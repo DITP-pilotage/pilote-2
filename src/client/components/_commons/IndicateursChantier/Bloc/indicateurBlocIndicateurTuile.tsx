@@ -1,18 +1,13 @@
-import { FunctionComponent } from "react";
 import IndicateurBlocIndicateurTuileStyled from "@/components/_commons/IndicateursChantier/Bloc/IndicateurBlocIndicateurTuile.styled";
 import BarreDeProgression from "@/components/_commons/BarreDeProgression/BarreDeProgression";
 import { formaterDate } from "@/client/utils/date/date";
-import { IndicateurDétailsParTerritoire } from "@/components/_commons/IndicateursChantier/Bloc/IndicateurBloc.interface";
+import { useBlocIndicateurContext } from "@/components/PageChantier/useBlocIndicateurContext";
+import { useTerritoireSelectionne } from "@/components/PageChantier/PageChantierServerSideContext";
 
-interface IndicateurDétailsParTerritoireProps {
-  indicateurDétailsParTerritoire: IndicateurDétailsParTerritoire;
-  typeDeRéforme: "chantier";
-  unité?: string | null;
-}
+const IndicateurBlocIndicateurTuile = () => {
+  const { detailIndicateurDuTerritoire } = useBlocIndicateurContext();
+  const detailTerritoireSelectionne = useTerritoireSelectionne();
 
-const IndicateurBlocIndicateurTuile: FunctionComponent<
-  IndicateurDétailsParTerritoireProps
-> = ({ indicateurDétailsParTerritoire, typeDeRéforme, unité }) => {
   const {
     dateValeurInitiale,
     valeurInitiale,
@@ -23,7 +18,9 @@ const IndicateurBlocIndicateurTuile: FunctionComponent<
     avancement,
     dateValeurCibleAnnuelle,
     valeurCibleAnnuelle,
-  } = indicateurDétailsParTerritoire.données;
+    unité,
+  } = detailIndicateurDuTerritoire;
+
   const unitéAffichée =
     unité?.toLocaleLowerCase() === "pourcentage" ? " %" : "";
 
@@ -33,9 +30,7 @@ const IndicateurBlocIndicateurTuile: FunctionComponent<
         <thead>
           <tr>
             <th className="fr-py-1v">Territoire</th>
-            <th className="fr-py-1v">
-              {indicateurDétailsParTerritoire.territoireNom}
-            </th>
+            <th className="fr-py-1v">{detailTerritoireSelectionne.nom}</th>
           </tr>
         </thead>
         <tbody>
@@ -75,9 +70,7 @@ const IndicateurBlocIndicateurTuile: FunctionComponent<
           </tr>
           <tr>
             <td className="fr-pt-1w fr-pb-0 fr-pr-0 libellés">
-              {typeDeRéforme === "chantier"
-                ? "Cible " + new Date().getFullYear().toString()
-                : "Cible"}
+              {"Cible " + new Date().getFullYear().toString()}
             </td>
             <td className="fr-pt-1w fr-pb-0 fr-pr-0 indicateur-bloc--avec-date">
               <span>
@@ -95,9 +88,7 @@ const IndicateurBlocIndicateurTuile: FunctionComponent<
           </tr>
           <tr>
             <td className="fr-pt-1w fr-pb-0 fr-pr-0 libellés">
-              {typeDeRéforme === "chantier"
-                ? "Avancement " + new Date().getFullYear().toString()
-                : "Avancement"}
+              {"Avancement " + new Date().getFullYear().toString()}
             </td>
             <td className="fr-pt-1w fr-pb-0 fr-pr-0">
               <BarreDeProgression
@@ -106,14 +97,12 @@ const IndicateurBlocIndicateurTuile: FunctionComponent<
                 positionTexte="côté"
                 taille="md"
                 valeur={avancement.annuel}
-                variante={typeDeRéforme === "chantier" ? "secondaire" : "rose"}
+                variante="secondaire"
               />
             </td>
           </tr>
           <tr>
-            <td className="fr-pt-1w fr-pb-0 fr-pr-0 libellés">
-              {typeDeRéforme === "chantier" ? "Cible 2026" : "Cible"}
-            </td>
+            <td className="fr-pt-1w fr-pb-0 fr-pr-0 libellés">Cible 2026</td>
             <td className="fr-pt-1w fr-pb-0 fr-pr-0 indicateur-bloc--avec-date">
               <span>
                 {Boolean(valeurCible)
@@ -129,7 +118,7 @@ const IndicateurBlocIndicateurTuile: FunctionComponent<
           </tr>
           <tr>
             <td className="fr-pt-1w fr-pb-0 fr-pr-0 libellés">
-              {typeDeRéforme === "chantier" ? "Avancement 2026" : "Avancement"}
+              Avancement 2026
             </td>
             <td className="fr-pt-1w fr-pb-0 fr-pr-0">
               <BarreDeProgression
@@ -138,7 +127,7 @@ const IndicateurBlocIndicateurTuile: FunctionComponent<
                 positionTexte="côté"
                 taille="md"
                 valeur={avancement.global}
-                variante={typeDeRéforme === "chantier" ? "primaire" : "rose"}
+                variante="primaire"
               />
             </td>
           </tr>

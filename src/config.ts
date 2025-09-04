@@ -386,3 +386,4 @@ config.validate({ allowed: "strict" });
 export const baseConfig = config;
 
 export const configuration = () => config.get();
+export const configurationFeatureFlip = () => config.get("featureFlip");

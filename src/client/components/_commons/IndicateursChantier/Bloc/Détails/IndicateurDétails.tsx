@@ -1,12 +1,12 @@
 import { FunctionComponent, useState } from "react";
 import { parseAsString, useQueryState } from "nuqs";
-import IndicateurÉvolution from "@/components/_commons/IndicateursChantier/Bloc/Détails/Évolution/IndicateurÉvolution";
+import { IndicateurÉvolution } from "@/components/_commons/IndicateursChantier/Bloc/Détails/Évolution/IndicateurÉvolution";
 import IndicateurSpécifications from "@/components/_commons/IndicateursChantier/Bloc/Détails/Spécifications/IndicateurSpécifications";
-import Indicateur from "@/server/domain/indicateur/Indicateur.interface";
 import { IndicateurDétailsParTerritoire } from "@/components/_commons/IndicateursChantier/Bloc/IndicateurBloc.interface";
 import { DétailsIndicateurs } from "@/server/domain/indicateur/DétailsIndicateur.interface";
 import { MailleInterne } from "@/server/domain/maille/Maille.interface";
 import CartographieAvecSelecteurIndicateur from "@/components/_commons/Cartographie/CartographieAvecSelecteurIndicateur/CartographieAvecSelecteurIndicateur";
+import { useBlocIndicateurContext } from "@/components/PageChantier/useBlocIndicateurContext";
 import { useIndicateurDétails } from "./useIndicateurDétails";
 
 export type CartographieIndicateurType =
@@ -15,46 +15,43 @@ export type CartographieIndicateurType =
   | "propositionValeur"
   | "valeurAvancement";
 interface IndicateurDétailsProps {
-  indicateur: Indicateur;
-  indicateurDétailsParTerritoires: IndicateurDétailsParTerritoire[];
   indicateurDétailsParTerritoiresComparés: IndicateurDétailsParTerritoire[];
-  chantierEstTerritorialisé: boolean;
   dateDeMiseAJourIndicateur: string | null;
-  détailsIndicateurs: DétailsIndicateurs;
   detailsIndicateursTerritoire: DétailsIndicateurs;
   dateValeurAvancement: string | null;
   dateProchaineDateMaj: string | null;
   dateProchaineDateValeurAvancement: string | null;
-  territoireCode: string;
   mailleQuery: MailleInterne;
   indicateurEstAjour: boolean;
-  jalon: number;
   mailsDirecteursProjets: string[];
   cartographieDroiteIndicateur: CartographieIndicateurType;
   cartographieGaucheIndicateur: CartographieIndicateurType;
   nouveauxGraphiquesSontActifs: boolean;
 }
 
-const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
-  indicateur,
-  indicateurDétailsParTerritoires,
+export const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
   indicateurDétailsParTerritoiresComparés,
-  chantierEstTerritorialisé,
   dateDeMiseAJourIndicateur,
-  détailsIndicateurs,
   detailsIndicateursTerritoire,
   dateValeurAvancement,
   dateProchaineDateMaj,
   dateProchaineDateValeurAvancement,
-  territoireCode,
   mailleQuery,
   indicateurEstAjour,
-  jalon,
   mailsDirecteursProjets,
   cartographieDroiteIndicateur,
   cartographieGaucheIndicateur,
   nouveauxGraphiquesSontActifs,
 }) => {
+  const {
+    indicateur,
+    chantier: { estTerritorialisé: chantierEstTerritorialisé },
+    detailIndicateurDuTerritoire,
+    jalon,
+    territoireCode,
+    détailsIndicateurs,
+  } = useBlocIndicateurContext();
+
   const [futOuvert, setFutOuvert] = useState(false);
 
   const {
@@ -62,7 +59,6 @@ const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
     donnéesCartographieValeurAvancementTerritorialisées,
   } = useIndicateurDétails(detailsIndicateursTerritoire[indicateur.id]);
 
-  const indicateurSiTypeDeReformeEstChantier = futOuvert;
   const nomDefinitionDeLindicateur =
     "Description de l'indicateur et calendrier de mise à jour";
   const nomRepartitionGeographiqueEtEvolution =
@@ -110,7 +106,7 @@ const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
           <div className="fr-container">
             <div className="fr-grid-row fr-grid-row--gutters fr-mb-1w">
               <div className="fr-col-12">
-                {indicateurSiTypeDeReformeEstChantier ? (
+                {futOuvert ? (
                   <IndicateurSpécifications
                     dateProchaineDateMaj={dateProchaineDateMaj}
                     dateProchaineDateValeurAvancement={
@@ -157,7 +153,7 @@ const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
         >
           <div className="fr-container">
             <div className="fr-grid-row fr-grid-row--gutters fr-my-1w">
-              {indicateurSiTypeDeReformeEstChantier &&
+              {futOuvert &&
               (donnéesCartographieAvancementTerritorialisées ||
                 donnéesCartographieValeurAvancementTerritorialisées ||
                 chantierEstTerritorialisé) ? (
@@ -200,29 +196,19 @@ const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
                   </section>
                 </>
               ) : null}
-              {
-                // TODO(JOTA-02/08/2024): Supprimer indicateurDétailsParTerritoires[0]?.données une fois le refacto page chantier terminé
-                indicateurSiTypeDeReformeEstChantier &&
-                indicateurDétailsParTerritoires[0]?.données ? (
-                  <section className="fr-col-12">
-                    <IndicateurÉvolution
-                      dateDeMiseAJourIndicateur={
-                        dateDeMiseAJourIndicateur ?? "Non renseignée"
-                      }
-                      indicateurDétailsParTerritoires={
-                        indicateurDétailsParTerritoires
-                      }
-                      indicateurDétailsParTerritoiresComparés={
-                        indicateurDétailsParTerritoiresComparés
-                      }
-                      nouveauxGraphiquesSontActifs={
-                        nouveauxGraphiquesSontActifs
-                      }
-                      source={indicateur.source}
-                    />
-                  </section>
-                ) : null
-              }
+              {futOuvert && detailIndicateurDuTerritoire ? (
+                <section className="fr-col-12">
+                  <IndicateurÉvolution
+                    dateDeMiseAJourIndicateur={
+                      dateDeMiseAJourIndicateur ?? "Non renseignée"
+                    }
+                    indicateurDétailsParTerritoiresComparés={
+                      indicateurDétailsParTerritoiresComparés
+                    }
+                    nouveauxGraphiquesSontActifs={nouveauxGraphiquesSontActifs}
+                  />
+                </section>
+              ) : null}
             </div>
           </div>
         </div>
@@ -230,5 +216,3 @@ const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
     </div>
   );
 };
-
-export default IndicateurDétails;

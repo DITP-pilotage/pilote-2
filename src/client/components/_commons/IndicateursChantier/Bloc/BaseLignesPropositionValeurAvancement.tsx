@@ -1,8 +1,6 @@
 import { PropsWithChildren } from "react";
 import clsx from "clsx";
 import { DétailsIndicateur } from "@/server/domain/indicateur/DétailsIndicateur.interface";
-import { InformationsIndicateurs } from "@/components/_commons/IndicateursChantier/Bloc/InformationsIndicateurs";
-import { DetailIndicateurPropositionValeurAvancement } from "@/server/chantiers/domain/DetailsIndicateurs";
 import {
   estPropositionAccepteeOuAccepteeAvecModification,
   estPropositionAccuseeReception,
@@ -13,6 +11,7 @@ import { useBlocIndicateurContext } from "@/components/PageChantier/useBlocIndic
 import { DatajobsExecution } from "@/server/datajobs-execution/DatajobsExecution";
 import { CelluleStatutProposition } from "@/components/_commons/IndicateursChantier/Bloc/CelluleStatutProposition";
 import { BarreDeProgressionAVenir } from "@/components/_commons/IndicateursChantier/Bloc/BarreDeProgressionAVenir";
+import { useTerritoireSelectionne } from "@/components/PageChantier/PageChantierServerSideContext";
 
 export const doitAfficherPropositionAcceptee = (
   detailIndicateur: DétailsIndicateur,
@@ -27,37 +26,36 @@ export const doitAfficherPropositionAcceptee = (
 };
 
 export const BaseLignesPropositionValeurAvancement = ({
-  detailIndicateur,
-  informationIndicateur,
-  proposition,
-  jalon,
   estAutoriseAAccepterLesPropositionsDeValeurAvancement,
   estAutoriseAProposerUneValeurAvancement,
   children,
 }: PropsWithChildren<{
-  jalon: number;
-  detailIndicateur: DétailsIndicateur;
-  informationIndicateur: InformationsIndicateurs[number];
-  proposition: DetailIndicateurPropositionValeurAvancement;
   estAutoriseAAccepterLesPropositionsDeValeurAvancement: boolean;
   estAutoriseAProposerUneValeurAvancement: boolean;
 }>) => {
-  const { datajobsExecution } = useBlocIndicateurContext();
+  const détailTerritoireSélectionné = useTerritoireSelectionne();
+
+  const { datajobsExecution, detailIndicateurDuTerritoire, jalon } =
+    useBlocIndicateurContext();
+
+  if (detailIndicateurDuTerritoire.proposition === null) return null;
 
   const afficherPropositionAcceptee = doitAfficherPropositionAcceptee(
-    detailIndicateur,
+    detailIndicateurDuTerritoire,
     datajobsExecution,
   );
 
   const estPropositionSurLeBonJalon =
-    detailIndicateur.dateValeurAvancementMandat !== null
-      ? new Date(detailIndicateur.dateValeurAvancementMandat!).getFullYear() <=
-        jalon
+    detailIndicateurDuTerritoire.dateValeurAvancementMandat !== null
+      ? new Date(
+          detailIndicateurDuTerritoire.dateValeurAvancementMandat!,
+        ).getFullYear() <= jalon
       : false;
 
   const varianteBarreProgression =
-    estPropositionAccepteeOuAccepteeAvecModification(detailIndicateur) ||
-    estPropositionAccuseeReception(detailIndicateur)
+    estPropositionAccepteeOuAccepteeAvecModification(
+      detailIndicateurDuTerritoire,
+    ) || estPropositionAccuseeReception(detailIndicateurDuTerritoire)
       ? "bleu-dsfr-info"
       : "jaune-moutarde";
 
@@ -66,30 +64,29 @@ export const BaseLignesPropositionValeurAvancement = ({
       <tr
         className={clsx("ligne-modification-proposition-valeur-davancement", {
           "!bg-dsfr-info-950 !text-dsfr-info-main-525":
-            estPropositionAccuseeReception(detailIndicateur) ||
+            estPropositionAccuseeReception(detailIndicateurDuTerritoire) ||
             afficherPropositionAcceptee,
           "!bg-dsfr-moutarde-main-975 !text-dsfr-moutarde-main-679":
-            !estPropositionAccuseeReception(detailIndicateur) &&
-            !estPropositionAccepteeOuAccepteeAvecModification(detailIndicateur),
+            !estPropositionAccuseeReception(detailIndicateurDuTerritoire) &&
+            !estPropositionAccepteeOuAccepteeAvecModification(
+              detailIndicateurDuTerritoire,
+            ),
         })}
-        key={informationIndicateur.territoireNom}
+        key={détailTerritoireSélectionné.nom}
       >
         <CelluleStatutProposition
-          detailIndicateur={detailIndicateur}
           estAutoriseAAccepterLesPropositionsDeValeurAvancement={
             estAutoriseAAccepterLesPropositionsDeValeurAvancement
           }
           estAutoriseAProposerUneValeurAvancement={
             estAutoriseAProposerUneValeurAvancement
           }
-          informationIndicateur={informationIndicateur}
-          proposition={proposition}
         />
         <td className="fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm text-center text-dsfr-grey-200">
           <ValeurEtDate
-            date={informationIndicateur.données.dateValeurInitiale}
-            unité={informationIndicateur.données.unité}
-            valeur={informationIndicateur.données.valeurInitiale}
+            date={detailIndicateurDuTerritoire.dateValeurInitiale}
+            unité={detailIndicateurDuTerritoire.unité}
+            valeur={detailIndicateurDuTerritoire.valeurInitiale}
           />
         </td>
         {estPropositionSurLeBonJalon ? (
@@ -97,29 +94,34 @@ export const BaseLignesPropositionValeurAvancement = ({
             {/* Valeur d'avancement en fonction de la proposition du jalon et date valeur d'avancement en fonction du mandat */}
             <td className="fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm texte-proposition text-center">
               <ValeurEtDate
-                date={informationIndicateur.données.dateValeurAvancementMandat}
-                unité={informationIndicateur.données.unité}
-                valeur={proposition.valeurAvancement}
+                date={detailIndicateurDuTerritoire.dateValeurAvancementMandat}
+                unité={detailIndicateurDuTerritoire.unité}
+                valeur={
+                  detailIndicateurDuTerritoire.proposition.valeurAvancement
+                }
               />
             </td>
             <td className="fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm text-center text-dsfr-grey-200">
               <ValeurEtDate
-                date={informationIndicateur.données.dateValeurCibleAnnuelle}
-                unité={informationIndicateur.données.unité}
-                valeur={informationIndicateur.données.valeurCibleAnnuelle}
+                date={detailIndicateurDuTerritoire.dateValeurCibleAnnuelle}
+                unité={detailIndicateurDuTerritoire.unité}
+                valeur={detailIndicateurDuTerritoire.valeurCibleAnnuelle}
               />
             </td>
             <td className="fr-mb-0 fr-p-0 fr-px-2w fr-py-md-1w fr-text--sm texte-proposition">
-              {proposition.statutTauxAvancement === "EN_COURS" ? (
+              {detailIndicateurDuTerritoire.proposition.statutTauxAvancement ===
+              "EN_COURS" ? (
                 <BarreDeProgressionAVenir variante={varianteBarreProgression} />
               ) : (
                 <BarreDeProgression
                   afficherTexte
                   fond="gris-clair"
-                  infobulleId={`infobulle-taux-avancement-proposition-jalon-${informationIndicateur.code}`}
                   positionTexte="dessus"
                   taille="md"
-                  valeur={proposition.tauxAvancementIntermediaire}
+                  valeur={
+                    detailIndicateurDuTerritoire.proposition
+                      .tauxAvancementIntermediaire
+                  }
                   variante={varianteBarreProgression}
                 />
               )}
@@ -131,29 +133,29 @@ export const BaseLignesPropositionValeurAvancement = ({
         {/* Valeur d'avancement en fonction de la proposition du jalon et date valeur d'avancement en fonction du mandat */}
         <td className="fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm texte-proposition text-center">
           <ValeurEtDate
-            date={informationIndicateur.données.dateValeurAvancementMandat}
-            unité={informationIndicateur.données.unité}
-            valeur={proposition.valeurAvancement}
+            date={detailIndicateurDuTerritoire.dateValeurAvancementMandat}
+            unité={detailIndicateurDuTerritoire.unité}
+            valeur={detailIndicateurDuTerritoire.proposition.valeurAvancement}
           />
         </td>
         <td className="fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm text-center text-dsfr-grey-200">
           <ValeurEtDate
-            date={informationIndicateur.données.dateValeurCible}
-            unité={informationIndicateur.données.unité}
-            valeur={informationIndicateur.données.valeurCible}
+            date={detailIndicateurDuTerritoire.dateValeurCible}
+            unité={detailIndicateurDuTerritoire.unité}
+            valeur={detailIndicateurDuTerritoire.valeurCible}
           />
         </td>
         <td className="fr-mb-0 fr-p-0 fr-px-2w fr-py-md-1w fr-text--sm texte-proposition">
-          {proposition.statutTauxAvancement === "EN_COURS" ? (
+          {detailIndicateurDuTerritoire.proposition.statutTauxAvancement ===
+          "EN_COURS" ? (
             <BarreDeProgressionAVenir variante={varianteBarreProgression} />
           ) : (
             <BarreDeProgression
               afficherTexte
               fond="gris-clair"
-              infobulleId={`infobulle-taux-avancement-proposition-global-${informationIndicateur.code}`}
               positionTexte="dessus"
               taille="md"
-              valeur={proposition.tauxAvancement}
+              valeur={detailIndicateurDuTerritoire.proposition.tauxAvancement}
               variante={varianteBarreProgression}
             />
           )}

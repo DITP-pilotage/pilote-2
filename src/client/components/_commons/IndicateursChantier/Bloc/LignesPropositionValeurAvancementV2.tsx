@@ -1,11 +1,10 @@
 import clsx from "clsx";
-import Indicateur from "@/server/domain/indicateur/Indicateur.interface";
-import { DétailsIndicateur } from "@/server/domain/indicateur/DétailsIndicateur.interface";
-import { InformationsIndicateurs } from "@/components/_commons/IndicateursChantier/Bloc/InformationsIndicateurs";
-import { DetailIndicateurPropositionValeurAvancement } from "@/server/chantiers/domain/DetailsIndicateurs";
 import { useBlocIndicateurContext } from "@/components/PageChantier/useBlocIndicateurContext";
-import { actionsTerritoiresStore } from "@/stores/useTerritoiresStore/useTerritoiresStore";
-import { estPropositionAccuseeReception } from "@/components/_commons/IndicateursChantier/Bloc/utils";
+import {
+  estPropositionAccuseeReception,
+  estPropositionRefusee,
+  estPropositionSupprimee,
+} from "@/components/_commons/IndicateursChantier/Bloc/utils";
 import Infobulle from "@/components/_commons/Infobulle/Infobulle";
 import { BoutonSupprimerProposition } from "@/components/_commons/IndicateursChantier/Bloc/BoutonSupprimerProposition";
 import { BoutonModifierProposition } from "@/components/_commons/IndicateursChantier/Bloc/BoutonModifierProposition";
@@ -15,53 +14,44 @@ import {
   BaseLignesPropositionValeurAvancement,
   doitAfficherPropositionAcceptee,
 } from "@/components/_commons/IndicateursChantier/Bloc/BaseLignesPropositionValeurAvancement";
+import { useTerritoireSelectionne } from "@/components/PageChantier/PageChantierServerSideContext";
 
 export const LignesPropositionValeurAvancementV2 = ({
-  indicateur,
-  detailIndicateur,
-  territoireCode,
-  informationIndicateur,
-  proposition,
-  jalon,
   propositionEstVisible,
   estAutoriseAAccepterLesPropositionsDeValeurAvancement,
   estAutoriseAProposerUneValeurAvancement,
 }: {
-  indicateur: Indicateur;
-  jalon: number;
-  territoireCode: string;
-  detailIndicateur: DétailsIndicateur;
-  informationIndicateur: InformationsIndicateurs[number];
-  proposition: DetailIndicateurPropositionValeurAvancement;
   propositionEstVisible: boolean;
   estAutoriseAAccepterLesPropositionsDeValeurAvancement: boolean;
   estAutoriseAProposerUneValeurAvancement: boolean;
 }) => {
-  const { datajobsExecution } = useBlocIndicateurContext();
-  // TODO: /!\ actionsTerritoiresStore est un hook
-  const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
+  const {
+    datajobsExecution,
+    detailIndicateurDuTerritoire,
+    territoireCode,
+    indicateur,
+  } = useBlocIndicateurContext();
 
-  if (!propositionEstVisible) {
+  const détailTerritoireSélectionné = useTerritoireSelectionne();
+
+  if (
+    !propositionEstVisible ||
+    estPropositionSupprimee(detailIndicateurDuTerritoire) ||
+    estPropositionRefusee(detailIndicateurDuTerritoire)
+  ) {
     return null;
   }
-
-  const détailTerritoireSélectionné =
-    récupérerDétailsSurUnTerritoire(territoireCode);
 
   if (estAutoriseAAccepterLesPropositionsDeValeurAvancement) {
     return (
       <BaseLignesPropositionValeurAvancement
-        detailIndicateur={detailIndicateur}
         estAutoriseAAccepterLesPropositionsDeValeurAvancement
         estAutoriseAProposerUneValeurAvancement={
           estAutoriseAProposerUneValeurAvancement
         }
-        informationIndicateur={informationIndicateur}
-        jalon={jalon}
-        proposition={proposition}
       >
         {doitAfficherPropositionAcceptee(
-          detailIndicateur,
+          detailIndicateurDuTerritoire,
           datajobsExecution,
         ) ? null : (
           <tr
@@ -69,18 +59,20 @@ export const LignesPropositionValeurAvancementV2 = ({
               "ligne-modification-proposition-valeur-davancement",
               {
                 "!bg-dsfr-info-950 !text-dsfr-info-main-525":
-                  estPropositionAccuseeReception(detailIndicateur),
+                  estPropositionAccuseeReception(detailIndicateurDuTerritoire),
                 "!bg-dsfr-moutarde-main-975 !text-dsfr-moutarde-main-679":
-                  !estPropositionAccuseeReception(detailIndicateur),
+                  !estPropositionAccuseeReception(detailIndicateurDuTerritoire),
               },
             )}
           >
             <td colSpan={8}>
               <div className="flex w-full align-center justify-end gap-4">
-                {!estPropositionAccuseeReception(detailIndicateur) && (
+                {!estPropositionAccuseeReception(
+                  detailIndicateurDuTerritoire,
+                ) && (
                   <div className="flex align-center">
                     <BoutonAccuserReceptionProposition
-                      detailIndicateur={informationIndicateur.données}
+                      detailIndicateur={detailIndicateurDuTerritoire}
                       détailTerritoireSélectionné={détailTerritoireSélectionné}
                     />
                     <Infobulle classNameBouton="texte-jaune" idHtml="test">
@@ -95,7 +87,7 @@ export const LignesPropositionValeurAvancementV2 = ({
                   </div>
                 )}
                 <BoutonPrendreDecisionProposition
-                  detailIndicateur={informationIndicateur.données}
+                  detailIndicateur={detailIndicateurDuTerritoire}
                   détailTerritoireSélectionné={détailTerritoireSélectionné}
                   id={indicateur.id}
                   indicateur={indicateur}
@@ -112,32 +104,22 @@ export const LignesPropositionValeurAvancementV2 = ({
   if (estAutoriseAProposerUneValeurAvancement) {
     return (
       <BaseLignesPropositionValeurAvancement
-        detailIndicateur={detailIndicateur}
         estAutoriseAAccepterLesPropositionsDeValeurAvancement={
           estAutoriseAAccepterLesPropositionsDeValeurAvancement
         }
         estAutoriseAProposerUneValeurAvancement
-        informationIndicateur={informationIndicateur}
-        jalon={jalon}
-        proposition={proposition}
       >
-        {estPropositionAccuseeReception(detailIndicateur) ||
+        {estPropositionAccuseeReception(detailIndicateurDuTerritoire) ||
         doitAfficherPropositionAcceptee(
-          detailIndicateur,
+          detailIndicateurDuTerritoire,
           datajobsExecution,
         ) ? null : (
           <tr className="ligne-modification-proposition-valeur-davancement !bg-dsfr-moutarde-main-975 !text-dsfr-moutarde-main-679">
             <td colSpan={8}>
               <div className="flex w-full justify-end">
-                <BoutonModifierProposition
-                  detailIndicateur={informationIndicateur.données}
-                  détailTerritoireSélectionné={détailTerritoireSélectionné}
-                  id={indicateur.id}
-                  indicateur={indicateur}
-                  territoireCode={territoireCode}
-                />
+                <BoutonModifierProposition />
                 <BoutonSupprimerProposition
-                  detailIndicateur={informationIndicateur.données}
+                  detailIndicateur={detailIndicateurDuTerritoire}
                   détailTerritoireSélectionné={détailTerritoireSélectionné}
                   id={indicateur.id}
                   indicateur={indicateur}
@@ -153,16 +135,12 @@ export const LignesPropositionValeurAvancementV2 = ({
 
   return (
     <BaseLignesPropositionValeurAvancement
-      detailIndicateur={detailIndicateur}
       estAutoriseAAccepterLesPropositionsDeValeurAvancement={
         estAutoriseAAccepterLesPropositionsDeValeurAvancement
       }
       estAutoriseAProposerUneValeurAvancement={
         estAutoriseAProposerUneValeurAvancement
       }
-      informationIndicateur={informationIndicateur}
-      jalon={jalon}
-      proposition={proposition}
     />
   );
 };

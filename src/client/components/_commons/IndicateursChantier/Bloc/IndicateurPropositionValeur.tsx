@@ -2,7 +2,6 @@ import clsx from "clsx";
 import { DétailsIndicateur } from "@/server/domain/indicateur/DétailsIndicateur.interface";
 import { formaterDate } from "@/client/utils/date/date";
 import BoutonSousLigné from "@/components/_commons/BoutonSousLigné/BoutonSousLigné";
-import { InformationsIndicateurs } from "@/components/_commons/IndicateursChantier/Bloc/InformationsIndicateurs";
 import {
   estPropositionAcceptee,
   estPropositionAccepteeAvecModification,
@@ -11,13 +10,12 @@ import {
   estPropositionRefusee,
   estPropositionSupprimee,
 } from "@/components/_commons/IndicateursChantier/Bloc/utils";
-import api from "@/server/infrastructure/api/trpc/api";
 import Infobulle from "@/components/_commons/Infobulle/Infobulle";
-import { MailleTerritoireSelectionne } from "@/server/domain/maille/Maille.interface";
 import { LigneInformationPropositionValeur } from "@/components/_commons/IndicateursChantier/Bloc/LigneInformationPropositionValeur";
 import { useBlocIndicateurContext } from "@/components/PageChantier/useBlocIndicateurContext";
 import { DatajobsExecution } from "@/server/datajobs-execution/DatajobsExecution";
 import { BoutonProposerValeur } from "@/components/_commons/IndicateursChantier/Bloc/BoutonProposerValeur";
+import { territoireCodeVersMailleCodeInsee } from "@/server/utils/territoires";
 
 export const ID_HTML_MODALE_HISTORIQUE_INDICATEUR_TERRITOIRE_VALEUR_EVENEMENT =
   "modale-historique-indicateur-territoire-valeur-evenement";
@@ -37,32 +35,29 @@ export const IndicateurPropositionValeur = ({
   estAutoriseAProposerUneValeurAvancement,
   propositionEstVisible,
   setPropositionEstVisible,
-  informationsIndicateurs,
-  detailIndicateur,
-  maille,
 }: {
   estAutoriseAProposerUneValeurAvancement: boolean;
   propositionEstVisible: boolean;
   setPropositionEstVisible(visible: boolean): void;
-  detailIndicateur: DétailsIndicateur;
-
-  informationsIndicateurs: InformationsIndicateurs;
-  maille: MailleTerritoireSelectionne;
 }) => {
-  const { indicateur, datajobsExecution } = useBlocIndicateurContext();
+  const {
+    indicateur,
+    datajobsExecution,
+    detailIndicateurDuTerritoire,
+    territoireCode,
+    configurationFeatureFlipping,
+  } = useBlocIndicateurContext();
 
-  const { data: variableContenuFFPropositionValeurAvancementV2 } =
-    api.gestionContenu.récupérerVariableContenu.useQuery({
-      nomVariableContenu: "NEXT_PUBLIC_FF_PROPOSITION_VALEUR_ACTUELLE_V2",
-    });
+  const { maille: mailleDuTerritoireSelectionnee } =
+    territoireCodeVersMailleCodeInsee(territoireCode);
 
-  if (!variableContenuFFPropositionValeurAvancementV2) return null;
-  if (detailIndicateur.valeurAvancementMandat == null) return null;
+  if (!configurationFeatureFlipping.propositionValeurAvancementV2) return null;
+  if (detailIndicateurDuTerritoire.valeurAvancementMandat == null) return null;
 
   const estAffichageSansProposition =
-    informationsIndicateurs[0].données.proposition === null;
+    detailIndicateurDuTerritoire.proposition === null;
 
-  if (indicateur.mailleRegAgregee && maille === "REG") {
+  if (indicateur.mailleRegAgregee && mailleDuTerritoireSelectionnee === "REG") {
     return (
       <p className="fr-text--xs texte-gris fr-mb-0 flex items-center">
         Impossible de proposer une autre valeur d'avancement
@@ -84,12 +79,12 @@ export const IndicateurPropositionValeur = ({
     );
   }
 
-  if (estPropositionSupprimee(detailIndicateur)) {
+  if (estPropositionSupprimee(detailIndicateurDuTerritoire)) {
     return (
       <LigneInformationPropositionValeur
         action={
           estAutoriseAProposerUneValeurAvancement ? (
-            <BoutonProposerValeur detailIndicateur={detailIndicateur} />
+            <BoutonProposerValeur />
           ) : null
         }
         className="texte-gris"
@@ -98,19 +93,19 @@ export const IndicateurPropositionValeur = ({
         <strong>dernière proposition en date supprimée</strong> par le
         territoire le{" "}
         {formaterDate(
-          detailIndicateur.propositionStatutTerritoire?.date,
+          detailIndicateurDuTerritoire.propositionStatutTerritoire?.date,
           "DD/MM/YYYY",
         )}
       </LigneInformationPropositionValeur>
     );
   }
 
-  if (estPropositionRefusee(detailIndicateur)) {
+  if (estPropositionRefusee(detailIndicateurDuTerritoire)) {
     return (
       <LigneInformationPropositionValeur
         action={
           estAutoriseAProposerUneValeurAvancement ? (
-            <BoutonProposerValeur detailIndicateur={detailIndicateur} />
+            <BoutonProposerValeur />
           ) : null
         }
         className="texte-gris"
@@ -119,14 +114,14 @@ export const IndicateurPropositionValeur = ({
         <strong>dernière proposition en date refusée</strong> par la direction
         de projet le{" "}
         {formaterDate(
-          detailIndicateur.propositionStatutDirectionProjet?.date,
+          detailIndicateurDuTerritoire.propositionStatutDirectionProjet?.date,
           "DD/MM/YYYY",
         )}
       </LigneInformationPropositionValeur>
     );
   }
 
-  if (estPropositionAccuseeReception(detailIndicateur)) {
+  if (estPropositionAccuseeReception(detailIndicateurDuTerritoire)) {
     return (
       <LigneInformationPropositionValeur
         action={
@@ -147,11 +142,13 @@ export const IndicateurPropositionValeur = ({
         className="text-dsfr-info-main-525"
       >
         <strong>Proposition de nouvelle valeur d'avancement en cours</strong> –{" "}
-        {estPropositionModifiee(detailIndicateur) ? "modifiée" : "présentée"}{" "}
+        {estPropositionModifiee(detailIndicateurDuTerritoire)
+          ? "modifiée"
+          : "présentée"}{" "}
         par le territoire le{" "}
         <strong>
           {formaterDate(
-            informationsIndicateurs[0].données.proposition?.dateProposition,
+            detailIndicateurDuTerritoire.proposition?.dateProposition,
             "DD/MM/YYYY",
           )}
         </strong>{" "}
@@ -161,9 +158,12 @@ export const IndicateurPropositionValeur = ({
   }
 
   if (
-    (estPropositionAcceptee(detailIndicateur) ||
-      estPropositionAccepteeAvecModification(detailIndicateur)) &&
-    estDatajobExecutionAvantProposition(datajobsExecution, detailIndicateur)
+    (estPropositionAcceptee(detailIndicateurDuTerritoire) ||
+      estPropositionAccepteeAvecModification(detailIndicateurDuTerritoire)) &&
+    estDatajobExecutionAvantProposition(
+      datajobsExecution,
+      detailIndicateurDuTerritoire,
+    )
   ) {
     return (
       <LigneInformationPropositionValeur
@@ -188,20 +188,20 @@ export const IndicateurPropositionValeur = ({
         par le territoire le{" "}
         <strong>
           {formaterDate(
-            informationsIndicateurs[0].données.proposition?.dateProposition,
+            detailIndicateurDuTerritoire.proposition?.dateProposition,
             "DD/MM/YYYY",
           )}
         </strong>{" "}
         et{" "}
         <strong>
           acceptée
-          {estPropositionAccepteeAvecModification(detailIndicateur)
+          {estPropositionAccepteeAvecModification(detailIndicateurDuTerritoire)
             ? " avec modification"
             : ""}
         </strong>{" "}
         par la direction de projet le{" "}
         {formaterDate(
-          detailIndicateur.propositionStatutDirectionProjet?.date,
+          detailIndicateurDuTerritoire.propositionStatutDirectionProjet?.date,
           "DD/MM/YYYY",
         )}
       </LigneInformationPropositionValeur>
@@ -213,7 +213,7 @@ export const IndicateurPropositionValeur = ({
       <LigneInformationPropositionValeur
         action={
           estAutoriseAProposerUneValeurAvancement ? (
-            <BoutonProposerValeur detailIndicateur={detailIndicateur} />
+            <BoutonProposerValeur />
           ) : null
         }
         className="texte-gris"
@@ -223,7 +223,7 @@ export const IndicateurPropositionValeur = ({
     );
   }
 
-  if (estPropositionModifiee(detailIndicateur)) {
+  if (estPropositionModifiee(detailIndicateurDuTerritoire)) {
     return (
       <LigneInformationPropositionValeur
         action={
@@ -247,7 +247,7 @@ export const IndicateurPropositionValeur = ({
         modifiée par le territoire le{" "}
         <strong>
           {formaterDate(
-            informationsIndicateurs[0].données.proposition?.dateProposition,
+            detailIndicateurDuTerritoire.proposition?.dateProposition,
             "DD/MM/YYYY",
           )}
         </strong>{" "}
@@ -279,7 +279,7 @@ export const IndicateurPropositionValeur = ({
       présentée par le territoire le{" "}
       <strong>
         {formaterDate(
-          informationsIndicateurs[0].données.proposition?.dateProposition,
+          detailIndicateurDuTerritoire.proposition?.dateProposition,
           "DD/MM/YYYY",
         )}
       </strong>{" "}
