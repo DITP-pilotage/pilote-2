@@ -11,7 +11,6 @@ export default function IndicateursRapportDetaille({
   détailsIndicateurs,
   typeDeRéforme,
   categoriesIndicateurRepartition,
-  sousIndicateursDisponibles,
 }: IndicateursProps) {
   const codeInseeSélectionnée = territoireCode?.split("-")[1];
   if (indicateurs.length === 0) {
@@ -52,17 +51,11 @@ export default function IndicateursRapportDetaille({
                     ),
                   )
                   .map((indicateur) => {
-                    const listeSousIndicateurs = sousIndicateursDisponibles
-                      ? indicateurs.filter(
-                          (ind) => ind.parentId === indicateur.id,
-                        )
-                      : [];
                     return (
                       <IndicateurBloc
                         détailsIndicateurs={détailsIndicateurs}
                         indicateur={indicateur}
                         key={indicateur.id}
-                        listeSousIndicateurs={listeSousIndicateurs}
                         territoireCode={territoireCode}
                         typeDeRéforme={typeDeRéforme}
                       />

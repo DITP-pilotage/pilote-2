@@ -2,7 +2,6 @@ import { FunctionComponent, useState } from "react";
 import { parseAsString, useQueryState } from "nuqs";
 import IndicateurÉvolution from "@/components/_commons/IndicateursChantier/Bloc/Détails/Évolution/IndicateurÉvolution";
 import IndicateurSpécifications from "@/components/_commons/IndicateursChantier/Bloc/Détails/Spécifications/IndicateurSpécifications";
-import SousIndicateurs from "@/components/_commons/IndicateursChantier/Bloc/Détails/SousIndicateurs/SousIndicateurs";
 import Indicateur from "@/server/domain/indicateur/Indicateur.interface";
 import { IndicateurDétailsParTerritoire } from "@/components/_commons/IndicateursChantier/Bloc/IndicateurBloc.interface";
 import { DétailsIndicateurs } from "@/server/domain/indicateur/DétailsIndicateur.interface";
@@ -21,16 +20,12 @@ interface IndicateurDétailsProps {
   indicateurDétailsParTerritoiresComparés: IndicateurDétailsParTerritoire[];
   chantierEstTerritorialisé: boolean;
   dateDeMiseAJourIndicateur: string | null;
-  listeSousIndicateurs: Indicateur[];
   détailsIndicateurs: DétailsIndicateurs;
   detailsIndicateursTerritoire: DétailsIndicateurs;
-  estSousIndicateur?: boolean;
   dateValeurAvancement: string | null;
   dateProchaineDateMaj: string | null;
   dateProchaineDateValeurAvancement: string | null;
   territoireCode: string;
-  territoiresCompares: string[];
-  mailleSelectionnee: MailleInterne;
   mailleQuery: MailleInterne;
   indicateurEstAjour: boolean;
   jalon: number;
@@ -46,16 +41,12 @@ const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
   indicateurDétailsParTerritoiresComparés,
   chantierEstTerritorialisé,
   dateDeMiseAJourIndicateur,
-  listeSousIndicateurs,
   détailsIndicateurs,
   detailsIndicateursTerritoire,
   dateValeurAvancement,
   dateProchaineDateMaj,
   dateProchaineDateValeurAvancement,
-  estSousIndicateur = false,
   territoireCode,
-  territoiresCompares,
-  mailleSelectionnee,
   mailleQuery,
   indicateurEstAjour,
   jalon,
@@ -72,12 +63,10 @@ const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
   } = useIndicateurDétails(detailsIndicateursTerritoire[indicateur.id]);
 
   const indicateurSiTypeDeReformeEstChantier = futOuvert;
-  const nomDefinitionDeLindicateur = estSousIndicateur
-    ? "Description du sous-indicateur et calendrier de mise à jour"
-    : "Description de l'indicateur et calendrier de mise à jour";
+  const nomDefinitionDeLindicateur =
+    "Description de l'indicateur et calendrier de mise à jour";
   const nomRepartitionGeographiqueEtEvolution =
     "Répartition géographique et évolution";
-  const nomSousIndicateurs = "Sous indicateurs";
 
   const responsablesDonnees =
     indicateur.responsablesDonneesMails.length > 0
@@ -238,43 +227,6 @@ const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
           </div>
         </div>
       </section>
-      {listeSousIndicateurs.length > 0 ? (
-        <section className="fr-accordion">
-          <h3 className="fr-accordion__title">
-            <button
-              aria-controls={`sous-indicateurs-${indicateur.id}`}
-              aria-expanded="false"
-              className="fr-accordion__btn"
-              onClick={() => setFutOuvert(true)}
-              title={nomSousIndicateurs}
-              type="button"
-            >
-              {nomSousIndicateurs}
-            </button>
-          </h3>
-          <div
-            className="fr-collapse fr-m-0 fr-p-0"
-            id={`sous-indicateurs-${indicateur.id}`}
-          >
-            <SousIndicateurs
-              cartographieDroiteIndicateur={cartographieDroiteIndicateur}
-              cartographieGaucheIndicateur={cartographieGaucheIndicateur}
-              chantierEstTerritorialisé={chantierEstTerritorialisé}
-              detailsIndicateursTerritoire={detailsIndicateursTerritoire}
-              détailsIndicateurs={détailsIndicateurs}
-              estInteractif
-              jalon={jalon}
-              listeSousIndicateurs={listeSousIndicateurs}
-              mailleQuery={mailleQuery}
-              mailleSelectionnee={mailleSelectionnee}
-              mailsDirecteursProjets={mailsDirecteursProjets}
-              nouveauxGraphiquesSontActifs={nouveauxGraphiquesSontActifs}
-              territoireCode={territoireCode}
-              territoiresCompares={territoiresCompares}
-            />
-          </div>
-        </section>
-      ) : null}
     </div>
   );
 };

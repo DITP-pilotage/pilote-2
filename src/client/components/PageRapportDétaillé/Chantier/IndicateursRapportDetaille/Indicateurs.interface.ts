@@ -12,5 +12,4 @@ export default interface RubriquesIndicateursProps {
   territoireCode?: string;
   typeDeRéforme: "chantier";
   categoriesIndicateurRepartition: Record<CategoriesIndicateur, Indicateur[]>;
-  sousIndicateursDisponibles: boolean;
 }

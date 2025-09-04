@@ -28,7 +28,6 @@ import {
 import Cartes from "@/client/components/PageRapportDétaillé/Cartes/Cartes";
 import Bloc from "@/components/_commons/Bloc/Bloc";
 import AvancementChantier from "@/components/PageChantier/AvancementChantier/AvancementChantier";
-import api from "@/server/infrastructure/api/trpc/api";
 import Indicateur from "@/server/domain/indicateur/Indicateur.interface";
 import { DonneesComparaisonDuTauxDAvancementType } from "@/server/domain/territoire/Territoire.interface";
 import RapportDétailléChantierStyled from "./RapportDétailléChantier.styled";
@@ -59,15 +58,6 @@ const RapportDétailléChantier: FunctionComponent<
 
   const avancements = mapChantierStatistiques.get(chantier.id)!;
 
-  const { data: sousIndicateursDisponibles } =
-    api.gestionContenu.récupérerVariableContenu.useQuery({
-      nomVariableContenu: "NEXT_PUBLIC_FF_SOUS_INDICATEURS",
-    });
-
-  const listeIndicateursParent = !!sousIndicateursDisponibles
-    ? indicateurs.filter((indicateur) => !indicateur.parentId)
-    : indicateurs;
-
   const donneesComparaisonDuTauxDAvancement: DonneesComparaisonDuTauxDAvancementType =
     {
       ppgEcartMedian: chantier.écart,
@@ -80,7 +70,7 @@ const RapportDétailléChantier: FunctionComponent<
   const categoriesIndicateurRepartition: Record<
     CategoriesIndicateur,
     Indicateur[]
-  > = listeIndicateursParent.reduce(
+  > = indicateurs.reduce(
     (acc, indicateur) => {
       if (
         (détailsIndicateurs[indicateur.id][territoireCode]?.pondération ?? 0) >
@@ -271,7 +261,6 @@ const RapportDétailléChantier: FunctionComponent<
                   détailsIndicateurs={détailsIndicateurs}
                   indicateurs={indicateurs}
                   listeRubriquesIndicateurs={listeRubriquesIndicateursChantier}
-                  sousIndicateursDisponibles={!!sousIndicateursDisponibles}
                   territoireCode={territoireCode}
                   typeDeRéforme="chantier"
                 />
