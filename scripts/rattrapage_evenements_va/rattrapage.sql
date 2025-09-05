@@ -175,7 +175,7 @@ FROM
     LEFT JOIN indicateur_identite ON indicateur_identite.id = pva.indic_id
     LEFT JOIN territoire ON territoire.code = pva.territoire_code
 WHERE
-    statut = 'EN_COURS'
+    pva.statut = 'EN_COURS'
     AND (
         maille_reg_agregee IS FALSE
         OR territoire."maille" <> 'reg'
