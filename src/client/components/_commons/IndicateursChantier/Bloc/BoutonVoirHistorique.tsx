@@ -1,17 +1,18 @@
+import { useId } from "react";
 import BoutonSousLigné from "@/components/_commons/BoutonSousLigné/BoutonSousLigné";
 import { ModaleHistoriqueIndicateurTerritoireValeurEvenement } from "@/components/_commons/IndicateursChantier/Bloc/ModaleHistoriqueIndicateurTerritoireValeurEvenement/ModaleHistoriqueIndicateurTerritoireValeurEvenement";
-import { ID_HTML_MODALE_HISTORIQUE_INDICATEUR_TERRITOIRE_VALEUR_EVENEMENT } from "@/components/_commons/IndicateursChantier/Bloc/IndicateurPropositionValeur";
 import { useBlocIndicateurContext } from "@/components/PageChantier/useBlocIndicateurContext";
 
 export const BoutonVoirHistorique = () => {
-  const { indicateur } = useBlocIndicateurContext();
+  const modaleId = useId();
+  const { configurationFeatureFlipping } = useBlocIndicateurContext();
+
+  if (!configurationFeatureFlipping.voirHistoriqueProposition) return null;
+
   return (
     <>
       <BoutonSousLigné
-        aria-controls={
-          ID_HTML_MODALE_HISTORIQUE_INDICATEUR_TERRITOIRE_VALEUR_EVENEMENT +
-          indicateur.id
-        }
+        aria-controls={modaleId}
         className="fr-link--xs fr-link--icon-left fr-icon-time-line !text-current fr-mr-2w"
         dataFrOpened={false}
         type="button"
@@ -19,10 +20,7 @@ export const BoutonVoirHistorique = () => {
         Voir l'historique
       </BoutonSousLigné>
       <ModaleHistoriqueIndicateurTerritoireValeurEvenement
-        generatedHTMLID={
-          ID_HTML_MODALE_HISTORIQUE_INDICATEUR_TERRITOIRE_VALEUR_EVENEMENT +
-          indicateur.id
-        }
+        generatedHTMLID={modaleId}
       />
     </>
   );
