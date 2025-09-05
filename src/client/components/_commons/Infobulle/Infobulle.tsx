@@ -10,14 +10,12 @@ import SecureTooltip from "@/client/components/_commons/SecureTooltip/SecureTool
 import InfobulleStyled from "./Infobulle.styled";
 
 type InfobulleProps = PropsWithChildren<{
-  idHtml?: string;
   classNameBouton?: string;
   classNameInfoBulle?: string;
   styleIconInfoBulle?: "information" | "question" | "informationProposition";
 }>;
 
 const Infobulle: FunctionComponent<InfobulleProps> = ({
-  idHtml,
   children,
   classNameBouton,
   classNameInfoBulle,
@@ -28,22 +26,21 @@ const Infobulle: FunctionComponent<InfobulleProps> = ({
   const [isVisible, setIsVisible] = useState(false);
   const buttonRef = useRef<HTMLButtonElement>(null);
 
-  const iconesMap = {
-    informationProposition: "ri-file-info-fill information-proposition-icone",
-    information: "fr-icon-information-fill",
-    question: "fr-icon-question-fill",
-  };
-
   return (
     <InfobulleStyled>
       <button
-        aria-describedby={idHtml || randomId}
+        aria-describedby={randomId}
         className={clsx(
           `fr-btn fr-btn--tertiary-no-outline flex justify-center align-center`,
-          iconesMap[styleIconInfoBulle],
+          {
+            "ri-file-info-fill information-proposition-icone":
+              styleIconInfoBulle === "informationProposition",
+            "fr-icon-information-fill": styleIconInfoBulle === "information",
+            "fr-icon-question-fill": styleIconInfoBulle === "question",
+          },
           classNameBouton,
         )}
-        id={idHtml || randomId}
+        id={randomId}
         onBlur={() => setIsVisible(false)}
         onClick={() => setIsVisible(!isVisible)}
         onFocus={() => setIsVisible(true)}

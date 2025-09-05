@@ -188,7 +188,6 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
         className="h-full"
         contenuClassesSupplémentaires="fr-p-2w"
         contenuInfobulle={INFOBULLE_CONTENUS.chantiers.repartitions}
-        idhtml="repartition-territoriale"
         titre="Répartition territoriale du taux d'avancement 2026"
       >
         <div className="fr-px-md-1w fr-px-lg-2w fr-py-1w">
@@ -247,7 +246,6 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
                 .comparaisonDeLAvancementRegDep
             : INFOBULLE_CONTENUS.chantier.avancement.comparaisonDeLAvancementNat
         }
-        idhtml="donnees-de-comparaison-de-lavancement"
         titre="Données de comparaison de l'avancement 2026"
       >
         {territoireCode !== "NAT-FR" ? (

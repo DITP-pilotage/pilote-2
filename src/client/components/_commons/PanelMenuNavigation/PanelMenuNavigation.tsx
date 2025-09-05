@@ -37,9 +37,7 @@ export const PanelMenuNavigation = ({
             Jalon :
           </label>
           <SelecteurJalon />
-          <Infobulle idHtml="infobulle-selecteur-jalon">
-            {INFOBULLE_CONTENUS.chantiers.jalon}
-          </Infobulle>
+          <Infobulle>{INFOBULLE_CONTENUS.chantiers.jalon}</Infobulle>
         </div>
       </div>
       {estAutoriseAVoirLeSelecteurDeMaille ? (

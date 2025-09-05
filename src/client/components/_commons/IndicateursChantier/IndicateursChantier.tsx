@@ -9,7 +9,7 @@ import {
 } from "@/client/utils/rubriques";
 import Indicateur from "@/server/domain/indicateur/Indicateur.interface";
 import { pageChantier } from "@/components/PageChantier/PageChantierServerSideContext";
-import TitreRubrique from "./Bloc/Détails/TitreRubrique/TitreRubrique";
+import { TitreRubrique } from "./Bloc/Détails/TitreRubrique/TitreRubrique";
 
 interface IndicateursProps {
   estAutoriseAProposerUneValeurAvancement: boolean;
@@ -59,7 +59,6 @@ const IndicateursChantier: FunctionComponent<IndicateursProps> = ({
               >
                 <TitreRubrique
                   nombreIndicateurRubrique={indicateursDeCetteRubrique.length}
-                  rubriqueAncre={rubriqueIndicateur.ancre}
                   rubriqueDescription={rubriqueIndicateur.description}
                   rubriqueNom={rubriqueIndicateur.nom}
                 />

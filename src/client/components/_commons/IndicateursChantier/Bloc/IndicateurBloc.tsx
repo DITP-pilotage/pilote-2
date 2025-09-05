@@ -208,7 +208,6 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                     <Infobulle
                       classNameBouton="infobulle-date-previsionnelle"
                       classNameInfoBulle="tooltip-accordeon"
-                      idHtml={`infobulle-date-previsionnelle-${indicateur.id}`}
                     >
                       <p className="fr-text--sm fr-text-title--blue-france">
                         Date prévisionnelle de mise à jour de l'indicateur :
@@ -395,10 +394,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                             {!variableContenuFFPropositionValeurAvancementV2 ? (
                               <div className="flex w-full justify-end">
                                 {propositionSurMailleDesactivee ? (
-                                  <Infobulle
-                                    classNameInfoBulle="tooltip-accordeon"
-                                    idHtml={`infobulle-proposition-desactivee-${indicateur.id}`}
-                                  >
+                                  <Infobulle classNameInfoBulle="tooltip-accordeon">
                                     <p className="fr-text--sm">
                                       Les résultats de cet indicateur sont
                                       agrégés depuis le niveau départemental. Il

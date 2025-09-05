@@ -62,10 +62,7 @@ export const IndicateurPropositionValeur = ({
       <p className="fr-text--xs texte-gris fr-mb-0 flex items-center">
         Impossible de proposer une autre valeur d'avancement
         <div className="-my-2">
-          <Infobulle
-            classNameInfoBulle="tooltip-accordeon"
-            idHtml={`infobulle-proposition-desactivee-${indicateur.id}`}
-          >
+          <Infobulle classNameInfoBulle="tooltip-accordeon">
             <p className="fr-text--sm">
               Les résultats de cet indicateur sont agrégés depuis le niveau
               départemental. Il n'est donc pas possible de proposer une valeur à

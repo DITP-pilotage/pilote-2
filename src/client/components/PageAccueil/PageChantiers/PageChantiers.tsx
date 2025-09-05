@@ -115,7 +115,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
                         >
                           Taux d'avancement moyen
                         </Titre>
-                        <Infobulle idHtml="infobulle-chantiers-jauges">
+                        <Infobulle>
                           {INFOBULLE_CONTENUS.chantiers.jauges}
                         </Infobulle>
                       </TitreInfobulleConteneur>
@@ -171,7 +171,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
                           >
                             Répartition territoriale
                           </Titre>
-                          <Infobulle idHtml="infobulle-chantiers-jauges-repartitions">
+                          <Infobulle>
                             {INFOBULLE_CONTENUS.chantiers.repartitions}
                           </Infobulle>
                         </TitreInfobulleConteneur>
@@ -214,9 +214,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
                   >
                     Répartition des météos renseignées
                   </Titre>
-                  <Infobulle idHtml="infobulle-chantiers-météos">
-                    {INFOBULLE_CONTENUS.chantiers.météos}
-                  </Infobulle>
+                  <Infobulle>{INFOBULLE_CONTENUS.chantiers.météos}</Infobulle>
                 </TitreInfobulleConteneur>
                 <RepartitionsMeteosChantiers
                   repartitionMeteos={repartitionMeteosChantiers}
@@ -259,10 +257,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
                   >
                     Chantiers signalés
                   </Titre>
-                  <Infobulle
-                    classNameBouton="titre-remontée-alertes"
-                    idHtml="infobulle-chantiers-alertes"
-                  >
+                  <Infobulle classNameBouton="titre-remontée-alertes">
                     {INFOBULLE_CONTENUS.chantiers.alertes}
                   </Infobulle>
                 </TitreInfobulleConteneur>

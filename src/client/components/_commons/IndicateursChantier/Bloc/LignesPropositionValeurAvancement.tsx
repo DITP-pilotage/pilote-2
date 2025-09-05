@@ -51,7 +51,6 @@ export const LignesPropositionValeurAvancement = ({
             <Infobulle
               classNameBouton="texte-proposition"
               classNameInfoBulle="tooltip-accordeon"
-              idHtml={`infobulle-proposition-valeur-davancement-${détailTerritoireSélectionné.code}`}
               styleIconInfoBulle="informationProposition"
             >
               <p className="fr-text--sm texte-proposition">

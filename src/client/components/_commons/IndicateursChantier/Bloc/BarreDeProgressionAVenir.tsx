@@ -1,5 +1,4 @@
 import clsx from "clsx";
-import { useId } from "react";
 import { BarreDeProgressionVariante } from "@/components/_commons/BarreDeProgression/BarreDeProgression";
 import Infobulle from "@/components/_commons/Infobulle/Infobulle";
 import { useBlocIndicateurContext } from "@/components/PageChantier/useBlocIndicateurContext";
@@ -10,8 +9,6 @@ export const BarreDeProgressionAVenir = ({
 }: {
   variante: BarreDeProgressionVariante;
 }) => {
-  const id = useId();
-
   const { detailIndicateurDuTerritoire } = useBlocIndicateurContext();
 
   return (
@@ -23,7 +20,6 @@ export const BarreDeProgressionAVenir = ({
             "before:!bg-dsfr-moutarde-main-679": variante === "jaune-moutarde",
             "before:!bg-dsfr-info-main-525": variante === "bleu-dsfr-info",
           })}
-          idHtml={id}
           styleIconInfoBulle="question"
         >
           <p className="fr-text--sm fr-mb-0">
