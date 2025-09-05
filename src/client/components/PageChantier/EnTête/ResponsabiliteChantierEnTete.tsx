@@ -1,15 +1,10 @@
-import { FunctionComponent } from "react";
-import Chantier from "@/server/domain/chantier/Chantier.interface";
+import { pageChantier } from "@/components/PageChantier/PageChantierServerSideContext";
 import EnteteResponsablesStyled from "./EnTêteResponsables.styled";
 import { recupererResponsabiliteTerritoriale } from "./responsabiliteAte";
 
-interface ResponsableEnTeteElement {
-  chantier: Chantier;
-}
+export const ResponsabiliteChantierEnTete = () => {
+  const { chantier } = pageChantier.useServerSidePropsContext();
 
-export const ResponsabiliteChantierEnTete: FunctionComponent<
-  ResponsableEnTeteElement
-> = ({ chantier }) => {
   const estChantierNational =
     chantier.maillesApplicables.length === 1 &&
     chantier.maillesApplicables.includes("nationale");
@@ -30,11 +25,11 @@ export const ResponsabiliteChantierEnTete: FunctionComponent<
   return (
     <EnteteResponsablesStyled>
       <div className="flex fr-pl-1v">
-        <div className="icone-entete fr-text-title--blue-france fr-mb-1w fr-pr-3v">
+        <div className="icone-entete fr-mb-1w fr-pr-3v">
           <span className="fr-icon-draft-line" />
         </div>
         <div>
-          <span className="fr-mb-0 fr-text-title--blue-france fr-text--xs">
+          <span className="fr-mb-0 fr-text--xs">
             Chantier piloté {estChantierNational ? "à la" : "jusqu'à la"}{" "}
             <span className="fr-text--bold">
               maille{" "}
@@ -49,10 +44,10 @@ export const ResponsabiliteChantierEnTete: FunctionComponent<
           </span>
           {!estChantierNational ? (
             <div>
-              <p className="fr-mb-0 fr-text-title--blue-france fr-text--xs fr-text--bold">
+              <p className="fr-mb-0 fr-text--xs fr-text--bold">
                 Commentaires locaux :
               </p>
-              <ul className="fr-mb-0 fr-text-title--blue-france fr-text--xs">
+              <ul className="fr-mb-0 fr-text--xs">
                 {listeResponsabiliteTerritoriale.map(
                   (responsabilite, index) => (
                     <li className="fr-pb-0" key={`responsabilite-${index}`}>

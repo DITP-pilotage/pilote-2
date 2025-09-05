@@ -144,7 +144,7 @@ const PageChantier = () => {
           className={
             chantier.statut !== "ARCHIVE"
               ? "bg-dsfr-blue-france-925"
-              : "bg-dsfr-grey-925"
+              : "bg-dsfr-grey-925 !text-dsfr-grey-200"
           }
         >
           <PageChantierEnTête

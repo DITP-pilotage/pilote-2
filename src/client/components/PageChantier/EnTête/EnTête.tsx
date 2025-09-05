@@ -3,6 +3,7 @@ import "@gouvfr/dsfr/dist/utility/icons/icons-document/icons-document.min.css";
 import "@gouvfr/dsfr/dist/dsfr.min.css";
 import Link from "next/link";
 import { FunctionComponent } from "react";
+import clsx from "clsx";
 import BoutonImpression from "@/components/_commons/BoutonImpression/BoutonImpression";
 import Titre from "@/components/_commons/Titre/Titre";
 import { ResponsableRapportDetailleContrat } from "@/server/chantiers/app/contrats/ChantierRapportDetailleContrat";
@@ -53,11 +54,21 @@ const PageChantierEnTête: FunctionComponent<PageChantierEnTêteProps> = ({
   const nomChantier =
     chantier.nom.length > 50 ? `${chantier.nom.slice(0, 50)}...` : chantier.nom;
 
+  const chantierEstArchive = chantier.statut === "ARCHIVE";
   return (
-    <PageChantierEnTêteStyled>
+    <PageChantierEnTêteStyled
+      className={clsx("fr-text-title--blue-france", {
+        "!text-dsfr-grey-200": chantierEstArchive,
+      })}
+    >
       <Link
         aria-label="Retour à l'accueil"
-        className="fr-link fr-fi-arrow-left-line fr-link--icon-left fr-mb-3w fr-mt-2w btn-retour"
+        className={clsx(
+          "fr-link fr-fi-arrow-left-line fr-link--icon-left fr-mb-3w fr-mt-2w btn-retour",
+          {
+            "!text-dsfr-grey-200": chantierEstArchive,
+          },
+        )}
         href={hrefBoutonRetour}
       >
         Retour
@@ -65,7 +76,9 @@ const PageChantierEnTête: FunctionComponent<PageChantierEnTêteProps> = ({
       <div className="container-titre-chantier">
         <Titre
           baliseHtml="h1"
-          className="fr-h2 fr-mb-2w fr-mt-1w titre-chantier"
+          className={clsx("fr-h2 fr-mb-2w fr-mt-1w titre-chantier", {
+            "!text-dsfr-grey-200": chantierEstArchive,
+          })}
         >
           {nomChantier}
         </Titre>
@@ -96,7 +109,7 @@ const PageChantierEnTête: FunctionComponent<PageChantierEnTêteProps> = ({
           size="sm"
         />
       </div>
-      <ResponsabiliteChantierEnTete chantier={chantier} />
+      <ResponsabiliteChantierEnTete />
       <div className="fr-mt-md-2w format-mobile fr-ml-1w">
         {afficheLeBoutonMiseAJourDonnee && !estVueMobile ? (
           <div className="fr-mb-1v">
@@ -111,12 +124,19 @@ const PageChantierEnTête: FunctionComponent<PageChantierEnTêteProps> = ({
         ) : null}
         {afficheLeBoutonImpression && !estVueMobile ? (
           <div className="format-mobile-bouton-impression fr-mb-1v">
-            <BoutonImpression />
+            <BoutonImpression
+              className={chantierEstArchive ? "!text-dsfr-grey-200" : ""}
+            />
           </div>
         ) : null}
         {afficheLeBoutonFicheConducteur && !estVueMobile ? (
           <Link
-            className="lien-menu fr-link fr-link--icon-left fr-icon-article-line fr-btn--icon-left fr-text--sm fr-p-0 no-underline border-b border-blue-france"
+            className={clsx(
+              "lien-menu fr-link fr-link--icon-left fr-icon-article-line fr-btn--icon-left fr-text--sm fr-p-0 no-underline border-b border-blue-france",
+              {
+                "!text-dsfr-grey-200": chantierEstArchive,
+              },
+            )}
             href={`/chantier/${chantier.id}/fiche-conducteur`}
             title="Fiche conducteur"
           >
