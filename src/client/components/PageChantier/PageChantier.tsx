@@ -2,6 +2,7 @@ import "@gouvfr/dsfr/dist/component/form/form.min.css";
 import "@gouvfr/dsfr/dist/utility/icons/icons-device/icons-device.min.css";
 import "@gouvfr/dsfr/dist/utility/icons/icons-media/icons-media.min.css";
 import { useState } from "react";
+import clsx from "clsx";
 import BarreLatérale from "@/components/_commons/BarreLatérale/BarreLatérale";
 import BarreLatéraleEncart from "@/components/_commons/BarreLatérale/BarreLatéraleEncart/BarreLatéraleEncart";
 import Commentaires from "@/components/_commons/CommentairesNew/Commentaires";
@@ -139,7 +140,13 @@ const PageChantier = () => {
         estOuvert={estOuverteBarreLatérale}
         setEstOuvert={setEstOuverteBarreLatérale}
       >
-        <BarreLatéraleEncart>
+        <BarreLatéraleEncart
+          className={
+            chantier.statut !== "ARCHIVE"
+              ? "bg-dsfr-blue-france-925"
+              : "bg-dsfr-grey-925"
+          }
+        >
           <PageChantierEnTête
             afficheLeBoutonFicheConducteur={
               estAutoriseAVoirLeBoutonFicheConducteur
@@ -154,7 +161,11 @@ const PageChantier = () => {
           rubriques={listeRubriques}
         />
       </BarreLatérale>
-      <main className="fr-pb-5w w-full">
+      <main
+        className={clsx("fr-pb-5w w-full", {
+          "!bg-dsfr-grey-1000": chantier.statut === "ARCHIVE",
+        })}
+      >
         <div className="horizontal-panel fr-background-blue-france-850 fr-grid-row fr-pt-2w">
           <PanelMenuNavigation
             estAutoriseAVoirLeSelecteurDeMaille={
@@ -193,7 +204,9 @@ const PageChantier = () => {
               <TitreInfobulleConteneur className="fr-mb-1w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0">
                 <Titre
                   baliseHtml="h2"
-                  className="fr-h4 fr-mb-0 fr-py-1v"
+                  className={clsx("fr-h4 fr-mb-0 fr-py-1v", {
+                    "!text-dsfr-grey-50": chantier.statut === "ARCHIVE",
+                  })}
                   estInline
                 >
                   Avancement du chantier
@@ -237,7 +250,9 @@ const PageChantier = () => {
               <TitreInfobulleConteneur className="fr-mb-1w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0">
                 <Titre
                   baliseHtml="h2"
-                  className="fr-h4 fr-mb-0 fr-py-1v"
+                  className={clsx("fr-h4 fr-mb-0 fr-py-1v", {
+                    "!text-dsfr-grey-50": chantier.statut === "ARCHIVE",
+                  })}
                   estInline
                 >
                   Météo et synthèse des résultats
@@ -254,7 +269,12 @@ const PageChantier = () => {
             <section className="rubrique" id="responsables">
               <Titre
                 baliseHtml="h2"
-                className="fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0"
+                className={clsx(
+                  "fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0",
+                  {
+                    "!text-dsfr-grey-50": chantier.statut === "ARCHIVE",
+                  },
+                )}
               >
                 Responsables
               </Titre>
@@ -277,7 +297,12 @@ const PageChantier = () => {
               <section className="rubrique" id="cartes">
                 <Titre
                   baliseHtml="h2"
-                  className="fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0"
+                  className={clsx(
+                    "fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0",
+                    {
+                      "!text-dsfr-grey-50": chantier.statut === "ARCHIVE",
+                    },
+                  )}
                 >
                   Répartition géographique
                 </Titre>
@@ -290,7 +315,9 @@ const PageChantier = () => {
               <TitreInfobulleConteneur className="fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0">
                 <Titre
                   baliseHtml="h2"
-                  className="fr-h4 fr-mb-0 fr-py-1v"
+                  className={clsx("fr-h4 fr-mb-0 fr-py-1v", {
+                    "!text-dsfr-grey-50": chantier.statut === "ARCHIVE",
+                  })}
                   estInline
                 >
                   Objectifs
@@ -307,7 +334,12 @@ const PageChantier = () => {
               <section className="rubrique" id="indicateurs">
                 <Titre
                   baliseHtml="h2"
-                  className="fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-3w fr-mx-2w fr-mx-md-0"
+                  className={clsx(
+                    "fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-3w fr-mx-2w fr-mx-md-0",
+                    {
+                      "!text-dsfr-grey-50": chantier.statut === "ARCHIVE",
+                    },
+                  )}
                 >
                   {`Indicateurs (${indicateurs.length})`}
                 </Titre>
@@ -359,7 +391,9 @@ const PageChantier = () => {
               <TitreInfobulleConteneur className="fr-mb-2w fr-mt-3v fr-mt-md-3w fr-mx-2w fr-mx-md-0">
                 <Titre
                   baliseHtml="h2"
-                  className="fr-h4 fr-mb-0 fr-py-1v"
+                  className={clsx("fr-h4 fr-mb-0 fr-py-1v", {
+                    "!text-dsfr-grey-50": chantier.statut === "ARCHIVE",
+                  })}
                   estInline
                 >
                   Commentaires du chantier

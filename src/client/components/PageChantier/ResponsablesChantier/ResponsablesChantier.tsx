@@ -8,6 +8,7 @@ import {
   ResponsableLocalRapportDetailleContrat,
 } from "@/server/chantiers/app/contrats/ChantierRapportDetailleContrat";
 import Chantier from "@/server/domain/chantier/Chantier.interface";
+import { pageChantier } from "@/client/components/PageChantier/PageChantierServerSideContext";
 
 interface ResponsablesChantierProps {
   listeDirecteursProjets: DirecteurProjetRapportDetailleContrat[];
@@ -60,8 +61,15 @@ const ResponsablesPageChantier: FunctionComponent<
     .filter(Boolean)
     .join("; ");
 
+  const { chantier } = pageChantier.useServerSidePropsContext();
+
   return (
-    <Bloc titre="National">
+    <Bloc
+      backgroundClassNameTitre={
+        chantier.statut === "ARCHIVE" ? "bg-dsfr-grey-925" : undefined
+      }
+      titre="National"
+    >
       <ResponsablesLigneChantier
         libelleEmailsResponsables={libelleEmailsDirecteursProjets}
         libelleNomsResponsables={libelleNomsDirecteursProjets}

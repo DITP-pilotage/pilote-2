@@ -11,6 +11,7 @@ import INFOBULLE_CONTENUS from "@/client/constants/infobulles";
 import { JaugeDeProgressionSmall } from "@/components/_commons/JaugeDeProgressionSmall/JaugeDeProgressionSmall";
 import { DonneesComparaisonDuTauxDAvancementType } from "@/server/domain/territoire/Territoire.interface";
 import { formaterDate } from "@/client/utils/date/date";
+import { pageChantier } from "@/client/components/PageChantier/PageChantierServerSideContext";
 import AvancementChantierStyled from "./AvancementChantier.styled";
 import EcartTauxAvancementPPG from "./EcartTauxAvancementPPG/EcartTauxAvancementPPG";
 import TendanceTauxAvancementPPG from "./TendanceTauxAvancementPPG/TendanceTauxAvancementPPG";
@@ -79,13 +80,20 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
     regionale: "la région",
   };
 
+  const { chantier } = pageChantier.useServerSidePropsContext();
+
   return (
     <AvancementChantierStyled
       className={classeAPartirDeLaMaille[territoireSélectionné.maille]}
     >
       {territoireCode !== "NAT-FR" &&
       mailleSelectionnee === "departementale" ? (
-        <Bloc titre={territoireSélectionné?.nomAffiché}>
+        <Bloc
+          backgroundClassNameTitre={
+            chantier.statut === "ARCHIVE" ? "bg-dsfr-grey-925" : undefined
+          }
+          titre={territoireSélectionné?.nomAffiché}
+        >
           <div className="fr-py-1w jauge">
             <AvancementsTerritoire
               avancementAnnuel={avancements.departementale.annuel.moyenne}
@@ -111,6 +119,9 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
       (mailleSelectionnee === "regionale" ||
         mailleSelectionnee === "departementale") ? (
         <Bloc
+          backgroundClassNameTitre={
+            chantier.statut === "ARCHIVE" ? "bg-dsfr-grey-925" : undefined
+          }
           titre={
             territoireSélectionnéParent
               ? territoireSélectionnéParent.nomAffiché
@@ -140,7 +151,12 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
           </div>
         </Bloc>
       ) : null}
-      <Bloc titre="France">
+      <Bloc
+        backgroundClassNameTitre={
+          chantier.statut === "ARCHIVE" ? "bg-dsfr-grey-925" : undefined
+        }
+        titre="France"
+      >
         <div className="fr-py-1w jauge">
           <div className="flex flex-direction-column flex-wrap justify-center align-center">
             <strong className="fr-text--sm fr-mb-0 text-center">
@@ -185,6 +201,9 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
         </div>
       </Bloc>
       <Bloc
+        backgroundClassNameTitre={
+          chantier.statut === "ARCHIVE" ? "bg-dsfr-grey-925" : undefined
+        }
         className="h-full"
         contenuClassesSupplémentaires="fr-p-2w"
         contenuInfobulle={INFOBULLE_CONTENUS.chantiers.repartitions}
@@ -238,6 +257,9 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
         </div>
       </Bloc>
       <Bloc
+        backgroundClassNameTitre={
+          chantier.statut === "ARCHIVE" ? "bg-dsfr-grey-925" : undefined
+        }
         className="h-full"
         contenuClassesSupplémentaires="fr-p-2w"
         contenuInfobulle={

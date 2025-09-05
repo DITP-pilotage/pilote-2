@@ -13,6 +13,7 @@ import {
   typesCommentaireMailleRégionaleOuDépartementale,
 } from "@/server/domain/chantier/commentaire/Commentaire.interface";
 import { Maille } from "@/server/domain/maille/Maille.interface";
+import { pageChantier } from "@/components/PageChantier/PageChantierServerSideContext";
 
 interface CommentairesProps {
   commentaires: Commentaire[] | null;
@@ -37,8 +38,14 @@ const Commentaires: FunctionComponent<CommentairesProps> = ({
   estInteractif = true,
   territoireCode,
 }) => {
+  const { chantier } = pageChantier.useServerSidePropsContext();
   return (
-    <Bloc titre={nomTerritoire}>
+    <Bloc
+      backgroundClassNameTitre={
+        chantier.statut === "ARCHIVE" ? "bg-dsfr-grey-925" : undefined
+      }
+      titre={nomTerritoire}
+    >
       {typesCommentaire.map((type, i) => (
         <Fragment key={type}>
           {i !== 0 && <hr className="fr-hr fr-mx-n2w" />}

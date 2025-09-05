@@ -1,4 +1,5 @@
 import { FunctionComponent } from "react";
+import clsx from "clsx";
 import IndicateurBloc from "@/components/_commons/IndicateursChantier/Bloc/IndicateurBloc";
 import IndicateursChantierStyled from "@/components/_commons/IndicateursChantier/IndicateursChantier.styled";
 import { comparerIndicateur } from "@/client/utils/indicateur/indicateur";
@@ -24,7 +25,7 @@ const IndicateursChantier: FunctionComponent<IndicateursProps> = ({
   alerteMiseAJourIndicateur,
   categoriesIndicateurRepartition,
 }) => {
-  const { territoireCode, indicateurs, détailsIndicateurs } =
+  const { territoireCode, indicateurs, détailsIndicateurs, chantier } =
     pageChantier.useServerSidePropsContext();
 
   if (indicateurs.length === 0) {
@@ -54,10 +55,24 @@ const IndicateursChantier: FunctionComponent<IndicateursProps> = ({
               <button
                 aria-controls={`accordion-rubrique-${rubriqueIndicateur.categorieIndicateur}`}
                 aria-expanded={rubriqueIndicateur.estAccordeonOuvert}
-                className="fr-accordion__btn fr-accordion_custom fr-py-0 fr-px-3v fr-icon-black"
+                className={clsx(
+                  "fr-accordion__btn border-b rounded-t-lg fr-py-0 fr-px-3v fr-icon-black",
+                  {
+                    "!bg-dsfr-blue-france-925 !border-blue-france-sun-113": !(
+                      chantier.statut === "ARCHIVE"
+                    ),
+                    "!bg-dsfr-grey-925 !border-dsfr-grey-200":
+                      chantier.statut === "ARCHIVE",
+                  },
+                )}
                 type="button"
               >
                 <TitreRubrique
+                  classNameTitre={
+                    chantier.statut === "ARCHIVE"
+                      ? "!text-dsfr-grey-200"
+                      : undefined
+                  }
                   nombreIndicateurRubrique={indicateursDeCetteRubrique.length}
                   rubriqueDescription={rubriqueIndicateur.description}
                   rubriqueNom={rubriqueIndicateur.nom}
