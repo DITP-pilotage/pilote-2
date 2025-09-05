@@ -237,6 +237,11 @@ const config = convict({
       default: false,
       env: "NEXT_PUBLIC_FF_PROPOSITION_VALEUR_ACTUELLE_V2",
     },
+    voirHistoriqueProposition: {
+      format: Boolean,
+      default: false,
+      env: "NEXT_PUBLIC_FF_PROPOSITION_VOIR_HISTORIQUE",
+    },
     docsAPI: {
       format: Boolean,
       default: false,
