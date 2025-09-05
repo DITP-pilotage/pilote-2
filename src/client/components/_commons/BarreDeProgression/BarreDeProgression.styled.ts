@@ -1,8 +1,6 @@
 import styled from "@emotion/styled";
 
-const BarreDeProgressionStyled = styled.div`
-  max-width: 100%;
-
+export const BarreDeProgressionStyled = styled.div`
   .fr-btn {
     width: var(--icon-size) !important;
     min-width: var(--icon-size) !important;
@@ -250,5 +248,3 @@ const BarreDeProgressionStyled = styled.div`
     flex-direction: column-reverse;
   }
 `;
-
-export default BarreDeProgressionStyled;
