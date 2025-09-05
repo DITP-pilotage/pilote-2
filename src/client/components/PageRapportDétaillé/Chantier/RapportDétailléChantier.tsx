@@ -126,7 +126,6 @@ const RapportDétailléChantier: FunctionComponent<
                 </Titre>
                 <AvancementChantier
                   avancements={avancements}
-                  chantier={chantier}
                   donneesComparaisonDuTauxDAvancement={
                     donneesComparaisonDuTauxDAvancement
                   }

@@ -6,7 +6,7 @@ export const BandeauInformationMajDonnees = ({
   if (!alerteMiseAJourIndicateur) return null;
 
   return (
-    <div className="fr-notice fr-notice--info fr-notice--warning !bg-dsfr-warning-950 !text-dsfr-warning-425">
+    <div className="fr-notice fr-notice--info fr-notice--warning !bg-dsfr-warning-950 !text-dsfr-warning-425 w-full">
       <div className="fr-notice__body flex fr-mx-3w">
         <p className="fr-notice__desc fr-ml-1v">
           <span className="fr-text--bold">
