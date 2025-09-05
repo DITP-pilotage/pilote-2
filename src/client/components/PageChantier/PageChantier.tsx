@@ -25,13 +25,13 @@ import {
 import Alerte from "@/client/components/_commons/Alerte/Alerte";
 import ResponsablesPageChantier from "@/components/PageChantier/ResponsablesChantier/ResponsablesChantier";
 import Indicateur from "@/server/domain/indicateur/Indicateur.interface";
-import BandeauInformationMajDonnees from "@/components/PageChantier/BandeauInformationMajDonnees/BandeauInformationMajDonnees";
 import BandeauInformation from "@/client/components/_commons/BandeauInformation/BandeauInformation";
 import { PanelMenuNavigation } from "@/components/_commons/PanelMenuNavigation/PanelMenuNavigation";
 import {
   pageChantier,
   useTerritoireSelectionne,
 } from "@/components/PageChantier/PageChantierServerSideContext";
+import { BandeauEntetePageChantier } from "@/components/PageChantier/BandeauEntetePageChantier";
 import AvancementChantier from "./AvancementChantier/AvancementChantier";
 import PageChantierEnTête from "./EnTête/EnTête";
 import Cartes from "./Cartes/Cartes";
@@ -183,13 +183,9 @@ const PageChantier = () => {
             {chantier.nom}
           </Titre>
         </div>
-        {alerteMiseAJourIndicateur ? (
-          <BandeauInformationMajDonnees
-            bandeauType="WARNING"
-            message="un ou plusieurs indicateurs de cette politique prioritaire nécessitent au moins une mise à jour de leur valeur d'avancement par l'équipe projet."
-            titre="Mise à jour des données requises : "
-          />
-        ) : null}
+        <BandeauEntetePageChantier
+          alerteMiseAJourIndicateur={alerteMiseAJourIndicateur}
+        />
         {mailleSourceDonnees === "regionale" ? (
           <BandeauInformation bandeauType="INFO" fermable={false}>
             En l'absence de données départementales, les valeurs des indicateurs

@@ -1,71 +1,56 @@
 import { FunctionComponent } from "react";
 import Link from "next/dist/client/link";
-import Indicateur, {
-  TypeIndicateur,
-} from "@/server/domain/indicateur/Indicateur.interface";
 import IcôneEmail from "@/components/_commons/IcôneEmail/IcôneEmail";
-import api from "@/server/infrastructure/api/trpc/api";
 import { libellesTypologieIndicateur } from "@/client/utils/indicateur/indicateur";
+import { useBlocIndicateurContext } from "@/components/PageChantier/useBlocIndicateurContext";
 import IndicateurSpécificationsStyled from "./IndicateurSpécifications.styled";
 
 interface IndicateurSpécificationsProps {
-  description: Indicateur["description"];
-  modeDeCalcul: Indicateur["modeDeCalcul"];
-  source: Indicateur["source"];
-  periodicite: Indicateur["periodicite"];
-  delaiDisponibilite: Indicateur["delaiDisponibilite"];
   dateValeurAvancement: string | null;
   dateProchaineDateMaj: string | null;
   dateProchaineDateValeurAvancement: string | null;
-  indicateurEstAjour: boolean;
-  indicateurEstApplicable: boolean | null;
   responsablesMails: string[];
-  indicateurId: string;
-  indicateurNom: string;
-  indicateurType: TypeIndicateur;
 }
 
 const IndicateurSpécifications: FunctionComponent<
   IndicateurSpécificationsProps
 > = ({
-  description,
-  modeDeCalcul,
-  source,
-  periodicite,
-  delaiDisponibilite,
   dateProchaineDateMaj,
   dateProchaineDateValeurAvancement,
   dateValeurAvancement,
-  indicateurEstAjour,
-  indicateurEstApplicable,
   responsablesMails,
-  indicateurId,
-  indicateurNom,
-  indicateurType,
 }) => {
+  const {
+    detailIndicateurDuTerritoire,
+    indicateur,
+    configurationFeatureFlipping,
+  } = useBlocIndicateurContext();
+
   const libelléValeurNull = "Non renseignée";
-  const objectMail = `PILOTE - Indicateur ${indicateurNom} (${indicateurId})`;
-  const { data: variableContenuFFPoserUneQuestion } =
-    api.gestionContenu.récupérerVariableContenu.useQuery({
-      nomVariableContenu: "NEXT_PUBLIC_FF_POSER_UNE_QUESTION_INDICATEUR",
-    });
+  const objectMail = `PILOTE - Indicateur ${indicateur.nom} (${indicateur.id})`;
+  const variableContenuFFPoserUneQuestion =
+    configurationFeatureFlipping.poserUneQuestionIndicateur;
 
   return (
     <IndicateurSpécificationsStyled>
       <p className="fr-text--md sous-titre">Description de l'indicateur</p>
-      <p className="fr-text--sm">{description ?? libelléValeurNull}</p>
+      <p className="fr-text--sm">
+        {indicateur.description ?? libelléValeurNull}
+      </p>
       <p className="fr-text--md sous-titre fr-mt-2w">
         Typologie de l'indicateur
       </p>
       <p className="fr-text--sm">
-        {libellesTypologieIndicateur[indicateurType]}
+        {libellesTypologieIndicateur[indicateur.type]}
       </p>
       <p className="fr-text--md sous-titre fr-mt-2w">Méthode de calcul</p>
-      <p className="fr-text--sm">{modeDeCalcul ?? libelléValeurNull}</p>
+      <p className="fr-text--sm">
+        {indicateur.modeDeCalcul ?? libelléValeurNull}
+      </p>
       <p className="fr-text--md sous-titre fr-mt-2w">Source</p>
-      <p className="fr-text--sm">{source ?? libelléValeurNull}</p>
+      <p className="fr-text--sm">{indicateur.source ?? libelléValeurNull}</p>
       <p className="fr-text--md sous-titre fr-mt-2w">Mise à jour</p>
-      {!!!indicateurEstApplicable ? (
+      {!detailIndicateurDuTerritoire.est_applicable ? (
         <p className="fr-text--sm">
           L'indicateur n'est pas applicable sur le territoire.
         </p>
@@ -74,7 +59,7 @@ const IndicateurSpécifications: FunctionComponent<
           <p className="fr-text--sm">
             La période de mise à jour pour cet indicateur est :{" "}
             <span className="fr-text--bold">
-              {periodicite ?? libelléValeurNull}
+              {indicateur.periodicite ?? libelléValeurNull}
             </span>
           </p>
           <p className="fr-text--sm">
@@ -91,11 +76,11 @@ const IndicateurSpécifications: FunctionComponent<
             La mise à disposition d'une nouvelle valeur pour cet indicateur
             nécessite un délai de disponibilité de{" "}
             <span className="fr-text--bold">
-              {delaiDisponibilite
-                ? `${delaiDisponibilite} mois.`
+              {indicateur.delaiDisponibilite
+                ? `${indicateur.delaiDisponibilite} mois.`
                 : "Non renseigné"}
             </span>{" "}
-            {`De ce fait, la mise à jour de la prochaine valeur d'avancement est requise ${indicateurEstAjour ? "au plus tard à" : "depuis"} la date :`}{" "}
+            {`De ce fait, la mise à jour de la prochaine valeur d'avancement est requise ${detailIndicateurDuTerritoire.estAJour ? "au plus tard à" : "depuis"} la date :`}{" "}
             <span className="fr-text--bold">
               {`${dateProchaineDateMaj ?? libelléValeurNull}.`}
             </span>
@@ -119,7 +104,7 @@ const IndicateurSpécifications: FunctionComponent<
           </p>
         </>
       )}
-      {!!variableContenuFFPoserUneQuestion && (
+      {variableContenuFFPoserUneQuestion ? (
         <div className="fr-mt-3w fr-ml-7w fr-p-2w bloc-question">
           <div className="flex">
             <span
@@ -150,7 +135,7 @@ const IndicateurSpécifications: FunctionComponent<
             </Link>
           </div>
         </div>
-      )}
+      ) : null}
     </IndicateurSpécificationsStyled>
   );
 };

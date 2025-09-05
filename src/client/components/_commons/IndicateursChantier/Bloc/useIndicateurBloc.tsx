@@ -27,17 +27,10 @@ export const useIndicateurBloc = (
       "MM/YYYY",
     ) ?? null;
 
-  const indicateurNonAJour = !détailsIndicateur[territoireCode]?.estAJour;
-
-  const indicateurEstApplicable =
-    !!détailsIndicateur[territoireCode]?.est_applicable;
-
   return {
     dateDeMiseAJourIndicateur,
     dateProchaineDateMaj,
     dateProchaineDateValeurAvancement,
     dateValeurAvancement,
-    indicateurNonAJour,
-    indicateurEstApplicable,
   };
 };

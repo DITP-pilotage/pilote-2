@@ -12,7 +12,7 @@ import BarreDeProgression from "@/components/_commons/BarreDeProgression/BarreDe
 import IndicateurBlocIndicateurTuile from "@/components/_commons/IndicateursChantier/Bloc/indicateurBlocIndicateurTuile";
 import { ModalePropositionValeurAvancement } from "@/components/_commons/IndicateursChantier/Bloc/ModalePropositionValeurAvancement/ModalePropositionValeurAvancement";
 import Infobulle from "@/components/_commons/Infobulle/Infobulle";
-import IndicateurTendance from "@/components/_commons/IndicateursChantier/Bloc/Tendances/IndicateurTendance";
+import { IndicateurTendance } from "@/components/_commons/IndicateursChantier/Bloc/Tendances/IndicateurTendance";
 import { IndicateurPropositionValeur } from "@/components/_commons/IndicateursChantier/Bloc/IndicateurPropositionValeur";
 import { LignesPropositionValeurAvancement } from "@/components/_commons/IndicateursChantier/Bloc/LignesPropositionValeurAvancement";
 import { BlocIndicateurProvider } from "@/components/PageChantier/useBlocIndicateurContext";
@@ -22,8 +22,8 @@ import {
   useTerritoireSelectionne,
 } from "@/components/PageChantier/PageChantierServerSideContext";
 import { BadgeIndicateurEnAlerte } from "@/components/_commons/IndicateursChantier/Bloc/BadgeIndicateurEnAlerte";
-import useIndicateurAlerteDateMaj from "@/components/_commons/IndicateursChantier/Bloc/useIndicateurAlerteDateMaj";
 import { BadgeIndicateurBarometre } from "@/components/_commons/IndicateursChantier/Bloc/BadgeIndicateurBarometre";
+import { LigneIndicateurDatePrevisionnelle } from "@/components/_commons/IndicateursChantier/Bloc/LigneIndicateurDatePrevisionnelle";
 import IndicateurBlocStyled from "./IndicateurBloc.styled";
 import { useIndicateurBloc } from "./useIndicateurBloc";
 import { ModalePropositionValeurAvancementV2 } from "./ModalePropositionValeurAvancementV2/ModalePropositionValeurAvancementV2";
@@ -87,8 +87,6 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
     dateProchaineDateMaj,
     dateProchaineDateValeurAvancement,
     dateValeurAvancement,
-    indicateurNonAJour,
-    indicateurEstApplicable,
   } = useIndicateurBloc(detailsIndicateur, territoireCode);
 
   const informationsIndicateursComparés = detailTerritoiresCompares
@@ -102,11 +100,6 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
         indicateurDétailsTerritoire2.données.codeInsee,
       ),
     );
-
-  const { estIndicateurEnAlerte } = useIndicateurAlerteDateMaj(
-    indicateurNonAJour,
-    indicateurEstApplicable,
-  );
 
   const propositionSurMailleDesactivee =
     indicateur.mailleRegAgregee && mailleSelectionnee == "regionale";
@@ -173,10 +166,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
             <div className="flex justify-between">
               <div>
                 <Titre baliseHtml="h4" className="fr-text--xl fr-mb-1w">
-                  <BadgeIndicateurEnAlerte
-                    indicateurEstApplicable={indicateurEstApplicable}
-                    indicateurNonAJour={indicateurNonAJour}
-                  />
+                  <BadgeIndicateurEnAlerte />
                   <BadgeIndicateurBarometre />
                   {indicateurNomAvecUnite}
                 </Titre>
@@ -192,35 +182,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                       {dateDeMiseAJourIndicateur ?? "Non renseignée"}
                     </span>
                   </p>
-                  <div
-                    className={`flex align-center w-full relative${estIndicateurEnAlerte ? " fr-text-warning" : " texte-gris"}`}
-                  >
-                    <p className="fr-mb-0 fr-text--xs">
-                      Date prévisionnelle de la prochaine mise à jour des
-                      données (de l'indicateur) :{" "}
-                      <span className="fr-text--bold">
-                        {indicateurEstApplicable
-                          ? (dateProchaineDateMaj ??
-                            "Données requises mais non renseignées par l'équipe projet")
-                          : "Non applicable"}
-                      </span>
-                    </p>
-                    <Infobulle
-                      classNameBouton="infobulle-date-previsionnelle"
-                      classNameInfoBulle="tooltip-accordeon"
-                    >
-                      <p className="fr-text--sm fr-text-title--blue-france">
-                        Date prévisionnelle de mise à jour de l'indicateur :
-                      </p>
-                      <p className="fr-text--sm fr-mb-0">
-                        Elle est calculée à partir de la date de la valeur
-                        d'avancement, de la période de mise à jour et du délai
-                        de disponibilité des données. Plus d'informations dans
-                        l'accordéon "Description de l'indicateur et calendrier
-                        de mise à jour".
-                      </p>
-                    </Infobulle>
-                  </div>
+                  <LigneIndicateurDatePrevisionnelle />
                   <IndicateurPonderation
                     indicateurPondération={
                       detailIndicateurDuTerritoire.pondération ?? null
@@ -235,9 +197,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                     setPropositionEstVisible={setPropositionEstVisible}
                   />
                 </div>
-                {detailIndicateurDuTerritoire.tendance === "BAISSE" ? (
-                  <IndicateurTendance />
-                ) : null}
+                <IndicateurTendance />
               </div>
             </div>
             {estVueTuile ? (
@@ -600,7 +560,6 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
               indicateurDétailsParTerritoiresComparés={
                 informationsIndicateursComparés
               }
-              indicateurEstAjour={!indicateurNonAJour}
               mailleQuery={mailleQuery}
               mailsDirecteursProjets={mailsDirecteursProjets}
               nouveauxGraphiquesSontActifs={!!nouveauxGraphiquesSontActifs}

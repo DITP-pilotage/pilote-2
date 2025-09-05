@@ -22,7 +22,6 @@ interface IndicateurDétailsProps {
   dateProchaineDateMaj: string | null;
   dateProchaineDateValeurAvancement: string | null;
   mailleQuery: MailleInterne;
-  indicateurEstAjour: boolean;
   mailsDirecteursProjets: string[];
   cartographieDroiteIndicateur: CartographieIndicateurType;
   cartographieGaucheIndicateur: CartographieIndicateurType;
@@ -37,7 +36,6 @@ export const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
   dateProchaineDateMaj,
   dateProchaineDateValeurAvancement,
   mailleQuery,
-  indicateurEstAjour,
   mailsDirecteursProjets,
   cartographieDroiteIndicateur,
   cartographieGaucheIndicateur,
@@ -49,7 +47,6 @@ export const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
     detailIndicateurDuTerritoire,
     jalon,
     territoireCode,
-    détailsIndicateurs,
   } = useBlocIndicateurContext();
 
   const [futOuvert, setFutOuvert] = useState(false);
@@ -113,20 +110,7 @@ export const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
                       dateProchaineDateValeurAvancement
                     }
                     dateValeurAvancement={dateValeurAvancement}
-                    delaiDisponibilite={indicateur.delaiDisponibilite}
-                    description={indicateur.description}
-                    indicateurEstAjour={indicateurEstAjour}
-                    indicateurEstApplicable={
-                      détailsIndicateurs[indicateur.id][territoireCode]
-                        ?.est_applicable
-                    }
-                    indicateurId={indicateur.id}
-                    indicateurNom={indicateur.nom}
-                    indicateurType={indicateur.type}
-                    modeDeCalcul={indicateur.modeDeCalcul}
-                    periodicite={indicateur.periodicite}
                     responsablesMails={responsablesDonnees}
-                    source={indicateur.source}
                   />
                 ) : null}
               </div>

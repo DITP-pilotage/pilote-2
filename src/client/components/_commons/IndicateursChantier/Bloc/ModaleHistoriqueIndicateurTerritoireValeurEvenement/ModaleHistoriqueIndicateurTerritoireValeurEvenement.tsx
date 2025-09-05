@@ -12,14 +12,11 @@ import { useModaleHistoriqueIndicateurTerritoireValeurEvenement } from "./useMod
 export const ModaleHistoriqueIndicateurTerritoireValeurEvenement: FunctionComponent<{
   generatedHTMLID: string;
 }> = ({ generatedHTMLID }) => {
-  const { indicateur, territoireCode, chantier, territoireSélectionné } =
+  const { indicateur, chantier, territoireSélectionné } =
     useBlocIndicateurContext();
 
   const { historique, isLoading } =
-    useModaleHistoriqueIndicateurTerritoireValeurEvenement({
-      indicateurId: indicateur.id,
-      territoireCode,
-    });
+    useModaleHistoriqueIndicateurTerritoireValeurEvenement();
 
   const mapperEvenementEnLibelle = ({
     typeEvenement,
