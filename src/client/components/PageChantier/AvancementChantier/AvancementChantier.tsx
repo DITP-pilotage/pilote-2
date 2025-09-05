@@ -11,12 +11,12 @@ import INFOBULLE_CONTENUS from "@/client/constants/infobulles";
 import { JaugeDeProgressionSmall } from "@/components/_commons/JaugeDeProgressionSmall/JaugeDeProgressionSmall";
 import { DonneesComparaisonDuTauxDAvancementType } from "@/server/domain/territoire/Territoire.interface";
 import { formaterDate } from "@/client/utils/date/date";
-import { pageChantier } from "@/client/components/PageChantier/PageChantierServerSideContext";
 import AvancementChantierStyled from "./AvancementChantier.styled";
 import EcartTauxAvancementPPG from "./EcartTauxAvancementPPG/EcartTauxAvancementPPG";
 import TendanceTauxAvancementPPG from "./TendanceTauxAvancementPPG/TendanceTauxAvancementPPG";
 
 interface AvancementChantierProps {
+  estChantierArchive?: boolean;
   territoireCode: string;
   mailleSelectionnee: MailleInterne;
   jalon: number;
@@ -45,6 +45,7 @@ interface AvancementChantierProps {
 }
 
 const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
+  estChantierArchive = false,
   avancements,
   territoireCode,
   mailleSelectionnee,
@@ -56,6 +57,7 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
   const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
 
   const territoireSélectionné = récupérerDétailsSurUnTerritoire(territoireCode);
+
   const territoireSélectionnéParent = territoireSélectionné.codeParent
     ? récupérerDétailsSurUnTerritoire(territoireSélectionné.codeParent)
     : null;
@@ -80,8 +82,6 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
     regionale: "la région",
   };
 
-  const { chantier } = pageChantier.useServerSidePropsContext();
-
   return (
     <AvancementChantierStyled
       className={classeAPartirDeLaMaille[territoireSélectionné.maille]}
@@ -90,7 +90,7 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
       mailleSelectionnee === "departementale" ? (
         <Bloc
           backgroundClassNameTitre={
-            chantier.statut === "ARCHIVE" ? "bg-dsfr-grey-925" : undefined
+            estChantierArchive ? "bg-dsfr-grey-925" : undefined
           }
           titre={territoireSélectionné?.nomAffiché}
         >
@@ -120,7 +120,7 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
         mailleSelectionnee === "departementale") ? (
         <Bloc
           backgroundClassNameTitre={
-            chantier.statut === "ARCHIVE" ? "bg-dsfr-grey-925" : undefined
+            estChantierArchive ? "bg-dsfr-grey-925" : undefined
           }
           titre={
             territoireSélectionnéParent
@@ -153,7 +153,7 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
       ) : null}
       <Bloc
         backgroundClassNameTitre={
-          chantier.statut === "ARCHIVE" ? "bg-dsfr-grey-925" : undefined
+          estChantierArchive ? "bg-dsfr-grey-925" : undefined
         }
         titre="France"
       >
@@ -202,7 +202,7 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
       </Bloc>
       <Bloc
         backgroundClassNameTitre={
-          chantier.statut === "ARCHIVE" ? "bg-dsfr-grey-925" : undefined
+          estChantierArchive ? "bg-dsfr-grey-925" : undefined
         }
         className="h-full"
         contenuClassesSupplémentaires="fr-p-2w"
@@ -258,7 +258,7 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
       </Bloc>
       <Bloc
         backgroundClassNameTitre={
-          chantier.statut === "ARCHIVE" ? "bg-dsfr-grey-925" : undefined
+          estChantierArchive ? "bg-dsfr-grey-925" : undefined
         }
         className="h-full"
         contenuClassesSupplémentaires="fr-p-2w"

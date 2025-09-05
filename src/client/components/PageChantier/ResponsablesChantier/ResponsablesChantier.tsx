@@ -8,13 +8,13 @@ import {
   ResponsableLocalRapportDetailleContrat,
 } from "@/server/chantiers/app/contrats/ChantierRapportDetailleContrat";
 import Chantier from "@/server/domain/chantier/Chantier.interface";
-import { pageChantier } from "@/client/components/PageChantier/PageChantierServerSideContext";
 
 interface ResponsablesChantierProps {
   listeDirecteursProjets: DirecteurProjetRapportDetailleContrat[];
   listeResponsablesLocaux: ResponsableLocalRapportDetailleContrat[];
   listeCoordinateursTerritorials: CoordinateurTerritorialRapportDetailleContrat[];
   afficheResponsablesLocaux: boolean;
+  estChantierArchive?: boolean;
   maille: Maille | null;
   libelléChantier: Chantier["nom"];
 }
@@ -33,6 +33,7 @@ const ResponsablesPageChantier: FunctionComponent<
   listeCoordinateursTerritorials,
   afficheResponsablesLocaux,
   maille,
+  estChantierArchive = false,
   libelléChantier,
 }) => {
   const libelleNomsDirecteursProjets = listeDirecteursProjets
@@ -61,12 +62,10 @@ const ResponsablesPageChantier: FunctionComponent<
     .filter(Boolean)
     .join("; ");
 
-  const { chantier } = pageChantier.useServerSidePropsContext();
-
   return (
     <Bloc
       backgroundClassNameTitre={
-        chantier.statut === "ARCHIVE" ? "bg-dsfr-grey-925" : undefined
+        estChantierArchive ? "bg-dsfr-grey-925" : undefined
       }
       titre="National"
     >

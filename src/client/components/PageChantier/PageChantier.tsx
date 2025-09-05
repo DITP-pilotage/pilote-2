@@ -134,6 +134,8 @@ const PageChantier = () => {
 
   const pathname = "/chantier/[id]/[territoireCode]";
 
+  const estChantierArchive = chantier.statut === "ARCHIVE";
+
   return (
     <PageChantierStyled className="flex">
       <BarreLatérale
@@ -163,7 +165,7 @@ const PageChantier = () => {
       </BarreLatérale>
       <main
         className={clsx("fr-pb-5w w-full", {
-          "!bg-dsfr-grey-1000": chantier.statut === "ARCHIVE",
+          "!bg-dsfr-grey-1000": estChantierArchive,
         })}
       >
         <div className="horizontal-panel fr-background-blue-france-850 fr-grid-row fr-pt-2w">
@@ -201,7 +203,7 @@ const PageChantier = () => {
                 <Titre
                   baliseHtml="h2"
                   className={clsx("fr-h4 fr-mb-0 fr-py-1v", {
-                    "!text-dsfr-grey-50": chantier.statut === "ARCHIVE",
+                    "!text-dsfr-grey-50": estChantierArchive,
                   })}
                   estInline
                 >
@@ -236,6 +238,7 @@ const PageChantier = () => {
                 donneesComparaisonDuTauxDAvancement={
                   donneesComparaisonDuTauxDAvancement
                 }
+                estChantierArchive={estChantierArchive}
                 jalon={jalon}
                 mailleQuery={mailleQuery}
                 mailleSelectionnee={mailleSelectionnee}
@@ -247,7 +250,7 @@ const PageChantier = () => {
                 <Titre
                   baliseHtml="h2"
                   className={clsx("fr-h4 fr-mb-0 fr-py-1v", {
-                    "!text-dsfr-grey-50": chantier.statut === "ARCHIVE",
+                    "!text-dsfr-grey-50": estChantierArchive,
                   })}
                   estInline
                 >
@@ -268,7 +271,7 @@ const PageChantier = () => {
                 className={clsx(
                   "fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0",
                   {
-                    "!text-dsfr-grey-50": chantier.statut === "ARCHIVE",
+                    "!text-dsfr-grey-50": estChantierArchive,
                   },
                 )}
               >
@@ -278,6 +281,7 @@ const PageChantier = () => {
                 afficheResponsablesLocaux={
                   territoireSélectionné.maille !== "nationale"
                 }
+                estChantierArchive={estChantierArchive}
                 libelléChantier={chantier.nom}
                 listeCoordinateursTerritorials={listeCoordinateursTerritorials}
                 listeDirecteursProjets={chantier.responsables.directeursProjet}
@@ -296,7 +300,7 @@ const PageChantier = () => {
                   className={clsx(
                     "fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0",
                     {
-                      "!text-dsfr-grey-50": chantier.statut === "ARCHIVE",
+                      "!text-dsfr-grey-50": estChantierArchive,
                     },
                   )}
                 >
@@ -312,7 +316,7 @@ const PageChantier = () => {
                 <Titre
                   baliseHtml="h2"
                   className={clsx("fr-h4 fr-mb-0 fr-py-1v", {
-                    "!text-dsfr-grey-50": chantier.statut === "ARCHIVE",
+                    "!text-dsfr-grey-50": estChantierArchive,
                   })}
                   estInline
                 >
@@ -333,7 +337,7 @@ const PageChantier = () => {
                   className={clsx(
                     "fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-3w fr-mx-2w fr-mx-md-0",
                     {
-                      "!text-dsfr-grey-50": chantier.statut === "ARCHIVE",
+                      "!text-dsfr-grey-50": estChantierArchive,
                     },
                   )}
                 >
@@ -388,7 +392,7 @@ const PageChantier = () => {
                 <Titre
                   baliseHtml="h2"
                   className={clsx("fr-h4 fr-mb-0 fr-py-1v", {
-                    "!text-dsfr-grey-50": chantier.statut === "ARCHIVE",
+                    "!text-dsfr-grey-50": estChantierArchive,
                   })}
                   estInline
                 >
@@ -404,6 +408,7 @@ const PageChantier = () => {
               </TitreInfobulleConteneur>
               <Commentaires
                 commentaires={commentaires[chantier.id]}
+                estChantierArchive={estChantierArchive}
                 maille={territoireSélectionné.maille}
                 modeÉcriture={estAutoriseAModifierLesPublications}
                 nomTerritoire={territoireSélectionné.nomAffiché}
