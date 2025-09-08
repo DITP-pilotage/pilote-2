@@ -1,7 +1,9 @@
 import {
   indicateur_identite as PrismaIndicateurIdentite,
+  indicateur_territoire,
   indicateur_territoire as PrismaIndicateurTerritoire,
   indicateur_territoire_jalon as PrismaIndicateurTerritoireJalon,
+  indicateur_territoire_valeur_evenement,
   indicateur_territoire_valeur_evenement as PrismaIndicateurTerritoireValeurEvenement,
   territoire as PrismaTerritoire,
   utilisateur as PrismaUtilisateur,
@@ -944,10 +946,7 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
 
       if (indicateurRow) {
         ({ propositionStatutTerritoire, propositionStatutDirectionProjet } =
-          this.calculerStatutsProposition(
-            indicateurRow,
-            indicateurTerritoireJalon?.date_valeur_actuelle,
-          ));
+          this.calculerStatutsProposition(indicateurRow));
       }
 
       donnéesTerritoires[territoire.code] = {
@@ -1054,10 +1053,7 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
         );
 
       const { propositionStatutTerritoire, propositionStatutDirectionProjet } =
-        this.calculerStatutsProposition(
-          indicateurRow,
-          indicateurTerritoireJalon?.date_valeur_actuelle,
-        );
+        this.calculerStatutsProposition(indicateurRow);
 
       détailsIndicateurs[indicateurRow.id][indicateurRow.territoire_code] = {
         dateValeurAvancementMandat: formatDate(
@@ -1196,11 +1192,11 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
   }
 
   private calculerStatutsProposition(
-    indicateurRow: PrismaIndicateurTerritoire & {
-      indicateur_territoire_valeur_evenement: PrismaIndicateurTerritoireValeurEvenement[];
+    indicateurRow: indicateur_territoire & {
+      indicateur_territoire_valeur_evenement: indicateur_territoire_valeur_evenement[];
     },
-    dateValeurActuelle: Date | null | undefined,
   ) {
+    const dateValeurActuelle = indicateurRow.date_valeur_actuelle_mandat;
     let propositionStatutTerritoire: DetailsIndicateur["propositionStatutTerritoire"] =
       null;
     let propositionStatutDirectionProjet: DetailsIndicateur["propositionStatutDirectionProjet"] =
