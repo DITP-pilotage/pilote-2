@@ -66,7 +66,7 @@ export class UtilisateurIAMKeycloakRepository
         realm: KEYCLOAK_REALM,
         clientId: configuration().import.clientId,
         redirectUri: configuration().baseUrl,
-        id: utilisateur[0].id,
+        id: utilisateur.id,
         lifespan: 7 * DAY_IN_SECONDS,
         actions: ["UPDATE_PASSWORD"],
       });
