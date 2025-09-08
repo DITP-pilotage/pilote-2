@@ -48,7 +48,7 @@ describe("PrismaMesureIndicateurTemporaireRepository", () => {
         .build();
       await getContainer("authentification")
         .resolve("utilisateurRepository")
-        .créerOuMettreÀJour(utilisateur as any, auteurId);
+        .créerOuMettreÀJour(utilisateur, auteurId);
 
       const rapport = new DetailValidationFichierBuilder()
         .avecId("6cba829c-def8-4f21-9bb0-07bd5a36bd02")
@@ -125,7 +125,7 @@ describe("PrismaMesureIndicateurTemporaireRepository", () => {
         .build();
       await getContainer("authentification")
         .resolve("utilisateurRepository")
-        .créerOuMettreÀJour(utilisateur as any, auteurId);
+        .créerOuMettreÀJour(utilisateur, auteurId);
 
       const rapport = new DetailValidationFichierBuilder()
         .avecId("6cba829c-def8-4f21-9bb0-07bd5a36bd02")
@@ -198,7 +198,7 @@ describe("PrismaMesureIndicateurTemporaireRepository", () => {
         .build();
       await getContainer("authentification")
         .resolve("utilisateurRepository")
-        .créerOuMettreÀJour(utilisateur as any, auteurId);
+        .créerOuMettreÀJour(utilisateur, auteurId);
 
       const rapport = new DetailValidationFichierBuilder()
         .avecId("6cba829c-def8-4f21-9bb0-07bd5a36bd02")

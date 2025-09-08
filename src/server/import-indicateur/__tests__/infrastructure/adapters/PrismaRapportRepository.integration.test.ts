@@ -49,7 +49,7 @@ describe("PrismaRapportRepository", () => {
         .build();
       await getContainer("authentification")
         .resolve("utilisateurRepository")
-        .créerOuMettreÀJour(utilisateur as any, auteurId);
+        .créerOuMettreÀJour(utilisateur, auteurId);
 
       const rapport = new DetailValidationFichierBuilder()
         .avecEstValide(true)
@@ -90,7 +90,7 @@ describe("PrismaRapportRepository", () => {
         .build();
       await getContainer("authentification")
         .resolve("utilisateurRepository")
-        .créerOuMettreÀJour(utilisateur as any, auteurId);
+        .créerOuMettreÀJour(utilisateur, auteurId);
 
       const listeMesuresIndicateurTemporaire = [
         new MesureIndicateurTemporaireBuilder()

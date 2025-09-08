@@ -1,5 +1,8 @@
 import { Territoire } from "@/server/domain/territoire/Territoire.interface";
-import { HabilitationsÀCréerOuMettreÀJourCalculées } from "./habilitation/Habilitation.interface";
+import {
+  HabilitationsÀCréerOuMettreÀJour,
+  HabilitationsÀCréerOuMettreÀJourCalculées,
+} from "./habilitation/Habilitation.interface";
 import Utilisateur, {
   UtilisateurÀCréerOuMettreÀJourSansHabilitation,
 } from "./Utilisateur.interface";
