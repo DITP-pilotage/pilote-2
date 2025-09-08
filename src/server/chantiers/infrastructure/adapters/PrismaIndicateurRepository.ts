@@ -1196,20 +1196,22 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
       indicateur_territoire_valeur_evenement: indicateur_territoire_valeur_evenement[];
     },
   ) {
-    const dateValeurActuelle = indicateurRow.date_valeur_actuelle_mandat;
+    const dateValeurAvancementLaPlusRecente =
+      indicateurRow.date_valeur_actuelle_mandat;
     let propositionStatutTerritoire: DetailsIndicateur["propositionStatutTerritoire"] =
       null;
     let propositionStatutDirectionProjet: DetailsIndicateur["propositionStatutDirectionProjet"] =
       null;
 
-    if (!dateValeurActuelle) {
+    if (!dateValeurAvancementLaPlusRecente) {
       return { propositionStatutTerritoire, propositionStatutDirectionProjet };
     }
     const evenementsProposition =
       indicateurRow.indicateur_territoire_valeur_evenement.filter(
         (evenement) =>
           evenement.type_evenement.startsWith("PROPOSITION_VALEUR_") &&
-          toISODate(evenement.date_valeur) === toISODate(dateValeurActuelle),
+          toISODate(evenement.date_valeur) ===
+            toISODate(dateValeurAvancementLaPlusRecente),
       );
 
     if (evenementsProposition.length === 0) {
