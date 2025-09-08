@@ -3,6 +3,7 @@ import { UtilisateurIAMRepository } from "@/server/gestion-utilisateur/domain/po
 import { configuration } from "@/config";
 import UtilisateurPourIAM from "@/server/gestion-utilisateur/domain/UtilisateurIAM.interface";
 import logger from "@/server/infrastructure/Logger";
+import { isUtilisateurDoublonError } from "@/server/utils/errors";
 
 const KEYCLOAK_REALM = "DITP";
 
@@ -127,11 +128,8 @@ export class UtilisateurIAMKeycloakRepository
         actions: ["UPDATE_PASSWORD"],
       });
       logger.info("Email envoyé à l'utilisateur.");
-    } catch (error: any) {
-      if (
-        error.message == "Request failed with status code 409" ||
-        error?.responseData?.errorMessage === "User exists with same username"
-      ) {
+    } catch (error) {
+      if (isUtilisateurDoublonError(error)) {
         logger.warn(`L'email ${email} existe déjà.`);
       } else {
         logger.error(error);
