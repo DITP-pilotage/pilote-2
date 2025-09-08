@@ -27,8 +27,6 @@ interface IndicateurDétailsProps {
   dateProchaineDateMaj: string | null;
   dateProchaineDateValeurAvancement: string | null;
   territoireCode: string;
-  territoiresCompares: string[];
-  mailleSelectionnee: MailleInterne;
   mailleQuery: MailleInterne;
   indicateurEstAjour: boolean;
   jalon: number;
@@ -51,8 +49,6 @@ const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
   dateProchaineDateValeurAvancement,
   estSousIndicateur = false,
   territoireCode,
-  territoiresCompares,
-  mailleSelectionnee,
   mailleQuery,
   indicateurEstAjour,
   jalon,
@@ -74,7 +70,6 @@ const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
     : "Description de l'indicateur et calendrier de mise à jour";
   const nomRepartitionGeographiqueEtEvolution =
     "Répartition géographique et évolution";
-  const nomSousIndicateurs = "Sous indicateurs";
 
   const responsablesDonnees =
     indicateur.responsablesDonneesMails.length > 0

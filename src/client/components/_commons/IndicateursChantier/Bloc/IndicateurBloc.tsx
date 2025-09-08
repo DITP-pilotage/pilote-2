@@ -729,11 +729,9 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                 indicateurEstAjour={!indicateurNonAJour}
                 jalon={jalon}
                 mailleQuery={mailleQuery}
-                mailleSelectionnee={mailleSelectionnee}
                 mailsDirecteursProjets={mailsDirecteursProjets}
                 nouveauxGraphiquesSontActifs={nouveauxGraphiquesSontActifs}
                 territoireCode={territoireCode}
-                territoiresCompares={territoiresCompares}
               />
             ) : null}
           </section>
