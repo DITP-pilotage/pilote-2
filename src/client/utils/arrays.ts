@@ -1,6 +1,6 @@
 export function groupByAndTransform<T, U>(
   arr: T[],
-  fn: (item: T) => any,
+  fn: (item: T) => string,
   transformFn: (item: T) => U,
 ) {
   return arr.reduce<Record<string, U[]>>((prev, curr) => {
