@@ -392,9 +392,10 @@ export const ModalePropositionValeurAvancementV2: FunctionComponent<{
                 été prise en compte
               </h3>
               <span>
-                La nouvelle proposition de valeur d'avancement sera affiché dans
-                le tableau des indicateurs. Le taux d'avancement correspondant
-                sera pris en compte dans un délai maximal de deux heures.
+                La nouvelle proposition de valeur d'avancement s'affichera dans
+                le tableau des indicateurs dans une heure. Veuillez noter que,
+                dans cet intervalle, il n'est pas possible de faire une autre
+                proposition pour cet indicateur.
               </span>
             </>
           )}
