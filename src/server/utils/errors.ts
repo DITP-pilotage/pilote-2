@@ -1,3 +1,5 @@
+import { z } from "zod";
+
 export class NonAutorisé extends Error {}
 
 export class TerritoireNonAutoriséErreur extends NonAutorisé {
@@ -56,7 +58,5 @@ export class ProfilNonAutorisésSuppressionUtilisateurErreur extends NonAutoris�
   }
 }
 
-export const isNodeSystemError = (
-  err: unknown,
-): err is Error & { code?: string } =>
-  err != null && typeof err === "object" && "code" in err;
+export const isENOENTError = (err: unknown) =>
+  z.object({ code: z.literal("ENOENT") }).safeParse(err).success;
