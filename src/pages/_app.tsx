@@ -41,6 +41,8 @@ interface MyAppProps extends AppProps {
   nonce?: string;
 }
 
+type WindowAvecNonce = Window & { __nonce?: string };
+
 function MonApplication({ Component, pageProps, nonce: appNonce }: MyAppProps) {
   useDétecterLargeurDÉcran();
 
@@ -50,7 +52,9 @@ function MonApplication({ Component, pageProps, nonce: appNonce }: MyAppProps) {
   // Utiliser le nonce passé par les props (côté serveur) ou le récupérer depuis window (côté client)
   const nonce =
     appNonce ||
-    (typeof window !== "undefined" ? (window as any).__nonce || "" : "");
+    (typeof window !== "undefined"
+      ? (window as WindowAvecNonce).__nonce || ""
+      : "");
 
   const débutChargement = () => {
     setPageEnCoursDeChargement(true);
