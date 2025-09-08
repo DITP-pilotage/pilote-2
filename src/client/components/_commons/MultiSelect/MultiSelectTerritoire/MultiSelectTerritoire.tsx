@@ -3,7 +3,6 @@ import MultiSelect from "@/client/components/_commons/MultiSelect/MultiSelect";
 import {
   MultiSelectOption,
   MultiSelectOptionGroupée,
-  MultiSelectOptions,
   MultiSelectOptionsGroupées,
 } from "@/client/components/_commons/MultiSelect/MultiSelect.interface";
 import { trierParOrdreAlphabétique } from "@/client/utils/arrays";
