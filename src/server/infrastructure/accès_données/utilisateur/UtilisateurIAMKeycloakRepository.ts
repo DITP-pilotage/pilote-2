@@ -1,5 +1,6 @@
 import KcAdminClient from "@keycloak/keycloak-admin-client";
 
+import { z } from "zod";
 import { UtilisateurIAMRepository } from "@/server/domain/utilisateur/UtilisateurIAMRepository";
 import logger from "@/server/infrastructure/Logger";
 import UtilisateurPourIAM from "@/server/domain/utilisateur/UtilisateurIAM.interface";
@@ -8,6 +9,18 @@ import { configuration } from "@/config";
 const KEYCLOAK_REALM = "DITP";
 
 const DAY_IN_SECONDS = 3600 * 24;
+
+function isUtilisateurDoublonError(error: unknown) {
+  return z
+    .object({
+      message: z.literal("Request failed with status code 409"),
+      responseData: z.object({
+        errorMessage: z.literal("User exists with same username"),
+      }),
+    })
+    .safeParse(error).success;
+}
+
 export default class UtilisateurIAMKeycloakRepository
   implements UtilisateurIAMRepository
 {
@@ -90,11 +103,8 @@ export default class UtilisateurIAMKeycloakRepository
         actions: ["UPDATE_PASSWORD"],
       });
       logger.info("Email envoyé à l'utilisateur.");
-    } catch (error: any) {
-      if (
-        error.message == "Request failed with status code 409" ||
-        error?.responseData?.errorMessage === "User exists with same username"
-      ) {
+    } catch (error: unknown) {
+      if (isUtilisateurDoublonError(error)) {
         logger.warn(`L'email ${email} existe déjà.`);
       } else {
         logger.error(error);
