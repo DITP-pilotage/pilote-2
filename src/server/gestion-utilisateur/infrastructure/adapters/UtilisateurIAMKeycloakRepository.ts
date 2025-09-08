@@ -10,36 +10,37 @@ const DAY_IN_SECONDS = 3600 * 24;
 export class UtilisateurIAMKeycloakRepository
   implements UtilisateurIAMRepository
 {
-  private kcAdminClient: any;
+  private kcAdminClient: KcAdminClient | undefined;
 
   async supprime(email: string): Promise<void> {
-    await this.loginKcAdminClient();
+    const kcAdminClient = await this.loginKcAdminClient();
 
-    const utilisateur = await this.kcAdminClient.users.findOne({
+    const [utilisateur] = await kcAdminClient.users.find({
       realm: KEYCLOAK_REALM,
       email: email,
+      exact: true,
     });
 
-    if (utilisateur.length > 0) {
-      await this.kcAdminClient.users.del({
+    if (utilisateur?.id) {
+      await kcAdminClient.users.del({
         realm: KEYCLOAK_REALM,
-        id: utilisateur[0].id,
+        id: utilisateur.id,
       });
       logger.info(`Utilisateur ${email} supprimé.`);
     }
   }
 
   async desactive(email: string): Promise<void> {
-    await this.loginKcAdminClient();
-
-    const utilisateur = await this.kcAdminClient.users.findOne({
+    const kcAdminClient = await this.loginKcAdminClient();
+    const [utilisateur] = await kcAdminClient.users.find({
       realm: KEYCLOAK_REALM,
       email: email,
+      exact: true,
     });
 
-    if (utilisateur.length > 0) {
-      await this.kcAdminClient.users.update(
-        { id: utilisateur[0].id },
+    if (utilisateur?.id) {
+      await kcAdminClient.users.update(
+        { id: utilisateur.id },
         { enabled: false },
       );
       logger.info(`Utilisateur ${email} désactivé.`);
@@ -47,20 +48,21 @@ export class UtilisateurIAMKeycloakRepository
   }
 
   async reactive(email: string): Promise<void> {
-    await this.loginKcAdminClient();
+    const kcAdminClient = await this.loginKcAdminClient();
 
-    const utilisateur = await this.kcAdminClient.users.findOne({
+    const [utilisateur] = await kcAdminClient.users.find({
       realm: KEYCLOAK_REALM,
       email: email,
+      exact: true,
     });
 
-    if (utilisateur.length > 0) {
-      await this.kcAdminClient.users.update(
-        { id: utilisateur[0].id },
+    if (utilisateur?.id) {
+      await kcAdminClient.users.update(
+        { id: utilisateur.id },
         { enabled: true },
       );
       logger.info(`Utilisateur ${email} réactivé.`);
-      await this.kcAdminClient.users.executeActionsEmail({
+      await kcAdminClient.users.executeActionsEmail({
         realm: KEYCLOAK_REALM,
         clientId: configuration().import.clientId,
         redirectUri: configuration().baseUrl,
@@ -96,6 +98,10 @@ export class UtilisateurIAMKeycloakRepository
   }
 
   private async importeUtilisateurIAM(utilisateur: UtilisateurPourIAM) {
+    if (!this.kcAdminClient) {
+      throw new Error("Keycloak client non initialisé");
+    }
+
     const email = utilisateur.email;
     try {
       const utilisateurIAM = await this.kcAdminClient.users.create({
