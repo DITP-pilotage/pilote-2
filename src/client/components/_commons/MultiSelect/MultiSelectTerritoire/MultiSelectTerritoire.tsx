@@ -82,7 +82,7 @@ const MultiSelectTerritoire: FunctionComponent<MultiSelectTerritoireProps> = ({
 
   const optionsRégions = {
     label: "Régions",
-    options: trierParOrdreAlphabétique<MultiSelectOptions>(
+    options: trierParOrdreAlphabétique(
       régions.map((d) =>
         générerLesOptions(
           d.nomAffiché,
@@ -98,7 +98,7 @@ const MultiSelectTerritoire: FunctionComponent<MultiSelectTerritoireProps> = ({
 
   const optionsDépartements = {
     label: "Départements",
-    options: trierParOrdreAlphabétique<MultiSelectOptions>(
+    options: trierParOrdreAlphabétique(
       départements.map((d) =>
         générerLesOptions(
           d.nomAffiché,

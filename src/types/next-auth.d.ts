@@ -9,7 +9,6 @@ declare module "next-auth" {
       address: string;
     } & DefaultSession["user"];
     accessToken: string;
-    error: unknown;
     habilitations: Habilitations;
     profil: ProfilCode;
     profilAAccèsAuxChantiersBrouillons: boolean;

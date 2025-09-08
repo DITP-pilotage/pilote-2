@@ -36,7 +36,7 @@ const MultiSelectPérimètreMinistériel: FunctionComponent<
       setOptionsGroupées([
         {
           label: "Périmètres Ministériels",
-          options: trierParOrdreAlphabétique<MultiSelectOptions>(
+          options: trierParOrdreAlphabétique(
             perimetresSelectionnables.map((perimetreMinisteriel) => ({
               label: perimetreMinisteriel.nom,
               value: perimetreMinisteriel.id,

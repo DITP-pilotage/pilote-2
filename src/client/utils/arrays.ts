@@ -40,11 +40,11 @@ export function auMoinsUneValeurDuTableauEstContenueDansLAutreTableau(
   return tableau1.some((element) => tableau2.includes(element));
 }
 
-export function trierParOrdreAlphabétique<T extends Record<string, any>[]>(
-  tableau: T,
-  propriétéDeTri: string,
-) {
+export function trierParOrdreAlphabétique<
+  T extends Record<string, unknown>,
+  K extends keyof T,
+>(tableau: T[], propriétéDeTri: K) {
   return tableau.sort((a, b) =>
-    a[propriétéDeTri].localeCompare(b[propriétéDeTri], "fr"),
+    String(a[propriétéDeTri]).localeCompare(String(b[propriétéDeTri]), "fr"),
   );
 }

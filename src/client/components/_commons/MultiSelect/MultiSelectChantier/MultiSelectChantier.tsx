@@ -34,7 +34,7 @@ const MultiSelectChantier: FunctionComponent<MultiSelectChantierProps> = ({
       setOptionsGroupées([
         {
           label: "Chantiers",
-          options: trierParOrdreAlphabétique<MultiSelectOptions>(
+          options: trierParOrdreAlphabétique(
             chantiers.map((chantier) => ({
               label: `${chantier.id} - ${chantier.nom}`,
               value: chantier.id,
