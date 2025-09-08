@@ -69,7 +69,7 @@ async function doFinalSignoutHandshake(token: PiloteJWTPayload) {
       await _assertResponseOk(response, "Failed to logout");
 
       logger.info("Completed post-logout handshake");
-    } catch (error: any) {
+    } catch (error: unknown) {
       logger.error(error, "Unable to perform post-logout handshake");
     }
   }
