@@ -11,7 +11,7 @@ const DAY_IN_SECONDS = 3600 * 24;
 export default class UtilisateurIAMKeycloakRepository
   implements UtilisateurIAMRepository
 {
-  private kcAdminClient: any;
+  private kcAdminClient: KcAdminClient | undefined;
 
   constructor(
     private readonly keycloakUrl: string,
@@ -20,17 +20,18 @@ export default class UtilisateurIAMKeycloakRepository
   ) {}
 
   async supprime(email: string): Promise<void> {
-    await this.loginKcAdminClient();
+    const kcAdminClient = await this.loginKcAdminClient();
 
-    const utilisateur = await this.kcAdminClient.users.findOne({
+    const [utilisateur] = await kcAdminClient.users.find({
       realm: KEYCLOAK_REALM,
       email: email,
+      exact: true,
     });
 
-    if (utilisateur.length > 0) {
-      await this.kcAdminClient.users.del({
+    if (utilisateur?.id) {
+      await kcAdminClient.users.del({
         realm: KEYCLOAK_REALM,
-        id: utilisateur[0].id,
+        id: utilisateur.id,
       });
       logger.info(`Utilisateur ${email} supprimé.`);
     }
@@ -60,6 +61,10 @@ export default class UtilisateurIAMKeycloakRepository
   }
 
   private async importeUtilisateurIAM(utilisateur: UtilisateurPourIAM) {
+    if (!this.kcAdminClient) {
+      throw new Error("kcAdminClient non initialisé");
+    }
+
     const email = utilisateur.email;
     try {
       const utilisateurIAM = await this.kcAdminClient.users.create({
