@@ -358,12 +358,14 @@ export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<{
           <h3 className="fr-alert__title">
             {decision === "refuser"
               ? "La proposition de valeur d'avancement a bien été refusée"
-              : "La nouvelle proposition de valeur d'avancement a correctement été prise en compte"}
+              : decision === "accepter"
+                ? "La proposition de valeur d'avancement a bien été acceptée"
+                : "La proposition de valeur d'avancement a bien été acceptée avec modification"}
           </h3>
           <span>
             {decision === "refuser"
               ? "La valeur d'avancement de cet indicateur est inchangée."
-              : "La nouvelle proposition de valeur d'avancement s'affichera dans le tableau des indicateurs dans une heure. Veuillez noter que, dans cet intervalle, il n'est pas possible de faire une autre proposition pour cet indicateur."}
+              : "La nouvelle valeur d'avancement sera importée et s'affichera dans le tableau des indicateurs dans un délai maximal de deux heures."}
           </span>
         </div>
       )}
