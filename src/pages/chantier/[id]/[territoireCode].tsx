@@ -325,7 +325,7 @@ const NextPageChantier: FunctionComponent<
       !chantierInformations.estUnChantierDROM ? (
         <ChoixTerritoire />
       ) : (
-        <PageChantier />
+        <PageChantier key={territoireCode} />
       )}
     </pageChantier.ServerSidePropsProvider>
   );
