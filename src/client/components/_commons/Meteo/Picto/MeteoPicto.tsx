@@ -11,11 +11,12 @@ interface MeteoPictoProps {
   estVisibleParLecteurDÉcran?: boolean;
 }
 
-export const meteosPictos: Record<Météo, any> = {
+export const meteosPictos: Record<Météo, string | null> = {
   ORAGE: pictoOrage,
   NUAGE: pictoNuage,
   COUVERT: pictoCouvert,
   SOLEIL: pictoSoleil,
+  // TODO(CHAN - 08/09/2025) : ici on a des img.src null, il faudrait un placeholder
   NON_RENSEIGNEE: null,
   NON_NECESSAIRE: null,
 };
@@ -29,7 +30,7 @@ const MeteoPicto: FunctionComponent<MeteoPictoProps> = ({
       alt={estVisibleParLecteurDÉcran ? libellésMétéos[meteo] : ""}
       aria-hidden={estVisibleParLecteurDÉcran ? undefined : "true"}
       className="meteo-picto inline"
-      src={meteosPictos[meteo]}
+      src={meteosPictos[meteo] ?? ""}
     />
   ) : null;
 };
