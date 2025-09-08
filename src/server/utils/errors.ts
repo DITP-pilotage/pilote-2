@@ -55,3 +55,8 @@ export class ProfilNonAutorisésSuppressionUtilisateurErreur extends NonAutoris�
     super("Le profil n'est pas autorisé pour la suppression de l'utilisateur");
   }
 }
+
+export const isNodeSystemError = (
+  err: unknown,
+): err is Error & { code?: string } =>
+  err != null && typeof err === "object" && "code" in err;
