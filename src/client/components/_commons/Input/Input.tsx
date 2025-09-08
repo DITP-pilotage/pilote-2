@@ -16,7 +16,7 @@ interface InputProps {
   type?: HTMLInputTypeAttribute;
   htmlName: string;
   texteAide?: string;
-  erreur?: FieldError | Merge<FieldError, FieldErrorsImpl<any>>;
+  erreur?: FieldError | Merge<FieldError, FieldErrorsImpl<{}>>;
   erreurMessage?: string;
   register: UseFormRegisterReturn;
   disabled?: boolean;

@@ -15,7 +15,7 @@ interface TexteAreaLabelProps {
   libellé: string;
   htmlName: string;
   register: UseFormRegisterReturn;
-  erreur?: FieldError | Merge<FieldError, FieldErrorsImpl<any>>;
+  erreur?: FieldError | Merge<FieldError, FieldErrorsImpl<{}>>;
   erreurMessage?: string;
   isRequired?: boolean;
   disabled?: boolean;
