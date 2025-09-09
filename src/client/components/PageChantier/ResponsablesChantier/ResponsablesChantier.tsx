@@ -14,6 +14,7 @@ interface ResponsablesChantierProps {
   listeResponsablesLocaux: ResponsableLocalRapportDetailleContrat[];
   listeCoordinateursTerritorials: CoordinateurTerritorialRapportDetailleContrat[];
   afficheResponsablesLocaux: boolean;
+  estChantierArchive?: boolean;
   maille: Maille | null;
   libelléChantier: Chantier["nom"];
 }
@@ -32,6 +33,7 @@ const ResponsablesPageChantier: FunctionComponent<
   listeCoordinateursTerritorials,
   afficheResponsablesLocaux,
   maille,
+  estChantierArchive = false,
   libelléChantier,
 }) => {
   const libelleNomsDirecteursProjets = listeDirecteursProjets
@@ -61,7 +63,12 @@ const ResponsablesPageChantier: FunctionComponent<
     .join("; ");
 
   return (
-    <Bloc titre="National">
+    <Bloc
+      backgroundClassNameTitre={
+        estChantierArchive ? "bg-dsfr-grey-925" : undefined
+      }
+      titre="National"
+    >
       <ResponsablesLigneChantier
         libelleEmailsResponsables={libelleEmailsDirecteursProjets}
         libelleNomsResponsables={libelleNomsDirecteursProjets}

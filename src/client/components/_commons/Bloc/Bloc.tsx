@@ -1,4 +1,5 @@
 import { FunctionComponent } from "react";
+import clsx from "clsx";
 import BlocStyled from "@/components/_commons/Bloc/Bloc.styled";
 import Infobulle from "@/components/_commons/Infobulle/Infobulle";
 
@@ -8,6 +9,7 @@ interface BlocProps {
   className?: string;
   titre?: string;
   contenuInfobulle?: React.ReactNode;
+  backgroundClassNameTitre?: string;
 }
 
 const Bloc: FunctionComponent<BlocProps> = ({
@@ -16,11 +18,17 @@ const Bloc: FunctionComponent<BlocProps> = ({
   titre,
   contenuInfobulle,
   className = "",
+  backgroundClassNameTitre,
 }) => {
   return (
     <BlocStyled className={`bloc-container${className ? ` ${className}` : ""}`}>
       {titre ? (
-        <div className="titre fr-mb-0 fr-p-2w fr-text--sm fr-text--bold flex align-center justify-start relative w-full">
+        <div
+          className={clsx(
+            "titre fr-mb-0 fr-p-2w fr-text--sm fr-text--bold flex align-center justify-start relative w-full",
+            backgroundClassNameTitre,
+          )}
+        >
           <div className="titre-ellipsis">{titre}</div>
           <div>
             {titre && contenuInfobulle ? (

@@ -42,6 +42,7 @@ export const IndicateurPropositionValeur = ({
 }) => {
   const {
     indicateur,
+    chantier,
     datajobsExecution,
     detailIndicateurDuTerritoire,
     territoireCode,
@@ -75,6 +76,8 @@ export const IndicateurPropositionValeur = ({
       </p>
     );
   }
+
+  const estChantierArchive = chantier.statut === "ARCHIVE";
 
   if (estPropositionSupprimee(detailIndicateurDuTerritoire)) {
     return (
@@ -136,7 +139,10 @@ export const IndicateurPropositionValeur = ({
               : "Afficher la proposition"}
           </BoutonSousLigné>
         }
-        className="text-dsfr-info-main-525"
+        className={clsx({
+          "text-dsfr-info-main-525": !estChantierArchive,
+          "text-dsfr-grey-200": estChantierArchive,
+        })}
       >
         <strong>Proposition de nouvelle valeur d'avancement en cours</strong> –{" "}
         {estPropositionModifiee(detailIndicateurDuTerritoire)
@@ -179,7 +185,10 @@ export const IndicateurPropositionValeur = ({
               : "Afficher la proposition"}
           </BoutonSousLigné>
         }
-        className="text-dsfr-info-main-525"
+        className={clsx({
+          "text-dsfr-info-main-525": !estChantierArchive,
+          "text-dsfr-grey-200": estChantierArchive,
+        })}
       >
         <strong>Proposition de nouvelle valeur d'avancement</strong> – présentée
         par le territoire le{" "}
@@ -238,7 +247,10 @@ export const IndicateurPropositionValeur = ({
               : "Afficher la proposition"}
           </BoutonSousLigné>
         }
-        className="texte-jaune"
+        className={clsx({
+          "texte-jaune": !estChantierArchive,
+          "text-dsfr-grey-200": estChantierArchive,
+        })}
       >
         <strong>Proposition de nouvelle valeur d'avancement en cours</strong> –{" "}
         modifiée par le territoire le{" "}
@@ -270,7 +282,10 @@ export const IndicateurPropositionValeur = ({
             : "Afficher la proposition"}
         </BoutonSousLigné>
       }
-      className="texte-jaune"
+      className={clsx({
+        "texte-jaune": !estChantierArchive,
+        "text-dsfr-grey-200": estChantierArchive,
+      })}
     >
       <strong>Proposition de nouvelle valeur d'avancement en cours</strong> –{" "}
       présentée par le territoire le{" "}

@@ -1,7 +1,12 @@
 import { FunctionComponent } from "react";
 import Icône from "@/components/_commons/Icône/Icône";
+import { useBlocIndicateurContext } from "@/components/PageChantier/useBlocIndicateurContext";
 
-const IndicateurTendance: FunctionComponent<{}> = () => {
+export const IndicateurTendance: FunctionComponent<{}> = () => {
+  const { detailIndicateurDuTerritoire } = useBlocIndicateurContext();
+
+  if (detailIndicateurDuTerritoire.tendance !== "BAISSE") return null;
+
   return (
     <div className="flex flex-direction-row fr-ml-2w fr-mr-1w">
       <p className="fr-text--xs fr-text-title--blue-france fr-mb-1w">
@@ -16,5 +21,3 @@ const IndicateurTendance: FunctionComponent<{}> = () => {
     </div>
   );
 };
-
-export default IndicateurTendance;

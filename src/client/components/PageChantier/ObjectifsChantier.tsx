@@ -26,7 +26,13 @@ export const ObjectifsChantier: FunctionComponent<ObjectifsChantierProps> = ({
   const objectifs = tousLesObjectifs[chantier.id];
 
   return (
-    <Bloc contenuClassesSupplémentaires="" titre="National">
+    <Bloc
+      backgroundClassNameTitre={
+        chantier.statut === "ARCHIVE" ? "bg-dsfr-grey-925" : undefined
+      }
+      contenuClassesSupplémentaires=""
+      titre="National"
+    >
       {typesObjectif.map((type) => (
         <section className="fr-accordion" key={type}>
           <h3 className="fr-accordion__title">

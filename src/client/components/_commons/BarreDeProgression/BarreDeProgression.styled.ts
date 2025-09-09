@@ -1,8 +1,6 @@
 import styled from "@emotion/styled";
 
-const BarreDeProgressionStyled = styled.div`
-  max-width: 100%;
-
+export const BarreDeProgressionStyled = styled.div`
   .fr-btn {
     width: var(--icon-size) !important;
     min-width: var(--icon-size) !important;
@@ -124,6 +122,16 @@ const BarreDeProgressionStyled = styled.div`
         }
       }
 
+      &.progress--grey-dsfr {
+        &::-moz-progress-bar {
+          background-color: #3a3a3a;
+        }
+
+        &::-webkit-progress-value {
+          background-color: #3a3a3a;
+        }
+      }
+
       &.progress--primaire-light {
         &::-moz-progress-bar {
           background-color: var(--blue-france-sun-113-625);
@@ -240,5 +248,3 @@ const BarreDeProgressionStyled = styled.div`
     flex-direction: column-reverse;
   }
 `;
-
-export default BarreDeProgressionStyled;
