@@ -1644,6 +1644,7 @@ describe("PrismaIndicateurRepository", () => {
               territoire_code: "NAT-FR",
               code_insee: "FR",
               zone_id: "FRANCE",
+              date_valeur_actuelle_mandat: new Date("2026-01-12"),
             },
           ],
         });
@@ -1784,6 +1785,7 @@ describe("PrismaIndicateurRepository", () => {
             territoire_code: "NAT-FR",
             code_insee: "FR",
             zone_id: "FRANCE",
+            date_valeur_actuelle_mandat: new Date("2026-01-12"),
           },
         ],
       });
@@ -1938,6 +1940,7 @@ describe("PrismaIndicateurRepository", () => {
             territoire_code: "NAT-FR",
             code_insee: "FR",
             zone_id: "FRANCE",
+            date_valeur_actuelle_mandat: new Date("2026-01-12"),
           },
         ],
       });
@@ -2095,6 +2098,7 @@ describe("PrismaIndicateurRepository", () => {
             territoire_code: "NAT-FR",
             code_insee: "FR",
             zone_id: "FRANCE",
+            date_valeur_actuelle_mandat: new Date("2026-01-12"),
           },
         ],
       });
@@ -2232,6 +2236,7 @@ describe("PrismaIndicateurRepository", () => {
             territoire_code: "NAT-FR",
             code_insee: "FR",
             zone_id: "FRANCE",
+            date_valeur_actuelle_mandat: new Date("2026-01-12"),
           },
         ],
       });
@@ -2354,6 +2359,7 @@ describe("PrismaIndicateurRepository", () => {
             territoire_code: "NAT-FR",
             code_insee: "FR",
             zone_id: "FRANCE",
+            date_valeur_actuelle_mandat: new Date("2026-01-12"),
           },
         ],
       });
@@ -2506,6 +2512,7 @@ describe("PrismaIndicateurRepository", () => {
             territoire_code: "NAT-FR",
             code_insee: "FR",
             zone_id: "FRANCE",
+            date_valeur_actuelle_mandat: new Date("2026-01-15"),
           },
         ],
       });
@@ -4292,6 +4299,7 @@ describe("PrismaIndicateurRepository", () => {
             code_insee: "02",
             territoire_code: "DEPT-02",
             zone_id: "D02",
+            date_valeur_actuelle_mandat: new Date("2026-01-12"),
             evolution_valeur_actuelle: [
               {
                 date: new Date("2026-01-12"),
@@ -4487,6 +4495,7 @@ describe("PrismaIndicateurRepository", () => {
             code_insee: "02",
             territoire_code: "DEPT-02",
             zone_id: "D02",
+            date_valeur_actuelle_mandat: new Date("2026-01-12"),
             evolution_valeur_actuelle: [
               {
                 date: new Date("2026-01-12"),
@@ -4686,6 +4695,7 @@ describe("PrismaIndicateurRepository", () => {
             code_insee: "02",
             territoire_code: "DEPT-02",
             zone_id: "D02",
+            date_valeur_actuelle_mandat: new Date("2026-01-12"),
             evolution_valeur_actuelle: [
               {
                 date: new Date("2026-01-12"),
@@ -4900,6 +4910,7 @@ describe("PrismaIndicateurRepository", () => {
             code_insee: "02",
             territoire_code: "DEPT-02",
             zone_id: "D02",
+            date_valeur_actuelle_mandat: new Date("2026-01-12"),
             evolution_valeur_actuelle: [
               {
                 date: new Date("2026-01-12"),
@@ -5094,6 +5105,7 @@ describe("PrismaIndicateurRepository", () => {
             code_insee: "02",
             territoire_code: "DEPT-02",
             zone_id: "D02",
+            date_valeur_actuelle_mandat: new Date("2026-01-12"),
             evolution_valeur_actuelle: [
               {
                 date: new Date("2026-01-12"),
@@ -5273,6 +5285,7 @@ describe("PrismaIndicateurRepository", () => {
             code_insee: "02",
             territoire_code: "DEPT-02",
             zone_id: "D02",
+            date_valeur_actuelle_mandat: new Date("2026-01-12"),
             evolution_valeur_actuelle: [
               {
                 date: new Date("2026-01-12"),
@@ -5482,6 +5495,7 @@ describe("PrismaIndicateurRepository", () => {
             code_insee: "02",
             territoire_code: "DEPT-02",
             zone_id: "D02",
+            date_valeur_actuelle_mandat: new Date("2026-01-12"),
             evolution_valeur_actuelle: [
               {
                 date: new Date("2026-01-12"),
