@@ -693,8 +693,8 @@ model indicateur_territoire_valeur_evenement {
   date_modification       DateTime              @updatedAt
   id_auteur_modification  String                @db.Uuid
   correlation_id          String                @db.Uuid
-  indicateur_territoire   indicateur_territoire @relation(fields: [indic_id, territoire_code], references: [id, territoire_code], onDelete: Cascade)
-  auteur                  utilisateur           @relation(fields: [id_auteur_modification], references: [id], onDelete: Cascade)
+  indicateur_territoire   indicateur_territoire @relation(fields: [indic_id, territoire_code], references: [id, territoire_code])
+  auteur                  utilisateur           @relation(fields: [id_auteur_modification], references: [id])
 
   @@index([indic_id, territoire_code, type_valeur])
   @@index([date_creation, ordre])
