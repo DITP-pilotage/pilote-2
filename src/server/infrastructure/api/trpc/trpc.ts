@@ -28,10 +28,12 @@ export const créerContextTRPC = async (opts: CreateNextContextOptions) => {
 const trpc = initTRPC.context<typeof créerContextTRPC>().create({
   transformer: superjson,
   errorFormatter({ shape, error }) {
+    const formattedData = { ...shape.data };
+    delete formattedData.stack;
     return {
       ...shape,
       data: {
-        ...shape.data,
+        ...formattedData,
         httpStatus: error.cause instanceof NonAutorisé ? 403 : 500,
         code:
           error.cause instanceof NonAutorisé
