@@ -6,7 +6,6 @@ import assert from "node:assert/strict";
 import PageChantier from "@/components/PageChantier/PageChantier";
 import { dependencies } from "@/server/infrastructure/Dependencies";
 import { authOptions } from "@/server/infrastructure/api/auth/[...nextauth]";
-import RécupérerChantierUseCase from "@/server/usecase/chantier/RécupérerChantierUseCase";
 import { NonAutorisé } from "@/server/utils/errors";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
 import ChoixTerritoire from "@/components/PageChantier/ChoixTerritoire/ChoixTerritoire";
@@ -19,13 +18,11 @@ import RécupérerSynthèseDesRésultatsLaPlusRécenteUseCase from "@/server/use
 import RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase from "@/server/usecase/chantier/commentaire/RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase";
 import RécupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase from "@/server/usecase/chantier/objectif/RécupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase";
 import RécupérerDécisionStratégiqueLaPlusRécenteUseCase from "@/server/usecase/chantier/décision/RécupérerDécisionStratégiqueLaPlusRécenteUseCase";
-import RécupérerDétailsIndicateursUseCase from "@/server/usecase/chantier/indicateur/RécupérerDétailsIndicateursUseCase";
 import { DétailsIndicateurTerritoire } from "@/server/domain/indicateur/DétailsIndicateur.interface";
 import RécupérerStatistiquesAvancementChantiersUseCase from "@/server/usecase/chantier/RécupérerStatistiquesAvancementChantiersUseCase";
 import { presenterEnAvancementsStatistiquesAccueilContrat } from "@/server/chantiers/app/contrats/AvancementsStatistiquesAccueilContrat";
 import { DonneesComparaisonDuTauxDAvancementType } from "@/server/domain/territoire/Territoire.interface";
 import { territoireCodeVersMailleCodeInsee } from "@/server/utils/territoires";
-import { ListerDétailsIndicateurTerritoireUseCase } from "@/server/usecase/chantier/indicateur/ListerDétailsIndicateurTerritoireUseCase";
 import { RécupérerVariableContenuUseCase } from "@/server/gestion-contenu/usecases/RécupérerVariableContenuUseCase";
 import { MailleInterne } from "@/server/domain/maille/Maille.interface";
 import { getAnneeDateDeBascule } from "@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getAnneeDateDeBascule";
@@ -117,15 +114,9 @@ export const getServerSideProps = async ({
       valeurFFPpgArchive,
       nouveauxGraphiquesSontActifs,
     ] = await Promise.all([
-      configuration().featureFlip.propositionValeurAvancementV2
-        ? getContainer("chantiers")
-            .resolve("recupererChantierUseCaseV2")
-            .run(chantierId, session.habilitations, session.profil, jalon)
-        : new RécupérerChantierUseCase(
-            dependencies.getChantierRepository(),
-            dependencies.getMinistèreRepository(),
-            dependencies.getTerritoireRepository(),
-          ).run(chantierId, session.habilitations, session.profil, jalon),
+      getContainer("chantiers")
+        .resolve("recupererChantierUseCaseV2")
+        .run(chantierId, session.habilitations, session.profil, jalon),
       dependencies.getIndicateurRepository().récupérerParChantierId(chantierId),
       new RécupérerSynthèseDesRésultatsLaPlusRécenteUseCase(
         dependencies.getSynthèseDesRésultatsRepository(),
@@ -141,13 +132,9 @@ export const getServerSideProps = async ({
       )
         .run(chantierId, session.habilitations)
         .catch(() => null),
-      configuration().featureFlip.propositionValeurAvancementV2
-        ? getContainer("chantiers")
-            .resolve("recupererDetailsIndicateursV2UseCase")
-            .run(chantierId, territoireCodes, session.habilitations, jalon)
-        : new RécupérerDétailsIndicateursUseCase(
-            dependencies.getIndicateurRepository(),
-          ).run(chantierId, territoireCodes, session.habilitations, jalon),
+      getContainer("chantiers")
+        .resolve("recupererDetailsIndicateursV2UseCase")
+        .run(chantierId, territoireCodes, session.habilitations, jalon),
       new RécupérerStatistiquesAvancementChantiersUseCase(
         dependencies.getChantierRepository(),
       )
@@ -237,25 +224,15 @@ export const getServerSideProps = async ({
     const detailsIndicateursTerritoire: Record<
       string,
       DétailsIndicateurTerritoire
-    > = configuration().featureFlip.propositionValeurAvancementV2
-      ? await getContainer("chantiers")
-          .resolve("listerDetailsIndicateurTerritoireUseCaseV2")
-          .run(
-            listeIndicateurId,
-            chantierId,
-            session.habilitations,
-            session.profil,
-            jalon,
-          )
-      : await new ListerDétailsIndicateurTerritoireUseCase(
-          dependencies.getIndicateurRepository(),
-        ).run(
-          listeIndicateurId,
-          chantierId,
-          session.habilitations,
-          session.profil,
-          jalon,
-        );
+    > = await getContainer("chantiers")
+      .resolve("listerDetailsIndicateurTerritoireUseCaseV2")
+      .run(
+        listeIndicateurId,
+        chantierId,
+        session.habilitations,
+        session.profil,
+        jalon,
+      );
 
     const datajobsExecution = await getContainer("main")
       .resolve("datajobsExecutionQueries")

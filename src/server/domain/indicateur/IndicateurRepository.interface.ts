@@ -2,7 +2,6 @@ import Indicateur from "@/server/domain/indicateur/Indicateur.interface";
 import {
   DétailsIndicateurMailles,
   DétailsIndicateurs,
-  DétailsIndicateurTerritoire,
 } from "@/server/domain/indicateur/DétailsIndicateur.interface";
 import { Maille } from "@/server/domain/maille/Maille.interface";
 import { CodeInsee } from "@/server/domain/territoire/Territoire.interface";
@@ -18,23 +17,7 @@ export default interface IndicateurRepository {
     profil: ProfilCode,
     jalon: number,
   ): Promise<DétailsIndicateurMailles>;
-  récupérerDétailsTerritoirePourUnIndicateur(
-    indicateurId: string,
-    habilitations: Habilitations,
-    profil: ProfilCode,
-    jalon: number,
-  ): Promise<DétailsIndicateurTerritoire>;
   récupérerParChantierId(chantierId: string): Promise<Indicateur[]>;
-  récupérerDétailsParIndicIdEtMaille(
-    indicateurId: string,
-    maille: Maille,
-    jalon: number,
-  ): Promise<DétailsIndicateurs>;
-  récupererDétailsParChantierIdEtTerritoire(
-    chantierId: string,
-    territoireCodes: string[],
-    jalon: number,
-  ): Promise<DétailsIndicateurs>;
   récupérerGroupésParChantier(
     chantiersIds: Chantier["id"][],
   ): Promise<Record<string, Indicateur[]>>;

@@ -17,7 +17,6 @@ import { FiltreQueryParams } from "@/server/chantiers/app/contrats/FiltreQueryPa
 import { PrismaChantier } from "@/server/chantiers/domain/PrismaChantier";
 import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
 import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
-import { configuration } from "@/config";
 
 class ErreurChantierNonTrouvé extends Error {
   constructor(idChantier: string) {
@@ -450,9 +449,6 @@ export class PrismaChantierRepository implements ChantierRepository {
     optionsExport: OptionsExport,
     jalon: number,
   ): Promise<ChantierPourExport[] | null> {
-    const featureFlipPropositionValeurAvancementV2 =
-      configuration().featureFlip.propositionValeurAvancementV2;
-
     const prismaChantierIdentite = await prisma.chantier_identite.findUnique({
       where: {
         id: chantierIdsLecture,
@@ -736,9 +732,7 @@ export class PrismaChantierRepository implements ChantierRepository {
           const maille = prismaChantierTerritoire.maille;
 
           const prismaNombrePropositionValeurActuelle =
-            featureFlipPropositionValeurAvancementV2
-              ? prismaChantierTerritoire.nombre_propositions_valeur_actuelle_v2
-              : prismaChantierTerritoire.nombre_propositions_valeur_actuelle;
+            prismaChantierTerritoire.nombre_propositions_valeur_actuelle_v2;
 
           if (maille === "DEPT") {
             aUnePropositionsValeurAvancement =
@@ -752,22 +746,16 @@ export class PrismaChantierRepository implements ChantierRepository {
                   (chantierTerritoire) =>
                     chantierTerritoire.territoire.code_parent === codeRegion,
                 )
-                .some((chantierTerritoire) =>
-                  featureFlipPropositionValeurAvancementV2
-                    ? chantierTerritoire.nombre_propositions_valeur_actuelle_v2 >
-                      0
-                    : chantierTerritoire.nombre_propositions_valeur_actuelle >
-                      0,
+                .some(
+                  (chantierTerritoire) =>
+                    chantierTerritoire.nombre_propositions_valeur_actuelle_v2 >
+                    0,
                 );
           } else {
             aUnePropositionsValeurAvancement =
               prismaChantierIdentite.chantier_territoire.some(
                 (chantierTerritoire) =>
-                  featureFlipPropositionValeurAvancementV2
-                    ? chantierTerritoire.nombre_propositions_valeur_actuelle_v2 >
-                      0
-                    : chantierTerritoire.nombre_propositions_valeur_actuelle >
-                      0,
+                  chantierTerritoire.nombre_propositions_valeur_actuelle_v2 > 0,
               );
           }
 
