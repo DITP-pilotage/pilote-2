@@ -23,14 +23,6 @@ import { BadgeIndicateurBarometre } from "@/components/_commons/IndicateursChant
 import { LigneIndicateurDatePrevisionnelle } from "@/components/_commons/IndicateursChantier/Bloc/LigneIndicateurDatePrevisionnelle";
 import IndicateurBlocStyled from "./IndicateurBloc.styled";
 import { useIndicateurBloc } from "./useIndicateurBloc";
-import { ModalePropositionValeurAvancementV2 } from "./ModalePropositionValeurAvancementV2/ModalePropositionValeurAvancementV2";
-
-export const ID_HTML_MODALE_SUPPRESSION_VALEUR_DAVANCEMENT =
-  "modale-suppression-valeur-davancement";
-export const ID_HTML_MODALE_PROPOSITION_VALEUR_DAVANCEMENT =
-  "modale-proposition-valeur-davancement";
-export const ID_HTML_MODALE_ACCEPTER_PROPOSITION_VALEUR_DAVANCEMENT =
-  "modale-accepter-proposition-valeur-davancement";
 
 interface IndicateurBlocProps {
   indicateur: Indicateur;
@@ -335,12 +327,12 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                   </tr>
                   {détailTerritoireSélectionné.code === territoireCode ? (
                     configurationFeatureFlipping.propositionValeurAvancement ? (
-                      estAutoriseAProposerUneValeurAvancement &&
-                      detailIndicateurDuTerritoire.valeurAvancementMandat !=
-                        null &&
-                      detailIndicateurDuTerritoire.proposition == null ? (
-                        <span>TO DELETE</span>
-                      ) : (
+                      !(
+                        estAutoriseAProposerUneValeurAvancement &&
+                        detailIndicateurDuTerritoire.valeurAvancementMandat !=
+                          null &&
+                        detailIndicateurDuTerritoire.proposition == null
+                      ) ? (
                         <LignesPropositionValeurAvancementV2
                           estAutoriseAAccepterLesPropositionsDeValeurAvancement={
                             estAutoriseAAccepterLesPropositionsDeValeurAvancement
@@ -350,7 +342,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                           }
                           propositionEstVisible={propositionEstVisible}
                         />
-                      )
+                      ) : null
                     ) : null
                   ) : null}
                   {informationsIndicateursComparés.map(

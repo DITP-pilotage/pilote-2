@@ -227,6 +227,7 @@ const config = convict({
       default: false,
       env: "NEXT_PUBLIC_FF_ALERTE_MAJ_INDICATEUR",
     },
+    // TODO(JOTA: 10/09/25): SUPPRIMER FF
     propositionValeurAvancement: {
       format: Boolean,
       default: false,
