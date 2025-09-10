@@ -18,12 +18,10 @@ export default function useRécapitulatifUtilisateur() {
       router.push("/admin/utilisateurs?compteCréé=true");
     },
     onError: (error) => {
-      if (error.data?.code === "INTERNAL_SERVER_ERROR") {
-        setAlerte({
-          type: "erreur",
-          titre: error.message,
-        });
-      }
+      setAlerte({
+        type: "erreur",
+        titre: error.message,
+      });
     },
   });
 
@@ -32,12 +30,10 @@ export default function useRécapitulatifUtilisateur() {
       router.push("/admin/utilisateurs?compteModifié=true");
     },
     onError: (error) => {
-      if (error.data?.code === "INTERNAL_SERVER_ERROR") {
-        setAlerte({
-          type: "erreur",
-          titre: error.message,
-        });
-      }
+      setAlerte({
+        type: "erreur",
+        titre: error.message,
+      });
     },
   });
 

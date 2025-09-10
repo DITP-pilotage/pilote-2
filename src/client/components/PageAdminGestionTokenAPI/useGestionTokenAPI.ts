@@ -35,12 +35,10 @@ export const useGestionTokenAPI = () => {
       });
     },
     onError: (error) => {
-      if (error.data?.code === "INTERNAL_SERVER_ERROR") {
-        setAlerte({
-          type: "erreur",
-          titre: error.message,
-        });
-      }
+      setAlerte({
+        type: "erreur",
+        titre: error.message,
+      });
     },
   });
 

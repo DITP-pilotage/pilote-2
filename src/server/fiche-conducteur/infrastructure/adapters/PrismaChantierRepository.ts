@@ -11,6 +11,7 @@ import { verifyValeurIsNotNullOrUndefined } from "@/server/utils/VerifyValeurIsN
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 
 import { PilotePrismaClient } from "@/server/db/PrismaTransaction";
+import { NotFoundError } from "@/server/app/error-boundary/not-found-error";
 
 const convertirChantierTerritoireEnChantier = (
   chantierTerritoireModel: ChantierTerritoireModel & {
@@ -102,7 +103,7 @@ export class PrismaChantierRepository implements ChantierRepository {
     });
 
     if (!result) {
-      throw new Error("Le chantier n'existe pas");
+      throw new NotFoundError("Le chantier n'existe pas");
     }
 
     return convertirChantierTerritoireEnChantier(result);
@@ -140,7 +141,7 @@ export class PrismaChantierRepository implements ChantierRepository {
     });
 
     if (!result) {
-      throw new Error("Le chantier n'existe pas");
+      throw new NotFoundError("Le chantier n'existe pas");
     }
 
     return result.chantier_territoire.map((chantierTerritoire) =>

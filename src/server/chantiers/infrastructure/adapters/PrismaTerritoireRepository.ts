@@ -4,6 +4,7 @@ import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { Territoire } from "@/server/domain/territoire/Territoire.interface";
 import { NOMS_MAILLES } from "@/server/infrastructure/accès_données/maille/mailleSQLParser";
 import { PilotePrismaClient } from "@/server/db/PrismaTransaction";
+import { NotFoundError } from "@/server/app/error-boundary/not-found-error";
 
 export class PrismaTerritoireRepository implements TerritoireRepository {
   private readonly prisma: PilotePrismaClient;
@@ -38,7 +39,7 @@ export class PrismaTerritoireRepository implements TerritoireRepository {
     });
 
     if (!territoire) {
-      throw new Error("Territoire non trouvé");
+      throw new NotFoundError("Territoire non trouvé");
     }
 
     return [
