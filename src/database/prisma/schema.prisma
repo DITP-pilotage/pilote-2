@@ -292,9 +292,9 @@ model synthese_des_resultats {
   date_meteo          DateTime?           @db.Timestamp
   commentaire         String?
   date_commentaire    DateTime?           @db.Timestamp
-  auteur_synthese     utilisateur?        @relation(fields: [auteur_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  auteur_synthese     utilisateur?        @relation(fields: [auteur_id], references: [id], onUpdate: Cascade)
   auteur_id           String?             @db.Uuid
-  chantier_territoire chantier_territoire @relation(fields: [chantier_id, territoire_code], references: [id, territoire_code], onDelete: Cascade, onUpdate: Cascade)
+  chantier_territoire chantier_territoire @relation(fields: [chantier_id, territoire_code], references: [id, territoire_code], onUpdate: Cascade)
 
   @@schema("public")
 }
@@ -324,8 +324,8 @@ model commentaire {
   maille              String
   code_insee          String
   territoire_code     String
-  auteur_commentaire  utilisateur?        @relation(fields: [auteur_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  chantier_territoire chantier_territoire @relation(fields: [chantier_id, territoire_code], references: [id, territoire_code], onDelete: Cascade, onUpdate: Cascade)
+  auteur_commentaire  utilisateur?        @relation(fields: [auteur_id], references: [id], onUpdate: Cascade)
+  chantier_territoire chantier_territoire @relation(fields: [chantier_id, territoire_code], references: [id, territoire_code], onUpdate: Cascade)
   auteur_id           String?             @db.Uuid
 
   @@schema("public")
@@ -523,9 +523,9 @@ model objectif {
   contenu           String
   date              DateTime          @db.Timestamp
   chantier_id       String
-  auteur_objectif   utilisateur?      @relation(fields: [auteur_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  auteur_objectif   utilisateur?      @relation(fields: [auteur_id], references: [id], onUpdate: Cascade)
   auteur_id         String?           @db.Uuid
-  chantier_identite chantier_identite @relation(fields: [chantier_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  chantier_identite chantier_identite @relation(fields: [chantier_id], references: [id], onUpdate: Cascade)
 
   @@schema("public")
 }
@@ -542,9 +542,9 @@ model decision_strategique {
   contenu                     String
   date                        DateTime                  @db.Timestamp
   chantier_id                 String
-  auteur_decision_strategique utilisateur?              @relation(fields: [auteur_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  auteur_decision_strategique utilisateur?              @relation(fields: [auteur_id], references: [id], onUpdate: Cascade)
   auteur_id                   String?                   @db.Uuid
-  chantier_identite           chantier_identite         @relation(fields: [chantier_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  chantier_identite           chantier_identite         @relation(fields: [chantier_id], references: [id], onUpdate: Cascade)
 
   @@schema("public")
 }
@@ -555,7 +555,7 @@ model utilisateur {
   nom                                    String
   prenom                                 String
   fonction                               String?
-  profil                                 profil                                   @relation(fields: [profilCode], references: [code], onDelete: Cascade, onUpdate: Cascade)
+  profil                                 profil                                   @relation(fields: [profilCode], references: [code], onUpdate: Cascade)
   profilCode                             String                                   @map("profil_code")
   habilitation                           habilitation[]
   rapport_import_mesure_indicateur       rapport_import_mesure_indicateur[]
@@ -631,7 +631,7 @@ model historisation_modification {
   ancienne_valeur      Json?
   nouvelle_valeur      Json?
   id_auteur            String?      @db.Uuid
-  auteur_modification  utilisateur? @relation(fields: [id_auteur], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  auteur_modification  utilisateur? @relation(fields: [id_auteur], references: [id], onUpdate: Cascade)
 
   @@schema("public")
 }
@@ -647,9 +647,9 @@ model proposition_valeur_actuelle {
   motif_proposition            String
   source_donnee_methode_calcul String
   statut                       type_statut_proposition
-  indicateur_territoire        indicateur_territoire   @relation(fields: [indic_id, territoire_code], references: [id, territoire_code], onDelete: Cascade, onUpdate: Cascade)
+  indicateur_territoire        indicateur_territoire   @relation(fields: [indic_id, territoire_code], references: [id, territoire_code], onUpdate: Cascade)
 
-  auteur_proposition       utilisateur? @relation(fields: [id_auteur_modification], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  auteur_proposition       utilisateur? @relation(fields: [id_auteur_modification], references: [id], onUpdate: Cascade)
   date_modification_statut DateTime?    @db.Timestamp()
 
   @@schema("public")
