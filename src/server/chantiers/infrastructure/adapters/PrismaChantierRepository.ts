@@ -17,7 +17,6 @@ import { FiltreQueryParams } from "@/server/chantiers/app/contrats/FiltreQueryPa
 import { PrismaChantier } from "@/server/chantiers/domain/PrismaChantier";
 import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
 import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
-import { configuration } from "@/config";
 
 class ErreurChantierNonTrouvé extends Error {
   constructor(idChantier: string) {

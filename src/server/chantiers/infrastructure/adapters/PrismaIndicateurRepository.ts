@@ -34,7 +34,6 @@ import {
   profilsTerritoriaux,
 } from "@/server/domain/utilisateur/Utilisateur.interface";
 import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
-import { configuration } from "@/config";
 
 const convertirEnDonneeIndicateur = (
   prismaIndicateurIdentite: PrismaIndicateurIdentite & {
