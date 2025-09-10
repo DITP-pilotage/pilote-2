@@ -7,6 +7,7 @@ import {
 } from "@getbrevo/brevo";
 import { ContactInfoLettresService } from "@/server/gestion-utilisateur/domain/ports/ContactInfoLettresService";
 import { configuration } from "@/config";
+import { ProfilCode } from "@/server/gestion-utilisateur/domain/Profil";
 
 const contactsApi = new ContactsApi();
 contactsApi.setApiKey(0, configuration().brevo.apiKey);
@@ -21,6 +22,7 @@ export class BrevoContactInfoLettresService
     email: string,
     nom: string,
     prenom: string,
+    profil: ProfilCode,
     listesDiffusionIds: number[],
   ): Promise<void> {
     const contact = new CreateContact();
@@ -28,6 +30,7 @@ export class BrevoContactInfoLettresService
     contact.attributes = {
       PRENOM: prenom,
       NOM: nom,
+      PROFIL: profil,
     };
     contact.listIds = listesDiffusionIds;
     await contactsApi.createContact(contact);
@@ -41,6 +44,7 @@ export class BrevoContactInfoLettresService
     email: string,
     nom: string,
     prenom: string,
+    profil: ProfilCode,
     listesDiffusionAAjouterIds: number[],
     listesDiffusionASupprimerIds: number[],
   ): Promise<void> {
@@ -48,6 +52,7 @@ export class BrevoContactInfoLettresService
       attributes: {
         PRENOM: prenom,
         NOM: nom,
+        PROFIL: profil,
       },
       listIds: listesDiffusionAAjouterIds,
       unlinkListIds: listesDiffusionASupprimerIds,
