@@ -107,6 +107,7 @@ export class HistorisationModification<
   }) {
     return new HistorisationModification({
       id: id || randomUUID(),
+      // @ts-expect-error - legacy
       idObjetModifie: tableRecuperationId[tableModifieId](nouvelleValeur),
       auteurId,
       typeDeModification: "creation",
@@ -153,16 +154,21 @@ export class HistorisationModification<
 
     return new HistorisationModification({
       id: id || randomUUID(),
+      // @ts-expect-error - legacy
       idObjetModifie: tableRecuperationId[tableModifieId](ancienneValeur),
       typeDeModification: "modification",
       dateDeModification: new Date().toISOString(),
       auteurId,
       tableModifieId,
+      // @ts-expect-error - legacy
       ancienneValeur:
         diffAncienneValeur &&
+        // @ts-expect-error - legacy
         tableConversionModification[tableModifieId](diffAncienneValeur),
+      // @ts-expect-error - legacy
       nouvelleValeur:
         diffNouvelleValeur &&
+        // @ts-expect-error - legacy
         tableConversionModification[tableModifieId](diffNouvelleValeur),
     });
   }

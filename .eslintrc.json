@@ -35,7 +35,7 @@
     "sonarjs/no-nested-template-literals": "off",
     "sonarjs/no-small-switch": "off",
     "@typescript-eslint/dot-notation": "off",
-    "@typescript-eslint/no-explicit-any": "warn",
+    "@typescript-eslint/no-explicit-any": "error",
     "no-restricted-syntax": [
       "error",
       {
