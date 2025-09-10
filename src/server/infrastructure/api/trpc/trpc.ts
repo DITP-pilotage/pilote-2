@@ -4,6 +4,7 @@ import { ZodError } from "zod";
 import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
 import { getServerAuthSession } from "@/server/infrastructure/api/auth/[...nextauth]";
 import { NonAutorisé } from "@/server/utils/errors";
+import { PiloteError } from "@/server/app/error-boundary/pilote-error";
 import { CreateContextOptions } from "./trpc.interface";
 
 const créerContextTRPCInterne = (opts: CreateContextOptions) => {
@@ -30,7 +31,9 @@ const trpc = initTRPC.context<typeof créerContextTRPC>().create({
   errorFormatter({ shape, error }) {
     const formattedData = { ...shape.data };
     delete formattedData.stack;
-    const isInternalServerError = !(error.cause instanceof NonAutorisé);
+    const isInternalServerError =
+      !(error.cause instanceof NonAutorisé) &&
+      !(error.cause instanceof PiloteError);
     return {
       ...shape,
       message: isInternalServerError
@@ -38,8 +41,16 @@ const trpc = initTRPC.context<typeof créerContextTRPC>().create({
         : shape.message,
       data: {
         ...formattedData,
-        httpStatus: isInternalServerError ? 500 : 403,
-        code: isInternalServerError ? "INTERNAL_SERVER_ERROR" : "UNAUTHORIZED",
+        httpStatus: isInternalServerError
+          ? 500
+          : error.cause instanceof PiloteError
+            ? error.cause.status
+            : 403,
+        code: isInternalServerError
+          ? "INTERNAL_SERVER_ERROR"
+          : error.cause instanceof PiloteError
+            ? error.cause.type
+            : "UNAUTHORIZED",
         zodError:
           error.cause instanceof ZodError ? error.cause.flatten() : null,
       },
