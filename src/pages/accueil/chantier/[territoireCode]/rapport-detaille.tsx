@@ -13,7 +13,6 @@ import RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase 
 import RécupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase from "@/server/usecase/chantier/objectif/RécupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase";
 import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
 import DécisionStratégique from "@/server/domain/chantier/décisionStratégique/DécisionStratégique.interface";
-import RécupérerChantiersAccessiblesEnLectureUseCase from "@/server/chantiers/usecases/RécupérerChantiersAccessiblesEnLectureUseCaseRapportDetaille";
 import Ministère from "@/server/domain/ministère/Ministère.interface";
 import { ChantierRapportDetailleContrat } from "@/server/chantiers/app/contrats/ChantierRapportDetailleContrat";
 import Alerte from "@/server/domain/alerte/Alerte";
@@ -172,37 +171,19 @@ export const getServerSideProps: GetServerSideProps<
 
   const mapAxes = new Map<string, Axe>(axes.map((axe) => [axe.id, axe]));
 
-  const chantiers = configuration().featureFlip.propositionValeurAvancementV2
-    ? await getContainer("chantiers")
-        .resolve(
-          "recupererChantiersAccessiblesEnLectureUseCaseRapportDetailleV2",
-        )
-        .run(
-          session.habilitations,
-          session.profil,
-          territoireCode,
-          mailleChantier || "departementale",
-          ministères,
-          mapAxes,
-          filtres,
-          sorting,
-          jalon,
-        )
-    : await new RécupérerChantiersAccessiblesEnLectureUseCase(
-        dependencies.getChantierRepository(),
-        dependencies.getTerritoireRepository(),
-      ).run(
-        session.habilitations,
-        session.profil,
-        territoireCode,
-        mailleChantier || "departementale",
-        ministères,
-        mapAxes,
-        filtres,
-        sorting,
-        jalon,
-      );
-
+  const chantiers = await getContainer("chantiers")
+    .resolve("recupererChantiersAccessiblesEnLectureUseCaseRapportDetailleV2")
+    .run(
+      session.habilitations,
+      session.profil,
+      territoireCode,
+      mailleChantier || "departementale",
+      ministères,
+      mapAxes,
+      filtres,
+      sorting,
+      jalon,
+    );
   const repartitionMeteosChantiers =
     await new RecupererRepartitionsMeteoChantiersUseCase({
       chantierRepository: dependencies.getChantierRepository(),

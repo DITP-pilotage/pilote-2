@@ -46,13 +46,11 @@ export const IndicateurPropositionValeur = ({
     datajobsExecution,
     detailIndicateurDuTerritoire,
     territoireCode,
-    configurationFeatureFlipping,
   } = useBlocIndicateurContext();
 
   const { maille: mailleDuTerritoireSelectionnee } =
     territoireCodeVersMailleCodeInsee(territoireCode);
 
-  if (!configurationFeatureFlipping.propositionValeurAvancementV2) return null;
   if (detailIndicateurDuTerritoire.valeurAvancementMandat == null) return null;
 
   const estAffichageSansProposition =

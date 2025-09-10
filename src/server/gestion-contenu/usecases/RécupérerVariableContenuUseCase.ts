@@ -68,10 +68,6 @@ export class RécupérerVariableContenuUseCase {
         return configuration().featureFlip
           .propositionValeurAvancement as VariableContenuDisponibleEnv[T];
       }
-      case "NEXT_PUBLIC_FF_PROPOSITION_VALEUR_ACTUELLE_V2": {
-        return configuration().featureFlip
-          .propositionValeurAvancementV2 as VariableContenuDisponibleEnv[T];
-      }
       case "NEXT_PUBLIC_SCHEMA_VALIDATA_URL": {
         return configuration()
           .schemaValidataUrl as VariableContenuDisponibleEnv[T];
