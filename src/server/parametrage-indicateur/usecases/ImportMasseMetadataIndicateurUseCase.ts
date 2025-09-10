@@ -5,6 +5,7 @@ import { ImportMetadataIndicateur } from "@/server/parametrage-indicateur/domain
 import logger from "@/server/infrastructure/Logger";
 import { supprimerLeFichier } from "@/server/import-indicateur/infrastructure/adapters/FichierService";
 import { validationImportMetadataIndicateurFormulaire } from "@/validation/metadataIndicateur";
+import { BadRequestError } from "@/server/app/error-boundary/bad-request-error";
 
 type RecordCSVImport = Record<
   (typeof AvailableHeaderCSVImport)[number],
@@ -281,10 +282,10 @@ export default class ImportMasseMetadataIndicateurUseCase {
           listeMetadataIndicateur,
         );
       } else {
-        throw new Error("Les entêtes ne sont pas correct");
+        throw new BadRequestError("Les entêtes ne sont pas correct");
       }
     } else {
-      throw new Error("Il n'y a aucune données dans le fichier");
+      throw new BadRequestError("Il n'y a aucune données dans le fichier");
     }
   }
 }
