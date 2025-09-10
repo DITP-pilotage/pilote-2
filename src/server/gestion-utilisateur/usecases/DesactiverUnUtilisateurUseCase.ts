@@ -9,6 +9,7 @@ import { ChantierRepository } from "@/server/gestion-utilisateur/domain/ports/Ch
 import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
 import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
 import { ContactInfoLettresService } from "@/server/gestion-utilisateur/domain/ports/ContactInfoLettresService";
+import { NotFoundError } from "@/server/app/error-boundary/not-found-error";
 
 type Dependencies = {
   utilisateurRepository: UtilisateurRepository;
@@ -75,7 +76,7 @@ export default class DesactiverUnUtilisateurUseCase {
     );
 
     if (!utilisateurASupprimer) {
-      throw new Error("Le compte à supprimer n'existe pas.");
+      throw new NotFoundError("Le compte à supprimer n'existe pas.");
     }
 
     const habilitationsUtilisateurASupprimer =

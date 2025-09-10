@@ -2,6 +2,7 @@ import { territoire as TerritoireModel } from "@prisma/client";
 import { TerritoireRepository } from "@/server/fiche-territoriale/domain/ports/TerritoireRepository";
 import { Territoire } from "@/server/fiche-territoriale/domain/Territoire";
 import { prisma } from "@/server/db/prisma";
+import { NotFoundError } from "@/server/app/error-boundary/not-found-error";
 
 const convertirEnTerritoire = (
   territoireModel: TerritoireModel,
@@ -26,7 +27,7 @@ export class PrismaTerritoireRepository implements TerritoireRepository {
     });
 
     if (!territoireModel) {
-      throw new Error("Le territoire n'existe pas");
+      throw new NotFoundError("Le territoire n'existe pas");
     }
 
     return convertirEnTerritoire(territoireModel);
