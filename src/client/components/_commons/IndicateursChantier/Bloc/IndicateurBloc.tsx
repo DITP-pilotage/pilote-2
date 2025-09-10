@@ -326,23 +326,21 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                     </td>
                   </tr>
                   {détailTerritoireSélectionné.code === territoireCode ? (
-                    configurationFeatureFlipping.propositionValeurAvancement ? (
-                      !(
-                        estAutoriseAProposerUneValeurAvancement &&
-                        detailIndicateurDuTerritoire.valeurAvancementMandat !=
-                          null &&
-                        detailIndicateurDuTerritoire.proposition == null
-                      ) ? (
-                        <LignesPropositionValeurAvancementV2
-                          estAutoriseAAccepterLesPropositionsDeValeurAvancement={
-                            estAutoriseAAccepterLesPropositionsDeValeurAvancement
-                          }
-                          estAutoriseAProposerUneValeurAvancement={
-                            estAutoriseAProposerUneValeurAvancement
-                          }
-                          propositionEstVisible={propositionEstVisible}
-                        />
-                      ) : null
+                    !(
+                      estAutoriseAProposerUneValeurAvancement &&
+                      detailIndicateurDuTerritoire.valeurAvancementMandat !=
+                        null &&
+                      detailIndicateurDuTerritoire.proposition == null
+                    ) ? (
+                      <LignesPropositionValeurAvancementV2
+                        estAutoriseAAccepterLesPropositionsDeValeurAvancement={
+                          estAutoriseAAccepterLesPropositionsDeValeurAvancement
+                        }
+                        estAutoriseAProposerUneValeurAvancement={
+                          estAutoriseAProposerUneValeurAvancement
+                        }
+                        propositionEstVisible={propositionEstVisible}
+                      />
                     ) : null
                   ) : null}
                   {informationsIndicateursComparés.map(
