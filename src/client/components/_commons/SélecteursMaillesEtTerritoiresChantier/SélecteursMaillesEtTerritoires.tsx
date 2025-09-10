@@ -9,7 +9,6 @@ import { territoiresAccessiblesEnLectureStore } from "@/stores/useTerritoiresSto
 import { trierParOrdreAlphabétique } from "@/client/utils/arrays";
 import {
   InputGroupeOptionGroupée,
-  InputGroupeOptions,
   InputGroupeOptionsGroupées,
 } from "@/components/_commons/InputGroupe/InputGroupe.interface";
 import { MultiSelectOption } from "@/components/_commons/MultiSelect/MultiSelect.interface";
@@ -47,7 +46,7 @@ const construireLaListeDOptions = (
 
   const optionsRégions = {
     label: "Régions",
-    options: trierParOrdreAlphabétique<InputGroupeOptions>(
+    options: trierParOrdreAlphabétique(
       territoiresDisponiblesReg.map((region) =>
         générerLesOptions(
           region.nomAffiché,
@@ -63,7 +62,7 @@ const construireLaListeDOptions = (
 
   const optionsDépartements = {
     label: "Départements",
-    options: trierParOrdreAlphabétique<InputGroupeOptions>(
+    options: trierParOrdreAlphabétique(
       territoiresDisponiblesDept.map((departement) =>
         générerLesOptions(
           departement.nomAffiché,

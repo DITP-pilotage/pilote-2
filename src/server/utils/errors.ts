@@ -1,3 +1,5 @@
+import { z } from "zod";
+
 export class NonAutorisé extends Error {}
 
 export class TerritoireNonAutoriséErreur extends NonAutorisé {
@@ -55,3 +57,16 @@ export class ProfilNonAutorisésSuppressionUtilisateurErreur extends NonAutoris�
     super("Le profil n'est pas autorisé pour la suppression de l'utilisateur");
   }
 }
+
+export const isENOENTError = (err: unknown) =>
+  z.object({ code: z.literal("ENOENT") }).safeParse(err).success;
+
+export const isUtilisateurDoublonError = (error: unknown) =>
+  z
+    .object({
+      message: z.literal("Request failed with status code 409"),
+      responseData: z.object({
+        errorMessage: z.literal("User exists with same username"),
+      }),
+    })
+    .safeParse(error).success;

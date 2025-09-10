@@ -80,7 +80,7 @@ describe("VerifierImportIndicateurHandler", () => {
         .build();
       await getContainer("authentification")
         .resolve("utilisateurRepository")
-        .créerOuMettreÀJour(utilisateur as any, auteurId);
+        .créerOuMettreÀJour(utilisateur, auteurId);
 
       nock(BASE_URL_VALIDATA)
         .post("/validate")
@@ -150,7 +150,7 @@ describe("VerifierImportIndicateurHandler", () => {
         .build();
       await getContainer("authentification")
         .resolve("utilisateurRepository")
-        .créerOuMettreÀJour(utilisateur as any, auteurId);
+        .créerOuMettreÀJour(utilisateur, auteurId);
 
       const formData = new FormData();
       const file = mock<File>();
@@ -222,7 +222,7 @@ describe("VerifierImportIndicateurHandler", () => {
         .build();
       await getContainer("authentification")
         .resolve("utilisateurRepository")
-        .créerOuMettreÀJour(utilisateur as any, auteurId);
+        .créerOuMettreÀJour(utilisateur, auteurId);
 
       const formData = new FormData();
       const file = mock<File>();
@@ -300,7 +300,7 @@ describe("VerifierImportIndicateurHandler", () => {
       .build();
     await getContainer("authentification")
       .resolve("utilisateurRepository")
-      .créerOuMettreÀJour(utilisateur as any, auteurId);
+      .créerOuMettreÀJour(utilisateur, auteurId);
 
     nock(BASE_URL_VALIDATA)
       .post("/validate")
@@ -403,7 +403,7 @@ describe("VerifierImportIndicateurHandler", () => {
       .build();
     await getContainer("authentification")
       .resolve("utilisateurRepository")
-      .créerOuMettreÀJour(utilisateur as any, auteurId);
+      .créerOuMettreÀJour(utilisateur, auteurId);
 
     nock(BASE_URL_VALIDATA)
       .post("/validate")

@@ -43,7 +43,7 @@ describe("PrismaErreurValidationFichierRepository", () => {
         .build();
       await getContainer("authentification")
         .resolve("utilisateurRepository")
-        .créerOuMettreÀJour(utilisateur as any, auteurId);
+        .créerOuMettreÀJour(utilisateur, auteurId);
 
       const rapport = new DetailValidationFichierBuilder()
         .avecId("a0c086eb-21e2-4f00-9ca8-4b0fcce133ad")

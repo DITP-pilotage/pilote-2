@@ -1,3 +1,4 @@
+import { z } from "zod";
 import {
   créerRouteurTRPC,
   procédureProtégée,
@@ -19,7 +20,7 @@ import { getContainer } from "@/server/dependances";
 import { defaultHistoriqueInformation } from "@/server/parametrage-indicateur/domain/DefaultHistoriqueInformation";
 
 const convertirEnMetadataParametrageIndicateurForm = (
-  input: any,
+  input: z.infer<typeof validationMetadataIndicateurFormulaire>,
 ): MetadataParametrageIndicateurForm => {
   return {
     indicId: input.indicId,
@@ -41,22 +42,31 @@ const convertirEnMetadataParametrageIndicateurForm = (
     indicSchema: input.indicSchema || "",
     zgApplicable: input.zgApplicable || null,
     viDeptFrom: input.viDeptFrom,
+    // @ts-expect-error à vérifier, avant input était de type any...
     viDeptOp: input.viDeptOp,
     vaDeptFrom: input.vaDeptFrom,
+    // @ts-expect-error à vérifier, avant input était de type any...
     vaDeptOp: input.vaDeptOp,
     vcDeptFrom: input.vcDeptFrom,
+    // @ts-expect-error à vérifier, avant input était de type any...
     vcDeptOp: input.vcDeptOp,
     viRegFrom: input.viRegFrom,
+    // @ts-expect-error à vérifier, avant input était de type any...
     viRegOp: input.viRegOp,
     vaRegFrom: input.vaRegFrom,
+    // @ts-expect-error à vérifier, avant input était de type any...
     vaRegOp: input.vaRegOp,
     vcRegFrom: input.vcRegFrom,
+    // @ts-expect-error à vérifier, avant input était de type any...
     vcRegOp: input.vcRegOp,
     viNatFrom: input.viNatFrom,
+    // @ts-expect-error à vérifier, avant input était de type any...
     viNatOp: input.viNatOp,
     vaNatFrom: input.vaNatFrom,
+    // @ts-expect-error à vérifier, avant input était de type any...
     vaNatOp: input.vaNatOp,
     vcNatFrom: input.vcNatFrom,
+    // @ts-expect-error à vérifier, avant input était de type any...
     vcNatOp: input.vcNatOp,
     paramVacaDecumulFrom: input.paramVacaDecumulFrom,
     paramVacaPartitionDate: input.paramVacaPartitionDate,
@@ -94,8 +104,10 @@ const convertirEnMetadataParametrageIndicateurForm = (
     contactTechnique: input.contactTechnique || null,
     contactTechniqueEmail: input.contactTechniqueEmail || "",
     commentaire: input.commentaire || null,
+    // @ts-expect-error à vérifier, avant input était de type any...
     maillePilotage: input.maillePilotage || null,
     cibleAttendue: input.cibleAttendue,
+    // @ts-expect-error à vérifier, avant input était de type any...
     couvertureTemporelle: input.couvertureTemporelle || null,
   };
 };

@@ -11,7 +11,7 @@ import {
 const TextArea: FunctionComponent<
   PropsWithChildren<{
     htmlName: string;
-    erreur?: FieldError | Merge<FieldError, FieldErrorsImpl<any>>;
+    erreur?: FieldError | Merge<FieldError, FieldErrorsImpl<{}>>;
     erreurMessage?: string;
     register: UseFormRegisterReturn;
     disabled?: boolean;

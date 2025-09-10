@@ -1,9 +1,6 @@
 import { FunctionComponent, useEffect, useState } from "react";
 import MultiSelect from "@/client/components/_commons/MultiSelectNew/MultiSelect";
-import {
-  MultiSelectOptions,
-  MultiSelectOptionsGroupées,
-} from "@/client/components/_commons/MultiSelectNew/MultiSelect.interface";
+import { MultiSelectOptionsGroupées } from "@/client/components/_commons/MultiSelectNew/MultiSelect.interface";
 import { trierParOrdreAlphabétique } from "@/client/utils/arrays";
 import { PerimetreMinisteriel } from "@/server/gestion-utilisateur/domain/PerimetreMinisteriel";
 
@@ -31,7 +28,7 @@ export const MultiSelectPérimètreMinistériel: FunctionComponent<
     setOptionsGroupées([
       {
         label: "Périmètres Ministériels",
-        options: trierParOrdreAlphabétique<MultiSelectOptions>(
+        options: trierParOrdreAlphabétique(
           listePerimetresMinisteriel.map((périmètreMinistériel) => ({
             label: périmètreMinistériel.nom,
             value: périmètreMinistériel.id,

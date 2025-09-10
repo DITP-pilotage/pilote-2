@@ -1,9 +1,6 @@
 import { FunctionComponent, useEffect, useState } from "react";
 import MultiSelect from "@/client/components/_commons/MultiSelect/MultiSelect";
-import {
-  MultiSelectOptions,
-  MultiSelectOptionsGroupées,
-} from "@/client/components/_commons/MultiSelect/MultiSelect.interface";
+import { MultiSelectOptionsGroupées } from "@/client/components/_commons/MultiSelect/MultiSelect.interface";
 import { trierParOrdreAlphabétique } from "@/client/utils/arrays";
 import { ChantierSynthétisé } from "@/server/domain/chantier/Chantier.interface";
 
@@ -34,7 +31,7 @@ const MultiSelectChantier: FunctionComponent<MultiSelectChantierProps> = ({
       setOptionsGroupées([
         {
           label: "Chantiers",
-          options: trierParOrdreAlphabétique<MultiSelectOptions>(
+          options: trierParOrdreAlphabétique(
             chantiers.map((chantier) => ({
               label: `${chantier.id} - ${chantier.nom}`,
               value: chantier.id,

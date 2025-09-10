@@ -1,17 +1,18 @@
 import KcAdminClient from "@keycloak/keycloak-admin-client";
-
 import { UtilisateurIAMRepository } from "@/server/domain/utilisateur/UtilisateurIAMRepository";
 import logger from "@/server/infrastructure/Logger";
 import UtilisateurPourIAM from "@/server/domain/utilisateur/UtilisateurIAM.interface";
 import { configuration } from "@/config";
+import { isUtilisateurDoublonError } from "@/server/utils/errors";
 
 const KEYCLOAK_REALM = "DITP";
 
 const DAY_IN_SECONDS = 3600 * 24;
+
 export default class UtilisateurIAMKeycloakRepository
   implements UtilisateurIAMRepository
 {
-  private kcAdminClient: any;
+  private kcAdminClient: KcAdminClient | undefined;
 
   constructor(
     private readonly keycloakUrl: string,
@@ -20,17 +21,18 @@ export default class UtilisateurIAMKeycloakRepository
   ) {}
 
   async supprime(email: string): Promise<void> {
-    await this.loginKcAdminClient();
+    const kcAdminClient = await this.loginKcAdminClient();
 
-    const utilisateur = await this.kcAdminClient.users.findOne({
+    const [utilisateur] = await kcAdminClient.users.find({
       realm: KEYCLOAK_REALM,
       email: email,
+      exact: true,
     });
 
-    if (utilisateur.length > 0) {
-      await this.kcAdminClient.users.del({
+    if (utilisateur?.id) {
+      await kcAdminClient.users.del({
         realm: KEYCLOAK_REALM,
-        id: utilisateur[0].id,
+        id: utilisateur.id,
       });
       logger.info(`Utilisateur ${email} supprimé.`);
     }
@@ -60,6 +62,10 @@ export default class UtilisateurIAMKeycloakRepository
   }
 
   private async importeUtilisateurIAM(utilisateur: UtilisateurPourIAM) {
+    if (!this.kcAdminClient) {
+      throw new Error("kcAdminClient non initialisé");
+    }
+
     const email = utilisateur.email;
     try {
       const utilisateurIAM = await this.kcAdminClient.users.create({
@@ -85,11 +91,8 @@ export default class UtilisateurIAMKeycloakRepository
         actions: ["UPDATE_PASSWORD"],
       });
       logger.info("Email envoyé à l'utilisateur.");
-    } catch (error: any) {
-      if (
-        error.message == "Request failed with status code 409" ||
-        error?.responseData?.errorMessage === "User exists with same username"
-      ) {
+    } catch (error: unknown) {
+      if (isUtilisateurDoublonError(error)) {
         logger.warn(`L'email ${email} existe déjà.`);
       } else {
         logger.error(error);

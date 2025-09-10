@@ -12,6 +12,7 @@ import { parseForm } from "@/server/import-indicateur/infrastructure/handlers/Pa
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
 import { PublierFichierIndicateurImporteUseCase } from "@/server/import-indicateur/usecases/PublierFichierIndicateurImporteUseCase";
 import { VerifierFichierIndicateurImporteUseCase } from "@/server/import-indicateur/usecases/VerifierFichierIndicateurImporteUseCase";
+import { isENOENTError } from "@/server/utils/errors";
 
 function convertirEnTableauPourCSV(
   donnees: ImportDonneeIndicateurAPIContrat[],
@@ -89,8 +90,8 @@ export class ImportDonneeIndicateurAPIHandler {
         await new Promise<void>(async (resolve, reject) => {
           try {
             await stat(uploadDir);
-          } catch (error: any) {
-            if (error.code === "ENOENT") {
+          } catch (error) {
+            if (isENOENTError(error)) {
               await mkdir(uploadDir, { recursive: true });
             } else {
               reject(error);

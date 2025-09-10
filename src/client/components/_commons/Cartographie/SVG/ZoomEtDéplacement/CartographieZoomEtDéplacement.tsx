@@ -25,7 +25,8 @@ const CartographieZoomEtDéplacement: FunctionComponent<
   const canvas = useMemo(() => d3Select(svg).selectChild(".canvas"), [svg]);
 
   const auZoomCallback = useCallback(
-    (évènement: any) => canvas.attr("transform", évènement.transform),
+    (évènement: { transform: string | null }) =>
+      canvas.attr("transform", évènement.transform),
     [canvas],
   );
 

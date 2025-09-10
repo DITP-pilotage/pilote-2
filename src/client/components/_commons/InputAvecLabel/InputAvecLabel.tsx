@@ -13,7 +13,7 @@ interface InputAvecLabelProps {
   libellé: string;
   htmlName: string;
   texteAide?: string;
-  erreur?: FieldError | Merge<FieldError, FieldErrorsImpl<any>>;
+  erreur?: FieldError | Merge<FieldError, FieldErrorsImpl<{}>>;
   register: UseFormRegisterReturn;
   disabled?: boolean;
 }
