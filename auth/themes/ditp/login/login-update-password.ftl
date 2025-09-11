@@ -41,11 +41,11 @@
                           </div>
                           <div class="fr-messages-group" id="password-new-input-messages" aria-live="assertive">
                             <p class="fr-message" id="password-new-input-message">Votre mot de passe doit contenir au moins :</p>
-                            <p class="fr-message fr-message--info" id="password-new-input-message-info">15 caractères minimum</p>
-                            <p class="fr-message fr-message--info" id="password-new-input-message-info-1">1 chiffre</p>
-                            <p class="fr-message fr-message--info" id="password-new-input-message-info-2">1 lettre minuscule</p>
-                            <p class="fr-message fr-message--info" id="password-new-input-message-info-3">1 lettre majuscule</p>
-                            <p class="fr-message fr-message--info" id="password-new-input-message-info-4">un caractère spécial (exemples : @ $! % &)</p>
+                            <p class="fr-message fr-message--error" id="password-new-input-message-length">15 caractères minimum</p>
+                            <p class="fr-message fr-message--error" id="password-new-input-message-number">1 chiffre</p>
+                            <p class="fr-message fr-message--error" id="password-new-input-message-lowercase">1 lettre minuscule</p>
+                            <p class="fr-message fr-message--error" id="password-new-input-message-uppercase">1 lettre majuscule</p>
+                            <p class="fr-message fr-message--error" id="password-new-input-message-special">un caractère spécial (exemples : @ $! % &)</p>
                           </div>
                           <div class="fr-password__checkbox fr-checkbox-group fr-checkbox-group--sm">
                             <input aria-label="Afficher le mot de passe" id="password-confirm-show" type="checkbox" aria-describedby="password-confirm-show-messages">
@@ -66,5 +66,31 @@
           </div>
         </div>
       </div>
+      <script>
+        const passwordInput = document.getElementById('password-new-input');
+      
+        const conditions = {
+          length: val => val.length >= 15,
+          number: val => /\d/.test(val),
+          lowercase: val => /[a-z]/.test(val),
+          uppercase: val => /[A-Z]/.test(val),
+          special: val => /[!@#$%^&*(),.?":{}|<>_\-\\[\]/;'`~+=]/.test(val)
+        };
+      
+        passwordInput.addEventListener('input', () => {
+          const val = passwordInput.value;
+      
+          for (const [condKey, test] of Object.entries(conditions)) {
+            const element = document.getElementById('password-new-input-message-' + condKey);
+            if (test(val)) {
+              element.classList.add('fr-message--valid'); // vous pouvez ajouter un style
+              element.classList.remove('fr-message--error');
+            } else {
+              element.classList.remove('fr-message--valid');
+              element.classList.add('fr-message--error');
+            }
+          }
+        });
+      </script>
     </main>
   </@layout.registrationLayout>
