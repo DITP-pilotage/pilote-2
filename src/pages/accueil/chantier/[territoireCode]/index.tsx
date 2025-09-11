@@ -213,13 +213,6 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({
     territoireCode,
   );
 
-  const repartitionMeteosChantiers =
-    await new RecupererRepartitionsMeteoChantiersUseCase({
-      chantierRepository: dependencies.getChantierRepository(),
-    })
-      .run(session.habilitations, territoireCode, filtres, axes)
-      .then(presenterEnRépartitionsMétéosChantiersContrat);
-
   const chantiersAvecAlertes =
     filtresAlertes.estEnAlerteÉcart ||
     filtresAlertes.estEnAlerteBaisse ||
@@ -256,6 +249,18 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({
           );
         })
       : chantiers;
+
+  const repartitionMeteosChantiers =
+    await new RecupererRepartitionsMeteoChantiersUseCase({
+      chantierRepository: dependencies.getChantierRepository(),
+    })
+      .run(
+        territoireCode,
+        filtres,
+        axes,
+        chantiersAvecAlertes.map((chantierAvecAlerte) => chantierAvecAlerte.id),
+      )
+      .then(presenterEnRépartitionsMétéosChantiersContrat);
 
   const récupérerStatistiquesChantiersUseCase =
     new RécupérerStatistiquesAvancementChantiersUseCase(
