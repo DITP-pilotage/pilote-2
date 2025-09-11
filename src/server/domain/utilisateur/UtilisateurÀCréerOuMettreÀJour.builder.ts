@@ -2,6 +2,7 @@ import { faker } from "@faker-js/faker/locale/fr";
 import Chantier from "@/server/domain/chantier/Chantier.interface";
 import PérimètreMinistériel from "@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface";
 import { Territoire } from "@/server/domain/territoire/Territoire.interface";
+import { HabilitationsÀCréerOuMettreÀJourCalculées } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
 import {
   profilsCodes,
   UtilisateurÀCréerOuMettreÀJour,
@@ -16,7 +17,7 @@ export default class UtilisateurÀCréerOuMettreÀJourBuilder {
 
   private _profil: UtilisateurÀCréerOuMettreÀJour["profil"];
 
-  private readonly _habilitations: UtilisateurÀCréerOuMettreÀJour["habilitations"];
+  private readonly _habilitations: HabilitationsÀCréerOuMettreÀJourCalculées;
 
   private readonly _fonction: UtilisateurÀCréerOuMettreÀJour["fonction"];
 
@@ -38,11 +39,25 @@ export default class UtilisateurÀCréerOuMettreÀJourBuilder {
         périmètres: [],
         territoires: [],
       },
+      gestionUtilisateur: {
+        chantiers: [],
+        périmètres: [],
+        territoires: [],
+      },
+      saisieIndicateur: {
+        chantiers: [],
+        périmètres: [],
+        territoires: [],
+      },
       responsabilite: {
         chantiers: [],
+        périmètres: [],
+        territoires: [],
       },
       saisieCommentaire: {
         chantiers: [],
+        périmètres: [],
+        territoires: [],
       },
     };
   }
@@ -129,7 +144,7 @@ export default class UtilisateurÀCréerOuMettreÀJourBuilder {
     return this;
   }
 
-  build(): UtilisateurÀCréerOuMettreÀJour {
+  build() {
     return {
       nom: this._nom,
       prénom: this._prénom,

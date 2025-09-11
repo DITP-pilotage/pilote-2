@@ -26,11 +26,6 @@ export class TerritoireSQLRepository implements TerritoireRepository {
     return territoires.map((t) => this._mapperVersLeDomaine(t));
   }
 
-  async récupérerTousNew() {
-    const territoires = await prisma.territoire.findMany();
-    return territoires.map((t) => this._mapperVersLeDomaine(t));
-  }
-
   async récupérerListe(codes: Territoire["code"][]) {
     const territoires = await prisma.territoire.findMany({
       where: { code: { in: codes } },

@@ -10,6 +10,7 @@ import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilita
 import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
 import { profilsInfolettreCoordinateur } from "@/server/domain/utilisateur/Utilisateur.interface";
 import { ContactInfoLettresService } from "@/server/gestion-utilisateur/domain/ports/ContactInfoLettresService";
+import { NotFoundError } from "@/server/app/error-boundary/not-found-error";
 
 type Dependencies = {
   utilisateurRepository: UtilisateurRepository;
@@ -72,7 +73,7 @@ export default class ReactiverUnUtilisateurUseCase {
     );
 
     if (!utilisateurAReactiver) {
-      throw new Error("Le compte à supprimer n'existe pas.");
+      throw new NotFoundError("Le compte à supprimer n'existe pas.");
     }
 
     const habilitation = new Habilitation(habilitations);
@@ -99,6 +100,7 @@ export default class ReactiverUnUtilisateurUseCase {
         utilisateurAReactiver.email,
         utilisateurAReactiver.nom,
         utilisateurAReactiver.prénom,
+        utilisateurAReactiver.profil,
         listesDiffusion,
       );
     }

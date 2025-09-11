@@ -2,6 +2,7 @@ import "@gouvfr/dsfr/dist/component/form/form.min.css";
 import "@gouvfr/dsfr/dist/utility/icons/icons-device/icons-device.min.css";
 import "@gouvfr/dsfr/dist/utility/icons/icons-media/icons-media.min.css";
 import { useState } from "react";
+import clsx from "clsx";
 import BarreLatérale from "@/components/_commons/BarreLatérale/BarreLatérale";
 import BarreLatéraleEncart from "@/components/_commons/BarreLatérale/BarreLatéraleEncart/BarreLatéraleEncart";
 import Commentaires from "@/components/_commons/CommentairesNew/Commentaires";
@@ -24,13 +25,13 @@ import {
 import Alerte from "@/client/components/_commons/Alerte/Alerte";
 import ResponsablesPageChantier from "@/components/PageChantier/ResponsablesChantier/ResponsablesChantier";
 import Indicateur from "@/server/domain/indicateur/Indicateur.interface";
-import BandeauInformationMajDonnees from "@/components/PageChantier/BandeauInformationMajDonnees/BandeauInformationMajDonnees";
 import BandeauInformation from "@/client/components/_commons/BandeauInformation/BandeauInformation";
 import { PanelMenuNavigation } from "@/components/_commons/PanelMenuNavigation/PanelMenuNavigation";
 import {
   pageChantier,
   useTerritoireSelectionne,
 } from "@/components/PageChantier/PageChantierServerSideContext";
+import { BandeauEntetePageChantier } from "@/components/PageChantier/BandeauEntetePageChantier";
 import AvancementChantier from "./AvancementChantier/AvancementChantier";
 import PageChantierEnTête from "./EnTête/EnTête";
 import Cartes from "./Cartes/Cartes";
@@ -133,13 +134,21 @@ const PageChantier = () => {
 
   const pathname = "/chantier/[id]/[territoireCode]";
 
+  const estChantierArchive = chantier.statut === "ARCHIVE";
+
   return (
     <PageChantierStyled className="flex">
       <BarreLatérale
         estOuvert={estOuverteBarreLatérale}
         setEstOuvert={setEstOuverteBarreLatérale}
       >
-        <BarreLatéraleEncart>
+        <BarreLatéraleEncart
+          className={
+            chantier.statut !== "ARCHIVE"
+              ? "bg-dsfr-blue-france-925"
+              : "bg-dsfr-grey-925 !text-dsfr-grey-200"
+          }
+        >
           <PageChantierEnTête
             afficheLeBoutonFicheConducteur={
               estAutoriseAVoirLeBoutonFicheConducteur
@@ -154,7 +163,11 @@ const PageChantier = () => {
           rubriques={listeRubriques}
         />
       </BarreLatérale>
-      <main className="fr-pb-5w w-full">
+      <main
+        className={clsx("fr-pb-5w w-full", {
+          "!bg-dsfr-grey-1000": estChantierArchive,
+        })}
+      >
         <div className="horizontal-panel fr-background-blue-france-850 fr-grid-row fr-pt-2w">
           <PanelMenuNavigation
             estAutoriseAVoirLeSelecteurDeMaille={
@@ -166,19 +179,15 @@ const PageChantier = () => {
             setEstOuverteBarreLatérale={setEstOuverteBarreLatérale}
             territoireCode={territoireCode}
           />
+          <BandeauEntetePageChantier
+            alerteMiseAJourIndicateur={alerteMiseAJourIndicateur}
+          />
         </div>
         <div className="fr-container--fluid fr-py-2w fr-px-md-2w titre-chantier-impression">
           <Titre baliseHtml="h1" className="fr-h2 fr-mb-0 fr-text--center">
             {chantier.nom}
           </Titre>
         </div>
-        {alerteMiseAJourIndicateur ? (
-          <BandeauInformationMajDonnees
-            bandeauType="WARNING"
-            message="un ou plusieurs indicateurs de cette politique prioritaire nécessitent au moins une mise à jour de leur valeur d'avancement par l'équipe projet."
-            titre="Mise à jour des données requises : "
-          />
-        ) : null}
         {mailleSourceDonnees === "regionale" ? (
           <BandeauInformation bandeauType="INFO" fermable={false}>
             En l'absence de données départementales, les valeurs des indicateurs
@@ -193,7 +202,9 @@ const PageChantier = () => {
               <TitreInfobulleConteneur className="fr-mb-1w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0">
                 <Titre
                   baliseHtml="h2"
-                  className="fr-h4 fr-mb-0 fr-py-1v"
+                  className={clsx("fr-h4 fr-mb-0 fr-py-1v", {
+                    "!text-dsfr-grey-50": estChantierArchive,
+                  })}
                   estInline
                 >
                   Avancement du chantier
@@ -227,6 +238,7 @@ const PageChantier = () => {
                 donneesComparaisonDuTauxDAvancement={
                   donneesComparaisonDuTauxDAvancement
                 }
+                estChantierArchive={estChantierArchive}
                 jalon={jalon}
                 mailleQuery={mailleQuery}
                 mailleSelectionnee={mailleSelectionnee}
@@ -237,7 +249,9 @@ const PageChantier = () => {
               <TitreInfobulleConteneur className="fr-mb-1w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0">
                 <Titre
                   baliseHtml="h2"
-                  className="fr-h4 fr-mb-0 fr-py-1v"
+                  className={clsx("fr-h4 fr-mb-0 fr-py-1v", {
+                    "!text-dsfr-grey-50": estChantierArchive,
+                  })}
                   estInline
                 >
                   Météo et synthèse des résultats
@@ -254,7 +268,12 @@ const PageChantier = () => {
             <section className="rubrique" id="responsables">
               <Titre
                 baliseHtml="h2"
-                className="fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0"
+                className={clsx(
+                  "fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0",
+                  {
+                    "!text-dsfr-grey-50": estChantierArchive,
+                  },
+                )}
               >
                 Responsables
               </Titre>
@@ -262,6 +281,7 @@ const PageChantier = () => {
                 afficheResponsablesLocaux={
                   territoireSélectionné.maille !== "nationale"
                 }
+                estChantierArchive={estChantierArchive}
                 libelléChantier={chantier.nom}
                 listeCoordinateursTerritorials={listeCoordinateursTerritorials}
                 listeDirecteursProjets={chantier.responsables.directeursProjet}
@@ -277,7 +297,12 @@ const PageChantier = () => {
               <section className="rubrique" id="cartes">
                 <Titre
                   baliseHtml="h2"
-                  className="fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0"
+                  className={clsx(
+                    "fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0",
+                    {
+                      "!text-dsfr-grey-50": estChantierArchive,
+                    },
+                  )}
                 >
                   Répartition géographique
                 </Titre>
@@ -290,7 +315,9 @@ const PageChantier = () => {
               <TitreInfobulleConteneur className="fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0">
                 <Titre
                   baliseHtml="h2"
-                  className="fr-h4 fr-mb-0 fr-py-1v"
+                  className={clsx("fr-h4 fr-mb-0 fr-py-1v", {
+                    "!text-dsfr-grey-50": estChantierArchive,
+                  })}
                   estInline
                 >
                   Objectifs
@@ -307,7 +334,12 @@ const PageChantier = () => {
               <section className="rubrique" id="indicateurs">
                 <Titre
                   baliseHtml="h2"
-                  className="fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-3w fr-mx-2w fr-mx-md-0"
+                  className={clsx(
+                    "fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-3w fr-mx-2w fr-mx-md-0",
+                    {
+                      "!text-dsfr-grey-50": estChantierArchive,
+                    },
+                  )}
                 >
                   {`Indicateurs (${indicateurs.length})`}
                 </Titre>
@@ -359,7 +391,9 @@ const PageChantier = () => {
               <TitreInfobulleConteneur className="fr-mb-2w fr-mt-3v fr-mt-md-3w fr-mx-2w fr-mx-md-0">
                 <Titre
                   baliseHtml="h2"
-                  className="fr-h4 fr-mb-0 fr-py-1v"
+                  className={clsx("fr-h4 fr-mb-0 fr-py-1v", {
+                    "!text-dsfr-grey-50": estChantierArchive,
+                  })}
                   estInline
                 >
                   Commentaires du chantier
@@ -374,6 +408,7 @@ const PageChantier = () => {
               </TitreInfobulleConteneur>
               <Commentaires
                 commentaires={commentaires[chantier.id]}
+                estChantierArchive={estChantierArchive}
                 maille={territoireSélectionné.maille}
                 modeÉcriture={estAutoriseAModifierLesPublications}
                 nomTerritoire={territoireSélectionné.nomAffiché}

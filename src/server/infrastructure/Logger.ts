@@ -1,6 +1,6 @@
 import pino, { Logger } from "pino";
 
-class AppLogger {
+class AppLogger implements Pick<Logger, "info" | "error" | "warn"> {
   private readonly _logger: Logger;
 
   constructor() {
@@ -9,19 +9,19 @@ class AppLogger {
     });
   }
 
-  info(...obj: any): void {
+  info(...obj: unknown[]) {
     this._logger.info(obj);
   }
 
-  error(...obj: any): void {
+  error(...obj: unknown[]) {
     this._logger.error(obj);
   }
 
-  warn(...obj: any): void {
+  warn(...obj: unknown[]) {
     this._logger.warn(obj);
   }
 
-  debug(...obj: any): void {
+  debug(...obj: unknown[]) {
     this._logger.debug(obj);
   }
 }

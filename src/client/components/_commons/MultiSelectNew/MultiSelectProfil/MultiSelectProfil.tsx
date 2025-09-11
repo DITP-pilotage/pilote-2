@@ -1,9 +1,6 @@
 import { FunctionComponent, useEffect, useState } from "react";
 import MultiSelect from "@/client/components/_commons/MultiSelectNew/MultiSelect";
-import {
-  MultiSelectOptions,
-  MultiSelectOptionsGroupées,
-} from "@/client/components/_commons/MultiSelectNew/MultiSelect.interface";
+import { MultiSelectOptionsGroupées } from "@/client/components/_commons/MultiSelectNew/MultiSelect.interface";
 import {
   deuxTableauxSontIdentiques,
   trierParOrdreAlphabétique,
@@ -37,7 +34,7 @@ export const MultiSelectProfil: FunctionComponent<MultiSelectProfilsProps> = ({
       setOptionsGroupées([
         {
           label: "Profils",
-          options: trierParOrdreAlphabétique<MultiSelectOptions>(
+          options: trierParOrdreAlphabétique(
             profils.map((profil) => ({
               label: profil.nom,
               value: profil.code,

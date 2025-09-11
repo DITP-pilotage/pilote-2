@@ -10,11 +10,8 @@ import { estLargeurDÉcranActuelleMoinsLargeQue } from "@/stores/useLargeurDÉcr
 import ValeurEtDate from "@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/ValeurEtDate";
 import BarreDeProgression from "@/components/_commons/BarreDeProgression/BarreDeProgression";
 import IndicateurBlocIndicateurTuile from "@/components/_commons/IndicateursChantier/Bloc/indicateurBlocIndicateurTuile";
-import { ModalePropositionValeurAvancement } from "@/components/_commons/IndicateursChantier/Bloc/ModalePropositionValeurAvancement/ModalePropositionValeurAvancement";
-import Infobulle from "@/components/_commons/Infobulle/Infobulle";
-import IndicateurTendance from "@/components/_commons/IndicateursChantier/Bloc/Tendances/IndicateurTendance";
+import { IndicateurTendance } from "@/components/_commons/IndicateursChantier/Bloc/Tendances/IndicateurTendance";
 import { IndicateurPropositionValeur } from "@/components/_commons/IndicateursChantier/Bloc/IndicateurPropositionValeur";
-import { LignesPropositionValeurAvancement } from "@/components/_commons/IndicateursChantier/Bloc/LignesPropositionValeurAvancement";
 import { BlocIndicateurProvider } from "@/components/PageChantier/useBlocIndicateurContext";
 import { LignesPropositionValeurAvancementV2 } from "@/components/_commons/IndicateursChantier/Bloc/LignesPropositionValeurAvancementV2";
 import {
@@ -22,18 +19,10 @@ import {
   useTerritoireSelectionne,
 } from "@/components/PageChantier/PageChantierServerSideContext";
 import { BadgeIndicateurEnAlerte } from "@/components/_commons/IndicateursChantier/Bloc/BadgeIndicateurEnAlerte";
-import useIndicateurAlerteDateMaj from "@/components/_commons/IndicateursChantier/Bloc/useIndicateurAlerteDateMaj";
 import { BadgeIndicateurBarometre } from "@/components/_commons/IndicateursChantier/Bloc/BadgeIndicateurBarometre";
+import { LigneIndicateurDatePrevisionnelle } from "@/components/_commons/IndicateursChantier/Bloc/LigneIndicateurDatePrevisionnelle";
 import IndicateurBlocStyled from "./IndicateurBloc.styled";
 import { useIndicateurBloc } from "./useIndicateurBloc";
-import { ModalePropositionValeurAvancementV2 } from "./ModalePropositionValeurAvancementV2/ModalePropositionValeurAvancementV2";
-
-export const ID_HTML_MODALE_SUPPRESSION_VALEUR_DAVANCEMENT =
-  "modale-suppression-valeur-davancement";
-export const ID_HTML_MODALE_PROPOSITION_VALEUR_DAVANCEMENT =
-  "modale-proposition-valeur-davancement";
-export const ID_HTML_MODALE_ACCEPTER_PROPOSITION_VALEUR_DAVANCEMENT =
-  "modale-accepter-proposition-valeur-davancement";
 
 interface IndicateurBlocProps {
   indicateur: Indicateur;
@@ -53,7 +42,6 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
     territoireCode,
     territoiresCompares,
     mailleQuery,
-    mailleSelectionnee,
     jalon,
     cartographieDroiteIndicateur,
     cartographieGaucheIndicateur,
@@ -79,16 +67,11 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
 
   const detailsIndicateur = détailsIndicateurs[indicateur.id];
 
-  const variableContenuFFPropositionValeurAvancementV2 =
-    configurationFeatureFlipping.propositionValeurAvancementV2;
-
   const {
     dateDeMiseAJourIndicateur,
     dateProchaineDateMaj,
     dateProchaineDateValeurAvancement,
     dateValeurAvancement,
-    indicateurNonAJour,
-    indicateurEstApplicable,
   } = useIndicateurBloc(detailsIndicateur, territoireCode);
 
   const informationsIndicateursComparés = detailTerritoiresCompares
@@ -102,14 +85,6 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
         indicateurDétailsTerritoire2.données.codeInsee,
       ),
     );
-
-  const { estIndicateurEnAlerte } = useIndicateurAlerteDateMaj(
-    indicateurNonAJour,
-    indicateurEstApplicable,
-  );
-
-  const propositionSurMailleDesactivee =
-    indicateur.mailleRegAgregee && mailleSelectionnee == "regionale";
 
   const getCalculAvancementMessage = (
     valeurInitiale: number | null,
@@ -173,10 +148,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
             <div className="flex justify-between">
               <div>
                 <Titre baliseHtml="h4" className="fr-text--xl fr-mb-1w">
-                  <BadgeIndicateurEnAlerte
-                    indicateurEstApplicable={indicateurEstApplicable}
-                    indicateurNonAJour={indicateurNonAJour}
-                  />
+                  <BadgeIndicateurEnAlerte />
                   <BadgeIndicateurBarometre />
                   {indicateurNomAvecUnite}
                 </Titre>
@@ -192,35 +164,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                       {dateDeMiseAJourIndicateur ?? "Non renseignée"}
                     </span>
                   </p>
-                  <div
-                    className={`flex align-center w-full relative${estIndicateurEnAlerte ? " fr-text-warning" : " texte-gris"}`}
-                  >
-                    <p className="fr-mb-0 fr-text--xs">
-                      Date prévisionnelle de la prochaine mise à jour des
-                      données (de l'indicateur) :{" "}
-                      <span className="fr-text--bold">
-                        {indicateurEstApplicable
-                          ? (dateProchaineDateMaj ??
-                            "Données requises mais non renseignées par l'équipe projet")
-                          : "Non applicable"}
-                      </span>
-                    </p>
-                    <Infobulle
-                      classNameBouton="infobulle-date-previsionnelle"
-                      classNameInfoBulle="tooltip-accordeon"
-                    >
-                      <p className="fr-text--sm fr-text-title--blue-france">
-                        Date prévisionnelle de mise à jour de l'indicateur :
-                      </p>
-                      <p className="fr-text--sm fr-mb-0">
-                        Elle est calculée à partir de la date de la valeur
-                        d'avancement, de la période de mise à jour et du délai
-                        de disponibilité des données. Plus d'informations dans
-                        l'accordéon "Description de l'indicateur et calendrier
-                        de mise à jour".
-                      </p>
-                    </Infobulle>
-                  </div>
+                  <LigneIndicateurDatePrevisionnelle />
                   <IndicateurPonderation
                     indicateurPondération={
                       detailIndicateurDuTerritoire.pondération ?? null
@@ -235,9 +179,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                     setPropositionEstVisible={setPropositionEstVisible}
                   />
                 </div>
-                {detailIndicateurDuTerritoire.tendance === "BAISSE" ? (
-                  <IndicateurTendance />
-                ) : null}
+                <IndicateurTendance />
               </div>
             </div>
             {estVueTuile ? (
@@ -384,84 +326,21 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                     </td>
                   </tr>
                   {détailTerritoireSélectionné.code === territoireCode ? (
-                    configurationFeatureFlipping.propositionValeurAvancement ? (
+                    !(
                       estAutoriseAProposerUneValeurAvancement &&
                       detailIndicateurDuTerritoire.valeurAvancementMandat !=
                         null &&
-                      detailIndicateurDuTerritoire.proposition == null ? (
-                        <tr className="ligne-creation-proposition-valeur-davancement">
-                          <td colSpan={8}>
-                            {!variableContenuFFPropositionValeurAvancementV2 ? (
-                              <div className="flex w-full justify-end">
-                                {propositionSurMailleDesactivee ? (
-                                  <Infobulle classNameInfoBulle="tooltip-accordeon">
-                                    <p className="fr-text--sm">
-                                      Les résultats de cet indicateur sont
-                                      agrégés depuis le niveau départemental. Il
-                                      n'est donc pas possible de proposer une
-                                      valeur à une autre maille. Vous pouvez,
-                                      soit proposer une valeur directement au
-                                      niveau d'un département ou contacter
-                                      directement le directeur de projet via
-                                      l'onglet Responsables.
-                                    </p>
-                                  </Infobulle>
-                                ) : null}
-                                <button
-                                  aria-controls={
-                                    ID_HTML_MODALE_PROPOSITION_VALEUR_DAVANCEMENT +
-                                    indicateur.id
-                                  }
-                                  className="fr-btn fr-btn--icon-left fr-icon-edit-fill fr-btn--secondary bouton-proposition-valeur-davancement"
-                                  data-fr-opened="false"
-                                  disabled={propositionSurMailleDesactivee}
-                                  type="button"
-                                >
-                                  Proposer une autre valeur d'avancement
-                                </button>
-                              </div>
-                            ) : null}
-                            {!variableContenuFFPropositionValeurAvancementV2 ? (
-                              <ModalePropositionValeurAvancement
-                                detailIndicateur={detailIndicateurDuTerritoire}
-                                generatedHTMLID={
-                                  ID_HTML_MODALE_PROPOSITION_VALEUR_DAVANCEMENT +
-                                  indicateur.id
-                                }
-                                indicateur={indicateur}
-                                territoireCode={territoireCode}
-                                territoireCodeInsee={
-                                  détailTerritoireSélectionné.codeInsee
-                                }
-                                territoireNom={détailTerritoireSélectionné.nom}
-                              />
-                            ) : (
-                              <ModalePropositionValeurAvancementV2
-                                generatedHTMLID={
-                                  ID_HTML_MODALE_PROPOSITION_VALEUR_DAVANCEMENT +
-                                  indicateur.id
-                                }
-                              />
-                            )}
-                          </td>
-                        </tr>
-                      ) : variableContenuFFPropositionValeurAvancementV2 ? (
-                        <LignesPropositionValeurAvancementV2
-                          estAutoriseAAccepterLesPropositionsDeValeurAvancement={
-                            estAutoriseAAccepterLesPropositionsDeValeurAvancement
-                          }
-                          estAutoriseAProposerUneValeurAvancement={
-                            estAutoriseAProposerUneValeurAvancement
-                          }
-                          propositionEstVisible={propositionEstVisible}
-                        />
-                      ) : detailIndicateurDuTerritoire.proposition !== null ? (
-                        <LignesPropositionValeurAvancement
-                          estAutoriseAProposerUneValeurAvancement={
-                            estAutoriseAProposerUneValeurAvancement
-                          }
-                        />
-                      ) : null
+                      detailIndicateurDuTerritoire.proposition == null
+                    ) ? (
+                      <LignesPropositionValeurAvancementV2
+                        estAutoriseAAccepterLesPropositionsDeValeurAvancement={
+                          estAutoriseAAccepterLesPropositionsDeValeurAvancement
+                        }
+                        estAutoriseAProposerUneValeurAvancement={
+                          estAutoriseAProposerUneValeurAvancement
+                        }
+                        propositionEstVisible={propositionEstVisible}
+                      />
                     ) : null
                   ) : null}
                   {informationsIndicateursComparés.map(
@@ -600,7 +479,6 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
               indicateurDétailsParTerritoiresComparés={
                 informationsIndicateursComparés
               }
-              indicateurEstAjour={!indicateurNonAJour}
               mailleQuery={mailleQuery}
               mailsDirecteursProjets={mailsDirecteursProjets}
               nouveauxGraphiquesSontActifs={!!nouveauxGraphiquesSontActifs}

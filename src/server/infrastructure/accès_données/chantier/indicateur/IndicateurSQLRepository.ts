@@ -11,7 +11,6 @@ import { CODES_MAILLES } from "@/server/infrastructure/accès_données/maille/ma
 import {
   DétailsIndicateurMailles,
   DétailsIndicateurs,
-  DétailsIndicateurTerritoire,
 } from "@/server/domain/indicateur/DétailsIndicateur.interface";
 import { Maille } from "@/server/domain/maille/Maille.interface";
 import { CodeInsee } from "@/server/domain/territoire/Territoire.interface";
@@ -19,10 +18,7 @@ import { groupByAndTransform } from "@/client/utils/arrays";
 import Chantier from "@/server/domain/chantier/Chantier.interface";
 import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
 import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
-import {
-  créerDonnéesTerritoires,
-  parseDétailsIndicateur,
-} from "@/server/infrastructure/accès_données/chantier/indicateur/IndicateurSQLParser";
+import { parseDétailsIndicateur } from "@/server/infrastructure/accès_données/chantier/indicateur/IndicateurSQLParser";
 import {
   ProfilCode,
   profilsTerritoriaux,
@@ -175,52 +171,6 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
     return indicateur!.chantier_id;
   }
 
-  async récupérerDétailsTerritoirePourUnIndicateur(
-    indicateurId: string,
-    habilitations: Habilitations,
-    profil: ProfilCode,
-    jalon: number,
-  ): Promise<DétailsIndicateurTerritoire> {
-    const habilitation = new Habilitation(habilitations);
-    const chantiersLecture =
-      habilitation.récupérerListeChantiersIdsAccessiblesEnLecture();
-    const territoiresLecture =
-      habilitation.récupérerListeTerritoireCodesAccessiblesEnLecture();
-
-    const listeIndicateursModel = await prisma.indicateur_territoire.findMany({
-      where: {
-        id: indicateurId,
-        indicateur_identite: {
-          chantier_id: { in: chantiersLecture },
-        },
-        territoire_code: !profilsTerritoriaux.includes(profil)
-          ? { in: territoiresLecture }
-          : undefined,
-      },
-      include: {
-        indicateur_identite: true,
-        indicateur_territoire_jalon: {
-          where: {
-            jalon,
-          },
-        },
-      },
-    });
-
-    if (listeIndicateursModel.length === 0) {
-      throw new ErreurIndicateurNonTrouvé(indicateurId);
-    }
-
-    const territoires = await prisma.territoire.findMany({
-      select: {
-        code: true,
-        code_insee: true,
-      },
-    });
-
-    return créerDonnéesTerritoires(territoires, listeIndicateursModel);
-  }
-
   async récupérerDétailsParMailles(
     id: string,
     habilitations: Habilitations,
@@ -340,59 +290,6 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
     return listePrismaIndicateurIdentite.map((indicateur) =>
       this._mapToDomain(indicateur),
     );
-  }
-
-  async récupérerDétailsParIndicIdEtMaille(
-    indicateurId: string,
-    maille: Maille,
-    jalon: number,
-  ): Promise<DétailsIndicateurs> {
-    const indicateurs = await prisma.indicateur_territoire.findMany({
-      where: {
-        id: indicateurId,
-        maille: CODES_MAILLES[maille],
-        indicateur_identite: {
-          NOT: {
-            type_id: null,
-          },
-        },
-      },
-      include: {
-        indicateur_identite: true,
-        indicateur_territoire_jalon: {
-          where: {
-            jalon,
-          },
-        },
-      },
-    });
-
-    return this._mapDétailsToDomain(indicateurs, jalon);
-  }
-
-  async récupererDétailsParChantierIdEtTerritoire(
-    chantierId: string,
-    territoireCodes: string[],
-    jalon: number,
-  ): Promise<DétailsIndicateurs> {
-    const indicateurs = await prisma.indicateur_territoire.findMany({
-      where: {
-        territoire_code: { in: territoireCodes },
-        indicateur_identite: {
-          chantier_id: chantierId,
-          statut: "PUBLIE",
-          NOT: {
-            type_id: null,
-          },
-        },
-      },
-      include: {
-        indicateur_identite: true,
-        indicateur_territoire_jalon: true,
-      },
-    });
-
-    return this._mapDétailsToDomain(indicateurs, jalon);
   }
 
   async recupererListeIndicateursPrisEnCompteDansCalculAvancementSurAuMoinsUnTerritoire(

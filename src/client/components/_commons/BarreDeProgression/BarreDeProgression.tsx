@@ -1,6 +1,6 @@
 import { FunctionComponent, ReactNode } from "react";
 import Infobulle from "@/client/components/_commons/Infobulle/Infobulle";
-import BarreDeProgressionStyled from "./BarreDeProgression.styled";
+import { BarreDeProgressionStyled } from "./BarreDeProgression.styled";
 
 export type BarreDeProgressionVariante =
   | "primaire"
@@ -49,7 +49,7 @@ const BarreDeProgression: FunctionComponent<BarreDeProgressionProps> = ({
 
   return (
     <BarreDeProgressionStyled
-      className={`barre-de-progression gap-2 flex texte-${positionTexte}`}
+      className={`barre-de-progression gap-2 flex texte-${positionTexte} w-full`}
     >
       <div className="barre">
         <progress

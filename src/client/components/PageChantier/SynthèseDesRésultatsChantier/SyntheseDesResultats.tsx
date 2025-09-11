@@ -22,7 +22,8 @@ const SyntheseDesResultats: FunctionComponent<SyntheseDesResultatsProps> = ({
   modeEcriture = false,
   estInteractif = true,
 }) => {
-  const { synthèseDesRésultats } = pageChantier.useServerSidePropsContext();
+  const { synthèseDesRésultats, chantier } =
+    pageChantier.useServerSidePropsContext();
 
   const [action] = useQueryState(
     "_action",
@@ -41,7 +42,13 @@ const SyntheseDesResultats: FunctionComponent<SyntheseDesResultatsProps> = ({
 
   return (
     <SyntheseDesResultatsStyled>
-      <Bloc className="h-full" titre={nomTerritoire}>
+      <Bloc
+        backgroundClassNameTitre={
+          chantier.statut === "ARCHIVE" ? "bg-dsfr-grey-925" : undefined
+        }
+        className="h-full"
+        titre={nomTerritoire}
+      >
         <div className="fr-py-1w">
           {modeÉdition && modeEcriture ? (
             <SyntheseDesResultatsFormulaire

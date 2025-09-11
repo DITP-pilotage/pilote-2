@@ -24,6 +24,7 @@ interface CommentairesProps {
     | typeof typesCommentaireMailleRégionaleOuDépartementale;
   modeÉcriture?: boolean;
   estInteractif?: boolean;
+  estChantierArchive?: boolean;
   territoireCode: string;
 }
 
@@ -36,9 +37,15 @@ const Commentaires: FunctionComponent<CommentairesProps> = ({
   modeÉcriture = false,
   estInteractif = true,
   territoireCode,
+  estChantierArchive = false,
 }) => {
   return (
-    <Bloc titre={nomTerritoire}>
+    <Bloc
+      backgroundClassNameTitre={
+        estChantierArchive ? "bg-dsfr-grey-925" : undefined
+      }
+      titre={nomTerritoire}
+    >
       {typesCommentaire.map((type, i) => (
         <Fragment key={type}>
           {i !== 0 && <hr className="fr-hr fr-mx-n2w" />}

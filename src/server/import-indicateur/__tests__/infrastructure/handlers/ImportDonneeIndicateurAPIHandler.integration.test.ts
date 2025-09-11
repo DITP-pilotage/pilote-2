@@ -95,7 +95,7 @@ describe("ImportDonneeIndicateurAPIHandler", () => {
         .build();
       await getContainer("authentification")
         .resolve("utilisateurRepository")
-        .créerOuMettreÀJour(utilisateur as any, auteurId);
+        .créerOuMettreÀJour(utilisateur, auteurId);
 
       nock(BASE_URL_VALIDATA)
         .post("/validate")
@@ -192,7 +192,7 @@ describe("ImportDonneeIndicateurAPIHandler", () => {
         .build();
       await getContainer("authentification")
         .resolve("utilisateurRepository")
-        .créerOuMettreÀJour(utilisateur as any, auteurId);
+        .créerOuMettreÀJour(utilisateur, auteurId);
 
       nock(BASE_URL_VALIDATA)
         .post("/validate")
@@ -279,7 +279,7 @@ describe("ImportDonneeIndicateurAPIHandler", () => {
         .build();
       await getContainer("authentification")
         .resolve("utilisateurRepository")
-        .créerOuMettreÀJour(utilisateur as any, auteurId);
+        .créerOuMettreÀJour(utilisateur, auteurId);
 
       nock(BASE_URL_VALIDATA)
         .post("/validate")
@@ -488,7 +488,7 @@ describe("ImportDonneeIndicateurAPIHandler", () => {
         .build();
       await getContainer("authentification")
         .resolve("utilisateurRepository")
-        .créerOuMettreÀJour(utilisateur as any, auteurId);
+        .créerOuMettreÀJour(utilisateur, auteurId);
 
       nock(BASE_URL_VALIDATA)
         .post("/validate")
@@ -591,7 +591,7 @@ describe("ImportDonneeIndicateurAPIHandler", () => {
         .build();
       await getContainer("authentification")
         .resolve("utilisateurRepository")
-        .créerOuMettreÀJour(utilisateur as any, auteurId);
+        .créerOuMettreÀJour(utilisateur, auteurId);
 
       nock(BASE_URL_VALIDATA)
         .post("/validate")
@@ -686,7 +686,7 @@ describe("ImportDonneeIndicateurAPIHandler", () => {
         .build();
       await getContainer("authentification")
         .resolve("utilisateurRepository")
-        .créerOuMettreÀJour(utilisateur as any, auteurId);
+        .créerOuMettreÀJour(utilisateur, auteurId);
 
       nock(BASE_URL_VALIDATA)
         .post("/validate")
@@ -771,7 +771,7 @@ describe("ImportDonneeIndicateurAPIHandler", () => {
         .build();
       await getContainer("authentification")
         .resolve("utilisateurRepository")
-        .créerOuMettreÀJour(utilisateur as any, auteurId);
+        .créerOuMettreÀJour(utilisateur, auteurId);
 
       nock(BASE_URL_VALIDATA)
         .post("/validate")
@@ -977,7 +977,7 @@ describe("ImportDonneeIndicateurAPIHandler", () => {
         .build();
       await getContainer("authentification")
         .resolve("utilisateurRepository")
-        .créerOuMettreÀJour(utilisateur as any, auteurId);
+        .créerOuMettreÀJour(utilisateur, auteurId);
 
       nock(BASE_URL_VALIDATA)
         .post("/validate")

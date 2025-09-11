@@ -34,7 +34,6 @@ import {
   profilsTerritoriaux,
 } from "@/server/domain/utilisateur/Utilisateur.interface";
 import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
-import { configuration } from "@/config";
 
 const convertirEnDonneeIndicateur = (
   prismaIndicateurIdentite: PrismaIndicateurIdentite & {
@@ -159,9 +158,6 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
     jalon: number,
     estAvecCadrage: boolean = false,
   ): Promise<IndicateurPourExport[]> {
-    const featureFlipPropositionValeurAvancementV2 =
-      configuration().featureFlip.propositionValeurAvancementV2;
-
     const listeChantierTerritoires = await prisma.chantier_territoire.findMany({
       where: {
         id: chantierId,
@@ -348,9 +344,7 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
         const maille = prismaChantierTerritoire.maille;
 
         const prismaChantierTerritoireNombrePropositionsValeurAvancement =
-          featureFlipPropositionValeurAvancementV2
-            ? prismaChantierTerritoire.nombre_propositions_valeur_actuelle_v2
-            : prismaChantierTerritoire.nombre_propositions_valeur_actuelle;
+          prismaChantierTerritoire.nombre_propositions_valeur_actuelle_v2;
 
         if (maille === "DEPT") {
           aUnePropositionsValeurAvancement =
@@ -364,17 +358,14 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
                 (chantierTerritoire) =>
                   chantierTerritoire.territoire.code_parent === codeRegion,
               )
-              .some((chantierTerritoire) =>
-                featureFlipPropositionValeurAvancementV2
-                  ? chantierTerritoire.nombre_propositions_valeur_actuelle_v2
-                  : chantierTerritoire.nombre_propositions_valeur_actuelle > 0,
+              .some(
+                (chantierTerritoire) =>
+                  chantierTerritoire.nombre_propositions_valeur_actuelle_v2,
               );
         } else {
           aUnePropositionsValeurAvancement = listeChantierTerritoires.some(
             (chantierTerritoire) =>
-              featureFlipPropositionValeurAvancementV2
-                ? chantierTerritoire.nombre_propositions_valeur_actuelle_v2
-                : chantierTerritoire.nombre_propositions_valeur_actuelle > 0,
+              chantierTerritoire.nombre_propositions_valeur_actuelle_v2,
           );
         }
 
@@ -552,9 +543,6 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
     territoireCodesLecture: string[],
     jalon: number,
   ): Promise<HistoriqueIndicateurPourExport[]> {
-    const featureFlipPropositionValeurAvancenementV2 =
-      configuration().featureFlip.propositionValeurAvancementV2;
-
     const result = await prisma.indicateur_identite.findMany({
       where: {
         chantier_id: chantierId,
@@ -670,9 +658,7 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
             const chantierTerritoire = indicateurPourExport.chantier_territoire;
 
             const chantierTerritoireNombrePropositionsValeurAvancement =
-              featureFlipPropositionValeurAvancenementV2
-                ? chantierTerritoire.nombre_propositions_valeur_actuelle_v2
-                : chantierTerritoire.nombre_propositions_valeur_actuelle;
+              chantierTerritoire.nombre_propositions_valeur_actuelle_v2;
 
             let aUnePropositionsValeurAvancement = false;
             const maille = indicateurPourExport.maille;
@@ -688,17 +674,13 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
                     (chantier) =>
                       chantier.territoire.code_parent === codeRegion,
                   )
-                  .some((chantier) =>
-                    featureFlipPropositionValeurAvancenementV2
-                      ? chantier.nombre_propositions_valeur_actuelle_v2
-                      : chantier.nombre_propositions_valeur_actuelle > 0,
+                  .some(
+                    (chantier) =>
+                      chantier.nombre_propositions_valeur_actuelle_v2,
                   );
             } else {
               aUnePropositionsValeurAvancement = listeTerritoireChantier.some(
-                (chantier) =>
-                  featureFlipPropositionValeurAvancenementV2
-                    ? chantier.nombre_propositions_valeur_actuelle_v2
-                    : chantier.nombre_propositions_valeur_actuelle > 0,
+                (chantier) => chantier.nombre_propositions_valeur_actuelle_v2,
               );
             }
             return (

@@ -3,7 +3,6 @@ import MultiSelect from "@/client/components/_commons/MultiSelect/MultiSelect";
 import {
   MultiSelectOption,
   MultiSelectOptionGroupée,
-  MultiSelectOptions,
   MultiSelectOptionsGroupées,
 } from "@/client/components/_commons/MultiSelect/MultiSelect.interface";
 import { trierParOrdreAlphabétique } from "@/client/utils/arrays";
@@ -82,7 +81,7 @@ const MultiSelectTerritoire: FunctionComponent<MultiSelectTerritoireProps> = ({
 
   const optionsRégions = {
     label: "Régions",
-    options: trierParOrdreAlphabétique<MultiSelectOptions>(
+    options: trierParOrdreAlphabétique(
       régions.map((d) =>
         générerLesOptions(
           d.nomAffiché,
@@ -98,7 +97,7 @@ const MultiSelectTerritoire: FunctionComponent<MultiSelectTerritoireProps> = ({
 
   const optionsDépartements = {
     label: "Départements",
-    options: trierParOrdreAlphabétique<MultiSelectOptions>(
+    options: trierParOrdreAlphabétique(
       départements.map((d) =>
         générerLesOptions(
           d.nomAffiché,

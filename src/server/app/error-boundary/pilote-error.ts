@@ -20,15 +20,15 @@ export class PiloteError extends Error {
     this._type = type;
   }
 
-  get message(): string {
+  get message() {
     return this._message;
   }
 
-  get status(): number {
+  get status() {
     return this._status;
   }
 
-  get type(): number {
-    return this._status;
+  get type() {
+    return this._type;
   }
 }

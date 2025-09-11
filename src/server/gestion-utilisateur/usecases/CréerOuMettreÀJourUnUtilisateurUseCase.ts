@@ -23,6 +23,8 @@ import { ChantierRepository } from "@/server/gestion-utilisateur/domain/ports/Ch
 import { UtilisateurRepository } from "@/server/gestion-utilisateur/domain/ports/UtilisateurRepository";
 import { InformationChantierUtilisateur } from "@/server/gestion-utilisateur/domain/InformationChantierUtilisateur";
 import { UtilisateurIAMRepository } from "@/server/gestion-utilisateur/domain/ports/UtilisateurIAMRepository";
+import { NotFoundError } from "@/server/app/error-boundary/not-found-error";
+import { ConflictError } from "@/server/app/error-boundary/conflict-error";
 
 type Dependencies = {
   utilisateurIAMRepository: UtilisateurIAMRepository;
@@ -159,6 +161,7 @@ export default class CréerOuMettreÀJourUnUtilisateurUseCase {
           utilisateur.email,
           utilisateur.nom,
           utilisateur.prénom,
+          utilisateur.profil,
           listesDiffusionAAjouter,
           listesDiffusionASupprimer,
         );
@@ -172,6 +175,7 @@ export default class CréerOuMettreÀJourUnUtilisateurUseCase {
           utilisateur.email,
           utilisateur.nom,
           utilisateur.prénom,
+          utilisateur.profil,
           listesDiffusion,
         );
       }
@@ -496,11 +500,11 @@ export default class CréerOuMettreÀJourUnUtilisateurUseCase {
       await this.utilisateurRepository.verifierExistenceUtilisateur(email);
 
     if (utilisateurExistant && !utilisateurExiste) {
-      throw new Error("Le compte à modifier n'existe pas.");
+      throw new NotFoundError("Le compte à modifier n'existe pas.");
     }
 
     if (!utilisateurExistant && utilisateurExiste) {
-      throw new Error(
+      throw new ConflictError(
         "Un compte a déjà été créé avec cette adresse électronique.",
       );
     }

@@ -17,7 +17,6 @@ import BarreLatérale from "@/components/_commons/BarreLatérale/BarreLatérale"
 import BarreLatéraleEncart from "@/components/_commons/BarreLatérale/BarreLatéraleEncart/BarreLatéraleEncart";
 import { Filtres } from "@/components/PageAccueil/Filtres/Filtres";
 import { authOptions } from "@/server/infrastructure/api/auth/[...nextauth]";
-import RécupérerChantiersAccessiblesEnLectureUseCase from "@/server/chantiers/usecases/RécupérerChantiersAccessiblesEnLectureUseCase";
 import { dependencies } from "@/server/infrastructure/Dependencies";
 import { ChantierAccueilContrat } from "@/server/chantiers/app/contrats/ChantierAccueilContratNew";
 import Ministère from "@/server/domain/ministère/Ministère.interface";
@@ -195,35 +194,19 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({
 
   const mapAxes = new Map<string, Axe>(axes.map((axe) => [axe.id, axe]));
 
-  const chantiers = configuration().featureFlip.propositionValeurAvancementV2
-    ? await getContainer("chantiers")
-        .resolve("recupererChantiersAccessiblesEnLectureUseCaseV2")
-        .run(
-          session.habilitations,
-          session.profil,
-          territoireCode,
-          mailleChantier || "departementale",
-          ministères,
-          mapAxes,
-          filtres,
-          sorting,
-          jalon,
-        )
-    : await new RécupérerChantiersAccessiblesEnLectureUseCase(
-        dependencies.getChantierRepository(),
-        dependencies.getTerritoireRepository(),
-      ).run(
-        session.habilitations,
-        session.profil,
-        territoireCode,
-        mailleChantier || "departementale",
-        ministères,
-        mapAxes,
-        filtres,
-        sorting,
-        jalon,
-      );
-
+  const chantiers = await getContainer("chantiers")
+    .resolve("recupererChantiersAccessiblesEnLectureUseCaseV2")
+    .run(
+      session.habilitations,
+      session.profil,
+      territoireCode,
+      mailleChantier || "departementale",
+      ministères,
+      mapAxes,
+      filtres,
+      sorting,
+      jalon,
+    );
   const { filtresComptesCalculés } = Chantier.recupererStatistiqueListeChantier(
     chantiers,
     mailleChantier,

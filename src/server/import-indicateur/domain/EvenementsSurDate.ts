@@ -4,6 +4,7 @@ import {
   IndicateurTerritoireValeurEvenement,
 } from "@/server/indicateur-territoire-valeur-evenement/domain/IndicateurTerritoireValeurEvenement";
 import { IndicateurData } from "@/server/import-indicateur/domain/IndicateurData";
+import { BadRequestError } from "@/server/app/error-boundary/bad-request-error";
 
 const estPropositionEnCours = (
   evenementsPropositionValeur: IndicateurTerritoireValeurEvenement | undefined,
@@ -127,7 +128,7 @@ export class EvenementsSurDate {
   creerEvenementValeurHistorisee({ auteurId }: { auteurId: string }) {
     const valeurEnCours = this.valeurEnCours();
     if (valeurEnCours == null)
-      throw new Error("Pas de valeur en cours pour l'historisation");
+      throw new BadRequestError("Pas de valeur en cours pour l'historisation");
 
     const evenement =
       IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
@@ -184,7 +185,7 @@ export class EvenementsSurDate {
   }): IndicateurTerritoireValeurEvenement {
     const evenementPropositionValeur = this.evenementPropositionValeurEnCours();
     if (!evenementPropositionValeur)
-      throw new Error("Aucune proposition de valeur n'est en cours");
+      throw new BadRequestError("Aucune proposition de valeur n'est en cours");
     const evenement =
       IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
         {
@@ -214,7 +215,7 @@ export class EvenementsSurDate {
   }) {
     const evenementExistant = this.evenementPropositionValeurEnCours();
     if (!evenementExistant)
-      throw new Error("Aucune proposition de valeur n'est en cours");
+      throw new BadRequestError("Aucune proposition de valeur n'est en cours");
 
     const evenement =
       IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
@@ -277,10 +278,12 @@ export class EvenementsSurDate {
     donneesComplementaires: DonneesComplementaires<"PROPOSITION_VALEUR_CREEE">;
   }) {
     if (this.estEvenementPropositionValeurAccuseeReception()) {
-      throw new Error("La proposition de valeur a déjà été accusée réception");
+      throw new BadRequestError(
+        "La proposition de valeur a déjà été accusée réception",
+      );
     }
     if (this.evenementPropositionValeurEnCours()) {
-      throw new Error("Une proposition de valeur est déjà en cours");
+      throw new BadRequestError("Une proposition de valeur est déjà en cours");
     }
     const evenement =
       IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
@@ -313,10 +316,12 @@ export class EvenementsSurDate {
     donneesComplementaires: DonneesComplementaires<"PROPOSITION_VALEUR_MODIFIEE">;
   }) {
     if (this.estEvenementPropositionValeurAccuseeReception()) {
-      throw new Error("La proposition de valeur a déjà été accusée réception");
+      throw new BadRequestError(
+        "La proposition de valeur a déjà été accusée réception",
+      );
     }
     if (!this.evenementPropositionValeurEnCours()) {
-      throw new Error("Aucune proposition de valeur n'est en cours");
+      throw new BadRequestError("Aucune proposition de valeur n'est en cours");
     }
     const evenement =
       IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
@@ -350,10 +355,12 @@ export class EvenementsSurDate {
       this.evenementPropositionValeurEnCours();
 
     if (this.estEvenementPropositionValeurAccuseeReception()) {
-      throw new Error("La proposition de valeur a déjà été accusée réception");
+      throw new BadRequestError(
+        "La proposition de valeur a déjà été accusée réception",
+      );
     }
     if (!evenementPropositionEnCours) {
-      throw new Error("Aucune proposition de valeur n'est en cours");
+      throw new BadRequestError("Aucune proposition de valeur n'est en cours");
     }
 
     const evenement =
@@ -388,10 +395,12 @@ export class EvenementsSurDate {
       this.evenementPropositionValeurEnCours();
 
     if (this.estEvenementPropositionValeurAccuseeReception()) {
-      throw new Error("La proposition de valeur a déjà été accusée réception");
+      throw new BadRequestError(
+        "La proposition de valeur a déjà été accusée réception",
+      );
     }
     if (!evenementPropositionEnCours) {
-      throw new Error("Aucune proposition de valeur n'est en cours");
+      throw new BadRequestError("Aucune proposition de valeur n'est en cours");
     }
 
     const evenement =
@@ -427,7 +436,7 @@ export class EvenementsSurDate {
       this.evenementPropositionValeurAccuseeReception();
 
     if (!evenementPropositionEnCours) {
-      throw new Error("Aucune proposition de valeur n'est en cours");
+      throw new BadRequestError("Aucune proposition de valeur n'est en cours");
     }
 
     const evenement =
@@ -463,7 +472,7 @@ export class EvenementsSurDate {
       this.evenementPropositionValeurAccuseeReception();
 
     if (!evenementPropositionEnCours) {
-      throw new Error("Aucune proposition de valeur n'est en cours");
+      throw new BadRequestError("Aucune proposition de valeur n'est en cours");
     }
 
     const evenementAcceptation =
@@ -519,7 +528,7 @@ export class EvenementsSurDate {
       this.evenementPropositionValeurAccuseeReception();
 
     if (!evenementPropositionEnCours) {
-      throw new Error("Aucune proposition de valeur n'est en cours");
+      throw new BadRequestError("Aucune proposition de valeur n'est en cours");
     }
 
     const evenementAcceptation =

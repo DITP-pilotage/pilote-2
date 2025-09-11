@@ -20,26 +20,37 @@
                     <form id="kkc-passwd-update-form" action="${url.loginAction}" method="post">
                       <input type="text" id="username" name="username" value="${username}" autocomplete="username" readonly="readonly" style="display:none;" />
                       <input type="password" id="password" name="password" autocomplete="current-password" style="display:none;" />
+
                       <div class="fr-fieldset__element">
-                        <label class="fr-label" for="password-new-input"> Mot de passe</label>
-                        <div class="fr-input-wrap">
-                          <input class="fr-password__input fr-input" aria-describedby="password-new-input-messages" aria-required="true" name="password-new" autocomplete="new-password" id="password-new" type="password">
+                        <div class="fr-password" id="password-new">
+                          <label class="fr-label" for="password-new-input"> Mot de passe</label>
+                          <div class="fr-input-wrap">
+                            <input class="fr-password__input fr-input" aria-describedby="password-new-input-messages" aria-required="true" name="password-new" autocomplete="new-password" id="password-new-input" type="password">
+                          </div>
+                          <div class="fr-password__checkbox fr-checkbox-group fr-checkbox-group--sm">
+                            <input aria-label="Afficher le mot de passe" id="password-new-show" type="checkbox" aria-describedby="password-new-show-messages">
+                            <label class="fr-password__checkbox fr-label" for="password-new-show"> Afficher </label>
+                          </div>
                         </div>
-                        <label class="fr-label" for="password-confirm-input">Confirmer le mot de passe</label>
-                        <div class="fr-input-wrap">
-                          <input class="fr-password__input fr-input" aria-describedby="password-confirm-input-messages" aria-required="true" name="password-confirm" autocomplete="new-password" id="password-confirm" type="password">
-                        </div>
-                        <div class="fr-messages-group" id="password-new-input-messages" aria-live="assertive">
-                          <p class="fr-message" id="password-new-input-message">Votre mot de passe doit contenir au moins :</p>
-                          <p class="fr-message fr-message--info" id="password-new-input-message-info">15 caractères minimum</p>
-                          <p class="fr-message fr-message--info" id="password-new-input-message-info-1">1 chiffre</p>
-                          <p class="fr-message fr-message--info" id="password-new-input-message-info-2">1 lettre minuscule</p>
-                          <p class="fr-message fr-message--info" id="password-new-input-message-info-3">1 lettre majuscule</p>
-                          <p class="fr-message fr-message--info" id="password-new-input-message-info-4">un caractère spécial (exemples : @ $! % &)</p>
-                        </div>
-                        <div class="fr-password__checkbox fr-checkbox-group fr-checkbox-group--sm">
-                          <input aria-label="Afficher le mot de passe" id="password-new-show" type="checkbox" aria-describedby="password-new-show-messages">
-                          <label class="fr-password__checkbox fr-label" for="password-new-show"> Afficher </label>
+                      </div>
+                      <div class="fr-fieldset__element">
+                        <div class="fr-password" id="password-confirm">
+                          <label class="fr-label" for="password-confirm-input">Confirmer le mot de passe</label>
+                          <div class="fr-input-wrap">
+                            <input class="fr-password__input fr-input" aria-describedby="password-confirm-input-messages" aria-required="true" name="password-confirm" autocomplete="new-password" id="password-confirm-input" type="password">
+                          </div>
+                          <div class="fr-messages-group" id="password-new-input-messages" aria-live="assertive">
+                            <p class="fr-message" id="password-new-input-message">Votre mot de passe doit contenir au moins :</p>
+                            <p class="fr-message fr-message--info" id="password-new-input-message-info">15 caractères minimum</p>
+                            <p class="fr-message fr-message--info" id="password-new-input-message-info-1">1 chiffre</p>
+                            <p class="fr-message fr-message--info" id="password-new-input-message-info-2">1 lettre minuscule</p>
+                            <p class="fr-message fr-message--info" id="password-new-input-message-info-3">1 lettre majuscule</p>
+                            <p class="fr-message fr-message--info" id="password-new-input-message-info-4">un caractère spécial (exemples : @ $! % &)</p>
+                          </div>
+                          <div class="fr-password__checkbox fr-checkbox-group fr-checkbox-group--sm">
+                            <input aria-label="Afficher le mot de passe" id="password-confirm-show" type="checkbox" aria-describedby="password-confirm-show-messages">
+                            <label class="fr-password__checkbox fr-label" for="password-confirm-show"> Afficher </label>
+                          </div>
                         </div>
                       </div>
                       <div class="fr-fieldset__element fr-grid-row fr-grid-row--right ">

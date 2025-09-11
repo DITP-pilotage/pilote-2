@@ -1,13 +1,8 @@
-import NextAuth, {
-  Account,
-  AuthOptions,
-  getServerSession,
-  User,
-} from "next-auth";
+import NextAuth, { AuthOptions, getServerSession, User } from "next-auth";
 import KeycloakProvider from "next-auth/providers/keycloak";
 import CredentialsProvider from "next-auth/providers/credentials";
-import type { JWT } from "next-auth/jwt";
 import { GetServerSidePropsContext } from "next";
+import { JWT } from "next-auth/jwt";
 import logger from "@/server/infrastructure/Logger";
 import { dependencies } from "@/server/infrastructure/Dependencies";
 import { configuration } from "@/config";
@@ -69,7 +64,7 @@ async function doFinalSignoutHandshake(token: PiloteJWTPayload) {
       await _assertResponseOk(response, "Failed to logout");
 
       logger.info("Completed post-logout handshake");
-    } catch (error: any) {
+    } catch (error: unknown) {
       logger.error(error, "Unable to perform post-logout handshake");
     }
   }
@@ -90,7 +85,7 @@ type PiloteJWTPayload = {
   refreshToken: string;
   idToken: string;
   provider: string;
-  user: User;
+  user: User & { email: string };
   error?: string;
 };
 
@@ -195,10 +190,6 @@ const credentialsProvider = CredentialsProvider({
   },
 });
 
-function _isLogingIn(account: Account, user: User): Boolean {
-  return Boolean(account && user);
-}
-
 function _hasExpired(token: PiloteJWTPayload): Boolean {
   if (token.provider == "credentials") {
     return false;
@@ -207,24 +198,28 @@ function _hasExpired(token: PiloteJWTPayload): Boolean {
   return now >= token.accessTokenExpires;
 }
 
+const toPiloteJWTPayload = (token: JWT) => token as PiloteJWTPayload;
+
 export const authOptions: AuthOptions = {
   providers: !!configuration().devPassword ? [credentialsProvider] : [keycloak],
   debug: configuration().nextAuth.debug,
   session: {
     maxAge: configuration().nextAuth.sessionMaxAge,
   },
+  events: {
+    signOut: ({ token }) => {
+      return doFinalSignoutHandshake(toPiloteJWTPayload(token));
+    },
+  },
   callbacks: {
-    async jwt({
-      token,
-      account,
-      user,
-      profile,
-      isNewUser,
-    }: any & {
-      token: JWT | PiloteJWTPayload;
-      account: Account;
-    }): Promise<PiloteJWTPayload> {
-      if (_isLogingIn(account, user)) {
+    async jwt({ token, account, user, profile, isNewUser }) {
+      if (
+        account?.access_token != null &&
+        account?.expires_at != null &&
+        account?.refresh_token != null &&
+        account?.id_token != null &&
+        user != null
+      ) {
         logger.info(
           { userId: user.id },
           "NextAuth JWT callback called from login",
@@ -241,23 +236,21 @@ export const authOptions: AuthOptions = {
         };
       }
 
-      if (!_hasExpired(token)) {
+      if (!_hasExpired(toPiloteJWTPayload(token))) {
         return token;
       }
 
       logger.info(
         "NextAuth JWT callback triggers refreshing (Access Token has expired)",
       );
-      return refreshAccessToken(token);
+      return refreshAccessToken(toPiloteJWTPayload(token));
     },
 
-    async session({
-      session,
-      token,
-    }: any & { token: PiloteJWTPayload }): Promise<any> {
+    async session({ session, token }) {
+      const piloteToken = toPiloteJWTPayload(token);
       const utilisateurRepository = dependencies.getUtilisateurRepository();
       const utilisateur = await utilisateurRepository.récupérer(
-        token.user.email,
+        piloteToken.user.email,
       );
 
       const profilRepository = dependencies.getProfilRepository();
@@ -270,22 +263,17 @@ export const authOptions: AuthOptions = {
 
       // Send properties to the client
       session.user = {
-        ...token.user,
-        id: utilisateur?.id,
+        ...piloteToken.user,
+        id: utilisateur!.id,
       };
-      session.accessToken = token.accessToken;
-      session.error = token.error;
+      session.accessToken = piloteToken.accessToken;
       session.profil = utilisateur?.profil;
+      // @ts-expect-error TODO(CHAN 10/09/2025): corriger les types dupliqués des habilitations
       session.habilitations = utilisateur!.habilitations;
       session.profilAAccèsAuxChantiersBrouillons =
-        profil?.chantiers.lecture.brouillons;
+        profil?.chantiers.lecture.brouillons ?? false;
 
       return session;
-    },
-  },
-  events: {
-    signOut: ({ token }: any) => {
-      return doFinalSignoutHandshake(token);
     },
   },
 };

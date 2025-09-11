@@ -3,6 +3,7 @@ import { Files, IncomingForm } from "formidable";
 import mime from "mime";
 import { join } from "node:path";
 import { mkdir, stat } from "node:fs/promises";
+import { isENOENTError } from "@/server/utils/errors";
 
 export async function parseForm(request: NextApiRequest): Promise<Files> {
   return new Promise<Files>(async (resolve, reject) => {
@@ -10,8 +11,8 @@ export async function parseForm(request: NextApiRequest): Promise<Files> {
 
     try {
       await stat(uploadDir);
-    } catch (error: any) {
-      if (error.code === "ENOENT") {
+    } catch (error) {
+      if (isENOENTError(error)) {
         await mkdir(uploadDir, { recursive: true });
       } else {
         reject(error);

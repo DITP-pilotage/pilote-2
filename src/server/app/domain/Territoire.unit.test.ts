@@ -100,13 +100,15 @@ describe("convertirZoneIdEnTerritoireCode", () => {
     });
 
     it("devrait lever une erreur pour null", () => {
-      expect(() => convertirZoneIdEnTerritoireCode(null as any)).toThrow(
+      // @ts-expect-error toujours utile à tester
+      expect(() => convertirZoneIdEnTerritoireCode(null)).toThrow(
         ConversionZoneIdError,
       );
     });
 
     it("devrait lever une erreur pour undefined", () => {
-      expect(() => convertirZoneIdEnTerritoireCode(undefined as any)).toThrow(
+      // @ts-expect-error toujours utile à tester
+      expect(() => convertirZoneIdEnTerritoireCode()).toThrow(
         ConversionZoneIdError,
       );
     });
@@ -243,13 +245,15 @@ describe("convertirTerritoireCodeEnZoneId", () => {
     });
 
     it("devrait lever une erreur pour null", () => {
-      expect(() => convertirTerritoireCodeEnZoneId(null as any)).toThrow(
+      // @ts-expect-error toujours utile à tester
+      expect(() => convertirTerritoireCodeEnZoneId(null)).toThrow(
         ConversionZoneIdError,
       );
     });
 
     it("devrait lever une erreur pour undefined", () => {
-      expect(() => convertirTerritoireCodeEnZoneId(undefined as any)).toThrow(
+      // @ts-expect-error toujours utile à tester
+      expect(() => convertirTerritoireCodeEnZoneId()).toThrow(
         ConversionZoneIdError,
       );
     });

@@ -13,9 +13,7 @@ export type HistorisationModificationDisponible = {
   chantier: Chantier;
   utilisateur: Utilisateur;
 };
-export const tableConversionModification: {
-  [key in keyof HistorisationModificationDisponible]: (obj: any) => any;
-} = {
+export const tableConversionModification = {
   metadata_indicateurs: convertirEnHistorisationMetadataIndicateurModel,
   metadata_parametrages_indicateurs:
     convertirEnHistorisationMetadataParametrageIndicateurModel,
@@ -24,9 +22,7 @@ export const tableConversionModification: {
   chantier: (chantier: Chantier) => chantier,
   utilisateur: convertirEnUtilisateurModel,
 };
-export const tableRecuperationId: {
-  [key in keyof HistorisationModificationDisponible]: (obj: any) => string;
-} = {
+export const tableRecuperationId = {
   metadata_indicateurs: (
     obj: HistorisationModificationDisponible["metadata_indicateurs"],
   ) => obj.indicId,

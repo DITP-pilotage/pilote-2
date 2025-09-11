@@ -8,6 +8,7 @@ import Logger from "@/server/infrastructure/Logger";
 import { MetadataParametrageIndicateur } from "@/server/parametrage-indicateur/domain/MetadataParametrageIndicateur";
 import { MetadataParametrageIndicateurRepository } from "@/server/parametrage-indicateur/domain/port/MetadataParametrageIndicateurRepository";
 import { ImportMetadataIndicateur } from "@/server/parametrage-indicateur/domain/ImportMetadataIndicateur";
+import { NotFoundError } from "@/server/app/error-boundary/not-found-error";
 
 export interface RawMetadataParametrageIndicateurModel {
   indic_id: string;
@@ -251,7 +252,7 @@ export class PrismaMetadataParametrageIndicateurRepository
       >`${Prisma.raw(query)}`;
 
       if (listeRawMetadataParametrageIndicateur.length === 0) {
-        throw new Error("invalid indic_id");
+        throw new NotFoundError("L'indicateur n'existe pas");
       }
 
       return convertirEnMetadataParametrageIndicateur(
@@ -259,7 +260,7 @@ export class PrismaMetadataParametrageIndicateurRepository
       );
     } catch (error: unknown) {
       Logger.error(error);
-      throw new Error((error as Error).message);
+      throw error;
     }
   }
 

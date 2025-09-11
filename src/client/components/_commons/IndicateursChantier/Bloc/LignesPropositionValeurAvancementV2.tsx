@@ -89,7 +89,6 @@ export const LignesPropositionValeurAvancementV2 = ({
                 <BoutonPrendreDecisionProposition
                   detailIndicateur={detailIndicateurDuTerritoire}
                   détailTerritoireSélectionné={détailTerritoireSélectionné}
-                  id={indicateur.id}
                   indicateur={indicateur}
                   territoireCode={territoireCode}
                 />
@@ -121,7 +120,6 @@ export const LignesPropositionValeurAvancementV2 = ({
                 <BoutonSupprimerProposition
                   detailIndicateur={detailIndicateurDuTerritoire}
                   détailTerritoireSélectionné={détailTerritoireSélectionné}
-                  id={indicateur.id}
                   indicateur={indicateur}
                   territoireCode={territoireCode}
                 />

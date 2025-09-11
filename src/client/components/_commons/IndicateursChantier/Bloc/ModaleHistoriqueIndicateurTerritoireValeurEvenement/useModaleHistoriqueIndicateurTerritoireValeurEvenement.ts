@@ -1,15 +1,12 @@
 import api from "@/server/infrastructure/api/trpc/api";
+import { useBlocIndicateurContext } from "@/components/PageChantier/useBlocIndicateurContext";
 
-export const useModaleHistoriqueIndicateurTerritoireValeurEvenement = ({
-  indicateurId,
-  territoireCode,
-}: {
-  indicateurId: string;
-  territoireCode: string;
-}) => {
+export const useModaleHistoriqueIndicateurTerritoireValeurEvenement = () => {
+  const { indicateur, territoireCode } = useBlocIndicateurContext();
+
   const { data: historique, isLoading } =
     api.indicateur.recupererHistoriqueIndicateurTerritoire.useQuery({
-      indicateurId,
+      indicateurId: indicateur.id,
       territoireCode,
     });
 

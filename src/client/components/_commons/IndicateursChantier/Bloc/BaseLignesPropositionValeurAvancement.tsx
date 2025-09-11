@@ -35,7 +35,7 @@ export const BaseLignesPropositionValeurAvancement = ({
 }>) => {
   const détailTerritoireSélectionné = useTerritoireSelectionne();
 
-  const { datajobsExecution, detailIndicateurDuTerritoire, jalon } =
+  const { datajobsExecution, detailIndicateurDuTerritoire, jalon, chantier } =
     useBlocIndicateurContext();
 
   if (detailIndicateurDuTerritoire.proposition === null) return null;
@@ -52,10 +52,13 @@ export const BaseLignesPropositionValeurAvancement = ({
         ).getFullYear() <= jalon
       : false;
 
-  const varianteBarreProgression =
-    estPropositionAccepteeOuAccepteeAvecModification(
-      detailIndicateurDuTerritoire,
-    ) || estPropositionAccuseeReception(detailIndicateurDuTerritoire)
+  const estChantierArchive = chantier.statut === "ARCHIVE";
+
+  const varianteBarreProgression = estChantierArchive
+    ? "secondaire"
+    : estPropositionAccepteeOuAccepteeAvecModification(
+          detailIndicateurDuTerritoire,
+        ) || estPropositionAccuseeReception(detailIndicateurDuTerritoire)
       ? "bleu-dsfr-info"
       : "jaune-moutarde";
 
@@ -63,10 +66,13 @@ export const BaseLignesPropositionValeurAvancement = ({
     <>
       <tr
         className={clsx("ligne-modification-proposition-valeur-davancement", {
+          "!bg-dsfr-grey-925 !text-dsfr-grey-200": estChantierArchive,
           "!bg-dsfr-info-950 !text-dsfr-info-main-525":
-            estPropositionAccuseeReception(detailIndicateurDuTerritoire) ||
-            afficherPropositionAcceptee,
+            !estChantierArchive &&
+            (estPropositionAccuseeReception(detailIndicateurDuTerritoire) ||
+              afficherPropositionAcceptee),
           "!bg-dsfr-moutarde-main-975 !text-dsfr-moutarde-main-679":
+            !estChantierArchive &&
             !estPropositionAccuseeReception(detailIndicateurDuTerritoire) &&
             !estPropositionAccepteeOuAccepteeAvecModification(
               detailIndicateurDuTerritoire,
