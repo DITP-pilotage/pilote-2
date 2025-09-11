@@ -38,11 +38,14 @@ test("doit pouvoir consulter les données des chantiers", async ({ page }) => {
   await test.step("Vérification filtre ministère actif 'Transition écologique et Cohésion des territoires'", async () => {
     await expect(
       page.locator(
-        "button[aria-label='Retirer le tag Cohésion des territoires, Ville']",
+        "button[aria-label='Retirer le tag Aménagement du territoire']",
       ),
     ).toBeVisible();
     await expect(
       page.locator("button[aria-label='Retirer le tag Logement']"),
+    ).toBeVisible();
+    await expect(
+      page.locator("button[aria-label='Retirer le tag Mer et Biodiversité']"),
     ).toBeVisible();
     await expect(
       page.locator("button[aria-label='Retirer le tag Transition Écologique']"),
