@@ -1,24 +1,15 @@
 import { parseAsString, useQueryState } from "nuqs";
 import { FunctionComponent } from "react";
 import { actionsTerritoiresStore } from "@/client/stores/useTerritoiresStore/useTerritoiresStore";
-import { CartographieSVGContrat } from "@/server/cartographie/app/contrats/CartographieSVGContrat";
-import { useCartographieSVG } from "./useCartographieSVG";
-
-// TODO refacto, mise en commun avec CartographieSVG.tsx
-const getTraceSvg = function (
-  svgAsJson: CartographieSVGContrat,
-  territoireCode: string,
-): string {
-  const pathCorrespondantAuTerritoireCode = svgAsJson.svg.g.path.find(
-    (path) => path["attr-territoire-code"] === territoireCode,
-  );
-  return pathCorrespondantAuTerritoireCode?.["attr-d"] || "";
-};
+import {
+  CARTOGRAPHIE_SVG_AS_JSON,
+  getTraceSvg,
+} from "./CartographieSVGContrat";
 
 export const CartographieTerritoireSélectionné: FunctionComponent<{
   territoireCode: string;
 }> = ({ territoireCode }) => {
-  const { sourceSvgAsJson } = useCartographieSVG();
+  const sourceSvgAsJson = CARTOGRAPHIE_SVG_AS_JSON;
 
   const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
 

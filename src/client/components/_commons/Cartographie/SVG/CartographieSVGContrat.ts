@@ -1,4 +1,4 @@
-const cartographieJson = {
+export const CARTOGRAPHIE_SVG_AS_JSON = {
   svg: {
     defs: {
       pattern: {
@@ -618,10 +618,16 @@ const cartographieJson = {
     "attr-version": "1.2",
     "attr-xmlns": "http://www.w3.org/2000/svg",
   },
-};
+} as const;
 
-export const useCartographieSVG = () => {
-  return {
-    sourceSvgAsJson: cartographieJson,
-  };
+export type CartographieSVGContrat = typeof CARTOGRAPHIE_SVG_AS_JSON;
+
+export const getTraceSvg = function (
+  svgAsJson: CartographieSVGContrat,
+  territoireCode: string,
+): string {
+  const pathCorrespondantAuTerritoireCode = svgAsJson.svg.g.path.find(
+    (path) => path["attr-territoire-code"] === territoireCode,
+  );
+  return pathCorrespondantAuTerritoireCode?.["attr-d"] || "";
 };

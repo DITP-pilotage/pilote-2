@@ -11,7 +11,6 @@ import { propositionValeurAvancementRouter } from "./propositionValeurAvancement
 import { territoireRouter } from "./territoire";
 import { périmètreMinistérielRouter } from "./périmètreMinistériel";
 import { profilRouter } from "./profil";
-import { cartographieSVGRouter } from "./cartographieSVG";
 import { parametrageNouveautesRouter } from "./parametrageNouveautes";
 
 export const appRouter = créerRouteurTRPC({
@@ -27,6 +26,5 @@ export const appRouter = créerRouteurTRPC({
   gestionTokenAPI: gestionTokenAPIRouter,
   périmètreMinistériel: périmètreMinistérielRouter,
   profil: profilRouter,
-  cartographieSVG: cartographieSVGRouter,
   parametrageNouveautes: parametrageNouveautesRouter,
 });

@@ -6,12 +6,14 @@ import {
   CartographieTerritoires,
   CartographieTerritoire,
 } from "@/components/_commons/Cartographie/useCartographie.interface";
-import { CartographieSVGContrat } from "@/server/cartographie/app/contrats/CartographieSVGContrat";
 import SecureTooltip from "@/components/_commons/SecureTooltip/SecureTooltip";
 import CartographieZoomEtDéplacement from "./ZoomEtDéplacement/CartographieZoomEtDéplacement";
 import CartographieSVGStyled from "./CartographieSVG.styled";
 import { CartographieTerritoireSélectionné } from "./CartographieTerritoireSélectionné";
-import { useCartographieSVG } from "./useCartographieSVG";
+import {
+  CARTOGRAPHIE_SVG_AS_JSON,
+  getTraceSvg,
+} from "./CartographieSVGContrat";
 
 interface CartographieSVGProps {
   territoireCode: string;
@@ -25,16 +27,6 @@ interface CartographieSVGProps {
   contoursGris?: boolean;
 }
 
-const getTraceSvg = function (
-  svgAsJson: CartographieSVGContrat,
-  territoireCode: string,
-): string {
-  const pathCorrespondantAuTerritoireCode = svgAsJson.svg.g.path.find(
-    (path) => path["attr-territoire-code"] === territoireCode,
-  );
-  return pathCorrespondantAuTerritoireCode?.["attr-d"] || "";
-};
-
 export const CartographieSVG: FunctionComponent<CartographieSVGProps> = ({
   territoireCode,
   options,
@@ -43,7 +35,7 @@ export const CartographieSVG: FunctionComponent<CartographieSVGProps> = ({
   auClicTerritoireCallback,
   contoursGris = false,
 }) => {
-  const { sourceSvgAsJson } = useCartographieSVG();
+  const sourceSvgAsJson = CARTOGRAPHIE_SVG_AS_JSON;
 
   const [hoveredTerritoire, setHoveredTerritoire] =
     useState<CartographieTerritoire | null>(null);
