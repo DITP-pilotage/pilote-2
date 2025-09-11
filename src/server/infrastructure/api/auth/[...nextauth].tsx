@@ -213,13 +213,7 @@ export const authOptions: AuthOptions = {
   },
   callbacks: {
     async jwt({ token, account, user, profile, isNewUser }) {
-      if (
-        account?.access_token != null &&
-        account?.expires_at != null &&
-        account?.refresh_token != null &&
-        account?.id_token != null &&
-        user != null
-      ) {
+      if (account != null && user != null) {
         logger.info(
           { userId: user.id },
           "NextAuth JWT callback called from login",
@@ -228,7 +222,10 @@ export const authOptions: AuthOptions = {
 
         return {
           accessToken: account.access_token,
-          accessTokenExpires: (account.expires_at - 10) * 1000,
+          accessTokenExpires:
+            account.expires_at == null
+              ? null
+              : (account.expires_at - 10) * 1000,
           refreshToken: account.refresh_token,
           idToken: account.id_token,
           provider: account.provider,
