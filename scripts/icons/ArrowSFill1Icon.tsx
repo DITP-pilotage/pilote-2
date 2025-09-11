@@ -1,12 +1,10 @@
-interface ArrowSFill1IconProps {
-  fill?: string;
-  className?: string;
-}
-
 export const ArrowSFill1Icon = ({
   fill = "currentColor",
   className,
-}: ArrowSFill1IconProps) => (
+}: {
+  fill?: string;
+  className?: string;
+}) => (
   <svg className={className} viewBox="0 0 24 24">
     <path
       fill-rule="evenodd"

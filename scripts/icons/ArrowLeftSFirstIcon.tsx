@@ -1,12 +1,10 @@
-interface ArrowLeftSFirstIconProps {
-  fill?: string;
-  className?: string;
-}
-
 export const ArrowLeftSFirstIcon = ({
   fill = "currentColor",
   className,
-}: ArrowLeftSFirstIconProps) => (
+}: {
+  fill?: string;
+  className?: string;
+}) => (
   <svg className={className} viewBox="0 0 24 24">
     <path d="M8 6H6V18.73H8V6Z" fill={fill} />
     <path

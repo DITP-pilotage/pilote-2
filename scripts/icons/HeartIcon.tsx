@@ -1,0 +1,16 @@
+export const HeartIcon = ({
+  fill = "currentColor",
+  className,
+}: {
+  fill?: string;
+  className?: string;
+}) => (
+  <svg className={className} viewBox="0 0 24 24">
+    <path
+      fill-rule="evenodd"
+      clip-rule="evenodd"
+      d="M12.001 4.52901C14.35 2.42001 17.98 2.49001 20.243 4.75701C22.505 7.02501 22.583 10.637 20.479 12.993L11.999 21.485L3.52101 12.993C1.41701 10.637 1.49601 7.01901 3.75701 4.75701C6.02201 2.49301 9.64501 2.41701 12.001 4.52901Z"
+      fill={fill}
+    />
+  </svg>
+);

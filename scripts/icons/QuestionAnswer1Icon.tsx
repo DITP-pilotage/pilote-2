@@ -1,0 +1,16 @@
+export const QuestionAnswer1Icon = ({
+  fill = "currentColor",
+  className,
+}: {
+  fill?: string;
+  className?: string;
+}) => (
+  <svg className={className} viewBox="0 0 24 24">
+    <path
+      fill-rule="evenodd"
+      clip-rule="evenodd"
+      d="M21 8C21.5523 8 22 8.44772 22 9V22.5L17.545 19H9C8.44772 19 8 18.5523 8 18V17H18.237L20 18.385V8H21ZM17 2C17.5523 2 18 2.44772 18 3V15H5.455L1 18.5V3C1 2.44772 1.44772 2 2 2H17ZM16 4H3V14.385L4.763 13H16V4Z"
+      fill={fill}
+    />
+  </svg>
+);

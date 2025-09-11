@@ -1,0 +1,16 @@
+export const AlarmWarningIcon = ({
+  fill = "currentColor",
+  className,
+}: {
+  fill?: string;
+  className?: string;
+}) => (
+  <svg className={className} viewBox="0 0 24 24">
+    <path
+      fill-rule="evenodd"
+      clip-rule="evenodd"
+      d="M12.0001 6C16.4184 6 20.0001 9.58172 20.0001 14V20H21.0001V22H3.00011V20H4.00011V14C4.00011 9.58172 7.58183 6 12.0001 6ZM12.0001 8C8.6864 8 6.00011 10.6863 6.00011 14H8.00011C8.00011 11.7909 9.79097 10 12.0001 10V8ZM4.22211 4.808L6.34311 6.928L4.93011 8.344L2.80811 6.222L4.22211 4.808ZM19.7781 4.808L21.1921 6.222L19.0721 8.343L17.6571 6.929L19.7781 4.808ZM13.0001 2V5H11.0001V2H13.0001Z"
+      fill={fill}
+    />
+  </svg>
+);

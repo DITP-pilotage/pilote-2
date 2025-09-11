@@ -1,0 +1,20 @@
+export const HexagonevalideContourIcon = ({
+  fill = "currentColor",
+  className,
+}: {
+  fill?: string;
+  className?: string;
+}) => (
+  <svg className={className} viewBox="0 0 24 24">
+    <path
+      d="M17.0732 9.92969L10.0029 17.001L5.75977 12.7578L7.17383 11.3438L10.0029 14.1729L15.6592 8.51562L17.0732 9.92969Z"
+      fill={fill}
+    />
+    <path
+      fill-rule="evenodd"
+      clip-rule="evenodd"
+      d="M23 12L17.5 21.5H6.5L1 12L6.5 2.5H17.5L23 12ZM3.31055 12L7.65332 19.5H16.3467L20.6895 12L16.3467 4.5H7.65332L3.31055 12Z"
+      fill={fill}
+    />
+  </svg>
+);

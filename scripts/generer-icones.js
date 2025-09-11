@@ -13,11 +13,19 @@ function filenameToComponentName(filename) {
   const cleanName = nameWithoutExt.replace(/^fr--/, "");
 
   // Convert to PascalCase and add Icon suffix
-  const componentName =
+  // Remove parentheses and their content, replace spaces with hyphens, then split on hyphens/underscores
+  let componentName =
     cleanName
+      .replace(/\([^)]*\)/g, "") // Remove parentheses and their content
+      .replace(/\s+/g, "-") // Replace spaces with hyphens
       .split(/[-_]/)
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
       .join("") + "Icon";
+
+  // If component name starts with a number, prefix with an underscore
+  if (/^\d/.test(componentName)) {
+    componentName = "_" + componentName;
+  }
 
   return componentName;
 }
@@ -47,13 +55,13 @@ function processSvgContent(svgContent) {
 function generateComponentContent(componentName, svgContent) {
   const hasStroke = svgContent.includes("stroke={stroke}");
 
-  const interfaceProps = hasStroke
-    ? `interface ${componentName}Props {
+  const propsType = hasStroke
+    ? `{
   fill?: string;
   stroke?: string;
   className?: string;
 }`
-    : `interface ${componentName}Props {
+    : `{
   fill?: string;
   className?: string;
 }`;
@@ -65,11 +73,9 @@ function generateComponentContent(componentName, svgContent) {
     : `  fill = 'currentColor',
   className,`;
 
-  return `${interfaceProps}
-
-export const ${componentName} = ({
+  return `export const ${componentName} = ({
 ${defaultProps}
-}: ${componentName}Props) => (
+}: ${propsType}) => (
   ${svgContent.replace("<svg", "<svg className={className}")}
 );
 `;

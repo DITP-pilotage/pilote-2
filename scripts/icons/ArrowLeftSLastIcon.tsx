@@ -1,12 +1,10 @@
-interface ArrowLeftSLastIconProps {
-  fill?: string;
-  className?: string;
-}
-
 export const ArrowLeftSLastIcon = ({
   fill = "currentColor",
   className,
-}: ArrowLeftSLastIconProps) => (
+}: {
+  fill?: string;
+  className?: string;
+}) => (
   <svg className={className} viewBox="0 0 24 24">
     <path d="M15.9982 6H17.9982V18.73H15.9982V6Z" fill={fill} />
     <path
