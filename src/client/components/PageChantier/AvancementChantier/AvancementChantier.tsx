@@ -90,7 +90,7 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
       mailleSelectionnee === "departementale" ? (
         <Bloc
           backgroundClassNameTitre={
-            estChantierArchive ? "bg-dsfr-grey-925" : undefined
+            estChantierArchive ? "bg-dsfr-grey-925" : "bg-dsfr-blue-france-925"
           }
           titre={territoireSélectionné?.nomAffiché}
         >
@@ -120,7 +120,7 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
         mailleSelectionnee === "departementale") ? (
         <Bloc
           backgroundClassNameTitre={
-            estChantierArchive ? "bg-dsfr-grey-925" : undefined
+            estChantierArchive ? "bg-dsfr-grey-925" : "bg-dsfr-blue-france-925"
           }
           titre={
             territoireSélectionnéParent
@@ -153,7 +153,7 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
       ) : null}
       <Bloc
         backgroundClassNameTitre={
-          estChantierArchive ? "bg-dsfr-grey-925" : undefined
+          estChantierArchive ? "bg-dsfr-grey-925" : "bg-dsfr-blue-france-925"
         }
         titre="France"
       >
@@ -202,7 +202,7 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
       </Bloc>
       <Bloc
         backgroundClassNameTitre={
-          estChantierArchive ? "bg-dsfr-grey-925" : undefined
+          estChantierArchive ? "bg-dsfr-grey-925" : "bg-dsfr-blue-france-925"
         }
         className="h-full"
         contenuClassesSupplémentaires="fr-p-2w"
@@ -258,7 +258,7 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
       </Bloc>
       <Bloc
         backgroundClassNameTitre={
-          estChantierArchive ? "bg-dsfr-grey-925" : undefined
+          estChantierArchive ? "bg-dsfr-grey-925" : "bg-dsfr-blue-france-925"
         }
         className="h-full"
         contenuClassesSupplémentaires="fr-p-2w"
