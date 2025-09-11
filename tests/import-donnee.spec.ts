@@ -6,20 +6,29 @@ import { loginFn } from "./utils";
 test("doit pouvoir importer des données", async ({ page }) => {
   await loginFn({ page });
 
-  await test.step('Navigation vers la page chantier "Doubler les effectifs de la réserve opérationnelle"', async () => {
-    await page.getByLabel("Pagination").getByText("2").click();
+  const informationChantierEtIndicateurPourTestsE2E = {
+    id: "121",
+    nom: "Mieux accompagner les aidants",
+    indicateurId: "IND-812",
+    indicateurNom:
+      "Nombre de plateformes de répit dédiées aux aidants de personnes handicapées",
+  };
+
+  await test.step(`Navigation vers la page chantier "${informationChantierEtIndicateurPourTestsE2E.nom}"`, async () => {
     await expect(
       page.getByRole("table").getByRole("cell", {
-        name: /Doubler les effectifs de la réserve opérationnelle/,
+        name: informationChantierEtIndicateurPourTestsE2E.nom,
       }),
     ).toBeVisible();
     await page
       .getByRole("table")
       .getByRole("cell", {
-        name: /Doubler les effectifs de la réserve opérationnelle/,
+        name: informationChantierEtIndicateurPourTestsE2E.nom,
       })
       .click();
-    await page.waitForURL("**/chantier/CH-027/NAT-FR**");
+    await page.waitForURL(
+      `**/chantier/CH-${informationChantierEtIndicateurPourTestsE2E.id}/NAT-FR**`,
+    );
   });
 
   await test.step('Navigation vers la page "Mise à jour des données"', async () => {
@@ -27,26 +36,29 @@ test("doit pouvoir importer des données", async ({ page }) => {
       page.getByRole("link", { name: /Mettre à jour les données/ }),
     ).toBeVisible();
     await page.getByRole("link", { name: /Mettre à jour les données/ }).click();
-    await page.waitForURL("**/chantier/CH-027/indicateurs");
+    await page.waitForURL(
+      `**/chantier/CH-${informationChantierEtIndicateurPourTestsE2E.id}/indicateurs`,
+    );
   });
 
-  await test.step("Sélection de l'indicateur IND-927 - Part d'entraînement de la réserve opérationnelle", async () => {
+  await test.step(`Sélection de l'indicateur ${informationChantierEtIndicateurPourTestsE2E.indicateurId} - ${informationChantierEtIndicateurPourTestsE2E.nom}`, async () => {
     await expect(page).toHaveTitle(
-      /Mettre à jour les données - Chantier 027 - PILOTE/,
+      `Mettre à jour les données - Chantier ${informationChantierEtIndicateurPourTestsE2E.id} - PILOTE`,
     );
     await expect(
       page.getByRole("heading", { name: /Sélectionnez l'indicateur/ }),
     ).toBeVisible();
+
     await page.getByLabel("Choix de l'indicateur").selectOption({
-      // C'est volontaire car le nom du chantier qui comporte une appostrophe typo
-      // eslint-disable-next-line no-restricted-syntax
-      label: "IND-927 : Part d’entraînement de la réserve opérationnelle",
+      label: `${informationChantierEtIndicateurPourTestsE2E.indicateurId} : ${informationChantierEtIndicateurPourTestsE2E.indicateurNom}`,
     });
   });
 
   await test.step("Passage à l'étape suivante 'Charger le fichier'", async () => {
     await page.getByRole("button", { name: /Suivant/ }).click();
-    await page.waitForURL("**/chantier/CH-027/indicateurs?etapeCourante=2**");
+    await page.waitForURL(
+      `**/chantier/CH-${informationChantierEtIndicateurPourTestsE2E.id}/indicateurs?etapeCourante=2**`,
+    );
     await expect(
       page.getByRole("heading", { name: /Étape 2 sur 3/ }),
     ).toBeVisible();
@@ -56,8 +68,22 @@ test("doit pouvoir importer des données", async ({ page }) => {
     const stringifier = stringify(
       [
         ["IND-97", "D12", "Aveyron", "2023-03-31", "va", "5"],
-        ["IND-927", "D13", "Bouches-du-Rhône", "2023-01-17", "va", "12"],
-        ["IND-927", "D14", "Calvados", "2023-02-26", "va", "20"],
+        [
+          `${informationChantierEtIndicateurPourTestsE2E.indicateurId}`,
+          "D13",
+          "Bouches-du-Rhône",
+          "2023-01-17",
+          "va",
+          "12",
+        ],
+        [
+          `${informationChantierEtIndicateurPourTestsE2E.indicateurId}`,
+          "D14",
+          "Calvados",
+          "2023-02-26",
+          "va",
+          "20",
+        ],
       ],
       {
         header: true,
@@ -73,7 +99,7 @@ test("doit pouvoir importer des données", async ({ page }) => {
     );
 
     await page.getByLabel("Choisir un fichier").setInputFiles({
-      name: "IND-927.csv",
+      name: `${informationChantierEtIndicateurPourTestsE2E.indicateurId}.csv`,
       mimeType: "text/csv",
       buffer: Buffer.from(stringifier),
     });
@@ -95,7 +121,7 @@ test("doit pouvoir importer des données", async ({ page }) => {
     ).toBeVisible();
     await expect(
       page.getByText(
-        /L'indicateur IND-97 ne correpond pas à l'indicateur choisis \(IND-927\)/,
+        `L'indicateur IND-97 ne correpond pas à l'indicateur choisis (${informationChantierEtIndicateurPourTestsE2E.indicateurId})`,
       ),
     ).toBeVisible({
       timeout: 30_000,
@@ -105,9 +131,30 @@ test("doit pouvoir importer des données", async ({ page }) => {
   await test.step("Choix d'un fichier valide", async () => {
     const stringifier = stringify(
       [
-        ["IND-927", "D12", "Aveyron", "2023-03-31", "va", "5"],
-        ["IND-927", "D13", "Bouches-du-Rhône", "2023-01-17", "va", "12"],
-        ["IND-927", "D14", "Calvados", "2023-02-26", "va", "20"],
+        [
+          `${informationChantierEtIndicateurPourTestsE2E.indicateurId}`,
+          "D12",
+          "Aveyron",
+          "2023-03-31",
+          "va",
+          "5",
+        ],
+        [
+          `${informationChantierEtIndicateurPourTestsE2E.indicateurId}`,
+          "D13",
+          "Bouches-du-Rhône",
+          "2023-01-17",
+          "va",
+          "12",
+        ],
+        [
+          `${informationChantierEtIndicateurPourTestsE2E.indicateurId}`,
+          "D14",
+          "Calvados",
+          "2023-02-26",
+          "va",
+          "20",
+        ],
       ],
       {
         header: true,
@@ -123,7 +170,7 @@ test("doit pouvoir importer des données", async ({ page }) => {
     );
 
     await page.getByLabel("Choisir un fichier").setInputFiles({
-      name: "IND-927.csv",
+      name: `${informationChantierEtIndicateurPourTestsE2E.indicateurId}.csv`,
       mimeType: "text/csv",
       buffer: Buffer.from(stringifier),
     });
@@ -141,7 +188,9 @@ test("doit pouvoir importer des données", async ({ page }) => {
 
   await test.step('Passage à l\'étape suivante "Transmettre les données pour publication"', async () => {
     await page.getByRole("button", { name: /Suivant/ }).click();
-    await page.waitForURL("**/chantier/CH-027/indicateurs?etapeCourante=3**");
+    await page.waitForURL(
+      `**/chantier/CH-${informationChantierEtIndicateurPourTestsE2E.id}/indicateurs?etapeCourante=3**`,
+    );
     await expect(
       page.getByRole("heading", { name: /Étape 3 sur 3/ }),
     ).toBeVisible();
@@ -157,7 +206,7 @@ test("doit pouvoir importer des données", async ({ page }) => {
   await test.step("Vérification que les données ont correctement été transmises", async () => {
     await expect(
       page.getByText(
-        /Les données ont été importées avec succès pour l'indicateur IND-927/,
+        `Les données ont été importées avec succès pour l'indicateur ${informationChantierEtIndicateurPourTestsE2E.indicateurId}`,
       ),
     ).toBeVisible();
   });

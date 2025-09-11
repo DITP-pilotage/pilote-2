@@ -2,6 +2,11 @@ import { expect, test } from "@playwright/test";
 import { loginFn } from "./utils";
 
 test("doit pouvoir consulter les données des chantiers", async ({ page }) => {
+  const informationChantierEtIndicateurTestsE2E = {
+    id: "062",
+    nom: "Assurer une gestion sobre de la ressource en eau",
+  };
+
   await loginFn({ page });
 
   await test.step("Vérification de la structure de la page d'accueil", async () => {
@@ -47,22 +52,26 @@ test("doit pouvoir consulter les données des chantiers", async ({ page }) => {
     ).toBeVisible();
   });
 
-  await test.step('Navigation vers le chantier "Développer le co-voiturage"', async () => {
+  await test.step(`Navigation vers le chantier "${informationChantierEtIndicateurTestsE2E.nom}"`, async () => {
     await expect(
-      page
-        .getByRole("table")
-        .getByRole("cell", { name: /Développer le co-voiturage/ }),
+      page.getByRole("table").getByRole("cell", {
+        name: `${informationChantierEtIndicateurTestsE2E.nom}`,
+      }),
     ).toBeVisible();
     await page
       .getByRole("table")
-      .getByRole("cell", { name: /Développer le co-voiturage/ })
+      .getByRole("cell", {
+        name: `${informationChantierEtIndicateurTestsE2E.nom}`,
+      })
       .click();
-    await page.waitForURL("**/chantier/CH-046/NAT-FR**");
+    await page.waitForURL(
+      `**/chantier/CH-${informationChantierEtIndicateurTestsE2E.id}/NAT-FR**`,
+    );
   });
 
-  await test.step('Vérification de la structure de la page chantier "Développer le co-voiturage"', async () => {
+  await test.step(`Vérification de la structure de la page chantier "${informationChantierEtIndicateurTestsE2E.nom}"`, async () => {
     await expect(page).toHaveTitle(
-      /Chantier 046 - Développer le co-voiturage - PILOTE/,
+      `Chantier ${informationChantierEtIndicateurTestsE2E.id} - ${informationChantierEtIndicateurTestsE2E.nom} - PILOTE`,
     );
 
     await expect(
@@ -93,7 +102,7 @@ test("doit pouvoir consulter les données des chantiers", async ({ page }) => {
       page.getByRole("button", { name: /^Ce qui reste à faire$/ }),
     ).toBeVisible();
     await expect(
-      page.getByRole("heading", { name: /^Indicateurs \(8\)$/ }),
+      page.getByRole("heading", { name: /^Indicateurs \(7\)$/ }),
     ).toBeVisible();
     await expect(
       page.getByRole("heading", {
@@ -101,7 +110,7 @@ test("doit pouvoir consulter les données des chantiers", async ({ page }) => {
       }),
     ).toBeVisible();
     await expect(
-      page.getByRole("heading", { name: /^Autres indicateurs \(3\)$/ }),
+      page.getByRole("heading", { name: /^Autres indicateurs \(2\)$/ }),
     ).toBeVisible();
     await expect(
       page.getByRole("heading", { name: /^Décisions stratégiques$/ }),
