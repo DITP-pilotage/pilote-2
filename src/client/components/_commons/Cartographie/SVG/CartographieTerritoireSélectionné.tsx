@@ -22,15 +22,23 @@ export const CartographieTerritoireSélectionné: FunctionComponent<{
     <g>
       {territoiresCompares.length > 0
         ? detailTerritoiresComparés.map((territoire) =>
-            getTraceSvg(territoire.code, {
-              className: "territoire-sélectionné",
-              key: territoire.code,
-            }),
+            getTraceSvg(
+              territoire.code,
+              {
+                className: "territoire-sélectionné",
+                key: territoire.code,
+              },
+              "regions",
+            ),
           )
-        : getTraceSvg(territoireCode, {
-            className: "territoire-sélectionné",
-            key: territoireCode,
-          })}
+        : getTraceSvg(
+            territoireCode,
+            {
+              className: "territoire-sélectionné",
+              key: territoireCode,
+            },
+            "regions",
+          )}
     </g>
   );
 };
