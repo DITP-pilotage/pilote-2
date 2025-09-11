@@ -163,10 +163,10 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
                       contenuClassesSupplémentaires="fr-p-2w"
                     >
                       <div className="fr-container fr-p-0">
-                        <TitreInfobulleConteneur>
+                        <TitreInfobulleConteneur className="mb-6">
                           <Titre
                             baliseHtml="h2"
-                            className="fr-text--lg fr-py-1v"
+                            className="fr-text--lg fr-py-1v !mb-0"
                             estInline
                           >
                             Répartition territoriale
