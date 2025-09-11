@@ -655,21 +655,23 @@ type RenderSVGProps = {
 };
 
 const svgMap = new Map<string, (props: RenderSVGProps) => ReactNode>();
-const g: SVGG = CARTOGRAPHIE_SVG_AS_JSON.svg.g;
+const contenuSVG: SVGG = CARTOGRAPHIE_SVG_AS_JSON.svg.g;
 
-[...(g.polygon ? [g.polygon] : [])].flat().forEach((polygon) => {
-  svgMap.set(polygon["attr-territoire-code"], (props) => (
-    <polygon points={polygon["attr-points"]} {...props} />
-  ));
-});
+[...(contenuSVG.polygon ? [contenuSVG.polygon] : [])]
+  .flat()
+  .forEach((polygon) => {
+    svgMap.set(polygon["attr-territoire-code"], (props) => (
+      <polygon points={polygon["attr-points"]} {...props} />
+    ));
+  });
 
-[...(g.path ? [g.path] : [])].flat().forEach((path) => {
+[...(contenuSVG.path ? [contenuSVG.path] : [])].flat().forEach((path) => {
   svgMap.set(path["attr-territoire-code"], (props) => (
     <path d={path["attr-d"]} {...props} />
   ));
 });
 
-[...(g.g ? [g.g] : [])].flat().forEach((g) => {
+[...(contenuSVG.g ? [contenuSVG.g] : [])].flat().forEach((g) => {
   let polygons: (props: RenderSVGProps) => ReactNode = (
     _props: RenderSVGProps,
   ) => null;
