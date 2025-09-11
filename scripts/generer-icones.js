@@ -5,6 +5,23 @@ const { execSync } = require("child_process");
 const SOURCE_DIR = path.join(__dirname, "Composants PILOTE");
 const OUTPUT_DIR = path.join(__dirname, "icons");
 
+// Convert numbers to words (only for leading numbers)
+function numberToWord(num) {
+  const numbers = {
+    '1': 'One',
+    '2': 'Two', 
+    '3': 'Three',
+    '4': 'Four',
+    '5': 'Five',
+    '6': 'Six',
+    '7': 'Seven',
+    '8': 'Eight',
+    '9': 'Nine',
+    '0': 'Zero'
+  };
+  return numbers[num] || num;
+}
+
 // Convert filename to PascalCase component name
 function filenameToComponentName(filename) {
   const nameWithoutExt = path.parse(filename).name;
@@ -22,10 +39,10 @@ function filenameToComponentName(filename) {
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
       .join("") + "Icon";
 
-  // If component name starts with a number, prefix with an underscore
-  if (/^\d/.test(componentName)) {
-    componentName = "_" + componentName;
-  }
+  // If component name starts with a number, convert the leading number(s) to words
+  componentName = componentName.replace(/^(\d+)/, (match) => {
+    return match.split('').map(digit => numberToWord(digit)).join('');
+  });
 
   return componentName;
 }
@@ -136,22 +153,13 @@ function generateIcons() {
     }
   });
 
-  // Generate index file for easy imports
-  const indexContent =
-    generatedComponents
-      .map(
-        ({ componentName, outputFilename }) =>
-          `export { ${componentName} } from './${path.parse(outputFilename).name}';`,
-      )
-      .join("\n") + "\n";
+  // Skip index file generation
 
-  fs.writeFileSync(path.join(OUTPUT_DIR, "index.ts"), indexContent);
 
   // Run Prettier on all generated files
   runPrettier();
 
   console.log(`\n Generated ${generatedComponents.length} icon components`);
-  console.log(` Created index.ts with all exports`);
   console.log(`\nOutput directory: ${OUTPUT_DIR}`);
 }
 
