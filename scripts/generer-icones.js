@@ -1,5 +1,6 @@
 const fs = require("fs");
 const path = require("path");
+const { execSync } = require("child_process");
 
 const SOURCE_DIR = path.join(__dirname, "Composants PILOTE");
 const OUTPUT_DIR = path.join(__dirname, "icons");
@@ -74,6 +75,20 @@ ${defaultProps}
 `;
 }
 
+// Run Prettier on generated files
+function runPrettier() {
+  try {
+    console.log("Running Prettier on generated files...");
+    execSync(`npx prettier --write "${OUTPUT_DIR}/**/*.{ts,tsx}"`, {
+      cwd: path.join(__dirname, ".."),
+      stdio: "inherit",
+    });
+    console.log("✓ Prettier formatting complete");
+  } catch (error) {
+    console.warn("⚠ Prettier formatting failed:", error.message);
+  }
+}
+
 // Main function
 function generateIcons() {
   // Create output directory if it doesn't exist
@@ -125,6 +140,9 @@ function generateIcons() {
       .join("\n") + "\n";
 
   fs.writeFileSync(path.join(OUTPUT_DIR, "index.ts"), indexContent);
+
+  // Run Prettier on all generated files
+  runPrettier();
 
   console.log(`\n Generated ${generatedComponents.length} icon components`);
   console.log(` Created index.ts with all exports`);

@@ -4,10 +4,15 @@ interface ArrowSFill3IconProps {
 }
 
 export const ArrowSFill3Icon = ({
-  fill = 'currentColor',
+  fill = "currentColor",
   className,
 }: ArrowSFill3IconProps) => (
   <svg className={className} viewBox="0 0 24 24">
-<path fill-rule="evenodd" clip-rule="evenodd" d="M8 12L14 6V18L8 12Z" fill={fill}/>
-</svg>
+    <path
+      fill-rule="evenodd"
+      clip-rule="evenodd"
+      d="M8 12L14 6V18L8 12Z"
+      fill={fill}
+    />
+  </svg>
 );

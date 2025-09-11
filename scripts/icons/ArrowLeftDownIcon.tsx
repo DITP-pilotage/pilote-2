@@ -4,10 +4,13 @@ interface ArrowLeftDownIconProps {
 }
 
 export const ArrowLeftDownIcon = ({
-  fill = 'currentColor',
+  fill = "currentColor",
   className,
 }: ArrowLeftDownIconProps) => (
   <svg className={className} viewBox="0 0 24 24">
-<path d="M12.364 13.071L17.3137 18.0208H6V6.70711L10.9498 11.6568L16.6066 6L18.0208 7.41421L12.364 13.071Z" fill={fill}/>
-</svg>
+    <path
+      d="M12.364 13.071L17.3137 18.0208H6V6.70711L10.9498 11.6568L16.6066 6L18.0208 7.41421L12.364 13.071Z"
+      fill={fill}
+    />
+  </svg>
 );
