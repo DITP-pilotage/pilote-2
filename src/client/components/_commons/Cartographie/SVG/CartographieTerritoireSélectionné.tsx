@@ -25,23 +25,21 @@ export const CartographieTerritoireSélectionné: FunctionComponent<{
 
   return (
     <g>
-      {territoiresCompares.length > 0 ? (
-        detailTerritoiresComparés.map((territoire) =>
-          sourceSvgAsJson ? (
-            <path
-              className="territoire-sélectionné"
-              d={getTraceSvg(sourceSvgAsJson, territoire.code)}
-              key={territoire.code}
-            />
-          ) : null,
-        )
-      ) : sourceSvgAsJson ? (
-        <path
-          className="territoire-sélectionné"
-          d={getTraceSvg(sourceSvgAsJson, territoireCode)}
-          key={territoireCode}
-        />
-      ) : null}
+      {territoiresCompares.length > 0
+        ? detailTerritoiresComparés.map((territoire) =>
+            sourceSvgAsJson
+              ? getTraceSvg(sourceSvgAsJson, territoire.code, {
+                  className: "territoire-sélectionné",
+                  key: territoire.code,
+                })
+              : null,
+          )
+        : sourceSvgAsJson
+          ? getTraceSvg(sourceSvgAsJson, territoireCode, {
+              className: "territoire-sélectionné",
+              key: territoireCode,
+            })
+          : null}
     </g>
   );
 };

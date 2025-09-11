@@ -82,44 +82,41 @@ export const CartographieSVG: FunctionComponent<CartographieSVGProps> = ({
           <defs>{hachuresGrisBlanc.patternSVG}</defs>
           <g className="canvas">
             {territoires.map((territoire) =>
-              sourceSvgAsJson ? (
-                <path
-                  className={`territoire-rempli ${options.estInteractif && territoire.estInteractif && territoire.estApplicable && "territoire-interactif"}`}
-                  d={getTraceSvg(sourceSvgAsJson, territoire.code)}
-                  fill={territoire.remplissage}
-                  key={`territoire-${territoire.codeInsee}`}
-                  onClick={() =>
-                    territoire.estApplicable &&
-                    options.estInteractif &&
-                    territoire.estInteractif &&
-                    auClicTerritoireCallback(
-                      territoire.code,
-                      options.territoireSélectionnable,
-                    )
-                  }
-                  onMouseEnter={(e) => {
-                    if (options.estInteractif) {
-                      setHoveredTerritoire(territoire);
-                      setHoveredElement(
-                        e.currentTarget as unknown as HTMLElement,
-                      );
-                    }
-                  }}
-                  onMouseLeave={() => {
-                    setHoveredTerritoire(null);
-                    setHoveredElement(null);
-                  }}
-                />
-              ) : null,
+              sourceSvgAsJson
+                ? getTraceSvg(sourceSvgAsJson, territoire.code, {
+                    className: `territoire-rempli ${options.estInteractif && territoire.estInteractif && territoire.estApplicable && "territoire-interactif"}`,
+                    fill: territoire.remplissage,
+                    key: `territoire-${territoire.codeInsee}`,
+                    onClick: () =>
+                      territoire.estApplicable &&
+                      options.estInteractif &&
+                      territoire.estInteractif &&
+                      auClicTerritoireCallback(
+                        territoire.code,
+                        options.territoireSélectionnable,
+                      ),
+                    onMouseEnter: (e) => {
+                      if (options.estInteractif) {
+                        setHoveredTerritoire(territoire);
+                        setHoveredElement(
+                          e.currentTarget as unknown as HTMLElement,
+                        );
+                      }
+                    },
+                    onMouseLeave: () => {
+                      setHoveredTerritoire(null);
+                      setHoveredElement(null);
+                    },
+                  })
+                : null,
             )}
             {frontières.map((frontière) =>
-              sourceSvgAsJson ? (
-                <path
-                  className="territoire-frontière"
-                  d={getTraceSvg(sourceSvgAsJson, frontière.code)}
-                  key={`frontière-${frontière.codeInsee}`}
-                />
-              ) : null,
+              sourceSvgAsJson
+                ? getTraceSvg(sourceSvgAsJson, frontière.code, {
+                    className: "territoire-frontière",
+                    key: `frontière-${frontière.codeInsee}`,
+                  })
+                : null,
             )}
             {options.territoireSélectionnable ? (
               <CartographieTerritoireSélectionné

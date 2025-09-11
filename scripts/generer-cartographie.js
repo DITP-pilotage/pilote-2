@@ -2,7 +2,7 @@ const fs = require("fs");
 const path = require("path");
 const { XMLParser } = require("fast-xml-parser");
 const svg = fs.readFileSync(
-  path.join(__dirname, "../public/img/cartographie-france.svg"),
+  path.join(__dirname, "../public/img/carto.svg"),
   "utf8",
 );
 
