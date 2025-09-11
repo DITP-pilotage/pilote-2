@@ -1,16 +1,11 @@
 import { parseAsString, useQueryState } from "nuqs";
 import { FunctionComponent } from "react";
 import { actionsTerritoiresStore } from "@/client/stores/useTerritoiresStore/useTerritoiresStore";
-import {
-  CARTOGRAPHIE_SVG_AS_JSON,
-  getTraceSvg,
-} from "./CartographieSVGContrat";
+import { getTraceSvg } from "./CartographieSVGContrat";
 
 export const CartographieTerritoireSélectionné: FunctionComponent<{
   territoireCode: string;
 }> = ({ territoireCode }) => {
-  const sourceSvgAsJson = CARTOGRAPHIE_SVG_AS_JSON;
-
   const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
 
   const [territoiresCompares] = useQueryState(
@@ -27,19 +22,15 @@ export const CartographieTerritoireSélectionné: FunctionComponent<{
     <g>
       {territoiresCompares.length > 0
         ? detailTerritoiresComparés.map((territoire) =>
-            sourceSvgAsJson
-              ? getTraceSvg(sourceSvgAsJson, territoire.code, {
-                  className: "territoire-sélectionné",
-                  key: territoire.code,
-                })
-              : null,
-          )
-        : sourceSvgAsJson
-          ? getTraceSvg(sourceSvgAsJson, territoireCode, {
+            getTraceSvg(territoire.code, {
               className: "territoire-sélectionné",
-              key: territoireCode,
-            })
-          : null}
+              key: territoire.code,
+            }),
+          )
+        : getTraceSvg(territoireCode, {
+            className: "territoire-sélectionné",
+            key: territoireCode,
+          })}
     </g>
   );
 };

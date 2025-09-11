@@ -10,10 +10,7 @@ import SecureTooltip from "@/components/_commons/SecureTooltip/SecureTooltip";
 import CartographieZoomEtDéplacement from "./ZoomEtDéplacement/CartographieZoomEtDéplacement";
 import CartographieSVGStyled from "./CartographieSVG.styled";
 import { CartographieTerritoireSélectionné } from "./CartographieTerritoireSélectionné";
-import {
-  CARTOGRAPHIE_SVG_AS_JSON,
-  getTraceSvg,
-} from "./CartographieSVGContrat";
+import { getTraceSvg } from "./CartographieSVGContrat";
 
 interface CartographieSVGProps {
   territoireCode: string;
@@ -35,8 +32,6 @@ export const CartographieSVG: FunctionComponent<CartographieSVGProps> = ({
   auClicTerritoireCallback,
   contoursGris = false,
 }) => {
-  const sourceSvgAsJson = CARTOGRAPHIE_SVG_AS_JSON;
-
   const [hoveredTerritoire, setHoveredTerritoire] =
     useState<CartographieTerritoire | null>(null);
   const [hoveredElement, setHoveredElement] = useState<HTMLElement | null>(
@@ -82,41 +77,37 @@ export const CartographieSVG: FunctionComponent<CartographieSVGProps> = ({
           <defs>{hachuresGrisBlanc.patternSVG}</defs>
           <g className="canvas">
             {territoires.map((territoire) =>
-              sourceSvgAsJson
-                ? getTraceSvg(sourceSvgAsJson, territoire.code, {
-                    className: `territoire-rempli ${options.estInteractif && territoire.estInteractif && territoire.estApplicable && "territoire-interactif"}`,
-                    fill: territoire.remplissage,
-                    key: `territoire-${territoire.codeInsee}`,
-                    onClick: () =>
-                      territoire.estApplicable &&
-                      options.estInteractif &&
-                      territoire.estInteractif &&
-                      auClicTerritoireCallback(
-                        territoire.code,
-                        options.territoireSélectionnable,
-                      ),
-                    onMouseEnter: (e) => {
-                      if (options.estInteractif) {
-                        setHoveredTerritoire(territoire);
-                        setHoveredElement(
-                          e.currentTarget as unknown as HTMLElement,
-                        );
-                      }
-                    },
-                    onMouseLeave: () => {
-                      setHoveredTerritoire(null);
-                      setHoveredElement(null);
-                    },
-                  })
-                : null,
+              getTraceSvg(territoire.code, {
+                className: `territoire-rempli ${options.estInteractif && territoire.estInteractif && territoire.estApplicable && "territoire-interactif"}`,
+                fill: territoire.remplissage,
+                key: `territoire-${territoire.codeInsee}`,
+                onClick: () =>
+                  territoire.estApplicable &&
+                  options.estInteractif &&
+                  territoire.estInteractif &&
+                  auClicTerritoireCallback(
+                    territoire.code,
+                    options.territoireSélectionnable,
+                  ),
+                onMouseEnter: (e) => {
+                  if (options.estInteractif) {
+                    setHoveredTerritoire(territoire);
+                    setHoveredElement(
+                      e.currentTarget as unknown as HTMLElement,
+                    );
+                  }
+                },
+                onMouseLeave: () => {
+                  setHoveredTerritoire(null);
+                  setHoveredElement(null);
+                },
+              }),
             )}
             {frontières.map((frontière) =>
-              sourceSvgAsJson
-                ? getTraceSvg(sourceSvgAsJson, frontière.code, {
-                    className: "territoire-frontière",
-                    key: `frontière-${frontière.codeInsee}`,
-                  })
-                : null,
+              getTraceSvg(frontière.code, {
+                className: "territoire-frontière",
+                key: `frontière-${frontière.codeInsee}`,
+              }),
             )}
             {options.territoireSélectionnable ? (
               <CartographieTerritoireSélectionné
