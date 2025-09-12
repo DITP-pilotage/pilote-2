@@ -20,7 +20,7 @@ const TableauChantiersTendance: FunctionComponent<{
 
   return (
     <Badge type={estArchive ? "gris" : badgeTypeÀPartirDeLaTendance[tendance]}>
-      <div className="flex align-center">
+      <div className="flex align-center pr-1">
         {tendance === "HAUSSE" ? (
           <Icone className="w-3 h-3 text-current" icone={ArrowRightUp1Icon} />
         ) : tendance === "BAISSE" ? (
