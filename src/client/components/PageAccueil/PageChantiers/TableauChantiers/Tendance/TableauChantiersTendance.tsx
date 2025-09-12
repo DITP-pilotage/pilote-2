@@ -5,7 +5,10 @@ import {
   badgeTypeÀPartirDeLaTendance,
   libelléÀPartirDeLaTendance,
 } from "@/client/utils/chantier/tendance/tendance";
-import Icône from "@/components/_commons/Icône/Icône";
+import { Icone } from "@/components/_commons/Icone";
+import { ArrowLine1Icon } from "@/components/_commons/Icones/ArrowLine1Icon";
+import { ArrowRightUp1Icon } from "@/components/_commons/Icones/ArrowRightUp1Icon";
+import { ArrowRightDown1Icon } from "@/components/_commons/Icones/ArrowRightDown1Icon";
 
 interface TableauChantiersTendanceProps {
   tendance: DonnéesTableauChantiers["tendance"];
@@ -23,20 +26,11 @@ const TableauChantiersTendance: FunctionComponent<
     <Badge type={estArchive ? "gris" : badgeTypeÀPartirDeLaTendance[tendance]}>
       <div className="flex align-center">
         {tendance === "HAUSSE" ? (
-          <Icône
-            className="fr-text--xs fr-mr-1v"
-            id="material-symbols::north_east::outlined"
-          />
+          <Icone className="w-3 h-3 text-current" icone={ArrowRightUp1Icon} />
         ) : tendance === "BAISSE" ? (
-          <Icône
-            className="fr-text--xs fr-mr-1v"
-            id="material-symbols::south_east::outlined"
-          />
+          <Icone className="w-3 h-3 text-current" icone={ArrowRightDown1Icon} />
         ) : (
-          <Icône
-            className="fr-text--xs fr-mr-1v"
-            id="material-symbols::east::outlined"
-          />
+          <Icone className="w-3 h-3 text-current" icone={ArrowLine1Icon} />
         )}
       </div>
       {libelléÀPartirDeLaTendance[tendance]}

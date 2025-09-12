@@ -49,7 +49,7 @@ export const Infobulle: FunctionComponent<
         ) : null}
         {styleIconInfoBulle === "documentation" ? (
           <Icone
-            className="!text-dsfr-moutarde-main-679"
+            className="text-dsfr-moutarde-main-679"
             icone={IconeDocumentationIcon}
           />
         ) : null}

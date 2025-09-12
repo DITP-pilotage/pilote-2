@@ -29,6 +29,9 @@
       "@/pages/*": [
         "pages/*"
       ],
+      "@/utils/*": [
+        "utils/*"
+      ],
       "@/hooks/*": [
         "hooks/*"
       ],
