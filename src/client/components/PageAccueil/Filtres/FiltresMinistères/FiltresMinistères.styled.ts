@@ -47,7 +47,7 @@ const FiltresMinistèresStyled = styled.div`
     color: var(--background-default-grey);
     background-color: var(--background-active-blue-france);
 
-    .icône {
+    svg {
       color: white;
     }
 

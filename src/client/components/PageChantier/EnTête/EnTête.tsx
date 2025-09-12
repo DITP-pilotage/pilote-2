@@ -1,31 +1,25 @@
-import "@gouvfr/dsfr/dist/utility/icons/icons-device/icons-device.min.css";
-import "@gouvfr/dsfr/dist/utility/icons/icons-document/icons-document.min.css";
 import "@gouvfr/dsfr/dist/dsfr.min.css";
 import Link from "next/link";
 import { FunctionComponent } from "react";
-import clsx from "clsx";
-import BoutonImpression from "@/components/_commons/BoutonImpression/BoutonImpression";
 import Titre from "@/components/_commons/Titre/Titre";
 import { ResponsableRapportDetailleContrat } from "@/server/chantiers/app/contrats/ChantierRapportDetailleContrat";
 import { getQueryParamString } from "@/client/utils/getQueryParamString";
-import { estLargeurDÉcranActuelleMoinsLargeQue } from "@/client/stores/useLargeurDÉcranStore/useLargeurDÉcranStore";
 import { getFiltresActifs } from "@/client/stores/useFiltresStoreNew/useFiltresStoreNew";
 import { pageChantier } from "@/components/PageChantier/PageChantierServerSideContext";
 import { IconeMinistere } from "@/client/utils/mapperIconeMinistereVersIcone";
 import { GovernmentIcon } from "@/components/_commons/Icones/GovernmentIcon";
 import { AccountIcon } from "@/components/_commons/Icones/AccountIcon";
-import PageChantierEnTêteStyled from "./EnTête.styled";
+import { clsxm } from "@/utils/clsxm";
+import { ActionChantierEnTete } from "@/components/PageChantier/EnTête/ActionChantierEnTete";
 import { ResponsableChantierEnTete } from "./EnTêteResponsables";
 import { ResponsabiliteChantierEnTete } from "./ResponsabiliteChantierEnTete";
 
-interface PageChantierEnTêteProps {
+const PageChantierEnTête: FunctionComponent<{
   responsables?: ResponsableRapportDetailleContrat;
   afficheLeBoutonImpression?: boolean;
   afficheLeBoutonMiseAJourDonnee?: boolean;
   afficheLeBoutonFicheConducteur?: boolean;
-}
-
-const PageChantierEnTête: FunctionComponent<PageChantierEnTêteProps> = ({
+}> = ({
   responsables,
   afficheLeBoutonImpression = false,
   afficheLeBoutonMiseAJourDonnee = false,
@@ -33,7 +27,6 @@ const PageChantierEnTête: FunctionComponent<PageChantierEnTêteProps> = ({
 }) => {
   const { chantier, territoireCode } = pageChantier.useServerSidePropsContext();
 
-  const estVueMobile = estLargeurDÉcranActuelleMoinsLargeQue("sm");
   const listeNomsResponsablesMinistèrePorteur: string[] = [
     responsables?.porteur?.nom,
   ].filter(Boolean);
@@ -59,38 +52,31 @@ const PageChantierEnTête: FunctionComponent<PageChantierEnTêteProps> = ({
 
   const chantierEstArchive = chantier.statut === "ARCHIVE";
   return (
-    <PageChantierEnTêteStyled
-      className={clsx("fr-text-title--blue-france", {
+    <div
+      className={clsxm("fr-text-title--blue-france print:mt-4", {
         "!text-dsfr-grey-200": chantierEstArchive,
       })}
     >
       <Link
         aria-label="Retour à l'accueil"
-        className={clsx(
-          "fr-link fr-fi-arrow-left-line fr-link--icon-left fr-mb-3w fr-mt-2w btn-retour",
-          {
-            "!text-dsfr-grey-200": chantierEstArchive,
-          },
-        )}
+        className="fr-link fr-fi-arrow-left-line fr-link--icon-left fr-mb-3w fr-mt-2w !text-dsfr-blue-france-sun-113"
         href={hrefBoutonRetour}
       >
         Retour
       </Link>
-      <div className="container-titre-chantier">
-        <Titre
-          baliseHtml="h1"
-          className={clsx("fr-h2 fr-mb-2w fr-mt-1w titre-chantier", {
-            "!text-dsfr-grey-200": chantierEstArchive,
-          })}
-        >
-          {nomChantier}
-        </Titre>
-      </div>
-      <div className="fr-pb-3w fr-mb-3w border-b border-blue-france flex">
+      <Titre
+        baliseHtml="h1"
+        className={clsxm("fr-h2 !mb-4 !mt-2 !text-dsfr-blue-france-sun-113", {
+          "!text-dsfr-grey-200": chantierEstArchive,
+        })}
+      >
+        {nomChantier}
+      </Titre>
+      <div className="!pb-6 !mb-6 border-b border-blue-france flex">
         <div className="icone-entete fr-mb-1w fr-pr-1w">
           <IconeMinistere icone={responsables?.porteur?.icône} />
         </div>
-        <p className={clsx(`fr-mb-0 uppercase`)}>
+        <p className={clsxm(`fr-mb-0 uppercase`)}>
           {listeNomsResponsablesMinistèrePorteur.join(", ") || "Non renseigné"}
         </p>
       </div>
@@ -105,41 +91,12 @@ const PageChantierEnTête: FunctionComponent<PageChantierEnTêteProps> = ({
         listeNomsResponsables={listeNomsDirecteursAdministrationCentrale}
       />
       <ResponsabiliteChantierEnTete />
-      <div className="fr-mt-md-2w format-mobile fr-ml-1w">
-        {afficheLeBoutonMiseAJourDonnee && !estVueMobile ? (
-          <div className="fr-mb-1v">
-            <Link
-              className="lien-menu fr-link fr-link--icon-left fr-icon-download-line fr-btn--icon-left fr-text--sm fr-p-0 no-underline border-b border-blue-france"
-              href={`/chantier/${chantier.id}/indicateurs`}
-              title="Mettre à jour les données"
-            >
-              Mettre à jour les données
-            </Link>
-          </div>
-        ) : null}
-        {afficheLeBoutonImpression && !estVueMobile ? (
-          <div className="format-mobile-bouton-impression fr-mb-1v">
-            <BoutonImpression
-              className={chantierEstArchive ? "!text-dsfr-grey-200" : ""}
-            />
-          </div>
-        ) : null}
-        {afficheLeBoutonFicheConducteur && !estVueMobile ? (
-          <Link
-            className={clsx(
-              "lien-menu fr-link fr-link--icon-left fr-icon-article-line fr-btn--icon-left fr-text--sm fr-p-0 no-underline border-b border-blue-france",
-              {
-                "!text-dsfr-grey-200": chantierEstArchive,
-              },
-            )}
-            href={`/chantier/${chantier.id}/fiche-conducteur`}
-            title="Fiche conducteur"
-          >
-            Fiche conducteur
-          </Link>
-        ) : null}
-      </div>
-    </PageChantierEnTêteStyled>
+      <ActionChantierEnTete
+        afficheLeBoutonFicheConducteur={afficheLeBoutonFicheConducteur}
+        afficheLeBoutonImpression={afficheLeBoutonImpression}
+        afficheLeBoutonMiseAJourDonnee={afficheLeBoutonMiseAJourDonnee}
+      />
+    </div>
   );
 };
 
