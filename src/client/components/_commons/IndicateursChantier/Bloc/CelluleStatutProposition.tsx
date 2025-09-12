@@ -42,7 +42,7 @@ export const CelluleStatutProposition = ({
       <Infobulle
         classNameBouton="texte-proposition"
         classNameInfoBulle="tooltip-accordeon"
-        styleIconInfoBulle="informationProposition"
+        styleIconInfoBulle="documentation"
       >
         <p className="fr-text--sm texte-proposition">
           La proposition de valeur d'avancement a bien été acceptée
@@ -68,7 +68,7 @@ export const CelluleStatutProposition = ({
       <Infobulle
         classNameBouton="texte-proposition"
         classNameInfoBulle="tooltip-accordeon"
-        styleIconInfoBulle="informationProposition"
+        styleIconInfoBulle="documentation"
       >
         <p className="fr-text--sm texte-proposition">
           La proposition de valeur d'avancement a bien été acceptée
@@ -87,7 +87,7 @@ export const CelluleStatutProposition = ({
       <Infobulle
         classNameBouton="texte-proposition"
         classNameInfoBulle="tooltip-accordeon"
-        styleIconInfoBulle="informationProposition"
+        styleIconInfoBulle="documentation"
       >
         <p className="fr-text--sm texte-proposition">
           Valeur d'avancement proposée le{" "}

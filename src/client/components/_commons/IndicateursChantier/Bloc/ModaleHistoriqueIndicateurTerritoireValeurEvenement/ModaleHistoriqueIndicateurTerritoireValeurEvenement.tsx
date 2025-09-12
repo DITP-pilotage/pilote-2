@@ -255,7 +255,7 @@ export const ModaleHistoriqueIndicateurTerritoireValeurEvenement: FunctionCompon
                               <Infobulle
                                 classNameBouton="fr-p-0 fr-mr-1w"
                                 classNameInfoBulle="tooltip-accordeon"
-                                styleIconInfoBulle="informationProposition"
+                                styleIconInfoBulle="documentation"
                               >
                                 <p className="fr-callout__text fr-text--sm">
                                   <span className="fr-text--bold">
