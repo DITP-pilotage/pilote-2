@@ -11,6 +11,9 @@ import { getQueryParamString } from "@/client/utils/getQueryParamString";
 import { estLargeurDÉcranActuelleMoinsLargeQue } from "@/client/stores/useLargeurDÉcranStore/useLargeurDÉcranStore";
 import { getFiltresActifs } from "@/client/stores/useFiltresStoreNew/useFiltresStoreNew";
 import { pageChantier } from "@/components/PageChantier/PageChantierServerSideContext";
+import { IconeMinistere } from "@/client/utils/mapperIconeMinistereVersIcone";
+import { GovernmentIcon } from "@/components/_commons/Icones/GovernmentIcon";
+import { AccountIcon } from "@/components/_commons/Icones/AccountIcon";
 import PageChantierEnTêteStyled from "./EnTête.styled";
 import { ResponsableChantierEnTete } from "./EnTêteResponsables";
 import { ResponsabiliteChantierEnTete } from "./ResponsabiliteChantierEnTete";
@@ -83,32 +86,26 @@ const PageChantierEnTête: FunctionComponent<PageChantierEnTêteProps> = ({
           {nomChantier}
         </Titre>
       </div>
-      <div className="fr-pb-3w fr-mb-3w border-b border-blue-france">
-        <ResponsableChantierEnTete
-          icone={responsables?.porteur?.icône || "remix::government::fill"}
-          iconeStyle="icone"
-          isUppercase
-          listeNomsResponsables={listeNomsResponsablesMinistèrePorteur}
-        />
+      <div className="fr-pb-3w fr-mb-3w border-b border-blue-france flex">
+        <div className="icone-entete fr-mb-1w fr-pr-1w">
+          <IconeMinistere
+            icone={responsables?.porteur?.icône || "remix::government::fill"}
+          />
+        </div>
+        <p className={clsx(`fr-mb-0 uppercase`)}>
+          {listeNomsResponsablesMinistèrePorteur.join(", ") || "Non renseigné"}
+        </p>
       </div>
-      <div className="fr-mb-1w">
-        <ResponsableChantierEnTete
-          icone="fr-icon-government-fill"
-          libellé="Autres ministères co-porteurs"
-          listeNomsResponsables={
-            listeNomsResponsablesAutresMinistèresCoPorteurs
-          }
-          size="sm"
-        />
-      </div>
-      <div className="fr-mb-1w">
-        <ResponsableChantierEnTete
-          icone="fr-icon-account-circle-fill"
-          libellé="Directeur(s) / directrice(s) d'Administration Centrale"
-          listeNomsResponsables={listeNomsDirecteursAdministrationCentrale}
-          size="sm"
-        />
-      </div>
+      <ResponsableChantierEnTete
+        icone={GovernmentIcon}
+        libellé="Autres ministères co-porteurs"
+        listeNomsResponsables={listeNomsResponsablesAutresMinistèresCoPorteurs}
+      />
+      <ResponsableChantierEnTete
+        icone={AccountIcon}
+        libellé="Directeur(s) / directrice(s) d'Administration Centrale"
+        listeNomsResponsables={listeNomsDirecteursAdministrationCentrale}
+      />
       <ResponsabiliteChantierEnTete />
       <div className="fr-mt-md-2w format-mobile fr-ml-1w">
         {afficheLeBoutonMiseAJourDonnee && !estVueMobile ? (

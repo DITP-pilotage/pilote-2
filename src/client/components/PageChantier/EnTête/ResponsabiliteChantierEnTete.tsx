@@ -1,5 +1,6 @@
 import { pageChantier } from "@/components/PageChantier/PageChantierServerSideContext";
-import EnteteResponsablesStyled from "./EnTêteResponsables.styled";
+import { Icone } from "@/components/_commons/Icone";
+import { DraftContourIcon } from "@/components/_commons/Icones/DraftContourIcon";
 import { recupererResponsabiliteTerritoriale } from "./responsabiliteAte";
 
 export const ResponsabiliteChantierEnTete = () => {
@@ -22,44 +23,48 @@ export const ResponsabiliteChantierEnTete = () => {
     chantier.ate,
   );
 
-  return (
-    <EnteteResponsablesStyled>
-      <div className="flex fr-pl-1v">
-        <div className="icone-entete fr-mb-1w fr-pr-3v">
-          <span className="fr-icon-draft-line" />
-        </div>
+  if (estChantierNational) {
+    return (
+      <div className="flex pl-1">
+        <Icone icone={DraftContourIcon} />
         <div>
-          <span className="fr-mb-0 fr-text--xs">
-            Chantier piloté {estChantierNational ? "à la" : "jusqu'à la"}{" "}
-            <span className="fr-text--bold">
-              maille{" "}
-              {estChantierNational
-                ? "nationale uniquement"
-                : estChantierRegional
-                  ? "régionale"
-                  : estChantierDepartemental
-                    ? "départementale"
-                    : null}
-            </span>
+          <span className="!mb-0 fr-text--xs">
+            Chantier piloté à la{" "}
+            <span className="bold">maille nationale uniquement</span>
           </span>
-          {!estChantierNational ? (
-            <div>
-              <p className="fr-mb-0 fr-text--xs fr-text--bold">
-                Commentaires locaux :
-              </p>
-              <ul className="fr-mb-0 fr-text--xs">
-                {listeResponsabiliteTerritoriale.map(
-                  (responsabilite, index) => (
-                    <li className="fr-pb-0" key={`responsabilite-${index}`}>
-                      {responsabilite}
-                    </li>
-                  ),
-                )}
-              </ul>
-            </div>
-          ) : null}
         </div>
       </div>
-    </EnteteResponsablesStyled>
+    );
+  }
+
+  return (
+    <div className="flex">
+      <div className="mx-2">
+        <Icone icone={DraftContourIcon} />
+      </div>
+      <div>
+        <span className="!mb-0 fr-text--xs">
+          Chantier piloté jusqu'à la{" "}
+          <span className="bold">
+            maille{" "}
+            {estChantierRegional
+              ? "régionale"
+              : estChantierDepartemental
+                ? "départementale"
+                : null}
+          </span>
+        </span>
+        <div>
+          <p className="!mb-0 fr-text--xs bold">Commentaires locaux :</p>
+          <ul className="!mb-0 fr-text--xs">
+            {listeResponsabiliteTerritoriale.map((responsabilite, index) => (
+              <li className="pb-0" key={`responsabilite-${index}`}>
+                {responsabilite}
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </div>
   );
 };
