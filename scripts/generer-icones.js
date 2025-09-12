@@ -65,6 +65,10 @@ function processSvgContent(svgContent) {
     processedSvg = processedSvg.replace(/stroke="#[^"]*"/g, "stroke={stroke}");
   }
 
+  // Replace fill-rule and clip-rule with fillRule and clipRule for React
+  processedSvg = processedSvg.replace(/fill-rule=/g, "fillRule=");
+  processedSvg = processedSvg.replace(/clip-rule=/g, "clipRule=");
+
   return processedSvg;
 }
 
@@ -96,6 +100,20 @@ ${defaultProps}
   ${svgContent.replace("<svg", "<svg className={className}")}
 );
 `;
+}
+
+// Run ESLint on generated files
+function runEslint() {
+  try {
+    console.log("Running ESLint on generated files...");
+    execSync(`npx eslint "${OUTPUT_DIR}/**/*.{ts,tsx}" --fix`, {
+      cwd: path.join(__dirname, ".."),
+      stdio: "inherit",
+    });
+    console.log("✓ ESLint fixes complete");
+  } catch (error) {
+    console.warn("⚠ ESLint fixes failed:", error.message);
+  }
 }
 
 // Run Prettier on generated files
@@ -156,7 +174,8 @@ function generateIcons() {
   // Skip index file generation
 
 
-  // Run Prettier on all generated files
+  // Run ESLint then Prettier on all generated files
+  runEslint();
   runPrettier();
 
   console.log(`\n Generated ${generatedComponents.length} icon components`);
