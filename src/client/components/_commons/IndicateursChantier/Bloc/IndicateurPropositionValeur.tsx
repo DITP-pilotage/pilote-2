@@ -10,7 +10,7 @@ import {
   estPropositionRefusee,
   estPropositionSupprimee,
 } from "@/components/_commons/IndicateursChantier/Bloc/utils";
-import Infobulle from "@/components/_commons/Infobulle/Infobulle";
+import { Infobulle } from "@/components/_commons/Infobulle/Infobulle";
 import { LigneInformationPropositionValeur } from "@/components/_commons/IndicateursChantier/Bloc/LigneInformationPropositionValeur";
 import { useBlocIndicateurContext } from "@/components/PageChantier/useBlocIndicateurContext";
 import { DatajobsExecution } from "@/server/datajobs-execution/DatajobsExecution";

@@ -1,6 +1,6 @@
 import { useBlocIndicateurContext } from "@/components/PageChantier/useBlocIndicateurContext";
 import { formaterDate } from "@/client/utils/date/date";
-import Infobulle from "@/components/_commons/Infobulle/Infobulle";
+import { Infobulle } from "@/components/_commons/Infobulle/Infobulle";
 import useIndicateurAlerteDateMaj from "@/components/_commons/IndicateursChantier/Bloc/useIndicateurAlerteDateMaj";
 
 export const LigneIndicateurDatePrevisionnelle = () => {

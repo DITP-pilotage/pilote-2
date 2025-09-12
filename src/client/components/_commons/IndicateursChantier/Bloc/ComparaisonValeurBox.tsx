@@ -1,5 +1,5 @@
 import { formaterDate } from "@/client/utils/date/date";
-import Infobulle from "@/client/components/_commons/Infobulle/Infobulle";
+import { Infobulle } from "@/client/components/_commons/Infobulle/Infobulle";
 import { DetailIndicateurPropositionValeurAvancement } from "@/server/chantiers/domain/DetailsIndicateurs";
 
 export const ComparaisonValeurBox = ({

@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import Infobulle from "@/components/_commons/Infobulle/Infobulle";
+import { Infobulle } from "@/components/_commons/Infobulle/Infobulle";
 import { formaterDate } from "@/client/utils/date/date";
 import {
   estPropositionAcceptee,

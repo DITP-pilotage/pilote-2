@@ -26,7 +26,7 @@ import IcônesMultiplesEtTexte from "@/components/_commons/IcônesMultiplesEtTex
 import TableauChantiersTendance from "@/components/PageAccueil/PageChantiers/TableauChantiers/Tendance/TableauChantiersTendance";
 import TableauChantiersEcart from "@/components/PageAccueil/PageChantiers/TableauChantiers/Écart/TableauChantiersÉcart";
 import Ministère from "@/server/domain/ministère/Ministère.interface";
-import Infobulle from "@/components/_commons/Infobulle/Infobulle";
+import { Infobulle } from "@/components/_commons/Infobulle/Infobulle";
 import infobulles from "@/client/constants/infobulles";
 import TableauChantiersProps, {
   DonnéesTableauChantiers,

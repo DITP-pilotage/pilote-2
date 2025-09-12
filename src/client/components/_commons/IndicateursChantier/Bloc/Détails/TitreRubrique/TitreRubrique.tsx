@@ -1,6 +1,6 @@
 import { FunctionComponent } from "react";
 import clsx from "clsx";
-import Infobulle from "@/components/_commons/Infobulle/Infobulle";
+import { Infobulle } from "@/components/_commons/Infobulle/Infobulle";
 import Titre from "@/components/_commons/Titre/Titre";
 import TitreInfobulleConteneur from "@/components/_commons/TitreInfobulleConteneur/TitreInfobulleConteneur";
 

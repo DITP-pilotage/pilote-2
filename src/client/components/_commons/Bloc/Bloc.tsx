@@ -1,7 +1,7 @@
 import { FunctionComponent } from "react";
 import clsx from "clsx";
 import BlocStyled from "@/components/_commons/Bloc/Bloc.styled";
-import Infobulle from "@/components/_commons/Infobulle/Infobulle";
+import { Infobulle } from "@/components/_commons/Infobulle/Infobulle";
 
 interface BlocProps {
   children: React.ReactNode;

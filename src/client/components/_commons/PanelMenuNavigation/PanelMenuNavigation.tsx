@@ -2,7 +2,7 @@ import SélecteursMaillesEtTerritoires from "@/components/_commons/SélecteursMa
 import { MailleInterne } from "@/server/domain/maille/Maille.interface";
 import SélecteurMaille from "@/client/components/_commons/SélecteursMaillesEtTerritoiresChantier/SélecteurMaille/SélecteurMaille";
 import INFOBULLE_CONTENUS from "@/client/constants/infobulles";
-import Infobulle from "@/client/components/_commons/Infobulle/Infobulle";
+import { Infobulle } from "@/client/components/_commons/Infobulle/Infobulle";
 import SelecteurJalon from "@/client/components/_commons/SelecteurJalon/SelecteurJalon";
 
 type PanelMenuNavigationProps = {

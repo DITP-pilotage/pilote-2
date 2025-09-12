@@ -1,6 +1,6 @@
 import clsx from "clsx";
 import { BarreDeProgressionVariante } from "@/components/_commons/BarreDeProgression/BarreDeProgression";
-import Infobulle from "@/components/_commons/Infobulle/Infobulle";
+import { Infobulle } from "@/components/_commons/Infobulle/Infobulle";
 import { useBlocIndicateurContext } from "@/components/PageChantier/useBlocIndicateurContext";
 import {
   estPropositionAccepteeAvecModification,

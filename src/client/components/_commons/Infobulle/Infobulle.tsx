@@ -12,13 +12,13 @@ import { Icone } from "@/components/_commons/Icone";
 import { IconeDocumentationIcon } from "@/components/_commons/Icones/IconeDocumentationIcon";
 import InfobulleStyled from "./Infobulle.styled";
 
-type InfobulleProps = PropsWithChildren<{
-  classNameBouton?: string;
-  classNameInfoBulle?: string;
-  styleIconInfoBulle?: "information" | "question" | "informationProposition";
-}>;
-
-const Infobulle: FunctionComponent<InfobulleProps> = ({
+export const Infobulle: FunctionComponent<
+  PropsWithChildren<{
+    classNameBouton?: string;
+    classNameInfoBulle?: string;
+    styleIconInfoBulle?: "information" | "question" | "informationProposition";
+  }>
+> = ({
   children,
   classNameBouton,
   classNameInfoBulle,
@@ -73,5 +73,3 @@ const Infobulle: FunctionComponent<InfobulleProps> = ({
     </InfobulleStyled>
   );
 };
-
-export default Infobulle;

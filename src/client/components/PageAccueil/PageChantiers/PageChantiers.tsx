@@ -13,7 +13,7 @@ import Titre from "@/components/_commons/Titre/Titre";
 import CartographieAvancement from "@/components/_commons/Cartographie/CartographieAvancement/CartographieAvancement";
 import useCartographie from "@/components/_commons/Cartographie/useCartographie";
 import { ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS } from "@/client/constants/légendes/élémentsDeLégendesCartographieAvancement";
-import Infobulle from "@/components/_commons/Infobulle/Infobulle";
+import { Infobulle } from "@/components/_commons/Infobulle/Infobulle";
 import INFOBULLE_CONTENUS from "@/client/constants/infobulles";
 import TitreInfobulleConteneur from "@/components/_commons/TitreInfobulleConteneur/TitreInfobulleConteneur";
 import RemontéeAlerte from "@/components/_commons/RemontéeAlerteChantier/RemontéeAlerte";
