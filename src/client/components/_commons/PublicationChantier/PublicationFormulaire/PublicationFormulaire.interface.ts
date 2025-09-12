@@ -2,7 +2,7 @@ import {
   RouterInputs,
   RouterOutputs,
 } from "@/server/infrastructure/api/trpc/trpc.interface";
-import { PublicationCaractéristiques } from "@/components/_commons/Publication/Publication.interface";
+import { PublicationCaractéristiques } from "@/components/_commons/PublicationChantier/Publication.interface";
 
 export default interface PublicationFormulaireProps {
   contenuInitial?: RouterInputs["publication"]["créer"]["contenu"];

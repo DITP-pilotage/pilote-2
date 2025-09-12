@@ -13,7 +13,7 @@ import Titre from "@/components/_commons/Titre/Titre";
 import CartographieAvancement from "@/components/_commons/Cartographie/CartographieAvancement/CartographieAvancement";
 import useCartographie from "@/components/_commons/Cartographie/useCartographie";
 import { ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS } from "@/client/constants/légendes/élémentsDeLégendesCartographieAvancement";
-import Infobulle from "@/components/_commons/Infobulle/Infobulle";
+import { Infobulle } from "@/components/_commons/Infobulle/Infobulle";
 import INFOBULLE_CONTENUS from "@/client/constants/infobulles";
 import TitreInfobulleConteneur from "@/components/_commons/TitreInfobulleConteneur/TitreInfobulleConteneur";
 import RemontéeAlerte from "@/components/_commons/RemontéeAlerteChantier/RemontéeAlerte";
@@ -163,10 +163,10 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
                       contenuClassesSupplémentaires="fr-p-2w"
                     >
                       <div className="fr-container fr-p-0">
-                        <TitreInfobulleConteneur>
+                        <TitreInfobulleConteneur className="mb-6">
                           <Titre
                             baliseHtml="h2"
-                            className="fr-text--lg fr-py-1v"
+                            className="fr-text--lg fr-py-1v !mb-0"
                             estInline
                           >
                             Répartition territoriale

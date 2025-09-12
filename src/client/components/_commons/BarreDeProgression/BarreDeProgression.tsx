@@ -1,5 +1,5 @@
 import { FunctionComponent, ReactNode } from "react";
-import Infobulle from "@/client/components/_commons/Infobulle/Infobulle";
+import { Infobulle } from "@/client/components/_commons/Infobulle/Infobulle";
 import { BarreDeProgressionStyled } from "./BarreDeProgression.styled";
 
 export type BarreDeProgressionVariante =

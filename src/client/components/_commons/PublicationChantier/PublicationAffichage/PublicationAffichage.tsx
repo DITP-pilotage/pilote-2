@@ -1,8 +1,8 @@
 import { FunctionComponent } from "react";
 import { formaterDate } from "@/client/utils/date/date";
 import { nettoyerUneChaîneDeCaractèresPourAffichageHTML } from "@/client/utils/strings";
-import Badge from "@/client/components/_commons/Badge/Badge";
-import PublicationProps from "@/client/components/_commons/Publication/Publication.interface";
+import { Badge } from "@/client/components/_commons/Badge/Badge";
+import PublicationProps from "@/client/components/_commons/PublicationChantier/Publication.interface";
 
 interface PublicationAffichageProps {
   publication: PublicationProps["publicationInitiale"];

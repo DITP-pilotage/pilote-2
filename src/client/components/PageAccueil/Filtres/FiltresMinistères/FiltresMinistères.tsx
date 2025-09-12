@@ -3,8 +3,9 @@ import { parseAsInteger, parseAsString, useQueryState } from "nuqs";
 import { FunctionComponent, useCallback } from "react";
 import PérimètreMinistériel from "@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface";
 import Ministère from "@/server/domain/ministère/Ministère.interface";
-import Icône from "@/components/_commons/Icône/Icône";
 import { sauvegarderFiltres } from "@/stores/useFiltresStoreNew/useFiltresStoreNew";
+import { IconeMinistere } from "@/client/utils/mapperIconeMinistereVersIcone";
+import { clsxm } from "@/utils/clsxm";
 import FiltresMinistèresStyled from "./FiltresMinistères.styled";
 
 interface FiltresMinistèresProps {
@@ -93,54 +94,46 @@ const FiltresMinistères: FunctionComponent<FiltresMinistèresProps> = ({
           aria-label="Liste des filtres ministères"
           className="fr-p-0 fr-m-0 ministères-liste"
         >
-          {ministères.map((ministère) => {
-            return (
-              <li className="" key={ministère.nom}>
-                <button
-                  className={`
-                        fr-m-0 fr-p-1w fr-text--md tuile
-                        ${estDéroulé(ministère) ? "ministère-déroulé actif" : ""}
-                      `}
-                  onClick={() => auClicSurUnMinistèreCallback(ministère)}
-                  type="button"
+          {ministères.map((ministère) => (
+            <li key={ministère.nom}>
+              <button
+                className={clsxm(`fr-m-0 fr-p-1w fr-text--md tuile`, {
+                  "ministère-déroulé actif": estDéroulé(ministère),
+                })}
+                onClick={() => auClicSurUnMinistèreCallback(ministère)}
+                type="button"
+              >
+                <div className="tuile-ministère-contenu">
+                  <IconeMinistere
+                    className="text-dsfr-blue-france-sun-113"
+                    icone={ministère.icône}
+                  />
+                  <span>{ministère.nom}</span>
+                </div>
+              </button>
+              {ministère.périmètresMinistériels.length > 1 && (
+                <ul
+                  className="fr-p-0 fr-m-0 fr-mb-1w périmètres-liste"
+                  tabIndex={!estDéroulé(ministère) ? -1 : undefined}
                 >
-                  <div className="tuile-ministère-contenu">
-                    <span className="icône text-lg">
-                      {!!ministère.icône && <Icône id={ministère.icône} />}
-                    </span>
-                    <span>{ministère.nom}</span>
-                  </div>
-                </button>
-                {ministère.périmètresMinistériels.length > 1 && (
-                  <ul
-                    className="fr-p-0 fr-m-0 fr-mb-1w périmètres-liste"
-                    tabIndex={!estDéroulé(ministère) ? -1 : undefined}
-                  >
-                    {ministère.périmètresMinistériels.map((périmètre) => (
-                      <li
-                        className="fr-p-0 fr-my-1w fr-mr-0 fr-ml-4w"
-                        key={périmètre.id}
+                  {ministère.périmètresMinistériels.map((périmètre) => (
+                    <li className="p-0 my-2 mr-0 ml-8" key={périmètre.id}>
+                      <button
+                        className={clsxm(`!m-0 p-2 fr-text--md tuile`, {
+                          actif: perimetres.includes(périmètre.id),
+                        })}
+                        onClick={() => auClicSurUnPérimètreCallback(périmètre)}
+                        tabIndex={!estDéroulé(ministère) ? -1 : undefined}
+                        type="button"
                       >
-                        <button
-                          className={`
-                                fr-m-0 fr-p-1w fr-text--md tuile
-                                ${perimetres.includes(périmètre.id) ? "actif" : ""}
-                              `}
-                          onClick={() =>
-                            auClicSurUnPérimètreCallback(périmètre)
-                          }
-                          tabIndex={!estDéroulé(ministère) ? -1 : undefined}
-                          type="button"
-                        >
-                          {périmètre.nom}
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </li>
-            );
-          })}
+                        {périmètre.nom}
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </li>
+          ))}
         </ul>
       </div>
     </FiltresMinistèresStyled>

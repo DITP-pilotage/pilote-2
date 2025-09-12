@@ -1,6 +1,6 @@
 import { useBlocIndicateurContext } from "@/components/PageChantier/useBlocIndicateurContext";
 import { formaterDate } from "@/client/utils/date/date";
-import Infobulle from "@/components/_commons/Infobulle/Infobulle";
+import { Infobulle } from "@/components/_commons/Infobulle/Infobulle";
 import useIndicateurAlerteDateMaj from "@/components/_commons/IndicateursChantier/Bloc/useIndicateurAlerteDateMaj";
 
 export const LigneIndicateurDatePrevisionnelle = () => {
@@ -21,7 +21,7 @@ export const LigneIndicateurDatePrevisionnelle = () => {
     <div
       className={`flex align-center w-full relative${estIndicateurEnAlerte ? " fr-text-warning" : " texte-gris"}`}
     >
-      <p className="fr-mb-0 fr-text--xs">
+      <p className="!mb-0 fr-text--xs pr-1">
         Date prévisionnelle de la prochaine mise à jour des données (de
         l'indicateur) :{" "}
         <span className="fr-text--bold">

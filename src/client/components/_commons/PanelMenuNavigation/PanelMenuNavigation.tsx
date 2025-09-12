@@ -2,8 +2,10 @@ import SélecteursMaillesEtTerritoires from "@/components/_commons/SélecteursMa
 import { MailleInterne } from "@/server/domain/maille/Maille.interface";
 import SélecteurMaille from "@/client/components/_commons/SélecteursMaillesEtTerritoiresChantier/SélecteurMaille/SélecteurMaille";
 import INFOBULLE_CONTENUS from "@/client/constants/infobulles";
-import Infobulle from "@/client/components/_commons/Infobulle/Infobulle";
+import { Infobulle } from "@/client/components/_commons/Infobulle/Infobulle";
 import SelecteurJalon from "@/client/components/_commons/SelecteurJalon/SelecteurJalon";
+import { Icone } from "@/components/_commons/Icone";
+import { EqualizerIcon } from "@/components/_commons/Icones/EqualizerIcon";
 
 type PanelMenuNavigationProps = {
   pathname: string;
@@ -47,13 +49,14 @@ export const PanelMenuNavigation = ({
       ) : null}
       <div className="fr-hidden-lg fr-py-1w fr-background-blue-france-975 w-full">
         <button
-          className="fr-btn fr-btn--tertiary-no-outline fr-btn--icon-left fr-icon-equalizer-fill fr-text-title--blue-france"
+          className="fr-btn fr-btn--tertiary-no-outline fr-text-title--blue-france gap-2"
           onClick={() => {
             setEstOuverteBarreLatérale(true);
           }}
           title="Filtrer"
           type="button"
         >
+          <Icone className="w-4 h-4" icone={EqualizerIcon} />
           {libelleMenuNavigation}
         </button>
       </div>

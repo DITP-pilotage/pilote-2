@@ -22,12 +22,12 @@ import TableauRéformesMétéo from "@/components/PageAccueil/TableauRéformes/M
 import { calculerMoyenne } from "@/client/utils/statistiques/statistiques";
 import { estLargeurDÉcranActuelleMoinsLargeQue } from "@/stores/useLargeurDÉcranStore/useLargeurDÉcranStore";
 import TypologiesPictos from "@/components/PageAccueil/PageChantiers/TableauChantiers/TypologiesPictos/TypologiesPictos";
-import IcônesMultiplesEtTexte from "@/components/_commons/IcônesMultiplesEtTexte/IcônesMultiplesEtTexte";
-import TableauChantiersTendance from "@/components/PageAccueil/PageChantiers/TableauChantiers/Tendance/TableauChantiersTendance";
+import { BadgeTendance } from "@/components/PageAccueil/PageChantiers/TableauChantiers/Tendance/BadgeTendance";
 import TableauChantiersEcart from "@/components/PageAccueil/PageChantiers/TableauChantiers/Écart/TableauChantiersÉcart";
 import Ministère from "@/server/domain/ministère/Ministère.interface";
-import Infobulle from "@/components/_commons/Infobulle/Infobulle";
+import { Infobulle } from "@/components/_commons/Infobulle/Infobulle";
 import infobulles from "@/client/constants/infobulles";
+import { IconeMinistere } from "@/client/utils/mapperIconeMinistereVersIcone";
 import TableauChantiersProps, {
   DonnéesTableauChantiers,
 } from "./TableauChantiers.interface";
@@ -86,37 +86,31 @@ export const useTableauChantiers = (
       header: "Chantiers",
       id: "nom",
       aggregatedCell: (aggregatedCellContext) => (
-        <IcônesMultiplesEtTexte
-          icônesId={
-            aggregatedCellContext.row.original.porteur?.icône
-              ? [aggregatedCellContext.row.original.porteur.icône]
-              : []
-          }
-          texteAlternatifPourIcônes={
-            aggregatedCellContext.row.original.porteur?.nom ?? undefined
-          }
-        >
+        <div className="flex gap-2">
+          <div>
+            <IconeMinistere
+              className="text-dsfr-blue-france-sun-113"
+              icone={aggregatedCellContext.row.original.porteur?.icône}
+            />
+          </div>
           {aggregatedCellContext.row.original.porteur?.nom ?? ""}
-        </IcônesMultiplesEtTexte>
+        </div>
       ),
       cell: (cellContext) =>
         cellContext.table.getColumn("porteur")?.getIsGrouped() ? (
-          <IcônesMultiplesEtTexte icônesId={[]}>
-            {cellContext.getValue()}
-          </IcônesMultiplesEtTexte>
+          <div className="ml-10">
+            <span>{cellContext.getValue()}</span>
+          </div>
         ) : (
-          <IcônesMultiplesEtTexte
-            icônesId={
-              cellContext.row.original.porteur?.icône
-                ? [cellContext.row.original.porteur.icône]
-                : []
-            }
-            texteAlternatifPourIcônes={
-              cellContext.row.original.porteur?.nom ?? undefined
-            }
-          >
-            {cellContext.getValue()}
-          </IcônesMultiplesEtTexte>
+          <div className="flex gap-2">
+            <div>
+              <IconeMinistere
+                className="text-dsfr-blue-france-sun-113"
+                icone={cellContext.row.original.porteur?.icône}
+              />
+            </div>
+            {cellContext.row.original.porteur?.nom ?? ""}
+          </div>
         ),
       enableSorting: false,
       enableGrouping: false,
@@ -235,7 +229,7 @@ export const useTableauChantiers = (
             ),
             id: "tendance",
             cell: (cellContext) => (
-              <TableauChantiersTendance
+              <BadgeTendance
                 estArchive={chantiersSontArchives}
                 tendance={cellContext.getValue()}
               />

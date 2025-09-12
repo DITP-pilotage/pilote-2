@@ -3,7 +3,7 @@ import clsx from "clsx";
 import Modale from "@/components/_commons/Modale/Modale";
 import Loader from "@/components/_commons/Loader/Loader";
 import { formaterDate } from "@/client/utils/date/date";
-import Infobulle from "@/components/_commons/Infobulle/Infobulle";
+import { Infobulle } from "@/components/_commons/Infobulle/Infobulle";
 import { DonneesComplementaires } from "@/server/indicateur-territoire-valeur-evenement/domain/IndicateurTerritoireValeurEvenement";
 import { toISODateTime } from "@/server/app/domain/Dates";
 import { useBlocIndicateurContext } from "@/components/PageChantier/useBlocIndicateurContext";
@@ -255,7 +255,7 @@ export const ModaleHistoriqueIndicateurTerritoireValeurEvenement: FunctionCompon
                               <Infobulle
                                 classNameBouton="fr-p-0 fr-mr-1w"
                                 classNameInfoBulle="tooltip-accordeon"
-                                styleIconInfoBulle="informationProposition"
+                                styleIconInfoBulle="documentation"
                               >
                                 <p className="fr-callout__text fr-text--sm">
                                   <span className="fr-text--bold">

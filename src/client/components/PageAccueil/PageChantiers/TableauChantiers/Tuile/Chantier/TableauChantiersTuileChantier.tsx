@@ -1,5 +1,4 @@
 import { FunctionComponent } from "react";
-import IcônesMultiplesEtTexte from "@/components/_commons/IcônesMultiplesEtTexte/IcônesMultiplesEtTexte";
 import PictoTendance from "@/components/_commons/PictoTendance/PictoTendance";
 import TexteColoré from "@/components/_commons/TexteColoré/TexteColoré";
 import { definirCouleurEcartArrondi } from "@/client/utils/chantier/écart/écart";
@@ -8,16 +7,13 @@ import TableauRéformesMétéo from "@/components/PageAccueil/TableauRéformes/M
 import TypologiesPictos from "@/components/PageAccueil/PageChantiers/TableauChantiers/TypologiesPictos/TypologiesPictos";
 import TableauChantiersTuileChantierStyled from "@/components/PageAccueil/PageChantiers/TableauChantiers/Tuile/Chantier/TableauChantiersTuileChantier.styled";
 import { DonnéesTableauChantiers } from "@/components/PageAccueil/PageChantiers/TableauChantiers/TableauChantiers.interface";
+import { IconeMinistere } from "@/client/utils/mapperIconeMinistereVersIcone";
 
-interface TableauChantiersTuileChantierProps {
+const TableauChantiersTuileChantier: FunctionComponent<{
   chantier: DonnéesTableauChantiers;
   afficherIcône: boolean;
   chantiersSontArchives: boolean;
-}
-
-const TableauChantiersTuileChantier: FunctionComponent<
-  TableauChantiersTuileChantierProps
-> = ({ chantier, afficherIcône, chantiersSontArchives }) => {
+}> = ({ chantier, afficherIcône, chantiersSontArchives }) => {
   const couleurEcartArrondi = definirCouleurEcartArrondi(
     chantier.écart,
     chantiersSontArchives,
@@ -27,17 +23,17 @@ const TableauChantiersTuileChantier: FunctionComponent<
     <TableauChantiersTuileChantierStyled>
       <div className="tuile-chantier-entête">
         <div className="fr-mb-0 fr-ml-n1w">
-          <IcônesMultiplesEtTexte
-            icônesId={
-              afficherIcône && chantier.porteur?.icône
-                ? [chantier.porteur.icône]
-                : []
-            }
-            largeurDesIcônes="1.75rem"
-            texteAlternatifPourIcônes={chantier.porteur?.nom ?? undefined}
-          >
-            <span className="fr-text--sm">{chantier.nom}</span>
-          </IcônesMultiplesEtTexte>
+          <div className="flex gap-2">
+            {afficherIcône ? (
+              <div>
+                <IconeMinistere
+                  className="text-dsfr-blue-france-sun-113"
+                  icone={chantier.porteur?.icône}
+                />
+              </div>
+            ) : null}
+            {chantier.porteur?.nom ?? undefined}
+          </div>
         </div>
         <div className="fr-ml-2w">
           <TypologiesPictos typologies={chantier.typologie} />

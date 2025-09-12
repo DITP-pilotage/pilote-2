@@ -1,53 +1,22 @@
-import { FunctionComponent } from "react";
-import clsx from "clsx";
-import Icône from "@/components/_commons/Icône/Icône";
-import EnteteResponsablesStyled from "./EnTêteResponsables.styled";
+import { ComponentType, FunctionComponent } from "react";
+import { Icone } from "@/components/_commons/Icone";
 
-interface ResponsableEnTete {
-  libellé?: string;
+export const ResponsableChantierEnTete: FunctionComponent<{
+  libellé: string;
   listeNomsResponsables: string[];
-  icone: string;
-  iconeStyle?: "icone" | "span";
-  size?: "sm" | "md";
-  isUppercase?: boolean;
-}
-
-export const ResponsableChantierEnTete: FunctionComponent<
-  ResponsableEnTete
-> = ({
-  libellé,
-  listeNomsResponsables,
-  icone,
-  iconeStyle = "span",
-  size = "md",
-  isUppercase = false,
-}) => {
+  icone: ComponentType<{ className: string; fill: string }>;
+}> = ({ libellé, listeNomsResponsables, icone }) => {
   const nomResponsable = listeNomsResponsables.join(", ") || "Non renseigné";
 
   return (
-    <EnteteResponsablesStyled className="flex">
-      <div className="icone-entete fr-mb-1w fr-pr-1w">
-        {iconeStyle === "icone" ? (
-          <Icône className="icone-entete " id={icone} />
-        ) : (
-          <span
-            className={`${icone} ${size === "sm" ? "fr-pl-1v fr-pr-1v " : ""}`}
-          />
-        )}
+    <div className="flex my-1">
+      <div className="mx-2">
+        <Icone icone={icone} />
       </div>
-      <div className="fr-pl-1v fr-mt-1v">
-        <p className={clsx(`fr-mb-0`, { "fr-text--xs": size === "sm" })}>
-          {libellé ? <strong>{libellé}</strong> : null}
-        </p>
-        <p
-          className={clsx(`fr-mb-0`, {
-            "fr-text--xs": size === "sm",
-            uppercase: isUppercase,
-          })}
-        >
-          {nomResponsable}
-        </p>
+      <div>
+        <p className="!mb-0 fr-text--xs bold">{libellé}</p>
+        <p className="!mb-0 fr-text--xs">{nomResponsable}</p>
       </div>
-    </EnteteResponsablesStyled>
+    </div>
   );
 };

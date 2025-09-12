@@ -1,8 +1,8 @@
 import { FunctionComponent } from "react";
 import { ChantierFicheTerritorialeContrat } from "@/server/fiche-territoriale/app/contrats/ChantierFicheTerritorialeContrat";
-import Icône from "@/components/_commons/Icône/Icône";
 import MeteoPicto from "@/components/_commons/Meteo/Picto/MeteoPicto";
 import "@gouvfr/dsfr/dist/component/badge/badge.min.css";
+import { IconeMinistere } from "@/client/utils/mapperIconeMinistereVersIcone";
 
 const classBadge = (
   tauxAvancement: number,
@@ -38,10 +38,10 @@ export const TableauFicheTerritoriale: FunctionComponent<{
               key={`chantier-fiche-territoriale-${index}`}
             >
               <div className="fr-col-8 fr-text--bold flex align-center fr-p-1v">
-                <div className="fr-pr-1w fr-text-title--blue-france text-lg">
-                  <Icône
-                    id={chantierFicheTerritoriale.ministereIcone}
-                    key="une-icone"
+                <div className="pr-2">
+                  <IconeMinistere
+                    className="text-dsfr-blue-france-sun-113"
+                    icone={chantierFicheTerritoriale.ministereIcone}
                   />
                 </div>
                 <span className="fiche-territoriale--contenu">

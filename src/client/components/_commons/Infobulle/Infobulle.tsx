@@ -1,21 +1,25 @@
 import {
   FunctionComponent,
+  PropsWithChildren,
+  useId,
   useRef,
   useState,
-  useId,
-  PropsWithChildren,
 } from "react";
 import clsx from "clsx";
 import SecureTooltip from "@/client/components/_commons/SecureTooltip/SecureTooltip";
+import { InformationPleineIcon } from "@/components/_commons/Icones/InformationPleineIcon";
+import { QuestionIcon } from "@/components/_commons/Icones/QuestionIcon";
+import { Icone } from "@/components/_commons/Icone";
+import { IconeDocumentationIcon } from "@/components/_commons/Icones/IconeDocumentationIcon";
 import InfobulleStyled from "./Infobulle.styled";
 
-type InfobulleProps = PropsWithChildren<{
-  classNameBouton?: string;
-  classNameInfoBulle?: string;
-  styleIconInfoBulle?: "information" | "question" | "informationProposition";
-}>;
-
-const Infobulle: FunctionComponent<InfobulleProps> = ({
+export const Infobulle: FunctionComponent<
+  PropsWithChildren<{
+    classNameBouton?: string;
+    classNameInfoBulle?: string;
+    styleIconInfoBulle?: "information" | "question" | "documentation";
+  }>
+> = ({
   children,
   classNameBouton,
   classNameInfoBulle,
@@ -30,16 +34,7 @@ const Infobulle: FunctionComponent<InfobulleProps> = ({
     <InfobulleStyled>
       <button
         aria-describedby={randomId}
-        className={clsx(
-          `fr-btn fr-btn--tertiary-no-outline flex justify-center align-center`,
-          {
-            "ri-file-info-fill information-proposition-icone":
-              styleIconInfoBulle === "informationProposition",
-            "fr-icon-information-fill": styleIconInfoBulle === "information",
-            "fr-icon-question-fill": styleIconInfoBulle === "question",
-          },
-          classNameBouton,
-        )}
+        className={clsx(`flex justify-center align-center`, classNameBouton)}
         id={randomId}
         onBlur={() => setIsVisible(false)}
         onClick={() => setIsVisible(!isVisible)}
@@ -48,7 +43,20 @@ const Infobulle: FunctionComponent<InfobulleProps> = ({
         onMouseLeave={() => setIsVisible(false)}
         ref={buttonRef}
         type="button"
-      />
+      >
+        {styleIconInfoBulle === "information" ? (
+          <Icone icone={InformationPleineIcon} />
+        ) : null}
+        {styleIconInfoBulle === "documentation" ? (
+          <Icone
+            className="text-dsfr-moutarde-main-679"
+            icone={IconeDocumentationIcon}
+          />
+        ) : null}
+        {styleIconInfoBulle === "question" ? (
+          <Icone icone={QuestionIcon} />
+        ) : null}
+      </button>
       <SecureTooltip
         anchorEl={buttonRef.current}
         border="1px solid var(--background-action-high-blue-france)"
@@ -60,5 +68,3 @@ const Infobulle: FunctionComponent<InfobulleProps> = ({
     </InfobulleStyled>
   );
 };
-
-export default Infobulle;

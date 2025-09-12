@@ -5,6 +5,23 @@ const { execSync } = require("child_process");
 const SOURCE_DIR = path.join(__dirname, "Composants PILOTE");
 const OUTPUT_DIR = path.join(__dirname, "icons");
 
+// Convert numbers to words (only for leading numbers)
+function numberToWord(num) {
+  const numbers = {
+    '1': 'One',
+    '2': 'Two', 
+    '3': 'Three',
+    '4': 'Four',
+    '5': 'Five',
+    '6': 'Six',
+    '7': 'Seven',
+    '8': 'Eight',
+    '9': 'Nine',
+    '0': 'Zero'
+  };
+  return numbers[num] || num;
+}
+
 // Convert filename to PascalCase component name
 function filenameToComponentName(filename) {
   const nameWithoutExt = path.parse(filename).name;
@@ -13,11 +30,19 @@ function filenameToComponentName(filename) {
   const cleanName = nameWithoutExt.replace(/^fr--/, "");
 
   // Convert to PascalCase and add Icon suffix
-  const componentName =
+  // Remove parentheses and their content, replace spaces with hyphens, then split on hyphens/underscores
+  let componentName =
     cleanName
+      .replace(/\([^)]*\)/g, "") // Remove parentheses and their content
+      .replace(/\s+/g, "-") // Replace spaces with hyphens
       .split(/[-_]/)
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
       .join("") + "Icon";
+
+  // If component name starts with a number, convert the leading number(s) to words
+  componentName = componentName.replace(/^(\d+)/, (match) => {
+    return match.split('').map(digit => numberToWord(digit)).join('');
+  });
 
   return componentName;
 }
@@ -40,6 +65,10 @@ function processSvgContent(svgContent) {
     processedSvg = processedSvg.replace(/stroke="#[^"]*"/g, "stroke={stroke}");
   }
 
+  // Replace fill-rule and clip-rule with fillRule and clipRule for React
+  processedSvg = processedSvg.replace(/fill-rule=/g, "fillRule=");
+  processedSvg = processedSvg.replace(/clip-rule=/g, "clipRule=");
+
   return processedSvg;
 }
 
@@ -47,13 +76,13 @@ function processSvgContent(svgContent) {
 function generateComponentContent(componentName, svgContent) {
   const hasStroke = svgContent.includes("stroke={stroke}");
 
-  const interfaceProps = hasStroke
-    ? `interface ${componentName}Props {
+  const propsType = hasStroke
+    ? `{
   fill?: string;
   stroke?: string;
   className?: string;
 }`
-    : `interface ${componentName}Props {
+    : `{
   fill?: string;
   className?: string;
 }`;
@@ -65,14 +94,26 @@ function generateComponentContent(componentName, svgContent) {
     : `  fill = 'currentColor',
   className,`;
 
-  return `${interfaceProps}
-
-export const ${componentName} = ({
+  return `export const ${componentName} = ({
 ${defaultProps}
-}: ${componentName}Props) => (
+}: ${propsType}) => (
   ${svgContent.replace("<svg", "<svg className={className}")}
 );
 `;
+}
+
+// Run ESLint on generated files
+function runEslint() {
+  try {
+    console.log("Running ESLint on generated files...");
+    execSync(`npx eslint "${OUTPUT_DIR}/**/*.{ts,tsx}" --fix`, {
+      cwd: path.join(__dirname, ".."),
+      stdio: "inherit",
+    });
+    console.log("✓ ESLint fixes complete");
+  } catch (error) {
+    console.warn("⚠ ESLint fixes failed:", error.message);
+  }
 }
 
 // Run Prettier on generated files
@@ -130,22 +171,14 @@ function generateIcons() {
     }
   });
 
-  // Generate index file for easy imports
-  const indexContent =
-    generatedComponents
-      .map(
-        ({ componentName, outputFilename }) =>
-          `export { ${componentName} } from './${path.parse(outputFilename).name}';`,
-      )
-      .join("\n") + "\n";
+  // Skip index file generation
 
-  fs.writeFileSync(path.join(OUTPUT_DIR, "index.ts"), indexContent);
 
-  // Run Prettier on all generated files
+  // Run ESLint then Prettier on all generated files
+  runEslint();
   runPrettier();
 
   console.log(`\n Generated ${generatedComponents.length} icon components`);
-  console.log(` Created index.ts with all exports`);
   console.log(`\nOutput directory: ${OUTPUT_DIR}`);
 }
 

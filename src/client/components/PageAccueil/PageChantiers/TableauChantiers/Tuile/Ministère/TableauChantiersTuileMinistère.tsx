@@ -1,6 +1,6 @@
 import { FunctionComponent } from "react";
 import BarreDeProgression from "@/components/_commons/BarreDeProgression/BarreDeProgression";
-import IcônesMultiplesEtTexte from "@/components/_commons/IcônesMultiplesEtTexte/IcônesMultiplesEtTexte";
+import { IconeMinistere } from "@/client/utils/mapperIconeMinistereVersIcone";
 import TableauChantiersTuileMinistèreStyled from "./TableauChantiersTuileMinistère.styled";
 import TableauChantiersTuileMinistèreProps from "./TableauChantiersTuileMinistère.interface";
 
@@ -11,12 +11,15 @@ const TableauChantiersTuileMinistère: FunctionComponent<
     <TableauChantiersTuileMinistèreStyled>
       <div>
         <div className="fr-mb-0 fr-ml-n1w">
-          <IcônesMultiplesEtTexte
-            icônesId={ministère.icône ? [ministère.icône] : []}
-            largeurDesIcônes="1.75rem"
-          >
-            <span className="fr-text--sm">{ministère?.nom ?? ""}</span>
-          </IcônesMultiplesEtTexte>
+          <div className="flex gap-2">
+            <div>
+              <IconeMinistere
+                className="text-dsfr-blue-france-sun-113"
+                icone={ministère.icône}
+              />
+            </div>
+            {ministère?.nom}
+          </div>
         </div>
         <div className="fr-mx-3w fr-mt-1v avancement">
           <BarreDeProgression

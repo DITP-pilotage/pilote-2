@@ -1,4 +1,4 @@
-import PublicationProps from "@/client/components/_commons/Publication/Publication.interface";
+import PublicationProps from "@/client/components/_commons/PublicationChantier/Publication.interface";
 
 export default interface PublicationHistoriqueProps {
   type: PublicationProps["caractéristiques"]["type"];
