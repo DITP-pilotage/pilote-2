@@ -10,14 +10,10 @@ import { ArrowLine1Icon } from "@/components/_commons/Icones/ArrowLine1Icon";
 import { ArrowRightUp1Icon } from "@/components/_commons/Icones/ArrowRightUp1Icon";
 import { ArrowRightDown1Icon } from "@/components/_commons/Icones/ArrowRightDown1Icon";
 
-interface TableauChantiersTendanceProps {
+const TableauChantiersTendance: FunctionComponent<{
   tendance: DonnéesTableauChantiers["tendance"];
   estArchive?: boolean;
-}
-
-const TableauChantiersTendance: FunctionComponent<
-  TableauChantiersTendanceProps
-> = ({ tendance, estArchive }) => {
+}> = ({ tendance, estArchive }) => {
   if (tendance === null) {
     return null;
   }
