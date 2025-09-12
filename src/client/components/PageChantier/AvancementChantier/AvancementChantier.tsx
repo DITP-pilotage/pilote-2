@@ -11,9 +11,9 @@ import INFOBULLE_CONTENUS from "@/client/constants/infobulles";
 import { JaugeDeProgressionSmall } from "@/components/_commons/JaugeDeProgressionSmall/JaugeDeProgressionSmall";
 import { DonneesComparaisonDuTauxDAvancementType } from "@/server/domain/territoire/Territoire.interface";
 import { formaterDate } from "@/client/utils/date/date";
+import { BadgeTendance } from "@/components/PageAccueil/PageChantiers/TableauChantiers/Tendance/BadgeTendance";
 import AvancementChantierStyled from "./AvancementChantier.styled";
 import EcartTauxAvancementPPG from "./EcartTauxAvancementPPG/EcartTauxAvancementPPG";
-import TendanceTauxAvancementPPG from "./TendanceTauxAvancementPPG/TendanceTauxAvancementPPG";
 
 interface AvancementChantierProps {
   estChantierArchive?: boolean;
@@ -314,7 +314,7 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
             EVOLUTION TEMPORELLE
           </strong>
           <p className="fr-text--sm fr-ml-1v fr-mb-1w">2026</p>
-          <TendanceTauxAvancementPPG
+          <BadgeTendance
             tendance={donneesComparaisonDuTauxDAvancement.ppgTendanceChantier}
           />
           <div className="fr-text--xs fr-mb-0 fr-mt-1w text-center">

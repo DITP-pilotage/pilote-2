@@ -8,7 +8,7 @@ import TableauRéformesMétéo from "@/components/PageAccueil/TableauRéformes/M
 import IcônesMultiplesEtTexte from "@/components/_commons/IcônesMultiplesEtTexte/IcônesMultiplesEtTexte";
 import TypologiesPictos from "@/components/PageAccueil/PageChantiers/TableauChantiers/TypologiesPictos/TypologiesPictos";
 import { DonnéesTableauChantiers } from "@/components/PageAccueil/PageChantiers/TableauChantiers/TableauChantiers.interface";
-import TableauChantiersTendance from "@/components/PageAccueil/PageChantiers/TableauChantiers/Tendance/TableauChantiersTendance";
+import { BadgeTendance } from "@/components/PageAccueil/PageChantiers/TableauChantiers/Tendance/BadgeTendance";
 import TableauChantiersEcart from "@/components/PageAccueil/PageChantiers/TableauChantiers/Écart/TableauChantiersÉcart";
 import RapportDétailléTableauChantiersProps from "./RapportDétailléTableauChantiers.interface";
 
@@ -88,7 +88,7 @@ const colonnesTableauChantiers = [
           id: "tendance",
           enableSorting: false,
           cell: (cellContext) => (
-            <TableauChantiersTendance tendance={cellContext.getValue()} />
+            <BadgeTendance tendance={cellContext.getValue()} />
           ),
           enableGrouping: false,
           meta: {

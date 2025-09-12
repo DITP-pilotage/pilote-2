@@ -23,7 +23,7 @@ import { calculerMoyenne } from "@/client/utils/statistiques/statistiques";
 import { estLargeurDÉcranActuelleMoinsLargeQue } from "@/stores/useLargeurDÉcranStore/useLargeurDÉcranStore";
 import TypologiesPictos from "@/components/PageAccueil/PageChantiers/TableauChantiers/TypologiesPictos/TypologiesPictos";
 import IcônesMultiplesEtTexte from "@/components/_commons/IcônesMultiplesEtTexte/IcônesMultiplesEtTexte";
-import TableauChantiersTendance from "@/components/PageAccueil/PageChantiers/TableauChantiers/Tendance/TableauChantiersTendance";
+import { BadgeTendance } from "@/components/PageAccueil/PageChantiers/TableauChantiers/Tendance/BadgeTendance";
 import TableauChantiersEcart from "@/components/PageAccueil/PageChantiers/TableauChantiers/Écart/TableauChantiersÉcart";
 import Ministère from "@/server/domain/ministère/Ministère.interface";
 import { Infobulle } from "@/components/_commons/Infobulle/Infobulle";
@@ -235,7 +235,7 @@ export const useTableauChantiers = (
             ),
             id: "tendance",
             cell: (cellContext) => (
-              <TableauChantiersTendance
+              <BadgeTendance
                 estArchive={chantiersSontArchives}
                 tendance={cellContext.getValue()}
               />
