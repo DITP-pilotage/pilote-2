@@ -178,8 +178,8 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                     propositionEstVisible={propositionEstVisible}
                     setPropositionEstVisible={setPropositionEstVisible}
                   />
+                  <IndicateurTendance />
                 </div>
-                <IndicateurTendance />
               </div>
             </div>
             {estVueTuile ? (
