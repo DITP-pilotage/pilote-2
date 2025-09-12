@@ -37,10 +37,10 @@ const mapIconeMinistereVersIcone = {
 };
 
 export const IconeMinistere = ({
-  icone,
+  icone = "remix::government::fill",
   className,
 }: {
-  icone: string;
+  icone?: string | null;
   className?: string;
 }) => {
   const IconeComponent =

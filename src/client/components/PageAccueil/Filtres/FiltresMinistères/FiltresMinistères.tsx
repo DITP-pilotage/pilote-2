@@ -3,8 +3,8 @@ import { parseAsInteger, parseAsString, useQueryState } from "nuqs";
 import { FunctionComponent, useCallback } from "react";
 import PérimètreMinistériel from "@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface";
 import Ministère from "@/server/domain/ministère/Ministère.interface";
-import Icône from "@/components/_commons/Icône/Icône";
 import { sauvegarderFiltres } from "@/stores/useFiltresStoreNew/useFiltresStoreNew";
+import { IconeMinistere } from "@/client/utils/mapperIconeMinistereVersIcone";
 import FiltresMinistèresStyled from "./FiltresMinistères.styled";
 
 interface FiltresMinistèresProps {
@@ -105,9 +105,10 @@ const FiltresMinistères: FunctionComponent<FiltresMinistèresProps> = ({
                   type="button"
                 >
                   <div className="tuile-ministère-contenu">
-                    <span className="icône text-lg">
-                      {!!ministère.icône && <Icône id={ministère.icône} />}
-                    </span>
+                    <IconeMinistere
+                      className="text-dsfr-blue-france-sun-113"
+                      icone={ministère.icône}
+                    />
                     <span>{ministère.nom}</span>
                   </div>
                 </button>

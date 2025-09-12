@@ -88,9 +88,7 @@ const PageChantierEnTête: FunctionComponent<PageChantierEnTêteProps> = ({
       </div>
       <div className="fr-pb-3w fr-mb-3w border-b border-blue-france flex">
         <div className="icone-entete fr-mb-1w fr-pr-1w">
-          <IconeMinistere
-            icone={responsables?.porteur?.icône || "remix::government::fill"}
-          />
+          <IconeMinistere icone={responsables?.porteur?.icône} />
         </div>
         <p className={clsx(`fr-mb-0 uppercase`)}>
           {listeNomsResponsablesMinistèrePorteur.join(", ") || "Non renseigné"}
