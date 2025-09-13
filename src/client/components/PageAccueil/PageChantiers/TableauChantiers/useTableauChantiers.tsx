@@ -109,7 +109,7 @@ export const useTableauChantiers = (
                 icone={cellContext.row.original.porteur?.icône}
               />
             </div>
-            {cellContext.row.original.porteur?.nom ?? ""}
+            {cellContext.getValue()}
           </div>
         ),
       enableSorting: false,
