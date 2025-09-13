@@ -2,7 +2,7 @@ import { Download, expect, test } from "@playwright/test";
 import fs from "node:fs";
 import { loginFn } from "./utils";
 
-test("doit pouvoir exporter les données des chantiers sous format CSV", async ({
+test("doit pouvoir exporter les données des utilisateurs sous format CSV", async ({
   page,
 }) => {
   await loginFn({ page });
