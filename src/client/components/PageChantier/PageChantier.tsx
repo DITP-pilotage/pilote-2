@@ -37,7 +37,7 @@ import PageChantierEnTête from "./EnTête/EnTête";
 import Cartes from "./Cartes/Cartes";
 import PageChantierStyled from "./PageChantier.styled";
 import { usePageChantier } from "./usePageChantier";
-import DécisionsStratégiques from "./DécisionsStratégiques/DécisionsStratégiques";
+import { DécisionsStratégiques } from "./DécisionsStratégiques/DécisionsStratégiques";
 
 const PageChantier = () => {
   const {
@@ -380,6 +380,7 @@ const PageChantier = () => {
                 <DécisionsStratégiques
                   chantierId={chantier.id}
                   décisionStratégique={décisionStratégique ?? null}
+                  estChantierArchive={estChantierArchive}
                   modeÉcriture={estAutoriseAModifierLesPublications}
                   territoireCode={territoireCode}
                 />
