@@ -5,10 +5,10 @@ import Tableau from "@/components/_commons/Tableau/Tableau";
 import PictoBaromètre from "@/components/_commons/PictoBaromètre/PictoBaromètre";
 import { IndicateurDétailsParTerritoire } from "@/components/PageRapportDétaillé/Chantier/IndicateursRapportDetaille/Bloc/IndicateurBloc.interface";
 import { actionsTerritoiresStore } from "@/client/stores/useTerritoiresStore/useTerritoiresStore";
-import IndicateurPondération from "@/components/PageRapportDétaillé/Chantier/IndicateursRapportDetaille/Bloc/Pondération/IndicateurPondération";
-import IndicateurTendance from "@/components/PageRapportDétaillé/Chantier/IndicateursRapportDetaille/Bloc/Tendance/IndicateurTendance";
 import { DétailsIndicateurs } from "@/server/domain/indicateur/DétailsIndicateur.interface";
 import Indicateur from "@/server/domain/indicateur/Indicateur.interface";
+import { IndicateurTendance } from "@/components/_commons/IndicateurTendance/IndicateurTendance";
+import { IndicateurPonderation } from "@/components/_commons/IndicateursChantier/Bloc/Pondération/IndicateurPonderation";
 import useIndicateurBloc from "./useIndicateurBloc";
 import IndicateurBlocStyled from "./IndicateurBloc.styled";
 
@@ -63,15 +63,15 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                     {dateDeMiseAJourIndicateur}
                   </span>
                 </p>
-                <IndicateurPondération
+                <IndicateurPonderation
                   indicateurPondération={
                     détailsIndicateur[territoireCode].pondération ?? null
                   }
-                  mailleSélectionnée={territoireSélectionné.maille}
+                  territoireCode={territoireCode}
                 />
-                {détailsIndicateur[territoireCode].tendance === "BAISSE" ? (
-                  <IndicateurTendance />
-                ) : null}
+                <IndicateurTendance
+                  tendance={détailsIndicateur[territoireCode].tendance}
+                />
               </div>
             </div>
           </div>

@@ -19,7 +19,8 @@ import {
 import { récupérerUnCookie } from "@/client/utils/cookies";
 import { getQueryParamString } from "@/client/utils/getQueryParamString";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
-import IcôneEmail from "@/components/_commons/IcôneEmail/IcôneEmail";
+import { EnveloppeContourIcon } from "@/components/_commons/Icones/EnveloppeContourIcon";
+import { Icone } from "@/components/_commons/Icone";
 
 const fermerLaModaleDuMenu = () => {
   if (typeof window.dsfr === "function") {
@@ -186,7 +187,10 @@ const Navigation: FunctionComponent<{}> = () => {
                 className="fr-btn fr-text--sm fr-py-0 fr-pr-1w fr-pl-0"
                 type="button"
               >
-                <IcôneEmail className="fr-mr-2v fr-text-title--blue-france" />
+                <Icone
+                  className="fr-mr-2v fr-text-title--blue-france"
+                  icone={EnveloppeContourIcon}
+                />
                 <Link
                   className="font-normal"
                   href="mailto:pilote.ditp@modernisation.gouv.fr"

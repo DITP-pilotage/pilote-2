@@ -7,7 +7,8 @@ import Navigation from "@/components/_commons/MiseEnPage/Navigation/Navigation";
 import Utilisateur from "@/components/_commons/MiseEnPage/EnTete/Utilisateur/Utilisateur";
 import BandeauInformation from "@/components/_commons/BandeauInformation/BandeauInformation";
 import api from "@/server/infrastructure/api/trpc/api";
-import IcôneEmail from "@/components/_commons/IcôneEmail/IcôneEmail";
+import { EnveloppeContourIcon } from "@/components/_commons/Icones/EnveloppeContourIcon";
+import { Icone } from "@/components/_commons/Icone";
 
 const useEntete = () => {
   const { data: messageInformation } =
@@ -70,7 +71,10 @@ export const EnTete: FunctionComponent<{}> = () => {
                       className="fr-btn fr-text--sm fr-py-0 fr-pr-1w fr-pl-0"
                       type="button"
                     >
-                      <IcôneEmail className="fr-mr-2v fr-text-title--blue-france" />
+                      <Icone
+                        className="fr-mr-2v fr-text-title--blue-france"
+                        icone={EnveloppeContourIcon}
+                      />
                       <Link
                         className="font-normal"
                         href="mailto:pilote.ditp@modernisation.gouv.fr"
