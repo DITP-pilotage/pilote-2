@@ -1,22 +1,29 @@
 import Bloc from "@/components/_commons/Bloc/Bloc";
 import Publication from "@/components/_commons/PublicationChantier/Publication";
 import { libellésTypesDécisionStratégique } from "@/client/constants/libellésDécisionStratégique";
-import { pageChantier } from "@/client/components/PageChantier/PageChantierServerSideContext";
-import DécisionsStratégiquesProps from "./DécisionsStratégiques.interface";
 
-export default function DécisionsStratégiques({
+import Chantier from "@/server/domain/chantier/Chantier.interface";
+import { RouterOutputs } from "@/server/infrastructure/api/trpc/trpc.interface";
+
+export const DécisionsStratégiques = ({
   décisionStratégique,
   chantierId,
   modeÉcriture = false,
   estInteractif = true,
+  estChantierArchive,
   territoireCode,
-}: DécisionsStratégiquesProps) {
-  const { chantier } = pageChantier.useServerSidePropsContext();
-
+}: {
+  décisionStratégique: RouterOutputs["publication"]["récupérerLaPlusRécente"];
+  chantierId: Chantier["id"];
+  territoireCode: string;
+  modeÉcriture?: boolean;
+  estInteractif?: boolean;
+  estChantierArchive: boolean;
+}) => {
   return (
     <Bloc
       backgroundClassNameTitre={
-        chantier.statut === "ARCHIVE" ? "bg-dsfr-grey-925" : undefined
+        estChantierArchive ? "bg-dsfr-grey-925" : undefined
       }
       titre="France"
     >
@@ -38,4 +45,4 @@ export default function DécisionsStratégiques({
       />
     </Bloc>
   );
-}
+};

@@ -12,7 +12,7 @@ import RapportDétailléChantierProps from "@/components/PageRapportDétaillé/C
 import Responsables from "@/components/PageChantier/ResponsablesChantier/ResponsablesChantier";
 import SynthèseDesRésultats from "@/components/_commons/SynthèseDesRésultats/SynthèseDesRésultats";
 import IndicateursRapportDetaille from "@/components/PageRapportDétaillé/Chantier/IndicateursRapportDetaille/IndicateursRapportDetaille";
-import DécisionsStratégiques from "@/components/PageChantier/DécisionsStratégiques/DécisionsStratégiques";
+import { DécisionsStratégiques } from "@/components/PageChantier/DécisionsStratégiques/DécisionsStratégiques";
 import Commentaires from "@/components/_commons/CommentairesNew/Commentaires";
 import Titre from "@/components/_commons/Titre/Titre";
 import Publication from "@/components/_commons/PublicationChantier/Publication";
@@ -282,6 +282,7 @@ const RapportDétailléChantier: FunctionComponent<
                   <DécisionsStratégiques
                     chantierId={chantier.id}
                     décisionStratégique={décisionStratégique}
+                    estChantierArchive={false}
                     estInteractif={false}
                     territoireCode={territoireCode}
                   />
