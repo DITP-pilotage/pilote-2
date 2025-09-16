@@ -1,7 +1,6 @@
 import { FunctionComponent } from "react";
 import { PictoTendance } from "@/components/_commons/PictoTendance/PictoTendance";
-import TexteColoré from "@/components/_commons/TexteColoré/TexteColoré";
-import { definirCouleurEcartArrondi } from "@/client/utils/chantier/écart/écart";
+import { EcartTuileChantier } from "@/components/_commons/TexteColoré/EcartTuileChantier";
 import TableauRéformesAvancement from "@/components/PageAccueil/TableauRéformes/Avancement/TableauRéformesAvancement";
 import TableauRéformesMétéo from "@/components/PageAccueil/TableauRéformes/Météo/TableauRéformesMétéo";
 import TypologiesPictos from "@/components/PageAccueil/PageChantiers/TableauChantiers/TypologiesPictos/TypologiesPictos";
@@ -14,11 +13,6 @@ const TableauChantiersTuileChantier: FunctionComponent<{
   afficherIcône: boolean;
   chantiersSontArchives: boolean;
 }> = ({ chantier, afficherIcône, chantiersSontArchives }) => {
-  const couleurEcartArrondi = definirCouleurEcartArrondi(
-    chantier.écart,
-    chantiersSontArchives,
-  );
-
   return (
     <TableauChantiersTuileChantierStyled>
       <div className="tuile-chantier-entête">
@@ -61,14 +55,10 @@ const TableauChantiersTuileChantier: FunctionComponent<{
           estArchive={chantiersSontArchives}
           tendance={chantier.tendance}
         />
-        {couleurEcartArrondi ? (
-          <TexteColoré
-            alignement="droite"
-            couleur={couleurEcartArrondi.couleur}
-            estGras
-            texte={`${couleurEcartArrondi.ecartArrondi.toFixed(1)}`}
-          />
-        ) : null}
+        <EcartTuileChantier
+          chantiersSontArchives={chantiersSontArchives}
+          ecart={chantier.écart}
+        />
       </div>
     </TableauChantiersTuileChantierStyled>
   );
