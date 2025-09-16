@@ -42,7 +42,7 @@ const Commentaires: FunctionComponent<CommentairesProps> = ({
   return (
     <Bloc
       backgroundClassNameTitre={
-        estChantierArchive ? "bg-dsfr-grey-925" : undefined
+        estChantierArchive ? "bg-dsfr-grey-925" : "bg-dsfr-blue-france-925"
       }
       titre={nomTerritoire}
     >
