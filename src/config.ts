@@ -303,13 +303,6 @@ const config = convict({
       env: "INDICATEUR_ID_ACCESSIBLE_PAR_UTILISATEUR_EQUIPE_DIR_PROJET",
     },
   },
-  cartographie: {
-    svgPath: {
-      format: String,
-      default: "cartographie-france.svg",
-      env: "CARTOGRAPHIE_SVG_PATH",
-    },
-  },
   dateBasculeAffichageValeursAnneePrecedente: {
     format: String,
     default: "2000-01-31",

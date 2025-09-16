@@ -1,25 +1,13 @@
 import { parseAsString, useQueryState } from "nuqs";
 import { FunctionComponent } from "react";
 import { actionsTerritoiresStore } from "@/client/stores/useTerritoiresStore/useTerritoiresStore";
-import { CartographieSVGContrat } from "@/server/cartographie/app/contrats/CartographieSVGContrat";
-import { useCartographieSVG } from "./useCartographieSVG";
-
-// TODO refacto, mise en commun avec CartographieSVG.tsx
-const getTraceSvg = function (
-  svgAsJson: CartographieSVGContrat,
-  territoireCode: string,
-): string {
-  const pathCorrespondantAuTerritoireCode = svgAsJson.svg.g.path.find(
-    (path) => path["attr-territoire-code"] === territoireCode,
-  );
-  return pathCorrespondantAuTerritoireCode?.["attr-d"] || "";
-};
+import { MailleInterne } from "@/server/domain/maille/Maille.interface";
+import { getTraceSvg } from "./CartographieSVGContrat";
 
 export const CartographieTerritoireSélectionné: FunctionComponent<{
   territoireCode: string;
-}> = ({ territoireCode }) => {
-  const { sourceSvgAsJson } = useCartographieSVG();
-
+  mailleSelectionnee: MailleInterne;
+}> = ({ territoireCode, mailleSelectionnee }) => {
   const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
 
   const [territoiresCompares] = useQueryState(
@@ -32,25 +20,29 @@ export const CartographieTerritoireSélectionné: FunctionComponent<{
     ...territoiresCompares.split(",").filter(Boolean),
   ].map(récupérerDétailsSurUnTerritoire);
 
+  if (territoireCode === "NAT-FR") return null;
+
   return (
     <g>
-      {territoiresCompares.length > 0 ? (
-        detailTerritoiresComparés.map((territoire) =>
-          sourceSvgAsJson ? (
-            <path
-              className="territoire-sélectionné"
-              d={getTraceSvg(sourceSvgAsJson, territoire.code)}
-              key={territoire.code}
-            />
-          ) : null,
-        )
-      ) : sourceSvgAsJson ? (
-        <path
-          className="territoire-sélectionné"
-          d={getTraceSvg(sourceSvgAsJson, territoireCode)}
-          key={territoireCode}
-        />
-      ) : null}
+      {territoiresCompares.length > 0
+        ? detailTerritoiresComparés.map((territoire) =>
+            getTraceSvg(
+              territoire.code,
+              {
+                className: "territoire-sélectionné",
+                key: territoire.code,
+              },
+              mailleSelectionnee,
+            ),
+          )
+        : getTraceSvg(
+            territoireCode,
+            {
+              className: "territoire-sélectionné",
+              key: territoireCode,
+            },
+            mailleSelectionnee,
+          )}
     </g>
   );
 };
