@@ -28,7 +28,9 @@ export const ObjectifsChantier: FunctionComponent<ObjectifsChantierProps> = ({
   return (
     <Bloc
       backgroundClassNameTitre={
-        chantier.statut === "ARCHIVE" ? "bg-dsfr-grey-925" : undefined
+        chantier.statut === "ARCHIVE"
+          ? "bg-dsfr-grey-925"
+          : "bg-dsfr-blue-france-925"
       }
       contenuClassesSupplémentaires=""
       titre="National"

@@ -44,7 +44,9 @@ const SyntheseDesResultats: FunctionComponent<SyntheseDesResultatsProps> = ({
     <SyntheseDesResultatsStyled>
       <Bloc
         backgroundClassNameTitre={
-          chantier.statut === "ARCHIVE" ? "bg-dsfr-grey-925" : undefined
+          chantier.statut === "ARCHIVE"
+            ? "bg-dsfr-grey-925"
+            : "bg-dsfr-blue-france-925"
         }
         className="h-full"
         titre={nomTerritoire}
