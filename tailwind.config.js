@@ -4,6 +4,8 @@ module.exports = {
   theme: {
     extend: {
       colors: {
+        // Le même que dsfr-blue-france-sun-113 car c'est le bleu marianne principal qu'on utilise presque partout
+        primary: "#000091",
         "dsfr-info-main-525": "#0078F3",
         "dsfr-info-950": "#E8EDFF",
         "dsfr-warning-950": "#FFE9E6",

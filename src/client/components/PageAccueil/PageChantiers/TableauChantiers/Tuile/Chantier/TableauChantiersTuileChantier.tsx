@@ -57,23 +57,18 @@ const TableauChantiersTuileChantier: FunctionComponent<{
             estArchive={chantiersSontArchives}
           />
         </div>
-        {process.env.NEXT_PUBLIC_FF_ALERTES === "true" &&
-          process.env.NEXT_PUBLIC_FF_ALERTES_BAISSE === "true" && (
-            <PictoTendance
-              estArchive={chantiersSontArchives}
-              tendance={chantier.tendance}
-            />
-          )}
-        {process.env.NEXT_PUBLIC_FF_ALERTES === "true" &&
-          process.env.NEXT_PUBLIC_FF_ALERTES_BAISSE === "true" &&
-          !!couleurEcartArrondi && (
-            <TexteColoré
-              alignement="droite"
-              couleur={couleurEcartArrondi.couleur}
-              estGras
-              texte={`${couleurEcartArrondi.ecartArrondi.toFixed(1)}`}
-            />
-          )}
+        <PictoTendance
+          estArchive={chantiersSontArchives}
+          tendance={chantier.tendance}
+        />
+        {couleurEcartArrondi ? (
+          <TexteColoré
+            alignement="droite"
+            couleur={couleurEcartArrondi.couleur}
+            estGras
+            texte={`${couleurEcartArrondi.ecartArrondi.toFixed(1)}`}
+          />
+        ) : null}
       </div>
     </TableauChantiersTuileChantierStyled>
   );
