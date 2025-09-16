@@ -48,11 +48,6 @@ export const CartographieSVG: FunctionComponent<CartographieSVGProps> = ({
     width: 100,
     height: 100,
   };
-  const mode: "departements" | "regions" = territoires[0]?.code.startsWith(
-    "DEPT",
-  )
-    ? "departements"
-    : "regions";
 
   return (
     <CartographieSVGStyled>

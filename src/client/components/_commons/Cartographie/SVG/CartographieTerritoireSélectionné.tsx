@@ -20,7 +20,8 @@ export const CartographieTerritoireSélectionné: FunctionComponent<{
     ...territoiresCompares.split(",").filter(Boolean),
   ].map(récupérerDétailsSurUnTerritoire);
 
-  const mode = territoireCode.startsWith("DEPT-") ? "departements" : "regions";
+  if (territoireCode === "NAT-FR") return null;
+
   return (
     <g>
       {territoiresCompares.length > 0
