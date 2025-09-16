@@ -1,5 +1,5 @@
 import { FunctionComponent } from "react";
-import PictoTendance from "@/components/_commons/PictoTendance/PictoTendance";
+import { PictoTendance } from "@/components/_commons/PictoTendance/PictoTendance";
 import TexteColoré from "@/components/_commons/TexteColoré/TexteColoré";
 import { definirCouleurEcartArrondi } from "@/client/utils/chantier/écart/écart";
 import TableauRéformesAvancement from "@/components/PageAccueil/TableauRéformes/Avancement/TableauRéformesAvancement";

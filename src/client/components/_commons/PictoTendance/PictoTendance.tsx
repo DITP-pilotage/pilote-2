@@ -7,11 +7,6 @@ import { Icone } from "@/components/_commons/Icone";
 
 type Tendance = ChantierTendance;
 
-interface PictoTendanceProps {
-  tendance: Tendance | null;
-  estArchive?: boolean;
-}
-
 const mapTendanceIcon: Record<
   ChantierTendance,
   ComponentType<{ className: string; fill: string }>
@@ -21,18 +16,25 @@ const mapTendanceIcon: Record<
   STAGNATION: ArrowLine1Icon,
 };
 
-const PictoTendance: FunctionComponent<PictoTendanceProps> = ({
-  tendance,
-  estArchive,
-}) => {
+const mapColorPicto = {
+  HAUSSE: "text-success",
+  BAISSE: "text-error",
+  STAGNATION: "text-primary",
+  ARCHIVE: "text-dsfr-grey-625",
+};
+
+export const PictoTendance: FunctionComponent<{
+  tendance: Tendance | null;
+  estArchive?: boolean;
+}> = ({ tendance, estArchive }) => {
   if (tendance === null) return null;
+
+  let color: keyof typeof mapColorPicto = estArchive ? "ARCHIVE" : tendance;
 
   return (
     <Icone
-      className="text-current"
+      className={mapColorPicto[color]}
       icone={mapTendanceIcon[tendance ?? "STAGNATION"]}
     />
   );
 };
-
-export default PictoTendance;
