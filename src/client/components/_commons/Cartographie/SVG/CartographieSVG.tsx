@@ -7,6 +7,7 @@ import {
   CartographieTerritoire,
 } from "@/components/_commons/Cartographie/useCartographie.interface";
 import SecureTooltip from "@/components/_commons/SecureTooltip/SecureTooltip";
+import { MailleInterne } from "@/server/domain/maille/Maille.interface";
 import CartographieZoomEtDéplacement from "./ZoomEtDéplacement/CartographieZoomEtDéplacement";
 import CartographieSVGStyled from "./CartographieSVG.styled";
 import { CartographieTerritoireSélectionné } from "./CartographieTerritoireSélectionné";
@@ -22,6 +23,7 @@ interface CartographieSVGProps {
     territoireSélectionnable: boolean,
   ) => void;
   contoursGris?: boolean;
+  mailleSelectionnee: MailleInterne;
 }
 
 export const CartographieSVG: FunctionComponent<CartographieSVGProps> = ({
@@ -31,6 +33,7 @@ export const CartographieSVG: FunctionComponent<CartographieSVGProps> = ({
   frontières,
   auClicTerritoireCallback,
   contoursGris = false,
+  mailleSelectionnee,
 }) => {
   const [hoveredTerritoire, setHoveredTerritoire] =
     useState<CartographieTerritoire | null>(null);
@@ -109,7 +112,7 @@ export const CartographieSVG: FunctionComponent<CartographieSVGProps> = ({
                     setHoveredElement(null);
                   },
                 },
-                mode,
+                mailleSelectionnee,
               ),
             )}
             {frontières.map((frontière) =>
@@ -119,11 +122,12 @@ export const CartographieSVG: FunctionComponent<CartographieSVGProps> = ({
                   className: "territoire-frontière",
                   key: `frontière-${frontière.codeInsee}`,
                 },
-                mode,
+                mailleSelectionnee,
               ),
             )}
             {options.territoireSélectionnable ? (
               <CartographieTerritoireSélectionné
+                mailleSelectionnee={mailleSelectionnee}
                 territoireCode={territoireCode}
               />
             ) : null}

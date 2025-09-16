@@ -1,11 +1,13 @@
 import { parseAsString, useQueryState } from "nuqs";
 import { FunctionComponent } from "react";
 import { actionsTerritoiresStore } from "@/client/stores/useTerritoiresStore/useTerritoiresStore";
+import { MailleInterne } from "@/server/domain/maille/Maille.interface";
 import { getTraceSvg } from "./CartographieSVGContrat";
 
 export const CartographieTerritoireSélectionné: FunctionComponent<{
   territoireCode: string;
-}> = ({ territoireCode }) => {
+  mailleSelectionnee: MailleInterne;
+}> = ({ territoireCode, mailleSelectionnee }) => {
   const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
 
   const [territoiresCompares] = useQueryState(
@@ -18,6 +20,7 @@ export const CartographieTerritoireSélectionné: FunctionComponent<{
     ...territoiresCompares.split(",").filter(Boolean),
   ].map(récupérerDétailsSurUnTerritoire);
 
+  const mode = territoireCode.startsWith("DEPT-") ? "departements" : "regions";
   return (
     <g>
       {territoiresCompares.length > 0
@@ -28,7 +31,7 @@ export const CartographieTerritoireSélectionné: FunctionComponent<{
                 className: "territoire-sélectionné",
                 key: territoire.code,
               },
-              "regions",
+              mailleSelectionnee,
             ),
           )
         : getTraceSvg(
@@ -37,7 +40,7 @@ export const CartographieTerritoireSélectionné: FunctionComponent<{
               className: "territoire-sélectionné",
               key: territoireCode,
             },
-            "regions",
+            mailleSelectionnee,
           )}
     </g>
   );
