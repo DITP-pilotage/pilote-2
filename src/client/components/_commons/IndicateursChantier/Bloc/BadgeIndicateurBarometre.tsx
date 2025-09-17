@@ -1,4 +1,4 @@
-import PictoBaromètre from "@/components/_commons/PictoBaromètre/PictoBaromètre";
+import { PictoBaromètre } from "@/components/_commons/PictoBaromètre/PictoBaromètre";
 import { useBlocIndicateurContext } from "@/components/PageChantier/useBlocIndicateurContext";
 
 export const BadgeIndicateurBarometre = () => {

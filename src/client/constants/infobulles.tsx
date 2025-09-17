@@ -1,6 +1,6 @@
-import PictoBaromètre from "@/components/_commons/PictoBaromètre/PictoBaromètre";
-import PictoChantierBrouillon from "@/components/_commons/PictoChantierBrouillon/PictoChantierBrouillon";
-import PictoTerritorialisé from "@/components/_commons/PictoTerritorialisé/PictoTerritorialisé";
+import { PictoBaromètre } from "@/components/_commons/PictoBaromètre/PictoBaromètre";
+import { PictoChantierBrouillon } from "@/components/_commons/PictoChantierBrouillon/PictoChantierBrouillon";
+import { PictoTerritorialise } from "@/components/_commons/PictoTerritorialisé/PictoTerritorialise";
 import { IndicateurPondération } from "@/components/PageChantier/PageChantier.interface";
 import { Maille } from "@/server/domain/maille/Maille.interface";
 
@@ -103,7 +103,7 @@ const INFOBULLE_CONTENUS = {
           de l'action publique
         </p>
         <p className="fr-text--sm">
-          <PictoTerritorialisé /> : Chantier dont le pilotage est
+          <PictoTerritorialise /> : Chantier dont le pilotage est
           territorialisé.
         </p>
         <p className="fr-text--sm">

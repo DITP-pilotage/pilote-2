@@ -5,11 +5,6 @@ const PageChantiersStyled = styled.main`
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
-
-    .titre-liens {
-      display: flex;
-      flex-wrap: wrap;
-    }
   }
 
   .fr-text--lg {

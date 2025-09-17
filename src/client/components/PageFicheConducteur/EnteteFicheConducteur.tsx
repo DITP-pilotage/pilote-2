@@ -1,7 +1,7 @@
 import { FunctionComponent, PropsWithChildren } from "react";
 import Encart from "@/components/_commons/Encart/Encart";
 import Titre from "@/components/_commons/Titre/Titre";
-import BoutonImpression from "@/components/_commons/BoutonImpression/BoutonImpression";
+import { BoutonImpression } from "@/components/_commons/BoutonImpression/BoutonImpression";
 
 export const EnteteFicheConducteur: FunctionComponent<
   PropsWithChildren<{}>
@@ -9,10 +9,7 @@ export const EnteteFicheConducteur: FunctionComponent<
   return (
     <Encart>
       <div className="flex justify-between align-center">
-        <Titre
-          baliseHtml="h2"
-          className="fr-h6 fr-mb-0 fr-text-title--blue-france"
-        >
+        <Titre baliseHtml="h2" className="fr-h6 fr-mb-0 !text-primary">
           {children}
         </Titre>
         <div className="flex align-center">

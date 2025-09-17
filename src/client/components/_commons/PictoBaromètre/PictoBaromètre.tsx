@@ -1,13 +1,7 @@
 import { FunctionComponent } from "react";
-import PictoBaromètreStyled from "@/components/_commons/PictoBaromètre/PictoBaromètre.styled";
+import { Icone } from "@/components/_commons/Icone";
+import { Dashboard31Icon } from "@/components/_commons/Icones/Dashboard31Icon";
 
-const PictoBaromètre: FunctionComponent<{}> = () => {
-  return (
-    <>
-      <PictoBaromètreStyled className="fr-icon-dashboard-3-line" />
-      <span className="fr-sr-only">élément du baromètre</span>
-    </>
-  );
+export const PictoBaromètre: FunctionComponent<{}> = () => {
+  return <Icone icone={Dashboard31Icon} />;
 };
-
-export default PictoBaromètre;

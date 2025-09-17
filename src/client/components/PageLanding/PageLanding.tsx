@@ -6,14 +6,13 @@ import téléchargementFichierSvg from "@gouvfr/dsfr/dist/artwork/pictograms/doc
 import Link from "next/link";
 import { signIn } from "next-auth/react";
 import Head from "next/head";
-import { FunctionComponent } from "react";
 import PageLandingStyled from "@/components/PageLanding/PageLanding.styled";
 import Titre from "@/components/_commons/Titre/Titre";
 import captureÉcranPilote from "/public/img/landing/capture-écran-pilote.png";
 import baromètreCarteSvg from "/public/img/landing/baromètre-carte-france.svg";
-import IcôneEmail from "@/components/_commons/IcôneEmail/IcôneEmail";
+import { BoutonContacterEquipePilote } from "@/components/PageAccueil/BoutonContacterEquipePilote";
 
-const PageLanding: FunctionComponent<{}> = () => {
+const PageLanding = () => {
   return (
     <>
       <Head>
@@ -206,16 +205,7 @@ const PageLanding: FunctionComponent<{}> = () => {
               <Titre baliseHtml="h2" className="fr-h3 fr-m-0">
                 Vous avez des questions ?
               </Titre>
-              <button className="fr-btn" type="button">
-                <IcôneEmail className="fr-mr-2v" />
-                <Link
-                  className="font-normal"
-                  href="mailto:pilote.ditp@modernisation.gouv.fr"
-                  title="Contacter l'équipe PILOTE"
-                >
-                  Contacter l'équipe PILOTE
-                </Link>
-              </button>
+              <BoutonContacterEquipePilote className="!texte-white" />
             </div>
           </div>
         </section>

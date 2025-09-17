@@ -1,12 +1,6 @@
-import { FunctionComponent } from "react";
 import { convertitEnPondération } from "@/client/utils/ponderation/ponderation";
 import { MailleTerritoireSelectionne } from "@/server/domain/maille/Maille.interface";
-import { useBlocIndicateurContext } from "@/components/PageChantier/useBlocIndicateurContext";
 import { territoireCodeVersMailleCodeInsee } from "@/server/utils/territoires";
-
-interface IndicateurPondérationProps {
-  indicateurPondération: number | null;
-}
 
 const adjectifÀPartirDeLaMaille: Record<MailleTerritoireSelectionne, string> = {
   NAT: "national",
@@ -14,11 +8,13 @@ const adjectifÀPartirDeLaMaille: Record<MailleTerritoireSelectionne, string> = 
   REG: "régional",
 };
 
-const IndicateurPonderation: FunctionComponent<IndicateurPondérationProps> = ({
+export const IndicateurPonderation = ({
   indicateurPondération,
+  territoireCode,
+}: {
+  indicateurPondération: number | null;
+  territoireCode: string;
 }) => {
-  const { territoireCode } = useBlocIndicateurContext();
-
   const { maille: mailleDuTerritoireSelectionnee } =
     territoireCodeVersMailleCodeInsee(territoireCode);
 
@@ -42,5 +38,3 @@ const IndicateurPonderation: FunctionComponent<IndicateurPondérationProps> = ({
     </p>
   );
 };
-
-export default IndicateurPonderation;

@@ -2,12 +2,12 @@ import "@gouvfr/dsfr/dist/component/header/header.min.css";
 import "@gouvfr/dsfr/dist/component/logo/logo.min.css";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
-import { FunctionComponent } from "react";
 import Navigation from "@/components/_commons/MiseEnPage/Navigation/Navigation";
-import Utilisateur from "@/components/_commons/MiseEnPage/EnTete/Utilisateur/Utilisateur";
+import { Utilisateur } from "@/components/_commons/MiseEnPage/EnTete/Utilisateur/Utilisateur";
 import BandeauInformation from "@/components/_commons/BandeauInformation/BandeauInformation";
 import api from "@/server/infrastructure/api/trpc/api";
-import IcôneEmail from "@/components/_commons/IcôneEmail/IcôneEmail";
+import { BoutonContacterEquipePilote } from "@/components/PageAccueil/BoutonContacterEquipePilote";
+import { BoutonSeConnecter } from "@/components/_commons/BoutonSeConnecter";
 
 const useEntete = () => {
   const { data: messageInformation } =
@@ -17,7 +17,7 @@ const useEntete = () => {
   };
 };
 
-export const EnTete: FunctionComponent<{}> = () => {
+export const EnTete = () => {
   const { data: session } = useSession();
   const { messageInformation } = useEntete();
 
@@ -66,22 +66,14 @@ export const EnTete: FunctionComponent<{}> = () => {
               <div className="fr-header__tools-links">
                 <ul className="flex align-center">
                   <li className="fr-mr-md-2w">
-                    <button
-                      className="fr-btn fr-text--sm fr-py-0 fr-pr-1w fr-pl-0"
-                      type="button"
-                    >
-                      <IcôneEmail className="fr-mr-2v fr-text-title--blue-france" />
-                      <Link
-                        className="font-normal"
-                        href="mailto:pilote.ditp@modernisation.gouv.fr"
-                        title="Contacter l'équipe PILOTE"
-                      >
-                        Contacter l'équipe PILOTE
-                      </Link>
-                    </button>
+                    <BoutonContacterEquipePilote />
                   </li>
                   <li>
-                    <Utilisateur />
+                    {session?.user?.email ? (
+                      <Utilisateur email={session.user.email} />
+                    ) : (
+                      <BoutonSeConnecter />
+                    )}
                   </li>
                 </ul>
               </div>

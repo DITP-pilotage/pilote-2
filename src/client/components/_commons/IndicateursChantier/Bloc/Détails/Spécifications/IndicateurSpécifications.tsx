@@ -1,8 +1,9 @@
 import { FunctionComponent } from "react";
 import Link from "next/dist/client/link";
-import IcôneEmail from "@/components/_commons/IcôneEmail/IcôneEmail";
 import { libellesTypologieIndicateur } from "@/client/utils/indicateur/indicateur";
 import { useBlocIndicateurContext } from "@/components/PageChantier/useBlocIndicateurContext";
+import { EnveloppeContourIcon } from "@/components/_commons/Icones/EnveloppeContourIcon";
+import { Icone } from "@/components/_commons/Icone";
 import IndicateurSpécificationsStyled from "./IndicateurSpécifications.styled";
 
 interface IndicateurSpécificationsProps {
@@ -125,7 +126,10 @@ const IndicateurSpécifications: FunctionComponent<
             </div>
           </div>
           <div className="flex align-end justify-end">
-            <IcôneEmail className="fr-mr-1v fr-text-title--blue-france fr-mt-2w fr-mt-lg-0" />
+            <Icone
+              className="fr-mr-1v fr-text-title--blue-france fr-mt-2w fr-mt-lg-0"
+              icone={EnveloppeContourIcon}
+            />
             <Link
               className="fr-link"
               href={`mailto:${responsablesMails.join(", ")}?subject=${objectMail}`}

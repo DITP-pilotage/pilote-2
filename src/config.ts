@@ -197,11 +197,6 @@ const config = convict({
       default: false,
       env: "NEXT_PUBLIC_FF_APPLICATION_INDISPONIBLE",
     },
-    ficheTerritoriale: {
-      format: Boolean,
-      default: true,
-      env: "NEXT_PUBLIC_FF_FICHE_TERRITORIALE",
-    },
     ficheConducteur: {
       format: Boolean,
       default: false,

@@ -1,12 +1,12 @@
-import { FunctionComponent } from "react";
-import { useBlocIndicateurContext } from "@/components/PageChantier/useBlocIndicateurContext";
 import { Icone } from "@/components/_commons/Icone";
 import { DecroissanceIcon } from "@/components/_commons/Icones/DecroissanceIcon";
 
-export const IndicateurTendance: FunctionComponent = () => {
-  const { detailIndicateurDuTerritoire } = useBlocIndicateurContext();
-
-  if (detailIndicateurDuTerritoire.tendance !== "BAISSE") return null;
+export const IndicateurTendance = ({
+  tendance,
+}: {
+  tendance: string | null;
+}) => {
+  if (tendance !== "BAISSE") return null;
 
   return (
     <div className="flex flex-direction-row fr-ml-2w fr-mr-1w">

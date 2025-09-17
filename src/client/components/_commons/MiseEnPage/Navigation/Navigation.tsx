@@ -6,9 +6,8 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
 import { Session } from "next-auth";
-
 import { FunctionComponent } from "react";
-import Utilisateur from "@/components/_commons/MiseEnPage/EnTete/Utilisateur/Utilisateur";
+import { Utilisateur } from "@/components/_commons/MiseEnPage/EnTete/Utilisateur/Utilisateur";
 import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
 import MenuItemGestionContenu from "@/components/_commons/MiseEnPage/Navigation/MenuItemGestionContenu";
 import api from "@/server/infrastructure/api/trpc/api";
@@ -19,7 +18,8 @@ import {
 import { récupérerUnCookie } from "@/client/utils/cookies";
 import { getQueryParamString } from "@/client/utils/getQueryParamString";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
-import IcôneEmail from "@/components/_commons/IcôneEmail/IcôneEmail";
+import { BoutonContacterEquipePilote } from "@/components/PageAccueil/BoutonContacterEquipePilote";
+import { BoutonSeConnecter } from "@/components/_commons/BoutonSeConnecter";
 
 const fermerLaModaleDuMenu = () => {
   if (typeof window.dsfr === "function") {
@@ -182,22 +182,14 @@ const Navigation: FunctionComponent<{}> = () => {
         <div className="fr-header__menu-links">
           <ul>
             <li className="fr-mr-md-2w">
-              <button
-                className="fr-btn fr-text--sm fr-py-0 fr-pr-1w fr-pl-0"
-                type="button"
-              >
-                <IcôneEmail className="fr-mr-2v fr-text-title--blue-france" />
-                <Link
-                  className="font-normal"
-                  href="mailto:pilote.ditp@modernisation.gouv.fr"
-                  title="Contacter l'équipe PILOTE"
-                >
-                  Contacter l'équipe PILOTE
-                </Link>
-              </button>
+              <BoutonContacterEquipePilote />
             </li>
             <li>
-              <Utilisateur />
+              {session?.user?.email ? (
+                <Utilisateur email={session.user.email} />
+              ) : (
+                <BoutonSeConnecter />
+              )}
             </li>
           </ul>
         </div>

@@ -1,26 +1,21 @@
-import {
-  useCallback,
-  useMemo,
-  useEffect,
-  FunctionComponent,
-  MutableRefObject,
-} from "react";
+import { MutableRefObject, useCallback, useEffect, useMemo } from "react";
 import { select as d3Select } from "d3-selection";
 import { zoom as d3Zoom } from "d3-zoom";
 import { Viewbox } from "@/components/_commons/Cartographie/SVG/CartographieSVG.interface";
-import CartographieZoomEtDéplacementStyled from "./CartographieZoomEtDéplacement.styled";
-
-interface CartographieZoomEtDéplacementProps {
-  svgRef: MutableRefObject<SVGSVGElement | null>;
-  viewbox: Viewbox;
-}
+import { Icone } from "@/components/_commons/Icone";
+import { AddLineIcon } from "@/components/_commons/Icones/AddLineIcon";
+import { SubtractLineIcon } from "@/components/_commons/Icones/SubtractLineIcon";
 
 const ZOOM_MAXIMUM = 10;
 const MULTIPLICATEUR_AU_ZOOM = 1.5;
 
-const CartographieZoomEtDéplacement: FunctionComponent<
-  CartographieZoomEtDéplacementProps
-> = ({ svgRef, viewbox }) => {
+const CartographieZoomEtDéplacement = ({
+  svgRef,
+  viewbox,
+}: {
+  svgRef: MutableRefObject<SVGSVGElement | null>;
+  viewbox: Viewbox;
+}) => {
   const svg = svgRef.current;
   const canvas = useMemo(() => d3Select(svg).selectChild(".canvas"), [svg]);
 
@@ -54,22 +49,22 @@ const CartographieZoomEtDéplacement: FunctionComponent<
   }, [svg, zoom]);
 
   return (
-    <CartographieZoomEtDéplacementStyled>
+    <div className="absolute right-0 w-8">
       <button
-        className="zoom-plus fr-btn"
+        className="flex justify-center !p-0.5 text-primary bg-white border-2 border-gray-300 rounded-t-lg shadow-[0_1px_1px_rgba(0,0,0,0.16),0_1px_0_-2px_rgba(0,0,0,0.16),0_1px_4px_rgba(0,0,0,0.23)]"
         onClick={() => zoomer(MULTIPLICATEUR_AU_ZOOM)}
         type="button"
       >
-        <span className="fr-icon-add-line" />
+        <Icone icone={AddLineIcon} />
       </button>
       <button
-        className="zoom-moins fr-btn"
+        className="flex justify-center !p-0.5 text-primary bg-white border-2 border-gray-300 rounded-b-lg shadow-[0_1px_1px_rgba(0,0,0,0.16),0_1px_0_-2px_rgba(0,0,0,0.16),0_1px_4px_rgba(0,0,0,0.23)]"
         onClick={() => zoomer(1 / MULTIPLICATEUR_AU_ZOOM)}
         type="button"
       >
-        <span className="fr-icon-subtract-line" />
+        <Icone icone={SubtractLineIcon} />
       </button>
-    </CartographieZoomEtDéplacementStyled>
+    </div>
   );
 };
 

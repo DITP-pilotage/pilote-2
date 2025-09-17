@@ -1,7 +1,6 @@
 import { FunctionComponent } from "react";
-import PictoTendance from "@/components/_commons/PictoTendance/PictoTendance";
-import TexteColoré from "@/components/_commons/TexteColoré/TexteColoré";
-import { definirCouleurEcartArrondi } from "@/client/utils/chantier/écart/écart";
+import { PictoTendance } from "@/components/_commons/PictoTendance/PictoTendance";
+import { EcartTuileChantier } from "@/components/_commons/TexteColoré/EcartTuileChantier";
 import TableauRéformesAvancement from "@/components/PageAccueil/TableauRéformes/Avancement/TableauRéformesAvancement";
 import TableauRéformesMétéo from "@/components/PageAccueil/TableauRéformes/Météo/TableauRéformesMétéo";
 import TypologiesPictos from "@/components/PageAccueil/PageChantiers/TableauChantiers/TypologiesPictos/TypologiesPictos";
@@ -14,30 +13,19 @@ const TableauChantiersTuileChantier: FunctionComponent<{
   afficherIcône: boolean;
   chantiersSontArchives: boolean;
 }> = ({ chantier, afficherIcône, chantiersSontArchives }) => {
-  const couleurEcartArrondi = definirCouleurEcartArrondi(
-    chantier.écart,
-    chantiersSontArchives,
-  );
-
   return (
     <TableauChantiersTuileChantierStyled>
       <div className="tuile-chantier-entête">
-        <div className="fr-mb-0 fr-ml-n1w">
-          <div className="flex gap-2">
-            {afficherIcône ? (
-              <div>
-                <IconeMinistere
-                  className="text-dsfr-blue-france-sun-113"
-                  icone={chantier.porteur?.icône}
-                />
-              </div>
-            ) : null}
-            {chantier.porteur?.nom ?? undefined}
-          </div>
+        <div className="fr-mb-0 fr-ml-n1w flex gap-2">
+          {afficherIcône ? (
+            <IconeMinistere
+              className="text-dsfr-blue-france-sun-113"
+              icone={chantier.porteur?.icône}
+            />
+          ) : null}
+          {chantier.porteur?.nom ?? undefined}
         </div>
-        <div className="fr-ml-2w">
-          <TypologiesPictos typologies={chantier.typologie} />
-        </div>
+        <TypologiesPictos typologies={chantier.typologie} />
       </div>
       <div className="fr-mt-1w fr-ml-5v tuile-chantier-corps">
         <div className="météo">
@@ -57,23 +45,14 @@ const TableauChantiersTuileChantier: FunctionComponent<{
             estArchive={chantiersSontArchives}
           />
         </div>
-        {process.env.NEXT_PUBLIC_FF_ALERTES === "true" &&
-          process.env.NEXT_PUBLIC_FF_ALERTES_BAISSE === "true" && (
-            <PictoTendance
-              estArchive={chantiersSontArchives}
-              tendance={chantier.tendance}
-            />
-          )}
-        {process.env.NEXT_PUBLIC_FF_ALERTES === "true" &&
-          process.env.NEXT_PUBLIC_FF_ALERTES_BAISSE === "true" &&
-          !!couleurEcartArrondi && (
-            <TexteColoré
-              alignement="droite"
-              couleur={couleurEcartArrondi.couleur}
-              estGras
-              texte={`${couleurEcartArrondi.ecartArrondi.toFixed(1)}`}
-            />
-          )}
+        <PictoTendance
+          estArchive={chantiersSontArchives}
+          tendance={chantier.tendance}
+        />
+        <EcartTuileChantier
+          chantiersSontArchives={chantiersSontArchives}
+          ecart={chantier.écart}
+        />
       </div>
     </TableauChantiersTuileChantierStyled>
   );

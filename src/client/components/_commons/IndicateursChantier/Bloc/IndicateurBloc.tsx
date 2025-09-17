@@ -3,14 +3,14 @@ import Bloc from "@/components/_commons/Bloc/Bloc";
 import Titre from "@/components/_commons/Titre/Titre";
 import { IndicateurDétails } from "@/components/_commons/IndicateursChantier/Bloc/Détails/IndicateurDétails";
 import { actionsTerritoiresStore } from "@/client/stores/useTerritoiresStore/useTerritoiresStore";
-import IndicateurPonderation from "@/components/_commons/IndicateursChantier/Bloc/Pondération/IndicateurPonderation";
+import { IndicateurPonderation } from "@/components/_commons/IndicateursChantier/Bloc/Pondération/IndicateurPonderation";
 import "@gouvfr/dsfr/dist/component/table/table.min.css";
 import Indicateur from "@/server/domain/indicateur/Indicateur.interface";
 import { estLargeurDÉcranActuelleMoinsLargeQue } from "@/stores/useLargeurDÉcranStore/useLargeurDÉcranStore";
 import ValeurEtDate from "@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/ValeurEtDate";
 import BarreDeProgression from "@/components/_commons/BarreDeProgression/BarreDeProgression";
 import IndicateurBlocIndicateurTuile from "@/components/_commons/IndicateursChantier/Bloc/indicateurBlocIndicateurTuile";
-import { IndicateurTendance } from "@/components/_commons/IndicateursChantier/Bloc/Tendances/IndicateurTendance";
+import { IndicateurTendance } from "@/components/_commons/IndicateurTendance/IndicateurTendance";
 import { IndicateurPropositionValeur } from "@/components/_commons/IndicateursChantier/Bloc/IndicateurPropositionValeur";
 import { BlocIndicateurProvider } from "@/components/PageChantier/useBlocIndicateurContext";
 import { LignesPropositionValeurAvancementV2 } from "@/components/_commons/IndicateursChantier/Bloc/LignesPropositionValeurAvancementV2";
@@ -169,6 +169,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                     indicateurPondération={
                       detailIndicateurDuTerritoire.pondération ?? null
                     }
+                    territoireCode={territoireCode}
                   />
 
                   <IndicateurPropositionValeur
@@ -178,7 +179,9 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                     propositionEstVisible={propositionEstVisible}
                     setPropositionEstVisible={setPropositionEstVisible}
                   />
-                  <IndicateurTendance />
+                  <IndicateurTendance
+                    tendance={detailIndicateurDuTerritoire.tendance}
+                  />
                 </div>
               </div>
             </div>

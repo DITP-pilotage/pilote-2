@@ -4,7 +4,7 @@ import { FunctionComponent } from "react";
 import HeaderFicheTerritoriale from "@/components/PageFicheTerritoriale/HeaderFicheTerritoriale";
 import Encart from "@/components/_commons/Encart/Encart";
 import Titre from "@/components/_commons/Titre/Titre";
-import BoutonImpression from "@/components/_commons/BoutonImpression/BoutonImpression";
+import { BoutonImpression } from "@/components/_commons/BoutonImpression/BoutonImpression";
 import { AvancementsFicheTerritoriale } from "@/components/PageFicheTerritoriale/AvancementsFicheTerritoriale/AvancementsFicheTerritoriale";
 import Bloc from "@/components/_commons/Bloc/Bloc";
 import TitreInfobulleConteneur from "@/components/_commons/TitreInfobulleConteneur/TitreInfobulleConteneur";

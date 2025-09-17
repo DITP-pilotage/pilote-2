@@ -5,14 +5,12 @@ import Ministère from "@/server/domain/ministère/Ministère.interface";
 import Axe from "@/server/domain/axe/Axe.interface";
 import Ppg from "@/server/domain/ppg/Ppg.interface";
 import PérimètreMinistériel from "@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface";
-import {
-  reinitialiserFiltres,
-  sauvegarderFiltres,
-} from "@/stores/useFiltresStoreNew/useFiltresStoreNew";
+import { sauvegarderFiltres } from "@/stores/useFiltresStoreNew/useFiltresStoreNew";
 import { Maille, MailleInterne } from "@/server/domain/maille/Maille.interface";
 import { libellésMétéos } from "@/server/domain/météo/Météo.interface";
 import { NOMS_CODES_MAILLES } from "@/server/infrastructure/accès_données/maille/mailleSQLParser";
 import { listeStatuts } from "@/client/constants/statut";
+import { BoutonReintialiserLesFiltres } from "@/components/PageAccueil/BoutonReintialiserLesFiltres";
 import FiltresActifsStyled from "./FiltresActifs.styled";
 import "@gouvfr/dsfr/dist/component/accordion/accordion.min.css";
 
@@ -98,31 +96,6 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({
     (ministère) => ministère.périmètresMinistériels,
   );
 
-  const désactiverTousLesFiltres = (
-    event: React.MouseEvent<HTMLButtonElement>,
-  ) => {
-    event.preventDefault();
-    event.stopPropagation();
-
-    reinitialiserFiltres();
-
-    return setFiltres({
-      perimetres: "",
-      axes: "",
-      q: "",
-      meteos: "",
-      statut: "PUBLIE",
-      estBarometre: false,
-      territorialisation: "",
-      estEnAlerteTauxAvancementNonCalculé: false,
-      estEnAlerteÉcart: false,
-      estEnAlerteBaisse: false,
-      estEnAlerteMétéoNonRenseignée: false,
-      estEnAlerteAbscenceTauxAvancementDepartemental: false,
-      estEnAlertePossedePropositionsValeurAvancement: false,
-    });
-  };
-
   return (
     <FiltresActifsStyled id="filtres-actifs">
       <div
@@ -138,23 +111,16 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({
         role="button"
         tabIndex={0}
       >
-        <div className="flex">
-          <p className="fr-text--xs fr-mb-0 fr-pr-2w">
-            <span className="bold fr-text--xs fr-mb-0">
-              {nombreFiltresActifs}
-            </span>{" "}
-            {nombreFiltresActifs > 1
-              ? "filtres actifs sur cette page"
-              : "filtre actif sur cette page"}
-          </p>
-          <button
-            className="fr-link fr-icon-arrow-go-forward-fill fr-link--icon-left fr-text--xs"
-            onClick={(event) => désactiverTousLesFiltres(event)}
-            title="Réinitialiser les filtres"
-            type="button"
-          >
-            Réinitialiser les filtres
-          </button>
+        <div className="flex gap-2">
+          <div className="flex align-center gap-1">
+            <span className="bold text-xs mb-0">{nombreFiltresActifs}</span>
+            <span className="text-xs">
+              {nombreFiltresActifs > 1
+                ? "filtres actifs sur cette page"
+                : "filtre actif sur cette page"}
+            </span>
+          </div>
+          <BoutonReintialiserLesFiltres />
         </div>
       </div>
       <div
@@ -173,7 +139,7 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({
             <div className="fr-col-lg-10 fr-col-sm-9 fr-col-7">
               <ul
                 aria-label="liste des tags des filtres ministère actifs"
-                className="conteneur-tags fr-my-0"
+                className="conteneur-tags fr-my-0 gap-2"
               >
                 {filtres.estEnAlerteTauxAvancementNonCalculé ? (
                   <li>
@@ -290,7 +256,7 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({
             <div className="fr-col-lg-10 fr-col-sm-9 fr-col-7">
               <ul
                 aria-label="liste des tags des filtres météo actifs"
-                className="conteneur-tags fr-my-0"
+                className="conteneur-tags fr-my-0 gap-2"
               >
                 {filtres.meteos
                   .split(",")
@@ -331,7 +297,7 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({
             <div className="fr-col-lg-10 fr-col-sm-9 fr-col-7">
               <ul
                 aria-label="liste des tags des filtres ministère actifs"
-                className="conteneur-tags fr-my-0"
+                className="conteneur-tags fr-my-0 gap-2"
               >
                 {filtres.perimetres
                   .split(",")
@@ -380,7 +346,7 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({
             <div className="fr-col-lg-10 fr-col-sm-9 fr-col-7">
               <ul
                 aria-label="liste des tags des filtres axes actifs"
-                className="conteneur-tags fr-my-0"
+                className="conteneur-tags fr-my-0 gap-2"
               >
                 {filtres.axes
                   .split(",")
@@ -415,7 +381,7 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({
             <div className="fr-col-lg-10 fr-col-sm-9 fr-col-7">
               <ul
                 aria-label="liste des tags des filtres statut actifs"
-                className="conteneur-tags fr-my-0"
+                className="conteneur-tags fr-my-0 gap-2"
               >
                 <li key={`tag-statut-${filtres.statut}`}>
                   <Tag
@@ -442,7 +408,7 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({
             <div className="fr-col-lg-10 fr-col-sm-9 fr-col-7">
               <ul
                 aria-label="liste des tags des filtres territorialisation actifs"
-                className="conteneur-tags fr-my-0"
+                className="conteneur-tags fr-my-0 gap-2"
               >
                 {filtres.territorialisation
                   .split(",")
@@ -490,7 +456,7 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({
             <div className="fr-col-lg-10 fr-col-sm-9 fr-col-7">
               <ul
                 aria-label="liste des tags des filtres baromètre actifs"
-                className="conteneur-tags fr-my-0"
+                className="conteneur-tags fr-my-0 gap-2"
               >
                 {filtres.estBarometre ? (
                   <li>
@@ -519,7 +485,7 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({
             <div className="fr-col-lg-10 fr-col-sm-9 fr-col-7">
               <ul
                 aria-label="liste des tags des filtres recherche actifs"
-                className="conteneur-tags fr-my-0"
+                className="conteneur-tags fr-my-0 gap-2"
               >
                 <li>
                   <Tag

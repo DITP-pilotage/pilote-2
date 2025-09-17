@@ -1,20 +1,13 @@
 import { FunctionComponent } from "react";
-import {
-  parseAsBoolean,
-  parseAsInteger,
-  parseAsString,
-  useQueryStates,
-} from "nuqs";
+import { parseAsInteger, parseAsString, useQueryStates } from "nuqs";
 import { FiltresSelectionMultiple } from "@/components/PageAccueil/Filtres/FiltresSelectionMultiple/FiltresSelectionMultiple";
 import Ministère from "@/server/domain/ministère/Ministère.interface";
 import Axe from "@/server/domain/axe/Axe.interface";
 import Titre from "@/components/_commons/Titre/Titre";
-import {
-  reinitialiserFiltres,
-  sauvegarderFiltres,
-} from "@/client/stores/useFiltresStoreNew/useFiltresStoreNew";
+import { sauvegarderFiltres } from "@/client/stores/useFiltresStoreNew/useFiltresStoreNew";
 import { calculerNouvelleMaille } from "@/components/PageAccueil/Filtres/utils";
 import { Maille } from "@/server/domain/maille/Maille.interface";
+import { BoutonReintialiserLesFiltres } from "@/components/PageAccueil/BoutonReintialiserLesFiltres";
 import FiltresGroupe from "./FiltresGroupe/FiltresGroupe";
 import FiltresMinistères from "./FiltresMinistères/FiltresMinistères";
 import { FiltresSelectionMultipleBoolean } from "./FiltresSelectionMultipleBoolean/FiltresSelectionMultipleBoolean";
@@ -39,20 +32,8 @@ export const Filtres: FunctionComponent<FiltresProps> = ({
     {
       maille: parseAsString.withDefault(""),
       pageIndex: parseAsInteger.withDefault(1),
-      perimetres: parseAsString.withDefault(""),
-      statut: parseAsString.withDefault(""),
       axes: parseAsString.withDefault(""),
-      meteos: parseAsString.withDefault(""),
-      estBarometre: parseAsBoolean.withDefault(false),
       territorialisation: parseAsString.withDefault(""),
-      estEnAlerteTauxAvancementNonCalculé: parseAsBoolean.withDefault(false),
-      estEnAlerteÉcart: parseAsBoolean.withDefault(false),
-      estEnAlerteBaisse: parseAsBoolean.withDefault(false),
-      estEnAlerteMétéoNonRenseignée: parseAsBoolean.withDefault(false),
-      estEnAlerteAbscenceTauxAvancementDepartemental:
-        parseAsBoolean.withDefault(false),
-      estEnAlertePossedePropositionsValeurAvancement:
-        parseAsBoolean.withDefault(false),
     },
     {
       shallow: false,
@@ -60,25 +41,6 @@ export const Filtres: FunctionComponent<FiltresProps> = ({
       history: "push",
     },
   );
-
-  const désactiverTousLesFiltres = () => {
-    reinitialiserFiltres();
-
-    return setFiltres({
-      perimetres: "",
-      axes: "",
-      meteos: "",
-      statut: "PUBLIE",
-      estBarometre: false,
-      territorialisation: "",
-      estEnAlerteTauxAvancementNonCalculé: false,
-      estEnAlerteÉcart: false,
-      estEnAlerteBaisse: false,
-      estEnAlerteMétéoNonRenseignée: false,
-      estEnAlerteAbscenceTauxAvancementDepartemental: false,
-      estEnAlertePossedePropositionsValeurAvancement: false,
-    });
-  };
 
   const filtresTerritorialisation =
     estProfilRegionalAutoriseAVoirLaTerritorialisation
@@ -113,14 +75,7 @@ export const Filtres: FunctionComponent<FiltresProps> = ({
         <Titre baliseHtml="h1" className="fr-h4 fr-mb-0 flex align-center">
           Filtres
         </Titre>
-        <button
-          className="fr-link fr-icon-arrow-go-forward-fill fr-link--icon-left fr-text--xs"
-          onClick={désactiverTousLesFiltres}
-          title="Réinitialiser les filtres"
-          type="button"
-        >
-          Réinitialiser les filtres
-        </button>
+        <BoutonReintialiserLesFiltres />
       </div>
       <section className="fr-px-3w">
         <FiltresMinistères ministères={ministères} />
