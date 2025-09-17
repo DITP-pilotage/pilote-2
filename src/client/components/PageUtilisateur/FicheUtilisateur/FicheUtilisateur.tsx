@@ -12,7 +12,7 @@ import FicheUtilisateurProps from "./FicheUtilisateur.interface";
 const FicheUtilisateur: FunctionComponent<FicheUtilisateurProps> = ({
   utilisateur,
 }) => {
-  const { scopes } = useFicheUtilisateur(utilisateur);
+  const { scopes, chantiers } = useFicheUtilisateur(utilisateur);
 
   return (
     <FicheUtilisateurStyled>
@@ -27,6 +27,7 @@ const FicheUtilisateur: FunctionComponent<FicheUtilisateurProps> = ({
       <TableauUtilisateur utilisateur={utilisateur} />
       <DetailsDroitsUtilisateur
         chantiers={scopes.lecture.chantiers}
+        listeInformationsChantiers={chantiers!}
         territoires={scopes.lecture.territoires}
         titre="Droits de lecture"
       />
@@ -34,21 +35,25 @@ const FicheUtilisateur: FunctionComponent<FicheUtilisateurProps> = ({
         chantiers={scopes.responsabilite.chantiers}
         labelChantiers="Responsabilité pour les chantiers"
         labelTerritoires="Responsabilité pour les territoires"
+        listeInformationsChantiers={chantiers!}
         territoires={scopes.responsabilite.territoires}
         titre="Responsabilité"
       />
       <DetailsDroitsUtilisateur
         chantiers={scopes["saisieIndicateur"].chantiers}
+        listeInformationsChantiers={chantiers!}
         territoires={scopes["saisieIndicateur"].territoires}
         titre="Droits de saisie des données quantitatives"
       />
       <DetailsDroitsUtilisateur
         chantiers={scopes["saisieCommentaire"].chantiers}
+        listeInformationsChantiers={chantiers!}
         territoires={scopes["saisieCommentaire"].territoires}
         titre="Droits de saisie des commentaires"
       />
       <DetailsDroitsUtilisateur
         chantiers={scopes["gestionUtilisateur"].chantiers}
+        listeInformationsChantiers={chantiers!}
         territoires={scopes["gestionUtilisateur"].territoires}
         titre="Droits de gestion des utilisateurs"
       />

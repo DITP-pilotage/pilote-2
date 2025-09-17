@@ -118,7 +118,7 @@ export default function useFicheUtilisateur(
         return (
           u.habilitations?.lecture?.chantiers?.map(
             (chantierId) =>
-              chantiers?.find((c) => c.id === chantierId)?.nom ?? "",
+              chantiers?.find((c) => c.id === chantierId)?.id ?? "",
           ) ?? []
         );
       }
@@ -132,7 +132,7 @@ export default function useFicheUtilisateur(
               chantier.territoiresApplicables.includes(territoire),
             )
           ) {
-            result.push(chantier.nom);
+            result.push(chantier.id);
           }
           return result;
         }, [] as string[]) ?? []
@@ -146,7 +146,7 @@ export default function useFicheUtilisateur(
   ) => {
     return (
       u.habilitations?.responsabilite?.chantiers?.map(
-        (chantierId) => chantiers?.find((c) => c.id === chantierId)?.nom ?? "",
+        (chantierId) => chantiers?.find((c) => c.id === chantierId)?.id ?? "",
       ) ?? []
     );
   };
@@ -201,7 +201,7 @@ export default function useFicheUtilisateur(
         return (
           u.habilitations?.saisieCommentaire?.chantiers?.map(
             (chantierId) =>
-              chantiers?.find((c) => c.id === chantierId)?.nom ?? "",
+              chantiers?.find((c) => c.id === chantierId)?.id ?? "",
           ) ?? []
         );
       },
@@ -285,5 +285,6 @@ export default function useFicheUtilisateur(
 
   return {
     scopes,
+    chantiers,
   };
 }

@@ -1,5 +1,6 @@
 import "@gouvfr/dsfr/dist/component/checkbox/checkbox.min.css";
 import { Fragment, FunctionComponent, useId } from "react";
+import clsx from "clsx";
 import { MultiSelectOptionGroupée } from "@/components/_commons/MultiSelectNew/MultiSelect.interface";
 
 interface MultiSelectGroupeProps {
@@ -35,7 +36,10 @@ const MultiSelectGroupe: FunctionComponent<MultiSelectGroupeProps> = ({
                 onChange={() => changementÉtatCallback(option.value)}
                 type="checkbox"
               />
-              <label className="fr-label" htmlFor={`${option.value} ${id}`}>
+              <label
+                className={clsx("fr-label", option.classesSupplementaires)}
+                htmlFor={`${option.value} ${id}`}
+              >
                 {option.label}
                 {!!option.afficherIcone && (
                   <span

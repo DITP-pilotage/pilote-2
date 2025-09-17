@@ -1,4 +1,4 @@
-import { FunctionComponent, useEffect, useState } from "react";
+import { FunctionComponent } from "react";
 import MultiSelect from "@/client/components/_commons/MultiSelect/MultiSelect";
 import { MultiSelectOptionsGroupées } from "@/client/components/_commons/MultiSelect/MultiSelect.interface";
 import { trierParOrdreAlphabétique } from "@/client/utils/arrays";
@@ -23,33 +23,45 @@ const MultiSelectChantier: FunctionComponent<MultiSelectChantierProps> = ({
   afficherBoutonsSélection,
   desactive,
 }) => {
-  const [optionsGroupées, setOptionsGroupées] =
-    useState<MultiSelectOptionsGroupées>([]);
+  const chantiersArchives = chantiers.filter(
+    (chantier) => chantier.statut === "ARCHIVE",
+  );
+  const chantiersNonArchives = chantiers.filter(
+    (chantier) => chantier.statut !== "ARCHIVE",
+  );
 
-  useEffect(() => {
-    if (chantiers) {
-      setOptionsGroupées([
-        {
-          label: "Chantiers",
-          options: trierParOrdreAlphabétique(
-            chantiers.map((chantier) => ({
-              label: `${chantier.id} - ${chantier.nom}`,
-              value: chantier.id,
-              disabled: valeursDésactivées?.includes(chantier.id),
-            })),
-            "label",
-          ),
-        },
-      ]);
-    }
-  }, [chantiers, valeursDésactivées]);
+  const optionsGroupées: MultiSelectOptionsGroupées = [
+    {
+      label: "Chantiers",
+      options: trierParOrdreAlphabétique(
+        chantiersNonArchives.map((chantier) => ({
+          label: `${chantier.id} - ${chantier.nom}`,
+          value: chantier.id,
+          disabled: valeursDésactivées?.includes(chantier.id),
+        })),
+        "label",
+      ),
+    },
+    {
+      label: "Chantiers archivés",
+      options: trierParOrdreAlphabétique(
+        chantiersArchives.map((chantier) => ({
+          label: `${chantier.id} - ${chantier.nom} (archivés)`,
+          value: chantier.id,
+          disabled: valeursDésactivées?.includes(chantier.id),
+          classesSupplementaires: "italic !text-dsfr-mention-grey",
+        })),
+        "label",
+      ),
+    },
+  ];
 
   return (
     <MultiSelect
       afficherBoutonsSélection={afficherBoutonsSélection}
-      changementValeursSélectionnéesCallback={(
-        valeursSélectionnées: string[],
-      ) => changementValeursSélectionnéesCallback(valeursSélectionnées)}
+      changementValeursSélectionnéesCallback={
+        changementValeursSélectionnéesCallback
+      }
       desactive={desactive}
       label="Chantier(s)"
       optionsGroupées={optionsGroupées}
