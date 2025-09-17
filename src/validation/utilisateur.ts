@@ -46,7 +46,7 @@ export const validationInfosBaseUtilisateur = z.object({
   gestionUtilisateur: z.boolean(),
 });
 
-const adresseEstValide = (adresse: string) => {
+const adresseEstValideSecretariatGeneral = (adresse: string) => {
   return (
     adresse.endsWith(".gouv.fr") ||
     /^.+@ac-[\da-z\-]+\.fr$/i.test(adresse) ||
@@ -54,13 +54,31 @@ const adresseEstValide = (adresse: string) => {
   );
 };
 
-export const validationInfosBaseUtilisateurNonAdmin = z.object({
+export const validationInfosBaseUtilisateurSecretariatGeneral = z.object({
   email: z
     .string()
     .email()
     .min(1)
     .max(100)
-    .refine((value) => adresseEstValide(value), { message: customErrorMail }),
+    .refine((value) => adresseEstValideSecretariatGeneral(value), {
+      message: customErrorMail,
+    }),
+  nom: z.string().min(1).max(100),
+  prénom: z.string().min(1).max(100),
+  fonction: z.string().max(100).nullable(),
+  profil: z.enum(profilsCodes),
+  saisieIndicateur: z.boolean(),
+});
+
+export const validationInfosBaseUtilisateurCoordinateur = z.object({
+  email: z
+    .string()
+    .email()
+    .min(1)
+    .max(100)
+    .refine((value) => value.endsWith(".gouv.fr"), {
+      message: customErrorMail,
+    }),
   nom: z.string().min(1).max(100),
   prénom: z.string().min(1).max(100),
   fonction: z.string().max(100).nullable(),
@@ -142,5 +160,7 @@ export const codesTerritoiresDROM = [
 export const donneValidationInfosBaseUtilisateur = (profil: ProfilCode) => {
   return [ProfilEnum.DITP_ADMIN, ProfilEnum.DITP_PILOTAGE].includes(profil)
     ? validationInfosBaseUtilisateur
-    : validationInfosBaseUtilisateurNonAdmin;
+    : profil === ProfilEnum.SECRETARIAT_GENERAL
+      ? validationInfosBaseUtilisateurSecretariatGeneral
+      : validationInfosBaseUtilisateurCoordinateur;
 };
