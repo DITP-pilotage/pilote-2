@@ -1,18 +1,23 @@
 import "@gouvfr/dsfr/dist/utility/icons/icons-business/icons-business.min.css";
 import { ButtonHTMLAttributes } from "react";
-import clsx from "clsx";
+import { clsxm } from "@/utils/clsxm";
+import { Icone } from "@/components/_commons/Icone";
+import { Printer1Icon } from "@/components/_commons/Icones/Printer1Icon";
 
-const BoutonImpression = ({ className }: ButtonHTMLAttributes<"button">) => {
+export const BoutonImpression = ({
+  className,
+}: ButtonHTMLAttributes<"button">) => {
   return (
     <button
-      className={clsx(
-        "fr-link fr-link--icon-left fr-icon-printer-line fr-btn--icon-left fr-text--sm fr-p-0 border-b border-blue-france",
+      className={clsxm(
+        "!text-sm flex align-center gap-1 !pl-0 pb-0.5 border-b border-blue-france !text-primary",
         className,
       )}
       onClick={() => window.print()}
       title="Imprimer"
       type="button"
     >
+      <Icone className="w-4 h-4" icone={Printer1Icon} />
       Imprimer
     </button>
   );
