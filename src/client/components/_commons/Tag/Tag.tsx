@@ -1,5 +1,8 @@
 import "@gouvfr/dsfr/dist/component/tag/tag.min.css";
 import { FunctionComponent } from "react";
+import { clsxm } from "@/utils/clsxm";
+import { Icone } from "@/components/_commons/Icone";
+import { CloseLineIcon } from "@/components/_commons/Icones/CloseLineIcon";
 import TagStyled from "./Tag.styled";
 
 interface TagProps {
@@ -19,16 +22,21 @@ export const Tag: FunctionComponent<TagProps> = ({
 }) => {
   return (
     <TagStyled
-      className={`fr-tag${size === "sm" ? " fr-tag--sm" : ""} fr-mr-1-5v fr-mb-1-5v ${color} ${doitAvoirUneTailleFixe ? "fr-tag--fixed-width" : ""}`}
+      className={clsxm(`fr-tag fr-mr-1-5v fr-mb-1-5v`, color, {
+        "fr-tag--sm": size === "sm",
+        "fr-tag--fixed-width": doitAvoirUneTailleFixe,
+      })}
     >
       <span>{libelle}</span>
       <button
         aria-label={`Retirer le tag ${libelle}`}
-        className="fr-icon--sm fr-icon-close-line fr-ml-1v"
+        className="ml-1"
         onClick={suppressionCallback}
         title="Supprimer filtre"
         type="button"
-      />
+      >
+        <Icone className="w-4 h-4 !text-current" icone={CloseLineIcon} />
+      </button>
     </TagStyled>
   );
 };
