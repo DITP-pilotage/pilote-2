@@ -2,7 +2,7 @@ import { FunctionComponent } from "react";
 import Bloc from "@/components/_commons/Bloc/Bloc";
 import Titre from "@/components/_commons/Titre/Titre";
 import Tableau from "@/components/_commons/Tableau/Tableau";
-import PictoBaromètre from "@/components/_commons/PictoBaromètre/PictoBaromètre";
+import { PictoBaromètre } from "@/components/_commons/PictoBaromètre/PictoBaromètre";
 import { IndicateurDétailsParTerritoire } from "@/components/PageRapportDétaillé/Chantier/IndicateursRapportDetaille/Bloc/IndicateurBloc.interface";
 import { actionsTerritoiresStore } from "@/client/stores/useTerritoiresStore/useTerritoiresStore";
 import { DétailsIndicateurs } from "@/server/domain/indicateur/DétailsIndicateur.interface";

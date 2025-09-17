@@ -16,22 +16,16 @@ const TableauChantiersTuileChantier: FunctionComponent<{
   return (
     <TableauChantiersTuileChantierStyled>
       <div className="tuile-chantier-entête">
-        <div className="fr-mb-0 fr-ml-n1w">
-          <div className="flex gap-2">
-            {afficherIcône ? (
-              <div>
-                <IconeMinistere
-                  className="text-dsfr-blue-france-sun-113"
-                  icone={chantier.porteur?.icône}
-                />
-              </div>
-            ) : null}
-            {chantier.porteur?.nom ?? undefined}
-          </div>
+        <div className="fr-mb-0 fr-ml-n1w flex gap-2">
+          {afficherIcône ? (
+            <IconeMinistere
+              className="text-dsfr-blue-france-sun-113"
+              icone={chantier.porteur?.icône}
+            />
+          ) : null}
+          {chantier.porteur?.nom ?? undefined}
         </div>
-        <div className="fr-ml-2w">
-          <TypologiesPictos typologies={chantier.typologie} />
-        </div>
+        <TypologiesPictos typologies={chantier.typologie} />
       </div>
       <div className="fr-mt-1w fr-ml-5v tuile-chantier-corps">
         <div className="météo">

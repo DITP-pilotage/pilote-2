@@ -1,13 +1,6 @@
-import { FunctionComponent } from "react";
-import PictoChantierBrouillonStyled from "./PictoChantierBrouillon.styled";
+import { Icone } from "@/components/_commons/Icone";
+import { Error1Icon } from "@/components/_commons/Icones/Error1Icon";
 
-const PictoChantierBrouillon: FunctionComponent<{}> = () => {
-  return (
-    <>
-      <PictoChantierBrouillonStyled className="fr-icon-error-line" />
-      <span className="fr-sr-only">chantier brouillon</span>
-    </>
-  );
+export const PictoChantierBrouillon = () => {
+  return <Icone icone={Error1Icon} />;
 };
-
-export default PictoChantierBrouillon;
