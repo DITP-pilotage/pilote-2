@@ -1,10 +1,4 @@
-import {
-  useCallback,
-  useMemo,
-  useEffect,
-  FunctionComponent,
-  MutableRefObject,
-} from "react";
+import { MutableRefObject, useCallback, useEffect, useMemo } from "react";
 import { select as d3Select } from "d3-selection";
 import { zoom as d3Zoom } from "d3-zoom";
 import { Viewbox } from "@/components/_commons/Cartographie/SVG/CartographieSVG.interface";
@@ -12,17 +6,16 @@ import { Icone } from "@/components/_commons/Icone";
 import { AddLineIcon } from "@/components/_commons/Icones/AddLineIcon";
 import { SubtractLineIcon } from "@/components/_commons/Icones/SubtractLineIcon";
 
-interface CartographieZoomEtDéplacementProps {
-  svgRef: MutableRefObject<SVGSVGElement | null>;
-  viewbox: Viewbox;
-}
-
 const ZOOM_MAXIMUM = 10;
 const MULTIPLICATEUR_AU_ZOOM = 1.5;
 
-const CartographieZoomEtDéplacement: FunctionComponent<
-  CartographieZoomEtDéplacementProps
-> = ({ svgRef, viewbox }) => {
+const CartographieZoomEtDéplacement = ({
+  svgRef,
+  viewbox,
+}: {
+  svgRef: MutableRefObject<SVGSVGElement | null>;
+  viewbox: Viewbox;
+}) => {
   const svg = svgRef.current;
   const canvas = useMemo(() => d3Select(svg).selectChild(".canvas"), [svg]);
 
