@@ -18,7 +18,7 @@ import {
 import { récupérerUnCookie } from "@/client/utils/cookies";
 import { getQueryParamString } from "@/client/utils/getQueryParamString";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
-import { BoutonContacterEquipePilote } from "@/components/_commons/BoutonContacterEquipePilote";
+import { BoutonContacterEquipePilote } from "@/components/PageAccueil/BoutonContacterEquipePilote";
 import { BoutonSeConnecter } from "@/components/_commons/BoutonSeConnecter";
 
 const fermerLaModaleDuMenu = () => {

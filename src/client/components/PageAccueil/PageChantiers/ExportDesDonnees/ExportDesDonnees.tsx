@@ -3,12 +3,12 @@ import { FunctionComponent } from "react";
 import { parseAsInteger, parseAsStringLiteral, useQueryState } from "nuqs";
 import Modale from "@/components/_commons/Modale/Modale";
 import IndicateurDEtapes from "@/components/_commons/IndicateurDEtapes/IndicateurDEtapes";
-import { EtapeContenuAExporter } from "@/components/PageAccueil/PageChantiers/ExportDesDonneesV2/EtapeContenuAExporter";
-import { EtapeDonneeChantierACollecter } from "@/components/PageAccueil/PageChantiers/ExportDesDonneesV2/EtapeDonneeChantierACollecter";
-import { EtapePerimetreExport } from "@/components/PageAccueil/PageChantiers/ExportDesDonneesV2/EtapePerimetreExport";
-import { EtapeRecapitulatif } from "@/components/PageAccueil/PageChantiers/ExportDesDonneesV2/EtapeRecapitulatif";
-import { EtapeDonneeIndicateurACollecter } from "@/components/PageAccueil/PageChantiers/ExportDesDonneesV2/EtapeDonneeIndicateurACollecter";
-import { EtapeDonneeHistoriqueIndicateurACollecter } from "@/components/PageAccueil/PageChantiers/ExportDesDonneesV2/EtapeDonneeHistoriqueIndicateurACollecter";
+import { EtapeContenuAExporter } from "@/components/PageAccueil/PageChantiers/ExportDesDonnees/EtapeContenuAExporter";
+import { EtapeDonneeChantierACollecter } from "@/components/PageAccueil/PageChantiers/ExportDesDonnees/EtapeDonneeChantierACollecter";
+import { EtapePerimetreExport } from "@/components/PageAccueil/PageChantiers/ExportDesDonnees/EtapePerimetreExport";
+import { EtapeRecapitulatif } from "@/components/PageAccueil/PageChantiers/ExportDesDonnees/EtapeRecapitulatif";
+import { EtapeDonneeIndicateurACollecter } from "@/components/PageAccueil/PageChantiers/ExportDesDonnees/EtapeDonneeIndicateurACollecter";
+import { EtapeDonneeHistoriqueIndicateurACollecter } from "@/components/PageAccueil/PageChantiers/ExportDesDonnees/EtapeDonneeHistoriqueIndicateurACollecter";
 import { EtapeDonneeEnCoursDeTelechargement } from "./EtapeDonneeEnCoursDeTelechargement";
 
 const Stepper = {
@@ -34,12 +34,11 @@ const Stepper = {
   },
 };
 
-export const ID_HTML_MODALE_EXPORT_V2 = "modale-exporter-les-données-v2";
-
-export const ExportDesDonneesV2: FunctionComponent<{
+export const ExportDesDonnees: FunctionComponent<{
   fermetureCallback: () => void;
   territoireCodeSelectionne: string;
-}> = ({ fermetureCallback, territoireCodeSelectionne }) => {
+  idHtmlModale: string;
+}> = ({ fermetureCallback, territoireCodeSelectionne, idHtmlModale }) => {
   const étapes = [
     Stepper.ETAPE_ELEMENTS_A_EXPORTER.titreEtape,
     Stepper.ETAPE_PERIMETRE_EXPORT.titreEtape,
@@ -70,7 +69,7 @@ export const ExportDesDonneesV2: FunctionComponent<{
   return (
     <Modale
       fermetureCallback={fermetureCallback}
-      idHtml={ID_HTML_MODALE_EXPORT_V2}
+      idHtml={idHtmlModale}
       tailleModale="lg"
     >
       <IndicateurDEtapes

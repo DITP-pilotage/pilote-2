@@ -10,7 +10,7 @@ import PageLandingStyled from "@/components/PageLanding/PageLanding.styled";
 import Titre from "@/components/_commons/Titre/Titre";
 import captureÉcranPilote from "/public/img/landing/capture-écran-pilote.png";
 import baromètreCarteSvg from "/public/img/landing/baromètre-carte-france.svg";
-import { BoutonContacterEquipePilote } from "@/components/_commons/BoutonContacterEquipePilote";
+import { BoutonContacterEquipePilote } from "@/components/PageAccueil/BoutonContacterEquipePilote";
 
 const PageLanding = () => {
   return (

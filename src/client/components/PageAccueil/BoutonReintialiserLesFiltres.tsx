@@ -54,7 +54,7 @@ export const BoutonReintialiserLesFiltres = () => {
   };
   return (
     <button
-      className="flex gap-1 align-center !text-xs text-primary !hover:bg-dsfr-blue-france-925-hover"
+      className="flex gap-1 align-center !text-xs !text-primary !hover:bg-dsfr-blue-france-925-hover"
       onClick={désactiverTousLesFiltres}
       title="Réinitialiser les filtres"
       type="button"

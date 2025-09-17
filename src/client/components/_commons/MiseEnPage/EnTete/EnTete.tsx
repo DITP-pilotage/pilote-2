@@ -6,7 +6,7 @@ import Navigation from "@/components/_commons/MiseEnPage/Navigation/Navigation";
 import { Utilisateur } from "@/components/_commons/MiseEnPage/EnTete/Utilisateur/Utilisateur";
 import BandeauInformation from "@/components/_commons/BandeauInformation/BandeauInformation";
 import api from "@/server/infrastructure/api/trpc/api";
-import { BoutonContacterEquipePilote } from "@/components/_commons/BoutonContacterEquipePilote";
+import { BoutonContacterEquipePilote } from "@/components/PageAccueil/BoutonContacterEquipePilote";
 import { BoutonSeConnecter } from "@/components/_commons/BoutonSeConnecter";
 
 const useEntete = () => {
