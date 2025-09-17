@@ -22,7 +22,7 @@ export const Tag: FunctionComponent<TagProps> = ({
 }) => {
   return (
     <TagStyled
-      className={clsxm(`fr-tag fr-mr-1-5v fr-mb-1-5v`, color, {
+      className={clsxm(`fr-tag flex gap-1 mr-2`, color, {
         "fr-tag--sm": size === "sm",
         "fr-tag--fixed-width": doitAvoirUneTailleFixe,
       })}

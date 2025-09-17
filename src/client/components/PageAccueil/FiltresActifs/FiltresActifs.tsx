@@ -139,7 +139,7 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({
             <div className="fr-col-lg-10 fr-col-sm-9 fr-col-7">
               <ul
                 aria-label="liste des tags des filtres ministère actifs"
-                className="conteneur-tags fr-my-0"
+                className="conteneur-tags fr-my-0 gap-2"
               >
                 {filtres.estEnAlerteTauxAvancementNonCalculé ? (
                   <li>
@@ -256,7 +256,7 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({
             <div className="fr-col-lg-10 fr-col-sm-9 fr-col-7">
               <ul
                 aria-label="liste des tags des filtres météo actifs"
-                className="conteneur-tags fr-my-0"
+                className="conteneur-tags fr-my-0 gap-2"
               >
                 {filtres.meteos
                   .split(",")
@@ -297,7 +297,7 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({
             <div className="fr-col-lg-10 fr-col-sm-9 fr-col-7">
               <ul
                 aria-label="liste des tags des filtres ministère actifs"
-                className="conteneur-tags fr-my-0"
+                className="conteneur-tags fr-my-0 gap-2"
               >
                 {filtres.perimetres
                   .split(",")
@@ -346,7 +346,7 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({
             <div className="fr-col-lg-10 fr-col-sm-9 fr-col-7">
               <ul
                 aria-label="liste des tags des filtres axes actifs"
-                className="conteneur-tags fr-my-0"
+                className="conteneur-tags fr-my-0 gap-2"
               >
                 {filtres.axes
                   .split(",")
@@ -381,7 +381,7 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({
             <div className="fr-col-lg-10 fr-col-sm-9 fr-col-7">
               <ul
                 aria-label="liste des tags des filtres statut actifs"
-                className="conteneur-tags fr-my-0"
+                className="conteneur-tags fr-my-0 gap-2"
               >
                 <li key={`tag-statut-${filtres.statut}`}>
                   <Tag
@@ -408,7 +408,7 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({
             <div className="fr-col-lg-10 fr-col-sm-9 fr-col-7">
               <ul
                 aria-label="liste des tags des filtres territorialisation actifs"
-                className="conteneur-tags fr-my-0"
+                className="conteneur-tags fr-my-0 gap-2"
               >
                 {filtres.territorialisation
                   .split(",")
@@ -456,7 +456,7 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({
             <div className="fr-col-lg-10 fr-col-sm-9 fr-col-7">
               <ul
                 aria-label="liste des tags des filtres baromètre actifs"
-                className="conteneur-tags fr-my-0"
+                className="conteneur-tags fr-my-0 gap-2"
               >
                 {filtres.estBarometre ? (
                   <li>
@@ -485,7 +485,7 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({
             <div className="fr-col-lg-10 fr-col-sm-9 fr-col-7">
               <ul
                 aria-label="liste des tags des filtres recherche actifs"
-                className="conteneur-tags fr-my-0"
+                className="conteneur-tags fr-my-0 gap-2"
               >
                 <li>
                   <Tag
