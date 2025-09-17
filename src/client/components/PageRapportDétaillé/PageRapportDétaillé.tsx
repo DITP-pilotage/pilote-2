@@ -55,6 +55,7 @@ interface PageRapportDétailléProps {
   >;
   mapDonnéesCartographieMétéo: Map<string, CartographieDonnéesMétéo>;
   listeIndicateursPrisEnCompteAvancement: string[];
+  chantiersSontArchives: boolean;
 }
 
 export const htmlId = {
@@ -81,6 +82,7 @@ const PageRapportDétaillé: FunctionComponent<PageRapportDétailléProps> = ({
   mapDonnéesCartographieAvancement,
   mapDonnéesCartographieMétéo,
   listeIndicateursPrisEnCompteAvancement,
+  chantiersSontArchives,
 }) => {
   const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
 
@@ -143,6 +145,7 @@ const PageRapportDétaillé: FunctionComponent<PageRapportDétailléProps> = ({
                 avancementsGlobauxTerritoriauxMoyens
               }
               chantiers={chantiersFiltrés}
+              chantiersSontArchives={chantiersSontArchives}
               filtresComptesCalculés={filtresComptesCalculés}
               jalon={jalon}
               mailleSelectionnee={mailleSelectionnee}

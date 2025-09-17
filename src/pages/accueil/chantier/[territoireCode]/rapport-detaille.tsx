@@ -69,6 +69,7 @@ interface NextPageRapportDétailléProps {
     donnéesCartographieMétéo: CartographieDonnéesMétéo;
   }[];
   listeIndicateursPrisEnCompteAvancement: string[];
+  chantiersStatuts: string[];
 }
 
 const PROFILS_AUTORISE_VOIR_BROUILLONS = new Set([
@@ -462,6 +463,7 @@ export const getServerSideProps: GetServerSideProps<
         décisionStratégique: décisionStratégiquesGroupéesParChantier,
       },
       listeIndicateursPrisEnCompteAvancement,
+      chantiersStatuts: filtres.statut,
     },
   };
 };
@@ -487,6 +489,7 @@ const NextPageRapportDétaillé: FunctionComponent<
   listeDonnéesCartographieAvancement,
   listeDonnéesCartographieMétéo,
   listeIndicateursPrisEnCompteAvancement,
+  chantiersStatuts,
 }) => {
   const mapChantierStatistiques = new Map<
     string,
@@ -533,6 +536,7 @@ const NextPageRapportDétaillé: FunctionComponent<
         }
         axes={axes}
         chantiers={chantiers}
+        chantiersSontArchives={chantiersStatuts.includes("ARCHIVE")}
         détailsIndicateursGroupésParChantier={
           détailsIndicateursGroupésParChantier
         }

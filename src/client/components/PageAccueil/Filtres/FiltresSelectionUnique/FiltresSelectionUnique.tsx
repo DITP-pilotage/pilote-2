@@ -1,4 +1,10 @@
-import { parseAsInteger, parseAsString, useQueryState } from "nuqs";
+import {
+  parseAsBoolean,
+  parseAsInteger,
+  parseAsString,
+  useQueryState,
+  useQueryStates,
+} from "nuqs";
 import { FunctionComponent } from "react";
 import { useSession } from "next-auth/react";
 import { sauvegarderFiltres } from "@/stores/useFiltresStoreNew/useFiltresStoreNew";
@@ -54,6 +60,24 @@ export const FiltresSelectionUnique: FunctionComponent<
       }),
   );
 
+  const [, setFiltresAlertes] = useQueryStates(
+    {
+      estEnAlerteTauxAvancementNonCalculé: parseAsBoolean.withDefault(false),
+      estEnAlerteÉcart: parseAsBoolean.withDefault(false),
+      estEnAlerteBaisse: parseAsBoolean.withDefault(false),
+      estEnAlerteMétéoNonRenseignée: parseAsBoolean.withDefault(false),
+      estEnAlerteAbscenceTauxAvancementDepartemental:
+        parseAsBoolean.withDefault(false),
+      estEnAlertePossedePropositionsValeurAvancement:
+        parseAsBoolean.withDefault(false),
+    },
+    {
+      shallow: false,
+      clearOnDefault: true,
+      history: "push",
+    },
+  );
+
   const [, setPagination] = useQueryState(
     "pageIndex",
     parseAsInteger.withDefault(1).withOptions({
@@ -62,6 +86,19 @@ export const FiltresSelectionUnique: FunctionComponent<
   );
 
   const auChangement = (valeur: string) => {
+    if (valeur === "ARCHIVE") {
+      const filtresAlertesReset = {
+        estEnAlerteTauxAvancementNonCalculé: false,
+        estEnAlerteÉcart: false,
+        estEnAlerteBaisse: false,
+        estEnAlerteMétéoNonRenseignée: false,
+        estEnAlerteAbscenceTauxAvancementDepartemental: false,
+        estEnAlertePossedePropositionsValeurAvancement: false,
+      };
+
+      setFiltresAlertes(filtresAlertesReset);
+      sauvegarderFiltres(filtresAlertesReset);
+    }
     sauvegarderFiltres({ [categorieDeFiltre]: valeur });
     setPagination(1);
     setListeFiltresNew(valeur);
