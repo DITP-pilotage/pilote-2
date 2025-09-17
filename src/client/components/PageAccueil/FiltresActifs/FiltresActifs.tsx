@@ -10,9 +10,9 @@ import { Maille, MailleInterne } from "@/server/domain/maille/Maille.interface";
 import { libellésMétéos } from "@/server/domain/météo/Météo.interface";
 import { NOMS_CODES_MAILLES } from "@/server/infrastructure/accès_données/maille/mailleSQLParser";
 import { listeStatuts } from "@/client/constants/statut";
+import { BoutonReintialiserLesFiltres } from "@/components/PageAccueil/BoutonReintialiserLesFiltres";
 import FiltresActifsStyled from "./FiltresActifs.styled";
 import "@gouvfr/dsfr/dist/component/accordion/accordion.min.css";
-import { BoutonReintialiserLesFiltres } from "@/components/PageAccueil/BoutonReintialiserLesFiltres";
 
 interface FiltresActifsProps {
   ministères: Ministère[];
