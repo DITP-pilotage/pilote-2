@@ -28,7 +28,7 @@
     "test:e2e:ui": "npx playwright test --ui",
     "test:e2e:server": "dotenv -e .env.e2e npm run dev",
     "test:server:unit": "jest src/server/.*.unit.test.* scripts/.*.unit.test.*",
-    "test:server:integration": "jest src/server/.*.integration.test.* --runInBand",
+    "test:server:integration": "dotenv -e .env.test -- jest src/server/.*.integration.test.* --runInBand",
     "test:server:domain:coverage": "jest --collectCoverage --collectCoverageFrom=src/server/domain/**/*.ts src/server/domain/.*.test.*",
     "test:server:infrastructure:coverage": "jest --collectCoverage --collectCoverageFrom=src/server/infrastructure/**/*.ts src/server/infrastructure/.*.test.*",
     "test:database:init": "dotenv -e .env.test -- npm run database:init -- --force",
