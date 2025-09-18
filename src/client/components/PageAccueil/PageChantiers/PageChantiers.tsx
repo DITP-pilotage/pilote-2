@@ -131,7 +131,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
                       </div>
                       <div className="fr-grid-row border-t fr-mt-1w">
                         <div className="fr-mt-1w w-full">
-                          <p className="fr-text--xl fr-text--bold fr-mb-0 texte-gris">
+                          <p className="fr-text--xl fr-text--bold fr-mb-0 !text-dsfr-mention-grey">
                             {`${(process.env.NEXT_PUBLIC_FF_TA_ANNUEL === "true" ? avancementsAgrégés?.annuel.moyenne?.toFixed(0) : null) ?? "- "}%`}
                           </p>
                           <BarreDeProgression
@@ -244,46 +244,45 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
             </Bloc>
           </div>
         </div>
-        {process.env.NEXT_PUBLIC_FF_ALERTES === "true" &&
-          !chantiersSontArchives && (
-            <div className="fr-pt-2w fr-px-2w fr-px-md-0 alertes">
-              <div className="fr-mb-2w">
-                <TitreInfobulleConteneur>
-                  <BadgeIcône type="warning" />
-                  <Titre
-                    baliseHtml="h2"
-                    className="fr-text--lg fr-mb-0 fr-py-1v fr-ml-1w titre-remontée-alertes"
-                    estInline
-                  >
-                    Chantiers signalés
-                  </Titre>
-                  <Infobulle classNameBouton="titre-remontée-alertes">
-                    {INFOBULLE_CONTENUS.chantiers.alertes}
-                  </Infobulle>
-                </TitreInfobulleConteneur>
-              </div>
-              <div className="fr-grid-row fr-mx-n1v fr-mx-md-n1w">
-                {remontéesAlertes.map(
-                  ({ nomCritère, libellé, nombre, estActivée }) =>
-                    (process.env.NEXT_PUBLIC_FF_ALERTES_BAISSE === "true" ||
-                      nomCritère !== "estEnAlerteBaisse") && (
-                      <div
-                        className="fr-col fr-px-1v fr-px-md-1w"
-                        key={libellé}
-                        title={libellé}
-                      >
-                        <RemontéeAlerte
-                          estActivée={estActivée}
-                          libellé={libellé}
-                          nomCritère={nomCritère}
-                          nombre={nombre}
-                        />
-                      </div>
-                    ),
-                )}
-              </div>
+        {!chantiersSontArchives && (
+          <div className="fr-pt-2w fr-px-2w fr-px-md-0 alertes">
+            <div className="fr-mb-2w">
+              <TitreInfobulleConteneur>
+                <BadgeIcône type="warning" />
+                <Titre
+                  baliseHtml="h2"
+                  className="fr-text--lg fr-mb-0 fr-py-1v fr-ml-1w !text-dsfr-warning-425"
+                  estInline
+                >
+                  Chantiers signalés
+                </Titre>
+                <Infobulle classNameBouton="!text-dsfr-warning-425">
+                  {INFOBULLE_CONTENUS.chantiers.alertes}
+                </Infobulle>
+              </TitreInfobulleConteneur>
             </div>
-          )}
+            <div className="fr-grid-row fr-mx-n1v fr-mx-md-n1w">
+              {remontéesAlertes.map(
+                ({ nomCritère, libellé, nombre, estActivée }) =>
+                  (process.env.NEXT_PUBLIC_FF_ALERTES_BAISSE === "true" ||
+                    nomCritère !== "estEnAlerteBaisse") && (
+                    <div
+                      className="fr-col fr-px-1v fr-px-md-1w"
+                      key={libellé}
+                      title={libellé}
+                    >
+                      <RemontéeAlerte
+                        estActivée={estActivée}
+                        libellé={libellé}
+                        nomCritère={nomCritère}
+                        nombre={nombre}
+                      />
+                    </div>
+                  ),
+              )}
+            </div>
+          </div>
+        )}
         <div className="fr-grid-row fr-mt-7v">
           <div className="fr-col-12">
             <Bloc>

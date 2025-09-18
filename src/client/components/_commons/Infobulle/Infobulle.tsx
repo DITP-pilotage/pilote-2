@@ -5,12 +5,12 @@ import {
   useRef,
   useState,
 } from "react";
-import clsx from "clsx";
 import SecureTooltip from "@/client/components/_commons/SecureTooltip/SecureTooltip";
 import { InformationPleineIcon } from "@/components/_commons/Icones/InformationPleineIcon";
 import { QuestionIcon } from "@/components/_commons/Icones/QuestionIcon";
 import { Icone } from "@/components/_commons/Icone";
 import { IconeDocumentationIcon } from "@/components/_commons/Icones/IconeDocumentationIcon";
+import { clsxm } from "@/utils/clsxm";
 import InfobulleStyled from "./Infobulle.styled";
 
 export const Infobulle: FunctionComponent<
@@ -34,7 +34,10 @@ export const Infobulle: FunctionComponent<
     <InfobulleStyled>
       <button
         aria-describedby={randomId}
-        className={clsx(`flex justify-center align-center`, classNameBouton)}
+        className={clsxm(
+          `flex justify-center align-center !text-primary`,
+          classNameBouton,
+        )}
         id={randomId}
         onBlur={() => setIsVisible(false)}
         onClick={() => setIsVisible(!isVisible)}
@@ -45,7 +48,7 @@ export const Infobulle: FunctionComponent<
         type="button"
       >
         {styleIconInfoBulle === "information" ? (
-          <Icone icone={InformationPleineIcon} />
+          <Icone className="!text-current" icone={InformationPleineIcon} />
         ) : null}
         {styleIconInfoBulle === "documentation" ? (
           <Icone

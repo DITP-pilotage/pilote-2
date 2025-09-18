@@ -79,7 +79,7 @@ export const IndicateurÉvolution: FunctionComponent<
       <Titre baliseHtml="h5" className="fr-text--lg fr-mb-0">
         Évolution de l'indicateur
       </Titre>
-      <p className="fr-text--xs texte-gris">
+      <p className="fr-text--xs !text-dsfr-mention-grey">
         {`Mis à jour le : ${dateDeMiseAJourIndicateur} | Source : ${source ?? "Non renseigné"}`}
       </p>
       {donnéesParTerritoire.datasets.some(

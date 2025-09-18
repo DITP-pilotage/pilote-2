@@ -22,7 +22,7 @@ const ValeurEtDate: FunctionComponent<ValeurEtDateProps> = ({
           : ""}
       </p>
       {!!dateFormatée && (
-        <p className="indicateur-date-valeur texte-gris">
+        <p className="indicateur-date-valeur !text-dsfr-mention-grey">
           {`(${dateFormatée})`}
         </p>
       )}

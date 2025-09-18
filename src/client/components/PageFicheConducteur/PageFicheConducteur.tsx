@@ -98,7 +98,7 @@ const PageFicheConducteur: FunctionComponent<
                 </div>
                 <div className="fr-grid-row border-t">
                   <div className="w-full fr-pt-1v">
-                    <p className="fr-text--md fr-text--bold fr-mb-0 texte-gris">
+                    <p className="fr-text--md fr-text--bold fr-mb-0 !text-dsfr-mention-grey">
                       {`${avancement.annuel?.toFixed(0) ?? "- "}%`}
                     </p>
                     <BarreDeProgression

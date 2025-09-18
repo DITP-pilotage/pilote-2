@@ -64,7 +64,7 @@ export const EtapeDonneeHistoriqueIndicateurACollecter = () => {
               de l'indicateur sur le territoire
             </span>
           </label>
-          <span className="fr-label fr-text--xs texte-gris fr-mb-0 fr-ml-4w">
+          <span className="fr-label fr-text--xs !text-dsfr-mention-grey fr-mb-0 fr-ml-4w">
             *les valeurs cibles sont fournies pour l'année en cours et à
             échéance
           </span>
