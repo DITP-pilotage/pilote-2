@@ -125,24 +125,46 @@
         "scopeCode": "lecture",
         "territoires": [],
         "perimetres": [],
-        "chantiers": ["CH-001", "CH-002", "CH-003", "CH-058"]
+        "chantiers": ["CH-070", "CH-071", "CH-067"]
       },
       {
         "scopeCode": "saisieCommentaire",
         "territoires": ["NAT"],
         "perimetres": [],
-        "chantiers": ["CH-001", "CH-002", "CH-003", "CH-058"]
+        "chantiers": ["CH-070", "CH-071", "CH-067"]
       },
       {
         "scopeCode": "saisieIndicateur",
         "territoires": [],
         "perimetres": [],
-        "chantiers": ["CH-001", "CH-002", "CH-003", "CH-058"]
+        "chantiers": ["CH-070", "CH-071", "CH-067"]
+      },
+      {
+        "scopeCode": "gestionUtilisateur",
+        "territoires": [
+          "DEPT-08", "DEPT-09", "DEPT-10", "DEPT-11", "DEPT-12", "DEPT-13", "DEPT-14", "DEPT-15",
+          "DEPT-16", "DEPT-17", "DEPT-18", "DEPT-19", "DEPT-2A", "DEPT-2B", "DEPT-21", "DEPT-22",
+          "DEPT-23", "DEPT-75", "DEPT-24", "DEPT-25", "DEPT-26", "DEPT-27", "DEPT-28", "DEPT-29",
+          "DEPT-30", "DEPT-31", "DEPT-33", "DEPT-34", "DEPT-35", "DEPT-36", "DEPT-37", "DEPT-38",
+          "DEPT-39", "DEPT-07", "DEPT-40", "DEPT-41", "DEPT-42", "DEPT-43", "DEPT-44", "DEPT-45",
+          "DEPT-46", "DEPT-47", "DEPT-48", "DEPT-49", "DEPT-50", "DEPT-51", "DEPT-52", "DEPT-53",
+          "DEPT-67", "DEPT-06", "DEPT-54", "DEPT-56", "DEPT-57", "DEPT-58", "DEPT-59", "DEPT-60",
+          "DEPT-61", "DEPT-62", "DEPT-63", "DEPT-65", "DEPT-66", "DEPT-68", "DEPT-69", "DEPT-70",
+          "DEPT-71", "DEPT-72", "DEPT-73", "DEPT-74", "DEPT-76", "DEPT-77", "DEPT-78", "DEPT-79",
+          "DEPT-80", "DEPT-81", "DEPT-82", "DEPT-83", "DEPT-84", "DEPT-85", "DEPT-86", "DEPT-87",
+          "DEPT-88", "DEPT-89", "REG-84", "REG-27", "REG-53", "REG-24", "REG-94", "DEPT-91", "DEPT-92",
+          "DEPT-93", "DEPT-94", "DEPT-95", "DEPT-976", "REG-44", "REG-32", "REG-11", "REG-28", "REG-75",
+          "REG-76", "REG-52", "REG-06", "REG-93", "REG-01", "REG-02", "REG-03", "REG-04", "DEPT-01",
+          "DEPT-02", "DEPT-03", "DEPT-04", "DEPT-05", "DEPT-90", "DEPT-32", "DEPT-55", "DEPT-64",
+          "DEPT-972", "DEPT-973", "DEPT-974", "DEPT-971"
+        ],
+        "perimetres": [],
+        "chantiers": ["CH-070", "CH-071", "CH-067"]
       }
     ]
   },
   {
-    "email": "directeur.projet@example.com",
+    "email": "equipe.dir.projet@example.com",
     "nom": "Directeur",
     "prenom": "Projet",
     "profilCode": "EQUIPE_DIR_PROJET",
@@ -151,53 +173,27 @@
         "scopeCode": "lecture",
         "territoires": [],
         "perimetres": [],
-        "chantiers": ["CH-001", "CH-002", "CH-003", "CH-058"]
+        "chantiers": ["CH-054", "CH-058", "CH-062", "CH-051"]
       },
       {
         "scopeCode": "saisieCommentaire",
         "territoires": ["NAT"],
         "perimetres": [],
-        "chantiers": ["CH-001", "CH-002", "CH-003", "CH-058"]
+        "chantiers": ["CH-054", "CH-058", "CH-062", "CH-051"]
       },
       {
         "scopeCode": "saisieIndicateur",
         "territoires": [],
         "perimetres": [],
-        "chantiers": ["CH-001", "CH-002", "CH-003", "CH-058"]
+        "chantiers": ["CH-054", "CH-058", "CH-062", "CH-051"]
       }
     ]
   },
   {
-    "email": "equipe.dir.projet@example.com",
-    "nom": "Equipe Directeur",
-    "prenom": "Projet",
-    "profilCode": "EQUIPE_DIR_PROJET",
-    "habilitations": [
-      {
-        "scopeCode": "lecture",
-        "territoires": [],
-        "perimetres": [],
-        "chantiers": ["CH-001", "CH-002", "CH-003", "CH-058"]
-      },
-      {
-        "scopeCode": "saisieCommentaire",
-        "territoires": ["NAT"],
-        "perimetres": [],
-        "chantiers": ["CH-001", "CH-002", "CH-003", "CH-058"]
-      },
-      {
-        "scopeCode": "saisieIndicateur",
-        "territoires": [],
-        "perimetres": [],
-        "chantiers": ["CH-001", "CH-002", "CH-003", "CH-058"]
-      }
-    ]
-  },
-  {
-    "email": "referent.region@example.com",
-    "nom": "Referent",
+    "email": "coordinateur.region@example.com",
+    "nom": "Coordinateur",
     "prenom": "Region",
-    "profilCode": "SERVICES_DECONCENTRES_REGION",
+    "profilCode": "COORDINATEUR_REGION",
     "habilitations": [
       {
         "scopeCode": "lecture",
@@ -207,6 +203,12 @@
       },
       {
         "scopeCode": "saisieCommentaire",
+        "territoires": ["REG-53", "DEPT-56", "DEPT-29", "DEPT-35", "DEPT-22"],
+        "perimetres": [],
+        "chantiers": []
+      },
+      {
+        "scopeCode": "gestionUtilisateur",
         "territoires": ["REG-53", "DEPT-56", "DEPT-29", "DEPT-35", "DEPT-22"],
         "perimetres": [],
         "chantiers": []
@@ -243,21 +245,21 @@
         "scopeCode": "lecture",
         "territoires": ["REG-53", "DEPT-56", "DEPT-29", "DEPT-35", "DEPT-22"],
         "perimetres": [],
-        "chantiers": ["CH-058"]
+        "chantiers": ["CH-058", "CH-054", "CH-062", "CH-051"]
       },
       {
         "scopeCode": "saisieCommentaire",
         "territoires": ["REG-53", "DEPT-56", "DEPT-29", "DEPT-35", "DEPT-22"],
         "perimetres": [],
-        "chantiers": ["CH-058"]
+        "chantiers": ["CH-058", "CH-054", "CH-062", "CH-051"]
       }
     ]
   },
   {
-    "email": "referent.departement@example.com",
-    "nom": "Referent",
+    "email": "coordinateur.departement@example.com",
+    "nom": "Coordinateur",
     "prenom": "Departement",
-    "profilCode": "SERVICES_DECONCENTRES_DEPARTEMENT",
+    "profilCode": "COORDINATEUR_DEPARTEMENT",
     "habilitations": [
       {
         "scopeCode": "lecture",
@@ -267,6 +269,12 @@
       },
       {
         "scopeCode": "saisieCommentaire",
+        "territoires": ["DEPT-56", "DEPT-29", "DEPT-35", "DEPT-22"],
+        "perimetres": [],
+        "chantiers": []
+      },
+      {
+        "scopeCode": "gestionUtilisateur",
         "territoires": ["DEPT-56", "DEPT-29", "DEPT-35", "DEPT-22"],
         "perimetres": [],
         "chantiers": []
@@ -303,13 +311,13 @@
         "scopeCode": "lecture",
         "territoires": ["DEPT-56", "DEPT-29", "DEPT-35", "DEPT-22"],
         "perimetres": [],
-        "chantiers": ["CH-058"]
+        "chantiers": ["CH-058", "CH-054", "CH-062", "CH-051"]
       },
       {
         "scopeCode": "saisieCommentaire",
         "territoires": ["DEPT-56", "DEPT-29", "DEPT-35", "DEPT-22"],
         "perimetres": [],
-        "chantiers": ["CH-058"]
+        "chantiers": ["CH-058", "CH-054", "CH-062", "CH-051"]
       }
     ]
   },
@@ -358,34 +366,6 @@
           "DEPT-974",
           "DEPT-976"
         ],
-        "perimetres": [],
-        "chantiers": []
-      }
-    ]
-  },
-  {
-    "email": "responsable.regional@example.com",
-    "nom": "Responsable local régional",
-    "prenom": "",
-    "profilCode": "SERVICES_DECONCENTRES_REGION",
-    "habilitations": [
-      {
-        "scopeCode": "saisieCommentaire",
-        "territoires": [],
-        "perimetres": [],
-        "chantiers": []
-      }
-    ]
-  },
-  {
-    "email": "responsable.departemental@example.com",
-    "nom": "Responsable local départemental",
-    "prenom": "",
-    "profilCode": "SERVICES_DECONCENTRES_DEPARTEMENT",
-    "habilitations": [
-      {
-        "scopeCode": "saisieCommentaire",
-        "territoires": [],
         "perimetres": [],
         "chantiers": []
       }
