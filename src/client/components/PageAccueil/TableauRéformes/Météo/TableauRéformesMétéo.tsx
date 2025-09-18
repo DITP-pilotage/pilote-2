@@ -40,14 +40,14 @@ const TableauRéformesMétéo: FunctionComponent<TableauChantiersMétéoProps> =
         </div>
       ) : (
         <span
-          className={`fr-text--xs texte-gris ${libelléMétéosÀPartirDeLaTaille[taille].className}`}
+          className={`fr-text--xs !text-dsfr-mention-grey ${libelléMétéosÀPartirDeLaTaille[taille].className}`}
         >
           {libelléMétéosÀPartirDeLaTaille[taille].texte(météo)}
         </span>
       )}
       {!!dateDeMàjDonnéesQualitatives &&
         process.env.NEXT_PUBLIC_FF_DATE_METEO === "true" && (
-          <span className="texte-gris">
+          <span className="!text-dsfr-mention-grey">
             {`(${formaterDate(dateDeMàjDonnéesQualitatives, "MM/YYYY")})`}
           </span>
         )}

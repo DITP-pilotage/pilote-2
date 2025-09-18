@@ -8,7 +8,7 @@ export const BoutonProposerValeur = () => {
     <>
       <BoutonSousLigné
         aria-controls={idModale}
-        className="fr-link--xs fr-link--icon-left fr-icon-edit-line texte-gris"
+        className="fr-link--xs fr-link--icon-left fr-icon-edit-line !text-dsfr-mention-grey"
         dataFrOpened={false}
         type="button"
       >

@@ -116,7 +116,7 @@ export const EtapeContenuAExporter = () => {
           <label className="fr-label" htmlFor="historique-indicateurs">
             l'historique des indicateurs
           </label>
-          <span className="fr-label fr-text--xs texte-gris fr-mb-0">
+          <span className="fr-label fr-text--xs !text-dsfr-mention-grey fr-mb-0">
             Cet historique recense l'ensemble des valeurs d'avancement pour
             chaque indicateur et chaque territoire.
           </span>

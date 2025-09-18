@@ -15,7 +15,7 @@ const CartographieLégendeListeÉlément: FunctionComponent<
   CartographieLégendeListeÉlémentProps
 > = ({ children, remplissage }) => {
   return (
-    <CartographieLégendeListeÉlémentStyled className="fr-pr-3v fr-pb-1v texte-gris">
+    <CartographieLégendeListeÉlémentStyled className="fr-pr-3v fr-pb-1v !text-dsfr-mention-grey">
       <svg
         className="fr-mr-1v fr-mt-1v remplissage"
         version="1.2"

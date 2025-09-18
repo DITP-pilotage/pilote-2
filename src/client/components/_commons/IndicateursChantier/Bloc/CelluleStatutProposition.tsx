@@ -122,11 +122,11 @@ export const CelluleStatutProposition = ({
         <div className="flex align-center selecteur-infobulle-conteneur">
           {estPropositionAccuseeReception(detailIndicateurDuTerritoire) ? (
             <>
-              <span className="fr-text--xs texte-gris">
+              <span className="fr-text--xs !text-dsfr-mention-grey">
                 la direction de projet a accusé réception
               </span>
               <Infobulle
-                classNameBouton="texte-gris"
+                classNameBouton="!text-dsfr-mention-grey"
                 classNameInfoBulle="tooltip-accordeon"
               >
                 {estAutoriseAProposerUneValeurAvancement ? (
@@ -148,11 +148,11 @@ export const CelluleStatutProposition = ({
             </>
           ) : (
             <>
-              <span className="fr-text--xs texte-gris">
+              <span className="fr-text--xs !text-dsfr-mention-grey">
                 En attente de lecture par la direction de projet
               </span>
               <Infobulle
-                classNameBouton="texte-gris"
+                classNameBouton="!text-dsfr-mention-grey"
                 classNameInfoBulle="tooltip-accordeon"
               >
                 <p className="fr-text--sm">

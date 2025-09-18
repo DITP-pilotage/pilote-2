@@ -41,7 +41,7 @@ export const ComparaisonValeurBox = ({
       </span>
       <div className="w-full flex flex-column justify-between fr-py-2w">
         <span className="fr-mb-2w text-center">{valeur}</span>
-        <span className="flex justify-center align-end texte-gris">
+        <span className="flex justify-center align-end !text-dsfr-mention-grey">
           ({formaterDate(date, "MM/YYYY")})
         </span>
       </div>

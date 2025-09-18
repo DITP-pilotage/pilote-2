@@ -15,13 +15,15 @@ const SynthèseDesRésultatsAffichage = () => {
 
   if (!synthèseDesRésultats) {
     return (
-      <p className="fr-text--sm texte-gris">Aucune synthèse des résultats.</p>
+      <p className="fr-text--sm !text-dsfr-mention-grey">
+        Aucune synthèse des résultats.
+      </p>
     );
   }
 
   return (
     <>
-      <p className="fr-text--xs texte-gris fr-mb-1w">
+      <p className="fr-text--xs !text-dsfr-mention-grey fr-mb-1w">
         {`Mis à jour le ${formaterDate(synthèseDesRésultats.date, "DD/MM/YYYY")}`}
         {!!synthèseDesRésultats.auteur &&
           ` | Par ${synthèseDesRésultats.auteur}`}

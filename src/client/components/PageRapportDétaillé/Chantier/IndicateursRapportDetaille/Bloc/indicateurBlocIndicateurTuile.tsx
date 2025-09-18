@@ -50,7 +50,7 @@ const IndicateurBlocIndicateurTuile: FunctionComponent<
                   : ""}
               </span>
               {dateValeurInitiale !== null && (
-                <span className="texte-gris">
+                <span className="!text-dsfr-mention-grey">
                   ({formaterDate(dateValeurInitiale, "MM/YYYY")})
                 </span>
               )}
@@ -67,7 +67,7 @@ const IndicateurBlocIndicateurTuile: FunctionComponent<
                   : ""}
               </span>
               {dateValeurAvancement !== null && (
-                <span className="texte-gris">
+                <span className="!text-dsfr-mention-grey">
                   ({formaterDate(dateValeurAvancement, "MM/YYYY")})
                 </span>
               )}
@@ -87,7 +87,7 @@ const IndicateurBlocIndicateurTuile: FunctionComponent<
                   : ""}
               </span>
               {dateValeurCible !== null && (
-                <span className="texte-gris">
+                <span className="!text-dsfr-mention-grey">
                   ({formaterDate(dateValeurCibleAnnuelle, "MM/YYYY")})
                 </span>
               )}
@@ -121,7 +121,7 @@ const IndicateurBlocIndicateurTuile: FunctionComponent<
                   : ""}
               </span>
               {dateValeurCible !== null && (
-                <span className="texte-gris">
+                <span className="!text-dsfr-mention-grey">
                   ({formaterDate(dateValeurCible, "MM/YYYY")})
                 </span>
               )}

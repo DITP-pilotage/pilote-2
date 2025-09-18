@@ -17,7 +17,9 @@ const TableauRéformesAvancement: FunctionComponent<
   return (
     <TableauRéformesAvancementStyled>
       {avancement === null ? (
-        <span className="texte-gris fr-text--xs">Non renseigné</span>
+        <span className="!text-dsfr-mention-grey fr-text--xs">
+          Non renseigné
+        </span>
       ) : (
         <BarreDeProgression
           fond="blanc"
@@ -33,7 +35,7 @@ const TableauRéformesAvancement: FunctionComponent<
         />
       )}
       {!!dateDeMàjDonnéesQuantitatives && (
-        <span className="texte-gris">
+        <span className="!text-dsfr-mention-grey">
           ({formaterDate(dateDeMàjDonnéesQuantitatives, "MM/YYYY")})
         </span>
       )}

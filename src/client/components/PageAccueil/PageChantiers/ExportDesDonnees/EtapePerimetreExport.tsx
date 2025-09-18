@@ -49,7 +49,7 @@ export const EtapePerimetreExport = () => {
             PILOTE
           </label>
           <label
-            className="fr-label fr-text--xs texte-gris fr-pl-4w"
+            className="fr-label fr-text--xs !text-dsfr-mention-grey fr-pl-4w"
             htmlFor="indicateurs"
           >
             le cas échéant, le territoire sélectionné et tous les territoires

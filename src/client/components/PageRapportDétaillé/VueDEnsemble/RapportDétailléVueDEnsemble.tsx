@@ -113,39 +113,40 @@ const RapportDétailléVueDEnsemble: FunctionComponent<
           </section>
         </Bloc>
       </div>
-      {process.env.NEXT_PUBLIC_FF_ALERTES === "true" &&
-        !chantiersSontArchives && (
-          <div className="fr-pt-3w fr-px-2w fr-px-md-0 alertes">
-            <div className="fr-mb-2w">
-              <TitreInfobulleConteneur>
-                <BadgeIcône type="warning" />
-                <Titre
-                  baliseHtml="h2"
-                  className="fr-text--lg fr-mb-0 fr-py-1v fr-ml-1w titre-remontée-alertes"
-                  estInline
-                >
-                  Chantiers signalés
-                </Titre>
-                <Infobulle>{INFOBULLE_CONTENUS.chantiers.alertes}</Infobulle>
-              </TitreInfobulleConteneur>
-            </div>
-            <div className="fr-grid-row fr-grid-row--gutters">
-              {remontéesAlertes.map(
-                ({ nomCritère, libellé, nombre, estActivée }) =>
-                  (process.env.NEXT_PUBLIC_FF_ALERTES_BAISSE === "true" ||
-                    nomCritère !== "estEnAlerteBaisse") && (
-                    <div className="fr-col" key={libellé}>
-                      <RemontéeAlerte
-                        estActivée={estActivée}
-                        libellé={libellé}
-                        nombre={nombre}
-                      />
-                    </div>
-                  ),
-              )}
-            </div>
+      {!chantiersSontArchives && (
+        <div className="fr-pt-3w fr-px-2w fr-px-md-0 alertes">
+          <div className="fr-mb-2w">
+            <TitreInfobulleConteneur>
+              <BadgeIcône type="warning" />
+              <Titre
+                baliseHtml="h2"
+                className="fr-text--lg fr-mb-0 fr-py-1v fr-ml-1w titre-remontée-alertes"
+                estInline
+              >
+                Chantiers signalés
+              </Titre>
+              <Infobulle classNameBouton="!text-current">
+                {INFOBULLE_CONTENUS.chantiers.alertes}
+              </Infobulle>
+            </TitreInfobulleConteneur>
           </div>
-        )}
+          <div className="fr-grid-row fr-grid-row--gutters">
+            {remontéesAlertes.map(
+              ({ nomCritère, libellé, nombre, estActivée }) =>
+                (process.env.NEXT_PUBLIC_FF_ALERTES_BAISSE === "true" ||
+                  nomCritère !== "estEnAlerteBaisse") && (
+                  <div className="fr-col" key={libellé}>
+                    <RemontéeAlerte
+                      estActivée={estActivée}
+                      libellé={libellé}
+                      nombre={nombre}
+                    />
+                  </div>
+                ),
+            )}
+          </div>
+        </div>
+      )}
       <div
         className="fr-grid-row fr-mt-7v impression-section"
         id={htmlId.listeDesChantiers()}

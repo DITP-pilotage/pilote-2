@@ -15,16 +15,6 @@ const PageChantiersStyled = styled.main`
     color: var(--text-disabled-grey);
   }
 
-  .alertes {
-    .titre-remontée-alertes {
-      color: var(--text-default-warning);
-    }
-
-    .infobulle-bouton {
-      color: var(--text-default-warning);
-    }
-  }
-
   .select-sm {
     .fr-select-group,
     .fr-select {

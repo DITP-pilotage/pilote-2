@@ -67,7 +67,7 @@ const SyntheseDesResultatsFormulaire: FunctionComponent<
       <Titre baliseHtml="h3" className="fr-h5 fr-mb-1v">
         Modifier la météo et la synthèse des résultats
       </Titre>
-      <p className="fr-text--xs fr-mb-1w texte-gris">
+      <p className="fr-text--xs fr-mb-1w !text-dsfr-mention-grey">
         {`Résumez l'état d'avancement du chantier et indiquez si vous souhaitez solliciter du soutien en quelques phrases (${LIMITE_CARACTÈRES_SYNTHÈSE_DES_RÉSULTATS} caractères maximum). La météo doit indiquer votre niveau de confiance dans la possibilité d'atteindre les objectifs du chantier et le niveau d'appui nécessaire.`}
       </p>
       <div

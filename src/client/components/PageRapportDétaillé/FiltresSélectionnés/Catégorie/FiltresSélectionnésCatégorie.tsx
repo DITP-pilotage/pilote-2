@@ -20,7 +20,10 @@ const FiltresSélectionnésCatégorie: FunctionComponent<
       {!estVide && (
         <ul>
           {filtres.map((filtre) => (
-            <li className="fr-text--sm fr-mb-1v texte-gris" key={filtre}>
+            <li
+              className="fr-text--sm fr-mb-1v !text-dsfr-mention-grey"
+              key={filtre}
+            >
               <span aria-hidden="true" className="fr-icon-check-line" />
               {filtre}
             </li>

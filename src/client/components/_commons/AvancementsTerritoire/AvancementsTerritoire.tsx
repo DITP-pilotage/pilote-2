@@ -40,7 +40,7 @@ const AvancementsTerritoire: FunctionComponent<AvancementsTerritoireProps> = ({
       />
       {process.env.NEXT_PUBLIC_FF_TA_ANNUEL === "true" && (
         <div className="fr-mt-2w">
-          <p className="fr-text--xl fr-text--bold fr-mb-0 texte-gris">
+          <p className="fr-text--xl fr-text--bold fr-mb-0 !text-dsfr-mention-grey">
             {`${avancementAnnuel?.toFixed(0) ?? "- "}%`}
           </p>
           <BarreDeProgression

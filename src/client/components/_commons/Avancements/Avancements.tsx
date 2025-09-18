@@ -40,7 +40,7 @@ const Avancements: FunctionComponent<AvancementsProps> = ({
           />
         </div>
         <div className="fr-mt-2w">
-          <p className="fr-text--xl fr-text--bold fr-mb-0 texte-gris">
+          <p className="fr-text--xl fr-text--bold fr-mb-0 !text-dsfr-mention-grey">
             {`${(process.env.NEXT_PUBLIC_FF_TA_ANNUEL === "true" ? avancements?.annuel.moyenne?.toFixed(0) : null) ?? "- "}%`}
           </p>
           <BarreDeProgression

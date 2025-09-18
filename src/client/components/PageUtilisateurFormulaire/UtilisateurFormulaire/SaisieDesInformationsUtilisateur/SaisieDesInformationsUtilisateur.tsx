@@ -59,7 +59,7 @@ const SaisieDesInformationsUtilisateur: FunctionComponent<
       <Titre baliseHtml="h2" className="fr-text--md  fr-mb-2w">
         Identification
       </Titre>
-      <p className="fr-text--xs texte-gris fr-mb-4w">
+      <p className="fr-text--xs !text-dsfr-mention-grey fr-mb-4w">
         Tous les champs sont obligatoires.
       </p>
       <InputAvecLabel
@@ -106,7 +106,7 @@ const SaisieDesInformationsUtilisateur: FunctionComponent<
         <Titre baliseHtml="h2" className="fr-text--md  fr-mb-2w">
           Droits de lecture
         </Titre>
-        <p className="fr-text--xs texte-gris fr-mb-4w">
+        <p className="fr-text--xs !text-dsfr-mention-grey fr-mb-4w">
           {`Afin de paramétrer l'espace Pilote, merci de préciser le périmètre auquel se rattache le compte. Les options disponibles dépendent du profil indiqué.
              Le nombre d'utilisateurs est limité à ${MAXIMUM_COMPTES_AUTORISE_PAR_DEPARTEMENT} comptes à la maille départementale et ${MAXIMUM_COMPTES_AUTORISE_PAR_REGION} comptes à la maille régionale.`}
         </p>
@@ -190,7 +190,7 @@ const SaisieDesInformationsUtilisateur: FunctionComponent<
           <Titre baliseHtml="h2" className="fr-text--md  fr-mb-2w">
             Responsabilités
           </Titre>
-          <p className="fr-text--xs texte-gris fr-mb-4w">
+          <p className="fr-text--xs !text-dsfr-mention-grey fr-mb-4w">
             Parmi les chantiers autorisés en lecture, merci d'indiquer ceux pour
             lesquels l'utilisateur a des responsabilités spécifiques (directeur
             de projet ou responsable local). L'utilisateur apparaîtra
@@ -239,7 +239,7 @@ const SaisieDesInformationsUtilisateur: FunctionComponent<
         <Titre baliseHtml="h2" className="fr-text--md  fr-mb-2w">
           Droits de saisie des commentaires
         </Titre>
-        <p className="fr-text--xs texte-gris fr-mb-4w">
+        <p className="fr-text--xs !text-dsfr-mention-grey fr-mb-4w">
           Parmi les chantiers autorisés en lecture, merci d'indiquer, le cas
           échéant, ceux pour lesquels l'utilisateur est autorisé à saisir des
           commentaires qualitatifs (dont la météo et la synthèse des résultats).
