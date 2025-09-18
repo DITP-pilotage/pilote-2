@@ -43,12 +43,6 @@ describe("convertirZoneIdEnTerritoireCode", () => {
         expect(convertirZoneIdEnTerritoireCode("D75")).toBe("DEPT-75");
       });
 
-      it('devrait convertir "D2A" ne devrait pas fonctionner car contient des lettres', () => {
-        expect(() => convertirZoneIdEnTerritoireCode("D2A")).toThrow(
-          ConversionZoneIdError,
-        );
-      });
-
       it("devrait convertir des codes départements avec plusieurs chiffres", () => {
         expect(convertirZoneIdEnTerritoireCode("D974")).toBe("DEPT-974");
       });
@@ -215,6 +209,14 @@ describe("convertirTerritoireCodeEnZoneId", () => {
 
       it('devrait convertir "dept-75" en minuscules en "D75"', () => {
         expect(convertirTerritoireCodeEnZoneId("dept-75")).toBe("D75");
+      });
+
+      it('devrait convertir "DEPT-2A" en "D2A"', () => {
+        expect(convertirTerritoireCodeEnZoneId("DEPT-2A")).toBe("D2A");
+      });
+
+      it('devrait convertir "dept-2a" en minuscules en "D2A"', () => {
+        expect(convertirTerritoireCodeEnZoneId("dept-2a")).toBe("D2A");
       });
     });
 
