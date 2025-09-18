@@ -1,4 +1,4 @@
-import { Dispatch, FunctionComponent, SetStateAction } from "react";
+import { Dispatch, FunctionComponent, SetStateAction, useId } from "react";
 import { PALETTE_DSFR } from "@/client/components/_commons/IndicateursChantier/Bloc/Détails/Évolution/useIndicateurEvolutionNew";
 import { IndicateurDétailsParTerritoire } from "@/client/components/_commons/IndicateursChantier/Bloc/IndicateurBloc.interface";
 import Interrupteur from "@/components/_commons/Interrupteur/Interrupteur";
@@ -28,14 +28,15 @@ const LineChartLegende: FunctionComponent<LineChartLegendeProps> = ({
   changerLaPeriodeSelectionnee,
   periodesSelectionnablesZoom,
 }) => {
+  const id = useId();
   return (
-    <LineChartLegendeStyled className="fr-mt-1w fr-ml-4w fr-mr-4w">
+    <LineChartLegendeStyled className="fr-mt-1w fr-ml-8w fr-mr-4w">
       <div className="flex align-center">
         <Interrupteur
           auChangement={() => setAfficherLesCibles(!afficherLesCibles)}
           checked={afficherLesCibles}
           direction="inverse"
-          id="interrupteur-valeurs-cibles"
+          id={`interrupteur-valeurs-cibles-${id}`}
           libellé="afficher les valeurs cibles"
         />
         <span className="fr-ml-4w fr-mr-1w">zoomer sur : </span>
@@ -63,7 +64,7 @@ const LineChartLegende: FunctionComponent<LineChartLegendeProps> = ({
             <span>valeur de l'indicateur</span>
           </div>
         </div>
-        <fieldset className="fr-fieldset" id="legend-checkbox">
+        <fieldset className="fr-fieldset" id={`legend-checkbox-${id}`}>
           {tousLesIndicateursDetails.map((indicateurDetail, index) => {
             return (
               <CheckboxGroupeStyled
@@ -76,8 +77,8 @@ const LineChartLegende: FunctionComponent<LineChartLegendeProps> = ({
                     checked={
                       territoiresAAfficher[indicateurDetail.territoireNom]
                     }
-                    id={`checkbox-${indicateurDetail.territoireNom}`}
-                    name={`checkbox-${indicateurDetail.territoireNom}`}
+                    id={`checkbox-${indicateurDetail.territoireNom}-${id}`}
+                    name={`checkbox-${indicateurDetail.territoireNom}-${id}`}
                     onChange={() => {
                       setTerritoiresAAfficher({
                         ...territoiresAAfficher,
@@ -89,7 +90,7 @@ const LineChartLegende: FunctionComponent<LineChartLegendeProps> = ({
                   />
                   <label
                     className="fr-label"
-                    htmlFor={`checkbox-${indicateurDetail.territoireNom}`}
+                    htmlFor={`checkbox-${indicateurDetail.territoireNom}-${id}`}
                   >
                     {" "}
                     {indicateurDetail.territoireNom}

@@ -3,6 +3,7 @@ import { TopLevelFormatterParams } from "echarts/types/dist/shared";
 import { ComposeOption } from "echarts/types/dist/echarts";
 import { useEffect, useState } from "react";
 import type { IndicateurDétailsParTerritoire } from "@/client/components/_commons/IndicateursChantier/Bloc/IndicateurBloc.interface";
+import { formaterDate } from "@/client/utils/date/date";
 
 export type ECOption = ComposeOption<LineSeriesOption>;
 export const PALETTE_DSFR = [
@@ -27,7 +28,7 @@ export const PALETTE_DSFR = [
 export default function useIndicateurEvolutionNew(
   tousLesIndicateursDetails: IndicateurDétailsParTerritoire[],
 ) {
-  const [afficherLesCibles, setAfficherLesCibles] = useState<boolean>(true);
+  const [afficherLesCibles, setAfficherLesCibles] = useState<boolean>(false);
   const [territoiresAAfficher, setTerritoiresAAfficher] = useState<
     Record<string, boolean>
   >(() =>
@@ -69,9 +70,10 @@ export default function useIndicateurEvolutionNew(
       if (date > maxDate) maxDate = date;
     });
   });
-  maxDate.setMonth(maxDate.getMonth() + 1);
   const minYear = new Date(minDate).getFullYear();
   const maxYear = maxDate.getFullYear();
+  const maxDatePrev = new Date(maxDate);
+  maxDate.setMonth(maxDate.getMonth() + 1);
 
   const periodesSelectionnablesZoom = Array.from(
     { length: maxYear - minYear + 1 },
@@ -280,6 +282,14 @@ export default function useIndicateurEvolutionNew(
         axisLabel: {
           formatter: (value: string) => {
             const date = new Date(value);
+            if (minYear === maxYear) {
+              const moisDuMilieu = Math.ceil(
+                (maxDatePrev.getMonth() + minDate.getMonth()) / 2,
+              );
+              return date.getMonth() === moisDuMilieu
+                ? date.getFullYear().toString()
+                : "";
+            }
             return date.getMonth() === 6 ? date.getFullYear().toString() : "";
           },
           fontWeight: "bold",
@@ -300,6 +310,13 @@ export default function useIndicateurEvolutionNew(
         showMaxLabel: false,
         showMinLabel: false,
         formatter: function (value: number) {
+          if (value >= 1_000_000_000) {
+            return (value / 1_000_000_000).toLocaleString("fr-FR") + " Md";
+          } else if (value >= 1_000_000) {
+            return (value / 1_000_000).toLocaleString("fr-FR") + " M";
+          } else if (value >= 1000) {
+            return (value / 1000).toLocaleString("fr-FR") + " k";
+          }
           return value.toLocaleString("fr-FR");
         },
       },
@@ -313,18 +330,23 @@ export default function useIndicateurEvolutionNew(
         filterMode: "none",
         labelFormatter: function (value: string) {
           const date = new Date(value);
-          return date.toLocaleDateString("fr-FR");
+          return formaterDate(date.toISOString(), "MM/YYYY");
+        },
+        textStyle: {
+          fontSize: 10,
+          overflow: "breakAll",
         },
         startValue: dataZoomPeriode.startValue,
         endValue: dataZoomPeriode.endValue,
       },
     ],
     grid: {
-      left: 0,
-      right: 30,
+      left: 25,
+      right: 60,
       top: 10,
       bottom: 60,
-      containLabel: true,
+      outerBoundsMode: "same",
+      outerBoundsContain: "axisLabel",
     },
     series: [
       ...tousLesIndicateursDetails.flatMap((indicateurDetail, index) => {
