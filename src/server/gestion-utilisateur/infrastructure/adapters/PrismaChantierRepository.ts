@@ -88,11 +88,6 @@ export class PrismaChantierRepository implements ChantierRepository {
     InformationChantierUtilisateur[]
   > {
     const listePrismaChantiers = await this.prisma.chantier_identite.findMany({
-      where: {
-        NOT: {
-          statut: "ARCHIVE",
-        },
-      },
       select: {
         id: true,
         nom: true,

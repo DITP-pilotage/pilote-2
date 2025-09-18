@@ -1,14 +1,20 @@
 import { useId } from "react";
+import clsx from "clsx";
 import { Icone } from "@/components/_commons/Icone";
 import { CloseLineIcon } from "@/components/_commons/Icones/CloseLineIcon";
 import { CheckLineIcon } from "@/components/_commons/Icones/CheckLineIcon";
+
+export type ElementListeDroitType = {
+  label: string;
+  className?: string;
+};
 
 export const ListeDeDroit = ({
   label,
   listeElement,
 }: {
   label: string;
-  listeElement: string[];
+  listeElement: ElementListeDroitType[];
 }) => {
   const id = useId();
 
@@ -34,7 +40,9 @@ export const ListeDeDroit = ({
           <div className="mr-2">
             <Icone className="text-dsfr-success-425" icone={CheckLineIcon} />
           </div>
-          <p className="fr-text--sm !mb-0">{element}</p>
+          <p className={clsx("fr-text--sm !mb-0", element.className)}>
+            {element.label}
+          </p>
         </div>
       ))}
     </div>

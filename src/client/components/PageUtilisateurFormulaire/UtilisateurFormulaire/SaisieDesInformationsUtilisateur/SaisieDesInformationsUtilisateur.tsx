@@ -8,10 +8,10 @@ import MultiSelectTerritoire, {
   MAXIMUM_COMPTES_AUTORISE_PAR_DEPARTEMENT,
   MAXIMUM_COMPTES_AUTORISE_PAR_REGION,
 } from "@/components/_commons/MultiSelect/MultiSelectTerritoire/MultiSelectTerritoire";
-import MultiSelectChantier from "@/components/_commons/MultiSelect/MultiSelectChantier/MultiSelectChantier";
 import MultiSelectPérimètreMinistériel from "@/components/_commons/MultiSelect/MultiSelectPérimètreMinistériel/MultiSelectPérimètreMinistériel";
 import { UtilisateurFormulaireProps } from "@/client/components/PageUtilisateurFormulaire/UtilisateurFormulaire/UtilisateurFormulaire.interface";
 import CaseACocher from "@/components/_commons/CaseACocher/CaseACocher";
+import { MultiSelectChantier } from "@/components/_commons/MultiSelectNew/MultiSelectChantier/MultiSelectChantier";
 import useSaisieDesInformationsUtilisateur from "./useSaisieDesInformationsUtilisateur";
 
 const SaisieDesInformationsUtilisateur: FunctionComponent<
