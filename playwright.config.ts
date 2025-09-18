@@ -1,8 +1,14 @@
 import { defineConfig, devices } from "@playwright/test";
+import { config } from "dotenv";
 
 /**
  * See https://playwright.dev/docs/test-configuration.
  */
+
+if (process.env.ENVIRONMENT !== "E2E") {
+  config({ path: ".env.e2e" });
+  config({ path: ".env" });
+}
 
 export default defineConfig({
   testDir: "./tests",
