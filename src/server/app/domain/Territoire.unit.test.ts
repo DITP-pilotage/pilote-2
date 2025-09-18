@@ -54,6 +54,14 @@ describe("convertirZoneIdEnTerritoireCode", () => {
       it('devrait convertir "D85" en majuscules en "DEPT-85"', () => {
         expect(convertirZoneIdEnTerritoireCode("D85")).toBe("DEPT-85");
       });
+
+      it('devrait convertir "D2A" en majuscules en "DEPT-2A"', () => {
+        expect(convertirZoneIdEnTerritoireCode("D2A")).toBe("DEPT-2A");
+      });
+
+      it('devrait convertir "D2B" en majuscules en "DEPT-2B"', () => {
+        expect(convertirZoneIdEnTerritoireCode("D2B")).toBe("DEPT-2B");
+      });
     });
 
     describe("régions", () => {
@@ -124,6 +132,12 @@ describe("convertirZoneIdEnTerritoireCode", () => {
 
     it('devrait lever une erreur pour "D" avec des lettres', () => {
       expect(() => convertirZoneIdEnTerritoireCode("DABC")).toThrow(
+        ConversionZoneIdError,
+      );
+    });
+
+    it('devrait lever une erreur pour "D2C"', () => {
+      expect(() => convertirZoneIdEnTerritoireCode("D2C")).toThrow(
         ConversionZoneIdError,
       );
     });
@@ -218,6 +232,26 @@ describe("convertirTerritoireCodeEnZoneId", () => {
       it('devrait convertir "dept-2a" en minuscules en "D2A"', () => {
         expect(convertirTerritoireCodeEnZoneId("dept-2a")).toBe("D2A");
       });
+
+      it('devrait convertir "DEPT-2B" en "D2B"', () => {
+        expect(convertirTerritoireCodeEnZoneId("DEPT-2B")).toBe("D2B");
+      });
+
+      it('devrait convertir "dept-2b" en minuscules en "D2B"', () => {
+        expect(convertirTerritoireCodeEnZoneId("dept-2b")).toBe("D2B");
+      });
+
+      it('ne devrait pas convertir "DEPT-2C" en "D2C"', () => {
+        expect(() => convertirTerritoireCodeEnZoneId("DEPT-2C")).toThrow(
+          new ConversionZoneIdError("DEPT-2C"),
+        );
+      });
+
+      it('ne devrait pas convertir "DEPT-2A2c" en "D2A2C"', () => {
+        expect(() => convertirTerritoireCodeEnZoneId("DEPT-2A2C")).toThrow(
+          new ConversionZoneIdError("DEPT-2A2C"),
+        );
+      });
     });
 
     describe("régions", () => {
@@ -277,6 +311,9 @@ describe("convertirTerritoireCodeEnZoneId", () => {
         ConversionZoneIdError,
       );
       expect(() => convertirTerritoireCodeEnZoneId("DEPT-ABC")).toThrow(
+        ConversionZoneIdError,
+      );
+      expect(() => convertirTerritoireCodeEnZoneId("DEPT-2A2B")).toThrow(
         ConversionZoneIdError,
       );
       expect(() => convertirTerritoireCodeEnZoneId("REG-XYZ")).toThrow(
