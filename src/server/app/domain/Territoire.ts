@@ -21,7 +21,11 @@ export function convertirZoneIdEnTerritoireCode(zoneId: string): string {
 
   if (zoneIdUpper.startsWith("D")) {
     const departementCode = zoneIdUpper.slice(1);
-    if (!departementCode || !/^\d+$/.test(departementCode)) {
+    if (
+      !departementCode ||
+      (!/^\d+$/.test(departementCode) &&
+        !["2A", "2B"].includes(departementCode))
+    ) {
       throw new ConversionZoneIdError(zoneId);
     }
     return `DEPT-${departementCode}`;
@@ -54,7 +58,11 @@ export function convertirTerritoireCodeEnZoneId(
 
   if (territoireCodeUpper.startsWith("DEPT-")) {
     const departementCode = territoireCodeUpper.slice(5);
-    if (!departementCode || !/^\d+$/.test(departementCode)) {
+    if (
+      !departementCode ||
+      (!/^\d+$/.test(departementCode) &&
+        !["2A", "2B"].includes(departementCode))
+    ) {
       throw new ConversionZoneIdError(territoireCode);
     }
     return `D${departementCode}`;
