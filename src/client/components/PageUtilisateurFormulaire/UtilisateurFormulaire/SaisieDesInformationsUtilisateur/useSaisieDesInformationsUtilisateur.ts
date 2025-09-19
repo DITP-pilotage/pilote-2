@@ -371,13 +371,18 @@ export default function useSectionDétailsMetadataAutresIndicateurForm() {
             ProfilEnum.PREFET_REGION,
             ProfilEnum.COORDINATEUR_DEPARTEMENT,
             ProfilEnum.COORDINATEUR_REGION,
-            ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT,
-            ProfilEnum.SERVICES_DECONCENTRES_REGION,
           ].includes(profilCodeSelectionne)
         ? chantiersSelectionnesLecture.filter(
             (chantier) => chantier.ate === "ate",
           )
-        : chantiersSelectionnesLecture;
+        : [
+              ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT,
+              ProfilEnum.SERVICES_DECONCENTRES_REGION,
+            ].includes(profilCodeSelectionne)
+          ? chantiersSelectionnesLecture.filter((chantier) =>
+              ["ate", "hors_ate_deconcentre"].includes(chantier.ate ?? ""),
+            )
+          : chantiersSelectionnesLecture;
   watch("profil");
 
   return {
