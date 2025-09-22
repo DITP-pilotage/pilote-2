@@ -17,9 +17,6 @@ import { DatajobsExecution } from "@/server/datajobs-execution/DatajobsExecution
 import { BoutonProposerValeur } from "@/components/_commons/IndicateursChantier/Bloc/BoutonProposerValeur";
 import { territoireCodeVersMailleCodeInsee } from "@/server/utils/territoires";
 
-export const ID_HTML_MODALE_HISTORIQUE_INDICATEUR_TERRITOIRE_VALEUR_EVENEMENT =
-  "modale-historique-indicateur-territoire-valeur-evenement";
-
 const estDatajobExecutionAvantProposition = (
   datajobsExecution: DatajobsExecution,
   detailIndicateur: DétailsIndicateur,

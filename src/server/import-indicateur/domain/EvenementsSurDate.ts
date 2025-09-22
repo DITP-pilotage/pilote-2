@@ -210,7 +210,7 @@ export class EvenementsSurDate {
     valeur,
   }: {
     auteurId: string;
-    valeur: number;
+    valeur: number | null;
   }) {
     const evenementExistant = this.evenementPropositionValeurEnCours();
     if (!evenementExistant)
@@ -254,7 +254,10 @@ export class EvenementsSurDate {
           typeEvenement: estValeurModifiee ? "VALEUR_MODIFIEE" : "VALEUR_CREEE",
           typeValeur: "VALEUR_AVANCEMENT",
           dateValeur: new Date(indicateurData.metricDate),
-          valeur: Number.parseFloat(indicateurData.metricValue),
+          valeur:
+            indicateurData.metricValue.length === 0
+              ? null
+              : Number.parseFloat(indicateurData.metricValue),
           donneesComplementaires: undefined,
           idAuteurModification: auteurId,
           correlationId: randomUUID(),

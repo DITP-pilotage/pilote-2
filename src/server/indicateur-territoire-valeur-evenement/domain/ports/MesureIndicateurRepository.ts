@@ -2,7 +2,7 @@ export type MesureIndicateur = {
   indicId: string;
   territoireCode: string;
   dateValeur: Date;
-  valeur: number;
+  valeur: string;
   auteurId: string;
 };
 
