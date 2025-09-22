@@ -14,7 +14,7 @@ type IndicateurTerritoireValeurEvenementContrat = {
   typeEvenement: string;
   typeValeur: string;
   dateValeur: Date;
-  valeur: number;
+  valeur: number | null;
   donneesComplementaires: IndicateurTerritoireValeurEvenement["donneesComplementaires"];
   idAuteurModification: string;
   correlationId: string;

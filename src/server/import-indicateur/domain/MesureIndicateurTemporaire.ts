@@ -15,6 +15,7 @@ export class MesureIndicateurTemporaire {
 
   private _metricType: string | null;
 
+  // TODO (JOTA:PVA:22/09/2025) Ne peut pas être null, c'est chaine de caractère vide
   private readonly _metricValue: string | null;
 
   private constructor({

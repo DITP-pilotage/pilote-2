@@ -15,7 +15,7 @@ export class PrismaPropositionValeurAvancementRepository
     indicId: string;
     zoneId: string;
     dateValeurImportee: Date;
-    valeurImportee: number;
+    valeurImportee: number | null;
   }): Promise<void> {
     const territoire = await getPrisma().territoire.findFirst({
       where: {

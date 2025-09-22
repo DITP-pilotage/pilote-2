@@ -94,7 +94,12 @@ export class PublierFichierIndicateurImporteUseCase {
               indicId: valeurAvancement.indicId,
               zoneId: valeurAvancement.zoneId,
               dateValeurImportee: new Date(valeurAvancement.metricDate),
-              valeurImportee: Number.parseFloat(valeurAvancement.metricValue),
+              valeurImportee:
+                // TODO (JOTA:PVA:22/09/2025) En réalité ne peut pas être null, c'est chaine de caractère vide
+                valeurAvancement.metricValue === null ||
+                valeurAvancement.metricValue.length === 0
+                  ? null
+                  : Number.parseFloat(valeurAvancement.metricValue),
             },
           ),
         ),

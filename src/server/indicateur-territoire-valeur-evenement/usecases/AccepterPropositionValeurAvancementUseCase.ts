@@ -53,13 +53,15 @@ export class AccepterPropositionValeurAvancementUseCase {
         motif,
       });
 
+    const valeurEnCours = evenementsSurDate.valeurEnCours();
+
     await this.transaction.run(async () => {
       await this.mesureIndicateurRepository.enregistrer({
         auteurId: idAuteurAcceptation,
         indicId,
         territoireCode,
         dateValeur: new Date(dateValeurAvancement),
-        valeur: evenementsSurDate.valeurEnCours(),
+        valeur: valeurEnCours === null ? "" : valeurEnCours.toString(),
       });
       await this.indicateurTerritoireValeurEvenementRepository.enregistrerTous(
         evenements,

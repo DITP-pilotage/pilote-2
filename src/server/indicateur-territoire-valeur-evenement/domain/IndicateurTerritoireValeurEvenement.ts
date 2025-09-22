@@ -23,8 +23,25 @@ type DonneesComplementairesMap = {
   PROPOSITION_VALEUR_ACCEPTEE_AVEC_MODIFICATION: { motif: string };
 };
 
+type ValeurEvenementMap = {
+  VALEUR_CREEE: number;
+  VALEUR_MODIFIEE: number | null;
+  VALEUR_HISTORISEE: number | null;
+  PROPOSITION_VALEUR_CREEE: number;
+  PROPOSITION_VALEUR_MODIFIEE: number;
+  PROPOSITION_VALEUR_SUPPRIMEE: number;
+  PROPOSITION_VALEUR_REFUSEE: number;
+  PROPOSITION_VALEUR_ACCUSEE_RECEPTION: number;
+  PROPOSITION_VALEUR_ACCEPTEE: number;
+  PROPOSITION_VALEUR_IGNOREE_VALEUR_MODIFIEE: number | null;
+  PROPOSITION_VALEUR_IGNOREE_VALEUR_HISTORISEE: number | null;
+  PROPOSITION_VALEUR_ACCEPTEE_AVEC_MODIFICATION: number;
+};
+
 export type DonneesComplementaires<T extends TypeEvenement> =
   DonneesComplementairesMap[T];
+
+export type ValeurEvenement<T extends TypeEvenement> = ValeurEvenementMap[T];
 
 export class IndicateurTerritoireValeurEvenement<
   T extends TypeEvenement = TypeEvenement,
@@ -41,7 +58,7 @@ export class IndicateurTerritoireValeurEvenement<
 
   private readonly _dateValeur: Date;
 
-  private readonly _valeur: number;
+  private readonly _valeur: ValeurEvenement<T>;
 
   private readonly _donneesComplementaires: DonneesComplementaires<T>;
 
@@ -73,7 +90,7 @@ export class IndicateurTerritoireValeurEvenement<
     typeEvenement: T;
     typeValeur: TypeValeur;
     dateValeur: Date;
-    valeur: number;
+    valeur: ValeurEvenement<T>;
     donneesComplementaires: DonneesComplementaires<T>;
     idAuteurModification: string;
     correlationId: string;
@@ -118,7 +135,7 @@ export class IndicateurTerritoireValeurEvenement<
     return this._dateValeur;
   }
 
-  get valeur(): number {
+  get valeur(): ValeurEvenement<T> {
     return this._valeur;
   }
 
@@ -162,7 +179,7 @@ export class IndicateurTerritoireValeurEvenement<
     typeEvenement: T;
     typeValeur: TypeValeur;
     dateValeur: Date;
-    valeur: number;
+    valeur: ValeurEvenement<T>;
     donneesComplementaires: DonneesComplementaires<T>;
     idAuteurModification: string;
     correlationId: string;

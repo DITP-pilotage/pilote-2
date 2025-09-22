@@ -25,7 +25,7 @@ export class PrismaMesureIndicateurRepository
           mesureIndicateur.territoireCode,
         ),
         metric_date: toISODate(mesureIndicateur.dateValeur),
-        metric_value: mesureIndicateur.valeur.toString(),
+        metric_value: mesureIndicateur.valeur,
         metric_type: "va",
       },
     });
