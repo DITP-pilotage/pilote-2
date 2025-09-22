@@ -9,7 +9,9 @@ const txStore = new AsyncLocalStorage<PilotePrismaClient>();
 
 export class PrismaTransaction implements Transaction {
   async run<T>(scope: () => Promise<T>): Promise<T> {
-    return prisma.$transaction((tx) => txStore.run(tx, scope));
+    return prisma.$transaction((tx) => txStore.run(tx, scope), {
+      timeout: 30_000,
+    });
   }
 }
 
