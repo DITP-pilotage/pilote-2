@@ -2,7 +2,15 @@ name: "DJ dev"
 
 on: 
   workflow_dispatch:
-
+    inputs:
+      environment:
+        description: "Environnement à tester"
+        required: true
+        default: 'dev-datajobs'
+        type: choice
+        options:
+          - dev-datajobs
+          - preprod-datajobs
 jobs:
   trigger-scalingo:
     name: "Lancement DJ dev"
@@ -12,6 +20,6 @@ jobs:
       with:
         region: 'osc-secnum-fr1'
         api_token: ${{ secrets.scalingo_api_token }}
-        app_name: 'dev-datajobs'
+        app_name: ${{ inputs.environment }}
     
     - run: scalingo run /bin/bash scripts/run_datajobs.sh
