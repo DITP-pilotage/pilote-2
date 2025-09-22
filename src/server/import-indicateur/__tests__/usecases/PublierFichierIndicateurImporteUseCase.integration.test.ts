@@ -10,6 +10,7 @@ import { IndicateurTerritoireValeurEvenementRepository } from "@/server/indicate
 import { IndicateurTerritoireValeurEvenement } from "@/server/indicateur-territoire-valeur-evenement/domain/IndicateurTerritoireValeurEvenement";
 import { ValeurIndicateurTerritoireEvenementBuilder } from "@/server/import-indicateur/app/builder/ValeurIndicateurTerritoireEvenement.builder";
 import { InMemoryTransaction } from "@/server/db/InMemoryTransaction";
+import { EvenementValeurEnum } from "@/server/app/domain/EvenementValeurEnum";
 
 describe("PublierFichierIndicateurImporteUseCase", () => {
   let publierFichierIndicateurImporteUseCase: PublierFichierIndicateurImporteUseCase;
@@ -244,6 +245,145 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
       "2cde2d5a-a575-48ba-9f18-b450d1aa3f60",
     );
     expect(evenement.ordre).toEqual(1);
+  });
+
+  it(`quand la valeur est chaine de caractère vide pour le tuple [indicateur, territoire, date, type], ne doit pas créer d'évènement ${EvenementValeurEnum.VALEUR_CREEE}`, async () => {
+    // GIVEN
+    const listeMesuresIndicateursTemporaires = [
+      new MesureIndicateurTemporaireBuilder()
+        .avecIndicId("IND-001")
+        .avecMetricDate("2023-01-15")
+        .avecMetricType("va")
+        .avecMetricValue("")
+        .avecRapportId("20a717e6-2de9-428c-b4e7-80f7b9f36ffc")
+        .avecZoneId("D01")
+        .build(),
+    ];
+
+    mesureIndicateurTemporaireRepository.recupererToutParRapportId.mockResolvedValue(
+      listeMesuresIndicateursTemporaires,
+    );
+
+    const evenementExistant = new ValeurIndicateurTerritoireEvenementBuilder()
+      .avecIndicId("IND-001")
+      .avecTerritoireCode("DEPT-01")
+      .avecTypeEvenement("VALEUR_CREEE")
+      .avecTypeValeur("VALEUR_AVANCEMENT")
+      .avecDateValeur(new Date("2023-01-01"))
+      .avecValeur(42)
+      .avecOrdre(1)
+      .build();
+
+    indicateurTerritoireValeurEvenementRepository.recupererParIndicIdTerritoireCodeEtTypeValeur.mockResolvedValue(
+      [evenementExistant],
+    );
+
+    // WHEN
+    await publierFichierIndicateurImporteUseCase.execute({
+      rapportId: "20a717e6-2de9-428c-b4e7-80f7b9f36ffc",
+      auteurId: "2cde2d5a-a575-48ba-9f18-b450d1aa3f60",
+    });
+
+    // THEN
+    expect(
+      indicateurTerritoireValeurEvenementRepository.enregistrerTous,
+    ).toHaveBeenNthCalledWith(1, []);
+  });
+
+  it(`quand la valeur est chaine de caractère vide pour le tuple [indicateur, territoire, date, type] avec un tuple pour une date antérieur, ne doit pas créer d'évènement (${EvenementValeurEnum.VALEUR_CREEE}, ${EvenementValeurEnum.VALEUR_HISTORISEE})`, async () => {
+    // GIVEN
+    const listeMesuresIndicateursTemporaires = [
+      new MesureIndicateurTemporaireBuilder()
+        .avecIndicId("IND-001")
+        .avecMetricDate("2023-01-01")
+        .avecMetricType("va")
+        .avecMetricValue("")
+        .avecRapportId("20a717e6-2de9-428c-b4e7-80f7b9f36ffc")
+        .avecZoneId("D01")
+        .build(),
+    ];
+
+    mesureIndicateurTemporaireRepository.recupererToutParRapportId.mockResolvedValue(
+      listeMesuresIndicateursTemporaires,
+    );
+
+    const evenementExistant = new ValeurIndicateurTerritoireEvenementBuilder()
+      .avecIndicId("IND-001")
+      .avecTerritoireCode("DEPT-01")
+      .avecTypeEvenement("VALEUR_CREEE")
+      .avecTypeValeur("VALEUR_AVANCEMENT")
+      .avecDateValeur(new Date("2023-01-15"))
+      .avecValeur(42)
+      .avecOrdre(1)
+      .build();
+
+    indicateurTerritoireValeurEvenementRepository.recupererParIndicIdTerritoireCodeEtTypeValeur.mockResolvedValue(
+      [evenementExistant],
+    );
+
+    // WHEN
+    await publierFichierIndicateurImporteUseCase.execute({
+      rapportId: "20a717e6-2de9-428c-b4e7-80f7b9f36ffc",
+      auteurId: "2cde2d5a-a575-48ba-9f18-b450d1aa3f60",
+    });
+
+    // THEN
+    expect(
+      indicateurTerritoireValeurEvenementRepository.enregistrerTous,
+    ).toHaveBeenNthCalledWith(1, []);
+  });
+
+  it(`quand il existe une valeur pour le tuple [indicateur, territoire, date, type] et que la nouvelle valeur est chaine de caractère vide, doit créer un évènement ${EvenementValeurEnum.VALEUR_MODIFIEE} avec valeur null`, async () => {
+    // GIVEN
+    const evenementCaptor = captor<IndicateurTerritoireValeurEvenement[]>();
+    const listeMesuresIndicateursTemporaires = [
+      new MesureIndicateurTemporaireBuilder()
+        .avecIndicId("IND-001")
+        .avecMetricDate("2023-01-15")
+        .avecMetricType("va")
+        .avecMetricValue("")
+        .avecRapportId("20a717e6-2de9-428c-b4e7-80f7b9f36ffc")
+        .avecZoneId("D01")
+        .build(),
+    ];
+
+    mesureIndicateurTemporaireRepository.recupererToutParRapportId.mockResolvedValue(
+      listeMesuresIndicateursTemporaires,
+    );
+
+    const evenementExistant = new ValeurIndicateurTerritoireEvenementBuilder()
+      .avecIndicId("IND-001")
+      .avecTerritoireCode("DEPT-01")
+      .avecTypeEvenement("VALEUR_CREEE")
+      .avecTypeValeur("VALEUR_AVANCEMENT")
+      .avecDateValeur(new Date("2023-01-15"))
+      .avecValeur(42)
+      .avecOrdre(1)
+      .build();
+
+    indicateurTerritoireValeurEvenementRepository.recupererParIndicIdTerritoireCodeEtTypeValeur.mockResolvedValue(
+      [evenementExistant],
+    );
+
+    // WHEN
+    await publierFichierIndicateurImporteUseCase.execute({
+      rapportId: "20a717e6-2de9-428c-b4e7-80f7b9f36ffc",
+      auteurId: "2cde2d5a-a575-48ba-9f18-b450d1aa3f60",
+    });
+
+    // THEN
+    expect(
+      indicateurTerritoireValeurEvenementRepository.enregistrerTous,
+    ).toHaveBeenNthCalledWith(1, evenementCaptor);
+
+    const evenementHistorise = evenementCaptor.value[0];
+    expect(evenementHistorise.indicId).toEqual("IND-001");
+    expect(evenementHistorise.territoireCode).toEqual("DEPT-01");
+    expect(evenementHistorise.typeEvenement).toEqual("VALEUR_MODIFIEE");
+    expect(evenementHistorise.typeValeur).toEqual("VALEUR_AVANCEMENT");
+    expect(evenementHistorise.dateValeur).toEqual(new Date("2023-01-15"));
+    expect(evenementHistorise.valeur).toEqual(null);
+    expect(evenementHistorise.ordre).toEqual(2);
   });
 
   it("quand la valeur est nouvelle pour le tuple [indicateur, territoire, date, type] avec un tuple pour une date antérieure, doit créer 2 lignes d'évènement (VALEUR_HISTORISEE + VALEUR_CREEE)", async () => {

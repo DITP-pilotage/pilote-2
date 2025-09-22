@@ -99,7 +99,7 @@ describe("AccepterPropositionValeurAvancementUseCase", () => {
       dateValeur: new Date("2024-06-08T00:00:00.000Z"),
       indicId: input.indicId,
       territoireCode: input.territoireCode,
-      valeur: 20,
+      valeur: "20",
     });
     expect(
       indicateurTerritoireValeurEvenementRepository.enregistrerTous,
