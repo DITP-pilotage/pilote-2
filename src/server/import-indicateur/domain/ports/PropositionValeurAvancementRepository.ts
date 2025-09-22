@@ -8,6 +8,6 @@ export interface PropositionValeurAvancementRepository {
     indicId: string;
     zoneId: string;
     dateValeurImportee: Date;
-    valeurImportee: number;
+    valeurImportee: number | null;
   }) => Promise<void>;
 }

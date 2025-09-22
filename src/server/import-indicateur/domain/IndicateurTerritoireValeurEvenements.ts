@@ -42,11 +42,15 @@ export class IndicateurTerritoireValeurEvenements {
     for (const [date, evenementsPourDate] of Object.entries(
       evenementsExistantParDate,
     )) {
-      if (date > indicateurData.metricDate) {
+      if (
+        date > indicateurData.metricDate &&
+        indicateurData.metricValue.length > 0
+      ) {
         doitHistoriserValeurCreee =
           !evenementsPourCetteDate.aValeurHistorisee();
         continue;
       }
+
       if (date === indicateurData.metricDate) {
         doitModifierValeurCreee = true;
         doitIgnorer = evenementsPourDate.aValeurEnCours(
@@ -66,7 +70,7 @@ export class IndicateurTerritoireValeurEvenements {
       }
 
       const estHistorise = evenementsPourDate.aValeurHistorisee();
-      if (!estHistorise) {
+      if (!estHistorise && indicateurData.metricValue.length > 0) {
         nouveauxEvenements.push(
           evenementsPourDate.creerEvenementValeurHistorisee({ auteurId }),
         );
@@ -84,18 +88,30 @@ export class IndicateurTerritoireValeurEvenements {
       //    ici on enregistre les evenements mais d'impact sur la proposition réelle
       nouveauxEvenements.push(
         evenementsPourCetteDate.creerEvenementPropositionValeurIgnoreeValeurModifiee(
-          { auteurId, valeur: Number.parseFloat(indicateurData.metricValue) },
+          {
+            auteurId,
+            valeur:
+              indicateurData.metricValue === null ||
+              indicateurData.metricValue.length === 0
+                ? null
+                : Number.parseFloat(indicateurData.metricValue),
+          },
         ),
       );
     }
 
-    nouveauxEvenements.push(
-      evenementsPourCetteDate.creerEvenementValeurCreeeOuModifiee({
-        indicateurData,
-        auteurId,
-        estValeurModifiee: doitModifierValeurCreee,
-      }),
-    );
+    if (
+      doitModifierValeurCreee ||
+      (!doitModifierValeurCreee && indicateurData.metricValue.length > 0)
+    ) {
+      nouveauxEvenements.push(
+        evenementsPourCetteDate.creerEvenementValeurCreeeOuModifiee({
+          indicateurData,
+          auteurId,
+          estValeurModifiee: doitModifierValeurCreee,
+        }),
+      );
+    }
 
     if (doitHistoriserValeurCreee) {
       nouveauxEvenements.push(

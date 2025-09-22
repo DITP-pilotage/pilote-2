@@ -64,7 +64,7 @@ export class AccepterAvecModificationPropositionValeurAvancementUseCase {
         indicId,
         territoireCode,
         dateValeur: new Date(dateValeurAvancement),
-        valeur,
+        valeur: valeur.toString(),
       });
       await this.indicateurTerritoireValeurEvenementRepository.enregistrerTous(
         evenements,

@@ -39,9 +39,15 @@ export const ModaleHistoriqueIndicateurTerritoireValeurEvenement: FunctionCompon
               <span className="fr-text--bold">import de données</span> par la
               direction de projet
             </p>
-            <p className="fr-mb-0 !texte-blue-france fr-text--bold">
-              → nouvelle valeur affichée dans PILOTE : {valeur}
-            </p>
+            {valeur === null ? (
+              <p className="fr-mb-0 !texte-blue-france fr-text--bold">
+                → la valeur a été supprimée de PILOTE
+              </p>
+            ) : (
+              <p className="fr-mb-0 !texte-blue-france fr-text--bold">
+                → nouvelle valeur affichée dans PILOTE : {valeur}
+              </p>
+            )}
           </div>
         );
       case "VALEUR_HISTORISEE":
@@ -131,9 +137,15 @@ export const ModaleHistoriqueIndicateurTerritoireValeurEvenement: FunctionCompon
               <span className="fr-text--bold"> import de données</span> par la
               direction de projet (la proposition en cours a été ignorée)
             </p>
-            <p className="fr-mb-0 !texte-blue-france fr-text--bold">
-              → nouvelle valeur affichée dans PILOTE : {valeur}
-            </p>
+            {valeur === null ? (
+              <p className="fr-mb-0 !texte-blue-france fr-text--bold">
+                → la valeur a été supprimée de PILOTE
+              </p>
+            ) : (
+              <p className="fr-mb-0 !texte-blue-france fr-text--bold">
+                → nouvelle valeur affichée dans PILOTE : {valeur}
+              </p>
+            )}
           </div>
         );
       case "PROPOSITION_VALEUR_IGNOREE_VALEUR_HISTORISEE":
