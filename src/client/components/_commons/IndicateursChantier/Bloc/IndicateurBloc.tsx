@@ -147,7 +147,10 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
           <section>
             <div className="flex justify-between">
               <div>
-                <Titre baliseHtml="h4" className="fr-text--xl fr-mb-1w">
+                <Titre
+                  baliseHtml="h4"
+                  className="fr-text--xl !mb-2 flex align-center"
+                >
                   <BadgeIndicateurEnAlerte />
                   <BadgeIndicateurBarometre />
                   {indicateurNomAvecUnite}

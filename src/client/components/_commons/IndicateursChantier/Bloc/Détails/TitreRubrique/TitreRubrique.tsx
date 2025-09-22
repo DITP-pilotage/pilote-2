@@ -24,7 +24,7 @@ export const TitreRubrique: FunctionComponent<{
         {`${rubriqueNom} (${nombreIndicateurRubrique})`}
       </Titre>
       {rubriqueDescription ? (
-        <Infobulle classNameBouton="fr-pb-2w">{rubriqueDescription}</Infobulle>
+        <Infobulle>{rubriqueDescription}</Infobulle>
       ) : null}
     </TitreInfobulleConteneur>
   );

@@ -2,6 +2,7 @@ import { useBlocIndicateurContext } from "@/components/PageChantier/useBlocIndic
 import { formaterDate } from "@/client/utils/date/date";
 import { Infobulle } from "@/components/_commons/Infobulle/Infobulle";
 import useIndicateurAlerteDateMaj from "@/components/_commons/IndicateursChantier/Bloc/useIndicateurAlerteDateMaj";
+import { clsxm } from "@/utils/clsxm";
 
 export const LigneIndicateurDatePrevisionnelle = () => {
   const { chantier, detailIndicateurDuTerritoire } = useBlocIndicateurContext();
@@ -19,7 +20,12 @@ export const LigneIndicateurDatePrevisionnelle = () => {
 
   return (
     <div
-      className={`flex align-center w-full relative${estIndicateurEnAlerte ? " fr-text-warning" : " texte-gris"}`}
+      className={clsxm(
+        `flex align-center w-full relative`,
+        estIndicateurEnAlerte
+          ? "text-dsfr-warning-425"
+          : "text-dsfr-mention-grey",
+      )}
     >
       <p className="!mb-0 fr-text--xs pr-1">
         Date prévisionnelle de la prochaine mise à jour des données (de
@@ -32,13 +38,15 @@ export const LigneIndicateurDatePrevisionnelle = () => {
         </span>
       </p>
       <Infobulle
-        classNameBouton="infobulle-date-previsionnelle"
+        classNameBouton={
+          estIndicateurEnAlerte ? "!text-dsfr-warning-425" : "!text-primary"
+        }
         classNameInfoBulle="tooltip-accordeon"
       >
-        <p className="fr-text--sm fr-text-title--blue-france">
+        <p className="!text-sm !text-primary !mb-2 bold">
           Date prévisionnelle de mise à jour de l'indicateur :
         </p>
-        <p className="fr-text--sm fr-mb-0">
+        <p className="!text-sm !mb-0">
           Elle est calculée à partir de la date de la valeur d'avancement, de la
           période de mise à jour et du délai de disponibilité des données. Plus
           d'informations dans l'accordéon "Description de l'indicateur et

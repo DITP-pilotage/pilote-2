@@ -10,7 +10,7 @@ const TitreInfobulleConteneur: FunctionComponent<
   TitreInfobulleConteneurProps
 > = ({ className, children }) => {
   return (
-    <TitreInfobulleConteneurStyled className={`${className} flex`}>
+    <TitreInfobulleConteneurStyled className={`${className} flex align-center`}>
       {children}
     </TitreInfobulleConteneurStyled>
   );
