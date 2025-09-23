@@ -10,8 +10,11 @@ import RapportDétailléTableauChantiersContenu from "./Contenu/RapportDétaill�
 
 const RapportDétailléTableauChantiers: FunctionComponent<
   RapportDétailléTableauChantiersProps
-> = ({ données }) => {
-  const { tableau } = useRapportDétailléTableauChantiers(données);
+> = ({ données, chantiersSontArchives }) => {
+  const { tableau } = useRapportDétailléTableauChantiers(
+    données,
+    chantiersSontArchives,
+  );
 
   return (
     <RapportDétailléTableauChantiersStyled className="fr-table fr-m-0 fr-p-0">

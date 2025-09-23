@@ -7,11 +7,12 @@ import AvancementsProps from "./Avancements.interface";
 const Avancements: FunctionComponent<AvancementsProps> = ({
   avancements,
   jalon,
+  chantiersSontArchives,
 }) => {
   return (
     <AvancementsStyled>
       <JaugeDeProgression
-        couleur="bleu"
+        couleur={chantiersSontArchives ? "gris" : "bleu"}
         libellé="Taux d'avancement à échéance 2026"
         pourcentage={!!avancements ? avancements.global.moyenne : null}
         taille="lg"
@@ -19,21 +20,21 @@ const Avancements: FunctionComponent<AvancementsProps> = ({
       <div>
         <div className="jauges-statistiques">
           <JaugeDeProgression
-            couleur="orange"
+            couleur={chantiersSontArchives ? "gris" : "orange"}
             libellé="Minimum"
             pourcentage={!!avancements ? avancements.global.minimum : null}
             taille="sm"
           />
           <div>
             <JaugeDeProgression
-              couleur="violet"
+              couleur={chantiersSontArchives ? "gris" : "violet"}
               libellé="Médiane"
               pourcentage={!!avancements ? avancements.global.médiane : null}
               taille="sm"
             />
           </div>
           <JaugeDeProgression
-            couleur="vert"
+            couleur={chantiersSontArchives ? "gris" : "vert"}
             libellé="Maximum"
             pourcentage={!!avancements ? avancements.global.maximum : null}
             taille="sm"
