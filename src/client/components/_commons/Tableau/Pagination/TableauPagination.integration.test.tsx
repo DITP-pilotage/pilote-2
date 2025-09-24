@@ -196,21 +196,21 @@ describe("quand il y a plus de 5 pages", () => {
     describe(`si la page courante est la page ${casDeTest.pageCourante}`, () => {
       let pagination: TableauPaginationTest;
       beforeEach(() => {
-        // GIVEN
+        // Given
         pagination = new TableauPaginationTest();
-        // WHEN
+        // When
         pagination.render(12, casDeTest.pageCourante);
       });
 
       test(`définit le "current page" à la page ${casDeTest.pageCourante}`, () => {
-        // THEN
+        // Then
         expect(pagination.récupérerLaPageCourante()).toEqual(
           String(casDeTest.pageCourante),
         );
       });
 
       test("affiche les éléments de pagination", () => {
-        // THEN
+        // Then
         expect(pagination.récupérerLesElementsDeListe()).toEqual(
           casDeTest.listeDElementsAttendus,
         );
@@ -223,14 +223,14 @@ describe("quand il y a 0 page", () => {
   let pagination: TableauPaginationTest;
 
   beforeEach(() => {
-    // GIVEN
+    // Given
     pagination = new TableauPaginationTest();
-    // WHEN
+    // When
     pagination.render(0, 1);
   });
 
   test("n'affiche pas les boutons de pagination", () => {
-    // THEN
+    // Then
     expect(pagination.récupérerLesElementsDeListe()).toEqual([]);
     expect(pagination.récupérerBoutonPagePrécédente()).not.toBeInTheDocument();
     expect(pagination.récupérerBoutonPremièrePage()).not.toBeInTheDocument();
@@ -243,14 +243,14 @@ describe("quand il y a une page", () => {
   let pagination: TableauPaginationTest;
 
   beforeEach(() => {
-    // GIVEN
+    // Given
     pagination = new TableauPaginationTest();
-    // WHEN
+    // When
     pagination.render(1, 1);
   });
 
   test("n'affiche pas les boutons de pagination", () => {
-    // THEN
+    // Then
     expect(pagination.récupérerLesElementsDeListe()).toEqual([]);
     expect(pagination.récupérerBoutonPagePrécédente()).not.toBeInTheDocument();
     expect(pagination.récupérerBoutonPremièrePage()).not.toBeInTheDocument();
@@ -266,14 +266,14 @@ describe("quand il y a entre 2 et 5 pages", () => {
     describe(`si la page courante est la page ${pageCourante}`, () => {
       let pagination: TableauPaginationTest;
       beforeEach(() => {
-        // GIVEN
+        // Given
         pagination = new TableauPaginationTest();
-        // WHEN
+        // When
         pagination.render(5, pageCourante);
       });
 
       test(`définit le "current page" à la page ${pageCourante}`, () => {
-        // THEN
+        // Then
         expect(pagination.récupérerLaPageCourante()).toEqual(
           String(pageCourante),
         );
@@ -291,7 +291,7 @@ describe("quand il y a entre 2 et 5 pages", () => {
           PAGE_SUIVANTE,
           DERNIERE_PAGE,
         ];
-        // THEN
+        // Then
         expect(pagination.récupérerLesElementsDeListe()).toEqual(renduAttendu);
       });
     });
@@ -302,51 +302,51 @@ describe("quand l'utilisateur clique sur les éléments de pagination", () => {
   let pagination: TableauPaginationTest;
 
   beforeEach(() => {
-    // GIVEN
+    // Given
     pagination = new TableauPaginationTest();
   });
 
   test('au clic sur "page suivante", l\'utilisateur est amené à la page suivante', async () => {
-    // WHEN
+    // When
     pagination.render(12, 1);
     await pagination.allerALaPageSuivante();
-    // THEN
+    // Then
     expect(pagination.récupérerLaPageCourante()).toEqual("2");
     expect(pagination.changementDePageCallback).toHaveBeenCalledTimes(1);
   });
 
   test('au clic sur "page précédente", l\'utilisateur est amené à la page précédente', async () => {
-    // WHEN
+    // When
     pagination.render(12, 3);
     await pagination.allerALaPagePrécédente();
-    // THEN
+    // Then
     expect(pagination.récupérerLaPageCourante()).toEqual("2");
     expect(pagination.changementDePageCallback).toHaveBeenCalledTimes(1);
   });
 
   test('au clic sur "première page", l\'utilisateur est amené à la première page', async () => {
-    // WHEN
+    // When
     pagination.render(12, 3);
     await pagination.allerALaPremièrePage();
-    // THEN
+    // Then
     expect(pagination.récupérerLaPageCourante()).toEqual("1");
     expect(pagination.changementDePageCallback).toHaveBeenCalledTimes(1);
   });
 
   test('au clic sur "dernière page", l\'utilisateur est amené à la dernière page', async () => {
-    // WHEN
+    // When
     pagination.render(12, 3);
     await pagination.allerALaDernièrePage();
-    // THEN
+    // Then
     expect(pagination.récupérerLaPageCourante()).toEqual("12");
     expect(pagination.changementDePageCallback).toHaveBeenCalledTimes(1);
   });
 
   test('au clic sur "5", l\'utilisateur est amené à la page 5', async () => {
-    // WHEN
+    // When
     pagination.render(12, 4);
     await pagination.allerALaPage(5);
-    // THEN
+    // Then
     expect(pagination.récupérerLaPageCourante()).toEqual("5");
     expect(pagination.changementDePageCallback).toHaveBeenCalledTimes(1);
   });
@@ -356,14 +356,14 @@ describe("quand on est à la première page", () => {
   let pagination: TableauPaginationTest;
 
   beforeEach(() => {
-    // GIVEN
+    // Given
     pagination = new TableauPaginationTest();
   });
 
   test('les boutons "première page" et "page précédente" sont désactivés', async () => {
-    // WHEN
+    // When
     pagination.render(12, 1);
-    // THEN
+    // Then
     expect(pagination.récupérerBoutonPremièrePage()).toBeDisabled();
     expect(pagination.récupérerBoutonPagePrécédente()).toBeDisabled();
   });
@@ -373,14 +373,14 @@ describe("quand on est à la dernière page", () => {
   let pagination: TableauPaginationTest;
 
   beforeEach(() => {
-    // GIVEN
+    // Given
     pagination = new TableauPaginationTest();
   });
 
   test('les boutons "dernière page" et "page suivante" sont désactivés', async () => {
-    // WHEN
+    // When
     pagination.render(12, 12);
-    // THEN
+    // Then
     expect(pagination.récupérerBoutonDernièrePage()).toBeDisabled();
     expect(pagination.récupérerBoutonPageSuivante()).toBeDisabled();
   });

@@ -50,7 +50,7 @@ describe("VerifierFichierIndicateurImporteUseCase", () => {
   });
 
   it("doit appeler le service de validation du fichier d'indicateur importé", async () => {
-    // GIVEN
+    // Given
     const detailValidationFichier = new DetailValidationFichierBuilder()
       .avecEstValide(true)
       .build();
@@ -66,16 +66,16 @@ describe("VerifierFichierIndicateurImporteUseCase", () => {
       detailValidationFichier,
     );
 
-    // WHEN
+    // When
     const result =
       await verifierFichierIndicateurImporteUseCase.execute(payload);
 
-    // THEN
+    // Then
     expect(result.estValide).toEqual(true);
   });
 
   it("quand l'indicateur possède des informations, doit concaténer le schema en metadata associé à l'indicateur", async () => {
-    // GIVEN
+    // Given
     const detailValidationFichier = new DetailValidationFichierBuilder()
       .avecEstValide(true)
       .build();
@@ -102,10 +102,10 @@ describe("VerifierFichierIndicateurImporteUseCase", () => {
       detailValidationFichier,
     );
 
-    // WHEN
+    // When
     await verifierFichierIndicateurImporteUseCase.execute(payload);
 
-    // THEN
+    // Then
     expect(
       fichierIndicateurValidationService.validerFichier,
     ).toHaveBeenNthCalledWith(1, payloadValiderFichierCaptor);
@@ -114,7 +114,7 @@ describe("VerifierFichierIndicateurImporteUseCase", () => {
   });
 
   it("quand le fichier est valide, doit sauvegarder les données du fichier contenu dans le rapport", async () => {
-    // GIVEN
+    // Given
     const mesureIndicateurTemporaire1 = new MesureIndicateurTemporaireBuilder()
       .avecIndicId("IND-001")
       .avecZoneId("D001")
@@ -151,10 +151,10 @@ describe("VerifierFichierIndicateurImporteUseCase", () => {
 
     const indicateurCaptor = captor<MesureIndicateurTemporaire[]>();
 
-    // WHEN
+    // When
     await verifierFichierIndicateurImporteUseCase.execute(payload);
 
-    // THEN
+    // Then
     expect(
       mesureIndicateurTemporaireRepository.sauvegarder,
     ).toHaveBeenNthCalledWith(1, indicateurCaptor);
@@ -178,7 +178,7 @@ describe("VerifierFichierIndicateurImporteUseCase", () => {
   });
 
   it("quand le fichier est invalide, doit sauvegarder les erreurs du fichier contenu dans le rapport", async () => {
-    // GIVEN
+    // Given
     const detailValidationFichier = new DetailValidationFichierBuilder()
       .avecId("a0c086eb-21e2-4f00-9ca8-4b0fcce133ad")
       .avecEstValide(false)
@@ -221,10 +221,10 @@ describe("VerifierFichierIndicateurImporteUseCase", () => {
 
     const indicateurCaptor = captor<ErreurValidationFichier[]>();
 
-    // WHEN
+    // When
     await verifierFichierIndicateurImporteUseCase.execute(payload);
 
-    // THEN
+    // Then
     expect(
       erreurValidationFichierRepository.sauvegarder,
     ).toHaveBeenNthCalledWith(1, indicateurCaptor);
@@ -261,7 +261,7 @@ describe("VerifierFichierIndicateurImporteUseCase", () => {
 
   describe("quand le fichier est invalide", () => {
     it("ne doit pas sauvegarder les données du fichier", async () => {
-      // GIVEN
+      // Given
       const detailValidationFichier = new DetailValidationFichierBuilder()
         .avecEstValide(false)
         .build();
@@ -277,17 +277,17 @@ describe("VerifierFichierIndicateurImporteUseCase", () => {
         detailValidationFichier,
       );
 
-      // WHEN
+      // When
       await verifierFichierIndicateurImporteUseCase.execute(payload);
 
-      // THEN
+      // Then
       expect(
         mesureIndicateurTemporaireRepository.sauvegarder,
       ).not.toHaveBeenCalled();
     });
 
     it("quand l'indic_id est null, ne doit pas controler la valeur de l'indic_id", async () => {
-      // GIVEN
+      // Given
       const mesureIndicateurTemporaire1 =
         new MesureIndicateurTemporaireBuilder()
           .avecIndicId("IND-001")
@@ -346,11 +346,11 @@ describe("VerifierFichierIndicateurImporteUseCase", () => {
         detailValidationFichier,
       );
 
-      // WHEN
+      // When
       const report =
         await verifierFichierIndicateurImporteUseCase.execute(payload);
 
-      // THEN
+      // Then
       expect(report.estValide).toEqual(false);
 
       expect(report.listeErreursValidation).toHaveLength(2);
@@ -358,7 +358,7 @@ describe("VerifierFichierIndicateurImporteUseCase", () => {
       expect(report.listeErreursValidation[1].nom).toEqual("METRIC_INVALIDE");
     });
     it("quand au moins un indicateur est invalide, doit inclure les erreurs de validation des données du rapport", async () => {
-      // GIVEN
+      // Given
       const mesureIndicateurTemporaire1 =
         new MesureIndicateurTemporaireBuilder()
           .avecIndicId("IND-001")
@@ -406,11 +406,11 @@ describe("VerifierFichierIndicateurImporteUseCase", () => {
         detailValidationFichier,
       );
 
-      // WHEN
+      // When
       const report =
         await verifierFichierIndicateurImporteUseCase.execute(payload);
 
-      // THEN
+      // Then
       expect(report.estValide).toEqual(false);
 
       expect(report.listeErreursValidation).toHaveLength(2);
@@ -422,7 +422,7 @@ describe("VerifierFichierIndicateurImporteUseCase", () => {
   });
 
   it("quand le fichier possède des indic_id différent de celui en paramètre, doit remonter un rapport invalide", async () => {
-    // GIVEN
+    // Given
     const mesureIndicateurTemporaire1 = new MesureIndicateurTemporaireBuilder()
       .avecIndicId("IND-001")
       .avecZoneId("D001")
@@ -456,11 +456,11 @@ describe("VerifierFichierIndicateurImporteUseCase", () => {
       detailValidationFichier,
     );
 
-    // WHEN
+    // When
     const report =
       await verifierFichierIndicateurImporteUseCase.execute(payload);
 
-    // THEN
+    // Then
     expect(report.estValide).toEqual(false);
     expect(
       mesureIndicateurTemporaireRepository.sauvegarder,
@@ -479,7 +479,7 @@ describe("VerifierFichierIndicateurImporteUseCase", () => {
   });
 
   it("quand le fichier possède des dates invalides, doit remonter un rapport invalide", async () => {
-    // GIVEN
+    // Given
     const mesureIndicateurTemporaire1 = new MesureIndicateurTemporaireBuilder()
       .avecIndicId("IND-001")
       .avecMetricDate("2023-06-31")
@@ -517,11 +517,11 @@ describe("VerifierFichierIndicateurImporteUseCase", () => {
       detailValidationFichier,
     );
 
-    // WHEN
+    // When
     const report =
       await verifierFichierIndicateurImporteUseCase.execute(payload);
 
-    // THEN
+    // Then
     expect(report.estValide).toEqual(false);
     expect(
       mesureIndicateurTemporaireRepository.sauvegarder,
@@ -561,7 +561,7 @@ describe("VerifierFichierIndicateurImporteUseCase", () => {
   });
 
   it("quand le fichier possède des dates invalides au format DD/MM/YYYY ou MM-DD-YY, doit remonter un rapport invalide", async () => {
-    // GIVEN
+    // Given
     const mesureIndicateurTemporaire1 = new MesureIndicateurTemporaireBuilder()
       .avecIndicId("IND-001")
       .avecMetricDate("31/06/2023")
@@ -599,11 +599,11 @@ describe("VerifierFichierIndicateurImporteUseCase", () => {
       detailValidationFichier,
     );
 
-    // WHEN
+    // When
     const report =
       await verifierFichierIndicateurImporteUseCase.execute(payload);
 
-    // THEN
+    // Then
     expect(report.estValide).toEqual(false);
     expect(
       mesureIndicateurTemporaireRepository.sauvegarder,
@@ -643,7 +643,7 @@ describe("VerifierFichierIndicateurImporteUseCase", () => {
   });
 
   it("quand le fichier possède une date valeur au format DD/MM/YYYY, doit convertir la date au format YYYY-MM-DD", async () => {
-    // GIVEN
+    // Given
     const mesureIndicateurTemporaire1 = new MesureIndicateurTemporaireBuilder()
       .avecIndicId("IND-001")
       .avecZoneId("D001")
@@ -680,10 +680,10 @@ describe("VerifierFichierIndicateurImporteUseCase", () => {
 
     const indicateurCaptor = captor<MesureIndicateurTemporaire[]>();
 
-    // WHEN
+    // When
     await verifierFichierIndicateurImporteUseCase.execute(payload);
 
-    // THEN
+    // Then
     expect(
       mesureIndicateurTemporaireRepository.sauvegarder,
     ).toHaveBeenNthCalledWith(1, indicateurCaptor);
@@ -707,7 +707,7 @@ describe("VerifierFichierIndicateurImporteUseCase", () => {
   });
 
   it("quand le fichier possède une date valeur au format D/MM/YYYY, DD/M/YYYY ou D/M/YYYY, doit convertir la date au format YYYY-MM-DD", async () => {
-    // GIVEN
+    // Given
     const mesureIndicateurTemporaire1 = new MesureIndicateurTemporaireBuilder()
       .avecIndicId("IND-001")
       .avecZoneId("D001")
@@ -759,10 +759,10 @@ describe("VerifierFichierIndicateurImporteUseCase", () => {
 
     const indicateurCaptor = captor<MesureIndicateurTemporaire[]>();
 
-    // WHEN
+    // When
     await verifierFichierIndicateurImporteUseCase.execute(payload);
 
-    // THEN
+    // Then
     expect(
       mesureIndicateurTemporaireRepository.sauvegarder,
     ).toHaveBeenNthCalledWith(1, indicateurCaptor);
@@ -800,7 +800,7 @@ describe("VerifierFichierIndicateurImporteUseCase", () => {
   });
 
   it("quand le fichier possède une date valeur au format MM-DD-YY, M-DD-YY, MM-D-YY ou M-D-YY, doit convertir la date au format YYYY-MM-DD", async () => {
-    // GIVEN
+    // Given
     const mesureIndicateurTemporaire1 = new MesureIndicateurTemporaireBuilder()
       .avecIndicId("IND-001")
       .avecZoneId("D001")
@@ -865,10 +865,10 @@ describe("VerifierFichierIndicateurImporteUseCase", () => {
 
     const indicateurCaptor = captor<MesureIndicateurTemporaire[]>();
 
-    // WHEN
+    // When
     await verifierFichierIndicateurImporteUseCase.execute(payload);
 
-    // THEN
+    // Then
     expect(
       mesureIndicateurTemporaireRepository.sauvegarder,
     ).toHaveBeenNthCalledWith(1, indicateurCaptor);
@@ -913,7 +913,7 @@ describe("VerifierFichierIndicateurImporteUseCase", () => {
   });
 
   it("quand le fichier possède un type au format VC VI VA, doit convertir en minuscule", async () => {
-    // GIVEN
+    // Given
     const mesureIndicateurTemporaire1 = new MesureIndicateurTemporaireBuilder()
       .avecIndicId("IND-001")
       .avecZoneId("D001")
@@ -959,10 +959,10 @@ describe("VerifierFichierIndicateurImporteUseCase", () => {
 
     const indicateurCaptor = captor<MesureIndicateurTemporaire[]>();
 
-    // WHEN
+    // When
     await verifierFichierIndicateurImporteUseCase.execute(payload);
 
-    // THEN
+    // Then
     expect(
       mesureIndicateurTemporaireRepository.sauvegarder,
     ).toHaveBeenNthCalledWith(1, indicateurCaptor);
@@ -993,7 +993,7 @@ describe("VerifierFichierIndicateurImporteUseCase", () => {
   });
 
   it("quand le fichier possède un zone id au format France, doit convertir en majuscule", async () => {
-    // GIVEN
+    // Given
     const mesureIndicateurTemporaire1 = new MesureIndicateurTemporaireBuilder()
       .avecIndicId("IND-001")
       .avecZoneId("FRANCE")
@@ -1031,10 +1031,10 @@ describe("VerifierFichierIndicateurImporteUseCase", () => {
 
     const indicateurCaptor = captor<MesureIndicateurTemporaire[]>();
 
-    // WHEN
+    // When
     await verifierFichierIndicateurImporteUseCase.execute(payload);
 
-    // THEN
+    // Then
     expect(
       mesureIndicateurTemporaireRepository.sauvegarder,
     ).toHaveBeenNthCalledWith(1, indicateurCaptor);
@@ -1058,7 +1058,7 @@ describe("VerifierFichierIndicateurImporteUseCase", () => {
   });
 
   it("doit enregistrer le rapport", async () => {
-    // GIVEN
+    // Given
     const detailValidationFichier = new DetailValidationFichierBuilder()
       .avecId("d6f7e603-ace5-49f4-8ab7-78cb6d7108cf")
       .avecUtilisateurEmail("ditp.admin@example.com")
@@ -1077,9 +1077,9 @@ describe("VerifierFichierIndicateurImporteUseCase", () => {
       detailValidationFichier,
     );
 
-    // WHEN
+    // When
     await verifierFichierIndicateurImporteUseCase.execute(payload);
-    // THEN
+    // Then
     expect(rapportRepository.sauvegarder).toHaveBeenNthCalledWith(
       1,
       rapportCaptor,

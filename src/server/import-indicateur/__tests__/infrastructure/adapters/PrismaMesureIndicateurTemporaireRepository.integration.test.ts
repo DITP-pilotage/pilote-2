@@ -39,7 +39,7 @@ describe("PrismaMesureIndicateurTemporaireRepository", () => {
 
   describe("#sauvegarder", () => {
     it("doit sauvegarder les données", async () => {
-      // GIVEN
+      // Given
       const auteurId = await creeUnUtilisateurEnBase();
       const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder()
         .avecEmail("ditp.admin@example.com")
@@ -77,12 +77,12 @@ describe("PrismaMesureIndicateurTemporaireRepository", () => {
           .build(),
       ];
 
-      // WHEN
+      // When
       await prismaMesureIndicateurTemporaireRepository.sauvegarder(
         listeMesuresIndicateurTemporaire,
       );
 
-      // THEN
+      // Then
       const resultListeIndicateursData =
         await prisma.mesure_indicateur_temporaire.findMany();
 
@@ -116,7 +116,7 @@ describe("PrismaMesureIndicateurTemporaireRepository", () => {
 
   describe("recupererToutParRapportId", () => {
     it("doit récupérer les mesures indicateurs temporaire liés au rapport id", async () => {
-      // GIVEN
+      // Given
       const auteurId = await creeUnUtilisateurEnBase();
       const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder()
         .avecEmail("ditp.admin@example.com")
@@ -170,13 +170,13 @@ describe("PrismaMesureIndicateurTemporaireRepository", () => {
       await prismaMesureIndicateurTemporaireRepository.sauvegarder(
         listeMesuresIndicateurTemporaire,
       );
-      // WHEN
+      // When
       const resultListeMesuresIndicateurTemporaire =
         await prismaMesureIndicateurTemporaireRepository.recupererToutParRapportId(
           "6cba829c-def8-4f21-9bb0-07bd5a36bd02",
         );
 
-      // THEN
+      // Then
       expect(resultListeMesuresIndicateurTemporaire).toHaveLength(2);
       expect(resultListeMesuresIndicateurTemporaire[0].rapportId).toEqual(
         "6cba829c-def8-4f21-9bb0-07bd5a36bd02",
@@ -189,7 +189,7 @@ describe("PrismaMesureIndicateurTemporaireRepository", () => {
 
   describe("supprimerToutParRapportId", () => {
     it("doit supprimer les mesures indicateurs temporaires liés à un rapport", async () => {
-      // GIVEN
+      // Given
       const auteurId = await creeUnUtilisateurEnBase();
       const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder()
         .avecEmail("ditp.admin@example.com")
@@ -244,12 +244,12 @@ describe("PrismaMesureIndicateurTemporaireRepository", () => {
         listeMesuresIndicateurTemporaire,
       );
 
-      // WHEN
+      // When
       await prismaMesureIndicateurTemporaireRepository.supprimerToutParRapportId(
         "6cba829c-def8-4f21-9bb0-07bd5a36bd02",
       );
 
-      // THEN
+      // Then
       const resultListeIndicateursData =
         await prisma.mesure_indicateur_temporaire.findMany();
 

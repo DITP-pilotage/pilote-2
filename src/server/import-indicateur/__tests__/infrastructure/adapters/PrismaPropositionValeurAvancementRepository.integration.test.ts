@@ -50,7 +50,7 @@ describe("PrismaPropositionValeurAvancement", () => {
 
   describe("#modifierStatutPropositionsValeurAvancementApresImport", () => {
     it("si la date de valeur avancement de l'import est égale à la date de valeur avancement de la proposition et la valeur avancement importée est égale à la proposition, applique le statut ACCEPTEE_VIA_IMPORT", async () => {
-      // GIVEN
+      // Given
       await prisma.utilisateur.create({
         data: {
           id: "7d9ba603-d510-46f6-bda3-736210467521",
@@ -76,7 +76,7 @@ describe("PrismaPropositionValeurAvancement", () => {
           statut: "EN_COURS",
         },
       });
-      // WHEN
+      // When
       await prismaPropositionValeurAvancementRepository.modifierStatutPropositionsValeurAvancementApresImport(
         {
           indicId: "IND-001",
@@ -86,7 +86,7 @@ describe("PrismaPropositionValeurAvancement", () => {
         },
       );
 
-      // THEN
+      // Then
       const proposition = await prisma.proposition_valeur_actuelle.findFirst();
       expect(proposition?.statut).toStrictEqual(
         StatutProposition.ACCEPTEE_VIA_IMPORT,
@@ -94,7 +94,7 @@ describe("PrismaPropositionValeurAvancement", () => {
     });
 
     it("si la date de valeur avancement de l'import est égale à la date de valeur avancement de la proposition et la valeur avancement importée est différente de la proposition, applique le statut TRAITEE_VIA_IMPORT", async () => {
-      // GIVEN
+      // Given
       await prisma.utilisateur.create({
         data: {
           id: "7d9ba603-d510-46f6-bda3-736210467521",
@@ -120,7 +120,7 @@ describe("PrismaPropositionValeurAvancement", () => {
           statut: "EN_COURS",
         },
       });
-      // WHEN
+      // When
       await prismaPropositionValeurAvancementRepository.modifierStatutPropositionsValeurAvancementApresImport(
         {
           indicId: "IND-001",
@@ -130,7 +130,7 @@ describe("PrismaPropositionValeurAvancement", () => {
         },
       );
 
-      // THEN
+      // Then
       const proposition = await prisma.proposition_valeur_actuelle.findFirst();
       expect(proposition?.statut).toStrictEqual(
         StatutProposition.TRAITEE_VIA_IMPORT,
@@ -138,7 +138,7 @@ describe("PrismaPropositionValeurAvancement", () => {
     });
 
     it("si la date de valeur avancement de l'import est égale à la date de valeur avancement de la proposition et la valeur avancement importée est différente de la proposition et la valeur est null, applique le statut TRAITEE_VIA_IMPORT", async () => {
-      // GIVEN
+      // Given
       await prisma.utilisateur.create({
         data: {
           id: "7d9ba603-d510-46f6-bda3-736210467521",
@@ -164,7 +164,7 @@ describe("PrismaPropositionValeurAvancement", () => {
           statut: "EN_COURS",
         },
       });
-      // WHEN
+      // When
       await prismaPropositionValeurAvancementRepository.modifierStatutPropositionsValeurAvancementApresImport(
         {
           indicId: "IND-001",
@@ -174,7 +174,7 @@ describe("PrismaPropositionValeurAvancement", () => {
         },
       );
 
-      // THEN
+      // Then
       const proposition = await prisma.proposition_valeur_actuelle.findFirst();
       expect(proposition?.statut).toStrictEqual(
         StatutProposition.TRAITEE_VIA_IMPORT,
@@ -182,7 +182,7 @@ describe("PrismaPropositionValeurAvancement", () => {
     });
 
     it("si la date de valeur avancement de l'import est postérieure à la date de valeur avancement de la proposition, applique le statut IGNOREE_VIA_IMPORT", async () => {
-      // GIVEN
+      // Given
       await prisma.utilisateur.create({
         data: {
           id: "7d9ba603-d510-46f6-bda3-736210467521",
@@ -208,7 +208,7 @@ describe("PrismaPropositionValeurAvancement", () => {
           statut: "EN_COURS",
         },
       });
-      // WHEN
+      // When
       await prismaPropositionValeurAvancementRepository.modifierStatutPropositionsValeurAvancementApresImport(
         {
           indicId: "IND-001",
@@ -218,7 +218,7 @@ describe("PrismaPropositionValeurAvancement", () => {
         },
       );
 
-      // THEN
+      // Then
       const proposition = await prisma.proposition_valeur_actuelle.findFirst();
       expect(proposition?.statut).toStrictEqual(
         StatutProposition.IGNOREE_VIA_IMPORT,
@@ -226,7 +226,7 @@ describe("PrismaPropositionValeurAvancement", () => {
     });
 
     it("si la date de valeur avancement de l'import est antérieure à la date de valeur avancement de la proposition, ne modifie pas le statut", async () => {
-      // GIVEN
+      // Given
       await prisma.utilisateur.create({
         data: {
           id: "7d9ba603-d510-46f6-bda3-736210467521",
@@ -252,7 +252,7 @@ describe("PrismaPropositionValeurAvancement", () => {
           statut: "EN_COURS",
         },
       });
-      // WHEN
+      // When
       await prismaPropositionValeurAvancementRepository.modifierStatutPropositionsValeurAvancementApresImport(
         {
           indicId: "IND-001",
@@ -262,13 +262,13 @@ describe("PrismaPropositionValeurAvancement", () => {
         },
       );
 
-      // THEN
+      // Then
       const proposition = await prisma.proposition_valeur_actuelle.findFirst();
       expect(proposition?.statut).toStrictEqual(StatutProposition.EN_COURS);
     });
 
     it("si le statut de la proposition n'est pas EN_COURS, ne modifie pas le statut", async () => {
-      // GIVEN
+      // Given
       await prisma.utilisateur.create({
         data: {
           id: "7d9ba603-d510-46f6-bda3-736210467521",
@@ -294,7 +294,7 @@ describe("PrismaPropositionValeurAvancement", () => {
           statut: "IGNOREE_VIA_IMPORT",
         },
       });
-      // WHEN
+      // When
       await prismaPropositionValeurAvancementRepository.modifierStatutPropositionsValeurAvancementApresImport(
         {
           indicId: "IND-001",
@@ -304,7 +304,7 @@ describe("PrismaPropositionValeurAvancement", () => {
         },
       );
 
-      // THEN
+      // Then
       const proposition = await prisma.proposition_valeur_actuelle.findFirst();
       expect(proposition?.statut).toStrictEqual(
         StatutProposition.IGNOREE_VIA_IMPORT,

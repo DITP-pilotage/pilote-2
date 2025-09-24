@@ -127,22 +127,22 @@ class TableauChantiersTest {
 let tableau: TableauChantiersTest;
 
 beforeEach(() => {
-  // GIVEN
+  // Given
   tableau = new TableauChantiersTest();
 
-  // WHEN
+  // When
   tableau.render();
 });
 describe.skip("TableauChantiers", () => {
   test("le tableau comporte le nombre de lignes adéquat", () => {
-    // THEN
+    // Then
     expect(tableau.récupérerLeNombreDeLignesDuTableau()).toBe(
       tableau.nombreDeDonnées(),
     );
   });
 
   test("le tableau comporte les données d'entrée", () => {
-    // THEN
+    // Then
     expect(screen.getByText("Déployer le programme FR")).toBeInTheDocument();
     expect(
       screen.getByText("Lutter contre la fraude fiscale"),
@@ -152,12 +152,12 @@ describe.skip("TableauChantiers", () => {
 
   describe("quand l'utilisateur clique sur le bouton de tri croissant d'une colonne", () => {
     test("les éléments du tableau sont triés par ordre croissant", async () => {
-      // WHEN
+      // When
       await tableau.trierSurLaColonne(
         'trier la colonne "avancement" par ordre croissant',
       );
 
-      // THEN
+      // Then
       expect(tableau.récupérerUneLigneDuTableau(1)).toHaveTextContent("97");
       expect(tableau.récupérerUneLigneDuTableau(2)).toHaveTextContent("98");
       expect(tableau.récupérerUneLigneDuTableau(3)).toHaveTextContent("99");
@@ -166,10 +166,10 @@ describe.skip("TableauChantiers", () => {
 
   // describe("quand l'utilisateur clique sur le bouton de tri décroissant d'une colonne", () => {
   //   test('les éléments du tableau sont triés par ordre décroissant', async () => {
-  //     // WHEN
+  //     // When
   //     await tableau.trierSurLaColonne('trier la colonne "avancement" par ordre décroissant');
 
-  //     // THEN
+  //     // Then
   //     expect(tableau.récupérerUneLigneDuTableau(1)).toHaveTextContent('99');
   //     expect(tableau.récupérerUneLigneDuTableau(2)).toHaveTextContent('98');
   //     expect(tableau.récupérerUneLigneDuTableau(3)).toHaveTextContent('97');
@@ -177,10 +177,10 @@ describe.skip("TableauChantiers", () => {
   // });
 
   test("la recherche applique un filtre sur les lignes", async () => {
-    // WHEN
+    // When
     await tableau.filtrerParContenuTextuel("fr");
 
-    // THEN
+    // Then
     expect(tableau.récupérerLeNombreDeLignesDuTableau()).toBe(2);
     tableau.récupérerLesLignesDuTableau().forEach((ligne) => {
       expect(ligne).toHaveTextContent(/.*fr.*/i);
@@ -189,7 +189,7 @@ describe.skip("TableauChantiers", () => {
 
   describe("Les bons pictogrammes de typologie apparaissent dans la colonnes typologie", () => {
     test("Quand le chantier est territorialisé et du baromètre", () => {
-      // GIVEN
+      // Given
       const ligneDUnChantierTerritorialisé =
         tableau.récupérerUneLigneParLeNomDuChantier(
           "Lutter contre la fraude fiscale",
@@ -207,14 +207,14 @@ describe.skip("TableauChantiers", () => {
         "chantier brouillon",
       );
 
-      // THEN
+      // Then
       expect(pictoTerritorialisé).toBeInTheDocument();
       expect(pictoBaromère).toBeInTheDocument();
       expect(pictoBrouillon).toBeInTheDocument();
     });
 
     test("Quand le chantier est territorialisé et n'est pas du baromètre ni un chantier brouillon", () => {
-      // GIVEN
+      // Given
       const ligneDUnChantierTerritorialisé =
         tableau.récupérerUneLigneParLeNomDuChantier("Déployer le programme FR");
       const pictoTerritorialisé = queryByText(
@@ -230,14 +230,14 @@ describe.skip("TableauChantiers", () => {
         "chantier brouillon",
       );
 
-      // THEN
+      // Then
       expect(pictoTerritorialisé).toBeInTheDocument();
       expect(pictoBaromère).not.toBeInTheDocument();
       expect(pictoBrouillon).not.toBeInTheDocument();
     });
 
     test("Quand le chantier n'est ni territorialisé, ni du baromètre, ni un chantier brouillon", () => {
-      // GIVEN
+      // Given
       const ligneDUnChantierTerritorialisé =
         tableau.récupérerUneLigneParLeNomDuChantier("Elections du maire");
       const pictoTerritorialisé = queryByText(
@@ -253,7 +253,7 @@ describe.skip("TableauChantiers", () => {
         "chantier brouillon",
       );
 
-      // THEN
+      // Then
       expect(pictoTerritorialisé).not.toBeInTheDocument();
       expect(pictoBaromère).not.toBeInTheDocument();
       expect(pictoBrouillon).not.toBeInTheDocument();

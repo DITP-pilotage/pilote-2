@@ -20,7 +20,7 @@ describe("PrismaErreurValidationFichierRepository", () => {
 
   describe("#sauvegarder", () => {
     it("doit sauvegarder les données", async () => {
-      // GIVEN
+      // Given
       const auteurId = randomUUID();
       await prisma.utilisateur.create({
         data: {
@@ -78,12 +78,12 @@ describe("PrismaErreurValidationFichierRepository", () => {
           .build(),
       ];
 
-      // WHEN
+      // When
       await prismaErreurValidationFichierRepository.sauvegarder(
         listeErreursValidationFichier,
       );
 
-      // THEN
+      // Then
       const resultListeErreursValidationFichier =
         await prisma.erreur_validation_fichier.findMany();
 

@@ -18,7 +18,7 @@ describe("PrismaMesureIndicateurRepository", () => {
       prismaMesureIndicateurRepository = new PrismaMesureIndicateurRepository();
     });
     it("doit sauvegarder les données", async () => {
-      // GIVEN
+      // Given
       const auteurId = randomUUID();
       await prisma.utilisateur.create({
         data: {
@@ -70,10 +70,10 @@ describe("PrismaMesureIndicateurRepository", () => {
           .build(),
       ];
 
-      // WHEN
+      // When
       await prismaMesureIndicateurRepository.sauvegarder(listeIndicateursData);
 
-      // THEN
+      // Then
       const resultListeIndicateursData =
         await prismaMesureIndicateurRepository.recupererTout();
 
