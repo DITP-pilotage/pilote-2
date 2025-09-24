@@ -367,9 +367,10 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
 
     return {
       lecture: chantiersAccessibles,
-      saisieCommentaire: profilUtilisateur.a_acces_tous_chantiers
-        ? chantiersAccessibles
-        : [],
+      saisieCommentaire:
+        profilUtilisateur.a_acces_tous_les_chantiers_saisie_commentaire
+          ? chantiersAccessibles
+          : [],
       saisieIndicateur: [
         ProfilEnum.DITP_PILOTAGE,
         ProfilEnum.DITP_ADMIN,
