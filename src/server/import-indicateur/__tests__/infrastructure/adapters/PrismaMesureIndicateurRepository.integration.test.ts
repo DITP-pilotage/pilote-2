@@ -54,7 +54,7 @@ describe("PrismaMesureIndicateurRepository", () => {
           .avecId("b2450ce3-8006-4550-8132-e5aab19c0caf")
           .avecRapportId("6cba829c-def8-4f21-9bb0-07bd5a36bd02")
           .avecIndicId("IND-001")
-          .avecMetricDate("30/12/2022")
+          .avecMetricDate("2022-12-01")
           .avecMetricType("vi")
           .avecMetricValue("12")
           .avecZoneId("D001")
@@ -63,7 +63,7 @@ describe("PrismaMesureIndicateurRepository", () => {
           .avecId("f7632d30-5b49-465e-8774-063f9f67f83b")
           .avecRapportId("6cba829c-def8-4f21-9bb0-07bd5a36bd02")
           .avecIndicId("IND-002")
-          .avecMetricDate("31/12/2022")
+          .avecMetricDate("2023-01-01")
           .avecMetricType("vc")
           .avecMetricValue("15")
           .avecZoneId("D002")
@@ -86,7 +86,7 @@ describe("PrismaMesureIndicateurRepository", () => {
         "6cba829c-def8-4f21-9bb0-07bd5a36bd02",
       );
       expect(resultListeIndicateursData[0].indicId).toEqual("IND-001");
-      expect(resultListeIndicateursData[0].metricDate).toEqual("30/12/2022");
+      expect(resultListeIndicateursData[0].metricDate).toEqual("2022-12-01");
       expect(resultListeIndicateursData[0].metricType).toEqual("vi");
       expect(resultListeIndicateursData[0].metricValue).toEqual("12");
       expect(resultListeIndicateursData[0].zoneId).toEqual("D001");
@@ -98,7 +98,7 @@ describe("PrismaMesureIndicateurRepository", () => {
         "6cba829c-def8-4f21-9bb0-07bd5a36bd02",
       );
       expect(resultListeIndicateursData[1].indicId).toEqual("IND-002");
-      expect(resultListeIndicateursData[1].metricDate).toEqual("31/12/2022");
+      expect(resultListeIndicateursData[1].metricDate).toEqual("2023-01-01");
       expect(resultListeIndicateursData[1].metricType).toEqual("vc");
       expect(resultListeIndicateursData[1].metricValue).toEqual("15");
       expect(resultListeIndicateursData[1].zoneId).toEqual("D002");

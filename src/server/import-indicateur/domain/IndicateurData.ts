@@ -86,12 +86,14 @@ export class IndicateurData {
     metricType: string;
     metricValue: string;
   }) {
+    const [annnee, mois] = metricDate.split("-");
+
     return new IndicateurData({
       id: id || randomUUID(),
       rapportId,
       indicId,
       zoneId,
-      metricDate,
+      metricDate: `${annnee}-${mois}-01`,
       metricType,
       metricValue,
     });
