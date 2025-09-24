@@ -588,6 +588,7 @@ model profil {
   a_acces_tous_chantiers                          Boolean       @default(false)
   a_acces_tous_chantiers_territorialises          Boolean       @default(false)
   a_acces_tous_les_territoires_lecture            Boolean       @default(false)
+  a_acces_tous_les_chantiers_saisie_commentaire   Boolean       @default(false)
   a_acces_tous_les_territoires_saisie_commentaire Boolean       @default(false)
   a_acces_tous_les_territoires_saisie_indicateur  Boolean       @default(false)
   peut_modifier_les_utilisateurs                  Boolean       @default(false)
