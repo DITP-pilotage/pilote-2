@@ -548,7 +548,20 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
     expect(evenementModifieANullJanvier.valeur).toEqual(null);
     expect(evenementModifieANullJanvier.ordre).toEqual(2);
 
-    const evenementCreeFevrier = evenementCaptor.value[2];
+    const evenementHistoriseJanvier = evenementCaptor.value[2];
+    expect(evenementHistoriseJanvier.indicId).toEqual("IND-001");
+    expect(evenementHistoriseJanvier.territoireCode).toEqual("DEPT-01");
+    expect(evenementHistoriseJanvier.typeEvenement).toEqual(
+      EvenementValeurEnum.VALEUR_HISTORISEE,
+    );
+    expect(evenementHistoriseJanvier.typeValeur).toEqual("VALEUR_AVANCEMENT");
+    expect(evenementHistoriseJanvier.dateValeur).toEqual(
+      new Date("2023-01-01"),
+    );
+    expect(evenementHistoriseJanvier.valeur).toEqual(null);
+    expect(evenementHistoriseJanvier.ordre).toEqual(3);
+
+    const evenementCreeFevrier = evenementCaptor.value[3];
     expect(evenementCreeFevrier.indicId).toEqual("IND-001");
     expect(evenementCreeFevrier.territoireCode).toEqual("DEPT-01");
     expect(evenementCreeFevrier.typeEvenement).toEqual(

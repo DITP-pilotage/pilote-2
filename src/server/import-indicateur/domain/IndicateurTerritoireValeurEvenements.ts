@@ -70,11 +70,7 @@ export class IndicateurTerritoireValeurEvenements {
       }
 
       const estHistorise = evenementsPourDate.aValeurHistorisee();
-      if (
-        !estHistorise &&
-        !evenementsPourDate.aValeurEnCours(null) &&
-        indicateurData.metricValue.length > 0
-      ) {
+      if (!estHistorise && indicateurData.metricValue.length > 0) {
         nouveauxEvenements.push(
           evenementsPourDate.creerEvenementValeurHistorisee({ auteurId }),
         );
