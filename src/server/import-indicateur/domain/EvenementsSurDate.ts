@@ -71,7 +71,7 @@ export class EvenementsSurDate {
 
   valeurEnCours() {
     // TODO : ajouter un test pour vérifier undefined vs null
-    return this.evenementsValeur()[0]?.valeur ?? null;
+    return this.evenementsValeur()[0]?.valeur;
   }
 
   aValeurEnCours(valeur: number | null): boolean {
@@ -128,6 +128,10 @@ export class EvenementsSurDate {
 
   creerEvenementValeurHistorisee({ auteurId }: { auteurId: string }) {
     const valeurEnCours = this.valeurEnCours();
+
+    if (valeurEnCours === undefined) {
+      throw new BadRequestError("Pas de valeur en cours pour l'historisation");
+    }
 
     const evenement =
       IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(

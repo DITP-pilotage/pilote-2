@@ -2116,6 +2116,50 @@ describe("EvenementsSurDate", () => {
       expect(nouveauEvenement.donneesComplementaires).toEqual(undefined);
     });
 
+    it("valeur en cours est null, doit créer un événement VALEUR_HISTORISEE avec succès quand une valeur en cours existe", () => {
+      // Given
+      const evenementValeur = new ValeurIndicateurTerritoireEvenementBuilder()
+        .avecIndicId(INDIC_ID)
+        .avecTerritoireCode(TERRITOIRE_CODE)
+        .avecTypeEvenement("VALEUR_CREEE")
+        .avecDateValeur(new Date("2023-01-01"))
+        .avecValeur(42)
+        .avecOrdre(1)
+        .build();
+      const evenementValeurModifiee =
+        new ValeurIndicateurTerritoireEvenementBuilder()
+          .avecIndicId(INDIC_ID)
+          .avecTerritoireCode(TERRITOIRE_CODE)
+          .avecTypeEvenement("VALEUR_MODIFIEE")
+          .avecDateValeur(new Date("2023-01-01"))
+          .avecValeur(null)
+          .avecOrdre(2)
+          .build();
+
+      const evenementsSurDate = EvenementsSurDate.pourDate(
+        createIdentifiantFlux(),
+        [evenementValeur, evenementValeurModifiee],
+      );
+
+      // When
+      const nouveauEvenement = evenementsSurDate.creerEvenementValeurHistorisee(
+        {
+          auteurId: AUTEUR_ID,
+        },
+      );
+
+      // Then
+      expect(nouveauEvenement.typeEvenement).toEqual("VALEUR_HISTORISEE");
+      expect(nouveauEvenement.indicId).toEqual(INDIC_ID);
+      expect(nouveauEvenement.territoireCode).toEqual(TERRITOIRE_CODE);
+      expect(nouveauEvenement.typeValeur).toEqual("VALEUR_AVANCEMENT");
+      expect(nouveauEvenement.dateValeur).toEqual(new Date("2023-01-01"));
+      expect(nouveauEvenement.valeur).toEqual(null);
+      expect(nouveauEvenement.idAuteurModification).toEqual(AUTEUR_ID);
+      expect(nouveauEvenement.ordre).toEqual(3);
+      expect(nouveauEvenement.donneesComplementaires).toEqual(undefined);
+    });
+
     it("doit échouer quand aucune valeur en cours n'existe", () => {
       // Given
       const evenementsSurDate = EvenementsSurDate.pourDate(
