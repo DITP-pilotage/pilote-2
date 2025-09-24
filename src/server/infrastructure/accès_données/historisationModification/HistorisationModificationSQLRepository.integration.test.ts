@@ -105,7 +105,7 @@ describe("HistorisationModificationSQLRepository", () => {
 
   describe("#sauvegarderModificationHistorisation", () => {
     test("doit sauvegarder une nouvelle création", async () => {
-      // GIVEN
+      // Given
       await prisma.utilisateur.create({
         data: {
           id: "416af1ab-a297-42fa-b89a-771cc8d89d0c",
@@ -130,14 +130,14 @@ describe("HistorisationModificationSQLRepository", () => {
           .withNouvelleValeur({ indicId: "unId2", indicHiddenPilote: false })
           .withAuteurId("416af1ab-a297-42fa-b89a-771cc8d89d0c")
           .build();
-      // WHEN
+      // When
       await historisationModificationSQLRepository.sauvegarderModificationHistorisation(
         historisationModification,
       );
       await historisationModificationSQLRepository.sauvegarderModificationHistorisation(
         historisationModification2,
       );
-      // THEN
+      // Then
       const listeHistorisationModification =
         await prisma.historisation_modification.findMany();
 

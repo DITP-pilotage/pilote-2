@@ -41,7 +41,7 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
   });
 
   it("doit transférer les mesures temporaires des indicateurs vers le repository permanent", async () => {
-    // GIVEN
+    // Given
     const mesureIndicateurTemporaireCaptor =
       captor<MesureIndicateurTemporaire[]>();
     const listeMesuresIndicateursTemporaires = [
@@ -70,13 +70,13 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
       [],
     );
 
-    // WHEN
+    // When
     await publierFichierIndicateurImporteUseCase.execute({
       rapportId: "20a717e6-2de9-428c-b4e7-80f7b9f36ffc",
       auteurId: "2cde2d5a-a575-48ba-9f18-b450d1aa3f60",
     });
 
-    // THEN
+    // Then
     expect(
       mesureIndicateurTemporaireRepository.recupererToutParRapportId,
     ).toHaveBeenNthCalledWith(1, "20a717e6-2de9-428c-b4e7-80f7b9f36ffc");
@@ -114,7 +114,7 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
   });
 
   it("doit supprimer les propositions de valeurs associés aux va importés", async () => {
-    // GIVEN
+    // Given
     const propositionsAModifierCaptor1 = captor<{
       dateValeurImportee: Date;
       indicId: string;
@@ -161,13 +161,13 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
     indicateurTerritoireValeurEvenementRepository.recupererParIndicIdTerritoireCodeEtTypeValeur.mockResolvedValue(
       [],
     );
-    // WHEN
+    // When
     await publierFichierIndicateurImporteUseCase.execute({
       rapportId: "20a717e6-2de9-428c-b4e7-80f7b9f36ffc",
       auteurId: "2cde2d5a-a575-48ba-9f18-b450d1aa3f60",
     });
 
-    // THEN
+    // Then
     expect(
       mesureIndicateurTemporaireRepository.recupererToutParRapportId,
     ).toHaveBeenNthCalledWith(1, "20a717e6-2de9-428c-b4e7-80f7b9f36ffc");
@@ -203,7 +203,7 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
   });
 
   it("quand la valeur est nouvelle pour le tuple [indicateur, territoire, date, type], doit créer une ligne d'évènement (VALEUR_CREEE)", async () => {
-    // GIVEN
+    // Given
     const evenementCaptor = captor<IndicateurTerritoireValeurEvenement[]>();
     const listeMesuresIndicateursTemporaires = [
       new MesureIndicateurTemporaireBuilder()
@@ -223,13 +223,13 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
       [],
     );
 
-    // WHEN
+    // When
     await publierFichierIndicateurImporteUseCase.execute({
       rapportId: "20a717e6-2de9-428c-b4e7-80f7b9f36ffc",
       auteurId: "2cde2d5a-a575-48ba-9f18-b450d1aa3f60",
     });
 
-    // THEN
+    // Then
     expect(
       indicateurTerritoireValeurEvenementRepository.enregistrerTous,
     ).toHaveBeenNthCalledWith(1, evenementCaptor);
@@ -248,7 +248,7 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
   });
 
   it(`quand la valeur est chaine de caractère vide pour le tuple [indicateur, territoire, date, type], ne doit pas créer d'évènement ${EvenementValeurEnum.VALEUR_CREEE}`, async () => {
-    // GIVEN
+    // Given
     const listeMesuresIndicateursTemporaires = [
       new MesureIndicateurTemporaireBuilder()
         .avecIndicId("IND-001")
@@ -278,20 +278,20 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
       [evenementExistant],
     );
 
-    // WHEN
+    // When
     await publierFichierIndicateurImporteUseCase.execute({
       rapportId: "20a717e6-2de9-428c-b4e7-80f7b9f36ffc",
       auteurId: "2cde2d5a-a575-48ba-9f18-b450d1aa3f60",
     });
 
-    // THEN
+    // Then
     expect(
       indicateurTerritoireValeurEvenementRepository.enregistrerTous,
     ).toHaveBeenNthCalledWith(1, []);
   });
 
   it(`quand la valeur est chaine de caractère vide pour le tuple [indicateur, territoire, date, type] avec un tuple pour une date antérieur, ne doit pas créer d'évènement (${EvenementValeurEnum.VALEUR_CREEE}, ${EvenementValeurEnum.VALEUR_HISTORISEE})`, async () => {
-    // GIVEN
+    // Given
     const listeMesuresIndicateursTemporaires = [
       new MesureIndicateurTemporaireBuilder()
         .avecIndicId("IND-001")
@@ -321,20 +321,20 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
       [evenementExistant],
     );
 
-    // WHEN
+    // When
     await publierFichierIndicateurImporteUseCase.execute({
       rapportId: "20a717e6-2de9-428c-b4e7-80f7b9f36ffc",
       auteurId: "2cde2d5a-a575-48ba-9f18-b450d1aa3f60",
     });
 
-    // THEN
+    // Then
     expect(
       indicateurTerritoireValeurEvenementRepository.enregistrerTous,
     ).toHaveBeenNthCalledWith(1, []);
   });
 
   it(`quand il existe une valeur pour le tuple [indicateur, territoire, date, type] et que la nouvelle valeur est chaine de caractère vide, doit créer un évènement ${EvenementValeurEnum.VALEUR_MODIFIEE} avec valeur null`, async () => {
-    // GIVEN
+    // Given
     const evenementCaptor = captor<IndicateurTerritoireValeurEvenement[]>();
     const listeMesuresIndicateursTemporaires = [
       new MesureIndicateurTemporaireBuilder()
@@ -365,13 +365,13 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
       [evenementExistant],
     );
 
-    // WHEN
+    // When
     await publierFichierIndicateurImporteUseCase.execute({
       rapportId: "20a717e6-2de9-428c-b4e7-80f7b9f36ffc",
       auteurId: "2cde2d5a-a575-48ba-9f18-b450d1aa3f60",
     });
 
-    // THEN
+    // Then
     expect(
       indicateurTerritoireValeurEvenementRepository.enregistrerTous,
     ).toHaveBeenNthCalledWith(1, evenementCaptor);
@@ -386,8 +386,110 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
     expect(evenementHistorise.ordre).toEqual(2);
   });
 
+  it(`quand la valeur est nouvelle pour le tuple [indicateur, territoire, date, type] et que la valeur est null, et un nouveau tuple pour une date supérieure et valeur non null dans le même import, doit créer 2 lignes d'évènement (${EvenementValeurEnum.VALEUR_CREEE} + ${EvenementValeurEnum.VALEUR_HISTORISEE})`, async () => {
+    // Given
+    const evenementCaptor = captor<IndicateurTerritoireValeurEvenement[]>();
+    const listeMesuresIndicateursTemporaires = [
+      new MesureIndicateurTemporaireBuilder()
+        .avecIndicId("IND-001")
+        .avecMetricDate("2023-01-01")
+        .avecMetricType("va")
+        .avecMetricValue("42")
+        .avecRapportId("20a717e6-2de9-428c-b4e7-80f7b9f36ffc")
+        .avecZoneId("D01")
+        .build(),
+      new MesureIndicateurTemporaireBuilder()
+        .avecIndicId("IND-001")
+        .avecMetricDate("2023-01-01")
+        .avecMetricType("va")
+        .avecMetricValue("")
+        .avecRapportId("20a717e6-2de9-428c-b4e7-80f7b9f36ffc")
+        .avecZoneId("D01")
+        .build(),
+      new MesureIndicateurTemporaireBuilder()
+        .avecIndicId("IND-001")
+        .avecMetricDate("2023-02-01")
+        .avecMetricType("va")
+        .avecMetricValue("10")
+        .avecRapportId("20a717e6-2de9-428c-b4e7-80f7b9f36ffc")
+        .avecZoneId("D01")
+        .build(),
+    ];
+
+    mesureIndicateurTemporaireRepository.recupererToutParRapportId.mockResolvedValue(
+      listeMesuresIndicateursTemporaires,
+    );
+
+    indicateurTerritoireValeurEvenementRepository.recupererParIndicIdTerritoireCodeEtTypeValeur.mockResolvedValue(
+      [],
+    );
+
+    // When
+    await publierFichierIndicateurImporteUseCase.execute({
+      rapportId: "20a717e6-2de9-428c-b4e7-80f7b9f36ffc",
+      auteurId: "2cde2d5a-a575-48ba-9f18-b450d1aa3f60",
+    });
+
+    // Then
+    expect(
+      indicateurTerritoireValeurEvenementRepository.enregistrerTous,
+    ).toHaveBeenNthCalledWith(1, evenementCaptor);
+
+    const evenementCreeJanvier = evenementCaptor.value[0];
+    expect(evenementCreeJanvier.indicId).toEqual("IND-001");
+    expect(evenementCreeJanvier.territoireCode).toEqual("DEPT-01");
+    expect(evenementCreeJanvier.typeEvenement).toEqual(
+      EvenementValeurEnum.VALEUR_CREEE,
+    );
+    expect(evenementCreeJanvier.typeValeur).toEqual("VALEUR_AVANCEMENT");
+    expect(evenementCreeJanvier.dateValeur).toEqual(new Date("2023-01-01"));
+    expect(evenementCreeJanvier.valeur).toEqual(42);
+    expect(evenementCreeJanvier.ordre).toEqual(1);
+
+    const evenementModifieANullJanvier = evenementCaptor.value[1];
+    expect(evenementModifieANullJanvier.indicId).toEqual("IND-001");
+    expect(evenementModifieANullJanvier.territoireCode).toEqual("DEPT-01");
+    expect(evenementModifieANullJanvier.typeEvenement).toEqual(
+      EvenementValeurEnum.VALEUR_MODIFIEE,
+    );
+    expect(evenementModifieANullJanvier.typeValeur).toEqual(
+      "VALEUR_AVANCEMENT",
+    );
+    expect(evenementModifieANullJanvier.dateValeur).toEqual(
+      new Date("2023-01-01"),
+    );
+    expect(evenementModifieANullJanvier.valeur).toEqual(null);
+    expect(evenementModifieANullJanvier.ordre).toEqual(2);
+
+    const evenementHistoriseJanvier = evenementCaptor.value[3];
+    expect(evenementHistoriseJanvier.indicId).toEqual("IND-001");
+    expect(evenementHistoriseJanvier.territoireCode).toEqual("DEPT-01");
+    expect(evenementHistoriseJanvier.typeEvenement).toEqual(
+      EvenementValeurEnum.VALEUR_HISTORISEE,
+    );
+    expect(evenementHistoriseJanvier.typeValeur).toEqual("VALEUR_AVANCEMENT");
+    expect(evenementHistoriseJanvier.dateValeur).toEqual(
+      new Date("2023-01-01"),
+    );
+    expect(evenementHistoriseJanvier.valeur).toEqual(null);
+    expect(evenementHistoriseJanvier.ordre).toEqual(3);
+
+    const evenementHistoriseFevrier = evenementCaptor.value[4];
+    expect(evenementHistoriseFevrier.indicId).toEqual("IND-001");
+    expect(evenementHistoriseFevrier.territoireCode).toEqual("DEPT-01");
+    expect(evenementHistoriseFevrier.typeEvenement).toEqual(
+      EvenementValeurEnum.VALEUR_HISTORISEE,
+    );
+    expect(evenementHistoriseFevrier.typeValeur).toEqual("VALEUR_AVANCEMENT");
+    expect(evenementHistoriseFevrier.dateValeur).toEqual(
+      new Date("2023-02-01"),
+    );
+    expect(evenementHistoriseFevrier.valeur).toEqual(10);
+    expect(evenementHistoriseFevrier.ordre).toEqual(1);
+  });
+
   it("quand la valeur est nouvelle pour le tuple [indicateur, territoire, date, type] avec un tuple pour une date antérieure, doit créer 2 lignes d'évènement (VALEUR_HISTORISEE + VALEUR_CREEE)", async () => {
-    // GIVEN
+    // Given
     const evenementCaptor = captor<IndicateurTerritoireValeurEvenement[]>();
     const listeMesuresIndicateursTemporaires = [
       new MesureIndicateurTemporaireBuilder()
@@ -417,13 +519,13 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
       listeMesuresIndicateursTemporaires,
     );
 
-    // WHEN
+    // When
     await publierFichierIndicateurImporteUseCase.execute({
       rapportId: "20a717e6-2de9-428c-b4e7-80f7b9f36ffc",
       auteurId: "2cde2d5a-a575-48ba-9f18-b450d1aa3f60",
     });
 
-    // THEN
+    // Then
     expect(
       indicateurTerritoireValeurEvenementRepository.enregistrerTous,
     ).toHaveBeenNthCalledWith(1, evenementCaptor);
@@ -448,7 +550,7 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
   });
 
   it("quand la valeur est nouvelle pour le tuple [indicateur, territoire, date, type] avec un tuple pour une date supérieure, doit créer 2 lignes d'évènement (VALEUR_CREEE + VALEUR_HISTORISEE)", async () => {
-    // GIVEN
+    // Given
     const evenementCaptor = captor<IndicateurTerritoireValeurEvenement[]>();
     const listeMesuresIndicateursTemporaires = [
       new MesureIndicateurTemporaireBuilder()
@@ -476,13 +578,13 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
       listeMesuresIndicateursTemporaires,
     );
 
-    // WHEN
+    // When
     await publierFichierIndicateurImporteUseCase.execute({
       rapportId: "20a717e6-2de9-428c-b4e7-80f7b9f36ffc",
       auteurId: "2cde2d5a-a575-48ba-9f18-b450d1aa3f60",
     });
 
-    // THEN
+    // Then
     expect(
       indicateurTerritoireValeurEvenementRepository.enregistrerTous,
     ).toHaveBeenNthCalledWith(1, evenementCaptor);
@@ -508,7 +610,7 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
   });
 
   it("quand la valeur est différente de la dernière valeur importée pour le tuple [indicateur, territoire, date, type], doit créer une ligne d'évènement (VALEUR_MODIFIEE)", async () => {
-    // GIVEN
+    // Given
     const evenementCaptor = captor<IndicateurTerritoireValeurEvenement[]>();
     const listeMesuresIndicateursTemporaires = [
       new MesureIndicateurTemporaireBuilder()
@@ -539,13 +641,13 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
       [evenementExistant],
     );
 
-    // WHEN
+    // When
     await publierFichierIndicateurImporteUseCase.execute({
       rapportId: "20a717e6-2de9-428c-b4e7-80f7b9f36ffc",
       auteurId: "2cde2d5a-a575-48ba-9f18-b450d1aa3f60",
     });
 
-    // THEN
+    // Then
     expect(
       indicateurTerritoireValeurEvenementRepository.enregistrerTous,
     ).toHaveBeenNthCalledWith(1, evenementCaptor);
@@ -562,7 +664,7 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
   });
 
   it("quand la valeur est identique à la dernière valeur importée pour le tuple [indicateur, territoire, date, type], ne doit pas créer de ligne d'évènement", async () => {
-    // GIVEN
+    // Given
     const listeMesuresIndicateursTemporaires = [
       new MesureIndicateurTemporaireBuilder()
         .avecIndicId("IND-001")
@@ -591,20 +693,20 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
       [evenementExistant],
     );
 
-    // WHEN
+    // When
     await publierFichierIndicateurImporteUseCase.execute({
       rapportId: "20a717e6-2de9-428c-b4e7-80f7b9f36ffc",
       auteurId: "2cde2d5a-a575-48ba-9f18-b450d1aa3f60",
     });
 
-    // THEN
+    // Then
     expect(
       indicateurTerritoireValeurEvenementRepository.enregistrerTous,
     ).toHaveBeenNthCalledWith(1, []);
   });
 
   it("quand plusieurs valeurs pour le même indicateur/territoire sont importées dans le même batch, doit tenir compte des événements créés précédemment dans le batch", async () => {
-    // GIVEN
+    // Given
     const evenementCaptor = captor<IndicateurTerritoireValeurEvenement[]>();
     const listeMesuresIndicateursTemporaires = [
       // Première valeur - nouvelle date, devrait créer VALEUR_CREEE
@@ -683,7 +785,7 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
   });
 
   it("quand une nouvelle valeur est importée et qu'il existe un évènement PROPOSITION_VALEUR_CREEE pour le tuple [indicateur, territoire, date, type], doit créer les évènements PROPOSITION_VALEUR_IGNOREE_VALEUR_MODIFIEE et VALEUR_MODIFIEE", async () => {
-    // GIVEN
+    // Given
     const evenementCaptor = captor<IndicateurTerritoireValeurEvenement[]>();
     const listeMesuresIndicateursTemporaires = [
       new MesureIndicateurTemporaireBuilder()
@@ -725,13 +827,13 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
       [evenementExistantValeur, evenementExistantProposition],
     );
 
-    // WHEN
+    // When
     await publierFichierIndicateurImporteUseCase.execute({
       rapportId: "20a717e6-2de9-428c-b4e7-80f7b9f36ffc",
       auteurId: "2cde2d5a-a575-48ba-9f18-b450d1aa3f60",
     });
 
-    // THEN
+    // Then
     expect(
       indicateurTerritoireValeurEvenementRepository.enregistrerTous,
     ).toHaveBeenNthCalledWith(1, evenementCaptor);
@@ -761,7 +863,7 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
   });
 
   it("quand une nouvelle valeur est importée et qu'il existe un évènement PROPOSITION_VALEUR_MODIFIEE avec une valeur différente pour le tuple [indicateur, territoire, date, type], doit créer les évènements PROPOSITION_VALEUR_IGNOREE_VALEUR_MODIFIEE et VALEUR_MODIFIEE", async () => {
-    // GIVEN
+    // Given
     const evenementCaptor = captor<IndicateurTerritoireValeurEvenement[]>();
     const listeMesuresIndicateursTemporaires = [
       new MesureIndicateurTemporaireBuilder()
@@ -803,13 +905,13 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
       [evenementExistantValeur, evenementExistantProposition],
     );
 
-    // WHEN
+    // When
     await publierFichierIndicateurImporteUseCase.execute({
       rapportId: "20a717e6-2de9-428c-b4e7-80f7b9f36ffc",
       auteurId: "2cde2d5a-a575-48ba-9f18-b450d1aa3f60",
     });
 
-    // THEN
+    // Then
     expect(
       indicateurTerritoireValeurEvenementRepository.enregistrerTous,
     ).toHaveBeenNthCalledWith(1, evenementCaptor);
@@ -839,7 +941,7 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
   });
 
   it("quand une nouvelle valeur est importée et qu'il existe un évènement PROPOSITION_VALEUR_ACCUSEE_RECEPTION avec une valeur différente pour le tuple [indicateur, territoire, date, type], doit créer les évènements PROPOSITION_VALEUR_IGNOREE_VALEUR_MODIFIEE et VALEUR_MODIFIEE", async () => {
-    // GIVEN
+    // Given
     const evenementCaptor = captor<IndicateurTerritoireValeurEvenement[]>();
     const listeMesuresIndicateursTemporaires = [
       new MesureIndicateurTemporaireBuilder()
@@ -896,13 +998,13 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
       ],
     );
 
-    // WHEN
+    // When
     await publierFichierIndicateurImporteUseCase.execute({
       rapportId: "20a717e6-2de9-428c-b4e7-80f7b9f36ffc",
       auteurId: "2cde2d5a-a575-48ba-9f18-b450d1aa3f60",
     });
 
-    // THEN
+    // Then
     expect(
       indicateurTerritoireValeurEvenementRepository.enregistrerTous,
     ).toHaveBeenNthCalledWith(1, evenementCaptor);
@@ -932,7 +1034,7 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
   });
 
   it("quand une nouvelle valeur est importée et qu'il existe un évènement VALEUR_CREE avec la même valeur pour le tuple [indicateur, territoire, date, type], ne doit pas créer d'évènement", async () => {
-    // GIVEN
+    // Given
     const listeMesuresIndicateursTemporaires = [
       new MesureIndicateurTemporaireBuilder()
         .avecIndicId("IND-001")
@@ -973,20 +1075,20 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
       [evenementExistantValeur, evenementExistantProposition],
     );
 
-    // WHEN
+    // When
     await publierFichierIndicateurImporteUseCase.execute({
       rapportId: "20a717e6-2de9-428c-b4e7-80f7b9f36ffc",
       auteurId: "2cde2d5a-a575-48ba-9f18-b450d1aa3f60",
     });
 
-    // THEN
+    // Then
     expect(
       indicateurTerritoireValeurEvenementRepository.enregistrerTous,
     ).toHaveBeenNthCalledWith(1, []);
   });
 
   it("quand une nouvelle valeur est importée et qu'il existe un évènement VALEUR_MODIFIEE avec la même valeur, ne doit pas créer d'évènement", async () => {
-    // GIVEN
+    // Given
     const listeMesuresIndicateursTemporaires = [
       new MesureIndicateurTemporaireBuilder()
         .avecIndicId("IND-001")
@@ -1027,20 +1129,20 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
       [evenementExistantValeur, evenementExistantProposition],
     );
 
-    // WHEN
+    // When
     await publierFichierIndicateurImporteUseCase.execute({
       rapportId: "20a717e6-2de9-428c-b4e7-80f7b9f36ffc",
       auteurId: "2cde2d5a-a575-48ba-9f18-b450d1aa3f60",
     });
 
-    // THEN
+    // Then
     expect(
       indicateurTerritoireValeurEvenementRepository.enregistrerTous,
     ).toHaveBeenNthCalledWith(1, []);
   });
 
   it("quand une nouvelle valeur est importée et qu'il existe un évènement PROPOSITION_VALEUR_CREEE avec une valeur différente pour une date antérieure, doit créer les évènements PROPOSITION_VALEUR_IGNOREE_VALEUR_HISTORISEE et VALEUR_CREEE", async () => {
-    // GIVEN
+    // Given
     const evenementCaptor = captor<IndicateurTerritoireValeurEvenement[]>();
     const listeMesuresIndicateursTemporaires = [
       new MesureIndicateurTemporaireBuilder()
@@ -1082,13 +1184,13 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
       [evenementExistantValeur, evenementExistantProposition],
     );
 
-    // WHEN
+    // When
     await publierFichierIndicateurImporteUseCase.execute({
       rapportId: "20a717e6-2de9-428c-b4e7-80f7b9f36ffc",
       auteurId: "2cde2d5a-a575-48ba-9f18-b450d1aa3f60",
     });
 
-    // THEN
+    // Then
     expect(
       indicateurTerritoireValeurEvenementRepository.enregistrerTous,
     ).toHaveBeenNthCalledWith(1, evenementCaptor);
@@ -1127,7 +1229,7 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
   });
 
   it("quand une nouvelle valeur est importée et qu'il existe un évènement PROPOSITION_VALEUR_MODIFIEE avec une valeur différente pour une date antérieure, doit créer les évènements PROPOSITION_VALEUR_IGNOREE_VALEUR_HISTORISEE et VALEUR_CREEE", async () => {
-    // GIVEN
+    // Given
     const evenementCaptor = captor<IndicateurTerritoireValeurEvenement[]>();
     const listeMesuresIndicateursTemporaires = [
       new MesureIndicateurTemporaireBuilder()
@@ -1169,13 +1271,13 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
       [evenementExistantValeur, evenementExistantProposition],
     );
 
-    // WHEN
+    // When
     await publierFichierIndicateurImporteUseCase.execute({
       rapportId: "20a717e6-2de9-428c-b4e7-80f7b9f36ffc",
       auteurId: "2cde2d5a-a575-48ba-9f18-b450d1aa3f60",
     });
 
-    // THEN
+    // Then
     expect(
       indicateurTerritoireValeurEvenementRepository.enregistrerTous,
     ).toHaveBeenNthCalledWith(1, evenementCaptor);
@@ -1215,7 +1317,7 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
   });
 
   it("quand une nouvelle valeur est importée et qu'il existe un évènement PROPOSITION_VALEUR_ACCUSEE_RECEPTION avec une valeur différente pour une date antérieure, doit créer les évènements PROPOSITION_VALEUR_IGNOREE_VALEUR_HISTORISEE et VALEUR_CREEE", async () => {
-    // GIVEN
+    // Given
     const evenementCaptor = captor<IndicateurTerritoireValeurEvenement[]>();
     const listeMesuresIndicateursTemporaires = [
       new MesureIndicateurTemporaireBuilder()
@@ -1272,13 +1374,13 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
       ],
     );
 
-    // WHEN
+    // When
     await publierFichierIndicateurImporteUseCase.execute({
       rapportId: "20a717e6-2de9-428c-b4e7-80f7b9f36ffc",
       auteurId: "2cde2d5a-a575-48ba-9f18-b450d1aa3f60",
     });
 
-    // THEN
+    // Then
     expect(
       indicateurTerritoireValeurEvenementRepository.enregistrerTous,
     ).toHaveBeenNthCalledWith(1, evenementCaptor);

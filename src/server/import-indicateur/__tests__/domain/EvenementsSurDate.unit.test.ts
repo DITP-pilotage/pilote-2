@@ -16,7 +16,7 @@ describe("EvenementsSurDate", () => {
 
   describe("#creerEvenementPropositionValeurCreee", () => {
     it("doit créer un événement PROPOSITION_VALEUR_CREEE avec succès quand aucune proposition n'existe", () => {
-      // GIVEN
+      // Given
       const evenementExistant = new ValeurIndicateurTerritoireEvenementBuilder()
         .avecIndicId(INDIC_ID)
         .avecTerritoireCode(TERRITOIRE_CODE)
@@ -33,7 +33,7 @@ describe("EvenementsSurDate", () => {
         tousLesEvenements,
       );
 
-      // WHEN
+      // When
       const nouveauEvenement =
         evenementsSurDate.creerEvenementPropositionValeurCreee({
           valeur: 85,
@@ -45,7 +45,7 @@ describe("EvenementsSurDate", () => {
           },
         });
 
-      // THEN
+      // Then
       expect(nouveauEvenement.typeEvenement).toEqual(
         "PROPOSITION_VALEUR_CREEE",
       );
@@ -66,7 +66,7 @@ describe("EvenementsSurDate", () => {
     });
 
     it("doit calculer l'ordre correct quand plusieurs événements existent à la même date", () => {
-      // GIVEN
+      // Given
       const evenement1 = new ValeurIndicateurTerritoireEvenementBuilder()
         .avecIndicId(INDIC_ID)
         .avecTerritoireCode(TERRITOIRE_CODE)
@@ -87,7 +87,7 @@ describe("EvenementsSurDate", () => {
         [evenement1, evenement2],
       );
 
-      // WHEN
+      // When
       const nouvelEvenement =
         evenementsSurDate.creerEvenementPropositionValeurCreee({
           valeur: 85,
@@ -99,12 +99,12 @@ describe("EvenementsSurDate", () => {
           },
         });
 
-      // THEN
+      // Then
       expect(nouvelEvenement.ordre).toEqual(3);
     });
 
     it("doit échouer quand une PROPOSITION_VALEUR_CREEE est déjà en cours", () => {
-      // GIVEN
+      // Given
       const evenementValeur = new ValeurIndicateurTerritoireEvenementBuilder()
         .avecIndicId(INDIC_ID)
         .avecTerritoireCode(TERRITOIRE_CODE)
@@ -129,7 +129,7 @@ describe("EvenementsSurDate", () => {
         [evenementValeur, evenementProposition],
       );
 
-      // WHEN & THEN
+      // When & THEN
       expect(() => {
         evenementsSurDate.creerEvenementPropositionValeurCreee({
           valeur: 85,
@@ -144,7 +144,7 @@ describe("EvenementsSurDate", () => {
     });
 
     it("doit échouer quand une PROPOSITION_VALEUR_MODIFIEE est déjà en cours", () => {
-      // GIVEN
+      // Given
       const evenementValeur = new ValeurIndicateurTerritoireEvenementBuilder()
         .avecIndicId(INDIC_ID)
         .avecTerritoireCode(TERRITOIRE_CODE)
@@ -169,7 +169,7 @@ describe("EvenementsSurDate", () => {
         [evenementValeur, evenementProposition],
       );
 
-      // WHEN & THEN
+      // When & THEN
       expect(() => {
         evenementsSurDate.creerEvenementPropositionValeurCreee({
           valeur: 85,
@@ -184,7 +184,7 @@ describe("EvenementsSurDate", () => {
     });
 
     it("doit réussir quand une autre proposition a été traitée (PROPOSITION_VALEUR_ACCEPTEE)", () => {
-      // GIVEN
+      // Given
       const evenementValeur = new ValeurIndicateurTerritoireEvenementBuilder()
         .avecIndicId(INDIC_ID)
         .avecTerritoireCode(TERRITOIRE_CODE)
@@ -223,7 +223,7 @@ describe("EvenementsSurDate", () => {
         ],
       );
 
-      // WHEN
+      // When
       const nouveauEvenement =
         evenementsSurDate.creerEvenementPropositionValeurCreee({
           valeur: 85,
@@ -235,7 +235,7 @@ describe("EvenementsSurDate", () => {
           },
         });
 
-      // THEN
+      // Then
       expect(nouveauEvenement.typeEvenement).toEqual(
         "PROPOSITION_VALEUR_CREEE",
       );
@@ -244,7 +244,7 @@ describe("EvenementsSurDate", () => {
     });
 
     it("doit échouer quand une PROPOSITION_VALEUR_ACCUSEE_RECEPTION est dans le flux", () => {
-      // GIVEN
+      // Given
       const evenementValeur = new ValeurIndicateurTerritoireEvenementBuilder()
         .avecIndicId(INDIC_ID)
         .avecTerritoireCode(TERRITOIRE_CODE)
@@ -283,7 +283,7 @@ describe("EvenementsSurDate", () => {
         ],
       );
 
-      // WHEN & THEN
+      // When & THEN
       expect(() => {
         evenementsSurDate.creerEvenementPropositionValeurCreee({
           valeur: 85,
@@ -300,7 +300,7 @@ describe("EvenementsSurDate", () => {
 
   describe("#creerEvenementPropositionValeurModifiee", () => {
     it("doit créer un événement PROPOSITION_VALEUR_MODIFIEE avec succès quand une PROPOSITION_VALEUR_CREEE existe", () => {
-      // GIVEN
+      // Given
       const evenementValeur = new ValeurIndicateurTerritoireEvenementBuilder()
         .avecIndicId(INDIC_ID)
         .avecTerritoireCode(TERRITOIRE_CODE)
@@ -325,7 +325,7 @@ describe("EvenementsSurDate", () => {
         [evenementValeur, evenementPropositionCreee],
       );
 
-      // WHEN
+      // When
       const nouveauEvenement =
         evenementsSurDate.creerEvenementPropositionValeurModifiee({
           valeur: 85,
@@ -337,7 +337,7 @@ describe("EvenementsSurDate", () => {
           },
         });
 
-      // THEN
+      // Then
       expect(nouveauEvenement.typeEvenement).toEqual(
         "PROPOSITION_VALEUR_MODIFIEE",
       );
@@ -355,7 +355,7 @@ describe("EvenementsSurDate", () => {
     });
 
     it("doit créer un événement PROPOSITION_VALEUR_MODIFIEE avec succès quand une PROPOSITION_VALEUR_MODIFIEE existe déjà", () => {
-      // GIVEN
+      // Given
       const evenementValeur = new ValeurIndicateurTerritoireEvenementBuilder()
         .avecIndicId(INDIC_ID)
         .avecTerritoireCode(TERRITOIRE_CODE)
@@ -394,7 +394,7 @@ describe("EvenementsSurDate", () => {
         ],
       );
 
-      // WHEN
+      // When
       const nouveauEvenement =
         evenementsSurDate.creerEvenementPropositionValeurModifiee({
           valeur: 85,
@@ -406,7 +406,7 @@ describe("EvenementsSurDate", () => {
           },
         });
 
-      // THEN
+      // Then
       expect(nouveauEvenement.typeEvenement).toEqual(
         "PROPOSITION_VALEUR_MODIFIEE",
       );
@@ -419,7 +419,7 @@ describe("EvenementsSurDate", () => {
     });
 
     it("doit échouer quand aucune PROPOSITION_CREEE n'existe", () => {
-      // GIVEN
+      // Given
       const evenementValeur = new ValeurIndicateurTerritoireEvenementBuilder()
         .avecIndicId(INDIC_ID)
         .avecTerritoireCode(TERRITOIRE_CODE)
@@ -434,7 +434,7 @@ describe("EvenementsSurDate", () => {
         [evenementValeur],
       );
 
-      // WHEN & THEN
+      // When & THEN
       expect(() => {
         evenementsSurDate.creerEvenementPropositionValeurModifiee({
           valeur: 85,
@@ -449,7 +449,7 @@ describe("EvenementsSurDate", () => {
     });
 
     it("doit échouer quand un évènement PROPOSITION_VALEUR_ACCEPTEE existe", () => {
-      // GIVEN
+      // Given
       const evenementValeur = new ValeurIndicateurTerritoireEvenementBuilder()
         .avecIndicId(INDIC_ID)
         .avecTerritoireCode(TERRITOIRE_CODE)
@@ -488,7 +488,7 @@ describe("EvenementsSurDate", () => {
         ],
       );
 
-      // WHEN & THEN
+      // When & THEN
       expect(() => {
         evenementsSurDate.creerEvenementPropositionValeurModifiee({
           valeur: 85,
@@ -503,7 +503,7 @@ describe("EvenementsSurDate", () => {
     });
 
     it("doit échouer quand un évènement PROPOSITION_VALEUR_REFUSEE existe", () => {
-      // GIVEN
+      // Given
       const evenementValeur = new ValeurIndicateurTerritoireEvenementBuilder()
         .avecIndicId(INDIC_ID)
         .avecTerritoireCode(TERRITOIRE_CODE)
@@ -542,7 +542,7 @@ describe("EvenementsSurDate", () => {
         ],
       );
 
-      // WHEN & THEN
+      // When & THEN
       expect(() => {
         evenementsSurDate.creerEvenementPropositionValeurModifiee({
           valeur: 85,
@@ -557,7 +557,7 @@ describe("EvenementsSurDate", () => {
     });
 
     it("doit échouer quand un évènement PROPOSITION_VALEUR_ACCUSEE_RECEPTION existe", () => {
-      // GIVEN
+      // Given
       const evenementValeur = new ValeurIndicateurTerritoireEvenementBuilder()
         .avecIndicId(INDIC_ID)
         .avecTerritoireCode(TERRITOIRE_CODE)
@@ -596,7 +596,7 @@ describe("EvenementsSurDate", () => {
         ],
       );
 
-      // WHEN & THEN
+      // When & THEN
       expect(() => {
         evenementsSurDate.creerEvenementPropositionValeurModifiee({
           valeur: 85,
@@ -613,7 +613,7 @@ describe("EvenementsSurDate", () => {
 
   describe("#creerEvenementPropositionValeurSupprimee", () => {
     it("doit créer un événement PROPOSITION_VALEUR_SUPPRIMEE avec succès quand une PROPOSITION_VALEUR_CREEE est en cours", () => {
-      // GIVEN
+      // Given
       const evenementValeur = new ValeurIndicateurTerritoireEvenementBuilder()
         .avecIndicId(INDIC_ID)
         .avecTerritoireCode(TERRITOIRE_CODE)
@@ -638,14 +638,14 @@ describe("EvenementsSurDate", () => {
         [evenementValeur, evenementPropositionCreee],
       );
 
-      // WHEN
+      // When
       const nouveauEvenement =
         evenementsSurDate.creerEvenementPropositionValeurSupprimee({
           auteurId: AUTEUR_ID,
           donneesComplementaires: { motif: "motif de la suppression" },
         });
 
-      // THEN
+      // Then
       expect(nouveauEvenement.typeEvenement).toEqual(
         "PROPOSITION_VALEUR_SUPPRIMEE",
       );
@@ -662,7 +662,7 @@ describe("EvenementsSurDate", () => {
     });
 
     it("doit créer un événement PROPOSITION_VALEUR_SUPPRIMEE avec succès quand une PROPOSITION_VALEUR_MODIFIEE est en cours", () => {
-      // GIVEN
+      // Given
       const evenementValeur = new ValeurIndicateurTerritoireEvenementBuilder()
         .avecIndicId(INDIC_ID)
         .avecTerritoireCode(TERRITOIRE_CODE)
@@ -701,14 +701,14 @@ describe("EvenementsSurDate", () => {
         ],
       );
 
-      // WHEN
+      // When
       const nouveauEvenement =
         evenementsSurDate.creerEvenementPropositionValeurSupprimee({
           auteurId: AUTEUR_ID,
           donneesComplementaires: { motif: "motif de la suppression" },
         });
 
-      // THEN
+      // Then
       expect(nouveauEvenement.typeEvenement).toEqual(
         "PROPOSITION_VALEUR_SUPPRIMEE",
       );
@@ -717,7 +717,7 @@ describe("EvenementsSurDate", () => {
     });
 
     it("doit échouer quand aucune proposition n'est en cours (PROPOSITION_VALEUR_CREEE ou PROPOSITION_VALEUR_MODIFIEE)", () => {
-      // GIVEN
+      // Given
       const evenementValeur = new ValeurIndicateurTerritoireEvenementBuilder()
         .avecIndicId(INDIC_ID)
         .avecTerritoireCode(TERRITOIRE_CODE)
@@ -732,7 +732,7 @@ describe("EvenementsSurDate", () => {
         [evenementValeur],
       );
 
-      // WHEN & THEN
+      // When & THEN
       expect(() => {
         evenementsSurDate.creerEvenementPropositionValeurSupprimee({
           auteurId: AUTEUR_ID,
@@ -742,7 +742,7 @@ describe("EvenementsSurDate", () => {
     });
 
     it("doit échouer quand un évènement PROPOSITION_VALEUR_ACCEPTEE existe", () => {
-      // GIVEN
+      // Given
       const evenementValeur = new ValeurIndicateurTerritoireEvenementBuilder()
         .avecIndicId(INDIC_ID)
         .avecTerritoireCode(TERRITOIRE_CODE)
@@ -781,7 +781,7 @@ describe("EvenementsSurDate", () => {
         ],
       );
 
-      // WHEN & THEN
+      // When & THEN
       expect(() => {
         evenementsSurDate.creerEvenementPropositionValeurSupprimee({
           auteurId: AUTEUR_ID,
@@ -791,7 +791,7 @@ describe("EvenementsSurDate", () => {
     });
 
     it("doit échouer quand un évènement PROPOSITION_VALEUR_REFUSEE existe", () => {
-      // GIVEN
+      // Given
       const evenementValeur = new ValeurIndicateurTerritoireEvenementBuilder()
         .avecIndicId(INDIC_ID)
         .avecTerritoireCode(TERRITOIRE_CODE)
@@ -830,7 +830,7 @@ describe("EvenementsSurDate", () => {
         ],
       );
 
-      // WHEN & THEN
+      // When & THEN
       expect(() => {
         evenementsSurDate.creerEvenementPropositionValeurSupprimee({
           auteurId: AUTEUR_ID,
@@ -840,7 +840,7 @@ describe("EvenementsSurDate", () => {
     });
 
     it("doit échouer quand un évènement PROPOSITION_VALEUR_ACCUSEE_RECEPTION existe", () => {
-      // GIVEN
+      // Given
       const evenementValeur = new ValeurIndicateurTerritoireEvenementBuilder()
         .avecIndicId(INDIC_ID)
         .avecTerritoireCode(TERRITOIRE_CODE)
@@ -879,7 +879,7 @@ describe("EvenementsSurDate", () => {
         ],
       );
 
-      // WHEN & THEN
+      // When & THEN
       expect(() => {
         evenementsSurDate.creerEvenementPropositionValeurSupprimee({
           auteurId: AUTEUR_ID,
@@ -891,7 +891,7 @@ describe("EvenementsSurDate", () => {
 
   describe("#creerEvenementPropositionValeurAccuseeReception", () => {
     it("doit créer un événement PROPOSITION_VALEUR_ACCUSEE_RECEPTION avec succès quand une PROPOSITION_VALEUR_CREEE est en cours", () => {
-      // GIVEN
+      // Given
       const evenementValeur = new ValeurIndicateurTerritoireEvenementBuilder()
         .avecIndicId(INDIC_ID)
         .avecTerritoireCode(TERRITOIRE_CODE)
@@ -916,14 +916,14 @@ describe("EvenementsSurDate", () => {
         [evenementValeur, evenementPropositionCreee],
       );
 
-      // WHEN
+      // When
       const nouveauEvenement =
         evenementsSurDate.creerEvenementPropositionValeurAccuseeReception({
           auteurId: AUTEUR_ID,
           motif: "Motif de l'accusé de réception",
         });
 
-      // THEN
+      // Then
       expect(nouveauEvenement.typeEvenement).toEqual(
         "PROPOSITION_VALEUR_ACCUSEE_RECEPTION",
       );
@@ -940,7 +940,7 @@ describe("EvenementsSurDate", () => {
     });
 
     it("doit créer un événement PROPOSITION_VALEUR_ACCUSEE_RECEPTION avec succès quand une PROPOSITION_VALEUR_MODIFIEE est en cours", () => {
-      // GIVEN
+      // Given
       const evenementValeur = new ValeurIndicateurTerritoireEvenementBuilder()
         .avecIndicId(INDIC_ID)
         .avecTerritoireCode(TERRITOIRE_CODE)
@@ -979,14 +979,14 @@ describe("EvenementsSurDate", () => {
         ],
       );
 
-      // WHEN
+      // When
       const nouveauEvenement =
         evenementsSurDate.creerEvenementPropositionValeurAccuseeReception({
           auteurId: AUTEUR_ID,
           motif: "Motif de l'accusé de réception",
         });
 
-      // THEN
+      // Then
       expect(nouveauEvenement.typeEvenement).toEqual(
         "PROPOSITION_VALEUR_ACCUSEE_RECEPTION",
       );
@@ -995,7 +995,7 @@ describe("EvenementsSurDate", () => {
     });
 
     it("doit échouer quand aucune proposition n'est en cours (PROPOSITION_VALEUR_CREEE ou PROPOSITION_VALEUR_MODIFIEE)", () => {
-      // GIVEN
+      // Given
       const evenementValeur = new ValeurIndicateurTerritoireEvenementBuilder()
         .avecIndicId(INDIC_ID)
         .avecTerritoireCode(TERRITOIRE_CODE)
@@ -1010,7 +1010,7 @@ describe("EvenementsSurDate", () => {
         [evenementValeur],
       );
 
-      // WHEN & THEN
+      // When & THEN
       expect(() => {
         evenementsSurDate.creerEvenementPropositionValeurAccuseeReception({
           auteurId: AUTEUR_ID,
@@ -1020,7 +1020,7 @@ describe("EvenementsSurDate", () => {
     });
 
     it("doit échouer quand un évènement PROPOSITION_VALEUR_ACCEPTEE existe", () => {
-      // GIVEN
+      // Given
       const evenementValeur = new ValeurIndicateurTerritoireEvenementBuilder()
         .avecIndicId(INDIC_ID)
         .avecTerritoireCode(TERRITOIRE_CODE)
@@ -1059,7 +1059,7 @@ describe("EvenementsSurDate", () => {
         ],
       );
 
-      // WHEN & THEN
+      // When & THEN
       expect(() => {
         evenementsSurDate.creerEvenementPropositionValeurAccuseeReception({
           auteurId: AUTEUR_ID,
@@ -1069,7 +1069,7 @@ describe("EvenementsSurDate", () => {
     });
 
     it("doit échouer quand un évènement PROPOSITION_VALEUR_REFUSEE existe", () => {
-      // GIVEN
+      // Given
       const evenementValeur = new ValeurIndicateurTerritoireEvenementBuilder()
         .avecIndicId(INDIC_ID)
         .avecTerritoireCode(TERRITOIRE_CODE)
@@ -1108,7 +1108,7 @@ describe("EvenementsSurDate", () => {
         ],
       );
 
-      // WHEN & THEN
+      // When & THEN
       expect(() => {
         evenementsSurDate.creerEvenementPropositionValeurAccuseeReception({
           auteurId: AUTEUR_ID,
@@ -1118,7 +1118,7 @@ describe("EvenementsSurDate", () => {
     });
 
     it("doit échouer quand un évènement PROPOSITION_VALEUR_ACCUSEE_RECEPTION existe", () => {
-      // GIVEN
+      // Given
       const evenementValeur = new ValeurIndicateurTerritoireEvenementBuilder()
         .avecIndicId(INDIC_ID)
         .avecTerritoireCode(TERRITOIRE_CODE)
@@ -1157,7 +1157,7 @@ describe("EvenementsSurDate", () => {
         ],
       );
 
-      // WHEN & THEN
+      // When & THEN
       expect(() => {
         evenementsSurDate.creerEvenementPropositionValeurAccuseeReception({
           auteurId: AUTEUR_ID,
@@ -1169,7 +1169,7 @@ describe("EvenementsSurDate", () => {
 
   describe("#creerEvenementPropositionValeurRefusee", () => {
     it("doit créer un événement PROPOSITION_VALEUR_REFUSEE avec succès quand une PROPOSITION_VALEUR_CREEE est en cours", () => {
-      // GIVEN
+      // Given
       const evenementValeur = new ValeurIndicateurTerritoireEvenementBuilder()
         .avecIndicId(INDIC_ID)
         .avecTerritoireCode(TERRITOIRE_CODE)
@@ -1194,14 +1194,14 @@ describe("EvenementsSurDate", () => {
         [evenementValeur, evenementPropositionCreee],
       );
 
-      // WHEN
+      // When
       const nouveauEvenement =
         evenementsSurDate.creerEvenementPropositionValeurRefusee({
           auteurId: AUTEUR_ID,
           motif: "Motif du refus",
         });
 
-      // THEN
+      // Then
       expect(nouveauEvenement.typeEvenement).toEqual(
         "PROPOSITION_VALEUR_REFUSEE",
       );
@@ -1218,7 +1218,7 @@ describe("EvenementsSurDate", () => {
     });
 
     it("doit créer un événement PROPOSITION_VALEUR_REFUSEE avec succès quand une PROPOSITION_VALEUR_MODIFIEE est en cours", () => {
-      // GIVEN
+      // Given
       const evenementValeur = new ValeurIndicateurTerritoireEvenementBuilder()
         .avecIndicId(INDIC_ID)
         .avecTerritoireCode(TERRITOIRE_CODE)
@@ -1257,14 +1257,14 @@ describe("EvenementsSurDate", () => {
         ],
       );
 
-      // WHEN
+      // When
       const nouveauEvenement =
         evenementsSurDate.creerEvenementPropositionValeurRefusee({
           auteurId: AUTEUR_ID,
           motif: "Motif du refus",
         });
 
-      // THEN
+      // Then
       expect(nouveauEvenement.typeEvenement).toEqual(
         "PROPOSITION_VALEUR_REFUSEE",
       );
@@ -1281,7 +1281,7 @@ describe("EvenementsSurDate", () => {
     });
 
     it("doit créer un événement PROPOSITION_VALEUR_REFUSEE avec succès quand une PROPOSITION_VALEUR_ACCUSEE_RECEPTION existe", () => {
-      // GIVEN
+      // Given
       const evenementValeur = new ValeurIndicateurTerritoireEvenementBuilder()
         .avecIndicId(INDIC_ID)
         .avecTerritoireCode(TERRITOIRE_CODE)
@@ -1320,14 +1320,14 @@ describe("EvenementsSurDate", () => {
         ],
       );
 
-      // WHEN
+      // When
       const nouveauEvenement =
         evenementsSurDate.creerEvenementPropositionValeurRefusee({
           auteurId: AUTEUR_ID,
           motif: "Motif du refus",
         });
 
-      // THEN
+      // Then
       expect(nouveauEvenement.typeEvenement).toEqual(
         "PROPOSITION_VALEUR_REFUSEE",
       );
@@ -1336,7 +1336,7 @@ describe("EvenementsSurDate", () => {
     });
 
     it("doit échouer quand aucune proposition n'est en cours et aucun évènement PROPOSITION_VALEUR_ACCUSEE_RECEPTION", () => {
-      // GIVEN
+      // Given
       const evenementValeur = new ValeurIndicateurTerritoireEvenementBuilder()
         .avecIndicId(INDIC_ID)
         .avecTerritoireCode(TERRITOIRE_CODE)
@@ -1351,7 +1351,7 @@ describe("EvenementsSurDate", () => {
         [evenementValeur],
       );
 
-      // WHEN & THEN
+      // When & THEN
       expect(() => {
         evenementsSurDate.creerEvenementPropositionValeurRefusee({
           auteurId: AUTEUR_ID,
@@ -1361,7 +1361,7 @@ describe("EvenementsSurDate", () => {
     });
 
     it("doit échouer quand un évènement PROPOSITION_VALEUR_ACCEPTEE existe", () => {
-      // GIVEN
+      // Given
       const evenementValeur = new ValeurIndicateurTerritoireEvenementBuilder()
         .avecIndicId(INDIC_ID)
         .avecTerritoireCode(TERRITOIRE_CODE)
@@ -1400,7 +1400,7 @@ describe("EvenementsSurDate", () => {
         ],
       );
 
-      // WHEN & THEN
+      // When & THEN
       expect(() => {
         evenementsSurDate.creerEvenementPropositionValeurRefusee({
           auteurId: AUTEUR_ID,
@@ -1412,7 +1412,7 @@ describe("EvenementsSurDate", () => {
 
   describe("#creerEvenementPropositionValeurAcceptee", () => {
     it("doit créer un événement PROPOSITION_VALEUR_ACCEPTEE avec succès quand une PROPOSITION_VALEUR_CREEE est en cours", () => {
-      // GIVEN
+      // Given
       const evenementValeur = new ValeurIndicateurTerritoireEvenementBuilder()
         .avecIndicId(INDIC_ID)
         .avecTerritoireCode(TERRITOIRE_CODE)
@@ -1437,14 +1437,14 @@ describe("EvenementsSurDate", () => {
         [evenementValeur, evenementPropositionCreee],
       );
 
-      // WHEN
+      // When
       const nouveauxEvenements =
         evenementsSurDate.creerEvenementPropositionValeurAcceptee({
           auteurId: AUTEUR_ID,
           motif: "Motif d'acceptation",
         });
 
-      // THEN
+      // Then
       expect(nouveauxEvenements[0].typeEvenement).toEqual(
         "PROPOSITION_VALEUR_ACCEPTEE",
       );
@@ -1461,7 +1461,7 @@ describe("EvenementsSurDate", () => {
     });
 
     it("doit créer un événement PROPOSITION_VALEUR_ACCEPTEE avec succès quand une PROPOSITION_VALEUR_MODIFIEE est en cours", () => {
-      // GIVEN
+      // Given
       const evenementValeur = new ValeurIndicateurTerritoireEvenementBuilder()
         .avecIndicId(INDIC_ID)
         .avecTerritoireCode(TERRITOIRE_CODE)
@@ -1500,14 +1500,14 @@ describe("EvenementsSurDate", () => {
         ],
       );
 
-      // WHEN
+      // When
       const nouveauxEvenements =
         evenementsSurDate.creerEvenementPropositionValeurAcceptee({
           auteurId: AUTEUR_ID,
           motif: "Motif d'acceptation",
         });
 
-      // THEN
+      // Then
       expect(nouveauxEvenements[0].typeEvenement).toEqual(
         "PROPOSITION_VALEUR_ACCEPTEE",
       );
@@ -1534,7 +1534,7 @@ describe("EvenementsSurDate", () => {
     });
 
     it("doit créer un événement PROPOSITION_VALEUR_ACCEPTEE avec succès quand une PROPOSITION_VALEUR_ACCUSEE_RECEPTION existe", () => {
-      // GIVEN
+      // Given
       const evenementValeur = new ValeurIndicateurTerritoireEvenementBuilder()
         .avecIndicId(INDIC_ID)
         .avecTerritoireCode(TERRITOIRE_CODE)
@@ -1573,14 +1573,14 @@ describe("EvenementsSurDate", () => {
         ],
       );
 
-      // WHEN
+      // When
       const nouveauxEvenements =
         evenementsSurDate.creerEvenementPropositionValeurAcceptee({
           auteurId: AUTEUR_ID,
           motif: "Motif d'acceptation",
         });
 
-      // THEN
+      // Then
       expect(nouveauxEvenements[0].typeEvenement).toEqual(
         "PROPOSITION_VALEUR_ACCEPTEE",
       );
@@ -1589,7 +1589,7 @@ describe("EvenementsSurDate", () => {
     });
 
     it("doit échouer quand aucune proposition n'est en cours et aucun évènement PROPOSITION_VALEUR_ACCUSEE_RECEPTION", () => {
-      // GIVEN
+      // Given
       const evenementValeur = new ValeurIndicateurTerritoireEvenementBuilder()
         .avecIndicId(INDIC_ID)
         .avecTerritoireCode(TERRITOIRE_CODE)
@@ -1604,7 +1604,7 @@ describe("EvenementsSurDate", () => {
         [evenementValeur],
       );
 
-      // WHEN & THEN
+      // When & THEN
       expect(() => {
         evenementsSurDate.creerEvenementPropositionValeurAcceptee({
           auteurId: AUTEUR_ID,
@@ -1614,7 +1614,7 @@ describe("EvenementsSurDate", () => {
     });
 
     it("doit échouer quand un évènement PROPOSITION_VALEUR_REFUSEE existe", () => {
-      // GIVEN
+      // Given
       const evenementValeur = new ValeurIndicateurTerritoireEvenementBuilder()
         .avecIndicId(INDIC_ID)
         .avecTerritoireCode(TERRITOIRE_CODE)
@@ -1653,7 +1653,7 @@ describe("EvenementsSurDate", () => {
         ],
       );
 
-      // WHEN & THEN
+      // When & THEN
       expect(() => {
         evenementsSurDate.creerEvenementPropositionValeurAcceptee({
           auteurId: AUTEUR_ID,
@@ -1665,7 +1665,7 @@ describe("EvenementsSurDate", () => {
 
   describe("#creerEvenementPropositionValeurAccepteeAvecModification", () => {
     it("doit créer un événement PROPOSITION_VALEUR_ACCEPTEE_AVEC_MODIFICATION avec succès quand une PROPOSITION_VALEUR_CREEE est en cours", () => {
-      // GIVEN
+      // Given
       const evenementValeur = new ValeurIndicateurTerritoireEvenementBuilder()
         .avecIndicId(INDIC_ID)
         .avecTerritoireCode(TERRITOIRE_CODE)
@@ -1690,13 +1690,13 @@ describe("EvenementsSurDate", () => {
         [evenementValeur, evenementPropositionCreee],
       );
 
-      // WHEN
+      // When
       const nouveauxEvenements =
         evenementsSurDate.creerEvenementPropositionValeurAccepteeAvecModification(
           { auteurId: AUTEUR_ID, valeur: 90, motif: "Motif de test" },
         );
 
-      // THEN
+      // Then
       const [evenementAcceptation, evenementModification] = nouveauxEvenements;
 
       expect(evenementAcceptation.typeEvenement).toEqual(
@@ -1719,7 +1719,7 @@ describe("EvenementsSurDate", () => {
     });
 
     it("doit créer un événement PROPOSITION_VALEUR_ACCEPTEE_AVEC_MODIFICATION avec succès quand une PROPOSITION_VALEUR_ACCUSEE_RECEPTION existe", () => {
-      // GIVEN
+      // Given
       const evenementValeur = new ValeurIndicateurTerritoireEvenementBuilder()
         .avecIndicId(INDIC_ID)
         .avecTerritoireCode(TERRITOIRE_CODE)
@@ -1758,13 +1758,13 @@ describe("EvenementsSurDate", () => {
         ],
       );
 
-      // WHEN
+      // When
       const nouveauxEvenements =
         evenementsSurDate.creerEvenementPropositionValeurAccepteeAvecModification(
           { auteurId: AUTEUR_ID, valeur: 95, motif: "Autre motif de test" },
         );
 
-      // THEN
+      // Then
       const [evenementAcceptation, evenementModification] = nouveauxEvenements;
 
       expect(evenementAcceptation.typeEvenement).toEqual(
@@ -1779,7 +1779,7 @@ describe("EvenementsSurDate", () => {
     });
 
     it("doit échouer quand aucune proposition n'est en cours et aucun évènement PROPOSITION_VALEUR_ACCUSEE_RECEPTION", () => {
-      // GIVEN
+      // Given
       const evenementValeur = new ValeurIndicateurTerritoireEvenementBuilder()
         .avecIndicId(INDIC_ID)
         .avecTerritoireCode(TERRITOIRE_CODE)
@@ -1794,7 +1794,7 @@ describe("EvenementsSurDate", () => {
         [evenementValeur],
       );
 
-      // WHEN & THEN
+      // When & THEN
       expect(() => {
         evenementsSurDate.creerEvenementPropositionValeurAccepteeAvecModification(
           { auteurId: AUTEUR_ID, valeur: 90, motif: "motif" },
@@ -1803,7 +1803,7 @@ describe("EvenementsSurDate", () => {
     });
 
     it("doit échouer quand un évènement PROPOSITION_VALEUR_REFUSEE existe", () => {
-      // GIVEN
+      // Given
       const evenementValeur = new ValeurIndicateurTerritoireEvenementBuilder()
         .avecIndicId(INDIC_ID)
         .avecTerritoireCode(TERRITOIRE_CODE)
@@ -1842,7 +1842,7 @@ describe("EvenementsSurDate", () => {
         ],
       );
 
-      // WHEN & THEN
+      // When & THEN
       expect(() => {
         evenementsSurDate.creerEvenementPropositionValeurAccepteeAvecModification(
           { auteurId: AUTEUR_ID, valeur: 90, motif: "motif" },
@@ -1853,7 +1853,7 @@ describe("EvenementsSurDate", () => {
 
   describe("#creerEvenementPropositionValeurIgnoreeValeurHistorisee", () => {
     it("doit créer un événement PROPOSITION_VALEUR_IGNOREE_VALEUR_HISTORISEE avec succès quand une proposition est en cours", () => {
-      // GIVEN
+      // Given
       const evenementValeur = new ValeurIndicateurTerritoireEvenementBuilder()
         .avecIndicId(INDIC_ID)
         .avecTerritoireCode(TERRITOIRE_CODE)
@@ -1878,7 +1878,7 @@ describe("EvenementsSurDate", () => {
         [evenementValeur, evenementPropositionCreee],
       );
 
-      // WHEN
+      // When
       const nouveauEvenement =
         evenementsSurDate.creerEvenementPropositionValeurIgnoreeValeurHistorisee(
           {
@@ -1886,7 +1886,7 @@ describe("EvenementsSurDate", () => {
           },
         );
 
-      // THEN
+      // Then
       expect(nouveauEvenement.typeEvenement).toEqual(
         "PROPOSITION_VALEUR_IGNOREE_VALEUR_HISTORISEE",
       );
@@ -1901,7 +1901,7 @@ describe("EvenementsSurDate", () => {
     });
 
     it("doit échouer quand aucune proposition n'est en cours", () => {
-      // GIVEN
+      // Given
       const evenementValeur = new ValeurIndicateurTerritoireEvenementBuilder()
         .avecIndicId(INDIC_ID)
         .avecTerritoireCode(TERRITOIRE_CODE)
@@ -1916,7 +1916,7 @@ describe("EvenementsSurDate", () => {
         [evenementValeur],
       );
 
-      // WHEN & THEN
+      // When & THEN
       expect(() => {
         evenementsSurDate.creerEvenementPropositionValeurIgnoreeValeurHistorisee(
           {
@@ -1929,7 +1929,7 @@ describe("EvenementsSurDate", () => {
 
   describe("#creerEvenementPropositionValeurIgnoreeValeurModifiee", () => {
     it("doit créer un événement PROPOSITION_VALEUR_IGNOREE_VALEUR_MODIFIEE avec succès quand une proposition est en cours", () => {
-      // GIVEN
+      // Given
       const evenementValeur = new ValeurIndicateurTerritoireEvenementBuilder()
         .avecIndicId(INDIC_ID)
         .avecTerritoireCode(TERRITOIRE_CODE)
@@ -1954,14 +1954,14 @@ describe("EvenementsSurDate", () => {
         [evenementValeur, evenementPropositionCreee],
       );
 
-      // WHEN
+      // When
       const nouveauEvenement =
         evenementsSurDate.creerEvenementPropositionValeurIgnoreeValeurModifiee({
           auteurId: AUTEUR_ID,
           valeur: 90,
         });
 
-      // THEN
+      // Then
       expect(nouveauEvenement.typeEvenement).toEqual(
         "PROPOSITION_VALEUR_IGNOREE_VALEUR_MODIFIEE",
       );
@@ -1976,7 +1976,7 @@ describe("EvenementsSurDate", () => {
     });
 
     it("doit échouer quand aucune proposition n'est en cours", () => {
-      // GIVEN
+      // Given
       const evenementValeur = new ValeurIndicateurTerritoireEvenementBuilder()
         .avecIndicId(INDIC_ID)
         .avecTerritoireCode(TERRITOIRE_CODE)
@@ -1991,7 +1991,7 @@ describe("EvenementsSurDate", () => {
         [evenementValeur],
       );
 
-      // WHEN & THEN
+      // When & THEN
       expect(() => {
         evenementsSurDate.creerEvenementPropositionValeurIgnoreeValeurModifiee({
           auteurId: AUTEUR_ID,
@@ -2003,7 +2003,7 @@ describe("EvenementsSurDate", () => {
 
   describe("#creerEvenementValeurCreeeOuModifiee", () => {
     it("doit créer un événement VALEUR_CREEE avec succès quand estValeurModifiee est false", () => {
-      // GIVEN
+      // Given
       const evenementsSurDate = EvenementsSurDate.pourDate(
         createIdentifiantFlux(),
         [],
@@ -2016,7 +2016,7 @@ describe("EvenementsSurDate", () => {
         .avecMetricValue("85")
         .build();
 
-      // WHEN
+      // When
       const nouveauEvenement =
         evenementsSurDate.creerEvenementValeurCreeeOuModifiee({
           indicateurData,
@@ -2024,7 +2024,7 @@ describe("EvenementsSurDate", () => {
           estValeurModifiee: false,
         });
 
-      // THEN
+      // Then
       expect(nouveauEvenement.typeEvenement).toEqual("VALEUR_CREEE");
       expect(nouveauEvenement.indicId).toEqual(INDIC_ID);
       expect(nouveauEvenement.territoireCode).toEqual(TERRITOIRE_CODE);
@@ -2037,7 +2037,7 @@ describe("EvenementsSurDate", () => {
     });
 
     it("doit créer un événement VALEUR_MODIFIEE avec succès quand estValeurModifiee est true", () => {
-      // GIVEN
+      // Given
       const evenementValeur = new ValeurIndicateurTerritoireEvenementBuilder()
         .avecIndicId(INDIC_ID)
         .avecTerritoireCode(TERRITOIRE_CODE)
@@ -2059,7 +2059,7 @@ describe("EvenementsSurDate", () => {
         .avecMetricValue("90")
         .build();
 
-      // WHEN
+      // When
       const nouveauEvenement =
         evenementsSurDate.creerEvenementValeurCreeeOuModifiee({
           indicateurData,
@@ -2067,7 +2067,7 @@ describe("EvenementsSurDate", () => {
           estValeurModifiee: true,
         });
 
-      // THEN
+      // Then
       expect(nouveauEvenement.typeEvenement).toEqual("VALEUR_MODIFIEE");
       expect(nouveauEvenement.indicId).toEqual(INDIC_ID);
       expect(nouveauEvenement.territoireCode).toEqual(TERRITOIRE_CODE);
@@ -2082,7 +2082,7 @@ describe("EvenementsSurDate", () => {
 
   describe("#creerEvenementValeurHistorisee", () => {
     it("doit créer un événement VALEUR_HISTORISEE avec succès quand une valeur en cours existe", () => {
-      // GIVEN
+      // Given
       const evenementValeur = new ValeurIndicateurTerritoireEvenementBuilder()
         .avecIndicId(INDIC_ID)
         .avecTerritoireCode(TERRITOIRE_CODE)
@@ -2097,14 +2097,14 @@ describe("EvenementsSurDate", () => {
         [evenementValeur],
       );
 
-      // WHEN
+      // When
       const nouveauEvenement = evenementsSurDate.creerEvenementValeurHistorisee(
         {
           auteurId: AUTEUR_ID,
         },
       );
 
-      // THEN
+      // Then
       expect(nouveauEvenement.typeEvenement).toEqual("VALEUR_HISTORISEE");
       expect(nouveauEvenement.indicId).toEqual(INDIC_ID);
       expect(nouveauEvenement.territoireCode).toEqual(TERRITOIRE_CODE);
@@ -2117,13 +2117,13 @@ describe("EvenementsSurDate", () => {
     });
 
     it("doit échouer quand aucune valeur en cours n'existe", () => {
-      // GIVEN
+      // Given
       const evenementsSurDate = EvenementsSurDate.pourDate(
         createIdentifiantFlux(),
         [],
       );
 
-      // WHEN & THEN
+      // When & THEN
       expect(() => {
         evenementsSurDate.creerEvenementValeurHistorisee({
           auteurId: AUTEUR_ID,
@@ -2134,7 +2134,7 @@ describe("EvenementsSurDate", () => {
 
   describe("#creerEvenementValeurHistoriseeACreation", () => {
     it("doit créer un événement VALEUR_HISTORISEE avec succès avec les données de l'indicateur", () => {
-      // GIVEN
+      // Given
       const evenementsSurDate = EvenementsSurDate.pourDate(
         createIdentifiantFlux(),
         [],
@@ -2147,14 +2147,14 @@ describe("EvenementsSurDate", () => {
         .avecMetricValue("85.5")
         .build();
 
-      // WHEN
+      // When
       const nouveauEvenement =
         evenementsSurDate.creerEvenementValeurHistoriseeACreation({
           indicateurData,
           auteurId: AUTEUR_ID,
         });
 
-      // THEN
+      // Then
       expect(nouveauEvenement.typeEvenement).toEqual("VALEUR_HISTORISEE");
       expect(nouveauEvenement.indicId).toEqual(INDIC_ID);
       expect(nouveauEvenement.territoireCode).toEqual(TERRITOIRE_CODE);

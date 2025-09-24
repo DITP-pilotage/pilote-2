@@ -9,7 +9,7 @@ import { getContainer } from "@/server/dependances";
 
 describe("PublierFichierImportIndicateurHandler", () => {
   it("doit transférer les mesures indicateurs temporaires vers la table permanente", async () => {
-    // GIVEN
+    // Given
     const auteurId = randomUUID();
     await prisma.utilisateur.create({
       data: {
@@ -88,11 +88,11 @@ describe("PublierFichierImportIndicateurHandler", () => {
     });
     const userId = "8f2ebc57-dc28-4e42-b3c5-f9d865d6da9e";
 
-    // WHEN
+    // When
     await getContainer("importIndicateur")
       .resolve("publierFichierImportIndicateurHandler")
       .handle(req, res, userId);
-    // THEN
+    // Then
     const listeMesuresIndicateursTemporaire =
       await prisma.mesure_indicateur_temporaire.findMany({});
     const listeMesuresIndicateurs = await prisma.mesure_indicateur.findMany({});

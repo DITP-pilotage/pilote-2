@@ -8,7 +8,7 @@ jest.mock("next/router", () => require("next-router-mock"));
 
 describe("ResultatValidationFichier", () => {
   it("quand le fichier est valide doit afficher que le fichier est correct", () => {
-    // GIVEN
+    // Given
     const rapport: DetailValidationFichierContrat = {
       id: "0df7df91-7c63-4e45-ba85-6553bf873705",
       estValide: true,
@@ -17,17 +17,17 @@ describe("ResultatValidationFichier", () => {
 
     mockRouter.push("chantier/CH-123/indicateurs?indicateurId=IND-123");
 
-    // WHEN
+    // When
     render(<ResultatValidationFichier rapport={rapport} />);
 
-    // THEN
+    // Then
     expect(
       screen.getByText("Bravo, le fichier est conforme !"),
     ).toBeInTheDocument();
   });
 
   it("quand le fichier contient des erreurs, doit afficher que le tableau d'erreur", () => {
-    // GIVEN
+    // Given
     const rapport: DetailValidationFichierContrat = {
       id: "9e058686-eecb-4079-a192-29547a3ee842",
       estValide: false,
@@ -53,10 +53,10 @@ describe("ResultatValidationFichier", () => {
       ],
     };
 
-    // WHEN
+    // When
     render(<ResultatValidationFichier rapport={rapport} />);
 
-    // THEN
+    // Then
     expect(screen.getByText("Message erreur 1")).toBeInTheDocument();
     expect(screen.getByText("cellule 1")).toBeInTheDocument();
     expect(screen.getByText("Nom du champ 1")).toBeInTheDocument();

@@ -1,6 +1,7 @@
 import {
   DonneesComplementaires,
   IndicateurTerritoireValeurEvenement,
+  ValeurEvenement,
 } from "@/server/indicateur-territoire-valeur-evenement/domain/IndicateurTerritoireValeurEvenement";
 import { TypeEvenement } from "@/server/indicateur-territoire-valeur-evenement/domain/TypeEvenement";
 import { TypeValeur } from "@/server/indicateur-territoire-valeur-evenement/domain/TypeValeur";
@@ -18,7 +19,7 @@ export class ValeurIndicateurTerritoireEvenementBuilder {
 
   private dateValeur: Date = new Date("2023-01-15");
 
-  private valeur: number = 75;
+  private valeur: ValeurEvenement<TypeEvenement> = 75;
 
   private donneesComplementaires: DonneesComplementaires<TypeEvenement> =
     undefined;
@@ -67,7 +68,9 @@ export class ValeurIndicateurTerritoireEvenementBuilder {
     return this;
   }
 
-  avecValeur(valeur: number): ValeurIndicateurTerritoireEvenementBuilder {
+  avecValeur(
+    valeur: ValeurEvenement<TypeEvenement>,
+  ): ValeurIndicateurTerritoireEvenementBuilder {
     this.valeur = valeur;
     return this;
   }

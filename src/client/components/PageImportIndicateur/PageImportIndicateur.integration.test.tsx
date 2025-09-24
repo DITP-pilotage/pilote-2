@@ -29,13 +29,13 @@ jest.mock("next/router", () => require("next-router-mock"));
 describe("PageImportIndicateur", () => {
   describe("En tête", () => {
     it("doit afficher un titre indiquant que l'on est sur la page indicateur", () => {
-      // GIVEN
+      // Given
       const chantierInformations: ChantierInformations = {
         id: "chantierId",
         nom: CHANTIER_NOM,
       };
 
-      // WHEN
+      // When
       render(
         <PageImportIndicateur
           chantierInformations={chantierInformations}
@@ -46,7 +46,7 @@ describe("PageImportIndicateur", () => {
         />,
       );
 
-      // THEN
+      // Then
       const titre = screen.getByRole("heading", { level: 1 });
 
       expect(titre).toBeInTheDocument();
@@ -54,13 +54,13 @@ describe("PageImportIndicateur", () => {
     });
 
     it("doit afficher un fil d'Ariane indiquant l'indicateur, le chantier et le retour à l'accueil", () => {
-      // GIVEN
+      // Given
       const chantierInformation: ChantierInformations = {
         id: "chantierId",
         nom: CHANTIER_NOM,
       };
 
-      // WHEN
+      // When
       render(
         <PageImportIndicateur
           chantierInformations={chantierInformation}
@@ -71,7 +71,7 @@ describe("PageImportIndicateur", () => {
         />,
       );
 
-      // THEN
+      // Then
       const fileDAriane = screen.getByRole("navigation");
       const elementAccueilFileDAriane = within(fileDAriane).getByRole("link", {
         name: "Accueil",
@@ -92,13 +92,13 @@ describe("PageImportIndicateur", () => {
 
   describe("Section import fichier indicateur pour un chantier", () => {
     it("doit afficher le titre de la section", () => {
-      // GIVEN
+      // Given
       const chantierInformation: ChantierInformations = {
         id: "chantierId",
         nom: CHANTIER_NOM,
       };
 
-      // WHEN
+      // When
       render(
         <PageImportIndicateur
           chantierInformations={chantierInformation}
@@ -109,7 +109,7 @@ describe("PageImportIndicateur", () => {
         />,
       );
 
-      // THEN
+      // Then
       const titreDeLaSection = screen.getByRole("heading", {
         level: 2,
         name: "Importez vos données",
@@ -119,7 +119,7 @@ describe("PageImportIndicateur", () => {
     });
 
     it("doit afficher la liste des titres des indicateurs", async () => {
-      // GIVEN
+      // Given
       const indicateurs: Indicateur[] = [
         new IndicateurBuilder()
           .avecType("IMPACT")
@@ -138,7 +138,7 @@ describe("PageImportIndicateur", () => {
         nom: CHANTIER_NOM,
       };
 
-      // WHEN
+      // When
       render(
         <PageImportIndicateur
           chantierInformations={chantierInformation}
@@ -149,7 +149,7 @@ describe("PageImportIndicateur", () => {
         />,
       );
 
-      // THEN
+      // Then
       const titreCatégorieIndicateur1 = screen.getByText(
         "IND-156798 : IND-156798-CH-123 nom indicateur",
       );

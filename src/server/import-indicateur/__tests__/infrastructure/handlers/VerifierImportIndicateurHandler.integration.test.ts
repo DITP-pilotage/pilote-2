@@ -56,7 +56,7 @@ async function creeUnUtilisateurEnBase() {
 describe("VerifierImportIndicateurHandler", () => {
   describe("Quand le fichier envoyé est correct", () => {
     it("doit retourner que le fichier est valide", async () => {
-      // GIVEN
+      // Given
       const auteurId = await creeUnUtilisateurEnBase();
       const report = new ReportValidataWithDataBuilder()
         .avecValid(true)
@@ -89,7 +89,7 @@ describe("VerifierImportIndicateurHandler", () => {
           JSON.stringify({ report, resource_data: report.resource_data }),
         );
 
-      // WHEN
+      // When
       const formData = new FormData();
       const file = mock<File>();
       formData.append("file", file);
@@ -110,7 +110,7 @@ describe("VerifierImportIndicateurHandler", () => {
         .resolve("verifierFichierImportIndicateurHandler")
         .handle(req, res);
 
-      // THEN
+      // Then
       expect(res._getStatusCode()).toEqual(200);
       expect(res._getJSONData()).toStrictEqual({
         id: anyString(),
@@ -120,7 +120,7 @@ describe("VerifierImportIndicateurHandler", () => {
     });
 
     it("doit sauvegarder les données du fichier", async () => {
-      // GIVEN
+      // Given
       const auteurId = await creeUnUtilisateurEnBase();
       const report = new ReportValidataWithDataBuilder()
         .avecValid(true)
@@ -167,12 +167,12 @@ describe("VerifierImportIndicateurHandler", () => {
         query: { indicateurId: "IND-001" },
       });
 
-      // WHEN
+      // When
       await getContainer("importIndicateur")
         .resolve("verifierFichierImportIndicateurHandler")
         .handle(req, res);
 
-      // THEN
+      // Then
       const listeDonneesFichier =
         await prisma.mesure_indicateur_temporaire.findMany({
           orderBy: { indic_id: "asc" },
@@ -192,7 +192,7 @@ describe("VerifierImportIndicateurHandler", () => {
     });
 
     it("doit sauvegarder le rapport pour lié à l'utilisateur", async () => {
-      // GIVEN
+      // Given
       const auteurId = await creeUnUtilisateurEnBase();
       const report = new ReportValidataWithDataBuilder()
         .avecValid(true)
@@ -239,12 +239,12 @@ describe("VerifierImportIndicateurHandler", () => {
         query: { indicateurId: "IND-001" },
       });
 
-      // WHEN
+      // When
       await getContainer("importIndicateur")
         .resolve("verifierFichierImportIndicateurHandler")
         .handle(req, res);
 
-      // THEN
+      // Then
       const listeRapport =
         await prisma.rapport_import_mesure_indicateur.findMany();
       expect(listeRapport).toHaveLength(1);
@@ -256,7 +256,7 @@ describe("VerifierImportIndicateurHandler", () => {
   });
 
   it("Quand le fichier envoyé est incorrect, doit retourner les erreurs du fichier", async () => {
-    // GIVEN
+    // Given
     const auteurId = await creeUnUtilisateurEnBase();
     const report = new ReportValidataWithDataBuilder()
       .avecValid(false)
@@ -309,7 +309,7 @@ describe("VerifierImportIndicateurHandler", () => {
         JSON.stringify({ report, resource_data: report.resource_data }),
       );
 
-    // WHEN
+    // When
     const formData = new FormData();
     const file = mock<File>();
     formData.append("file", file);
@@ -330,7 +330,7 @@ describe("VerifierImportIndicateurHandler", () => {
       .resolve("verifierFichierImportIndicateurHandler")
       .handle(req, res);
 
-    // THEN
+    // Then
     expect(res._getStatusCode()).toEqual(200);
     expect(res._getJSONData()).toStrictEqual({
       id: anyString(),
@@ -359,7 +359,7 @@ describe("VerifierImportIndicateurHandler", () => {
   });
 
   it("Quand le fichier envoyé est incorrect, doit sauvegarder les erreurs du fichier", async () => {
-    // GIVEN
+    // Given
     const auteurId = await creeUnUtilisateurEnBase();
     const report = new ReportValidataWithDataBuilder()
       .avecValid(false)
@@ -412,7 +412,7 @@ describe("VerifierImportIndicateurHandler", () => {
         JSON.stringify({ report, resource_data: report.resource_data }),
       );
 
-    // WHEN
+    // When
     const formData = new FormData();
     const file = mock<File>();
     formData.append("file", file);
@@ -432,7 +432,7 @@ describe("VerifierImportIndicateurHandler", () => {
       .resolve("verifierFichierImportIndicateurHandler")
       .handle(req, res);
 
-    // THEN
+    // Then
     expect(res._getStatusCode()).toEqual(200);
     const listeErreursValidationFichier =
       await prisma.erreur_validation_fichier.findMany();

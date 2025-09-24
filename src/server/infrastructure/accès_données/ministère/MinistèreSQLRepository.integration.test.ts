@@ -5,7 +5,7 @@ import { prisma } from "@/server/db/prisma";
 
 describe("MinistèreSQLRepository", () => {
   test("Accède à un ministère", async () => {
-    // GIVEN
+    // Given
     const repository: MinistèreRepository = new MinistèreSQLRepository();
     const ministere1: ministere = {
       id: "1",
@@ -47,10 +47,10 @@ describe("MinistèreSQLRepository", () => {
       data: [périmètre1, périmètre2, périmètre3],
     });
 
-    // WHEN
+    // When
     const ministères = await repository.getListe();
 
-    // THEN
+    // Then
     expect(ministères).toStrictEqual([
       {
         id: "1",

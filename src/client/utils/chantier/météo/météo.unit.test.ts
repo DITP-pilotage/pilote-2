@@ -3,44 +3,44 @@ import { météos } from "@/server/domain/météo/Météo.interface";
 
 describe("comparerMétéo", () => {
   test("retourne 0 si les météos sont identiques", () => {
-    // GIVEN
+    // Given
     const météoA = "SOLEIL";
     const météoB = "SOLEIL";
 
-    // WHEN
+    // When
     const comparaison = comparerMétéo(météoA, météoB, [
       { desc: true, id: "1" },
     ]);
 
-    // THEN
+    // Then
     expect(comparaison).toStrictEqual(0);
   });
 
   test("retourne 1 si la météo A est meilleure que la météo B", () => {
-    // GIVEN
+    // Given
     const météoA = "SOLEIL";
     const météoB = "ORAGE";
 
-    // WHEN
+    // When
     const comparaison = comparerMétéo(météoA, météoB, [
       { desc: true, id: "1" },
     ]);
 
-    // THEN
+    // Then
     expect(comparaison).toStrictEqual(1);
   });
 
   test("retourne -1 si la météo A est pire que la météo B", () => {
-    // GIVEN
+    // Given
     const météoA = "ORAGE";
     const météoB = "SOLEIL";
 
-    // WHEN
+    // When
     const comparaison = comparerMétéo(météoA, météoB, [
       { desc: true, id: "1" },
     ]);
 
-    // THEN
+    // Then
     expect(comparaison).toStrictEqual(-1);
   });
 

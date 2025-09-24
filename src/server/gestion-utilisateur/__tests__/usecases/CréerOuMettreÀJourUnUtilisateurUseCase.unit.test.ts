@@ -197,7 +197,7 @@ describe("CréerOuMettreÀJourUnUtilisateurUseCase", () => {
 
   describe("Si la variable d'env IMPORT_KEYCLOAK_URL n'est pas définie", () => {
     it("ne créé pas l'utilisateur sur Keycloak", async () => {
-      // GIVEN
+      // Given
       process.env.IMPORT_KEYCLOAK_URL = undefined;
       const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder()
         .avecProfil(ProfilEnum.DITP_ADMIN)

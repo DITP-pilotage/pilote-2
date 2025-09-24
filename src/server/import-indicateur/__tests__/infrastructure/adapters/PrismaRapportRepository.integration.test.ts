@@ -38,7 +38,7 @@ describe("PrismaRapportRepository", () => {
   });
   describe("#sauvegarder", () => {
     it("doit sauvegarder le rapport", async () => {
-      // GIVEN
+      // Given
       const auteurId = await creeUnUtilisateurEnBase();
       const now = new Date();
 
@@ -58,10 +58,10 @@ describe("PrismaRapportRepository", () => {
         .avecDateCreation(now)
         .build();
 
-      // WHEN
+      // When
       await prismaRapportRepository.sauvegarder(rapport);
 
-      // THEN
+      // Then
       const listeDesRapports =
         await prisma.rapport_import_mesure_indicateur.findMany();
       expect(listeDesRapports[0].id).toEqual(
@@ -79,7 +79,7 @@ describe("PrismaRapportRepository", () => {
 
   describe("#récupérerRapportParId", () => {
     it("doit récupérer le rapport avec les données", async () => {
-      // GIVEN
+      // Given
       const auteurId = await creeUnUtilisateurEnBase();
       const now = new Date();
 
@@ -113,7 +113,7 @@ describe("PrismaRapportRepository", () => {
           .build(),
       ];
 
-      // WHEN
+      // When
       const rapport = new DetailValidationFichierBuilder()
         .avecId("f69bbd1f-de95-442a-9392-df644e1096f8")
         .avecEstValide(true)
@@ -126,12 +126,12 @@ describe("PrismaRapportRepository", () => {
         listeMesuresIndicateurTemporaire,
       );
 
-      // WHEN
+      // When
       const rapportResult = await prismaRapportRepository.récupérerRapportParId(
         "f69bbd1f-de95-442a-9392-df644e1096f8",
       );
 
-      // THEN
+      // Then
       expect(rapportResult.estValide).toEqual(true);
       expect(rapportResult.listeMesuresIndicateurTemporaire).toHaveLength(2);
 
