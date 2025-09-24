@@ -47,7 +47,7 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
     const listeMesuresIndicateursTemporaires = [
       new MesureIndicateurTemporaireBuilder()
         .avecIndicId("IND-001")
-        .avecMetricDate("30/12/2022")
+        .avecMetricDate("2022-12-01")
         .avecMetricType("vi")
         .avecMetricValue("12")
         .avecRapportId("20a717e6-2de9-428c-b4e7-80f7b9f36ffc")
@@ -55,7 +55,7 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
         .build(),
       new MesureIndicateurTemporaireBuilder()
         .avecIndicId("IND-002")
-        .avecMetricDate("31/12/2022")
+        .avecMetricDate("2022-12-01")
         .avecMetricType("vc")
         .avecMetricValue("15")
         .avecRapportId("20a717e6-2de9-428c-b4e7-80f7b9f36ffc")
@@ -97,7 +97,7 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
       "20a717e6-2de9-428c-b4e7-80f7b9f36ffc",
     );
     expect(listeMesuresIndicateurs[0].indicId).toEqual("IND-001");
-    expect(listeMesuresIndicateurs[0].metricDate).toEqual("30/12/2022");
+    expect(listeMesuresIndicateurs[0].metricDate).toEqual("2022-12-01");
     expect(listeMesuresIndicateurs[0].metricType).toEqual("vi");
     expect(listeMesuresIndicateurs[0].metricValue).toEqual("12");
     expect(listeMesuresIndicateurs[0].zoneId).toEqual("D01");
@@ -107,7 +107,7 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
       "20a717e6-2de9-428c-b4e7-80f7b9f36ffc",
     );
     expect(listeMesuresIndicateurs[1].indicId).toEqual("IND-002");
-    expect(listeMesuresIndicateurs[1].metricDate).toEqual("31/12/2022");
+    expect(listeMesuresIndicateurs[1].metricDate).toEqual("2022-12-01");
     expect(listeMesuresIndicateurs[1].metricType).toEqual("vc");
     expect(listeMesuresIndicateurs[1].metricValue).toEqual("15");
     expect(listeMesuresIndicateurs[1].zoneId).toEqual("D002");
@@ -208,7 +208,7 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
     const listeMesuresIndicateursTemporaires = [
       new MesureIndicateurTemporaireBuilder()
         .avecIndicId("IND-001")
-        .avecMetricDate("2023-01-15")
+        .avecMetricDate("2023-01-01")
         .avecMetricType("va")
         .avecMetricValue("75")
         .avecRapportId("20a717e6-2de9-428c-b4e7-80f7b9f36ffc")
@@ -239,7 +239,7 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
     expect(evenement.territoireCode).toEqual("DEPT-01");
     expect(evenement.typeEvenement).toEqual("VALEUR_CREEE");
     expect(evenement.typeValeur).toEqual("VALEUR_AVANCEMENT");
-    expect(evenement.dateValeur).toEqual(new Date("2023-01-15"));
+    expect(evenement.dateValeur).toEqual(new Date("2023-01-01"));
     expect(evenement.valeur).toEqual(75);
     expect(evenement.idAuteurModification).toEqual(
       "2cde2d5a-a575-48ba-9f18-b450d1aa3f60",
@@ -252,7 +252,7 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
     const listeMesuresIndicateursTemporaires = [
       new MesureIndicateurTemporaireBuilder()
         .avecIndicId("IND-001")
-        .avecMetricDate("2023-01-15")
+        .avecMetricDate("2023-02-01")
         .avecMetricType("va")
         .avecMetricValue("")
         .avecRapportId("20a717e6-2de9-428c-b4e7-80f7b9f36ffc")
@@ -339,7 +339,7 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
     const listeMesuresIndicateursTemporaires = [
       new MesureIndicateurTemporaireBuilder()
         .avecIndicId("IND-001")
-        .avecMetricDate("2023-01-15")
+        .avecMetricDate("2023-02-01")
         .avecMetricType("va")
         .avecMetricValue("")
         .avecRapportId("20a717e6-2de9-428c-b4e7-80f7b9f36ffc")
@@ -356,7 +356,7 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
       .avecTerritoireCode("DEPT-01")
       .avecTypeEvenement("VALEUR_CREEE")
       .avecTypeValeur("VALEUR_AVANCEMENT")
-      .avecDateValeur(new Date("2023-01-15"))
+      .avecDateValeur(new Date("2023-02-01"))
       .avecValeur(42)
       .avecOrdre(1)
       .build();
@@ -381,7 +381,7 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
     expect(evenementHistorise.territoireCode).toEqual("DEPT-01");
     expect(evenementHistorise.typeEvenement).toEqual("VALEUR_MODIFIEE");
     expect(evenementHistorise.typeValeur).toEqual("VALEUR_AVANCEMENT");
-    expect(evenementHistorise.dateValeur).toEqual(new Date("2023-01-15"));
+    expect(evenementHistorise.dateValeur).toEqual(new Date("2023-02-01"));
     expect(evenementHistorise.valeur).toEqual(null);
     expect(evenementHistorise.ordre).toEqual(2);
   });
@@ -677,6 +677,62 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
     );
     expect(evenementModifieANullJanvier.valeur).toEqual(null);
     expect(evenementModifieANullJanvier.ordre).toEqual(3);
+  });
+
+  it(`valeur janvier 01 -> valeur janvier 05 (${EvenementValeurEnum.VALEUR_MODIFIEE} janvier)`, async () => {
+    // Given
+    const evenementCaptor = captor<IndicateurTerritoireValeurEvenement[]>();
+    const listeMesuresIndicateursTemporaires = [
+      new MesureIndicateurTemporaireBuilder()
+        .avecIndicId("IND-001")
+        .avecMetricDate("2023-01-15")
+        .avecMetricType("va")
+        .avecMetricValue("42")
+        .avecRapportId("20a717e6-2de9-428c-b4e7-80f7b9f36ffc")
+        .avecZoneId("D01")
+        .build(),
+    ];
+
+    mesureIndicateurTemporaireRepository.recupererToutParRapportId.mockResolvedValue(
+      listeMesuresIndicateursTemporaires,
+    );
+
+    const evenementExistant = new ValeurIndicateurTerritoireEvenementBuilder()
+      .avecIndicId("IND-001")
+      .avecTerritoireCode("DEPT-01")
+      .avecTypeEvenement("VALEUR_CREEE")
+      .avecTypeValeur("VALEUR_AVANCEMENT")
+      .avecDateValeur(new Date("2023-01-01"))
+      .avecValeur(10)
+      .avecOrdre(1)
+      .build();
+
+    indicateurTerritoireValeurEvenementRepository.recupererParIndicIdTerritoireCodeEtTypeValeur.mockResolvedValue(
+      [evenementExistant],
+    );
+
+    // When
+    await publierFichierIndicateurImporteUseCase.execute({
+      rapportId: "20a717e6-2de9-428c-b4e7-80f7b9f36ffc",
+      auteurId: "2cde2d5a-a575-48ba-9f18-b450d1aa3f60",
+    });
+
+    // Then
+    expect(
+      indicateurTerritoireValeurEvenementRepository.enregistrerTous,
+    ).toHaveBeenNthCalledWith(1, evenementCaptor);
+
+    const [evenementModifieJanvier] = evenementCaptor.value;
+
+    expect(evenementModifieJanvier.indicId).toEqual("IND-001");
+    expect(evenementModifieJanvier.territoireCode).toEqual("DEPT-01");
+    expect(evenementModifieJanvier.typeEvenement).toEqual(
+      EvenementValeurEnum.VALEUR_MODIFIEE,
+    );
+    expect(evenementModifieJanvier.typeValeur).toEqual("VALEUR_AVANCEMENT");
+    expect(evenementModifieJanvier.dateValeur).toEqual(new Date("2023-01-01"));
+    expect(evenementModifieJanvier.valeur).toEqual(42);
+    expect(evenementModifieJanvier.ordre).toEqual(2);
   });
 
   it(`quand la valeur est nouvelle pour le tuple [indicateur, territoire, date, type] et que la valeur est null, et un nouveau tuple pour une date supérieure et valeur non null, doit créer 2 lignes d'évènements (${EvenementValeurEnum.VALEUR_HISTORISEE} + ${EvenementValeurEnum.VALEUR_CREEE})`, async () => {
