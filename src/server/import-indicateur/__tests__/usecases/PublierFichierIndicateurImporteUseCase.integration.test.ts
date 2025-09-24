@@ -386,6 +386,93 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
     expect(evenementHistorise.ordre).toEqual(2);
   });
 
+  it(`quand la valeur est nouvelle pour le tuple [indicateur, territoire, date, type] et que la valeur est null, et un nouveau tuple pour une date identique et valeur non null dans le même import, doit créer 3 lignes d'évènement (${EvenementValeurEnum.VALEUR_CREEE} + ${EvenementValeurEnum.VALEUR_MODIFIEE} à null + ${EvenementValeurEnum.VALEUR_MODIFIEE}) - en batch`, async () => {
+    // Given
+    const evenementCaptor = captor<IndicateurTerritoireValeurEvenement[]>();
+    const listeMesuresIndicateursTemporaires = [
+      new MesureIndicateurTemporaireBuilder()
+        .avecIndicId("IND-001")
+        .avecMetricDate("2023-01-01")
+        .avecMetricType("va")
+        .avecMetricValue("42")
+        .avecRapportId("20a717e6-2de9-428c-b4e7-80f7b9f36ffc")
+        .avecZoneId("D01")
+        .build(),
+      new MesureIndicateurTemporaireBuilder()
+        .avecIndicId("IND-001")
+        .avecMetricDate("2023-01-01")
+        .avecMetricType("va")
+        .avecMetricValue("")
+        .avecRapportId("20a717e6-2de9-428c-b4e7-80f7b9f36ffc")
+        .avecZoneId("D01")
+        .build(),
+      new MesureIndicateurTemporaireBuilder()
+        .avecIndicId("IND-001")
+        .avecMetricDate("2023-01-01")
+        .avecMetricType("va")
+        .avecMetricValue("10")
+        .avecRapportId("20a717e6-2de9-428c-b4e7-80f7b9f36ffc")
+        .avecZoneId("D01")
+        .build(),
+    ];
+
+    mesureIndicateurTemporaireRepository.recupererToutParRapportId.mockResolvedValue(
+      listeMesuresIndicateursTemporaires,
+    );
+
+    indicateurTerritoireValeurEvenementRepository.recupererParIndicIdTerritoireCodeEtTypeValeur.mockResolvedValue(
+      [],
+    );
+
+    // When
+    await publierFichierIndicateurImporteUseCase.execute({
+      rapportId: "20a717e6-2de9-428c-b4e7-80f7b9f36ffc",
+      auteurId: "2cde2d5a-a575-48ba-9f18-b450d1aa3f60",
+    });
+
+    // Then
+    expect(
+      indicateurTerritoireValeurEvenementRepository.enregistrerTous,
+    ).toHaveBeenNthCalledWith(1, evenementCaptor);
+
+    const evenementCreeJanvier = evenementCaptor.value[0];
+    expect(evenementCreeJanvier.indicId).toEqual("IND-001");
+    expect(evenementCreeJanvier.territoireCode).toEqual("DEPT-01");
+    expect(evenementCreeJanvier.typeEvenement).toEqual(
+      EvenementValeurEnum.VALEUR_CREEE,
+    );
+    expect(evenementCreeJanvier.typeValeur).toEqual("VALEUR_AVANCEMENT");
+    expect(evenementCreeJanvier.dateValeur).toEqual(new Date("2023-01-01"));
+    expect(evenementCreeJanvier.valeur).toEqual(42);
+    expect(evenementCreeJanvier.ordre).toEqual(1);
+
+    const evenementModifieANullJanvier = evenementCaptor.value[1];
+    expect(evenementModifieANullJanvier.indicId).toEqual("IND-001");
+    expect(evenementModifieANullJanvier.territoireCode).toEqual("DEPT-01");
+    expect(evenementModifieANullJanvier.typeEvenement).toEqual(
+      EvenementValeurEnum.VALEUR_MODIFIEE,
+    );
+    expect(evenementModifieANullJanvier.typeValeur).toEqual(
+      "VALEUR_AVANCEMENT",
+    );
+    expect(evenementModifieANullJanvier.dateValeur).toEqual(
+      new Date("2023-01-01"),
+    );
+    expect(evenementModifieANullJanvier.valeur).toEqual(null);
+    expect(evenementModifieANullJanvier.ordre).toEqual(2);
+
+    const evenementModifieeJanvier = evenementCaptor.value[2];
+    expect(evenementModifieeJanvier.indicId).toEqual("IND-001");
+    expect(evenementModifieeJanvier.territoireCode).toEqual("DEPT-01");
+    expect(evenementModifieeJanvier.typeEvenement).toEqual(
+      EvenementValeurEnum.VALEUR_MODIFIEE,
+    );
+    expect(evenementModifieeJanvier.typeValeur).toEqual("VALEUR_AVANCEMENT");
+    expect(evenementModifieeJanvier.dateValeur).toEqual(new Date("2023-01-01"));
+    expect(evenementModifieeJanvier.valeur).toEqual(10);
+    expect(evenementModifieeJanvier.ordre).toEqual(3);
+  });
+
   it(`quand la valeur est nouvelle pour le tuple [indicateur, territoire, date, type] et que la valeur est null, et un nouveau tuple pour une date supérieure et valeur non null dans le même import, doit créer 3 lignes d'évènement (${EvenementValeurEnum.VALEUR_CREEE} + ${EvenementValeurEnum.VALEUR_MODIFIEE} à null + ${EvenementValeurEnum.VALEUR_CREEE}) - en batch`, async () => {
     // Given
     const evenementCaptor = captor<IndicateurTerritoireValeurEvenement[]>();
