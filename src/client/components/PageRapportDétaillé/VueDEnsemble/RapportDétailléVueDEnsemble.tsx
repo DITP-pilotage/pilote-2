@@ -76,7 +76,11 @@ const RapportDétailléVueDEnsemble: FunctionComponent<
               </Titre>
               <Infobulle>{INFOBULLE_CONTENUS.chantiers.jauges}</Infobulle>
             </TitreInfobulleConteneur>
-            <Avancements avancements={avancementsAgrégés} jalon={jalon} />
+            <Avancements
+              avancements={avancementsAgrégés}
+              chantiersSontArchives={chantiersSontArchives}
+              jalon={jalon}
+            />
           </section>
           <hr className="fr-hr fr-my-3w fr-pb-1v" />
           <section>
@@ -163,6 +167,7 @@ const RapportDétailléVueDEnsemble: FunctionComponent<
               </Titre>
             </TitreInfobulleConteneur>
             <RapportDétailléTableauChantiers
+              chantiersSontArchives={chantiersSontArchives}
               données={donnéesTableauChantiers}
             />
           </Bloc>

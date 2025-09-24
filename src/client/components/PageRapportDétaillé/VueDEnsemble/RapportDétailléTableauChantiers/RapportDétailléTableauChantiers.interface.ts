@@ -2,6 +2,7 @@ import { ChantierVueDEnsemble } from "@/server/domain/chantier/Chantier.interfac
 
 export default interface RapportDétailléTableauChantiersProps {
   données: DonnéesTableauChantiers[];
+  chantiersSontArchives: boolean;
 }
 
 export type DonnéesTableauChantiers = ChantierVueDEnsemble;
