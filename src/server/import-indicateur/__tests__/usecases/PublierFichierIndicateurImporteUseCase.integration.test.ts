@@ -386,7 +386,7 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
     expect(evenementHistorise.ordre).toEqual(2);
   });
 
-  it(`quand la valeur est nouvelle pour le tuple [indicateur, territoire, date, type] et que la valeur est null, et un nouveau tuple pour une date supérieure et valeur non null dans le même import, doit créer 2 lignes d'évènement (${EvenementValeurEnum.VALEUR_CREEE} + ${EvenementValeurEnum.VALEUR_HISTORISEE})`, async () => {
+  it(`quand la valeur est nouvelle pour le tuple [indicateur, territoire, date, type] et que la valeur est null, et un nouveau tuple pour une date supérieure et valeur non null dans le même import, doit créer 3 lignes d'évènement (${EvenementValeurEnum.VALEUR_CREEE} + ${EvenementValeurEnum.VALEUR_MODIFIEE} à null + ${EvenementValeurEnum.VALEUR_CREEE}) - en batch`, async () => {
     // Given
     const evenementCaptor = captor<IndicateurTerritoireValeurEvenement[]>();
     const listeMesuresIndicateursTemporaires = [
@@ -461,31 +461,80 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
     expect(evenementModifieANullJanvier.valeur).toEqual(null);
     expect(evenementModifieANullJanvier.ordre).toEqual(2);
 
-    const evenementHistoriseJanvier = evenementCaptor.value[3];
-    expect(evenementHistoriseJanvier.indicId).toEqual("IND-001");
-    expect(evenementHistoriseJanvier.territoireCode).toEqual("DEPT-01");
-    expect(evenementHistoriseJanvier.typeEvenement).toEqual(
-      EvenementValeurEnum.VALEUR_HISTORISEE,
+    const evenementCreeFevrier = evenementCaptor.value[2];
+    expect(evenementCreeFevrier.indicId).toEqual("IND-001");
+    expect(evenementCreeFevrier.territoireCode).toEqual("DEPT-01");
+    expect(evenementCreeFevrier.typeEvenement).toEqual(
+      EvenementValeurEnum.VALEUR_CREEE,
     );
-    expect(evenementHistoriseJanvier.typeValeur).toEqual("VALEUR_AVANCEMENT");
-    expect(evenementHistoriseJanvier.dateValeur).toEqual(
-      new Date("2023-01-01"),
-    );
-    expect(evenementHistoriseJanvier.valeur).toEqual(null);
-    expect(evenementHistoriseJanvier.ordre).toEqual(3);
+    expect(evenementCreeFevrier.typeValeur).toEqual("VALEUR_AVANCEMENT");
+    expect(evenementCreeFevrier.dateValeur).toEqual(new Date("2023-02-01"));
+    expect(evenementCreeFevrier.valeur).toEqual(10);
+    expect(evenementCreeFevrier.ordre).toEqual(1);
+  });
 
-    const evenementHistoriseFevrier = evenementCaptor.value[4];
-    expect(evenementHistoriseFevrier.indicId).toEqual("IND-001");
-    expect(evenementHistoriseFevrier.territoireCode).toEqual("DEPT-01");
-    expect(evenementHistoriseFevrier.typeEvenement).toEqual(
-      EvenementValeurEnum.VALEUR_HISTORISEE,
+  it(`quand la valeur est nouvelle pour le tuple [indicateur, territoire, date, type] et que la valeur est null, et un nouveau tuple pour une date supérieure et valeur non null, doit créer 1 ligne d'évènement (${EvenementValeurEnum.VALEUR_CREEE})`, async () => {
+    // Given
+    const evenementCaptor = captor<IndicateurTerritoireValeurEvenement[]>();
+    const listeMesuresIndicateursTemporaires = [
+      new MesureIndicateurTemporaireBuilder()
+        .avecIndicId("IND-001")
+        .avecMetricDate("2023-02-01")
+        .avecMetricType("va")
+        .avecMetricValue("10")
+        .avecRapportId("20a717e6-2de9-428c-b4e7-80f7b9f36ffc")
+        .avecZoneId("D01")
+        .build(),
+    ];
+
+    mesureIndicateurTemporaireRepository.recupererToutParRapportId.mockResolvedValue(
+      listeMesuresIndicateursTemporaires,
     );
-    expect(evenementHistoriseFevrier.typeValeur).toEqual("VALEUR_AVANCEMENT");
-    expect(evenementHistoriseFevrier.dateValeur).toEqual(
-      new Date("2023-02-01"),
+
+    indicateurTerritoireValeurEvenementRepository.recupererParIndicIdTerritoireCodeEtTypeValeur.mockResolvedValue(
+      [
+        new ValeurIndicateurTerritoireEvenementBuilder()
+          .avecIndicId("IND-001")
+          .avecTerritoireCode("DEPT-01")
+          .avecTypeEvenement("VALEUR_CREEE")
+          .avecTypeValeur("VALEUR_AVANCEMENT")
+          .avecDateValeur(new Date("2023-01-01"))
+          .avecValeur(42)
+          .avecOrdre(1)
+          .build(),
+        new ValeurIndicateurTerritoireEvenementBuilder()
+          .avecIndicId("IND-001")
+          .avecTerritoireCode("DEPT-01")
+          .avecTypeEvenement("VALEUR_MODIFIEE")
+          .avecTypeValeur("VALEUR_AVANCEMENT")
+          .avecDateValeur(new Date("2023-01-01"))
+          .avecValeur(null)
+          .avecOrdre(2)
+          .build(),
+      ],
     );
-    expect(evenementHistoriseFevrier.valeur).toEqual(10);
-    expect(evenementHistoriseFevrier.ordre).toEqual(1);
+
+    // When
+    await publierFichierIndicateurImporteUseCase.execute({
+      rapportId: "20a717e6-2de9-428c-b4e7-80f7b9f36ffc",
+      auteurId: "2cde2d5a-a575-48ba-9f18-b450d1aa3f60",
+    });
+
+    // Then
+    expect(
+      indicateurTerritoireValeurEvenementRepository.enregistrerTous,
+    ).toHaveBeenNthCalledWith(1, evenementCaptor);
+
+    const evenementCreeFevrier = evenementCaptor.value[0];
+    expect(evenementCreeFevrier.indicId).toEqual("IND-001");
+    expect(evenementCreeFevrier.territoireCode).toEqual("DEPT-01");
+    expect(evenementCreeFevrier.typeEvenement).toEqual(
+      EvenementValeurEnum.VALEUR_CREEE,
+    );
+    expect(evenementCreeFevrier.typeValeur).toEqual("VALEUR_AVANCEMENT");
+    expect(evenementCreeFevrier.dateValeur).toEqual(new Date("2023-02-01"));
+    expect(evenementCreeFevrier.valeur).toEqual(10);
+    expect(evenementCreeFevrier.ordre).toEqual(1);
   });
 
   it("quand la valeur est nouvelle pour le tuple [indicateur, territoire, date, type] avec un tuple pour une date antérieure, doit créer 2 lignes d'évènement (VALEUR_HISTORISEE + VALEUR_CREEE)", async () => {

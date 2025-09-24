@@ -73,7 +73,7 @@ export class EvenementsSurDate {
     return this.evenementsValeur()[0]?.valeur ?? null;
   }
 
-  aValeurEnCours(valeur: number): boolean {
+  aValeurEnCours(valeur: number | null): boolean {
     return this.valeurEnCours() === valeur;
   }
 
