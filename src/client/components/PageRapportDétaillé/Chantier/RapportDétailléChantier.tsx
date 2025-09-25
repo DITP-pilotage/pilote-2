@@ -10,7 +10,7 @@ import {
 import { htmlId } from "@/components/PageRapportDétaillé/PageRapportDétaillé";
 import RapportDétailléChantierProps from "@/components/PageRapportDétaillé/Chantier/RapportDétailléChantier.interface";
 import Responsables from "@/components/PageChantier/ResponsablesChantier/ResponsablesChantier";
-import SynthèseDesRésultats from "@/components/_commons/SynthèseDesRésultats/SynthèseDesRésultats";
+import SynthèseDesRésultats from "@/components/PageRapportDétaillé/SynthèseDesRésultats/SynthèseDesRésultats";
 import IndicateursRapportDetaille from "@/components/PageRapportDétaillé/Chantier/IndicateursRapportDetaille/IndicateursRapportDetaille";
 import { DécisionsStratégiques } from "@/components/PageChantier/DécisionsStratégiques/DécisionsStratégiques";
 import Commentaires from "@/components/_commons/CommentairesNew/Commentaires";

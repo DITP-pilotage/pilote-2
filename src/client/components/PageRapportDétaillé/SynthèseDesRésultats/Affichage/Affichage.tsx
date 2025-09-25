@@ -1,6 +1,6 @@
 import { formaterDate } from "@/client/utils/date/date";
 import { nettoyerUneChaîneDeCaractèresPourAffichageHTML } from "@/client/utils/strings";
-import BoutonsAffichage from "@/components/_commons/SynthèseDesRésultats/BoutonsAffichage/BoutonsAffichage";
+import BoutonsAffichage from "@/components/PageRapportDétaillé/SynthèseDesRésultats/BoutonsAffichage/BoutonsAffichage";
 import SynthèseDesRésultatsInterface from "@/server/domain/chantier/synthèseDesRésultats/SynthèseDesRésultats.interface";
 import useAffichage from "./useAffichage";
 

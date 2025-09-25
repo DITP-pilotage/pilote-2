@@ -1,9 +1,9 @@
 import Bloc from "@/components/_commons/Bloc/Bloc";
-import SynthèseDesRésultatsStyled from "@/components/_commons/SynthèseDesRésultats/SynthèseDesRésultats.styled";
+import SynthèseDesRésultatsStyled from "@/components/PageRapportDétaillé/SynthèseDesRésultats/SynthèseDesRésultats.styled";
 import MeteoPicto from "@/components/_commons/Meteo/Picto/MeteoPicto";
 import MétéoBadge from "@/components/_commons/Meteo/Badge/MétéoBadge";
 import Alerte from "@/components/_commons/Alerte/Alerte";
-import SynthèseDesRésultatsAffichage from "@/components/_commons/SynthèseDesRésultats/Affichage/Affichage";
+import SynthèseDesRésultatsAffichage from "@/components/PageRapportDétaillé/SynthèseDesRésultats/Affichage/Affichage";
 import { Maille } from "@/server/domain/maille/Maille.interface";
 import SynthèseDesRésultatsInterface from "@/server/domain/chantier/synthèseDesRésultats/SynthèseDesRésultats.interface";
 
