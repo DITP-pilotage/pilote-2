@@ -21,7 +21,6 @@ import {
 import { BadgeIndicateurEnAlerte } from "@/components/_commons/IndicateursChantier/Bloc/BadgeIndicateurEnAlerte";
 import { BadgeIndicateurBarometre } from "@/components/_commons/IndicateursChantier/Bloc/BadgeIndicateurBarometre";
 import { LigneIndicateurDatePrevisionnelle } from "@/components/_commons/IndicateursChantier/Bloc/LigneIndicateurDatePrevisionnelle";
-import { clsxm } from "@/utils/clsxm";
 import IndicateurBlocStyled from "./IndicateurBloc.styled";
 import { useIndicateurBloc } from "./useIndicateurBloc";
 
