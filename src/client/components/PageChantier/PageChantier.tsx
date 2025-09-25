@@ -369,8 +369,8 @@ const PageChantier = () => {
           {territoireSélectionné.maille === "nationale" ? (
             <div className="fr-my-2w">
               <section className="rubrique" id="décisions-stratégiques">
-                <TitreInfobulleConteneur className="fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0">
-                  <Titre baliseHtml="h2" className="fr-h4" estInline>
+                <TitreInfobulleConteneur className="!mb-4 !mt-3 !md:mt-0 !mx-4 !md:mx-0 flex align-center">
+                  <Titre baliseHtml="h2" className="fr-h4 !m-0" estInline>
                     Décisions stratégiques
                   </Titre>
                   <Infobulle>
