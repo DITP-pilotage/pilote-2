@@ -17,6 +17,9 @@ import { Profil } from "@/server/gestion-utilisateur/domain/Profil";
 import { UtilisateurListeGestionContrat } from "@/server/app/contrats/UtilisateurListeGestionContrat";
 import { TerritoireAvecNombreUtilisateurs } from "@/server/gestion-utilisateur/domain/Territoire";
 import { ExportDesDonnees } from "@/components/PageAdminUtilisateurs/ExportDesDonnees/ExportDesDonnees";
+import { Icone } from "@/components/_commons/Icone";
+import { Download1Icon } from "@/components/_commons/Icones/Download1Icon";
+import { Success1Icon } from "@/components/_commons/Icones/Success1Icon";
 
 const PageAdminUtilisateurs: FunctionComponent<{
   listeUtilisateurs: UtilisateurListeGestionContrat[];
@@ -115,13 +118,17 @@ const PageAdminUtilisateurs: FunctionComponent<{
               </Titre>
             </div>
             <div className="fr-col-12 fr-col-md-6">
-              <div className="flex justify-end align-center">
+              <div className="flex justify-end align-center gap-2">
                 <ExportDesDonnees />
                 <Link
-                  className="fr-btn fr-btn--icon-left fr-icon-checkbox-circle-line fr-ml-2w"
+                  className="!bg-primary !bg-none font-medium !text-white rounded flex align-center gap-2 !px-4 py-2 no-underline"
                   href={donneLaRedirection()}
                   title="Créer un compte"
                 >
+                  <Icone
+                    className="w-4 h-4 !text-current"
+                    icone={Success1Icon}
+                  />
                   Créer un compte
                 </Link>
               </div>
