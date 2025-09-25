@@ -2,6 +2,8 @@ import "@gouvfr/dsfr/dist/component/modal/modal.min.css";
 import { FunctionComponent } from "react";
 import clsx from "clsx";
 import Titre from "@/components/_commons/Titre/Titre";
+import { Icone } from "@/components/_commons/Icone";
+import { CloseLineIcon } from "@/components/_commons/Icones/CloseLineIcon";
 import ModaleProps from "./Modale.interface";
 import ModaleStyled from "./Modale.styled";
 import useModale from "./useModale";
@@ -30,14 +32,18 @@ const Modale: FunctionComponent<ModaleProps> = ({
           <div
             className={`fr-modal__body ${taillePossible[tailleModale]} fr-mx-auto modale-conteneur`}
           >
-            <div className="fr-modal__header fr-pb-0 fr-mr-2w fr-mr-md-0">
+            <div className="!text-sm flex justify-end align-center !mt-2 !mr-4 !md:mr-0">
               <button
                 aria-controls={idHtml}
-                className="fr-link--close fr-link bouton-fermer-modale"
+                className="!text-primary flex align-center gap-1 px-4 py-2"
                 title="Fermer la fenêtre modale"
                 type="button"
               >
                 Fermer
+                <Icone
+                  className="w-4 h-4 !text-current"
+                  icone={CloseLineIcon}
+                />
               </button>
             </div>
             <div className="fr-mx-4w">
