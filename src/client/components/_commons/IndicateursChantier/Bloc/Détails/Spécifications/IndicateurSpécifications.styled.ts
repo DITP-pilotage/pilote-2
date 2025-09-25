@@ -16,10 +16,6 @@ const IndicateurSpécificationsStyled = styled.div`
   p {
     margin-bottom: 0;
   }
-
-  .bloc-question {
-    background-color: var(--grey-975-125);
-  }
 `;
 
 export default IndicateurSpécificationsStyled;

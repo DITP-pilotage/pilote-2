@@ -4,6 +4,7 @@ import { libellesTypologieIndicateur } from "@/client/utils/indicateur/indicateu
 import { useBlocIndicateurContext } from "@/components/PageChantier/useBlocIndicateurContext";
 import { EnveloppeContourIcon } from "@/components/_commons/Icones/EnveloppeContourIcon";
 import { Icone } from "@/components/_commons/Icone";
+import { QuestionIcon } from "@/components/_commons/Icones/QuestionIcon";
 import IndicateurSpécificationsStyled from "./IndicateurSpécifications.styled";
 
 interface IndicateurSpécificationsProps {
@@ -106,11 +107,11 @@ const IndicateurSpécifications: FunctionComponent<
         </>
       )}
       {variableContenuFFPoserUneQuestion ? (
-        <div className="fr-mt-3w fr-ml-7w fr-p-2w bloc-question">
+        <div className="fr-mt-3w fr-ml-7w fr-p-2w bg-dsfr-grey-925">
           <div className="flex">
-            <span
-              aria-hidden="true"
-              className="fr-icon-question-fill icone-question fr-mr-2w"
+            <Icone
+              className="text-primary h-6 w-6 shrink-0 mr-4"
+              icone={QuestionIcon}
             />
             <div>
               <p className="fr-text--md sous-titre">
