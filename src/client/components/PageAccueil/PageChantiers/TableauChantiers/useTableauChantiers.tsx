@@ -28,6 +28,10 @@ import Ministère from "@/server/domain/ministère/Ministère.interface";
 import { Infobulle } from "@/components/_commons/Infobulle/Infobulle";
 import infobulles from "@/client/constants/infobulles";
 import { IconeMinistere } from "@/client/utils/mapperIconeMinistereVersIcone";
+import { Icone } from "@/components/_commons/Icone";
+import { ArrowSLineIcon } from "@/components/_commons/Icones/ArrowSLineIcon";
+import { ArrowSLine2Icon } from "@/components/_commons/Icones/ArrowSLine2Icon";
+import { clsxm } from "@/utils/clsxm";
 import TableauChantiersProps, {
   DonnéesTableauChantiers,
 } from "./TableauChantiers.interface";
@@ -269,9 +273,17 @@ export const useTableauChantiers = (
       id: "dérouler-groupe",
       aggregatedCell: (aggregatedCellContext) => (
         <button
-          className={`${aggregatedCellContext.row.getIsExpanded() ? "fr-icon-arrow-up-s-line" : "fr-icon-arrow-down-s-line"} chevron-accordéon`}
+          className={clsxm(
+            chantiersSontArchives ? "!text-dsfr-grey-925" : "!text-primary",
+          )}
           type="button"
-        />
+        >
+          {aggregatedCellContext.row.getIsExpanded() ? (
+            <Icone className="!text-current" icone={ArrowSLineIcon} />
+          ) : (
+            <Icone className="!text-current" icone={ArrowSLine2Icon} />
+          )}
+        </button>
       ),
       meta: {
         width: "3.5rem",

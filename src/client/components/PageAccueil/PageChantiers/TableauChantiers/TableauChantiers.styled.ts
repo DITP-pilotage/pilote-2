@@ -120,13 +120,6 @@ const TableauChantiersStyled = styled.section<{
           }
         }
       }
-
-      .chevron-accordéon::before {
-        background-color: ${({ chantiersArchives }) =>
-          chantiersArchives
-            ? "var(--text-disabled-grey)"
-            : "var(--blue-france-sun-113-625)"};
-      }
     }
   }
 
@@ -134,13 +127,6 @@ const TableauChantiersStyled = styled.section<{
     button {
       border-radius: 4px;
     }
-  }
-
-  .icônes {
-    color: ${({ chantiersArchives }) =>
-      chantiersArchives
-        ? "var(--text-disabled-grey)"
-        : "var(--background-active-blue-france)"};
   }
 `;
 

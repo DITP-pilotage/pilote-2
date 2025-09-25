@@ -1,8 +1,11 @@
 import { FunctionComponent } from "react";
 import BarreDeProgression from "@/components/_commons/BarreDeProgression/BarreDeProgression";
 import { IconeMinistere } from "@/client/utils/mapperIconeMinistereVersIcone";
-import TableauChantiersTuileMinistèreStyled from "./TableauChantiersTuileMinistère.styled";
+import { Icone } from "@/components/_commons/Icone";
+import { ArrowSLine2Icon } from "@/components/_commons/Icones/ArrowSLine2Icon";
+import { ArrowSLineIcon } from "@/components/_commons/Icones/ArrowSLineIcon";
 import TableauChantiersTuileMinistèreProps from "./TableauChantiersTuileMinistère.interface";
+import TableauChantiersTuileMinistèreStyled from "./TableauChantiersTuileMinistère.styled";
 
 const TableauChantiersTuileMinistère: FunctionComponent<
   TableauChantiersTuileMinistèreProps
@@ -30,10 +33,13 @@ const TableauChantiersTuileMinistère: FunctionComponent<
           />
         </div>
       </div>
-      <button
-        className={`${estDéroulé ? "fr-icon-arrow-up-s-line" : "fr-icon-arrow-down-s-line"} chevron-accordéon`}
-        type="button"
-      />
+      <button type="button">
+        {estDéroulé ? (
+          <Icone icone={ArrowSLineIcon} />
+        ) : (
+          <Icone icone={ArrowSLine2Icon} />
+        )}
+      </button>
     </TableauChantiersTuileMinistèreStyled>
   );
 };

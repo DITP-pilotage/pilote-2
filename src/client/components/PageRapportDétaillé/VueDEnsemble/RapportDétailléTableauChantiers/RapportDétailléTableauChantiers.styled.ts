@@ -25,10 +25,6 @@ const RapportDétailléTableauChantiersStyled = styled.section`
       }
     }
   }
-
-  .icônes {
-    color: var(--background-active-blue-france);
-  }
 `;
 
 export default RapportDétailléTableauChantiersStyled;
