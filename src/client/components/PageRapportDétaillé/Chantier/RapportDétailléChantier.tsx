@@ -167,11 +167,8 @@ const RapportDétailléChantier: FunctionComponent<
               Météo et synthèse des résultats
             </Titre>
             <SynthèseDesRésultats
-              estInteractif={false}
               nomTerritoire={territoireSélectionné!.nomAffiché}
-              rechargerRéforme={() => {}}
-              réformeId={chantier.id}
-              synthèseDesRésultatsInitiale={synthèseDesRésultats}
+              synthèseDesRésultats={synthèseDesRésultats}
             />
           </section>
         </div>
