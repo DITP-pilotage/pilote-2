@@ -57,10 +57,6 @@ const FicheIndicateurStyled = styled.div`
       white-space: nowrap;
     }
   }
-
-  .relative {
-    position: relative;
-  }
 `;
 
 export default FicheIndicateurStyled;

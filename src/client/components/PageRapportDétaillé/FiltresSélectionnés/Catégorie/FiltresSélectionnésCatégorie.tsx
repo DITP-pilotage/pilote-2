@@ -1,6 +1,6 @@
-import { FunctionComponent } from "react";
-import Titre from "@/components/_commons/Titre/Titre";
-import FiltresSélectionnésCatégorieStyled from "./FiltresSélectionnésCatégorie.styled";
+import React, { FunctionComponent } from "react";
+import { Icone } from "@/components/_commons/Icone";
+import { CheckLineIcon } from "@/components/_commons/Icones/CheckLineIcon";
 
 interface FiltresSélectionnésCatégorieProps {
   titre: string;
@@ -10,27 +10,27 @@ interface FiltresSélectionnésCatégorieProps {
 const FiltresSélectionnésCatégorie: FunctionComponent<
   FiltresSélectionnésCatégorieProps
 > = ({ titre, filtres }) => {
-  const estVide = filtres.length === 0;
+  if (filtres.length === 0) {
+    return <h3 className="!text-base !mb-1">{`${titre} (Tous)`}</h3>;
+  }
 
   return (
-    <FiltresSélectionnésCatégorieStyled>
-      <Titre baliseHtml="h3" className="fr-text--md fr-mb-1v">
-        {`${titre} (${estVide ? "Tous" : filtres.length})`}
-      </Titre>
-      {!estVide && (
-        <ul>
-          {filtres.map((filtre) => (
-            <li
-              className="fr-text--sm fr-mb-1v !text-dsfr-mention-grey"
-              key={filtre}
-            >
-              <span aria-hidden="true" className="fr-icon-check-line" />
-              {filtre}
-            </li>
-          ))}
-        </ul>
-      )}
-    </FiltresSélectionnésCatégorieStyled>
+    <div>
+      <h3 className="!text-base !mb-1">{`${titre} (${filtres.length})`}</h3>
+      <ul className="!p-0 !m-0">
+        {filtres.map((filtre) => (
+          <li
+            className="flex align-start !text-sm !text-dsfr-mention-grey !mb-1 list-none gap-2"
+            key={filtre}
+          >
+            <div>
+              <Icone className="text-dsfr-success-425" icone={CheckLineIcon} />
+            </div>
+            {filtre}
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 };
 
