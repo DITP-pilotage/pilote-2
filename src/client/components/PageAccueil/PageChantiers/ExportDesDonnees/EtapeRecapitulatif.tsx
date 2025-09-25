@@ -11,6 +11,8 @@ import { horodatage } from "@/client/utils/date/date";
 import api from "@/server/infrastructure/api/trpc/api";
 import { getAnneeDateDeBascule } from "@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getAnneeDateDeBascule";
 import { useSelecteurJalon } from "@/components/_commons/SelecteurJalon/useSelecteurJalon";
+import { Icone } from "@/components/_commons/Icone";
+import { CheckLineIcon } from "@/components/_commons/Icones/CheckLineIcon";
 
 const ressources = {
   chantiers: {
@@ -216,11 +218,8 @@ export const EtapeRecapitulatif = ({
         Veuillez vérifier ci-dessous le contenu de votre fichier d'export :
       </p>
       <h3 className="fr-text--md fr-mb-0 fr-mt-2w">Éléments à exporter</h3>
-      <p>
-        <span
-          aria-hidden="true"
-          className="fr-icon-check-line texte-success fr-mr-1w"
-        />
+      <p className="flex gap-2">
+        <Icone className="text-dsfr-success-425" icone={CheckLineIcon} />
         {filtres.typeExport === "chantiers" ? (
           <span>chantiers</span>
         ) : filtres.typeExport === "indicateurs" ? (
@@ -230,19 +229,16 @@ export const EtapeRecapitulatif = ({
         )}
       </p>
       <h3 className="fr-text--md fr-mb-0 fr-mt-2w">Périmètre de l'export</h3>
-      <p>
-        <span
-          aria-hidden="true"
-          className="fr-icon-check-line texte-success fr-mr-1w"
-        />
+      <p className="flex gap-2">
+        <Icone className="text-dsfr-success-425" icone={CheckLineIcon} />
         {filtres.isAvecFiltre ? (
           <span>
-            export des éléments correspondant aux filtres activés dans PILOTE :
+            export des éléments correspondant aux filtres activés dans PILOTE
           </span>
         ) : (
           <span>
             export de tous les éléments sur tous les territoires ouverts en
-            lecture :
+            lecture
           </span>
         )}
       </p>
@@ -252,10 +248,10 @@ export const EtapeRecapitulatif = ({
           .filter(([key]) => filtres.optionsExport.includes(key))
           .map(([key, value]) => {
             return (
-              <li key={key}>
-                <span
-                  aria-hidden="true"
-                  className="fr-icon-check-line texte-success fr-mr-1w"
+              <li className="flex gap-2" key={key}>
+                <Icone
+                  className="text-dsfr-success-425"
+                  icone={CheckLineIcon}
                 />
                 {value}
               </li>
