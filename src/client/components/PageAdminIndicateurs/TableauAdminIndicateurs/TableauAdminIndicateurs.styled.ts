@@ -34,14 +34,6 @@ const TableauAdminIndicateursStyled = styled.section`
     }
   }
 
-  .fr-icon-red {
-    color: red;
-  }
-
-  .fr-icon-green {
-    color: green;
-  }
-
   table.tableau {
     display: table;
 

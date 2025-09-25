@@ -2,6 +2,8 @@ import "@gouvfr/dsfr/dist/component/checkbox/checkbox.min.css";
 import { Fragment, FunctionComponent, useId } from "react";
 import clsx from "clsx";
 import { MultiSelectOptionGroupée } from "@/components/_commons/MultiSelectNew/MultiSelect.interface";
+import { CloseCircleIcon } from "@/components/_commons/Icones/CloseCircleIcon";
+import { Icone } from "@/components/_commons/Icone";
 
 interface MultiSelectGroupeProps {
   groupeOptions: MultiSelectOptionGroupée;
@@ -42,9 +44,9 @@ const MultiSelectGroupe: FunctionComponent<MultiSelectGroupeProps> = ({
               >
                 {option.label}
                 {!!option.afficherIcone && (
-                  <span
-                    aria-hidden="true"
-                    className="fr-icon-close-circle-fill fr-icon--sm fr-icon-red fr-ml-1w"
+                  <Icone
+                    className="!text-error w-4 h-4"
+                    icone={CloseCircleIcon}
                   />
                 )}
               </label>

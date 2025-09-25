@@ -219,7 +219,7 @@ const Navigation: FunctionComponent<{}> = () => {
                         {page.nom}
                         {page.matcher === "/nouveautes" &&
                         !aConsulteLaDerniereNouveaute ? (
-                          <span className="fr-text-red fr-pl-1v absolute fr-top-1v">
+                          <span className="!text-error fr-pl-1v absolute fr-top-1v">
                             ●
                           </span>
                         ) : null}

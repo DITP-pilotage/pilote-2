@@ -25,6 +25,9 @@ import {
   PAGE_INDEX_DEFAUT,
   TAILLE_DEFAUT_PAGINATION_UTILISATEUR,
 } from "@/client/constants/constantes";
+import { Icone } from "@/components/_commons/Icone";
+import { CloseCircleIcon } from "@/components/_commons/Icones/CloseCircleIcon";
+import { SuccessIcon } from "@/components/_commons/Icones/SuccessIcon";
 
 const reactTableColonnesHelper =
   createColumnHelper<UtilisateurListeGestionContrat>();
@@ -81,22 +84,17 @@ const colonnes = [
   ),
   reactTableColonnesHelper.accessor("statut", {
     header: "Actif",
-    cell: (props) =>
-      props.getValue() === "desactive" ? (
+    cell: (props) => {
+      return (
         <div className="flex justify-center">
-          <span
-            aria-hidden="true"
-            className="fr-icon-close-circle-fill fr-icon-red"
-          />
+          {props.getValue() === "desactive" ? (
+            <Icone className="!text-error" icone={CloseCircleIcon} />
+          ) : (
+            <Icone className="!text-success" icone={SuccessIcon} />
+          )}
         </div>
-      ) : (
-        <div className="flex justify-center">
-          <span
-            aria-hidden="true"
-            className="fr-icon-checkbox-circle-fill fr-icon-green"
-          />
-        </div>
-      ),
+      );
+    },
   }),
 ];
 

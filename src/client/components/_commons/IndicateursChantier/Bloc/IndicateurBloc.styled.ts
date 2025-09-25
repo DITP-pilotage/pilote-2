@@ -58,26 +58,8 @@ const IndicateurBlocStyled = styled.div`
     }
   }
 
-  .fr-text-warning .infobulle-date-previsionnelle {
-    color: var(--border-plain-warning) !important;
-  }
-
-  .texte-gris .infobulle-date-previsionnelle {
-    color: var(--text-mention-grey) !important;
-  }
-
   .texte-jaune {
     color: var(--yellow-moutarde-main-679) !important;
-  }
-
-  .infobulle-date-previsionnelle {
-    position: relative;
-    min-height: 0;
-    padding: 0;
-
-    button::before {
-      --icon-size: 1.3rem !important;
-    }
   }
 
   .indicateur-date-valeur {

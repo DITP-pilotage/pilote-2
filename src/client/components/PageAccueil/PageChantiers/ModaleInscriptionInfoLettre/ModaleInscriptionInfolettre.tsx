@@ -48,7 +48,7 @@ export const ModaleInscriptionInfolettre: FunctionComponent = () => {
               <label className="fr-label fr-text--bold" htmlFor="email">
                 EMAIL
                 {}
-                <span className="fr-text-red">*</span>
+                <span className="!text-error">*</span>
               </label>
               <Input
                 disabled
@@ -69,7 +69,7 @@ export const ModaleInscriptionInfolettre: FunctionComponent = () => {
                 pourrai me désabonner à tout moment via le lien présent dans
                 chaque envoi.
                 {}
-                <span className="fr-text-red">*</span>
+                <span className="!text-error">*</span>
               </label>
             </div>
             <button

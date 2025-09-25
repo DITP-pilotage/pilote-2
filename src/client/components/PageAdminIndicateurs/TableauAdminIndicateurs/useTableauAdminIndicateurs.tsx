@@ -20,6 +20,9 @@ import { MetadataParametrageIndicateurInformationContrat } from "@/server/app/co
 import { formaterDate, horodatage } from "@/client/utils/date/date";
 import AlerteProps from "@/components/_commons/Alerte/Alerte.interface";
 import Chantier from "@/server/domain/chantier/Chantier.interface";
+import { CloseCircleIcon } from "@/components/_commons/Icones/CloseCircleIcon";
+import { Icone } from "@/components/_commons/Icone";
+import { SuccessIcon } from "@/components/_commons/Icones/SuccessIcon";
 
 const reactTableColonnesHelper =
   createColumnHelper<MetadataParametrageIndicateurInformationContrat>();
@@ -67,22 +70,17 @@ const colonnes = [
   reactTableColonnesHelper.accessor("indicHiddenPilote", {
     header: "Actif / Inactif",
     sortingFn: "auto",
-    cell: (props) =>
-      props.getValue() ? (
+    cell: (props) => {
+      return (
         <div className="flex justify-center">
-          <span
-            aria-hidden="true"
-            className="fr-icon-close-circle-fill fr-icon-red"
-          />
+          {props.getValue() ? (
+            <Icone className="!text-error" icone={CloseCircleIcon} />
+          ) : (
+            <Icone className="!text-success" icone={SuccessIcon} />
+          )}
         </div>
-      ) : (
-        <div className="flex justify-center">
-          <span
-            aria-hidden="true"
-            className="fr-icon-checkbox-circle-fill fr-icon-green"
-          />
-        </div>
-      ),
+      );
+    },
   }),
 ];
 
