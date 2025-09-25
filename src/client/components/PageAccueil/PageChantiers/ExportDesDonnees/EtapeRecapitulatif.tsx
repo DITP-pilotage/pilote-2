@@ -13,6 +13,7 @@ import { getAnneeDateDeBascule } from "@/components/_commons/IndicateursChantier
 import { useSelecteurJalon } from "@/components/_commons/SelecteurJalon/useSelecteurJalon";
 import { Icone } from "@/components/_commons/Icone";
 import { CheckLineIcon } from "@/components/_commons/Icones/CheckLineIcon";
+import { Download1Icon } from "@/components/_commons/Icones/Download1Icon";
 
 const ressources = {
   chantiers: {
@@ -283,26 +284,27 @@ export const EtapeRecapitulatif = ({
           }
         }}
       >
-        <div className="w-full flex justify-end fr-mt-2w">
+        <div className="w-full flex justify-end fr-mt-2w gap-4">
           <button
             aria-controls="modale-exporter-les-données-v2"
-            className="fr-link fr-mr-2w"
+            className="!text-primary font-medium !px-4"
             title="Fermer la fenêtre modale"
             type="button"
           >
             Annuler
           </button>
           <button
-            className="fr-btn fr-btn--secondary fr-mr-2w"
+            className="!text-primary font-medium !border !border-primary !py-2 !px-4"
             onClick={() => setEtapeCourante(3)}
             type="button"
           >
             Étape précédente
           </button>
           <button
-            className="fr-btn fr-btn--icon-left fr-icon-download-line btn-radius"
+            className="!bg-primary font-medium !text-white rounded flex align-center gap-2 !px-4"
             type="submit"
           >
+            <Icone className="!text-current w-4 h-4" icone={Download1Icon} />
             Exporter les données
           </button>
         </div>
