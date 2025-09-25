@@ -18,7 +18,6 @@ import { UtilisateurListeGestionContrat } from "@/server/app/contrats/Utilisateu
 import { TerritoireAvecNombreUtilisateurs } from "@/server/gestion-utilisateur/domain/Territoire";
 import { ExportDesDonnees } from "@/components/PageAdminUtilisateurs/ExportDesDonnees/ExportDesDonnees";
 import { Icone } from "@/components/_commons/Icone";
-import { Download1Icon } from "@/components/_commons/Icones/Download1Icon";
 import { Success1Icon } from "@/components/_commons/Icones/Success1Icon";
 
 const PageAdminUtilisateurs: FunctionComponent<{
