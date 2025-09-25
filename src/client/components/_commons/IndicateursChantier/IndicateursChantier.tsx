@@ -1,5 +1,4 @@
 import { FunctionComponent } from "react";
-import clsx from "clsx";
 import IndicateurBloc from "@/components/_commons/IndicateursChantier/Bloc/IndicateurBloc";
 import IndicateursChantierStyled from "@/components/_commons/IndicateursChantier/IndicateursChantier.styled";
 import { comparerIndicateur } from "@/client/utils/indicateur/indicateur";
@@ -10,6 +9,7 @@ import {
 } from "@/client/utils/rubriques";
 import Indicateur from "@/server/domain/indicateur/Indicateur.interface";
 import { pageChantier } from "@/components/PageChantier/PageChantierServerSideContext";
+import { clsxm } from "@/utils/clsxm";
 import { TitreRubrique } from "./Bloc/Détails/TitreRubrique/TitreRubrique";
 
 interface IndicateursProps {
@@ -55,11 +55,11 @@ const IndicateursChantier: FunctionComponent<IndicateursProps> = ({
               <button
                 aria-controls={`accordion-rubrique-${rubriqueIndicateur.categorieIndicateur}`}
                 aria-expanded={rubriqueIndicateur.estAccordeonOuvert}
-                className={clsx(
-                  "fr-accordion__btn border-b rounded-t-lg fr-py-0 fr-px-3v fr-icon-black",
+                className={clsxm(
+                  "fr-accordion__btn border-b rounded-t-lg fr-py-0 fr-px-3v !text-black",
                   {
                     "!bg-dsfr-blue-france-925 !border-dsfr-blue-france-sun-113":
-                      !(chantier.statut === "ARCHIVE"),
+                      chantier.statut !== "ARCHIVE",
                     "!bg-dsfr-grey-925 !border-dsfr-grey-200":
                       chantier.statut === "ARCHIVE",
                   },
@@ -69,8 +69,8 @@ const IndicateursChantier: FunctionComponent<IndicateursProps> = ({
                 <TitreRubrique
                   classNameTitre={
                     chantier.statut === "ARCHIVE"
-                      ? "!text-dsfr-grey-200"
-                      : undefined
+                      ? "!m-0 !text-dsfr-grey-200"
+                      : "!m-0"
                   }
                   nombreIndicateurRubrique={indicateursDeCetteRubrique.length}
                   rubriqueDescription={rubriqueIndicateur.description}
