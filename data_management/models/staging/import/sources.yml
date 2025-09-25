@@ -426,6 +426,12 @@ sources:
                     "name": "Education prioritaire",
                     "desc": "	Territoires contenant des écoles en Education Prioritaire (Cantal,Haute-Loire,Lot et Lozère n'ont pas de REP)",
                   },
+                  {
+                    "order_id": 25,
+                    "value": "ZG-025",
+                    "name": "Bon état écologique des cours d'eau",
+                    "desc": "Toutes zones sauf départements 09, 64, 75, 93 et DROM (pas de station de mesure)",
+                  },
                 ]
               pilote_create_mandatory: false
               pilote_create_defaultValue: ""
