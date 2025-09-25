@@ -11,13 +11,13 @@ export const BoutonNavigationFicheConducteur = ({
   chantierId: string;
 }) => (
   <Link
-    className={clsxm("!text-sm flex align-center gap-1 pb-1", {
+    className={clsxm("!text-sm flex align-center gap-1 pb-1 border-current", {
       "!text-dsfr-grey-200": chantierEstArchive,
     })}
     href={`/chantier/${chantierId}/fiche-conducteur`}
     title="Fiche conducteur"
   >
-    <Icone className="w-4 h-6" icone={ArticleContourIcon} />
+    <Icone className="w-4 h-4 !text-current" icone={ArticleContourIcon} />
     Fiche conducteur
   </Link>
 );

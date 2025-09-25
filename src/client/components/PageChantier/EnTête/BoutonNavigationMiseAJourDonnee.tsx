@@ -12,7 +12,7 @@ export const BoutonNavigationMiseAJourDonnee = ({
     href={`/chantier/${chantierId}/indicateurs`}
     title="Mettre à jour les données"
   >
-    <Icone className="w-4 h-4" icone={Download1Icon} />
+    <Icone className="w-4 h-4 !text-current" icone={Download1Icon} />
     Mettre à jour les données
   </Link>
 );

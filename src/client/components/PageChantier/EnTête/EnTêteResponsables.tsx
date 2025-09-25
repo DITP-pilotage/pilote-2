@@ -9,9 +9,9 @@ export const ResponsableChantierEnTete: FunctionComponent<{
   const nomResponsable = listeNomsResponsables.join(", ") || "Non renseigné";
 
   return (
-    <div className="flex my-1">
-      <div className="mx-2">
-        <Icone icone={icone} />
+    <div className="flex gap-2">
+      <div>
+        <Icone className="!text-current" icone={icone} />
       </div>
       <div>
         <p className="!mb-0 fr-text--xs bold">{libellé}</p>
