@@ -6,11 +6,13 @@ export const Bouton = ({
   onClick,
   className,
   iconLeft,
+  iconRight,
 }: {
   label: string;
   onClick: MouseEventHandler<HTMLButtonElement>;
   className?: string;
   iconLeft?: ReactNode;
+  iconRight?: ReactNode;
 }) => {
   return (
     <button
@@ -20,6 +22,7 @@ export const Bouton = ({
     >
       {iconLeft}
       {label}
+      {iconRight}
     </button>
   );
 };
