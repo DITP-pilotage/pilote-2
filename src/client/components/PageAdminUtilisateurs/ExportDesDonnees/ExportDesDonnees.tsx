@@ -1,6 +1,8 @@
 import React, { FunctionComponent } from "react";
 import { parseAsString, useQueryStates } from "nuqs";
 import { horodatage } from "@/client/utils/date/date";
+import { Icone } from "@/components/_commons/Icone";
+import { Download1Icon } from "@/components/_commons/Icones/Download1Icon";
 
 export const ExportDesDonnees: FunctionComponent<{}> = () => {
   const [filtres] = useQueryStates(
@@ -84,9 +86,10 @@ export const ExportDesDonnees: FunctionComponent<{}> = () => {
     >
       <div className="w-full flex justify-end align-center">
         <button
-          className="fr-link fr-link--icon-left fr-icon-download-line"
+          className="!text-primary flex align-center gap-2 font-medium"
           type="submit"
         >
+          <Icone className="w-4 h-4" icone={Download1Icon} />
           Exporter les données
         </button>
       </div>
