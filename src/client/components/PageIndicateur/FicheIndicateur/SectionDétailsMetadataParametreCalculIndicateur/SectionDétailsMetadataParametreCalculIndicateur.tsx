@@ -1,6 +1,5 @@
 import { FunctionComponent } from "react";
 import Titre from "@/components/_commons/Titre/Titre";
-import SectionDétailsMetadataParametreCalculIndicateurStyled from "@/components/PageIndicateur/FicheIndicateur/SectionDétailsMetadataParametreCalculIndicateur/SectionDétailsMetadataParametreCalculIndicateur.styled";
 import useDétailsMetadataParametreCalculIndicateurForm from "@/components/PageIndicateur/FicheIndicateur/SectionDétailsMetadataParametreCalculIndicateur/useDétailsMetadataParametreCalculIndicateurForm";
 import { MetadataParametrageIndicateurContrat } from "@/server/app/contrats/MetadataParametrageIndicateurContrat";
 import { MapInformationMetadataIndicateurContrat } from "@/server/app/contrats/InformationMetadataIndicateurContrat";
@@ -23,7 +22,7 @@ const SectionDétailsMetadataParametreCalculIndicateur: FunctionComponent<{
     useDétailsMetadataParametreCalculIndicateurForm();
 
   return (
-    <SectionDétailsMetadataParametreCalculIndicateurStyled>
+    <div>
       <Titre baliseHtml="h2" className="fr-h5">
         Calcul de la valeur d'avancement
       </Titre>
@@ -206,7 +205,7 @@ const SectionDétailsMetadataParametreCalculIndicateur: FunctionComponent<{
         </div>
       </div>
       <hr className="fr-hr fr-mt-3w" />
-    </SectionDétailsMetadataParametreCalculIndicateurStyled>
+    </div>
   );
 };
 

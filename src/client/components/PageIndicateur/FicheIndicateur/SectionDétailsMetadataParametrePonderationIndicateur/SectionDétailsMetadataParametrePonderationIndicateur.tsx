@@ -1,6 +1,5 @@
 import { FunctionComponent } from "react";
 import Titre from "@/components/_commons/Titre/Titre";
-import SectionDétailsMetadataParametrePonderationIndicateurStyled from "@/components/PageIndicateur/FicheIndicateur/SectionDétailsMetadataParametrePonderationIndicateur/SectionDétailsMetadataParametrePonderationIndicateur.styled";
 import useDétailsMetadataParametrePonderationIndicateurForm from "@/components/PageIndicateur/FicheIndicateur/SectionDétailsMetadataParametrePonderationIndicateur/useDétailsMetadataParametrePonderationndicateurForm";
 import { MetadataParametrageIndicateurContrat } from "@/server/app/contrats/MetadataParametrageIndicateurContrat";
 import { MapInformationMetadataIndicateurContrat } from "@/server/app/contrats/InformationMetadataIndicateurContrat";
@@ -21,7 +20,7 @@ const SectionDétailsMetadataParametrePonderationIndicateur: FunctionComponent<{
   const { indicateurEstTerritorialise } = useDetailMetadataIndicateurForm();
 
   return (
-    <SectionDétailsMetadataParametrePonderationIndicateurStyled>
+    <div>
       <Titre baliseHtml="h2" className="fr-h5">
         Pondération de l'indicateur dans le calcul du taux d'avancement global
       </Titre>
@@ -71,7 +70,7 @@ const SectionDétailsMetadataParametrePonderationIndicateur: FunctionComponent<{
           />
         </div>
       </div>
-    </SectionDétailsMetadataParametrePonderationIndicateurStyled>
+    </div>
   );
 };
 

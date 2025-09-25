@@ -1,5 +1,4 @@
 import { FunctionComponent } from "react";
-import SectionDétailsMetadataIndicateurStyled from "@/components/PageIndicateur/FicheIndicateur/SectionDétailsMetadataIndicateur/SectionDétailsMetadataIndicateur.styled";
 import useDetailMetadataIndicateurForm from "@/components/PageIndicateur/FicheIndicateur/SectionDétailsMetadataIndicateur/useDetailMetadataIndicateurForm";
 import { MetadataParametrageIndicateurContrat } from "@/server/app/contrats/MetadataParametrageIndicateurContrat";
 import { MapInformationMetadataIndicateurContrat } from "@/server/app/contrats/InformationMetadataIndicateurContrat";
@@ -53,7 +52,7 @@ const SectionDétailsMetadataIndicateur: FunctionComponent<{
   }
 
   return (
-    <SectionDétailsMetadataIndicateurStyled>
+    <div>
       <div className="fr-grid-row fr-grid-row--gutters">
         <div className="fr-col-12 fr-col-md-6">
           <MetadataIndicateurTextArea
@@ -340,7 +339,7 @@ const SectionDétailsMetadataIndicateur: FunctionComponent<{
           />
         </div>
       </div>
-    </SectionDétailsMetadataIndicateurStyled>
+    </div>
   );
 };
 

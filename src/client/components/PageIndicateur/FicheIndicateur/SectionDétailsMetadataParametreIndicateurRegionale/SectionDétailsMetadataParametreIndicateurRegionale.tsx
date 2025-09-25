@@ -1,6 +1,5 @@
 import { FunctionComponent } from "react";
 import Titre from "@/components/_commons/Titre/Titre";
-import SectionDétailsMetadataParametreCalculIndicateurStyled from "@/components/PageIndicateur/FicheIndicateur/SectionDétailsMetadataParametreCalculIndicateur/SectionDétailsMetadataParametreCalculIndicateur.styled";
 import useDétailsMetadataParametreIndicateurRegionaleForm, {
   MetadataParametrageParametreIndicateurRegionaleForm,
 } from "@/components/PageIndicateur/FicheIndicateur/SectionDétailsMetadataParametreIndicateurRegionale/useDétailsMetadataParametreIndicateurRegionaleForm";
@@ -38,7 +37,7 @@ const SectionDétailsMetadataParametreIndicateurRegionale: FunctionComponent<{
   };
 
   return (
-    <SectionDétailsMetadataParametreCalculIndicateurStyled>
+    <div>
       <Titre baliseHtml="h2" className="fr-h5">
         Maille régionale
       </Titre>
@@ -222,7 +221,7 @@ const SectionDétailsMetadataParametreIndicateurRegionale: FunctionComponent<{
         </div>
       </div>
       <hr className="fr-hr fr-mt-3w" />
-    </SectionDétailsMetadataParametreCalculIndicateurStyled>
+    </div>
   );
 };
 

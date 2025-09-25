@@ -1,6 +1,5 @@
 import { FunctionComponent } from "react";
 import Titre from "@/components/_commons/Titre/Titre";
-import SectionDétailsMetadataParametreIndicateurDepartementaleStyled from "@/components/PageIndicateur/FicheIndicateur/SectionDétailsMetadataParametreIndicateurDepartementale/SectionDétailsMetadataParametreIndicateurDepartementale.styled";
 import useDétailsMetadataParametreIndicateurDepartementaleForm, {
   MetadataParametrageParametreIndicateurDepartementaleForm,
 } from "@/components/PageIndicateur/FicheIndicateur/SectionDétailsMetadataParametreIndicateurDepartementale/useDétailsMetadataParametreIndicateurDepartementaleForm";
@@ -38,7 +37,7 @@ const SectionDétailsMetadataParametreIndicateurDepartementale: FunctionComponen
   };
 
   return (
-    <SectionDétailsMetadataParametreIndicateurDepartementaleStyled>
+    <div>
       <Titre baliseHtml="h2" className="fr-h5">
         Maille départementale
       </Titre>
@@ -221,7 +220,7 @@ const SectionDétailsMetadataParametreIndicateurDepartementale: FunctionComponen
         </div>
       </div>
       <hr className="fr-hr fr-mt-3w" />
-    </SectionDétailsMetadataParametreIndicateurDepartementaleStyled>
+    </div>
   );
 };
 

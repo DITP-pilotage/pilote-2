@@ -3,7 +3,6 @@ import Titre from "@/components/_commons/Titre/Titre";
 import useDétailsMetadataParametreIndicateurNationaleForm, {
   MetadataParametrageParametreIndicateurNationaleForm,
 } from "@/components/PageIndicateur/FicheIndicateur/SectionDétailsMetadataParametreIndicateurNationale/useDétailsMetadataParametreIndicateurNationaleForm";
-import SectionDétailsMetadataParametreIndicateurNationaleStyled from "@/components/PageIndicateur/FicheIndicateur/SectionDétailsMetadataParametreIndicateurNationale/SectionDétailsMetadataParametreIndicateurNationale.styled";
 import { MapInformationMetadataIndicateurContrat } from "@/server/app/contrats/InformationMetadataIndicateurContrat";
 import { MetadataParametrageIndicateurContrat } from "@/server/app/contrats/MetadataParametrageIndicateurContrat";
 import { MetadataIndicateurSelecteur } from "@/components/PageIndicateur/FicheIndicateur/commons/MetadataIndicateurSelecteur";
@@ -38,7 +37,7 @@ const SectionDétailsMetadataParametreIndicateurNationale: FunctionComponent<{
   };
 
   return (
-    <SectionDétailsMetadataParametreIndicateurNationaleStyled>
+    <div>
       <Titre baliseHtml="h2" className="fr-h5">
         Maille nationale
       </Titre>
@@ -221,7 +220,7 @@ const SectionDétailsMetadataParametreIndicateurNationale: FunctionComponent<{
         </div>
       </div>
       <hr className="fr-hr fr-mt-3w" />
-    </SectionDétailsMetadataParametreIndicateurNationaleStyled>
+    </div>
   );
 };
 

@@ -1,6 +1,5 @@
 import { FunctionComponent } from "react";
 import Titre from "@/components/_commons/Titre/Titre";
-import SectionDétailsMetadataAutresIndicateurStyled from "@/components/PageIndicateur/FicheIndicateur/SectionDétailsMetadataAutresIndicateur/SectionDétailsMetadataAutresIndicateur.styled";
 import useSectionDétailsMetadataAutresIndicateurForm from "@/components/PageIndicateur/FicheIndicateur/SectionDétailsMetadataAutresIndicateur/useDétailsMetadataAutresIndicateurForm";
 import { MetadataParametrageIndicateurContrat } from "@/server/app/contrats/MetadataParametrageIndicateurContrat";
 import { MapInformationMetadataIndicateurContrat } from "@/server/app/contrats/InformationMetadataIndicateurContrat";
@@ -25,7 +24,7 @@ const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
   const { register, getValues, errors } =
     useSectionDétailsMetadataAutresIndicateurForm();
   return (
-    <SectionDétailsMetadataAutresIndicateurStyled>
+    <div>
       <Titre baliseHtml="h2" className="fr-h5">
         Autres informations
       </Titre>
@@ -331,7 +330,7 @@ const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
           />
         </div>
       </div>
-    </SectionDétailsMetadataAutresIndicateurStyled>
+    </div>
   );
 };
 
