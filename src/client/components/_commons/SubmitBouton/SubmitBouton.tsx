@@ -1,32 +1,27 @@
 import "@gouvfr/dsfr/dist/component/button/button.min.css";
-import { FunctionComponent } from "react";
+import { ReactNode } from "react";
+import { clsxm } from "@/utils/clsxm";
 
-interface SubmitBoutonProps {
-  label: string;
-  disabled?: boolean;
-  className?: string;
-}
-
-const SubmitBouton: FunctionComponent<SubmitBoutonProps> = ({
+export const SubmitBouton = ({
   label,
   disabled,
   className,
+  iconRight,
+}: {
+  label: string;
+  disabled?: boolean;
+  className?: string;
+  iconRight?: ReactNode;
 }) => {
   return (
     <button
-      className={`fr-btn${className ? " " + className : ""}`}
+      className={clsxm("fr-btn gap-2", className)}
       disabled={disabled}
       title={label}
       type="submit"
     >
       {label}
+      {iconRight}
     </button>
   );
 };
-
-SubmitBouton.defaultProps = {
-  className: "",
-  disabled: false,
-};
-
-export default SubmitBouton;

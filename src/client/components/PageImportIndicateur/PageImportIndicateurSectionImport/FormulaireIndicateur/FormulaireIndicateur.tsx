@@ -1,7 +1,7 @@
 import { Dispatch, FunctionComponent, SetStateAction } from "react";
 import InputFichier from "@/components/_commons/InputFichier/InputFichier";
 import { useFormulaireIndicateur } from "@/hooks/useFomulaireIndicateur";
-import SubmitBouton from "@/components/_commons/SubmitBouton/SubmitBouton";
+import { SubmitBouton } from "@/components/_commons/SubmitBouton/SubmitBouton";
 import { wording } from "@/client/utils/i18n/i18n";
 import { DetailValidationFichierContrat } from "@/server/app/contrats/DetailValidationFichierContrat.interface";
 

@@ -2,7 +2,7 @@ import { Controller } from "react-hook-form";
 import { FunctionComponent } from "react";
 import InputAvecLabel from "@/components/_commons/InputAvecLabel/InputAvecLabel";
 import Sélecteur from "@/components/_commons/Sélecteur/Sélecteur";
-import SubmitBouton from "@/components/_commons/SubmitBouton/SubmitBouton";
+import { SubmitBouton } from "@/components/_commons/SubmitBouton/SubmitBouton";
 import Titre from "@/components/_commons/Titre/Titre";
 import MultiSelectTerritoire, {
   MAXIMUM_COMPTES_AUTORISE_PAR_DEPARTEMENT,
@@ -12,6 +12,8 @@ import MultiSelectPérimètreMinistériel from "@/components/_commons/MultiSelec
 import { UtilisateurFormulaireProps } from "@/client/components/PageUtilisateurFormulaire/UtilisateurFormulaire/UtilisateurFormulaire.interface";
 import CaseACocher from "@/components/_commons/CaseACocher/CaseACocher";
 import { MultiSelectChantier } from "@/components/_commons/MultiSelectNew/MultiSelectChantier/MultiSelectChantier";
+import { Icone } from "@/components/_commons/Icone";
+import { ArrowLine1Icon } from "@/components/_commons/Icones/ArrowLine1Icon";
 import useSaisieDesInformationsUtilisateur from "./useSaisieDesInformationsUtilisateur";
 
 const SaisieDesInformationsUtilisateur: FunctionComponent<
@@ -278,7 +280,9 @@ const SaisieDesInformationsUtilisateur: FunctionComponent<
       </div>
       <div className="fr-grid-row fr-grid-row--right fr-mt-4w">
         <SubmitBouton
-          className="fr-btn--icon-right fr-icon-arrow-right-line"
+          iconRight={
+            <Icone className="text-current h-4 w-4" icone={ArrowLine1Icon} />
+          }
           label="Suivant"
         />
       </div>

@@ -9,8 +9,9 @@ import { MetadataParametrageIndicateurInformationContrat } from "@/server/app/co
 import TableauAdminIndicateursContenu from "@/components/PageAdminIndicateurs/TableauAdminIndicateurs/Contenu/TableauAdminIndicateursContenu";
 import TableauPagination from "@/components/_commons/Tableau/Pagination/TableauPagination";
 import InputFichier from "@/components/_commons/InputFichier/InputFichier";
-import SubmitBouton from "@/components/_commons/SubmitBouton/SubmitBouton";
+import { SubmitBouton } from "@/components/_commons/SubmitBouton/SubmitBouton";
 import Alerte from "@/components/_commons/Alerte/Alerte";
+import { Icone } from "@/components/_commons/Icone";
 
 const TableauAdminIndicateurs: FunctionComponent<{}> = () => {
   const {
