@@ -1,18 +1,18 @@
 import Link from "next/link";
-import { FunctionComponent } from "react";
-import Bouton from "@/components/_commons/Bouton/Bouton";
+import { Bouton } from "@/components/_commons/Bouton/Bouton";
 import useRécapitulatifUtilisateur from "@/components/PageUtilisateurFormulaire/UtilisateurFormulaire/RécapitulatifUtilisateur/useRécapitulatifUtilisateur";
 import FicheUtilisateur from "@/components/PageUtilisateur/FicheUtilisateur/FicheUtilisateur";
 import Alerte from "@/components/_commons/Alerte/Alerte";
+import { Icone } from "@/components/_commons/Icone";
+import { ArrowLine3Icon } from "@/components/_commons/Icones/ArrowLine3Icon";
 
-interface RécapitulatifUtilisateurProps {
+const RécapitulatifUtilisateur = ({
+  auClicBoutonRetourCallback,
+  utilisateurExistant,
+}: {
   auClicBoutonRetourCallback: () => void;
   utilisateurExistant: boolean;
-}
-
-const RécapitulatifUtilisateur: FunctionComponent<
-  RécapitulatifUtilisateurProps
-> = ({ auClicBoutonRetourCallback, utilisateurExistant }) => {
+}) => {
   const { utilisateur, envoyerFormulaireUtilisateur, alerte } =
     useRécapitulatifUtilisateur();
 
@@ -24,9 +24,10 @@ const RécapitulatifUtilisateur: FunctionComponent<
           <Alerte titre={alerte.titre} type={alerte.type} />
         </div>
       )}
-      <div className="fr-grid-row fr-mt-4w">
+      <div className="fr-grid-row !mt-8 flex items-center gap-4">
         <Bouton
-          className="fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line fr-mr-2w"
+          className="fr-btn--secondary"
+          iconLeft={<Icone className="h-4 w-4" icone={ArrowLine3Icon} />}
           label="Retour"
           onClick={auClicBoutonRetourCallback}
         />

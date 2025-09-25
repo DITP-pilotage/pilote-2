@@ -9,7 +9,7 @@ import Bloc from "@/components/_commons/Bloc/Bloc";
 import FicheUtilisateur from "@/components/PageUtilisateur/FicheUtilisateur/FicheUtilisateur";
 import Alerte from "@/components/_commons/Alerte/Alerte";
 import Modale from "@/client/components/_commons/Modale/Modale";
-import Bouton from "@/client/components/_commons/Bouton/Bouton";
+import { Bouton } from "@/client/components/_commons/Bouton/Bouton";
 import BandeauInformation from "@/components/_commons/BandeauInformation/BandeauInformation";
 import { useGestionTokenAPI } from "@/components/PageAdminGestionTokenAPI/useGestionTokenAPI";
 import Utilisateur from "@/server/domain/utilisateur/Utilisateur.interface";

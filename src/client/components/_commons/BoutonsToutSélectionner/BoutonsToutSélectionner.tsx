@@ -1,5 +1,5 @@
 import { FunctionComponent, MouseEventHandler } from "react";
-import Bouton from "@/components/_commons/Bouton/Bouton";
+import { Bouton } from "@/components/_commons/Bouton/Bouton";
 
 interface BoutonToutSélectionnerProps {
   onClickToutSélectionner: MouseEventHandler<HTMLButtonElement>;
