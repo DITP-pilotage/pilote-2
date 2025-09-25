@@ -58,18 +58,10 @@ const IndicateurBlocStyled = styled.div`
     }
   }
 
-  .texte-jaune {
-    color: var(--yellow-moutarde-main-679) !important;
-  }
-
   .indicateur-date-valeur {
     height: 1rem;
     font-size: 0.625rem;
     line-height: 1rem;
-  }
-
-  tr.table-comparaison-border {
-    border-top: 1px solid #ddd;
   }
 `;
 

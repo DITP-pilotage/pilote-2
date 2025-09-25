@@ -243,7 +243,7 @@ export const IndicateurPropositionValeur = ({
           </BoutonSousLigné>
         }
         className={clsx({
-          "texte-jaune": !estChantierArchive,
+          "text-dsfr-moutarde-main-679": !estChantierArchive,
           "text-dsfr-grey-200": estChantierArchive,
         })}
       >
@@ -278,7 +278,7 @@ export const IndicateurPropositionValeur = ({
         </BoutonSousLigné>
       }
       className={clsx({
-        "texte-jaune": !estChantierArchive,
+        "text-dsfr-moutarde-main-679": !estChantierArchive,
         "text-dsfr-grey-200": estChantierArchive,
       })}
     >

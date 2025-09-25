@@ -21,6 +21,7 @@ import {
 import { BadgeIndicateurEnAlerte } from "@/components/_commons/IndicateursChantier/Bloc/BadgeIndicateurEnAlerte";
 import { BadgeIndicateurBarometre } from "@/components/_commons/IndicateursChantier/Bloc/BadgeIndicateurBarometre";
 import { LigneIndicateurDatePrevisionnelle } from "@/components/_commons/IndicateursChantier/Bloc/LigneIndicateurDatePrevisionnelle";
+import { clsxm } from "@/utils/clsxm";
 import IndicateurBlocStyled from "./IndicateurBloc.styled";
 import { useIndicateurBloc } from "./useIndicateurBloc";
 
@@ -100,7 +101,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
       tauxAvancement === null
     ) {
       return (
-        <span className="fr-text--sm">
+        <span className="!text-sm">
           Le taux d'avancement n'est pas calculé car des données sont manquantes
           ou non applicables.
         </span>
@@ -163,7 +164,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                   <p className="fr-mb-0 fr-text--xs texte-gris">
                     Dernière mise à jour des données (de l'indicateur, toutes
                     zones confondues) :{" "}
-                    <span className="fr-text--bold">
+                    <span className="bold">
                       {dateDeMiseAJourIndicateur ?? "Non renseignée"}
                     </span>
                   </p>
@@ -198,9 +199,9 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                 <thead className="fr-background-transparent text-center">
                   <tr>
                     <th className="fr-mb-0 fr-pl-2w fr-p-1w fr-py-md-1w" />
-                    <th className="fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm" />
+                    <th className="fr-mb-0 fr-p-0 fr-py-md-1w !text-sm" />
                     <th
-                      className="fr-background-contrast-grey border-b-2 border-b-high-grey text-center fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm fr-text--bold"
+                      className="fr-background-contrast-grey border-b-2 border-b-high-grey text-center fr-mb-0 fr-p-0 fr-py-md-1w !text-sm bold"
                       colSpan={3}
                     >
                       <div className="flex align-center justify-center">
@@ -210,48 +211,45 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                       </div>
                     </th>
                     <th
-                      className="fr-background-action-low-blue-france border-b-2 border-b-high-grey text-center fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm fr-text--bold"
+                      className="fr-background-action-low-blue-france border-b-2 border-b-high-grey text-center fr-mb-0 fr-p-0 fr-py-md-1w !text-sm bold"
                       colSpan={3}
                     >
                       DONNÉES À ÉCHÉANCE 2026
                     </th>
                   </tr>
                   <tr className="border-b-2 border-b-high-grey">
-                    <th className="fr-background-action-low-blue-france text-center fr-mb-0 fr-px-1w fr-py-md-1w fr-text--sm fr-text--bold no-wrap">
+                    <th className="fr-background-action-low-blue-france text-center fr-mb-0 fr-px-1w fr-py-md-1w !text-sm bold no-wrap">
                       Territoire(s)
                     </th>
-                    <th className="fr-background-action-low-blue-france text-center fr-mb-0 fr-px-1w fr-py-md-1w fr-text--sm fr-text--bold">
+                    <th className="fr-background-action-low-blue-france text-center fr-mb-0 fr-px-1w fr-py-md-1w !text-sm bold">
                       valeur initiale
                     </th>
-                    <th className="fr-background-contrast-grey text-center fr-mb-0 fr-px-1w fr-py-md-1w fr-text--sm fr-text--bold">
+                    <th className="fr-background-contrast-grey text-center fr-mb-0 fr-px-1w fr-py-md-1w !text-sm bold">
                       valeur d'avancement
                     </th>
-                    <th className="fr-background-contrast-grey text-center fr-mb-0 fr-px-1w fr-py-md-1w fr-text--sm fr-text--bold">
+                    <th className="fr-background-contrast-grey text-center fr-mb-0 fr-px-1w fr-py-md-1w !text-sm bold">
                       valeur cible
                     </th>
-                    <th className="fr-background-contrast-grey text-center fr-mb-0 fr-px-1w fr-py-md-1w fr-text--sm fr-text--bold">
+                    <th className="fr-background-contrast-grey text-center fr-mb-0 fr-px-1w fr-py-md-1w !text-sm bold">
                       taux d'avancement
                     </th>
-                    <th className="fr-background-action-low-blue-france text-center fr-mb-0 fr-px-1w fr-py-md-1w fr-text--sm fr-text--bold">
+                    <th className="fr-background-action-low-blue-france text-center fr-mb-0 fr-px-1w fr-py-md-1w !text-sm bold">
                       valeur d'avancement
                     </th>
-                    <th className="fr-background-action-low-blue-france text-center fr-mb-0 fr-px-1w fr-py-md-1w fr-text--sm fr-text--bold">
+                    <th className="fr-background-action-low-blue-france text-center fr-mb-0 fr-px-1w fr-py-md-1w !text-sm bold">
                       valeur cible
                     </th>
-                    <th className="fr-background-action-low-blue-france text-center fr-mb-0 fr-px-1w fr-py-md-1w fr-text--sm fr-text--bold">
+                    <th className="fr-background-action-low-blue-france text-center fr-mb-0 fr-px-1w fr-py-md-1w !text-sm bold">
                       taux d'avancement
                     </th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr
-                    className={`${détailTerritoireSélectionné.code === territoireCode ? "ligne-territoire-proposition-valeur-davancement" : null}`}
-                    key={détailTerritoireSélectionné.nom}
-                  >
-                    <td className="fr-mb-0 fr-pl-2w fr-p-1w fr-py-md-1w fr-text--sm fr-text--bold fr-text-title--high-blue-france">
+                  <tr key={détailTerritoireSélectionné.nom}>
+                    <td className="fr-mb-0 fr-pl-2w fr-p-1w fr-py-md-1w !text-sm bold text-primary">
                       {détailTerritoireSélectionné.nom}
                     </td>
-                    <td className="fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm text-center">
+                    <td className="fr-mb-0 fr-p-0 fr-py-md-1w !text-sm text-center">
                       <ValeurEtDate
                         date={detailIndicateurDuTerritoire.dateValeurInitiale}
                         unité={detailIndicateurDuTerritoire.unité}
@@ -259,14 +257,14 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                       />
                     </td>
                     {/* Valeur et date valeur d'avancement de indicateurTerritoireJalon en fonction du jalon */}
-                    <td className="fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm text-center">
+                    <td className="fr-mb-0 fr-p-0 fr-py-md-1w !text-sm text-center">
                       <ValeurEtDate
                         date={detailIndicateurDuTerritoire.dateValeurAvancement}
                         unité={detailIndicateurDuTerritoire.unité}
                         valeur={detailIndicateurDuTerritoire.valeurAvancement}
                       />
                     </td>
-                    <td className="fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm text-center">
+                    <td className="fr-mb-0 fr-p-0 fr-py-md-1w !text-sm text-center">
                       <ValeurEtDate
                         date={
                           detailIndicateurDuTerritoire.dateValeurCibleAnnuelle
@@ -277,7 +275,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                         }
                       />
                     </td>
-                    <td className="fr-mb-0 fr-p-0 fr-px-2w fr-py-md-1w fr-text--sm flex">
+                    <td className="fr-mb-0 fr-p-0 fr-px-2w fr-py-md-1w !text-sm flex">
                       <BarreDeProgression
                         afficherTexte
                         fond="gris-clair"
@@ -295,7 +293,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                       />
                     </td>
                     {/* Valeur et date valeur d'avancement mandat de indicateurTerritoire */}
-                    <td className="fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm text-center">
+                    <td className="fr-mb-0 fr-p-0 fr-py-md-1w !text-sm text-center">
                       <ValeurEtDate
                         date={
                           detailIndicateurDuTerritoire.dateValeurAvancementMandat
@@ -306,14 +304,14 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                         }
                       />
                     </td>
-                    <td className="fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm text-center">
+                    <td className="fr-mb-0 fr-p-0 fr-py-md-1w !text-sm text-center">
                       <ValeurEtDate
                         date={detailIndicateurDuTerritoire.dateValeurCible}
                         unité={detailIndicateurDuTerritoire.unité}
                         valeur={detailIndicateurDuTerritoire.valeurCible}
                       />
                     </td>
-                    <td className="fr-mb-0 fr-p-0 fr-px-2w fr-py-md-1w fr-text--sm">
+                    <td className="fr-mb-0 fr-p-0 fr-px-2w fr-py-md-1w !text-sm">
                       <BarreDeProgression
                         afficherTexte
                         fond="gris-clair"
@@ -356,13 +354,13 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                           key={informationIndicateurComparé.territoireNom}
                         >
                           <tr
-                            className={`${informationIndicateurComparé.code === territoireCode ? "ligne-territoire-proposition-valeur-davancement" : "table-comparaison-border"}`}
+                            className="border-t border-t-dsfr-grey-625"
                             key={informationIndicateurComparé.territoireNom}
                           >
-                            <td className="fr-mb-0 fr-pl-2w fr-p-1w fr-py-md-1w fr-text--sm fr-text-title--light-blue-france">
+                            <td className="fr-mb-0 fr-pl-2w fr-p-1w fr-py-md-1w !text-sm fr-text-title--light-blue-france">
                               {informationIndicateurComparé.territoireNom}
                             </td>
-                            <td className="fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm text-center">
+                            <td className="fr-mb-0 fr-p-0 fr-py-md-1w !text-sm text-center">
                               <ValeurEtDate
                                 date={
                                   informationIndicateurComparé.données
@@ -377,7 +375,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                                 }
                               />
                             </td>
-                            <td className="fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm text-center">
+                            <td className="fr-mb-0 fr-p-0 fr-py-md-1w !text-sm text-center">
                               <ValeurEtDate
                                 date={
                                   informationIndicateurComparé.données
@@ -392,7 +390,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                                 }
                               />
                             </td>
-                            <td className="fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm text-center">
+                            <td className="fr-mb-0 fr-p-0 fr-py-md-1w !text-sm text-center">
                               <ValeurEtDate
                                 date={
                                   informationIndicateurComparé.données
@@ -407,7 +405,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                                 }
                               />
                             </td>
-                            <td className="fr-mb-0 fr-p-0 fr-px-2w fr-py-md-1w fr-text--sm">
+                            <td className="fr-mb-0 fr-p-0 fr-px-2w fr-py-md-1w !text-sm">
                               <BarreDeProgression
                                 afficherTexte
                                 fond="gris-clair"
@@ -421,7 +419,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                               />
                             </td>
                             {/* Valeur et date valeur d'avancement mandat de indicateurTerritoire */}
-                            <td className="fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm text-center">
+                            <td className="fr-mb-0 fr-p-0 fr-py-md-1w !text-sm text-center">
                               <ValeurEtDate
                                 date={
                                   informationIndicateurComparé.données
@@ -436,7 +434,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                                 }
                               />
                             </td>
-                            <td className="fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm text-center">
+                            <td className="fr-mb-0 fr-p-0 fr-py-md-1w !text-sm text-center">
                               <ValeurEtDate
                                 date={
                                   informationIndicateurComparé.données
@@ -451,7 +449,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                                 }
                               />
                             </td>
-                            <td className="fr-mb-0 fr-p-0 fr-px-2w fr-py-md-1w fr-text--sm">
+                            <td className="fr-mb-0 fr-p-0 fr-px-2w fr-py-md-1w !text-sm">
                               <BarreDeProgression
                                 afficherTexte
                                 fond="gris-clair"

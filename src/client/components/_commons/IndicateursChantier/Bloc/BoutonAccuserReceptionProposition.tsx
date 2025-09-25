@@ -20,7 +20,7 @@ export const BoutonAccuserReceptionProposition = ({
     <>
       <BoutonSousLigné
         aria-controls={modaleId}
-        className="fr-link--icon-left fr-icon-mail-line texte-jaune"
+        className="fr-link--icon-left fr-icon-mail-line !text-dsfr-moutarde-main-679"
         dataFrOpened={false}
         type="button"
       >
