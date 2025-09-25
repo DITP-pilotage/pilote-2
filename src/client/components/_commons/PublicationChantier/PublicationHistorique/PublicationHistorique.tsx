@@ -1,6 +1,6 @@
 import { Fragment, FunctionComponent, useMemo } from "react";
 import Modale from "@/components/_commons/Modale/Modale";
-import BoutonSousLigné from "@/components/_commons/BoutonSousLigné/BoutonSousLigné";
+import { BoutonSousLigné } from "@/components/_commons/BoutonSousLigné/BoutonSousLigné";
 import PublicationAffichage from "@/components/_commons/PublicationChantier/PublicationAffichage/PublicationAffichage";
 import PublicationHistoriqueProps from "./PublicationHistorique.interface";
 import usePublicationHistorique from "./usePublicationHistorique";

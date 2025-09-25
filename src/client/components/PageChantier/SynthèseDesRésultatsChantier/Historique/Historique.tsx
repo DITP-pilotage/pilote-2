@@ -3,7 +3,7 @@ import Modale from "@/components/_commons/Modale/Modale";
 import MétéoBadge from "@/components/_commons/Meteo/Badge/MétéoBadge";
 import MeteoPicto from "@/components/_commons/Meteo/Picto/MeteoPicto";
 import SynthèseDesRésultatsAffichage from "@/components/PageChantier/SynthèseDesRésultatsChantier/Affichage/Affichage";
-import BoutonSousLigné from "@/components/_commons/BoutonSousLigné/BoutonSousLigné";
+import { BoutonSousLigné } from "@/components/_commons/BoutonSousLigné/BoutonSousLigné";
 import { useTerritoireSelectionne } from "@/components/PageChantier/PageChantierServerSideContext";
 import SynthèseDesRésultatsHistoriqueStyled from "./Historique.styled";
 import useHistoriqueDeLaSyntheseDesResultats from "./useHistoriqueDeLaSyntheseDesResultats";

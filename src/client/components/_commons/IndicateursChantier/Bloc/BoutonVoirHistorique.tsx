@@ -1,7 +1,9 @@
 import { useId } from "react";
-import BoutonSousLigné from "@/components/_commons/BoutonSousLigné/BoutonSousLigné";
+import { BoutonSousLigné } from "@/components/_commons/BoutonSousLigné/BoutonSousLigné";
 import { ModaleHistoriqueIndicateurTerritoireValeurEvenement } from "@/components/_commons/IndicateursChantier/Bloc/ModaleHistoriqueIndicateurTerritoireValeurEvenement/ModaleHistoriqueIndicateurTerritoireValeurEvenement";
 import { useBlocIndicateurContext } from "@/components/PageChantier/useBlocIndicateurContext";
+import { Icone } from "@/components/_commons/Icone";
+import { Time1Icon } from "@/components/_commons/Icones/Time1Icon";
 
 export const BoutonVoirHistorique = () => {
   const modaleId = useId();
@@ -13,8 +15,9 @@ export const BoutonVoirHistorique = () => {
     <>
       <BoutonSousLigné
         aria-controls={modaleId}
-        className="fr-link--xs fr-link--icon-left fr-icon-time-line !text-current fr-mr-2w"
+        className="fr-link--xs !text-current !mr-4"
         dataFrOpened={false}
+        iconLeft={<Icone className="text-current h-3 w-3" icone={Time1Icon} />}
         type="button"
       >
         Voir l'historique

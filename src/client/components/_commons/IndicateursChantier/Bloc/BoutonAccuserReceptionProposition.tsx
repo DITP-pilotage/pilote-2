@@ -1,9 +1,12 @@
 import { useId } from "react";
 import { DétailsIndicateur } from "@/server/domain/indicateur/DétailsIndicateur.interface";
 import { DétailTerritoire } from "@/server/domain/territoire/Territoire.interface";
-import BoutonSousLigné from "@/components/_commons/BoutonSousLigné/BoutonSousLigné";
+import { BoutonSousLigné } from "@/components/_commons/BoutonSousLigné/BoutonSousLigné";
 import { ModaleAccuserReceptionPropositionValeurAvancement } from "@/components/_commons/IndicateursChantier/Bloc/ModaleAccuserReceptionPropositionValeurAvancement/ModaleAccuserReceptionPropositionValeurAvancement";
 import { useBlocIndicateurContext } from "@/components/PageChantier/useBlocIndicateurContext";
+import { MailIcon } from "@/components/_commons/Icones/MailIcon";
+import { Mail1Icon } from "@/components/_commons/Icones/Mail1Icon";
+import { Icone } from "@/components/_commons/Icone";
 
 export const BoutonAccuserReceptionProposition = ({
   detailIndicateur,
@@ -20,8 +23,9 @@ export const BoutonAccuserReceptionProposition = ({
     <>
       <BoutonSousLigné
         aria-controls={modaleId}
-        className="fr-link--icon-left fr-icon-mail-line !text-dsfr-moutarde-main-679"
+        className="!text-dsfr-moutarde-main-679"
         dataFrOpened={false}
+        iconLeft={<Icone className="text-current h-4 w-4" icone={Mail1Icon} />}
         type="button"
       >
         Accuser réception

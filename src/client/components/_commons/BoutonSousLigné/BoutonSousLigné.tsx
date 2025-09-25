@@ -1,25 +1,27 @@
-import { FunctionComponent, ComponentProps } from "react";
+import { ComponentProps, ReactNode } from "react";
 import clsx from "clsx";
 import BoutonSousLignéStyled from "@/components/_commons/BoutonSousLigné/BoutonSousLigné.styled";
 
-type BoutonSousLignéProps = ComponentProps<"button"> & {
-  dataFrOpened?: boolean;
-};
-
-const BoutonSousLigné: FunctionComponent<BoutonSousLignéProps> = ({
+export const BoutonSousLigné = ({
   className,
   dataFrOpened,
+  iconLeft,
+  children,
   ...props
+}: ComponentProps<"button"> & {
+  dataFrOpened?: boolean;
+  iconLeft?: ReactNode;
 }) => {
   return (
     <BoutonSousLignéStyled
-      className={clsx("fr-link override", className, {
+      className={clsx("!flex items-center gap-2 fr-link override", className, {
         "!opacity-80": props.disabled,
       })}
       data-fr-opened={dataFrOpened}
       {...props}
-    />
+    >
+      {iconLeft}
+      {children}
+    </BoutonSousLignéStyled>
   );
 };
-
-export default BoutonSousLigné;

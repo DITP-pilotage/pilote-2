@@ -1,7 +1,7 @@
 import clsx from "clsx";
 import { DétailsIndicateur } from "@/server/domain/indicateur/DétailsIndicateur.interface";
 import { formaterDate } from "@/client/utils/date/date";
-import BoutonSousLigné from "@/components/_commons/BoutonSousLigné/BoutonSousLigné";
+import { BoutonSousLigné } from "@/components/_commons/BoutonSousLigné/BoutonSousLigné";
 import {
   estPropositionAcceptee,
   estPropositionAccepteeAvecModification,
@@ -16,6 +16,9 @@ import { useBlocIndicateurContext } from "@/components/PageChantier/useBlocIndic
 import { DatajobsExecution } from "@/server/datajobs-execution/DatajobsExecution";
 import { BoutonProposerValeur } from "@/components/_commons/IndicateursChantier/Bloc/BoutonProposerValeur";
 import { territoireCodeVersMailleCodeInsee } from "@/server/utils/territoires";
+import { Icone } from "@/components/_commons/Icone";
+import { Eye1Icon } from "@/components/_commons/Icones/Eye1Icon";
+import { EyeOff1Icon } from "@/components/_commons/Icones/EyeOff1Icon";
 
 const estDatajobExecutionAvantProposition = (
   datajobsExecution: DatajobsExecution,
@@ -56,7 +59,8 @@ export const IndicateurPropositionValeur = ({
   if (indicateur.mailleRegAgregee && mailleDuTerritoireSelectionnee === "REG") {
     return (
       <div className="fr-text--xs texte-gris fr-mb-0 flex items-center">
-        Impossible de proposer une autre valeur d'avancement
+        Impossible de proposer une autre valeur d'avancement Impossible de
+        proposer une autre valeur d'avancement
         <Infobulle classNameInfoBulle="tooltip-accordeon">
           <p className="fr-text--sm">
             Les résultats de cet indicateur sont agrégés depuis le niveau
@@ -119,11 +123,14 @@ export const IndicateurPropositionValeur = ({
       <LigneInformationPropositionValeur
         action={
           <BoutonSousLigné
-            className={clsx("!text-current fr-link--xs fr-link--icon-left", {
-              "fr-icon-eye-off-line": propositionEstVisible,
-              "fr-icon-eye-line": !propositionEstVisible,
-            })}
+            className="!text-current fr-link--xs"
             dataFrOpened={false}
+            iconLeft={
+              <Icone
+                className="text-current h-3 w-3"
+                icone={propositionEstVisible ? EyeOff1Icon : Eye1Icon}
+              />
+            }
             onClick={() => setPropositionEstVisible(!propositionEstVisible)}
             type="button"
           >
@@ -165,11 +172,14 @@ export const IndicateurPropositionValeur = ({
       <LigneInformationPropositionValeur
         action={
           <BoutonSousLigné
-            className={clsx("!text-current fr-link--xs fr-link--icon-left", {
-              "fr-icon-eye-off-line": propositionEstVisible,
-              "fr-icon-eye-line": !propositionEstVisible,
-            })}
+            className="!text-current fr-link--xs"
             dataFrOpened={false}
+            iconLeft={
+              <Icone
+                className="text-current h-3 w-3"
+                icone={propositionEstVisible ? EyeOff1Icon : Eye1Icon}
+              />
+            }
             onClick={() => setPropositionEstVisible(!propositionEstVisible)}
             type="button"
           >
@@ -227,11 +237,14 @@ export const IndicateurPropositionValeur = ({
       <LigneInformationPropositionValeur
         action={
           <BoutonSousLigné
-            className={clsx("!text-current fr-link--xs fr-link--icon-left", {
-              "fr-icon-eye-off-line": propositionEstVisible,
-              "fr-icon-eye-line": !propositionEstVisible,
-            })}
+            className="!text-current fr-link--xs"
             dataFrOpened={false}
+            iconLeft={
+              <Icone
+                className="text-current h-3 w-3"
+                icone={propositionEstVisible ? EyeOff1Icon : Eye1Icon}
+              />
+            }
             onClick={() => setPropositionEstVisible(!propositionEstVisible)}
             type="button"
           >
@@ -262,11 +275,14 @@ export const IndicateurPropositionValeur = ({
     <LigneInformationPropositionValeur
       action={
         <BoutonSousLigné
-          className={clsx("!text-current fr-link--xs fr-link--icon-left", {
-            "fr-icon-eye-off-line": propositionEstVisible,
-            "fr-icon-eye-line": !propositionEstVisible,
-          })}
+          className="!text-current fr-link--xs"
           dataFrOpened={false}
+          iconLeft={
+            <Icone
+              className="text-current h-3 w-3"
+              icone={propositionEstVisible ? EyeOff1Icon : Eye1Icon}
+            />
+          }
           onClick={() => setPropositionEstVisible(!propositionEstVisible)}
           type="button"
         >
