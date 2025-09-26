@@ -9,6 +9,8 @@ import Titre from "@/components/_commons/Titre/Titre";
 import Bloc from "@/components/_commons/Bloc/Bloc";
 import { estLargeurDÉcranActuelleMoinsLargeQue } from "@/client/stores/useLargeurDÉcranStore/useLargeurDÉcranStore";
 import { pageChantier } from "@/components/PageChantier/PageChantierServerSideContext";
+import { Icone } from "@/components/_commons/Icone";
+import { Equalizer1Icon } from "@/components/_commons/Icones/Equalizer1Icon";
 import useChoixTerritoire from "./useChoixTerritoire";
 import ChoixTerritoireStyled from "./ChoixTerritoire.styled";
 
@@ -49,7 +51,7 @@ const ChoixTerritoire = () => {
         <ChoixTerritoireStyled>
           <div className="bouton-filtrer fr-hidden-lg fr-py-1w fr-px-1v">
             <button
-              className="fr-btn fr-btn--tertiary-no-outline fr-btn--icon-left fr-icon-equalizer-fill fr-text-title--blue-france"
+              className="fr-btn fr-btn--tertiary-no-outline !text-primary gap-2"
               onClick={() => {
                 setEstOuverteBarreLatérale(true);
                 setEstVisibleEnMobile(true);
@@ -57,6 +59,7 @@ const ChoixTerritoire = () => {
               title="Filtrer"
               type="button"
             >
+              <Icone className="w-4 h-4" icone={Equalizer1Icon} />
               Filtrer
             </button>
           </div>

@@ -1,4 +1,3 @@
-import "@gouvfr/dsfr/dist/utility/icons/icons-document/icons-document.min.css";
 import { FunctionComponent } from "react";
 import { pageChantier } from "@/components/PageChantier/PageChantierServerSideContext";
 import { BoutonImpression } from "@/components/_commons/BoutonImpression/BoutonImpression";

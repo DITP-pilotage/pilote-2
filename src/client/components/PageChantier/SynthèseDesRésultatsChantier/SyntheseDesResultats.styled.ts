@@ -32,10 +32,6 @@ const SyntheseDesResultatsStyled = styled.div`
     display: flex;
     justify-content: end;
   }
-
-  .bouton-modifier {
-    border-radius: 0.25rem;
-  }
 `;
 
 export default SyntheseDesResultatsStyled;

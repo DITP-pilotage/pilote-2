@@ -1,6 +1,4 @@
 import "@gouvfr/dsfr/dist/component/badge/badge.min.css";
-import "@gouvfr/dsfr/dist/utility/icons/icons-business/icons-business.min.css";
-import "@gouvfr/dsfr/dist/utility/icons/icons-device/icons-device.min.css";
 import Link from "next/link";
 import { FunctionComponent, useState } from "react";
 import PageRapportDétailléStyled from "@/components/PageRapportDétaillé/PageRapportDétaillé.styled";

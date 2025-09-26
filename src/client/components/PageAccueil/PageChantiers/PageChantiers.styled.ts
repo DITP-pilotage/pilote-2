@@ -1,18 +1,8 @@
 import styled from "@emotion/styled";
 
 const PageChantiersStyled = styled.main`
-  .titre {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-  }
-
   .fr-text--lg {
     line-height: 1.5rem;
-  }
-
-  .titre-gris {
-    color: var(--text-disabled-grey);
   }
 
   .select-sm {

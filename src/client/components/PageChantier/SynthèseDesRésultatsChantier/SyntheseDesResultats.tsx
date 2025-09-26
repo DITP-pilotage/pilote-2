@@ -10,6 +10,8 @@ import Alerte from "@/components/_commons/Alerte/Alerte";
 import SynthèseDesRésultatsAffichage from "@/components/PageChantier/SynthèseDesRésultatsChantier/Affichage/Affichage";
 import { pageChantier } from "@/components/PageChantier/PageChantierServerSideContext";
 import SyntheseDesResultatsFormulaire from "@/components/PageChantier/SynthèseDesRésultatsChantier/SyntheseDesResultatsFormulaire/SyntheseDesResultatsFormulaire";
+import { Icone } from "@/components/_commons/Icone";
+import { Icone1Icon } from "@/components/_commons/Icones/Icone1Icon";
 
 export interface SyntheseDesResultatsProps {
   nomTerritoire: string;
@@ -92,15 +94,11 @@ const SyntheseDesResultats: FunctionComponent<SyntheseDesResultatsProps> = ({
                     ) : null}
                     {modeEcriture ? (
                       <button
-                        className="fr-btn fr-btn--secondary fr-ml-3w bouton-modifier"
+                        className="fr-btn fr-btn--secondary !ml-6 rounded gap-2"
                         onClick={() => setModeÉdition(true)}
                         type="button"
                       >
-                        <span
-                          aria-hidden="true"
-                          className="fr-icon-edit-line fr-mr-1w"
-                        />
-                        {}
+                        <Icone icone={Icone1Icon} />
                         Modifier
                       </button>
                     ) : null}

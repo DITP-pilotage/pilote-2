@@ -4,7 +4,6 @@ import { DétailTerritoire } from "@/server/domain/territoire/Territoire.interfa
 import { BoutonSousLigné } from "@/components/_commons/BoutonSousLigné/BoutonSousLigné";
 import { ModaleAccuserReceptionPropositionValeurAvancement } from "@/components/_commons/IndicateursChantier/Bloc/ModaleAccuserReceptionPropositionValeurAvancement/ModaleAccuserReceptionPropositionValeurAvancement";
 import { useBlocIndicateurContext } from "@/components/PageChantier/useBlocIndicateurContext";
-import { MailIcon } from "@/components/_commons/Icones/MailIcon";
 import { Mail1Icon } from "@/components/_commons/Icones/Mail1Icon";
 import { Icone } from "@/components/_commons/Icone";
 

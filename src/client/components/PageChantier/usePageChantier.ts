@@ -63,7 +63,7 @@ export const usePageChantier = () => {
       ProfilEnum.EQUIPE_DIR_PROJET,
       ProfilEnum.SECRETARIAT_GENERAL,
     ].includes(session.profil) &&
-    territoireSélectionné?.maille != "nationale"
+    territoireSélectionné?.maille !== "nationale"
   ) {
     estAutoriseAModifierLesPublications =
       estAutoriseAModifierLesPublications &&

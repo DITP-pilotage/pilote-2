@@ -1,4 +1,3 @@
-import "@gouvfr/dsfr/dist/utility/icons/icons-business/icons-business.min.css";
 import { ButtonHTMLAttributes } from "react";
 import { clsxm } from "@/utils/clsxm";
 import { Icone } from "@/components/_commons/Icone";

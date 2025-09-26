@@ -11,7 +11,6 @@ import TableauPagination from "@/components/_commons/Tableau/Pagination/TableauP
 import InputFichier from "@/components/_commons/InputFichier/InputFichier";
 import { SubmitBouton } from "@/components/_commons/SubmitBouton/SubmitBouton";
 import Alerte from "@/components/_commons/Alerte/Alerte";
-import { Icone } from "@/components/_commons/Icone";
 
 const TableauAdminIndicateurs: FunctionComponent<{}> = () => {
   const {

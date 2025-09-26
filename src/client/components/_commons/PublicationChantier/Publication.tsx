@@ -1,7 +1,8 @@
 import { FunctionComponent } from "react";
 import Alerte from "@/components/_commons/Alerte/Alerte";
 import Titre from "@/components/_commons/Titre/Titre";
-import PublicationStyled from "./Publication.styled";
+import { Icone } from "@/components/_commons/Icone";
+import { Icone1Icon } from "@/components/_commons/Icones/Icone1Icon";
 import usePublication from "./usePublication";
 import PublicationFormulaire from "./PublicationFormulaire/PublicationFormulaire";
 import PublicationProps from "./Publication.interface";
@@ -28,7 +29,7 @@ const Publication: FunctionComponent<PublicationProps> = ({
   } = usePublication(publicationInitiale);
 
   return (
-    <PublicationStyled className="fr-px-0 fr-px-md-1w fr-py-2w">
+    <section className="fr-px-0 fr-px-md-1w fr-py-2w">
       <Titre baliseHtml="h3" className="fr-h5 fr-mb-1w">
         {modeÉdition
           ? `Modifier : ${caractéristiques.libelléType}`
@@ -53,7 +54,7 @@ const Publication: FunctionComponent<PublicationProps> = ({
           <PublicationAffichage publication={publication} />
           {estInteractif ? (
             <div className="fr-grid-row fr-grid-row--right">
-              <div className="fr-col-12 actions fr-mt-1w">
+              <div className="fr-col-12 flex justify-end fr-mt-1w">
                 {!!publication && (
                   <PublicationHistorique
                     entité={caractéristiques.entité}
@@ -64,15 +65,11 @@ const Publication: FunctionComponent<PublicationProps> = ({
                 )}
                 {modeÉcriture ? (
                   <button
-                    className="fr-btn fr-btn--secondary fr-ml-3w bouton-modifier"
+                    className="fr-btn fr-btn--secondary !ml-6 gap-2 rounded"
                     onClick={activerLeModeÉdition}
                     type="button"
                   >
-                    <span
-                      aria-hidden="true"
-                      className="fr-icon-edit-line fr-mr-1w"
-                    />
-                    {}
+                    <Icone icone={Icone1Icon} />
                     Modifier
                   </button>
                 ) : null}
@@ -81,7 +78,7 @@ const Publication: FunctionComponent<PublicationProps> = ({
           ) : null}
         </>
       )}
-    </PublicationStyled>
+    </section>
   );
 };
 
