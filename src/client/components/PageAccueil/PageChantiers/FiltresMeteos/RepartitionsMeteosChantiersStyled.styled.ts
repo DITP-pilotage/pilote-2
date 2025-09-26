@@ -3,10 +3,6 @@ import styled from "@emotion/styled";
 const RepartitionsMeteosChantiersStyled = styled.ul`
   list-style: none;
 
-  button.est-active {
-    border-color: var(--text-title-blue-france);
-  }
-
   .nombre-de-chantiers {
     color: var(--text-title-blue-france);
   }

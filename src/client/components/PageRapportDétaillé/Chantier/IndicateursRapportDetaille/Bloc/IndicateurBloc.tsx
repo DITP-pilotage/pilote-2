@@ -44,11 +44,12 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
         <section>
           <div className="flex justify-between">
             <div>
-              <Titre baliseHtml="h4" className="fr-text--xl fr-mb-1w">
+              <Titre
+                baliseHtml="h4"
+                className="fr-text--xl fr-mb-1w flex gap-2 items-center"
+              >
                 {indicateur.estIndicateurDuBaromètre ? (
-                  <span className="fr-mr-1v">
-                    <PictoBaromètre />
-                  </span>
+                  <PictoBaromètre />
                 ) : null}
                 {indicateur.nom +
                   (indicateur.unité === null || indicateur.unité === ""

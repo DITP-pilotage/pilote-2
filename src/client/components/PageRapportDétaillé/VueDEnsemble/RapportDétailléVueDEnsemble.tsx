@@ -119,7 +119,7 @@ const RapportDétailléVueDEnsemble: FunctionComponent<
       </div>
       {!chantiersSontArchives && (
         <div className="fr-pt-3w fr-px-2w fr-px-md-0 alertes">
-          <div className="fr-mb-2w">
+          <div className="fr-mb-2w ">
             <TitreInfobulleConteneur>
               <BadgeIcône type="warning" />
               <Titre
@@ -129,7 +129,7 @@ const RapportDétailléVueDEnsemble: FunctionComponent<
               >
                 Chantiers signalés
               </Titre>
-              <Infobulle classNameBouton="!text-current">
+              <Infobulle classNameBouton="!text-dsfr-warning-425">
                 {INFOBULLE_CONTENUS.chantiers.alertes}
               </Infobulle>
             </TitreInfobulleConteneur>

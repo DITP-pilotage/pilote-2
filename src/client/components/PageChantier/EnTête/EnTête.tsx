@@ -12,8 +12,6 @@ import { AccountIcon } from "@/components/_commons/Icones/AccountIcon";
 import { clsxm } from "@/utils/clsxm";
 import { ActionChantierEnTete } from "@/components/PageChantier/EnTête/ActionChantierEnTete";
 import { Icone } from "@/components/_commons/Icone";
-import { ArrowLine2Icon } from "@/components/_commons/Icones/ArrowLine2Icon";
-import { ArrowLine1Icon } from "@/components/_commons/Icones/ArrowLine1Icon";
 import { ArrowLine3Icon } from "@/components/_commons/Icones/ArrowLine3Icon";
 import { ResponsableChantierEnTete } from "./EnTêteResponsables";
 import { ResponsabiliteChantierEnTete } from "./ResponsabiliteChantierEnTete";
