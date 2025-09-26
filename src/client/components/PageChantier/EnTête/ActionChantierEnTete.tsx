@@ -28,7 +28,11 @@ export const ActionChantierEnTete: FunctionComponent<{
       {afficheLeBoutonImpression ? (
         <div className="mb-1">
           <BoutonImpression
-            className={chantierEstArchive ? "!text-dsfr-grey-200" : ""}
+            className={
+              chantierEstArchive
+                ? "!text-dsfr-grey-200 !border-dsfr-grey-200"
+                : ""
+            }
           />
         </div>
       ) : null}

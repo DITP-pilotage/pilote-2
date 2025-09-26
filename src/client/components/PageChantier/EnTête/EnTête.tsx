@@ -80,17 +80,21 @@ const PageChantierEnTête: FunctionComponent<{
           {listeNomsResponsablesMinistèrePorteur.join(", ") || "Non renseigné"}
         </p>
       </div>
-      <ResponsableChantierEnTete
-        icone={GovernmentIcon}
-        libellé="Autres ministères co-porteurs"
-        listeNomsResponsables={listeNomsResponsablesAutresMinistèresCoPorteurs}
-      />
-      <ResponsableChantierEnTete
-        icone={AccountIcon}
-        libellé="Directeur(s) / directrice(s) d'Administration Centrale"
-        listeNomsResponsables={listeNomsDirecteursAdministrationCentrale}
-      />
-      <ResponsabiliteChantierEnTete />
+      <div className="!mb-2 flex flex-column gap-y-2">
+        <ResponsableChantierEnTete
+          icone={GovernmentIcon}
+          libellé="Autres ministères co-porteurs"
+          listeNomsResponsables={
+            listeNomsResponsablesAutresMinistèresCoPorteurs
+          }
+        />
+        <ResponsableChantierEnTete
+          icone={AccountIcon}
+          libellé="Directeur(s) / directrice(s) d'Administration Centrale"
+          listeNomsResponsables={listeNomsDirecteursAdministrationCentrale}
+        />
+        <ResponsabiliteChantierEnTete />
+      </div>
       <ActionChantierEnTete
         afficheLeBoutonFicheConducteur={afficheLeBoutonFicheConducteur}
         afficheLeBoutonImpression={afficheLeBoutonImpression}

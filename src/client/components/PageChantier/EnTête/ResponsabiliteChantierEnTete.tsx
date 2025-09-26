@@ -25,8 +25,10 @@ export const ResponsabiliteChantierEnTete = () => {
 
   if (estChantierNational) {
     return (
-      <div className="flex pl-1">
-        <Icone icone={DraftContourIcon} />
+      <div className="flex gap-2">
+        <div>
+          <Icone className="!text-current" icone={DraftContourIcon} />
+        </div>
         <div>
           <span className="!mb-0 fr-text--xs">
             Chantier piloté à la{" "}
@@ -38,9 +40,9 @@ export const ResponsabiliteChantierEnTete = () => {
   }
 
   return (
-    <div className="flex">
-      <div className="mx-2">
-        <Icone icone={DraftContourIcon} />
+    <div className="flex gap-2">
+      <div>
+        <Icone className="!text-current" icone={DraftContourIcon} />
       </div>
       <div>
         <span className="!mb-0 fr-text--xs">
