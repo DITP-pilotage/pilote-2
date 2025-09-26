@@ -13,6 +13,8 @@ import { MetadataParametrageIndicateurContrat } from "@/server/app/contrats/Meta
 import { MapInformationMetadataIndicateurContrat } from "@/server/app/contrats/InformationMetadataIndicateurContrat";
 import { ChantierSynthétisé } from "@/server/domain/chantier/Chantier.interface";
 import { InformationHistorisationMetadataIndicateurContrat } from "@/server/parametrage-indicateur/app/InformationDerniereModificationMetadataIndicateurContrat";
+import { Icone } from "@/components/_commons/Icone";
+import { ArrowLine3Icon } from "@/components/_commons/Icones/ArrowLine3Icon";
 
 interface PageIndicateurProps {
   indicateur: MetadataParametrageIndicateurContrat;
@@ -68,13 +70,16 @@ const PageIndicateur: FunctionComponent<PageIndicateurProps> = ({
                 }
               })}
             >
-              <Link
-                aria-label="Retour à la liste des indicateurs"
-                className="fr-link fr-fi-arrow-left-line fr-link--icon-left fr-text--sm bouton-retour"
-                href="/admin/indicateurs"
-              >
-                Retour
-              </Link>
+              <div className="flex">
+                <Link
+                  aria-label="Retour à l'accueil"
+                  className="flex items-center gap-2 !text-primary"
+                  href="/admin/indicateurs"
+                >
+                  <Icone className="w-4 h-4" icone={ArrowLine3Icon} />
+                  Retour
+                </Link>
+              </div>
               {modificationReussie ? (
                 <div className="fr-my-4w">
                   <Alerte

@@ -1,7 +1,6 @@
 import { parseAsBoolean, parseAsStringLiteral, useQueryState } from "nuqs";
 import { FunctionComponent } from "react";
 import Bloc from "@/components/_commons/Bloc/Bloc";
-import SyntheseDesResultatsStyled from "@/components/PageChantier/SynthèseDesRésultatsChantier/SyntheseDesResultats.styled";
 import { MeteoPicto } from "@/components/_commons/Meteo/Picto/MeteoPicto";
 import MétéoBadge from "@/components/_commons/Meteo/Badge/MétéoBadge";
 import SynthèseDesRésultatsHistorique from "@/components/PageChantier/SynthèseDesRésultatsChantier/Historique/Historique";
@@ -43,7 +42,7 @@ const SyntheseDesResultats: FunctionComponent<SyntheseDesResultatsProps> = ({
   const { synthèseDesRésultatsCréée } = useSyntheseDesResultats();
 
   return (
-    <SyntheseDesResultatsStyled>
+    <div>
       <Bloc
         backgroundClassNameTitre={
           chantier.statut === "ARCHIVE"
@@ -69,26 +68,22 @@ const SyntheseDesResultats: FunctionComponent<SyntheseDesResultatsProps> = ({
                   />
                 </div>
               )}
-              <div className="contenu">
-                <div className="fr-mx-1w fr-mb-2w fr-mb-md-0 météo-affichage">
-                  <div className="fr-mb-2w">
-                    <MétéoBadge
-                      météo={synthèseDesRésultats?.météo ?? "NON_RENSEIGNEE"}
-                    />
-                  </div>
-                  {!!synthèseDesRésultats && (
-                    <div>
-                      <MeteoPicto meteo={synthèseDesRésultats.météo} />
-                    </div>
-                  )}
+              <div className="flex gap-4">
+                <div className="flex flex-col gap-4 align-center">
+                  <MétéoBadge
+                    météo={synthèseDesRésultats?.météo ?? "NON_RENSEIGNEE"}
+                  />
+                  {synthèseDesRésultats ? (
+                    <MeteoPicto meteo={synthèseDesRésultats.météo} />
+                  ) : null}
                 </div>
-                <div className="synthèse-affichage">
+                <div>
                   <SynthèseDesRésultatsAffichage />
                 </div>
               </div>
               {estInteractif ? (
                 <div className="fr-grid-row fr-grid-row--right">
-                  <div className="fr-col-12 actions fr-mt-1w">
+                  <div className="fr-col-12 flex justify-end fr-mt-1w">
                     {!!synthèseDesRésultats ? (
                       <SynthèseDesRésultatsHistorique />
                     ) : null}
@@ -109,7 +104,7 @@ const SyntheseDesResultats: FunctionComponent<SyntheseDesResultatsProps> = ({
           )}
         </div>
       </Bloc>
-    </SyntheseDesResultatsStyled>
+    </div>
   );
 };
 

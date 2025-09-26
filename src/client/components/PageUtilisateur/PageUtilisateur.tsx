@@ -14,6 +14,8 @@ import BandeauInformation from "@/components/_commons/BandeauInformation/Bandeau
 import { useGestionTokenAPI } from "@/components/PageAdminGestionTokenAPI/useGestionTokenAPI";
 import Utilisateur from "@/server/domain/utilisateur/Utilisateur.interface";
 import { TokenAPIInformationContrat } from "@/server/authentification/app/contrats/TokenAPIInformationContrat";
+import { Icone } from "@/components/_commons/Icone";
+import { ArrowLine3Icon } from "@/components/_commons/Icones/ArrowLine3Icon";
 import usePageUtilisateur from "./usePageUtilisateur";
 
 interface PageUtilisateurProps {
@@ -44,13 +46,16 @@ const PageUtilisateur: FunctionComponent<PageUtilisateurProps> = ({
       <main className="fr-container">
         <FilAriane chemin={chemin} libelléPageCourante="Utilisateur" />
         <div className="fiche-utilisateur fr-pt-1w fr-pb-13w">
-          <Link
-            aria-label="Retour à la liste des utilisateurs"
-            className="fr-link fr-fi-arrow-left-line fr-link--icon-left fr-text--sm bouton-retour"
-            href="/admin/utilisateurs"
-          >
-            Retour
-          </Link>
+          <div className="flex">
+            <Link
+              aria-label="Retour à l'accueil"
+              className="flex items-center gap-2 !text-primary"
+              href="/admin/utilisateurs"
+            >
+              <Icone className="w-4 h-4" icone={ArrowLine3Icon} />
+              Retour
+            </Link>
+          </div>
           <Titre baliseHtml="h1" className="fr-h1 fr-mt-4w">
             Fiche du compte
           </Titre>
@@ -134,8 +139,8 @@ const PageUtilisateur: FunctionComponent<PageUtilisateurProps> = ({
                     >
                       <div>
                         Vous êtes sur le point de désactiver le compte de{" "}
-                        <span className="prénom">{utilisateur.prénom}</span>{" "}
-                        <span className="nom">{utilisateur.nom}.</span>
+                        <span className="uppercase">{utilisateur.prénom}</span>{" "}
+                        <span className="uppercase">{utilisateur.nom}.</span>
                       </div>
                       <div className="fr-grid-row fr-grid-row--right fr-mt-4w">
                         <Bouton
@@ -172,8 +177,8 @@ const PageUtilisateur: FunctionComponent<PageUtilisateurProps> = ({
                     >
                       <div>
                         Vous êtes sur le point de réactiver le compte de{" "}
-                        <span className="prénom">{utilisateur.prénom}</span>{" "}
-                        <span className="nom">{utilisateur.nom}.</span> Un
+                        <span className="uppercase">{utilisateur.prénom}</span>{" "}
+                        <span className="uppercase">{utilisateur.nom}.</span> Un
                         message de réinitialisation de mot de passe lui sera
                         transmis automatiquement.
                       </div>

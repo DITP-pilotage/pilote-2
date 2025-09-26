@@ -6,11 +6,6 @@ const PageUtilisateurStyled = styled.div`
   .desactiver {
     color: var(--text-active-blue-france);
   }
-
-  .prénom,
-  .nom {
-    text-transform: capitalize;
-  }
 `;
 
 export default PageUtilisateurStyled;
