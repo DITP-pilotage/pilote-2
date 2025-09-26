@@ -3,14 +3,6 @@ import styled from "@emotion/styled";
 const RepartitionsMeteosChantiersStyled = styled.ul`
   list-style: none;
 
-  .bouton-repartition-meteos {
-    height: 100%;
-    padding: 1rem 0.5rem;
-    border: 1px solid #e3e3fd;
-    border-radius: 4px;
-    box-shadow: 0 2px 6px rgb(0 0 18 / 16%);
-  }
-
   button.est-active {
     border-color: var(--text-title-blue-france);
   }

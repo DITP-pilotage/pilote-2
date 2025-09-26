@@ -7,7 +7,7 @@ import Titre from "@/components/_commons/Titre/Titre";
 import Bloc from "@/components/_commons/Bloc/Bloc";
 import JaugeDeProgression from "@/components/_commons/JaugeDeProgression/JaugeDeProgression";
 import MétéoBadge from "@/components/_commons/Meteo/Badge/MétéoBadge";
-import MeteoPicto from "@/components/_commons/Meteo/Picto/MeteoPicto";
+import { MeteoPicto } from "@/components/_commons/Meteo/Picto/MeteoPicto";
 import { ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS } from "@/client/constants/légendes/élémentsDeLégendesCartographieAvancement";
 import CartographieAvancement from "@/components/_commons/Cartographie/CartographieAvancement/CartographieAvancement";
 import { ÉLÉMENTS_LÉGENDE_MÉTÉO_CHANTIERS } from "@/client/constants/légendes/élémentsDeLégendesCartographieMétéo";

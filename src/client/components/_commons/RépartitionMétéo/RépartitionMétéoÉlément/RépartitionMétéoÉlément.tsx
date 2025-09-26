@@ -1,5 +1,5 @@
 import { FunctionComponent } from "react";
-import MeteoPicto from "@/components/_commons/Meteo/Picto/MeteoPicto";
+import { MeteoPicto } from "@/components/_commons/Meteo/Picto/MeteoPicto";
 import { libellésMétéos, Météo } from "@/server/domain/météo/Météo.interface";
 import RépartitionMétéoÉlémentStyled from "./RépartitionMétéoÉlément.styled";
 

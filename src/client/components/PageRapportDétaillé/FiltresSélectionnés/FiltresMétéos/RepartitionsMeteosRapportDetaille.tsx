@@ -4,7 +4,7 @@ import {
   libellésMétéos,
   météosSaisissables,
 } from "@/server/domain/météo/Météo.interface";
-import MeteoPicto from "@/components/_commons/Meteo/Picto/MeteoPicto";
+import { MeteoPicto } from "@/components/_commons/Meteo/Picto/MeteoPicto";
 import { RepartitionMeteoContrat } from "@/server/fiche-territoriale/app/contrats/RepartitionMeteoContrat";
 import RepartitionsMeteosRapportDetailleStyled from "./RepartitionsMeteosRapportDetailleStyled.styled";
 

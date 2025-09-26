@@ -6,8 +6,9 @@ import {
   météosSaisissables,
 } from "@/server/domain/météo/Météo.interface";
 import { sauvegarderFiltres } from "@/client/stores/useFiltresStoreNew/useFiltresStoreNew";
-import MeteoPicto from "@/components/_commons/Meteo/Picto/MeteoPicto";
+import { MeteoPicto } from "@/components/_commons/Meteo/Picto/MeteoPicto";
 import { RepartitionMeteoContrat } from "@/server/fiche-territoriale/app/contrats/RepartitionMeteoContrat";
+import { clsxm } from "@/utils/clsxm";
 import RepartitionsMeteosChantiersStyled from "./RepartitionsMeteosChantiersStyled.styled";
 
 interface RepartitionsMeteosChantiersProps {
@@ -57,7 +58,12 @@ const RepartitionsMeteosChantiers: FunctionComponent<
           title={libellésMétéos[meteo]}
         >
           <button
-            className={`bouton-repartition-meteos ${meteos.includes(meteo) ? "est-active" : ""}`}
+            className={clsxm(
+              "h-full shadow-lg p-2 border !border-dsfr-grey-925 rounded flex flex-column items-center",
+              {
+                "!border-primary": meteos.includes(meteo),
+              },
+            )}
             onClick={() => {
               auClickCallback(meteo);
             }}

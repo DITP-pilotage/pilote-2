@@ -13,7 +13,7 @@ import INFOBULLE_CONTENUS from "@/client/constants/infobulles";
 import RépartitionMétéo from "@/components/_commons/RépartitionMétéo/RépartitionMétéo";
 import { TableauFicheTerritoriale } from "@/components/PageFicheTerritoriale/TableauFicheTerritoriale";
 import BarreDeProgression from "@/components/_commons/BarreDeProgression/BarreDeProgression";
-import MeteoPicto from "@/components/_commons/Meteo/Picto/MeteoPicto";
+import { MeteoPicto } from "@/components/_commons/Meteo/Picto/MeteoPicto";
 import { FicheTerritorialeContrat } from "@/server/fiche-territoriale/app/contrats/FicheTerritorialeContrat";
 import PageFicheTerritorialeStyled from "./PageFicheTerritoriale.styled";
 

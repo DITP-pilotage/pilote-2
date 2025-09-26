@@ -1,5 +1,5 @@
 import { FunctionComponent } from "react";
-import MeteoPicto from "@/components/_commons/Meteo/Picto/MeteoPicto";
+import { MeteoPicto } from "@/components/_commons/Meteo/Picto/MeteoPicto";
 import { libellésMétéos, Météo } from "@/server/domain/météo/Météo.interface";
 import { TableauChantiersMétéoTaille } from "@/components/PageAccueil/TableauRéformes/Météo/TableauRéformesMétéo.interface";
 import { formaterDate } from "@/client/utils/date/date";
@@ -36,7 +36,7 @@ const TableauRéformesMétéo: FunctionComponent<TableauChantiersMétéoProps> =
     >
       {météo !== "NON_NECESSAIRE" && météo !== "NON_RENSEIGNEE" ? (
         <div className="fr-ml-1w">
-          <MeteoPicto estVisibleParLecteurDÉcran meteo={météo} />
+          <MeteoPicto meteo={météo} />
         </div>
       ) : (
         <span

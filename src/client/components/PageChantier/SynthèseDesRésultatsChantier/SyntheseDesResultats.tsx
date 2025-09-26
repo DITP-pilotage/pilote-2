@@ -2,7 +2,7 @@ import { parseAsBoolean, parseAsStringLiteral, useQueryState } from "nuqs";
 import { FunctionComponent } from "react";
 import Bloc from "@/components/_commons/Bloc/Bloc";
 import SyntheseDesResultatsStyled from "@/components/PageChantier/SynthèseDesRésultatsChantier/SyntheseDesResultats.styled";
-import MeteoPicto from "@/components/_commons/Meteo/Picto/MeteoPicto";
+import { MeteoPicto } from "@/components/_commons/Meteo/Picto/MeteoPicto";
 import MétéoBadge from "@/components/_commons/Meteo/Badge/MétéoBadge";
 import SynthèseDesRésultatsHistorique from "@/components/PageChantier/SynthèseDesRésultatsChantier/Historique/Historique";
 import { useSyntheseDesResultats } from "@/components/PageChantier/SynthèseDesRésultatsChantier/useSyntheseDesResultats";
