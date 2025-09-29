@@ -194,18 +194,18 @@ export const ModaleHistoriqueIndicateurTerritoireValeurEvenement: FunctionCompon
     >
       <div className="fr-grid-row fr-mt-1w">
         <span className="fr-text--lg fr-text--bold fr-mb-0 fr-col-2 !texte-blue-france">
-          {chantier.id}
+          {indicateur.id}
         </span>
         <span className="fr-text--lg fr-text--bold fr-mb-0 fr-col-10 !texte-blue-france">
-          {chantier.nom}
+          {indicateur.nom}
         </span>
       </div>
       <div className="fr-grid-row !texte-title-grey">
         <span className="fr-text--lg fr-text--bold fr-mb-0 fr-col-2">
-          {indicateur.id}
+          {chantier.id}
         </span>
         <span className="fr-text--lg fr-text--bold fr-mb-0 fr-col-10">
-          {indicateur.nom}
+          {chantier.nom}
         </span>
       </div>
       <div className="fr-grid-row !texte-title-grey">
@@ -233,17 +233,17 @@ export const ModaleHistoriqueIndicateurTerritoireValeurEvenement: FunctionCompon
                 <button
                   aria-controls={`accordion-rubrique-${indicateur.id}-${dateIso}-${index}`}
                   aria-expanded={index === 0}
-                  className="fr-accordion__btn !background-black !texte-white fr-py-0 fr-px-3v fr-mb-1v"
+                  className="fr-accordion__btn !bg-dsfr-blue-france-850 !texte-primary fr-py-0 fr-px-3v fr-mb-1v"
                   type="button"
                 >
-                  Valeur d'avancement {dateFormatee}
+                  Valeur d'avancement à la date du {dateFormatee}
                 </button>
                 <div
                   className="fr-collapse"
                   id={`accordion-rubrique-${indicateur.id}-${dateIso}-${index}`}
                 >
                   <div className="fr-my-2w">
-                    <div className="fr-grid-row fr-p-3v fr-background-blue-france-850">
+                    <div className="fr-grid-row fr-p-3v bg-dsfr-contrast-grey">
                       <div className="fr-col-2 flex align-center">date</div>
                       <div className="fr-col-10">action</div>
                     </div>

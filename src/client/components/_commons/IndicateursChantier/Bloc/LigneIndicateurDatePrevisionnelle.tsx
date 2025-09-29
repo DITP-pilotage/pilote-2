@@ -1,15 +1,13 @@
 import { useBlocIndicateurContext } from "@/components/PageChantier/useBlocIndicateurContext";
 import { formaterDate } from "@/client/utils/date/date";
 import { Infobulle } from "@/components/_commons/Infobulle/Infobulle";
-import useIndicateurAlerteDateMaj from "@/components/_commons/IndicateursChantier/Bloc/useIndicateurAlerteDateMaj";
+import { useIndicateurAlerteDateMaj } from "@/components/_commons/IndicateursChantier/Bloc/useIndicateurAlerteDateMaj";
 import { clsxm } from "@/utils/clsxm";
 
 export const LigneIndicateurDatePrevisionnelle = () => {
   const { chantier, detailIndicateurDuTerritoire } = useBlocIndicateurContext();
-  const { estIndicateurEnAlerte } = useIndicateurAlerteDateMaj(
-    !!detailIndicateurDuTerritoire.estAJour,
-    !!detailIndicateurDuTerritoire.est_applicable,
-  );
+
+  const { estIndicateurEnAlerte } = useIndicateurAlerteDateMaj();
 
   if (chantier.statut === "ARCHIVE") return null;
 

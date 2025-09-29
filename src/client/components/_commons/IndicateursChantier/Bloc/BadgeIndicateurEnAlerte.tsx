@@ -1,13 +1,10 @@
 import BadgeIcône from "@/components/_commons/BadgeIcône/BadgeIcône";
-import useIndicateurAlerteDateMaj from "@/components/_commons/IndicateursChantier/Bloc/useIndicateurAlerteDateMaj";
+import { useIndicateurAlerteDateMaj } from "@/components/_commons/IndicateursChantier/Bloc/useIndicateurAlerteDateMaj";
 import { useBlocIndicateurContext } from "@/components/PageChantier/useBlocIndicateurContext";
 
 export const BadgeIndicateurEnAlerte = () => {
-  const { detailIndicateurDuTerritoire, chantier } = useBlocIndicateurContext();
-  const { estIndicateurEnAlerte } = useIndicateurAlerteDateMaj(
-    !!detailIndicateurDuTerritoire.estAJour,
-    !!detailIndicateurDuTerritoire.est_applicable,
-  );
+  const { chantier } = useBlocIndicateurContext();
+  const { estIndicateurEnAlerte } = useIndicateurAlerteDateMaj();
 
   if (estIndicateurEnAlerte || chantier.statut === "ARCHIVE") return null;
 

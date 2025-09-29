@@ -15,6 +15,7 @@ import {
   statutBrouillonEtPublie,
   statutPublie,
 } from "@/client/constants/statut";
+import { Infobulle } from "@/components/_commons/Infobulle/Infobulle";
 import { FiltresSélectionUniqueStyled } from "./FiltresSelectionUnique.styled";
 
 const availableFiltres = ["statut"] as const;
@@ -36,12 +37,20 @@ export const FiltresSelectionUnique: FunctionComponent<
   const profilPeutAccederAuxBrouillons =
     !!session?.profilAAccèsAuxChantiersBrouillons;
 
-  const statutsDisponibles = profilPeutAccederAuxBrouillons
+  type StatutFiltre = {
+    id: string;
+    nom: string;
+    texteInfobulle: string | null;
+  };
+
+  const statutsDisponibles: StatutFiltre[] = profilPeutAccederAuxBrouillons
     ? [statutPublie, statutBrouillon, statutBrouillonEtPublie]
     : [statutPublie];
+
   if (variableContenuFFPpgArchive) {
     statutsDisponibles.push(statutArchive);
   }
+
   const valuesFiltres = {
     statut: {
       valeurDisponible: statutsDisponibles,
@@ -117,20 +126,21 @@ export const FiltresSelectionUnique: FunctionComponent<
       <div className="fr-collapse" id={`fr-sidemenu-item-${categorieDeFiltre}`}>
         <ul className="fr-p-0 fr-m-0 fr-mb-1w fr-pl-1w">
           {valuesFiltres[categorieDeFiltre].valeurDisponible.map((filtre) => (
-            <li className="fr-p-0 fr-my-1w fr-mr-0" key={filtre.id}>
-              <div className="fr-checkbox-group">
-                <button
-                  className={`fr-tag fr-tag--icon-left fr-mr-1w ${filtresNew === filtre.id ? "fr-tag-active" : ""}`}
-                  id={`${categorieDeFiltre}-${filtre.id}`}
-                  key={`${categorieDeFiltre}-${filtre.id}`}
-                  onClick={() =>
-                    filtresNew !== filtre.id && auChangement(filtre.id)
-                  }
-                  type="button"
-                >
-                  {filtre.nom}
-                </button>
-              </div>
+            <li className="fr-p-0 fr-my-1w fr-mr-0 flex gap-2" key={filtre.id}>
+              <button
+                className={`fr-tag fr-tag--icon-left fr-mr-1w ${filtresNew === filtre.id ? "fr-tag-active" : ""}`}
+                id={`${categorieDeFiltre}-${filtre.id}`}
+                key={`${categorieDeFiltre}-${filtre.id}`}
+                onClick={() =>
+                  filtresNew !== filtre.id && auChangement(filtre.id)
+                }
+                type="button"
+              >
+                {filtre.nom}
+              </button>
+              {filtre.texteInfobulle ? (
+                <Infobulle>{filtre.texteInfobulle}</Infobulle>
+              ) : null}
             </li>
           ))}
         </ul>
