@@ -20,6 +20,8 @@ module.exports = {
         "dsfr-grey-625": "#929292",
         "dsfr-grey-925": "#E5E5E5",
         "dsfr-mention-grey": "#666",
+        "dsfr-contrast-grey": "#EEE",
+        "dsfr-blue-france-850": "#CACAFB",
         "dsfr-blue-france-925": "#E3E3FD",
         "dsfr-blue-france-925-hover": "#C1C1FB",
         "dsfr-blue-france-525": "#6A6AF4",
