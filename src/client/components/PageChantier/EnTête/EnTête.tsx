@@ -11,6 +11,8 @@ import { GovernmentIcon } from "@/components/_commons/Icones/GovernmentIcon";
 import { AccountIcon } from "@/components/_commons/Icones/AccountIcon";
 import { clsxm } from "@/utils/clsxm";
 import { ActionChantierEnTete } from "@/components/PageChantier/EnTête/ActionChantierEnTete";
+import { Icone } from "@/components/_commons/Icone";
+import { ArrowLine3Icon } from "@/components/_commons/Icones/ArrowLine3Icon";
 import { ResponsableChantierEnTete } from "./EnTêteResponsables";
 import { ResponsabiliteChantierEnTete } from "./ResponsabiliteChantierEnTete";
 
@@ -57,13 +59,16 @@ const PageChantierEnTête: FunctionComponent<{
         "!text-dsfr-grey-200": chantierEstArchive,
       })}
     >
-      <Link
-        aria-label="Retour à l'accueil"
-        className="fr-link fr-fi-arrow-left-line fr-link--icon-left fr-mb-3w fr-mt-2w !text-dsfr-blue-france-sun-113"
-        href={hrefBoutonRetour}
-      >
-        Retour
-      </Link>
+      <div className="flex">
+        <Link
+          aria-label="Retour à l'accueil"
+          className="flex items-center gap-2 !text-primary"
+          href={hrefBoutonRetour}
+        >
+          <Icone className="w-4 h-4" icone={ArrowLine3Icon} />
+          Retour
+        </Link>
+      </div>
       <Titre
         baliseHtml="h1"
         className={clsxm("fr-h2 !mb-4 !mt-2 !text-dsfr-blue-france-sun-113", {

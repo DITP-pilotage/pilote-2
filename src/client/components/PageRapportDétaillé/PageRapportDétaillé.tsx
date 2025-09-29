@@ -1,6 +1,4 @@
 import "@gouvfr/dsfr/dist/component/badge/badge.min.css";
-import "@gouvfr/dsfr/dist/utility/icons/icons-business/icons-business.min.css";
-import "@gouvfr/dsfr/dist/utility/icons/icons-device/icons-device.min.css";
 import Link from "next/link";
 import { FunctionComponent, useState } from "react";
 import PageRapportDétailléStyled from "@/components/PageRapportDétaillé/PageRapportDétaillé.styled";
@@ -28,6 +26,9 @@ import { TypeAlerteChantier } from "@/server/chantiers/app/contrats/TypeAlerteCh
 import { MailleInterne } from "@/server/domain/maille/Maille.interface";
 import { RepartitionMeteoContrat } from "@/server/fiche-territoriale/app/contrats/RepartitionMeteoContrat";
 import { getFiltresActifs } from "@/client/stores/useFiltresStoreNew/useFiltresStoreNew";
+import { ArrowGoBackIcon } from "@/components/_commons/Icones/ArrowGoBackIcon";
+import { Icone } from "@/components/_commons/Icone";
+import { Printer1Icon } from "@/components/_commons/Icones/Printer1Icon";
 import FiltresSélectionnés from "./FiltresSélectionnés/FiltresSélectionnés";
 
 interface PageRapportDétailléProps {
@@ -110,17 +111,19 @@ const PageRapportDétaillé: FunctionComponent<PageRapportDétailléProps> = ({
               </Titre>
               <div>
                 <Link
-                  className="fr-btn fr-btn--tertiary-no-outline fr-icon-arrow-go-back-fill fr-btn--icon-left fr-text--sm"
+                  className="fr-btn gap-2 fr-btn--tertiary-no-outline fr-text--sm"
                   href={hrefBoutonRetour}
                   title="Revenir à l'accueil"
                 >
+                  <Icone className="w-4 h-4" icone={ArrowGoBackIcon} />
                   Revenir à l'accueil
                 </Link>
                 <button
-                  className="fr-btn fr-btn--tertiary-no-outline fr-icon-printer-line fr-btn--icon-left fr-text--sm"
+                  className="fr-btn gap-2 fr-btn--tertiary-no-outline fr-text--sm"
                   onClick={() => window.print()}
                   type="button"
                 >
+                  <Icone className="w-4 h-4" icone={Printer1Icon} />
                   Imprimer
                 </button>
               </div>

@@ -10,6 +10,8 @@ import IndicateurDEtapes from "@/components/_commons/IndicateurDEtapes/Indicateu
 import { donneValidationInfosBaseUtilisateur } from "@/validation/utilisateur";
 import RécapitulatifUtilisateur from "@/components/PageUtilisateurFormulaire/UtilisateurFormulaire/RécapitulatifUtilisateur/RécapitulatifUtilisateur";
 import api from "@/server/infrastructure/api/trpc/api";
+import { Icone } from "@/components/_commons/Icone";
+import { ArrowLine3Icon } from "@/components/_commons/Icones/ArrowLine3Icon";
 import {
   UtilisateurFormInputs,
   UtilisateurFormulaireProps,
@@ -75,23 +77,27 @@ const UtilisateurFormulaire: FunctionComponent<UtilisateurFormulaireProps> = ({
 
   return (
     <>
-      {etapeCourante === 1 ? (
-        <Link
-          aria-label="Retour à la liste des utilisateurs"
-          className="fr-link fr-fi-arrow-left-line fr-link--icon-left fr-text--sm bouton-retour"
-          href="/admin/utilisateurs"
-        >
-          Retour
-        </Link>
-      ) : (
-        <button
-          className="fr-link fr-fi-arrow-left-line fr-link--icon-left fr-text--sm bouton-retour"
-          onClick={() => setEtapeCourante(1)}
-          type="button"
-        >
-          Retour
-        </button>
-      )}
+      <div className="flex">
+        {etapeCourante === 1 ? (
+          <Link
+            aria-label="Retour à l'accueil"
+            className="flex items-center gap-2 !text-primary"
+            href="/admin/utilisateurs"
+          >
+            <Icone className="w-4 h-4" icone={ArrowLine3Icon} />
+            Retour
+          </Link>
+        ) : (
+          <button
+            className="flex items-center gap-2 !text-primary border-b !border-b-primary"
+            onClick={() => setEtapeCourante(1)}
+            type="button"
+          >
+            <Icone className="w-4 h-4" icone={ArrowLine3Icon} />
+            Retour
+          </button>
+        )}
+      </div>
       <Titre baliseHtml="h1" className="fr-h1 fr-mt-4w">
         {utilisateur ? "Modifier un compte" : "Créer un compte"}
       </Titre>

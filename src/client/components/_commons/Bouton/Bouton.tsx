@@ -1,29 +1,28 @@
-import { FunctionComponent, MouseEventHandler } from "react";
+import { MouseEventHandler, ReactNode } from "react";
+import { clsxm } from "@/utils/clsxm";
 
-interface BoutonProps {
-  label: string;
-  onClick: MouseEventHandler<HTMLButtonElement>;
-  className?: string;
-}
-
-const Bouton: FunctionComponent<BoutonProps> = ({
+export const Bouton = ({
   label,
   onClick,
   className,
+  iconLeft,
+  iconRight,
+}: {
+  label: string;
+  onClick: MouseEventHandler<HTMLButtonElement>;
+  className?: string;
+  iconLeft?: ReactNode;
+  iconRight?: ReactNode;
 }) => {
   return (
     <button
-      className={`fr-btn${className ? " " + className : ""}`}
+      className={clsxm("fr-btn gap-2", className)}
       onClick={onClick}
       type="button"
     >
+      {iconLeft}
       {label}
+      {iconRight}
     </button>
   );
 };
-
-Bouton.defaultProps = {
-  className: "",
-};
-
-export default Bouton;

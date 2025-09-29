@@ -30,6 +30,8 @@ import Bloc from "@/components/_commons/Bloc/Bloc";
 import AvancementChantier from "@/components/PageChantier/AvancementChantier/AvancementChantier";
 import Indicateur from "@/server/domain/indicateur/Indicateur.interface";
 import { DonneesComparaisonDuTauxDAvancementType } from "@/server/domain/territoire/Territoire.interface";
+import { Icone } from "@/components/_commons/Icone";
+import { ArrowLineIcon } from "@/components/_commons/Icones/ArrowLineIcon";
 import RapportDétailléChantierStyled from "./RapportDétailléChantier.styled";
 
 const RapportDétailléChantier: FunctionComponent<
@@ -107,10 +109,11 @@ const RapportDétailléChantier: FunctionComponent<
             <>
               <section className="rubrique avancement impression-section-haut-de-page">
                 <Link
-                  className="fr-btn fr-btn--tertiary-no-outline fr-icon-arrow-up-line fr-btn--icon-left fr-text--sm"
+                  className="fr-btn gap-2 fr-btn--tertiary-no-outline fr-text--sm"
                   href={`#${htmlId.listeDesChantiers()}`}
                   title="Revenir à la liste des chantiers"
                 >
+                  <Icone className="w-4 h-4" icone={ArrowLineIcon} />
                   Haut de page
                 </Link>
                 <Encart>

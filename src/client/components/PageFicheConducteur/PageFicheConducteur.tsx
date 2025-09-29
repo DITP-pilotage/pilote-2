@@ -7,7 +7,7 @@ import Titre from "@/components/_commons/Titre/Titre";
 import Bloc from "@/components/_commons/Bloc/Bloc";
 import JaugeDeProgression from "@/components/_commons/JaugeDeProgression/JaugeDeProgression";
 import MétéoBadge from "@/components/_commons/Meteo/Badge/MétéoBadge";
-import MeteoPicto from "@/components/_commons/Meteo/Picto/MeteoPicto";
+import { MeteoPicto } from "@/components/_commons/Meteo/Picto/MeteoPicto";
 import { ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS } from "@/client/constants/légendes/élémentsDeLégendesCartographieAvancement";
 import CartographieAvancement from "@/components/_commons/Cartographie/CartographieAvancement/CartographieAvancement";
 import { ÉLÉMENTS_LÉGENDE_MÉTÉO_CHANTIERS } from "@/client/constants/légendes/élémentsDeLégendesCartographieMétéo";
@@ -124,20 +124,16 @@ const PageFicheConducteur: FunctionComponent<
               >
                 Météo et synthèse des résultats
               </Titre>
-              <Bloc contenuClassesSupplémentaires="fr-grid-row fr-grid-row--gutters fr-p-1w">
-                <div className="fr-col-2">
-                  <div className="text-center fr-text--xs">
-                    <MétéoBadge
-                      météo={synthèseDesRésultats.meteo || "NON_RENSEIGNEE"}
-                    />
-                  </div>
-                  <div className="w-full flex justify-center">
-                    <MeteoPicto
-                      meteo={synthèseDesRésultats.meteo || "NON_RENSEIGNEE"}
-                    />
-                  </div>
+              <Bloc className="p-4" contenuClassesSupplémentaires="flex gap-2">
+                <div className="flex flex-col gap-2 align-center">
+                  <MétéoBadge
+                    météo={synthèseDesRésultats.meteo || "NON_RENSEIGNEE"}
+                  />
+                  <MeteoPicto
+                    meteo={synthèseDesRésultats.meteo || "NON_RENSEIGNEE"}
+                  />
                 </div>
-                <div className="fr-col-10">
+                <div>
                   {commentaire ? (
                     commentaire
                       ?.split("\n")
@@ -152,7 +148,6 @@ const PageFicheConducteur: FunctionComponent<
                   ) : (
                     <p className="fr-text--xs">Aucune synthèse des résultats</p>
                   )}
-                  <p className="fr-text--sm fr-mb-0" />
                 </div>
               </Bloc>
             </div>

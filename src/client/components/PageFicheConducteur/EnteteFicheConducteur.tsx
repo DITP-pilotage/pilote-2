@@ -8,13 +8,11 @@ export const EnteteFicheConducteur: FunctionComponent<
 > = ({ children }) => {
   return (
     <Encart>
-      <div className="flex justify-between align-center">
-        <Titre baliseHtml="h2" className="fr-h6 fr-mb-0 !text-primary">
+      <div className="flex justify-between align-center gap-2">
+        <Titre baliseHtml="h2" className="!text-lg !mb-0 !text-primary">
           {children}
         </Titre>
-        <div className="flex align-center">
-          <BoutonImpression />
-        </div>
+        <BoutonImpression />
       </div>
     </Encart>
   );

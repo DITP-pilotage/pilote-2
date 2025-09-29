@@ -1,9 +1,9 @@
 import { FunctionComponent } from "react";
-import MeteoPicto from "@/components/_commons/Meteo/Picto/MeteoPicto";
+import { MeteoPicto } from "@/components/_commons/Meteo/Picto/MeteoPicto";
 import { libellésMétéos, Météo } from "@/server/domain/météo/Météo.interface";
 import { TableauChantiersMétéoTaille } from "@/components/PageAccueil/TableauRéformes/Météo/TableauRéformesMétéo.interface";
 import { formaterDate } from "@/client/utils/date/date";
-import TableauRéformesMétéoStyled from "@/components/PageAccueil/TableauRéformes/Météo/TableauRéformesMétéo.styled";
+import { clsxm } from "@/utils/clsxm";
 
 interface TableauChantiersMétéoProps {
   météo: Météo;
@@ -30,28 +30,26 @@ const TableauRéformesMétéo: FunctionComponent<TableauChantiersMétéoProps> =
   chantiersSontArchives,
 }) => {
   return (
-    <TableauRéformesMétéoStyled
-      estArchive={chantiersSontArchives}
-      taille={taille}
+    <div
+      className={clsxm("flex flex-column items-center !w-auto", {
+        "grayscale-100": chantiersSontArchives,
+      })}
     >
       {météo !== "NON_NECESSAIRE" && météo !== "NON_RENSEIGNEE" ? (
-        <div className="fr-ml-1w">
-          <MeteoPicto estVisibleParLecteurDÉcran meteo={météo} />
-        </div>
+        <MeteoPicto meteo={météo} />
       ) : (
         <span
-          className={`fr-text--xs !text-dsfr-mention-grey ${libelléMétéosÀPartirDeLaTaille[taille].className}`}
+          className={`!text-xs !text-dsfr-mention-grey ${libelléMétéosÀPartirDeLaTaille[taille].className}`}
         >
           {libelléMétéosÀPartirDeLaTaille[taille].texte(météo)}
         </span>
       )}
-      {!!dateDeMàjDonnéesQualitatives &&
-        process.env.NEXT_PUBLIC_FF_DATE_METEO === "true" && (
-          <span className="!text-dsfr-mention-grey">
-            {`(${formaterDate(dateDeMàjDonnéesQualitatives, "MM/YYYY")})`}
-          </span>
-        )}
-    </TableauRéformesMétéoStyled>
+      {dateDeMàjDonnéesQualitatives ? (
+        <span className="!text-dsfr-mention-grey !text-xs">
+          {`(${formaterDate(dateDeMàjDonnéesQualitatives, "MM/YYYY")})`}
+        </span>
+      ) : null}
+    </div>
   );
 };
 

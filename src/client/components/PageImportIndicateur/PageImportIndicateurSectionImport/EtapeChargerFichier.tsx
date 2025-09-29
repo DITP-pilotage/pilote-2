@@ -5,7 +5,9 @@ import Titre from "@/components/_commons/Titre/Titre";
 import { wording } from "@/client/utils/i18n/i18n";
 import FormulaireIndicateur from "@/components/PageImportIndicateur/PageImportIndicateurSectionImport/FormulaireIndicateur/FormulaireIndicateur";
 import ResultatValidationFichier from "@/components/PageImportIndicateur/ResultatValidationFichier/ResultatValidationFichier";
-import SubmitBouton from "@/components/_commons/SubmitBouton/SubmitBouton";
+import { SubmitBouton } from "@/components/_commons/SubmitBouton/SubmitBouton";
+import { Icone } from "@/components/_commons/Icone";
+import { ArrowLine1Icon } from "@/components/_commons/Icones/ArrowLine1Icon";
 
 const EtapeChargerFichier: FunctionComponent<{
   indicateur: Indicateur;
@@ -54,7 +56,12 @@ const EtapeChargerFichier: FunctionComponent<{
             <input name="rapportId" type="hidden" value={rapport?.id} />
             <div className="fr-mt-4w flex justify-end">
               <SubmitBouton
-                className="fr-btn--icon-right fr-icon-arrow-right-line"
+                iconRight={
+                  <Icone
+                    className="text-current h-4 w-4"
+                    icone={ArrowLine1Icon}
+                  />
+                }
                 label={
                   wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT
                     .ETAPE_CHARGER_FICHIER.LABEL_BOUTON_PROCHAINE_ETAPE

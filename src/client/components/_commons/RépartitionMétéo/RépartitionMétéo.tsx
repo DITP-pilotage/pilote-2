@@ -20,9 +20,9 @@ const RépartitionMétéo: FunctionComponent<RépartitionMétéoProps> = ({
   chantiersSontArchives,
 }) => {
   return (
-    <RépartitionMétéoStyled className="fr-grid-row fr-mx-n3v">
+    <RépartitionMétéoStyled className="flex gap-4">
       {météosÀAfficher.map((météo) => (
-        <li className="fr-col-3" key={libellésMétéos[météo]}>
+        <li key={libellésMétéos[météo]}>
           <RépartitionMétéoÉlément
             estArchive={chantiersSontArchives}
             météo={météo}

@@ -1,5 +1,5 @@
 import { Dispatch, FunctionComponent, SetStateAction } from "react";
-import SubmitBouton from "@/components/_commons/SubmitBouton/SubmitBouton";
+import { SubmitBouton } from "@/components/_commons/SubmitBouton/SubmitBouton";
 import { usePublierIndicateur } from "@/hooks/usePublierIndicateur";
 import { wording } from "@/client/utils/i18n/i18n";
 

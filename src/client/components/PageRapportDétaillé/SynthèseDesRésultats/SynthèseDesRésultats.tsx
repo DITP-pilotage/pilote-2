@@ -1,6 +1,6 @@
 import Bloc from "@/components/_commons/Bloc/Bloc";
 import SynthèseDesRésultatsStyled from "@/components/PageRapportDétaillé/SynthèseDesRésultats/SynthèseDesRésultats.styled";
-import MeteoPicto from "@/components/_commons/Meteo/Picto/MeteoPicto";
+import { MeteoPicto } from "@/components/_commons/Meteo/Picto/MeteoPicto";
 import MétéoBadge from "@/components/_commons/Meteo/Badge/MétéoBadge";
 import Alerte from "@/components/_commons/Alerte/Alerte";
 import SynthèseDesRésultatsAffichage from "@/components/PageRapportDétaillé/SynthèseDesRésultats/Affichage/Affichage";

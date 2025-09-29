@@ -9,7 +9,7 @@ import {
   météosSaisissables,
 } from "@/server/domain/météo/Météo.interface";
 import Titre from "@/components/_commons/Titre/Titre";
-import MeteoPicto from "@/components/_commons/Meteo/Picto/MeteoPicto";
+import { MeteoPicto } from "@/components/_commons/Meteo/Picto/MeteoPicto";
 import Alerte from "@/components/_commons/Alerte/Alerte";
 import {
   LIMITE_CARACTÈRES_SYNTHÈSE_DES_RÉSULTATS,

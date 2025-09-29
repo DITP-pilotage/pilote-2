@@ -1,6 +1,5 @@
 import "@gouvfr/dsfr/dist/component/table/table.min.css";
 import "@gouvfr/dsfr/dist/component/notice/notice.min.css";
-import "@gouvfr/dsfr/dist/utility/icons/icons-map/icons-map.min.css";
 import { parseAsBoolean, parseAsInteger, useQueryState } from "nuqs";
 import { FunctionComponent } from "react";
 import BarreDeRecherche from "@/components/_commons/BarreDeRecherche/BarreDeRecherche";
