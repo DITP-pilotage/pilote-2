@@ -67,7 +67,10 @@ export const useModaleAccuserReceptionPropositionValeurAvancement = ({
       territoireCode,
     };
 
-    mutationAccuserReceptionPropositionValeurAvancement.mutate(inputs);
+    mutationAccuserReceptionPropositionValeurAvancement.mutate({
+      ...inputs,
+      dateValeurAvancement: "2024-10-01T00:00:00.000Z",
+    });
   };
 
   const reactHookForm = useForm<FormData>({

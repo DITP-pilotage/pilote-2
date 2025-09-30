@@ -54,6 +54,9 @@ const useModalePropositionValeurAvancementV2 = () => {
   const { indicateur, detailIndicateurDuTerritoire, territoireCode } =
     useBlocIndicateurContext();
 
+  console.log(indicateur.id);
+  console.log(detailIndicateurDuTerritoire);
+
   const [
     etapePropositionValeurAvancement,
     setEtapePropositionValeurAvancement,
@@ -91,9 +94,19 @@ const useModalePropositionValeurAvancementV2 = () => {
     };
 
     if (estUneModification) {
-      mutationModifierPropositonValeurAvancement.mutate(inputs);
+      mutationModifierPropositonValeurAvancement.mutate({
+        ...inputs,
+        dateValeurAvancement: "2024-10-01T00:00:00.000Z",
+      });
     } else {
-      mutationCreerPropositonValeurAvancement.mutate(inputs);
+      console.log({
+        ...inputs,
+        dateValeurAvancement: "2024-10-01T00:00:00.000Z",
+      });
+      mutationCreerPropositonValeurAvancement.mutate({
+        ...inputs,
+        dateValeurAvancement: "2024-10-01T00:00:00.000Z",
+      });
     }
   };
 

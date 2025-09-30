@@ -153,7 +153,10 @@ export const useModaleAccepterPropositionValeurAvancement = ({
         valeur: valeurModification,
       });
     } else {
-      mutationAccepterPropositonValeurAvancement.mutate(inputs);
+      mutationAccepterPropositonValeurAvancement.mutate({
+        ...inputs,
+        dateValeurAvancement: "2024-10-01T00:00:00.000Z",
+      });
     }
   };
 
