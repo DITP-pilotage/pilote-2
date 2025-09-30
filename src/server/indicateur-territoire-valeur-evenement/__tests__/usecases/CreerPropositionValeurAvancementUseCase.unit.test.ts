@@ -6,8 +6,8 @@ import { IndicateurTerritoireValeurEvenement } from "@/server/indicateur-territo
 import { EvenementsSurDate } from "@/server/import-indicateur/domain/EvenementsSurDate";
 import { toISODate } from "@/server/app/domain/Dates";
 
-describe("CreerIndicateurTerritoireValeurEvenementUseCase", () => {
-  let creerIndicateurTerritoireValeurEvenementUseCase: CreerPropositionValeurAvancementUseCase;
+describe("CreerPropositionValeurAvancementUseCase", () => {
+  let creerPropositionValeurAvancementUseCase: CreerPropositionValeurAvancementUseCase;
   let indicateurTerritoireValeurEvenementRepository: MockProxy<IndicateurTerritoireValeurEvenementRepository>;
   let indicateurRepository: MockProxy<IndicateurRepository>;
 
@@ -15,7 +15,7 @@ describe("CreerIndicateurTerritoireValeurEvenementUseCase", () => {
     indicateurTerritoireValeurEvenementRepository =
       mock<IndicateurTerritoireValeurEvenementRepository>();
     indicateurRepository = mock<IndicateurRepository>();
-    creerIndicateurTerritoireValeurEvenementUseCase =
+    creerPropositionValeurAvancementUseCase =
       new CreerPropositionValeurAvancementUseCase({
         indicateurTerritoireValeurEvenementRepository,
         indicateurRepository,
@@ -55,7 +55,7 @@ describe("CreerIndicateurTerritoireValeurEvenementUseCase", () => {
     );
 
     // When
-    await creerIndicateurTerritoireValeurEvenementUseCase.run(input);
+    await creerPropositionValeurAvancementUseCase.run(input);
 
     // Then
     expect(
@@ -111,7 +111,7 @@ describe("CreerIndicateurTerritoireValeurEvenementUseCase", () => {
     );
 
     // When
-    await creerIndicateurTerritoireValeurEvenementUseCase.run(input);
+    await creerPropositionValeurAvancementUseCase.run(input);
 
     // Then
     expect(
@@ -157,7 +157,7 @@ describe("CreerIndicateurTerritoireValeurEvenementUseCase", () => {
     );
 
     // When
-    await creerIndicateurTerritoireValeurEvenementUseCase.run(input);
+    await creerPropositionValeurAvancementUseCase.run(input);
 
     // Then
     expect(
@@ -258,7 +258,7 @@ describe("CreerIndicateurTerritoireValeurEvenementUseCase", () => {
     );
 
     // When
-    await creerIndicateurTerritoireValeurEvenementUseCase.run(input);
+    await creerPropositionValeurAvancementUseCase.run(input);
 
     // Then
     expect(
@@ -305,7 +305,7 @@ describe("CreerIndicateurTerritoireValeurEvenementUseCase", () => {
 
     // When / Then
     await expect(
-      creerIndicateurTerritoireValeurEvenementUseCase.run(input),
+      creerPropositionValeurAvancementUseCase.run(input),
     ).rejects.toThrow();
 
     expect(
@@ -384,7 +384,7 @@ describe("CreerIndicateurTerritoireValeurEvenementUseCase", () => {
 
     // When / Then
     await expect(
-      creerIndicateurTerritoireValeurEvenementUseCase.run(input),
+      creerPropositionValeurAvancementUseCase.run(input),
     ).rejects.toThrow();
   });
 
@@ -422,7 +422,7 @@ describe("CreerIndicateurTerritoireValeurEvenementUseCase", () => {
     );
 
     // When
-    await creerIndicateurTerritoireValeurEvenementUseCase.run(input);
+    await creerPropositionValeurAvancementUseCase.run(input);
 
     // Then
     expect(
