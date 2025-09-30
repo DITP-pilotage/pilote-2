@@ -78,7 +78,7 @@ const estMoisAvant = (mois1: string, mois2: string) => {
   const partsMois2 = mois2.split("/");
 
   return (
-    `${partsMois1[1]}-${partsMois1[0]}-01` <
+    `${partsMois1[1]}-${partsMois1[0]}-01` <=
     `${partsMois2[1]}-${partsMois2[0]}-01`
   );
 };
@@ -157,7 +157,11 @@ const useModalePropositionValeurAvancementV2 = () => {
           obj.moisValeurAvancement,
         );
       },
-      { path: ["moisValeurAvancement"], message: "Coucou" },
+      {
+        path: ["moisValeurAvancement"],
+        message:
+          "La date de la proposition doit être supérieure à la dernière date de valeur d'avancement",
+      },
     );
   }, [moisDateValeurAvancementMandat]);
   const reactHookForm = useForm<PropositionValeurAvancementForm>({
