@@ -19,7 +19,7 @@ interface Dependencies {
   indicateurRepository: IndicateurRepository;
 }
 
-export class CreerIndicateurTerritoireValeurEvenementUseCase {
+export class CreerPropositionValeurAvancementUseCase {
   private readonly indicateurTerritoireValeurEvenementRepository: IndicateurTerritoireValeurEvenementRepository;
 
   private readonly indicateurRepository: IndicateurRepository;

@@ -37,7 +37,7 @@ export const propositionValeurAvancementRouter = créerRouteurTRPC({
       );
 
       await getContainer("indicateurTerritoireValeurEvenement")
-        .resolve("creerIndicateurTerritoireValeurEvenementUseCase")
+        .resolve("creerPropositionValeurAvancementUseCase")
         .run({
           indicId: input.indicId,
           territoireCode: input.territoireCode,

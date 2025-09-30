@@ -1,5 +1,5 @@
 import { MockProxy, mock } from "jest-mock-extended";
-import { CreerIndicateurTerritoireValeurEvenementUseCase } from "@/server/indicateur-territoire-valeur-evenement/usecases/CreerIndicateurTerritoireValeurEvenementUseCase";
+import { CreerPropositionValeurAvancementUseCase } from "@/server/indicateur-territoire-valeur-evenement/usecases/CreerPropositionValeurAvancementUseCase";
 import { IndicateurTerritoireValeurEvenementRepository } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/IndicateurTerritoireValeurEvenementRepository";
 import { IndicateurRepository } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/IndicateurRepository";
 import { IndicateurTerritoireValeurEvenement } from "@/server/indicateur-territoire-valeur-evenement/domain/IndicateurTerritoireValeurEvenement";
@@ -7,7 +7,7 @@ import { EvenementsSurDate } from "@/server/import-indicateur/domain/EvenementsS
 import { toISODate } from "@/server/app/domain/Dates";
 
 describe("CreerIndicateurTerritoireValeurEvenementUseCase", () => {
-  let creerIndicateurTerritoireValeurEvenementUseCase: CreerIndicateurTerritoireValeurEvenementUseCase;
+  let creerIndicateurTerritoireValeurEvenementUseCase: CreerPropositionValeurAvancementUseCase;
   let indicateurTerritoireValeurEvenementRepository: MockProxy<IndicateurTerritoireValeurEvenementRepository>;
   let indicateurRepository: MockProxy<IndicateurRepository>;
 
@@ -16,7 +16,7 @@ describe("CreerIndicateurTerritoireValeurEvenementUseCase", () => {
       mock<IndicateurTerritoireValeurEvenementRepository>();
     indicateurRepository = mock<IndicateurRepository>();
     creerIndicateurTerritoireValeurEvenementUseCase =
-      new CreerIndicateurTerritoireValeurEvenementUseCase({
+      new CreerPropositionValeurAvancementUseCase({
         indicateurTerritoireValeurEvenementRepository,
         indicateurRepository,
       });
