@@ -25,15 +25,28 @@ export class CreerIndicateurTerritoireValeurEvenementUseCase {
   async run(
     input: CreerIndicateurTerritoireValeurEvenementInput,
   ): Promise<void> {
-    const evenementsSurDate =
-      await this.indicateurTerritoireValeurEvenementRepository.recupererParIndicIdTerritoireCodeTypeValeurEtDate(
+    const [evenementsSurDate, tous] = await Promise.all([
+      this.indicateurTerritoireValeurEvenementRepository.recupererParIndicIdTerritoireCodeTypeValeurEtDate(
         {
           indicId: input.indicId,
           territoireCode: input.territoireCode,
           dateValeur: input.dateValeurAvancement,
           typeValeur: "VALEUR_AVANCEMENT",
         },
-      );
+      ),
+      this.indicateurTerritoireValeurEvenementRepository.recupererParIndicIdTerritoireCodeTypeValeurEtDateSuperieureA(
+        {
+          indicId: input.indicId,
+          territoireCode: input.territoireCode,
+          dateValeur: input.dateValeurAvancement, // TODO: derniere date de la valeur d'avancement
+          typeValeur: "VALEUR_AVANCEMENT",
+        },
+      ),
+    ]);
+
+    tous.forEach((evenets) => {
+      evenets.naPasDeProposition();
+    });
 
     const evenement = evenementsSurDate.creerEvenementPropositionValeurCreee({
       valeur: input.valeurAvancement,

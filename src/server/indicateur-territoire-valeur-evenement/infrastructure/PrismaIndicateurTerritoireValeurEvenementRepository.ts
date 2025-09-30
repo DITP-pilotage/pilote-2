@@ -107,6 +107,15 @@ export class PrismaIndicateurTerritoireValeurEvenementRepository
     );
   }
 
+  recupererParIndicIdTerritoireCodeTypeValeurEtDateSuperieureA(args: {
+    indicId: string;
+    territoireCode: string;
+    typeValeur: TypeValeur;
+    dateValeur: Date;
+  }): Promise<EvenementsSurDate[]> {
+    return Promise.resolve([]);
+  }
+
   async enregistrer(
     evenement: IndicateurTerritoireValeurEvenement,
   ): Promise<void> {
