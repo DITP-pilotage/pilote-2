@@ -8,7 +8,7 @@ import {
 import départements from "@/client/constants/départements.json";
 import régions from "@/client/constants/régions.json";
 import { Maille } from "@/server/domain/maille/Maille.interface";
-import { ChantierRapportDetailleContrat } from "@/server/chantiers/app/contrats/ChantierRapportDetailleContrat";
+import { ChantierRapportDetailleContrat } from "@/server/chantiers/app/contrats/ChantierRapportDetailleContratV2";
 import { AgrégatParTerritoire } from "./agrégateur.interface";
 
 type AvancementRegroupementDonnéesBrutesMaille = {
@@ -17,8 +17,8 @@ type AvancementRegroupementDonnéesBrutesMaille = {
 };
 
 type AvancementRegroupementDonnéesBrutesTerritoire = {
-  global: number | null;
-  annuel: number | null;
+  global: { avancement: number | null; date: string | null };
+  annuel: { avancement: number | null; date: string | null };
 };
 
 export class AgrégateurChantierRapportDetailleParTerritoire {
@@ -42,21 +42,48 @@ export class AgrégateurChantierRapportDetailleParTerritoire {
       ([territoireCode, donnéesTerritoire]) => {
         this.agrégat["nationale"].territoires[
           territoireCode
-        ].donnéesBrutes.avancements = donnéesTerritoire.avancement;
+        ].donnéesBrutes.avancements = {
+          global: {
+            avancement: donnéesTerritoire.avancement.global,
+            date: donnéesTerritoire.dateDeMàjDonnéesQuantitatives,
+          },
+          annuel: {
+            avancement: donnéesTerritoire.avancement.annuel,
+            date: donnéesTerritoire.dateTauxAvancementAnnuel,
+          },
+        };
       },
     );
     objectEntries(this.chantier.mailles["departementale"]).forEach(
       ([territoireCode, donnéesTerritoire]) => {
         this.agrégat["departementale"].territoires[
           territoireCode
-        ].donnéesBrutes.avancements = donnéesTerritoire.avancement;
+        ].donnéesBrutes.avancements = {
+          global: {
+            avancement: donnéesTerritoire.avancement.global,
+            date: donnéesTerritoire.dateDeMàjDonnéesQuantitatives,
+          },
+          annuel: {
+            avancement: donnéesTerritoire.avancement.annuel,
+            date: donnéesTerritoire.dateTauxAvancementAnnuel,
+          },
+        };
       },
     );
     objectEntries(this.chantier.mailles["regionale"]).forEach(
       ([territoireCode, donnéesTerritoire]) => {
         this.agrégat["regionale"].territoires[
           territoireCode
-        ].donnéesBrutes.avancements = donnéesTerritoire.avancement;
+        ].donnéesBrutes.avancements = {
+          global: {
+            avancement: donnéesTerritoire.avancement.global,
+            date: donnéesTerritoire.dateDeMàjDonnéesQuantitatives,
+          },
+          annuel: {
+            avancement: donnéesTerritoire.avancement.annuel,
+            date: donnéesTerritoire.dateTauxAvancementAnnuel,
+          },
+        };
       },
     );
   }
@@ -71,8 +98,8 @@ export class AgrégateurChantierRapportDetailleParTerritoire {
       ([territoireCode, donnéesTerritoire]) => {
         let avancementsPourCeTerritoireCode: AvancementRegroupementDonnéesBrutesTerritoire =
           {
-            global: null,
-            annuel: null,
+            global: { avancement: null, date: null },
+            annuel: { avancement: null, date: null },
           };
         avancementsPourCeTerritoireCode.global =
           donnéesTerritoire.donnéesBrutes.avancements.global;
@@ -80,11 +107,11 @@ export class AgrégateurChantierRapportDetailleParTerritoire {
           donnéesTerritoire.donnéesBrutes.avancements.annuel;
         avancementsPourCetteMaille.global = [
           ...avancementsPourCetteMaille.global,
-          avancementsPourCeTerritoireCode.global,
+          avancementsPourCeTerritoireCode.global.avancement,
         ];
         avancementsPourCetteMaille.annuel = [
           ...avancementsPourCetteMaille.annuel,
-          avancementsPourCeTerritoireCode.annuel,
+          avancementsPourCeTerritoireCode.annuel.avancement,
         ];
 
         this._calculerLaRépartitionDesAvancementsParTerritoire(
@@ -137,14 +164,14 @@ export class AgrégateurChantierRapportDetailleParTerritoire {
     return {
       répartition: {
         avancements: {
-          global: null,
-          annuel: null,
+          global: { avancement: null, date: null },
+          annuel: { avancement: null, date: null },
         },
       },
       donnéesBrutes: {
         avancements: {
-          global: null,
-          annuel: null,
+          global: { avancement: null, date: null },
+          annuel: { avancement: null, date: null },
         },
       },
     };

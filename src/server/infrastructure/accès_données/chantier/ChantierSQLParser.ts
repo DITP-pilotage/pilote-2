@@ -64,6 +64,10 @@ export function créerDonnéesTerritoires(
       dateTauxAvancementPrecedent:
         chantierRow?.date_taux_avancement_mandat_valeur_precedente?.toISOString() ??
         null,
+      dateTauxAvancementAnnuel:
+        chantierRow?.chantier_territoire_jalon
+          .at(0)
+          ?.date_taux_avancement?.toISOString() ?? null,
     };
 
     if (!!chantierRow) {
@@ -148,6 +152,10 @@ export const parseChantierNew = (
           dateDeMàjDonnéesQuantitatives:
             chantierMailleNationale.date_taux_avancement_mandat?.toISOString() ??
             null,
+          dateTauxAvancementAnnuel:
+            chantierMailleNationale.chantier_territoire_jalon
+              .at(0)
+              ?.date_taux_avancement?.toISOString() ?? null,
           estApplicable: chantierMailleNationale.est_applicable,
           responsableLocal: [],
           coordinateurTerritorial: [],

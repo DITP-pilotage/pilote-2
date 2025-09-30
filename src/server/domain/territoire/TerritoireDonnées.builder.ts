@@ -43,6 +43,8 @@ export default class TerritoireDonnéesBuilder {
 
   private _dateTauxAvancementMandatValeurPrecedent: TerritoireDonnées["dateTauxAvancementPrecedent"];
 
+  private _dateTauxAvancementAnnuel: TerritoireDonnées["dateTauxAvancementAnnuel"];
+
   constructor() {
     this._codeInsee = faker.helpers.arrayElement([
       ...codesInseeDépartements,
@@ -86,6 +88,7 @@ export default class TerritoireDonnéesBuilder {
       0.2,
       faker.date.past().toISOString(),
     );
+    this._dateTauxAvancementAnnuel = null;
   }
 
   avecCodeInsee(
@@ -114,6 +117,7 @@ export default class TerritoireDonnéesBuilder {
       nombrePropositionValeurPonderee: this._nombrePropositionValeurPonderee,
       dateTauxAvancementPrecedent:
         this._dateTauxAvancementMandatValeurPrecedent,
+      dateTauxAvancementAnnuel: this._dateTauxAvancementAnnuel,
     };
   }
 }

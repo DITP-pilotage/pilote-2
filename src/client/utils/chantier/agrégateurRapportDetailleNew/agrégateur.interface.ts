@@ -1,4 +1,3 @@
-import { Avancement } from "@/server/domain/chantier/avancement/Avancement.interface";
 import { Maille } from "@/server/domain/maille/Maille.interface";
 import { CodeInsee } from "@/server/domain/territoire/Territoire.interface";
 
@@ -15,8 +14,8 @@ type RépartitionAvancementsMaille = {
 };
 
 type RépartitionAvancementsTerritoire = {
-  global: number | null;
-  annuel: number | null;
+  global: { avancement: number | null; date: string | null };
+  annuel: { avancement: number | null; date: string | null };
 };
 
 export type Agrégat = {
@@ -29,7 +28,7 @@ export type Agrégat = {
         avancements: RépartitionAvancementsTerritoire;
       };
       donnéesBrutes: {
-        avancements: Avancement;
+        avancements: RépartitionAvancementsTerritoire;
       };
     };
   };

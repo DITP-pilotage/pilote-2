@@ -9,7 +9,7 @@ import { CodeInsee } from "@/server/domain/territoire/Territoire.interface";
 import départements from "@/client/constants/départements.json";
 import régions from "@/client/constants/régions.json";
 import { Maille } from "@/server/domain/maille/Maille.interface";
-import { ChantierRapportDetailleContrat } from "@/server/chantiers/app/contrats/ChantierRapportDetailleContrat";
+import Chantier from "@/server/domain/chantier/Chantier.interface";
 import { AgrégatParTerritoire } from "./agrégateur.interface";
 
 type AvancementRegroupementDonnéesBrutesMaille = {
@@ -18,14 +18,14 @@ type AvancementRegroupementDonnéesBrutesMaille = {
 };
 
 type AvancementRegroupementDonnéesBrutesTerritoire = {
-  global: number | null;
-  annuel: number | null;
+  global: { avancement: number | null; date: string | null };
+  annuel: { avancement: number | null; date: string | null };
 };
 
 export class AgrégateurChantiersParTerritoire {
   private agrégat: AgrégatParTerritoire;
 
-  constructor(private chantier: ChantierRapportDetailleContrat) {
+  constructor(private chantier: Chantier) {
     this.chantier = chantier;
     this.agrégat = this._créerAgrégatInitial();
   }
@@ -43,7 +43,16 @@ export class AgrégateurChantiersParTerritoire {
           ([territoireCode, donnéesTerritoire]) => {
             this.agrégat[maille].territoires[
               territoireCode
-            ].donnéesBrutes.avancements = donnéesTerritoire.avancement;
+            ].donnéesBrutes.avancements = {
+              global: {
+                avancement: donnéesTerritoire.avancement.global,
+                date: donnéesTerritoire.dateDeMàjDonnéesQuantitatives,
+              },
+              annuel: {
+                avancement: donnéesTerritoire.avancement.annuel,
+                date: donnéesTerritoire.dateTauxAvancementAnnuel,
+              },
+            };
           },
         );
       },
@@ -61,8 +70,8 @@ export class AgrégateurChantiersParTerritoire {
         ([territoireCode, donnéesTerritoire]) => {
           let avancementsPourCeCodeInsee: AvancementRegroupementDonnéesBrutesTerritoire =
             {
-              global: null,
-              annuel: null,
+              global: { avancement: null, date: null },
+              annuel: { avancement: null, date: null },
             };
           avancementsPourCeCodeInsee.global =
             donnéesTerritoire.donnéesBrutes.avancements.global;
@@ -70,11 +79,11 @@ export class AgrégateurChantiersParTerritoire {
             donnéesTerritoire.donnéesBrutes.avancements.annuel;
           avancementsPourCetteMaille.global = [
             ...avancementsPourCetteMaille.global,
-            avancementsPourCeCodeInsee.global,
+            avancementsPourCeCodeInsee.global.avancement,
           ];
           avancementsPourCetteMaille.annuel = [
             ...avancementsPourCetteMaille.annuel,
-            avancementsPourCeCodeInsee.annuel,
+            avancementsPourCeCodeInsee.annuel.avancement,
           ];
 
           this._calculerLaRépartitionDesAvancementsParTerritoire(
@@ -128,14 +137,14 @@ export class AgrégateurChantiersParTerritoire {
     return {
       répartition: {
         avancements: {
-          global: null,
-          annuel: null,
+          global: { avancement: null, date: null },
+          annuel: { avancement: null, date: null },
         },
       },
       donnéesBrutes: {
         avancements: {
-          global: null,
-          annuel: null,
+          global: { avancement: null, date: null },
+          annuel: { avancement: null, date: null },
         },
       },
     };

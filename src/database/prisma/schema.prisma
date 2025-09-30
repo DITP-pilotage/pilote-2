@@ -151,13 +151,15 @@ model chantier_territoire {
 }
 
 model chantier_territoire_jalon {
-  id                  String
-  code_insee          String
-  maille              Maille
-  territoire_code     String
-  zone_id             String
-  jalon               Int
-  taux_avancement     Float?
+  id                   String
+  code_insee           String
+  maille               Maille
+  territoire_code      String
+  zone_id              String
+  jalon                Int
+  taux_avancement      Float?
+  date_taux_avancement DateTime? @db.Date
+
   chantier_territoire chantier_territoire @relation(fields: [id, territoire_code], references: [id, territoire_code], onDelete: Cascade, onUpdate: Cascade)
 
   @@id([id, territoire_code, jalon])

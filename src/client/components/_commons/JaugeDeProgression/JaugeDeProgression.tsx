@@ -4,11 +4,13 @@ import {
   JaugeDeProgressionTaille,
 } from "@/components/_commons/JaugeDeProgression/JaugeDeProgression.interface";
 import JaugeDeProgressionSVG from "@/components/_commons/JaugeDeProgression/JaugeDeProgressionSVG";
+import { formaterDate } from "@/client/utils/date/date";
 import JaugeDeProgressionStyled from "./JaugeDeProgression.styled";
 
 interface JaugeDeProgressionProps {
   couleur: JaugeDeProgressionCouleur;
   libellé: string;
+  date?: string | null;
   pourcentage: number | null | undefined;
   taille: JaugeDeProgressionTaille;
   noWrap?: boolean;
@@ -32,6 +34,7 @@ const classesÀPartirDeTaille = {
 const JaugeDeProgression: FunctionComponent<JaugeDeProgressionProps> = ({
   couleur,
   libellé,
+  date,
   pourcentage,
   taille,
   noWrap = false,
@@ -55,6 +58,13 @@ const JaugeDeProgression: FunctionComponent<JaugeDeProgressionProps> = ({
       >
         {libellé}
       </p>
+      {date ? (
+        <p
+          className={`fr-text--xs fr-mb-0 text-center ${classesÀPartirDeTaille[taille].libellé}${noWrap ? "no-wrap" : ""}`}
+        >
+          {`(${formaterDate(date, "MM/YYYY")})`}
+        </p>
+      ) : null}
     </JaugeDeProgressionStyled>
   );
 };

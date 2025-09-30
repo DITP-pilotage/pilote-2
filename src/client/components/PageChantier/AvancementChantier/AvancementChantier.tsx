@@ -4,7 +4,6 @@ import { actionsTerritoiresStore } from "@/stores/useTerritoiresStore/useTerrito
 import AvancementsTerritoire from "@/components/_commons/AvancementsTerritoire/AvancementsTerritoire";
 import JaugeDeProgression from "@/components/_commons/JaugeDeProgression/JaugeDeProgression";
 import BarreDeProgression from "@/components/_commons/BarreDeProgression/BarreDeProgression";
-import { AvancementsStatistiques } from "@/components/_commons/Avancements/Avancements.interface";
 import { Maille, MailleInterne } from "@/server/domain/maille/Maille.interface";
 import Alerte from "@/components/_commons/Alerte/Alerte";
 import INFOBULLE_CONTENUS from "@/client/constants/infobulles";
@@ -22,21 +21,37 @@ interface AvancementChantierProps {
   jalon: number;
   mailleQuery: MailleInterne;
   avancements: {
-    nationale: AvancementsStatistiques;
-    departementale: {
+    nationale: {
       global: {
         moyenne: number | null;
+        médiane: number | null | undefined;
+        minimum: number | null | undefined;
+        maximum: number | null | undefined;
+        date: string | null;
       };
       annuel: {
         moyenne: number | null;
+        date: string | null;
+      };
+    };
+    departementale: {
+      global: {
+        moyenne: number | null;
+        date: string | null;
+      };
+      annuel: {
+        moyenne: number | null;
+        date: string | null;
       };
     };
     regionale: {
       global: {
         moyenne: number | null;
+        date: string | null;
       };
       annuel: {
         moyenne: number | null;
+        date: string | null;
       };
     };
   };
@@ -100,6 +115,8 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
               avancementGlobal={avancements.departementale.global.moyenne}
               couleurBarreDeProgression="secondaire"
               couleurJaugeDeProgression="bleu"
+              dateAvancementAnnuel={avancements.departementale.annuel.date}
+              dateAvancementGlobal={avancements.departementale.global.date}
               jalon={jalon}
               territoireNom={territoireSélectionné.nom}
               titreTauxAvancement={sousTitreTuileAvancementDepartemental}
@@ -140,6 +157,8 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
               couleurJaugeDeProgression={
                 mailleSelectionnee === "regionale" ? "bleu" : "bleu-clair"
               }
+              dateAvancementAnnuel={avancements.regionale.annuel.date}
+              dateAvancementGlobal={avancements.regionale.global.date}
               jalon={jalon}
               territoireNom={
                 territoireSélectionnéParent
@@ -166,6 +185,7 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
           </div>
           <JaugeDeProgression
             couleur={territoireCode !== "NAT-FR" ? "bleu-clair" : "bleu"}
+            date={avancements.nationale?.global.date ?? null}
             libellé="France"
             pourcentage={
               avancements.nationale
@@ -192,11 +212,14 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
               }
               variante="secondaire-light"
             />
-            <div className="flex align-center justify-center fr-text--xs  w-full relative">
-              <p className="fr-text--xs fr-mb-0 fr-mt-1v">
-                {`Avancement à échéance${!territoireCode.startsWith("NAT") ? ` ${jalon}` : ""}`}
+            <p className="fr-text--xs flex justify-center fr-mb-0 fr-mt-1v">
+              {`Avancement à échéance ${jalon}`}
+            </p>
+            {avancements.nationale.annuel.date ? (
+              <p className="fr-text--xs flex justify-center fr-mb-0">
+                {`(${formaterDate(avancements.nationale.annuel.date, "MM/YYYY")})`}
               </p>
-            </div>
+            ) : null}
           </div>
         </div>
       </Bloc>

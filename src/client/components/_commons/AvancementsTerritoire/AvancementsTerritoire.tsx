@@ -4,11 +4,14 @@ import BarreDeProgression, {
   BarreDeProgressionVariante,
 } from "@/components/_commons/BarreDeProgression/BarreDeProgression";
 import { JaugeDeProgressionCouleur } from "@/client/components/_commons/JaugeDeProgression/JaugeDeProgression.interface";
+import { formaterDate } from "@/client/utils/date/date";
 
 interface AvancementsTerritoireProps {
   territoireNom: string;
   avancementGlobal: number | null;
+  dateAvancementGlobal: string | null;
   avancementAnnuel: number | null;
+  dateAvancementAnnuel: string | null;
   jalon: number;
   couleurBarreDeProgression: BarreDeProgressionVariante;
   couleurJaugeDeProgression: JaugeDeProgressionCouleur;
@@ -19,6 +22,8 @@ const AvancementsTerritoire: FunctionComponent<AvancementsTerritoireProps> = ({
   territoireNom,
   avancementGlobal,
   avancementAnnuel,
+  dateAvancementGlobal,
+  dateAvancementAnnuel,
   couleurBarreDeProgression,
   couleurJaugeDeProgression,
   jalon,
@@ -34,6 +39,7 @@ const AvancementsTerritoire: FunctionComponent<AvancementsTerritoireProps> = ({
       </div>
       <JaugeDeProgression
         couleur={couleurJaugeDeProgression}
+        date={dateAvancementGlobal}
         libellé={territoireNom}
         pourcentage={avancementGlobal}
         taille="lg"
@@ -52,11 +58,14 @@ const AvancementsTerritoire: FunctionComponent<AvancementsTerritoireProps> = ({
             valeur={avancementAnnuel}
             variante={couleurBarreDeProgression}
           />
-          <div className="flex align-center justify-center fr-text--xs  w-full relative">
-            <p className="fr-text--xs fr-mb-0 fr-mt-1v">
-              Avancement à échéance {jalon}
+          <p className="fr-text--xs flex justify-center fr-mb-0 fr-mt-1v">
+            Avancement à échéance {jalon}
+          </p>
+          {dateAvancementAnnuel ? (
+            <p className="fr-text--xs fr-mb-0 flex justify-center">
+              {`(${formaterDate(dateAvancementAnnuel, "MM/YYYY")})`}
             </p>
-          </div>
+          ) : null}
         </div>
       )}
     </>

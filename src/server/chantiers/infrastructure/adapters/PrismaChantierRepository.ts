@@ -1306,6 +1306,7 @@ export class PrismaChantierRepository implements ChantierRepository {
             chantier_territoire_jalon: {
               select: {
                 taux_avancement: true,
+                date_taux_avancement: true,
               },
               where: {
                 jalon,
