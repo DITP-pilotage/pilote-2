@@ -432,6 +432,12 @@ sources:
                     "name": "Bon état écologique des cours d'eau",
                     "desc": "Toutes zones sauf départements 09, 64, 75, 93 et DROM (pas de station de mesure)",
                   },
+                  {
+                    "order_id": 26,
+                    "value": "ZG-026",
+                    "name": "PCAET (CH-161)",
+                    "desc": "Toutes zones sauf Lozère",
+                  },
                 ]
               pilote_create_mandatory: false
               pilote_create_defaultValue: ""
