@@ -8,21 +8,11 @@ import Indicateur, {
   TypeIndicateur,
 } from "@/server/domain/indicateur/Indicateur.interface";
 import { CODES_MAILLES } from "@/server/infrastructure/accès_données/maille/mailleSQLParser";
-import {
-  DétailsIndicateurMailles,
-  DétailsIndicateurs,
-} from "@/server/domain/indicateur/DétailsIndicateur.interface";
+import { DétailsIndicateurs } from "@/server/domain/indicateur/DétailsIndicateur.interface";
 import { Maille } from "@/server/domain/maille/Maille.interface";
 import { CodeInsee } from "@/server/domain/territoire/Territoire.interface";
 import { groupByAndTransform } from "@/client/utils/arrays";
 import Chantier from "@/server/domain/chantier/Chantier.interface";
-import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
-import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
-import { parseDétailsIndicateur } from "@/server/infrastructure/accès_données/chantier/indicateur/IndicateurSQLParser";
-import {
-  ProfilCode,
-  profilsTerritoriaux,
-} from "@/server/domain/utilisateur/Utilisateur.interface";
 import { comparerDates, formatDate } from "@/client/utils/date/date";
 import { verifyValeurIsNotNullOrUndefined } from "@/server/utils/VerifyValeurIsNotNullOrUndefined";
 import { prisma } from "@/server/db/prisma";
@@ -30,12 +20,6 @@ import { prisma } from "@/server/db/prisma";
 export interface historique_valeurs {
   date: string;
   valeur: number;
-}
-
-class ErreurIndicateurNonTrouvé extends Error {
-  constructor(idIndicateur: string) {
-    super(`Erreur: indicateur '${idIndicateur}' non trouvé.`);
-  }
 }
 
 export default class IndicateurSQLRepository implements IndicateurRepository {
@@ -114,25 +98,8 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
             indicateurTerritoireJalon?.taux_avancement,
           ),
         },
-        proposition:
-          indicateurRow.valeur_actuelle_proposition !== null &&
-          indicateurRow.valeur_actuelle_proposition !== undefined
-            ? {
-                // Pour autoriser une valeur actuelle proposé à 0
-                valeurAvancement: indicateurRow.valeur_actuelle_proposition,
-                tauxAvancement:
-                  indicateurRow.taux_avancement_mandat_proposition,
-                statutTauxAvancement: "CALCULE",
-                tauxAvancementIntermediaire: verifyValeurIsNotNullOrUndefined(
-                  indicateurTerritoireJalon?.taux_avancement_proposition,
-                ),
-                auteur: indicateurRow.auteur_proposition,
-                motif: indicateurRow.motif_proposition,
-                sourceDonneeEtMethodeCalcul:
-                  indicateurRow.source_donnee_methode_calcul_proposition,
-                dateProposition: formatDate(indicateurRow.date_proposition),
-              }
-            : null,
+        // TODO(CHAN) : Plus utilisé, uniquement pour le typing pour les rapports détaillés
+        proposition: null,
         propositionStatutTerritoire: null,
         propositionStatutDirectionProjet: null,
         unité: indicateurRow.indicateur_identite.unite_mesure,
@@ -159,56 +126,6 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
     }
 
     return détailsIndicateurs;
-  }
-
-  async récupérerChantierIdAssocié(id: string): Promise<string> {
-    const indicateur = await prisma.indicateur_identite.findFirst({
-      where: {
-        id,
-      },
-    });
-
-    return indicateur!.chantier_id;
-  }
-
-  async récupérerDétailsParMailles(
-    id: string,
-    habilitations: Habilitations,
-    profil: ProfilCode,
-    jalon: number,
-  ): Promise<DétailsIndicateurMailles> {
-    const h = new Habilitation(habilitations);
-    const chantiersLecture = h.récupérerListeChantiersIdsAccessiblesEnLecture();
-    const territoiresLecture =
-      h.récupérerListeTerritoireCodesAccessiblesEnLecture();
-
-    const indicateur = await prisma.indicateur_territoire.findMany({
-      where: {
-        id,
-        indicateur_identite: {
-          chantier_id: { in: chantiersLecture },
-        },
-        territoire_code: !profilsTerritoriaux.includes(profil)
-          ? { in: territoiresLecture }
-          : undefined,
-      },
-      include: {
-        indicateur_identite: true,
-        indicateur_territoire_jalon: {
-          where: {
-            jalon,
-          },
-        },
-      },
-    });
-
-    if (!indicateur) {
-      throw new ErreurIndicateurNonTrouvé(id);
-    }
-
-    const territoires = await prisma.territoire.findMany();
-
-    return parseDétailsIndicateur(indicateur, territoires);
   }
 
   async récupérerGroupésParChantier(

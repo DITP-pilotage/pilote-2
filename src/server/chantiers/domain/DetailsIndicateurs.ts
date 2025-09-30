@@ -6,7 +6,7 @@ export type DetailsIndicateurTerritoire = Record<CodeInsee, DetailsIndicateur>;
 export type DetailsIndicateurs = Record<string, DetailsIndicateurTerritoire>;
 
 export interface DetailIndicateurPropositionValeurAvancement {
-  dateValeurAvancement: Date;
+  dateValeurAvancement: string;
   valeurAvancement: number;
   tauxAvancement: number | null;
   tauxAvancementIntermediaire: number | null;

@@ -1147,7 +1147,8 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
     return doitRetournerProposition
       ? {
           valeurAvancement: evenementPropositionLePlusRecent.valeur!,
-          dateValeurAvancement: evenementPropositionLePlusRecent.date_valeur!,
+          dateValeurAvancement:
+            evenementPropositionLePlusRecent.date_valeur!.toISOString(),
           tauxAvancement: indicateurRow.taux_avancement_mandat_proposition_v2,
           statutTauxAvancement: statutTauxAvancement,
           tauxAvancementIntermediaire:

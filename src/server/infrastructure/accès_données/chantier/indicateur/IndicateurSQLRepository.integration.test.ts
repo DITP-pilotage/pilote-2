@@ -9,45 +9,6 @@ describe("IndicateurSQLRepository", () => {
     prismaIndicateurRepository = new IndicateurSQLRepository();
   });
 
-  describe("#récupérerChantierIdAssocié", () => {
-    it("doit récupérer l'id de chantier de l'indicateur passé en paramètre", async () => {
-      // Given
-      await prisma.chantier_identite.createMany({
-        data: [
-          {
-            id: "CH-001",
-            nom: "Chantier 001",
-          },
-          {
-            id: "CH-002",
-            nom: "Chantier 002",
-          },
-        ],
-      });
-
-      await prisma.indicateur_identite.createMany({
-        data: [
-          {
-            id: "IND-001",
-            nom: "Indicateur 001",
-            chantier_id: "CH-001",
-          },
-          {
-            id: "IND-002",
-            nom: "Indicateur 002",
-            chantier_id: "CH-002",
-          },
-        ],
-      });
-
-      // When
-      const result =
-        await prismaIndicateurRepository.récupérerChantierIdAssocié("IND-001");
-      // Then
-      expect(result).toEqual("CH-001");
-    });
-  });
-
   describe("#récupérerGroupésParChantier", () => {
     it("doit récupérer les détails des indicateurs regroupé par chantier", async () => {
       // Given
@@ -524,15 +485,7 @@ describe("IndicateurSQLRepository", () => {
               prochaineDateValeurAvancement: new Date(
                 "2025-09-31",
               ).toISOString(),
-              proposition: {
-                valeurAvancement: 10,
-                tauxAvancement: 11,
-                tauxAvancementIntermediaire: 12,
-                auteur: "John Doe",
-                motif: "Pendant un test",
-                sourceDonneeEtMethodeCalcul: "test integ",
-                dateProposition: new Date("2025-02-06").toISOString(),
-              },
+              proposition: null,
               tendance: "HAUSSE",
               unité: "kg",
               valeurAvancement: 10,
@@ -566,15 +519,7 @@ describe("IndicateurSQLRepository", () => {
               prochaineDateValeurAvancement: new Date(
                 "2025-09-31",
               ).toISOString(),
-              proposition: {
-                valeurAvancement: 10,
-                tauxAvancement: 11,
-                tauxAvancementIntermediaire: 12,
-                auteur: "John Doe",
-                motif: "Pendant un test",
-                sourceDonneeEtMethodeCalcul: "test integ",
-                dateProposition: new Date("2025-02-06").toISOString(),
-              },
+              proposition: null,
               tendance: "HAUSSE",
               unité: null,
               valeurAvancement: 10,
@@ -610,15 +555,7 @@ describe("IndicateurSQLRepository", () => {
               prochaineDateValeurAvancement: new Date(
                 "2025-09-31",
               ).toISOString(),
-              proposition: {
-                valeurAvancement: 10,
-                tauxAvancement: 11,
-                tauxAvancementIntermediaire: 12,
-                auteur: "John Doe",
-                motif: "Pendant un test",
-                sourceDonneeEtMethodeCalcul: "test integ",
-                dateProposition: new Date("2025-02-06").toISOString(),
-              },
+              proposition: null,
               tendance: "HAUSSE",
               unité: "mg",
               valeurAvancement: 10,

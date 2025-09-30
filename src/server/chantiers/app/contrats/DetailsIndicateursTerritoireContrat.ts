@@ -27,7 +27,7 @@ export const presenterEnDetailsIndicateursTerritoireContrat = (
           ? {
               ...detailsTerritoire.proposition,
               dateValeurAvancement:
-                detailsTerritoire.proposition.dateValeurAvancement.toISOString(),
+                detailsTerritoire.proposition.dateValeurAvancement,
             }
           : null,
         propositionStatutTerritoire:
