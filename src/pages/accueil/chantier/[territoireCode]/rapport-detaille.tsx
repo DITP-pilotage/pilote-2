@@ -240,7 +240,10 @@ export const getServerSideProps: GetServerSideProps<
       dependencies.getChantierRepository(),
     );
 
-  const listeAvancementsStatistiques = [];
+  const listeAvancementsStatistiques: {
+    id: string;
+    avancementChantierRapportDetaille: AvancementChantierRapportDetaille;
+  }[] = [];
 
   for (const chantier of chantiersAvecAlertes) {
     const avancementsStatistique =
@@ -254,26 +257,38 @@ export const getServerSideProps: GetServerSideProps<
       new AgrégateurChantierRapportDetailleParTerritoire(chantier).agréger();
 
     const avancementRégional = (typeTauxAvancement: "global" | "annuel") => {
-      return territoireSélectionné.maille === "regionale"
-        ? avancementChantierRapportDetaille.regionale.territoires[
+      if (territoireSélectionné.maille === "regionale") {
+        const avancement =
+          avancementChantierRapportDetaille.regionale.territoires[
             territoireCode
-          ].répartition.avancements[typeTauxAvancement]
-        : territoireSélectionné.maille === "departementale" &&
+          ].répartition.avancements[typeTauxAvancement];
+
+        return { moyenne: avancement.avancement, date: avancement.date };
+      } else if (
+        territoireSélectionné.maille === "departementale" &&
+        territoireSélectionné.codeParent
+      ) {
+        const avancement =
+          avancementChantierRapportDetaille.regionale.territoires[
             territoireSélectionné.codeParent
-          ? avancementChantierRapportDetaille.regionale.territoires[
-              territoireSélectionné.codeParent
-            ].répartition.avancements[typeTauxAvancement]
-          : null;
+          ].répartition.avancements[typeTauxAvancement];
+        return { moyenne: avancement.avancement, date: avancement.date };
+      } else {
+        return { moyenne: null, date: null };
+      }
     };
 
     const avancementDépartemental = (
       typeTauxAvancement: "global" | "annuel",
     ) => {
-      return territoireSélectionné.maille === "departementale"
-        ? avancementChantierRapportDetaille[mailleSelectionnee].territoires[
+      if (territoireSélectionné.maille === "departementale") {
+        const avancement =
+          avancementChantierRapportDetaille[mailleSelectionnee].territoires[
             territoireCode
-          ].répartition.avancements[typeTauxAvancement]
-        : null;
+          ].répartition.avancements[typeTauxAvancement];
+        return { moyenne: avancement.avancement, date: avancement.date };
+      }
+      return { moyenne: null, date: null };
     };
 
     listeAvancementsStatistiques.push({
@@ -287,27 +302,33 @@ export const getServerSideProps: GetServerSideProps<
             médiane: avancementsStatistique?.global.médiane ?? null,
             minimum: avancementsStatistique?.global.minimum ?? null,
             maximum: avancementsStatistique?.global.maximum ?? null,
+            date: avancementChantierRapportDetaille.nationale.territoires[
+              "NAT-FR"
+            ].répartition.avancements.global.date,
           },
           annuel: {
             moyenne:
               avancementChantierRapportDetaille.nationale.répartition
                 .avancements.annuel.moyenne,
+            date: avancementChantierRapportDetaille.nationale.territoires[
+              "NAT-FR"
+            ].répartition.avancements.annuel.date,
           },
         },
         departementale: {
           global: {
-            moyenne: avancementDépartemental("global"),
+            ...avancementDépartemental("global"),
           },
           annuel: {
-            moyenne: avancementDépartemental("annuel"),
+            ...avancementDépartemental("annuel"),
           },
         },
         regionale: {
           global: {
-            moyenne: avancementRégional("global"),
+            ...avancementRégional("global"),
           },
           annuel: {
-            moyenne: avancementRégional("annuel"),
+            ...avancementRégional("annuel"),
           },
         },
       },

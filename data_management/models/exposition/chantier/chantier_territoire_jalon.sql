@@ -11,6 +11,7 @@ tous_jalons AS (
         chantier_id,
         zone_id,
         taa_courant_ch AS taux_avancement_annuel,
+        date_ta as date_taux_avancement_annuel,
         jalon
     FROM {{ ref('compute_ta_ch_jalon') }}
 )
@@ -22,7 +23,8 @@ SELECT
     t.zone_id,
     t.code_insee,
     jalons_a_considerer.jalon,
-    tous_jalons.taux_avancement_annuel AS taux_avancement
+    tous_jalons.taux_avancement_annuel AS taux_avancement,
+    tous_jalons.date_taux_avancement_annuel::date as date_taux_avancement
 FROM {{ ref('stg_ppg_metadata__chantiers') }} AS meta_ch
 CROSS JOIN {{ source('db_schema_public', 'territoire') }} AS t
 CROSS JOIN {{ ref('jalons_a_etudier') }} AS jalons_a_considerer

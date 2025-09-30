@@ -23,6 +23,7 @@ interface TerritoireDonnéeRapportDetailleContrat {
   tendance: "BAISSE" | "HAUSSE" | "STAGNATION" | null;
   dateDeMàjDonnéesQualitatives: string | null;
   dateDeMàjDonnéesQuantitatives: string | null;
+  dateTauxAvancementAnnuel: string | null;
   avancement: TerritoireAvancementRapportDetailleContrat;
   avancementPrecedent: TerritoireAvancementRapportDetailleContrat["global"];
   responsableLocal: ResponsableLocalRapportDetailleContrat[];
@@ -103,6 +104,7 @@ export interface ChantierRapportDetailleContrat {
   responsables: ResponsableRapportDetailleContrat;
   dateDeMàjDonnéesQuantitatives: string | null;
   dateDeMàjDonnéesQualitatives: string | null;
+  dateTauxAvancementAnnuel: string | null;
   écart: number | null;
   tendance: "BAISSE" | "HAUSSE" | "STAGNATION" | null;
   météo: Météo;
@@ -161,6 +163,10 @@ export function créerDonnéesTerritoiresRapportDetailleNew(
         chantierRow?.derniere_maj_date_qualitative?.toISOString() || null,
       dateDeMàjDonnéesQuantitatives:
         chantierRow?.date_taux_avancement_mandat?.toISOString() ?? null,
+      dateTauxAvancementAnnuel:
+        chantierRow?.chantier_territoire_jalon
+          .at(0)
+          ?.date_taux_avancement?.toISOString() ?? null,
       avancement: {
         annuel:
           chantierRow?.chantier_territoire_jalon.at(0)?.taux_avancement ?? null,
@@ -245,6 +251,7 @@ export const presenterEnChantierRapportDetaille = (
               dateDeMàjDonnéesQuantitatives:
                 chantierMailleNationale.date_taux_avancement_mandat?.toISOString() ??
                 null,
+              dateTauxAvancementAnnuel: null,
               estApplicable: chantierMailleNationale.est_applicable,
               responsableLocal: [],
               coordinateurTerritorial: [],
@@ -280,6 +287,10 @@ export const presenterEnChantierRapportDetaille = (
               dateDeMàjDonnéesQuantitatives:
                 chantierMailleNationale.date_taux_avancement_mandat?.toISOString() ??
                 null,
+              dateTauxAvancementAnnuel:
+                chantierMailleNationale.chantier_territoire_jalon
+                  .at(0)
+                  ?.date_taux_avancement?.toISOString() ?? null,
               estApplicable: chantierMailleNationale.est_applicable,
               coordinateurTerritorial: [],
               responsableLocal: [],
@@ -365,6 +376,8 @@ export const presenterEnChantierRapportDetaille = (
       newMaille[mailleChantier][territoireCode].dateDeMàjDonnéesQuantitatives,
     dateDeMàjDonnéesQualitatives:
       newMaille[mailleChantier][territoireCode].dateDeMàjDonnéesQualitatives,
+    dateTauxAvancementAnnuel:
+      newMaille[mailleChantier][territoireCode].dateTauxAvancementAnnuel,
     écart: newMaille[mailleChantier][territoireCode].écart,
     tendance: newMaille[mailleChantier][territoireCode].tendance,
     météo: newMaille[mailleChantier][territoireCode].météo,

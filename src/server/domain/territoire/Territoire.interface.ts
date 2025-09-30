@@ -153,6 +153,7 @@ export type TerritoireDonnées = {
   tendance: ChantierTendance | null;
   dateDeMàjDonnéesQualitatives: string | null;
   dateDeMàjDonnéesQuantitatives: string | null;
+  dateTauxAvancementAnnuel: string | null;
   estApplicable: boolean | null;
   responsableLocal: ResponsableLocal[];
   coordinateurTerritorial: CoordinateurTerritorial[];

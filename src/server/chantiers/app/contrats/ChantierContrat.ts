@@ -54,6 +54,10 @@ export function créerDonnéesTerritoires(
         chantierRow?.derniere_maj_date_qualitative?.toISOString() || null,
       dateDeMàjDonnéesQuantitatives:
         chantierRow?.date_taux_avancement_mandat?.toISOString() ?? null,
+      dateTauxAvancementAnnuel:
+        chantierRow?.chantier_territoire_jalon
+          .at(0)
+          ?.date_taux_avancement?.toISOString() ?? null,
       responsableLocal: [],
       coordinateurTerritorial: [],
       mailleSourceDonnees: chantierRow?.donnees_maille_source
@@ -150,6 +154,10 @@ export const presenterEnChantierContrat = (
           dateDeMàjDonnéesQuantitatives:
             chantierMailleNationale.date_taux_avancement_mandat?.toISOString() ??
             null,
+          dateTauxAvancementAnnuel:
+            chantierMailleNationale.chantier_territoire_jalon
+              .at(0)
+              ?.date_taux_avancement?.toISOString() ?? null,
           estApplicable: chantierMailleNationale.est_applicable,
           responsableLocal: [],
           coordinateurTerritorial: [],

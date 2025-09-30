@@ -10,7 +10,6 @@ import { NonAutorisé } from "@/server/utils/errors";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
 import ChoixTerritoire from "@/components/PageChantier/ChoixTerritoire/ChoixTerritoire";
 import calculerChantierAvancements from "@/client/utils/chantier/avancement/calculerChantierAvancementsNew";
-import { ChantierRapportDetailleContrat } from "@/server/chantiers/app/contrats/ChantierRapportDetailleContrat";
 import { comparerIndicateur } from "@/client/utils/indicateur/indicateur";
 import { convertitEnPondération } from "@/client/utils/ponderation/ponderation";
 import { IndicateurPondération } from "@/components/PageChantier/PageChantier.interface";
@@ -171,7 +170,7 @@ export const getServerSideProps = async ({
     }
 
     const avancements = calculerChantierAvancements(
-      chantier as unknown as ChantierRapportDetailleContrat,
+      chantier,
       mailleSelectionnee,
       territoireCode,
       territoireSélectionné.codeParent,
