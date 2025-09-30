@@ -1,5 +1,8 @@
+import { Promise } from "ts-toolbelt/out/Any/Promise";
+import { undefined } from "zod";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { IndicateurRepository } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/IndicateurRepository";
+import { prisma } from "@/server/db/prisma";
 
 export class PrismaIndicateurRepository implements IndicateurRepository {
   private readonly prisma: PrismaPilote;
@@ -33,5 +36,20 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
         taux_avancement_proposition_v2: null,
       },
     });
+  }
+
+  async getDerniereDateValeurAvancement(
+    indicId: string,
+    territoireCode: string,
+  ): Promise<Date | null> {
+    const row = await this.prisma
+      .getInstance()
+      .indicateur_territoire_jalon.findFirst({
+        where: { id: indicId, territoire_code: territoireCode },
+        orderBy: { date_valeur_actuelle: "desc" },
+      });
+
+    if (!row) return null;
+    return row.date_valeur_actuelle;
   }
 }
