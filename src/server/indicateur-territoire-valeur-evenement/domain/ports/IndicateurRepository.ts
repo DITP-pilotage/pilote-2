@@ -3,8 +3,8 @@ export interface IndicateurRepository {
     indicId: string;
     territoireCode: string;
   }): Promise<void>;
-  getDerniereDateValeurAvancement(
-    indicId: string,
-    territoireCode: string,
-  ): Promise<Date | null>;
+  getDateEffectiveValeurAvancement(args: {
+    indicId: string;
+    territoireCode: string;
+  }): Promise<Date | null>;
 }

@@ -34,7 +34,7 @@ describe("CreerIndicateurTerritoireValeurEvenementUseCase", () => {
       sourceDonneeEtMethodeCalcul: "Source de la donnée et méthode de calcul",
     };
 
-    indicateurRepository.getDerniereDateValeurAvancement.mockResolvedValue(
+    indicateurRepository.getDateEffectiveValeurAvancement.mockResolvedValue(
       new Date("2024-01-01"),
     );
 
@@ -90,7 +90,7 @@ describe("CreerIndicateurTerritoireValeurEvenementUseCase", () => {
       sourceDonneeEtMethodeCalcul: "Source de la donnée et méthode de calcul",
     };
 
-    indicateurRepository.getDerniereDateValeurAvancement.mockResolvedValue(
+    indicateurRepository.getDateEffectiveValeurAvancement.mockResolvedValue(
       new Date("2024-03-01"),
     );
 
@@ -136,7 +136,7 @@ describe("CreerIndicateurTerritoireValeurEvenementUseCase", () => {
       sourceDonneeEtMethodeCalcul: "Source de la donnée et méthode de calcul",
     };
 
-    indicateurRepository.getDerniereDateValeurAvancement.mockResolvedValue(
+    indicateurRepository.getDateEffectiveValeurAvancement.mockResolvedValue(
       new Date("2024-04-01"),
     );
 
@@ -181,7 +181,7 @@ describe("CreerIndicateurTerritoireValeurEvenementUseCase", () => {
       sourceDonneeEtMethodeCalcul: "Source de la donnée et méthode de calcul",
     };
 
-    indicateurRepository.getDerniereDateValeurAvancement.mockResolvedValue(
+    indicateurRepository.getDateEffectiveValeurAvancement.mockResolvedValue(
       new Date("2024-05-01"),
     );
 
@@ -283,7 +283,7 @@ describe("CreerIndicateurTerritoireValeurEvenementUseCase", () => {
       sourceDonneeEtMethodeCalcul: "Source de la donnée et méthode de calcul",
     };
 
-    indicateurRepository.getDerniereDateValeurAvancement.mockResolvedValue(
+    indicateurRepository.getDateEffectiveValeurAvancement.mockResolvedValue(
       derniereDateValeurAvancement,
     );
 
@@ -309,8 +309,13 @@ describe("CreerIndicateurTerritoireValeurEvenementUseCase", () => {
     ).rejects.toThrow();
 
     expect(
-      indicateurRepository.getDerniereDateValeurAvancement,
-    ).toHaveBeenCalledWith(input.indicId, input.territoireCode);
+      indicateurRepository.getDateEffectiveValeurAvancement,
+    ).toHaveBeenCalledWith(
+      expect.objectContaining({
+        indicId: input.indicId,
+        territoireCode: input.territoireCode,
+      }),
+    );
   });
 
   it("Doit échouer quand une proposition existe déjà sur une date supérieure ou égale", async () => {
@@ -326,7 +331,7 @@ describe("CreerIndicateurTerritoireValeurEvenementUseCase", () => {
       sourceDonneeEtMethodeCalcul: "Source de la donnée et méthode de calcul",
     };
 
-    indicateurRepository.getDerniereDateValeurAvancement.mockResolvedValue(
+    indicateurRepository.getDateEffectiveValeurAvancement.mockResolvedValue(
       derniereDateValeurAvancement,
     );
 
@@ -396,7 +401,7 @@ describe("CreerIndicateurTerritoireValeurEvenementUseCase", () => {
       sourceDonneeEtMethodeCalcul: "Source de la donnée et méthode de calcul",
     };
 
-    indicateurRepository.getDerniereDateValeurAvancement.mockResolvedValue(
+    indicateurRepository.getDateEffectiveValeurAvancement.mockResolvedValue(
       derniereDateValeurAvancement,
     );
 

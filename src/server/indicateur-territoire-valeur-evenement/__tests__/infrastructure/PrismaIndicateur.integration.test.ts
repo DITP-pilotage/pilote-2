@@ -126,10 +126,10 @@ describe("PrismaIndicateurRepository", () => {
     it("Doit retourner null quand il n'y a pas de ligne pour l'indicateur et le territoire", async () => {
       // When
       const result =
-        await prismaIndicateurRepository.getDerniereDateValeurAvancement(
-          "IND-999",
-          "REG-99",
-        );
+        await prismaIndicateurRepository.getDateEffectiveValeurAvancement({
+          indicId: "IND-999",
+          territoireCode: "REG-99",
+        });
 
       // Then
       expect(result).toBeNull();
@@ -217,10 +217,10 @@ describe("PrismaIndicateurRepository", () => {
 
       // When
       const result =
-        await prismaIndicateurRepository.getDerniereDateValeurAvancement(
-          "IND-002",
-          "REG-02",
-        );
+        await prismaIndicateurRepository.getDateEffectiveValeurAvancement({
+          indicId: "IND-002",
+          territoireCode: "REG-02",
+        });
 
       // Then
       expect(result).toEqual(dateRecente);

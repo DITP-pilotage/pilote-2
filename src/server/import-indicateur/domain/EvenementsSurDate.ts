@@ -109,10 +109,6 @@ export class EvenementsSurDate {
     return null;
   }
 
-  naPasDeProposition() {
-    return this.evenementPropositionValeurEnCours() == null;
-  }
-
   evenementPropositionValeurAccuseeReception() {
     const evenementPropositionValeurLePlusRecent =
       this.evenementsPropositionValeur()[0];
