@@ -1,6 +1,7 @@
 import { MockProxy, mock } from "jest-mock-extended";
 import { CreerIndicateurTerritoireValeurEvenementUseCase } from "@/server/indicateur-territoire-valeur-evenement/usecases/CreerIndicateurTerritoireValeurEvenementUseCase";
 import { IndicateurTerritoireValeurEvenementRepository } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/IndicateurTerritoireValeurEvenementRepository";
+import { IndicateurRepository } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/IndicateurRepository";
 import { IndicateurTerritoireValeurEvenement } from "@/server/indicateur-territoire-valeur-evenement/domain/IndicateurTerritoireValeurEvenement";
 import { EvenementsSurDate } from "@/server/import-indicateur/domain/EvenementsSurDate";
 import { toISODate } from "@/server/app/domain/Dates";
@@ -8,13 +9,16 @@ import { toISODate } from "@/server/app/domain/Dates";
 describe("CreerIndicateurTerritoireValeurEvenementUseCase", () => {
   let creerIndicateurTerritoireValeurEvenementUseCase: CreerIndicateurTerritoireValeurEvenementUseCase;
   let indicateurTerritoireValeurEvenementRepository: MockProxy<IndicateurTerritoireValeurEvenementRepository>;
+  let indicateurRepository: MockProxy<IndicateurRepository>;
 
   beforeEach(() => {
     indicateurTerritoireValeurEvenementRepository =
       mock<IndicateurTerritoireValeurEvenementRepository>();
+    indicateurRepository = mock<IndicateurRepository>();
     creerIndicateurTerritoireValeurEvenementUseCase =
       new CreerIndicateurTerritoireValeurEvenementUseCase({
         indicateurTerritoireValeurEvenementRepository,
+        indicateurRepository,
       });
   });
 
@@ -30,6 +34,10 @@ describe("CreerIndicateurTerritoireValeurEvenementUseCase", () => {
       sourceDonneeEtMethodeCalcul: "Source de la donnée et méthode de calcul",
     };
 
+    indicateurRepository.getDerniereDateValeurAvancement.mockResolvedValue(
+      new Date("2024-01-01"),
+    );
+
     indicateurTerritoireValeurEvenementRepository.recupererParIndicIdTerritoireCodeTypeValeurEtDate.mockResolvedValue(
       new EvenementsSurDate({
         identifiantFlux: {
@@ -40,6 +48,10 @@ describe("CreerIndicateurTerritoireValeurEvenementUseCase", () => {
         evenementsSurDate: [],
         tousLesEvenements: [],
       }),
+    );
+
+    indicateurTerritoireValeurEvenementRepository.recupererParIndicIdTerritoireCodeTypeValeurEtDateSuperieureA.mockResolvedValue(
+      [],
     );
 
     // When
@@ -78,6 +90,10 @@ describe("CreerIndicateurTerritoireValeurEvenementUseCase", () => {
       sourceDonneeEtMethodeCalcul: "Source de la donnée et méthode de calcul",
     };
 
+    indicateurRepository.getDerniereDateValeurAvancement.mockResolvedValue(
+      new Date("2024-03-01"),
+    );
+
     indicateurTerritoireValeurEvenementRepository.recupererParIndicIdTerritoireCodeTypeValeurEtDate.mockResolvedValue(
       new EvenementsSurDate({
         identifiantFlux: {
@@ -88,6 +104,10 @@ describe("CreerIndicateurTerritoireValeurEvenementUseCase", () => {
         evenementsSurDate: [],
         tousLesEvenements: [],
       }),
+    );
+
+    indicateurTerritoireValeurEvenementRepository.recupererParIndicIdTerritoireCodeTypeValeurEtDateSuperieureA.mockResolvedValue(
+      [],
     );
 
     // When
@@ -116,6 +136,10 @@ describe("CreerIndicateurTerritoireValeurEvenementUseCase", () => {
       sourceDonneeEtMethodeCalcul: "Source de la donnée et méthode de calcul",
     };
 
+    indicateurRepository.getDerniereDateValeurAvancement.mockResolvedValue(
+      new Date("2024-04-01"),
+    );
+
     indicateurTerritoireValeurEvenementRepository.recupererParIndicIdTerritoireCodeTypeValeurEtDate.mockResolvedValue(
       new EvenementsSurDate({
         identifiantFlux: {
@@ -126,6 +150,10 @@ describe("CreerIndicateurTerritoireValeurEvenementUseCase", () => {
         evenementsSurDate: [],
         tousLesEvenements: [],
       }),
+    );
+
+    indicateurTerritoireValeurEvenementRepository.recupererParIndicIdTerritoireCodeTypeValeurEtDateSuperieureA.mockResolvedValue(
+      [],
     );
 
     // When
@@ -152,6 +180,10 @@ describe("CreerIndicateurTerritoireValeurEvenementUseCase", () => {
       motif: "Motif de la proposition",
       sourceDonneeEtMethodeCalcul: "Source de la donnée et méthode de calcul",
     };
+
+    indicateurRepository.getDerniereDateValeurAvancement.mockResolvedValue(
+      new Date("2024-05-01"),
+    );
 
     const evenementsExistants = [
       IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
@@ -221,6 +253,10 @@ describe("CreerIndicateurTerritoireValeurEvenementUseCase", () => {
       }),
     );
 
+    indicateurTerritoireValeurEvenementRepository.recupererParIndicIdTerritoireCodeTypeValeurEtDateSuperieureA.mockResolvedValue(
+      [],
+    );
+
     // When
     await creerIndicateurTerritoireValeurEvenementUseCase.run(input);
 
@@ -230,6 +266,179 @@ describe("CreerIndicateurTerritoireValeurEvenementUseCase", () => {
     ).toHaveBeenCalledWith(
       expect.objectContaining<Partial<IndicateurTerritoireValeurEvenement>>({
         ordre: 4, // Max ordre existant (3) + 1
+      }),
+    );
+  });
+
+  it("Doit échouer quand la date de proposition est inférieure à la dernière date de valeur d'avancement", async () => {
+    // Given
+    const derniereDateValeurAvancement = new Date("2024-06-01");
+    const input = {
+      indicId: "IND-007",
+      territoireCode: "REG-03",
+      valeurAvancement: 50,
+      dateValeurAvancement: new Date("2024-05-01"), // Date inférieure
+      idAuteurModification: "user-xyz",
+      motif: "Motif de la proposition",
+      sourceDonneeEtMethodeCalcul: "Source de la donnée et méthode de calcul",
+    };
+
+    indicateurRepository.getDerniereDateValeurAvancement.mockResolvedValue(
+      derniereDateValeurAvancement,
+    );
+
+    indicateurTerritoireValeurEvenementRepository.recupererParIndicIdTerritoireCodeTypeValeurEtDate.mockResolvedValue(
+      new EvenementsSurDate({
+        identifiantFlux: {
+          indicId: input.indicId,
+          territoireCode: input.territoireCode,
+          date: toISODate(input.dateValeurAvancement),
+        },
+        evenementsSurDate: [],
+        tousLesEvenements: [],
+      }),
+    );
+
+    indicateurTerritoireValeurEvenementRepository.recupererParIndicIdTerritoireCodeTypeValeurEtDateSuperieureA.mockResolvedValue(
+      [],
+    );
+
+    // When / Then
+    await expect(
+      creerIndicateurTerritoireValeurEvenementUseCase.run(input),
+    ).rejects.toThrow();
+
+    expect(
+      indicateurRepository.getDerniereDateValeurAvancement,
+    ).toHaveBeenCalledWith(input.indicId, input.territoireCode);
+  });
+
+  it("Doit échouer quand une proposition existe déjà sur une date supérieure ou égale", async () => {
+    // Given
+    const derniereDateValeurAvancement = new Date("2024-05-01");
+    const input = {
+      indicId: "IND-008",
+      territoireCode: "REG-04",
+      valeurAvancement: 60,
+      dateValeurAvancement: new Date("2024-06-01"),
+      idAuteurModification: "user-abc",
+      motif: "Motif de la proposition",
+      sourceDonneeEtMethodeCalcul: "Source de la donnée et méthode de calcul",
+    };
+
+    indicateurRepository.getDerniereDateValeurAvancement.mockResolvedValue(
+      derniereDateValeurAvancement,
+    );
+
+    // Une proposition existe déjà sur une date future
+    const propositionExistante =
+      IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
+        {
+          indicId: input.indicId,
+          territoireCode: input.territoireCode,
+          typeEvenement: "PROPOSITION_VALEUR_CREEE",
+          typeValeur: "VALEUR_AVANCEMENT",
+          dateValeur: new Date("2024-07-01"),
+          valeur: 70,
+          idAuteurModification: "user-other",
+          correlationId: "corr-3",
+          ordre: 1,
+          dateCreation: new Date("2024-06-15"),
+          donneesComplementaires: {
+            motif: "Autre proposition",
+            sourceDonneeEtMethodeCalcul: "Autre source",
+          },
+        },
+      );
+
+    indicateurTerritoireValeurEvenementRepository.recupererParIndicIdTerritoireCodeTypeValeurEtDate.mockResolvedValue(
+      new EvenementsSurDate({
+        identifiantFlux: {
+          indicId: input.indicId,
+          territoireCode: input.territoireCode,
+          date: toISODate(input.dateValeurAvancement),
+        },
+        evenementsSurDate: [],
+        tousLesEvenements: [],
+      }),
+    );
+
+    indicateurTerritoireValeurEvenementRepository.recupererParIndicIdTerritoireCodeTypeValeurEtDateSuperieureA.mockResolvedValue(
+      [
+        new EvenementsSurDate({
+          identifiantFlux: {
+            indicId: input.indicId,
+            territoireCode: input.territoireCode,
+            date: toISODate(new Date("2024-07-01")),
+          },
+          evenementsSurDate: [propositionExistante],
+          tousLesEvenements: [propositionExistante],
+        }),
+      ],
+    );
+
+    // When / Then
+    await expect(
+      creerIndicateurTerritoireValeurEvenementUseCase.run(input),
+    ).rejects.toThrow();
+  });
+
+  it("Doit créer une proposition quand la date est valide et aucune proposition n'existe", async () => {
+    // Given
+    const derniereDateValeurAvancement = new Date("2024-05-01");
+    const input = {
+      indicId: "IND-009",
+      territoireCode: "REG-05",
+      valeurAvancement: 65,
+      dateValeurAvancement: new Date("2024-06-01"),
+      idAuteurModification: "user-valid",
+      motif: "Motif de la proposition",
+      sourceDonneeEtMethodeCalcul: "Source de la donnée et méthode de calcul",
+    };
+
+    indicateurRepository.getDerniereDateValeurAvancement.mockResolvedValue(
+      derniereDateValeurAvancement,
+    );
+
+    indicateurTerritoireValeurEvenementRepository.recupererParIndicIdTerritoireCodeTypeValeurEtDate.mockResolvedValue(
+      new EvenementsSurDate({
+        identifiantFlux: {
+          indicId: input.indicId,
+          territoireCode: input.territoireCode,
+          date: toISODate(input.dateValeurAvancement),
+        },
+        evenementsSurDate: [],
+        tousLesEvenements: [],
+      }),
+    );
+
+    indicateurTerritoireValeurEvenementRepository.recupererParIndicIdTerritoireCodeTypeValeurEtDateSuperieureA.mockResolvedValue(
+      [],
+    );
+
+    // When
+    await creerIndicateurTerritoireValeurEvenementUseCase.run(input);
+
+    // Then
+    expect(
+      indicateurTerritoireValeurEvenementRepository.recupererParIndicIdTerritoireCodeTypeValeurEtDateSuperieureA,
+    ).toHaveBeenCalledWith({
+      indicId: input.indicId,
+      territoireCode: input.territoireCode,
+      dateValeur: expect.any(Date),
+      typeValeur: "VALEUR_AVANCEMENT",
+    });
+
+    expect(
+      indicateurTerritoireValeurEvenementRepository.enregistrer,
+    ).toHaveBeenCalledWith(
+      expect.objectContaining({
+        indicId: input.indicId,
+        territoireCode: input.territoireCode,
+        typeEvenement: "PROPOSITION_VALEUR_CREEE",
+        typeValeur: "VALEUR_AVANCEMENT",
+        dateValeur: input.dateValeurAvancement,
+        valeur: input.valeurAvancement,
       }),
     );
   });

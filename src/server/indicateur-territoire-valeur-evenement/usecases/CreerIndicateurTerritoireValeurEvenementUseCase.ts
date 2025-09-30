@@ -1,4 +1,5 @@
 import { IndicateurTerritoireValeurEvenementRepository } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/IndicateurTerritoireValeurEvenementRepository";
+import { IndicateurRepository } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/IndicateurRepository";
 
 export type CreerIndicateurTerritoireValeurEvenementInput = {
   indicId: string;
@@ -12,14 +13,21 @@ export type CreerIndicateurTerritoireValeurEvenementInput = {
 
 interface Dependencies {
   indicateurTerritoireValeurEvenementRepository: IndicateurTerritoireValeurEvenementRepository;
+  indicateurRepository: IndicateurRepository;
 }
 
 export class CreerIndicateurTerritoireValeurEvenementUseCase {
   private readonly indicateurTerritoireValeurEvenementRepository: IndicateurTerritoireValeurEvenementRepository;
 
-  constructor({ indicateurTerritoireValeurEvenementRepository }: Dependencies) {
+  private readonly indicateurRepository: IndicateurRepository;
+
+  constructor({
+    indicateurTerritoireValeurEvenementRepository,
+    indicateurRepository,
+  }: Dependencies) {
     this.indicateurTerritoireValeurEvenementRepository =
       indicateurTerritoireValeurEvenementRepository;
+    this.indicateurRepository = indicateurRepository;
   }
 
   async run(
