@@ -195,7 +195,8 @@ export const ModalePropositionValeurAvancementV2: FunctionComponent<{
                         <span className="flex justify-center texte-gris">
                           (
                           {formaterDate(
-                            detailIndicateurDuTerritoire.dateValeurAvancementMandat,
+                            detailIndicateurDuTerritoire.proposition
+                              ?.dateValeurAvancement,
                             "MM/YYYY",
                           )}
                           )
@@ -220,12 +221,11 @@ export const ModalePropositionValeurAvancementV2: FunctionComponent<{
                       type="text"
                     />
                     <span className="flex texte-gris fr-text--xs">
-                      (
+                      Dernière date de la valeur d'avancement : 
                       {formaterDate(
                         detailIndicateurDuTerritoire.dateValeurAvancementMandat,
                         "MM/YYYY",
                       )}
-                      )
                     </span>
                   </div>
                   {estUneModificationDeProposition ? (

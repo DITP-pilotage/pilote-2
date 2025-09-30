@@ -1,6 +1,6 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useSession } from "next-auth/react";
 import { z } from "zod";
 import { LIMITE_CARACTERES_DOCUMENTATION_PROPOSITION } from "@/validation/proposition-valeur-avancement";
@@ -17,7 +17,7 @@ export enum EtapePropositionValeurAvancement {
   VALIDATION_VALEUR_ACTUELLE = "VALIDATION_VALEUR_ACTUELLE",
 }
 
-const formSchema = z.object({
+const baseFormSchema = z.object({
   valeurAvancement: z
     .string()
     .refine(
@@ -50,7 +50,7 @@ const formSchema = z.object({
   territoireCode: z.string(),
 });
 
-type PropositionValeurAvancementForm = z.infer<typeof formSchema>;
+type PropositionValeurAvancementForm = z.infer<typeof baseFormSchema>;
 
 export const Stepper: Record<
   EtapePropositionValeurAvancement[keyof EtapePropositionValeurAvancement &
@@ -71,6 +71,22 @@ export const Stepper: Record<
     titre: "Validation de la proposition",
     etapeSuivante: null,
   },
+};
+
+const estMoisAvant = (mois1: string, mois2: string) => {
+  const partsMois1 = mois1.split("/");
+  const partsMois2 = mois2.split("/");
+
+  return (
+    `${partsMois1[1]}-${partsMois1[0]}-01` <
+    `${partsMois2[1]}-${partsMois2[0]}-01`
+  );
+};
+
+const formatterMois = (date: string) => {
+  const annee = new Date(date).getFullYear();
+  const mois = new Date(date).getMonth() + 1;
+  return `${mois.toString().padStart(2, "0")}/${annee}`;
 };
 
 const useModalePropositionValeurAvancementV2 = () => {
@@ -129,13 +145,21 @@ const useModalePropositionValeurAvancementV2 = () => {
     estPropositionCreee(detailIndicateurDuTerritoire) ||
     estPropositionModifiee(detailIndicateurDuTerritoire);
 
-  const annee = new Date(
+  const moisDateValeurAvancementMandat = formatterMois(
     detailIndicateurDuTerritoire.dateValeurAvancementMandat!,
-  ).getFullYear();
-  const mois =
-    new Date(
-      detailIndicateurDuTerritoire.dateValeurAvancementMandat!,
-    ).getMonth() + 1;
+  );
+
+  const formSchema = useMemo(() => {
+    return baseFormSchema.refine(
+      (obj) => {
+        return estMoisAvant(
+          moisDateValeurAvancementMandat,
+          obj.moisValeurAvancement,
+        );
+      },
+      { path: ["moisValeurAvancement"], message: "Coucou" },
+    );
+  }, [moisDateValeurAvancementMandat]);
   const reactHookForm = useForm<PropositionValeurAvancementForm>({
     mode: "all",
     resolver: zodResolver(formSchema),
@@ -149,7 +173,9 @@ const useModalePropositionValeurAvancementV2 = () => {
             sourceDonneeEtMethodeCalcul:
               detailIndicateurDuTerritoire.proposition
                 .sourceDonneeEtMethodeCalcul || "",
-            moisValeurAvancement: `${mois.toString().padStart(2, "0")}/${annee}`,
+            moisValeurAvancement: formatterMois(
+              detailIndicateurDuTerritoire.proposition.dateValeurAvancement,
+            ),
             indicId: indicateur.id,
             territoireCode,
           }
@@ -157,7 +183,7 @@ const useModalePropositionValeurAvancementV2 = () => {
             valeurAvancement: `${detailIndicateurDuTerritoire.valeurAvancementMandat}`,
             motifProposition: "",
             sourceDonneeEtMethodeCalcul: "",
-            moisValeurAvancement: `${mois.toString().padStart(2, "0")}/${annee}`,
+            moisValeurAvancement: moisDateValeurAvancementMandat,
             indicId: indicateur.id,
             territoireCode,
           },
