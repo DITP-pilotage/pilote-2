@@ -38,10 +38,13 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
     });
   }
 
-  async getDerniereDateValeurAvancement(
-    indicId: string,
-    territoireCode: string,
-  ): Promise<Date | null> {
+  async getDateEffectiveValeurAvancement({
+    indicId,
+    territoireCode,
+  }: {
+    indicId: string;
+    territoireCode: string;
+  }): Promise<Date | null> {
     const row = await this.prisma
       .getInstance()
       .indicateur_territoire_jalon.findFirst({

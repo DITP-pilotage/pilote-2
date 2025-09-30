@@ -69,8 +69,6 @@ export class PrismaIndicateurTerritoireValeurEvenementRepository
           indic_id: args.indicId,
           territoire_code: args.territoireCode,
           type_valeur: args.typeValeur,
-          // TODO(PVA/JOTA) - Faire un filtre sur la date de valeur
-          // date_valeur: args.dateValeur,
         },
         orderBy: [{ date_valeur: "desc" }, { ordre: "desc" }],
       });
