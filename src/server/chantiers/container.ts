@@ -7,8 +7,6 @@ import { IndicateurRepository } from "@/server/chantiers/domain/ports/Indicateur
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { PropositionValeurAvancementRepository } from "@/server/chantiers/domain/ports/PropositionValeurAvancementRepository";
 import { PrismaPropositionValeurAvancementRepository } from "@/server/chantiers/infrastructure/adapters/PrismaPropositionValeurAvancementRepository";
-import { CreerPropositionValeurAvancementUseCase } from "@/server/chantiers/usecases/CreerPropositionValeurAvancementUseCase";
-import { ModifierPropositionValeurAvancementUseCase } from "@/server/chantiers/usecases/ModifierPropositionValeurAvancementUseCase";
 import { InitialDependencies } from "@/server/InitialDependencies";
 import { TerritoireRepository } from "./domain/ports/TerritoireRepository";
 import { PrismaTerritoireRepository } from "./infrastructure/adapters/PrismaTerritoireRepository";
@@ -40,8 +38,6 @@ export type ChantierDependencies = {
   exportCsvDesChantiersUseCase: ExportCsvDesChantiersUseCase;
   exportCsvDesIndicateursUseCase: ExportCsvDesIndicateursUseCase;
   exportCsvDesHistoriquesIndicateursUseCase: ExportCsvDesHistoriquesIndicateursUseCase;
-  creerPropositionValeurAvancementUseCase: CreerPropositionValeurAvancementUseCase;
-  modifierPropositionValeurAvancementUseCase: ModifierPropositionValeurAvancementUseCase;
   envoyerLesRapportsPropositionValeurAvancementUseCase: EnvoyerLesRapportsPropositionValeurAvancementUseCase;
   recupererDetailsIndicateursV2UseCase: RecupererDetailsIndicateursV2UseCase;
   recupererChantiersAccessiblesEnLectureUseCaseV2: RecupererChantiersAccessiblesEnLectureUseCaseV2;
@@ -68,12 +64,6 @@ export const getChantiersContainer = (
     exportCsvDesIndicateursUseCase: asClass(ExportCsvDesIndicateursUseCase),
     exportCsvDesHistoriquesIndicateursUseCase: asClass(
       ExportCsvDesHistoriquesIndicateursUseCase,
-    ),
-    creerPropositionValeurAvancementUseCase: asClass(
-      CreerPropositionValeurAvancementUseCase,
-    ),
-    modifierPropositionValeurAvancementUseCase: asClass(
-      ModifierPropositionValeurAvancementUseCase,
     ),
     envoyerLesRapportsPropositionValeurAvancementUseCase: asClass(
       EnvoyerLesRapportsPropositionValeurAvancementUseCase,
