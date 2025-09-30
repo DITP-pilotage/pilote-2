@@ -203,6 +203,31 @@ export const ModalePropositionValeurAvancementV2: FunctionComponent<{
                       </div>
                     </div>
                   </div>
+                  <div className="fr-mt-2w">
+                    <label className="fr-label" htmlFor="valeurAvancement">
+                      Date de la valeur d'avancement proposée
+                      <ChampObligatoire />
+                    </label>
+                    <Input
+                      className="fr-mt-1v input--sm"
+                      classNameGroupe="fr-mb-1v"
+                      erreurMessage={
+                        reactHookForm.formState.errors.moisValeurAvancement
+                          ?.message
+                      }
+                      htmlName="moisValeurAvancement"
+                      register={reactHookForm.register("moisValeurAvancement")}
+                      type="text"
+                    />
+                    <span className="flex texte-gris fr-text--xs">
+                      (
+                      {formaterDate(
+                        detailIndicateurDuTerritoire.dateValeurAvancementMandat,
+                        "MM/YYYY",
+                      )}
+                      )
+                    </span>
+                  </div>
                   {estUneModificationDeProposition ? (
                     <div className="fr-mt-2w">
                       <label className="fr-label" htmlFor="valeurAvancement">

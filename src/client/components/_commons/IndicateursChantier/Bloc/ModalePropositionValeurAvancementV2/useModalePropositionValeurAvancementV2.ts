@@ -2,7 +2,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useSession } from "next-auth/react";
-import { validationPropositionValeurAvancement } from "@/validation/proposition-valeur-avancement";
+import { z } from "zod";
+import { LIMITE_CARACTERES_DOCUMENTATION_PROPOSITION } from "@/validation/proposition-valeur-avancement";
 import api from "@/server/infrastructure/api/trpc/api";
 import { récupérerUnCookie } from "@/client/utils/cookies";
 import { useBlocIndicateurContext } from "@/components/PageChantier/useBlocIndicateurContext";
@@ -11,19 +12,45 @@ import {
   estPropositionModifiee,
 } from "@/components/_commons/IndicateursChantier/Bloc/utils";
 
-interface PropositionValeurAvancementForm {
-  valeurAvancement: string;
-  motifProposition: string;
-  sourceDonneeEtMethodeCalcul: string;
-  dateValeurAvancement: string;
-  indicId: string;
-  territoireCode: string;
-}
-
 export enum EtapePropositionValeurAvancement {
   SAISIE_VALEUR_ACTUELLE = "SAISIE_VALEUR_ACTUELLE",
   VALIDATION_VALEUR_ACTUELLE = "VALIDATION_VALEUR_ACTUELLE",
 }
+
+const formSchema = z.object({
+  valeurAvancement: z
+    .string()
+    .refine(
+      (value) => new RegExp(/^-?\d+$|^-?\d+([,.])\d+$/).test(value),
+      "Le champ doit être un nombre",
+    ),
+  motifProposition: z
+    .string()
+    .max(
+      LIMITE_CARACTERES_DOCUMENTATION_PROPOSITION,
+      "La limite maximale de 500 caractères a été dépassée",
+    )
+    .refine(
+      (value) => value && new RegExp(/^\w.*$/).test(value),
+      "Veuillez saisir un motif de proposition",
+    ),
+  moisValeurAvancement: z
+    .string()
+    .refine(
+      (value) => new RegExp(/^(0[1-9]|1[0-2])\/\d{4}$/).test(value),
+      "Le champ doit être au format MM/YYYY",
+    ),
+  sourceDonneeEtMethodeCalcul: z
+    .string()
+    .max(
+      LIMITE_CARACTERES_DOCUMENTATION_PROPOSITION,
+      "La limite maximale de 500 caractères a été dépassée",
+    ),
+  indicId: z.string(),
+  territoireCode: z.string(),
+});
+
+type PropositionValeurAvancementForm = z.infer<typeof formSchema>;
 
 export const Stepper: Record<
   EtapePropositionValeurAvancement[keyof EtapePropositionValeurAvancement &
@@ -54,9 +81,6 @@ const useModalePropositionValeurAvancementV2 = () => {
   const { indicateur, detailIndicateurDuTerritoire, territoireCode } =
     useBlocIndicateurContext();
 
-  console.log(indicateur.id);
-  console.log(detailIndicateurDuTerritoire);
-
   const [
     etapePropositionValeurAvancement,
     setEtapePropositionValeurAvancement,
@@ -84,29 +108,20 @@ const useModalePropositionValeurAvancementV2 = () => {
     estUneModification: boolean,
     data: PropositionValeurAvancementForm,
   ) => {
+    const [mois, annee] = data.moisValeurAvancement.split("/");
     const inputs = {
       csrf: récupérerUnCookie("csrf") ?? "",
       ...data,
       valeurAvancement: data.valeurAvancement,
-      dateValeurAvancement: data.dateValeurAvancement!,
+      dateValeurAvancement: `${annee}-${mois}-01T00:00:00.000Z`,
       indicId: indicateur.id,
       territoireCode,
     };
 
     if (estUneModification) {
-      mutationModifierPropositonValeurAvancement.mutate({
-        ...inputs,
-        dateValeurAvancement: "2024-10-01T00:00:00.000Z",
-      });
+      mutationModifierPropositonValeurAvancement.mutate(inputs);
     } else {
-      console.log({
-        ...inputs,
-        dateValeurAvancement: "2024-10-01T00:00:00.000Z",
-      });
-      mutationCreerPropositonValeurAvancement.mutate({
-        ...inputs,
-        dateValeurAvancement: "2024-10-01T00:00:00.000Z",
-      });
+      mutationCreerPropositonValeurAvancement.mutate(inputs);
     }
   };
 
@@ -114,9 +129,16 @@ const useModalePropositionValeurAvancementV2 = () => {
     estPropositionCreee(detailIndicateurDuTerritoire) ||
     estPropositionModifiee(detailIndicateurDuTerritoire);
 
+  const annee = new Date(
+    detailIndicateurDuTerritoire.dateValeurAvancementMandat!,
+  ).getFullYear();
+  const mois =
+    new Date(
+      detailIndicateurDuTerritoire.dateValeurAvancementMandat!,
+    ).getMonth() + 1;
   const reactHookForm = useForm<PropositionValeurAvancementForm>({
     mode: "all",
-    resolver: zodResolver(validationPropositionValeurAvancement),
+    resolver: zodResolver(formSchema),
     defaultValues:
       detailIndicateurDuTerritoire.proposition &&
       estUneModificationDeProposition
@@ -127,8 +149,7 @@ const useModalePropositionValeurAvancementV2 = () => {
             sourceDonneeEtMethodeCalcul:
               detailIndicateurDuTerritoire.proposition
                 .sourceDonneeEtMethodeCalcul || "",
-            dateValeurAvancement:
-              detailIndicateurDuTerritoire.dateValeurAvancementMandat!,
+            moisValeurAvancement: `${mois.toString().padStart(2, "0")}/${annee}`,
             indicId: indicateur.id,
             territoireCode,
           }
@@ -136,8 +157,7 @@ const useModalePropositionValeurAvancementV2 = () => {
             valeurAvancement: `${detailIndicateurDuTerritoire.valeurAvancementMandat}`,
             motifProposition: "",
             sourceDonneeEtMethodeCalcul: "",
-            dateValeurAvancement:
-              detailIndicateurDuTerritoire.dateValeurAvancementMandat!,
+            moisValeurAvancement: `${mois.toString().padStart(2, "0")}/${annee}`,
             indicId: indicateur.id,
             territoireCode,
           },
