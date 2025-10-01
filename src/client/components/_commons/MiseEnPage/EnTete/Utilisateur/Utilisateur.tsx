@@ -5,6 +5,7 @@ import { ArrowSLine1Icon } from "@/components/_commons/Icones/ArrowSLine1Icon";
 import { BoutonSeDeconnecter } from "@/components/_commons/BoutonSeDeconnecter";
 import { clsxm } from "@/utils/clsxm";
 import { Dropdown } from "@/components/shared/Dropdown";
+import { BoutonPanelAdministrateur } from "@/components/_commons/BoutonPanelAdministrateur";
 
 export const Utilisateur = ({ email }: { email: string }) => {
   const [estDeplie, setEstDeplie] = useState<boolean>(false);
@@ -29,6 +30,7 @@ export const Utilisateur = ({ email }: { email: string }) => {
         </button>
       </Dropdown.Trigger>
       <Dropdown.Content align="end">
+        <BoutonPanelAdministrateur />
         <BoutonSeDeconnecter />
       </Dropdown.Content>
     </Dropdown.Root>
