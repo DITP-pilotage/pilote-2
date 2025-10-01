@@ -19,10 +19,7 @@ export const BarreDeProgressionAVenir = ({
       <div className="flex items-center gap-1">
         <div className="font-bold">à venir</div>
         <Infobulle
-          classNameBouton={clsx("!-my-1", {
-            "before:!bg-dsfr-moutarde-main-679": variante === "jaune-moutarde",
-            "before:!bg-dsfr-info-main-525": variante === "bleu-dsfr-info",
-          })}
+          classNameBouton="!-my-1 !text-current"
           styleIconInfoBulle="question"
         >
           {estPropositionAccepteeOuAccepteeAvecModification(

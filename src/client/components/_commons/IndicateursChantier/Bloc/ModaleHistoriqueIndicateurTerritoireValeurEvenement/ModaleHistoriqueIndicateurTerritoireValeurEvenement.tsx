@@ -265,7 +265,7 @@ export const ModaleHistoriqueIndicateurTerritoireValeurEvenement: FunctionCompon
                           <div className="fr-col-10 flex align-center">
                             {evenement.donneesComplementaires ? (
                               <Infobulle
-                                classNameBouton="fr-p-0 fr-mr-1w"
+                                classNameBouton="fr-p-0 fr-mr-1w !text-primary"
                                 classNameInfoBulle="tooltip-accordeon"
                                 styleIconInfoBulle="documentation"
                               >
