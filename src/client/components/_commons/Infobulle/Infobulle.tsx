@@ -51,13 +51,10 @@ export const Infobulle: FunctionComponent<
           <Icone className="!text-current" icone={InformationPleineIcon} />
         ) : null}
         {styleIconInfoBulle === "documentation" ? (
-          <Icone
-            className="text-dsfr-moutarde-main-679"
-            icone={IconeDocumentationIcon}
-          />
+          <Icone className="!text-current" icone={IconeDocumentationIcon} />
         ) : null}
         {styleIconInfoBulle === "question" ? (
-          <Icone icone={QuestionIcon} />
+          <Icone className="!text-current" icone={QuestionIcon} />
         ) : null}
       </button>
       <SecureTooltip

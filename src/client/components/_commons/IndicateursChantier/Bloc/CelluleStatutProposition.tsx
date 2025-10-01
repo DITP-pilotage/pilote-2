@@ -40,7 +40,7 @@ export const CelluleStatutProposition = ({
   ) {
     infoBulle = (
       <Infobulle
-        classNameBouton="texte-proposition"
+        classNameBouton="!text-current"
         classNameInfoBulle="tooltip-accordeon"
         styleIconInfoBulle="documentation"
       >
@@ -66,7 +66,7 @@ export const CelluleStatutProposition = ({
   ) {
     infoBulle = (
       <Infobulle
-        classNameBouton="texte-proposition"
+        classNameBouton="!text-current"
         classNameInfoBulle="tooltip-accordeon"
         styleIconInfoBulle="documentation"
       >
@@ -85,7 +85,7 @@ export const CelluleStatutProposition = ({
   } else {
     infoBulle = (
       <Infobulle
-        classNameBouton="texte-proposition"
+        classNameBouton="!text-current"
         classNameInfoBulle="tooltip-accordeon"
         styleIconInfoBulle="documentation"
       >
