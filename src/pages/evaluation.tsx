@@ -177,11 +177,19 @@ export default function EvaluationPage() {
               const critere = CRITERES_STUB[index];
               return (
                 <div key={critere.id}>
-                  <header>{critere.nom}</header>
-                  <div className="bg-dsfr-grey-925">
+                  <header className="py-6 px-4 text-primary font-bold">
+                    {critere.nom}
+                  </header>
+                  <div className="bg-dsfr-grey-925/30">
                     {field.sousCriteres.map((subField, j) => {
                       const sousCritere = critere.sousCriteres[j];
-                      return <div key={sousCritere.id}>{sousCritere.nom}</div>;
+                      return (
+                        <div className="py-6 pr-4 pl-12" key={sousCritere.id}>
+                          <span className="text-primary">
+                            {sousCritere.nom}
+                          </span>
+                        </div>
+                      );
                     })}
                   </div>
                 </div>
