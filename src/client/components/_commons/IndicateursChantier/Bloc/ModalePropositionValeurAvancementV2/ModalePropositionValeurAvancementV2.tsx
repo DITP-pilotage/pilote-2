@@ -205,30 +205,34 @@ export const ModalePropositionValeurAvancementV2: FunctionComponent<{
                       </div>
                     </div>
                   </div>
-                  <div className="fr-mt-2w">
-                    <label className="fr-label" htmlFor="valeurAvancement">
-                      Date de la valeur d'avancement proposée
-                      <ChampObligatoire />
-                    </label>
-                    <Input
-                      className="fr-mt-1v input--sm"
-                      classNameGroupe="fr-mb-1v"
-                      erreurMessage={
-                        reactHookForm.formState.errors.moisValeurAvancement
-                          ?.message
-                      }
-                      htmlName="moisValeurAvancement"
-                      register={reactHookForm.register("moisValeurAvancement")}
-                      type="text"
-                    />
-                    <span className="flex texte-gris fr-text--xs">
-                      Dernière date de la valeur d'avancement : 
-                      {formaterDate(
-                        detailIndicateurDuTerritoire.dateValeurAvancementMandat,
-                        "MM/YYYY",
-                      )}
-                    </span>
-                  </div>
+                  {!estUneModificationDeProposition && (
+                    <div className="fr-mt-2w">
+                      <label className="fr-label" htmlFor="valeurAvancement">
+                        Date de la valeur d'avancement proposée
+                        <ChampObligatoire />
+                      </label>
+                      <Input
+                        className="fr-mt-1v input--sm"
+                        classNameGroupe="fr-mb-1v"
+                        erreurMessage={
+                          reactHookForm.formState.errors.moisValeurAvancement
+                            ?.message
+                        }
+                        htmlName="moisValeurAvancement"
+                        register={reactHookForm.register(
+                          "moisValeurAvancement",
+                        )}
+                        type="text"
+                      />
+                      <span className="flex texte-gris fr-text--xs">
+                        Dernière date de la valeur d'avancement :
+                        {formaterDate(
+                          detailIndicateurDuTerritoire.dateValeurAvancementMandat,
+                          "MM/YYYY",
+                        )}
+                      </span>
+                    </div>
+                  )}
                   {estUneModificationDeProposition ? (
                     <div className="fr-mt-2w">
                       <label className="fr-label" htmlFor="valeurAvancement">
@@ -338,6 +342,14 @@ export const ModalePropositionValeurAvancementV2: FunctionComponent<{
                           "MM/YYYY",
                         )}
                         )
+                      </span>
+                    </p>
+                    <p className="fr-callout__text fr-text--sm">
+                      <span className="fr-text--bold">
+                        Date de la proposition de valeur d'avancement : 
+                      </span>
+                      <span className="text-italic">
+                        {reactHookForm.getValues("moisValeurAvancement")}
                       </span>
                     </p>
                     <p className="fr-callout__text fr-text--sm">
