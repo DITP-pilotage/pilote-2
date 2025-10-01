@@ -1,8 +1,5 @@
-import { Promise } from "ts-toolbelt/out/Any/Promise";
-import { undefined } from "zod";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { IndicateurRepository } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/IndicateurRepository";
-import { prisma } from "@/server/db/prisma";
 
 export class PrismaIndicateurRepository implements IndicateurRepository {
   private readonly prisma: PrismaPilote;

@@ -1,7 +1,6 @@
 import { IndicateurTerritoireValeurEvenementRepository } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/IndicateurTerritoireValeurEvenementRepository";
 import { IndicateurRepository } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/IndicateurRepository";
 import { toISODate } from "@/server/app/domain/Dates";
-import { PiloteError } from "@/server/app/error-boundary/pilote-error";
 import { BadRequestError } from "@/server/app/error-boundary/bad-request-error";
 
 export type CreerIndicateurTerritoireValeurEvenementInput = {
