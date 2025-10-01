@@ -68,11 +68,21 @@ export class CreerPropositionValeurAvancementUseCase {
     const dateEffective =
       await this.indicateurRepository.getDateEffectiveValeurAvancement(input);
 
+    this.verifierDatePropositionAvantAujourdhui(input.dateValeurAvancement);
     this.verifierDatePropositionApresDateEffective(
       dateEffective,
       input.dateValeurAvancement,
     );
     await this.verifierPasAutrePropositionEnCours(dateEffective, input);
+  }
+
+  verifierDatePropositionAvantAujourdhui(dateProposition: Date) {
+    const aujourdhui = new Date();
+    if (toISODate(dateProposition) > toISODate(aujourdhui)) {
+      throw new BadRequestError(
+        "La date de la proposition ne peut pas être postérieure à aujourd'hui",
+      );
+    }
   }
 
   private async verifierPasAutrePropositionEnCours(

@@ -270,7 +270,7 @@ describe("CreerPropositionValeurAvancementUseCase", () => {
     );
   });
 
-  it("Doit échouer quand la date de proposition est inférieure à la dernière date de valeur d'avancement", async () => {
+  it("Doit échouer quand la date de proposition est inférieure à la date effective de valeur d'avancement", async () => {
     // Given
     const derniereDateValeurAvancement = new Date("2024-06-01");
     const input = {
@@ -316,6 +316,95 @@ describe("CreerPropositionValeurAvancementUseCase", () => {
         territoireCode: input.territoireCode,
       }),
     );
+  });
+
+  it("Doit échouer quand la date de proposition est supérieure à la date du jour", async () => {
+    // Given
+    const derniereDateValeurAvancement = new Date("2024-06-01");
+    const dateValeurAvancement = new Date();
+    dateValeurAvancement.setMonth(new Date().getMonth() + 1); // Date dans le futur
+    const input = {
+      indicId: "IND-007",
+      territoireCode: "REG-03",
+      valeurAvancement: 50,
+      dateValeurAvancement,
+      idAuteurModification: "user-xyz",
+      motif: "Motif de la proposition",
+      sourceDonneeEtMethodeCalcul: "Source de la donnée et méthode de calcul",
+    };
+
+    indicateurRepository.getDateEffectiveValeurAvancement.mockResolvedValue(
+      derniereDateValeurAvancement,
+    );
+
+    indicateurTerritoireValeurEvenementRepository.recupererParIndicIdTerritoireCodeTypeValeurEtDate.mockResolvedValue(
+      new EvenementsSurDate({
+        identifiantFlux: {
+          indicId: input.indicId,
+          territoireCode: input.territoireCode,
+          date: toISODate(input.dateValeurAvancement),
+        },
+        evenementsSurDate: [],
+        tousLesEvenements: [],
+      }),
+    );
+
+    indicateurTerritoireValeurEvenementRepository.recupererParIndicIdTerritoireCodeTypeValeurEtDateSuperieureA.mockResolvedValue(
+      [],
+    );
+
+    // When / Then
+    await expect(
+      creerPropositionValeurAvancementUseCase.run(input),
+    ).rejects.toThrow();
+
+    expect(
+      indicateurRepository.getDateEffectiveValeurAvancement,
+    ).toHaveBeenCalledWith(
+      expect.objectContaining({
+        indicId: input.indicId,
+        territoireCode: input.territoireCode,
+      }),
+    );
+  });
+
+  it("Doit fonctionner quand la date de proposition est la date du jour", async () => {
+    // Given
+    const derniereDateValeurAvancement = new Date("2024-06-01");
+    const input = {
+      indicId: "IND-007",
+      territoireCode: "REG-03",
+      valeurAvancement: 50,
+      dateValeurAvancement: new Date(),
+      idAuteurModification: "user-xyz",
+      motif: "Motif de la proposition",
+      sourceDonneeEtMethodeCalcul: "Source de la donnée et méthode de calcul",
+    };
+
+    indicateurRepository.getDateEffectiveValeurAvancement.mockResolvedValue(
+      derniereDateValeurAvancement,
+    );
+
+    indicateurTerritoireValeurEvenementRepository.recupererParIndicIdTerritoireCodeTypeValeurEtDate.mockResolvedValue(
+      new EvenementsSurDate({
+        identifiantFlux: {
+          indicId: input.indicId,
+          territoireCode: input.territoireCode,
+          date: toISODate(input.dateValeurAvancement),
+        },
+        evenementsSurDate: [],
+        tousLesEvenements: [],
+      }),
+    );
+
+    indicateurTerritoireValeurEvenementRepository.recupererParIndicIdTerritoireCodeTypeValeurEtDateSuperieureA.mockResolvedValue(
+      [],
+    );
+
+    // When / Then
+    await expect(
+      creerPropositionValeurAvancementUseCase.run(input),
+    ).toResolve();
   });
 
   it("Doit échouer quand une proposition existe déjà sur une date supérieure ou égale", async () => {
