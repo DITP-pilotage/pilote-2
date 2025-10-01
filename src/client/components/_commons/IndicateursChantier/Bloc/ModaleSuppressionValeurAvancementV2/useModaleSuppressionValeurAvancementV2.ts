@@ -76,7 +76,7 @@ const useModaleSuppressionValeurAvancementV2 = ({
       indicId: indicateur.id,
       auteurModification,
       territoireCode,
-      dateValeurAvancement: detailIndicateur.dateValeurAvancementMandat!,
+      dateValeurAvancement: detailIndicateur.proposition!.dateValeurAvancement,
       motif: data.motifSuppression,
     };
 
