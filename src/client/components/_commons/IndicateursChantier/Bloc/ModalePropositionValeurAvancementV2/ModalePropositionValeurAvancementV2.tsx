@@ -3,7 +3,9 @@ import { FormProvider } from "react-hook-form";
 import Modale from "@/components/_commons/Modale/Modale";
 
 import useModalePropositionValeurAvancementV2, {
+  estChampMoisValide,
   EtapePropositionValeurAvancement,
+  reformatterChampsMois,
   Stepper,
 } from "@/components/_commons/IndicateursChantier/Bloc/ModalePropositionValeurAvancementV2/useModalePropositionValeurAvancementV2";
 import Input from "@/components/_commons/Input/Input";
@@ -38,6 +40,19 @@ export const ModalePropositionValeurAvancementV2: FunctionComponent<{
       nom: territoireNom,
     },
   } = useBlocIndicateurContext();
+
+  const handleMoisValeurAvancementBlur = () => {
+    const currentValue = reactHookForm.getValues("moisValeurAvancement");
+    if (currentValue && estChampMoisValide(currentValue)) {
+      reactHookForm.setValue(
+        "moisValeurAvancement",
+        reformatterChampsMois(currentValue),
+        {
+          shouldValidate: true,
+        },
+      );
+    }
+  };
 
   return (
     <Modale
@@ -221,6 +236,9 @@ export const ModalePropositionValeurAvancementV2: FunctionComponent<{
                         htmlName="moisValeurAvancement"
                         register={reactHookForm.register(
                           "moisValeurAvancement",
+                          {
+                            onBlur: handleMoisValeurAvancementBlur,
+                          },
                         )}
                         type="text"
                       />

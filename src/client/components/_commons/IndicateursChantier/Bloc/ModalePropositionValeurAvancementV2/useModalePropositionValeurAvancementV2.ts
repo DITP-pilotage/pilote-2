@@ -17,6 +17,14 @@ export enum EtapePropositionValeurAvancement {
   VALIDATION_VALEUR_ACTUELLE = "VALIDATION_VALEUR_ACTUELLE",
 }
 
+export const estChampMoisValide = (value: string) =>
+  new RegExp(/^(0?[1-9]|1[0-2])\/\d{4}$/).test(value);
+
+export const reformatterChampsMois = (value: string) => {
+  const [mois, annee] = value.split("/");
+  return `${mois.padStart(2, "0")}/${annee}`;
+};
+
 const baseFormSchema = z.object({
   valeurAvancement: z
     .string()
@@ -37,7 +45,7 @@ const baseFormSchema = z.object({
   moisValeurAvancement: z
     .string()
     .refine(
-      (value) => new RegExp(/^(0[1-9]|1[0-2])\/\d{4}$/).test(value),
+      (value) => estChampMoisValide(value),
       "Le champ doit être au format MM/YYYY",
     )
     .refine((value) => {
