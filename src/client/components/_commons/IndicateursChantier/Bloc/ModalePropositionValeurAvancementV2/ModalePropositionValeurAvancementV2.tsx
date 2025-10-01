@@ -196,7 +196,8 @@ export const ModalePropositionValeurAvancementV2: FunctionComponent<{
                           (
                           {formaterDate(
                             detailIndicateurDuTerritoire.proposition
-                              ?.dateValeurAvancement,
+                              ?.dateValeurAvancement ??
+                              detailIndicateurDuTerritoire.dateValeurAvancementMandat,
                             "MM/YYYY",
                           )}
                           )
