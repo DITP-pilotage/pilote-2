@@ -56,6 +56,7 @@ WITH get_val_jalons AS (
         ON
             meta_indic.id = prop_v2.indic_id
             AND zones.id = prop_v2.zone_id
+            AND jalons.jalon >= EXTRACT(YEAR FROM prop_v2.date_valeur_avancement) 
 
 ),
 
