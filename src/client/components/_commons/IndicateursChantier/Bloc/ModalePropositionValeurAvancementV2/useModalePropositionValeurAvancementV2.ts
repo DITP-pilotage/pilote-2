@@ -39,7 +39,13 @@ const baseFormSchema = z.object({
     .refine(
       (value) => new RegExp(/^(0[1-9]|1[0-2])\/\d{4}$/).test(value),
       "Le champ doit être au format MM/YYYY",
-    ),
+    )
+    .refine((value) => {
+      const [mois, annee] = value.split("/").map(Number);
+      const date = new Date(annee, mois - 1);
+      const now = new Date();
+      return date <= now;
+    }, "La date de la proposition doit être antérieure ou égale à la date du jour"),
   sourceDonneeEtMethodeCalcul: z
     .string()
     .max(
