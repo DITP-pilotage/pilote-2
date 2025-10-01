@@ -46,9 +46,9 @@ export const BaseLignesPropositionValeurAvancement = ({
   );
 
   const estPropositionSurLeBonJalon =
-    detailIndicateurDuTerritoire.dateValeurAvancementMandat !== null
+    detailIndicateurDuTerritoire.proposition.dateValeurAvancement !== null
       ? new Date(
-          detailIndicateurDuTerritoire.dateValeurAvancementMandat!,
+          detailIndicateurDuTerritoire.proposition.dateValeurAvancement,
         ).getFullYear() <= jalon
       : false;
 
@@ -141,7 +141,7 @@ export const BaseLignesPropositionValeurAvancement = ({
         {/* Valeur d'avancement en fonction de la proposition du jalon et date valeur d'avancement en fonction du mandat */}
         <td className="fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm texte-proposition text-center">
           <ValeurEtDate
-            date={detailIndicateurDuTerritoire.dateValeurAvancementMandat}
+            date={detailIndicateurDuTerritoire.proposition.dateValeurAvancement}
             unité={detailIndicateurDuTerritoire.unité}
             valeur={detailIndicateurDuTerritoire.proposition.valeurAvancement}
           />
