@@ -197,7 +197,7 @@ export default function EvaluationPage() {
       </Head>
 
       <div className="min-h-[60vh]">
-        <section className="bg-white mx-auto w-full max-w-[1208px]">
+        <section className="bg-white mx-auto w-full max-w-4xl">
           <header className="p-4 bg-dsfr-blue-france-925 border-b-2 border-black">
             <span className="font-bold text-sm">Mon auto-évaluation</span>
           </header>
@@ -210,7 +210,7 @@ export default function EvaluationPage() {
         </section>
       </div>
 
-      <div className="sticky flex justify-between mt-4 bottom-8 mx-auto w-full max-w-[1208px] bg-white px-6 py-4">
+      <div className="sticky flex justify-between mt-4 bottom-8 mx-auto w-full max-w-4xl bg-white px-6 py-4">
         {etape === "criteres" && (
           <Bouton
             className="ml-auto"

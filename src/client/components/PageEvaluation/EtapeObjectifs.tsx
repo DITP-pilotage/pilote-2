@@ -1,4 +1,5 @@
 import { Controller, useFieldArray } from "react-hook-form";
+import { useId } from "react";
 import { useFormEvaluation } from "@/components/PageEvaluation/form";
 
 export interface Objectif {
@@ -11,6 +12,7 @@ export interface Objectif {
 }
 
 export function EtapeObjectifs({ objectifs }: { objectifs: Objectif[] }) {
+  const baseId = useId();
   const form = useFormEvaluation();
   const { fields } = useFieldArray({
     control: form.control,
@@ -21,21 +23,46 @@ export function EtapeObjectifs({ objectifs }: { objectifs: Objectif[] }) {
       {fields.map((fieldObjectif, index) => {
         const objectif = objectifs[index];
         const noteName = `objectifs.${index}.note` as const;
+        const commentaireName = `objectifs.${index}.commentaire` as const;
+
         return (
-          <div className="py-6 px-4 flex justify-between" key={objectif.id}>
-            <span className="text-primary font-bold">{objectif.nom}</span>
-            <Controller
-              control={form.control}
-              name={noteName}
-              render={({ field }) => (
-                <input
-                  className="border !rounded-md !bg-white w-14 aspect-square text-center"
-                  type="number"
-                  {...field}
-                  onChange={(e) => field.onChange(e.target.valueAsNumber)}
-                />
-              )}
-            />
+          <div key={objectif.id}>
+            <div className="p-4 flex items-center justify-between pr-6">
+              <header className="text-primary font-bold">{objectif.nom}</header>
+              <Controller
+                control={form.control}
+                name={noteName}
+                render={({ field }) => (
+                  <input
+                    className="border !rounded-md !bg-white w-14 aspect-square text-center"
+                    type="number"
+                    {...field}
+                    onChange={(e) => field.onChange(e.target.valueAsNumber)}
+                  />
+                )}
+              />
+            </div>
+            <div className="py-4 px-6 flex flex-col bg-dsfr-grey-925/30 ">
+              <Controller
+                control={form.control}
+                name={commentaireName}
+                render={({ field }) => {
+                  const fieldId = `${baseId}.${index}.commentaire`;
+                  return (
+                    <div className="flex flex-col gap-1">
+                      <label className="font-bold text-sm" htmlFor={fieldId}>
+                        Commentaire
+                      </label>
+                      <textarea
+                        className="border !rounded-md !bg-white py-2 px-4"
+                        id={fieldId}
+                        {...field}
+                      />
+                    </div>
+                  );
+                }}
+              />
+            </div>
           </div>
         );
       })}

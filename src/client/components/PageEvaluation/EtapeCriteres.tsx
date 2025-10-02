@@ -39,7 +39,7 @@ export const EtapeCriteres = ({ criteres }: { criteres: Critere[] }) => {
 
                 return (
                   <div
-                    className="py-6 pr-4 pl-12 flex flex-col"
+                    className="py-6 px-12 flex flex-col"
                     key={sousCritere.id}
                   >
                     <div className="flex items-center">
@@ -66,9 +66,9 @@ export const EtapeCriteres = ({ criteres }: { criteres: Critere[] }) => {
                       control={form.control}
                       name={commentaireInputName}
                       render={({ field }) => {
-                        const fieldId = `${baseId}:commentaire`;
+                        const fieldId = `${baseId}.${index}.${j}.commentaire`;
                         return (
-                          <div className="flex flex-col gap-1 max-w-xl">
+                          <div className="flex flex-col gap-1">
                             <label
                               className="font-bold text-sm"
                               htmlFor={fieldId}
