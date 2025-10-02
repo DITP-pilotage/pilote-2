@@ -1,21 +1,19 @@
-import { MouseEventHandler, ReactNode } from "react";
+import { ComponentProps, ReactNode } from "react";
 import { clsxm } from "@/utils/clsxm";
 
 export const Bouton = ({
   label,
-  onClick,
-  className,
   iconLeft,
   iconRight,
   variant,
+  className,
+  ...props
 }: {
   label: string;
-  onClick: MouseEventHandler<HTMLButtonElement>;
-  className?: string;
   iconLeft?: ReactNode;
   iconRight?: ReactNode;
   variant?: "primary" | "secondary";
-}) => {
+} & ComponentProps<"button">) => {
   return (
     <button
       className={clsxm(
@@ -23,8 +21,8 @@ export const Bouton = ({
         { "fr-btn--secondary": variant === "secondary" },
         className,
       )}
-      onClick={onClick}
       type="button"
+      {...props}
     >
       {iconLeft}
       {label}

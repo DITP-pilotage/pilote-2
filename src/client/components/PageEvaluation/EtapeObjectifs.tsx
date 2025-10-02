@@ -1,6 +1,7 @@
 import { Controller, useFieldArray } from "react-hook-form";
 import { useId } from "react";
 import { useFormEvaluation } from "@/components/PageEvaluation/form";
+import { clsxm } from "@/utils/clsxm";
 
 export interface Objectif {
   id: string;
@@ -32,9 +33,14 @@ export function EtapeObjectifs({ objectifs }: { objectifs: Objectif[] }) {
               <Controller
                 control={form.control}
                 name={noteName}
-                render={({ field }) => (
+                render={({ field, fieldState }) => (
                   <input
-                    className="border !rounded-md !bg-white w-14 aspect-square text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                    className={clsxm(
+                      "border !rounded-md !bg-white w-14 aspect-square text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none",
+                      {
+                        "!border-dsfr-error-425": fieldState.error != null,
+                      },
+                    )}
                     type="number"
                     {...field}
                     onChange={(e) => field.onChange(e.target.valueAsNumber)}

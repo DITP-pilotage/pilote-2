@@ -1,7 +1,7 @@
 import Head from "next/head";
 import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
+import { FormEvent, useId, useState } from "react";
 import { InferGetServerSidePropsType } from "next";
 import { Bouton } from "@/components/_commons/Bouton/Bouton";
 import { Icone } from "@/components/_commons/Icone";
@@ -24,6 +24,7 @@ export default function EvaluationPage({
   autoEvaluation,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const [etape, setEtape] = useState<"criteres" | "objectifs">("criteres");
+  const formId = useId();
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -38,7 +39,21 @@ export default function EvaluationPage({
     },
   });
 
-  console.log(form.watch());
+  const handleSubmitCriteres = async (e: FormEvent) => {
+    e.preventDefault();
+    const isValid = await form.trigger("criteres", {
+      shouldFocus: true,
+    });
+    if (!isValid) return;
+
+    setEtape("objectifs");
+    window.scrollTo(0, 0);
+  };
+
+  const handleSubmit =
+    etape === "criteres"
+      ? handleSubmitCriteres
+      : form.handleSubmit((data) => console.log(data));
 
   return (
     <main className="py-6">
@@ -47,7 +62,11 @@ export default function EvaluationPage({
       </Head>
 
       <div className="min-h-[60vh]">
-        <section className="bg-white mx-auto w-full max-w-4xl">
+        <form
+          className="bg-white mx-auto w-full max-w-4xl"
+          id={formId}
+          onSubmit={handleSubmit}
+        >
           <header className="p-4 bg-dsfr-blue-france-925 border-b-2 border-black">
             <span className="font-bold text-sm">Mon auto-évaluation</span>
           </header>
@@ -59,7 +78,7 @@ export default function EvaluationPage({
               <EtapeObjectifs objectifs={autoEvaluation.objectifs} />
             )}
           </FormProvider>
-        </section>
+        </form>
       </div>
 
       <div className="sticky flex items-center justify-between mt-4 bottom-8 mx-auto w-full max-w-4xl bg-white px-6 py-4">
@@ -69,14 +88,12 @@ export default function EvaluationPage({
         {etape === "criteres" && (
           <Bouton
             className="ml-auto"
+            form={formId}
             iconRight={
               <Icone className="text-current" icone={ArrowLine1Icon} />
             }
             label="Objectitfs"
-            onClick={() => {
-              setEtape("objectifs");
-              window.scrollTo(0, 0);
-            }}
+            type="submit"
           />
         )}
         {etape === "objectifs" && (
@@ -89,10 +106,7 @@ export default function EvaluationPage({
               onClick={() => setEtape("criteres")}
               variant="secondary"
             />
-            <Bouton
-              label="Soumettre"
-              onClick={() => console.log("Hello world")}
-            />
+            <Bouton form={formId} label="Soumettre" type="submit" />
           </div>
         )}
       </div>
