@@ -34,7 +34,7 @@ export function EtapeObjectifs({ objectifs }: { objectifs: Objectif[] }) {
                 name={noteName}
                 render={({ field }) => (
                   <input
-                    className="border !rounded-md !bg-white w-14 aspect-square text-center"
+                    className="border !rounded-md !bg-white w-14 aspect-square text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                     type="number"
                     {...field}
                     onChange={(e) => field.onChange(e.target.valueAsNumber)}
