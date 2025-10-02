@@ -1,7 +1,8 @@
 import Head from "next/head";
 import { z } from "zod";
-import { useFieldArray, useForm } from "react-hook-form";
+import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import Input from "@/components/_commons/Input/Input";
 
 const formSchema = z.object({
   criteres: z
@@ -160,6 +161,8 @@ export default function EvaluationPage() {
 
   const { fields } = useFieldArray({ control: form.control, name: "criteres" });
 
+  console.log(JSON.stringify(form.watch(), null, 2));
+
   return (
     <main>
       <Head>
@@ -168,7 +171,6 @@ export default function EvaluationPage() {
 
       <div className="min-h-[60vh] py-6">
         <section className="bg-white mx-auto w-full max-w-[1208px]">
-          <span>todo: switch</span>
           <header className="p-4 bg-dsfr-blue-france-925 border-b-2 border-black">
             <span className="font-bold text-sm">Mon auto-évaluation</span>
           </header>
@@ -183,11 +185,51 @@ export default function EvaluationPage() {
                   <div className="bg-dsfr-grey-925/30">
                     {field.sousCriteres.map((subField, j) => {
                       const sousCritere = critere.sousCriteres[j];
+                      const noteInputName =
+                        `criteres.${index}.sousCriteres.${j}.note` as const;
+                      const commentaireInputName =
+                        `criteres.${index}.sousCriteres.${j}.commentaire` as const;
+
                       return (
-                        <div className="py-6 pr-4 pl-12" key={sousCritere.id}>
-                          <span className="text-primary">
-                            {sousCritere.nom}
-                          </span>
+                        <div
+                          className="py-6 pr-4 pl-12 flex flex-col"
+                          key={sousCritere.id}
+                        >
+                          <div className="flex items-center">
+                            <span className="text-primary grow">
+                              {sousCritere.nom}
+                            </span>
+                            <Controller
+                              control={form.control}
+                              name={noteInputName}
+                              render={({ field }) => (
+                                <input
+                                  className="border !rounded-md !bg-white w-14 aspect-square text-center"
+                                  type="number"
+                                  {...field}
+                                  onChange={(e) =>
+                                    field.onChange(e.target.valueAsNumber)
+                                  }
+                                />
+                              )}
+                            />
+                          </div>
+
+                          <Controller
+                            control={form.control}
+                            name={commentaireInputName}
+                            render={({ field }) => (
+                              <div className="flex flex-col gap-1 max-w-xl">
+                                <label className="font-bold text-sm">
+                                  Commentaire
+                                </label>
+                                <textarea
+                                  className="border !rounded-md !bg-white py-2 px-4"
+                                  {...field}
+                                />
+                              </div>
+                            )}
+                          />
                         </div>
                       );
                     })}
