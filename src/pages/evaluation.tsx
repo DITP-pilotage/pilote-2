@@ -60,12 +60,47 @@ export default function EvaluationPage(
 
   return (
     <pageEvaluation.ServerSidePropsProvider value={props}>
-      <main className="py-6 pb-0">
+      <main className="py-6 pt-0">
         <Head>
           <title>PILOTE - Évaluation</title>
         </Head>
 
-        <div className="min-h-[60vh]">
+        <div className="min-h-[60vh] relative">
+          <footer className="sticky top-0 bg-white mb-6">
+            <div className="flex items-center justify-between mt-4 mx-auto w-full max-w-4xl px-2 py-4">
+              <span className="italic text-sm">
+                Dernière modification :{" "}
+                {formaterDate(
+                  autoEvaluation.denieresModifications,
+                  "DD/MM/YYYY [à] H[h]mm",
+                )}
+              </span>
+              {etape === "criteres" && (
+                <Bouton
+                  className="ml-auto"
+                  form={formId}
+                  iconRight={
+                    <Icone className="text-current" icone={ArrowLine1Icon} />
+                  }
+                  label="Objectitfs"
+                  type="submit"
+                />
+              )}
+              {etape === "objectifs" && (
+                <div className="ml-auto flex items-center gap-4">
+                  <Bouton
+                    iconLeft={
+                      <Icone className="text-current" icone={ArrowLine3Icon} />
+                    }
+                    label="Critères"
+                    onClick={() => setEtape("criteres")}
+                    variant="secondary"
+                  />
+                  <Bouton form={formId} label="Soumettre" type="submit" />
+                </div>
+              )}
+            </div>
+          </footer>
           <form
             className="bg-white mx-auto w-full max-w-4xl"
             id={formId}
@@ -80,42 +115,6 @@ export default function EvaluationPage(
             </FormProvider>
           </form>
         </div>
-
-        <footer className="sticky bottom-0 bg-white">
-          <div className="flex items-center justify-between mt-4 mx-auto w-full max-w-4xl px-2 py-4">
-            <span className="italic text-sm">
-              Dernière modification :{" "}
-              {formaterDate(
-                autoEvaluation.denieresModifications,
-                "DD/MM/YYYY [à] H[h]mm",
-              )}
-            </span>
-            {etape === "criteres" && (
-              <Bouton
-                className="ml-auto"
-                form={formId}
-                iconRight={
-                  <Icone className="text-current" icone={ArrowLine1Icon} />
-                }
-                label="Objectitfs"
-                type="submit"
-              />
-            )}
-            {etape === "objectifs" && (
-              <div className="ml-auto flex items-center gap-4">
-                <Bouton
-                  iconLeft={
-                    <Icone className="text-current" icone={ArrowLine3Icon} />
-                  }
-                  label="Critères"
-                  onClick={() => setEtape("criteres")}
-                  variant="secondary"
-                />
-                <Bouton form={formId} label="Soumettre" type="submit" />
-              </div>
-            )}
-          </div>
-        </footer>
       </main>
     </pageEvaluation.ServerSidePropsProvider>
   );
