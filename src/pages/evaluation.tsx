@@ -82,7 +82,7 @@ export default function EvaluationPage(
         </div>
 
         <footer className="sticky bottom-0 bg-white">
-          <div className="flex items-center justify-between mt-4 mx-auto w-full max-w-4xl px-6 py-4">
+          <div className="flex items-center justify-between mt-4 mx-auto w-full max-w-4xl px-2 py-4">
             <span className="italic text-sm">
               Dernière modification :{" "}
               {formaterDate(
