@@ -15,6 +15,7 @@ import {
   EtapeObjectifs,
   Objectif,
 } from "@/components/PageEvaluation/EtapeObjectifs";
+import { formaterDate } from "@/client/utils/date/date";
 
 const CRITERES_STUB: Critere[] = [
   {
@@ -210,7 +211,10 @@ export default function EvaluationPage() {
         </section>
       </div>
 
-      <div className="sticky flex justify-between mt-4 bottom-8 mx-auto w-full max-w-4xl bg-white px-6 py-4">
+      <div className="sticky flex items-center justify-between mt-4 bottom-8 mx-auto w-full max-w-4xl bg-white px-6 py-4">
+        <span className="italic text-sm">
+          Dernière modification : {formaterDate("2025-10-01", "DD/MM/YYYY")}
+        </span>
         {etape === "criteres" && (
           <Bouton
             className="ml-auto"
@@ -225,19 +229,20 @@ export default function EvaluationPage() {
           />
         )}
         {etape === "objectifs" && (
-          <>
+          <div className="ml-auto flex items-center gap-4">
             <Bouton
               iconLeft={
                 <Icone className="text-current" icone={ArrowLine3Icon} />
               }
               label="Critères"
               onClick={() => setEtape("criteres")}
+              variant="secondary"
             />
             <Bouton
               label="Soumettre"
               onClick={() => console.log("Hello world")}
             />
-          </>
+          </div>
         )}
       </div>
     </main>

@@ -7,16 +7,22 @@ export const Bouton = ({
   className,
   iconLeft,
   iconRight,
+  variant,
 }: {
   label: string;
   onClick: MouseEventHandler<HTMLButtonElement>;
   className?: string;
   iconLeft?: ReactNode;
   iconRight?: ReactNode;
+  variant?: "primary" | "secondary";
 }) => {
   return (
     <button
-      className={clsxm("fr-btn gap-2", className)}
+      className={clsxm(
+        "fr-btn gap-2",
+        { "fr-btn--secondary": variant === "secondary" },
+        className,
+      )}
       onClick={onClick}
       type="button"
     >
