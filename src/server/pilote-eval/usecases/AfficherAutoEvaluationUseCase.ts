@@ -1,5 +1,15 @@
-import { Critere } from "@/components/PageEvaluation/EtapeCriteres";
-import { Objectif } from "@/components/PageEvaluation/EtapeObjectifs";
+export interface Critere {
+  id: string;
+  nom: string;
+  sousCriteres: Array<{
+    id: string;
+    nom: string;
+    evaluation: {
+      note: number;
+      commentaire: string;
+    };
+  }>;
+}
 
 const CRITERES_STUB: Critere[] = [
   {
@@ -116,6 +126,15 @@ const CRITERES_STUB: Critere[] = [
   },
 ];
 
+export interface Objectif {
+  id: string;
+  nom: string;
+  evaluation: {
+    note: number;
+    commentaire: string;
+  };
+}
+
 const OBJECTIFS_STUB: Objectif[] = [
   {
     id: "1",
@@ -161,6 +180,10 @@ const OBJECTIFS_STUB: Objectif[] = [
 
 export class AfficherAutoEvaluationUseCase {
   async run() {
-    return { criteres: CRITERES_STUB, objectifs: OBJECTIFS_STUB };
+    return {
+      criteres: CRITERES_STUB,
+      objectifs: OBJECTIFS_STUB,
+      denieresModifications: new Date().toISOString(),
+    };
   }
 }

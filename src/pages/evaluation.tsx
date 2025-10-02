@@ -12,6 +12,7 @@ import { ArrowLine3Icon } from "@/components/_commons/Icones/ArrowLine3Icon";
 import { EtapeObjectifs } from "@/components/PageEvaluation/EtapeObjectifs";
 import { formaterDate } from "@/client/utils/date/date";
 import { getContainer } from "@/server/dependances";
+import { pageEvaluation } from "@/components/PageEvaluation/PageEvaluationServerSideContext";
 
 export const getServerSideProps = async () => {
   const autoEvaluation = await getContainer("piloteEval")
@@ -20,9 +21,10 @@ export const getServerSideProps = async () => {
   return { props: { autoEvaluation } };
 };
 
-export default function EvaluationPage({
-  autoEvaluation,
-}: InferGetServerSidePropsType<typeof getServerSideProps>) {
+export default function EvaluationPage(
+  props: InferGetServerSidePropsType<typeof getServerSideProps>,
+) {
+  const { autoEvaluation } = props;
   const [etape, setEtape] = useState<"criteres" | "objectifs">("criteres");
   const formId = useId();
   const form = useForm<FormValues>({
@@ -56,60 +58,59 @@ export default function EvaluationPage({
       : form.handleSubmit((data) => console.log(data));
 
   return (
-    <main className="py-6">
-      <Head>
-        <title>PILOTE - Évaluation</title>
-      </Head>
+    <pageEvaluation.ServerSidePropsProvider value={props}>
+      <main className="py-6">
+        <Head>
+          <title>PILOTE - Évaluation</title>
+        </Head>
 
-      <div className="min-h-[60vh]">
-        <form
-          className="bg-white mx-auto w-full max-w-4xl"
-          id={formId}
-          onSubmit={handleSubmit}
-        >
-          <header className="p-4 bg-dsfr-blue-france-925 border-b-2 border-black">
-            <span className="font-bold text-sm">Mon auto-évaluation</span>
-          </header>
-          <FormProvider {...form}>
-            {etape === "criteres" && (
-              <EtapeCriteres criteres={autoEvaluation.criteres} />
-            )}
-            {etape === "objectifs" && (
-              <EtapeObjectifs objectifs={autoEvaluation.objectifs} />
-            )}
-          </FormProvider>
-        </form>
-      </div>
+        <div className="min-h-[60vh]">
+          <form
+            className="bg-white mx-auto w-full max-w-4xl"
+            id={formId}
+            onSubmit={handleSubmit}
+          >
+            <header className="p-4 bg-dsfr-blue-france-925 border-b-2 border-black">
+              <span className="font-bold text-sm">Mon auto-évaluation</span>
+            </header>
+            <FormProvider {...form}>
+              {etape === "criteres" && <EtapeCriteres />}
+              {etape === "objectifs" && <EtapeObjectifs />}
+            </FormProvider>
+          </form>
+        </div>
 
-      <div className="sticky flex items-center justify-between mt-4 bottom-8 mx-auto w-full max-w-4xl bg-white px-6 py-4">
-        <span className="italic text-sm">
-          Dernière modification : {formaterDate("2025-10-01", "DD/MM/YYYY")}
-        </span>
-        {etape === "criteres" && (
-          <Bouton
-            className="ml-auto"
-            form={formId}
-            iconRight={
-              <Icone className="text-current" icone={ArrowLine1Icon} />
-            }
-            label="Objectitfs"
-            type="submit"
-          />
-        )}
-        {etape === "objectifs" && (
-          <div className="ml-auto flex items-center gap-4">
+        <div className="sticky flex items-center justify-between mt-4 bottom-8 mx-auto w-full max-w-4xl bg-white px-6 py-4">
+          <span className="italic text-sm">
+            Dernière modification :{" "}
+            {formaterDate(autoEvaluation.denieresModifications, "DD/MM/YYYY")}
+          </span>
+          {etape === "criteres" && (
             <Bouton
-              iconLeft={
-                <Icone className="text-current" icone={ArrowLine3Icon} />
+              className="ml-auto"
+              form={formId}
+              iconRight={
+                <Icone className="text-current" icone={ArrowLine1Icon} />
               }
-              label="Critères"
-              onClick={() => setEtape("criteres")}
-              variant="secondary"
+              label="Objectitfs"
+              type="submit"
             />
-            <Bouton form={formId} label="Soumettre" type="submit" />
-          </div>
-        )}
-      </div>
-    </main>
+          )}
+          {etape === "objectifs" && (
+            <div className="ml-auto flex items-center gap-4">
+              <Bouton
+                iconLeft={
+                  <Icone className="text-current" icone={ArrowLine3Icon} />
+                }
+                label="Critères"
+                onClick={() => setEtape("criteres")}
+                variant="secondary"
+              />
+              <Bouton form={formId} label="Soumettre" type="submit" />
+            </div>
+          )}
+        </div>
+      </main>
+    </pageEvaluation.ServerSidePropsProvider>
   );
 }

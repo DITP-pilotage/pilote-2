@@ -2,17 +2,10 @@ import { Controller, useFieldArray } from "react-hook-form";
 import { useId } from "react";
 import { useFormEvaluation } from "@/components/PageEvaluation/form";
 import { clsxm } from "@/utils/clsxm";
+import { pageEvaluation } from "@/components/PageEvaluation/PageEvaluationServerSideContext";
 
-export interface Objectif {
-  id: string;
-  nom: string;
-  evaluation: {
-    note: number;
-    commentaire: string;
-  };
-}
-
-export function EtapeObjectifs({ objectifs }: { objectifs: Objectif[] }) {
+export function EtapeObjectifs() {
+  const { autoEvaluation } = pageEvaluation.useServerSidePropsContext();
   const baseId = useId();
   const form = useFormEvaluation();
   const { fields } = useFieldArray({
@@ -22,7 +15,7 @@ export function EtapeObjectifs({ objectifs }: { objectifs: Objectif[] }) {
   return (
     <div className="divide-y divide-gray-100">
       {fields.map((fieldObjectif, index) => {
-        const objectif = objectifs[index];
+        const objectif = autoEvaluation.objectifs[index];
         const noteName = `objectifs.${index}.note` as const;
         const commentaireName = `objectifs.${index}.commentaire` as const;
 

@@ -2,21 +2,10 @@ import { Controller, useFieldArray } from "react-hook-form";
 import { useId } from "react";
 import { useFormEvaluation } from "@/components/PageEvaluation/form";
 import { clsxm } from "@/utils/clsxm";
+import { pageEvaluation } from "@/components/PageEvaluation/PageEvaluationServerSideContext";
 
-export interface Critere {
-  id: string;
-  nom: string;
-  sousCriteres: Array<{
-    id: string;
-    nom: string;
-    evaluation: {
-      note: number;
-      commentaire: string;
-    };
-  }>;
-}
-
-export const EtapeCriteres = ({ criteres }: { criteres: Critere[] }) => {
+export const EtapeCriteres = () => {
+  const { autoEvaluation } = pageEvaluation.useServerSidePropsContext();
   const form = useFormEvaluation();
   const baseId = useId();
   const { fields } = useFieldArray({ control: form.control, name: "criteres" });
@@ -24,7 +13,7 @@ export const EtapeCriteres = ({ criteres }: { criteres: Critere[] }) => {
   return (
     <div>
       {fields.map((fieldCritere, index) => {
-        const critere = criteres[index];
+        const critere = autoEvaluation.criteres[index];
         return (
           <div key={critere.id}>
             <header className="py-6 px-4 text-primary font-bold">
