@@ -83,7 +83,10 @@ export default function EvaluationPage(
         <div className="sticky flex items-center justify-between mt-4 bottom-8 mx-auto w-full max-w-4xl bg-white px-6 py-4">
           <span className="italic text-sm">
             Dernière modification :{" "}
-            {formaterDate(autoEvaluation.denieresModifications, "DD/MM/YYYY")}
+            {formaterDate(
+              autoEvaluation.denieresModifications,
+              "DD/MM/YYYY [à] H[h]mm",
+            )}
           </span>
           {etape === "criteres" && (
             <Bouton
