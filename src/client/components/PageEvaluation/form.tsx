@@ -12,6 +12,12 @@ export const formSchema = z.object({
         .array(),
     })
     .array(),
+  objectifs: z
+    .object({
+      note: z.number(),
+      commentaire: z.string().max(600),
+    })
+    .array(),
 });
 
 export type FormValues = z.infer<typeof formSchema>;

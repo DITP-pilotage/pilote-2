@@ -11,6 +11,10 @@ import {
 } from "@/components/PageEvaluation/EtapeCriteres";
 import { formSchema, FormValues } from "@/components/PageEvaluation/form";
 import { ArrowLine3Icon } from "@/components/_commons/Icones/ArrowLine3Icon";
+import {
+  EtapeObjectifs,
+  Objectif,
+} from "@/components/PageEvaluation/EtapeObjectifs";
 
 const CRITERES_STUB: Critere[] = [
   {
@@ -127,6 +131,49 @@ const CRITERES_STUB: Critere[] = [
   },
 ];
 
+const OBJECTIFS_STUB: Objectif[] = [
+  {
+    id: "1",
+    nom: "Déployer un plan numérique éducatif dans les collèges et lycées",
+    evaluation: {
+      note: 0,
+      commentaire: "",
+    },
+  },
+  {
+    id: "2",
+    nom: " Valoriser le patrimoine historique de Caen, Rouen et le Mont-Saint-Michel",
+    evaluation: {
+      note: 0,
+      commentaire: "",
+    },
+  },
+  {
+    id: "3",
+    nom: "Transition écologique et Cohésion des territoires",
+    evaluation: {
+      note: 0,
+      commentaire: "",
+    },
+  },
+  {
+    id: "4",
+    nom: "Faire de Besançon une référence du sport universitaire",
+    evaluation: {
+      note: 0,
+      commentaire: "",
+    },
+  },
+  {
+    id: "5",
+    nom: "Renforcer l’insertion des jeunes dans les métiers industriels",
+    evaluation: {
+      note: 0,
+      commentaire: "",
+    },
+  },
+];
+
 export default function EvaluationPage() {
   const [etape, setEtape] = useState<"criteres" | "objectifs">("criteres");
   const form = useForm<FormValues>({
@@ -137,8 +184,11 @@ export default function EvaluationPage() {
           (sousCritere) => sousCritere.evaluation,
         ),
       })),
+      objectifs: OBJECTIFS_STUB.map((objectif) => objectif.evaluation),
     },
   });
+
+  console.log(form.watch());
 
   return (
     <main className="py-6">
@@ -153,7 +203,9 @@ export default function EvaluationPage() {
           </header>
           <FormProvider {...form}>
             {etape === "criteres" && <EtapeCriteres criteres={CRITERES_STUB} />}
-            {etape === "objectifs" && <div>Objectifs</div>}
+            {etape === "objectifs" && (
+              <EtapeObjectifs objectifs={OBJECTIFS_STUB} />
+            )}
           </FormProvider>
         </section>
       </div>
