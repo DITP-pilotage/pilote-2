@@ -218,7 +218,10 @@ export default function EvaluationPage() {
               <Icone className="text-current" icone={ArrowLine1Icon} />
             }
             label="Objectitfs"
-            onClick={() => setEtape("objectifs")}
+            onClick={() => {
+              setEtape("objectifs");
+              window.scrollTo(0, 0);
+            }}
           />
         )}
         {etape === "objectifs" && (
