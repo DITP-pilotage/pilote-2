@@ -1,43 +1,16 @@
 import Head from "next/head";
-import { z } from "zod";
-import { Controller, useFieldArray, useForm } from "react-hook-form";
+import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Button } from "@tanstack/react-query-devtools/build/lib/styledComponents";
-import Input from "@/components/_commons/Input/Input";
+import { useState } from "react";
 import { Bouton } from "@/components/_commons/Bouton/Bouton";
 import { Icone } from "@/components/_commons/Icone";
-import { ArrowLine2Icon } from "@/components/_commons/Icones/ArrowLine2Icon";
-import { ArrowLine3Icon } from "@/components/_commons/Icones/ArrowLine3Icon";
-import { ArrowLineIcon } from "@/components/_commons/Icones/ArrowLineIcon";
 import { ArrowLine1Icon } from "@/components/_commons/Icones/ArrowLine1Icon";
-
-const formSchema = z.object({
-  criteres: z
-    .object({
-      sousCriteres: z
-        .object({
-          note: z.number(),
-          commentaire: z.string().max(600),
-        })
-        .array(),
-    })
-    .array(),
-});
-
-type FormValues = z.infer<typeof formSchema>;
-
-interface Critere {
-  id: string;
-  nom: string;
-  sousCriteres: Array<{
-    id: string;
-    nom: string;
-    evaluation: {
-      note: number;
-      commentaire: string;
-    };
-  }>;
-}
+import {
+  Critere,
+  EtapeCriteres,
+} from "@/components/PageEvaluation/EtapeCriteres";
+import { formSchema, FormValues } from "@/components/PageEvaluation/form";
+import { ArrowLine3Icon } from "@/components/_commons/Icones/ArrowLine3Icon";
 
 const CRITERES_STUB: Critere[] = [
   {
@@ -155,6 +128,7 @@ const CRITERES_STUB: Critere[] = [
 ];
 
 export default function EvaluationPage() {
+  const [etape, setEtape] = useState<"criteres" | "objectifs">("criteres");
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -165,10 +139,6 @@ export default function EvaluationPage() {
       })),
     },
   });
-
-  const { fields } = useFieldArray({ control: form.control, name: "criteres" });
-
-  console.log(JSON.stringify(form.watch(), null, 2));
 
   return (
     <main className="py-6">
@@ -181,78 +151,39 @@ export default function EvaluationPage() {
           <header className="p-4 bg-dsfr-blue-france-925 border-b-2 border-black">
             <span className="font-bold text-sm">Mon auto-évaluation</span>
           </header>
-          <div>
-            {fields.map((field, index) => {
-              const critere = CRITERES_STUB[index];
-              return (
-                <div key={critere.id}>
-                  <header className="py-6 px-4 text-primary font-bold">
-                    {critere.nom}
-                  </header>
-                  <div className="bg-dsfr-grey-925/30">
-                    {field.sousCriteres.map((subField, j) => {
-                      const sousCritere = critere.sousCriteres[j];
-                      const noteInputName =
-                        `criteres.${index}.sousCriteres.${j}.note` as const;
-                      const commentaireInputName =
-                        `criteres.${index}.sousCriteres.${j}.commentaire` as const;
-
-                      return (
-                        <div
-                          className="py-6 pr-4 pl-12 flex flex-col"
-                          key={sousCritere.id}
-                        >
-                          <div className="flex items-center">
-                            <span className="text-primary grow">
-                              {sousCritere.nom}
-                            </span>
-                            <Controller
-                              control={form.control}
-                              name={noteInputName}
-                              render={({ field }) => (
-                                <input
-                                  className="border !rounded-md !bg-white w-14 aspect-square text-center"
-                                  type="number"
-                                  {...field}
-                                  onChange={(e) =>
-                                    field.onChange(e.target.valueAsNumber)
-                                  }
-                                />
-                              )}
-                            />
-                          </div>
-
-                          <Controller
-                            control={form.control}
-                            name={commentaireInputName}
-                            render={({ field }) => (
-                              <div className="flex flex-col gap-1 max-w-xl">
-                                <label className="font-bold text-sm">
-                                  Commentaire
-                                </label>
-                                <textarea
-                                  className="border !rounded-md !bg-white py-2 px-4"
-                                  {...field}
-                                />
-                              </div>
-                            )}
-                          />
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+          <FormProvider {...form}>
+            {etape === "criteres" && <EtapeCriteres criteres={CRITERES_STUB} />}
+            {etape === "objectifs" && <div>Objectifs</div>}
+          </FormProvider>
         </section>
       </div>
 
-      <div className="sticky flex justify-end mt-4 bottom-8 mx-auto w-full max-w-[1208px] bg-white px-6 py-4">
-        <Bouton
-          iconRight={<Icone className="text-current" icone={ArrowLine1Icon} />}
-          label="Objectitfs"
-        />
+      <div className="sticky flex justify-between mt-4 bottom-8 mx-auto w-full max-w-[1208px] bg-white px-6 py-4">
+        {etape === "criteres" && (
+          <Bouton
+            className="ml-auto"
+            iconRight={
+              <Icone className="text-current" icone={ArrowLine1Icon} />
+            }
+            label="Objectitfs"
+            onClick={() => setEtape("objectifs")}
+          />
+        )}
+        {etape === "objectifs" && (
+          <>
+            <Bouton
+              iconLeft={
+                <Icone className="text-current" icone={ArrowLine3Icon} />
+              }
+              label="Critères"
+              onClick={() => setEtape("criteres")}
+            />
+            <Bouton
+              label="Soumettre"
+              onClick={() => console.log("Hello world")}
+            />
+          </>
+        )}
       </div>
     </main>
   );
