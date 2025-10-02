@@ -2,7 +2,14 @@ import Head from "next/head";
 import { z } from "zod";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Button } from "@tanstack/react-query-devtools/build/lib/styledComponents";
 import Input from "@/components/_commons/Input/Input";
+import { Bouton } from "@/components/_commons/Bouton/Bouton";
+import { Icone } from "@/components/_commons/Icone";
+import { ArrowLine2Icon } from "@/components/_commons/Icones/ArrowLine2Icon";
+import { ArrowLine3Icon } from "@/components/_commons/Icones/ArrowLine3Icon";
+import { ArrowLineIcon } from "@/components/_commons/Icones/ArrowLineIcon";
+import { ArrowLine1Icon } from "@/components/_commons/Icones/ArrowLine1Icon";
 
 const formSchema = z.object({
   criteres: z
@@ -164,12 +171,12 @@ export default function EvaluationPage() {
   console.log(JSON.stringify(form.watch(), null, 2));
 
   return (
-    <main>
+    <main className="py-6">
       <Head>
         <title>PILOTE - Évaluation</title>
       </Head>
 
-      <div className="min-h-[60vh] py-6">
+      <div className="min-h-[60vh]">
         <section className="bg-white mx-auto w-full max-w-[1208px]">
           <header className="p-4 bg-dsfr-blue-france-925 border-b-2 border-black">
             <span className="font-bold text-sm">Mon auto-évaluation</span>
@@ -239,6 +246,13 @@ export default function EvaluationPage() {
             })}
           </div>
         </section>
+      </div>
+
+      <div className="sticky flex justify-end mt-4 bottom-8 mx-auto w-full max-w-[1208px] bg-white px-6 py-4">
+        <Bouton
+          iconRight={<Icone className="text-current" icone={ArrowLine1Icon} />}
+          label="Objectitfs"
+        />
       </div>
     </main>
   );
