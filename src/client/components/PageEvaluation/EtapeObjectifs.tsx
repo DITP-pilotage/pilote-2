@@ -44,6 +44,10 @@ export function EtapeObjectifs({ objectifs }: { objectifs: Objectif[] }) {
                     type="number"
                     {...field}
                     onChange={(e) => field.onChange(e.target.valueAsNumber)}
+                    ref={(node) => {
+                      if (index != 0) return;
+                      node?.focus();
+                    }}
                   />
                 )}
               />
