@@ -29,6 +29,7 @@ export default function EvaluationPage(
   const formId = useId();
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
+    mode: "onChange",
     defaultValues: {
       criteres: autoEvaluation.criteres.map((critere) => ({
         sousCriteres: critere.sousCriteres.map(
@@ -59,7 +60,7 @@ export default function EvaluationPage(
 
   return (
     <pageEvaluation.ServerSidePropsProvider value={props}>
-      <main className="py-6">
+      <main className="py-6 pb-0">
         <Head>
           <title>PILOTE - Évaluation</title>
         </Head>
@@ -80,39 +81,41 @@ export default function EvaluationPage(
           </form>
         </div>
 
-        <div className="sticky flex items-center justify-between mt-4 bottom-8 mx-auto w-full max-w-4xl bg-white px-6 py-4">
-          <span className="italic text-sm">
-            Dernière modification :{" "}
-            {formaterDate(
-              autoEvaluation.denieresModifications,
-              "DD/MM/YYYY [à] H[h]mm",
-            )}
-          </span>
-          {etape === "criteres" && (
-            <Bouton
-              className="ml-auto"
-              form={formId}
-              iconRight={
-                <Icone className="text-current" icone={ArrowLine1Icon} />
-              }
-              label="Objectitfs"
-              type="submit"
-            />
-          )}
-          {etape === "objectifs" && (
-            <div className="ml-auto flex items-center gap-4">
+        <footer className="sticky bottom-0 bg-white">
+          <div className="flex items-center justify-between mt-4 mx-auto w-full max-w-4xl px-6 py-4">
+            <span className="italic text-sm">
+              Dernière modification :{" "}
+              {formaterDate(
+                autoEvaluation.denieresModifications,
+                "DD/MM/YYYY [à] H[h]mm",
+              )}
+            </span>
+            {etape === "criteres" && (
               <Bouton
-                iconLeft={
-                  <Icone className="text-current" icone={ArrowLine3Icon} />
+                className="ml-auto"
+                form={formId}
+                iconRight={
+                  <Icone className="text-current" icone={ArrowLine1Icon} />
                 }
-                label="Critères"
-                onClick={() => setEtape("criteres")}
-                variant="secondary"
+                label="Objectitfs"
+                type="submit"
               />
-              <Bouton form={formId} label="Soumettre" type="submit" />
-            </div>
-          )}
-        </div>
+            )}
+            {etape === "objectifs" && (
+              <div className="ml-auto flex items-center gap-4">
+                <Bouton
+                  iconLeft={
+                    <Icone className="text-current" icone={ArrowLine3Icon} />
+                  }
+                  label="Critères"
+                  onClick={() => setEtape("criteres")}
+                  variant="secondary"
+                />
+                <Bouton form={formId} label="Soumettre" type="submit" />
+              </div>
+            )}
+          </div>
+        </footer>
       </main>
     </pageEvaluation.ServerSidePropsProvider>
   );
