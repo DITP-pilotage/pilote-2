@@ -179,6 +179,36 @@ export const validationMetadataIndicateurFormulaire = z
         metadata.poids_pourcent_nat_declaree
           .metaPiloteEditRegexViolationMessage,
       ),
+    poidsPourcentEvalNat: z
+      .string()
+      .refine(
+        (value) =>
+          new RegExp(
+            metadata.poids_pourcent_eval_nat_declaree.metaPiloteEditRegex,
+          ).test(value),
+        metadata.poids_pourcent_eval_nat_declaree
+          .metaPiloteEditRegexViolationMessage,
+      ),
+    poidsPourcentEvalReg: z
+      .string()
+      .refine(
+        (value) =>
+          new RegExp(
+            metadata.poids_pourcent_eval_reg_declaree.metaPiloteEditRegex,
+          ).test(value),
+        metadata.poids_pourcent_eval_reg_declaree
+          .metaPiloteEditRegexViolationMessage,
+      ),
+    poidsPourcentEvalDept: z
+      .string()
+      .refine(
+        (value) =>
+          new RegExp(
+            metadata.poids_pourcent_eval_dept_declaree.metaPiloteEditRegex,
+          ).test(value),
+        metadata.poids_pourcent_eval_dept_declaree
+          .metaPiloteEditRegexViolationMessage,
+      ),
     tendance: z.string(),
     reformePrioritaire: z.string().nullable(),
     projetAnnuelPerf: z.boolean(),
@@ -409,6 +439,36 @@ export const validationImportMetadataIndicateurFormulaire = z
             metadata.poids_pourcent_nat_declaree.metaPiloteEditRegex,
           ).test(value),
         metadata.poids_pourcent_nat_declaree
+          .metaPiloteEditRegexViolationMessage,
+      ),
+    poidsPourcentEvalNat: z
+      .string()
+      .refine(
+        (value) =>
+          new RegExp(
+            metadata.poids_pourcent_eval_nat_declaree.metaPiloteEditRegex,
+          ).test(value),
+        metadata.poids_pourcent_eval_nat_declaree
+          .metaPiloteEditRegexViolationMessage,
+      ),
+    poidsPourcentEvalReg: z
+      .string()
+      .refine(
+        (value) =>
+          new RegExp(
+            metadata.poids_pourcent_eval_reg_declaree.metaPiloteEditRegex,
+          ).test(value),
+        metadata.poids_pourcent_eval_reg_declaree
+          .metaPiloteEditRegexViolationMessage,
+      ),
+    poidsPourcentEvalDept: z
+      .string()
+      .refine(
+        (value) =>
+          new RegExp(
+            metadata.poids_pourcent_eval_dept_declaree.metaPiloteEditRegex,
+          ).test(value),
+        metadata.poids_pourcent_eval_dept_declaree
           .metaPiloteEditRegexViolationMessage,
       ),
     tendance: z.string(),

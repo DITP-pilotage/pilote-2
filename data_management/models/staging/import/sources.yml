@@ -1325,6 +1325,45 @@ sources:
               pilote_create_defaultValue: 0
               pilote_disp_blocId: 6
 
+          - name: poids_pourcent_eval_nat_declaree
+            data_type: number
+            description: >
+              Poids de l'indicateur dans le calcul du taux d'avancement pour les évaluations préfets aux différentes mailles
+            meta:
+              pilote_alias: "Maille nationale (Evalutation préfet)"
+              pilote_edit_boxType: text
+              pilote_disp_dispDesc: true
+              pilote_edit_regex: "(^\\d{1,2}$)|(^\\d{1,2}\\.\\d{1,2}$)|(^100$)"
+              pilote_edit_regexViolationMessage: "Pondération comprise entre 0 et 100."
+              pilote_create_defaultValue: 0
+              pilote_disp_blocId: 6
+
+          - name: poids_pourcent_eval_reg_declaree
+            data_type: number
+            description: >
+              Poids de l'indicateur dans le calcul du taux d'avancement global à la maille régionale si territorialisé à cette maille.
+            meta:
+              pilote_alias: "Maille régionale (Evalutation préfet)"
+              pilote_edit_boxType: text
+              pilote_disp_dispDesc: false
+              pilote_edit_regex: "(^\\d{1,2}$)|(^\\d{1,2}\\.\\d{1,2}$)|(^100$)"
+              pilote_edit_regexViolationMessage: "Pondération comprise entre 0 et 100."
+              pilote_create_defaultValue: 0
+              pilote_disp_blocId: 6
+
+          - name: poids_pourcent_eval_dept_declaree
+            data_type: number
+            description: >
+              Poids de l'indicateur dans le calcul du taux d'avancement global à la maille départementale si territorialisé à cette maille.
+            meta:
+              pilote_alias: "Maille départementale (Evalutation préfet)"
+              pilote_edit_boxType: text
+              pilote_disp_dispDesc: false
+              pilote_edit_regex: "(^\\d{1,2}$)|(^\\d{1,2}\\.\\d{1,2}$)|(^100$)"
+              pilote_edit_regexViolationMessage: "Pondération comprise entre 0 et 100."
+              pilote_create_defaultValue: 0
+              pilote_disp_blocId: 6
+
       - name: metadata_indicateurs_complementaire
         description: "Table contenant des informations complémentaires sur les indicateurs"
         columns:

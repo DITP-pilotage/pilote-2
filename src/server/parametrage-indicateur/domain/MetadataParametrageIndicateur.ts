@@ -45,6 +45,9 @@ interface InputMetadataParametrageIndicateur {
   poidsPourcentDept: number;
   poidsPourcentReg: number;
   poidsPourcentNat: number;
+  poidsPourcentEvalNat: number;
+  poidsPourcentEvalReg: number;
+  poidsPourcentEvalDept: number;
   tendance: string;
   reformePrioritaire: string | null;
   projetAnnuelPerf: boolean;
@@ -125,6 +128,12 @@ export class MetadataParametrageIndicateur {
   private readonly _poidsPourcentReg: number;
 
   private readonly _poidsPourcentNat: number;
+
+  private readonly _poidsPourcentEvalNat: number;
+
+  private readonly _poidsPourcentEvalReg: number;
+
+  private readonly _poidsPourcentEvalDept: number;
 
   private readonly _tendance: string;
 
@@ -235,6 +244,9 @@ export class MetadataParametrageIndicateur {
     poidsPourcentDept,
     poidsPourcentReg,
     poidsPourcentNat,
+    poidsPourcentEvalNat,
+    poidsPourcentEvalReg,
+    poidsPourcentEvalDept,
     tendance,
     indicParentIndic,
     indicParentCh,
@@ -304,6 +316,9 @@ export class MetadataParametrageIndicateur {
     this._poidsPourcentDept = poidsPourcentDept;
     this._poidsPourcentReg = poidsPourcentReg;
     this._poidsPourcentNat = poidsPourcentNat;
+    this._poidsPourcentEvalNat = poidsPourcentEvalNat;
+    this._poidsPourcentEvalReg = poidsPourcentEvalReg;
+    this._poidsPourcentEvalDept = poidsPourcentEvalDept;
     this._tendance = tendance;
     this._indicParentIndic = indicParentIndic;
     this._indicParentCh = indicParentCh;
@@ -456,6 +471,18 @@ export class MetadataParametrageIndicateur {
 
   get poidsPourcentNat(): number {
     return this._poidsPourcentNat;
+  }
+
+  get poidsPourcentEvalNat(): number {
+    return this._poidsPourcentEvalNat;
+  }
+
+  get poidsPourcentEvalReg(): number {
+    return this._poidsPourcentEvalReg;
+  }
+
+  get poidsPourcentEvalDept(): number {
+    return this._poidsPourcentEvalDept;
   }
 
   get tendance(): string {
@@ -647,6 +674,9 @@ export class MetadataParametrageIndicateur {
     poidsPourcentDept,
     poidsPourcentReg,
     poidsPourcentNat,
+    poidsPourcentEvalNat,
+    poidsPourcentEvalReg,
+    poidsPourcentEvalDept,
     tendance,
     indicParentIndic,
     indicParentCh,
@@ -717,6 +747,9 @@ export class MetadataParametrageIndicateur {
       poidsPourcentDept,
       poidsPourcentReg,
       poidsPourcentNat,
+      poidsPourcentEvalNat,
+      poidsPourcentEvalReg,
+      poidsPourcentEvalDept,
       tendance,
       indicParentIndic,
       indicParentCh,

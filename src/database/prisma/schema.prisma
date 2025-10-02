@@ -385,35 +385,38 @@ model metadata_indicateurs_hidden {
 }
 
 model metadata_parametrage_indicateurs {
-  indic_id                     String  @id
-  vi_dept_from                 String?
-  vi_dept_op                   String?
-  va_dept_from                 String?
-  va_dept_op                   String?
-  vc_dept_from                 String?
-  vc_dept_op                   String?
-  vi_reg_from                  String?
-  vi_reg_op                    String?
-  va_reg_from                  String?
-  va_reg_op                    String?
-  vc_reg_from                  String?
-  vc_reg_op                    String?
-  vi_nat_from                  String?
-  vi_nat_op                    String?
-  va_nat_from                  String?
-  va_nat_op                    String?
-  vc_nat_from                  String?
-  vc_nat_op                    String?
-  param_vaca_decumul_from      String?
-  param_vaca_partition_date    String?
-  param_vaca_op                String?
-  param_vacg_decumul_from      String?
-  param_vacg_partition_date    String?
-  param_vacg_op                String?
-  poids_pourcent_dept_declaree Float?
-  poids_pourcent_reg_declaree  Float?
-  poids_pourcent_nat_declaree  Float?
-  tendance                     String?
+  indic_id                          String  @id
+  vi_dept_from                      String?
+  vi_dept_op                        String?
+  va_dept_from                      String?
+  va_dept_op                        String?
+  vc_dept_from                      String?
+  vc_dept_op                        String?
+  vi_reg_from                       String?
+  vi_reg_op                         String?
+  va_reg_from                       String?
+  va_reg_op                         String?
+  vc_reg_from                       String?
+  vc_reg_op                         String?
+  vi_nat_from                       String?
+  vi_nat_op                         String?
+  va_nat_from                       String?
+  va_nat_op                         String?
+  vc_nat_from                       String?
+  vc_nat_op                         String?
+  param_vaca_decumul_from           String?
+  param_vaca_partition_date         String?
+  param_vaca_op                     String?
+  param_vacg_decumul_from           String?
+  param_vacg_partition_date         String?
+  param_vacg_op                     String?
+  poids_pourcent_dept_declaree      Float?
+  poids_pourcent_reg_declaree       Float?
+  poids_pourcent_nat_declaree       Float?
+  poids_pourcent_eval_dept_declaree Float?
+  poids_pourcent_eval_reg_declaree  Float?
+  poids_pourcent_eval_nat_declaree  Float?
+  tendance                          String?
 
   @@schema("raw_data")
 }

@@ -80,6 +80,18 @@ const convertirEnMetadataParametrageIndicateurForm = (
       (!Number.isNaN(input.poidsPourcentReg) && +input.poidsPourcentReg) || 0,
     poidsPourcentNat:
       (!Number.isNaN(input.poidsPourcentNat) && +input.poidsPourcentNat) || 0,
+    poidsPourcentEvalNat:
+      (!Number.isNaN(input.poidsPourcentEvalNat) &&
+        +input.poidsPourcentEvalNat) ||
+      0,
+    poidsPourcentEvalReg:
+      (!Number.isNaN(input.poidsPourcentEvalReg) &&
+        +input.poidsPourcentEvalReg) ||
+      0,
+    poidsPourcentEvalDept:
+      (!Number.isNaN(input.poidsPourcentEvalDept) &&
+        +input.poidsPourcentEvalDept) ||
+      0,
     tendance: input.tendance,
     reformePrioritaire: input.reformePrioritaire || null,
     projetAnnuelPerf: input.projetAnnuelPerf,

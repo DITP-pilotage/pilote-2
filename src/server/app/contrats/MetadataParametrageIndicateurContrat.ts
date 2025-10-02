@@ -40,6 +40,9 @@ export interface MetadataParametrageIndicateurContrat {
   poidsPourcentDept: number;
   poidsPourcentReg: number;
   poidsPourcentNat: number;
+  poidsPourcentEvalNat: number;
+  poidsPourcentEvalReg: number;
+  poidsPourcentEvalDept: number;
   tendance: string;
   indicParentIndic: string | null;
   indicParentCh: string;
@@ -113,6 +116,9 @@ export const presenterEnMetadataParametrageIndicateurContrat = (
   poidsPourcentDept: metadataParametrageIndicateur.poidsPourcentDept,
   poidsPourcentReg: metadataParametrageIndicateur.poidsPourcentReg,
   poidsPourcentNat: metadataParametrageIndicateur.poidsPourcentNat,
+  poidsPourcentEvalNat: metadataParametrageIndicateur.poidsPourcentEvalNat,
+  poidsPourcentEvalReg: metadataParametrageIndicateur.poidsPourcentEvalReg,
+  poidsPourcentEvalDept: metadataParametrageIndicateur.poidsPourcentEvalDept,
   tendance: metadataParametrageIndicateur.tendance,
   indicParentIndic: metadataParametrageIndicateur.indicParentIndic,
   indicParentCh: metadataParametrageIndicateur.indicParentCh,

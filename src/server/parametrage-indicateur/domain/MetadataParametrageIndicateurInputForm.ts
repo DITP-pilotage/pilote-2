@@ -44,6 +44,9 @@ export interface MetadataParametrageIndicateurForm {
   poidsPourcentDept: number;
   poidsPourcentReg: number;
   poidsPourcentNat: number;
+  poidsPourcentEvalNat: number;
+  poidsPourcentEvalReg: number;
+  poidsPourcentEvalDept: number;
   tendance: string;
   reformePrioritaire: string | null;
   projetAnnuelPerf: boolean;

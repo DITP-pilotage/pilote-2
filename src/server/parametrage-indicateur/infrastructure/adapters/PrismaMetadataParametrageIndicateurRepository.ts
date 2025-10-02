@@ -39,6 +39,9 @@ export interface RawMetadataParametrageIndicateurModel {
   poids_pourcent_dept_declaree: number;
   poids_pourcent_reg_declaree: number;
   poids_pourcent_nat_declaree: number;
+  poids_pourcent_eval_nat_declaree: number;
+  poids_pourcent_eval_reg_declaree: number;
+  poids_pourcent_eval_dept_declaree: number;
   tendance: string;
   indic_parent_indic: string;
   indic_parent_ch: string;
@@ -125,6 +128,12 @@ function convertirEnMetadataParametrageIndicateur(
       rawMetadataParametrageIndicateur.poids_pourcent_reg_declaree,
     poidsPourcentNat:
       rawMetadataParametrageIndicateur.poids_pourcent_nat_declaree,
+    poidsPourcentEvalNat:
+      rawMetadataParametrageIndicateur.poids_pourcent_eval_nat_declaree,
+    poidsPourcentEvalReg:
+      rawMetadataParametrageIndicateur.poids_pourcent_eval_reg_declaree,
+    poidsPourcentEvalDept:
+      rawMetadataParametrageIndicateur.poids_pourcent_eval_dept_declaree,
     tendance: rawMetadataParametrageIndicateur.tendance,
     indicParentIndic: rawMetadataParametrageIndicateur.indic_parent_indic,
     indicParentCh: rawMetadataParametrageIndicateur.indic_parent_ch,
@@ -314,6 +323,9 @@ export class PrismaMetadataParametrageIndicateurRepository
                                              poids_pourcent_dept_declaree       = '${inputs.poidsPourcentDept}',
                                              poids_pourcent_reg_declaree        = '${inputs.poidsPourcentReg}',
                                              poids_pourcent_nat_declaree        = '${inputs.poidsPourcentNat}',
+                                             poids_pourcent_eval_nat_declaree        = '${inputs.poidsPourcentEvalNat}', 
+                                             poids_pourcent_eval_reg_declaree        = '${inputs.poidsPourcentEvalReg}',  
+                                             poids_pourcent_eval_dept_declaree        = '${inputs.poidsPourcentEvalDept}',                                             
                                              tendance                  = ${makeStrSafer(inputs.tendance)}
                                          WHERE indic_id = '${inputs.indicId}'`;
 
@@ -420,6 +432,9 @@ export class PrismaMetadataParametrageIndicateurRepository
                                                                                                 poids_pourcent_dept_declaree,
                                                                                                 poids_pourcent_reg_declaree,
                                                                                                 poids_pourcent_nat_declaree,
+                                                                                                poids_pourcent_eval_nat_declaree,
+                                                                                                poids_pourcent_eval_reg_declaree,
+                                                                                                poids_pourcent_eval_dept_declaree,
                                                                                                 tendance)
                                          VALUES ('${inputs.indicId}',
                                                  ${makeStrSafer(inputs.viDeptFrom)}, 
@@ -449,6 +464,9 @@ export class PrismaMetadataParametrageIndicateurRepository
                                                  '${inputs.poidsPourcentDept}',
                                                  '${inputs.poidsPourcentReg}', 
                                                  '${inputs.poidsPourcentNat}',
+                                                 '${inputs.poidsPourcentEvalNat}',
+                                                 '${inputs.poidsPourcentEvalReg}',
+                                                 '${inputs.poidsPourcentEvalDept}',
                                                  ${makeStrSafer(inputs.tendance)})`;
     const queryMetadataIndicateurComplementaire = `INSERT INTO raw_data.metadata_indicateurs_complementaire (indic_id,
                                                                                                 reforme_prioritaire,
@@ -593,6 +611,9 @@ export class PrismaMetadataParametrageIndicateurRepository
                                                                                                 poids_pourcent_dept_declaree,
                                                                                                 poids_pourcent_reg_declaree,
                                                                                                 poids_pourcent_nat_declaree,
+                                                                                                poids_pourcent_eval_nat_declaree,
+                                                                                                poids_pourcent_eval_reg_declaree,
+                                                                                                poids_pourcent_eval_dept_declaree,
                                                                                                 tendance)
                                          VALUES ('${indicateur.indicId}',
                                                  ${makeStrSafer(indicateur.viDeptFrom)}, 
@@ -622,6 +643,9 @@ export class PrismaMetadataParametrageIndicateurRepository
                                                  '${indicateur.poidsPourcentDept}',
                                                  '${indicateur.poidsPourcentReg}', 
                                                  '${indicateur.poidsPourcentNat}',
+                                                 '${indicateur.poidsPourcentEvalNat}',
+                                                 '${indicateur.poidsPourcentEvalReg}',
+                                                 '${indicateur.poidsPourcentEvalDept}',
                                                  ${makeStrSafer(indicateur.tendance)})
 
                                            ON CONFLICT (indic_id) DO UPDATE
@@ -652,6 +676,9 @@ export class PrismaMetadataParametrageIndicateurRepository
                                                      poids_pourcent_dept_declaree = '${indicateur.poidsPourcentDept}',
                                                      poids_pourcent_reg_declaree = '${indicateur.poidsPourcentReg}',
                                                      poids_pourcent_nat_declaree = '${indicateur.poidsPourcentNat}',
+                                                     poids_pourcent_eval_nat_declaree = '${indicateur.poidsPourcentEvalNat}',                                                     
+                                                     poids_pourcent_eval_reg_declaree = '${indicateur.poidsPourcentEvalReg}',                                                     
+                                                     poids_pourcent_eval_dept_declaree = '${indicateur.poidsPourcentEvalDept}',                                                     
                                                      tendance = ${makeStrSafer(indicateur.tendance)};`;
     };
     const queryMetadataIndicateurComplementaireFn = (

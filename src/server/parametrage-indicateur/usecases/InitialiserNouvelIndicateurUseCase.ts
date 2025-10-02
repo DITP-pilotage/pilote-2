@@ -59,6 +59,12 @@ export default class InitialiserNouvelIndicateurUseCase {
         .metaPiloteDefaultValue as number,
       poidsPourcentNat: listeInformation.poids_pourcent_nat_declaree
         .metaPiloteDefaultValue as number,
+      poidsPourcentEvalNat: listeInformation.poids_pourcent_eval_nat_declaree
+        .metaPiloteDefaultValue as number,
+      poidsPourcentEvalReg: listeInformation.poids_pourcent_eval_reg_declaree
+        .metaPiloteDefaultValue as number,
+      poidsPourcentEvalDept: listeInformation.poids_pourcent_eval_dept_declaree
+        .metaPiloteDefaultValue as number,
       tendance: listeInformation.tendance.metaPiloteDefaultValue as string,
       indicParentIndic: listeInformation.indic_parent_indic
         .metaPiloteDefaultValue as string,
