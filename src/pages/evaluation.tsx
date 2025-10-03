@@ -13,17 +13,28 @@ import { EtapeObjectifs } from "@/components/PageEvaluation/EtapeObjectifs";
 import { formaterDate } from "@/client/utils/date/date";
 import { getContainer } from "@/server/dependances";
 import { pageEvaluation } from "@/components/PageEvaluation/PageEvaluationServerSideContext";
+import { configurationFeatureFlip } from "@/config";
 
 export const getServerSideProps = async () => {
   const autoEvaluation = await getContainer("piloteEval")
     .resolve("afficherAutoEvaluation")
     .run();
+  const featureFlipping = configurationFeatureFlip();
+
+  if (!featureFlipping.piloteEval) {
+    return {
+      redirect: {
+        destination: "404",
+      },
+    };
+  }
+
   return { props: { autoEvaluation } };
 };
 
-export default function EvaluationPage(
+const EvaluationPage = (
   props: InferGetServerSidePropsType<typeof getServerSideProps>,
-) {
+) => {
   const { autoEvaluation } = props;
   const [etape, setEtape] = useState<"criteres" | "objectifs">("criteres");
   const formId = useId();
@@ -56,7 +67,8 @@ export default function EvaluationPage(
   const handleSubmit =
     etape === "criteres"
       ? handleSubmitCriteres
-      : form.handleSubmit((data) => console.log(data));
+      : // eslint-disable-next-line no-console
+        form.handleSubmit((data) => console.log(data));
 
   return (
     <pageEvaluation.ServerSidePropsProvider value={props}>
@@ -66,6 +78,19 @@ export default function EvaluationPage(
         </Head>
 
         <div className="min-h-[60vh] relative">
+          <form
+            className="bg-white mx-auto w-full max-w-4xl"
+            id={formId}
+            onSubmit={handleSubmit}
+          >
+            <header className="p-4 bg-dsfr-blue-france-925 border-b-2 border-black">
+              <span className="font-bold text-sm">Mon auto-évaluation</span>
+            </header>
+            <FormProvider {...form}>
+              {etape === "criteres" && <EtapeCriteres />}
+              {etape === "objectifs" && <EtapeObjectifs />}
+            </FormProvider>
+          </form>
           <footer className="sticky top-0 bg-white mb-6">
             <div className="flex items-center justify-between mt-4 mx-auto w-full max-w-4xl px-2 py-4">
               <span className="italic text-sm">
@@ -101,21 +126,10 @@ export default function EvaluationPage(
               )}
             </div>
           </footer>
-          <form
-            className="bg-white mx-auto w-full max-w-4xl"
-            id={formId}
-            onSubmit={handleSubmit}
-          >
-            <header className="p-4 bg-dsfr-blue-france-925 border-b-2 border-black">
-              <span className="font-bold text-sm">Mon auto-évaluation</span>
-            </header>
-            <FormProvider {...form}>
-              {etape === "criteres" && <EtapeCriteres />}
-              {etape === "objectifs" && <EtapeObjectifs />}
-            </FormProvider>
-          </form>
         </div>
       </main>
     </pageEvaluation.ServerSidePropsProvider>
   );
-}
+};
+
+export default EvaluationPage;
