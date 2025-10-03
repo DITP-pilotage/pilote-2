@@ -1,5 +1,5 @@
 import { asClass, AwilixContainer, createContainer } from "awilix";
-import { AfficherAutoEvaluationUseCase } from "@/server/pilote-eval/usecases/AfficherAutoEvaluationUseCase";
+import { AfficherAutoEvaluationUseCase } from "@/server/evaluation/usecases/AfficherAutoEvaluationUseCase";
 
 export type PiloteEvalDependencies = {
   afficherAutoEvaluation: AfficherAutoEvaluationUseCase;

@@ -22,7 +22,7 @@ import {
 import {
   getPiloteEvalContainer,
   PiloteEvalDependencies,
-} from "@/server/pilote-eval/container";
+} from "@/server/evaluation/container";
 import {
   GestionUtilisateurDependencies,
   getGestionUtilisateurContainer,

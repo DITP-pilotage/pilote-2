@@ -5,7 +5,7 @@ export interface Critere {
     id: string;
     nom: string;
     evaluation: {
-      note: number;
+      note: number | null;
       commentaire: string;
     };
   }>;
@@ -70,7 +70,7 @@ const CRITERES_STUB: Critere[] = [
     sousCriteres: [
       {
         id: "3-1",
-        nom: "Organisation et actions mises en place ou envisagée pour améliorer l’accès aux services publics",
+        nom: "Organisation et actions mises en place ou envisagée pour améliorer l'accès aux services publics",
         evaluation: {
           note: null,
           commentaire: "",
@@ -100,7 +100,7 @@ const CRITERES_STUB: Critere[] = [
     sousCriteres: [
       {
         id: "4-1",
-        nom: "Valorisation des PPG, dont celle publiées au Baromètre des résultats de l’action publique ",
+        nom: "Valorisation des PPG, dont celle publiées au Baromètre des résultats de l'action publique ",
         evaluation: {
           note: null,
           commentaire: "",
@@ -116,7 +116,7 @@ const CRITERES_STUB: Critere[] = [
       },
       {
         id: "4-3",
-        nom: "Toutes actions ou prises de parole valorisant la mobilisation de l’Etat dans votre territoire ",
+        nom: "Toutes actions ou prises de parole valorisant la mobilisation de l'Etat dans votre territoire ",
         evaluation: {
           note: null,
           commentaire: "",
@@ -130,7 +130,7 @@ export interface Objectif {
   id: string;
   nom: string;
   evaluation: {
-    note: number;
+    note: number | null;
     commentaire: string;
   };
 }
@@ -170,7 +170,7 @@ const OBJECTIFS_STUB: Objectif[] = [
   },
   {
     id: "5",
-    nom: "Renforcer l’insertion des jeunes dans les métiers industriels",
+    nom: "Renforcer l'insertion des jeunes dans les métiers industriels",
     evaluation: {
       note: null,
       commentaire: "",
