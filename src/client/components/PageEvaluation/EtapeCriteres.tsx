@@ -9,6 +9,8 @@ export const EtapeCriteres = () => {
   const form = useFormEvaluation();
   const { fields } = useFieldArray({ control: form.control, name: "criteres" });
 
+  console.log(fields);
+
   return (
     <div>
       {fields.map((fieldCritere, index) => {

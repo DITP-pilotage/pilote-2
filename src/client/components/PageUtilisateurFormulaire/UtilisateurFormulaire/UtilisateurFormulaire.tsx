@@ -47,6 +47,7 @@ const UtilisateurFormulaire: FunctionComponent<UtilisateurFormulaireProps> = ({
       profil: utilisateur?.profil,
       gestionUtilisateur: utilisateur?.gestionUtilisateur,
       saisieIndicateur: utilisateur?.saisieIndicateur,
+      applicationAccessible: ["pilote"],
       habilitations: {
         lecture: {
           chantiers: utilisateur?.habilitations.lecture.chantiers,
