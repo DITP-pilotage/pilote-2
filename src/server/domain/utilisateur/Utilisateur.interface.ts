@@ -72,8 +72,8 @@ type Utilisateur = {
 };
 
 export enum ApplicationAccessible {
-  PILOTE = "pilote",
-  PILOTE_EVAL = "pilote-eval",
+  PILOTE = "PILOTE",
+  PILOTE_EVAL = "PILOTE_EVAL",
 }
 
 export type UtilisateurÀCréerOuMettreÀJour = {

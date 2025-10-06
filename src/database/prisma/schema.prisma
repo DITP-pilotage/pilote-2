@@ -580,6 +580,7 @@ model utilisateur {
   date_inscription_infolettre            DateTime?
   historisations_modification            historisation_modification[]
   indicateur_territoire_valeur_evenement indicateur_territoire_valeur_evenement[]
+  applications_accessibles                application_accessible[]
 
   @@schema("public")
 }
@@ -732,6 +733,13 @@ enum type_valeur {
   VALEUR_AVANCEMENT
   VALEUR_CIBLE
   VALEUR_INITIALE
+
+  @@schema("public")
+}
+
+enum application_accessible {
+  PILOTE
+  PILOTE_EVAL
 
   @@schema("public")
 }

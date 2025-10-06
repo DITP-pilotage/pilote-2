@@ -70,7 +70,7 @@ export const validationInfosBaseUtilisateurSecretariatGeneral = z.object({
   fonction: z.string().max(100).nullable(),
   profil: z.enum(profilsCodes),
   saisieIndicateur: z.boolean(),
-  applicationsAccessibles: z.enum(["pilote", "pilote-eval"]),
+  applicationsAccessibles: z.array(z.nativeEnum(ApplicationAccessible)),
 });
 
 export const validationInfosBaseUtilisateurCoordinateur = z.object({
@@ -87,7 +87,7 @@ export const validationInfosBaseUtilisateurCoordinateur = z.object({
   fonction: z.string().max(100).nullable(),
   profil: z.enum(profilsCodes),
   saisieIndicateur: z.boolean(),
-  applicationsAccessibles: z.enum(["pilote", "pilote-eval"]),
+  applicationsAccessibles: z.array(z.nativeEnum(ApplicationAccessible)),
 });
 
 export const validationInfosHabilitationsUtilisateur = z.object({
