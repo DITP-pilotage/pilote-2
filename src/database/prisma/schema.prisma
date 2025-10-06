@@ -156,6 +156,7 @@ model chantier_territoire_jalon {
   zone_id              String
   jalon                Int
   taux_avancement      Float?
+  taux_avancement_eval Float?
   date_taux_avancement DateTime? @db.Date
 
   chantier_territoire chantier_territoire @relation(fields: [id, territoire_code], references: [id, territoire_code], onDelete: Cascade, onUpdate: Cascade)
