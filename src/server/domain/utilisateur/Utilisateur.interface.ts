@@ -68,6 +68,7 @@ type Utilisateur = {
   saisieIndicateur: boolean;
   gestionUtilisateur: boolean;
   habilitations: Habilitations;
+  applicationsAccessibles: ApplicationAccessible[];
   dateDesactivation: string | null;
 };
 

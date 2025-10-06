@@ -267,6 +267,7 @@ export const authOptions: AuthOptions = {
       session.profil = utilisateur?.profil;
       // @ts-expect-error TODO(CHAN 10/09/2025): corriger les types dupliqués des habilitations
       session.habilitations = utilisateur!.habilitations;
+      session.applicationsAccessibles = utilisateur!.applicationsAccessibles;
       session.profilAAccèsAuxChantiersBrouillons =
         profil?.chantiers.lecture.brouillons ?? false;
 

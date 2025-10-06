@@ -26,7 +26,10 @@ import {
   profilsRégionaux,
   Utilisateur,
 } from "@/server/gestion-utilisateur/domain/Utilisateur.interface";
-import { UtilisateurÀCréerOuMettreÀJourSansHabilitation } from "@/server/domain/utilisateur/Utilisateur.interface";
+import {
+  ApplicationAccessible,
+  UtilisateurÀCréerOuMettreÀJourSansHabilitation,
+} from "@/server/domain/utilisateur/Utilisateur.interface";
 
 import { PilotePrismaClient } from "@/server/db/PrismaTransaction";
 
@@ -901,6 +904,8 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
           utilisateurBrut.profil,
         ),
         habilitations: habilitations,
+        applicationsAccessibles:
+          utilisateurBrut.applications_accessibles as ApplicationAccessible[],
         dateDesactivation:
           utilisateurBrut.date_desactivation?.toISOString() ?? null,
       };
