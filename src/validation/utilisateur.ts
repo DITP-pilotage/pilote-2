@@ -1,5 +1,6 @@
 import { z } from "zod";
 import {
+  ApplicationAccessible,
   ProfilCode,
   profilsCodes,
 } from "@/server/domain/utilisateur/Utilisateur.interface";
@@ -44,7 +45,7 @@ export const validationInfosBaseUtilisateur = z.object({
   profil: z.enum(profilsCodes),
   saisieIndicateur: z.boolean(),
   gestionUtilisateur: z.boolean(),
-  applicationAccessible: z.array(z.enum(["pilote", "pilote-eval"])),
+  applicationsAccessibles: z.array(z.nativeEnum(ApplicationAccessible)),
 });
 
 const adresseEstValideSecretariatGeneral = (adresse: string) => {
@@ -69,7 +70,7 @@ export const validationInfosBaseUtilisateurSecretariatGeneral = z.object({
   fonction: z.string().max(100).nullable(),
   profil: z.enum(profilsCodes),
   saisieIndicateur: z.boolean(),
-  applicationAccessible: z.enum(["pilote", "pilote-eval"]),
+  applicationsAccessibles: z.enum(["pilote", "pilote-eval"]),
 });
 
 export const validationInfosBaseUtilisateurCoordinateur = z.object({
@@ -86,7 +87,7 @@ export const validationInfosBaseUtilisateurCoordinateur = z.object({
   fonction: z.string().max(100).nullable(),
   profil: z.enum(profilsCodes),
   saisieIndicateur: z.boolean(),
-  applicationAccessible: z.enum(["pilote", "pilote-eval"]),
+  applicationsAccessibles: z.enum(["pilote", "pilote-eval"]),
 });
 
 export const validationInfosHabilitationsUtilisateur = z.object({

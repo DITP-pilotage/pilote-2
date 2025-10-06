@@ -12,6 +12,7 @@ import RécapitulatifUtilisateur from "@/components/PageUtilisateurFormulaire/Ut
 import api from "@/server/infrastructure/api/trpc/api";
 import { Icone } from "@/components/_commons/Icone";
 import { ArrowLine3Icon } from "@/components/_commons/Icones/ArrowLine3Icon";
+import { ApplicationAccessible } from "@/server/domain/utilisateur/Utilisateur.interface";
 import {
   UtilisateurFormInputs,
   UtilisateurFormulaireProps,
@@ -47,7 +48,7 @@ const UtilisateurFormulaire: FunctionComponent<UtilisateurFormulaireProps> = ({
       profil: utilisateur?.profil,
       gestionUtilisateur: utilisateur?.gestionUtilisateur,
       saisieIndicateur: utilisateur?.saisieIndicateur,
-      applicationAccessible: ["pilote"],
+      applicationsAccessibles: [ApplicationAccessible.PILOTE],
       habilitations: {
         lecture: {
           chantiers: utilisateur?.habilitations.lecture.chantiers,

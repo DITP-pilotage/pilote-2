@@ -71,6 +71,11 @@ type Utilisateur = {
   dateDesactivation: string | null;
 };
 
+export enum ApplicationAccessible {
+  PILOTE = "pilote",
+  PILOTE_EVAL = "pilote-eval",
+}
+
 export type UtilisateurÀCréerOuMettreÀJour = {
   nom: string;
   prénom: string;
@@ -79,6 +84,7 @@ export type UtilisateurÀCréerOuMettreÀJour = {
   profil: ProfilCode;
   saisieIndicateur: boolean;
   gestionUtilisateur: boolean;
+  applicationsAccessibles: ApplicationAccessible[];
   habilitations: HabilitationsÀCréerOuMettreÀJour;
 };
 
@@ -89,6 +95,7 @@ export type UtilisateurÀCréerOuMettreÀJourSansHabilitation = {
   fonction: string | null;
   profil: ProfilCode;
   saisieIndicateur: boolean;
+  applicationsAccessibles: ApplicationAccessible[];
   gestionUtilisateur: boolean;
 };
 
