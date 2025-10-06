@@ -39,6 +39,7 @@ export const ModalePropositionValeurAvancementV2: FunctionComponent<{
       codeInsee: territoireCodeInsee,
       nom: territoireNom,
     },
+    configurationFeatureFlipping,
   } = useBlocIndicateurContext();
 
   const handleMoisValeurAvancementBlur = () => {
@@ -220,7 +221,8 @@ export const ModalePropositionValeurAvancementV2: FunctionComponent<{
                       </div>
                     </div>
                   </div>
-                  {!estUneModificationDeProposition && (
+                  {configurationFeatureFlipping.pvaValeurDifferente &&
+                  !estUneModificationDeProposition ? (
                     <div className="fr-mt-2w">
                       <label className="fr-label" htmlFor="valeurAvancement">
                         Date de la valeur d'avancement proposée
@@ -250,7 +252,7 @@ export const ModalePropositionValeurAvancementV2: FunctionComponent<{
                         )}
                       </span>
                     </div>
-                  )}
+                  ) : null}
                   {estUneModificationDeProposition ? (
                     <div className="fr-mt-2w">
                       <label className="fr-label" htmlFor="valeurAvancement">
