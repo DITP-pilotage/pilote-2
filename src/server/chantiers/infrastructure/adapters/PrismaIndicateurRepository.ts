@@ -1147,6 +1147,8 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
     return doitRetournerProposition
       ? {
           valeurAvancement: evenementPropositionLePlusRecent.valeur!,
+          dateValeurAvancement:
+            evenementPropositionLePlusRecent.date_valeur!.toISOString(),
           tauxAvancement: indicateurRow.taux_avancement_mandat_proposition_v2,
           statutTauxAvancement: statutTauxAvancement,
           tauxAvancementIntermediaire:
@@ -1192,7 +1194,7 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
       indicateurRow.indicateur_territoire_valeur_evenement.filter(
         (evenement) =>
           evenement.type_evenement.startsWith("PROPOSITION_VALEUR_") &&
-          toISODate(evenement.date_valeur) ===
+          toISODate(evenement.date_valeur) >=
             toISODate(dateValeurAvancementLaPlusRecente),
       );
 

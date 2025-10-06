@@ -1,8 +1,9 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useSession } from "next-auth/react";
-import { validationPropositionValeurAvancement } from "@/validation/proposition-valeur-avancement";
+import { z } from "zod";
+import { LIMITE_CARACTERES_DOCUMENTATION_PROPOSITION } from "@/validation/proposition-valeur-avancement";
 import api from "@/server/infrastructure/api/trpc/api";
 import { récupérerUnCookie } from "@/client/utils/cookies";
 import { useBlocIndicateurContext } from "@/components/PageChantier/useBlocIndicateurContext";
@@ -11,19 +12,59 @@ import {
   estPropositionModifiee,
 } from "@/components/_commons/IndicateursChantier/Bloc/utils";
 
-interface PropositionValeurAvancementForm {
-  valeurAvancement: string;
-  motifProposition: string;
-  sourceDonneeEtMethodeCalcul: string;
-  dateValeurAvancement: string;
-  indicId: string;
-  territoireCode: string;
-}
-
 export enum EtapePropositionValeurAvancement {
   SAISIE_VALEUR_ACTUELLE = "SAISIE_VALEUR_ACTUELLE",
   VALIDATION_VALEUR_ACTUELLE = "VALIDATION_VALEUR_ACTUELLE",
 }
+
+export const estChampMoisValide = (value: string) =>
+  new RegExp(/^(0?[1-9]|1[0-2])\/\d{4}$/).test(value);
+
+export const reformatterChampsMois = (value: string) => {
+  const [mois, annee] = value.split("/");
+  return `${mois.padStart(2, "0")}/${annee}`;
+};
+
+const baseFormSchema = z.object({
+  valeurAvancement: z
+    .string()
+    .refine(
+      (value) => new RegExp(/^-?\d+$|^-?\d+([,.])\d+$/).test(value),
+      "Le champ doit être un nombre",
+    ),
+  motifProposition: z
+    .string()
+    .max(
+      LIMITE_CARACTERES_DOCUMENTATION_PROPOSITION,
+      "La limite maximale de 500 caractères a été dépassée",
+    )
+    .refine(
+      (value) => value && new RegExp(/^\w.*$/).test(value),
+      "Veuillez saisir un motif de proposition",
+    ),
+  moisValeurAvancement: z
+    .string()
+    .refine(
+      (value) => estChampMoisValide(value),
+      "Le champ doit être au format MM/YYYY",
+    )
+    .refine((value) => {
+      const [mois, annee] = value.split("/").map(Number);
+      const date = new Date(annee, mois - 1);
+      const now = new Date();
+      return date <= now;
+    }, "La date de la proposition doit être antérieure ou égale à la date du jour"),
+  sourceDonneeEtMethodeCalcul: z
+    .string()
+    .max(
+      LIMITE_CARACTERES_DOCUMENTATION_PROPOSITION,
+      "La limite maximale de 500 caractères a été dépassée",
+    ),
+  indicId: z.string(),
+  territoireCode: z.string(),
+});
+
+type PropositionValeurAvancementForm = z.infer<typeof baseFormSchema>;
 
 export const Stepper: Record<
   EtapePropositionValeurAvancement[keyof EtapePropositionValeurAvancement &
@@ -44,6 +85,22 @@ export const Stepper: Record<
     titre: "Validation de la proposition",
     etapeSuivante: null,
   },
+};
+
+const estMoisAvant = (mois1: string, mois2: string) => {
+  const partsMois1 = mois1.split("/");
+  const partsMois2 = mois2.split("/");
+
+  return (
+    `${partsMois1[1]}-${partsMois1[0]}-01` <=
+    `${partsMois2[1]}-${partsMois2[0]}-01`
+  );
+};
+
+const formatterMois = (date: string) => {
+  const annee = new Date(date).getFullYear();
+  const mois = new Date(date).getMonth() + 1;
+  return `${mois.toString().padStart(2, "0")}/${annee}`;
 };
 
 const useModalePropositionValeurAvancementV2 = () => {
@@ -81,11 +138,12 @@ const useModalePropositionValeurAvancementV2 = () => {
     estUneModification: boolean,
     data: PropositionValeurAvancementForm,
   ) => {
+    const [mois, annee] = data.moisValeurAvancement.split("/");
     const inputs = {
       csrf: récupérerUnCookie("csrf") ?? "",
       ...data,
       valeurAvancement: data.valeurAvancement,
-      dateValeurAvancement: data.dateValeurAvancement!,
+      dateValeurAvancement: `${annee}-${mois}-01T00:00:00.000Z`,
       indicId: indicateur.id,
       territoireCode,
     };
@@ -101,9 +159,28 @@ const useModalePropositionValeurAvancementV2 = () => {
     estPropositionCreee(detailIndicateurDuTerritoire) ||
     estPropositionModifiee(detailIndicateurDuTerritoire);
 
+  const moisDateValeurAvancementMandat = formatterMois(
+    detailIndicateurDuTerritoire.dateValeurAvancementMandat!,
+  );
+
+  const formSchema = useMemo(() => {
+    return baseFormSchema.refine(
+      (obj) => {
+        return estMoisAvant(
+          moisDateValeurAvancementMandat,
+          obj.moisValeurAvancement,
+        );
+      },
+      {
+        path: ["moisValeurAvancement"],
+        message:
+          "La date de la proposition doit être supérieure à la dernière date de valeur d'avancement",
+      },
+    );
+  }, [moisDateValeurAvancementMandat]);
   const reactHookForm = useForm<PropositionValeurAvancementForm>({
     mode: "all",
-    resolver: zodResolver(validationPropositionValeurAvancement),
+    resolver: zodResolver(formSchema),
     defaultValues:
       detailIndicateurDuTerritoire.proposition &&
       estUneModificationDeProposition
@@ -114,8 +191,9 @@ const useModalePropositionValeurAvancementV2 = () => {
             sourceDonneeEtMethodeCalcul:
               detailIndicateurDuTerritoire.proposition
                 .sourceDonneeEtMethodeCalcul || "",
-            dateValeurAvancement:
-              detailIndicateurDuTerritoire.dateValeurAvancementMandat!,
+            moisValeurAvancement: formatterMois(
+              detailIndicateurDuTerritoire.proposition.dateValeurAvancement,
+            ),
             indicId: indicateur.id,
             territoireCode,
           }
@@ -123,8 +201,7 @@ const useModalePropositionValeurAvancementV2 = () => {
             valeurAvancement: `${detailIndicateurDuTerritoire.valeurAvancementMandat}`,
             motifProposition: "",
             sourceDonneeEtMethodeCalcul: "",
-            dateValeurAvancement:
-              detailIndicateurDuTerritoire.dateValeurAvancementMandat!,
+            moisValeurAvancement: moisDateValeurAvancementMandat,
             indicId: indicateur.id,
             territoireCode,
           },

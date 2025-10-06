@@ -17,7 +17,8 @@ WITH get_val_jalons AS (
         h.vcg,
         h.vcg_date,
         prop.valeur_actuelle_proposee AS vacp,
-        prop_v2.valeur_avancement_proposee as vacp_v2
+        prop_v2.valeur_avancement_proposee as vacp_v2,
+        prop_v2.date_valeur_avancement as date_valeur_proposition_v2
     FROM {{ ref('stg_ppg_metadata__zones') }} AS zones
     CROSS JOIN {{ ref('stg_ppg_metadata__indicateurs') }} AS meta_indic
     CROSS JOIN {{ ref('jalons_a_etudier') }} as jalons
@@ -55,7 +56,7 @@ WITH get_val_jalons AS (
         ON
             meta_indic.id = prop_v2.indic_id
             AND zones.id = prop_v2.zone_id
-            AND prop_v2.date_valeur_avancement::date = a.date_vaca::date
+            AND jalons.jalon >= EXTRACT(YEAR FROM prop_v2.date_valeur_avancement) 
 
 ),
 

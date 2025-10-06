@@ -4,7 +4,7 @@ import { PrismaIndicateurTerritoireValeurEvenementRepository } from "@/server/in
 import { PrismaMesureIndicateurRepository } from "@/server/indicateur-territoire-valeur-evenement/infrastructure/PrismaMesureIndicateurRepository";
 import { MesureIndicateurRepository } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/MesureIndicateurRepository";
 import { IndicateurTerritoireValeurEvenementRepository } from "./domain/ports/IndicateurTerritoireValeurEvenementRepository";
-import { CreerIndicateurTerritoireValeurEvenementUseCase } from "./usecases/CreerIndicateurTerritoireValeurEvenementUseCase";
+import { CreerPropositionValeurAvancementUseCase } from "./usecases/CreerPropositionValeurAvancementUseCase";
 import { AccepterPropositionValeurAvancementUseCase } from "./usecases/AccepterPropositionValeurAvancementUseCase";
 import { RefuserPropositionValeurAvancementUseCase } from "./usecases/RefuserPropositionValeurAvancementUseCase";
 import { ModifierPropositionValeurAvancementUseCase } from "./usecases/ModifierPropositionValeurAvancementUseCase";
@@ -19,7 +19,7 @@ export type IndicateurTerritoireValeurEvenementDependencies = {
   indicateurTerritoireValeurEvenementRepository: IndicateurTerritoireValeurEvenementRepository;
   mesureIndicateurRepository: MesureIndicateurRepository;
   indicateurRepository: IndicateurRepository;
-  creerIndicateurTerritoireValeurEvenementUseCase: CreerIndicateurTerritoireValeurEvenementUseCase;
+  creerPropositionValeurAvancementUseCase: CreerPropositionValeurAvancementUseCase;
   accepterPropositionValeurAvancementUseCase: AccepterPropositionValeurAvancementUseCase;
   refuserPropositionValeurAvancementUseCase: RefuserPropositionValeurAvancementUseCase;
   accuserReceptionPropositionValeurUseCase: AccuserReceptionPropositionValeurUseCase;
@@ -41,8 +41,8 @@ export const getIndicateurTerritoireValeurEvenementContainer = (
       ),
       mesureIndicateurRepository: asClass(PrismaMesureIndicateurRepository),
       indicateurRepository: asClass(PrismaIndicateurRepository),
-      creerIndicateurTerritoireValeurEvenementUseCase: asClass(
-        CreerIndicateurTerritoireValeurEvenementUseCase,
+      creerPropositionValeurAvancementUseCase: asClass(
+        CreerPropositionValeurAvancementUseCase,
       ),
       accepterPropositionValeurAvancementUseCase: asClass(
         AccepterPropositionValeurAvancementUseCase,

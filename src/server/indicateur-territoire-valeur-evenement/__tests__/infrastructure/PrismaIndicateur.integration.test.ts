@@ -121,4 +121,109 @@ describe("PrismaIndicateurRepository", () => {
       ).toBeNull();
     });
   });
+
+  describe("#getDerniereDateValeurAvancement", () => {
+    it("Doit retourner null quand il n'y a pas de ligne pour l'indicateur et le territoire", async () => {
+      // When
+      const result =
+        await prismaIndicateurRepository.getDateEffectiveValeurAvancement({
+          indicId: "IND-999",
+          territoireCode: "REG-99",
+        });
+
+      // Then
+      expect(result).toBeNull();
+    });
+
+    it("Doit retourner la date la plus récente quand il y a plusieurs lignes", async () => {
+      // Given
+      await prisma.chantier_identite.create({
+        data: {
+          id: "CH-002",
+          nom: "Chantier Test 2",
+        },
+      });
+
+      await prisma.chantier_territoire.create({
+        data: {
+          id: "CH-002",
+          territoire_code: "REG-02",
+          maille: "REG",
+          code_insee: "02",
+          zone_id: "R02",
+        },
+      });
+
+      await prisma.indicateur_identite.create({
+        data: {
+          id: "IND-002",
+          nom: "Indicateur Test 2",
+          est_barometre: false,
+          est_phare: false,
+          chantier_identite: {
+            connect: {
+              id: "CH-002",
+            },
+          },
+        },
+      });
+
+      await prisma.indicateur_territoire.create({
+        data: {
+          id: "IND-002",
+          chantier_id: "CH-002",
+          maille: "REG",
+          territoire_code: "REG-02",
+          code_insee: "02",
+          zone_id: "R02",
+        },
+      });
+
+      const dateAncienne = new Date("2024-01-15");
+      const dateMilieu = new Date("2024-06-15");
+      const dateRecente = new Date("2024-12-15");
+
+      await prisma.indicateur_territoire_jalon.createMany({
+        data: [
+          {
+            id: "IND-002",
+            maille: "REG",
+            territoire_code: "REG-02",
+            code_insee: "02",
+            zone_id: "R02",
+            jalon: 2024,
+            date_valeur_actuelle: dateAncienne,
+          },
+          {
+            id: "IND-002",
+            maille: "REG",
+            territoire_code: "REG-02",
+            code_insee: "02",
+            zone_id: "R02",
+            jalon: 2025,
+            date_valeur_actuelle: dateRecente,
+          },
+          {
+            id: "IND-002",
+            maille: "REG",
+            territoire_code: "REG-02",
+            code_insee: "02",
+            zone_id: "R02",
+            jalon: 2026,
+            date_valeur_actuelle: dateMilieu,
+          },
+        ],
+      });
+
+      // When
+      const result =
+        await prismaIndicateurRepository.getDateEffectiveValeurAvancement({
+          indicId: "IND-002",
+          territoireCode: "REG-02",
+        });
+
+      // Then
+      expect(result).toEqual(dateRecente);
+    });
+  });
 });

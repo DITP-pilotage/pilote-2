@@ -1,14 +1,9 @@
 import { Avancement } from "@/server/domain/chantier/avancement/Avancement.interface";
 import { CodeInsee } from "@/server/domain/territoire/Territoire.interface";
-import { Maille } from "@/server/domain/maille/Maille.interface";
 import { DetailsIndicateur } from "@/server/chantiers/domain/DetailsIndicateurs";
 import Indicateur from "./Indicateur.interface";
 
 export type DétailsIndicateurTerritoire = Record<CodeInsee, DétailsIndicateur>;
-export type DétailsIndicateurMailles = Record<
-  Maille,
-  DétailsIndicateurTerritoire
->;
 export type DétailsIndicateurs = Record<
   Indicateur["id"],
   DétailsIndicateurTerritoire
@@ -16,6 +11,7 @@ export type DétailsIndicateurs = Record<
 
 interface DetailIndicateurPropositionValeurAvancement {
   valeurAvancement: number;
+  dateValeurAvancement: string;
   tauxAvancement: number | null;
   statutTauxAvancement: "CALCULE" | "EN_COURS";
   tauxAvancementIntermediaire: number | null;
