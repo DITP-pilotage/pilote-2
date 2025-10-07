@@ -4,7 +4,13 @@ import { useFormEvaluation } from "@/components/PageEvaluation/form";
 import { Icone } from "@/components/_commons/Icone";
 import { AddLineIcon } from "@/components/_commons/Icones/AddLineIcon";
 
-export function Commentaire({ name }: { name: string }) {
+export function Commentaire({
+  name,
+}: {
+  name:
+    | `criteres.${number}.sousCriteres.${number}.commentaire`
+    | `objectifs.${number}.commentaire`;
+}) {
   const [displayComment, setDisplayComment] = useState(false);
   const form = useFormEvaluation();
 

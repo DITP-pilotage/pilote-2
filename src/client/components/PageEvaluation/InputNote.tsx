@@ -2,8 +2,15 @@ import { Controller } from "react-hook-form";
 import { useFormEvaluation } from "@/components/PageEvaluation/form";
 import { clsxm } from "@/utils/clsxm";
 
-export function InputNote({ name }: { name: string }) {
+export function InputNote({
+  name,
+}: {
+  name:
+    | `criteres.${number}.sousCriteres.${number}.note`
+    | `objectifs.${number}.note`;
+}) {
   const form = useFormEvaluation();
+
   return (
     <Controller
       control={form.control}
@@ -20,6 +27,7 @@ export function InputNote({ name }: { name: string }) {
             type="number"
             {...field}
             onChange={(e) => field.onChange(e.target.valueAsNumber)}
+            value={field.value?.toString() ?? ""}
           />
           <span className="px-2 flex items-center font-semibold text-sm py-2 border-l border-gray-200">
             %

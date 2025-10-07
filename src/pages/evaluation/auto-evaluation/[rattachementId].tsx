@@ -93,20 +93,7 @@ const AutoEvaluationPage = (
         </Head>
 
         <div className="min-h-[60vh] relative">
-          <form
-            className="bg-white mx-auto w-full max-w-4xl"
-            id={formId}
-            onSubmit={handleSubmit}
-          >
-            <header className="p-4 bg-dsfr-blue-france-925 border-b-2 border-black">
-              <span className="font-bold text-sm">Mon auto-évaluation</span>
-            </header>
-            <FormProvider {...form}>
-              {etape === "criteres" && <EtapeCriteres />}
-              {etape === "objectifs" && <EtapeObjectifs />}
-            </FormProvider>
-          </form>
-          <footer className="sticky top-0 bg-white mb-6">
+          <div className="sticky top-0 bg-white mb-6">
             <div className="flex items-center justify-between mt-4 mx-auto w-full max-w-4xl px-2 py-4">
               <span className="italic text-sm">
                 Dernière modification :{" "}
@@ -122,7 +109,7 @@ const AutoEvaluationPage = (
                   iconRight={
                     <Icone className="text-current" icone={ArrowLine1Icon} />
                   }
-                  label="Objectitfs"
+                  label="Objectifs"
                   type="submit"
                 />
               )}
@@ -140,7 +127,20 @@ const AutoEvaluationPage = (
                 </div>
               )}
             </div>
-          </footer>
+          </div>
+          <form
+            className="bg-white mx-auto w-full max-w-4xl"
+            id={formId}
+            onSubmit={handleSubmit}
+          >
+            <header className="p-4 bg-dsfr-blue-france-925 border-b-2 border-black">
+              <span className="font-bold text-sm">Mon auto-évaluation</span>
+            </header>
+            <FormProvider {...form}>
+              {etape === "criteres" && <EtapeCriteres />}
+              {etape === "objectifs" && <EtapeObjectifs />}
+            </FormProvider>
+          </form>
         </div>
       </main>
     </pageEvaluation.ServerSidePropsProvider>
