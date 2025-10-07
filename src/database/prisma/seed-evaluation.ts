@@ -3,6 +3,8 @@ import {
   referentiel_sous_critere,
   referentiel_rattachement,
   referentiel_objectif,
+  fiche_evaluation,
+  etape_evaluation,
 } from "@prisma/client";
 import { prisma } from "@/server/db/prisma";
 
@@ -210,6 +212,33 @@ async function run() {
       update: objectif,
     });
   }
+
+  const ficheEvaluation: fiche_evaluation = {
+    id: "d66e07e2-cabf-41d9-9bf9-75829df8b3ad",
+    jalon: 2024,
+    etape_courante: "AUTO_EVALUATION",
+    rattachement_code: "REG-75",
+    created_at: new Date(),
+    updated_at: new Date(),
+  };
+  await prisma.fiche_evaluation.upsert({
+    where: { id: ficheEvaluation.id },
+    create: ficheEvaluation,
+    update: ficheEvaluation,
+  });
+
+  const etapeEvaluation: etape_evaluation = {
+    id: "e868c426-33c3-4d30-94ef-559c28386c28",
+    fiche_evaluation_id: ficheEvaluation.id,
+    type: "AUTO_EVALUATION",
+    created_at: new Date(),
+    updated_at: new Date(),
+  };
+  await prisma.etape_evaluation.upsert({
+    where: { id: etapeEvaluation.id },
+    create: etapeEvaluation,
+    update: etapeEvaluation,
+  });
 }
 
 run();

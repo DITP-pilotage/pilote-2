@@ -808,7 +808,7 @@ model fiche_evaluation {
   rattachement      referentiel_rattachement @relation(fields: [rattachement_code], references: [code], onDelete: Cascade, onUpdate: Cascade)
   created_at        DateTime                 @default(now())
   updated_at        DateTime                 @updatedAt
-  etape_evaluation  etape_evaluation[]
+  etape_evaluations etape_evaluation[]
 
   @@unique([rattachement_code, jalon])
   @@schema("public")
