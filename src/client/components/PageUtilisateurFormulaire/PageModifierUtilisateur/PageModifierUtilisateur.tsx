@@ -1,16 +1,12 @@
-import { FunctionComponent } from "react";
 import UtilisateurFormulaire from "@/components/PageUtilisateurFormulaire/UtilisateurFormulaire/UtilisateurFormulaire";
 import FilAriane from "@/client/components/_commons/FilAriane/FilAriane";
-import Utilisateur from "@/server/domain/utilisateur/Utilisateur.interface";
+import { pageModifierUtilisateur } from "@/components/PageUtilisateurFormulaire/PageModifierUtilisateur/PageModifierUtilisateurServerSideContext";
 import PageModifierUtilisateurStyled from "./PageModifierUtilisateur.styled";
 
-interface PageModifierUtilisateurProps {
-  utilisateur: Utilisateur;
-}
+const PageModifierUtilisateur = () => {
+  const { utilisateur, estAutoriseAVoirLeSelecteurApplication } =
+    pageModifierUtilisateur.useServerSidePropsContext();
 
-const PageModifierUtilisateur: FunctionComponent<
-  PageModifierUtilisateurProps
-> = ({ utilisateur }) => {
   const chemin = [{ nom: "Gestion des comptes", lien: "/admin/utilisateurs" }];
 
   return (
@@ -18,7 +14,12 @@ const PageModifierUtilisateur: FunctionComponent<
       <main className="fr-container">
         <FilAriane chemin={chemin} libelléPageCourante="Modifier un compte" />
         <div className="fr-pb-4w">
-          <UtilisateurFormulaire utilisateur={utilisateur} />
+          <UtilisateurFormulaire
+            estAutoriseAVoirLeSelecteurApplication={
+              estAutoriseAVoirLeSelecteurApplication
+            }
+            utilisateur={utilisateur}
+          />
         </div>
       </main>
     </PageModifierUtilisateurStyled>

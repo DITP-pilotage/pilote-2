@@ -26,77 +26,16 @@ import {
   profilsRégionaux,
   Utilisateur,
 } from "@/server/gestion-utilisateur/domain/Utilisateur.interface";
-import { UtilisateurÀCréerOuMettreÀJourSansHabilitation } from "@/server/domain/utilisateur/Utilisateur.interface";
+import {
+  ApplicationAccessible,
+  UtilisateurÀCréerOuMettreÀJourSansHabilitation,
+} from "@/server/domain/utilisateur/Utilisateur.interface";
 
 import { PilotePrismaClient } from "@/server/db/PrismaTransaction";
 
 interface Dependencies {
   prisma: PrismaPilote;
 }
-
-const convertirEnModel = (utilisateurAConvertir: {
-  email: string;
-  nom: string;
-  prenom: string;
-  profilCode: string;
-  fonction: string | null;
-  auteurIdModification: string;
-  dateModification: Date;
-  auteurIdCreation: string;
-  dateCreation: Date;
-}): Omit<
-  PrismaUtilisateurModel,
-  | "id"
-  | "auteur_email_creation"
-  | "auteur_email_modification"
-  | "date_desactivation"
-  | "date_visualisation_video_accueil"
-  | "date_visualisation_popup_infolettre"
-  | "date_inscription_infolettre"
-> => {
-  return {
-    email: utilisateurAConvertir.email,
-    nom: utilisateurAConvertir.nom,
-    prenom: utilisateurAConvertir.prenom,
-    profilCode: utilisateurAConvertir.profilCode,
-    fonction: utilisateurAConvertir.fonction,
-    auteur_id_modification: utilisateurAConvertir.auteurIdModification,
-    date_modification: utilisateurAConvertir.dateModification,
-    auteur_id_creation: utilisateurAConvertir.auteurIdCreation,
-    date_creation: utilisateurAConvertir.dateCreation,
-  };
-};
-
-const convertirEnModelModification = (utilisateurAConvertir: {
-  email: string;
-  nom: string;
-  prenom: string;
-  profilCode: string;
-  fonction: string | null;
-  auteurIdModification: string;
-  dateModification: Date;
-}): Omit<
-  PrismaUtilisateurModel,
-  | "id"
-  | "auteur_id_creation"
-  | "date_creation"
-  | "auteur_email_creation"
-  | "auteur_email_modification"
-  | "date_desactivation"
-  | "date_visualisation_video_accueil"
-  | "date_visualisation_popup_infolettre"
-  | "date_inscription_infolettre"
-> => {
-  return {
-    email: utilisateurAConvertir.email,
-    nom: utilisateurAConvertir.nom,
-    prenom: utilisateurAConvertir.prenom,
-    profilCode: utilisateurAConvertir.profilCode,
-    fonction: utilisateurAConvertir.fonction,
-    auteur_id_modification: utilisateurAConvertir.auteurIdModification,
-    date_modification: utilisateurAConvertir.dateModification,
-  };
-};
 
 const récupérerChantiersParDéfaut = (
   profilUtilisateur: PrismaProfilModel,
@@ -965,6 +904,8 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
           utilisateurBrut.profil,
         ),
         habilitations: habilitations,
+        applicationsAccessibles:
+          utilisateurBrut.applications_accessibles as ApplicationAccessible[],
         dateDesactivation:
           utilisateurBrut.date_desactivation?.toISOString() ?? null,
       };
@@ -989,26 +930,28 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
     auteurId: string,
   ): Promise<void> {
     const utilisateurCrééOuMisÀJour = await this.prisma.utilisateur.upsert({
-      create: convertirEnModel({
+      create: {
         email: utilisateur.email.toLocaleLowerCase(),
         nom: utilisateur.nom,
         prenom: utilisateur.prénom,
         profilCode: utilisateur.profil,
         fonction: utilisateur.fonction,
-        auteurIdCreation: auteurId,
-        dateCreation: new Date(),
-        auteurIdModification: auteurId,
-        dateModification: new Date(),
-      }),
-      update: convertirEnModelModification({
+        applications_accessibles: utilisateur.applicationsAccessibles,
+        auteur_id_modification: auteurId,
+        date_modification: new Date(),
+        auteur_id_creation: auteurId,
+        date_creation: new Date(),
+      },
+      update: {
         email: utilisateur.email.toLocaleLowerCase(),
         nom: utilisateur.nom,
         prenom: utilisateur.prénom,
         profilCode: utilisateur.profil,
         fonction: utilisateur.fonction,
-        auteurIdModification: auteurId,
-        dateModification: new Date(),
-      }),
+        applications_accessibles: utilisateur.applicationsAccessibles,
+        auteur_id_modification: auteurId,
+        date_modification: new Date(),
+      },
       where: {
         email: utilisateur.email.toLowerCase(),
       },

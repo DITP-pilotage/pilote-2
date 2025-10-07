@@ -12,6 +12,7 @@ import RécapitulatifUtilisateur from "@/components/PageUtilisateurFormulaire/Ut
 import api from "@/server/infrastructure/api/trpc/api";
 import { Icone } from "@/components/_commons/Icone";
 import { ArrowLine3Icon } from "@/components/_commons/Icones/ArrowLine3Icon";
+import { ApplicationAccessible } from "@/server/domain/utilisateur/Utilisateur.interface";
 import {
   UtilisateurFormInputs,
   UtilisateurFormulaireProps,
@@ -20,6 +21,7 @@ import SaisieDesInformationsUtilisateur from "./SaisieDesInformationsUtilisateur
 
 const UtilisateurFormulaire: FunctionComponent<UtilisateurFormulaireProps> = ({
   utilisateur,
+  estAutoriseAVoirLeSelecteurApplication,
 }) => {
   const étapes = [
     "Identifier l'utilisateur",
@@ -47,6 +49,9 @@ const UtilisateurFormulaire: FunctionComponent<UtilisateurFormulaireProps> = ({
       profil: utilisateur?.profil,
       gestionUtilisateur: utilisateur?.gestionUtilisateur,
       saisieIndicateur: utilisateur?.saisieIndicateur,
+      applicationsAccessibles: utilisateur
+        ? utilisateur?.applicationsAccessibles
+        : [ApplicationAccessible.PILOTE],
       habilitations: {
         lecture: {
           chantiers: utilisateur?.habilitations.lecture.chantiers,
@@ -107,7 +112,12 @@ const UtilisateurFormulaire: FunctionComponent<UtilisateurFormulaireProps> = ({
           <FormProvider {...reactHookForm}>
             <form onSubmit={reactHookForm.handleSubmit(passerAuRécapitulatif)}>
               {etapeCourante === 1 && (
-                <SaisieDesInformationsUtilisateur utilisateur={utilisateur} />
+                <SaisieDesInformationsUtilisateur
+                  estAutoriseAVoirLeSelecteurApplication={
+                    estAutoriseAVoirLeSelecteurApplication
+                  }
+                  utilisateur={utilisateur}
+                />
               )}
               {etapeCourante === 2 && (
                 <RécapitulatifUtilisateur

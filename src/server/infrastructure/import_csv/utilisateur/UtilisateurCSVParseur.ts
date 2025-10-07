@@ -2,6 +2,7 @@ import { Options, parse } from "csv-parse/sync";
 import fs from "node:fs";
 import assert from "node:assert/strict";
 import {
+  ApplicationAccessible,
   ProfilCode,
   UtilisateurÀCréerOuMettreÀJourSansHabilitation,
 } from "@/server/domain/utilisateur/Utilisateur.interface";
@@ -126,6 +127,7 @@ export default class UtilisateurCSVParseur {
       fonction: null,
       saisieIndicateur: true,
       gestionUtilisateur: true,
+      applicationsAccessibles: [ApplicationAccessible.PILOTE],
       habilitations: {
         lecture: this._générerUneHabilitation(),
         saisieCommentaire: this._générerUneHabilitation(),

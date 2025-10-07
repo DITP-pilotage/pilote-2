@@ -4,6 +4,7 @@ import PérimètreMinistériel from "@/server/domain/périmètreMinistériel/Pé
 import { Territoire } from "@/server/domain/territoire/Territoire.interface";
 import { HabilitationsÀCréerOuMettreÀJourCalculées } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
 import {
+  ApplicationAccessible,
   profilsCodes,
   UtilisateurÀCréerOuMettreÀJour,
 } from "./Utilisateur.interface";
@@ -153,6 +154,7 @@ export default class UtilisateurÀCréerOuMettreÀJourBuilder {
       fonction: this._fonction,
       saisieIndicateur: this._saisieIndicateur,
       gestionUtilisateur: this._gestionUtilisateur,
+      applicationsAccessibles: [ApplicationAccessible.PILOTE],
       habilitations: this._habilitations,
     };
   }

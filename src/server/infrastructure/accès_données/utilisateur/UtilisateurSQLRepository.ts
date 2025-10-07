@@ -8,6 +8,7 @@ import {
   utilisateur,
 } from "@prisma/client";
 import Utilisateur, {
+  ApplicationAccessible,
   ProfilCode,
   profilsDépartementaux,
   profilsRégionaux,
@@ -26,38 +27,6 @@ import { Territoire } from "@/server/domain/territoire/Territoire.interface";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
 import { prisma } from "@/server/db/prisma";
 import { configuration } from "@/config";
-import { convertirEnModel } from "@/server/infrastructure/accès_données/utilisateur/ConvertirUtilisateurEnUtilisateurModel";
-
-export const convertirEnModelModification = (utilisateurAConvertir: {
-  email: string;
-  nom: string;
-  prenom: string;
-  profilCode: string;
-  fonction: string | null;
-  auteurIdModification: string;
-  dateModification: Date;
-}): Omit<
-  utilisateur,
-  | "id"
-  | "auteur_id_creation"
-  | "date_creation"
-  | "auteur_email_creation"
-  | "auteur_email_modification"
-  | "date_desactivation"
-  | "date_visualisation_video_accueil"
-  | "date_visualisation_popup_infolettre"
-  | "date_inscription_infolettre"
-> => {
-  return {
-    email: utilisateurAConvertir.email,
-    nom: utilisateurAConvertir.nom,
-    prenom: utilisateurAConvertir.prenom,
-    profilCode: utilisateurAConvertir.profilCode,
-    fonction: utilisateurAConvertir.fonction,
-    auteur_id_modification: utilisateurAConvertir.auteurIdModification,
-    date_modification: utilisateurAConvertir.dateModification,
-  };
-};
 
 // TODO: TOUT TESTEEEEER
 export class UtilisateurSQLRepository implements UtilisateurRepository {
@@ -282,26 +251,26 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
     auteurId: string,
   ): Promise<void> {
     const utilisateurCrééOuMisÀJour = await prisma.utilisateur.upsert({
-      create: convertirEnModel({
+      create: {
         email: u.email.toLocaleLowerCase(),
         nom: u.nom,
         prenom: u.prénom,
         profilCode: u.profil,
         fonction: u.fonction,
-        auteurIdCreation: auteurId,
-        dateCreation: new Date(),
-        auteurIdModification: auteurId,
-        dateModification: new Date(),
-      }),
-      update: convertirEnModelModification({
+        auteur_id_creation: auteurId,
+        date_creation: new Date(),
+        auteur_id_modification: auteurId,
+        date_modification: new Date(),
+      },
+      update: {
         email: u.email.toLocaleLowerCase(),
         nom: u.nom,
         prenom: u.prénom,
         profilCode: u.profil,
         fonction: u.fonction,
-        auteurIdModification: auteurId,
-        dateModification: new Date(),
-      }),
+        auteur_id_modification: auteurId,
+        date_modification: new Date(),
+      },
       where: {
         email: u.email.toLowerCase(),
       },
@@ -603,6 +572,8 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
         habilitations,
         utilisateurBrut.profil,
       ),
+      applicationsAccessibles:
+        utilisateurBrut.applications_accessibles as ApplicationAccessible[],
       habilitations: habilitations,
       dateDesactivation:
         utilisateurBrut.date_desactivation?.toISOString() ?? null,

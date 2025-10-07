@@ -20,6 +20,10 @@ import {
   getFicheConducteurContainer,
 } from "@/server/fiche-conducteur/container";
 import {
+  getPiloteEvalContainer,
+  PiloteEvalDependencies,
+} from "@/server/evaluation/container";
+import {
   GestionUtilisateurDependencies,
   getGestionUtilisateurContainer,
 } from "./gestion-utilisateur/container";
@@ -46,6 +50,7 @@ export type ContainerDependencies = {
   ficheConducteur: AwilixContainer<FicheConducteurDependencies>;
   parametrageNouveautes: AwilixContainer<ParametrageNouveautesDependencies>;
   indicateurTerritoireValeurEvenement: AwilixContainer<IndicateurTerritoireValeurEvenementDependencies>;
+  piloteEval: AwilixContainer<PiloteEvalDependencies>;
 };
 
 function registerContainer(): ContainerDependencies {
@@ -79,6 +84,7 @@ function registerContainer(): ContainerDependencies {
       getIndicateurTerritoireValeurEvenementContainer(
         initialContainerWithTransversalDependencies,
       ),
+    piloteEval: getPiloteEvalContainer(),
   };
 }
 

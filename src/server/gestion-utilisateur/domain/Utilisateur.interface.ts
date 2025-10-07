@@ -1,4 +1,5 @@
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
+import { ApplicationAccessible } from "@/server/domain/utilisateur/Utilisateur.interface";
 import {
   Habilitations,
   HabilitationsÀCréerOuMettreÀJour,
@@ -51,6 +52,7 @@ export type Utilisateur = {
   saisieIndicateur: boolean;
   saisieCommentaire: boolean;
   gestionUtilisateur: boolean;
+  applicationsAccessibles: ApplicationAccessible[];
   habilitations: Habilitations;
   dateDesactivation: string | null;
 };
@@ -64,5 +66,6 @@ export type UtilisateurÀCréerOuMettreÀJour = {
   saisieIndicateur: boolean;
   saisieCommentaire: boolean;
   gestionUtilisateur: boolean;
+  applicationsAccessibles: ApplicationAccessible[];
   habilitations: HabilitationsÀCréerOuMettreÀJour;
 };

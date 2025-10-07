@@ -20,6 +20,7 @@ import { getQueryParamString } from "@/client/utils/getQueryParamString";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
 import { BoutonContacterEquipePilote } from "@/components/PageAccueil/BoutonContacterEquipePilote";
 import { BoutonSeConnecter } from "@/components/_commons/BoutonSeConnecter";
+import { ApplicationAccessible } from "@/server/domain/utilisateur/Utilisateur.interface";
 
 const fermerLaModaleDuMenu = () => {
   if (typeof window.dsfr === "function") {
@@ -46,6 +47,12 @@ const estAutoriséAAccéderALaGestionDesComptes = (session: Session | null) => {
 const estAdministrateurOuPilotage = (session: Session) => {
   return [ProfilEnum.DITP_ADMIN, ProfilEnum.DITP_PILOTAGE].includes(
     session?.profil,
+  );
+};
+
+const estAutoriseAAccederAPiloteEval = (session: Session) => {
+  return session.applicationsAccessibles.includes(
+    ApplicationAccessible.PILOTE_EVAL,
   );
 };
 
@@ -161,6 +168,14 @@ const Navigation: FunctionComponent<{}> = () => {
         estAdministrateurOuPilotage(session!),
       prefetch: false,
       target: "_blank",
+    },
+    {
+      nom: "Évaluation",
+      lien: "/evaluation",
+      matcher: "/evaluation",
+      accessible: estAutoriseAAccederAPiloteEval(session!),
+      prefetch: true,
+      target: "_self",
     },
   ];
 

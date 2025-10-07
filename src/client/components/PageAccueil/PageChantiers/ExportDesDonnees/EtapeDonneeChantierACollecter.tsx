@@ -54,7 +54,7 @@ export const EtapeDonneeChantierACollecter = () => {
           libellé="afficher le détail"
         />
       </div>
-      <div className="fr-fieldset__element fr-pl-0 fr-pb-2w border-b-2">
+      <div className="fr-fieldset__element fr-pl-0 fr-pb-2w border-b">
         <h3 className="fr-text--md underline fr-mb-1w">DÉFINITION</h3>
         <div className="fr-checkbox-group">
           <input
@@ -159,7 +159,7 @@ export const EtapeDonneeChantierACollecter = () => {
           )}
         </div>
       </div>
-      <div className="fr-fieldset__element fr-pl-0 fr-pb-2w border-b-2">
+      <div className="fr-fieldset__element fr-pl-0 fr-pb-2w border-b">
         <h3 className="fr-text--md underline fr-mb-0 fr-mt-2w">
           DONNÉES QUANTITATIVES
         </h3>

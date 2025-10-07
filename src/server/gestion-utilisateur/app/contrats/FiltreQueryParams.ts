@@ -8,8 +8,3 @@ export type FiltreQueryParams = {
   typeCompte: ("actif" | "desactive")[];
   chantiersAssociésAuxPérimètres: string[];
 };
-
-export type SortingParams = {
-  desc: boolean;
-  id: string;
-};

@@ -16,6 +16,7 @@ export const convertirEnModel = (utilisateurAConvertir: {
   | "auteur_email_creation"
   | "auteur_email_modification"
   | "date_desactivation"
+  | "applications_accessibles"
   | "date_visualisation_video_accueil"
   | "date_visualisation_popup_infolettre"
   | "date_inscription_infolettre"
