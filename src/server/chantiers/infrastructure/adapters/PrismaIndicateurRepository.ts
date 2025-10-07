@@ -112,46 +112,6 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
       : [];
   }
 
-  async supprimerPropositionValeurAvancement({
-    indicId,
-    territoireCode,
-    auteurModification,
-  }: {
-    indicId: string;
-    territoireCode: string;
-    auteurModification: string;
-  }): Promise<void> {
-    await prisma.indicateur_territoire.update({
-      where: {
-        id_territoire_code: {
-          id: indicId,
-          territoire_code: territoireCode,
-        },
-      },
-      data: {
-        motif_proposition: null,
-        date_proposition: null,
-        valeur_actuelle_proposition: null,
-        taux_avancement_mandat_proposition: null,
-        source_donnee_methode_calcul_proposition: null,
-        auteur_proposition: auteurModification,
-      },
-    });
-
-    await prisma.indicateur_territoire_jalon.update({
-      where: {
-        id_territoire_code_jalon: {
-          id: indicId,
-          territoire_code: territoireCode,
-          jalon: 2025,
-        },
-      },
-      data: {
-        taux_avancement_proposition: null,
-      },
-    });
-  }
-
   async recupererPourExports(
     chantierId: string,
     territoireCodesLecture: string[],
@@ -167,7 +127,6 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
         maille: true,
         taux_avancement_mandat: true,
         est_applicable: true,
-        nombre_propositions_valeur_actuelle: true,
         nombre_propositions_valeur_actuelle_v2: true,
         territoire: {
           select: {
@@ -264,7 +223,6 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
           select: {
             maille: true,
             territoire_code: true,
-            nombre_propositions_valeur_actuelle: true,
             nombre_propositions_valeur_actuelle_v2: true,
             meteo: true,
             taux_avancement_mandat: true,
@@ -571,7 +529,6 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
               select: {
                 maille: true,
                 territoire_code: true,
-                nombre_propositions_valeur_actuelle: true,
                 nombre_propositions_valeur_actuelle_v2: true,
                 est_applicable: true,
                 taux_avancement_mandat: true,
@@ -631,7 +588,6 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
                 ecart: true,
                 tendance: true,
                 taux_avancement_mandat: true,
-                nombre_propositions_valeur_actuelle: true,
                 nombre_propositions_valeur_actuelle_v2: true,
               },
             },

@@ -14,7 +14,6 @@ import RécupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase fro
 import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
 import DécisionStratégique from "@/server/domain/chantier/décisionStratégique/DécisionStratégique.interface";
 import Ministère from "@/server/domain/ministère/Ministère.interface";
-import { ChantierRapportDetailleContrat } from "@/server/chantiers/app/contrats/ChantierRapportDetailleContrat";
 import Alerte from "@/server/domain/alerte/Alerte";
 import RécupérerStatistiquesAvancementChantiersUseCase from "@/server/usecase/chantier/RécupérerStatistiquesAvancementChantiersUseCase";
 import {
@@ -40,6 +39,7 @@ import { RecupererRepartitionsMeteoChantiersUseCase } from "@/server/chantiers/u
 import { getAnneeDateDeBascule } from "@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getAnneeDateDeBascule";
 import { configuration } from "@/config";
 import { getContainer } from "@/server/dependances";
+import { ChantierRapportDetailleContrat } from "@/server/chantiers/app/contrats/ChantierRapportDetailleContratV2";
 
 interface NextPageRapportDétailléProps {
   chantiers: ChantierRapportDetailleContrat[];

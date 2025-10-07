@@ -2,7 +2,6 @@ import "@gouvfr/dsfr/dist/dsfr.min.css";
 import Link from "next/link";
 import { FunctionComponent } from "react";
 import Titre from "@/components/_commons/Titre/Titre";
-import { ResponsableRapportDetailleContrat } from "@/server/chantiers/app/contrats/ChantierRapportDetailleContrat";
 import { getQueryParamString } from "@/client/utils/getQueryParamString";
 import { getFiltresActifs } from "@/client/stores/useFiltresStoreNew/useFiltresStoreNew";
 import { pageChantier } from "@/components/PageChantier/PageChantierServerSideContext";
@@ -13,6 +12,7 @@ import { clsxm } from "@/utils/clsxm";
 import { ActionChantierEnTete } from "@/components/PageChantier/EnTête/ActionChantierEnTete";
 import { Icone } from "@/components/_commons/Icone";
 import { ArrowLine3Icon } from "@/components/_commons/Icones/ArrowLine3Icon";
+import { ResponsableRapportDetailleContrat } from "@/server/chantiers/app/contrats/ChantierRapportDetailleContratV2";
 import { ResponsableChantierEnTete } from "./EnTêteResponsables";
 import { ResponsabiliteChantierEnTete } from "./ResponsabiliteChantierEnTete";
 

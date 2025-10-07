@@ -1,6 +1,6 @@
 import { AvancementsStatistiquesAccueilContrat } from "@/server/chantiers/app/contrats/AvancementsStatistiquesAccueilContrat";
-import { ChantierRapportDetailleContrat } from "@/server/chantiers/app/contrats/ChantierRapportDetailleContrat";
 import { TypeAlerteChantier } from "@/server/chantiers/app/contrats/TypeAlerteChantier";
+import { ChantierRapportDetailleContrat } from "@/server/chantiers/app/contrats/ChantierRapportDetailleContratV2";
 import useVueDEnsemble from "./useVueDEnsemble";
 
 export default function usePageRapportDétaillé(

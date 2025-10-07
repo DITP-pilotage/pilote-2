@@ -6,6 +6,7 @@ source .env
 echo ">> TRUNCATE content of these tables..."
 time psql -d $DATABASE_URL -c "
 TRUNCATE TABLE
+    public.proposition_valeur_actuelle,
     public.indicateur_territoire_valeur_evenement,
     public.indicateur_territoire_jalon,
     public.indicateur_territoire,

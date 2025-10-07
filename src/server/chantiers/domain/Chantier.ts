@@ -1,14 +1,14 @@
-import { ChantierAccueilContrat } from "@/server/chantiers/app/contrats/ChantierAccueilContratNew";
-import { ChantierRapportDetailleContrat } from "@/server/chantiers/app/contrats/ChantierRapportDetailleContrat";
 import Alerte from "@/server/domain/alerte/Alerte";
 import { MeteoDisponible } from "@/server/fiche-territoriale/domain/MeteoDisponible";
 import { TypeAlerteChantier } from "@/server/chantiers/app/contrats/TypeAlerteChantier";
 import { Maille } from "@/server/domain/maille/Maille.interface";
+import { ChantierAccueilContratV2 } from "@/server/chantiers/app/contrats/ChantierAccueilContratV2";
+import { ChantierRapportDetailleContrat } from "@/server/chantiers/app/contrats/ChantierRapportDetailleContratV2";
 
 // eslint-disable-next-line unicorn/no-static-only-class
 export class Chantier {
   static recupererStatistiqueListeChantier(
-    chantiers: ChantierRapportDetailleContrat[] | ChantierAccueilContrat[],
+    chantiers: ChantierRapportDetailleContrat[] | ChantierAccueilContratV2[],
     mailleChantier: Maille,
     territoireCode: string,
   ) {

@@ -59,12 +59,6 @@ SELECT
             THEN date_pro_maj.prochaine_date_maj_jours
     END AS prochaine_date_maj_jours,
     meta_indic_parametrage.tendance,
-    a.vacp AS valeur_actuelle_proposition,
-    NULL::VARCHAR AS auteur_proposition,
-    NULL::date AS date_proposition,
-    NULL::VARCHAR AS motif_proposition,
-    NULL::VARCHAR AS source_donnee_methode_calcul_proposition,
-    NULL::NUMERIC AS taux_avancement_mandat_proposition,
     a.tap_global AS taux_avancement_mandat_proposition_v2,
     CASE
         WHEN
