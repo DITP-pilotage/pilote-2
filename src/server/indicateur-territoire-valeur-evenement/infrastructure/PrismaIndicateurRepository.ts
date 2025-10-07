@@ -20,7 +20,7 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
         },
       },
       data: {
-        taux_avancement_mandat_proposition_v2: null,
+        taux_avancement_mandat_proposition: null,
       },
     });
 
@@ -30,7 +30,7 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
         territoire_code: args.territoireCode,
       },
       data: {
-        taux_avancement_proposition_v2: null,
+        taux_avancement_proposition: null,
       },
     });
   }

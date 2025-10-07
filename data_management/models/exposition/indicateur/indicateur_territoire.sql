@@ -59,7 +59,7 @@ SELECT
             THEN date_pro_maj.prochaine_date_maj_jours
     END AS prochaine_date_maj_jours,
     meta_indic_parametrage.tendance,
-    a.tap_global AS taux_avancement_mandat_proposition_v2,
+    a.tap_global AS taux_avancement_mandat_proposition,
     CASE
         WHEN
             coalesce(z_appl.est_applicable, true) AND maille_appl.maille_est_applicable

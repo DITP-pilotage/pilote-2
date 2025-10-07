@@ -57,7 +57,7 @@ describe("PrismaIndicateurRepository", () => {
           territoire_code: "REG-01",
           code_insee: "01",
           zone_id: "R01",
-          taux_avancement_mandat_proposition_v2: 10,
+          taux_avancement_mandat_proposition: 10,
         },
       });
 
@@ -69,7 +69,7 @@ describe("PrismaIndicateurRepository", () => {
           code_insee: "01",
           zone_id: "R01",
           jalon: 2024,
-          taux_avancement_proposition_v2: 20,
+          taux_avancement_proposition: 20,
         },
       });
 
@@ -81,7 +81,7 @@ describe("PrismaIndicateurRepository", () => {
           code_insee: "01",
           zone_id: "R01",
           jalon: 2025,
-          taux_avancement_proposition_v2: 15,
+          taux_avancement_proposition: 15,
         },
       });
 
@@ -110,14 +110,14 @@ describe("PrismaIndicateurRepository", () => {
         });
 
       expect(
-        indicateurTerritoire?.taux_avancement_mandat_proposition_v2,
+        indicateurTerritoire?.taux_avancement_mandat_proposition,
       ).toBeNull();
       expect(indicateursTerritoireJalon).toHaveLength(2);
       expect(
-        indicateursTerritoireJalon[0].taux_avancement_proposition_v2,
+        indicateursTerritoireJalon[0].taux_avancement_proposition,
       ).toBeNull();
       expect(
-        indicateursTerritoireJalon[1].taux_avancement_proposition_v2,
+        indicateursTerritoireJalon[1].taux_avancement_proposition,
       ).toBeNull();
     });
   });

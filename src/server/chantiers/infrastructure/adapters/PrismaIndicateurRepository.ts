@@ -127,7 +127,7 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
         maille: true,
         taux_avancement_mandat: true,
         est_applicable: true,
-        nombre_propositions_valeur_actuelle_v2: true,
+        nombre_propositions_valeur_actuelle: true,
         territoire: {
           select: {
             code_parent: true,
@@ -223,7 +223,7 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
           select: {
             maille: true,
             territoire_code: true,
-            nombre_propositions_valeur_actuelle_v2: true,
+            nombre_propositions_valeur_actuelle: true,
             meteo: true,
             taux_avancement_mandat: true,
             est_applicable: true,
@@ -302,7 +302,7 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
         const maille = prismaChantierTerritoire.maille;
 
         const prismaChantierTerritoireNombrePropositionsValeurAvancement =
-          prismaChantierTerritoire.nombre_propositions_valeur_actuelle_v2;
+          prismaChantierTerritoire.nombre_propositions_valeur_actuelle;
 
         if (maille === "DEPT") {
           aUnePropositionsValeurAvancement =
@@ -318,12 +318,12 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
               )
               .some(
                 (chantierTerritoire) =>
-                  chantierTerritoire.nombre_propositions_valeur_actuelle_v2,
+                  chantierTerritoire.nombre_propositions_valeur_actuelle,
               );
         } else {
           aUnePropositionsValeurAvancement = listeChantierTerritoires.some(
             (chantierTerritoire) =>
-              chantierTerritoire.nombre_propositions_valeur_actuelle_v2,
+              chantierTerritoire.nombre_propositions_valeur_actuelle,
           );
         }
 
@@ -529,7 +529,7 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
               select: {
                 maille: true,
                 territoire_code: true,
-                nombre_propositions_valeur_actuelle_v2: true,
+                nombre_propositions_valeur_actuelle: true,
                 est_applicable: true,
                 taux_avancement_mandat: true,
                 territoire: {
@@ -588,7 +588,7 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
                 ecart: true,
                 tendance: true,
                 taux_avancement_mandat: true,
-                nombre_propositions_valeur_actuelle_v2: true,
+                nombre_propositions_valeur_actuelle: true,
               },
             },
           },
@@ -614,7 +614,7 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
             const chantierTerritoire = indicateurPourExport.chantier_territoire;
 
             const chantierTerritoireNombrePropositionsValeurAvancement =
-              chantierTerritoire.nombre_propositions_valeur_actuelle_v2;
+              chantierTerritoire.nombre_propositions_valeur_actuelle;
 
             let aUnePropositionsValeurAvancement = false;
             const maille = indicateurPourExport.maille;
@@ -631,12 +631,11 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
                       chantier.territoire.code_parent === codeRegion,
                   )
                   .some(
-                    (chantier) =>
-                      chantier.nombre_propositions_valeur_actuelle_v2,
+                    (chantier) => chantier.nombre_propositions_valeur_actuelle,
                   );
             } else {
               aUnePropositionsValeurAvancement = listeTerritoireChantier.some(
-                (chantier) => chantier.nombre_propositions_valeur_actuelle_v2,
+                (chantier) => chantier.nombre_propositions_valeur_actuelle,
               );
             }
             return (
@@ -1105,11 +1104,11 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
           valeurAvancement: evenementPropositionLePlusRecent.valeur!,
           dateValeurAvancement:
             evenementPropositionLePlusRecent.date_valeur!.toISOString(),
-          tauxAvancement: indicateurRow.taux_avancement_mandat_proposition_v2,
+          tauxAvancement: indicateurRow.taux_avancement_mandat_proposition,
           statutTauxAvancement: statutTauxAvancement,
           tauxAvancementIntermediaire:
             indicateurTerritoireJalon !== undefined
-              ? indicateurTerritoireJalon.taux_avancement_proposition_v2
+              ? indicateurTerritoireJalon.taux_avancement_proposition
               : null,
           auteur: `${evenementPropositionLePlusRecent.auteur.prenom} ${evenementPropositionLePlusRecent.auteur.nom}`,
           dateProposition: formatDate(

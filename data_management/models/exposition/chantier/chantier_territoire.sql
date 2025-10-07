@@ -133,8 +133,8 @@ SELECT
             UPPER(meta_ch.replicate_val_nat_to) = 'REG' AND z.zone_type = 'REG'
             THEN 'reg'::maille
     END AS donnees_maille_source,
-    COALESCE(pva.nombre_propositions_valeur_actuelle, 0) as nombre_propositions_valeur_actuelle_v2,
-    COALESCE(pva.nombre_propositions_valeur_actuelle_ponderee, 0) as nombre_propositions_valeur_actuelle_ponderee_v2
+    COALESCE(pva.nombre_propositions_valeur_actuelle, 0) as nombre_propositions_valeur_actuelle,
+    COALESCE(pva.nombre_propositions_valeur_actuelle_ponderee, 0) as nombre_propositions_valeur_actuelle_ponderee
 FROM {{ ref('stg_ppg_metadata__chantiers') }} AS meta_ch
 CROSS JOIN {{ source('db_schema_public', 'territoire') }} AS t
 LEFT JOIN
