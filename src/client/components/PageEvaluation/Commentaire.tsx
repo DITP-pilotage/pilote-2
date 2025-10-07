@@ -17,7 +17,7 @@ export function Commentaire({
   if (!displayComment) {
     return (
       <button
-        className="-ml-4 !text-xs !text-dsfr-grey-200 inline-flex gap-1 items-center"
+        className="-ml-4 !text-xs !text-dsfr-grey-200 inline-flex w-fit gap-1 items-center"
         onClick={() => setDisplayComment(true)}
         type="button"
       >
