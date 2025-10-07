@@ -51,34 +51,14 @@ proposition_valeur_actuelle_chantier AS (
     INNER JOIN {{ ref('get_last_vaca') }} vaca
         ON vaca.zone_id = t.zone_id 
         AND vaca.indic_id = ipv.indic_id 
-        AND vaca.date_valeur_actuelle::DATE = ipv.date_valeur_actuelle
+        AND vaca.date_valeur_actuelle::DATE = ipv.date_valeur_avancement
     LEFT JOIN {{ ref('int_ponderation_reelle') }} ipr 
         ON ipr.indic_id = ipv.indic_id 
         AND ipr.zone_id = t.zone_id
     LEFT JOIN {{ ref('stg_ppg_metadata__indicateurs') }} spmi 
-        ON spmi.id = ipv.indic_id 
+        ON spmi.id = ipv.indic_id
     WHERE spmi.est_cache_dans_pilote IS FALSE
     GROUP BY ipv.territoire_code, spmi.chantier_id
-),
-proposition_valeur_actuelle_chantier_v2 AS (
-    SELECT 
-        ipv_v2.territoire_code, 
-        spmi.chantier_id, 
-        COUNT(*) AS nombre_propositions_valeur_actuelle,
-        SUM(CASE WHEN ipr.poids_zone_reel > 0 THEN 1 ELSE 0 END) AS nombre_propositions_valeur_actuelle_ponderee
-    FROM {{ ref('int_propositions_valeurs_v2')}} ipv_v2
-    LEFT JOIN {{ source('db_schema_public', 'territoire') }}  t ON t.code = ipv_v2.territoire_code 
-    INNER JOIN {{ ref('get_last_vaca') }} vaca
-        ON vaca.zone_id = t.zone_id 
-        AND vaca.indic_id = ipv_v2.indic_id 
-        AND vaca.date_valeur_actuelle::DATE = ipv_v2.date_valeur_avancement
-    LEFT JOIN {{ ref('int_ponderation_reelle') }} ipr 
-        ON ipr.indic_id = ipv_v2.indic_id 
-        AND ipr.zone_id = t.zone_id
-    LEFT JOIN {{ ref('stg_ppg_metadata__indicateurs') }} spmi 
-        ON spmi.id = ipv_v2.indic_id
-    WHERE spmi.est_cache_dans_pilote IS FALSE
-    GROUP BY ipv_v2.territoire_code, spmi.chantier_id
 )
 
 SELECT
@@ -153,10 +133,10 @@ SELECT
             UPPER(meta_ch.replicate_val_nat_to) = 'REG' AND z.zone_type = 'REG'
             THEN 'reg'::maille
     END AS donnees_maille_source,
-    COALESCE(pva.nombre_propositions_valeur_actuelle, 0) as nombre_propositions_valeur_actuelle,
-    COALESCE(pva.nombre_propositions_valeur_actuelle_ponderee, 0) as nombre_propositions_valeur_actuelle_ponderee,
-    COALESCE(pva_v2.nombre_propositions_valeur_actuelle, 0) as nombre_propositions_valeur_actuelle_v2,
-    COALESCE(pva_v2.nombre_propositions_valeur_actuelle_ponderee, 0) as nombre_propositions_valeur_actuelle_ponderee_v2
+    0::NUMERIC as nombre_propositions_valeur_actuelle,
+    0::NUMERIC as nombre_propositions_valeur_actuelle_ponderee,
+    COALESCE(pva.nombre_propositions_valeur_actuelle, 0) as nombre_propositions_valeur_actuelle_v2,
+    COALESCE(pva.nombre_propositions_valeur_actuelle_ponderee, 0) as nombre_propositions_valeur_actuelle_ponderee_v2
 FROM {{ ref('stg_ppg_metadata__chantiers') }} AS meta_ch
 CROSS JOIN {{ source('db_schema_public', 'territoire') }} AS t
 LEFT JOIN
@@ -204,9 +184,4 @@ LEFT JOIN
     ON
         pva.chantier_id = meta_ch.id
         AND pva.territoire_code = t.code
-LEFT JOIN
-    proposition_valeur_actuelle_chantier_v2 pva_v2
-    ON
-        pva_v2.chantier_id = meta_ch.id
-        AND pva_v2.territoire_code = t.code
 --ORDER by meta_ch.id, z.zone_type

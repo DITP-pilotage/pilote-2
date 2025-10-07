@@ -19,8 +19,5 @@ SELECT
     vacp,
     tap_global,
     tap_courant,
-    vacp_v2,
-    tap_global_v2,
-    tap_courant_v2,
-    date_valeur_proposition_v2
+    date_valeur_proposition
 FROM sort_mesures_vaca_last
