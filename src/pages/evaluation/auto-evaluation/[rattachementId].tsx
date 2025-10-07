@@ -58,13 +58,15 @@ const AutoEvaluationPage = (
     mode: "onChange",
     defaultValues: {
       criteres: autoEvaluation.criteres.map((critere) => ({
-        sousCriteres: critere.sousCriteres.map(
-          (sousCritere) => sousCritere.evaluation,
-        ),
+        sousCriteres: critere.sousCriteres.map((sousCritere) => ({
+          note: sousCritere.evaluation.note ?? undefined,
+          commentaire: sousCritere.evaluation.commentaire ?? undefined,
+        })),
       })),
-      objectifs: autoEvaluation.objectifs.map(
-        (objectif) => objectif.evaluation,
-      ),
+      objectifs: autoEvaluation.objectifs.map((objectif) => ({
+        note: objectif.evaluation.note ?? undefined,
+        commentaire: objectif.evaluation.commentaire ?? undefined,
+      })),
     },
   });
 
