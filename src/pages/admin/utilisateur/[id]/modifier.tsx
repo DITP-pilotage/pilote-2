@@ -1,6 +1,5 @@
-import { GetServerSidePropsContext } from "next";
+import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next";
 import Head from "next/head";
-import { FunctionComponent } from "react";
 import { getServerAuthSession } from "@/server/infrastructure/api/auth/[...nextauth]";
 import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
 import Utilisateur from "@/server/domain/utilisateur/Utilisateur.interface";
@@ -8,34 +7,15 @@ import RécupérerUnUtilisateurUseCase from "@/server/gestion-utilisateur/usecas
 import PageModifierUtilisateur from "@/components/PageUtilisateurFormulaire/PageModifierUtilisateur/PageModifierUtilisateur";
 import { commenceParUneVoyelle } from "@/client/utils/strings";
 import { dependencies } from "@/server/infrastructure/Dependencies";
+import { pageModifierUtilisateur } from "@/components/PageUtilisateurFormulaire/PageModifierUtilisateur/PageModifierUtilisateurServerSideContext";
+import { configurationFeatureFlip } from "@/config";
+import { ProfilEnum } from "@/server/app/enum/profil.enum";
 
-export interface NextPageModifierUtilisateurProps {
-  utilisateur: Utilisateur;
-}
-
-const NextPageModifierUtilisateur: FunctionComponent<
-  NextPageModifierUtilisateurProps
-> = ({ utilisateur }) => {
-  return (
-    <>
-      <Head>
-        <title>
-          Modifier le compte{" "}
-          {commenceParUneVoyelle(utilisateur.prénom) ? "d'" : "de "}
-          {utilisateur.prénom} {utilisateur.nom.toUpperCase()} - PILOTE
-        </title>
-      </Head>
-      <PageModifierUtilisateur utilisateur={utilisateur} />
-    </>
-  );
-};
-export default NextPageModifierUtilisateur;
-
-export async function getServerSideProps({
+export const getServerSideProps = async ({
   req,
   res,
   params,
-}: GetServerSidePropsContext<{ id: Utilisateur["id"] }>) {
+}: GetServerSidePropsContext<{ id: Utilisateur["id"] }>) => {
   const redirigerVersPageAccueil = {
     redirect: {
       destination: "/",
@@ -73,6 +53,29 @@ export async function getServerSideProps({
   return {
     props: {
       utilisateur: utilisateurDemandé,
+      estAutoriseAVoirLeSelecteurApplication:
+        configurationFeatureFlip().piloteEval &&
+        [ProfilEnum.DITP_ADMIN].includes(session.profil),
     },
   };
-}
+};
+
+const NextPageModifierUtilisateur = (
+  props: InferGetServerSidePropsType<typeof getServerSideProps>,
+) => {
+  return (
+    <pageModifierUtilisateur.ServerSidePropsProvider value={props}>
+      <Head>
+        <title>
+          Modifier le compte 
+          {commenceParUneVoyelle(props.utilisateur.prénom) ? "d'" : "de "}
+          {props.utilisateur.prénom} {props.utilisateur.nom.toUpperCase()} - 
+          PILOTE
+        </title>
+      </Head>
+      <PageModifierUtilisateur />
+    </pageModifierUtilisateur.ServerSidePropsProvider>
+  );
+};
+
+export default NextPageModifierUtilisateur;

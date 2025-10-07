@@ -21,6 +21,7 @@ import SaisieDesInformationsUtilisateur from "./SaisieDesInformationsUtilisateur
 
 const UtilisateurFormulaire: FunctionComponent<UtilisateurFormulaireProps> = ({
   utilisateur,
+  estAutoriseAVoirLeSelecteurApplication,
 }) => {
   const étapes = [
     "Identifier l'utilisateur",
@@ -111,7 +112,12 @@ const UtilisateurFormulaire: FunctionComponent<UtilisateurFormulaireProps> = ({
           <FormProvider {...reactHookForm}>
             <form onSubmit={reactHookForm.handleSubmit(passerAuRécapitulatif)}>
               {etapeCourante === 1 && (
-                <SaisieDesInformationsUtilisateur utilisateur={utilisateur} />
+                <SaisieDesInformationsUtilisateur
+                  estAutoriseAVoirLeSelecteurApplication={
+                    estAutoriseAVoirLeSelecteurApplication
+                  }
+                  utilisateur={utilisateur}
+                />
               )}
               {etapeCourante === 2 && (
                 <RécapitulatifUtilisateur

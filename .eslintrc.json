@@ -119,6 +119,7 @@
     "unicorn/prefer-top-level-await": "off",
     "react/jsx-no-bind": "off",
     "react/jsx-no-literals": "off",
+    "react/destructuring-assignment": "off",
     "react/forbid-component-props": "off",
     "react/require-default-props": "off",
     "react/jsx-max-depth": "off",

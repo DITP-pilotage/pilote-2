@@ -3,6 +3,7 @@ import { RouterInputs } from "@/server/infrastructure/api/trpc/trpc.interface";
 
 export interface UtilisateurFormulaireProps {
   utilisateur?: Utilisateur;
+  estAutoriseAVoirLeSelecteurApplication: boolean;
 }
 
 export type UtilisateurFormInputs = Omit<

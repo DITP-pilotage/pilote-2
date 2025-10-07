@@ -19,7 +19,7 @@ import useSaisieDesInformationsUtilisateur from "./useSaisieDesInformationsUtili
 
 const SaisieDesInformationsUtilisateur: FunctionComponent<
   UtilisateurFormulaireProps
-> = ({ utilisateur }) => {
+> = ({ utilisateur, estAutoriseAVoirLeSelecteurApplication }) => {
   const {
     register,
     control,
@@ -66,7 +66,9 @@ const SaisieDesInformationsUtilisateur: FunctionComponent<
             Tous les champs sont obligatoires.
           </p>
         </div>
-        <SelecteurApplication />
+        {estAutoriseAVoirLeSelecteurApplication ? (
+          <SelecteurApplication />
+        ) : null}
       </div>
       <InputAvecLabel
         disabled={Boolean(utilisateur?.email)}
