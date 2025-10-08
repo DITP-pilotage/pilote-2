@@ -2,7 +2,6 @@ import { z } from "zod";
 import { $Enums } from "@prisma/client";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { Transaction } from "@/server/db/Transaction";
-import { getPrisma } from "@/server/db/PrismaTransaction";
 
 export const enregisterBrouillonCommandSchema = z.object({
   ficheEvaluationId: z.string(),
@@ -46,6 +45,11 @@ export class EnregistrerBrouillonAutoEvaluationHandler {
           },
           type: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
         },
+      });
+
+      await prisma.etape_evaluation.update({
+        where: { id: etape.id },
+        data: { updated_at: new Date() },
       });
 
       for (const evaluationObjectif of command.evaluationsObjectifs) {
