@@ -22,10 +22,20 @@ export interface Objectif {
   };
 }
 
-export class AfficherAutoEvaluationUseCase {
+export type AfficherAutoEvaluationViewModel = {
+  criteres: Critere[];
+  objectifs: Objectif[];
+  denieresModifications: string;
+};
+
+export class AfficherAutoEvaluationQuery {
   constructor(private readonly dependencies: { prisma: PrismaPilote }) {}
 
-  async run({ ficheEvaluationId }: { ficheEvaluationId: string }) {
+  async run({
+    ficheEvaluationId,
+  }: {
+    ficheEvaluationId: string;
+  }): Promise<AfficherAutoEvaluationViewModel> {
     const criteres = await this.dependencies.prisma
       .getInstance()
       .referentiel_critere.findMany({
@@ -54,38 +64,34 @@ export class AfficherAutoEvaluationUseCase {
       });
 
     return {
-      criteres: criteres.map((critere): Critere => {
+      criteres: criteres.map((critere) => {
         return {
           id: critere.id,
           nom: critere.libelle,
-          sousCriteres: critere.sous_criteres.map((sousCritere) => {
-            return {
-              id: sousCritere.id,
-              nom: sousCritere.libelle,
-              evaluation: etapeAutoEvaluation.evaluations_sous_criteres.find(
-                (evaluation) => evaluation.sous_critere_id === sousCritere.id,
-              ) ?? {
-                note: null,
-                commentaire: "",
-              },
-            };
-          }),
+          sousCriteres: critere.sous_criteres.map((sousCritere) => ({
+            id: sousCritere.id,
+            nom: sousCritere.libelle,
+            evaluation: etapeAutoEvaluation.evaluations_sous_criteres.find(
+              (evaluation) => evaluation.sous_critere_id === sousCritere.id,
+            ) ?? {
+              note: null,
+              commentaire: "",
+            },
+          })),
         };
       }),
       objectifs:
         etapeAutoEvaluation.fiche_evaluation.rattachement.objectifs.map(
-          (objectif): Objectif => {
-            return {
-              id: objectif.id,
-              nom: objectif.libelle,
-              evaluation: etapeAutoEvaluation.evaluations_objectifs.find(
-                (evaluation) => evaluation.objectif_id === objectif.id,
-              ) ?? {
-                note: null,
-                commentaire: "",
-              },
-            };
-          },
+          (objectif) => ({
+            id: objectif.id,
+            nom: objectif.libelle,
+            evaluation: etapeAutoEvaluation.evaluations_objectifs.find(
+              (evaluation) => evaluation.objectif_id === objectif.id,
+            ) ?? {
+              note: null,
+              commentaire: "",
+            },
+          }),
         ),
       denieresModifications: new Date().toISOString(),
     };
