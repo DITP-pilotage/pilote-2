@@ -851,7 +851,7 @@ model evaluation_objectif {
   objectif               referentiel_objectif @relation(fields: [referentiel_objectifId], references: [id])
   auteur_id              String               @db.Uuid
   auteur                 utilisateur          @relation(fields: [auteur_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  note                   Int
+  note                   Int?
   commentaire            String
   created_at             DateTime             @default(now())
   updated_at             DateTime             @updatedAt
@@ -869,7 +869,7 @@ model evaluation_sous_critere {
   sous_critere        referentiel_sous_critere @relation(fields: [sous_critere_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
   auteur_id           String                   @db.Uuid
   auteur              utilisateur              @relation(fields: [auteur_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  note                Int
+  note                Int?
   commentaire         String
   created_at          DateTime                 @default(now())
   updated_at          DateTime                 @updatedAt
