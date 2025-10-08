@@ -268,40 +268,14 @@ describe("AfficherAutoEvaluationQuery", () => {
 
     it("doit retourner readOnly=true quand l'étape courante n'est pas AUTO_EVALUATION", async () => {
       // Given
-      const critereId = "e21aa8c5-24bc-4231-8c39-e8da5431dae9";
-      const sousCritereId = "0ab1b63f-2ff6-45e9-835a-ffb51c4fd21b";
       const rattachementCode = "REG-87";
-      const objectifId = "9c1ca5fa-d599-4b6d-8e1d-09d1fd993f79";
       const ficheEvaluationId = "8eee737b-b5c0-4fa3-b7c1-f8d8586c83ca";
       const etapeEvaluationId = "53b83d91-646e-4274-b370-a70681723483";
-
-      await prisma.referentiel_critere.create({
-        data: {
-          id: critereId,
-          libelle: "Critère read-only",
-          descriptif: "Description critère read-only",
-          sous_criteres: {
-            create: {
-              id: sousCritereId,
-              libelle: "Sous-critère read-only",
-              descriptif: "Description sous-critère read-only",
-            },
-          },
-        },
-      });
 
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
           libelle: "Rattachement read-only",
-          objectifs: {
-            create: {
-              id: objectifId,
-              libelle: "Objectif read-only",
-              descriptif: "Description objectif read-only",
-              jalon: 1,
-            },
-          },
         },
       });
 
@@ -334,7 +308,6 @@ describe("AfficherAutoEvaluationQuery", () => {
       const sousCritere2Id = "619116c4-e270-457d-a05d-ee3f229c203b";
       const sousCritere3Id = "debfb0d8-9ea6-4f1c-ad2d-102eb5bda14e";
       const rattachementCode = "REG-86";
-      const objectifId = "1ae2033e-0036-467c-ab9f-0b98449f68a6";
       const ficheEvaluationId = "00f0584d-18a8-4e4b-a517-23152d6b0ea6";
       const etapeEvaluationId = "963739be-41cc-405d-bb41-48654254d486";
 
@@ -366,19 +339,10 @@ describe("AfficherAutoEvaluationQuery", () => {
         },
       });
 
-      // Créer le rattachement avec un objectif
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
           libelle: "Rattachement multiple",
-          objectifs: {
-            create: {
-              id: objectifId,
-              libelle: "Objectif multiple",
-              descriptif: "Description objectif multiple",
-              jalon: 1,
-            },
-          },
         },
       });
 
