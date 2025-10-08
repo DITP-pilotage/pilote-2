@@ -104,6 +104,7 @@ describe("AfficherAutoEvaluationQuery", () => {
               id: sousCritere1Id,
               nom: "Sous-critère 1",
               evaluation: {
+                id: expect.any(String),
                 note: null,
                 commentaire: "",
               },
@@ -118,6 +119,7 @@ describe("AfficherAutoEvaluationQuery", () => {
               id: sousCritere2Id,
               nom: "Sous-critère 2",
               evaluation: {
+                id: expect.any(String),
                 note: null,
                 commentaire: "",
               },
@@ -130,6 +132,7 @@ describe("AfficherAutoEvaluationQuery", () => {
           id: objectif1Id,
           libelle: "Objectif 1",
           evaluation: {
+            id: expect.any(String),
             note: null,
             commentaire: "",
           },
@@ -138,6 +141,7 @@ describe("AfficherAutoEvaluationQuery", () => {
           id: objectif2Id,
           libelle: "Objectif 2",
           evaluation: {
+            id: expect.any(String),
             note: null,
             commentaire: "",
           },
@@ -252,13 +256,8 @@ describe("AfficherAutoEvaluationQuery", () => {
               nom: "Sous-critère test",
               evaluation: {
                 id: evaluationSousCritereId,
-                etape_evaluation_id: etapeEvaluationId,
-                sous_critere_id: sousCritereId,
-                auteur_id: utilisateurId,
                 note: 3,
                 commentaire: "Sous-critère acceptable",
-                created_at: expect.any(Date),
-                updated_at: expect.any(Date),
               },
             },
           ],
@@ -270,14 +269,8 @@ describe("AfficherAutoEvaluationQuery", () => {
           libelle: "Objectif test",
           evaluation: {
             id: evaluationObjectifId,
-            etape_evaluation_id: etapeEvaluationId,
-            objectif_id: objectifId,
-            referentiel_objectifId: objectifId,
-            auteur_id: utilisateurId,
             note: 4,
             commentaire: "Bon objectif",
-            created_at: expect.any(Date),
-            updated_at: expect.any(Date),
           },
         },
       ]);
@@ -393,6 +386,7 @@ describe("AfficherAutoEvaluationQuery", () => {
               id: sousCritere1Id,
               nom: "Sous-critère 1",
               evaluation: {
+                id: expect.any(String),
                 note: null,
                 commentaire: "",
               },
@@ -401,6 +395,7 @@ describe("AfficherAutoEvaluationQuery", () => {
               id: sousCritere2Id,
               nom: "Sous-critère 2",
               evaluation: {
+                id: expect.any(String),
                 note: null,
                 commentaire: "",
               },
@@ -409,6 +404,7 @@ describe("AfficherAutoEvaluationQuery", () => {
               id: sousCritere3Id,
               nom: "Sous-critère 3",
               evaluation: {
+                id: expect.any(String),
                 note: null,
                 commentaire: "",
               },
@@ -526,6 +522,7 @@ describe("AfficherAutoEvaluationQuery", () => {
               id: sousCritereId,
               nom: "Sous-critère isolation",
               evaluation: {
+                id: expect.any(String),
                 note: null,
                 commentaire: "",
               },
