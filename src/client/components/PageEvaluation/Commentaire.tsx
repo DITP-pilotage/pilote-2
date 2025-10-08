@@ -11,8 +11,9 @@ export function Commentaire({
     | `criteres.${number}.sousCriteres.${number}.commentaire`
     | `objectifs.${number}.commentaire`;
 }) {
-  const [displayComment, setDisplayComment] = useState(false);
   const form = useFormEvaluation();
+  const defaultOpen = form.getValues(name) != "";
+  const [displayComment, setDisplayComment] = useState(defaultOpen);
 
   if (!displayComment) {
     return (
@@ -42,6 +43,10 @@ export function Commentaire({
               className="border !rounded-md !bg-white py-2 px-4"
               id={fieldId}
               {...field}
+              ref={(node) => {
+                node?.focus();
+                field.ref(node);
+              }}
             />
           </div>
         );

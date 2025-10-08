@@ -21,7 +21,9 @@ export function EtapeObjectifs() {
         return (
           <div key={objectif.id}>
             <div className="p-4 flex items-center justify-between pr-6">
-              <header className="text-primary font-bold">{objectif.nom}</header>
+              <header className="text-primary font-bold">
+                {objectif.libelle}
+              </header>
               <InputNote name={noteName} />
             </div>
             <div className="py-4 px-6 flex flex-col bg-dsfr-grey-925/30 ">

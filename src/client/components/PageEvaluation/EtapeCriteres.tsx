@@ -16,7 +16,7 @@ export const EtapeCriteres = () => {
         return (
           <div key={critere.id}>
             <header className="py-6 px-4 text-primary font-bold border-t-1 !border-primary">
-              {critere.nom}
+              {critere.libelle}
             </header>
             <div className="bg-dsfr-grey-925/30 divide-y divide-gray-200">
               {fieldCritere.sousCriteres.map((subField, j) => {

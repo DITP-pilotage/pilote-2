@@ -19,6 +19,7 @@ import { pageEvaluation } from "@/components/PageEvaluation/PageEvaluationServer
 import { configurationFeatureFlip } from "@/config";
 import { authOptions } from "@/server/infrastructure/api/auth/[...nextauth]";
 import { ApplicationAccessible } from "@/server/domain/utilisateur/Utilisateur.interface";
+import api from "@/server/infrastructure/api/trpc/api";
 
 export const getServerSideProps = async ({
   req,
@@ -53,6 +54,7 @@ export const getServerSideProps = async ({
 const AutoEvaluationPage = (
   props: InferGetServerSidePropsType<typeof getServerSideProps>,
 ) => {
+  const enregisterBrouillon = api.evaluation.enregistrerBrouillon.useMutation();
   const { autoEvaluation } = props;
   const [etape, setEtape] = useState<"criteres" | "objectifs">("criteres");
   const formId = useId();
@@ -88,7 +90,34 @@ const AutoEvaluationPage = (
     etape === "criteres"
       ? handleSubmitCriteres
       : // eslint-disable-next-line no-console
-        form.handleSubmit((data) => console.log(data));
+        form.handleSubmit((data) => {
+          enregisterBrouillon.mutate({
+            evaluationsObjectifs: autoEvaluation.objectifs.map(
+              (objectif, index) => {
+                const evaluation = data.objectifs[index];
+                return {
+                  id: "??",
+                  objectifId: objectif.id,
+                  note: evaluation.note,
+                  commentaire: evaluation.commentaire,
+                };
+              },
+            ),
+            evaluationsSousCriteres: autoEvaluation.criteres.flatMap(
+              (critere, index) => {
+                return critere.sousCriteres.map((sousCritere, jindex) => {
+                  const evaluation = data.criteres[index].sousCriteres[jindex];
+                  return {
+                    id: "??",
+                    sousCritereId: sousCritere.id,
+                    note: evaluation.note,
+                    commentaire: evaluation.commentaire,
+                  };
+                });
+              },
+            ),
+          });
+        });
 
   return (
     <pageEvaluation.ServerSidePropsProvider value={props}>
@@ -103,7 +132,7 @@ const AutoEvaluationPage = (
               <span className="italic text-sm">
                 Dernière modification :{" "}
                 {formaterDate(
-                  autoEvaluation.denieresModifications,
+                  autoEvaluation.dateDerniereModification,
                   "DD/MM/YYYY [à] H[h]mm",
                 )}
               </span>
