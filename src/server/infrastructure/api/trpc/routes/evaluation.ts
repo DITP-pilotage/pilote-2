@@ -4,17 +4,22 @@ import {
 } from "@/server/infrastructure/api/trpc/trpc";
 import { enregisterBrouillonCommandSchema } from "@/server/evaluation/handlers/EnregistrerBrouillonAutoEvaluationHandler";
 import { getContainer } from "@/server/dependances";
-import { PrismaPilote } from "@/server/db/PrismaPilote";
-
-// class AccesFicheEvaluationService {
-//   constructor(private readonly dependencies: { prisma: PrismaPilote }) {}
-//
-// }
+import { ForbiddenError } from "@/server/app/error-boundary/forbidden-error";
 
 export const evaluationRouter = créerRouteurTRPC({
   enregistrerBrouillon: procédureProtégée
     .input(enregisterBrouillonCommandSchema)
     .mutation(async ({ input, ctx }) => {
+      const peutAccederFicheAutoEvaluation = await getContainer("piloteEval")
+        .resolve("accesFicheEvaluationService")
+        .peutAccederFicheAutoEvaluation({
+          utilisateurId: ctx.session.user.id,
+          ficheEvaluationId: input.ficheEvaluationId,
+        });
+
+      if (!peutAccederFicheAutoEvaluation)
+        throw new ForbiddenError("Accès refusé à la fiche d'auto-évaluation");
+
       await getContainer("piloteEval")
         .resolve("enregistrerBrouillonAutoEvaluation")
         .execute(input, ctx.session.user.id);

@@ -22,13 +22,23 @@ export const getServerSideProps = async ({
 
   const featureFlipping = configurationFeatureFlip();
 
+  const peutAccederFicheAutoEvaluation = await getContainer("piloteEval")
+    .resolve("accesFicheEvaluationService")
+    .peutAccederFicheAutoEvaluation({
+      utilisateurId: session.user.id,
+      ficheEvaluationId,
+    });
+
   if (
     !featureFlipping.piloteEval ||
-    !session.applicationsAccessibles.includes(ApplicationAccessible.PILOTE_EVAL)
+    !session.applicationsAccessibles.includes(
+      ApplicationAccessible.PILOTE_EVAL,
+    ) ||
+    peutAccederFicheAutoEvaluation
   ) {
     return {
       redirect: {
-        destination: "404",
+        destination: "/404",
       },
     };
   }
