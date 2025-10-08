@@ -19,7 +19,7 @@ import { pageEvaluation } from "@/components/PageEvaluation/PageEvaluationServer
 import { configurationFeatureFlip } from "@/config";
 import { authOptions } from "@/server/infrastructure/api/auth/[...nextauth]";
 import { ApplicationAccessible } from "@/server/domain/utilisateur/Utilisateur.interface";
-import api from "@/server/infrastructure/api/trpc/api";
+import { BoutonEnregistrerBrouillon } from "@/components/PageEvaluation/BoutonEnregistrerBrouillon";
 
 export const getServerSideProps = async ({
   req,
@@ -54,7 +54,6 @@ export const getServerSideProps = async ({
 const AutoEvaluationPage = (
   props: InferGetServerSidePropsType<typeof getServerSideProps>,
 ) => {
-  const enregisterBrouillon = api.evaluation.enregistrerBrouillon.useMutation();
   const { autoEvaluation } = props;
   const [etape, setEtape] = useState<"criteres" | "objectifs">("criteres");
   const formId = useId();
@@ -91,107 +90,79 @@ const AutoEvaluationPage = (
   const handleSubmit =
     etape === "criteres"
       ? handleSubmitCriteres
-      : // eslint-disable-next-line no-console
-        form.handleSubmit((data) => {
-          enregisterBrouillon.mutate({
-            ficheEvaluationId: autoEvaluation.ficheEvaluationId,
-            evaluationsObjectifs: autoEvaluation.objectifs.map(
-              (objectif, index) => {
-                const evaluation = data.objectifs[index];
-                return {
-                  id: evaluation.id,
-                  objectifId: objectif.id,
-                  note: evaluation.note,
-                  commentaire: evaluation.commentaire,
-                };
-              },
-            ),
-            evaluationsSousCriteres: autoEvaluation.criteres.flatMap(
-              (critere, index) => {
-                return critere.sousCriteres.map((sousCritere, jindex) => {
-                  const evaluation = data.criteres[index].sousCriteres[jindex];
-                  return {
-                    id: evaluation.id,
-                    sousCritereId: sousCritere.id,
-                    note: evaluation.note,
-                    commentaire: evaluation.commentaire,
-                  };
-                });
-              },
-            ),
-          });
+      : form.handleSubmit((data) => {
+          console.log("TODO: soumettre pour consolidation", data);
         });
 
   return (
     <pageEvaluation.ServerSidePropsProvider value={props}>
       <main className="py-6 pt-0">
-        <Head>
-          <title>PILOTE - Auto-évaluation</title>
-        </Head>
+        <FormProvider {...form}>
+          <Head>
+            <title>PILOTE - Auto-évaluation</title>
+          </Head>
 
-        <div className="min-h-[60vh] relative">
-          <div className="sticky top-0 bg-white mb-6">
-            <div className="flex items-center justify-between mt-4 mx-auto w-full max-w-4xl px-2 py-4">
-              <span className="italic text-sm">
-                Dernière modification :{" "}
-                {formaterDate(
-                  autoEvaluation.dateDerniereModification,
-                  "DD/MM/YYYY [à] H[h]mm",
+          <div className="min-h-[60vh] relative">
+            <div className="sticky top-0 bg-white mb-6">
+              <div className="flex items-center justify-between mt-4 mx-auto w-full max-w-4xl px-2 py-4">
+                <span className="italic text-sm">
+                  Dernière modification :{" "}
+                  {formaterDate(
+                    autoEvaluation.dateDerniereModification,
+                    "DD/MM/YYYY [à] H[h]mm",
+                  )}
+                </span>
+                {etape === "criteres" && (
+                  <div className="ml-auto flex items-center gap-4">
+                    <BoutonEnregistrerBrouillon />
+                    <Bouton
+                      form={formId}
+                      iconRight={
+                        <Icone
+                          className="text-current"
+                          icone={ArrowLine1Icon}
+                        />
+                      }
+                      label="Objectifs"
+                      type="submit"
+                    />
+                  </div>
                 )}
-              </span>
-              {etape === "criteres" && (
-                <div className="ml-auto flex items-center gap-4">
-                  <Bouton
-                    label="Enregistrer le brouillon"
-                    type="button"
-                    variant="secondary"
-                  />
-                  <Bouton
-                    form={formId}
-                    iconRight={
-                      <Icone className="text-current" icone={ArrowLine1Icon} />
-                    }
-                    label="Objectifs"
-                    type="submit"
-                  />
-                </div>
-              )}
-              {etape === "objectifs" && (
-                <div className="ml-auto flex items-center gap-4">
-                  <Bouton
-                    iconLeft={
-                      <Icone className="text-current" icone={ArrowLine3Icon} />
-                    }
-                    label="Critères"
-                    onClick={() => setEtape("criteres")}
-                    variant="secondary"
-                  />
+                {etape === "objectifs" && (
+                  <div className="ml-auto flex items-center gap-4">
+                    <Bouton
+                      iconLeft={
+                        <Icone
+                          className="text-current"
+                          icone={ArrowLine3Icon}
+                        />
+                      }
+                      label="Critères"
+                      onClick={() => setEtape("criteres")}
+                      variant="secondary"
+                    />
 
-                  <Bouton
-                    label="Enregistrer le brouillon"
-                    type="button"
-                    variant="secondary"
-                  />
+                    <BoutonEnregistrerBrouillon />
 
-                  <Bouton form={formId} label="Soumettre" type="submit" />
-                </div>
-              )}
+                    <Bouton form={formId} label="Soumettre" type="submit" />
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
-          <form
-            className="bg-white mx-auto w-full max-w-4xl"
-            id={formId}
-            onSubmit={handleSubmit}
-          >
-            <header className="p-4 bg-dsfr-blue-france-925 border-b-2 border-black">
-              <span className="font-bold text-sm">Mon auto-évaluation</span>
-            </header>
-            <FormProvider {...form}>
+            <form
+              className="bg-white mx-auto w-full max-w-4xl"
+              id={formId}
+              onSubmit={handleSubmit}
+            >
+              <header className="p-4 bg-dsfr-blue-france-925 border-b-2 border-black">
+                <span className="font-bold text-sm">Mon auto-évaluation</span>
+              </header>
+
               {etape === "criteres" && <EtapeCriteres />}
               {etape === "objectifs" && <EtapeObjectifs />}
-            </FormProvider>
-          </form>
-        </div>
+            </form>
+          </div>
+        </FormProvider>
       </main>
     </pageEvaluation.ServerSidePropsProvider>
   );
