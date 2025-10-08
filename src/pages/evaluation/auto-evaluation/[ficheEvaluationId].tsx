@@ -4,6 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { FormEvent, useId, useState } from "react";
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next";
 import { getServerSession } from "next-auth/next";
+import { z } from "zod";
 import assert from "node:assert";
 import { Bouton } from "@/components/_commons/Bouton/Bouton";
 import { Icone } from "@/components/_commons/Icone";
@@ -22,8 +23,10 @@ import { ApplicationAccessible } from "@/server/domain/utilisateur/Utilisateur.i
 export const getServerSideProps = async ({
   req,
   res,
+  params,
 }: GetServerSidePropsContext) => {
   const session = await getServerSession(req, res, authOptions);
+  const ficheEvaluationId = z.string().parse(params?.ficheEvaluationId);
 
   assert(session);
 
@@ -42,7 +45,7 @@ export const getServerSideProps = async ({
 
   const autoEvaluation = await getContainer("piloteEval")
     .resolve("afficherAutoEvaluation")
-    .run();
+    .run({ ficheEvaluationId });
 
   return { props: { autoEvaluation } };
 };

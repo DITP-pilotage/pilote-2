@@ -767,7 +767,7 @@ model referentiel_rattachement {
   libelle                              String
   created_at                           DateTime                               @default(now())
   updated_at                           DateTime                               @updatedAt
-  referentiel_objectif                 referentiel_objectif[]
+  objectifs                            referentiel_objectif[]
   fiche_evaluation                     fiche_evaluation[]
   rattachement_utilisateur_etape_jalon rattachement_utilisateur_etape_jalon[]
 
@@ -775,15 +775,15 @@ model referentiel_rattachement {
 }
 
 model referentiel_objectif {
-  id                  String                   @id @db.Uuid
-  libelle             String
-  descriptif          String
-  jalon               Int
-  rattachement_code   String
-  rattachement        referentiel_rattachement @relation(fields: [rattachement_code], references: [code], onDelete: Cascade, onUpdate: Cascade)
-  created_at          DateTime                 @default(now())
-  updated_at          DateTime                 @updatedAt
-  evaluation_objectif evaluation_objectif[]
+  id                String                   @id @db.Uuid
+  libelle           String
+  descriptif        String
+  jalon             Int
+  rattachement_code String
+  rattachement      referentiel_rattachement @relation(fields: [rattachement_code], references: [code], onDelete: Cascade, onUpdate: Cascade)
+  created_at        DateTime                 @default(now())
+  updated_at        DateTime                 @updatedAt
+  evaluations       evaluation_objectif[]
 
   @@schema("public")
 }
@@ -815,14 +815,14 @@ model fiche_evaluation {
 }
 
 model etape_evaluation {
-  id                      String                    @id @db.Uuid
-  fiche_evaluation_id     String                    @db.Uuid
-  fiche_evaluation        fiche_evaluation          @relation(fields: [fiche_evaluation_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  type                    etape_evaluation_enum
-  created_at              DateTime                  @default(now())
-  updated_at              DateTime                  @updatedAt
-  evaluation_objectif     evaluation_objectif[]
-  evaluation_sous_critere evaluation_sous_critere[]
+  id                        String                    @id @db.Uuid
+  fiche_evaluation_id       String                    @db.Uuid
+  fiche_evaluation          fiche_evaluation          @relation(fields: [fiche_evaluation_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  type                      etape_evaluation_enum
+  created_at                DateTime                  @default(now())
+  updated_at                DateTime                  @updatedAt
+  evaluations_objectifs     evaluation_objectif[]
+  evaluations_sous_criteres evaluation_sous_critere[]
 
   @@unique([fiche_evaluation_id, type])
   @@schema("public")
