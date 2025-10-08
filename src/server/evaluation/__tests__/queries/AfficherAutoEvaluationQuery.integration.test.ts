@@ -95,52 +95,54 @@ describe("AfficherAutoEvaluationQuery", () => {
       const result = await query.run({ ficheEvaluationId });
 
       // Then
-      expect(result.criteres).toHaveLength(2);
-      expect(result.criteres[0]).toEqual({
-        id: critere1Id,
-        libelle: "Critère 1",
-        sousCriteres: [
-          {
-            id: sousCritere1Id,
-            nom: "Sous-critère 1",
-            evaluation: {
-              note: null,
-              commentaire: "",
+      expect(result.criteres).toEqual([
+        {
+          id: critere1Id,
+          libelle: "Critère 1",
+          sousCriteres: [
+            {
+              id: sousCritere1Id,
+              nom: "Sous-critère 1",
+              evaluation: {
+                note: null,
+                commentaire: "",
+              },
             },
-          },
-        ],
-      });
-      expect(result.criteres[1]).toEqual({
-        id: critere2Id,
-        libelle: "Critère 2",
-        sousCriteres: [
-          {
-            id: sousCritere2Id,
-            nom: "Sous-critère 2",
-            evaluation: {
-              note: null,
-              commentaire: "",
+          ],
+        },
+        {
+          id: critere2Id,
+          libelle: "Critère 2",
+          sousCriteres: [
+            {
+              id: sousCritere2Id,
+              nom: "Sous-critère 2",
+              evaluation: {
+                note: null,
+                commentaire: "",
+              },
             },
+          ],
+        },
+      ]);
+      expect(result.objectifs).toEqual([
+        {
+          id: objectif1Id,
+          libelle: "Objectif 1",
+          evaluation: {
+            note: null,
+            commentaire: "",
           },
-        ],
-      });
-      expect(result.objectifs).toHaveLength(2);
-      expect(result.objectifs[0]).toEqual({
-        id: objectif1Id,
-        libelle: "Objectif 1",
-        evaluation: {
-          note: null,
-          commentaire: "",
         },
-      });
-      expect(result.objectifs[1]).toEqual({
-        id: objectif2Id,
-        libelle: "Objectif 2",
-        evaluation: {
-          note: null,
-          commentaire: "",
+        {
+          id: objectif2Id,
+          libelle: "Objectif 2",
+          evaluation: {
+            note: null,
+            commentaire: "",
+          },
         },
-      });
+      ]);
       expect(result.readOnly).toBe(false);
       expect(result.dateDerniereModification).toBeDefined();
     });
@@ -240,29 +242,45 @@ describe("AfficherAutoEvaluationQuery", () => {
       const result = await query.run({ ficheEvaluationId });
 
       // Then
-      expect(result.criteres).toHaveLength(1);
-      expect(result.criteres[0].sousCriteres[0].evaluation).toEqual({
-        id: evaluationSousCritereId,
-        etape_evaluation_id: etapeEvaluationId,
-        sous_critere_id: sousCritereId,
-        auteur_id: utilisateurId,
-        note: 3,
-        commentaire: "Sous-critère acceptable",
-        created_at: expect.any(Date),
-        updated_at: expect.any(Date),
-      });
-      expect(result.objectifs).toHaveLength(1);
-      expect(result.objectifs[0].evaluation).toEqual({
-        id: evaluationObjectifId,
-        etape_evaluation_id: etapeEvaluationId,
-        objectif_id: objectifId,
-        referentiel_objectifId: objectifId,
-        auteur_id: utilisateurId,
-        note: 4,
-        commentaire: "Bon objectif",
-        created_at: expect.any(Date),
-        updated_at: expect.any(Date),
-      });
+      expect(result.criteres).toEqual([
+        {
+          id: critereId,
+          libelle: "Critère test",
+          sousCriteres: [
+            {
+              id: sousCritereId,
+              nom: "Sous-critère test",
+              evaluation: {
+                id: evaluationSousCritereId,
+                etape_evaluation_id: etapeEvaluationId,
+                sous_critere_id: sousCritereId,
+                auteur_id: utilisateurId,
+                note: 3,
+                commentaire: "Sous-critère acceptable",
+                created_at: expect.any(Date),
+                updated_at: expect.any(Date),
+              },
+            },
+          ],
+        },
+      ]);
+      expect(result.objectifs).toEqual([
+        {
+          id: objectifId,
+          libelle: "Objectif test",
+          evaluation: {
+            id: evaluationObjectifId,
+            etape_evaluation_id: etapeEvaluationId,
+            objectif_id: objectifId,
+            referentiel_objectifId: objectifId,
+            auteur_id: utilisateurId,
+            note: 4,
+            commentaire: "Bon objectif",
+            created_at: expect.any(Date),
+            updated_at: expect.any(Date),
+          },
+        },
+      ]);
       expect(result.readOnly).toBe(false);
     });
 
@@ -366,11 +384,38 @@ describe("AfficherAutoEvaluationQuery", () => {
       const result = await query.run({ ficheEvaluationId });
 
       // Then
-      expect(result.criteres).toHaveLength(1);
-      expect(result.criteres[0].sousCriteres).toHaveLength(3);
-      expect(result.criteres[0].sousCriteres[0].id).toBe(sousCritere1Id);
-      expect(result.criteres[0].sousCriteres[1].id).toBe(sousCritere2Id);
-      expect(result.criteres[0].sousCriteres[2].id).toBe(sousCritere3Id);
+      expect(result.criteres).toEqual([
+        {
+          id: critereId,
+          libelle: "Critère multiple",
+          sousCriteres: [
+            {
+              id: sousCritere1Id,
+              nom: "Sous-critère 1",
+              evaluation: {
+                note: null,
+                commentaire: "",
+              },
+            },
+            {
+              id: sousCritere2Id,
+              nom: "Sous-critère 2",
+              evaluation: {
+                note: null,
+                commentaire: "",
+              },
+            },
+            {
+              id: sousCritere3Id,
+              nom: "Sous-critère 3",
+              evaluation: {
+                note: null,
+                commentaire: "",
+              },
+            },
+          ],
+        },
+      ]);
     });
   });
 });
