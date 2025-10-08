@@ -417,5 +417,191 @@ describe("AfficherAutoEvaluationQuery", () => {
         },
       ]);
     });
+
+    it("ne doit pas récupérer les évaluations d'autres étapes", async () => {
+      // Given
+      const critereId = "a1b2c3d4-e5f6-7890-abcd-ef1234567890";
+      const sousCritereId = "b2c3d4e5-f6a7-8901-bcde-f12345678901";
+      const rattachementCode = "REG-88";
+      const objectifId = "c3d4e5f6-a7b8-9012-cdef-123456789012";
+      const ficheEvaluationId = "d4e5f6a7-b8c9-0123-def1-234567890123";
+      const etapeAutoEvaluationId = "e5f6a7b8-c9d0-1234-ef12-345678901234";
+      const etapeConsolidationId = "f6a7b8c9-d0e1-2345-f123-456789012345";
+      const utilisateur1Id = "a7b8c9d0-e1f2-3456-1234-567890123456";
+      const utilisateur2Id = "11646233-5c43-4c73-977e-031ce1a0db8a";
+      const evaluationConsolidationId = "b8c9d0e1-f2a3-4567-2345-678901234567";
+
+      await prisma.utilisateur.create({
+        data: {
+          id: utilisateur1Id,
+          email: "auto-evaluation@example.com",
+          nom: "Auto Evaluation",
+          prenom: "User",
+          date_creation: new Date(),
+          profilCode: "DITP_ADMIN",
+        },
+      });
+      await prisma.utilisateur.create({
+        data: {
+          id: utilisateur2Id,
+          email: "consolidation@example.com",
+          nom: "Consolidation",
+          prenom: "User",
+          date_creation: new Date(),
+          profilCode: "DITP_ADMIN",
+        },
+      });
+
+      await prisma.referentiel_critere.create({
+        data: {
+          id: critereId,
+          libelle: "Critère isolation",
+          descriptif: "Description critère isolation",
+          sous_criteres: {
+            create: {
+              id: sousCritereId,
+              libelle: "Sous-critère isolation",
+              descriptif: "Description sous-critère isolation",
+            },
+          },
+        },
+      });
+
+      await prisma.referentiel_rattachement.create({
+        data: {
+          code: rattachementCode,
+          libelle: "Rattachement isolation",
+          objectifs: {
+            create: {
+              id: objectifId,
+              libelle: "Objectif isolation",
+              descriptif: "Description objectif isolation",
+              jalon: 2025,
+            },
+          },
+        },
+      });
+
+      await prisma.fiche_evaluation.create({
+        data: {
+          id: ficheEvaluationId,
+          jalon: 2025,
+          etape_courante: "AUTO_EVALUATION",
+          rattachement_code: rattachementCode,
+          etape_evaluations: {
+            create: [
+              {
+                id: etapeAutoEvaluationId,
+                type: "AUTO_EVALUATION",
+              },
+              {
+                id: etapeConsolidationId,
+                type: "CONSOLIDATION",
+              },
+            ],
+          },
+        },
+      });
+
+      await prisma.evaluation_sous_critere.create({
+        data: {
+          id: evaluationConsolidationId,
+          etape_evaluation_id: etapeConsolidationId,
+          sous_critere_id: sousCritereId,
+          auteur_id: utilisateur2Id,
+          note: 5,
+          commentaire: "Évaluation de consolidation",
+        },
+      });
+
+      // When
+      const result = await query.run({ ficheEvaluationId });
+
+      expect(result.criteres).toEqual([
+        {
+          id: critereId,
+          libelle: "Critère isolation",
+          sousCriteres: [
+            {
+              id: sousCritereId,
+              nom: "Sous-critère isolation",
+              evaluation: {
+                note: null,
+                commentaire: "",
+              },
+            },
+          ],
+        },
+      ]);
+    });
+
+    it("ne doit pas récupérer les objectifs d'autres rattachements", async () => {
+      // Given
+      const rattachement1Code = "REG-89";
+      const rattachement2Code = "REG-90";
+      const objectifId = "1948fc2a-65ee-4aae-8280-9c16f486582f";
+      const ficheEvaluation1Id = "807dca77-cd62-46b1-b30f-96745d5ef971";
+      const ficheEvaluation2Id = "9ea9f07f-e363-46df-96e4-408fb294cc71";
+      const etapeEvaluation1Id = "f102386f-91ed-469b-8c3d-2c211e2b5046";
+      const etapeEvaluation2Id = "cdef279e-5ed4-407d-be0e-bc273ec0e560";
+
+      await prisma.referentiel_rattachement.create({
+        data: {
+          code: rattachement1Code,
+          libelle: "Rattachement 1",
+        },
+      });
+
+      await prisma.referentiel_rattachement.create({
+        data: {
+          code: rattachement2Code,
+          libelle: "Rattachement 2",
+          objectifs: {
+            create: {
+              id: objectifId,
+              libelle: "Objectif rattachement 2",
+              descriptif: "Description objectif rattachement 2",
+              jalon: 2025,
+            },
+          },
+        },
+      });
+
+      await prisma.fiche_evaluation.create({
+        data: {
+          id: ficheEvaluation1Id,
+          jalon: 2025,
+          etape_courante: "AUTO_EVALUATION",
+          rattachement_code: rattachement1Code,
+          etape_evaluations: {
+            create: {
+              id: etapeEvaluation1Id,
+              type: "AUTO_EVALUATION",
+            },
+          },
+        },
+      });
+
+      await prisma.fiche_evaluation.create({
+        data: {
+          id: ficheEvaluation2Id,
+          jalon: 2025,
+          etape_courante: "AUTO_EVALUATION",
+          rattachement_code: rattachement2Code,
+          etape_evaluations: {
+            create: {
+              id: etapeEvaluation2Id,
+              type: "AUTO_EVALUATION",
+            },
+          },
+        },
+      });
+
+      // When - Récupérer la fiche du rattachement 1
+      const result = await query.run({ ficheEvaluationId: ficheEvaluation1Id });
+
+      // Then
+      expect(result.objectifs).toEqual([]);
+    });
   });
 });
