@@ -58,7 +58,6 @@ export class EnregistrerBrouillonAutoEvaluationHandler {
           id: evaluationObjectif.id,
           auteur_id: auteurId,
           objectif_id: evaluationObjectif.objectifId,
-          referentiel_objectifId: evaluationObjectif.objectifId, // TODO
           note: evaluationObjectif.note,
           commentaire: evaluationObjectif.commentaire,
         };

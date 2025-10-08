@@ -208,7 +208,6 @@ describe("EnregistrerBrouillonAutoEvaluationHandler", () => {
           id: evaluationObjectifId,
           etape_evaluation_id: etapeEvaluationId,
           objectif_id: objectifId,
-          referentiel_objectifId: objectifId,
           auteur_id: utilisateurId,
           note: 2,
           commentaire: "Initial comment",

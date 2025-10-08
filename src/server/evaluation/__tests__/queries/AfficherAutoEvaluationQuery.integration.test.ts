@@ -224,7 +224,6 @@ describe("AfficherAutoEvaluationQuery", () => {
           id: evaluationObjectifId,
           etape_evaluation_id: etapeEvaluationId,
           objectif_id: objectifId,
-          referentiel_objectifId: objectifId,
           auteur_id: utilisateurId,
           note: 4,
           commentaire: "Bon objectif",
