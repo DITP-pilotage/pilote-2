@@ -8,6 +8,7 @@ export interface Critere {
     id: string;
     nom: string;
     evaluation: {
+      id: string;
       note: number | null;
       commentaire: string;
     };
@@ -18,6 +19,7 @@ export interface Objectif {
   id: string;
   libelle: string;
   evaluation: {
+    id: string;
     note: number | null;
     commentaire: string;
   };
@@ -76,6 +78,7 @@ export class AfficherAutoEvaluationQuery {
             evaluation: etapeAutoEvaluation.evaluations_sous_criteres.find(
               (evaluation) => evaluation.sous_critere_id === sousCritere.id,
             ) ?? {
+              id: crypto.randomUUID(),
               note: null,
               commentaire: "",
             },
@@ -90,6 +93,7 @@ export class AfficherAutoEvaluationQuery {
             evaluation: etapeAutoEvaluation.evaluations_objectifs.find(
               (evaluation) => evaluation.objectif_id === objectif.id,
             ) ?? {
+              id: crypto.randomUUID(),
               note: null,
               commentaire: "",
             },

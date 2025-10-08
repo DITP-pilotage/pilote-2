@@ -6,6 +6,7 @@ export const formSchema = z.object({
     .object({
       sousCriteres: z
         .object({
+          id: z.string(),
           note: z.number(),
           commentaire: z.string().max(600),
         })
@@ -14,6 +15,7 @@ export const formSchema = z.object({
     .array(),
   objectifs: z
     .object({
+      id: z.string(),
       note: z.number(),
       commentaire: z.string().max(600),
     })

@@ -64,11 +64,13 @@ const AutoEvaluationPage = (
     defaultValues: {
       criteres: autoEvaluation.criteres.map((critere) => ({
         sousCriteres: critere.sousCriteres.map((sousCritere) => ({
+          id: sousCritere.evaluation.id,
           note: sousCritere.evaluation.note ?? undefined,
           commentaire: sousCritere.evaluation.commentaire ?? undefined,
         })),
       })),
       objectifs: autoEvaluation.objectifs.map((objectif) => ({
+        id: objectif.evaluation.id,
         note: objectif.evaluation.note ?? undefined,
         commentaire: objectif.evaluation.commentaire ?? undefined,
       })),
@@ -96,7 +98,7 @@ const AutoEvaluationPage = (
               (objectif, index) => {
                 const evaluation = data.objectifs[index];
                 return {
-                  id: "??",
+                  id: evaluation.id,
                   objectifId: objectif.id,
                   note: evaluation.note,
                   commentaire: evaluation.commentaire,
@@ -108,7 +110,7 @@ const AutoEvaluationPage = (
                 return critere.sousCriteres.map((sousCritere, jindex) => {
                   const evaluation = data.criteres[index].sousCriteres[jindex];
                   return {
-                    id: "??",
+                    id: evaluation.id,
                     sousCritereId: sousCritere.id,
                     note: evaluation.note,
                     commentaire: evaluation.commentaire,
