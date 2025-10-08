@@ -26,14 +26,14 @@ export const FormulaireEvaluation = () => {
       criteres: autoEvaluation.criteres.map((critere) => ({
         sousCriteres: critere.sousCriteres.map((sousCritere) => ({
           id: sousCritere.evaluation.id,
-          note: sousCritere.evaluation.note ?? undefined,
-          commentaire: sousCritere.evaluation.commentaire ?? undefined,
+          note: sousCritere.evaluation.note,
+          commentaire: sousCritere.evaluation.commentaire,
         })),
       })),
       objectifs: autoEvaluation.objectifs.map((objectif) => ({
         id: objectif.evaluation.id,
-        note: objectif.evaluation.note ?? undefined,
-        commentaire: objectif.evaluation.commentaire ?? undefined,
+        note: objectif.evaluation.note,
+        commentaire: objectif.evaluation.commentaire,
       })),
     },
   });
