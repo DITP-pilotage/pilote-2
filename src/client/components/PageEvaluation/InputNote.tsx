@@ -1,6 +1,7 @@
 import { Controller } from "react-hook-form";
 import { useFormEvaluation } from "@/components/PageEvaluation/form";
 import { clsxm } from "@/utils/clsxm";
+import { MessageErreur } from "@/components/PageEvaluation/MessageErreur";
 
 export function InputNote({
   name,
@@ -54,9 +55,9 @@ export function InputNote({
           </div>
           <div className="relative h-3 mt-1">
             {fieldState.error ? (
-              <span className="absolute right-0 text-xs text-error whitespace-nowrap">
+              <MessageErreur className="absolute right-0">
                 {fieldState.error.message}
-              </span>
+              </MessageErreur>
             ) : null}
           </div>
         </div>

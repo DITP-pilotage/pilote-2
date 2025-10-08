@@ -9,7 +9,9 @@ const evaluationSchema = z.object({
     .min(0, MESSAGE_ERREUR_NOTE)
     .max(100, MESSAGE_ERREUR_NOTE)
     .nullable(),
-  commentaire: z.string().max(600),
+  commentaire: z
+    .string()
+    .max(600, "Le commentaire ne doit pas dépasser 600 caractères."),
 });
 
 export const formSchema = z.object({

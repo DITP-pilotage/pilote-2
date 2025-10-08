@@ -4,6 +4,7 @@ import { useFormEvaluation } from "@/components/PageEvaluation/form";
 import { Icone } from "@/components/_commons/Icone";
 import { AddLineIcon } from "@/components/_commons/Icones/AddLineIcon";
 import { clsxm } from "@/utils/clsxm";
+import { MessageErreur } from "@/components/PageEvaluation/MessageErreur";
 
 export function CommentaireTextarea({
   name,
@@ -37,7 +38,12 @@ export function CommentaireTextarea({
         const fieldId = `${name}.commentaire`;
         return (
           <div className="flex flex-col gap-1">
-            <label className="font-bold text-sm" htmlFor={fieldId}>
+            <label
+              className={clsxm("font-bold text-sm", {
+                "text-error": !!fieldState.error,
+              })}
+              htmlFor={fieldId}
+            >
               Commentaire
             </label>
             <textarea
@@ -46,11 +52,24 @@ export function CommentaireTextarea({
               })}
               id={fieldId}
               {...field}
+              onBlur={(e) => {
+                field.onBlur(e);
+                if (!e.target.value) setDisplayComment(false);
+              }}
               ref={(node) => {
                 node?.focus();
                 field.ref(node);
               }}
             />
+            <div className="flex justify-between mt-1">
+              {fieldState.error ? (
+                <MessageErreur>{fieldState.error.message}</MessageErreur>
+              ) : null}
+
+              <span className="text-xs ml-auto">
+                {field.value.length} / 600
+              </span>
+            </div>
           </div>
         );
       }}
