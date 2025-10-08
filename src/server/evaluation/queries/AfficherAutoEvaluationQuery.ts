@@ -1,8 +1,9 @@
+import { $Enums } from "@prisma/client";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 
 export interface Critere {
   id: string;
-  nom: string;
+  libelle: string;
   sousCriteres: Array<{
     id: string;
     nom: string;
@@ -15,7 +16,7 @@ export interface Critere {
 
 export interface Objectif {
   id: string;
-  nom: string;
+  libelle: string;
   evaluation: {
     note: number | null;
     commentaire: string;
@@ -25,7 +26,8 @@ export interface Objectif {
 export type AfficherAutoEvaluationViewModel = {
   criteres: Critere[];
   objectifs: Objectif[];
-  denieresModifications: string;
+  dateDerniereModification: string;
+  readOnly: boolean;
 };
 
 export class AfficherAutoEvaluationQuery {
@@ -67,7 +69,7 @@ export class AfficherAutoEvaluationQuery {
       criteres: criteres.map((critere) => {
         return {
           id: critere.id,
-          nom: critere.libelle,
+          libelle: critere.libelle,
           sousCriteres: critere.sous_criteres.map((sousCritere) => ({
             id: sousCritere.id,
             nom: sousCritere.libelle,
@@ -84,7 +86,7 @@ export class AfficherAutoEvaluationQuery {
         etapeAutoEvaluation.fiche_evaluation.rattachement.objectifs.map(
           (objectif) => ({
             id: objectif.id,
-            nom: objectif.libelle,
+            libelle: objectif.libelle,
             evaluation: etapeAutoEvaluation.evaluations_objectifs.find(
               (evaluation) => evaluation.objectif_id === objectif.id,
             ) ?? {
@@ -93,7 +95,10 @@ export class AfficherAutoEvaluationQuery {
             },
           }),
         ),
-      denieresModifications: new Date().toISOString(),
+      dateDerniereModification: new Date().toISOString(),
+      readOnly:
+        etapeAutoEvaluation.fiche_evaluation.etape_courante !==
+        $Enums.etape_evaluation_enum.AUTO_EVALUATION,
     };
   }
 }

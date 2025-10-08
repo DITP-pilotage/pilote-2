@@ -108,15 +108,21 @@ const AutoEvaluationPage = (
                 )}
               </span>
               {etape === "criteres" && (
-                <Bouton
-                  className="ml-auto"
-                  form={formId}
-                  iconRight={
-                    <Icone className="text-current" icone={ArrowLine1Icon} />
-                  }
-                  label="Objectifs"
-                  type="submit"
-                />
+                <div className="ml-auto flex items-center gap-4">
+                  <Bouton
+                    label="Enregistrer le brouillon"
+                    type="button"
+                    variant="secondary"
+                  />
+                  <Bouton
+                    form={formId}
+                    iconRight={
+                      <Icone className="text-current" icone={ArrowLine1Icon} />
+                    }
+                    label="Objectifs"
+                    type="submit"
+                  />
+                </div>
               )}
               {etape === "objectifs" && (
                 <div className="ml-auto flex items-center gap-4">
@@ -128,6 +134,13 @@ const AutoEvaluationPage = (
                     onClick={() => setEtape("criteres")}
                     variant="secondary"
                   />
+
+                  <Bouton
+                    label="Enregistrer le brouillon"
+                    type="button"
+                    variant="secondary"
+                  />
+
                   <Bouton form={formId} label="Soumettre" type="submit" />
                 </div>
               )}
