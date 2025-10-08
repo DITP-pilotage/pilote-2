@@ -10,7 +10,6 @@ import { ChantierInformations } from "@/components/PageImportIndicateur/Chantier
 import { dependencies } from "@/server/infrastructure/Dependencies";
 import Indicateur from "@/server/domain/indicateur/Indicateur.interface";
 import { authOptions } from "@/server/infrastructure/api/auth/[...nextauth]";
-import RécupérerChantierUseCase from "@/server/usecase/chantier/RécupérerChantierUseCase";
 import {
   presenterEnRapportContrat,
   RapportContrat,
@@ -23,6 +22,7 @@ import {
 import { getFiltresActifs } from "@/stores/useFiltresStoreNew/useFiltresStoreNew";
 import { getAnneeDateDeBascule } from "@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getAnneeDateDeBascule";
 import { configuration } from "@/config";
+import { getContainer } from "@/server/dependances";
 
 interface NextPageImportIndicateurProps {
   chantierInformations: ChantierInformations;
@@ -62,11 +62,9 @@ export async function getServerSideProps({
     throw new Error("Not connected or not authorized ?");
   }
 
-  const chantier: Chantier = await new RécupérerChantierUseCase(
-    dependencies.getChantierRepository(),
-    dependencies.getMinistèreRepository(),
-    dependencies.getTerritoireRepository(),
-  ).run(params.id, session.habilitations, session.profil, jalon);
+  const chantier = await getContainer("chantiers")
+    .resolve("recupererChantierUseCaseV2")
+    .run(params.id, session.habilitations, session.profil, jalon);
 
   const indicateurRepository = dependencies.getIndicateurRepository();
   const indicateurs = await indicateurRepository.récupérerParChantierId(

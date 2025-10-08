@@ -16,15 +16,6 @@ export interface IndicateurRepository {
     indicId: string;
     jalon: number;
   }): Promise<DonneeIndicateur[]>;
-  supprimerPropositionValeurAvancement({
-    indicId,
-    territoireCode,
-    auteurModification,
-  }: {
-    indicId: string;
-    territoireCode: string;
-    auteurModification: string;
-  }): Promise<void>;
   recupererPourExports(
     chantierIdsLecture: string,
     territoireCodesLecture: string[],

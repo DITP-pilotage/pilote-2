@@ -136,8 +136,8 @@ export function créerDonnéesTerritoiresRapportDetailleNew(
     const chantierRow = chantierRows.find((c) => c.territoire_code === t.code);
 
     let aUnePropositionDeValeurAvancement =
-      chantierRow?.nombre_propositions_valeur_actuelle_v2
-        ? chantierRow.nombre_propositions_valeur_actuelle_v2 > 0
+      chantierRow?.nombre_propositions_valeur_actuelle
+        ? chantierRow.nombre_propositions_valeur_actuelle > 0
         : false;
     if (chantierRowsMailleEnfant && listeTerritoireEnfant) {
       const territoiresEnfantCodes = new Set(
@@ -151,7 +151,7 @@ export function créerDonnéesTerritoiresRapportDetailleNew(
       aUnePropositionDeValeurAvancement = aUnePropositionDeValeurAvancement
         ? true
         : chantierRowsTerritoiresEnfant.some(
-            (chantier) => chantier.nombre_propositions_valeur_actuelle_v2 > 0,
+            (chantier) => chantier.nombre_propositions_valeur_actuelle > 0,
           );
     }
 
@@ -259,8 +259,7 @@ export const presenterEnChantierRapportDetaille = (
                 ...listeChantiersMailleDépartementale,
                 ...listeChantiersMailleRégionale,
               ].some(
-                (chantier) =>
-                  chantier.nombre_propositions_valeur_actuelle_v2 > 0,
+                (chantier) => chantier.nombre_propositions_valeur_actuelle > 0,
               ),
               dateTauxAvancementMandatValeurPrecedente:
                 chantierMailleNationale?.date_taux_avancement_mandat_valeur_precedente?.toISOString() ??
@@ -298,8 +297,7 @@ export const presenterEnChantierRapportDetaille = (
                 ...listeChantiersMailleDépartementale,
                 ...listeChantiersMailleRégionale,
               ].some(
-                (chantier) =>
-                  chantier.nombre_propositions_valeur_actuelle_v2 > 0,
+                (chantier) => chantier.nombre_propositions_valeur_actuelle > 0,
               ),
               dateTauxAvancementMandatValeurPrecedente:
                 chantierMailleNationale?.date_taux_avancement_mandat_valeur_precedente?.toISOString() ??

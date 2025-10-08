@@ -59,13 +59,7 @@ SELECT
             THEN date_pro_maj.prochaine_date_maj_jours
     END AS prochaine_date_maj_jours,
     meta_indic_parametrage.tendance,
-    a.vacp AS valeur_actuelle_proposition,
-    pva.auteur_proposition AS auteur_proposition,
-    pva.date_proposition::date AS date_proposition,
-    pva.motif_proposition AS motif_proposition,
-    pva.source_donnee_methode_calcul AS source_donnee_methode_calcul_proposition,
     a.tap_global AS taux_avancement_mandat_proposition,
-    a.tap_global_v2 AS taux_avancement_mandat_proposition_v2,
     CASE
         WHEN
             coalesce(z_appl.est_applicable, true) AND maille_appl.maille_est_applicable
@@ -102,11 +96,6 @@ LEFT JOIN {{ ref('get_date_pro_maj_indic') }} AS date_pro_maj
 LEFT JOIN
     {{ source('parametrage_indicateurs', 'metadata_parametrage_indicateurs') }} AS meta_indic_parametrage
     ON meta_indic.id = meta_indic_parametrage.indic_id
-LEFT JOIN {{ ref('int_propositions_valeurs') }} AS pva
-    ON
-        meta_indic.id = pva.indic_id
-        AND territoire.code = pva.territoire_code
-        AND pva.date_valeur_actuelle::date = a.date_valeur_actuelle::date
 LEFT JOIN get_evol_vaca AS evol_va
     ON meta_indic.id = evol_va.indic_id AND territoire.zone_id = evol_va.zone_id
 ORDER BY meta_indic.id, territoire.maille, territoire.code

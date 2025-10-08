@@ -64,9 +64,9 @@ export function créerDonnéesTerritoires(
         ? NOMS_MAILLES[chantierRow.donnees_maille_source]
         : null,
       nombrePropositionValeur:
-        chantierRow?.nombre_propositions_valeur_actuelle_v2 ?? 0,
+        chantierRow?.nombre_propositions_valeur_actuelle ?? 0,
       nombrePropositionValeurPonderee:
-        chantierRow?.nombre_propositions_valeur_actuelle_ponderee_v2 ?? 0,
+        chantierRow?.nombre_propositions_valeur_actuelle_ponderee ?? 0,
       dateTauxAvancementPrecedent:
         chantierRow?.date_taux_avancement_mandat_valeur_precedente?.toISOString() ??
         null,
@@ -166,9 +166,7 @@ export const presenterEnChantierContrat = (
           nombrePropositionValeur: [
             ...listeChantiersMailleDépartementale,
             ...listeChantiersMailleRégionale,
-          ].some(
-            (chantier) => chantier.nombre_propositions_valeur_actuelle_v2 > 0,
-          )
+          ].some((chantier) => chantier.nombre_propositions_valeur_actuelle > 0)
             ? 1
             : 0,
           dateTauxAvancementPrecedent:

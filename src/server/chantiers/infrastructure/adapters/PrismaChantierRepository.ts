@@ -732,7 +732,7 @@ export class PrismaChantierRepository implements ChantierRepository {
           const maille = prismaChantierTerritoire.maille;
 
           const prismaNombrePropositionValeurActuelle =
-            prismaChantierTerritoire.nombre_propositions_valeur_actuelle_v2;
+            prismaChantierTerritoire.nombre_propositions_valeur_actuelle;
 
           if (maille === "DEPT") {
             aUnePropositionsValeurAvancement =
@@ -748,14 +748,13 @@ export class PrismaChantierRepository implements ChantierRepository {
                 )
                 .some(
                   (chantierTerritoire) =>
-                    chantierTerritoire.nombre_propositions_valeur_actuelle_v2 >
-                    0,
+                    chantierTerritoire.nombre_propositions_valeur_actuelle > 0,
                 );
           } else {
             aUnePropositionsValeurAvancement =
               prismaChantierIdentite.chantier_territoire.some(
                 (chantierTerritoire) =>
-                  chantierTerritoire.nombre_propositions_valeur_actuelle_v2 > 0,
+                  chantierTerritoire.nombre_propositions_valeur_actuelle > 0,
               );
           }
 
@@ -1300,8 +1299,8 @@ export class PrismaChantierRepository implements ChantierRepository {
             coordinateurs_territoriaux: true,
             coordinateurs_territoriaux_mails: true,
             taux_avancement_mandat: true,
-            nombre_propositions_valeur_actuelle_v2: true,
-            nombre_propositions_valeur_actuelle_ponderee_v2: true,
+            nombre_propositions_valeur_actuelle: true,
+            nombre_propositions_valeur_actuelle_ponderee: true,
             date_taux_avancement_mandat_valeur_precedente: true,
             chantier_territoire_jalon: {
               select: {

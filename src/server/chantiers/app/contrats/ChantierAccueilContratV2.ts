@@ -107,8 +107,8 @@ export function créerDonnéesTerritoiresV2(
     );
 
     let aUnePropositionDeValeurAvancement =
-      chantierRow?.nombre_propositions_valeur_actuelle_v2
-        ? chantierRow.nombre_propositions_valeur_actuelle_v2 > 0
+      chantierRow?.nombre_propositions_valeur_actuelle
+        ? chantierRow.nombre_propositions_valeur_actuelle > 0
         : false;
     if (chantierRowsMailleEnfant && listeTerritoireEnfant) {
       const territoiresEnfantCodes = new Set(
@@ -122,7 +122,7 @@ export function créerDonnéesTerritoiresV2(
       aUnePropositionDeValeurAvancement = aUnePropositionDeValeurAvancement
         ? true
         : chantierRowsTerritoiresEnfant.some(
-            (chantier) => chantier.nombre_propositions_valeur_actuelle_v2 > 0,
+            (chantier) => chantier.nombre_propositions_valeur_actuelle > 0,
           );
     }
 
@@ -208,8 +208,7 @@ export const presenterEnChantierAccueilContratV2 = (
                 ...listeChantiersMailleDépartementale,
                 ...listeChantiersMailleRégionale,
               ].some(
-                (chantier) =>
-                  chantier.nombre_propositions_valeur_actuelle_v2 > 0,
+                (chantier) => chantier.nombre_propositions_valeur_actuelle > 0,
               ),
             }
           : {
@@ -237,8 +236,7 @@ export const presenterEnChantierAccueilContratV2 = (
                 ...listeChantiersMailleDépartementale,
                 ...listeChantiersMailleRégionale,
               ].some(
-                (chantier) =>
-                  chantier.nombre_propositions_valeur_actuelle_v2 > 0,
+                (chantier) => chantier.nombre_propositions_valeur_actuelle > 0,
               ),
             },
     },
