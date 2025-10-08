@@ -16,22 +16,49 @@ export function InputNote({
       control={form.control}
       name={name}
       render={({ field, fieldState }) => (
-        <div className="border !rounded-md !bg-white flex items-stretch focus-within:outline-2 focus-within:outline-dsfr-info-main-525 focus-within:outline-offset-2">
-          <input
+        <div className="flex flex-col">
+          <div
             className={clsxm(
-              "focus:!outline-none w-[6ch] text-right px-4 py-2 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none",
+              "border !rounded-md !bg-white flex items-stretch overflow-hidden",
+              "focus-within:outline-2 focus-within:outline-dsfr-info-main-525 focus-within:outline-offset-2",
               {
-                "!border-dsfr-error-425": fieldState.error != null,
+                "!border-error text-error": !!fieldState.error,
               },
             )}
-            type="number"
-            {...field}
-            onChange={(e) => field.onChange(e.target.valueAsNumber)}
-            value={field.value?.toString() ?? ""}
-          />
-          <span className="px-2 flex items-center font-semibold text-sm py-2 border-l border-gray-200">
-            %
-          </span>
+          >
+            <input
+              className={clsxm(
+                "focus:!outline-none w-[6ch] text-right px-4 py-2 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none",
+                {
+                  "!border-dsfr-error-425": fieldState.error != null,
+                },
+              )}
+              type="number"
+              {...field}
+              onChange={(e) => {
+                const value = e.target.valueAsNumber;
+                field.onChange(Number.isNaN(value) ? null : value);
+              }}
+              value={field.value?.toString() ?? ""}
+            />
+            <span
+              className={clsxm(
+                "px-2 flex items-center font-semibold text-sm py-2 border-l border-gray-200 bg-gray-50",
+                {
+                  "!border-error/30 !bg-error/5": !!fieldState.error,
+                },
+              )}
+            >
+              %
+            </span>
+          </div>
+          <div className="relative h-3 mt-1">
+            {fieldState.error ? (
+              <span className="absolute right-0 text-xs text-error whitespace-nowrap">
+                {fieldState.error.message}
+              </span>
+            ) : null}
+          </div>
         </div>
       )}
     />
