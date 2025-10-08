@@ -26,6 +26,7 @@ export interface Objectif {
 }
 
 export type AfficherAutoEvaluationViewModel = {
+  ficheEvaluationId: string;
   criteres: Critere[];
   objectifs: Objectif[];
   dateDerniereModification: string;
@@ -68,36 +69,43 @@ export class AfficherAutoEvaluationQuery {
       });
 
     return {
-      criteres: criteres.map((critere) => {
-        return {
-          id: critere.id,
-          libelle: critere.libelle,
-          sousCriteres: critere.sous_criteres.map((sousCritere) => ({
+      ficheEvaluationId: etapeAutoEvaluation.fiche_evaluation.id,
+      criteres: criteres.map((critere) => ({
+        id: critere.id,
+        libelle: critere.libelle,
+        sousCriteres: critere.sous_criteres.map((sousCritere) => {
+          const evaluation = etapeAutoEvaluation.evaluations_sous_criteres.find(
+            (evaluationSousCritere) =>
+              evaluationSousCritere.sous_critere_id === sousCritere.id,
+          );
+          return {
             id: sousCritere.id,
             nom: sousCritere.libelle,
-            evaluation: etapeAutoEvaluation.evaluations_sous_criteres.find(
-              (evaluation) => evaluation.sous_critere_id === sousCritere.id,
-            ) ?? {
-              id: crypto.randomUUID(),
-              note: null,
-              commentaire: "",
+            evaluation: {
+              id: evaluation?.id ?? crypto.randomUUID(),
+              note: evaluation?.note ?? null,
+              commentaire: evaluation?.commentaire ?? "",
             },
-          })),
-        };
-      }),
+          };
+        }),
+      })),
       objectifs:
         etapeAutoEvaluation.fiche_evaluation.rattachement.objectifs.map(
-          (objectif) => ({
-            id: objectif.id,
-            libelle: objectif.libelle,
-            evaluation: etapeAutoEvaluation.evaluations_objectifs.find(
-              (evaluation) => evaluation.objectif_id === objectif.id,
-            ) ?? {
-              id: crypto.randomUUID(),
-              note: null,
-              commentaire: "",
-            },
-          }),
+          (objectif) => {
+            const evaluation = etapeAutoEvaluation.evaluations_objectifs.find(
+              (evaluationObjectif) =>
+                evaluationObjectif.objectif_id === objectif.id,
+            );
+            return {
+              id: objectif.id,
+              libelle: objectif.libelle,
+              evaluation: {
+                id: evaluation?.id ?? crypto.randomUUID(),
+                note: evaluation?.note ?? null,
+                commentaire: evaluation?.commentaire ?? "",
+              },
+            };
+          },
         ),
       dateDerniereModification: new Date().toISOString(),
       readOnly:

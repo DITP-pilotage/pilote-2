@@ -94,6 +94,7 @@ const AutoEvaluationPage = (
       : // eslint-disable-next-line no-console
         form.handleSubmit((data) => {
           enregisterBrouillon.mutate({
+            ficheEvaluationId: autoEvaluation.ficheEvaluationId,
             evaluationsObjectifs: autoEvaluation.objectifs.map(
               (objectif, index) => {
                 const evaluation = data.objectifs[index];
