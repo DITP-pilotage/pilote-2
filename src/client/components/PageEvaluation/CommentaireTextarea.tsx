@@ -3,8 +3,9 @@ import { Controller } from "react-hook-form";
 import { useFormEvaluation } from "@/components/PageEvaluation/form";
 import { Icone } from "@/components/_commons/Icone";
 import { AddLineIcon } from "@/components/_commons/Icones/AddLineIcon";
+import { clsxm } from "@/utils/clsxm";
 
-export function Commentaire({
+export function CommentaireTextarea({
   name,
 }: {
   name:
@@ -32,7 +33,7 @@ export function Commentaire({
     <Controller
       control={form.control}
       name={name}
-      render={({ field }) => {
+      render={({ field, fieldState }) => {
         const fieldId = `${name}.commentaire`;
         return (
           <div className="flex flex-col gap-1">
@@ -40,7 +41,9 @@ export function Commentaire({
               Commentaire
             </label>
             <textarea
-              className="border !rounded-md !bg-white py-2 px-4"
+              className={clsxm("border !rounded-md !bg-white py-2 px-4", {
+                "!border-error": !!fieldState.error,
+              })}
               id={fieldId}
               {...field}
               ref={(node) => {

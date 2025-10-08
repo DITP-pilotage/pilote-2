@@ -1,7 +1,7 @@
 import { useFieldArray } from "react-hook-form";
 import { useFormEvaluation } from "@/components/PageEvaluation/form";
 import { pageEvaluation } from "@/components/PageEvaluation/PageEvaluationServerSideContext";
-import { Commentaire } from "@/components/PageEvaluation/Commentaire";
+import { CommentaireTextarea } from "@/components/PageEvaluation/CommentaireTextarea";
 import { InputNote } from "@/components/PageEvaluation/InputNote";
 
 export const EtapeCriteres = () => {
@@ -35,7 +35,7 @@ export const EtapeCriteres = () => {
                       <InputNote name={noteInputName} />{" "}
                     </div>
 
-                    <Commentaire name={commentaireInputName} />
+                    <CommentaireTextarea name={commentaireInputName} />
                   </div>
                 );
               })}

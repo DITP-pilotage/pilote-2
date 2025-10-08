@@ -1,7 +1,7 @@
 import { useFieldArray } from "react-hook-form";
 import { useFormEvaluation } from "@/components/PageEvaluation/form";
 import { pageEvaluation } from "@/components/PageEvaluation/PageEvaluationServerSideContext";
-import { Commentaire } from "@/components/PageEvaluation/Commentaire";
+import { CommentaireTextarea } from "@/components/PageEvaluation/CommentaireTextarea";
 import { InputNote } from "@/components/PageEvaluation/InputNote";
 
 export function EtapeObjectifs() {
@@ -27,7 +27,7 @@ export function EtapeObjectifs() {
               <InputNote name={noteName} />
             </div>
             <div className="py-4 px-6 flex flex-col bg-dsfr-grey-925/30 ">
-              <Commentaire name={commentaireName} />
+              <CommentaireTextarea name={commentaireName} />
             </div>
           </div>
         );
