@@ -5,6 +5,7 @@ import { Icone } from "@/components/_commons/Icone";
 import { AddLineIcon } from "@/components/_commons/Icones/AddLineIcon";
 import { clsxm } from "@/utils/clsxm";
 import { MessageErreur } from "@/components/PageEvaluation/MessageErreur";
+import { pageEvaluation } from "@/components/PageEvaluation/PageEvaluationServerSideContext";
 
 export function CommentaireTextarea({
   name,
@@ -14,6 +15,7 @@ export function CommentaireTextarea({
     | `objectifs.${number}.commentaire`;
 }) {
   const form = useFormEvaluation();
+  const { autoEvaluation } = pageEvaluation.useServerSidePropsContext();
   const defaultOpen = form.getValues(name) != "";
   const [displayComment, setDisplayComment] = useState(defaultOpen);
 
@@ -52,8 +54,9 @@ export function CommentaireTextarea({
               })}
               id={fieldId}
               {...field}
+              disabled={autoEvaluation.readOnly}
               onBlur={(e) => {
-                field.onBlur(e);
+                field.onBlur();
                 if (!e.target.value) setDisplayComment(false);
               }}
               ref={(node) => {

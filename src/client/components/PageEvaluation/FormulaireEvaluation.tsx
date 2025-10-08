@@ -12,6 +12,7 @@ import { ArrowLine1Icon } from "@/components/_commons/Icones/ArrowLine1Icon";
 import { ArrowLine3Icon } from "@/components/_commons/Icones/ArrowLine3Icon";
 import { EtapeCriteres } from "@/components/PageEvaluation/EtapeCriteres";
 import { EtapeObjectifs } from "@/components/PageEvaluation/EtapeObjectifs";
+import { InformationPleineIcon } from "@/components/_commons/Icones/InformationPleineIcon";
 
 export const FormulaireEvaluation = () => {
   const { autoEvaluation } = pageEvaluation.useServerSidePropsContext();
@@ -66,34 +67,49 @@ export const FormulaireEvaluation = () => {
                   "DD/MM/YYYY [à] H[h]mm",
                 )}
               </span>
-              {etape === "criteres" && (
-                <div className="ml-auto flex items-center gap-4">
-                  <BoutonEnregistrerBrouillon formId={formId} />
-                  <Bouton
-                    form={formId}
-                    iconRight={
-                      <Icone className="text-current" icone={ArrowLine1Icon} />
-                    }
-                    label="Objectifs"
-                    type="submit"
-                  />
-                </div>
-              )}
-              {etape === "objectifs" && (
-                <div className="ml-auto flex items-center gap-4">
-                  <Bouton
-                    iconLeft={
-                      <Icone className="text-current" icone={ArrowLine3Icon} />
-                    }
-                    label="Critères"
-                    onClick={() => setEtape("criteres")}
-                    variant="secondary"
-                  />
+              {autoEvaluation.readOnly ? (
+                <span className="flex gap-2 text-sm items-center">
+                  <Icone className="h-5 w-5" icone={InformationPleineIcon} />{" "}
+                  Cette fiche d'évaluation a déjà été soumise.
+                </span>
+              ) : (
+                <>
+                  {etape === "criteres" && (
+                    <div className="ml-auto flex items-center gap-4">
+                      <BoutonEnregistrerBrouillon formId={formId} />
+                      <Bouton
+                        form={formId}
+                        iconRight={
+                          <Icone
+                            className="text-current"
+                            icone={ArrowLine1Icon}
+                          />
+                        }
+                        label="Objectifs"
+                        type="submit"
+                      />
+                    </div>
+                  )}
+                  {etape === "objectifs" && (
+                    <div className="ml-auto flex items-center gap-4">
+                      <Bouton
+                        iconLeft={
+                          <Icone
+                            className="text-current"
+                            icone={ArrowLine3Icon}
+                          />
+                        }
+                        label="Critères"
+                        onClick={() => setEtape("criteres")}
+                        variant="secondary"
+                      />
 
-                  <BoutonEnregistrerBrouillon formId={formId} />
+                      <BoutonEnregistrerBrouillon formId={formId} />
 
-                  <Bouton label="Soumettre" />
-                </div>
+                      <Bouton label="Soumettre" />
+                    </div>
+                  )}
+                </>
               )}
             </div>
           </div>

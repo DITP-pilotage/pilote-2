@@ -2,6 +2,7 @@ import { Controller } from "react-hook-form";
 import { useFormEvaluation } from "@/components/PageEvaluation/form";
 import { clsxm } from "@/utils/clsxm";
 import { MessageErreur } from "@/components/PageEvaluation/MessageErreur";
+import { pageEvaluation } from "@/components/PageEvaluation/PageEvaluationServerSideContext";
 
 export function InputNote({
   name,
@@ -11,6 +12,7 @@ export function InputNote({
     | `objectifs.${number}.note`;
 }) {
   const form = useFormEvaluation();
+  const { autoEvaluation } = pageEvaluation.useServerSidePropsContext();
 
   return (
     <Controller
@@ -36,6 +38,7 @@ export function InputNote({
               )}
               type="number"
               {...field}
+              disabled={autoEvaluation.readOnly}
               onChange={(e) => {
                 const value = e.target.valueAsNumber;
                 field.onChange(Number.isNaN(value) ? null : value);
