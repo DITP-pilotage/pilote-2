@@ -848,14 +848,13 @@ model evaluation_objectif {
   etape_evaluation_id    String               @db.Uuid
   etape_evaluation       etape_evaluation     @relation(fields: [etape_evaluation_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
   objectif_id            String               @db.Uuid
-  objectif               referentiel_objectif @relation(fields: [referentiel_objectifId], references: [id])
+  objectif               referentiel_objectif @relation(fields: [objectif_id], references: [id])
   auteur_id              String               @db.Uuid
   auteur                 utilisateur          @relation(fields: [auteur_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
   note                   Int?
   commentaire            String
   created_at             DateTime             @default(now())
   updated_at             DateTime             @updatedAt
-  referentiel_objectifId String               @db.Uuid
 
   @@unique([etape_evaluation_id, objectif_id, auteur_id])
   @@schema("public")

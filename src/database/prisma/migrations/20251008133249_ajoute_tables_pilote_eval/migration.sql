@@ -93,7 +93,6 @@ CREATE TABLE "public"."evaluation_objectif" (
     "commentaire" TEXT NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
-    "referentiel_objectifId" UUID NOT NULL,
 
     CONSTRAINT "evaluation_objectif_pkey" PRIMARY KEY ("id")
 );
@@ -149,7 +148,7 @@ ALTER TABLE "public"."rattachement_utilisateur_etape_jalon" ADD CONSTRAINT "ratt
 ALTER TABLE "public"."evaluation_objectif" ADD CONSTRAINT "evaluation_objectif_etape_evaluation_id_fkey" FOREIGN KEY ("etape_evaluation_id") REFERENCES "public"."etape_evaluation"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "public"."evaluation_objectif" ADD CONSTRAINT "evaluation_objectif_referentiel_objectifId_fkey" FOREIGN KEY ("referentiel_objectifId") REFERENCES "public"."referentiel_objectif"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "public"."evaluation_objectif" ADD CONSTRAINT "evaluation_objectif_objectif_id_fkey" FOREIGN KEY ("objectif_id") REFERENCES "public"."referentiel_objectif"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "public"."evaluation_objectif" ADD CONSTRAINT "evaluation_objectif_auteur_id_fkey" FOREIGN KEY ("auteur_id") REFERENCES "public"."utilisateur"("id") ON DELETE CASCADE ON UPDATE CASCADE;
