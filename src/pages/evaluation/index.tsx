@@ -28,17 +28,17 @@ export const getServerSideProps = async ({
     };
   }
 
-  const rattachements = await getContainer("piloteEval")
-    .resolve("listerRattachements")
-    .run();
+  const fichesEvaluation = await getContainer("piloteEval")
+    .resolve("listerFichesAutoEvaluation")
+    .run({ utilisateurId: session.user.id });
 
-  return { props: { rattachements } };
+  return { props: { fichesEvaluation } };
 };
 
 const EvaluationPage = (
   props: InferGetServerSidePropsType<typeof getServerSideProps>,
 ) => {
-  const { rattachements } = props;
+  const { fichesEvaluation } = props;
 
   return (
     <main className="py-6 pt-0">
@@ -53,13 +53,13 @@ const EvaluationPage = (
           </header>
           <div className="p-4">
             <ul className="space-y-2 !list-none !px-0">
-              {rattachements.map((rattachement) => (
-                <li key={rattachement.id}>
+              {fichesEvaluation.map((ficheEvaluation) => (
+                <li key={ficheEvaluation.id}>
                   <a
                     className="block p-4 border border-gray-300 rounded hover:bg-gray-50"
-                    href={`/evaluation/auto-evaluation/${rattachement.id}`}
+                    href={`/evaluation/auto-evaluation/${ficheEvaluation.id}`}
                   >
-                    {rattachement.nom}
+                    {ficheEvaluation.rattachement.libelle}
                   </a>
                 </li>
               ))}

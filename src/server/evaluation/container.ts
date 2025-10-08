@@ -1,12 +1,12 @@
 import { asClass, AwilixContainer } from "awilix";
 import { AfficherAutoEvaluationQuery } from "@/server/evaluation/queries/AfficherAutoEvaluationQuery";
-import { ListerRattachementsUseCase } from "@/server/evaluation/usecases/ListerRattachementsUseCase";
+import { ListerFichesAutoEvaluationQuery } from "@/server/evaluation/queries/ListerFichesAutoEvaluationQuery";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { EnregistrerBrouillonAutoEvaluationHandler } from "./handlers/EnregistrerBrouillonAutoEvaluationHandler";
 
 export type PiloteEvalDependencies = {
   afficherAutoEvaluation: AfficherAutoEvaluationQuery;
-  listerRattachements: ListerRattachementsUseCase;
+  listerFichesAutoEvaluation: ListerFichesAutoEvaluationQuery;
   enregistrerBrouillonAutoEvaluation: EnregistrerBrouillonAutoEvaluationHandler;
 };
 
@@ -15,7 +15,7 @@ export const getPiloteEvalContainer = (
 ): AwilixContainer<PiloteEvalDependencies> => {
   return initialContainer.createScope<PiloteEvalDependencies>().register({
     afficherAutoEvaluation: asClass(AfficherAutoEvaluationQuery),
-    listerRattachements: asClass(ListerRattachementsUseCase),
+    listerFichesAutoEvaluation: asClass(ListerFichesAutoEvaluationQuery),
     enregistrerBrouillonAutoEvaluation: asClass(
       EnregistrerBrouillonAutoEvaluationHandler,
     ),
