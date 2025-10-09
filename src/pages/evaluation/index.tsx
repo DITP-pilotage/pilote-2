@@ -28,17 +28,17 @@ export const getServerSideProps = async ({
     };
   }
 
-  const rattachements = await getContainer("piloteEval")
-    .resolve("listerRattachements")
-    .run();
+  const fichesEvaluation = await getContainer("piloteEval")
+    .resolve("listerFichesAutoEvaluation")
+    .run({ utilisateurId: session.user.id });
 
-  return { props: { rattachements } };
+  return { props: { fichesEvaluation } };
 };
 
 const EvaluationPage = (
   props: InferGetServerSidePropsType<typeof getServerSideProps>,
 ) => {
-  const { rattachements } = props;
+  const { fichesEvaluation } = props;
 
   return (
     <main className="py-6 pt-0">
@@ -47,19 +47,23 @@ const EvaluationPage = (
       </Head>
 
       <div className="min-h-[60vh]">
-        <div className="bg-white mx-auto w-full max-w-4xl">
+        <div className="bg-white mx-auto w-full max-w-4xl py-6">
           <header className="p-4 bg-dsfr-blue-france-925 border-b-2 border-black">
             <span className="font-bold text-sm">Mes auto-évaluations</span>
           </header>
           <div className="p-4">
             <ul className="space-y-2 !list-none !px-0">
-              {rattachements.map((rattachement) => (
-                <li key={rattachement.id}>
+              {fichesEvaluation.map((ficheEvaluation) => (
+                <li key={ficheEvaluation.id}>
                   <a
-                    className="block p-4 border border-gray-300 rounded hover:bg-gray-50"
-                    href={`/evaluation/auto-evaluation/${rattachement.id}`}
+                    className="block p-4 border border-gray-300 rounded hover:bg-gray-50 flex justify-between items-center"
+                    href={`/evaluation/auto-evaluation/${ficheEvaluation.id}`}
                   >
-                    {rattachement.nom}
+                    {ficheEvaluation.rattachement.libelle}
+
+                    <span className="text-xs bg-blue-100 text-blue-600 px-2 py-1.5 rounded-md">
+                      {ficheEvaluation.etapeCourante}
+                    </span>
                   </a>
                 </li>
               ))}

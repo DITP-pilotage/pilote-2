@@ -84,7 +84,9 @@ function registerContainer(): ContainerDependencies {
       getIndicateurTerritoireValeurEvenementContainer(
         initialContainerWithTransversalDependencies,
       ),
-    piloteEval: getPiloteEvalContainer(),
+    piloteEval: getPiloteEvalContainer(
+      initialContainerWithTransversalDependencies,
+    ),
   };
 }
 

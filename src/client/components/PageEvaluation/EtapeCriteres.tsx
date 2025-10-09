@@ -1,7 +1,7 @@
 import { useFieldArray } from "react-hook-form";
 import { useFormEvaluation } from "@/components/PageEvaluation/form";
 import { pageEvaluation } from "@/components/PageEvaluation/PageEvaluationServerSideContext";
-import { Commentaire } from "@/components/PageEvaluation/Commentaire";
+import { CommentaireTextarea } from "@/components/PageEvaluation/CommentaireTextarea";
 import { InputNote } from "@/components/PageEvaluation/InputNote";
 
 export const EtapeCriteres = () => {
@@ -16,7 +16,7 @@ export const EtapeCriteres = () => {
         return (
           <div key={critere.id}>
             <header className="py-6 px-4 text-primary font-bold border-t-1 !border-primary">
-              {critere.nom}
+              {critere.libelle}
             </header>
             <div className="bg-dsfr-grey-925/30 divide-y divide-gray-200">
               {fieldCritere.sousCriteres.map((subField, j) => {
@@ -35,7 +35,7 @@ export const EtapeCriteres = () => {
                       <InputNote name={noteInputName} />{" "}
                     </div>
 
-                    <Commentaire name={commentaireInputName} />
+                    <CommentaireTextarea name={commentaireInputName} />
                   </div>
                 );
               })}
