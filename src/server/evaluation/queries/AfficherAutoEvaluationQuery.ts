@@ -1,4 +1,5 @@
 import { $Enums } from "@prisma/client";
+import { randomUUID } from "node:crypto";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 
 export interface Critere {
@@ -82,7 +83,7 @@ export class AfficherAutoEvaluationQuery {
             id: sousCritere.id,
             nom: sousCritere.libelle,
             evaluation: {
-              id: evaluation?.id ?? crypto.randomUUID(),
+              id: evaluation?.id ?? randomUUID(),
               note: evaluation?.note ?? null,
               commentaire: evaluation?.commentaire ?? "",
             },
@@ -100,7 +101,7 @@ export class AfficherAutoEvaluationQuery {
               id: objectif.id,
               libelle: objectif.libelle,
               evaluation: {
-                id: evaluation?.id ?? crypto.randomUUID(),
+                id: evaluation?.id ?? randomUUID(),
                 note: evaluation?.note ?? null,
                 commentaire: evaluation?.commentaire ?? "",
               },

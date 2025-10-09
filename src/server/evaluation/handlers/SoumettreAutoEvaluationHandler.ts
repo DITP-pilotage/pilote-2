@@ -5,6 +5,7 @@ import {
   evaluation_sous_critere,
 } from "@prisma/client";
 import { z } from "zod";
+import { randomUUID } from "node:crypto";
 import { Transaction } from "@/server/db/Transaction";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 
@@ -50,12 +51,12 @@ export class SoumettreAutoEvaluationHandler {
   }) {
     return this.prisma.etape_evaluation.create({
       data: {
-        id: crypto.randomUUID(),
+        id: randomUUID(),
         fiche_evaluation_id: ficheEvaluationId,
         type: $Enums.etape_evaluation_enum.CONSOLIDATION,
         evaluations_objectifs: {
           create: etapeEvaluation.evaluations_objectifs.map((evaluation) => ({
-            id: crypto.randomUUID(),
+            id: randomUUID(),
             objectif_id: evaluation.objectif_id,
             auteur_id: auteurId,
             note: evaluation.note,
@@ -65,7 +66,7 @@ export class SoumettreAutoEvaluationHandler {
         evaluations_sous_criteres: {
           create: etapeEvaluation.evaluations_sous_criteres.map(
             (evaluation) => ({
-              id: crypto.randomUUID(),
+              id: randomUUID(),
               sous_critere_id: evaluation.sous_critere_id,
               auteur_id: auteurId,
               note: evaluation.note,
