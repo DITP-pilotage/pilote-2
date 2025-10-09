@@ -25,13 +25,21 @@ export default function PageConsolidation(
 
   return (
     <div className="mx-auto w-full max-w-[1200px] py-6">
-      <table className="table-auto w-full">
+      <table className="table-auto w-full border-collapse border border-gray-300">
         <thead>
-          <tr>
-            <th>Rattachement</th>
-            <th>Libellé</th>
-            <th>Note</th>
-            <th>Statut</th>
+          <tr className="bg-gray-100">
+            <th className="border border-gray-300 px-4 py-3 text-left font-semibold">
+              Rattachement
+            </th>
+            <th className="border border-gray-300 px-4 py-3 text-left font-semibold">
+              Libellé
+            </th>
+            <th className="border border-gray-300 px-4 py-3 text-left font-semibold w-24">
+              Note
+            </th>
+            <th className="border border-gray-300 px-4 py-3 text-left font-semibold w-32">
+              Statut
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -45,23 +53,27 @@ export default function PageConsolidation(
                 return (
                   <>
                     {/* Ligne du critère */}
-                    <tr key={`critere-${critere.id}`}>
-                      <td>{rattachement.libelle}</td>
-                      <td>
+                    <tr key={`critere-${critere.id}`} className="bg-gray-50">
+                      <td className="border border-gray-300 px-4 py-2">
+                        {rattachement.libelle}
+                      </td>
+                      <td className="border border-gray-300 px-4 py-2">
                         <strong>{critere.libelle}</strong>
                       </td>
-                      <td />
-                      <td />
+                      <td className="border border-gray-300 px-4 py-2" />
+                      <td className="border border-gray-300 px-4 py-2" />
                     </tr>
                     {/* Lignes des sous-critères */}
                     {sousCriteresGroup.map((sousCritere) => (
                       <tr key={`sous-critere-${sousCritere.id}`}>
-                        <td />
-                        <td style={{ paddingLeft: "2rem" }}>
+                        <td className="border border-gray-300 px-4 py-2" />
+                        <td className="border border-gray-300 px-4 py-2 pl-12">
                           {sousCritere.libelle}
                         </td>
-                        <td>{sousCritere.evaluation.note}</td>
-                        <td />
+                        <td className="border border-gray-300 px-4 py-2">
+                          {sousCritere.evaluation.note}
+                        </td>
+                        <td className="border border-gray-300 px-4 py-2" />
                       </tr>
                     ))}
                   </>
@@ -71,10 +83,16 @@ export default function PageConsolidation(
               {/* Objectifs */}
               {rattachement.objectifs.map((objectif) => (
                 <tr key={`objectif-${objectif.id}`}>
-                  <td>{rattachement.libelle}</td>
-                  <td>{objectif.libelle}</td>
-                  <td>{objectif.evaluation.note}</td>
-                  <td />
+                  <td className="border border-gray-300 px-4 py-2">
+                    {rattachement.libelle}
+                  </td>
+                  <td className="border border-gray-300 px-4 py-2">
+                    {objectif.libelle}
+                  </td>
+                  <td className="border border-gray-300 px-4 py-2">
+                    {objectif.evaluation.note}
+                  </td>
+                  <td className="border border-gray-300 px-4 py-2" />
                 </tr>
               ))}
             </>
