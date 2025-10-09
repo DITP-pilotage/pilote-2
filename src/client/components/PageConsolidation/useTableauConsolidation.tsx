@@ -5,8 +5,117 @@ import {
   getGroupedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
+import { Controller } from "react-hook-form";
 import { useMemo } from "react";
+import { useFormulaireConsolidation } from "@/components/PageConsolidation/form";
+import { clsxm } from "@/utils/clsxm";
+import { MessageErreur } from "@/components/PageEvaluation/MessageErreur";
 import { ConsolidationData } from "@/server/evaluation/queries/AfficherConsolidationQuery";
+
+export function InputNote({ name }: { name: any }) {
+  const form = useFormulaireConsolidation();
+
+  return (
+    <Controller
+      control={form.control}
+      name={name}
+      render={({ field, fieldState }) => (
+        <div className="flex flex-col">
+          <div
+            className={clsxm(
+              "border !rounded-md !bg-white flex items-stretch overflow-hidden",
+              "focus-within:outline-2 focus-within:outline-dsfr-info-main-525 focus-within:outline-offset-2",
+              {
+                "!border-error text-error": !!fieldState.error,
+              },
+            )}
+          >
+            <input
+              className={clsxm(
+                "focus:!outline-none w-[6ch] text-right px-4 py-2 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none",
+                {
+                  "!border-dsfr-error-425": fieldState.error != null,
+                },
+              )}
+              type="number"
+              {...field}
+              onChange={(e) => {
+                const value = e.target.valueAsNumber;
+                field.onChange(Number.isNaN(value) ? null : value);
+              }}
+              value={field.value?.toString() ?? ""}
+            />
+            <span
+              className={clsxm(
+                "px-2 flex items-center font-semibold text-sm py-2 border-l border-gray-200 bg-gray-50",
+                {
+                  "!border-error/30 !bg-error/5": !!fieldState.error,
+                },
+              )}
+            >
+              %
+            </span>
+          </div>
+          <div className="relative h-3 mt-1">
+            {fieldState.error ? (
+              <MessageErreur className="absolute right-0">
+                {fieldState.error.message}
+              </MessageErreur>
+            ) : null}
+          </div>
+        </div>
+      )}
+    />
+  );
+}
+
+const CommentaireTextarea = ({ name }: { name: any }) => {
+  const form = useFormulaireConsolidation();
+  return (
+    <Controller
+      control={form.control}
+      name={name}
+      render={({ field, fieldState }) => {
+        const fieldId = `${name}.commentaire`;
+        return (
+          <div className="flex flex-col gap-1 max-w-lg">
+            <label
+              className={clsxm("font-bold text-sm", {
+                "text-error": !!fieldState.error,
+              })}
+              htmlFor={fieldId}
+            >
+              Commentaire
+            </label>
+            <textarea
+              className={clsxm(
+                "border !rounded-md !bg-white py-2 px-4 field-sizing-content",
+                {
+                  "!border-error": !!fieldState.error,
+                },
+              )}
+              id={fieldId}
+              {...field}
+              ref={(node) => {
+                node?.focus();
+                field.ref(node);
+              }}
+            />
+            <div className="flex justify-between mt-1">
+              {fieldState.error ? (
+                <MessageErreur>{fieldState.error.message}</MessageErreur>
+              ) : null}
+
+              <span className="text-xs ml-auto">
+                {field.value.length} / 600
+              </span>
+            </div>
+          </div>
+        );
+      }}
+    />
+  );
+};
 
 type TableauConsolidationRow =
   | {
@@ -77,10 +186,15 @@ const columns = [
         return null;
       }
 
+      const name =
+        info.row.original.type === "objectif"
+          ? (`objectifs.${info.row.original.id}.commentaire` as const)
+          : (`sousCriteres.${info.row.original.id}.commentaire` as const);
+
       return (
         <div>
           <div>{row.original.libelle}</div>
-          <div className="max-w-md">{row.original.evaluation.commentaire}</div>
+          <CommentaireTextarea name={name} />
         </div>
       );
     },
@@ -92,9 +206,18 @@ const columns = [
     header: "Note",
     cell: (info) => {
       if (info.row.getIsGrouped()) {
-        return "";
+        return null;
       }
-      return info.getValue() ?? "";
+      const name =
+        info.row.original.type === "objectif"
+          ? (`objectifs.${info.row.original.id}.note` as const)
+          : (`sousCriteres.${info.row.original.id}.note` as const);
+
+      return (
+        <div className="flex justify-end">
+          <InputNote name={name} />
+        </div>
+      );
     },
     enableGrouping: false,
   }),
@@ -119,7 +242,7 @@ export function useTableauConsolidation(rattachements: ConsolidationData) {
     rattachements.forEach((rattachement) => {
       rattachement.sousCriteres.forEach((sousCritere) => {
         rows.push({
-          id: `sous-critere-${sousCritere.id}`,
+          id: sousCritere.id,
           type: "sous-critere",
           rattachement,
           critere: sousCritere.critere,
@@ -130,7 +253,7 @@ export function useTableauConsolidation(rattachements: ConsolidationData) {
 
       rattachement.objectifs.forEach((objectif) => {
         rows.push({
-          id: `objectif-${objectif.id}`,
+          id: objectif.id,
           type: "objectif",
           rattachement,
           libelle: objectif.libelle,
@@ -153,8 +276,6 @@ export function useTableauConsolidation(rattachements: ConsolidationData) {
       expanded: true, // Expand all groups by default
     },
   });
-
-  console.log(table.getRowModel().rows);
 
   return { table };
 }
