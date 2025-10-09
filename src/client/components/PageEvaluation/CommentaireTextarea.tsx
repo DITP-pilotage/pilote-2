@@ -49,9 +49,12 @@ export function CommentaireTextarea({
               Commentaire
             </label>
             <textarea
-              className={clsxm("border !rounded-md !bg-white py-2 px-4", {
-                "!border-error": !!fieldState.error,
-              })}
+              className={clsxm(
+                "border !rounded-md !bg-white py-2 px-4 field-sizing-content",
+                {
+                  "!border-error": !!fieldState.error,
+                },
+              )}
               id={fieldId}
               {...field}
               disabled={autoEvaluation.readOnly}
