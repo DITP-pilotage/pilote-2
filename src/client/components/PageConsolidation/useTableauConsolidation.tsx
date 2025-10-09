@@ -7,13 +7,14 @@ import {
 } from "@tanstack/react-table";
 import { useMemo } from "react";
 
-type RowType = "critere" | "sous-critere" | "objectif";
+type RowType = "sous-critere" | "objectif";
 
 interface TableauConsolidationRow {
   id: string;
   type: RowType;
   rattachementLibelle: string;
-  critereId?: string;
+  critereId: string;
+  critereLibelle: string;
   libelle: string;
   note: number | null;
   statut: string;
@@ -45,7 +46,7 @@ interface Rattachement {
   code: string;
   libelle: string;
   objectifs: Objectif[];
-  criteres: SousCritere[][];
+  sousCriteres: SousCritere[];
 }
 
 export function useTableauConsolidation(rattachements: Rattachement[]) {
@@ -54,33 +55,17 @@ export function useTableauConsolidation(rattachements: Rattachement[]) {
     const rows: TableauConsolidationRow[] = [];
 
     rattachements.forEach((rattachement) => {
-      // Add criteres and sous-criteres
-      rattachement.criteres.forEach((sousCriteresGroup) => {
-        const critere = sousCriteresGroup[0]?.critere;
-        if (!critere) return;
-
-        // Add critere row (parent group)
+      // Add sous-criteres
+      rattachement.sousCriteres.forEach((sousCritere) => {
         rows.push({
-          id: `critere-${critere.id}`,
-          type: "critere",
+          id: `sous-critere-${sousCritere.id}`,
+          type: "sous-critere",
           rattachementLibelle: rattachement.libelle,
-          critereId: critere.id,
-          libelle: critere.libelle,
-          note: null,
+          critereId: sousCritere.critere.id,
+          critereLibelle: sousCritere.critere.libelle,
+          libelle: sousCritere.libelle,
+          note: sousCritere.evaluation.note,
           statut: "",
-        });
-
-        // Add sous-critere rows
-        sousCriteresGroup.forEach((sousCritere) => {
-          rows.push({
-            id: `sous-critere-${sousCritere.id}`,
-            type: "sous-critere",
-            rattachementLibelle: rattachement.libelle,
-            critereId: critere.id,
-            libelle: sousCritere.libelle,
-            note: sousCritere.evaluation.note,
-            statut: "",
-          });
         });
       });
 
@@ -90,6 +75,8 @@ export function useTableauConsolidation(rattachements: Rattachement[]) {
           id: `objectif-${objectif.id}`,
           type: "objectif",
           rattachementLibelle: rattachement.libelle,
+          critereId: "",
+          critereLibelle: "",
           libelle: objectif.libelle,
           note: objectif.evaluation.note,
           statut: "",
@@ -107,42 +94,52 @@ export function useTableauConsolidation(rattachements: Rattachement[]) {
       columnHelper.accessor("rattachementLibelle", {
         header: "Rattachement",
         cell: (info) => {
-          const row = info.row;
-          // Only show for critere rows and objectif rows
-          if (row.original.type === "sous-critere") {
-            return "";
+          if (info.row.getIsGrouped()) {
+            // Show rattachement for grouped critere rows
+            return info.getValue();
           }
-          return info.getValue();
+          // Show for objectif rows, hide for sous-critere rows
+          if (info.row.original.type === "objectif") {
+            return info.getValue();
+          }
+          return "";
         },
         enableGrouping: false,
       }),
-      columnHelper.accessor("libelle", {
+      columnHelper.accessor("critereLibelle", {
         header: "Libellé",
         cell: (info) => {
           const row = info.row;
           if (row.getIsGrouped()) {
-            return <strong>{info.getValue()}</strong>;
+            // This is a grouped critere row
+            return <strong>{row.original.critereLibelle}</strong>;
           }
-          if (row.original.type === "critere") {
-            return <strong>{info.getValue()}</strong>;
-          }
+          // This is a sous-critere or objectif row
           if (row.original.type === "sous-critere") {
-            return <span className="pl-12">{info.getValue()}</span>;
+            return <span className="pl-12">{row.original.libelle}</span>;
           }
-          return info.getValue();
+          return row.original.libelle;
         },
-        aggregatedCell: (info) => {
-          return <strong>{info.getValue()}</strong>;
-        },
+        getGroupingValue: (row) => row.critereLibelle,
       }),
       columnHelper.accessor("note", {
         header: "Note",
-        cell: (info) => info.getValue() ?? "",
+        cell: (info) => {
+          if (info.row.getIsGrouped()) {
+            return "";
+          }
+          return info.getValue() ?? "";
+        },
         enableGrouping: false,
       }),
       columnHelper.accessor("statut", {
         header: "Statut",
-        cell: (info) => info.getValue(),
+        cell: (info) => {
+          if (info.row.getIsGrouped()) {
+            return "";
+          }
+          return info.getValue();
+        },
         enableGrouping: false,
       }),
     ],
@@ -156,7 +153,7 @@ export function useTableauConsolidation(rattachements: Rattachement[]) {
     getExpandedRowModel: getExpandedRowModel(),
     getGroupedRowModel: getGroupedRowModel(),
     state: {
-      grouping: ["critereId"],
+      grouping: ["critereLibelle"],
     },
     initialState: {
       expanded: true, // Expand all groups by default

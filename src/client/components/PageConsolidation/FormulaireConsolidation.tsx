@@ -32,7 +32,7 @@ export const FormulaireConsolidation = () => {
         {table.getRowModel().rows.map((row) => (
           <tr
             className={clsxm({
-              "bg-gray-50": row.original.type === "critere",
+              "bg-gray-50": row.getIsGrouped(),
             })}
             key={row.id}
           >

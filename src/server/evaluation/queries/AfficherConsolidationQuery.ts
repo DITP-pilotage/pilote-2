@@ -47,25 +47,6 @@ export class AfficherConsolidationQuery {
       });
 
     return rattachements.map((rattachement) => {
-      const sousCriteres = rattachement.fiche_evaluation.flatMap((fiche) =>
-        fiche.etape_evaluations[0].evaluations_sous_criteres.map(
-          (evaluation) => ({
-            id: evaluation.sous_critere.id,
-            critere: {
-              id: evaluation.sous_critere.parent.id,
-              libelle: evaluation.sous_critere.parent.libelle,
-            },
-            libelle: evaluation.sous_critere.libelle,
-            evaluation: {
-              note: evaluation.note,
-              commentaire: evaluation.commentaire,
-            },
-          }),
-        ),
-      );
-      const criteres = Object.values(
-        groupBy(sousCriteres, (sousCritere) => sousCritere.critere.id),
-      );
       return {
         code: rattachement.code,
         libelle: rattachement.libelle,
@@ -81,7 +62,22 @@ export class AfficherConsolidationQuery {
             }),
           ),
         ),
-        criteres,
+        sousCriteres: rattachement.fiche_evaluation.flatMap((fiche) =>
+          fiche.etape_evaluations[0].evaluations_sous_criteres.map(
+            (evaluation) => ({
+              id: evaluation.sous_critere.id,
+              critere: {
+                id: evaluation.sous_critere.parent.id,
+                libelle: evaluation.sous_critere.parent.libelle,
+              },
+              libelle: evaluation.sous_critere.libelle,
+              evaluation: {
+                note: evaluation.note,
+                commentaire: evaluation.commentaire,
+              },
+            }),
+          ),
+        ),
       };
     });
   }
