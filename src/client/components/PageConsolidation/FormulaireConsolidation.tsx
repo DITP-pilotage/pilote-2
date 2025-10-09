@@ -26,6 +26,8 @@ export const FormulaireConsolidation = () => {
   });
   const rows = table.getRowModel().rows;
 
+  console.log(form.watch());
+
   return (
     <FormProvider {...form}>
       <table className="table-auto w-full border-collapse border border-gray-300">
