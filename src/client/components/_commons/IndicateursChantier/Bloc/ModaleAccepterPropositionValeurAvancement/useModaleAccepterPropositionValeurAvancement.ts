@@ -162,7 +162,7 @@ export const useModaleAccepterPropositionValeurAvancement = ({
     resolver: zodResolver(formSchema),
     defaultValues: {
       motif: "",
-      dateValeurAvancement: detailIndicateur.dateValeurAvancementMandat!,
+      dateValeurAvancement: detailIndicateur.proposition!.dateValeurAvancement,
       indicId: indicateur.id,
       territoireCode,
       decision: "accepter",

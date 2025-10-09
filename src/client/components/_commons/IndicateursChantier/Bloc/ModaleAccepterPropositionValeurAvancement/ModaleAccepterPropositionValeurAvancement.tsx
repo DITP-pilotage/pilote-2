@@ -118,7 +118,7 @@ export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<{
                       )}
                     />
                     <ComparaisonValeurBox
-                      date={detailIndicateur.dateValeurAvancementMandat}
+                      date={detailIndicateur.proposition!.dateValeurAvancement}
                       indicateurId={indicateur.id}
                       proposition={detailIndicateur.proposition}
                       titre={`Valeur d'avancement proposée par ${detailIndicateur.proposition?.auteur} le ${formaterDate(
@@ -270,7 +270,7 @@ export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<{
                       <span className="fr-text--bold">
                         {detailIndicateur.proposition?.valeurAvancement} (
                         {formaterDate(
-                          detailIndicateur.dateValeurAvancement,
+                          detailIndicateur.proposition?.dateValeurAvancement,
                           "MM/YYYY",
                         )}
                         )
