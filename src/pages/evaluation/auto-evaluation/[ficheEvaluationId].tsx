@@ -34,7 +34,7 @@ export const getServerSideProps = async ({
     !session.applicationsAccessibles.includes(
       ApplicationAccessible.PILOTE_EVAL,
     ) ||
-    peutAccederFicheAutoEvaluation
+    !peutAccederFicheAutoEvaluation
   ) {
     return {
       redirect: {
