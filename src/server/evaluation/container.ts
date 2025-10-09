@@ -3,6 +3,7 @@ import { AfficherAutoEvaluationQuery } from "@/server/evaluation/queries/Affiche
 import { ListerFichesAutoEvaluationQuery } from "@/server/evaluation/queries/ListerFichesAutoEvaluationQuery";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { AccesFicheEvaluationService } from "@/server/evaluation/services/AccesFicheEvaluationService";
+import { SoumettreAutoEvaluationHandler } from "@/server/evaluation/handlers/SoumettreAutoEvaluationHandler";
 import { EnregistrerBrouillonAutoEvaluationHandler } from "./handlers/EnregistrerBrouillonAutoEvaluationHandler";
 
 export type PiloteEvalDependencies = {
@@ -10,6 +11,7 @@ export type PiloteEvalDependencies = {
   listerFichesAutoEvaluation: ListerFichesAutoEvaluationQuery;
   enregistrerBrouillonAutoEvaluation: EnregistrerBrouillonAutoEvaluationHandler;
   accesFicheEvaluationService: AccesFicheEvaluationService;
+  soumettreAutoEvaluationHandler: SoumettreAutoEvaluationHandler;
 };
 
 export const getPiloteEvalContainer = (
@@ -22,5 +24,6 @@ export const getPiloteEvalContainer = (
       EnregistrerBrouillonAutoEvaluationHandler,
     ),
     accesFicheEvaluationService: asClass(AccesFicheEvaluationService),
+    soumettreAutoEvaluationHandler: asClass(SoumettreAutoEvaluationHandler),
   });
 };
