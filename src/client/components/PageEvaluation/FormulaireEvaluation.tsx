@@ -13,12 +13,14 @@ import { ArrowLine3Icon } from "@/components/_commons/Icones/ArrowLine3Icon";
 import { EtapeCriteres } from "@/components/PageEvaluation/EtapeCriteres";
 import { EtapeObjectifs } from "@/components/PageEvaluation/EtapeObjectifs";
 import { InformationPleineIcon } from "@/components/_commons/Icones/InformationPleineIcon";
+import { BoutonSoumettreAutoEvaluation } from "@/components/PageEvaluation/BoutonSoumettreAutoEvaluation";
 
 export const FormulaireEvaluation = () => {
   const { autoEvaluation } = pageEvaluation.useServerSidePropsContext();
   const [etape, setEtape] = useState<"criteres" | "objectifs">("criteres");
   const formId = useId();
   const enregistrerBrouillon = useEnregistrerBrouillon();
+
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     mode: "onChange",
@@ -67,50 +69,53 @@ export const FormulaireEvaluation = () => {
                   "DD/MM/YYYY [à] H[h]mm",
                 )}
               </span>
-              {autoEvaluation.readOnly ? (
-                <span className="flex gap-2 text-sm items-center">
-                  <Icone className="h-5 w-5" icone={InformationPleineIcon} />{" "}
-                  Cette fiche d'évaluation a déjà été soumise.
-                </span>
-              ) : (
-                <>
-                  {etape === "criteres" && (
-                    <div className="ml-auto flex items-center gap-4">
+              <div className="ml-auto flex items-center gap-4">
+                {autoEvaluation.readOnly ? (
+                  <span className="flex gap-2 text-sm items-center">
+                    <Icone className="h-5 w-5" icone={InformationPleineIcon} />{" "}
+                    Cette fiche d'évaluation a déjà été soumise.
+                  </span>
+                ) : null}
+                {etape === "criteres" && (
+                  <>
+                    {!autoEvaluation.readOnly && (
                       <BoutonEnregistrerBrouillon formId={formId} />
-                      <Bouton
-                        form={formId}
-                        iconRight={
-                          <Icone
-                            className="text-current"
-                            icone={ArrowLine1Icon}
-                          />
-                        }
-                        label="Objectifs"
-                        type="submit"
-                      />
-                    </div>
-                  )}
-                  {etape === "objectifs" && (
-                    <div className="ml-auto flex items-center gap-4">
-                      <Bouton
-                        iconLeft={
-                          <Icone
-                            className="text-current"
-                            icone={ArrowLine3Icon}
-                          />
-                        }
-                        label="Critères"
-                        onClick={() => setEtape("criteres")}
-                        variant="secondary"
-                      />
-
-                      <BoutonEnregistrerBrouillon formId={formId} />
-
-                      <Bouton label="Soumettre" />
-                    </div>
-                  )}
-                </>
-              )}
+                    )}
+                    <Bouton
+                      form={formId}
+                      iconRight={
+                        <Icone
+                          className="text-current"
+                          icone={ArrowLine1Icon}
+                        />
+                      }
+                      label="Objectifs"
+                      type="submit"
+                    />
+                  </>
+                )}
+                {etape === "objectifs" && (
+                  <>
+                    <Bouton
+                      iconLeft={
+                        <Icone
+                          className="text-current"
+                          icone={ArrowLine3Icon}
+                        />
+                      }
+                      label="Critères"
+                      onClick={() => setEtape("criteres")}
+                      variant="secondary"
+                    />
+                    {!autoEvaluation.readOnly && (
+                      <>
+                        <BoutonEnregistrerBrouillon formId={formId} />
+                        <BoutonSoumettreAutoEvaluation />
+                      </>
+                    )}
+                  </>
+                )}
+              </div>
             </div>
           </div>
           <form
