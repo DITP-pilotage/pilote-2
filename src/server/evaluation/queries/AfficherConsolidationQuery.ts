@@ -1,6 +1,9 @@
 import { $Enums } from "@prisma/client";
-import groupBy from "lodash.groupby";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
+
+export type ConsolidationData = Awaited<
+  ReturnType<AfficherConsolidationQuery["run"]>
+>;
 
 export class AfficherConsolidationQuery {
   constructor(private readonly dependencies: { prisma: PrismaPilote }) {}
@@ -46,39 +49,37 @@ export class AfficherConsolidationQuery {
         },
       });
 
-    return rattachements.map((rattachement) => {
-      return {
-        code: rattachement.code,
-        libelle: rattachement.libelle,
-        objectifs: rattachement.fiche_evaluation.flatMap((ficheEvaluation) =>
-          ficheEvaluation.etape_evaluations[0].evaluations_objectifs.map(
-            (evaluation) => ({
-              id: evaluation.objectif.id,
-              libelle: evaluation.objectif.libelle,
-              evaluation: {
-                note: evaluation.note,
-                commentaire: evaluation.commentaire,
-              },
-            }),
-          ),
+    return rattachements.map((rattachement) => ({
+      code: rattachement.code,
+      libelle: rattachement.libelle,
+      objectifs: rattachement.fiche_evaluation.flatMap((ficheEvaluation) =>
+        ficheEvaluation.etape_evaluations[0].evaluations_objectifs.map(
+          (evaluation) => ({
+            id: evaluation.objectif.id,
+            libelle: evaluation.objectif.libelle,
+            evaluation: {
+              note: evaluation.note,
+              commentaire: evaluation.commentaire,
+            },
+          }),
         ),
-        sousCriteres: rattachement.fiche_evaluation.flatMap((fiche) =>
-          fiche.etape_evaluations[0].evaluations_sous_criteres.map(
-            (evaluation) => ({
-              id: evaluation.sous_critere.id,
-              critere: {
-                id: evaluation.sous_critere.parent.id,
-                libelle: evaluation.sous_critere.parent.libelle,
-              },
-              libelle: evaluation.sous_critere.libelle,
-              evaluation: {
-                note: evaluation.note,
-                commentaire: evaluation.commentaire,
-              },
-            }),
-          ),
+      ),
+      sousCriteres: rattachement.fiche_evaluation.flatMap((fiche) =>
+        fiche.etape_evaluations[0].evaluations_sous_criteres.map(
+          (evaluation) => ({
+            id: evaluation.sous_critere.id,
+            critere: {
+              id: evaluation.sous_critere.parent.id,
+              libelle: evaluation.sous_critere.parent.libelle,
+            },
+            libelle: evaluation.sous_critere.libelle,
+            evaluation: {
+              note: evaluation.note,
+              commentaire: evaluation.commentaire,
+            },
+          }),
         ),
-      };
-    });
+      ),
+    }));
   }
 }
