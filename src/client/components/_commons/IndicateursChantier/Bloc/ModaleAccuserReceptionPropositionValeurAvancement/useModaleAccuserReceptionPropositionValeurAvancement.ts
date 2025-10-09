@@ -75,7 +75,7 @@ export const useModaleAccuserReceptionPropositionValeurAvancement = ({
     resolver: zodResolver(validationAccuserReceptionPropostionValeurAvancement),
     defaultValues: {
       motif: "",
-      dateValeurAvancement: detailIndicateur.dateValeurAvancementMandat!,
+      dateValeurAvancement: detailIndicateur.proposition!.dateValeurAvancement,
       indicId: indicateur.id,
       territoireCode,
     },
