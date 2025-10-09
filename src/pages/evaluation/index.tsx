@@ -6,7 +6,6 @@ import { getContainer } from "@/server/dependances";
 import { configurationFeatureFlip } from "@/config";
 import { authOptions } from "@/server/infrastructure/api/auth/[...nextauth]";
 import { ApplicationAccessible } from "@/server/domain/utilisateur/Utilisateur.interface";
-import Tag from "@/components/_commons/Tag/Tag";
 
 export const getServerSideProps = async ({
   req,

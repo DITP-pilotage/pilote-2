@@ -88,25 +88,6 @@ const sousCriteres: referentiel_sous_critere[] = [
   },
 ];
 
-/* sous critères
-id,libelle,descriptif,parent_id,created_at,updated_at
-48b2635e-d65f-4197-8e77-5623ad4eb46c,Taux de publication dans les délais,Part des avis publiés dans les délais réglementaires.,831cb1a5-036b-4609-a560-68cd1852397f,2025-10-07T10:00:00,2025-10-07T10:00:00
-176bb1a0-1827-4762-9508-1eaaf5e2d1c0,Données ouvertes conformes,Conformité des données aux schémas open data (profil d'acheteur).,831cb1a5-036b-4609-a560-68cd1852397f,2025-10-07T10:00:00,2025-10-07T10:00:00
-60b875a6-90fd-4deb-87e4-230c91e8246a,Respect des jalons critiques,Proportion de jalons respectés à ±10 jours.,dedffbcf-97dc-40c9-9df4-a5be78617ba6,2025-10-07T10:00:00,2025-10-07T10:00:00
-1da91469-c6f2-46f5-b8fd-81942ef7e7db,Plan d'actions sur retards,Existence et suivi d'un plan d'actions correctives.,dedffbcf-97dc-40c9-9df4-a5be78617ba6,2025-10-07T10:00:00,2025-10-07T10:00:00
-92ca5b55-ae9f-4809-abdf-111732ab9772,Insertion locale,Part des heures réservées à l'insertion socio-professionnelle.,9cc999b6-b0da-48c5-bae7-2b9d38e5f1bd,2025-10-07T10:00:00,2025-10-07T10:00:00
-4969b17c-965b-4d01-9546-31a46ceda590,Clauses environnementales,Présence d'objectifs de réduction des déchets et d'émissions.,9cc999b6-b0da-48c5-bae7-2b9d38e5f1bd,2025-10-07T10:00:00,2025-10-07T10:00:00
-
- */
-
-/* rattachements
-code,libelle,created_at,updated_at
-PREF-75,Préfecture de Paris (Département 75),2025-10-07T10:00:00,2025-10-07T10:00:00
-DEPT-59,Préfecture du Nord (Département 59),2025-10-07T10:00:00,2025-10-07T10:00:00
-REG-75,Région Île-de-France,2025-10-07T10:00:00,2025-10-07T10:00:00
-
- */
-
 const rattachements: referentiel_rattachement[] = [
   {
     code: "PREF-75",
@@ -213,32 +194,64 @@ async function run() {
     });
   }
 
-  const ficheEvaluation: fiche_evaluation = {
-    id: "d66e07e2-cabf-41d9-9bf9-75829df8b3ad",
-    jalon: 2024,
-    etape_courante: "AUTO_EVALUATION",
-    rattachement_code: "REG-75",
-    created_at: new Date(),
-    updated_at: new Date(),
-  };
-  await prisma.fiche_evaluation.upsert({
-    where: { id: ficheEvaluation.id },
-    create: ficheEvaluation,
-    update: ficheEvaluation,
-  });
+  const fichesEvaluation: fiche_evaluation[] = [
+    {
+      id: "d66e07e2-cabf-41d9-9bf9-75829df8b3ad",
+      jalon: 2024,
+      etape_courante: "AUTO_EVALUATION",
+      rattachement_code: "REG-75",
+      created_at: new Date(),
+      updated_at: new Date(),
+    },
+    {
+      id: "3ac2cea5-dbb2-4e54-b5b1-b399a99949dd",
+      jalon: 2024,
+      etape_courante: "CONSOLIDATION",
+      rattachement_code: "DEPT-59",
+      created_at: new Date(),
+      updated_at: new Date(),
+    },
+  ];
 
-  const etapeEvaluation: etape_evaluation = {
-    id: "e868c426-33c3-4d30-94ef-559c28386c28",
-    fiche_evaluation_id: ficheEvaluation.id,
-    type: "AUTO_EVALUATION",
-    created_at: new Date(),
-    updated_at: new Date(),
-  };
-  await prisma.etape_evaluation.upsert({
-    where: { id: etapeEvaluation.id },
-    create: etapeEvaluation,
-    update: etapeEvaluation,
-  });
+  for (const ficheEvaluation of fichesEvaluation) {
+    await prisma.fiche_evaluation.upsert({
+      where: { id: ficheEvaluation.id },
+      create: ficheEvaluation,
+      update: ficheEvaluation,
+    });
+  }
+
+  const etapesEvaluation: etape_evaluation[] = [
+    {
+      id: "e868c426-33c3-4d30-94ef-559c28386c28",
+      fiche_evaluation_id: fichesEvaluation[0].id,
+      type: "AUTO_EVALUATION",
+      created_at: new Date(),
+      updated_at: new Date(),
+    },
+    {
+      id: "d6050c26-c872-4134-90d3-c45a8a9dc539",
+      fiche_evaluation_id: fichesEvaluation[1].id,
+      type: "AUTO_EVALUATION",
+      created_at: new Date(),
+      updated_at: new Date(),
+    },
+    {
+      id: "3ec9fca0-854f-4e53-9664-53244c40060f",
+      fiche_evaluation_id: fichesEvaluation[1].id,
+      type: "CONSOLIDATION",
+      created_at: new Date(),
+      updated_at: new Date(),
+    },
+  ];
+
+  for (const etapeEvaluation of etapesEvaluation) {
+    await prisma.etape_evaluation.upsert({
+      where: { id: etapeEvaluation.id },
+      create: etapeEvaluation,
+      update: etapeEvaluation,
+    });
+  }
 }
 
 run();
