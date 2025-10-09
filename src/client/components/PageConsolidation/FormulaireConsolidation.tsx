@@ -7,6 +7,7 @@ export const FormulaireConsolidation = () => {
   const { rattachements } = pageConsolidation.useServerSidePropsContext();
   const { table } = useTableauConsolidation(rattachements);
 
+  const rows = table.getRowModel().rows;
   return (
     <table className="table-auto w-full border-collapse border border-gray-300">
       <thead>
@@ -29,20 +30,28 @@ export const FormulaireConsolidation = () => {
         ))}
       </thead>
       <tbody>
-        {table.getRowModel().rows.map((row) => (
-          <tr
-            className={clsxm({
-              "bg-gray-50": row.getIsGrouped(),
-            })}
-            key={row.id}
-          >
-            {row.getVisibleCells().map((cell) => (
-              <td className="border border-gray-300 px-4 py-2" key={cell.id}>
-                {flexRender(cell.column.columnDef.cell, cell.getContext())}
-              </td>
-            ))}
-          </tr>
-        ))}
+        {rows.map((row, index) => {
+          if (row.getIsGrouped() && row.original.type === "objectif")
+            return null;
+          if (row.depth === 0) return null;
+
+          return (
+            <tr
+              className={clsxm({
+                "bg-gray-50": row.getIsGrouped(),
+                "border-t border-t-2 border-primary":
+                  rows[index - 1]?.depth === 0,
+              })}
+              key={row.id}
+            >
+              {row.getVisibleCells().map((cell) => (
+                <td className="border border-gray-300 px-4 py-2" key={cell.id}>
+                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                </td>
+              ))}
+            </tr>
+          );
+        })}
       </tbody>
     </table>
   );

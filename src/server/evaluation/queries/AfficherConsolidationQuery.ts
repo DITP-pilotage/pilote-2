@@ -58,6 +58,7 @@ export class AfficherConsolidationQuery {
             id: evaluation.objectif.id,
             libelle: evaluation.objectif.libelle,
             evaluation: {
+              id: evaluation.id,
               note: evaluation.note,
               commentaire: evaluation.commentaire,
             },
@@ -74,6 +75,7 @@ export class AfficherConsolidationQuery {
             },
             libelle: evaluation.sous_critere.libelle,
             evaluation: {
+              id: evaluation.id,
               note: evaluation.note,
               commentaire: evaluation.commentaire,
             },

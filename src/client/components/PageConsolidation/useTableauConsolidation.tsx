@@ -21,6 +21,11 @@ type TableauConsolidationRow =
         code: string;
         libelle: string;
       };
+      evaluation: {
+        id: string;
+        note: number | null;
+        commentaire: string;
+      };
     }
   | {
       type: "objectif";
@@ -29,6 +34,11 @@ type TableauConsolidationRow =
       rattachement: {
         code: string;
         libelle: string;
+      };
+      evaluation: {
+        id: string;
+        note: number | null;
+        commentaire: string;
       };
     };
 
@@ -39,13 +49,14 @@ const columns = [
     id: "rattachementCode",
     header: "Rattachement",
     cell: (info) => {
-      if (info.row.getIsGrouped()) {
-        return info.row.original.rattachement.libelle;
+      if (info.row.getIsGrouped() || info.row.original.type === "objectif") {
+        return (
+          <span className="text-primary font-semibold">
+            {info.row.original.rattachement.libelle}
+          </span>
+        );
       }
 
-      if (info.row.original.type === "objectif") {
-        return info.row.original.rattachement.libelle;
-      }
       return "";
     },
     getGroupingValue: (row) => row.rattachement.code,
@@ -58,15 +69,20 @@ const columns = [
       if (row.getIsGrouped()) {
         if (row.original.type === "sous-critere") {
           return (
-            <span className="font-bold">{row.original.critere.libelle}</span>
+            <span className="font-bold text-primary">
+              {row.original.critere.libelle}
+            </span>
           );
         }
         return null;
       }
-      if (row.original.type === "sous-critere") {
-        return <span className="pl-12">{row.original.libelle}</span>;
-      }
-      return row.original.libelle;
+
+      return (
+        <div>
+          <div>{row.original.libelle}</div>
+          <div className="max-w-md">{row.original.evaluation.commentaire}</div>
+        </div>
+      );
     },
     getGroupingValue: (row) =>
       row.type === "sous-critere" ? row.critere.id : null,
@@ -94,8 +110,7 @@ const columns = [
     enableGrouping: false,
   }),
 ];
-const grouping = ["rattachement.code"];
-// const grouping = ["rattachement.code", "critereId"];
+const grouping = ["rattachementCode", "critereId"];
 
 export function useTableauConsolidation(rattachements: ConsolidationData) {
   const data = useMemo<TableauConsolidationRow[]>(() => {
@@ -109,6 +124,7 @@ export function useTableauConsolidation(rattachements: ConsolidationData) {
           rattachement,
           critere: sousCritere.critere,
           libelle: sousCritere.libelle,
+          evaluation: sousCritere.evaluation,
         });
       });
 
@@ -118,6 +134,7 @@ export function useTableauConsolidation(rattachements: ConsolidationData) {
           type: "objectif",
           rattachement,
           libelle: objectif.libelle,
+          evaluation: objectif.evaluation,
         });
       });
     });
