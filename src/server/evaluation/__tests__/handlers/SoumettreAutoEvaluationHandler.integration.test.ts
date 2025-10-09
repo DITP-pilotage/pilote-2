@@ -226,25 +226,29 @@ describe("SoumettreAutoEvaluationHandler", () => {
         },
       );
 
-      // Vérifier que l'évaluation objectif a été clonée
-      expect(etapeConsolidation.evaluations_objectifs).toHaveLength(1);
-      const evaluationObjectifClonee =
-        etapeConsolidation.evaluations_objectifs[0];
-      expect(evaluationObjectifClonee.objectif_id).toBe(objectifId);
-      expect(evaluationObjectifClonee.auteur_id).toBe(nouvelAuteurId);
-      expect(evaluationObjectifClonee.note).toBe(5);
-      expect(evaluationObjectifClonee.commentaire).toBe("Excellent objectif");
-      expect(evaluationObjectifClonee.id).not.toBe(evaluationObjectifId); // Nouvel ID
+      expect(etapeConsolidation.evaluations_objectifs).toEqual([
+        expect.objectContaining({
+          objectif_id: objectifId,
+          auteur_id: nouvelAuteurId,
+          note: 5,
+          commentaire: "Excellent objectif",
+        }),
+      ]);
+      expect(etapeConsolidation.evaluations_objectifs[0].id).not.toBe(
+        evaluationObjectifId,
+      );
 
-      // Vérifier que l'évaluation sous-critère a été clonée
-      expect(etapeConsolidation.evaluations_sous_criteres).toHaveLength(1);
-      const evaluationSousCritereClonee =
-        etapeConsolidation.evaluations_sous_criteres[0];
-      expect(evaluationSousCritereClonee.sous_critere_id).toBe(sousCritereId);
-      expect(evaluationSousCritereClonee.auteur_id).toBe(nouvelAuteurId);
-      expect(evaluationSousCritereClonee.note).toBe(4);
-      expect(evaluationSousCritereClonee.commentaire).toBe("Bon sous-critère");
-      expect(evaluationSousCritereClonee.id).not.toBe(evaluationSousCritereId); // Nouvel ID
+      expect(etapeConsolidation.evaluations_sous_criteres).toEqual([
+        expect.objectContaining({
+          sous_critere_id: sousCritereId,
+          auteur_id: nouvelAuteurId,
+          note: 4,
+          commentaire: "Bon sous-critère",
+        }),
+      ]);
+      expect(etapeConsolidation.evaluations_sous_criteres[0].id).not.toBe(
+        evaluationSousCritereId,
+      );
     });
   });
 });
