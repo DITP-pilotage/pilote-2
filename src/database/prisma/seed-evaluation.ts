@@ -90,14 +90,14 @@ const sousCriteres: referentiel_sous_critere[] = [
 
 const rattachements: referentiel_rattachement[] = [
   {
-    code: "PREF-75",
-    libelle: "Préfecture de Paris (Département 75)",
+    code: "POL-75",
+    libelle: "Préfecture de police de Paris",
     created_at: new Date("2025-10-07T10:00:00"),
     updated_at: new Date("2025-10-07T10:00:00"),
   },
   {
     code: "DEPT-59",
-    libelle: "Préfecture du Nord (Département 59)",
+    libelle: "Département Nord",
     created_at: new Date("2025-10-07T10:00:00"),
     updated_at: new Date("2025-10-07T10:00:00"),
   },
@@ -109,22 +109,13 @@ const rattachements: referentiel_rattachement[] = [
   },
 ];
 
-/* objectifs
-id,libelle,descriptif,jalon,rattachement_code,created_at,updated_at
-4883a4f7-8acc-4310-af42-c3fedece4c69,Accélérer la publication des appels d'offres,Mise en ligne des DCE sous 10 jours après validation.,1,PREF-75,2025-10-07T10:00:00,2025-10-07T10:00:00
-182a28d8-b7f0-473f-94a2-a438bb8cb926,Suivre hebdomadairement les jalons critiques,Rituel hebdo avec tableau de bord partagé.,2,PREF-75,2025-10-07T10:00:00,2025-10-07T10:00:00
-4fbbf458-c00d-400d-888c-30a03844d297,Déployer clauses d'insertion,Atteindre 5% d'heures d'insertion sur chantiers majeurs.,1,DEPT-59,2025-10-07T10:00:00,2025-10-07T10:00:00
-ea790ca1-3695-4445-a626-44f0c1333c0d,Réduire les déchets de chantier,Plan de valorisation matière à 70%.,3,REG-75,2025-10-07T10:00:00,2025-10-07T10:00:00
-
- */
-
 const objectifs: referentiel_objectif[] = [
   {
     id: "4883a4f7-8acc-4310-af42-c3fedece4c69",
     libelle: "Accélérer la publication des appels d'offres",
     descriptif: "Mise en ligne des DCE sous 10 jours après validation.",
     jalon: 1,
-    rattachement_code: "PREF-75",
+    rattachement_code: "POL-75",
     created_at: new Date("2025-10-07T10:00:00"),
     updated_at: new Date("2025-10-07T10:00:00"),
   },
@@ -133,7 +124,7 @@ const objectifs: referentiel_objectif[] = [
     libelle: "Suivre hebdomadairement les jalons critiques",
     descriptif: "Rituel hebdo avec tableau de bord partagé.",
     jalon: 2,
-    rattachement_code: "PREF-75",
+    rattachement_code: "POL-75",
     created_at: new Date("2025-10-07T10:00:00"),
     updated_at: new Date("2025-10-07T10:00:00"),
   },
@@ -211,6 +202,14 @@ async function run() {
       created_at: new Date(),
       updated_at: new Date(),
     },
+    {
+      id: "ff103f90-7911-46b7-8c4c-7bb9a0eea2a4",
+      jalon: 2024,
+      etape_courante: "AUTO_EVALUATION",
+      rattachement_code: "POL-75",
+      created_at: new Date(),
+      updated_at: new Date(),
+    },
   ];
 
   for (const ficheEvaluation of fichesEvaluation) {
@@ -240,6 +239,13 @@ async function run() {
       id: "3ec9fca0-854f-4e53-9664-53244c40060f",
       fiche_evaluation_id: fichesEvaluation[1].id,
       type: "CONSOLIDATION",
+      created_at: new Date(),
+      updated_at: new Date(),
+    },
+    {
+      id: "d79f61b7-487e-438e-9662-c9bcdc301897",
+      fiche_evaluation_id: fichesEvaluation[2].id,
+      type: "AUTO_EVALUATION",
       created_at: new Date(),
       updated_at: new Date(),
     },
