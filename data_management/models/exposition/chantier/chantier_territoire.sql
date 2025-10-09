@@ -48,10 +48,6 @@ proposition_valeur_actuelle_chantier AS (
         SUM(CASE WHEN ipr.poids_zone_reel > 0 THEN 1 ELSE 0 END) AS nombre_propositions_valeur_actuelle_ponderee
     FROM {{ ref('int_propositions_valeurs')}} ipv
     LEFT JOIN {{ source('db_schema_public', 'territoire') }}  t ON t.code = ipv.territoire_code 
-    INNER JOIN {{ ref('get_last_vaca') }} vaca
-        ON vaca.zone_id = t.zone_id 
-        AND vaca.indic_id = ipv.indic_id 
-        AND vaca.date_valeur_actuelle::DATE = ipv.date_valeur_avancement
     LEFT JOIN {{ ref('int_ponderation_reelle') }} ipr 
         ON ipr.indic_id = ipv.indic_id 
         AND ipr.zone_id = t.zone_id
