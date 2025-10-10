@@ -3,7 +3,7 @@ import { pageEvaluation } from "@/components/PageEvaluation/PageEvaluationServer
 import { FormValues } from "@/components/PageEvaluation/form";
 import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
 
-export function useEnregistrerBrouillon() {
+export const useEnregistrerBrouillon = () => {
   const enregisterBrouillon = api.evaluation.enregistrerBrouillon.useMutation();
   const { autoEvaluation } = pageEvaluation.useServerSidePropsContext();
   const refreshRouter = useRefreshRouter();
@@ -41,4 +41,4 @@ export function useEnregistrerBrouillon() {
       },
     );
   };
-}
+};

@@ -843,6 +843,13 @@ model rattachement_utilisateur_etape_jalon {
   @@schema("public")
 }
 
+enum statut_evaluation {
+  VERIFIE
+  A_VERIFIER
+
+  @@schema("public")
+}
+
 model evaluation_objectif {
   id                     String               @id @db.Uuid
   etape_evaluation_id    String               @db.Uuid
@@ -853,6 +860,7 @@ model evaluation_objectif {
   auteur                 utilisateur          @relation(fields: [auteur_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
   note                   Int?
   commentaire            String
+  statut_evaluation         statut_evaluation
   created_at             DateTime             @default(now())
   updated_at             DateTime             @updatedAt
 
@@ -870,6 +878,7 @@ model evaluation_sous_critere {
   auteur              utilisateur              @relation(fields: [auteur_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
   note                Int?
   commentaire         String
+  statut_evaluation         statut_evaluation
   created_at          DateTime                 @default(now())
   updated_at          DateTime                 @updatedAt
 
