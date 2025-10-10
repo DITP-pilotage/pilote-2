@@ -12,6 +12,27 @@ import { clsxm } from "@/utils/clsxm";
 import { MessageErreur } from "@/components/PageEvaluation/MessageErreur";
 import { ConsolidationData } from "@/server/evaluation/queries/AfficherConsolidationQuery";
 
+const SelecteurStatutEvaluation = () => {
+  const form = useFormulaireConsolidation();
+
+  return (
+    <div className="p-1 !bg-dsfr-blue-france-850 rounded gap-1 flex">
+      <button
+        className="w-1/2 !bg-error !text-white px-4 py-2 rounded"
+        type="button"
+      >
+        A vérifier
+      </button>
+      <button
+        className="w-1/2 !bg-success !text-white px-4 py-2 rounded"
+        type="button"
+      >
+        Vérifié
+      </button>
+    </div>
+  );
+};
+
 export function InputNote({ name }: { name: any }) {
   const form = useFormulaireConsolidation();
 
@@ -228,7 +249,7 @@ const columns = [
       if (info.row.getIsGrouped()) {
         return "";
       }
-      return info.getValue();
+      return <SelecteurStatutEvaluation />;
     },
     enableGrouping: false,
   }),
