@@ -15,12 +15,26 @@ export const FormulaireConsolidation = () => {
       objectifs: Object.fromEntries(
         rattachements
           .flatMap((rattachement) => rattachement.objectifs)
-          .map((objectif) => [objectif.id, objectif.evaluation]),
+          .map((objectif) => [
+            objectif.id,
+            {
+              note: objectif.evaluation.note,
+              commentaire: objectif.evaluation.commentaire,
+              statut_evaluation: objectif.evaluation.statut_evaluation,
+            },
+          ]),
       ),
       sousCriteres: Object.fromEntries(
         rattachements
           .flatMap((rattachement) => rattachement.sousCriteres)
-          .map((sousCritere) => [sousCritere.id, sousCritere.evaluation]),
+          .map((sousCritere) => [
+            sousCritere.id,
+            {
+              note: sousCritere.evaluation.note,
+              commentaire: sousCritere.evaluation.commentaire,
+              statut_evaluation: sousCritere.evaluation.statut_evaluation,
+            },
+          ]),
       ),
     },
   });

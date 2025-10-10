@@ -5,6 +5,7 @@ const evaluationRecordSchema = z.record(
   z.object({
     note: z.number().int().nullable(),
     commentaire: z.string(),
+    statut_evaluation: z.enum(["VERIFIE", "A_VERIFIER"]),
   }),
 );
 

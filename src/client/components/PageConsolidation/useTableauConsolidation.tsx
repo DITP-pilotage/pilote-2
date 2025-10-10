@@ -12,24 +12,38 @@ import { clsxm } from "@/utils/clsxm";
 import { MessageErreur } from "@/components/PageEvaluation/MessageErreur";
 import { ConsolidationData } from "@/server/evaluation/queries/AfficherConsolidationQuery";
 
-const SelecteurStatutEvaluation = () => {
+const SelecteurStatutEvaluation = ({ name }: { name: any }) => {
   const form = useFormulaireConsolidation();
 
   return (
-    <div className="p-1 !bg-dsfr-blue-france-850 rounded gap-1 flex">
-      <button
-        className="w-1/2 !bg-error !text-white px-4 py-2 rounded"
-        type="button"
-      >
-        A vérifier
-      </button>
-      <button
-        className="w-1/2 !bg-success !text-white px-4 py-2 rounded"
-        type="button"
-      >
-        Vérifié
-      </button>
-    </div>
+    <Controller
+      control={form.control}
+      name={name}
+      render={({ field }) => (
+        <div className="p-1 !bg-dsfr-alt-blue-france rounded gap-1 flex">
+          <button
+            className={clsxm("w-1/2 p-2 rounded", {
+              "!bg-error !text-white bold": field.value === "A_VERIFIER",
+              "!bg-transparent !text-black": field.value !== "A_VERIFIER",
+            })}
+            onClick={() => field.onChange("A_VERIFIER")}
+            type="button"
+          >
+            A vérifier
+          </button>
+          <button
+            className={clsxm("w-1/2 p-2 rounded", {
+              "!bg-success !text-white bold": field.value === "VERIFIE",
+              "!bg-transparent !text-black": field.value !== "VERIFIE",
+            })}
+            onClick={() => field.onChange("VERIFIE")}
+            type="button"
+          >
+            Vérifié
+          </button>
+        </div>
+      )}
+    />
   );
 };
 
@@ -249,7 +263,12 @@ const columns = [
       if (info.row.getIsGrouped()) {
         return "";
       }
-      return <SelecteurStatutEvaluation />;
+      const name =
+        info.row.original.type === "objectif"
+          ? (`objectifs.${info.row.original.id}.statut_evaluation` as const)
+          : (`sousCriteres.${info.row.original.id}.statut_evaluation` as const);
+
+      return <SelecteurStatutEvaluation name={name} />;
     },
     enableGrouping: false,
   }),
