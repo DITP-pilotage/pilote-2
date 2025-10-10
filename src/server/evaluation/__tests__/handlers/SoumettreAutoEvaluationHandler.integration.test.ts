@@ -192,6 +192,7 @@ describe("SoumettreAutoEvaluationHandler", () => {
                   objectif_id: objectifId,
                   auteur_id: utilisateurId,
                   note: 5,
+                  statut_evaluation: "VERIFIE",
                   commentaire: "Excellent objectif",
                 },
               },
@@ -201,6 +202,7 @@ describe("SoumettreAutoEvaluationHandler", () => {
                   sous_critere_id: sousCritereId,
                   auteur_id: utilisateurId,
                   note: 4,
+                  statut_evaluation: "VERIFIE",
                   commentaire: "Bon sous-critère",
                 },
               },
@@ -232,9 +234,10 @@ describe("SoumettreAutoEvaluationHandler", () => {
           auteur_id: nouvelAuteurId,
           note: 5,
           commentaire: "Excellent objectif",
+          statut_evaluation: "A_VERIFIER",
         }),
       ]);
-      expect(etapeConsolidation.evaluations_objectifs[0].id).not.toBe(
+      expect(etapeConsolidation.evaluations_objectifs.at(0)?.id).not.toBe(
         evaluationObjectifId,
       );
 
@@ -244,9 +247,10 @@ describe("SoumettreAutoEvaluationHandler", () => {
           auteur_id: nouvelAuteurId,
           note: 4,
           commentaire: "Bon sous-critère",
+          statut_evaluation: "A_VERIFIER",
         }),
       ]);
-      expect(etapeConsolidation.evaluations_sous_criteres[0].id).not.toBe(
+      expect(etapeConsolidation.evaluations_sous_criteres.at(0)?.id).not.toBe(
         evaluationSousCritereId,
       );
     });
