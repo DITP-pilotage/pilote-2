@@ -84,6 +84,12 @@ export class EvenementsSurDate {
     );
   }
 
+  aValeurCreee() {
+    return this.evenementsValeur().some(
+      (evenement) => evenement.typeEvenement === "VALEUR_CREEE",
+    );
+  }
+
   evenementsValeur() {
     return this.evenementsSurDate
       .filter((evenement) => evenement.typeEvenement.startsWith("VALEUR_"))
