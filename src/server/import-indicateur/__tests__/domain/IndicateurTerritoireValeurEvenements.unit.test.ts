@@ -247,5 +247,56 @@ describe("IndicateurTerritoireValeurEvenements", () => {
       expect(nouveauxEvenements2[1].typeEvenement).toEqual("VALEUR_CREEE");
       expect(nouveauxEvenements2[1].ordre).toEqual(1); // First order for 2023-02-01
     });
+
+    it("Doit historiser la dernière valeur créee et ignorer la proposition quand leurs dates sont différentes", () => {
+      const evenementsExistants = [
+        new ValeurIndicateurTerritoireEvenementBuilder()
+          .avecIndicId(INDIC_ID)
+          .avecTerritoireCode(TERRITOIRE_CODE)
+          .avecTypeEvenement("VALEUR_CREEE")
+          .avecDateValeur(new Date("2023-01-01"))
+          .avecValeur(42)
+          .avecOrdre(1)
+          .build(),
+        new ValeurIndicateurTerritoireEvenementBuilder()
+          .avecIndicId(INDIC_ID)
+          .avecTerritoireCode(TERRITOIRE_CODE)
+          .avecTypeEvenement("PROPOSITION_VALEUR_CREEE")
+          .avecDateValeur(new Date("2023-03-01"))
+          .avecValeur(50)
+          .avecOrdre(1)
+          .build(),
+      ];
+
+      const evenements = new IndicateurTerritoireValeurEvenements({
+        indicId: INDIC_ID,
+        territoireCode: TERRITOIRE_CODE,
+        evenementsInitiaux: evenementsExistants,
+      });
+
+      const indicateurData = createIndicateurData({
+        metricValue: "85",
+        metricDate: "2023-06-01",
+      });
+      const nouveauxEvenements = evenements.ingererIndicateurData(
+        indicateurData,
+        AUTEUR_ID,
+      );
+
+      expect(nouveauxEvenements).toHaveLength(3);
+      expect(nouveauxEvenements[0].typeEvenement).toEqual("VALEUR_HISTORISEE");
+      expect(nouveauxEvenements[0].valeur).toEqual(42);
+      expect(nouveauxEvenements[0].ordre).toEqual(2);
+
+      expect(nouveauxEvenements[1].typeEvenement).toEqual(
+        "PROPOSITION_VALEUR_IGNOREE_VALEUR_HISTORISEE",
+      );
+      expect(nouveauxEvenements[1].valeur).toEqual(50);
+      expect(nouveauxEvenements[1].ordre).toEqual(2);
+
+      expect(nouveauxEvenements[2].typeEvenement).toEqual("VALEUR_CREEE");
+      expect(nouveauxEvenements[2].valeur).toEqual(85);
+      expect(nouveauxEvenements[2].ordre).toEqual(1);
+    });
   });
 });
