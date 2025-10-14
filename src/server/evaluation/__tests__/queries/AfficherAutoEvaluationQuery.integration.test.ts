@@ -99,30 +99,30 @@ describe("AfficherAutoEvaluationQuery", () => {
         {
           id: critere1Id,
           libelle: "Critère 1",
+          evaluation: {
+            id: expect.any(String),
+            note: null,
+            commentaire: "",
+          },
           sousCriteres: [
             {
               id: sousCritere1Id,
               nom: "Sous-critère 1",
-              evaluation: {
-                id: expect.any(String),
-                note: null,
-                commentaire: "",
-              },
             },
           ],
         },
         {
           id: critere2Id,
           libelle: "Critère 2",
+          evaluation: {
+            id: expect.any(String),
+            note: null,
+            commentaire: "",
+          },
           sousCriteres: [
             {
               id: sousCritere2Id,
               nom: "Sous-critère 2",
-              evaluation: {
-                id: expect.any(String),
-                note: null,
-                commentaire: "",
-              },
             },
           ],
         },
@@ -230,14 +230,14 @@ describe("AfficherAutoEvaluationQuery", () => {
         },
       });
 
-      await prisma.evaluation_sous_critere.create({
+      await prisma.evaluation_critere.create({
         data: {
           id: evaluationSousCritereId,
           etape_evaluation_id: etapeEvaluationId,
-          sous_critere_id: sousCritereId,
+          critere_id: critereId,
           auteur_id: utilisateurId,
           note: 3,
-          commentaire: "Sous-critère acceptable",
+          commentaire: "Critère acceptable",
         },
       });
 
@@ -249,15 +249,15 @@ describe("AfficherAutoEvaluationQuery", () => {
         {
           id: critereId,
           libelle: "Critère test",
+          evaluation: {
+            id: evaluationSousCritereId,
+            note: 3,
+            commentaire: "Critère acceptable",
+          },
           sousCriteres: [
             {
               id: sousCritereId,
               nom: "Sous-critère test",
-              evaluation: {
-                id: evaluationSousCritereId,
-                note: 3,
-                commentaire: "Sous-critère acceptable",
-              },
             },
           ],
         },
@@ -380,33 +380,23 @@ describe("AfficherAutoEvaluationQuery", () => {
         {
           id: critereId,
           libelle: "Critère multiple",
+          evaluation: {
+            id: expect.any(String),
+            note: null,
+            commentaire: "",
+          },
           sousCriteres: [
             {
               id: sousCritere1Id,
               nom: "Sous-critère 1",
-              evaluation: {
-                id: expect.any(String),
-                note: null,
-                commentaire: "",
-              },
             },
             {
               id: sousCritere2Id,
               nom: "Sous-critère 2",
-              evaluation: {
-                id: expect.any(String),
-                note: null,
-                commentaire: "",
-              },
             },
             {
               id: sousCritere3Id,
               nom: "Sous-critère 3",
-              evaluation: {
-                id: expect.any(String),
-                note: null,
-                commentaire: "",
-              },
             },
           ],
         },
@@ -498,11 +488,11 @@ describe("AfficherAutoEvaluationQuery", () => {
         },
       });
 
-      await prisma.evaluation_sous_critere.create({
+      await prisma.evaluation_critere.create({
         data: {
           id: evaluationConsolidationId,
           etape_evaluation_id: etapeConsolidationId,
-          sous_critere_id: sousCritereId,
+          critere_id: critereId,
           auteur_id: utilisateur2Id,
           note: 5,
           commentaire: "Évaluation de consolidation",
@@ -516,15 +506,15 @@ describe("AfficherAutoEvaluationQuery", () => {
         {
           id: critereId,
           libelle: "Critère isolation",
+          evaluation: {
+            id: expect.any(String),
+            note: null,
+            commentaire: "",
+          },
           sousCriteres: [
             {
               id: sousCritereId,
               nom: "Sous-critère isolation",
-              evaluation: {
-                id: expect.any(String),
-                note: null,
-                commentaire: "",
-              },
             },
           ],
         },

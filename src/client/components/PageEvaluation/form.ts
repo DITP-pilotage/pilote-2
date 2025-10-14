@@ -15,7 +15,7 @@ const evaluationSchema = z.object({
 });
 
 export const formSchema = z.object({
-  criteres: z.object({ sousCriteres: evaluationSchema.array() }).array(),
+  criteres: evaluationSchema.array(),
   objectifs: evaluationSchema.array(),
 });
 

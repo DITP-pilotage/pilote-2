@@ -5,9 +5,7 @@ import { InputNote } from "@/components/_commons/InputNote";
 export const InputNoteAutoEvaluation = ({
   name,
 }: {
-  name:
-    | `criteres.${number}.sousCriteres.${number}.note`
-    | `objectifs.${number}.note`;
+  name: `criteres.${number}.note` | `objectifs.${number}.note`;
 }) => {
   const form = useFormEvaluation();
   const { autoEvaluation } = pageEvaluation.useServerSidePropsContext();

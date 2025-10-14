@@ -26,11 +26,9 @@ export const FormulaireEvaluation = () => {
     mode: "onChange",
     defaultValues: {
       criteres: autoEvaluation.criteres.map((critere) => ({
-        sousCriteres: critere.sousCriteres.map((sousCritere) => ({
-          id: sousCritere.evaluation.id,
-          note: sousCritere.evaluation.note,
-          commentaire: sousCritere.evaluation.commentaire,
-        })),
+        id: critere.evaluation.id,
+        note: critere.evaluation.note,
+        commentaire: critere.evaluation.commentaire,
       })),
       objectifs: autoEvaluation.objectifs.map((objectif) => ({
         id: objectif.evaluation.id,

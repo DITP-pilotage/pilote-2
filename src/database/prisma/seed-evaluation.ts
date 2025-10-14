@@ -8,7 +8,7 @@ import {
   rattachement_utilisateur_etape_jalon,
   $Enums,
   evaluation_objectif,
-  evaluation_sous_critere,
+  evaluation_critere,
 } from "@prisma/client";
 import { prisma } from "@/server/db/prisma";
 
@@ -87,6 +87,72 @@ const sousCriteres: referentiel_sous_critere[] = [
     libelle: "Clauses environnementales",
     descriptif: "Présence d'objectifs de réduction des déchets et d'émissions.",
     parent_id: "9cc999b6-b0da-48c5-bae7-2b9d38e5f1bd",
+    created_at: new Date("2025-10-07T10:00:00"),
+    updated_at: new Date("2025-10-07T10:00:00"),
+  },
+];
+
+const evaluationsCriteresAutoEvaluation: evaluation_critere[] = [
+  {
+    id: "a04ccc87-2dca-437e-9551-395a1aeb55ea",
+    critere_id: "831cb1a5-036b-4609-a560-68cd1852397f",
+    note: 10,
+    commentaire: "Un commentaire 1",
+    etape_evaluation_id: "d6050c26-c872-4134-90d3-c45a8a9dc539",
+    auteur_id: "99038eff-b2d4-4262-a630-631be8b46411",
+    created_at: new Date("2025-10-07T10:00:00"),
+    updated_at: new Date("2025-10-07T10:00:00"),
+  },
+  {
+    id: "2a4e6053-0d3f-425d-a3b9-44c0a13642b7",
+    critere_id: "dedffbcf-97dc-40c9-9df4-a5be78617ba6",
+    note: 11,
+    commentaire: "Un commentaire 2",
+    etape_evaluation_id: "d6050c26-c872-4134-90d3-c45a8a9dc539",
+    auteur_id: "99038eff-b2d4-4262-a630-631be8b46411",
+    created_at: new Date("2025-10-07T10:00:00"),
+    updated_at: new Date("2025-10-07T10:00:00"),
+  },
+  {
+    id: "27d97e2a-3422-4829-8b9f-4956be9d4077",
+    critere_id: "9cc999b6-b0da-48c5-bae7-2b9d38e5f1bd",
+    note: 12,
+    commentaire: "Un commentaire 3",
+    etape_evaluation_id: "d6050c26-c872-4134-90d3-c45a8a9dc539",
+    auteur_id: "99038eff-b2d4-4262-a630-631be8b46411",
+    created_at: new Date("2025-10-07T10:00:00"),
+    updated_at: new Date("2025-10-07T10:00:00"),
+  },
+];
+
+const evaluationsCriteresConsolidation: evaluation_critere[] = [
+  {
+    id: "4a38e120-0b58-49d9-932a-dbb2b8fccb4d",
+    critere_id: "831cb1a5-036b-4609-a560-68cd1852397f",
+    note: 10,
+    commentaire: "Un commentaire 1",
+    etape_evaluation_id: "3ec9fca0-854f-4e53-9664-53244c40060f",
+    auteur_id: "99038eff-b2d4-4262-a630-631be8b46411",
+    created_at: new Date("2025-10-07T10:00:00"),
+    updated_at: new Date("2025-10-07T10:00:00"),
+  },
+  {
+    id: "2d2a8cb0-058d-4ab0-a388-eefd62ec6437",
+    critere_id: "dedffbcf-97dc-40c9-9df4-a5be78617ba6",
+    note: 11,
+    commentaire: "Un commentaire 2",
+    etape_evaluation_id: "3ec9fca0-854f-4e53-9664-53244c40060f",
+    auteur_id: "99038eff-b2d4-4262-a630-631be8b46411",
+    created_at: new Date("2025-10-07T10:00:00"),
+    updated_at: new Date("2025-10-07T10:00:00"),
+  },
+  {
+    id: "13203ec8-06ae-4484-900b-bc17fb71076f",
+    critere_id: "9cc999b6-b0da-48c5-bae7-2b9d38e5f1bd",
+    note: 12,
+    commentaire: "Un commentaire 3",
+    etape_evaluation_id: "3ec9fca0-854f-4e53-9664-53244c40060f",
+    auteur_id: "99038eff-b2d4-4262-a630-631be8b46411",
     created_at: new Date("2025-10-07T10:00:00"),
     updated_at: new Date("2025-10-07T10:00:00"),
   },
@@ -200,144 +266,6 @@ const rattachementsUtilisateur: rattachement_utilisateur_etape_jalon[] = [
   },
 ];
 
-const evaluationsSousCriteresAutoEvaluation: evaluation_sous_critere[] = [
-  {
-    id: "a04ccc87-2dca-437e-9551-395a1aeb55ea",
-    sous_critere_id: "48b2635e-d65f-4197-8e77-5623ad4eb46c",
-    note: 10,
-    statut_evaluation: $Enums.statut_evaluation.VERIFIE,
-    commentaire: "Un commentaire 1",
-    etape_evaluation_id: "d6050c26-c872-4134-90d3-c45a8a9dc539",
-    auteur_id: "99038eff-b2d4-4262-a630-631be8b46411",
-    created_at: new Date("2025-10-07T10:00:00"),
-    updated_at: new Date("2025-10-07T10:00:00"),
-  },
-  {
-    id: "2a4e6053-0d3f-425d-a3b9-44c0a13642b7",
-    sous_critere_id: "176bb1a0-1827-4762-9508-1eaaf5e2d1c0",
-    note: 11,
-    statut_evaluation: $Enums.statut_evaluation.VERIFIE,
-    commentaire: "Un commentaire 2",
-    etape_evaluation_id: "d6050c26-c872-4134-90d3-c45a8a9dc539",
-    auteur_id: "99038eff-b2d4-4262-a630-631be8b46411",
-    created_at: new Date("2025-10-07T10:00:00"),
-    updated_at: new Date("2025-10-07T10:00:00"),
-  },
-  {
-    id: "27d97e2a-3422-4829-8b9f-4956be9d4077",
-    sous_critere_id: "60b875a6-90fd-4deb-87e4-230c91e8246a",
-    note: 12,
-    statut_evaluation: $Enums.statut_evaluation.VERIFIE,
-    commentaire: "Un commentaire 3",
-    etape_evaluation_id: "d6050c26-c872-4134-90d3-c45a8a9dc539",
-    auteur_id: "99038eff-b2d4-4262-a630-631be8b46411",
-    created_at: new Date("2025-10-07T10:00:00"),
-    updated_at: new Date("2025-10-07T10:00:00"),
-  },
-  {
-    id: "fe88bfb8-4f91-4349-8219-d9f2c9d64290",
-    sous_critere_id: "1da91469-c6f2-46f5-b8fd-81942ef7e7db",
-    note: 13,
-    statut_evaluation: $Enums.statut_evaluation.VERIFIE,
-    commentaire: "Un commentaire 4",
-    etape_evaluation_id: "d6050c26-c872-4134-90d3-c45a8a9dc539",
-    auteur_id: "99038eff-b2d4-4262-a630-631be8b46411",
-    created_at: new Date("2025-10-07T10:00:00"),
-    updated_at: new Date("2025-10-07T10:00:00"),
-  },
-  {
-    id: "cb3dbfea-91eb-4504-868b-ba71306e5e96",
-    sous_critere_id: "92ca5b55-ae9f-4809-abdf-111732ab9772",
-    note: 14,
-    statut_evaluation: $Enums.statut_evaluation.VERIFIE,
-    commentaire: "Un commentaire 5",
-    etape_evaluation_id: "d6050c26-c872-4134-90d3-c45a8a9dc539",
-    auteur_id: "99038eff-b2d4-4262-a630-631be8b46411",
-    created_at: new Date("2025-10-07T10:00:00"),
-    updated_at: new Date("2025-10-07T10:00:00"),
-  },
-  {
-    id: "7f89b768-1bbb-411d-97a0-bd1edb4e9847",
-    sous_critere_id: "4969b17c-965b-4d01-9546-31a46ceda590",
-    note: null,
-    statut_evaluation: $Enums.statut_evaluation.VERIFIE,
-    commentaire: "Un commentaire 6",
-    etape_evaluation_id: "d6050c26-c872-4134-90d3-c45a8a9dc539",
-    auteur_id: "99038eff-b2d4-4262-a630-631be8b46411",
-    created_at: new Date("2025-10-07T10:00:00"),
-    updated_at: new Date("2025-10-07T10:00:00"),
-  },
-];
-
-const evaluationsSousCriteresConsolidation: evaluation_sous_critere[] = [
-  {
-    id: "4a38e120-0b58-49d9-932a-dbb2b8fccb4d",
-    sous_critere_id: "48b2635e-d65f-4197-8e77-5623ad4eb46c",
-    note: 10,
-    statut_evaluation: $Enums.statut_evaluation.A_VERIFIER,
-    commentaire: "Un commentaire 1",
-    etape_evaluation_id: "3ec9fca0-854f-4e53-9664-53244c40060f",
-    auteur_id: "99038eff-b2d4-4262-a630-631be8b46411",
-    created_at: new Date("2025-10-07T10:00:00"),
-    updated_at: new Date("2025-10-07T10:00:00"),
-  },
-  {
-    id: "2d2a8cb0-058d-4ab0-a388-eefd62ec6437",
-    sous_critere_id: "176bb1a0-1827-4762-9508-1eaaf5e2d1c0",
-    note: 11,
-    statut_evaluation: $Enums.statut_evaluation.A_VERIFIER,
-    commentaire: "Un commentaire 2",
-    etape_evaluation_id: "3ec9fca0-854f-4e53-9664-53244c40060f",
-    auteur_id: "99038eff-b2d4-4262-a630-631be8b46411",
-    created_at: new Date("2025-10-07T10:00:00"),
-    updated_at: new Date("2025-10-07T10:00:00"),
-  },
-  {
-    id: "13203ec8-06ae-4484-900b-bc17fb71076f",
-    sous_critere_id: "60b875a6-90fd-4deb-87e4-230c91e8246a",
-    note: 12,
-    statut_evaluation: $Enums.statut_evaluation.A_VERIFIER,
-    commentaire: "Un commentaire 3",
-    etape_evaluation_id: "3ec9fca0-854f-4e53-9664-53244c40060f",
-    auteur_id: "99038eff-b2d4-4262-a630-631be8b46411",
-    created_at: new Date("2025-10-07T10:00:00"),
-    updated_at: new Date("2025-10-07T10:00:00"),
-  },
-  {
-    id: "e17c0e68-fa4c-4324-a418-7b161e03ffc9",
-    sous_critere_id: "1da91469-c6f2-46f5-b8fd-81942ef7e7db",
-    note: 13,
-    statut_evaluation: $Enums.statut_evaluation.A_VERIFIER,
-    commentaire: "Un commentaire 4",
-    etape_evaluation_id: "3ec9fca0-854f-4e53-9664-53244c40060f",
-    auteur_id: "99038eff-b2d4-4262-a630-631be8b46411",
-    created_at: new Date("2025-10-07T10:00:00"),
-    updated_at: new Date("2025-10-07T10:00:00"),
-  },
-  {
-    id: "79a9729d-c63f-446a-aba4-b39e1ed6c09f",
-    sous_critere_id: "92ca5b55-ae9f-4809-abdf-111732ab9772",
-    note: 14,
-    statut_evaluation: $Enums.statut_evaluation.A_VERIFIER,
-    commentaire: "Un commentaire 5",
-    etape_evaluation_id: "3ec9fca0-854f-4e53-9664-53244c40060f",
-    auteur_id: "99038eff-b2d4-4262-a630-631be8b46411",
-    created_at: new Date("2025-10-07T10:00:00"),
-    updated_at: new Date("2025-10-07T10:00:00"),
-  },
-  {
-    id: "7d71c1e3-f9f6-42e9-817f-76747b962293",
-    sous_critere_id: "4969b17c-965b-4d01-9546-31a46ceda590",
-    note: null,
-    statut_evaluation: $Enums.statut_evaluation.A_VERIFIER,
-    commentaire: "Un commentaire 6",
-    etape_evaluation_id: "3ec9fca0-854f-4e53-9664-53244c40060f",
-    auteur_id: "99038eff-b2d4-4262-a630-631be8b46411",
-    created_at: new Date("2025-10-07T10:00:00"),
-    updated_at: new Date("2025-10-07T10:00:00"),
-  },
-];
-
 const fichesEvaluation: fiche_evaluation[] = [
   {
     id: "d66e07e2-cabf-41d9-9bf9-75829df8b3ad",
@@ -372,7 +300,6 @@ const evaluationsObjectifsAutoEvaluation: evaluation_objectif[] = [
     etape_evaluation_id: "d6050c26-c872-4134-90d3-c45a8a9dc539",
     auteur_id: "99038eff-b2d4-4262-a630-631be8b46411",
     note: 10,
-    statut_evaluation: $Enums.statut_evaluation.VERIFIE,
     commentaire: "Un commentaire d'auto evaluation",
     created_at: new Date(),
     updated_at: new Date(),
@@ -386,7 +313,6 @@ const evaluationsObjectifsConsolidation: evaluation_objectif[] = [
     etape_evaluation_id: "3ec9fca0-854f-4e53-9664-53244c40060f",
     auteur_id: "99038eff-b2d4-4262-a630-631be8b46411",
     note: 10,
-    statut_evaluation: $Enums.statut_evaluation.A_VERIFIER,
     commentaire: "Un commentaire d'auto evaluation",
     created_at: new Date(),
     updated_at: new Date(),
@@ -427,7 +353,7 @@ const etapesEvaluation: etape_evaluation[] = [
 async function run() {
   // Clean database
   await prisma.evaluation_objectif.deleteMany({});
-  await prisma.evaluation_sous_critere.deleteMany({});
+  await prisma.evaluation_critere.deleteMany({});
   await prisma.rattachement_utilisateur_etape_jalon.deleteMany({});
   await prisma.etape_evaluation.deleteMany({});
   await prisma.fiche_evaluation.deleteMany({});
@@ -493,14 +419,14 @@ async function run() {
     });
   }
 
-  for (const evaluationSousCritere of [
-    ...evaluationsSousCriteresAutoEvaluation,
-    ...evaluationsSousCriteresConsolidation,
+  for (const evaluationCritere of [
+    ...evaluationsCriteresAutoEvaluation,
+    ...evaluationsCriteresConsolidation,
   ]) {
-    await prisma.evaluation_sous_critere.upsert({
-      where: { id: evaluationSousCritere.id },
-      create: evaluationSousCritere,
-      update: evaluationSousCritere,
+    await prisma.evaluation_critere.upsert({
+      where: { id: evaluationCritere.id },
+      create: evaluationCritere,
+      update: evaluationCritere,
     });
   }
 

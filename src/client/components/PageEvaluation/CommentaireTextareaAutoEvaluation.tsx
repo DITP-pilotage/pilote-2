@@ -8,9 +8,7 @@ import { Textarea } from "@/components/_commons/Textarea";
 export function CommentaireTextareaAutoEvaluation({
   name,
 }: {
-  name:
-    | `criteres.${number}.sousCriteres.${number}.commentaire`
-    | `objectifs.${number}.commentaire`;
+  name: `criteres.${number}.commentaire` | `objectifs.${number}.commentaire`;
 }) {
   const form = useFormEvaluation();
   const { autoEvaluation } = pageEvaluation.useServerSidePropsContext();
@@ -34,6 +32,11 @@ export function CommentaireTextareaAutoEvaluation({
     <Textarea
       control={form.control}
       name={name}
+      onBlur={(event) => {
+        if (!event.target.value) {
+          setDisplayComment(false);
+        }
+      }}
       readOnly={autoEvaluation.readOnly}
     />
   );

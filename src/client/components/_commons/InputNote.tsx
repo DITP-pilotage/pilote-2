@@ -1,18 +1,16 @@
-import { Control, Controller } from "react-hook-form";
+import { Control, Controller, FieldValues, Path } from "react-hook-form";
+import { ComponentProps } from "react";
 import { clsxm } from "@/utils/clsxm";
 import { MessageErreur } from "@/components/PageEvaluation/MessageErreur";
 
-export const InputNote = ({
+export function InputNote<T extends FieldValues>({
   name,
   control,
   readOnly,
-}: {
-  name: string;
-  // A améliorer ?
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  control: Control<any>;
-  readOnly: boolean;
-}) => {
+}: ComponentProps<"input"> & {
+  name: Path<T>;
+  control: Control<T>;
+}) {
   return (
     <Controller
       control={control}
@@ -66,4 +64,4 @@ export const InputNote = ({
       )}
     />
   );
-};
+}

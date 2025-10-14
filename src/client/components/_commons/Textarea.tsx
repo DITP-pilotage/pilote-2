@@ -1,18 +1,19 @@
-import { Control, Controller } from "react-hook-form";
+import { Control, Controller, FieldValues, Path } from "react-hook-form";
+import { ComponentProps } from "react";
 import { clsxm } from "@/utils/clsxm";
 import { MessageErreur } from "@/components/PageEvaluation/MessageErreur";
 
-export const Textarea = ({
+export function Textarea<T extends FieldValues>({
   name,
   control,
   readOnly,
-}: {
-  name: string;
-  // A améliorer ?
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  control: Control<any>;
-  readOnly: boolean;
-}) => {
+  onBlur,
+  className,
+  ...props
+}: ComponentProps<"textarea"> & {
+  name: Path<T>;
+  control: Control<T>;
+}) {
   return (
     <Controller
       control={control}
@@ -30,20 +31,20 @@ export const Textarea = ({
               Commentaire
             </label>
             <textarea
+              {...props}
               className={clsxm(
                 "border !rounded-md !bg-white py-2 px-4 field-sizing-content",
                 {
                   "!border-error": !!fieldState.error,
                 },
+                className,
               )}
               id={fieldId}
               {...field}
               disabled={readOnly}
-              onBlur={(e) => {
+              onBlur={(event) => {
                 field.onBlur();
-                if (!e.target.value) {
-                  setDisplayComment(false);
-                }
+                onBlur?.(event);
               }}
               ref={(node) => {
                 node?.focus();
@@ -64,4 +65,4 @@ export const Textarea = ({
       }}
     />
   );
-};
+}
