@@ -1,22 +1,21 @@
-import { Controller } from "react-hook-form";
-import { useFormEvaluation } from "@/components/PageEvaluation/form";
+import { Control, Controller } from "react-hook-form";
 import { clsxm } from "@/utils/clsxm";
 import { MessageErreur } from "@/components/PageEvaluation/MessageErreur";
-import { pageEvaluation } from "@/components/PageEvaluation/PageEvaluationServerSideContext";
 
-export function InputNote({
+export const InputNote = ({
   name,
+  control,
+  readOnly,
 }: {
-  name:
-    | `criteres.${number}.sousCriteres.${number}.note`
-    | `objectifs.${number}.note`;
-}) {
-  const form = useFormEvaluation();
-  const { autoEvaluation } = pageEvaluation.useServerSidePropsContext();
-
+  name: string;
+  // A améliorer ?
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  control: Control<any>;
+  readOnly: boolean;
+}) => {
   return (
     <Controller
-      control={form.control}
+      control={control}
       name={name}
       render={({ field, fieldState }) => (
         <div className="flex flex-col">
@@ -38,7 +37,7 @@ export function InputNote({
               )}
               type="number"
               {...field}
-              disabled={autoEvaluation.readOnly}
+              disabled={readOnly}
               onChange={(e) => {
                 const value = e.target.valueAsNumber;
                 field.onChange(Number.isNaN(value) ? null : value);
@@ -67,4 +66,4 @@ export function InputNote({
       )}
     />
   );
-}
+};

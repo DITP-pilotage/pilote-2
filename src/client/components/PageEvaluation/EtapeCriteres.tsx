@@ -1,8 +1,8 @@
 import { useFieldArray } from "react-hook-form";
 import { useFormEvaluation } from "@/components/PageEvaluation/form";
 import { pageEvaluation } from "@/components/PageEvaluation/PageEvaluationServerSideContext";
-import { CommentaireTextarea } from "@/components/PageEvaluation/CommentaireTextarea";
-import { InputNote } from "@/components/PageEvaluation/InputNote";
+import { CommentaireTextareaAutoEvaluation } from "@/components/PageEvaluation/CommentaireTextareaAutoEvaluation";
+import { InputNoteAutoEvaluation } from "@/components/PageEvaluation/InputNoteAutoEvaluation";
 
 export const EtapeCriteres = () => {
   const { autoEvaluation } = pageEvaluation.useServerSidePropsContext();
@@ -32,10 +32,12 @@ export const EtapeCriteres = () => {
                       <span className="text-primary grow">
                         {sousCritere.nom}
                       </span>
-                      <InputNote name={noteInputName} />{" "}
+                      <InputNoteAutoEvaluation name={noteInputName} />{" "}
                     </div>
 
-                    <CommentaireTextarea name={commentaireInputName} />
+                    <CommentaireTextareaAutoEvaluation
+                      name={commentaireInputName}
+                    />
                   </div>
                 );
               })}

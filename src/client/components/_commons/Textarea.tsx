@@ -1,40 +1,21 @@
-import { useState } from "react";
-import { Controller } from "react-hook-form";
-import { useFormEvaluation } from "@/components/PageEvaluation/form";
-import { Icone } from "@/components/_commons/Icone";
-import { AddLineIcon } from "@/components/_commons/Icones/AddLineIcon";
+import { Control, Controller } from "react-hook-form";
 import { clsxm } from "@/utils/clsxm";
 import { MessageErreur } from "@/components/PageEvaluation/MessageErreur";
-import { pageEvaluation } from "@/components/PageEvaluation/PageEvaluationServerSideContext";
 
-export function CommentaireTextarea({
+export const Textarea = ({
   name,
+  control,
+  readOnly,
 }: {
-  name:
-    | `criteres.${number}.sousCriteres.${number}.commentaire`
-    | `objectifs.${number}.commentaire`;
-}) {
-  const form = useFormEvaluation();
-  const { autoEvaluation } = pageEvaluation.useServerSidePropsContext();
-  const defaultOpen = form.getValues(name) != "";
-  const [displayComment, setDisplayComment] = useState(defaultOpen);
-
-  if (!displayComment) {
-    return (
-      <button
-        className="-ml-4 !text-xs !text-dsfr-grey-200 inline-flex w-fit gap-1 items-center"
-        onClick={() => setDisplayComment(true)}
-        type="button"
-      >
-        <Icone className="w-3 h-3 text-current" icone={AddLineIcon} /> Ajouter
-        un commentaire
-      </button>
-    );
-  }
-
+  name: string;
+  // A améliorer ?
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  control: Control<any>;
+  readOnly: boolean;
+}) => {
   return (
     <Controller
-      control={form.control}
+      control={control}
       name={name}
       render={({ field, fieldState }) => {
         const fieldId = `${name}.commentaire`;
@@ -57,10 +38,12 @@ export function CommentaireTextarea({
               )}
               id={fieldId}
               {...field}
-              disabled={autoEvaluation.readOnly}
+              disabled={readOnly}
               onBlur={(e) => {
                 field.onBlur();
-                if (!e.target.value) setDisplayComment(false);
+                if (!e.target.value) {
+                  setDisplayComment(false);
+                }
               }}
               ref={(node) => {
                 node?.focus();
@@ -81,4 +64,4 @@ export function CommentaireTextarea({
       }}
     />
   );
-}
+};

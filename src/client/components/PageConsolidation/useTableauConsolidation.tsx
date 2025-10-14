@@ -5,152 +5,10 @@ import {
   getGroupedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { Controller } from "react-hook-form";
 import { useMemo } from "react";
-import { useFormulaireConsolidation } from "@/components/PageConsolidation/form";
-import { clsxm } from "@/utils/clsxm";
-import { MessageErreur } from "@/components/PageEvaluation/MessageErreur";
 import { ConsolidationData } from "@/server/evaluation/queries/AfficherConsolidationQuery";
-
-const SelecteurStatutEvaluation = ({ name }: { name: any }) => {
-  const form = useFormulaireConsolidation();
-
-  return (
-    <Controller
-      control={form.control}
-      name={name}
-      render={({ field }) => (
-        <div className="p-1 !bg-dsfr-alt-blue-france rounded gap-1 flex">
-          <button
-            className={clsxm("w-1/2 p-2 rounded", {
-              "!bg-error !text-white bold": field.value === "A_VERIFIER",
-              "!bg-transparent !text-black": field.value !== "A_VERIFIER",
-            })}
-            onClick={() => field.onChange("A_VERIFIER")}
-            type="button"
-          >
-            A vérifier
-          </button>
-          <button
-            className={clsxm("w-1/2 p-2 rounded", {
-              "!bg-success !text-white bold": field.value === "VERIFIE",
-              "!bg-transparent !text-black": field.value !== "VERIFIE",
-            })}
-            onClick={() => field.onChange("VERIFIE")}
-            type="button"
-          >
-            Vérifié
-          </button>
-        </div>
-      )}
-    />
-  );
-};
-
-export function InputNote({ name }: { name: any }) {
-  const form = useFormulaireConsolidation();
-
-  return (
-    <Controller
-      control={form.control}
-      name={name}
-      render={({ field, fieldState }) => (
-        <div className="flex flex-col">
-          <div
-            className={clsxm(
-              "border !rounded-md !bg-white flex items-stretch overflow-hidden",
-              "focus-within:outline-2 focus-within:outline-dsfr-info-main-525 focus-within:outline-offset-2",
-              {
-                "!border-error text-error": !!fieldState.error,
-              },
-            )}
-          >
-            <input
-              className={clsxm(
-                "focus:!outline-none w-[6ch] text-right px-4 py-2 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none",
-                {
-                  "!border-dsfr-error-425": fieldState.error != null,
-                },
-              )}
-              type="number"
-              {...field}
-              onChange={(e) => {
-                const value = e.target.valueAsNumber;
-                field.onChange(Number.isNaN(value) ? null : value);
-              }}
-              value={field.value?.toString() ?? ""}
-            />
-            <span
-              className={clsxm(
-                "px-2 flex items-center font-semibold text-sm py-2 border-l border-gray-200 bg-gray-50",
-                {
-                  "!border-error/30 !bg-error/5": !!fieldState.error,
-                },
-              )}
-            >
-              %
-            </span>
-          </div>
-          <div className="relative h-3 mt-1">
-            {fieldState.error ? (
-              <MessageErreur className="absolute right-0">
-                {fieldState.error.message}
-              </MessageErreur>
-            ) : null}
-          </div>
-        </div>
-      )}
-    />
-  );
-}
-
-const CommentaireTextarea = ({ name }: { name: any }) => {
-  const form = useFormulaireConsolidation();
-  return (
-    <Controller
-      control={form.control}
-      name={name}
-      render={({ field, fieldState }) => {
-        const fieldId = `${name}.commentaire`;
-        return (
-          <div className="flex flex-col gap-1 max-w-lg">
-            <label
-              className={clsxm("font-bold text-sm", {
-                "text-error": !!fieldState.error,
-              })}
-              htmlFor={fieldId}
-            >
-              Commentaire
-            </label>
-            <textarea
-              className={clsxm(
-                "border !rounded-md !bg-white py-2 px-4 field-sizing-content",
-                {
-                  "!border-error": !!fieldState.error,
-                },
-              )}
-              id={fieldId}
-              {...field}
-              ref={(node) => {
-                node?.focus();
-                field.ref(node);
-              }}
-            />
-            <div className="flex justify-between mt-1">
-              {fieldState.error ? (
-                <MessageErreur>{fieldState.error.message}</MessageErreur>
-              ) : null}
-
-              <span className="text-xs ml-auto">
-                {field.value.length} / 600
-              </span>
-            </div>
-          </div>
-        );
-      }}
-    />
-  );
-};
+import { CommentaireTextareaConsolidation } from "@/components/PageConsolidation/CommentaireTextareaConsolidation";
+import { InputNoteConsolidation } from "@/components/PageConsolidation/InputNoteConsolidation";
 
 type TableauConsolidationRow =
   | {
@@ -229,7 +87,7 @@ const columns = [
       return (
         <div>
           <div>{row.original.libelle}</div>
-          <CommentaireTextarea name={name} />
+          <CommentaireTextareaConsolidation name={name} />
         </div>
       );
     },
@@ -250,32 +108,16 @@ const columns = [
 
       return (
         <div className="flex justify-end">
-          <InputNote name={name} />
+          <InputNoteConsolidation name={name} />
         </div>
       );
-    },
-    enableGrouping: false,
-  }),
-  columnHelper.display({
-    id: "statut",
-    header: "Statut",
-    cell: (info) => {
-      if (info.row.getIsGrouped()) {
-        return "";
-      }
-      const name =
-        info.row.original.type === "objectif"
-          ? (`objectifs.${info.row.original.id}.statut_evaluation` as const)
-          : (`sousCriteres.${info.row.original.id}.statut_evaluation` as const);
-
-      return <SelecteurStatutEvaluation name={name} />;
     },
     enableGrouping: false,
   }),
 ];
 const grouping = ["rattachementCode", "critereId"];
 
-export function useTableauConsolidation(rattachements: ConsolidationData) {
+export const useTableauConsolidation = (rattachements: ConsolidationData) => {
   const data = useMemo<TableauConsolidationRow[]>(() => {
     const rows: TableauConsolidationRow[] = [];
 
@@ -318,4 +160,4 @@ export function useTableauConsolidation(rattachements: ConsolidationData) {
   });
 
   return { table };
-}
+};
