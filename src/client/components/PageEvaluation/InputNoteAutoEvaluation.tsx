@@ -1,6 +1,6 @@
 import { useFormEvaluation } from "@/components/PageEvaluation/form";
 import { pageEvaluation } from "@/components/PageEvaluation/PageEvaluationServerSideContext";
-import { InputNote } from "@/components/_commons/InputNote";
+import { InputNoteControlled } from "@/components/_commons/InputNoteControlled";
 
 export const InputNoteAutoEvaluation = ({
   name,
@@ -11,7 +11,7 @@ export const InputNoteAutoEvaluation = ({
   const { autoEvaluation } = pageEvaluation.useServerSidePropsContext();
 
   return (
-    <InputNote
+    <InputNoteControlled
       control={form.control}
       name={name}
       readOnly={autoEvaluation.readOnly}

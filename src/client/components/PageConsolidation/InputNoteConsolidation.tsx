@@ -1,5 +1,5 @@
 import { useFormulaireConsolidation } from "@/components/PageConsolidation/form";
-import { InputNote } from "@/components/_commons/InputNote";
+import { InputNoteControlled } from "@/components/_commons/InputNoteControlled";
 
 export const InputNoteConsolidation = ({
   name,
@@ -8,5 +8,7 @@ export const InputNoteConsolidation = ({
 }) => {
   const form = useFormulaireConsolidation();
 
-  return <InputNote control={form.control} name={name} readOnly={false} />;
+  return (
+    <InputNoteControlled control={form.control} name={name} readOnly={false} />
+  );
 };

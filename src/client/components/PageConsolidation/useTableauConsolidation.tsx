@@ -9,7 +9,13 @@ import { useMemo } from "react";
 import { ConsolidationData } from "@/server/evaluation/queries/AfficherConsolidationQuery";
 import { CommentaireTextareaConsolidation } from "@/components/PageConsolidation/CommentaireTextareaConsolidation";
 import { InputNoteConsolidation } from "@/components/PageConsolidation/InputNoteConsolidation";
+import { InputNote } from "@/components/_commons/InputNote";
 
+type Evaluation = {
+  id: string;
+  note: number | null;
+  commentaire: string;
+};
 type TableauConsolidationRow =
   | {
       type: "critere";
@@ -19,11 +25,8 @@ type TableauConsolidationRow =
         code: string;
         libelle: string;
       };
-      evaluation: {
-        id: string;
-        note: number | null;
-        commentaire: string;
-      };
+      evaluation: Evaluation;
+      autoEvaluation: Evaluation;
     }
   | {
       type: "objectif";
@@ -33,11 +36,8 @@ type TableauConsolidationRow =
         code: string;
         libelle: string;
       };
-      evaluation: {
-        id: string;
-        note: number | null;
-        commentaire: string;
-      };
+      evaluation: Evaluation;
+      autoEvaluation: Evaluation;
     };
 
 const columnHelper = createColumnHelper<TableauConsolidationRow>();
@@ -69,6 +69,25 @@ const columns = [
         <div>
           <div>{row.original.libelle}</div>
           <CommentaireTextareaConsolidation name={name} />
+        </div>
+      );
+    },
+    enableGrouping: false,
+  }),
+  columnHelper.display({
+    id: "noteAutoEvaluation",
+    header: "Note Auto-évaluation",
+    cell: (info) => {
+      if (info.row.getIsGrouped()) {
+        return null;
+      }
+
+      return (
+        <div className="flex justify-end">
+          <InputNote
+            disabled
+            value={info.row.original.autoEvaluation.note ?? ""}
+          />
         </div>
       );
     },
@@ -109,6 +128,7 @@ export const useTableauConsolidation = (rattachements: ConsolidationData) => {
           rattachement,
           libelle: critere.libelle,
           evaluation: critere.evaluation,
+          autoEvaluation: critere.autoEvaluation,
         });
       });
 
@@ -119,6 +139,7 @@ export const useTableauConsolidation = (rattachements: ConsolidationData) => {
           rattachement,
           libelle: objectif.libelle,
           evaluation: objectif.evaluation,
+          autoEvaluation: objectif.autoEvaluation,
         });
       });
     });
