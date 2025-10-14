@@ -861,5 +861,194 @@ describe("AfficherConsolidationQuery", () => {
         },
       ]);
     });
+
+    it("doit retourner les données d'auto-évaluation pour chaque objectif et critère", async () => {
+      // Given
+      const utilisateurId = "c4634567-89ab-cdef-0123-456789abcdef";
+      const utilisateurAutoId = "d4634567-89ab-cdef-0123-456789abcdef";
+      const rattachementCode = "REG-12";
+      const objectifId = "e4634567-89ab-cdef-0123-456789abcdef";
+      const critereId = "f4634567-89ab-cdef-0123-456789abcdef";
+      const sousCritereId = "14734567-89ab-cdef-0123-456789abcdef";
+      const ficheEvaluationId = "24734567-89ab-cdef-0123-456789abcdef";
+      const etapeAutoEvaluationId = "34734567-89ab-cdef-0123-456789abcdef";
+      const etapeConsolidationId = "44734567-89ab-cdef-0123-456789abcdef";
+      const evaluationObjectifAutoId = "54734567-89ab-cdef-0123-456789abcdef";
+      const evaluationObjectifConsoId = "64734567-89ab-cdef-0123-456789abcdef";
+      const evaluationCritereAutoId = "74734567-89ab-cdef-0123-456789abcdef";
+      const evaluationCritereConsoId = "84734567-89ab-cdef-0123-456789abcdef";
+
+      await prisma.utilisateur.create({
+        data: {
+          id: utilisateurId,
+          email: "consolidation@example.com",
+          nom: "Consolidation",
+          prenom: "User",
+          date_creation: new Date(),
+          profilCode: "DITP_ADMIN",
+        },
+      });
+
+      await prisma.utilisateur.create({
+        data: {
+          id: utilisateurAutoId,
+          email: "auto@example.com",
+          nom: "Auto",
+          prenom: "User",
+          date_creation: new Date(),
+          profilCode: "DITP_ADMIN",
+        },
+      });
+
+      await prisma.referentiel_critere.create({
+        data: {
+          id: critereId,
+          libelle: "Critère avec auto-évaluation",
+          descriptif: "Description critère",
+          sous_criteres: {
+            create: {
+              id: sousCritereId,
+              libelle: "Sous-critère",
+              descriptif: "Description sous-critère",
+            },
+          },
+        },
+      });
+
+      await prisma.referentiel_rattachement.create({
+        data: {
+          code: rattachementCode,
+          libelle: "Rattachement avec auto-évaluation",
+          objectifs: {
+            create: {
+              id: objectifId,
+              libelle: "Objectif avec auto-évaluation",
+              descriptif: "Description objectif",
+              jalon: 2025,
+            },
+          },
+        },
+      });
+
+      await prisma.fiche_evaluation.create({
+        data: {
+          id: ficheEvaluationId,
+          jalon: 2025,
+          etape_courante: "CONSOLIDATION",
+          rattachement_code: rattachementCode,
+          etape_evaluations: {
+            create: [
+              {
+                id: etapeAutoEvaluationId,
+                type: "AUTO_EVALUATION",
+              },
+              {
+                id: etapeConsolidationId,
+                type: "CONSOLIDATION",
+              },
+            ],
+          },
+        },
+      });
+
+      await prisma.rattachement_utilisateur_etape_jalon.create({
+        data: {
+          id: "94734567-89ab-cdef-0123-456789abcdef",
+          rattachement_code: rattachementCode,
+          utilisateur_id: utilisateurId,
+          etape: "CONSOLIDATION",
+          jalon: 2025,
+        },
+      });
+
+      // Évaluations en AUTO_EVALUATION
+      await prisma.evaluation_objectif.create({
+        data: {
+          id: evaluationObjectifAutoId,
+          etape_evaluation_id: etapeAutoEvaluationId,
+          objectif_id: objectifId,
+          auteur_id: utilisateurAutoId,
+          note: 3,
+          commentaire: "Auto-évaluation objectif",
+        },
+      });
+
+      await prisma.evaluation_critere.create({
+        data: {
+          id: evaluationCritereAutoId,
+          etape_evaluation_id: etapeAutoEvaluationId,
+          critere_id: critereId,
+          auteur_id: utilisateurAutoId,
+          note: 2,
+          commentaire: "Auto-évaluation critère",
+        },
+      });
+
+      // Évaluations en CONSOLIDATION
+      await prisma.evaluation_objectif.create({
+        data: {
+          id: evaluationObjectifConsoId,
+          etape_evaluation_id: etapeConsolidationId,
+          objectif_id: objectifId,
+          auteur_id: utilisateurId,
+          note: 4,
+          commentaire: "Consolidation objectif",
+        },
+      });
+
+      await prisma.evaluation_critere.create({
+        data: {
+          id: evaluationCritereConsoId,
+          etape_evaluation_id: etapeConsolidationId,
+          critere_id: critereId,
+          auteur_id: utilisateurId,
+          note: 5,
+          commentaire: "Consolidation critère",
+        },
+      });
+
+      // When
+      const result = await query.run({ utilisateurId });
+
+      // Then
+      expect(result).toEqual([
+        {
+          code: rattachementCode,
+          libelle: "Rattachement avec auto-évaluation",
+          objectifs: [
+            {
+              id: objectifId,
+              libelle: "Objectif avec auto-évaluation",
+              autoEvaluation: {
+                id: evaluationObjectifAutoId,
+                note: 3,
+                commentaire: "Auto-évaluation objectif",
+              },
+              evaluation: {
+                id: evaluationObjectifConsoId,
+                note: 4,
+                commentaire: "Consolidation objectif",
+              },
+            },
+          ],
+          criteres: expect.arrayContaining([
+            {
+              id: critereId,
+              libelle: "Critère avec auto-évaluation",
+              autoEvaluation: {
+                id: evaluationCritereAutoId,
+                note: 2,
+                commentaire: "Auto-évaluation critère",
+              },
+              evaluation: {
+                id: evaluationCritereConsoId,
+                note: 5,
+                commentaire: "Consolidation critère",
+              },
+            },
+          ]),
+        },
+      ]);
+    });
   });
 });
