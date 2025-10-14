@@ -8,8 +8,8 @@ export const useEnregistrerBrouillon = () => {
   const { autoEvaluation } = pageEvaluation.useServerSidePropsContext();
   const refreshRouter = useRefreshRouter();
 
-  return (data: FormValues) => {
-    enregisterBrouillon.mutate(
+  return (data: FormValues) =>
+    enregisterBrouillon.mutateAsync(
       {
         ficheEvaluationId: autoEvaluation.ficheEvaluationId,
         evaluationsObjectifs: autoEvaluation.objectifs.map(
@@ -23,22 +23,18 @@ export const useEnregistrerBrouillon = () => {
             };
           },
         ),
-        evaluationsSousCriteres: autoEvaluation.criteres.flatMap(
-          (critere, index) =>
-            critere.sousCriteres.map((sousCritere, jindex) => {
-              const evaluation = data.criteres[index].sousCriteres[jindex];
-              return {
-                id: evaluation.id,
-                sousCritereId: sousCritere.id,
-                note: evaluation.note,
-                commentaire: evaluation.commentaire,
-              };
-            }),
-        ),
+        evaluationsCriteres: autoEvaluation.criteres.map((critere, index) => {
+          const evaluation = data.criteres[index];
+          return {
+            id: evaluation.id,
+            critereId: critere.id,
+            note: evaluation.note,
+            commentaire: evaluation.commentaire,
+          };
+        }),
       },
       {
         onSuccess: refreshRouter,
       },
     );
-  };
 };

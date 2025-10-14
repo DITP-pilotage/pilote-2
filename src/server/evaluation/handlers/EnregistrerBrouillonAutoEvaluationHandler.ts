@@ -5,10 +5,10 @@ import { Transaction } from "@/server/db/Transaction";
 
 export const enregisterBrouillonCommandSchema = z.object({
   ficheEvaluationId: z.string(),
-  evaluationsSousCriteres: z
+  evaluationsCriteres: z
     .object({
       id: z.string(),
-      sousCritereId: z.string(),
+      critereId: z.string(),
       note: z.number().int().nullable(),
       commentaire: z.string(),
     })
@@ -68,17 +68,17 @@ export class EnregistrerBrouillonAutoEvaluationHandler {
         });
       }
 
-      for (const evaluationSousCritere of command.evaluationsSousCriteres) {
+      for (const evaluationCritere of command.evaluationsCriteres) {
         const fields = {
           etape_evaluation_id: etape.id,
-          id: evaluationSousCritere.id,
+          id: evaluationCritere.id,
           auteur_id: auteurId,
-          sous_critere_id: evaluationSousCritere.sousCritereId,
-          note: evaluationSousCritere.note,
-          commentaire: evaluationSousCritere.commentaire,
+          critere_id: evaluationCritere.critereId,
+          note: evaluationCritere.note,
+          commentaire: evaluationCritere.commentaire,
         };
-        await prisma.evaluation_sous_critere.upsert({
-          where: { id: evaluationSousCritere.id },
+        await prisma.evaluation_critere.upsert({
+          where: { id: evaluationCritere.id },
           create: fields,
           update: fields,
         });

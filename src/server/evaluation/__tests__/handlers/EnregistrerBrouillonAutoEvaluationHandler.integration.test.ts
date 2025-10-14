@@ -26,7 +26,7 @@ describe("EnregistrerBrouillonAutoEvaluationHandler", () => {
       const etapeEvaluationId = "e5f6a7b8-c9d0-1234-ef12-345678901234";
       const utilisateurId = "f6a7b8c9-d0e1-2345-f123-456789012345";
       const evaluationObjectifId = "a7b8c9d0-e1f2-3456-1234-567890123456";
-      const evaluationSousCritereId = "b8c9d0e1-f2a3-4567-2345-678901234567";
+      const evaluationCritereId = "b8c9d0e1-f2a3-4567-2345-678901234567";
 
       await prisma.utilisateur.create({
         data: {
@@ -96,10 +96,10 @@ describe("EnregistrerBrouillonAutoEvaluationHandler", () => {
               commentaire: "Bon objectif",
             },
           ],
-          evaluationsSousCriteres: [
+          evaluationsCriteres: [
             {
-              id: evaluationSousCritereId,
-              sousCritereId,
+              id: evaluationCritereId,
+              critereId,
               note: 3,
               commentaire: "Acceptable",
             },
@@ -121,14 +121,13 @@ describe("EnregistrerBrouillonAutoEvaluationHandler", () => {
         commentaire: "Bon objectif",
       });
 
-      const evaluationSousCritere =
-        await prisma.evaluation_sous_critere.findUnique({
-          where: { id: evaluationSousCritereId },
-        });
-      expect(evaluationSousCritere).toMatchObject({
-        id: evaluationSousCritereId,
+      const evaluationCritere = await prisma.evaluation_critere.findUnique({
+        where: { id: evaluationCritereId },
+      });
+      expect(evaluationCritere).toMatchObject({
+        id: evaluationCritereId,
         etape_evaluation_id: etapeEvaluationId,
-        sous_critere_id: sousCritereId,
+        critere_id: critereId,
         auteur_id: utilisateurId,
         note: 3,
         commentaire: "Acceptable",
@@ -145,7 +144,7 @@ describe("EnregistrerBrouillonAutoEvaluationHandler", () => {
       const etapeEvaluationId = "64f04ba8-85bf-4ba0-be83-b42e8dd5a5e0";
       const utilisateurId = "c647fa2f-c8e2-4a6b-b347-62abf24ff3d2";
       const evaluationObjectifId = "9d8b66e1-1378-4982-9b9e-947b2b4c520b";
-      const evaluationSousCritereId = "48c9c8f1-43dd-4718-87a6-ba9986468c54";
+      const evaluationCritereId = "48c9c8f1-43dd-4718-87a6-ba9986468c54";
 
       await prisma.utilisateur.create({
         data: {
@@ -214,14 +213,14 @@ describe("EnregistrerBrouillonAutoEvaluationHandler", () => {
         },
       });
 
-      await prisma.evaluation_sous_critere.create({
+      await prisma.evaluation_critere.create({
         data: {
-          id: evaluationSousCritereId,
+          id: evaluationCritereId,
           etape_evaluation_id: etapeEvaluationId,
-          sous_critere_id: sousCritereId,
+          critere_id: critereId,
           auteur_id: utilisateurId,
           note: 1,
-          commentaire: "Initial sous-critère",
+          commentaire: "Initial critère",
         },
       });
 
@@ -237,12 +236,12 @@ describe("EnregistrerBrouillonAutoEvaluationHandler", () => {
               commentaire: "Updated comment",
             },
           ],
-          evaluationsSousCriteres: [
+          evaluationsCriteres: [
             {
-              id: evaluationSousCritereId,
-              sousCritereId,
+              id: evaluationCritereId,
+              critereId,
               note: 4,
-              commentaire: "Updated sous-critère",
+              commentaire: "Updated critère",
             },
           ],
         },
@@ -258,13 +257,12 @@ describe("EnregistrerBrouillonAutoEvaluationHandler", () => {
         commentaire: "Updated comment",
       });
 
-      const evaluationSousCritere =
-        await prisma.evaluation_sous_critere.findUnique({
-          where: { id: evaluationSousCritereId },
-        });
-      expect(evaluationSousCritere).toMatchObject({
+      const evaluationCritere = await prisma.evaluation_critere.findUnique({
+        where: { id: evaluationCritereId },
+      });
+      expect(evaluationCritere).toMatchObject({
         note: 4,
-        commentaire: "Updated sous-critère",
+        commentaire: "Updated critère",
       });
     });
 
@@ -315,7 +313,7 @@ describe("EnregistrerBrouillonAutoEvaluationHandler", () => {
         {
           ficheEvaluationId,
           evaluationsObjectifs: [],
-          evaluationsSousCriteres: [],
+          evaluationsCriteres: [],
         },
         utilisateurId,
       );
@@ -337,7 +335,7 @@ describe("EnregistrerBrouillonAutoEvaluationHandler", () => {
       const etapeEvaluationId = "375c7b7c-fe14-4542-b4c6-6ad4c5260626";
       const utilisateurId = "41672568-2e78-40bb-9ca8-ed1ea085398b";
       const evaluationObjectifId = "1b9dc0fe-6a00-404c-a0aa-d2f3bcbcfe23";
-      const evaluationSousCritereId = "f061f13f-b742-4828-b3e4-3b8aa8341f27";
+      const evaluationCritereId = "f061f13f-b742-4828-b3e4-3b8aa8341f27";
 
       await prisma.utilisateur.create({
         data: {
@@ -407,10 +405,10 @@ describe("EnregistrerBrouillonAutoEvaluationHandler", () => {
               commentaire: "Pas encore évalué",
             },
           ],
-          evaluationsSousCriteres: [
+          evaluationsCriteres: [
             {
-              id: evaluationSousCritereId,
-              sousCritereId,
+              id: evaluationCritereId,
+              critereId,
               note: null,
               commentaire: "En cours",
             },
@@ -428,11 +426,10 @@ describe("EnregistrerBrouillonAutoEvaluationHandler", () => {
         commentaire: "Pas encore évalué",
       });
 
-      const evaluationSousCritere =
-        await prisma.evaluation_sous_critere.findUnique({
-          where: { id: evaluationSousCritereId },
-        });
-      expect(evaluationSousCritere).toMatchObject({
+      const evaluationCritere = await prisma.evaluation_critere.findUnique({
+        where: { id: evaluationCritereId },
+      });
+      expect(evaluationCritere).toMatchObject({
         note: null,
         commentaire: "En cours",
       });
@@ -484,7 +481,7 @@ describe("EnregistrerBrouillonAutoEvaluationHandler", () => {
           {
             ficheEvaluationId,
             evaluationsObjectifs: [],
-            evaluationsSousCriteres: [],
+            evaluationsCriteres: [],
           },
           utilisateurId,
         ),

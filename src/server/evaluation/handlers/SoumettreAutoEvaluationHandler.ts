@@ -2,7 +2,7 @@ import {
   $Enums,
   etape_evaluation,
   evaluation_objectif,
-  evaluation_sous_critere,
+  evaluation_critere,
 } from "@prisma/client";
 import { z } from "zod";
 import { randomUUID } from "node:crypto";
@@ -46,7 +46,7 @@ export class SoumettreAutoEvaluationHandler {
     ficheEvaluationId: string;
     etapeEvaluation: etape_evaluation & {
       evaluations_objectifs: evaluation_objectif[];
-      evaluations_sous_criteres: evaluation_sous_critere[];
+      evaluations_criteres: evaluation_critere[];
     };
   }) {
     return this.prisma.etape_evaluation.create({
@@ -60,21 +60,17 @@ export class SoumettreAutoEvaluationHandler {
             objectif_id: evaluation.objectif_id,
             auteur_id: auteurId,
             note: evaluation.note,
-            statut_evaluation: $Enums.statut_evaluation.A_VERIFIER,
             commentaire: evaluation.commentaire,
           })),
         },
-        evaluations_sous_criteres: {
-          create: etapeEvaluation.evaluations_sous_criteres.map(
-            (evaluation) => ({
-              id: randomUUID(),
-              sous_critere_id: evaluation.sous_critere_id,
-              auteur_id: auteurId,
-              note: evaluation.note,
-              statut_evaluation: $Enums.statut_evaluation.A_VERIFIER,
-              commentaire: evaluation.commentaire,
-            }),
-          ),
+        evaluations_criteres: {
+          create: etapeEvaluation.evaluations_criteres.map((evaluation) => ({
+            id: randomUUID(),
+            critere_id: evaluation.critere_id,
+            auteur_id: auteurId,
+            note: evaluation.note,
+            commentaire: evaluation.commentaire,
+          })),
         },
       },
     });
@@ -98,7 +94,7 @@ export class SoumettreAutoEvaluationHandler {
       },
       include: {
         evaluations_objectifs: true,
-        evaluations_sous_criteres: true,
+        evaluations_criteres: true,
       },
     });
   }
