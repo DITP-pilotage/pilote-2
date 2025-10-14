@@ -247,80 +247,78 @@ describe("AfficherConsolidationQuery", () => {
       const result = await query.run({ utilisateurId });
 
       // Then
-      expect(result).toEqual(
-        expect.arrayContaining([
-          {
-            code: rattachement1Code,
-            libelle: "Rattachement 1",
-            objectifs: [
-              {
-                id: objectif1Id,
-                libelle: "Objectif rattachement 1",
-                evaluation: {
-                  id: evaluationObjectif1Id,
-                  note: 5,
-                  commentaire: "Excellent",
-                },
+      expect(result).toEqual([
+        {
+          code: rattachement1Code,
+          libelle: "Rattachement 1",
+          objectifs: [
+            {
+              id: objectif1Id,
+              libelle: "Objectif rattachement 1",
+              evaluation: {
+                id: evaluationObjectif1Id,
+                note: 5,
+                commentaire: "Excellent",
               },
-            ],
-            criteres: expect.arrayContaining([
-              {
-                id: critere1Id,
-                libelle: "Critère rattachement 1",
-                evaluation: {
-                  id: evaluationCritere1Id,
-                  note: 4,
-                  commentaire: "Bon critère",
-                },
+            },
+          ],
+          criteres: [
+            {
+              id: critere1Id,
+              libelle: "Critère rattachement 1",
+              evaluation: {
+                id: evaluationCritere1Id,
+                note: 4,
+                commentaire: "Bon critère",
               },
-              {
-                id: critere2Id,
-                libelle: "Critère rattachement 2",
-                evaluation: {
-                  id: expect.any(String),
-                  note: null,
-                  commentaire: "",
-                },
+            },
+            {
+              id: critere2Id,
+              libelle: "Critère rattachement 2",
+              evaluation: {
+                id: expect.any(String),
+                note: null,
+                commentaire: "",
               },
-            ]),
-          },
-          {
-            code: rattachement2Code,
-            libelle: "Rattachement 2",
-            objectifs: [
-              {
-                id: objectif2Id,
-                libelle: "Objectif rattachement 2",
-                evaluation: {
-                  id: evaluationObjectif2Id,
-                  note: 3,
-                  commentaire: "Moyen",
-                },
+            },
+          ],
+        },
+        {
+          code: rattachement2Code,
+          libelle: "Rattachement 2",
+          objectifs: [
+            {
+              id: objectif2Id,
+              libelle: "Objectif rattachement 2",
+              evaluation: {
+                id: evaluationObjectif2Id,
+                note: 3,
+                commentaire: "Moyen",
               },
-            ],
-            criteres: expect.arrayContaining([
-              {
-                id: critere1Id,
-                libelle: "Critère rattachement 1",
-                evaluation: {
-                  id: expect.any(String),
-                  note: null,
-                  commentaire: "",
-                },
+            },
+          ],
+          criteres: [
+            {
+              id: critere1Id,
+              libelle: "Critère rattachement 1",
+              evaluation: {
+                id: expect.any(String),
+                note: null,
+                commentaire: "",
               },
-              {
-                id: critere2Id,
-                libelle: "Critère rattachement 2",
-                evaluation: {
-                  id: evaluationCritere2Id,
-                  note: 2,
-                  commentaire: "Critère à améliorer",
-                },
+            },
+            {
+              id: critere2Id,
+              libelle: "Critère rattachement 2",
+              evaluation: {
+                id: evaluationCritere2Id,
+                note: 2,
+                commentaire: "Critère à améliorer",
               },
-            ]),
-          },
-        ]),
-      );
+            },
+          ],
+        },
+      ]);
     });
 
     it("ne doit pas retourner les rattachements dans d'autres étapes", async () => {
@@ -725,7 +723,7 @@ describe("AfficherConsolidationQuery", () => {
           code: rattachementCode,
           libelle: "Rattachement avec critères mixtes",
           objectifs: [],
-          criteres: expect.arrayContaining([
+          criteres: [
             {
               id: critere1Id,
               libelle: "Critère 1",
@@ -744,7 +742,7 @@ describe("AfficherConsolidationQuery", () => {
                 commentaire: "",
               },
             },
-          ]),
+          ],
         },
       ]);
     });
@@ -839,7 +837,7 @@ describe("AfficherConsolidationQuery", () => {
         {
           code: rattachementCode,
           libelle: "Rattachement avec objectifs mixtes",
-          objectifs: expect.arrayContaining([
+          objectifs: [
             {
               id: objectif1Id,
               libelle: "Objectif 1",
@@ -858,7 +856,7 @@ describe("AfficherConsolidationQuery", () => {
                 commentaire: "",
               },
             },
-          ]),
+          ],
           criteres: expect.any(Array),
         },
       ]);
