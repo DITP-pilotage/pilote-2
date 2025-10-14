@@ -39,8 +39,12 @@ export class AfficherConsolidationQuery {
                   evaluations_objectifs: {
                     include: { objectif: true },
                   },
-                  evaluations_sous_criteres: {
-                    include: { sous_critere: { include: { parent: true } } },
+                  evaluations_criteres: {
+                    include: {
+                      critere: {
+                        include: { sous_criteres: true },
+                      },
+                    },
                   },
                 },
               },
@@ -61,28 +65,20 @@ export class AfficherConsolidationQuery {
               id: evaluation.id,
               note: evaluation.note,
               commentaire: evaluation.commentaire,
-              statut_evaluation: evaluation.statut_evaluation,
             },
           }),
         ),
       ),
-      sousCriteres: rattachement.fiche_evaluation.flatMap((fiche) =>
-        fiche.etape_evaluations[0].evaluations_sous_criteres.map(
-          (evaluation) => ({
-            id: evaluation.sous_critere.id,
-            critere: {
-              id: evaluation.sous_critere.parent.id,
-              libelle: evaluation.sous_critere.parent.libelle,
-            },
-            libelle: evaluation.sous_critere.libelle,
-            evaluation: {
-              id: evaluation.id,
-              note: evaluation.note,
-              commentaire: evaluation.commentaire,
-              statut_evaluation: evaluation.statut_evaluation,
-            },
-          }),
-        ),
+      criteres: rattachement.fiche_evaluation.flatMap((fiche) =>
+        fiche.etape_evaluations[0].evaluations_criteres.map((evaluation) => ({
+          id: evaluation.critere.id,
+          libelle: evaluation.critere.libelle,
+          evaluation: {
+            id: evaluation.id,
+            note: evaluation.note,
+            commentaire: evaluation.commentaire,
+          },
+        })),
       ),
     }));
   }

@@ -12,13 +12,9 @@ import { InputNoteConsolidation } from "@/components/PageConsolidation/InputNote
 
 type TableauConsolidationRow =
   | {
-      type: "sous-critere";
+      type: "critere";
       id: string;
       libelle: string;
-      critere: {
-        id: string;
-        libelle: string;
-      };
       rattachement: {
         code: string;
         libelle: string;
@@ -51,38 +47,23 @@ const columns = [
     id: "rattachementCode",
     header: "Rattachement",
     cell: (info) => {
-      if (info.row.getIsGrouped() || info.row.original.type === "objectif") {
-        return (
-          <span className="text-primary font-semibold">
-            {info.row.original.rattachement.libelle}
-          </span>
-        );
-      }
-
-      return "";
+      return (
+        <span className="text-primary font-semibold">
+          {info.row.original.rattachement.libelle}
+        </span>
+      );
     },
     getGroupingValue: (row) => row.rattachement.code,
   }),
-  columnHelper.accessor("critere.id", {
-    id: "critereId",
+  columnHelper.accessor("id", {
+    id: "id",
     header: "Libellé",
     cell: (info) => {
       const row = info.row;
-      if (row.getIsGrouped()) {
-        if (row.original.type === "sous-critere") {
-          return (
-            <span className="font-bold text-primary">
-              {row.original.critere.libelle}
-            </span>
-          );
-        }
-        return null;
-      }
-
       const name =
         info.row.original.type === "objectif"
           ? (`objectifs.${info.row.original.id}.commentaire` as const)
-          : (`sousCriteres.${info.row.original.id}.commentaire` as const);
+          : (`criteres.${info.row.original.id}.commentaire` as const);
 
       return (
         <div>
@@ -91,8 +72,7 @@ const columns = [
         </div>
       );
     },
-    getGroupingValue: (row) =>
-      row.type === "sous-critere" ? row.critere.id : null,
+    enableGrouping: false,
   }),
   columnHelper.display({
     id: "note",
@@ -104,7 +84,7 @@ const columns = [
       const name =
         info.row.original.type === "objectif"
           ? (`objectifs.${info.row.original.id}.note` as const)
-          : (`sousCriteres.${info.row.original.id}.note` as const);
+          : (`criteres.${info.row.original.id}.note` as const);
 
       return (
         <div className="flex justify-end">
@@ -115,21 +95,20 @@ const columns = [
     enableGrouping: false,
   }),
 ];
-const grouping = ["rattachementCode", "critereId"];
+const grouping = ["rattachementCode"];
 
 export const useTableauConsolidation = (rattachements: ConsolidationData) => {
   const data = useMemo<TableauConsolidationRow[]>(() => {
     const rows: TableauConsolidationRow[] = [];
 
     rattachements.forEach((rattachement) => {
-      rattachement.sousCriteres.forEach((sousCritere) => {
+      rattachement.criteres.forEach((critere) => {
         rows.push({
-          id: sousCritere.id,
-          type: "sous-critere",
+          id: critere.id,
+          type: "critere",
           rattachement,
-          critere: sousCritere.critere,
-          libelle: sousCritere.libelle,
-          evaluation: sousCritere.evaluation,
+          libelle: critere.libelle,
+          evaluation: critere.evaluation,
         });
       });
 

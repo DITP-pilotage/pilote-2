@@ -4,7 +4,7 @@ import { InputNote } from "@/components/_commons/InputNote";
 export const InputNoteConsolidation = ({
   name,
 }: {
-  name: `objectifs.${string}.note` | `sousCriteres.${string}.note`;
+  name: `objectifs.${string}.note` | `criteres.${string}.note`;
 }) => {
   const form = useFormulaireConsolidation();
 

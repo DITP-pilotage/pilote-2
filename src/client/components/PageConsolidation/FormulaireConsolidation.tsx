@@ -20,19 +20,17 @@ export const FormulaireConsolidation = () => {
             {
               note: objectif.evaluation.note,
               commentaire: objectif.evaluation.commentaire,
-              statut_evaluation: objectif.evaluation.statut_evaluation,
             },
           ]),
       ),
-      sousCriteres: Object.fromEntries(
+      criteres: Object.fromEntries(
         rattachements
-          .flatMap((rattachement) => rattachement.sousCriteres)
-          .map((sousCritere) => [
-            sousCritere.id,
+          .flatMap((rattachement) => rattachement.criteres)
+          .map((critere) => [
+            critere.id,
             {
-              note: sousCritere.evaluation.note,
-              commentaire: sousCritere.evaluation.commentaire,
-              statut_evaluation: sousCritere.evaluation.statut_evaluation,
+              note: critere.evaluation.note,
+              commentaire: critere.evaluation.commentaire,
             },
           ]),
       ),
