@@ -569,5 +569,247 @@ describe("AfficherConsolidationQuery", () => {
         criteres: [],
       });
     });
+
+    it("doit retourner tous les critères du référentiel même sans évaluation", async () => {
+      // Given
+      const utilisateurId = "d4434567-89ab-cdef-0123-456789abcdef";
+      const rattachementCode = "REG-10";
+      const critere1Id = "e4434567-89ab-cdef-0123-456789abcdef";
+      const critere2Id = "f4434567-89ab-cdef-0123-456789abcdef";
+      const critere3Id = "14534567-89ab-cdef-0123-456789abcdef";
+      const sousCritere1Id = "24534567-89ab-cdef-0123-456789abcdef";
+      const sousCritere2Id = "34534567-89ab-cdef-0123-456789abcdef";
+      const sousCritere3Id = "44534567-89ab-cdef-0123-456789abcdef";
+      const ficheEvaluationId = "54534567-89ab-cdef-0123-456789abcdef";
+      const etapeEvaluationId = "64534567-89ab-cdef-0123-456789abcdef";
+      const evaluationCritere1Id = "74534567-89ab-cdef-0123-456789abcdef";
+
+      await prisma.utilisateur.create({
+        data: {
+          id: utilisateurId,
+          email: "all-criteres@example.com",
+          nom: "All",
+          prenom: "Criteres",
+          date_creation: new Date(),
+          profilCode: "DITP_ADMIN",
+        },
+      });
+
+      // Créer 2 critères dans le référentiel
+      await prisma.referentiel_critere.create({
+        data: {
+          id: critere1Id,
+          libelle: "Critère 1",
+          descriptif: "Description critère 1",
+          sous_criteres: {
+            create: {
+              id: sousCritere1Id,
+              libelle: "Sous-critère 1",
+              descriptif: "Description sous-critère 1",
+            },
+          },
+        },
+      });
+
+      await prisma.referentiel_critere.create({
+        data: {
+          id: critere2Id,
+          libelle: "Critère 2",
+          descriptif: "Description critère 2",
+          sous_criteres: {
+            create: {
+              id: sousCritere2Id,
+              libelle: "Sous-critère 2",
+              descriptif: "Description sous-critère 2",
+            },
+          },
+        },
+      });
+
+      await prisma.referentiel_rattachement.create({
+        data: {
+          code: rattachementCode,
+          libelle: "Rattachement avec critères mixtes",
+        },
+      });
+
+      await prisma.fiche_evaluation.create({
+        data: {
+          id: ficheEvaluationId,
+          jalon: 2025,
+          etape_courante: "CONSOLIDATION",
+          rattachement_code: rattachementCode,
+          etape_evaluations: {
+            create: {
+              id: etapeEvaluationId,
+              type: "CONSOLIDATION",
+            },
+          },
+        },
+      });
+
+      await prisma.rattachement_utilisateur_etape_jalon.create({
+        data: {
+          id: "84534567-89ab-cdef-0123-456789abcdef",
+          rattachement_code: rattachementCode,
+          utilisateur_id: utilisateurId,
+          etape: "CONSOLIDATION",
+          jalon: 2025,
+        },
+      });
+
+      // Evaluation uniquement pour le critère 1 seulement
+      await prisma.evaluation_critere.create({
+        data: {
+          id: evaluationCritere1Id,
+          etape_evaluation_id: etapeEvaluationId,
+          critere_id: critere1Id,
+          auteur_id: utilisateurId,
+          note: 3,
+          commentaire: "Évaluation critère 1",
+        },
+      });
+
+      // When
+      const result = await query.run({ utilisateurId });
+
+      expect(result).toHaveLength(1);
+      expect(result[0].criteres).toHaveLength(3);
+      expect(result[0].criteres).toEqual(
+        expect.arrayContaining([
+          {
+            id: critere1Id,
+            libelle: "Critère 1",
+            evaluation: {
+              id: evaluationCritere1Id,
+              note: 3,
+              commentaire: "Évaluation critère 1",
+            },
+          },
+          {
+            id: critere2Id,
+            libelle: "Critère 2",
+            evaluation: {
+              id: expect.any(String),
+              note: null,
+              commentaire: "",
+            },
+          },
+        ]),
+      );
+    });
+
+    it("doit retourner tous les objectifs du rattachement même sans évaluation", async () => {
+      // Given
+      const utilisateurId = "94534567-89ab-cdef-0123-456789abcdef";
+      const rattachementCode = "REG-11";
+      const objectif1Id = "a4534567-89ab-cdef-0123-456789abcdef";
+      const objectif2Id = "b4534567-89ab-cdef-0123-456789abcdef";
+      const objectif3Id = "c4534567-89ab-cdef-0123-456789abcdef";
+      const ficheEvaluationId = "d4634567-89ab-cdef-0123-456789abcdef";
+      const etapeEvaluationId = "e4634567-89ab-cdef-0123-456789abcdef";
+      const evaluationObjectif1Id = "f4634567-89ab-cdef-0123-456789abcdef";
+
+      await prisma.utilisateur.create({
+        data: {
+          id: utilisateurId,
+          email: "all-objectifs@example.com",
+          nom: "All",
+          prenom: "Objectifs",
+          date_creation: new Date(),
+          profilCode: "DITP_ADMIN",
+        },
+      });
+
+      // Créer un rattachement avec 2 objectifs
+      await prisma.referentiel_rattachement.create({
+        data: {
+          code: rattachementCode,
+          libelle: "Rattachement avec objectifs mixtes",
+          objectifs: {
+            create: [
+              {
+                id: objectif1Id,
+                libelle: "Objectif 1",
+                descriptif: "Description objectif 1",
+                jalon: 2025,
+              },
+              {
+                id: objectif2Id,
+                libelle: "Objectif 2",
+                descriptif: "Description objectif 2",
+                jalon: 2025,
+              },
+            ],
+          },
+        },
+      });
+
+      await prisma.fiche_evaluation.create({
+        data: {
+          id: ficheEvaluationId,
+          jalon: 2025,
+          etape_courante: "CONSOLIDATION",
+          rattachement_code: rattachementCode,
+          etape_evaluations: {
+            create: {
+              id: etapeEvaluationId,
+              type: "CONSOLIDATION",
+            },
+          },
+        },
+      });
+
+      await prisma.rattachement_utilisateur_etape_jalon.create({
+        data: {
+          id: "14634567-89ab-cdef-0123-456789abcdef",
+          rattachement_code: rattachementCode,
+          utilisateur_id: utilisateurId,
+          etape: "CONSOLIDATION",
+          jalon: 2025,
+        },
+      });
+
+      // Evaluation uniquement pour l'objectif 1
+      await prisma.evaluation_objectif.create({
+        data: {
+          id: evaluationObjectif1Id,
+          etape_evaluation_id: etapeEvaluationId,
+          objectif_id: objectif1Id,
+          auteur_id: utilisateurId,
+          note: 5,
+          commentaire: "Évaluation objectif 1",
+        },
+      });
+
+      // When
+      const result = await query.run({ utilisateurId });
+
+      // Then - TOUS les objectifs du rattachement doivent être retournés
+      expect(result).toHaveLength(1);
+      expect(result[0].objectifs).toHaveLength(3);
+      expect(result[0].objectifs).toEqual(
+        expect.arrayContaining([
+          {
+            id: objectif1Id,
+            libelle: "Objectif 1",
+            evaluation: {
+              id: evaluationObjectif1Id,
+              note: 5,
+              commentaire: "Évaluation objectif 1",
+            },
+          },
+          {
+            id: objectif2Id,
+            libelle: "Objectif 2",
+            evaluation: {
+              id: expect.any(String),
+              note: null,
+              commentaire: "",
+            },
+          },
+        ]),
+      );
+    });
   });
 });
