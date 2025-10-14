@@ -3,7 +3,7 @@ import { useFormContext } from "react-hook-form";
 
 const evaluationRecordSchema = z.record(
   z.object({
-    note: z.number().int().nullable(),
+    note: z.number({ invalid_type_error: "La note est obligatoire" }).int(),
     commentaire: z.string(),
   }),
 );
