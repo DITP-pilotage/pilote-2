@@ -1,7 +1,11 @@
 import { Control, Controller, FieldValues, Path } from "react-hook-form";
-import { ComponentProps } from "react";
+import { ComponentProps, RefObject, useImperativeHandle, useRef } from "react";
 import { clsxm } from "@/utils/clsxm";
 import { MessageErreur } from "@/components/PageEvaluation/MessageErreur";
+
+export type TextareaRef = {
+  focus: () => void;
+};
 
 export function Textarea<T extends FieldValues>({
   name,
@@ -9,11 +13,21 @@ export function Textarea<T extends FieldValues>({
   readOnly,
   onBlur,
   className,
+  textareaRef,
   ...props
 }: ComponentProps<"textarea"> & {
   name: Path<T>;
   control: Control<T>;
+  textareaRef?: RefObject<TextareaRef>;
 }) {
+  const internalRef = useRef<HTMLTextAreaElement | null>(null);
+
+  useImperativeHandle(textareaRef, () => ({
+    focus: () => {
+      internalRef.current?.focus();
+    },
+  }));
+
   return (
     <Controller
       control={control}
@@ -47,7 +61,7 @@ export function Textarea<T extends FieldValues>({
                 onBlur?.(event);
               }}
               ref={(node) => {
-                node?.focus();
+                internalRef.current = node;
                 field.ref(node);
               }}
             />
