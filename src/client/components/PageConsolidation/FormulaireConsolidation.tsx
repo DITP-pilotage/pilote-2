@@ -65,7 +65,7 @@ export const FormulaireConsolidation = () => {
           .map((objectif) => [
             objectif.id,
             {
-              note: objectif.evaluation.note,
+              note: objectif.evaluation.note ?? undefined,
               commentaire: objectif.evaluation.commentaire,
             },
           ]),
@@ -76,7 +76,7 @@ export const FormulaireConsolidation = () => {
           .map((critere) => [
             critere.id,
             {
-              note: critere.evaluation.note,
+              note: critere.evaluation.note ?? undefined,
               commentaire: critere.evaluation.commentaire,
             },
           ]),
