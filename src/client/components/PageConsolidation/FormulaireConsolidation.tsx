@@ -43,7 +43,7 @@ export const FormulaireConsolidation = () => {
       <table className="table-auto w-full border-collapse border border-gray-300">
         <thead>
           {table.getHeaderGroups().map((headerGroup) => (
-            <tr className="bg-gray-100" key={headerGroup.id}>
+            <tr className="bg-dsfr-alt-blue-france" key={headerGroup.id}>
               {headerGroup.headers.map((header) => (
                 <th
                   className="border border-gray-300 px-4 py-3 text-left font-semibold"

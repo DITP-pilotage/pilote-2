@@ -66,8 +66,14 @@ const columns = [
           : (`criteres.${info.row.original.id}.commentaire` as const);
 
       return (
-        <div>
-          <div>{row.original.libelle}</div>
+        <div className="space-y-4">
+          <div className="bg-gray-100 pb-2 border-b border-gray-200 -mx-4 px-4 -mt-2 pt-2">
+            {row.original.libelle}
+          </div>
+          <div>
+            <strong className="text-sm">Commentaire de l'auto évalué</strong>
+            <blockquote>{row.original.autoEvaluation.commentaire}</blockquote>
+          </div>
           <CommentaireTextareaConsolidation name={name} />
         </div>
       );
