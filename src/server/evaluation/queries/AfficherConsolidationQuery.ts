@@ -16,44 +16,49 @@ export class AfficherConsolidationQuery {
     ]);
 
     return rattachements.map((rattachement) => {
-      const evaluations = rattachement.fiche_evaluation.flatMap(
+      const etapesEvaluations = rattachement.fiche_evaluation.flatMap(
         (fiche) => fiche.etape_evaluations,
       );
 
       const objectifsAvecEvaluations = rattachement.objectifs.map(
         (objectif) => {
-          const evaluation = evaluations
-            .flatMap((etape) => etape.evaluations_objectifs)
-            .find(
-              (evaluationObjectif) =>
-                evaluationObjectif.objectif_id === objectif.id,
-            );
+          const consolidationEvaluation = this.findEvaluationObjectif(
+            etapesEvaluations,
+            objectif.id,
+            $Enums.etape_evaluation_enum.CONSOLIDATION,
+          );
+          const autoEvaluation = this.findEvaluationObjectif(
+            etapesEvaluations,
+            objectif.id,
+            $Enums.etape_evaluation_enum.AUTO_EVALUATION,
+          );
 
           return {
             id: objectif.id,
             libelle: objectif.libelle,
-            evaluation: {
-              id: evaluation?.id ?? randomUUID(),
-              note: evaluation?.note ?? null,
-              commentaire: evaluation?.commentaire ?? "",
-            },
+            autoEvaluation: this.formatEvaluation(autoEvaluation),
+            evaluation: this.formatEvaluation(consolidationEvaluation),
           };
         },
       );
 
       const criteresAvecEvaluations = tousCriteres.map((critere) => {
-        const evaluation = evaluations
-          .flatMap((etape) => etape.evaluations_criteres)
-          .find((e) => e.critere_id === critere.id);
+        const consolidationEvaluation = this.findEvaluationCritere(
+          etapesEvaluations,
+          critere.id,
+          $Enums.etape_evaluation_enum.CONSOLIDATION,
+        );
+        const autoEvaluation = this.findEvaluationCritere(
+          etapesEvaluations,
+          critere.id,
+          $Enums.etape_evaluation_enum.AUTO_EVALUATION,
+        );
 
         return {
           id: critere.id,
           libelle: critere.libelle,
-          evaluation: {
-            id: evaluation?.id ?? randomUUID(),
-            note: evaluation?.note ?? null,
-            commentaire: evaluation?.commentaire ?? "",
-          },
+          autoEvaluation: this.formatEvaluation(autoEvaluation),
+          evaluation: this.formatEvaluation(consolidationEvaluation),
         };
       });
 
@@ -99,7 +104,12 @@ export class AfficherConsolidationQuery {
             include: {
               etape_evaluations: {
                 where: {
-                  type: $Enums.etape_evaluation_enum.CONSOLIDATION,
+                  type: {
+                    in: [
+                      $Enums.etape_evaluation_enum.AUTO_EVALUATION,
+                      $Enums.etape_evaluation_enum.CONSOLIDATION,
+                    ],
+                  },
                 },
                 include: {
                   evaluations_objectifs: true,
@@ -110,5 +120,55 @@ export class AfficherConsolidationQuery {
           },
         },
       });
+  }
+
+  private findEvaluationObjectif(
+    etapeEvaluations: Array<{
+      type: $Enums.etape_evaluation_enum;
+      evaluations_objectifs: Array<{
+        id: string;
+        objectif_id: string;
+        note: number | null;
+        commentaire: string;
+      }>;
+    }>,
+    objectifId: string,
+    etapeType: $Enums.etape_evaluation_enum,
+  ) {
+    return etapeEvaluations
+      .filter((etape) => etape.type === etapeType)
+      .flatMap((etape) => etape.evaluations_objectifs)
+      .find((evaluation) => evaluation.objectif_id === objectifId);
+  }
+
+  private findEvaluationCritere(
+    etapeEvaluations: Array<{
+      type: $Enums.etape_evaluation_enum;
+      evaluations_criteres: Array<{
+        id: string;
+        critere_id: string;
+        note: number | null;
+        commentaire: string;
+      }>;
+    }>,
+    critereId: string,
+    etapeType: $Enums.etape_evaluation_enum,
+  ) {
+    return etapeEvaluations
+      .filter((etape) => etape.type === etapeType)
+      .flatMap((etape) => etape.evaluations_criteres)
+      .find((evaluation) => evaluation.critere_id === critereId);
+  }
+
+  private formatEvaluation(
+    evaluation:
+      | { id: string; note: number | null; commentaire: string }
+      | undefined,
+  ) {
+    return {
+      id: evaluation?.id ?? randomUUID(),
+      note: evaluation?.note ?? null,
+      commentaire: evaluation?.commentaire ?? "",
+    };
   }
 }

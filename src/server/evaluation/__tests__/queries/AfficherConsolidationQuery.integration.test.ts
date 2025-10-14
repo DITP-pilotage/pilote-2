@@ -255,6 +255,11 @@ describe("AfficherConsolidationQuery", () => {
             {
               id: objectif1Id,
               libelle: "Objectif rattachement 1",
+              autoEvaluation: {
+                id: expect.any(String),
+                note: null,
+                commentaire: "",
+              },
               evaluation: {
                 id: evaluationObjectif1Id,
                 note: 5,
@@ -266,6 +271,11 @@ describe("AfficherConsolidationQuery", () => {
             {
               id: critere1Id,
               libelle: "Critère rattachement 1",
+              autoEvaluation: {
+                id: expect.any(String),
+                note: null,
+                commentaire: "",
+              },
               evaluation: {
                 id: evaluationCritere1Id,
                 note: 4,
@@ -275,6 +285,11 @@ describe("AfficherConsolidationQuery", () => {
             {
               id: critere2Id,
               libelle: "Critère rattachement 2",
+              autoEvaluation: {
+                id: expect.any(String),
+                note: null,
+                commentaire: "",
+              },
               evaluation: {
                 id: expect.any(String),
                 note: null,
@@ -290,6 +305,11 @@ describe("AfficherConsolidationQuery", () => {
             {
               id: objectif2Id,
               libelle: "Objectif rattachement 2",
+              autoEvaluation: {
+                id: expect.any(String),
+                note: null,
+                commentaire: "",
+              },
               evaluation: {
                 id: evaluationObjectif2Id,
                 note: 3,
@@ -301,6 +321,11 @@ describe("AfficherConsolidationQuery", () => {
             {
               id: critere1Id,
               libelle: "Critère rattachement 1",
+              autoEvaluation: {
+                id: expect.any(String),
+                note: null,
+                commentaire: "",
+              },
               evaluation: {
                 id: expect.any(String),
                 note: null,
@@ -310,6 +335,11 @@ describe("AfficherConsolidationQuery", () => {
             {
               id: critere2Id,
               libelle: "Critère rattachement 2",
+              autoEvaluation: {
+                id: expect.any(String),
+                note: null,
+                commentaire: "",
+              },
               evaluation: {
                 id: evaluationCritere2Id,
                 note: 2,
@@ -494,6 +524,11 @@ describe("AfficherConsolidationQuery", () => {
             {
               id: objectifId,
               libelle: "Objectif multi-étape",
+              autoEvaluation: {
+                id: evaluationAutoId,
+                note: 2,
+                commentaire: "Évaluation auto",
+              },
               evaluation: {
                 id: evaluationConsolidationId,
                 note: 4,
@@ -594,6 +629,11 @@ describe("AfficherConsolidationQuery", () => {
             {
               id: objectifId,
               libelle: "Objectif sans évaluation",
+              autoEvaluation: {
+                id: expect.any(String),
+                note: null,
+                commentaire: "",
+              },
               evaluation: {
                 id: expect.any(String),
                 note: null,
@@ -605,6 +645,11 @@ describe("AfficherConsolidationQuery", () => {
             {
               id: critereId,
               libelle: "Critère sans évaluation",
+              autoEvaluation: {
+                id: expect.any(String),
+                note: null,
+                commentaire: "",
+              },
               evaluation: {
                 id: expect.any(String),
                 note: null,
@@ -727,6 +772,11 @@ describe("AfficherConsolidationQuery", () => {
             {
               id: critere1Id,
               libelle: "Critère 1",
+              autoEvaluation: {
+                id: expect.any(String),
+                note: null,
+                commentaire: "",
+              },
               evaluation: {
                 id: evaluationCritere1Id,
                 note: 3,
@@ -736,6 +786,11 @@ describe("AfficherConsolidationQuery", () => {
             {
               id: critere2Id,
               libelle: "Critère 2",
+              autoEvaluation: {
+                id: expect.any(String),
+                note: null,
+                commentaire: "",
+              },
               evaluation: {
                 id: expect.any(String),
                 note: null,
@@ -841,6 +896,11 @@ describe("AfficherConsolidationQuery", () => {
             {
               id: objectif1Id,
               libelle: "Objectif 1",
+              autoEvaluation: {
+                id: expect.any(String),
+                note: null,
+                commentaire: "",
+              },
               evaluation: {
                 id: evaluationObjectif1Id,
                 note: 5,
@@ -850,6 +910,11 @@ describe("AfficherConsolidationQuery", () => {
             {
               id: objectif2Id,
               libelle: "Objectif 2",
+              autoEvaluation: {
+                id: expect.any(String),
+                note: null,
+                commentaire: "",
+              },
               evaluation: {
                 id: expect.any(String),
                 note: null,
