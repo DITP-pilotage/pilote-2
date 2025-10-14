@@ -137,3 +137,4 @@ When working on PVA functionality, focus on:
 - Email service integrations for notifications
 - always write expect(result).toEqual([{...}]) rather than toHaveLength + index access
 - no unnecessary comment other than given when then in tests case. You may still write a comment to emphasize test-specific data required for the test to be properly setup
+- no 1 or 2 character variable. eg e -> error, ev -> event
