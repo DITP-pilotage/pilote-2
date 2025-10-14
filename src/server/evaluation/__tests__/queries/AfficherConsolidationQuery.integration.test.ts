@@ -63,14 +63,20 @@ describe("AfficherConsolidationQuery", () => {
       const utilisateurId = "51234567-89ab-cdef-0123-456789abcdef";
       const rattachement1Code = "REG-03";
       const rattachement2Code = "REG-04";
+      const critere1Id = "52234567-89ab-cdef-0123-456789abcdef";
+      const critere2Id = "53234567-89ab-cdef-0123-456789abcdef";
+      const sousCritere1Id = "54234567-89ab-cdef-0123-456789abcdef";
+      const sousCritere2Id = "55234567-89ab-cdef-0123-456789abcdef";
       const objectif1Id = "61234567-89ab-cdef-0123-456789abcdef";
       const objectif2Id = "71234567-89ab-cdef-0123-456789abcdef";
       const fiche1Id = "81234567-89ab-cdef-0123-456789abcdef";
       const fiche2Id = "91234567-89ab-cdef-0123-456789abcdef";
       const etape1Id = "a2234567-89ab-cdef-0123-456789abcdef";
       const etape2Id = "b2234567-89ab-cdef-0123-456789abcdef";
-      const evaluation1Id = "c2234567-89ab-cdef-0123-456789abcdef";
-      const evaluation2Id = "d2234567-89ab-cdef-0123-456789abcdef";
+      const evaluationObjectif1Id = "c2234567-89ab-cdef-0123-456789abcdef";
+      const evaluationObjectif2Id = "d2234567-89ab-cdef-0123-456789abcdef";
+      const evaluationCritere1Id = "e2234567-89ab-cdef-0123-456789abcdea";
+      const evaluationCritere2Id = "f2234567-89ab-cdef-0123-456789abcdea";
 
       await prisma.utilisateur.create({
         data: {
@@ -80,6 +86,36 @@ describe("AfficherConsolidationQuery", () => {
           prenom: "Territoire",
           date_creation: new Date(),
           profilCode: "DITP_ADMIN",
+        },
+      });
+
+      await prisma.referentiel_critere.create({
+        data: {
+          id: critere1Id,
+          libelle: "Critère rattachement 1",
+          descriptif: "Description critère 1",
+          sous_criteres: {
+            create: {
+              id: sousCritere1Id,
+              libelle: "Sous-critère 1",
+              descriptif: "Description sous-critère 1",
+            },
+          },
+        },
+      });
+
+      await prisma.referentiel_critere.create({
+        data: {
+          id: critere2Id,
+          libelle: "Critère rattachement 2",
+          descriptif: "Description critère 2",
+          sous_criteres: {
+            create: {
+              id: sousCritere2Id,
+              libelle: "Sous-critère 2",
+              descriptif: "Description sous-critère 2",
+            },
+          },
         },
       });
 
@@ -165,7 +201,7 @@ describe("AfficherConsolidationQuery", () => {
 
       await prisma.evaluation_objectif.create({
         data: {
-          id: evaluation1Id,
+          id: evaluationObjectif1Id,
           etape_evaluation_id: etape1Id,
           objectif_id: objectif1Id,
           auteur_id: utilisateurId,
@@ -176,12 +212,34 @@ describe("AfficherConsolidationQuery", () => {
 
       await prisma.evaluation_objectif.create({
         data: {
-          id: evaluation2Id,
+          id: evaluationObjectif2Id,
           etape_evaluation_id: etape2Id,
           objectif_id: objectif2Id,
           auteur_id: utilisateurId,
           note: 3,
           commentaire: "Moyen",
+        },
+      });
+
+      await prisma.evaluation_critere.create({
+        data: {
+          id: evaluationCritere1Id,
+          etape_evaluation_id: etape1Id,
+          critere_id: critere1Id,
+          auteur_id: utilisateurId,
+          note: 4,
+          commentaire: "Bon critère",
+        },
+      });
+
+      await prisma.evaluation_critere.create({
+        data: {
+          id: evaluationCritere2Id,
+          etape_evaluation_id: etape2Id,
+          critere_id: critere2Id,
+          auteur_id: utilisateurId,
+          note: 2,
+          commentaire: "Critère à améliorer",
         },
       });
 
@@ -198,13 +256,23 @@ describe("AfficherConsolidationQuery", () => {
             id: objectif1Id,
             libelle: "Objectif rattachement 1",
             evaluation: {
-              id: evaluation1Id,
+              id: evaluationObjectif1Id,
               note: 5,
               commentaire: "Excellent",
             },
           },
         ],
-        criteres: [],
+        criteres: [
+          {
+            id: critere1Id,
+            libelle: "Critère rattachement 1",
+            evaluation: {
+              id: evaluationCritere1Id,
+              note: 4,
+              commentaire: "Bon critère",
+            },
+          },
+        ],
       });
       expect(result.find((r) => r.code === rattachement2Code)).toEqual({
         code: rattachement2Code,
@@ -214,13 +282,23 @@ describe("AfficherConsolidationQuery", () => {
             id: objectif2Id,
             libelle: "Objectif rattachement 2",
             evaluation: {
-              id: evaluation2Id,
+              id: evaluationObjectif2Id,
               note: 3,
               commentaire: "Moyen",
             },
           },
         ],
-        criteres: [],
+        criteres: [
+          {
+            id: critere2Id,
+            libelle: "Critère rattachement 2",
+            evaluation: {
+              id: evaluationCritere2Id,
+              note: 2,
+              commentaire: "Critère à améliorer",
+            },
+          },
+        ],
       });
     });
 
