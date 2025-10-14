@@ -1,6 +1,7 @@
 import Head from "next/head";
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next";
 import { getServerSession } from "next-auth/next";
+import Link from "next/link";
 import assert from "node:assert";
 import { getContainer } from "@/server/dependances";
 import { configurationFeatureFlip } from "@/config";
@@ -46,8 +47,8 @@ const EvaluationPage = (
         <title>PILOTE - Évaluation</title>
       </Head>
 
-      <div className="min-h-[60vh]">
-        <div className="bg-white mx-auto w-full max-w-4xl py-6">
+      <div className="min-h-[60vh] py-6">
+        <div className="bg-white mx-auto w-full max-w-4xl">
           <header className="p-4 bg-dsfr-blue-france-925 border-b-2 border-black">
             <span className="font-bold text-sm">Mes auto-évaluations</span>
           </header>
@@ -68,6 +69,15 @@ const EvaluationPage = (
                 </li>
               ))}
             </ul>
+          </div>
+
+          <header className="p-4 bg-dsfr-blue-france-925 border-b-2 border-black">
+            <span className="font-bold text-sm">Consolidation</span>
+          </header>
+          <div className="p-3">
+            <Link href="/evaluation/consolidation">
+              Accéder à la consolidation
+            </Link>
           </div>
         </div>
       </div>
