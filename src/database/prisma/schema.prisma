@@ -574,7 +574,7 @@ model utilisateur {
   applications_accessibles               application_accessible[]
   rattachement_utilisateur_etape_jalons  rattachement_utilisateur_etape_jalon[]
   evaluation_objectif                    evaluation_objectif[]
-  evaluation_sous_critere                evaluation_sous_critere[]
+  evaluation_critere                     evaluation_critere[]
 
   @@schema("public")
 }
@@ -739,25 +739,25 @@ enum application_accessible {
 }
 
 model referentiel_critere {
-  id            String                     @id @db.Uuid
-  libelle       String
-  descriptif    String
-  sous_criteres referentiel_sous_critere[]
-  created_at    DateTime                   @default(now())
-  updated_at    DateTime                   @updatedAt
+  id                 String                     @id @db.Uuid
+  libelle            String
+  descriptif         String
+  sous_criteres      referentiel_sous_critere[]
+  created_at         DateTime                   @default(now())
+  updated_at         DateTime                   @updatedAt
+  evaluation_critere evaluation_critere[]
 
   @@schema("public")
 }
 
 model referentiel_sous_critere {
-  id                      String                    @id @db.Uuid
-  libelle                 String
-  descriptif              String
-  parent_id               String                    @db.Uuid
-  parent                  referentiel_critere       @relation(fields: [parent_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  created_at              DateTime                  @default(now())
-  updated_at              DateTime                  @updatedAt
-  evaluation_sous_critere evaluation_sous_critere[]
+  id         String              @id @db.Uuid
+  libelle    String
+  descriptif String
+  parent_id  String              @db.Uuid
+  parent     referentiel_critere @relation(fields: [parent_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  created_at DateTime            @default(now())
+  updated_at DateTime            @updatedAt
 
   @@schema("public")
 }
@@ -815,14 +815,14 @@ model fiche_evaluation {
 }
 
 model etape_evaluation {
-  id                        String                    @id @db.Uuid
-  fiche_evaluation_id       String                    @db.Uuid
-  fiche_evaluation          fiche_evaluation          @relation(fields: [fiche_evaluation_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  type                      etape_evaluation_enum
-  created_at                DateTime                  @default(now())
-  updated_at                DateTime                  @updatedAt
-  evaluations_objectifs     evaluation_objectif[]
-  evaluations_sous_criteres evaluation_sous_critere[]
+  id                    String                @id @db.Uuid
+  fiche_evaluation_id   String                @db.Uuid
+  fiche_evaluation      fiche_evaluation      @relation(fields: [fiche_evaluation_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  type                  etape_evaluation_enum
+  created_at            DateTime              @default(now())
+  updated_at            DateTime              @updatedAt
+  evaluations_objectifs evaluation_objectif[]
+  evaluations_criteres  evaluation_critere[]
 
   @@unique([fiche_evaluation_id, type])
   @@schema("public")
@@ -843,45 +843,36 @@ model rattachement_utilisateur_etape_jalon {
   @@schema("public")
 }
 
-enum statut_evaluation {
-  VERIFIE
-  A_VERIFIER
-
-  @@schema("public")
-}
-
 model evaluation_objectif {
-  id                     String               @id @db.Uuid
-  etape_evaluation_id    String               @db.Uuid
-  etape_evaluation       etape_evaluation     @relation(fields: [etape_evaluation_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  objectif_id            String               @db.Uuid
-  objectif               referentiel_objectif @relation(fields: [objectif_id], references: [id])
-  auteur_id              String               @db.Uuid
-  auteur                 utilisateur          @relation(fields: [auteur_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  note                   Int?
-  commentaire            String
-  statut_evaluation         statut_evaluation
-  created_at             DateTime             @default(now())
-  updated_at             DateTime             @updatedAt
+  id                  String               @id @db.Uuid
+  etape_evaluation_id String               @db.Uuid
+  etape_evaluation    etape_evaluation     @relation(fields: [etape_evaluation_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  objectif_id         String               @db.Uuid
+  objectif            referentiel_objectif @relation(fields: [objectif_id], references: [id])
+  auteur_id           String               @db.Uuid
+  auteur              utilisateur          @relation(fields: [auteur_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  note                Int?
+  commentaire         String
+  created_at          DateTime             @default(now())
+  updated_at          DateTime             @updatedAt
 
   @@unique([etape_evaluation_id, objectif_id, auteur_id])
   @@schema("public")
 }
 
-model evaluation_sous_critere {
-  id                  String                   @id @db.Uuid
-  etape_evaluation_id String                   @db.Uuid
-  etape_evaluation    etape_evaluation         @relation(fields: [etape_evaluation_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  sous_critere_id     String                   @db.Uuid
-  sous_critere        referentiel_sous_critere @relation(fields: [sous_critere_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  auteur_id           String                   @db.Uuid
-  auteur              utilisateur              @relation(fields: [auteur_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+model evaluation_critere {
+  id                  String              @id @db.Uuid
+  etape_evaluation_id String              @db.Uuid
+  etape_evaluation    etape_evaluation    @relation(fields: [etape_evaluation_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  critere_id          String              @db.Uuid
+  critere             referentiel_critere @relation(fields: [critere_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  auteur_id           String              @db.Uuid
+  auteur              utilisateur         @relation(fields: [auteur_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
   note                Int?
   commentaire         String
-  statut_evaluation         statut_evaluation
-  created_at          DateTime                 @default(now())
-  updated_at          DateTime                 @updatedAt
+  created_at          DateTime            @default(now())
+  updated_at          DateTime            @updatedAt
 
-  @@unique([etape_evaluation_id, sous_critere_id, auteur_id])
+  @@unique([etape_evaluation_id, critere_id, auteur_id])
   @@schema("public")
 }
