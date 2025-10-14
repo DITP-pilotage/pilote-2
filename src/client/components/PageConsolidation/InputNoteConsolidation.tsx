@@ -7,8 +7,20 @@ export const InputNoteConsolidation = ({
   name: `objectifs.${string}.note` | `criteres.${string}.note`;
 }) => {
   const form = useFormulaireConsolidation();
+  const commentaireName = name.replace(".note", ".commentaire");
 
   return (
-    <InputNoteControlled control={form.control} name={name} readOnly={false} />
+    <InputNoteControlled
+      control={form.control}
+      name={name}
+      onChange={() =>
+        form.trigger(
+          commentaireName as
+            | `objectifs.${string}.commentaire`
+            | `criteres.${string}.commentaire`,
+        )
+      }
+      readOnly={false}
+    />
   );
 };

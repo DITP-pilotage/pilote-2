@@ -8,6 +8,7 @@ export type TextareaRef = {
 };
 
 export function Textarea<T extends FieldValues>({
+  label = "Commentaire",
   name,
   control,
   readOnly,
@@ -16,6 +17,7 @@ export function Textarea<T extends FieldValues>({
   textareaRef,
   ...props
 }: ComponentProps<"textarea"> & {
+  label?: string;
   name: Path<T>;
   control: Control<T>;
   textareaRef?: RefObject<TextareaRef>;
@@ -42,7 +44,7 @@ export function Textarea<T extends FieldValues>({
               })}
               htmlFor={fieldId}
             >
-              Commentaire
+              {label}
             </label>
             <textarea
               {...props}

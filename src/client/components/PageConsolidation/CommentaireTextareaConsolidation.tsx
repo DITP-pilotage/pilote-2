@@ -7,5 +7,12 @@ export const CommentaireTextareaConsolidation = ({
   name: `objectifs.${string}.commentaire` | `criteres.${string}.commentaire`;
 }) => {
   const form = useFormulaireConsolidation();
-  return <Textarea control={form.control} name={name} readOnly={false} />;
+  return (
+    <Textarea
+      control={form.control}
+      label="Motif de la consolidation"
+      name={name}
+      readOnly={false}
+    />
+  );
 };

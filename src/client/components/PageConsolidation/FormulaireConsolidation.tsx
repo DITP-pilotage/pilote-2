@@ -1,16 +1,63 @@
 import { flexRender } from "@tanstack/react-table";
 import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect, useMemo } from "react";
 import { pageConsolidation } from "@/components/PageConsolidation/PageConsolidationServerSideContext";
 import { clsxm } from "@/utils/clsxm";
-import { formSchema, FormValues } from "@/components/PageConsolidation/form";
+import {
+  baseFormSchema,
+  FormValues,
+} from "@/components/PageConsolidation/form";
+import { ConsolidationData } from "@/server/evaluation/queries/AfficherConsolidationQuery";
 import { useTableauConsolidation } from "./useTableauConsolidation";
+
+const getAutoEvaluationCritere = (
+  rattachement: ConsolidationData[number],
+  critereId: string,
+) => {
+  return rattachement.criteres.find((critere) => critere.id === critereId)
+    ?.autoEvaluation;
+};
+
+const getAutoEvaluationObjectif = (
+  rattachement: ConsolidationData[number],
+  objectifId: string,
+) => {
+  return rattachement.objectifs.find((objectif) => objectif.id === objectifId)
+    ?.autoEvaluation;
+};
 
 export const FormulaireConsolidation = () => {
   const { rattachements } = pageConsolidation.useServerSidePropsContext();
   const { table } = useTableauConsolidation(rattachements);
+  const formSchema = useMemo(() => {
+    return baseFormSchema.superRefine((obj, ctx) => {
+      for (const rattachement of rattachements) {
+        for (const objectif of rattachement.objectifs) {
+          const autoEvaluation = getAutoEvaluationObjectif(
+            rattachement,
+            objectif.id,
+          );
+          const consolidationEvaluation = obj.objectifs[objectif.id];
+
+          if (
+            autoEvaluation?.note != consolidationEvaluation.note &&
+            !consolidationEvaluation.commentaire
+          ) {
+            ctx.addIssue({
+              code: "custom",
+              message:
+                "Le motif de consolidation est obligatoire lorsque la note est modifiée",
+              path: ["objectifs", objectif.id, "commentaire"],
+            });
+          }
+        }
+      }
+    });
+  }, [rattachements]);
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
+    mode: "onChange",
     defaultValues: {
       objectifs: Object.fromEntries(
         rattachements

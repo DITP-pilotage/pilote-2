@@ -8,11 +8,11 @@ const evaluationRecordSchema = z.record(
   }),
 );
 
-export const formSchema = z.object({
+export const baseFormSchema = z.object({
   objectifs: evaluationRecordSchema,
   criteres: evaluationRecordSchema,
 });
 
-export type FormValues = z.infer<typeof formSchema>;
+export type FormValues = z.infer<typeof baseFormSchema>;
 
 export const useFormulaireConsolidation = () => useFormContext<FormValues>();
