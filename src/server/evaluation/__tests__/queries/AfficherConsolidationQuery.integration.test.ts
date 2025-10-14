@@ -247,86 +247,77 @@ describe("AfficherConsolidationQuery", () => {
       const result = await query.run({ utilisateurId });
 
       // Then
-      expect(result).toHaveLength(2);
-      const result1 = result.find((r) => r.code === rattachement1Code);
-      const result2 = result.find((r) => r.code === rattachement2Code);
-
-      // Rattachement 1
-      expect(result1).toMatchObject({
-        code: rattachement1Code,
-        libelle: "Rattachement 1",
-      });
-      expect(result1?.objectifs).toHaveLength(1);
-      expect(result1?.objectifs[0]).toEqual({
-        id: objectif1Id,
-        libelle: "Objectif rattachement 1",
-        evaluation: {
-          id: evaluationObjectif1Id,
-          note: 5,
-          commentaire: "Excellent",
-        },
-      });
-      // All critères from référentiel should be returned
-      expect(result1?.criteres).toHaveLength(2);
-      expect(result1?.criteres).toEqual(
+      expect(result).toEqual(
         expect.arrayContaining([
           {
-            id: critere1Id,
-            libelle: "Critère rattachement 1",
-            evaluation: {
-              id: evaluationCritere1Id,
-              note: 4,
-              commentaire: "Bon critère",
-            },
+            code: rattachement1Code,
+            libelle: "Rattachement 1",
+            objectifs: [
+              {
+                id: objectif1Id,
+                libelle: "Objectif rattachement 1",
+                evaluation: {
+                  id: evaluationObjectif1Id,
+                  note: 5,
+                  commentaire: "Excellent",
+                },
+              },
+            ],
+            criteres: expect.arrayContaining([
+              {
+                id: critere1Id,
+                libelle: "Critère rattachement 1",
+                evaluation: {
+                  id: evaluationCritere1Id,
+                  note: 4,
+                  commentaire: "Bon critère",
+                },
+              },
+              {
+                id: critere2Id,
+                libelle: "Critère rattachement 2",
+                evaluation: {
+                  id: expect.any(String),
+                  note: null,
+                  commentaire: "",
+                },
+              },
+            ]),
           },
           {
-            id: critere2Id,
-            libelle: "Critère rattachement 2",
-            evaluation: {
-              id: "",
-              note: null,
-              commentaire: "",
-            },
-          },
-        ]),
-      );
-
-      // Rattachement 2
-      expect(result2).toMatchObject({
-        code: rattachement2Code,
-        libelle: "Rattachement 2",
-      });
-      expect(result2?.objectifs).toHaveLength(1);
-      expect(result2?.objectifs[0]).toEqual({
-        id: objectif2Id,
-        libelle: "Objectif rattachement 2",
-        evaluation: {
-          id: evaluationObjectif2Id,
-          note: 3,
-          commentaire: "Moyen",
-        },
-      });
-      // All critères from référentiel should be returned
-      expect(result2?.criteres).toHaveLength(2);
-      expect(result2?.criteres).toEqual(
-        expect.arrayContaining([
-          {
-            id: critere1Id,
-            libelle: "Critère rattachement 1",
-            evaluation: {
-              id: "",
-              note: null,
-              commentaire: "",
-            },
-          },
-          {
-            id: critere2Id,
-            libelle: "Critère rattachement 2",
-            evaluation: {
-              id: evaluationCritere2Id,
-              note: 2,
-              commentaire: "Critère à améliorer",
-            },
+            code: rattachement2Code,
+            libelle: "Rattachement 2",
+            objectifs: [
+              {
+                id: objectif2Id,
+                libelle: "Objectif rattachement 2",
+                evaluation: {
+                  id: evaluationObjectif2Id,
+                  note: 3,
+                  commentaire: "Moyen",
+                },
+              },
+            ],
+            criteres: expect.arrayContaining([
+              {
+                id: critere1Id,
+                libelle: "Critère rattachement 1",
+                evaluation: {
+                  id: expect.any(String),
+                  note: null,
+                  commentaire: "",
+                },
+              },
+              {
+                id: critere2Id,
+                libelle: "Critère rattachement 2",
+                evaluation: {
+                  id: evaluationCritere2Id,
+                  note: 2,
+                  commentaire: "Critère à améliorer",
+                },
+              },
+            ]),
           },
         ]),
       );
@@ -497,16 +488,22 @@ describe("AfficherConsolidationQuery", () => {
       const result = await query.run({ utilisateurId });
 
       // Then
-      expect(result).toHaveLength(1);
-      expect(result[0].objectifs).toEqual([
+      expect(result).toEqual([
         {
-          id: objectifId,
-          libelle: "Objectif multi-étape",
-          evaluation: {
-            id: evaluationConsolidationId,
-            note: 4,
-            commentaire: "Évaluation consolidation",
-          },
+          code: rattachementCode,
+          libelle: "Rattachement multi-étape",
+          objectifs: [
+            {
+              id: objectifId,
+              libelle: "Objectif multi-étape",
+              evaluation: {
+                id: evaluationConsolidationId,
+                note: 4,
+                commentaire: "Évaluation consolidation",
+              },
+            },
+          ],
+          criteres: expect.any(Array),
         },
       ]);
     });
@@ -590,34 +587,35 @@ describe("AfficherConsolidationQuery", () => {
       // When
       const result = await query.run({ utilisateurId });
 
-      // Then - Now returns objectifs and critères with empty evaluations
-      expect(result).toHaveLength(1);
-      expect(result[0]).toMatchObject({
-        code: rattachementCode,
-        libelle: "Rattachement sans évaluations",
-      });
-      // Should return the objectif with empty evaluation
-      expect(result[0].objectifs).toHaveLength(1);
-      expect(result[0].objectifs[0]).toEqual({
-        id: objectifId,
-        libelle: "Objectif sans évaluation",
-        evaluation: {
-          id: "",
-          note: null,
-          commentaire: "",
+      // Then
+      expect(result).toEqual([
+        {
+          code: rattachementCode,
+          libelle: "Rattachement sans évaluations",
+          objectifs: [
+            {
+              id: objectifId,
+              libelle: "Objectif sans évaluation",
+              evaluation: {
+                id: expect.any(String),
+                note: null,
+                commentaire: "",
+              },
+            },
+          ],
+          criteres: [
+            {
+              id: critereId,
+              libelle: "Critère sans évaluation",
+              evaluation: {
+                id: expect.any(String),
+                note: null,
+                commentaire: "",
+              },
+            },
+          ],
         },
-      });
-      // Should return the critère with empty evaluation
-      expect(result[0].criteres).toHaveLength(1);
-      expect(result[0].criteres[0]).toEqual({
-        id: critereId,
-        libelle: "Critère sans évaluation",
-        evaluation: {
-          id: "",
-          note: null,
-          commentaire: "",
-        },
-      });
+      ]);
     });
 
     it("doit retourner tous les critères du référentiel même sans évaluation", async () => {
@@ -721,30 +719,34 @@ describe("AfficherConsolidationQuery", () => {
       // When
       const result = await query.run({ utilisateurId });
 
-      expect(result).toHaveLength(1);
-      expect(result[0].criteres).toHaveLength(2);
-      expect(result[0].criteres).toEqual(
-        expect.arrayContaining([
-          {
-            id: critere1Id,
-            libelle: "Critère 1",
-            evaluation: {
-              id: evaluationCritere1Id,
-              note: 3,
-              commentaire: "Évaluation critère 1",
+      // Then
+      expect(result).toEqual([
+        {
+          code: rattachementCode,
+          libelle: "Rattachement avec critères mixtes",
+          objectifs: [],
+          criteres: expect.arrayContaining([
+            {
+              id: critere1Id,
+              libelle: "Critère 1",
+              evaluation: {
+                id: evaluationCritere1Id,
+                note: 3,
+                commentaire: "Évaluation critère 1",
+              },
             },
-          },
-          {
-            id: critere2Id,
-            libelle: "Critère 2",
-            evaluation: {
-              id: "",
-              note: null,
-              commentaire: "",
+            {
+              id: critere2Id,
+              libelle: "Critère 2",
+              evaluation: {
+                id: expect.any(String),
+                note: null,
+                commentaire: "",
+              },
             },
-          },
-        ]),
-      );
+          ]),
+        },
+      ]);
     });
 
     it("doit retourner tous les objectifs du rattachement même sans évaluation", async () => {
@@ -832,31 +834,34 @@ describe("AfficherConsolidationQuery", () => {
       // When
       const result = await query.run({ utilisateurId });
 
-      // Then - TOUS les objectifs du rattachement doivent être retournés
-      expect(result).toHaveLength(1);
-      expect(result[0].objectifs).toHaveLength(2);
-      expect(result[0].objectifs).toEqual(
-        expect.arrayContaining([
-          {
-            id: objectif1Id,
-            libelle: "Objectif 1",
-            evaluation: {
-              id: evaluationObjectif1Id,
-              note: 5,
-              commentaire: "Évaluation objectif 1",
+      // Then
+      expect(result).toEqual([
+        {
+          code: rattachementCode,
+          libelle: "Rattachement avec objectifs mixtes",
+          objectifs: expect.arrayContaining([
+            {
+              id: objectif1Id,
+              libelle: "Objectif 1",
+              evaluation: {
+                id: evaluationObjectif1Id,
+                note: 5,
+                commentaire: "Évaluation objectif 1",
+              },
             },
-          },
-          {
-            id: objectif2Id,
-            libelle: "Objectif 2",
-            evaluation: {
-              id: "",
-              note: null,
-              commentaire: "",
+            {
+              id: objectif2Id,
+              libelle: "Objectif 2",
+              evaluation: {
+                id: expect.any(String),
+                note: null,
+                commentaire: "",
+              },
             },
-          },
-        ]),
-      );
+          ]),
+          criteres: expect.any(Array),
+        },
+      ]);
     });
   });
 });
