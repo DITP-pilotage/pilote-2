@@ -5,6 +5,8 @@ import { getContainer } from "@/server/dependances";
 import { authOptions } from "@/server/infrastructure/api/auth/[...nextauth]";
 import { pageConsolidation } from "@/components/PageConsolidation/PageConsolidationServerSideContext";
 import { FormulaireConsolidation } from "@/components/PageConsolidation/FormulaireConsolidation";
+import { configurationFeatureFlip } from "@/config";
+import { ApplicationAccessible } from "@/server/domain/utilisateur/Utilisateur.interface";
 
 export const getServerSideProps = async ({
   req,
@@ -12,6 +14,28 @@ export const getServerSideProps = async ({
 }: GetServerSidePropsContext) => {
   const session = await getServerSession(req, res, authOptions);
   assert(session);
+
+  const featureFlipping = configurationFeatureFlip();
+
+  const peutAccederEtapeConsolidation = await getContainer("piloteEval")
+    .resolve("accesFicheEvaluationService")
+    .peutAccederEtapeConsolidation({
+      utilisateurId: session.user.id,
+    });
+
+  if (
+    !featureFlipping.piloteEval ||
+    !session.applicationsAccessibles.includes(
+      ApplicationAccessible.PILOTE_EVAL,
+    ) ||
+    !peutAccederEtapeConsolidation
+  ) {
+    return {
+      redirect: {
+        destination: "/404",
+      },
+    };
+  }
 
   const rattachements = await getContainer("piloteEval")
     .resolve("afficherConsolidationQuery")

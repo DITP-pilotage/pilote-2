@@ -22,9 +22,9 @@ export const getServerSideProps = async ({
 
   const featureFlipping = configurationFeatureFlip();
 
-  const peutAccederFicheAutoEvaluation = await getContainer("piloteEval")
+  const peutAccederEtapeAutoEvaluation = await getContainer("piloteEval")
     .resolve("accesFicheEvaluationService")
-    .peutAccederFicheAutoEvaluation({
+    .peutAccederEtapeAutoEvaluation({
       utilisateurId: session.user.id,
       ficheEvaluationId,
     });
@@ -34,7 +34,7 @@ export const getServerSideProps = async ({
     !session.applicationsAccessibles.includes(
       ApplicationAccessible.PILOTE_EVAL,
     ) ||
-    !peutAccederFicheAutoEvaluation
+    !peutAccederEtapeAutoEvaluation
   ) {
     return {
       redirect: {

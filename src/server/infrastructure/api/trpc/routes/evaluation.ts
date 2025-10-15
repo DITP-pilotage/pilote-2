@@ -13,7 +13,7 @@ export const evaluationRouter = créerRouteurTRPC({
     .mutation(async ({ input, ctx }) => {
       const peutAccederFicheAutoEvaluation = await getContainer("piloteEval")
         .resolve("accesFicheEvaluationService")
-        .peutAccederFicheAutoEvaluation({
+        .peutAccederEtapeAutoEvaluation({
           utilisateurId: ctx.session.user.id,
           ficheEvaluationId: input.ficheEvaluationId,
         });
@@ -31,9 +31,8 @@ export const evaluationRouter = créerRouteurTRPC({
     .mutation(async ({ input, ctx }) => {
       const peutAccederFicheAutoEvaluation = await getContainer("piloteEval")
         .resolve("accesFicheEvaluationService")
-        .peutAccederFicheAutoEvaluation({
+        .peutAccederEtapeConsolidation({
           utilisateurId: ctx.session.user.id,
-          ficheEvaluationId: input.ficheEvaluationId,
         });
 
       if (!peutAccederFicheAutoEvaluation)
@@ -49,7 +48,7 @@ export const evaluationRouter = créerRouteurTRPC({
     .mutation(async ({ input, ctx }) => {
       const peutAccederFicheAutoEvaluation = await getContainer("piloteEval")
         .resolve("accesFicheEvaluationService")
-        .peutAccederFicheAutoEvaluation({
+        .peutAccederEtapeAutoEvaluation({
           utilisateurId: ctx.session.user.id,
           ficheEvaluationId: input.ficheEvaluationId,
         });
