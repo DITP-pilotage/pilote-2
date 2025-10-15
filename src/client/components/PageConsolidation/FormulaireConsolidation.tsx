@@ -66,20 +66,29 @@ export const FormulaireConsolidation = () => {
             ))}
           </thead>
           <tbody>
-            {rows.map((row, index) => {
-              if (row.getIsGrouped() && row.original.type === "objectif")
-                return null;
-              if (row.depth === 0) return null;
+            {rows.map((row) => {
+              if (row.getIsGrouped()) {
+                const rattachementCell = row
+                  .getAllCells()
+                  .find((cell) => cell.column.id === "rattachementCode")!;
+
+                return (
+                  <tr
+                    className="border-t !border-t-2 !border-primary"
+                    key={row.id}
+                  >
+                    <td className="text-primary p-4" colSpan={4}>
+                      {flexRender(
+                        rattachementCell.column.columnDef.cell,
+                        rattachementCell.getContext(),
+                      )}
+                    </td>
+                  </tr>
+                );
+              }
 
               return (
-                <tr
-                  className={clsxm({
-                    "bg-gray-50": row.getIsGrouped(),
-                    "border-t border-t-2 border-primary":
-                      rows[index - 1]?.depth === 0,
-                  })}
-                  key={row.id}
-                >
+                <tr key={row.id}>
                   {row.getVisibleCells().map((cell) => (
                     <td
                       className={clsxm(
@@ -92,10 +101,12 @@ export const FormulaireConsolidation = () => {
                       )}
                       key={cell.id}
                     >
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext(),
-                      )}
+                      {cell.column.id !== "rattachementCode"
+                        ? flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext(),
+                          )
+                        : null}
                     </td>
                   ))}
                 </tr>
