@@ -1,61 +1,22 @@
 import { flexRender } from "@tanstack/react-table";
 import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMemo } from "react";
 import { pageConsolidation } from "@/components/PageConsolidation/PageConsolidationServerSideContext";
 import { clsxm } from "@/utils/clsxm";
-import {
-  baseFormSchema,
-  FormValues,
-  getCommentairesCriteresInvalides,
-  getCommentairesObjectifsInvalides,
-  getFichesEvaluationParDefaut,
-} from "@/components/PageConsolidation/form";
 import { Bouton } from "@/components/_commons/Bouton/Bouton";
+import {
+  FormValues,
+  getFichesEvaluationParDefaut,
+  useFormSchema,
+} from "./form";
+import { useEnregistrerBrouillonConsolidation } from "./useEnregistrerBrouillonConsolidation";
 import { useTableauConsolidation } from "./useTableauConsolidation";
 
 export const FormulaireConsolidation = () => {
   const { rattachements } = pageConsolidation.useServerSidePropsContext();
   const { table } = useTableauConsolidation(rattachements);
-  const formSchema = useMemo(() => {
-    return baseFormSchema.superRefine((form, ctx) => {
-      for (const {
-        ficheEvaluationId,
-        objectifId,
-      } of getCommentairesObjectifsInvalides(rattachements, form)) {
-        ctx.addIssue({
-          code: "custom",
-          message:
-            "Le motif de consolidation est obligatoire lorsque la note est modifiée",
-          path: [
-            "fichesEvaluation",
-            ficheEvaluationId,
-            "objectifs",
-            objectifId,
-            "commentaire",
-          ],
-        });
-      }
-
-      for (const {
-        ficheEvaluationId,
-        critereId,
-      } of getCommentairesCriteresInvalides(rattachements, form)) {
-        ctx.addIssue({
-          code: "custom",
-          message:
-            "Le motif de consolidation est obligatoire lorsque la note est modifiée",
-          path: [
-            "fichesEvaluation",
-            ficheEvaluationId,
-            "criteres",
-            critereId,
-            "commentaire",
-          ],
-        });
-      }
-    });
-  }, [rattachements]);
+  const enregisterBrouillon = useEnregistrerBrouillonConsolidation();
+  const formSchema = useFormSchema();
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     mode: "onChange",
@@ -67,7 +28,7 @@ export const FormulaireConsolidation = () => {
 
   return (
     <FormProvider {...form}>
-      <form onSubmit={form.handleSubmit((values) => console.log(values))}>
+      <form onSubmit={form.handleSubmit(enregisterBrouillon)}>
         <Bouton label="Enregistrer le brouillon" type="submit" />
         <table className="table-auto w-full border-collapse border border-gray-300">
           <thead>

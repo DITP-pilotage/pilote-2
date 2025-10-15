@@ -1,9 +1,12 @@
 import { z } from "zod";
 import { useFormContext } from "react-hook-form";
+import { useMemo } from "react";
 import { ConsolidationData } from "@/server/evaluation/queries/AfficherConsolidationQuery";
+import { pageConsolidation } from "@/components/PageConsolidation/PageConsolidationServerSideContext";
 
 const evaluationRecordSchema = z.record(
   z.object({
+    id: z.string(),
     note: z.number().int().nullable(),
     commentaire: z.string(),
   }),
@@ -33,6 +36,7 @@ export const getFichesEvaluationParDefaut = (
           rattachement.objectifs.map((objectif) => [
             objectif.id,
             {
+              id: objectif.evaluation.id,
               note: objectif.evaluation.note,
               commentaire: objectif.evaluation.commentaire,
             },
@@ -42,6 +46,7 @@ export const getFichesEvaluationParDefaut = (
           rattachement.criteres.map((critere) => [
             critere.id,
             {
+              id: critere.evaluation.id,
               note: critere.evaluation.note,
               commentaire: critere.evaluation.commentaire,
             },
@@ -139,3 +144,46 @@ export const getCommentairesCriteresInvalides = (
       ficheEvaluationId,
       critereId,
     }));
+
+export const useFormSchema = () => {
+  const { rattachements } = pageConsolidation.useServerSidePropsContext();
+  return useMemo(() => {
+    return baseFormSchema.superRefine((form, ctx) => {
+      for (const {
+        ficheEvaluationId,
+        objectifId,
+      } of getCommentairesObjectifsInvalides(rattachements, form)) {
+        ctx.addIssue({
+          code: "custom",
+          message:
+            "Le motif de consolidation est obligatoire lorsque la note est modifiée",
+          path: [
+            "fichesEvaluation",
+            ficheEvaluationId,
+            "objectifs",
+            objectifId,
+            "commentaire",
+          ],
+        });
+      }
+
+      for (const {
+        ficheEvaluationId,
+        critereId,
+      } of getCommentairesCriteresInvalides(rattachements, form)) {
+        ctx.addIssue({
+          code: "custom",
+          message:
+            "Le motif de consolidation est obligatoire lorsque la note est modifiée",
+          path: [
+            "fichesEvaluation",
+            ficheEvaluationId,
+            "criteres",
+            critereId,
+            "commentaire",
+          ],
+        });
+      }
+    });
+  }, [rattachements]);
+};
