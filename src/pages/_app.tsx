@@ -10,6 +10,7 @@ import Head from "next/head";
 import { TRPCClientError } from "@trpc/client";
 import init from "@socialgouv/matomo-next";
 import Router from "next/router";
+import { Toaster } from "sonner";
 import MiseEnPage from "@/client/components/_commons/MiseEnPage/MiseEnPage";
 import useDétecterLargeurDÉcran from "@/client/hooks/useDétecterLargeurDÉcran";
 import api from "@/server/infrastructure/api/trpc/api";
@@ -120,6 +121,7 @@ function MonApplication({ Component, pageProps, nonce: appNonce }: MyAppProps) {
         <SessionProvider session={pageProps.session}>
           <MiseEnPage afficherLeLoader={afficherLeLoader}>
             <Component {...pageProps} />
+            <Toaster />
           </MiseEnPage>
         </SessionProvider>
       </QueryClientProvider>

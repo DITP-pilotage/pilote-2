@@ -1,3 +1,5 @@
+import { useEffect } from "react";
+import { toast } from "sonner";
 import api from "@/server/infrastructure/api/trpc/api";
 import { FormValues } from "@/components/PageConsolidation/form";
 
@@ -26,5 +28,13 @@ export const useEnregistrerBrouillonConsolidation = () => {
           };
         },
       ),
+      {
+        onSuccess: () => {
+          toast.success("Données enregistrées", {
+            position: "top-right",
+            richColors: true,
+          });
+        },
+      },
     );
 };

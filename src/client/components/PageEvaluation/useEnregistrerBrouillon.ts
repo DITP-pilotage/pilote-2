@@ -1,3 +1,4 @@
+import { toast } from "sonner";
 import api from "@/server/infrastructure/api/trpc/api";
 import { pageEvaluation } from "@/components/PageEvaluation/PageEvaluationServerSideContext";
 import { FormValues } from "@/components/PageEvaluation/form";
@@ -35,7 +36,13 @@ export const useEnregistrerBrouillon = () => {
         }),
       },
       {
-        onSuccess: refreshRouter,
+        onSuccess: async () => {
+          toast.success("Données enregistrées", {
+            position: "top-right",
+            richColors: true,
+          });
+          await refreshRouter();
+        },
       },
     );
 };
