@@ -2,14 +2,14 @@ import {
   créerRouteurTRPC,
   procédureProtégée,
 } from "@/server/infrastructure/api/trpc/trpc";
-import { enregisterBrouillonCommandSchema } from "@/server/evaluation/handlers/EnregistrerBrouillonAutoEvaluationHandler";
 import { getContainer } from "@/server/dependances";
 import { ForbiddenError } from "@/server/app/error-boundary/forbidden-error";
 import { soumettreAutoEvaluationCommandSchema } from "@/server/evaluation/handlers/SoumettreAutoEvaluationHandler";
+import { enregisterEvaluationCommandSchema } from "@/server/evaluation/services/EnregistrerEvaluationService";
 
 export const evaluationRouter = créerRouteurTRPC({
   enregistrerBrouillon: procédureProtégée
-    .input(enregisterBrouillonCommandSchema)
+    .input(enregisterEvaluationCommandSchema)
     .mutation(async ({ input, ctx }) => {
       const peutAccederFicheAutoEvaluation = await getContainer("piloteEval")
         .resolve("accesFicheEvaluationService")
