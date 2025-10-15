@@ -25,6 +25,7 @@ type TableauConsolidationRow =
         code: string;
         libelle: string;
       };
+      ficheEvaluationId: string;
       evaluation: Evaluation;
       autoEvaluation: Evaluation;
     }
@@ -36,6 +37,7 @@ type TableauConsolidationRow =
         code: string;
         libelle: string;
       };
+      ficheEvaluationId: string;
       evaluation: Evaluation;
       autoEvaluation: Evaluation;
     };
@@ -62,8 +64,8 @@ const columns = [
       const row = info.row;
       const name =
         info.row.original.type === "objectif"
-          ? (`objectifs.${info.row.original.id}.commentaire` as const)
-          : (`criteres.${info.row.original.id}.commentaire` as const);
+          ? (`fichesEvaluation.${info.row.original.ficheEvaluationId}.objectifs.${info.row.original.id}.commentaire` as const)
+          : (`fichesEvaluation.${info.row.original.ficheEvaluationId}.criteres.${info.row.original.id}.commentaire` as const);
 
       return (
         <div className="space-y-4">
@@ -108,8 +110,8 @@ const columns = [
       }
       const name =
         info.row.original.type === "objectif"
-          ? (`objectifs.${info.row.original.id}.note` as const)
-          : (`criteres.${info.row.original.id}.note` as const);
+          ? (`fichesEvaluation.${info.row.original.ficheEvaluationId}.objectifs.${info.row.original.id}.note` as const)
+          : (`fichesEvaluation.${info.row.original.ficheEvaluationId}.criteres.${info.row.original.id}.note` as const);
 
       return (
         <div className="flex justify-end">
@@ -132,6 +134,7 @@ export const useTableauConsolidation = (rattachements: ConsolidationData) => {
           id: critere.id,
           type: "critere",
           rattachement,
+          ficheEvaluationId: rattachement.ficheEvaluationId,
           libelle: critere.libelle,
           evaluation: critere.evaluation,
           autoEvaluation: critere.autoEvaluation,
@@ -143,6 +146,7 @@ export const useTableauConsolidation = (rattachements: ConsolidationData) => {
           id: objectif.id,
           type: "objectif",
           rattachement,
+          ficheEvaluationId: rattachement.ficheEvaluationId,
           libelle: objectif.libelle,
           evaluation: objectif.evaluation,
           autoEvaluation: objectif.autoEvaluation,

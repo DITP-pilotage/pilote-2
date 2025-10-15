@@ -10,39 +10,47 @@ const evaluationRecordSchema = z.record(
 );
 
 export const baseFormSchema = z.object({
-  objectifs: evaluationRecordSchema,
-  criteres: evaluationRecordSchema,
+  fichesEvaluation: z.record(
+    z.object({
+      objectifs: evaluationRecordSchema,
+      criteres: evaluationRecordSchema,
+    }),
+  ),
 });
 
 export type FormValues = z.infer<typeof baseFormSchema>;
 
 export const useFormulaireConsolidation = () => useFormContext<FormValues>();
 
-export const getObjectifsParDefaut = (rattachements: ConsolidationData) =>
+export const getFichesEvaluationParDefaut = (
+  rattachements: ConsolidationData,
+) =>
   Object.fromEntries(
-    rattachements
-      .flatMap((rattachement) => rattachement.objectifs)
-      .map((objectif) => [
-        objectif.id,
-        {
-          note: objectif.evaluation.note,
-          commentaire: objectif.evaluation.commentaire,
-        },
-      ]),
+    rattachements.map((rattachement) => [
+      rattachement.ficheEvaluationId,
+      {
+        objectifs: Object.fromEntries(
+          rattachement.objectifs.map((objectif) => [
+            objectif.id,
+            {
+              note: objectif.evaluation.note,
+              commentaire: objectif.evaluation.commentaire,
+            },
+          ]),
+        ),
+        criteres: Object.fromEntries(
+          rattachement.criteres.map((critere) => [
+            critere.id,
+            {
+              note: critere.evaluation.note,
+              commentaire: critere.evaluation.commentaire,
+            },
+          ]),
+        ),
+      },
+    ]),
   );
 
-export const getCriteresParDefaut = (rattachements: ConsolidationData) =>
-  Object.fromEntries(
-    rattachements
-      .flatMap((rattachement) => rattachement.criteres)
-      .map((critere) => [
-        critere.id,
-        {
-          note: critere.evaluation.note,
-          commentaire: critere.evaluation.commentaire,
-        },
-      ]),
-  );
 const getAutoEvaluationObjectif = (
   rattachement: ConsolidationData[number],
   objectifId: string,
@@ -67,9 +75,12 @@ export const getCommentairesObjectifsInvalides = (
         rattachement,
         objectif.id,
       );
-      const consolidationEvaluation = obj.objectifs[objectif.id];
+      const ficheEvaluation =
+        obj.fichesEvaluation[rattachement.ficheEvaluationId];
+      const consolidationEvaluation = ficheEvaluation?.objectifs[objectif.id];
 
       return {
+        ficheEvaluationId: rattachement.ficheEvaluationId,
         objectifId: objectif.id,
         autoEvaluation,
         consolidationEvaluation,
@@ -77,10 +88,14 @@ export const getCommentairesObjectifsInvalides = (
     })
     .filter(
       ({ autoEvaluation, consolidationEvaluation }) =>
+        consolidationEvaluation &&
         autoEvaluation?.note != consolidationEvaluation.note &&
         !consolidationEvaluation.commentaire,
     )
-    .map(({ objectifId }) => objectifId);
+    .map(({ ficheEvaluationId, objectifId }) => ({
+      ficheEvaluationId,
+      objectifId,
+    }));
 
 const getAutoEvaluationCritere = (
   rattachement: ConsolidationData[number],
@@ -103,9 +118,12 @@ export const getCommentairesCriteresInvalides = (
     )
     .map(({ critere, rattachement }) => {
       const autoEvaluation = getAutoEvaluationCritere(rattachement, critere.id);
-      const consolidationEvaluation = obj.criteres[critere.id];
+      const ficheEvaluation =
+        obj.fichesEvaluation[rattachement.ficheEvaluationId];
+      const consolidationEvaluation = ficheEvaluation?.criteres[critere.id];
 
       return {
+        ficheEvaluationId: rattachement.ficheEvaluationId,
         critereId: critere.id,
         autoEvaluation,
         consolidationEvaluation,
@@ -113,7 +131,11 @@ export const getCommentairesCriteresInvalides = (
     })
     .filter(
       ({ autoEvaluation, consolidationEvaluation }) =>
+        consolidationEvaluation &&
         autoEvaluation?.note != consolidationEvaluation.note &&
         !consolidationEvaluation.commentaire,
     )
-    .map(({ critereId }) => critereId);
+    .map(({ ficheEvaluationId, critereId }) => ({
+      ficheEvaluationId,
+      critereId,
+    }));

@@ -1,11 +1,14 @@
 import { useFormulaireConsolidation } from "@/components/PageConsolidation/form";
 import { InputNoteControlled } from "@/components/_commons/InputNoteControlled";
 
-export const InputNoteConsolidation = ({
-  name,
-}: {
-  name: `objectifs.${string}.note` | `criteres.${string}.note`;
-}) => {
+type FormNoteName =
+  | `fichesEvaluation.${string}.objectifs.${string}.note`
+  | `fichesEvaluation.${string}.criteres.${string}.note`;
+type FormCommentaireName =
+  | `fichesEvaluation.${string}.objectifs.${string}.commentaire`
+  | `fichesEvaluation.${string}.criteres.${string}.commentaire`;
+
+export const InputNoteConsolidation = ({ name }: { name: FormNoteName }) => {
   const form = useFormulaireConsolidation();
   const commentaireName = name.replace(".note", ".commentaire");
 
@@ -13,13 +16,7 @@ export const InputNoteConsolidation = ({
     <InputNoteControlled
       control={form.control}
       name={name}
-      onChange={() =>
-        form.trigger(
-          commentaireName as
-            | `objectifs.${string}.commentaire`
-            | `criteres.${string}.commentaire`,
-        )
-      }
+      onChange={() => form.trigger(commentaireName as FormCommentaireName)}
       readOnly={false}
     />
   );
