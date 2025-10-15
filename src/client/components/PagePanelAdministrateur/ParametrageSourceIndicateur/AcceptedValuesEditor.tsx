@@ -13,8 +13,8 @@ export const AcceptedValuesEditor: FunctionComponent<
     const nouvelleValeur: ValeurAccepte = {
       ordre:
         values.length > 0 ? Math.max(...values.map((v) => v.ordre)) + 1 : 1,
-      value: "",
-      name: "",
+      valeur: "",
+      nom: "",
       description: "",
     };
     onChange([...values, nouvelleValeur]);
@@ -75,9 +75,11 @@ export const AcceptedValuesEditor: FunctionComponent<
               <input
                 className="fr-input"
                 id={`value-${index}`}
-                onChange={(e) => modifierValeur(index, "value", e.target.value)}
+                onChange={(e) =>
+                  modifierValeur(index, "valeur", e.target.value)
+                }
                 type="text"
-                value={acceptedValue.value}
+                value={acceptedValue.valeur}
               />
             </div>
             <div className="fr-col-3">
@@ -87,9 +89,9 @@ export const AcceptedValuesEditor: FunctionComponent<
               <input
                 className="fr-input"
                 id={`name-${index}`}
-                onChange={(e) => modifierValeur(index, "name", e.target.value)}
+                onChange={(e) => modifierValeur(index, "nom", e.target.value)}
                 type="text"
-                value={acceptedValue.name}
+                value={acceptedValue.nom}
               />
             </div>
             <div className="fr-col-3">

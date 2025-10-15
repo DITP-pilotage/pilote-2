@@ -1,7 +1,7 @@
 export interface ValeurAccepte {
   ordre: number;
-  value: string;
-  name: string;
+  valeur: string;
+  nom: string;
   description: string;
 }
 
