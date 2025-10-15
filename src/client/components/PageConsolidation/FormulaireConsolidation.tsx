@@ -19,7 +19,6 @@ export const FormulaireConsolidation = () => {
   const { table } = useTableauConsolidation(rattachements);
   const formSchema = useMemo(() => {
     return baseFormSchema.superRefine((form, ctx) => {
-      console.log("COUCOU");
       for (const objectifId of getCommentairesObjectifsInvalides(
         rattachements,
         form,
