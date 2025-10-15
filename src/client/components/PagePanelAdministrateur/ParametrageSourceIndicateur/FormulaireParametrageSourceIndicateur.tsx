@@ -1,17 +1,15 @@
-import { FunctionComponent, useState } from "react";
+import { useState } from "react";
+import { pageParametrageSourceContext } from "@/components/PagePanelAdministrateur/ParametrageSourceIndicateur/PageParametrageSourceContext";
 import { MetadataIndicateurForm } from "./types";
 import { MetadataFieldEditor } from "./MetadataFieldEditor";
-import { mockMetadataIndicateurs } from "./mockData";
 
-interface FormulaireParametrageSourceIndicateurProps {
-  initialData?: MetadataIndicateurForm[];
-}
+export const FormulaireParametrageSourceIndicateur = () => {
+  const { listeMetadonneesIndicateur } =
+    pageParametrageSourceContext.useServerSidePropsContext();
 
-export const FormulaireParametrageSourceIndicateur: FunctionComponent<
-  FormulaireParametrageSourceIndicateurProps
-> = ({ initialData = mockMetadataIndicateurs }) => {
-  const [metadataList, setMetadataList] =
-    useState<MetadataIndicateurForm[]>(initialData);
+  const [metadataList, setMetadataList] = useState<MetadataIndicateurForm[]>(
+    listeMetadonneesIndicateur,
+  );
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
 
