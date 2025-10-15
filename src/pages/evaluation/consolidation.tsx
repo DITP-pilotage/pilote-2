@@ -37,11 +37,11 @@ export const getServerSideProps = async ({
     };
   }
 
-  const rattachements = await getContainer("piloteEval")
-    .resolve("afficherConsolidationQuery")
-    .run({ utilisateurId: session.user.id });
-
-  return { props: { rattachements } };
+  return {
+    props: await getContainer("piloteEval")
+      .resolve("afficherConsolidationQuery")
+      .run({ utilisateurId: session.user.id }),
+  };
 };
 
 export default function PageConsolidation(

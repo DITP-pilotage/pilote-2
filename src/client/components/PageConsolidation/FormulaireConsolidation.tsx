@@ -4,6 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { pageConsolidation } from "@/components/PageConsolidation/PageConsolidationServerSideContext";
 import { clsxm } from "@/utils/clsxm";
 import { Bouton } from "@/components/_commons/Bouton/Bouton";
+import { FiltresConsolidation } from "@/components/PageConsolidation/FiltresConsolidation";
 import {
   FormValues,
   getFichesEvaluationParDefaut,
@@ -14,7 +15,7 @@ import { useTableauConsolidation } from "./useTableauConsolidation";
 
 export const FormulaireConsolidation = () => {
   const { rattachements } = pageConsolidation.useServerSidePropsContext();
-  const { table } = useTableauConsolidation(rattachements);
+  const { table } = useTableauConsolidation();
   const enregisterBrouillon = useEnregistrerBrouillonConsolidation();
   const formSchema = useFormSchema();
   const form = useForm<FormValues>({
@@ -38,6 +39,7 @@ export const FormulaireConsolidation = () => {
           type="submit"
           variant="secondary"
         />
+        <FiltresConsolidation table={table} />
         <table className="table-fixed w-full border-collapse border border-gray-300">
           <thead>
             {table.getHeaderGroups().map((headerGroup) => (

@@ -2,14 +2,17 @@ import {
   createColumnHelper,
   getCoreRowModel,
   getExpandedRowModel,
+  getFacetedUniqueValues,
+  getFilteredRowModel,
   getGroupedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
 import { useMemo } from "react";
-import { ConsolidationData } from "@/server/evaluation/queries/AfficherConsolidationQuery";
 import { CommentaireTextareaConsolidation } from "@/components/PageConsolidation/CommentaireTextareaConsolidation";
 import { InputNoteConsolidation } from "@/components/PageConsolidation/InputNoteConsolidation";
 import { InputNote } from "@/components/_commons/InputNote";
+import { pageConsolidation } from "@/components/PageConsolidation/PageConsolidationServerSideContext";
+import { clsxm } from "@/utils/clsxm";
 
 type Evaluation = {
   id: string;
@@ -44,87 +47,11 @@ type TableauConsolidationRow =
 
 const columnHelper = createColumnHelper<TableauConsolidationRow>();
 
-const columns = [
-  columnHelper.accessor("rattachement.code", {
-    id: "rattachementCode",
-    header: "Rattachement",
-    cell: (info) => {
-      return (
-        <span className="text-primary font-semibold">
-          {info.row.original.rattachement.libelle}
-        </span>
-      );
-    },
-    getGroupingValue: (row) => row.rattachement.code,
-  }),
-  columnHelper.accessor("id", {
-    id: "id",
-    header: "Libellé",
-    cell: (info) => {
-      const row = info.row;
-      const name =
-        info.row.original.type === "objectif"
-          ? (`fichesEvaluation.${info.row.original.ficheEvaluationId}.objectifs.${info.row.original.id}.commentaire` as const)
-          : (`fichesEvaluation.${info.row.original.ficheEvaluationId}.criteres.${info.row.original.id}.commentaire` as const);
-
-      return (
-        <div className="space-y-4">
-          <div className="bg-gray-100 pb-2 border-b border-gray-200 -mx-4 px-4 -mt-2 pt-2">
-            {row.original.libelle}
-          </div>
-          <div>
-            <strong className="text-sm">Commentaire de l'auto évalué</strong>
-            <blockquote>{row.original.autoEvaluation.commentaire}</blockquote>
-          </div>
-          <CommentaireTextareaConsolidation name={name} />
-        </div>
-      );
-    },
-    enableGrouping: false,
-  }),
-  columnHelper.display({
-    id: "noteAutoEvaluation",
-    header: "Note Auto-évaluation",
-    cell: (info) => {
-      if (info.row.getIsGrouped()) {
-        return null;
-      }
-
-      return (
-        <div className="flex justify-end">
-          <InputNote
-            disabled
-            value={info.row.original.autoEvaluation.note ?? ""}
-          />
-        </div>
-      );
-    },
-    enableGrouping: false,
-  }),
-  columnHelper.display({
-    id: "note",
-    header: "Note",
-    cell: (info) => {
-      if (info.row.getIsGrouped()) {
-        return null;
-      }
-      const name =
-        info.row.original.type === "objectif"
-          ? (`fichesEvaluation.${info.row.original.ficheEvaluationId}.objectifs.${info.row.original.id}.note` as const)
-          : (`fichesEvaluation.${info.row.original.ficheEvaluationId}.criteres.${info.row.original.id}.note` as const);
-
-      return (
-        <div className="flex justify-end">
-          <InputNoteConsolidation name={name} />
-        </div>
-      );
-    },
-    enableGrouping: false,
-  }),
-];
 const grouping = ["rattachementCode"];
 
-export const useTableauConsolidation = (rattachements: ConsolidationData) => {
+export const useTableauConsolidation = () => {
+  const { rattachements, criteres } =
+    pageConsolidation.useServerSidePropsContext();
   const data = useMemo<TableauConsolidationRow[]>(() => {
     const rows: TableauConsolidationRow[] = [];
 
@@ -157,15 +84,146 @@ export const useTableauConsolidation = (rattachements: ConsolidationData) => {
     return rows;
   }, [rattachements]);
 
+  const columns = useMemo(
+    () => [
+      columnHelper.accessor("rattachement.code", {
+        id: "rattachementCode",
+        header: "Rattachement",
+        cell: (info) => {
+          return (
+            <span className="text-primary font-semibold">
+              {info.row.original.rattachement.libelle}
+            </span>
+          );
+        },
+        filterFn: "arrIncludesSome",
+        meta: {
+          filter: {
+            label: "Filtrer par territoire",
+            labelToutesLesOptions: "Tous les territoires",
+            getValueLabel: (value) =>
+              rattachements.find((rattachement) => rattachement.code === value)
+                ?.libelle ?? value,
+          },
+        },
+        getGroupingValue: (row) => row.rattachement.code,
+      }),
+      columnHelper.accessor("id", {
+        id: "id",
+        header: "Libellé",
+        cell: (info) => {
+          const row = info.row;
+          const name =
+            info.row.original.type === "objectif"
+              ? (`fichesEvaluation.${info.row.original.ficheEvaluationId}.objectifs.${info.row.original.id}.commentaire` as const)
+              : (`fichesEvaluation.${info.row.original.ficheEvaluationId}.criteres.${info.row.original.id}.commentaire` as const);
+
+          return (
+            <div className="space-y-4">
+              <div className="bg-gray-100 pb-2 border-b border-gray-200 -mx-4 px-4 -mt-2 pt-2 flex items-center gap-2">
+                <span
+                  className={clsxm(
+                    "text-xs px-2 py-1.5 rounded-md capitalize font-medium",
+                    {
+                      "bg-blue-100 text-blue-600":
+                        row.original.type === "critere",
+                      "bg-green-100 text-green-600":
+                        row.original.type === "objectif",
+                    },
+                  )}
+                >
+                  {row.original.type}
+                </span>
+                {row.original.libelle}
+              </div>
+              <div>
+                <strong className="text-sm">
+                  Commentaire de l'auto évalué
+                </strong>
+                <blockquote>
+                  {row.original.autoEvaluation.commentaire}
+                </blockquote>
+              </div>
+              <CommentaireTextareaConsolidation name={name} />
+            </div>
+          );
+        },
+        enableGrouping: false,
+        enableColumnFilter: false,
+      }),
+      columnHelper.display({
+        id: "noteAutoEvaluation",
+        header: "Note Auto-évaluation",
+        cell: (info) => {
+          if (info.row.getIsGrouped()) {
+            return null;
+          }
+
+          return (
+            <div className="flex justify-end">
+              <InputNote
+                disabled
+                value={info.row.original.autoEvaluation.note ?? ""}
+              />
+            </div>
+          );
+        },
+        enableGrouping: false,
+      }),
+      columnHelper.display({
+        id: "note",
+        header: "Note",
+        cell: (info) => {
+          if (info.row.getIsGrouped()) {
+            return null;
+          }
+          const name =
+            info.row.original.type === "objectif"
+              ? (`fichesEvaluation.${info.row.original.ficheEvaluationId}.objectifs.${info.row.original.id}.note` as const)
+              : (`fichesEvaluation.${info.row.original.ficheEvaluationId}.criteres.${info.row.original.id}.note` as const);
+
+          return (
+            <div className="flex justify-end">
+              <InputNoteConsolidation name={name} />
+            </div>
+          );
+        },
+        enableGrouping: false,
+      }),
+      columnHelper.accessor((row) => (row.type === "critere" ? row.id : null), {
+        id: "critereId",
+        header: "Critere",
+        enableGrouping: false,
+        enableColumnFilter: true,
+        filterFn: "arrIncludesSome",
+        meta: {
+          filter: {
+            label: "Filtrer par critère",
+            labelToutesLesOptions: "Tous les critères",
+            getValueLabel: (value) =>
+              criteres.find((critere) => critere.id === value)?.libelle ??
+              value,
+          },
+        },
+      }),
+    ],
+    [rattachements, criteres],
+  );
+
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
     getExpandedRowModel: getExpandedRowModel(),
     getGroupedRowModel: getGroupedRowModel(),
+    getFacetedUniqueValues: getFacetedUniqueValues(),
     state: { grouping },
     initialState: {
-      expanded: true, // Expand all groups by default
+      expanded: true,
+      columnVisibility: {
+        critereId: false,
+      },
     },
   });
 

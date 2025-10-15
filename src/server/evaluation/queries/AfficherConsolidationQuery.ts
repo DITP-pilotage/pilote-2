@@ -4,7 +4,7 @@ import { PrismaPilote } from "@/server/db/PrismaPilote";
 
 export type ConsolidationData = Awaited<
   ReturnType<AfficherConsolidationQuery["run"]>
->;
+>["rattachements"];
 
 export class AfficherConsolidationQuery {
   constructor(private readonly dependencies: { prisma: PrismaPilote }) {}
@@ -15,61 +15,67 @@ export class AfficherConsolidationQuery {
       this.fetchCriteres(),
     ]);
 
-    return rattachements.map((rattachement) => {
-      const etapesEvaluations = rattachement.fiche_evaluation.flatMap(
-        (fiche) => fiche.etape_evaluations,
-      );
+    return {
+      criteres: tousCriteres.map((critere) => ({
+        id: critere.id,
+        libelle: critere.libelle,
+      })),
+      rattachements: rattachements.map((rattachement) => {
+        const etapesEvaluations = rattachement.fiche_evaluation.flatMap(
+          (fiche) => fiche.etape_evaluations,
+        );
 
-      const objectifsAvecEvaluations = rattachement.objectifs.map(
-        (objectif) => {
-          const consolidationEvaluation = this.findEvaluationObjectif(
+        const objectifsAvecEvaluations = rattachement.objectifs.map(
+          (objectif) => {
+            const consolidationEvaluation = this.findEvaluationObjectif(
+              etapesEvaluations,
+              objectif.id,
+              $Enums.etape_evaluation_enum.CONSOLIDATION,
+            );
+            const autoEvaluation = this.findEvaluationObjectif(
+              etapesEvaluations,
+              objectif.id,
+              $Enums.etape_evaluation_enum.AUTO_EVALUATION,
+            );
+
+            return {
+              id: objectif.id,
+              libelle: objectif.libelle,
+              autoEvaluation: this.formatEvaluation(autoEvaluation),
+              evaluation: this.formatEvaluation(consolidationEvaluation),
+            };
+          },
+        );
+
+        const criteresAvecEvaluations = tousCriteres.map((critere) => {
+          const consolidationEvaluation = this.findEvaluationCritere(
             etapesEvaluations,
-            objectif.id,
+            critere.id,
             $Enums.etape_evaluation_enum.CONSOLIDATION,
           );
-          const autoEvaluation = this.findEvaluationObjectif(
+          const autoEvaluation = this.findEvaluationCritere(
             etapesEvaluations,
-            objectif.id,
+            critere.id,
             $Enums.etape_evaluation_enum.AUTO_EVALUATION,
           );
 
           return {
-            id: objectif.id,
-            libelle: objectif.libelle,
+            id: critere.id,
+            libelle: critere.libelle,
             autoEvaluation: this.formatEvaluation(autoEvaluation),
             evaluation: this.formatEvaluation(consolidationEvaluation),
           };
-        },
-      );
-
-      const criteresAvecEvaluations = tousCriteres.map((critere) => {
-        const consolidationEvaluation = this.findEvaluationCritere(
-          etapesEvaluations,
-          critere.id,
-          $Enums.etape_evaluation_enum.CONSOLIDATION,
-        );
-        const autoEvaluation = this.findEvaluationCritere(
-          etapesEvaluations,
-          critere.id,
-          $Enums.etape_evaluation_enum.AUTO_EVALUATION,
-        );
+        });
 
         return {
-          id: critere.id,
-          libelle: critere.libelle,
-          autoEvaluation: this.formatEvaluation(autoEvaluation),
-          evaluation: this.formatEvaluation(consolidationEvaluation),
+          code: rattachement.code,
+          libelle: rattachement.libelle,
+          ficheEvaluationId: rattachement.fiche_evaluation[0].id,
+          objectifs: objectifsAvecEvaluations,
+          criteres: criteresAvecEvaluations,
         };
-      });
-
-      return {
-        code: rattachement.code,
-        libelle: rattachement.libelle,
-        ficheEvaluationId: rattachement.fiche_evaluation[0].id,
-        objectifs: objectifsAvecEvaluations,
-        criteres: criteresAvecEvaluations,
-      };
-    });
+      }),
+    };
   }
 
   private fetchCriteres() {
