@@ -14,11 +14,16 @@ export class EnregistrerBrouillonConsolidationHandler {
     },
   ) {}
 
-  async execute(command: EnregistrerEvaluationCommandSchema, auteurId: string) {
-    await new EnregistrerEvaluationService(this.dependencies).enregister({
-      command,
-      auteurId,
-      etapeCourante: $Enums.etape_evaluation_enum.CONSOLIDATION,
-    });
+  async execute(
+    commands: EnregistrerEvaluationCommandSchema[],
+    auteurId: string,
+  ) {
+    for (const command of commands) {
+      await new EnregistrerEvaluationService(this.dependencies).enregister({
+        command,
+        auteurId,
+        etapeCourante: $Enums.etape_evaluation_enum.CONSOLIDATION,
+      });
+    }
   }
 }

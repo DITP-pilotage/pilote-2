@@ -27,7 +27,7 @@ export const evaluationRouter = créerRouteurTRPC({
     }),
 
   enregistrerBrouillonConsolidation: procédureProtégée
-    .input(enregisterEvaluationCommandSchema)
+    .input(enregisterEvaluationCommandSchema.array())
     .mutation(async ({ input, ctx }) => {
       const peutAccederFicheAutoEvaluation = await getContainer("piloteEval")
         .resolve("accesFicheEvaluationService")
