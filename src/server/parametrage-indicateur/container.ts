@@ -15,6 +15,7 @@ import { PrismaHistorisationModificationRepository } from "@/server/infrastructu
 import { YamlInformationMetadataIndicateurRepository } from "@/server/parametrage-indicateur/infrastructure/adapters/YamlInformationMetadataIndicateurRepository";
 import { PrismaMetadataParametrageIndicateurRepository } from "@/server/parametrage-indicateur/infrastructure/adapters/PrismaMetadataParametrageIndicateurRepository";
 import { PrismaMetadataParametrageIndicateurQuery } from "@/server/parametrage-indicateur/infrastructure/queries/PrismaMetadataParametrageIndicateurQuery";
+import { GetMetadataIndicateurConfigurationQuery } from "@/server/parametrage-indicateur/queries/GetMetadataIndicateurConfigurationQuery";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 
 export type ParametrageIndicateurDependencies = {
@@ -31,6 +32,7 @@ export type ParametrageIndicateurDependencies = {
   importMasseMetadataIndicateurUseCase: ImportMasseMetadataIndicateurUseCase;
   metadataParametrageIndicateurRepository: MetadataParametrageIndicateurRepository;
   metadataParametrageIndicateurQuery: PrismaMetadataParametrageIndicateurQuery;
+  getMetadataIndicateurConfigurationQuery: GetMetadataIndicateurConfigurationQuery;
 };
 
 export const getParametrageIndicateurContainer = (
@@ -77,6 +79,9 @@ export const getParametrageIndicateurContainer = (
       ),
       metadataParametrageIndicateurQuery: asClass(
         PrismaMetadataParametrageIndicateurQuery,
+      ),
+      getMetadataIndicateurConfigurationQuery: asClass(
+        GetMetadataIndicateurConfigurationQuery,
       ),
     });
 };

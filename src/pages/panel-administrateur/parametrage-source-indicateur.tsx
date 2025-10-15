@@ -5,7 +5,7 @@ import { getServerAuthSession } from "@/server/infrastructure/api/auth/[...nexta
 import { FormulaireParametrageSourceIndicateur } from "@/components/PagePanelAdministrateur/ParametrageSourceIndicateur/FormulaireParametrageSourceIndicateur";
 import { pageParametrageSourceContext } from "@/components/PagePanelAdministrateur/ParametrageSourceIndicateur/PageParametrageSourceContext";
 import Habilitation from "@/server/gestion-utilisateur/domain/habilitation/Habilitation";
-import { mockMetadataIndicateurs } from "@/components/PagePanelAdministrateur/ParametrageSourceIndicateur/mockData";
+import { getContainer } from "@/server/dependances";
 import NextPanelAdministrateurLayout from "./layout";
 
 export const getServerSideProps = async ({
@@ -37,9 +37,15 @@ export const getServerSideProps = async ({
     };
   }
 
+  const { listeMetadonneesIndicateur } = await getContainer(
+    "parametrageIndicateur",
+  )
+    .resolve("getMetadataIndicateurConfigurationQuery")
+    .run();
+
   return {
     props: {
-      listeMetadonneesIndicateur: mockMetadataIndicateurs,
+      listeMetadonneesIndicateur,
     },
   };
 };

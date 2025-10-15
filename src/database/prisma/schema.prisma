@@ -995,8 +995,16 @@ model indicateur_evaluation {
   @@schema("public")
 }
 
+enum type_groupe_metadata_indicateur {
+  METADATA_INDICATEURS
+  METADATA_PARAMETRAGE_INDICATEURS
+  METADATA_INDICATEURS_COMPLEMENTAIRE
+
+  @@schema("public")
+}
+
 model metadata_indicateur {
-  name                           String                                @id
+  name                           String                             @id
   data_type                      String
   description                    String
   est_visible                    Boolean
@@ -1008,6 +1016,8 @@ model metadata_indicateur {
   default_value                  String?
   est_obligatoire                Boolean
   doit_afficher_la_description   Boolean
+  groupe                         type_groupe_metadata_indicateur
+  bloc_id                        Int?
   valeurs_acceptees              metadata_indicateur_valeur_acceptee[]
 
   @@schema("public")

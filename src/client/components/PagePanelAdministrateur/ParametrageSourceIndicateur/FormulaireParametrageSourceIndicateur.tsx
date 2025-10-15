@@ -61,7 +61,7 @@ export const FormulaireParametrageSourceIndicateur = () => {
     <div className="fr-container">
       <div className="fr-grid-row fr-grid-row--gutters">
         <div className="fr-col-12">
-          <div className="flex justify-between align-center fr-mb-3w">
+          <div className="flex justify-between align-center !mb-2">
             <h2 className="fr-h2 fr-mb-0">Configuration des métadonnées</h2>
             <div className="flex gap-2">
               <button
