@@ -38,22 +38,6 @@ export const FormulaireEvaluation = () => {
     },
   });
 
-  const handleSubmitCriteres = async (e: FormEvent) => {
-    e.preventDefault();
-    const isValid = await form.trigger("criteres", {
-      shouldFocus: true,
-    });
-    if (!isValid) return;
-
-    setEtape("objectifs");
-    window.scrollTo(0, 0);
-  };
-
-  const handleSubmit =
-    etape === "criteres"
-      ? handleSubmitCriteres
-      : form.handleSubmit(enregistrerBrouillon);
-
   return (
     <main className="py-6 pt-0">
       <FormProvider {...form}>
@@ -88,7 +72,8 @@ export const FormulaireEvaluation = () => {
                         />
                       }
                       label="Objectifs"
-                      type="submit"
+                      onClick={() => setEtape("objectifs")}
+                      type="button"
                     />
                   </>
                 )}
@@ -119,7 +104,7 @@ export const FormulaireEvaluation = () => {
           <form
             className="bg-white mx-auto w-full max-w-4xl"
             id={formId}
-            onSubmit={handleSubmit}
+            onSubmit={form.handleSubmit(enregistrerBrouillon)}
           >
             <header className="p-4 bg-dsfr-blue-france-925 border-b-2 border-black">
               <span className="font-bold text-sm">Mon auto-évaluation</span>
