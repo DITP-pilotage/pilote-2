@@ -3,28 +3,13 @@ import { useFormContext } from "react-hook-form";
 import { useMemo } from "react";
 import { ConsolidationData } from "@/server/evaluation/queries/AfficherConsolidationQuery";
 import { pageConsolidation } from "@/components/PageConsolidation/PageConsolidationServerSideContext";
-
-const MESSAGE_ERREUR_NOTE = "La valeur doit être comprise entre 0 et 100.";
-const evaluationRecordSchema = z.record(
-  z.object({
-    id: z.string(),
-    note: z
-      .number()
-      .int()
-      .min(0, MESSAGE_ERREUR_NOTE)
-      .max(100, MESSAGE_ERREUR_NOTE)
-      .nullable(),
-    commentaire: z
-      .string()
-      .max(600, "Le commentaire ne doit pas dépasser 600 caractères."),
-  }),
-);
+import { evaluationSchema } from "@/server/evaluation/schemas";
 
 export const baseFormSchema = z.object({
   fichesEvaluation: z.record(
     z.object({
-      objectifs: evaluationRecordSchema,
-      criteres: evaluationRecordSchema,
+      objectifs: z.record(evaluationSchema),
+      criteres: z.record(evaluationSchema),
     }),
   ),
 });
