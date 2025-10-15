@@ -1,12 +1,11 @@
-import { ComponentProps } from "react";
+import { ComponentProps, forwardRef } from "react";
 import { clsxm } from "@/utils/clsxm";
 import { MessageErreur } from "@/components/PageEvaluation/MessageErreur";
 
-export const InputNote = ({
-  errorMessage,
-  className,
-  ...props
-}: ComponentProps<"input"> & { errorMessage?: string }) => {
+export const InputNote = forwardRef<
+  HTMLInputElement,
+  ComponentProps<"input"> & { errorMessage?: string }
+>(function InputNote({ errorMessage, className, ...props }, ref) {
   return (
     <div className="flex flex-col">
       <div
@@ -27,6 +26,7 @@ export const InputNote = ({
             },
           )}
           {...props}
+          ref={ref}
           type="number"
         />
         <span
@@ -49,4 +49,4 @@ export const InputNote = ({
       </div>
     </div>
   );
-};
+});

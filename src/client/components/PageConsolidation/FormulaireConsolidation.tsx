@@ -7,53 +7,41 @@ import { clsxm } from "@/utils/clsxm";
 import {
   baseFormSchema,
   FormValues,
+  getCommentairesCriteresInvalides,
+  getCommentairesObjectifsInvalides,
   getCriteresParDefaut,
   getObjectifsParDefaut,
 } from "@/components/PageConsolidation/form";
-import { ConsolidationData } from "@/server/evaluation/queries/AfficherConsolidationQuery";
 import { useTableauConsolidation } from "./useTableauConsolidation";
-
-const getAutoEvaluationCritere = (
-  rattachement: ConsolidationData[number],
-  critereId: string,
-) => {
-  return rattachement.criteres.find((critere) => critere.id === critereId)
-    ?.autoEvaluation;
-};
-
-const getAutoEvaluationObjectif = (
-  rattachement: ConsolidationData[number],
-  objectifId: string,
-) => {
-  return rattachement.objectifs.find((objectif) => objectif.id === objectifId)
-    ?.autoEvaluation;
-};
 
 export const FormulaireConsolidation = () => {
   const { rattachements } = pageConsolidation.useServerSidePropsContext();
   const { table } = useTableauConsolidation(rattachements);
   const formSchema = useMemo(() => {
-    return baseFormSchema.superRefine((obj, ctx) => {
-      for (const rattachement of rattachements) {
-        for (const objectif of rattachement.objectifs) {
-          const autoEvaluation = getAutoEvaluationObjectif(
-            rattachement,
-            objectif.id,
-          );
-          const consolidationEvaluation = obj.objectifs[objectif.id];
+    return baseFormSchema.superRefine((form, ctx) => {
+      console.log("COUCOU");
+      for (const objectifId of getCommentairesObjectifsInvalides(
+        rattachements,
+        form,
+      )) {
+        ctx.addIssue({
+          code: "custom",
+          message:
+            "Le motif de consolidation est obligatoire lorsque la note est modifiée",
+          path: ["objectifs", objectifId, "commentaire"],
+        });
+      }
 
-          if (
-            autoEvaluation?.note != consolidationEvaluation.note &&
-            !consolidationEvaluation.commentaire
-          ) {
-            ctx.addIssue({
-              code: "custom",
-              message:
-                "Le motif de consolidation est obligatoire lorsque la note est modifiée",
-              path: ["objectifs", objectif.id, "commentaire"],
-            });
-          }
-        }
+      for (const critereId of getCommentairesCriteresInvalides(
+        rattachements,
+        form,
+      )) {
+        ctx.addIssue({
+          code: "custom",
+          message:
+            "Le motif de consolidation est obligatoire lorsque la note est modifiée",
+          path: ["criteres", critereId, "commentaire"],
+        });
       }
     });
   }, [rattachements]);
