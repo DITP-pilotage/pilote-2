@@ -8,7 +8,7 @@ import { soumettreAutoEvaluationCommandSchema } from "@/server/evaluation/handle
 import { enregisterEvaluationCommandSchema } from "@/server/evaluation/services/EnregistrerEvaluationService";
 
 export const evaluationRouter = créerRouteurTRPC({
-  enregistrerBrouillon: procédureProtégée
+  enregistrerBrouillonAutoEvaluation: procédureProtégée
     .input(enregisterEvaluationCommandSchema)
     .mutation(async ({ input, ctx }) => {
       const peutAccederFicheAutoEvaluation = await getContainer("piloteEval")
@@ -23,6 +23,24 @@ export const evaluationRouter = créerRouteurTRPC({
 
       await getContainer("piloteEval")
         .resolve("enregistrerBrouillonAutoEvaluation")
+        .execute(input, ctx.session.user.id);
+    }),
+
+  enregistrerBrouillonConsolidation: procédureProtégée
+    .input(enregisterEvaluationCommandSchema)
+    .mutation(async ({ input, ctx }) => {
+      const peutAccederFicheAutoEvaluation = await getContainer("piloteEval")
+        .resolve("accesFicheEvaluationService")
+        .peutAccederFicheAutoEvaluation({
+          utilisateurId: ctx.session.user.id,
+          ficheEvaluationId: input.ficheEvaluationId,
+        });
+
+      if (!peutAccederFicheAutoEvaluation)
+        throw new ForbiddenError("Accès refusé à la fiche d'auto-évaluation");
+
+      await getContainer("piloteEval")
+        .resolve("enregistrerBrouillonConsolidationHandler")
         .execute(input, ctx.session.user.id);
     }),
 

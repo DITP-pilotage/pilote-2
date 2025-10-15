@@ -4,7 +4,8 @@ import { FormValues } from "@/components/PageEvaluation/form";
 import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
 
 export const useEnregistrerBrouillon = () => {
-  const enregisterBrouillon = api.evaluation.enregistrerBrouillon.useMutation();
+  const enregisterBrouillon =
+    api.evaluation.enregistrerBrouillonAutoEvaluation.useMutation();
   const { autoEvaluation } = pageEvaluation.useServerSidePropsContext();
   const refreshRouter = useRefreshRouter();
 

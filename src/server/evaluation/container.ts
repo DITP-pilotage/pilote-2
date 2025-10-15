@@ -5,6 +5,7 @@ import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { AccesFicheEvaluationService } from "@/server/evaluation/services/AccesFicheEvaluationService";
 import { SoumettreAutoEvaluationHandler } from "@/server/evaluation/handlers/SoumettreAutoEvaluationHandler";
 import { AfficherConsolidationQuery } from "@/server/evaluation/queries/AfficherConsolidationQuery";
+import { EnregistrerBrouillonConsolidationHandler } from "@/server/evaluation/handlers/EnregistrerBrouillonConsolidationHandler";
 import { EnregistrerBrouillonAutoEvaluationHandler } from "./handlers/EnregistrerBrouillonAutoEvaluationHandler";
 
 export type PiloteEvalDependencies = {
@@ -12,6 +13,7 @@ export type PiloteEvalDependencies = {
   afficherConsolidationQuery: AfficherConsolidationQuery;
   listerFichesAutoEvaluation: ListerFichesAutoEvaluationQuery;
   enregistrerBrouillonAutoEvaluation: EnregistrerBrouillonAutoEvaluationHandler;
+  enregistrerBrouillonConsolidationHandler: EnregistrerBrouillonConsolidationHandler;
   accesFicheEvaluationService: AccesFicheEvaluationService;
   soumettreAutoEvaluationHandler: SoumettreAutoEvaluationHandler;
 };
@@ -25,6 +27,9 @@ export const getPiloteEvalContainer = (
     listerFichesAutoEvaluation: asClass(ListerFichesAutoEvaluationQuery),
     enregistrerBrouillonAutoEvaluation: asClass(
       EnregistrerBrouillonAutoEvaluationHandler,
+    ),
+    enregistrerBrouillonConsolidationHandler: asClass(
+      EnregistrerBrouillonConsolidationHandler,
     ),
     accesFicheEvaluationService: asClass(AccesFicheEvaluationService),
     soumettreAutoEvaluationHandler: asClass(SoumettreAutoEvaluationHandler),
