@@ -1,12 +1,14 @@
 import { flexRender } from "@tanstack/react-table";
 import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
 import { pageConsolidation } from "@/components/PageConsolidation/PageConsolidationServerSideContext";
 import { clsxm } from "@/utils/clsxm";
 import {
   baseFormSchema,
   FormValues,
+  getCriteresParDefaut,
+  getObjectifsParDefaut,
 } from "@/components/PageConsolidation/form";
 import { ConsolidationData } from "@/server/evaluation/queries/AfficherConsolidationQuery";
 import { useTableauConsolidation } from "./useTableauConsolidation";
@@ -59,28 +61,8 @@ export const FormulaireConsolidation = () => {
     resolver: zodResolver(formSchema),
     mode: "onChange",
     defaultValues: {
-      objectifs: Object.fromEntries(
-        rattachements
-          .flatMap((rattachement) => rattachement.objectifs)
-          .map((objectif) => [
-            objectif.id,
-            {
-              note: objectif.evaluation.note ?? undefined,
-              commentaire: objectif.evaluation.commentaire,
-            },
-          ]),
-      ),
-      criteres: Object.fromEntries(
-        rattachements
-          .flatMap((rattachement) => rattachement.criteres)
-          .map((critere) => [
-            critere.id,
-            {
-              note: critere.evaluation.note ?? undefined,
-              commentaire: critere.evaluation.commentaire,
-            },
-          ]),
-      ),
+      objectifs: getObjectifsParDefaut(rattachements),
+      criteres: getCriteresParDefaut(rattachements),
     },
   });
   const rows = table.getRowModel().rows;
