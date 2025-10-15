@@ -66,49 +66,74 @@ export const FormulaireConsolidation = () => {
             ))}
           </thead>
           <tbody>
-            {rows.map((row) => {
-              if (row.getIsGrouped()) {
-                const rattachementCell = row
-                  .getAllCells()
-                  .find((cell) => cell.column.id === "rattachementCode")!;
+            {rows.map((row, index) => {
+              // Skip group header rows
+              if (row.getIsGrouped()) return null;
 
-                return (
-                  <tr
-                    className="border-t !border-t-2 !border-primary"
-                    key={row.id}
-                  >
-                    <td className="text-primary p-4" colSpan={4}>
+              // Check if this is the first row in a group
+              const isFirstInGroup =
+                index === 0 || rows[index - 1].getIsGrouped();
+
+              // Calculate group size (count consecutive non-grouped rows)
+              let groupSize = 0;
+              if (isFirstInGroup) {
+                for (
+                  let i = index;
+                  i < rows.length && !rows[i].getIsGrouped();
+                  i++
+                ) {
+                  groupSize++;
+                }
+              }
+
+              // Get the rattachement cell from the parent group
+              const groupRow =
+                isFirstInGroup && index > 0 ? rows[index - 1] : null;
+              const rattachementCell = groupRow
+                ?.getAllCells()
+                .find((cell) => cell.column.id === "rattachementCode");
+
+              return (
+                <tr
+                  className={clsxm(
+                    isFirstInGroup && "border-t border-t-2 border-primary",
+                  )}
+                  key={row.id}
+                >
+                  {isFirstInGroup && rattachementCell ? (
+                    <td
+                      className="border border-gray-300 px-4 py-2 w-48 align-top"
+                      rowSpan={groupSize}
+                    >
                       {flexRender(
                         rattachementCell.column.columnDef.cell,
                         rattachementCell.getContext(),
                       )}
                     </td>
-                  </tr>
-                );
-              }
+                  ) : null}
 
-              return (
-                <tr key={row.id}>
-                  {row.getVisibleCells().map((cell) => (
-                    <td
-                      className={clsxm(
-                        "border border-gray-300 px-4 py-2",
-                        cell.column.id === "rattachementCode" && "w-48",
-                        cell.column.id === "id" && "w-auto",
-                        (cell.column.id === "noteAutoEvaluation" ||
-                          cell.column.id === "note") &&
-                          "w-32",
-                      )}
-                      key={cell.id}
-                    >
-                      {cell.column.id !== "rattachementCode"
-                        ? flexRender(
-                            cell.column.columnDef.cell,
-                            cell.getContext(),
-                          )
-                        : null}
-                    </td>
-                  ))}
+                  {row.getVisibleCells().map((cell) => {
+                    // Skip rattachementCode column as we handle it separately
+                    if (cell.column.id === "rattachementCode") return null;
+
+                    return (
+                      <td
+                        className={clsxm(
+                          "border border-gray-300 px-4 py-2",
+                          cell.column.id === "id" && "w-auto",
+                          (cell.column.id === "noteAutoEvaluation" ||
+                            cell.column.id === "note") &&
+                            "w-32",
+                        )}
+                        key={cell.id}
+                      >
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext(),
+                        )}
+                      </td>
+                    );
+                  })}
                 </tr>
               );
             })}

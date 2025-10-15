@@ -4,11 +4,19 @@ import { useMemo } from "react";
 import { ConsolidationData } from "@/server/evaluation/queries/AfficherConsolidationQuery";
 import { pageConsolidation } from "@/components/PageConsolidation/PageConsolidationServerSideContext";
 
+const MESSAGE_ERREUR_NOTE = "La valeur doit être comprise entre 0 et 100.";
 const evaluationRecordSchema = z.record(
   z.object({
     id: z.string(),
-    note: z.number().int().nullable(),
-    commentaire: z.string(),
+    note: z
+      .number()
+      .int()
+      .min(0, MESSAGE_ERREUR_NOTE)
+      .max(100, MESSAGE_ERREUR_NOTE)
+      .nullable(),
+    commentaire: z
+      .string()
+      .max(600, "Le commentaire ne doit pas dépasser 600 caractères."),
   }),
 );
 
