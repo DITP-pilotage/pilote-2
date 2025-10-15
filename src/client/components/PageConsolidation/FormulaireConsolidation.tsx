@@ -28,8 +28,16 @@ export const FormulaireConsolidation = () => {
 
   return (
     <FormProvider {...form}>
-      <form onSubmit={form.handleSubmit(enregisterBrouillon)}>
-        <Bouton label="Enregistrer le brouillon" type="submit" />
+      <form
+        className="flex flex-col gap-3"
+        onSubmit={form.handleSubmit(enregisterBrouillon)}
+      >
+        <Bouton
+          className="self-end"
+          label="Enregistrer le brouillon"
+          type="submit"
+          variant="secondary"
+        />
         <table className="table-auto w-full border-collapse border border-gray-300">
           <thead>
             {table.getHeaderGroups().map((headerGroup) => (
