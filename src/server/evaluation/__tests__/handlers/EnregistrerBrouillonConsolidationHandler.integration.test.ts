@@ -86,25 +86,27 @@ describe("EnregistrerBrouillonConsolidationHandler", () => {
 
       // When
       await handler.execute(
-        {
-          ficheEvaluationId,
-          evaluationsObjectifs: [
-            {
-              id: evaluationObjectifId,
-              objectifId,
-              note: 4,
-              commentaire: "Bon objectif",
-            },
-          ],
-          evaluationsCriteres: [
-            {
-              id: evaluationCritereId,
-              critereId,
-              note: 3,
-              commentaire: "Acceptable",
-            },
-          ],
-        },
+        [
+          {
+            ficheEvaluationId,
+            evaluationsObjectifs: [
+              {
+                id: evaluationObjectifId,
+                objectifId,
+                note: 4,
+                commentaire: "Bon objectif",
+              },
+            ],
+            evaluationsCriteres: [
+              {
+                id: evaluationCritereId,
+                critereId,
+                note: 3,
+                commentaire: "Acceptable",
+              },
+            ],
+          },
+        ],
         utilisateurId,
       );
 
@@ -226,25 +228,27 @@ describe("EnregistrerBrouillonConsolidationHandler", () => {
 
       // When
       await handler.execute(
-        {
-          ficheEvaluationId,
-          evaluationsObjectifs: [
-            {
-              id: evaluationObjectifId,
-              objectifId,
-              note: 5,
-              commentaire: "Updated comment",
-            },
-          ],
-          evaluationsCriteres: [
-            {
-              id: evaluationCritereId,
-              critereId,
-              note: 4,
-              commentaire: "Updated critère",
-            },
-          ],
-        },
+        [
+          {
+            ficheEvaluationId,
+            evaluationsObjectifs: [
+              {
+                id: evaluationObjectifId,
+                objectifId,
+                note: 5,
+                commentaire: "Updated comment",
+              },
+            ],
+            evaluationsCriteres: [
+              {
+                id: evaluationCritereId,
+                critereId,
+                note: 4,
+                commentaire: "Updated critère",
+              },
+            ],
+          },
+        ],
         utilisateurId,
       );
 
@@ -310,11 +314,13 @@ describe("EnregistrerBrouillonConsolidationHandler", () => {
 
       // When
       await handler.execute(
-        {
-          ficheEvaluationId,
-          evaluationsObjectifs: [],
-          evaluationsCriteres: [],
-        },
+        [
+          {
+            ficheEvaluationId,
+            evaluationsObjectifs: [],
+            evaluationsCriteres: [],
+          },
+        ],
         utilisateurId,
       );
 
@@ -395,25 +401,27 @@ describe("EnregistrerBrouillonConsolidationHandler", () => {
 
       // When
       await handler.execute(
-        {
-          ficheEvaluationId,
-          evaluationsObjectifs: [
-            {
-              id: evaluationObjectifId,
-              objectifId,
-              note: null,
-              commentaire: "Pas encore évalué",
-            },
-          ],
-          evaluationsCriteres: [
-            {
-              id: evaluationCritereId,
-              critereId,
-              note: null,
-              commentaire: "En cours",
-            },
-          ],
-        },
+        [
+          {
+            ficheEvaluationId,
+            evaluationsObjectifs: [
+              {
+                id: evaluationObjectifId,
+                objectifId,
+                note: null,
+                commentaire: "Pas encore évalué",
+              },
+            ],
+            evaluationsCriteres: [
+              {
+                id: evaluationCritereId,
+                critereId,
+                note: null,
+                commentaire: "En cours",
+              },
+            ],
+          },
+        ],
         utilisateurId,
       );
 
@@ -478,11 +486,13 @@ describe("EnregistrerBrouillonConsolidationHandler", () => {
       // When/Then
       await expect(
         handler.execute(
-          {
-            ficheEvaluationId,
-            evaluationsObjectifs: [],
-            evaluationsCriteres: [],
-          },
+          [
+            {
+              ficheEvaluationId,
+              evaluationsObjectifs: [],
+              evaluationsCriteres: [],
+            },
+          ],
           utilisateurId,
         ),
       ).rejects.toThrow();
