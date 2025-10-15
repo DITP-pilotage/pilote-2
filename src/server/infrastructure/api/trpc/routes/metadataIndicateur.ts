@@ -136,9 +136,7 @@ export const metadataIndicateurRouter = créerRouteurTRPC({
           .resolve("habilitationService")
           .recupererHabilitations(ctx.session);
 
-        habilitations.verifierAutorisationLectureMetadataIndicateur(
-          ctx.session.profil,
-        );
+        habilitations.verifierAutorisationLectureMetadataIndicateur();
 
         const listeMetadataIndicateur = await getContainer(
           "parametrageIndicateur",
@@ -166,9 +164,7 @@ export const metadataIndicateurRouter = créerRouteurTRPC({
           .resolve("habilitationService")
           .recupererHabilitations(ctx.session);
 
-        habilitations.verifierAutorisationLectureMetadataIndicateur(
-          ctx.session.profil,
-        );
+        habilitations.verifierAutorisationLectureMetadataIndicateur();
 
         const listeMetadataIndicateur = await getContainer(
           "parametrageIndicateur",
@@ -203,9 +199,7 @@ export const metadataIndicateurRouter = créerRouteurTRPC({
       const habilitations = await getContainer("gestionUtilisateur")
         .resolve("habilitationService")
         .recupererHabilitations(ctx.session);
-      habilitations.verifierAutorisationLectureMetadataIndicateur(
-        ctx.session.profil,
-      );
+      habilitations.verifierAutorisationLectureMetadataIndicateur();
 
       return getContainer("parametrageIndicateur")
         .resolve("récupérerMetadataIndicateurIdentifiantGénéréUseCase")
@@ -220,9 +214,7 @@ export const metadataIndicateurRouter = créerRouteurTRPC({
       const habilitations = await getContainer("gestionUtilisateur")
         .resolve("habilitationService")
         .recupererHabilitations(ctx.session);
-      habilitations.verifierAutorisationModificationMetadataIndicateur(
-        ctx.session.profil,
-      );
+      habilitations.verifierAutorisationModificationMetadataIndicateur();
 
       return getContainer("parametrageIndicateur")
         .resolve("modifierUneMetadataIndicateurUseCase")
@@ -239,9 +231,7 @@ export const metadataIndicateurRouter = créerRouteurTRPC({
       const habilitations = await getContainer("gestionUtilisateur")
         .resolve("habilitationService")
         .recupererHabilitations(ctx.session);
-      habilitations.verifierAutorisationModificationMetadataIndicateur(
-        ctx.session.profil,
-      );
+      habilitations.verifierAutorisationModificationMetadataIndicateur();
 
       return getContainer("parametrageIndicateur")
         .resolve("creerUneMetadataIndicateurUseCase")

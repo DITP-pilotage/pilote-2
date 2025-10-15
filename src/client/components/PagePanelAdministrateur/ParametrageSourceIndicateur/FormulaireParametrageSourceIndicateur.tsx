@@ -20,16 +20,16 @@ export const FormulaireParametrageSourceIndicateur: FunctionComponent<
       name: "",
       dataType: "text",
       description: "",
-      metaPiloteShow: true,
-      metaPiloteAlias: "",
-      metaPiloteEditIsEditable: true,
-      metaPiloteEditRegex: "",
+      estVisible: true,
+      alias: "",
+      estEditable: true,
+      validationRegex: "",
       metaPiloteEditRegexViolationMessage: null,
-      metaPiloteEditBoxType: "text",
-      metaPiloteDefaultValue: "",
-      metaPiloteMandatory: false,
-      metaPiloteDispDispDesc: false,
-      acceptedValues: [],
+      editBoxType: "text",
+      defaultValue: "",
+      estObligatoire: false,
+      doitAfficherLaDescription: false,
+      listeValeursAcceptes: [],
     };
     setMetadataList([...metadataList, nouveauChamp]);
     setSelectedIndex(metadataList.length);
@@ -50,14 +50,13 @@ export const FormulaireParametrageSourceIndicateur: FunctionComponent<
 
   const sauvegarder = () => {
     // TODO: Implémenter la sauvegarde vers le backend
-    console.log("Sauvegarde des métadonnées:", metadataList);
     alert("Sauvegarde des métadonnées (à implémenter)");
   };
 
   const metadataFiltrees = metadataList.filter(
     (meta) =>
       meta.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      meta.metaPiloteAlias.toLowerCase().includes(searchTerm.toLowerCase()),
+      meta.alias.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   return (
@@ -114,7 +113,7 @@ export const FormulaireParametrageSourceIndicateur: FunctionComponent<
                           {metadata.name || "(Sans nom)"}
                         </div>
                         <div className="fr-text--sm text-gray-600">
-                          {metadata.metaPiloteAlias}
+                          {metadata.alias}
                         </div>
                       </div>
                       <button
@@ -129,7 +128,7 @@ export const FormulaireParametrageSourceIndicateur: FunctionComponent<
                       </button>
                     </div>
                     <div className="fr-text--xs text-gray-500 fr-mt-1w">
-                      Type: {metadata.metaPiloteEditBoxType || "Aucun"}
+                      Type: {metadata.editBoxType || "Aucun"}
                     </div>
                   </div>
                 );

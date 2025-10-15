@@ -1,22 +1,22 @@
-export interface AcceptedValueForm {
-  orderId: number;
+export interface ValeurAccepte {
+  ordre: number;
   value: string;
   name: string;
-  desc: string;
+  description: string;
 }
 
 export interface MetadataIndicateurForm {
   name: string;
   dataType: "text" | "boolean" | "number";
   description: string;
-  metaPiloteShow: boolean;
-  metaPiloteAlias: string;
-  metaPiloteEditIsEditable: boolean;
-  metaPiloteEditRegex: string;
+  estVisible: boolean;
+  alias: string;
+  estEditable: boolean;
+  validationRegex: string;
   metaPiloteEditRegexViolationMessage: string | null;
-  metaPiloteEditBoxType: "text" | "textarea" | "boolean" | "multi-select" | null;
-  metaPiloteDefaultValue: string | number | null | boolean;
-  metaPiloteMandatory: boolean;
-  metaPiloteDispDispDesc: boolean;
-  acceptedValues: AcceptedValueForm[];
+  editBoxType: "text" | "textarea" | "boolean" | "multi-select" | null;
+  defaultValue: string | number | null | boolean;
+  estObligatoire: boolean;
+  doitAfficherLaDescription: boolean;
+  listeValeursAcceptes: ValeurAccepte[];
 }

@@ -1,20 +1,39 @@
 import Head from "next/head";
-import { GetServerSideProps } from "next";
+import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next";
+import { FunctionComponent } from "react";
 import { getServerAuthSession } from "@/server/infrastructure/api/auth/[...nextauth]";
 import { FormulaireParametrageSourceIndicateur } from "@/components/PagePanelAdministrateur/ParametrageSourceIndicateur/FormulaireParametrageSourceIndicateur";
+import { pageParametrageSourceContext } from "@/components/PagePanelAdministrateur/ParametrageSourceIndicateur/PageParametrageSourceContext";
+import Habilitation from "@/server/gestion-utilisateur/domain/habilitation/Habilitation";
 import NextPanelAdministrateurLayout from "./layout";
 
-export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
+export const getServerSideProps = async ({
+  req,
+  res,
+}: GetServerSidePropsContext) => {
   const session = await getServerAuthSession({ req, res });
-  const redirigerVersPageAccueil = {
-    redirect: {
-      destination: "/",
-      permanent: false,
-    },
-  };
 
   if (!session) {
-    return redirigerVersPageAccueil;
+    return {
+      redirect: {
+        destination: "/",
+        permanent: false,
+      },
+    };
+  }
+
+  const habilitation = new Habilitation({
+    habilitations: session.habilitations,
+    profil: session.profil,
+  });
+
+  if (!habilitation.estAutoriseAAccederALaPageAdmin()) {
+    return {
+      redirect: {
+        destination: "/",
+        permanent: false,
+      },
+    };
   }
 
   return {
@@ -22,9 +41,11 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
   };
 };
 
-const NextPagePanelAdministrateurParametrageSourceIndicateur = () => {
+const NextPagePanelAdministrateurParametrageSourceIndicateur: FunctionComponent<
+  InferGetServerSidePropsType<typeof getServerSideProps>
+> = (props) => {
   return (
-    <>
+    <pageParametrageSourceContext.ServerSidePropsProvider value={props}>
       <Head>
         <title>
           Panel administrateur - Paramétrage source indicateur - PILOTE
@@ -33,7 +54,7 @@ const NextPagePanelAdministrateurParametrageSourceIndicateur = () => {
       <NextPanelAdministrateurLayout pageActive="parametrage-source-indicateur">
         <FormulaireParametrageSourceIndicateur />
       </NextPanelAdministrateurLayout>
-    </>
+    </pageParametrageSourceContext.ServerSidePropsProvider>
   );
 };
 

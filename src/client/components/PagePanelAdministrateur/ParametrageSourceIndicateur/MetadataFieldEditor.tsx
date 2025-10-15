@@ -10,7 +10,7 @@ interface MetadataFieldEditorProps {
 
 export const MetadataFieldEditor: FunctionComponent<
   MetadataFieldEditorProps
-> = ({ metadata, onChange, onClose }) => {
+> = ({ metadata, onChange }) => {
   const handleChange = (
     field: keyof MetadataIndicateurForm,
     value: unknown,
@@ -54,10 +54,10 @@ export const MetadataFieldEditor: FunctionComponent<
             <input
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all !bg-white"
               id="alias"
-              onChange={(e) => handleChange("metaPiloteAlias", e.target.value)}
+              onChange={(e) => handleChange("alias", e.target.value)}
               placeholder="Ex: Identifiant"
               type="text"
-              value={metadata.metaPiloteAlias}
+              value={metadata.alias}
             />
           </div>
 
@@ -121,9 +121,9 @@ export const MetadataFieldEditor: FunctionComponent<
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all !bg-white"
                 id="boxType"
                 onChange={(e) =>
-                  handleChange("metaPiloteEditBoxType", e.target.value || null)
+                  handleChange("editBoxType", e.target.value || null)
                 }
-                value={metadata.metaPiloteEditBoxType || ""}
+                value={metadata.editBoxType || ""}
               >
                 <option value="">Aucun</option>
                 <option value="text">📄 Texte</option>
@@ -135,15 +135,17 @@ export const MetadataFieldEditor: FunctionComponent<
           </div>
 
           {/* Valeurs acceptées si multi-select */}
-          {metadata.metaPiloteEditBoxType === "multi-select" && (
+          {metadata.editBoxType === "multi-select" && (
             <div className="pt-4 border-t border-green-300">
               <h5 className="text-md font-bold text-green-800 mb-3 flex items-center gap-2">
                 <span className="text-xl">📑</span>
                 Valeurs acceptées
               </h5>
               <AcceptedValuesEditor
-                onChange={(values) => handleChange("acceptedValues", values)}
-                values={metadata.acceptedValues}
+                onChange={(values) =>
+                  handleChange("listeValeursAcceptes", values)
+                }
+                values={metadata.listeValeursAcceptes}
               />
             </div>
           )}
@@ -158,12 +160,10 @@ export const MetadataFieldEditor: FunctionComponent<
             <input
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all !bg-white"
               id="defaultValue"
-              onChange={(e) =>
-                handleChange("metaPiloteDefaultValue", e.target.value)
-              }
+              onChange={(e) => handleChange("defaultValue", e.target.value)}
               placeholder="Valeur par défaut..."
               type="text"
-              value={metadata.metaPiloteDefaultValue?.toString() || ""}
+              value={metadata.defaultValue?.toString() || ""}
             />
           </div>
         </div>
@@ -184,12 +184,10 @@ export const MetadataFieldEditor: FunctionComponent<
             <input
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all font-mono text-sm"
               id="regex"
-              onChange={(e) =>
-                handleChange("metaPiloteEditRegex", e.target.value)
-              }
+              onChange={(e) => handleChange("validationRegex", e.target.value)}
               placeholder="Ex: ^IND-\d{3,4}$"
               type="text"
-              value={metadata.metaPiloteEditRegex}
+              value={metadata.validationRegex}
             />
           </div>
 
@@ -225,11 +223,9 @@ export const MetadataFieldEditor: FunctionComponent<
           <div className="grid grid-cols-2 gap-4">
             <label className="flex items-center space-x-3 cursor-pointer p-3 rounded-lg hover:bg-purple-200 transition-all">
               <input
-                checked={metadata.metaPiloteShow}
+                checked={metadata.estVisible}
                 className="w-5 h-5 text-purple-600 rounded focus:ring-2 focus:ring-purple-500"
-                onChange={(e) =>
-                  handleChange("metaPiloteShow", e.target.checked)
-                }
+                onChange={(e) => handleChange("estVisible", e.target.checked)}
                 type="checkbox"
               />
               <span className="text-sm font-semibold text-gray-700">
@@ -239,11 +235,9 @@ export const MetadataFieldEditor: FunctionComponent<
 
             <label className="flex items-center space-x-3 cursor-pointer p-3 rounded-lg hover:bg-purple-200 transition-all">
               <input
-                checked={metadata.metaPiloteEditIsEditable}
+                checked={metadata.estEditable}
                 className="w-5 h-5 text-purple-600 rounded focus:ring-2 focus:ring-purple-500"
-                onChange={(e) =>
-                  handleChange("metaPiloteEditIsEditable", e.target.checked)
-                }
+                onChange={(e) => handleChange("estEditable", e.target.checked)}
                 type="checkbox"
               />
               <span className="text-sm font-semibold text-gray-700">
@@ -253,10 +247,10 @@ export const MetadataFieldEditor: FunctionComponent<
 
             <label className="flex items-center space-x-3 cursor-pointer p-3 rounded-lg hover:bg-purple-200 transition-all">
               <input
-                checked={metadata.metaPiloteMandatory}
+                checked={metadata.estObligatoire}
                 className="w-5 h-5 text-purple-600 rounded focus:ring-2 focus:ring-purple-500"
                 onChange={(e) =>
-                  handleChange("metaPiloteMandatory", e.target.checked)
+                  handleChange("estObligatoire", e.target.checked)
                 }
                 type="checkbox"
               />
@@ -267,10 +261,10 @@ export const MetadataFieldEditor: FunctionComponent<
 
             <label className="flex items-center space-x-3 cursor-pointer p-3 rounded-lg hover:bg-purple-200 transition-all">
               <input
-                checked={metadata.metaPiloteDispDispDesc}
+                checked={metadata.doitAfficherLaDescription}
                 className="w-5 h-5 text-purple-600 rounded focus:ring-2 focus:ring-purple-500"
                 onChange={(e) =>
-                  handleChange("metaPiloteDispDispDesc", e.target.checked)
+                  handleChange("doitAfficherLaDescription", e.target.checked)
                 }
                 type="checkbox"
               />
@@ -282,15 +276,17 @@ export const MetadataFieldEditor: FunctionComponent<
         </div>
 
         {/* Section Valeurs acceptées (si multi-select) */}
-        {metadata.metaPiloteEditBoxType === "multi-select" && (
+        {metadata.editBoxType === "multi-select" && (
           <div className="bg-gradient-to-br from-indigo-50 to-indigo-100 p-5 rounded-xl border border-indigo-200">
             <h4 className="text-lg font-bold text-indigo-900 mb-4 flex items-center gap-2">
               <span className="text-2xl">📑</span>
               Valeurs acceptées
             </h4>
             <AcceptedValuesEditor
-              onChange={(values) => handleChange("acceptedValues", values)}
-              values={metadata.acceptedValues}
+              onChange={(values) =>
+                handleChange("listeValeursAcceptes", values)
+              }
+              values={metadata.listeValeursAcceptes}
             />
           </div>
         )}

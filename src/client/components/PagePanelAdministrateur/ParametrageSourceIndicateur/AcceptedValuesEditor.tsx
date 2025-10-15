@@ -1,21 +1,21 @@
 import { FunctionComponent } from "react";
-import { AcceptedValueForm } from "./types";
+import { ValeurAccepte } from "./types";
 
 interface AcceptedValuesEditorProps {
-  values: AcceptedValueForm[];
-  onChange: (values: AcceptedValueForm[]) => void;
+  values: ValeurAccepte[];
+  onChange: (values: ValeurAccepte[]) => void;
 }
 
 export const AcceptedValuesEditor: FunctionComponent<
   AcceptedValuesEditorProps
 > = ({ values, onChange }) => {
   const ajouterValeur = () => {
-    const nouvelleValeur: AcceptedValueForm = {
-      orderId:
-        values.length > 0 ? Math.max(...values.map((v) => v.orderId)) + 1 : 1,
+    const nouvelleValeur: ValeurAccepte = {
+      ordre:
+        values.length > 0 ? Math.max(...values.map((v) => v.ordre)) + 1 : 1,
       value: "",
       name: "",
-      desc: "",
+      description: "",
     };
     onChange([...values, nouvelleValeur]);
   };
@@ -26,7 +26,7 @@ export const AcceptedValuesEditor: FunctionComponent<
 
   const modifierValeur = (
     index: number,
-    field: keyof AcceptedValueForm,
+    field: keyof ValeurAccepte,
     value: string | number,
   ) => {
     const nouvelleListe = [...values];
@@ -36,7 +36,7 @@ export const AcceptedValuesEditor: FunctionComponent<
 
   return (
     <div className="fr-mt-2w">
-      <label className="fr-label font-bold">Valeurs acceptées</label>
+      <span className="fr-label font-bold">Valeurs acceptées</span>
       {values.map((acceptedValue, index) => (
         <div className="border p-3 fr-mb-2w rounded" key={index}>
           <div className="flex justify-between align-center fr-mb-1w">
@@ -60,12 +60,12 @@ export const AcceptedValuesEditor: FunctionComponent<
                 onChange={(e) =>
                   modifierValeur(
                     index,
-                    "orderId",
+                    "ordre",
                     Number.parseInt(e.target.value) || 0,
                   )
                 }
                 type="number"
-                value={acceptedValue.orderId}
+                value={acceptedValue.ordre}
               />
             </div>
             <div className="fr-col-3">
@@ -99,9 +99,11 @@ export const AcceptedValuesEditor: FunctionComponent<
               <input
                 className="fr-input"
                 id={`desc-${index}`}
-                onChange={(e) => modifierValeur(index, "desc", e.target.value)}
+                onChange={(e) =>
+                  modifierValeur(index, "description", e.target.value)
+                }
                 type="text"
-                value={acceptedValue.desc}
+                value={acceptedValue.description}
               />
             </div>
           </div>
