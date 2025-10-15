@@ -38,13 +38,20 @@ export const FormulaireConsolidation = () => {
           type="submit"
           variant="secondary"
         />
-        <table className="table-auto w-full border-collapse border border-gray-300">
+        <table className="table-fixed w-full border-collapse border border-gray-300">
           <thead>
             {table.getHeaderGroups().map((headerGroup) => (
-              <tr className="bg-dsfr-alt-blue-france" key={headerGroup.id}>
+              <tr className="bg-blue-100" key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
                   <th
-                    className="border border-gray-300 px-4 py-3 text-left font-semibold"
+                    className={clsxm(
+                      "border border-gray-300 px-4 py-3 text-left font-semibold",
+                      header.id === "rattachementCode" && "w-48",
+                      header.id === "id" && "w-auto",
+                      (header.id === "noteAutoEvaluation" ||
+                        header.id === "note") &&
+                        "w-32",
+                    )}
                     key={header.id}
                   >
                     {header.isPlaceholder
@@ -75,7 +82,14 @@ export const FormulaireConsolidation = () => {
                 >
                   {row.getVisibleCells().map((cell) => (
                     <td
-                      className="border border-gray-300 px-4 py-2"
+                      className={clsxm(
+                        "border border-gray-300 px-4 py-2",
+                        cell.column.id === "rattachementCode" && "w-48",
+                        cell.column.id === "id" && "w-auto",
+                        (cell.column.id === "noteAutoEvaluation" ||
+                          cell.column.id === "note") &&
+                          "w-32",
+                      )}
                       key={cell.id}
                     >
                       {flexRender(
