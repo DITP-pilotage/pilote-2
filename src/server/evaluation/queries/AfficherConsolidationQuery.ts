@@ -65,6 +65,7 @@ export class AfficherConsolidationQuery {
       return {
         code: rattachement.code,
         libelle: rattachement.libelle,
+        ficheEvaluationId: rattachement.fiche_evaluation[0].id,
         objectifs: objectifsAvecEvaluations,
         criteres: criteresAvecEvaluations,
       };

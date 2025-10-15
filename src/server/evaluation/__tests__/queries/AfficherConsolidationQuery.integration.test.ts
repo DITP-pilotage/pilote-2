@@ -251,6 +251,7 @@ describe("AfficherConsolidationQuery", () => {
         {
           code: rattachement1Code,
           libelle: "Rattachement 1",
+          ficheEvaluationId: fiche1Id,
           objectifs: [
             {
               id: objectif1Id,
@@ -301,6 +302,7 @@ describe("AfficherConsolidationQuery", () => {
         {
           code: rattachement2Code,
           libelle: "Rattachement 2",
+          ficheEvaluationId: fiche2Id,
           objectifs: [
             {
               id: objectif2Id,
@@ -520,6 +522,7 @@ describe("AfficherConsolidationQuery", () => {
         {
           code: rattachementCode,
           libelle: "Rattachement multi-étape",
+          ficheEvaluationId,
           objectifs: [
             {
               id: objectifId,
@@ -625,6 +628,7 @@ describe("AfficherConsolidationQuery", () => {
         {
           code: rattachementCode,
           libelle: "Rattachement sans évaluations",
+          ficheEvaluationId,
           objectifs: [
             {
               id: objectifId,
@@ -767,6 +771,7 @@ describe("AfficherConsolidationQuery", () => {
         {
           code: rattachementCode,
           libelle: "Rattachement avec critères mixtes",
+          ficheEvaluationId,
           objectifs: [],
           criteres: [
             {
@@ -892,6 +897,7 @@ describe("AfficherConsolidationQuery", () => {
         {
           code: rattachementCode,
           libelle: "Rattachement avec objectifs mixtes",
+          ficheEvaluationId,
           objectifs: [
             {
               id: objectif1Id,
@@ -1080,6 +1086,7 @@ describe("AfficherConsolidationQuery", () => {
         {
           code: rattachementCode,
           libelle: "Rattachement avec auto-évaluation",
+          ficheEvaluationId,
           objectifs: [
             {
               id: objectifId,
