@@ -202,14 +202,11 @@ export const MetadataFieldEditor: FunctionComponent<
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all !bg-white"
               id="regexViolation"
               onChange={(e) =>
-                handleChange(
-                  "metaPiloteEditRegexViolationMessage",
-                  e.target.value,
-                )
+                handleChange("validationRegexErrorMessage", e.target.value)
               }
               placeholder="Message si validation échoue..."
               type="text"
-              value={metadata.metaPiloteEditRegexViolationMessage || ""}
+              value={metadata.validationRegexErrorMessage || ""}
             />
           </div>
         </div>

@@ -24,7 +24,7 @@ export const FormulaireParametrageSourceIndicateur: FunctionComponent<
       alias: "",
       estEditable: true,
       validationRegex: "",
-      metaPiloteEditRegexViolationMessage: null,
+      validationRegexErrorMessage: null,
       editBoxType: "text",
       defaultValue: "",
       estObligatoire: false,

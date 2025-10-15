@@ -13,7 +13,7 @@ export interface MetadataIndicateurForm {
   alias: string;
   estEditable: boolean;
   validationRegex: string;
-  metaPiloteEditRegexViolationMessage: string | null;
+  validationRegexErrorMessage: string | null;
   editBoxType: "text" | "textarea" | "boolean" | "multi-select" | null;
   defaultValue: string | number | null | boolean;
   estObligatoire: boolean;
