@@ -77,7 +77,7 @@ export class AfficherPilotageQuery {
       },
       orderBy: {
         rattachement: {
-          libelle: "asc",
+          code: "asc",
         },
       },
     });

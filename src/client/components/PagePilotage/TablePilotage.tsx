@@ -6,7 +6,7 @@ export const TablePilotage = () => {
   const { table } = usePilotageTable();
 
   return (
-    <div className="overflow-x-auto border border-gray-200 rounded-lg">
+    <div className="overflow-auto border border-gray-200 rounded-lg max-h-[75vh]">
       <table className="w-full border-collapse">
         <thead>
           {table.getHeaderGroups().map((headerGroup) => (
