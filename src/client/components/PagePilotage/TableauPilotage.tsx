@@ -7,6 +7,8 @@ import { MenuActionTableauPilotage } from "@/components/PagePilotage/MenuActionT
 export const TableauPilotage = () => {
   const { table, fichesSelectionneesIds } = usePilotageTable();
 
+  console.log(table.getHeaderGroups());
+
   return (
     <div className="space-y-4">
       <div className="flex justify-between">
@@ -17,23 +19,28 @@ export const TableauPilotage = () => {
       </div>
 
       <div className="overflow-auto border border-gray-200 rounded-lg max-h-[75vh]">
-        <table className="w-full border-collapse">
-          <thead className="sticky top-0 z-10">
+        <table className="w-full border-separate border-spacing-0">
+          <thead className="sticky top-0 z-1">
             {table.getHeaderGroups().map((headerGroup, groupIndex) => (
               <tr key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
+                {headerGroup.headers.map((header, index) => {
                   const meta = header.column.columnDef.meta;
+                  const lastSticky =
+                    meta?.positioning?.sticky != null &&
+                    headerGroup.headers[index + 1]?.column.columnDef.meta
+                      ?.positioning?.sticky == null;
 
                   return (
                     <th
                       className={clsxm(
-                        "border-b border-gray-200 bg-gray-50 px-4 py-3 text-left text-sm font-semibold text-gray-900 whitespace-nowrap",
+                        "border-b !border-gray-200 bg-gray-50 px-4 py-3 text-left text-sm font-semibold text-gray-900 whitespace-nowrap",
                         {
-                          "shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]":
-                            meta?.sticky === "left",
-                          "border-l border-gray-200":
-                            !meta?.isFirstInGroup && !meta?.sticky,
-                          "border-l-2 border-gray-300": meta?.isFirstInGroup,
+                          "not-last:border-r":
+                            header.colSpan === 1 && !meta?.positioning?.sticky,
+                          "not-last:border-r-2":
+                            lastSticky ||
+                            header.colSpan > 1 ||
+                            meta?.positioning?.lastInGroup,
                         },
                       )}
                       colSpan={header.colSpan}
@@ -42,9 +49,9 @@ export const TableauPilotage = () => {
                         width: header.getSize(),
                         position: "sticky",
                         top: groupIndex * 52,
-                        ...(meta?.sticky === "left"
+                        ...(meta?.positioning?.sticky === "left"
                           ? {
-                              left: meta.stickyOffset,
+                              left: meta?.positioning?.stickyOffset,
                               zIndex: 30,
                             }
                           : {
@@ -65,46 +72,52 @@ export const TableauPilotage = () => {
             ))}
           </thead>
           <tbody>
-            {table.getRowModel().rows.map((row) => (
-              <tr
-                className="hover:bg-gray-50 transition-colors border-b border-gray-100 last:border-b-0"
-                key={row.id}
-              >
-                {row.getVisibleCells().map((cell) => {
-                  const meta = cell.column.columnDef.meta;
+            {table.getRowModel().rows.map((row) => {
+              const cells = row.getVisibleCells();
+              return (
+                <tr
+                  className="hover:bg-gray-50 transition-colors border-b border-gray-100 last:border-b-0"
+                  key={row.id}
+                >
+                  {cells.map((cell, index) => {
+                    const meta = cell.column.columnDef.meta;
+                    const lastSticky =
+                      meta?.positioning?.sticky != null &&
+                      cells[index + 1]?.column.columnDef.meta?.positioning
+                        ?.sticky == null;
 
-                  return (
-                    <td
-                      className={clsxm(
-                        "px-4 py-3 text-sm text-gray-900 bg-white",
-                        {
-                          "shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]":
-                            meta?.sticky === "left",
-                          "border-l-2 border-gray-300": meta?.isFirstInGroup,
-                          "border-l border-gray-200":
-                            !meta?.isFirstInGroup && !meta?.sticky,
-                        },
-                      )}
-                      key={cell.id}
-                      style={{
-                        width: cell.column.getSize(),
-                        ...(meta?.sticky === "left"
-                          ? {
-                              position: "sticky",
-                              left: meta.stickyOffset,
-                            }
-                          : {}),
-                      }}
-                    >
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext(),
-                      )}
-                    </td>
-                  );
-                })}
-              </tr>
-            ))}
+                    return (
+                      <td
+                        className={clsxm(
+                          "px-4 py-3 text-sm text-gray-900 bg-white",
+                          {
+                            "border-l !border-green-600":
+                              !meta?.positioning?.sticky,
+                            "border-r border-r-2 !border-r-gray-200":
+                              lastSticky,
+                          },
+                        )}
+                        key={cell.id}
+                        style={{
+                          width: cell.column.getSize(),
+                          ...(meta?.positioning?.sticky === "left"
+                            ? {
+                                position: "sticky",
+                                left: meta?.positioning?.stickyOffset,
+                              }
+                            : {}),
+                        }}
+                      >
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext(),
+                        )}
+                      </td>
+                    );
+                  })}
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>

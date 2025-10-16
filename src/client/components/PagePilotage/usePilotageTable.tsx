@@ -92,8 +92,10 @@ export const usePilotageTable = () => {
         ),
         size: 45,
         meta: {
-          sticky: "left",
-          stickyOffset: 0,
+          positioning: {
+            sticky: "left",
+            stickyOffset: 0,
+          },
         },
       }),
       columnHelper.accessor("etapeCourante", {
@@ -102,8 +104,10 @@ export const usePilotageTable = () => {
         cell: (info) => <BadgeFicheEtape etape={info.getValue()} />,
         size: 150,
         meta: {
-          sticky: "left",
-          stickyOffset: 45,
+          positioning: {
+            sticky: "left",
+            stickyOffset: 45,
+          },
         },
       }),
       columnHelper.accessor("rattachementCode", {
@@ -116,8 +120,10 @@ export const usePilotageTable = () => {
         ),
         size: 120,
         meta: {
-          sticky: "left",
-          stickyOffset: 117,
+          positioning: {
+            sticky: "left",
+            stickyOffset: 117,
+          },
         },
       }),
       columnHelper.accessor("rattachementLibelle", {
@@ -130,13 +136,15 @@ export const usePilotageTable = () => {
         ),
         size: 250,
         meta: {
-          sticky: "left",
-          stickyOffset: 217,
+          positioning: {
+            sticky: "left",
+            stickyOffset: 217,
+          },
         },
       }),
     ];
 
-    const critereColumns = criteres.map((critere, index) =>
+    const critereColumns = criteres.map((critere) =>
       columnHelper.group({
         id: `critere-${critere.id}`,
         header: () => (
@@ -147,7 +155,7 @@ export const usePilotageTable = () => {
             <div>{critere.libelle}</div>
           </div>
         ),
-        columns: ETAPES.map((etape, etapeIndex) =>
+        columns: ETAPES.map((etape, index) =>
           columnHelper.display({
             id: `critere-${critere.id}-${etape.key}`,
             header: etape.label,
@@ -156,23 +164,20 @@ export const usePilotageTable = () => {
                 info.row.original.evaluationsParCritereEtEtape[critere.id]?.[
                   etape.key
                 ];
-              return (
-                <div className="text-center">
-                  {note !== null && note !== undefined ? note : "-"}
-                </div>
-              );
+              return <div className="text-center">{note ?? "-"}</div>;
             },
             size: 100,
             meta: {
-              isFirstInGroup: etapeIndex === 0,
-              isFirstGroup: index === 0,
+              positioning: {
+                lastInGroup: index === ETAPES.length - 1,
+              },
             },
           }),
         ),
       }),
     );
 
-    const objectifColumns = objectifs.map((objectif, index) =>
+    const objectifColumns = objectifs.map((objectif) =>
       columnHelper.group({
         id: `objectif-${objectif.id}`,
         header: () => (
@@ -183,7 +188,7 @@ export const usePilotageTable = () => {
             <div>{objectif.libelle}</div>
           </div>
         ),
-        columns: ETAPES.map((etape, etapeIndex) =>
+        columns: ETAPES.map((etape, index) =>
           columnHelper.display({
             id: `objectif-${objectif.id}-${etape.key}`,
             header: etape.label,
@@ -192,16 +197,13 @@ export const usePilotageTable = () => {
                 info.row.original.evaluationsParObjectifEtEtape[objectif.id]?.[
                   etape.key
                 ];
-              return (
-                <div className="text-center">
-                  {note !== null && note !== undefined ? note : "-"}
-                </div>
-              );
+              return <div className="text-center">{note ?? "-"}</div>;
             },
             size: 100,
             meta: {
-              isFirstInGroup: etapeIndex === 0,
-              isFirstGroup: index === 0 && criteres.length === 0,
+              positioning: {
+                lastInGroup: index === ETAPES.length - 1,
+              },
             },
           }),
         ),
