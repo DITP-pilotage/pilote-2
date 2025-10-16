@@ -276,7 +276,7 @@ describe("AccesFicheEvaluationService", () => {
 
       await prisma.rattachement_utilisateur_etape_jalon.create({
         data: {
-          id: "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+          id: "04f16d2d-032d-47bb-bfb1-f00811b54c77",
           rattachement_code: rattachementCode,
           utilisateur_id: utilisateurId,
           etape: "CONSOLIDATION",

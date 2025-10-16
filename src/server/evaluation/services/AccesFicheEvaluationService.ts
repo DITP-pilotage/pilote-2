@@ -59,16 +59,10 @@ export class AccesFicheEvaluationService {
   ) {
     const resultat = await this.dependencies.prisma
       .getInstance()
-      .fiche_evaluation.count({
+      .rattachement_utilisateur_etape_jalon.count({
         where: {
-          rattachement: {
-            rattachement_utilisateur_etape_jalon: {
-              some: {
-                etape,
-                utilisateur_id: utilisateurId,
-              },
-            },
-          },
+          etape,
+          utilisateur_id: utilisateurId,
         },
       });
 
