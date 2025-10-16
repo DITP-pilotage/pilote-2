@@ -121,7 +121,10 @@ export const FormulaireParametrageSourceIndicateur = () => {
           </div>
 
           {selectedIndex !== null && metadataValues[selectedIndex] ? (
-            <MetadataFieldEditor fieldIndex={selectedIndex} />
+            <MetadataFieldEditor
+              fieldIndex={selectedIndex}
+              key={selectedIndex}
+            />
           ) : (
             <div className="bg-white p-4 border rounded text-center text-gray-500">
               Sélectionnez un champ pour l'éditer ou créez-en un nouveau
