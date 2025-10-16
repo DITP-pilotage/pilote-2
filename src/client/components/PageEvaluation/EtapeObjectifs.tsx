@@ -1,8 +1,8 @@
 import { useFieldArray } from "react-hook-form";
 import { useFormEvaluation } from "@/components/PageEvaluation/form";
 import { pageEvaluation } from "@/components/PageEvaluation/PageEvaluationServerSideContext";
-import { CommentaireTextarea } from "@/components/PageEvaluation/CommentaireTextarea";
-import { InputNote } from "@/components/PageEvaluation/InputNote";
+import { CommentaireTextareaAutoEvaluation } from "@/components/PageEvaluation/CommentaireTextareaAutoEvaluation";
+import { InputNoteAutoEvaluation } from "@/components/PageEvaluation/InputNoteAutoEvaluation";
 
 export function EtapeObjectifs() {
   const { autoEvaluation } = pageEvaluation.useServerSidePropsContext();
@@ -24,10 +24,10 @@ export function EtapeObjectifs() {
               <header className="text-primary font-bold">
                 {objectif.libelle}
               </header>
-              <InputNote name={noteName} />
+              <InputNoteAutoEvaluation name={noteName} />
             </div>
             <div className="py-4 px-6 flex flex-col bg-dsfr-grey-925/30 ">
-              <CommentaireTextarea name={commentaireName} />
+              <CommentaireTextareaAutoEvaluation name={commentaireName} />
             </div>
           </div>
         );

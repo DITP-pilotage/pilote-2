@@ -23,6 +23,7 @@ import {
   getPiloteEvalContainer,
   PiloteEvalDependencies,
 } from "@/server/evaluation/container";
+import { configuration } from "@/config";
 import {
   GestionUtilisateurDependencies,
   getGestionUtilisateurContainer,
@@ -96,10 +97,11 @@ declare global {
   var __container: ContainerDependencies | undefined;
 }
 
-if (!global.__container) {
+if (!global.__container && configuration().env === "production") {
   global.__container = registerContainer();
+} else {
+  innerContainer = registerContainer();
 }
-innerContainer = global.__container;
 
 export const getContainer = <T extends keyof ContainerDependencies>(
   nameDependency: T,

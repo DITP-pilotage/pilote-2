@@ -1,21 +1,9 @@
 import { z } from "zod";
 import { useFormContext } from "react-hook-form";
-
-const MESSAGE_ERREUR_NOTE = "La valeur doit être comprise entre 0 et 100.";
-const evaluationSchema = z.object({
-  id: z.string(),
-  note: z
-    .number()
-    .min(0, MESSAGE_ERREUR_NOTE)
-    .max(100, MESSAGE_ERREUR_NOTE)
-    .nullable(),
-  commentaire: z
-    .string()
-    .max(600, "Le commentaire ne doit pas dépasser 600 caractères."),
-});
+import { evaluationSchema } from "@/server/evaluation/schemas";
 
 export const formSchema = z.object({
-  criteres: z.object({ sousCriteres: evaluationSchema.array() }).array(),
+  criteres: evaluationSchema.array(),
   objectifs: evaluationSchema.array(),
 });
 

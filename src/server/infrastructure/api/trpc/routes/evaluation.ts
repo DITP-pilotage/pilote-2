@@ -2,18 +2,18 @@ import {
   créerRouteurTRPC,
   procédureProtégée,
 } from "@/server/infrastructure/api/trpc/trpc";
-import { enregisterBrouillonCommandSchema } from "@/server/evaluation/handlers/EnregistrerBrouillonAutoEvaluationHandler";
 import { getContainer } from "@/server/dependances";
 import { ForbiddenError } from "@/server/app/error-boundary/forbidden-error";
 import { soumettreAutoEvaluationCommandSchema } from "@/server/evaluation/handlers/SoumettreAutoEvaluationHandler";
+import { enregisterEvaluationCommandSchema } from "@/server/evaluation/services/EnregistrerEvaluationService";
 
 export const evaluationRouter = créerRouteurTRPC({
-  enregistrerBrouillon: procédureProtégée
-    .input(enregisterBrouillonCommandSchema)
+  enregistrerBrouillonAutoEvaluation: procédureProtégée
+    .input(enregisterEvaluationCommandSchema)
     .mutation(async ({ input, ctx }) => {
       const peutAccederFicheAutoEvaluation = await getContainer("piloteEval")
         .resolve("accesFicheEvaluationService")
-        .peutAccederFicheAutoEvaluation({
+        .peutAccederEtapeAutoEvaluation({
           utilisateurId: ctx.session.user.id,
           ficheEvaluationId: input.ficheEvaluationId,
         });
@@ -26,12 +26,29 @@ export const evaluationRouter = créerRouteurTRPC({
         .execute(input, ctx.session.user.id);
     }),
 
+  enregistrerBrouillonConsolidation: procédureProtégée
+    .input(enregisterEvaluationCommandSchema.array())
+    .mutation(async ({ input, ctx }) => {
+      const peutAccederFicheAutoEvaluation = await getContainer("piloteEval")
+        .resolve("accesFicheEvaluationService")
+        .peutAccederEtapeConsolidation({
+          utilisateurId: ctx.session.user.id,
+        });
+
+      if (!peutAccederFicheAutoEvaluation)
+        throw new ForbiddenError("Accès refusé à la fiche d'auto-évaluation");
+
+      await getContainer("piloteEval")
+        .resolve("enregistrerBrouillonConsolidationHandler")
+        .execute(input, ctx.session.user.id);
+    }),
+
   soumettreAutoEvaluation: procédureProtégée
     .input(soumettreAutoEvaluationCommandSchema)
     .mutation(async ({ input, ctx }) => {
       const peutAccederFicheAutoEvaluation = await getContainer("piloteEval")
         .resolve("accesFicheEvaluationService")
-        .peutAccederFicheAutoEvaluation({
+        .peutAccederEtapeAutoEvaluation({
           utilisateurId: ctx.session.user.id,
           ficheEvaluationId: input.ficheEvaluationId,
         });

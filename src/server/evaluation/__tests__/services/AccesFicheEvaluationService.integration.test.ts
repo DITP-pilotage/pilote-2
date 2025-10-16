@@ -10,7 +10,7 @@ describe("AccesFicheEvaluationService", () => {
     service = new AccesFicheEvaluationService({ prisma: prismaPilote });
   });
 
-  describe("peutAccederFicheAutoEvaluation", () => {
+  describe("peutAccederEtapeAutoEvaluation", () => {
     it("doit retourner true quand l'utilisateur a la permission pour l'étape AUTO_EVALUATION", async () => {
       // Given
       const rattachementCode = "REG-300";
@@ -62,7 +62,7 @@ describe("AccesFicheEvaluationService", () => {
       });
 
       // When
-      const result = await service.peutAccederFicheAutoEvaluation({
+      const result = await service.peutAccederEtapeAutoEvaluation({
         utilisateurId,
         ficheEvaluationId,
       });
@@ -112,7 +112,7 @@ describe("AccesFicheEvaluationService", () => {
       });
 
       // When
-      const result = await service.peutAccederFicheAutoEvaluation({
+      const result = await service.peutAccederEtapeAutoEvaluation({
         utilisateurId: utilisateurId,
         ficheEvaluationId,
       });
@@ -172,7 +172,7 @@ describe("AccesFicheEvaluationService", () => {
       });
 
       // When
-      const result = await service.peutAccederFicheAutoEvaluation({
+      const result = await service.peutAccederEtapeAutoEvaluation({
         utilisateurId,
         ficheEvaluationId,
       });
@@ -240,9 +240,127 @@ describe("AccesFicheEvaluationService", () => {
       });
 
       // When
-      const result = await service.peutAccederFicheAutoEvaluation({
+      const result = await service.peutAccederEtapeAutoEvaluation({
         utilisateurId,
         ficheEvaluationId,
+      });
+
+      // Then
+      expect(result).toBe(false);
+    });
+  });
+
+  describe("peutAccederEtapeConsolidation", () => {
+    it("doit retourner true quand l'utilisateur a la permission pour l'étape CONSOLIDATION", async () => {
+      // Given
+      const rattachementCode = "REG-300";
+      const utilisateurId = "6429fbb5-c4c3-4e98-a729-f35ab37ea512";
+
+      await prisma.utilisateur.create({
+        data: {
+          id: utilisateurId,
+          email: "user1@example.com",
+          nom: "User1",
+          prenom: "Test",
+          date_creation: new Date(),
+          profilCode: "DITP_ADMIN",
+        },
+      });
+
+      await prisma.referentiel_rattachement.create({
+        data: {
+          code: rattachementCode,
+          libelle: "Rattachement avec permission",
+        },
+      });
+
+      await prisma.rattachement_utilisateur_etape_jalon.create({
+        data: {
+          id: "04f16d2d-032d-47bb-bfb1-f00811b54c77",
+          rattachement_code: rattachementCode,
+          utilisateur_id: utilisateurId,
+          etape: "CONSOLIDATION",
+          jalon: 2025,
+        },
+      });
+
+      // When
+      const result = await service.peutAccederEtapeConsolidation({
+        utilisateurId,
+      });
+
+      // Then
+      expect(result).toBe(true);
+    });
+
+    it("doit retourner false quand l'utilisateur n'a aucune permission", async () => {
+      // Given
+      const rattachementCode = "REG-301";
+      const utilisateurId = "1a632394-370b-4330-b5ec-dee666abaea2";
+
+      await prisma.utilisateur.create({
+        data: {
+          id: utilisateurId,
+          email: "user-no-perm@example.com",
+          nom: "UserNoPermission",
+          prenom: "Test",
+          date_creation: new Date(),
+          profilCode: "DITP_ADMIN",
+        },
+      });
+
+      await prisma.referentiel_rattachement.create({
+        data: {
+          code: rattachementCode,
+          libelle: "Rattachement réservé",
+        },
+      });
+
+      // When
+      const result = await service.peutAccederEtapeConsolidation({
+        utilisateurId,
+      });
+
+      // Then
+      expect(result).toBe(false);
+    });
+
+    it("doit retourner false quand l'utilisateur a une permission pour une étape différente", async () => {
+      // Given
+      const rattachementCode = "REG-302";
+      const utilisateurId = "e5e06dd2-b30f-4022-acfe-94bd80f6733c";
+
+      await prisma.utilisateur.create({
+        data: {
+          id: utilisateurId,
+          email: "user2@example.com",
+          nom: "User2",
+          prenom: "Test",
+          date_creation: new Date(),
+          profilCode: "DITP_ADMIN",
+        },
+      });
+
+      await prisma.referentiel_rattachement.create({
+        data: {
+          code: rattachementCode,
+          libelle: "Rattachement auto évaluation",
+        },
+      });
+
+      await prisma.rattachement_utilisateur_etape_jalon.create({
+        data: {
+          id: "e7222f87-cdd8-457d-b131-515d8e40cb20",
+          rattachement_code: rattachementCode,
+          utilisateur_id: utilisateurId,
+          etape: "AUTO_EVALUATION", // Mauvais étape
+          jalon: 2025,
+        },
+      });
+
+      // When
+      const result = await service.peutAccederEtapeConsolidation({
+        utilisateurId,
       });
 
       // Then

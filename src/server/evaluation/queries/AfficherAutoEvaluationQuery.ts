@@ -5,14 +5,14 @@ import { PrismaPilote } from "@/server/db/PrismaPilote";
 export interface Critere {
   id: string;
   libelle: string;
+  evaluation: {
+    id: string;
+    note: number | null;
+    commentaire: string;
+  };
   sousCriteres: Array<{
     id: string;
-    nom: string;
-    evaluation: {
-      id: string;
-      note: number | null;
-      commentaire: string;
-    };
+    libelle: string;
   }>;
 }
 
@@ -56,7 +56,7 @@ export class AfficherAutoEvaluationQuery {
         },
         include: {
           evaluations_objectifs: true,
-          evaluations_sous_criteres: true,
+          evaluations_criteres: true,
           fiche_evaluation: {
             include: {
               rattachement: {
@@ -71,25 +71,24 @@ export class AfficherAutoEvaluationQuery {
 
     return {
       ficheEvaluationId: etapeAutoEvaluation.fiche_evaluation.id,
-      criteres: criteres.map((critere) => ({
-        id: critere.id,
-        libelle: critere.libelle,
-        sousCriteres: critere.sous_criteres.map((sousCritere) => {
-          const evaluation = etapeAutoEvaluation.evaluations_sous_criteres.find(
-            (evaluationSousCritere) =>
-              evaluationSousCritere.sous_critere_id === sousCritere.id,
-          );
-          return {
+      criteres: criteres.map((critere) => {
+        const evaluation = etapeAutoEvaluation.evaluations_criteres.find(
+          (evaluationCritere) => evaluationCritere.critere_id === critere.id,
+        );
+        return {
+          id: critere.id,
+          libelle: critere.libelle,
+          evaluation: {
+            id: evaluation?.id ?? randomUUID(),
+            note: evaluation?.note ?? null,
+            commentaire: evaluation?.commentaire ?? "",
+          },
+          sousCriteres: critere.sous_criteres.map((sousCritere) => ({
             id: sousCritere.id,
-            nom: sousCritere.libelle,
-            evaluation: {
-              id: evaluation?.id ?? randomUUID(),
-              note: evaluation?.note ?? null,
-              commentaire: evaluation?.commentaire ?? "",
-            },
-          };
-        }),
-      })),
+            libelle: sousCritere.libelle,
+          })),
+        };
+      }),
       objectifs:
         etapeAutoEvaluation.fiche_evaluation.rattachement.objectifs.map(
           (objectif) => {

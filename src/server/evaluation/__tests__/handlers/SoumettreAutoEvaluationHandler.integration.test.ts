@@ -123,7 +123,7 @@ describe("SoumettreAutoEvaluationHandler", () => {
       const critereId = "b14de9a4-8560-4dfe-87db-d809f8dd4ccb";
       const sousCritereId = "281faaec-39a7-4ab3-ba9f-a89505491bb4";
       const evaluationObjectifId = "8dcbbe35-9ba9-44f4-a529-e184345e1e2f";
-      const evaluationSousCritereId = "660e6500-c52a-4692-a00c-f00df6eae92c";
+      const evaluationCritereId = "660e6500-c52a-4692-a00c-f00df6eae92c";
 
       await prisma.utilisateur.createMany({
         data: [
@@ -195,13 +195,13 @@ describe("SoumettreAutoEvaluationHandler", () => {
                   commentaire: "Excellent objectif",
                 },
               },
-              evaluations_sous_criteres: {
+              evaluations_criteres: {
                 create: {
-                  id: evaluationSousCritereId,
-                  sous_critere_id: sousCritereId,
+                  id: evaluationCritereId,
+                  critere_id: critereId,
                   auteur_id: utilisateurId,
                   note: 4,
-                  commentaire: "Bon sous-critère",
+                  commentaire: "Bon critère",
                 },
               },
             },
@@ -221,7 +221,7 @@ describe("SoumettreAutoEvaluationHandler", () => {
           },
           include: {
             evaluations_objectifs: true,
-            evaluations_sous_criteres: true,
+            evaluations_criteres: true,
           },
         },
       );
@@ -234,20 +234,20 @@ describe("SoumettreAutoEvaluationHandler", () => {
           commentaire: "Excellent objectif",
         }),
       ]);
-      expect(etapeConsolidation.evaluations_objectifs[0].id).not.toBe(
+      expect(etapeConsolidation.evaluations_objectifs.at(0)?.id).not.toBe(
         evaluationObjectifId,
       );
 
-      expect(etapeConsolidation.evaluations_sous_criteres).toEqual([
+      expect(etapeConsolidation.evaluations_criteres).toEqual([
         expect.objectContaining({
-          sous_critere_id: sousCritereId,
+          critere_id: critereId,
           auteur_id: nouvelAuteurId,
           note: 4,
-          commentaire: "Bon sous-critère",
+          commentaire: "Bon critère",
         }),
       ]);
-      expect(etapeConsolidation.evaluations_sous_criteres[0].id).not.toBe(
-        evaluationSousCritereId,
+      expect(etapeConsolidation.evaluations_criteres.at(0)?.id).not.toBe(
+        evaluationCritereId,
       );
     });
   });

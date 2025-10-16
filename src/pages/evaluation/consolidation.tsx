@@ -1,32 +1,26 @@
-import Head from "next/head";
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next";
 import { getServerSession } from "next-auth/next";
-import { z } from "zod";
 import assert from "node:assert";
 import { getContainer } from "@/server/dependances";
-import { pageEvaluation } from "@/components/PageEvaluation/PageEvaluationServerSideContext";
-import { configurationFeatureFlip } from "@/config";
 import { authOptions } from "@/server/infrastructure/api/auth/[...nextauth]";
+import { pageConsolidation } from "@/components/PageConsolidation/PageConsolidationServerSideContext";
+import { FormulaireConsolidation } from "@/components/PageConsolidation/FormulaireConsolidation";
+import { configurationFeatureFlip } from "@/config";
 import { ApplicationAccessible } from "@/server/domain/utilisateur/Utilisateur.interface";
-import { FormulaireEvaluation } from "@/components/PageEvaluation/FormulaireEvaluation";
 
 export const getServerSideProps = async ({
   req,
   res,
-  params,
 }: GetServerSidePropsContext) => {
   const session = await getServerSession(req, res, authOptions);
-  const ficheEvaluationId = z.string().parse(params?.ficheEvaluationId);
-
   assert(session);
 
   const featureFlipping = configurationFeatureFlip();
 
-  const peutAccederEtapeAutoEvaluation = await getContainer("piloteEval")
+  const peutAccederEtapeConsolidation = await getContainer("piloteEval")
     .resolve("accesFicheEvaluationService")
-    .peutAccederEtapeAutoEvaluation({
+    .peutAccederEtapeConsolidation({
       utilisateurId: session.user.id,
-      ficheEvaluationId,
     });
 
   if (
@@ -34,7 +28,7 @@ export const getServerSideProps = async ({
     !session.applicationsAccessibles.includes(
       ApplicationAccessible.PILOTE_EVAL,
     ) ||
-    !peutAccederEtapeAutoEvaluation
+    !peutAccederEtapeConsolidation
   ) {
     return {
       redirect: {
@@ -43,25 +37,21 @@ export const getServerSideProps = async ({
     };
   }
 
-  const autoEvaluation = await getContainer("piloteEval")
-    .resolve("afficherAutoEvaluation")
-    .run({ ficheEvaluationId });
-
-  return { props: { autoEvaluation } };
+  return {
+    props: await getContainer("piloteEval")
+      .resolve("afficherConsolidationQuery")
+      .run({ utilisateurId: session.user.id }),
+  };
 };
 
-const AutoEvaluationPage = (
+export default function PageConsolidation(
   props: InferGetServerSidePropsType<typeof getServerSideProps>,
-) => {
+) {
   return (
-    <pageEvaluation.ServerSidePropsProvider value={props}>
-      <Head>
-        <title>PILOTE - Auto-évaluation</title>
-      </Head>
-
-      <FormulaireEvaluation />
-    </pageEvaluation.ServerSidePropsProvider>
+    <div className="mx-auto w-full max-w-[1200px] py-6">
+      <pageConsolidation.ServerSidePropsProvider value={props}>
+        <FormulaireConsolidation />
+      </pageConsolidation.ServerSidePropsProvider>
+    </div>
   );
-};
-
-export default AutoEvaluationPage;
+}

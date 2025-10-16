@@ -1,15 +1,15 @@
-import { EnregistrerBrouillonAutoEvaluationHandler } from "@/server/evaluation/handlers/EnregistrerBrouillonAutoEvaluationHandler";
+import { EnregistrerBrouillonConsolidationHandler } from "@/server/evaluation/handlers/EnregistrerBrouillonConsolidationHandler";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { prisma } from "@/server/db/prisma";
 import { PrismaTransaction } from "@/server/db/PrismaTransaction";
 
-describe("EnregistrerBrouillonAutoEvaluationHandler", () => {
-  let handler: EnregistrerBrouillonAutoEvaluationHandler;
+describe("EnregistrerBrouillonConsolidationHandler", () => {
+  let handler: EnregistrerBrouillonConsolidationHandler;
   const prismaPilote = new PrismaPilote();
   const transaction = new PrismaTransaction();
 
   beforeEach(() => {
-    handler = new EnregistrerBrouillonAutoEvaluationHandler({
+    handler = new EnregistrerBrouillonConsolidationHandler({
       prisma: prismaPilote,
       transaction,
     });
@@ -73,12 +73,12 @@ describe("EnregistrerBrouillonAutoEvaluationHandler", () => {
         data: {
           id: ficheEvaluationId,
           jalon: 2025,
-          etape_courante: "AUTO_EVALUATION",
+          etape_courante: "CONSOLIDATION",
           rattachement_code: rattachementCode,
           etape_evaluations: {
             create: {
               id: etapeEvaluationId,
-              type: "AUTO_EVALUATION",
+              type: "CONSOLIDATION",
             },
           },
         },
@@ -86,25 +86,27 @@ describe("EnregistrerBrouillonAutoEvaluationHandler", () => {
 
       // When
       await handler.execute(
-        {
-          ficheEvaluationId,
-          evaluationsObjectifs: [
-            {
-              id: evaluationObjectifId,
-              objectifId,
-              note: 4,
-              commentaire: "Bon objectif",
-            },
-          ],
-          evaluationsCriteres: [
-            {
-              id: evaluationCritereId,
-              critereId,
-              note: 3,
-              commentaire: "Acceptable",
-            },
-          ],
-        },
+        [
+          {
+            ficheEvaluationId,
+            evaluationsObjectifs: [
+              {
+                id: evaluationObjectifId,
+                objectifId,
+                note: 4,
+                commentaire: "Bon objectif",
+              },
+            ],
+            evaluationsCriteres: [
+              {
+                id: evaluationCritereId,
+                critereId,
+                note: 3,
+                commentaire: "Acceptable",
+              },
+            ],
+          },
+        ],
         utilisateurId,
       );
 
@@ -191,12 +193,12 @@ describe("EnregistrerBrouillonAutoEvaluationHandler", () => {
         data: {
           id: ficheEvaluationId,
           jalon: 2025,
-          etape_courante: "AUTO_EVALUATION",
+          etape_courante: "CONSOLIDATION",
           rattachement_code: rattachementCode,
           etape_evaluations: {
             create: {
               id: etapeEvaluationId,
-              type: "AUTO_EVALUATION",
+              type: "CONSOLIDATION",
             },
           },
         },
@@ -226,25 +228,27 @@ describe("EnregistrerBrouillonAutoEvaluationHandler", () => {
 
       // When
       await handler.execute(
-        {
-          ficheEvaluationId,
-          evaluationsObjectifs: [
-            {
-              id: evaluationObjectifId,
-              objectifId,
-              note: 5,
-              commentaire: "Updated comment",
-            },
-          ],
-          evaluationsCriteres: [
-            {
-              id: evaluationCritereId,
-              critereId,
-              note: 4,
-              commentaire: "Updated critère",
-            },
-          ],
-        },
+        [
+          {
+            ficheEvaluationId,
+            evaluationsObjectifs: [
+              {
+                id: evaluationObjectifId,
+                objectifId,
+                note: 5,
+                commentaire: "Updated comment",
+              },
+            ],
+            evaluationsCriteres: [
+              {
+                id: evaluationCritereId,
+                critereId,
+                note: 4,
+                commentaire: "Updated critère",
+              },
+            ],
+          },
+        ],
         utilisateurId,
       );
 
@@ -296,12 +300,12 @@ describe("EnregistrerBrouillonAutoEvaluationHandler", () => {
         data: {
           id: ficheEvaluationId,
           jalon: 2025,
-          etape_courante: "AUTO_EVALUATION",
+          etape_courante: "CONSOLIDATION",
           rattachement_code: rattachementCode,
           etape_evaluations: {
             create: {
               id: etapeEvaluationId,
-              type: "AUTO_EVALUATION",
+              type: "CONSOLIDATION",
               updated_at: initialDate,
             },
           },
@@ -310,11 +314,13 @@ describe("EnregistrerBrouillonAutoEvaluationHandler", () => {
 
       // When
       await handler.execute(
-        {
-          ficheEvaluationId,
-          evaluationsObjectifs: [],
-          evaluationsCriteres: [],
-        },
+        [
+          {
+            ficheEvaluationId,
+            evaluationsObjectifs: [],
+            evaluationsCriteres: [],
+          },
+        ],
         utilisateurId,
       );
 
@@ -382,12 +388,12 @@ describe("EnregistrerBrouillonAutoEvaluationHandler", () => {
         data: {
           id: ficheEvaluationId,
           jalon: 2025,
-          etape_courante: "AUTO_EVALUATION",
+          etape_courante: "CONSOLIDATION",
           rattachement_code: rattachementCode,
           etape_evaluations: {
             create: {
               id: etapeEvaluationId,
-              type: "AUTO_EVALUATION",
+              type: "CONSOLIDATION",
             },
           },
         },
@@ -395,25 +401,27 @@ describe("EnregistrerBrouillonAutoEvaluationHandler", () => {
 
       // When
       await handler.execute(
-        {
-          ficheEvaluationId,
-          evaluationsObjectifs: [
-            {
-              id: evaluationObjectifId,
-              objectifId,
-              note: null,
-              commentaire: "Pas encore évalué",
-            },
-          ],
-          evaluationsCriteres: [
-            {
-              id: evaluationCritereId,
-              critereId,
-              note: null,
-              commentaire: "En cours",
-            },
-          ],
-        },
+        [
+          {
+            ficheEvaluationId,
+            evaluationsObjectifs: [
+              {
+                id: evaluationObjectifId,
+                objectifId,
+                note: null,
+                commentaire: "Pas encore évalué",
+              },
+            ],
+            evaluationsCriteres: [
+              {
+                id: evaluationCritereId,
+                critereId,
+                note: null,
+                commentaire: "En cours",
+              },
+            ],
+          },
+        ],
         utilisateurId,
       );
 
@@ -435,7 +443,7 @@ describe("EnregistrerBrouillonAutoEvaluationHandler", () => {
       });
     });
 
-    it("doit échouer si la fiche n'est pas en étape AUTO_EVALUATION", async () => {
+    it("doit échouer si la fiche n'est pas en étape CONSOLIDATION", async () => {
       // Given
       const rattachementCode = "REG-104";
       const ficheEvaluationId = "9f53ee09-f26f-42af-b019-f1f7ac83a874";
@@ -464,12 +472,12 @@ describe("EnregistrerBrouillonAutoEvaluationHandler", () => {
         data: {
           id: ficheEvaluationId,
           jalon: 2025,
-          etape_courante: "CONSOLIDATION", // Etape suivante
+          etape_courante: "CONTROLE_QUALITE", // Etape suivante
           rattachement_code: rattachementCode,
           etape_evaluations: {
             create: {
               id: etapeEvaluationId,
-              type: "AUTO_EVALUATION",
+              type: "CONSOLIDATION",
             },
           },
         },
@@ -478,11 +486,13 @@ describe("EnregistrerBrouillonAutoEvaluationHandler", () => {
       // When/Then
       await expect(
         handler.execute(
-          {
-            ficheEvaluationId,
-            evaluationsObjectifs: [],
-            evaluationsCriteres: [],
-          },
+          [
+            {
+              ficheEvaluationId,
+              evaluationsObjectifs: [],
+              evaluationsCriteres: [],
+            },
+          ],
           utilisateurId,
         ),
       ).rejects.toThrow();

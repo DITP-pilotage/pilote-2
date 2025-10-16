@@ -1,4 +1,4 @@
-import { FormEvent, useId, useState } from "react";
+import { useId, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { pageEvaluation } from "@/components/PageEvaluation/PageEvaluationServerSideContext";
@@ -14,7 +14,6 @@ import { EtapeCriteres } from "@/components/PageEvaluation/EtapeCriteres";
 import { EtapeObjectifs } from "@/components/PageEvaluation/EtapeObjectifs";
 import { InformationPleineIcon } from "@/components/_commons/Icones/InformationPleineIcon";
 import { BoutonSoumettreAutoEvaluation } from "@/components/PageEvaluation/BoutonSoumettreAutoEvaluation";
-
 export const FormulaireEvaluation = () => {
   const { autoEvaluation } = pageEvaluation.useServerSidePropsContext();
   const [etape, setEtape] = useState<"criteres" | "objectifs">("criteres");
@@ -26,11 +25,9 @@ export const FormulaireEvaluation = () => {
     mode: "onChange",
     defaultValues: {
       criteres: autoEvaluation.criteres.map((critere) => ({
-        sousCriteres: critere.sousCriteres.map((sousCritere) => ({
-          id: sousCritere.evaluation.id,
-          note: sousCritere.evaluation.note,
-          commentaire: sousCritere.evaluation.commentaire,
-        })),
+        id: critere.evaluation.id,
+        note: critere.evaluation.note,
+        commentaire: critere.evaluation.commentaire,
       })),
       objectifs: autoEvaluation.objectifs.map((objectif) => ({
         id: objectif.evaluation.id,
@@ -39,22 +36,6 @@ export const FormulaireEvaluation = () => {
       })),
     },
   });
-
-  const handleSubmitCriteres = async (e: FormEvent) => {
-    e.preventDefault();
-    const isValid = await form.trigger("criteres", {
-      shouldFocus: true,
-    });
-    if (!isValid) return;
-
-    setEtape("objectifs");
-    window.scrollTo(0, 0);
-  };
-
-  const handleSubmit =
-    etape === "criteres"
-      ? handleSubmitCriteres
-      : form.handleSubmit(enregistrerBrouillon);
 
   return (
     <main className="py-6 pt-0">
@@ -90,7 +71,8 @@ export const FormulaireEvaluation = () => {
                         />
                       }
                       label="Objectifs"
-                      type="submit"
+                      onClick={() => setEtape("objectifs")}
+                      type="button"
                     />
                   </>
                 )}
@@ -121,7 +103,7 @@ export const FormulaireEvaluation = () => {
           <form
             className="bg-white mx-auto w-full max-w-4xl"
             id={formId}
-            onSubmit={handleSubmit}
+            onSubmit={form.handleSubmit(enregistrerBrouillon)}
           >
             <header className="p-4 bg-dsfr-blue-france-925 border-b-2 border-black">
               <span className="font-bold text-sm">Mon auto-évaluation</span>

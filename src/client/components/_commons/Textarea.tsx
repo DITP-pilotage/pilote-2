@@ -1,40 +1,38 @@
-import { useState } from "react";
-import { Controller } from "react-hook-form";
-import { useFormEvaluation } from "@/components/PageEvaluation/form";
-import { Icone } from "@/components/_commons/Icone";
-import { AddLineIcon } from "@/components/_commons/Icones/AddLineIcon";
+import { Control, Controller, FieldValues, Path } from "react-hook-form";
+import { ComponentProps, RefObject, useImperativeHandle, useRef } from "react";
 import { clsxm } from "@/utils/clsxm";
 import { MessageErreur } from "@/components/PageEvaluation/MessageErreur";
-import { pageEvaluation } from "@/components/PageEvaluation/PageEvaluationServerSideContext";
 
-export function CommentaireTextarea({
+export type TextareaRef = {
+  focus: () => void;
+};
+
+export function Textarea<T extends FieldValues>({
+  label = "Commentaire",
   name,
-}: {
-  name:
-    | `criteres.${number}.sousCriteres.${number}.commentaire`
-    | `objectifs.${number}.commentaire`;
+  control,
+  readOnly,
+  onBlur,
+  className,
+  textareaRef,
+  ...props
+}: ComponentProps<"textarea"> & {
+  label?: string;
+  name: Path<T>;
+  control: Control<T>;
+  textareaRef?: RefObject<TextareaRef>;
 }) {
-  const form = useFormEvaluation();
-  const { autoEvaluation } = pageEvaluation.useServerSidePropsContext();
-  const defaultOpen = form.getValues(name) != "";
-  const [displayComment, setDisplayComment] = useState(defaultOpen);
+  const internalRef = useRef<HTMLTextAreaElement | null>(null);
 
-  if (!displayComment) {
-    return (
-      <button
-        className="-ml-4 !text-xs !text-dsfr-grey-200 inline-flex w-fit gap-1 items-center"
-        onClick={() => setDisplayComment(true)}
-        type="button"
-      >
-        <Icone className="w-3 h-3 text-current" icone={AddLineIcon} /> Ajouter
-        un commentaire
-      </button>
-    );
-  }
+  useImperativeHandle(textareaRef, () => ({
+    focus: () => {
+      internalRef.current?.focus();
+    },
+  }));
 
   return (
     <Controller
-      control={form.control}
+      control={control}
       name={name}
       render={({ field, fieldState }) => {
         const fieldId = `${name}.commentaire`;
@@ -46,24 +44,26 @@ export function CommentaireTextarea({
               })}
               htmlFor={fieldId}
             >
-              Commentaire
+              {label}
             </label>
             <textarea
+              {...props}
               className={clsxm(
                 "border !rounded-md !bg-white py-2 px-4 field-sizing-content",
                 {
                   "!border-error": !!fieldState.error,
                 },
+                className,
               )}
               id={fieldId}
               {...field}
-              disabled={autoEvaluation.readOnly}
-              onBlur={(e) => {
+              disabled={readOnly}
+              onBlur={(event) => {
                 field.onBlur();
-                if (!e.target.value) setDisplayComment(false);
+                onBlur?.(event);
               }}
               ref={(node) => {
-                node?.focus();
+                internalRef.current = node;
                 field.ref(node);
               }}
             />
