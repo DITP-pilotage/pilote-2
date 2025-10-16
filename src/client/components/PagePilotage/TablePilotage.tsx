@@ -8,8 +8,8 @@ export const TablePilotage = () => {
   return (
     <div className="overflow-auto border border-gray-200 rounded-lg max-h-[75vh]">
       <table className="w-full border-collapse">
-        <thead>
-          {table.getHeaderGroups().map((headerGroup) => (
+        <thead className="sticky top-0 z-10">
+          {table.getHeaderGroups().map((headerGroup, groupIndex) => (
             <tr key={headerGroup.id}>
               {headerGroup.headers.map((header) => {
                 const meta = header.column.columnDef.meta;
@@ -30,13 +30,16 @@ export const TablePilotage = () => {
                     key={header.id}
                     style={{
                       width: header.getSize(),
+                      position: "sticky",
+                      top: groupIndex * 52,
                       ...(meta?.sticky === "left"
                         ? {
-                            position: "sticky",
                             left: meta.stickyOffset,
-                            zIndex: 20,
+                            zIndex: 30,
                           }
-                        : {}),
+                        : {
+                            zIndex: 20,
+                          }),
                     }}
                   >
                     {header.isPlaceholder
