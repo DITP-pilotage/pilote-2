@@ -107,7 +107,7 @@ describe("AfficherAutoEvaluationQuery", () => {
           sousCriteres: [
             {
               id: sousCritere1Id,
-              nom: "Sous-critère 1",
+              libelle: "Sous-critère 1",
             },
           ],
         },
@@ -122,7 +122,7 @@ describe("AfficherAutoEvaluationQuery", () => {
           sousCriteres: [
             {
               id: sousCritere2Id,
-              nom: "Sous-critère 2",
+              libelle: "Sous-critère 2",
             },
           ],
         },
@@ -257,7 +257,7 @@ describe("AfficherAutoEvaluationQuery", () => {
           sousCriteres: [
             {
               id: sousCritereId,
-              nom: "Sous-critère test",
+              libelle: "Sous-critère test",
             },
           ],
         },
@@ -388,15 +388,15 @@ describe("AfficherAutoEvaluationQuery", () => {
           sousCriteres: [
             {
               id: sousCritere1Id,
-              nom: "Sous-critère 1",
+              libelle: "Sous-critère 1",
             },
             {
               id: sousCritere2Id,
-              nom: "Sous-critère 2",
+              libelle: "Sous-critère 2",
             },
             {
               id: sousCritere3Id,
-              nom: "Sous-critère 3",
+              libelle: "Sous-critère 3",
             },
           ],
         },
@@ -514,7 +514,7 @@ describe("AfficherAutoEvaluationQuery", () => {
           sousCriteres: [
             {
               id: sousCritereId,
-              nom: "Sous-critère isolation",
+              libelle: "Sous-critère isolation",
             },
           ],
         },
