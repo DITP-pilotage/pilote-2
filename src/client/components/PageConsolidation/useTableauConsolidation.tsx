@@ -7,7 +7,7 @@ import {
   getGroupedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { CommentaireTextareaConsolidation } from "@/components/PageConsolidation/CommentaireTextareaConsolidation";
 import { InputNoteConsolidation } from "@/components/PageConsolidation/InputNoteConsolidation";
 import { InputNote } from "@/components/_commons/InputNote";
@@ -47,11 +47,10 @@ type TableauConsolidationRow =
 
 const columnHelper = createColumnHelper<TableauConsolidationRow>();
 
-const grouping = ["rattachementCode"];
-
 export const useTableauConsolidation = () => {
   const { rattachements, criteres } =
     pageConsolidation.useServerSidePropsContext();
+  const [grouping, setGrouping] = useState<string[]>(["rattachementCode"]);
   const data = useMemo<TableauConsolidationRow[]>(() => {
     const rows: TableauConsolidationRow[] = [];
 
@@ -104,6 +103,9 @@ export const useTableauConsolidation = () => {
             getValueLabel: (value) =>
               rattachements.find((rattachement) => rattachement.code === value)
                 ?.libelle ?? value,
+          },
+          grouping: {
+            label: "Territoire",
           },
         },
         getGroupingValue: (row) => row.rattachement.code,
@@ -193,7 +195,6 @@ export const useTableauConsolidation = () => {
       columnHelper.accessor((row) => (row.type === "critere" ? row.id : null), {
         id: "critereId",
         header: "Critere",
-        enableGrouping: false,
         enableColumnFilter: true,
         filterFn: "arrIncludesSome",
         meta: {
@@ -204,7 +205,11 @@ export const useTableauConsolidation = () => {
               criteres.find((critere) => critere.id === value)?.libelle ??
               value,
           },
+          grouping: {
+            label: "Critère",
+          },
         },
+        getGroupingValue: (row) => (row.type === "critere" ? row.id : null),
       }),
     ],
     [rattachements, criteres],
@@ -219,6 +224,7 @@ export const useTableauConsolidation = () => {
     getGroupedRowModel: getGroupedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
     state: { grouping },
+    onGroupingChange: setGrouping,
     initialState: {
       expanded: true,
       columnVisibility: {

@@ -9,5 +9,8 @@ declare module "@tanstack/react-table" {
       labelToutesLesOptions: string;
       getValueLabel(value: string): string;
     };
+    grouping?: {
+      label: string;
+    };
   }
 }
