@@ -28,15 +28,12 @@ export const TablePilotage = () => {
         fiche.etapeCourante === $Enums.etape_evaluation_enum.CONSOLIDATION,
     ) && selectedCount > 0;
 
-  console.log(fichesSelectionnees);
-
   return (
     <div className="space-y-4">
       <div className="flex justify-end">
         <div className="flex items-center gap-4 px-3 py-2 rounded border border-gray-200">
           <p className="!text-sm font-semibold !mb-0">
-            {selectedCount} rattachement{selectedCount > 1 ? "s" : ""}{" "}
-            sélectionné
+            {selectedCount} ligne{selectedCount > 1 ? "s" : ""} sélectionné
             {selectedCount > 1 ? "s" : ""}
           </p>
           <Bouton

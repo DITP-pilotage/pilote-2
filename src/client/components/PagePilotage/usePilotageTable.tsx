@@ -10,6 +10,7 @@ type FicheEvaluationRow = {
   id: string;
   rattachementCode: string;
   rattachementLibelle: string;
+  etapeCourante: string;
   evaluationsParCritereEtEtape: Record<string, Record<string, number | null>>;
   evaluationsParObjectifEtEtape: Record<string, Record<string, number | null>>;
 };
@@ -61,6 +62,7 @@ export const usePilotageTable = () => {
       id: fiche.id,
       rattachementCode: fiche.rattachement.code,
       rattachementLibelle: fiche.rattachement.libelle,
+      etapeCourante: fiche.etapeCourante,
       evaluationsParCritereEtEtape: fiche.evaluationsParCritereEtEtape,
       evaluationsParObjectifEtEtape: fiche.evaluationsParObjectifEtEtape,
     }));
@@ -86,10 +88,24 @@ export const usePilotageTable = () => {
             type="checkbox"
           />
         ),
-        size: 50,
+        size: 45,
         meta: {
           sticky: "left",
           stickyOffset: 0,
+        },
+      }),
+      columnHelper.accessor("etapeCourante", {
+        id: "etape",
+        header: "Étape",
+        cell: (info) => (
+          <span className="text-xs bg-blue-100 text-blue-600 px-2 py-1.5 rounded-md whitespace-nowrap">
+            {info.getValue()}
+          </span>
+        ),
+        size: 150,
+        meta: {
+          sticky: "left",
+          stickyOffset: 45,
         },
       }),
       columnHelper.accessor("rattachementCode", {
@@ -103,7 +119,7 @@ export const usePilotageTable = () => {
         size: 120,
         meta: {
           sticky: "left",
-          stickyOffset: 45,
+          stickyOffset: 195,
         },
       }),
       columnHelper.accessor("rattachementLibelle", {
@@ -117,7 +133,7 @@ export const usePilotageTable = () => {
         size: 250,
         meta: {
           sticky: "left",
-          stickyOffset: 145,
+          stickyOffset: 315,
         },
       }),
     ];
