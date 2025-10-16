@@ -72,7 +72,7 @@ export const usePilotageTable = () => {
       columnHelper.group({
         id: `critere-${critere.id}`,
         header: () => (
-          <div className="text-xs font-medium">
+          <div className="text-xs font-medium flex flex-col items-center">
             <div className="bg-blue-50 text-blue-700 px-2 py-1 rounded mb-1 inline-block">
               Critère
             </div>
@@ -110,7 +110,7 @@ export const usePilotageTable = () => {
       columnHelper.group({
         id: `objectif-${objectif.id}`,
         header: () => (
-          <div className="text-xs font-medium">
+          <div className="text-xs font-medium flex flex-col items-center">
             <div className="bg-green-50 text-green-700 px-2 py-1 rounded mb-1 inline-block">
               Objectif
             </div>
