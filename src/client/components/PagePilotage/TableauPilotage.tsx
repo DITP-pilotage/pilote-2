@@ -89,12 +89,11 @@ export const TableauPilotage = () => {
                     return (
                       <td
                         className={clsxm(
-                          "px-4 py-3 text-sm text-gray-900 bg-white",
+                          "px-4 py-3 border-t border-gray-200 text-sm text-gray-900 bg-white",
                           {
-                            "border-l !border-green-600":
-                              !meta?.positioning?.sticky,
-                            "border-r border-r-2 !border-r-gray-200":
-                              lastSticky,
+                            "not-last:border-r": !meta?.positioning?.sticky,
+                            "not-last:border-r-2":
+                              lastSticky || meta?.positioning?.lastInGroup,
                           },
                         )}
                         key={cell.id}
