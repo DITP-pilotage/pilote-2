@@ -97,8 +97,11 @@ declare global {
   var __container: ContainerDependencies | undefined;
 }
 
-if (!global.__container && configuration().env === "production") {
-  global.__container = registerContainer();
+if (configuration().env === "production") {
+  if (!global.__container) {
+    global.__container = registerContainer();
+  }
+  innerContainer = global.__container;
 } else {
   innerContainer = registerContainer();
 }
