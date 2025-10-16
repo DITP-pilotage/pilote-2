@@ -1,49 +1,42 @@
-import { FunctionComponent } from "react";
+import { Controller, useFieldArray } from "react-hook-form";
+import { useFormParametrageSource } from "./form";
 import { ValeurAccepte } from "./types";
 
-interface AcceptedValuesEditorProps {
-  values: ValeurAccepte[];
-  onChange: (values: ValeurAccepte[]) => void;
-}
+export const AcceptedValuesEditor = ({
+  fieldIndex,
+}: {
+  fieldIndex: number;
+}) => {
+  const form = useFormParametrageSource();
+  const { fields, append, remove } = useFieldArray({
+    control: form.control,
+    name: `metadataList.${fieldIndex}.listeValeursAcceptes`,
+  });
 
-export const AcceptedValuesEditor: FunctionComponent<
-  AcceptedValuesEditorProps
-> = ({ values, onChange }) => {
   const ajouterValeur = () => {
+    const valeurs = form.getValues(
+      `metadataList.${fieldIndex}.listeValeursAcceptes`,
+    );
     const nouvelleValeur: ValeurAccepte = {
       ordre:
-        values.length > 0 ? Math.max(...values.map((v) => v.ordre)) + 1 : 1,
+        valeurs.length > 0 ? Math.max(...valeurs.map((v) => v.ordre)) + 1 : 1,
       valeur: "",
       nom: "",
       description: "",
     };
-    onChange([...values, nouvelleValeur]);
-  };
-
-  const supprimerValeur = (index: number) => {
-    onChange(values.filter((_, i) => i !== index));
-  };
-
-  const modifierValeur = (
-    index: number,
-    field: keyof ValeurAccepte,
-    value: string | number,
-  ) => {
-    const nouvelleListe = [...values];
-    nouvelleListe[index] = { ...nouvelleListe[index], [field]: value };
-    onChange(nouvelleListe);
+    append(nouvelleValeur);
   };
 
   return (
     <div className="fr-mt-2w">
       <span className="fr-label font-bold">Valeurs acceptées</span>
-      {values.map((acceptedValue, index) => (
-        <div className="border p-3 fr-mb-2w rounded" key={index}>
+      {fields.map((field, index) => (
+        <div className="border p-3 fr-mb-2w rounded" key={field.id}>
           <div className="flex justify-between align-center fr-mb-1w">
             <span className="font-bold">Valeur {index + 1}</span>
             <button
               className="fr-btn fr-btn--sm fr-btn--secondary"
-              onClick={() => supprimerValeur(index)}
+              onClick={() => remove(index)}
               type="button"
             >
               Supprimer
@@ -51,61 +44,86 @@ export const AcceptedValuesEditor: FunctionComponent<
           </div>
           <div className="fr-grid-row fr-grid-row--gutters">
             <div className="fr-col-3">
-              <label className="fr-label" htmlFor={`order-${index}`}>
+              <label
+                className="fr-label"
+                htmlFor={`metadataList.${fieldIndex}.listeValeursAcceptes.${index}.ordre`}
+              >
                 Ordre
               </label>
-              <input
-                className="fr-input bg-white"
-                id={`order-${index}`}
-                onChange={(e) =>
-                  modifierValeur(
-                    index,
-                    "ordre",
-                    Number.parseInt(e.target.value) || 0,
-                  )
-                }
-                type="number"
-                value={acceptedValue.ordre}
+              <Controller
+                control={form.control}
+                name={`metadataList.${fieldIndex}.listeValeursAcceptes.${index}.ordre`}
+                render={({ field }) => (
+                  <input
+                    className="fr-input bg-white"
+                    id={`metadataList.${fieldIndex}.listeValeursAcceptes.${index}.ordre`}
+                    type="number"
+                    {...field}
+                    onChange={(e) =>
+                      field.onChange(Number.parseInt(e.target.value) || 0)
+                    }
+                  />
+                )}
               />
             </div>
             <div className="fr-col-3">
-              <label className="fr-label" htmlFor={`value-${index}`}>
+              <label
+                className="fr-label"
+                htmlFor={`metadataList.${fieldIndex}.listeValeursAcceptes.${index}.valeur`}
+              >
                 Valeur
               </label>
-              <input
-                className="fr-input"
-                id={`value-${index}`}
-                onChange={(e) =>
-                  modifierValeur(index, "valeur", e.target.value)
-                }
-                type="text"
-                value={acceptedValue.valeur}
+              <Controller
+                control={form.control}
+                name={`metadataList.${fieldIndex}.listeValeursAcceptes.${index}.valeur`}
+                render={({ field }) => (
+                  <input
+                    className="fr-input"
+                    id={`metadataList.${fieldIndex}.listeValeursAcceptes.${index}.valeur`}
+                    type="text"
+                    {...field}
+                  />
+                )}
               />
             </div>
             <div className="fr-col-3">
-              <label className="fr-label" htmlFor={`name-${index}`}>
+              <label
+                className="fr-label"
+                htmlFor={`metadataList.${fieldIndex}.listeValeursAcceptes.${index}.nom`}
+              >
                 Nom
               </label>
-              <input
-                className="fr-input"
-                id={`name-${index}`}
-                onChange={(e) => modifierValeur(index, "nom", e.target.value)}
-                type="text"
-                value={acceptedValue.nom}
+              <Controller
+                control={form.control}
+                name={`metadataList.${fieldIndex}.listeValeursAcceptes.${index}.nom`}
+                render={({ field }) => (
+                  <input
+                    className="fr-input"
+                    id={`metadataList.${fieldIndex}.listeValeursAcceptes.${index}.nom`}
+                    type="text"
+                    {...field}
+                  />
+                )}
               />
             </div>
             <div className="fr-col-3">
-              <label className="fr-label" htmlFor={`desc-${index}`}>
+              <label
+                className="fr-label"
+                htmlFor={`metadataList.${fieldIndex}.listeValeursAcceptes.${index}.description`}
+              >
                 Description
               </label>
-              <input
-                className="fr-input"
-                id={`desc-${index}`}
-                onChange={(e) =>
-                  modifierValeur(index, "description", e.target.value)
-                }
-                type="text"
-                value={acceptedValue.description}
+              <Controller
+                control={form.control}
+                name={`metadataList.${fieldIndex}.listeValeursAcceptes.${index}.description`}
+                render={({ field }) => (
+                  <input
+                    className="fr-input"
+                    id={`metadataList.${fieldIndex}.listeValeursAcceptes.${index}.description`}
+                    type="text"
+                    {...field}
+                  />
+                )}
               />
             </div>
           </div>

@@ -1,21 +1,12 @@
-import { FunctionComponent } from "react";
-import { MetadataIndicateurForm } from "./types";
+import { useFormParametrageSource } from "./form";
+import { InputMetadata } from "./InputMetadata";
+import { SelectMetadata } from "./SelectMetadata";
+import { CheckboxMetadata } from "./CheckboxMetadata";
 import { AcceptedValuesEditor } from "./AcceptedValuesEditor";
 
-interface MetadataFieldEditorProps {
-  metadata: MetadataIndicateurForm;
-  onChange: (metadata: MetadataIndicateurForm) => void;
-}
-
-export const MetadataFieldEditor: FunctionComponent<
-  MetadataFieldEditorProps
-> = ({ metadata, onChange }) => {
-  const handleChange = (
-    field: keyof MetadataIndicateurForm,
-    value: unknown,
-  ) => {
-    onChange({ ...metadata, [field]: value });
-  };
+export const MetadataFieldEditor = ({ fieldIndex }: { fieldIndex: number }) => {
+  const form = useFormParametrageSource();
+  const editBoxType = form.watch(`metadataList.${fieldIndex}.editBoxType`);
 
   return (
     <div className="bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden">
@@ -26,56 +17,27 @@ export const MetadataFieldEditor: FunctionComponent<
             Informations de base
           </h4>
           <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label
-                className="block text-sm font-semibold text-gray-700 mb-2"
-                htmlFor="name"
-              >
-                Nom du champ <span className="text-red-500">*</span>
-              </label>
-              <input
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all !bg-white"
-                id="name"
-                onChange={(e) => handleChange("name", e.target.value)}
-                placeholder="Ex: indic_id"
-                type="text"
-                value={metadata.name}
-              />
-            </div>
+            <InputMetadata
+              label="Nom du champ"
+              name={`metadataList.${fieldIndex}.name`}
+              placeholder="Ex: indic_id"
+              required
+            />
 
-            <div>
-              <label
-                className="block text-sm font-semibold text-gray-700 mb-2"
-                htmlFor="alias"
-              >
-                Alias (affichage) <span className="text-red-500">*</span>
-              </label>
-              <input
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all !bg-white"
-                id="alias"
-                onChange={(e) => handleChange("alias", e.target.value)}
-                placeholder="Ex: Identifiant"
-                type="text"
-                value={metadata.alias}
-              />
-            </div>
+            <InputMetadata
+              label="Alias (affichage)"
+              name={`metadataList.${fieldIndex}.alias`}
+              placeholder="Ex: Identifiant"
+              required
+            />
 
-            <div className="col-span-2">
-              <label
-                className="block text-sm font-semibold text-gray-700 mb-2"
-                htmlFor="description"
-              >
-                Description
-              </label>
-              <textarea
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-none !bg-white"
-                id="description"
-                onChange={(e) => handleChange("description", e.target.value)}
-                placeholder="Description du champ..."
-                rows={3}
-                value={metadata.description}
-              />
-            </div>
+            <InputMetadata
+              className="col-span-2"
+              label="Description"
+              name={`metadataList.${fieldIndex}.description`}
+              placeholder="Description du champ..."
+              type="textarea"
+            />
           </div>
         </div>
 
@@ -86,85 +48,43 @@ export const MetadataFieldEditor: FunctionComponent<
           </h4>
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label
-                  className="block text-sm font-semibold text-gray-700 mb-2"
-                  htmlFor="dataType"
-                >
-                  Type de données <span className="text-red-500">*</span>
-                </label>
-                <select
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all !bg-white"
-                  id="dataType"
-                  onChange={(e) =>
-                    handleChange(
-                      "dataType",
-                      e.target.value as "text" | "boolean" | "number",
-                    )
-                  }
-                  value={metadata.dataType}
-                >
-                  <option value="text">📝 Texte</option>
-                  <option value="boolean">✓ Booléen</option>
-                  <option value="number">🔢 Nombre</option>
-                </select>
-              </div>
+              <SelectMetadata
+                label="Type de données"
+                name={`metadataList.${fieldIndex}.dataType`}
+                required
+              >
+                <option value="text">Texte</option>
+                <option value="boolean">Booléen</option>
+                <option value="number">Nombre</option>
+              </SelectMetadata>
 
-              <div>
-                <label
-                  className="block text-sm font-semibold text-gray-700 mb-2"
-                  htmlFor="boxType"
-                >
-                  Type de champ de saisie
-                </label>
-                <select
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all !bg-white"
-                  id="boxType"
-                  onChange={(e) =>
-                    handleChange("editBoxType", e.target.value || null)
-                  }
-                  value={metadata.editBoxType || ""}
-                >
-                  <option value="">Aucun</option>
-                  <option value="text">📄 Texte</option>
-                  <option value="textarea">📋 Zone de texte</option>
-                  <option value="boolean">☑️ Booléen</option>
-                  <option value="multi-select">📑 Multi-select</option>
-                </select>
-              </div>
+              <SelectMetadata
+                label="Type de champ de saisie"
+                name={`metadataList.${fieldIndex}.editBoxType`}
+              >
+                <option value="">Aucun</option>
+                <option value="text">Texte</option>
+                <option value="textarea">Zone de texte</option>
+                <option value="boolean">☑Booléen</option>
+                <option value="multi-select">Multi-select</option>
+              </SelectMetadata>
             </div>
 
             {/* Valeurs acceptées si multi-select */}
-            {metadata.editBoxType === "multi-select" && (
+            {editBoxType === "multi-select" && (
               <div className="pt-4 border-t border-green-300">
                 <h5 className="text-md font-bold text-green-800 mb-3 flex items-center gap-2">
                   Valeurs acceptées
                 </h5>
-                <AcceptedValuesEditor
-                  onChange={(values) =>
-                    handleChange("listeValeursAcceptes", values)
-                  }
-                  values={metadata.listeValeursAcceptes}
-                />
+                <AcceptedValuesEditor fieldIndex={fieldIndex} />
               </div>
             )}
 
-            <div>
-              <label
-                className="block text-sm font-semibold text-gray-700 mb-2"
-                htmlFor="defaultValue"
-              >
-                Valeur par défaut
-              </label>
-              <input
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all !bg-white"
-                id="defaultValue"
-                onChange={(e) => handleChange("defaultValue", e.target.value)}
-                placeholder="Valeur par défaut..."
-                type="text"
-                value={metadata.defaultValue?.toString() || ""}
-              />
-            </div>
+            <InputMetadata
+              label="Valeur par défaut"
+              name={`metadataList.${fieldIndex}.defaultValue`}
+              placeholder="Valeur par défaut..."
+            />
           </div>
         </div>
 
@@ -174,43 +94,17 @@ export const MetadataFieldEditor: FunctionComponent<
             Validation
           </h4>
           <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label
-                className="block text-sm font-semibold text-gray-700 mb-2"
-                htmlFor="regex"
-              >
-                Regex de validation
-              </label>
-              <input
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all font-mono text-sm"
-                id="regex"
-                onChange={(e) =>
-                  handleChange("validationRegex", e.target.value)
-                }
-                placeholder="Ex: ^IND-\d{3,4}$"
-                type="text"
-                value={metadata.validationRegex}
-              />
-            </div>
+            <InputMetadata
+              label="Regex de validation"
+              name={`metadataList.${fieldIndex}.validationRegex`}
+              placeholder="Ex: ^IND-\d{3,4}$"
+            />
 
-            <div>
-              <label
-                className="block text-sm font-semibold text-gray-700 mb-2"
-                htmlFor="regexViolation"
-              >
-                Message d'erreur regex
-              </label>
-              <input
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all !bg-white"
-                id="regexViolation"
-                onChange={(e) =>
-                  handleChange("validationRegexErrorMessage", e.target.value)
-                }
-                placeholder="Message si validation échoue..."
-                type="text"
-                value={metadata.validationRegexErrorMessage || ""}
-              />
-            </div>
+            <InputMetadata
+              label="Message d'erreur regex"
+              name={`metadataList.${fieldIndex}.validationRegexErrorMessage`}
+              placeholder="Message si validation échoue..."
+            />
           </div>
         </div>
 
@@ -220,57 +114,25 @@ export const MetadataFieldEditor: FunctionComponent<
             Options
           </h4>
           <div className="grid grid-cols-2 gap-4">
-            <label className="flex items-center space-x-3 cursor-pointer p-3 rounded-lg hover:bg-purple-200 transition-all gap-2">
-              <input
-                checked={metadata.estVisible}
-                className="w-5 h-5 text-purple-600 rounded focus:ring-2 focus:ring-purple-500"
-                onChange={(e) => handleChange("estVisible", e.target.checked)}
-                type="checkbox"
-              />
-              <span className="text-sm font-semibold text-gray-700">
-                La metadata est-elle visible ?
-              </span>
-            </label>
+            <CheckboxMetadata
+              label="La metadata est-elle visible ?"
+              name={`metadataList.${fieldIndex}.estVisible`}
+            />
 
-            <label className="flex items-center space-x-3 cursor-pointer p-3 rounded-lg hover:bg-purple-200 transition-all gap-2">
-              <input
-                checked={metadata.estEditable}
-                className="w-5 h-5 text-purple-600 rounded focus:ring-2 focus:ring-purple-500"
-                onChange={(e) => handleChange("estEditable", e.target.checked)}
-                type="checkbox"
-              />
-              <span className="text-sm font-semibold text-gray-700">
-                La metadata est-elle editable ?
-              </span>
-            </label>
+            <CheckboxMetadata
+              label="La metadata est-elle editable ?"
+              name={`metadataList.${fieldIndex}.estEditable`}
+            />
 
-            <label className="flex items-center space-x-3 cursor-pointer p-3 rounded-lg hover:bg-purple-200 transition-all gap-2">
-              <input
-                checked={metadata.estObligatoire}
-                className="w-5 h-5 text-purple-600 rounded focus:ring-2 focus:ring-purple-500"
-                onChange={(e) =>
-                  handleChange("estObligatoire", e.target.checked)
-                }
-                type="checkbox"
-              />
-              <span className="text-sm font-semibold text-gray-700">
-                La metadata est-elle visible obligatoire ?
-              </span>
-            </label>
+            <CheckboxMetadata
+              label="La metadata est-elle visible obligatoire ?"
+              name={`metadataList.${fieldIndex}.estObligatoire`}
+            />
 
-            <label className="flex items-center space-x-3 cursor-pointer p-3 rounded-lg hover:bg-purple-200 transition-all gap-2">
-              <input
-                checked={metadata.doitAfficherLaDescription}
-                className="w-5 h-5 text-purple-600 rounded focus:ring-2 focus:ring-purple-500"
-                onChange={(e) =>
-                  handleChange("doitAfficherLaDescription", e.target.checked)
-                }
-                type="checkbox"
-              />
-              <span className="text-sm font-semibold text-gray-700">
-                La description est elle visible ?
-              </span>
-            </label>
+            <CheckboxMetadata
+              label="La description est elle visible ?"
+              name={`metadataList.${fieldIndex}.doitAfficherLaDescription`}
+            />
           </div>
         </div>
       </div>
