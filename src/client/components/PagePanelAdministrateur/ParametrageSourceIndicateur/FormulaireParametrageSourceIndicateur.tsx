@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { pageParametrageSourceContext } from "@/components/PagePanelAdministrateur/ParametrageSourceIndicateur/PageParametrageSourceContext";
+import { clsxm } from "@/utils/clsxm";
 import { MetadataIndicateurForm } from "./types";
 import { MetadataFieldEditor } from "./MetadataFieldEditor";
 
@@ -33,12 +34,13 @@ export const FormulaireParametrageSourceIndicateur = () => {
     setSelectedIndex(metadataList.length);
   };
 
-  const supprimerChamp = (index: number) => {
+  /* const supprimerChamp = (index: number) => {
     setMetadataList(metadataList.filter((_, i) => i !== index));
     if (selectedIndex === index) {
       setSelectedIndex(null);
     }
   };
+  */
 
   const modifierChamp = (index: number, metadata: MetadataIndicateurForm) => {
     const nouvelleListe = [...metadataList];
@@ -58,96 +60,71 @@ export const FormulaireParametrageSourceIndicateur = () => {
   );
 
   return (
-    <div className="fr-container">
-      <div className="fr-grid-row fr-grid-row--gutters">
-        <div className="fr-col-12">
-          <div className="flex justify-between align-center !mb-2">
-            <h2 className="fr-h2 fr-mb-0">Configuration des métadonnées</h2>
-            <div className="flex gap-2">
-              <button
-                className="fr-btn fr-btn--secondary"
-                onClick={ajouterChamp}
-                type="button"
-              >
-                Ajouter un champ
-              </button>
-              <button
-                className="fr-btn fr-btn--primary"
-                onClick={sauvegarder}
-                type="button"
-              >
-                Sauvegarder
-              </button>
-            </div>
-          </div>
+    <div className="flex flex-column">
+      <div className="flex justify-between align-center !mb-2">
+        <h2 className="fr-h2 fr-mb-0">Configuration des métadonnées</h2>
+        <div className="flex gap-2">
+          <button
+            className="fr-btn fr-btn--secondary"
+            onClick={ajouterChamp}
+            type="button"
+          >
+            Ajouter un champ
+          </button>
+          <button
+            className="fr-btn fr-btn--primary"
+            onClick={sauvegarder}
+            type="button"
+          >
+            Sauvegarder
+          </button>
         </div>
+      </div>
 
-        <div className="fr-col-4">
-          <div className="bg-white p-3 border rounded">
-            <input
-              className="fr-input fr-mb-2w"
-              onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Rechercher un champ..."
-              type="text"
-              value={searchTerm}
-            />
+      <div className="flex gap-2">
+        <div className="bg-white p-3 border rounded">
+          <input
+            className="fr-input fr-mb-2w"
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder="Rechercher un champ..."
+            type="text"
+            value={searchTerm}
+          />
 
-            <div style={{ maxHeight: "70vh", overflowY: "auto" }}>
-              {metadataFiltrees.map((metadata) => {
-                const originalIndex = metadataList.indexOf(metadata);
-                return (
-                  <div
-                    className={`p-2 fr-mb-1w border rounded cursor-pointer ${
-                      selectedIndex === originalIndex
-                        ? "bg-blue-100 border-blue-500"
-                        : "hover:bg-gray-100"
-                    }`}
-                    key={originalIndex}
+          <div className="flex flex-column gap-2">
+            {metadataFiltrees.map((metadata) => {
+              const originalIndex = metadataList.indexOf(metadata);
+              return (
+                <div className="border rounded" key={originalIndex}>
+                  <button
+                    className={clsxm(`flex w-full p-2 text-left`, {
+                      "!bg-blue-100 !border-blue-500":
+                        selectedIndex === originalIndex,
+                      "!hover:bg-gray-100": selectedIndex !== originalIndex,
+                    })}
                     onClick={() => setSelectedIndex(originalIndex)}
+                    type="button"
                   >
-                    <div className="flex justify-between align-center">
-                      <div>
-                        <div className="font-bold">
-                          {metadata.name || "(Sans nom)"}
-                        </div>
-                        <div className="fr-text--sm text-gray-600">
-                          {metadata.alias}
-                        </div>
-                      </div>
-                      <button
-                        className="fr-btn fr-btn--sm fr-btn--secondary"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          supprimerChamp(originalIndex);
-                        }}
-                        type="button"
-                      >
-                        ✕
-                      </button>
-                    </div>
-                    <div className="fr-text--xs text-gray-500 fr-mt-1w">
-                      Type: {metadata.editBoxType || "Aucun"}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
+                    <span className="w-[20ch] truncate bold">
+                      {metadata.name || "(Sans nom)"}
+                    </span>
+                  </button>
+                </div>
+              );
+            })}
           </div>
         </div>
 
-        <div className="fr-col-8">
-          {selectedIndex !== null && metadataList[selectedIndex] ? (
-            <MetadataFieldEditor
-              metadata={metadataList[selectedIndex]}
-              onChange={(metadata) => modifierChamp(selectedIndex, metadata)}
-              onClose={() => setSelectedIndex(null)}
-            />
-          ) : (
-            <div className="bg-white p-4 border rounded text-center text-gray-500">
-              Sélectionnez un champ pour l'éditer ou créez-en un nouveau
-            </div>
-          )}
-        </div>
+        {selectedIndex !== null && metadataList[selectedIndex] ? (
+          <MetadataFieldEditor
+            metadata={metadataList[selectedIndex]}
+            onChange={(metadata) => modifierChamp(selectedIndex, metadata)}
+          />
+        ) : (
+          <div className="bg-white p-4 border rounded text-center text-gray-500">
+            Sélectionnez un champ pour l'éditer ou créez-en un nouveau
+          </div>
+        )}
       </div>
     </div>
   );

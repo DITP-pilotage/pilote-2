@@ -6,7 +6,7 @@ import { FormulaireParametrageSourceIndicateur } from "@/components/PagePanelAdm
 import { pageParametrageSourceContext } from "@/components/PagePanelAdministrateur/ParametrageSourceIndicateur/PageParametrageSourceContext";
 import Habilitation from "@/server/gestion-utilisateur/domain/habilitation/Habilitation";
 import { getContainer } from "@/server/dependances";
-import NextPanelAdministrateurLayout from "./layout";
+import { NextPanelAdministrateurLayout } from "./layout";
 
 export const getServerSideProps = async ({
   req,

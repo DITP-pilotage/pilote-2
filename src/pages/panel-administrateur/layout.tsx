@@ -5,17 +5,15 @@ interface PanelAdministrateurLayoutProps extends PropsWithChildren {
   pageActive?: string;
 }
 
-const NextPanelAdministrateurLayout: FunctionComponent<
+export const NextPanelAdministrateurLayout: FunctionComponent<
   PanelAdministrateurLayoutProps
 > = ({ children, pageActive = "" }) => {
   return (
-    <div className="flex" style={{ minHeight: "100vh" }}>
+    <div className="flex min-vh-100">
       <MenuLateralPanelAdministrateur pageActive={pageActive} />
-      <main className="flex-grow" style={{ minWidth: 0 }}>
-        <div className="fr-mt-4w fr-mx-4w fr-mb-3w">{children}</div>
+      <main className="flex-grow min-w-0">
+        <div className="!mt-4 !mx-4 !mb-3">{children}</div>
       </main>
     </div>
   );
 };
-
-export default NextPanelAdministrateurLayout;
