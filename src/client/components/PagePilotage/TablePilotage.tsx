@@ -12,12 +12,7 @@ export const TablePilotage = () => {
           {table.getHeaderGroups().map((headerGroup) => (
             <tr key={headerGroup.id}>
               {headerGroup.headers.map((header) => {
-                const meta = header.column.columnDef.meta as
-                  | {
-                      sticky?: "left";
-                      stickyOffset?: number;
-                    }
-                  | undefined;
+                const meta = header.column.columnDef.meta;
 
                 return (
                   <th
@@ -26,6 +21,9 @@ export const TablePilotage = () => {
                       {
                         "shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]":
                           meta?.sticky === "left",
+                        "border-l border-gray-200":
+                          !meta?.isFirstInGroup && !meta?.sticky,
+                        "border-l-2 border-gray-300": meta?.isFirstInGroup,
                       },
                     )}
                     colSpan={header.colSpan}
@@ -60,12 +58,7 @@ export const TablePilotage = () => {
               key={row.id}
             >
               {row.getVisibleCells().map((cell) => {
-                const meta = cell.column.columnDef.meta as
-                  | {
-                      sticky?: "left";
-                      stickyOffset?: number;
-                    }
-                  | undefined;
+                const meta = cell.column.columnDef.meta;
 
                 return (
                   <td
@@ -74,6 +67,9 @@ export const TablePilotage = () => {
                       {
                         "shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]":
                           meta?.sticky === "left",
+                        "border-l-2 border-gray-300": meta?.isFirstInGroup,
+                        "border-l border-gray-200":
+                          !meta?.isFirstInGroup && !meta?.sticky,
                       },
                     )}
                     key={cell.id}

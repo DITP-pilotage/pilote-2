@@ -68,7 +68,7 @@ export const usePilotageTable = () => {
       }),
     ];
 
-    const critereColumns = criteres.map((critere) =>
+    const critereColumns = criteres.map((critere, index) =>
       columnHelper.group({
         id: `critere-${critere.id}`,
         header: () => (
@@ -79,7 +79,7 @@ export const usePilotageTable = () => {
             <div>{critere.libelle}</div>
           </div>
         ),
-        columns: ETAPES.map((etape) =>
+        columns: ETAPES.map((etape, etapeIndex) =>
           columnHelper.display({
             id: `critere-${critere.id}-${etape.key}`,
             header: etape.label,
@@ -90,23 +90,21 @@ export const usePilotageTable = () => {
                 ];
               return (
                 <div className="text-center">
-                  {note !== null && note !== undefined ? (
-                    <span className="inline-block px-2 py-1 bg-gray-100 rounded">
-                      {note}
-                    </span>
-                  ) : (
-                    <span className="text-gray-400">-</span>
-                  )}
+                  {note !== null && note !== undefined ? note : "-"}
                 </div>
               );
             },
             size: 100,
+            meta: {
+              isFirstInGroup: etapeIndex === 0,
+              isFirstGroup: index === 0,
+            },
           }),
         ),
       }),
     );
 
-    const objectifColumns = objectifs.map((objectif) =>
+    const objectifColumns = objectifs.map((objectif, index) =>
       columnHelper.group({
         id: `objectif-${objectif.id}`,
         header: () => (
@@ -117,7 +115,7 @@ export const usePilotageTable = () => {
             <div>{objectif.libelle}</div>
           </div>
         ),
-        columns: ETAPES.map((etape) =>
+        columns: ETAPES.map((etape, etapeIndex) =>
           columnHelper.display({
             id: `objectif-${objectif.id}-${etape.key}`,
             header: etape.label,
@@ -128,17 +126,15 @@ export const usePilotageTable = () => {
                 ];
               return (
                 <div className="text-center">
-                  {note !== null && note !== undefined ? (
-                    <span className="inline-block px-2 py-1 bg-gray-100 rounded">
-                      {note}
-                    </span>
-                  ) : (
-                    <span className="text-gray-400">-</span>
-                  )}
+                  {note !== null && note !== undefined ? note : "-"}
                 </div>
               );
             },
             size: 100,
+            meta: {
+              isFirstInGroup: etapeIndex === 0,
+              isFirstGroup: index === 0 && criteres.length === 0,
+            },
           }),
         ),
       }),

@@ -14,5 +14,7 @@ declare module "@tanstack/react-table" {
     };
     sticky?: "left";
     stickyOffset?: number;
+    isFirstInGroup?: boolean;
+    isFirstGroup?: boolean;
   }
 }
