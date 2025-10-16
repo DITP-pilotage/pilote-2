@@ -438,6 +438,12 @@ sources:
                     "name": "PCAET (CH-161)",
                     "desc": "Toutes zones sauf Lozère",
                   },
+                  {
+                    "order_id": 27,
+                    "value": "ZG-027",
+                    "name": "Toutes zones sauf Corse",
+                    "desc": "Tous départements et régions sauf Corse",
+                  }
                 ]
               pilote_create_mandatory: false
               pilote_create_defaultValue: ""
