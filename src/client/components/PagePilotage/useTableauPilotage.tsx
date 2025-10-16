@@ -14,7 +14,11 @@ type FicheEvaluationRow = {
   rattachementLibelle: string;
   etapeCourante: $Enums.etape_evaluation_enum;
   evaluationsParCritereEtEtape: Record<string, Record<string, number | null>>;
-  evaluationsParObjectifEtEtape: Record<string, Record<string, number | null>>;
+  objectifs: Array<{
+    id: string;
+    libelle: string;
+    evaluations: Record<string, number | null>;
+  }>;
 };
 
 const columnHelper = createColumnHelper<FicheEvaluationRow>();
@@ -54,7 +58,7 @@ const IndeterminateCheckbox = ({
 };
 
 export const useTableauPilotage = () => {
-  const { fichesEvaluation, criteres, objectifs } =
+  const { fichesEvaluation, criteres } =
     pagePilotage.useServerSidePropsContext().pilotage;
 
   const [rowSelection, setRowSelection] = useState<Record<string, boolean>>({});
@@ -66,7 +70,7 @@ export const useTableauPilotage = () => {
       rattachementLibelle: fiche.rattachement.libelle,
       etapeCourante: fiche.etapeCourante,
       evaluationsParCritereEtEtape: fiche.evaluationsParCritereEtEtape,
-      evaluationsParObjectifEtEtape: fiche.evaluationsParObjectifEtEtape,
+      objectifs: fiche.objectifs,
     }));
   }, [fichesEvaluation]);
 
@@ -177,26 +181,23 @@ export const useTableauPilotage = () => {
       }),
     );
 
-    const objectifColumns = objectifs.map((objectif) =>
+    const objectifColumns = Array.from({ length: 5 }, (_, objectifIndex) =>
       columnHelper.group({
-        id: `objectif-${objectif.id}`,
+        id: `objectif-${objectifIndex + 1}`,
         header: () => (
           <div className="text-xs font-medium flex flex-col items-center">
             <div className="bg-green-50 text-green-700 px-2 py-1 rounded mb-1 inline-block">
-              Objectif
+              Objectif {objectifIndex + 1}
             </div>
-            <div>{objectif.libelle}</div>
           </div>
         ),
         columns: ETAPES.map((etape, index) =>
           columnHelper.display({
-            id: `objectif-${objectif.id}-${etape.key}`,
+            id: `objectif-${objectifIndex + 1}-${etape.key}`,
             header: etape.label,
             cell: (info) => {
-              const note =
-                info.row.original.evaluationsParObjectifEtEtape[objectif.id]?.[
-                  etape.key
-                ];
+              const objectif = info.row.original.objectifs[objectifIndex];
+              const note = objectif?.evaluations[etape.key];
               return <div className="text-center">{note ?? "-"}</div>;
             },
             size: 100,
@@ -211,7 +212,7 @@ export const useTableauPilotage = () => {
     );
 
     return [...stickyColumns, ...critereColumns, ...objectifColumns];
-  }, [criteres, objectifs]);
+  }, [criteres]);
 
   const table = useReactTable({
     data,
