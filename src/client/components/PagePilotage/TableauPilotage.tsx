@@ -1,74 +1,19 @@
 import { flexRender } from "@tanstack/react-table";
-import { useMemo } from "react";
-import { $Enums } from "@prisma/client";
-import keyBy from "lodash.keyby";
 import { usePilotageTable } from "@/components/PagePilotage/usePilotageTable";
 import { clsxm } from "@/utils/clsxm";
-import { Bouton } from "@/components/_commons/Bouton/Bouton";
-import { pagePilotage } from "@/components/PagePilotage/PagePilotageServerSideContext";
-import { BadgeFicheEtape } from "@/components/_commons/BadgeFicheEtape/BadgeFicheEtape";
+import { LegendeTableauPilotage } from "@/components/PagePilotage/LegendeTableauPilotage";
+import { MenuActionTableauPilotage } from "@/components/PagePilotage/MenuActionTableauPilotage";
 
 export const TableauPilotage = () => {
-  const { table, rowSelection } = usePilotageTable();
-  const { pilotage } = pagePilotage.useServerSidePropsContext();
-  const fiches = useMemo(
-    () => keyBy(pilotage.fichesEvaluation, (fiche) => fiche.id),
-    [pilotage.fichesEvaluation],
-  );
-  const selectedIds = Object.keys(rowSelection);
-  const selectedCount = selectedIds.length;
-  const fichesSelectionnees = selectedIds.map((id) => fiches[id]);
-  const peutRetournerEnConsolidation =
-    fichesSelectionnees.every(
-      (fiche) =>
-        fiche.etapeCourante === $Enums.etape_evaluation_enum.CONTROLE_QUALITE,
-    ) && selectedCount > 0;
-  const peutPasserEnInstruction =
-    fichesSelectionnees.every(
-      (fiche) =>
-        fiche.etapeCourante === $Enums.etape_evaluation_enum.CONSOLIDATION,
-    ) && selectedCount > 0;
+  const { table, fichesSelectionneesIds } = usePilotageTable();
 
   return (
     <div className="space-y-4">
       <div className="flex justify-between">
-        <div className="flex items-center gap-4">
-          <span className="text-sm font-medium text-gray-700">Légende :</span>
-          <div className="flex items-center gap-2">
-            <BadgeFicheEtape
-              etape={$Enums.etape_evaluation_enum.AUTO_EVALUATION}
-            />
-            <span className="text-xs text-gray-600">Auto-évaluation</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <BadgeFicheEtape
-              etape={$Enums.etape_evaluation_enum.CONSOLIDATION}
-            />
-            <span className="text-xs text-gray-600">Consolidation</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <BadgeFicheEtape
-              etape={$Enums.etape_evaluation_enum.CONTROLE_QUALITE}
-            />
-            <span className="text-xs text-gray-600">Instruction</span>
-          </div>
-        </div>
-        <div className="flex items-center gap-4 px-3 py-2 rounded border border-gray-200">
-          <p className="!text-sm font-semibold !mb-0">
-            {selectedCount} ligne{selectedCount > 1 ? "s" : ""} sélectionné
-            {selectedCount > 1 ? "s" : ""}
-          </p>
-          <Bouton
-            disabled={!peutRetournerEnConsolidation}
-            label="Retour en consolidation"
-            variant="secondary"
-          />
-          <Bouton
-            disabled={!peutPasserEnInstruction}
-            label="Passer en instruction"
-            variant="secondary"
-          />
-        </div>
+        <LegendeTableauPilotage />
+        <MenuActionTableauPilotage
+          fichesSelectionneesIds={fichesSelectionneesIds}
+        />
       </div>
 
       <div className="overflow-auto border border-gray-200 rounded-lg max-h-[75vh]">

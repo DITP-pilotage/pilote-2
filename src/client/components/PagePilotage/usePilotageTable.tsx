@@ -57,7 +57,7 @@ export const usePilotageTable = () => {
   const { fichesEvaluation, criteres, objectifs } =
     pagePilotage.useServerSidePropsContext().pilotage;
 
-  const [rowSelection, setRowSelection] = useState({});
+  const [rowSelection, setRowSelection] = useState<Record<string, boolean>>({});
 
   const data = useMemo<FicheEvaluationRow[]>(() => {
     return fichesEvaluation.map((fiche) => ({
@@ -223,5 +223,5 @@ export const usePilotageTable = () => {
     getRowId: (row) => row.id,
   });
 
-  return { table, rowSelection };
+  return { table, fichesSelectionneesIds: Object.keys(rowSelection) };
 };
