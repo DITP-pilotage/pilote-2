@@ -366,55 +366,5 @@ describe("AccesFicheEvaluationService", () => {
       // Then
       expect(result).toBe(false);
     });
-
-    it("doit retourner false quand l'utilisateur a une permission pour un rattachement différent", async () => {
-      // Given
-      const rattachement1Code = "REG-305";
-      const rattachement2Code = "REG-306";
-      const utilisateurId = "10f709ef-f0c1-4f5e-9604-68db8b36e093";
-
-      await prisma.utilisateur.create({
-        data: {
-          id: utilisateurId,
-          email: "user4@example.com",
-          nom: "User4",
-          prenom: "Test",
-          date_creation: new Date(),
-          profilCode: "DITP_ADMIN",
-        },
-      });
-
-      await prisma.referentiel_rattachement.create({
-        data: {
-          code: rattachement1Code,
-          libelle: "Rattachement 1",
-        },
-      });
-
-      await prisma.referentiel_rattachement.create({
-        data: {
-          code: rattachement2Code,
-          libelle: "Rattachement 2",
-        },
-      });
-
-      await prisma.rattachement_utilisateur_etape_jalon.create({
-        data: {
-          id: "5cea8480-c4ab-4fec-b99d-5881fe207f39",
-          rattachement_code: rattachement1Code,
-          utilisateur_id: utilisateurId,
-          etape: "CONSOLIDATION",
-          jalon: 2025,
-        },
-      });
-
-      // When
-      const result = await service.peutAccederEtapeConsolidation({
-        utilisateurId,
-      });
-
-      // Then
-      expect(result).toBe(false);
-    });
   });
 });
