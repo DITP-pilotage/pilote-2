@@ -55,7 +55,7 @@ describe("AfficherConsolidationQuery", () => {
       const result = await query.run({ utilisateurId });
 
       // Then
-      expect(result).toEqual([]);
+      expect(result.rattachements).toEqual([]);
     });
 
     it("doit retourner plusieurs rattachements pour un utilisateur avec accès multi-territoire", async () => {
@@ -247,7 +247,7 @@ describe("AfficherConsolidationQuery", () => {
       const result = await query.run({ utilisateurId });
 
       // Then
-      expect(result).toEqual([
+      expect(result.rattachements).toEqual([
         {
           code: rattachement1Code,
           libelle: "Rattachement 1",
@@ -407,7 +407,7 @@ describe("AfficherConsolidationQuery", () => {
       const result = await query.run({ utilisateurId });
 
       // Then
-      expect(result).toEqual([]);
+      expect(result.rattachements).toEqual([]);
     });
 
     it("ne doit pas retourner les évaluations d'autres étapes", async () => {
@@ -518,7 +518,7 @@ describe("AfficherConsolidationQuery", () => {
       const result = await query.run({ utilisateurId });
 
       // Then
-      expect(result).toEqual([
+      expect(result.rattachements).toEqual([
         {
           code: rattachementCode,
           libelle: "Rattachement multi-étape",
@@ -624,7 +624,7 @@ describe("AfficherConsolidationQuery", () => {
       const result = await query.run({ utilisateurId });
 
       // Then
-      expect(result).toEqual([
+      expect(result.rattachements).toEqual([
         {
           code: rattachementCode,
           libelle: "Rattachement sans évaluations",
@@ -767,7 +767,7 @@ describe("AfficherConsolidationQuery", () => {
       const result = await query.run({ utilisateurId });
 
       // Then
-      expect(result).toEqual([
+      expect(result.rattachements).toEqual([
         {
           code: rattachementCode,
           libelle: "Rattachement avec critères mixtes",
@@ -893,7 +893,7 @@ describe("AfficherConsolidationQuery", () => {
       const result = await query.run({ utilisateurId });
 
       // Then
-      expect(result).toEqual([
+      expect(result.rattachements).toEqual([
         {
           code: rattachementCode,
           libelle: "Rattachement avec objectifs mixtes",
@@ -1082,7 +1082,7 @@ describe("AfficherConsolidationQuery", () => {
       const result = await query.run({ utilisateurId });
 
       // Then
-      expect(result).toEqual([
+      expect(result.rattachements).toEqual([
         {
           code: rattachementCode,
           libelle: "Rattachement avec auto-évaluation",
