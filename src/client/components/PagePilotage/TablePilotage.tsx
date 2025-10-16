@@ -1,27 +1,57 @@
 import { flexRender } from "@tanstack/react-table";
+import { useMemo } from "react";
+import { $Enums } from "@prisma/client";
+import keyBy from "lodash.keyby";
 import { usePilotageTable } from "@/components/PagePilotage/usePilotageTable";
 import { clsxm } from "@/utils/clsxm";
+import { Bouton } from "@/components/_commons/Bouton/Bouton";
+import { pagePilotage } from "@/components/PagePilotage/PagePilotageServerSideContext";
 
 export const TablePilotage = () => {
   const { table, rowSelection } = usePilotageTable();
-
+  const { pilotage } = pagePilotage.useServerSidePropsContext();
+  const fiches = useMemo(
+    () => keyBy(pilotage.fichesEvaluation, (fiche) => fiche.id),
+    [pilotage.fichesEvaluation],
+  );
   const selectedIds = Object.keys(rowSelection);
   const selectedCount = selectedIds.length;
+  const fichesSelectionnees = selectedIds.map((id) => fiches[id]);
+  const peutRetournerEnConsolidation =
+    fichesSelectionnees.every(
+      (fiche) =>
+        fiche.etapeCourante === $Enums.etape_evaluation_enum.CONTROLE_QUALITE,
+    ) && selectedCount > 0;
+  const peutPasserEnInstruction =
+    fichesSelectionnees.every(
+      (fiche) =>
+        fiche.etapeCourante === $Enums.etape_evaluation_enum.CONSOLIDATION,
+    ) && selectedCount > 0;
+
+  console.log(fichesSelectionnees);
 
   return (
-    <div>
-      {selectedCount > 0 && (
-        <div className="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-          <p className="font-semibold text-blue-900">
+    <div className="space-y-4">
+      <div className="flex justify-end">
+        <div className="flex items-center gap-4 px-3 py-2 rounded border border-gray-200">
+          <p className="!text-sm font-semibold !mb-0">
             {selectedCount} rattachement{selectedCount > 1 ? "s" : ""}{" "}
             sélectionné
             {selectedCount > 1 ? "s" : ""}
           </p>
-          <p className="text-sm text-blue-700 mt-1">
-            IDs: {selectedIds.join(", ")}
-          </p>
+          <Bouton
+            disabled={!peutRetournerEnConsolidation}
+            label="Retour en consolidation"
+            variant="secondary"
+          />
+          <Bouton
+            disabled={!peutPasserEnInstruction}
+            label="Passer en instruction"
+            variant="secondary"
+          />
         </div>
-      )}
+      </div>
+
       <div className="overflow-auto border border-gray-200 rounded-lg max-h-[75vh]">
         <table className="w-full border-collapse">
           <thead className="sticky top-0 z-10">
