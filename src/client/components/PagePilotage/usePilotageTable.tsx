@@ -122,7 +122,7 @@ export const usePilotageTable = () => {
         meta: {
           positioning: {
             sticky: "left",
-            stickyOffset: 117,
+            stickyOffset: 116,
           },
         },
       }),
@@ -138,7 +138,7 @@ export const usePilotageTable = () => {
         meta: {
           positioning: {
             sticky: "left",
-            stickyOffset: 217,
+            stickyOffset: 215,
           },
         },
       }),
