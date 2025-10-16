@@ -4,13 +4,15 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { useMemo, useState, useEffect, useRef } from "react";
+import { $Enums } from "@prisma/client";
 import { pagePilotage } from "@/components/PagePilotage/PagePilotageServerSideContext";
+import { BadgeFicheEtape } from "@/components/_commons/BadgeFicheEtape/BadgeFicheEtape";
 
 type FicheEvaluationRow = {
   id: string;
   rattachementCode: string;
   rattachementLibelle: string;
-  etapeCourante: string;
+  etapeCourante: $Enums.etape_evaluation_enum;
   evaluationsParCritereEtEtape: Record<string, Record<string, number | null>>;
   evaluationsParObjectifEtEtape: Record<string, Record<string, number | null>>;
 };
@@ -97,11 +99,7 @@ export const usePilotageTable = () => {
       columnHelper.accessor("etapeCourante", {
         id: "etape",
         header: "Étape",
-        cell: (info) => (
-          <span className="text-xs bg-blue-100 text-blue-600 px-2 py-1.5 rounded-md whitespace-nowrap">
-            {info.getValue()}
-          </span>
-        ),
+        cell: (info) => <BadgeFicheEtape etape={info.getValue()} />,
         size: 150,
         meta: {
           sticky: "left",
@@ -119,7 +117,7 @@ export const usePilotageTable = () => {
         size: 120,
         meta: {
           sticky: "left",
-          stickyOffset: 195,
+          stickyOffset: 117,
         },
       }),
       columnHelper.accessor("rattachementLibelle", {
@@ -133,7 +131,7 @@ export const usePilotageTable = () => {
         size: 250,
         meta: {
           sticky: "left",
-          stickyOffset: 315,
+          stickyOffset: 217,
         },
       }),
     ];
