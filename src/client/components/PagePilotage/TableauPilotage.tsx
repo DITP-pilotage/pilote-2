@@ -8,7 +8,7 @@ import { Bouton } from "@/components/_commons/Bouton/Bouton";
 import { pagePilotage } from "@/components/PagePilotage/PagePilotageServerSideContext";
 import { BadgeFicheEtape } from "@/components/_commons/BadgeFicheEtape/BadgeFicheEtape";
 
-export const TablePilotage = () => {
+export const TableauPilotage = () => {
   const { table, rowSelection } = usePilotageTable();
   const { pilotage } = pagePilotage.useServerSidePropsContext();
   const fiches = useMemo(
