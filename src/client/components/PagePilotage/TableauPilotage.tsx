@@ -1,11 +1,11 @@
 import { flexRender } from "@tanstack/react-table";
-import { usePilotageTable } from "@/components/PagePilotage/usePilotageTable";
+import { useTableauPilotage } from "@/components/PagePilotage/useTableauPilotage";
 import { clsxm } from "@/utils/clsxm";
 import { LegendeTableauPilotage } from "@/components/PagePilotage/LegendeTableauPilotage";
 import { MenuActionTableauPilotage } from "@/components/PagePilotage/MenuActionTableauPilotage";
 
 export const TableauPilotage = () => {
-  const { table, fichesSelectionneesIds } = usePilotageTable();
+  const { table, fichesSelectionneesIds } = useTableauPilotage();
 
   console.log(table.getHeaderGroups());
 

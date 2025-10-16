@@ -53,7 +53,7 @@ const IndeterminateCheckbox = ({
   );
 };
 
-export const usePilotageTable = () => {
+export const useTableauPilotage = () => {
   const { fichesEvaluation, criteres, objectifs } =
     pagePilotage.useServerSidePropsContext().pilotage;
 
