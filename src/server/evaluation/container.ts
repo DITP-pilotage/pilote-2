@@ -6,11 +6,13 @@ import { AccesFicheEvaluationService } from "@/server/evaluation/services/AccesF
 import { SoumettreAutoEvaluationHandler } from "@/server/evaluation/handlers/SoumettreAutoEvaluationHandler";
 import { AfficherConsolidationQuery } from "@/server/evaluation/queries/AfficherConsolidationQuery";
 import { EnregistrerBrouillonConsolidationHandler } from "@/server/evaluation/handlers/EnregistrerBrouillonConsolidationHandler";
+import { AfficherPilotageQuery } from "@/server/evaluation/queries/AfficherPilotageQuery";
 import { EnregistrerBrouillonAutoEvaluationHandler } from "./handlers/EnregistrerBrouillonAutoEvaluationHandler";
 
 export type PiloteEvalDependencies = {
   afficherAutoEvaluation: AfficherAutoEvaluationQuery;
   afficherConsolidationQuery: AfficherConsolidationQuery;
+  afficherPilotageQuery: AfficherPilotageQuery;
   listerFichesAutoEvaluation: ListerFichesAutoEvaluationQuery;
   enregistrerBrouillonAutoEvaluation: EnregistrerBrouillonAutoEvaluationHandler;
   enregistrerBrouillonConsolidationHandler: EnregistrerBrouillonConsolidationHandler;
@@ -24,6 +26,7 @@ export const getPiloteEvalContainer = (
   return initialContainer.createScope<PiloteEvalDependencies>().register({
     afficherAutoEvaluation: asClass(AfficherAutoEvaluationQuery),
     afficherConsolidationQuery: asClass(AfficherConsolidationQuery),
+    afficherPilotageQuery: asClass(AfficherPilotageQuery),
     listerFichesAutoEvaluation: asClass(ListerFichesAutoEvaluationQuery),
     enregistrerBrouillonAutoEvaluation: asClass(
       EnregistrerBrouillonAutoEvaluationHandler,
