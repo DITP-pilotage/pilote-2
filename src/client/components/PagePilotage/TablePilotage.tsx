@@ -6,6 +6,7 @@ import { usePilotageTable } from "@/components/PagePilotage/usePilotageTable";
 import { clsxm } from "@/utils/clsxm";
 import { Bouton } from "@/components/_commons/Bouton/Bouton";
 import { pagePilotage } from "@/components/PagePilotage/PagePilotageServerSideContext";
+import { BadgeFicheEtape } from "@/components/_commons/BadgeFicheEtape/BadgeFicheEtape";
 
 export const TablePilotage = () => {
   const { table, rowSelection } = usePilotageTable();
@@ -30,7 +31,28 @@ export const TablePilotage = () => {
 
   return (
     <div className="space-y-4">
-      <div className="flex justify-end">
+      <div className="flex justify-between">
+        <div className="flex items-center gap-4">
+          <span className="text-sm font-medium text-gray-700">Légende :</span>
+          <div className="flex items-center gap-2">
+            <BadgeFicheEtape
+              etape={$Enums.etape_evaluation_enum.AUTO_EVALUATION}
+            />
+            <span className="text-xs text-gray-600">Auto-évaluation</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <BadgeFicheEtape
+              etape={$Enums.etape_evaluation_enum.CONSOLIDATION}
+            />
+            <span className="text-xs text-gray-600">Consolidation</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <BadgeFicheEtape
+              etape={$Enums.etape_evaluation_enum.CONTROLE_QUALITE}
+            />
+            <span className="text-xs text-gray-600">Instruction</span>
+          </div>
+        </div>
         <div className="flex items-center gap-4 px-3 py-2 rounded border border-gray-200">
           <p className="!text-sm font-semibold !mb-0">
             {selectedCount} ligne{selectedCount > 1 ? "s" : ""} sélectionné
