@@ -3,7 +3,7 @@ import {
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { useMemo } from "react";
+import { useMemo, useState, useEffect, useRef } from "react";
 import { pagePilotage } from "@/components/PagePilotage/PagePilotageServerSideContext";
 
 type FicheEvaluationRow = {
@@ -22,9 +22,39 @@ const ETAPES = [
   { key: "CONTROLE_QUALITE", label: "Instruction" },
 ] as const;
 
+const IndeterminateCheckbox = ({
+  checked,
+  indeterminate,
+  onChange,
+}: {
+  checked: boolean;
+  indeterminate: boolean;
+  onChange: (event: unknown) => void;
+}) => {
+  const ref = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (ref.current) {
+      ref.current.indeterminate = indeterminate;
+    }
+  }, [indeterminate]);
+
+  return (
+    <input
+      checked={checked}
+      className="cursor-pointer"
+      onChange={onChange}
+      ref={ref}
+      type="checkbox"
+    />
+  );
+};
+
 export const usePilotageTable = () => {
   const { fichesEvaluation, criteres, objectifs } =
     pagePilotage.useServerSidePropsContext().pilotage;
+
+  const [rowSelection, setRowSelection] = useState({});
 
   const data = useMemo<FicheEvaluationRow[]>(() => {
     return fichesEvaluation.map((fiche) => ({
@@ -38,6 +68,30 @@ export const usePilotageTable = () => {
 
   const columns = useMemo(() => {
     const stickyColumns = [
+      columnHelper.display({
+        id: "select",
+        header: ({ table }) => (
+          <IndeterminateCheckbox
+            checked={table.getIsAllRowsSelected()}
+            indeterminate={table.getIsSomeRowsSelected()}
+            onChange={table.getToggleAllRowsSelectedHandler()}
+          />
+        ),
+        cell: ({ row }) => (
+          <input
+            checked={row.getIsSelected()}
+            className="cursor-pointer"
+            disabled={!row.getCanSelect()}
+            onChange={row.getToggleSelectedHandler()}
+            type="checkbox"
+          />
+        ),
+        size: 50,
+        meta: {
+          sticky: "left",
+          stickyOffset: 0,
+        },
+      }),
       columnHelper.accessor("rattachementCode", {
         id: "code",
         header: "Code",
@@ -49,7 +103,7 @@ export const usePilotageTable = () => {
         size: 120,
         meta: {
           sticky: "left",
-          stickyOffset: 0,
+          stickyOffset: 45,
         },
       }),
       columnHelper.accessor("rattachementLibelle", {
@@ -63,7 +117,7 @@ export const usePilotageTable = () => {
         size: 250,
         meta: {
           sticky: "left",
-          stickyOffset: 92,
+          stickyOffset: 145,
         },
       }),
     ];
@@ -147,7 +201,13 @@ export const usePilotageTable = () => {
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
+    state: {
+      rowSelection,
+    },
+    enableRowSelection: true,
+    onRowSelectionChange: setRowSelection,
+    getRowId: (row) => row.id,
   });
 
-  return { table };
+  return { table, rowSelection };
 };
