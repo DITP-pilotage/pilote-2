@@ -18,6 +18,7 @@ import { zodValidateurCSRF } from "@/validation/publication";
 import { MetadataParametrageIndicateurForm } from "@/server/parametrage-indicateur/domain/MetadataParametrageIndicateurInputForm";
 import { getContainer } from "@/server/dependances";
 import { defaultHistoriqueInformation } from "@/server/parametrage-indicateur/domain/DefaultHistoriqueInformation";
+import { enregistrerMetadataIndicateurCommandSchema } from "@/server/parametrage-indicateur/handlers/EnregistrerMetadataIndicateurHandler";
 
 const convertirEnMetadataParametrageIndicateurForm = (
   input: z.infer<typeof validationMetadataIndicateurFormulaire>,
@@ -239,5 +240,17 @@ export const metadataIndicateurRouter = créerRouteurTRPC({
           ctx.session.user.id as string,
           convertirEnMetadataParametrageIndicateurForm(input),
         );
+    }),
+  enregistrerMetadataIndicateur: procédureProtégée
+    .input(enregistrerMetadataIndicateurCommandSchema)
+    .mutation(async ({ input, ctx }) => {
+      const habilitations = await getContainer("gestionUtilisateur")
+        .resolve("habilitationService")
+        .recupererHabilitations(ctx.session);
+      habilitations.verifierAutorisationModificationMetadataIndicateur();
+
+      await getContainer("parametrageIndicateur")
+        .resolve("enregistrerMetadataIndicateurHandler")
+        .execute(input);
     }),
 });

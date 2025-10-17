@@ -21,7 +21,10 @@ export interface MetadataIndicateur {
   estObligatoire: boolean;
   doitAfficherLaDescription: boolean;
   listeValeursAcceptes: ValeurAcceptee[];
-  groupe: string;
+  groupe:
+    | "METADATA_INDICATEURS"
+    | "METADATA_PARAMETRAGE_INDICATEURS"
+    | "METADATA_INDICATEURS_COMPLEMENTAIRE";
   blocId: number | null;
 }
 
@@ -86,7 +89,10 @@ export class GetMetadataIndicateurConfigurationQuery {
           nom: valeur.nom,
           description: valeur.description,
         })),
-        groupe: metadata.groupe,
+        groupe: metadata.groupe as
+          | "METADATA_INDICATEURS"
+          | "METADATA_PARAMETRAGE_INDICATEURS"
+          | "METADATA_INDICATEURS_COMPLEMENTAIRE",
         blocId: metadata.bloc_id,
       })),
     };

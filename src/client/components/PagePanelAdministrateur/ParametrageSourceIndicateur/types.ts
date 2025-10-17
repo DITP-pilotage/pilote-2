@@ -19,4 +19,9 @@ export interface MetadataIndicateurForm {
   estObligatoire: boolean;
   doitAfficherLaDescription: boolean;
   listeValeursAcceptes: ValeurAccepte[];
+  groupe:
+    | "METADATA_INDICATEURS"
+    | "METADATA_PARAMETRAGE_INDICATEURS"
+    | "METADATA_INDICATEURS_COMPLEMENTAIRE";
+  blocId: number | null;
 }

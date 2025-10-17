@@ -6,6 +6,7 @@ import { clsxm } from "@/utils/clsxm";
 import { MetadataIndicateurForm } from "./types";
 import { MetadataFieldEditor } from "./MetadataFieldEditor";
 import { formSchema, FormValues } from "./form";
+import { BoutonEnregistrerMetadataIndicateur } from "./BoutonEnregistrerMetadataIndicateur";
 
 export const FormulaireParametrageSourceIndicateur = () => {
   const { listeMetadonneesIndicateur } =
@@ -42,14 +43,12 @@ export const FormulaireParametrageSourceIndicateur = () => {
       estObligatoire: false,
       doitAfficherLaDescription: false,
       listeValeursAcceptes: [],
+      groupe: "METADATA_INDICATEURS",
+      blocId: null,
     };
     append(nouveauChamp);
     setSelectedIndex(metadataFields.length);
   };
-
-  const sauvegarder = form.handleSubmit((data) => {
-    console.log("Données du formulaire :", data);
-  });
 
   const metadataValues = form.watch("metadataList");
   const metadataFiltrees = metadataFields.filter((_, index) => {
@@ -73,13 +72,7 @@ export const FormulaireParametrageSourceIndicateur = () => {
             >
               Ajouter un champ
             </button>
-            <button
-              className="fr-btn fr-btn--primary"
-              onClick={sauvegarder}
-              type="button"
-            >
-              Sauvegarder
-            </button>
+            <BoutonEnregistrerMetadataIndicateur />
           </div>
         </div>
 

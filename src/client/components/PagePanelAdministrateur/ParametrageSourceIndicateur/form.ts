@@ -24,6 +24,12 @@ const metadataIndicateurSchema = z.object({
   estObligatoire: z.boolean(),
   doitAfficherLaDescription: z.boolean(),
   listeValeursAcceptes: z.array(valeurAccepteSchema),
+  groupe: z.enum([
+    "METADATA_INDICATEURS",
+    "METADATA_PARAMETRAGE_INDICATEURS",
+    "METADATA_INDICATEURS_COMPLEMENTAIRE",
+  ]),
+  blocId: z.number().nullable(),
 });
 
 export const formSchema = z.object({

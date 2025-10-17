@@ -17,6 +17,7 @@ import { PrismaMetadataParametrageIndicateurRepository } from "@/server/parametr
 import { PrismaMetadataParametrageIndicateurQuery } from "@/server/parametrage-indicateur/infrastructure/queries/PrismaMetadataParametrageIndicateurQuery";
 import { GetMetadataIndicateurConfigurationQuery } from "@/server/parametrage-indicateur/queries/GetMetadataIndicateurConfigurationQuery";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
+import { EnregistrerMetadataIndicateurHandler } from "@/server/parametrage-indicateur/handlers/EnregistrerMetadataIndicateurHandler";
 
 export type ParametrageIndicateurDependencies = {
   informationMetadataIndicateurRepository: InformationMetadataIndicateurRepository;
@@ -33,6 +34,7 @@ export type ParametrageIndicateurDependencies = {
   metadataParametrageIndicateurRepository: MetadataParametrageIndicateurRepository;
   metadataParametrageIndicateurQuery: PrismaMetadataParametrageIndicateurQuery;
   getMetadataIndicateurConfigurationQuery: GetMetadataIndicateurConfigurationQuery;
+  enregistrerMetadataIndicateurHandler: EnregistrerMetadataIndicateurHandler;
 };
 
 export const getParametrageIndicateurContainer = (
@@ -82,6 +84,9 @@ export const getParametrageIndicateurContainer = (
       ),
       getMetadataIndicateurConfigurationQuery: asClass(
         GetMetadataIndicateurConfigurationQuery,
+      ),
+      enregistrerMetadataIndicateurHandler: asClass(
+        EnregistrerMetadataIndicateurHandler,
       ),
     });
 };
