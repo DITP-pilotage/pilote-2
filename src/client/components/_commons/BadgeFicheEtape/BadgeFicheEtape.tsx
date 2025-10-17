@@ -1,51 +1,60 @@
 import { $Enums } from "@prisma/client";
 
-type BadgeFicheEtapeProps = {
-  etape: $Enums.etape_evaluation_enum;
-};
-
 const ETAPE_CONFIG: Record<
   $Enums.etape_evaluation_enum,
-  { label: string; colorClasses: string }
+  { labelPetit: string; label: string; colorClasses: string }
 > = {
   AUTO_EVALUATION: {
-    label: "AE",
+    labelPetit: "AE",
+    label: "Auto-évaluation",
     colorClasses: "bg-yellow-100 text-yellow-700",
   },
   CONSOLIDATION: {
-    label: "C",
+    labelPetit: "C",
+    label: "Consolidation",
     colorClasses: "bg-blue-100 text-blue-600",
   },
   CONTROLE_QUALITE: {
-    label: "I",
+    labelPetit: "I",
+    label: "Instruction",
     colorClasses: "bg-green-100 text-green-700",
   },
   AJUSTEMENTS: {
-    label: "A",
+    labelPetit: "A",
+    label: "Ajustement",
     colorClasses: "bg-orange-100 text-orange-700",
   },
   CONTRE_PROPOSITION: {
-    label: "C",
+    labelPetit: "C",
+    label: "Contre proposition",
     colorClasses: "bg-purple-100 text-purple-700",
   },
   CONTROLE_QUALITE_BIS: {
-    label: "I",
+    labelPetit: "I",
+    label: "Instruction bis",
     colorClasses: "bg-green-100 text-green-700",
   },
   AJUSTEMENTS_BIS: {
-    label: "A",
+    labelPetit: "A",
+    label: "Ajustement bis",
     colorClasses: "bg-orange-100 text-orange-700",
   },
 };
 
-export const BadgeFicheEtape = ({ etape }: BadgeFicheEtapeProps) => {
+export const BadgeFicheEtape = ({
+  etape,
+  taille = "petit",
+}: {
+  etape: $Enums.etape_evaluation_enum;
+  taille?: "petit" | "grand";
+}) => {
   const config = ETAPE_CONFIG[etape];
 
   return (
     <span
       className={`text-xs px-2 py-1.5 rounded-md whitespace-nowrap ${config.colorClasses}`}
     >
-      {config.label}
+      {taille === "petit" ? config.labelPetit : config.label}
     </span>
   );
 };

@@ -63,7 +63,10 @@ const EvaluationPage = (
                   >
                     {ficheEvaluation.rattachement.libelle}
 
-                    <BadgeFicheEtape etape={ficheEvaluation.etapeCourante} />
+                    <BadgeFicheEtape
+                      etape={ficheEvaluation.etapeCourante}
+                      taille="grand"
+                    />
                   </a>
                 </li>
               ))}
