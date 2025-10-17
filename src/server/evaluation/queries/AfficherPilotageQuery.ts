@@ -1,3 +1,4 @@
+import { $Enums } from "@prisma/client";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 
 export class AfficherPilotageQuery {
