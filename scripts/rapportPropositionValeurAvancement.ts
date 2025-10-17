@@ -1,9 +1,9 @@
 import { loadEnvConfig } from "@next/env";
 import process from "node:process";
 import logger from "@/server/infrastructure/Logger";
+import { envoieMessageTchap } from "@/server/utils/notification-tchap";
 import { getInitialContainer } from "@/server/initial-container";
 import { getChantiersContainer } from "@/server/chantiers/container";
-import { envoieMessageTchap } from "@/server/utils/notification-tchap";
 
 const projectDir = process.cwd();
 loadEnvConfig(projectDir);
