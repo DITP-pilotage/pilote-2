@@ -12,9 +12,10 @@ declare module "@tanstack/react-table" {
     grouping?: {
       label: string;
     };
-    sticky?: "left";
-    stickyOffset?: number;
-    isFirstInGroup?: boolean;
-    isFirstGroup?: boolean;
+    positioning?: {
+      sticky?: "left";
+      stickyOffset?: number;
+      lastInGroup?: boolean;
+    };
   }
 }

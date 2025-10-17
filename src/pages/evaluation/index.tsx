@@ -7,6 +7,7 @@ import { getContainer } from "@/server/dependances";
 import { configurationFeatureFlip } from "@/config";
 import { authOptions } from "@/server/infrastructure/api/auth/[...nextauth]";
 import { ApplicationAccessible } from "@/server/domain/utilisateur/Utilisateur.interface";
+import { BadgeFicheEtape } from "@/components/_commons/BadgeFicheEtape/BadgeFicheEtape";
 
 export const getServerSideProps = async ({
   req,
@@ -62,9 +63,10 @@ const EvaluationPage = (
                   >
                     {ficheEvaluation.rattachement.libelle}
 
-                    <span className="text-xs bg-blue-100 text-blue-600 px-2 py-1.5 rounded-md">
-                      {ficheEvaluation.etapeCourante}
-                    </span>
+                    <BadgeFicheEtape
+                      etape={ficheEvaluation.etapeCourante}
+                      taille="grand"
+                    />
                   </a>
                 </li>
               ))}

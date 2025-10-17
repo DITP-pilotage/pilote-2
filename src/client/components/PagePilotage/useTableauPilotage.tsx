@@ -1,0 +1,230 @@
+import {
+  createColumnHelper,
+  getCoreRowModel,
+  useReactTable,
+} from "@tanstack/react-table";
+import { useMemo, useState, useEffect, useRef } from "react";
+import { $Enums } from "@prisma/client";
+import { pagePilotage } from "@/components/PagePilotage/PagePilotageServerSideContext";
+import { BadgeFicheEtape } from "@/components/_commons/BadgeFicheEtape/BadgeFicheEtape";
+
+type FicheEvaluationRow = {
+  id: string;
+  rattachementCode: string;
+  rattachementLibelle: string;
+  etapeCourante: $Enums.etape_evaluation_enum;
+  evaluationsParCritereEtEtape: Record<string, Record<string, number | null>>;
+  objectifs: Array<{
+    id: string;
+    libelle: string;
+    evaluations: Record<string, number | null>;
+  }>;
+};
+
+const columnHelper = createColumnHelper<FicheEvaluationRow>();
+
+const ETAPES = [
+  { key: "AUTO_EVALUATION", label: "Auto-évaluation" },
+  { key: "CONSOLIDATION", label: "Consolidation" },
+  { key: "CONTROLE_QUALITE", label: "Instruction" },
+] as const;
+
+const IndeterminateCheckbox = ({
+  checked,
+  indeterminate,
+  onChange,
+}: {
+  checked: boolean;
+  indeterminate: boolean;
+  onChange: (event: unknown) => void;
+}) => {
+  const ref = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (ref.current) {
+      ref.current.indeterminate = indeterminate;
+    }
+  }, [indeterminate]);
+
+  return (
+    <input
+      checked={checked}
+      className="cursor-pointer"
+      onChange={onChange}
+      ref={ref}
+      type="checkbox"
+    />
+  );
+};
+
+export const useTableauPilotage = () => {
+  const { fichesEvaluation, criteres } =
+    pagePilotage.useServerSidePropsContext().pilotage;
+
+  const [rowSelection, setRowSelection] = useState<Record<string, boolean>>({});
+
+  const data = useMemo<FicheEvaluationRow[]>(() => {
+    return fichesEvaluation.map((fiche) => ({
+      id: fiche.id,
+      rattachementCode: fiche.rattachement.code,
+      rattachementLibelle: fiche.rattachement.libelle,
+      etapeCourante: fiche.etapeCourante,
+      evaluationsParCritereEtEtape: fiche.evaluationsParCritereEtEtape,
+      objectifs: fiche.objectifs,
+    }));
+  }, [fichesEvaluation]);
+
+  const columns = useMemo(() => {
+    const stickyColumns = [
+      columnHelper.display({
+        id: "select",
+        header: ({ table }) => (
+          <IndeterminateCheckbox
+            checked={table.getIsAllRowsSelected()}
+            indeterminate={table.getIsSomeRowsSelected()}
+            onChange={table.getToggleAllRowsSelectedHandler()}
+          />
+        ),
+        cell: ({ row }) => (
+          <input
+            checked={row.getIsSelected()}
+            className="cursor-pointer"
+            disabled={!row.getCanSelect()}
+            onChange={row.getToggleSelectedHandler()}
+            type="checkbox"
+          />
+        ),
+        size: 45,
+        meta: {
+          positioning: {
+            sticky: "left",
+            stickyOffset: 0,
+          },
+        },
+      }),
+      columnHelper.accessor("etapeCourante", {
+        id: "etape",
+        header: "Étape",
+        cell: (info) => <BadgeFicheEtape etape={info.getValue()} />,
+        size: 150,
+        meta: {
+          positioning: {
+            sticky: "left",
+            stickyOffset: 45,
+          },
+        },
+      }),
+      columnHelper.accessor("rattachementCode", {
+        id: "code",
+        header: "Code",
+        cell: (info) => (
+          <div className="font-mono text-sm whitespace-nowrap">
+            {info.getValue()}
+          </div>
+        ),
+        size: 120,
+        meta: {
+          positioning: {
+            sticky: "left",
+            stickyOffset: 116,
+          },
+        },
+      }),
+      columnHelper.accessor("rattachementLibelle", {
+        id: "libelle",
+        header: "Territoire",
+        cell: (info) => (
+          <div className="font-semibold whitespace-nowrap">
+            {info.getValue()}
+          </div>
+        ),
+        size: 250,
+        meta: {
+          positioning: {
+            sticky: "left",
+            stickyOffset: 207,
+          },
+        },
+      }),
+    ];
+
+    const critereColumns = criteres.map((critere) =>
+      columnHelper.group({
+        id: `critere-${critere.id}`,
+        header: () => (
+          <div className="text-xs font-medium flex flex-col items-center">
+            <div className="bg-blue-50 text-blue-700 px-2 py-1 rounded mb-1 inline-block">
+              Critère
+            </div>
+            <div>{critere.libelle}</div>
+          </div>
+        ),
+        columns: ETAPES.map((etape, index) =>
+          columnHelper.display({
+            id: `critere-${critere.id}-${etape.key}`,
+            header: etape.label,
+            cell: (info) => {
+              const note =
+                info.row.original.evaluationsParCritereEtEtape[critere.id]?.[
+                  etape.key
+                ];
+              return <div className="text-center">{note ?? "-"}</div>;
+            },
+            size: 100,
+            meta: {
+              positioning: {
+                lastInGroup: index === ETAPES.length - 1,
+              },
+            },
+          }),
+        ),
+      }),
+    );
+
+    const objectifColumns = Array.from({ length: 5 }, (_, objectifIndex) =>
+      columnHelper.group({
+        id: `objectif-${objectifIndex + 1}`,
+        header: () => (
+          <div className="text-xs font-medium flex flex-col items-center">
+            <div className="bg-green-50 text-green-700 px-2 py-1 rounded mb-1 inline-block">
+              Objectif {objectifIndex + 1}
+            </div>
+          </div>
+        ),
+        columns: ETAPES.map((etape, index) =>
+          columnHelper.display({
+            id: `objectif-${objectifIndex + 1}-${etape.key}`,
+            header: etape.label,
+            cell: (info) => {
+              const objectif = info.row.original.objectifs[objectifIndex];
+              const note = objectif?.evaluations[etape.key];
+              return <div className="text-center">{note ?? "-"}</div>;
+            },
+            size: 100,
+            meta: {
+              positioning: {
+                lastInGroup: index === ETAPES.length - 1,
+              },
+            },
+          }),
+        ),
+      }),
+    );
+
+    return [...stickyColumns, ...critereColumns, ...objectifColumns];
+  }, [criteres]);
+
+  const table = useReactTable({
+    data,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+    state: {
+      rowSelection,
+    },
+    enableRowSelection: true,
+    onRowSelectionChange: setRowSelection,
+    getRowId: (row) => row.id,
+  });
+
+  return { table, fichesSelectionneesIds: Object.keys(rowSelection) };
+};

@@ -5,21 +5,15 @@ export class AfficherPilotageQuery {
   constructor(private readonly dependencies: { prisma: PrismaPilote }) {}
 
   async run() {
-    const [fichesEvaluation, criteres, objectifs] = await Promise.all([
+    const [fichesEvaluation, criteres] = await Promise.all([
       this.fetchFichesEvaluation(),
       this.fetchCriteres(),
-      this.fetchObjectifs(),
     ]);
 
     return {
       criteres: criteres.map((critere) => ({
         id: critere.id,
         libelle: critere.libelle,
-      })),
-      objectifs: objectifs.map((objectif) => ({
-        id: objectif.id,
-        libelle: objectif.libelle,
-        rattachementCode: objectif.rattachement_code,
       })),
       fichesEvaluation: fichesEvaluation.map((fiche) => {
         const rattachement = fiche.rattachement;
@@ -30,11 +24,23 @@ export class AfficherPilotageQuery {
           "critere",
         );
 
-        const evaluationsParObjectifEtEtape = this.buildEvaluationsMap(
-          fiche.etape_evaluations,
-          rattachement.objectifs.map((o) => o.id),
-          "objectif",
-        );
+        const objectifs = rattachement.objectifs.map((objectif) => {
+          const evaluationsParEtape = this.buildEvaluationsMap(
+            fiche.etape_evaluations,
+            [objectif.id],
+            "objectif",
+          );
+
+          return {
+            id: objectif.id,
+            libelle: objectif.libelle,
+            evaluations: evaluationsParEtape[objectif.id] || {
+              AUTO_EVALUATION: null,
+              CONSOLIDATION: null,
+              CONTROLE_QUALITE: null,
+            },
+          };
+        });
 
         return {
           id: fiche.id,
@@ -45,7 +51,7 @@ export class AfficherPilotageQuery {
             libelle: rattachement.libelle,
           },
           evaluationsParCritereEtEtape,
-          evaluationsParObjectifEtEtape,
+          objectifs,
         };
       }),
     };
@@ -87,14 +93,6 @@ export class AfficherPilotageQuery {
     return this.dependencies.prisma.getInstance().referentiel_critere.findMany({
       orderBy: { libelle: "asc" },
     });
-  }
-
-  private fetchObjectifs() {
-    return this.dependencies.prisma
-      .getInstance()
-      .referentiel_objectif.findMany({
-        orderBy: { libelle: "asc" },
-      });
   }
 
   private buildEvaluationsMap(
