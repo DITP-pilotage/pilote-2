@@ -7,8 +7,6 @@ import { MenuActionTableauPilotage } from "@/components/PagePilotage/MenuActionT
 export const TableauPilotage = () => {
   const { table, fichesSelectionneesIds } = useTableauPilotage();
 
-  console.log(table.getHeaderGroups());
-
   return (
     <div className="space-y-4">
       <div className="flex justify-between">

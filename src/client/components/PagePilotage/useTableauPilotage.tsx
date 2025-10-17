@@ -142,7 +142,7 @@ export const useTableauPilotage = () => {
         meta: {
           positioning: {
             sticky: "left",
-            stickyOffset: 215,
+            stickyOffset: 207,
           },
         },
       }),
