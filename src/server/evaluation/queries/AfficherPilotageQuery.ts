@@ -37,7 +37,7 @@ export class AfficherPilotageQuery {
             evaluations: evaluationsParEtape[objectif.id] || {
               AUTO_EVALUATION: null,
               CONSOLIDATION: null,
-              CONTROLE_QUALITE: null,
+              INSTRUCTION: null,
             },
           };
         });
@@ -115,14 +115,17 @@ export class AfficherPilotageQuery {
     }>,
     ids: string[],
     type: "critere" | "objectif",
-  ): Record<string, Record<string, number | null>> {
-    const map: Record<string, Record<string, number | null>> = {};
+  ): Record<string, Record<$Enums.etape_evaluation_enum, number | null>> {
+    const map: Record<
+      string,
+      Record<$Enums.etape_evaluation_enum, number | null>
+    > = {};
 
     ids.forEach((id) => {
       map[id] = {
         AUTO_EVALUATION: null,
         CONSOLIDATION: null,
-        CONTROLE_QUALITE: null,
+        INSTRUCTION: null,
       };
     });
 

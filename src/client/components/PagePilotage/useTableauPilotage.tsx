@@ -27,11 +27,11 @@ type FicheEvaluationRow = {
 
 const columnHelper = createColumnHelper<FicheEvaluationRow>();
 
-const ETAPES = [
+const ETAPES: { key: $Enums.etape_evaluation_enum; label: string }[] = [
   { key: "AUTO_EVALUATION", label: "Auto-évaluation" },
   { key: "CONSOLIDATION", label: "Consolidation" },
-  { key: "CONTROLE_QUALITE", label: "Instruction" },
-] as const;
+  { key: "INSTRUCTION", label: "Instruction" },
+];
 
 const IndeterminateCheckbox = ({
   checked,
