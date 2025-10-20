@@ -2,8 +2,8 @@ import { useMemo } from "react";
 import keyBy from "lodash.keyby";
 import { $Enums } from "@prisma/client";
 import { pagePilotage } from "@/components/PagePilotage/PagePilotageServerSideContext";
-import { Bouton } from "@/components/_commons/Bouton/Bouton";
 import { BoutonDebloquerLaConsolidation } from "@/components/PagePilotage/BoutonDebloquerLaConsolidation";
+import { BoutonPasserEnInstruction } from "@/components/PagePilotage/BoutonPasserEnInstruction";
 
 export const MenuActionTableauPilotage = ({
   fichesSelectionneesIds,
@@ -36,10 +36,9 @@ export const MenuActionTableauPilotage = ({
         disabled={!peutModifierLEtapeViaPilotage}
         fichesSelectionneesIds={fichesSelectionneesIds}
       />
-      <Bouton
+      <BoutonPasserEnInstruction
         disabled={!peutModifierLEtapeViaPilotage}
-        label="Passer en instruction"
-        variant="secondary"
+        fichesSelectionneesIds={fichesSelectionneesIds}
       />
     </div>
   );
