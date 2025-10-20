@@ -22,10 +22,7 @@ export const MenuActionTableauPilotage = ({
     fichesSelectionnees.every((fiche) => fiche.etapeCourante === etape) &&
     selectedCount > 0;
 
-  const peutRetournerEnConsolidation = toutesFichesEnEtape(
-    $Enums.etape_evaluation_enum.CONSOLIDATION,
-  );
-  const peutPasserEnInstruction = toutesFichesEnEtape(
+  const peutModifierLEtapeViaPilotage = toutesFichesEnEtape(
     $Enums.etape_evaluation_enum.CONSOLIDATION,
   );
 
@@ -36,11 +33,11 @@ export const MenuActionTableauPilotage = ({
         {selectedCount > 1 ? "s" : ""}
       </p>
       <BoutonRetourEnConsolidation
-        disabled={!peutRetournerEnConsolidation}
+        disabled={!peutModifierLEtapeViaPilotage}
         fichesSelectionneesIds={fichesSelectionneesIds}
       />
       <Bouton
-        disabled={!peutPasserEnInstruction}
+        disabled={!peutModifierLEtapeViaPilotage}
         label="Passer en instruction"
         variant="secondary"
       />
