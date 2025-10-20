@@ -76,7 +76,7 @@ export class AfficherPilotageQuery {
               in: [
                 $Enums.etape_evaluation_enum.AUTO_EVALUATION,
                 $Enums.etape_evaluation_enum.CONSOLIDATION,
-                $Enums.etape_evaluation_enum.CONTROLE_QUALITE,
+                $Enums.etape_evaluation_enum.INSTRUCTION,
               ],
             },
           },

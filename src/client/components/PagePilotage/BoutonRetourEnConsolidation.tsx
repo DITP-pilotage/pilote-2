@@ -17,7 +17,7 @@ export const BoutonRetourEnConsolidation = ({
   return (
     <Bouton
       disabled={disabled}
-      label="Retour en consolidation"
+      label="Débloquer la consolidation"
       onClick={handleDebloquerFiches}
       variant="secondary"
     />

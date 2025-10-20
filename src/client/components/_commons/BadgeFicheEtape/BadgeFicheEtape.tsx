@@ -14,30 +14,10 @@ const ETAPE_CONFIG: Record<
     label: "Consolidation",
     colorClasses: "bg-blue-100 text-blue-600",
   },
-  CONTROLE_QUALITE: {
+  INSTRUCTION: {
     labelPetit: "I",
     label: "Instruction",
     colorClasses: "bg-green-100 text-green-700",
-  },
-  AJUSTEMENTS: {
-    labelPetit: "A",
-    label: "Ajustement",
-    colorClasses: "bg-orange-100 text-orange-700",
-  },
-  CONTRE_PROPOSITION: {
-    labelPetit: "C",
-    label: "Contre proposition",
-    colorClasses: "bg-purple-100 text-purple-700",
-  },
-  CONTROLE_QUALITE_BIS: {
-    labelPetit: "I",
-    label: "Instruction bis",
-    colorClasses: "bg-green-100 text-green-700",
-  },
-  AJUSTEMENTS_BIS: {
-    labelPetit: "A",
-    label: "Ajustement bis",
-    colorClasses: "bg-orange-100 text-orange-700",
   },
 };
 

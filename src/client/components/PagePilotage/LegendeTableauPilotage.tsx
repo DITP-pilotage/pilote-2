@@ -13,7 +13,7 @@ export const LegendeTableauPilotage = () => (
       <span className="text-xs text-gray-600">Consolidation</span>
     </div>
     <div className="flex items-center gap-2">
-      <BadgeFicheEtape etape={$Enums.etape_evaluation_enum.CONTROLE_QUALITE} />
+      <BadgeFicheEtape etape={$Enums.etape_evaluation_enum.INSTRUCTION} />
       <span className="text-xs text-gray-600">Instruction</span>
     </div>
   </div>
