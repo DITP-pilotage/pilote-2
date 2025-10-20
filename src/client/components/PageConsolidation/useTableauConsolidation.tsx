@@ -112,17 +112,21 @@ export const useTableauConsolidation = () => {
       }),
       columnHelper.accessor("id", {
         id: "id",
-        header: "Libellé",
+        header: "Évaluation",
         cell: (info) => {
           const row = info.row;
-          const name =
+          const commentaireName =
             info.row.original.type === "objectif"
               ? (`fichesEvaluation.${info.row.original.ficheEvaluationId}.objectifs.${info.row.original.id}.commentaire` as const)
               : (`fichesEvaluation.${info.row.original.ficheEvaluationId}.criteres.${info.row.original.id}.commentaire` as const);
+          const noteName =
+            info.row.original.type === "objectif"
+              ? (`fichesEvaluation.${info.row.original.ficheEvaluationId}.objectifs.${info.row.original.id}.note` as const)
+              : (`fichesEvaluation.${info.row.original.ficheEvaluationId}.criteres.${info.row.original.id}.note` as const);
 
           return (
             <div className="space-y-4">
-              <div className="bg-gray-100 pb-2 border-b border-gray-200 -mx-4 px-4 -mt-2 pt-2 flex items-center gap-2">
+              <div className="bg-gray-100 pb-2 border-b border-gray-200 -mx-4 px-4 pt-2 flex items-center gap-2 !mb-0">
                 <span
                   className={clsxm(
                     "text-xs px-2 py-1.5 rounded-md capitalize font-medium",
@@ -138,59 +142,48 @@ export const useTableauConsolidation = () => {
                 </span>
                 {row.original.libelle}
               </div>
-              <div>
-                <strong className="text-sm">
-                  Commentaire de l'auto évalué
-                </strong>
-                <blockquote>
-                  {row.original.autoEvaluation.commentaire}
-                </blockquote>
+
+              <div className="flex border-b border-b-gray-200 !mb-0 !-mx-4">
+                <div className="flex-1 border-r border-r-gray-200 p-4">
+                  <CommentaireTextareaConsolidation name={commentaireName} />
+                </div>
+                <div className="flex-shrink-0 w-[12rem] p-4">
+                  <strong className="text-sm block mb-1">
+                    Note de consolidation
+                  </strong>
+                  <div className="flex justify-end">
+                    <InputNoteConsolidation name={noteName} />
+                  </div>
+                </div>
               </div>
-              <CommentaireTextareaConsolidation name={name} />
+
+              <div className="flex !mb-0 !-mx-4">
+                <div className="flex-1 border-r border-r-gray-200 p-4">
+                  <strong className="text-sm block mb-2">
+                    Commentaire de l'auto évalué
+                  </strong>
+                  <blockquote className="text-sm text-gray-700 italic border-l-4 border-gray-300 pl-3 py-1">
+                    {row.original.autoEvaluation.commentaire ||
+                      "Aucun commentaire"}
+                  </blockquote>
+                </div>
+                <div className="flex-shrink-0 w-[12rem] p-4">
+                  <strong className="text-sm block mb-1">
+                    Note auto-évaluation
+                  </strong>
+                  <div className="flex justify-end">
+                    <InputNote
+                      disabled
+                      value={info.row.original.autoEvaluation.note ?? ""}
+                    />
+                  </div>
+                </div>
+              </div>
             </div>
           );
         },
         enableGrouping: false,
         enableColumnFilter: false,
-      }),
-      columnHelper.display({
-        id: "noteAutoEvaluation",
-        header: "Note Auto-évaluation",
-        cell: (info) => {
-          if (info.row.getIsGrouped()) {
-            return null;
-          }
-
-          return (
-            <div className="flex justify-end">
-              <InputNote
-                disabled
-                value={info.row.original.autoEvaluation.note ?? ""}
-              />
-            </div>
-          );
-        },
-        enableGrouping: false,
-      }),
-      columnHelper.display({
-        id: "note",
-        header: "Note",
-        cell: (info) => {
-          if (info.row.getIsGrouped()) {
-            return null;
-          }
-          const name =
-            info.row.original.type === "objectif"
-              ? (`fichesEvaluation.${info.row.original.ficheEvaluationId}.objectifs.${info.row.original.id}.note` as const)
-              : (`fichesEvaluation.${info.row.original.ficheEvaluationId}.criteres.${info.row.original.id}.note` as const);
-
-          return (
-            <div className="flex justify-end">
-              <InputNoteConsolidation name={name} />
-            </div>
-          );
-        },
-        enableGrouping: false,
       }),
       columnHelper.accessor((row) => (row.type === "critere" ? row.id : null), {
         id: "critereId",

@@ -15,8 +15,8 @@ Cette fonctionnalité permet de gérer le mode lecture seule des fiches de conso
 
 ### État cible
 - Ligne 1 (1 colonne) : Type + Libellé
-- Ligne 2 (2 colonnes) : Commentaire auto-évalué + Commentaire consolidation
-- Ligne 3 (2 colonnes) : Note auto-évaluation + Note consolidation
+- Ligne 2 (2 colonnes) : Commentaire consolidation + Note consolidation
+- Ligne 3 (2 colonnes) : Commentaire auto-évalué + note auto-évalué
 
 ### Fichiers concernés
 - `src/client/components/PageConsolidation/useTableauConsolidation.tsx:113-194`
@@ -29,13 +29,32 @@ Cette fonctionnalité permet de gérer le mode lecture seule des fiches de conso
 
 ---
 
-## Étape 2 : Ajout de l'attribut read_only
+## Étape 2 : Ajout de l'application PILOTE_EVAL_PILOTAGE et de l'attribut read_only
 
-**Objectif** : Ajouter un champ read_only dans le modèle de données et le propager
+**Objectif** : Ajouter l'application PILOTE_EVAL_PILOTAGE et le champ read_only dans une seule migration
 
-### Base de données
-- Ajouter `read_only Boolean @default(false)` dans le modèle `etape_evaluation` (`src/database/prisma/schema.prisma:817`)
-- Générer et exécuter la migration Prisma
+### Base de données - Migration unique
+**Fichiers concernés** : `src/database/prisma/schema.prisma`
+
+**Actions** :
+1. Modifier le schema Prisma :
+   - Ajouter `PILOTE_EVAL_PILOTAGE` dans l'enum `application_accessible` (ligne 734-739)
+   - Ajouter `read_only Boolean @default(false)` dans le modèle `etape_evaluation` (ligne 817)
+2. Générer la migration Prisma : `npm run database:migration`
+3. Nommer la migration de manière descriptive : `add_pilote_eval_pilotage_and_read_only`
+4. Exécuter la migration
+
+### Frontend - Ajout de l'option dans le sélecteur
+**Fichier** : `src/client/components/PageUtilisateurFormulaire/UtilisateurFormulaire/SaisieDesInformationsUtilisateur/SelecteurApplication.tsx:6-17`
+
+Ajouter la nouvelle application dans le tableau `applications` :
+```typescript
+{
+  id: "pilote-eval-pilotage",
+  label: "Pilote eval pilotage", 
+  value: ApplicationAccessible.PILOTE_EVAL_PILOTAGE as const,
+}
+```
 
 ### Query - AfficherConsolidationQuery
 **Fichier** : `src/server/evaluation/queries/AfficherConsolidationQuery.ts:9`
