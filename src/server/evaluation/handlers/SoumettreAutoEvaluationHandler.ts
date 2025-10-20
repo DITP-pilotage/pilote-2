@@ -60,7 +60,7 @@ export class SoumettreAutoEvaluationHandler {
             objectif_id: evaluation.objectif_id,
             auteur_id: auteurId,
             note: evaluation.note,
-            commentaire: evaluation.commentaire,
+            commentaire: "",
           })),
         },
         evaluations_criteres: {
@@ -69,7 +69,7 @@ export class SoumettreAutoEvaluationHandler {
             critere_id: evaluation.critere_id,
             auteur_id: auteurId,
             note: evaluation.note,
-            commentaire: evaluation.commentaire,
+            commentaire: "",
           })),
         },
       },
