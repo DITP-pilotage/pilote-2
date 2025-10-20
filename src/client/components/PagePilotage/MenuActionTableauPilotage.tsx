@@ -3,7 +3,7 @@ import keyBy from "lodash.keyby";
 import { $Enums } from "@prisma/client";
 import { pagePilotage } from "@/components/PagePilotage/PagePilotageServerSideContext";
 import { Bouton } from "@/components/_commons/Bouton/Bouton";
-import { BoutonRetourEnConsolidation } from "@/components/PagePilotage/BoutonRetourEnConsolidation";
+import { BoutonDebloquerLaConsolidation } from "@/components/PagePilotage/BoutonDebloquerLaConsolidation";
 
 export const MenuActionTableauPilotage = ({
   fichesSelectionneesIds,
@@ -32,7 +32,7 @@ export const MenuActionTableauPilotage = ({
         {selectedCount} ligne{selectedCount > 1 ? "s" : ""} sélectionné
         {selectedCount > 1 ? "s" : ""}
       </p>
-      <BoutonRetourEnConsolidation
+      <BoutonDebloquerLaConsolidation
         disabled={!peutModifierLEtapeViaPilotage}
         fichesSelectionneesIds={fichesSelectionneesIds}
       />

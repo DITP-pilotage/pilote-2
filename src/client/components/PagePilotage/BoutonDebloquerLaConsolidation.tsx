@@ -1,7 +1,7 @@
 import { Bouton } from "@/components/_commons/Bouton/Bouton";
 import { useDebloquerFiches } from "@/components/PagePilotage/useDebloquerFiches";
 
-export const BoutonRetourEnConsolidation = ({
+export const BoutonDebloquerLaConsolidation = ({
   fichesSelectionneesIds,
   disabled,
 }: {
