@@ -7,6 +7,7 @@ import { SoumettreAutoEvaluationHandler } from "@/server/evaluation/handlers/Sou
 import { AfficherConsolidationQuery } from "@/server/evaluation/queries/AfficherConsolidationQuery";
 import { EnregistrerBrouillonConsolidationHandler } from "@/server/evaluation/handlers/EnregistrerBrouillonConsolidationHandler";
 import { AfficherPilotageQuery } from "@/server/evaluation/queries/AfficherPilotageQuery";
+import { DebloquerFichesConsolidationHandler } from "@/server/evaluation/handlers/DebloquerFichesConsolidationHandler";
 import { EnregistrerBrouillonAutoEvaluationHandler } from "./handlers/EnregistrerBrouillonAutoEvaluationHandler";
 
 export type PiloteEvalDependencies = {
@@ -18,6 +19,7 @@ export type PiloteEvalDependencies = {
   enregistrerBrouillonConsolidationHandler: EnregistrerBrouillonConsolidationHandler;
   accesFicheEvaluationService: AccesFicheEvaluationService;
   soumettreAutoEvaluationHandler: SoumettreAutoEvaluationHandler;
+  debloquerFichesConsolidationHandler: DebloquerFichesConsolidationHandler;
 };
 
 export const getPiloteEvalContainer = (
@@ -36,5 +38,8 @@ export const getPiloteEvalContainer = (
     ),
     accesFicheEvaluationService: asClass(AccesFicheEvaluationService),
     soumettreAutoEvaluationHandler: asClass(SoumettreAutoEvaluationHandler),
+    debloquerFichesConsolidationHandler: asClass(
+      DebloquerFichesConsolidationHandler,
+    ),
   });
 };
