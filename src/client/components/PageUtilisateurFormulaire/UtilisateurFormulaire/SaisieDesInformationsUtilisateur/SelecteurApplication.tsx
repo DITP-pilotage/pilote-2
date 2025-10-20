@@ -1,18 +1,23 @@
 import { Controller, ControllerRenderProps } from "react-hook-form";
+import { $Enums } from "@prisma/client";
 import { useFormSaisieInformationUtilisateur } from "@/components/PageUtilisateurFormulaire/UtilisateurFormulaire/SaisieDesInformationsUtilisateur/form";
 import { UtilisateurFormInputs } from "@/components/PageUtilisateurFormulaire/UtilisateurFormulaire/UtilisateurFormulaire.interface";
-import { ApplicationAccessible } from "@/server/domain/utilisateur/Utilisateur.interface";
 
 const applications = [
   {
     id: "pilote",
     label: "Pilote",
-    value: ApplicationAccessible.PILOTE as const,
+    value: $Enums.application_accessible.PILOTE,
   },
   {
     id: "pilote-eval",
     label: "Pilote eval",
-    value: ApplicationAccessible.PILOTE_EVAL as const,
+    value: $Enums.application_accessible.PILOTE_EVAL,
+  },
+  {
+    id: "pilote-eval-pilotage",
+    label: "Pilote eval pilotage",
+    value: $Enums.application_accessible.PILOTE_EVAL_PILOTAGE,
   },
 ] as const;
 

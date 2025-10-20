@@ -52,7 +52,7 @@ Ajouter la nouvelle application dans le tableau `applications` :
 {
   id: "pilote-eval-pilotage",
   label: "Pilote eval pilotage", 
-  value: ApplicationAccessible.PILOTE_EVAL_PILOTAGE as const,
+  value: $Enums.application_accessible.PILOTE_EVAL_PILOTAGE as const,
 }
 ```
 

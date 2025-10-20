@@ -2,11 +2,11 @@ import Head from "next/head";
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next";
 import { getServerSession } from "next-auth/next";
 import Link from "next/link";
+import { $Enums } from "@prisma/client";
 import assert from "node:assert";
 import { getContainer } from "@/server/dependances";
 import { configurationFeatureFlip } from "@/config";
 import { authOptions } from "@/server/infrastructure/api/auth/[...nextauth]";
-import { ApplicationAccessible } from "@/server/domain/utilisateur/Utilisateur.interface";
 import { BadgeFicheEtape } from "@/components/_commons/BadgeFicheEtape/BadgeFicheEtape";
 
 export const getServerSideProps = async ({
@@ -21,11 +21,13 @@ export const getServerSideProps = async ({
 
   if (
     !featureFlipping.piloteEval ||
-    !session.applicationsAccessibles.includes(ApplicationAccessible.PILOTE_EVAL)
+    !session.applicationsAccessibles.includes(
+      $Enums.application_accessible.PILOTE_EVAL,
+    )
   ) {
     return {
       redirect: {
-        destination: "404",
+        destination: "/404",
       },
     };
   }

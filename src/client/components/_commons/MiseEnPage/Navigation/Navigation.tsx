@@ -7,6 +7,7 @@ import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
 import { Session } from "next-auth";
 import { FunctionComponent } from "react";
+import { $Enums } from "@prisma/client";
 import { Utilisateur } from "@/components/_commons/MiseEnPage/EnTete/Utilisateur/Utilisateur";
 import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
 import MenuItemGestionContenu from "@/components/_commons/MiseEnPage/Navigation/MenuItemGestionContenu";
@@ -20,7 +21,6 @@ import { getQueryParamString } from "@/client/utils/getQueryParamString";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
 import { BoutonContacterEquipePilote } from "@/components/PageAccueil/BoutonContacterEquipePilote";
 import { BoutonSeConnecter } from "@/components/_commons/BoutonSeConnecter";
-import { ApplicationAccessible } from "@/server/domain/utilisateur/Utilisateur.interface";
 
 const fermerLaModaleDuMenu = () => {
   if (typeof window.dsfr === "function") {
@@ -52,7 +52,7 @@ const estAdministrateurOuPilotage = (session: Session) => {
 
 const estAutoriseAAccederAPiloteEval = (session: Session) => {
   return session.applicationsAccessibles.includes(
-    ApplicationAccessible.PILOTE_EVAL,
+    $Enums.application_accessible.PILOTE_EVAL,
   );
 };
 

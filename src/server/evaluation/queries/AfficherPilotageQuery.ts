@@ -20,7 +20,7 @@ export class AfficherPilotageQuery {
 
         const evaluationsParCritereEtEtape = this.buildEvaluationsMap(
           fiche.etape_evaluations,
-          criteres.map((c) => c.id),
+          criteres.map((critere) => critere.id),
           "critere",
         );
 

@@ -1,9 +1,36 @@
-import { InferGetServerSidePropsType } from "next";
+import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next";
+import { getServerSession } from "next-auth/next";
+import { $Enums } from "@prisma/client";
+import assert from "node:assert";
 import { getContainer } from "@/server/dependances";
 import { pagePilotage } from "@/components/PagePilotage/PagePilotageServerSideContext";
 import { TableauPilotage } from "@/components/PagePilotage/TableauPilotage";
+import { authOptions } from "@/server/infrastructure/api/auth/[...nextauth]";
+import { configurationFeatureFlip } from "@/config";
 
-export const getServerSideProps = async () => {
+export const getServerSideProps = async ({
+  req,
+  res,
+}: GetServerSidePropsContext) => {
+  const session = await getServerSession(req, res, authOptions);
+
+  assert(session);
+
+  const featureFlipping = configurationFeatureFlip();
+
+  if (
+    !featureFlipping.piloteEval ||
+    !session.applicationsAccessibles.includes(
+      $Enums.application_accessible.PILOTE_EVAL_PILOTAGE,
+    )
+  ) {
+    return {
+      redirect: {
+        destination: "/404",
+      },
+    };
+  }
+
   return {
     props: {
       pilotage: await getContainer("piloteEval")
