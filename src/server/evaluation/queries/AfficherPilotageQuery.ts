@@ -42,10 +42,15 @@ export class AfficherPilotageQuery {
           };
         });
 
+        const etapeConsolidation = fiche.etape_evaluations.find(
+          (etape) => etape.type === $Enums.etape_evaluation_enum.CONSOLIDATION,
+        );
+
         return {
           id: fiche.id,
           jalon: fiche.jalon,
           etapeCourante: fiche.etape_courante,
+          readOnly: etapeConsolidation?.read_only ?? false,
           rattachement: {
             code: rattachement.code,
             libelle: rattachement.libelle,
@@ -98,6 +103,7 @@ export class AfficherPilotageQuery {
   private buildEvaluationsMap(
     etapeEvaluations: Array<{
       type: $Enums.etape_evaluation_enum;
+      read_only: boolean;
       evaluations_objectifs: Array<{
         objectif_id: string;
         note: number | null;

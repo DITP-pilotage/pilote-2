@@ -7,9 +7,13 @@ import { useMemo, useState, useEffect, useRef } from "react";
 import { $Enums } from "@prisma/client";
 import { pagePilotage } from "@/components/PagePilotage/PagePilotageServerSideContext";
 import { BadgeFicheEtape } from "@/components/_commons/BadgeFicheEtape/BadgeFicheEtape";
+import { Icone } from "@/components/_commons/Icone";
+import { LockIcon } from "@/components/_commons/Icones/LockIcon";
+import { LockUnlockIcon } from "@/components/_commons/Icones/LockUnlockIcon";
 
 type FicheEvaluationRow = {
   id: string;
+  readOnly: boolean;
   rattachementCode: string;
   rattachementLibelle: string;
   etapeCourante: $Enums.etape_evaluation_enum;
@@ -66,6 +70,7 @@ export const useTableauPilotage = () => {
   const data = useMemo<FicheEvaluationRow[]>(() => {
     return fichesEvaluation.map((fiche) => ({
       id: fiche.id,
+      readOnly: fiche.readOnly,
       rattachementCode: fiche.rattachement.code,
       rattachementLibelle: fiche.rattachement.libelle,
       etapeCourante: fiche.etapeCourante,
@@ -102,6 +107,26 @@ export const useTableauPilotage = () => {
           },
         },
       }),
+      columnHelper.accessor("readOnly", {
+        id: "statut",
+        header: "",
+        cell: (info) => (
+          <div className="text-center text-xl">
+            {info.getValue() ? (
+              <Icone className="h-4 w-4" icone={LockIcon} />
+            ) : (
+              <Icone className="h-4 w-4" icone={LockUnlockIcon} />
+            )}
+          </div>
+        ),
+        size: 50,
+        meta: {
+          positioning: {
+            sticky: "left",
+            stickyOffset: 45,
+          },
+        },
+      }),
       columnHelper.accessor("etapeCourante", {
         id: "etape",
         header: "Étape",
@@ -110,7 +135,7 @@ export const useTableauPilotage = () => {
         meta: {
           positioning: {
             sticky: "left",
-            stickyOffset: 45,
+            stickyOffset: 93,
           },
         },
       }),
@@ -126,7 +151,7 @@ export const useTableauPilotage = () => {
         meta: {
           positioning: {
             sticky: "left",
-            stickyOffset: 116,
+            stickyOffset: 164,
           },
         },
       }),
@@ -142,7 +167,7 @@ export const useTableauPilotage = () => {
         meta: {
           positioning: {
             sticky: "left",
-            stickyOffset: 207,
+            stickyOffset: 255,
           },
         },
       }),
