@@ -4,7 +4,7 @@
 
 Cette fonctionnalité permet de gérer le mode lecture seule des fiches de consolidation via l'écran pilotage. Les fiches en mode lecture seule ne pourront pas être modifiées jusqu'à ce qu'elles soient débloquées par l'interface de pilotage.
 
-## Étape 1 : Refonte de l'affichage du tableau de consolidation
+## Étape 1 : Refonte de l'affichage du tableau de consolidation - Terminé
 
 **Objectif** : Réorganiser l'affichage des 3 colonnes actuelles en 3 lignes
 
@@ -29,7 +29,7 @@ Cette fonctionnalité permet de gérer le mode lecture seule des fiches de conso
 
 ---
 
-## Étape 2 : Ajout de l'application PILOTE_EVAL_PILOTAGE et de l'attribut read_only
+## Étape 2 : Ajout de l'application PILOTE_EVAL_PILOTAGE et de l'attribut read_only - Terminé
 
 **Objectif** : Ajouter l'application PILOTE_EVAL_PILOTAGE et le champ read_only dans une seule migration
 
@@ -68,7 +68,8 @@ Ajouter la nouvelle application dans le tableau `applications` :
 **Fichier** : `src/client/components/PageConsolidation/FormulaireConsolidation.tsx:38-43`
 
 - Ajouter la prop readOnly au contexte ou aux props du composant
-- Masquer le bouton "Enregistrer le brouillon" quand `readOnly === true`
+- Masquer le bouton "Enregistrer le brouillon" quand `readOnly === true` si toutes les fiches sont en read_only === true
+- Afficher le cadena ouvert si readOnly === true et fermé si readOnly === false
 
 ### Fichiers concernés
 - `src/database/prisma/schema.prisma`
@@ -79,7 +80,7 @@ Ajouter la nouvelle application dans le tableau `applications` :
 
 ---
 
-## Étape 3 : Passage en lecture seule des champs de consolidation
+## Étape 3 : Passage en lecture seule des champs de consolidation - Terminé
 
 **Objectif** : Rendre les commentaires et notes de consolidation en lecture seule quand `readOnly === true`
 
@@ -104,7 +105,7 @@ Un refactoring de qualité pourra être effectué après cette étape pour amél
 
 ---
 
-## Étape 4 : Affichage du statut readOnly dans le tableau de pilotage
+## Étape 4 : Affichage du statut readOnly dans le tableau de pilotage - Terminé
 
 **Objectif** : Afficher une icône indiquant le statut readOnly dans le tableau de pilotage
 
