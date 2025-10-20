@@ -27,6 +27,7 @@ type TableauConsolidationRow =
       rattachement: {
         code: string;
         libelle: string;
+        readOnly: boolean;
       };
       ficheEvaluationId: string;
       evaluation: Evaluation;
@@ -39,6 +40,7 @@ type TableauConsolidationRow =
       rattachement: {
         code: string;
         libelle: string;
+        readOnly: boolean;
       };
       ficheEvaluationId: string;
       evaluation: Evaluation;
@@ -145,14 +147,20 @@ export const useTableauConsolidation = () => {
 
               <div className="flex border-b border-b-gray-200 !mb-0 !-mx-4">
                 <div className="flex-1 border-r border-r-gray-200 p-4">
-                  <CommentaireTextareaConsolidation name={commentaireName} />
+                  <CommentaireTextareaConsolidation
+                    disabled={row.original.rattachement.readOnly}
+                    name={commentaireName}
+                  />
                 </div>
                 <div className="flex-shrink-0 w-[12rem] p-4">
                   <strong className="text-sm block mb-1">
                     Note de consolidation
                   </strong>
                   <div className="flex justify-end">
-                    <InputNoteConsolidation name={noteName} />
+                    <InputNoteConsolidation
+                      disabled={row.original.rattachement.readOnly}
+                      name={noteName}
+                    />
                   </div>
                 </div>
               </div>

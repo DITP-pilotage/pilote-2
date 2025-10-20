@@ -27,6 +27,9 @@ export const FormulaireConsolidation = () => {
     },
   });
   const rows = table.getRowModel().rows;
+  const estEnLectureSeule = rattachements.every(
+    (rattachement) => rattachement.readOnly,
+  );
 
   return (
     <FormProvider {...form}>
@@ -34,12 +37,14 @@ export const FormulaireConsolidation = () => {
         className="flex flex-col gap-3"
         onSubmit={form.handleSubmit(enregisterBrouillon)}
       >
-        <Bouton
-          className="self-end"
-          label="Enregistrer le brouillon"
-          type="submit"
-          variant="secondary"
-        />
+        {!estEnLectureSeule && (
+          <Bouton
+            className="self-end"
+            label="Enregistrer le brouillon"
+            type="submit"
+            variant="secondary"
+          />
+        )}
         <FiltresConsolidation table={table} />
         <GroupesConsolidation table={table} />
         <table className="table-fixed w-full border-collapse border border-gray-300">
