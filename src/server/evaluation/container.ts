@@ -43,8 +43,6 @@ export const getPiloteEvalContainer = (
     debloquerFichesConsolidationHandler: asClass(
       DebloquerFichesConsolidationHandler,
     ),
-    passerALEtapeInstructionHandler: asClass(
-      PasserALEtapeInstructionHandler,
-    ),
+    passerALEtapeInstructionHandler: asClass(PasserALEtapeInstructionHandler),
   });
 };
