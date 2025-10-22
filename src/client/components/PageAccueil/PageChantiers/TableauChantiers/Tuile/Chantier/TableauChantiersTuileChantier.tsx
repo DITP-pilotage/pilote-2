@@ -23,7 +23,7 @@ const TableauChantiersTuileChantier: FunctionComponent<{
               icone={chantier.porteur?.icône}
             />
           ) : null}
-          {chantier.porteur?.nom ?? undefined}
+          {chantier.nom ?? undefined}
         </div>
         <TypologiesPictos typologies={chantier.typologie} />
       </div>
