@@ -767,17 +767,17 @@ export function FormulaireInstruction() {
 
 ## Tâches à réaliser
 
-### Étape 1 : Base de données
-- [ ] Modifier `schema.prisma` pour ajouter les 4 nouveaux modèles
-- [ ] Créer la migration Prisma (manuellement)
-- [ ] Mettre à jour `seed-evaluation.ts` avec les nouvelles données
-- [ ] Exécuter le seed pour vérifier que tout fonctionne
+### Étape 1 : Base de données ✅ TERMINÉE
+- [x] Modifier `schema.prisma` pour ajouter les 4 nouveaux modèles
+- [x] Créer la migration Prisma (manuellement)
+- [x] Mettre à jour `seed-evaluation.ts` avec les nouvelles données
+- [x] Exécuter le seed pour vérifier que tout fonctionne
 
 ### Étape 2 : Query et page
-- [ ] Créer les tests dans `AfficherInstruction.query.test.ts`
-- [ ] Implémenter `AfficherInstruction.query.ts`
-- [ ] Vérifier que les tests sont au rouge (avant implémentation)
-- [ ] Vérifier que les tests passent au vert (après implémentation)
+- [x] Créer les tests dans `AfficherInstruction.query.test.ts`
+- [x] Implémenter `AfficherInstruction.query.ts`
+- [x] Vérifier que les tests sont au rouge (avant implémentation)
+- [x] Vérifier que les tests passent au vert (après implémentation)
 - [ ] Ajouter la query au container Awilix
 - [ ] Créer le service `peutAccederEtapeInstruction` dans `accesFicheEvaluationService`
 - [ ] Créer la page `instruction.tsx` avec `getServerSideProps`
