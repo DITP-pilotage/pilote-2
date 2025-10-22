@@ -778,8 +778,8 @@ export function FormulaireInstruction() {
 - [x] Implémenter `AfficherInstruction.query.ts`
 - [x] Vérifier que les tests sont au rouge (avant implémentation)
 - [x] Vérifier que les tests passent au vert (après implémentation)
-- [ ] Ajouter la query au container Awilix
-- [ ] Créer le service `peutAccederEtapeInstruction` dans `accesFicheEvaluationService`
+- [x] Ajouter la query au container Awilix
+- [x] Créer le service `peutAccederEtapeInstruction` dans `accesFicheEvaluationService`
 - [ ] Créer la page `instruction.tsx` avec `getServerSideProps`
 
 ### Étape 3 : Affichage

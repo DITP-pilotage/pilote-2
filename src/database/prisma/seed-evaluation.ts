@@ -195,6 +195,12 @@ const rattachements: referentiel_rattachement[] = [
     created_at: new Date("2025-10-07T10:00:00"),
     updated_at: new Date("2025-10-07T10:00:00"),
   },
+  {
+    code: "DEPT-87",
+    libelle: "Département Haute-Vienne",
+    created_at: new Date("2025-10-07T10:00:00"),
+    updated_at: new Date("2025-10-07T10:00:00"),
+  },
 ];
 
 const objectifs: referentiel_objectif[] = [
@@ -211,7 +217,7 @@ const objectifs: referentiel_objectif[] = [
   {
     id: "182a28d8-b7f0-473f-94a2-a438bb8cb926",
     tutelle_id: "a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d",
-    libelle: "b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e",
+    libelle: "Suivre hebdomadairement les jalons critiques",
     descriptif: "Rituel hebdo avec tableau de bord partagé.",
     jalon: 2,
     rattachement_code: "POL-75",
@@ -235,6 +241,16 @@ const objectifs: referentiel_objectif[] = [
     descriptif: "Plan de valorisation matière à 70%.",
     jalon: 3,
     rattachement_code: "REG-75",
+    created_at: new Date("2025-10-07T10:00:00"),
+    updated_at: new Date("2025-10-07T10:00:00"),
+  },
+  {
+    id: "be719e85-d987-4e5a-884a-17478e6657b5",
+    tutelle_id: "b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e",
+    libelle: "Développer des outils de gestion des chantiers",
+    descriptif: "Utilisation de l'outil de gestion des chantiers.",
+    jalon: 3,
+    rattachement_code: "DEPT-87",
     created_at: new Date("2025-10-07T10:00:00"),
     updated_at: new Date("2025-10-07T10:00:00"),
   },
@@ -286,38 +302,61 @@ const rattachementsUtilisateur: rattachement_utilisateur_etape_jalon[] = [
     created_at: new Date("2025-10-07T10:00:00"),
     updated_at: new Date("2025-10-07T10:00:00"),
   },
+  {
+    id: "c3d4e5f6-a7b8-4c9d-0e1f-2a3b4c5d6e7f",
+    etape: $Enums.etape_evaluation_enum.INSTRUCTION,
+    jalon: 2025,
+    utilisateur_id: "e57fa03f-03f0-4a93-974c-b5107c9c68b1",
+    rattachement_code: "POL-75",
+    created_at: new Date("2025-10-07T10:00:00"),
+    updated_at: new Date("2025-10-07T10:00:00"),
+  },
+  {
+    id: "d4e5f6a7-b8c9-4d0e-1f2a-3b4c5d6e7f8a",
+    etape: $Enums.etape_evaluation_enum.INSTRUCTION,
+    jalon: 2025,
+    utilisateur_id: "e57fa03f-03f0-4a93-974c-b5107c9c68b1",
+    rattachement_code: "DEPT-59",
+    created_at: new Date("2025-10-07T10:00:00"),
+    updated_at: new Date("2025-10-07T10:00:00"),
+  },
+  {
+    id: "e5f6a7b8-c9d0-4e1f-2a3b-4c5d6e7f8a9b",
+    etape: $Enums.etape_evaluation_enum.INSTRUCTION,
+    jalon: 2025,
+    utilisateur_id: "e57fa03f-03f0-4a93-974c-b5107c9c68b1",
+    rattachement_code: "REG-75",
+    created_at: new Date("2025-10-07T10:00:00"),
+    updated_at: new Date("2025-10-07T10:00:00"),
+  },
+  {
+    id: "7dd2b82d-7399-4f34-86ad-6b42833c16cc",
+    etape: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
+    jalon: 2025,
+    utilisateur_id: "e57fa03f-03f0-4a93-974c-b5107c9c68b1",
+    rattachement_code: "DEPT-87",
+    created_at: new Date("2025-10-07T10:00:00"),
+    updated_at: new Date("2025-10-07T10:00:00"),
+  },
+  {
+    id: "430811af-2463-470e-9d54-967f4827d112",
+    etape: $Enums.etape_evaluation_enum.CONSOLIDATION,
+    jalon: 2025,
+    utilisateur_id: "e57fa03f-03f0-4a93-974c-b5107c9c68b1",
+    rattachement_code: "DEPT-87",
+    created_at: new Date("2025-10-07T10:00:00"),
+    updated_at: new Date("2025-10-07T10:00:00"),
+  },
+  {
+    id: "361379e2-5a87-4160-9f8c-6db331703d2f",
+    etape: $Enums.etape_evaluation_enum.INSTRUCTION,
+    jalon: 2025,
+    utilisateur_id: "e57fa03f-03f0-4a93-974c-b5107c9c68b1",
+    rattachement_code: "DEPT-87",
+    created_at: new Date("2025-10-07T10:00:00"),
+    updated_at: new Date("2025-10-07T10:00:00"),
+  },
 ];
-
-const rattachementsUtilisateurInstruction: rattachement_utilisateur_etape_jalon[] =
-  [
-    {
-      id: "c3d4e5f6-a7b8-4c9d-0e1f-2a3b4c5d6e7f",
-      etape: $Enums.etape_evaluation_enum.INSTRUCTION,
-      jalon: 2025,
-      utilisateur_id: "e57fa03f-03f0-4a93-974c-b5107c9c68b1",
-      rattachement_code: "POL-75",
-      created_at: new Date("2025-10-07T10:00:00"),
-      updated_at: new Date("2025-10-07T10:00:00"),
-    },
-    {
-      id: "d4e5f6a7-b8c9-4d0e-1f2a-3b4c5d6e7f8a",
-      etape: $Enums.etape_evaluation_enum.INSTRUCTION,
-      jalon: 2025,
-      utilisateur_id: "e57fa03f-03f0-4a93-974c-b5107c9c68b1",
-      rattachement_code: "DEPT-59",
-      created_at: new Date("2025-10-07T10:00:00"),
-      updated_at: new Date("2025-10-07T10:00:00"),
-    },
-    {
-      id: "e5f6a7b8-c9d0-4e1f-2a3b-4c5d6e7f8a9b",
-      etape: $Enums.etape_evaluation_enum.INSTRUCTION,
-      jalon: 2025,
-      utilisateur_id: "e57fa03f-03f0-4a93-974c-b5107c9c68b1",
-      rattachement_code: "REG-75",
-      created_at: new Date("2025-10-07T10:00:00"),
-      updated_at: new Date("2025-10-07T10:00:00"),
-    },
-  ];
 
 const fichesEvaluation: fiche_evaluation[] = [
   {
@@ -348,135 +387,9 @@ const fichesEvaluation: fiche_evaluation[] = [
     id: "a1a1a1a1-b2b2-4c3c-8d4d-e5e5e5e5e5e5",
     jalon: 2025,
     etape_courante: $Enums.etape_evaluation_enum.INSTRUCTION,
-    rattachement_code: "DEPT-59",
+    rattachement_code: "DEPT-87",
     created_at: new Date(),
     updated_at: new Date(),
-  },
-];
-
-const evaluationsObjectifsAutoEvaluation: evaluation_objectif[] = [
-  {
-    id: "3a6f53ff-8221-4513-96a4-bde397c8aca3",
-    objectif_id: "4fbbf458-c00d-400d-888c-30a03844d297",
-    etape_evaluation_id: "d6050c26-c872-4134-90d3-c45a8a9dc539",
-    auteur_id: "e57fa03f-03f0-4a93-974c-b5107c9c68b1",
-    note: 10,
-    commentaire: "Un commentaire d'auto evaluation",
-    created_at: new Date(),
-    updated_at: new Date(),
-  },
-];
-
-const evaluationsObjectifsConsolidation: evaluation_objectif[] = [
-  {
-    id: "fc2def49-719d-46c4-8cc8-617954ac68f9",
-    objectif_id: "4fbbf458-c00d-400d-888c-30a03844d297",
-    etape_evaluation_id: "3ec9fca0-854f-4e53-9664-53244c40060f",
-    auteur_id: "e57fa03f-03f0-4a93-974c-b5107c9c68b1",
-    note: 10,
-    commentaire: "Un commentaire d'auto evaluation",
-    created_at: new Date(),
-    updated_at: new Date(),
-  },
-];
-
-const evaluationsObjectifsInstruction: evaluation_objectif[] = [
-  {
-    id: "f2a3b4c5-d6e7-4f8a-9b0c-1d2e3f4a5b6c",
-    objectif_id: "4fbbf458-c00d-400d-888c-30a03844d297",
-    etape_evaluation_id: "d3d3d3d3-e4e4-4f5f-8a6a-b7b7b7b7b7b7",
-    auteur_id: "e57fa03f-03f0-4a93-974c-b5107c9c68b1",
-    note: 15,
-    commentaire: "Un commentaire d'instruction pour objectif",
-    created_at: new Date(),
-    updated_at: new Date(),
-  },
-];
-
-const evaluationsCriteresInstruction: evaluation_critere[] = [
-  {
-    id: "a3b4c5d6-e7f8-4a9b-0c1d-2e3f4a5b6c7d",
-    critere_id: "831cb1a5-036b-4609-a560-68cd1852397f",
-    note: 14,
-    commentaire: "Un commentaire d'instruction pour critère 1",
-    etape_evaluation_id: "d3d3d3d3-e4e4-4f5f-8a6a-b7b7b7b7b7b7",
-    auteur_id: "e57fa03f-03f0-4a93-974c-b5107c9c68b1",
-    created_at: new Date("2025-10-07T10:00:00"),
-    updated_at: new Date("2025-10-07T10:00:00"),
-  },
-  {
-    id: "b4c5d6e7-f8a9-4b0c-1d2e-3f4a5b6c7d8e",
-    critere_id: "dedffbcf-97dc-40c9-9df4-a5be78617ba6",
-    note: 13,
-    commentaire: "Un commentaire d'instruction pour critère 2",
-    etape_evaluation_id: "d3d3d3d3-e4e4-4f5f-8a6a-b7b7b7b7b7b7",
-    auteur_id: "e57fa03f-03f0-4a93-974c-b5107c9c68b1",
-    created_at: new Date("2025-10-07T10:00:00"),
-    updated_at: new Date("2025-10-07T10:00:00"),
-  },
-  {
-    id: "c5d6e7f8-a9b0-4c1d-2e3f-4a5b6c7d8e9f",
-    critere_id: "9cc999b6-b0da-48c5-bae7-2b9d38e5f1bd",
-    note: 16,
-    commentaire: "Un commentaire d'instruction pour critère 3",
-    etape_evaluation_id: "d3d3d3d3-e4e4-4f5f-8a6a-b7b7b7b7b7b7",
-    auteur_id: "e57fa03f-03f0-4a93-974c-b5107c9c68b1",
-    created_at: new Date("2025-10-07T10:00:00"),
-    updated_at: new Date("2025-10-07T10:00:00"),
-  },
-];
-
-const instructionsObjectifs: instruction_objectif[] = [
-  {
-    id: "f6a7b8c9-d0e1-4f2a-3b4c-5d6e7f8a9b0c",
-    objectif_id: "4883a4f7-8acc-4310-af42-c3fedece4c69",
-    rattachement_utilisateur_etape_jalon_id:
-      "c3d4e5f6-a7b8-4c9d-0e1f-2a3b4c5d6e7f",
-    created_at: new Date("2025-10-07T10:00:00"),
-    updated_at: new Date("2025-10-07T10:00:00"),
-  },
-  {
-    id: "a7b8c9d0-e1f2-4a3b-4c5d-6e7f8a9b0c1d",
-    objectif_id: "182a28d8-b7f0-473f-94a2-a438bb8cb926",
-    rattachement_utilisateur_etape_jalon_id:
-      "c3d4e5f6-a7b8-4c9d-0e1f-2a3b4c5d6e7f",
-    created_at: new Date("2025-10-07T10:00:00"),
-    updated_at: new Date("2025-10-07T10:00:00"),
-  },
-  {
-    id: "b8c9d0e1-f2a3-4b4c-5d6e-7f8a9b0c1d2e",
-    objectif_id: "4fbbf458-c00d-400d-888c-30a03844d297",
-    rattachement_utilisateur_etape_jalon_id:
-      "d4e5f6a7-b8c9-4d0e-1f2a-3b4c5d6e7f8a",
-    created_at: new Date("2025-10-07T10:00:00"),
-    updated_at: new Date("2025-10-07T10:00:00"),
-  },
-];
-
-const instructionsCriteres: instruction_critere[] = [
-  {
-    id: "c9d0e1f2-a3b4-4c5d-6e7f-8a9b0c1d2e3f",
-    critere_id: "831cb1a5-036b-4609-a560-68cd1852397f",
-    rattachement_utilisateur_etape_jalon_id:
-      "c3d4e5f6-a7b8-4c9d-0e1f-2a3b4c5d6e7f",
-    created_at: new Date("2025-10-07T10:00:00"),
-    updated_at: new Date("2025-10-07T10:00:00"),
-  },
-  {
-    id: "d0e1f2a3-b4c5-4d6e-7f8a-9b0c1d2e3f4a",
-    critere_id: "dedffbcf-97dc-40c9-9df4-a5be78617ba6",
-    rattachement_utilisateur_etape_jalon_id:
-      "d4e5f6a7-b8c9-4d0e-1f2a-3b4c5d6e7f8a",
-    created_at: new Date("2025-10-07T10:00:00"),
-    updated_at: new Date("2025-10-07T10:00:00"),
-  },
-  {
-    id: "e1f2a3b4-c5d6-4e7f-8a9b-0c1d2e3f4a5b",
-    critere_id: "9cc999b6-b0da-48c5-bae7-2b9d38e5f1bd",
-    rattachement_utilisateur_etape_jalon_id:
-      "e5f6a7b8-c9d0-4e1f-2a3b-4c5d6e7f8a9b",
-    created_at: new Date("2025-10-07T10:00:00"),
-    updated_at: new Date("2025-10-07T10:00:00"),
   },
 ];
 
@@ -536,6 +449,138 @@ const etapesEvaluation: etape_evaluation[] = [
     read_only: false,
     created_at: new Date(),
     updated_at: new Date(),
+  },
+];
+
+const evaluationsObjectifsAutoEvaluation: evaluation_objectif[] = [
+  {
+    id: "3a6f53ff-8221-4513-96a4-bde397c8aca3",
+    objectif_id: "4fbbf458-c00d-400d-888c-30a03844d297",
+    etape_evaluation_id: "d6050c26-c872-4134-90d3-c45a8a9dc539",
+    auteur_id: "e57fa03f-03f0-4a93-974c-b5107c9c68b1",
+    note: 10,
+    commentaire: "Un commentaire d'auto evaluation",
+    created_at: new Date(),
+    updated_at: new Date(),
+  },
+  {
+    id: "3a6f53ff-8221-4513-96a4-bde397c8aca3",
+    objectif_id: "be719e85-d987-4e5a-884a-17478e6657b5",
+    etape_evaluation_id: "b1b1b1b1-c2c2-4d3d-8e4e-f5f5f5f5f5f5",
+    auteur_id: "e57fa03f-03f0-4a93-974c-b5107c9c68b1",
+    note: 10,
+    commentaire: "Un commentaire d'auto evaluation",
+    created_at: new Date(),
+    updated_at: new Date(),
+  },
+];
+
+const evaluationsObjectifsConsolidation: evaluation_objectif[] = [
+  {
+    id: "fc2def49-719d-46c4-8cc8-617954ac68f9",
+    objectif_id: "4fbbf458-c00d-400d-888c-30a03844d297",
+    etape_evaluation_id: "3ec9fca0-854f-4e53-9664-53244c40060f",
+    auteur_id: "e57fa03f-03f0-4a93-974c-b5107c9c68b1",
+    note: 10,
+    commentaire: "Un commentaire d'auto evaluation",
+    created_at: new Date(),
+    updated_at: new Date(),
+  },
+  {
+    id: "faeb1483-77f5-4ba1-a0a1-df51c3933507",
+    objectif_id: "be719e85-d987-4e5a-884a-17478e6657b5",
+    etape_evaluation_id: "c2c2c2c2-d3d3-4e4e-9f5f-a6a6a6a6a6a6",
+    auteur_id: "e57fa03f-03f0-4a93-974c-b5107c9c68b1",
+    note: 11,
+    commentaire: "Un commentaire de consolidation",
+    created_at: new Date(),
+    updated_at: new Date(),
+  },
+];
+
+const evaluationsObjectifsInstruction: evaluation_objectif[] = [
+  {
+    id: "f2a3b4c5-d6e7-4f8a-9b0c-1d2e3f4a5b6c",
+    objectif_id: "4fbbf458-c00d-400d-888c-30a03844d297",
+    etape_evaluation_id: "d3d3d3d3-e4e4-4f5f-8a6a-b7b7b7b7b7b7",
+    auteur_id: "e57fa03f-03f0-4a93-974c-b5107c9c68b1",
+    note: 15,
+    commentaire: "Un commentaire d'instruction pour objectif",
+    created_at: new Date(),
+    updated_at: new Date(),
+  },
+  {
+    id: "c4a9212e-9f58-481d-9b89-ee1a2175a98f",
+    objectif_id: "be719e85-d987-4e5a-884a-17478e6657b5",
+    etape_evaluation_id: "d3d3d3d3-e4e4-4f5f-8a6a-b7b7b7b7b7b7",
+    auteur_id: "e57fa03f-03f0-4a93-974c-b5107c9c68b1",
+    note: 12,
+    commentaire: "Un commentaire d'instruction pour objectif",
+    created_at: new Date(),
+    updated_at: new Date(),
+  },
+];
+
+const evaluationsCriteresInstruction: evaluation_critere[] = [
+  {
+    id: "a3b4c5d6-e7f8-4a9b-0c1d-2e3f4a5b6c7d",
+    critere_id: "831cb1a5-036b-4609-a560-68cd1852397f",
+    note: 14,
+    commentaire: "Un commentaire d'instruction pour critère 1",
+    etape_evaluation_id: "d3d3d3d3-e4e4-4f5f-8a6a-b7b7b7b7b7b7",
+    auteur_id: "e57fa03f-03f0-4a93-974c-b5107c9c68b1",
+    created_at: new Date("2025-10-07T10:00:00"),
+    updated_at: new Date("2025-10-07T10:00:00"),
+  },
+  {
+    id: "b4c5d6e7-f8a9-4b0c-1d2e-3f4a5b6c7d8e",
+    critere_id: "dedffbcf-97dc-40c9-9df4-a5be78617ba6",
+    note: 13,
+    commentaire: "Un commentaire d'instruction pour critère 2",
+    etape_evaluation_id: "d3d3d3d3-e4e4-4f5f-8a6a-b7b7b7b7b7b7",
+    auteur_id: "e57fa03f-03f0-4a93-974c-b5107c9c68b1",
+    created_at: new Date("2025-10-07T10:00:00"),
+    updated_at: new Date("2025-10-07T10:00:00"),
+  },
+  {
+    id: "c5d6e7f8-a9b0-4c1d-2e3f-4a5b6c7d8e9f",
+    critere_id: "9cc999b6-b0da-48c5-bae7-2b9d38e5f1bd",
+    note: 16,
+    commentaire: "Un commentaire d'instruction pour critère 3",
+    etape_evaluation_id: "d3d3d3d3-e4e4-4f5f-8a6a-b7b7b7b7b7b7",
+    auteur_id: "e57fa03f-03f0-4a93-974c-b5107c9c68b1",
+    created_at: new Date("2025-10-07T10:00:00"),
+    updated_at: new Date("2025-10-07T10:00:00"),
+  },
+];
+
+const instructionsObjectifs: instruction_objectif[] = [
+  {
+    id: "f6a7b8c9-d0e1-4f2a-3b4c-5d6e7f8a9b0c",
+    objectif_id: "be719e85-d987-4e5a-884a-17478e6657b5",
+    rattachement_utilisateur_etape_jalon_id:
+      "361379e2-5a87-4160-9f8c-6db331703d2f",
+    created_at: new Date("2025-10-07T10:00:00"),
+    updated_at: new Date("2025-10-07T10:00:00"),
+  },
+];
+
+const instructionsCriteres: instruction_critere[] = [
+  {
+    id: "c9d0e1f2-a3b4-4c5d-6e7f-8a9b0c1d2e3f",
+    critere_id: "831cb1a5-036b-4609-a560-68cd1852397f",
+    rattachement_utilisateur_etape_jalon_id:
+      "361379e2-5a87-4160-9f8c-6db331703d2f",
+    created_at: new Date("2025-10-07T10:00:00"),
+    updated_at: new Date("2025-10-07T10:00:00"),
+  },
+  {
+    id: "d0e1f2a3-b4c5-4d6e-7f8a-9b0c1d2e3f4a",
+    critere_id: "dedffbcf-97dc-40c9-9df4-a5be78617ba6",
+    rattachement_utilisateur_etape_jalon_id:
+      "361379e2-5a87-4160-9f8c-6db331703d2f",
+    created_at: new Date("2025-10-07T10:00:00"),
+    updated_at: new Date("2025-10-07T10:00:00"),
   },
 ];
 
@@ -613,10 +658,7 @@ async function run() {
     });
   }
 
-  for (const rattachementUtilisateur of [
-    ...rattachementsUtilisateur,
-    ...rattachementsUtilisateurInstruction,
-  ]) {
+  for (const rattachementUtilisateur of rattachementsUtilisateur) {
     await prisma.rattachement_utilisateur_etape_jalon.upsert({
       where: { id: rattachementUtilisateur.id },
       create: rattachementUtilisateur,
