@@ -39,7 +39,7 @@ describe("AccesFicheEvaluationService", () => {
 
       await prisma.rattachement_utilisateur_etape_jalon.create({
         data: {
-          id: "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+          id: "699279b7-355a-44ed-bef2-4765b6f82660",
           rattachement_code: rattachementCode,
           utilisateur_id: utilisateurId,
           etape: "AUTO_EVALUATION",
@@ -149,7 +149,7 @@ describe("AccesFicheEvaluationService", () => {
 
       await prisma.rattachement_utilisateur_etape_jalon.create({
         data: {
-          id: "e7222f87-cdd8-457d-b131-515d8e40cb20",
+          id: "ea1ca377-e097-4356-99bb-0e3fec1561b8",
           rattachement_code: rattachementCode,
           utilisateur_id: utilisateurId,
           etape: "CONSOLIDATION", // Mauvais étape
@@ -361,6 +361,124 @@ describe("AccesFicheEvaluationService", () => {
 
       // When
       const result = await service.peutAccederEtapeConsolidation({
+        utilisateurId,
+      });
+
+      // Then
+      expect(result).toBe(false);
+    });
+  });
+
+  describe("peutAccederEtapeInstruction", () => {
+    it("doit retourner true quand l'utilisateur a la permission pour l'étape INSTRUCTION", async () => {
+      // Given
+      const rattachementCode = "REG-400";
+      const utilisateurId = "8a9f5d3c-1e2a-4b5c-9d8e-7f6a5b4c3d2e";
+
+      await prisma.utilisateur.create({
+        data: {
+          id: utilisateurId,
+          email: "user-instruction@example.com",
+          nom: "UserInstruction",
+          prenom: "Test",
+          date_creation: new Date(),
+          profilCode: "DITP_ADMIN",
+        },
+      });
+
+      await prisma.referentiel_rattachement.create({
+        data: {
+          code: rattachementCode,
+          libelle: "Rattachement avec permission instruction",
+        },
+      });
+
+      await prisma.rattachement_utilisateur_etape_jalon.create({
+        data: {
+          id: "6b55294c-47b5-4bbb-9790-41ae8ec7f02b",
+          rattachement_code: rattachementCode,
+          utilisateur_id: utilisateurId,
+          etape: "INSTRUCTION",
+          jalon: 2025,
+        },
+      });
+
+      // When
+      const result = await service.peutAccederEtapeInstruction({
+        utilisateurId,
+      });
+
+      // Then
+      expect(result).toBe(true);
+    });
+
+    it("doit retourner false quand l'utilisateur n'a aucune permission", async () => {
+      // Given
+      const rattachementCode = "REG-401";
+      const utilisateurId = "0d858723-a70a-46b5-ac85-f51ae2954ca2";
+
+      await prisma.utilisateur.create({
+        data: {
+          id: utilisateurId,
+          email: "user-no-instruction@example.com",
+          nom: "UserNoInstruction",
+          prenom: "Test",
+          date_creation: new Date(),
+          profilCode: "DITP_ADMIN",
+        },
+      });
+
+      await prisma.referentiel_rattachement.create({
+        data: {
+          code: rattachementCode,
+          libelle: "Rattachement réservé instruction",
+        },
+      });
+
+      // When
+      const result = await service.peutAccederEtapeInstruction({
+        utilisateurId,
+      });
+
+      // Then
+      expect(result).toBe(false);
+    });
+
+    it("doit retourner false quand l'utilisateur a une permission pour une étape différente", async () => {
+      // Given
+      const rattachementCode = "REG-402";
+      const utilisateurId = "68f4044d-419f-49bc-a445-8273166e07e8";
+
+      await prisma.utilisateur.create({
+        data: {
+          id: utilisateurId,
+          email: "user-other-etape@example.com",
+          nom: "UserOtherEtape",
+          prenom: "Test",
+          date_creation: new Date(),
+          profilCode: "DITP_ADMIN",
+        },
+      });
+
+      await prisma.referentiel_rattachement.create({
+        data: {
+          code: rattachementCode,
+          libelle: "Rattachement consolidation",
+        },
+      });
+
+      await prisma.rattachement_utilisateur_etape_jalon.create({
+        data: {
+          id: "d6b1f015-536e-41ef-a52b-5c079c8e88fb",
+          rattachement_code: rattachementCode,
+          utilisateur_id: utilisateurId,
+          etape: "CONSOLIDATION",
+          jalon: 2025,
+        },
+      });
+
+      // When
+      const result = await service.peutAccederEtapeInstruction({
         utilisateurId,
       });
 
