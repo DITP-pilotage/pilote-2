@@ -9,11 +9,11 @@ import { randomUUID } from "node:crypto";
 import { Transaction } from "@/server/db/Transaction";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 
-export const soumettreAutoEvaluationCommandSchema = z.object({
-  ficheEvaluationId: z.string(),
+export const passerALEtapeInstructionCommandSchema = z.object({
+  ficheEvaluationIds: z.array(z.string()),
 });
 
-export class SoumettreAutoEvaluationHandler {
+export class PasserALEtapeInstructionHandler {
   constructor(
     private readonly dependencies: {
       transaction: Transaction;
@@ -22,22 +22,27 @@ export class SoumettreAutoEvaluationHandler {
   ) {}
 
   async execute(
-    { ficheEvaluationId }: z.infer<typeof soumettreAutoEvaluationCommandSchema>,
+    {
+      ficheEvaluationIds,
+    }: z.infer<typeof passerALEtapeInstructionCommandSchema>,
     auteurId: string,
   ) {
-    const etapeEvaluation = await this.getEtapeEvaluation(ficheEvaluationId);
-
     await this.dependencies.transaction.run(async () => {
-      await this.creerEtapeConsolidation({
-        auteurId,
-        ficheEvaluationId,
-        etapeEvaluation,
-      });
-      await this.setEtapeCouranteConsolidation(ficheEvaluationId);
+      for (const ficheEvaluationId of ficheEvaluationIds) {
+        const etapeEvaluation =
+          await this.getEtapeConsolidation(ficheEvaluationId);
+
+        await this.creerEtapeInstruction({
+          auteurId,
+          ficheEvaluationId,
+          etapeEvaluation,
+        });
+        await this.setEtapeCouranteInstruction(ficheEvaluationId);
+      }
     });
   }
 
-  private creerEtapeConsolidation({
+  private creerEtapeInstruction({
     auteurId,
     ficheEvaluationId,
     etapeEvaluation,
@@ -53,7 +58,7 @@ export class SoumettreAutoEvaluationHandler {
       data: {
         id: randomUUID(),
         fiche_evaluation_id: ficheEvaluationId,
-        type: $Enums.etape_evaluation_enum.CONSOLIDATION,
+        type: $Enums.etape_evaluation_enum.INSTRUCTION,
         evaluations_objectifs: {
           create: etapeEvaluation.evaluations_objectifs.map((evaluation) => ({
             id: randomUUID(),
@@ -76,20 +81,20 @@ export class SoumettreAutoEvaluationHandler {
     });
   }
 
-  private setEtapeCouranteConsolidation(ficheEvaluationId: string) {
+  private setEtapeCouranteInstruction(ficheEvaluationId: string) {
     return this.prisma.fiche_evaluation.update({
       where: { id: ficheEvaluationId },
-      data: { etape_courante: $Enums.etape_evaluation_enum.CONSOLIDATION },
+      data: { etape_courante: $Enums.etape_evaluation_enum.INSTRUCTION },
     });
   }
 
-  private getEtapeEvaluation(ficheEvaluationId: string) {
+  private getEtapeConsolidation(ficheEvaluationId: string) {
     return this.prisma.etape_evaluation.findFirstOrThrow({
       where: {
-        type: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
+        type: $Enums.etape_evaluation_enum.CONSOLIDATION,
         fiche_evaluation: {
           id: ficheEvaluationId,
-          etape_courante: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
+          etape_courante: $Enums.etape_evaluation_enum.CONSOLIDATION,
         },
       },
       include: {

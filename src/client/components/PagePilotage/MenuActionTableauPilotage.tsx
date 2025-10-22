@@ -2,7 +2,8 @@ import { useMemo } from "react";
 import keyBy from "lodash.keyby";
 import { $Enums } from "@prisma/client";
 import { pagePilotage } from "@/components/PagePilotage/PagePilotageServerSideContext";
-import { Bouton } from "@/components/_commons/Bouton/Bouton";
+import { BoutonDebloquerLaConsolidation } from "@/components/PagePilotage/BoutonDebloquerLaConsolidation";
+import { BoutonPasserEnInstruction } from "@/components/PagePilotage/BoutonPasserEnInstruction";
 
 export const MenuActionTableauPilotage = ({
   fichesSelectionneesIds,
@@ -21,10 +22,7 @@ export const MenuActionTableauPilotage = ({
     fichesSelectionnees.every((fiche) => fiche.etapeCourante === etape) &&
     selectedCount > 0;
 
-  const peutRetournerEnConsolidation = toutesFichesEnEtape(
-    $Enums.etape_evaluation_enum.CONTROLE_QUALITE,
-  );
-  const peutPasserEnInstruction = toutesFichesEnEtape(
+  const peutModifierLEtapeViaPilotage = toutesFichesEnEtape(
     $Enums.etape_evaluation_enum.CONSOLIDATION,
   );
 
@@ -34,15 +32,13 @@ export const MenuActionTableauPilotage = ({
         {selectedCount} ligne{selectedCount > 1 ? "s" : ""} sélectionné
         {selectedCount > 1 ? "s" : ""}
       </p>
-      <Bouton
-        disabled={!peutRetournerEnConsolidation}
-        label="Retour en consolidation"
-        variant="secondary"
+      <BoutonDebloquerLaConsolidation
+        disabled={!peutModifierLEtapeViaPilotage}
+        fichesSelectionneesIds={fichesSelectionneesIds}
       />
-      <Bouton
-        disabled={!peutPasserEnInstruction}
-        label="Passer en instruction"
-        variant="secondary"
+      <BoutonPasserEnInstruction
+        disabled={!peutModifierLEtapeViaPilotage}
+        fichesSelectionneesIds={fichesSelectionneesIds}
       />
     </div>
   );

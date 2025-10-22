@@ -472,7 +472,7 @@ describe("EnregistrerBrouillonConsolidationHandler", () => {
         data: {
           id: ficheEvaluationId,
           jalon: 2025,
-          etape_courante: "CONTROLE_QUALITE", // Etape suivante
+          etape_courante: "INSTRUCTION", // Etape suivante
           rattachement_code: rattachementCode,
           etape_evaluations: {
             create: {

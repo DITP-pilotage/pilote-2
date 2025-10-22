@@ -67,10 +67,15 @@ export class AfficherConsolidationQuery {
           };
         });
 
+        const etapeConsolidation = etapesEvaluations.find(
+          (etape) => etape.type === $Enums.etape_evaluation_enum.CONSOLIDATION,
+        );
+
         return {
           code: rattachement.code,
           libelle: rattachement.libelle,
           ficheEvaluationId: rattachement.fiche_evaluation[0].id,
+          readOnly: etapeConsolidation?.read_only ?? false,
           objectifs: objectifsAvecEvaluations,
           criteres: criteresAvecEvaluations,
         };
@@ -132,6 +137,7 @@ export class AfficherConsolidationQuery {
   private findEvaluationObjectif(
     etapeEvaluations: Array<{
       type: $Enums.etape_evaluation_enum;
+      read_only: boolean;
       evaluations_objectifs: Array<{
         id: string;
         objectif_id: string;
@@ -151,6 +157,7 @@ export class AfficherConsolidationQuery {
   private findEvaluationCritere(
     etapeEvaluations: Array<{
       type: $Enums.etape_evaluation_enum;
+      read_only: boolean;
       evaluations_criteres: Array<{
         id: string;
         critere_id: string;

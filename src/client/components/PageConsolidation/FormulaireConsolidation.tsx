@@ -15,8 +15,7 @@ import { useEnregistrerBrouillonConsolidation } from "./useEnregistrerBrouillonC
 import { useTableauConsolidation } from "./useTableauConsolidation";
 
 export const FormulaireConsolidation = () => {
-  const { rattachements, criteres } =
-    pageConsolidation.useServerSidePropsContext();
+  const { rattachements } = pageConsolidation.useServerSidePropsContext();
   const { table } = useTableauConsolidation();
   const enregisterBrouillon = useEnregistrerBrouillonConsolidation();
   const formSchema = useFormSchema();
@@ -28,6 +27,9 @@ export const FormulaireConsolidation = () => {
     },
   });
   const rows = table.getRowModel().rows;
+  const estEnLectureSeule = rattachements.every(
+    (rattachement) => rattachement.readOnly,
+  );
 
   return (
     <FormProvider {...form}>
@@ -35,12 +37,14 @@ export const FormulaireConsolidation = () => {
         className="flex flex-col gap-3"
         onSubmit={form.handleSubmit(enregisterBrouillon)}
       >
-        <Bouton
-          className="self-end"
-          label="Enregistrer le brouillon"
-          type="submit"
-          variant="secondary"
-        />
+        {!estEnLectureSeule && (
+          <Bouton
+            className="self-end"
+            label="Enregistrer le brouillon"
+            type="submit"
+            variant="secondary"
+          />
+        )}
         <FiltresConsolidation table={table} />
         <GroupesConsolidation table={table} />
         <table className="table-fixed w-full border-collapse border border-gray-300">
@@ -61,9 +65,6 @@ export const FormulaireConsolidation = () => {
                         "border border-gray-300 px-4 py-3 text-left font-semibold",
                         header.id === "rattachementCode" && "w-48",
                         header.id === "id" && "w-auto",
-                        (header.id === "noteAutoEvaluation" ||
-                          header.id === "note") &&
-                          "w-32",
                       )}
                       key={header.id}
                     >
@@ -80,23 +81,14 @@ export const FormulaireConsolidation = () => {
           </thead>
           <tbody>
             {rows.map((row) => {
-              if (row.getIsGrouped()) {
-                const groupingColumnId = table.getState().grouping[0];
+              const groupingColumnId = table.getState().grouping[0];
+              if (row.getIsGrouped() && groupingColumnId !== "critereId") {
                 const groupingValue = row.groupingValue as string;
 
-                let displayLabel = groupingValue;
-                let colSpan = 4;
-
-                if (groupingColumnId === "rattachementCode") {
-                  colSpan = 3;
-                  const rattachement = rattachements.find(
-                    (r) => r.code === groupingValue,
-                  );
-                  displayLabel = rattachement?.libelle ?? groupingValue;
-                } else if (groupingColumnId === "critereId") {
-                  const critere = criteres.find((c) => c.id === groupingValue);
-                  displayLabel = critere?.libelle ?? "Objectifs";
-                }
+                const rattachement = rattachements.find(
+                  (rattachementAAfficher) =>
+                    rattachementAAfficher.code === groupingValue,
+                );
 
                 return (
                   <tr
@@ -105,9 +97,9 @@ export const FormulaireConsolidation = () => {
                   >
                     <td
                       className="font-semibold text-primary px-4 py-3"
-                      colSpan={colSpan}
+                      colSpan={1}
                     >
-                      {displayLabel}
+                      {rattachement?.libelle ?? groupingValue}
                     </td>
                   </tr>
                 );
@@ -128,11 +120,8 @@ export const FormulaireConsolidation = () => {
                       return (
                         <td
                           className={clsxm(
-                            "border border-gray-300 px-4 py-2",
+                            "border border-gray-300 px-4",
                             cell.column.id === "id" && "w-auto",
-                            (cell.column.id === "noteAutoEvaluation" ||
-                              cell.column.id === "note") &&
-                              "w-32",
                           )}
                           key={cell.id}
                         >

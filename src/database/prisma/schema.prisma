@@ -734,6 +734,7 @@ enum type_valeur {
 enum application_accessible {
   PILOTE
   PILOTE_EVAL
+  PILOTE_EVAL_PILOTAGE
 
   @@schema("public")
 }
@@ -791,11 +792,7 @@ model referentiel_objectif {
 enum etape_evaluation_enum {
   AUTO_EVALUATION
   CONSOLIDATION
-  CONTROLE_QUALITE
-  AJUSTEMENTS
-  CONTRE_PROPOSITION
-  CONTROLE_QUALITE_BIS
-  AJUSTEMENTS_BIS
+  INSTRUCTION
 
   @@schema("public")
 }
@@ -819,6 +816,7 @@ model etape_evaluation {
   fiche_evaluation_id   String                @db.Uuid
   fiche_evaluation      fiche_evaluation      @relation(fields: [fiche_evaluation_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
   type                  etape_evaluation_enum
+  read_only             Boolean               @default(false)
   created_at            DateTime              @default(now())
   updated_at            DateTime              @updatedAt
   evaluations_objectifs evaluation_objectif[]

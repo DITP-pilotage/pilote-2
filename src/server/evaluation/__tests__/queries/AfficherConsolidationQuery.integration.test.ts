@@ -252,6 +252,7 @@ describe("AfficherConsolidationQuery", () => {
           code: rattachement1Code,
           libelle: "Rattachement 1",
           ficheEvaluationId: fiche1Id,
+          readOnly: false,
           objectifs: [
             {
               id: objectif1Id,
@@ -303,6 +304,7 @@ describe("AfficherConsolidationQuery", () => {
           code: rattachement2Code,
           libelle: "Rattachement 2",
           ficheEvaluationId: fiche2Id,
+          readOnly: false,
           objectifs: [
             {
               id: objectif2Id,
@@ -523,6 +525,7 @@ describe("AfficherConsolidationQuery", () => {
           code: rattachementCode,
           libelle: "Rattachement multi-étape",
           ficheEvaluationId,
+          readOnly: false,
           objectifs: [
             {
               id: objectifId,
@@ -629,6 +632,7 @@ describe("AfficherConsolidationQuery", () => {
           code: rattachementCode,
           libelle: "Rattachement sans évaluations",
           ficheEvaluationId,
+          readOnly: false,
           objectifs: [
             {
               id: objectifId,
@@ -772,6 +776,7 @@ describe("AfficherConsolidationQuery", () => {
           code: rattachementCode,
           libelle: "Rattachement avec critères mixtes",
           ficheEvaluationId,
+          readOnly: false,
           objectifs: [],
           criteres: [
             {
@@ -898,6 +903,7 @@ describe("AfficherConsolidationQuery", () => {
           code: rattachementCode,
           libelle: "Rattachement avec objectifs mixtes",
           ficheEvaluationId,
+          readOnly: false,
           objectifs: [
             {
               id: objectif1Id,
@@ -1016,6 +1022,7 @@ describe("AfficherConsolidationQuery", () => {
               {
                 id: etapeConsolidationId,
                 type: "CONSOLIDATION",
+                read_only: true,
               },
             ],
           },
@@ -1087,6 +1094,7 @@ describe("AfficherConsolidationQuery", () => {
           code: rattachementCode,
           libelle: "Rattachement avec auto-évaluation",
           ficheEvaluationId,
+          readOnly: true,
           objectifs: [
             {
               id: objectifId,

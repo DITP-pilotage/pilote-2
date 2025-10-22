@@ -2,12 +2,12 @@ import Head from "next/head";
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next";
 import { getServerSession } from "next-auth/next";
 import { z } from "zod";
+import { $Enums } from "@prisma/client";
 import assert from "node:assert";
 import { getContainer } from "@/server/dependances";
 import { pageEvaluation } from "@/components/PageEvaluation/PageEvaluationServerSideContext";
 import { configurationFeatureFlip } from "@/config";
 import { authOptions } from "@/server/infrastructure/api/auth/[...nextauth]";
-import { ApplicationAccessible } from "@/server/domain/utilisateur/Utilisateur.interface";
 import { FormulaireEvaluation } from "@/components/PageEvaluation/FormulaireEvaluation";
 
 export const getServerSideProps = async ({
@@ -32,7 +32,7 @@ export const getServerSideProps = async ({
   if (
     !featureFlipping.piloteEval ||
     !session.applicationsAccessibles.includes(
-      ApplicationAccessible.PILOTE_EVAL,
+      $Enums.application_accessible.PILOTE_EVAL,
     ) ||
     !peutAccederEtapeAutoEvaluation
   ) {

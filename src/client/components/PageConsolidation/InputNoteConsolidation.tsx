@@ -8,7 +8,13 @@ type FormCommentaireName =
   | `fichesEvaluation.${string}.objectifs.${string}.commentaire`
   | `fichesEvaluation.${string}.criteres.${string}.commentaire`;
 
-export const InputNoteConsolidation = ({ name }: { name: FormNoteName }) => {
+export const InputNoteConsolidation = ({
+  name,
+  disabled = false,
+}: {
+  name: FormNoteName;
+  disabled?: boolean;
+}) => {
   const form = useFormulaireConsolidation();
   const commentaireName = name.replace(".note", ".commentaire");
 
@@ -17,7 +23,7 @@ export const InputNoteConsolidation = ({ name }: { name: FormNoteName }) => {
       control={form.control}
       name={name}
       onChange={() => form.trigger(commentaireName as FormCommentaireName)}
-      readOnly={false}
+      readOnly={disabled}
     />
   );
 };

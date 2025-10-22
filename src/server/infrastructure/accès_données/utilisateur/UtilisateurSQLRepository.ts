@@ -1,4 +1,5 @@
 import {
+  $Enums,
   chantier_identite as PrismaChantierIdentite,
   habilitation as PrismaHabilitation,
   perimetre,
@@ -8,7 +9,6 @@ import {
   utilisateur,
 } from "@prisma/client";
 import Utilisateur, {
-  ApplicationAccessible,
   ProfilCode,
   profilsDépartementaux,
   profilsRégionaux,
@@ -573,7 +573,7 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
         utilisateurBrut.profil,
       ),
       applicationsAccessibles:
-        utilisateurBrut.applications_accessibles as ApplicationAccessible[],
+        utilisateurBrut.applications_accessibles as $Enums.application_accessible[],
       habilitations: habilitations,
       dateDesactivation:
         utilisateurBrut.date_desactivation?.toISOString() ?? null,

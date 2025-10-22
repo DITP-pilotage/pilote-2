@@ -6,6 +6,8 @@ import { getContainer } from "@/server/dependances";
 import { ForbiddenError } from "@/server/app/error-boundary/forbidden-error";
 import { soumettreAutoEvaluationCommandSchema } from "@/server/evaluation/handlers/SoumettreAutoEvaluationHandler";
 import { enregisterEvaluationCommandSchema } from "@/server/evaluation/services/EnregistrerEvaluationService";
+import { debloquerFichesConsolidationCommandSchema } from "@/server/evaluation/handlers/DebloquerFichesConsolidationHandler";
+import { passerALEtapeInstructionCommandSchema } from "@/server/evaluation/handlers/PasserALEtapeInstructionHandler";
 
 export const evaluationRouter = créerRouteurTRPC({
   enregistrerBrouillonAutoEvaluation: procédureProtégée
@@ -58,6 +60,40 @@ export const evaluationRouter = créerRouteurTRPC({
 
       await getContainer("piloteEval")
         .resolve("soumettreAutoEvaluationHandler")
+        .execute(input, ctx.session.user.id);
+    }),
+
+  debloquerFichesConsolidation: procédureProtégée
+    .input(debloquerFichesConsolidationCommandSchema)
+    .mutation(async ({ input, ctx }) => {
+      const peutAccederPilotage = await getContainer("piloteEval")
+        .resolve("accesFicheEvaluationService")
+        .peutAccederEtapePilotage({
+          applicationsAccessibles: ctx.session.applicationsAccessibles,
+        });
+
+      if (!peutAccederPilotage)
+        throw new ForbiddenError("Accès refusé au pilotage");
+
+      await getContainer("piloteEval")
+        .resolve("debloquerFichesConsolidationHandler")
+        .execute(input);
+    }),
+
+  passerALEtapeInstruction: procédureProtégée
+    .input(passerALEtapeInstructionCommandSchema)
+    .mutation(async ({ input, ctx }) => {
+      const peutAccederPilotage = await getContainer("piloteEval")
+        .resolve("accesFicheEvaluationService")
+        .peutAccederEtapePilotage({
+          applicationsAccessibles: ctx.session.applicationsAccessibles,
+        });
+
+      if (!peutAccederPilotage)
+        throw new ForbiddenError("Accès refusé au pilotage");
+
+      await getContainer("piloteEval")
+        .resolve("passerALEtapeInstructionHandler")
         .execute(input, ctx.session.user.id);
     }),
 });

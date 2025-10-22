@@ -1,4 +1,5 @@
 import {
+  $Enums,
   habilitation as PrismaHabilitationModel,
   Prisma,
   profil as PrismaProfilModel,
@@ -26,10 +27,7 @@ import {
   profilsRégionaux,
   Utilisateur,
 } from "@/server/gestion-utilisateur/domain/Utilisateur.interface";
-import {
-  ApplicationAccessible,
-  UtilisateurÀCréerOuMettreÀJourSansHabilitation,
-} from "@/server/domain/utilisateur/Utilisateur.interface";
+import { UtilisateurÀCréerOuMettreÀJourSansHabilitation } from "@/server/domain/utilisateur/Utilisateur.interface";
 
 import { PilotePrismaClient } from "@/server/db/PrismaTransaction";
 
@@ -905,7 +903,7 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
         ),
         habilitations: habilitations,
         applicationsAccessibles:
-          utilisateurBrut.applications_accessibles as ApplicationAccessible[],
+          utilisateurBrut.applications_accessibles as $Enums.application_accessible[],
         dateDesactivation:
           utilisateurBrut.date_desactivation?.toISOString() ?? null,
       };

@@ -7,8 +7,10 @@ type FormCommentaireName =
 
 export const CommentaireTextareaConsolidation = ({
   name,
+  disabled = false,
 }: {
   name: FormCommentaireName;
+  disabled?: boolean;
 }) => {
   const form = useFormulaireConsolidation();
   return (
@@ -16,7 +18,7 @@ export const CommentaireTextareaConsolidation = ({
       control={form.control}
       label="Motif de la consolidation"
       name={name}
-      readOnly={false}
+      readOnly={disabled}
     />
   );
 };

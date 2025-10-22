@@ -20,7 +20,7 @@ export class AfficherPilotageQuery {
 
         const evaluationsParCritereEtEtape = this.buildEvaluationsMap(
           fiche.etape_evaluations,
-          criteres.map((c) => c.id),
+          criteres.map((critere) => critere.id),
           "critere",
         );
 
@@ -37,15 +37,20 @@ export class AfficherPilotageQuery {
             evaluations: evaluationsParEtape[objectif.id] || {
               AUTO_EVALUATION: null,
               CONSOLIDATION: null,
-              CONTROLE_QUALITE: null,
+              INSTRUCTION: null,
             },
           };
         });
+
+        const etapeConsolidation = fiche.etape_evaluations.find(
+          (etape) => etape.type === $Enums.etape_evaluation_enum.CONSOLIDATION,
+        );
 
         return {
           id: fiche.id,
           jalon: fiche.jalon,
           etapeCourante: fiche.etape_courante,
+          readOnly: etapeConsolidation?.read_only ?? false,
           rattachement: {
             code: rattachement.code,
             libelle: rattachement.libelle,
@@ -71,7 +76,7 @@ export class AfficherPilotageQuery {
               in: [
                 $Enums.etape_evaluation_enum.AUTO_EVALUATION,
                 $Enums.etape_evaluation_enum.CONSOLIDATION,
-                $Enums.etape_evaluation_enum.CONTROLE_QUALITE,
+                $Enums.etape_evaluation_enum.INSTRUCTION,
               ],
             },
           },
@@ -98,6 +103,7 @@ export class AfficherPilotageQuery {
   private buildEvaluationsMap(
     etapeEvaluations: Array<{
       type: $Enums.etape_evaluation_enum;
+      read_only: boolean;
       evaluations_objectifs: Array<{
         objectif_id: string;
         note: number | null;
@@ -109,14 +115,17 @@ export class AfficherPilotageQuery {
     }>,
     ids: string[],
     type: "critere" | "objectif",
-  ): Record<string, Record<string, number | null>> {
-    const map: Record<string, Record<string, number | null>> = {};
+  ): Record<string, Record<$Enums.etape_evaluation_enum, number | null>> {
+    const map: Record<
+      string,
+      Record<$Enums.etape_evaluation_enum, number | null>
+    > = {};
 
     ids.forEach((id) => {
       map[id] = {
         AUTO_EVALUATION: null,
         CONSOLIDATION: null,
-        CONTROLE_QUALITE: null,
+        INSTRUCTION: null,
       };
     });
 

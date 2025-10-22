@@ -4,6 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 
+import { $Enums } from "@prisma/client";
 import Titre from "@/components/_commons/Titre/Titre";
 import Bloc from "@/components/_commons/Bloc/Bloc";
 import IndicateurDEtapes from "@/components/_commons/IndicateurDEtapes/IndicateurDEtapes";
@@ -12,7 +13,6 @@ import RécapitulatifUtilisateur from "@/components/PageUtilisateurFormulaire/Ut
 import api from "@/server/infrastructure/api/trpc/api";
 import { Icone } from "@/components/_commons/Icone";
 import { ArrowLine3Icon } from "@/components/_commons/Icones/ArrowLine3Icon";
-import { ApplicationAccessible } from "@/server/domain/utilisateur/Utilisateur.interface";
 import {
   UtilisateurFormInputs,
   UtilisateurFormulaireProps,
@@ -51,7 +51,7 @@ const UtilisateurFormulaire: FunctionComponent<UtilisateurFormulaireProps> = ({
       saisieIndicateur: utilisateur?.saisieIndicateur,
       applicationsAccessibles: utilisateur
         ? utilisateur?.applicationsAccessibles
-        : [ApplicationAccessible.PILOTE],
+        : [$Enums.application_accessible.PILOTE],
       habilitations: {
         lecture: {
           chantiers: utilisateur?.habilitations.lecture.chantiers,

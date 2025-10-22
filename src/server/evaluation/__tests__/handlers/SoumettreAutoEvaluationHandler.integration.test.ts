@@ -231,7 +231,7 @@ describe("SoumettreAutoEvaluationHandler", () => {
           objectif_id: objectifId,
           auteur_id: nouvelAuteurId,
           note: 5,
-          commentaire: "Excellent objectif",
+          commentaire: "",
         }),
       ]);
       expect(etapeConsolidation.evaluations_objectifs.at(0)?.id).not.toBe(
@@ -243,7 +243,7 @@ describe("SoumettreAutoEvaluationHandler", () => {
           critere_id: critereId,
           auteur_id: nouvelAuteurId,
           note: 4,
-          commentaire: "Bon critère",
+          commentaire: "",
         }),
       ]);
       expect(etapeConsolidation.evaluations_criteres.at(0)?.id).not.toBe(

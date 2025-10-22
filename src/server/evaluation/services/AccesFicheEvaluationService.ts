@@ -29,6 +29,16 @@ export class AccesFicheEvaluationService {
     );
   }
 
+  async peutAccederEtapePilotage({
+    applicationsAccessibles,
+  }: {
+    applicationsAccessibles: $Enums.application_accessible[];
+  }): Promise<boolean> {
+    return applicationsAccessibles.includes(
+      $Enums.application_accessible.PILOTE_EVAL_PILOTAGE,
+    );
+  }
+
   private async peutAccederEtapePourFiche(
     ficheEvaluationId: string,
     utilisateurId: string,

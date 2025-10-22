@@ -1,3 +1,4 @@
+import { $Enums } from "@prisma/client";
 import { AccesFicheEvaluationService } from "@/server/evaluation/services/AccesFicheEvaluationService";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { prisma } from "@/server/db/prisma";
@@ -361,6 +362,69 @@ describe("AccesFicheEvaluationService", () => {
       // When
       const result = await service.peutAccederEtapeConsolidation({
         utilisateurId,
+      });
+
+      // Then
+      expect(result).toBe(false);
+    });
+  });
+
+  describe("peutAccederEtapePilotage", () => {
+    it("doit retourner true quand l'utilisateur a l'application PILOTE_EVAL_PILOTAGE", async () => {
+      // Given
+      const applicationsAccessibles: $Enums.application_accessible[] = [
+        $Enums.application_accessible.PILOTE,
+        $Enums.application_accessible.PILOTE_EVAL,
+        $Enums.application_accessible.PILOTE_EVAL_PILOTAGE,
+      ];
+
+      // When
+      const result = await service.peutAccederEtapePilotage({
+        applicationsAccessibles,
+      });
+
+      // Then
+      expect(result).toBe(true);
+    });
+
+    it("doit retourner true quand l'utilisateur a uniquement l'application PILOTE_EVAL_PILOTAGE", async () => {
+      // Given
+      const applicationsAccessibles: $Enums.application_accessible[] = [
+        $Enums.application_accessible.PILOTE_EVAL_PILOTAGE,
+      ];
+
+      // When
+      const result = await service.peutAccederEtapePilotage({
+        applicationsAccessibles,
+      });
+
+      // Then
+      expect(result).toBe(true);
+    });
+
+    it("doit retourner false quand l'utilisateur n'a pas l'application PILOTE_EVAL_PILOTAGE", async () => {
+      // Given
+      const applicationsAccessibles: $Enums.application_accessible[] = [
+        $Enums.application_accessible.PILOTE,
+        $Enums.application_accessible.PILOTE_EVAL,
+      ];
+
+      // When
+      const result = await service.peutAccederEtapePilotage({
+        applicationsAccessibles,
+      });
+
+      // Then
+      expect(result).toBe(false);
+    });
+
+    it("doit retourner false quand l'utilisateur n'a aucune application", async () => {
+      // Given
+      const applicationsAccessibles: $Enums.application_accessible[] = [];
+
+      // When
+      const result = await service.peutAccederEtapePilotage({
+        applicationsAccessibles,
       });
 
       // Then
