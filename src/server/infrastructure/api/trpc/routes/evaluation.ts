@@ -45,6 +45,23 @@ export const evaluationRouter = créerRouteurTRPC({
         .execute(input, ctx.session.user.id);
     }),
 
+  enregistrerBrouillonInstruction: procédureProtégée
+    .input(enregisterEvaluationCommandSchema.array())
+    .mutation(async ({ input, ctx }) => {
+      const peutAccederFicheInstruction = await getContainer("piloteEval")
+        .resolve("accesFicheEvaluationService")
+        .peutAccederEtapeInstruction({
+          utilisateurId: ctx.session.user.id,
+        });
+
+      if (!peutAccederFicheInstruction)
+        throw new ForbiddenError("Accès refusé à la fiche d'instruction");
+
+      await getContainer("piloteEval")
+        .resolve("enregistrerBrouillonInstructionHandler")
+        .execute(input, ctx.session.user.id);
+    }),
+
   soumettreAutoEvaluation: procédureProtégée
     .input(soumettreAutoEvaluationCommandSchema)
     .mutation(async ({ input, ctx }) => {

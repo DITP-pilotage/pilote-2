@@ -10,6 +10,7 @@ import { AfficherPilotageQuery } from "@/server/evaluation/queries/AfficherPilot
 import { DebloquerFichesConsolidationHandler } from "@/server/evaluation/handlers/DebloquerFichesConsolidationHandler";
 import { PasserALEtapeInstructionHandler } from "@/server/evaluation/handlers/PasserALEtapeInstructionHandler";
 import { AfficherInstructionQuery } from "@/server/evaluation/queries/AfficherInstructionQuery";
+import { EnregistrerBrouillonInstructionHandler } from "@/server/evaluation/handlers/EnregistrerBrouillonInstructionHandler";
 import { EnregistrerBrouillonAutoEvaluationHandler } from "./handlers/EnregistrerBrouillonAutoEvaluationHandler";
 
 export type PiloteEvalDependencies = {
@@ -20,6 +21,7 @@ export type PiloteEvalDependencies = {
   listerFichesAutoEvaluation: ListerFichesAutoEvaluationQuery;
   enregistrerBrouillonAutoEvaluation: EnregistrerBrouillonAutoEvaluationHandler;
   enregistrerBrouillonConsolidationHandler: EnregistrerBrouillonConsolidationHandler;
+  enregistrerBrouillonInstructionHandler: EnregistrerBrouillonInstructionHandler;
   accesFicheEvaluationService: AccesFicheEvaluationService;
   soumettreAutoEvaluationHandler: SoumettreAutoEvaluationHandler;
   debloquerFichesConsolidationHandler: DebloquerFichesConsolidationHandler;
@@ -40,6 +42,9 @@ export const getPiloteEvalContainer = (
     ),
     enregistrerBrouillonConsolidationHandler: asClass(
       EnregistrerBrouillonConsolidationHandler,
+    ),
+    enregistrerBrouillonInstructionHandler: asClass(
+      EnregistrerBrouillonInstructionHandler,
     ),
     accesFicheEvaluationService: asClass(AccesFicheEvaluationService),
     soumettreAutoEvaluationHandler: asClass(SoumettreAutoEvaluationHandler),
