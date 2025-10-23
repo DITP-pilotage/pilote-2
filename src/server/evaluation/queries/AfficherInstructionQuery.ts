@@ -12,7 +12,28 @@ export class AfficherInstructionQuery {
   async execute({ utilisateurId }: { utilisateurId: string }) {
     const rattachements = await this.fetchRattachements(utilisateurId);
 
+    const tousCriteresMap = new Map<string, { id: string; libelle: string }>();
+    rattachements.forEach((rattachement) => {
+      const rattachementUtilisateurEtapeJalon =
+        rattachement.rattachement_utilisateur_etape_jalon.find(
+          (rattachementUtilisateurEtape) =>
+            rattachementUtilisateurEtape.utilisateur_id === utilisateurId &&
+            rattachementUtilisateurEtape.etape ===
+              $Enums.etape_evaluation_enum.INSTRUCTION,
+        );
+
+      this.fetchCriteresAccessiblesPourUnRattachement(
+        rattachementUtilisateurEtapeJalon,
+      ).forEach((critere) => {
+        tousCriteresMap.set(critere.id, {
+          id: critere.id,
+          libelle: critere.libelle,
+        });
+      });
+    });
+
     return {
+      criteres: [...tousCriteresMap.values()],
       rattachements: rattachements.map((rattachement) => {
         const etapesEvaluations = rattachement.fiche_evaluation.flatMap(
           (fiche) => fiche.etape_evaluations,
@@ -70,11 +91,12 @@ export class AfficherInstructionQuery {
             };
           });
 
-        const tousCriteres = this.fetchTousCriteres(
-          rattachementUtilisateurEtapeJalon,
-        );
+        const tousCriteresRattachement =
+          this.fetchCriteresAccessiblesPourUnRattachement(
+            rattachementUtilisateurEtapeJalon,
+          );
 
-        const criteresAvecEvaluations = tousCriteres
+        const criteresAvecEvaluations = tousCriteresRattachement
           .filter((critere) => criteresAccessibles.includes(critere.id))
           .map((critere) => {
             const autoEvaluation = this.findEvaluationCritere(
@@ -118,7 +140,7 @@ export class AfficherInstructionQuery {
     };
   }
 
-  private fetchTousCriteres(
+  private fetchCriteresAccessiblesPourUnRattachement(
     rattachementUtilisateurEtapeJalon:
       | {
           instruction_criteres: Array<{

@@ -792,6 +792,753 @@ export function FormulaireInstruction() {
 
 ---
 
+## NOUVEAU PLAN : Implémentation du formulaire d'instruction en s'inspirant de la consolidation
+
+### Vue d'ensemble
+
+Suite à l'analyse de la page de consolidation existante, voici le plan détaillé pour créer le formulaire d'instruction qui permettra d'instruire les objectifs et critères avec affichage des 3 étapes d'évaluation (auto-évaluation, consolidation, instruction).
+
+---
+
+### ÉTAPE 1 : Affichage du formulaire (Frontend)
+
+#### 1.1 Créer les fichiers de structure de base
+
+##### Fichier 1 : `src/client/components/PageInstruction/form.ts`
+
+**Source d'inspiration :** `src/client/components/PageConsolidation/form.ts`
+
+**Contenu à créer :**
+- Schema Zod identique : `baseFormSchema` avec `fichesEvaluation` contenant `objectifs` et `criteres`
+- Type `FormValues` dérivé du schéma
+- Hook `useFormulaireInstruction()` pour accéder au formulaire
+- Fonction `getFichesEvaluationParDefaut()` qui initialise le formulaire avec les données `instruction` (au lieu de `evaluation` dans consolidation)
+- Fonctions de validation :
+  - `getCommentairesObjectifsInvalides()` : compare `consolidation.note` vs `instruction.note` (au lieu de `autoEvaluation` vs `consolidation`)
+  - `getCommentairesCriteresInvalides()` : même logique
+- Hook `useFormSchema()` avec validation personnalisée
+
+**Adaptations clés :**
+```typescript
+// DIFFÉRENCES avec consolidation :
+// 1. Import InstructionData au lieu de ConsolidationData
+import { InstructionData } from "@/server/evaluation/queries/AfficherInstructionQuery";
+import { pageInstruction } from "@/components/PageInstruction/PageInstructionServerSideContext";
+
+// 2. Données par défaut depuis objectif.instruction
+objectif.instruction.id,
+objectif.instruction.note,
+objectif.instruction.commentaire,
+
+// 3. Validation : comparer consolidation vs instruction
+const consolidation = getConsolidationObjectif(rattachement, objectif.id);
+const instructionEvaluation = ficheEvaluation?.objectifs[objectif.id];
+if (consolidation?.note != instructionEvaluation.note && !instructionEvaluation.commentaire)
+
+// 4. Message d'erreur
+message: "Le motif d'instruction est obligatoire lorsque la note est modifiée"
+```
+
+---
+
+##### Fichier 2 : `src/client/components/PageInstruction/CommentaireTextareaInstruction.tsx`
+
+**Source d'inspiration :** `src/client/components/PageConsolidation/CommentaireTextareaConsolidation.tsx`
+
+**Contenu :**
+```typescript
+import { useFormulaireInstruction } from "@/components/PageInstruction/form";
+import { Textarea } from "@/components/_commons/Textarea";
+
+type FormCommentaireName =
+  | `fichesEvaluation.${string}.objectifs.${string}.commentaire`
+  | `fichesEvaluation.${string}.criteres.${string}.commentaire`;
+
+export const CommentaireTextareaInstruction = ({
+  name,
+  disabled = false,
+}: {
+  name: FormCommentaireName;
+  disabled?: boolean;
+}) => {
+  const form = useFormulaireInstruction();
+  return (
+    <Textarea
+      control={form.control}
+      label="Motif de l'instruction"
+      name={name}
+      readOnly={disabled}
+    />
+  );
+};
+```
+
+---
+
+##### Fichier 3 : `src/client/components/PageInstruction/InputNoteInstruction.tsx`
+
+**Source d'inspiration :** `src/client/components/PageConsolidation/InputNoteConsolidation.tsx`
+
+**Contenu :**
+```typescript
+import { useFormulaireInstruction } from "@/components/PageInstruction/form";
+import { InputNoteControlled } from "@/components/_commons/InputNoteControlled";
+
+type FormNoteName =
+  | `fichesEvaluation.${string}.objectifs.${string}.note`
+  | `fichesEvaluation.${string}.criteres.${string}.note`;
+type FormCommentaireName =
+  | `fichesEvaluation.${string}.objectifs.${string}.commentaire`
+  | `fichesEvaluation.${string}.criteres.${string}.commentaire`;
+
+export const InputNoteInstruction = ({
+  name,
+  disabled = false,
+}: {
+  name: FormNoteName;
+  disabled?: boolean;
+}) => {
+  const form = useFormulaireInstruction();
+  const commentaireName = name.replace(".note", ".commentaire");
+
+  return (
+    <InputNoteControlled
+      control={form.control}
+      name={name}
+      onChange={() => form.trigger(commentaireName as FormCommentaireName)}
+      readOnly={disabled}
+    />
+  );
+};
+```
+
+---
+
+#### 1.2 Créer le hook de tableau
+
+##### Fichier 4 : `src/client/components/PageInstruction/useTableauInstruction.tsx`
+
+**Source d'inspiration :** `src/client/components/PageConsolidation/useTableauConsolidation.tsx`
+
+**Structure de données :**
+```typescript
+type TableauInstructionRow =
+  | {
+      type: "critere";
+      id: string;
+      libelle: string;
+      rattachement: {
+        code: string;
+        libelle: string;
+        readOnly: boolean;
+      };
+      ficheEvaluationId: string;
+      autoEvaluation: Evaluation;   // readonly
+      consolidation: Evaluation;    // readonly
+      instruction: Evaluation;      // éditable
+    }
+  | {
+      type: "objectif";
+      id: string;
+      libelle: string;
+      rattachement: {
+        code: string;
+        libelle: string;
+        readOnly: boolean;
+      };
+      ficheEvaluationId: string;
+      autoEvaluation: Evaluation;
+      consolidation: Evaluation;
+      instruction: Evaluation;
+    };
+```
+
+**Colonnes :**
+
+1. **Colonne "Rattachement"** - identique à consolidation
+2. **Colonne "Évaluation"** - DIFFÉRENCE CLÉ : 3 sections au lieu de 2
+
+```typescript
+cell: (info) => {
+  return (
+    <div className="space-y-4">
+      <div className="bg-gray-100 pb-2 border-b">
+        <span className="badge">{row.original.type}</span>
+        {row.original.libelle}
+      </div>
+
+      {/* SECTION 1 : INSTRUCTION (éditable) */}
+      <div className="flex border-b">
+        <div className="flex-1 border-r p-4">
+          <CommentaireTextareaInstruction
+            disabled={row.original.rattachement.readOnly}
+            name={commentaireName}
+          />
+        </div>
+        <div className="flex-shrink-0 w-[12rem] p-4">
+          <strong>Note d'instruction</strong>
+          <InputNoteInstruction
+            disabled={row.original.rattachement.readOnly}
+            name={noteName}
+          />
+        </div>
+      </div>
+
+      {/* SECTION 2 : CONSOLIDATION (readonly) */}
+      <div className="flex border-b">
+        <div className="flex-1 border-r p-4">
+          <strong>Commentaire de consolidation</strong>
+          <blockquote className="text-sm text-gray-700 italic border-l-4 border-gray-300 pl-3 py-1">
+            {row.original.consolidation.commentaire || "Aucun commentaire"}
+          </blockquote>
+        </div>
+        <div className="flex-shrink-0 w-[12rem] p-4">
+          <strong>Note de consolidation</strong>
+          <InputNote disabled value={row.original.consolidation.note ?? ""} />
+        </div>
+      </div>
+
+      {/* SECTION 3 : AUTO-ÉVALUATION (readonly) */}
+      <div className="flex">
+        <div className="flex-1 border-r p-4">
+          <strong>Commentaire de l'auto évalué</strong>
+          <blockquote className="text-sm text-gray-700 italic border-l-4 border-gray-300 pl-3 py-1">
+            {row.original.autoEvaluation.commentaire || "Aucun commentaire"}
+          </blockquote>
+        </div>
+        <div className="flex-shrink-0 w-[12rem] p-4">
+          <strong>Note auto-évaluation</strong>
+          <InputNote disabled value={row.original.autoEvaluation.note ?? ""} />
+        </div>
+      </div>
+    </div>
+  );
+}
+```
+
+3. **Colonne "Critère"** - identique à consolidation
+
+**Données du tableau :**
+```typescript
+const data = useMemo<TableauInstructionRow[]>(() => {
+  const rows: TableauInstructionRow[] = [];
+
+  rattachements.forEach((rattachement) => {
+    rattachement.criteres.forEach((critere) => {
+      rows.push({
+        id: critere.id,
+        type: "critere",
+        rattachement,
+        ficheEvaluationId: rattachement.ficheEvaluationId,
+        libelle: critere.libelle,
+        autoEvaluation: critere.autoEvaluation,
+        consolidation: critere.consolidation,
+        instruction: critere.instruction,  // NOUVEAU
+      });
+    });
+
+    rattachement.objectifs.forEach((objectif) => {
+      rows.push({
+        id: objectif.id,
+        type: "objectif",
+        rattachement,
+        ficheEvaluationId: rattachement.ficheEvaluationId,
+        libelle: objectif.libelle,
+        autoEvaluation: objectif.autoEvaluation,
+        consolidation: objectif.consolidation,
+        instruction: objectif.instruction,  // NOUVEAU
+      });
+    });
+  });
+
+  return rows;
+}, [rattachements]);
+```
+
+---
+
+#### 1.3 Fichiers optionnels : Filtres et groupes
+
+##### Fichier 5 (optionnel) : `src/client/components/PageInstruction/FiltresInstruction.tsx`
+
+Copie de `FiltresConsolidation.tsx` avec renommage des imports.
+
+##### Fichier 6 (optionnel) : `src/client/components/PageInstruction/GroupesInstruction.tsx`
+
+Copie de `GroupesConsolidation.tsx` avec renommage des imports.
+
+---
+
+#### 1.4 Réécrire le FormulaireInstruction
+
+##### Fichier 7 : `src/client/components/PageInstruction/FormulaireInstruction.tsx`
+
+**Source d'inspiration :** `src/client/components/PageConsolidation/FormulaireConsolidation.tsx`
+
+**Structure complète :**
+```typescript
+import { flexRender } from "@tanstack/react-table";
+import { FormProvider, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { pageInstruction } from "@/components/PageInstruction/PageInstructionServerSideContext";
+import { clsxm } from "@/utils/clsxm";
+import { Bouton } from "@/components/_commons/Bouton/Bouton";
+import { FiltresInstruction } from "@/components/PageInstruction/FiltresInstruction";
+import { GroupesInstruction } from "@/components/PageInstruction/GroupesInstruction";
+import {
+  FormValues,
+  getFichesEvaluationParDefaut,
+  useFormSchema,
+} from "./form";
+import { useEnregistrerBrouillonInstruction } from "./useEnregistrerBrouillonInstruction";
+import { useTableauInstruction } from "./useTableauInstruction";
+
+export const FormulaireInstruction = () => {
+  const { rattachements } = pageInstruction.useServerSidePropsContext();
+  const { table } = useTableauInstruction();
+  const enregistrerBrouillon = useEnregistrerBrouillonInstruction();
+  const formSchema = useFormSchema();
+  const form = useForm<FormValues>({
+    resolver: zodResolver(formSchema),
+    mode: "onChange",
+    defaultValues: {
+      fichesEvaluation: getFichesEvaluationParDefaut(rattachements),
+    },
+  });
+  const rows = table.getRowModel().rows;
+  const estEnLectureSeule = rattachements.every(
+    (rattachement) => rattachement.readOnly,
+  );
+
+  return (
+    <FormProvider {...form}>
+      <form
+        className="flex flex-col gap-3"
+        onSubmit={form.handleSubmit(enregistrerBrouillon)}
+      >
+        {!estEnLectureSeule && (
+          <Bouton
+            className="self-end"
+            label="Enregistrer le brouillon"
+            type="submit"
+            variant="secondary"
+          />
+        )}
+        <FiltresInstruction table={table} />
+        <GroupesInstruction table={table} />
+        <table className="table-fixed w-full border-collapse border border-gray-300">
+          <thead>
+            {table.getHeaderGroups().map((headerGroup) => (
+              <tr className="bg-blue-100" key={headerGroup.id}>
+                {headerGroup.headers
+                  .filter((header) => {
+                    if (table.getState().grouping[0] === "rattachementCode") {
+                      return header.id !== "rattachementCode";
+                    }
+                    return true;
+                  })
+                  .map((header) => (
+                    <th
+                      className={clsxm(
+                        "border border-gray-300 px-4 py-3 text-left font-semibold",
+                        header.id === "rattachementCode" && "w-48",
+                        header.id === "id" && "w-auto",
+                      )}
+                      key={header.id}
+                    >
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext(),
+                          )}
+                    </th>
+                  ))}
+              </tr>
+            ))}
+          </thead>
+          <tbody>
+            {rows.map((row) => {
+              const groupingColumnId = table.getState().grouping[0];
+              if (row.getIsGrouped() && groupingColumnId !== "critereId") {
+                const groupingValue = row.groupingValue as string;
+
+                const rattachement = rattachements.find(
+                  (rattachementAAfficher) =>
+                    rattachementAAfficher.code === groupingValue,
+                );
+
+                return (
+                  <tr
+                    className={clsxm("border-t border-t-2 border-primary")}
+                    key={row.id}
+                  >
+                    <td
+                      className="font-semibold text-primary px-4 py-3"
+                      colSpan={1}
+                    >
+                      {rattachement?.libelle ?? groupingValue}
+                    </td>
+                  </tr>
+                );
+              }
+
+              return (
+                <tr key={row.id}>
+                  {row
+                    .getVisibleCells()
+                    .filter((cell) => {
+                      if (table.getState().grouping[0] === "rattachementCode") {
+                        return cell.column.id !== "rattachementCode";
+                      }
+                      return true;
+                    })
+                    .map((cell) => {
+                      return (
+                        <td
+                          className={clsxm(
+                            "border border-gray-300 px-4",
+                            cell.column.id === "id" && "w-auto",
+                          )}
+                          key={cell.id}
+                        >
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext(),
+                          )}
+                        </td>
+                      );
+                    })}
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </form>
+    </FormProvider>
+  );
+};
+```
+
+**Note :** Cette structure est quasi-identique à `FormulaireConsolidation`, seuls les imports et noms de hooks changent.
+
+---
+
+### ÉTAPE 2 : Enregistrement de l'instruction (Backend + API)
+
+#### 2.1 Créer les tests du handler
+
+##### Fichier 8 : `src/server/evaluation/__tests__/handlers/EnregistrerBrouillonInstructionHandler.integration.test.ts`
+
+**Source d'inspiration :** `src/server/evaluation/__tests__/handlers/EnregistrerBrouillonConsolidationHandler.integration.test.ts`
+
+**5 tests à créer :**
+
+1. **"doit créer de nouvelles évaluations quand aucune n'existe"**
+   ```typescript
+   // Given : fiche avec etape_courante: "INSTRUCTION"
+   // When : appeler handler.execute() avec évaluations objectifs/critères
+   // Then : vérifier création evaluation_objectif et evaluation_critere
+   ```
+
+2. **"doit mettre à jour des évaluations existantes"**
+   ```typescript
+   // Given : évaluations existantes avec note=2
+   // When : appeler handler.execute() avec note=5
+   // Then : vérifier mise à jour des notes et commentaires
+   ```
+
+3. **"doit mettre à jour la date de modification de l'étape"**
+   ```typescript
+   // Given : étape avec updated_at initial
+   // When : appeler handler.execute()
+   // Then : vérifier updated_at > initialDate
+   ```
+
+4. **"doit gérer les notes nulles"**
+   ```typescript
+   // Given : n/a
+   // When : appeler handler.execute() avec note: null
+   // Then : vérifier création avec note: null
+   ```
+
+5. **"doit échouer si la fiche n'est pas en étape INSTRUCTION"**
+   ```typescript
+   // Given : fiche avec etape_courante: "CONSOLIDATION"
+   // When : appeler handler.execute()
+   // Then : expect().rejects.toThrow()
+   ```
+
+**Adaptations clés :**
+- Remplacer `CONSOLIDATION` par `INSTRUCTION` partout
+- Remplacer `EnregistrerBrouillonConsolidationHandler` par `EnregistrerBrouillonInstructionHandler`
+- Utiliser des UUIDs différents de ceux de consolidation
+
+---
+
+#### 2.2 Créer le handler
+
+##### Fichier 9 : `src/server/evaluation/handlers/EnregistrerBrouillonInstructionHandler.ts`
+
+**Source d'inspiration :** `src/server/evaluation/handlers/EnregistrerBrouillonConsolidationHandler.ts`
+
+**Signature :**
+```typescript
+export class EnregistrerBrouillonInstructionHandler {
+  constructor(
+    private readonly dependencies: {
+      prisma: PrismaPilote;
+      transaction: PrismaTransaction;
+    }
+  ) {}
+
+  async execute(
+    fichesEvaluation: Array<{
+      ficheEvaluationId: string;
+      evaluationsObjectifs: Array<{
+        id: string;
+        objectifId: string;
+        note: number | null;
+        commentaire: string;
+      }>;
+      evaluationsCriteres: Array<{
+        id: string;
+        critereId: string;
+        note: number | null;
+        commentaire: string;
+      }>;
+    }>,
+    utilisateurId: string,
+  ): Promise<void>
+```
+
+**Logique (identique à consolidation, sauf l'étape) :**
+1. Pour chaque `ficheEvaluation` :
+   - Vérifier `etape_courante === "INSTRUCTION"`
+   - Récupérer l'`etape_evaluation` de type `INSTRUCTION`
+
+2. Upsert des `evaluation_objectif` avec `etape_evaluation_id`
+
+3. Upsert des `evaluation_critere` avec `etape_evaluation_id`
+
+4. Update du `updated_at` de l'étape
+
+**Différence clé :** rechercher `type: "INSTRUCTION"` au lieu de `"CONSOLIDATION"`
+
+---
+
+#### 2.3 Enregistrer dans le container Awilix
+
+**Fichier à modifier :** chercher où est défini `enregistrerBrouillonConsolidationHandler`
+
+```bash
+grep -r "enregistrerBrouillonConsolidationHandler" src/server/
+```
+
+**Ajout à faire :**
+```typescript
+import { EnregistrerBrouillonInstructionHandler } from "@/server/evaluation/handlers/EnregistrerBrouillonInstructionHandler";
+
+// Dans le container :
+enregistrerBrouillonInstructionHandler: asClass(EnregistrerBrouillonInstructionHandler).scoped(),
+```
+
+---
+
+#### 2.4 Créer la route tRPC
+
+**Fichier à modifier :** chercher où est définie la mutation `enregistrerBrouillonConsolidation`
+
+```bash
+grep -r "enregistrerBrouillonConsolidation" src/server/infrastructure/
+```
+
+**Mutation à ajouter :**
+```typescript
+enregistrerBrouillonInstruction: protectedProcedure
+  .input(
+    z.array(
+      z.object({
+        ficheEvaluationId: z.string(),
+        evaluationsObjectifs: z.array(
+          z.object({
+            id: z.string(),
+            objectifId: z.string(),
+            note: z.number().nullable(),
+            commentaire: z.string(),
+          })
+        ),
+        evaluationsCriteres: z.array(
+          z.object({
+            id: z.string(),
+            critereId: z.string(),
+            note: z.number().nullable(),
+            commentaire: z.string(),
+          })
+        ),
+      })
+    )
+  )
+  .mutation(async ({ ctx, input }) => {
+    return getContainer("piloteEval")
+      .resolve("enregistrerBrouillonInstructionHandler")
+      .execute(input, ctx.session.user.id);
+  }),
+```
+
+---
+
+#### 2.5 Créer le hook React Query
+
+##### Fichier 10 : `src/client/components/PageInstruction/useEnregistrerBrouillonInstruction.ts`
+
+**Source d'inspiration :** `src/client/components/PageConsolidation/useEnregistrerBrouillonConsolidation.ts`
+
+**Code :**
+```typescript
+import { toast } from "sonner";
+import api from "@/server/infrastructure/api/trpc/api";
+import { FormValues } from "@/components/PageInstruction/form";
+
+export const useEnregistrerBrouillonInstruction = () => {
+  const enregistrerBrouillon =
+    api.evaluation.enregistrerBrouillonInstruction.useMutation();
+
+  return (values: FormValues) =>
+    enregistrerBrouillon.mutateAsync(
+      Object.entries(values.fichesEvaluation).map(
+        ([ficheEvaluationId, { objectifs, criteres }]) => {
+          return {
+            ficheEvaluationId,
+            evaluationsObjectifs: Object.entries(objectifs).map(
+              ([objectifId, evaluation]) => ({
+                ...evaluation,
+                objectifId,
+              }),
+            ),
+            evaluationsCriteres: Object.entries(criteres).map(
+              ([critereId, evaluation]) => ({
+                ...evaluation,
+                critereId,
+              }),
+            ),
+          };
+        },
+      ),
+      {
+        onSuccess: () => {
+          toast.success("Données enregistrées", {
+            position: "top-right",
+            richColors: true,
+          });
+        },
+      },
+    );
+};
+```
+
+---
+
+### RÉCAPITULATIF DES FICHIERS
+
+#### Fichiers à créer (10 fichiers obligatoires)
+
+**Frontend (7 fichiers) :**
+1. ✅ `src/client/components/PageInstruction/form.ts`
+2. ✅ `src/client/components/PageInstruction/CommentaireTextareaInstruction.tsx`
+3. ✅ `src/client/components/PageInstruction/InputNoteInstruction.tsx`
+4. ✅ `src/client/components/PageInstruction/useTableauInstruction.tsx`
+5. ✅ `src/client/components/PageInstruction/useEnregistrerBrouillonInstruction.ts`
+6. ⚠️ `src/client/components/PageInstruction/FiltresInstruction.tsx` (optionnel)
+7. ⚠️ `src/client/components/PageInstruction/GroupesInstruction.tsx` (optionnel)
+
+**Backend (3 fichiers) :**
+8. ✅ `src/server/evaluation/__tests__/handlers/EnregistrerBrouillonInstructionHandler.integration.test.ts`
+9. ✅ `src/server/evaluation/handlers/EnregistrerBrouillonInstructionHandler.ts`
+
+#### Fichiers à modifier (3 fichiers)
+
+10. ✅ `src/client/components/PageInstruction/FormulaireInstruction.tsx` (réécriture complète)
+11. ✅ Fichier container Awilix (à localiser)
+12. ✅ Fichier router tRPC évaluation (à localiser)
+
+---
+
+### ORDRE D'IMPLÉMENTATION RECOMMANDÉ
+
+#### Phase 1 : Structure de base (sans soumission)
+
+1. ✅ Créer `form.ts`
+2. ✅ Créer `CommentaireTextareaInstruction.tsx`
+3. ✅ Créer `InputNoteInstruction.tsx`
+4. ✅ Créer `useTableauInstruction.tsx`
+5. ✅ Réécrire `FormulaireInstruction.tsx` (sans hook de soumission)
+6. 🧪 Tester l'affichage dans le navigateur
+
+#### Phase 2 : Tests et backend
+
+7. ✅ Créer les tests `EnregistrerBrouillonInstructionHandler.integration.test.ts`
+8. 🧪 Vérifier que les tests sont rouges
+9. ✅ Créer `EnregistrerBrouillonInstructionHandler.ts`
+10. 🧪 Lancer les tests et corriger jusqu'au vert
+
+#### Phase 3 : Connexion API
+
+11. ✅ Ajouter le handler au container Awilix
+12. ✅ Créer la route tRPC
+13. ✅ Créer `useEnregistrerBrouillonInstruction.ts`
+14. ✅ Connecter le formulaire avec le hook
+15. 🧪 Tester l'enregistrement end-to-end
+
+---
+
+### POINTS D'ATTENTION
+
+#### Différences clés avec Consolidation
+
+| Aspect | Consolidation | Instruction |
+|--------|---------------|-------------|
+| Étape modifiable | Consolidation | Instruction |
+| Références readonly | Auto-évaluation (1) | Auto-évaluation + Consolidation (2) |
+| Validation | autoEval vs consolidation | consolidation vs instruction |
+| Message d'erreur | "motif de consolidation" | "motif d'instruction" |
+| Sections dans tableau | 2 sections | 3 sections |
+| Ordre d'affichage | Consolidation (haut), Auto-éval (bas) | Instruction (haut), Consolidation (milieu), Auto-éval (bas) |
+
+#### Vérifications à effectuer
+
+**Schéma Prisma doit contenir :**
+- Enum `etape_evaluation_enum.INSTRUCTION`
+- Tables `evaluation_objectif` et `evaluation_critere` liées à `etape_evaluation`
+
+**Query AfficherInstructionQuery doit retourner :**
+```typescript
+{
+  rattachements: Array<{
+    code: string;
+    libelle: string;
+    ficheEvaluationId: string;
+    readOnly: boolean;
+    objectifs: Array<{
+      id: string;
+      libelle: string;
+      autoEvaluation: { id, note, commentaire };
+      consolidation: { id, note, commentaire };
+      instruction: { id, note, commentaire };
+    }>;
+    criteres: Array<{
+      id: string;
+      libelle: string;
+      autoEvaluation: { id, note, commentaire };
+      consolidation: { id, note, commentaire };
+      instruction: { id, note, commentaire };
+    }>;
+  }>;
+}
+```
+
+---
+
 ## Notes techniques
 
 ### Relations importantes

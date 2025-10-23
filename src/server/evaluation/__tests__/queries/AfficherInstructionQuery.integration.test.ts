@@ -253,6 +253,11 @@ describe("AfficherInstructionQuery", () => {
       expect(result.rattachements).toHaveLength(1);
       expect(result.rattachements[0].criteres).toHaveLength(1);
       expect(result.rattachements[0].criteres[0].id).toBe(critere1Id);
+      expect(result.criteres).toHaveLength(1);
+      expect(result.criteres[0]).toEqual({
+        id: critere1Id,
+        libelle: "Critère à instruire",
+      });
     });
 
     it("doit récupérer les évaluations AUTO_EVALUATION, CONSOLIDATION et INSTRUCTION pour les objectifs", async () => {
@@ -849,6 +854,168 @@ describe("AfficherInstructionQuery", () => {
       expect(result.rattachements).toHaveLength(2);
       expect(result.rattachements[0].code).toBe(rattachement1Code);
       expect(result.rattachements[1].code).toBe(rattachement2Code);
+    });
+
+    it("doit retourner la liste unique de tous les critères accessibles pour filtrage", async () => {
+      // Given
+      const rattachement1Code = "REG-TEST-09";
+      const rattachement2Code = "REG-TEST-10";
+      const utilisateurId = "8f3e9d42-1a7c-4e5b-9c8d-3f2a1b4e6c7d";
+      const ficheEvaluation1Id = "1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d";
+      const ficheEvaluation2Id = "2b3c4d5e-6f7a-8b9c-0d1e-2f3a4b5c6d7e";
+      const etapeInstruction1Id = "3c4d5e6f-7a8b-9c0d-1e2f-3a4b5c6d7e8f";
+      const etapeInstruction2Id = "4d5e6f7a-8b9c-0d1e-2f3a-4b5c6d7e8f9a";
+      const critere1Id = "5e6f7a8b-9c0d-1e2f-3a4b-5c6d7e8f9a0b";
+      const critere2Id = "6f7a8b9c-0d1e-2f3a-4b5c-6d7e8f9a0b1c";
+      const critere3Id = "7a8b9c0d-1e2f-3a4b-5c6d-7e8f9a0b1c2d";
+      const critere4Id = "bf5b719f-c274-4129-992f-9b3919128b64";
+      const rattachementUtilisateur1Id = "1e2f3a4b-5c6d-7e8f-9a0b-1c2d3e4f5a6b";
+      const rattachementUtilisateur2Id = "2f3a4b5c-6d7e-8f9a-0b1c-2d3e4f5a6b7c";
+      const instructionCritere1Id = "3a4b5c6d-7e8f-9a0b-1c2d-3e4f5a6b7c8d";
+      const instructionCritere2Id = "4b5c6d7e-8f9a-0b1c-2d3e-4f5a6b7c8d9e";
+      const instructionCritere3aId = "5c6d7e8f-9a0b-1c2d-3e4f-5a6b7c8d9e0f";
+      const instructionCritere3bId = "6d7e8f9a-0b1c-2d3e-4f5a-6b7c8d9e0f1a";
+
+      await prisma.utilisateur.create({
+        data: {
+          id: utilisateurId,
+          email: "filtrage-criteres@example.com",
+          nom: "Filtrage",
+          prenom: "Criteres",
+          date_creation: new Date(),
+          profilCode: "DITP_ADMIN",
+        },
+      });
+
+      await prisma.referentiel_critere.createMany({
+        data: [
+          {
+            id: critere1Id,
+            libelle: "Critère unique rattachement 1",
+            descriptif: "Description",
+          },
+          {
+            id: critere2Id,
+            libelle: "Critère unique rattachement 2",
+            descriptif: "Description",
+          },
+          {
+            id: critere3Id,
+            libelle: "Critère commun aux 2",
+            descriptif: "Description",
+          },
+          {
+            id: critere4Id,
+            libelle: "Critère dans aucun des 2",
+            descriptif: "Description",
+          },
+        ],
+      });
+
+      await prisma.referentiel_rattachement.createMany({
+        data: [
+          {
+            code: rattachement1Code,
+            libelle: "Rattachement 1 filtrage",
+          },
+          {
+            code: rattachement2Code,
+            libelle: "Rattachement 2 filtrage",
+          },
+        ],
+      });
+
+      await prisma.fiche_evaluation.createMany({
+        data: [
+          {
+            id: ficheEvaluation1Id,
+            jalon: 2025,
+            etape_courante: "INSTRUCTION",
+            rattachement_code: rattachement1Code,
+          },
+          {
+            id: ficheEvaluation2Id,
+            jalon: 2025,
+            etape_courante: "INSTRUCTION",
+            rattachement_code: rattachement2Code,
+          },
+        ],
+      });
+
+      await prisma.etape_evaluation.createMany({
+        data: [
+          {
+            id: etapeInstruction1Id,
+            fiche_evaluation_id: ficheEvaluation1Id,
+            type: "INSTRUCTION",
+          },
+          {
+            id: etapeInstruction2Id,
+            fiche_evaluation_id: ficheEvaluation2Id,
+            type: "INSTRUCTION",
+          },
+        ],
+      });
+
+      await prisma.rattachement_utilisateur_etape_jalon.createMany({
+        data: [
+          {
+            id: rattachementUtilisateur1Id,
+            rattachement_code: rattachement1Code,
+            utilisateur_id: utilisateurId,
+            etape: "INSTRUCTION",
+            jalon: 2025,
+          },
+          {
+            id: rattachementUtilisateur2Id,
+            rattachement_code: rattachement2Code,
+            utilisateur_id: utilisateurId,
+            etape: "INSTRUCTION",
+            jalon: 2025,
+          },
+        ],
+      });
+
+      await prisma.instruction_critere.createMany({
+        data: [
+          {
+            id: instructionCritere1Id,
+            critere_id: critere1Id,
+            rattachement_utilisateur_etape_jalon_id: rattachementUtilisateur1Id,
+          },
+          {
+            id: instructionCritere3aId,
+            critere_id: critere3Id,
+            rattachement_utilisateur_etape_jalon_id: rattachementUtilisateur1Id,
+          },
+          {
+            id: instructionCritere2Id,
+            critere_id: critere2Id,
+            rattachement_utilisateur_etape_jalon_id: rattachementUtilisateur2Id,
+          },
+          {
+            id: instructionCritere3bId,
+            critere_id: critere3Id,
+            rattachement_utilisateur_etape_jalon_id: rattachementUtilisateur2Id,
+          },
+        ],
+      });
+
+      // When
+      const result = await query.execute({ utilisateurId });
+
+      // Then
+      expect(result.rattachements).toHaveLength(2);
+
+      // Le tableau criteres à la racine doit contenir les 3 critères uniques
+      expect(result.criteres).toHaveLength(3);
+      expect(result.criteres).toEqual(
+        expect.arrayContaining([
+          { id: critere1Id, libelle: "Critère unique rattachement 1" },
+          { id: critere2Id, libelle: "Critère unique rattachement 2" },
+          { id: critere3Id, libelle: "Critère commun aux 2" },
+        ]),
+      );
     });
   });
 });

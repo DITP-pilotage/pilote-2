@@ -1,7 +1,7 @@
 import { Table } from "@tanstack/react-table";
 import { ButtonTag } from "@/components/_commons/ButtonTag";
 
-export function FiltresConsolidation<T>({ table }: { table: Table<T> }) {
+export function FiltresInstruction<T>({ table }: { table: Table<T> }) {
   return (
     <div className="space-y-2">
       {table

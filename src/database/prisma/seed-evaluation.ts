@@ -582,6 +582,22 @@ const instructionsCriteres: instruction_critere[] = [
     created_at: new Date("2025-10-07T10:00:00"),
     updated_at: new Date("2025-10-07T10:00:00"),
   },
+  {
+    id: "b2b1998d-1338-44a7-82ec-b626259d8ced",
+    critere_id: "831cb1a5-036b-4609-a560-68cd1852397f",
+    rattachement_utilisateur_etape_jalon_id:
+      "d4e5f6a7-b8c9-4d0e-1f2a-3b4c5d6e7f8a",
+    created_at: new Date("2025-10-07T10:00:00"),
+    updated_at: new Date("2025-10-07T10:00:00"),
+  },
+  {
+    id: "3be5eb36-8e3e-497a-b59d-7b3ea635c872",
+    critere_id: "dedffbcf-97dc-40c9-9df4-a5be78617ba6",
+    rattachement_utilisateur_etape_jalon_id:
+      "d4e5f6a7-b8c9-4d0e-1f2a-3b4c5d6e7f8a",
+    created_at: new Date("2025-10-07T10:00:00"),
+    updated_at: new Date("2025-10-07T10:00:00"),
+  },
 ];
 
 async function run() {
