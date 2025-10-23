@@ -6,7 +6,7 @@ export const BadgeIndicateurEnAlerte = () => {
   const { chantier } = useBlocIndicateurContext();
   const { estIndicateurEnAlerte } = useIndicateurAlerteDateMaj();
 
-  if (estIndicateurEnAlerte || chantier.statut === "ARCHIVE") return null;
+  if (!estIndicateurEnAlerte || chantier.statut === "ARCHIVE") return null;
 
   return (
     <span className="fr-mr-1v">

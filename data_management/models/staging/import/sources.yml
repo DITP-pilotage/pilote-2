@@ -438,6 +438,12 @@ sources:
                     "name": "PCAET (CH-161)",
                     "desc": "Toutes zones sauf Lozère",
                   },
+                  {
+                    "order_id": 27,
+                    "value": "ZG-027",
+                    "name": "Toutes zones sauf Corse",
+                    "desc": "Tous départements et régions sauf Corse",
+                  },
                 ]
               pilote_create_mandatory: false
               pilote_create_defaultValue: ""
@@ -513,7 +519,7 @@ sources:
                   },
                   {
                     "order_id": 3,
-                    "value": "moy",
+                    "value": "avg",
                     "name": "Moyenne",
                     "desc": "Moyenne des valeurs des sous-indicateurs",
                   },
@@ -635,7 +641,7 @@ sources:
                   },
                   {
                     "order_id": 3,
-                    "value": "moy",
+                    "value": "avg",
                     "name": "Moyenne",
                     "desc": "Moyenne des valeurs des sous-indicateurs",
                   },
@@ -701,7 +707,7 @@ sources:
                   },
                   {
                     "order_id": 3,
-                    "value": "moy",
+                    "value": "avg",
                     "name": "Moyenne",
                     "desc": "Moyenne des valeurs de la maille inférieure.",
                   },
@@ -769,7 +775,7 @@ sources:
                   },
                   {
                     "order_id": 3,
-                    "value": "moy",
+                    "value": "avg",
                     "name": "Moyenne",
                     "desc": "Moyenne des valeurs de la maille inférieure.",
                   },
@@ -837,7 +843,7 @@ sources:
                   },
                   {
                     "order_id": 3,
-                    "value": "moy",
+                    "value": "avg",
                     "name": "Moyenne",
                     "desc": "Moyenne des valeurs de la maille inférieure.",
                   },
@@ -911,7 +917,7 @@ sources:
                   },
                   {
                     "order_id": 3,
-                    "value": "moy",
+                    "value": "avg",
                     "name": "Moyenne",
                     "desc": "Moyenne des valeurs de la maille inférieure.",
                   },
@@ -985,7 +991,7 @@ sources:
                   },
                   {
                     "order_id": 3,
-                    "value": "moy",
+                    "value": "avg",
                     "name": "Moyenne",
                     "desc": "Moyenne des valeurs de la maille inférieure.",
                   },
@@ -1059,7 +1065,7 @@ sources:
                   },
                   {
                     "order_id": 3,
-                    "value": "moy",
+                    "value": "avg",
                     "name": "Moyenne",
                     "desc": "Moyenne des valeurs de la maille inférieure.",
                   },
@@ -1157,7 +1163,7 @@ sources:
                     "desc": "VA saisie : non cumulable (%) ou déjà cumulée (valeur à date)",
                   },
                   { "order_id": 2, "value": "sum", "name": "Somme des VA" },
-                  { "order_id": 3, "value": "moy", "name": "Moyenne" },
+                  { "order_id": 3, "value": "avg", "name": "Moyenne" },
                 ]
           - name: param_vacg_decumul_from
             data_type: text
@@ -1252,7 +1258,7 @@ sources:
                     "desc": "VA saisie : non cumulable (%) ou déjà cumulée (valeur à date)",
                   },
                   { "order_id": 2, "value": "sum", "name": "Somme des VA" },
-                  { "order_id": 3, "value": "moy", "name": "Moyenne" },
+                  { "order_id": 3, "value": "avg", "name": "Moyenne" },
                 ]
           - name: tendance
             data_type: text

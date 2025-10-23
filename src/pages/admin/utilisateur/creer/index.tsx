@@ -1,21 +1,11 @@
-import { GetServerSidePropsContext } from "next";
+import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next";
 import Head from "next/head";
-import { FunctionComponent } from "react";
 import { getServerAuthSession } from "@/server/infrastructure/api/auth/[...nextauth]";
 import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
 import PageCréerUtilisateur from "@/components/PageUtilisateurFormulaire/PageCréerUtilisateur/PageCréerUtilisateur";
-
-const NextPageCréerUtilisateur: FunctionComponent<{}> = () => {
-  return (
-    <>
-      <Head>
-        <title>Créer un compte - PILOTE</title>
-      </Head>
-      <PageCréerUtilisateur />
-    </>
-  );
-};
-export default NextPageCréerUtilisateur;
+import { pageCreerUtilisateur } from "@/components/PageUtilisateurFormulaire/PageCréerUtilisateur/PageCreerUtilisateurServerSideContext";
+import { configurationFeatureFlip } from "@/config";
+import { ProfilEnum } from "@/server/app/enum/profil.enum";
 
 export async function getServerSideProps({
   req,
@@ -41,6 +31,25 @@ export async function getServerSideProps({
   }
 
   return {
-    props: {},
+    props: {
+      estAutoriseAVoirLeSelecteurApplication:
+        configurationFeatureFlip().piloteEval &&
+        [ProfilEnum.DITP_ADMIN].includes(session.profil),
+    },
   };
 }
+
+const NextPageCréerUtilisateur = (
+  props: InferGetServerSidePropsType<typeof getServerSideProps>,
+) => {
+  return (
+    <pageCreerUtilisateur.ServerSidePropsProvider value={props}>
+      <Head>
+        <title>Créer un compte - PILOTE</title>
+      </Head>
+      <PageCréerUtilisateur />
+    </pageCreerUtilisateur.ServerSidePropsProvider>
+  );
+};
+
+export default NextPageCréerUtilisateur;

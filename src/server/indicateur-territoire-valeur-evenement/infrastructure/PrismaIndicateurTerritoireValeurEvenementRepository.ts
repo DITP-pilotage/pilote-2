@@ -69,8 +69,6 @@ export class PrismaIndicateurTerritoireValeurEvenementRepository
           indic_id: args.indicId,
           territoire_code: args.territoireCode,
           type_valeur: args.typeValeur,
-          // TODO(PVA/JOTA) - Faire un filtre sur la date de valeur
-          // date_valeur: args.dateValeur,
         },
         orderBy: [{ date_valeur: "desc" }, { ordre: "desc" }],
       });
@@ -105,6 +103,87 @@ export class PrismaIndicateurTerritoireValeurEvenementRepository
       },
       evenements,
     );
+  }
+
+  async recupererParIndicIdTerritoireCodeTypeValeurEtDateSuperieureA({
+    indicId,
+    territoireCode,
+    typeValeur,
+    dateValeur,
+  }: {
+    indicId: string;
+    territoireCode: string;
+    typeValeur: TypeValeur;
+    dateValeur: Date;
+  }): Promise<EvenementsSurDate[]> {
+    const lignes = await this.prisma
+      .getInstance()
+      .indicateur_territoire_valeur_evenement.findMany({
+        where: {
+          indic_id: indicId,
+          territoire_code: territoireCode,
+          type_valeur: typeValeur,
+          date_valeur: {
+            gt: dateValeur,
+          },
+        },
+        orderBy: [{ date_valeur: "desc" }, { ordre: "desc" }],
+      });
+
+    const evenements = lignes.map((ligne) =>
+      IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
+        {
+          id: ligne.id,
+          indicId: ligne.indic_id,
+          territoireCode: ligne.territoire_code,
+          typeEvenement: ligne.type_evenement,
+          typeValeur: ligne.type_valeur,
+          dateValeur: ligne.date_valeur,
+          valeur: ligne.valeur!,
+          donneesComplementaires:
+            ligne.donnees_complementaires as DonneesComplementaires<
+              typeof ligne.type_evenement
+            >,
+          idAuteurModification: ligne.id_auteur_modification,
+          correlationId: ligne.correlation_id,
+          ordre: ligne.ordre,
+          dateCreation: ligne.date_creation,
+        },
+      ),
+    );
+
+    // Grouper les événements par date (format ISO)
+    const evenementsGroupesParDate = new Map<
+      string,
+      IndicateurTerritoireValeurEvenement[]
+    >();
+
+    for (const evenement of evenements) {
+      const dateISO = toISODate(evenement.dateValeur);
+      if (!evenementsGroupesParDate.has(dateISO)) {
+        evenementsGroupesParDate.set(dateISO, []);
+      }
+      evenementsGroupesParDate.get(dateISO)!.push(evenement);
+    }
+
+    // Créer un EvenementsSurDate pour chaque date, triés par date décroissante
+    const evenementsSurDates: EvenementsSurDate[] = [];
+    const datesTries = [...evenementsGroupesParDate.keys()].sort().reverse();
+
+    for (const date of datesTries) {
+      const evenementsPourDate = evenementsGroupesParDate.get(date)!;
+      const evenementsSurDate = EvenementsSurDate.pourDate(
+        {
+          indicId,
+          territoireCode,
+          date,
+        },
+        evenementsPourDate,
+      );
+      evenementsSurDates.push(evenementsSurDate);
+    }
+
+    return evenementsSurDates;
   }
 
   async enregistrer(

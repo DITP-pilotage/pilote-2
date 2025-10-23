@@ -117,20 +117,19 @@
   color: var(--text-title-blue-france);
 }
 
-
 .\!texte-blue-france {
   color: var(--text-title-blue-france) !important;
 }
 
-.texte-title-grey{
+.texte-title-grey {
   color: var(--text-title-grey);
 }
 
-.\!texte-title-grey{
+.\!texte-title-grey {
   color: var(--text-title-grey) !important;
 }
 
-.\!texte-white{
+.\!texte-white {
   color: white !important;
 }
 
@@ -201,11 +200,11 @@
 }
 
 .overflow-y-auto {
-  overflow-y: auto!important;
+  overflow-y: auto !important;
 }
 
 .overflow-y-scroll {
-  overflow-y: scroll!important;
+  overflow-y: scroll !important;
 }
 
 .fr-text-title--blue-france {
@@ -269,12 +268,6 @@
 }
 
 .border-b {
-  border-bottom-width: 1px !important;
-  border-bottom-color: var(--border-default-grey) !important;
-  border-bottom-style: solid !important;
-}
-
-.border-b-2 {
   border-bottom-width: 1px !important;
   border-bottom-color: var(--border-default-grey) !important;
   border-bottom-style: solid !important;

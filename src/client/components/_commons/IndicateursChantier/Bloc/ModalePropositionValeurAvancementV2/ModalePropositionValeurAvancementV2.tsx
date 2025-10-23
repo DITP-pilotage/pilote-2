@@ -3,7 +3,9 @@ import { FormProvider } from "react-hook-form";
 import Modale from "@/components/_commons/Modale/Modale";
 
 import useModalePropositionValeurAvancementV2, {
+  estChampMoisValide,
   EtapePropositionValeurAvancement,
+  reformatterChampsMois,
   Stepper,
 } from "@/components/_commons/IndicateursChantier/Bloc/ModalePropositionValeurAvancementV2/useModalePropositionValeurAvancementV2";
 import Input from "@/components/_commons/Input/Input";
@@ -37,7 +39,21 @@ export const ModalePropositionValeurAvancementV2: FunctionComponent<{
       codeInsee: territoireCodeInsee,
       nom: territoireNom,
     },
+    configurationFeatureFlipping,
   } = useBlocIndicateurContext();
+
+  const handleMoisValeurAvancementBlur = () => {
+    const currentValue = reactHookForm.getValues("moisValeurAvancement");
+    if (currentValue && estChampMoisValide(currentValue)) {
+      reactHookForm.setValue(
+        "moisValeurAvancement",
+        reformatterChampsMois(currentValue),
+        {
+          shouldValidate: true,
+        },
+      );
+    }
+  };
 
   return (
     <Modale
@@ -195,7 +211,9 @@ export const ModalePropositionValeurAvancementV2: FunctionComponent<{
                         <span className="flex justify-center texte-gris">
                           (
                           {formaterDate(
-                            detailIndicateurDuTerritoire.dateValeurAvancementMandat,
+                            detailIndicateurDuTerritoire.proposition
+                              ?.dateValeurAvancement ??
+                              detailIndicateurDuTerritoire.dateValeurAvancementMandat,
                             "MM/YYYY",
                           )}
                           )
@@ -203,6 +221,38 @@ export const ModalePropositionValeurAvancementV2: FunctionComponent<{
                       </div>
                     </div>
                   </div>
+                  {configurationFeatureFlipping.pvaValeurDifferente &&
+                  !estUneModificationDeProposition ? (
+                    <div className="fr-mt-2w">
+                      <label className="fr-label" htmlFor="valeurAvancement">
+                        Date de la valeur d'avancement proposée
+                        <ChampObligatoire />
+                      </label>
+                      <Input
+                        className="fr-mt-1v input--sm"
+                        classNameGroupe="fr-mb-1v"
+                        erreurMessage={
+                          reactHookForm.formState.errors.moisValeurAvancement
+                            ?.message
+                        }
+                        htmlName="moisValeurAvancement"
+                        register={reactHookForm.register(
+                          "moisValeurAvancement",
+                          {
+                            onBlur: handleMoisValeurAvancementBlur,
+                          },
+                        )}
+                        type="text"
+                      />
+                      <span className="flex texte-gris fr-text--xs">
+                        Dernière date de la valeur d'avancement :
+                        {formaterDate(
+                          detailIndicateurDuTerritoire.dateValeurAvancementMandat,
+                          "MM/YYYY",
+                        )}
+                      </span>
+                    </div>
+                  ) : null}
                   {estUneModificationDeProposition ? (
                     <div className="fr-mt-2w">
                       <label className="fr-label" htmlFor="valeurAvancement">
@@ -312,6 +362,14 @@ export const ModalePropositionValeurAvancementV2: FunctionComponent<{
                           "MM/YYYY",
                         )}
                         )
+                      </span>
+                    </p>
+                    <p className="fr-callout__text fr-text--sm">
+                      <span className="fr-text--bold">
+                        Date de la proposition de valeur d'avancement : 
+                      </span>
+                      <span className="text-italic">
+                        {reactHookForm.getValues("moisValeurAvancement")}
                       </span>
                     </p>
                     <p className="fr-callout__text fr-text--sm">

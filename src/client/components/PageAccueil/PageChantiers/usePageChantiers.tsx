@@ -1,10 +1,10 @@
-import { ChantierAccueilContrat } from "@/server/chantiers/app/contrats/ChantierAccueilContratNew";
 import { AvancementsStatistiquesAccueilContrat } from "@/server/chantiers/app/contrats/AvancementsStatistiquesAccueilContrat";
 import { TypeAlerteChantier } from "@/server/chantiers/app/contrats/TypeAlerteChantier";
+import { ChantierAccueilContratV2 } from "@/server/chantiers/app/contrats/ChantierAccueilContratV2";
 import useVueDEnsemble from "./useVueDEnsemble";
 
 export default function usePageChantiers(
-  chantiers: ChantierAccueilContrat[],
+  chantiers: ChantierAccueilContratV2[],
   territoireCode: string,
   filtresComptesCalculés: Record<TypeAlerteChantier, number>,
   avancementsAgrégés: AvancementsStatistiquesAccueilContrat,

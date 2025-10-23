@@ -200,7 +200,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                     <th className="fr-mb-0 fr-pl-2w fr-p-1w fr-py-md-1w" />
                     <th className="fr-mb-0 fr-p-0 fr-py-md-1w !text-sm" />
                     <th
-                      className="fr-background-contrast-grey border-b-2 border-b-high-grey text-center fr-mb-0 fr-p-0 fr-py-md-1w !text-sm bold"
+                      className="fr-background-contrast-grey border-b border-b-high-grey text-center fr-mb-0 fr-p-0 fr-py-md-1w !text-sm bold"
                       colSpan={3}
                     >
                       <div className="flex align-center justify-center">
@@ -210,13 +210,13 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                       </div>
                     </th>
                     <th
-                      className="fr-background-action-low-blue-france border-b-2 border-b-high-grey text-center fr-mb-0 fr-p-0 fr-py-md-1w !text-sm bold"
+                      className="fr-background-action-low-blue-france border-b border-b-high-grey text-center fr-mb-0 fr-p-0 fr-py-md-1w !text-sm bold"
                       colSpan={3}
                     >
                       DONNÉES À ÉCHÉANCE 2026
                     </th>
                   </tr>
-                  <tr className="border-b-2 border-b-high-grey">
+                  <tr className="border-b border-b-high-grey">
                     <th className="fr-background-action-low-blue-france text-center fr-mb-0 fr-px-1w fr-py-md-1w !text-sm bold no-wrap">
                       Territoire(s)
                     </th>

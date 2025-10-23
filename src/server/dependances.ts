@@ -20,6 +20,11 @@ import {
   getFicheConducteurContainer,
 } from "@/server/fiche-conducteur/container";
 import {
+  getPiloteEvalContainer,
+  PiloteEvalDependencies,
+} from "@/server/evaluation/container";
+import { configuration } from "@/config";
+import {
   GestionUtilisateurDependencies,
   getGestionUtilisateurContainer,
 } from "./gestion-utilisateur/container";
@@ -46,6 +51,7 @@ export type ContainerDependencies = {
   ficheConducteur: AwilixContainer<FicheConducteurDependencies>;
   parametrageNouveautes: AwilixContainer<ParametrageNouveautesDependencies>;
   indicateurTerritoireValeurEvenement: AwilixContainer<IndicateurTerritoireValeurEvenementDependencies>;
+  piloteEval: AwilixContainer<PiloteEvalDependencies>;
 };
 
 function registerContainer(): ContainerDependencies {
@@ -79,6 +85,9 @@ function registerContainer(): ContainerDependencies {
       getIndicateurTerritoireValeurEvenementContainer(
         initialContainerWithTransversalDependencies,
       ),
+    piloteEval: getPiloteEvalContainer(
+      initialContainerWithTransversalDependencies,
+    ),
   };
 }
 
@@ -88,10 +97,14 @@ declare global {
   var __container: ContainerDependencies | undefined;
 }
 
-if (!global.__container) {
-  global.__container = registerContainer();
+if (configuration().env === "production") {
+  if (!global.__container) {
+    global.__container = registerContainer();
+  }
+  innerContainer = global.__container;
+} else {
+  innerContainer = registerContainer();
 }
-innerContainer = global.__container;
 
 export const getContainer = <T extends keyof ContainerDependencies>(
   nameDependency: T,

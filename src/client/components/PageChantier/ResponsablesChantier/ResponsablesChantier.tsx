@@ -2,12 +2,12 @@ import { FunctionComponent } from "react";
 import Bloc from "@/components/_commons/Bloc/Bloc";
 import ResponsablesLigneChantier from "@/components/_commons/ResponsablesLigneChantier/ResponsablesLigneChantier";
 import { Maille } from "@/server/domain/maille/Maille.interface";
+import Chantier from "@/server/domain/chantier/Chantier.interface";
 import {
   CoordinateurTerritorialRapportDetailleContrat,
   DirecteurProjetRapportDetailleContrat,
   ResponsableLocalRapportDetailleContrat,
-} from "@/server/chantiers/app/contrats/ChantierRapportDetailleContrat";
-import Chantier from "@/server/domain/chantier/Chantier.interface";
+} from "@/server/chantiers/app/contrats/ChantierRapportDetailleContratV2";
 
 interface ResponsablesChantierProps {
   listeDirecteursProjets: DirecteurProjetRapportDetailleContrat[];

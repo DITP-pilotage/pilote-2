@@ -9,45 +9,6 @@ describe("IndicateurSQLRepository", () => {
     prismaIndicateurRepository = new IndicateurSQLRepository();
   });
 
-  describe("#récupérerChantierIdAssocié", () => {
-    it("doit récupérer l'id de chantier de l'indicateur passé en paramètre", async () => {
-      // Given
-      await prisma.chantier_identite.createMany({
-        data: [
-          {
-            id: "CH-001",
-            nom: "Chantier 001",
-          },
-          {
-            id: "CH-002",
-            nom: "Chantier 002",
-          },
-        ],
-      });
-
-      await prisma.indicateur_identite.createMany({
-        data: [
-          {
-            id: "IND-001",
-            nom: "Indicateur 001",
-            chantier_id: "CH-001",
-          },
-          {
-            id: "IND-002",
-            nom: "Indicateur 002",
-            chantier_id: "CH-002",
-          },
-        ],
-      });
-
-      // When
-      const result =
-        await prismaIndicateurRepository.récupérerChantierIdAssocié("IND-001");
-      // Then
-      expect(result).toEqual("CH-001");
-    });
-  });
-
   describe("#récupérerGroupésParChantier", () => {
     it("doit récupérer les détails des indicateurs regroupé par chantier", async () => {
       // Given
@@ -291,12 +252,6 @@ describe("IndicateurSQLRepository", () => {
             prochaine_date_maj_jours: 50,
             prochaine_date_maj: new Date("2025-08-31"),
             prochaine_date_valeur_actuelle: new Date("2025-09-31"),
-            valeur_actuelle_proposition: 10,
-            taux_avancement_mandat_proposition: 11,
-            auteur_proposition: "John Doe",
-            motif_proposition: "Pendant un test",
-            source_donnee_methode_calcul_proposition: "test integ",
-            date_proposition: new Date("2025-02-06"),
             tendance: "HAUSSE",
             valeur_actuelle_mandat: 10,
             valeur_cible_mandat: 11,
@@ -320,12 +275,6 @@ describe("IndicateurSQLRepository", () => {
             prochaine_date_maj_jours: 50,
             prochaine_date_maj: new Date("2025-08-31"),
             prochaine_date_valeur_actuelle: new Date("2025-09-31"),
-            valeur_actuelle_proposition: 10,
-            taux_avancement_mandat_proposition: 11,
-            auteur_proposition: "John Doe",
-            motif_proposition: "Pendant un test",
-            source_donnee_methode_calcul_proposition: "test integ",
-            date_proposition: new Date("2025-02-06"),
             tendance: "HAUSSE",
             valeur_actuelle_mandat: 10,
             valeur_cible_mandat: 11,
@@ -357,12 +306,6 @@ describe("IndicateurSQLRepository", () => {
             prochaine_date_maj_jours: 50,
             prochaine_date_maj: new Date("2025-08-31"),
             prochaine_date_valeur_actuelle: new Date("2025-09-31"),
-            valeur_actuelle_proposition: 10,
-            taux_avancement_mandat_proposition: 11,
-            auteur_proposition: "John Doe",
-            motif_proposition: "Pendant un test",
-            source_donnee_methode_calcul_proposition: "test integ",
-            date_proposition: new Date("2025-02-06"),
             tendance: "HAUSSE",
             valeur_actuelle_mandat: 10,
             valeur_cible_mandat: 11,
@@ -407,7 +350,6 @@ describe("IndicateurSQLRepository", () => {
             jalon: 2025,
             date_valeur_actuelle: new Date("2025-01-13"),
             valeur_actuelle: 10,
-            taux_avancement_proposition: 12,
           },
           {
             id: "IND-001",
@@ -432,7 +374,6 @@ describe("IndicateurSQLRepository", () => {
             jalon: 2025,
             date_valeur_actuelle: new Date("2025-01-13"),
             valeur_actuelle: 10,
-            taux_avancement_proposition: 12,
           },
           {
             id: "IND-002",
@@ -466,7 +407,6 @@ describe("IndicateurSQLRepository", () => {
             date_valeur_cible: new Date("2024-12-06"),
             taux_avancement: 13,
             jalon: 2024,
-            taux_avancement_proposition: 12,
           },
           {
             id: "IND-005",
@@ -478,7 +418,6 @@ describe("IndicateurSQLRepository", () => {
             date_valeur_cible: new Date("2025-12-06"),
             taux_avancement: 13,
             jalon: 2025,
-            taux_avancement_proposition: 12,
             date_valeur_actuelle: new Date("2025-01-13"),
             valeur_actuelle: 10,
           },
@@ -524,15 +463,7 @@ describe("IndicateurSQLRepository", () => {
               prochaineDateValeurAvancement: new Date(
                 "2025-09-31",
               ).toISOString(),
-              proposition: {
-                valeurAvancement: 10,
-                tauxAvancement: 11,
-                tauxAvancementIntermediaire: 12,
-                auteur: "John Doe",
-                motif: "Pendant un test",
-                sourceDonneeEtMethodeCalcul: "test integ",
-                dateProposition: new Date("2025-02-06").toISOString(),
-              },
+              proposition: null,
               tendance: "HAUSSE",
               unité: "kg",
               valeurAvancement: 10,
@@ -566,15 +497,7 @@ describe("IndicateurSQLRepository", () => {
               prochaineDateValeurAvancement: new Date(
                 "2025-09-31",
               ).toISOString(),
-              proposition: {
-                valeurAvancement: 10,
-                tauxAvancement: 11,
-                tauxAvancementIntermediaire: 12,
-                auteur: "John Doe",
-                motif: "Pendant un test",
-                sourceDonneeEtMethodeCalcul: "test integ",
-                dateProposition: new Date("2025-02-06").toISOString(),
-              },
+              proposition: null,
               tendance: "HAUSSE",
               unité: null,
               valeurAvancement: 10,
@@ -610,15 +533,7 @@ describe("IndicateurSQLRepository", () => {
               prochaineDateValeurAvancement: new Date(
                 "2025-09-31",
               ).toISOString(),
-              proposition: {
-                valeurAvancement: 10,
-                tauxAvancement: 11,
-                tauxAvancementIntermediaire: 12,
-                auteur: "John Doe",
-                motif: "Pendant un test",
-                sourceDonneeEtMethodeCalcul: "test integ",
-                dateProposition: new Date("2025-02-06").toISOString(),
-              },
+              proposition: null,
               tendance: "HAUSSE",
               unité: "mg",
               valeurAvancement: 10,

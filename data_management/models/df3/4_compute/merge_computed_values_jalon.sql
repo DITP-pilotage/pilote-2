@@ -12,7 +12,6 @@ SELECT
     COALESCE(a.date_vaca, b.date_vacg) AS date_valeur,
     a.vaca,
     b.vacg,
-    vacp.vacp,
     vca.vca as vca_courant, 
     vca.vca_date as vca_courant_date,
     e.vig, e.vig_date,
@@ -26,7 +25,6 @@ LEFT JOIN
         AND a.zone_id = b.zone_id
         AND a.date_vaca = b.date_vacg
         AND a.jalon = b.jalon
-left join {{ ref('compute_vacp') }} vacp on a.indic_id = vacp.indic_id and a.zone_id = vacp.zone_id and a.date_vaca::date = vacp.metric_date::date 
 left join {{ ref('get_vca_jalon') }} vca on a.indic_id =vca.indic_id and a.zone_id =vca.zone_id and a.jalon=vca.jalon 
 left join {{ ref('get_vig') }} e on a.indic_id =e.indic_id and a.zone_id =e.zone_id
 left join {{ ref('get_vcg') }} f on a.indic_id =f.indic_id and a.zone_id =f.zone_id

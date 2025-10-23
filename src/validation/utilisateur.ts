@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { $Enums } from "@prisma/client";
 import {
   ProfilCode,
   profilsCodes,
@@ -44,6 +45,7 @@ export const validationInfosBaseUtilisateur = z.object({
   profil: z.enum(profilsCodes),
   saisieIndicateur: z.boolean(),
   gestionUtilisateur: z.boolean(),
+  applicationsAccessibles: z.array(z.nativeEnum($Enums.application_accessible)),
 });
 
 const adresseEstValideSecretariatGeneral = (adresse: string) => {
@@ -68,6 +70,7 @@ export const validationInfosBaseUtilisateurSecretariatGeneral = z.object({
   fonction: z.string().max(100).nullable(),
   profil: z.enum(profilsCodes),
   saisieIndicateur: z.boolean(),
+  applicationsAccessibles: z.array(z.nativeEnum($Enums.application_accessible)),
 });
 
 export const validationInfosBaseUtilisateurCoordinateur = z.object({
@@ -84,6 +87,7 @@ export const validationInfosBaseUtilisateurCoordinateur = z.object({
   fonction: z.string().max(100).nullable(),
   profil: z.enum(profilsCodes),
   saisieIndicateur: z.boolean(),
+  applicationsAccessibles: z.array(z.nativeEnum($Enums.application_accessible)),
 });
 
 export const validationInfosHabilitationsUtilisateur = z.object({
@@ -100,30 +104,6 @@ export const validationInfosHabilitationsUtilisateur = z.object({
       chantiers: z.string().array(),
     }),
   }),
-});
-
-export const validationFiltresPourListeUtilisateurNew = z.object({
-  filtres: z.object({
-    chantiers: z.string().array(),
-    territoires: z.string().array(),
-    périmètresMinistériels: z.string().array(),
-    chantiersAssociésAuxPérimètres: z.string().array(),
-    profils: z.enum(profilsCodes).array(),
-    typesCompte: z.enum(["actif", "desactive"]).array(),
-  }),
-  pagination: z.object({
-    pageIndex: z.number(),
-    pageSize: z.number(),
-  }),
-  sorting: z
-    .object({
-      id: z
-        .string()
-        .regex(/email|nom|prénom|profil|fonction|Dernière modification/),
-      desc: z.boolean(),
-    })
-    .array(),
-  valeurDeLaRecherche: z.string(),
 });
 
 export const validationSupprimerUtilisateur = z.object({

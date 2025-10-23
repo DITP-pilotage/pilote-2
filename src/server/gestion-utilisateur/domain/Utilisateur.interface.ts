@@ -1,3 +1,4 @@
+import { $Enums } from "@prisma/client";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
 import {
   Habilitations,
@@ -51,6 +52,7 @@ export type Utilisateur = {
   saisieIndicateur: boolean;
   saisieCommentaire: boolean;
   gestionUtilisateur: boolean;
+  applicationsAccessibles: $Enums.application_accessible[];
   habilitations: Habilitations;
   dateDesactivation: string | null;
 };
@@ -64,5 +66,6 @@ export type UtilisateurÀCréerOuMettreÀJour = {
   saisieIndicateur: boolean;
   saisieCommentaire: boolean;
   gestionUtilisateur: boolean;
+  applicationsAccessibles: $Enums.application_accessible[];
   habilitations: HabilitationsÀCréerOuMettreÀJour;
 };

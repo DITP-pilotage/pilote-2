@@ -1,4 +1,5 @@
 /* eslint-disable sonarjs/no-duplicate-string */
+import { $Enums } from "@prisma/client";
 import fs from "node:fs";
 import UtilisateurÀCréerOuMettreÀJourBuilder from "@/server/domain/utilisateur/UtilisateurÀCréerOuMettreÀJour.builder";
 import UtilisateurCSVParseur from "./UtilisateurCSVParseur";
@@ -40,6 +41,7 @@ describe("UtilisateurCSVParseur", () => {
         saisieIndicateur: true,
         gestionUtilisateur: true,
         auteurEmail: "ditp.admin@example.com",
+        applicationsAccessibles: [$Enums.application_accessible.PILOTE],
         habilitations: {
           lecture: {
             chantiers: ["CH-001", "CH-002", "CH-003"],

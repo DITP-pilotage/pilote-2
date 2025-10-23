@@ -8,8 +8,8 @@ import {
 import départements from "@/client/constants/départements.json";
 import régions from "@/client/constants/régions.json";
 import { Maille } from "@/server/domain/maille/Maille.interface";
-import { ChantierAccueilContrat } from "@/server/chantiers/app/contrats/ChantierAccueilContratNew";
-import { ChantierRapportDetailleContrat } from "@/server/chantiers/app/contrats/ChantierRapportDetailleContrat";
+import { ChantierAccueilContratV2 } from "@/server/chantiers/app/contrats/ChantierAccueilContratV2";
+import { ChantierRapportDetailleContrat } from "@/server/chantiers/app/contrats/ChantierRapportDetailleContratV2";
 import { AgrégatParTerritoire } from "./agrégateur.interface";
 
 type AvancementRegroupementDonnéesBrutes = {
@@ -22,7 +22,7 @@ export class AgrégateurListeChantiersParTerritoire {
 
   constructor(
     private chantiers: (
-      | ChantierAccueilContrat
+      | ChantierAccueilContratV2
       | ChantierRapportDetailleContrat
     )[],
   ) {

@@ -113,38 +113,36 @@ model chantier_identite {
 }
 
 model chantier_territoire {
-  id                                              String
-  territoire_code                                 String
-  territoire                                      territoire                  @relation(fields: [territoire_code], references: [code], onDelete: Cascade, onUpdate: Cascade)
-  code_insee                                      String
-  maille                                          Maille
-  zone_id                                         String
-  taux_avancement_mandat                          Float?
-  date_taux_avancement_mandat                     DateTime?                   @db.Date
-  territoire_nom                                  String?
-  meteo                                           String?                     @default("NON_RENSEIGNEE")
-  taux_avancement_mandat_valeur_precedente        Float?
-  date_taux_avancement_mandat_valeur_precedente   DateTime?                   @db.Date
-  est_applicable                                  Boolean?
-  responsables_locaux                             String[]
-  coordinateurs_territoriaux                      String[]
-  responsables_locaux_mails                       String[]
-  coordinateurs_territoriaux_mails                String[]
-  derniere_maj_date_qualitative                   DateTime?                   @db.Date
-  tendance                                        type_tendance?
-  tendance_int_index                              Float?
-  ecart                                           Float?
-  meteo_int_index                                 Float?
-  donnees_maille_source                           Maille?
-  nombre_propositions_valeur_actuelle             Int                         @default(0)
-  nombre_propositions_valeur_actuelle_ponderee    Int                         @default(0)
-  nombre_propositions_valeur_actuelle_v2          Int                         @default(0)
-  nombre_propositions_valeur_actuelle_ponderee_v2 Int                         @default(0)
-  chantier_identite                               chantier_identite           @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  chantier_territoire_jalon                       chantier_territoire_jalon[]
-  commentaires                                    commentaire[]
-  syntheses_des_resultats                         synthese_des_resultats[]
-  indicateur_territoire                           indicateur_territoire[]
+  id                                            String
+  territoire_code                               String
+  territoire                                    territoire                  @relation(fields: [territoire_code], references: [code], onDelete: Cascade, onUpdate: Cascade)
+  code_insee                                    String
+  maille                                        Maille
+  zone_id                                       String
+  taux_avancement_mandat                        Float?
+  date_taux_avancement_mandat                   DateTime?                   @db.Date
+  territoire_nom                                String?
+  meteo                                         String?                     @default("NON_RENSEIGNEE")
+  taux_avancement_mandat_valeur_precedente      Float?
+  date_taux_avancement_mandat_valeur_precedente DateTime?                   @db.Date
+  est_applicable                                Boolean?
+  responsables_locaux                           String[]
+  coordinateurs_territoriaux                    String[]
+  responsables_locaux_mails                     String[]
+  coordinateurs_territoriaux_mails              String[]
+  derniere_maj_date_qualitative                 DateTime?                   @db.Date
+  tendance                                      type_tendance?
+  tendance_int_index                            Float?
+  ecart                                         Float?
+  meteo_int_index                               Float?
+  donnees_maille_source                         Maille?
+  nombre_propositions_valeur_actuelle           Int                         @default(0)
+  nombre_propositions_valeur_actuelle_ponderee  Int                         @default(0)
+  chantier_identite                             chantier_identite           @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  chantier_territoire_jalon                     chantier_territoire_jalon[]
+  commentaires                                  commentaire[]
+  syntheses_des_resultats                       synthese_des_resultats[]
+  indicateur_territoire                         indicateur_territoire[]
 
   @@id([id, territoire_code])
   @@schema("public")
@@ -218,42 +216,36 @@ model indicateur_identite {
 }
 
 model indicateur_territoire {
-  id                                       String
-  chantier_id                              String
-  maille                                   Maille
-  territoire_code                          String
-  code_insee                               String
-  zone_id                                  String
-  valeur_cible_mandat                      Float?
-  taux_avancement_mandat                   Float?
-  date_valeur_actuelle_mandat              DateTime?                                @db.Date
-  date_valeur_initiale                     DateTime?                                @db.Date
-  valeur_actuelle_mandat                   Float?
-  valeur_initiale                          Float?
-  territoire_nom                           String?
-  date_valeur_cible_mandat                 DateTime?                                @db.Date
-  est_applicable                           Boolean?
-  ponderation_zone_declaree                Float?
-  ponderation_zone_reel                    Float?
-  est_a_jour                               Boolean?
-  prochaine_date_maj                       DateTime?                                @db.Date
-  prochaine_date_maj_jours                 Int?
-  tendance                                 String?
-  valeur_actuelle_proposition              Float?
-  auteur_proposition                       String?
-  date_proposition                         DateTime?                                @db.Date
-  motif_proposition                        String?
-  source_donnee_methode_calcul_proposition String?
-  taux_avancement_mandat_proposition       Float?
-  taux_avancement_mandat_proposition_v2    Float?
-  prochaine_date_valeur_actuelle           DateTime?                                @db.Date
-  evolution_valeur_actuelle                Json?
-  territoire                               territoire                               @relation(fields: [territoire_code], references: [code], onDelete: Cascade, onUpdate: Cascade)
-  indicateur_identite                      indicateur_identite                      @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  chantier_territoire                      chantier_territoire                      @relation(fields: [chantier_id, territoire_code], references: [id, territoire_code], onDelete: Cascade, onUpdate: Cascade)
-  indicateur_territoire_jalon              indicateur_territoire_jalon[]
-  proposition_valeur_actuelle              proposition_valeur_actuelle[]
-  indicateur_territoire_valeur_evenement   indicateur_territoire_valeur_evenement[]
+  id                                     String
+  chantier_id                            String
+  maille                                 Maille
+  territoire_code                        String
+  code_insee                             String
+  zone_id                                String
+  valeur_cible_mandat                    Float?
+  taux_avancement_mandat                 Float?
+  date_valeur_actuelle_mandat            DateTime?                                @db.Date
+  date_valeur_initiale                   DateTime?                                @db.Date
+  valeur_actuelle_mandat                 Float?
+  valeur_initiale                        Float?
+  territoire_nom                         String?
+  date_valeur_cible_mandat               DateTime?                                @db.Date
+  est_applicable                         Boolean?
+  ponderation_zone_declaree              Float?
+  ponderation_zone_reel                  Float?
+  est_a_jour                             Boolean?
+  prochaine_date_maj                     DateTime?                                @db.Date
+  prochaine_date_maj_jours               Int?
+  tendance                               String?
+  taux_avancement_mandat_proposition     Float?
+  prochaine_date_valeur_actuelle         DateTime?                                @db.Date
+  evolution_valeur_actuelle              Json?
+  territoire                             territoire                               @relation(fields: [territoire_code], references: [code], onDelete: Cascade, onUpdate: Cascade)
+  indicateur_identite                    indicateur_identite                      @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  chantier_territoire                    chantier_territoire                      @relation(fields: [chantier_id, territoire_code], references: [id, territoire_code], onDelete: Cascade, onUpdate: Cascade)
+  indicateur_territoire_jalon            indicateur_territoire_jalon[]
+  proposition_valeur_actuelle            proposition_valeur_actuelle[]
+  indicateur_territoire_valeur_evenement indicateur_territoire_valeur_evenement[]
 
   @@id([id, territoire_code])
   @@index([territoire_code])
@@ -263,20 +255,19 @@ model indicateur_territoire {
 }
 
 model indicateur_territoire_jalon {
-  id                             String
-  territoire_code                String
-  code_insee                     String
-  maille                         Maille
-  jalon                          Int
-  zone_id                        String
-  date_valeur_cible              DateTime?             @db.Date
-  taux_avancement                Float?
-  valeur_cible                   Float?
-  taux_avancement_proposition    Float?
-  taux_avancement_proposition_v2 Float?
-  date_valeur_actuelle           DateTime?             @db.Date
-  valeur_actuelle                Float?
-  indicateur_territoire          indicateur_territoire @relation(fields: [id, territoire_code], references: [id, territoire_code], onDelete: Cascade, onUpdate: Cascade)
+  id                          String
+  territoire_code             String
+  code_insee                  String
+  maille                      Maille
+  jalon                       Int
+  zone_id                     String
+  date_valeur_cible           DateTime?             @db.Date
+  taux_avancement             Float?
+  valeur_cible                Float?
+  taux_avancement_proposition Float?
+  date_valeur_actuelle        DateTime?             @db.Date
+  valeur_actuelle             Float?
+  indicateur_territoire       indicateur_territoire @relation(fields: [id, territoire_code], references: [id, territoire_code], onDelete: Cascade, onUpdate: Cascade)
 
   @@id([id, territoire_code, jalon])
   @@index([id, territoire_code])
@@ -580,6 +571,10 @@ model utilisateur {
   date_inscription_infolettre            DateTime?
   historisations_modification            historisation_modification[]
   indicateur_territoire_valeur_evenement indicateur_territoire_valeur_evenement[]
+  applications_accessibles               application_accessible[]
+  rattachement_utilisateur_etape_jalons  rattachement_utilisateur_etape_jalon[]
+  evaluation_objectif                    evaluation_objectif[]
+  evaluation_critere                     evaluation_critere[]
 
   @@schema("public")
 }
@@ -733,5 +728,149 @@ enum type_valeur {
   VALEUR_CIBLE
   VALEUR_INITIALE
 
+  @@schema("public")
+}
+
+enum application_accessible {
+  PILOTE
+  PILOTE_EVAL
+  PILOTE_EVAL_PILOTAGE
+
+  @@schema("public")
+}
+
+model referentiel_critere {
+  id                 String                     @id @db.Uuid
+  libelle            String
+  descriptif         String
+  sous_criteres      referentiel_sous_critere[]
+  created_at         DateTime                   @default(now())
+  updated_at         DateTime                   @updatedAt
+  evaluation_critere evaluation_critere[]
+
+  @@schema("public")
+}
+
+model referentiel_sous_critere {
+  id         String              @id @db.Uuid
+  libelle    String
+  descriptif String
+  parent_id  String              @db.Uuid
+  parent     referentiel_critere @relation(fields: [parent_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  created_at DateTime            @default(now())
+  updated_at DateTime            @updatedAt
+
+  @@schema("public")
+}
+
+model referentiel_rattachement {
+  code                                 String                                 @id
+  libelle                              String
+  created_at                           DateTime                               @default(now())
+  updated_at                           DateTime                               @updatedAt
+  objectifs                            referentiel_objectif[]
+  fiche_evaluation                     fiche_evaluation[]
+  rattachement_utilisateur_etape_jalon rattachement_utilisateur_etape_jalon[]
+
+  @@schema("public")
+}
+
+model referentiel_objectif {
+  id                String                   @id @db.Uuid
+  libelle           String
+  descriptif        String
+  jalon             Int
+  rattachement_code String
+  rattachement      referentiel_rattachement @relation(fields: [rattachement_code], references: [code], onDelete: Cascade, onUpdate: Cascade)
+  created_at        DateTime                 @default(now())
+  updated_at        DateTime                 @updatedAt
+  evaluations       evaluation_objectif[]
+
+  @@schema("public")
+}
+
+enum etape_evaluation_enum {
+  AUTO_EVALUATION
+  CONSOLIDATION
+  INSTRUCTION
+
+  @@schema("public")
+}
+
+model fiche_evaluation {
+  id                String                   @id @db.Uuid
+  jalon             Int
+  etape_courante    etape_evaluation_enum
+  rattachement_code String
+  rattachement      referentiel_rattachement @relation(fields: [rattachement_code], references: [code], onDelete: Cascade, onUpdate: Cascade)
+  created_at        DateTime                 @default(now())
+  updated_at        DateTime                 @updatedAt
+  etape_evaluations etape_evaluation[]
+
+  @@unique([rattachement_code, jalon])
+  @@schema("public")
+}
+
+model etape_evaluation {
+  id                    String                @id @db.Uuid
+  fiche_evaluation_id   String                @db.Uuid
+  fiche_evaluation      fiche_evaluation      @relation(fields: [fiche_evaluation_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  type                  etape_evaluation_enum
+  read_only             Boolean               @default(false)
+  created_at            DateTime              @default(now())
+  updated_at            DateTime              @updatedAt
+  evaluations_objectifs evaluation_objectif[]
+  evaluations_criteres  evaluation_critere[]
+
+  @@unique([fiche_evaluation_id, type])
+  @@schema("public")
+}
+
+model rattachement_utilisateur_etape_jalon {
+  id                String                   @id @db.Uuid
+  etape             etape_evaluation_enum
+  jalon             Int
+  utilisateur_id    String                   @db.Uuid
+  utilisateur       utilisateur              @relation(fields: [utilisateur_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  rattachement_code String
+  rattachement      referentiel_rattachement @relation(fields: [rattachement_code], references: [code], onDelete: Cascade, onUpdate: Cascade)
+  created_at        DateTime                 @default(now())
+  updated_at        DateTime                 @updatedAt
+
+  @@unique([utilisateur_id, rattachement_code, jalon, etape])
+  @@schema("public")
+}
+
+model evaluation_objectif {
+  id                  String               @id @db.Uuid
+  etape_evaluation_id String               @db.Uuid
+  etape_evaluation    etape_evaluation     @relation(fields: [etape_evaluation_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  objectif_id         String               @db.Uuid
+  objectif            referentiel_objectif @relation(fields: [objectif_id], references: [id])
+  auteur_id           String               @db.Uuid
+  auteur              utilisateur          @relation(fields: [auteur_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  note                Int?
+  commentaire         String
+  created_at          DateTime             @default(now())
+  updated_at          DateTime             @updatedAt
+
+  @@unique([etape_evaluation_id, objectif_id, auteur_id])
+  @@schema("public")
+}
+
+model evaluation_critere {
+  id                  String              @id @db.Uuid
+  etape_evaluation_id String              @db.Uuid
+  etape_evaluation    etape_evaluation    @relation(fields: [etape_evaluation_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  critere_id          String              @db.Uuid
+  critere             referentiel_critere @relation(fields: [critere_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  auteur_id           String              @db.Uuid
+  auteur              utilisateur         @relation(fields: [auteur_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  note                Int?
+  commentaire         String
+  created_at          DateTime            @default(now())
+  updated_at          DateTime            @updatedAt
+
+  @@unique([etape_evaluation_id, critere_id, auteur_id])
   @@schema("public")
 }

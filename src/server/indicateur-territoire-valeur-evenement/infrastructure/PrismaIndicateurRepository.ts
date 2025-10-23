@@ -20,7 +20,7 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
         },
       },
       data: {
-        taux_avancement_mandat_proposition_v2: null,
+        taux_avancement_mandat_proposition: null,
       },
     });
 
@@ -30,8 +30,26 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
         territoire_code: args.territoireCode,
       },
       data: {
-        taux_avancement_proposition_v2: null,
+        taux_avancement_proposition: null,
       },
     });
+  }
+
+  async getDateEffectiveValeurAvancement({
+    indicId,
+    territoireCode,
+  }: {
+    indicId: string;
+    territoireCode: string;
+  }): Promise<Date | null> {
+    const row = await this.prisma
+      .getInstance()
+      .indicateur_territoire_jalon.findFirst({
+        where: { id: indicId, territoire_code: territoireCode },
+        orderBy: { date_valeur_actuelle: "desc" },
+      });
+
+    if (!row) return null;
+    return row.date_valeur_actuelle;
   }
 }

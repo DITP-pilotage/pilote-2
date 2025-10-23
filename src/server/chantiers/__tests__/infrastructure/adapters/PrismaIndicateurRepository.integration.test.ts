@@ -280,128 +280,8 @@ describe("PrismaIndicateurRepository", () => {
     });
   });
 
-  describe("#supprimerPropositionValeurAvancement", () => {
-    it("doit supprimer les données associés à la proposition de valeur actuelle de l'indicateur", async () => {
-      // Given
-      const indicId = "IND-001";
-      await prisma.chantier_identite.create({
-        data: {
-          id: "CH-001",
-          nom: "Nom chantier OK",
-          directeurs_administration_centrale: ["DAC 1", "DAC 2"],
-          directeurs_projet: ["DP 1", "DP 2"],
-        },
-      });
-
-      await prisma.chantier_territoire.createMany({
-        data: [
-          {
-            id: "CH-001",
-            code_insee: "FR",
-            maille: "NAT",
-            zone_id: "FRANCE",
-            territoire_code: "NAT-FR",
-          },
-        ],
-      });
-
-      await prisma.indicateur_identite.create({
-        data: {
-          id: "IND-001",
-          nom: "Indicateur OK",
-          chantier_id: "CH-001",
-          type_id: "IMPACT",
-        },
-      });
-
-      await prisma.indicateur_territoire.create({
-        data: {
-          id: "IND-001",
-          chantier_id: "CH-001",
-          code_insee: "FR",
-          maille: "NAT",
-          zone_id: "FRANCE",
-          territoire_code: "NAT-FR",
-          ponderation_zone_reel: 20,
-          motif_proposition: "Un motif",
-          date_proposition: new Date("2025-12-06"),
-          auteur_proposition: "John Doe",
-          valeur_actuelle_proposition: 10,
-          source_donnee_methode_calcul_proposition: "Une source",
-          taux_avancement_mandat_proposition: 12,
-        },
-      });
-
-      await prisma.indicateur_territoire_jalon.create({
-        data: {
-          id: "IND-001",
-          code_insee: "FR",
-          maille: "NAT",
-          zone_id: "FRANCE",
-          jalon: 2025,
-          territoire_code: "NAT-FR",
-          taux_avancement_proposition: 30,
-        },
-      });
-
-      // When
-      await prismaIndicateurRepository.supprimerPropositionValeurAvancement({
-        indicId,
-        territoireCode: "NAT-FR",
-        auteurModification: "Jane Doe",
-      });
-
-      // Then
-      const indicateur = await prisma.indicateur_identite.findUnique({
-        where: {
-          id: "IND-001",
-        },
-        include: {
-          indicateur_territoire: {
-            where: {
-              territoire_code: "NAT-FR",
-            },
-            include: {
-              indicateur_territoire_jalon: {
-                where: {
-                  jalon: 2025,
-                  territoire_code: "NAT-FR",
-                },
-              },
-            },
-          },
-        },
-      });
-
-      expect(
-        indicateur?.indicateur_territoire.at(0)?.motif_proposition,
-      ).toEqual(null);
-      expect(indicateur?.indicateur_territoire.at(0)?.date_proposition).toEqual(
-        null,
-      );
-      expect(
-        indicateur?.indicateur_territoire.at(0)?.auteur_proposition,
-      ).toEqual("Jane Doe");
-      expect(
-        indicateur?.indicateur_territoire.at(0)?.valeur_actuelle_proposition,
-      ).toEqual(null);
-      expect(
-        indicateur?.indicateur_territoire.at(0)
-          ?.source_donnee_methode_calcul_proposition,
-      ).toEqual(null);
-      expect(
-        indicateur?.indicateur_territoire.at(0)
-          ?.taux_avancement_mandat_proposition,
-      ).toEqual(null);
-      expect(
-        indicateur?.indicateur_territoire.at(0)?.indicateur_territoire_jalon[0]
-          .taux_avancement_proposition,
-      ).toEqual(null);
-    });
-  });
-
   describe("#recupererDetailsParChantierIdEtTerritoire", () => {
-    it("sans proposition de valeur d'avancement, retourne les détails des indicateurs pour un chantier et un territoire", async () => {
+    it("sans PVA, retourne les détails des indicateurs pour un chantier et un territoire", async () => {
       // Given
       const chantierId = "CH-001";
       const territoireCodes = ["NAT-FR"];
@@ -573,7 +453,7 @@ describe("PrismaIndicateurRepository", () => {
       ]);
     });
 
-    it("Quand il existe une proposition de valeur d'avancement [CREEE], retourne les détails des indicateurs pour un chantier, territoire et proposition", async () => {
+    it("avec une PVA [CREEE], retourne les détails des indicateurs pour un chantier, territoire et proposition", async () => {
       // Given
       const chantierId = "CH-001";
       const territoireCodes = ["NAT-FR"];
@@ -682,7 +562,7 @@ describe("PrismaIndicateurRepository", () => {
             type_valeur: "VALEUR_AVANCEMENT",
             donnees_complementaires: {},
             type_evenement: EvenementValeurEnum.VALEUR_CREEE,
-            date_valeur: new Date("2026-01-12"),
+            date_valeur: new Date("2026-01-01"),
             ordre: 1,
             date_modification: new Date("2026-01-12"),
             date_creation: new Date("2026-01-12"),
@@ -697,7 +577,7 @@ describe("PrismaIndicateurRepository", () => {
             type_valeur: "VALEUR_AVANCEMENT",
             donnees_complementaires: {},
             type_evenement: EvenementValeurEnum.VALEUR_MODIFIEE,
-            date_valeur: new Date("2026-01-12"),
+            date_valeur: new Date("2026-01-01"),
             ordre: 2,
             date_modification: new Date("2026-01-12"),
             date_creation: new Date("2026-01-12"),
@@ -716,7 +596,7 @@ describe("PrismaIndicateurRepository", () => {
                 "Source de la donnée et méthode de calcul",
             },
             type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_CREEE,
-            date_valeur: new Date("2026-01-12"),
+            date_valeur: new Date("2026-01-01"),
             ordre: 3,
             date_modification: new Date("2026-01-12"),
             date_creation: new Date("2026-01-12"),
@@ -748,12 +628,13 @@ describe("PrismaIndicateurRepository", () => {
         statutTauxAvancement: "CALCULE",
         auteur: "Jane Doe",
         dateProposition: "2026-01-12T00:00:00.000Z",
+        dateValeurAvancement: "2026-01-01T00:00:00.000Z",
         motif: "Motif de la proposition",
         sourceDonneeEtMethodeCalcul: "Source de la donnée et méthode de calcul",
       });
     });
 
-    it("Quand il existe une proposition de valeur d'avancement [CREEE, MODIFIEE], retourne les détails des indicateurs pour un chantier, territoire et dernière proposition", async () => {
+    it("avec une PVA [CREEE] sur une date ultérieure, retourne les détails des indicateurs pour un chantier, territoire et proposition", async () => {
       // Given
       const chantierId = "CH-001";
       const territoireCodes = ["NAT-FR"];
@@ -862,7 +743,7 @@ describe("PrismaIndicateurRepository", () => {
             type_valeur: "VALEUR_AVANCEMENT",
             donnees_complementaires: {},
             type_evenement: EvenementValeurEnum.VALEUR_CREEE,
-            date_valeur: new Date("2026-01-12"),
+            date_valeur: new Date("2026-01-01"),
             ordre: 1,
             date_modification: new Date("2026-01-12"),
             date_creation: new Date("2026-01-12"),
@@ -877,7 +758,188 @@ describe("PrismaIndicateurRepository", () => {
             type_valeur: "VALEUR_AVANCEMENT",
             donnees_complementaires: {},
             type_evenement: EvenementValeurEnum.VALEUR_MODIFIEE,
-            date_valeur: new Date("2026-01-12"),
+            date_valeur: new Date("2026-01-01"),
+            ordre: 2,
+            date_modification: new Date("2026-01-12"),
+            date_creation: new Date("2026-01-12"),
+            id_auteur_modification: "550e8400-e29b-41d4-a716-446655440001",
+            correlation_id: "550e8400-e29b-41d4-a716-446655440002",
+            valeur: 110,
+          },
+          {
+            id: "550e8400-e29b-41d4-a716-446655440002",
+            indic_id: "IND-001",
+            territoire_code: "NAT-FR",
+            type_valeur: "VALEUR_AVANCEMENT",
+            donnees_complementaires: {
+              motif: "Motif de la proposition",
+              source_donnee_methode_calcul:
+                "Source de la donnée et méthode de calcul",
+            },
+            type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_CREEE,
+            date_valeur: new Date("2026-02-01"),
+            ordre: 3,
+            date_modification: new Date("2026-01-12"),
+            date_creation: new Date("2026-01-12"),
+            id_auteur_modification: "550e8400-e29b-41d4-a716-446655440001",
+            correlation_id: "550e8400-e29b-41d4-a716-446655440002",
+            valeur: 120,
+          },
+        ],
+      });
+
+      // When
+      const result =
+        await prismaIndicateurRepository.recupererDetailsParChantierIdEtTerritoire(
+          chantierId,
+          territoireCodes,
+          jalon,
+          dateDerniereExecutionDatajobs,
+        );
+
+      // Then
+      expect(result["IND-001"]["NAT-FR"].valeurAvancement).toEqual(110);
+      expect(result["IND-001"]["NAT-FR"].dateValeurAvancement).toEqual(
+        "2026-01-12T00:00:00.000Z",
+      );
+      expect(result["IND-001"]["NAT-FR"].proposition).toEqual({
+        valeurAvancement: 120,
+        tauxAvancement: null,
+        tauxAvancementIntermediaire: null,
+        statutTauxAvancement: "CALCULE",
+        auteur: "Jane Doe",
+        dateProposition: "2026-01-12T00:00:00.000Z",
+        dateValeurAvancement: "2026-02-01T00:00:00.000Z",
+        motif: "Motif de la proposition",
+        sourceDonneeEtMethodeCalcul: "Source de la donnée et méthode de calcul",
+      });
+    });
+
+    it("avec une PVA [CREEE, MODIFIEE], retourne les détails des indicateurs pour un chantier, territoire et dernière proposition", async () => {
+      // Given
+      const chantierId = "CH-001";
+      const territoireCodes = ["NAT-FR"];
+      const jalon = 2025;
+
+      await prisma.chantier_identite.createMany({
+        data: [
+          {
+            id: chantierId,
+            nom: "Chantier 001",
+            ministeres: ["1009"],
+            ministeres_acronymes: ["MINA"],
+          },
+        ],
+      });
+
+      await prisma.chantier_territoire.createMany({
+        data: [
+          {
+            id: "CH-001",
+            maille: "NAT",
+            code_insee: "FR",
+            territoire_code: "NAT-FR",
+            zone_id: "FRANCE",
+          },
+          {
+            id: "CH-001",
+            maille: "DEPT",
+            code_insee: "01",
+            territoire_code: "DEPT-01",
+            zone_id: "D01",
+          },
+        ],
+      });
+
+      await prisma.indicateur_identite.createMany({
+        data: [
+          {
+            id: "IND-001",
+            nom: "Indicateur 001",
+            chantier_id: chantierId,
+            dernier_import_date_indic: new Date("2026-01-12"),
+            type_id: "IMPACT",
+            unite_mesure: "kg",
+          },
+        ],
+      });
+
+      await prisma.indicateur_territoire.createMany({
+        data: [
+          {
+            id: "IND-001",
+            chantier_id: chantierId,
+            maille: "NAT",
+            territoire_code: "NAT-FR",
+            code_insee: "FR",
+            zone_id: "FRANCE",
+          },
+          {
+            id: "IND-001",
+            chantier_id: chantierId,
+            maille: "DEPT",
+            territoire_code: "DEPT-01",
+            code_insee: "01",
+            zone_id: "D01",
+          },
+        ],
+      });
+
+      await prisma.indicateur_territoire_jalon.createMany({
+        data: [
+          {
+            id: "IND-001",
+            territoire_code: "NAT-FR",
+            code_insee: "FR",
+            maille: "NAT",
+            jalon: 2025,
+            zone_id: "FRANCE",
+            valeur_actuelle: 110,
+            date_valeur_actuelle: new Date("2026-01-12"),
+          },
+        ],
+      });
+
+      await prisma.utilisateur.create({
+        data: {
+          email: "jane.doe@test.com",
+          nom: "Doe",
+          prenom: "Jane",
+          id: "550e8400-e29b-41d4-a716-446655440001",
+          date_creation: new Date().toISOString(),
+          profil: {
+            connect: {
+              code: ProfilEnum.DITP_ADMIN,
+            },
+          },
+        },
+      });
+
+      await prisma.indicateur_territoire_valeur_evenement.createMany({
+        data: [
+          {
+            id: "550e8400-e29b-41d4-a716-446655440000",
+            indic_id: "IND-001",
+            territoire_code: "NAT-FR",
+            type_valeur: "VALEUR_AVANCEMENT",
+            donnees_complementaires: {},
+            type_evenement: EvenementValeurEnum.VALEUR_CREEE,
+            date_valeur: new Date("2026-01-01"),
+            ordre: 1,
+            date_modification: new Date("2026-01-12"),
+            date_creation: new Date("2026-01-12"),
+            id_auteur_modification: "550e8400-e29b-41d4-a716-446655440001",
+            correlation_id: "550e8400-e29b-41d4-a716-446655440002",
+            valeur: 100,
+          },
+          {
+            id: "550e8400-e29b-41d4-a716-446655440001",
+            indic_id: "IND-001",
+            territoire_code: "NAT-FR",
+            type_valeur: "VALEUR_AVANCEMENT",
+            donnees_complementaires: {},
+            type_evenement: EvenementValeurEnum.VALEUR_MODIFIEE,
+            date_valeur: new Date("2026-01-01"),
             ordre: 2,
             date_modification: new Date("2026-01-12"),
             date_creation: new Date("2026-01-12"),
@@ -896,7 +958,7 @@ describe("PrismaIndicateurRepository", () => {
                 "Source de la donnée et méthode de calcul",
             },
             type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_CREEE,
-            date_valeur: new Date("2026-01-12"),
+            date_valeur: new Date("2026-01-01"),
             ordre: 3,
             date_modification: new Date("2026-01-12"),
             date_creation: new Date("2026-01-12"),
@@ -911,7 +973,7 @@ describe("PrismaIndicateurRepository", () => {
             type_valeur: "VALEUR_AVANCEMENT",
             donnees_complementaires: {},
             type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_MODIFIEE,
-            date_valeur: new Date("2026-01-12"),
+            date_valeur: new Date("2026-01-01"),
             ordre: 4,
             date_modification: new Date("2026-01-12"),
             date_creation: new Date("2026-01-12"),
@@ -943,6 +1005,203 @@ describe("PrismaIndicateurRepository", () => {
         statutTauxAvancement: "CALCULE",
         auteur: "Jane Doe",
         dateProposition: "2026-01-12T00:00:00.000Z",
+        dateValeurAvancement: "2026-01-01T00:00:00.000Z",
+        motif: null,
+        sourceDonneeEtMethodeCalcul: null,
+      });
+    });
+
+    it("avec une PVA [CREEE, MODIFIEE] sur une date ultérieure, retourne les détails des indicateurs pour un chantier, territoire et dernière proposition", async () => {
+      // Given
+      const chantierId = "CH-001";
+      const territoireCodes = ["NAT-FR"];
+      const jalon = 2025;
+
+      await prisma.chantier_identite.createMany({
+        data: [
+          {
+            id: chantierId,
+            nom: "Chantier 001",
+            ministeres: ["1009"],
+            ministeres_acronymes: ["MINA"],
+          },
+        ],
+      });
+
+      await prisma.chantier_territoire.createMany({
+        data: [
+          {
+            id: "CH-001",
+            maille: "NAT",
+            code_insee: "FR",
+            territoire_code: "NAT-FR",
+            zone_id: "FRANCE",
+          },
+          {
+            id: "CH-001",
+            maille: "DEPT",
+            code_insee: "01",
+            territoire_code: "DEPT-01",
+            zone_id: "D01",
+          },
+        ],
+      });
+
+      await prisma.indicateur_identite.createMany({
+        data: [
+          {
+            id: "IND-001",
+            nom: "Indicateur 001",
+            chantier_id: chantierId,
+            dernier_import_date_indic: new Date("2026-01-12"),
+            type_id: "IMPACT",
+            unite_mesure: "kg",
+          },
+        ],
+      });
+
+      await prisma.indicateur_territoire.createMany({
+        data: [
+          {
+            id: "IND-001",
+            chantier_id: chantierId,
+            maille: "NAT",
+            territoire_code: "NAT-FR",
+            code_insee: "FR",
+            zone_id: "FRANCE",
+          },
+          {
+            id: "IND-001",
+            chantier_id: chantierId,
+            maille: "DEPT",
+            territoire_code: "DEPT-01",
+            code_insee: "01",
+            zone_id: "D01",
+          },
+        ],
+      });
+
+      await prisma.indicateur_territoire_jalon.createMany({
+        data: [
+          {
+            id: "IND-001",
+            territoire_code: "NAT-FR",
+            code_insee: "FR",
+            maille: "NAT",
+            jalon: 2025,
+            zone_id: "FRANCE",
+            valeur_actuelle: 110,
+            date_valeur_actuelle: new Date("2026-01-12"),
+          },
+        ],
+      });
+
+      await prisma.utilisateur.create({
+        data: {
+          email: "jane.doe@test.com",
+          nom: "Doe",
+          prenom: "Jane",
+          id: "550e8400-e29b-41d4-a716-446655440001",
+          date_creation: new Date().toISOString(),
+          profil: {
+            connect: {
+              code: ProfilEnum.DITP_ADMIN,
+            },
+          },
+        },
+      });
+
+      await prisma.indicateur_territoire_valeur_evenement.createMany({
+        data: [
+          {
+            id: "550e8400-e29b-41d4-a716-446655440000",
+            indic_id: "IND-001",
+            territoire_code: "NAT-FR",
+            type_valeur: "VALEUR_AVANCEMENT",
+            donnees_complementaires: {},
+            type_evenement: EvenementValeurEnum.VALEUR_CREEE,
+            date_valeur: new Date("2026-01-01"),
+            ordre: 1,
+            date_modification: new Date("2026-01-12"),
+            date_creation: new Date("2026-01-12"),
+            id_auteur_modification: "550e8400-e29b-41d4-a716-446655440001",
+            correlation_id: "550e8400-e29b-41d4-a716-446655440002",
+            valeur: 100,
+          },
+          {
+            id: "550e8400-e29b-41d4-a716-446655440001",
+            indic_id: "IND-001",
+            territoire_code: "NAT-FR",
+            type_valeur: "VALEUR_AVANCEMENT",
+            donnees_complementaires: {},
+            type_evenement: EvenementValeurEnum.VALEUR_MODIFIEE,
+            date_valeur: new Date("2026-01-01"),
+            ordre: 2,
+            date_modification: new Date("2026-01-12"),
+            date_creation: new Date("2026-01-12"),
+            id_auteur_modification: "550e8400-e29b-41d4-a716-446655440001",
+            correlation_id: "550e8400-e29b-41d4-a716-446655440002",
+            valeur: 110,
+          },
+          {
+            id: "550e8400-e29b-41d4-a716-446655440002",
+            indic_id: "IND-001",
+            territoire_code: "NAT-FR",
+            type_valeur: "VALEUR_AVANCEMENT",
+            donnees_complementaires: {
+              motif: "Motif de la proposition",
+              sourceDonneeEtMethodeCalcul:
+                "Source de la donnée et méthode de calcul",
+            },
+            type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_CREEE,
+            date_valeur: new Date("2026-02-01"),
+            ordre: 3,
+            date_modification: new Date("2026-01-12"),
+            date_creation: new Date("2026-01-12"),
+            id_auteur_modification: "550e8400-e29b-41d4-a716-446655440001",
+            correlation_id: "550e8400-e29b-41d4-a716-446655440002",
+            valeur: 120,
+          },
+          {
+            id: "550e8400-e29b-41d4-a716-446655440003",
+            indic_id: "IND-001",
+            territoire_code: "NAT-FR",
+            type_valeur: "VALEUR_AVANCEMENT",
+            donnees_complementaires: {},
+            type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_MODIFIEE,
+            date_valeur: new Date("2026-02-01"),
+            ordre: 4,
+            date_modification: new Date("2026-01-12"),
+            date_creation: new Date("2026-01-12"),
+            id_auteur_modification: "550e8400-e29b-41d4-a716-446655440001",
+            correlation_id: "550e8400-e29b-41d4-a716-446655440002",
+            valeur: 140,
+          },
+        ],
+      });
+
+      // When
+      const result =
+        await prismaIndicateurRepository.recupererDetailsParChantierIdEtTerritoire(
+          chantierId,
+          territoireCodes,
+          jalon,
+          dateDerniereExecutionDatajobs,
+        );
+
+      // Then
+      expect(result["IND-001"]["NAT-FR"].valeurAvancement).toEqual(110);
+      expect(result["IND-001"]["NAT-FR"].dateValeurAvancement).toEqual(
+        "2026-01-12T00:00:00.000Z",
+      );
+      expect(result["IND-001"]["NAT-FR"].proposition).toEqual({
+        valeurAvancement: 140,
+        tauxAvancement: null,
+        tauxAvancementIntermediaire: null,
+        statutTauxAvancement: "CALCULE",
+        auteur: "Jane Doe",
+        dateProposition: "2026-01-12T00:00:00.000Z",
+        dateValeurAvancement: "2026-02-01T00:00:00.000Z",
         motif: null,
         sourceDonneeEtMethodeCalcul: null,
       });
@@ -954,7 +1213,7 @@ describe("PrismaIndicateurRepository", () => {
       [EvenementValeurEnum.PROPOSITION_VALEUR_IGNOREE_VALEUR_MODIFIEE],
       [EvenementValeurEnum.PROPOSITION_VALEUR_IGNOREE_VALEUR_HISTORISEE],
     ])(
-      "Quand il existe une proposition de valeur d'avancement [CREEE, MODIFIEE, %s], retourne les détails des indicateurs pour un chantier, territoire et aucune proposition",
+      "avec une PVA [CREEE, MODIFIEE, %s], retourne les détails des indicateurs pour un chantier, territoire et aucune proposition",
       async (evenement) => {
         // Given
         const chantierId = "CH-001";
@@ -1158,7 +1417,7 @@ describe("PrismaIndicateurRepository", () => {
       EvenementValeurEnum.PROPOSITION_VALEUR_ACCEPTEE,
       EvenementValeurEnum.PROPOSITION_VALEUR_ACCEPTEE_AVEC_MODIFICATION,
     ])(
-      "Quand il existe une proposition de valeur d'avancement [CREEE, MODIFIEE, %s], retourne les détails des indicateurs pour un chantier, territoire et la proposition",
+      "avec une PVA [CREEE, MODIFIEE, %s], retourne les détails des indicateurs pour un chantier, territoire et la proposition",
       async (evenement) => {
         // Given
         const chantierId = "CH-001";
@@ -1358,7 +1617,7 @@ describe("PrismaIndicateurRepository", () => {
       },
     );
 
-    it("Quand il existe une proposition de valeur d'avancement [CREEE, MODIFIEE, SUPPRIMEE, CREEE], retourne les détails des indicateurs pour un chantier, territoire et nouvelle proposition", async () => {
+    it("avec une PVA [CREEE, MODIFIEE, SUPPRIMEE, CREEE], retourne les détails des indicateurs pour un chantier, territoire et nouvelle proposition", async () => {
       // Given
       const chantierId = "CH-001";
       const territoireCodes = ["NAT-FR"];
@@ -1467,7 +1726,7 @@ describe("PrismaIndicateurRepository", () => {
             type_valeur: "VALEUR_AVANCEMENT",
             donnees_complementaires: {},
             type_evenement: EvenementValeurEnum.VALEUR_CREEE,
-            date_valeur: new Date("2026-01-12"),
+            date_valeur: new Date("2026-01-01"),
             ordre: 1,
             date_modification: new Date("2026-01-12"),
             date_creation: new Date("2026-01-12"),
@@ -1482,7 +1741,7 @@ describe("PrismaIndicateurRepository", () => {
             type_valeur: "VALEUR_AVANCEMENT",
             donnees_complementaires: {},
             type_evenement: EvenementValeurEnum.VALEUR_MODIFIEE,
-            date_valeur: new Date("2026-01-12"),
+            date_valeur: new Date("2026-01-01"),
             ordre: 2,
             date_modification: new Date("2026-01-12"),
             date_creation: new Date("2026-01-12"),
@@ -1501,7 +1760,7 @@ describe("PrismaIndicateurRepository", () => {
                 "Source de la donnée et méthode de calcul",
             },
             type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_CREEE,
-            date_valeur: new Date("2026-01-12"),
+            date_valeur: new Date("2026-01-01"),
             ordre: 3,
             date_modification: new Date("2026-01-12"),
             date_creation: new Date("2026-01-12"),
@@ -1516,7 +1775,7 @@ describe("PrismaIndicateurRepository", () => {
             type_valeur: "VALEUR_AVANCEMENT",
             donnees_complementaires: {},
             type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_MODIFIEE,
-            date_valeur: new Date("2026-01-12"),
+            date_valeur: new Date("2026-01-01"),
             ordre: 4,
             date_modification: new Date("2026-01-12"),
             date_creation: new Date("2026-01-12"),
@@ -1532,7 +1791,7 @@ describe("PrismaIndicateurRepository", () => {
             type_valeur: "VALEUR_AVANCEMENT",
             donnees_complementaires: {},
             type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_SUPPRIMEE,
-            date_valeur: new Date("2026-01-12"),
+            date_valeur: new Date("2026-01-01"),
             ordre: 5,
             date_modification: new Date("2026-01-12"),
             date_creation: new Date("2026-01-12"),
@@ -1551,7 +1810,7 @@ describe("PrismaIndicateurRepository", () => {
                 "Source de la donnée et méthode de calcul 2",
             },
             type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_CREEE,
-            date_valeur: new Date("2026-01-12"),
+            date_valeur: new Date("2026-01-01"),
             ordre: 6,
             date_modification: new Date("2026-01-12"),
             date_creation: new Date("2026-01-12"),
@@ -1583,6 +1842,7 @@ describe("PrismaIndicateurRepository", () => {
         statutTauxAvancement: "CALCULE",
         auteur: "Jane Doe",
         dateProposition: "2026-01-12T00:00:00.000Z",
+        dateValeurAvancement: "2026-01-01T00:00:00.000Z",
         motif: "Motif de la proposition 2",
         sourceDonneeEtMethodeCalcul:
           "Source de la donnée et méthode de calcul 2",
@@ -1644,7 +1904,7 @@ describe("PrismaIndicateurRepository", () => {
               territoire_code: "NAT-FR",
               code_insee: "FR",
               zone_id: "FRANCE",
-              date_valeur_actuelle_mandat: new Date("2026-01-12"),
+              date_valeur_actuelle_mandat: new Date("2026-01-01"),
             },
           ],
         });
@@ -1658,7 +1918,7 @@ describe("PrismaIndicateurRepository", () => {
               maille: "NAT",
               jalon: 2025,
               zone_id: "FRANCE",
-              date_valeur_actuelle: new Date("2026-01-12"),
+              date_valeur_actuelle: new Date("2026-01-01"),
             },
           ],
         });
@@ -1687,7 +1947,7 @@ describe("PrismaIndicateurRepository", () => {
               type_valeur: "VALEUR_AVANCEMENT",
               donnees_complementaires: {},
               type_evenement: evenement,
-              date_valeur: new Date("2026-01-12"),
+              date_valeur: new Date("2026-01-01"),
               ordre: 2,
               date_modification: new Date("2026-01-12"),
               date_creation: new Date("2026-01-12"),
@@ -1702,7 +1962,7 @@ describe("PrismaIndicateurRepository", () => {
               type_valeur: "VALEUR_AVANCEMENT",
               donnees_complementaires: {},
               type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_CREEE,
-              date_valeur: new Date("2026-01-12"),
+              date_valeur: new Date("2026-01-01"),
               ordre: 1,
               date_modification: new Date("2026-01-12"),
               date_creation: new Date("2026-01-12"),
@@ -2817,7 +3077,7 @@ describe("PrismaIndicateurRepository", () => {
   });
 
   describe("#récupérerDétailsTerritoirePourUnIndicateur", () => {
-    it("sans proposition de valeur d'avancement, retourne les détails d'un indicateur sur tous les territoires territoire", async () => {
+    it("sans PVA, retourne les détails d'un indicateur sur tous les territoires territoire", async () => {
       // Given
       const chantiersIds = ["CH-001"];
       const indicateurId = "IND-001";
@@ -2992,7 +3252,7 @@ describe("PrismaIndicateurRepository", () => {
       expect(result["DEPT-01"].historiquesValeurs).toEqual([]);
     });
 
-    it("Quand il existe une proposition de valeur d'avancement [CREEE], retourne les détails des indicateurs pour un chantier, territoire et proposition", async () => {
+    it("avec une PVA [CREEE], retourne les détails des indicateurs pour un chantier, territoire et proposition", async () => {
       // Given
       const chantiersIds = ["CH-001"];
       const indicateurId = "IND-001";
@@ -3141,7 +3401,7 @@ describe("PrismaIndicateurRepository", () => {
             type_valeur: "VALEUR_AVANCEMENT",
             donnees_complementaires: {},
             type_evenement: EvenementValeurEnum.VALEUR_CREEE,
-            date_valeur: new Date("2026-01-12"),
+            date_valeur: new Date("2026-01-01"),
             ordre: 1,
             date_modification: new Date("2026-01-12"),
             date_creation: new Date("2026-01-12"),
@@ -3156,7 +3416,7 @@ describe("PrismaIndicateurRepository", () => {
             type_valeur: "VALEUR_AVANCEMENT",
             donnees_complementaires: {},
             type_evenement: EvenementValeurEnum.VALEUR_MODIFIEE,
-            date_valeur: new Date("2026-01-12"),
+            date_valeur: new Date("2026-01-01"),
             ordre: 2,
             date_modification: new Date("2026-01-12"),
             date_creation: new Date("2026-01-12"),
@@ -3175,7 +3435,7 @@ describe("PrismaIndicateurRepository", () => {
                 "Source de la donnée et méthode de calcul",
             },
             type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_CREEE,
-            date_valeur: new Date("2026-01-12"),
+            date_valeur: new Date("2026-01-01"),
             ordre: 3,
             date_modification: new Date("2026-01-12"),
             date_creation: new Date("2026-01-12"),
@@ -3208,12 +3468,13 @@ describe("PrismaIndicateurRepository", () => {
         statutTauxAvancement: "CALCULE",
         auteur: "Jane Doe",
         dateProposition: "2026-01-12T00:00:00.000Z",
+        dateValeurAvancement: "2026-01-01T00:00:00.000Z",
         motif: "Motif de la proposition",
         sourceDonneeEtMethodeCalcul: "Source de la donnée et méthode de calcul",
       });
     });
 
-    it("Quand il existe une proposition de valeur d'avancement [CREEE, MODIFIEE], retourne les détails des indicateurs pour un chantier, territoire et dernière proposition", async () => {
+    it("avec une PVA [CREEE, MODIFIEE], retourne les détails des indicateurs pour un chantier, territoire et dernière proposition", async () => {
       // Given
       const chantiersIds = ["CH-001"];
       const indicateurId = "IND-001";
@@ -3362,7 +3623,7 @@ describe("PrismaIndicateurRepository", () => {
             type_valeur: "VALEUR_AVANCEMENT",
             donnees_complementaires: {},
             type_evenement: EvenementValeurEnum.VALEUR_CREEE,
-            date_valeur: new Date("2026-01-12"),
+            date_valeur: new Date("2026-01-01"),
             ordre: 1,
             date_modification: new Date("2026-01-12"),
             date_creation: new Date("2026-01-12"),
@@ -3377,7 +3638,7 @@ describe("PrismaIndicateurRepository", () => {
             type_valeur: "VALEUR_AVANCEMENT",
             donnees_complementaires: {},
             type_evenement: EvenementValeurEnum.VALEUR_MODIFIEE,
-            date_valeur: new Date("2026-01-12"),
+            date_valeur: new Date("2026-01-01"),
             ordre: 2,
             date_modification: new Date("2026-01-12"),
             date_creation: new Date("2026-01-12"),
@@ -3396,7 +3657,7 @@ describe("PrismaIndicateurRepository", () => {
                 "Source de la donnée et méthode de calcul",
             },
             type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_CREEE,
-            date_valeur: new Date("2026-01-12"),
+            date_valeur: new Date("2026-01-01"),
             ordre: 3,
             date_modification: new Date("2026-01-12"),
             date_creation: new Date("2026-01-12"),
@@ -3411,7 +3672,7 @@ describe("PrismaIndicateurRepository", () => {
             type_valeur: "VALEUR_AVANCEMENT",
             donnees_complementaires: {},
             type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_MODIFIEE,
-            date_valeur: new Date("2026-01-12"),
+            date_valeur: new Date("2026-01-01"),
             ordre: 4,
             date_modification: new Date("2026-01-12"),
             date_creation: new Date("2026-01-12"),
@@ -3444,6 +3705,7 @@ describe("PrismaIndicateurRepository", () => {
         statutTauxAvancement: "CALCULE",
         auteur: "Jane Doe",
         dateProposition: "2026-01-12T00:00:00.000Z",
+        dateValeurAvancement: "2026-01-01T00:00:00.000Z",
         motif: null,
         sourceDonneeEtMethodeCalcul: null,
       });
@@ -3455,7 +3717,7 @@ describe("PrismaIndicateurRepository", () => {
       [EvenementValeurEnum.PROPOSITION_VALEUR_IGNOREE_VALEUR_MODIFIEE],
       [EvenementValeurEnum.PROPOSITION_VALEUR_IGNOREE_VALEUR_HISTORISEE],
     ])(
-      "Quand il existe une proposition de valeur d'avancement [CREEE, MODIFIEE, %s], retourne les détails des indicateurs pour un chantier, territoire et aucune proposition",
+      "avec une PVA [CREEE, MODIFIEE, %s], retourne les détails des indicateurs pour un chantier, territoire et aucune proposition",
       async (evenement) => {
         // Given
         const chantiersIds = ["CH-001"];
@@ -3700,7 +3962,7 @@ describe("PrismaIndicateurRepository", () => {
       [EvenementValeurEnum.PROPOSITION_VALEUR_ACCEPTEE],
       [EvenementValeurEnum.PROPOSITION_VALEUR_ACCEPTEE_AVEC_MODIFICATION],
     ])(
-      "Quand il existe une proposition de valeur d'avancement [CREEE, MODIFIEE, %s], retourne les détails des indicateurs pour un chantier, territoire et la proposition",
+      "avec une PVA [CREEE, MODIFIEE, %s], retourne les détails des indicateurs pour un chantier, territoire et la proposition",
       async (evenement) => {
         // Given
         const chantiersIds = ["CH-001"];
@@ -3941,7 +4203,7 @@ describe("PrismaIndicateurRepository", () => {
       },
     );
 
-    it("Quand il existe une proposition de valeur d'avancement [CREEE, MODIFIEE, SUPPRIMEE, CREEE], retourne les détails des indicateurs pour un chantier, territoire et nouvelle proposition", async () => {
+    it("avec une PVA [CREEE, MODIFIEE, SUPPRIMEE, CREEE], retourne les détails des indicateurs pour un chantier, territoire et nouvelle proposition", async () => {
       // Given
       const chantiersIds = ["CH-001"];
       const indicateurId = "IND-001";
@@ -4090,7 +4352,7 @@ describe("PrismaIndicateurRepository", () => {
             type_valeur: "VALEUR_AVANCEMENT",
             donnees_complementaires: {},
             type_evenement: EvenementValeurEnum.VALEUR_CREEE,
-            date_valeur: new Date("2026-01-12"),
+            date_valeur: new Date("2026-01-01"),
             ordre: 1,
             date_modification: new Date("2026-01-12"),
             date_creation: new Date("2026-01-12"),
@@ -4105,7 +4367,7 @@ describe("PrismaIndicateurRepository", () => {
             type_valeur: "VALEUR_AVANCEMENT",
             donnees_complementaires: {},
             type_evenement: EvenementValeurEnum.VALEUR_MODIFIEE,
-            date_valeur: new Date("2026-01-12"),
+            date_valeur: new Date("2026-01-01"),
             ordre: 2,
             date_modification: new Date("2026-01-12"),
             date_creation: new Date("2026-01-12"),
@@ -4124,7 +4386,7 @@ describe("PrismaIndicateurRepository", () => {
                 "Source de la donnée et méthode de calcul",
             },
             type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_CREEE,
-            date_valeur: new Date("2026-01-12"),
+            date_valeur: new Date("2026-01-01"),
             ordre: 3,
             date_modification: new Date("2026-01-12"),
             date_creation: new Date("2026-01-12"),
@@ -4139,7 +4401,7 @@ describe("PrismaIndicateurRepository", () => {
             type_valeur: "VALEUR_AVANCEMENT",
             donnees_complementaires: {},
             type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_MODIFIEE,
-            date_valeur: new Date("2026-01-12"),
+            date_valeur: new Date("2026-01-01"),
             ordre: 4,
             date_modification: new Date("2026-01-12"),
             date_creation: new Date("2026-01-12"),
@@ -4155,7 +4417,7 @@ describe("PrismaIndicateurRepository", () => {
             type_valeur: "VALEUR_AVANCEMENT",
             donnees_complementaires: {},
             type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_SUPPRIMEE,
-            date_valeur: new Date("2026-01-12"),
+            date_valeur: new Date("2026-01-01"),
             ordre: 5,
             date_modification: new Date("2026-01-12"),
             date_creation: new Date("2026-01-12"),
@@ -4174,7 +4436,7 @@ describe("PrismaIndicateurRepository", () => {
                 "Source de la donnée et méthode de calcul 2",
             },
             type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_CREEE,
-            date_valeur: new Date("2026-01-12"),
+            date_valeur: new Date("2026-01-01"),
             ordre: 6,
             date_modification: new Date("2026-01-12"),
             date_creation: new Date("2026-01-12"),
@@ -4207,6 +4469,7 @@ describe("PrismaIndicateurRepository", () => {
         statutTauxAvancement: "CALCULE",
         auteur: "Jane Doe",
         dateProposition: "2026-01-12T00:00:00.000Z",
+        dateValeurAvancement: "2026-01-01T00:00:00.000Z",
         motif: "Motif de la proposition 2",
         sourceDonneeEtMethodeCalcul:
           "Source de la donnée et méthode de calcul 2",

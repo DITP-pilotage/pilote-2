@@ -7,6 +7,7 @@ import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
 import { Session } from "next-auth";
 import { FunctionComponent } from "react";
+import { $Enums } from "@prisma/client";
 import { Utilisateur } from "@/components/_commons/MiseEnPage/EnTete/Utilisateur/Utilisateur";
 import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
 import MenuItemGestionContenu from "@/components/_commons/MiseEnPage/Navigation/MenuItemGestionContenu";
@@ -46,6 +47,12 @@ const estAutoriséAAccéderALaGestionDesComptes = (session: Session | null) => {
 const estAdministrateurOuPilotage = (session: Session) => {
   return [ProfilEnum.DITP_ADMIN, ProfilEnum.DITP_PILOTAGE].includes(
     session?.profil,
+  );
+};
+
+const estAutoriseAAccederAPiloteEval = (session: Session) => {
+  return session.applicationsAccessibles.includes(
+    $Enums.application_accessible.PILOTE_EVAL,
   );
 };
 
@@ -161,6 +168,14 @@ const Navigation: FunctionComponent<{}> = () => {
         estAdministrateurOuPilotage(session!),
       prefetch: false,
       target: "_blank",
+    },
+    {
+      nom: "Évaluation",
+      lien: "/evaluation",
+      matcher: "/evaluation",
+      accessible: estAutoriseAAccederAPiloteEval(session!),
+      prefetch: true,
+      target: "_self",
     },
   ];
 

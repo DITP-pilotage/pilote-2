@@ -17,11 +17,11 @@ import {
   AvancementsGlobauxTerritoriauxMoyensContrat,
   AvancementsStatistiquesAccueilContrat,
 } from "@/server/chantiers/app/contrats/AvancementsStatistiquesAccueilContrat";
-import { ChantierRapportDetailleContrat } from "@/server/chantiers/app/contrats/ChantierRapportDetailleContrat";
 import { TypeAlerteChantier } from "@/server/chantiers/app/contrats/TypeAlerteChantier";
 import { RepartitionMeteoContrat } from "@/server/fiche-territoriale/app/contrats/RepartitionMeteoContrat";
 import { MailleInterne } from "@/server/domain/maille/Maille.interface";
 import RepartitionsMeteosRapportDetaille from "@/client/components/PageRapportDétaillé/FiltresSélectionnés/FiltresMétéos/RepartitionsMeteosRapportDetaille";
+import { ChantierRapportDetailleContrat } from "@/server/chantiers/app/contrats/ChantierRapportDetailleContratV2";
 import RapportDétailléTableauChantiers from "./RapportDétailléTableauChantiers/RapportDétailléTableauChantiers";
 
 interface RapportDétailléVueDEnsembleProps {

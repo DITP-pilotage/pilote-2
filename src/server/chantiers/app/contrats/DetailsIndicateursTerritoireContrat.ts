@@ -23,7 +23,13 @@ export const presenterEnDetailsIndicateursTerritoireContrat = (
         valeurCibleAnnuelle: detailsTerritoire.valeurCibleAnnuelle,
         dateValeurCibleAnnuelle: detailsTerritoire.dateValeurCibleAnnuelle,
         avancement: detailsTerritoire.avancement,
-        proposition: detailsTerritoire.proposition,
+        proposition: detailsTerritoire.proposition
+          ? {
+              ...detailsTerritoire.proposition,
+              dateValeurAvancement:
+                detailsTerritoire.proposition.dateValeurAvancement,
+            }
+          : null,
         propositionStatutTerritoire:
           detailsTerritoire.propositionStatutTerritoire,
         propositionStatutDirectionProjet:

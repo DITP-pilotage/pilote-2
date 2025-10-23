@@ -247,10 +247,20 @@ const config = convict({
       default: false,
       env: "NEXT_PUBLIC_FF_VIDEO_ACCUEIL",
     },
+    pvaValeurDifferente: {
+      format: Boolean,
+      default: false,
+      env: "NEXT_PUBLIC_FF_PVA_VALEUR_DIFFERENTE",
+    },
     nouveauxGraphiques: {
       format: Boolean,
       default: false,
       env: "NEXT_PUBLIC_FF_NOUVEAUX_GRAPHIQUES",
+    },
+    piloteEval: {
+      format: Boolean,
+      default: false,
+      env: "NEXT_PUBLIC_FF_PILOTE_EVAL",
     },
   },
   analytics: {

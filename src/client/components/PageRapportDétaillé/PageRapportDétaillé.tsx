@@ -19,7 +19,6 @@ import {
   AvancementsStatistiquesAccueilContrat,
 } from "@/server/chantiers/app/contrats/AvancementsStatistiquesAccueilContrat";
 import Axe from "@/server/domain/axe/Axe.interface";
-import { ChantierRapportDetailleContrat } from "@/server/chantiers/app/contrats/ChantierRapportDetailleContrat";
 import { AvancementChantierRapportDetaille } from "@/components/PageRapportDétaillé/AvancementChantierRapportDetaille";
 import { CartographieDonnéesMétéo } from "@/components/_commons/Cartographie/CartographieMétéo/CartographieMétéo.interface";
 import { TypeAlerteChantier } from "@/server/chantiers/app/contrats/TypeAlerteChantier";
@@ -29,6 +28,7 @@ import { getFiltresActifs } from "@/client/stores/useFiltresStoreNew/useFiltresS
 import { ArrowGoBackIcon } from "@/components/_commons/Icones/ArrowGoBackIcon";
 import { Icone } from "@/components/_commons/Icone";
 import { Printer1Icon } from "@/components/_commons/Icones/Printer1Icon";
+import { ChantierRapportDetailleContrat } from "@/server/chantiers/app/contrats/ChantierRapportDetailleContratV2";
 import FiltresSélectionnés from "./FiltresSélectionnés/FiltresSélectionnés";
 
 interface PageRapportDétailléProps {

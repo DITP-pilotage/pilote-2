@@ -14,11 +14,12 @@ import CaseACocher from "@/components/_commons/CaseACocher/CaseACocher";
 import { MultiSelectChantier } from "@/components/_commons/MultiSelectNew/MultiSelectChantier/MultiSelectChantier";
 import { Icone } from "@/components/_commons/Icone";
 import { ArrowLine1Icon } from "@/components/_commons/Icones/ArrowLine1Icon";
+import { SelecteurApplication } from "@/components/PageUtilisateurFormulaire/UtilisateurFormulaire/SaisieDesInformationsUtilisateur/SelecteurApplication";
 import useSaisieDesInformationsUtilisateur from "./useSaisieDesInformationsUtilisateur";
 
 const SaisieDesInformationsUtilisateur: FunctionComponent<
   UtilisateurFormulaireProps
-> = ({ utilisateur }) => {
+> = ({ utilisateur, estAutoriseAVoirLeSelecteurApplication }) => {
   const {
     register,
     control,
@@ -58,12 +59,17 @@ const SaisieDesInformationsUtilisateur: FunctionComponent<
         dans la partie “périmètre”. Pour certains profils, les droits de saisie
         sont facultatifs et à préciser.
       </p>
-      <Titre baliseHtml="h2" className="fr-text--md  fr-mb-2w">
-        Identification
-      </Titre>
-      <p className="fr-text--xs !text-dsfr-mention-grey fr-mb-4w">
-        Tous les champs sont obligatoires.
-      </p>
+      <div className="flex justify-between items-center">
+        <div>
+          <h2 className="!mb-2 !text-lg">Identification</h2>
+          <p className="!text-xs !text-dsfr-mention-grey !mb-8">
+            Tous les champs sont obligatoires.
+          </p>
+        </div>
+        {estAutoriseAVoirLeSelecteurApplication ? (
+          <SelecteurApplication />
+        ) : null}
+      </div>
       <InputAvecLabel
         disabled={Boolean(utilisateur?.email)}
         erreur={errors.email}

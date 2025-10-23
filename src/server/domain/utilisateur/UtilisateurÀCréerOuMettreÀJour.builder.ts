@@ -1,4 +1,5 @@
 import { faker } from "@faker-js/faker/locale/fr";
+import { $Enums } from "@prisma/client";
 import Chantier from "@/server/domain/chantier/Chantier.interface";
 import PérimètreMinistériel from "@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface";
 import { Territoire } from "@/server/domain/territoire/Territoire.interface";
@@ -153,6 +154,7 @@ export default class UtilisateurÀCréerOuMettreÀJourBuilder {
       fonction: this._fonction,
       saisieIndicateur: this._saisieIndicateur,
       gestionUtilisateur: this._gestionUtilisateur,
+      applicationsAccessibles: [$Enums.application_accessible.PILOTE],
       habilitations: this._habilitations,
     };
   }

@@ -4,6 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 
+import { $Enums } from "@prisma/client";
 import Titre from "@/components/_commons/Titre/Titre";
 import Bloc from "@/components/_commons/Bloc/Bloc";
 import IndicateurDEtapes from "@/components/_commons/IndicateurDEtapes/IndicateurDEtapes";
@@ -20,6 +21,7 @@ import SaisieDesInformationsUtilisateur from "./SaisieDesInformationsUtilisateur
 
 const UtilisateurFormulaire: FunctionComponent<UtilisateurFormulaireProps> = ({
   utilisateur,
+  estAutoriseAVoirLeSelecteurApplication,
 }) => {
   const étapes = [
     "Identifier l'utilisateur",
@@ -47,6 +49,9 @@ const UtilisateurFormulaire: FunctionComponent<UtilisateurFormulaireProps> = ({
       profil: utilisateur?.profil,
       gestionUtilisateur: utilisateur?.gestionUtilisateur,
       saisieIndicateur: utilisateur?.saisieIndicateur,
+      applicationsAccessibles: utilisateur
+        ? utilisateur?.applicationsAccessibles
+        : [$Enums.application_accessible.PILOTE],
       habilitations: {
         lecture: {
           chantiers: utilisateur?.habilitations.lecture.chantiers,
@@ -107,7 +112,12 @@ const UtilisateurFormulaire: FunctionComponent<UtilisateurFormulaireProps> = ({
           <FormProvider {...reactHookForm}>
             <form onSubmit={reactHookForm.handleSubmit(passerAuRécapitulatif)}>
               {etapeCourante === 1 && (
-                <SaisieDesInformationsUtilisateur utilisateur={utilisateur} />
+                <SaisieDesInformationsUtilisateur
+                  estAutoriseAVoirLeSelecteurApplication={
+                    estAutoriseAVoirLeSelecteurApplication
+                  }
+                  utilisateur={utilisateur}
+                />
               )}
               {etapeCourante === 2 && (
                 <RécapitulatifUtilisateur

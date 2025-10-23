@@ -19,7 +19,6 @@ import BadgeIcône from "@/components/_commons/BadgeIcône/BadgeIcône";
 import { JaugeDeProgressionSmall } from "@/components/_commons/JaugeDeProgressionSmall/JaugeDeProgressionSmall";
 import BarreDeProgression from "@/components/_commons/BarreDeProgression/BarreDeProgression";
 import Ministère from "@/server/domain/ministère/Ministère.interface";
-import { ChantierAccueilContrat } from "@/server/chantiers/app/contrats/ChantierAccueilContratNew";
 import {
   AvancementsGlobauxTerritoriauxMoyensContrat,
   AvancementsStatistiquesAccueilContrat,
@@ -29,13 +28,14 @@ import { MailleInterne } from "@/server/domain/maille/Maille.interface";
 import JaugeDeProgression from "@/components/_commons/JaugeDeProgression/JaugeDeProgression";
 import { RepartitionMeteoContrat } from "@/server/fiche-territoriale/app/contrats/RepartitionMeteoContrat";
 import { useSelecteurJalon } from "@/components/_commons/SelecteurJalon/useSelecteurJalon";
+import { ChantierAccueilContratV2 } from "@/server/chantiers/app/contrats/ChantierAccueilContratV2";
 import PageChantiersStyled from "./PageChantiers.styled";
 import TableauChantiers from "./TableauChantiers/TableauChantiers";
 import usePageChantiers from "./usePageChantiers";
 import RepartitionsMeteosChantiers from "./FiltresMeteos/RepartitionsMeteosChantiers";
 
 interface PageChantiersProps {
-  chantiers: ChantierAccueilContrat[];
+  chantiers: ChantierAccueilContratV2[];
   nombreTotalChantiersAvecAlertes: number;
   ministères: Ministère[];
   territoireCode: string;
