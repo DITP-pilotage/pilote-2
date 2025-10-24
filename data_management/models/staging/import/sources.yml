@@ -1328,9 +1328,9 @@ sources:
           - name: poids_pourcent_eval_nat_declaree
             data_type: number
             description: >
-              Poids de l'indicateur dans le calcul du taux d'avancement pour les évaluations préfets aux différentes mailles
+              Poids de l'indicateur dans le calcul du taux d'avancement pour les feuilles de route aux différentes mailles
             meta:
-              pilote_alias: "Maille nationale (Evalutation préfet)"
+              pilote_alias: "Maille nationale (Feuille de route)"
               pilote_edit_boxType: text
               pilote_disp_dispDesc: true
               pilote_edit_regex: "(^\\d{1,2}$)|(^\\d{1,2}\\.\\d{1,2}$)|(^100$)"
@@ -1343,7 +1343,7 @@ sources:
             description: >
               Poids de l'indicateur dans le calcul du taux d'avancement global à la maille régionale si territorialisé à cette maille.
             meta:
-              pilote_alias: "Maille régionale (Evalutation préfet)"
+              pilote_alias: "Maille régionale (Feuille de route)"
               pilote_edit_boxType: text
               pilote_disp_dispDesc: false
               pilote_edit_regex: "(^\\d{1,2}$)|(^\\d{1,2}\\.\\d{1,2}$)|(^100$)"
@@ -1356,7 +1356,7 @@ sources:
             description: >
               Poids de l'indicateur dans le calcul du taux d'avancement global à la maille départementale si territorialisé à cette maille.
             meta:
-              pilote_alias: "Maille départementale (Evalutation préfet)"
+              pilote_alias: "Maille départementale (Feuille de route)"
               pilote_edit_boxType: text
               pilote_disp_dispDesc: false
               pilote_edit_regex: "(^\\d{1,2}$)|(^\\d{1,2}\\.\\d{1,2}$)|(^100$)"
