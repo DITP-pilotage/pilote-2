@@ -156,6 +156,7 @@ model chantier_territoire_jalon {
   zone_id              String
   jalon                Int
   taux_avancement      Float?
+  taux_avancement_eval Float?
   date_taux_avancement DateTime? @db.Date
 
   chantier_territoire chantier_territoire @relation(fields: [id, territoire_code], references: [id, territoire_code], onDelete: Cascade, onUpdate: Cascade)
@@ -233,6 +234,8 @@ model indicateur_territoire {
   est_applicable                         Boolean?
   ponderation_zone_declaree              Float?
   ponderation_zone_reel                  Float?
+  ponderation_zone_declaree_eval         Float?
+  ponderation_zone_reel_eval             Float?
   est_a_jour                             Boolean?
   prochaine_date_maj                     DateTime?                                @db.Date
   prochaine_date_maj_jours               Int?
@@ -385,35 +388,38 @@ model metadata_indicateurs_hidden {
 }
 
 model metadata_parametrage_indicateurs {
-  indic_id                     String  @id
-  vi_dept_from                 String?
-  vi_dept_op                   String?
-  va_dept_from                 String?
-  va_dept_op                   String?
-  vc_dept_from                 String?
-  vc_dept_op                   String?
-  vi_reg_from                  String?
-  vi_reg_op                    String?
-  va_reg_from                  String?
-  va_reg_op                    String?
-  vc_reg_from                  String?
-  vc_reg_op                    String?
-  vi_nat_from                  String?
-  vi_nat_op                    String?
-  va_nat_from                  String?
-  va_nat_op                    String?
-  vc_nat_from                  String?
-  vc_nat_op                    String?
-  param_vaca_decumul_from      String?
-  param_vaca_partition_date    String?
-  param_vaca_op                String?
-  param_vacg_decumul_from      String?
-  param_vacg_partition_date    String?
-  param_vacg_op                String?
-  poids_pourcent_dept_declaree Float?
-  poids_pourcent_reg_declaree  Float?
-  poids_pourcent_nat_declaree  Float?
-  tendance                     String?
+  indic_id                          String  @id
+  vi_dept_from                      String?
+  vi_dept_op                        String?
+  va_dept_from                      String?
+  va_dept_op                        String?
+  vc_dept_from                      String?
+  vc_dept_op                        String?
+  vi_reg_from                       String?
+  vi_reg_op                         String?
+  va_reg_from                       String?
+  va_reg_op                         String?
+  vc_reg_from                       String?
+  vc_reg_op                         String?
+  vi_nat_from                       String?
+  vi_nat_op                         String?
+  va_nat_from                       String?
+  va_nat_op                         String?
+  vc_nat_from                       String?
+  vc_nat_op                         String?
+  param_vaca_decumul_from           String?
+  param_vaca_partition_date         String?
+  param_vaca_op                     String?
+  param_vacg_decumul_from           String?
+  param_vacg_partition_date         String?
+  param_vacg_op                     String?
+  poids_pourcent_dept_declaree      Float?
+  poids_pourcent_reg_declaree       Float?
+  poids_pourcent_nat_declaree       Float?
+  poids_pourcent_eval_dept_declaree Float?
+  poids_pourcent_eval_reg_declaree  Float?
+  poids_pourcent_eval_nat_declaree  Float?
+  tendance                          String?
 
   @@schema("raw_data")
 }
@@ -872,5 +878,34 @@ model evaluation_critere {
   updated_at          DateTime            @updatedAt
 
   @@unique([etape_evaluation_id, critere_id, auteur_id])
+  @@schema("public")
+}
+
+model chantier_evaluation {
+  id              String
+  code_insee      String
+  maille          Maille
+  territoire_code String
+  zone_id         String
+  taux_avancement Float?
+  date_calcul     DateTime @db.Date
+
+  @@id([id, territoire_code, date_calcul])
+  @@schema("public")
+}
+
+model indicateur_evaluation {
+  id                   String
+  chantier_id          String
+  territoire_code      String
+  code_insee           String
+  maille               Maille
+  zone_id              String
+  taux_avancement      Float?
+  ponderation_declaree Float
+  ponderation_reelle   Float
+  date_calcul          DateTime @db.Date
+
+  @@id([id, territoire_code, date_calcul])
   @@schema("public")
 }

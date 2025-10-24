@@ -44,6 +44,9 @@ export interface ImportMetadataIndicateur {
   poidsPourcentDept: string;
   poidsPourcentReg: string;
   poidsPourcentNat: string;
+  poidsPourcentEvalNat: string;
+  poidsPourcentEvalReg: string;
+  poidsPourcentEvalDept: string;
   tendance: string;
   reformePrioritaire: string | null;
   projetAnnuelPerf: boolean;
