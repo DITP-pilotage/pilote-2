@@ -1,8 +1,32 @@
+import { toast } from "sonner";
+import api from "@/server/infrastructure/api/trpc/api";
+import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
+
 export const useModifierEtatFichesInstruction = () => {
+  const mutation = api.evaluation.modifierEtatFichesInstruction.useMutation();
+  const refreshRouter = useRefreshRouter();
+
   return {
-    modifierEtat: (ficheEvaluationIds: string[], readOnly: boolean) => {
-      console.log("Modifier état fiches instruction:", ficheEvaluationIds, "readOnly:", readOnly);
-      return Promise.resolve();
-    },
+    modifierEtat: (ficheEvaluationIds: string[], readOnly: boolean) =>
+      mutation.mutateAsync(
+        {
+          ficheEvaluationIds,
+          readOnly,
+        },
+        {
+          onSuccess: async () => {
+            toast.success(
+              readOnly
+                ? "Les fiches ont correctement été bloquées"
+                : "Les fiches ont correctement été débloquées",
+              {
+                position: "top-right",
+                richColors: true,
+              },
+            );
+            await refreshRouter();
+          },
+        },
+      ),
   };
 };
