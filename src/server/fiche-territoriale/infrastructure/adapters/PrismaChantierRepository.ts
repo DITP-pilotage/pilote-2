@@ -53,6 +53,7 @@ export class PrismaChantierRepository implements ChantierRepository {
           chantier_identite: {
             est_barometre: true,
             est_territorialise: true,
+            statut: "PUBLIE",
           },
         },
         include: {
