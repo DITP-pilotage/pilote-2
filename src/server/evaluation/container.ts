@@ -11,6 +11,7 @@ import { DebloquerFichesConsolidationHandler } from "@/server/evaluation/handler
 import { PasserALEtapeInstructionHandler } from "@/server/evaluation/handlers/PasserALEtapeInstructionHandler";
 import { AfficherInstructionQuery } from "@/server/evaluation/queries/AfficherInstructionQuery";
 import { EnregistrerBrouillonInstructionHandler } from "@/server/evaluation/handlers/EnregistrerBrouillonInstructionHandler";
+import { ModifierEtatFichesInstructionHandler } from "@/server/evaluation/handlers/ModifierEtatFichesInstructionHandler";
 import { EnregistrerBrouillonAutoEvaluationHandler } from "./handlers/EnregistrerBrouillonAutoEvaluationHandler";
 
 export type PiloteEvalDependencies = {
@@ -25,6 +26,7 @@ export type PiloteEvalDependencies = {
   accesFicheEvaluationService: AccesFicheEvaluationService;
   soumettreAutoEvaluationHandler: SoumettreAutoEvaluationHandler;
   debloquerFichesConsolidationHandler: DebloquerFichesConsolidationHandler;
+  modifierEtatFichesInstructionHandler: ModifierEtatFichesInstructionHandler;
   passerALEtapeInstructionHandler: PasserALEtapeInstructionHandler;
 };
 
@@ -50,6 +52,9 @@ export const getPiloteEvalContainer = (
     soumettreAutoEvaluationHandler: asClass(SoumettreAutoEvaluationHandler),
     debloquerFichesConsolidationHandler: asClass(
       DebloquerFichesConsolidationHandler,
+    ),
+    modifierEtatFichesInstructionHandler: asClass(
+      ModifierEtatFichesInstructionHandler,
     ),
     passerALEtapeInstructionHandler: asClass(PasserALEtapeInstructionHandler),
   });
