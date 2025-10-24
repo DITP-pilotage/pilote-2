@@ -48,3 +48,4 @@ ENV/
 env.bak/
 venv.bak/
 
+dbt_internal_packages/
