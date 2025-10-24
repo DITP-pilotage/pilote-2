@@ -5,6 +5,7 @@ Ce plan détaille l'implémentation de la fonctionnalité permettant de bloquer 
 ## Inspiration
 
 Nous nous inspirons de la fonctionnalité existante pour débloquer la consolidation :
+
 - Handler : `src/server/evaluation/handlers/DebloquerFichesConsolidationHandler.ts`
 - Tests : `src/server/evaluation/__tests__/handlers/DebloquerFichesConsolidationHandler.integration.test.ts`
 - Bouton : `src/client/components/PagePilotage/BoutonDebloquerLaConsolidation.tsx`
@@ -12,6 +13,7 @@ Nous nous inspirons de la fonctionnalité existante pour débloquer la consolida
 ## Différence principale
 
 Contrairement au déblocage de consolidation qui ne gère que le passage à `read_only = false`, nous devons gérer **deux actions** :
+
 - **Bloquer** : `read_only = true`
 - **Débloquer** : `read_only = false`
 
@@ -22,6 +24,7 @@ Contrairement au déblocage de consolidation qui ne gère que le passage à `rea
 **Fichier à créer** : `src/server/evaluation/__tests__/handlers/ModifierEtatFichesInstructionHandler.integration.test.ts`
 
 Tests à implémenter :
+
 1. `doit débloquer plusieurs fiches instruction en une seule opération`
    - Créer 5 fiches avec des étapes INSTRUCTION dont certaines sont en `read_only: true`
    - Appeler le handler avec `readOnly: false`
@@ -48,6 +51,7 @@ Tests à implémenter :
 **Fichier à créer** : `src/server/evaluation/handlers/ModifierEtatFichesInstructionHandler.ts`
 
 Structure :
+
 ```typescript
 export const modifierEtatFichesInstructionCommandSchema = z.object({
   ficheEvaluationIds: z.array(z.string()),
@@ -55,7 +59,10 @@ export const modifierEtatFichesInstructionCommandSchema = z.object({
 });
 
 export class ModifierEtatFichesInstructionHandler {
-  constructor(dependencies: { transaction: Transaction; prisma: PrismaPilote }) {}
+  constructor(dependencies: {
+    transaction: Transaction;
+    prisma: PrismaPilote;
+  }) {}
 
   async execute(command: ModifierEtatFichesInstructionCommand): Promise<void> {
     // Si aucune fiche, ne rien faire
@@ -80,6 +87,7 @@ export class ModifierEtatFichesInstructionHandler {
 **Fichier à modifier** : `src/server/infrastructure/api/trpc/routes/evaluation.ts`
 
 Ajouter une mutation `modifierEtatFichesInstruction` :
+
 - Input : `modifierEtatFichesInstructionCommandSchema`
 - Vérifier les permissions avec `peutAccederEtapePilotage`
 - Appeler le handler via le conteneur
@@ -89,27 +97,29 @@ Ajouter une mutation `modifierEtatFichesInstruction` :
 ### 2.1 - Créer les composants de boutons
 
 **Fichiers à créer** :
+
 - `src/client/components/PagePilotage/BoutonBloquerInstruction.tsx`
 - `src/client/components/PagePilotage/BoutonDebloquerInstruction.tsx`
 
 Inspirés de `BoutonDebloquerLaConsolidation.tsx` :
+
 - Accepter `disabled` et `fichesSelectionneesIds` en props
-- Utiliser le hook `useDebloquerFiches` (à créer)
-- Afficher une confirmation avant l'action
-- Recharger la page après succès
+- Utiliser le hook `useModifierEtatFichesInstruction` (à créer en même temps)
+- Pour l'instant, le hook renvoie juste un console.log (implémentation ultérieure)
 
-**Hook à créer** : `src/client/components/PagePilotage/useModifierEtatFichesInstruction.ts`
+**Hook à créer (temporaire)** : `src/client/components/PagePilotage/useModifierEtatFichesInstruction.ts`
 
-Structure similaire à `useDebloquerFiches.ts` :
 ```typescript
 export const useModifierEtatFichesInstruction = () => {
-  const mutation = api.evaluation.modifierEtatFichesInstruction.useMutation();
-
   return {
-    bloquer: (ficheEvaluationIds: string[]) =>
-      mutation.mutateAsync({ ficheEvaluationIds, readOnly: true }),
-    debloquer: (ficheEvaluationIds: string[]) =>
-      mutation.mutateAsync({ ficheEvaluationIds, readOnly: false }),
+    bloquer: (ficheEvaluationIds: string[]) => {
+      console.log("Bloquer fiches instruction:", ficheEvaluationIds);
+      return Promise.resolve();
+    },
+    debloquer: (ficheEvaluationIds: string[]) => {
+      console.log("Débloquer fiches instruction:", ficheEvaluationIds);
+      return Promise.resolve();
+    },
   };
 };
 ```
@@ -119,8 +129,9 @@ export const useModifierEtatFichesInstruction = () => {
 **Fichier à modifier** : `src/client/components/PagePilotage/MenuActionTableauPilotage.tsx`
 
 Modifications :
-1. Ajouter une condition pour vérifier si toutes les fiches sélectionnées sont en étape INSTRUCTION
-2. Importer et ajouter les deux nouveaux boutons
+
+1. Importer et ajouter les deux nouveaux boutons
+2. Ajouter une condition pour vérifier si toutes les fiches sélectionnées sont en étape INSTRUCTION
 3. Les boutons sont `disabled` si au moins une fiche sélectionnée n'est pas en étape INSTRUCTION
 
 ```typescript
@@ -138,9 +149,45 @@ const peutModifierLInstructionViaPilotage = toutesFichesEnEtape(
 />
 ```
 
+### 2.3 - Mettre en place l'appel au backend
+
+**Fichier à modifier** : `src/client/components/PagePilotage/useModifierEtatFichesInstruction.ts`
+
+Implémenter le hook pour qu'il appelle réellement la route tRPC :
+
+```typescript
+export const useModifierEtatFichesInstruction = () => {
+  const mutation = api.evaluation.modifierEtatFichesInstruction.useMutation();
+
+  return {
+    bloquer: (ficheEvaluationIds: string[]) =>
+      mutation.mutateAsync(
+        { ficheEvaluationIds, readOnly: true },
+        {
+          onSuccess: () => {
+            toast.success("Fiches bloquées avec succès");
+            window.location.reload();
+          },
+        },
+      ),
+    debloquer: (ficheEvaluationIds: string[]) =>
+      mutation.mutateAsync(
+        { ficheEvaluationIds, readOnly: false },
+        {
+          onSuccess: () => {
+            toast.success("Fiches débloquées avec succès");
+            window.location.reload();
+          },
+        },
+      ),
+  };
+};
+```
+
 ## Résumé des fichiers
 
 ### Fichiers à créer (5)
+
 1. `src/server/evaluation/__tests__/handlers/ModifierEtatFichesInstructionHandler.integration.test.ts` ✅
 2. `src/server/evaluation/handlers/ModifierEtatFichesInstructionHandler.ts` ✅
 3. `src/client/components/PagePilotage/BoutonBloquerInstruction.tsx`
@@ -148,6 +195,7 @@ const peutModifierLInstructionViaPilotage = toutesFichesEnEtape(
 5. `src/client/components/PagePilotage/useModifierEtatFichesInstruction.ts`
 
 ### Fichiers à modifier (3)
+
 1. `src/server/evaluation/container.ts`
 2. `src/server/infrastructure/api/trpc/routes/evaluation.ts`
 3. `src/client/components/PagePilotage/MenuActionTableauPilotage.tsx`
