@@ -16,6 +16,7 @@ export const BoutonBloquerInstruction = ({
 
   return (
     <Bouton
+      className="!text-sm"
       disabled={disabled}
       label="Bloquer l'instruction"
       onClick={handleBloquerFiches}

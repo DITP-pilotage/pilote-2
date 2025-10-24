@@ -16,6 +16,7 @@ export const BoutonDebloquerInstruction = ({
 
   return (
     <Bouton
+      className="!text-sm"
       disabled={disabled}
       label="Débloquer l'instruction"
       onClick={handleDebloquerFiches}
