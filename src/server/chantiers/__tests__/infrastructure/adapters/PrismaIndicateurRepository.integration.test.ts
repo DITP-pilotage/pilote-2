@@ -6141,4 +6141,451 @@ describe("PrismaIndicateurRepository", () => {
       );
     });
   });
+
+  describe("#recupererIndicateursNonAJourParChantierId", () => {
+    it("doit retourner les indicateurs non à jour (est_a_jour = false ou null) pour tous les chantiers publiés", async () => {
+      // Given
+      await prisma.chantier_identite.createMany({
+        data: [
+          {
+            id: "CH-001",
+            nom: "Chantier 001",
+            statut: "PUBLIE",
+          },
+          {
+            id: "CH-002",
+            nom: "Chantier 002",
+            statut: "PUBLIE",
+          },
+        ],
+      });
+
+      await prisma.chantier_territoire.createMany({
+        data: [
+          {
+            id: "CH-001",
+            territoire_code: "NAT-FR",
+            code_insee: "FR",
+            maille: "NAT",
+            zone_id: "FRANCE",
+          },
+          {
+            id: "CH-002",
+            territoire_code: "NAT-FR",
+            code_insee: "FR",
+            maille: "NAT",
+            zone_id: "FRANCE",
+          },
+        ],
+      });
+
+      await prisma.indicateur_identite.createMany({
+        data: [
+          {
+            id: "IND-001",
+            nom: "Indicateur 001",
+            chantier_id: "CH-001",
+            type_id: "IMPACT",
+            statut: "PUBLIE",
+          },
+          {
+            id: "IND-002",
+            nom: "Indicateur 002",
+            chantier_id: "CH-001",
+            type_id: "IMPACT",
+            statut: "PUBLIE",
+          },
+          {
+            id: "IND-003",
+            nom: "Indicateur 003",
+            chantier_id: "CH-002",
+            type_id: "IMPACT",
+            statut: "PUBLIE",
+          },
+        ],
+      });
+
+      await prisma.indicateur_territoire.createMany({
+        data: [
+          {
+            id: "IND-001",
+            chantier_id: "CH-001",
+            maille: "NAT",
+            territoire_code: "NAT-FR",
+            code_insee: "FR",
+            zone_id: "FRANCE",
+            est_applicable: true,
+            est_a_jour: false,
+          },
+          {
+            id: "IND-002",
+            chantier_id: "CH-001",
+            maille: "NAT",
+            territoire_code: "NAT-FR",
+            code_insee: "FR",
+            zone_id: "FRANCE",
+            est_applicable: true,
+            est_a_jour: true,
+          },
+          {
+            id: "IND-003",
+            chantier_id: "CH-002",
+            maille: "NAT",
+            territoire_code: "NAT-FR",
+            code_insee: "FR",
+            zone_id: "FRANCE",
+            est_applicable: true,
+            est_a_jour: null,
+          },
+        ],
+      });
+
+      // When
+      const result =
+        await prismaIndicateurRepository.recupererIndicateursNonAJourParChantierId();
+
+      // Then
+      expect(result.size).toEqual(2);
+      expect(result.get("CH-001")).toEqual(expect.arrayContaining(["IND-001"]));
+      expect(result.get("CH-002")).toEqual(["IND-003"]);
+    });
+
+    it("doit exclure les indicateurs avec est_applicable = false ou null", async () => {
+      // Given
+      await prisma.chantier_identite.create({
+        data: {
+          id: "CH-001",
+          nom: "Chantier 001",
+          statut: "PUBLIE",
+        },
+      });
+
+      await prisma.chantier_territoire.create({
+        data: {
+          id: "CH-001",
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+        },
+      });
+
+      await prisma.indicateur_identite.createMany({
+        data: [
+          {
+            id: "IND-001",
+            nom: "Indicateur 001",
+            chantier_id: "CH-001",
+            type_id: "IMPACT",
+            statut: "PUBLIE",
+          },
+          {
+            id: "IND-002",
+            nom: "Indicateur 002",
+            chantier_id: "CH-001",
+            type_id: "IMPACT",
+            statut: "PUBLIE",
+          },
+          {
+            id: "IND-003",
+            nom: "Indicateur 003",
+            chantier_id: "CH-001",
+            type_id: "IMPACT",
+            statut: "PUBLIE",
+          },
+        ],
+      });
+
+      await prisma.indicateur_territoire.createMany({
+        data: [
+          {
+            id: "IND-001",
+            chantier_id: "CH-001",
+            maille: "NAT",
+            territoire_code: "NAT-FR",
+            code_insee: "FR",
+            zone_id: "FRANCE",
+            est_applicable: false,
+            est_a_jour: false,
+          },
+          {
+            id: "IND-002",
+            chantier_id: "CH-001",
+            maille: "NAT",
+            territoire_code: "NAT-FR",
+            code_insee: "FR",
+            zone_id: "FRANCE",
+            est_applicable: null,
+            est_a_jour: false,
+          },
+          {
+            id: "IND-003",
+            chantier_id: "CH-001",
+            maille: "NAT",
+            territoire_code: "NAT-FR",
+            code_insee: "FR",
+            zone_id: "FRANCE",
+            est_applicable: true,
+            est_a_jour: false,
+          },
+        ],
+      });
+
+      // When
+      const result =
+        await prismaIndicateurRepository.recupererIndicateursNonAJourParChantierId();
+
+      // Then
+      expect(result.size).toEqual(1);
+      expect(result.get("CH-001")).toEqual(["IND-003"]);
+    });
+
+    it("doit retourner une Map vide si aucun indicateur n'est non à jour", async () => {
+      // Given
+      await prisma.chantier_identite.create({
+        data: {
+          id: "CH-001",
+          nom: "Chantier 001",
+          statut: "PUBLIE",
+        },
+      });
+
+      await prisma.chantier_territoire.create({
+        data: {
+          id: "CH-001",
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+        },
+      });
+
+      await prisma.indicateur_identite.create({
+        data: {
+          id: "IND-001",
+          nom: "Indicateur 001",
+          chantier_id: "CH-001",
+          type_id: "IMPACT",
+          statut: "PUBLIE",
+        },
+      });
+
+      await prisma.indicateur_territoire.create({
+        data: {
+          id: "IND-001",
+          chantier_id: "CH-001",
+          maille: "NAT",
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          zone_id: "FRANCE",
+          est_applicable: true,
+          est_a_jour: true,
+        },
+      });
+
+      // When
+      const result =
+        await prismaIndicateurRepository.recupererIndicateursNonAJourParChantierId();
+
+      // Then
+      expect(result.size).toEqual(0);
+    });
+
+    it("doit retourner seulement les chantiers ayant au moins un indicateur non à jour", async () => {
+      // Given
+      await prisma.chantier_identite.createMany({
+        data: [
+          {
+            id: "CH-001",
+            nom: "Chantier 001",
+            statut: "PUBLIE",
+          },
+          {
+            id: "CH-002",
+            nom: "Chantier 002",
+            statut: "PUBLIE",
+          },
+        ],
+      });
+
+      await prisma.chantier_territoire.createMany({
+        data: [
+          {
+            id: "CH-001",
+            territoire_code: "NAT-FR",
+            code_insee: "FR",
+            maille: "NAT",
+            zone_id: "FRANCE",
+          },
+          {
+            id: "CH-002",
+            territoire_code: "NAT-FR",
+            code_insee: "FR",
+            maille: "NAT",
+            zone_id: "FRANCE",
+          },
+        ],
+      });
+
+      await prisma.indicateur_identite.createMany({
+        data: [
+          {
+            id: "IND-001",
+            nom: "Indicateur 001",
+            chantier_id: "CH-001",
+            type_id: "IMPACT",
+            statut: "PUBLIE",
+          },
+          {
+            id: "IND-002",
+            nom: "Indicateur 002",
+            chantier_id: "CH-002",
+            type_id: "IMPACT",
+            statut: "PUBLIE",
+          },
+        ],
+      });
+
+      await prisma.indicateur_territoire.createMany({
+        data: [
+          {
+            id: "IND-001",
+            chantier_id: "CH-001",
+            maille: "NAT",
+            territoire_code: "NAT-FR",
+            code_insee: "FR",
+            zone_id: "FRANCE",
+            est_applicable: true,
+            est_a_jour: false,
+          },
+          {
+            id: "IND-002",
+            chantier_id: "CH-002",
+            maille: "NAT",
+            territoire_code: "NAT-FR",
+            code_insee: "FR",
+            zone_id: "FRANCE",
+            est_applicable: true,
+            est_a_jour: true,
+          },
+        ],
+      });
+
+      // When
+      const result =
+        await prismaIndicateurRepository.recupererIndicateursNonAJourParChantierId();
+
+      // Then
+      expect(result.size).toEqual(1);
+      expect(result.get("CH-001")).toEqual(["IND-001"]);
+      expect(result.has("CH-002")).toEqual(false);
+    });
+
+    it("ne doit pas retourner les chantiers et les indicateurs non publiés", async () => {
+      // Given
+      await prisma.chantier_identite.createMany({
+        data: [
+          {
+            id: "CH-001",
+            nom: "Chantier 001",
+            statut: "PUBLIE",
+          },
+          {
+            id: "CH-002",
+            nom: "Chantier 002",
+            statut: "BROUILLON",
+          },
+        ],
+      });
+
+      await prisma.chantier_territoire.createMany({
+        data: [
+          {
+            id: "CH-001",
+            territoire_code: "NAT-FR",
+            code_insee: "FR",
+            maille: "NAT",
+            zone_id: "FRANCE",
+          },
+          {
+            id: "CH-002",
+            territoire_code: "NAT-FR",
+            code_insee: "FR",
+            maille: "NAT",
+            zone_id: "FRANCE",
+          },
+        ],
+      });
+
+      await prisma.indicateur_identite.createMany({
+        data: [
+          {
+            id: "IND-001",
+            nom: "Indicateur 001",
+            chantier_id: "CH-001",
+            type_id: "IMPACT",
+            statut: "PUBLIE",
+          },
+          {
+            id: "IND-002",
+            nom: "Indicateur 002",
+            chantier_id: "CH-001",
+            type_id: "IMPACT",
+            statut: "SUPPRIME",
+          },
+          {
+            id: "IND-003",
+            nom: "Indicateur 003",
+            chantier_id: "CH-002",
+            type_id: "IMPACT",
+            statut: "PUBLIE",
+          },
+        ],
+      });
+
+      await prisma.indicateur_territoire.createMany({
+        data: [
+          {
+            id: "IND-001",
+            chantier_id: "CH-001",
+            maille: "NAT",
+            territoire_code: "NAT-FR",
+            code_insee: "FR",
+            zone_id: "FRANCE",
+            est_applicable: true,
+            est_a_jour: false,
+          },
+          {
+            id: "IND-002",
+            chantier_id: "CH-001",
+            maille: "NAT",
+            territoire_code: "NAT-FR",
+            code_insee: "FR",
+            zone_id: "FRANCE",
+            est_applicable: true,
+            est_a_jour: false,
+          },
+          {
+            id: "IND-003",
+            chantier_id: "CH-002",
+            maille: "NAT",
+            territoire_code: "NAT-FR",
+            code_insee: "FR",
+            zone_id: "FRANCE",
+            est_applicable: true,
+            est_a_jour: false,
+          },
+        ],
+      });
+
+      // When
+      const result =
+        await prismaIndicateurRepository.recupererIndicateursNonAJourParChantierId();
+
+      // Then
+      expect(result.size).toEqual(1);
+      expect(result.get("CH-001")).toEqual(["IND-001"]);
+      expect(result.has("CH-002")).toEqual(false);
+    });
+  });
 });

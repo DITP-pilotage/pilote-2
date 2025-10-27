@@ -40,4 +40,5 @@ export interface IndicateurRepository {
     jalon: number,
     dateDerniereExecutionDatajobs: Date,
   ): Promise<DetailsIndicateurTerritoire>;
+  recupererIndicateursNonAJourParChantierId(): Promise<Map<string, string[]>>;
 }
