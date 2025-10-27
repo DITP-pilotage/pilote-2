@@ -1474,4 +1474,556 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
       expect(evenements).toHaveLength(0);
     });
   });
+
+  describe("#recupererLesPropositionsEnCoursParChantierIds", () => {
+    it("Doit récupérer les propositions en cours groupées par chantier et indicateur", async () => {
+      // Given
+      const userId = "f47ac10b-58cc-4372-a567-0e02b2c3d600";
+      await prisma.utilisateur.create({
+        data: {
+          id: userId,
+          nom: "Nom Test PVA",
+          prenom: "Prénom Test PVA",
+          email: "testpva@example.com",
+          profilCode: "DITP_ADMIN",
+          date_creation: new Date(),
+        },
+      });
+
+      await prisma.chantier_identite.create({
+        data: {
+          id: "CH-PVA-001",
+          nom: "Chantier PVA Test 1",
+          statut: "PUBLIE",
+        },
+      });
+
+      await prisma.chantier_territoire.create({
+        data: {
+          id: "CH-PVA-001",
+          territoire_code: "REG-01",
+          maille: "REG",
+          code_insee: "01",
+          zone_id: "R01",
+        },
+      });
+
+      await prisma.indicateur_identite.create({
+        data: {
+          id: "IND-PVA-001",
+          nom: "Indicateur PVA Test 1",
+          unite_mesure: "%",
+          est_barometre: false,
+          est_phare: false,
+          statut: "PUBLIE",
+          chantier_identite: {
+            connect: {
+              id: "CH-PVA-001",
+            },
+          },
+        },
+      });
+
+      await prisma.indicateur_territoire.create({
+        data: {
+          id: "IND-PVA-001",
+          chantier_id: "CH-PVA-001",
+          maille: "REG",
+          territoire_code: "REG-01",
+          code_insee: "01",
+          zone_id: "R01",
+          valeur_actuelle_mandat: 50.5,
+          date_valeur_actuelle_mandat: new Date("2024-06-01"),
+        },
+      });
+
+      const evenementProposition =
+        IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
+          {
+            indicId: "IND-PVA-001",
+            territoireCode: "REG-01",
+            typeEvenement: "PROPOSITION_VALEUR_CREEE",
+            typeValeur: "VALEUR_AVANCEMENT",
+            dateValeur: new Date("2024-07-01"),
+            valeur: 75,
+            idAuteurModification: userId,
+            correlationId: "cdc411d4-9c0e-41f5-93c3-70d7f5044c6c",
+            ordre: 1,
+            dateCreation: new Date(),
+            donneesComplementaires: {
+              motif: "Motif de la proposition",
+              sourceDonneeEtMethodeCalcul: "Source de la donnée",
+            },
+          },
+        );
+
+      await prismaIndicateurTerritoireValeurEvenementRepository.enregistrer(
+        evenementProposition,
+      );
+
+      // When
+      const result =
+        await prismaIndicateurTerritoireValeurEvenementRepository.recupererLesPropositionsEnCoursParChantierIds();
+
+      // Then
+      expect(result.size).toBe(1);
+      expect(result.has("CH-PVA-001")).toBe(true);
+
+      const indicateurMap = result.get("CH-PVA-001")!;
+      expect(indicateurMap.size).toBe(1);
+      expect(indicateurMap.has("IND-PVA-001")).toBe(true);
+
+      const rapports = indicateurMap.get("IND-PVA-001")!;
+      expect(rapports).toEqual([
+        {
+          indicateurId: "IND-PVA-001",
+          territoireCode: "REG-01",
+          valeurAvancementProposee: "75",
+          dateValeurAvancement: "01/06/2024",
+          valeurAvancementReference: "50.5",
+          nomIndicateur: "Indicateur PVA Test 1",
+          uniteIndicateur: "%",
+          nomTerritoire: "Guadeloupe",
+        },
+      ]);
+    });
+
+    it("Doit filtrer les propositions selon leur statut pour ne garder que les propositions en cours", async () => {
+      // Given
+      const userId = "f47ac10b-58cc-4372-a567-0e02b2c3d601";
+      await prisma.utilisateur.create({
+        data: {
+          id: userId,
+          nom: "Nom Test PVA 2",
+          prenom: "Prénom Test PVA 2",
+          email: "testpva2@example.com",
+          profilCode: "DITP_ADMIN",
+          date_creation: new Date(),
+        },
+      });
+
+      await prisma.chantier_identite.create({
+        data: {
+          id: "CH-PVA-002",
+          nom: "Chantier PVA Test 2",
+          statut: "PUBLIE",
+        },
+      });
+
+      await prisma.chantier_territoire.createMany({
+        data: [
+          {
+            id: "CH-PVA-002",
+            territoire_code: "REG-02",
+            maille: "REG",
+            code_insee: "02",
+            zone_id: "R02",
+          },
+          {
+            id: "CH-PVA-002",
+            territoire_code: "REG-03",
+            maille: "REG",
+            code_insee: "03",
+            zone_id: "R03",
+          },
+        ],
+      });
+
+      await prisma.indicateur_identite.create({
+        data: {
+          id: "IND-PVA-002",
+          nom: "Indicateur PVA Test 2",
+          unite_mesure: "unité",
+          est_barometre: false,
+          est_phare: false,
+          statut: "PUBLIE",
+          chantier_identite: {
+            connect: {
+              id: "CH-PVA-002",
+            },
+          },
+        },
+      });
+
+      await prisma.indicateur_territoire.createMany({
+        data: [
+          {
+            id: "IND-PVA-002",
+            chantier_id: "CH-PVA-002",
+            maille: "REG",
+            territoire_code: "REG-02",
+            code_insee: "02",
+            zone_id: "R02",
+            valeur_actuelle_mandat: 100,
+            date_valeur_actuelle_mandat: new Date("2024-07-01"),
+          },
+          {
+            id: "IND-PVA-002",
+            chantier_id: "CH-PVA-002",
+            maille: "REG",
+            territoire_code: "REG-03",
+            code_insee: "03",
+            zone_id: "R03",
+            valeur_actuelle_mandat: 200,
+            date_valeur_actuelle_mandat: new Date("2024-07-01"),
+          },
+        ],
+      });
+
+      const evenementCree =
+        IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
+          {
+            indicId: "IND-PVA-002",
+            territoireCode: "REG-02",
+            typeEvenement: "PROPOSITION_VALEUR_CREEE",
+            typeValeur: "VALEUR_AVANCEMENT",
+            dateValeur: new Date("2024-07-01"),
+            valeur: 150,
+            idAuteurModification: userId,
+            correlationId: "cdc411d4-9c0e-41f5-93c3-70d7f5044c6c",
+            ordre: 1,
+            dateCreation: new Date(),
+            donneesComplementaires: {
+              motif: "Motif",
+              sourceDonneeEtMethodeCalcul: "Source",
+            },
+          },
+        );
+
+      const evenementAcceptee =
+        IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
+          {
+            indicId: "IND-PVA-002",
+            territoireCode: "REG-02",
+            typeEvenement: "PROPOSITION_VALEUR_ACCEPTEE",
+            typeValeur: "VALEUR_AVANCEMENT",
+            dateValeur: new Date("2024-07-01"),
+            valeur: 200,
+            idAuteurModification: userId,
+            correlationId: "33040663-78f3-4236-b39b-be0565f051f7",
+            ordre: 2,
+            dateCreation: new Date(),
+            donneesComplementaires: {
+              motif: "Motif acceptation",
+            },
+          },
+        );
+
+      const evenementRefusee =
+        IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
+          {
+            indicId: "IND-PVA-002",
+            territoireCode: "REG-03",
+            typeEvenement: "PROPOSITION_VALEUR_CREEE",
+            typeValeur: "VALEUR_AVANCEMENT",
+            dateValeur: new Date("2024-07-01"),
+            valeur: 250,
+            idAuteurModification: userId,
+            correlationId: "d2e6bbac-20c9-441a-ab4f-af325e4c4859",
+            ordre: 1,
+            dateCreation: new Date(),
+            donneesComplementaires: {
+              motif: "Motif",
+              sourceDonneeEtMethodeCalcul: "Source",
+            },
+          },
+        );
+
+      await prismaIndicateurTerritoireValeurEvenementRepository.enregistrerTous(
+        [evenementCree, evenementAcceptee, evenementRefusee],
+      );
+
+      // When
+      const result =
+        await prismaIndicateurTerritoireValeurEvenementRepository.recupererLesPropositionsEnCoursParChantierIds();
+
+      // Then
+      const indicateurMap = result.get("CH-PVA-002")!;
+      const rapports = indicateurMap.get("IND-PVA-002")!;
+      expect(rapports).toEqual([
+        {
+          indicateurId: "IND-PVA-002",
+          territoireCode: "REG-03",
+          valeurAvancementProposee: "250",
+          dateValeurAvancement: "01/07/2024",
+          valeurAvancementReference: "200",
+          nomIndicateur: "Indicateur PVA Test 2",
+          uniteIndicateur: "unité",
+          nomTerritoire: "Guyane",
+        },
+      ]);
+    });
+
+    it("Doit ne garder que le dernier événement par triplet (indicId, territoireCode, dateValeur)", async () => {
+      // Given
+      const userId = "f47ac10b-58cc-4372-a567-0e02b2c3d602";
+      await prisma.utilisateur.create({
+        data: {
+          id: userId,
+          nom: "Nom Test PVA 3",
+          prenom: "Prénom Test PVA 3",
+          email: "testpva3@example.com",
+          profilCode: "DITP_ADMIN",
+          date_creation: new Date(),
+        },
+      });
+
+      await prisma.chantier_identite.create({
+        data: {
+          id: "CH-PVA-003",
+          nom: "Chantier PVA Test 3",
+          statut: "PUBLIE",
+        },
+      });
+
+      await prisma.chantier_territoire.create({
+        data: {
+          id: "CH-PVA-003",
+          territoire_code: "REG-03",
+          maille: "REG",
+          code_insee: "03",
+          zone_id: "R03",
+        },
+      });
+
+      await prisma.indicateur_identite.create({
+        data: {
+          id: "IND-PVA-003",
+          nom: "Indicateur PVA Test 3",
+          est_barometre: false,
+          est_phare: false,
+          statut: "PUBLIE",
+          chantier_identite: {
+            connect: {
+              id: "CH-PVA-003",
+            },
+          },
+        },
+      });
+
+      await prisma.indicateur_territoire.create({
+        data: {
+          id: "IND-PVA-003",
+          chantier_id: "CH-PVA-003",
+          maille: "REG",
+          territoire_code: "REG-03",
+          code_insee: "03",
+          zone_id: "R03",
+          valeur_actuelle_mandat: 30,
+          date_valeur_actuelle_mandat: new Date("2024-01-01"),
+        },
+      });
+
+      const dateValeur = new Date("2024-07-01");
+      const evenementCree =
+        IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
+          {
+            indicId: "IND-PVA-003",
+            territoireCode: "REG-03",
+            typeEvenement: "PROPOSITION_VALEUR_CREEE",
+            typeValeur: "VALEUR_AVANCEMENT",
+            dateValeur,
+            valeur: 10,
+            idAuteurModification: userId,
+            correlationId: "d2e6bbac-20c9-441a-ab4f-af325e4c4859",
+            ordre: 1,
+            dateCreation: new Date("2024-07-01T10:00:00"),
+            donneesComplementaires: {
+              motif: "Motif création",
+              sourceDonneeEtMethodeCalcul: "Source",
+            },
+          },
+        );
+
+      const evenementModifiee =
+        IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
+          {
+            indicId: "IND-PVA-003",
+            territoireCode: "REG-03",
+            typeEvenement: "PROPOSITION_VALEUR_MODIFIEE",
+            typeValeur: "VALEUR_AVANCEMENT",
+            dateValeur,
+            valeur: 15,
+            idAuteurModification: userId,
+            correlationId: "d2e6bbac-20c9-441a-ab4f-af325e4c4859",
+            ordre: 2,
+            dateCreation: new Date("2024-07-01T11:00:00"),
+            donneesComplementaires: {
+              motif: "Motif modification",
+              sourceDonneeEtMethodeCalcul: "Source",
+            },
+          },
+        );
+
+      await prismaIndicateurTerritoireValeurEvenementRepository.enregistrerTous(
+        [evenementCree, evenementModifiee],
+      );
+
+      // When
+      const result =
+        await prismaIndicateurTerritoireValeurEvenementRepository.recupererLesPropositionsEnCoursParChantierIds();
+
+      // Then
+      const indicateurMap = result.get("CH-PVA-003")!;
+      const rapports = indicateurMap.get("IND-PVA-003")!;
+      expect(rapports).toEqual([
+        {
+          indicateurId: "IND-PVA-003",
+          territoireCode: "REG-03",
+          valeurAvancementProposee: "15",
+          dateValeurAvancement: "01/01/2024",
+          valeurAvancementReference: "30",
+          nomIndicateur: "Indicateur PVA Test 3",
+          uniteIndicateur: "",
+          nomTerritoire: "Guyane",
+        },
+      ]);
+    });
+
+    it("Doit exclure les propositions dont l'indicateur ou le chantier n'est pas publié", async () => {
+      // Given
+      const userId = "f47ac10b-58cc-4372-a567-0e02b2c3d604";
+      await prisma.utilisateur.create({
+        data: {
+          id: userId,
+          nom: "Nom Test PVA 5",
+          prenom: "Prénom Test PVA 5",
+          email: "testpva5@example.com",
+          profilCode: "DITP_ADMIN",
+          date_creation: new Date(),
+        },
+      });
+
+      await prisma.chantier_identite.createMany({
+        data: [
+          {
+            id: "CH-PVA-005",
+            nom: "Chantier PVA Test 5 (Brouillon)",
+            statut: "BROUILLON",
+          },
+          {
+            id: "CH-PVA-006",
+            nom: "Chantier PVA Test 6 (Publié)",
+            statut: "PUBLIE",
+          },
+        ],
+      });
+
+      await prisma.chantier_territoire.createMany({
+        data: [
+          {
+            id: "CH-PVA-005",
+            territoire_code: "REG-01",
+            maille: "REG",
+            code_insee: "01",
+            zone_id: "R01",
+          },
+          {
+            id: "CH-PVA-006",
+            territoire_code: "REG-02",
+            maille: "REG",
+            code_insee: "02",
+            zone_id: "R02",
+          },
+        ],
+      });
+
+      await prisma.indicateur_identite.createMany({
+        data: [
+          {
+            id: "IND-PVA-005",
+            chantier_id: "CH-PVA-005",
+            nom: "Indicateur PVA Test 5 (Chantier Brouillon)",
+            est_barometre: false,
+            est_phare: false,
+            statut: "PUBLIE",
+          },
+          {
+            id: "IND-PVA-006",
+            chantier_id: "CH-PVA-006",
+            nom: "Indicateur PVA Test 6 (Indicateur Brouillon)",
+            est_barometre: false,
+            est_phare: false,
+            statut: "SUPPRIME",
+          },
+        ],
+      });
+
+      await prisma.indicateur_territoire.createMany({
+        data: [
+          {
+            id: "IND-PVA-005",
+            chantier_id: "CH-PVA-005",
+            maille: "REG",
+            territoire_code: "REG-01",
+            code_insee: "01",
+            zone_id: "R01",
+            valeur_actuelle_mandat: 50,
+            date_valeur_actuelle_mandat: new Date("2024-01-01"),
+          },
+          {
+            id: "IND-PVA-006",
+            chantier_id: "CH-PVA-006",
+            maille: "REG",
+            territoire_code: "REG-02",
+            code_insee: "02",
+            zone_id: "R02",
+            valeur_actuelle_mandat: 60,
+            date_valeur_actuelle_mandat: new Date("2024-01-01"),
+          },
+        ],
+      });
+
+      const evenementChantierBrouillon =
+        IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
+          {
+            indicId: "IND-PVA-005",
+            territoireCode: "REG-01",
+            typeEvenement: "PROPOSITION_VALEUR_CREEE",
+            typeValeur: "VALEUR_AVANCEMENT",
+            dateValeur: new Date("2024-07-01"),
+            valeur: 75,
+            idAuteurModification: userId,
+            correlationId: "d2e6bbac-20c9-441a-ab4f-af325e4c4859",
+            ordre: 1,
+            dateCreation: new Date(),
+            donneesComplementaires: {
+              motif: "Motif",
+              sourceDonneeEtMethodeCalcul: "Source",
+            },
+          },
+        );
+
+      const evenementIndicateurBrouillon =
+        IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
+          {
+            indicId: "IND-PVA-006",
+            territoireCode: "REG-02",
+            typeEvenement: "PROPOSITION_VALEUR_CREEE",
+            typeValeur: "VALEUR_AVANCEMENT",
+            dateValeur: new Date("2024-07-01"),
+            valeur: 85,
+            idAuteurModification: userId,
+            correlationId: "d2e6bbac-20c9-441a-ab4f-af325e4c4859",
+            ordre: 1,
+            dateCreation: new Date(),
+            donneesComplementaires: {
+              motif: "Motif",
+              sourceDonneeEtMethodeCalcul: "Source",
+            },
+          },
+        );
+
+      await prismaIndicateurTerritoireValeurEvenementRepository.enregistrerTous(
+        [evenementChantierBrouillon, evenementIndicateurBrouillon],
+      );
+
+      // When
+      const result =
+        await prismaIndicateurTerritoireValeurEvenementRepository.recupererLesPropositionsEnCoursParChantierIds();
+
+      // Then
+      expect(result.size).toBe(0);
+    });
+  });
 });

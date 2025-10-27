@@ -8,6 +8,8 @@ import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { PropositionValeurAvancementRepository } from "@/server/chantiers/domain/ports/PropositionValeurAvancementRepository";
 import { PrismaPropositionValeurAvancementRepository } from "@/server/chantiers/infrastructure/adapters/PrismaPropositionValeurAvancementRepository";
 import { InitialDependencies } from "@/server/InitialDependencies";
+import { IndicateurTerritoireValeurEvenementRepository } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/IndicateurTerritoireValeurEvenementRepository";
+import { PrismaIndicateurTerritoireValeurEvenementRepository } from "@/server/indicateur-territoire-valeur-evenement/infrastructure/PrismaIndicateurTerritoireValeurEvenementRepository";
 import { TerritoireRepository } from "./domain/ports/TerritoireRepository";
 import { PrismaTerritoireRepository } from "./infrastructure/adapters/PrismaTerritoireRepository";
 import { UtilisateurRepository } from "./domain/ports/UtilisateurRepository";
@@ -44,6 +46,7 @@ export type ChantierDependencies = {
   recupererChantiersAccessiblesEnLectureUseCaseRapportDetailleV2: RecupererChantiersAccessiblesEnLectureUseCaseRapportDetailleV2;
   recupererChantierUseCaseV2: RecupererChantierUseCaseV2;
   listerDetailsIndicateurTerritoireUseCaseV2: ListerDetailsIndicateurTerritoireUseCaseV2;
+  indicateurTerritoireValeurEvenementRepository: IndicateurTerritoireValeurEvenementRepository;
 };
 
 export const getChantiersContainer = (
@@ -80,6 +83,9 @@ export const getChantiersContainer = (
     recupererChantierUseCaseV2: asClass(RecupererChantierUseCaseV2),
     listerDetailsIndicateurTerritoireUseCaseV2: asClass(
       ListerDetailsIndicateurTerritoireUseCaseV2,
+    ),
+    indicateurTerritoireValeurEvenementRepository: asClass(
+      PrismaIndicateurTerritoireValeurEvenementRepository,
     ),
   });
 };
