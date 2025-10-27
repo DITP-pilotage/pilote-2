@@ -1,8 +1,5 @@
 import { mock, MockProxy } from "jest-mock-extended";
-import {
-  PropositionValeurAvancementRepository,
-  PropositionValeurAvancementRapport,
-} from "@/server/chantiers/domain/ports/PropositionValeurAvancementRepository";
+import { PropositionValeurAvancementRapport } from "@/server/chantiers/domain/ports/PropositionValeurAvancementRepository";
 import { ChantierRepository } from "@/server/chantiers/domain/ports/ChantierRepository";
 import { EnvoieEmailService } from "@/server/chantiers/domain/ports/EnvoieEmailService";
 import { EnvoyerLesRapportsPropositionValeurAvancementUseCase } from "@/server/chantiers/usecases/EnvoyerLesRapportsPropositionValeurAvancementUseCase";
@@ -10,33 +7,33 @@ import { UtilisateurRepository } from "@/server/chantiers/domain/ports/Utilisate
 import { Utilisateur } from "@/server/chantiers/domain/Utilisateur";
 import { PropositionValeurAvancementChantierInformation } from "@/server/chantiers/domain/PropositionValeurAvancementChantierInformation";
 import { genererParametresEnvoieRapportProposition } from "@/server/chantiers/app/contrats/ParametresEnvoieEmailRapportProposition";
+import { IndicateurTerritoireValeurEvenementRepository } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/IndicateurTerritoireValeurEvenementRepository";
 
 describe("EnvoyerLesRapportsPropositionValeurAvancementUseCase", () => {
   let utilisateurRepository: MockProxy<UtilisateurRepository>;
-  let propositionValeurAvancementRepository: MockProxy<PropositionValeurAvancementRepository>;
   let chantierRepository: MockProxy<ChantierRepository>;
   let envoieEmailService: MockProxy<EnvoieEmailService>;
+  let indicateurTerritoireValeurEvenementRepository: MockProxy<IndicateurTerritoireValeurEvenementRepository>;
 
   let envoyerLesRapportsPropositionValeurAvancementUseCase: EnvoyerLesRapportsPropositionValeurAvancementUseCase;
 
   beforeEach(() => {
     utilisateurRepository = mock<UtilisateurRepository>();
-    propositionValeurAvancementRepository =
-      mock<PropositionValeurAvancementRepository>();
     chantierRepository = mock<ChantierRepository>();
     envoieEmailService = mock<EnvoieEmailService>();
+    indicateurTerritoireValeurEvenementRepository =
+      mock<IndicateurTerritoireValeurEvenementRepository>();
 
     envoyerLesRapportsPropositionValeurAvancementUseCase =
       new EnvoyerLesRapportsPropositionValeurAvancementUseCase({
-        propositionValeurAvancementRepository,
         chantierRepository,
         utilisateurRepository,
         envoieEmailService,
+        indicateurTerritoireValeurEvenementRepository,
       });
   });
-  it("Supprime les comptes qui sont désactivés depuis plus de 2 ans et anonymise les saisies", async () => {
+  it("Envoie les rapports de propositions d'avancement aux directeurs de projet", async () => {
     // Given
-    const listeChantiersIdsAvecProposition = ["CH-001", "CH-002", "CH-003"];
     const listeDirecteursDeProjet: Utilisateur[] = [
       Utilisateur.creerUtilisateur({
         email: "directeur.test1@exemple.com",
@@ -189,33 +186,29 @@ describe("EnvoyerLesRapportsPropositionValeurAvancementUseCase", () => {
       propositionsParChantier,
     );
 
-    propositionValeurAvancementRepository.recupererLaListeDesChantiersIdsAvecPropositionEnCours.mockResolvedValue(
-      listeChantiersIdsAvecProposition,
+    indicateurTerritoireValeurEvenementRepository.recupererLesPropositionsEnCoursParChantierIds.mockResolvedValue(
+      propositionsParChantier,
     );
+
     utilisateurRepository.recupererUtilisateursParProfilEtChantierIds.mockResolvedValue(
       listeDirecteursDeProjet,
     );
     chantierRepository.recupererListePropositionValeurAvancementChantierInformationParChantiersIds.mockResolvedValue(
       listeChantiersProposition,
     );
-    propositionValeurAvancementRepository.recupererLesPropositionsEnCoursParChantierIds.mockResolvedValue(
-      propositionsParChantier,
-    );
+
     // When
     await envoyerLesRapportsPropositionValeurAvancementUseCase.run();
 
     // Then
     expect(
-      propositionValeurAvancementRepository.recupererLaListeDesChantiersIdsAvecPropositionEnCours,
+      indicateurTerritoireValeurEvenementRepository.recupererLesPropositionsEnCoursParChantierIds,
     ).toHaveBeenCalledTimes(1);
     expect(
       utilisateurRepository.recupererUtilisateursParProfilEtChantierIds,
     ).toHaveBeenCalledTimes(1);
     expect(
       chantierRepository.recupererListePropositionValeurAvancementChantierInformationParChantiersIds,
-    ).toHaveBeenCalledTimes(1);
-    expect(
-      propositionValeurAvancementRepository.recupererLesPropositionsEnCoursParChantierIds,
     ).toHaveBeenCalledTimes(1);
     expect(envoieEmailService.envoieUnEmail).toHaveBeenCalledTimes(3);
     expect(envoieEmailService.envoieUnEmail).toHaveBeenNthCalledWith(

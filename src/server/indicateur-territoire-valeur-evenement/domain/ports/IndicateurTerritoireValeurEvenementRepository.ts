@@ -2,6 +2,17 @@ import { EvenementsSurDate } from "@/server/import-indicateur/domain/EvenementsS
 import { IndicateurTerritoireValeurEvenement } from "@/server/indicateur-territoire-valeur-evenement/domain/IndicateurTerritoireValeurEvenement";
 import { TypeValeur } from "@/server/indicateur-territoire-valeur-evenement/domain/TypeValeur";
 
+export type PropositionValeurAvancementRapport = {
+  indicateurId: string;
+  territoireCode: string;
+  dateValeurAvancement: string;
+  valeurAvancementProposee: string;
+  valeurAvancementReference: string;
+  nomIndicateur: string;
+  uniteIndicateur: string;
+  nomTerritoire: string;
+};
+
 export interface IndicateurTerritoireValeurEvenementRepository {
   recupererParIndicIdTerritoireCodeEtTypeValeur(args: {
     indicId: string;
@@ -28,4 +39,7 @@ export interface IndicateurTerritoireValeurEvenementRepository {
   enregistrerTous(
     evenements: IndicateurTerritoireValeurEvenement[],
   ): Promise<void>;
+  recupererLesPropositionsEnCoursParChantierIds(): Promise<
+    Map<string, Map<string, PropositionValeurAvancementRapport[]>>
+  >;
 }
