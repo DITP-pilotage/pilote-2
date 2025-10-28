@@ -3,12 +3,14 @@ import { EnvoieEmailService } from "@/server/chantiers/domain/ports/EnvoieEmailS
 import { UtilisateurRepository } from "@/server/chantiers/domain/ports/UtilisateurRepository";
 import { genererParametresEnvoieRapportProposition } from "@/server/chantiers/app/contrats/ParametresEnvoieEmailRapportProposition";
 import { IndicateurTerritoireValeurEvenementRepository } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/IndicateurTerritoireValeurEvenementRepository";
+import { IndicateurRepository } from "@/server/chantiers/domain/ports/IndicateurRepository";
 
 interface Dependencies {
   chantierRepository: ChantierRepository;
   utilisateurRepository: UtilisateurRepository;
   envoieEmailService: EnvoieEmailService;
   indicateurTerritoireValeurEvenementRepository: IndicateurTerritoireValeurEvenementRepository;
+  indicateurRepository: IndicateurRepository;
 }
 
 export class EnvoyerLesRapportsPropositionValeurAvancementUseCase {
@@ -20,35 +22,46 @@ export class EnvoyerLesRapportsPropositionValeurAvancementUseCase {
 
   private indicateurTerritoireValeurEvenementRepository: IndicateurTerritoireValeurEvenementRepository;
 
+  private indicateurRepository: IndicateurRepository;
+
   constructor({
     chantierRepository,
     utilisateurRepository,
     envoieEmailService,
     indicateurTerritoireValeurEvenementRepository,
+    indicateurRepository,
   }: Dependencies) {
     this.chantierRepository = chantierRepository;
     this.utilisateurRepository = utilisateurRepository;
     this.envoieEmailService = envoieEmailService;
     this.indicateurTerritoireValeurEvenementRepository =
       indicateurTerritoireValeurEvenementRepository;
+    this.indicateurRepository = indicateurRepository;
   }
 
   async run(): Promise<{ emailsEnEchec: string[] }> {
     const propositionsParChantier =
       await this.indicateurTerritoireValeurEvenementRepository.recupererLesPropositionsEnCoursParChantierIds();
 
-    const listeChantiersIdsAvecProposition = [
-      ...propositionsParChantier.keys(),
+    const indicateursNonAJourParChantier =
+      await this.indicateurRepository.recupererIndicateursNonAJourParChantierId();
+
+    const listeChantiersIdsRapport = [
+      ...new Set([
+        ...propositionsParChantier.keys(),
+        ...indicateursNonAJourParChantier.keys(),
+      ]),
     ];
+
     const listeDirecteursDeProjet =
       await this.utilisateurRepository.recupererUtilisateursParProfilEtChantierIds(
         "EQUIPE_DIR_PROJET",
-        listeChantiersIdsAvecProposition,
+        listeChantiersIdsRapport,
       );
 
     const listeChantiersProposition =
       await this.chantierRepository.recupererListePropositionValeurAvancementChantierInformationParChantiersIds(
-        { listeChantiersIds: listeChantiersIdsAvecProposition },
+        { listeChantiersIds: listeChantiersIdsRapport },
       );
 
     const mapChantiersPropositionInformation = new Map(
@@ -57,16 +70,23 @@ export class EnvoyerLesRapportsPropositionValeurAvancementUseCase {
 
     const emailsEnEchec: string[] = [];
 
-    for (const directeur of listeDirecteursDeProjet) {
+    const tmp = [
+      listeDirecteursDeProjet[0],
+      listeDirecteursDeProjet[1],
+      listeDirecteursDeProjet[listeDirecteursDeProjet.length - 1],
+    ];
+
+    for (const directeur of tmp) {
       try {
         const { chantiers, conseillerEmail } =
           genererParametresEnvoieRapportProposition(
             directeur.listeChantiers,
             mapChantiersPropositionInformation,
             propositionsParChantier,
+            indicateursNonAJourParChantier,
           );
         await this.envoieEmailService.envoieUnEmail(
-          [{ email: directeur.email }],
+          [{ email: "tconti34@gmail.com" }],
           4,
           { chantiers, conseiller_email: conseillerEmail },
         );

@@ -164,13 +164,50 @@ const indicateurs = await prisma.indicateur_territoire.findMany({
 
 ### 2.3 Mise à jour du use case
 
+**Fichier 1** : `src/server/chantiers/usecases/EnvoyerLesRapportsPropositionValeurAvancementUseCase.ts`
+
 **Modifications à apporter** :
 
-1. **Ajouter l'injection de dépendance** (si nécessaire) :
-   - Le `indicateurRepository` doit être ajouté aux dépendances
-   - Vérifier si déjà présent, sinon ajouter dans l'interface `Dependencies`
+1. **Ajouter `indicateurRepository` à l'interface `Dependencies`** (ligne ~7) :
+   ```typescript
+   interface Dependencies {
+     chantierRepository: ChantierRepository;
+     utilisateurRepository: UtilisateurRepository;
+     envoieEmailService: EnvoieEmailService;
+     indicateurTerritoireValeurEvenementRepository: IndicateurTerritoireValeurEvenementRepository;
+     indicateurRepository: IndicateurRepository; // NOUVEAU
+   }
+   ```
 
-2. **Dans la méthode `run()`**, après la ligne 42 (récupération des chantiers avec propositions) :
+2. **Ajouter l'import de `IndicateurRepository`** en haut du fichier :
+   ```typescript
+   import { IndicateurRepository } from "@/server/chantiers/domain/ports/IndicateurRepository";
+   ```
+
+3. **Ajouter la propriété privée** dans la classe (ligne ~21) :
+   ```typescript
+   private indicateurRepository: IndicateurRepository;
+   ```
+
+4. **Initialiser la propriété dans le constructeur** (ligne ~27) :
+   ```typescript
+   constructor({
+     chantierRepository,
+     utilisateurRepository,
+     envoieEmailService,
+     indicateurTerritoireValeurEvenementRepository,
+     indicateurRepository, // NOUVEAU
+   }: Dependencies) {
+     this.chantierRepository = chantierRepository;
+     this.utilisateurRepository = utilisateurRepository;
+     this.envoieEmailService = envoieEmailService;
+     this.indicateurTerritoireValeurEvenementRepository =
+       indicateurTerritoireValeurEvenementRepository;
+     this.indicateurRepository = indicateurRepository; // NOUVEAU
+   }
+   ```
+
+5. **Dans la méthode `run()`**, après la ligne 42 (récupération des chantiers avec propositions) :
    ```typescript
    // Ligne ~42 : const listeChantiersIdsAvecProposition = [...]
 
@@ -179,7 +216,7 @@ const indicateurs = await prisma.indicateur_territoire.findMany({
      await this.indicateurRepository.recupererIndicateursNonAJourParChantierId();
    ```
 
-3. **Modifier l'appel à `genererParametresEnvoieRapportProposition`** (ligne ~63) :
+6. **Modifier l'appel à `genererParametresEnvoieRapportProposition`** (ligne ~63) :
    ```typescript
    // AVANT :
    const { chantiers, conseillerEmail } = genererParametresEnvoieRapportProposition(
@@ -197,16 +234,18 @@ const indicateurs = await prisma.indicateur_territoire.findMany({
    );
    ```
 
-4. **Mettre à jour le paramètre d'email Brevo** (ligne ~68-72) :
-   - Le template Brevo doit recevoir la liste des indicateurs non à jour par chantier
-   - Vérifier le contrat du template email (id: 4)
-   - Ajouter le champ approprié dans les paramètres
+**Fichier 2** : `src/server/chantiers/app/contrats/ParametresEnvoieEmailRapportProposition.ts`
 
-**Note sur `genererParametresEnvoieRapportProposition`** :
-- Cette fonction devra également être mise à jour pour accepter et traiter le 4ème paramètre
-- Vérifier le fichier : `src/server/chantiers/app/contrats/ParametresEnvoieEmailRapportProposition.ts`
-- Mettre à jour la signature de la fonction
-- Adapter la logique pour inclure les indicateurs non à jour dans le retour
+**Modifications à apporter** :
+
+1. **Mettre à jour la signature de la fonction `genererParametresEnvoieRapportProposition`** :
+   - Ajouter un 4ème paramètre : `indicateursNonAJourParChantier: Map<string, string[]>`
+   - Rendre ce paramètre optionnel pour ne pas casser les autres utilisations
+
+2. **Adapter la logique pour inclure les indicateurs non à jour dans le retour** :
+   - Pour chaque chantier, extraire la liste des indicateurs non à jour depuis la Map
+   - Ajouter cette information dans l'objet chantier retourné
+   - Si le chantier n'a pas d'indicateurs non à jour, retourner un tableau vide
 
 ---
 

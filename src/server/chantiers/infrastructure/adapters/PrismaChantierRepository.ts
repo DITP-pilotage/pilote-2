@@ -6,7 +6,7 @@ import { Météo } from "@/server/domain/météo/Météo.interface";
 import { OptionsExport } from "@/server/usecase/chantier/OptionsExport";
 import { verifyValeurIsNotNullOrUndefined } from "@/server/utils/VerifyValeurIsNotNullOrUndefined";
 import { ChantierPourExport } from "@/server/chantiers/domain/ChantierPourExport";
-import { PropositionValeurAvancementChantierInformation } from "@/server/chantiers/domain/PropositionValeurAvancementChantierInformation";
+import { RapportDirecteurProjetChantierInformation } from "@/server/chantiers/domain/PropositionValeurAvancementChantierInformation";
 import { NotFoundError } from "@/server/app/error-boundary/not-found-error";
 import {
   ProfilCode,
@@ -1048,7 +1048,7 @@ export class PrismaChantierRepository implements ChantierRepository {
     indicId,
   }: {
     indicId: string;
-  }): Promise<PropositionValeurAvancementChantierInformation> {
+  }): Promise<RapportDirecteurProjetChantierInformation> {
     const propositionValeurAvancementChantierInformation =
       await prisma.indicateur_identite.findUnique({
         where: {
@@ -1085,7 +1085,7 @@ export class PrismaChantierRepository implements ChantierRepository {
     listeChantiersIds,
   }: {
     listeChantiersIds: string[];
-  }): Promise<PropositionValeurAvancementChantierInformation[]> {
+  }): Promise<RapportDirecteurProjetChantierInformation[]> {
     const listeChantiersInformations = await prisma.chantier_identite.findMany({
       where: {
         id: {

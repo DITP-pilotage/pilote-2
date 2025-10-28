@@ -1,7 +1,7 @@
 import { PropositionValeurAvancementRapport } from "@/server/chantiers/domain/ports/PropositionValeurAvancementRepository";
-import { PropositionValeurAvancementChantierInformation } from "@/server/chantiers/domain/PropositionValeurAvancementChantierInformation";
+import { RapportDirecteurProjetChantierInformation } from "@/server/chantiers/domain/PropositionValeurAvancementChantierInformation";
 
-type ParamIndicateur = {
+type ParamIndicateurPropositions = {
   id: string;
   nom: string;
   unite: string;
@@ -18,63 +18,74 @@ type ParametreEnvoieRapportProposition = {
   id_chantier: string;
   nombre_propositions: string;
   conseiller_email: string;
-  indicateurs: ParamIndicateur[];
+  afficherSectionPropositions: boolean;
+  indicateursPropositions: ParamIndicateurPropositions[];
+  afficherSectionMajIndicateur: boolean;
+  indicateursNonMisAJour: string[];
 };
 
 export const genererParametresEnvoieRapportProposition = (
   listeChantierIds: string[],
-  mapChantiersPropositionInformation: Map<
+  mapChantiersInformation: Map<
     string,
-    PropositionValeurAvancementChantierInformation
+    RapportDirecteurProjetChantierInformation
   >,
   propositionsParChantier: Map<
     string,
     Map<string, PropositionValeurAvancementRapport[]>
   >,
+  indicateursNonAJourParChantier: Map<string, string[]>,
 ): {
   chantiers: ParametreEnvoieRapportProposition[];
   conseillerEmail: string;
 } => {
   const params: ParametreEnvoieRapportProposition[] = [];
   for (const chantierId of listeChantierIds) {
-    const chantier = mapChantiersPropositionInformation.get(chantierId);
+    const chantier = mapChantiersInformation.get(chantierId);
     if (!chantier) {
       continue;
     }
 
     const mapPropositionsChantier = propositionsParChantier.get(chantierId);
-    if (!mapPropositionsChantier) {
-      continue;
-    }
+    const indicateursNonMisAJour =
+      indicateursNonAJourParChantier.get(chantierId);
 
     let nombrePropositions = 0;
 
-    const indicateurs: ParamIndicateur[] = [];
-    for (const [
-      indicId,
-      propositionsTerritoire,
-    ] of mapPropositionsChantier.entries()) {
-      const unite = propositionsTerritoire[0].uniteIndicateur;
-      const nom = propositionsTerritoire[0].nomIndicateur;
-      const suffixe = unite?.toLocaleLowerCase() === "pourcentage" ? " %" : "";
+    const indicateursPropositions: ParamIndicateurPropositions[] = [];
+    if (mapPropositionsChantier) {
+      for (const [
+        indicId,
+        propositionsTerritoire,
+      ] of mapPropositionsChantier.entries()) {
+        const unite = propositionsTerritoire[0].uniteIndicateur;
+        const nom = propositionsTerritoire[0].nomIndicateur;
+        const suffixe =
+          unite?.toLocaleLowerCase() === "pourcentage" ? " %" : "";
 
-      indicateurs.push({
-        id: indicId,
-        nom: nom,
-        unite: unite ? `(en ${unite})` : "",
-        territoires: propositionsTerritoire.map((p) => ({
-          code: p.territoireCode,
-          nom: p.nomTerritoire,
-          valeur_avancement: p.valeurAvancementReference + suffixe,
-          date_valeur: p.dateValeurAvancement,
-          proposition: p.valeurAvancementProposee + suffixe,
-        })),
-      });
+        indicateursPropositions.push({
+          id: indicId,
+          nom: nom,
+          unite: unite ? `(en ${unite})` : "",
+          territoires: propositionsTerritoire.map((p) => ({
+            code: p.territoireCode,
+            nom: p.nomTerritoire,
+            valeur_avancement: p.valeurAvancementReference + suffixe,
+            date_valeur: p.dateValeurAvancement,
+            proposition: p.valeurAvancementProposee + suffixe,
+          })),
+        });
 
-      nombrePropositions += propositionsTerritoire.length;
+        nombrePropositions += propositionsTerritoire.length;
+      }
     }
 
-    if (indicateurs.length > 0) {
+    const afficherSectionPropositions = indicateursPropositions.length > 0;
+    const afficherSectionMajIndicateur = indicateursNonMisAJour
+      ? indicateursNonMisAJour.length > 0
+      : false;
+
+    if (afficherSectionMajIndicateur || afficherSectionPropositions) {
       params.push({
         nom_chantier: chantier.nom,
         id_chantier: chantier.id,
@@ -83,7 +94,10 @@ export const genererParametresEnvoieRapportProposition = (
             ? `${nombrePropositions} propositions territoriales de valeur d'avancement`
             : "1 proposition territoriale de valeur d'avancement",
         conseiller_email: chantier.conseillerMail,
-        indicateurs,
+        afficherSectionPropositions,
+        indicateursPropositions: indicateursPropositions,
+        afficherSectionMajIndicateur,
+        indicateursNonMisAJour: indicateursNonMisAJour ?? [],
       });
     }
   }

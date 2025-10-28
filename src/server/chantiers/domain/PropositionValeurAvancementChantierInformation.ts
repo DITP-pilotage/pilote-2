@@ -1,4 +1,4 @@
-export interface PropositionValeurAvancementChantierInformation {
+export interface RapportDirecteurProjetChantierInformation {
   id: string;
   nom: string;
   statut: string;

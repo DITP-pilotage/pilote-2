@@ -9,7 +9,7 @@ import {
   ChantiersNonAutorisésCreationModificationUtilisateurErreur,
 } from "@/server/utils/errors";
 import { Profil } from "@/server/domain/profil/Profil.interface";
-import { PropositionValeurAvancementChantierInformation } from "@/server/chantiers/domain/PropositionValeurAvancementChantierInformation";
+import { RapportDirecteurProjetChantierInformation } from "@/server/chantiers/domain/PropositionValeurAvancementChantierInformation";
 import { ProfilCode } from "@/server/gestion-utilisateur/domain/Utilisateur.interface";
 
 describe("Habilitation", () => {
@@ -42,8 +42,8 @@ describe("Habilitation", () => {
 
   // Helper function pour créer des données de proposition valeur avancement
   const creerPropositionValeurAvancementMock = (
-    overrides: Partial<PropositionValeurAvancementChantierInformation> = {},
-  ): PropositionValeurAvancementChantierInformation => ({
+    overrides: Partial<RapportDirecteurProjetChantierInformation> = {},
+  ): RapportDirecteurProjetChantierInformation => ({
     id: "chantier-1",
     nom: "Test Chantier",
     statut: "PUBLIE",
