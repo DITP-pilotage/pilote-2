@@ -11,22 +11,24 @@ export default function useDetailsDroitsUtilisateur({
   listeInformationsChantiers: InformationChantierUtilisateur[];
 }) {
   const listeElementsChantiers: ElementListeDroitType[] = chantiers
-    .map((chantier) => {
+    .reduce((elements, chantier) => {
       const info = listeInformationsChantiers?.find((i) => i.id === chantier);
 
       if (!info) {
-        return { label: chantier };
+        return elements;
       }
 
       if (info.statut === "ARCHIVE") {
-        return {
+        elements.push({
           label: `${info.nom} (archivés)`,
           className: "italic !text-dsfr-mention-grey",
-        };
+        });
+      } else {
+        elements.push({ label: info.nom });
       }
 
-      return { label: info.nom };
-    })
+      return elements;
+    }, [] as ElementListeDroitType[])
     .sort((a) => (a.className ? 1 : -1));
 
   const listeElementsTerritoires: ElementListeDroitType[] = territoires.map(

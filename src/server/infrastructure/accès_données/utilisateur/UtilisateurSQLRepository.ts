@@ -63,11 +63,11 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
   async _récupérerChantiers() {
     const whereOptions: Prisma.chantier_identiteWhereInput = configuration()
       .featureFlip.ppgArchive
-      ? {}
+      ? {
+          statut: { notIn: ["SUPPRIME"] },
+        }
       : {
-          NOT: {
-            statut: "ARCHIVE",
-          },
+          statut: { notIn: ["ARCHIVE", "SUPPRIME"] },
         };
 
     if (this._chantiers.donnéesBrutes.length === 0) {
@@ -498,8 +498,10 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
       const chantiersAssociésAuxPérimètresMinistériels =
         h.perimetres.length > 0
           ? listeChantier
-              .filter((c) =>
-                c.perimetre_ids.some((p) => h.perimetres.includes(p)),
+              .filter(
+                (c) =>
+                  c.statut !== "SUPPRIME" &&
+                  c.perimetre_ids.some((p) => h.perimetres.includes(p)),
               )
               .map((c) => c.id)
           : [];
