@@ -3,9 +3,10 @@ import { randomUUID } from "node:crypto";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { Critere, Rattachement } from "@/server/evaluation/queries/types";
 
-export type InstructionData = Awaited<
-  ReturnType<AfficherInstructionQuery["execute"]>
->["rattachements"];
+type AfficherInstructionQueryResult = {
+  criteres: Critere[];
+  rattachements: Rattachement[];
+};
 
 export class AfficherInstructionQuery {
   constructor(private readonly dependencies: { prisma: PrismaPilote }) {}
@@ -14,8 +15,11 @@ export class AfficherInstructionQuery {
     utilisateurId,
   }: {
     utilisateurId: string;
-  }): Promise<{ criteres: Critere[]; rattachements: Rattachement[] }> {
+  }): Promise<AfficherInstructionQueryResult> {
     const rattachements = await this.fetchRattachements(utilisateurId);
+    console.log("---------------------------------");
+    console.log(rattachements);
+    console.log("---------------------------------");
 
     const tousCriteresMap = new Map<string, { id: string; libelle: string }>();
     rattachements.forEach((rattachement) => {
