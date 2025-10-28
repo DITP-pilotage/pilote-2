@@ -1,15 +1,21 @@
 import { $Enums } from "@prisma/client";
 import { randomUUID } from "node:crypto";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
+import { Critere, Rattachement } from "@/server/evaluation/queries/types";
 
-export type ConsolidationData = Awaited<
-  ReturnType<AfficherConsolidationQuery["run"]>
->["rattachements"];
+type AfficherConsolidationQueryResult = {
+  criteres: Critere[];
+  rattachements: Rattachement[];
+};
 
 export class AfficherConsolidationQuery {
   constructor(private readonly dependencies: { prisma: PrismaPilote }) {}
 
-  async run({ utilisateurId }: { utilisateurId: string }) {
+  async run({
+    utilisateurId,
+  }: {
+    utilisateurId: string;
+  }): Promise<AfficherConsolidationQueryResult> {
     const [rattachements, tousCriteres] = await Promise.all([
       this.fetchRattachements(utilisateurId),
       this.fetchCriteres(),
@@ -41,8 +47,16 @@ export class AfficherConsolidationQuery {
             return {
               id: objectif.id,
               libelle: objectif.libelle,
-              autoEvaluation: this.formatEvaluation(autoEvaluation),
-              evaluation: this.formatEvaluation(consolidationEvaluation),
+              evaluations: [
+                {
+                  etape: $Enums.etape_evaluation_enum.CONSOLIDATION,
+                  evaluation: this.formatEvaluation(consolidationEvaluation),
+                },
+                {
+                  etape: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
+                  evaluation: this.formatEvaluation(autoEvaluation),
+                },
+              ],
             };
           },
         );
@@ -62,8 +76,16 @@ export class AfficherConsolidationQuery {
           return {
             id: critere.id,
             libelle: critere.libelle,
-            autoEvaluation: this.formatEvaluation(autoEvaluation),
-            evaluation: this.formatEvaluation(consolidationEvaluation),
+            evaluations: [
+              {
+                etape: $Enums.etape_evaluation_enum.CONSOLIDATION,
+                evaluation: this.formatEvaluation(consolidationEvaluation),
+              },
+              {
+                etape: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
+                evaluation: this.formatEvaluation(autoEvaluation),
+              },
+            ],
           };
         });
 

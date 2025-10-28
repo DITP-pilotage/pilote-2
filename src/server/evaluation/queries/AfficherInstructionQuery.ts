@@ -1,6 +1,7 @@
 import { $Enums } from "@prisma/client";
 import { randomUUID } from "node:crypto";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
+import { Critere, Rattachement } from "@/server/evaluation/queries/types";
 
 export type InstructionData = Awaited<
   ReturnType<AfficherInstructionQuery["execute"]>
@@ -9,7 +10,11 @@ export type InstructionData = Awaited<
 export class AfficherInstructionQuery {
   constructor(private readonly dependencies: { prisma: PrismaPilote }) {}
 
-  async execute({ utilisateurId }: { utilisateurId: string }) {
+  async execute({
+    utilisateurId,
+  }: {
+    utilisateurId: string;
+  }): Promise<{ criteres: Critere[]; rattachements: Rattachement[] }> {
     const rattachements = await this.fetchRattachements(utilisateurId);
 
     const tousCriteresMap = new Map<string, { id: string; libelle: string }>();
@@ -85,9 +90,20 @@ export class AfficherInstructionQuery {
                     nom: objectif.tutelle.nom,
                   }
                 : null,
-              autoEvaluation: this.formatEvaluation(autoEvaluation),
-              consolidation: this.formatEvaluation(consolidation),
-              instruction: this.formatEvaluation(instructionEvaluation),
+              evaluations: [
+                {
+                  etape: $Enums.etape_evaluation_enum.INSTRUCTION,
+                  evaluation: this.formatEvaluation(instructionEvaluation),
+                },
+                {
+                  etape: $Enums.etape_evaluation_enum.CONSOLIDATION,
+                  evaluation: this.formatEvaluation(consolidation),
+                },
+                {
+                  etape: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
+                  evaluation: this.formatEvaluation(autoEvaluation),
+                },
+              ],
             };
           });
 
@@ -118,9 +134,20 @@ export class AfficherInstructionQuery {
             return {
               id: critere.id,
               libelle: critere.libelle,
-              autoEvaluation: this.formatEvaluation(autoEvaluation),
-              consolidation: this.formatEvaluation(consolidation),
-              instruction: this.formatEvaluation(instructionEvaluation),
+              evaluations: [
+                {
+                  etape: $Enums.etape_evaluation_enum.INSTRUCTION,
+                  evaluation: this.formatEvaluation(instructionEvaluation),
+                },
+                {
+                  etape: $Enums.etape_evaluation_enum.CONSOLIDATION,
+                  evaluation: this.formatEvaluation(consolidation),
+                },
+                {
+                  etape: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
+                  evaluation: this.formatEvaluation(autoEvaluation),
+                },
+              ],
             };
           });
 

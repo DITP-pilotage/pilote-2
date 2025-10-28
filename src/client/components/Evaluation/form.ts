@@ -1,9 +1,10 @@
 import { z } from "zod";
 import { useFormContext } from "react-hook-form";
 import { useMemo } from "react";
-import { ConsolidationData } from "@/server/evaluation/queries/AfficherConsolidationQuery";
-import { pageConsolidation } from "@/components/PageConsolidation/PageConsolidationServerSideContext";
+
+// TODO: types génériques pour évaludation
 import { evaluationSchema } from "@/server/evaluation/schemas";
+import { Rattachement } from "@/server/evaluation/queries/types";
 
 export const baseFormSchema = z.object({
   fichesEvaluation: z.record(
@@ -16,11 +17,9 @@ export const baseFormSchema = z.object({
 
 export type FormValues = z.infer<typeof baseFormSchema>;
 
-export const useFormulaireConsolidation = () => useFormContext<FormValues>();
+export const useFormulaireEvaluation = () => useFormContext<FormValues>();
 
-export const getFichesEvaluationParDefaut = (
-  rattachements: ConsolidationData,
-) =>
+export const getFichesEvaluationParDefaut = (rattachements: Rattachement[]) =>
   Object.fromEntries(
     rattachements.map((rattachement) => [
       rattachement.ficheEvaluationId,
@@ -29,9 +28,9 @@ export const getFichesEvaluationParDefaut = (
           rattachement.objectifs.map((objectif) => [
             objectif.id,
             {
-              id: objectif.evaluation.id,
-              note: objectif.evaluation.note,
-              commentaire: objectif.evaluation.commentaire,
+              id: objectif.evaluations[0].evaluation.id,
+              note: objectif.evaluations[0].evaluation.note,
+              commentaire: objectif.evaluations[0].evaluation.commentaire,
             },
           ]),
         ),
@@ -39,9 +38,9 @@ export const getFichesEvaluationParDefaut = (
           rattachement.criteres.map((critere) => [
             critere.id,
             {
-              id: critere.evaluation.id,
-              note: critere.evaluation.note,
-              commentaire: critere.evaluation.commentaire,
+              id: critere.evaluations[0].evaluation.id,
+              note: critere.evaluations[0].evaluation.note,
+              commentaire: critere.evaluations[0].evaluation.commentaire,
             },
           ]),
         ),
@@ -50,15 +49,15 @@ export const getFichesEvaluationParDefaut = (
   );
 
 const getAutoEvaluationObjectif = (
-  rattachement: ConsolidationData[number],
+  rattachement: Rattachement[][number],
   objectifId: string,
 ) => {
   return rattachement.objectifs.find((objectif) => objectif.id === objectifId)
-    ?.autoEvaluation;
+    ?.evaluations[0].evaluation;
 };
 
 export const getCommentairesObjectifsInvalides = (
-  rattachements: ConsolidationData,
+  rattachements: Rattachement[],
   obj: FormValues,
 ) =>
   rattachements
@@ -96,15 +95,15 @@ export const getCommentairesObjectifsInvalides = (
     }));
 
 const getAutoEvaluationCritere = (
-  rattachement: ConsolidationData[number],
+  rattachement: Rattachement[][number],
   critereId: string,
 ) => {
   return rattachement.criteres.find((critere) => critere.id === critereId)
-    ?.autoEvaluation;
+    ?.evaluations[0].evaluation;
 };
 
 export const getCommentairesCriteresInvalides = (
-  rattachements: ConsolidationData,
+  rattachements: Rattachement[],
   obj: FormValues,
 ) =>
   rattachements
@@ -138,8 +137,7 @@ export const getCommentairesCriteresInvalides = (
       critereId,
     }));
 
-export const useFormSchema = () => {
-  const { rattachements } = pageConsolidation.useServerSidePropsContext();
+export const useFormSchema = (rattachements: Rattachement[]) => {
   return useMemo(() => {
     return baseFormSchema.superRefine((form, ctx) => {
       for (const {

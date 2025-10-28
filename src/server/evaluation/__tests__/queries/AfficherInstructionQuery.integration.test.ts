@@ -1,3 +1,4 @@
+import { $Enums } from "@prisma/client";
 import { AfficherInstructionQuery } from "@/server/evaluation/queries/AfficherInstructionQuery";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { prisma } from "@/server/db/prisma";
@@ -411,21 +412,32 @@ describe("AfficherInstructionQuery", () => {
         id: objectifId,
         libelle: "Objectif avec 3 évaluations",
         tutelle: null,
-        autoEvaluation: {
-          id: evaluationAutoId,
-          note: 10,
-          commentaire: "Évaluation auto",
-        },
-        consolidation: {
-          id: evaluationConsoId,
-          note: 12,
-          commentaire: "Évaluation consolidation",
-        },
-        instruction: {
-          id: evaluationInstructionId,
-          note: 15,
-          commentaire: "Évaluation instruction",
-        },
+        evaluations: [
+          {
+            etape: $Enums.etape_evaluation_enum.INSTRUCTION,
+            evaluation: {
+              id: evaluationInstructionId,
+              note: 15,
+              commentaire: "Évaluation instruction",
+            },
+          },
+          {
+            etape: $Enums.etape_evaluation_enum.CONSOLIDATION,
+            evaluation: {
+              id: evaluationConsoId,
+              note: 12,
+              commentaire: "Évaluation consolidation",
+            },
+          },
+          {
+            etape: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
+            evaluation: {
+              id: evaluationAutoId,
+              note: 10,
+              commentaire: "Évaluation auto",
+            },
+          },
+        ],
       });
     });
 
@@ -587,21 +599,32 @@ describe("AfficherInstructionQuery", () => {
       expect(result.rattachements[0].criteres[0]).toEqual({
         id: critereId,
         libelle: "Critère avec 3 évaluations",
-        autoEvaluation: {
-          id: evaluationAutoId,
-          note: 8,
-          commentaire: "Évaluation auto critère",
-        },
-        consolidation: {
-          id: evaluationConsoId,
-          note: 11,
-          commentaire: "Évaluation consolidation critère",
-        },
-        instruction: {
-          id: evaluationInstructionId,
-          note: 14,
-          commentaire: "Évaluation instruction critère",
-        },
+        evaluations: [
+          {
+            etape: $Enums.etape_evaluation_enum.INSTRUCTION,
+            evaluation: {
+              id: evaluationInstructionId,
+              note: 14,
+              commentaire: "Évaluation instruction critère",
+            },
+          },
+          {
+            etape: $Enums.etape_evaluation_enum.CONSOLIDATION,
+            evaluation: {
+              id: evaluationConsoId,
+              note: 11,
+              commentaire: "Évaluation consolidation critère",
+            },
+          },
+          {
+            etape: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
+            evaluation: {
+              id: evaluationAutoId,
+              note: 8,
+              commentaire: "Évaluation auto critère",
+            },
+          },
+        ],
       });
     });
 
