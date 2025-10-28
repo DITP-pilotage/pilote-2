@@ -4,7 +4,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { $Enums } from "@prisma/client";
 import { Bouton } from "@/components/_commons/Bouton/Bouton";
 import { clsxm } from "@/utils/clsxm";
-import { Evaluation, Rattachement } from "@/server/evaluation/queries/types";
+import {
+  Critere,
+  Evaluation,
+  Rattachement,
+} from "@/server/evaluation/queries/types";
+import { useTableauEvaluation } from "@/components/Evaluation/useTableauEvaluation";
 import {
   FormValues,
   getFichesEvaluationParDefaut,
@@ -46,13 +51,14 @@ export type TableauEvaluationRow =
     };
 export const TableauEvaluation = ({
   rattachements,
-  table,
+  criteres,
   onEnregistrer,
 }: {
   rattachements: Rattachement[];
-  table: Table<TableauEvaluationRow>;
+  criteres: Critere[];
   onEnregistrer: (values: FormValues) => Promise<void>;
 }) => {
+  const { table } = useTableauEvaluation({ rattachements, criteres });
   const formSchema = useFormSchema(rattachements);
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),

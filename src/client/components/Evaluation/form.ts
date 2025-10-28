@@ -1,8 +1,6 @@
 import { z } from "zod";
 import { useFormContext } from "react-hook-form";
 import { useMemo } from "react";
-
-// TODO: types génériques pour évaludation
 import { evaluationSchema } from "@/server/evaluation/schemas";
 import { Rattachement } from "@/server/evaluation/queries/types";
 
