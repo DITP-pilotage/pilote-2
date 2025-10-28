@@ -4,8 +4,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { pageConsolidation } from "@/components/PageConsolidation/PageConsolidationServerSideContext";
 import { clsxm } from "@/utils/clsxm";
 import { Bouton } from "@/components/_commons/Bouton/Bouton";
-import { FiltresConsolidation } from "@/components/PageConsolidation/FiltresConsolidation";
-import { GroupesConsolidation } from "@/components/PageConsolidation/GroupesConsolidation";
+import { FiltresTableauEvaluation } from "@/components/Evaluation/FiltresTableauEvaluation";
+import { GroupesTableauEvaluation } from "@/components/Evaluation/GroupesTableauEvaluation";
 import {
   FormValues,
   getFichesEvaluationParDefaut,
@@ -45,8 +45,8 @@ export const FormulaireConsolidation = () => {
             variant="secondary"
           />
         )}
-        <FiltresConsolidation table={table} />
-        <GroupesConsolidation table={table} />
+        <FiltresTableauEvaluation table={table} />
+        <GroupesTableauEvaluation table={table} />
         <table className="table-fixed w-full border-collapse border border-gray-300">
           <thead>
             {table.getHeaderGroups().map((headerGroup) => (

@@ -1,7 +1,7 @@
 import { Table } from "@tanstack/react-table";
 import { ButtonTag } from "@/components/_commons/ButtonTag";
 
-export function GroupesInstruction<T>({ table }: { table: Table<T> }) {
+export function GroupesTableauEvaluation<T>({ table }: { table: Table<T> }) {
   const groupableColumns = table
     .getAllColumns()
     .filter(

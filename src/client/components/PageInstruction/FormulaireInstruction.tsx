@@ -4,8 +4,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { pageInstruction } from "@/components/PageInstruction/PageInstructionServerSideContext";
 import { clsxm } from "@/utils/clsxm";
 import { Bouton } from "@/components/_commons/Bouton/Bouton";
-import { FiltresInstruction } from "@/components/PageInstruction/FiltresInstruction";
-import { GroupesInstruction } from "@/components/PageInstruction/GroupesInstruction";
+import { FiltresTableauEvaluation } from "@/components/Evaluation/FiltresTableauEvaluation";
+import { GroupesTableauEvaluation } from "@/components/Evaluation/GroupesTableauEvaluation";
 import {
   FormValues,
   getFichesEvaluationParDefaut,
@@ -45,8 +45,8 @@ export const FormulaireInstruction = () => {
             variant="secondary"
           />
         )}
-        <FiltresInstruction table={table} />
-        <GroupesInstruction table={table} />
+        <FiltresTableauEvaluation table={table} />
+        <GroupesTableauEvaluation table={table} />
         <table className="table-fixed w-full border-collapse border border-gray-300">
           <thead>
             {table.getHeaderGroups().map((headerGroup) => (
