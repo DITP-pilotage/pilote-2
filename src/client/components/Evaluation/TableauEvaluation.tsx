@@ -125,12 +125,14 @@ export const TableauEvaluation = ({
               const groupingColumnId = table.getState().grouping[0];
               if (row.getIsGrouped()) {
                 let label = "";
+                let colSpan = 1;
                 const groupingValue = row.groupingValue as string;
 
                 if (groupingColumnId == "critereId") {
                   const critere = criteres.find(
                     (critereGroup) => critereGroup.id === groupingValue,
                   );
+                  colSpan = 2;
                   label = critere?.libelle ?? "Objectifs";
                 } else {
                   const rattachement = rattachements.find(
@@ -147,7 +149,7 @@ export const TableauEvaluation = ({
                   >
                     <td
                       className="font-semibold text-primary px-4 py-3"
-                      colSpan={2}
+                      colSpan={colSpan}
                     >
                       {label ?? groupingValue}
                     </td>
