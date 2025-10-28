@@ -123,13 +123,22 @@ export const TableauEvaluation = ({
           <tbody>
             {rows.map((row) => {
               const groupingColumnId = table.getState().grouping[0];
-              if (row.getIsGrouped() && groupingColumnId !== "critereId") {
+              if (row.getIsGrouped()) {
+                let label = "";
                 const groupingValue = row.groupingValue as string;
 
-                const rattachement = rattachements.find(
-                  (rattachementAAfficher) =>
-                    rattachementAAfficher.code === groupingValue,
-                );
+                if (groupingColumnId == "critereId") {
+                  const critere = criteres.find(
+                    (critereGroup) => critereGroup.id === groupingValue,
+                  );
+                  label = critere?.libelle ?? "Objectifs";
+                } else {
+                  const rattachement = rattachements.find(
+                    (rattachementGroup) =>
+                      rattachementGroup.code === groupingValue,
+                  );
+                  label = rattachement?.libelle ?? "";
+                }
 
                 return (
                   <tr
@@ -138,9 +147,9 @@ export const TableauEvaluation = ({
                   >
                     <td
                       className="font-semibold text-primary px-4 py-3"
-                      colSpan={1}
+                      colSpan={2}
                     >
-                      {rattachement?.libelle ?? groupingValue}
+                      {label ?? groupingValue}
                     </td>
                   </tr>
                 );

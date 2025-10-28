@@ -17,9 +17,6 @@ export class AfficherInstructionQuery {
     utilisateurId: string;
   }): Promise<AfficherInstructionQueryResult> {
     const rattachements = await this.fetchRattachements(utilisateurId);
-    console.log("---------------------------------");
-    console.log(rattachements);
-    console.log("---------------------------------");
 
     const tousCriteresMap = new Map<string, { id: string; libelle: string }>();
     rattachements.forEach((rattachement) => {
