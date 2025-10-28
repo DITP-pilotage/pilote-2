@@ -46,12 +46,12 @@ export const getFichesEvaluationParDefaut = (rattachements: Rattachement[]) =>
     ]),
   );
 
-const getAutoEvaluationObjectif = (
+const getEvaluationObjectifEtapePrecedente = (
   rattachement: Rattachement[][number],
   objectifId: string,
 ) => {
   return rattachement.objectifs.find((objectif) => objectif.id === objectifId)
-    ?.evaluations[0].evaluation;
+    ?.evaluations[1]?.evaluation;
 };
 
 export const getCommentairesObjectifsInvalides = (
@@ -66,7 +66,7 @@ export const getCommentairesObjectifsInvalides = (
       })),
     )
     .map(({ objectif, rattachement }) => {
-      const autoEvaluation = getAutoEvaluationObjectif(
+      const autoEvaluation = getEvaluationObjectifEtapePrecedente(
         rattachement,
         objectif.id,
       );
@@ -92,12 +92,12 @@ export const getCommentairesObjectifsInvalides = (
       objectifId,
     }));
 
-const getAutoEvaluationCritere = (
+const getEvaluationCritereEtapePrecedente = (
   rattachement: Rattachement[][number],
   critereId: string,
 ) => {
   return rattachement.criteres.find((critere) => critere.id === critereId)
-    ?.evaluations[0].evaluation;
+    ?.evaluations[1]?.evaluation;
 };
 
 export const getCommentairesCriteresInvalides = (
@@ -112,7 +112,10 @@ export const getCommentairesCriteresInvalides = (
       })),
     )
     .map(({ critere, rattachement }) => {
-      const autoEvaluation = getAutoEvaluationCritere(rattachement, critere.id);
+      const autoEvaluation = getEvaluationCritereEtapePrecedente(
+        rattachement,
+        critere.id,
+      );
       const ficheEvaluation =
         obj.fichesEvaluation[rattachement.ficheEvaluationId];
       const consolidationEvaluation = ficheEvaluation?.criteres[critere.id];

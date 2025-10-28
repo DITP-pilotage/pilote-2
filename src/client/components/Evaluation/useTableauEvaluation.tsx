@@ -9,12 +9,10 @@ import {
 } from "@tanstack/react-table";
 import { useMemo, useState } from "react";
 import { $Enums } from "@prisma/client";
-import { CommentaireTextareaEvaluation } from "@/components/Evaluation/CommentaireTextareaEvaluation";
-import { InputNoteEvaluation } from "@/components/Evaluation/InputNoteEvaluation";
-import { InputNote } from "@/components/_commons/InputNote";
 import { clsxm } from "@/utils/clsxm";
 import { TableauEvaluationRow } from "@/components/Evaluation/TableauEvaluation";
 import { Critere, Rattachement } from "@/server/evaluation/queries/types";
+import { LigneEtapeEvaluation } from "@/components/Evaluation/LigneEtapeEvaluation";
 
 const columnHelper = createColumnHelper<TableauEvaluationRow>();
 
@@ -125,122 +123,48 @@ export const useTableauEvaluation = ({
                     evalItem.etape === $Enums.etape_evaluation_enum.INSTRUCTION
                   ) {
                     return (
-                      <div
-                        className="flex !mb-0 !-mx-4 first:border-t-0"
+                      <LigneEtapeEvaluation
+                        commentaire={evalItem.evaluation.commentaire}
+                        commentaireLabel="Commentaire d'instruction"
+                        commentaireName={commentaireName}
+                        isEditable={isEditable}
                         key={evalItem.etape}
-                      >
-                        <div className="flex-1 border-r border-r-gray-200 p-4">
-                          {isEditable ? (
-                            <CommentaireTextareaEvaluation
-                              disabled={false}
-                              name={commentaireName}
-                            />
-                          ) : (
-                            <>
-                              <strong className="text-sm block mb-2">
-                                Commentaire d'instruction
-                              </strong>
-                              <blockquote className="text-sm text-gray-700 italic border-l-4 border-gray-300 pl-3 py-1">
-                                {evalItem.evaluation.commentaire ||
-                                  "Aucun commentaire"}
-                              </blockquote>
-                            </>
-                          )}
-                        </div>
-                        <div className="flex-shrink-0 w-[12rem] p-4">
-                          <strong className="text-sm block mb-1">
-                            Note d'instruction
-                          </strong>
-                          <div className="flex justify-end">
-                            {isEditable ? (
-                              <InputNoteEvaluation
-                                disabled={false}
-                                name={noteName}
-                              />
-                            ) : (
-                              <InputNote
-                                disabled
-                                value={evalItem.evaluation.note ?? ""}
-                              />
-                            )}
-                          </div>
-                        </div>
-                      </div>
+                        note={evalItem.evaluation.note}
+                        noteLabel="Note d'instruction"
+                        noteName={noteName}
+                      />
                     );
                   } else if (
                     evalItem.etape ===
                     $Enums.etape_evaluation_enum.CONSOLIDATION
                   ) {
                     return (
-                      <div
-                        className="flex !mb-0 !-mx-4 first:border-t-0"
+                      <LigneEtapeEvaluation
+                        commentaire={evalItem.evaluation.commentaire}
+                        commentaireLabel="Commentaire de consolidation"
+                        commentaireName={commentaireName}
+                        isEditable={isEditable}
                         key={evalItem.etape}
-                      >
-                        <div className="flex-1 border-r border-r-gray-200 p-4">
-                          {isEditable ? (
-                            <CommentaireTextareaEvaluation
-                              disabled={false}
-                              name={commentaireName}
-                            />
-                          ) : (
-                            <>
-                              <strong className="text-sm block mb-2">
-                                Commentaire de consolidation
-                              </strong>
-                              <blockquote className="text-sm text-gray-700 italic border-l-4 border-gray-300 pl-3 py-1">
-                                {evalItem.evaluation.commentaire ||
-                                  "Aucun commentaire"}
-                              </blockquote>
-                            </>
-                          )}
-                        </div>
-                        <div className="flex-shrink-0 w-[12rem] p-4">
-                          <strong className="text-sm block mb-1">
-                            Note de consolidation
-                          </strong>
-                          <div className="flex justify-end">
-                            {isEditable ? (
-                              <InputNoteEvaluation
-                                disabled={false}
-                                name={noteName}
-                              />
-                            ) : (
-                              <InputNote
-                                disabled
-                                value={evalItem.evaluation.note ?? ""}
-                              />
-                            )}
-                          </div>
-                        </div>
-                      </div>
+                        note={evalItem.evaluation.note}
+                        noteLabel="Note de consolidation"
+                        noteName={noteName}
+                      />
                     );
                   } else if (
                     evalItem.etape ===
                     $Enums.etape_evaluation_enum.AUTO_EVALUATION
                   ) {
                     return (
-                      <div className="flex !mb-0 !-mx-4" key={evalItem.etape}>
-                        <div className="flex-1 border-r border-r-gray-200 p-4">
-                          <strong className="text-sm block mb-2">
-                            Commentaire de l'auto évalué
-                          </strong>
-                          <blockquote className="text-sm text-gray-700 italic border-l-4 border-gray-300 pl-3 py-1">
-                            {evalItem.evaluation.commentaire ||
-                              "Aucun commentaire"}
-                          </blockquote>
-                        </div>
-                        <div className="flex-shrink-0 w-[12rem] p-4">
-                          <strong className="text-sm block mb-1">
-                            Note auto-évaluation
-                          </strong>
-                          <div className="flex justify-end">
-                            <InputNote
-                              disabled
-                              value={evalItem.evaluation.note ?? ""}
-                            />
-                          </div>
-                        </div>
-                      </div>
+                      <LigneEtapeEvaluation
+                        commentaire={evalItem.evaluation.commentaire}
+                        commentaireLabel="Commentaire de l'auto évalué"
+                        commentaireName={commentaireName}
+                        isEditable={false}
+                        key={evalItem.etape}
+                        note={evalItem.evaluation.note}
+                        noteLabel="Note auto-évaluation"
+                        noteName={noteName}
+                      />
                     );
                   }
                   return null;
