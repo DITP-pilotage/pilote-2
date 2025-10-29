@@ -83,6 +83,10 @@ const EvaluationPage = (
               Accéder à la consolidation
             </Link>
           </div>
+
+          <div className="p-3">
+            <Link href="/evaluation/instruction">Accéder à l'instruction</Link>
+          </div>
           <header className="p-4 bg-dsfr-blue-france-925 border-b-2 border-black">
             <span className="font-bold text-sm">Pilotage</span>
           </header>

@@ -4,6 +4,8 @@ import { $Enums } from "@prisma/client";
 import { pagePilotage } from "@/components/PagePilotage/PagePilotageServerSideContext";
 import { BoutonDebloquerLaConsolidation } from "@/components/PagePilotage/BoutonDebloquerLaConsolidation";
 import { BoutonPasserEnInstruction } from "@/components/PagePilotage/BoutonPasserEnInstruction";
+import { BoutonBloquerInstruction } from "@/components/PagePilotage/BoutonBloquerInstruction";
+import { BoutonDebloquerInstruction } from "@/components/PagePilotage/BoutonDebloquerInstruction";
 
 export const MenuActionTableauPilotage = ({
   fichesSelectionneesIds,
@@ -22,8 +24,12 @@ export const MenuActionTableauPilotage = ({
     fichesSelectionnees.every((fiche) => fiche.etapeCourante === etape) &&
     selectedCount > 0;
 
-  const peutModifierLEtapeViaPilotage = toutesFichesEnEtape(
+  const peutModifierLaConsolidationViaPilotage = toutesFichesEnEtape(
     $Enums.etape_evaluation_enum.CONSOLIDATION,
+  );
+
+  const peutModifierLInstructionViaPilotage = toutesFichesEnEtape(
+    $Enums.etape_evaluation_enum.INSTRUCTION,
   );
 
   return (
@@ -33,11 +39,19 @@ export const MenuActionTableauPilotage = ({
         {selectedCount > 1 ? "s" : ""}
       </p>
       <BoutonDebloquerLaConsolidation
-        disabled={!peutModifierLEtapeViaPilotage}
+        disabled={!peutModifierLaConsolidationViaPilotage}
         fichesSelectionneesIds={fichesSelectionneesIds}
       />
       <BoutonPasserEnInstruction
-        disabled={!peutModifierLEtapeViaPilotage}
+        disabled={!peutModifierLaConsolidationViaPilotage}
+        fichesSelectionneesIds={fichesSelectionneesIds}
+      />
+      <BoutonBloquerInstruction
+        disabled={!peutModifierLInstructionViaPilotage}
+        fichesSelectionneesIds={fichesSelectionneesIds}
+      />
+      <BoutonDebloquerInstruction
+        disabled={!peutModifierLInstructionViaPilotage}
         fichesSelectionneesIds={fichesSelectionneesIds}
       />
     </div>

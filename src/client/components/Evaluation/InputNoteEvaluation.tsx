@@ -1,4 +1,4 @@
-import { useFormulaireConsolidation } from "@/components/PageConsolidation/form";
+import { useFormulaireEvaluation } from "@/components/Evaluation/form";
 import { InputNoteControlled } from "@/components/_commons/InputNoteControlled";
 
 type FormNoteName =
@@ -8,14 +8,14 @@ type FormCommentaireName =
   | `fichesEvaluation.${string}.objectifs.${string}.commentaire`
   | `fichesEvaluation.${string}.criteres.${string}.commentaire`;
 
-export const InputNoteConsolidation = ({
+export const InputNoteEvaluation = ({
   name,
   disabled = false,
 }: {
   name: FormNoteName;
   disabled?: boolean;
 }) => {
-  const form = useFormulaireConsolidation();
+  const form = useFormulaireEvaluation();
   const commentaireName = name.replace(".note", ".commentaire");
 
   return (

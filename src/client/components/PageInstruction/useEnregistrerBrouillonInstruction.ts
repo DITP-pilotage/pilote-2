@@ -2,9 +2,9 @@ import { toast } from "sonner";
 import api from "@/server/infrastructure/api/trpc/api";
 import { FormValues } from "@/components/Evaluation/form";
 
-export const useEnregistrerBrouillonConsolidation = () => {
+export const useEnregistrerBrouillonInstruction = () => {
   const enregistrerBrouillon =
-    api.evaluation.enregistrerBrouillonConsolidation.useMutation();
+    api.evaluation.enregistrerBrouillonInstruction.useMutation();
 
   return (values: FormValues) =>
     enregistrerBrouillon.mutateAsync(

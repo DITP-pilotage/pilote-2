@@ -745,14 +745,25 @@ enum application_accessible {
   @@schema("public")
 }
 
+model referentiel_tutelle {
+  id         String                 @id @db.Uuid
+  nom        String
+  created_at DateTime               @default(now())
+  updated_at DateTime               @updatedAt
+  objectifs  referentiel_objectif[]
+
+  @@schema("public")
+}
+
 model referentiel_critere {
-  id                 String                     @id @db.Uuid
-  libelle            String
-  descriptif         String
-  sous_criteres      referentiel_sous_critere[]
-  created_at         DateTime                   @default(now())
-  updated_at         DateTime                   @updatedAt
-  evaluation_critere evaluation_critere[]
+  id                  String                     @id @db.Uuid
+  libelle             String
+  descriptif          String
+  sous_criteres       referentiel_sous_critere[]
+  created_at          DateTime                   @default(now())
+  updated_at          DateTime                   @updatedAt
+  evaluation_critere  evaluation_critere[]
+  instruction_critere instruction_critere[]
 
   @@schema("public")
 }
@@ -782,15 +793,18 @@ model referentiel_rattachement {
 }
 
 model referentiel_objectif {
-  id                String                   @id @db.Uuid
-  libelle           String
-  descriptif        String
-  jalon             Int
-  rattachement_code String
-  rattachement      referentiel_rattachement @relation(fields: [rattachement_code], references: [code], onDelete: Cascade, onUpdate: Cascade)
-  created_at        DateTime                 @default(now())
-  updated_at        DateTime                 @updatedAt
-  evaluations       evaluation_objectif[]
+  id                    String                    @id @db.Uuid
+  libelle               String
+  descriptif            String
+  jalon                 Int
+  rattachement_code     String
+  rattachement          referentiel_rattachement  @relation(fields: [rattachement_code], references: [code], onDelete: Cascade, onUpdate: Cascade)
+  tutelle_id            String?                   @db.Uuid
+  tutelle               referentiel_tutelle?      @relation(fields: [tutelle_id], references: [id], onDelete: SetNull, onUpdate: Cascade)
+  created_at            DateTime                  @default(now())
+  updated_at            DateTime                  @updatedAt
+  evaluations           evaluation_objectif[]
+  instruction_objectif  instruction_objectif[]
 
   @@schema("public")
 }
@@ -833,15 +847,17 @@ model etape_evaluation {
 }
 
 model rattachement_utilisateur_etape_jalon {
-  id                String                   @id @db.Uuid
-  etape             etape_evaluation_enum
-  jalon             Int
-  utilisateur_id    String                   @db.Uuid
-  utilisateur       utilisateur              @relation(fields: [utilisateur_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  rattachement_code String
-  rattachement      referentiel_rattachement @relation(fields: [rattachement_code], references: [code], onDelete: Cascade, onUpdate: Cascade)
-  created_at        DateTime                 @default(now())
-  updated_at        DateTime                 @updatedAt
+  id                    String                   @id @db.Uuid
+  etape                 etape_evaluation_enum
+  jalon                 Int
+  utilisateur_id        String                   @db.Uuid
+  utilisateur           utilisateur              @relation(fields: [utilisateur_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  rattachement_code     String
+  rattachement          referentiel_rattachement @relation(fields: [rattachement_code], references: [code], onDelete: Cascade, onUpdate: Cascade)
+  created_at            DateTime                 @default(now())
+  updated_at            DateTime                 @updatedAt
+  instruction_objectifs instruction_objectif[]
+  instruction_criteres  instruction_critere[]
 
   @@unique([utilisateur_id, rattachement_code, jalon, etape])
   @@schema("public")
@@ -878,6 +894,32 @@ model evaluation_critere {
   updated_at          DateTime            @updatedAt
 
   @@unique([etape_evaluation_id, critere_id, auteur_id])
+  @@schema("public")
+}
+
+model instruction_objectif {
+  id                                      String                               @id @db.Uuid
+  objectif_id                             String                               @db.Uuid
+  objectif                                referentiel_objectif                 @relation(fields: [objectif_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  rattachement_utilisateur_etape_jalon_id String                               @db.Uuid
+  rattachement_utilisateur_etape_jalon    rattachement_utilisateur_etape_jalon @relation(fields: [rattachement_utilisateur_etape_jalon_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  created_at                              DateTime                             @default(now())
+  updated_at                              DateTime                             @updatedAt
+
+  @@unique([objectif_id, rattachement_utilisateur_etape_jalon_id])
+  @@schema("public")
+}
+
+model instruction_critere {
+  id                                      String                               @id @db.Uuid
+  critere_id                              String                               @db.Uuid
+  critere                                 referentiel_critere                  @relation(fields: [critere_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  rattachement_utilisateur_etape_jalon_id String                               @db.Uuid
+  rattachement_utilisateur_etape_jalon    rattachement_utilisateur_etape_jalon @relation(fields: [rattachement_utilisateur_etape_jalon_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  created_at                              DateTime                             @default(now())
+  updated_at                              DateTime                             @updatedAt
+
+  @@unique([critere_id, rattachement_utilisateur_etape_jalon_id])
   @@schema("public")
 }
 

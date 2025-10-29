@@ -7,6 +7,7 @@ import { ForbiddenError } from "@/server/app/error-boundary/forbidden-error";
 import { soumettreAutoEvaluationCommandSchema } from "@/server/evaluation/handlers/SoumettreAutoEvaluationHandler";
 import { enregisterEvaluationCommandSchema } from "@/server/evaluation/services/EnregistrerEvaluationService";
 import { debloquerFichesConsolidationCommandSchema } from "@/server/evaluation/handlers/DebloquerFichesConsolidationHandler";
+import { modifierEtatFichesInstructionCommandSchema } from "@/server/evaluation/handlers/ModifierEtatFichesInstructionHandler";
 import { passerALEtapeInstructionCommandSchema } from "@/server/evaluation/handlers/PasserALEtapeInstructionHandler";
 
 export const evaluationRouter = créerRouteurTRPC({
@@ -45,6 +46,23 @@ export const evaluationRouter = créerRouteurTRPC({
         .execute(input, ctx.session.user.id);
     }),
 
+  enregistrerBrouillonInstruction: procédureProtégée
+    .input(enregisterEvaluationCommandSchema.array())
+    .mutation(async ({ input, ctx }) => {
+      const peutAccederFicheInstruction = await getContainer("piloteEval")
+        .resolve("accesFicheEvaluationService")
+        .peutAccederEtapeInstruction({
+          utilisateurId: ctx.session.user.id,
+        });
+
+      if (!peutAccederFicheInstruction)
+        throw new ForbiddenError("Accès refusé à la fiche d'instruction");
+
+      await getContainer("piloteEval")
+        .resolve("enregistrerBrouillonInstructionHandler")
+        .execute(input, ctx.session.user.id);
+    }),
+
   soumettreAutoEvaluation: procédureProtégée
     .input(soumettreAutoEvaluationCommandSchema)
     .mutation(async ({ input, ctx }) => {
@@ -77,6 +95,23 @@ export const evaluationRouter = créerRouteurTRPC({
 
       await getContainer("piloteEval")
         .resolve("debloquerFichesConsolidationHandler")
+        .execute(input);
+    }),
+
+  modifierEtatFichesInstruction: procédureProtégée
+    .input(modifierEtatFichesInstructionCommandSchema)
+    .mutation(async ({ input, ctx }) => {
+      const peutAccederPilotage = await getContainer("piloteEval")
+        .resolve("accesFicheEvaluationService")
+        .peutAccederEtapePilotage({
+          applicationsAccessibles: ctx.session.applicationsAccessibles,
+        });
+
+      if (!peutAccederPilotage)
+        throw new ForbiddenError("Accès refusé au pilotage");
+
+      await getContainer("piloteEval")
+        .resolve("modifierEtatFichesInstructionHandler")
         .execute(input);
     }),
 

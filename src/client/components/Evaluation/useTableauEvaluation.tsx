@@ -8,53 +8,24 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { useMemo, useState } from "react";
-import { CommentaireTextareaConsolidation } from "@/components/PageConsolidation/CommentaireTextareaConsolidation";
-import { InputNoteConsolidation } from "@/components/PageConsolidation/InputNoteConsolidation";
-import { InputNote } from "@/components/_commons/InputNote";
-import { pageConsolidation } from "@/components/PageConsolidation/PageConsolidationServerSideContext";
+import { $Enums } from "@prisma/client";
 import { clsxm } from "@/utils/clsxm";
+import { TableauEvaluationRow } from "@/components/Evaluation/TableauEvaluation";
+import { Critere, Rattachement } from "@/server/evaluation/queries/types";
+import { LigneEtapeEvaluation } from "@/components/Evaluation/LigneEtapeEvaluation";
 
-type Evaluation = {
-  id: string;
-  note: number | null;
-  commentaire: string;
-};
-type TableauConsolidationRow =
-  | {
-      type: "critere";
-      id: string;
-      libelle: string;
-      rattachement: {
-        code: string;
-        libelle: string;
-        readOnly: boolean;
-      };
-      ficheEvaluationId: string;
-      evaluation: Evaluation;
-      autoEvaluation: Evaluation;
-    }
-  | {
-      type: "objectif";
-      id: string;
-      libelle: string;
-      rattachement: {
-        code: string;
-        libelle: string;
-        readOnly: boolean;
-      };
-      ficheEvaluationId: string;
-      evaluation: Evaluation;
-      autoEvaluation: Evaluation;
-    };
+const columnHelper = createColumnHelper<TableauEvaluationRow>();
 
-const columnHelper = createColumnHelper<TableauConsolidationRow>();
-
-export const useTableauConsolidation = () => {
-  const { rattachements, criteres } =
-    pageConsolidation.useServerSidePropsContext();
+export const useTableauEvaluation = ({
+  rattachements,
+  criteres,
+}: {
+  rattachements: Rattachement[];
+  criteres: Critere[];
+}) => {
   const [grouping, setGrouping] = useState<string[]>(["rattachementCode"]);
-  const data = useMemo<TableauConsolidationRow[]>(() => {
-    const rows: TableauConsolidationRow[] = [];
+  const data = useMemo<TableauEvaluationRow[]>(() => {
+    const rows: TableauEvaluationRow[] = [];
 
     rattachements.forEach((rattachement) => {
       rattachement.criteres.forEach((critere) => {
@@ -64,8 +35,7 @@ export const useTableauConsolidation = () => {
           rattachement,
           ficheEvaluationId: rattachement.ficheEvaluationId,
           libelle: critere.libelle,
-          evaluation: critere.evaluation,
-          autoEvaluation: critere.autoEvaluation,
+          evaluations: critere.evaluations,
         });
       });
 
@@ -76,8 +46,7 @@ export const useTableauConsolidation = () => {
           rattachement,
           ficheEvaluationId: rattachement.ficheEvaluationId,
           libelle: objectif.libelle,
-          evaluation: objectif.evaluation,
-          autoEvaluation: objectif.autoEvaluation,
+          evaluations: objectif.evaluations,
         });
       });
     });
@@ -116,6 +85,7 @@ export const useTableauConsolidation = () => {
         id: "id",
         header: "Évaluation",
         cell: (info) => {
+          const currentGrouping = info.table.getState().grouping[0];
           const row = info.row;
           const commentaireName =
             info.row.original.type === "objectif"
@@ -128,64 +98,81 @@ export const useTableauConsolidation = () => {
 
           return (
             <div className="space-y-4">
-              <div className="bg-gray-100 pb-2 border-b border-gray-200 -mx-4 px-4 pt-2 flex items-center gap-2 !mb-0">
-                <span
-                  className={clsxm(
-                    "text-xs px-2 py-1.5 rounded-md capitalize font-medium",
-                    {
-                      "bg-blue-100 text-blue-600":
-                        row.original.type === "critere",
-                      "bg-green-100 text-green-600":
-                        row.original.type === "objectif",
-                    },
-                  )}
-                >
-                  {row.original.type}
-                </span>
-                {row.original.libelle}
-              </div>
+              {(row.original.type === "objectif" ||
+                currentGrouping !== "critereId") && (
+                <div className="bg-gray-100 pb-2 border-b border-gray-200 -mx-4 px-4 pt-2 flex items-center gap-2 !mb-0">
+                  <span
+                    className={clsxm(
+                      "text-xs px-2 py-1.5 rounded-md capitalize font-medium",
+                      {
+                        "bg-blue-100 text-blue-600":
+                          row.original.type === "critere",
+                        "bg-green-100 text-green-600":
+                          row.original.type === "objectif",
+                      },
+                    )}
+                  >
+                    {row.original.type}
+                  </span>
+                  {row.original.libelle}
+                </div>
+              )}
 
-              <div className="flex border-b border-b-gray-200 !mb-0 !-mx-4">
-                <div className="flex-1 border-r border-r-gray-200 p-4">
-                  <CommentaireTextareaConsolidation
-                    disabled={row.original.rattachement.readOnly}
-                    name={commentaireName}
-                  />
-                </div>
-                <div className="flex-shrink-0 w-[12rem] p-4">
-                  <strong className="text-sm block mb-1">
-                    Note de consolidation
-                  </strong>
-                  <div className="flex justify-end">
-                    <InputNoteConsolidation
-                      disabled={row.original.rattachement.readOnly}
-                      name={noteName}
-                    />
-                  </div>
-                </div>
-              </div>
+              <div className="divide-y divide-gray-200">
+                {row.original.evaluations.map((evalItem, index) => {
+                  const isEditable =
+                    index === 0 && !row.original.rattachement.readOnly;
 
-              <div className="flex !mb-0 !-mx-4">
-                <div className="flex-1 border-r border-r-gray-200 p-4">
-                  <strong className="text-sm block mb-2">
-                    Commentaire de l'auto évalué
-                  </strong>
-                  <blockquote className="text-sm text-gray-700 italic border-l-4 border-gray-300 pl-3 py-1">
-                    {row.original.autoEvaluation.commentaire ||
-                      "Aucun commentaire"}
-                  </blockquote>
-                </div>
-                <div className="flex-shrink-0 w-[12rem] p-4">
-                  <strong className="text-sm block mb-1">
-                    Note auto-évaluation
-                  </strong>
-                  <div className="flex justify-end">
-                    <InputNote
-                      disabled
-                      value={info.row.original.autoEvaluation.note ?? ""}
-                    />
-                  </div>
-                </div>
+                  if (
+                    evalItem.etape === $Enums.etape_evaluation_enum.INSTRUCTION
+                  ) {
+                    return (
+                      <LigneEtapeEvaluation
+                        commentaire={evalItem.evaluation.commentaire}
+                        commentaireLabel="Commentaire d'instruction"
+                        commentaireName={commentaireName}
+                        isEditable={isEditable}
+                        key={evalItem.etape}
+                        note={evalItem.evaluation.note}
+                        noteLabel="Note d'instruction"
+                        noteName={noteName}
+                      />
+                    );
+                  } else if (
+                    evalItem.etape ===
+                    $Enums.etape_evaluation_enum.CONSOLIDATION
+                  ) {
+                    return (
+                      <LigneEtapeEvaluation
+                        commentaire={evalItem.evaluation.commentaire}
+                        commentaireLabel="Commentaire de consolidation"
+                        commentaireName={commentaireName}
+                        isEditable={isEditable}
+                        key={evalItem.etape}
+                        note={evalItem.evaluation.note}
+                        noteLabel="Note de consolidation"
+                        noteName={noteName}
+                      />
+                    );
+                  } else if (
+                    evalItem.etape ===
+                    $Enums.etape_evaluation_enum.AUTO_EVALUATION
+                  ) {
+                    return (
+                      <LigneEtapeEvaluation
+                        commentaire={evalItem.evaluation.commentaire}
+                        commentaireLabel="Commentaire de l'auto évalué"
+                        commentaireName={commentaireName}
+                        isEditable={false}
+                        key={evalItem.etape}
+                        note={evalItem.evaluation.note}
+                        noteLabel="Note auto-évaluation"
+                        noteName={noteName}
+                      />
+                    );
+                  }
+                  return null;
+                })}
               </div>
             </div>
           );
