@@ -1,4 +1,6 @@
 export class PiloteError extends Error {
+  private readonly _tag = "PiloteError";
+
   private readonly _message: string;
 
   private readonly _status: number;
@@ -18,6 +20,10 @@ export class PiloteError extends Error {
     this._message = message;
     this._status = code;
     this._type = type;
+  }
+
+  static isPiloteError(error: unknown): error is PiloteError {
+    return (error as PiloteError)._tag === "PiloteError";
   }
 
   get message() {

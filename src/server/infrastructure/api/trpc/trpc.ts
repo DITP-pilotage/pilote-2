@@ -26,32 +26,14 @@ export const créerContextTRPC = async (opts: CreateNextContextOptions) => {
   });
 };
 
-const isPiloteError = (error: unknown): error is PiloteError => {
-  return (
-    error instanceof PiloteError ||
-    (typeof error === "object" &&
-      error !== null &&
-      "status" in error &&
-      "type" in error &&
-      typeof error.status === "number" &&
-      typeof error.type === "string")
-  );
-};
-
-const isNonAutorisé = (error: unknown): error is NonAutorisé => {
-  return (
-    error instanceof NonAutorisé ||
-    (error instanceof Error && error.constructor.name === "NonAutorisé")
-  );
-};
-
 const trpc = initTRPC.context<typeof créerContextTRPC>().create({
   transformer: superjson,
   errorFormatter({ shape, error }) {
     const formattedData = { ...shape.data };
     delete formattedData.stack;
     const isInternalServerError =
-      !isNonAutorisé(error.cause) && !isPiloteError(error.cause);
+      !NonAutorisé.isNonAutorisé(error.cause) &&
+      !PiloteError.isPiloteError(error.cause);
     return {
       ...shape,
       message: isInternalServerError
@@ -61,12 +43,12 @@ const trpc = initTRPC.context<typeof créerContextTRPC>().create({
         ...formattedData,
         httpStatus: isInternalServerError
           ? 500
-          : isPiloteError(error.cause)
+          : PiloteError.isPiloteError(error.cause)
             ? error.cause.status
             : 403,
         code: isInternalServerError
           ? "INTERNAL_SERVER_ERROR"
-          : isPiloteError(error.cause)
+          : PiloteError.isPiloteError(error.cause)
             ? error.cause.type
             : "UNAUTHORIZED",
         zodError:
