@@ -45,7 +45,6 @@ export class DesactiverComptesInactifsUseCase {
   async run(): Promise<DesactiverComptesInactifsResultat> {
     const EMAIL_UTILISATEUR_SYSTEME = "import.csv@modernisation.gouv.fr";
 
-    // Récupérer l'ID de l'utilisateur système
     const auteurIdSysteme =
       await this.utilisateurRepository.recupererUtilisateurId(
         EMAIL_UTILISATEUR_SYSTEME,
@@ -57,7 +56,6 @@ export class DesactiverComptesInactifsUseCase {
       );
     }
 
-    // Récupérer les comptes inactifs depuis Keycloak
     const comptesInactifs =
       await this.utilisateurIAMRepository.recupererComptesInactifsDepuisKeycloak();
 
@@ -67,41 +65,36 @@ export class DesactiverComptesInactifsUseCase {
     let mailsJ7 = 0;
     let mailsJ30 = 0;
 
-    // Parcourir les comptes inactifs et appliquer la logique
     for (const compte of comptesInactifs) {
       const { email, joursInactivite } = compte;
 
-      if (joursInactivite > 100) {
+      if (joursInactivite > 90) {
         logger.info(
           `Désactivation du compte ${email} (${joursInactivite} jours d'inactivité)`,
         );
 
-        // 1. Désactivation dans la base de données
         await this.utilisateurRepository.desactiver(email, auteurIdSysteme);
 
-        // 2. Suppression du contact Brevo (si feature flag actif)
         if (process.env.NEXT_PUBLIC_FF_LIEN_CONTACT_BREVO === "true") {
           await this.contactInfoLettresService.supprimerContact(email);
         }
 
-        // 3. Désactivation dans Keycloak (si configuré)
         if (process.env.IMPORT_KEYCLOAK_URL) {
           await this.utilisateurIAMRepository.desactive(email);
         }
 
-        // 4. Suppression du token API
         await this.tokenAPIInformationRepository.supprimerTokenAPIInformation({
           email,
         });
 
         comptesDesactives++;
-      } else if (joursInactivite === 96) {
+      } else if (joursInactivite === 83) {
         await this.contactInfoLettresService.envoieUnEmail([{ email }], 39, {
           joursAvantDesactivation: 7,
         });
         logger.info(`Mail J-7 envoyé à ${email}`);
         mailsJ7++;
-      } else if (joursInactivite === 92) {
+      } else if (joursInactivite === 60) {
         await this.contactInfoLettresService.envoieUnEmail([{ email }], 39, {
           joursAvantDesactivation: 30,
         });
