@@ -104,6 +104,11 @@ export class PrismaChantierRepository implements ChantierRepository {
           },
         },
       },
+      where: {
+        statut: {
+          not: "SUPPRIME",
+        },
+      },
     });
     return listePrismaChantiers.map(convertirEnInformationChantierUtilisateur);
   }
