@@ -12,6 +12,10 @@ import {
 } from "@/server/evaluation/queries/types";
 import { useTableauEvaluation } from "@/components/Evaluation/useTableauEvaluation";
 import {
+  CritereOuObjectif,
+  FicheCadrage,
+} from "@/components/Evaluation/FicheCadrage";
+import {
   FormValues,
   getFichesEvaluationParDefaut,
   useFormSchema,
@@ -59,11 +63,12 @@ export const TableauEvaluation = ({
   criteres: Critere[];
   onEnregistrer: (values: FormValues) => Promise<void>;
 }) => {
-  const [cibleDetailId, setCibleDetailId] = useState<string | null>(null);
+  const [critereOuObjectif, setCritereOuObjectif] =
+    useState<CritereOuObjectif | null>(null);
   const { table } = useTableauEvaluation({
     rattachements,
     criteres,
-    onCibleDetailIdChange: setCibleDetailId,
+    onCibleDetailIdChange: setCritereOuObjectif,
   });
   const formSchema = useFormSchema(rattachements);
   const form = useForm<FormValues>({
@@ -140,13 +145,17 @@ export const TableauEvaluation = ({
                     const critere = criteres.find(
                       (critereGroup) => critereGroup.id === groupingValue,
                     );
+                    if (critere == null)
+                      throw new Error(`Critère introuvable : ${groupingValue}`);
                     colSpan = 2;
                     label = critere?.libelle ?? "Objectifs";
                     aside = (
                       <div>
                         <Bouton
                           label="Fiche de cadrage"
-                          onClick={() => setCibleDetailId(groupingValue)}
+                          onClick={() =>
+                            setCritereOuObjectif({ type: "critere", critere })
+                          }
                           size="sm"
                           variant="secondary"
                         />
@@ -213,31 +222,7 @@ export const TableauEvaluation = ({
             </tbody>
           </table>
         </form>
-        <div className="w-full bg-dsfr-alt-blue-france border-l border-gray-200 inset-shadow-xs">
-          <aside className="sticky top-0 p-6">
-            <h2 className="!text-lg">
-              Pilotage des CLSPD et développement de ceux-ci dans les communes
-              prioritaires
-            </h2>
-
-            <p>{cibleDetailId} </p>
-
-            <p>
-              Amet qui fugiat veniam commodo aliqua voluptate minim quis.
-              Nostrud minim elit eu cillum aliquip deserunt consectetur qui
-              velit minim labore excepteur. Est reprehenderit eu excepteur ut do
-              id amet cillum non elit. Aliqua commodo sint dolore aute do. Ipsum
-              est culpa elit consequat incididunt enim ex. Non ea sint labore
-              commodo incididunt consectetur mollit culpa officia aliquip.
-              Consectetur aute adipisicing ullamco culpa proident adipisicing
-              irure adipisicing quis velit labore nisi dolore. Commodo in ea
-              ullamco consectetur ullamco esse veniam esse excepteur labore anim
-              anim. Veniam sit mollit nulla sit quis et deserunt aliqua ad
-              dolore. Sunt duis ea anim do consectetur aliquip consequat magna
-              in magna cillum cillum sint.
-            </p>
-          </aside>
-        </div>
+        <FicheCadrage critereOuObjectif={critereOuObjectif} />
       </main>
     </FormProvider>
   );

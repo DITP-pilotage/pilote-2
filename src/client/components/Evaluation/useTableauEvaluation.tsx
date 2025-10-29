@@ -7,11 +7,15 @@ import {
   getGroupedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { $Enums } from "@prisma/client";
 import { clsxm } from "@/utils/clsxm";
 import { TableauEvaluationRow } from "@/components/Evaluation/TableauEvaluation";
-import { Critere, Rattachement } from "@/server/evaluation/queries/types";
+import {
+  Critere,
+  Objectif,
+  Rattachement,
+} from "@/server/evaluation/queries/types";
 import { LigneEtapeEvaluation } from "@/components/Evaluation/LigneEtapeEvaluation";
 import { Bouton } from "@/components/_commons/Bouton/Bouton";
 
@@ -24,8 +28,21 @@ export const useTableauEvaluation = ({
 }: {
   rattachements: Rattachement[];
   criteres: Critere[];
-  onCibleDetailIdChange(id: string): void;
+  onCibleDetailIdChange(
+    cible:
+      | { type: "critere"; critere: Critere }
+      | { type: "objectif"; objectif: Objectif },
+  ): void;
 }) => {
+  const getCritere = useCallback(
+    (critereId: string) => {
+      const critereCible = criteres.find((critere) => critere.id === critereId);
+      if (critereCible == null)
+        throw new Error(`Critere introuvable: ${critereId}`);
+      return critereCible;
+    },
+    [criteres],
+  );
   const [grouping, setGrouping] = useState<string[]>(["rattachementCode"]);
   const data = useMemo<TableauEvaluationRow[]>(() => {
     const rows: TableauEvaluationRow[] = [];
@@ -37,7 +54,7 @@ export const useTableauEvaluation = ({
           type: "critere",
           rattachement,
           ficheEvaluationId: rattachement.ficheEvaluationId,
-          libelle: critere.libelle,
+          libelle: getCritere(critere.id).libelle,
           evaluations: critere.evaluations,
         });
       });
@@ -55,7 +72,7 @@ export const useTableauEvaluation = ({
     });
 
     return rows;
-  }, [rattachements]);
+  }, [getCritere, rattachements]);
 
   const columns = useMemo(
     () => [
@@ -125,7 +142,20 @@ export const useTableauEvaluation = ({
                     <Bouton
                       className="!bg-white"
                       label="Fiche de cadrage"
-                      onClick={() => onCibleDetailIdChange(row.original.id)}
+                      onClick={() => {
+                        if (row.original.type === "objectif") {
+                          onCibleDetailIdChange({
+                            type: row.original.type,
+                            objectif: row.original,
+                          });
+                        } else {
+                          const critere = getCritere(row.original.id);
+                          onCibleDetailIdChange({
+                            type: row.original.type,
+                            critere,
+                          });
+                        }
+                      }}
                       size="sm"
                       variant="secondary"
                     />
