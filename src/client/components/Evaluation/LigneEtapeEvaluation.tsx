@@ -38,7 +38,7 @@ export const LigneEtapeEvaluation = ({
         ) : (
           <>
             <strong className="text-sm block mb-2">{commentaireLabel}</strong>
-            <blockquote className="text-sm text-gray-700 italic border-l-4 border-gray-300 pl-3 py-1">
+            <blockquote className="text-sm text-gray-700 italic border-l-4 border-gray-300 pl-3 py-1 whitespace-pre">
               {commentaire || "Aucun commentaire"}
             </blockquote>
           </>
