@@ -12,6 +12,9 @@ async function main() {
   const utilisateurIAMRepository = container.resolve(
     "utilisateurIAMRepository",
   );
+  const contactInfoLettresService = container.resolve(
+    "contactInfoLettresService",
+  );
 
   // Récupérer les comptes inactifs depuis Keycloak
   logger.info("Récupération des comptes inactifs depuis Keycloak...");
@@ -29,22 +32,17 @@ async function main() {
     const { email, joursInactivite } = compte;
 
     if (joursInactivite > 100) {
-      // Désactiver le compte
-      console.log(
-        `🔴 [DÉSACTIVATION] ${email} - ${joursInactivite} jours d'inactivité`,
-      );
       comptesADesactiver++;
     } else if (joursInactivite === 96) {
-      // Envoyer mail 7 jours avant désactivation
-      console.log(
-        `⚠️  [MAIL J-7] ${email} - ${joursInactivite} jours d'inactivité - Envoi mail "7 jours avant désactivation"`,
-      );
+      await contactInfoLettresService.envoieUnEmail([{ email }], 39, {
+        joursAvantDesactivation: 7,
+      });
       mailsJ7++;
     } else if (joursInactivite === 92) {
       // Envoyer mail 30 jours avant désactivation
-      console.log(
-        `⚠️  [MAIL J-30] ${email} - ${joursInactivite} jours d'inactivité - Envoi mail "30 jours avant désactivation"`,
-      );
+      await contactInfoLettresService.envoieUnEmail([{ email }], 39, {
+        joursAvantDesactivation: 30,
+      });
       mailsJ30++;
     }
   }
