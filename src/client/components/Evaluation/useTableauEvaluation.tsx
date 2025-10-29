@@ -13,15 +13,18 @@ import { clsxm } from "@/utils/clsxm";
 import { TableauEvaluationRow } from "@/components/Evaluation/TableauEvaluation";
 import { Critere, Rattachement } from "@/server/evaluation/queries/types";
 import { LigneEtapeEvaluation } from "@/components/Evaluation/LigneEtapeEvaluation";
+import { Bouton } from "@/components/_commons/Bouton/Bouton";
 
 const columnHelper = createColumnHelper<TableauEvaluationRow>();
 
 export const useTableauEvaluation = ({
   rattachements,
   criteres,
+  onCibleDetailIdChange,
 }: {
   rattachements: Rattachement[];
   criteres: Critere[];
+  onCibleDetailIdChange(id: string): void;
 }) => {
   const [grouping, setGrouping] = useState<string[]>(["rattachementCode"]);
   const data = useMemo<TableauEvaluationRow[]>(() => {
@@ -100,21 +103,33 @@ export const useTableauEvaluation = ({
             <div className="space-y-4">
               {(row.original.type === "objectif" ||
                 currentGrouping !== "critereId") && (
-                <div className="bg-gray-100 pb-2 border-b border-gray-200 -mx-4 px-4 pt-2 flex items-center gap-2 !mb-0">
-                  <span
-                    className={clsxm(
-                      "text-xs px-2 py-1.5 rounded-md capitalize font-medium",
-                      {
-                        "bg-blue-100 text-blue-600":
-                          row.original.type === "critere",
-                        "bg-green-100 text-green-600":
-                          row.original.type === "objectif",
-                      },
-                    )}
-                  >
-                    {row.original.type}
-                  </span>
-                  {row.original.libelle}
+                <div className="bg-gray-100 pb-2 border-b border-gray-200 -mx-4 px-4 pt-2 flex items-center justify-between gap-2 !mb-0">
+                  <div className="flex items-center gap-2">
+                    <span
+                      className={clsxm(
+                        "text-xs px-2 py-1.5 rounded-md capitalize font-medium",
+                        {
+                          "bg-blue-100 text-blue-600":
+                            row.original.type === "critere",
+                          "bg-green-100 text-green-600":
+                            row.original.type === "objectif",
+                        },
+                      )}
+                    >
+                      {row.original.type}
+                    </span>
+                    {row.original.libelle}
+                  </div>
+
+                  <div>
+                    <Bouton
+                      className="!bg-white"
+                      label="Fiche de cadrage"
+                      onClick={() => onCibleDetailIdChange(row.original.id)}
+                      size="sm"
+                      variant="secondary"
+                    />
+                  </div>
                 </div>
               )}
 

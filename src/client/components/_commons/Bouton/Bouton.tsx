@@ -7,18 +7,23 @@ export const Bouton = ({
   iconRight,
   variant,
   className,
+  size = "default",
   ...props
 }: {
   label: string;
   iconLeft?: ReactNode;
   iconRight?: ReactNode;
   variant?: "primary" | "secondary";
+  size?: "sm" | "default";
 } & ComponentProps<"button">) => {
   return (
     <button
       className={clsxm(
         "fr-btn gap-2",
-        { "fr-btn--secondary": variant === "secondary" },
+        {
+          "fr-btn--secondary": variant === "secondary",
+          "fr-btn--sm": size === "sm",
+        },
         className,
       )}
       type="button"
