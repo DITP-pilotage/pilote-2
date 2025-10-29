@@ -26,7 +26,6 @@ export const créerContextTRPC = async (opts: CreateNextContextOptions) => {
   });
 };
 
-// Helper functions pour détecter les types d'erreurs de manière robuste
 const isPiloteError = (error: unknown): error is PiloteError => {
   return (
     error instanceof PiloteError ||
@@ -34,8 +33,8 @@ const isPiloteError = (error: unknown): error is PiloteError => {
       error !== null &&
       "status" in error &&
       "type" in error &&
-      typeof (error as Record<string, unknown>).status === "number" &&
-      typeof (error as Record<string, unknown>).type === "string")
+      typeof error.status === "number" &&
+      typeof error.type === "string")
   );
 };
 
