@@ -48,10 +48,8 @@ export default function PageInstruction(
   props: InferGetServerSidePropsType<typeof getServerSideProps>,
 ) {
   return (
-    <div className="mx-auto w-full max-w-[1200px] py-6">
-      <pageInstruction.ServerSidePropsProvider value={props}>
-        <FormulaireInstruction />
-      </pageInstruction.ServerSidePropsProvider>
-    </div>
+    <pageInstruction.ServerSidePropsProvider value={props}>
+      <FormulaireInstruction />
+    </pageInstruction.ServerSidePropsProvider>
   );
 }
