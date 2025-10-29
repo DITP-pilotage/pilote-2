@@ -919,6 +919,15 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
     return utilisateur?.email ?? null;
   }
 
+  async recupererUtilisateurId(email: string): Promise<string | null> {
+    const utilisateur = await this.prisma.utilisateur.findUnique({
+      where: { email: email.toLowerCase() },
+      select: { id: true },
+    });
+
+    return utilisateur?.id ?? null;
+  }
+
   async créerOuMettreÀJour(
     utilisateur: UtilisateurÀCréerOuMettreÀJourSansHabilitation & {
       habilitations: HabilitationsÀCréerOuMettreÀJourCalculées;

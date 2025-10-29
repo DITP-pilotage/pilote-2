@@ -83,4 +83,5 @@ export interface UtilisateurRepository {
     dateVisualisationPopupInfolettre: Date,
   ): Promise<void>;
   recupererUtilisateurEmail(id: string): Promise<string | null>;
+  recupererUtilisateurId(email: string): Promise<string | null>;
 }

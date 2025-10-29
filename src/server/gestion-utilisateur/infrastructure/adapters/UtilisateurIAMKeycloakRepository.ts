@@ -100,6 +100,10 @@ export class UtilisateurIAMKeycloakRepository
         continue;
       }
 
+      if (utilisateur.enabled === false) {
+        continue;
+      }
+
       const sessions = await kcAdminClient.users.listSessions({
         realm: KEYCLOAK_REALM,
         id: utilisateur.id,

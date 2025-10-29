@@ -15,15 +15,27 @@ async function main() {
   const contactInfoLettresService = container.resolve(
     "contactInfoLettresService",
   );
+  const utilisateurRepository = container.resolve("utilisateurRepository");
+  const tokenAPIInformationRepository = container.resolve(
+    "tokenAPIInformationRepository",
+  );
 
-  // Récupérer les comptes inactifs depuis Keycloak
-  logger.info("Récupération des comptes inactifs depuis Keycloak...");
+  const auteurIdSysteme = await utilisateurRepository.recupererUtilisateurId(
+    "import.csv@modernisation.gouv.fr",
+  );
+
+  if (!auteurIdSysteme) {
+    throw new Error(
+      `L'utilisateur système n'existe pas. Veuillez créer cet utilisateur avant d'exécuter ce script.`,
+    );
+  }
+
   const comptesInactifs =
     await utilisateurIAMRepository.recupererComptesInactifsDepuisKeycloak();
 
   logger.info(`${comptesInactifs.length} comptes inactifs trouvés`);
 
-  let comptesADesactiver = 0;
+  let comptesDesactives = 0;
   let mailsJ7 = 0;
   let mailsJ30 = 0;
 
@@ -32,24 +44,43 @@ async function main() {
     const { email, joursInactivite } = compte;
 
     if (joursInactivite > 100) {
-      comptesADesactiver++;
-    } else if (joursInactivite === 96) {
-      await contactInfoLettresService.envoieUnEmail([{ email }], 39, {
-        joursAvantDesactivation: 7,
+      logger.info(
+        `Désactivation du compte ${email} (${joursInactivite} jours d'inactivité)`,
+      );
+
+      await utilisateurRepository.desactiver(email, auteurIdSysteme);
+
+      if (process.env.NEXT_PUBLIC_FF_LIEN_CONTACT_BREVO === "true") {
+        await contactInfoLettresService.supprimerContact(email);
+      }
+
+      if (process.env.IMPORT_KEYCLOAK_URL) {
+        await utilisateurIAMRepository.desactive(email);
+      }
+
+      await tokenAPIInformationRepository.supprimerTokenAPIInformation({
+        email,
       });
+
+      comptesDesactives++;
+    } else if (joursInactivite === 96) {
+      // await contactInfoLettresService.envoieUnEmail([{ email }], 39, {
+      //   joursAvantDesactivation: 7,
+      // });
+      logger.info(`Mail J-7 envoyé à ${email}`);
       mailsJ7++;
     } else if (joursInactivite === 92) {
-      // Envoyer mail 30 jours avant désactivation
-      await contactInfoLettresService.envoieUnEmail([{ email }], 39, {
-        joursAvantDesactivation: 30,
-      });
+      // await contactInfoLettresService.envoieUnEmail([{ email }], 39, {
+      //   joursAvantDesactivation: 30,
+      // });
+      logger.info(`Mail J-30 envoyé à ${email}`);
       mailsJ30++;
     }
   }
 
   return {
     comptesTotaux: comptesInactifs.length,
-    comptesDesactives: comptesADesactiver,
+    comptesDesactives,
     mailsEnvoyes: mailsJ7 + mailsJ30,
     detailsMails: {
       mailsJ7,
@@ -68,14 +99,14 @@ if (isMain) {
       console.log("\n✅ Succès - Résultats :");
       console.log(`   - Comptes inactifs trouvés : ${resultat.comptesTotaux}`);
       console.log(
-        `   - Comptes à désactiver (> 90 jours) : ${resultat.comptesDesactives}`,
+        `   - Comptes désactivés (> 100 jours) : ${resultat.comptesDesactives}`,
       );
-      console.log(`   - Mails à envoyer : ${resultat.mailsEnvoyes}`);
+      console.log(`   - Mails envoyés : ${resultat.mailsEnvoyes}`);
       console.log(
-        `     • Mails J-7 (83 jours d'inactivité) : ${resultat.detailsMails.mailsJ7}`,
+        `     • Mails J-7 (96 jours d'inactivité) : ${resultat.detailsMails.mailsJ7}`,
       );
       console.log(
-        `     • Mails J-30 (60 jours d'inactivité) : ${resultat.detailsMails.mailsJ30}`,
+        `     • Mails J-30 (92 jours d'inactivité) : ${resultat.detailsMails.mailsJ30}`,
       );
     })
     .catch((error) => {
