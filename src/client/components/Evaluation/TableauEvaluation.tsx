@@ -1,4 +1,4 @@
-import { flexRender, Table } from "@tanstack/react-table";
+import { flexRender } from "@tanstack/react-table";
 import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { $Enums } from "@prisma/client";
