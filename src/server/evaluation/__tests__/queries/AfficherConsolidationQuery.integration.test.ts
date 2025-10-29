@@ -258,6 +258,7 @@ describe("AfficherConsolidationQuery", () => {
             {
               id: objectif1Id,
               libelle: "Objectif rattachement 1",
+              descriptif: "Description objectif 1",
               evaluations: [
                 {
                   etape: $Enums.etape_evaluation_enum.CONSOLIDATION,
@@ -282,6 +283,7 @@ describe("AfficherConsolidationQuery", () => {
             {
               id: critere1Id,
               libelle: "Critère rattachement 1",
+              descriptif: "Description critère 1",
               evaluations: [
                 {
                   etape: $Enums.etape_evaluation_enum.CONSOLIDATION,
@@ -304,6 +306,7 @@ describe("AfficherConsolidationQuery", () => {
             {
               id: critere2Id,
               libelle: "Critère rattachement 2",
+              descriptif: "Description critère 2",
               evaluations: [
                 {
                   etape: $Enums.etape_evaluation_enum.CONSOLIDATION,
@@ -334,6 +337,7 @@ describe("AfficherConsolidationQuery", () => {
             {
               id: objectif2Id,
               libelle: "Objectif rattachement 2",
+              descriptif: "Description objectif 2",
               evaluations: [
                 {
                   etape: $Enums.etape_evaluation_enum.CONSOLIDATION,
@@ -358,6 +362,7 @@ describe("AfficherConsolidationQuery", () => {
             {
               id: critere1Id,
               libelle: "Critère rattachement 1",
+              descriptif: "Description critère 1",
               evaluations: [
                 {
                   etape: $Enums.etape_evaluation_enum.CONSOLIDATION,
@@ -380,6 +385,7 @@ describe("AfficherConsolidationQuery", () => {
             {
               id: critere2Id,
               libelle: "Critère rattachement 2",
+              descriptif: "Description critère 2",
               evaluations: [
                 {
                   etape: $Enums.etape_evaluation_enum.CONSOLIDATION,
@@ -579,6 +585,7 @@ describe("AfficherConsolidationQuery", () => {
             {
               id: objectifId,
               libelle: "Objectif multi-étape",
+              descriptif: "Description objectif",
               evaluations: [
                 {
                   etape: $Enums.etape_evaluation_enum.CONSOLIDATION,
@@ -694,6 +701,7 @@ describe("AfficherConsolidationQuery", () => {
             {
               id: objectifId,
               libelle: "Objectif sans évaluation",
+              descriptif: "Description objectif",
               evaluations: [
                 {
                   etape: $Enums.etape_evaluation_enum.CONSOLIDATION,
@@ -718,6 +726,7 @@ describe("AfficherConsolidationQuery", () => {
             {
               id: critereId,
               libelle: "Critère sans évaluation",
+              descriptif: "Description critère",
               evaluations: [
                 {
                   etape: $Enums.etape_evaluation_enum.CONSOLIDATION,
@@ -855,6 +864,7 @@ describe("AfficherConsolidationQuery", () => {
             {
               id: critere1Id,
               libelle: "Critère 1",
+              descriptif: "Description critère 1",
               evaluations: [
                 {
                   etape: $Enums.etape_evaluation_enum.CONSOLIDATION,
@@ -877,6 +887,7 @@ describe("AfficherConsolidationQuery", () => {
             {
               id: critere2Id,
               libelle: "Critère 2",
+              descriptif: "Description critère 2",
               evaluations: [
                 {
                   etape: $Enums.etape_evaluation_enum.CONSOLIDATION,
@@ -997,6 +1008,7 @@ describe("AfficherConsolidationQuery", () => {
             {
               id: objectif1Id,
               libelle: "Objectif 1",
+              descriptif: "Description objectif 1",
               evaluations: [
                 {
                   etape: $Enums.etape_evaluation_enum.CONSOLIDATION,
@@ -1019,6 +1031,7 @@ describe("AfficherConsolidationQuery", () => {
             {
               id: objectif2Id,
               libelle: "Objectif 2",
+              descriptif: "Description objectif 2",
               evaluations: [
                 {
                   etape: $Enums.etape_evaluation_enum.CONSOLIDATION,
@@ -1204,6 +1217,7 @@ describe("AfficherConsolidationQuery", () => {
             {
               id: objectifId,
               libelle: "Objectif avec auto-évaluation",
+              descriptif: "Description objectif",
               evaluations: [
                 {
                   etape: $Enums.etape_evaluation_enum.CONSOLIDATION,
@@ -1228,6 +1242,7 @@ describe("AfficherConsolidationQuery", () => {
             {
               id: critereId,
               libelle: "Critère avec auto-évaluation",
+              descriptif: "Description critère",
               evaluations: [
                 {
                   etape: $Enums.etape_evaluation_enum.CONSOLIDATION,

@@ -258,6 +258,14 @@ describe("AfficherInstructionQuery", () => {
       expect(result.criteres[0]).toEqual({
         id: critere1Id,
         libelle: "Critère à instruire",
+        descriptif: "Description critère 1",
+        sousCriteres: [
+          {
+            id: sousCritere1Id,
+            libelle: "Sous-critère 1",
+            descriptif: "Description sous-critère 1",
+          },
+        ],
       });
     });
 
@@ -411,6 +419,7 @@ describe("AfficherInstructionQuery", () => {
       expect(result.rattachements[0].objectifs[0]).toEqual({
         id: objectifId,
         libelle: "Objectif avec 3 évaluations",
+        descriptif: "Description objectif",
         tutelle: null,
         evaluations: [
           {
@@ -1034,9 +1043,24 @@ describe("AfficherInstructionQuery", () => {
       expect(result.criteres).toHaveLength(3);
       expect(result.criteres).toEqual(
         expect.arrayContaining([
-          { id: critere1Id, libelle: "Critère unique rattachement 1" },
-          { id: critere2Id, libelle: "Critère unique rattachement 2" },
-          { id: critere3Id, libelle: "Critère commun aux 2" },
+          {
+            id: critere1Id,
+            libelle: "Critère unique rattachement 1",
+            descriptif: "Description",
+            sousCriteres: [],
+          },
+          {
+            id: critere2Id,
+            libelle: "Critère unique rattachement 2",
+            descriptif: "Description",
+            sousCriteres: [],
+          },
+          {
+            id: critere3Id,
+            libelle: "Critère commun aux 2",
+            descriptif: "Description",
+            sousCriteres: [],
+          },
         ]),
       );
     });
