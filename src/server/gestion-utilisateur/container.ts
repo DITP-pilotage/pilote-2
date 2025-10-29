@@ -50,6 +50,7 @@ import { DesactiverPopupInfolettreUseCase } from "./usecases/DesactiverPopupInfo
 import { AjouterUnContactAUneInfoLettreUseCase } from "./usecases/AjouterUnContactAUneInfoLettreUseCase";
 import { PrismaHabilitationService } from "./infrastructure/adapters/PrismaHabilitationService";
 import { HabilitationService } from "./domain/ports/HabilitationService";
+import { DesactiverComptesInactifsUseCase } from "./usecases/DesactiverComptesInactifsUseCase";
 import ImporterDesUtilisateursUseCase from "./usecases/ImporterDesUtilisateursUseCase";
 
 export type GestionUtilisateurDependencies = {
@@ -87,6 +88,7 @@ export type GestionUtilisateurDependencies = {
   desactiverPopupInfolettreUseCase: DesactiverPopupInfolettreUseCase;
   ajouterUnContactAUneInfoLettreUseCase: AjouterUnContactAUneInfoLettreUseCase;
   habilitationService: HabilitationService;
+  desactiverComptesInactifsUseCase: DesactiverComptesInactifsUseCase;
   importerDesUtilisateursUseCase: ImporterDesUtilisateursUseCase;
 };
 
@@ -170,6 +172,9 @@ export const getGestionUtilisateurContainer = (
         AjouterUnContactAUneInfoLettreUseCase,
       ),
       habilitationService: asClass(PrismaHabilitationService),
+      desactiverComptesInactifsUseCase: asClass(
+        DesactiverComptesInactifsUseCase,
+      ),
       importerDesUtilisateursUseCase: asClass(ImporterDesUtilisateursUseCase),
     });
 };
