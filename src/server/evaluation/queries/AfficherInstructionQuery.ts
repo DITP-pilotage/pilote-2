@@ -1,4 +1,5 @@
 import { $Enums } from "@prisma/client";
+import pick from "lodash.pick";
 import { randomUUID } from "node:crypto";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { Critere, Rattachement } from "@/server/evaluation/queries/types";
@@ -18,7 +19,7 @@ export class AfficherInstructionQuery {
   }): Promise<AfficherInstructionQueryResult> {
     const rattachements = await this.fetchRattachements(utilisateurId);
 
-    const tousCriteresMap = new Map<string, { id: string; libelle: string }>();
+    const tousCriteresMap = new Map<string, Critere>();
     rattachements.forEach((rattachement) => {
       const rattachementUtilisateurEtapeJalon =
         rattachement.rattachement_utilisateur_etape_jalon.find(
@@ -32,8 +33,10 @@ export class AfficherInstructionQuery {
         rattachementUtilisateurEtapeJalon,
       ).forEach((critere) => {
         tousCriteresMap.set(critere.id, {
-          id: critere.id,
-          libelle: critere.libelle,
+          ...pick(critere, ["id", "libelle", "descriptif"]),
+          sousCriteres: critere.sous_criteres.map((sousCritere) =>
+            pick(sousCritere, ["id", "libelle", "descriptif"]),
+          ),
         });
       });
     });
@@ -85,6 +88,7 @@ export class AfficherInstructionQuery {
             return {
               id: objectif.id,
               libelle: objectif.libelle,
+              descriptif: objectif.descriptif,
               tutelle: objectif.tutelle
                 ? {
                     id: objectif.tutelle.id,
@@ -175,6 +179,12 @@ export class AfficherInstructionQuery {
             critere: {
               id: string;
               libelle: string;
+              descriptif: string;
+              sous_criteres: Array<{
+                id: string;
+                libelle: string;
+                descriptif: string;
+              }>;
             };
           }>;
         }
@@ -233,6 +243,8 @@ export class AfficherInstructionQuery {
                     select: {
                       id: true,
                       libelle: true,
+                      descriptif: true,
+                      sous_criteres: true,
                     },
                   },
                 },

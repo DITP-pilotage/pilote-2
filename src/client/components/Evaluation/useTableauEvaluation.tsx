@@ -63,6 +63,7 @@ export const useTableauEvaluation = ({
         rows.push({
           id: objectif.id,
           type: "objectif",
+          descriptif: objectif.descriptif,
           rattachement,
           ficheEvaluationId: rattachement.ficheEvaluationId,
           libelle: objectif.libelle,

@@ -1,6 +1,17 @@
 import { $Enums } from "@prisma/client";
 
-export type Critere = { id: string; libelle: string };
+export type SousCritere = {
+  id: string;
+  libelle: string;
+  descriptif: string;
+};
+
+export type Critere = {
+  id: string;
+  libelle: string;
+  descriptif: string;
+  sousCriteres: Array<SousCritere>;
+};
 
 export type Evaluation = {
   id: string;
@@ -11,6 +22,7 @@ export type Evaluation = {
 export type Objectif = {
   id: string;
   libelle: string;
+  descriptif: string;
   evaluations: Array<{
     etape: $Enums.etape_evaluation_enum;
     evaluation: Evaluation;

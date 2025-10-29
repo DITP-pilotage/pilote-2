@@ -1,4 +1,5 @@
 import { $Enums } from "@prisma/client";
+import pick from "lodash.pick";
 import { randomUUID } from "node:crypto";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { Critere, Rattachement } from "@/server/evaluation/queries/types";
@@ -23,8 +24,10 @@ export class AfficherConsolidationQuery {
 
     return {
       criteres: tousCriteres.map((critere) => ({
-        id: critere.id,
-        libelle: critere.libelle,
+        ...pick(critere, ["id", "libelle", "descriptif"]),
+        sousCriteres: critere.sous_criteres.map((sousCritere) =>
+          pick(sousCritere, ["id", "libelle", "descriptif"]),
+        ),
       })),
       rattachements: rattachements.map((rattachement) => {
         const etapesEvaluations = rattachement.fiche_evaluation.flatMap(
@@ -45,8 +48,7 @@ export class AfficherConsolidationQuery {
             );
 
             return {
-              id: objectif.id,
-              libelle: objectif.libelle,
+              ...pick(objectif, ["id", "libelle", "descriptif"]),
               evaluations: [
                 {
                   etape: $Enums.etape_evaluation_enum.CONSOLIDATION,
@@ -74,8 +76,7 @@ export class AfficherConsolidationQuery {
           );
 
           return {
-            id: critere.id,
-            libelle: critere.libelle,
+            ...pick(critere, ["id", "libelle", "descriptif"]),
             evaluations: [
               {
                 etape: $Enums.etape_evaluation_enum.CONSOLIDATION,
