@@ -82,6 +82,52 @@ export class UtilisateurIAMKeycloakRepository
     }
   }
 
+  async recupererComptesInactifsDepuisKeycloak(): Promise<
+    { email: string; joursInactivite: number }[]
+  > {
+    const kcAdminClient = await this.loginKcAdminClient();
+
+    const utilisateurs = await kcAdminClient.users.find({
+      realm: KEYCLOAK_REALM,
+    });
+
+    const comptesInactifs: { email: string; joursInactivite: number }[] = [];
+    const maintenant = Date.now();
+    const SOIXANTE_JOURS_EN_MS = 60 * DAY_IN_SECONDS * 1000;
+
+    for (const utilisateur of utilisateurs) {
+      if (!utilisateur.email || !utilisateur.id) {
+        continue;
+      }
+
+      const sessions = await kcAdminClient.users.listSessions({
+        realm: KEYCLOAK_REALM,
+        id: utilisateur.id,
+      });
+
+      const derniereConnexion =
+        sessions.length > 0
+          ? Math.max(...sessions.map((session) => session.lastAccess || 0))
+          : utilisateur.createdTimestamp;
+
+      if (derniereConnexion) {
+        const tempsInactiviteMs = maintenant - derniereConnexion;
+        const joursInactivite = Math.floor(
+          tempsInactiviteMs / (DAY_IN_SECONDS * 1000),
+        );
+
+        if (tempsInactiviteMs > SOIXANTE_JOURS_EN_MS) {
+          comptesInactifs.push({
+            email: utilisateur.email,
+            joursInactivite,
+          });
+        }
+      }
+    }
+
+    return comptesInactifs;
+  }
+
   private async loginKcAdminClient() {
     this.kcAdminClient = new KcAdminClient({
       baseUrl: configuration().import.keycloakUrl,

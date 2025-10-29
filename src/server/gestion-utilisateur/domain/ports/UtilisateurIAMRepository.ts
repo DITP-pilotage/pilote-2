@@ -5,4 +5,7 @@ export interface UtilisateurIAMRepository {
   supprime(email: string): Promise<void>;
   desactive(email: string): Promise<void>;
   reactive(email: string): Promise<void>;
+  recupererComptesInactifsDepuisKeycloak(): Promise<
+    { email: string; joursInactivite: number }[]
+  >;
 }
