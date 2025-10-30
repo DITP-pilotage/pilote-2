@@ -84,7 +84,7 @@ export const TableauEvaluation = ({
     <FormProvider {...form}>
       <LayoutFicheCadrage>
         <form
-          className="flex flex-col gap-3 w-full max-w-[1200px] py-6 grow overflow-y-auto px-8"
+          className="flex flex-col gap-3 w-full max-w-[1200px] py-6 grow px-8"
           onSubmit={form.handleSubmit(onEnregistrer)}
         >
           {!estEnLectureSeule && (
@@ -162,12 +162,9 @@ export const TableauEvaluation = ({
                   }
 
                   return (
-                    <tr
-                      className={clsxm("border-t border-t-2 border-primary")}
-                      key={row.id}
-                    >
-                      <td className="px-4 py-3" colSpan={colSpan}>
-                        <div className="flex items-center justify-between">
+                    <tr className={clsxm("sticky top-0")} key={row.id}>
+                      <td colSpan={colSpan}>
+                        <div className="!border-t-2 !border-t-primary !bg-white border-b border-b-gray-200 px-4 py-3 flex items-center justify-between">
                           <span className="font-semibold text-primary">
                             {label ?? groupingValue}
                           </span>
