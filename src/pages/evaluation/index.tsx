@@ -50,10 +50,10 @@ const EvaluationPage = (
         <title>PILOTE - Évaluation</title>
       </Head>
 
-      <div className="min-h-[60vh] py-6">
+      <div className="min-h-[60vh] py-12">
         <div className="mx-auto w-full max-w-6xl">
           <header className="mb-6">
-            <h1 className="text-3xl font-bold mb-2">
+            <h1 className="!text-3xl font-bold mb-2">
               Bienvenue sur votre espace d'auto-évaluation
             </h1>
             <p className="text-gray-600">
