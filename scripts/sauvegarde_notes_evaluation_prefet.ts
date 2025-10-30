@@ -4,9 +4,24 @@ import { prisma } from "@/server/db/prisma";
 async function sauvegardeNotes() {
   const listeChantiers = ["CH-076", "CH-103", "CH-067"];
 
+  const rattachementsExistants = await prisma.fiche_evaluation.findMany({
+    where: {
+      jalon: 2025,
+    },
+    select: {
+      rattachement_code: true,
+      jalon: true,
+    },
+  });
+
+  const rattachements = rattachementsExistants.map(
+    (rattachement) => rattachement.rattachement_code,
+  );
+
   const chantiers = await prisma.chantier_territoire_jalon.findMany({
     where: {
       id: { in: listeChantiers },
+      territoire_code: { in: rattachements },
       jalon: 2025,
     },
     select: {
@@ -26,6 +41,7 @@ async function sauvegardeNotes() {
         ponderation_zone_reel_eval: { not: null, gt: 0 },
       },
       jalon: 2025,
+      territoire_code: { in: rattachements },
     },
     select: {
       id: true,

@@ -371,7 +371,7 @@ const rattachementsUtilisateur: rattachement_utilisateur_etape_jalon[] = [
 const fichesEvaluation: fiche_evaluation[] = [
   {
     id: "d66e07e2-cabf-41d9-9bf9-75829df8b3ad",
-    jalon: 2024,
+    jalon: 2025,
     etape_courante: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
     rattachement_code: "REG-75",
     created_at: new Date(),
@@ -379,7 +379,7 @@ const fichesEvaluation: fiche_evaluation[] = [
   },
   {
     id: "3ac2cea5-dbb2-4e54-b5b1-b399a99949dd",
-    jalon: 2024,
+    jalon: 2025,
     etape_courante: $Enums.etape_evaluation_enum.CONSOLIDATION,
     rattachement_code: "DEPT-59",
     created_at: new Date(),
@@ -387,7 +387,7 @@ const fichesEvaluation: fiche_evaluation[] = [
   },
   {
     id: "ff103f90-7911-46b7-8c4c-7bb9a0eea2a4",
-    jalon: 2024,
+    jalon: 2025,
     etape_courante: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
     rattachement_code: "POL-75",
     created_at: new Date(),
