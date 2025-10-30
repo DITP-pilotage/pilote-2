@@ -89,11 +89,29 @@ export class UtilisateurIAMKeycloakRepository
 
     const utilisateurs = await kcAdminClient.users.find({
       realm: KEYCLOAK_REALM,
+      max: 10_000,
     });
 
     const comptesInactifs: { email: string; joursInactivite: number }[] = [];
     const maintenant = Date.now();
     const SOIXANTE_JOURS_EN_MS = 60 * DAY_IN_SECONDS * 1000;
+
+    const events = await kcAdminClient.realms.findEvents({
+      realm: KEYCLOAK_REALM,
+      type: "LOGIN",
+      max: 1_000_000,
+    });
+
+    const dernieresConnexionsMap = new Map<string, number>();
+
+    for (const event of events) {
+      if (event.userId && event.time) {
+        const existingTime = dernieresConnexionsMap.get(event.userId);
+        if (!existingTime || event.time > existingTime) {
+          dernieresConnexionsMap.set(event.userId, event.time);
+        }
+      }
+    }
 
     for (const utilisateur of utilisateurs) {
       if (!utilisateur.email || !utilisateur.id) {
@@ -104,15 +122,9 @@ export class UtilisateurIAMKeycloakRepository
         continue;
       }
 
-      const sessions = await kcAdminClient.users.listSessions({
-        realm: KEYCLOAK_REALM,
-        id: utilisateur.id,
-      });
-
+      const derniereConnexionEvent = dernieresConnexionsMap.get(utilisateur.id);
       const derniereConnexion =
-        sessions.length > 0
-          ? Math.max(...sessions.map((session) => session.lastAccess || 0))
-          : utilisateur.createdTimestamp;
+        derniereConnexionEvent || utilisateur.createdTimestamp;
 
       if (derniereConnexion) {
         const tempsInactiviteMs = maintenant - derniereConnexion;
@@ -120,6 +132,7 @@ export class UtilisateurIAMKeycloakRepository
           tempsInactiviteMs / (DAY_IN_SECONDS * 1000),
         );
 
+        // Retourner uniquement les comptes inactifs depuis plus de 60 jours
         if (tempsInactiviteMs > SOIXANTE_JOURS_EN_MS) {
           comptesInactifs.push({
             email: utilisateur.email,
