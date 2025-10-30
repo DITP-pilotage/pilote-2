@@ -10,6 +10,17 @@ export class ListerFichesAutoEvaluationQuery {
   constructor(private readonly dependencies: { prisma: PrismaPilote }) {}
 
   async run({ utilisateurId }: { utilisateurId: string }) {
+    const derniereDateCalcul = await this.dependencies.prisma
+      .getInstance()
+      .chantier_evaluation.findFirst({
+        orderBy: {
+          date_calcul: "desc",
+        },
+        select: {
+          date_calcul: true,
+        },
+      });
+
     const fichesEvaluation = await this.dependencies.prisma
       .getInstance()
       .fiche_evaluation.findMany({
@@ -38,6 +49,13 @@ export class ListerFichesAutoEvaluationQuery {
               evaluations_objectifs: true,
               evaluations_criteres: true,
             },
+          },
+          chantiers_evaluation: {
+            where: derniereDateCalcul
+              ? {
+                  date_calcul: derniereDateCalcul.date_calcul,
+                }
+              : undefined,
           },
         },
       });
@@ -83,6 +101,20 @@ export class ListerFichesAutoEvaluationQuery {
             )
           : null;
 
+      const chantiersAvecTaux = fiche.chantiers_evaluation.filter(
+        (chantier) => chantier.taux_avancement !== null,
+      );
+
+      const noteCollective =
+        chantiersAvecTaux.length > 0
+          ? Math.round(
+              chantiersAvecTaux.reduce(
+                (sum, chantier) => sum + chantier.taux_avancement!,
+                0,
+              ) / chantiersAvecTaux.length,
+            )
+          : null;
+
       return {
         id: fiche.id,
         etapeCourante: fiche.etape_courante,
@@ -106,6 +138,7 @@ export class ListerFichesAutoEvaluationQuery {
           nombreNotes: moyenneCriteres?.count ?? 0,
           nombreTotal: criteresAvecNotes.length,
         },
+        noteCollective,
       };
     });
   }
