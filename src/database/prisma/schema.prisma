@@ -819,14 +819,15 @@ enum etape_evaluation_enum {
 }
 
 model fiche_evaluation {
-  id                String                   @id @db.Uuid
-  jalon             Int
-  etape_courante    etape_evaluation_enum
-  rattachement_code String
-  rattachement      referentiel_rattachement @relation(fields: [rattachement_code], references: [code], onDelete: Cascade, onUpdate: Cascade)
-  created_at        DateTime                 @default(now())
-  updated_at        DateTime                 @updatedAt
-  etape_evaluations etape_evaluation[]
+  id                   String                   @id @db.Uuid
+  jalon                Int
+  etape_courante       etape_evaluation_enum
+  rattachement_code    String
+  rattachement         referentiel_rattachement @relation(fields: [rattachement_code], references: [code], onDelete: Cascade, onUpdate: Cascade)
+  created_at           DateTime                 @default(now())
+  updated_at           DateTime                 @updatedAt
+  etape_evaluations    etape_evaluation[]
+  chantiers_evaluation chantier_evaluation[]
 
   @@unique([rattachement_code, jalon])
   @@schema("public")
@@ -925,13 +926,15 @@ model instruction_critere {
 }
 
 model chantier_evaluation {
-  id              String
-  code_insee      String
-  maille          Maille
-  territoire_code String
-  zone_id         String
-  taux_avancement Float?
-  date_calcul     DateTime @db.Date
+  id               String
+  code_insee       String
+  maille           Maille
+  territoire_code  String
+  zone_id          String
+  taux_avancement  Float?
+  date_calcul      DateTime          @db.Date
+  jalon            Int
+  fiche_evaluation fiche_evaluation? @relation(fields: [territoire_code, jalon], references: [rattachement_code, jalon], onDelete: Cascade, onUpdate: Cascade)
 
   @@id([id, territoire_code, date_calcul])
   @@schema("public")
@@ -948,6 +951,7 @@ model indicateur_evaluation {
   ponderation_declaree Float
   ponderation_reelle   Float
   date_calcul          DateTime @db.Date
+  jalon                Int
 
   @@id([id, territoire_code, date_calcul])
   @@schema("public")

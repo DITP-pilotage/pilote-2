@@ -53,6 +53,7 @@ async function sauvegardeNotes() {
       taux_avancement: chantier.taux_avancement_eval,
       zone_id: chantier.zone_id,
       date_calcul: new Date(),
+      jalon: 2025,
     })),
   });
 
@@ -70,6 +71,7 @@ async function sauvegardeNotes() {
       ponderation_reelle:
         indicateur.indicateur_territoire.ponderation_zone_reel_eval!,
       date_calcul: new Date(),
+      jalon: 2025,
     })),
   });
 }
