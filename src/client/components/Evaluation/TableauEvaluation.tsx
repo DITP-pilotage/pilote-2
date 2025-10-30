@@ -11,10 +11,8 @@ import {
   Rattachement,
 } from "@/server/evaluation/queries/types";
 import { useTableauEvaluation } from "@/components/Evaluation/useTableauEvaluation";
-import {
-  LayoutFicheCadrage,
-  UseSetCritereOuObjectif,
-} from "@/components/Evaluation/LayoutFicheCadrage";
+import { LayoutFicheCadrage } from "@/components/Evaluation/LayoutFicheCadrage";
+import { BoutonAfficherFicheCadrage } from "@/components/Evaluation/BoutonAfficherFicheCadrage";
 import {
   FormValues,
   getFichesEvaluationParDefaut,
@@ -144,29 +142,17 @@ export const TableauEvaluation = ({
                     const critere = criteres.find(
                       (critereGroup) => critereGroup.id === groupingValue,
                     );
-                    if (critere == null)
-                      throw new Error(`Critère introuvable : ${groupingValue}`);
                     colSpan = 2;
                     label = critere?.libelle ?? "Objectifs";
-                    aside = (
-                      <div>
-                        <UseSetCritereOuObjectif>
-                          {(setCritereOuObjectif) => (
-                            <Bouton
-                              label="Fiche de cadrage"
-                              onClick={() =>
-                                setCritereOuObjectif({
-                                  type: "critere",
-                                  critere,
-                                })
-                              }
-                              size="sm"
-                              variant="secondary"
-                            />
-                          )}
-                        </UseSetCritereOuObjectif>
-                      </div>
-                    );
+                    if (critere != null) {
+                      aside = (
+                        <div>
+                          <BoutonAfficherFicheCadrage
+                            critereOuObjectif={{ type: "critere", critere }}
+                          />
+                        </div>
+                      );
+                    }
                   } else {
                     const rattachement = rattachements.find(
                       (rattachementGroup) =>

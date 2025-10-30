@@ -13,8 +13,7 @@ import { clsxm } from "@/utils/clsxm";
 import { TableauEvaluationRow } from "@/components/Evaluation/TableauEvaluation";
 import { Critere, Rattachement } from "@/server/evaluation/queries/types";
 import { LigneEtapeEvaluation } from "@/components/Evaluation/LigneEtapeEvaluation";
-import { Bouton } from "@/components/_commons/Bouton/Bouton";
-import { UseSetCritereOuObjectif } from "@/components/Evaluation/LayoutFicheCadrage";
+import { BoutonAfficherFicheCadrage } from "@/components/Evaluation/BoutonAfficherFicheCadrage";
 
 const columnHelper = createColumnHelper<TableauEvaluationRow>();
 
@@ -131,30 +130,16 @@ export const useTableauEvaluation = ({
                   </div>
 
                   <div>
-                    <UseSetCritereOuObjectif>
-                      {(setCritereOuObjectif) => (
-                        <Bouton
-                          className="!bg-white"
-                          label="Fiche de cadrage"
-                          onClick={() => {
-                            if (row.original.type === "objectif") {
-                              setCritereOuObjectif({
-                                type: row.original.type,
-                                objectif: row.original,
-                              });
-                            } else {
-                              const critere = getCritere(row.original.id);
-                              setCritereOuObjectif({
-                                type: row.original.type,
-                                critere,
-                              });
+                    <BoutonAfficherFicheCadrage
+                      critereOuObjectif={
+                        row.original.type === "objectif"
+                          ? { type: "objectif", objectif: row.original }
+                          : {
+                              type: "critere",
+                              critere: getCritere(row.original.id),
                             }
-                          }}
-                          size="sm"
-                          variant="secondary"
-                        />
-                      )}
-                    </UseSetCritereOuObjectif>
+                      }
+                    />
                   </div>
                 </div>
               )}
