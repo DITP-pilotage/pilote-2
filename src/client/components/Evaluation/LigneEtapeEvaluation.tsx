@@ -33,6 +33,7 @@ export const LigneEtapeEvaluation = ({
         {isEditable ? (
           <CommentaireTextareaEvaluation
             disabled={false}
+            label={commentaireLabel}
             name={commentaireName}
           />
         ) : (

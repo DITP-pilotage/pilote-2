@@ -64,12 +64,14 @@ describe("AfficherAutoEvaluationQuery", () => {
                 libelle: "Objectif 1",
                 descriptif: "Description objectif 1",
                 jalon: 2025,
+                indicateur_cible: "75% de taux de réussite",
               },
               {
                 id: objectif2Id,
                 libelle: "Objectif 2",
                 descriptif: "Description objectif 2",
                 jalon: 2025,
+                indicateur_cible: "Réduction de 30% des coûts",
               },
             ],
           },
@@ -99,6 +101,7 @@ describe("AfficherAutoEvaluationQuery", () => {
         {
           id: critere1Id,
           libelle: "Critère 1",
+          descriptif: "Description critère 1",
           evaluation: {
             id: expect.any(String),
             note: null,
@@ -108,12 +111,14 @@ describe("AfficherAutoEvaluationQuery", () => {
             {
               id: sousCritere1Id,
               libelle: "Sous-critère 1",
+              descriptif: "Description sous-critère 1",
             },
           ],
         },
         {
           id: critere2Id,
           libelle: "Critère 2",
+          descriptif: "Description critère 2",
           evaluation: {
             id: expect.any(String),
             note: null,
@@ -123,6 +128,7 @@ describe("AfficherAutoEvaluationQuery", () => {
             {
               id: sousCritere2Id,
               libelle: "Sous-critère 2",
+              descriptif: "Description sous-critère 2",
             },
           ],
         },
@@ -131,6 +137,8 @@ describe("AfficherAutoEvaluationQuery", () => {
         {
           id: objectif1Id,
           libelle: "Objectif 1",
+          descriptif: "Description objectif 1",
+          indicateurCible: "75% de taux de réussite",
           evaluation: {
             id: expect.any(String),
             note: null,
@@ -140,6 +148,8 @@ describe("AfficherAutoEvaluationQuery", () => {
         {
           id: objectif2Id,
           libelle: "Objectif 2",
+          descriptif: "Description objectif 2",
+          indicateurCible: "Réduction de 30% des coûts",
           evaluation: {
             id: expect.any(String),
             note: null,
@@ -199,6 +209,7 @@ describe("AfficherAutoEvaluationQuery", () => {
               libelle: "Objectif test",
               descriptif: "Description objectif test",
               jalon: 1,
+              indicateur_cible: "500 agents formés",
             },
           },
         },
@@ -249,6 +260,7 @@ describe("AfficherAutoEvaluationQuery", () => {
         {
           id: critereId,
           libelle: "Critère test",
+          descriptif: "Description critère test",
           evaluation: {
             id: evaluationSousCritereId,
             note: 3,
@@ -258,6 +270,7 @@ describe("AfficherAutoEvaluationQuery", () => {
             {
               id: sousCritereId,
               libelle: "Sous-critère test",
+              descriptif: "Description sous-critère test",
             },
           ],
         },
@@ -266,6 +279,8 @@ describe("AfficherAutoEvaluationQuery", () => {
         {
           id: objectifId,
           libelle: "Objectif test",
+          descriptif: "Description objectif test",
+          indicateurCible: "500 agents formés",
           evaluation: {
             id: evaluationObjectifId,
             note: 4,
@@ -380,6 +395,7 @@ describe("AfficherAutoEvaluationQuery", () => {
         {
           id: critereId,
           libelle: "Critère multiple",
+          descriptif: "Description critère multiple",
           evaluation: {
             id: expect.any(String),
             note: null,
@@ -389,14 +405,17 @@ describe("AfficherAutoEvaluationQuery", () => {
             {
               id: sousCritere1Id,
               libelle: "Sous-critère 1",
+              descriptif: "Description 1",
             },
             {
               id: sousCritere2Id,
               libelle: "Sous-critère 2",
+              descriptif: "Description 2",
             },
             {
               id: sousCritere3Id,
               libelle: "Sous-critère 3",
+              descriptif: "Description 3",
             },
           ],
         },
@@ -462,6 +481,7 @@ describe("AfficherAutoEvaluationQuery", () => {
               libelle: "Objectif isolation",
               descriptif: "Description objectif isolation",
               jalon: 2025,
+              indicateur_cible: "100% de couverture territoriale",
             },
           },
         },
@@ -506,6 +526,7 @@ describe("AfficherAutoEvaluationQuery", () => {
         {
           id: critereId,
           libelle: "Critère isolation",
+          descriptif: "Description critère isolation",
           evaluation: {
             id: expect.any(String),
             note: null,
@@ -515,6 +536,7 @@ describe("AfficherAutoEvaluationQuery", () => {
             {
               id: sousCritereId,
               libelle: "Sous-critère isolation",
+              descriptif: "Description sous-critère isolation",
             },
           ],
         },
@@ -548,6 +570,7 @@ describe("AfficherAutoEvaluationQuery", () => {
               libelle: "Objectif rattachement 2",
               descriptif: "Description objectif rattachement 2",
               jalon: 2025,
+              indicateur_cible: "25 démarches dématérialisées",
             },
           },
         },

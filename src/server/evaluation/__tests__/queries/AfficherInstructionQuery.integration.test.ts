@@ -77,12 +77,14 @@ describe("AfficherInstructionQuery", () => {
                 libelle: "Objectif à instruire",
                 descriptif: "Description objectif 1",
                 jalon: 2025,
+                indicateur_cible: "Atteindre 90% de conformité",
               },
               {
                 id: objectif2Id,
                 libelle: "Objectif non à instruire",
                 descriptif: "Description objectif 2",
                 jalon: 2025,
+                indicateur_cible: "5 nouveaux partenariats",
               },
             ],
           },
@@ -258,6 +260,14 @@ describe("AfficherInstructionQuery", () => {
       expect(result.criteres[0]).toEqual({
         id: critere1Id,
         libelle: "Critère à instruire",
+        descriptif: "Description critère 1",
+        sousCriteres: [
+          {
+            id: sousCritere1Id,
+            libelle: "Sous-critère 1",
+            descriptif: "Description sous-critère 1",
+          },
+        ],
       });
     });
 
@@ -321,6 +331,7 @@ describe("AfficherInstructionQuery", () => {
               libelle: "Objectif avec 3 évaluations",
               descriptif: "Description objectif",
               jalon: 2025,
+              indicateur_cible: "1000 utilisateurs actifs par mois",
             },
           },
         },
@@ -411,6 +422,8 @@ describe("AfficherInstructionQuery", () => {
       expect(result.rattachements[0].objectifs[0]).toEqual({
         id: objectifId,
         libelle: "Objectif avec 3 évaluations",
+        descriptif: "Description objectif",
+        indicateurCible: "1000 utilisateurs actifs par mois",
         tutelle: null,
         evaluations: [
           {
@@ -671,12 +684,14 @@ describe("AfficherInstructionQuery", () => {
                 descriptif: "Description",
                 jalon: 2025,
                 tutelle_id: tutelleId,
+                indicateur_cible: "30 projets validés",
               },
               {
                 id: objectifSansTutelleId,
                 libelle: "Objectif sans tutelle",
                 descriptif: "Description",
                 jalon: 2025,
+                indicateur_cible: "Budget exécuté à 100%",
               },
             ],
           },
@@ -785,6 +800,7 @@ describe("AfficherInstructionQuery", () => {
               libelle: "Objectif rattachement 1",
               descriptif: "Description",
               jalon: 2025,
+              indicateur_cible: "200 bénéficiaires",
             },
           },
         },
@@ -800,6 +816,7 @@ describe("AfficherInstructionQuery", () => {
               libelle: "Objectif rattachement 2",
               descriptif: "Description",
               jalon: 2025,
+              indicateur_cible: "Temps de réponse < 48h",
             },
           },
         },
@@ -1034,9 +1051,24 @@ describe("AfficherInstructionQuery", () => {
       expect(result.criteres).toHaveLength(3);
       expect(result.criteres).toEqual(
         expect.arrayContaining([
-          { id: critere1Id, libelle: "Critère unique rattachement 1" },
-          { id: critere2Id, libelle: "Critère unique rattachement 2" },
-          { id: critere3Id, libelle: "Critère commun aux 2" },
+          {
+            id: critere1Id,
+            libelle: "Critère unique rattachement 1",
+            descriptif: "Description",
+            sousCriteres: [],
+          },
+          {
+            id: critere2Id,
+            libelle: "Critère unique rattachement 2",
+            descriptif: "Description",
+            sousCriteres: [],
+          },
+          {
+            id: critere3Id,
+            libelle: "Critère commun aux 2",
+            descriptif: "Description",
+            sousCriteres: [],
+          },
         ]),
       );
     });

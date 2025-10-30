@@ -14,6 +14,8 @@ import { EtapeCriteres } from "@/components/PageEvaluation/EtapeCriteres";
 import { EtapeObjectifs } from "@/components/PageEvaluation/EtapeObjectifs";
 import { InformationPleineIcon } from "@/components/_commons/Icones/InformationPleineIcon";
 import { BoutonSoumettreAutoEvaluation } from "@/components/PageEvaluation/BoutonSoumettreAutoEvaluation";
+import { LayoutFicheCadrage } from "@/components/Evaluation/LayoutFicheCadrage";
+
 export const FormulaireEvaluation = () => {
   const { autoEvaluation } = pageEvaluation.useServerSidePropsContext();
   const [etape, setEtape] = useState<"criteres" | "objectifs">("criteres");
@@ -38,82 +40,87 @@ export const FormulaireEvaluation = () => {
   });
 
   return (
-    <main className="py-6 pt-0">
-      <FormProvider {...form}>
-        <div className="min-h-[60vh] relative">
-          <div className="sticky top-0 bg-white mb-6">
-            <div className="flex items-center justify-between mt-4 mx-auto w-full max-w-4xl px-2 py-4">
-              <span className="italic text-sm">
-                Dernière modification :{" "}
-                {formaterDate(
-                  autoEvaluation.dateDerniereModification,
-                  "DD/MM/YYYY [à] H[h]mm",
-                )}
-              </span>
-              <div className="ml-auto flex items-center gap-4">
-                {autoEvaluation.readOnly ? (
-                  <span className="flex gap-2 text-sm items-center">
-                    <Icone className="h-5 w-5" icone={InformationPleineIcon} />{" "}
-                    Cette fiche d'évaluation a déjà été soumise.
-                  </span>
-                ) : null}
-                {etape === "criteres" && (
-                  <>
-                    {!autoEvaluation.readOnly && (
-                      <BoutonEnregistrerBrouillon formId={formId} />
-                    )}
-                    <Bouton
-                      form={formId}
-                      iconRight={
-                        <Icone
-                          className="text-current"
-                          icone={ArrowLine1Icon}
-                        />
-                      }
-                      label="Objectifs"
-                      onClick={() => setEtape("objectifs")}
-                      type="button"
-                    />
-                  </>
-                )}
-                {etape === "objectifs" && (
-                  <>
-                    <Bouton
-                      iconLeft={
-                        <Icone
-                          className="text-current"
-                          icone={ArrowLine3Icon}
-                        />
-                      }
-                      label="Critères"
-                      onClick={() => setEtape("criteres")}
-                      variant="secondary"
-                    />
-                    {!autoEvaluation.readOnly && (
-                      <>
+    <LayoutFicheCadrage>
+      <main className="!bg-white py-6 pt-0 w-full">
+        <FormProvider {...form}>
+          <div className="relative">
+            <div className="sticky top-0 bg-white mb-6">
+              <div className="flex items-center justify-between mt-4 mx-auto w-full max-w-4xl px-2 py-4">
+                <span className="italic text-sm">
+                  Dernière modification :{" "}
+                  {formaterDate(
+                    autoEvaluation.dateDerniereModification,
+                    "DD/MM/YYYY [à] H[h]mm",
+                  )}
+                </span>
+                <div className="ml-auto flex items-center gap-4">
+                  {autoEvaluation.readOnly ? (
+                    <span className="flex gap-2 text-sm items-center">
+                      <Icone
+                        className="h-5 w-5"
+                        icone={InformationPleineIcon}
+                      />{" "}
+                      Cette fiche d'évaluation a déjà été soumise.
+                    </span>
+                  ) : null}
+                  {etape === "criteres" && (
+                    <>
+                      {!autoEvaluation.readOnly && (
                         <BoutonEnregistrerBrouillon formId={formId} />
-                        <BoutonSoumettreAutoEvaluation />
-                      </>
-                    )}
-                  </>
-                )}
+                      )}
+                      <Bouton
+                        form={formId}
+                        iconRight={
+                          <Icone
+                            className="text-current"
+                            icone={ArrowLine1Icon}
+                          />
+                        }
+                        label="Objectifs"
+                        onClick={() => setEtape("objectifs")}
+                        type="button"
+                      />
+                    </>
+                  )}
+                  {etape === "objectifs" && (
+                    <>
+                      <Bouton
+                        iconLeft={
+                          <Icone
+                            className="text-current"
+                            icone={ArrowLine3Icon}
+                          />
+                        }
+                        label="Critères"
+                        onClick={() => setEtape("criteres")}
+                        variant="secondary"
+                      />
+                      {!autoEvaluation.readOnly && (
+                        <>
+                          <BoutonEnregistrerBrouillon formId={formId} />
+                          <BoutonSoumettreAutoEvaluation />
+                        </>
+                      )}
+                    </>
+                  )}
+                </div>
               </div>
             </div>
-          </div>
-          <form
-            className="bg-white mx-auto w-full max-w-4xl"
-            id={formId}
-            onSubmit={form.handleSubmit(enregistrerBrouillon)}
-          >
-            <header className="p-4 bg-dsfr-blue-france-925 border-b-2 border-black">
-              <span className="font-bold text-sm">Mon auto-évaluation</span>
-            </header>
+            <form
+              className="bg-white mx-auto w-full max-w-4xl"
+              id={formId}
+              onSubmit={form.handleSubmit(enregistrerBrouillon)}
+            >
+              <header className="p-4 bg-dsfr-blue-france-925 border-b-2 border-black">
+                <span className="font-bold text-sm">Mon auto-évaluation</span>
+              </header>
 
-            {etape === "criteres" && <EtapeCriteres />}
-            {etape === "objectifs" && <EtapeObjectifs />}
-          </form>
-        </div>
-      </FormProvider>
-    </main>
+              {etape === "criteres" && <EtapeCriteres />}
+              {etape === "objectifs" && <EtapeObjectifs />}
+            </form>
+          </div>
+        </FormProvider>
+      </main>
+    </LayoutFicheCadrage>
   );
 };

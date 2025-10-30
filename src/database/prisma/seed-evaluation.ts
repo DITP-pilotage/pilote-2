@@ -209,6 +209,8 @@ const objectifs: referentiel_objectif[] = [
     tutelle_id: "a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d",
     libelle: "Accélérer la publication des appels d'offres",
     descriptif: "Mise en ligne des DCE sous 10 jours après validation.",
+    indicateur_cible:
+      "Excepteur cillum incididunt ex nulla excepteur irure sint amet excepteur esse amet aliqua laboris.",
     jalon: 1,
     rattachement_code: "POL-75",
     created_at: new Date("2025-10-07T10:00:00"),
@@ -219,6 +221,8 @@ const objectifs: referentiel_objectif[] = [
     tutelle_id: "a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d",
     libelle: "Suivre hebdomadairement les jalons critiques",
     descriptif: "Rituel hebdo avec tableau de bord partagé.",
+    indicateur_cible:
+      "Exercitation incididunt excepteur cupidatat ex nulla ex nostrud sint esse amet.",
     jalon: 2,
     rattachement_code: "POL-75",
     created_at: new Date("2025-10-07T10:00:00"),
@@ -229,6 +233,8 @@ const objectifs: referentiel_objectif[] = [
     tutelle_id: "b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e",
     libelle: "Déployer clauses d'insertion",
     descriptif: "Atteindre 5% d'heures d'insertion sur chantiers majeurs.",
+    indicateur_cible:
+      "Pariatur cillum sit occaecat labore incididunt dolor do sunt mollit qui proident aute veniam sint quis.",
     jalon: 1,
     rattachement_code: "DEPT-59",
     created_at: new Date("2025-10-07T10:00:00"),
@@ -239,6 +245,8 @@ const objectifs: referentiel_objectif[] = [
     tutelle_id: "b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e",
     libelle: "Réduire les déchets de chantier",
     descriptif: "Plan de valorisation matière à 70%.",
+    indicateur_cible:
+      "Minim dolore reprehenderit irure Lorem id amet exercitation officia aliqua laborum irure cupidatat anim ipsum.",
     jalon: 3,
     rattachement_code: "REG-75",
     created_at: new Date("2025-10-07T10:00:00"),
@@ -249,6 +257,8 @@ const objectifs: referentiel_objectif[] = [
     tutelle_id: "b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e",
     libelle: "Développer des outils de gestion des chantiers",
     descriptif: "Utilisation de l'outil de gestion des chantiers.",
+    indicateur_cible:
+      "Proident Lorem do ipsum excepteur dolore anim aliquip Lorem laboris irure.",
     jalon: 3,
     rattachement_code: "DEPT-87",
     created_at: new Date("2025-10-07T10:00:00"),
