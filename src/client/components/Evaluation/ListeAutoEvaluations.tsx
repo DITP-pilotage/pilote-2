@@ -84,6 +84,7 @@ const CardEvaluation = ({
 // eslint-disable-next-line react/no-multi-comp
 const CardVide = () => null;
 
+// eslint-disable-next-line react/no-multi-comp
 export const ListeAutoEvaluations = ({
   fichesEvaluation,
 }: {
