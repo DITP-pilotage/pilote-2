@@ -1,4 +1,4 @@
-import { useId, useState } from "react";
+import { useEffect, useId, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { pageEvaluation } from "@/components/PageEvaluation/PageEvaluationServerSideContext";
@@ -18,9 +18,25 @@ import { LayoutFicheCadrage } from "@/components/Evaluation/LayoutFicheCadrage";
 
 export const FormulaireEvaluation = () => {
   const { autoEvaluation } = pageEvaluation.useServerSidePropsContext();
-  const [etape, setEtape] = useState<"criteres" | "objectifs">("criteres");
+  const [etape, setEtape] = useState<"criteres" | "objectifs">(() => {
+    if (typeof window !== "undefined") {
+      return window.location.hash === "#objectifs" ? "objectifs" : "criteres";
+    }
+    return "criteres";
+  });
   const formId = useId();
   const enregistrerBrouillon = useEnregistrerBrouillon();
+
+  useEffect(() => {
+    const handleHashChange = () => {
+      if (window.location.hash === "#objectifs") {
+        setEtape("objectifs");
+      }
+    };
+
+    window.addEventListener("hashchange", handleHashChange);
+    return () => window.removeEventListener("hashchange", handleHashChange);
+  }, []);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),

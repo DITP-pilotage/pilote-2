@@ -107,6 +107,16 @@ describe("ListerFichesAutoEvaluationQuery", () => {
           code: rattachement1Code,
           libelle: "Rattachement 1",
         },
+        objectifs: {
+          moyenne: null,
+          nombreNotes: 0,
+          nombreTotal: 0,
+        },
+        criteres: {
+          moyenne: null,
+          nombreNotes: 0,
+          nombreTotal: 0,
+        },
       });
       expect(result).toContainEqual({
         id: ficheEvaluation2Id,
@@ -114,6 +124,16 @@ describe("ListerFichesAutoEvaluationQuery", () => {
         rattachement: {
           code: rattachement2Code,
           libelle: "Rattachement 2",
+        },
+        objectifs: {
+          moyenne: null,
+          nombreNotes: 0,
+          nombreTotal: 0,
+        },
+        criteres: {
+          moyenne: null,
+          nombreNotes: 0,
+          nombreTotal: 0,
         },
       });
     });

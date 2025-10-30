@@ -26,16 +26,87 @@ export class ListerFichesAutoEvaluationQuery {
             },
           },
         },
-        include: { rattachement: true },
+        include: {
+          rattachement: {
+            include: {
+              objectifs: true,
+            },
+          },
+          etape_evaluations: {
+            where: { type: $Enums.etape_evaluation_enum.AUTO_EVALUATION },
+            include: {
+              evaluations_objectifs: true,
+              evaluations_criteres: true,
+            },
+          },
+        },
       });
 
-    return fichesEvaluation.map((fiche) => ({
-      id: fiche.id,
-      etapeCourante: fiche.etape_courante,
-      rattachement: {
-        code: fiche.rattachement.code,
-        libelle: fiche.rattachement.libelle,
-      },
-    }));
+    return fichesEvaluation.map((fiche) => {
+      const etapeAutoEvaluation = fiche.etape_evaluations[0];
+      const objectifsAvecNotes = etapeAutoEvaluation
+        ? fiche.rattachement.objectifs.map((objectif) => {
+            const evaluation = etapeAutoEvaluation.evaluations_objectifs.find(
+              (evalObjectif) => evalObjectif.objectif_id === objectif.id,
+            );
+            return {
+              note: evaluation?.note ?? null,
+            };
+          })
+        : [];
+
+      const criteresAvecNotes = etapeAutoEvaluation
+        ? etapeAutoEvaluation.evaluations_criteres.map((evalCritere) => ({
+            note: evalCritere.note,
+          }))
+        : [];
+
+      const moyenneObjectifs =
+        objectifsAvecNotes.length > 0
+          ? objectifsAvecNotes.reduce(
+              (acc, obj) => ({
+                total: acc.total + (obj.note ?? 0),
+                count: acc.count + (obj.note !== null ? 1 : 0),
+              }),
+              { total: 0, count: 0 },
+            )
+          : null;
+
+      const moyenneCriteres =
+        criteresAvecNotes.length > 0
+          ? criteresAvecNotes.reduce(
+              (acc, crit) => ({
+                total: acc.total + (crit.note ?? 0),
+                count: acc.count + (crit.note !== null ? 1 : 0),
+              }),
+              { total: 0, count: 0 },
+            )
+          : null;
+
+      return {
+        id: fiche.id,
+        etapeCourante: fiche.etape_courante,
+        rattachement: {
+          code: fiche.rattachement.code,
+          libelle: fiche.rattachement.libelle,
+        },
+        objectifs: {
+          moyenne:
+            moyenneObjectifs && moyenneObjectifs.count > 0
+              ? Math.round(moyenneObjectifs.total / moyenneObjectifs.count)
+              : null,
+          nombreNotes: moyenneObjectifs?.count ?? 0,
+          nombreTotal: objectifsAvecNotes.length,
+        },
+        criteres: {
+          moyenne:
+            moyenneCriteres && moyenneCriteres.count > 0
+              ? Math.round(moyenneCriteres.total / moyenneCriteres.count)
+              : null,
+          nombreNotes: moyenneCriteres?.count ?? 0,
+          nombreTotal: criteresAvecNotes.length,
+        },
+      };
+    });
   }
 }
