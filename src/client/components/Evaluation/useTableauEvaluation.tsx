@@ -9,6 +9,7 @@ import {
 } from "@tanstack/react-table";
 import { useCallback, useMemo, useState } from "react";
 import { $Enums } from "@prisma/client";
+import pick from "lodash.pick";
 import { clsxm } from "@/utils/clsxm";
 import { TableauEvaluationRow } from "@/components/Evaluation/TableauEvaluation";
 import { Critere, Rattachement } from "@/server/evaluation/queries/types";
@@ -40,10 +41,10 @@ export const useTableauEvaluation = ({
     rattachements.forEach((rattachement) => {
       rattachement.criteres.forEach((critere) => {
         rows.push({
-          id: critere.id,
           type: "critere",
-          rattachement,
           ficheEvaluationId: rattachement.ficheEvaluationId,
+          rattachement,
+          id: critere.id,
           libelle: getCritere(critere.id).libelle,
           evaluations: critere.evaluations,
         });
@@ -51,13 +52,16 @@ export const useTableauEvaluation = ({
 
       rattachement.objectifs.forEach((objectif) => {
         rows.push({
-          id: objectif.id,
           type: "objectif",
-          descriptif: objectif.descriptif,
-          rattachement,
           ficheEvaluationId: rattachement.ficheEvaluationId,
-          libelle: objectif.libelle,
-          evaluations: objectif.evaluations,
+          rattachement,
+          ...pick(objectif, [
+            "id",
+            "libelle",
+            "descriptif",
+            "indicateurCible",
+            "evaluations",
+          ]),
         });
       });
     });

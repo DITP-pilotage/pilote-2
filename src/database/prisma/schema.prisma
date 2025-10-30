@@ -793,18 +793,19 @@ model referentiel_rattachement {
 }
 
 model referentiel_objectif {
-  id                    String                    @id @db.Uuid
-  libelle               String
-  descriptif            String
-  jalon                 Int
-  rattachement_code     String
-  rattachement          referentiel_rattachement  @relation(fields: [rattachement_code], references: [code], onDelete: Cascade, onUpdate: Cascade)
-  tutelle_id            String?                   @db.Uuid
-  tutelle               referentiel_tutelle?      @relation(fields: [tutelle_id], references: [id], onDelete: SetNull, onUpdate: Cascade)
-  created_at            DateTime                  @default(now())
-  updated_at            DateTime                  @updatedAt
-  evaluations           evaluation_objectif[]
-  instruction_objectif  instruction_objectif[]
+  id                   String                   @id @db.Uuid
+  libelle              String
+  descriptif           String
+  indicateur_cible     String                   @default("")
+  jalon                Int
+  rattachement_code    String
+  rattachement         referentiel_rattachement @relation(fields: [rattachement_code], references: [code], onDelete: Cascade, onUpdate: Cascade)
+  tutelle_id           String?                  @db.Uuid
+  tutelle              referentiel_tutelle?     @relation(fields: [tutelle_id], references: [id], onDelete: SetNull, onUpdate: Cascade)
+  created_at           DateTime                 @default(now())
+  updated_at           DateTime                 @updatedAt
+  evaluations          evaluation_objectif[]
+  instruction_objectif instruction_objectif[]
 
   @@schema("public")
 }

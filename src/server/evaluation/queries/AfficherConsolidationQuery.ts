@@ -49,6 +49,7 @@ export class AfficherConsolidationQuery {
 
             return {
               ...pick(objectif, ["id", "libelle", "descriptif"]),
+              indicateurCible: objectif.indicateur_cible,
               evaluations: [
                 {
                   etape: $Enums.etape_evaluation_enum.CONSOLIDATION,

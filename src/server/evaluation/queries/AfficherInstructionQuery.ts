@@ -86,9 +86,8 @@ export class AfficherInstructionQuery {
             );
 
             return {
-              id: objectif.id,
-              libelle: objectif.libelle,
-              descriptif: objectif.descriptif,
+              ...pick(objectif, ["id", "libelle", "descriptif"]),
+              indicateurCible: objectif.indicateur_cible,
               tutelle: objectif.tutelle
                 ? {
                     id: objectif.tutelle.id,

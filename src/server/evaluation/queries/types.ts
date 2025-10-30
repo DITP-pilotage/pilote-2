@@ -23,6 +23,7 @@ export type Objectif = {
   id: string;
   libelle: string;
   descriptif: string;
+  indicateurCible: string;
   evaluations: Array<{
     etape: $Enums.etape_evaluation_enum;
     evaluation: Evaluation;

@@ -42,6 +42,7 @@ export type TableauEvaluationRow =
       id: string;
       libelle: string;
       descriptif: string;
+      indicateurCible: string;
       rattachement: {
         code: string;
         libelle: string;
