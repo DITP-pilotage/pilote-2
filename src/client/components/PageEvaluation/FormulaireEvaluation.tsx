@@ -14,8 +14,8 @@ import { EtapeCriteres } from "@/components/PageEvaluation/EtapeCriteres";
 import { EtapeObjectifs } from "@/components/PageEvaluation/EtapeObjectifs";
 import { InformationPleineIcon } from "@/components/_commons/Icones/InformationPleineIcon";
 import { BoutonSoumettreAutoEvaluation } from "@/components/PageEvaluation/BoutonSoumettreAutoEvaluation";
-import { FicheCadrage } from "@/components/Evaluation/FicheCadrage";
 import { LayoutFicheCadrage } from "@/components/Evaluation/LayoutFicheCadrage";
+
 export const FormulaireEvaluation = () => {
   const { autoEvaluation } = pageEvaluation.useServerSidePropsContext();
   const [etape, setEtape] = useState<"criteres" | "objectifs">("criteres");

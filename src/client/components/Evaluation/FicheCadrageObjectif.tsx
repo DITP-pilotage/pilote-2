@@ -1,6 +1,10 @@
 import { Objectif } from "@/server/evaluation/queries/types";
 
-export const FicheCadrageObjectif = ({ objectif }: { objectif: Objectif }) => {
+export const FicheCadrageObjectif = ({
+  objectif,
+}: {
+  objectif: Omit<Objectif, "evaluations">;
+}) => {
   return (
     <div>
       <h2 className="!text-xl">{objectif.libelle}</h2>

@@ -24,7 +24,6 @@ export interface Objectif {
   libelle: string;
   descriptif: string;
   indicateurCible: string;
-  evaluations: Array<any>;
   evaluation: {
     id: string;
     note: number | null;
@@ -108,14 +107,6 @@ export class AfficherAutoEvaluationQuery {
                 note: evaluation?.note ?? null,
                 commentaire: evaluation?.commentaire ?? "",
               },
-              // TODO: fix me
-              evaluations: [
-                {
-                  id: evaluation?.id ?? randomUUID(),
-                  note: evaluation?.note ?? null,
-                  commentaire: evaluation?.commentaire ?? "",
-                },
-              ],
             };
           },
         ),
