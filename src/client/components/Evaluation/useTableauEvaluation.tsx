@@ -11,28 +11,19 @@ import { useCallback, useMemo, useState } from "react";
 import { $Enums } from "@prisma/client";
 import { clsxm } from "@/utils/clsxm";
 import { TableauEvaluationRow } from "@/components/Evaluation/TableauEvaluation";
-import {
-  Critere,
-  Objectif,
-  Rattachement,
-} from "@/server/evaluation/queries/types";
+import { Critere, Rattachement } from "@/server/evaluation/queries/types";
 import { LigneEtapeEvaluation } from "@/components/Evaluation/LigneEtapeEvaluation";
 import { Bouton } from "@/components/_commons/Bouton/Bouton";
+import { UseSetCritereOuObjectif } from "@/components/Evaluation/LayoutFicheCadrage";
 
 const columnHelper = createColumnHelper<TableauEvaluationRow>();
 
 export const useTableauEvaluation = ({
   rattachements,
   criteres,
-  onCibleDetailIdChange,
 }: {
   rattachements: Rattachement[];
   criteres: Critere[];
-  onCibleDetailIdChange(
-    cible:
-      | { type: "critere"; critere: Critere }
-      | { type: "objectif"; objectif: Objectif },
-  ): void;
 }) => {
   const getCritere = useCallback(
     (critereId: string) => {
@@ -140,26 +131,30 @@ export const useTableauEvaluation = ({
                   </div>
 
                   <div>
-                    <Bouton
-                      className="!bg-white"
-                      label="Fiche de cadrage"
-                      onClick={() => {
-                        if (row.original.type === "objectif") {
-                          onCibleDetailIdChange({
-                            type: row.original.type,
-                            objectif: row.original,
-                          });
-                        } else {
-                          const critere = getCritere(row.original.id);
-                          onCibleDetailIdChange({
-                            type: row.original.type,
-                            critere,
-                          });
-                        }
-                      }}
-                      size="sm"
-                      variant="secondary"
-                    />
+                    <UseSetCritereOuObjectif>
+                      {(setCritereOuObjectif) => (
+                        <Bouton
+                          className="!bg-white"
+                          label="Fiche de cadrage"
+                          onClick={() => {
+                            if (row.original.type === "objectif") {
+                              setCritereOuObjectif({
+                                type: row.original.type,
+                                objectif: row.original,
+                              });
+                            } else {
+                              const critere = getCritere(row.original.id);
+                              setCritereOuObjectif({
+                                type: row.original.type,
+                                critere,
+                              });
+                            }
+                          }}
+                          size="sm"
+                          variant="secondary"
+                        />
+                      )}
+                    </UseSetCritereOuObjectif>
                   </div>
                 </div>
               )}
@@ -246,7 +241,7 @@ export const useTableauEvaluation = ({
         getGroupingValue: (row) => (row.type === "critere" ? row.id : null),
       }),
     ],
-    [rattachements, criteres],
+    [rattachements, getCritere, criteres],
   );
 
   const table = useReactTable({
