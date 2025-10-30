@@ -4,6 +4,7 @@ import { UtilisateurIAMRepository } from "@/server/gestion-utilisateur/domain/po
 import { TokenAPIInformationRepository } from "@/server/gestion-utilisateur/domain/ports/TokenAPIInformationRepository";
 import { ContactInfoLettresService } from "@/server/gestion-utilisateur/domain/ports/ContactInfoLettresService";
 import { DesactiverComptesInactifsUseCase } from "@/server/gestion-utilisateur/usecases/DesactiverComptesInactifsUseCase";
+import { baseConfig } from "@/config";
 
 describe("DesactiverComptesInactifsUseCase", () => {
   let utilisateurRepository: MockProxy<UtilisateurRepository>;
@@ -32,8 +33,9 @@ describe("DesactiverComptesInactifsUseCase", () => {
       AUTEUR_ID_SYSTEME,
     );
 
-    process.env.NEXT_PUBLIC_FF_LIEN_CONTACT_BREVO = "true";
-    process.env.IMPORT_KEYCLOAK_URL = "http://keycloak.test";
+    // Configuration des feature flags et variables d'environnement
+    baseConfig.set("featureFlip.lienContactBrevo", true);
+    baseConfig.set("import.keycloakUrl", "http://keycloak.test");
   });
 
   it("désactive un compte inactif depuis plus de 90 jours", async () => {
@@ -69,7 +71,6 @@ describe("DesactiverComptesInactifsUseCase", () => {
     expect(resultat).toEqual({
       comptesTotaux: 1,
       comptesDesactives: 1,
-      mailsEnvoyes: 0,
       detailsMails: {
         mailsJ7: 0,
         mailsJ30: 0,
@@ -104,7 +105,6 @@ describe("DesactiverComptesInactifsUseCase", () => {
     expect(resultat).toEqual({
       comptesTotaux: 1,
       comptesDesactives: 0,
-      mailsEnvoyes: 1,
       detailsMails: {
         mailsJ7: 0,
         mailsJ30: 1,
@@ -139,7 +139,6 @@ describe("DesactiverComptesInactifsUseCase", () => {
     expect(resultat).toEqual({
       comptesTotaux: 1,
       comptesDesactives: 0,
-      mailsEnvoyes: 1,
       detailsMails: {
         mailsJ7: 1,
         mailsJ30: 0,
@@ -167,7 +166,6 @@ describe("DesactiverComptesInactifsUseCase", () => {
     expect(resultat).toEqual({
       comptesTotaux: 4,
       comptesDesactives: 1,
-      mailsEnvoyes: 2,
       detailsMails: {
         mailsJ7: 1,
         mailsJ30: 1,

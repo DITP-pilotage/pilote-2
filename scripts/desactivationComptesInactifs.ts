@@ -22,15 +22,12 @@ if (isMain) {
       );
       logger.info("\n✅ Succès - Résultats :");
       logger.info(`   - Comptes inactifs trouvés : ${resultat.comptesTotaux}`);
+      logger.info(`   - Comptes désactivés : ${resultat.comptesDesactives}`);
       logger.info(
-        `   - Comptes désactivés (> 100 jours) : ${resultat.comptesDesactives}`,
-      );
-      logger.info(`   - Mails envoyés : ${resultat.mailsEnvoyes}`);
-      logger.info(
-        `     • Mails J-7 (96 jours d'inactivité) : ${resultat.detailsMails.mailsJ7}`,
+        `   - Mails J-7 (96 jours d'inactivité) : ${resultat.detailsMails.mailsJ7}`,
       );
       logger.info(
-        `     • Mails J-30 (92 jours d'inactivité) : ${resultat.detailsMails.mailsJ30}`,
+        `   - Mails J-30 (92 jours d'inactivité) : ${resultat.detailsMails.mailsJ30}`,
       );
     })
     .catch((error) => {

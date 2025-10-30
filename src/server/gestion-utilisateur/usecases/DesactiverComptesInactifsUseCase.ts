@@ -3,6 +3,7 @@ import { UtilisateurIAMRepository } from "@/server/gestion-utilisateur/domain/po
 import { TokenAPIInformationRepository } from "@/server/gestion-utilisateur/domain/ports/TokenAPIInformationRepository";
 import { ContactInfoLettresService } from "@/server/gestion-utilisateur/domain/ports/ContactInfoLettresService";
 import logger from "@/server/infrastructure/Logger";
+import { configuration } from "@/config";
 
 type Dependencies = {
   utilisateurRepository: UtilisateurRepository;
@@ -14,7 +15,6 @@ type Dependencies = {
 export interface DesactiverComptesInactifsResultat {
   comptesTotaux: number;
   comptesDesactives: number;
-  mailsEnvoyes: number;
   detailsMails: {
     mailsJ7: number;
     mailsJ30: number;
@@ -44,6 +44,7 @@ export class DesactiverComptesInactifsUseCase {
 
   async run(): Promise<DesactiverComptesInactifsResultat> {
     const EMAIL_UTILISATEUR_SYSTEME = "import.csv@modernisation.gouv.fr";
+    const config = configuration();
 
     const auteurIdSysteme =
       await this.utilisateurRepository.recupererUtilisateurId(
@@ -75,11 +76,11 @@ export class DesactiverComptesInactifsUseCase {
 
         await this.utilisateurRepository.desactiver(email, auteurIdSysteme);
 
-        if (process.env.NEXT_PUBLIC_FF_LIEN_CONTACT_BREVO === "true") {
+        if (config.featureFlip.lienContactBrevo) {
           await this.contactInfoLettresService.supprimerContact(email);
         }
 
-        if (process.env.IMPORT_KEYCLOAK_URL) {
+        if (config.import.keycloakUrl) {
           await this.utilisateurIAMRepository.desactive(email);
         }
 
@@ -106,7 +107,6 @@ export class DesactiverComptesInactifsUseCase {
     return {
       comptesTotaux: comptesInactifs.length,
       comptesDesactives,
-      mailsEnvoyes: mailsJ7 + mailsJ30,
       detailsMails: {
         mailsJ7,
         mailsJ30,

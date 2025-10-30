@@ -264,6 +264,11 @@ const config = convict({
       default: false,
       env: "NEXT_PUBLIC_FF_PILOTE_EVAL",
     },
+    lienContactBrevo: {
+      format: Boolean,
+      default: false,
+      env: "NEXT_PUBLIC_FF_LIEN_CONTACT_BREVO",
+    },
     panelAdmin: {
       format: Boolean,
       default: false,
