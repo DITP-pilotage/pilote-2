@@ -14,20 +14,21 @@ type SetCritereOuObjectif = (critereOuObjectif: CritereOuObjectif) => void;
 
 const context = createContext<null | SetCritereOuObjectif>(null);
 
-export const UseSetCritereOuObjectif = ({
-  children,
-}: {
-  children: (setter: SetCritereOuObjectif) => ReactNode;
-}) => {
+export const useSetCritereOuObjectif = () => {
   const setCritereOuObjectif = useContext(context);
   if (setCritereOuObjectif === null) {
     throw new Error(
       "UseSetCritereOuObjectif must be used within a LayoutFicheCadrage",
     );
   }
-
-  return <>{children(setCritereOuObjectif)}</>;
+  return setCritereOuObjectif;
 };
+
+export const UseSetCritereOuObjectif = ({
+  children,
+}: {
+  children: (setter: SetCritereOuObjectif) => ReactNode;
+}) => <>{children(useSetCritereOuObjectif())}</>;
 
 // eslint-disable-next-line react/no-multi-comp
 export const LayoutFicheCadrage = ({ children }: PropsWithChildren) => {

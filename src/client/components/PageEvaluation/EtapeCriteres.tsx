@@ -3,7 +3,7 @@ import { useFormEvaluation } from "@/components/PageEvaluation/form";
 import { pageEvaluation } from "@/components/PageEvaluation/PageEvaluationServerSideContext";
 import { CommentaireTextareaAutoEvaluation } from "@/components/PageEvaluation/CommentaireTextareaAutoEvaluation";
 import { InputNoteAutoEvaluation } from "@/components/PageEvaluation/InputNoteAutoEvaluation";
-import { Infobulle } from "@/components/_commons/Infobulle/Infobulle";
+import { BoutonEnSavoirPlus } from "@/components/PageEvaluation/BoutonEnSavoirPlus";
 
 export const EtapeCriteres = () => {
   const { autoEvaluation } = pageEvaluation.useServerSidePropsContext();
@@ -22,16 +22,12 @@ export const EtapeCriteres = () => {
             <header className="p-4 flex items-center justify-between pr-6">
               <div className="flex items-center">
                 {critere.libelle}
-                <Infobulle>
-                  <h3 className="!text-base !m-0">Sous critère</h3>
-                  <ul>
-                    {critere.sousCriteres.map((sousCritere) => (
-                      <li className="!m-0" key={sousCritere.id}>
-                        {sousCritere.libelle}
-                      </li>
-                    ))}
-                  </ul>
-                </Infobulle>
+                <BoutonEnSavoirPlus
+                  critereOuObjectif={{
+                    type: "critere",
+                    critere,
+                  }}
+                />
               </div>
               <InputNoteAutoEvaluation name={noteName} />
             </header>

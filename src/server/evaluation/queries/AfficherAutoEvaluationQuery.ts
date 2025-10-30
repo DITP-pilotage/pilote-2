@@ -1,10 +1,12 @@
 import { $Enums } from "@prisma/client";
+import pick from "lodash.pick";
 import { randomUUID } from "node:crypto";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 
 export interface Critere {
   id: string;
   libelle: string;
+  descriptif: string;
   evaluation: {
     id: string;
     note: number | null;
@@ -13,12 +15,16 @@ export interface Critere {
   sousCriteres: Array<{
     id: string;
     libelle: string;
+    descriptif: string;
   }>;
 }
 
 export interface Objectif {
   id: string;
   libelle: string;
+  descriptif: string;
+  indicateurCible: string;
+  evaluations: Array<any>;
   evaluation: {
     id: string;
     note: number | null;
@@ -76,17 +82,15 @@ export class AfficherAutoEvaluationQuery {
           (evaluationCritere) => evaluationCritere.critere_id === critere.id,
         );
         return {
-          id: critere.id,
-          libelle: critere.libelle,
+          ...pick(critere, ["id", "libelle", "descriptif"]),
           evaluation: {
             id: evaluation?.id ?? randomUUID(),
             note: evaluation?.note ?? null,
             commentaire: evaluation?.commentaire ?? "",
           },
-          sousCriteres: critere.sous_criteres.map((sousCritere) => ({
-            id: sousCritere.id,
-            libelle: sousCritere.libelle,
-          })),
+          sousCriteres: critere.sous_criteres.map((sousCritere) =>
+            pick(sousCritere, ["id", "libelle", "descriptif"]),
+          ),
         };
       }),
       objectifs:
@@ -97,13 +101,21 @@ export class AfficherAutoEvaluationQuery {
                 evaluationObjectif.objectif_id === objectif.id,
             );
             return {
-              id: objectif.id,
-              libelle: objectif.libelle,
+              ...pick(objectif, ["id", "libelle", "descriptif"]),
+              indicateurCible: objectif.indicateur_cible,
               evaluation: {
                 id: evaluation?.id ?? randomUUID(),
                 note: evaluation?.note ?? null,
                 commentaire: evaluation?.commentaire ?? "",
               },
+              // TODO: fix me
+              evaluations: [
+                {
+                  id: evaluation?.id ?? randomUUID(),
+                  note: evaluation?.note ?? null,
+                  commentaire: evaluation?.commentaire ?? "",
+                },
+              ],
             };
           },
         ),
