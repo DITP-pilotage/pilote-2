@@ -30,7 +30,7 @@ export class RecupererDetailsNoteCollectiveQuery {
       .chantier_evaluation.findMany({
         where: {
           territoire_code: rattachementCode,
-          jalon: jalon,
+          jalon,
           date_calcul: derniereDateCalcul.date_calcul,
         },
         include: {

@@ -158,7 +158,7 @@ export const ListeAutoEvaluations = ({
                 variant="secondary"
               />
               <CardNoteCollective
-                lien={`/evaluation/auto-evaluation/${ficheEvaluation.id}#note-collective`}
+                lien={`/evaluation/note-collective/${ficheEvaluation.rattachement.code}`}
                 moyenne={ficheEvaluation.noteCollective}
                 titre="Objectifs collectifs"
               />
