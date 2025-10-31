@@ -101,17 +101,15 @@ export class ListerFichesAutoEvaluationQuery {
             )
           : null;
 
-      const chantiersAvecTaux = fiche.chantiers_evaluation.filter(
-        (chantier) => chantier.taux_avancement !== null,
-      );
-
-      const noteCollective =
-        chantiersAvecTaux.length > 0
-          ? Math.round(
-              chantiersAvecTaux.reduce(
-                (sum, chantier) => sum + chantier.taux_avancement!,
-                0,
-              ) / chantiersAvecTaux.length,
+      const chantiersNoteCollective = fiche.chantiers_evaluation;
+      const moyenneChantiers =
+        chantiersNoteCollective.length > 0
+          ? chantiersNoteCollective.reduce(
+              (acc, chantier) => ({
+                total: acc.total + (chantier.taux_avancement ?? 0),
+                count: acc.count + (chantier.taux_avancement !== null ? 1 : 0),
+              }),
+              { total: 0, count: 0 },
             )
           : null;
 
@@ -138,7 +136,10 @@ export class ListerFichesAutoEvaluationQuery {
           nombreNotes: moyenneCriteres?.count ?? 0,
           nombreTotal: criteresAvecNotes.length,
         },
-        noteCollective,
+        noteCollective:
+          moyenneChantiers && moyenneChantiers.count > 0
+            ? Math.round(moyenneChantiers.total / moyenneChantiers.count)
+            : null,
       };
     });
   }
