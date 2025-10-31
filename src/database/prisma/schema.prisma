@@ -108,6 +108,7 @@ model chantier_identite {
   indicateur_identite                   indicateur_identite[]
   objectifs                             objectif[]
   decisions_strategiques                decision_strategique[]
+  chantiers_evaluation                  chantier_evaluation[]
 
   @@schema("public")
 }
@@ -926,15 +927,16 @@ model instruction_critere {
 }
 
 model chantier_evaluation {
-  id               String
-  code_insee       String
-  maille           Maille
-  territoire_code  String
-  zone_id          String
-  taux_avancement  Float?
-  date_calcul      DateTime          @db.Date
-  jalon            Int
-  fiche_evaluation fiche_evaluation? @relation(fields: [territoire_code, jalon], references: [rattachement_code, jalon], onDelete: Cascade, onUpdate: Cascade)
+  id                String
+  code_insee        String
+  maille            Maille
+  territoire_code   String
+  zone_id           String
+  taux_avancement   Float?
+  date_calcul       DateTime           @db.Date
+  jalon             Int
+  fiche_evaluation  fiche_evaluation?  @relation(fields: [territoire_code, jalon], references: [rattachement_code, jalon], onDelete: Cascade, onUpdate: Cascade)
+  chantier_identite chantier_identite  @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   @@id([id, territoire_code, date_calcul])
   @@schema("public")

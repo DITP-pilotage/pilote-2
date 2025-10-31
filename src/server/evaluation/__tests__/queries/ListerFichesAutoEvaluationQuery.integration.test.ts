@@ -278,6 +278,23 @@ describe("ListerFichesAutoEvaluationQuery", () => {
       const ficheEvaluationId = "a1b2c3d4-e5f6-7890-abcd-ef1234567890";
       const etapeEvaluationId = "b2c3d4e5-f6a7-8901-bcde-f12345678901";
 
+      await prisma.chantier_identite.createMany({
+        data: [
+          {
+            id: "CH-001",
+            nom: "Chantier 1",
+          },
+          {
+            id: "CH-002",
+            nom: "Chantier 1",
+          },
+          {
+            id: "CH-003",
+            nom: "Chantier 1",
+          },
+        ],
+      });
+
       await prisma.utilisateur.create({
         data: {
           id: utilisateurId,
