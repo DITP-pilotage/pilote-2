@@ -933,10 +933,10 @@ model chantier_evaluation {
   territoire_code   String
   zone_id           String
   taux_avancement   Float?
-  date_calcul       DateTime           @db.Date
-  jalon             Int
-  fiche_evaluation  fiche_evaluation?  @relation(fields: [territoire_code, jalon], references: [rattachement_code, jalon], onDelete: Cascade, onUpdate: Cascade)
-  chantier_identite chantier_identite  @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  date_calcul       DateTime          @db.Date
+  jalon             Int               @default(2025)
+  fiche_evaluation  fiche_evaluation? @relation(fields: [territoire_code, jalon], references: [rattachement_code, jalon], onDelete: Cascade, onUpdate: Cascade)
+  chantier_identite chantier_identite @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   @@id([id, territoire_code, date_calcul])
   @@schema("public")
@@ -953,7 +953,7 @@ model indicateur_evaluation {
   ponderation_declaree Float
   ponderation_reelle   Float
   date_calcul          DateTime @db.Date
-  jalon                Int
+  jalon                Int      @default(2025)
 
   @@id([id, territoire_code, date_calcul])
   @@schema("public")
