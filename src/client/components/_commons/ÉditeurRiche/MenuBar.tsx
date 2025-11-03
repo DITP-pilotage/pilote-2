@@ -58,12 +58,12 @@ export const MenuBar = ({ editor }: { editor: Editor }) => {
           <Icone icone={ListOrderedIcon} />
         </button>
         <button
-          aria-label="Code en ligne"
+          aria-label="Ligne de code"
           aria-pressed={editor.isActive("code")}
           className={buttonClass(editor.isActive("code"))}
           disabled={!editor.can().chain().focus().toggleCode().run()}
           onClick={() => editor.chain().focus().toggleCode().run()}
-          title="Code en ligne"
+          title="Ligne de code"
           type="button"
         >
           <Icone icone={ListOrderedIcon} />
