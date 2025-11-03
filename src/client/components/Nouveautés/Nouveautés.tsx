@@ -1,7 +1,7 @@
 import { FunctionComponent } from "react";
 import Titre from "@/components/_commons/Titre/Titre";
 import Bloc from "@/components/_commons/Bloc/Bloc";
-import { ÉditeurRiche } from "@/client/components/_commons/ÉditeurRiche/ÉditeurRiche";
+import { EditeurRiche } from "@/components/_commons/ÉditeurRiche/EditeurRiche";
 import { useNouveautés } from "./useNouveautés";
 import "@gouvfr/dsfr/dist/component/accordion/accordion.min.css";
 import "@gouvfr/dsfr/dist/component/input/input.min.css";
@@ -63,7 +63,7 @@ const Nouveautés: FunctionComponent<{
                         </div>
                       </div>
                       <div className="fr-col-12 fr-mb-2w">
-                        <ÉditeurRiche
+                        <EditeurRiche
                           contenu={contenu}
                           onChange={setContenu}
                           placeholder="Saisissez les nouvelles fonctionnalités..."
@@ -118,7 +118,7 @@ const Nouveautés: FunctionComponent<{
                       <div className="fr-mb-2w">
                         {estAutoriseAModifierLesNouveautés &&
                         listeNouveautes[0].id === idAModifier ? (
-                          <ÉditeurRiche
+                          <EditeurRiche
                             contenu={listeNouveautes[0].contenu}
                             onChange={setContenu}
                             placeholder="Saisissez les nouvelles fonctionnalités..."
@@ -205,7 +205,7 @@ const Nouveautés: FunctionComponent<{
                                 <div className="fr-mb-2w">
                                   {estAutoriseAModifierLesNouveautés &&
                                   element.id === idAModifier ? (
-                                    <ÉditeurRiche
+                                    <EditeurRiche
                                       contenu={element.contenu}
                                       onChange={setContenu}
                                       placeholder="Saisissez les nouvelles fonctionnalités..."
