@@ -2,6 +2,10 @@ import { Editor } from "@tiptap/react";
 import { Icone } from "@/components/_commons/Icone";
 import { ListOrderedIcon } from "@/components/_commons/Icones/ListOrderedIcon";
 import { clsxm } from "@/utils/clsxm";
+import { BoldIcon } from "@/components/_commons/Icones/BoldIcon";
+import { ItalicIcon } from "@/components/_commons/Icones/ItalicIcon";
+import { StrikethroughIcon } from "@/components/_commons/Icones/StrikethroughIcon";
+import { CodeIcon } from "@/components/_commons/Icones/CodeIcon";
 
 export const MenuBar = ({ editor }: { editor: Editor }) => {
   if (!editor) {
@@ -33,7 +37,7 @@ export const MenuBar = ({ editor }: { editor: Editor }) => {
           title="Gras"
           type="button"
         >
-          <Icone icone={ListOrderedIcon} />
+          <Icone icone={BoldIcon} />
         </button>
         <button
           aria-label="Italique"
@@ -44,7 +48,7 @@ export const MenuBar = ({ editor }: { editor: Editor }) => {
           title="Italique"
           type="button"
         >
-          <Icone icone={ListOrderedIcon} />
+          <Icone icone={ItalicIcon} />
         </button>
         <button
           aria-label="Barré"
@@ -55,7 +59,7 @@ export const MenuBar = ({ editor }: { editor: Editor }) => {
           title="Barré"
           type="button"
         >
-          <Icone icone={ListOrderedIcon} />
+          <Icone icone={StrikethroughIcon} />
         </button>
         <button
           aria-label="Ligne de code"
@@ -66,7 +70,7 @@ export const MenuBar = ({ editor }: { editor: Editor }) => {
           title="Ligne de code"
           type="button"
         >
-          <Icone icone={ListOrderedIcon} />
+          <Icone icone={CodeIcon} />
         </button>
       </div>
 
