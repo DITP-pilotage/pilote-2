@@ -39,11 +39,14 @@ export const AnnexeTextareaAutoEvaluation = ({
       control={form.control}
       name={name}
       render={({ field }) => (
-        <EditeurRiche
-          contenu={field.value || ""}
-          estEnLectureSeule={autoEvaluation.readOnly}
-          onChange={field.onChange}
-        />
+        <>
+          <span className="bold">Annexe</span>
+          <EditeurRiche
+            contenu={field.value || ""}
+            estEnLectureSeule={autoEvaluation.readOnly}
+            onChange={field.onChange}
+          />
+        </>
       )}
     />
   );
