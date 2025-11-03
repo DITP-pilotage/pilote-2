@@ -2,7 +2,7 @@ import logger from "@/server/infrastructure/Logger";
 import { prisma } from "@/server/db/prisma";
 
 async function sauvegardeNotes() {
-  const listeChantiers = [
+  const LISTE_CHANTIERS_INCLUS_FICHE_EVALUATION = [
     "CH-076",
     "CH-103",
     "CH-067",
@@ -27,7 +27,7 @@ async function sauvegardeNotes() {
 
   const chantiers = await prisma.chantier_territoire_jalon.findMany({
     where: {
-      id: { in: listeChantiers },
+      id: { in: LISTE_CHANTIERS_INCLUS_FICHE_EVALUATION },
       territoire_code: { in: rattachements },
       jalon: 2025,
     },
@@ -44,7 +44,7 @@ async function sauvegardeNotes() {
   const indicateurs = await prisma.indicateur_territoire_jalon.findMany({
     where: {
       indicateur_territoire: {
-        chantier_id: { in: listeChantiers },
+        chantier_id: { in: LISTE_CHANTIERS_INCLUS_FICHE_EVALUATION },
         ponderation_zone_reel_eval: { not: null, gt: 0 },
       },
       jalon: 2025,

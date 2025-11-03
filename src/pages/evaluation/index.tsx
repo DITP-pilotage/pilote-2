@@ -7,7 +7,7 @@ import assert from "node:assert";
 import { getContainer } from "@/server/dependances";
 import { configurationFeatureFlip } from "@/config";
 import { authOptions } from "@/server/infrastructure/api/auth/[...nextauth]";
-import { ListeAutoEvaluations } from "@/components/Evaluation/ListeAutoEvaluations";
+import { ListeAutoEvaluations } from "@/components/Evaluation/ListeAutoEvaluation/ListeAutoEvaluations";
 
 export const getServerSideProps = async ({
   req,

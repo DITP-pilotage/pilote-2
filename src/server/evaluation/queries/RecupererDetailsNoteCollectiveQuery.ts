@@ -44,12 +44,14 @@ export class RecupererDetailsNoteCollectiveQuery {
 
     return chantiersEvaluation.map((chantier) => {
       const ministereId = chantier.chantier_identite.ministeres[0];
-      const ministere = ministeres.find((m) => m.id === ministereId);
+      const ministereChantier = ministeres.find(
+        (ministere) => ministere.id === ministereId,
+      );
 
       return {
         id: chantier.id,
         nom: chantier.chantier_identite.nom,
-        icone_ministere: ministere?.icone ?? null,
+        icone_ministere: ministereChantier?.icone ?? null,
         taux_avancement: chantier.taux_avancement,
       };
     });
