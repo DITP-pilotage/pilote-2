@@ -21,6 +21,10 @@ export class ListerFichesAutoEvaluationQuery {
         },
       });
 
+    const tousLesCriteres = await this.dependencies.prisma
+      .getInstance()
+      .referentiel_critere.findMany();
+
     const fichesEvaluation = await this.dependencies.prisma
       .getInstance()
       .fiche_evaluation.findMany({
@@ -74,9 +78,14 @@ export class ListerFichesAutoEvaluationQuery {
         : [];
 
       const criteresAvecNotes = etapeAutoEvaluation
-        ? etapeAutoEvaluation.evaluations_criteres.map((evalCritere) => ({
-            note: evalCritere.note,
-          }))
+        ? tousLesCriteres.map((critere) => {
+            const evaluation = etapeAutoEvaluation.evaluations_criteres.find(
+              (evalCritere) => evalCritere.critere_id === critere.id,
+            );
+            return {
+              note: evaluation?.note ?? null,
+            };
+          })
         : [];
 
       const moyenneObjectifs =
