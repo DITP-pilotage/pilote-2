@@ -5,7 +5,24 @@ import { clsxm } from "@/utils/clsxm";
 import { BoldIcon } from "@/components/_commons/Icones/BoldIcon";
 import { ItalicIcon } from "@/components/_commons/Icones/ItalicIcon";
 import { StrikethroughIcon } from "@/components/_commons/Icones/StrikethroughIcon";
+import { UnderlineIcon } from "@/components/_commons/Icones/UnderlineIcon";
 import { CodeIcon } from "@/components/_commons/Icones/CodeIcon";
+import { ParagraphIcon } from "@/components/_commons/Icones/ParagraphIcon";
+import { Heading1Icon } from "@/components/_commons/Icones/Heading1Icon";
+import { Heading2Icon } from "@/components/_commons/Icones/Heading2Icon";
+import { Heading3Icon } from "@/components/_commons/Icones/Heading3Icon";
+import { Heading4Icon } from "@/components/_commons/Icones/Heading4Icon";
+import { Heading5Icon } from "@/components/_commons/Icones/Heading5Icon";
+import { Heading6Icon } from "@/components/_commons/Icones/Heading6Icon";
+import { BulletListIcon } from "@/components/_commons/Icones/BulletListIcon";
+import { CodeBlockIcon } from "@/components/_commons/Icones/CodeBlockIcon";
+import { BlockquoteIcon } from "@/components/_commons/Icones/BlockquoteIcon";
+import { HorizontalRuleIcon } from "@/components/_commons/Icones/HorizontalRuleIcon";
+import { LineBreakIcon } from "@/components/_commons/Icones/LineBreakIcon";
+import { UndoIcon } from "@/components/_commons/Icones/UndoIcon";
+import { RedoIcon } from "@/components/_commons/Icones/RedoIcon";
+import { ClearFormatIcon } from "@/components/_commons/Icones/ClearFormatIcon";
+import { ClearNodesIcon } from "@/components/_commons/Icones/ClearNodesIcon";
 
 export const MenuBar = ({ editor }: { editor: Editor }) => {
   if (!editor) {
@@ -62,6 +79,17 @@ export const MenuBar = ({ editor }: { editor: Editor }) => {
           <Icone icone={StrikethroughIcon} />
         </button>
         <button
+          aria-label="Souligné"
+          aria-pressed={editor.isActive("underline")}
+          className={buttonClass(editor.isActive("underline"))}
+          disabled={!editor.can().chain().focus().toggleUnderline().run()}
+          onClick={() => editor.chain().focus().toggleUnderline().run()}
+          title="Souligné"
+          type="button"
+        >
+          <Icone icone={UnderlineIcon} />
+        </button>
+        <button
           aria-label="Ligne de code"
           aria-pressed={editor.isActive("code")}
           className={buttonClass(editor.isActive("code"))}
@@ -86,7 +114,7 @@ export const MenuBar = ({ editor }: { editor: Editor }) => {
           title="Paragraphe"
           type="button"
         >
-          <Icone icone={ListOrderedIcon} />
+          <Icone icone={ParagraphIcon} />
         </button>
         <button
           aria-label="Titre 1"
@@ -98,7 +126,7 @@ export const MenuBar = ({ editor }: { editor: Editor }) => {
           title="Titre 1"
           type="button"
         >
-          <Icone icone={ListOrderedIcon} />
+          <Icone icone={Heading1Icon} />
         </button>
         <button
           aria-label="Titre 2"
@@ -110,7 +138,7 @@ export const MenuBar = ({ editor }: { editor: Editor }) => {
           title="Titre 2"
           type="button"
         >
-          <Icone icone={ListOrderedIcon} />
+          <Icone icone={Heading2Icon} />
         </button>
         <button
           aria-label="Titre 3"
@@ -122,7 +150,7 @@ export const MenuBar = ({ editor }: { editor: Editor }) => {
           title="Titre 3"
           type="button"
         >
-          <Icone icone={ListOrderedIcon} />
+          <Icone icone={Heading3Icon} />
         </button>
         <button
           aria-label="Titre 4"
@@ -134,7 +162,7 @@ export const MenuBar = ({ editor }: { editor: Editor }) => {
           title="Titre 4"
           type="button"
         >
-          <Icone icone={ListOrderedIcon} />
+          <Icone icone={Heading4Icon} />
         </button>
         <button
           aria-label="Titre 5"
@@ -146,7 +174,7 @@ export const MenuBar = ({ editor }: { editor: Editor }) => {
           title="Titre 5"
           type="button"
         >
-          <Icone icone={ListOrderedIcon} />
+          <Icone icone={Heading5Icon} />
         </button>
         <button
           aria-label="Titre 6"
@@ -158,7 +186,7 @@ export const MenuBar = ({ editor }: { editor: Editor }) => {
           title="Titre 6"
           type="button"
         >
-          <Icone icone={ListOrderedIcon} />
+          <Icone icone={Heading6Icon} />
         </button>
       </div>
 
@@ -174,7 +202,7 @@ export const MenuBar = ({ editor }: { editor: Editor }) => {
           title="Liste à puces"
           type="button"
         >
-          <Icone icone={ListOrderedIcon} />
+          <Icone icone={BulletListIcon} />
         </button>
         <button
           aria-label="Liste numérotée"
@@ -200,7 +228,7 @@ export const MenuBar = ({ editor }: { editor: Editor }) => {
           title="Bloc de code"
           type="button"
         >
-          <Icone icone={ListOrderedIcon} />
+          <Icone icone={CodeBlockIcon} />
         </button>
         <button
           aria-label="Citation"
@@ -210,7 +238,7 @@ export const MenuBar = ({ editor }: { editor: Editor }) => {
           title="Citation"
           type="button"
         >
-          <Icone icone={ListOrderedIcon} />
+          <Icone icone={BlockquoteIcon} />
         </button>
         <button
           aria-label="Ligne horizontale"
@@ -219,7 +247,7 @@ export const MenuBar = ({ editor }: { editor: Editor }) => {
           title="Ligne horizontale"
           type="button"
         >
-          <Icone icone={ListOrderedIcon} />
+          <Icone icone={HorizontalRuleIcon} />
         </button>
         <button
           aria-label="Retour à la ligne"
@@ -228,7 +256,7 @@ export const MenuBar = ({ editor }: { editor: Editor }) => {
           title="Retour à la ligne"
           type="button"
         >
-          <Icone icone={ListOrderedIcon} />
+          <Icone icone={LineBreakIcon} />
         </button>
       </div>
 
@@ -244,7 +272,7 @@ export const MenuBar = ({ editor }: { editor: Editor }) => {
           title="Annuler"
           type="button"
         >
-          <Icone icone={ListOrderedIcon} />
+          <Icone icone={UndoIcon} />
         </button>
         <button
           aria-label="Rétablir"
@@ -254,7 +282,7 @@ export const MenuBar = ({ editor }: { editor: Editor }) => {
           title="Rétablir"
           type="button"
         >
-          <Icone icone={ListOrderedIcon} />
+          <Icone icone={RedoIcon} />
         </button>
       </div>
 
@@ -269,7 +297,7 @@ export const MenuBar = ({ editor }: { editor: Editor }) => {
           title="Effacer le formatage"
           type="button"
         >
-          <Icone icone={ListOrderedIcon} />
+          <Icone icone={ClearFormatIcon} />
         </button>
         <button
           aria-label="Effacer les styles de bloc"
@@ -278,7 +306,7 @@ export const MenuBar = ({ editor }: { editor: Editor }) => {
           title="Effacer les styles de bloc"
           type="button"
         >
-          <Icone icone={ListOrderedIcon} />
+          <Icone icone={ClearNodesIcon} />
         </button>
       </div>
     </div>
