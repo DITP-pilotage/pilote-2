@@ -51,69 +51,85 @@ const PageDetailsNoteCollective = (
   const { chantiersEvaluation } = props;
 
   return (
-    <>
+    <main className="py-6 pt-0">
       <Head>
         <title>PILOTE - Détails note collective</title>
       </Head>
 
-      <div className="p-8">
-        <h1 className="text-2xl font-bold mb-6">Détails note collective</h1>
+      <div className="min-h-[60vh] py-12">
+        <div className="mx-auto w-full max-w-6xl">
+          <header className="mb-6">
+            <h1 className="!text-3xl font-bold mb-2">
+              Bienvenue sur le détail de votre note collective
+            </h1>
+          </header>
 
-        <div className="overflow-x-auto">
-          <table className="min-w-full bg-white border border-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b">
-                  Chantier
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b">
-                  Note
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-200">
-              {chantiersEvaluation.length === 0 ? (
-                <tr>
-                  <td
-                    className="px-6 py-4 text-center text-gray-500"
-                    colSpan={2}
-                  >
-                    Aucun chantier trouvé
-                  </td>
-                </tr>
-              ) : (
-                chantiersEvaluation.map((chantier) => (
-                  <tr className="hover:bg-gray-50" key={chantier.id}>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center gap-3">
-                        <IconeMinistere
-                          className="text-dsfr-blue-france-sun-113"
-                          icone={chantier.icone_ministere}
-                        />
-                        <span className="text-sm font-medium text-gray-900">
-                          {chantier.nom}
-                        </span>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      {chantier.taux_avancement !== null ? (
-                        <span className="text-xs px-2 py-1.5 rounded-md whitespace-nowrap bg-purple-100 text-purple-700">
-                          {Math.round(chantier.taux_avancement)} / 100
-                        </span>
-                      ) : (
-                        <span className="text-sm text-gray-500">
-                          Non renseigné
-                        </span>
-                      )}
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+          <div className="bg-white rounded shadow">
+            <header className="p-6">
+              <span className="font-bold">
+                Détail des chantiers et objectifs collectifs de votre territoire
+              </span>
+            </header>
+
+            <div className="px-6 pb-6">
+              <div className="overflow-x-auto">
+                <table className="min-w-full border border-gray-200">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b">
+                        Chantier
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b">
+                        Note
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-200">
+                    {chantiersEvaluation.length === 0 ? (
+                      <tr>
+                        <td
+                          className="px-6 py-4 text-center text-gray-500"
+                          colSpan={2}
+                        >
+                          Aucun chantier trouvé
+                        </td>
+                      </tr>
+                    ) : (
+                      chantiersEvaluation.map((chantier) => (
+                        <tr className="hover:bg-gray-50" key={chantier.id}>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <div className="flex items-center gap-3">
+                              <IconeMinistere
+                                className="text-dsfr-blue-france-sun-113"
+                                icone={chantier.icone_ministere}
+                              />
+                              <span className="text-sm font-medium text-gray-900">
+                                {chantier.nom}
+                              </span>
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            {chantier.taux_avancement !== null ? (
+                              <span className="text-xs px-2 py-1.5 rounded-md whitespace-nowrap bg-purple-100 text-purple-700">
+                                {Math.round(chantier.taux_avancement)} / 100
+                              </span>
+                            ) : (
+                              <span className="text-sm text-gray-500">
+                                Non renseigné
+                              </span>
+                            )}
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-    </>
+    </main>
   );
 };
 
