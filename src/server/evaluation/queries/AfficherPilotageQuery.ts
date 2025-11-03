@@ -42,15 +42,15 @@ export class AfficherPilotageQuery {
           };
         });
 
-        const etapeConsolidation = fiche.etape_evaluations.find(
-          (etape) => etape.type === $Enums.etape_evaluation_enum.CONSOLIDATION,
+        const etapeEnCours = fiche.etape_evaluations.find(
+          (etape) => etape.type === fiche.etape_courante,
         );
 
         return {
           id: fiche.id,
           jalon: fiche.jalon,
           etapeCourante: fiche.etape_courante,
-          readOnly: etapeConsolidation?.read_only ?? false,
+          readOnly: etapeEnCours?.read_only ?? false,
           rattachement: {
             code: rattachement.code,
             libelle: rattachement.libelle,
