@@ -1,5 +1,7 @@
 import { Editor } from "@tiptap/react";
 import "@gouvfr/dsfr/dist/component/tag/tag.min.css";
+import { Icone } from "@/components/_commons/Icone";
+import { ListOrderedIcon } from "@/components/_commons/Icones/ListOrderedIcon";
 
 export const MenuBar = ({ editor }: { editor: Editor }) => {
   if (!editor) {
@@ -8,7 +10,7 @@ export const MenuBar = ({ editor }: { editor: Editor }) => {
 
   return (
     <div className="control-group fr-my-2w">
-      <div className="button-group">
+      <div className="button-group border-t">
         <button
           aria-pressed={editor.isActive("bold")}
           className="fr-tag fr-mr-1w fr-mb-1w"
@@ -16,7 +18,8 @@ export const MenuBar = ({ editor }: { editor: Editor }) => {
           onClick={() => editor.chain().focus().toggleBold().run()}
           type="button"
         >
-          Gras
+          {/*Gras*/}
+          <Icone icone={ListOrderedIcon} />
         </button>
         <button
           aria-pressed={editor.isActive("italic")}
@@ -25,7 +28,8 @@ export const MenuBar = ({ editor }: { editor: Editor }) => {
           onClick={() => editor.chain().focus().toggleItalic().run()}
           type="button"
         >
-          Italique
+          {/*Italique*/}
+          <Icone icone={ListOrderedIcon} />
         </button>
         <button
           aria-pressed={editor.isActive("strike")}
@@ -34,7 +38,8 @@ export const MenuBar = ({ editor }: { editor: Editor }) => {
           onClick={() => editor.chain().focus().toggleStrike().run()}
           type="button"
         >
-          Barré
+          {/*Barré*/}
+          <Icone icone={ListOrderedIcon} />
         </button>
         <button
           aria-pressed={editor.isActive("code")}
@@ -43,7 +48,8 @@ export const MenuBar = ({ editor }: { editor: Editor }) => {
           onClick={() => editor.chain().focus().toggleCode().run()}
           type="button"
         >
-          Code
+          {/*ligne de code*/}
+          <Icone icone={ListOrderedIcon} />
         </button>
         <button
           aria-pressed={editor.isActive("paragraph")}
@@ -51,7 +57,8 @@ export const MenuBar = ({ editor }: { editor: Editor }) => {
           onClick={() => editor.chain().focus().setParagraph().run()}
           type="button"
         >
-          Paragraphe
+          {/*Paragraphe*/}
+          <Icone icone={ListOrderedIcon} />
         </button>
         <button
           aria-pressed={editor.isActive("heading", { level: 1 })}
@@ -61,7 +68,8 @@ export const MenuBar = ({ editor }: { editor: Editor }) => {
           }
           type="button"
         >
-          Titre 1
+          {/*Titre 1*/}
+          <Icone icone={ListOrderedIcon} />
         </button>
         <button
           aria-pressed={editor.isActive("heading", { level: 2 })}
@@ -71,7 +79,8 @@ export const MenuBar = ({ editor }: { editor: Editor }) => {
           }
           type="button"
         >
-          Titre 2
+          {/*Titre 2*/}
+          <Icone icone={ListOrderedIcon} />
         </button>
         <button
           aria-pressed={editor.isActive("heading", { level: 3 })}
@@ -81,7 +90,8 @@ export const MenuBar = ({ editor }: { editor: Editor }) => {
           }
           type="button"
         >
-          Titre 3
+          {/*Titre 3*/}
+          <Icone icone={ListOrderedIcon} />
         </button>
         <button
           aria-pressed={editor.isActive("heading", { level: 4 })}
@@ -91,7 +101,8 @@ export const MenuBar = ({ editor }: { editor: Editor }) => {
           }
           type="button"
         >
-          Titre 4
+          {/*Titre 4*/}
+          <Icone icone={ListOrderedIcon} />
         </button>
         <button
           aria-pressed={editor.isActive("heading", { level: 5 })}
@@ -101,7 +112,8 @@ export const MenuBar = ({ editor }: { editor: Editor }) => {
           }
           type="button"
         >
-          Titre 5
+          {/*Titre 5*/}
+          <Icone icone={ListOrderedIcon} />
         </button>
         <button
           aria-pressed={editor.isActive("heading", { level: 6 })}
@@ -111,7 +123,8 @@ export const MenuBar = ({ editor }: { editor: Editor }) => {
           }
           type="button"
         >
-          Titre 6
+          {/*Titre 6*/}
+          <Icone icone={ListOrderedIcon} />
         </button>
         <button
           aria-pressed={editor.isActive("bulletList")}
@@ -119,7 +132,8 @@ export const MenuBar = ({ editor }: { editor: Editor }) => {
           onClick={() => editor.chain().focus().toggleBulletList().run()}
           type="button"
         >
-          Liste à puces
+          {/*Liste à puces*/}
+          <Icone icone={ListOrderedIcon} />
         </button>
         <button
           aria-pressed={editor.isActive("orderedList")}
@@ -127,7 +141,8 @@ export const MenuBar = ({ editor }: { editor: Editor }) => {
           onClick={() => editor.chain().focus().toggleOrderedList().run()}
           type="button"
         >
-          Liste numérotée
+          {/*Liste numérotée*/}
+          <Icone icone={ListOrderedIcon} />
         </button>
         <button
           aria-pressed={editor.isActive("codeBlock")}
@@ -135,7 +150,8 @@ export const MenuBar = ({ editor }: { editor: Editor }) => {
           onClick={() => editor.chain().focus().toggleCodeBlock().run()}
           type="button"
         >
-          Bloc de code
+          {/*Bloc de code*/}
+          <Icone icone={ListOrderedIcon} />
         </button>
         <button
           aria-pressed={editor.isActive("blockquote")}
@@ -143,21 +159,24 @@ export const MenuBar = ({ editor }: { editor: Editor }) => {
           onClick={() => editor.chain().focus().toggleBlockquote().run()}
           type="button"
         >
-          Citation
+          {/*Citation*/}
+          <Icone icone={ListOrderedIcon} />
         </button>
         <button
           className="fr-tag fr-mr-1w fr-mb-1w"
           onClick={() => editor.chain().focus().setHorizontalRule().run()}
           type="button"
         >
-          Ligne horizontale
+          {/*Ligne horizontale*/}
+          <Icone icone={ListOrderedIcon} />
         </button>
         <button
           className="fr-tag fr-mr-1w fr-mb-1w"
           onClick={() => editor.chain().focus().setHardBreak().run()}
           type="button"
         >
-          Retour à la ligne
+          {/*Retour à la ligne*/}
+          <Icone icone={ListOrderedIcon} />
         </button>
         <button
           className="fr-tag fr-mr-1w fr-mb-1w"
@@ -165,7 +184,8 @@ export const MenuBar = ({ editor }: { editor: Editor }) => {
           onClick={() => editor.chain().focus().undo().run()}
           type="button"
         >
-          Annuler
+          {/*Annuler*/}
+          <Icone icone={ListOrderedIcon} />
         </button>
         <button
           className="fr-tag fr-mr-1w fr-mb-1w"
@@ -173,21 +193,24 @@ export const MenuBar = ({ editor }: { editor: Editor }) => {
           onClick={() => editor.chain().focus().redo().run()}
           type="button"
         >
-          Rétablir
+          {/*Rétablir*/}
+          <Icone icone={ListOrderedIcon} />
         </button>
         <button
           className="fr-tag fr-mr-1w fr-mb-1w"
           onClick={() => editor.chain().focus().unsetAllMarks().run()}
           type="button"
         >
-          Effacer les marques
+          {/*Effacer les marques*/}
+          <Icone icone={ListOrderedIcon} />
         </button>
         <button
           className="fr-tag fr-mr-1w fr-mb-1w"
           onClick={() => editor.chain().focus().clearNodes().run()}
           type="button"
         >
-          Effacer les nœuds
+          {/*Effacer les nœuds*/}
+          <Icone icone={ListOrderedIcon} />
         </button>
         {/*
           <button
