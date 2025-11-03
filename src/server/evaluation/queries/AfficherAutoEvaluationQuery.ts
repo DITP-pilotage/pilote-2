@@ -11,6 +11,7 @@ export interface Critere {
     id: string;
     note: number | null;
     commentaire: string;
+    annexe: string;
   };
   sousCriteres: Array<{
     id: string;
@@ -28,6 +29,7 @@ export interface Objectif {
     id: string;
     note: number | null;
     commentaire: string;
+    annexe: string;
   };
 }
 
@@ -88,6 +90,7 @@ export class AfficherAutoEvaluationQuery {
             id: evaluation?.id ?? randomUUID(),
             note: evaluation?.note ?? null,
             commentaire: evaluation?.commentaire ?? "",
+            annexe: evaluation?.annexe ?? "",
           },
           sousCriteres: critere.sous_criteres.map((sousCritere) =>
             pick(sousCritere, ["id", "libelle", "descriptif"]),
@@ -108,6 +111,7 @@ export class AfficherAutoEvaluationQuery {
                 id: evaluation?.id ?? randomUUID(),
                 note: evaluation?.note ?? null,
                 commentaire: evaluation?.commentaire ?? "",
+                annexe: evaluation?.annexe ?? "",
               },
             };
           },
