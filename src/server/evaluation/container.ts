@@ -12,6 +12,7 @@ import { PasserALEtapeInstructionHandler } from "@/server/evaluation/handlers/Pa
 import { AfficherInstructionQuery } from "@/server/evaluation/queries/AfficherInstructionQuery";
 import { EnregistrerBrouillonInstructionHandler } from "@/server/evaluation/handlers/EnregistrerBrouillonInstructionHandler";
 import { ModifierEtatFichesInstructionHandler } from "@/server/evaluation/handlers/ModifierEtatFichesInstructionHandler";
+import { RecupererDetailsNoteCollectiveQuery } from "@/server/evaluation/queries/RecupererDetailsNoteCollectiveQuery";
 import { EnregistrerBrouillonAutoEvaluationHandler } from "./handlers/EnregistrerBrouillonAutoEvaluationHandler";
 
 export type PiloteEvalDependencies = {
@@ -20,6 +21,7 @@ export type PiloteEvalDependencies = {
   afficherInstructionQuery: AfficherInstructionQuery;
   afficherPilotageQuery: AfficherPilotageQuery;
   listerFichesAutoEvaluation: ListerFichesAutoEvaluationQuery;
+  recupererDetailsNoteCollectiveQuery: RecupererDetailsNoteCollectiveQuery;
   enregistrerBrouillonAutoEvaluation: EnregistrerBrouillonAutoEvaluationHandler;
   enregistrerBrouillonConsolidationHandler: EnregistrerBrouillonConsolidationHandler;
   enregistrerBrouillonInstructionHandler: EnregistrerBrouillonInstructionHandler;
@@ -39,6 +41,9 @@ export const getPiloteEvalContainer = (
     afficherInstructionQuery: asClass(AfficherInstructionQuery),
     afficherPilotageQuery: asClass(AfficherPilotageQuery),
     listerFichesAutoEvaluation: asClass(ListerFichesAutoEvaluationQuery),
+    recupererDetailsNoteCollectiveQuery: asClass(
+      RecupererDetailsNoteCollectiveQuery,
+    ),
     enregistrerBrouillonAutoEvaluation: asClass(
       EnregistrerBrouillonAutoEvaluationHandler,
     ),

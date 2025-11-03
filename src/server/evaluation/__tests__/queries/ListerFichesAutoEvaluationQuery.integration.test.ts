@@ -117,6 +117,7 @@ describe("ListerFichesAutoEvaluationQuery", () => {
           nombreNotes: 0,
           nombreTotal: 0,
         },
+        noteCollective: null,
       });
       expect(result).toContainEqual({
         id: ficheEvaluation2Id,
@@ -135,6 +136,7 @@ describe("ListerFichesAutoEvaluationQuery", () => {
           nombreNotes: 0,
           nombreTotal: 0,
         },
+        noteCollective: null,
       });
     });
 
@@ -267,6 +269,154 @@ describe("ListerFichesAutoEvaluationQuery", () => {
 
       // Then
       expect(result).toEqual([]);
+    });
+
+    it("doit calculer la note collective à partir des chantiers_evaluation de la dernière date_calcul", async () => {
+      // Given
+      const rattachementCode = "REG-205";
+      const utilisateurId = "f8a7b6c5-4d3e-2f1a-0b9c-8d7e6f5a4b3c";
+      const ficheEvaluationId = "a1b2c3d4-e5f6-7890-abcd-ef1234567890";
+      const etapeEvaluationId = "b2c3d4e5-f6a7-8901-bcde-f12345678901";
+
+      await prisma.chantier_identite.createMany({
+        data: [
+          {
+            id: "CH-001",
+            nom: "Chantier 1",
+          },
+          {
+            id: "CH-002",
+            nom: "Chantier 1",
+          },
+          {
+            id: "CH-003",
+            nom: "Chantier 1",
+          },
+        ],
+      });
+
+      await prisma.utilisateur.create({
+        data: {
+          id: utilisateurId,
+          email: "user-note-collective@example.com",
+          nom: "UserNoteCollective",
+          prenom: "Test",
+          date_creation: new Date(),
+          profilCode: "DITP_ADMIN",
+        },
+      });
+
+      await prisma.referentiel_rattachement.create({
+        data: {
+          code: rattachementCode,
+          libelle: "Rattachement avec note collective",
+        },
+      });
+
+      await prisma.rattachement_utilisateur_etape_jalon.create({
+        data: {
+          id: "c3d4e5f6-a7b8-9012-cdef-123456789012",
+          rattachement_code: rattachementCode,
+          utilisateur_id: utilisateurId,
+          etape: "AUTO_EVALUATION",
+          jalon: 2025,
+        },
+      });
+
+      await prisma.fiche_evaluation.create({
+        data: {
+          id: ficheEvaluationId,
+          jalon: 2025,
+          etape_courante: "AUTO_EVALUATION",
+          rattachement_code: rattachementCode,
+          etape_evaluations: {
+            create: {
+              id: etapeEvaluationId,
+              type: "AUTO_EVALUATION",
+            },
+          },
+        },
+      });
+
+      await prisma.chantier_evaluation.createMany({
+        data: [
+          {
+            id: "CH-001",
+            territoire_code: rattachementCode,
+            code_insee: "75",
+            maille: "DEPT",
+            zone_id: "zone-1",
+            taux_avancement: 50,
+            date_calcul: new Date("2025-01-10"),
+            jalon: 2025,
+          },
+          {
+            id: "CH-002",
+            territoire_code: rattachementCode,
+            code_insee: "75",
+            maille: "DEPT",
+            zone_id: "zone-1",
+            taux_avancement: 60,
+            date_calcul: new Date("2025-01-10"),
+            jalon: 2025,
+          },
+          {
+            id: "CH-001",
+            territoire_code: rattachementCode,
+            code_insee: "75",
+            maille: "DEPT",
+            zone_id: "zone-1",
+            taux_avancement: 75.5,
+            date_calcul: new Date("2025-01-15"),
+            jalon: 2025,
+          },
+          {
+            id: "CH-002",
+            territoire_code: rattachementCode,
+            code_insee: "75",
+            maille: "DEPT",
+            zone_id: "zone-1",
+            taux_avancement: 84.5,
+            date_calcul: new Date("2025-01-15"),
+            jalon: 2025,
+          },
+          {
+            id: "CH-003",
+            territoire_code: rattachementCode,
+            code_insee: "75",
+            maille: "DEPT",
+            zone_id: "zone-1",
+            taux_avancement: null,
+            date_calcul: new Date("2025-01-15"),
+            jalon: 2025,
+          },
+        ],
+      });
+
+      // When
+      const result = await query.run({ utilisateurId });
+
+      // Then
+      expect(result).toHaveLength(1);
+      expect(result[0]).toEqual({
+        id: ficheEvaluationId,
+        etapeCourante: "AUTO_EVALUATION",
+        rattachement: {
+          code: rattachementCode,
+          libelle: "Rattachement avec note collective",
+        },
+        objectifs: {
+          moyenne: null,
+          nombreNotes: 0,
+          nombreTotal: 0,
+        },
+        criteres: {
+          moyenne: null,
+          nombreNotes: 0,
+          nombreTotal: 0,
+        },
+        noteCollective: 80,
+      });
     });
   });
 });
