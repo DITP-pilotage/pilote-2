@@ -1,0 +1,14 @@
+export const ParagraphIcon = ({
+  fill = "currentColor",
+  className,
+}: {
+  fill?: string;
+  className?: string;
+}) => (
+  <svg className={className} viewBox="0 0 24 24">
+    <path
+      d="M13 4C13 4 15 4 15 4C17.2091 4 19 5.79086 19 8C19 10.2091 17.2091 12 15 12H13V20H11V4H13ZM13 6V10H15C16.1046 10 17 9.10457 17 8C17 6.89543 16.1046 6 15 6H13ZM9 12C6.79086 12 5 10.2091 5 8C5 5.79086 6.79086 4 9 4V6C7.89543 6 7 6.89543 7 8C7 9.10457 7.89543 10 9 10V20H7V12H9Z"
+      fill={fill}
+    />
+  </svg>
+);
