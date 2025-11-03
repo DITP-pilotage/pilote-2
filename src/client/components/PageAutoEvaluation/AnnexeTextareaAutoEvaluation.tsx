@@ -1,20 +1,21 @@
 import { useState } from "react";
 import { flushSync } from "react-dom";
+import { Controller } from "react-hook-form";
+import { useFormEvaluation } from "@/components/PageEvaluation/form";
 import { Icone } from "@/components/_commons/Icone";
 import { AddLineIcon } from "@/components/_commons/Icones/AddLineIcon";
 import { pageEvaluation } from "@/components/PageEvaluation/PageEvaluationServerSideContext";
 import { EditeurRiche } from "@/components/_commons/ÉditeurRiche/EditeurRiche";
 
-export function AnnexeTextareaAutoEvaluation(
-  {
-    /* name, */
-  }: {
-    /* name: `criteres.${number}.annexe` | `objectifs.${number}.annexe`; */
-  },
-) {
+export const AnnexeTextareaAutoEvaluation = ({
+  name,
+}: {
+  name: `criteres.${number}.annexe` | `objectifs.${number}.annexe`;
+}) => {
+  const form = useFormEvaluation();
   const { autoEvaluation } = pageEvaluation.useServerSidePropsContext();
-  const [displayAnnexe, setDisplayAnnexe] = useState(false);
-  const [contenu, setContenu] = useState("");
+  const defaultOpen = form.getValues(name) !== "";
+  const [displayAnnexe, setDisplayAnnexe] = useState(defaultOpen);
 
   if (!displayAnnexe) {
     return (
@@ -34,10 +35,16 @@ export function AnnexeTextareaAutoEvaluation(
   }
 
   return (
-    <EditeurRiche
-      contenu={contenu}
-      estEnLectureSeule={autoEvaluation.readOnly}
-      onChange={setContenu}
+    <Controller
+      control={form.control}
+      name={name}
+      render={({ field }) => (
+        <EditeurRiche
+          contenu={field.value || ""}
+          estEnLectureSeule={autoEvaluation.readOnly}
+          onChange={field.onChange}
+        />
+      )}
     />
   );
-}
+};
