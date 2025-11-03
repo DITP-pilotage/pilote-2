@@ -106,6 +106,7 @@
     ],
     "sonarjs/no-duplicate-string": "off",
     "unicorn/prevent-abbreviations": "off",
+    "unicorn/no-static-only-class": "off",
     "unicorn/switch-case-braces": "off",
     "unicorn/prefer-switch": "off",
     "unicorn/filename-case": "off",
