@@ -24,9 +24,9 @@ to_replicate_from_nat AS (
 
 -- Tableau des chantier à répliquer de maille X -> Y
 src_chantier_mailles_to_replicate AS (
-    SELECT * FROM to_replicate_from_reg
-    UNION
-    SELECT * FROM to_replicate_from_nat
+    SELECT chantier_id, replicate_maille_from, replicate_maille_to FROM to_replicate_from_reg
+    UNION ALL
+    SELECT chantier_id, replicate_maille_from, replicate_maille_to FROM to_replicate_from_nat
 ),
 
 -- Liste des zones où répliquer les données
@@ -69,19 +69,20 @@ replicated_values AS (
         id,
         date_import,
         indic_id,
+        is_last_monthly_value,
         zone_id_child AS zone_id,
         metric_date,
         metric_type,
         metric_value
     --, b.*
     FROM valeurs_region_src
-    ORDER BY indic_id, metric_date
+    --ORDER BY indic_id, metric_date
 )
 
 -- Union des données précédentes avec les données répliquées
-SELECT * 
+SELECT id, date_import, indic_id, is_last_monthly_value, zone_id, metric_date, metric_type, metric_value
 FROM {{ ref('agg_all') }} 
 WHERE (indic_id, zone_id) NOT IN (SELECT indic_id, zone_id FROM replicated_values)
-UNION 
-SELECT * 
+UNION ALL
+SELECT id, date_import, indic_id, is_last_monthly_value, zone_id, metric_date, metric_type, metric_value
 FROM replicated_values

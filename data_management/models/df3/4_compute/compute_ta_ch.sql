@@ -6,12 +6,12 @@ with
 ta_zone_indic as (
 	select 
 	b.chantier_id, a.zone_id, z.maille as "maille", metric_date,a.indic_id,
-	vaca, vig, vca_courant, vca_adate, vca_adate_date, vcg,
+	vaca, is_last_monthly_va, vig, vca_courant, vca_adate, vca_adate_date, vcg,
 	taa_courant, taa_adate, tag
 	from {{ ref('compute_ta_indic') }} a
 	left join {{ ref('stg_ppg_metadata__indicateurs') }} b on a.indic_id = b.id
 	left join {{ ref('stg_ppg_metadata__zones') }} z on a.zone_id=z.id 
-	order by chantier_id, zone_id, metric_date, indic_id
+	--order by chantier_id, zone_id, metric_date, indic_id
 ),
 -- Calcul du TA pondéré
 --	On va pondérer chaque TA par sa pondération à cette maille

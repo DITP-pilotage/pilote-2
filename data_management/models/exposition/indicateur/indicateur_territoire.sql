@@ -100,4 +100,4 @@ LEFT JOIN
     ON meta_indic.id = meta_indic_parametrage.indic_id
 LEFT JOIN get_evol_vaca AS evol_va
     ON meta_indic.id = evol_va.indic_id AND territoire.zone_id = evol_va.zone_id
-ORDER BY meta_indic.id, territoire.maille, territoire.code
+--ORDER BY meta_indic.id, territoire.maille, territoire.code

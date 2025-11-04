@@ -7,6 +7,7 @@ WITH tri_des_jalons AS (
         zone_id,
         metric_date,
         vaca,
+        is_last_monthly_va,
         jalon,
         row_number()
             OVER (PARTITION BY indic_id, zone_id, jalon ORDER BY jalon DESC)
@@ -23,6 +24,7 @@ SELECT
     zone_id,
     metric_date as derniere_date_vaca,
     vaca as derniere_vaca,
+    is_last_monthly_va,
     jalon as dernier_jalon
 FROM tri_des_jalons
 WHERE

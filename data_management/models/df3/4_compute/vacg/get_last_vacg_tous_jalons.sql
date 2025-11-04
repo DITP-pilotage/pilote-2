@@ -6,6 +6,7 @@ WITH tri_des_jalons AS (
         zone_id,
         metric_date,
         vacg,
+        is_last_monthly_va,
         jalon,
         row_number()
             OVER (PARTITION BY indic_id, zone_id ORDER BY jalon DESC)

@@ -7,7 +7,7 @@ with
 --	et on y ajoute les paramètres d'aggrégation NAT
 mesure_last_params_nat as (
     select 
-        a.id, a.date_import, a.indic_id , metric_date, metric_type, metric_value , zone_id,
+        a.id, a.date_import, a.indic_id , a.is_last_monthly_value, metric_date, metric_type, metric_value , zone_id,
         b.vi_nat_from , b.vi_nat_op , b.va_nat_from, b.va_nat_op, b.vc_nat_from , b.vc_nat_op 
     from {{ ref('mesure_last_null_erase_keep_lastvalmonth') }} a
     left join {{ source('parametrage_indicateurs', 'metadata_parametrage_indicateurs') }} b 
@@ -41,7 +41,7 @@ indic_agg_to_nat as (
 --  et on sélectionne que les valeurs qui sont REG avec un parent NAT
 -- Ce sont ces données que la DF va aggréger
 mesure_last_params_nat_from_reg as (
-	select a.id, a.date_import, a.indic_id as indic_id1 , metric_date , metric_type , metric_value::float, a.zone_id,
+	select a.id, a.date_import, a.indic_id as indic_id1 , a.is_last_monthly_value, metric_date , metric_type , metric_value::float, a.zone_id,
 	b.zone_type, b.zone_parent , b.zone_parent_type ,
 	c.*
 	from {{ ref('agg_reg') }} a
@@ -59,7 +59,7 @@ mesure_last_params_nat_from_reg as (
 --  on lui associe ses paramètres d'aggrégation
 --  et on sélectionne que les valeurs qui sont DEPT avec un parent NAT
 mesure_last_params_nat_from_dept as (
-	select a.id, a.date_import, a.indic_id as indic_id1 , metric_date , metric_type , metric_value::float, a.zone_id,
+	select a.id, a.date_import, a.indic_id as indic_id1 , a.is_last_monthly_value, metric_date , metric_type , metric_value::float, a.zone_id,
 	b.zone_type, b.zone_parent_parent as zone_parent , b.zone_parent_parent_type as zone_parent_type ,
 	c.*
 	from {{ ref('agg_dept') }} a
@@ -75,7 +75,7 @@ mesure_last_params_nat_from_dept as (
 -- Union des valeurs aggrégées depuis DEPT et REG
 mesure_last_params_nat_from_dept_or_reg as (
 	select * from mesure_last_params_nat_from_dept
-	union
+	union all
 	select * from mesure_last_params_nat_from_reg
 ),
 
@@ -87,11 +87,11 @@ compute_op_sum_avg as (
 		-- On met id=NULL lorsque la valeur est générée par aggrégation et non issue d'une mesure saisie
 		null::uuid as id, 
 		max(date_import) as date_import,
-		zone_parent, indic_id as indic_id1, metric_date, metric_type, 
+		zone_parent, indic_id as indic_id1, is_last_monthly_value, metric_date, metric_type, 
 		sum(metric_value::float) as op_sum,
 		avg(metric_value::float) as op_avg
 	from mesure_last_params_nat_from_dept_or_reg
-	group by zone_parent, indic_id, metric_date, metric_type
+	group by zone_parent, indic_id, is_last_monthly_value, metric_date, metric_type
 ),
 
 -- On sélectionne le bon résultat de calcul de l'aggrégation 
@@ -117,16 +117,17 @@ mesure_last_params_nat_aggregated as (
 		id,
 		date_import,
         indic_id,
+        is_last_monthly_value,
         zone_parent as zone_id,
         metric_date, metric_type,
         op_selected as metric_value
     from compute_op_selected
-    order by indic_id, zone_id, metric_date, metric_type
+    --order by indic_id, is_last_monthly_value, zone_id, metric_date, metric_type
 )
 
 
 -- On retourne donc les valeurs NAT saisies, et attendues comme tel
-select id, date_import, indic_id, zone_id, metric_date, metric_type, metric_value::float from mesure_last_params_nat_user
-union
+select id, date_import, indic_id, is_last_monthly_value, zone_id, metric_date, metric_type, metric_value::float from mesure_last_params_nat_user
+union all
 -- ET les valeurs agg
-select * from mesure_last_params_nat_aggregated
+select id, date_import, indic_id, is_last_monthly_value, zone_id, metric_date, metric_type, metric_value::float from mesure_last_params_nat_aggregated

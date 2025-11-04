@@ -3,12 +3,12 @@
 
 with source as 
 -- On prend les VC NAT de la table agg_nat
-(select * from {{ ref('agg_nat') }} where zone_id='FRANCE' and metric_type in ('vc','vi')),
+(select id, date_import, indic_id, is_last_monthly_value, zone_id, metric_date, metric_type, metric_value from {{ ref('agg_nat') }} where zone_id='FRANCE' and metric_type in ('vc','vi')),
 -- On sélectionne certaines colonnes de la table des mesures valides
 --	et on y ajoute les paramètres d'aggrégation NAT (cf agg_nat)
 mesure_last_params_nat as (
     select 
-        a.id, a.date_import, a.indic_id , metric_date, metric_type, metric_value , zone_id,
+        a.id, a.date_import, a.indic_id , a.is_last_monthly_value, metric_date, metric_type, metric_value , zone_id,
         b.vi_nat_from , b.vi_nat_op , b.va_nat_from, b.va_nat_op, b.vc_nat_from , b.vc_nat_op 
     from {{ ref('mesure_last_null_erase_keep_lastvalmonth') }} a
     left join {{ source('parametrage_indicateurs', 'metadata_parametrage_indicateurs') }} b 
@@ -35,13 +35,14 @@ select
     coalesce(a.id, b.id) as id,
     coalesce(a.date_import, b.date_import) as date_import,
     coalesce(a.indic_id, b.indic_id) as indic_id,
+    coalesce(a.is_last_monthly_value, b.is_last_monthly_value) as is_last_monthly_value,
     coalesce(a.zone_id, b.zone_id) as zone_id,
     coalesce(a.metric_date, b.metric_date) as metric_date,
     coalesce(a.metric_type, b.metric_type) as metric_type,
     a.metric_value as computed_value,
     b.metric_value as illegal_input_value
 from source a full join
-mesure_last_params_nat_all_vc b on a.indic_id=b.indic_id and a.zone_id=b.zone_id and a.metric_date=b.metric_date and a.metric_type=b.metric_type
+mesure_last_params_nat_all_vc b on a.indic_id=b.indic_id and a.is_last_monthly_value=b.is_last_monthly_value and a.zone_id=b.zone_id and a.metric_date=b.metric_date and a.metric_type=b.metric_type
 ),
 -- Jointure des valeurs précédentes
 --	et de valeurs illegalement saisies en vi
@@ -50,32 +51,33 @@ select
     coalesce(a.id, b.id) as id,
     coalesce(a.date_import, b.date_import) as date_import,
     coalesce(a.indic_id, b.indic_id) as indic_id,
+    coalesce(a.is_last_monthly_value, b.is_last_monthly_value) as is_last_monthly_value,
     coalesce(a.zone_id, b.zone_id) as zone_id,
     coalesce(a.metric_date, b.metric_date) as metric_date,
     coalesce(a.metric_type, b.metric_type) as metric_type,
     a.metric_value as computed_value,
     b.metric_value as illegal_input_value
 from source a full join
-mesure_last_params_nat_all_vi b on a.indic_id=b.indic_id and a.zone_id=b.zone_id and a.metric_date=b.metric_date and a.metric_type=b.metric_type
+mesure_last_params_nat_all_vi b on a.indic_id=b.indic_id and a.is_last_monthly_value=b.is_last_monthly_value and a.zone_id=b.zone_id and a.metric_date=b.metric_date and a.metric_type=b.metric_type
 )
 
 -- Jointure des VC+VI avec le reste des valeurs NAT aggrégées (VA)
-select * from 
+select id, date_import, indic_id, is_last_monthly_value, zone_id, metric_date, metric_type, metric_value from 
 (select 
-    id, date_import, indic_id, zone_id, metric_date, metric_type,
+    id, date_import, indic_id, is_last_monthly_value, zone_id, metric_date, metric_type,
 	-- Si pas de computed_value, alors on prend la illegal_value
 	coalesce(computed_value, illegal_input_value::float) as metric_value 
-    from join_correct_and_illegal_values_vc where metric_type='vc') as a
-union
+    from join_correct_and_illegal_values_vc where metric_type='vc')
+union all
 (select 
-    id, date_import, indic_id, zone_id, metric_date, metric_type,
+    id, date_import, indic_id, is_last_monthly_value, zone_id, metric_date, metric_type,
 	-- Si pas de computed_value, alors on prend la illegal_value
 	coalesce(computed_value, illegal_input_value::float) as metric_value 
     from join_correct_and_illegal_values_vi where metric_type='vi')
-union
+union all   
 (select 
-    id, date_import, indic_id, zone_id, metric_date, metric_type, metric_value 
-    from {{ ref('agg_nat') }}  where metric_type='va')
+    id, date_import, indic_id, is_last_monthly_value, zone_id, metric_date, metric_type, metric_value 
+    from {{ ref('agg_nat') }} where metric_type='va')
 
 
 

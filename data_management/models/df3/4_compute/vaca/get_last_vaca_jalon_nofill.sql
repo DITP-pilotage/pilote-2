@@ -6,6 +6,7 @@ WITH ajout_annee AS (
         zone_id,
         metric_date,
         vaca,
+        is_last_monthly_va,
         date_part('year', metric_date::date) AS annee_valeur,
         row_number()
             OVER (
@@ -23,6 +24,7 @@ SELECT
     zone_id,
     metric_date,
     vaca,
+    is_last_monthly_va,
     annee_valeur AS jalon
 FROM ajout_annee
 WHERE r = 1

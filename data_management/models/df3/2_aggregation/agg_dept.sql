@@ -10,6 +10,7 @@ mesure_last_params_dept AS (
         a.id, 
         a.date_import, 
         a.indic_id,
+        a.is_last_monthly_value,
         metric_date,
         metric_type,
         metric_value,
@@ -45,4 +46,4 @@ mesure_last_params_dept_user AS (
 -- Valeurs DEPT aggrégées: Aucune, car pas de niveau inférieur
 
 -- On retourne donc simlement les valeurs DEPT saisies, et attendues comme tel
-SELECT * FROM mesure_last_params_dept_user
+SELECT id, date_import, indic_id, is_last_monthly_value, zone_id, metric_date, metric_type, metric_value::float FROM mesure_last_params_dept_user

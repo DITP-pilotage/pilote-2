@@ -5,14 +5,14 @@ indic_taa_courant_dispo as (
 	select b.chantier_id, indic_id, zone_id, metric_date, taa_courant
 	from {{ ref('compute_ta_indic') }} a
 	left join {{ ref('stg_ppg_metadata__indicateurs') }} b on a.indic_id=b.id
-	where vaca is not null
+	where vaca is not null AND is_last_monthly_va
 )
 , ch_count_taa_courant_par_date as (
 select 
 	chantier_id, zone_id, metric_date, count(indic_id) as n_taa_dispos
 from indic_taa_courant_dispo 
 group by chantier_id, zone_id, metric_date
-order by chantier_id, zone_id, metric_date desc
+--order by chantier_id, zone_id, metric_date desc
 )
 
 , rank_dates_taa_ch_dispo as (
