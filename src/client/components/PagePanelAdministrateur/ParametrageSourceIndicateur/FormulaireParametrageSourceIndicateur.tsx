@@ -119,7 +119,7 @@ export const FormulaireParametrageSourceIndicateur = () => {
               key={selectedIndex}
             />
           ) : (
-            <div className="bg-white p-4 border rounded text-center text-gray-500">
+            <div className="bg-white p-4 border rounded text-center text-gray-500 w-full">
               Sélectionnez un champ pour l'éditer ou créez-en un nouveau
             </div>
           )}

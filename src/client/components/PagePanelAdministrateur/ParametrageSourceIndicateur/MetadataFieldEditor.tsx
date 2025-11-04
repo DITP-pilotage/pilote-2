@@ -9,7 +9,7 @@ export const MetadataFieldEditor = ({ fieldIndex }: { fieldIndex: number }) => {
   const editBoxType = form.watch(`metadataList.${fieldIndex}.editBoxType`);
 
   return (
-    <div className="bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden">
+    <div className="bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden w-full">
       <div className="flex flex-column p-6 gap-8">
         {/* Section Informations de base */}
         <div>

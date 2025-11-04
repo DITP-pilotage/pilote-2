@@ -3,12 +3,18 @@ import { Icone } from "@/components/_commons/Icone";
 import { Account1Icon } from "@/components/_commons/Icones/Account1Icon";
 import { ArrowSLine1Icon } from "@/components/_commons/Icones/ArrowSLine1Icon";
 import { BoutonSeDeconnecter } from "@/components/_commons/BoutonSeDeconnecter";
+import { BoutonPanelAdministrateur } from "@/components/_commons/BoutonPanelAdministrateur";
 import { clsxm } from "@/utils/clsxm";
 import { Dropdown } from "@/components/shared/Dropdown";
-import { BoutonPanelAdministrateur } from "@/components/_commons/BoutonPanelAdministrateur";
+import api from "@/server/infrastructure/api/trpc/api";
 
 export const Utilisateur = ({ email }: { email: string }) => {
   const [estDeplie, setEstDeplie] = useState<boolean>(false);
+
+  const { data: panelAdminEstDisponible } =
+    api.gestionContenu.récupérerVariableContenu.useQuery({
+      nomVariableContenu: "NEXT_PUBLIC_FF_PANEL_ADMIN",
+    });
 
   return (
     <Dropdown.Root onOpenChange={setEstDeplie} open={estDeplie}>
@@ -30,7 +36,7 @@ export const Utilisateur = ({ email }: { email: string }) => {
         </button>
       </Dropdown.Trigger>
       <Dropdown.Content align="end">
-        <BoutonPanelAdministrateur />
+        {panelAdminEstDisponible ? <BoutonPanelAdministrateur /> : null}
         <BoutonSeDeconnecter />
       </Dropdown.Content>
     </Dropdown.Root>
