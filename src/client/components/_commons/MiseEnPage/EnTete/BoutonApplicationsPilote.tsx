@@ -7,6 +7,7 @@ import { clsxm } from "@/utils/clsxm";
 import { ArrowSLine1Icon } from "@/components/_commons/Icones/ArrowSLine1Icon";
 import { useCurrentApplication } from "@/client/hooks/useCurrentApplication";
 import { GridIcon } from "@/components/_commons/Icones/GridIcon";
+import { Dropdown } from "@/components/shared/Dropdown";
 
 const APPLICATIONS = {
   [$Enums.application_accessible.PILOTE]: {
@@ -42,36 +43,35 @@ export const BoutonApplicationsPilote = () => {
     : APPLICATIONS.PILOTE_EVAL;
 
   return (
-    <div className="flex flex-col">
-      <button
-        className="flex fr-text--sm !p-0 !text-primary"
-        onClick={() => setEstDeplie(!estDeplie)}
-        title={boutonPrincipal.title}
-        type="button"
-      >
-        <Icone icone={GridIcon} />
-        <span className="pl-2 pr-1">{boutonPrincipal.label}</span>
-        <Icone
-          className={clsxm(
-            "transition-transform duration-200 ease-in-out",
-            estDeplie ? "rotate-90" : "rotate-0",
-          )}
-          icone={ArrowSLine1Icon}
-        />
-      </button>
+    <Dropdown.Root onOpenChange={setEstDeplie} open={estDeplie}>
+      <Dropdown.Trigger asChild>
+        <button
+          className="flex fr-text--sm !p-0 !text-primary"
+          title={boutonPrincipal.title}
+          type="button"
+        >
+          <Icone icone={GridIcon} />
+          <span className="pl-2 pr-1">{boutonPrincipal.label}</span>
+          <Icone
+            className={clsxm(
+              "transition-transform duration-200 ease-in-out",
+              estDeplie ? "rotate-90" : "rotate-0",
+            )}
+            icone={ArrowSLine1Icon}
+          />
+        </button>
+      </Dropdown.Trigger>
 
-      {estDeplie ? (
-        <div>
-          <Link
-            href={boutonSecondaire.url}
-            onClick={() => setEstDeplie(false)}
-            title={boutonSecondaire.title}
-            type="button"
-          >
-            {boutonSecondaire.label}
-          </Link>
-        </div>
-      ) : null}
-    </div>
+      <Dropdown.Content align="end">
+        <Dropdown.Link
+          href={boutonSecondaire.url}
+          onClick={() => setEstDeplie(false)}
+          title={boutonSecondaire.title}
+          type="button"
+        >
+          {boutonSecondaire.label}
+        </Dropdown.Link>
+      </Dropdown.Content>
+    </Dropdown.Root>
   );
 };
