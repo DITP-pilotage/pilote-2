@@ -70,13 +70,13 @@ export class EnvoyerLesRapportsPropositionValeurAvancementUseCase {
 
     const emailsEnEchec: string[] = [];
 
-    const tmp = [
-      listeDirecteursDeProjet[0],
-      listeDirecteursDeProjet[1],
-      listeDirecteursDeProjet[listeDirecteursDeProjet.length - 1],
-    ];
+    // const tmp = [
+    //   listeDirecteursDeProjet[0],
+    //   listeDirecteursDeProjet[1],
+    //   listeDirecteursDeProjet[listeDirecteursDeProjet.length - 1],
+    // ];
 
-    for (const directeur of tmp) {
+    for (const directeur of listeDirecteursDeProjet) {
       try {
         const { chantiers, conseillerEmail } =
           genererParametresEnvoieRapportProposition(
@@ -86,7 +86,7 @@ export class EnvoyerLesRapportsPropositionValeurAvancementUseCase {
             indicateursNonAJourParChantier,
           );
         await this.envoieEmailService.envoieUnEmail(
-          [{ email: "tconti34@gmail.com" }],
+          [{ email: directeur.email }],
           4,
           { chantiers, conseiller_email: conseillerEmail },
         );

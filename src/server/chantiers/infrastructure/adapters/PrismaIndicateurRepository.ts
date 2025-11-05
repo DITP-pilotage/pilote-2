@@ -1236,7 +1236,7 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
   }
 
   async recupererIndicateursNonAJourParChantierId(): Promise<
-    Map<string, string[]>
+    Map<string, { id: string; nom: string }[]>
   > {
     const indicateurs = await prisma.indicateur_territoire.findMany({
       where: {
@@ -1253,6 +1253,7 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
         indicateur_identite: {
           select: {
             id: true,
+            nom: true,
             chantier_id: true,
           },
         },
@@ -1260,17 +1261,24 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
       distinct: ["id"],
     });
 
-    const indicateursParChantier = new Map<string, string[]>();
+    const indicateursParChantier = new Map<
+      string,
+      { id: string; nom: string }[]
+    >();
 
     for (const indicateur of indicateurs) {
       const chantierId = indicateur.indicateur_identite.chantier_id;
       const indicateurId = indicateur.indicateur_identite.id;
+      const indicateurNom = indicateur.indicateur_identite.nom;
 
       if (!indicateursParChantier.has(chantierId)) {
         indicateursParChantier.set(chantierId, []);
       }
 
-      indicateursParChantier.get(chantierId)!.push(indicateurId);
+      indicateursParChantier.get(chantierId)!.push({
+        id: indicateurId,
+        nom: indicateurNom,
+      });
     }
 
     return indicateursParChantier;

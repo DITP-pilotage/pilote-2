@@ -6246,8 +6246,12 @@ describe("PrismaIndicateurRepository", () => {
 
       // Then
       expect(result.size).toEqual(2);
-      expect(result.get("CH-001")).toEqual(expect.arrayContaining(["IND-001"]));
-      expect(result.get("CH-002")).toEqual(["IND-003"]);
+      expect(result.get("CH-001")).toEqual(
+        expect.arrayContaining([{ id: "IND-001", nom: "Indicateur 001" }]),
+      );
+      expect(result.get("CH-002")).toEqual([
+        { id: "IND-003", nom: "Indicateur 003" },
+      ]);
     });
 
     it("doit exclure les indicateurs avec est_applicable = false ou null", async () => {
@@ -6337,7 +6341,9 @@ describe("PrismaIndicateurRepository", () => {
 
       // Then
       expect(result.size).toEqual(1);
-      expect(result.get("CH-001")).toEqual(["IND-003"]);
+      expect(result.get("CH-001")).toEqual([
+        { id: "IND-003", nom: "Indicateur 003" },
+      ]);
     });
 
     it("doit retourner une Map vide si aucun indicateur n'est non à jour", async () => {
@@ -6477,7 +6483,9 @@ describe("PrismaIndicateurRepository", () => {
 
       // Then
       expect(result.size).toEqual(1);
-      expect(result.get("CH-001")).toEqual(["IND-001"]);
+      expect(result.get("CH-001")).toEqual([
+        { id: "IND-001", nom: "Indicateur 001" },
+      ]);
       expect(result.has("CH-002")).toEqual(false);
     });
 
@@ -6584,7 +6592,9 @@ describe("PrismaIndicateurRepository", () => {
 
       // Then
       expect(result.size).toEqual(1);
-      expect(result.get("CH-001")).toEqual(["IND-001"]);
+      expect(result.get("CH-001")).toEqual([
+        { id: "IND-001", nom: "Indicateur 001" },
+      ]);
       expect(result.has("CH-002")).toEqual(false);
     });
   });

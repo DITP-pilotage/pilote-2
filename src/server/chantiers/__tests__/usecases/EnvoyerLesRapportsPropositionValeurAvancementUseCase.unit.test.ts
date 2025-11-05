@@ -186,8 +186,14 @@ describe("EnvoyerLesRapportsPropositionValeurAvancementUseCase", () => {
     ]);
 
     const indicateursNonAJourParChantier = new Map([
-      ["CH-001", ["IND-001", "IND-002"]],
-      ["CH-004", ["IND-003"]],
+      [
+        "CH-001",
+        [
+          { id: "IND-001", nom: "Indicateur 1" },
+          { id: "IND-002", nom: "Indicateur 2" },
+        ],
+      ],
+      ["CH-004", [{ id: "IND-003", nom: "Indicateur 3" }]],
     ]);
 
     const paramsDirecteur1 = genererParametresEnvoieRapportProposition(
