@@ -147,8 +147,7 @@ export const useFormSchema = (rattachements: Rattachement[]) => {
       } of getCommentairesObjectifsInvalides(rattachements, form)) {
         ctx.addIssue({
           code: "custom",
-          message:
-            "Le motif de consolidation est obligatoire lorsque la note est modifiée",
+          message: "Le motif est obligatoire lorsque la note est modifiée",
           path: [
             "fichesEvaluation",
             ficheEvaluationId,
@@ -165,8 +164,7 @@ export const useFormSchema = (rattachements: Rattachement[]) => {
       } of getCommentairesCriteresInvalides(rattachements, form)) {
         ctx.addIssue({
           code: "custom",
-          message:
-            "Le motif de consolidation est obligatoire lorsque la note est modifiée",
+          message: "Le motif est obligatoire lorsque la note est modifiée",
           path: [
             "fichesEvaluation",
             ficheEvaluationId,
