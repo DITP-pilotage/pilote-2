@@ -74,7 +74,7 @@ const useNavigation = () => {
   };
 };
 
-const Navigation: FunctionComponent<{}> = () => {
+export const Navigation: FunctionComponent<{}> = () => {
   const { data: session } = useSession();
   const currentApplication = useCurrentApplication();
   const router = useRouter();
@@ -175,14 +175,6 @@ const Navigation: FunctionComponent<{}> = () => {
           },
         ]
       : [
-          {
-            nom: "Accueil",
-            lien: "/",
-            matcher: "/accueil",
-            accessible: estAutoriseAAccederAPiloteEval(session!),
-            prefetch: true,
-            target: "_self",
-          },
           {
             nom: "Auto-évaluation",
             lien: "/evaluation",
@@ -291,5 +283,3 @@ const Navigation: FunctionComponent<{}> = () => {
     </div>
   );
 };
-
-export default Navigation;
