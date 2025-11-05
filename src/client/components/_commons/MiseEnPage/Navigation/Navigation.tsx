@@ -268,6 +268,11 @@ export const NavigationPilote = () => {
 
 export const NavigationPiloteEval = () => {
   const { data: session } = useSession();
+  const { data: droitsPiloteEval } =
+    api.evaluation.getDroitsPiloteEval.useQuery(undefined, {
+      enabled: session != null,
+    });
+
   if (session == null) return null;
 
   return (
@@ -285,7 +290,7 @@ export const NavigationPiloteEval = () => {
           nom: "Appréciation",
           lien: "/evaluation/consolidation",
           matcher: "/evaluation/consolidation",
-          accessible: estAutoriseAAccederAPiloteEval(session),
+          accessible: droitsPiloteEval?.peutAccederConsolidation ?? false,
           prefetch: true,
           target: "_self",
         },
@@ -293,7 +298,7 @@ export const NavigationPiloteEval = () => {
           nom: "Instruction",
           lien: "/evaluation/instruction",
           matcher: "/evaluation/instruction",
-          accessible: estAutoriseAAccederAPiloteEval(session),
+          accessible: droitsPiloteEval?.peutAccederInstruction ?? false,
           prefetch: true,
           target: "_self",
         },
@@ -301,7 +306,7 @@ export const NavigationPiloteEval = () => {
           nom: "Pilotage",
           lien: "/evaluation/pilotage",
           matcher: "/evaluation/pilotage",
-          accessible: estAutoriseAAccederAPiloteEval(session),
+          accessible: droitsPiloteEval?.peutAccederPilotage ?? false,
           prefetch: true,
           target: "_self",
         },
