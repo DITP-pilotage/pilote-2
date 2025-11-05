@@ -1,10 +1,43 @@
 import React, { FunctionComponent } from "react";
 import Link from "next/link";
-import "@gouvfr/dsfr/dist/component/sidemenu/sidemenu.min.css";
+import { clsxm } from "@/utils/clsxm";
 
 interface MenuLateralPanelAdministrateurProps {
   pageActive: string;
 }
+
+const menuItems = [
+  {
+    label: "Paramétrage source indicateur",
+    href: "/panel-administrateur/parametrage-source-indicateur",
+    pageKey: "parametrage-source-indicateur",
+  },
+  {
+    label: "🚧 Droits utilisateurs 🚧",
+    href: "/panel-administrateur/droits-utilisateurs",
+    pageKey: "metadata-chantier",
+  },
+  {
+    label: "🚧 Metadata chantier 🚧",
+    href: "/panel-administrateur/metadata-chantier",
+    pageKey: "metadata-chantier",
+  },
+  {
+    label: "🚧 Centre d'aide 🚧",
+    href: "/panel-administrateur/centre-aide",
+    pageKey: "centre-aide",
+  },
+  {
+    label: "🚧 Nouveauté 🚧",
+    href: "/panel-administrateur/nouveaute",
+    pageKey: "nouveaute",
+  },
+  {
+    label: "🚧 Feature flipping 🚧",
+    href: "/panel-administrateur/feature-flipping",
+    pageKey: "feature-flipping",
+  },
+] as const;
 
 export const MenuLateralPanelAdministrateur: FunctionComponent<
   MenuLateralPanelAdministrateurProps
@@ -12,81 +45,44 @@ export const MenuLateralPanelAdministrateur: FunctionComponent<
   return (
     <nav
       aria-label="Menu latéral"
-      className="fr-sidemenu"
+      className="bg-white border-r border-gray-200 min-w-[250px] shrink-0"
       role="navigation"
-      style={{ minWidth: "250px", flexShrink: 0 }}
     >
-      <div className="fr-sidemenu__inner !p-4">
+      <div className="p-4">
         <button
           aria-controls="fr-sidemenu-wrapper"
           aria-expanded="false"
-          className="fr-sidemenu__btn"
-          hidden
+          className="hidden"
           type="button"
         >
           Panel Administrateur
         </button>
-        <div className="fr-collapse" id="fr-sidemenu-wrapper">
-          <div className="fr-sidemenu__title">Panel Administrateur</div>
-          <ul className="fr-sidemenu__list">
-            <li className="fr-sidemenu__item">
-              <Link
-                aria-current={
-                  pageActive === "parametrage-source-indicateur"
-                    ? "page"
-                    : undefined
-                }
-                className="fr-sidemenu__link"
-                href="/panel-administrateur/parametrage-source-indicateur"
-                target="_self"
-              >
-                Paramétrage source indicateur
-              </Link>
-            </li>
-            <li className="fr-sidemenu__item">
-              <Link
-                aria-current={
-                  pageActive === "metadata-chantier" ? "page" : undefined
-                }
-                className="fr-sidemenu__link"
-                href="/panel-administrateur/metadata-chantier"
-                target="_self"
-              >
-                Metadata chantier
-              </Link>
-            </li>
-            <li className="fr-sidemenu__item">
-              <Link
-                aria-current={pageActive === "centre-aide" ? "page" : undefined}
-                className="fr-sidemenu__link"
-                href="/panel-administrateur/centre-aide"
-                target="_self"
-              >
-                Centre d'aide
-              </Link>
-            </li>
-            <li className="fr-sidemenu__item">
-              <Link
-                aria-current={pageActive === "nouveaute" ? "page" : undefined}
-                className="fr-sidemenu__link"
-                href="/panel-administrateur/nouveaute"
-                target="_self"
-              >
-                Nouveauté
-              </Link>
-            </li>
-            <li className="fr-sidemenu__item">
-              <Link
-                aria-current={
-                  pageActive === "feature-flipping" ? "page" : undefined
-                }
-                className="fr-sidemenu__link"
-                href="/panel-administrateur/feature-flipping"
-                target="_self"
-              >
-                Feature flipping
-              </Link>
-            </li>
+        <div id="fr-sidemenu-wrapper">
+          <div className="text-lg font-bold mb-4 text-gray-900">
+            Panel Administrateur
+          </div>
+          <ul className="space-y-1 list-style-none !pl-0">
+            {menuItems.map((item) => {
+              const isActive = pageActive === item.pageKey;
+              return (
+                <li key={item.pageKey}>
+                  <Link
+                    aria-current={isActive ? "page" : undefined}
+                    className={clsxm(
+                      `!block !px-4 !py-2 !rounded-md !transition-colors !bg-none`,
+                      {
+                        "!bg-blue-100 !text-blue-700 !font-medium": isActive,
+                        "!text-gray-700 !hover:bg-gray-100": !isActive,
+                      },
+                    )}
+                    href={item.href}
+                    target="_self"
+                  >
+                    {item.label}
+                  </Link>
+                </li>
+              );
+            })}
           </ul>
         </div>
       </div>
