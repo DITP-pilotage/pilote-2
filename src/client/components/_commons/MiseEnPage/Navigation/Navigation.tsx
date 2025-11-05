@@ -6,7 +6,6 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
 import { Session } from "next-auth";
-import { FunctionComponent } from "react";
 import { $Enums } from "@prisma/client";
 import { Utilisateur } from "@/components/_commons/MiseEnPage/EnTete/Utilisateur/Utilisateur";
 import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
@@ -74,16 +73,23 @@ const useNavigation = () => {
   };
 };
 
-export const Navigation: FunctionComponent<{}> = () => {
+type LienNavigation = {
+  nom: string;
+  lien: string;
+  matcher: string;
+  accessible?: boolean;
+  prefetch: boolean;
+  target: string;
+};
+
+export const BaseNavigation = ({ pages }: { pages: LienNavigation[] }) => {
   const { data: session } = useSession();
   const currentApplication = useCurrentApplication();
+
   const router = useRouter();
   const urlActuelle = router.pathname;
 
-  const {
-    vérifierValeurApplicationEstIndisponible,
-    vérifierSuiviCompletudeEstDisponibleEstIndisponible,
-  } = useNavigation();
+  const { vérifierValeurApplicationEstIndisponible } = useNavigation();
 
   if (
     vérifierValeurApplicationEstIndisponible &&
@@ -92,28 +98,6 @@ export const Navigation: FunctionComponent<{}> = () => {
   ) {
     router.push("/503");
   }
-
-  const filtresActifs = getFiltresActifs();
-
-  const territoireCodeURL = router.query.territoireCode as string | undefined;
-  const jalonUrl = router.query.jalon as string | undefined;
-
-  const init: Partial<FiltreAccueil> = {
-    jalon: jalonUrl,
-  };
-
-  const territoireCodeStore = Boolean(filtresActifs?.territoireCode)
-    ? filtresActifs.territoireCode
-    : session?.habilitations.lecture.territoires.includes("NAT-FR")
-      ? "NAT-FR"
-      : session?.habilitations.lecture.territoires[0];
-  const territoireCode = territoireCodeURL ?? territoireCodeStore;
-
-  const queryParamString = getQueryParamString(
-    filtresActifs,
-    new Set(["territoireCode"]),
-    init,
-  );
 
   const { data: listerNouveautes } = api.parametrageNouveautes.lister.useQuery(
     undefined,
@@ -127,87 +111,6 @@ export const Navigation: FunctionComponent<{}> = () => {
       ? récupérerUnCookie("derniereVersionNouveauteConsulte") ===
         listerNouveautes[0].version
       : true;
-
-  const pages =
-    currentApplication === $Enums.application_accessible.PILOTE
-      ? [
-          {
-            nom: "Accueil",
-            lien: `/accueil/chantier/${territoireCode}${queryParamString.length > 0 ? `?${queryParamString}` : ""}`,
-            matcher: "/accueil/chantier/[territoireCode]",
-            accessible: true,
-            prefetch: true,
-            target: "_self",
-          },
-          {
-            nom: "Gestion des comptes",
-            lien: "/admin/utilisateurs",
-            matcher: "/admin/utilisateurs",
-            accessible: estAutoriséAAccéderALaGestionDesComptes(session),
-            prefetch: false,
-            target: "_self",
-          },
-          {
-            nom: "Nouveautés",
-            lien: "/nouveautes",
-            matcher: "/nouveautes",
-            accessible: true,
-            prefetch: false,
-            target: "_self",
-          },
-          {
-            nom: "Centre d'aide",
-            lien: "/centreaide",
-            matcher: "/centreaide",
-            accessible: true,
-            prefetch: false,
-            target: "_blank",
-          },
-          {
-            nom: "Suivi de la complétude",
-            lien: "https://copilot-metabase.osc-secnum-fr1.scalingo.io/dashboard/39-tableau-de-bord-de-conformite-pilote",
-            matcher: "/suivicompletude",
-            accessible:
-              vérifierSuiviCompletudeEstDisponibleEstIndisponible &&
-              estAdministrateurOuPilotage(session!),
-            prefetch: false,
-            target: "_blank",
-          },
-        ]
-      : [
-          {
-            nom: "Auto-évaluation",
-            lien: "/evaluation",
-            matcher: "/evaluation",
-            accessible: estAutoriseAAccederAPiloteEval(session!),
-            prefetch: true,
-            target: "_self",
-          },
-          {
-            nom: "Appréciation",
-            lien: "/evaluation/consolidation",
-            matcher: "/evaluation/consolidation",
-            accessible: estAutoriseAAccederAPiloteEval(session!),
-            prefetch: true,
-            target: "_self",
-          },
-          {
-            nom: "Instruction",
-            lien: "/evaluation/instruction",
-            matcher: "/evaluation/instruction",
-            accessible: estAutoriseAAccederAPiloteEval(session!),
-            prefetch: true,
-            target: "_self",
-          },
-          {
-            nom: "Pilotage",
-            lien: "/evaluation/pilotage",
-            matcher: "/evaluation/pilotage",
-            accessible: estAutoriseAAccederAPiloteEval(session!),
-            prefetch: true,
-            target: "_self",
-          },
-        ];
 
   return (
     <div
@@ -282,4 +185,136 @@ export const Navigation: FunctionComponent<{}> = () => {
       </div>
     </div>
   );
+};
+
+export const NavigationPilote = () => {
+  const { data: session } = useSession();
+  const router = useRouter();
+
+  const { vérifierSuiviCompletudeEstDisponibleEstIndisponible } =
+    useNavigation();
+
+  const filtresActifs = getFiltresActifs();
+
+  const territoireCodeURL = router.query.territoireCode as string | undefined;
+  const jalonUrl = router.query.jalon as string | undefined;
+
+  const init: Partial<FiltreAccueil> = {
+    jalon: jalonUrl,
+  };
+
+  const territoireCodeStore = Boolean(filtresActifs?.territoireCode)
+    ? filtresActifs.territoireCode
+    : session?.habilitations.lecture.territoires.includes("NAT-FR")
+      ? "NAT-FR"
+      : session?.habilitations.lecture.territoires[0];
+  const territoireCode = territoireCodeURL ?? territoireCodeStore;
+
+  const queryParamString = getQueryParamString(
+    filtresActifs,
+    new Set(["territoireCode"]),
+    init,
+  );
+
+  return (
+    <BaseNavigation
+      pages={[
+        {
+          nom: "Accueil",
+          lien: `/accueil/chantier/${territoireCode}${queryParamString.length > 0 ? `?${queryParamString}` : ""}`,
+          matcher: "/accueil/chantier/[territoireCode]",
+          accessible: true,
+          prefetch: true,
+          target: "_self",
+        } as LienNavigation,
+        {
+          nom: "Gestion des comptes",
+          lien: "/admin/utilisateurs",
+          matcher: "/admin/utilisateurs",
+          accessible: estAutoriséAAccéderALaGestionDesComptes(session),
+          prefetch: false,
+          target: "_self",
+        },
+        {
+          nom: "Nouveautés",
+          lien: "/nouveautes",
+          matcher: "/nouveautes",
+          accessible: true,
+          prefetch: false,
+          target: "_self",
+        },
+        {
+          nom: "Centre d'aide",
+          lien: "/centreaide",
+          matcher: "/centreaide",
+          accessible: true,
+          prefetch: false,
+          target: "_blank",
+        },
+        {
+          nom: "Suivi de la complétude",
+          lien: "https://copilot-metabase.osc-secnum-fr1.scalingo.io/dashboard/39-tableau-de-bord-de-conformite-pilote",
+          matcher: "/suivicompletude",
+          accessible:
+            Boolean(vérifierSuiviCompletudeEstDisponibleEstIndisponible) &&
+            estAdministrateurOuPilotage(session!),
+          prefetch: false,
+          target: "_blank",
+        },
+      ]}
+    />
+  );
+};
+
+export const NavigationPiloteEval = () => {
+  const { data: session } = useSession();
+  if (session == null) return null;
+
+  return (
+    <BaseNavigation
+      pages={[
+        {
+          nom: "Auto-évaluation",
+          lien: "/evaluation",
+          matcher: "/evaluation",
+          accessible: estAutoriseAAccederAPiloteEval(session),
+          prefetch: true,
+          target: "_self",
+        },
+        {
+          nom: "Appréciation",
+          lien: "/evaluation/consolidation",
+          matcher: "/evaluation/consolidation",
+          accessible: estAutoriseAAccederAPiloteEval(session),
+          prefetch: true,
+          target: "_self",
+        },
+        {
+          nom: "Instruction",
+          lien: "/evaluation/instruction",
+          matcher: "/evaluation/instruction",
+          accessible: estAutoriseAAccederAPiloteEval(session),
+          prefetch: true,
+          target: "_self",
+        },
+        {
+          nom: "Pilotage",
+          lien: "/evaluation/pilotage",
+          matcher: "/evaluation/pilotage",
+          accessible: estAutoriseAAccederAPiloteEval(session),
+          prefetch: true,
+          target: "_self",
+        },
+      ]}
+    />
+  );
+};
+
+export const Navigation = () => {
+  const currentApplication = useCurrentApplication();
+
+  if (currentApplication === $Enums.application_accessible.PILOTE_EVAL)
+    return <NavigationPiloteEval />;
+
+  return <NavigationPilote />;
 };
