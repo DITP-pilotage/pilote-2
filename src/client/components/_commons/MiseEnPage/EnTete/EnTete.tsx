@@ -8,6 +8,7 @@ import BandeauInformation from "@/components/_commons/BandeauInformation/Bandeau
 import api from "@/server/infrastructure/api/trpc/api";
 import { BoutonContacterEquipePilote } from "@/components/PageAccueil/BoutonContacterEquipePilote";
 import { BoutonSeConnecter } from "@/components/_commons/BoutonSeConnecter";
+import { BoutonApplicationsPilote } from "@/components/_commons/MiseEnPage/EnTete/BoutonApplicationsPilote";
 
 const useEntete = () => {
   const { data: messageInformation } =
@@ -64,17 +65,24 @@ export const EnTete = () => {
             </div>
             <div className="fr-header__tools">
               <div className="fr-header__tools-links">
-                <ul className="flex align-center">
-                  <li className="fr-mr-md-2w">
+                <ul className="flex align-center gap-4">
+                  <li>
                     <BoutonContacterEquipePilote />
                   </li>
-                  <li>
-                    {session?.user?.email ? (
-                      <Utilisateur email={session.user.email} />
-                    ) : (
+                  {session?.user?.email ? (
+                    <>
+                      <li>
+                        <BoutonApplicationsPilote />
+                      </li>
+                      <li>
+                        <Utilisateur email={session.user.email} />
+                      </li>
+                    </>
+                  ) : (
+                    <li>
                       <BoutonSeConnecter />
-                    )}
-                  </li>
+                    </li>
+                  )}
                 </ul>
               </div>
             </div>

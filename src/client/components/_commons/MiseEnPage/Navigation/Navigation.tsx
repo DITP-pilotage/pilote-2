@@ -21,6 +21,7 @@ import { getQueryParamString } from "@/client/utils/getQueryParamString";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
 import { BoutonContacterEquipePilote } from "@/components/PageAccueil/BoutonContacterEquipePilote";
 import { BoutonSeConnecter } from "@/components/_commons/BoutonSeConnecter";
+import { useCurrentApplication } from "@/client/hooks/useCurrentApplication";
 
 const fermerLaModaleDuMenu = () => {
   if (typeof window.dsfr === "function") {
@@ -75,6 +76,7 @@ const useNavigation = () => {
 
 const Navigation: FunctionComponent<{}> = () => {
   const { data: session } = useSession();
+  const currentApplication = useCurrentApplication();
   const router = useRouter();
   const urlActuelle = router.pathname;
 
@@ -126,58 +128,62 @@ const Navigation: FunctionComponent<{}> = () => {
         listerNouveautes[0].version
       : true;
 
-  const pages = [
-    {
-      nom: "Accueil",
-      lien: `/accueil/chantier/${territoireCode}${queryParamString.length > 0 ? `?${queryParamString}` : ""}`,
-      matcher: "/accueil/chantier/[territoireCode]",
-      accessible: true,
-      prefetch: true,
-      target: "_self",
-    },
-    {
-      nom: "Gestion des comptes",
-      lien: "/admin/utilisateurs",
-      matcher: "/admin/utilisateurs",
-      accessible: estAutoriséAAccéderALaGestionDesComptes(session),
-      prefetch: false,
-      target: "_self",
-    },
-    {
-      nom: "Nouveautés",
-      lien: "/nouveautes",
-      matcher: "/nouveautes",
-      accessible: true,
-      prefetch: false,
-      target: "_self",
-    },
-    {
-      nom: "Centre d'aide",
-      lien: "/centreaide",
-      matcher: "/centreaide",
-      accessible: true,
-      prefetch: false,
-      target: "_blank",
-    },
-    {
-      nom: "Suivi de la complétude",
-      lien: "https://copilot-metabase.osc-secnum-fr1.scalingo.io/dashboard/39-tableau-de-bord-de-conformite-pilote",
-      matcher: "/suivicompletude",
-      accessible:
-        vérifierSuiviCompletudeEstDisponibleEstIndisponible &&
-        estAdministrateurOuPilotage(session!),
-      prefetch: false,
-      target: "_blank",
-    },
-    {
-      nom: "Évaluation",
-      lien: "/evaluation",
-      matcher: "/evaluation",
-      accessible: estAutoriseAAccederAPiloteEval(session!),
-      prefetch: true,
-      target: "_self",
-    },
-  ];
+  const pages =
+    currentApplication === $Enums.application_accessible.PILOTE
+      ? [
+          {
+            nom: "Accueil",
+            lien: `/accueil/chantier/${territoireCode}${queryParamString.length > 0 ? `?${queryParamString}` : ""}`,
+            matcher: "/accueil/chantier/[territoireCode]",
+            accessible: true,
+            prefetch: true,
+            target: "_self",
+          },
+          {
+            nom: "Gestion des comptes",
+            lien: "/admin/utilisateurs",
+            matcher: "/admin/utilisateurs",
+            accessible: estAutoriséAAccéderALaGestionDesComptes(session),
+            prefetch: false,
+            target: "_self",
+          },
+          {
+            nom: "Nouveautés",
+            lien: "/nouveautes",
+            matcher: "/nouveautes",
+            accessible: true,
+            prefetch: false,
+            target: "_self",
+          },
+          {
+            nom: "Centre d'aide",
+            lien: "/centreaide",
+            matcher: "/centreaide",
+            accessible: true,
+            prefetch: false,
+            target: "_blank",
+          },
+          {
+            nom: "Suivi de la complétude",
+            lien: "https://copilot-metabase.osc-secnum-fr1.scalingo.io/dashboard/39-tableau-de-bord-de-conformite-pilote",
+            matcher: "/suivicompletude",
+            accessible:
+              vérifierSuiviCompletudeEstDisponibleEstIndisponible &&
+              estAdministrateurOuPilotage(session!),
+            prefetch: false,
+            target: "_blank",
+          },
+        ]
+      : [
+          {
+            nom: "Accueil",
+            lien: "/evaluation",
+            matcher: "/evaluation",
+            accessible: estAutoriseAAccederAPiloteEval(session!),
+            prefetch: true,
+            target: "_self",
+          },
+        ];
 
   return (
     <div
@@ -242,7 +248,8 @@ const Navigation: FunctionComponent<{}> = () => {
                     </li>
                   ),
               )}
-              {estAdministrateur(session) ? (
+              {currentApplication === $Enums.application_accessible.PILOTE &&
+              estAdministrateur(session) ? (
                 <MenuItemGestionContenu urlActuelle={urlActuelle} />
               ) : null}
             </ul>
