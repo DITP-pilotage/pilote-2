@@ -39,7 +39,9 @@ export const EnTete = () => {
                   <p className="fr-logo fr-mr-5v">Gouvernement</p>
                   <div>
                     <Link href="/" title="Retour à l'accueil du site">
-                      <p className="fr-header__service-title">PILOTE</p>
+                      <p className="fr-header__service-title">
+                        La suite PILOTE
+                      </p>
                     </Link>
                     <p className="fr-header__service-tagline fr-text--sm">
                       Piloter l'action publique par les résultats

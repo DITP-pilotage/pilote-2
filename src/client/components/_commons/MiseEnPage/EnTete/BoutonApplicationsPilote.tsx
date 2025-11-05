@@ -8,6 +8,19 @@ import { ArrowSLine1Icon } from "@/components/_commons/Icones/ArrowSLine1Icon";
 import { useCurrentApplication } from "@/client/hooks/useCurrentApplication";
 import { GridIcon } from "@/components/_commons/Icones/GridIcon";
 
+const APPLICATIONS = {
+  [$Enums.application_accessible.PILOTE]: {
+    label: "PILOTE",
+    url: "/",
+    title: "Piloter mes chantiers",
+  },
+  [$Enums.application_accessible.PILOTE_EVAL]: {
+    label: "PILOTE ÉVAL",
+    url: "/evaluation",
+    title: "Évaluer les résultats",
+  },
+};
+
 export const BoutonApplicationsPilote = () => {
   const [estDeplie, setEstDeplie] = useState<boolean>(false);
   const session = useSession();
@@ -21,21 +34,23 @@ export const BoutonApplicationsPilote = () => {
 
   const estPiloteEval =
     currentApplication === $Enums.application_accessible.PILOTE_EVAL;
-  const labelPrincipal = estPiloteEval ? "PILOTE ÉVAL" : "PILOTE";
-  const option = estPiloteEval
-    ? { label: "PILOTE", url: "/" }
-    : { label: "PILOTE ÉVAL", url: "/evaluation" };
+  const boutonPrincipal = estPiloteEval
+    ? APPLICATIONS.PILOTE_EVAL
+    : APPLICATIONS.PILOTE;
+  const boutonSecondaire = estPiloteEval
+    ? APPLICATIONS.PILOTE
+    : APPLICATIONS.PILOTE_EVAL;
 
   return (
     <div className="flex flex-col">
       <button
         className="flex fr-text--sm !p-0 !text-primary"
-        name="Changer d'application"
         onClick={() => setEstDeplie(!estDeplie)}
+        title={boutonPrincipal.title}
         type="button"
       >
         <Icone icone={GridIcon} />
-        <span className="pl-2 pr-1">{labelPrincipal}</span>
+        <span className="pl-2 pr-1">{boutonPrincipal.label}</span>
         <Icone
           className={clsxm(
             "transition-transform duration-200 ease-in-out",
@@ -48,11 +63,12 @@ export const BoutonApplicationsPilote = () => {
       {estDeplie ? (
         <div>
           <Link
-            href={option.url}
+            href={boutonSecondaire.url}
             onClick={() => setEstDeplie(false)}
+            title={boutonSecondaire.title}
             type="button"
           >
-            {option.label}
+            {boutonSecondaire.label}
           </Link>
         </div>
       ) : null}
