@@ -63,50 +63,6 @@ const EvaluationPage = (
           </header>
 
           <ListeAutoEvaluations fichesEvaluation={fichesEvaluation} />
-
-          <div className="mt-8 grid grid-cols-3 gap-4">
-            <div className="bg-white rounded shadow">
-              <header className="p-4 bg-dsfr-blue-france-925 border-b-2 border-black">
-                <span className="font-bold text-sm">Consolidation</span>
-              </header>
-              <div className="p-4">
-                <Link
-                  className="text-blue-600 hover:underline"
-                  href="/evaluation/consolidation"
-                >
-                  Accéder à la consolidation
-                </Link>
-              </div>
-            </div>
-
-            <div className="bg-white rounded shadow">
-              <header className="p-4 bg-dsfr-blue-france-925 border-b-2 border-black">
-                <span className="font-bold text-sm">Instruction</span>
-              </header>
-              <div className="p-4">
-                <Link
-                  className="text-blue-600 hover:underline"
-                  href="/evaluation/instruction"
-                >
-                  Accéder à l'instruction
-                </Link>
-              </div>
-            </div>
-
-            <div className="bg-white rounded shadow">
-              <header className="p-4 bg-dsfr-blue-france-925 border-b-2 border-black">
-                <span className="font-bold text-sm">Pilotage</span>
-              </header>
-              <div className="p-4">
-                <Link
-                  className="text-blue-600 hover:underline"
-                  href="/evaluation/pilotage"
-                >
-                  Accéder au pilotage
-                </Link>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
     </main>
