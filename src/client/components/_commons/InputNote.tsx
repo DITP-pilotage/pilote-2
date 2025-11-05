@@ -19,7 +19,7 @@ export const InputNote = forwardRef<
       >
         <input
           className={clsxm(
-            "focus:!outline-none w-[6ch] text-right px-4 py-2 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none",
+            "focus:!outline-none w-[6ch] text-right px-4 py-2 [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none",
             className,
             {
               "!border-dsfr-error-425": !!errorMessage,
@@ -27,6 +27,10 @@ export const InputNote = forwardRef<
           )}
           {...props}
           ref={ref}
+          style={{
+            appearance: "textfield",
+            ...props.style,
+          }}
           type="number"
         />
         <span
