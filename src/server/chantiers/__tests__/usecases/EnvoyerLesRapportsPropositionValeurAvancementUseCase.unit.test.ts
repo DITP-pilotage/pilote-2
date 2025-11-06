@@ -268,6 +268,7 @@ describe("EnvoyerLesRapportsPropositionValeurAvancementUseCase", () => {
       {
         chantiers: paramsDirecteur1.chantiers,
         conseiller_email: paramsDirecteur1.conseillerEmail,
+        texteIntro: "votre chantier prioritaire",
       },
     );
     expect(envoieEmailService.envoieUnEmail).toHaveBeenNthCalledWith(
@@ -277,6 +278,7 @@ describe("EnvoyerLesRapportsPropositionValeurAvancementUseCase", () => {
       {
         chantiers: paramsDirecteur2.chantiers,
         conseiller_email: paramsDirecteur2.conseillerEmail,
+        texteIntro: "votre chantier prioritaire",
       },
     );
     expect(envoieEmailService.envoieUnEmail).toHaveBeenNthCalledWith(
@@ -286,6 +288,7 @@ describe("EnvoyerLesRapportsPropositionValeurAvancementUseCase", () => {
       {
         chantiers: paramsDirecteur3.chantiers,
         conseiller_email: paramsDirecteur3.conseillerEmail,
+        texteIntro: "vos chantiers prioritaires",
       },
     );
     expect(envoieEmailService.envoieUnEmail).toHaveBeenNthCalledWith(
@@ -295,6 +298,7 @@ describe("EnvoyerLesRapportsPropositionValeurAvancementUseCase", () => {
       {
         chantiers: paramsDirecteur4.chantiers,
         conseiller_email: paramsDirecteur4.conseillerEmail,
+        texteIntro: "votre chantier prioritaire",
       },
     );
   });

@@ -22,6 +22,7 @@ type ParametreEnvoieRapportProposition = {
   indicateursPropositions: ParamIndicateurPropositions[];
   afficherSectionMajIndicateur: boolean;
   indicateursNonMisAJour: { id: string; nom: string; mailles: string[] }[];
+  nombreIndicateursNonMisAJour: string;
 };
 
 export const genererParametresEnvoieRapportProposition = (
@@ -41,6 +42,7 @@ export const genererParametresEnvoieRapportProposition = (
 ): {
   chantiers: ParametreEnvoieRapportProposition[];
   conseillerEmail: string;
+  texteIntro: string;
 } => {
   const params: ParametreEnvoieRapportProposition[] = [];
   for (const chantierId of listeChantierIds) {
@@ -95,15 +97,26 @@ export const genererParametresEnvoieRapportProposition = (
         nombre_propositions:
           nombrePropositions > 1
             ? `${nombrePropositions} propositions territoriales de valeur d'avancement`
-            : "1 proposition territoriale de valeur d'avancement",
+            : `${nombrePropositions} proposition territoriale de valeur d'avancement`,
         conseiller_email: chantier.conseillerMail,
         afficherSectionPropositions,
         indicateursPropositions: indicateursPropositions,
         afficherSectionMajIndicateur,
         indicateursNonMisAJour: indicateursNonMisAJour ?? [],
+        nombreIndicateursNonMisAJour:
+          (indicateursNonMisAJour?.length ?? 0 > 1)
+            ? `${indicateursNonMisAJour?.length ?? 0} indicateurs à mettre à jour`
+            : `${indicateursNonMisAJour?.length ?? 0} indicateur à mettre à jour`,
       });
     }
   }
 
-  return { chantiers: params, conseillerEmail: params[0].conseiller_email };
+  return {
+    chantiers: params,
+    conseillerEmail: params[0].conseiller_email,
+    texteIntro:
+      params.length > 1
+        ? "vos chantiers prioritaires"
+        : "votre chantier prioritaire",
+  };
 };

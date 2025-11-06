@@ -65,6 +65,7 @@ describe("genererParametresEnvoieRapportProposition", () => {
           "1 proposition territoriale de valeur d'avancement",
         conseiller_email: "conseiller1@exemple.com",
         afficherSectionPropositions: true,
+        nombreIndicateursNonMisAJour: "0 indicateur à mettre à jour",
         indicateursPropositions: [
           {
             id: "IND-001",
