@@ -249,13 +249,13 @@ describe("genererParametresEnvoieRapportProposition", () => {
 
       const indicateursNonAJourParChantier = new Map<
         string,
-        { id: string; nom: string }[]
+        { id: string; nom: string; mailles: string[] }[]
       >([
         [
           "CH-001",
           [
-            { id: "IND-001", nom: "Indicateur 1" },
-            { id: "IND-002", nom: "Indicateur 2" },
+            { id: "IND-001", nom: "Indicateur 1", mailles: ["NAT"] },
+            { id: "IND-002", nom: "Indicateur 2", mailles: ["NAT", "REG"] },
           ],
         ],
       ]);
@@ -272,8 +272,8 @@ describe("genererParametresEnvoieRapportProposition", () => {
       expect(result.chantiers).toHaveLength(1);
       expect(result.chantiers[0].afficherSectionMajIndicateur).toEqual(true);
       expect(result.chantiers[0].indicateursNonMisAJour).toEqual([
-        { id: "IND-001", nom: "Indicateur 1" },
-        { id: "IND-002", nom: "Indicateur 2" },
+        { id: "IND-001", nom: "Indicateur 1", mailles: ["NAT"] },
+        { id: "IND-002", nom: "Indicateur 2", mailles: ["NAT", "REG"] },
       ]);
     });
 
@@ -323,7 +323,7 @@ describe("genererParametresEnvoieRapportProposition", () => {
 
       const indicateursNonAJourParChantier = new Map<
         string,
-        { id: string; nom: string }[]
+        { id: string; nom: string; mailles: string[] }[]
       >();
 
       // When
@@ -388,13 +388,13 @@ describe("genererParametresEnvoieRapportProposition", () => {
 
       const indicateursNonAJourParChantier = new Map<
         string,
-        { id: string; nom: string }[]
+        { id: string; nom: string; mailles: string[] }[]
       >([
         [
           "CH-001",
           [
-            { id: "IND-002", nom: "Indicateur 2" },
-            { id: "IND-003", nom: "Indicateur 3" },
+            { id: "IND-002", nom: "Indicateur 2", mailles: ["NAT"] },
+            { id: "IND-003", nom: "Indicateur 3", mailles: ["REG"] },
           ],
         ],
       ]);
@@ -496,13 +496,13 @@ describe("genererParametresEnvoieRapportProposition", () => {
 
       const indicateursNonAJourParChantier = new Map<
         string,
-        { id: string; nom: string }[]
+        { id: string; nom: string; mailles: string[] }[]
       >([
         [
           "CH-001",
           [
-            { id: "IND-001", nom: "Indicateur 1" },
-            { id: "IND-002", nom: "Indicateur 2" },
+            { id: "IND-001", nom: "Indicateur 1", mailles: ["NAT"] },
+            { id: "IND-002", nom: "Indicateur 2", mailles: ["DEPT"] },
           ],
         ],
       ]);
@@ -577,7 +577,7 @@ describe("genererParametresEnvoieRapportProposition", () => {
 
       const indicateursNonAJourParChantier = new Map<
         string,
-        { id: string; nom: string }[]
+        { id: string; nom: string; mailles: string[] }[]
       >();
 
       // When

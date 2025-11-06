@@ -189,11 +189,11 @@ describe("EnvoyerLesRapportsPropositionValeurAvancementUseCase", () => {
       [
         "CH-001",
         [
-          { id: "IND-001", nom: "Indicateur 1" },
-          { id: "IND-002", nom: "Indicateur 2" },
+          { id: "IND-001", nom: "Indicateur 1", mailles: ["NAT"] },
+          { id: "IND-002", nom: "Indicateur 2", mailles: ["NAT", "REG"] },
         ],
       ],
-      ["CH-004", [{ id: "IND-003", nom: "Indicateur 3" }]],
+      ["CH-004", [{ id: "IND-003", nom: "Indicateur 3", mailles: ["DEPT"] }]],
     ]);
 
     const paramsDirecteur1 = genererParametresEnvoieRapportProposition(

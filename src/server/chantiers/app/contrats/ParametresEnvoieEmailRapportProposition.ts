@@ -21,7 +21,7 @@ type ParametreEnvoieRapportProposition = {
   afficherSectionPropositions: boolean;
   indicateursPropositions: ParamIndicateurPropositions[];
   afficherSectionMajIndicateur: boolean;
-  indicateursNonMisAJour: { id: string; nom: string }[];
+  indicateursNonMisAJour: { id: string; nom: string; mailles: string[] }[];
 };
 
 export const genererParametresEnvoieRapportProposition = (
@@ -34,7 +34,10 @@ export const genererParametresEnvoieRapportProposition = (
     string,
     Map<string, PropositionValeurAvancementRapport[]>
   >,
-  indicateursNonAJourParChantier: Map<string, { id: string; nom: string }[]>,
+  indicateursNonAJourParChantier: Map<
+    string,
+    { id: string; nom: string; mailles: string[] }[]
+  >,
 ): {
   chantiers: ParametreEnvoieRapportProposition[];
   conseillerEmail: string;

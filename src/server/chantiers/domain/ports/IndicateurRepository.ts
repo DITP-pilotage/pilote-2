@@ -41,6 +41,6 @@ export interface IndicateurRepository {
     dateDerniereExecutionDatajobs: Date,
   ): Promise<DetailsIndicateurTerritoire>;
   recupererIndicateursNonAJourParChantierId(): Promise<
-    Map<string, { id: string; nom: string }[]>
+    Map<string, { id: string; nom: string; mailles: string[] }[]>
   >;
 }

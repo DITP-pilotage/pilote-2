@@ -6247,10 +6247,12 @@ describe("PrismaIndicateurRepository", () => {
       // Then
       expect(result.size).toEqual(2);
       expect(result.get("CH-001")).toEqual(
-        expect.arrayContaining([{ id: "IND-001", nom: "Indicateur 001" }]),
+        expect.arrayContaining([
+          { id: "IND-001", nom: "Indicateur 001", mailles: ["NAT"] },
+        ]),
       );
       expect(result.get("CH-002")).toEqual([
-        { id: "IND-003", nom: "Indicateur 003" },
+        { id: "IND-003", nom: "Indicateur 003", mailles: ["NAT"] },
       ]);
     });
 
@@ -6342,7 +6344,7 @@ describe("PrismaIndicateurRepository", () => {
       // Then
       expect(result.size).toEqual(1);
       expect(result.get("CH-001")).toEqual([
-        { id: "IND-003", nom: "Indicateur 003" },
+        { id: "IND-003", nom: "Indicateur 003", mailles: ["NAT"] },
       ]);
     });
 
@@ -6484,7 +6486,7 @@ describe("PrismaIndicateurRepository", () => {
       // Then
       expect(result.size).toEqual(1);
       expect(result.get("CH-001")).toEqual([
-        { id: "IND-001", nom: "Indicateur 001" },
+        { id: "IND-001", nom: "Indicateur 001", mailles: ["NAT"] },
       ]);
       expect(result.has("CH-002")).toEqual(false);
     });
@@ -6593,9 +6595,151 @@ describe("PrismaIndicateurRepository", () => {
       // Then
       expect(result.size).toEqual(1);
       expect(result.get("CH-001")).toEqual([
-        { id: "IND-001", nom: "Indicateur 001" },
+        { id: "IND-001", nom: "Indicateur 001", mailles: ["NAT"] },
       ]);
       expect(result.has("CH-002")).toEqual(false);
+    });
+
+    it("doit regrouper les mailles non à jour pour un même indicateur", async () => {
+      // Given
+      await prisma.chantier_identite.create({
+        data: {
+          id: "CH-001",
+          nom: "Chantier 001",
+          statut: "PUBLIE",
+        },
+      });
+
+      await prisma.chantier_territoire.createMany({
+        data: [
+          {
+            id: "CH-001",
+            territoire_code: "NAT-FR",
+            code_insee: "FR",
+            maille: "NAT",
+            zone_id: "FRANCE",
+          },
+          {
+            id: "CH-001",
+            territoire_code: "REG-11",
+            code_insee: "11",
+            maille: "REG",
+            zone_id: "REG-11",
+          },
+          {
+            id: "CH-001",
+            territoire_code: "DEPT-75",
+            code_insee: "75",
+            maille: "DEPT",
+            zone_id: "DEPT-75",
+          },
+        ],
+      });
+
+      await prisma.indicateur_identite.createMany({
+        data: [
+          {
+            id: "IND-001",
+            nom: "Indicateur 001",
+            chantier_id: "CH-001",
+            type_id: "IMPACT",
+            statut: "PUBLIE",
+          },
+          {
+            id: "IND-002",
+            nom: "Indicateur 002",
+            chantier_id: "CH-001",
+            type_id: "IMPACT",
+            statut: "PUBLIE",
+          },
+        ],
+      });
+
+      await prisma.indicateur_territoire.createMany({
+        data: [
+          {
+            id: "IND-001",
+            chantier_id: "CH-001",
+            maille: "NAT",
+            territoire_code: "NAT-FR",
+            code_insee: "FR",
+            zone_id: "FRANCE",
+            est_applicable: true,
+            est_a_jour: false,
+          },
+          {
+            id: "IND-001",
+            chantier_id: "CH-001",
+            maille: "REG",
+            territoire_code: "REG-11",
+            code_insee: "11",
+            zone_id: "REG-11",
+            est_applicable: true,
+            est_a_jour: null,
+          },
+          {
+            id: "IND-001",
+            chantier_id: "CH-001",
+            maille: "DEPT",
+            territoire_code: "DEPT-75",
+            code_insee: "75",
+            zone_id: "DEPT-75",
+            est_applicable: true,
+            est_a_jour: true,
+          },
+          {
+            id: "IND-002",
+            chantier_id: "CH-001",
+            maille: "NAT",
+            territoire_code: "NAT-FR",
+            code_insee: "FR",
+            zone_id: "FRANCE",
+            est_applicable: true,
+            est_a_jour: true,
+          },
+          {
+            id: "IND-002",
+            chantier_id: "CH-001",
+            maille: "REG",
+            territoire_code: "REG-11",
+            code_insee: "11",
+            zone_id: "REG-11",
+            est_applicable: true,
+            est_a_jour: false,
+          },
+          {
+            id: "IND-002",
+            chantier_id: "CH-001",
+            maille: "DEPT",
+            territoire_code: "DEPT-75",
+            code_insee: "75",
+            zone_id: "DEPT-75",
+            est_applicable: true,
+            est_a_jour: false,
+          },
+        ],
+      });
+
+      // When
+      const result =
+        await prismaIndicateurRepository.recupererIndicateursNonAJourParChantierId();
+
+      // Then
+      expect(result.size).toEqual(1);
+      expect(result.get("CH-001")).toEqual([
+        {
+          id: "IND-001",
+          nom: "Indicateur 001",
+          mailles: expect.arrayContaining(["NAT", "REG"]),
+        },
+        {
+          id: "IND-002",
+          nom: "Indicateur 002",
+          mailles: expect.arrayContaining(["REG", "DEPT"]),
+        },
+      ]);
+      expect(result.get("CH-001")![0].mailles).toHaveLength(2);
+      expect(result.get("CH-001")![1].mailles).toHaveLength(2);
     });
   });
 });
