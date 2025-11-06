@@ -28,8 +28,8 @@ export const Dropdown = Object.assign({}, DropdownMenu, {
       type="button"
       {...props}
       className={clsxm(
-        props.className,
         "block !-mx-2 !-my-1 !px-2 py-1 rounded hover:bg-gray-200 bg-transparent transition-color font-medium",
+        props.className,
       )}
     />
   ),
@@ -37,8 +37,8 @@ export const Dropdown = Object.assign({}, DropdownMenu, {
     <Link
       {...props}
       className={clsxm(
-        props.className,
         "block -mx-2 -my-1 !px-2 py-1 rounded hover:!bg-gray-200 !bg-transparent transition-color font-medium !bg-none",
+        props.className,
       )}
     />
   ),
