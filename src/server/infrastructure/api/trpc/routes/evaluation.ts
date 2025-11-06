@@ -11,6 +11,34 @@ import { modifierEtatFichesInstructionCommandSchema } from "@/server/evaluation/
 import { passerALEtapeInstructionCommandSchema } from "@/server/evaluation/handlers/PasserALEtapeInstructionHandler";
 
 export const evaluationRouter = créerRouteurTRPC({
+  getDroitsPiloteEval: procédureProtégée.query(async ({ ctx }) => {
+    const accesFicheEvaluationService = getContainer("piloteEval").resolve(
+      "accesFicheEvaluationService",
+    );
+
+    const [
+      peutAccederConsolidation,
+      peutAccederInstruction,
+      peutAccederPilotage,
+    ] = await Promise.all([
+      accesFicheEvaluationService.peutAccederEtapeConsolidation({
+        utilisateurId: ctx.session.user.id,
+      }),
+      accesFicheEvaluationService.peutAccederEtapeInstruction({
+        utilisateurId: ctx.session.user.id,
+      }),
+      accesFicheEvaluationService.peutAccederEtapePilotage({
+        applicationsAccessibles: ctx.session.applicationsAccessibles,
+      }),
+    ]);
+
+    return {
+      peutAccederConsolidation,
+      peutAccederInstruction,
+      peutAccederPilotage,
+    };
+  }),
+
   enregistrerBrouillonAutoEvaluation: procédureProtégée
     .input(enregisterEvaluationCommandSchema)
     .mutation(async ({ input, ctx }) => {

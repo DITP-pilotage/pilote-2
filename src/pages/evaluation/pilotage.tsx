@@ -47,7 +47,8 @@ export default function PagePilotage(
     <pagePilotage.ServerSidePropsProvider value={props}>
       <div className="mx-auto w-full max-w-[1600px] py-6 px-4">
         <h1 className="text-2xl font-bold mb-6">Pilotage des évaluations</h1>
-
+      </div>
+      <div className="py-6 px-4">
         <TableauPilotage />
       </div>
     </pagePilotage.ServerSidePropsProvider>

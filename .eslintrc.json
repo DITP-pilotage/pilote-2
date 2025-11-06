@@ -128,6 +128,7 @@
     "react/jsx-props-no-spreading": "off",
     "react/no-array-index-key": "off",
     "react/prefer-read-only-props": "off",
+    "react/no-multi-comp": "off",
     "prettier/prettier": "error"
   }
 }

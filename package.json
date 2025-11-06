@@ -112,6 +112,7 @@
     "next-auth": "^4.24.11",
     "nuqs": "^1.17.1",
     "pino": "^8.11.0",
+    "radix-ui": "^1.4.3",
     "react": "^18.2.0",
     "react-accessible-dropdown-menu-hook": "^4.0.0",
     "react-chartjs-2": "^5.2.0",

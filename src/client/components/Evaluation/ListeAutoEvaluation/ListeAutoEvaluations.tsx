@@ -40,12 +40,12 @@ export const ListeAutoEvaluations = ({
             </div>
             <BadgeFicheEtape
               etape={ficheEvaluation.etapeCourante}
-              taille="petit"
+              taille="grand"
             />
           </header>
 
           <div className="p-6">
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid md:grid-cols-3 gap-4">
               <CardEvaluation
                 lien={`/evaluation/auto-evaluation/${ficheEvaluation.id}#objectifs`}
                 moyenne={ficheEvaluation.objectifs.moyenne}
