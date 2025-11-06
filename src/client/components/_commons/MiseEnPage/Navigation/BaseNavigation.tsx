@@ -19,12 +19,12 @@ const fermerLaModaleDuMenu = () => {
       ?.modal?.conceal();
   }
 };
+
 const estAutoriséAParcourirSiIndisponible = (session: Session | null) =>
   session?.profil === ProfilEnum.DITP_ADMIN;
 
-function estAdministrateur(session: Session | null) {
-  return session?.profil === ProfilEnum.DITP_ADMIN;
-}
+const estAdministrateur = (session: Session | null) =>
+  session?.profil === ProfilEnum.DITP_ADMIN;
 
 export const useNavigation = () => {
   const { data: applicationEstDisponible } =

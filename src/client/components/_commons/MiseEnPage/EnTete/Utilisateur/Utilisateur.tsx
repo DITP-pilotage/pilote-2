@@ -13,7 +13,7 @@ export const Utilisateur = ({ email }: { email: string }) => {
     <Dropdown.Root onOpenChange={setEstDeplie} open={estDeplie}>
       <Dropdown.Trigger asChild>
         <button
-          className="flex flex-end fr-text--sm !p-0 !text-primary"
+          className="flex items-center !text-sm !p-0 !text-primary"
           name="Utilisateur connecté"
           type="button"
         >
