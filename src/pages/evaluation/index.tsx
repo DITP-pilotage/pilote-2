@@ -1,13 +1,10 @@
-import Head from "next/head";
-import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next";
+import { GetServerSidePropsContext } from "next";
 import { getServerSession } from "next-auth/next";
-import Link from "next/link";
 import { $Enums } from "@prisma/client";
 import assert from "node:assert";
 import { getContainer } from "@/server/dependances";
 import { configurationFeatureFlip } from "@/config";
 import { authOptions } from "@/server/infrastructure/api/auth/[...nextauth]";
-import { ListeAutoEvaluations } from "@/components/Evaluation/ListeAutoEvaluation/ListeAutoEvaluations";
 
 export const getServerSideProps = async ({
   req,
