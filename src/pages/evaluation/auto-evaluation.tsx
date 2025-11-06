@@ -32,58 +32,41 @@ export const getServerSideProps = async ({
     };
   }
 
-  const utilisateurId = session.user.id;
   const fichesEvaluation = await getContainer("piloteEval")
     .resolve("listerFichesAutoEvaluation")
-    .run({ utilisateurId: utilisateurId });
-  const accesFicheEvaluationService = getContainer("piloteEval").resolve(
-    "accesFicheEvaluationService",
-  );
+    .run({ utilisateurId: session.user.id });
 
-  if (fichesEvaluation.length > 0) {
-    return {
-      redirect: {
-        destination: `/evaluation/auto-evaluation`,
-      },
-    };
-  }
-
-  if (
-    await accesFicheEvaluationService.peutAccederEtapeConsolidation({
-      utilisateurId,
-    })
-  )
-    return {
-      redirect: {
-        destination: `/evaluation/consolidation`,
-      },
-    };
-
-  if (
-    await accesFicheEvaluationService.peutAccederEtapeInstruction({
-      utilisateurId,
-    })
-  )
-    return {
-      redirect: {
-        destination: `/evaluation/instruction`,
-      },
-    };
-
-  if (
-    await accesFicheEvaluationService.peutAccederEtapePilotage({
-      applicationsAccessibles: session.applicationsAccessibles,
-    })
-  )
-    return {
-      redirect: {
-        destination: `/evaluation/pilotage`,
-      },
-    };
-
-  return { props: {} };
+  return { props: { fichesEvaluation } };
 };
 
-const EvaluationIndexPage = () => null;
+const EvaluationPage = (
+  props: InferGetServerSidePropsType<typeof getServerSideProps>,
+) => {
+  const { fichesEvaluation } = props;
 
-export default EvaluationIndexPage;
+  return (
+    <main className="py-6 pt-0">
+      <Head>
+        <title>PILOTE - Évaluation</title>
+      </Head>
+
+      <div className="min-h-[60vh] py-12">
+        <div className="mx-auto w-full max-w-6xl">
+          <header className="mb-6">
+            <h1 className="!text-3xl font-bold mb-2">
+              Bienvenue sur votre espace d'auto-évaluation
+            </h1>
+            <p className="text-gray-600">
+              Cet espace vous permet de renseigner vos auto-évaluations et de
+              suivre vos objectifs collectifs.
+            </p>
+          </header>
+
+          <ListeAutoEvaluations fichesEvaluation={fichesEvaluation} />
+        </div>
+      </div>
+    </main>
+  );
+};
+
+export default EvaluationPage;

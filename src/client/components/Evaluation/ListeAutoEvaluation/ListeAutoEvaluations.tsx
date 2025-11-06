@@ -40,7 +40,7 @@ export const ListeAutoEvaluations = ({
             </div>
             <BadgeFicheEtape
               etape={ficheEvaluation.etapeCourante}
-              taille="petit"
+              taille="grand"
             />
           </header>
 
