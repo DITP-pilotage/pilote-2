@@ -57,6 +57,8 @@ describe("EnregistrerBrouillonInstructionHandler", () => {
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
+          groupe: rattachementCode,
+          ordre: 1,
           libelle: "Rattachement test",
           objectifs: {
             create: {
@@ -177,6 +179,8 @@ describe("EnregistrerBrouillonInstructionHandler", () => {
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
+          groupe: rattachementCode,
+          ordre: 1,
           libelle: "Rattachement update",
           objectifs: {
             create: {
@@ -291,6 +295,8 @@ describe("EnregistrerBrouillonInstructionHandler", () => {
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
+          groupe: rattachementCode,
+          ordre: 1,
           libelle: "Rattachement date",
         },
       });
@@ -372,6 +378,8 @@ describe("EnregistrerBrouillonInstructionHandler", () => {
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
+          groupe: rattachementCode,
+          ordre: 1,
           libelle: "Rattachement null",
           objectifs: {
             create: {
@@ -464,6 +472,8 @@ describe("EnregistrerBrouillonInstructionHandler", () => {
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
+          groupe: rattachementCode,
+          ordre: 1,
           libelle: "Rattachement",
         },
       });

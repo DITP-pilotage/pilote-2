@@ -35,6 +35,8 @@ describe("ListerFichesAutoEvaluationQuery", () => {
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachement1Code,
+          groupe: rattachement1Code,
+          ordre: 1,
           libelle: "Rattachement 1",
         },
       });
@@ -42,6 +44,8 @@ describe("ListerFichesAutoEvaluationQuery", () => {
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachement2Code,
+          groupe: rattachement2Code,
+          ordre: 1,
           libelle: "Rattachement 2",
         },
       });
@@ -175,6 +179,8 @@ describe("ListerFichesAutoEvaluationQuery", () => {
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
+          groupe: rattachementCode,
+          ordre: 1,
           libelle: "Rattachement réservé",
         },
       });
@@ -234,6 +240,8 @@ describe("ListerFichesAutoEvaluationQuery", () => {
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
+          groupe: rattachementCode,
+          ordre: 1,
           libelle: "Rattachement consolidation",
         },
       });
@@ -309,6 +317,8 @@ describe("ListerFichesAutoEvaluationQuery", () => {
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
+          groupe: rattachementCode,
+          ordre: 1,
           libelle: "Rattachement avec note collective",
         },
       });

@@ -55,6 +55,8 @@ describe("EnregistrerBrouillonAutoEvaluationCriteresHandler", () => {
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
+          groupe: rattachementCode,
+          ordre: 1,
           libelle: "Rattachement test critères",
         },
       });
@@ -143,6 +145,8 @@ describe("EnregistrerBrouillonAutoEvaluationCriteresHandler", () => {
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
+          groupe: rattachementCode,
+          ordre: 1,
           libelle: "Rattachement update critères",
         },
       });
@@ -220,6 +224,8 @@ describe("EnregistrerBrouillonAutoEvaluationCriteresHandler", () => {
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
+          groupe: rattachementCode,
+          ordre: 1,
           libelle: "Rattachement date critères",
         },
       });
@@ -296,6 +302,8 @@ describe("EnregistrerBrouillonAutoEvaluationCriteresHandler", () => {
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
+          groupe: rattachementCode,
+          ordre: 1,
           libelle: "Rattachement null critères",
         },
       });
@@ -362,6 +370,8 @@ describe("EnregistrerBrouillonAutoEvaluationCriteresHandler", () => {
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
+          groupe: rattachementCode,
+          ordre: 1,
           libelle: "Rattachement critères",
         },
       });

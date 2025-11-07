@@ -31,6 +31,8 @@ describe("AfficherInstructionQuery", () => {
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
+          groupe: rattachementCode,
+          ordre: 1,
           libelle: "Rattachement sans accès instruction",
         },
       });
@@ -69,6 +71,8 @@ describe("AfficherInstructionQuery", () => {
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
+          groupe: rattachementCode,
+          ordre: 1,
           libelle: "Rattachement avec objectifs filtrés",
           objectifs: {
             create: [
@@ -202,6 +206,8 @@ describe("AfficherInstructionQuery", () => {
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
+          groupe: rattachementCode,
+          ordre: 1,
           libelle: "Rattachement avec critères filtrés",
         },
       });
@@ -324,6 +330,8 @@ describe("AfficherInstructionQuery", () => {
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
+          groupe: rattachementCode,
+          ordre: 1,
           libelle: "Rattachement avec 3 étapes",
           objectifs: {
             create: {
@@ -523,6 +531,8 @@ describe("AfficherInstructionQuery", () => {
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
+          groupe: rattachementCode,
+          ordre: 1,
           libelle: "Rattachement critère 3 étapes",
         },
       });
@@ -675,6 +685,8 @@ describe("AfficherInstructionQuery", () => {
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
+          groupe: rattachementCode,
+          ordre: 1,
           libelle: "Rattachement avec tutelles",
           objectifs: {
             create: [
@@ -793,6 +805,8 @@ describe("AfficherInstructionQuery", () => {
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachement1Code,
+          groupe: rattachement1Code,
+          ordre: 1,
           libelle: "Rattachement 1",
           objectifs: {
             create: {
@@ -809,6 +823,8 @@ describe("AfficherInstructionQuery", () => {
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachement2Code,
+          groupe: rattachement2Code,
+          ordre: 1,
           libelle: "Rattachement 2",
           objectifs: {
             create: {
@@ -957,10 +973,14 @@ describe("AfficherInstructionQuery", () => {
           {
             code: rattachement1Code,
             libelle: "Rattachement 1 filtrage",
+            groupe: rattachement1Code,
+            ordre: 1,
           },
           {
             code: rattachement2Code,
             libelle: "Rattachement 2 filtrage",
+            groupe: rattachement2Code,
+            ordre: 1,
           },
         ],
       });

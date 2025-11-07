@@ -42,22 +42,32 @@ describe("DebloquerFichesConsolidationHandler", () => {
           {
             code: rattachement1Code,
             libelle: "Rattachement test 1",
+            groupe: rattachement1Code,
+            ordre: 1,
           },
           {
             code: rattachement2Code,
             libelle: "Rattachement test 2",
+            groupe: rattachement2Code,
+            ordre: 1,
           },
           {
             code: rattachement3Code,
             libelle: "Rattachement test 3",
+            groupe: rattachement3Code,
+            ordre: 1,
           },
           {
             code: rattachement4Code,
             libelle: "Rattachement test 4",
+            groupe: rattachement4Code,
+            ordre: 1,
           },
           {
             code: rattachement5Code,
             libelle: "Rattachement test 5",
+            groupe: rattachement5Code,
+            ordre: 1,
           },
         ],
       });
@@ -172,6 +182,8 @@ describe("DebloquerFichesConsolidationHandler", () => {
         data: {
           code: rattachementCode,
           libelle: "Rattachement multi-étapes",
+          groupe: rattachementCode,
+          ordre: 1,
         },
       });
 

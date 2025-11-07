@@ -182,24 +182,32 @@ const rattachements: referentiel_rattachement[] = [
     libelle: "Préfecture de police de Paris",
     created_at: new Date("2025-10-07T10:00:00"),
     updated_at: new Date("2025-10-07T10:00:00"),
+    groupe: "REG-75",
+    ordre: 2,
   },
   {
     code: "DEPT-59",
     libelle: "Département Nord",
     created_at: new Date("2025-10-07T10:00:00"),
     updated_at: new Date("2025-10-07T10:00:00"),
+    groupe: "DEPT-59",
+    ordre: 1,
   },
   {
     code: "REG-75",
     libelle: "Région Île-de-France",
     created_at: new Date("2025-10-07T10:00:00"),
     updated_at: new Date("2025-10-07T10:00:00"),
+    groupe: "REG-75",
+    ordre: 2,
   },
   {
     code: "DEPT-87",
     libelle: "Département Haute-Vienne",
     created_at: new Date("2025-10-07T10:00:00"),
     updated_at: new Date("2025-10-07T10:00:00"),
+    groupe: "DEPT-87",
+    ordre: 1,
   },
 ];
 

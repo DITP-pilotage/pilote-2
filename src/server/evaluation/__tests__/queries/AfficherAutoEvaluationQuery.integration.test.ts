@@ -56,6 +56,8 @@ describe("AfficherAutoEvaluationQuery", () => {
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
+          groupe: rattachementCode,
+          ordre: 1,
           libelle: "Rattachement 1",
           objectifs: {
             create: [
@@ -202,6 +204,8 @@ describe("AfficherAutoEvaluationQuery", () => {
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
+          groupe: rattachementCode,
+          ordre: 1,
           libelle: "Rattachement test",
           objectifs: {
             create: {
@@ -300,6 +304,8 @@ describe("AfficherAutoEvaluationQuery", () => {
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
+          groupe: rattachementCode,
+          ordre: 1,
           libelle: "Rattachement read-only",
         },
       });
@@ -367,6 +373,8 @@ describe("AfficherAutoEvaluationQuery", () => {
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
+          groupe: rattachementCode,
+          ordre: 1,
           libelle: "Rattachement multiple",
         },
       });
@@ -474,6 +482,8 @@ describe("AfficherAutoEvaluationQuery", () => {
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
+          groupe: rattachementCode,
+          ordre: 1,
           libelle: "Rattachement isolation",
           objectifs: {
             create: {
@@ -556,6 +566,8 @@ describe("AfficherAutoEvaluationQuery", () => {
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachement1Code,
+          groupe: rattachement1Code,
+          ordre: 1,
           libelle: "Rattachement 1",
         },
       });
@@ -563,6 +575,8 @@ describe("AfficherAutoEvaluationQuery", () => {
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachement2Code,
+          groupe: rattachement2Code,
+          ordre: 1,
           libelle: "Rattachement 2",
           objectifs: {
             create: {
