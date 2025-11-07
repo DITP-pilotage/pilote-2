@@ -45,7 +45,7 @@ export const genererParametresEnvoieRapportProposition = (
   texteIntro: string;
 } => {
   const params: ParametreEnvoieRapportProposition[] = [];
-  for (const chantierId of listeChantierIds) {
+  for (const chantierId of listeChantierIds.sort()) {
     const chantier = mapChantiersInformation.get(chantierId);
     if (!chantier) {
       continue;
@@ -90,23 +90,28 @@ export const genererParametresEnvoieRapportProposition = (
       ? indicateursNonMisAJour.length > 0
       : false;
 
+    const nombreIndicateursNonMisAJour = indicateursNonMisAJour?.length ?? 0;
     if (afficherSectionMajIndicateur || afficherSectionPropositions) {
       params.push({
         nom_chantier: chantier.nom,
         id_chantier: chantier.id,
         nombre_propositions:
-          nombrePropositions > 1
-            ? `${nombrePropositions} propositions territoriales de valeur d'avancement`
-            : `${nombrePropositions} proposition territoriale de valeur d'avancement`,
+          nombrePropositions === 0
+            ? "aucune proposition territoriale de valeur d'avancement"
+            : nombrePropositions > 1
+              ? `${nombrePropositions} propositions territoriales de valeur d'avancement`
+              : `${nombrePropositions} proposition territoriale de valeur d'avancement`,
         conseiller_email: chantier.conseillerMail,
         afficherSectionPropositions,
         indicateursPropositions: indicateursPropositions,
         afficherSectionMajIndicateur,
         indicateursNonMisAJour: indicateursNonMisAJour ?? [],
         nombreIndicateursNonMisAJour:
-          (indicateursNonMisAJour?.length ?? 0 > 1)
-            ? `${indicateursNonMisAJour?.length ?? 0} indicateurs à mettre à jour`
-            : `${indicateursNonMisAJour?.length ?? 0} indicateur à mettre à jour`,
+          nombreIndicateursNonMisAJour === 0
+            ? "aucun indicateur à mettre à jour"
+            : nombreIndicateursNonMisAJour > 1
+              ? `${nombreIndicateursNonMisAJour} indicateurs à mettre à jour`
+              : `${nombreIndicateursNonMisAJour} indicateur à mettre à jour`,
       });
     }
   }

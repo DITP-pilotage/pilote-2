@@ -365,6 +365,7 @@ export class PrismaIndicateurTerritoireValeurEvenementRepository
               statut: "PUBLIE",
               chantier_identite: { statut: "PUBLIE" },
             },
+            est_applicable: true,
           },
         },
         orderBy: [

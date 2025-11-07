@@ -1505,6 +1505,7 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
           maille: "REG",
           code_insee: "01",
           zone_id: "R01",
+          est_applicable: true,
         },
       });
 
@@ -1534,6 +1535,7 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
           zone_id: "R01",
           valeur_actuelle_mandat: 50.5,
           date_valeur_actuelle_mandat: new Date("2024-06-01"),
+          est_applicable: true,
         },
       });
 
@@ -1656,6 +1658,7 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
             zone_id: "R02",
             valeur_actuelle_mandat: 100,
             date_valeur_actuelle_mandat: new Date("2024-07-01"),
+            est_applicable: true,
           },
           {
             id: "IND-PVA-002",
@@ -1666,6 +1669,7 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
             zone_id: "R03",
             valeur_actuelle_mandat: 200,
             date_valeur_actuelle_mandat: new Date("2024-07-01"),
+            est_applicable: true,
           },
         ],
       });
@@ -1811,6 +1815,7 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
           zone_id: "R03",
           valeur_actuelle_mandat: 30,
           date_valeur_actuelle_mandat: new Date("2024-01-01"),
+          est_applicable: true,
         },
       });
 
@@ -1960,6 +1965,7 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
             zone_id: "R01",
             valeur_actuelle_mandat: 50,
             date_valeur_actuelle_mandat: new Date("2024-01-01"),
+            est_applicable: true,
           },
           {
             id: "IND-PVA-006",
@@ -1970,6 +1976,7 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
             zone_id: "R02",
             valeur_actuelle_mandat: 60,
             date_valeur_actuelle_mandat: new Date("2024-01-01"),
+            est_applicable: true,
           },
         ],
       });
