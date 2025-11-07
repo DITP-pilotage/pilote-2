@@ -27,6 +27,8 @@ export const EnTete = () => {
     messageInformation?.bandeauTexte ||
     "Des opérations de maintenance sont en cours et peuvent perturber le fonctionnement normal de PILOTE. En cas de difficultés : pilote.ditp@modernisation.gouv.fr";
   const bandeauType = messageInformation?.bandeauType || "WARNING";
+  const peutVoirLeBoutonApplicationsPilote =
+    process.env.NEXT_PUBLIC_FF_PILOTE_EVAL === "true";
 
   return (
     <header className="fr-header" role="banner">
@@ -71,9 +73,11 @@ export const EnTete = () => {
                   </li>
                   {session?.user?.email ? (
                     <>
-                      <li>
-                        <BoutonApplicationsPilote />
-                      </li>
+                      {peutVoirLeBoutonApplicationsPilote ? (
+                        <li>
+                          <BoutonApplicationsPilote />
+                        </li>
+                      ) : null}
                       <li>
                         <Utilisateur email={session.user.email} />
                       </li>
