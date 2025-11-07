@@ -16,6 +16,8 @@ type FicheEvaluationRow = {
   readOnly: boolean;
   rattachementCode: string;
   rattachementLibelle: string;
+  rattachementGroupe: string;
+  rattachementOrdre: number;
   etapeCourante: $Enums.etape_evaluation_enum;
   evaluationsParCritereEtEtape: Record<string, Record<string, number | null>>;
   objectifs: Array<{
@@ -73,6 +75,8 @@ export const useTableauPilotage = () => {
       readOnly: fiche.readOnly,
       rattachementCode: fiche.rattachement.code,
       rattachementLibelle: fiche.rattachement.libelle,
+      rattachementGroupe: fiche.rattachement.groupe,
+      rattachementOrdre: fiche.rattachement.ordre,
       etapeCourante: fiche.etapeCourante,
       evaluationsParCritereEtEtape: fiche.evaluationsParCritereEtEtape,
       objectifs: fiche.objectifs,
