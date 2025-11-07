@@ -98,5 +98,184 @@ describe("PrismaUtilisateurRepository", () => {
       expect(utilisateurs[0].email).toStrictEqual("dir.projet1@test.com");
       expect(utilisateurs[1].email).toStrictEqual("dir.projet3@test.com");
     });
+
+    it("doit récupérer les utilisateurs ayant des habilitations via périmètres", async () => {
+      // Given
+      await prisma.chantier_identite.createMany({
+        data: [
+          {
+            id: "CH-100",
+            nom: "Chantier 100",
+            perimetre_ids: ["PER-001", "PER-002"],
+            statut: "PUBLIE",
+          },
+          {
+            id: "CH-101",
+            nom: "Chantier 101",
+            perimetre_ids: ["PER-002"],
+            statut: "PUBLIE",
+          },
+          {
+            id: "CH-102",
+            nom: "Chantier 102",
+            perimetre_ids: ["PER-003"],
+            statut: "PUBLIE",
+          },
+        ],
+      });
+
+      await prisma.utilisateur.createMany({
+        data: [
+          {
+            id: "a1b2c3d4-1111-2222-3333-444444444444",
+            email: "user.perimetre1@test.com",
+            nom: "Perimetre1",
+            prenom: "User",
+            profilCode: "EQUIPE_DIR_PROJET",
+            date_creation: new Date(),
+          },
+          {
+            id: "a1b2c3d4-5555-6666-7777-888888888888",
+            email: "user.perimetre2@test.com",
+            nom: "Perimetre2",
+            prenom: "User",
+            profilCode: "EQUIPE_DIR_PROJET",
+            date_creation: new Date(),
+          },
+        ],
+      });
+
+      await prisma.habilitation.createMany({
+        data: [
+          {
+            utilisateurId: "a1b2c3d4-1111-2222-3333-444444444444",
+            scopeCode: "lecture",
+            perimetres: ["PER-001"],
+          },
+          {
+            utilisateurId: "a1b2c3d4-5555-6666-7777-888888888888",
+            scopeCode: "lecture",
+            perimetres: ["PER-002"],
+          },
+        ],
+      });
+
+      // When
+      const utilisateurs =
+        await prismaUtilisateurRepository.recupererUtilisateursParProfilEtChantierIds(
+          "EQUIPE_DIR_PROJET",
+          ["CH-100", "CH-101"],
+        );
+
+      // Then
+      expect(utilisateurs).toHaveLength(2);
+      expect(utilisateurs[0].email).toStrictEqual("user.perimetre1@test.com");
+      expect(utilisateurs[0].listeChantiers).toEqual(["CH-100"]);
+      expect(utilisateurs[1].email).toStrictEqual("user.perimetre2@test.com");
+      expect(utilisateurs[1].listeChantiers).toEqual(["CH-100", "CH-101"]);
+    });
+
+    it("doit récupérer les utilisateurs ayant des habilitations directes et via périmètres", async () => {
+      // Given
+      await prisma.chantier_identite.createMany({
+        data: [
+          {
+            id: "CH-200",
+            nom: "Chantier 200",
+            perimetre_ids: ["PER-100"],
+            statut: "PUBLIE",
+          },
+          {
+            id: "CH-201",
+            nom: "Chantier 201",
+            perimetre_ids: ["PER-100"],
+            statut: "PUBLIE",
+          },
+          {
+            id: "CH-202",
+            nom: "Chantier 202",
+            perimetre_ids: [],
+            statut: "PUBLIE",
+          },
+        ],
+      });
+
+      await prisma.utilisateur.create({
+        data: {
+          id: "b1b2b3b4-1111-2222-3333-444444444444",
+          email: "user.mixte@test.com",
+          nom: "Mixte",
+          prenom: "User",
+          profilCode: "EQUIPE_DIR_PROJET",
+          date_creation: new Date(),
+        },
+      });
+
+      await prisma.habilitation.create({
+        data: {
+          utilisateurId: "b1b2b3b4-1111-2222-3333-444444444444",
+          scopeCode: "lecture",
+          chantiers: ["CH-202"],
+          perimetres: ["PER-100"],
+        },
+      });
+
+      // When
+      const utilisateurs =
+        await prismaUtilisateurRepository.recupererUtilisateursParProfilEtChantierIds(
+          "EQUIPE_DIR_PROJET",
+          ["CH-200", "CH-201", "CH-202"],
+        );
+
+      // Then
+      expect(utilisateurs).toHaveLength(1);
+      expect(utilisateurs[0].email).toStrictEqual("user.mixte@test.com");
+      expect(utilisateurs[0].listeChantiers).toEqual([
+        "CH-202",
+        "CH-200",
+        "CH-201",
+      ]);
+    });
+
+    it("ne doit pas récupérer les utilisateurs ayant uniquement des périmètres sans chantiers correspondants", async () => {
+      // Given
+      await prisma.chantier_identite.create({
+        data: {
+          id: "CH-300",
+          nom: "Chantier 300",
+          perimetre_ids: ["PER-200"],
+          statut: "PUBLIE",
+        },
+      });
+
+      await prisma.utilisateur.create({
+        data: {
+          id: "c1c2c3c4-1111-2222-3333-444444444444",
+          email: "user.sans.chantier@test.com",
+          nom: "SansChantier",
+          prenom: "User",
+          profilCode: "EQUIPE_DIR_PROJET",
+          date_creation: new Date(),
+        },
+      });
+
+      await prisma.habilitation.create({
+        data: {
+          utilisateurId: "c1c2c3c4-1111-2222-3333-444444444444",
+          scopeCode: "lecture",
+          perimetres: ["PER-999"],
+        },
+      });
+
+      // When
+      const utilisateurs =
+        await prismaUtilisateurRepository.recupererUtilisateursParProfilEtChantierIds(
+          "EQUIPE_DIR_PROJET",
+          ["CH-300"],
+        );
+
+      // Then
+      expect(utilisateurs).toHaveLength(0);
+    });
   });
 });
