@@ -6,15 +6,14 @@ WITH ajout_annee AS (
         zone_id,
         metric_date,
         vacg,
-        is_last_monthly_va,
-        date_part('year', metric_date::date) AS annee_valeur,
-        row_number()
+        DATE_PART('year', metric_date::DATE) AS annee_valeur,
+        ROW_NUMBER()
             OVER (
                 PARTITION BY
-                    indic_id, zone_id, date_part('year', metric_date::date)
-                ORDER BY metric_date::date DESC
+                    indic_id, zone_id, DATE_PART('year', metric_date::DATE)
+                ORDER BY metric_date::DATE DESC
             )
-        AS r
+            AS r
     FROM {{ ref('compute_vacg') }}
     WHERE vacg IS NOT NULL
 )
@@ -24,7 +23,6 @@ SELECT
     zone_id,
     metric_date,
     vacg,
-    is_last_monthly_va,
     annee_valeur AS jalon
 FROM ajout_annee
 WHERE r = 1

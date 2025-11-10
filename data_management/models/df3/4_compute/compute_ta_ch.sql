@@ -6,7 +6,7 @@ with
 ta_zone_indic as (
 	select 
 	b.chantier_id, a.zone_id, z.maille as "maille", metric_date,a.indic_id,
-	vaca, is_last_monthly_va, vig, vca_courant, vca_adate, vca_adate_date, vcg,
+	vaca, vig, vca_courant, vca_adate, vca_adate_date, vcg,
 	taa_courant, taa_adate, tag
 	from {{ ref('compute_ta_indic') }} a
 	left join {{ ref('stg_ppg_metadata__indicateurs') }} b on a.indic_id = b.id

@@ -17,7 +17,6 @@ pivot_va AS (
         id, 
         date_import, 
         indic_id,
-        is_last_monthly_value,
         zone_id,
         metric_date,
         metric_value AS va
@@ -40,10 +39,9 @@ pivot_vc AS (
 --  pour construire les colonnes vi et va
 u_vi_va AS (
     SELECT
-        -- on garde la vi de table a, la va et l'info si c'est la dernière va du mois de table b
+        -- on garde la vi de table a, la va de la table b
         a.vi,
         b.va,
-        b.is_last_monthly_value as is_last_monthly_value,
         coalesce(a.id, b.id) as id,
         coalesce(a.date_import, b.date_import) as date_import,
         coalesce(a.indic_id, b.indic_id) AS indic_id,
@@ -65,12 +63,11 @@ u_vi_va_vc AS (
     SELECT
         coalesce(a.id, c.id) as id,
         coalesce(a.date_import, c.date_import) as date_import,
-        -- on garde la vi et va et l'info si c'est la dernière va de de table a, la vc de table c
+        -- on garde la vi et va de la table a, la vc de la table c
         a.vi,
         a.va,
         c.vc,
         coalesce(a.indic_id, c.indic_id) AS indic_id,
-        a.is_last_monthly_value as is_last_monthly_va,
         coalesce(a.zone_id, c.zone_id) AS zone_id,
         coalesce(a.metric_date, c.metric_date) AS metric_date
     FROM u_vi_va AS a

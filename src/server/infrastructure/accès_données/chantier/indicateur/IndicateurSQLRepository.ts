@@ -20,6 +20,8 @@ import { prisma } from "@/server/db/prisma";
 export interface historique_valeurs {
   date: string;
   valeur: number;
+  taa: number;
+  tag: number;
 }
 
 export default class IndicateurSQLRepository implements IndicateurRepository {

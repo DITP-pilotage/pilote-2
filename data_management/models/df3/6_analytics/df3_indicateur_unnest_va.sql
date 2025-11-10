@@ -17,5 +17,9 @@ SELECT
     (evolution_valeur_actuelle_unnest ->> 'valeur')
     ::numeric AS va_unnest_computed,
     (evolution_valeur_actuelle_unnest ->> 'date')
-    ::date AS va_date_unnest_computed
+    ::date AS va_date_unnest_computed,
+    (evolution_valeur_actuelle_unnest ->> 'taa')
+    ::date AS taa_unnest_computed,
+    (evolution_valeur_actuelle_unnest ->> 'tag')
+    ::date AS tag_unnest_computed
 FROM unnest_json_array
