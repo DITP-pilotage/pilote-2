@@ -161,6 +161,7 @@ compute_op_selected AS (
 		compute_op_sum_avg.date_import,
         compute_op_sum_avg.zone_parent,
         compute_op_sum_avg.indic_id1,
+        compute_op_sum_avg.metric_date,
         compute_op_sum_avg.metric_type,
         compute_op_sum_avg.op_sum,
         compute_op_sum_avg.op_avg,
@@ -194,7 +195,6 @@ mesure_last_params_reg_aggregated AS (
         indic_id,
         zone_parent AS zone_id,
         metric_date,
-        metric_date_raw,
         metric_type,
         op_selected AS metric_value
     FROM compute_op_selected
