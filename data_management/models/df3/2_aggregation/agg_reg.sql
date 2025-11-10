@@ -146,12 +146,12 @@ compute_op_sum_avg AS (
         MAX(date_import) AS date_import,
         zone_parent,
         indic_id AS indic_id1,
-        metric_date_raw,
+        metric_date,
         metric_type,
         SUM(metric_value) AS op_sum,
         AVG(metric_value) AS op_avg
     FROM mesure_last_params_reg_from_dept
-    GROUP BY zone_parent, indic_id, metric_date_raw, metric_type
+    GROUP BY zone_parent, indic_id, metric_date, metric_type
 ),
 
 -- On sélectionne le bon résultat de calcul de l'aggrégation 
@@ -161,8 +161,6 @@ compute_op_selected AS (
 		compute_op_sum_avg.date_import,
         compute_op_sum_avg.zone_parent,
         compute_op_sum_avg.indic_id1,
-        TO_CHAR(DATE_TRUNC('month', compute_op_sum_avg.metric_date_raw), 'YYYY-MM-DD')
-            AS metric_date,
         compute_op_sum_avg.metric_type,
         compute_op_sum_avg.op_sum,
         compute_op_sum_avg.op_avg,
