@@ -22,6 +22,16 @@ export const useIndicateurÉvolution = () => {
     scales: {
       x: { border: { dash: [2, 4] } },
       y: { border: { dash: [2, 4] }, beginAtZero: true },
+      ...(configurationFeatureFlipping.taHistory && {
+        yright: {
+          border: { dash: [2, 4] },
+          beginAtZero: true,
+          position: "right",
+          grid: {
+            drawOnChartArea: false,
+          },
+        },
+      }),
     },
     plugins: {
       legend: {
@@ -71,6 +81,7 @@ export const useIndicateurÉvolution = () => {
       borderColor: "#000000",
       backgroundColor: "#000000",
       stepped: "after",
+      yAxisID: 'yright',
     },
   ];
 
