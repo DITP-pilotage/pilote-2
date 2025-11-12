@@ -5,7 +5,8 @@ import { useBlocIndicateurContext } from "@/components/PageChantier/useBlocIndic
 import { useTerritoireSelectionne } from "@/components/PageChantier/PageChantierServerSideContext";
 
 export const useIndicateurÉvolution = () => {
-  const { detailIndicateurDuTerritoire, configurationFeatureFlipping } = useBlocIndicateurContext();
+  const { detailIndicateurDuTerritoire, configurationFeatureFlipping } =
+    useBlocIndicateurContext();
   const detailTerritoireSelectionne = useTerritoireSelectionne();
   let donnéesParTerritoire: ChartData<"line">;
 
@@ -69,7 +70,7 @@ export const useIndicateurÉvolution = () => {
       pointStyle: "circle",
       borderColor: "#000000",
       backgroundColor: "#000000",
-      stepped:'after'
+      stepped: "after",
     },
   ];
 
@@ -92,11 +93,9 @@ export const useIndicateurÉvolution = () => {
     labels: valeursAxeX,
     datasets:
       detailIndicateurDuTerritoire.valeurCible !== null
-        ? (
-          configurationFeatureFlipping.taHistory          
+        ? configurationFeatureFlipping.taHistory
           ? [...évolutions, valeurCible]
           : [évolutions[0], valeurCible]
-        )
         : [évolutions[0]],
   };
 
