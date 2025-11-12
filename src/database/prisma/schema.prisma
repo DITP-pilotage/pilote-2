@@ -844,6 +844,8 @@ model etape_evaluation {
   updated_at            DateTime              @updatedAt
   evaluations_objectifs evaluation_objectif[]
   evaluations_criteres  evaluation_critere[]
+  objectifs_valides     Boolean?              @default(false)
+  criteres_valides      Boolean?              @default(false)
 
   @@unique([fiche_evaluation_id, type])
   @@schema("public")
