@@ -81,7 +81,7 @@ export const useIndicateurÉvolution = () => {
       borderColor: "#000000",
       backgroundColor: "#000000",
       stepped: "after",
-      yAxisID: 'yright',
+      yAxisID: "yright",
     },
   ];
 
