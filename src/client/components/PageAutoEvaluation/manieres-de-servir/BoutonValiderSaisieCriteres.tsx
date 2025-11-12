@@ -2,6 +2,8 @@ import { toast } from "sonner";
 import api from "@/server/infrastructure/api/trpc/api";
 import { Bouton } from "@/components/_commons/Bouton/Bouton";
 import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
+import { useFormEvaluationCriteres } from "@/components/PageAutoEvaluation/manieres-de-servir/form";
+import { useEnregistrerBrouillonCriteres } from "@/components/PageAutoEvaluation/manieres-de-servir/useEnregistrerBrouillonCriteres";
 
 export const BoutonValiderSaisieCriteres = ({
   ficheEvaluationId,
@@ -10,8 +12,15 @@ export const BoutonValiderSaisieCriteres = ({
 }) => {
   const validerSaisie = api.evaluation.validerSaisieCriteres.useMutation();
   const refreshRouter = useRefreshRouter();
+  const form = useFormEvaluationCriteres();
+  const enregistrer = useEnregistrerBrouillonCriteres();
 
   const handleClick = async () => {
+    const isFormValid = await form.trigger();
+    if (!isFormValid) return;
+
+    await form.handleSubmit(enregistrer)();
+
     await validerSaisie.mutateAsync(
       { ficheEvaluationId },
       {
@@ -34,11 +43,11 @@ export const BoutonValiderSaisieCriteres = ({
 
   return (
     <Bouton
+      disabled={validerSaisie.isLoading}
       label="Valider"
       onClick={handleClick}
       type="button"
       variant="primary"
-      disabled={validerSaisie.isLoading}
     />
   );
 };

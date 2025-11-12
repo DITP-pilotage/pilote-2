@@ -19,7 +19,7 @@ export const FormulaireAutoEvaluationManieresDeServir = () => {
   const { autoEvaluation } =
     pageAutoEvaluationManieresDeServir.useServerSidePropsContext();
   const formId = useId();
-  const enregistrerBrouillon = useEnregistrerBrouillonCriteres(autoEvaluation);
+  const enregistrerBrouillon = useEnregistrerBrouillonCriteres();
 
   const isReadOnly = autoEvaluation.readOnly || autoEvaluation.criteresValides;
 

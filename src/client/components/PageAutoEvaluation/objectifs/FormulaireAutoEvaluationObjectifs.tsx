@@ -19,7 +19,7 @@ export const FormulaireAutoEvaluationObjectifs = () => {
   const { autoEvaluation } =
     pageAutoEvaluationObjectifs.useServerSidePropsContext();
   const formId = useId();
-  const enregistrerBrouillon = useEnregistrerBrouillonObjectifs(autoEvaluation);
+  const enregistrerBrouillon = useEnregistrerBrouillonObjectifs();
 
   const isReadOnly = autoEvaluation.readOnly || autoEvaluation.objectifsValides;
 
