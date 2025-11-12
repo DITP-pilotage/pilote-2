@@ -9,6 +9,7 @@ import { EtapeObjectifs } from "@/components/PageAutoEvaluation/objectifs/EtapeO
 import { InformationPleineIcon } from "@/components/_commons/Icones/InformationPleineIcon";
 import { LayoutFicheCadrage } from "@/components/Evaluation/LayoutFicheCadrage";
 import { BoutonEnregistrerBrouillon } from "@/components/PageAutoEvaluation/BoutonEnregistrerBrouillon";
+import { BoutonValiderSaisieObjectifs } from "@/components/PageAutoEvaluation/objectifs/BoutonValiderSaisieObjectifs";
 import {
   formSchemaObjectifs,
   FormValuesObjectifs,
@@ -57,7 +58,12 @@ export const FormulaireAutoEvaluationObjectifs = () => {
                     </span>
                   ) : null}
                   {!autoEvaluation.readOnly && (
-                    <BoutonEnregistrerBrouillon formId={formId} />
+                    <>
+                      <BoutonEnregistrerBrouillon formId={formId} />
+                      <BoutonValiderSaisieObjectifs
+                        ficheEvaluationId={autoEvaluation.ficheEvaluationId}
+                      />
+                    </>
                   )}
                 </div>
               </div>

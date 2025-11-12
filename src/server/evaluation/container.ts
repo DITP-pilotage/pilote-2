@@ -15,6 +15,8 @@ import { ModifierEtatFichesInstructionHandler } from "@/server/evaluation/handle
 import { RecupererDetailsNoteCollectiveQuery } from "@/server/evaluation/queries/RecupererDetailsNoteCollectiveQuery";
 import { EnregistrerBrouillonAutoEvaluationObjectifsHandler } from "./handlers/EnregistrerBrouillonAutoEvaluationObjectifsHandler";
 import { EnregistrerBrouillonAutoEvaluationCriteresHandler } from "./handlers/EnregistrerBrouillonAutoEvaluationCriteresHandler";
+import { ValiderSaisieCriteresHandler } from "./handlers/ValiderSaisieCriteresHandler";
+import { ValiderSaisieObjectifsHandler } from "./handlers/ValiderSaisieObjectifsHandler";
 
 export type PiloteEvalDependencies = {
   afficherAutoEvaluation: AfficherAutoEvaluationQuery;
@@ -25,6 +27,8 @@ export type PiloteEvalDependencies = {
   recupererDetailsNoteCollectiveQuery: RecupererDetailsNoteCollectiveQuery;
   enregistrerBrouillonAutoEvaluationObjectifs: EnregistrerBrouillonAutoEvaluationObjectifsHandler;
   enregistrerBrouillonAutoEvaluationCriteres: EnregistrerBrouillonAutoEvaluationCriteresHandler;
+  validerSaisieObjectifs: ValiderSaisieObjectifsHandler;
+  validerSaisieCriteres: ValiderSaisieCriteresHandler;
   enregistrerBrouillonConsolidationHandler: EnregistrerBrouillonConsolidationHandler;
   enregistrerBrouillonInstructionHandler: EnregistrerBrouillonInstructionHandler;
   accesFicheEvaluationService: AccesFicheEvaluationService;
@@ -52,6 +56,8 @@ export const getPiloteEvalContainer = (
     enregistrerBrouillonAutoEvaluationCriteres: asClass(
       EnregistrerBrouillonAutoEvaluationCriteresHandler,
     ),
+    validerSaisieObjectifs: asClass(ValiderSaisieObjectifsHandler),
+    validerSaisieCriteres: asClass(ValiderSaisieCriteresHandler),
     enregistrerBrouillonConsolidationHandler: asClass(
       EnregistrerBrouillonConsolidationHandler,
     ),

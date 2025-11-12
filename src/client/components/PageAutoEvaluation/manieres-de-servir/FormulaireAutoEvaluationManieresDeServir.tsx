@@ -4,6 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useEnregistrerBrouillonCriteres } from "@/components/PageAutoEvaluation/manieres-de-servir/useEnregistrerBrouillonCriteres";
 import { formaterDate } from "@/client/utils/date/date";
 import { BoutonEnregistrerBrouillon } from "@/components/PageAutoEvaluation/BoutonEnregistrerBrouillon";
+import { BoutonValiderSaisieCriteres } from "@/components/PageAutoEvaluation/manieres-de-servir/BoutonValiderSaisieCriteres";
 import { Icone } from "@/components/_commons/Icone";
 import { EtapeCriteres } from "@/components/PageAutoEvaluation/manieres-de-servir/EtapeCriteres";
 import { InformationPleineIcon } from "@/components/_commons/Icones/InformationPleineIcon";
@@ -57,7 +58,12 @@ export const FormulaireAutoEvaluationManieresDeServir = () => {
                     </span>
                   ) : null}
                   {!autoEvaluation.readOnly && (
-                    <BoutonEnregistrerBrouillon formId={formId} />
+                    <>
+                      <BoutonEnregistrerBrouillon formId={formId} />
+                      <BoutonValiderSaisieCriteres
+                        ficheEvaluationId={autoEvaluation.ficheEvaluationId}
+                      />
+                    </>
                   )}
                 </div>
               </div>
