@@ -108,6 +108,7 @@ model chantier_identite {
   indicateur_identite                   indicateur_identite[]
   objectifs                             objectif[]
   decisions_strategiques                decision_strategique[]
+  chantiers_evaluation                  chantier_evaluation[]
 
   @@schema("public")
 }
@@ -156,6 +157,7 @@ model chantier_territoire_jalon {
   zone_id              String
   jalon                Int
   taux_avancement      Float?
+  taux_avancement_eval Float?
   date_taux_avancement DateTime? @db.Date
 
   chantier_territoire chantier_territoire @relation(fields: [id, territoire_code], references: [id, territoire_code], onDelete: Cascade, onUpdate: Cascade)
@@ -233,6 +235,8 @@ model indicateur_territoire {
   est_applicable                         Boolean?
   ponderation_zone_declaree              Float?
   ponderation_zone_reel                  Float?
+  ponderation_zone_declaree_eval         Float?
+  ponderation_zone_reel_eval             Float?
   est_a_jour                             Boolean?
   prochaine_date_maj                     DateTime?                                @db.Date
   prochaine_date_maj_jours               Int?
@@ -385,35 +389,38 @@ model metadata_indicateurs_hidden {
 }
 
 model metadata_parametrage_indicateurs {
-  indic_id                     String  @id
-  vi_dept_from                 String?
-  vi_dept_op                   String?
-  va_dept_from                 String?
-  va_dept_op                   String?
-  vc_dept_from                 String?
-  vc_dept_op                   String?
-  vi_reg_from                  String?
-  vi_reg_op                    String?
-  va_reg_from                  String?
-  va_reg_op                    String?
-  vc_reg_from                  String?
-  vc_reg_op                    String?
-  vi_nat_from                  String?
-  vi_nat_op                    String?
-  va_nat_from                  String?
-  va_nat_op                    String?
-  vc_nat_from                  String?
-  vc_nat_op                    String?
-  param_vaca_decumul_from      String?
-  param_vaca_partition_date    String?
-  param_vaca_op                String?
-  param_vacg_decumul_from      String?
-  param_vacg_partition_date    String?
-  param_vacg_op                String?
-  poids_pourcent_dept_declaree Float?
-  poids_pourcent_reg_declaree  Float?
-  poids_pourcent_nat_declaree  Float?
-  tendance                     String?
+  indic_id                          String  @id
+  vi_dept_from                      String?
+  vi_dept_op                        String?
+  va_dept_from                      String?
+  va_dept_op                        String?
+  vc_dept_from                      String?
+  vc_dept_op                        String?
+  vi_reg_from                       String?
+  vi_reg_op                         String?
+  va_reg_from                       String?
+  va_reg_op                         String?
+  vc_reg_from                       String?
+  vc_reg_op                         String?
+  vi_nat_from                       String?
+  vi_nat_op                         String?
+  va_nat_from                       String?
+  va_nat_op                         String?
+  vc_nat_from                       String?
+  vc_nat_op                         String?
+  param_vaca_decumul_from           String?
+  param_vaca_partition_date         String?
+  param_vaca_op                     String?
+  param_vacg_decumul_from           String?
+  param_vacg_partition_date         String?
+  param_vacg_op                     String?
+  poids_pourcent_dept_declaree      Float?
+  poids_pourcent_reg_declaree       Float?
+  poids_pourcent_nat_declaree       Float?
+  poids_pourcent_eval_dept_declaree Float?
+  poids_pourcent_eval_reg_declaree  Float?
+  poids_pourcent_eval_nat_declaree  Float?
+  tendance                          String?
 
   @@schema("raw_data")
 }
@@ -739,14 +746,25 @@ enum application_accessible {
   @@schema("public")
 }
 
+model referentiel_tutelle {
+  id         String                 @id @db.Uuid
+  nom        String
+  created_at DateTime               @default(now())
+  updated_at DateTime               @updatedAt
+  objectifs  referentiel_objectif[]
+
+  @@schema("public")
+}
+
 model referentiel_critere {
-  id                 String                     @id @db.Uuid
-  libelle            String
-  descriptif         String
-  sous_criteres      referentiel_sous_critere[]
-  created_at         DateTime                   @default(now())
-  updated_at         DateTime                   @updatedAt
-  evaluation_critere evaluation_critere[]
+  id                  String                     @id @db.Uuid
+  libelle             String
+  descriptif          String
+  sous_criteres       referentiel_sous_critere[]
+  created_at          DateTime                   @default(now())
+  updated_at          DateTime                   @updatedAt
+  evaluation_critere  evaluation_critere[]
+  instruction_critere instruction_critere[]
 
   @@schema("public")
 }
@@ -776,15 +794,19 @@ model referentiel_rattachement {
 }
 
 model referentiel_objectif {
-  id                String                   @id @db.Uuid
-  libelle           String
-  descriptif        String
-  jalon             Int
-  rattachement_code String
-  rattachement      referentiel_rattachement @relation(fields: [rattachement_code], references: [code], onDelete: Cascade, onUpdate: Cascade)
-  created_at        DateTime                 @default(now())
-  updated_at        DateTime                 @updatedAt
-  evaluations       evaluation_objectif[]
+  id                   String                   @id @db.Uuid
+  libelle              String
+  descriptif           String
+  indicateur_cible     String                   @default("")
+  jalon                Int
+  rattachement_code    String
+  rattachement         referentiel_rattachement @relation(fields: [rattachement_code], references: [code], onDelete: Cascade, onUpdate: Cascade)
+  tutelle_id           String?                  @db.Uuid
+  tutelle              referentiel_tutelle?     @relation(fields: [tutelle_id], references: [id], onDelete: SetNull, onUpdate: Cascade)
+  created_at           DateTime                 @default(now())
+  updated_at           DateTime                 @updatedAt
+  evaluations          evaluation_objectif[]
+  instruction_objectif instruction_objectif[]
 
   @@schema("public")
 }
@@ -798,14 +820,15 @@ enum etape_evaluation_enum {
 }
 
 model fiche_evaluation {
-  id                String                   @id @db.Uuid
-  jalon             Int
-  etape_courante    etape_evaluation_enum
-  rattachement_code String
-  rattachement      referentiel_rattachement @relation(fields: [rattachement_code], references: [code], onDelete: Cascade, onUpdate: Cascade)
-  created_at        DateTime                 @default(now())
-  updated_at        DateTime                 @updatedAt
-  etape_evaluations etape_evaluation[]
+  id                   String                   @id @db.Uuid
+  jalon                Int
+  etape_courante       etape_evaluation_enum
+  rattachement_code    String
+  rattachement         referentiel_rattachement @relation(fields: [rattachement_code], references: [code], onDelete: Cascade, onUpdate: Cascade)
+  created_at           DateTime                 @default(now())
+  updated_at           DateTime                 @updatedAt
+  etape_evaluations    etape_evaluation[]
+  chantiers_evaluation chantier_evaluation[]
 
   @@unique([rattachement_code, jalon])
   @@schema("public")
@@ -827,15 +850,17 @@ model etape_evaluation {
 }
 
 model rattachement_utilisateur_etape_jalon {
-  id                String                   @id @db.Uuid
-  etape             etape_evaluation_enum
-  jalon             Int
-  utilisateur_id    String                   @db.Uuid
-  utilisateur       utilisateur              @relation(fields: [utilisateur_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  rattachement_code String
-  rattachement      referentiel_rattachement @relation(fields: [rattachement_code], references: [code], onDelete: Cascade, onUpdate: Cascade)
-  created_at        DateTime                 @default(now())
-  updated_at        DateTime                 @updatedAt
+  id                    String                   @id @db.Uuid
+  etape                 etape_evaluation_enum
+  jalon                 Int
+  utilisateur_id        String                   @db.Uuid
+  utilisateur           utilisateur              @relation(fields: [utilisateur_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  rattachement_code     String
+  rattachement          referentiel_rattachement @relation(fields: [rattachement_code], references: [code], onDelete: Cascade, onUpdate: Cascade)
+  created_at            DateTime                 @default(now())
+  updated_at            DateTime                 @updatedAt
+  instruction_objectifs instruction_objectif[]
+  instruction_criteres  instruction_critere[]
 
   @@unique([utilisateur_id, rattachement_code, jalon, etape])
   @@schema("public")
@@ -872,5 +897,64 @@ model evaluation_critere {
   updated_at          DateTime            @updatedAt
 
   @@unique([etape_evaluation_id, critere_id, auteur_id])
+  @@schema("public")
+}
+
+model instruction_objectif {
+  id                                      String                               @id @db.Uuid
+  objectif_id                             String                               @db.Uuid
+  objectif                                referentiel_objectif                 @relation(fields: [objectif_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  rattachement_utilisateur_etape_jalon_id String                               @db.Uuid
+  rattachement_utilisateur_etape_jalon    rattachement_utilisateur_etape_jalon @relation(fields: [rattachement_utilisateur_etape_jalon_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  created_at                              DateTime                             @default(now())
+  updated_at                              DateTime                             @updatedAt
+
+  @@unique([objectif_id, rattachement_utilisateur_etape_jalon_id])
+  @@schema("public")
+}
+
+model instruction_critere {
+  id                                      String                               @id @db.Uuid
+  critere_id                              String                               @db.Uuid
+  critere                                 referentiel_critere                  @relation(fields: [critere_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  rattachement_utilisateur_etape_jalon_id String                               @db.Uuid
+  rattachement_utilisateur_etape_jalon    rattachement_utilisateur_etape_jalon @relation(fields: [rattachement_utilisateur_etape_jalon_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  created_at                              DateTime                             @default(now())
+  updated_at                              DateTime                             @updatedAt
+
+  @@unique([critere_id, rattachement_utilisateur_etape_jalon_id])
+  @@schema("public")
+}
+
+model chantier_evaluation {
+  id                String
+  code_insee        String
+  maille            Maille
+  territoire_code   String
+  zone_id           String
+  taux_avancement   Float?
+  date_calcul       DateTime          @db.Date
+  jalon             Int               @default(2025)
+  fiche_evaluation  fiche_evaluation? @relation(fields: [territoire_code, jalon], references: [rattachement_code, jalon], onDelete: Cascade, onUpdate: Cascade)
+  chantier_identite chantier_identite @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@id([id, territoire_code, date_calcul])
+  @@schema("public")
+}
+
+model indicateur_evaluation {
+  id                   String
+  chantier_id          String
+  territoire_code      String
+  code_insee           String
+  maille               Maille
+  zone_id              String
+  taux_avancement      Float?
+  ponderation_declaree Float
+  ponderation_reelle   Float
+  date_calcul          DateTime @db.Date
+  jalon                Int      @default(2025)
+
+  @@id([id, territoire_code, date_calcul])
   @@schema("public")
 }

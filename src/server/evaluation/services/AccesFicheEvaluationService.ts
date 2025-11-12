@@ -29,6 +29,17 @@ export class AccesFicheEvaluationService {
     );
   }
 
+  async peutAccederEtapeInstruction({
+    utilisateurId,
+  }: {
+    utilisateurId: string;
+  }): Promise<boolean> {
+    return this.peutAccederEtape(
+      utilisateurId,
+      $Enums.etape_evaluation_enum.INSTRUCTION,
+    );
+  }
+
   async peutAccederEtapePilotage({
     applicationsAccessibles,
   }: {
@@ -60,7 +71,7 @@ export class AccesFicheEvaluationService {
         },
       });
 
-    return resultat != 0;
+    return resultat !== 0;
   }
 
   private async peutAccederEtape(

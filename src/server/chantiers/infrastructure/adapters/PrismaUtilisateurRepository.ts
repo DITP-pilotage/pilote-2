@@ -7,6 +7,26 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
     profilCode: string,
     listeChantierIds: string[],
   ): Promise<Utilisateur[]> {
+    const chantiers = await prisma.chantier_identite.findMany({
+      where: {
+        statut: "PUBLIE",
+      },
+      select: {
+        id: true,
+        perimetre_ids: true,
+      },
+    });
+
+    const mapPerimetreToChantiers = new Map<string, string[]>();
+    chantiers.forEach((chantier) => {
+      chantier.perimetre_ids.forEach((perimetreId) => {
+        if (!mapPerimetreToChantiers.has(perimetreId)) {
+          mapPerimetreToChantiers.set(perimetreId, []);
+        }
+        mapPerimetreToChantiers.get(perimetreId)!.push(chantier.id);
+      });
+    });
+
     const utilisateurs = await prisma.utilisateur.findMany({
       where: {
         profilCode: profilCode,
@@ -14,9 +34,18 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
         habilitation: {
           some: {
             scopeCode: "lecture",
-            chantiers: {
-              hasSome: listeChantierIds,
-            },
+            OR: [
+              {
+                chantiers: {
+                  hasSome: listeChantierIds,
+                },
+              },
+              {
+                perimetres: {
+                  isEmpty: false,
+                },
+              },
+            ],
           },
         },
       },
@@ -24,16 +53,41 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
         habilitation: true,
       },
     });
-    return utilisateurs.map((utilisateur) =>
-      Utilisateur.creerUtilisateur({
-        email: utilisateur.email,
-        nom: utilisateur.nom,
-        prenom: utilisateur.prenom,
-        listeChantiers:
-          utilisateur.habilitation.find(
-            (habilitation) => habilitation.scopeCode === "lecture",
-          )?.chantiers ?? [],
-      }),
-    );
+
+    const utilisateursAvecChantiers: Utilisateur[] = [];
+
+    for (const utilisateur of utilisateurs) {
+      const habilitationLecture = utilisateur.habilitation.find(
+        (habilitation) => habilitation.scopeCode === "lecture",
+      );
+
+      if (!habilitationLecture) {
+        continue;
+      }
+
+      const chantiersDirects = habilitationLecture.chantiers;
+      const chantiersViaPerimetres = habilitationLecture.perimetres.flatMap(
+        (perimetreId) => mapPerimetreToChantiers.get(perimetreId) ?? [],
+      );
+
+      const tousLesChantiers = [
+        ...new Set([...chantiersDirects, ...chantiersViaPerimetres]),
+      ].filter((chantierId) => listeChantierIds.includes(chantierId));
+
+      if (tousLesChantiers.length === 0) {
+        continue;
+      }
+
+      utilisateursAvecChantiers.push(
+        Utilisateur.creerUtilisateur({
+          email: utilisateur.email,
+          nom: utilisateur.nom,
+          prenom: utilisateur.prenom,
+          listeChantiers: tousLesChantiers,
+        }),
+      );
+    }
+
+    return utilisateursAvecChantiers;
   }
 }

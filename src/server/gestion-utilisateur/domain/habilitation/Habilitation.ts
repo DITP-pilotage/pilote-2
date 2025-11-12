@@ -12,7 +12,7 @@ import { Profil } from "@/server/domain/profil/Profil.interface";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
 import { ProfilCode } from "@/server/gestion-utilisateur/domain/Utilisateur.interface";
 import { UnauthorizedError } from "@/server/app/error-boundary/unauthorized-error";
-import { PropositionValeurAvancementChantierInformation } from "@/server/chantiers/domain/PropositionValeurAvancementChantierInformation";
+import { RapportDirecteurProjetChantierInformation } from "@/server/chantiers/domain/PropositionValeurAvancementChantierInformation";
 import { LISTE_PROFIL_TERRITORIALISE } from "@/server/app/domain/ProfilTerritorialise";
 import { Habilitations } from "./Habilitation.interface";
 
@@ -139,7 +139,7 @@ export default class Habilitation {
   verifierAutorisationModificationPropositionValeurAvancement(
     profil: ProfilCode | null,
     chantiersIdsAutorisés: string[],
-    propositionValeurAvancementChantierInformation: PropositionValeurAvancementChantierInformation,
+    propositionValeurAvancementChantierInformation: RapportDirecteurProjetChantierInformation,
   ) {
     const estAutoriseAModifierLesCommentaires = chantiersIdsAutorisés.includes(
       propositionValeurAvancementChantierInformation.id,
@@ -159,7 +159,7 @@ export default class Habilitation {
   verifierAutorisationAcceptationOuRefusPropositionValeurAvancement(
     profil: ProfilCode | null,
     habilitations: Habilitations,
-    propositionValeurAvancementChantierInformation: PropositionValeurAvancementChantierInformation,
+    propositionValeurAvancementChantierInformation: RapportDirecteurProjetChantierInformation,
   ) {
     const estAutoriseAImportSurLeChantier =
       habilitations.saisieIndicateur.chantiers.includes(

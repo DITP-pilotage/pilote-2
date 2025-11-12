@@ -1,11 +1,11 @@
-import logger from '@/server/infrastructure/Logger';
-import { prisma } from '@/server/db/prisma';
-import seedsUtilisateursTest from '@/server/seeds/utilisateursTest.json';
+import logger from "@/server/infrastructure/Logger";
+import { prisma } from "@/server/db/prisma";
+import seedsUtilisateursTest from "@/server/seeds/utilisateursTest.json";
 
 async function seedUsers() {
   const auteurImport = await prisma.utilisateur.findFirst({
     where: {
-      email: 'import.csv@modernisation.gouv.fr',
+      email: "import.csv@modernisation.gouv.fr",
     },
   });
 
@@ -37,22 +37,29 @@ async function seedUsers() {
           });
         }
 
-        logger.info(`Utilisateur et ses habilitations créés avec succès : ${utilisateur.email}`);
+        logger.info(
+          `Utilisateur et ses habilitations créés avec succès : ${utilisateur.email}`,
+        );
       });
     }
 
-    logger.info('Initialisation des utilisateurs de tests terminée avec succès !');
+    logger.info(
+      "Initialisation des utilisateurs de tests terminée avec succès !",
+    );
   } catch (error) {
-    logger.error('Erreur lors de l\'initialisation des utilisateurs de tests :', error);
+    logger.error(
+      "Erreur lors de l'initialisation des utilisateurs de tests :",
+      error,
+    );
     throw error;
   }
 }
 
 seedUsers()
   .then(() => {
-    logger.info('Script exécuté avec succès');
+    logger.info("Script exécuté avec succès");
   })
   .catch((error) => {
-    logger.error('Échec du script :', error);
+    logger.error("Échec du script :", error);
     throw error;
-  }); 
+  });

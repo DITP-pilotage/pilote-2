@@ -1,3 +1,4 @@
+import { $Enums } from "@prisma/client";
 import { AfficherConsolidationQuery } from "@/server/evaluation/queries/AfficherConsolidationQuery";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { prisma } from "@/server/db/prisma";
@@ -129,6 +130,7 @@ describe("AfficherConsolidationQuery", () => {
               libelle: "Objectif rattachement 1",
               descriptif: "Description objectif 1",
               jalon: 2025,
+              indicateur_cible: "Atteindre 85% de satisfaction",
             },
           },
         },
@@ -144,6 +146,7 @@ describe("AfficherConsolidationQuery", () => {
               libelle: "Objectif rattachement 2",
               descriptif: "Description objectif 2",
               jalon: 2025,
+              indicateur_cible: "Réduire de 20% les délais",
             },
           },
         },
@@ -257,46 +260,74 @@ describe("AfficherConsolidationQuery", () => {
             {
               id: objectif1Id,
               libelle: "Objectif rattachement 1",
-              autoEvaluation: {
-                id: expect.any(String),
-                note: null,
-                commentaire: "",
-              },
-              evaluation: {
-                id: evaluationObjectif1Id,
-                note: 5,
-                commentaire: "Excellent",
-              },
+              descriptif: "Description objectif 1",
+              indicateurCible: "Atteindre 85% de satisfaction",
+              evaluations: [
+                {
+                  etape: $Enums.etape_evaluation_enum.CONSOLIDATION,
+                  evaluation: {
+                    id: evaluationObjectif1Id,
+                    note: 5,
+                    commentaire: "Excellent",
+                  },
+                },
+                {
+                  etape: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
+                  evaluation: {
+                    id: expect.any(String),
+                    note: null,
+                    commentaire: "",
+                  },
+                },
+              ],
             },
           ],
           criteres: [
             {
               id: critere1Id,
               libelle: "Critère rattachement 1",
-              autoEvaluation: {
-                id: expect.any(String),
-                note: null,
-                commentaire: "",
-              },
-              evaluation: {
-                id: evaluationCritere1Id,
-                note: 4,
-                commentaire: "Bon critère",
-              },
+              descriptif: "Description critère 1",
+              evaluations: [
+                {
+                  etape: $Enums.etape_evaluation_enum.CONSOLIDATION,
+                  evaluation: {
+                    id: evaluationCritere1Id,
+                    note: 4,
+                    commentaire: "Bon critère",
+                  },
+                },
+                {
+                  etape: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
+                  evaluation: {
+                    id: expect.any(String),
+                    note: null,
+                    commentaire: "",
+                  },
+                },
+              ],
             },
             {
               id: critere2Id,
               libelle: "Critère rattachement 2",
-              autoEvaluation: {
-                id: expect.any(String),
-                note: null,
-                commentaire: "",
-              },
-              evaluation: {
-                id: expect.any(String),
-                note: null,
-                commentaire: "",
-              },
+              descriptif: "Description critère 2",
+              evaluations: [
+                {
+                  etape: $Enums.etape_evaluation_enum.CONSOLIDATION,
+                  evaluation: {
+                    id: expect.any(String),
+                    note: null,
+                    commentaire: "",
+                  },
+                },
+                {
+                  etape: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
+                  evaluation: {
+                    id: expect.any(String),
+                    note: null,
+                    commentaire: "",
+                  },
+                },
+              ],
             },
           ],
         },
@@ -309,46 +340,74 @@ describe("AfficherConsolidationQuery", () => {
             {
               id: objectif2Id,
               libelle: "Objectif rattachement 2",
-              autoEvaluation: {
-                id: expect.any(String),
-                note: null,
-                commentaire: "",
-              },
-              evaluation: {
-                id: evaluationObjectif2Id,
-                note: 3,
-                commentaire: "Moyen",
-              },
+              descriptif: "Description objectif 2",
+              indicateurCible: "Réduire de 20% les délais",
+              evaluations: [
+                {
+                  etape: $Enums.etape_evaluation_enum.CONSOLIDATION,
+                  evaluation: {
+                    id: evaluationObjectif2Id,
+                    note: 3,
+                    commentaire: "Moyen",
+                  },
+                },
+                {
+                  etape: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
+                  evaluation: {
+                    id: expect.any(String),
+                    note: null,
+                    commentaire: "",
+                  },
+                },
+              ],
             },
           ],
           criteres: [
             {
               id: critere1Id,
               libelle: "Critère rattachement 1",
-              autoEvaluation: {
-                id: expect.any(String),
-                note: null,
-                commentaire: "",
-              },
-              evaluation: {
-                id: expect.any(String),
-                note: null,
-                commentaire: "",
-              },
+              descriptif: "Description critère 1",
+              evaluations: [
+                {
+                  etape: $Enums.etape_evaluation_enum.CONSOLIDATION,
+                  evaluation: {
+                    id: expect.any(String),
+                    note: null,
+                    commentaire: "",
+                  },
+                },
+                {
+                  etape: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
+                  evaluation: {
+                    id: expect.any(String),
+                    note: null,
+                    commentaire: "",
+                  },
+                },
+              ],
             },
             {
               id: critere2Id,
               libelle: "Critère rattachement 2",
-              autoEvaluation: {
-                id: expect.any(String),
-                note: null,
-                commentaire: "",
-              },
-              evaluation: {
-                id: evaluationCritere2Id,
-                note: 2,
-                commentaire: "Critère à améliorer",
-              },
+              descriptif: "Description critère 2",
+              evaluations: [
+                {
+                  etape: $Enums.etape_evaluation_enum.CONSOLIDATION,
+                  evaluation: {
+                    id: evaluationCritere2Id,
+                    note: 2,
+                    commentaire: "Critère à améliorer",
+                  },
+                },
+                {
+                  etape: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
+                  evaluation: {
+                    id: expect.any(String),
+                    note: null,
+                    commentaire: "",
+                  },
+                },
+              ],
             },
           ],
         },
@@ -456,6 +515,7 @@ describe("AfficherConsolidationQuery", () => {
               libelle: "Objectif multi-étape",
               descriptif: "Description objectif",
               jalon: 2025,
+              indicateur_cible: "100 dossiers traités par mois",
             },
           },
         },
@@ -530,16 +590,26 @@ describe("AfficherConsolidationQuery", () => {
             {
               id: objectifId,
               libelle: "Objectif multi-étape",
-              autoEvaluation: {
-                id: evaluationAutoId,
-                note: 2,
-                commentaire: "Évaluation auto",
-              },
-              evaluation: {
-                id: evaluationConsolidationId,
-                note: 4,
-                commentaire: "Évaluation consolidation",
-              },
+              descriptif: "Description objectif",
+              indicateurCible: "100 dossiers traités par mois",
+              evaluations: [
+                {
+                  etape: $Enums.etape_evaluation_enum.CONSOLIDATION,
+                  evaluation: {
+                    id: evaluationConsolidationId,
+                    note: 4,
+                    commentaire: "Évaluation consolidation",
+                  },
+                },
+                {
+                  etape: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
+                  evaluation: {
+                    id: evaluationAutoId,
+                    note: 2,
+                    commentaire: "Évaluation auto",
+                  },
+                },
+              ],
             },
           ],
           criteres: expect.any(Array),
@@ -593,6 +663,7 @@ describe("AfficherConsolidationQuery", () => {
               libelle: "Objectif sans évaluation",
               descriptif: "Description objectif",
               jalon: 2025,
+              indicateur_cible: "Zéro incident de sécurité",
             },
           },
         },
@@ -637,32 +708,51 @@ describe("AfficherConsolidationQuery", () => {
             {
               id: objectifId,
               libelle: "Objectif sans évaluation",
-              autoEvaluation: {
-                id: expect.any(String),
-                note: null,
-                commentaire: "",
-              },
-              evaluation: {
-                id: expect.any(String),
-                note: null,
-                commentaire: "",
-              },
+              descriptif: "Description objectif",
+              indicateurCible: "Zéro incident de sécurité",
+              evaluations: [
+                {
+                  etape: $Enums.etape_evaluation_enum.CONSOLIDATION,
+                  evaluation: {
+                    id: expect.any(String),
+                    note: null,
+                    commentaire: "",
+                  },
+                },
+                {
+                  etape: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
+                  evaluation: {
+                    id: expect.any(String),
+                    note: null,
+                    commentaire: "",
+                  },
+                },
+              ],
             },
           ],
           criteres: [
             {
               id: critereId,
               libelle: "Critère sans évaluation",
-              autoEvaluation: {
-                id: expect.any(String),
-                note: null,
-                commentaire: "",
-              },
-              evaluation: {
-                id: expect.any(String),
-                note: null,
-                commentaire: "",
-              },
+              descriptif: "Description critère",
+              evaluations: [
+                {
+                  etape: $Enums.etape_evaluation_enum.CONSOLIDATION,
+                  evaluation: {
+                    id: expect.any(String),
+                    note: null,
+                    commentaire: "",
+                  },
+                },
+                {
+                  etape: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
+                  evaluation: {
+                    id: expect.any(String),
+                    note: null,
+                    commentaire: "",
+                  },
+                },
+              ],
             },
           ],
         },
@@ -782,30 +872,48 @@ describe("AfficherConsolidationQuery", () => {
             {
               id: critere1Id,
               libelle: "Critère 1",
-              autoEvaluation: {
-                id: expect.any(String),
-                note: null,
-                commentaire: "",
-              },
-              evaluation: {
-                id: evaluationCritere1Id,
-                note: 3,
-                commentaire: "Évaluation critère 1",
-              },
+              descriptif: "Description critère 1",
+              evaluations: [
+                {
+                  etape: $Enums.etape_evaluation_enum.CONSOLIDATION,
+                  evaluation: {
+                    id: evaluationCritere1Id,
+                    note: 3,
+                    commentaire: "Évaluation critère 1",
+                  },
+                },
+                {
+                  etape: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
+                  evaluation: {
+                    id: expect.any(String),
+                    note: null,
+                    commentaire: "",
+                  },
+                },
+              ],
             },
             {
               id: critere2Id,
               libelle: "Critère 2",
-              autoEvaluation: {
-                id: expect.any(String),
-                note: null,
-                commentaire: "",
-              },
-              evaluation: {
-                id: expect.any(String),
-                note: null,
-                commentaire: "",
-              },
+              descriptif: "Description critère 2",
+              evaluations: [
+                {
+                  etape: $Enums.etape_evaluation_enum.CONSOLIDATION,
+                  evaluation: {
+                    id: expect.any(String),
+                    note: null,
+                    commentaire: "",
+                  },
+                },
+                {
+                  etape: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
+                  evaluation: {
+                    id: expect.any(String),
+                    note: null,
+                    commentaire: "",
+                  },
+                },
+              ],
             },
           ],
         },
@@ -845,12 +953,14 @@ describe("AfficherConsolidationQuery", () => {
                 libelle: "Objectif 1",
                 descriptif: "Description objectif 1",
                 jalon: 2025,
+                indicateur_cible: "50 nouvelles formations créées",
               },
               {
                 id: objectif2Id,
                 libelle: "Objectif 2",
                 descriptif: "Description objectif 2",
                 jalon: 2025,
+                indicateur_cible: "Taux d'accessibilité > 95%",
               },
             ],
           },
@@ -908,30 +1018,50 @@ describe("AfficherConsolidationQuery", () => {
             {
               id: objectif1Id,
               libelle: "Objectif 1",
-              autoEvaluation: {
-                id: expect.any(String),
-                note: null,
-                commentaire: "",
-              },
-              evaluation: {
-                id: evaluationObjectif1Id,
-                note: 5,
-                commentaire: "Évaluation objectif 1",
-              },
+              descriptif: "Description objectif 1",
+              indicateurCible: "50 nouvelles formations créées",
+              evaluations: [
+                {
+                  etape: $Enums.etape_evaluation_enum.CONSOLIDATION,
+                  evaluation: {
+                    id: evaluationObjectif1Id,
+                    note: 5,
+                    commentaire: "Évaluation objectif 1",
+                  },
+                },
+                {
+                  etape: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
+                  evaluation: {
+                    id: expect.any(String),
+                    note: null,
+                    commentaire: "",
+                  },
+                },
+              ],
             },
             {
               id: objectif2Id,
               libelle: "Objectif 2",
-              autoEvaluation: {
-                id: expect.any(String),
-                note: null,
-                commentaire: "",
-              },
-              evaluation: {
-                id: expect.any(String),
-                note: null,
-                commentaire: "",
-              },
+              descriptif: "Description objectif 2",
+              indicateurCible: "Taux d'accessibilité > 95%",
+              evaluations: [
+                {
+                  etape: $Enums.etape_evaluation_enum.CONSOLIDATION,
+                  evaluation: {
+                    id: expect.any(String),
+                    note: null,
+                    commentaire: "",
+                  },
+                },
+                {
+                  etape: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
+                  evaluation: {
+                    id: expect.any(String),
+                    note: null,
+                    commentaire: "",
+                  },
+                },
+              ],
             },
           ],
           criteres: expect.any(Array),
@@ -1002,6 +1132,7 @@ describe("AfficherConsolidationQuery", () => {
               libelle: "Objectif avec auto-évaluation",
               descriptif: "Description objectif",
               jalon: 2025,
+              indicateur_cible: "Diminution de 15% des émissions CO2",
             },
           },
         },
@@ -1099,32 +1230,51 @@ describe("AfficherConsolidationQuery", () => {
             {
               id: objectifId,
               libelle: "Objectif avec auto-évaluation",
-              autoEvaluation: {
-                id: evaluationObjectifAutoId,
-                note: 3,
-                commentaire: "Auto-évaluation objectif",
-              },
-              evaluation: {
-                id: evaluationObjectifConsoId,
-                note: 4,
-                commentaire: "Consolidation objectif",
-              },
+              descriptif: "Description objectif",
+              indicateurCible: "Diminution de 15% des émissions CO2",
+              evaluations: [
+                {
+                  etape: $Enums.etape_evaluation_enum.CONSOLIDATION,
+                  evaluation: {
+                    id: evaluationObjectifConsoId,
+                    note: 4,
+                    commentaire: "Consolidation objectif",
+                  },
+                },
+                {
+                  etape: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
+                  evaluation: {
+                    id: evaluationObjectifAutoId,
+                    note: 3,
+                    commentaire: "Auto-évaluation objectif",
+                  },
+                },
+              ],
             },
           ],
           criteres: expect.arrayContaining([
             {
               id: critereId,
               libelle: "Critère avec auto-évaluation",
-              autoEvaluation: {
-                id: evaluationCritereAutoId,
-                note: 2,
-                commentaire: "Auto-évaluation critère",
-              },
-              evaluation: {
-                id: evaluationCritereConsoId,
-                note: 5,
-                commentaire: "Consolidation critère",
-              },
+              descriptif: "Description critère",
+              evaluations: [
+                {
+                  etape: $Enums.etape_evaluation_enum.CONSOLIDATION,
+                  evaluation: {
+                    id: evaluationCritereConsoId,
+                    note: 5,
+                    commentaire: "Consolidation critère",
+                  },
+                },
+                {
+                  etape: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
+                  evaluation: {
+                    id: evaluationCritereAutoId,
+                    note: 2,
+                    commentaire: "Auto-évaluation critère",
+                  },
+                },
+              ],
             },
           ]),
         },

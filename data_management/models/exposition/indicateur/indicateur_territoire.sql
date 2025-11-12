@@ -43,6 +43,8 @@ SELECT
     coalesce(z_appl.est_applicable, true) AND maille_appl.maille_est_applicable AS est_applicable,
     pond_reelle.poids_zone_declaree AS ponderation_zone_declaree,
     pond_reelle.poids_zone_reel AS ponderation_zone_reel,
+    pond_reelle.poids_eval_zone_declaree AS ponderation_zone_declaree_eval,
+    pond_reelle.poids_eval_zone_reel AS ponderation_zone_reel_eval,
     CASE
         WHEN coalesce(z_appl.est_applicable, true) AND maille_appl.maille_est_applicable THEN date_pro_maj.est_a_jour
     END AS est_a_jour,

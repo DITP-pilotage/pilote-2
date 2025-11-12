@@ -3,6 +3,7 @@ import { useFormEvaluation } from "@/components/PageEvaluation/form";
 import { pageEvaluation } from "@/components/PageEvaluation/PageEvaluationServerSideContext";
 import { CommentaireTextareaAutoEvaluation } from "@/components/PageEvaluation/CommentaireTextareaAutoEvaluation";
 import { InputNoteAutoEvaluation } from "@/components/PageEvaluation/InputNoteAutoEvaluation";
+import { BoutonEnSavoirPlus } from "@/components/PageEvaluation/BoutonEnSavoirPlus";
 
 export function EtapeObjectifs() {
   const { autoEvaluation } = pageEvaluation.useServerSidePropsContext();
@@ -21,8 +22,13 @@ export function EtapeObjectifs() {
         return (
           <div key={objectif.id}>
             <div className="p-4 flex items-center justify-between pr-6">
-              <header className="text-primary font-bold">
-                {objectif.libelle}
+              <header className="flex items-center gap-2">
+                <span className="text-primary font-bold">
+                  {objectif.libelle}
+                </span>
+                <BoutonEnSavoirPlus
+                  critereOuObjectif={{ type: "objectif", objectif }}
+                />
               </header>
               <InputNoteAutoEvaluation name={noteName} />
             </div>

@@ -4,6 +4,9 @@ export type MetadataParametrageParametrePonderationIndicateurForm = {
   poidsPourcentDept: string;
   poidsPourcentReg: string;
   poidsPourcentNat: string;
+  poidsPourcentEvalNat: string;
+  poidsPourcentEvalReg: string;
+  poidsPourcentEvalDept: string;
 };
 
 export default function useDétailsMetadataParametrePonderationIndicateurForm() {

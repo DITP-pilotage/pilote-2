@@ -16,6 +16,7 @@ export const BoutonDebloquerLaConsolidation = ({
 
   return (
     <Bouton
+      className="!text-sm"
       disabled={disabled}
       label="Débloquer la consolidation"
       onClick={handleDebloquerFiches}

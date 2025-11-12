@@ -27,4 +27,17 @@ time pg_dump -d $CONN_STR_PROD --verbose \
     --table public.erreur_validation_fichier \
     --table public.objectif \
     --table public.indicateur_territoire_valeur_evenement \
+    --table public.referentiel_objectif \
+    --table public.referentiel_tutelle \
+    --table public.referentiel_critere \
+    --table public.referentiel_sous_critere \
+    --table public.referentiel_rattachement \
+    --table public.fiche_evaluation \
+    --table public.etape_evaluation \
+    --table public.rattachement_utilisateur_etape_jalon \
+    --table public.evaluation_objectif \
+    --table public.evaluation_critere \
+    --table public.instruction_objectif \
+    --table public.instruction_critere \
+    --table public.chantier_evaluation \
     --file=$DUMP_DEST

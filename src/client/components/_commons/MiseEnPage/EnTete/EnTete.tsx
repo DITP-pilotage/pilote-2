@@ -2,12 +2,13 @@ import "@gouvfr/dsfr/dist/component/header/header.min.css";
 import "@gouvfr/dsfr/dist/component/logo/logo.min.css";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
-import Navigation from "@/components/_commons/MiseEnPage/Navigation/Navigation";
+import { Navigation } from "@/components/_commons/MiseEnPage/Navigation/Navigation";
 import { Utilisateur } from "@/components/_commons/MiseEnPage/EnTete/Utilisateur/Utilisateur";
 import BandeauInformation from "@/components/_commons/BandeauInformation/BandeauInformation";
 import api from "@/server/infrastructure/api/trpc/api";
 import { BoutonContacterEquipePilote } from "@/components/PageAccueil/BoutonContacterEquipePilote";
 import { BoutonSeConnecter } from "@/components/_commons/BoutonSeConnecter";
+import { BoutonApplicationsPilote } from "@/components/_commons/MiseEnPage/EnTete/BoutonApplicationsPilote";
 
 const useEntete = () => {
   const { data: messageInformation } =
@@ -26,6 +27,8 @@ export const EnTete = () => {
     messageInformation?.bandeauTexte ||
     "Des opérations de maintenance sont en cours et peuvent perturber le fonctionnement normal de PILOTE. En cas de difficultés : pilote.ditp@modernisation.gouv.fr";
   const bandeauType = messageInformation?.bandeauType || "WARNING";
+  const peutVoirLeBoutonApplicationsPilote =
+    process.env.NEXT_PUBLIC_FF_PILOTE_EVAL === "true";
 
   return (
     <header className="fr-header" role="banner">
@@ -64,17 +67,26 @@ export const EnTete = () => {
             </div>
             <div className="fr-header__tools">
               <div className="fr-header__tools-links">
-                <ul className="flex align-center">
-                  <li className="fr-mr-md-2w">
+                <ul className="flex align-center gap-4">
+                  <li>
                     <BoutonContacterEquipePilote />
                   </li>
-                  <li>
-                    {session?.user?.email ? (
-                      <Utilisateur email={session.user.email} />
-                    ) : (
+                  {session?.user?.email ? (
+                    <>
+                      {peutVoirLeBoutonApplicationsPilote ? (
+                        <li>
+                          <BoutonApplicationsPilote />
+                        </li>
+                      ) : null}
+                      <li>
+                        <Utilisateur email={session.user.email} />
+                      </li>
+                    </>
+                  ) : (
+                    <li>
                       <BoutonSeConnecter />
-                    )}
-                  </li>
+                    </li>
+                  )}
                 </ul>
               </div>
             </div>

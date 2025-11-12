@@ -70,6 +70,50 @@ const SectionDétailsMetadataParametrePonderationIndicateur: FunctionComponent<{
           />
         </div>
       </div>
+      <div className="fr-grid-row fr-grid-row--gutters">
+        <div className="fr-col-12 fr-col-md-4">
+          <MetadataIndicateurInput
+            erreurMessage={errors.poidsPourcentEvalDept?.message}
+            estEnCoursDeModification={estEnCoursDeModification}
+            htmlName="poidsPourcentEvalDept"
+            informationMetadataIndicateur={
+              mapInformationMetadataIndicateur.poids_pourcent_eval_dept_declaree
+            }
+            register={register("poidsPourcentEvalDept", {
+              value: `${indicateur.poidsPourcentEvalDept}`,
+            })}
+            valeurAffiché={`${indicateur.poidsPourcentEvalDept}`}
+          />
+        </div>
+        <div className="fr-col-12 fr-col-md-4">
+          <MetadataIndicateurInput
+            erreurMessage={errors.poidsPourcentEvalReg?.message}
+            estEnCoursDeModification={estEnCoursDeModification}
+            htmlName="poidsPourcentEvalReg"
+            informationMetadataIndicateur={
+              mapInformationMetadataIndicateur.poids_pourcent_eval_reg_declaree
+            }
+            register={register("poidsPourcentEvalReg", {
+              value: `${indicateur.poidsPourcentEvalReg}`,
+            })}
+            valeurAffiché={`${indicateur.poidsPourcentEvalReg}`}
+          />
+        </div>
+        <div className="fr-col-12 fr-col-md-4">
+          <MetadataIndicateurInput
+            erreurMessage={errors.poidsPourcentEvalNat?.message}
+            estEnCoursDeModification={estEnCoursDeModification}
+            htmlName="poidsPourcentEvalNat"
+            informationMetadataIndicateur={
+              mapInformationMetadataIndicateur.poids_pourcent_eval_nat_declaree
+            }
+            register={register("poidsPourcentEvalNat", {
+              value: `${indicateur.poidsPourcentEvalNat}`,
+            })}
+            valeurAffiché={`${indicateur.poidsPourcentEvalNat}`}
+          />
+        </div>
+      </div>
     </div>
   );
 };

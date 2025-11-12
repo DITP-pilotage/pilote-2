@@ -16,6 +16,7 @@ export const BoutonPasserEnInstruction = ({
 
   return (
     <Bouton
+      className="!text-sm"
       disabled={disabled}
       label="Passer en instruction"
       onClick={handlePasserEnInstruction}

@@ -48,10 +48,8 @@ export default function PageConsolidation(
   props: InferGetServerSidePropsType<typeof getServerSideProps>,
 ) {
   return (
-    <div className="mx-auto w-full max-w-[1200px] py-6">
-      <pageConsolidation.ServerSidePropsProvider value={props}>
-        <FormulaireConsolidation />
-      </pageConsolidation.ServerSidePropsProvider>
-    </div>
+    <pageConsolidation.ServerSidePropsProvider value={props}>
+      <FormulaireConsolidation />
+    </pageConsolidation.ServerSidePropsProvider>
   );
 }

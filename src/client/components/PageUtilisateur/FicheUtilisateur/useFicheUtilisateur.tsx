@@ -117,8 +117,7 @@ export default function useFicheUtilisateur(
       if (profil?.chantiers.lecture.tousTerritoires) {
         return (
           u.habilitations?.lecture?.chantiers?.map(
-            (chantierId) =>
-              chantiers?.find((c) => c.id === chantierId)?.id ?? "",
+            (chantierId) => chantierId,
           ) ?? []
         );
       }
@@ -146,7 +145,7 @@ export default function useFicheUtilisateur(
   ) => {
     return (
       u.habilitations?.responsabilite?.chantiers?.map(
-        (chantierId) => chantiers?.find((c) => c.id === chantierId)?.id ?? "",
+        (chantierId) => chantierId,
       ) ?? []
     );
   };
@@ -196,17 +195,13 @@ export default function useFicheUtilisateur(
     );
 
   const déterminerLesNomÀAfficherPourLesChantiersSaisieCommentaire =
-    useCallback(
-      (u: FicheUtilisateurProps["utilisateur"]) => {
-        return (
-          u.habilitations?.saisieCommentaire?.chantiers?.map(
-            (chantierId) =>
-              chantiers?.find((c) => c.id === chantierId)?.id ?? "",
-          ) ?? []
-        );
-      },
-      [chantiers],
-    );
+    useCallback((u: FicheUtilisateurProps["utilisateur"]) => {
+      return (
+        u.habilitations?.saisieCommentaire?.chantiers?.map(
+          (chantierId) => chantierId,
+        ) ?? []
+      );
+    }, []);
 
   const déterminerLesNomÀAfficherPourLesChantiersGestionDesUtilisateurs =
     useCallback(

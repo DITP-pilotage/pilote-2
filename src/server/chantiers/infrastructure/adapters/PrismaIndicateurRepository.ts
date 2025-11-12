@@ -1234,4 +1234,65 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
       propositionStatut: dernierEvenement.type_evenement,
     };
   }
+
+  async recupererIndicateursNonAJourParChantierId(): Promise<
+    Map<string, { id: string; nom: string; mailles: string[] }[]>
+  > {
+    const indicateurs = await prisma.indicateur_territoire.findMany({
+      where: {
+        indicateur_identite: {
+          statut: "PUBLIE",
+          chantier_identite: {
+            statut: "PUBLIE",
+          },
+        },
+        est_applicable: true,
+        OR: [{ est_a_jour: false }, { est_a_jour: null }],
+      },
+      select: {
+        maille: true,
+        indicateur_identite: {
+          select: {
+            id: true,
+            nom: true,
+            chantier_id: true,
+          },
+        },
+      },
+      distinct: ["id", "maille"],
+    });
+
+    const indicateursParChantier = new Map<
+      string,
+      { id: string; nom: string; mailles: string[] }[]
+    >();
+
+    for (const indicateur of indicateurs) {
+      const chantierId = indicateur.indicateur_identite.chantier_id;
+      const indicateurId = indicateur.indicateur_identite.id;
+      const indicateurNom = indicateur.indicateur_identite.nom;
+      const maille = indicateur.maille;
+
+      if (!indicateursParChantier.has(chantierId)) {
+        indicateursParChantier.set(chantierId, []);
+      }
+
+      const indicateursChantier = indicateursParChantier.get(chantierId)!;
+      const indicateurExistant = indicateursChantier.find(
+        (indic) => indic.id === indicateurId,
+      );
+
+      if (indicateurExistant) {
+        indicateurExistant.mailles.push(maille);
+      } else {
+        indicateursChantier.push({
+          id: indicateurId,
+          nom: indicateurNom,
+          mailles: [maille],
+        });
+      }
+    }
+
+    return indicateursParChantier;
+  }
 }

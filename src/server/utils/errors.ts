@@ -1,6 +1,12 @@
 import { z } from "zod";
 
-export class NonAutorisé extends Error {}
+export class NonAutorisé extends Error {
+  private readonly _tag = "NonAutorisé";
+
+  static isNonAutorisé(error: unknown): error is NonAutorisé {
+    return (error as NonAutorisé)._tag === "NonAutorisé";
+  }
+}
 
 export class TerritoireNonAutoriséErreur extends NonAutorisé {
   constructor() {

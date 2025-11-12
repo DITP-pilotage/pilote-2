@@ -3,11 +3,16 @@ import {
   IndicateurTerritoireValeurEvenement,
   DonneesComplementaires,
 } from "@/server/indicateur-territoire-valeur-evenement/domain/IndicateurTerritoireValeurEvenement";
-import { IndicateurTerritoireValeurEvenementRepository } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/IndicateurTerritoireValeurEvenementRepository";
+import {
+  IndicateurTerritoireValeurEvenementRepository,
+  PropositionValeurAvancementRapport,
+} from "@/server/indicateur-territoire-valeur-evenement/domain/ports/IndicateurTerritoireValeurEvenementRepository";
 import { TypeValeur } from "@/server/indicateur-territoire-valeur-evenement/domain/TypeValeur";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { EvenementsSurDate } from "@/server/import-indicateur/domain/EvenementsSurDate";
 import { toISODate } from "@/server/app/domain/Dates";
+import { EvenementValeurEnum } from "@/server/app/domain/EvenementValeurEnum";
+import { formaterDate } from "@/client/utils/date/date";
 
 export class PrismaIndicateurTerritoireValeurEvenementRepository
   implements IndicateurTerritoireValeurEvenementRepository
@@ -333,5 +338,134 @@ export class PrismaIndicateurTerritoireValeurEvenementRepository
         return Prisma.JsonNull;
       }
     }
+  }
+
+  async recupererLesPropositionsEnCoursParChantierIds(): Promise<
+    Map<string, Map<string, PropositionValeurAvancementRapport[]>>
+  > {
+    const propositions = await this.prisma
+      .getInstance()
+      .indicateur_territoire_valeur_evenement.findMany({
+        where: {
+          type_evenement: {
+            in: [
+              "PROPOSITION_VALEUR_CREEE",
+              "PROPOSITION_VALEUR_MODIFIEE",
+              "PROPOSITION_VALEUR_SUPPRIMEE",
+              "PROPOSITION_VALEUR_REFUSEE",
+              "PROPOSITION_VALEUR_ACCUSEE_RECEPTION",
+              "PROPOSITION_VALEUR_ACCEPTEE",
+              "PROPOSITION_VALEUR_IGNOREE_VALEUR_MODIFIEE",
+              "PROPOSITION_VALEUR_IGNOREE_VALEUR_HISTORISEE",
+              "PROPOSITION_VALEUR_ACCEPTEE_AVEC_MODIFICATION",
+            ],
+          },
+          indicateur_territoire: {
+            indicateur_identite: {
+              statut: "PUBLIE",
+              chantier_identite: { statut: "PUBLIE" },
+            },
+            est_applicable: true,
+          },
+        },
+        orderBy: [
+          { indic_id: "asc" },
+          { territoire_code: "asc" },
+          { date_valeur: "asc" },
+          { ordre: "desc" },
+        ],
+        select: {
+          indic_id: true,
+          territoire_code: true,
+          date_valeur: true,
+          type_evenement: true,
+          valeur: true,
+          indicateur_territoire: {
+            select: {
+              chantier_id: true,
+              valeur_actuelle_mandat: true,
+              date_valeur_actuelle_mandat: true,
+              territoire: {
+                select: {
+                  nom: true,
+                },
+              },
+              indicateur_identite: {
+                select: {
+                  nom: true,
+                  unite_mesure: true,
+                },
+              },
+            },
+          },
+        },
+      });
+
+    const dernierEvenementProposition = Object.values(
+      propositions.reduce(
+        (acc, proposition) => {
+          const key = `${proposition.indic_id}-${proposition.territoire_code}-${proposition.date_valeur.toISOString()}`;
+          if (!acc[key]) {
+            acc[key] = proposition;
+          }
+          return acc;
+        },
+        {} as Record<string, (typeof propositions)[number]>,
+      ),
+    );
+
+    const propositionsEnCours = dernierEvenementProposition.filter(
+      (evenement) =>
+        [
+          EvenementValeurEnum.PROPOSITION_VALEUR_CREEE,
+          EvenementValeurEnum.PROPOSITION_VALEUR_MODIFIEE,
+          EvenementValeurEnum.PROPOSITION_VALEUR_ACCUSEE_RECEPTION,
+        ].includes(evenement.type_evenement),
+    );
+
+    return propositionsEnCours.reduce((acc, proposition) => {
+      const chantierId = proposition.indicateur_territoire.chantier_id;
+      const indicateurId = proposition.indic_id;
+
+      const rapport: PropositionValeurAvancementRapport = {
+        indicateurId,
+        territoireCode: proposition.territoire_code,
+        valeurAvancementProposee: Number.isInteger(proposition.valeur)
+          ? proposition.valeur!.toString()
+          : proposition.valeur!.toFixed(1).toString(),
+        dateValeurAvancement: formaterDate(
+          proposition.indicateur_territoire.date_valeur_actuelle_mandat?.toISOString(),
+          "DD/MM/YYYY",
+        )!,
+        valeurAvancementReference: Number.isInteger(
+          proposition.indicateur_territoire.valeur_actuelle_mandat,
+        )
+          ? (proposition.indicateur_territoire.valeur_actuelle_mandat?.toString() ??
+            "")
+          : (proposition.indicateur_territoire.valeur_actuelle_mandat
+              ?.toFixed(1)
+              .toString() ?? ""),
+        nomIndicateur:
+          proposition.indicateur_territoire.indicateur_identite.nom,
+        uniteIndicateur:
+          proposition.indicateur_territoire.indicateur_identite.unite_mesure ??
+          "",
+        nomTerritoire: proposition.indicateur_territoire.territoire.nom,
+      };
+
+      if (!acc.has(chantierId)) {
+        acc.set(chantierId, new Map());
+      }
+
+      const indicateurMap = acc.get(chantierId)!;
+
+      if (!indicateurMap.has(indicateurId)) {
+        indicateurMap.set(indicateurId, []);
+      }
+
+      indicateurMap.get(indicateurId)!.push(rapport);
+
+      return acc;
+    }, new Map<string, Map<string, PropositionValeurAvancementRapport[]>>());
   }
 }

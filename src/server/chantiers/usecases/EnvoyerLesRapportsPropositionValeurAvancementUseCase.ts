@@ -1,53 +1,68 @@
-import { PropositionValeurAvancementRepository } from "@/server/chantiers/domain/ports/PropositionValeurAvancementRepository";
 import { ChantierRepository } from "@/server/chantiers/domain/ports/ChantierRepository";
 import { EnvoieEmailService } from "@/server/chantiers/domain/ports/EnvoieEmailService";
 import { UtilisateurRepository } from "@/server/chantiers/domain/ports/UtilisateurRepository";
 import { genererParametresEnvoieRapportProposition } from "@/server/chantiers/app/contrats/ParametresEnvoieEmailRapportProposition";
+import { IndicateurTerritoireValeurEvenementRepository } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/IndicateurTerritoireValeurEvenementRepository";
+import { IndicateurRepository } from "@/server/chantiers/domain/ports/IndicateurRepository";
 
 interface Dependencies {
-  propositionValeurAvancementRepository: PropositionValeurAvancementRepository;
   chantierRepository: ChantierRepository;
   utilisateurRepository: UtilisateurRepository;
   envoieEmailService: EnvoieEmailService;
+  indicateurTerritoireValeurEvenementRepository: IndicateurTerritoireValeurEvenementRepository;
+  indicateurRepository: IndicateurRepository;
 }
 
 export class EnvoyerLesRapportsPropositionValeurAvancementUseCase {
-  private propositionValeurAvancementRepository: PropositionValeurAvancementRepository;
-
   private chantierRepository: ChantierRepository;
 
   private utilisateurRepository: UtilisateurRepository;
 
   private envoieEmailService: EnvoieEmailService;
 
+  private indicateurTerritoireValeurEvenementRepository: IndicateurTerritoireValeurEvenementRepository;
+
+  private indicateurRepository: IndicateurRepository;
+
   constructor({
-    propositionValeurAvancementRepository,
     chantierRepository,
     utilisateurRepository,
     envoieEmailService,
+    indicateurTerritoireValeurEvenementRepository,
+    indicateurRepository,
   }: Dependencies) {
-    this.propositionValeurAvancementRepository =
-      propositionValeurAvancementRepository;
     this.chantierRepository = chantierRepository;
     this.utilisateurRepository = utilisateurRepository;
     this.envoieEmailService = envoieEmailService;
+    this.indicateurTerritoireValeurEvenementRepository =
+      indicateurTerritoireValeurEvenementRepository;
+    this.indicateurRepository = indicateurRepository;
   }
 
   async run(): Promise<{ emailsEnEchec: string[] }> {
-    const listeChantiersIdsAvecProposition =
-      await this.propositionValeurAvancementRepository.recupererLaListeDesChantiersIdsAvecPropositionEnCours();
+    const propositionsParChantier =
+      await this.indicateurTerritoireValeurEvenementRepository.recupererLesPropositionsEnCoursParChantierIds();
+
+    const indicateursNonAJourParChantier =
+      await this.indicateurRepository.recupererIndicateursNonAJourParChantierId();
+
+    const listeChantiersIdsRapport = [
+      ...new Set([
+        ...propositionsParChantier.keys(),
+        ...indicateursNonAJourParChantier.keys(),
+      ]),
+    ];
+
     const listeDirecteursDeProjet =
       await this.utilisateurRepository.recupererUtilisateursParProfilEtChantierIds(
         "EQUIPE_DIR_PROJET",
-        listeChantiersIdsAvecProposition,
+        listeChantiersIdsRapport,
       );
 
     const listeChantiersProposition =
       await this.chantierRepository.recupererListePropositionValeurAvancementChantierInformationParChantiersIds(
-        { listeChantiersIds: listeChantiersIdsAvecProposition },
+        { listeChantiersIds: listeChantiersIdsRapport },
       );
-    const propositionsParChantier =
-      await this.propositionValeurAvancementRepository.recupererLesPropositionsEnCoursParChantierIds();
 
     const mapChantiersPropositionInformation = new Map(
       listeChantiersProposition.map((chantier) => [chantier.id, chantier]),
@@ -57,16 +72,17 @@ export class EnvoyerLesRapportsPropositionValeurAvancementUseCase {
 
     for (const directeur of listeDirecteursDeProjet) {
       try {
-        const { chantiers, conseillerEmail } =
+        const { chantiers, conseillerEmail, texteIntro } =
           genererParametresEnvoieRapportProposition(
             directeur.listeChantiers,
             mapChantiersPropositionInformation,
             propositionsParChantier,
+            indicateursNonAJourParChantier,
           );
         await this.envoieEmailService.envoieUnEmail(
           [{ email: directeur.email }],
           4,
-          { chantiers, conseiller_email: conseillerEmail },
+          { chantiers, conseiller_email: conseillerEmail, texteIntro },
         );
       } catch {
         emailsEnEchec.push(directeur.email);

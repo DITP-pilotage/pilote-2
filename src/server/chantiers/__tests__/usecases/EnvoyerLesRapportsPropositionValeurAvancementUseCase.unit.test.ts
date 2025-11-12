@@ -1,42 +1,43 @@
 import { mock, MockProxy } from "jest-mock-extended";
-import {
-  PropositionValeurAvancementRepository,
-  PropositionValeurAvancementRapport,
-} from "@/server/chantiers/domain/ports/PropositionValeurAvancementRepository";
+import { PropositionValeurAvancementRapport } from "@/server/chantiers/domain/ports/PropositionValeurAvancementRepository";
 import { ChantierRepository } from "@/server/chantiers/domain/ports/ChantierRepository";
 import { EnvoieEmailService } from "@/server/chantiers/domain/ports/EnvoieEmailService";
 import { EnvoyerLesRapportsPropositionValeurAvancementUseCase } from "@/server/chantiers/usecases/EnvoyerLesRapportsPropositionValeurAvancementUseCase";
 import { UtilisateurRepository } from "@/server/chantiers/domain/ports/UtilisateurRepository";
 import { Utilisateur } from "@/server/chantiers/domain/Utilisateur";
-import { PropositionValeurAvancementChantierInformation } from "@/server/chantiers/domain/PropositionValeurAvancementChantierInformation";
+import { RapportDirecteurProjetChantierInformation } from "@/server/chantiers/domain/PropositionValeurAvancementChantierInformation";
 import { genererParametresEnvoieRapportProposition } from "@/server/chantiers/app/contrats/ParametresEnvoieEmailRapportProposition";
+import { IndicateurTerritoireValeurEvenementRepository } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/IndicateurTerritoireValeurEvenementRepository";
+import { IndicateurRepository } from "@/server/chantiers/domain/ports/IndicateurRepository";
 
 describe("EnvoyerLesRapportsPropositionValeurAvancementUseCase", () => {
   let utilisateurRepository: MockProxy<UtilisateurRepository>;
-  let propositionValeurAvancementRepository: MockProxy<PropositionValeurAvancementRepository>;
   let chantierRepository: MockProxy<ChantierRepository>;
   let envoieEmailService: MockProxy<EnvoieEmailService>;
+  let indicateurTerritoireValeurEvenementRepository: MockProxy<IndicateurTerritoireValeurEvenementRepository>;
+  let indicateurRepository: MockProxy<IndicateurRepository>;
 
   let envoyerLesRapportsPropositionValeurAvancementUseCase: EnvoyerLesRapportsPropositionValeurAvancementUseCase;
 
   beforeEach(() => {
     utilisateurRepository = mock<UtilisateurRepository>();
-    propositionValeurAvancementRepository =
-      mock<PropositionValeurAvancementRepository>();
     chantierRepository = mock<ChantierRepository>();
     envoieEmailService = mock<EnvoieEmailService>();
+    indicateurTerritoireValeurEvenementRepository =
+      mock<IndicateurTerritoireValeurEvenementRepository>();
+    indicateurRepository = mock<IndicateurRepository>();
 
     envoyerLesRapportsPropositionValeurAvancementUseCase =
       new EnvoyerLesRapportsPropositionValeurAvancementUseCase({
-        propositionValeurAvancementRepository,
         chantierRepository,
         utilisateurRepository,
         envoieEmailService,
+        indicateurTerritoireValeurEvenementRepository,
+        indicateurRepository,
       });
   });
-  it("Supprime les comptes qui sont désactivés depuis plus de 2 ans et anonymise les saisies", async () => {
+  it("Envoie les rapports de propositions d'avancement aux directeurs de projet", async () => {
     // Given
-    const listeChantiersIdsAvecProposition = ["CH-001", "CH-002", "CH-003"];
     const listeDirecteursDeProjet: Utilisateur[] = [
       Utilisateur.creerUtilisateur({
         email: "directeur.test1@exemple.com",
@@ -56,30 +57,41 @@ describe("EnvoyerLesRapportsPropositionValeurAvancementUseCase", () => {
         prenom: "directeur",
         listeChantiers: ["CH-001", "CH-003"],
       }),
+      Utilisateur.creerUtilisateur({
+        email: "directeur.test4@exemple.com",
+        nom: "test4",
+        prenom: "directeur",
+        listeChantiers: ["CH-004"],
+      }),
     ];
-    const listeChantiersProposition: PropositionValeurAvancementChantierInformation[] =
-      [
-        {
-          id: "CH-001",
-          nom: "Chantier 1",
-          statut: "PUBLIE",
-          conseillerMail: "conseiller.ch1@exemple.com",
-        },
-        {
-          id: "CH-002",
-          nom: "Chantier 2",
-          statut: "PUBLIE",
-          conseillerMail: "conseiller.ch2@exemple.com",
-        },
-        {
-          id: "CH-003",
-          nom: "Chantier 3",
-          statut: "PUBLIE",
-          conseillerMail: "conseiller.ch3@exemple.com",
-        },
-      ];
+    const listeChantiers: RapportDirecteurProjetChantierInformation[] = [
+      {
+        id: "CH-001",
+        nom: "Chantier 1",
+        statut: "PUBLIE",
+        conseillerMail: "conseiller.ch1@exemple.com",
+      },
+      {
+        id: "CH-002",
+        nom: "Chantier 2",
+        statut: "PUBLIE",
+        conseillerMail: "conseiller.ch2@exemple.com",
+      },
+      {
+        id: "CH-003",
+        nom: "Chantier 3",
+        statut: "PUBLIE",
+        conseillerMail: "conseiller.ch3@exemple.com",
+      },
+      {
+        id: "CH-004",
+        nom: "Chantier 4",
+        statut: "PUBLIE",
+        conseillerMail: "conseiller.ch4@exemple.com",
+      },
+    ];
     const mapChantiersPropositionInformation = new Map(
-      listeChantiersProposition.map((chantier) => [chantier.id, chantier]),
+      listeChantiers.map((chantier) => [chantier.id, chantier]),
     );
 
     const propositionsParChantier: Map<
@@ -173,51 +185,82 @@ describe("EnvoyerLesRapportsPropositionValeurAvancementUseCase", () => {
       ],
     ]);
 
+    const indicateursNonAJourParChantier = new Map([
+      [
+        "CH-001",
+        [
+          { id: "IND-001", nom: "Indicateur 1", mailles: ["NAT"] },
+          { id: "IND-002", nom: "Indicateur 2", mailles: ["NAT", "REG"] },
+        ],
+      ],
+      ["CH-004", [{ id: "IND-003", nom: "Indicateur 3", mailles: ["DEPT"] }]],
+    ]);
+
     const paramsDirecteur1 = genererParametresEnvoieRapportProposition(
       listeDirecteursDeProjet[0].listeChantiers,
       mapChantiersPropositionInformation,
       propositionsParChantier,
+      indicateursNonAJourParChantier,
     );
     const paramsDirecteur2 = genererParametresEnvoieRapportProposition(
       listeDirecteursDeProjet[1].listeChantiers,
       mapChantiersPropositionInformation,
       propositionsParChantier,
+      indicateursNonAJourParChantier,
     );
     const paramsDirecteur3 = genererParametresEnvoieRapportProposition(
       listeDirecteursDeProjet[2].listeChantiers,
       mapChantiersPropositionInformation,
       propositionsParChantier,
+      indicateursNonAJourParChantier,
+    );
+    const paramsDirecteur4 = genererParametresEnvoieRapportProposition(
+      listeDirecteursDeProjet[3].listeChantiers,
+      mapChantiersPropositionInformation,
+      propositionsParChantier,
+      indicateursNonAJourParChantier,
     );
 
-    propositionValeurAvancementRepository.recupererLaListeDesChantiersIdsAvecPropositionEnCours.mockResolvedValue(
-      listeChantiersIdsAvecProposition,
+    indicateurTerritoireValeurEvenementRepository.recupererLesPropositionsEnCoursParChantierIds.mockResolvedValue(
+      propositionsParChantier,
     );
+
+    indicateurRepository.recupererIndicateursNonAJourParChantierId.mockResolvedValue(
+      indicateursNonAJourParChantier,
+    );
+
     utilisateurRepository.recupererUtilisateursParProfilEtChantierIds.mockResolvedValue(
       listeDirecteursDeProjet,
     );
     chantierRepository.recupererListePropositionValeurAvancementChantierInformationParChantiersIds.mockResolvedValue(
-      listeChantiersProposition,
+      listeChantiers,
     );
-    propositionValeurAvancementRepository.recupererLesPropositionsEnCoursParChantierIds.mockResolvedValue(
-      propositionsParChantier,
-    );
+
     // When
     await envoyerLesRapportsPropositionValeurAvancementUseCase.run();
 
     // Then
     expect(
-      propositionValeurAvancementRepository.recupererLaListeDesChantiersIdsAvecPropositionEnCours,
+      indicateurTerritoireValeurEvenementRepository.recupererLesPropositionsEnCoursParChantierIds,
+    ).toHaveBeenCalledTimes(1);
+    expect(
+      indicateurRepository.recupererIndicateursNonAJourParChantierId,
     ).toHaveBeenCalledTimes(1);
     expect(
       utilisateurRepository.recupererUtilisateursParProfilEtChantierIds,
     ).toHaveBeenCalledTimes(1);
     expect(
+      utilisateurRepository.recupererUtilisateursParProfilEtChantierIds,
+    ).toHaveBeenCalledWith("EQUIPE_DIR_PROJET", [
+      "CH-001",
+      "CH-002",
+      "CH-003",
+      "CH-004",
+    ]);
+    expect(
       chantierRepository.recupererListePropositionValeurAvancementChantierInformationParChantiersIds,
     ).toHaveBeenCalledTimes(1);
-    expect(
-      propositionValeurAvancementRepository.recupererLesPropositionsEnCoursParChantierIds,
-    ).toHaveBeenCalledTimes(1);
-    expect(envoieEmailService.envoieUnEmail).toHaveBeenCalledTimes(3);
+    expect(envoieEmailService.envoieUnEmail).toHaveBeenCalledTimes(4);
     expect(envoieEmailService.envoieUnEmail).toHaveBeenNthCalledWith(
       1,
       [{ email: listeDirecteursDeProjet[0].email }],
@@ -225,6 +268,7 @@ describe("EnvoyerLesRapportsPropositionValeurAvancementUseCase", () => {
       {
         chantiers: paramsDirecteur1.chantiers,
         conseiller_email: paramsDirecteur1.conseillerEmail,
+        texteIntro: "votre chantier prioritaire",
       },
     );
     expect(envoieEmailService.envoieUnEmail).toHaveBeenNthCalledWith(
@@ -234,6 +278,7 @@ describe("EnvoyerLesRapportsPropositionValeurAvancementUseCase", () => {
       {
         chantiers: paramsDirecteur2.chantiers,
         conseiller_email: paramsDirecteur2.conseillerEmail,
+        texteIntro: "votre chantier prioritaire",
       },
     );
     expect(envoieEmailService.envoieUnEmail).toHaveBeenNthCalledWith(
@@ -243,6 +288,17 @@ describe("EnvoyerLesRapportsPropositionValeurAvancementUseCase", () => {
       {
         chantiers: paramsDirecteur3.chantiers,
         conseiller_email: paramsDirecteur3.conseillerEmail,
+        texteIntro: "vos chantiers prioritaires",
+      },
+    );
+    expect(envoieEmailService.envoieUnEmail).toHaveBeenNthCalledWith(
+      4,
+      [{ email: listeDirecteursDeProjet[3].email }],
+      4,
+      {
+        chantiers: paramsDirecteur4.chantiers,
+        conseiller_email: paramsDirecteur4.conseillerEmail,
+        texteIntro: "votre chantier prioritaire",
       },
     );
   });

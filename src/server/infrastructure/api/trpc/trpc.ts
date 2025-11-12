@@ -32,8 +32,8 @@ const trpc = initTRPC.context<typeof créerContextTRPC>().create({
     const formattedData = { ...shape.data };
     delete formattedData.stack;
     const isInternalServerError =
-      !(error.cause instanceof NonAutorisé) &&
-      !(error.cause instanceof PiloteError);
+      !NonAutorisé.isNonAutorisé(error.cause) &&
+      !PiloteError.isPiloteError(error.cause);
     return {
       ...shape,
       message: isInternalServerError
@@ -43,12 +43,12 @@ const trpc = initTRPC.context<typeof créerContextTRPC>().create({
         ...formattedData,
         httpStatus: isInternalServerError
           ? 500
-          : error.cause instanceof PiloteError
+          : PiloteError.isPiloteError(error.cause)
             ? error.cause.status
             : 403,
         code: isInternalServerError
           ? "INTERNAL_SERVER_ERROR"
-          : error.cause instanceof PiloteError
+          : PiloteError.isPiloteError(error.cause)
             ? error.cause.type
             : "UNAUTHORIZED",
         zodError:

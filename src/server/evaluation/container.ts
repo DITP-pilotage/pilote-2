@@ -9,18 +9,26 @@ import { EnregistrerBrouillonConsolidationHandler } from "@/server/evaluation/ha
 import { AfficherPilotageQuery } from "@/server/evaluation/queries/AfficherPilotageQuery";
 import { DebloquerFichesConsolidationHandler } from "@/server/evaluation/handlers/DebloquerFichesConsolidationHandler";
 import { PasserALEtapeInstructionHandler } from "@/server/evaluation/handlers/PasserALEtapeInstructionHandler";
+import { AfficherInstructionQuery } from "@/server/evaluation/queries/AfficherInstructionQuery";
+import { EnregistrerBrouillonInstructionHandler } from "@/server/evaluation/handlers/EnregistrerBrouillonInstructionHandler";
+import { ModifierEtatFichesInstructionHandler } from "@/server/evaluation/handlers/ModifierEtatFichesInstructionHandler";
+import { RecupererDetailsNoteCollectiveQuery } from "@/server/evaluation/queries/RecupererDetailsNoteCollectiveQuery";
 import { EnregistrerBrouillonAutoEvaluationHandler } from "./handlers/EnregistrerBrouillonAutoEvaluationHandler";
 
 export type PiloteEvalDependencies = {
   afficherAutoEvaluation: AfficherAutoEvaluationQuery;
   afficherConsolidationQuery: AfficherConsolidationQuery;
+  afficherInstructionQuery: AfficherInstructionQuery;
   afficherPilotageQuery: AfficherPilotageQuery;
   listerFichesAutoEvaluation: ListerFichesAutoEvaluationQuery;
+  recupererDetailsNoteCollectiveQuery: RecupererDetailsNoteCollectiveQuery;
   enregistrerBrouillonAutoEvaluation: EnregistrerBrouillonAutoEvaluationHandler;
   enregistrerBrouillonConsolidationHandler: EnregistrerBrouillonConsolidationHandler;
+  enregistrerBrouillonInstructionHandler: EnregistrerBrouillonInstructionHandler;
   accesFicheEvaluationService: AccesFicheEvaluationService;
   soumettreAutoEvaluationHandler: SoumettreAutoEvaluationHandler;
   debloquerFichesConsolidationHandler: DebloquerFichesConsolidationHandler;
+  modifierEtatFichesInstructionHandler: ModifierEtatFichesInstructionHandler;
   passerALEtapeInstructionHandler: PasserALEtapeInstructionHandler;
 };
 
@@ -30,18 +38,28 @@ export const getPiloteEvalContainer = (
   return initialContainer.createScope<PiloteEvalDependencies>().register({
     afficherAutoEvaluation: asClass(AfficherAutoEvaluationQuery),
     afficherConsolidationQuery: asClass(AfficherConsolidationQuery),
+    afficherInstructionQuery: asClass(AfficherInstructionQuery),
     afficherPilotageQuery: asClass(AfficherPilotageQuery),
     listerFichesAutoEvaluation: asClass(ListerFichesAutoEvaluationQuery),
+    recupererDetailsNoteCollectiveQuery: asClass(
+      RecupererDetailsNoteCollectiveQuery,
+    ),
     enregistrerBrouillonAutoEvaluation: asClass(
       EnregistrerBrouillonAutoEvaluationHandler,
     ),
     enregistrerBrouillonConsolidationHandler: asClass(
       EnregistrerBrouillonConsolidationHandler,
     ),
+    enregistrerBrouillonInstructionHandler: asClass(
+      EnregistrerBrouillonInstructionHandler,
+    ),
     accesFicheEvaluationService: asClass(AccesFicheEvaluationService),
     soumettreAutoEvaluationHandler: asClass(SoumettreAutoEvaluationHandler),
     debloquerFichesConsolidationHandler: asClass(
       DebloquerFichesConsolidationHandler,
+    ),
+    modifierEtatFichesInstructionHandler: asClass(
+      ModifierEtatFichesInstructionHandler,
     ),
     passerALEtapeInstructionHandler: asClass(PasserALEtapeInstructionHandler),
   });
