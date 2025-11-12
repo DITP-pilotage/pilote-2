@@ -7,7 +7,9 @@ export function createServerSidePropsContext<T>() {
     const contextValues = useContext(context);
 
     if (!contextValues) {
-      throw new Error("usePageChantier must be used within the context!");
+      throw new Error(
+        "useServerSidePropsContext must be used within the context!",
+      );
     }
 
     return contextValues;

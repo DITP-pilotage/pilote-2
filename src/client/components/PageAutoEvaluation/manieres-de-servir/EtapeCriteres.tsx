@@ -1,12 +1,13 @@
 import { useFieldArray } from "react-hook-form";
-import { useFormEvaluation } from "@/components/PageEvaluation/form";
-import { pageEvaluation } from "@/components/PageEvaluation/PageEvaluationServerSideContext";
-import { CommentaireTextareaAutoEvaluation } from "@/components/PageEvaluation/CommentaireTextareaAutoEvaluation";
-import { InputNoteAutoEvaluation } from "@/components/PageEvaluation/InputNoteAutoEvaluation";
-import { BoutonEnSavoirPlus } from "@/components/PageEvaluation/BoutonEnSavoirPlus";
+import { useFormEvaluation } from "@/components/PageAutoEvaluation/form";
+import { CommentaireTextareaAutoEvaluation } from "@/components/PageAutoEvaluation/CommentaireTextareaAutoEvaluation";
+import { InputNoteAutoEvaluation } from "@/components/PageAutoEvaluation/InputNoteAutoEvaluation";
+import { BoutonEnSavoirPlus } from "@/components/PageAutoEvaluation/BoutonEnSavoirPlus";
+import { pageAutoEvaluationManieresDeServir } from "@/components/PageAutoEvaluation/manieres-de-servir/PageAutoEvaluationManieresDeServirServerSideContext";
 
 export const EtapeCriteres = () => {
-  const { autoEvaluation } = pageEvaluation.useServerSidePropsContext();
+  const { autoEvaluation } =
+    pageAutoEvaluationManieresDeServir.useServerSidePropsContext();
   const form = useFormEvaluation();
   const { fields } = useFieldArray({ control: form.control, name: "criteres" });
 
@@ -29,10 +30,16 @@ export const EtapeCriteres = () => {
                   }}
                 />
               </div>
-              <InputNoteAutoEvaluation name={noteName} />
+              <InputNoteAutoEvaluation
+                name={noteName}
+                readOnly={autoEvaluation.readOnly}
+              />
             </header>
             <div className="py-4 px-6 flex flex-col bg-dsfr-grey-925/30 ">
-              <CommentaireTextareaAutoEvaluation name={commentaireName} />
+              <CommentaireTextareaAutoEvaluation
+                name={commentaireName}
+                readOnly={autoEvaluation.readOnly}
+              />
             </div>
           </div>
         );

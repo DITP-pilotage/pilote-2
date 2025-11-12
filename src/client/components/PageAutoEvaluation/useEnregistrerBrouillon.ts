@@ -1,13 +1,14 @@
 import { toast } from "sonner";
 import api from "@/server/infrastructure/api/trpc/api";
-import { pageEvaluation } from "@/components/PageEvaluation/PageEvaluationServerSideContext";
-import { FormValues } from "@/components/PageEvaluation/form";
+import { FormValues } from "@/components/PageAutoEvaluation/form";
 import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
+import { AfficherAutoEvaluationViewModel } from "@/server/evaluation/queries/AfficherAutoEvaluationQuery";
 
-export const useEnregistrerBrouillon = () => {
+export const useEnregistrerBrouillon = (
+  autoEvaluation: AfficherAutoEvaluationViewModel,
+) => {
   const enregisterBrouillon =
     api.evaluation.enregistrerBrouillonAutoEvaluation.useMutation();
-  const { autoEvaluation } = pageEvaluation.useServerSidePropsContext();
   const refreshRouter = useRefreshRouter();
 
   return (data: FormValues) =>

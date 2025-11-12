@@ -5,10 +5,10 @@ import { z } from "zod";
 import { $Enums } from "@prisma/client";
 import assert from "node:assert";
 import { getContainer } from "@/server/dependances";
-import { pageEvaluation } from "@/components/PageEvaluation/PageEvaluationServerSideContext";
 import { configurationFeatureFlip } from "@/config";
 import { authOptions } from "@/server/infrastructure/api/auth/[...nextauth]";
-import { FormulaireEvaluation } from "@/components/PageEvaluation/FormulaireEvaluation";
+import { FormulaireAutoEvaluationManieresDeServir } from "@/components/PageAutoEvaluation/manieres-de-servir/FormulaireAutoEvaluationManieresDeServir";
+import { pageAutoEvaluationManieresDeServir } from "@/components/PageAutoEvaluation/manieres-de-servir/PageAutoEvaluationManieresDeServirServerSideContext";
 
 export const getServerSideProps = async ({
   req,
@@ -54,13 +54,13 @@ const AutoEvaluationPage = (
   props: InferGetServerSidePropsType<typeof getServerSideProps>,
 ) => {
   return (
-    <pageEvaluation.ServerSidePropsProvider value={props}>
+    <pageAutoEvaluationManieresDeServir.ServerSidePropsProvider value={props}>
       <Head>
         <title>PILOTE - Auto-évaluation</title>
       </Head>
 
-      <FormulaireEvaluation />
-    </pageEvaluation.ServerSidePropsProvider>
+      <FormulaireAutoEvaluationManieresDeServir />
+    </pageAutoEvaluationManieresDeServir.ServerSidePropsProvider>
   );
 };
 

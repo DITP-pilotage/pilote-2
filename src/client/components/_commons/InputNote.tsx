@@ -1,6 +1,6 @@
 import { ComponentProps, forwardRef } from "react";
 import { clsxm } from "@/utils/clsxm";
-import { MessageErreur } from "@/components/PageEvaluation/MessageErreur";
+import { MessageErreur } from "@/components/PageAutoEvaluation/MessageErreur";
 
 export const InputNote = forwardRef<
   HTMLInputElement,

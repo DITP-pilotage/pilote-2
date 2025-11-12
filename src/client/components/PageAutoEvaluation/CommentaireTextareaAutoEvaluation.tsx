@@ -1,18 +1,18 @@
 import { useState, useRef } from "react";
 import { flushSync } from "react-dom";
-import { useFormEvaluation } from "@/components/PageEvaluation/form";
+import { useFormEvaluation } from "@/components/PageAutoEvaluation/form";
 import { Icone } from "@/components/_commons/Icone";
 import { AddLineIcon } from "@/components/_commons/Icones/AddLineIcon";
-import { pageEvaluation } from "@/components/PageEvaluation/PageEvaluationServerSideContext";
 import { Textarea, TextareaRef } from "@/components/_commons/Textarea";
 
 export function CommentaireTextareaAutoEvaluation({
   name,
+  readOnly,
 }: {
   name: `criteres.${number}.commentaire` | `objectifs.${number}.commentaire`;
+  readOnly: boolean;
 }) {
   const form = useFormEvaluation();
-  const { autoEvaluation } = pageEvaluation.useServerSidePropsContext();
   const defaultOpen = form.getValues(name) != "";
   const [displayComment, setDisplayComment] = useState(defaultOpen);
   const textareaRef = useRef<TextareaRef>(null);
@@ -44,7 +44,7 @@ export function CommentaireTextareaAutoEvaluation({
           setDisplayComment(false);
         }
       }}
-      readOnly={autoEvaluation.readOnly}
+      readOnly={readOnly}
       textareaRef={textareaRef}
     />
   );
