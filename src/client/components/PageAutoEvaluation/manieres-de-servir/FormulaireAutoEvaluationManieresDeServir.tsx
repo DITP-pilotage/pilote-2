@@ -21,6 +21,8 @@ export const FormulaireAutoEvaluationManieresDeServir = () => {
   const formId = useId();
   const enregistrerBrouillon = useEnregistrerBrouillonCriteres(autoEvaluation);
 
+  const isReadOnly = autoEvaluation.readOnly || autoEvaluation.criteresValides;
+
   const form = useForm<FormValuesCriteres>({
     resolver: zodResolver(formSchema),
     mode: "onChange",
@@ -57,7 +59,17 @@ export const FormulaireAutoEvaluationManieresDeServir = () => {
                       Cette fiche d'évaluation a déjà été soumise.
                     </span>
                   ) : null}
-                  {!autoEvaluation.readOnly && (
+                  {autoEvaluation.criteresValides &&
+                  !autoEvaluation.readOnly ? (
+                    <span className="flex gap-2 text-sm items-center">
+                      <Icone
+                        className="h-5 w-5"
+                        icone={InformationPleineIcon}
+                      />{" "}
+                      Les manières de servir ont été validées.
+                    </span>
+                  ) : null}
+                  {!isReadOnly && (
                     <>
                       <BoutonEnregistrerBrouillon formId={formId} />
                       <BoutonValiderSaisieCriteres

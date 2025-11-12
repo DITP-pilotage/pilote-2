@@ -13,6 +13,8 @@ export function EtapeObjectifs() {
     control: form.control,
     name: "objectifs",
   });
+  const readOnly = autoEvaluation.readOnly || autoEvaluation.criteresValides;
+
   return (
     <div className="divide-y divide-gray-100">
       {fields.map((fieldObjectif, index) => {
@@ -34,7 +36,7 @@ export function EtapeObjectifs() {
               <InputNoteAutoEvaluation
                 control={form.control}
                 name={noteName}
-                readOnly={autoEvaluation.readOnly}
+                readOnly={readOnly}
               />
             </div>
             <div className="py-4 px-6 flex flex-col bg-dsfr-grey-925/30 ">
@@ -42,7 +44,7 @@ export function EtapeObjectifs() {
                 control={form.control}
                 defaultOpen={!!fieldObjectif.commentaire}
                 name={commentaireName}
-                readOnly={autoEvaluation.readOnly}
+                readOnly={readOnly}
               />
             </div>
           </div>

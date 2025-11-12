@@ -10,6 +10,7 @@ export const EtapeCriteres = () => {
     pageAutoEvaluationManieresDeServir.useServerSidePropsContext();
   const form = useFormEvaluationCriteres();
   const { fields } = useFieldArray({ control: form.control, name: "criteres" });
+  const readOnly = autoEvaluation.readOnly || autoEvaluation.criteresValides;
 
   return (
     <div>
@@ -33,7 +34,7 @@ export const EtapeCriteres = () => {
               <InputNoteAutoEvaluation
                 control={form.control}
                 name={noteName}
-                readOnly={autoEvaluation.readOnly}
+                readOnly={readOnly}
               />
             </header>
             <div className="py-4 px-6 flex flex-col bg-dsfr-grey-925/30 ">
@@ -41,7 +42,7 @@ export const EtapeCriteres = () => {
                 control={form.control}
                 defaultOpen={!!fieldCritere.commentaire}
                 name={commentaireName}
-                readOnly={autoEvaluation.readOnly}
+                readOnly={readOnly}
               />
             </div>
           </div>

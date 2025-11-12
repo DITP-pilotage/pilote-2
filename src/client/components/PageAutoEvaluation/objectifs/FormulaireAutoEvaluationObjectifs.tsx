@@ -21,6 +21,8 @@ export const FormulaireAutoEvaluationObjectifs = () => {
   const formId = useId();
   const enregistrerBrouillon = useEnregistrerBrouillonObjectifs(autoEvaluation);
 
+  const isReadOnly = autoEvaluation.readOnly || autoEvaluation.objectifsValides;
+
   const form = useForm<FormValuesObjectifs>({
     resolver: zodResolver(formSchemaObjectifs),
     mode: "onChange",
@@ -57,7 +59,17 @@ export const FormulaireAutoEvaluationObjectifs = () => {
                       Cette fiche d'évaluation a déjà été soumise.
                     </span>
                   ) : null}
-                  {!autoEvaluation.readOnly && (
+                  {autoEvaluation.objectifsValides &&
+                  !autoEvaluation.readOnly ? (
+                    <span className="flex gap-2 text-sm items-center">
+                      <Icone
+                        className="h-5 w-5"
+                        icone={InformationPleineIcon}
+                      />{" "}
+                      Les objectifs ont été validés.
+                    </span>
+                  ) : null}
+                  {!isReadOnly && (
                     <>
                       <BoutonEnregistrerBrouillon formId={formId} />
                       <BoutonValiderSaisieObjectifs
