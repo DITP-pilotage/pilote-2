@@ -60,21 +60,6 @@ export const useIndicateurÉvolution = () => {
     },
   ];
 
-  const avancementsMandat: ChartDataset<"line">[] = [
-    {
-      label: detailTerritoireSelectionne.nom,
-      data: listeDesDateOrdonnees.map(
-        (date) =>
-          detailIndicateurDuTerritoire.historiquesValeurs.find(
-            (valeurHistorique) => valeurHistorique.date === date,
-          )?.taa ?? null,
-      ),
-      pointStyle: "circle",
-      borderColor: "#000000",
-      backgroundColor: "#000000",
-    },
-  ];
-
   const listeValeurCible = Array.from({ length: valeursAxeX.length }).map(
     () => detailIndicateurDuTerritoire.valeurCible,
   );
@@ -94,7 +79,7 @@ export const useIndicateurÉvolution = () => {
     labels: valeursAxeX,
     datasets:
       detailIndicateurDuTerritoire.valeurCible !== null
-        ? [évolutions[0], avancementsMandat[0], valeurCible]
+        ? [évolutions[0], valeurCible]
         : [évolutions[0]],
   };
 
