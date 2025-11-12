@@ -4,16 +4,11 @@ import {
   evaluation_objectif,
   evaluation_critere,
 } from "@prisma/client";
-import { z } from "zod";
 import { randomUUID } from "node:crypto";
 import { Transaction } from "@/server/db/Transaction";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 
-export const soumettreAutoEvaluationCommandSchema = z.object({
-  ficheEvaluationId: z.string(),
-});
-
-export class SoumettreAutoEvaluationHandler {
+export class SoumettreAutoEvaluationService {
   constructor(
     private readonly dependencies: {
       transaction: Transaction;
@@ -21,10 +16,7 @@ export class SoumettreAutoEvaluationHandler {
     },
   ) {}
 
-  async execute(
-    { ficheEvaluationId }: z.infer<typeof soumettreAutoEvaluationCommandSchema>,
-    auteurId: string,
-  ) {
+  async execute(ficheEvaluationId: string, auteurId: string) {
     const etapeEvaluation = await this.getEtapeEvaluation(ficheEvaluationId);
 
     await this.dependencies.transaction.run(async () => {

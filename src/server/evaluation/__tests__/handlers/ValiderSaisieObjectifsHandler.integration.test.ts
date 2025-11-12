@@ -2,16 +2,22 @@ import { ValiderSaisieObjectifsHandler } from "@/server/evaluation/handlers/Vali
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { prisma } from "@/server/db/prisma";
 import { PrismaTransaction } from "@/server/db/PrismaTransaction";
+import { SoumettreAutoEvaluationService } from "@/server/evaluation/services/SoumettreAutoEvaluationService";
 
 describe("ValiderSaisieObjectifsHandler", () => {
   let handler: ValiderSaisieObjectifsHandler;
   const prismaPilote = new PrismaPilote();
   const transaction = new PrismaTransaction();
+  const soumettreAutoEvaluationService = new SoumettreAutoEvaluationService({
+    prisma: prismaPilote,
+    transaction,
+  });
 
   beforeEach(() => {
     handler = new ValiderSaisieObjectifsHandler({
       prisma: prismaPilote,
       transaction,
+      soumettreAutoEvaluationService,
     });
   });
 
@@ -47,9 +53,12 @@ describe("ValiderSaisieObjectifsHandler", () => {
       });
 
       // When
-      await handler.execute({
-        ficheEvaluationId,
-      });
+      await handler.execute(
+        {
+          ficheEvaluationId,
+        },
+        "auteur-test-id",
+      );
 
       // Then
       const etape = await prisma.etape_evaluation.findUniqueOrThrow({
@@ -92,9 +101,12 @@ describe("ValiderSaisieObjectifsHandler", () => {
       });
 
       // When
-      await handler.execute({
-        ficheEvaluationId,
-      });
+      await handler.execute(
+        {
+          ficheEvaluationId,
+        },
+        "auteur-test-id",
+      );
 
       // Then
       const etape = await prisma.etape_evaluation.findUniqueOrThrow({
@@ -135,9 +147,12 @@ describe("ValiderSaisieObjectifsHandler", () => {
 
       // When/Then
       await expect(
-        handler.execute({
-          ficheEvaluationId,
-        }),
+        handler.execute(
+          {
+            ficheEvaluationId,
+          },
+          "auteur-test-id",
+        ),
       ).rejects.toThrow();
     });
 
@@ -172,9 +187,12 @@ describe("ValiderSaisieObjectifsHandler", () => {
       });
 
       // When
-      await handler.execute({
-        ficheEvaluationId,
-      });
+      await handler.execute(
+        {
+          ficheEvaluationId,
+        },
+        "auteur-test-id",
+      );
 
       // Then
       const etape = await prisma.etape_evaluation.findUniqueOrThrow({
@@ -182,6 +200,60 @@ describe("ValiderSaisieObjectifsHandler", () => {
       });
       expect(etape.objectifs_valides).toBe(true);
       expect(etape.criteres_valides).toBe(true);
+    });
+
+    it("doit passer à l'étape CONSOLIDATION quand les critères sont déjà validés", async () => {
+      // Given
+      const rattachementCode = "REG-504";
+      const ficheEvaluationId = "c9d0e1f2-a3b4-5678-3456-789012345679";
+      const etapeEvaluationId = "d0e1f2a3-b4c5-6789-4567-890123456790";
+      const auteurId = "auteur-test-id";
+
+      await prisma.referentiel_rattachement.create({
+        data: {
+          code: rattachementCode,
+          libelle: "Rattachement test consolidation auto objectifs",
+        },
+      });
+
+      await prisma.fiche_evaluation.create({
+        data: {
+          id: ficheEvaluationId,
+          jalon: 2025,
+          etape_courante: "AUTO_EVALUATION",
+          rattachement_code: rattachementCode,
+          etape_evaluations: {
+            create: {
+              id: etapeEvaluationId,
+              type: "AUTO_EVALUATION",
+              objectifs_valides: false,
+              criteres_valides: true,
+            },
+          },
+        },
+      });
+
+      // When
+      await handler.execute(
+        {
+          ficheEvaluationId,
+        },
+        auteurId,
+      );
+
+      // Then
+      const ficheEvaluation = await prisma.fiche_evaluation.findUniqueOrThrow({
+        where: { id: ficheEvaluationId },
+      });
+      expect(ficheEvaluation.etape_courante).toBe("CONSOLIDATION");
+
+      const etapeConsolidation = await prisma.etape_evaluation.findFirst({
+        where: {
+          fiche_evaluation_id: ficheEvaluationId,
+          type: "CONSOLIDATION",
+        },
+      });
+      expect(etapeConsolidation).not.toBeNull();
     });
   });
 });

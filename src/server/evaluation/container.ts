@@ -3,7 +3,6 @@ import { AfficherAutoEvaluationQuery } from "@/server/evaluation/queries/Affiche
 import { ListerFichesAutoEvaluationQuery } from "@/server/evaluation/queries/ListerFichesAutoEvaluationQuery";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { AccesFicheEvaluationService } from "@/server/evaluation/services/AccesFicheEvaluationService";
-import { SoumettreAutoEvaluationHandler } from "@/server/evaluation/handlers/SoumettreAutoEvaluationHandler";
 import { AfficherConsolidationQuery } from "@/server/evaluation/queries/AfficherConsolidationQuery";
 import { EnregistrerBrouillonConsolidationHandler } from "@/server/evaluation/handlers/EnregistrerBrouillonConsolidationHandler";
 import { AfficherPilotageQuery } from "@/server/evaluation/queries/AfficherPilotageQuery";
@@ -13,6 +12,7 @@ import { AfficherInstructionQuery } from "@/server/evaluation/queries/AfficherIn
 import { EnregistrerBrouillonInstructionHandler } from "@/server/evaluation/handlers/EnregistrerBrouillonInstructionHandler";
 import { ModifierEtatFichesInstructionHandler } from "@/server/evaluation/handlers/ModifierEtatFichesInstructionHandler";
 import { RecupererDetailsNoteCollectiveQuery } from "@/server/evaluation/queries/RecupererDetailsNoteCollectiveQuery";
+import { SoumettreAutoEvaluationService } from "@/server/evaluation/services/SoumettreAutoEvaluationService";
 import { EnregistrerBrouillonAutoEvaluationObjectifsHandler } from "./handlers/EnregistrerBrouillonAutoEvaluationObjectifsHandler";
 import { EnregistrerBrouillonAutoEvaluationCriteresHandler } from "./handlers/EnregistrerBrouillonAutoEvaluationCriteresHandler";
 import { ValiderSaisieCriteresHandler } from "./handlers/ValiderSaisieCriteresHandler";
@@ -32,7 +32,7 @@ export type PiloteEvalDependencies = {
   enregistrerBrouillonConsolidationHandler: EnregistrerBrouillonConsolidationHandler;
   enregistrerBrouillonInstructionHandler: EnregistrerBrouillonInstructionHandler;
   accesFicheEvaluationService: AccesFicheEvaluationService;
-  soumettreAutoEvaluationHandler: SoumettreAutoEvaluationHandler;
+  soumettreAutoEvaluationService: SoumettreAutoEvaluationService;
   debloquerFichesConsolidationHandler: DebloquerFichesConsolidationHandler;
   modifierEtatFichesInstructionHandler: ModifierEtatFichesInstructionHandler;
   passerALEtapeInstructionHandler: PasserALEtapeInstructionHandler;
@@ -65,7 +65,7 @@ export const getPiloteEvalContainer = (
       EnregistrerBrouillonInstructionHandler,
     ),
     accesFicheEvaluationService: asClass(AccesFicheEvaluationService),
-    soumettreAutoEvaluationHandler: asClass(SoumettreAutoEvaluationHandler),
+    soumettreAutoEvaluationService: asClass(SoumettreAutoEvaluationService),
     debloquerFichesConsolidationHandler: asClass(
       DebloquerFichesConsolidationHandler,
     ),
