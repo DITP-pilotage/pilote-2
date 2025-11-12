@@ -47,14 +47,14 @@ export const ListeAutoEvaluations = ({
           <div className="p-6">
             <div className="grid md:grid-cols-3 gap-4">
               <CardEvaluation
-                lien={`/evaluation/auto-evaluation/${ficheEvaluation.id}#objectifs`}
+                lien={`/evaluation/auto-evaluation/${ficheEvaluation.id}/objectifs`}
                 moyenne={ficheEvaluation.objectifs.moyenne}
                 nombreNotes={ficheEvaluation.objectifs.nombreNotes}
                 nombreTotal={ficheEvaluation.objectifs.nombreTotal}
                 titre="Objectifs individuels"
               />
               <CardEvaluation
-                lien={`/evaluation/auto-evaluation/${ficheEvaluation.id}`}
+                lien={`/evaluation/auto-evaluation/${ficheEvaluation.id}/manieres-de-servir`}
                 moyenne={ficheEvaluation.criteres.moyenne}
                 nombreNotes={ficheEvaluation.criteres.nombreNotes}
                 nombreTotal={ficheEvaluation.criteres.nombreTotal}
