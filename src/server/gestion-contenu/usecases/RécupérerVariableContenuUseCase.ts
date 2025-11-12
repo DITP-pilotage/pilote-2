@@ -88,6 +88,10 @@ export class RécupérerVariableContenuUseCase {
         return configuration().featureFlip
           .nouveauxGraphiques as VariableContenuDisponibleEnv[T];
       }
+      case "NEXT_PUBLIC_FF_TA_HISTORY": {
+        return configuration().featureFlip
+          .taHistory as VariableContenuDisponibleEnv[T];
+      }
     }
   }
 }
