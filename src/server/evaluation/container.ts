@@ -13,7 +13,8 @@ import { AfficherInstructionQuery } from "@/server/evaluation/queries/AfficherIn
 import { EnregistrerBrouillonInstructionHandler } from "@/server/evaluation/handlers/EnregistrerBrouillonInstructionHandler";
 import { ModifierEtatFichesInstructionHandler } from "@/server/evaluation/handlers/ModifierEtatFichesInstructionHandler";
 import { RecupererDetailsNoteCollectiveQuery } from "@/server/evaluation/queries/RecupererDetailsNoteCollectiveQuery";
-import { EnregistrerBrouillonAutoEvaluationHandler } from "./handlers/EnregistrerBrouillonAutoEvaluationHandler";
+import { EnregistrerBrouillonAutoEvaluationObjectifsHandler } from "./handlers/EnregistrerBrouillonAutoEvaluationObjectifsHandler";
+import { EnregistrerBrouillonAutoEvaluationCriteresHandler } from "./handlers/EnregistrerBrouillonAutoEvaluationCriteresHandler";
 
 export type PiloteEvalDependencies = {
   afficherAutoEvaluation: AfficherAutoEvaluationQuery;
@@ -22,7 +23,8 @@ export type PiloteEvalDependencies = {
   afficherPilotageQuery: AfficherPilotageQuery;
   listerFichesAutoEvaluation: ListerFichesAutoEvaluationQuery;
   recupererDetailsNoteCollectiveQuery: RecupererDetailsNoteCollectiveQuery;
-  enregistrerBrouillonAutoEvaluation: EnregistrerBrouillonAutoEvaluationHandler;
+  enregistrerBrouillonAutoEvaluationObjectifs: EnregistrerBrouillonAutoEvaluationObjectifsHandler;
+  enregistrerBrouillonAutoEvaluationCriteres: EnregistrerBrouillonAutoEvaluationCriteresHandler;
   enregistrerBrouillonConsolidationHandler: EnregistrerBrouillonConsolidationHandler;
   enregistrerBrouillonInstructionHandler: EnregistrerBrouillonInstructionHandler;
   accesFicheEvaluationService: AccesFicheEvaluationService;
@@ -44,8 +46,11 @@ export const getPiloteEvalContainer = (
     recupererDetailsNoteCollectiveQuery: asClass(
       RecupererDetailsNoteCollectiveQuery,
     ),
-    enregistrerBrouillonAutoEvaluation: asClass(
-      EnregistrerBrouillonAutoEvaluationHandler,
+    enregistrerBrouillonAutoEvaluationObjectifs: asClass(
+      EnregistrerBrouillonAutoEvaluationObjectifsHandler,
+    ),
+    enregistrerBrouillonAutoEvaluationCriteres: asClass(
+      EnregistrerBrouillonAutoEvaluationCriteresHandler,
     ),
     enregistrerBrouillonConsolidationHandler: asClass(
       EnregistrerBrouillonConsolidationHandler,

@@ -1,20 +1,16 @@
-import { useFormEvaluation } from "@/components/PageAutoEvaluation/form";
+import { Control, FieldValues, Path } from "react-hook-form";
 import { InputNoteControlled } from "@/components/_commons/InputNoteControlled";
 
-export const InputNoteAutoEvaluation = ({
+export function InputNoteAutoEvaluation<T extends FieldValues>({
   name,
   readOnly,
+  control,
 }: {
-  name: `criteres.${number}.note` | `objectifs.${number}.note`;
+  name: Path<T>;
   readOnly: boolean;
-}) => {
-  const form = useFormEvaluation();
-
+  control: Control<T>;
+}) {
   return (
-    <InputNoteControlled
-      control={form.control}
-      name={name}
-      readOnly={readOnly}
-    />
+    <InputNoteControlled control={control} name={name} readOnly={readOnly} />
   );
-};
+}

@@ -1,8 +1,7 @@
 import { useId } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEnregistrerBrouillon } from "@/components/PageAutoEvaluation/useEnregistrerBrouillon";
-import { formSchema, FormValues } from "@/components/PageAutoEvaluation/form";
+import { useEnregistrerBrouillonCriteres } from "@/components/PageAutoEvaluation/manieres-de-servir/useEnregistrerBrouillonCriteres";
 import { formaterDate } from "@/client/utils/date/date";
 import { BoutonEnregistrerBrouillon } from "@/components/PageAutoEvaluation/BoutonEnregistrerBrouillon";
 import { Icone } from "@/components/_commons/Icone";
@@ -10,15 +9,18 @@ import { EtapeCriteres } from "@/components/PageAutoEvaluation/manieres-de-servi
 import { InformationPleineIcon } from "@/components/_commons/Icones/InformationPleineIcon";
 import { LayoutFicheCadrage } from "@/components/Evaluation/LayoutFicheCadrage";
 import { pageAutoEvaluationManieresDeServir } from "@/components/PageAutoEvaluation/manieres-de-servir/PageAutoEvaluationManieresDeServirServerSideContext";
+import {
+  formSchema,
+  FormValuesCriteres,
+} from "@/components/PageAutoEvaluation/manieres-de-servir/form";
 
 export const FormulaireAutoEvaluationManieresDeServir = () => {
   const { autoEvaluation } =
     pageAutoEvaluationManieresDeServir.useServerSidePropsContext();
   const formId = useId();
-  // TODO: mutation pour enregistrer les critères uniquement
-  const enregistrerBrouillon = useEnregistrerBrouillon(autoEvaluation);
+  const enregistrerBrouillon = useEnregistrerBrouillonCriteres(autoEvaluation);
 
-  const form = useForm<FormValues>({
+  const form = useForm<FormValuesCriteres>({
     resolver: zodResolver(formSchema),
     mode: "onChange",
     defaultValues: {
@@ -26,12 +28,6 @@ export const FormulaireAutoEvaluationManieresDeServir = () => {
         id: critere.evaluation.id,
         note: critere.evaluation.note,
         commentaire: critere.evaluation.commentaire,
-      })),
-      // TODO: supoprimer les objectifs du formulaire
-      objectifs: autoEvaluation.objectifs.map((objectif) => ({
-        id: objectif.evaluation.id,
-        note: objectif.evaluation.note,
-        commentaire: objectif.evaluation.commentaire,
       })),
     },
   });

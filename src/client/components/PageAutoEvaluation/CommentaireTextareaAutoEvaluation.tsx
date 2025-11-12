@@ -1,19 +1,21 @@
 import { useState, useRef } from "react";
 import { flushSync } from "react-dom";
-import { useFormEvaluation } from "@/components/PageAutoEvaluation/form";
+import { Control, FieldValues, Path } from "react-hook-form";
 import { Icone } from "@/components/_commons/Icone";
 import { AddLineIcon } from "@/components/_commons/Icones/AddLineIcon";
 import { Textarea, TextareaRef } from "@/components/_commons/Textarea";
 
-export function CommentaireTextareaAutoEvaluation({
+export function CommentaireTextareaAutoEvaluation<T extends FieldValues>({
   name,
   readOnly,
+  defaultOpen,
+  control,
 }: {
-  name: `criteres.${number}.commentaire` | `objectifs.${number}.commentaire`;
+  name: Path<T>;
   readOnly: boolean;
+  defaultOpen: boolean;
+  control: Control<T>;
 }) {
-  const form = useFormEvaluation();
-  const defaultOpen = form.getValues(name) != "";
   const [displayComment, setDisplayComment] = useState(defaultOpen);
   const textareaRef = useRef<TextareaRef>(null);
 
@@ -37,7 +39,7 @@ export function CommentaireTextareaAutoEvaluation({
 
   return (
     <Textarea
-      control={form.control}
+      control={control}
       name={name}
       onBlur={(event) => {
         if (!event.target.value) {

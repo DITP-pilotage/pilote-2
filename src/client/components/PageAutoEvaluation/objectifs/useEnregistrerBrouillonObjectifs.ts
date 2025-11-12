@@ -1,17 +1,17 @@
 import { toast } from "sonner";
 import api from "@/server/infrastructure/api/trpc/api";
-import { FormValues } from "@/components/PageAutoEvaluation/form";
 import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
 import { AfficherAutoEvaluationViewModel } from "@/server/evaluation/queries/AfficherAutoEvaluationQuery";
+import { FormValuesObjectifs } from "@/components/PageAutoEvaluation/objectifs/form";
 
-export const useEnregistrerBrouillon = (
+export const useEnregistrerBrouillonObjectifs = (
   autoEvaluation: AfficherAutoEvaluationViewModel,
 ) => {
   const enregisterBrouillon =
-    api.evaluation.enregistrerBrouillonAutoEvaluation.useMutation();
+    api.evaluation.enregistrerBrouillonAutoEvaluationObjectifs.useMutation();
   const refreshRouter = useRefreshRouter();
 
-  return (data: FormValues) =>
+  return (data: FormValuesObjectifs) =>
     enregisterBrouillon.mutateAsync(
       {
         ficheEvaluationId: autoEvaluation.ficheEvaluationId,
@@ -26,15 +26,6 @@ export const useEnregistrerBrouillon = (
             };
           },
         ),
-        evaluationsCriteres: autoEvaluation.criteres.map((critere, index) => {
-          const evaluation = data.criteres[index];
-          return {
-            id: evaluation.id,
-            critereId: critere.id,
-            note: evaluation.note,
-            commentaire: evaluation.commentaire,
-          };
-        }),
       },
       {
         onSuccess: async () => {

@@ -1,14 +1,14 @@
 import { useFieldArray } from "react-hook-form";
-import { useFormEvaluation } from "@/components/PageAutoEvaluation/form";
 import { pageAutoEvaluationObjectifs } from "@/components/PageAutoEvaluation/objectifs/PageAutoEvaluationObjectifsServerSideContext";
 import { CommentaireTextareaAutoEvaluation } from "@/components/PageAutoEvaluation/CommentaireTextareaAutoEvaluation";
 import { InputNoteAutoEvaluation } from "@/components/PageAutoEvaluation/InputNoteAutoEvaluation";
 import { BoutonEnSavoirPlus } from "@/components/PageAutoEvaluation/BoutonEnSavoirPlus";
+import { useFormEvaluationObjectifs } from "@/components/PageAutoEvaluation/objectifs/form";
 
 export function EtapeObjectifs() {
   const { autoEvaluation } =
     pageAutoEvaluationObjectifs.useServerSidePropsContext();
-  const form = useFormEvaluation();
+  const form = useFormEvaluationObjectifs();
   const { fields } = useFieldArray({
     control: form.control,
     name: "objectifs",
@@ -32,12 +32,15 @@ export function EtapeObjectifs() {
                 />
               </header>
               <InputNoteAutoEvaluation
+                control={form.control}
                 name={noteName}
                 readOnly={autoEvaluation.readOnly}
               />
             </div>
             <div className="py-4 px-6 flex flex-col bg-dsfr-grey-925/30 ">
               <CommentaireTextareaAutoEvaluation
+                control={form.control}
+                defaultOpen={!!fieldObjectif.commentaire}
                 name={commentaireName}
                 readOnly={autoEvaluation.readOnly}
               />

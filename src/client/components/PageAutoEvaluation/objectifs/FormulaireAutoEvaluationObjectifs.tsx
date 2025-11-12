@@ -2,32 +2,28 @@ import { useId } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { pageAutoEvaluationObjectifs } from "@/components/PageAutoEvaluation/objectifs/PageAutoEvaluationObjectifsServerSideContext";
-import { useEnregistrerBrouillon } from "@/components/PageAutoEvaluation/useEnregistrerBrouillon";
-import { formSchema, FormValues } from "@/components/PageAutoEvaluation/form";
+import { useEnregistrerBrouillonObjectifs } from "@/components/PageAutoEvaluation/objectifs/useEnregistrerBrouillonObjectifs";
 import { formaterDate } from "@/client/utils/date/date";
 import { Icone } from "@/components/_commons/Icone";
 import { EtapeObjectifs } from "@/components/PageAutoEvaluation/objectifs/EtapeObjectifs";
 import { InformationPleineIcon } from "@/components/_commons/Icones/InformationPleineIcon";
 import { LayoutFicheCadrage } from "@/components/Evaluation/LayoutFicheCadrage";
 import { BoutonEnregistrerBrouillon } from "@/components/PageAutoEvaluation/BoutonEnregistrerBrouillon";
+import {
+  formSchemaObjectifs,
+  FormValuesObjectifs,
+} from "@/components/PageAutoEvaluation/objectifs/form";
 
 export const FormulaireAutoEvaluationObjectifs = () => {
   const { autoEvaluation } =
     pageAutoEvaluationObjectifs.useServerSidePropsContext();
   const formId = useId();
-  // TODO: mutation pour enregistrer les objectifs uniquement
-  const enregistrerBrouillon = useEnregistrerBrouillon(autoEvaluation);
+  const enregistrerBrouillon = useEnregistrerBrouillonObjectifs(autoEvaluation);
 
-  const form = useForm<FormValues>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<FormValuesObjectifs>({
+    resolver: zodResolver(formSchemaObjectifs),
     mode: "onChange",
     defaultValues: {
-      // TODO: supprimer les critères du formulaire
-      criteres: autoEvaluation.criteres.map((critere) => ({
-        id: critere.evaluation.id,
-        note: critere.evaluation.note,
-        commentaire: critere.evaluation.commentaire,
-      })),
       objectifs: autoEvaluation.objectifs.map((objectif) => ({
         id: objectif.evaluation.id,
         note: objectif.evaluation.note,

@@ -411,6 +411,8 @@ const etapesEvaluation: etape_evaluation[] = [
     read_only: false,
     created_at: new Date(),
     updated_at: new Date(),
+    objectifs_valides: false,
+    criteres_valides: false,
   },
   {
     id: "d6050c26-c872-4134-90d3-c45a8a9dc539",
@@ -419,6 +421,8 @@ const etapesEvaluation: etape_evaluation[] = [
     read_only: false,
     created_at: new Date(),
     updated_at: new Date(),
+    objectifs_valides: false,
+    criteres_valides: false,
   },
   {
     id: "3ec9fca0-854f-4e53-9664-53244c40060f",
@@ -427,6 +431,8 @@ const etapesEvaluation: etape_evaluation[] = [
     read_only: false,
     created_at: new Date(),
     updated_at: new Date(),
+    objectifs_valides: null,
+    criteres_valides: null,
   },
   {
     id: "d79f61b7-487e-438e-9662-c9bcdc301897",
@@ -435,6 +441,8 @@ const etapesEvaluation: etape_evaluation[] = [
     read_only: false,
     created_at: new Date(),
     updated_at: new Date(),
+    objectifs_valides: false,
+    criteres_valides: false,
   },
   {
     id: "b1b1b1b1-c2c2-4d3d-8e4e-f5f5f5f5f5f5",
@@ -443,6 +451,8 @@ const etapesEvaluation: etape_evaluation[] = [
     read_only: false,
     created_at: new Date(),
     updated_at: new Date(),
+    objectifs_valides: false,
+    criteres_valides: false,
   },
   {
     id: "c2c2c2c2-d3d3-4e4e-9f5f-a6a6a6a6a6a6",
@@ -451,6 +461,8 @@ const etapesEvaluation: etape_evaluation[] = [
     read_only: false,
     created_at: new Date(),
     updated_at: new Date(),
+    objectifs_valides: null,
+    criteres_valides: null,
   },
   {
     id: "d3d3d3d3-e4e4-4f5f-8a6a-b7b7b7b7b7b7",
@@ -459,6 +471,8 @@ const etapesEvaluation: etape_evaluation[] = [
     read_only: false,
     created_at: new Date(),
     updated_at: new Date(),
+    objectifs_valides: null,
+    criteres_valides: null,
   },
 ];
 

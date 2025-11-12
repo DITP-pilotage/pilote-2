@@ -9,6 +9,8 @@ import { enregisterEvaluationCommandSchema } from "@/server/evaluation/services/
 import { debloquerFichesConsolidationCommandSchema } from "@/server/evaluation/handlers/DebloquerFichesConsolidationHandler";
 import { modifierEtatFichesInstructionCommandSchema } from "@/server/evaluation/handlers/ModifierEtatFichesInstructionHandler";
 import { passerALEtapeInstructionCommandSchema } from "@/server/evaluation/handlers/PasserALEtapeInstructionHandler";
+import { enregisterEvaluationCriteresCommandSchema } from "@/server/evaluation/handlers/EnregistrerBrouillonAutoEvaluationCriteresHandler";
+import { enregisterEvaluationObjectifsCommandSchema } from "@/server/evaluation/handlers/EnregistrerBrouillonAutoEvaluationObjectifsHandler";
 
 export const evaluationRouter = créerRouteurTRPC({
   getDroitsPiloteEval: procédureProtégée.query(async ({ ctx }) => {
@@ -39,8 +41,8 @@ export const evaluationRouter = créerRouteurTRPC({
     };
   }),
 
-  enregistrerBrouillonAutoEvaluation: procédureProtégée
-    .input(enregisterEvaluationCommandSchema)
+  enregistrerBrouillonAutoEvaluationObjectifs: procédureProtégée
+    .input(enregisterEvaluationObjectifsCommandSchema)
     .mutation(async ({ input, ctx }) => {
       const peutAccederFicheAutoEvaluation = await getContainer("piloteEval")
         .resolve("accesFicheEvaluationService")
@@ -53,7 +55,25 @@ export const evaluationRouter = créerRouteurTRPC({
         throw new ForbiddenError("Accès refusé à la fiche d'auto-évaluation");
 
       await getContainer("piloteEval")
-        .resolve("enregistrerBrouillonAutoEvaluation")
+        .resolve("enregistrerBrouillonAutoEvaluationObjectifs")
+        .execute(input, ctx.session.user.id);
+    }),
+
+  enregistrerBrouillonAutoEvaluationCriteres: procédureProtégée
+    .input(enregisterEvaluationCriteresCommandSchema)
+    .mutation(async ({ input, ctx }) => {
+      const peutAccederFicheAutoEvaluation = await getContainer("piloteEval")
+        .resolve("accesFicheEvaluationService")
+        .peutAccederEtapeAutoEvaluation({
+          utilisateurId: ctx.session.user.id,
+          ficheEvaluationId: input.ficheEvaluationId,
+        });
+
+      if (!peutAccederFicheAutoEvaluation)
+        throw new ForbiddenError("Accès refusé à la fiche d'auto-évaluation");
+
+      await getContainer("piloteEval")
+        .resolve("enregistrerBrouillonAutoEvaluationCriteres")
         .execute(input, ctx.session.user.id);
     }),
 
