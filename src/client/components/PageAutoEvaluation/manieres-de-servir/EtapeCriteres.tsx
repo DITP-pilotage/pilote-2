@@ -1,9 +1,11 @@
 import { useFieldArray } from "react-hook-form";
+import { useCallback } from "react";
 import { CommentaireTextareaAutoEvaluation } from "@/components/PageAutoEvaluation/CommentaireTextareaAutoEvaluation";
 import { InputNoteAutoEvaluation } from "@/components/PageAutoEvaluation/InputNoteAutoEvaluation";
 import { BoutonEnSavoirPlus } from "@/components/PageAutoEvaluation/BoutonEnSavoirPlus";
 import { pageAutoEvaluationManieresDeServir } from "@/components/PageAutoEvaluation/manieres-de-servir/PageAutoEvaluationManieresDeServirServerSideContext";
 import { useFormEvaluationCriteres } from "@/components/PageAutoEvaluation/manieres-de-servir/form";
+import { useEnregistrerBrouillonCriteres } from "@/components/PageAutoEvaluation/manieres-de-servir/useEnregistrerBrouillonCriteres";
 
 export const EtapeCriteres = () => {
   const { autoEvaluation } =
@@ -11,6 +13,16 @@ export const EtapeCriteres = () => {
   const form = useFormEvaluationCriteres();
   const { fields } = useFieldArray({ control: form.control, name: "criteres" });
   const readOnly = autoEvaluation.readOnly || autoEvaluation.criteresValides;
+  const enregistrerBrouillon = useEnregistrerBrouillonCriteres({
+    showToast: false,
+  });
+
+  const handleAutosave = useCallback(async () => {
+    const isValid = await form.trigger();
+    if (isValid) {
+      await form.handleSubmit(enregistrerBrouillon)();
+    }
+  }, [form, enregistrerBrouillon]);
 
   return (
     <div>
@@ -34,6 +46,7 @@ export const EtapeCriteres = () => {
               <InputNoteAutoEvaluation
                 control={form.control}
                 name={noteName}
+                onAutosave={handleAutosave}
                 readOnly={readOnly}
               />
             </header>
@@ -42,6 +55,7 @@ export const EtapeCriteres = () => {
                 control={form.control}
                 defaultOpen={!!fieldCritere.commentaire}
                 name={commentaireName}
+                onAutosave={handleAutosave}
                 readOnly={readOnly}
               />
             </div>

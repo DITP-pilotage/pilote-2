@@ -1,9 +1,11 @@
 import { useFieldArray } from "react-hook-form";
+import { useCallback } from "react";
 import { pageAutoEvaluationObjectifs } from "@/components/PageAutoEvaluation/objectifs/PageAutoEvaluationObjectifsServerSideContext";
 import { CommentaireTextareaAutoEvaluation } from "@/components/PageAutoEvaluation/CommentaireTextareaAutoEvaluation";
 import { InputNoteAutoEvaluation } from "@/components/PageAutoEvaluation/InputNoteAutoEvaluation";
 import { BoutonEnSavoirPlus } from "@/components/PageAutoEvaluation/BoutonEnSavoirPlus";
 import { useFormEvaluationObjectifs } from "@/components/PageAutoEvaluation/objectifs/form";
+import { useEnregistrerBrouillonObjectifs } from "@/components/PageAutoEvaluation/objectifs/useEnregistrerBrouillonObjectifs";
 
 export function EtapeObjectifs() {
   const { autoEvaluation } =
@@ -13,7 +15,17 @@ export function EtapeObjectifs() {
     control: form.control,
     name: "objectifs",
   });
-  const readOnly = autoEvaluation.readOnly || autoEvaluation.criteresValides;
+  const readOnly = autoEvaluation.readOnly || autoEvaluation.objectifsValides;
+  const enregistrerBrouillon = useEnregistrerBrouillonObjectifs({
+    showToast: false,
+  });
+
+  const handleAutosave = useCallback(async () => {
+    const isValid = await form.trigger();
+    if (isValid) {
+      await form.handleSubmit(enregistrerBrouillon)();
+    }
+  }, [form, enregistrerBrouillon]);
 
   return (
     <div className="divide-y divide-gray-100">
@@ -36,6 +48,7 @@ export function EtapeObjectifs() {
               <InputNoteAutoEvaluation
                 control={form.control}
                 name={noteName}
+                onAutosave={handleAutosave}
                 readOnly={readOnly}
               />
             </div>
@@ -44,6 +57,7 @@ export function EtapeObjectifs() {
                 control={form.control}
                 defaultOpen={!!fieldObjectif.commentaire}
                 name={commentaireName}
+                onAutosave={handleAutosave}
                 readOnly={readOnly}
               />
             </div>

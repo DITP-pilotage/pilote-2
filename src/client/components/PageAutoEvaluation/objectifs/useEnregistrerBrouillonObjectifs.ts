@@ -4,7 +4,9 @@ import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
 import { FormValuesObjectifs } from "@/components/PageAutoEvaluation/objectifs/form";
 import { pageAutoEvaluationObjectifs } from "@/components/PageAutoEvaluation/objectifs/PageAutoEvaluationObjectifsServerSideContext";
 
-export const useEnregistrerBrouillonObjectifs = () => {
+export const useEnregistrerBrouillonObjectifs = ({
+  showToast = true,
+}: { showToast?: boolean } = {}) => {
   const { autoEvaluation } =
     pageAutoEvaluationObjectifs.useServerSidePropsContext();
   const enregisterBrouillon =
@@ -29,10 +31,12 @@ export const useEnregistrerBrouillonObjectifs = () => {
       },
       {
         onSuccess: async () => {
-          toast.success("Données enregistrées", {
-            position: "top-right",
-            richColors: true,
-          });
+          if (showToast) {
+            toast.success("Données enregistrées", {
+              position: "top-right",
+              richColors: true,
+            });
+          }
           await refreshRouter();
         },
       },

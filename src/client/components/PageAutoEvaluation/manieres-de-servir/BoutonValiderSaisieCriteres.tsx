@@ -13,7 +13,7 @@ export const BoutonValiderSaisieCriteres = ({
   const validerSaisie = api.evaluation.validerSaisieCriteres.useMutation();
   const refreshRouter = useRefreshRouter();
   const form = useFormEvaluationCriteres();
-  const enregistrer = useEnregistrerBrouillonCriteres();
+  const enregistrer = useEnregistrerBrouillonCriteres({ showToast: false });
 
   const handleClick = async () => {
     const isFormValid = await form.trigger();

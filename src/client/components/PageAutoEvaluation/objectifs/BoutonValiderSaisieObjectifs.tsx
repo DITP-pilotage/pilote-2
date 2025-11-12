@@ -13,7 +13,9 @@ export const BoutonValiderSaisieObjectifs = ({
   const validerSaisie = api.evaluation.validerSaisieObjectifs.useMutation();
   const refreshRouter = useRefreshRouter();
   const form = useFormEvaluationObjectifs();
-  const enregistrerBrouillon = useEnregistrerBrouillonObjectifs();
+  const enregistrerBrouillon = useEnregistrerBrouillonObjectifs({
+    showToast: false,
+  });
 
   const handleClick = async () => {
     const isFormValid = await form.trigger();
