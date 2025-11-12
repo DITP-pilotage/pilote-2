@@ -4,15 +4,16 @@ import { Transaction } from "@/server/db/Transaction";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { getPrisma } from "@/server/db/PrismaTransaction";
 
-export const debloquerFichesConsolidationCommandSchema = z.object({
+export const modifierEtatFichesConsolidationCommandSchema = z.object({
   ficheEvaluationIds: z.array(z.string()),
+  readOnly: z.boolean(),
 });
 
-export type DebloquerFichesConsolidationCommand = z.infer<
-  typeof debloquerFichesConsolidationCommandSchema
+export type ModifierEtatFichesConsolidationCommand = z.infer<
+  typeof modifierEtatFichesConsolidationCommandSchema
 >;
 
-export class DebloquerFichesConsolidationHandler {
+export class ModifierEtatFichesConsolidationHandler {
   constructor(
     private readonly dependencies: {
       transaction: Transaction;
@@ -20,7 +21,9 @@ export class DebloquerFichesConsolidationHandler {
     },
   ) {}
 
-  async execute(command: DebloquerFichesConsolidationCommand): Promise<void> {
+  async execute(
+    command: ModifierEtatFichesConsolidationCommand,
+  ): Promise<void> {
     if (command.ficheEvaluationIds.length === 0) {
       return;
     }
@@ -36,7 +39,7 @@ export class DebloquerFichesConsolidationHandler {
           type: $Enums.etape_evaluation_enum.CONSOLIDATION,
         },
         data: {
-          read_only: false,
+          read_only: command.readOnly,
         },
       });
     });
