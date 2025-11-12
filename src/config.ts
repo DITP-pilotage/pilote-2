@@ -267,6 +267,11 @@ const config = convict({
       default: false,
       env: "NEXT_PUBLIC_FF_PILOTE_EVAL",
     },
+    taHistory: {
+      format: Boolean,
+      default: false,
+      env: "NEXT_PUBLIC_FF_TA_HISTORY",
+    },
   },
   analytics: {
     doc: "Matomo Analytics",

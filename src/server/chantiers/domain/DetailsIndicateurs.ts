@@ -20,6 +20,8 @@ export interface DetailIndicateurPropositionValeurAvancement {
 interface HistoriqueValeur {
   date: string;
   valeur: number;
+  taa: number | null;
+  tag: number | null;
 }
 
 interface ValeurCibleAnnuelle {
