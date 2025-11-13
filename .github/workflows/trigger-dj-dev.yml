@@ -11,6 +11,7 @@ on:
         options:
           - dev-datajobs
           - preprod-datajobs
+          - prod-datajobs-ditp
 jobs:
   trigger-scalingo:
     name: "Lancement datajobs pour l'environ : ${{inputs.environment}}"
