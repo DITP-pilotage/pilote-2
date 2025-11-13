@@ -199,7 +199,7 @@ const rattachements: referentiel_rattachement[] = [
     created_at: new Date("2025-10-07T10:00:00"),
     updated_at: new Date("2025-10-07T10:00:00"),
     groupe: "REG-75",
-    ordre: 2,
+    ordre: 1,
   },
   {
     code: "DEPT-87",
