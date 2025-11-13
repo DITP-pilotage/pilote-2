@@ -4,7 +4,7 @@ import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { Transaction } from "@/server/db/Transaction";
 import { EnregistrerEvaluationService } from "@/server/evaluation/services/EnregistrerEvaluationService";
 
-export const enregisterEvaluationObjectifsCommandSchema = z.object({
+export const enregistrerEvaluationObjectifsCommandSchema = z.object({
   ficheEvaluationId: z.string(),
   evaluationsObjectifs: z
     .object({
@@ -17,7 +17,7 @@ export const enregisterEvaluationObjectifsCommandSchema = z.object({
 });
 
 export type EnregistrerEvaluationObjectifsCommandSchema = z.infer<
-  typeof enregisterEvaluationObjectifsCommandSchema
+  typeof enregistrerEvaluationObjectifsCommandSchema
 >;
 
 export class EnregistrerBrouillonAutoEvaluationObjectifsHandler {

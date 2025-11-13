@@ -4,12 +4,12 @@ import {
 } from "@/server/infrastructure/api/trpc/trpc";
 import { getContainer } from "@/server/dependances";
 import { ForbiddenError } from "@/server/app/error-boundary/forbidden-error";
-import { enregisterEvaluationCommandSchema } from "@/server/evaluation/services/EnregistrerEvaluationService";
+import { enregistrerEvaluationCommandSchema } from "@/server/evaluation/services/EnregistrerEvaluationService";
 import { debloquerFichesConsolidationCommandSchema } from "@/server/evaluation/handlers/DebloquerFichesConsolidationHandler";
 import { modifierEtatFichesInstructionCommandSchema } from "@/server/evaluation/handlers/ModifierEtatFichesInstructionHandler";
 import { passerALEtapeInstructionCommandSchema } from "@/server/evaluation/handlers/PasserALEtapeInstructionHandler";
-import { enregisterEvaluationCriteresCommandSchema } from "@/server/evaluation/handlers/EnregistrerBrouillonAutoEvaluationCriteresHandler";
-import { enregisterEvaluationObjectifsCommandSchema } from "@/server/evaluation/handlers/EnregistrerBrouillonAutoEvaluationObjectifsHandler";
+import { enregistrerEvaluationCriteresCommandSchema } from "@/server/evaluation/handlers/EnregistrerBrouillonAutoEvaluationCriteresHandler";
+import { enregistrerEvaluationObjectifsCommandSchema } from "@/server/evaluation/handlers/EnregistrerBrouillonAutoEvaluationObjectifsHandler";
 import { validerSaisieCriteresCommandSchema } from "@/server/evaluation/handlers/ValiderSaisieCriteresHandler";
 import { validerSaisieObjectifsCommandSchema } from "@/server/evaluation/handlers/ValiderSaisieObjectifsHandler";
 
@@ -43,7 +43,7 @@ export const evaluationRouter = créerRouteurTRPC({
   }),
 
   enregistrerBrouillonAutoEvaluationObjectifs: procédureProtégée
-    .input(enregisterEvaluationObjectifsCommandSchema)
+    .input(enregistrerEvaluationObjectifsCommandSchema)
     .mutation(async ({ input, ctx }) => {
       const peutAccederFicheAutoEvaluation = await getContainer("piloteEval")
         .resolve("accesFicheEvaluationService")
@@ -61,7 +61,7 @@ export const evaluationRouter = créerRouteurTRPC({
     }),
 
   enregistrerBrouillonAutoEvaluationCriteres: procédureProtégée
-    .input(enregisterEvaluationCriteresCommandSchema)
+    .input(enregistrerEvaluationCriteresCommandSchema)
     .mutation(async ({ input, ctx }) => {
       const peutAccederFicheAutoEvaluation = await getContainer("piloteEval")
         .resolve("accesFicheEvaluationService")
@@ -115,7 +115,7 @@ export const evaluationRouter = créerRouteurTRPC({
     }),
 
   enregistrerBrouillonConsolidation: procédureProtégée
-    .input(enregisterEvaluationCommandSchema.array())
+    .input(enregistrerEvaluationCommandSchema.array())
     .mutation(async ({ input, ctx }) => {
       const peutAccederFicheAutoEvaluation = await getContainer("piloteEval")
         .resolve("accesFicheEvaluationService")
@@ -132,7 +132,7 @@ export const evaluationRouter = créerRouteurTRPC({
     }),
 
   enregistrerBrouillonInstruction: procédureProtégée
-    .input(enregisterEvaluationCommandSchema.array())
+    .input(enregistrerEvaluationCommandSchema.array())
     .mutation(async ({ input, ctx }) => {
       const peutAccederFicheInstruction = await getContainer("piloteEval")
         .resolve("accesFicheEvaluationService")
