@@ -5,8 +5,7 @@ import { useBlocIndicateurContext } from "@/components/PageChantier/useBlocIndic
 import { useTerritoireSelectionne } from "@/components/PageChantier/PageChantierServerSideContext";
 
 export const useIndicateurÉvolution = () => {
-  const { detailIndicateurDuTerritoire, configurationFeatureFlipping } =
-    useBlocIndicateurContext();
+  const { detailIndicateurDuTerritoire } = useBlocIndicateurContext();
   const detailTerritoireSelectionne = useTerritoireSelectionne();
   let donnéesParTerritoire: ChartData<"line">;
 
@@ -22,16 +21,6 @@ export const useIndicateurÉvolution = () => {
     scales: {
       x: { border: { dash: [2, 4] } },
       y: { border: { dash: [2, 4] }, beginAtZero: true },
-      ...(configurationFeatureFlipping.taHistory && {
-        yright: {
-          border: { dash: [2, 4] },
-          beginAtZero: true,
-          position: "right",
-          grid: {
-            drawOnChartArea: false,
-          },
-        },
-      }),
     },
     plugins: {
       legend: {
@@ -69,20 +58,6 @@ export const useIndicateurÉvolution = () => {
       borderColor: couleurs[0],
       backgroundColor: couleurs[0],
     },
-    {
-      label: `${detailTerritoireSelectionne.nom} - Taux d'avancement du mandat`,
-      data: listeDesDateOrdonnees.map(
-        (date) =>
-          detailIndicateurDuTerritoire.historiquesValeurs.find(
-            (valeurHistorique) => valeurHistorique.date === date,
-          )?.tag ?? null,
-      ),
-      pointStyle: "circle",
-      borderColor: "#000000",
-      backgroundColor: "#000000",
-      stepped: "after",
-      yAxisID: "yright",
-    },
   ];
 
   const listeValeurCible = Array.from({ length: valeursAxeX.length }).map(
@@ -104,9 +79,7 @@ export const useIndicateurÉvolution = () => {
     labels: valeursAxeX,
     datasets:
       detailIndicateurDuTerritoire.valeurCible !== null
-        ? configurationFeatureFlipping.taHistory
-          ? [...évolutions, valeurCible]
-          : [évolutions[0], valeurCible]
+        ? [évolutions[0], valeurCible]
         : [évolutions[0]],
   };
 
