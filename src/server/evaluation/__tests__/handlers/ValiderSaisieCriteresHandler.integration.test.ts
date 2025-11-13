@@ -31,6 +31,8 @@ describe("ValiderSaisieCriteresHandler", () => {
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
+          groupe: rattachementCode,
+          ordre: 1,
           libelle: "Rattachement test valider critères",
         },
       });
@@ -78,6 +80,8 @@ describe("ValiderSaisieCriteresHandler", () => {
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
+          groupe: rattachementCode,
+          ordre: 1,
           libelle: "Rattachement test date",
         },
       });
@@ -124,6 +128,8 @@ describe("ValiderSaisieCriteresHandler", () => {
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
+          groupe: rattachementCode,
+          ordre: 1,
           libelle: "Rattachement test consolidation",
         },
       });
@@ -165,6 +171,8 @@ describe("ValiderSaisieCriteresHandler", () => {
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
+          groupe: rattachementCode,
+          ordre: 1,
           libelle: "Rattachement test objectifs déjà validés",
         },
       });
@@ -212,6 +220,8 @@ describe("ValiderSaisieCriteresHandler", () => {
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
+          groupe: rattachementCode,
+          ordre: 1,
           libelle: "Rattachement test consolidation auto",
         },
       });
