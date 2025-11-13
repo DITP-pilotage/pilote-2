@@ -21,9 +21,11 @@ const columnHelper = createColumnHelper<TableauEvaluationRow>();
 export const useTableauEvaluation = ({
   rattachements,
   criteres,
+  onAutosave,
 }: {
   rattachements: Rattachement[];
   criteres: Critere[];
+  onAutosave?: () => void;
 }) => {
   const getCritere = useCallback(
     (critereId: string) => {
@@ -166,6 +168,7 @@ export const useTableauEvaluation = ({
                         note={evalItem.evaluation.note}
                         noteLabel="Note d'instruction"
                         noteName={noteName}
+                        onAutosave={onAutosave}
                       />
                     );
                   } else if (
@@ -182,6 +185,7 @@ export const useTableauEvaluation = ({
                         note={evalItem.evaluation.note}
                         noteLabel="Note de consolidation"
                         noteName={noteName}
+                        onAutosave={onAutosave}
                       />
                     );
                   } else if (
@@ -230,7 +234,7 @@ export const useTableauEvaluation = ({
         getGroupingValue: (row) => (row.type === "critere" ? row.id : null),
       }),
     ],
-    [rattachements, getCritere, criteres],
+    [rattachements, getCritere, criteres, onAutosave],
   );
 
   const table = useReactTable({
