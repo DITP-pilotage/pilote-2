@@ -302,7 +302,6 @@ export default function useIndicateurEvolutionNew(
       },
     ],
     yAxis: {
-      name: "valeur",
       type: "value",
       min: yMin,
       max: yMax,
