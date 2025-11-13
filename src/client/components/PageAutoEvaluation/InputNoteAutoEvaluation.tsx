@@ -1,6 +1,6 @@
 import { Control, FieldValues, Path } from "react-hook-form";
-import { useCallback, useRef, useEffect } from "react";
 import { InputNoteControlled } from "@/components/_commons/InputNoteControlled";
+import { useAutosave } from "@/components/Evaluation/useAutosave";
 
 export function InputNoteAutoEvaluation<T extends FieldValues>({
   name,
@@ -13,41 +13,13 @@ export function InputNoteAutoEvaluation<T extends FieldValues>({
   control: Control<T>;
   onAutosave?: () => void;
 }) {
-  const timeoutRef = useRef<NodeJS.Timeout>();
-  const onAutosaveRef = useRef(onAutosave);
-
-  useEffect(() => {
-    onAutosaveRef.current = onAutosave;
-  }, [onAutosave]);
-
-  const handleChange = useCallback(() => {
-    if (!onAutosaveRef.current) return;
-
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
-    }
-
-    timeoutRef.current = setTimeout(() => {
-      onAutosaveRef.current?.();
-    }, 400);
-  }, []);
-
-  const handleBlur = useCallback(() => {
-    if (!onAutosaveRef.current) return;
-
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
-    }
-
-    onAutosaveRef.current();
-  }, []);
+  const autosave = useAutosave({ onAutosave });
 
   return (
     <InputNoteControlled
       control={control}
       name={name}
-      onBlur={handleBlur}
-      onChange={handleChange}
+      {...autosave}
       readOnly={readOnly}
     />
   );
