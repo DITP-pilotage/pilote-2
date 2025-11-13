@@ -1,7 +1,7 @@
 import { Control, Controller, FieldValues, Path } from "react-hook-form";
 import { ComponentProps, RefObject, useImperativeHandle, useRef } from "react";
 import { clsxm } from "@/utils/clsxm";
-import { MessageErreur } from "@/components/PageEvaluation/MessageErreur";
+import { MessageErreur } from "@/components/PageAutoEvaluation/MessageErreur";
 
 export type TextareaRef = {
   focus: () => void;
@@ -12,6 +12,7 @@ export function Textarea<T extends FieldValues>({
   name,
   control,
   readOnly,
+  onChange,
   onBlur,
   className,
   textareaRef,
@@ -61,6 +62,10 @@ export function Textarea<T extends FieldValues>({
               onBlur={(event) => {
                 field.onBlur();
                 onBlur?.(event);
+              }}
+              onChange={(event) => {
+                field.onChange(event);
+                onChange?.(event);
               }}
               ref={(node) => {
                 internalRef.current = node;

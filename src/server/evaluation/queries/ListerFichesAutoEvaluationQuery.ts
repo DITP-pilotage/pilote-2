@@ -28,6 +28,11 @@ export class ListerFichesAutoEvaluationQuery {
     const fichesEvaluation = await this.dependencies.prisma
       .getInstance()
       .fiche_evaluation.findMany({
+        orderBy: {
+          rattachement: {
+            code: "asc",
+          },
+        },
         where: {
           etape_evaluations: {
             some: { type: $Enums.etape_evaluation_enum.AUTO_EVALUATION },

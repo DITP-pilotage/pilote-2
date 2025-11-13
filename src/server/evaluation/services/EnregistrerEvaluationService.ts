@@ -3,7 +3,7 @@ import { $Enums } from "@prisma/client";
 import { Transaction } from "@/server/db/Transaction";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 
-export const enregisterEvaluationCommandSchema = z.object({
+export const enregistrerEvaluationCommandSchema = z.object({
   ficheEvaluationId: z.string(),
   evaluationsCriteres: z
     .object({
@@ -24,7 +24,7 @@ export const enregisterEvaluationCommandSchema = z.object({
 });
 
 export type EnregistrerEvaluationCommandSchema = z.infer<
-  typeof enregisterEvaluationCommandSchema
+  typeof enregistrerEvaluationCommandSchema
 >;
 
 export class EnregistrerEvaluationService {
