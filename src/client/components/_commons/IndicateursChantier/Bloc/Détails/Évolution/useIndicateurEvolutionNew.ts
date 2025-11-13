@@ -189,33 +189,30 @@ export default function useIndicateurEvolutionNew(
     lineStyle: { type: "dotted", width: 2 },
     silent: true,
     yAxisIndex: 1,
-    data:
-      territoiresAAfficher[indicateur.territoireNom]
-        ? indicateur.données.historiquesValeurs.flatMap(
-            (valeur, index, array) => {
-              if (valeur.taa === null) return [];
+    data: territoiresAAfficher[indicateur.territoireNom]
+      ? indicateur.données.historiquesValeurs.flatMap(
+          (valeur, index, array) => {
+            if (valeur.taa === null) return [];
 
-              const debutRange =
-                new Date(valeur.date) < minDate
-                  ? minDate
-                  : new Date(valeur.date);
+            const debutRange =
+              new Date(valeur.date) < minDate ? minDate : new Date(valeur.date);
 
-              const finRange =
-                new Date(`${valeur.date.substring(0, 4)}-12-31`) > maxDate
-                  ? maxDate
-                  : new Date(array[index + 1].date).getFullYear()
-                    === new Date(valeur.date).getFullYear()
-                    ? new Date(array[index + 1].date)
-                    : new Date(`${valeur.date.substring(0, 4)}-12-31`)
-              
-              return [
-                [debutRange, valeur.taa],
-                [finRange, valeur.taa],
-                null,
-              ];
-            },
-          )
-        : [],
+            const finRange =
+              new Date(`${valeur.date.slice(0, 4)}-12-31`) > maxDate
+                ? maxDate
+                : new Date(array[index + 1].date).getFullYear() ===
+                    new Date(valeur.date).getFullYear()
+                  ? new Date(array[index + 1].date)
+                  : new Date(`${valeur.date.slice(0, 4)}-12-31`);
+
+            return [
+              [debutRange.setDate(15), valeur.taa],
+              [finRange.setDate(15), valeur.taa],
+              null,
+            ];
+          },
+        )
+      : [],
   });
 
   const creerSerieTag = (
@@ -230,31 +227,31 @@ export default function useIndicateurEvolutionNew(
     lineStyle: { type: 2, width: 2 },
     silent: true,
     yAxisIndex: 1,
-    data:
-      territoiresAAfficher[indicateur.territoireNom]
-        ? indicateur.données.historiquesValeurs.flatMap(
-            (valeur, index, array) => {
-              if (valeur.tag === null) return [];
+    data: territoiresAAfficher[indicateur.territoireNom]
+      ? indicateur.données.historiquesValeurs.flatMap(
+          (valeur, index, array) => {
+            if (valeur.tag === null) return [];
 
-              const debutRange =
-                new Date(valeur.date) < minDate
-                  ? minDate
-                  : new Date(valeur.date);
+            const debutRange =
+              new Date(valeur.date) < minDate ? minDate : new Date(valeur.date);
 
-              const finRange = (index === array.length || !array[index + 1] || new Date(array[index + 1].date) < minDate)
-                  ? maxDate
-                  : new Date(array[index + 1].date);
-              
-              return [
-                [debutRange, valeur.tag],
-                [finRange, valeur.tag],
-                null,
-              ];
-            },
-          )
-        : [],
+            const finRange =
+              index === array.length ||
+              !array[index + 1] ||
+              new Date(array[index + 1].date) < minDate
+                ? maxDate
+                : new Date(array[index + 1].date);
+
+            return [
+              [debutRange.setDate(15), valeur.tag],
+              [finRange.setDate(15), valeur.tag],
+              null,
+            ];
+          },
+        )
+      : [],
   });
-  
+
   const formatterLaTooltip = (parametres: TopLevelFormatterParams): string => {
     const dataParametres = Array.isArray(parametres)
       ? parametres
@@ -382,7 +379,7 @@ export default function useIndicateurEvolutionNew(
     ],
     yAxis: [
       {
-        name: 'valeur',
+        name: "valeur",
         type: "value",
         min: yMin,
         max: yMax,
@@ -403,17 +400,17 @@ export default function useIndicateurEvolutionNew(
         },
       },
       {
-        type: 'value',
-        name: 'Avancement annuel',
-        position: 'right',
+        type: "value",
+        name: "Avancement annuel",
+        position: "right",
         axisLine: {
           show: true,
         },
         axisLabel: {
           showMaxLabel: true,
           showMinLabel: true,
-          formatter: '{value} %'
-        }
+          formatter: "{value} %",
+        },
       },
     ],
     dataZoom: [
@@ -446,7 +443,6 @@ export default function useIndicateurEvolutionNew(
     series: [
       ...tousLesIndicateursDetails.flatMap((indicateurDetail, index) => {
         const couleur = PALETTE_DSFR[index % PALETTE_DSFR.length];
-        console.log(creerSerieTag(indicateurDetail, couleur))
         return [
           creerSerie(indicateurDetail, couleur),
           creerSerieCibles(indicateurDetail, couleur),
@@ -463,7 +459,6 @@ export default function useIndicateurEvolutionNew(
       } as LineSeriesOption,
     ],
   };
-  
 
   return {
     afficherLesCibles,
