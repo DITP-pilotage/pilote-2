@@ -6,7 +6,7 @@ import { AccesFicheEvaluationService } from "@/server/evaluation/services/AccesF
 import { AfficherConsolidationQuery } from "@/server/evaluation/queries/AfficherConsolidationQuery";
 import { EnregistrerBrouillonConsolidationHandler } from "@/server/evaluation/handlers/EnregistrerBrouillonConsolidationHandler";
 import { AfficherPilotageQuery } from "@/server/evaluation/queries/AfficherPilotageQuery";
-import { DebloquerFichesConsolidationHandler } from "@/server/evaluation/handlers/DebloquerFichesConsolidationHandler";
+import { ModifierEtatFichesConsolidationHandler } from "@/server/evaluation/handlers/ModifierEtatFichesConsolidationHandler";
 import { PasserALEtapeInstructionHandler } from "@/server/evaluation/handlers/PasserALEtapeInstructionHandler";
 import { AfficherInstructionQuery } from "@/server/evaluation/queries/AfficherInstructionQuery";
 import { EnregistrerBrouillonInstructionHandler } from "@/server/evaluation/handlers/EnregistrerBrouillonInstructionHandler";
@@ -33,7 +33,7 @@ export type PiloteEvalDependencies = {
   enregistrerBrouillonInstructionHandler: EnregistrerBrouillonInstructionHandler;
   accesFicheEvaluationService: AccesFicheEvaluationService;
   soumettreAutoEvaluationService: SoumettreAutoEvaluationService;
-  debloquerFichesConsolidationHandler: DebloquerFichesConsolidationHandler;
+  modifierEtatFichesConsolidationHandler: ModifierEtatFichesConsolidationHandler;
   modifierEtatFichesInstructionHandler: ModifierEtatFichesInstructionHandler;
   passerALEtapeInstructionHandler: PasserALEtapeInstructionHandler;
 };
@@ -66,8 +66,8 @@ export const getPiloteEvalContainer = (
     ),
     accesFicheEvaluationService: asClass(AccesFicheEvaluationService),
     soumettreAutoEvaluationService: asClass(SoumettreAutoEvaluationService),
-    debloquerFichesConsolidationHandler: asClass(
-      DebloquerFichesConsolidationHandler,
+    modifierEtatFichesConsolidationHandler: asClass(
+      ModifierEtatFichesConsolidationHandler,
     ),
     modifierEtatFichesInstructionHandler: asClass(
       ModifierEtatFichesInstructionHandler,

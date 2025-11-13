@@ -5,7 +5,7 @@ import {
 import { getContainer } from "@/server/dependances";
 import { ForbiddenError } from "@/server/app/error-boundary/forbidden-error";
 import { enregistrerEvaluationCommandSchema } from "@/server/evaluation/services/EnregistrerEvaluationService";
-import { debloquerFichesConsolidationCommandSchema } from "@/server/evaluation/handlers/DebloquerFichesConsolidationHandler";
+import { modifierEtatFichesConsolidationCommandSchema } from "@/server/evaluation/handlers/ModifierEtatFichesConsolidationHandler";
 import { modifierEtatFichesInstructionCommandSchema } from "@/server/evaluation/handlers/ModifierEtatFichesInstructionHandler";
 import { passerALEtapeInstructionCommandSchema } from "@/server/evaluation/handlers/PasserALEtapeInstructionHandler";
 import { enregistrerEvaluationCriteresCommandSchema } from "@/server/evaluation/handlers/EnregistrerBrouillonAutoEvaluationCriteresHandler";
@@ -148,8 +148,8 @@ export const evaluationRouter = créerRouteurTRPC({
         .execute(input, ctx.session.user.id);
     }),
 
-  debloquerFichesConsolidation: procédureProtégée
-    .input(debloquerFichesConsolidationCommandSchema)
+  modifierEtatFichesConsolidation: procédureProtégée
+    .input(modifierEtatFichesConsolidationCommandSchema)
     .mutation(async ({ input, ctx }) => {
       const peutAccederPilotage = await getContainer("piloteEval")
         .resolve("accesFicheEvaluationService")
@@ -161,7 +161,7 @@ export const evaluationRouter = créerRouteurTRPC({
         throw new ForbiddenError("Accès refusé au pilotage");
 
       await getContainer("piloteEval")
-        .resolve("debloquerFichesConsolidationHandler")
+        .resolve("modifierEtatFichesConsolidationHandler")
         .execute(input);
     }),
 
