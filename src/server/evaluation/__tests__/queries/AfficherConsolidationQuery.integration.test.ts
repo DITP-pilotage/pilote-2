@@ -33,6 +33,8 @@ describe("AfficherConsolidationQuery", () => {
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
+          groupe: rattachementCode,
+          ordre: 1,
           libelle: "Rattachement sans accès",
         },
       });
@@ -123,6 +125,8 @@ describe("AfficherConsolidationQuery", () => {
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachement1Code,
+          groupe: rattachement1Code,
+          ordre: 1,
           libelle: "Rattachement 1",
           objectifs: {
             create: {
@@ -139,6 +143,8 @@ describe("AfficherConsolidationQuery", () => {
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachement2Code,
+          groupe: rattachement2Code,
+          ordre: 1,
           libelle: "Rattachement 2",
           objectifs: {
             create: {
@@ -435,6 +441,8 @@ describe("AfficherConsolidationQuery", () => {
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
+          groupe: rattachementCode,
+          ordre: 1,
           libelle: "Rattachement en auto-évaluation",
         },
       });
@@ -508,6 +516,8 @@ describe("AfficherConsolidationQuery", () => {
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
+          groupe: rattachementCode,
+          ordre: 1,
           libelle: "Rattachement multi-étape",
           objectifs: {
             create: {
@@ -656,6 +666,8 @@ describe("AfficherConsolidationQuery", () => {
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
+          groupe: rattachementCode,
+          ordre: 1,
           libelle: "Rattachement sans évaluations",
           objectifs: {
             create: {
@@ -816,6 +828,8 @@ describe("AfficherConsolidationQuery", () => {
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
+          groupe: rattachementCode,
+          ordre: 1,
           libelle: "Rattachement avec critères mixtes",
         },
       });
@@ -945,6 +959,8 @@ describe("AfficherConsolidationQuery", () => {
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
+          groupe: rattachementCode,
+          ordre: 1,
           libelle: "Rattachement avec objectifs mixtes",
           objectifs: {
             create: [
@@ -1125,6 +1141,8 @@ describe("AfficherConsolidationQuery", () => {
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
+          groupe: rattachementCode,
+          ordre: 1,
           libelle: "Rattachement avec auto-évaluation",
           objectifs: {
             create: {

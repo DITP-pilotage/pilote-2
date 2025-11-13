@@ -36,6 +36,8 @@ describe("PasserALEtapeInstructionHandler", () => {
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
+          groupe: rattachementCode,
+          ordre: 1,
           libelle: "Rattachement instruction test",
         },
       });
@@ -116,6 +118,8 @@ describe("PasserALEtapeInstructionHandler", () => {
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
+          groupe: rattachementCode,
+          ordre: 1,
           libelle: "Rattachement instruction clone",
           objectifs: {
             create: {
@@ -228,6 +232,8 @@ describe("PasserALEtapeInstructionHandler", () => {
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
+          groupe: rattachementCode,
+          ordre: 1,
           libelle: "Rattachement instruction multiple",
         },
       });
@@ -235,6 +241,8 @@ describe("PasserALEtapeInstructionHandler", () => {
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode2,
+          groupe: rattachementCode,
+          ordre: 1,
           libelle: "Rattachement instruction multiple 2",
         },
       });

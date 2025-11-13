@@ -784,6 +784,8 @@ model referentiel_sous_critere {
 model referentiel_rattachement {
   code                                 String                                 @id
   libelle                              String
+  groupe                               String
+  ordre                                Int
   created_at                           DateTime                               @default(now())
   updated_at                           DateTime                               @updatedAt
   objectifs                            referentiel_objectif[]

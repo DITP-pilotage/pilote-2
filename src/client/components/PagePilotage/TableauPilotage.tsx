@@ -70,8 +70,15 @@ export const TableauPilotage = () => {
             ))}
           </thead>
           <tbody>
-            {table.getRowModel().rows.map((row) => {
+            {table.getRowModel().rows.map((row, rowIndex) => {
               const cells = row.getVisibleCells();
+              const previousRow = table.getRowModel().rows[rowIndex - 1];
+              const isNewGroup =
+                rowIndex > 0 &&
+                previousRow &&
+                previousRow.original.rattachementGroupe !==
+                  row.original.rattachementGroupe;
+
               return (
                 <tr
                   className="hover:bg-gray-50 transition-colors border-b border-gray-100 last:border-b-0"
@@ -87,11 +94,12 @@ export const TableauPilotage = () => {
                     return (
                       <td
                         className={clsxm(
-                          "px-4 py-3 border-t border-gray-200 text-sm text-gray-900 bg-white",
+                          "px-4 py-3 border-gray-200 text-sm text-gray-900 bg-white",
                           {
                             "not-last:border-r": !meta?.positioning?.sticky,
                             "not-last:border-r-2":
                               lastSticky || meta?.positioning?.lastInGroup,
+                            "border-t": isNewGroup,
                           },
                         )}
                         key={cell.id}

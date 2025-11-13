@@ -58,10 +58,14 @@ describe("RecupererDetailsNoteCollectiveQuery", () => {
           {
             code: rattachementCode,
             libelle: "Département 75",
+            groupe: rattachementCode,
+            ordre: 1,
           },
           {
             code: "DEPT-01",
             libelle: "Département 01",
+            groupe: rattachementCode,
+            ordre: 1,
           },
         ],
       });
@@ -202,6 +206,8 @@ describe("RecupererDetailsNoteCollectiveQuery", () => {
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
+          groupe: rattachementCode,
+          ordre: 1,
           libelle: "Région 302",
         },
       });
@@ -311,6 +317,8 @@ describe("RecupererDetailsNoteCollectiveQuery", () => {
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
+          groupe: rattachementCode,
+          ordre: 1,
           libelle: "Région 304",
         },
       });

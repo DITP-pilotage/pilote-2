@@ -39,6 +39,8 @@ describe("EnregistrerBrouillonAutoEvaluationObjectifsHandler", () => {
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
+          groupe: rattachementCode,
+          ordre: 1,
           libelle: "Rattachement test objectifs",
           objectifs: {
             create: {
@@ -119,6 +121,8 @@ describe("EnregistrerBrouillonAutoEvaluationObjectifsHandler", () => {
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
+          groupe: rattachementCode,
+          ordre: 1,
           libelle: "Rattachement update objectifs",
           objectifs: {
             create: {
@@ -204,6 +208,8 @@ describe("EnregistrerBrouillonAutoEvaluationObjectifsHandler", () => {
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
+          groupe: rattachementCode,
+          ordre: 1,
           libelle: "Rattachement date objectifs",
         },
       });
@@ -264,6 +270,8 @@ describe("EnregistrerBrouillonAutoEvaluationObjectifsHandler", () => {
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
+          groupe: rattachementCode,
+          ordre: 1,
           libelle: "Rattachement null objectifs",
           objectifs: {
             create: {
@@ -338,6 +346,8 @@ describe("EnregistrerBrouillonAutoEvaluationObjectifsHandler", () => {
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
+          groupe: rattachementCode,
+          ordre: 1,
           libelle: "Rattachement objectifs",
         },
       });
