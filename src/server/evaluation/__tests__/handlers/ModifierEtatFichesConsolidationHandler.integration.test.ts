@@ -39,11 +39,36 @@ describe("ModifierEtatFichesConsolidationHandler", () => {
 
       await prisma.referentiel_rattachement.createMany({
         data: [
-          { code: rattachement1Code, libelle: "Rattachement consolidation 1" },
-          { code: rattachement2Code, libelle: "Rattachement consolidation 2" },
-          { code: rattachement3Code, libelle: "Rattachement consolidation 3" },
-          { code: rattachement4Code, libelle: "Rattachement consolidation 4" },
-          { code: rattachement5Code, libelle: "Rattachement consolidation 5" },
+          {
+            code: rattachement1Code,
+            libelle: "Rattachement consolidation 1",
+            groupe: rattachement1Code,
+            ordre: 1,
+          },
+          {
+            code: rattachement2Code,
+            libelle: "Rattachement consolidation 2",
+            groupe: rattachement2Code,
+            ordre: 1,
+          },
+          {
+            code: rattachement3Code,
+            libelle: "Rattachement consolidation 3",
+            groupe: rattachement3Code,
+            ordre: 1,
+          },
+          {
+            code: rattachement4Code,
+            libelle: "Rattachement consolidation 4",
+            groupe: rattachement4Code,
+            ordre: 1,
+          },
+          {
+            code: rattachement5Code,
+            libelle: "Rattachement consolidation 5",
+            groupe: rattachement5Code,
+            ordre: 1,
+          },
         ],
       });
 
@@ -169,11 +194,36 @@ describe("ModifierEtatFichesConsolidationHandler", () => {
 
       await prisma.referentiel_rattachement.createMany({
         data: [
-          { code: rattachement1Code, libelle: "Rattachement bloquer 1" },
-          { code: rattachement2Code, libelle: "Rattachement bloquer 2" },
-          { code: rattachement3Code, libelle: "Rattachement bloquer 3" },
-          { code: rattachement4Code, libelle: "Rattachement bloquer 4" },
-          { code: rattachement5Code, libelle: "Rattachement bloquer 5" },
+          {
+            code: rattachement1Code,
+            libelle: "Rattachement bloquer 1",
+            groupe: rattachement1Code,
+            ordre: 1,
+          },
+          {
+            code: rattachement2Code,
+            libelle: "Rattachement bloquer 2",
+            groupe: rattachement2Code,
+            ordre: 1,
+          },
+          {
+            code: rattachement3Code,
+            libelle: "Rattachement bloquer 3",
+            groupe: rattachement3Code,
+            ordre: 1,
+          },
+          {
+            code: rattachement4Code,
+            libelle: "Rattachement bloquer 4",
+            groupe: rattachement4Code,
+            ordre: 1,
+          },
+          {
+            code: rattachement5Code,
+            libelle: "Rattachement bloquer 5",
+            groupe: rattachement5Code,
+            ordre: 1,
+          },
         ],
       });
 
@@ -289,6 +339,8 @@ describe("ModifierEtatFichesConsolidationHandler", () => {
         data: {
           code: rattachementCode,
           libelle: "Rattachement multi-étapes",
+          groupe: rattachementCode,
+          ordre: 1,
         },
       });
 
@@ -352,6 +404,8 @@ describe("ModifierEtatFichesConsolidationHandler", () => {
         data: {
           code: rattachementCode,
           libelle: "Rattachement vide",
+          groupe: rattachementCode,
+          ordre: 1,
         },
       });
 
