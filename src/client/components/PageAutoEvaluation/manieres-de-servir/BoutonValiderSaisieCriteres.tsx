@@ -1,7 +1,7 @@
 import { useId } from "react";
 import { toast } from "sonner";
+import { useRouter } from "next/router";
 import api from "@/server/infrastructure/api/trpc/api";
-import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
 import { useFormEvaluationCriteres } from "@/components/PageAutoEvaluation/manieres-de-servir/form";
 import { useEnregistrerBrouillonCriteres } from "@/components/PageAutoEvaluation/manieres-de-servir/useEnregistrerBrouillonCriteres";
 import { ConfirmerValidationSaisie } from "@/components/PageAutoEvaluation/ConfirmerValidationSaisie";
@@ -13,7 +13,7 @@ export const BoutonValiderSaisieCriteres = ({
 }) => {
   const idModale = useId();
   const validerSaisie = api.evaluation.validerSaisieCriteres.useMutation();
-  const refreshRouter = useRefreshRouter();
+  const router = useRouter();
   const form = useFormEvaluationCriteres();
   const enregistrer = useEnregistrerBrouillonCriteres({ showToast: false });
 
@@ -33,7 +33,7 @@ export const BoutonValiderSaisieCriteres = ({
             position: "top-right",
             richColors: true,
           });
-          await refreshRouter();
+          await router.push("/evaluation/auto-evaluation");
         },
         onError: () => {
           toast.error("Erreur lors de la validation", {
