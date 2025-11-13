@@ -1,26 +1,30 @@
+import { useId } from "react";
 import { toast } from "sonner";
 import api from "@/server/infrastructure/api/trpc/api";
-import { Bouton } from "@/components/_commons/Bouton/Bouton";
 import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
 import { useFormEvaluationCriteres } from "@/components/PageAutoEvaluation/manieres-de-servir/form";
 import { useEnregistrerBrouillonCriteres } from "@/components/PageAutoEvaluation/manieres-de-servir/useEnregistrerBrouillonCriteres";
+import { ConfirmerValidationSaisie } from "@/components/PageAutoEvaluation/ConfirmerValidationSaisie";
 
 export const BoutonValiderSaisieCriteres = ({
   ficheEvaluationId,
 }: {
   ficheEvaluationId: string;
 }) => {
+  const idModale = useId();
   const validerSaisie = api.evaluation.validerSaisieCriteres.useMutation();
   const refreshRouter = useRefreshRouter();
   const form = useFormEvaluationCriteres();
   const enregistrer = useEnregistrerBrouillonCriteres({ showToast: false });
 
-  const handleClick = async () => {
+  const handleOpenModal = async () => {
     const isFormValid = await form.trigger();
     if (!isFormValid) return;
 
     await form.handleSubmit(enregistrer)();
+  };
 
+  const handleConfirmValidation = async () => {
     await validerSaisie.mutateAsync(
       { ficheEvaluationId },
       {
@@ -42,12 +46,24 @@ export const BoutonValiderSaisieCriteres = ({
   };
 
   return (
-    <Bouton
-      disabled={validerSaisie.isLoading}
-      label="Valider"
-      onClick={handleClick}
-      type="button"
-      variant="primary"
-    />
+    <div>
+      <button
+        aria-controls={idModale}
+        className="fr-btn"
+        data-fr-opened="false"
+        disabled={validerSaisie.isLoading}
+        onClick={handleOpenModal}
+        type="button"
+      >
+        Valider
+      </button>
+      <ConfirmerValidationSaisie
+        annee={2025}
+        generatedHTMLID={idModale}
+        isPending={validerSaisie.isLoading}
+        onConfirm={handleConfirmValidation}
+        typeEvaluation="manieres-de-servir"
+      />
+    </div>
   );
 };
