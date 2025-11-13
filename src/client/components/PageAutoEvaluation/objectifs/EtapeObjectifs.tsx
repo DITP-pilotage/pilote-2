@@ -6,6 +6,7 @@ import { InputNoteAutoEvaluation } from "@/components/PageAutoEvaluation/InputNo
 import { BoutonEnSavoirPlus } from "@/components/PageAutoEvaluation/BoutonEnSavoirPlus";
 import { useFormEvaluationObjectifs } from "@/components/PageAutoEvaluation/objectifs/form";
 import { useEnregistrerBrouillonObjectifs } from "@/components/PageAutoEvaluation/objectifs/useEnregistrerBrouillonObjectifs";
+import { AnnexeTextareaAutoEvaluation } from "@/components/PageAutoEvaluation/AnnexeTextareaAutoEvaluation";
 
 export function EtapeObjectifs() {
   const { autoEvaluation } =
@@ -33,6 +34,7 @@ export function EtapeObjectifs() {
         const objectif = autoEvaluation.objectifs[index];
         const noteName = `objectifs.${index}.note` as const;
         const commentaireName = `objectifs.${index}.commentaire` as const;
+        const annexeName = `objectifs.${index}.annexe` as const;
 
         return (
           <div key={objectif.id}>
@@ -58,6 +60,14 @@ export function EtapeObjectifs() {
                 defaultOpen={!!fieldObjectif.commentaire}
                 name={commentaireName}
                 onAutosave={handleAutosave}
+                readOnly={readOnly}
+              />
+            </div>
+            <div className="py-4 px-6 flex flex-col bg-dsfr-grey-925/30 ">
+              <AnnexeTextareaAutoEvaluation
+                control={form.control}
+                defaultOpen={form.getValues(annexeName) !== ""}
+                name={annexeName}
                 readOnly={readOnly}
               />
             </div>
