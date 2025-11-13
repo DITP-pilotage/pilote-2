@@ -12,6 +12,7 @@ export function Textarea<T extends FieldValues>({
   name,
   control,
   readOnly,
+  onChange,
   onBlur,
   className,
   textareaRef,
@@ -61,6 +62,10 @@ export function Textarea<T extends FieldValues>({
               onBlur={(event) => {
                 field.onBlur();
                 onBlur?.(event);
+              }}
+              onChange={(event) => {
+                field.onChange(event);
+                onChange?.(event);
               }}
               ref={(node) => {
                 internalRef.current = node;
