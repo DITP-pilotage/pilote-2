@@ -302,26 +302,26 @@ export default function useIndicateurEvolutionNew(
       },
     ],
     yAxis: {
-        name: "valeur",
-        type: "value",
-        min: yMin,
-        max: yMax,
-        splitLine: { show: true },
-        axisLabel: {
-          showMaxLabel: false,
-          showMinLabel: false,
-          formatter: function (value: number) {
-            if (value >= 1_000_000_000) {
-              return (value / 1_000_000_000).toLocaleString("fr-FR") + " Md";
-            } else if (value >= 1_000_000) {
-              return (value / 1_000_000).toLocaleString("fr-FR") + " M";
-            } else if (value >= 1000) {
-              return (value / 1000).toLocaleString("fr-FR") + " k";
-            }
-            return value.toLocaleString("fr-FR");
-          },
+      name: "valeur",
+      type: "value",
+      min: yMin,
+      max: yMax,
+      splitLine: { show: true },
+      axisLabel: {
+        showMaxLabel: false,
+        showMinLabel: false,
+        formatter: function (value: number) {
+          if (value >= 1_000_000_000) {
+            return (value / 1_000_000_000).toLocaleString("fr-FR") + " Md";
+          } else if (value >= 1_000_000) {
+            return (value / 1_000_000).toLocaleString("fr-FR") + " M";
+          } else if (value >= 1000) {
+            return (value / 1000).toLocaleString("fr-FR") + " k";
+          }
+          return value.toLocaleString("fr-FR");
         },
       },
+    },
     dataZoom: [
       {
         type: "slider",
