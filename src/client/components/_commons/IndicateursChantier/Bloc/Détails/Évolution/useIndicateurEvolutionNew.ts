@@ -176,6 +176,85 @@ export default function useIndicateurEvolutionNew(
         : [],
   });
 
+  const creerSerieTaa = (
+    indicateur: IndicateurDétailsParTerritoire,
+    couleur: string,
+  ): LineSeriesOption => ({
+    name: `${indicateur.territoireNom} - Taux Avancement Annuel`,
+    type: "line",
+    symbol: "none",
+    showSymbol: false,
+    connectNulls: false,
+    color: couleur,
+    lineStyle: { type: "dotted", width: 2 },
+    silent: true,
+    yAxisIndex: 1,
+    data:
+      territoiresAAfficher[indicateur.territoireNom]
+        ? indicateur.données.historiquesValeurs.flatMap(
+            (valeur, index, array) => {
+              if (valeur.taa === null) return [];
+
+              const debutRange =
+                new Date(valeur.date) < minDate
+                  ? minDate
+                  : new Date(valeur.date);
+
+              const finRange =
+                new Date(`${valeur.date.substring(0, 4)}-12-31`) > maxDate
+                  ? maxDate
+                  : new Date(array[index + 1].date).getFullYear()
+                    === new Date(valeur.date).getFullYear()
+                    ? new Date(array[index + 1].date)
+                    : new Date(`${valeur.date.substring(0, 4)}-12-31`)
+              
+              return [
+                [debutRange, valeur.taa],
+                [finRange, valeur.taa],
+                null,
+              ];
+            },
+          )
+        : [],
+  });
+
+  const creerSerieTag = (
+    indicateur: IndicateurDétailsParTerritoire,
+    couleur: string,
+  ): LineSeriesOption => ({
+    name: `${indicateur.territoireNom} - Taux Avancement Mandat`,
+    type: "line",
+    showSymbol: false,
+    connectNulls: false,
+    color: couleur,
+    lineStyle: { type: 2, width: 2 },
+    silent: true,
+    yAxisIndex: 1,
+    data:
+      territoiresAAfficher[indicateur.territoireNom]
+        ? indicateur.données.historiquesValeurs.flatMap(
+            (valeur, index, array) => {
+              if (valeur.tag === null) return [];
+
+              const debutRange =
+                new Date(valeur.date) < minDate
+                  ? minDate
+                  : new Date(valeur.date);
+
+              const finRange = (index === array.length || !array[index + 1] || new Date(array[index + 1].date) < minDate)
+                  ? maxDate
+                  : new Date(array[index + 1].date);
+              
+              return [
+                [debutRange, valeur.tag],
+                [finRange, valeur.tag],
+                null,
+              ];
+            },
+          )
+        : [],
+  });
+  
   const formatterLaTooltip = (parametres: TopLevelFormatterParams): string => {
     const dataParametres = Array.isArray(parametres)
       ? parametres
@@ -301,26 +380,42 @@ export default function useIndicateurEvolutionNew(
         axisLine: { show: false },
       },
     ],
-    yAxis: {
-      type: "value",
-      min: yMin,
-      max: yMax,
-      splitLine: { show: true },
-      axisLabel: {
-        showMaxLabel: false,
-        showMinLabel: false,
-        formatter: function (value: number) {
-          if (value >= 1_000_000_000) {
-            return (value / 1_000_000_000).toLocaleString("fr-FR") + " Md";
-          } else if (value >= 1_000_000) {
-            return (value / 1_000_000).toLocaleString("fr-FR") + " M";
-          } else if (value >= 1000) {
-            return (value / 1000).toLocaleString("fr-FR") + " k";
-          }
-          return value.toLocaleString("fr-FR");
+    yAxis: [
+      {
+        name: 'valeur',
+        type: "value",
+        min: yMin,
+        max: yMax,
+        splitLine: { show: true },
+        axisLabel: {
+          showMaxLabel: false,
+          showMinLabel: false,
+          formatter: function (value: number) {
+            if (value >= 1_000_000_000) {
+              return (value / 1_000_000_000).toLocaleString("fr-FR") + " Md";
+            } else if (value >= 1_000_000) {
+              return (value / 1_000_000).toLocaleString("fr-FR") + " M";
+            } else if (value >= 1000) {
+              return (value / 1000).toLocaleString("fr-FR") + " k";
+            }
+            return value.toLocaleString("fr-FR");
+          },
         },
       },
-    },
+      {
+        type: 'value',
+        name: 'Avancement annuel',
+        position: 'right',
+        axisLine: {
+          show: true,
+        },
+        axisLabel: {
+          showMaxLabel: true,
+          showMinLabel: true,
+          formatter: '{value} %'
+        }
+      },
+    ],
     dataZoom: [
       {
         type: "slider",
@@ -351,9 +446,12 @@ export default function useIndicateurEvolutionNew(
     series: [
       ...tousLesIndicateursDetails.flatMap((indicateurDetail, index) => {
         const couleur = PALETTE_DSFR[index % PALETTE_DSFR.length];
+        console.log(creerSerieTag(indicateurDetail, couleur))
         return [
           creerSerie(indicateurDetail, couleur),
           creerSerieCibles(indicateurDetail, couleur),
+          creerSerieTaa(indicateurDetail, couleur),
+          creerSerieTag(indicateurDetail, couleur),
         ];
       }),
       {
@@ -365,6 +463,7 @@ export default function useIndicateurEvolutionNew(
       } as LineSeriesOption,
     ],
   };
+  
 
   return {
     afficherLesCibles,
