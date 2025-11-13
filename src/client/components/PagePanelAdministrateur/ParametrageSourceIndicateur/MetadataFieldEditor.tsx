@@ -18,7 +18,7 @@ export const MetadataFieldEditor = ({ fieldIndex }: { fieldIndex: number }) => {
           </h4>
           <div className="grid grid-cols-2 gap-4">
             <InputMetadata
-              label="Nom du champ"
+              label="Nom du champ ⚠️"
               name={`metadataList.${fieldIndex}.name`}
               placeholder="Ex: indic_id"
               required

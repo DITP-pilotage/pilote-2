@@ -89,7 +89,7 @@ export async function getServerSideProps({
 
   const mapInformationMetadataIndicateur =
     presenterEnMapInformationMetadataIndicateurContrat(
-      getContainer("parametrageIndicateur")
+      await getContainer("parametrageIndicateur")
         .resolve("récupérerInformationMetadataIndicateurUseCase")
         .run(),
     );
