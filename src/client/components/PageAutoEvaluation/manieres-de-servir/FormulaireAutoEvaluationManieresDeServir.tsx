@@ -31,6 +31,7 @@ export const FormulaireAutoEvaluationManieresDeServir = () => {
         id: critere.evaluation.id,
         note: critere.evaluation.note,
         commentaire: critere.evaluation.commentaire,
+        annexe: critere.evaluation.annexe,
       })),
     },
   });

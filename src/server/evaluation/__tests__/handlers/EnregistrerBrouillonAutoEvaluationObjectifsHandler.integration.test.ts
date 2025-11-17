@@ -78,6 +78,7 @@ describe("EnregistrerBrouillonAutoEvaluationObjectifsHandler", () => {
               objectifId,
               note: 4,
               commentaire: "Bon objectif",
+              annexe: "une annexe",
             },
           ],
         },
@@ -95,6 +96,7 @@ describe("EnregistrerBrouillonAutoEvaluationObjectifsHandler", () => {
         auteur_id: utilisateurId,
         note: 4,
         commentaire: "Bon objectif",
+        annexe: "une annexe",
       });
     });
 
@@ -171,6 +173,7 @@ describe("EnregistrerBrouillonAutoEvaluationObjectifsHandler", () => {
               objectifId,
               note: 5,
               commentaire: "Updated comment",
+              annexe: "une annexe",
             },
           ],
         },
@@ -184,6 +187,7 @@ describe("EnregistrerBrouillonAutoEvaluationObjectifsHandler", () => {
       expect(evaluationObjectif).toMatchObject({
         note: 5,
         commentaire: "Updated comment",
+        annexe: "une annexe",
       });
     });
 
@@ -309,6 +313,7 @@ describe("EnregistrerBrouillonAutoEvaluationObjectifsHandler", () => {
               objectifId,
               note: null,
               commentaire: "Pas encore évalué",
+              annexe: "une annexe",
             },
           ],
         },
@@ -322,6 +327,7 @@ describe("EnregistrerBrouillonAutoEvaluationObjectifsHandler", () => {
       expect(evaluationObjectif).toMatchObject({
         note: null,
         commentaire: "Pas encore évalué",
+        annexe: "une annexe",
       });
     });
 

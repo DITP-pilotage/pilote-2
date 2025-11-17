@@ -6,6 +6,7 @@ import { BoutonEnSavoirPlus } from "@/components/PageAutoEvaluation/BoutonEnSavo
 import { pageAutoEvaluationManieresDeServir } from "@/components/PageAutoEvaluation/manieres-de-servir/PageAutoEvaluationManieresDeServirServerSideContext";
 import { useFormEvaluationCriteres } from "@/components/PageAutoEvaluation/manieres-de-servir/form";
 import { useEnregistrerBrouillonCriteres } from "@/components/PageAutoEvaluation/manieres-de-servir/useEnregistrerBrouillonCriteres";
+import { AnnexeTextareaAutoEvaluation } from "@/components/PageAutoEvaluation/AnnexeTextareaAutoEvaluation";
 
 export const EtapeCriteres = () => {
   const { autoEvaluation } =
@@ -30,6 +31,7 @@ export const EtapeCriteres = () => {
         const critere = autoEvaluation.criteres[index];
         const noteName = `criteres.${index}.note` as const;
         const commentaireName = `criteres.${index}.commentaire` as const;
+        const annexeName = `criteres.${index}.annexe` as const;
 
         return (
           <div key={critere.id}>
@@ -56,6 +58,13 @@ export const EtapeCriteres = () => {
                 defaultOpen={!!fieldCritere.commentaire}
                 name={commentaireName}
                 onAutosave={handleAutosave}
+                readOnly={readOnly}
+              />
+            </div>
+            <div className="py-4 px-6 flex flex-col bg-dsfr-blue-france-850/30 ">
+              <AnnexeTextareaAutoEvaluation
+                control={form.control}
+                name={annexeName}
                 readOnly={readOnly}
               />
             </div>

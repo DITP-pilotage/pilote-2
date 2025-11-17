@@ -31,6 +31,7 @@ export const FormulaireAutoEvaluationObjectifs = () => {
         id: objectif.evaluation.id,
         note: objectif.evaluation.note,
         commentaire: objectif.evaluation.commentaire,
+        annexe: objectif.evaluation.annexe,
       })),
     },
   });

@@ -12,6 +12,7 @@ export const enregistrerEvaluationObjectifsCommandSchema = z.object({
       objectifId: z.string(),
       note: z.number().int().nullable(),
       commentaire: z.string(),
+      annexe: z.string(),
     })
     .array(),
 });

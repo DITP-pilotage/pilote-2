@@ -108,6 +108,7 @@ describe("AfficherAutoEvaluationQuery", () => {
             id: expect.any(String),
             note: null,
             commentaire: "",
+            annexe: "",
           },
           sousCriteres: [
             {
@@ -125,6 +126,7 @@ describe("AfficherAutoEvaluationQuery", () => {
             id: expect.any(String),
             note: null,
             commentaire: "",
+            annexe: "",
           },
           sousCriteres: [
             {
@@ -145,6 +147,7 @@ describe("AfficherAutoEvaluationQuery", () => {
             id: expect.any(String),
             note: null,
             commentaire: "",
+            annexe: "",
           },
         },
         {
@@ -156,6 +159,7 @@ describe("AfficherAutoEvaluationQuery", () => {
             id: expect.any(String),
             note: null,
             commentaire: "",
+            annexe: "",
           },
         },
       ]);
@@ -242,6 +246,7 @@ describe("AfficherAutoEvaluationQuery", () => {
           auteur_id: utilisateurId,
           note: 4,
           commentaire: "Bon objectif",
+          annexe: "Une annexe",
         },
       });
 
@@ -253,6 +258,7 @@ describe("AfficherAutoEvaluationQuery", () => {
           auteur_id: utilisateurId,
           note: 3,
           commentaire: "Critère acceptable",
+          annexe: "Annexe critere",
         },
       });
 
@@ -269,6 +275,7 @@ describe("AfficherAutoEvaluationQuery", () => {
             id: evaluationSousCritereId,
             note: 3,
             commentaire: "Critère acceptable",
+            annexe: "Annexe critere",
           },
           sousCriteres: [
             {
@@ -289,6 +296,7 @@ describe("AfficherAutoEvaluationQuery", () => {
             id: evaluationObjectifId,
             note: 4,
             commentaire: "Bon objectif",
+            annexe: "Une annexe",
           },
         },
       ]);
@@ -408,6 +416,7 @@ describe("AfficherAutoEvaluationQuery", () => {
             id: expect.any(String),
             note: null,
             commentaire: "",
+            annexe: "",
           },
           sousCriteres: [
             {
@@ -526,6 +535,7 @@ describe("AfficherAutoEvaluationQuery", () => {
           auteur_id: utilisateur2Id,
           note: 5,
           commentaire: "Évaluation de consolidation",
+          annexe: "",
         },
       });
 
@@ -541,6 +551,7 @@ describe("AfficherAutoEvaluationQuery", () => {
             id: expect.any(String),
             note: null,
             commentaire: "",
+            annexe: "",
           },
           sousCriteres: [
             {

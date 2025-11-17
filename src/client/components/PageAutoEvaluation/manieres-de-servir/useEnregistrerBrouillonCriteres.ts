@@ -24,6 +24,7 @@ export const useEnregistrerBrouillonCriteres = ({
             critereId: critere.id,
             note: evaluation.note,
             commentaire: evaluation.commentaire,
+            annexe: evaluation.annexe,
           };
         }),
       },

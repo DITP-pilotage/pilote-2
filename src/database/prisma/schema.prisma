@@ -880,6 +880,7 @@ model evaluation_objectif {
   auteur              utilisateur          @relation(fields: [auteur_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
   note                Int?
   commentaire         String
+  annexe              String               @default("")
   created_at          DateTime             @default(now())
   updated_at          DateTime             @updatedAt
 
@@ -897,6 +898,7 @@ model evaluation_critere {
   auteur              utilisateur         @relation(fields: [auteur_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
   note                Int?
   commentaire         String
+  annexe              String              @default("")
   created_at          DateTime            @default(now())
   updated_at          DateTime            @updatedAt
 

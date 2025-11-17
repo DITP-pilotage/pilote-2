@@ -25,6 +25,7 @@ export const useEnregistrerBrouillonObjectifs = ({
               objectifId: objectif.id,
               note: evaluation.note,
               commentaire: evaluation.commentaire,
+              annexe: evaluation.annexe,
             };
           },
         ),

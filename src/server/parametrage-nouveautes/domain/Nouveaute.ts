@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { BadRequestError } from "@/server/app/error-boundary/bad-request-error";
+import { SanitizerHTML } from "@/server/app/domain/SanitizerHTML";
 
 export class Nouveaute {
   private _id: string;
@@ -76,23 +77,12 @@ export class Nouveaute {
   }
 
   static sanitizeHtml(html: string): string {
-    const dangerousTags = ["script", "style", "iframe", "object", "embed"];
-    let sanitizedHtml = html;
-
-    for (const tag of dangerousTags) {
-      const openTagRegex = new RegExp(`<${tag}[^>]*>`, "gi");
-      const closeTagRegex = new RegExp(`</${tag}>`, "gi");
-
-      if (
-        openTagRegex.test(sanitizedHtml) ||
-        closeTagRegex.test(sanitizedHtml)
-      ) {
-        throw new BadRequestError(
-          "Le contenu HTML contient des balises non autorisées (script, style, etc.)",
-        );
-      }
+    const sanitized = SanitizerHTML.sanitize(html);
+    if (sanitized !== html) {
+      throw new BadRequestError(
+        "Le contenu contient des balises HTML non autorisées",
+      );
     }
-
-    return sanitizedHtml;
+    return sanitized;
   }
 }

@@ -97,6 +97,7 @@ describe("EnregistrerBrouillonConsolidationHandler", () => {
                 objectifId,
                 note: 4,
                 commentaire: "Bon objectif",
+                annexe: "une annexe",
               },
             ],
             evaluationsCriteres: [
@@ -105,6 +106,7 @@ describe("EnregistrerBrouillonConsolidationHandler", () => {
                 critereId,
                 note: 3,
                 commentaire: "Acceptable",
+                annexe: "une annexe 2",
               },
             ],
           },
@@ -123,6 +125,7 @@ describe("EnregistrerBrouillonConsolidationHandler", () => {
         auteur_id: utilisateurId,
         note: 4,
         commentaire: "Bon objectif",
+        annexe: "une annexe",
       });
 
       const evaluationCritere = await prisma.evaluation_critere.findUnique({
@@ -135,6 +138,7 @@ describe("EnregistrerBrouillonConsolidationHandler", () => {
         auteur_id: utilisateurId,
         note: 3,
         commentaire: "Acceptable",
+        annexe: "une annexe 2",
       });
     });
 
@@ -241,6 +245,7 @@ describe("EnregistrerBrouillonConsolidationHandler", () => {
                 objectifId,
                 note: 5,
                 commentaire: "Updated comment",
+                annexe: "une annexe",
               },
             ],
             evaluationsCriteres: [
@@ -249,6 +254,7 @@ describe("EnregistrerBrouillonConsolidationHandler", () => {
                 critereId,
                 note: 4,
                 commentaire: "Updated critère",
+                annexe: "une annexe 2",
               },
             ],
           },
@@ -263,6 +269,7 @@ describe("EnregistrerBrouillonConsolidationHandler", () => {
       expect(evaluationObjectif).toMatchObject({
         note: 5,
         commentaire: "Updated comment",
+        annexe: "une annexe",
       });
 
       const evaluationCritere = await prisma.evaluation_critere.findUnique({
@@ -271,6 +278,7 @@ describe("EnregistrerBrouillonConsolidationHandler", () => {
       expect(evaluationCritere).toMatchObject({
         note: 4,
         commentaire: "Updated critère",
+        annexe: "une annexe 2",
       });
     });
 
@@ -418,6 +426,7 @@ describe("EnregistrerBrouillonConsolidationHandler", () => {
                 objectifId,
                 note: null,
                 commentaire: "Pas encore évalué",
+                annexe: "une annexe",
               },
             ],
             evaluationsCriteres: [
@@ -426,6 +435,7 @@ describe("EnregistrerBrouillonConsolidationHandler", () => {
                 critereId,
                 note: null,
                 commentaire: "En cours",
+                annexe: "une annexe",
               },
             ],
           },
@@ -448,6 +458,7 @@ describe("EnregistrerBrouillonConsolidationHandler", () => {
       expect(evaluationCritere).toMatchObject({
         note: null,
         commentaire: "En cours",
+        annexe: "une annexe",
       });
     });
 

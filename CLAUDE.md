@@ -141,3 +141,4 @@ When working on PVA functionality, focus on:
 - no unnecessary comment other than given when then in tests case. You may still write a comment to emphasize test-specific data required for the test to be properly setup
 - no 1 or 2 character variable. eg e -> error, ev -> event
 - When it's possible, use $Enums from @prisma to handle values and types
+- Never launch tests by yourself, the user will ALWAYS launch them by himself
