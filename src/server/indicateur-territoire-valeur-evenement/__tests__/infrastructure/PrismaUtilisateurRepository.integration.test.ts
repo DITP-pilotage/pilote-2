@@ -162,7 +162,7 @@ describe("PrismaUtilisateurRepository", () => {
 
       // When
       const result =
-        await prismaUtilisateurRepository.recupererUtilisateurParProfilEtTerritoire(
+        await prismaUtilisateurRepository.recupererUtilisateursParProfilEtTerritoire(
           {
             profil: "COORDINATEUR_REGION",
             territoireCode: "REG-01",

@@ -116,7 +116,6 @@ export class AccepterAvecModificationPropositionValeurAvancementUseCase {
     const informationIndicateur =
       await this.indicateurRepository.recupererInformationIndicateur(indicId);
 
-    console.log([...emailsAuteurs, ...emailsCoordinateurs]);
     for (const emailDestinataire of [
       ...emailsAuteurs,
       ...emailsCoordinateurs,

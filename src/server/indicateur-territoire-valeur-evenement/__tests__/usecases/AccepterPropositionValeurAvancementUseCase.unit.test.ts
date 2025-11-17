@@ -181,8 +181,12 @@ describe("AccepterPropositionValeurAvancementUseCase", () => {
       territoireCode: input.territoireCode,
     });
 
-    expect(envoieEmailService.envoieNotificationProposition).toHaveBeenCalledTimes(4);
-    expect(envoieEmailService.envoieNotificationProposition).toHaveBeenCalledWith({
+    expect(
+      envoieEmailService.envoieNotificationProposition,
+    ).toHaveBeenCalledTimes(4);
+    expect(
+      envoieEmailService.envoieNotificationProposition,
+    ).toHaveBeenCalledWith({
       destinataires: [{ email: "auteur1@example.com" }],
       templateId: 40,
       parametres: {
@@ -195,7 +199,9 @@ describe("AccepterPropositionValeurAvancementUseCase", () => {
         va_proposee: 20,
       },
     });
-    expect(envoieEmailService.envoieNotificationProposition).toHaveBeenCalledWith({
+    expect(
+      envoieEmailService.envoieNotificationProposition,
+    ).toHaveBeenCalledWith({
       destinataires: [{ email: "auteur2@example.com" }],
       templateId: 40,
       parametres: {
@@ -208,7 +214,9 @@ describe("AccepterPropositionValeurAvancementUseCase", () => {
         va_proposee: 20,
       },
     });
-    expect(envoieEmailService.envoieNotificationProposition).toHaveBeenCalledWith({
+    expect(
+      envoieEmailService.envoieNotificationProposition,
+    ).toHaveBeenCalledWith({
       destinataires: [{ email: "coordinateur1@example.com" }],
       templateId: 40,
       parametres: {
@@ -221,7 +229,9 @@ describe("AccepterPropositionValeurAvancementUseCase", () => {
         va_proposee: 20,
       },
     });
-    expect(envoieEmailService.envoieNotificationProposition).toHaveBeenCalledWith({
+    expect(
+      envoieEmailService.envoieNotificationProposition,
+    ).toHaveBeenCalledWith({
       destinataires: [{ email: "coordinateur2@example.com" }],
       templateId: 40,
       parametres: {
