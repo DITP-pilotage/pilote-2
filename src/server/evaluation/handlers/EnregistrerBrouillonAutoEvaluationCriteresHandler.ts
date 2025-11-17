@@ -12,6 +12,7 @@ export const enregistrerEvaluationCriteresCommandSchema = z.object({
       critereId: z.string(),
       note: z.number().int().nullable(),
       commentaire: z.string(),
+      annexe: z.string(),
     })
     .array(),
 });

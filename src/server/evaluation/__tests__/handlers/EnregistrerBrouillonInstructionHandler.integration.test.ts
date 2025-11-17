@@ -97,6 +97,7 @@ describe("EnregistrerBrouillonInstructionHandler", () => {
                 objectifId,
                 note: 4,
                 commentaire: "Bon objectif",
+                annexe: "une annexe 1",
               },
             ],
             evaluationsCriteres: [
@@ -105,6 +106,7 @@ describe("EnregistrerBrouillonInstructionHandler", () => {
                 critereId,
                 note: 3,
                 commentaire: "Acceptable",
+                annexe: "une annexe 2",
               },
             ],
           },
@@ -241,6 +243,7 @@ describe("EnregistrerBrouillonInstructionHandler", () => {
                 objectifId,
                 note: 5,
                 commentaire: "Updated comment",
+                annexe: "une annexe 1",
               },
             ],
             evaluationsCriteres: [
@@ -249,6 +252,7 @@ describe("EnregistrerBrouillonInstructionHandler", () => {
                 critereId,
                 note: 4,
                 commentaire: "Updated critère",
+                annexe: "une annexe 2",
               },
             ],
           },
@@ -418,6 +422,7 @@ describe("EnregistrerBrouillonInstructionHandler", () => {
                 objectifId,
                 note: null,
                 commentaire: "Pas encore évalué",
+                annexe: "une annexe",
               },
             ],
             evaluationsCriteres: [
@@ -426,6 +431,7 @@ describe("EnregistrerBrouillonInstructionHandler", () => {
                 critereId,
                 note: null,
                 commentaire: "En cours",
+                annexe: "une annexe 2",
               },
             ],
           },

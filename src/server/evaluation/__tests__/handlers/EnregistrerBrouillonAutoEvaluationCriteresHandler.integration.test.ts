@@ -86,6 +86,7 @@ describe("EnregistrerBrouillonAutoEvaluationCriteresHandler", () => {
               critereId,
               note: 3,
               commentaire: "Acceptable",
+              annexe: "une annexe",
             },
           ],
         },
@@ -103,6 +104,7 @@ describe("EnregistrerBrouillonAutoEvaluationCriteresHandler", () => {
         auteur_id: utilisateurId,
         note: 3,
         commentaire: "Acceptable",
+        annexe: "une annexe",
       });
     });
 
@@ -187,6 +189,7 @@ describe("EnregistrerBrouillonAutoEvaluationCriteresHandler", () => {
               critereId,
               note: 4,
               commentaire: "Updated critère",
+              annexe: "une annexe",
             },
           ],
         },
@@ -200,6 +203,7 @@ describe("EnregistrerBrouillonAutoEvaluationCriteresHandler", () => {
       expect(evaluationCritere).toMatchObject({
         note: 4,
         commentaire: "Updated critère",
+        annexe: "une annexe",
       });
     });
 
@@ -333,6 +337,7 @@ describe("EnregistrerBrouillonAutoEvaluationCriteresHandler", () => {
               critereId,
               note: null,
               commentaire: "En cours",
+              annexe: "une annexe",
             },
           ],
         },
@@ -346,6 +351,7 @@ describe("EnregistrerBrouillonAutoEvaluationCriteresHandler", () => {
       expect(evaluationCritere).toMatchObject({
         note: null,
         commentaire: "En cours",
+        annexe: "une annexe",
       });
     });
 

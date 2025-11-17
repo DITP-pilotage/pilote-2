@@ -66,7 +66,6 @@ export function EtapeObjectifs() {
             <div className="py-4 px-6 flex flex-col bg-dsfr-blue-france-850/30 ">
               <AnnexeTextareaAutoEvaluation
                 control={form.control}
-                defaultOpen={form.getValues(annexeName) !== ""}
                 name={annexeName}
                 readOnly={readOnly}
               />
