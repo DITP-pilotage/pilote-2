@@ -7,4 +7,9 @@ export interface IndicateurRepository {
     indicId: string;
     territoireCode: string;
   }): Promise<Date | null>;
+  recupererInformationIndicateur(indicId: string): Promise<{
+    nom: string;
+    chantierId: string;
+    chantierNom: string;
+  } | null>;
 }

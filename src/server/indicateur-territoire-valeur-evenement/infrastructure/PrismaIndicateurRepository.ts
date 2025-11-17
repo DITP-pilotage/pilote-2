@@ -52,4 +52,32 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
     if (!row) return null;
     return row.date_valeur_actuelle;
   }
+
+  async recupererInformationIndicateur(indicId: string): Promise<{
+    nom: string;
+    chantierId: string;
+    chantierNom: string;
+  } | null> {
+    const indicateur = await this.prisma
+      .getInstance()
+      .indicateur_identite.findUnique({
+        where: { id: indicId },
+        include: {
+          chantier_identite: {
+            select: {
+              id: true,
+              nom: true,
+            },
+          },
+        },
+      });
+
+    if (!indicateur) return null;
+
+    return {
+      nom: indicateur.nom,
+      chantierId: indicateur.chantier_identite.id,
+      chantierNom: indicateur.chantier_identite.nom,
+    };
+  }
 }
