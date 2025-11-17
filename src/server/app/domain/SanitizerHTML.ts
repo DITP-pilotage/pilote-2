@@ -53,6 +53,8 @@ export class SanitizerHTML {
         img: ["http", "https", "data"],
       },
       disallowedTagsMode: "discard",
+      allowedIframeHostnames: [],
+      allowProtocolRelative: false,
     });
   }
 }

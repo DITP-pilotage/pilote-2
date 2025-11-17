@@ -77,6 +77,12 @@ export class Nouveaute {
   }
 
   static sanitizeHtml(html: string): string {
-    return SanitizerHTML.sanitize(html);
+    const sanitized = SanitizerHTML.sanitize(html);
+    if (sanitized !== html) {
+      throw new BadRequestError(
+        "Le contenu contient des balises HTML non autorisées",
+      );
+    }
+    return sanitized;
   }
 }
