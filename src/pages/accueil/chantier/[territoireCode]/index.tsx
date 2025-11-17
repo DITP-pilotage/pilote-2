@@ -25,7 +25,7 @@ import { Maille } from "@/server/domain/maille/Maille.interface";
 import { RecupererRepartitionsMeteoChantiersUseCase } from "@/server/chantiers/usecases/RecupererRepartitionMeteoChantiersUseCase";
 import { presenterEnRépartitionsMétéosChantiersContrat } from "@/server/chantiers/app/contrats/RepartitionMeteoChantiersContrat";
 import { getAnneeDateDeBascule } from "@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getAnneeDateDeBascule";
-import { configuration } from "@/config";
+import { configuration, configurationFeatureFlip } from "@/config";
 import { ModaleVideoAccueil } from "@/components/PageAccueil/PageChantiers/ModaleVideoAccueil/ModaleVideoAccueil";
 import { getContainer } from "@/server/dependances";
 import { profilsRégionaux } from "@/server/gestion-utilisateur/domain/Utilisateur.interface";
@@ -271,7 +271,9 @@ export const getServerSideProps = async ({
     pageSize,
   );
 
-  const estVideoAccueilActive = configuration().featureFlip.videoAccueil;
+  const estVideoAccueilActive = configurationFeatureFlip().videoAccueil;
+  const estFicheTerritorialeActive =
+    configurationFeatureFlip().ficheTerritoriale;
 
   const doitAfficherModaleVideoAccueil = await getContainer(
     "gestionUtilisateur",
@@ -305,6 +307,7 @@ export const getServerSideProps = async ({
       doitAfficherModaleVideoAccueil:
         estVideoAccueilActive && !doitAfficherModaleVideoAccueil,
       doitAfficherLaModaleInfolettre,
+      doitAfficherLaFicheTerritoriale: estFicheTerritorialeActive,
     },
   };
 };
@@ -346,6 +349,7 @@ const ChantierLayout = ({
   jalon,
   doitAfficherModaleVideoAccueil,
   doitAfficherLaModaleInfolettre,
+  doitAfficherLaFicheTerritoriale,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const { data: session } = useSession();
 
@@ -394,7 +398,8 @@ const ChantierLayout = ({
               {`${nombreTotalChantiersAvecAlertes} ${nombreTotalChantiersAvecAlertes >= 2 ? "chantiers" : "chantier"}`}
             </Titre>
             <div className="inline-flex flex-column gap-1">
-              {estAutoriséAConsulterLaFicheTerritoriale(
+              {doitAfficherLaFicheTerritoriale &&
+              estAutoriséAConsulterLaFicheTerritoriale(
                 session?.profil || "",
               ) ? (
                 <BoutonNavigationFicheTerritoriale
