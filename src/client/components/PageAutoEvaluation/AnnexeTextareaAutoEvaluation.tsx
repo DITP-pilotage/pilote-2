@@ -18,37 +18,53 @@ export function AnnexeTextareaAutoEvaluation<T extends FieldValues>({
 }) {
   const [displayAnnexe, setDisplayAnnexe] = useState(defaultOpen);
 
-  if (!displayAnnexe) {
-    return (
-      <button
-        className="-ml-4 !text-xs !text-dsfr-grey-200 inline-flex w-fit gap-1 items-center"
-        onClick={() => {
-          flushSync(() => {
-            setDisplayAnnexe(true);
-          });
-        }}
-        type="button"
-      >
-        <Icone className="w-3 h-3 text-current" icone={AddLineIcon} /> Ajouter
-        une annexe
-      </button>
-    );
-  }
-
   return (
     <Controller
       control={control}
       name={name}
-      render={({ field }) => (
-        <>
-          <span className="bold">Annexe</span>
-          <EditeurRiche
-            contenu={field.value || ""}
-            estEnLectureSeule={readOnly}
-            onChange={field.onChange}
-          />
-        </>
-      )}
+      render={({ field }) => {
+        if (!displayAnnexe) {
+          const hasContent = field.value && field.value.trim() !== "";
+          return (
+            <button
+              className="-ml-4 !text-xs !text-dsfr-grey-200 inline-flex w-fit gap-1 items-center"
+              onClick={() => {
+                flushSync(() => {
+                  setDisplayAnnexe(true);
+                });
+              }}
+              type="button"
+            >
+              <Icone className="w-3 h-3 text-current" icone={AddLineIcon} />
+              {hasContent ? "Afficher l'annexe" : "Ajouter une annexe"}
+            </button>
+          );
+        }
+
+        return (
+          <div className="flex flex-column gap-2">
+            <span className="bold">Annexe</span>
+            <EditeurRiche
+              contenu={field.value || ""}
+              estEnLectureSeule={readOnly}
+              onChange={field.onChange}
+            />
+            <div className="flex justify-end">
+              {!readOnly && (
+                <Button
+                  className="!text-xs !text-dsfr-grey-200 inline-flex w-fit gap-1 items-center"
+                  onClick={() => {
+                    setDisplayAnnexe(false);
+                  }}
+                  type="button"
+                >
+                  Fermer l'annexe
+                </Button>
+              )}
+            </div>
+          </div>
+        );
+      }}
     />
   );
 }
