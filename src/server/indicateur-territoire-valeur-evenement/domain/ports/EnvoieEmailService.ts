@@ -21,6 +21,7 @@ type ParametresEmailPropositionMap = {
   PROPOSITION_VALEUR_ACCUSEE_RECEPTION: ParametresEmailBase;
   PROPOSITION_VALEUR_ACCEPTEE: ParametresEmailBase;
   PROPOSITION_VALEUR_ACCEPTEE_AVEC_MODIFICATION: ParametresEmailBase & {
+    valeur_acceptee: number;
     motif_modification: string;
   };
 };
