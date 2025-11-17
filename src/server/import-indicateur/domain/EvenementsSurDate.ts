@@ -104,6 +104,16 @@ export class EvenementsSurDate {
       .sort((evenement1, evenement2) => evenement2.ordre - evenement1.ordre);
   }
 
+  evenementsPropositionValeurCreeeOuModifiee() {
+    return this.evenementsSurDate
+      .filter((evenement) =>
+        ["PROPOSITION_VALEUR_CREEE", "PROPOSITION_VALEUR_MODIFIEE"].includes(
+          evenement.typeEvenement,
+        ),
+      )
+      .sort((evenement1, evenement2) => evenement2.ordre - evenement1.ordre);
+  }
+
   evenementPropositionValeurEnCours() {
     const evenementPropositionValeurLePlusRecent =
       this.evenementsPropositionValeur()[0];
