@@ -202,6 +202,11 @@ const config = convict({
       default: false,
       env: "NEXT_PUBLIC_FF_FICHE_CONDUCTEUR",
     },
+    ficheTerritoriale: {
+      format: Boolean,
+      default: true,
+      env: "NEXT_PUBLIC_FF_FICHE_TERRITORIALE",
+    },
     taAnnuel: {
       format: Boolean,
       default: false,
