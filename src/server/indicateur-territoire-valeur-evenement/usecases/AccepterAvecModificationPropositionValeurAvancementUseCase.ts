@@ -123,7 +123,7 @@ export class AccepterAvecModificationPropositionValeurAvancementUseCase {
     ]) {
       await this.envoieEmailService.envoieNotificationProposition<"PROPOSITION_VALEUR_ACCEPTEE_AVEC_MODIFICATION">(
         {
-          destinataires: [{ email: "tconti34@gmail.com" }],
+          destinataires: [{ email: emailDestinataire }],
           templateId: 41,
           parametres: {
             id_chantier: informationIndicateur!.chantierId,
