@@ -12,7 +12,7 @@ export const enregistrerEvaluationCommandSchema = z.object({
       critereId: z.string(),
       note: z.number().int().nullable(),
       commentaire: z.string(),
-      annexe: z.string(),
+      annexe: z.string().optional(),
     })
     .array(),
   evaluationsObjectifs: z
@@ -21,7 +21,7 @@ export const enregistrerEvaluationCommandSchema = z.object({
       objectifId: z.string(),
       note: z.number().int().nullable(),
       commentaire: z.string(),
-      annexe: z.string(),
+      annexe: z.string().optional(),
     })
     .array(),
 });
@@ -72,7 +72,9 @@ export class EnregistrerEvaluationService {
           objectif_id: evaluationObjectif.objectifId,
           note: evaluationObjectif.note,
           commentaire: evaluationObjectif.commentaire,
-          annexe: SanitizerHTML.sanitize(evaluationObjectif.annexe),
+          annexe: evaluationObjectif.annexe
+            ? SanitizerHTML.sanitize(evaluationObjectif.annexe)
+            : undefined,
         };
         await prisma.evaluation_objectif.upsert({
           where: { id: evaluationObjectif.id },
@@ -89,7 +91,9 @@ export class EnregistrerEvaluationService {
           critere_id: evaluationCritere.critereId,
           note: evaluationCritere.note,
           commentaire: evaluationCritere.commentaire,
-          annexe: SanitizerHTML.sanitize(evaluationCritere.annexe),
+          annexe: evaluationCritere.annexe
+            ? SanitizerHTML.sanitize(evaluationCritere.annexe)
+            : undefined,
         };
         await prisma.evaluation_critere.upsert({
           where: { id: evaluationCritere.id },

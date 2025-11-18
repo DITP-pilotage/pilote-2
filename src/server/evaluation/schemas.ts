@@ -18,5 +18,4 @@ export const evaluationSchema = z.object({
   id: z.string(),
   note: evaluationNoteSchema.nullable(),
   commentaire: evaluationCommentaireSchema,
-  annexe: evaluationAnnexeSchema,
 });
