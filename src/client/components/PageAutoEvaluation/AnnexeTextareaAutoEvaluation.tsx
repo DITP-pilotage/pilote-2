@@ -77,6 +77,7 @@ export function AnnexeTextareaAutoEvaluation<T extends FieldValues>({
                     setDisplayAnnexe(false);
                   }}
                   type="button"
+                  variant="link"
                 />
               )}
             </div>
