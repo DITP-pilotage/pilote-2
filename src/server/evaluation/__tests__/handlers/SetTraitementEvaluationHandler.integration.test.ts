@@ -422,7 +422,9 @@ describe("SetTraitementEvaluationHandler", () => {
           typeEvaluation: "OBJECTIF",
           statut: "TRAITEE",
         }),
-      ).rejects.toThrow();
+      ).rejects.toThrow(
+        "La fiche d'évaluation doit être en état CONSOLIDATION",
+      );
     });
 
     it("doit échouer si la note de l'évaluation objectif est null", async () => {
@@ -500,7 +502,7 @@ describe("SetTraitementEvaluationHandler", () => {
           typeEvaluation: "OBJECTIF",
           statut: "TRAITEE",
         }),
-      ).rejects.toThrow();
+      ).rejects.toThrow("La note de l'évaluation ne peut pas être null");
     });
 
     it("doit échouer si la note de l'évaluation critere est null", async () => {
@@ -576,7 +578,7 @@ describe("SetTraitementEvaluationHandler", () => {
           typeEvaluation: "MANIERE_DE_SERVIR",
           statut: "TRAITEE",
         }),
-      ).rejects.toThrow();
+      ).rejects.toThrow("La note de l'évaluation ne peut pas être null");
     });
   });
 });
