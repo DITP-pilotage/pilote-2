@@ -1,5 +1,8 @@
 SELECT
     itve.id,
+    itve.indic_id,
+    itve.territoire_code,
+    itve.date_valeur,
     ta_indic.id AS ta_indic_id,
     ta_indic.taa_adate,
     ta_indic.tag
@@ -20,7 +23,6 @@ LEFT OUTER JOIN {{ ref('compute_ta_indic') }} AS ta_indic
         AND territoire.zone_id = ta_indic.zone_id
         AND itve.indic_id = ta_indic.indic_id
 WHERE itve.type_valeur = 'VALEUR_AVANCEMENT'
-AND ta_indic.id IS NULL
 AND NOT (
     (indic.maille_nat_agregee AND itve.territoire_code LIKE 'NAT%')
     OR (indic.maille_reg_agregee AND itve.territoire_code LIKE 'REG%')
