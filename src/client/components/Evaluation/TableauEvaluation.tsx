@@ -2,7 +2,7 @@ import { flexRender } from "@tanstack/react-table";
 import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { $Enums } from "@prisma/client";
-import { ReactNode, useCallback } from "react";
+import { memo, ReactNode, useCallback } from "react";
 import { Bouton } from "@/components/_commons/Bouton/Bouton";
 import { clsxm } from "@/utils/clsxm";
 import {
@@ -57,7 +57,7 @@ export type TableauEvaluationRow =
       }>;
     };
 
-export const TableauEvaluation = ({
+export const TableauEvaluation = memo(function TableauEvaluation({
   rattachements,
   criteres,
   onEnregistrer,
@@ -65,7 +65,7 @@ export const TableauEvaluation = ({
   rattachements: Rattachement[];
   criteres: Critere[];
   onEnregistrer: (values: FormValues, showToast: boolean) => Promise<void>;
-}) => {
+}) {
   const formSchema = useFormSchema(rattachements);
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -228,4 +228,4 @@ export const TableauEvaluation = ({
       </LayoutFicheCadrage>
     </FormProvider>
   );
-};
+});
