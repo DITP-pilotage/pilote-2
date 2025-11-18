@@ -35,6 +35,7 @@ export type TableauEvaluationRow =
       evaluations: Array<{
         etape: $Enums.etape_evaluation_enum;
         evaluation: Evaluation;
+        dateTraitement: string | null;
       }>;
     }
   | {
@@ -52,6 +53,7 @@ export type TableauEvaluationRow =
       evaluations: Array<{
         etape: $Enums.etape_evaluation_enum;
         evaluation: Evaluation;
+        dateTraitement: string | null;
       }>;
     };
 
@@ -76,7 +78,9 @@ export const TableauEvaluation = ({
   const handleAutosave = useCallback(async () => {
     const isValid = await form.trigger();
     if (isValid) {
-      await form.handleSubmit((values) => onEnregistrer(values, false))();
+      await form.handleSubmit((values) => {
+        return onEnregistrer(values, false);
+      })();
     }
   }, [form, onEnregistrer]);
 

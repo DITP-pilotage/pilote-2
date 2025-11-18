@@ -15,6 +15,7 @@ import { TableauEvaluationRow } from "@/components/Evaluation/TableauEvaluation"
 import { Critere, Rattachement } from "@/server/evaluation/queries/types";
 import { LigneEtapeEvaluation } from "@/components/Evaluation/LigneEtapeEvaluation";
 import { BoutonAfficherFicheCadrage } from "@/components/Evaluation/BoutonAfficherFicheCadrage";
+import { BoutonTraitementEvaluation } from "@/components/Evaluation/BoutonTraitementEvaluation";
 
 const columnHelper = createColumnHelper<TableauEvaluationRow>();
 
@@ -134,8 +135,7 @@ export const useTableauEvaluation = ({
                     </span>
                     {row.original.libelle}
                   </div>
-
-                  <div>
+                  <div className="flex items-center gap-4">
                     <BoutonAfficherFicheCadrage
                       critereOuObjectif={
                         row.original.type === "objectif"
@@ -144,6 +144,21 @@ export const useTableauEvaluation = ({
                               type: "critere",
                               critere: getCritere(row.original.id),
                             }
+                      }
+                    />
+                    <BoutonTraitementEvaluation
+                      dateTraitement={
+                        row.original.evaluations[0]?.dateTraitement ?? null
+                      }
+                      disabled={
+                        row.original.evaluations[0]?.evaluation.note == null ||
+                        row.original.rattachement.readOnly
+                      }
+                      evaluationId={row.original.evaluations[0]?.evaluation.id}
+                      typeEvaluation={
+                        row.original.type === "objectif"
+                          ? "OBJECTIF"
+                          : "MANIERE_DE_SERVIR"
                       }
                     />
                   </div>
