@@ -50,7 +50,7 @@ export const EditeurRiche: FunctionComponent<ÉditeurRicheProps> = ({
   });
 
   return (
-    <ÉditeurRicheStyled>
+    <ÉditeurRicheStyled className="isolate relative max-h-[650px] overflow-auto">
       <MenuBar editor={editor} />
       <EditorContent editor={editor} />
     </ÉditeurRicheStyled>
