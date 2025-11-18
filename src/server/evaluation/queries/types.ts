@@ -30,6 +30,7 @@ export type Objectif = {
     dateTraitement: string | null;
   }>;
 };
+
 export type Rattachement = {
   code: string;
   libelle: string;

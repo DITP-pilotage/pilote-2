@@ -441,6 +441,7 @@ describe("AfficherInstructionQuery", () => {
               note: 15,
               commentaire: "Évaluation instruction",
             },
+            dateTraitement: null,
           },
           {
             etape: $Enums.etape_evaluation_enum.CONSOLIDATION,
@@ -449,6 +450,7 @@ describe("AfficherInstructionQuery", () => {
               note: 12,
               commentaire: "Évaluation consolidation",
             },
+            dateTraitement: null,
           },
           {
             etape: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
@@ -457,6 +459,7 @@ describe("AfficherInstructionQuery", () => {
               note: 10,
               commentaire: "Évaluation auto",
             },
+            dateTraitement: null,
           },
         ],
       });
@@ -630,6 +633,7 @@ describe("AfficherInstructionQuery", () => {
               note: 14,
               commentaire: "Évaluation instruction critère",
             },
+            dateTraitement: null,
           },
           {
             etape: $Enums.etape_evaluation_enum.CONSOLIDATION,
@@ -638,6 +642,7 @@ describe("AfficherInstructionQuery", () => {
               note: 11,
               commentaire: "Évaluation consolidation critère",
             },
+            dateTraitement: null,
           },
           {
             etape: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
@@ -646,6 +651,7 @@ describe("AfficherInstructionQuery", () => {
               note: 8,
               commentaire: "Évaluation auto critère",
             },
+            dateTraitement: null,
           },
         ],
       });
