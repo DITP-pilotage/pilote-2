@@ -6,7 +6,7 @@ export const useEnregistrerBrouillonConsolidation = () => {
   const enregistrerBrouillon =
     api.evaluation.enregistrerBrouillonConsolidation.useMutation();
 
-  return (values: FormValues) =>
+  return (values: FormValues, showToast: boolean) =>
     enregistrerBrouillon.mutateAsync(
       Object.entries(values.fichesEvaluation).map(
         ([ficheEvaluationId, { objectifs, criteres }]) => {
@@ -29,10 +29,12 @@ export const useEnregistrerBrouillonConsolidation = () => {
       ),
       {
         onSuccess: () => {
-          toast.success("Données enregistrées", {
-            position: "top-right",
-            richColors: true,
-          });
+          if (showToast) {
+            toast.success("Données enregistrées", {
+              position: "top-right",
+              richColors: true,
+            });
+          }
         },
       },
     );

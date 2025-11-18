@@ -41,7 +41,7 @@ export const FormulaireAutoEvaluationObjectifs = () => {
       <main className="!bg-white py-6 pt-0 w-full">
         <FormProvider {...form}>
           <div className="relative">
-            <div className="sticky top-0 bg-white mb-6">
+            <div className="sticky top-0 bg-white mb-6 z-1">
               <div className="flex items-center justify-between mt-4 mx-auto w-full max-w-4xl px-2 py-4">
                 <span className="italic text-sm">
                   Dernière modification :{" "}

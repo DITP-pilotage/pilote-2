@@ -1,9 +1,10 @@
-import { useState, useRef, useCallback, useEffect } from "react";
+import { useState, useRef } from "react";
 import { flushSync } from "react-dom";
 import { Control, FieldValues, Path } from "react-hook-form";
 import { Icone } from "@/components/_commons/Icone";
 import { AddLineIcon } from "@/components/_commons/Icones/AddLineIcon";
 import { Textarea, TextareaRef } from "@/components/_commons/Textarea";
+import { useAutosave } from "@/components/Evaluation/useAutosave";
 
 export function CommentaireTextareaAutoEvaluation<T extends FieldValues>({
   name,
@@ -19,40 +20,8 @@ export function CommentaireTextareaAutoEvaluation<T extends FieldValues>({
   onAutosave?: () => void;
 }) {
   const [displayComment, setDisplayComment] = useState(defaultOpen);
+  const autosave = useAutosave({ onAutosave });
   const textareaRef = useRef<TextareaRef>(null);
-  const timeoutRef = useRef<NodeJS.Timeout>();
-  const onAutosaveRef = useRef(onAutosave);
-
-  useEffect(() => {
-    onAutosaveRef.current = onAutosave;
-  }, [onAutosave]);
-
-  const handleChange = useCallback(() => {
-    if (!onAutosaveRef.current) return;
-
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
-    }
-
-    timeoutRef.current = setTimeout(() => {
-      onAutosaveRef.current?.();
-    }, 400);
-  }, []);
-
-  const handleBlur = useCallback(
-    (event: React.FocusEvent<HTMLTextAreaElement>) => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
-
-      if (!event.target.value) {
-        setDisplayComment(false);
-      } else if (onAutosaveRef.current) {
-        onAutosaveRef.current();
-      }
-    },
-    [],
-  );
 
   if (!displayComment) {
     return (
@@ -76,8 +45,13 @@ export function CommentaireTextareaAutoEvaluation<T extends FieldValues>({
     <Textarea
       control={control}
       name={name}
-      onBlur={handleBlur}
-      onChange={handleChange}
+      {...autosave}
+      onBlur={(event) => {
+        if (!event.target.value) {
+          setDisplayComment(false);
+        }
+        autosave.onBlur();
+      }}
       readOnly={readOnly}
       textareaRef={textareaRef}
     />

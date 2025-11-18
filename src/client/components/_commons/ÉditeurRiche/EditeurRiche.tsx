@@ -6,22 +6,31 @@ import { TextStyle } from "@tiptap/extension-text-style";
 import { Color } from "@tiptap/extension-color";
 import { Placeholder } from "@tiptap/extension-placeholder";
 import { Underline } from "@tiptap/extension-underline";
-import { FunctionComponent } from "react";
+import { FunctionComponent, RefObject, useImperativeHandle } from "react";
+import { TextareaRef } from "@/components/_commons/Textarea";
 import { ÉditeurRicheStyled } from "./ÉditeurRiche.styled";
 import { MenuBar } from "./MenuBar";
+
+export type EditeurRicheRef = {
+  focus: () => void;
+};
 
 interface ÉditeurRicheProps {
   contenu: string;
   onChange: (contenu: string) => void;
+  onBlur?: () => void;
   placeholder?: string;
   estEnLectureSeule?: boolean;
+  editeurRef?: RefObject<TextareaRef>;
 }
 
 export const EditeurRiche: FunctionComponent<ÉditeurRicheProps> = ({
   contenu,
   onChange,
+  onBlur,
   placeholder = "Saisissez votre texte...",
   estEnLectureSeule = false,
+  editeurRef,
 }) => {
   const editor = useEditor({
     extensions: [
@@ -42,12 +51,19 @@ export const EditeurRiche: FunctionComponent<ÉditeurRicheProps> = ({
 
     editable: !estEnLectureSeule,
     onUpdate: ({ editor: editor2 }) => {
-      onChange(editor2.getHTML());
+      onChange(editor2.isEmpty ? "" : editor2.getHTML());
     },
+    onBlur: onBlur,
   });
 
+  useImperativeHandle(editeurRef, () => ({
+    focus: () => {
+      editor.commands.focus("end");
+    },
+  }));
+
   return (
-    <ÉditeurRicheStyled>
+    <ÉditeurRicheStyled className="relative max-h-[650px] overflow-auto">
       <MenuBar editor={editor} />
       <EditorContent editor={editor} />
     </ÉditeurRicheStyled>

@@ -1,22 +1,30 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { flushSync } from "react-dom";
 import { Control, Controller, FieldValues, Path } from "react-hook-form";
 import { Icone } from "@/components/_commons/Icone";
 import { AddLineIcon } from "@/components/_commons/Icones/AddLineIcon";
-import { EditeurRiche } from "@/components/_commons/ÉditeurRiche/EditeurRiche";
+import {
+  EditeurRiche,
+  EditeurRicheRef,
+} from "@/components/_commons/ÉditeurRiche/EditeurRiche";
 import { Bouton } from "@/components/_commons/Bouton/Bouton";
 import { ChatForwardIcon } from "@/components/_commons/Icones/ChatForwardIcon";
+import { useAutosave } from "@/components/Evaluation/useAutosave";
 
 export function AnnexeTextareaAutoEvaluation<T extends FieldValues>({
   name,
   readOnly,
   control,
+  onAutosave,
 }: {
   name: Path<T>;
   readOnly: boolean;
   control: Control<T>;
+  onAutosave?: () => void;
 }) {
   const [displayAnnexe, setDisplayAnnexe] = useState(false);
+  const editeurRef = useRef<EditeurRicheRef>(null);
+  const autosave = useAutosave({ onAutosave });
 
   return (
     <Controller
@@ -32,6 +40,7 @@ export function AnnexeTextareaAutoEvaluation<T extends FieldValues>({
                 flushSync(() => {
                   setDisplayAnnexe(true);
                 });
+                editeurRef.current?.focus();
               }}
               type="button"
             >
@@ -54,12 +63,17 @@ export function AnnexeTextareaAutoEvaluation<T extends FieldValues>({
         }
 
         return (
-          <div className="flex flex-column gap-2">
+          <div className="isolate z-0 flex flex-column gap-2">
             <span className="bold">Annexe (facultatif)</span>
             <EditeurRiche
               contenu={field.value || ""}
+              editeurRef={editeurRef}
               estEnLectureSeule={readOnly}
-              onChange={field.onChange}
+              onBlur={autosave.onBlur}
+              onChange={(value) => {
+                field.onChange(value);
+                autosave.onChange();
+              }}
             />
             <div className="flex justify-end">
               {!readOnly && (
@@ -69,6 +83,7 @@ export function AnnexeTextareaAutoEvaluation<T extends FieldValues>({
                     setDisplayAnnexe(false);
                   }}
                   type="button"
+                  variant="link"
                 />
               )}
             </div>

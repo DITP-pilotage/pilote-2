@@ -65,6 +65,7 @@ export const EtapeCriteres = () => {
               <AnnexeTextareaAutoEvaluation
                 control={form.control}
                 name={annexeName}
+                onAutosave={handleAutosave}
                 readOnly={readOnly}
               />
             </div>

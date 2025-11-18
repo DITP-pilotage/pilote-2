@@ -1,5 +1,6 @@
 import { useFormulaireEvaluation } from "@/components/Evaluation/form";
 import { InputNoteControlled } from "@/components/_commons/InputNoteControlled";
+import { useAutosave } from "@/components/Evaluation/useAutosave";
 
 type FormNoteName =
   | `fichesEvaluation.${string}.objectifs.${string}.note`
@@ -11,18 +12,25 @@ type FormCommentaireName =
 export const InputNoteEvaluation = ({
   name,
   disabled = false,
+  onAutosave,
 }: {
   name: FormNoteName;
   disabled?: boolean;
+  onAutosave?: () => void;
 }) => {
   const form = useFormulaireEvaluation();
   const commentaireName = name.replace(".note", ".commentaire");
+  const autosave = useAutosave({ onAutosave });
 
   return (
     <InputNoteControlled
       control={form.control}
       name={name}
-      onChange={() => form.trigger(commentaireName as FormCommentaireName)}
+      {...autosave}
+      onChange={async () => {
+        await form.trigger(commentaireName as FormCommentaireName);
+        autosave.onChange();
+      }}
       readOnly={disabled}
     />
   );
