@@ -1,9 +1,12 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { flushSync } from "react-dom";
 import { Control, Controller, FieldValues, Path } from "react-hook-form";
 import { Icone } from "@/components/_commons/Icone";
 import { AddLineIcon } from "@/components/_commons/Icones/AddLineIcon";
-import { EditeurRiche } from "@/components/_commons/ÉditeurRiche/EditeurRiche";
+import {
+  EditeurRiche,
+  EditeurRicheRef,
+} from "@/components/_commons/ÉditeurRiche/EditeurRiche";
 import { Bouton } from "@/components/_commons/Bouton/Bouton";
 import { ChatForwardIcon } from "@/components/_commons/Icones/ChatForwardIcon";
 import { useAutosave } from "@/components/Evaluation/useAutosave";
@@ -20,6 +23,7 @@ export function AnnexeTextareaAutoEvaluation<T extends FieldValues>({
   onAutosave?: () => void;
 }) {
   const [displayAnnexe, setDisplayAnnexe] = useState(false);
+  const editeurRef = useRef<EditeurRicheRef>(null);
   const autosave = useAutosave({ onAutosave });
 
   return (
@@ -36,6 +40,7 @@ export function AnnexeTextareaAutoEvaluation<T extends FieldValues>({
                 flushSync(() => {
                   setDisplayAnnexe(true);
                 });
+                editeurRef.current?.focus();
               }}
               type="button"
             >
@@ -62,6 +67,7 @@ export function AnnexeTextareaAutoEvaluation<T extends FieldValues>({
             <span className="bold">Annexe (facultatif)</span>
             <EditeurRiche
               contenu={field.value || ""}
+              editeurRef={editeurRef}
               estEnLectureSeule={readOnly}
               onBlur={autosave.onBlur}
               onChange={(value) => {
