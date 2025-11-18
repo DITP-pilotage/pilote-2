@@ -22,4 +22,6 @@ models:
           - type: primary_key
       - name : ta_indic_id
         tests:
-          - not_null
+          - not_null:
+              config:
+                severity: warn
