@@ -30,5 +30,13 @@ export const useAutosave = ({ onAutosave }: { onAutosave?: () => void }) => {
     onAutosaveRef.current();
   }, []);
 
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
+
   return { onChange, onBlur };
 };
