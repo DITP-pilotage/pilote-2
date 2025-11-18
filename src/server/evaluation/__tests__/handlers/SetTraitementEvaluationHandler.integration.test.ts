@@ -1,0 +1,370 @@
+import { $Enums } from "@prisma/client";
+import { PrismaPilote } from "@/server/db/PrismaPilote";
+import { prisma } from "@/server/db/prisma";
+import { PrismaTransaction } from "@/server/db/PrismaTransaction";
+import { SetTraitementEvaluationHandler } from "@/server/evaluation/handlers/SetTraitementEvaluationHandler";
+import { ProfilEnum } from "@/server/app/enum/profil.enum";
+
+describe("SetTraitementEvaluationHandler", () => {
+  let handler: SetTraitementEvaluationHandler;
+  const prismaPilote = new PrismaPilote();
+  const transaction = new PrismaTransaction();
+
+  beforeEach(() => {
+    handler = new SetTraitementEvaluationHandler({
+      prisma: prismaPilote,
+      transaction,
+    });
+  });
+
+  describe("#execute", () => {
+    describe("evaluation objectif", () => {
+      it("doit définir date_traitement à la date actuelle quand le statut est TRAITEE", async () => {
+        const rattachementCode = "REG-TRAITEMENT-01";
+        const ficheEvaluationId = "a1b2c3d4-e5f6-7890-abcd-111111111111";
+        const etapeEvaluationId = "b1c2d3e4-f5a6-8901-bcde-111111111111";
+        const evaluationObjectifId = "c1d2e3f4-a5b6-7890-cdef-111111111111";
+        const utilisateurId = "d1e2f3a4-b5c6-8901-def1-111111111111";
+        const objectifId = "e1f2a3b4-c5d6-7890-ef12-111111111111";
+
+        await prisma.utilisateur.create({
+          data: {
+            id: utilisateurId,
+            nom: "Doe",
+            prenom: "John",
+            email: "john.doe@example.com",
+            fonction: "Administrateur",
+            profilCode: ProfilEnum.DITP_ADMIN,
+          },
+        });
+
+        await prisma.referentiel_objectif.create({
+          data: {
+            id: objectifId,
+            code: "OBJ-01",
+            nom: "Objectif 1",
+            ordre: 1,
+            groupe: "Groupe 1",
+          },
+        });
+
+        await prisma.referentiel_rattachement.create({
+          data: {
+            code: rattachementCode,
+            libelle: "Rattachement traitement 1",
+            groupe: rattachementCode,
+            ordre: 1,
+          },
+        });
+
+        await prisma.fiche_evaluation.create({
+          data: {
+            id: ficheEvaluationId,
+            jalon: 2025,
+            etape_courante: $Enums.etape_evaluation_enum.CONSOLIDATION,
+            rattachement_code: rattachementCode,
+          },
+        });
+
+        await prisma.etape_evaluation.create({
+          data: {
+            id: etapeEvaluationId,
+            fiche_evaluation_id: ficheEvaluationId,
+            type: $Enums.etape_evaluation_enum.CONSOLIDATION,
+            read_only: false,
+          },
+        });
+
+        await prisma.evaluation_objectif.create({
+          data: {
+            id: evaluationObjectifId,
+            etape_evaluation_id: etapeEvaluationId,
+            objectif_id: objectifId,
+            auteur_id: utilisateurId,
+            note: 3,
+            commentaire: "Commentaire test",
+            date_traitement: null,
+          },
+        });
+
+        const beforeUpdate = new Date();
+
+        await handler.execute({
+          evaluationId: evaluationObjectifId,
+          typeEvaluation: "OBJECTIF",
+          statut: "TRAITEE",
+        });
+
+        const afterUpdate = new Date();
+
+        const evaluationUpdated = await prisma.evaluation_objectif.findUnique({
+          where: { id: evaluationObjectifId },
+        });
+
+        expect(evaluationUpdated?.date_traitement).not.toBeNull();
+        expect(evaluationUpdated?.date_traitement).toBeInstanceOf(Date);
+        expect(
+          evaluationUpdated?.date_traitement?.getTime(),
+        ).toBeGreaterThanOrEqual(beforeUpdate.getTime());
+        expect(
+          evaluationUpdated?.date_traitement?.getTime(),
+        ).toBeLessThanOrEqual(afterUpdate.getTime());
+      });
+
+      it("doit définir date_traitement à null quand le statut est NON_TRAITEE", async () => {
+        const rattachementCode = "REG-TRAITEMENT-02";
+        const ficheEvaluationId = "a1b2c3d4-e5f6-7890-abcd-222222222222";
+        const etapeEvaluationId = "b1c2d3e4-f5a6-8901-bcde-222222222222";
+        const evaluationObjectifId = "c1d2e3f4-a5b6-7890-cdef-222222222222";
+        const utilisateurId = "d1e2f3a4-b5c6-8901-def1-222222222222";
+        const objectifId = "e1f2a3b4-c5d6-7890-ef12-222222222222";
+
+        await prisma.utilisateur.create({
+          data: {
+            id: utilisateurId,
+            nom: "Doe",
+            prenom: "Jane",
+            email: "jane.doe@example.com",
+            fonction: "Administrateur",
+            profilCode: ProfilEnum.DITP_ADMIN,
+          },
+        });
+
+        await prisma.referentiel_objectif.create({
+          data: {
+            id: objectifId,
+            libelle: "Objectif 2",
+            ordre: 1,
+            groupe: "Groupe 2",
+          },
+        });
+
+        await prisma.referentiel_rattachement.create({
+          data: {
+            code: rattachementCode,
+            libelle: "Rattachement traitement 2",
+            groupe: rattachementCode,
+            ordre: 1,
+          },
+        });
+
+        await prisma.fiche_evaluation.create({
+          data: {
+            id: ficheEvaluationId,
+            jalon: 2025,
+            etape_courante: $Enums.etape_evaluation_enum.CONSOLIDATION,
+            rattachement_code: rattachementCode,
+          },
+        });
+
+        await prisma.etape_evaluation.create({
+          data: {
+            id: etapeEvaluationId,
+            fiche_evaluation_id: ficheEvaluationId,
+            type: $Enums.etape_evaluation_enum.CONSOLIDATION,
+            read_only: false,
+          },
+        });
+
+        await prisma.evaluation_objectif.create({
+          data: {
+            id: evaluationObjectifId,
+            etape_evaluation_id: etapeEvaluationId,
+            objectif_id: objectifId,
+            auteur_id: utilisateurId,
+            note: 3,
+            commentaire: "Commentaire test",
+            date_traitement: new Date(),
+          },
+        });
+
+        await handler.execute({
+          evaluationId: evaluationObjectifId,
+          typeEvaluation: "OBJECTIF",
+          statut: "NON_TRAITEE",
+        });
+
+        const evaluationUpdated = await prisma.evaluation_objectif.findUnique({
+          where: { id: evaluationObjectifId },
+        });
+
+        expect(evaluationUpdated?.date_traitement).toBeNull();
+      });
+    });
+
+    describe("evaluation critere", () => {
+      it("doit définir date_traitement à la date actuelle quand le statut est TRAITEE", async () => {
+        const rattachementCode = "REG-TRAITEMENT-03";
+        const ficheEvaluationId = "a1b2c3d4-e5f6-7890-abcd-333333333333";
+        const etapeEvaluationId = "b1c2d3e4-f5a6-8901-bcde-333333333333";
+        const evaluationCritereId = "c1d2e3f4-a5b6-7890-cdef-333333333333";
+        const utilisateurId = "d1e2f3a4-b5c6-8901-def1-333333333333";
+        const critereId = "e1f2a3b4-c5d6-7890-ef12-333333333333";
+
+        await prisma.utilisateur.create({
+          data: {
+            id: utilisateurId,
+            nom: "Smith",
+            prenom: "Alice",
+            email: "alice.smith@example.com",
+            fonction: "Administrateur",
+            profilCode: ProfilEnum.DITP_ADMIN,
+          },
+        });
+
+        await prisma.referentiel_critere.create({
+          data: {
+            id: critereId,
+            code: "CRI-01",
+            nom: "Critère 1",
+            ordre: 1,
+            groupe: "Groupe 1",
+          },
+        });
+
+        await prisma.referentiel_rattachement.create({
+          data: {
+            code: rattachementCode,
+            libelle: "Rattachement traitement 3",
+            groupe: rattachementCode,
+            ordre: 1,
+          },
+        });
+
+        await prisma.fiche_evaluation.create({
+          data: {
+            id: ficheEvaluationId,
+            jalon: 2025,
+            etape_courante: $Enums.etape_evaluation_enum.CONSOLIDATION,
+            rattachement_code: rattachementCode,
+          },
+        });
+
+        await prisma.etape_evaluation.create({
+          data: {
+            id: etapeEvaluationId,
+            fiche_evaluation_id: ficheEvaluationId,
+            type: $Enums.etape_evaluation_enum.CONSOLIDATION,
+            read_only: false,
+          },
+        });
+
+        await prisma.evaluation_critere.create({
+          data: {
+            id: evaluationCritereId,
+            etape_evaluation_id: etapeEvaluationId,
+            critere_id: critereId,
+            auteur_id: utilisateurId,
+            note: 3,
+            commentaire: "Commentaire test",
+            date_traitement: null,
+          },
+        });
+
+        const beforeUpdate = new Date();
+
+        await handler.execute({
+          evaluationId: evaluationCritereId,
+          typeEvaluation: "MANIERE_DE_SERVIR",
+          statut: "TRAITEE",
+        });
+
+        const afterUpdate = new Date();
+
+        const evaluationUpdated = await prisma.evaluation_critere.findUnique({
+          where: { id: evaluationCritereId },
+        });
+
+        expect(evaluationUpdated?.date_traitement).not.toBeNull();
+        expect(evaluationUpdated?.date_traitement).toBeInstanceOf(Date);
+        expect(
+          evaluationUpdated?.date_traitement?.getTime(),
+        ).toBeGreaterThanOrEqual(beforeUpdate.getTime());
+        expect(
+          evaluationUpdated?.date_traitement?.getTime(),
+        ).toBeLessThanOrEqual(afterUpdate.getTime());
+      });
+
+      it("doit définir date_traitement à null quand le statut est NON_TRAITEE", async () => {
+        const rattachementCode = "REG-TRAITEMENT-04";
+        const ficheEvaluationId = "a1b2c3d4-e5f6-7890-abcd-444444444444";
+        const etapeEvaluationId = "b1c2d3e4-f5a6-8901-bcde-444444444444";
+        const evaluationCritereId = "c1d2e3f4-a5b6-7890-cdef-444444444444";
+        const utilisateurId = "d1e2f3a4-b5c6-8901-def1-444444444444";
+        const critereId = "e1f2a3b4-c5d6-7890-ef12-444444444444";
+
+        await prisma.utilisateur.create({
+          data: {
+            id: utilisateurId,
+            nom: "Smith",
+            prenom: "Bob",
+            email: "bob.smith@example.com",
+            fonction: "Administrateur",
+            profilCode: ProfilEnum.DITP_ADMIN,
+          },
+        });
+
+        await prisma.referentiel_critere.create({
+          data: {
+            id: critereId,
+            code: "CRI-02",
+            nom: "Critère 2",
+            ordre: 1,
+            groupe: "Groupe 2",
+          },
+        });
+
+        await prisma.referentiel_rattachement.create({
+          data: {
+            code: rattachementCode,
+            libelle: "Rattachement traitement 4",
+            groupe: rattachementCode,
+            ordre: 1,
+          },
+        });
+
+        await prisma.fiche_evaluation.create({
+          data: {
+            id: ficheEvaluationId,
+            jalon: 2025,
+            etape_courante: $Enums.etape_evaluation_enum.CONSOLIDATION,
+            rattachement_code: rattachementCode,
+          },
+        });
+
+        await prisma.etape_evaluation.create({
+          data: {
+            id: etapeEvaluationId,
+            fiche_evaluation_id: ficheEvaluationId,
+            type: $Enums.etape_evaluation_enum.CONSOLIDATION,
+            read_only: false,
+          },
+        });
+
+        await prisma.evaluation_critere.create({
+          data: {
+            id: evaluationCritereId,
+            etape_evaluation_id: etapeEvaluationId,
+            critere_id: critereId,
+            auteur_id: utilisateurId,
+            note: 3,
+            commentaire: "Commentaire test",
+            date_traitement: new Date(),
+          },
+        });
+
+        await handler.execute({
+          evaluationId: evaluationCritereId,
+          typeEvaluation: "MANIERE_DE_SERVIR",
+          statut: "NON_TRAITEE",
+        });
+
+        const evaluationUpdated = await prisma.evaluation_critere.findUnique({
+          where: { id: evaluationCritereId },
+        });
+
+        expect(evaluationUpdated?.date_traitement).toBeNull();
+      });
+    });
+  });
+});
