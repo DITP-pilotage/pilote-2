@@ -1,7 +1,7 @@
 version: 2
 
 models:
-  - name: indicateur_territoire_va_evenement_avec_ta
+  - name: indicateur_territoire_valeur_evenement_taux_avancement
     description: >
       Table reliant les indicateur_territoire_valeur_evenement à leur Taux d'avancement annuels (TAA)
       et taux d'avancement global (TAG) pour chaque VA non issue d'aggrégation et pour les territoires
@@ -20,6 +20,8 @@ models:
         constraints:
           - type: not_null
           - type: primary_key
+          - type: foreign_key
+            to: source('db_schema_public', 'indicateur_territoire_valeur_evenement')
       - name : ta_indic_id
         tests:
           - not_null:
