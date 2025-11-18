@@ -13,6 +13,7 @@ import { EnregistrerBrouillonInstructionHandler } from "@/server/evaluation/hand
 import { ModifierEtatFichesInstructionHandler } from "@/server/evaluation/handlers/ModifierEtatFichesInstructionHandler";
 import { RecupererDetailsNoteCollectiveQuery } from "@/server/evaluation/queries/RecupererDetailsNoteCollectiveQuery";
 import { SoumettreAutoEvaluationService } from "@/server/evaluation/services/SoumettreAutoEvaluationService";
+import { PasserALaConsolidationHandler } from "@/server/evaluation/handlers/PasserALaConsolidationHandler";
 import { EnregistrerBrouillonAutoEvaluationObjectifsHandler } from "./handlers/EnregistrerBrouillonAutoEvaluationObjectifsHandler";
 import { EnregistrerBrouillonAutoEvaluationCriteresHandler } from "./handlers/EnregistrerBrouillonAutoEvaluationCriteresHandler";
 import { ValiderSaisieCriteresHandler } from "./handlers/ValiderSaisieCriteresHandler";
@@ -35,6 +36,7 @@ export type PiloteEvalDependencies = {
   soumettreAutoEvaluationService: SoumettreAutoEvaluationService;
   modifierEtatFichesConsolidationHandler: ModifierEtatFichesConsolidationHandler;
   modifierEtatFichesInstructionHandler: ModifierEtatFichesInstructionHandler;
+  passerALaConsolidationHandler: PasserALaConsolidationHandler;
   passerALEtapeInstructionHandler: PasserALEtapeInstructionHandler;
 };
 
@@ -72,6 +74,7 @@ export const getPiloteEvalContainer = (
     modifierEtatFichesInstructionHandler: asClass(
       ModifierEtatFichesInstructionHandler,
     ),
+    passerALaConsolidationHandler: asClass(PasserALaConsolidationHandler),
     passerALEtapeInstructionHandler: asClass(PasserALEtapeInstructionHandler),
   });
 };

@@ -7,6 +7,7 @@ import { ForbiddenError } from "@/server/app/error-boundary/forbidden-error";
 import { enregistrerEvaluationCommandSchema } from "@/server/evaluation/services/EnregistrerEvaluationService";
 import { modifierEtatFichesConsolidationCommandSchema } from "@/server/evaluation/handlers/ModifierEtatFichesConsolidationHandler";
 import { modifierEtatFichesInstructionCommandSchema } from "@/server/evaluation/handlers/ModifierEtatFichesInstructionHandler";
+import { passerALaConsolidationCommandSchema } from "@/server/evaluation/handlers/PasserALaConsolidationHandler";
 import { passerALEtapeInstructionCommandSchema } from "@/server/evaluation/handlers/PasserALEtapeInstructionHandler";
 import { enregistrerEvaluationCriteresCommandSchema } from "@/server/evaluation/handlers/EnregistrerBrouillonAutoEvaluationCriteresHandler";
 import { enregistrerEvaluationObjectifsCommandSchema } from "@/server/evaluation/handlers/EnregistrerBrouillonAutoEvaluationObjectifsHandler";
@@ -180,6 +181,23 @@ export const evaluationRouter = créerRouteurTRPC({
       await getContainer("piloteEval")
         .resolve("modifierEtatFichesInstructionHandler")
         .execute(input);
+    }),
+
+  passerALaConsolidation: procédureProtégée
+    .input(passerALaConsolidationCommandSchema)
+    .mutation(async ({ input, ctx }) => {
+      const peutAccederPilotage = await getContainer("piloteEval")
+        .resolve("accesFicheEvaluationService")
+        .peutAccederEtapePilotage({
+          applicationsAccessibles: ctx.session.applicationsAccessibles,
+        });
+
+      if (!peutAccederPilotage)
+        throw new ForbiddenError("Accès refusé au pilotage");
+
+      await getContainer("piloteEval")
+        .resolve("passerALaConsolidationHandler")
+        .execute(input, ctx.session.user.id);
     }),
 
   passerALEtapeInstruction: procédureProtégée
