@@ -27,6 +27,7 @@ export type Objectif = {
   evaluations: Array<{
     etape: $Enums.etape_evaluation_enum;
     evaluation: Evaluation;
+    dateTraitement: string | null;
   }>;
 };
 export type Rattachement = {
@@ -40,6 +41,7 @@ export type Rattachement = {
     evaluations: Array<{
       etape: $Enums.etape_evaluation_enum;
       evaluation: Evaluation;
+      dateTraitement: string | null;
     }>;
   }>;
 };
