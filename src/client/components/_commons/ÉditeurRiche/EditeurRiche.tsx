@@ -13,6 +13,7 @@ import { MenuBar } from "./MenuBar";
 interface ÉditeurRicheProps {
   contenu: string;
   onChange: (contenu: string) => void;
+  onBlur?: () => void;
   placeholder?: string;
   estEnLectureSeule?: boolean;
 }
@@ -20,6 +21,7 @@ interface ÉditeurRicheProps {
 export const EditeurRiche: FunctionComponent<ÉditeurRicheProps> = ({
   contenu,
   onChange,
+  onBlur,
   placeholder = "Saisissez votre texte...",
   estEnLectureSeule = false,
 }) => {
@@ -44,6 +46,7 @@ export const EditeurRiche: FunctionComponent<ÉditeurRicheProps> = ({
     onUpdate: ({ editor: editor2 }) => {
       onChange(editor2.getHTML());
     },
+    onBlur: onBlur,
   });
 
   return (

@@ -6,17 +6,21 @@ import { AddLineIcon } from "@/components/_commons/Icones/AddLineIcon";
 import { EditeurRiche } from "@/components/_commons/ÉditeurRiche/EditeurRiche";
 import { Bouton } from "@/components/_commons/Bouton/Bouton";
 import { ChatForwardIcon } from "@/components/_commons/Icones/ChatForwardIcon";
+import { useAutosave } from "@/components/Evaluation/useAutosave";
 
 export function AnnexeTextareaAutoEvaluation<T extends FieldValues>({
   name,
   readOnly,
   control,
+  onAutosave,
 }: {
   name: Path<T>;
   readOnly: boolean;
   control: Control<T>;
+  onAutosave?: () => void;
 }) {
   const [displayAnnexe, setDisplayAnnexe] = useState(false);
+  const autosave = useAutosave({ onAutosave });
 
   return (
     <Controller
@@ -59,7 +63,11 @@ export function AnnexeTextareaAutoEvaluation<T extends FieldValues>({
             <EditeurRiche
               contenu={field.value || ""}
               estEnLectureSeule={readOnly}
-              onChange={field.onChange}
+              onBlur={autosave.onBlur}
+              onChange={(value) => {
+                field.onChange(value);
+                autosave.onChange();
+              }}
             />
             <div className="flex justify-end">
               {!readOnly && (
