@@ -22,9 +22,10 @@ LEFT OUTER JOIN {{ ref('compute_ta_indic') }} AS ta_indic
         itve.date_valeur::TEXT = ta_indic.metric_date
         AND territoire.zone_id = ta_indic.zone_id
         AND itve.indic_id = ta_indic.indic_id
-WHERE itve.type_valeur = 'VALEUR_AVANCEMENT'
-AND NOT (
-    (indic.maille_nat_agregee AND itve.territoire_code LIKE 'NAT%')
-    OR (indic.maille_reg_agregee AND itve.territoire_code LIKE 'REG%')
-)
-AND indic_territoire.est_applicable
+WHERE
+    itve.type_valeur = 'VALEUR_AVANCEMENT'
+    AND NOT (
+        (indic.maille_nat_agregee AND itve.territoire_code LIKE 'NAT%')
+        OR (indic.maille_reg_agregee AND itve.territoire_code LIKE 'REG%')
+    )
+    AND indic_territoire.est_applicable
