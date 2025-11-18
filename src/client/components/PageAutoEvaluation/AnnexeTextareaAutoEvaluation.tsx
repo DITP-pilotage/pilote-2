@@ -63,7 +63,7 @@ export function AnnexeTextareaAutoEvaluation<T extends FieldValues>({
         }
 
         return (
-          <div className="flex flex-column gap-2">
+          <div className="isolate z-0 flex flex-column gap-2">
             <span className="bold">Annexe (facultatif)</span>
             <EditeurRiche
               contenu={field.value || ""}
