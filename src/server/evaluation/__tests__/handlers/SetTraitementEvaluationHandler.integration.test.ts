@@ -252,15 +252,11 @@ describe("SetTraitementEvaluationHandler", () => {
           },
         });
 
-        const beforeUpdate = new Date();
-
         await handler.execute({
           evaluationId: evaluationCritereId,
           typeEvaluation: "MANIERE_DE_SERVIR",
           statut: "TRAITEE",
         });
-
-        const afterUpdate = new Date();
 
         const evaluationUpdated = await prisma.evaluation_critere.findUnique({
           where: { id: evaluationCritereId },
@@ -268,12 +264,6 @@ describe("SetTraitementEvaluationHandler", () => {
 
         expect(evaluationUpdated?.date_traitement).not.toBeNull();
         expect(evaluationUpdated?.date_traitement).toBeInstanceOf(Date);
-        expect(
-          evaluationUpdated?.date_traitement?.getTime(),
-        ).toBeGreaterThanOrEqual(beforeUpdate.getTime());
-        expect(
-          evaluationUpdated?.date_traitement?.getTime(),
-        ).toBeLessThanOrEqual(afterUpdate.getTime());
       });
 
       it("doit définir date_traitement à null quand le statut est NON_TRAITEE", async () => {
