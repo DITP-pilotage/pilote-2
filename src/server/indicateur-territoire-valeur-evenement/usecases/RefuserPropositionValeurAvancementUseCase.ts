@@ -4,6 +4,7 @@ import { IndicateurRepository } from "@/server/indicateur-territoire-valeur-even
 import { UtilisateurRepository } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/UtilisateurRepository";
 import { EnvoieEmailService } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/EnvoieEmailService";
 import { formaterDate } from "@/client/utils/date/date";
+import { formaterNombre } from "@/client/utils/nombre/nombre";
 
 export class RefuserPropositionValeurAvancementUseCase {
   private readonly indicateurTerritoireValeurEvenementRepository: IndicateurTerritoireValeurEvenementRepository;
@@ -106,17 +107,20 @@ export class RefuserPropositionValeurAvancementUseCase {
           destinataires: [{ email: emailDestinataire }],
           templateId: 42,
           parametres: {
-            id_chantier: informationIndicateur!.chantierId,
-            nom_chantier: informationIndicateur!.chantierNom,
-            id_indicateur: indicId,
-            nom_indicateur: informationIndicateur!.nom,
-            date_pva: formaterDate(
+            chantierId: informationIndicateur!.chantierId,
+            chantierNom: informationIndicateur!.chantierNom,
+            indicateurId: indicId,
+            indicateurNom: informationIndicateur!.nom,
+            dateValeur: formaterDate(
               new Date(evenement.dateValeur).toISOString(),
               "MM-YYYY",
             )!,
-            va_actuelle: evenementsSurDate.valeurEnCours(),
-            va_proposee: evenement.valeur,
-            motif_refus: evenement.donneesComplementaires?.motif ?? "",
+            valeurAvancement: formaterNombre(
+              evenementsSurDate.valeurEnCours(),
+              1,
+            ),
+            valeurProposee: formaterNombre(evenement.valeur, 1),
+            motifRefus: evenement.donneesComplementaires?.motif ?? "",
           },
         },
       );

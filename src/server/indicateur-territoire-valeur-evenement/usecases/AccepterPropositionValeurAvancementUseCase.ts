@@ -5,6 +5,7 @@ import { UtilisateurRepository } from "@/server/indicateur-territoire-valeur-eve
 import { IndicateurRepository } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/IndicateurRepository";
 import { EnvoieEmailService } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/EnvoieEmailService";
 import { formaterDate } from "@/client/utils/date/date";
+import { formaterNombre } from "@/client/utils/nombre/nombre";
 
 export class AccepterPropositionValeurAvancementUseCase {
   private readonly indicateurTerritoireValeurEvenementRepository: IndicateurTerritoireValeurEvenementRepository;
@@ -121,16 +122,22 @@ export class AccepterPropositionValeurAvancementUseCase {
           destinataires: [{ email: emailDestinataire }],
           templateId: 40,
           parametres: {
-            id_chantier: informationIndicateur!.chantierId,
-            nom_chantier: informationIndicateur!.chantierNom,
-            id_indicateur: indicId,
-            nom_indicateur: informationIndicateur!.nom,
-            date_pva: formaterDate(
+            chantierId: informationIndicateur!.chantierId,
+            chantierNom: informationIndicateur!.chantierNom,
+            indicateurId: indicId,
+            indicateurNom: informationIndicateur!.nom,
+            dateValeur: formaterDate(
               new Date(dateValeurAvancement).toISOString(),
               "MM-YYYY",
             )!,
-            va_actuelle: valeurAvancementAvantAcceptation,
-            va_proposee: evenementsSurDate.valeurEnCours(),
+            valeurAvancement: formaterNombre(
+              valeurAvancementAvantAcceptation,
+              1,
+            ),
+            valeurProposee: formaterNombre(
+              evenementsSurDate.valeurEnCours(),
+              1,
+            ),
           },
         },
       );

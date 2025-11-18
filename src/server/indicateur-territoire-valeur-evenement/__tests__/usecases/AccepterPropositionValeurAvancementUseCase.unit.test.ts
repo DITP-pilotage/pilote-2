@@ -190,13 +190,13 @@ describe("AccepterPropositionValeurAvancementUseCase", () => {
       destinataires: [{ email: "auteur1@example.com" }],
       templateId: 40,
       parametres: {
-        id_chantier: "CH-001",
-        nom_chantier: "Nom du chantier",
-        id_indicateur: input.indicId,
-        nom_indicateur: "Nom de l'indicateur",
-        date_pva: "06-2024",
-        va_actuelle: 3,
-        va_proposee: 20,
+        chantierId: "CH-001",
+        chantierNom: "Nom du chantier",
+        indicateurId: input.indicId,
+        indicateurNom: "Nom de l'indicateur",
+        dateValeur: "06-2024",
+        valeurAvancement: "3",
+        valeurProposee: "20",
       },
     });
     expect(
@@ -205,13 +205,13 @@ describe("AccepterPropositionValeurAvancementUseCase", () => {
       destinataires: [{ email: "auteur2@example.com" }],
       templateId: 40,
       parametres: {
-        id_chantier: "CH-001",
-        nom_chantier: "Nom du chantier",
-        id_indicateur: input.indicId,
-        nom_indicateur: "Nom de l'indicateur",
-        date_pva: "06-2024",
-        va_actuelle: 3,
-        va_proposee: 20,
+        chantierId: "CH-001",
+        chantierNom: "Nom du chantier",
+        indicateurId: input.indicId,
+        indicateurNom: "Nom de l'indicateur",
+        dateValeur: "06-2024",
+        valeurAvancement: "3",
+        valeurProposee: "20",
       },
     });
     expect(
@@ -220,13 +220,13 @@ describe("AccepterPropositionValeurAvancementUseCase", () => {
       destinataires: [{ email: "coordinateur1@example.com" }],
       templateId: 40,
       parametres: {
-        id_chantier: "CH-001",
-        nom_chantier: "Nom du chantier",
-        id_indicateur: input.indicId,
-        nom_indicateur: "Nom de l'indicateur",
-        date_pva: "06-2024",
-        va_actuelle: 3,
-        va_proposee: 20,
+        chantierId: "CH-001",
+        chantierNom: "Nom du chantier",
+        indicateurId: input.indicId,
+        indicateurNom: "Nom de l'indicateur",
+        dateValeur: "06-2024",
+        valeurAvancement: "3",
+        valeurProposee: "20",
       },
     });
     expect(
@@ -235,13 +235,13 @@ describe("AccepterPropositionValeurAvancementUseCase", () => {
       destinataires: [{ email: "coordinateur2@example.com" }],
       templateId: 40,
       parametres: {
-        id_chantier: "CH-001",
-        nom_chantier: "Nom du chantier",
-        id_indicateur: input.indicId,
-        nom_indicateur: "Nom de l'indicateur",
-        date_pva: "06-2024",
-        va_actuelle: 3,
-        va_proposee: 20,
+        chantierId: "CH-001",
+        chantierNom: "Nom du chantier",
+        indicateurId: input.indicId,
+        indicateurNom: "Nom de l'indicateur",
+        dateValeur: "06-2024",
+        valeurAvancement: "3",
+        valeurProposee: "20",
       },
     });
   });

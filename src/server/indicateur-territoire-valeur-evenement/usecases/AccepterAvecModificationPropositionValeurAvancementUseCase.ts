@@ -5,6 +5,7 @@ import { UtilisateurRepository } from "@/server/indicateur-territoire-valeur-eve
 import { IndicateurRepository } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/IndicateurRepository";
 import { EnvoieEmailService } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/EnvoieEmailService";
 import { formaterDate } from "@/client/utils/date/date";
+import { formaterNombre } from "@/client/utils/nombre/nombre";
 
 export class AccepterAvecModificationPropositionValeurAvancementUseCase {
   private readonly indicateurTerritoireValeurEvenementRepository: IndicateurTerritoireValeurEvenementRepository;
@@ -69,7 +70,7 @@ export class AccepterAvecModificationPropositionValeurAvancementUseCase {
       );
 
     const valeurPropositionAvantAcceptation =
-      evenementsSurDate.evenementPropositionValeurEnCours()?.valeur!;
+      evenementsSurDate.evenementPropositionValeurEnCours()?.valeur;
     const valeurAvancementAvantAcceptation = evenementsSurDate.valeurEnCours();
 
     const evenements =
@@ -125,18 +126,24 @@ export class AccepterAvecModificationPropositionValeurAvancementUseCase {
           destinataires: [{ email: emailDestinataire }],
           templateId: 41,
           parametres: {
-            id_chantier: informationIndicateur!.chantierId,
-            nom_chantier: informationIndicateur!.chantierNom,
-            id_indicateur: indicId,
-            nom_indicateur: informationIndicateur!.nom,
-            date_pva: formaterDate(
+            chantierId: informationIndicateur!.chantierId,
+            chantierNom: informationIndicateur!.chantierNom,
+            indicateurId: indicId,
+            indicateurNom: informationIndicateur!.nom,
+            dateValeur: formaterDate(
               new Date(dateValeurAvancement).toISOString(),
               "MM-YYYY",
             )!,
-            va_actuelle: valeurAvancementAvantAcceptation,
-            va_proposee: valeurPropositionAvantAcceptation,
-            valeur_acceptee: valeur,
-            motif_modification: motif,
+            valeurAvancement: formaterNombre(
+              valeurAvancementAvantAcceptation,
+              1,
+            ),
+            valeurProposee: formaterNombre(
+              valeurPropositionAvantAcceptation,
+              1,
+            ),
+            valeurAcceptee: formaterNombre(valeur, 1),
+            motifModification: motif,
           },
         },
       );

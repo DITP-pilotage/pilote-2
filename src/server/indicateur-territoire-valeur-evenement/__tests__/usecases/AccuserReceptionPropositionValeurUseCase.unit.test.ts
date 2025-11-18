@@ -161,13 +161,13 @@ describe("AccuserReceptionPropositionValeurUseCase", () => {
       destinataires: [{ email: "auteur1@example.com" }],
       templateId: 43,
       parametres: {
-        id_chantier: "CH-001",
-        nom_chantier: "Nom du chantier",
-        id_indicateur: input.indicId,
-        nom_indicateur: "Nom de l'indicateur",
-        date_pva: "06-2024",
-        va_proposee: 20,
-        va_actuelle: 3,
+        chantierId: "CH-001",
+        chantierNom: "Nom du chantier",
+        indicateurId: input.indicId,
+        indicateurNom: "Nom de l'indicateur",
+        dateValeur: "06-2024",
+        valeurProposee: "20",
+        valeurAvancement: "3",
       },
     });
     expect(
@@ -176,13 +176,13 @@ describe("AccuserReceptionPropositionValeurUseCase", () => {
       destinataires: [{ email: "auteur2@example.com" }],
       templateId: 43,
       parametres: {
-        id_chantier: "CH-001",
-        nom_chantier: "Nom du chantier",
-        id_indicateur: input.indicId,
-        nom_indicateur: "Nom de l'indicateur",
-        date_pva: "06-2024",
-        va_proposee: 20,
-        va_actuelle: 3,
+        chantierId: "CH-001",
+        chantierNom: "Nom du chantier",
+        indicateurId: input.indicId,
+        indicateurNom: "Nom de l'indicateur",
+        dateValeur: "06-2024",
+        valeurProposee: "20",
+        valeurAvancement: "3",
       },
     });
     expect(
@@ -191,13 +191,13 @@ describe("AccuserReceptionPropositionValeurUseCase", () => {
       destinataires: [{ email: "coordinateur1@example.com" }],
       templateId: 43,
       parametres: {
-        id_chantier: "CH-001",
-        nom_chantier: "Nom du chantier",
-        id_indicateur: input.indicId,
-        nom_indicateur: "Nom de l'indicateur",
-        date_pva: "06-2024",
-        va_proposee: 20,
-        va_actuelle: 3,
+        chantierId: "CH-001",
+        chantierNom: "Nom du chantier",
+        indicateurId: input.indicId,
+        indicateurNom: "Nom de l'indicateur",
+        dateValeur: "06-2024",
+        valeurProposee: "20",
+        valeurAvancement: "3",
       },
     });
     expect(
@@ -206,13 +206,13 @@ describe("AccuserReceptionPropositionValeurUseCase", () => {
       destinataires: [{ email: "coordinateur2@example.com" }],
       templateId: 43,
       parametres: {
-        id_chantier: "CH-001",
-        nom_chantier: "Nom du chantier",
-        id_indicateur: input.indicId,
-        nom_indicateur: "Nom de l'indicateur",
-        date_pva: "06-2024",
-        va_proposee: 20,
-        va_actuelle: 3,
+        chantierId: "CH-001",
+        chantierNom: "Nom du chantier",
+        indicateurId: input.indicId,
+        indicateurNom: "Nom de l'indicateur",
+        dateValeur: "06-2024",
+        valeurProposee: "20",
+        valeurAvancement: "3",
       },
     });
   });
