@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { useFormulaireEvaluation } from "@/components/Evaluation/form";
 import { Textarea } from "@/components/_commons/Textarea";
 import { useAutosave } from "@/components/Evaluation/useAutosave";
