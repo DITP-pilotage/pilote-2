@@ -2,7 +2,7 @@ export function formaterNombre(
   nombre: number | null | undefined,
   decimales: number,
 ) {
-  if (nombre === undefined || nombre === null) {
+  if (nombre == null) {
     return "";
   }
 
