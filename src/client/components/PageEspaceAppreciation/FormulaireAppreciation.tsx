@@ -1,10 +1,10 @@
 import { TableauEvaluation } from "@/client/components/Evaluation/TableauEvaluation";
-import { pageConsolidation } from "./PageConsolidationServerSideContext";
+import { pageEspaceAppreciation } from "./PageEspaceAppreciationServerSideContext";
 import { useEnregistrerBrouillonConsolidation } from "./useEnregistrerBrouillonConsolidation";
 
-export const FormulaireConsolidation = () => {
+export const FormulaireAppreciation = () => {
   const { rattachements, criteres } =
-    pageConsolidation.useServerSidePropsContext();
+    pageEspaceAppreciation.useServerSidePropsContext();
   const enregisterBrouillon = useEnregistrerBrouillonConsolidation();
 
   return (

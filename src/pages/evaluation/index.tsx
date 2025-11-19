@@ -46,13 +46,13 @@ export const getServerSideProps = async ({
   }
 
   if (
-    await accesFicheEvaluationService.peutAccederEtapeConsolidation({
+    await accesFicheEvaluationService.peutAccederEtapeAppreciation({
       utilisateurId,
     })
   )
     return {
       redirect: {
-        destination: `/evaluation/consolidation`,
+        destination: `/evaluation/appreciation`,
       },
     };
 

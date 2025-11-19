@@ -23,11 +23,11 @@ export const evaluationRouter = créerRouteurTRPC({
     );
 
     const [
-      peutAccederConsolidation,
+      peutAccederAppreciation,
       peutAccederInstruction,
       peutAccederPilotage,
     ] = await Promise.all([
-      accesFicheEvaluationService.peutAccederEtapeConsolidation({
+      accesFicheEvaluationService.peutAccederEtapeAppreciation({
         utilisateurId: ctx.session.user.id,
       }),
       accesFicheEvaluationService.peutAccederEtapeInstruction({
@@ -39,7 +39,7 @@ export const evaluationRouter = créerRouteurTRPC({
     ]);
 
     return {
-      peutAccederConsolidation,
+      peutAccederAppreciation,
       peutAccederInstruction,
       peutAccederPilotage,
     };
@@ -122,7 +122,7 @@ export const evaluationRouter = créerRouteurTRPC({
     .mutation(async ({ input, ctx }) => {
       const peutAccederFicheAutoEvaluation = await getContainer("piloteEval")
         .resolve("accesFicheEvaluationService")
-        .peutAccederEtapeConsolidation({
+        .peutAccederEtapeAppreciation({
           utilisateurId: ctx.session.user.id,
         });
 
@@ -224,7 +224,7 @@ export const evaluationRouter = créerRouteurTRPC({
     .mutation(async ({ input, ctx }) => {
       const peutAccederConsolidation = await getContainer("piloteEval")
         .resolve("accesFicheEvaluationService")
-        .peutAccederEtapeConsolidation({
+        .peutAccederEtapeAppreciation({
           utilisateurId: ctx.session.user.id,
         });
 
