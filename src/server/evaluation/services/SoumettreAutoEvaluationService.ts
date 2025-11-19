@@ -17,26 +17,106 @@ export class SoumettreAutoEvaluationService {
   ) {}
 
   async execute(ficheEvaluationId: string, auteurId: string) {
-    const etapeEvaluation = await this.getEtapeEvaluation(ficheEvaluationId);
+    const etapeAutoEvaluation =
+      await this.getEtapeAutoEvaluation(ficheEvaluationId);
 
     await this.dependencies.transaction.run(async () => {
-      await this.creerEtapeConsolidation({
-        auteurId,
-        ficheEvaluationId,
-        etapeEvaluation,
-      });
+      const existingConsolidation =
+        await this.getExistingConsolidation(ficheEvaluationId);
+
+      // eslint-disable-next-line unicorn/prefer-ternary
+      if (!existingConsolidation) {
+        await this.creerEtapeConsolidation({
+          auteurId,
+          ficheEvaluationId,
+          etapeAutoEvaluation,
+        });
+      } else {
+        await this.mettreAJourConsolidationExistante({
+          etapeAutoEvaluation,
+          consolidation: existingConsolidation,
+        });
+      }
+
       await this.setEtapeCouranteConsolidation(ficheEvaluationId);
+    });
+  }
+
+  private async mettreAJourConsolidationExistante({
+    etapeAutoEvaluation,
+    consolidation,
+  }: {
+    etapeAutoEvaluation: etape_evaluation & {
+      evaluations_objectifs: evaluation_objectif[];
+      evaluations_criteres: evaluation_critere[];
+    };
+    consolidation: etape_evaluation & {
+      evaluations_objectifs: evaluation_objectif[];
+      evaluations_criteres: evaluation_critere[];
+    };
+  }) {
+    for (const autoEvalObjectif of etapeAutoEvaluation.evaluations_objectifs) {
+      const consolidationObjectif = consolidation.evaluations_objectifs.find(
+        (evalObj) => evalObj.objectif_id === autoEvalObjectif.objectif_id,
+      );
+
+      if (!consolidationObjectif) continue;
+
+      if (consolidationObjectif.note == null) {
+        await this.prisma.evaluation_objectif.update({
+          where: { id: consolidationObjectif.id },
+          data: { note: autoEvalObjectif.note },
+        });
+      } else if (consolidationObjectif.note !== autoEvalObjectif.note) {
+        await this.prisma.evaluation_objectif.update({
+          where: { id: consolidationObjectif.id },
+          data: { date_traitement: null },
+        });
+      }
+    }
+
+    for (const autoEvalCritere of etapeAutoEvaluation.evaluations_criteres) {
+      const consolidationCritere = consolidation.evaluations_criteres.find(
+        (evalCrit) => evalCrit.critere_id === autoEvalCritere.critere_id,
+      );
+
+      if (!consolidationCritere) continue;
+
+      if (consolidationCritere.note == null) {
+        await this.prisma.evaluation_critere.update({
+          where: { id: consolidationCritere.id },
+          data: { note: autoEvalCritere.note },
+        });
+      } else if (consolidationCritere.note !== autoEvalCritere.note) {
+        await this.prisma.evaluation_critere.update({
+          where: { id: consolidationCritere.id },
+          data: { date_traitement: null },
+        });
+      }
+    }
+  }
+
+  private getExistingConsolidation(ficheEvaluationId: string) {
+    return this.prisma.etape_evaluation.findFirst({
+      where: {
+        fiche_evaluation_id: ficheEvaluationId,
+        type: $Enums.etape_evaluation_enum.CONSOLIDATION,
+      },
+      include: {
+        evaluations_objectifs: true,
+        evaluations_criteres: true,
+      },
     });
   }
 
   private creerEtapeConsolidation({
     auteurId,
     ficheEvaluationId,
-    etapeEvaluation,
+    etapeAutoEvaluation,
   }: {
     auteurId: string;
     ficheEvaluationId: string;
-    etapeEvaluation: etape_evaluation & {
+    etapeAutoEvaluation: etape_evaluation & {
       evaluations_objectifs: evaluation_objectif[];
       evaluations_criteres: evaluation_critere[];
     };
@@ -47,22 +127,26 @@ export class SoumettreAutoEvaluationService {
         fiche_evaluation_id: ficheEvaluationId,
         type: $Enums.etape_evaluation_enum.CONSOLIDATION,
         evaluations_objectifs: {
-          create: etapeEvaluation.evaluations_objectifs.map((evaluation) => ({
-            id: randomUUID(),
-            objectif_id: evaluation.objectif_id,
-            auteur_id: auteurId,
-            note: evaluation.note,
-            commentaire: "",
-          })),
+          create: etapeAutoEvaluation.evaluations_objectifs.map(
+            (evaluation) => ({
+              id: randomUUID(),
+              objectif_id: evaluation.objectif_id,
+              auteur_id: auteurId,
+              note: evaluation.note,
+              commentaire: "",
+            }),
+          ),
         },
         evaluations_criteres: {
-          create: etapeEvaluation.evaluations_criteres.map((evaluation) => ({
-            id: randomUUID(),
-            critere_id: evaluation.critere_id,
-            auteur_id: auteurId,
-            note: evaluation.note,
-            commentaire: "",
-          })),
+          create: etapeAutoEvaluation.evaluations_criteres.map(
+            (evaluation) => ({
+              id: randomUUID(),
+              critere_id: evaluation.critere_id,
+              auteur_id: auteurId,
+              note: evaluation.note,
+              commentaire: "",
+            }),
+          ),
         },
       },
     });
@@ -75,7 +159,7 @@ export class SoumettreAutoEvaluationService {
     });
   }
 
-  private getEtapeEvaluation(ficheEvaluationId: string) {
+  private getEtapeAutoEvaluation(ficheEvaluationId: string) {
     return this.prisma.etape_evaluation.findFirstOrThrow({
       where: {
         type: $Enums.etape_evaluation_enum.AUTO_EVALUATION,

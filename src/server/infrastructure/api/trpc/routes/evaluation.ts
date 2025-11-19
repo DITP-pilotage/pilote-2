@@ -14,6 +14,7 @@ import { enregistrerEvaluationObjectifsCommandSchema } from "@/server/evaluation
 import { validerSaisieCriteresCommandSchema } from "@/server/evaluation/handlers/ValiderSaisieCriteresHandler";
 import { validerSaisieObjectifsCommandSchema } from "@/server/evaluation/handlers/ValiderSaisieObjectifsHandler";
 import { setTraitementEvaluationCommandSchema } from "@/server/evaluation/handlers/SetTraitementEvaluationHandler";
+import { retournerAutoEvaluationCommandSchema } from "@/server/evaluation/handlers/RetournerAutoEvaluationHandler";
 
 export const evaluationRouter = créerRouteurTRPC({
   getDroitsPiloteEval: procédureProtégée.query(async ({ ctx }) => {
@@ -232,6 +233,23 @@ export const evaluationRouter = créerRouteurTRPC({
 
       await getContainer("piloteEval")
         .resolve("setTraitementEvaluationHandler")
+        .execute(input);
+    }),
+
+  retournerAutoEvaluation: procédureProtégée
+    .input(retournerAutoEvaluationCommandSchema)
+    .mutation(async ({ input, ctx }) => {
+      const peutAccederPilotage = await getContainer("piloteEval")
+        .resolve("accesFicheEvaluationService")
+        .peutAccederEtapePilotage({
+          applicationsAccessibles: ctx.session.applicationsAccessibles,
+        });
+
+      if (!peutAccederPilotage)
+        throw new ForbiddenError("Accès refusé au pilotage");
+
+      await getContainer("piloteEval")
+        .resolve("retournerAutoEvaluationHandler")
         .execute(input);
     }),
 });
