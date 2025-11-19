@@ -8,14 +8,10 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { useCallback, useMemo, useState } from "react";
-import { $Enums } from "@prisma/client";
 import pick from "lodash.pick";
-import { clsxm } from "@/utils/clsxm";
 import { TableauEvaluationRow } from "@/components/Evaluation/TableauEvaluation";
 import { Critere, Rattachement } from "@/server/evaluation/queries/types";
-import { LigneEtapeEvaluation } from "@/components/Evaluation/LigneEtapeEvaluation";
-import { BoutonAfficherFicheCadrage } from "@/components/Evaluation/BoutonAfficherFicheCadrage";
-import { BoutonTraitementEvaluation } from "@/components/Evaluation/BoutonTraitementEvaluation";
+import { CelluleEvaluation } from "@/components/Evaluation/CelluleEvaluation";
 
 const columnHelper = createColumnHelper<TableauEvaluationRow>();
 
@@ -102,128 +98,13 @@ export const useTableauEvaluation = ({
       columnHelper.accessor("id", {
         id: "id",
         header: "Évaluation",
-        cell: (info) => {
-          const currentGrouping = info.table.getState().grouping[0];
-          const row = info.row;
-          const commentaireName =
-            info.row.original.type === "objectif"
-              ? (`fichesEvaluation.${info.row.original.ficheEvaluationId}.objectifs.${info.row.original.id}.commentaire` as const)
-              : (`fichesEvaluation.${info.row.original.ficheEvaluationId}.criteres.${info.row.original.id}.commentaire` as const);
-          const noteName =
-            info.row.original.type === "objectif"
-              ? (`fichesEvaluation.${info.row.original.ficheEvaluationId}.objectifs.${info.row.original.id}.note` as const)
-              : (`fichesEvaluation.${info.row.original.ficheEvaluationId}.criteres.${info.row.original.id}.note` as const);
-
+        cell: ({ table, row }) => {
+          const currentGrouping = table.getState().grouping[0];
           return (
-            <div className="space-y-4">
-              {(row.original.type === "objectif" ||
-                currentGrouping !== "critereId") && (
-                <div className="bg-gray-100 pb-2 border-b border-gray-200 -mx-4 px-4 pt-2 flex items-center justify-between gap-2 !mb-0">
-                  <div className="flex items-center gap-2">
-                    <span
-                      className={clsxm(
-                        "text-xs px-2 py-1.5 rounded-md capitalize font-medium",
-                        {
-                          "bg-blue-100 text-blue-600":
-                            row.original.type === "critere",
-                          "bg-green-100 text-green-600":
-                            row.original.type === "objectif",
-                        },
-                      )}
-                    >
-                      {row.original.type}
-                    </span>
-                    {row.original.libelle}
-                  </div>
-                  <div className="flex items-center gap-4">
-                    <BoutonAfficherFicheCadrage
-                      critereOuObjectif={
-                        row.original.type === "objectif"
-                          ? { type: "objectif", objectif: row.original }
-                          : {
-                              type: "critere",
-                              critere: getCritere(row.original.id),
-                            }
-                      }
-                    />
-                    <BoutonTraitementEvaluation
-                      dateTraitement={
-                        row.original.evaluations[0]?.dateTraitement ?? null
-                      }
-                      disabled={
-                        row.original.evaluations[0]?.evaluation.note == null ||
-                        row.original.rattachement.readOnly
-                      }
-                      evaluationId={row.original.evaluations[0]?.evaluation.id}
-                      typeEvaluation={
-                        row.original.type === "objectif"
-                          ? "OBJECTIF"
-                          : "MANIERE_DE_SERVIR"
-                      }
-                    />
-                  </div>
-                </div>
-              )}
-
-              <div className="divide-y divide-gray-200">
-                {row.original.evaluations.map((evalItem, index) => {
-                  const isEditable =
-                    index === 0 && !row.original.rattachement.readOnly;
-
-                  if (
-                    evalItem.etape === $Enums.etape_evaluation_enum.INSTRUCTION
-                  ) {
-                    return (
-                      <LigneEtapeEvaluation
-                        commentaire={evalItem.evaluation.commentaire}
-                        commentaireLabel="Commentaire d'instruction"
-                        commentaireName={commentaireName}
-                        isEditable={isEditable}
-                        key={evalItem.etape}
-                        note={evalItem.evaluation.note}
-                        noteLabel="Note d'instruction"
-                        noteName={noteName}
-                        onAutosave={onAutosave}
-                      />
-                    );
-                  } else if (
-                    evalItem.etape ===
-                    $Enums.etape_evaluation_enum.CONSOLIDATION
-                  ) {
-                    return (
-                      <LigneEtapeEvaluation
-                        commentaire={evalItem.evaluation.commentaire}
-                        commentaireLabel="Commentaire de consolidation"
-                        commentaireName={commentaireName}
-                        isEditable={isEditable}
-                        key={evalItem.etape}
-                        note={evalItem.evaluation.note}
-                        noteLabel="Note de consolidation"
-                        noteName={noteName}
-                        onAutosave={onAutosave}
-                      />
-                    );
-                  } else if (
-                    evalItem.etape ===
-                    $Enums.etape_evaluation_enum.AUTO_EVALUATION
-                  ) {
-                    return (
-                      <LigneEtapeEvaluation
-                        commentaire={evalItem.evaluation.commentaire}
-                        commentaireLabel="Commentaire de l'auto évalué"
-                        commentaireName={commentaireName}
-                        isEditable={false}
-                        key={evalItem.etape}
-                        note={evalItem.evaluation.note}
-                        noteLabel="Note auto-évaluation"
-                        noteName={noteName}
-                      />
-                    );
-                  }
-                  return null;
-                })}
-              </div>
-            </div>
+            <CelluleEvaluation
+              currentGrouping={currentGrouping}
+              ligne={row.original}
+            />
           );
         },
         enableGrouping: false,
