@@ -53,12 +53,14 @@ export class SetTraitementEvaluationHandler {
         throw new Error("Évaluation non trouvée");
       }
 
+      const etapeCourante =
+        evaluation.etape_evaluation.fiche_evaluation.etape_courante;
       if (
-        evaluation.etape_evaluation.fiche_evaluation.etape_courante !==
-        $Enums.etape_evaluation_enum.CONSOLIDATION
+        etapeCourante !== $Enums.etape_evaluation_enum.CONSOLIDATION &&
+        etapeCourante !== $Enums.etape_evaluation_enum.INSTRUCTION
       ) {
         throw new Error(
-          "La fiche d'évaluation doit être en état CONSOLIDATION",
+          "La fiche d'évaluation doit être en état CONSOLIDATION ou INSTRUCTION",
         );
       }
 

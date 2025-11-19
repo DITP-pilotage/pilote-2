@@ -347,7 +347,89 @@ describe("SetTraitementEvaluationHandler", () => {
       });
     });
 
-    it("doit échouer si la fiche n'est pas en état CONSOLIDATION", async () => {
+    it("doit définir date_traitement quand la fiche est en état INSTRUCTION", async () => {
+      const rattachementCode = "REG-TRAITEMENT-08";
+      const ficheEvaluationId = "a1b2c3d4-e5f6-7890-abcd-888888888888";
+      const etapeEvaluationId = "b1c2d3e4-f5a6-8901-bcde-888888888888";
+      const evaluationObjectifId = "c1d2e3f4-a5b6-7890-cdef-888888888888";
+      const utilisateurId = "d1e2f3a4-b5c6-8901-def1-888888888888";
+      const objectifId = "e1f2a3b4-c5d6-7890-ef12-888888888888";
+
+      await prisma.utilisateur.create({
+        data: {
+          id: utilisateurId,
+          nom: "Doe",
+          prenom: "Instruction",
+          email: "instruction.doe@example.com",
+          fonction: "Administrateur",
+          profilCode: ProfilEnum.DITP_ADMIN,
+          date_creation: new Date(),
+        },
+      });
+
+      await prisma.referentiel_rattachement.create({
+        data: {
+          code: rattachementCode,
+          libelle: "Rattachement traitement 8",
+          groupe: rattachementCode,
+          ordre: 1,
+        },
+      });
+
+      await prisma.referentiel_objectif.create({
+        data: {
+          id: objectifId,
+          libelle: "Objectif 8",
+          descriptif: "Description objectif 8",
+          jalon: 2025,
+          rattachement_code: rattachementCode,
+        },
+      });
+
+      await prisma.fiche_evaluation.create({
+        data: {
+          id: ficheEvaluationId,
+          jalon: 2025,
+          etape_courante: $Enums.etape_evaluation_enum.INSTRUCTION,
+          rattachement_code: rattachementCode,
+        },
+      });
+
+      await prisma.etape_evaluation.create({
+        data: {
+          id: etapeEvaluationId,
+          fiche_evaluation_id: ficheEvaluationId,
+          type: $Enums.etape_evaluation_enum.INSTRUCTION,
+          read_only: false,
+        },
+      });
+
+      await prisma.evaluation_objectif.create({
+        data: {
+          id: evaluationObjectifId,
+          etape_evaluation_id: etapeEvaluationId,
+          objectif_id: objectifId,
+          auteur_id: utilisateurId,
+          note: 3,
+          commentaire: "Commentaire test",
+          date_traitement: null,
+        },
+      });
+
+      await handler.execute({
+        evaluationId: evaluationObjectifId,
+        typeEvaluation: "OBJECTIF",
+        statut: "TRAITEE",
+      });
+
+      const evaluationUpdated = await prisma.evaluation_objectif.findUnique({
+        where: { id: evaluationObjectifId },
+      });
+
+      expect(evaluationUpdated?.date_traitement).toBeInstanceOf(Date);
+    });
+
+    it("doit échouer si la fiche n'est pas en état CONSOLIDATION ou INSTRUCTION", async () => {
       const rattachementCode = "REG-TRAITEMENT-05";
       const ficheEvaluationId = "a1b2c3d4-e5f6-7890-abcd-555555555555";
       const etapeEvaluationId = "b1c2d3e4-f5a6-8901-bcde-555555555555";
@@ -423,7 +505,7 @@ describe("SetTraitementEvaluationHandler", () => {
           statut: "TRAITEE",
         }),
       ).rejects.toThrow(
-        "La fiche d'évaluation doit être en état CONSOLIDATION",
+        "La fiche d'évaluation doit être en état CONSOLIDATION ou INSTRUCTION",
       );
     });
 
