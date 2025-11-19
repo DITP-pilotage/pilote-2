@@ -13,7 +13,10 @@ import {
 import { useTableauEvaluation } from "@/components/Evaluation/useTableauEvaluation";
 import { LayoutFicheCadrage } from "@/components/Evaluation/LayoutFicheCadrage";
 import { BoutonAfficherFicheCadrage } from "@/components/Evaluation/BoutonAfficherFicheCadrage";
-import { CriteresProvider, useCriteres } from "@/components/Evaluation/context";
+import {
+  CriteresProvider,
+  useCriteres,
+} from "@/components/Evaluation/CriteresProvider";
 import {
   FormValues,
   getFichesEvaluationParDefaut,

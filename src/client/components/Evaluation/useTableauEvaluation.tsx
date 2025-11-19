@@ -12,7 +12,7 @@ import pick from "lodash.pick";
 import { TableauEvaluationRow } from "@/components/Evaluation/TableauEvaluation";
 import { Rattachement } from "@/server/evaluation/queries/types";
 import { CelluleEvaluation } from "@/components/Evaluation/CelluleEvaluation";
-import { useGetCritere } from "@/components/Evaluation/context";
+import { useGetCritere } from "@/components/Evaluation/CriteresProvider";
 
 const columnHelper = createColumnHelper<TableauEvaluationRow>();
 

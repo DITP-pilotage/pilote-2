@@ -5,7 +5,7 @@ import { clsxm } from "@/utils/clsxm";
 import { BoutonAfficherFicheCadrage } from "@/components/Evaluation/BoutonAfficherFicheCadrage";
 import { BoutonTraitementEvaluation } from "@/components/Evaluation/BoutonTraitementEvaluation";
 import { LigneEtapeEvaluation } from "@/components/Evaluation/LigneEtapeEvaluation";
-import { useGetCritere } from "@/components/Evaluation/context";
+import { useGetCritere } from "@/components/Evaluation/CriteresProvider";
 
 export const CelluleEvaluation = ({
   ligne,
