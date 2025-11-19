@@ -1,5 +1,6 @@
 import { $Enums } from "@prisma/client";
 import { clsxm } from "@/utils/clsxm";
+import { LigneEnteteAvancementCompletionEvaluation } from "@/components/Evaluation/ListeAutoEvaluation/LigneEnteteAvancementCompletionEvaluation";
 import { BaseCardEvaluation } from "./BaseCardEvaluation";
 
 type FicheEvaluation = {
@@ -56,52 +57,18 @@ export const ListeAutoEvaluations = ({
                 {formatterTitreEvaluation(ficheEvaluation.rattachement)}
               </h2>
               <ul>
-                {ficheEvaluation.objectifsValides ? (
-                  <li className="!text-primary">
-                    <b>Objectifs individuels</b> : votre auto-évaluation a été
-                    transmise
-                  </li>
-                ) : (
-                  <li className="!text-pilote-yellow">
-                    <b>Objectifs individuels</b> : 
-                    {ficheEvaluation.objectifs.nombreNotes ===
-                    ficheEvaluation.objectifs.nombreTotal ? (
-                      <>
-                        votre auto-évaluation est complète et en attente d'être
-                        transmise
-                      </>
-                    ) : (
-                      <>
-                        vous avez auto-évalué 
-                        {ficheEvaluation.objectifs.nombreNotes} objectif(s) sur 
-                        {ficheEvaluation.objectifs.nombreTotal} 
-                      </>
-                    )}
-                  </li>
-                )}
-                {ficheEvaluation.criteresValides ? (
-                  <li className="!text-primary">
-                    <b>Manière de servir</b> : votre auto-évaluation a été
-                    transmise
-                  </li>
-                ) : (
-                  <li className="!text-pilote-yellow">
-                    <b>Manière de servir</b> : 
-                    {ficheEvaluation.criteres.nombreNotes ===
-                    ficheEvaluation.criteres.nombreTotal ? (
-                      <>
-                        votre auto-évaluation est complète et en attente d'être
-                        transmise
-                      </>
-                    ) : (
-                      <>
-                        vous avez auto-évalué 
-                        {ficheEvaluation.criteres.nombreNotes} axes(s) sur 
-                        {ficheEvaluation.criteres.nombreTotal}
-                      </>
-                    )}
-                  </li>
-                )}
+                <LigneEnteteAvancementCompletionEvaluation
+                  avancementCompletion={ficheEvaluation.objectifs}
+                  categorie="Objectifs individuelle"
+                  denomination="objectif"
+                  estValide={ficheEvaluation.objectifsValides}
+                />
+                <LigneEnteteAvancementCompletionEvaluation
+                  avancementCompletion={ficheEvaluation.criteres}
+                  categorie="Manière de service"
+                  denomination="axe"
+                  estValide={ficheEvaluation.criteresValides}
+                />
               </ul>
             </header>
 
