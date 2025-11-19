@@ -81,7 +81,7 @@ export const InnerTableauEvaluation = memo(function TableauEvaluation({
   const handleAutosave = useCallback(async () => {
     const isValid = await form.trigger();
     if (isValid) {
-      await form.handleSubmit((values) => {
+      await form.handleSubmit(async (values) => {
         return onEnregistrer(values, false);
       })();
     }

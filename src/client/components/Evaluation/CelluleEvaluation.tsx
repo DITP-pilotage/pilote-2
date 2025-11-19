@@ -6,6 +6,7 @@ import { BoutonAfficherFicheCadrage } from "@/components/Evaluation/BoutonAffich
 import { BoutonTraitementEvaluation } from "@/components/Evaluation/BoutonTraitementEvaluation";
 import { LigneEtapeEvaluation } from "@/components/Evaluation/LigneEtapeEvaluation";
 import { useGetCritere } from "@/components/Evaluation/CriteresProvider";
+import { useFormulaireEvaluation } from "@/components/Evaluation/form";
 
 export const CelluleEvaluation = ({
   ligne,
@@ -26,6 +27,7 @@ export const CelluleEvaluation = ({
     ligne.type === "objectif"
       ? (`fichesEvaluation.${ligne.ficheEvaluationId}.objectifs.${ligne.id}.note` as const)
       : (`fichesEvaluation.${ligne.ficheEvaluationId}.criteres.${ligne.id}.note` as const);
+  const note = useFormulaireEvaluation().watch(noteName);
 
   return (
     <div className="space-y-4">
@@ -59,7 +61,7 @@ export const CelluleEvaluation = ({
             <BoutonTraitementEvaluation
               dateTraitement={ligne.evaluations[0]?.dateTraitement ?? null}
               disabled={
-                ligne.evaluations[0]?.evaluation.note == null ||
+                note == null ||
                 ligne.rattachement.readOnly ||
                 !formState.isValid
               }
