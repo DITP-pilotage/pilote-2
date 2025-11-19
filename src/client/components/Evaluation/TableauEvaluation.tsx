@@ -2,7 +2,7 @@ import { flexRender } from "@tanstack/react-table";
 import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { $Enums } from "@prisma/client";
-import { memo, ReactNode, useCallback } from "react";
+import { ComponentProps, memo, ReactNode, useCallback } from "react";
 import { Bouton } from "@/components/_commons/Bouton/Bouton";
 import { clsxm } from "@/utils/clsxm";
 import {
@@ -13,7 +13,7 @@ import {
 import { useTableauEvaluation } from "@/components/Evaluation/useTableauEvaluation";
 import { LayoutFicheCadrage } from "@/components/Evaluation/LayoutFicheCadrage";
 import { BoutonAfficherFicheCadrage } from "@/components/Evaluation/BoutonAfficherFicheCadrage";
-import { CriteresProvider } from "@/components/Evaluation/context";
+import { CriteresProvider, useCriteres } from "@/components/Evaluation/context";
 import {
   FormValues,
   getFichesEvaluationParDefaut,
@@ -58,15 +58,14 @@ export type TableauEvaluationRow =
       }>;
     };
 
-export const TableauEvaluation = memo(function TableauEvaluation({
+export const InnerTableauEvaluation = memo(function TableauEvaluation({
   rattachements,
-  criteres,
   onEnregistrer,
 }: {
   rattachements: Rattachement[];
-  criteres: Critere[];
   onEnregistrer: (values: FormValues, showToast: boolean) => Promise<void>;
 }) {
+  const criteres = useCriteres();
   const formSchema = useFormSchema(rattachements);
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -87,7 +86,6 @@ export const TableauEvaluation = memo(function TableauEvaluation({
 
   const { table } = useTableauEvaluation({
     rattachements,
-    criteres,
     onAutosave: handleAutosave,
   });
   const rows = table.getRowModel().rows;
@@ -236,3 +234,15 @@ export const TableauEvaluation = memo(function TableauEvaluation({
     </CriteresProvider>
   );
 });
+
+export const TableauEvaluation = (
+  props: ComponentProps<typeof InnerTableauEvaluation> & {
+    criteres: Critere[];
+  },
+) => {
+  return (
+    <CriteresProvider criteres={props.criteres}>
+      <InnerTableauEvaluation {...props} />
+    </CriteresProvider>
+  );
+};

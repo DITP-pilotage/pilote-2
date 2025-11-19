@@ -7,32 +7,23 @@ import {
   getGroupedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { useCallback, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import pick from "lodash.pick";
 import { TableauEvaluationRow } from "@/components/Evaluation/TableauEvaluation";
-import { Critere, Rattachement } from "@/server/evaluation/queries/types";
+import { Rattachement } from "@/server/evaluation/queries/types";
 import { CelluleEvaluation } from "@/components/Evaluation/CelluleEvaluation";
+import { useGetCritere } from "@/components/Evaluation/context";
 
 const columnHelper = createColumnHelper<TableauEvaluationRow>();
 
 export const useTableauEvaluation = ({
   rattachements,
-  criteres,
   onAutosave,
 }: {
   rattachements: Rattachement[];
-  criteres: Critere[];
-  onAutosave?: () => void;
+  onAutosave: () => void;
 }) => {
-  const getCritere = useCallback(
-    (critereId: string) => {
-      const critereCible = criteres.find((critere) => critere.id === critereId);
-      if (critereCible == null)
-        throw new Error(`Critere introuvable: ${critereId}`);
-      return critereCible;
-    },
-    [criteres],
-  );
+  const getCritere = useGetCritere();
   const [grouping, setGrouping] = useState<string[]>(["rattachementCode"]);
   const data = useMemo<TableauEvaluationRow[]>(() => {
     const rows: TableauEvaluationRow[] = [];
@@ -104,6 +95,7 @@ export const useTableauEvaluation = ({
             <CelluleEvaluation
               currentGrouping={currentGrouping}
               ligne={row.original}
+              onAutosave={onAutosave}
             />
           );
         },
@@ -119,9 +111,7 @@ export const useTableauEvaluation = ({
           filter: {
             label: "Filtrer par critère",
             labelToutesLesOptions: "Tous les critères",
-            getValueLabel: (value) =>
-              criteres.find((critere) => critere.id === value)?.libelle ??
-              value,
+            getValueLabel: (value) => getCritere(value)?.libelle ?? value,
           },
           grouping: {
             label: "Critère",
@@ -130,7 +120,7 @@ export const useTableauEvaluation = ({
         getGroupingValue: (row) => (row.type === "critere" ? row.id : null),
       }),
     ],
-    [rattachements, criteres],
+    [rattachements, onAutosave, getCritere],
   );
 
   const table = useReactTable({

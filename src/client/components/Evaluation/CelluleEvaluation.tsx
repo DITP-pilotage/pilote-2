@@ -14,7 +14,7 @@ export const CelluleEvaluation = ({
 }: {
   ligne: TableauEvaluationRow;
   currentGrouping: string;
-  onAutosave?: () => void;
+  onAutosave: () => void;
 }) => {
   const formState = useFormState();
   const getCritere = useGetCritere();

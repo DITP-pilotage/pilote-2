@@ -51,23 +51,30 @@ export const BoutonTraitementEvaluation = ({
   return (
     <button
       aria-pressed={dateTraitement != null}
-      className={clsxm(
-        "rounded-full !p-0.5 !border-2 w-5 h-5 flex items-center justify-center",
-        {
-          "!border-green-600 !text-green-700 !bg-green-50 hover:bg-green-200":
-            complete,
-          "!border-gray-400 text-gray-400 !bg-white hover:bg-gray-100":
-            !complete,
-          "cursor-not-allowed !opacity-50": disabled,
-        },
-      )}
+      className={clsxm(" inline-flex items-center gap-2 justify-end", {
+        "cursor-not-allowed !opacity-50": disabled,
+      })}
       disabled={setTraitement.isLoading || disabled}
       onClick={handleClick}
       type="button"
     >
-      {complete ? (
-        <Icone className="text-current" icone={CheckLineIcon} />
-      ) : null}
+      <span>{complete ? "Traité" : "Non traité"}</span>
+
+      <span
+        className={clsxm(
+          "rounded-full !p-0.5 !border-2 w-5 h-5 flex items-center justify-center",
+          {
+            "!border-green-600 !text-green-700 !bg-green-50 hover:bg-green-200":
+              complete,
+            "!border-gray-400 text-gray-400 !bg-white hover:bg-gray-100":
+              !complete,
+          },
+        )}
+      >
+        {complete ? (
+          <Icone className="text-current" icone={CheckLineIcon} />
+        ) : null}
+      </span>
     </button>
   );
 };
