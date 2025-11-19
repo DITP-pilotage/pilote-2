@@ -21,7 +21,9 @@ export const getServerSideProps = async ({
 
   const featureFlipping = configurationFeatureFlip();
 
-  const peutAccederEtapeConsolidation = await getContainer("piloteEval")
+  const container = getContainer("piloteEval");
+
+  const peutAccederEtapeConsolidation = await container
     .resolve("accesFicheEvaluationService")
     .peutAccederEtapeAppreciation({
       utilisateurId: session.user.id,
@@ -41,8 +43,14 @@ export const getServerSideProps = async ({
     };
   }
 
+  const fichesParPhase = await container
+    .resolve("listerFichesEvaluationParPhaseQuery")
+    .run({ utilisateurId: session.user.id });
+
   return {
-    props: {},
+    props: {
+      fichesParPhase,
+    },
   };
 };
 
