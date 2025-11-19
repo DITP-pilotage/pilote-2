@@ -76,14 +76,14 @@ export const ListeAutoEvaluations = ({
                 <LigneEnteteAvancementCompletionEvaluation
                   avancementCompletion={ficheEvaluation.objectifs}
                   categorie="Objectifs individuelle"
-                  denomination="objectif"
                   estValide={ficheEvaluation.objectifsValides}
+                  texteCibleCompletion="objectif"
                 />
                 <LigneEnteteAvancementCompletionEvaluation
                   avancementCompletion={ficheEvaluation.criteres}
                   categorie="Manière de service"
-                  denomination="axe"
                   estValide={ficheEvaluation.criteresValides}
+                  texteCibleCompletion="axe"
                 />
               </ul>
             </header>
