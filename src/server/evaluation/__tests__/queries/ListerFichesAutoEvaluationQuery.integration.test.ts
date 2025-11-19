@@ -107,6 +107,8 @@ describe("ListerFichesAutoEvaluationQuery", () => {
       expect(result).toContainEqual({
         id: ficheEvaluation1Id,
         etapeCourante: "AUTO_EVALUATION",
+        objectifsValides: false,
+        criteresValides: false,
         rattachement: {
           code: rattachement1Code,
           libelle: "Rattachement 1",
@@ -126,6 +128,8 @@ describe("ListerFichesAutoEvaluationQuery", () => {
       expect(result).toContainEqual({
         id: ficheEvaluation2Id,
         etapeCourante: "CONSOLIDATION",
+        objectifsValides: false,
+        criteresValides: false,
         rattachement: {
           code: rattachement2Code,
           libelle: "Rattachement 2",
@@ -411,6 +415,8 @@ describe("ListerFichesAutoEvaluationQuery", () => {
       expect(result[0]).toEqual({
         id: ficheEvaluationId,
         etapeCourante: "AUTO_EVALUATION",
+        objectifsValides: false,
+        criteresValides: false,
         rattachement: {
           code: rattachementCode,
           libelle: "Rattachement avec note collective",
