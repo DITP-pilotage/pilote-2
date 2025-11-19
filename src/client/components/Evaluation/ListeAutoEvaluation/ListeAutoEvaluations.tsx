@@ -67,7 +67,7 @@ export const ListeAutoEvaluations = ({
     <div className="space-y-8">
       {fichesEvaluation.map((ficheEvaluation) => {
         return (
-          <div className="flex flex-column gap-2" key={ficheEvaluation.id}>
+          <div className="flex flex-col gap-2" key={ficheEvaluation.id}>
             <header>
               <h2 className="!text-2xl !text-primary !mb-0">
                 {formatterTitreEvaluation(ficheEvaluation.rattachement)}
@@ -75,13 +75,13 @@ export const ListeAutoEvaluations = ({
               <ul>
                 <LigneEnteteAvancementCompletionEvaluation
                   avancementCompletion={ficheEvaluation.objectifs}
-                  categorie="Objectifs individuelle"
+                  categorie="Objectifs individuels"
                   estValide={ficheEvaluation.objectifsValides}
                   texteCibleCompletion="objectif"
                 />
                 <LigneEnteteAvancementCompletionEvaluation
                   avancementCompletion={ficheEvaluation.criteres}
-                  categorie="Manière de service"
+                  categorie="Manière de servir"
                   estValide={ficheEvaluation.criteresValides}
                   texteCibleCompletion="axe"
                 />
