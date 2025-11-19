@@ -27,7 +27,7 @@ interface YamlColumn {
       pilote_create_mandatory: boolean;
       pilote_disp_dispDesc: boolean;
     };
-  }
+  };
 }
 
 interface YamlTable {
@@ -46,7 +46,8 @@ const convertirEnInformationMetadataIndicateur = (
   yamlColumn: YamlColumn,
 ): InformationMetadataIndicateur => {
   const acceptedValues: YamlAcceptedValue[] =
-    (yamlColumn.config.meta.pilote_edit_acceptedValues as YamlAcceptedValue[]) || [];
+    (yamlColumn.config.meta
+      .pilote_edit_acceptedValues as YamlAcceptedValue[]) || [];
   return InformationMetadataIndicateur.creerInformationMetadataIndicateur({
     name: yamlColumn.name,
     dataType: yamlColumn.data_type,
@@ -59,8 +60,10 @@ const convertirEnInformationMetadataIndicateur = (
       yamlColumn.config.meta.pilote_edit_regexViolationMessage,
     metaPiloteEditBoxType: yamlColumn.config.meta.pilote_edit_boxType,
     metaPiloteDefaultValue: yamlColumn.config.meta.pilote_create_defaultValue,
-    metaPiloteMandatory: yamlColumn.config.meta.pilote_create_mandatory || false,
-    metaPiloteDispDispDesc: yamlColumn.config.meta.pilote_disp_dispDesc || false,
+    metaPiloteMandatory:
+      yamlColumn.config.meta.pilote_create_mandatory || false,
+    metaPiloteDispDispDesc:
+      yamlColumn.config.meta.pilote_disp_dispDesc || false,
     acceptedValues: acceptedValues.map((acceptedValue) =>
       AcceptedValue.créerAcceptedValue({
         orderId: acceptedValue.order_id,
