@@ -318,5 +318,115 @@ describe("PasserALaConsolidationHandler", () => {
 
       expect(etapesConsolidation).toHaveLength(2);
     });
+
+    it("ne doit pas recréer une étape CONSOLIDATION si elle existe déjà", async () => {
+      // Given - fiche qui est revenue en AUTO_EVALUATION après avoir été en CONSOLIDATION
+      const rattachementCode = "REG-504";
+      const ficheEvaluationId = "f8a9b0c1-2d3e-4f5a-6b7c-8d9e0f1a2b3c";
+      const etapeAutoEvaluationId = "a9b0c1d2-3e4f-5a6b-7c8d-9e0f1a2b3c4d";
+      const existingConsolidationId = "b0c1d2e3-4f5a-6b7c-8d9e-0f1a2b3c4d5e";
+      const utilisateurId = "c1d2e3f4-5a6b-7c8d-9e0f-1a2b3c4d5e6f";
+      const objectifId = "d2e3f4a5-6b7c-8d9e-0f1a-2b3c4d5e6f7a";
+      const existingEvalObjectifId = "e3f4a5b6-7c8d-9e0f-1a2b-3c4d5e6f7a8b";
+
+      await prisma.utilisateur.create({
+        data: {
+          id: utilisateurId,
+          email: "test.consolidation.existing@example.com",
+          nom: "Consolidation",
+          prenom: "Existing",
+          date_creation: new Date(),
+          profilCode: "DITP_ADMIN",
+        },
+      });
+
+      await prisma.referentiel_rattachement.create({
+        data: {
+          code: rattachementCode,
+          groupe: rattachementCode,
+          ordre: 1,
+          libelle: "Rattachement existing consolidation",
+          objectifs: {
+            create: {
+              id: objectifId,
+              libelle: "Objectif existing",
+              descriptif: "Description",
+              jalon: 2025,
+            },
+          },
+        },
+      });
+
+      await prisma.fiche_evaluation.create({
+        data: {
+          id: ficheEvaluationId,
+          jalon: 2025,
+          etape_courante: "AUTO_EVALUATION",
+          rattachement_code: rattachementCode,
+          etape_evaluations: {
+            create: [
+              {
+                id: etapeAutoEvaluationId,
+                type: "AUTO_EVALUATION",
+                evaluations_objectifs: {
+                  create: {
+                    id: "f4a5b6c7-8d9e-0f1a-2b3c-4d5e6f7a8b9c",
+                    objectif_id: objectifId,
+                    auteur_id: utilisateurId,
+                    note: 5,
+                    commentaire: "Auto-évalué",
+                  },
+                },
+              },
+              {
+                id: existingConsolidationId,
+                type: "CONSOLIDATION",
+                evaluations_objectifs: {
+                  create: {
+                    id: existingEvalObjectifId,
+                    objectif_id: objectifId,
+                    auteur_id: utilisateurId,
+                    note: 4,
+                    commentaire: "Consolidé précédemment",
+                  },
+                },
+              },
+            ],
+          },
+        },
+      });
+
+      // When
+      await handler.execute(
+        { ficheEvaluationIds: [ficheEvaluationId] },
+        utilisateurId,
+      );
+
+      // Then - should only have one CONSOLIDATION step (the existing one)
+      const etapesConsolidation = await prisma.etape_evaluation.findMany({
+        where: {
+          fiche_evaluation_id: ficheEvaluationId,
+          type: "CONSOLIDATION",
+        },
+        include: {
+          evaluations_objectifs: true,
+        },
+      });
+
+      expect(etapesConsolidation).toHaveLength(1);
+      expect(etapesConsolidation[0].id).toBe(existingConsolidationId);
+      expect(etapesConsolidation[0].evaluations_objectifs).toEqual([
+        expect.objectContaining({
+          id: existingEvalObjectifId,
+          note: 4,
+          commentaire: "Consolidé précédemment",
+        }),
+      ]);
+
+      const ficheEvaluation = await prisma.fiche_evaluation.findUniqueOrThrow({
+        where: { id: ficheEvaluationId },
+      });
+      expect(ficheEvaluation.etape_courante).toBe("CONSOLIDATION");
+    });
   });
 });

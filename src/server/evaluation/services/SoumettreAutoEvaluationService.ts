@@ -20,12 +20,27 @@ export class SoumettreAutoEvaluationService {
     const etapeEvaluation = await this.getEtapeEvaluation(ficheEvaluationId);
 
     await this.dependencies.transaction.run(async () => {
-      await this.creerEtapeConsolidation({
-        auteurId,
-        ficheEvaluationId,
-        etapeEvaluation,
-      });
+      const existingConsolidation =
+        await this.getExistingConsolidation(ficheEvaluationId);
+
+      if (!existingConsolidation) {
+        await this.creerEtapeConsolidation({
+          auteurId,
+          ficheEvaluationId,
+          etapeEvaluation,
+        });
+      }
+
       await this.setEtapeCouranteConsolidation(ficheEvaluationId);
+    });
+  }
+
+  private getExistingConsolidation(ficheEvaluationId: string) {
+    return this.prisma.etape_evaluation.findFirst({
+      where: {
+        fiche_evaluation_id: ficheEvaluationId,
+        type: $Enums.etape_evaluation_enum.CONSOLIDATION,
+      },
     });
   }
 

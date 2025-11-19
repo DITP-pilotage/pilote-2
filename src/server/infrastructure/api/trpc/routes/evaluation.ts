@@ -14,6 +14,7 @@ import { enregistrerEvaluationObjectifsCommandSchema } from "@/server/evaluation
 import { validerSaisieCriteresCommandSchema } from "@/server/evaluation/handlers/ValiderSaisieCriteresHandler";
 import { validerSaisieObjectifsCommandSchema } from "@/server/evaluation/handlers/ValiderSaisieObjectifsHandler";
 import { setTraitementEvaluationCommandSchema } from "@/server/evaluation/handlers/SetTraitementEvaluationHandler";
+import { retournerAutoEvaluationCommandSchema } from "@/server/evaluation/handlers/RetournerAutoEvaluationHandler";
 
 export const evaluationRouter = créerRouteurTRPC({
   getDroitsPiloteEval: procédureProtégée.query(async ({ ctx }) => {
@@ -232,6 +233,23 @@ export const evaluationRouter = créerRouteurTRPC({
 
       await getContainer("piloteEval")
         .resolve("setTraitementEvaluationHandler")
+        .execute(input);
+    }),
+
+  retournerAutoEvaluation: procédureProtégée
+    .input(retournerAutoEvaluationCommandSchema)
+    .mutation(async ({ input, ctx }) => {
+      const peutAccederConsolidation = await getContainer("piloteEval")
+        .resolve("accesFicheEvaluationService")
+        .peutAccederEtapeConsolidation({
+          utilisateurId: ctx.session.user.id,
+        });
+
+      if (!peutAccederConsolidation)
+        throw new ForbiddenError("Accès refusé à la consolidation");
+
+      await getContainer("piloteEval")
+        .resolve("retournerAutoEvaluationHandler")
         .execute(input);
     }),
 });
