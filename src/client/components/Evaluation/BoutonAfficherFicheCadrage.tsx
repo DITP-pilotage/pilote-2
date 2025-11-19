@@ -11,6 +11,7 @@ export const BoutonAfficherFicheCadrage = ({
     <UseSetCritereOuObjectif>
       {(setCritereOuObjectif) => (
         <Bouton
+          className="whitespace-nowrap"
           label="Fiche de cadrage"
           onClick={() => setCritereOuObjectif(critereOuObjectif)}
           size="sm"

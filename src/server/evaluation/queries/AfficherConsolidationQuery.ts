@@ -2,7 +2,12 @@ import { $Enums } from "@prisma/client";
 import pick from "lodash.pick";
 import { randomUUID } from "node:crypto";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
-import { Critere, Rattachement } from "@/server/evaluation/queries/types";
+import {
+  Critere,
+  Evaluation,
+  Objectif,
+  Rattachement,
+} from "@/server/evaluation/queries/types";
 
 type AfficherConsolidationQueryResult = {
   criteres: Critere[];
@@ -54,12 +59,20 @@ export class AfficherConsolidationQuery {
                 {
                   etape: $Enums.etape_evaluation_enum.CONSOLIDATION,
                   evaluation: this.formatEvaluation(consolidationEvaluation),
+                  dateTraitement: consolidationEvaluation?.date_traitement
+                    ? new Date(
+                        consolidationEvaluation.date_traitement,
+                      ).toISOString()
+                    : null,
                 },
                 {
                   etape: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
                   evaluation: this.formatEvaluation(autoEvaluation),
+                  dateTraitement: autoEvaluation?.date_traitement
+                    ? new Date(autoEvaluation.date_traitement).toISOString()
+                    : null,
                 },
-              ],
+              ] satisfies Objectif["evaluations"],
             };
           },
         );
@@ -82,12 +95,20 @@ export class AfficherConsolidationQuery {
               {
                 etape: $Enums.etape_evaluation_enum.CONSOLIDATION,
                 evaluation: this.formatEvaluation(consolidationEvaluation),
+                dateTraitement: consolidationEvaluation?.date_traitement
+                  ? new Date(
+                      consolidationEvaluation.date_traitement,
+                    ).toISOString()
+                  : null,
               },
               {
                 etape: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
                 evaluation: this.formatEvaluation(autoEvaluation),
+                dateTraitement: autoEvaluation?.date_traitement
+                  ? new Date(autoEvaluation.date_traitement).toISOString()
+                  : null,
               },
-            ],
+            ] satisfies Rattachement["criteres"][number]["evaluations"],
           };
         });
 
@@ -167,6 +188,7 @@ export class AfficherConsolidationQuery {
         objectif_id: string;
         note: number | null;
         commentaire: string;
+        date_traitement: Date | null;
       }>;
     }>,
     objectifId: string,
@@ -187,6 +209,7 @@ export class AfficherConsolidationQuery {
         critere_id: string;
         note: number | null;
         commentaire: string;
+        date_traitement: Date | null;
       }>;
     }>,
     critereId: string,
@@ -200,9 +223,13 @@ export class AfficherConsolidationQuery {
 
   private formatEvaluation(
     evaluation:
-      | { id: string; note: number | null; commentaire: string }
+      | {
+          id: string;
+          note: number | null;
+          commentaire: string;
+        }
       | undefined,
-  ) {
+  ): Evaluation {
     return {
       id: evaluation?.id ?? randomUUID(),
       note: evaluation?.note ?? null,

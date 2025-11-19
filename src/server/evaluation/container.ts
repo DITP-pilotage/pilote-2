@@ -18,6 +18,7 @@ import { EnregistrerBrouillonAutoEvaluationObjectifsHandler } from "./handlers/E
 import { EnregistrerBrouillonAutoEvaluationCriteresHandler } from "./handlers/EnregistrerBrouillonAutoEvaluationCriteresHandler";
 import { ValiderSaisieCriteresHandler } from "./handlers/ValiderSaisieCriteresHandler";
 import { ValiderSaisieObjectifsHandler } from "./handlers/ValiderSaisieObjectifsHandler";
+import { SetTraitementEvaluationHandler } from "./handlers/SetTraitementEvaluationHandler";
 
 export type PiloteEvalDependencies = {
   afficherAutoEvaluation: AfficherAutoEvaluationQuery;
@@ -38,6 +39,7 @@ export type PiloteEvalDependencies = {
   modifierEtatFichesInstructionHandler: ModifierEtatFichesInstructionHandler;
   passerALaConsolidationHandler: PasserALaConsolidationHandler;
   passerALEtapeInstructionHandler: PasserALEtapeInstructionHandler;
+  setTraitementEvaluationHandler: SetTraitementEvaluationHandler;
 };
 
 export const getPiloteEvalContainer = (
@@ -76,5 +78,6 @@ export const getPiloteEvalContainer = (
     ),
     passerALaConsolidationHandler: asClass(PasserALaConsolidationHandler),
     passerALEtapeInstructionHandler: asClass(PasserALEtapeInstructionHandler),
+    setTraitementEvaluationHandler: asClass(SetTraitementEvaluationHandler),
   });
 };
