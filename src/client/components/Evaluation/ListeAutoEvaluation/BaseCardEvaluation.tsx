@@ -3,6 +3,7 @@ import { PropsWithChildren } from "react";
 import { Icone } from "@/components/_commons/Icone";
 import { ArrowLine1Icon } from "@/components/_commons/Icones/ArrowLine1Icon";
 import { clsxm } from "@/utils/clsxm";
+import { SubtractIcon } from "./SubtractIcon";
 
 interface BaseCardEvaluationProps {
   lien: string;
@@ -28,7 +29,23 @@ export const BaseCardEvaluation = ({
 }: PropsWithChildren<BaseCardEvaluationProps>) => {
   return (
     <Link className="block no-underline" href={lien}>
-      <section className="flex flex-col gap-4 h-full p-4 bg-white border border-gray-300 !border-b-4 !border-b-dsfr-blue-france-sun-113 rounded cursor-pointer transition-shadow hover:shadow-md">
+      <section className="relative flex flex-col gap-4 h-full p-4 bg-white border border-gray-300 !border-b-4 !border-b-dsfr-blue-france-sun-113 rounded cursor-pointer transition-shadow hover:shadow-md">
+        {statutCompletion ? (
+          <div className="absolute -top-1 right-0 flex items-center gap-1">
+            <span
+              className={clsxm("text-xs font-semibold", {
+                "text-pilote-yellow": statutCompletion === "NON_COMPLETE",
+                "text-primary": statutCompletion === "COMPLETER",
+              })}
+            >
+              {texteCompletion}
+            </span>
+            <SubtractIcon
+              className="w-8 h-16"
+              fill={statutCompletion === "NON_COMPLETE" ? "#F9B233" : "#000091"}
+            />
+          </div>
+        ) : null}
         <span className="w-fit px-2 py-1.5 text-xs text-blue-600 bg-blue-100 rounded-xl">
           {rattachement}
         </span>
