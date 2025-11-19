@@ -36,7 +36,7 @@ export const CelluleEvaluation = ({
           <div className="flex items-center gap-2">
             <span
               className={clsxm(
-                "text-xs px-2 py-1.5 rounded-md capitalize font-medium",
+                "whitespace-nowrap text-xs px-2 py-1.5 rounded-md capitalize font-medium",
                 {
                   "bg-blue-100 text-blue-600": ligne.type === "critere",
                   "bg-green-100 text-green-600": ligne.type === "objectif",

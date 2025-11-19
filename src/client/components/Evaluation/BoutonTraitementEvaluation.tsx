@@ -51,9 +51,12 @@ export const BoutonTraitementEvaluation = ({
   return (
     <button
       aria-pressed={dateTraitement != null}
-      className={clsxm(" inline-flex items-center gap-2 justify-end", {
-        "cursor-not-allowed !opacity-50": disabled,
-      })}
+      className={clsxm(
+        "whitespace-nowrap inline-flex items-center gap-2 justify-end",
+        {
+          "cursor-not-allowed !opacity-50": disabled,
+        },
+      )}
       disabled={setTraitement.isLoading || disabled}
       onClick={handleClick}
       type="button"
