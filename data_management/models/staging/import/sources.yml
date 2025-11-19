@@ -145,7 +145,45 @@ sources:
                 pilote_alias: "Typologie"
                 pilote_edit_isEditable: true
                 pilote_edit_acceptedValuesViolationMessage: "Veuillez choisir une typologie d'indicateur valide parmi: "
-                pilote_edit_acceptedValues: [{"order_id": 0, "value": "", "name": "Choisir une typologie", "desc": "Choisir une typologie"}, {"order_id": 1, "value": "IMPACT", "name": "Impact", "desc": "Indicateur d'impact"}, {"order_id": 2, "value": "DEPL", "name": "Déploiement", "desc": "Indicateur de déploiement"}, {"order_id": 3, "value": "CONTEXTE", "name": "De contexte", "desc": "Indicateur de contexte"}, {"order_id": 4, "value": "Q_SERV", "name": "De qualité de service", "desc": "Mesure la qualité du service rendu."}, {"order_id": 5, "value": "REBOND", "name": "Effets rebonds", "desc": "Effets rebonds engendrés par la mise en place du chantier"}]
+                pilote_edit_acceptedValues:
+                  [
+                    {
+                      "order_id": 0,
+                      "value": "",
+                      "name": "Choisir une typologie",
+                      "desc": "Choisir une typologie",
+                    },
+                    {
+                      "order_id": 1,
+                      "value": "IMPACT",
+                      "name": "Impact",
+                      "desc": "Indicateur d'impact",
+                    },
+                    {
+                      "order_id": 2,
+                      "value": "DEPL",
+                      "name": "Déploiement",
+                      "desc": "Indicateur de déploiement",
+                    },
+                    {
+                      "order_id": 3,
+                      "value": "CONTEXTE",
+                      "name": "De contexte",
+                      "desc": "Indicateur de contexte",
+                    },
+                    {
+                      "order_id": 4,
+                      "value": "Q_SERV",
+                      "name": "De qualité de service",
+                      "desc": "Mesure la qualité du service rendu.",
+                    },
+                    {
+                      "order_id": 5,
+                      "value": "REBOND",
+                      "name": "Effets rebonds",
+                      "desc": "Effets rebonds engendrés par la mise en place du chantier",
+                    },
+                  ]
                 pilote_disp_dispDesc: true
                 pilote_create_mandatory: true
                 pilote_create_defaultValue: ""
@@ -219,7 +257,33 @@ sources:
                 pilote_edit_isEditable: false
                 pilote_edit_boxType: text
                 pilote_edit_acceptedValuesViolationMessage: "Veuillez choisir des contraintes de saisie parmi: "
-                pilote_edit_acceptedValues: [{"order_id": 1, "value": "sans-contraintes.json", "name": "-", "desc": "Pas de contraintes particulières"}, {"order_id": 2, "value": "restrict-dept.json", "name": "Saisie départementale", "desc": "Saisie restreinte au niveau départemental"}, {"order_id": 3, "value": "restrict-reg.json", "name": "Saisie régionale", "desc": "Saisie restreinte au niveau régional"}, {"order_id": 4, "value": "restrict-0-100.json", "name": "Dans [0,100]", "desc": "Saisie entre 0 et 100."}]
+                pilote_edit_acceptedValues:
+                  [
+                    {
+                      "order_id": 1,
+                      "value": "sans-contraintes.json",
+                      "name": "-",
+                      "desc": "Pas de contraintes particulières",
+                    },
+                    {
+                      "order_id": 2,
+                      "value": "restrict-dept.json",
+                      "name": "Saisie départementale",
+                      "desc": "Saisie restreinte au niveau départemental",
+                    },
+                    {
+                      "order_id": 3,
+                      "value": "restrict-reg.json",
+                      "name": "Saisie régionale",
+                      "desc": "Saisie restreinte au niveau régional",
+                    },
+                    {
+                      "order_id": 4,
+                      "value": "restrict-0-100.json",
+                      "name": "Dans [0,100]",
+                      "desc": "Saisie entre 0 et 100.",
+                    },
+                  ]
                 pilote_create_mandatory: true
                 pilote_create_defaultValue: "sans-contraintes.json"
           - name: zg_applicable
@@ -423,7 +487,171 @@ sources:
                 pilote_edit_regexViolationMessage: "Le code de la ZG doit être au format 'ZG-XXX'"
                 pilote_edit_boxType: multi-select
                 pilote_disp_dispDesc: true
-                pilote_edit_acceptedValues: [{"order_id": 1, "value": "", "name": "Toutes zones", "desc": "Toutes zones"}, {"order_id": 2, "value": "ZG-002", "name": "Façades maritimes département", "desc": "Départements avec façade maritime"}, {"order_id": 3, "value": "ZG-003", "name": "Façades maritimes région", "desc": "Régions avec façade maritime"}, {"order_id": 4, "value": "ZG-004", "name": "ZFE département", "desc": "\tDépartements avec au moins une ZFE"}, {"order_id": 5, "value": "ZG-005", "name": "ZFE région", "desc": "\tRégions avec au moins une ZFE"}, {"order_id": 6, "value": "ZG-006", "name": "Façades maritimes hors OM", "desc": "Ensemble des territoires avec façade maritime hors Outre-Mer"}, {"order_id": 7, "value": "ZG-007", "name": "ZFE", "desc": "Territoires avec au moins une ZFE"}, {"order_id": 8, "value": "ZG-008", "name": "Ports CH-049", "desc": "Ports de la PPG « Verdir les ports et les flottes »"}, {"order_id": 9, "value": "ZG-009", "name": "Ports CH-059", "desc": "Ports de la PPG « Devenir leader de l'hydrogène décarboné »"}, {"order_id": 10, "value": "ZG-010", "name": "Façade maritime Méditerranée", "desc": "Territoires de la façade maritime méditerranéenne"}, {"order_id": 11, "value": "ZG-011", "name": "ANRU", "desc": "Territoires concernés par le programme Accélérer le renouvellement urbain des quartiers"}, {"order_id": 12, "value": "ZG-012", "name": "ACV", "desc": "Territoires concernés par le programme Action Coeur de Ville"}, {"order_id": 13, "value": "ZG-013", "name": "PVD", "desc": "Territoires concernés par le programme Petites Villes de Demain"}, {"order_id": 14, "value": "ZG-014", "name": "Outre-Mer", "desc": "DROM"}, {"order_id": 15, "value": "ZG-015", "name": "Façades maritimes dont OM", "desc": "Territoires avec façade maritime dont Outre-Mer"}, {"order_id": 16, "value": "ZG-016", "name": "Prisons", "desc": "Territoires concernés par le programme 15 000 places de prisons"}, {"order_id": 17, "value": "ZG-017", "name": "GUDA", "desc": "Territoires concernés par les GUDA"}, {"order_id": 18, "value": "ZG-018", "name": "Toutes zones sauf Mayotte", "desc": "Tous départements et régions Hexagone et OM, hors Mayotte"}, {"order_id": 19, "value": "ZG-019", "name": "Toutes zones métropole", "desc": "Tous départements et régions Hexagone"}, {"order_id": 20, "value": "ZG-020", "name": "50 sites + émetteurs", "desc": "Territoires des 50 sites industriels les plus émetteurs"}, {"order_id": 21, "value": "ZG-021", "name": "Force aux Frontières", "desc": "Territoires de la PPG « Force aux Frontières »"}, {"order_id": 22, "value": "ZG-022", "name": "Stationnement vélo sécurisé en gare", "desc": "Territoires de l'indicateur Places de stationnement vélo sécurisé en gare (IND-215) de la PPG « Amplifier le plan vélo »"}, {"order_id": 23, "value": "ZG-023", "name": "Industrie décarbonnée", "desc": "Régions de la PPG « Devenir la première grande économie décarbonée »"}, {"order_id": 24, "value": "ZG-024", "name": "Education prioritaire", "desc": "\tTerritoires contenant des écoles en Education Prioritaire (Cantal,Haute-Loire,Lot et Lozère n'ont pas de REP)"}, {"order_id": 25, "value": "ZG-025", "name": "Bon état écologique des cours d'eau", "desc": "Toutes zones sauf départements 09, 64, 75, 93 et DROM (pas de station de mesure)"}, {"order_id": 26, "value": "ZG-026", "name": "PCAET (CH-161)", "desc": "Toutes zones sauf Lozère"}, {"order_id": 27, "value": "ZG-027", "name": "Toutes zones sauf Corse", "desc": "Tous départements et régions sauf Corse"}]
+                pilote_edit_acceptedValues:
+                  [
+                    {
+                      "order_id": 1,
+                      "value": "",
+                      "name": "Toutes zones",
+                      "desc": "Toutes zones",
+                    },
+                    {
+                      "order_id": 2,
+                      "value": "ZG-002",
+                      "name": "Façades maritimes département",
+                      "desc": "Départements avec façade maritime",
+                    },
+                    {
+                      "order_id": 3,
+                      "value": "ZG-003",
+                      "name": "Façades maritimes région",
+                      "desc": "Régions avec façade maritime",
+                    },
+                    {
+                      "order_id": 4,
+                      "value": "ZG-004",
+                      "name": "ZFE département",
+                      "desc": "\tDépartements avec au moins une ZFE",
+                    },
+                    {
+                      "order_id": 5,
+                      "value": "ZG-005",
+                      "name": "ZFE région",
+                      "desc": "\tRégions avec au moins une ZFE",
+                    },
+                    {
+                      "order_id": 6,
+                      "value": "ZG-006",
+                      "name": "Façades maritimes hors OM",
+                      "desc": "Ensemble des territoires avec façade maritime hors Outre-Mer",
+                    },
+                    {
+                      "order_id": 7,
+                      "value": "ZG-007",
+                      "name": "ZFE",
+                      "desc": "Territoires avec au moins une ZFE",
+                    },
+                    {
+                      "order_id": 8,
+                      "value": "ZG-008",
+                      "name": "Ports CH-049",
+                      "desc": "Ports de la PPG « Verdir les ports et les flottes »",
+                    },
+                    {
+                      "order_id": 9,
+                      "value": "ZG-009",
+                      "name": "Ports CH-059",
+                      "desc": "Ports de la PPG « Devenir leader de l'hydrogène décarboné »",
+                    },
+                    {
+                      "order_id": 10,
+                      "value": "ZG-010",
+                      "name": "Façade maritime Méditerranée",
+                      "desc": "Territoires de la façade maritime méditerranéenne",
+                    },
+                    {
+                      "order_id": 11,
+                      "value": "ZG-011",
+                      "name": "ANRU",
+                      "desc": "Territoires concernés par le programme Accélérer le renouvellement urbain des quartiers",
+                    },
+                    {
+                      "order_id": 12,
+                      "value": "ZG-012",
+                      "name": "ACV",
+                      "desc": "Territoires concernés par le programme Action Coeur de Ville",
+                    },
+                    {
+                      "order_id": 13,
+                      "value": "ZG-013",
+                      "name": "PVD",
+                      "desc": "Territoires concernés par le programme Petites Villes de Demain",
+                    },
+                    {
+                      "order_id": 14,
+                      "value": "ZG-014",
+                      "name": "Outre-Mer",
+                      "desc": "DROM",
+                    },
+                    {
+                      "order_id": 15,
+                      "value": "ZG-015",
+                      "name": "Façades maritimes dont OM",
+                      "desc": "Territoires avec façade maritime dont Outre-Mer",
+                    },
+                    {
+                      "order_id": 16,
+                      "value": "ZG-016",
+                      "name": "Prisons",
+                      "desc": "Territoires concernés par le programme 15 000 places de prisons",
+                    },
+                    {
+                      "order_id": 17,
+                      "value": "ZG-017",
+                      "name": "GUDA",
+                      "desc": "Territoires concernés par les GUDA",
+                    },
+                    {
+                      "order_id": 18,
+                      "value": "ZG-018",
+                      "name": "Toutes zones sauf Mayotte",
+                      "desc": "Tous départements et régions Hexagone et OM, hors Mayotte",
+                    },
+                    {
+                      "order_id": 19,
+                      "value": "ZG-019",
+                      "name": "Toutes zones métropole",
+                      "desc": "Tous départements et régions Hexagone",
+                    },
+                    {
+                      "order_id": 20,
+                      "value": "ZG-020",
+                      "name": "50 sites + émetteurs",
+                      "desc": "Territoires des 50 sites industriels les plus émetteurs",
+                    },
+                    {
+                      "order_id": 21,
+                      "value": "ZG-021",
+                      "name": "Force aux Frontières",
+                      "desc": "Territoires de la PPG « Force aux Frontières »",
+                    },
+                    {
+                      "order_id": 22,
+                      "value": "ZG-022",
+                      "name": "Stationnement vélo sécurisé en gare",
+                      "desc": "Territoires de l'indicateur Places de stationnement vélo sécurisé en gare (IND-215) de la PPG « Amplifier le plan vélo »",
+                    },
+                    {
+                      "order_id": 23,
+                      "value": "ZG-023",
+                      "name": "Industrie décarbonnée",
+                      "desc": "Régions de la PPG « Devenir la première grande économie décarbonée »",
+                    },
+                    {
+                      "order_id": 24,
+                      "value": "ZG-024",
+                      "name": "Education prioritaire",
+                      "desc": "\tTerritoires contenant des écoles en Education Prioritaire (Cantal,Haute-Loire,Lot et Lozère n'ont pas de REP)",
+                    },
+                    {
+                      "order_id": 25,
+                      "value": "ZG-025",
+                      "name": "Bon état écologique des cours d'eau",
+                      "desc": "Toutes zones sauf départements 09, 64, 75, 93 et DROM (pas de station de mesure)",
+                    },
+                    {
+                      "order_id": 26,
+                      "value": "ZG-026",
+                      "name": "PCAET (CH-161)",
+                      "desc": "Toutes zones sauf Lozère",
+                    },
+                    {
+                      "order_id": 27,
+                      "value": "ZG-027",
+                      "name": "Toutes zones sauf Corse",
+                      "desc": "Tous départements et régions sauf Corse",
+                    },
+                  ]
                 pilote_create_mandatory: false
                 pilote_create_defaultValue: ""
 >>>>>>> 694c07318 ([PIL-990] Fix dbt yaml)
@@ -454,7 +682,27 @@ sources:
                 pilote_disp_dispDesc: true
                 pilote_create_defaultValue: "_"
                 pilote_disp_blocId: 2
-                pilote_edit_acceptedValues: [{"order_id": 1, "value": "_", "name": "Pas de saisie", "desc": "Pas de saisie attendue à cette maille"}, {"order_id": 2, "value": "user_input", "name": "Saisie utilisateur", "desc": "On attend que cette valeur soit saisie par l'utilisateur"}, {"order_id": 3, "value": "sub_indic", "name": "Sous-indicateur", "desc": ""}]
+                pilote_edit_acceptedValues:
+                  [
+                    {
+                      "order_id": 1,
+                      "value": "_",
+                      "name": "Pas de saisie",
+                      "desc": "Pas de saisie attendue à cette maille",
+                    },
+                    {
+                      "order_id": 2,
+                      "value": "user_input",
+                      "name": "Saisie utilisateur",
+                      "desc": "On attend que cette valeur soit saisie par l'utilisateur",
+                    },
+                    {
+                      "order_id": 3,
+                      "value": "sub_indic",
+                      "name": "Sous-indicateur",
+                      "desc": "",
+                    },
+                  ]
           - name: vi_dept_op
             data_type: text
             description: >
@@ -466,7 +714,27 @@ sources:
                 pilote_disp_dispDesc: true
                 pilote_create_defaultValue: "_"
                 pilote_disp_blocId: 2
-                pilote_edit_acceptedValues: [{"order_id": 1, "value": "_", "name": "Aucune", "desc": "Pas d'opération d'aggrégation"}, {"order_id": 2, "value": "sum", "name": "Somme", "desc": "Somme des valeurs des sous-indicateurs"}, {"order_id": 3, "value": "avg", "name": "Moyenne", "desc": "Moyenne des valeurs des sous-indicateurs"}]
+                pilote_edit_acceptedValues:
+                  [
+                    {
+                      "order_id": 1,
+                      "value": "_",
+                      "name": "Aucune",
+                      "desc": "Pas d'opération d'aggrégation",
+                    },
+                    {
+                      "order_id": 2,
+                      "value": "sum",
+                      "name": "Somme",
+                      "desc": "Somme des valeurs des sous-indicateurs",
+                    },
+                    {
+                      "order_id": 3,
+                      "value": "avg",
+                      "name": "Moyenne",
+                      "desc": "Moyenne des valeurs des sous-indicateurs",
+                    },
+                  ]
           - name: va_dept_from
             data_type: text
             description: Source des valeurs actuelles départementales (import, agrégation géographique, agrégation d'indicateurs...)
@@ -477,7 +745,27 @@ sources:
                 pilote_disp_dispDesc: true
                 pilote_create_defaultValue: "_"
                 pilote_disp_blocId: 2
-                pilote_edit_acceptedValues: [{"order_id": 1, "value": "_", "name": "Pas de saisie", "desc": "Pas de saisie attendue à cette maille"}, {"order_id": 2, "value": "user_input", "name": "Saisie utilisateur", "desc": "On attend que cette valeur soit saisie par l'utilisateur"}, {"order_id": 3, "value": "sub_indic", "name": "Sous-indicateur", "desc": ""}]
+                pilote_edit_acceptedValues:
+                  [
+                    {
+                      "order_id": 1,
+                      "value": "_",
+                      "name": "Pas de saisie",
+                      "desc": "Pas de saisie attendue à cette maille",
+                    },
+                    {
+                      "order_id": 2,
+                      "value": "user_input",
+                      "name": "Saisie utilisateur",
+                      "desc": "On attend que cette valeur soit saisie par l'utilisateur",
+                    },
+                    {
+                      "order_id": 3,
+                      "value": "sub_indic",
+                      "name": "Sous-indicateur",
+                      "desc": "",
+                    },
+                  ]
 
           - name: va_dept_op
             data_type: text
@@ -489,7 +777,27 @@ sources:
                 pilote_disp_dispDesc: true
                 pilote_create_defaultValue: "_"
                 pilote_disp_blocId: 2
-                pilote_edit_acceptedValues: [{"order_id": 1, "value": "_", "name": "Aucune", "desc": "Pas d'opération d'aggrégation"}, {"order_id": 2, "value": "sum", "name": "Somme", "desc": "Somme des valeurs des sous-indicateurs"}, {"order_id": 3, "value": "moy", "name": "Moyenne", "desc": "Moyenne des valeurs des sous-indicateurs"}]
+                pilote_edit_acceptedValues:
+                  [
+                    {
+                      "order_id": 1,
+                      "value": "_",
+                      "name": "Aucune",
+                      "desc": "Pas d'opération d'aggrégation",
+                    },
+                    {
+                      "order_id": 2,
+                      "value": "sum",
+                      "name": "Somme",
+                      "desc": "Somme des valeurs des sous-indicateurs",
+                    },
+                    {
+                      "order_id": 3,
+                      "value": "moy",
+                      "name": "Moyenne",
+                      "desc": "Moyenne des valeurs des sous-indicateurs",
+                    },
+                  ]
 
           - name: vc_dept_from
             data_type: text
@@ -501,7 +809,27 @@ sources:
                 pilote_disp_dispDesc: true
                 pilote_create_defaultValue: "_"
                 pilote_disp_blocId: 2
-                pilote_edit_acceptedValues: [{"order_id": 1, "value": "_", "name": "Pas de saisie", "desc": "Pas de saisie attendue à cette maille"}, {"order_id": 2, "value": "user_input", "name": "Saisie utilisateur", "desc": "On attend que cette valeur soit saisie par l'utilisateur"}, {"order_id": 3, "value": "sub_indic", "name": "Sous-indicateur", "desc": ""}]
+                pilote_edit_acceptedValues:
+                  [
+                    {
+                      "order_id": 1,
+                      "value": "_",
+                      "name": "Pas de saisie",
+                      "desc": "Pas de saisie attendue à cette maille",
+                    },
+                    {
+                      "order_id": 2,
+                      "value": "user_input",
+                      "name": "Saisie utilisateur",
+                      "desc": "On attend que cette valeur soit saisie par l'utilisateur",
+                    },
+                    {
+                      "order_id": 3,
+                      "value": "sub_indic",
+                      "name": "Sous-indicateur",
+                      "desc": "",
+                    },
+                  ]
           - name: vc_dept_op
             data_type: text
             description: Opération effectuée sur la source de la valeur pour obtenir la valeur affichée dans Pilote
@@ -512,7 +840,27 @@ sources:
                 pilote_disp_dispDesc: true
                 pilote_create_defaultValue: "_"
                 pilote_disp_blocId: 2
-                pilote_edit_acceptedValues: [{"order_id": 1, "value": "_", "name": "Aucune", "desc": "Pas d'opération d'aggrégation"}, {"order_id": 2, "value": "sum", "name": "Somme", "desc": "Somme des valeurs des sous-indicateurs"}, {"order_id": 3, "value": "avg", "name": "Moyenne", "desc": "Moyenne des valeurs des sous-indicateurs"}]
+                pilote_edit_acceptedValues:
+                  [
+                    {
+                      "order_id": 1,
+                      "value": "_",
+                      "name": "Aucune",
+                      "desc": "Pas d'opération d'aggrégation",
+                    },
+                    {
+                      "order_id": 2,
+                      "value": "sum",
+                      "name": "Somme",
+                      "desc": "Somme des valeurs des sous-indicateurs",
+                    },
+                    {
+                      "order_id": 3,
+                      "value": "avg",
+                      "name": "Moyenne",
+                      "desc": "Moyenne des valeurs des sous-indicateurs",
+                    },
+                  ]
           - name: vi_reg_from
             data_type: text
             description: Source des valeurs initiales régionales (import, agrégation géographique, agrégation d'indicateurs...)
@@ -523,7 +871,33 @@ sources:
                 pilote_disp_dispDesc: true
                 pilote_create_defaultValue: "_"
                 pilote_disp_blocID: 3
-                pilote_edit_acceptedValues: [{"order_id": 1, "value": "_", "name": "Pas de saisie", "desc": "Pas de saisie attendue à cette maille"}, {"order_id": 2, "value": "user_input", "name": "Saisie utilisateur", "desc": "On attend que cette valeur soit saisie par l'utilisateur"}, {"order_id": 3, "value": "DEPT", "name": "Depuis les DEPT", "desc": "Cette valeur sera aggrégée depuis les valeurs départementales"}, {"order_id": 4, "value": "sub_indic", "name": "Sous-indicateur", "desc": ""}]
+                pilote_edit_acceptedValues:
+                  [
+                    {
+                      "order_id": 1,
+                      "value": "_",
+                      "name": "Pas de saisie",
+                      "desc": "Pas de saisie attendue à cette maille",
+                    },
+                    {
+                      "order_id": 2,
+                      "value": "user_input",
+                      "name": "Saisie utilisateur",
+                      "desc": "On attend que cette valeur soit saisie par l'utilisateur",
+                    },
+                    {
+                      "order_id": 3,
+                      "value": "DEPT",
+                      "name": "Depuis les DEPT",
+                      "desc": "Cette valeur sera aggrégée depuis les valeurs départementales",
+                    },
+                    {
+                      "order_id": 4,
+                      "value": "sub_indic",
+                      "name": "Sous-indicateur",
+                      "desc": "",
+                    },
+                  ]
           - name: vi_reg_op
             data_type: text
             description: Opération effectuée sur la source de la valeur pour obtenir la valeur affichée dans Pilote
@@ -534,7 +908,27 @@ sources:
                 pilote_disp_dispDesc: true
                 pilote_create_defaultValue: "_"
                 pilote_disp_blocID: 3
-                pilote_edit_acceptedValues: [{"order_id": 1, "value": "_", "name": "Aucune", "desc": "Pas d'opération d'aggrégation"}, {"order_id": 2, "value": "sum", "name": "Somme", "desc": "Somme des valeurs de la maille inférieure."}, {"order_id": 3, "value": "avg", "name": "Moyenne", "desc": "Moyenne des valeurs de la maille inférieure."}]
+                pilote_edit_acceptedValues:
+                  [
+                    {
+                      "order_id": 1,
+                      "value": "_",
+                      "name": "Aucune",
+                      "desc": "Pas d'opération d'aggrégation",
+                    },
+                    {
+                      "order_id": 2,
+                      "value": "sum",
+                      "name": "Somme",
+                      "desc": "Somme des valeurs de la maille inférieure.",
+                    },
+                    {
+                      "order_id": 3,
+                      "value": "avg",
+                      "name": "Moyenne",
+                      "desc": "Moyenne des valeurs de la maille inférieure.",
+                    },
+                  ]
           - name: va_reg_from
             data_type: text
             description: >
@@ -546,7 +940,33 @@ sources:
                 pilote_disp_dispDesc: true
                 pilote_create_defaultValue: "_"
                 pilote_disp_blocID: 3
-                pilote_edit_acceptedValues: [{"order_id": 1, "value": "_", "name": "Pas de saisie", "desc": "Pas de saisie attendue à cette maille"}, {"order_id": 2, "value": "user_input", "name": "Saisie utilisateur", "desc": "On attend que cette valeur soit saisie par l'utilisateur"}, {"order_id": 3, "value": "DEPT", "name": "Depuis les DEPT", "desc": "Cette valeur sera aggrégée depuis les valeurs départementales"}, {"order_id": 4, "value": "sub_indic", "name": "Sous-indicateur", "desc": ""}]
+                pilote_edit_acceptedValues:
+                  [
+                    {
+                      "order_id": 1,
+                      "value": "_",
+                      "name": "Pas de saisie",
+                      "desc": "Pas de saisie attendue à cette maille",
+                    },
+                    {
+                      "order_id": 2,
+                      "value": "user_input",
+                      "name": "Saisie utilisateur",
+                      "desc": "On attend que cette valeur soit saisie par l'utilisateur",
+                    },
+                    {
+                      "order_id": 3,
+                      "value": "DEPT",
+                      "name": "Depuis les DEPT",
+                      "desc": "Cette valeur sera aggrégée depuis les valeurs départementales",
+                    },
+                    {
+                      "order_id": 4,
+                      "value": "sub_indic",
+                      "name": "Sous-indicateur",
+                      "desc": "",
+                    },
+                  ]
           - name: va_reg_op
             data_type: text
             description: >
@@ -558,7 +978,27 @@ sources:
                 pilote_disp_dispDesc: true
                 pilote_create_defaultValue: "_"
                 pilote_disp_blocID: 3
-                pilote_edit_acceptedValues: [{"order_id": 1, "value": "_", "name": "Aucune", "desc": "Pas d'opération d'aggrégation"}, {"order_id": 2, "value": "sum", "name": "Somme", "desc": "Somme des valeurs de la maille inférieure."}, {"order_id": 3, "value": "avg", "name": "Moyenne", "desc": "Moyenne des valeurs de la maille inférieure."}]
+                pilote_edit_acceptedValues:
+                  [
+                    {
+                      "order_id": 1,
+                      "value": "_",
+                      "name": "Aucune",
+                      "desc": "Pas d'opération d'aggrégation",
+                    },
+                    {
+                      "order_id": 2,
+                      "value": "sum",
+                      "name": "Somme",
+                      "desc": "Somme des valeurs de la maille inférieure.",
+                    },
+                    {
+                      "order_id": 3,
+                      "value": "avg",
+                      "name": "Moyenne",
+                      "desc": "Moyenne des valeurs de la maille inférieure.",
+                    },
+                  ]
           - name: vc_reg_from
             data_type: text
             description: >
@@ -570,7 +1010,33 @@ sources:
                 pilote_disp_dispDesc: true
                 pilote_create_defaultValue: "_"
                 pilote_disp_blocID: 3
-                pilote_edit_acceptedValues: [{"order_id": 1, "value": "_", "name": "Pas de saisie", "desc": "Pas de saisie attendue à cette maille"}, {"order_id": 2, "value": "user_input", "name": "Saisie utilisateur", "desc": "On attend que cette valeur soit saisie par l'utilisateur"}, {"order_id": 3, "value": "DEPT", "name": "Depuis les DEPT", "desc": "Cette valeur sera aggrégée depuis les valeurs départementales"}, {"order_id": 4, "value": "sub_indic", "name": "Sous-indicateur", "desc": ""}]
+                pilote_edit_acceptedValues:
+                  [
+                    {
+                      "order_id": 1,
+                      "value": "_",
+                      "name": "Pas de saisie",
+                      "desc": "Pas de saisie attendue à cette maille",
+                    },
+                    {
+                      "order_id": 2,
+                      "value": "user_input",
+                      "name": "Saisie utilisateur",
+                      "desc": "On attend que cette valeur soit saisie par l'utilisateur",
+                    },
+                    {
+                      "order_id": 3,
+                      "value": "DEPT",
+                      "name": "Depuis les DEPT",
+                      "desc": "Cette valeur sera aggrégée depuis les valeurs départementales",
+                    },
+                    {
+                      "order_id": 4,
+                      "value": "sub_indic",
+                      "name": "Sous-indicateur",
+                      "desc": "",
+                    },
+                  ]
           - name: vc_reg_op
             data_type: text
             description: >
@@ -582,7 +1048,27 @@ sources:
                 pilote_disp_dispDesc: true
                 pilote_create_defaultValue: "_"
                 pilote_disp_blocID: 3
-                pilote_edit_acceptedValues: [{"order_id": 1, "value": "_", "name": "Aucune", "desc": "Pas d'opération d'aggrégation"}, {"order_id": 2, "value": "sum", "name": "Somme", "desc": "Somme des valeurs de la maille inférieure."}, {"order_id": 3, "value": "avg", "name": "Moyenne", "desc": "Moyenne des valeurs de la maille inférieure."}]
+                pilote_edit_acceptedValues:
+                  [
+                    {
+                      "order_id": 1,
+                      "value": "_",
+                      "name": "Aucune",
+                      "desc": "Pas d'opération d'aggrégation",
+                    },
+                    {
+                      "order_id": 2,
+                      "value": "sum",
+                      "name": "Somme",
+                      "desc": "Somme des valeurs de la maille inférieure.",
+                    },
+                    {
+                      "order_id": 3,
+                      "value": "avg",
+                      "name": "Moyenne",
+                      "desc": "Moyenne des valeurs de la maille inférieure.",
+                    },
+                  ]
           - name: vi_nat_from
             data_type: text
             description: >
@@ -594,7 +1080,39 @@ sources:
                 pilote_disp_dispDesc: true
                 pilote_create_defaultValue: "_"
                 pilote_disp_blocID: 4
-                pilote_edit_acceptedValues: [{"order_id": 1, "value": "_", "name": "Pas de saisie", "desc": "Pas de saisie attendue à cette maille"}, {"order_id": 2, "value": "user_input", "name": "Saisie utilisateur", "desc": "On attend que cette valeur soit saisie par l'utilisateur"}, {"order_id": 3, "value": "DEPT", "name": "Depuis les DEPT", "desc": "Cette valeur sera aggrégée depuis les valeurs départementales"}, {"order_id": 4, "value": "REG", "name": "Depuis les REG", "desc": "Cette valeur sera aggrégée depuis les valeurs régionales."}, {"order_id": 5, "value": "sub_indic", "name": "Sous-indicateur", "desc": ""}]
+                pilote_edit_acceptedValues:
+                  [
+                    {
+                      "order_id": 1,
+                      "value": "_",
+                      "name": "Pas de saisie",
+                      "desc": "Pas de saisie attendue à cette maille",
+                    },
+                    {
+                      "order_id": 2,
+                      "value": "user_input",
+                      "name": "Saisie utilisateur",
+                      "desc": "On attend que cette valeur soit saisie par l'utilisateur",
+                    },
+                    {
+                      "order_id": 3,
+                      "value": "DEPT",
+                      "name": "Depuis les DEPT",
+                      "desc": "Cette valeur sera aggrégée depuis les valeurs départementales",
+                    },
+                    {
+                      "order_id": 4,
+                      "value": "REG",
+                      "name": "Depuis les REG",
+                      "desc": "Cette valeur sera aggrégée depuis les valeurs régionales.",
+                    },
+                    {
+                      "order_id": 5,
+                      "value": "sub_indic",
+                      "name": "Sous-indicateur",
+                      "desc": "",
+                    },
+                  ]
           - name: vi_nat_op
             data_type: text
             description: >
@@ -606,7 +1124,27 @@ sources:
                 pilote_disp_dispDesc: true
                 pilote_create_defaultValue: "_"
                 pilote_disp_blocID: 4
-                pilote_edit_acceptedValues: [{"order_id": 1, "value": "_", "name": "Aucune", "desc": "Pas d'opération d'aggrégation"}, {"order_id": 2, "value": "sum", "name": "Somme", "desc": "Somme des valeurs de la maille inférieure."}, {"order_id": 3, "value": "avg", "name": "Moyenne", "desc": "Moyenne des valeurs de la maille inférieure."}]
+                pilote_edit_acceptedValues:
+                  [
+                    {
+                      "order_id": 1,
+                      "value": "_",
+                      "name": "Aucune",
+                      "desc": "Pas d'opération d'aggrégation",
+                    },
+                    {
+                      "order_id": 2,
+                      "value": "sum",
+                      "name": "Somme",
+                      "desc": "Somme des valeurs de la maille inférieure.",
+                    },
+                    {
+                      "order_id": 3,
+                      "value": "avg",
+                      "name": "Moyenne",
+                      "desc": "Moyenne des valeurs de la maille inférieure.",
+                    },
+                  ]
           - name: va_nat_from
             data_type: text
             description: >
@@ -618,7 +1156,39 @@ sources:
                 pilote_disp_dispDesc: true
                 pilote_create_defaultValue: "_"
                 pilote_disp_blocID: 4
-                pilote_edit_acceptedValues: [{"order_id": 1, "value": "_", "name": "Pas de saisie", "desc": "Pas de saisie attendue à cette maille"}, {"order_id": 2, "value": "user_input", "name": "Saisie utilisateur", "desc": "On attend que cette valeur soit saisie par l'utilisateur"}, {"order_id": 3, "value": "DEPT", "name": "Depuis les DEPT", "desc": "Cette valeur sera aggrégée depuis les valeurs départementales"}, {"order_id": 4, "value": "REG", "name": "Depuis les REG", "desc": "Cette valeur sera aggrégée depuis les valeurs régionales."}, {"order_id": 5, "value": "sub_indic", "name": "Sous-indicateur", "desc": ""}]
+                pilote_edit_acceptedValues:
+                  [
+                    {
+                      "order_id": 1,
+                      "value": "_",
+                      "name": "Pas de saisie",
+                      "desc": "Pas de saisie attendue à cette maille",
+                    },
+                    {
+                      "order_id": 2,
+                      "value": "user_input",
+                      "name": "Saisie utilisateur",
+                      "desc": "On attend que cette valeur soit saisie par l'utilisateur",
+                    },
+                    {
+                      "order_id": 3,
+                      "value": "DEPT",
+                      "name": "Depuis les DEPT",
+                      "desc": "Cette valeur sera aggrégée depuis les valeurs départementales",
+                    },
+                    {
+                      "order_id": 4,
+                      "value": "REG",
+                      "name": "Depuis les REG",
+                      "desc": "Cette valeur sera aggrégée depuis les valeurs régionales.",
+                    },
+                    {
+                      "order_id": 5,
+                      "value": "sub_indic",
+                      "name": "Sous-indicateur",
+                      "desc": "",
+                    },
+                  ]
           - name: va_nat_op
             data_type: text
             description: >
@@ -630,7 +1200,27 @@ sources:
                 pilote_disp_dispDesc: true
                 pilote_create_defaultValue: "_"
                 pilote_disp_blocID: 4
-                pilote_edit_acceptedValues: [{"order_id": 1, "value": "_", "name": "Aucune", "desc": "Pas d'opération d'aggrégation"}, {"order_id": 2, "value": "sum", "name": "Somme", "desc": "Somme des valeurs de la maille inférieure."}, {"order_id": 3, "value": "avg", "name": "Moyenne", "desc": "Moyenne des valeurs de la maille inférieure."}]
+                pilote_edit_acceptedValues:
+                  [
+                    {
+                      "order_id": 1,
+                      "value": "_",
+                      "name": "Aucune",
+                      "desc": "Pas d'opération d'aggrégation",
+                    },
+                    {
+                      "order_id": 2,
+                      "value": "sum",
+                      "name": "Somme",
+                      "desc": "Somme des valeurs de la maille inférieure.",
+                    },
+                    {
+                      "order_id": 3,
+                      "value": "avg",
+                      "name": "Moyenne",
+                      "desc": "Moyenne des valeurs de la maille inférieure.",
+                    },
+                  ]
           - name: vc_nat_from
             data_type: text
             description: >
@@ -642,7 +1232,39 @@ sources:
                 pilote_disp_dispDesc: true
                 pilote_create_defaultValue: "_"
                 pilote_disp_blocID: 4
-                pilote_edit_acceptedValues: [{"order_id": 1, "value": "_", "name": "Pas de saisie", "desc": "Pas de saisie attendue à cette maille"}, {"order_id": 2, "value": "user_input", "name": "Saisie utilisateur", "desc": "On attend que cette valeur soit saisie par l'utilisateur"}, {"order_id": 3, "value": "DEPT", "name": "Depuis les DEPT", "desc": "Cette valeur sera aggrégée depuis les valeurs départementales"}, {"order_id": 4, "value": "REG", "name": "Depuis les REG", "desc": "Cette valeur sera aggrégée depuis les valeurs régionales."}, {"order_id": 5, "value": "sub_indic", "name": "Sous-indicateur", "desc": ""}]
+                pilote_edit_acceptedValues:
+                  [
+                    {
+                      "order_id": 1,
+                      "value": "_",
+                      "name": "Pas de saisie",
+                      "desc": "Pas de saisie attendue à cette maille",
+                    },
+                    {
+                      "order_id": 2,
+                      "value": "user_input",
+                      "name": "Saisie utilisateur",
+                      "desc": "On attend que cette valeur soit saisie par l'utilisateur",
+                    },
+                    {
+                      "order_id": 3,
+                      "value": "DEPT",
+                      "name": "Depuis les DEPT",
+                      "desc": "Cette valeur sera aggrégée depuis les valeurs départementales",
+                    },
+                    {
+                      "order_id": 4,
+                      "value": "REG",
+                      "name": "Depuis les REG",
+                      "desc": "Cette valeur sera aggrégée depuis les valeurs régionales.",
+                    },
+                    {
+                      "order_id": 5,
+                      "value": "sub_indic",
+                      "name": "Sous-indicateur",
+                      "desc": "",
+                    },
+                  ]
           - name: vc_nat_op
             data_type: text
             description: >
@@ -654,7 +1276,27 @@ sources:
                 pilote_disp_dispDesc: true
                 pilote_create_defaultValue: "_"
                 pilote_disp_blocID: 4
-                pilote_edit_acceptedValues: [{"order_id": 1, "value": "_", "name": "Aucune", "desc": "Pas d'opération d'aggrégation"}, {"order_id": 2, "value": "sum", "name": "Somme", "desc": "Somme des valeurs de la maille inférieure."}, {"order_id": 3, "value": "avg", "name": "Moyenne", "desc": "Moyenne des valeurs de la maille inférieure."}]
+                pilote_edit_acceptedValues:
+                  [
+                    {
+                      "order_id": 1,
+                      "value": "_",
+                      "name": "Aucune",
+                      "desc": "Pas d'opération d'aggrégation",
+                    },
+                    {
+                      "order_id": 2,
+                      "value": "sum",
+                      "name": "Somme",
+                      "desc": "Somme des valeurs de la maille inférieure.",
+                    },
+                    {
+                      "order_id": 3,
+                      "value": "avg",
+                      "name": "Moyenne",
+                      "desc": "Moyenne des valeurs de la maille inférieure.",
+                    },
+                  ]
           - name: param_vaca_decumul_from
             data_type: text
             description: >
@@ -666,7 +1308,27 @@ sources:
                 pilote_disp_dispDesc: true
                 pilote_create_defaultValue: "_"
                 pilote_disp_blocId: 5
-                pilote_edit_acceptedValues: [{"order_id": 1, "value": "_", "name": "Non", "desc": "Pas de décumul nécessaire"}, {"order_id": 2, "value": "from_year_start", "name": "Oui, saisie en cumul annuel", "desc": "Les valeurs sont saisies cumulées depuis le débur d'année"}, {"order_id": 3, "value": "from_custom_date::2019-01-01", "name": "Oui, saisie en cumul depuis le début", "desc": "Les valeurs ont saisies cumulées depuis une date éloignée, date de VI ou début du dispositif."}]
+                pilote_edit_acceptedValues:
+                  [
+                    {
+                      "order_id": 1,
+                      "value": "_",
+                      "name": "Non",
+                      "desc": "Pas de décumul nécessaire",
+                    },
+                    {
+                      "order_id": 2,
+                      "value": "from_year_start",
+                      "name": "Oui, saisie en cumul annuel",
+                      "desc": "Les valeurs sont saisies cumulées depuis le débur d'année",
+                    },
+                    {
+                      "order_id": 3,
+                      "value": "from_custom_date::2019-01-01",
+                      "name": "Oui, saisie en cumul depuis le début",
+                      "desc": "Les valeurs ont saisies cumulées depuis une date éloignée, date de VI ou début du dispositif.",
+                    },
+                  ]
           - name: param_vaca_partition_date
             data_type: text
             description: >
@@ -678,7 +1340,33 @@ sources:
                 pilote_disp_dispDesc: true
                 pilote_create_defaultValue: "_"
                 pilote_disp_blocId: 5
-                pilote_edit_acceptedValues: [{"order_id": 1, "value": "_", "name": "Non", "desc": "Valeurs déjà cumulées ou non cumulables."}, {"order_id": 2, "value": "from_year_start", "name": "Oui, cumul annuel", "desc": "Cumul des VA depuis janvier (01) de l'année en cours."}, {"order_id": 3, "value": "from_custom_date::2019-01-01", "name": "Oui, cumul global", "desc": "Cumul de toutes les VA."}, {"order_id": 4, "value": "from_previous_month::12", "name": "Oui, cumul en année glissante", "desc": "Cumul des VA des 12 derniers mois."}]
+                pilote_edit_acceptedValues:
+                  [
+                    {
+                      "order_id": 1,
+                      "value": "_",
+                      "name": "Non",
+                      "desc": "Valeurs déjà cumulées ou non cumulables.",
+                    },
+                    {
+                      "order_id": 2,
+                      "value": "from_year_start",
+                      "name": "Oui, cumul annuel",
+                      "desc": "Cumul des VA depuis janvier (01) de l'année en cours.",
+                    },
+                    {
+                      "order_id": 3,
+                      "value": "from_custom_date::2019-01-01",
+                      "name": "Oui, cumul global",
+                      "desc": "Cumul de toutes les VA.",
+                    },
+                    {
+                      "order_id": 4,
+                      "value": "from_previous_month::12",
+                      "name": "Oui, cumul en année glissante",
+                      "desc": "Cumul des VA des 12 derniers mois.",
+                    },
+                  ]
           - name: param_vaca_op
             data_type: text
             description: >
@@ -690,7 +1378,23 @@ sources:
                 pilote_disp_dispDesc: true
                 pilote_create_defaultValue: ""
                 pilote_disp_blocId: 5
-                pilote_edit_acceptedValues: [{"order_id": 0, "value": "", "name": "Choisir une Opération (TA annuel)", "desc": "Choisir une Opération (TA annuel)"}, {"order_id": 1, "value": "current_value", "name": "Valeur saisie", "desc": "VA saisie : non cumulable (%) ou déjà cumulée (valeur à date)"}, {"order_id": 2, "value": "sum", "name": "Somme des VA"}, {"order_id": 3, "value": "avg", "name": "Moyenne"}]
+                pilote_edit_acceptedValues:
+                  [
+                    {
+                      "order_id": 0,
+                      "value": "",
+                      "name": "Choisir une Opération (TA annuel)",
+                      "desc": "Choisir une Opération (TA annuel)",
+                    },
+                    {
+                      "order_id": 1,
+                      "value": "current_value",
+                      "name": "Valeur saisie",
+                      "desc": "VA saisie : non cumulable (%) ou déjà cumulée (valeur à date)",
+                    },
+                    { "order_id": 2, "value": "sum", "name": "Somme des VA" },
+                    { "order_id": 3, "value": "avg", "name": "Moyenne" },
+                  ]
           - name: param_vacg_decumul_from
             data_type: text
             description: >
@@ -702,7 +1406,27 @@ sources:
                 pilote_disp_dispDesc: true
                 pilote_create_defaultValue: "_"
                 pilote_disp_blocId: 5
-                pilote_edit_acceptedValues: [{"order_id": 1, "value": "_", "name": "Non", "desc": "Pas de décumul nécessaire"}, {"order_id": 2, "value": "from_year_start", "name": "Oui, saisie en cumul annuel", "desc": "Les valeurs sont saisies cumulées depuis le débur d'année"}, {"order_id": 3, "value": "from_custom_date::2019-01-01", "name": "Oui, saisie en cumul depuis le début", "desc": "Les valeurs ont saisies cumulées depuis une date éloignée, date de VI ou début du dispositif."}]
+                pilote_edit_acceptedValues:
+                  [
+                    {
+                      "order_id": 1,
+                      "value": "_",
+                      "name": "Non",
+                      "desc": "Pas de décumul nécessaire",
+                    },
+                    {
+                      "order_id": 2,
+                      "value": "from_year_start",
+                      "name": "Oui, saisie en cumul annuel",
+                      "desc": "Les valeurs sont saisies cumulées depuis le débur d'année",
+                    },
+                    {
+                      "order_id": 3,
+                      "value": "from_custom_date::2019-01-01",
+                      "name": "Oui, saisie en cumul depuis le début",
+                      "desc": "Les valeurs ont saisies cumulées depuis une date éloignée, date de VI ou début du dispositif.",
+                    },
+                  ]
           - name: param_vacg_partition_date
             data_type: text
             description: >
@@ -714,7 +1438,33 @@ sources:
                 pilote_disp_dispDesc: true
                 pilote_create_defaultValue: "_"
                 pilote_disp_blocId: 5
-                pilote_edit_acceptedValues: [{"order_id": 1, "value": "_", "name": "Non", "desc": "Valeurs déjà cumulées ou non cumulables."}, {"order_id": 2, "value": "from_year_start", "name": "Oui, cumul annuel", "desc": "Cumul des VA depuis janvier (01) de l'année en cours."}, {"order_id": 3, "value": "from_custom_date::2019-01-01", "name": "Oui, cumul global", "desc": "Cumul de toutes les VA."}, {"order_id": 4, "value": "from_previous_month::12", "name": "Oui, cumul en année glissante", "desc": "Cumul des VA des 12 derniers mois."}]
+                pilote_edit_acceptedValues:
+                  [
+                    {
+                      "order_id": 1,
+                      "value": "_",
+                      "name": "Non",
+                      "desc": "Valeurs déjà cumulées ou non cumulables.",
+                    },
+                    {
+                      "order_id": 2,
+                      "value": "from_year_start",
+                      "name": "Oui, cumul annuel",
+                      "desc": "Cumul des VA depuis janvier (01) de l'année en cours.",
+                    },
+                    {
+                      "order_id": 3,
+                      "value": "from_custom_date::2019-01-01",
+                      "name": "Oui, cumul global",
+                      "desc": "Cumul de toutes les VA.",
+                    },
+                    {
+                      "order_id": 4,
+                      "value": "from_previous_month::12",
+                      "name": "Oui, cumul en année glissante",
+                      "desc": "Cumul des VA des 12 derniers mois.",
+                    },
+                  ]
           - name: param_vacg_op
             data_type: text
             description: >
@@ -726,7 +1476,23 @@ sources:
                 pilote_disp_dispDesc: true
                 pilote_create_defaultValue: ""
                 pilote_disp_blocId: 5
-                pilote_edit_acceptedValues: [{"order_id": 0, "value": "", "name": "Choisir une Opération (TA global)", "desc": "Choisir une Opération (TA global)"}, {"order_id": 1, "value": "current_value", "name": "Valeur saisie", "desc": "VA saisie : non cumulable (%) ou déjà cumulée (valeur à date)"}, {"order_id": 2, "value": "sum", "name": "Somme des VA"}, {"order_id": 3, "value": "avg", "name": "Moyenne"}]
+                pilote_edit_acceptedValues:
+                  [
+                    {
+                      "order_id": 0,
+                      "value": "",
+                      "name": "Choisir une Opération (TA global)",
+                      "desc": "Choisir une Opération (TA global)",
+                    },
+                    {
+                      "order_id": 1,
+                      "value": "current_value",
+                      "name": "Valeur saisie",
+                      "desc": "VA saisie : non cumulable (%) ou déjà cumulée (valeur à date)",
+                    },
+                    { "order_id": 2, "value": "sum", "name": "Somme des VA" },
+                    { "order_id": 3, "value": "avg", "name": "Moyenne" },
+                  ]
           - name: tendance
             data_type: text
             description: >
@@ -738,7 +1504,21 @@ sources:
                 pilote_disp_dispDesc: true
                 pilote_create_defaultValue: "HAUSSE"
                 pilote_disp_blocId: 5
-                pilote_edit_acceptedValues: [{"order_id": 1, "value": "HAUSSE", "name": "Hausse", "desc": "Tendance en hausse"}, {"order_id": 2, "value": "BAISSE", "name": "Baisse", "desc": "Tendance en baisse"}]
+                pilote_edit_acceptedValues:
+                  [
+                    {
+                      "order_id": 1,
+                      "value": "HAUSSE",
+                      "name": "Hausse",
+                      "desc": "Tendance en hausse",
+                    },
+                    {
+                      "order_id": 2,
+                      "value": "BAISSE",
+                      "name": "Baisse",
+                      "desc": "Tendance en baisse",
+                    },
+                  ]
 
           - name: poids_pourcent_nat_declaree
             data_type: number
@@ -874,7 +1654,69 @@ sources:
                 pilote_disp_blocId: 7
                 pilote_edit_regex:
                 pilote_edit_regexViolationMessage:
-                pilote_edit_acceptedValues: [{"order_id": 0, "value": "", "name": "Choisir une périodicité", "desc": "Choisir une périodicité"}, {"order_id": 1, "value": "Mensuelle", "name": "Mensuelle", "desc": "Périodicité mensuelle"}, {"order_id": 2, "value": "Bimestrielle", "name": "Bimestrielle", "desc": "Tous les 2 mois"}, {"order_id": 3, "value": "Trimestrielle", "name": "Trimestrielle", "desc": "Périodicité trimestrielle"}, {"order_id": 4, "value": "Semestrielle", "name": "Semestrielle", "desc": "Périodicité semestrielle"}, {"order_id": 5, "value": "Annuelle", "name": "Annuelle", "desc": "Périodicité annuelle"}, {"order_id": 6, "value": "Bi-annuelle", "name": "Bi-annuelle", "desc": "Périodicité bi-annuelle"}, {"order_id": 7, "value": "3 ans", "name": "3 ans", "desc": "Périodicité triennale"}, {"order_id": 8, "value": "6 ans", "name": "6 ans", "desc": "Périodicité sexennale"}, {"order_id": 9, "value": "Autre/Inconnue", "name": "Autre/Inconnue", "desc": "Périodicité autre/inconnue"}]
+                pilote_edit_acceptedValues:
+                  [
+                    {
+                      "order_id": 0,
+                      "value": "",
+                      "name": "Choisir une périodicité",
+                      "desc": "Choisir une périodicité",
+                    },
+                    {
+                      "order_id": 1,
+                      "value": "Mensuelle",
+                      "name": "Mensuelle",
+                      "desc": "Périodicité mensuelle",
+                    },
+                    {
+                      "order_id": 2,
+                      "value": "Bimestrielle",
+                      "name": "Bimestrielle",
+                      "desc": "Tous les 2 mois",
+                    },
+                    {
+                      "order_id": 3,
+                      "value": "Trimestrielle",
+                      "name": "Trimestrielle",
+                      "desc": "Périodicité trimestrielle",
+                    },
+                    {
+                      "order_id": 4,
+                      "value": "Semestrielle",
+                      "name": "Semestrielle",
+                      "desc": "Périodicité semestrielle",
+                    },
+                    {
+                      "order_id": 5,
+                      "value": "Annuelle",
+                      "name": "Annuelle",
+                      "desc": "Périodicité annuelle",
+                    },
+                    {
+                      "order_id": 6,
+                      "value": "Bi-annuelle",
+                      "name": "Bi-annuelle",
+                      "desc": "Périodicité bi-annuelle",
+                    },
+                    {
+                      "order_id": 7,
+                      "value": "3 ans",
+                      "name": "3 ans",
+                      "desc": "Périodicité triennale",
+                    },
+                    {
+                      "order_id": 8,
+                      "value": "6 ans",
+                      "name": "6 ans",
+                      "desc": "Périodicité sexennale",
+                    },
+                    {
+                      "order_id": 9,
+                      "value": "Autre/Inconnue",
+                      "name": "Autre/Inconnue",
+                      "desc": "Périodicité autre/inconnue",
+                    },
+                  ]
           - name: delai_disponibilite
             data_type: number
             description: |
@@ -929,7 +1771,87 @@ sources:
                 pilote_disp_blocId: 7
                 pilote_edit_regex:
                 pilote_edit_regexViolationMessage:
-                pilote_edit_acceptedValues: [{"order_id": 1, "value": "NAT", "name": "Nationale", "desc": "Maille nationale"}, {"order_id": 2, "value": "REG", "name": "Régions", "desc": "Maille régionale"}, {"order_id": 3, "value": "DEPT", "name": "Départements", "desc": "Maille départementale"}, {"order_id": 4, "value": "COM", "name": "Communes", "desc": "Maille communale"}, {"order_id": 5, "value": "FAC_M", "name": "Façades maritimes", "desc": "Façades maritimes"}, {"order_id": 6, "value": "EPCI", "name": "EPCI", "desc": "Etablissement Public de Coopération Intercommunale"}, {"order_id": 7, "value": "AGGLO", "name": "Agglomérations", "desc": "Agglomérations de plus de 150 000 habitants en France métropolitaine"}, {"order_id": 8, "value": "DISP", "name": "DISP", "desc": "Directions inter-régionales des services pénitentiaires"}, {"order_id": 9, "value": "COUR", "name": "Cours d'appel", "desc": "Cours d'appel"}, {"order_id": 10, "value": "DIRPJJ", "name": "DIRPJJ", "desc": "Directions inter-régionales de la protection judiciaire de la jeunesse"}, {"order_id": 11, "value": "ACA", "name": "Académies", "desc": "Académies"}, {"order_id": 12, "value": "PORT", "name": "Grands ports maritimes", "desc": "Grands ports maritimes"}, {"order_id": 13, "value": "MEAE", "name": "Zones MEAE", "desc": "Zones géographiques regroupant plusieurs pays"}]
+                pilote_edit_acceptedValues:
+                  [
+                    {
+                      "order_id": 1,
+                      "value": "NAT",
+                      "name": "Nationale",
+                      "desc": "Maille nationale",
+                    },
+                    {
+                      "order_id": 2,
+                      "value": "REG",
+                      "name": "Régions",
+                      "desc": "Maille régionale",
+                    },
+                    {
+                      "order_id": 3,
+                      "value": "DEPT",
+                      "name": "Départements",
+                      "desc": "Maille départementale",
+                    },
+                    {
+                      "order_id": 4,
+                      "value": "COM",
+                      "name": "Communes",
+                      "desc": "Maille communale",
+                    },
+                    {
+                      "order_id": 5,
+                      "value": "FAC_M",
+                      "name": "Façades maritimes",
+                      "desc": "Façades maritimes",
+                    },
+                    {
+                      "order_id": 6,
+                      "value": "EPCI",
+                      "name": "EPCI",
+                      "desc": "Etablissement Public de Coopération Intercommunale",
+                    },
+                    {
+                      "order_id": 7,
+                      "value": "AGGLO",
+                      "name": "Agglomérations",
+                      "desc": "Agglomérations de plus de 150 000 habitants en France métropolitaine",
+                    },
+                    {
+                      "order_id": 8,
+                      "value": "DISP",
+                      "name": "DISP",
+                      "desc": "Directions inter-régionales des services pénitentiaires",
+                    },
+                    {
+                      "order_id": 9,
+                      "value": "COUR",
+                      "name": "Cours d'appel",
+                      "desc": "Cours d'appel",
+                    },
+                    {
+                      "order_id": 10,
+                      "value": "DIRPJJ",
+                      "name": "DIRPJJ",
+                      "desc": "Directions inter-régionales de la protection judiciaire de la jeunesse",
+                    },
+                    {
+                      "order_id": 11,
+                      "value": "ACA",
+                      "name": "Académies",
+                      "desc": "Académies",
+                    },
+                    {
+                      "order_id": 12,
+                      "value": "PORT",
+                      "name": "Grands ports maritimes",
+                      "desc": "Grands ports maritimes",
+                    },
+                    {
+                      "order_id": 13,
+                      "value": "MEAE",
+                      "name": "Zones MEAE",
+                      "desc": "Zones géographiques regroupant plusieurs pays",
+                    },
+                  ]
 
           - name: admin_source
             data_type: text
@@ -1072,7 +1994,33 @@ sources:
                 pilote_disp_dispDesc: true
                 pilote_create_defaultValue: "_"
                 pilote_disp_blocId: 2
-                pilote_edit_acceptedValues: [{"order_id": 1, "value": "_", "name": "Non piloté", "desc": "Indicateur non utilisé pour le pilotage, sans cible attendue."}, {"order_id": 2, "value": "DEPT", "name": "Départemental", "desc": "Pilotage départemental, régional et national"}, {"order_id": 3, "value": "REG", "name": "Régional", "desc": "Pilotage régional et national"}, {"order_id": 4, "value": "NAT", "name": "National", "desc": "Pilotage national"}]
+                pilote_edit_acceptedValues:
+                  [
+                    {
+                      "order_id": 1,
+                      "value": "_",
+                      "name": "Non piloté",
+                      "desc": "Indicateur non utilisé pour le pilotage, sans cible attendue.",
+                    },
+                    {
+                      "order_id": 2,
+                      "value": "DEPT",
+                      "name": "Départemental",
+                      "desc": "Pilotage départemental, régional et national",
+                    },
+                    {
+                      "order_id": 3,
+                      "value": "REG",
+                      "name": "Régional",
+                      "desc": "Pilotage régional et national",
+                    },
+                    {
+                      "order_id": 4,
+                      "value": "NAT",
+                      "name": "National",
+                      "desc": "Pilotage national",
+                    },
+                  ]
 
           - name: cible_attendue
             data_type: boolean
@@ -1096,7 +2044,33 @@ sources:
                 pilote_disp_dispDesc: true
                 pilote_create_defaultValue: "continue"
                 pilote_disp_blocId: 2
-                pilote_edit_acceptedValues: [{"order_id": 1, "value": "continue", "name": "Période d'observation", "desc": "Valeur mesurée depuis le début de la période d'observation. Par exemple, depuis une date précise de lancement du programme."}, {"order_id": 2, "value": "a_date", "name": "A date", "desc": "Calcul de l'indicateur à date."}, {"order_id": 3, "value": "annee", "name": "Année", "desc": "Indicateur observé depuis le début de l'année civile en cours."}, {"order_id": 4, "value": "annee_glissante", "name": "Année glissante", "desc": "Indicateur observé sur les 12 derniers mois."}]
+                pilote_edit_acceptedValues:
+                  [
+                    {
+                      "order_id": 1,
+                      "value": "continue",
+                      "name": "Période d'observation",
+                      "desc": "Valeur mesurée depuis le début de la période d'observation. Par exemple, depuis une date précise de lancement du programme.",
+                    },
+                    {
+                      "order_id": 2,
+                      "value": "a_date",
+                      "name": "A date",
+                      "desc": "Calcul de l'indicateur à date.",
+                    },
+                    {
+                      "order_id": 3,
+                      "value": "annee",
+                      "name": "Année",
+                      "desc": "Indicateur observé depuis le début de l'année civile en cours.",
+                    },
+                    {
+                      "order_id": 4,
+                      "value": "annee_glissante",
+                      "name": "Année glissante",
+                      "desc": "Indicateur observé sur les 12 derniers mois.",
+                    },
+                  ]
 
   - name: import_from_files
     description: "Cette base de données correspond à la base Pilote de production."
