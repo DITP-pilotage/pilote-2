@@ -16,6 +16,17 @@ import { useGetCritere } from "@/components/Evaluation/CriteresProvider";
 
 const columnHelper = createColumnHelper<TableauEvaluationRow>();
 
+const STATUTS_EVALUATION = {
+  TRAITE: { label: "Traité" },
+  NON_TRAITE: { label: "Non traité" },
+};
+
+type STATUT_EVALUATION = keyof typeof STATUTS_EVALUATION;
+
+const getStatutTraitement = (row: TableauEvaluationRow): STATUT_EVALUATION => {
+  return row.evaluations[0]?.dateTraitement != null ? "TRAITE" : "NON_TRAITE";
+};
+
 export const useTableauEvaluation = ({
   rattachements,
   onAutosave,
@@ -58,7 +69,6 @@ export const useTableauEvaluation = ({
 
     return rows;
   }, [getCritere, rattachements]);
-
   const columns = useMemo(
     () => [
       columnHelper.accessor("rattachement.code", {
@@ -119,6 +129,29 @@ export const useTableauEvaluation = ({
         },
         getGroupingValue: (row) => (row.type === "critere" ? row.id : null),
       }),
+      columnHelper.accessor(getStatutTraitement, {
+        id: "traite",
+        enableColumnFilter: true,
+        filterFn: (row, columnId, filterValue) => {
+          const filter = Array.isArray(filterValue)
+            ? filterValue
+            : [filterValue];
+
+          if (filter.length === 0) {
+            return true;
+          }
+
+          return filter.includes(getStatutTraitement(row.original));
+        },
+        meta: {
+          filter: {
+            label: "Filtrer par statut",
+            labelToutesLesOptions: "Tous",
+            getValueLabel: (value: STATUT_EVALUATION) =>
+              STATUTS_EVALUATION[value].label,
+          },
+        },
+      }),
     ],
     [rattachements, onAutosave, getCritere],
   );
@@ -137,6 +170,7 @@ export const useTableauEvaluation = ({
       expanded: true,
       columnVisibility: {
         critereId: false,
+        traite: false,
       },
     },
   });
