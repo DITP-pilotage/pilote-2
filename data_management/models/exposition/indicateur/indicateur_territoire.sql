@@ -18,8 +18,8 @@ get_evol_vaca AS (
         JSONB_AGG(JSONB_BUILD_OBJECT(
             'date', metric_date,
             'valeur', vaca,
-            'taa', taux_avancement_jalon,
-            'tag', taux_avancement_mandat
+            'taux_avancement_jalon', taa,
+            'taux_avancement_mandat', tag
         )) AS evolution_avancement
     FROM {{ ref('compute_ta_indic') }}
     WHERE vaca IS NOT NULL
