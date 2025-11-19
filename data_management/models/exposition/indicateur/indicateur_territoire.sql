@@ -19,7 +19,7 @@ get_evol_vaca AS (
             'date', metric_date,
             'valeur', vaca,
             'taa', taux_avancement_jalon,
-            'tag', taux_avancement_mandat,
+            'tag', taux_avancement_mandat
         )) AS evolution_avancement
     FROM {{ ref('compute_ta_indic') }}
     WHERE vaca IS NOT NULL
