@@ -438,7 +438,8 @@ describe("PasserALaConsolidationHandler", () => {
       const utilisateurId = "d4e5f6a7-8b9c-0d1e-2f3a-4b5c6d7e8f73";
       const objectifId = "e5f6a7b8-9c0d-1e2f-3a4b-5c6d7e8f9a74";
       const critereId = "f6a7b8c9-0d1e-2f3a-4b5c-6d7e8f9a0b75";
-      const consolidationEvalObjectifId = "a7b8c9d0-1e2f-3a4b-5c6d-7e8f9a0b1c76";
+      const consolidationEvalObjectifId =
+        "a7b8c9d0-1e2f-3a4b-5c6d-7e8f9a0b1c76";
       const consolidationEvalCritereId = "b8c9d0e1-2f3a-4b5c-6d7e-8f9a0b1c2d77";
 
       await prisma.utilisateur.create({
@@ -561,7 +562,8 @@ describe("PasserALaConsolidationHandler", () => {
       const utilisateurId = "b4c5d6e7-8f9a-0b1c-2d3e-4f5a6b7c8d83";
       const objectifId = "c5d6e7f8-9a0b-1c2d-3e4f-5a6b7c8d9e84";
       const critereId = "a1b2c3d4-5e6f-7a8b-9c0d-1e2f3a4b5cb1";
-      const consolidationEvalObjectifId = "d6e7f8a9-0b1c-2d3e-4f5a-6b7c8d9e0f85";
+      const consolidationEvalObjectifId =
+        "d6e7f8a9-0b1c-2d3e-4f5a-6b7c8d9e0f85";
       const consolidationEvalCritereId = "b2c3d4e5-6f7a-8b9c-0d1e-2f3a4b5c6db2";
 
       await prisma.utilisateur.create({
@@ -684,7 +686,8 @@ describe("PasserALaConsolidationHandler", () => {
       const utilisateurId = "c1d2e3f4-5a6b-7c8d-9e0f-1a2b3c4d5e90";
       const objectifId = "d2e3f4a5-6b7c-8d9e-0f1a-2b3c4d5e6f91";
       const critereId = "e3f4a5b6-7c8d-9e0f-1a2b-3c4d5e6f7a92";
-      const consolidationEvalObjectifId = "f4a5b6c7-8d9e-0f1a-2b3c-4d5e6f7a8b93";
+      const consolidationEvalObjectifId =
+        "f4a5b6c7-8d9e-0f1a-2b3c-4d5e6f7a8b93";
       const consolidationEvalCritereId = "a5b6c7d8-9e0f-1a2b-3c4d-5e6f7a8b9c94";
       const dateTraitement = new Date("2025-01-15");
 
@@ -811,7 +814,8 @@ describe("PasserALaConsolidationHandler", () => {
       const existingConsolidationId = "f0a1b2c3-4d5e-6f7a-8b9c-0d1e2f3a4b99";
       const utilisateurId = "a1b2c3d4-5e6f-7a8b-9c0d-1e2f3a4b5ca0";
       const objectifId = "b2c3d4e5-6f7a-8b9c-0d1e-2f3a4b5c6da1";
-      const consolidationEvalObjectifId = "c3d4e5f6-7a8b-9c0d-1e2f-3a4b5c6d7ea2";
+      const consolidationEvalObjectifId =
+        "c3d4e5f6-7a8b-9c0d-1e2f-3a4b5c6d7ea2";
       const dateTraitement = new Date("2025-01-15");
 
       await prisma.utilisateur.create({
@@ -904,7 +908,8 @@ describe("PasserALaConsolidationHandler", () => {
       const existingConsolidationId = "a7b8c9d0-1e2f-3a4b-5c6d-7e8f9a0b1ca6";
       const utilisateurId = "b8c9d0e1-2f3a-4b5c-6d7e-8f9a0b1c2da7";
       const objectifId = "c9d0e1f2-3a4b-5c6d-7e8f-9a0b1c2d3ea8";
-      const consolidationEvalObjectifId = "d0e1f2a3-4b5c-6d7e-8f9a-0b1c2d3e4fa9";
+      const consolidationEvalObjectifId =
+        "d0e1f2a3-4b5c-6d7e-8f9a-0b1c2d3e4fa9";
 
       await prisma.utilisateur.create({
         data: {
