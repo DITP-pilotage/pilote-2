@@ -146,5 +146,64 @@ describe("RetournerAutoEvaluationHandler", () => {
       });
       expect(ficheEvaluation.etape_courante).toBe("AUTO_EVALUATION");
     });
+
+    it("doit réinitialiser remttre l'étape AUTO_EVALUATION en écriture", async () => {
+      // Given
+      const rattachementCode = "REG-604";
+      const ficheEvaluationId = "55c8075a-cae2-444e-9214-8d730f71e47a";
+      const etapeAutoEvaluationId = "7e391c6b-4cae-4431-83a8-c2eef41f103c";
+
+      await prisma.referentiel_rattachement.create({
+        data: {
+          code: rattachementCode,
+          groupe: rattachementCode,
+          ordre: 1,
+          libelle: "Rattachement retour reset flags",
+        },
+      });
+
+      await prisma.fiche_evaluation.create({
+        data: {
+          id: ficheEvaluationId,
+          jalon: 2025,
+          etape_courante: "CONSOLIDATION",
+          rattachement_code: rattachementCode,
+          etape_evaluations: {
+            create: [
+              {
+                id: etapeAutoEvaluationId,
+                type: "AUTO_EVALUATION",
+                read_only: true,
+                objectifs_valides: true,
+                criteres_valides: true,
+              },
+              {
+                id: "71153e0d-c648-4e61-b47d-5a0eebdbf5de",
+                type: "CONSOLIDATION",
+              },
+            ],
+          },
+        },
+      });
+
+      // When
+      await handler.execute({
+        ficheEvaluationIds: [ficheEvaluationId],
+      });
+
+      // Then
+      const etapeAutoEvaluation =
+        await prisma.etape_evaluation.findUniqueOrThrow({
+          where: { id: etapeAutoEvaluationId },
+        });
+
+      expect(etapeAutoEvaluation).toEqual(
+        expect.objectContaining({
+          read_only: false,
+          objectifs_valides: false,
+          criteres_valides: false,
+        }),
+      );
+    });
   });
 });

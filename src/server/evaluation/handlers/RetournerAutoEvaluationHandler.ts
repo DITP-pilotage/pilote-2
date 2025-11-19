@@ -57,6 +57,18 @@ export class RetournerAutoEvaluationHandler {
           etape_courante: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
         },
       });
+
+      await prisma.etape_evaluation.updateMany({
+        where: {
+          fiche_evaluation_id: { in: command.ficheEvaluationIds },
+          type: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
+        },
+        data: {
+          read_only: false,
+          objectifs_valides: false,
+          criteres_valides: false,
+        },
+      });
     });
   }
 }
