@@ -239,14 +239,14 @@ export const evaluationRouter = créerRouteurTRPC({
   retournerAutoEvaluation: procédureProtégée
     .input(retournerAutoEvaluationCommandSchema)
     .mutation(async ({ input, ctx }) => {
-      const peutAccederConsolidation = await getContainer("piloteEval")
+      const peutAccederPilotage = await getContainer("piloteEval")
         .resolve("accesFicheEvaluationService")
-        .peutAccederEtapeConsolidation({
-          utilisateurId: ctx.session.user.id,
+        .peutAccederEtapePilotage({
+          applicationsAccessibles: ctx.session.applicationsAccessibles,
         });
 
-      if (!peutAccederConsolidation)
-        throw new ForbiddenError("Accès refusé à la consolidation");
+      if (!peutAccederPilotage)
+        throw new ForbiddenError("Accès refusé au pilotage");
 
       await getContainer("piloteEval")
         .resolve("retournerAutoEvaluationHandler")
