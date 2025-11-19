@@ -21,9 +21,9 @@ export const BoutonTraitementEvaluation = ({
     onMutate: (payload) => {
       setComplete(payload.statut === "TRAITEE");
     },
-    onSuccess: async () => {
+    onSuccess: async (_, payload) => {
       toast.success(
-        dateTraitement
+        payload.statut === "NON_TRAITEE"
           ? "Évaluation marquée comme non complétée"
           : "Évaluation marquée comme complétée",
         {
