@@ -1,6 +1,6 @@
 import { $Enums } from "@prisma/client";
-import { clsxm } from "@/utils/clsxm";
 import { LigneEnteteAvancementCompletionEvaluation } from "@/components/Evaluation/ListeAutoEvaluation/LigneEnteteAvancementCompletionEvaluation";
+import { BarreProgressionEvaluation } from "@/components/Evaluation/ListeAutoEvaluation/BarreProgressionEvaluation";
 import { BaseCardEvaluation } from "./BaseCardEvaluation";
 
 type FicheEvaluation = {
@@ -40,6 +40,22 @@ const formatterTitreEvaluation = ({
     return `Région ${libelle}`;
   }
   return libelle;
+};
+
+const formatterTexteCompletion = ({
+  nombreNotes,
+  nombreTotal,
+  estValide,
+}: {
+  nombreNotes: number;
+  nombreTotal: number;
+  estValide: boolean;
+}) => {
+  return estValide
+    ? "TRANSMIS"
+    : nombreNotes === nombreTotal
+      ? "À TRANSMETTRE"
+      : "À COMPLÉTER";
 };
 
 export const ListeAutoEvaluations = ({
@@ -101,35 +117,18 @@ export const ListeAutoEvaluations = ({
                     ? "COMPLETER"
                     : "NON_COMPLETE"
                 }
-                texteCompletion={
-                  ficheEvaluation.objectifsValides
-                    ? "TRANSMIS"
-                    : ficheEvaluation.objectifs.nombreNotes ===
-                        ficheEvaluation.objectifs.nombreTotal
-                      ? "À TRANSMETTRE"
-                      : "À COMPLÉTER"
-                }
+                texteCompletion={formatterTexteCompletion({
+                  ...ficheEvaluation.objectifs,
+                  estValide: ficheEvaluation.objectifsValides,
+                })}
                 texteLienNavigation="accéder à l'auto-évaluation des objectifs"
                 titre="Objectifs individuels"
               >
-                <div>
-                  <div className="text-sm text-gray-600 mb-2">
-                    {`Progression : ${ficheEvaluation.objectifs.nombreNotes} / ${ficheEvaluation.objectifs.nombreTotal} objectifs${!ficheEvaluation.objectifsValides && ficheEvaluation.objectifs.nombreNotes === ficheEvaluation.objectifs.nombreTotal ? " - à transmettre" : ""}`}
-                  </div>
-                  {ficheEvaluation.objectifs.nombreTotal > 0 && (
-                    <div className="w-full bg-gray-200 rounded-full h-2">
-                      <div
-                        className={clsxm("h-2 rounded-full", {
-                          "bg-primary": ficheEvaluation.objectifsValides,
-                          "bg-pilote-yellow": !ficheEvaluation.objectifsValides,
-                        })}
-                        style={{
-                          width: `${(ficheEvaluation.objectifs.nombreNotes / ficheEvaluation.objectifs.nombreTotal) * 100}%`,
-                        }}
-                      />
-                    </div>
-                  )}
-                </div>
+                <BarreProgressionEvaluation
+                  estValide={ficheEvaluation.objectifsValides}
+                  nombreNotes={ficheEvaluation.objectifs.nombreNotes}
+                  nombreTotal={ficheEvaluation.objectifs.nombreTotal}
+                />
               </BaseCardEvaluation>
               <BaseCardEvaluation
                 libelleMoyenne="auto-évaluation"
@@ -141,35 +140,18 @@ export const ListeAutoEvaluations = ({
                 statutCompletion={
                   ficheEvaluation.criteresValides ? "COMPLETER" : "NON_COMPLETE"
                 }
-                texteCompletion={
-                  ficheEvaluation.criteresValides
-                    ? "TRANSMIS"
-                    : ficheEvaluation.criteres.nombreNotes ===
-                        ficheEvaluation.criteres.nombreTotal
-                      ? "À TRANSMETTRE"
-                      : "À COMPLÉTER"
-                }
+                texteCompletion={formatterTexteCompletion({
+                  ...ficheEvaluation.criteres,
+                  estValide: ficheEvaluation.criteresValides,
+                })}
                 texteLienNavigation="accéder à l'auto-évaluation de la manière de servir"
                 titre="Manière de servir"
               >
-                <div>
-                  <div className="text-sm text-gray-600 mb-2">
-                    {`Progression : ${ficheEvaluation.criteres.nombreNotes} / ${ficheEvaluation.criteres.nombreTotal} axes${!ficheEvaluation.criteresValides && ficheEvaluation.criteres.nombreNotes === ficheEvaluation.criteres.nombreTotal ? " - à transmettre" : ""}`}
-                  </div>
-                  {ficheEvaluation.criteres.nombreTotal > 0 && (
-                    <div className="w-full bg-gray-200 rounded-full h-2">
-                      <div
-                        className={clsxm("h-2 rounded-full", {
-                          "bg-primary": ficheEvaluation.criteresValides,
-                          "bg-pilote-yellow": !ficheEvaluation.criteresValides,
-                        })}
-                        style={{
-                          width: `${(ficheEvaluation.criteres.nombreNotes / ficheEvaluation.criteres.nombreTotal) * 100}%`,
-                        }}
-                      />
-                    </div>
-                  )}
-                </div>
+                <BarreProgressionEvaluation
+                  estValide={ficheEvaluation.criteresValides}
+                  nombreNotes={ficheEvaluation.criteres.nombreNotes}
+                  nombreTotal={ficheEvaluation.criteres.nombreTotal}
+                />
               </BaseCardEvaluation>
             </div>
           </div>
