@@ -1,63 +1,6 @@
 version: 2
 
 models:
-  - name: chantier
-    description: "Une vue sur `df3_chantier`"
-    columns:
-      - name: id
-        description: "source de données à date du 06/07/2023 : ppg_metadata.view_meta_chantier"
-      - name: nom
-        description: "source de données à date du 06/07/2023 : ppg_metadata.view_meta_chantier"
-      - name: code_insee
-        description: "source de données à date du 06/07/2023 : ppg_metadata.view_meta_chantier"
-      - name: taux_avancement
-        description: "source de données à date du 06/07/2023 : dfakto.fact_progress_chantier"
-      - name: taux_avancement_date
-        description: "Date du TA. C'est la date la plus récente de màj d'un indicateur du TA chantier."
-      - name: territoire_nom
-        description: "source de données à date du 06/07/2023 : ppg_metadata.view_meta_zone"
-      - name: perimetre_ids
-        description: "source de données à date du 06/07/2023 : ppg_metadata.view_meta_chantier"
-      - name: maille
-        description: "source de données à date du 06/07/2023 : ppg_metadata.view_meta_zone"
-      - name: directeurs_administration_centrale
-        description: "source de données à date du 06/07/2023 : ppg_metadata.m_porteurs"
-      - name: ministeres
-        description: "source de données à date du 06/07/2023 : ppg_metadata.view_meta_chantier"
-      - name: directions_administration_centrale
-        description: "Acronymes des directions porteuses de ce chantier. Si pas d'acronyme pour une direction, on retourne '-' pour ne pas planter la webapp."
-      - name: directeurs_projet
-        description: "source de données à date du 06/07/2023 : ppg_metadata.m_porteurs"
-      - name: meteo
-        description: "source de données à date du 06/07/2023 : champs déprécié"
-      - name: meteo_int_index
-        description: "Representation numérique de la météo sous forme [null, 1, 2, 3, 4] correspondant à [null, ORAGE, NUAGE, COUVERT, SOLEIL] pour permettre notamment des actions de tri"
-      - name: axe
-        description: "source de données à date du 06/07/2023 : ppg_metadata.view_meta_axe"
-      - name: ppg
-        description: "source de données à date du 06/07/2023 : ppg_metadata.view_meta_ppg"
-      - name: directeurs_projet_mails
-        description: "source de données à date du 06/07/2023 : ppg_metadata.view_meta_chantier"
-      - name: est_barometre
-        description: "source de données à date du 06/07/2023 : ppg_metadata.view_meta_indicateur"
-      - name: est_territorialise
-        description: "source de données à date du 06/07/2023 : ppg_metadata.view_meta_chantier"
-      - name: territoire_code
-        description: "source de données à date du 06/07/2023 : ppg_metadata.view_meta_zone"
-      - name: taux_avancement_precedent
-        description: "source de données à date du 06/07/2023 : données non encore existante"
-      - name: donnees_maille_source
-        description: "Indique la maille depuis laquelle la valeur est répliquée. Dans `{reg, nat}`. En effet, on ne peut pas répliquer des valeurs depuis la maille `DEPT` car il n'y a pas de maille inférieure."
-      - name: cible_attendue
-        description: "Indique si une cible et donc un TA sont attendus pour ce chantier. Si non renseignée dans `ch_cible_attendue` (cf table source `metadata_chantiers`), alors on considère sa valeur à `TRUE`."
-      - name: tendance
-        description: "Indique la tendance du taux d'avancement par rapport au taux avancement précédent, HAUSSE si taux avancement > taux avancement précédent, BAISSE si taux avancement < taux avancement précédent, sinon STAGNATION"
-      - name: tendance_int_index
-        description: "Indique la répresentation de la tendance sous forme [-1, 0, 1] correspondant à [BAISSE, STAGNATION, HAUSSE] pour permettre des actions de tri"
-      - name: derniere_maj_date_qualitative
-        description: "Indique la dernière date de mise à jour des données qualitatives d'un chantier"
-      - name: ecart
-        description: "Indique l'écart entre le taux d'avancement d'un territoire d'un chantier et la mediane de l'ensemble des chantiers appartenant à la maille du taux d'avancement précédent"
   - name: axe
     columns:
       - name: id
@@ -88,6 +31,7 @@ models:
         description: "source de données à date du 07/07/2023 : import massif des commentaires"
       - name: code_insee
         description: "source de données à date du 07/07/2023 : import massif des commentaires"
+<<<<<<< HEAD
   - name: indicateur
     description: "Une vue sur `df3_indicateur`"
     columns:
@@ -165,6 +109,8 @@ models:
         description : "Indique si l'indicateur a une tendance en hausse ou en baisse (valeur HAUSSE / BAISSE)"
       - name: responsables_donnees_mails
         description : "Liste des emails des responsables données de l'indicateur"
+=======
+>>>>>>> 694c07318 ([PIL-990] Fix dbt yaml)
   - name: decision_strategique
     columns:
       - name: id

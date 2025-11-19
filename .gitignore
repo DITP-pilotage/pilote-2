@@ -53,3 +53,4 @@ qodana.yaml
 /playwright/.cache/
 
 public/centreaide/
+data_management/models/exposition/indicateur/indicateur_territoire_valeur_evenement_taux_avancement.sql
