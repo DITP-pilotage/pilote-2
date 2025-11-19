@@ -53,11 +53,17 @@ const EvaluationPage = (
         <div className="mx-auto w-full max-w-6xl">
           <header className="mb-6">
             <h1 className="!text-3xl font-bold mb-2">
-              Bienvenue sur votre espace d'auto-évaluation
+              Bienvenue sur votre espace d'auto-évaluation 2025
             </h1>
+            <h2 className="!text-2xl !text-primary">Calendrier</h2>
             <p className="text-gray-600">
-              Cet espace vous permet de renseigner vos auto-évaluations et de
-              suivre vos objectifs collectifs.
+              La phase d'auto-évaluation des objectifs individuels et de la
+              manière de servir est ouverte jusqu'à la fin du mois de janvier
+              2026. À l'échéance qui vous a été fixée, les auto-évaluations
+              incomplètes ou non validées seront automatiquement validées. Les
+              objectifs collectifs ne font pas l'objet d'une auto-évaluation et
+              sont mis à disposition à titre informatif. Ils seront évalués à
+              partir des résultats constatés dans PILOTE.
             </p>
           </header>
 
