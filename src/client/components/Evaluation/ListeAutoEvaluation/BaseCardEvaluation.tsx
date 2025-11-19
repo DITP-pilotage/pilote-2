@@ -48,10 +48,10 @@ export const BaseCardEvaluation = ({
             />
           </div>
         ) : null}
-        <span className="w-fit px-2 py-1.5 text-xs text-blue-600 bg-blue-100 rounded-xl">
-          {rattachement}
-        </span>
-        <header>
+        <header className="flex flex-column gap-2">
+          <span className="w-fit px-2 py-1.5 text-xs text-blue-600 bg-blue-100 rounded-xl">
+            {rattachement}
+          </span>
           <h3 className="!text-xl !mb-0 font-semibold !text-dsfr-blue-france-sun-113">
             {titre}
           </h3>

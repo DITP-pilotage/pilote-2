@@ -20,14 +20,9 @@ export const LigneEnteteAvancementCompletionEvaluation = ({
   return (
     <li className="!text-pilote-yellow">
       <b>{categorie}</b> : 
-      {nombreNotes === nombreTotal ? (
-        <>votre auto-évaluation est complète et en attente d'être transmise</>
-      ) : (
-        <>
-          vous avez auto-évalué {nombreNotes} {denomination}(s) sur{" "}
-          {nombreTotal}
-        </>
-      )}
+      {nombreNotes === nombreTotal
+        ? "votre auto-évaluation est complète et en attente d'être transmise"
+        : `vous avez auto-évalué ${nombreNotes} ${denomination}(s) sur ${nombreTotal}`}
     </li>
   );
 };
