@@ -125,8 +125,10 @@ models:
         description: "source de données à date du 07/07/2023 : ppg_metadata.view_meta_zone"
       - name: territoire_nom
         description: "source de données à date du 07/07/2023 : ppg_metadata.view_meta_zone"
-      - name: evolution_valeur_actuelle
-        description: "Liste de dates et valeur associée. Exemple: [{date: YYYY-MM-DD, valeur: 12.34}, ...]"
+      - name: evolution_avancement
+        description: >
+          "Liste de dates et valeur associée et potentiellement TAA et TAG.
+          Exemple: [{date: YYYY-MM-DD, valeur: 12.34, taux_avancement_jalon: 100, taux_avancement_mandat: 90}, ...]"
       - name: description
         description: "source de données à date du 07/07/2023 : ppg_metadata.view_meta_indicateur"
       - name: source

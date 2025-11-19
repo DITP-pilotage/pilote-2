@@ -553,7 +553,7 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
             territoire_code: true,
             valeur_initiale: true,
             date_valeur_initiale: true,
-            evolution_valeur_actuelle: true,
+            evolution_avancement: true,
             valeur_cible_mandat: true,
             date_valeur_cible_mandat: true,
             est_applicable: true,
@@ -639,7 +639,7 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
               );
             }
             return (
-              indicateurPourExport.evolution_valeur_actuelle as unknown as historique_valeurs[]
+              indicateurPourExport.evolution_avancement as unknown as historique_valeurs[]
             ).map((historiqueIndicateur) => ({
               maille: indicateurPourExport.maille,
               régionNom:
@@ -903,7 +903,7 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
         // TODO(Tristan-10/10/2024) : Trouver une moyen de se débarasser du as unknown
         historiquesValeurs: indicateurRow
           ? (
-              (indicateurRow.evolution_valeur_actuelle as unknown as historique_valeurs[]) ||
+              (indicateurRow.evolution_avancement as unknown as historique_valeurs[]) ||
               []
             ).sort((a, b) => comparerDates(a.date, b.date))
           : [],
@@ -1002,7 +1002,7 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
         dateValeurInitiale: formatDate(indicateurRow.date_valeur_initiale),
         historiquesValeurs: indicateurRow
           ? (
-              (indicateurRow.evolution_valeur_actuelle as unknown as historique_valeurs[]) ||
+              (indicateurRow.evolution_avancement as unknown as historique_valeurs[]) ||
               []
             ).sort((a, b) => comparerDates(a.date, b.date))
           : [],

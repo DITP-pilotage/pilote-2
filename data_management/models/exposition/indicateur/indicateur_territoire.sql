@@ -18,9 +18,9 @@ get_evol_vaca AS (
         JSONB_AGG(JSONB_BUILD_OBJECT(
             'date', metric_date,
             'valeur', vaca,
-            'taa', taa_adate,
-            'tag', tag
-        )) AS evolution_valeur_actuelle
+            'taa', taux_avancement_jalon,
+            'tag', taux_avancement_mandat,
+        )) AS evolution_avancement
     FROM {{ ref('compute_ta_indic') }}
     WHERE vaca IS NOT NULL
     GROUP BY indic_id, zone_id
@@ -76,9 +76,9 @@ SELECT
             THEN date_pro_maj.prochaine_date_va
     END AS prochaine_date_valeur_actuelle,
     COALESCE(
-        evol_va.evolution_valeur_actuelle,
+        evol_va.evolution_avancement,
         '[]'::JSONB	-- Return [] if the join gives NULL
-    ) AS evolution_valeur_actuelle
+    ) AS evolution_avancement
 
 FROM {{ source('db_schema_public', 'territoire') }} AS territoire
 CROSS JOIN {{ ref('stg_ppg_metadata__indicateurs') }} AS meta_indic

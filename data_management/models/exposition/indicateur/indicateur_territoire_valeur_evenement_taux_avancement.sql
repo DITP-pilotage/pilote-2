@@ -1,11 +1,11 @@
 SELECT
-    indicateur_territoire_valeur_evenement.id,
+    indicateur_territoire_valeur_evenement.id AS evenement_id,
     indicateur_territoire_valeur_evenement.indic_id,
     indicateur_territoire_valeur_evenement.territoire_code,
     indicateur_territoire_valeur_evenement.date_valeur,
     ta_indic.id AS ta_indic_id,
-    ta_indic.taa_adate,
-    ta_indic.tag
+    ta_indic.taa_adate AS taux_avancement_jalon,
+    ta_indic.tag AS taux_avancement_mandat
 FROM
     {{ source('db_schema_public', 'indicateur_territoire_valeur_evenement') }}
         AS indicateur_territoire_valeur_evenement
