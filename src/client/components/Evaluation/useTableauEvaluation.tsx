@@ -21,11 +21,11 @@ const STATUTS_EVALUATION = {
   NON_TRAITE: { label: "Non traité" },
 };
 
+type STATUT_EVALUATION = keyof typeof STATUTS_EVALUATION;
+
 const getStatutTraitement = (row: TableauEvaluationRow): STATUT_EVALUATION => {
   return row.evaluations[0]?.dateTraitement != null ? "TRAITE" : "NON_TRAITE";
 };
-
-type STATUT_EVALUATION = keyof typeof STATUTS_EVALUATION;
 
 export const useTableauEvaluation = ({
   rattachements,
