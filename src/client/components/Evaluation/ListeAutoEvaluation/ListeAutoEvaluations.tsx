@@ -63,9 +63,20 @@ export const ListeAutoEvaluations = ({
                   </li>
                 ) : (
                   <li className="!text-pilote-yellow">
-                    <b>Objectifs individuels</b> : vous avez auto-évalué 
-                    {ficheEvaluation.objectifs.nombreNotes} objectif(s) sur 
-                    {ficheEvaluation.objectifs.nombreTotal}
+                    <b>Objectifs individuels</b> : 
+                    {ficheEvaluation.objectifs.nombreNotes ===
+                    ficheEvaluation.objectifs.nombreTotal ? (
+                      <>
+                        votre auto-évaluation est complète et en attente d'être
+                        transmise
+                      </>
+                    ) : (
+                      <>
+                        vous avez auto-évalué 
+                        {ficheEvaluation.objectifs.nombreNotes} objectif(s) sur 
+                        {ficheEvaluation.objectifs.nombreTotal} 
+                      </>
+                    )}
                   </li>
                 )}
                 {ficheEvaluation.criteresValides ? (
@@ -75,9 +86,20 @@ export const ListeAutoEvaluations = ({
                   </li>
                 ) : (
                   <li className="!text-pilote-yellow">
-                    <b>Manière de servir</b> : vous avez auto-évalué 
-                    {ficheEvaluation.criteres.nombreNotes} axe(s) sur 
-                    {ficheEvaluation.criteres.nombreTotal}
+                    <b>Manière de servir</b> : 
+                    {ficheEvaluation.criteres.nombreNotes ===
+                    ficheEvaluation.criteres.nombreTotal ? (
+                      <>
+                        votre auto-évaluation est complète et en attente d'être
+                        transmise
+                      </>
+                    ) : (
+                      <>
+                        vous avez auto-évalué 
+                        {ficheEvaluation.criteres.nombreNotes} axes(s) sur 
+                        {ficheEvaluation.criteres.nombreTotal}
+                      </>
+                    )}
                   </li>
                 )}
               </ul>
@@ -113,15 +135,19 @@ export const ListeAutoEvaluations = ({
                     : "NON_COMPLETE"
                 }
                 texteCompletion={
-                  ficheEvaluation.objectifsValides ? "TRANSMIS" : "À COMPLÉTER"
+                  ficheEvaluation.objectifsValides
+                    ? "TRANSMIS"
+                    : ficheEvaluation.objectifs.nombreNotes ===
+                        ficheEvaluation.objectifs.nombreTotal
+                      ? "À TRANSMETTRE"
+                      : "À COMPLÉTER"
                 }
                 texteLienNavigation="accéder à l'auto-évaluation des objectifs"
                 titre="Objectifs individuels"
               >
                 <div>
                   <div className="text-sm text-gray-600 mb-2">
-                    Progression : {ficheEvaluation.objectifs.nombreNotes}/
-                    {ficheEvaluation.objectifs.nombreTotal} objectifs
+                    {`Progression : ${ficheEvaluation.objectifs.nombreNotes} / ${ficheEvaluation.objectifs.nombreTotal} objectifs${!ficheEvaluation.objectifsValides && ficheEvaluation.objectifs.nombreNotes === ficheEvaluation.objectifs.nombreTotal ? " - à transmettre" : ""}`}
                   </div>
                   {ficheEvaluation.objectifs.nombreTotal > 0 && (
                     <div className="w-full bg-gray-200 rounded-full h-2">
@@ -149,15 +175,19 @@ export const ListeAutoEvaluations = ({
                   ficheEvaluation.criteresValides ? "COMPLETER" : "NON_COMPLETE"
                 }
                 texteCompletion={
-                  ficheEvaluation.criteresValides ? "TRANSMIS" : "À TRANSMETTRE"
+                  ficheEvaluation.criteresValides
+                    ? "TRANSMIS"
+                    : ficheEvaluation.criteres.nombreNotes ===
+                        ficheEvaluation.criteres.nombreTotal
+                      ? "À TRANSMETTRE"
+                      : "À COMPLÉTER"
                 }
                 texteLienNavigation="accéder à l'auto-évaluation de la manière de servir"
                 titre="Manière de servir"
               >
                 <div>
                   <div className="text-sm text-gray-600 mb-2">
-                    Progression : {ficheEvaluation.criteres.nombreNotes}/
-                    {ficheEvaluation.criteres.nombreTotal} axes - à transmettre
+                    {`Progression : ${ficheEvaluation.criteres.nombreNotes} / ${ficheEvaluation.criteres.nombreTotal} axes${!ficheEvaluation.criteresValides && ficheEvaluation.criteres.nombreNotes === ficheEvaluation.criteres.nombreTotal ? " - à transmettre" : ""}`}
                   </div>
                   {ficheEvaluation.criteres.nombreTotal > 0 && (
                     <div className="w-full bg-gray-200 rounded-full h-2">
