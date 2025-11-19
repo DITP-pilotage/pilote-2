@@ -24,7 +24,7 @@ fix_mesure_indicateur_06_31 as (
 rank_mesures as (
 select *,
 -- On trie, pour chaque {indic_id, metric_type, metric_date_fixed, zone_id}, les valeurs par date d'import la plus récente
-row_number() over (partition by indic_id, metric_type, metric_date_fixed, zone_id order by date_import desc) as r
+row_number() over (partition by indic_id, metric_type, zone_id, date_trunc('month', metric_date_fixed::date) order by date_import desc) as r
 from fix_mesure_indicateur_06_31
 ),
 -- et on garde pour chacun de ces groupes la plus récente
