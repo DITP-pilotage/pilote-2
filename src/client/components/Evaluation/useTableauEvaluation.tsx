@@ -130,7 +130,7 @@ export const useTableauEvaluation = ({
         getGroupingValue: (row) => (row.type === "critere" ? row.id : null),
       }),
     ],
-    [rattachements, getCritere, criteres, onAutosave],
+    [rattachements, criteres],
   );
 
   const table = useReactTable({
