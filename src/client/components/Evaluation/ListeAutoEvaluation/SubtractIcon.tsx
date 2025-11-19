@@ -1,5 +1,5 @@
 export const SubtractIcon = ({
-  fill = "#F9B233",
+  fill = "currentColor",
   className,
 }: {
   fill?: string;

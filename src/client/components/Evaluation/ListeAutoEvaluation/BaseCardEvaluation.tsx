@@ -41,8 +41,10 @@ export const BaseCardEvaluation = ({
               {texteCompletion}
             </span>
             <SubtractIcon
-              className="w-8 h-16"
-              fill={statutCompletion === "NON_COMPLETE" ? "#F9B233" : "#000091"}
+              className={clsxm("w-8 h-16", {
+                "text-pilote-yellow": statutCompletion === "NON_COMPLETE",
+                "text-primary": statutCompletion === "COMPLETER",
+              })}
             />
           </div>
         ) : null}
