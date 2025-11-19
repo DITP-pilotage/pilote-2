@@ -147,7 +147,7 @@ describe("RetournerAutoEvaluationHandler", () => {
       expect(ficheEvaluation.etape_courante).toBe("AUTO_EVALUATION");
     });
 
-    it("doit réinitialiser remttre l'étape AUTO_EVALUATION en écriture", async () => {
+    it("doit remettre l'étape AUTO_EVALUATION en écriture", async () => {
       // Given
       const rattachementCode = "REG-604";
       const ficheEvaluationId = "55c8075a-cae2-444e-9214-8d730f71e47a";
