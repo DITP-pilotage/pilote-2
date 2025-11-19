@@ -16,7 +16,7 @@ import { useGetCritere } from "@/components/Evaluation/CriteresProvider";
 
 const columnHelper = createColumnHelper<TableauEvaluationRow>();
 
-const STATUTS_EVALUTATION = {
+const STATUTS_EVALUATION = {
   TRAITE: { label: "Traité" },
   NON_TRAITE: { label: "Non traité" },
 };
@@ -25,7 +25,7 @@ const getStatutTraitement = (row: TableauEvaluationRow): STATUT_EVALUATION => {
   return row.evaluations[0]?.dateTraitement != null ? "TRAITE" : "NON_TRAITE";
 };
 
-type STATUT_EVALUATION = keyof typeof STATUTS_EVALUTATION;
+type STATUT_EVALUATION = keyof typeof STATUTS_EVALUATION;
 
 export const useTableauEvaluation = ({
   rattachements,
@@ -148,7 +148,7 @@ export const useTableauEvaluation = ({
             label: "Filtrer par statut",
             labelToutesLesOptions: "Tous",
             getValueLabel: (value: STATUT_EVALUATION) =>
-              STATUTS_EVALUTATION[value].label,
+              STATUTS_EVALUATION[value].label,
           },
         },
       }),
