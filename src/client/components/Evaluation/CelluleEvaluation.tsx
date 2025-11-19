@@ -1,4 +1,5 @@
 import { $Enums } from "@prisma/client";
+import { useFormState } from "react-hook-form";
 import { TableauEvaluationRow } from "@/components/Evaluation/TableauEvaluation";
 import { clsxm } from "@/utils/clsxm";
 import { BoutonAfficherFicheCadrage } from "@/components/Evaluation/BoutonAfficherFicheCadrage";
@@ -15,6 +16,7 @@ export const CelluleEvaluation = ({
   currentGrouping: string;
   onAutosave?: () => void;
 }) => {
+  const formState = useFormState();
   const getCritere = useGetCritere();
   const commentaireName =
     ligne.type === "objectif"
@@ -58,7 +60,8 @@ export const CelluleEvaluation = ({
               dateTraitement={ligne.evaluations[0]?.dateTraitement ?? null}
               disabled={
                 ligne.evaluations[0]?.evaluation.note == null ||
-                ligne.rattachement.readOnly
+                ligne.rattachement.readOnly ||
+                !formState.isValid
               }
               evaluationId={ligne.evaluations[0]?.evaluation.id}
               typeEvaluation={
