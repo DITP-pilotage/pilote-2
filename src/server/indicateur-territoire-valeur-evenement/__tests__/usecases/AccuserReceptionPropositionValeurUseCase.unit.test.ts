@@ -123,6 +123,7 @@ describe("AccuserReceptionPropositionValeurUseCase", () => {
 
     // When
     await accuserReceptionPropositionValeurUseCase.run(input);
+    await new Promise((resolve) => setImmediate(resolve));
 
     // Then
     expect(

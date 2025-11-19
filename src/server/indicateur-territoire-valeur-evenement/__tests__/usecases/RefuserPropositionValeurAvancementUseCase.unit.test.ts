@@ -128,6 +128,7 @@ describe("RefuserPropositionValeurAvancementUseCase", () => {
 
     // When
     await refuserPropositionValeurAvancementUseCase.run(input);
+    await new Promise((resolve) => setImmediate(resolve));
 
     // Then
     expect(

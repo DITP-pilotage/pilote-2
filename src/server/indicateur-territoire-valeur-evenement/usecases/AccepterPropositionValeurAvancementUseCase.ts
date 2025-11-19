@@ -6,6 +6,9 @@ import { IndicateurRepository } from "@/server/indicateur-territoire-valeur-even
 import { EnvoieEmailService } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/EnvoieEmailService";
 import { formaterDate } from "@/client/utils/date/date";
 import { formaterNombre } from "@/client/utils/nombre/nombre";
+import { EvenementsSurDate } from "@/server/import-indicateur/domain/EvenementsSurDate";
+import { ValeurEvenement } from "@/server/indicateur-territoire-valeur-evenement/domain/IndicateurTerritoireValeurEvenement";
+import { TypeEvenement } from "@/server/indicateur-territoire-valeur-evenement/domain/TypeEvenement";
 
 export class AccepterPropositionValeurAvancementUseCase {
   private readonly indicateurTerritoireValeurEvenementRepository: IndicateurTerritoireValeurEvenementRepository;
@@ -89,6 +92,28 @@ export class AccepterPropositionValeurAvancementUseCase {
       );
     });
 
+    this.envoieNotification({
+      evenementsSurDate,
+      territoireCode,
+      indicId,
+      dateValeurAvancement,
+      valeurAvancementAvantAcceptation,
+    }).catch();
+  }
+
+  private async envoieNotification({
+    evenementsSurDate,
+    territoireCode,
+    indicId,
+    dateValeurAvancement,
+    valeurAvancementAvantAcceptation,
+  }: {
+    evenementsSurDate: EvenementsSurDate;
+    territoireCode: string;
+    indicId: string;
+    dateValeurAvancement: string;
+    valeurAvancementAvantAcceptation: ValeurEvenement<TypeEvenement>;
+  }) {
     const auteursIdsProposition = evenementsSurDate
       .evenementsPropositionValeurCreeeOuModifiee()
       .map((proposition) => proposition.idAuteurModification);

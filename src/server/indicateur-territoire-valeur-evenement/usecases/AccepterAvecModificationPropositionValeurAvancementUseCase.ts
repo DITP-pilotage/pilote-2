@@ -6,6 +6,9 @@ import { IndicateurRepository } from "@/server/indicateur-territoire-valeur-even
 import { EnvoieEmailService } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/EnvoieEmailService";
 import { formaterDate } from "@/client/utils/date/date";
 import { formaterNombre } from "@/client/utils/nombre/nombre";
+import { EvenementsSurDate } from "@/server/import-indicateur/domain/EvenementsSurDate";
+import { ValeurEvenement } from "@/server/indicateur-territoire-valeur-evenement/domain/IndicateurTerritoireValeurEvenement";
+import { TypeEvenement } from "@/server/indicateur-territoire-valeur-evenement/domain/TypeEvenement";
 
 export class AccepterAvecModificationPropositionValeurAvancementUseCase {
   private readonly indicateurTerritoireValeurEvenementRepository: IndicateurTerritoireValeurEvenementRepository;
@@ -95,6 +98,39 @@ export class AccepterAvecModificationPropositionValeurAvancementUseCase {
       );
     });
 
+    this.EnvoieNotification({
+      evenementsSurDate,
+      territoireCode,
+      indicId,
+      dateValeurAvancement,
+      valeurAvancementAvantAcceptation,
+      valeurPropositionAvantAcceptation,
+      valeurAcceptee: valeur,
+      motif,
+    }).catch();
+  }
+
+  private async EnvoieNotification({
+    evenementsSurDate,
+    territoireCode,
+    indicId,
+    dateValeurAvancement,
+    valeurAvancementAvantAcceptation,
+    valeurPropositionAvantAcceptation,
+    valeurAcceptee,
+    motif,
+  }: {
+    evenementsSurDate: EvenementsSurDate;
+    territoireCode: string;
+    indicId: string;
+    dateValeurAvancement: string;
+    valeurAvancementAvantAcceptation: ValeurEvenement<TypeEvenement>;
+    valeurPropositionAvantAcceptation:
+      | ValeurEvenement<TypeEvenement>
+      | undefined;
+    valeurAcceptee: number;
+    motif: string;
+  }): Promise<void> {
     const auteursIdsProposition = evenementsSurDate
       .evenementsPropositionValeurCreeeOuModifiee()
       .map((proposition) => proposition.idAuteurModification);
@@ -142,7 +178,7 @@ export class AccepterAvecModificationPropositionValeurAvancementUseCase {
               valeurPropositionAvantAcceptation,
               1,
             ),
-            valeurAcceptee: formaterNombre(valeur, 1),
+            valeurAcceptee: formaterNombre(valeurAcceptee, 1),
             motifModification: motif,
           },
         },

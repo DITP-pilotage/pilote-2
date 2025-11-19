@@ -135,6 +135,7 @@ describe("AccepterAvecModificationPropositionValeurAvancementUseCase", () => {
 
     // When
     await accepterAvecModificationPropositionValeurAvancementUseCase.run(input);
+    await new Promise((resolve) => setImmediate(resolve));
 
     // Then
     expect(mesureIndicateurRepository.enregistrer).toHaveBeenCalledWith({
