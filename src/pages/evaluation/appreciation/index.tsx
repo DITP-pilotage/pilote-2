@@ -10,6 +10,7 @@ import { configurationFeatureFlip } from "@/config";
 import { pageAppreciation } from "@/components/PageAppreciation/PageAppreciationServerSideContext";
 import { InformationEnteteAppreciation } from "@/components/PageAppreciation/InformationEnteteAppreciation";
 import { SelecteurPhaseAppreciation } from "@/components/PageAppreciation/SelecteurPhaseAppreciation";
+import { ListePhaseEvaluation } from "@/components/PageAppreciation/ListePhaseEvaluation";
 
 export const getServerSideProps = async ({
   req,
@@ -45,7 +46,7 @@ export const getServerSideProps = async ({
   };
 };
 
-export default function PageConsolidation(
+export default function PageAppreciation(
   props: InferGetServerSidePropsType<typeof getServerSideProps>,
 ) {
   const [statutCompletionAppreciation, setStatutCompletionAppreciation] =
@@ -93,6 +94,7 @@ export default function PageConsolidation(
               />
             </header>
           </div>
+          <ListePhaseEvaluation />
         </div>
       </main>
     </pageAppreciation.ServerSidePropsProvider>
