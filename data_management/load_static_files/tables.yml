@@ -35,7 +35,7 @@ groups:
         path_in_repo: "models/chantier/ref_chantier_engagement.csv"
       metadata_chantiers:
         schema: "raw_data"
-        dType: "{'replicate_val_reg_to': sqlalchemy.types.VARCHAR, 'replicate_val_nat_to': sqlalchemy.types.VARCHAR}"
+        dtype: "{'replicate_val_reg_to': str, 'replicate_val_nat_to': str}"
         path_in_repo: "views/chantier/view_meta_chantier.csv"
       metadata_chantier_meteos:
         schema: "raw_data"
