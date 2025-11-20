@@ -20,6 +20,7 @@ import { ValiderSaisieCriteresHandler } from "./handlers/ValiderSaisieCriteresHa
 import { ValiderSaisieObjectifsHandler } from "./handlers/ValiderSaisieObjectifsHandler";
 import { SetTraitementEvaluationHandler } from "./handlers/SetTraitementEvaluationHandler";
 import { RetournerAutoEvaluationHandler } from "./handlers/RetournerAutoEvaluationHandler";
+import { ModifierObjectifHandler } from "./handlers/ModifierObjectifHandler";
 
 export type PiloteEvalDependencies = {
   afficherAutoEvaluation: AfficherAutoEvaluationQuery;
@@ -42,6 +43,7 @@ export type PiloteEvalDependencies = {
   passerALEtapeInstructionHandler: PasserALEtapeInstructionHandler;
   setTraitementEvaluationHandler: SetTraitementEvaluationHandler;
   retournerAutoEvaluationHandler: RetournerAutoEvaluationHandler;
+  modifierObjectifHandler: ModifierObjectifHandler;
 };
 
 export const getPiloteEvalContainer = (
@@ -82,5 +84,6 @@ export const getPiloteEvalContainer = (
     passerALEtapeInstructionHandler: asClass(PasserALEtapeInstructionHandler),
     setTraitementEvaluationHandler: asClass(SetTraitementEvaluationHandler),
     retournerAutoEvaluationHandler: asClass(RetournerAutoEvaluationHandler),
+    modifierObjectifHandler: asClass(ModifierObjectifHandler),
   });
 };
