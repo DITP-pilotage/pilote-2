@@ -250,8 +250,8 @@ export const useTableauEvaluation = ({
     initialState: {
       expanded: true,
       columnVisibility: {
-        critereId: false,
-        traite: false,
+        [COLONNES.CRITERE_ID]: false,
+        [COLONNES.STATUT_TRAITEMENT]: false,
       },
     },
   });
