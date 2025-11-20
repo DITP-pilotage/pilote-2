@@ -47,3 +47,10 @@ echo ">> pg_restore dumped file..."
 time pg_restore -d $DATABASE_URL --verbose \
     --no-owner --no-privileges --exit-on-error \
     $DUMP_DEST
+
+echo ">> Anonymisation des utilisateur..."
+time psql -d $DATABASE_URL -c "
+UPDATE utilisateur
+SET email = REPLACE(CONCAT(id, '@example.com'), ' ', '')
+WHERE email NOT LIKE '%@example%'";
+"
