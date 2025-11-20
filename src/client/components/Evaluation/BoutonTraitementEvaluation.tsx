@@ -4,6 +4,7 @@ import api from "@/server/infrastructure/api/trpc/api";
 import { Icone } from "@/components/_commons/Icone";
 import { CheckLineIcon } from "@/components/_commons/Icones/CheckLineIcon";
 import { clsxm } from "@/utils/clsxm";
+import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
 
 export const BoutonTraitementEvaluation = ({
   evaluationId,
@@ -17,6 +18,7 @@ export const BoutonTraitementEvaluation = ({
   disabled: boolean;
 }) => {
   const [complete, setComplete] = useState(dateTraitement != null);
+  const refreshRouter = useRefreshRouter();
   const setTraitement = api.evaluation.setTraitementEvaluation.useMutation({
     onMutate: (payload) => {
       setComplete(payload.statut === "TRAITEE");
@@ -31,6 +33,7 @@ export const BoutonTraitementEvaluation = ({
           richColors: true,
         },
       );
+      return refreshRouter();
     },
     onError: () => {
       toast.error("Erreur lors de la mise à jour", {
