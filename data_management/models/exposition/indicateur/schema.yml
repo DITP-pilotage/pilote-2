@@ -9,11 +9,11 @@ models:
     config:
         materialized: table
         indexes: 
-          - columns: ['id']
+          - columns: ['evenement_id']
           - columns: ['indic_id']
           - columns: ['territoire_code']
     columns:
-      - name : id
+      - name : evenement_id
         tests:
           - unique
           - not_null
