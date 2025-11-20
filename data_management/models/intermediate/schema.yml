@@ -147,9 +147,20 @@ unit_tests:
       given:
         - input: source('db_schema_public', 'synthese_des_resultats')
           rows:
-            - { chantier_id: 'CH-090', territoire_code: 'DEPT-01', meteo: 'COUVERT', date_meteo: '2021-01-05' }
-            - { chantier_id: 'CH-090', territoire_code: 'DEPT-01', meteo: 'SOLEIL', date_meteo: '2021-01-06' }
-            - { chantier_id: 'CH-090', territoire_code: 'DEPT-01', meteo: 'ORAGE', date_meteo: '2021-01-07' }
+            - { chantier_id: 'CH-090', territoire_code: 'DEPT-01', meteo: 'COUVERT', date_meteo: '2021-01-05', maille : 'dept', code_insee : '01' }
+            - { chantier_id: 'CH-090', territoire_code: 'DEPT-01', meteo: 'SOLEIL', date_meteo: '2021-01-06', maille : 'dept', code_insee : '01'  }
+            - { chantier_id: 'CH-090', territoire_code: 'DEPT-01', meteo: 'ORAGE', date_meteo: '2021-01-07', maille : 'dept', code_insee : '01'  }
+        - input: source('db_schema_public', 'territoire')
+          format: sql
+          rows: |
+            SELECT
+              'DEPT-01' AS code,
+              'Ain' AS nom,
+              '01 - Ain' AS nom_affiche,
+              'dept'::maille AS maille,
+              '01' AS code_insee,
+              'REG-84' AS code_parent,
+              'D01' AS zone_id
       expect:
         rows:
           - { chantier_id: 'CH-090', territoire_code: 'DEPT-01', meteo: 'ORAGE', date_meteo: '2021-01-07' }
