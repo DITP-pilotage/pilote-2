@@ -2,8 +2,10 @@ import { toast } from "sonner";
 import { useCallback } from "react";
 import api from "@/server/infrastructure/api/trpc/api";
 import { FormValues } from "@/components/Evaluation/form";
+import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
 
 export const useEnregistrerBrouillonConsolidation = () => {
+  const refreshRouter = useRefreshRouter();
   const enregistrerBrouillon =
     api.evaluation.enregistrerBrouillonConsolidation.useMutation();
   // Attention : enregistrerBrouillon.mutateAsync est stable
@@ -33,16 +35,17 @@ export const useEnregistrerBrouillonConsolidation = () => {
           },
         ),
         {
-          onSuccess: () => {
+          onSuccess: async () => {
             if (showToast) {
               toast.success("Données enregistrées", {
                 position: "top-right",
                 richColors: true,
               });
             }
+            return refreshRouter();
           },
         },
       ),
-    [mutateAsync],
+    [mutateAsync, refreshRouter],
   );
 };
