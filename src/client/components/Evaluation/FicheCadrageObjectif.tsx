@@ -59,6 +59,7 @@ export const FicheCadrageObjectif = ({
       <form className="space-y-4">
         <div>
           <Textarea
+            charLimit={600}
             className="max-h-[400px] overflow-y-auto"
             control={form.control}
             label="Descriptif"
@@ -70,6 +71,7 @@ export const FicheCadrageObjectif = ({
 
         <div>
           <Textarea
+            charLimit={600}
             className="max-h-[400px] overflow-y-auto"
             control={form.control}
             label="Indicateur + cible"
