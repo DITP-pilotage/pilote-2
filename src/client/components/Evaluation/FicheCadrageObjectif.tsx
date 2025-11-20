@@ -9,10 +9,10 @@ import api from "@/server/infrastructure/api/trpc/api";
 const formSchema = z.object({
   descriptif: z
     .string()
-    .max(600, "Le descriptif ne doit pas dépasser 600 caractères."),
+    .max(600, "Ce champ ne doit pas dépasser 600 caractères."),
   indicateurCible: z
     .string()
-    .max(600, "Le descriptif ne doit pas dépasser 600 caractères."),
+    .max(600, "Ce champ ne doit pas dépasser 600 caractères."),
 });
 
 type FormValues = z.infer<typeof formSchema>;
