@@ -30,12 +30,8 @@ export class ModifierObjectifHandler {
       const objectif = await prisma.referentiel_objectif.findFirst({
         where: {
           id: command.objectifId,
-          evaluations: {
-            some: {
-              etape_evaluation: {
-                fiche_evaluation_id: command.ficheEvaluationId,
-              },
-            },
+          rattachement: {
+            fiche_evaluation: { some: { id: command.ficheEvaluationId } },
           },
         },
       });
