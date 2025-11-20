@@ -16,12 +16,14 @@ export function Textarea<T extends FieldValues>({
   onBlur,
   className,
   textareaRef,
+  charLimit,
   ...props
 }: ComponentProps<"textarea"> & {
   label?: string;
   name: Path<T>;
   control: Control<T>;
   textareaRef?: RefObject<TextareaRef>;
+  charLimit?: number;
 }) {
   const internalRef = useRef<HTMLTextAreaElement | null>(null);
 
@@ -77,9 +79,11 @@ export function Textarea<T extends FieldValues>({
                 <MessageErreur>{fieldState.error.message}</MessageErreur>
               ) : null}
 
-              <span className="text-xs ml-auto">
-                {field.value.length} / 600
-              </span>
+              {charLimit != null && (
+                <span className="text-xs ml-auto">
+                  {field.value.length} / {charLimit}
+                </span>
+              )}
             </div>
           </div>
         );
