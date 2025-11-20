@@ -16,17 +16,9 @@ export const formatterTitreEvaluation = ({
 };
 
 export const formatterTexteCompletion = ({
-  nombreNotes,
-  nombreTotal,
   estValide,
 }: {
-  nombreNotes: number;
-  nombreTotal: number;
   estValide: boolean;
 }) => {
-  return estValide
-    ? "TRANSMIS"
-    : nombreNotes === nombreTotal
-      ? "À TRANSMETTRE"
-      : "À COMPLÉTER";
+  return estValide ? "TRANSMIS" : "À COMPLÉTER";
 };

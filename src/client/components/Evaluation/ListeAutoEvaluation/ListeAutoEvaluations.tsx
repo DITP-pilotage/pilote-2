@@ -94,6 +94,7 @@ export const ListeAutoEvaluations = ({
                 listeInformationsMoyennes={[
                   {
                     libelle: "taux d'avancement",
+                    misEnAvant: true,
                     moyenne: ficheEvaluation.noteCollective,
                   },
                 ]}
@@ -114,6 +115,7 @@ export const ListeAutoEvaluations = ({
                 listeInformationsMoyennes={[
                   {
                     libelle: "auto-évaluation",
+                    misEnAvant: true,
                     moyenne: ficheEvaluation.objectifs.moyenne,
                   },
                 ]}
@@ -133,6 +135,7 @@ export const ListeAutoEvaluations = ({
                 titre="Objectifs individuels"
               >
                 <BarreProgressionEvaluation
+                  elementDeProgression="objectifs"
                   estValide={ficheEvaluation.objectifsValides}
                   nombreNotes={ficheEvaluation.objectifs.nombreNotes}
                   nombreTotal={ficheEvaluation.objectifs.nombreTotal}
@@ -143,6 +146,7 @@ export const ListeAutoEvaluations = ({
                 listeInformationsMoyennes={[
                   {
                     libelle: "auto-évaluation",
+                    misEnAvant: true,
                     moyenne: ficheEvaluation.criteres.moyenne,
                   },
                 ]}
@@ -160,6 +164,7 @@ export const ListeAutoEvaluations = ({
                 titre="Manière de servir"
               >
                 <BarreProgressionEvaluation
+                  elementDeProgression="axes"
                   estValide={ficheEvaluation.criteresValides}
                   nombreNotes={ficheEvaluation.criteres.nombreNotes}
                   nombreTotal={ficheEvaluation.criteres.nombreTotal}

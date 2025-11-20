@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { PropsWithChildren } from "react";
+import { PropsWithChildren, useId } from "react";
 import { Icone } from "@/components/_commons/Icone";
 import { ArrowLine1Icon } from "@/components/_commons/Icones/ArrowLine1Icon";
 import { clsxm } from "@/utils/clsxm";
@@ -11,6 +11,7 @@ interface BaseCardEvaluationProps {
   texteBadge: string;
   listeInformationsMoyennes: {
     moyenne: number | null;
+    misEnAvant?: boolean;
     libelle: string;
   }[];
   texteLienNavigation?: string;
@@ -28,6 +29,7 @@ export const BaseCardEvaluation = ({
   statutCompletion,
   texteCompletion,
 }: PropsWithChildren<BaseCardEvaluationProps>) => {
+  const id = useId();
   return (
     <Link className="block no-underline" href={lien}>
       <section className="relative flex flex-col gap-4 h-full p-4 bg-white border border-gray-300 !border-b-4 !border-b-dsfr-blue-france-sun-113 rounded cursor-pointer transition-shadow hover:shadow-md">
@@ -57,20 +59,24 @@ export const BaseCardEvaluation = ({
             {titre}
           </h3>
         </header>
-        <div className="flex justify-end items-end h-10">
-          {listeInformationsMoyennes.map((informationMoyenne) => {
+        <div className="flex flex-col justify-end items-end h-10">
+          {listeInformationsMoyennes.map((informationMoyenne, index) => {
             return (
-              <>
+              <div className="flex items-end" key={`${id}-${index}`}>
                 <span className="mr-2 text-grey-200">
                   {informationMoyenne.libelle} : 
                 </span>
 
                 {informationMoyenne.moyenne !== null ? (
                   <span
-                    className={clsxm("text-4xl font-bold", {
+                    className={clsxm("text-sm", {
+                      "!text-4xl font-bold": informationMoyenne.misEnAvant,
                       "!text-pilote-yellow":
-                        statutCompletion === "NON_COMPLETE",
-                      "!text-primary": statutCompletion === "COMPLETER",
+                        statutCompletion === "NON_COMPLETE" &&
+                        informationMoyenne.misEnAvant,
+                      "!text-primary":
+                        statutCompletion === "COMPLETER" &&
+                        informationMoyenne.misEnAvant,
                       "!text-dsfr-grey-625": !statutCompletion,
                     })}
                   >
@@ -82,7 +88,7 @@ export const BaseCardEvaluation = ({
                   </span>
                 )}
                 <span className="text-sm text-grey-200"> / 100</span>
-              </>
+              </div>
             );
           })}
         </div>

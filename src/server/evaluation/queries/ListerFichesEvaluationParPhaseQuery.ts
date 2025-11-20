@@ -97,6 +97,72 @@ export class ListerFichesEvaluationParPhaseQuery {
         permissionsUtilisateur.map((perm) => perm.etape),
       );
 
+      const moyennesObjectifsParPhase: Partial<
+        Record<$Enums.etape_evaluation_enum, number | null>
+      > = {};
+
+      const moyennesCriteresParPhase: Partial<
+        Record<$Enums.etape_evaluation_enum, number | null>
+      > = {};
+
+      for (const etape of fiche.etape_evaluations) {
+        const objectifsParEtape = fiche.rattachement.objectifs.map(
+          (objectif) => {
+            const evaluation = etape.evaluations_objectifs.find(
+              (evalObjectif) => evalObjectif.objectif_id === objectif.id,
+            );
+            return {
+              note: evaluation?.note ?? null,
+            };
+          },
+        );
+
+        const criteresParEtape = tousLesCriteres.map((critere) => {
+          const evaluation = etape.evaluations_criteres.find(
+            (evalCritere) => evalCritere.critere_id === critere.id,
+          );
+          return {
+            note: evaluation?.note ?? null,
+          };
+        });
+
+        const moyenneObjectifsEtape =
+          objectifsParEtape.length > 0
+            ? objectifsParEtape.reduce(
+                (acc, obj) => ({
+                  total: acc.total + (obj.note ?? 0),
+                  count: acc.count + (obj.note !== null ? 1 : 0),
+                }),
+                { total: 0, count: 0 },
+              )
+            : null;
+
+        const moyenneCriteresEtape =
+          criteresParEtape.length > 0
+            ? criteresParEtape.reduce(
+                (acc, crit) => ({
+                  total: acc.total + (crit.note ?? 0),
+                  count: acc.count + (crit.note !== null ? 1 : 0),
+                }),
+                { total: 0, count: 0 },
+              )
+            : null;
+
+        moyennesObjectifsParPhase[etape.type] =
+          moyenneObjectifsEtape && moyenneObjectifsEtape.count > 0
+            ? Math.round(
+                moyenneObjectifsEtape.total / moyenneObjectifsEtape.count,
+              )
+            : null;
+
+        moyennesCriteresParPhase[etape.type] =
+          moyenneCriteresEtape && moyenneCriteresEtape.count > 0
+            ? Math.round(
+                moyenneCriteresEtape.total / moyenneCriteresEtape.count,
+              )
+            : null;
+      }
+
       for (const etapeEvaluation of fiche.etape_evaluations) {
         if (!etapesAutorisees.has(etapeEvaluation.type)) {
           continue;
@@ -175,6 +241,7 @@ export class ListerFichesEvaluationParPhaseQuery {
               moyenneObjectifs && moyenneObjectifs.count > 0
                 ? Math.round(moyenneObjectifs.total / moyenneObjectifs.count)
                 : null,
+            moyennesParPhase: moyennesObjectifsParPhase,
             nombreNotes: moyenneObjectifs?.count ?? 0,
             nombreTotal: objectifsAvecNotes.length,
           },
@@ -183,6 +250,7 @@ export class ListerFichesEvaluationParPhaseQuery {
               moyenneCriteres && moyenneCriteres.count > 0
                 ? Math.round(moyenneCriteres.total / moyenneCriteres.count)
                 : null,
+            moyennesParPhase: moyennesCriteresParPhase,
             nombreNotes: moyenneCriteres?.count ?? 0,
             nombreTotal: criteresAvecNotes.length,
           },

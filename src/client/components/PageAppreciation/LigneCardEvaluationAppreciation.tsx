@@ -47,7 +47,16 @@ export const LigneCardEvaluationAppreciation = ({
           listeInformationsMoyennes={[
             {
               libelle: "appréciation",
-              moyenne: ficheEvaluation.objectifs.moyenne,
+              misEnAvant: true,
+              moyenne:
+                ficheEvaluation.objectifs.moyennesParPhase.CONSOLIDATION ||
+                null,
+            },
+            {
+              libelle: "auto-évaluation",
+              moyenne:
+                ficheEvaluation.objectifs.moyennesParPhase.AUTO_EVALUATION ||
+                null,
             },
           ]}
           statutCompletion={
@@ -55,17 +64,18 @@ export const LigneCardEvaluationAppreciation = ({
           }
           texteBadge="Objectifs individuels"
           texteCompletion={formatterTexteCompletion({
-            ...ficheEvaluation.objectifs,
             estValide: ficheEvaluation.objectifsValides,
           })}
           texteLienNavigation="accéder à l'appréciation des objectifs individuels"
           titre={formatterTitreEvaluation(ficheEvaluation.rattachement)}
         >
           <BarreProgressionEvaluation
+            elementDeProgression="objectifs"
             estValide={ficheEvaluation.objectifsValides}
             nombreNotes={ficheEvaluation.objectifs.nombreNotes}
             nombreTotal={ficheEvaluation.objectifs.nombreTotal}
             peutEtreTransmis={false}
+            texteProgression="Traité"
           />
         </BaseCardEvaluation>
         <BaseCardEvaluation
@@ -73,7 +83,15 @@ export const LigneCardEvaluationAppreciation = ({
           listeInformationsMoyennes={[
             {
               libelle: "appréciation",
-              moyenne: ficheEvaluation.criteres.moyenne,
+              misEnAvant: true,
+              moyenne:
+                ficheEvaluation.criteres.moyennesParPhase.CONSOLIDATION || null,
+            },
+            {
+              libelle: "auto-évaluation",
+              moyenne:
+                ficheEvaluation.criteres.moyennesParPhase.AUTO_EVALUATION ||
+                null,
             },
           ]}
           statutCompletion={
@@ -81,17 +99,18 @@ export const LigneCardEvaluationAppreciation = ({
           }
           texteBadge="Manière de servir"
           texteCompletion={formatterTexteCompletion({
-            ...ficheEvaluation.criteres,
             estValide: ficheEvaluation.criteresValides,
           })}
           texteLienNavigation="accéder à l'appréciation de la manière de servir"
           titre={formatterTitreEvaluation(ficheEvaluation.rattachement)}
         >
           <BarreProgressionEvaluation
+            elementDeProgression="axes"
             estValide={ficheEvaluation.criteresValides}
             nombreNotes={ficheEvaluation.criteres.nombreNotes}
             nombreTotal={ficheEvaluation.criteres.nombreTotal}
             peutEtreTransmis={false}
+            texteProgression="Traité"
           />
         </BaseCardEvaluation>
       </div>

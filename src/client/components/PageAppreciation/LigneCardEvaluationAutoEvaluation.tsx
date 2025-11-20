@@ -26,6 +26,7 @@ export const LigneCardEvaluationAutoEvaluation = ({
               {
                 libelle: "taux d'avancement",
                 moyenne: ficheEvaluation.noteCollective,
+                misEnAvant: true,
               },
             ]}
             texteBadge="Objectifs collectifs"
@@ -49,6 +50,7 @@ export const LigneCardEvaluationAutoEvaluation = ({
           titre={formatterTitreEvaluation(ficheEvaluation.rattachement)}
         >
           <BarreProgressionEvaluation
+            elementDeProgression="objectifs"
             estValide={ficheEvaluation.objectifsValides}
             nombreNotes={ficheEvaluation.objectifs.nombreNotes}
             nombreTotal={ficheEvaluation.objectifs.nombreTotal}
@@ -65,6 +67,7 @@ export const LigneCardEvaluationAutoEvaluation = ({
           titre={formatterTitreEvaluation(ficheEvaluation.rattachement)}
         >
           <BarreProgressionEvaluation
+            elementDeProgression="axes"
             estValide={ficheEvaluation.criteresValides}
             nombreNotes={ficheEvaluation.criteres.nombreNotes}
             nombreTotal={ficheEvaluation.criteres.nombreTotal}

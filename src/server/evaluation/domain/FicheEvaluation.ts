@@ -11,11 +11,17 @@ export interface FicheEvaluation {
   };
   objectifs: {
     moyenne: number | null;
+    moyennesParPhase: Partial<
+      Record<$Enums.etape_evaluation_enum, number | null>
+    >;
     nombreNotes: number;
     nombreTotal: number;
   };
   criteres: {
     moyenne: number | null;
+    moyennesParPhase: Partial<
+      Record<$Enums.etape_evaluation_enum, number | null>
+    >;
     nombreNotes: number;
     nombreTotal: number;
   };

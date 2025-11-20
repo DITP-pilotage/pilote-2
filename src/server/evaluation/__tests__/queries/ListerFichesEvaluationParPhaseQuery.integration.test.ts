@@ -158,11 +158,17 @@ describe("ListerFichesEvaluationParPhaseQuery", () => {
               },
               objectifs: {
                 moyenne: null,
+                moyennesParPhase: {
+                  [$Enums.etape_evaluation_enum.AUTO_EVALUATION]: null,
+                },
                 nombreNotes: 0,
                 nombreTotal: 0,
               },
               criteres: {
                 moyenne: null,
+                moyennesParPhase: {
+                  [$Enums.etape_evaluation_enum.AUTO_EVALUATION]: null,
+                },
                 nombreNotes: 0,
                 nombreTotal: 0,
               },
@@ -179,11 +185,17 @@ describe("ListerFichesEvaluationParPhaseQuery", () => {
               },
               objectifs: {
                 moyenne: null,
+                moyennesParPhase: {
+                  [$Enums.etape_evaluation_enum.AUTO_EVALUATION]: null,
+                },
                 nombreNotes: 0,
                 nombreTotal: 0,
               },
               criteres: {
                 moyenne: null,
+                moyennesParPhase: {
+                  [$Enums.etape_evaluation_enum.AUTO_EVALUATION]: null,
+                },
                 nombreNotes: 0,
                 nombreTotal: 0,
               },
@@ -207,11 +219,17 @@ describe("ListerFichesEvaluationParPhaseQuery", () => {
               },
               objectifs: {
                 moyenne: null,
+                moyennesParPhase: {
+                  [$Enums.etape_evaluation_enum.CONSOLIDATION]: null,
+                },
                 nombreNotes: 0,
                 nombreTotal: 0,
               },
               criteres: {
                 moyenne: null,
+                moyennesParPhase: {
+                  [$Enums.etape_evaluation_enum.CONSOLIDATION]: null,
+                },
                 nombreNotes: 0,
                 nombreTotal: 0,
               },
@@ -427,15 +445,205 @@ describe("ListerFichesEvaluationParPhaseQuery", () => {
           },
           objectifs: {
             moyenne: null,
+            moyennesParPhase: {
+              [$Enums.etape_evaluation_enum.INSTRUCTION]: null,
+            },
             nombreNotes: 0,
             nombreTotal: 0,
           },
           criteres: {
             moyenne: null,
+            moyennesParPhase: {
+              [$Enums.etape_evaluation_enum.INSTRUCTION]: null,
+            },
             nombreNotes: 0,
             nombreTotal: 0,
           },
           noteCollective: 80,
+        },
+      ]);
+    });
+
+    it("doit inclure les moyennes de toutes les phases précédentes dans moyennesParPhase", async () => {
+      const utilisateurId = "bbda7822-0401-4200-9c8a-50717004eadb";
+      const rattachementCode = "REG-50";
+      const ficheId = "33cd70fb-b632-4ad2-bc92-de4e62aa7141";
+
+      await prisma.utilisateur.create({
+        data: {
+          id: utilisateurId,
+          email: "user-moyennes-phases@example.com",
+          nom: "UserMoyennes",
+          prenom: "Test",
+          date_creation: new Date(),
+          profilCode: "DITP_ADMIN",
+        },
+      });
+
+      await prisma.referentiel_rattachement.create({
+        data: {
+          code: rattachementCode,
+          groupe: rattachementCode,
+          ordre: 1,
+          libelle: "Région moyennes phases",
+        },
+      });
+
+      await prisma.rattachement_utilisateur_etape_jalon.create({
+        data: {
+          id: "7118afff-72bf-48e7-a3b7-d0060dcb00bf",
+          rattachement_code: rattachementCode,
+          utilisateur_id: utilisateurId,
+          etape: $Enums.etape_evaluation_enum.CONSOLIDATION,
+          jalon: 2025,
+        },
+      });
+
+      const objectif1Id = "bce9ed29-50c0-4acc-b16f-d78ff9301df2";
+      const objectif2Id = "f34b3af5-7c58-4c92-9091-c888ff845660";
+      const critereId = "97aac51b-70d6-4128-97b6-747c5a89bb99";
+
+      await prisma.referentiel_objectif.createMany({
+        data: [
+          {
+            id: objectif1Id,
+            descriptif: "objectif 1",
+            jalon: 2025,
+            rattachement_code: rattachementCode,
+            libelle: "Objectif 1",
+          },
+          {
+            id: objectif2Id,
+            descriptif: "objectif 2",
+            jalon: 2025,
+            rattachement_code: rattachementCode,
+            libelle: "Objectif 2",
+          },
+        ],
+      });
+
+      await prisma.referentiel_critere.create({
+        data: {
+          id: critereId,
+          descriptif: "Critère 2",
+          libelle: "Critère 1",
+        },
+      });
+
+      await prisma.fiche_evaluation.create({
+        data: {
+          id: ficheId,
+          jalon: 2025,
+          etape_courante: $Enums.etape_evaluation_enum.CONSOLIDATION,
+          rattachement_code: rattachementCode,
+          etape_evaluations: {
+            create: [
+              {
+                id: "929972cf-70c5-4621-9f17-d49dff835cba",
+                type: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
+                evaluations_objectifs: {
+                  create: [
+                    {
+                      id: "b5246338-9cbe-4995-95ac-387b09193d2f",
+                      commentaire: "Un commentaire",
+                      auteur_id: utilisateurId,
+                      objectif_id: objectif1Id,
+                      note: 10,
+                    },
+                    {
+                      id: "f9af13f1-7f4f-4919-9568-377002034086",
+                      commentaire: "Un commentaire",
+                      auteur_id: utilisateurId,
+                      objectif_id: objectif2Id,
+                      note: 20,
+                    },
+                  ],
+                },
+                evaluations_criteres: {
+                  create: [
+                    {
+                      id: "b3925cef-460d-4915-9b3f-9b849d9bd02f",
+                      commentaire: "Un commentaire",
+                      auteur_id: utilisateurId,
+                      critere_id: critereId,
+                      note: 15,
+                    },
+                  ],
+                },
+              },
+              {
+                id: "32a89257-7bee-410a-aecb-5d19d6a60373",
+                type: $Enums.etape_evaluation_enum.CONSOLIDATION,
+                evaluations_objectifs: {
+                  create: [
+                    {
+                      id: "81b914ac-ae3a-4ade-a204-32dd2eec57be",
+                      commentaire: "Un commentaire",
+                      auteur_id: utilisateurId,
+                      objectif_id: objectif1Id,
+                      note: 30,
+                    },
+                    {
+                      id: "b693e742-81ad-417f-8dca-91722954db99",
+                      commentaire: "Un commentaire",
+                      auteur_id: utilisateurId,
+                      objectif_id: objectif2Id,
+                      note: 40,
+                    },
+                  ],
+                },
+                evaluations_criteres: {
+                  create: [
+                    {
+                      id: "f9b1d396-cd59-4b43-b4a5-e64eea0b3f74",
+                      commentaire: "Un commentaire",
+                      auteur_id: utilisateurId,
+                      critere_id: critereId,
+                      note: 25,
+                    },
+                  ],
+                },
+              },
+            ],
+          },
+        },
+      });
+
+      const result = await query.run({ utilisateurId });
+
+      expect(
+        result["Région moyennes phases"][
+          $Enums.etape_evaluation_enum.CONSOLIDATION
+        ],
+      ).toEqual([
+        {
+          id: ficheId,
+          etapeCourante: $Enums.etape_evaluation_enum.CONSOLIDATION,
+          objectifsValides: false,
+          criteresValides: false,
+          rattachement: {
+            code: rattachementCode,
+            libelle: "Région moyennes phases",
+          },
+          objectifs: {
+            moyenne: 35,
+            moyennesParPhase: {
+              [$Enums.etape_evaluation_enum.AUTO_EVALUATION]: 15,
+              [$Enums.etape_evaluation_enum.CONSOLIDATION]: 35,
+            },
+            nombreNotes: 2,
+            nombreTotal: 2,
+          },
+          criteres: {
+            moyenne: 25,
+            moyennesParPhase: {
+              [$Enums.etape_evaluation_enum.AUTO_EVALUATION]: 15,
+              [$Enums.etape_evaluation_enum.CONSOLIDATION]: 25,
+            },
+            nombreNotes: 1,
+            nombreTotal: 1,
+          },
+          noteCollective: null,
         },
       ]);
     });
@@ -523,11 +731,19 @@ describe("ListerFichesEvaluationParPhaseQuery", () => {
           },
           objectifs: {
             moyenne: null,
+            moyennesParPhase: {
+              [$Enums.etape_evaluation_enum.AUTO_EVALUATION]: null,
+              [$Enums.etape_evaluation_enum.CONSOLIDATION]: null,
+            },
             nombreNotes: 0,
             nombreTotal: 0,
           },
           criteres: {
             moyenne: null,
+            moyennesParPhase: {
+              [$Enums.etape_evaluation_enum.AUTO_EVALUATION]: null,
+              [$Enums.etape_evaluation_enum.CONSOLIDATION]: null,
+            },
             nombreNotes: 0,
             nombreTotal: 0,
           },
