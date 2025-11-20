@@ -4,7 +4,10 @@ import { FicheCadrageObjectif } from "@/components/Evaluation/FicheCadrageObject
 
 export type CritereOuObjectif =
   | { type: "critere"; critere: Critere }
-  | { type: "objectif"; objectif: Omit<Objectif, "evaluations"> };
+  | {
+      type: "objectif";
+      objectif: Omit<Objectif, "evaluations"> & { ficheEvaluationId: string };
+    };
 
 export const FicheCadrage = ({
   critereOuObjectif,
