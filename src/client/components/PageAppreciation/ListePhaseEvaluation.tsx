@@ -26,7 +26,7 @@ export const ListePhaseEvaluation = () => {
                 INSTRUCTION.length
               } formulaires`}
             </h2>
-            <Accordion.Root collapsible type="multiple">
+            <Accordion.Root type="multiple">
               <Accordion.Item value="appreciation">
                 <Accordion.Header>
                   <Accordion.Trigger>

@@ -102,6 +102,10 @@ export class ListerFichesEvaluationParPhaseQuery {
           continue;
         }
 
+        if (etapeEvaluation.type !== fiche.etape_courante) {
+          continue;
+        }
+
         const objectifsAvecNotes = fiche.rattachement.objectifs.map(
           (objectif) => {
             const evaluation = etapeEvaluation.evaluations_objectifs.find(

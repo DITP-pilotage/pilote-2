@@ -440,6 +440,108 @@ describe("ListerFichesEvaluationParPhaseQuery", () => {
       ]);
     });
 
+    it("ne doit retourner une fiche que dans la phase correspondant à son etape_courante, même si l'utilisateur a des permissions pour plusieurs phases", async () => {
+      const utilisateurId = "9744ab67-996a-43bf-bec5-54bbe39c5a57";
+      const rattachementCode = "REG-40";
+      const ficheId = "0287810b-8f94-4e43-9ff2-7c57d369c86b";
+
+      await prisma.utilisateur.create({
+        data: {
+          id: utilisateurId,
+          email: "user-multi-phases@example.com",
+          nom: "UserMultiPhases",
+          prenom: "Test",
+          date_creation: new Date(),
+          profilCode: "DITP_ADMIN",
+        },
+      });
+
+      await prisma.referentiel_rattachement.create({
+        data: {
+          code: rattachementCode,
+          groupe: rattachementCode,
+          ordre: 1,
+          libelle: "Région multi-phases",
+        },
+      });
+
+      await prisma.rattachement_utilisateur_etape_jalon.createMany({
+        data: [
+          {
+            id: "fdcc1846-650b-4d5f-a194-79b348db0d9e",
+            rattachement_code: rattachementCode,
+            utilisateur_id: utilisateurId,
+            etape: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
+            jalon: 2025,
+          },
+          {
+            id: "110852f6-b032-4ec2-9f94-4671ae300079",
+            rattachement_code: rattachementCode,
+            utilisateur_id: utilisateurId,
+            etape: $Enums.etape_evaluation_enum.CONSOLIDATION,
+            jalon: 2025,
+          },
+        ],
+      });
+
+      await prisma.fiche_evaluation.create({
+        data: {
+          id: ficheId,
+          jalon: 2025,
+          etape_courante: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
+          rattachement_code: rattachementCode,
+          etape_evaluations: {
+            create: [
+              {
+                id: "e563f605-2d87-4303-84f0-eb3e17b62b67",
+                type: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
+              },
+              {
+                id: "d5fbb75e-e792-48a8-a7cd-a27b850f4604",
+                type: $Enums.etape_evaluation_enum.CONSOLIDATION,
+              },
+            ],
+          },
+        },
+      });
+
+      const result = await query.run({ utilisateurId });
+
+      expect(
+        result["Région multi-phases"][
+          $Enums.etape_evaluation_enum.AUTO_EVALUATION
+        ],
+      ).toEqual([
+        {
+          id: ficheId,
+          etapeCourante: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
+          objectifsValides: false,
+          criteresValides: false,
+          rattachement: {
+            code: rattachementCode,
+            libelle: "Région multi-phases",
+          },
+          objectifs: {
+            moyenne: null,
+            nombreNotes: 0,
+            nombreTotal: 0,
+          },
+          criteres: {
+            moyenne: null,
+            nombreNotes: 0,
+            nombreTotal: 0,
+          },
+          noteCollective: null,
+        },
+      ]);
+
+      expect(
+        result["Région multi-phases"][
+          $Enums.etape_evaluation_enum.CONSOLIDATION
+        ],
+      ).toEqual([]);
+    });
+
     it("doit ordonner les fiches par ordre du rattachement dans chaque groupe", async () => {
       const utilisateurId = "5a7e9dec-8328-44bf-a7fd-c362592aab7d";
       const groupeCode = "REG-30";
