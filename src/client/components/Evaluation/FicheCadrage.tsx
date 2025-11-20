@@ -11,7 +11,9 @@ export type CritereOuObjectif =
 
 export const FicheCadrage = ({
   critereOuObjectif,
+  editable,
 }: {
+  editable: boolean;
   critereOuObjectif: CritereOuObjectif | null;
 }) => {
   return (
@@ -26,6 +28,7 @@ export const FicheCadrage = ({
           )}
           {critereOuObjectif?.type === "objectif" && (
             <FicheCadrageObjectif
+              editable={editable}
               key={critereOuObjectif.objectif.id}
               objectif={critereOuObjectif.objectif}
             />
