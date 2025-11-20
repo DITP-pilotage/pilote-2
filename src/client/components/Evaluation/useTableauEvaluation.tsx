@@ -9,6 +9,7 @@ import {
 } from "@tanstack/react-table";
 import { useMemo, useState } from "react";
 import pick from "lodash.pick";
+import { parseAsArrayOf, parseAsString, useQueryStates } from "nuqs";
 import { TableauEvaluationRow } from "@/components/Evaluation/TableauEvaluation";
 import { Rattachement } from "@/server/evaluation/queries/types";
 import { CelluleEvaluation } from "@/components/Evaluation/CelluleEvaluation";
@@ -34,6 +35,19 @@ export const useTableauEvaluation = ({
 }) => {
   const getCritere = useGetCritere();
   const [grouping, setGrouping] = useState<string[]>(["rattachementCode"]);
+
+  const [filters, setFilters] = useQueryStates(
+    {
+      territoire: parseAsArrayOf(parseAsString).withDefault([]),
+      critere: parseAsArrayOf(parseAsString).withDefault([]),
+      traite: parseAsArrayOf(parseAsString).withDefault([]),
+    },
+    {
+      shallow: false,
+      clearOnDefault: true,
+      history: "replace",
+    },
+  );
   const data = useMemo<TableauEvaluationRow[]>(() => {
     const rows: TableauEvaluationRow[] = [];
 
@@ -146,6 +160,29 @@ export const useTableauEvaluation = ({
     [rattachements, getCritere],
   );
 
+  const columnFilters = useMemo(() => {
+    const columnFiltersArray = [];
+    if (filters.territoire.length > 0) {
+      columnFiltersArray.push({
+        id: "rattachementCode",
+        value: filters.territoire,
+      });
+    }
+    if (filters.critere.length > 0) {
+      columnFiltersArray.push({
+        id: "critereId",
+        value: filters.critere,
+      });
+    }
+    if (filters.traite.length > 0) {
+      columnFiltersArray.push({
+        id: "traite",
+        value: filters.traite,
+      });
+    }
+    return columnFiltersArray;
+  }, [filters]);
+
   const table = useReactTable({
     data,
     columns,
@@ -154,8 +191,43 @@ export const useTableauEvaluation = ({
     getExpandedRowModel: getExpandedRowModel(),
     getGroupedRowModel: getGroupedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
-    state: { grouping },
+    state: {
+      grouping,
+      columnFilters,
+    },
     onGroupingChange: setGrouping,
+    onColumnFiltersChange: (updater) => {
+      const newFilters =
+        typeof updater === "function" ? updater(columnFilters) : updater;
+
+      const territoireFilterValue = newFilters.find(
+        (filter) => filter.id === "rattachementCode",
+      )?.value;
+      const critereFilterValue = newFilters.find(
+        (filter) => filter.id === "critereId",
+      )?.value;
+      const traiteFilterValue = newFilters.find(
+        (filter) => filter.id === "traite",
+      )?.value;
+
+      void setFilters({
+        territoire:
+          Array.isArray(territoireFilterValue) &&
+          territoireFilterValue.every((v) => typeof v === "string")
+            ? (territoireFilterValue as string[])
+            : [],
+        critere:
+          Array.isArray(critereFilterValue) &&
+          critereFilterValue.every((v) => typeof v === "string")
+            ? (critereFilterValue as string[])
+            : [],
+        traite:
+          Array.isArray(traiteFilterValue) &&
+          traiteFilterValue.every((v) => typeof v === "string")
+            ? (traiteFilterValue as string[])
+            : [],
+      });
+    },
     initialState: {
       expanded: true,
       columnVisibility: {
