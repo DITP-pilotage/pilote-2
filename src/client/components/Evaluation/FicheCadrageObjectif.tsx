@@ -7,8 +7,12 @@ import { useAutosave } from "@/components/Evaluation/useAutosave";
 import api from "@/server/infrastructure/api/trpc/api";
 
 const formSchema = z.object({
-  descriptif: z.string(),
-  indicateurCible: z.string(),
+  descriptif: z
+    .string()
+    .max(600, "Le descriptif ne doit pas dépasser 600 caractères."),
+  indicateurCible: z
+    .string()
+    .max(600, "Le descriptif ne doit pas dépasser 600 caractères."),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -38,9 +42,15 @@ export const FicheCadrageObjectif = ({
     });
   });
 
-  const { onChange, onBlur } = useAutosave({
+  const autosave = useAutosave({
     onAutosave: handleSubmit,
   });
+
+  const onBlur = async () => {
+    const isValid = await form.trigger();
+    if (!isValid) return;
+    autosave.onBlur();
+  };
 
   return (
     <div>
@@ -49,21 +59,23 @@ export const FicheCadrageObjectif = ({
       <form className="space-y-4">
         <div>
           <Textarea
+            className="max-h-[400px] overflow-y-auto"
             control={form.control}
             label="Descriptif"
             name="descriptif"
             onBlur={onBlur}
-            onChange={onChange}
+            onChange={autosave.onChange}
           />
         </div>
 
         <div>
           <Textarea
+            className="max-h-[400px] overflow-y-auto"
             control={form.control}
             label="Indicateur + cible"
             name="indicateurCible"
             onBlur={onBlur}
-            onChange={onChange}
+            onChange={autosave.onChange}
           />
         </div>
       </form>
