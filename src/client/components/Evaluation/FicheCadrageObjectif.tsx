@@ -20,8 +20,6 @@ export const FicheCadrageObjectif = ({
 }) => {
   const mutation = api.evaluation.modifierObjectif.useMutation();
 
-  console.log(objectif);
-
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     mode: "onChange",
