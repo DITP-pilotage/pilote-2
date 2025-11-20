@@ -19,10 +19,16 @@ export const FicheCadrage = ({
       <aside className="sticky top-0 p-6 h-screen relative">
         <div className="absolute inset-0 p-6 overflow-y-auto">
           {critereOuObjectif?.type === "critere" && (
-            <FicheCadrageCritere critere={critereOuObjectif.critere} />
+            <FicheCadrageCritere
+              critere={critereOuObjectif.critere}
+              key={critereOuObjectif.critere.id}
+            />
           )}
           {critereOuObjectif?.type === "objectif" && (
-            <FicheCadrageObjectif objectif={critereOuObjectif.objectif} />
+            <FicheCadrageObjectif
+              key={critereOuObjectif.objectif.id}
+              objectif={critereOuObjectif.objectif}
+            />
           )}
         </div>
       </aside>
