@@ -1,9 +1,6 @@
 import { FicheEvaluation } from "@/server/evaluation/domain/FicheEvaluation";
 import { BaseCardEvaluation } from "@/components/Evaluation/ListeAutoEvaluation/BaseCardEvaluation";
-import {
-  formatterTexteCompletion,
-  formatterTitreEvaluation,
-} from "@/components/PageAppreciation/utilsTexteEvaluation";
+import { formatterTitreEvaluation } from "@/components/PageAppreciation/utilsTexteEvaluation";
 import { BarreProgressionEvaluation } from "@/components/Evaluation/ListeAutoEvaluation/BarreProgressionEvaluation";
 import { clsxm } from "@/utils/clsxm";
 
@@ -24,14 +21,16 @@ export const LigneCardEvaluationAutoEvaluation = ({
       >
         {afficherObjectifsCollectifs ? (
           <BaseCardEvaluation
-            libelleMoyenne="taux d'avancement"
             lien={`/evaluation/note-collective/${ficheEvaluation.rattachement.code}`}
-            moyenne={ficheEvaluation.noteCollective}
-            rattachement={formatterTitreEvaluation(
-              ficheEvaluation.rattachement,
-            )}
+            listeInformationsMoyennes={[
+              {
+                libelle: "taux d'avancement",
+                moyenne: ficheEvaluation.noteCollective,
+              },
+            ]}
+            texteBadge="Objectifs collectifs"
             texteLienNavigation="Consulter la liste des objectifs collectifs"
-            titre="Objectifs collectifs"
+            titre={formatterTitreEvaluation(ficheEvaluation.rattachement)}
           >
             <div className="text-xs text-grey-200">
               Taux constaté dans PILOTE, en attente de la saisie finalisée des
@@ -41,18 +40,13 @@ export const LigneCardEvaluationAutoEvaluation = ({
         ) : null}
 
         <BaseCardEvaluation
-          libelleMoyenne="auto-évaluation"
           lien="TODO"
-          moyenne={ficheEvaluation.objectifs.moyenne}
-          rattachement={formatterTitreEvaluation(ficheEvaluation.rattachement)}
+          listeInformationsMoyennes={[]}
           statutCompletion={
             ficheEvaluation.objectifsValides ? "COMPLETER" : "NON_COMPLETE"
           }
-          texteCompletion={formatterTexteCompletion({
-            ...ficheEvaluation.objectifs,
-            estValide: ficheEvaluation.objectifsValides,
-          })}
-          titre="Objectifs individuels"
+          texteBadge="Objectifs individuels"
+          titre={formatterTitreEvaluation(ficheEvaluation.rattachement)}
         >
           <BarreProgressionEvaluation
             estValide={ficheEvaluation.objectifsValides}
@@ -61,18 +55,13 @@ export const LigneCardEvaluationAutoEvaluation = ({
           />
         </BaseCardEvaluation>
         <BaseCardEvaluation
-          libelleMoyenne="auto-évaluation"
           lien="TODO"
-          moyenne={ficheEvaluation.criteres.moyenne}
-          rattachement={formatterTitreEvaluation(ficheEvaluation.rattachement)}
+          listeInformationsMoyennes={[]}
           statutCompletion={
             ficheEvaluation.criteresValides ? "COMPLETER" : "NON_COMPLETE"
           }
-          texteCompletion={formatterTexteCompletion({
-            ...ficheEvaluation.criteres,
-            estValide: ficheEvaluation.criteresValides,
-          })}
-          titre="Manière de servir"
+          texteBadge="Manière de servir"
+          titre={formatterTitreEvaluation(ficheEvaluation.rattachement)}
         >
           <BarreProgressionEvaluation
             estValide={ficheEvaluation.criteresValides}

@@ -14,6 +14,7 @@ export const formatterTitreEvaluation = ({
   }
   return libelle;
 };
+
 export const formatterTexteCompletion = ({
   nombreNotes,
   nombreTotal,

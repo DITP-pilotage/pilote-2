@@ -90,10 +90,14 @@ export const ListeAutoEvaluations = ({
 
             <div className="grid md:grid-cols-3 gap-4">
               <BaseCardEvaluation
-                libelleMoyenne="taux d'avancement"
                 lien={`/evaluation/note-collective/${ficheEvaluation.rattachement.code}`}
-                moyenne={ficheEvaluation.noteCollective}
-                rattachement={formatterTitreEvaluation(
+                listeInformationsMoyennes={[
+                  {
+                    libelle: "taux d'avancement",
+                    moyenne: ficheEvaluation.noteCollective,
+                  },
+                ]}
+                texteBadge={formatterTitreEvaluation(
                   ficheEvaluation.rattachement,
                 )}
                 texteLienNavigation="Consulter la liste des objectifs collectifs"
@@ -106,17 +110,21 @@ export const ListeAutoEvaluations = ({
               </BaseCardEvaluation>
 
               <BaseCardEvaluation
-                libelleMoyenne="auto-évaluation"
                 lien={`/evaluation/auto-evaluation/${ficheEvaluation.id}/objectifs`}
-                moyenne={ficheEvaluation.objectifs.moyenne}
-                rattachement={formatterTitreEvaluation(
-                  ficheEvaluation.rattachement,
-                )}
+                listeInformationsMoyennes={[
+                  {
+                    libelle: "auto-évaluation",
+                    moyenne: ficheEvaluation.objectifs.moyenne,
+                  },
+                ]}
                 statutCompletion={
                   ficheEvaluation.objectifsValides
                     ? "COMPLETER"
                     : "NON_COMPLETE"
                 }
+                texteBadge={formatterTitreEvaluation(
+                  ficheEvaluation.rattachement,
+                )}
                 texteCompletion={formatterTexteCompletion({
                   ...ficheEvaluation.objectifs,
                   estValide: ficheEvaluation.objectifsValides,
@@ -131,15 +139,19 @@ export const ListeAutoEvaluations = ({
                 />
               </BaseCardEvaluation>
               <BaseCardEvaluation
-                libelleMoyenne="auto-évaluation"
                 lien={`/evaluation/auto-evaluation/${ficheEvaluation.id}/manieres-de-servir`}
-                moyenne={ficheEvaluation.criteres.moyenne}
-                rattachement={formatterTitreEvaluation(
-                  ficheEvaluation.rattachement,
-                )}
+                listeInformationsMoyennes={[
+                  {
+                    libelle: "auto-évaluation",
+                    moyenne: ficheEvaluation.criteres.moyenne,
+                  },
+                ]}
                 statutCompletion={
                   ficheEvaluation.criteresValides ? "COMPLETER" : "NON_COMPLETE"
                 }
+                texteBadge={formatterTitreEvaluation(
+                  ficheEvaluation.rattachement,
+                )}
                 texteCompletion={formatterTexteCompletion({
                   ...ficheEvaluation.criteres,
                   estValide: ficheEvaluation.criteresValides,
