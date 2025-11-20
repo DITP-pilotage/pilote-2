@@ -28,27 +28,9 @@ const getStatutTraitement = (row: TableauEvaluationRow): STATUT_EVALUATION => {
   return row.evaluations[0]?.dateTraitement != null ? "TRAITE" : "NON_TRAITE";
 };
 
-export const useTableauEvaluation = ({
-  rattachements,
-}: {
-  rattachements: Rattachement[];
-}) => {
+const useTableData = (rattachements: Rattachement[]) => {
   const getCritere = useGetCritere();
-  const [grouping, setGrouping] = useState<string[]>(["rattachementCode"]);
-
-  const [filters, setFilters] = useQueryStates(
-    {
-      territoire: parseAsArrayOf(parseAsString).withDefault([]),
-      critere: parseAsArrayOf(parseAsString).withDefault([]),
-      traite: parseAsArrayOf(parseAsString).withDefault([]),
-    },
-    {
-      shallow: false,
-      clearOnDefault: true,
-      history: "replace",
-    },
-  );
-  const data = useMemo<TableauEvaluationRow[]>(() => {
+  return useMemo<TableauEvaluationRow[]>(() => {
     const rows: TableauEvaluationRow[] = [];
 
     rattachements.forEach((rattachement) => {
@@ -81,11 +63,21 @@ export const useTableauEvaluation = ({
 
     return rows;
   }, [getCritere, rattachements]);
+};
 
-  const columns = useMemo(
+export const COLONNES = {
+  RATTACHEMENT_CODE: "rattachementCode",
+  ID: "id",
+  CRITERE_ID: "critereId",
+  STATUT_TRAITEMENT: "statutTraitement",
+};
+
+const useTableColumns = (rattachements: Rattachement[]) => {
+  const getCritere = useGetCritere();
+  return useMemo(
     () => [
       columnHelper.accessor("rattachement.code", {
-        id: "rattachementCode",
+        id: COLONNES.RATTACHEMENT_CODE,
         header: "Rattachement",
         cell: (info) => {
           return (
@@ -110,14 +102,14 @@ export const useTableauEvaluation = ({
         getGroupingValue: (row) => row.rattachement.code,
       }),
       columnHelper.accessor("id", {
-        id: "id",
+        id: COLONNES.ID,
         header: "Évaluation",
         cell: CelluleEvaluation,
         enableGrouping: false,
         enableColumnFilter: false,
       }),
       columnHelper.accessor((row) => (row.type === "critere" ? row.id : null), {
-        id: "critereId",
+        id: COLONNES.CRITERE_ID,
         header: "Critere",
         enableColumnFilter: true,
         filterFn: "arrIncludesSome",
@@ -134,7 +126,7 @@ export const useTableauEvaluation = ({
         getGroupingValue: (row) => (row.type === "critere" ? row.id : null),
       }),
       columnHelper.accessor(getStatutTraitement, {
-        id: "traite",
+        id: COLONNES.STATUT_TRAITEMENT,
         enableColumnFilter: true,
         filterFn: (row, columnId, filterValue) => {
           const filter = Array.isArray(filterValue)
@@ -159,29 +151,56 @@ export const useTableauEvaluation = ({
     ],
     [rattachements, getCritere],
   );
+};
 
+const useColumnFilters = () => {
+  const [filters, setFilters] = useQueryStates(
+    {
+      territoire: parseAsArrayOf(parseAsString).withDefault([]),
+      critere: parseAsArrayOf(parseAsString).withDefault([]),
+      traite: parseAsArrayOf(parseAsString).withDefault([]),
+    },
+    {
+      shallow: false,
+      clearOnDefault: true,
+      history: "replace",
+    },
+  );
   const columnFilters = useMemo(() => {
     const columnFiltersArray = [];
     if (filters.territoire.length > 0) {
       columnFiltersArray.push({
-        id: "rattachementCode",
+        id: COLONNES.RATTACHEMENT_CODE,
         value: filters.territoire,
       });
     }
     if (filters.critere.length > 0) {
       columnFiltersArray.push({
-        id: "critereId",
+        id: COLONNES.CRITERE_ID,
         value: filters.critere,
       });
     }
     if (filters.traite.length > 0) {
       columnFiltersArray.push({
-        id: "traite",
+        id: COLONNES.STATUT_TRAITEMENT,
         value: filters.traite,
       });
     }
     return columnFiltersArray;
   }, [filters]);
+
+  return [columnFilters, setFilters] as const;
+};
+
+export const useTableauEvaluation = ({
+  rattachements,
+}: {
+  rattachements: Rattachement[];
+}) => {
+  const [grouping, setGrouping] = useState<string[]>(["rattachementCode"]);
+  const data = useTableData(rattachements);
+  const columns = useTableColumns(rattachements);
+  const [columnFilters, setFilters] = useColumnFilters();
 
   const table = useReactTable({
     data,
@@ -201,13 +220,13 @@ export const useTableauEvaluation = ({
         typeof updater === "function" ? updater(columnFilters) : updater;
 
       const territoireFilterValue = newFilters.find(
-        (filter) => filter.id === "rattachementCode",
+        (filter) => filter.id === COLONNES.RATTACHEMENT_CODE,
       )?.value;
       const critereFilterValue = newFilters.find(
-        (filter) => filter.id === "critereId",
+        (filter) => filter.id === COLONNES.CRITERE_ID,
       )?.value;
       const traiteFilterValue = newFilters.find(
-        (filter) => filter.id === "traite",
+        (filter) => filter.id === COLONNES.STATUT_TRAITEMENT,
       )?.value;
 
       void setFilters({

@@ -10,7 +10,10 @@ import {
   Evaluation,
   Rattachement,
 } from "@/server/evaluation/queries/types";
-import { useTableauEvaluation } from "@/components/Evaluation/useTableauEvaluation";
+import {
+  COLONNES,
+  useTableauEvaluation,
+} from "@/components/Evaluation/useTableauEvaluation";
 import { LayoutFicheCadrage } from "@/components/Evaluation/LayoutFicheCadrage";
 import { BoutonAfficherFicheCadrage } from "@/components/Evaluation/BoutonAfficherFicheCadrage";
 import {
@@ -122,9 +125,10 @@ export const InnerTableauEvaluation = memo(function TableauEvaluation({
                       {headerGroup.headers
                         .filter((header) => {
                           if (
-                            table.getState().grouping[0] === "rattachementCode"
+                            table.getState().grouping[0] ===
+                            COLONNES.RATTACHEMENT_CODE
                           ) {
-                            return header.id !== "rattachementCode";
+                            return header.id !== COLONNES.RATTACHEMENT_CODE;
                           }
 
                           return true;
@@ -133,8 +137,9 @@ export const InnerTableauEvaluation = memo(function TableauEvaluation({
                           <th
                             className={clsxm(
                               "border border-gray-300 px-4 py-3 text-left font-semibold",
-                              header.id === "rattachementCode" && "w-48",
-                              header.id === "id" && "w-auto",
+                              header.id === COLONNES.RATTACHEMENT_CODE &&
+                                "w-48",
+                              header.id === COLONNES.ID && "w-auto",
                             )}
                             key={header.id}
                           >
@@ -158,7 +163,7 @@ export const InnerTableauEvaluation = memo(function TableauEvaluation({
                       let colSpan = 1;
                       let aside: ReactNode = null;
 
-                      if (groupingColumnId == "critereId") {
+                      if (groupingColumnId == COLONNES.CRITERE_ID) {
                         const critere = criteres.find(
                           (critereGroup) => critereGroup.id === groupingValue,
                         );
@@ -203,9 +208,11 @@ export const InnerTableauEvaluation = memo(function TableauEvaluation({
                           .filter((cell) => {
                             if (
                               table.getState().grouping[0] ===
-                              "rattachementCode"
+                              COLONNES.RATTACHEMENT_CODE
                             ) {
-                              return cell.column.id !== "rattachementCode";
+                              return (
+                                cell.column.id !== COLONNES.RATTACHEMENT_CODE
+                              );
                             }
 
                             return true;
