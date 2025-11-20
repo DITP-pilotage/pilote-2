@@ -1,10 +1,12 @@
 import { clsxm } from "@/utils/clsxm";
 
 export const BarreProgressionEvaluation = ({
+  peutEtreTransmis = true,
   estValide,
   nombreTotal,
   nombreNotes,
 }: {
+  peutEtreTransmis?: boolean;
   estValide: boolean;
   nombreTotal: number;
   nombreNotes: number;
@@ -12,7 +14,7 @@ export const BarreProgressionEvaluation = ({
   return (
     <div>
       <div className="text-sm text-gray-600 mb-2">
-        {`Progression : ${nombreNotes} / ${nombreTotal} axes${!estValide && nombreNotes === nombreTotal ? " - à transmettre" : ""}`}
+        {`Progression : ${nombreNotes} / ${nombreTotal} axes${!estValide && peutEtreTransmis && nombreNotes === nombreTotal ? " - à transmettre" : ""}`}
       </div>
       {nombreTotal > 0 && (
         <div className="w-full bg-gray-200 rounded-full h-2">

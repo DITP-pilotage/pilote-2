@@ -52,6 +52,7 @@ export const LigneCardEvaluationAutoEvaluation = ({
             estValide={ficheEvaluation.objectifsValides}
             nombreNotes={ficheEvaluation.objectifs.nombreNotes}
             nombreTotal={ficheEvaluation.objectifs.nombreTotal}
+            peutEtreTransmis={false}
           />
         </BaseCardEvaluation>
         <BaseCardEvaluation
@@ -67,6 +68,7 @@ export const LigneCardEvaluationAutoEvaluation = ({
             estValide={ficheEvaluation.criteresValides}
             nombreNotes={ficheEvaluation.criteres.nombreNotes}
             nombreTotal={ficheEvaluation.criteres.nombreTotal}
+            peutEtreTransmis={false}
           />
         </BaseCardEvaluation>
       </div>
