@@ -162,13 +162,15 @@ describe("ModifierObjectifHandler", () => {
     });
 
     it("ne doit pas permettre de modifier un objectif d'une autre fiche d'évaluation", async () => {
-      const rattachementCode = "REG-MODIFIER-OBJ-04";
+      const rattachementCode1 = "REG-MODIFIER-OBJ-04A";
+      const rattachementCode2 = "REG-MODIFIER-OBJ-04B";
       const ficheEvaluationId1 = "a1b2c3d4-e5f6-7890-abcd-444444444441";
       const ficheEvaluationId2 = "a1b2c3d4-e5f6-7890-abcd-444444444442";
       const etapeEvaluationId = "b1c2d3e4-f5a6-8901-bcde-444444444444";
       const evaluationObjectifId = "c1d2e3f4-a5b6-7890-cdef-444444444444";
       const utilisateurId = "d1e2f3a4-b5c6-8901-def1-444444444444";
-      const objectifId = "e1f2a3b4-c5d6-7890-ef12-444444444444";
+      const objectifId1 = "e1f2a3b4-c5d6-7890-ef12-444444444441";
+      const objectifId2 = "e1f2a3b4-c5d6-7890-ef12-444444444442";
 
       await prisma.utilisateur.create({
         data: {
@@ -184,21 +186,41 @@ describe("ModifierObjectifHandler", () => {
 
       await prisma.referentiel_rattachement.create({
         data: {
-          code: rattachementCode,
-          libelle: "Rattachement modifier objectif 4",
-          groupe: rattachementCode,
+          code: rattachementCode1,
+          libelle: "Rattachement modifier objectif 4A",
+          groupe: rattachementCode1,
           ordre: 1,
+        },
+      });
+
+      await prisma.referentiel_rattachement.create({
+        data: {
+          code: rattachementCode2,
+          libelle: "Rattachement modifier objectif 4B",
+          groupe: rattachementCode2,
+          ordre: 2,
         },
       });
 
       await prisma.referentiel_objectif.create({
         data: {
-          id: objectifId,
-          libelle: "Objectif 4",
-          descriptif: "Description initiale",
-          indicateur_cible: "Indicateur initial",
+          id: objectifId1,
+          libelle: "Objectif 4A",
+          descriptif: "Description initiale A",
+          indicateur_cible: "Indicateur initial A",
           jalon: 2025,
-          rattachement_code: rattachementCode,
+          rattachement_code: rattachementCode1,
+        },
+      });
+
+      await prisma.referentiel_objectif.create({
+        data: {
+          id: objectifId2,
+          libelle: "Objectif 4B",
+          descriptif: "Description initiale B",
+          indicateur_cible: "Indicateur initial B",
+          jalon: 2025,
+          rattachement_code: rattachementCode2,
         },
       });
 
@@ -207,7 +229,7 @@ describe("ModifierObjectifHandler", () => {
           id: ficheEvaluationId1,
           jalon: 2025,
           etape_courante: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
-          rattachement_code: rattachementCode,
+          rattachement_code: rattachementCode1,
         },
       });
 
@@ -216,7 +238,7 @@ describe("ModifierObjectifHandler", () => {
           id: ficheEvaluationId2,
           jalon: 2025,
           etape_courante: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
-          rattachement_code: rattachementCode,
+          rattachement_code: rattachementCode2,
         },
       });
 
@@ -233,7 +255,7 @@ describe("ModifierObjectifHandler", () => {
         data: {
           id: evaluationObjectifId,
           etape_evaluation_id: etapeEvaluationId,
-          objectif_id: objectifId,
+          objectif_id: objectifId1,
           auteur_id: utilisateurId,
           note: 3,
           commentaire: "Commentaire test",
@@ -244,7 +266,7 @@ describe("ModifierObjectifHandler", () => {
       await expect(
         handler.execute({
           ficheEvaluationId: ficheEvaluationId2,
-          objectifId,
+          objectifId: objectifId1,
           descriptif: "Description modifiée",
           indicateurCible: "Indicateur modifié",
         }),
