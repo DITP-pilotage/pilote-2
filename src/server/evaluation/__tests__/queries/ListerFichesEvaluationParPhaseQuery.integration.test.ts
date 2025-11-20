@@ -17,9 +17,8 @@ describe("ListerFichesEvaluationParPhaseQuery", () => {
       const regGroupeCode = "REG-01";
       const deptGroupeCode = "DEPT-01";
 
-      const regRattachement1Code = "REG-01";
-      const regRattachement2Code = "REG-02";
-      const deptRattachement1Code = "DEPT-01-01";
+      const regRattachementCode = "REG-02";
+      const deptRattachementCode = "DEPT-02";
 
       const ficheAutoEval1Id = "b72e9d27-6241-4d83-a647-01dd86d24ba2";
       const ficheAutoEval2Id = "b306da42-3cc4-46f1-a2c6-c5a61acecb33";
@@ -39,22 +38,28 @@ describe("ListerFichesEvaluationParPhaseQuery", () => {
       await prisma.referentiel_rattachement.createMany({
         data: [
           {
-            code: regRattachement1Code,
+            code: regGroupeCode,
             groupe: regGroupeCode,
-            ordre: 1,
+            ordre: 0,
             libelle: "Région 01",
           },
           {
-            code: regRattachement2Code,
+            code: regRattachementCode,
             groupe: regGroupeCode,
-            ordre: 2,
+            ordre: 1,
             libelle: "Région 02",
           },
           {
-            code: deptRattachement1Code,
+            code: deptGroupeCode,
+            groupe: deptGroupeCode,
+            ordre: 0,
+            libelle: "Département 01",
+          },
+          {
+            code: deptRattachementCode,
             groupe: deptGroupeCode,
             ordre: 1,
-            libelle: "Département 01-01",
+            libelle: "Département 02",
           },
         ],
       });
@@ -62,22 +67,29 @@ describe("ListerFichesEvaluationParPhaseQuery", () => {
       await prisma.rattachement_utilisateur_etape_jalon.createMany({
         data: [
           {
-            id: "9aac619e-4882-4e24-85d4-15a8fcc88873",
-            rattachement_code: regRattachement1Code,
+            id: "5905f2ea-724b-4411-a572-7a91d6128657",
+            rattachement_code: regGroupeCode,
             utilisateur_id: utilisateurId,
             etape: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
             jalon: 2025,
           },
           {
-            id: "5905f2ea-724b-4411-a572-7a91d6128657",
-            rattachement_code: regRattachement2Code,
+            id: "977fccfb-4e43-4a35-a4f3-db8ea66a261d",
+            rattachement_code: regRattachementCode,
             utilisateur_id: utilisateurId,
             etape: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
             jalon: 2025,
           },
           {
             id: "42ec64ca-b3dd-4a34-a8e3-fb9f9c48dec1",
-            rattachement_code: deptRattachement1Code,
+            rattachement_code: deptGroupeCode,
+            utilisateur_id: utilisateurId,
+            etape: $Enums.etape_evaluation_enum.CONSOLIDATION,
+            jalon: 2025,
+          },
+          {
+            id: "11cafdec-49ac-4ca4-bb12-c6a882079ba9",
+            rattachement_code: deptRattachementCode,
             utilisateur_id: utilisateurId,
             etape: $Enums.etape_evaluation_enum.CONSOLIDATION,
             jalon: 2025,
@@ -90,7 +102,7 @@ describe("ListerFichesEvaluationParPhaseQuery", () => {
           id: ficheAutoEval1Id,
           jalon: 2025,
           etape_courante: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
-          rattachement_code: regRattachement1Code,
+          rattachement_code: regGroupeCode,
           etape_evaluations: {
             create: {
               id: "ac3157dc-81cd-4394-a9ba-00d6e42af11f",
@@ -105,7 +117,7 @@ describe("ListerFichesEvaluationParPhaseQuery", () => {
           id: ficheAutoEval2Id,
           jalon: 2025,
           etape_courante: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
-          rattachement_code: regRattachement2Code,
+          rattachement_code: regRattachementCode,
           etape_evaluations: {
             create: {
               id: "fe910817-3175-45be-b013-3f12d274d479",
@@ -120,7 +132,7 @@ describe("ListerFichesEvaluationParPhaseQuery", () => {
           id: ficheConsolidationId,
           jalon: 2025,
           etape_courante: $Enums.etape_evaluation_enum.CONSOLIDATION,
-          rattachement_code: deptRattachement1Code,
+          rattachement_code: deptRattachementCode,
           etape_evaluations: {
             create: {
               id: "b33de04e-c083-4f5a-8eac-bbb909bb64b5",
@@ -133,7 +145,7 @@ describe("ListerFichesEvaluationParPhaseQuery", () => {
       const result = await query.run({ utilisateurId });
 
       expect(result).toEqual({
-        [regGroupeCode]: {
+        "Région 01": {
           [$Enums.etape_evaluation_enum.AUTO_EVALUATION]: [
             {
               id: ficheAutoEval1Id,
@@ -141,7 +153,7 @@ describe("ListerFichesEvaluationParPhaseQuery", () => {
               objectifsValides: false,
               criteresValides: false,
               rattachement: {
-                code: regRattachement1Code,
+                code: regGroupeCode,
                 libelle: "Région 01",
               },
               objectifs: {
@@ -162,7 +174,7 @@ describe("ListerFichesEvaluationParPhaseQuery", () => {
               objectifsValides: false,
               criteresValides: false,
               rattachement: {
-                code: regRattachement2Code,
+                code: regRattachementCode,
                 libelle: "Région 02",
               },
               objectifs: {
@@ -181,7 +193,7 @@ describe("ListerFichesEvaluationParPhaseQuery", () => {
           [$Enums.etape_evaluation_enum.CONSOLIDATION]: [],
           [$Enums.etape_evaluation_enum.INSTRUCTION]: [],
         },
-        [deptGroupeCode]: {
+        "Département 01": {
           [$Enums.etape_evaluation_enum.AUTO_EVALUATION]: [],
           [$Enums.etape_evaluation_enum.CONSOLIDATION]: [
             {
@@ -190,8 +202,8 @@ describe("ListerFichesEvaluationParPhaseQuery", () => {
               objectifsValides: false,
               criteresValides: false,
               rattachement: {
-                code: deptRattachement1Code,
-                libelle: "Département 01-01",
+                code: deptRattachementCode,
+                libelle: "Département 02",
               },
               objectifs: {
                 moyenne: null,
@@ -283,7 +295,7 @@ describe("ListerFichesEvaluationParPhaseQuery", () => {
 
       expect(resultSansPermission).toEqual({});
       expect(
-        resultAvecPermission[rattachementCode][
+        resultAvecPermission["Région restreinte"][
           $Enums.etape_evaluation_enum.AUTO_EVALUATION
         ],
       ).toHaveLength(1);
@@ -400,7 +412,9 @@ describe("ListerFichesEvaluationParPhaseQuery", () => {
       const result = await query.run({ utilisateurId });
 
       expect(
-        result[rattachementCode][$Enums.etape_evaluation_enum.INSTRUCTION],
+        result["Région avec note collective"][
+          $Enums.etape_evaluation_enum.INSTRUCTION
+        ],
       ).toEqual([
         {
           id: ficheId,
@@ -449,6 +463,12 @@ describe("ListerFichesEvaluationParPhaseQuery", () => {
 
       await prisma.referentiel_rattachement.createMany({
         data: [
+          {
+            code: groupeCode,
+            groupe: groupeCode,
+            ordre: 0,
+            libelle: "Région 30",
+          },
           {
             code: rattachement1Code,
             groupe: groupeCode,
@@ -542,7 +562,7 @@ describe("ListerFichesEvaluationParPhaseQuery", () => {
       const result = await query.run({ utilisateurId });
 
       const fichesAutoEval =
-        result[groupeCode][$Enums.etape_evaluation_enum.AUTO_EVALUATION];
+        result["Région 30"][$Enums.etape_evaluation_enum.AUTO_EVALUATION];
       expect(fichesAutoEval).toHaveLength(3);
       expect(fichesAutoEval[0].rattachement.code).toBe(rattachement2Code);
       expect(fichesAutoEval[1].rattachement.code).toBe(rattachement3Code);

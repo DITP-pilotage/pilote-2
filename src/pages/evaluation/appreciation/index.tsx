@@ -43,13 +43,13 @@ export const getServerSideProps = async ({
     };
   }
 
-  const fichesParPhase = await container
+  const fichesParGroupePuisPhase = await container
     .resolve("listerFichesEvaluationParPhaseQuery")
     .run({ utilisateurId: session.user.id });
 
   return {
     props: {
-      fichesParPhase,
+      fichesParGroupePuisPhase,
     },
   };
 };

@@ -11,7 +11,7 @@ interface BaseCardEvaluationProps {
   rattachement: string;
   moyenne: number | null;
   libelleMoyenne: string;
-  texteLienNavigation: string;
+  texteLienNavigation?: string;
   statutCompletion?: "COMPLETER" | "NON_COMPLETE";
   texteCompletion?: "À COMPLÉTER" | "À TRANSMETTRE" | "TRANSMIS";
 }
@@ -75,12 +75,14 @@ export const BaseCardEvaluation = ({
           <span className="text-sm text-grey-200"> / 100</span>
         </div>
         {children}
-        <div className="flex items-center justify-between">
-          <span className="text-xs text-dsfr-mention-grey">
-            {texteLienNavigation}
-          </span>
-          <Icone icone={ArrowLine1Icon} />
-        </div>
+        {texteLienNavigation ? (
+          <div className="flex items-center justify-between">
+            <span className="text-xs text-dsfr-mention-grey">
+              {texteLienNavigation}
+            </span>
+            <Icone icone={ArrowLine1Icon} />
+          </div>
+        ) : null}
       </section>
     </Link>
   );

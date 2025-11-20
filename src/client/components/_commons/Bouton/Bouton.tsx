@@ -21,7 +21,7 @@ export const Bouton = ({
       className={clsxm(
         "gap-2",
         {
-          "fr-link": variant === "link",
+          "fr-link flex": variant === "link",
           "fr-btn fr-btn--secondary": variant === "secondary",
           "fr-btn fr-btn--sm": size === "sm",
         },

@@ -1,27 +1,6 @@
 import { $Enums } from "@prisma/client";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
-
-interface FicheEvaluation {
-  id: string;
-  etapeCourante: $Enums.etape_evaluation_enum;
-  objectifsValides: boolean;
-  criteresValides: boolean;
-  rattachement: {
-    code: string;
-    libelle: string;
-  };
-  objectifs: {
-    moyenne: number | null;
-    nombreNotes: number;
-    nombreTotal: number;
-  };
-  criteres: {
-    moyenne: number | null;
-    nombreNotes: number;
-    nombreTotal: number;
-  };
-  noteCollective: number | null;
-}
+import { FicheEvaluation } from "@/server/evaluation/domain/FicheEvaluation";
 
 type FichesParPhase = Record<$Enums.etape_evaluation_enum, FicheEvaluation[]>;
 type FichesParGroupe = Record<string, FichesParPhase>;
@@ -48,6 +27,22 @@ export class ListerFichesEvaluationParPhaseQuery {
     const tousLesCriteres = await this.dependencies.prisma
       .getInstance()
       .referentiel_critere.findMany();
+
+    const tousLesRattachements = await this.dependencies.prisma
+      .getInstance()
+      .referentiel_rattachement.findMany({
+        select: {
+          code: true,
+          libelle: true,
+        },
+      });
+
+    const mapCodeVersLibelle = new Map(
+      tousLesRattachements.map((rattachement) => [
+        rattachement.code,
+        rattachement.libelle,
+      ]),
+    );
 
     const fichesEvaluation = await this.dependencies.prisma
       .getInstance()
@@ -193,22 +188,23 @@ export class ListerFichesEvaluationParPhaseQuery {
               : null,
         };
 
-        const groupe = fiche.rattachement.groupe;
+        const codeGroupe = fiche.rattachement.groupe;
+        const libelleGroupe = mapCodeVersLibelle.get(codeGroupe) ?? codeGroupe;
         const phase = etapeEvaluation.type;
 
-        if (!fichesParGroupe[groupe]) {
-          fichesParGroupe[groupe] = {
+        if (!fichesParGroupe[libelleGroupe]) {
+          fichesParGroupe[libelleGroupe] = {
             [$Enums.etape_evaluation_enum.AUTO_EVALUATION]: [],
             [$Enums.etape_evaluation_enum.CONSOLIDATION]: [],
             [$Enums.etape_evaluation_enum.INSTRUCTION]: [],
           };
         }
 
-        if (!fichesParGroupe[groupe][phase]) {
-          fichesParGroupe[groupe][phase] = [];
+        if (!fichesParGroupe[libelleGroupe][phase]) {
+          fichesParGroupe[libelleGroupe][phase] = [];
         }
 
-        fichesParGroupe[groupe][phase]!.push(ficheFormatee);
+        fichesParGroupe[libelleGroupe][phase]!.push(ficheFormatee);
       }
     }
 
