@@ -43,7 +43,7 @@ export const LigneCardEvaluationAppreciation = ({
         ) : null}
 
         <BaseCardEvaluation
-          lien="TODO"
+          lien="/evaluation/appreciation/espace-appreciation"
           listeInformationsMoyennes={[
             {
               libelle: "appréciation",
@@ -79,7 +79,7 @@ export const LigneCardEvaluationAppreciation = ({
           />
         </BaseCardEvaluation>
         <BaseCardEvaluation
-          lien="TODO"
+          lien="/evaluation/appreciation/espace-appreciation"
           listeInformationsMoyennes={[
             {
               libelle: "appréciation",
