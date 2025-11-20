@@ -29,10 +29,8 @@ const getStatutTraitement = (row: TableauEvaluationRow): STATUT_EVALUATION => {
 
 export const useTableauEvaluation = ({
   rattachements,
-  onAutosave,
 }: {
   rattachements: Rattachement[];
-  onAutosave: () => void;
 }) => {
   const getCritere = useGetCritere();
   const [grouping, setGrouping] = useState<string[]>(["rattachementCode"]);
@@ -69,6 +67,7 @@ export const useTableauEvaluation = ({
 
     return rows;
   }, [getCritere, rattachements]);
+
   const columns = useMemo(
     () => [
       columnHelper.accessor("rattachement.code", {
@@ -99,16 +98,7 @@ export const useTableauEvaluation = ({
       columnHelper.accessor("id", {
         id: "id",
         header: "Évaluation",
-        cell: ({ table, row }) => {
-          const currentGrouping = table.getState().grouping[0];
-          return (
-            <CelluleEvaluation
-              currentGrouping={currentGrouping}
-              ligne={row.original}
-              onAutosave={onAutosave}
-            />
-          );
-        },
+        cell: CelluleEvaluation,
         enableGrouping: false,
         enableColumnFilter: false,
       }),
@@ -153,7 +143,7 @@ export const useTableauEvaluation = ({
         },
       }),
     ],
-    [rattachements, onAutosave, getCritere],
+    [rattachements, getCritere],
   );
 
   const table = useReactTable({

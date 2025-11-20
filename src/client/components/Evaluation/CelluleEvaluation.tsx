@@ -1,5 +1,7 @@
 import { $Enums } from "@prisma/client";
 import { useFormState } from "react-hook-form";
+import { useEffect, useRef } from "react";
+import { Row, Table } from "@tanstack/react-table";
 import { TableauEvaluationRow } from "@/components/Evaluation/TableauEvaluation";
 import { clsxm } from "@/utils/clsxm";
 import { BoutonAfficherFicheCadrage } from "@/components/Evaluation/BoutonAfficherFicheCadrage";
@@ -7,16 +9,18 @@ import { BoutonTraitementEvaluation } from "@/components/Evaluation/BoutonTraite
 import { LigneEtapeEvaluation } from "@/components/Evaluation/LigneEtapeEvaluation";
 import { useGetCritere } from "@/components/Evaluation/CriteresProvider";
 import { useFormulaireEvaluation } from "@/components/Evaluation/form";
+import { useHandleAutosave } from "@/components/Evaluation/AutosaveProvider";
 
 export const CelluleEvaluation = ({
-  ligne,
-  currentGrouping,
-  onAutosave,
+  table,
+  row,
 }: {
-  ligne: TableauEvaluationRow;
-  currentGrouping: string;
-  onAutosave: () => void;
+  table: Table<TableauEvaluationRow>;
+  row: Row<TableauEvaluationRow>;
 }) => {
+  const currentGrouping = table.getState().grouping[0];
+  const ligne = row.original;
+  const onAutosave = useHandleAutosave();
   const formState = useFormState();
   const getCritere = useGetCritere();
   const commentaireName =
@@ -28,6 +32,18 @@ export const CelluleEvaluation = ({
       ? (`fichesEvaluation.${ligne.ficheEvaluationId}.objectifs.${ligne.id}.note` as const)
       : (`fichesEvaluation.${ligne.ficheEvaluationId}.criteres.${ligne.id}.note` as const);
   const note = useFormulaireEvaluation().watch(noteName);
+
+  useEffect(() => {
+    console.log(`Ligne: ${ligne.id}`, ligne.evaluations[0].evaluation.note);
+  }, [ligne.evaluations, ligne.id]);
+
+  const debug = useRef(`${ligne.id} ${ligne.evaluations[0].evaluation.note}`);
+  debug.current = `${ligne.id} ${ligne.evaluations[0].evaluation.note}`;
+  useEffect(() => {
+    return () => {
+      console.log(`Unmounting ${debug.current}`);
+    };
+  }, []);
 
   return (
     <div className="space-y-4">
