@@ -4,8 +4,8 @@ import { $Enums } from "@prisma/client";
 import assert from "node:assert";
 import { getContainer } from "@/server/dependances";
 import { authOptions } from "@/server/infrastructure/api/auth/[...nextauth]";
-import { pageConsolidation } from "@/components/PageConsolidation/PageConsolidationServerSideContext";
-import { FormulaireConsolidation } from "@/components/PageConsolidation/FormulaireConsolidation";
+import { pageEspaceAppreciation } from "@/components/PageEspaceAppreciation/PageEspaceAppreciationServerSideContext";
+import { FormulaireAppreciation } from "@/components/PageEspaceAppreciation/FormulaireAppreciation";
 import { configurationFeatureFlip } from "@/config";
 
 export const getServerSideProps = async ({
@@ -19,7 +19,7 @@ export const getServerSideProps = async ({
 
   const peutAccederEtapeConsolidation = await getContainer("piloteEval")
     .resolve("accesFicheEvaluationService")
-    .peutAccederEtapeConsolidation({
+    .peutAccederEtapeAppreciation({
       utilisateurId: session.user.id,
     });
 
@@ -44,12 +44,12 @@ export const getServerSideProps = async ({
   };
 };
 
-export default function PageConsolidation(
+export default function PageEspaceAppreciation(
   props: InferGetServerSidePropsType<typeof getServerSideProps>,
 ) {
   return (
-    <pageConsolidation.ServerSidePropsProvider value={props}>
-      <FormulaireConsolidation />
-    </pageConsolidation.ServerSidePropsProvider>
+    <pageEspaceAppreciation.ServerSidePropsProvider value={props}>
+      <FormulaireAppreciation />
+    </pageEspaceAppreciation.ServerSidePropsProvider>
   );
 }

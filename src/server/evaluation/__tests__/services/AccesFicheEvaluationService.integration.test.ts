@@ -298,7 +298,7 @@ describe("AccesFicheEvaluationService", () => {
       });
 
       // When
-      const result = await service.peutAccederEtapeConsolidation({
+      const result = await service.peutAccederEtapeAppreciation({
         utilisateurId,
       });
 
@@ -332,7 +332,7 @@ describe("AccesFicheEvaluationService", () => {
       });
 
       // When
-      const result = await service.peutAccederEtapeConsolidation({
+      const result = await service.peutAccederEtapeAppreciation({
         utilisateurId,
       });
 
@@ -376,7 +376,7 @@ describe("AccesFicheEvaluationService", () => {
       });
 
       // When
-      const result = await service.peutAccederEtapeConsolidation({
+      const result = await service.peutAccederEtapeAppreciation({
         utilisateurId,
       });
 

@@ -1,6 +1,7 @@
 import { asClass, AwilixContainer } from "awilix";
 import { AfficherAutoEvaluationQuery } from "@/server/evaluation/queries/AfficherAutoEvaluationQuery";
 import { ListerFichesAutoEvaluationQuery } from "@/server/evaluation/queries/ListerFichesAutoEvaluationQuery";
+import { ListerFichesEvaluationParPhaseQuery } from "@/server/evaluation/queries/ListerFichesEvaluationParPhaseQuery";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { AccesFicheEvaluationService } from "@/server/evaluation/services/AccesFicheEvaluationService";
 import { AfficherConsolidationQuery } from "@/server/evaluation/queries/AfficherConsolidationQuery";
@@ -27,6 +28,7 @@ export type PiloteEvalDependencies = {
   afficherInstructionQuery: AfficherInstructionQuery;
   afficherPilotageQuery: AfficherPilotageQuery;
   listerFichesAutoEvaluation: ListerFichesAutoEvaluationQuery;
+  listerFichesEvaluationParPhaseQuery: ListerFichesEvaluationParPhaseQuery;
   recupererDetailsNoteCollectiveQuery: RecupererDetailsNoteCollectiveQuery;
   enregistrerBrouillonAutoEvaluationObjectifs: EnregistrerBrouillonAutoEvaluationObjectifsHandler;
   enregistrerBrouillonAutoEvaluationCriteres: EnregistrerBrouillonAutoEvaluationCriteresHandler;
@@ -53,6 +55,9 @@ export const getPiloteEvalContainer = (
     afficherInstructionQuery: asClass(AfficherInstructionQuery),
     afficherPilotageQuery: asClass(AfficherPilotageQuery),
     listerFichesAutoEvaluation: asClass(ListerFichesAutoEvaluationQuery),
+    listerFichesEvaluationParPhaseQuery: asClass(
+      ListerFichesEvaluationParPhaseQuery,
+    ),
     recupererDetailsNoteCollectiveQuery: asClass(
       RecupererDetailsNoteCollectiveQuery,
     ),

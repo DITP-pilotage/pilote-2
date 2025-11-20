@@ -18,7 +18,7 @@ export class AccesFicheEvaluationService {
     );
   }
 
-  async peutAccederEtapeConsolidation({
+  async peutAccederEtapeAppreciation({
     utilisateurId,
   }: {
     utilisateurId: string;

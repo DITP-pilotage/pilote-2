@@ -1,38 +1,35 @@
 import { ComponentProps, ReactNode } from "react";
 import { clsxm } from "@/utils/clsxm";
 
-export const Bouton = ({
+export const Lien = ({
   label,
   iconLeft,
   iconRight,
-  variant,
+  variant = "primary",
   className,
-  size = "default",
   ...props
 }: {
   label: string;
   iconLeft?: ReactNode;
   iconRight?: ReactNode;
-  variant?: "primary" | "secondary" | "link";
-  size?: "sm" | "default";
-} & ComponentProps<"button">) => {
+  variant?: "primary" | "button" | "button-secondary";
+} & ComponentProps<"a">) => {
   return (
-    <button
+    <a
       className={clsxm(
         "gap-2",
         {
-          "fr-link flex": variant === "link",
-          "fr-btn fr-btn--secondary": variant === "secondary",
-          "fr-btn fr-btn--sm": size === "sm",
+          "fr-link": variant === "primary",
+          "fr-btn": variant === "button",
+          "fr-btn fr-btn--secondary": variant === "button-secondary",
         },
         className,
       )}
-      type="button"
       {...props}
     >
       {iconLeft}
       {label}
       {iconRight}
-    </button>
+    </a>
   );
 };
