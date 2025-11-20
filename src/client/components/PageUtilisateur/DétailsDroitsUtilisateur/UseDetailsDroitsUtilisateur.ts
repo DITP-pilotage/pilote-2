@@ -15,6 +15,7 @@ export default function useDetailsDroitsUtilisateur({
       const info = listeInformationsChantiers?.find((i) => i.id === chantier);
 
       if (!info) {
+        elements.push({ label: chantier });
         return elements;
       }
 

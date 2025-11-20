@@ -111,8 +111,9 @@ export default function useFicheUtilisateur(
 
       if (profil?.chantiers.lecture.tous) return ["Tous les chantiers"];
 
-      if (profil?.chantiers.lecture.tousTerritorialisés)
+      if (profil?.chantiers.lecture.tousTerritorialisés) {
         return ["Tous les chantiers territorialisés"];
+      }
 
       if (profil?.chantiers.lecture.tousTerritoires) {
         return (
