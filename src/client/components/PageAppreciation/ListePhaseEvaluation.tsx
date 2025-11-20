@@ -6,6 +6,7 @@ import { Bouton } from "@/components/_commons/Bouton/Bouton";
 import { EyeOffIcon } from "@/components/_commons/Icones/EyeOffIcon";
 import { EyeIcon } from "@/components/_commons/Icones/EyeIcon";
 import { Icone } from "@/components/_commons/Icone";
+import { LigneCardEvaluationAppreciation } from "@/components/PageAppreciation/LigneCardEvaluationAppreciation";
 
 export const ListePhaseEvaluation = () => {
   const { fichesParGroupePuisPhase } =
@@ -25,7 +26,59 @@ export const ListePhaseEvaluation = () => {
                 INSTRUCTION.length
               } formulaires`}
             </h2>
-            <Accordion.Root collapsible type="single">
+            <Accordion.Root collapsible type="multiple">
+              <Accordion.Item value="appreciation">
+                <Accordion.Header>
+                  <Accordion.Trigger>
+                    Territoire(s) en phase d'appréciation - 
+                    {CONSOLIDATION.length} formulaire(s) en cours
+                  </Accordion.Trigger>
+                </Accordion.Header>
+                <Accordion.Content>
+                  {CONSOLIDATION.length > 0 ? (
+                    <div className="flex flex-col gap-4 mt-4">
+                      <div>
+                        <Bouton
+                          iconLeft={
+                            <Icone
+                              className="w-6 h-6"
+                              icone={
+                                afficherObjectifsCollectifs
+                                  ? EyeOffIcon
+                                  : EyeIcon
+                              }
+                            />
+                          }
+                          label={
+                            afficherObjectifsCollectifs
+                              ? "Masquer les objectifs collectifs"
+                              : "Afficher les objectifs collectifs"
+                          }
+                          onClick={() =>
+                            setAfficherObjectifsCollectifs(
+                              !afficherObjectifsCollectifs,
+                            )
+                          }
+                          variant="link"
+                        />
+                      </div>
+                      {CONSOLIDATION.map((ficheEvaluation) => (
+                        <LigneCardEvaluationAppreciation
+                          afficherObjectifsCollectifs={
+                            afficherObjectifsCollectifs
+                          }
+                          ficheEvaluation={ficheEvaluation}
+                          key={ficheEvaluation.id}
+                        />
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="mt-4 mb-2">
+                      Aucun territoire n'est dans cette phase
+                    </div>
+                  )}
+                </Accordion.Content>
+              </Accordion.Item>
               <Accordion.Item value="auto-evaluation">
                 <Accordion.Header>
                   <Accordion.Trigger>
@@ -71,42 +124,11 @@ export const ListePhaseEvaluation = () => {
                         />
                       ))}
                     </div>
-                  ) : null}
-                </Accordion.Content>
-              </Accordion.Item>
-              <Accordion.Item value="appreciation">
-                <Accordion.Header>
-                  <Accordion.Trigger>
-                    Territoire(s) en phase d'appréciation - 
-                    {CONSOLIDATION.length} formulaire(s) en cours
-                  </Accordion.Trigger>
-                </Accordion.Header>
-                <Accordion.Content>
-                  {CONSOLIDATION.length > 0 ? (
-                    <div className="space-y-3">
-                      <p>
-                        La phase d'appréciation vous permet de porter un regard
-                        sur les auto-évaluations transmises par vos territoires.
-                        Vous pouvez confirmer, ajuster ou commenter les notes
-                        proposées.
-                      </p>
-                      <p>
-                        Pour chaque item évalué, vous devez renseigner la note
-                        que vous retenez et, le cas échéant, un commentaire
-                        expliquant votre position si elle diffère de
-                        l'auto-évaluation.
-                      </p>
-                      <p>
-                        Cette phase est ouverte dès réception des
-                        auto-évaluations (au plus tard début février 2026) et se
-                        termine fin février 2026.
-                      </p>
-                      <p className="font-medium">
-                        Pensez à marquer les items comme traités au fur et à
-                        mesure pour suivre votre avancement.
-                      </p>
+                  ) : (
+                    <div className="mt-4 mb-2">
+                      Aucun territoire n'est dans cette phase
                     </div>
-                  ) : null}
+                  )}
                 </Accordion.Content>
               </Accordion.Item>
               <Accordion.Item value="instruction">
