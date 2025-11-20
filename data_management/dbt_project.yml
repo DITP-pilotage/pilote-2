@@ -136,3 +136,7 @@ vars:
     ta_decimales: 2
     # Premier jalon à étudier. Le dernier jalon est l'année en cours.
     premier_jalon_va: 2022
+    # legacy behavior car on utilisait surrogate_key sur des incremental models
+    # sans garantie qu'on avait pas de nulls
+    # see https://github.com/dbt-labs/dbt-utils/releases/tag/1.0.0
+    surrogate_key_treat_nulls_as_empty_strings: true
