@@ -1,7 +1,7 @@
 import os
 import yaml
 import sys
-from sqlalchemy import create_engine
+import sqlalchemy
 from utils.GithubRepo import GithubRepo
 from utils.sql import generateQueriesCreateSchema
 
@@ -26,7 +26,7 @@ conn_str = "".join([
     "@",os.environ.get("PGHOST"),":",os.environ.get("PGPORT"),
     "/",os.environ.get("PGDATABASE")
 ])
-engine = create_engine(conn_str)
+engine = sqlalchemy.create_engine(conn_str)
 
 # main
 
@@ -59,6 +59,8 @@ with engine.connect() as con:
 
         # Download table and add its content to database
         csv_as_df = repo.getFileAsDataframe(table_options.get('path_in_repo'), repo_branch)
+        if table_options.get('dType', None) is not None:
+            csv_as_df.to_sql(name=table_name, con=con, if_exists='replace', schema=table_options.get('schema'), dtype=eval(table_options.get('dType')))
         csv_as_df.to_sql(name=table_name, con=con, if_exists='replace', schema=table_options.get('schema'))
 
         # Commit for each table
