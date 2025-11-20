@@ -30,7 +30,7 @@ export_va AS
   FROM donnees a
   left join {{ ref('df3_indicateur_unnest_va') }} b on a.id=b.id and a.territoire_code=b.territoire_code
   -- On ne garde que les lignes où une VA est dispo
-  WHERE evolution_valeur_actuelle IS NOT NULL 
+  WHERE evolution_avancement IS NOT NULL 
 ),
 
 -- Données VI

@@ -1,22 +1,35 @@
-{{ config(materialized = 'table') }}
+{{ config(
+    materialized = 'table',
+) }}
 
 -- Si plusieurs valeurs existent pour un même couple
---  {indic_id, zone_id , metric_type, mois}, on garde celle importée le plus récemment
+--  {indic_id, zone_id , metric_type, mois},
+-- on garde celle importée le plus récemment pour les vi, va et vc
 
-with rank_values_month as (
-    select 
-    date_import, indic_id,
-    to_char(date_trunc('month', metric_date::date),'YYYY-MM-DD') as metric_date, 
-    metric_type, metric_value, zone_id, id, rapport_id,
-    rank() over (partition by 
+WITH rank_values_month AS (
+    SELECT
+        date_import,
         indic_id,
-        zone_id,
+        TO_CHAR(DATE_TRUNC('month', metric_date::DATE), 'YYYY-MM-DD')
+            AS metric_date,
         metric_type,
-        date_trunc('month', metric_date::date)
-        order by
-            date_import::timestamp desc,
-            metric_date::timestamp desc
-    ) as r
-from {{ ref('mesure_last_null_erase') }} )
+        metric_value::FLOAT,
+        zone_id,
+        id,
+        rapport_id,
+        ROW_NUMBER() OVER (
+            PARTITION BY
+                indic_id,
+                zone_id,
+                metric_type,
+                DATE_TRUNC('month', metric_date::DATE)
+            ORDER BY
+                date_import::TIMESTAMP DESC,
+                metric_date::TIMESTAMP DESC
+        ) AS r
+    FROM {{ ref('mesure_last_null_erase') }}
+)
 
-select * from rank_values_month where r=1
+SELECT *
+FROM rank_values_month
+WHERE r = 1

@@ -39,12 +39,12 @@ pivot_vc AS (
 --  pour construire les colonnes vi et va
 u_vi_va AS (
     SELECT
+        -- on garde la vi de table a, la va de la table b
         a.vi,
         b.va,
         coalesce(a.id, b.id) as id,
         coalesce(a.date_import, b.date_import) as date_import,
         coalesce(a.indic_id, b.indic_id) AS indic_id,
-        -- on garde la vi de table a, la va de table b
         coalesce(a.zone_id, b.zone_id) AS zone_id,
         coalesce(a.metric_date, b.metric_date) AS metric_date
     FROM pivot_vi AS a
@@ -54,7 +54,7 @@ u_vi_va AS (
             a.indic_id = b.indic_id
             AND a.zone_id = b.zone_id
             AND a.metric_date = b.metric_date
-    ORDER BY indic_id ASC, zone_id ASC, metric_date ASC
+    --ORDER BY indic_id ASC, zone_id ASC, metric_date ASC
 ),
 
 -- Jointure des 2 tables pivotées: u_vi_va X vc => u_vi_va_vc
@@ -63,10 +63,10 @@ u_vi_va_vc AS (
     SELECT
         coalesce(a.id, c.id) as id,
         coalesce(a.date_import, c.date_import) as date_import,
+        -- on garde la vi et va de la table a, la vc de la table c
         a.vi,
         a.va,
         c.vc,
-        -- on garde la vi et va de table a, la vc de table c
         coalesce(a.indic_id, c.indic_id) AS indic_id,
         coalesce(a.zone_id, c.zone_id) AS zone_id,
         coalesce(a.metric_date, c.metric_date) AS metric_date
@@ -77,7 +77,7 @@ u_vi_va_vc AS (
             a.indic_id = c.indic_id
             AND a.zone_id = c.zone_id
             AND a.metric_date = c.metric_date
-    ORDER BY indic_id ASC, zone_id ASC, metric_date ASC
+    --ORDER BY indic_id ASC, zone_id ASC, metric_date ASC
 )
 
 SELECT * FROM u_vi_va_vc

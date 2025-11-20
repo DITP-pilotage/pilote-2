@@ -11,7 +11,7 @@ ta_zone_indic as (
 	from {{ ref('compute_ta_indic') }} a
 	left join {{ ref('stg_ppg_metadata__indicateurs') }} b on a.indic_id = b.id
 	left join {{ ref('stg_ppg_metadata__zones') }} z on a.zone_id=z.id 
-	order by chantier_id, zone_id, metric_date, indic_id
+	--order by chantier_id, zone_id, metric_date, indic_id
 ),
 -- Calcul du TA pondéré
 --	On va pondérer chaque TA par sa pondération à cette maille

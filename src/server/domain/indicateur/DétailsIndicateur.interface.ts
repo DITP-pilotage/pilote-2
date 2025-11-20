@@ -24,6 +24,8 @@ interface DetailIndicateurPropositionValeurAvancement {
 interface HistoriqueValeur {
   date: string;
   valeur: number;
+  taux_avancement_jalon?: number | null;
+  taux_avancement_mandat?: number | null;
 }
 
 interface ValeurCibleAnnuelle {

@@ -243,7 +243,7 @@ model indicateur_territoire {
   tendance                               String?
   taux_avancement_mandat_proposition     Float?
   prochaine_date_valeur_actuelle         DateTime?                                @db.Date
-  evolution_valeur_actuelle              Json?
+  evolution_avancement                   Json?
   territoire                             territoire                               @relation(fields: [territoire_code], references: [code], onDelete: Cascade, onUpdate: Cascade)
   indicateur_identite                    indicateur_identite                      @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: Cascade)
   chantier_territoire                    chantier_territoire                      @relation(fields: [chantier_id, territoire_code], references: [id, territoire_code], onDelete: Cascade, onUpdate: Cascade)
