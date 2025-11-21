@@ -86,9 +86,11 @@ export const FormulaireAutoEvaluationManieresDeServir = () => {
                       )}
                     </span>
                   </div>
-                  <BoutonValiderSaisieCriteres
-                    ficheEvaluationId={autoEvaluation.ficheEvaluationId}
-                  />
+                  {!isReadOnly ? (
+                    <BoutonValiderSaisieCriteres
+                      ficheEvaluationId={autoEvaluation.ficheEvaluationId}
+                    />
+                  ) : null}
                 </div>
               </div>
             </div>

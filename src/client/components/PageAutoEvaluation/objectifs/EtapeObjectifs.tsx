@@ -29,7 +29,7 @@ export function EtapeObjectifs() {
   }, [form, enregistrerBrouillon]);
 
   return (
-    <div className="divide-y divide-gray-100">
+    <div>
       {fields.map((fieldObjectif, index) => {
         const objectif = autoEvaluation.objectifs[index];
         const noteName = `objectifs.${index}.note` as const;
@@ -38,43 +38,44 @@ export function EtapeObjectifs() {
 
         return (
           <div key={objectif.id}>
-            <div className="p-4 flex items-center justify-between pr-6">
-              <header className="flex items-center gap-2">
-                <span className="text-primary font-bold">
-                  {objectif.libelle}
-                </span>
-                <BoutonEnSavoirPlus
-                  critereOuObjectif={{
+            <header className="p-4 flex items-center justify-between pr-6 bg-dsfr-blue-france-925 border-t-1 border-dsfr-blue-france-sun-113">
+              <span className="font-semibold text-dsfr-blue-france-sun-113">
+                {objectif.libelle}
+              </span>
+              <BoutonEnSavoirPlus
+                critereOuObjectif={{
                     type: "objectif",
                     objectif: {
                       ...objectif,
                       ficheEvaluationId: autoEvaluation.ficheEvaluationId,
                     },
                   }}
+              />
+            </header>
+            <div className="flex bg-dsfr-grey-925/30">
+              <div className="py-4 px-6 flex flex-col flex-1">
+                <CommentaireTextareaAutoEvaluation
+                  control={form.control}
+                  name={commentaireName}
+                  onAutosave={handleAutosave}
+                  readOnly={readOnly}
                 />
-              </header>
-              <InputNoteAutoEvaluation
-                control={form.control}
-                name={noteName}
-                onAutosave={handleAutosave}
-                readOnly={readOnly}
-              />
-            </div>
-            <div className="py-4 px-6 flex flex-col bg-dsfr-grey-925/30 ">
-              <CommentaireTextareaAutoEvaluation
-                control={form.control}
-                defaultOpen={!!fieldObjectif.commentaire}
-                name={commentaireName}
-                onAutosave={handleAutosave}
-                readOnly={readOnly}
-              />
-            </div>
-            <div className="py-4 px-6 flex flex-col bg-dsfr-blue-france-850/30 ">
-              <AnnexeTextareaAutoEvaluation
-                control={form.control}
-                name={annexeName}
-                readOnly={readOnly}
-              />
+                <AnnexeTextareaAutoEvaluation
+                  control={form.control}
+                  name={annexeName}
+                  onAutosave={handleAutosave}
+                  readOnly={readOnly}
+                />
+              </div>
+              <div className="py-4 px-6 flex items-start justify-center border-l-1 border-black">
+                <InputNoteAutoEvaluation
+                  control={form.control}
+                  label="Note"
+                  name={noteName}
+                  onAutosave={handleAutosave}
+                  readOnly={readOnly}
+                />
+              </div>
             </div>
           </div>
         );

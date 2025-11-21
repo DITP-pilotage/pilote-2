@@ -5,6 +5,7 @@ import api from "@/server/infrastructure/api/trpc/api";
 import { useFormEvaluationObjectifs } from "@/components/PageAutoEvaluation/objectifs/form";
 import { useEnregistrerBrouillonObjectifs } from "@/components/PageAutoEvaluation/objectifs/useEnregistrerBrouillonObjectifs";
 import { ConfirmerValidationSaisie } from "@/components/PageAutoEvaluation/ConfirmerValidationSaisie";
+import { SendIcon } from "@/components/_commons/Icones/SendIcon";
 
 export const BoutonValiderSaisieObjectifs = ({
   ficheEvaluationId,
@@ -57,7 +58,8 @@ export const BoutonValiderSaisieObjectifs = ({
         onClick={handleOpenModal}
         type="button"
       >
-        Valider
+        Transmettre le formulaire
+        <SendIcon className="h-4 w-4 ml-2" />
       </button>
       <ConfirmerValidationSaisie
         annee={2025}
