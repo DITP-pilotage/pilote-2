@@ -52,7 +52,7 @@ export const InputNote = forwardRef<
             },
           )}
         >
-          %
+          / 100
         </span>
       </div>
       <div className="relative h-3 mt-1">

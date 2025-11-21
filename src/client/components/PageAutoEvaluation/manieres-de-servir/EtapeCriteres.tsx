@@ -50,7 +50,6 @@ export const EtapeCriteres = () => {
               <div className="py-4 px-6 flex flex-col flex-1">
                 <CommentaireTextareaAutoEvaluation
                   control={form.control}
-                  defaultOpen
                   name={commentaireName}
                   onAutosave={handleAutosave}
                   readOnly={readOnly}
