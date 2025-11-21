@@ -35,8 +35,8 @@ export const EtapeCriteres = () => {
 
         return (
           <div key={critere.id}>
-            <header className="p-4 flex items-center justify-between pr-6">
-              <div className="flex items-center">
+            <header className="p-4 flex items-center justify-between pr-6 bg-dsfr-blue-france-925 border-t-1 border-dsfr-blue-france-sun-113">
+              <div className="flex items-center font-semibold text-dsfr-blue-france-sun-113">
                 {critere.libelle}
                 <BoutonEnSavoirPlus
                   critereOuObjectif={{
@@ -55,7 +55,7 @@ export const EtapeCriteres = () => {
             <div className="py-4 px-6 flex flex-col bg-dsfr-grey-925/30 ">
               <CommentaireTextareaAutoEvaluation
                 control={form.control}
-                defaultOpen={!!fieldCritere.commentaire}
+                defaultOpen
                 name={commentaireName}
                 onAutosave={handleAutosave}
                 readOnly={readOnly}

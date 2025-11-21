@@ -2,7 +2,6 @@ import { useId } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEnregistrerBrouillonCriteres } from "@/components/PageAutoEvaluation/manieres-de-servir/useEnregistrerBrouillonCriteres";
-import { formaterDate } from "@/client/utils/date/date";
 import { BoutonEnregistrerBrouillon } from "@/components/PageAutoEvaluation/BoutonEnregistrerBrouillon";
 import { BoutonValiderSaisieCriteres } from "@/components/PageAutoEvaluation/manieres-de-servir/BoutonValiderSaisieCriteres";
 import { Icone } from "@/components/_commons/Icone";
@@ -14,6 +13,8 @@ import {
   formSchema,
   FormValuesCriteres,
 } from "@/components/PageAutoEvaluation/manieres-de-servir/form";
+import { formatterTitreEvaluation } from "@/components/PageAppreciation/utilsTexteEvaluation";
+import { formaterDate } from "@/client/utils/date/date";
 
 export const FormulaireAutoEvaluationManieresDeServir = () => {
   const { autoEvaluation } =
@@ -42,42 +43,52 @@ export const FormulaireAutoEvaluationManieresDeServir = () => {
         <FormProvider {...form}>
           <div className="relative">
             <div className="sticky top-0 bg-white mb-6 z-1">
-              <div className="flex items-center justify-between mt-4 mx-auto w-full max-w-4xl px-2 py-4">
-                <span className="italic text-sm">
-                  Dernière modification :{" "}
-                  {formaterDate(
-                    autoEvaluation.dateDerniereModification,
-                    "DD/MM/YYYY [à] H[h]mm",
-                  )}
-                </span>
-                <div className="ml-auto flex items-center gap-4">
-                  {autoEvaluation.readOnly ? (
-                    <span className="flex gap-2 text-sm items-center">
-                      <Icone
-                        className="h-5 w-5"
-                        icone={InformationPleineIcon}
-                      />{" "}
-                      Cette fiche d'évaluation a déjà été soumise.
+              <div className="flex justify-between mt-4 mx-auto w-full max-w-4xl p-4">
+                <div className="flex flex-col gap-2">
+                  <span className="w-fit px-2 py-1.5 text-sm text-blue-600 bg-blue-100 rounded-xl">
+                    {formatterTitreEvaluation(autoEvaluation.rattachement)}
+                  </span>
+                  <h3 className="!text-xl !mb-0 font-semibold !text-dsfr-blue-france-sun-113">
+                    Manière de servir
+                  </h3>
+                </div>
+                <div className="flex gap-2">
+                  <div className="flex flex-col items-end gap-2">
+                    <div className="flex items-center gap-4">
+                      {autoEvaluation.readOnly ? (
+                        <span className="flex gap-2 text-sm items-center">
+                          <Icone
+                            className="h-5 w-5"
+                            icone={InformationPleineIcon}
+                          />{" "}
+                          Cette fiche d'évaluation a déjà été soumise.
+                        </span>
+                      ) : null}
+                      {autoEvaluation.criteresValides &&
+                      !autoEvaluation.readOnly ? (
+                        <span className="flex gap-2 text-sm items-center">
+                          <Icone
+                            className="h-5 w-5"
+                            icone={InformationPleineIcon}
+                          />{" "}
+                          Les manières de servir ont été validées.
+                        </span>
+                      ) : null}
+                      {!isReadOnly && (
+                        <BoutonEnregistrerBrouillon formId={formId} />
+                      )}
+                    </div>
+                    <span className="italic text-sm">
+                      Dernière modification :{" "}
+                      {formaterDate(
+                        autoEvaluation.dateDerniereModification,
+                        "DD/MM/YYYY [à] H[h]mm",
+                      )}
                     </span>
-                  ) : null}
-                  {autoEvaluation.criteresValides &&
-                  !autoEvaluation.readOnly ? (
-                    <span className="flex gap-2 text-sm items-center">
-                      <Icone
-                        className="h-5 w-5"
-                        icone={InformationPleineIcon}
-                      />{" "}
-                      Les manières de servir ont été validées.
-                    </span>
-                  ) : null}
-                  {!isReadOnly && (
-                    <>
-                      <BoutonEnregistrerBrouillon formId={formId} />
-                      <BoutonValiderSaisieCriteres
-                        ficheEvaluationId={autoEvaluation.ficheEvaluationId}
-                      />
-                    </>
-                  )}
+                  </div>
+                  <BoutonValiderSaisieCriteres
+                    ficheEvaluationId={autoEvaluation.ficheEvaluationId}
+                  />
                 </div>
               </div>
             </div>
@@ -86,10 +97,6 @@ export const FormulaireAutoEvaluationManieresDeServir = () => {
               id={formId}
               onSubmit={form.handleSubmit(enregistrerBrouillon)}
             >
-              <header className="p-4 bg-dsfr-blue-france-925 border-b-2 border-black">
-                <span className="font-bold text-sm">Mon auto-évaluation</span>
-              </header>
-
               <EtapeCriteres />
             </form>
           </div>
