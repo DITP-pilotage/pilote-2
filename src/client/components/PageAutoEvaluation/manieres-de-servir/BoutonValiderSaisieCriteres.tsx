@@ -55,7 +55,7 @@ export const BoutonValiderSaisieCriteres = ({
         onClick={handleOpenModal}
         type="button"
       >
-        Valider
+        Transmettre le formulaire
       </button>
       <ConfirmerValidationSaisie
         annee={2025}

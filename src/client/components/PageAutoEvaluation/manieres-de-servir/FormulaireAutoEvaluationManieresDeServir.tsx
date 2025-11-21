@@ -52,8 +52,8 @@ export const FormulaireAutoEvaluationManieresDeServir = () => {
                     Manière de servir
                   </h3>
                 </div>
-                <div className="flex gap-2">
-                  <div className="flex flex-col items-end gap-2">
+                <div className="flex gap-4">
+                  <div className="flex flex-col items-end gap-3">
                     <div className="flex items-center gap-4">
                       {autoEvaluation.readOnly ? (
                         <span className="flex gap-2 text-sm items-center">

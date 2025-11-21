@@ -4,6 +4,7 @@ import { Icone1Icon } from "@/client/components/_commons/Icones/Icone1Icon";
 export const BoutonEnregistrerBrouillon = ({ formId }: { formId: string }) => {
   return (
     <Bouton
+      className="!mt-2"
       form={formId}
       iconLeft={<Icone1Icon className="h-4 w-4 mt-1" />}
       label="Enregistrer le brouillon"

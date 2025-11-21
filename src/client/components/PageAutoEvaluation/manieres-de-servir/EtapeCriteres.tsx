@@ -36,38 +36,41 @@ export const EtapeCriteres = () => {
         return (
           <div key={critere.id}>
             <header className="p-4 flex items-center justify-between pr-6 bg-dsfr-blue-france-925 border-t-1 border-dsfr-blue-france-sun-113">
-              <div className="flex items-center font-semibold text-dsfr-blue-france-sun-113">
+              <span className="font-semibold text-dsfr-blue-france-sun-113">
                 {critere.libelle}
-                <BoutonEnSavoirPlus
-                  critereOuObjectif={{
-                    type: "critere",
-                    critere,
-                  }}
-                />
-              </div>
-              <InputNoteAutoEvaluation
-                control={form.control}
-                name={noteName}
-                onAutosave={handleAutosave}
-                readOnly={readOnly}
+              </span>
+              <BoutonEnSavoirPlus
+                critereOuObjectif={{
+                  type: "critere",
+                  critere,
+                }}
               />
             </header>
-            <div className="py-4 px-6 flex flex-col bg-dsfr-grey-925/30 ">
-              <CommentaireTextareaAutoEvaluation
-                control={form.control}
-                defaultOpen
-                name={commentaireName}
-                onAutosave={handleAutosave}
-                readOnly={readOnly}
-              />
-            </div>
-            <div className="py-4 px-6 flex flex-col bg-dsfr-blue-france-850/30 ">
-              <AnnexeTextareaAutoEvaluation
-                control={form.control}
-                name={annexeName}
-                onAutosave={handleAutosave}
-                readOnly={readOnly}
-              />
+            <div className="flex bg-dsfr-grey-925/30">
+              <div className="py-4 px-6 flex flex-col flex-1">
+                <CommentaireTextareaAutoEvaluation
+                  control={form.control}
+                  defaultOpen
+                  name={commentaireName}
+                  onAutosave={handleAutosave}
+                  readOnly={readOnly}
+                />
+                <AnnexeTextareaAutoEvaluation
+                  control={form.control}
+                  name={annexeName}
+                  onAutosave={handleAutosave}
+                  readOnly={readOnly}
+                />
+              </div>
+              <div className="py-4 px-6 flex items-start justify-center border-l-1 border-black">
+                <InputNoteAutoEvaluation
+                  control={form.control}
+                  label="Note"
+                  name={noteName}
+                  onAutosave={handleAutosave}
+                  readOnly={readOnly}
+                />
+              </div>
             </div>
           </div>
         );
