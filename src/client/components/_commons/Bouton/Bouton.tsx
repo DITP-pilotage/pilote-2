@@ -23,6 +23,7 @@ export const Bouton = ({
         {
           "fr-link flex": variant === "link",
           "fr-btn fr-btn--secondary": variant === "secondary",
+          "fr-btn": variant === "primary",
           "fr-btn fr-btn--sm": size === "sm",
         },
         className,

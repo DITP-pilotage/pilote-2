@@ -144,13 +144,15 @@ const PageUtilisateur: FunctionComponent<PageUtilisateurProps> = ({
                       </div>
                       <div className="fr-grid-row fr-grid-row--right fr-mt-4w">
                         <Bouton
-                          className="fr-btn--secondary fr-mr-2w"
+                          className="!mr-2"
                           label="Annuler"
                           onClick={fermerLaModaleDeDesactivationUtilisateur}
+                          variant="secondary"
                         />
                         <Bouton
                           label="Confirmer la désactivation"
                           onClick={desactiverUtilisateur}
+                          variant="primary"
                         />
                       </div>
                     </Modale>
@@ -184,13 +186,15 @@ const PageUtilisateur: FunctionComponent<PageUtilisateurProps> = ({
                       </div>
                       <div className="fr-grid-row fr-grid-row--right fr-mt-4w">
                         <Bouton
-                          className="fr-btn--secondary fr-mr-2w"
+                          className="!mr-2"
                           label="Annuler"
                           onClick={fermerLaModaleDeReactivationUtilisateur}
+                          variant="secondary"
                         />
                         <Bouton
                           label="Confirmer la réactivation"
                           onClick={reactiverUtilisateur}
+                          variant="primary"
                         />
                       </div>
                     </Modale>
