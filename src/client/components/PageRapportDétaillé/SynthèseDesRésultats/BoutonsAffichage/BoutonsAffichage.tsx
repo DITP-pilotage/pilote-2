@@ -21,18 +21,20 @@ const BoutonsAffichage: FunctionComponent<BoutonsAffichageProps> = ({
     <>
       {afficherVoirPlus ? (
         <Bouton
-          className="fr-btn--sm gap-2 fr-btn--tertiary-no-outline !p-0 !mt-2"
+          className="!items-center !mt-2 !text-sm"
           iconRight={<Icone className="h-4 w-4" icone={ArrowSLine2Icon} />}
           label="Voir plus"
           onClick={déplierLeContenu}
+          variant="link"
         />
       ) : null}
       {afficherVoirMoins ? (
         <Bouton
-          className="fr-btn--sm fr-btn--tertiary-no-outline !p-0 !mt-2"
+          className="!items-center !mt-2 !text-sm"
           iconRight={<Icone className="h-4 w-4" icone={ArrowSLineIcon} />}
           label="Voir moins"
           onClick={replierLeContenu}
+          variant="link"
         />
       ) : null}
     </>

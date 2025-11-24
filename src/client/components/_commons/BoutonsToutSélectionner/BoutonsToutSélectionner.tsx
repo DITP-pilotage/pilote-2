@@ -16,16 +16,16 @@ const BoutonToutSélectionner: FunctionComponent<
     >
       <li>
         <Bouton
-          className="fr-btn--secondary"
           label="Tout sélectionner"
           onClick={onClickToutSélectionner}
+          variant="secondary"
         />
       </li>
       <li>
         <Bouton
-          className="fr-btn--secondary"
           label="Tout déselectionner"
           onClick={onClickToutDésélectionner}
+          variant="secondary"
         />
       </li>
     </ul>
