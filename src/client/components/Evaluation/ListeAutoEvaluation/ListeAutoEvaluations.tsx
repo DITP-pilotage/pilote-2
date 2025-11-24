@@ -66,6 +66,12 @@ export const ListeAutoEvaluations = ({
   return (
     <div className="space-y-8">
       {fichesEvaluation.map((ficheEvaluation) => {
+        const criteresValidesOuEtapeClose =
+          ficheEvaluation.criteresValides ||
+          ficheEvaluation.etapeCourante !== "AUTO_EVALUATION";
+        const ObjectifsValidesOuEtapeClose =
+          ficheEvaluation.objectifsValides ||
+          ficheEvaluation.etapeCourante !== "AUTO_EVALUATION";
         return (
           <div className="flex flex-col gap-2" key={ficheEvaluation.id}>
             <header>
@@ -76,13 +82,13 @@ export const ListeAutoEvaluations = ({
                 <LigneEnteteAvancementCompletionEvaluation
                   avancementCompletion={ficheEvaluation.objectifs}
                   categorie="Objectifs individuels"
-                  estValide={ficheEvaluation.objectifsValides}
+                  estValide={ObjectifsValidesOuEtapeClose}
                   texteCibleCompletion="objectif"
                 />
                 <LigneEnteteAvancementCompletionEvaluation
                   avancementCompletion={ficheEvaluation.criteres}
                   categorie="Manière de servir"
-                  estValide={ficheEvaluation.criteresValides}
+                  estValide={criteresValidesOuEtapeClose}
                   texteCibleCompletion="axe"
                 />
               </ul>
@@ -120,23 +126,21 @@ export const ListeAutoEvaluations = ({
                   },
                 ]}
                 statutCompletion={
-                  ficheEvaluation.objectifsValides
-                    ? "COMPLETER"
-                    : "NON_COMPLETE"
+                  ObjectifsValidesOuEtapeClose ? "COMPLETER" : "NON_COMPLETE"
                 }
                 texteBadge={formatterTitreEvaluation(
                   ficheEvaluation.rattachement,
                 )}
                 texteCompletion={formatterTexteCompletion({
                   ...ficheEvaluation.objectifs,
-                  estValide: ficheEvaluation.objectifsValides,
+                  estValide: ObjectifsValidesOuEtapeClose,
                 })}
                 texteLienNavigation="accéder à l'auto-évaluation des objectifs"
                 titre="Objectifs individuels"
               >
                 <BarreProgressionEvaluation
                   elementDeProgression="objectifs"
-                  estValide={ficheEvaluation.objectifsValides}
+                  estValide={ObjectifsValidesOuEtapeClose}
                   nombreNotes={ficheEvaluation.objectifs.nombreNotes}
                   nombreTotal={ficheEvaluation.objectifs.nombreTotal}
                 />
@@ -151,21 +155,21 @@ export const ListeAutoEvaluations = ({
                   },
                 ]}
                 statutCompletion={
-                  ficheEvaluation.criteresValides ? "COMPLETER" : "NON_COMPLETE"
+                  criteresValidesOuEtapeClose ? "COMPLETER" : "NON_COMPLETE"
                 }
                 texteBadge={formatterTitreEvaluation(
                   ficheEvaluation.rattachement,
                 )}
                 texteCompletion={formatterTexteCompletion({
                   ...ficheEvaluation.criteres,
-                  estValide: ficheEvaluation.criteresValides,
+                  estValide: criteresValidesOuEtapeClose,
                 })}
                 texteLienNavigation="accéder à l'auto-évaluation de la manière de servir"
                 titre="Manière de servir"
               >
                 <BarreProgressionEvaluation
                   elementDeProgression="axes"
-                  estValide={ficheEvaluation.criteresValides}
+                  estValide={criteresValidesOuEtapeClose}
                   nombreNotes={ficheEvaluation.criteres.nombreNotes}
                   nombreTotal={ficheEvaluation.criteres.nombreTotal}
                 />

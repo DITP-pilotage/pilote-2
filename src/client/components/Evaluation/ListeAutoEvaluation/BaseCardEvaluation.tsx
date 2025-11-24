@@ -83,7 +83,13 @@ export const BaseCardEvaluation = ({
                     {informationMoyenne.moyenne}
                   </span>
                 ) : (
-                  <span className="text-xl font-bold !text-pilote-yellow">
+                  <span
+                    className={clsxm("text-xl font-bold", {
+                      "!text-pilote-yellow":
+                        statutCompletion === "NON_COMPLETE",
+                      "!text-primary": statutCompletion === "COMPLETER",
+                    })}
+                  >
                     -
                   </span>
                 )}
