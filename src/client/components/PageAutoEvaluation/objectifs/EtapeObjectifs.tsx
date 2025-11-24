@@ -44,12 +44,12 @@ export function EtapeObjectifs() {
               </span>
               <BoutonEnSavoirPlus
                 critereOuObjectif={{
-                    type: "objectif",
-                    objectif: {
-                      ...objectif,
-                      ficheEvaluationId: autoEvaluation.ficheEvaluationId,
-                    },
-                  }}
+                  type: "objectif",
+                  objectif: {
+                    ...objectif,
+                    ficheEvaluationId: autoEvaluation.ficheEvaluationId,
+                  },
+                }}
               />
             </header>
             <div className="flex bg-dsfr-grey-925/30">
