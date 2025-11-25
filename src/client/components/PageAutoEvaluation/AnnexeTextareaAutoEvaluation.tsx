@@ -16,11 +16,13 @@ export function AnnexeTextareaAutoEvaluation<T extends FieldValues>({
   readOnly,
   control,
   onAutosave,
+  onFocus,
 }: {
   name: Path<T>;
   readOnly: boolean;
   control: Control<T>;
   onAutosave?: () => void;
+  onFocus?: () => void;
 }) {
   const [displayAnnexe, setDisplayAnnexe] = useState(false);
   const editeurRef = useRef<EditeurRicheRef>(null);
@@ -42,6 +44,7 @@ export function AnnexeTextareaAutoEvaluation<T extends FieldValues>({
                 });
                 editeurRef.current?.focus();
               }}
+              onFocus={onFocus}
               type="button"
             >
               {hasContent ? (
@@ -74,6 +77,7 @@ export function AnnexeTextareaAutoEvaluation<T extends FieldValues>({
                 field.onChange(value);
                 autosave.onChange();
               }}
+              onFocus={onFocus}
             />
             <div className="flex justify-end">
               {!readOnly && (

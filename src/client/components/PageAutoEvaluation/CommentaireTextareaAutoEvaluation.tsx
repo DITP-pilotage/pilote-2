@@ -8,11 +8,13 @@ export function CommentaireTextareaAutoEvaluation<T extends FieldValues>({
   readOnly,
   control,
   onAutosave,
+  onFocus,
 }: {
   name: Path<T>;
   readOnly: boolean;
   control: Control<T>;
   onAutosave?: () => void;
+  onFocus?: () => void;
 }) {
   const autosave = useAutosave({ onAutosave });
   const textareaRef = useRef<TextareaRef>(null);
@@ -26,6 +28,7 @@ export function CommentaireTextareaAutoEvaluation<T extends FieldValues>({
       onBlur={() => {
         autosave.onBlur();
       }}
+      onFocus={onFocus}
       readOnly={readOnly}
       textareaRef={textareaRef}
     />

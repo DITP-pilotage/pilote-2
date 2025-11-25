@@ -11,18 +11,25 @@ import { QuestionIcon } from "@/components/_commons/Icones/QuestionIcon";
 import { Icone } from "@/components/_commons/Icone";
 import { IconeDocumentationIcon } from "@/components/_commons/Icones/IconeDocumentationIcon";
 import { clsxm } from "@/utils/clsxm";
+import { WarningIcon } from "@/client/components/_commons/Icones/WarningIcon";
 import InfobulleStyled from "./Infobulle.styled";
 
 export const Infobulle: FunctionComponent<
   PropsWithChildren<{
     classNameBouton?: string;
     classNameInfoBulle?: string;
-    styleIconInfoBulle?: "information" | "question" | "documentation";
+    classNameIcone?: string;
+    styleIconInfoBulle?:
+      | "information"
+      | "question"
+      | "documentation"
+      | "warning";
   }>
 > = ({
   children,
   classNameBouton,
   classNameInfoBulle,
+  classNameIcone,
   styleIconInfoBulle = "information",
 }) => {
   const randomId = useId();
@@ -48,13 +55,28 @@ export const Infobulle: FunctionComponent<
         type="button"
       >
         {styleIconInfoBulle === "information" ? (
-          <Icone className="!text-current" icone={InformationPleineIcon} />
+          <Icone
+            className={clsxm("!text-current", classNameIcone)}
+            icone={InformationPleineIcon}
+          />
         ) : null}
         {styleIconInfoBulle === "documentation" ? (
-          <Icone className="!text-current" icone={IconeDocumentationIcon} />
+          <Icone
+            className={clsxm("!text-current", classNameIcone)}
+            icone={IconeDocumentationIcon}
+          />
         ) : null}
         {styleIconInfoBulle === "question" ? (
-          <Icone className="!text-current" icone={QuestionIcon} />
+          <Icone
+            className={clsxm("!text-current", classNameIcone)}
+            icone={QuestionIcon}
+          />
+        ) : null}
+        {styleIconInfoBulle === "warning" ? (
+          <Icone
+            className={clsxm("!text-current", classNameIcone)}
+            icone={WarningIcon}
+          />
         ) : null}
       </button>
       <SecureTooltip

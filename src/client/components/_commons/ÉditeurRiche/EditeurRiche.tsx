@@ -19,6 +19,7 @@ interface ÉditeurRicheProps {
   contenu: string;
   onChange: (contenu: string) => void;
   onBlur?: () => void;
+  onFocus?: () => void;
   placeholder?: string;
   estEnLectureSeule?: boolean;
   editeurRef?: RefObject<TextareaRef>;
@@ -31,6 +32,7 @@ export const EditeurRiche: FunctionComponent<ÉditeurRicheProps> = ({
   placeholder = "Saisissez votre texte...",
   estEnLectureSeule = false,
   editeurRef,
+  onFocus,
 }) => {
   const editor = useEditor({
     extensions: [
@@ -54,6 +56,7 @@ export const EditeurRiche: FunctionComponent<ÉditeurRicheProps> = ({
       onChange(editor2.isEmpty ? "" : editor2.getHTML());
     },
     onBlur: onBlur,
+    onFocus: onFocus,
   });
 
   useImperativeHandle(editeurRef, () => ({
