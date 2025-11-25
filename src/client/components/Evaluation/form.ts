@@ -218,9 +218,13 @@ export const enregistrerUnChamp = (
   ];
 };
 
-export const enregistrerTousLesChamps = (values: FormValues) => {
-  return Object.entries(values.fichesEvaluation).map(
-    ([ficheEvaluationId, { objectifs, criteres }]) => {
+export const enregistrerTousLesChamps = (
+  values: FormValues,
+  isReadOnly: (ficheEvaluationId: string) => boolean,
+) => {
+  return Object.entries(values.fichesEvaluation)
+    .filter(([ficheEvaluationId]) => !isReadOnly(ficheEvaluationId))
+    .map(([ficheEvaluationId, { objectifs, criteres }]) => {
       return {
         ficheEvaluationId,
         evaluationsObjectifs: Object.entries(objectifs).map(
@@ -236,6 +240,5 @@ export const enregistrerTousLesChamps = (values: FormValues) => {
           }),
         ),
       };
-    },
-  );
+    });
 };

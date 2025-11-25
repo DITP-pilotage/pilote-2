@@ -9,6 +9,7 @@ import {
   FormValues,
 } from "@/components/Evaluation/form";
 import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
+import { pageEspaceAppreciation } from "@/components/PageEspaceAppreciation/PageEspaceAppreciationServerSideContext";
 
 export const useEnregistrerBrouillonConsolidation = () => {
   const refreshRouter = useRefreshRouter();
@@ -17,6 +18,7 @@ export const useEnregistrerBrouillonConsolidation = () => {
   // Attention : enregistrerBrouillon.mutateAsync est stable
   //  mais enregistrerBrouillon lui-même ne l'est pas
   const mutateAsync = enregistrerBrouillon.mutateAsync;
+  const props = pageEspaceAppreciation.useServerSidePropsContext();
 
   return useCallback(
     (
@@ -26,7 +28,14 @@ export const useEnregistrerBrouillonConsolidation = () => {
     ) => {
       const dataToSend = fieldName
         ? enregistrerUnChamp(values, fieldName)
-        : enregistrerTousLesChamps(values);
+        : enregistrerTousLesChamps(
+            values,
+            (ficheEvaluationId) =>
+              props.rattachements.find(
+                (rattachement) =>
+                  rattachement.ficheEvaluationId === ficheEvaluationId,
+              )?.readOnly ?? false,
+          );
 
       if (!dataToSend) {
         return Promise.resolve();

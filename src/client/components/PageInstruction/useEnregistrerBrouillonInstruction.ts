@@ -24,7 +24,7 @@ export const useEnregistrerBrouillonInstruction = () => {
     ) => {
       const dataToSend = fieldName
         ? enregistrerUnChamp(values, fieldName)
-        : enregistrerTousLesChamps(values);
+        : enregistrerTousLesChamps(values, () => false);
 
       if (!dataToSend) {
         return Promise.resolve();
