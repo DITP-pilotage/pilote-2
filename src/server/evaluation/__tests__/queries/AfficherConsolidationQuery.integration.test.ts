@@ -1111,6 +1111,186 @@ describe("AfficherConsolidationQuery", () => {
       ]);
     });
 
+    it("doit retourner les fiches en phase INSTRUCTION en mode lecture seule", async () => {
+      // Given
+      const utilisateurId = "a5734567-89ab-cdef-0123-456789abcdef";
+      const rattachementCode = "REG-13";
+      const objectifId = "b5734567-89ab-cdef-0123-456789abcdef";
+      const critereId = "c5734567-89ab-cdef-0123-456789abcdef";
+      const sousCritereId = "d5734567-89ab-cdef-0123-456789abcdef";
+      const ficheEvaluationId = "e5734567-89ab-cdef-0123-456789abcdef";
+      const etapeAutoEvaluationId = "f5734567-89ab-cdef-0123-456789abcdef";
+      const etapeConsolidationId = "15834567-89ab-cdef-0123-456789abcdef";
+      const evaluationObjectifConsoId = "25834567-89ab-cdef-0123-456789abcdef";
+      const evaluationCritereConsoId = "35834567-89ab-cdef-0123-456789abcdef";
+
+      await prisma.utilisateur.create({
+        data: {
+          id: utilisateurId,
+          email: "instruction@example.com",
+          nom: "Instruction",
+          prenom: "User",
+          date_creation: new Date(),
+          profilCode: "DITP_ADMIN",
+        },
+      });
+
+      await prisma.referentiel_critere.create({
+        data: {
+          id: critereId,
+          libelle: "Critère en instruction",
+          descriptif: "Description critère",
+          sous_criteres: {
+            create: {
+              id: sousCritereId,
+              libelle: "Sous-critère",
+              descriptif: "Description sous-critère",
+            },
+          },
+        },
+      });
+
+      await prisma.referentiel_rattachement.create({
+        data: {
+          code: rattachementCode,
+          groupe: rattachementCode,
+          ordre: 1,
+          libelle: "Rattachement en instruction",
+          objectifs: {
+            create: {
+              id: objectifId,
+              libelle: "Objectif en instruction",
+              descriptif: "Description objectif",
+              jalon: 2025,
+              indicateur_cible: "100% de conformité",
+            },
+          },
+        },
+      });
+
+      await prisma.fiche_evaluation.create({
+        data: {
+          id: ficheEvaluationId,
+          jalon: 2025,
+          etape_courante: "INSTRUCTION",
+          rattachement_code: rattachementCode,
+          etape_evaluations: {
+            create: [
+              {
+                id: etapeAutoEvaluationId,
+                type: "AUTO_EVALUATION",
+              },
+              {
+                id: etapeConsolidationId,
+                type: "CONSOLIDATION",
+                read_only: false,
+              },
+            ],
+          },
+        },
+      });
+
+      await prisma.rattachement_utilisateur_etape_jalon.create({
+        data: {
+          id: "45834567-89ab-cdef-0123-456789abcdef",
+          rattachement_code: rattachementCode,
+          utilisateur_id: utilisateurId,
+          etape: "CONSOLIDATION",
+          jalon: 2025,
+        },
+      });
+
+      await prisma.evaluation_objectif.create({
+        data: {
+          id: evaluationObjectifConsoId,
+          etape_evaluation_id: etapeConsolidationId,
+          objectif_id: objectifId,
+          auteur_id: utilisateurId,
+          note: 4,
+          commentaire: "Évaluation en instruction",
+        },
+      });
+
+      await prisma.evaluation_critere.create({
+        data: {
+          id: evaluationCritereConsoId,
+          etape_evaluation_id: etapeConsolidationId,
+          critere_id: critereId,
+          auteur_id: utilisateurId,
+          note: 3,
+          commentaire: "Critère en instruction",
+        },
+      });
+
+      // When
+      const result = await query.run({ utilisateurId });
+
+      // Then
+      expect(result.rattachements).toEqual([
+        {
+          code: rattachementCode,
+          libelle: "Rattachement en instruction",
+          ficheEvaluationId,
+          readOnly: true,
+          objectifs: [
+            {
+              id: objectifId,
+              libelle: "Objectif en instruction",
+              descriptif: "Description objectif",
+              indicateurCible: "100% de conformité",
+              evaluations: [
+                {
+                  etape: $Enums.etape_evaluation_enum.CONSOLIDATION,
+                  evaluation: {
+                    id: evaluationObjectifConsoId,
+                    note: 4,
+                    commentaire: "Évaluation en instruction",
+                  },
+                  dateTraitement: null,
+                },
+                {
+                  etape: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
+                  evaluation: {
+                    id: expect.any(String),
+                    note: null,
+                    commentaire: "",
+                  },
+                  dateTraitement: null,
+                },
+              ],
+            },
+          ],
+          criteres: expect.arrayContaining([
+            {
+              id: critereId,
+              libelle: "Critère en instruction",
+              descriptif: "Description critère",
+              evaluations: [
+                {
+                  etape: $Enums.etape_evaluation_enum.CONSOLIDATION,
+                  evaluation: {
+                    id: evaluationCritereConsoId,
+                    note: 3,
+                    commentaire: "Critère en instruction",
+                  },
+                  dateTraitement: null,
+                },
+                {
+                  etape: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
+                  evaluation: {
+                    id: expect.any(String),
+                    note: null,
+                    commentaire: "",
+                  },
+                  dateTraitement: null,
+                },
+              ],
+            },
+          ]),
+        },
+      ]);
+    });
+
     it("doit retourner les données d'auto-évaluation pour chaque objectif et critère", async () => {
       // Given
       const utilisateurId = "c4634567-89ab-cdef-0123-456789abcdef";
