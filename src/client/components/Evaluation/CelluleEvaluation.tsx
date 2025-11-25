@@ -1,6 +1,6 @@
 import { $Enums } from "@prisma/client";
-import { useFormState } from "react-hook-form";
 import { Row, Table } from "@tanstack/react-table";
+import { useFormState } from "react-hook-form";
 import { TableauEvaluationRow } from "@/components/Evaluation/TableauEvaluation";
 import { clsxm } from "@/utils/clsxm";
 import { BoutonAfficherFicheCadrage } from "@/components/Evaluation/BoutonAfficherFicheCadrage";
@@ -20,7 +20,6 @@ export const CelluleEvaluation = ({
   const currentGrouping = table.getState().grouping[0];
   const ligne = row.original;
   const onAutosave = useHandleAutosave();
-  const formState = useFormState();
   const getCritere = useGetCritere();
   const commentaireName =
     ligne.type === "objectif"
@@ -30,7 +29,15 @@ export const CelluleEvaluation = ({
     ligne.type === "objectif"
       ? (`fichesEvaluation.${ligne.ficheEvaluationId}.objectifs.${ligne.id}.note` as const)
       : (`fichesEvaluation.${ligne.ficheEvaluationId}.criteres.${ligne.id}.note` as const);
-  const note = useFormulaireEvaluation().watch(noteName);
+  const form = useFormulaireEvaluation();
+  const note = form.watch(noteName);
+
+  // Nécessaire pour lire l'état mis à jour des champs
+  // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+  useFormState().isValid;
+  const commentaireError = form.getFieldState(commentaireName).invalid;
+  const noteError = form.getFieldState(noteName).invalid;
+  const disabled = commentaireError || noteError;
 
   return (
     <div className="space-y-4">
@@ -63,11 +70,7 @@ export const CelluleEvaluation = ({
             />
             <BoutonTraitementEvaluation
               dateTraitement={ligne.evaluations[0]?.dateTraitement ?? null}
-              disabled={
-                note == null ||
-                ligne.rattachement.readOnly ||
-                !formState.isValid
-              }
+              disabled={note == null || ligne.rattachement.readOnly || disabled}
               evaluationId={ligne.evaluations[0]?.evaluation.id}
               typeEvaluation={
                 ligne.type === "objectif" ? "OBJECTIF" : "MANIERE_DE_SERVIR"
