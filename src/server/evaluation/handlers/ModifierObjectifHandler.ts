@@ -7,8 +7,8 @@ import { NotFoundError } from "@/server/app/error-boundary/not-found-error";
 export const modifierObjectifCommandSchema = z.object({
   ficheEvaluationId: z.string(),
   objectifId: z.string(),
-  descriptif: z.string(),
-  indicateurCible: z.string(),
+  descriptif: z.string().max(600),
+  indicateurCible: z.string().max(600),
 });
 
 export type ModifierObjectifCommand = z.infer<
