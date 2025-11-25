@@ -1,7 +1,11 @@
 import { clsxm } from "@/utils/clsxm";
+import { Icone } from "@/components/_commons/Icone";
+import { LockIcon } from "@/components/_commons/Icones/LockIcon";
+import { Tooltip } from "@/components/shared/Tooltip";
 
 export const BarreProgressionEvaluation = ({
   peutEtreTransmis = true,
+  estVerrouille = false,
   texteProgression = "Progression",
   elementDeProgression,
   estValide,
@@ -9,6 +13,7 @@ export const BarreProgressionEvaluation = ({
   nombreNotes,
 }: {
   peutEtreTransmis?: boolean;
+  estVerrouille?: boolean;
   texteProgression?: string;
   elementDeProgression: "axes" | "objectifs";
   estValide: boolean;
@@ -17,7 +22,19 @@ export const BarreProgressionEvaluation = ({
 }) => {
   return (
     <div>
-      <div className="text-sm text-gray-600 mb-2">
+      <div className="text-sm text-gray-600 mb-2 flex items-center gap-2">
+        {estVerrouille ? (
+          <Tooltip.Root>
+            <Tooltip.Trigger>
+              <Icone className="w-4 h-4" icone={LockIcon} />
+            </Tooltip.Trigger>
+            <Tooltip.Content>
+              La DITP prend connaissance de vos appréciations sur ce formulaire
+              et en a suspendu momentanément l'édition. Le formulaire reste
+              cependant consultable.
+            </Tooltip.Content>
+          </Tooltip.Root>
+        ) : null}
         {`${texteProgression} : ${nombreNotes} / ${nombreTotal} ${elementDeProgression}${!estValide && peutEtreTransmis && nombreNotes === nombreTotal ? " - à transmettre" : ""}`}
       </div>
       {nombreTotal > 0 && (

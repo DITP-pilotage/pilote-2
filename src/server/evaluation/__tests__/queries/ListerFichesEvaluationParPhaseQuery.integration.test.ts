@@ -70,14 +70,14 @@ describe("ListerFichesEvaluationParPhaseQuery", () => {
             id: "5905f2ea-724b-4411-a572-7a91d6128657",
             rattachement_code: regGroupeCode,
             utilisateur_id: utilisateurId,
-            etape: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
+            etape: $Enums.etape_evaluation_enum.CONSOLIDATION,
             jalon: 2025,
           },
           {
             id: "977fccfb-4e43-4a35-a4f3-db8ea66a261d",
             rattachement_code: regRattachementCode,
             utilisateur_id: utilisateurId,
-            etape: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
+            etape: $Enums.etape_evaluation_enum.CONSOLIDATION,
             jalon: 2025,
           },
           {
@@ -150,8 +150,9 @@ describe("ListerFichesEvaluationParPhaseQuery", () => {
             {
               id: ficheAutoEval1Id,
               etapeCourante: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
-              objectifsValides: false,
-              criteresValides: false,
+              readOnly: false,
+              objectifsValides: true,
+              criteresValides: true,
               rattachement: {
                 code: regGroupeCode,
                 libelle: "Région 01",
@@ -163,6 +164,7 @@ describe("ListerFichesEvaluationParPhaseQuery", () => {
                 },
                 nombreNotes: 0,
                 nombreTotal: 0,
+                nombreTraites: 0,
               },
               criteres: {
                 moyenne: null,
@@ -171,14 +173,16 @@ describe("ListerFichesEvaluationParPhaseQuery", () => {
                 },
                 nombreNotes: 0,
                 nombreTotal: 0,
+                nombreTraites: 0,
               },
               noteCollective: null,
             },
             {
               id: ficheAutoEval2Id,
               etapeCourante: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
-              objectifsValides: false,
-              criteresValides: false,
+              readOnly: false,
+              objectifsValides: true,
+              criteresValides: true,
               rattachement: {
                 code: regRattachementCode,
                 libelle: "Région 02",
@@ -188,6 +192,7 @@ describe("ListerFichesEvaluationParPhaseQuery", () => {
                 moyennesParPhase: {
                   [$Enums.etape_evaluation_enum.AUTO_EVALUATION]: null,
                 },
+                nombreTraites: 0,
                 nombreNotes: 0,
                 nombreTotal: 0,
               },
@@ -196,6 +201,7 @@ describe("ListerFichesEvaluationParPhaseQuery", () => {
                 moyennesParPhase: {
                   [$Enums.etape_evaluation_enum.AUTO_EVALUATION]: null,
                 },
+                nombreTraites: 0,
                 nombreNotes: 0,
                 nombreTotal: 0,
               },
@@ -211,8 +217,9 @@ describe("ListerFichesEvaluationParPhaseQuery", () => {
             {
               id: ficheConsolidationId,
               etapeCourante: $Enums.etape_evaluation_enum.CONSOLIDATION,
-              objectifsValides: false,
-              criteresValides: false,
+              readOnly: false,
+              objectifsValides: true,
+              criteresValides: true,
               rattachement: {
                 code: deptRattachementCode,
                 libelle: "Département 02",
@@ -224,6 +231,7 @@ describe("ListerFichesEvaluationParPhaseQuery", () => {
                 },
                 nombreNotes: 0,
                 nombreTotal: 0,
+                nombreTraites: 0,
               },
               criteres: {
                 moyenne: null,
@@ -232,6 +240,7 @@ describe("ListerFichesEvaluationParPhaseQuery", () => {
                 },
                 nombreNotes: 0,
                 nombreTotal: 0,
+                nombreTraites: 0,
               },
               noteCollective: null,
             },
@@ -284,7 +293,7 @@ describe("ListerFichesEvaluationParPhaseQuery", () => {
           id: "29b0c9e5-b60e-441d-8ebf-215f67e26045",
           rattachement_code: rattachementCode,
           utilisateur_id: utilisateurAvecPermissionId,
-          etape: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
+          etape: $Enums.etape_evaluation_enum.CONSOLIDATION,
           jalon: 2025,
         },
       });
@@ -362,7 +371,7 @@ describe("ListerFichesEvaluationParPhaseQuery", () => {
           id: "977fc894-5663-4471-b57b-b69a0199a382",
           rattachement_code: rattachementCode,
           utilisateur_id: utilisateurId,
-          etape: $Enums.etape_evaluation_enum.INSTRUCTION,
+          etape: $Enums.etape_evaluation_enum.CONSOLIDATION,
           jalon: 2025,
         },
       });
@@ -437,8 +446,9 @@ describe("ListerFichesEvaluationParPhaseQuery", () => {
         {
           id: ficheId,
           etapeCourante: $Enums.etape_evaluation_enum.INSTRUCTION,
-          objectifsValides: false,
-          criteresValides: false,
+          readOnly: false,
+          objectifsValides: true,
+          criteresValides: true,
           rattachement: {
             code: rattachementCode,
             libelle: "Région avec note collective",
@@ -450,6 +460,7 @@ describe("ListerFichesEvaluationParPhaseQuery", () => {
             },
             nombreNotes: 0,
             nombreTotal: 0,
+            nombreTraites: 0,
           },
           criteres: {
             moyenne: null,
@@ -458,6 +469,7 @@ describe("ListerFichesEvaluationParPhaseQuery", () => {
             },
             nombreNotes: 0,
             nombreTotal: 0,
+            nombreTraites: 0,
           },
           noteCollective: 80,
         },
@@ -600,6 +612,7 @@ describe("ListerFichesEvaluationParPhaseQuery", () => {
                       auteur_id: utilisateurId,
                       critere_id: critereId,
                       note: 25,
+                      date_traitement: new Date(),
                     },
                   ],
                 },
@@ -620,7 +633,8 @@ describe("ListerFichesEvaluationParPhaseQuery", () => {
           id: ficheId,
           etapeCourante: $Enums.etape_evaluation_enum.CONSOLIDATION,
           objectifsValides: false,
-          criteresValides: false,
+          criteresValides: true,
+          readOnly: false,
           rattachement: {
             code: rattachementCode,
             libelle: "Région moyennes phases",
@@ -633,6 +647,7 @@ describe("ListerFichesEvaluationParPhaseQuery", () => {
             },
             nombreNotes: 2,
             nombreTotal: 2,
+            nombreTraites: 0,
           },
           criteres: {
             moyenne: 25,
@@ -642,6 +657,7 @@ describe("ListerFichesEvaluationParPhaseQuery", () => {
             },
             nombreNotes: 1,
             nombreTotal: 1,
+            nombreTraites: 1,
           },
           noteCollective: null,
         },
@@ -673,23 +689,14 @@ describe("ListerFichesEvaluationParPhaseQuery", () => {
         },
       });
 
-      await prisma.rattachement_utilisateur_etape_jalon.createMany({
-        data: [
-          {
-            id: "fdcc1846-650b-4d5f-a194-79b348db0d9e",
-            rattachement_code: rattachementCode,
-            utilisateur_id: utilisateurId,
-            etape: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
-            jalon: 2025,
-          },
-          {
-            id: "110852f6-b032-4ec2-9f94-4671ae300079",
-            rattachement_code: rattachementCode,
-            utilisateur_id: utilisateurId,
-            etape: $Enums.etape_evaluation_enum.CONSOLIDATION,
-            jalon: 2025,
-          },
-        ],
+      await prisma.rattachement_utilisateur_etape_jalon.create({
+        data: {
+          id: "110852f6-b032-4ec2-9f94-4671ae300079",
+          rattachement_code: rattachementCode,
+          utilisateur_id: utilisateurId,
+          etape: $Enums.etape_evaluation_enum.CONSOLIDATION,
+          jalon: 2025,
+        },
       });
 
       await prisma.fiche_evaluation.create({
@@ -723,8 +730,9 @@ describe("ListerFichesEvaluationParPhaseQuery", () => {
         {
           id: ficheId,
           etapeCourante: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
-          objectifsValides: false,
-          criteresValides: false,
+          objectifsValides: true,
+          criteresValides: true,
+          readOnly: false,
           rattachement: {
             code: rattachementCode,
             libelle: "Région multi-phases",
@@ -737,6 +745,7 @@ describe("ListerFichesEvaluationParPhaseQuery", () => {
             },
             nombreNotes: 0,
             nombreTotal: 0,
+            nombreTraites: 0,
           },
           criteres: {
             moyenne: null,
@@ -746,6 +755,7 @@ describe("ListerFichesEvaluationParPhaseQuery", () => {
             },
             nombreNotes: 0,
             nombreTotal: 0,
+            nombreTraites: 0,
           },
           noteCollective: null,
         },
@@ -814,21 +824,21 @@ describe("ListerFichesEvaluationParPhaseQuery", () => {
             id: "71e1c6e8-8da1-445c-a64a-221de179cb43",
             rattachement_code: rattachement1Code,
             utilisateur_id: utilisateurId,
-            etape: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
+            etape: $Enums.etape_evaluation_enum.CONSOLIDATION,
             jalon: 2025,
           },
           {
             id: "34d08d8b-1ec8-47b4-8a0c-980c6a2c3502",
             rattachement_code: rattachement2Code,
             utilisateur_id: utilisateurId,
-            etape: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
+            etape: $Enums.etape_evaluation_enum.CONSOLIDATION,
             jalon: 2025,
           },
           {
             id: "04a0d908-8154-4b28-bc21-34b0d6c46010",
             rattachement_code: rattachement3Code,
             utilisateur_id: utilisateurId,
-            etape: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
+            etape: $Enums.etape_evaluation_enum.CONSOLIDATION,
             jalon: 2025,
           },
         ],

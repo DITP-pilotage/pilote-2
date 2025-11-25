@@ -4,7 +4,7 @@ import {
   formatterTexteCompletion,
   formatterTitreEvaluation,
 } from "@/components/PageAppreciation/utilsTexteEvaluation";
-import { BarreProgressionEvaluation } from "@/components/Evaluation/ListeAutoEvaluation/BarreProgressionEvaluation";
+import { BarreProgressionEvaluation } from "@/components/_commons/BarreProgressionEvaluation";
 import { clsxm } from "@/utils/clsxm";
 
 export const LigneCardEvaluationAppreciation = ({
@@ -60,7 +60,9 @@ export const LigneCardEvaluationAppreciation = ({
             },
           ]}
           statutCompletion={
-            ficheEvaluation.objectifsValides ? "COMPLETER" : "NON_COMPLETE"
+            ficheEvaluation.readOnly || ficheEvaluation.objectifsValides
+              ? "COMPLETER"
+              : "NON_COMPLETE"
           }
           texteBadge="Objectifs individuels"
           texteCompletion={formatterTexteCompletion({
@@ -72,7 +74,8 @@ export const LigneCardEvaluationAppreciation = ({
           <BarreProgressionEvaluation
             elementDeProgression="objectifs"
             estValide={ficheEvaluation.objectifsValides}
-            nombreNotes={ficheEvaluation.objectifs.nombreNotes}
+            estVerrouille={ficheEvaluation.readOnly}
+            nombreNotes={ficheEvaluation.objectifs.nombreTraites}
             nombreTotal={ficheEvaluation.objectifs.nombreTotal}
             peutEtreTransmis={false}
             texteProgression="Traité"
@@ -95,7 +98,9 @@ export const LigneCardEvaluationAppreciation = ({
             },
           ]}
           statutCompletion={
-            ficheEvaluation.criteresValides ? "COMPLETER" : "NON_COMPLETE"
+            ficheEvaluation.readOnly || ficheEvaluation.criteresValides
+              ? "COMPLETER"
+              : "NON_COMPLETE"
           }
           texteBadge="Manière de servir"
           texteCompletion={formatterTexteCompletion({
@@ -107,7 +112,8 @@ export const LigneCardEvaluationAppreciation = ({
           <BarreProgressionEvaluation
             elementDeProgression="axes"
             estValide={ficheEvaluation.criteresValides}
-            nombreNotes={ficheEvaluation.criteres.nombreNotes}
+            estVerrouille={ficheEvaluation.readOnly}
+            nombreNotes={ficheEvaluation.criteres.nombreTraites}
             nombreTotal={ficheEvaluation.criteres.nombreTotal}
             peutEtreTransmis={false}
             texteProgression="Traité"
