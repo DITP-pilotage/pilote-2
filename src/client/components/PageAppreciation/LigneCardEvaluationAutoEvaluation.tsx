@@ -41,7 +41,6 @@ export const LigneCardEvaluationAutoEvaluation = ({
         ) : null}
 
         <BaseCardEvaluation
-          lien="TODO"
           listeInformationsMoyennes={[]}
           statutCompletion={
             ficheEvaluation.objectifsValides ? "COMPLETER" : "NON_COMPLETE"
@@ -58,7 +57,6 @@ export const LigneCardEvaluationAutoEvaluation = ({
           />
         </BaseCardEvaluation>
         <BaseCardEvaluation
-          lien="TODO"
           listeInformationsMoyennes={[]}
           statutCompletion={
             ficheEvaluation.criteresValides ? "COMPLETER" : "NON_COMPLETE"
