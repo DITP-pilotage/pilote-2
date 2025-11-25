@@ -74,6 +74,7 @@ export const LigneCardEvaluationAppreciation = ({
           <BarreProgressionEvaluation
             elementDeProgression="objectifs"
             estValide={ficheEvaluation.objectifsValides}
+            estVerrouille={ficheEvaluation.readOnly}
             nombreNotes={ficheEvaluation.objectifs.nombreTraites}
             nombreTotal={ficheEvaluation.objectifs.nombreTotal}
             peutEtreTransmis={false}
@@ -111,6 +112,7 @@ export const LigneCardEvaluationAppreciation = ({
           <BarreProgressionEvaluation
             elementDeProgression="axes"
             estValide={ficheEvaluation.criteresValides}
+            estVerrouille={ficheEvaluation.readOnly}
             nombreNotes={ficheEvaluation.criteres.nombreTraites}
             nombreTotal={ficheEvaluation.criteres.nombreTotal}
             peutEtreTransmis={false}
