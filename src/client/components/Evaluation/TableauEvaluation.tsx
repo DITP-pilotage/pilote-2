@@ -22,6 +22,8 @@ import {
 } from "@/components/Evaluation/CriteresProvider";
 import { AutosaveProvider } from "@/components/Evaluation/AutosaveProvider";
 import {
+  FormCommentaireName,
+  FormNoteName,
   FormValues,
   getFichesEvaluationParDefaut,
   useFormSchema,
@@ -70,7 +72,11 @@ export const InnerTableauEvaluation = memo(function TableauEvaluation({
   onEnregistrer,
 }: {
   rattachements: Rattachement[];
-  onEnregistrer: (values: FormValues, showToast: boolean) => Promise<void>;
+  onEnregistrer: (
+    values: FormValues,
+    showToast: boolean,
+    fieldName?: FormCommentaireName | FormNoteName,
+  ) => Promise<void>;
 }) {
   const criteres = useCriteres();
   const formSchema = useFormSchema(rattachements);
@@ -82,14 +88,16 @@ export const InnerTableauEvaluation = memo(function TableauEvaluation({
     },
   });
 
-  const handleAutosave = useCallback(async () => {
-    const isValid = await form.trigger();
-    if (isValid) {
-      await form.handleSubmit(async (values) => {
-        return onEnregistrer(values, false);
-      })();
-    }
-  }, [form, onEnregistrer]);
+  const handleAutosave = useCallback(
+    async (fieldName: FormCommentaireName | FormNoteName) => {
+      const fieldState = form.getFieldState(fieldName);
+      if (!fieldState.invalid) {
+        const values = form.getValues();
+        await onEnregistrer(values, false, fieldName);
+      }
+    },
+    [form, onEnregistrer],
+  );
 
   const { table } = useTableauEvaluation({ rattachements });
   const rows = table.getRowModel().rows;

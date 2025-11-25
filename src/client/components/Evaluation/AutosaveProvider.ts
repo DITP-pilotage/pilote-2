@@ -1,6 +1,10 @@
 import { createContext, useContext } from "react";
+import {
+  FormCommentaireName,
+  FormNoteName,
+} from "@/components/Evaluation/form";
 
-type Autosave = () => void;
+type Autosave = (fieldName: FormCommentaireName | FormNoteName) => void;
 const context = createContext<null | Autosave>(null);
 
 export const useHandleAutosave = () => {

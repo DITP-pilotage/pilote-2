@@ -177,3 +177,16 @@ export const useFormSchema = (rattachements: Rattachement[]) => {
     });
   }, [rattachements]);
 };
+
+export type FormObjectifCommentaireName =
+  `fichesEvaluation.${string}.objectifs.${string}.commentaire`;
+export type FormObjectifNoteName =
+  `fichesEvaluation.${string}.objectifs.${string}.note`;
+export type FormCritereCommentaireName =
+  `fichesEvaluation.${string}.criteres.${string}.commentaire`;
+export type FormCritereNoteName =
+  `fichesEvaluation.${string}.criteres.${string}.note`;
+export type FormCommentaireName =
+  | FormObjectifCommentaireName
+  | FormCritereCommentaireName;
+export type FormNoteName = FormObjectifNoteName | FormCritereNoteName;
