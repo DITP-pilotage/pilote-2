@@ -22,7 +22,8 @@ export const FormulaireAutoEvaluationManieresDeServir = () => {
   const formId = useId();
   const enregistrerBrouillon = useEnregistrerBrouillonCriteres();
 
-  const isReadOnly = autoEvaluation.readOnly || autoEvaluation.criteresValides;
+  const isReadOnly =
+    autoEvaluation.readOnly || autoEvaluation.isCriteresValides;
 
   const form = useForm<FormValuesCriteres>({
     resolver: zodResolver(formSchema),
@@ -64,7 +65,7 @@ export const FormulaireAutoEvaluationManieresDeServir = () => {
                           Cette fiche d'évaluation a déjà été soumise.
                         </span>
                       ) : null}
-                      {autoEvaluation.criteresValides &&
+                      {autoEvaluation.isCriteresValides &&
                       !autoEvaluation.readOnly ? (
                         <span className="flex gap-2 text-sm items-center">
                           <Icone

@@ -43,8 +43,8 @@ export type AfficherAutoEvaluationViewModel = {
   objectifs: Objectif[];
   dateDerniereModification: string;
   readOnly: boolean;
-  objectifsValides: boolean;
-  criteresValides: boolean;
+  isObjectifsValides: boolean;
+  isCriteresValides: boolean;
 };
 
 export class AfficherAutoEvaluationQuery {
@@ -129,8 +129,8 @@ export class AfficherAutoEvaluationQuery {
       readOnly:
         etapeAutoEvaluation.fiche_evaluation.etape_courante !==
         $Enums.etape_evaluation_enum.AUTO_EVALUATION,
-      objectifsValides: etapeAutoEvaluation.objectifs_valides ?? false,
-      criteresValides: etapeAutoEvaluation.criteres_valides ?? false,
+      isObjectifsValides: etapeAutoEvaluation.objectifs_valides ?? false,
+      isCriteresValides: etapeAutoEvaluation.criteres_valides ?? false,
     };
   }
 }

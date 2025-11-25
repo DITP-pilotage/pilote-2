@@ -60,20 +60,20 @@ export const LigneCardEvaluationAppreciation = ({
             },
           ]}
           statutCompletion={
-            ficheEvaluation.readOnly || ficheEvaluation.objectifsValides
+            ficheEvaluation.readOnly || ficheEvaluation.isObjectifsValides
               ? "COMPLETER"
               : "NON_COMPLETE"
           }
           texteBadge="Objectifs individuels"
           texteCompletion={formatterTexteCompletion({
-            estValide: ficheEvaluation.objectifsValides,
+            estValide: ficheEvaluation.isObjectifsValides,
           })}
           texteLienNavigation="accéder à l'appréciation des objectifs individuels"
           titre={formatterTitreEvaluation(ficheEvaluation.rattachement)}
         >
           <BarreProgressionEvaluation
             elementDeProgression="objectifs"
-            estValide={ficheEvaluation.objectifsValides}
+            estValide={ficheEvaluation.isObjectifsValides}
             estVerrouille={ficheEvaluation.readOnly}
             nombreNotes={ficheEvaluation.objectifs.nombreTraites}
             nombreTotal={ficheEvaluation.objectifs.nombreTotal}
@@ -98,20 +98,20 @@ export const LigneCardEvaluationAppreciation = ({
             },
           ]}
           statutCompletion={
-            ficheEvaluation.readOnly || ficheEvaluation.criteresValides
+            ficheEvaluation.readOnly || ficheEvaluation.isCriteresValides
               ? "COMPLETER"
               : "NON_COMPLETE"
           }
           texteBadge="Manière de servir"
           texteCompletion={formatterTexteCompletion({
-            estValide: ficheEvaluation.criteresValides,
+            estValide: ficheEvaluation.isCriteresValides,
           })}
           texteLienNavigation="accéder à l'appréciation de la manière de servir"
           titre={formatterTitreEvaluation(ficheEvaluation.rattachement)}
         >
           <BarreProgressionEvaluation
             elementDeProgression="axes"
-            estValide={ficheEvaluation.criteresValides}
+            estValide={ficheEvaluation.isCriteresValides}
             estVerrouille={ficheEvaluation.readOnly}
             nombreNotes={ficheEvaluation.criteres.nombreTraites}
             nombreTotal={ficheEvaluation.criteres.nombreTotal}

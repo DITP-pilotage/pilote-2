@@ -232,10 +232,10 @@ export class ListerFichesEvaluationParPhaseQuery {
         id: fiche.id,
         etapeCourante: fiche.etape_courante,
         readOnly: etapeEvaluation.read_only,
-        objectifsValides: objectifsAvecNotes.every(
+        isObjectifsValides: objectifsAvecNotes.every(
           (objectif) => objectif.estTraite,
         ),
-        criteresValides: criteresAvecNotes.every(
+        isCriteresValides: criteresAvecNotes.every(
           (critere) => critere.estTraite,
         ),
         rattachement: {

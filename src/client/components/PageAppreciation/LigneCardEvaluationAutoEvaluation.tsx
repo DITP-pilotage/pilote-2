@@ -43,14 +43,14 @@ export const LigneCardEvaluationAutoEvaluation = ({
         <BaseCardEvaluation
           listeInformationsMoyennes={[]}
           statutCompletion={
-            ficheEvaluation.objectifsValides ? "COMPLETER" : "NON_COMPLETE"
+            ficheEvaluation.isObjectifsValides ? "COMPLETER" : "NON_COMPLETE"
           }
           texteBadge="Objectifs individuels"
           titre={formatterTitreEvaluation(ficheEvaluation.rattachement)}
         >
           <BarreProgressionEvaluation
             elementDeProgression="objectifs"
-            estValide={ficheEvaluation.objectifsValides}
+            estValide={ficheEvaluation.isObjectifsValides}
             nombreNotes={ficheEvaluation.objectifs.nombreNotes}
             nombreTotal={ficheEvaluation.objectifs.nombreTotal}
             peutEtreTransmis={false}
@@ -59,14 +59,14 @@ export const LigneCardEvaluationAutoEvaluation = ({
         <BaseCardEvaluation
           listeInformationsMoyennes={[]}
           statutCompletion={
-            ficheEvaluation.criteresValides ? "COMPLETER" : "NON_COMPLETE"
+            ficheEvaluation.isCriteresValides ? "COMPLETER" : "NON_COMPLETE"
           }
           texteBadge="Manière de servir"
           titre={formatterTitreEvaluation(ficheEvaluation.rattachement)}
         >
           <BarreProgressionEvaluation
             elementDeProgression="axes"
-            estValide={ficheEvaluation.criteresValides}
+            estValide={ficheEvaluation.isCriteresValides}
             nombreNotes={ficheEvaluation.criteres.nombreNotes}
             nombreTotal={ficheEvaluation.criteres.nombreTotal}
             peutEtreTransmis={false}
