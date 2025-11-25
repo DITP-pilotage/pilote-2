@@ -42,7 +42,7 @@ export const MenuBar = ({ editor }: { editor: Editor }) => {
     );
 
   return (
-    <div className="flex z-1 sticky top-0 flex-wrap gap-1 items-center p-2 bg-[#f6f6f6] border border-[#ddd] border-b-0 rounded-t">
+    <div className="flex z-1 sticky top-0 flex-wrap gap-1 items-center p-2 border border-[#ddd] border-b-0 rounded-t !bg-white">
       {/* Formatage de texte */}
       <div className="flex gap-1 items-center">
         <button

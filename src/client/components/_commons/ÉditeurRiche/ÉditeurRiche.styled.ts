@@ -5,7 +5,6 @@ export const ÉditeurRicheStyled = styled.div`
   .ProseMirror {
     min-height: 200px;
     padding: 1rem;
-    background-color: #f6f6f6;
     border: 1px solid #ddd;
     border-radius: 4px;
     outline: none;

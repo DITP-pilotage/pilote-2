@@ -55,7 +55,7 @@ export const EtapeCriteres = () => {
                 }}
               />
             </header>
-            <div className="flex bg-dsfr-grey-925/30">
+            <div className="flex">
               <div className="py-4 px-6 flex flex-col flex-1">
                 <CommentaireTextareaAutoEvaluation
                   control={form.control}

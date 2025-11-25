@@ -24,6 +24,7 @@ export function InputNoteControlled<T extends FieldValues>({
           <InputNote
             {...props}
             {...field}
+            className="!bg-dsfr-contrast-grey"
             disabled={readOnly}
             errorMessage={fieldState.error?.message}
             id={fieldId}
