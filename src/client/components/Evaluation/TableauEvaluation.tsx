@@ -2,7 +2,7 @@ import { flexRender } from "@tanstack/react-table";
 import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { $Enums } from "@prisma/client";
-import { ComponentProps, memo, ReactNode, useCallback } from "react";
+import { ComponentProps, memo, ReactNode, useCallback, useEffect } from "react";
 import { Bouton } from "@/components/_commons/Bouton/Bouton";
 import { clsxm } from "@/utils/clsxm";
 import {
@@ -87,6 +87,11 @@ export const InnerTableauEvaluation = memo(function TableauEvaluation({
       fichesEvaluation: getFichesEvaluationParDefaut(rattachements),
     },
   });
+
+  const { trigger } = form;
+  useEffect(() => {
+    trigger();
+  }, [trigger]);
 
   const handleAutosave = useCallback(
     async (fieldName: FormCommentaireName | FormNoteName) => {
