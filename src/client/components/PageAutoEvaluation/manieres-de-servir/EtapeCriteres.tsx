@@ -2,7 +2,7 @@ import { useFieldArray } from "react-hook-form";
 import { useCallback } from "react";
 import { CommentaireTextareaAutoEvaluation } from "@/components/PageAutoEvaluation/CommentaireTextareaAutoEvaluation";
 import { InputNoteAutoEvaluation } from "@/components/PageAutoEvaluation/InputNoteAutoEvaluation";
-import { BoutonEnSavoirPlus } from "@/components/PageAutoEvaluation/BoutonEnSavoirPlus";
+import { BoutonAfficherFicheCadrage } from "@/components/PageAutoEvaluation/BoutonAfficherFicheCadrage";
 import { pageAutoEvaluationManieresDeServir } from "@/components/PageAutoEvaluation/manieres-de-servir/PageAutoEvaluationManieresDeServirServerSideContext";
 import { useFormEvaluationCriteres } from "@/components/PageAutoEvaluation/manieres-de-servir/form";
 import { useEnregistrerBrouillonCriteres } from "@/components/PageAutoEvaluation/manieres-de-servir/useEnregistrerBrouillonCriteres";
@@ -39,7 +39,7 @@ export const EtapeCriteres = () => {
               <span className="font-semibold text-dsfr-blue-france-sun-113">
                 {critere.libelle}
               </span>
-              <BoutonEnSavoirPlus
+              <BoutonAfficherFicheCadrage
                 critereOuObjectif={{
                   type: "critere",
                   critere,

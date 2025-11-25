@@ -3,10 +3,11 @@ import { useCallback } from "react";
 import { pageAutoEvaluationObjectifs } from "@/components/PageAutoEvaluation/objectifs/PageAutoEvaluationObjectifsServerSideContext";
 import { CommentaireTextareaAutoEvaluation } from "@/components/PageAutoEvaluation/CommentaireTextareaAutoEvaluation";
 import { InputNoteAutoEvaluation } from "@/components/PageAutoEvaluation/InputNoteAutoEvaluation";
-import { BoutonEnSavoirPlus } from "@/components/PageAutoEvaluation/BoutonEnSavoirPlus";
+import { BoutonAfficherFicheCadrage } from "@/components/PageAutoEvaluation/BoutonAfficherFicheCadrage";
 import { useFormEvaluationObjectifs } from "@/components/PageAutoEvaluation/objectifs/form";
 import { useEnregistrerBrouillonObjectifs } from "@/components/PageAutoEvaluation/objectifs/useEnregistrerBrouillonObjectifs";
 import { AnnexeTextareaAutoEvaluation } from "@/components/PageAutoEvaluation/AnnexeTextareaAutoEvaluation";
+import { Infobulle } from "@/components/_commons/Infobulle/Infobulle";
 
 export function EtapeObjectifs() {
   const { autoEvaluation } =
@@ -35,22 +36,36 @@ export function EtapeObjectifs() {
         const noteName = `objectifs.${index}.note` as const;
         const commentaireName = `objectifs.${index}.commentaire` as const;
         const annexeName = `objectifs.${index}.annexe` as const;
+        const ficheCadrageACompleter =
+          !objectif.descriptif || !objectif.indicateurCible;
 
         return (
           <div key={objectif.id}>
-            <header className="p-4 flex items-center justify-between pr-6 bg-dsfr-blue-france-925 border-t-1 border-dsfr-blue-france-sun-113">
+            <header className="p-4 flex items-center justify-between bg-dsfr-blue-france-925 border-t-1 border-dsfr-blue-france-sun-113">
               <span className="font-semibold text-dsfr-blue-france-sun-113">
                 {objectif.libelle}
               </span>
-              <BoutonEnSavoirPlus
-                critereOuObjectif={{
-                  type: "objectif",
-                  objectif: {
-                    ...objectif,
-                    ficheEvaluationId: autoEvaluation.ficheEvaluationId,
-                  },
-                }}
-              />
+              <div className="flex items-center gap-2">
+                <BoutonAfficherFicheCadrage
+                  critereOuObjectif={{
+                    type: "objectif",
+                    objectif: {
+                      ...objectif,
+                      ficheEvaluationId: autoEvaluation.ficheEvaluationId,
+                    },
+                  }}
+                />
+                {ficheCadrageACompleter ? (
+                  <Infobulle
+                    classNameBouton="!text-dsfr-warning-425 !fr-btn-sm"
+                    styleIconInfoBulle="warning"
+                  >
+                    Éditez la fiche de cadrage afin de compléter le descriptif
+                    de l'objectif et les critères d'évaluation associés
+                    (indicateur + cible).
+                  </Infobulle>
+                ) : null}
+              </div>
             </header>
             <div className="flex bg-dsfr-grey-925/30">
               <div className="py-4 px-6 flex flex-col flex-1">
