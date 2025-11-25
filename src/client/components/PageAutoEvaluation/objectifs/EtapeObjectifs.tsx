@@ -8,6 +8,7 @@ import { useFormEvaluationObjectifs } from "@/components/PageAutoEvaluation/obje
 import { useEnregistrerBrouillonObjectifs } from "@/components/PageAutoEvaluation/objectifs/useEnregistrerBrouillonObjectifs";
 import { AnnexeTextareaAutoEvaluation } from "@/components/PageAutoEvaluation/AnnexeTextareaAutoEvaluation";
 import { Infobulle } from "@/components/_commons/Infobulle/Infobulle";
+import { useSetCritereOuObjectif } from "@/components/Evaluation/LayoutFicheCadrage";
 
 export function EtapeObjectifs() {
   const { autoEvaluation } =
@@ -21,6 +22,7 @@ export function EtapeObjectifs() {
   const enregistrerBrouillon = useEnregistrerBrouillonObjectifs({
     showToast: false,
   });
+  const setCritereOuObjectif = useSetCritereOuObjectif();
 
   const handleAutosave = useCallback(async () => {
     const isValid = await form.trigger();
@@ -38,6 +40,16 @@ export function EtapeObjectifs() {
         const annexeName = `objectifs.${index}.annexe` as const;
         const ficheCadrageACompleter =
           !objectif.descriptif || !objectif.indicateurCible;
+
+        const afficherFicheCadrage = () => {
+          setCritereOuObjectif({
+            type: "objectif",
+            objectif: {
+              ...objectif,
+              ficheEvaluationId: autoEvaluation.ficheEvaluationId,
+            },
+          });
+        };
 
         return (
           <div key={objectif.id}>
@@ -73,12 +85,14 @@ export function EtapeObjectifs() {
                   control={form.control}
                   name={commentaireName}
                   onAutosave={handleAutosave}
+                  onFocus={afficherFicheCadrage}
                   readOnly={readOnly}
                 />
                 <AnnexeTextareaAutoEvaluation
                   control={form.control}
                   name={annexeName}
                   onAutosave={handleAutosave}
+                  onFocus={afficherFicheCadrage}
                   readOnly={readOnly}
                 />
               </div>
@@ -88,6 +102,7 @@ export function EtapeObjectifs() {
                   label="Note"
                   name={noteName}
                   onAutosave={handleAutosave}
+                  onFocus={afficherFicheCadrage}
                   readOnly={readOnly}
                 />
               </div>

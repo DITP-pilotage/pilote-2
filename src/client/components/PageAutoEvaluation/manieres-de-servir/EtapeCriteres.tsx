@@ -7,6 +7,7 @@ import { pageAutoEvaluationManieresDeServir } from "@/components/PageAutoEvaluat
 import { useFormEvaluationCriteres } from "@/components/PageAutoEvaluation/manieres-de-servir/form";
 import { useEnregistrerBrouillonCriteres } from "@/components/PageAutoEvaluation/manieres-de-servir/useEnregistrerBrouillonCriteres";
 import { AnnexeTextareaAutoEvaluation } from "@/components/PageAutoEvaluation/AnnexeTextareaAutoEvaluation";
+import { useSetCritereOuObjectif } from "@/components/Evaluation/LayoutFicheCadrage";
 
 export const EtapeCriteres = () => {
   const { autoEvaluation } =
@@ -17,6 +18,7 @@ export const EtapeCriteres = () => {
   const enregistrerBrouillon = useEnregistrerBrouillonCriteres({
     showToast: false,
   });
+  const setCritereOuObjectif = useSetCritereOuObjectif();
 
   const handleAutosave = useCallback(async () => {
     const isValid = await form.trigger();
@@ -32,6 +34,13 @@ export const EtapeCriteres = () => {
         const noteName = `criteres.${index}.note` as const;
         const commentaireName = `criteres.${index}.commentaire` as const;
         const annexeName = `criteres.${index}.annexe` as const;
+
+        const afficherFicheCadrage = () => {
+          setCritereOuObjectif({
+            type: "critere",
+            critere,
+          });
+        };
 
         return (
           <div key={critere.id}>
@@ -52,12 +61,14 @@ export const EtapeCriteres = () => {
                   control={form.control}
                   name={commentaireName}
                   onAutosave={handleAutosave}
+                  onFocus={afficherFicheCadrage}
                   readOnly={readOnly}
                 />
                 <AnnexeTextareaAutoEvaluation
                   control={form.control}
                   name={annexeName}
                   onAutosave={handleAutosave}
+                  onFocus={afficherFicheCadrage}
                   readOnly={readOnly}
                 />
               </div>
@@ -67,6 +78,7 @@ export const EtapeCriteres = () => {
                   label="Note"
                   name={noteName}
                   onAutosave={handleAutosave}
+                  onFocus={afficherFicheCadrage}
                   readOnly={readOnly}
                 />
               </div>
