@@ -44,6 +44,22 @@ export class ListerFichesEvaluationParPhaseQuery {
       ]),
     );
 
+    const rattachementsEnAppreciation = await this.dependencies.prisma
+      .getInstance()
+      .rattachement_utilisateur_etape_jalon.findMany({
+        where: {
+          utilisateur_id: utilisateurId,
+          etape: $Enums.etape_evaluation_enum.CONSOLIDATION,
+        },
+        select: {
+          rattachement_code: true,
+        },
+      });
+
+    const rattachementCodes = rattachementsEnAppreciation.map(
+      (r) => r.rattachement_code,
+    );
+
     const fichesEvaluation = await this.dependencies.prisma
       .getInstance()
       .fiche_evaluation.findMany({
@@ -53,23 +69,14 @@ export class ListerFichesEvaluationParPhaseQuery {
           },
         },
         where: {
-          rattachement: {
-            rattachement_utilisateur_etape_jalon: {
-              some: {
-                utilisateur_id: utilisateurId,
-              },
-            },
+          rattachement_code: {
+            in: rattachementCodes,
           },
         },
         include: {
           rattachement: {
             include: {
               objectifs: true,
-              rattachement_utilisateur_etape_jalon: {
-                where: {
-                  utilisateur_id: utilisateurId,
-                },
-              },
             },
           },
           etape_evaluations: {
@@ -91,12 +98,6 @@ export class ListerFichesEvaluationParPhaseQuery {
     const fichesParGroupe: FichesParGroupe = {};
 
     for (const fiche of fichesEvaluation) {
-      const permissionsUtilisateur =
-        fiche.rattachement.rattachement_utilisateur_etape_jalon;
-      const etapesAutorisees = new Set(
-        permissionsUtilisateur.map((perm) => perm.etape),
-      );
-
       const moyennesObjectifsParPhase: Partial<
         Record<$Enums.etape_evaluation_enum, number | null>
       > = {};
@@ -163,134 +164,131 @@ export class ListerFichesEvaluationParPhaseQuery {
             : null;
       }
 
-      for (const etapeEvaluation of fiche.etape_evaluations) {
-        if (!etapesAutorisees.has(etapeEvaluation.type)) {
-          continue;
-        }
+      const etapeEvaluation = fiche.etape_evaluations.find(
+        (etape) => etape.type === fiche.etape_courante,
+      );
 
-        if (etapeEvaluation.type !== fiche.etape_courante) {
-          continue;
-        }
+      if (!etapeEvaluation) {
+        continue;
+      }
 
-        const objectifsAvecNotes = fiche.rattachement.objectifs.map(
-          (objectif) => {
-            const evaluation = etapeEvaluation.evaluations_objectifs.find(
-              (evalObjectif) => evalObjectif.objectif_id === objectif.id,
-            );
-            return {
-              note: evaluation?.note ?? null,
-              estTraite: !!evaluation?.date_traitement,
-            };
-          },
-        );
-
-        const criteresAvecNotes = tousLesCriteres.map((critere) => {
-          const evaluation = etapeEvaluation.evaluations_criteres.find(
-            (evalCritere) => evalCritere.critere_id === critere.id,
+      const objectifsAvecNotes = fiche.rattachement.objectifs.map(
+        (objectif) => {
+          const evaluation = etapeEvaluation.evaluations_objectifs.find(
+            (evalObjectif) => evalObjectif.objectif_id === objectif.id,
           );
           return {
             note: evaluation?.note ?? null,
             estTraite: !!evaluation?.date_traitement,
           };
-        });
+        },
+      );
 
-        const moyenneObjectifs =
-          objectifsAvecNotes.length > 0
-            ? objectifsAvecNotes.reduce(
-                (acc, obj) => ({
-                  total: acc.total + (obj.note ?? 0),
-                  count: acc.count + (obj.note !== null ? 1 : 0),
-                }),
-                { total: 0, count: 0 },
-              )
-            : null;
-
-        const moyenneCriteres =
-          criteresAvecNotes.length > 0
-            ? criteresAvecNotes.reduce(
-                (acc, crit) => ({
-                  total: acc.total + (crit.note ?? 0),
-                  count: acc.count + (crit.note !== null ? 1 : 0),
-                }),
-                { total: 0, count: 0 },
-              )
-            : null;
-
-        const chantiersNoteCollective = fiche.chantiers_evaluation;
-        const moyenneChantiers =
-          chantiersNoteCollective.length > 0
-            ? chantiersNoteCollective.reduce(
-                (acc, chantier) => ({
-                  total: acc.total + (chantier.taux_avancement ?? 0),
-                  count:
-                    acc.count + (chantier.taux_avancement !== null ? 1 : 0),
-                }),
-                { total: 0, count: 0 },
-              )
-            : null;
-
-        const ficheFormatee: FicheEvaluation = {
-          id: fiche.id,
-          etapeCourante: fiche.etape_courante,
-          readOnly: etapeEvaluation.read_only,
-          objectifsValides: objectifsAvecNotes.every(
-            (objectif) => objectif.estTraite,
-          ),
-          criteresValides: criteresAvecNotes.every(
-            (critere) => critere.estTraite,
-          ),
-          rattachement: {
-            code: fiche.rattachement.code,
-            libelle: fiche.rattachement.libelle,
-          },
-          objectifs: {
-            moyenne:
-              moyenneObjectifs && moyenneObjectifs.count > 0
-                ? Math.round(moyenneObjectifs.total / moyenneObjectifs.count)
-                : null,
-            moyennesParPhase: moyennesObjectifsParPhase,
-            nombreTraites:
-              objectifsAvecNotes?.filter((objectif) => objectif.estTraite)
-                .length ?? 0,
-            nombreNotes: moyenneObjectifs?.count ?? 0,
-            nombreTotal: objectifsAvecNotes.length,
-          },
-          criteres: {
-            moyenne:
-              moyenneCriteres && moyenneCriteres.count > 0
-                ? Math.round(moyenneCriteres.total / moyenneCriteres.count)
-                : null,
-            moyennesParPhase: moyennesCriteresParPhase,
-            nombreTraites:
-              criteresAvecNotes?.filter((critere) => critere.estTraite)
-                .length ?? 0,
-            nombreNotes: moyenneCriteres?.count ?? 0,
-            nombreTotal: criteresAvecNotes.length,
-          },
-          noteCollective:
-            moyenneChantiers && moyenneChantiers.count > 0
-              ? Math.round(moyenneChantiers.total / moyenneChantiers.count)
-              : null,
+      const criteresAvecNotes = tousLesCriteres.map((critere) => {
+        const evaluation = etapeEvaluation.evaluations_criteres.find(
+          (evalCritere) => evalCritere.critere_id === critere.id,
+        );
+        return {
+          note: evaluation?.note ?? null,
+          estTraite: !!evaluation?.date_traitement,
         };
+      });
 
-        const codeGroupe = fiche.rattachement.groupe;
-        const libelleGroupe = mapCodeVersLibelle.get(codeGroupe) ?? codeGroupe;
-        const phase = etapeEvaluation.type;
+      const moyenneObjectifs =
+        objectifsAvecNotes.length > 0
+          ? objectifsAvecNotes.reduce(
+              (acc, obj) => ({
+                total: acc.total + (obj.note ?? 0),
+                count: acc.count + (obj.note !== null ? 1 : 0),
+              }),
+              { total: 0, count: 0 },
+            )
+          : null;
 
-        if (!fichesParGroupe[libelleGroupe]) {
-          fichesParGroupe[libelleGroupe] = {
-            [$Enums.etape_evaluation_enum.AUTO_EVALUATION]: [],
-            [$Enums.etape_evaluation_enum.CONSOLIDATION]: [],
-            [$Enums.etape_evaluation_enum.INSTRUCTION]: [],
-          };
-        }
+      const moyenneCriteres =
+        criteresAvecNotes.length > 0
+          ? criteresAvecNotes.reduce(
+              (acc, crit) => ({
+                total: acc.total + (crit.note ?? 0),
+                count: acc.count + (crit.note !== null ? 1 : 0),
+              }),
+              { total: 0, count: 0 },
+            )
+          : null;
 
-        if (!fichesParGroupe[libelleGroupe][phase]) {
-          fichesParGroupe[libelleGroupe][phase] = [];
-        }
+      const chantiersNoteCollective = fiche.chantiers_evaluation;
+      const moyenneChantiers =
+        chantiersNoteCollective.length > 0
+          ? chantiersNoteCollective.reduce(
+              (acc, chantier) => ({
+                total: acc.total + (chantier.taux_avancement ?? 0),
+                count: acc.count + (chantier.taux_avancement !== null ? 1 : 0),
+              }),
+              { total: 0, count: 0 },
+            )
+          : null;
 
-        fichesParGroupe[libelleGroupe][phase]!.push(ficheFormatee);
+      const ficheFormatee: FicheEvaluation = {
+        id: fiche.id,
+        etapeCourante: fiche.etape_courante,
+        readOnly: etapeEvaluation.read_only,
+        objectifsValides: objectifsAvecNotes.every(
+          (objectif) => objectif.estTraite,
+        ),
+        criteresValides: criteresAvecNotes.every(
+          (critere) => critere.estTraite,
+        ),
+        rattachement: {
+          code: fiche.rattachement.code,
+          libelle: fiche.rattachement.libelle,
+        },
+        objectifs: {
+          moyenne:
+            moyenneObjectifs && moyenneObjectifs.count > 0
+              ? Math.round(moyenneObjectifs.total / moyenneObjectifs.count)
+              : null,
+          moyennesParPhase: moyennesObjectifsParPhase,
+          nombreTraites:
+            objectifsAvecNotes?.filter((objectif) => objectif.estTraite)
+              .length ?? 0,
+          nombreNotes: moyenneObjectifs?.count ?? 0,
+          nombreTotal: objectifsAvecNotes.length,
+        },
+        criteres: {
+          moyenne:
+            moyenneCriteres && moyenneCriteres.count > 0
+              ? Math.round(moyenneCriteres.total / moyenneCriteres.count)
+              : null,
+          moyennesParPhase: moyennesCriteresParPhase,
+          nombreTraites:
+            criteresAvecNotes?.filter((critere) => critere.estTraite).length ??
+            0,
+          nombreNotes: moyenneCriteres?.count ?? 0,
+          nombreTotal: criteresAvecNotes.length,
+        },
+        noteCollective:
+          moyenneChantiers && moyenneChantiers.count > 0
+            ? Math.round(moyenneChantiers.total / moyenneChantiers.count)
+            : null,
+      };
+
+      const codeGroupe = fiche.rattachement.groupe;
+      const libelleGroupe = mapCodeVersLibelle.get(codeGroupe) ?? codeGroupe;
+      const phase = fiche.etape_courante;
+
+      if (!fichesParGroupe[libelleGroupe]) {
+        fichesParGroupe[libelleGroupe] = {
+          [$Enums.etape_evaluation_enum.AUTO_EVALUATION]: [],
+          [$Enums.etape_evaluation_enum.CONSOLIDATION]: [],
+          [$Enums.etape_evaluation_enum.INSTRUCTION]: [],
+        };
       }
+
+      if (!fichesParGroupe[libelleGroupe][phase]) {
+        fichesParGroupe[libelleGroupe][phase] = [];
+      }
+
+      fichesParGroupe[libelleGroupe][phase]!.push(ficheFormatee);
     }
 
     return fichesParGroupe;
