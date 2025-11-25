@@ -57,10 +57,32 @@ export const getServerSideProps = async ({
 export default function PageAppreciation(
   props: InferGetServerSidePropsType<typeof getServerSideProps>,
 ) {
+  const nombreInstruction = Object.values(
+    props.fichesParGroupePuisPhase,
+  ).flatMap((groupe) => groupe.INSTRUCTION).length;
+  const nombreAppreciation = Object.values(
+    props.fichesParGroupePuisPhase,
+  ).flatMap((groupe) => groupe.CONSOLIDATION).length;
+  const nombreAutoEvaluation = Object.values(
+    props.fichesParGroupePuisPhase,
+  ).flatMap((groupe) => groupe.AUTO_EVALUATION).length;
+  const nombreTotal =
+    nombreInstruction + nombreAppreciation + nombreAutoEvaluation;
+  const appreciationTerminee = nombreTotal === nombreInstruction;
+  const appreciationEnCours = nombreAppreciation > 0;
+  const autoEvaluationEnCours = nombreAutoEvaluation > 0;
+
+  const statutInitial = appreciationTerminee
+    ? "TERMINE"
+    : appreciationEnCours
+      ? "APPRECIATION_EN_COURS"
+      : autoEvaluationEnCours
+        ? "AUTO_EVAL_EN_COURS"
+        : "PAS_DEBUTE";
   const [statutCompletionAppreciation, setStatutCompletionAppreciation] =
     useState<
       "PAS_DEBUTE" | "AUTO_EVAL_EN_COURS" | "APPRECIATION_EN_COURS" | "TERMINE"
-    >("PAS_DEBUTE");
+    >(statutInitial);
 
   return (
     <pageAppreciation.ServerSidePropsProvider value={props}>
