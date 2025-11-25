@@ -10,13 +10,17 @@ import {
   Evaluation,
   Rattachement,
 } from "@/server/evaluation/queries/types";
-import { useTableauEvaluation } from "@/components/Evaluation/useTableauEvaluation";
+import {
+  COLONNES,
+  useTableauEvaluation,
+} from "@/components/Evaluation/useTableauEvaluation";
 import { LayoutFicheCadrage } from "@/components/Evaluation/LayoutFicheCadrage";
 import { BoutonAfficherFicheCadrage } from "@/components/Evaluation/BoutonAfficherFicheCadrage";
 import {
   CriteresProvider,
   useCriteres,
 } from "@/components/Evaluation/CriteresProvider";
+import { AutosaveProvider } from "@/components/Evaluation/AutosaveProvider";
 import {
   FormValues,
   getFichesEvaluationParDefaut,
@@ -87,131 +91,133 @@ export const InnerTableauEvaluation = memo(function TableauEvaluation({
     }
   }, [form, onEnregistrer]);
 
-  const { table } = useTableauEvaluation({
-    rattachements,
-    onAutosave: handleAutosave,
-  });
+  const { table } = useTableauEvaluation({ rattachements });
   const rows = table.getRowModel().rows;
   const estEnLectureSeule = rattachements.every(
     (rattachement) => rattachement.readOnly,
   );
 
   return (
-    <CriteresProvider criteres={criteres}>
-      <FormProvider {...form}>
-        <LayoutFicheCadrage>
-          <form
-            className="flex flex-col gap-3 w-full max-w-[1200px] py-6 grow px-8"
-            onSubmit={form.handleSubmit((values) =>
-              onEnregistrer(values, true),
-            )}
-          >
-            {!estEnLectureSeule && (
-              <Bouton
-                className="self-end"
-                label="Enregistrer le brouillon"
-                type="submit"
-                variant="secondary"
-              />
-            )}
-            <FiltresTableauEvaluation table={table} />
-            <GroupesTableauEvaluation table={table} />
-            <table className="table-fixed w-full border-collapse border border-gray-300">
-              <thead>
-                {table.getHeaderGroups().map((headerGroup) => (
-                  <tr className="bg-blue-100" key={headerGroup.id}>
-                    {headerGroup.headers
-                      .filter((header) => {
-                        if (
-                          table.getState().grouping[0] === "rattachementCode"
-                        ) {
-                          return header.id !== "rattachementCode";
-                        }
-
-                        return true;
-                      })
-                      .map((header) => (
-                        <th
-                          className={clsxm(
-                            "border border-gray-300 px-4 py-3 text-left font-semibold",
-                            header.id === "rattachementCode" && "w-48",
-                            header.id === "id" && "w-auto",
-                          )}
-                          key={header.id}
-                        >
-                          {header.isPlaceholder
-                            ? null
-                            : flexRender(
-                                header.column.columnDef.header,
-                                header.getContext(),
-                              )}
-                        </th>
-                      ))}
-                  </tr>
-                ))}
-              </thead>
-              <tbody>
-                {rows.map((row) => {
-                  const groupingColumnId = table.getState().grouping[0];
-                  if (row.getIsGrouped()) {
-                    const groupingValue = row.groupingValue as string;
-                    let label = "";
-                    let colSpan = 1;
-                    let aside: ReactNode = null;
-
-                    if (groupingColumnId == "critereId") {
-                      const critere = criteres.find(
-                        (critereGroup) => critereGroup.id === groupingValue,
-                      );
-                      colSpan = 2;
-                      label = critere?.libelle ?? "Objectifs";
-                      if (critere != null) {
-                        aside = (
-                          <div>
-                            <BoutonAfficherFicheCadrage
-                              critereOuObjectif={{ type: "critere", critere }}
-                            />
-                          </div>
-                        );
-                      }
-                    } else {
-                      const rattachement = rattachements.find(
-                        (rattachementGroup) =>
-                          rattachementGroup.code === groupingValue,
-                      );
-                      label = rattachement?.libelle ?? "";
-                    }
-
-                    return (
-                      <tr className={clsxm("sticky top-0")} key={row.id}>
-                        <td colSpan={colSpan}>
-                          <div className="!border-t-2 !border-t-primary !bg-white border-b border-b-gray-200 px-4 py-3 flex items-center justify-between">
-                            <span className="font-semibold text-primary">
-                              {label ?? groupingValue}
-                            </span>
-
-                            {aside}
-                          </div>
-                        </td>
-                      </tr>
-                    );
-                  }
-
-                  return (
-                    <tr key={row.id}>
-                      {row
-                        .getVisibleCells()
-                        .filter((cell) => {
+    <AutosaveProvider value={handleAutosave}>
+      <CriteresProvider criteres={criteres}>
+        <FormProvider {...form}>
+          <LayoutFicheCadrage>
+            <form
+              className="flex flex-col gap-3 w-full max-w-[1200px] py-6 grow px-8"
+              onSubmit={form.handleSubmit((values) =>
+                onEnregistrer(values, true),
+              )}
+            >
+              {!estEnLectureSeule && (
+                <Bouton
+                  className="self-end"
+                  label="Enregistrer le brouillon"
+                  type="submit"
+                  variant="secondary"
+                />
+              )}
+              <FiltresTableauEvaluation table={table} />
+              <GroupesTableauEvaluation table={table} />
+              <table className="table-fixed w-full border-collapse border border-gray-300">
+                <thead>
+                  {table.getHeaderGroups().map((headerGroup) => (
+                    <tr className="bg-blue-100" key={headerGroup.id}>
+                      {headerGroup.headers
+                        .filter((header) => {
                           if (
-                            table.getState().grouping[0] === "rattachementCode"
+                            table.getState().grouping[0] ===
+                            COLONNES.RATTACHEMENT_CODE
                           ) {
-                            return cell.column.id !== "rattachementCode";
+                            return header.id !== COLONNES.RATTACHEMENT_CODE;
                           }
 
                           return true;
                         })
-                        .map((cell) => {
-                          return (
+                        .map((header) => (
+                          <th
+                            className={clsxm(
+                              "border border-gray-300 px-4 py-3 text-left font-semibold",
+                              header.id === COLONNES.RATTACHEMENT_CODE &&
+                                "w-48",
+                              header.id === COLONNES.ID && "w-auto",
+                            )}
+                            key={header.id}
+                          >
+                            {header.isPlaceholder
+                              ? null
+                              : flexRender(
+                                  header.column.columnDef.header,
+                                  header.getContext(),
+                                )}
+                          </th>
+                        ))}
+                    </tr>
+                  ))}
+                </thead>
+                <tbody>
+                  {rows.map((row) => {
+                    const groupingColumnId = table.getState().grouping[0];
+                    if (row.getIsGrouped()) {
+                      const groupingValue = row.groupingValue as string;
+                      let label = "";
+                      let colSpan = 1;
+                      let aside: ReactNode = null;
+
+                      if (groupingColumnId == COLONNES.CRITERE_ID) {
+                        const critere = criteres.find(
+                          (critereGroup) => critereGroup.id === groupingValue,
+                        );
+                        colSpan = 2;
+                        label = critere?.libelle ?? "Objectifs";
+                        if (critere != null) {
+                          aside = (
+                            <div>
+                              <BoutonAfficherFicheCadrage
+                                critereOuObjectif={{ type: "critere", critere }}
+                              />
+                            </div>
+                          );
+                        }
+                      } else {
+                        const rattachement = rattachements.find(
+                          (rattachementGroup) =>
+                            rattachementGroup.code === groupingValue,
+                        );
+                        label = rattachement?.libelle ?? "";
+                      }
+
+                      return (
+                        <tr className={clsxm("sticky top-0")} key={row.id}>
+                          <td colSpan={colSpan}>
+                            <div className="!border-t-2 !border-t-primary !bg-white border-b border-b-gray-200 px-4 py-3 flex items-center justify-between">
+                              <span className="font-semibold text-primary">
+                                {label ?? groupingValue}
+                              </span>
+
+                              {aside}
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    }
+
+                    return (
+                      <tr key={row.original.id}>
+                        {row
+                          .getVisibleCells()
+                          .filter((cell) => {
+                            if (
+                              table.getState().grouping[0] ===
+                              COLONNES.RATTACHEMENT_CODE
+                            ) {
+                              return (
+                                cell.column.id !== COLONNES.RATTACHEMENT_CODE
+                              );
+                            }
+
+                            return true;
+                          })
+                          .map((cell) => (
                             <td
                               className={clsxm(
                                 "border border-gray-300 px-4",
@@ -224,17 +230,17 @@ export const InnerTableauEvaluation = memo(function TableauEvaluation({
                                 cell.getContext(),
                               )}
                             </td>
-                          );
-                        })}
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </form>
-        </LayoutFicheCadrage>
-      </FormProvider>
-    </CriteresProvider>
+                          ))}
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </form>
+          </LayoutFicheCadrage>
+        </FormProvider>
+      </CriteresProvider>
+    </AutosaveProvider>
   );
 });
 

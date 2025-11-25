@@ -1,5 +1,6 @@
 import { $Enums } from "@prisma/client";
 import { useFormState } from "react-hook-form";
+import { Row, Table } from "@tanstack/react-table";
 import { TableauEvaluationRow } from "@/components/Evaluation/TableauEvaluation";
 import { clsxm } from "@/utils/clsxm";
 import { BoutonAfficherFicheCadrage } from "@/components/Evaluation/BoutonAfficherFicheCadrage";
@@ -7,16 +8,18 @@ import { BoutonTraitementEvaluation } from "@/components/Evaluation/BoutonTraite
 import { LigneEtapeEvaluation } from "@/components/Evaluation/LigneEtapeEvaluation";
 import { useGetCritere } from "@/components/Evaluation/CriteresProvider";
 import { useFormulaireEvaluation } from "@/components/Evaluation/form";
+import { useHandleAutosave } from "@/components/Evaluation/AutosaveProvider";
 
 export const CelluleEvaluation = ({
-  ligne,
-  currentGrouping,
-  onAutosave,
+  table,
+  row,
 }: {
-  ligne: TableauEvaluationRow;
-  currentGrouping: string;
-  onAutosave: () => void;
+  table: Table<TableauEvaluationRow>;
+  row: Row<TableauEvaluationRow>;
 }) => {
+  const currentGrouping = table.getState().grouping[0];
+  const ligne = row.original;
+  const onAutosave = useHandleAutosave();
   const formState = useFormState();
   const getCritere = useGetCritere();
   const commentaireName =

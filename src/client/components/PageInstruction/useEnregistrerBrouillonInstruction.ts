@@ -2,8 +2,10 @@ import { toast } from "sonner";
 import { useCallback } from "react";
 import api from "@/server/infrastructure/api/trpc/api";
 import { FormValues } from "@/components/Evaluation/form";
+import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
 
 export const useEnregistrerBrouillonInstruction = () => {
+  const refreshRouter = useRefreshRouter();
   const enregistrerBrouillon =
     api.evaluation.enregistrerBrouillonInstruction.useMutation();
   const mutateAsync = enregistrerBrouillon.mutateAsync;
@@ -36,9 +38,10 @@ export const useEnregistrerBrouillonInstruction = () => {
               position: "top-right",
               richColors: true,
             });
+            return refreshRouter();
           },
         },
       ),
-    [mutateAsync],
+    [mutateAsync, refreshRouter],
   );
 };
