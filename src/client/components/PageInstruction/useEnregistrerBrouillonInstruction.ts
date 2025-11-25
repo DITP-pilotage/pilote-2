@@ -8,6 +8,55 @@ import {
 } from "@/components/Evaluation/form";
 import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
 
+const enregistrerUnChamp = (
+  values: FormValues,
+  fieldName: FormCommentaireName | FormNoteName,
+) => {
+  const parts = fieldName.split(".");
+  const ficheEvaluationId = parts[1];
+  const type = parts[2] as "objectifs" | "criteres";
+  const itemId = parts[3];
+
+  const ficheEvaluation = values.fichesEvaluation[ficheEvaluationId];
+  const evaluation = ficheEvaluation?.[type]?.[itemId];
+
+  if (!evaluation) {
+    return null;
+  }
+
+  return [
+    {
+      ficheEvaluationId,
+      evaluationsObjectifs:
+        type === "objectifs" ? [{ ...evaluation, objectifId: itemId }] : [],
+      evaluationsCriteres:
+        type === "criteres" ? [{ ...evaluation, critereId: itemId }] : [],
+    },
+  ];
+};
+
+const enregistrerTousLesChamps = (values: FormValues) => {
+  return Object.entries(values.fichesEvaluation).map(
+    ([ficheEvaluationId, { objectifs, criteres }]) => {
+      return {
+        ficheEvaluationId,
+        evaluationsObjectifs: Object.entries(objectifs).map(
+          ([objectifId, evaluation]) => ({
+            ...evaluation,
+            objectifId,
+          }),
+        ),
+        evaluationsCriteres: Object.entries(criteres).map(
+          ([critereId, evaluation]) => ({
+            ...evaluation,
+            critereId,
+          }),
+        ),
+      };
+    },
+  );
+};
+
 export const useEnregistrerBrouillonInstruction = () => {
   const refreshRouter = useRefreshRouter();
   const enregistrerBrouillon =
@@ -20,52 +69,12 @@ export const useEnregistrerBrouillonInstruction = () => {
       showToast: boolean,
       fieldName?: FormCommentaireName | FormNoteName,
     ) => {
-      let dataToSend;
+      const dataToSend = fieldName
+        ? enregistrerUnChamp(values, fieldName)
+        : enregistrerTousLesChamps(values);
 
-      if (fieldName) {
-        const parts = fieldName.split(".");
-        const ficheEvaluationId = parts[1];
-        const type = parts[2] as "objectifs" | "criteres";
-        const itemId = parts[3];
-
-        const ficheEvaluation = values.fichesEvaluation[ficheEvaluationId];
-        const evaluation = ficheEvaluation?.[type]?.[itemId];
-
-        if (!evaluation) {
-          return Promise.resolve();
-        }
-
-        dataToSend = [
-          {
-            ficheEvaluationId,
-            evaluationsObjectifs:
-              type === "objectifs"
-                ? [{ ...evaluation, objectifId: itemId }]
-                : [],
-            evaluationsCriteres:
-              type === "criteres" ? [{ ...evaluation, critereId: itemId }] : [],
-          },
-        ];
-      } else {
-        dataToSend = Object.entries(values.fichesEvaluation).map(
-          ([ficheEvaluationId, { objectifs, criteres }]) => {
-            return {
-              ficheEvaluationId,
-              evaluationsObjectifs: Object.entries(objectifs).map(
-                ([objectifId, evaluation]) => ({
-                  ...evaluation,
-                  objectifId,
-                }),
-              ),
-              evaluationsCriteres: Object.entries(criteres).map(
-                ([critereId, evaluation]) => ({
-                  ...evaluation,
-                  critereId,
-                }),
-              ),
-            };
-          },
-        );
+      if (!dataToSend) {
+        return Promise.resolve();
       }
 
       return mutateAsync(dataToSend, {
