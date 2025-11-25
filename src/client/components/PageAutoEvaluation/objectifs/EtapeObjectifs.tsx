@@ -44,7 +44,13 @@ export function EtapeObjectifs() {
                   {objectif.libelle}
                 </span>
                 <BoutonEnSavoirPlus
-                  critereOuObjectif={{ type: "objectif", objectif }}
+                  critereOuObjectif={{
+                    type: "objectif",
+                    objectif: {
+                      ...objectif,
+                      ficheEvaluationId: autoEvaluation.ficheEvaluationId,
+                    },
+                  }}
                 />
               </header>
               <InputNoteAutoEvaluation

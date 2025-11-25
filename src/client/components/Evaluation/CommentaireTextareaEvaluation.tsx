@@ -22,6 +22,7 @@ export const CommentaireTextareaEvaluation = ({
 
   return (
     <Textarea
+      charLimit={600}
       control={form.control}
       label={label}
       name={name}

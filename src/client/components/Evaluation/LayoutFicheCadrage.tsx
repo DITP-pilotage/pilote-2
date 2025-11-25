@@ -31,7 +31,10 @@ export const UseSetCritereOuObjectif = ({
 }) => <>{children(useSetCritereOuObjectif())}</>;
 
 // eslint-disable-next-line react/no-multi-comp
-export const LayoutFicheCadrage = ({ children }: PropsWithChildren) => {
+export const LayoutFicheCadrage = ({
+  children,
+  editable = false,
+}: PropsWithChildren<{ editable?: boolean }>) => {
   const [critereOuObjectif, setCritereOuObjectif] =
     useState<CritereOuObjectif | null>(null);
 
@@ -43,7 +46,10 @@ export const LayoutFicheCadrage = ({ children }: PropsWithChildren) => {
       >
         <div className="max-[2000px]:hidden" />
         <div className="flex flex-col items-center">{children}</div>
-        <FicheCadrage critereOuObjectif={critereOuObjectif} />
+        <FicheCadrage
+          critereOuObjectif={critereOuObjectif}
+          editable={editable}
+        />
       </main>
     </context.Provider>
   );
