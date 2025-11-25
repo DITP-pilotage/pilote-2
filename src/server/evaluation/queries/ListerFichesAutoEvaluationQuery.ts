@@ -130,8 +130,8 @@ export class ListerFichesAutoEvaluationQuery {
       return {
         id: fiche.id,
         etapeCourante: fiche.etape_courante,
-        objectifsValides: etapeAutoEvaluation.objectifs_valides ?? false,
-        criteresValides: etapeAutoEvaluation.criteres_valides ?? false,
+        isObjectifsValides: etapeAutoEvaluation.objectifs_valides ?? false,
+        isCriteresValides: etapeAutoEvaluation.criteres_valides ?? false,
         rattachement: {
           code: fiche.rattachement.code,
           libelle: fiche.rattachement.libelle,

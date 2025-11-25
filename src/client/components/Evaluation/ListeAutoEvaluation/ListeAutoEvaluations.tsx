@@ -6,8 +6,8 @@ import { BaseCardEvaluation } from "./BaseCardEvaluation";
 type FicheEvaluation = {
   id: string;
   etapeCourante: $Enums.etape_evaluation_enum;
-  objectifsValides: boolean;
-  criteresValides: boolean;
+  isObjectifsValides: boolean;
+  isCriteresValides: boolean;
   rattachement: {
     code: string;
     libelle: string;
@@ -67,10 +67,10 @@ export const ListeAutoEvaluations = ({
     <div className="space-y-8">
       {fichesEvaluation.map((ficheEvaluation) => {
         const maniereDeServirValidesOuEtapeClose =
-          ficheEvaluation.criteresValides ||
+          ficheEvaluation.isCriteresValides ||
           ficheEvaluation.etapeCourante !== "AUTO_EVALUATION";
         const objectifsValidesOuEtapeClose =
-          ficheEvaluation.objectifsValides ||
+          ficheEvaluation.isObjectifsValides ||
           ficheEvaluation.etapeCourante !== "AUTO_EVALUATION";
         return (
           <div className="flex flex-col gap-2" key={ficheEvaluation.id}>
