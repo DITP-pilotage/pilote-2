@@ -116,11 +116,18 @@ export class AfficherConsolidationQuery {
           (etape) => etape.type === $Enums.etape_evaluation_enum.CONSOLIDATION,
         );
 
+        const ficheEvaluation = rattachement.fiche_evaluation[0];
+        const isInstructionPhase =
+          ficheEvaluation.etape_courante ===
+          $Enums.etape_evaluation_enum.INSTRUCTION;
+
         return {
           code: rattachement.code,
           libelle: rattachement.libelle,
-          ficheEvaluationId: rattachement.fiche_evaluation[0].id,
-          readOnly: etapeConsolidation?.read_only ?? false,
+          ficheEvaluationId: ficheEvaluation.id,
+          readOnly: isInstructionPhase
+            ? true
+            : (etapeConsolidation?.read_only ?? false),
           objectifs: objectifsAvecEvaluations,
           criteres: criteresAvecEvaluations,
         };
@@ -142,7 +149,12 @@ export class AfficherConsolidationQuery {
         where: {
           fiche_evaluation: {
             some: {
-              etape_courante: $Enums.etape_evaluation_enum.CONSOLIDATION,
+              etape_courante: {
+                in: [
+                  $Enums.etape_evaluation_enum.CONSOLIDATION,
+                  $Enums.etape_evaluation_enum.INSTRUCTION,
+                ],
+              },
             },
           },
           rattachement_utilisateur_etape_jalon: {
@@ -156,7 +168,12 @@ export class AfficherConsolidationQuery {
           objectifs: { orderBy: { libelle: "asc" } },
           fiche_evaluation: {
             where: {
-              etape_courante: $Enums.etape_evaluation_enum.CONSOLIDATION,
+              etape_courante: {
+                in: [
+                  $Enums.etape_evaluation_enum.CONSOLIDATION,
+                  $Enums.etape_evaluation_enum.INSTRUCTION,
+                ],
+              },
             },
             include: {
               etape_evaluations: {
