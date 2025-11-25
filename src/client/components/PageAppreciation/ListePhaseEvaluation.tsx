@@ -7,6 +7,7 @@ import { EyeOffIcon } from "@/components/_commons/Icones/EyeOffIcon";
 import { EyeIcon } from "@/components/_commons/Icones/EyeIcon";
 import { Icone } from "@/components/_commons/Icone";
 import { LigneCardEvaluationAppreciation } from "@/components/PageAppreciation/LigneCardEvaluationAppreciation";
+import { LigneCardEvaluationInstruction } from "@/components/PageAppreciation/LigneCardEvaluationInstruction";
 
 export const ListePhaseEvaluation = () => {
   const { fichesParGroupePuisPhase } =
@@ -140,24 +141,41 @@ export const ListePhaseEvaluation = () => {
                 </Accordion.Header>
                 <Accordion.Content>
                   {INSTRUCTION.length > 0 ? (
-                    <div className="space-y-3">
-                      <p>
-                        L'instruction est la phase finale du processus
-                        d'évaluation, menée par la DITP (Direction
-                        interministérielle de la transformation publique).
-                      </p>
-                      <p>
-                        À l'issue de la phase d'appréciation, toutes les
-                        appréciations – même incomplètes – sont transmises à la
-                        DITP pour instruction. Cette phase permet d'analyser
-                        l'ensemble des évaluations et d'en tirer des
-                        enseignements au niveau national.
-                      </p>
-                      <p className="font-medium">
-                        Les résultats de l'instruction serviront à identifier
-                        les bonnes pratiques et les axes d'amélioration pour les
-                        politiques prioritaires du gouvernement.
-                      </p>
+                    <div className="flex flex-col gap-4 mt-4">
+                      <div>
+                        <Bouton
+                          iconLeft={
+                            <Icone
+                              className="w-6 h-6"
+                              icone={
+                                afficherObjectifsCollectifs
+                                  ? EyeOffIcon
+                                  : EyeIcon
+                              }
+                            />
+                          }
+                          label={
+                            afficherObjectifsCollectifs
+                              ? "Masquer les objectifs collectifs"
+                              : "Afficher les objectifs collectifs"
+                          }
+                          onClick={() =>
+                            setAfficherObjectifsCollectifs(
+                              !afficherObjectifsCollectifs,
+                            )
+                          }
+                          variant="link"
+                        />
+                      </div>
+                      {INSTRUCTION.map((ficheEvaluation) => (
+                        <LigneCardEvaluationInstruction
+                          afficherObjectifsCollectifs={
+                            afficherObjectifsCollectifs
+                          }
+                          ficheEvaluation={ficheEvaluation}
+                          key={ficheEvaluation.id}
+                        />
+                      ))}
                     </div>
                   ) : (
                     <div className="mt-4 mb-2">

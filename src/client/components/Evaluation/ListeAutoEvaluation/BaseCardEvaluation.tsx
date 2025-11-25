@@ -105,7 +105,7 @@ export const BaseCardEvaluation = ({
         </div>
         {children}
         {texteLienNavigation ? (
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-end gap-4">
             <span className="text-xs text-dsfr-mention-grey">
               {texteLienNavigation}
             </span>
