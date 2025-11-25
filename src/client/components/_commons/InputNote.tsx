@@ -4,10 +4,20 @@ import { MessageErreur } from "@/components/PageAutoEvaluation/MessageErreur";
 
 export const InputNote = forwardRef<
   HTMLInputElement,
-  ComponentProps<"input"> & { errorMessage?: string }
->(function InputNote({ errorMessage, className, ...props }, ref) {
+  ComponentProps<"input"> & { errorMessage?: string; label?: string }
+>(function InputNote({ errorMessage, label, className, id, ...props }, ref) {
   return (
     <div className="flex flex-col">
+      {label ? (
+        <label
+          className={clsxm("font-bold text-sm mb-1", {
+            "text-error": !!errorMessage,
+          })}
+          htmlFor={id}
+        >
+          {label}
+        </label>
+      ) : null}
       <div
         className={clsxm(
           "border !rounded-md !bg-white flex items-stretch overflow-hidden",
@@ -26,6 +36,7 @@ export const InputNote = forwardRef<
             },
           )}
           {...props}
+          id={id}
           ref={ref}
           style={{
             appearance: "textfield",
@@ -41,7 +52,7 @@ export const InputNote = forwardRef<
             },
           )}
         >
-          %
+          / 100
         </span>
       </div>
       <div className="relative h-3 mt-1">

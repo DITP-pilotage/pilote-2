@@ -42,7 +42,7 @@ export function Textarea<T extends FieldValues>({
         return (
           <div className="flex flex-col gap-1">
             <label
-              className={clsxm("font-bold text-sm", {
+              className={clsxm("italic text-sm", {
                 "text-error": !!fieldState.error,
               })}
               htmlFor={fieldId}

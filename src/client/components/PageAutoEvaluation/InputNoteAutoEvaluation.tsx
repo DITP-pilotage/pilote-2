@@ -7,17 +7,20 @@ export function InputNoteAutoEvaluation<T extends FieldValues>({
   readOnly,
   control,
   onAutosave,
+  label,
 }: {
   name: Path<T>;
   readOnly: boolean;
   control: Control<T>;
   onAutosave?: () => void;
+  label?: string;
 }) {
   const autosave = useAutosave({ onAutosave });
 
   return (
     <InputNoteControlled
       control={control}
+      label={label}
       name={name}
       {...autosave}
       readOnly={readOnly}

@@ -35,6 +35,10 @@ export interface Objectif {
 
 export type AfficherAutoEvaluationViewModel = {
   ficheEvaluationId: string;
+  rattachement: {
+    code: string;
+    libelle: string;
+  };
   criteres: Critere[];
   objectifs: Objectif[];
   dateDerniereModification: string;
@@ -81,6 +85,10 @@ export class AfficherAutoEvaluationQuery {
 
     return {
       ficheEvaluationId: etapeAutoEvaluation.fiche_evaluation.id,
+      rattachement: {
+        code: etapeAutoEvaluation.fiche_evaluation.rattachement.code,
+        libelle: etapeAutoEvaluation.fiche_evaluation.rattachement.libelle,
+      },
       criteres: criteres.map((critere) => {
         const evaluation = etapeAutoEvaluation.evaluations_criteres.find(
           (evaluationCritere) => evaluationCritere.critere_id === critere.id,

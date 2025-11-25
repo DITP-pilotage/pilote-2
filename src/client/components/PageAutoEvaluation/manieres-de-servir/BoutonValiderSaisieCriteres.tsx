@@ -5,6 +5,7 @@ import api from "@/server/infrastructure/api/trpc/api";
 import { useFormEvaluationCriteres } from "@/components/PageAutoEvaluation/manieres-de-servir/form";
 import { useEnregistrerBrouillonCriteres } from "@/components/PageAutoEvaluation/manieres-de-servir/useEnregistrerBrouillonCriteres";
 import { ConfirmerValidationSaisie } from "@/components/PageAutoEvaluation/ConfirmerValidationSaisie";
+import { SendIcon } from "@/components/_commons/Icones/SendIcon";
 
 export const BoutonValiderSaisieCriteres = ({
   ficheEvaluationId,
@@ -55,7 +56,8 @@ export const BoutonValiderSaisieCriteres = ({
         onClick={handleOpenModal}
         type="button"
       >
-        Valider
+        Transmettre le formulaire
+        <SendIcon className="h-4 w-4 ml-2" />
       </button>
       <ConfirmerValidationSaisie
         annee={2025}
