@@ -6,6 +6,7 @@ import { Textarea } from "@/components/_commons/Textarea";
 import { useAutosave } from "@/components/Evaluation/useAutosave";
 import api from "@/server/infrastructure/api/trpc/api";
 import { Infobulle } from "@/client/components/_commons/Infobulle/Infobulle";
+import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
 
 const formSchema = z.object({
   descriptif: z
@@ -26,6 +27,7 @@ export const FicheCadrageObjectif = ({
   objectif: Omit<Objectif, "evaluations"> & { ficheEvaluationId: string };
 }) => {
   const mutation = api.evaluation.modifierObjectif.useMutation();
+  const refreshRouter = useRefreshRouter();
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -43,6 +45,7 @@ export const FicheCadrageObjectif = ({
       descriptif: values.descriptif,
       indicateurCible: values.indicateurCible,
     });
+    await refreshRouter();
   });
 
   const autosave = useAutosave({
@@ -55,8 +58,14 @@ export const FicheCadrageObjectif = ({
     autosave.onBlur();
   };
 
+  const descriptifActuel = form.watch("descriptif");
+  const indicateurCibleActuel = form.watch("indicateurCible");
+
   const ficheCadrageACompleter =
-    !objectif.descriptif || !objectif.indicateurCible;
+    !descriptifActuel ||
+    descriptifActuel.trim() === "" ||
+    !indicateurCibleActuel ||
+    indicateurCibleActuel.trim() === "";
 
   return (
     <div>
