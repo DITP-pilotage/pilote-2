@@ -15,6 +15,7 @@ import { validerSaisieCriteresCommandSchema } from "@/server/evaluation/handlers
 import { validerSaisieObjectifsCommandSchema } from "@/server/evaluation/handlers/ValiderSaisieObjectifsHandler";
 import { setTraitementEvaluationCommandSchema } from "@/server/evaluation/handlers/SetTraitementEvaluationHandler";
 import { retournerAutoEvaluationCommandSchema } from "@/server/evaluation/handlers/RetournerAutoEvaluationHandler";
+import { modifierObjectifCommandSchema } from "@/server/evaluation/handlers/ModifierObjectifHandler";
 
 export const evaluationRouter = créerRouteurTRPC({
   getDroitsPiloteEval: procédureProtégée.query(async ({ ctx }) => {
@@ -250,6 +251,24 @@ export const evaluationRouter = créerRouteurTRPC({
 
       await getContainer("piloteEval")
         .resolve("retournerAutoEvaluationHandler")
+        .execute(input);
+    }),
+
+  modifierObjectif: procédureProtégée
+    .input(modifierObjectifCommandSchema)
+    .mutation(async ({ input, ctx }) => {
+      const peutAccederFicheAutoEvaluation = await getContainer("piloteEval")
+        .resolve("accesFicheEvaluationService")
+        .peutAccederEtapeAutoEvaluation({
+          utilisateurId: ctx.session.user.id,
+          ficheEvaluationId: input.ficheEvaluationId,
+        });
+
+      if (!peutAccederFicheAutoEvaluation)
+        throw new ForbiddenError("Accès refusé à la fiche d'auto-évaluation");
+
+      await getContainer("piloteEval")
+        .resolve("modifierObjectifHandler")
         .execute(input);
     }),
 });

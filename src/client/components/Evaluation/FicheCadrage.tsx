@@ -4,11 +4,16 @@ import { FicheCadrageObjectif } from "@/components/Evaluation/FicheCadrageObject
 
 export type CritereOuObjectif =
   | { type: "critere"; critere: Critere }
-  | { type: "objectif"; objectif: Omit<Objectif, "evaluations"> };
+  | {
+      type: "objectif";
+      objectif: Omit<Objectif, "evaluations"> & { ficheEvaluationId: string };
+    };
 
 export const FicheCadrage = ({
   critereOuObjectif,
+  editable,
 }: {
+  editable: boolean;
   critereOuObjectif: CritereOuObjectif | null;
 }) => {
   return (
@@ -16,10 +21,17 @@ export const FicheCadrage = ({
       <aside className="sticky top-0 p-6 h-screen relative">
         <div className="absolute inset-0 p-6 overflow-y-auto">
           {critereOuObjectif?.type === "critere" && (
-            <FicheCadrageCritere critere={critereOuObjectif.critere} />
+            <FicheCadrageCritere
+              critere={critereOuObjectif.critere}
+              key={critereOuObjectif.critere.id}
+            />
           )}
           {critereOuObjectif?.type === "objectif" && (
-            <FicheCadrageObjectif objectif={critereOuObjectif.objectif} />
+            <FicheCadrageObjectif
+              editable={editable}
+              key={critereOuObjectif.objectif.id}
+              objectif={critereOuObjectif.objectif}
+            />
           )}
         </div>
       </aside>

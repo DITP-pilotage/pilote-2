@@ -43,6 +43,7 @@ export function CommentaireTextareaAutoEvaluation<T extends FieldValues>({
 
   return (
     <Textarea
+      charLimit={600}
       control={control}
       name={name}
       {...autosave}

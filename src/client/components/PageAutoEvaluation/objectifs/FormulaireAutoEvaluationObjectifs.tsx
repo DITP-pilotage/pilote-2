@@ -37,7 +37,7 @@ export const FormulaireAutoEvaluationObjectifs = () => {
   });
 
   return (
-    <LayoutFicheCadrage>
+    <LayoutFicheCadrage editable={!isReadOnly}>
       <main className="!bg-white py-6 pt-0 w-full">
         <FormProvider {...form}>
           <div className="relative">
