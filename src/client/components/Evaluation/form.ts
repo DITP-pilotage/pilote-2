@@ -177,3 +177,65 @@ export const useFormSchema = (rattachements: Rattachement[]) => {
     });
   }, [rattachements]);
 };
+
+export type FormObjectifCommentaireName =
+  `fichesEvaluation.${string}.objectifs.${string}.commentaire`;
+export type FormObjectifNoteName =
+  `fichesEvaluation.${string}.objectifs.${string}.note`;
+export type FormCritereCommentaireName =
+  `fichesEvaluation.${string}.criteres.${string}.commentaire`;
+export type FormCritereNoteName =
+  `fichesEvaluation.${string}.criteres.${string}.note`;
+export type FormCommentaireName =
+  | FormObjectifCommentaireName
+  | FormCritereCommentaireName;
+export type FormNoteName = FormObjectifNoteName | FormCritereNoteName;
+
+export const enregistrerUnChamp = (
+  values: FormValues,
+  fieldName: FormCommentaireName | FormNoteName,
+) => {
+  const parts = fieldName.split(".");
+  const ficheEvaluationId = parts[1];
+  const type = parts[2] as "objectifs" | "criteres";
+  const itemId = parts[3];
+
+  const ficheEvaluation = values.fichesEvaluation[ficheEvaluationId];
+  const evaluation = ficheEvaluation?.[type]?.[itemId];
+
+  if (!evaluation) {
+    return null;
+  }
+
+  return [
+    {
+      ficheEvaluationId,
+      evaluationsObjectifs:
+        type === "objectifs" ? [{ ...evaluation, objectifId: itemId }] : [],
+      evaluationsCriteres:
+        type === "criteres" ? [{ ...evaluation, critereId: itemId }] : [],
+    },
+  ];
+};
+
+export const enregistrerTousLesChamps = (values: FormValues) => {
+  return Object.entries(values.fichesEvaluation).map(
+    ([ficheEvaluationId, { objectifs, criteres }]) => {
+      return {
+        ficheEvaluationId,
+        evaluationsObjectifs: Object.entries(objectifs).map(
+          ([objectifId, evaluation]) => ({
+            ...evaluation,
+            objectifId,
+          }),
+        ),
+        evaluationsCriteres: Object.entries(criteres).map(
+          ([critereId, evaluation]) => ({
+            ...evaluation,
+            critereId,
+          }),
+        ),
+      };
+    },
+  );
+};
