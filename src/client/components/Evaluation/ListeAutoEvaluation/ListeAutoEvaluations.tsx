@@ -1,6 +1,6 @@
 import { $Enums } from "@prisma/client";
 import { LigneEnteteAvancementCompletionEvaluation } from "@/components/Evaluation/ListeAutoEvaluation/LigneEnteteAvancementCompletionEvaluation";
-import { BarreProgressionEvaluation } from "@/components/Evaluation/ListeAutoEvaluation/BarreProgressionEvaluation";
+import { BarreProgressionEvaluation } from "@/components/_commons/BarreProgressionEvaluation";
 import { BaseCardEvaluation } from "./BaseCardEvaluation";
 
 type FicheEvaluation = {

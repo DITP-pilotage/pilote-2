@@ -4,7 +4,7 @@ import {
   formatterTexteCompletion,
   formatterTitreEvaluation,
 } from "@/components/PageAppreciation/utilsTexteEvaluation";
-import { BarreProgressionEvaluation } from "@/components/Evaluation/ListeAutoEvaluation/BarreProgressionEvaluation";
+import { BarreProgressionEvaluation } from "@/components/_commons/BarreProgressionEvaluation";
 import { clsxm } from "@/utils/clsxm";
 
 export const LigneCardEvaluationAppreciation = ({
