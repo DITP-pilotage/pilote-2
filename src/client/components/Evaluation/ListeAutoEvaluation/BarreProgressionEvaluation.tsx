@@ -28,7 +28,11 @@ export const BarreProgressionEvaluation = ({
             <Tooltip.Trigger>
               <Icone className="w-4 h-4" icone={LockIcon} />
             </Tooltip.Trigger>
-            <Tooltip.Content>Évaluation verrouillée</Tooltip.Content>
+            <Tooltip.Content>
+              La DITP prend connaissance de vos appréciations sur ce formulaire
+              et en a suspendu momentanément l'édition. Le formulaire reste
+              cependant consultable.
+            </Tooltip.Content>
           </Tooltip.Root>
         ) : null}
         {`${texteProgression} : ${nombreNotes} / ${nombreTotal} ${elementDeProgression}${!estValide && peutEtreTransmis && nombreNotes === nombreTotal ? " - à transmettre" : ""}`}

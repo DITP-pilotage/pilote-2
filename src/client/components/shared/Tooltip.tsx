@@ -3,6 +3,12 @@ import { ComponentProps } from "react";
 import { clsxm } from "@/utils/clsxm";
 
 export const Tooltip = Object.assign({}, RadixTooltip, {
+  Provider: ({
+    delayDuration = 0,
+    ...props
+  }: ComponentProps<typeof RadixTooltip.Provider>) => (
+    <RadixTooltip.Provider delayDuration={delayDuration} {...props} />
+  ),
   Content: ({
     children,
     ...props
@@ -12,7 +18,7 @@ export const Tooltip = Object.assign({}, RadixTooltip, {
         {...props}
         className={clsxm(
           props.className,
-          "bg-gray-900 text-white rounded px-3 py-2 text-sm z-50",
+          "bg-gray-900 text-white rounded px-3 py-2 text-sm z-50 max-w-96",
           "data-[state=delayed-open]:animate-tooltip-fade-in data-[state=closed]:animate-tooltip-fade-out",
         )}
         sideOffset={5}
@@ -23,13 +29,15 @@ export const Tooltip = Object.assign({}, RadixTooltip, {
     </RadixTooltip.Portal>
   ),
   Trigger: (props: ComponentProps<"button">) => (
-    <button
-      type="button"
-      {...props}
-      className={clsxm(
-        "block !-mx-2 !-my-1 !px-2 py-1 rounded hover:bg-gray-200 bg-transparent transition-color font-medium",
-        props.className,
-      )}
-    />
+    <RadixTooltip.Trigger asChild>
+      <button
+        type="button"
+        {...props}
+        className={clsxm(
+          "block !-mx-2 !-my-1 !px-2 py-1 rounded hover:bg-gray-200 bg-transparent transition-color font-medium",
+          props.className,
+        )}
+      />
+    </RadixTooltip.Trigger>
   ),
 });
