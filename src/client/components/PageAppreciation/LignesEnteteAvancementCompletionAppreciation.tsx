@@ -10,10 +10,10 @@ export const LignesEnteteAvancementCompletionAppreciation = ({
   instruction: FicheEvaluation[];
 }) => {
   const appreciationRequierentAttention = consolidation.filter(
-    (fiche) => !fiche.objectifsValides || !fiche.criteresValides,
+    (fiche) => !fiche.isObjectifsValides || !fiche.isCriteresValides,
   ).length;
   const appreciationCompletes = consolidation.filter(
-    (fiche) => fiche.objectifsValides && fiche.criteresValides,
+    (fiche) => fiche.isObjectifsValides && fiche.isCriteresValides,
   ).length;
   const autoEvaluationEnCours = autoEvaluation.length;
   const instructionEnCours = instruction.length;

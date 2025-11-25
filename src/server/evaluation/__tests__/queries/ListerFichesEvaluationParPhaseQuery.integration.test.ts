@@ -151,8 +151,8 @@ describe("ListerFichesEvaluationParPhaseQuery", () => {
               id: ficheAutoEval1Id,
               etapeCourante: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
               readOnly: false,
-              objectifsValides: true,
-              criteresValides: true,
+              isObjectifsValides: true,
+              isCriteresValides: true,
               rattachement: {
                 code: regGroupeCode,
                 libelle: "Région 01",
@@ -181,8 +181,8 @@ describe("ListerFichesEvaluationParPhaseQuery", () => {
               id: ficheAutoEval2Id,
               etapeCourante: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
               readOnly: false,
-              objectifsValides: true,
-              criteresValides: true,
+              isObjectifsValides: true,
+              isCriteresValides: true,
               rattachement: {
                 code: regRattachementCode,
                 libelle: "Région 02",
@@ -218,8 +218,8 @@ describe("ListerFichesEvaluationParPhaseQuery", () => {
               id: ficheConsolidationId,
               etapeCourante: $Enums.etape_evaluation_enum.CONSOLIDATION,
               readOnly: false,
-              objectifsValides: true,
-              criteresValides: true,
+              isObjectifsValides: true,
+              isCriteresValides: true,
               rattachement: {
                 code: deptRattachementCode,
                 libelle: "Département 02",
@@ -447,8 +447,8 @@ describe("ListerFichesEvaluationParPhaseQuery", () => {
           id: ficheId,
           etapeCourante: $Enums.etape_evaluation_enum.INSTRUCTION,
           readOnly: false,
-          objectifsValides: true,
-          criteresValides: true,
+          isObjectifsValides: true,
+          isCriteresValides: true,
           rattachement: {
             code: rattachementCode,
             libelle: "Région avec note collective",
@@ -632,8 +632,8 @@ describe("ListerFichesEvaluationParPhaseQuery", () => {
         {
           id: ficheId,
           etapeCourante: $Enums.etape_evaluation_enum.CONSOLIDATION,
-          objectifsValides: false,
-          criteresValides: true,
+          isObjectifsValides: false,
+          isCriteresValides: true,
           readOnly: false,
           rattachement: {
             code: rattachementCode,
@@ -730,8 +730,8 @@ describe("ListerFichesEvaluationParPhaseQuery", () => {
         {
           id: ficheId,
           etapeCourante: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
-          objectifsValides: true,
-          criteresValides: true,
+          isObjectifsValides: true,
+          isCriteresValides: true,
           readOnly: false,
           rattachement: {
             code: rattachementCode,

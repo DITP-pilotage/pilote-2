@@ -14,7 +14,7 @@ export const EtapeCriteres = () => {
     pageAutoEvaluationManieresDeServir.useServerSidePropsContext();
   const form = useFormEvaluationCriteres();
   const { fields } = useFieldArray({ control: form.control, name: "criteres" });
-  const readOnly = autoEvaluation.readOnly || autoEvaluation.criteresValides;
+  const readOnly = autoEvaluation.readOnly || autoEvaluation.isCriteresValides;
   const enregistrerBrouillon = useEnregistrerBrouillonCriteres({
     showToast: false,
   });

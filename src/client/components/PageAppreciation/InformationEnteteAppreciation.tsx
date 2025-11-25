@@ -89,7 +89,7 @@ export const InformationEnteteAppreciation = ({
         <div className="flex justify-center mb-4">
           <Lien
             href="espace-appreciation"
-            label="Accéder à mon espace d'appréciation"
+            label="Consulter mon espace d'appréciation"
             variant="button-secondary"
           />
         </div>

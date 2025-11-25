@@ -29,7 +29,7 @@ export const LigneCardEvaluationInstruction = ({
               },
             ]}
             texteBadge="Objectifs collectifs"
-            texteLienNavigation="Consulter la liste des objectifs collectifs"
+            texteLienNavigation="consulter la liste des objectifs collectifs"
             titre={formatterTitreEvaluation(ficheEvaluation.rattachement)}
           >
             <div className="text-xs text-grey-200">

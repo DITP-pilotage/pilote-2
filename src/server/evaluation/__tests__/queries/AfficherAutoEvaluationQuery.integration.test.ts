@@ -233,6 +233,7 @@ describe("AfficherAutoEvaluationQuery", () => {
             create: {
               id: etapeEvaluationId,
               type: "AUTO_EVALUATION",
+              objectifs_valides: true,
             },
           },
         },
@@ -301,6 +302,8 @@ describe("AfficherAutoEvaluationQuery", () => {
         },
       ]);
       expect(result.readOnly).toBe(false);
+      expect(result.isObjectifsValides).toBe(true);
+      expect(result.isCriteresValides).toBe(false);
     });
 
     it("doit retourner readOnly=true quand l'étape courante n'est pas AUTO_EVALUATION", async () => {

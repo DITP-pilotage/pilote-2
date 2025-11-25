@@ -18,7 +18,7 @@ export function EtapeObjectifs() {
     control: form.control,
     name: "objectifs",
   });
-  const readOnly = autoEvaluation.readOnly || autoEvaluation.objectifsValides;
+  const readOnly = autoEvaluation.readOnly || autoEvaluation.isObjectifsValides;
   const enregistrerBrouillon = useEnregistrerBrouillonObjectifs({
     showToast: false,
   });

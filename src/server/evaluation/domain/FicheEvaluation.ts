@@ -4,8 +4,8 @@ export interface FicheEvaluation {
   id: string;
   etapeCourante: $Enums.etape_evaluation_enum;
   readOnly: boolean;
-  objectifsValides: boolean;
-  criteresValides: boolean;
+  isObjectifsValides: boolean;
+  isCriteresValides: boolean;
   rattachement: {
     code: string;
     libelle: string;
