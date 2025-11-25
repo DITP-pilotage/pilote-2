@@ -22,6 +22,11 @@ const STATUTS_EVALUATION = {
   NON_TRAITE: { label: "Non traité" },
 };
 
+const CATEGORIES = {
+  objectif: { label: "Objectifs" },
+  critere: { label: "Critères" },
+};
+
 type STATUT_EVALUATION = keyof typeof STATUTS_EVALUATION;
 
 const getStatutTraitement = (row: TableauEvaluationRow): STATUT_EVALUATION => {
@@ -70,6 +75,7 @@ export const COLONNES = {
   ID: "id",
   CRITERE_ID: "critereId",
   STATUT_TRAITEMENT: "statutTraitement",
+  CATEGORIE: "categorie",
 };
 
 const useTableColumns = (rattachements: Rattachement[]) => {
@@ -148,6 +154,29 @@ const useTableColumns = (rattachements: Rattachement[]) => {
           },
         },
       }),
+      columnHelper.accessor((ligne) => ligne.type, {
+        id: COLONNES.CATEGORIE,
+        enableColumnFilter: true,
+        filterFn: (row, columnId, filterValue) => {
+          const filter = Array.isArray(filterValue)
+            ? filterValue
+            : [filterValue];
+
+          if (filter.length === 0) {
+            return true;
+          }
+
+          return filter.includes(row.original.type);
+        },
+        meta: {
+          filter: {
+            label: "Filtrer par catégorie",
+            labelToutesLesOptions: "Tous",
+            getValueLabel: (value: TableauEvaluationRow["type"]) =>
+              CATEGORIES[value].label,
+          },
+        },
+      }),
     ],
     [rattachements, getCritere],
   );
@@ -159,6 +188,7 @@ const useColumnFilters = () => {
       territoire: parseAsArrayOf(parseAsString).withDefault([]),
       critere: parseAsArrayOf(parseAsString).withDefault([]),
       traite: parseAsArrayOf(parseAsString).withDefault([]),
+      categorie: parseAsArrayOf(parseAsString).withDefault([]),
     },
     {
       shallow: false,
@@ -184,6 +214,12 @@ const useColumnFilters = () => {
       columnFiltersArray.push({
         id: COLONNES.STATUT_TRAITEMENT,
         value: filters.traite,
+      });
+    }
+    if (filters.categorie.length > 0) {
+      columnFiltersArray.push({
+        id: COLONNES.CATEGORIE,
+        value: filters.categorie,
       });
     }
     return columnFiltersArray;
@@ -228,6 +264,9 @@ export const useTableauEvaluation = ({
       const traiteFilterValue = newFilters.find(
         (filter) => filter.id === COLONNES.STATUT_TRAITEMENT,
       )?.value;
+      const categorieFilterValue = newFilters.find(
+        (filter) => filter.id === COLONNES.CATEGORIE,
+      )?.value;
 
       void setFilters({
         territoire:
@@ -245,6 +284,11 @@ export const useTableauEvaluation = ({
           traiteFilterValue.every((v) => typeof v === "string")
             ? (traiteFilterValue as string[])
             : [],
+        categorie:
+          Array.isArray(categorieFilterValue) &&
+          categorieFilterValue.every((v) => typeof v === "string")
+            ? (categorieFilterValue as string[])
+            : [],
       });
     },
     initialState: {
@@ -252,6 +296,7 @@ export const useTableauEvaluation = ({
       columnVisibility: {
         [COLONNES.CRITERE_ID]: false,
         [COLONNES.STATUT_TRAITEMENT]: false,
+        [COLONNES.CATEGORIE]: false,
       },
     },
   });

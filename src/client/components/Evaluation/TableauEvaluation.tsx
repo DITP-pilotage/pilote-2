@@ -117,8 +117,9 @@ export const InnerTableauEvaluation = memo(function TableauEvaluation({
           <LayoutFicheCadrage>
             <form
               className="flex flex-col gap-3 w-full max-w-[1200px] py-6 grow px-8"
-              onSubmit={form.handleSubmit((values) =>
-                onEnregistrer(values, true),
+              onSubmit={form.handleSubmit(
+                (values) => onEnregistrer(values, true),
+                () => table.resetColumnFilters(),
               )}
             >
               {!estEnLectureSeule && (
