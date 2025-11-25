@@ -40,7 +40,7 @@ export const LigneCardEvaluationInstruction = ({
         ) : null}
 
         <BaseCardEvaluation
-          lien={`/evaluation/appreciation/espace-appreciation?territoire=${ficheEvaluation.rattachement.code}`}
+          lien={`/evaluation/appreciation/espace-appreciation?territoire=${ficheEvaluation.rattachement.code}&categorie=objectif`}
           listeInformationsMoyennes={[
             {
               libelle: "appréciation",
@@ -60,7 +60,7 @@ export const LigneCardEvaluationInstruction = ({
           titre={formatterTitreEvaluation(ficheEvaluation.rattachement)}
         />
         <BaseCardEvaluation
-          lien={`/evaluation/appreciation/espace-appreciation?territoire=${ficheEvaluation.rattachement.code}`}
+          lien={`/evaluation/appreciation/espace-appreciation?territoire=${ficheEvaluation.rattachement.code}&categorie=critere`}
           listeInformationsMoyennes={[
             {
               libelle: "appréciation",
