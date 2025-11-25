@@ -20,5 +20,5 @@ export const formatterTexteCompletion = ({
 }: {
   estValide: boolean;
 }) => {
-  return estValide ? "TRANSMIS" : "À COMPLÉTER";
+  return estValide ? "TRAITÉ" : "À TRAITER";
 };

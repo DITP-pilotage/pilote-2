@@ -3,6 +3,7 @@ import { $Enums } from "@prisma/client";
 export interface FicheEvaluation {
   id: string;
   etapeCourante: $Enums.etape_evaluation_enum;
+  readOnly: boolean;
   objectifsValides: boolean;
   criteresValides: boolean;
   rattachement: {
@@ -14,6 +15,7 @@ export interface FicheEvaluation {
     moyennesParPhase: Partial<
       Record<$Enums.etape_evaluation_enum, number | null>
     >;
+    nombreTraites: number;
     nombreNotes: number;
     nombreTotal: number;
   };
@@ -22,6 +24,7 @@ export interface FicheEvaluation {
     moyennesParPhase: Partial<
       Record<$Enums.etape_evaluation_enum, number | null>
     >;
+    nombreTraites: number;
     nombreNotes: number;
     nombreTotal: number;
   };

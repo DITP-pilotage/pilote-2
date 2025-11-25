@@ -179,6 +179,7 @@ export class ListerFichesEvaluationParPhaseQuery {
             );
             return {
               note: evaluation?.note ?? null,
+              estTraite: !!evaluation?.date_traitement,
             };
           },
         );
@@ -189,6 +190,7 @@ export class ListerFichesEvaluationParPhaseQuery {
           );
           return {
             note: evaluation?.note ?? null,
+            estTraite: !!evaluation?.date_traitement,
           };
         });
 
@@ -230,8 +232,13 @@ export class ListerFichesEvaluationParPhaseQuery {
         const ficheFormatee: FicheEvaluation = {
           id: fiche.id,
           etapeCourante: fiche.etape_courante,
-          objectifsValides: etapeEvaluation.objectifs_valides ?? false,
-          criteresValides: etapeEvaluation.criteres_valides ?? false,
+          readOnly: etapeEvaluation.read_only,
+          objectifsValides: objectifsAvecNotes.every(
+            (objectif) => objectif.estTraite,
+          ),
+          criteresValides: criteresAvecNotes.every(
+            (critere) => critere.estTraite,
+          ),
           rattachement: {
             code: fiche.rattachement.code,
             libelle: fiche.rattachement.libelle,
@@ -242,6 +249,9 @@ export class ListerFichesEvaluationParPhaseQuery {
                 ? Math.round(moyenneObjectifs.total / moyenneObjectifs.count)
                 : null,
             moyennesParPhase: moyennesObjectifsParPhase,
+            nombreTraites:
+              objectifsAvecNotes?.filter((objectif) => objectif.estTraite)
+                .length ?? 0,
             nombreNotes: moyenneObjectifs?.count ?? 0,
             nombreTotal: objectifsAvecNotes.length,
           },
@@ -251,6 +261,9 @@ export class ListerFichesEvaluationParPhaseQuery {
                 ? Math.round(moyenneCriteres.total / moyenneCriteres.count)
                 : null,
             moyennesParPhase: moyennesCriteresParPhase,
+            nombreTraites:
+              criteresAvecNotes?.filter((critere) => critere.estTraite)
+                .length ?? 0,
             nombreNotes: moyenneCriteres?.count ?? 0,
             nombreTotal: criteresAvecNotes.length,
           },
