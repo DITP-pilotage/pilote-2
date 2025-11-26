@@ -155,45 +155,182 @@ export class GenererPDFAutoEvaluationHandler {
       });
     }
 
-    // Page 3: Fiches de cadrage - Manière de servir
-    content.push({
-      text: `Auto-évaluation - Fiches de cadrage - Manière de servir`,
-      fontSize: 16,
-      bold: true,
-      color: "#000091",
-      margin: [0, 0, 0, 15],
-      pageBreak: "before",
-    });
+    // Page 3: Fiches de cadrage - Objectifs
+    if (autoEvaluation.objectifs.length > 0) {
+      content.push({
+        text: `Auto-évaluation - Fiches de cadrage - Objectifs`,
+        fontSize: 16,
+        bold: true,
+        color: "#000091",
+        margin: [0, 0, 0, 15],
+        pageBreak: "before",
+      });
 
-    // Page 4: Fiches de cadrage - Objectifs
-    content.push({
-      text: `Auto-évaluation - Fiches de cadrage - Objectifs`,
-      fontSize: 16,
-      bold: true,
-      color: "#000091",
-      margin: [0, 0, 0, 15],
-      pageBreak: "before",
-    });
+      const fichesCadrageTableBody: any[] = [];
 
-    // Page 5: Annexes - Manière de servir
-    content.push({
-      text: `Auto-évaluation - Annexes - Manière de servir`,
-      fontSize: 16,
-      bold: true,
-      color: "#000091",
-      margin: [0, 0, 0, 15],
-      pageBreak: "before",
-    });
+      autoEvaluation.objectifs.forEach((objectif) => {
+        fichesCadrageTableBody.push([
+          {
+            text: objectif.libelle,
+            fontSize: 10,
+            bold: true,
+            colSpan: 2,
+            margin: [5, 5, 5, 5],
+          },
+          {},
+        ]);
 
-    // Page 6: Annexes - Objectifs
-    content.push({
-      text: `Auto-évaluation - Annexes - Objectifs`,
-      fontSize: 16,
-      bold: true,
-      color: "#000091",
-      margin: [0, 0, 0, 15],
-      pageBreak: "before",
-    });
+        fichesCadrageTableBody.push([
+          {
+            text: objectif.descriptif || "Aucune description",
+            fontSize: 8,
+            color: objectif.descriptif ? "#555555" : "#999999",
+            italics: !objectif.descriptif,
+            margin: [5, 5, 5, 5],
+            colSpan: 2,
+          },
+          {},
+        ]);
+      });
+
+      content.push({
+        table: {
+          headerRows: 0,
+          widths: ["*", 80],
+          body: fichesCadrageTableBody,
+        },
+        layout: {
+          hLineWidth: (i: number) => {
+            return i % 2 === 0 ? 1 : 0.5;
+          },
+          vLineWidth: () => 0.5,
+          hLineColor: () => "#CCCCCC",
+          vLineColor: () => "#CCCCCC",
+          fillColor: (i: number) => {
+            return i % 2 === 0 ? "#F6F6F6" : null;
+          },
+        },
+        margin: [0, 0, 0, 20],
+      });
+    }
+
+    // Page 4: Annexes - Manière de servir
+    if (autoEvaluation.criteres.length > 0) {
+      content.push({
+        text: `Auto-évaluation - Annexes - Manière de servir`,
+        fontSize: 16,
+        bold: true,
+        color: "#000091",
+        margin: [0, 0, 0, 15],
+        pageBreak: "before",
+      });
+
+      const annexesCriteresTableBody: any[] = [];
+
+      autoEvaluation.criteres.forEach((critere) => {
+        annexesCriteresTableBody.push([
+          {
+            text: critere.libelle,
+            fontSize: 10,
+            bold: true,
+            colSpan: 2,
+            margin: [5, 5, 5, 5],
+          },
+          {},
+        ]);
+
+        annexesCriteresTableBody.push([
+          {
+            text: critere.evaluation.annexe || "Aucune annexe",
+            fontSize: 8,
+            color: critere.evaluation.annexe ? "#555555" : "#999999",
+            italics: !critere.evaluation.annexe,
+            margin: [5, 5, 5, 5],
+            colSpan: 2,
+          },
+          {},
+        ]);
+      });
+
+      content.push({
+        table: {
+          headerRows: 0,
+          widths: ["*", 80],
+          body: annexesCriteresTableBody,
+        },
+        layout: {
+          hLineWidth: (i: number) => {
+            return i % 2 === 0 ? 1 : 0.5;
+          },
+          vLineWidth: () => 0.5,
+          hLineColor: () => "#CCCCCC",
+          vLineColor: () => "#CCCCCC",
+          fillColor: (i: number) => {
+            return i % 2 === 0 ? "#F6F6F6" : null;
+          },
+        },
+        margin: [0, 0, 0, 20],
+      });
+    }
+
+    // Page 5: Annexes - Objectifs
+    if (autoEvaluation.objectifs.length > 0) {
+      content.push({
+        text: `Auto-évaluation - Annexes - Objectifs`,
+        fontSize: 16,
+        bold: true,
+        color: "#000091",
+        margin: [0, 0, 0, 15],
+        pageBreak: "before",
+      });
+
+      const annexesObjectifsTableBody: any[] = [];
+
+      autoEvaluation.objectifs.forEach((objectif) => {
+        annexesObjectifsTableBody.push([
+          {
+            text: objectif.libelle,
+            fontSize: 10,
+            bold: true,
+            colSpan: 2,
+            margin: [5, 5, 5, 5],
+          },
+          {},
+        ]);
+
+        annexesObjectifsTableBody.push([
+          {
+            text: objectif.evaluation.annexe || "Aucune annexe",
+            fontSize: 8,
+            color: objectif.evaluation.annexe ? "#555555" : "#999999",
+            italics: !objectif.evaluation.annexe,
+            margin: [5, 5, 5, 5],
+            colSpan: 2,
+          },
+          {},
+        ]);
+      });
+
+      content.push({
+        table: {
+          headerRows: 0,
+          widths: ["*", 80],
+          body: annexesObjectifsTableBody,
+        },
+        layout: {
+          hLineWidth: (i: number) => {
+            return i % 2 === 0 ? 1 : 0.5;
+          },
+          vLineWidth: () => 0.5,
+          hLineColor: () => "#CCCCCC",
+          vLineColor: () => "#CCCCCC",
+          fillColor: (i: number) => {
+            return i % 2 === 0 ? "#F6F6F6" : null;
+          },
+        },
+        margin: [0, 0, 0, 20],
+      });
+    }
 
     const pdf = {
       content,
