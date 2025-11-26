@@ -70,10 +70,6 @@ export const InformationEnteteAppreciation = ({
             variant="button"
           />
         </div>
-        <p>
-          À toutes fins utiles, la section suivante vous propose une vue
-          détaillée, formulaire par formulaire, des auto-évaluations en cours.
-        </p>
       </>
     );
   }
