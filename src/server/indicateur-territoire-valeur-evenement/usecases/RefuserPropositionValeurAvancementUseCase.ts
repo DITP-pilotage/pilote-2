@@ -120,10 +120,11 @@ export class RefuserPropositionValeurAvancementUseCase {
     const informationIndicateur =
       await this.indicateurRepository.recupererInformationIndicateur(indicId);
 
-    for (const emailDestinataire of [
-      ...emailsAuteurs,
-      ...emailsCoordinateurs,
-    ]) {
+    const emailsDestinatairesUniques = [
+      ...new Set([...emailsAuteurs, ...emailsCoordinateurs]),
+    ];
+
+    for (const emailDestinataire of emailsDestinatairesUniques) {
       await this.envoieEmailService.envoieNotificationProposition<"PROPOSITION_VALEUR_REFUSEE">(
         {
           destinataires: [{ email: emailDestinataire }],
