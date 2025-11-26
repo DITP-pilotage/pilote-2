@@ -43,6 +43,7 @@ const useTableData = (rattachements: Rattachement[]) => {
         rows.push({
           type: "critere",
           ficheEvaluationId: rattachement.ficheEvaluationId,
+          etapeCourante: rattachement.etapeCourante,
           rattachement,
           id: critere.id,
           libelle: getCritere(critere.id).libelle,
@@ -54,6 +55,7 @@ const useTableData = (rattachements: Rattachement[]) => {
         rows.push({
           type: "objectif",
           ficheEvaluationId: rattachement.ficheEvaluationId,
+          etapeCourante: rattachement.etapeCourante,
           rattachement,
           ...pick(objectif, [
             "id",
