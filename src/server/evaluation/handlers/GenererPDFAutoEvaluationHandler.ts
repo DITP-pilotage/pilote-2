@@ -22,101 +22,21 @@ export class GenererPDFAutoEvaluationHandler {
       return `${note}/100`;
     };
 
-    const content = [];
+    const content: any[] = [];
 
-    // Header
-    content.push(
-      {
-        text: `Auto-évaluation - ${autoEvaluation.rattachement.code} - ${autoEvaluation.rattachement.libelle}`,
-        fontSize: 16,
-        bold: true,
-        color: "#000091",
-        margin: [0, 0, 0, 5],
-      },
-      {
-        text: `Date : ${new Date(autoEvaluation.dateDerniereModification).toLocaleDateString("fr-FR")}`,
-        fontSize: 8,
-        color: "#666666",
-        margin: [0, 0, 0, 15],
-      },
-    );
+    const rattachementLabel = `${autoEvaluation.rattachement.code} - ${autoEvaluation.rattachement.libelle}`;
 
-    // Objectifs section
-    if (autoEvaluation.objectifs.length > 0) {
-      content.push({
-        text: "Objectifs individuels",
-        fontSize: 16,
-        bold: true,
-        color: "#000091",
-        margin: [0, 0, 0, 12],
-      });
-
-      const objectifsTableBody = [];
-
-      autoEvaluation.objectifs.forEach((objectif) => {
-        objectifsTableBody.push([
-          {
-            text: objectif.libelle,
-            fontSize: 10,
-            bold: true,
-            colSpan: 2,
-            margin: [5, 5, 5, 5],
-          },
-          {},
-        ]);
-
-        objectifsTableBody.push([
-          {
-            text: objectif.evaluation.commentaire || "Aucun commentaire",
-            fontSize: 8,
-            color: objectif.evaluation.commentaire ? "#555555" : "#999999",
-            italics: !objectif.evaluation.commentaire,
-            margin: [5, 5, 5, 15],
-          },
-          {
-            text: formatterNote(objectif.evaluation.note),
-            fontSize: 8,
-            bold: true,
-            alignment: "center",
-            margin: [5, 5, 5, 5],
-            color: "#000091",
-          },
-        ]);
-      });
-
-      content.push({
-        table: {
-          headerRows: 0,
-          widths: ["*", 80],
-          body: objectifsTableBody,
-        },
-        layout: {
-          hLineWidth: (i, node) => {
-            return i % 2 === 0 ? 1 : 0.5;
-          },
-          vLineWidth: () => 0.5,
-          hLineColor: () => "#CCCCCC",
-          vLineColor: () => "#CCCCCC",
-          fillColor: (i) => {
-            return i % 2 === 0 ? "#F6F6F6" : null;
-          },
-        },
-        margin: [0, 0, 0, 20],
-      });
-    }
-
-    // Critères section
+    // Page 1: Manière de servir
     if (autoEvaluation.criteres.length > 0) {
       content.push({
-        text: "Manière de servir",
+        text: `Auto-évaluation - Manière de servir - ${rattachementLabel}`,
         fontSize: 16,
         bold: true,
         color: "#000091",
         margin: [0, 0, 0, 15],
-        pageBreak: "before",
       });
 
-      const criteresTableBody = [];
+      const criteresTableBody: any[] = [];
 
       autoEvaluation.criteres.forEach((critere) => {
         criteresTableBody.push([
@@ -156,13 +76,13 @@ export class GenererPDFAutoEvaluationHandler {
           body: criteresTableBody,
         },
         layout: {
-          hLineWidth: (i, node) => {
+          hLineWidth: (i: number) => {
             return i % 2 === 0 ? 1 : 0.5;
           },
           vLineWidth: () => 0.5,
           hLineColor: () => "#CCCCCC",
           vLineColor: () => "#CCCCCC",
-          fillColor: (i) => {
+          fillColor: (i: number) => {
             return i % 2 === 0 ? "#F6F6F6" : null;
           },
         },
@@ -170,12 +90,117 @@ export class GenererPDFAutoEvaluationHandler {
       });
     }
 
+    // Page 2: Objectifs
+    if (autoEvaluation.objectifs.length > 0) {
+      content.push({
+        text: `Auto-évaluation - Objectifs - ${rattachementLabel}`,
+        fontSize: 16,
+        bold: true,
+        color: "#000091",
+        margin: [0, 0, 0, 15],
+        pageBreak: "before",
+      });
+
+      const objectifsTableBody: any[] = [];
+
+      autoEvaluation.objectifs.forEach((objectif) => {
+        objectifsTableBody.push([
+          {
+            text: objectif.libelle,
+            fontSize: 10,
+            bold: true,
+            colSpan: 2,
+            margin: [5, 5, 5, 5],
+          },
+          {},
+        ]);
+
+        objectifsTableBody.push([
+          {
+            text: objectif.evaluation.commentaire || "Aucun commentaire",
+            fontSize: 8,
+            color: objectif.evaluation.commentaire ? "#555555" : "#999999",
+            italics: !objectif.evaluation.commentaire,
+            margin: [5, 5, 5, 15],
+          },
+          {
+            text: formatterNote(objectif.evaluation.note),
+            fontSize: 8,
+            bold: true,
+            alignment: "center",
+            margin: [5, 5, 5, 5],
+            color: "#000091",
+          },
+        ]);
+      });
+
+      content.push({
+        table: {
+          headerRows: 0,
+          widths: ["*", 80],
+          body: objectifsTableBody,
+        },
+        layout: {
+          hLineWidth: (i: number) => {
+            return i % 2 === 0 ? 1 : 0.5;
+          },
+          vLineWidth: () => 0.5,
+          hLineColor: () => "#CCCCCC",
+          vLineColor: () => "#CCCCCC",
+          fillColor: (i: number) => {
+            return i % 2 === 0 ? "#F6F6F6" : null;
+          },
+        },
+        margin: [0, 0, 0, 20],
+      });
+    }
+
+    // Page 3: Fiches de cadrage - Manière de servir
+    content.push({
+      text: `Auto-évaluation - Fiches de cadrage - Manière de servir`,
+      fontSize: 16,
+      bold: true,
+      color: "#000091",
+      margin: [0, 0, 0, 15],
+      pageBreak: "before",
+    });
+
+    // Page 4: Fiches de cadrage - Objectifs
+    content.push({
+      text: `Auto-évaluation - Fiches de cadrage - Objectifs`,
+      fontSize: 16,
+      bold: true,
+      color: "#000091",
+      margin: [0, 0, 0, 15],
+      pageBreak: "before",
+    });
+
+    // Page 5: Annexes - Manière de servir
+    content.push({
+      text: `Auto-évaluation - Annexes - Manière de servir`,
+      fontSize: 16,
+      bold: true,
+      color: "#000091",
+      margin: [0, 0, 0, 15],
+      pageBreak: "before",
+    });
+
+    // Page 6: Annexes - Objectifs
+    content.push({
+      text: `Auto-évaluation - Annexes - Objectifs`,
+      fontSize: 16,
+      bold: true,
+      color: "#000091",
+      margin: [0, 0, 0, 15],
+      pageBreak: "before",
+    });
+
     const pdf = {
       content,
       defaultStyle: {
         font: "Roboto",
       },
-      pageMargins: [40, 60, 40, 60],
+      pageMargins: [40, 60, 40, 60] as [number, number, number, number],
     };
 
     const buffer = await new Promise<Buffer>((resolve) => {
