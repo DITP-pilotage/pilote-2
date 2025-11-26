@@ -124,7 +124,7 @@ describe("AccepterAvecModificationPropositionValeurAvancementUseCase", () => {
     ]);
 
     utilisateurRepository.recupererUtilisateursParProfilEtTerritoire.mockResolvedValue(
-      ["coordinateur1@example.com", "coordinateur2@example.com"],
+      ["auteur1@example.com", "coordinateur2@example.com"],
     );
 
     indicateurRepository.recupererInformationIndicateur.mockResolvedValue({
@@ -185,7 +185,7 @@ describe("AccepterAvecModificationPropositionValeurAvancementUseCase", () => {
 
     expect(
       envoieEmailService.envoieNotificationProposition,
-    ).toHaveBeenCalledTimes(4);
+    ).toHaveBeenCalledTimes(3);
     expect(
       envoieEmailService.envoieNotificationProposition,
     ).toHaveBeenCalledWith({
@@ -207,23 +207,6 @@ describe("AccepterAvecModificationPropositionValeurAvancementUseCase", () => {
       envoieEmailService.envoieNotificationProposition,
     ).toHaveBeenCalledWith({
       destinataires: [{ email: "auteur2@example.com" }],
-      templateId: 41,
-      parametres: {
-        chantierId: "CH-001",
-        chantierNom: "Nom du chantier",
-        indicateurId: input.indicId,
-        indicateurNom: "Nom de l'indicateur",
-        dateValeur: "06-2024",
-        valeurAvancement: "3",
-        valeurProposee: "20",
-        valeurAcceptee: "25",
-        motifModification: input.motif,
-      },
-    });
-    expect(
-      envoieEmailService.envoieNotificationProposition,
-    ).toHaveBeenCalledWith({
-      destinataires: [{ email: "coordinateur1@example.com" }],
       templateId: 41,
       parametres: {
         chantierId: "CH-001",
