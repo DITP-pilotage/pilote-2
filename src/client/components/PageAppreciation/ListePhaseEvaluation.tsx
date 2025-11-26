@@ -23,9 +23,10 @@ export const ListePhaseEvaluation = () => {
           <div className="mb-8" key={groupe}>
             <h2 className="!text-2xl !text-primary">
               {`${groupe} - Vue détaillée des ${
-                AUTO_EVALUATION.length +
-                CONSOLIDATION.length +
-                INSTRUCTION.length
+                (AUTO_EVALUATION.length +
+                  CONSOLIDATION.length +
+                  INSTRUCTION.length) *
+                2
               } formulaires`}
             </h2>
             <LignesEnteteAvancementCompletionAppreciation
@@ -38,7 +39,7 @@ export const ListePhaseEvaluation = () => {
                 <Accordion.Header>
                   <Accordion.Trigger>
                     Territoire(s) en phase d'appréciation - 
-                    {CONSOLIDATION.length} formulaire(s) en cours
+                    {CONSOLIDATION.length * 2} formulaire(s) en cours
                   </Accordion.Trigger>
                 </Accordion.Header>
                 <Accordion.Content>
@@ -90,7 +91,7 @@ export const ListePhaseEvaluation = () => {
                 <Accordion.Header>
                   <Accordion.Trigger>
                     Territoire(s) en phase d'auto-évaluation - 
-                    {AUTO_EVALUATION.length} formulaire(s) en cours
+                    {AUTO_EVALUATION.length * 2} formulaire(s) en cours
                   </Accordion.Trigger>
                 </Accordion.Header>
                 <Accordion.Content>
@@ -141,8 +142,8 @@ export const ListePhaseEvaluation = () => {
               <Accordion.Item value="instruction">
                 <Accordion.Header>
                   <Accordion.Trigger>
-                    Territoire(s) en phase d'instruction - {INSTRUCTION.length}{" "}
-                    formulaire(s) en cours
+                    Territoire(s) en phase d'instruction -{" "}
+                    {INSTRUCTION.length * 2} formulaire(s) en cours
                   </Accordion.Trigger>
                 </Accordion.Header>
                 <Accordion.Content>

@@ -9,14 +9,26 @@ export const LignesEnteteAvancementCompletionAppreciation = ({
   consolidation: FicheEvaluation[];
   instruction: FicheEvaluation[];
 }) => {
-  const appreciationRequierentAttention = consolidation.filter(
-    (fiche) => !fiche.isObjectifsValides || !fiche.isCriteresValides,
-  ).length;
-  const appreciationCompletes = consolidation.filter(
-    (fiche) => fiche.isObjectifsValides && fiche.isCriteresValides,
-  ).length;
-  const autoEvaluationEnCours = autoEvaluation.length;
-  const instructionEnCours = instruction.length;
+  const appreciationRequierentAttention = consolidation
+    .flatMap(
+      (fiche) =>
+        [
+          !fiche.isObjectifsValides && !fiche.readOnly,
+          !fiche.isCriteresValides && !fiche.readOnly,
+        ].filter(Boolean).length,
+    )
+    .reduce((a, b) => a + b, 0);
+  const appreciationCompletes = consolidation
+    .flatMap(
+      (fiche) =>
+        [
+          fiche.isObjectifsValides || fiche.readOnly,
+          fiche.isCriteresValides || fiche.readOnly,
+        ].filter(Boolean).length,
+    )
+    .reduce((a, b) => a + b, 0);
+  const autoEvaluationEnCours = autoEvaluation.length * 2;
+  const instructionEnCours = instruction.length * 2;
 
   return (
     <ul className="list-disc list-inside mt-4 mb-2">
