@@ -1,26 +1,22 @@
 import { FicheEvaluation } from "@/server/evaluation/domain/FicheEvaluation";
 
 const compterAppreciationAvecAttention = (appreciation: FicheEvaluation[]) =>
-  appreciation
-    .flatMap(
-      (fiche) =>
-        [
-          !fiche.isObjectifsValides && !fiche.readOnly,
-          !fiche.isCriteresValides && !fiche.readOnly,
-        ].filter(Boolean).length,
-    )
-    .reduce((a, b) => a + b, 0);
+  appreciation.reduce(
+    (count, fiche) =>
+      count +
+      (!fiche.isObjectifsValides && !fiche.readOnly ? 1 : 0) +
+      (!fiche.isCriteresValides && !fiche.readOnly ? 1 : 0),
+    0,
+  );
 
 const compterAppreciationCompletes = (appreciation: FicheEvaluation[]) =>
-  appreciation
-    .flatMap(
-      (fiche) =>
-        [
-          fiche.isObjectifsValides || fiche.readOnly,
-          fiche.isCriteresValides || fiche.readOnly,
-        ].filter(Boolean).length,
-    )
-    .reduce((a, b) => a + b, 0);
+  appreciation.reduce(
+    (count, fiche) =>
+      count +
+      (fiche.isObjectifsValides || fiche.readOnly ? 1 : 0) +
+      (fiche.isCriteresValides || fiche.readOnly ? 1 : 0),
+    0,
+  );
 
 export const LignesEnteteAvancementCompletionAppreciation = ({
   autoEvaluation,
