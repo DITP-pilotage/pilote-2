@@ -66,14 +66,17 @@ export const LigneCardEvaluationAppreciation = ({
           }
           texteBadge="Objectifs individuels"
           texteCompletion={formatterTexteCompletion({
-            estValide: ficheEvaluation.isObjectifsValides,
+            estValide:
+              ficheEvaluation.isObjectifsValides || ficheEvaluation.readOnly,
           })}
           texteLienNavigation="accéder à l'appréciation des objectifs individuels"
           titre={formatterTitreEvaluation(ficheEvaluation.rattachement)}
         >
           <BarreProgressionEvaluation
             elementDeProgression="objectifs"
-            estValide={ficheEvaluation.isObjectifsValides}
+            estValide={
+              ficheEvaluation.isObjectifsValides || ficheEvaluation.readOnly
+            }
             estVerrouille={ficheEvaluation.readOnly}
             nombreNotes={ficheEvaluation.objectifs.nombreTraites}
             nombreTotal={ficheEvaluation.objectifs.nombreTotal}
@@ -104,14 +107,17 @@ export const LigneCardEvaluationAppreciation = ({
           }
           texteBadge="Manière de servir"
           texteCompletion={formatterTexteCompletion({
-            estValide: ficheEvaluation.isCriteresValides,
+            estValide:
+              ficheEvaluation.isCriteresValides || ficheEvaluation.readOnly,
           })}
           texteLienNavigation="accéder à l'appréciation de la manière de servir"
           titre={formatterTitreEvaluation(ficheEvaluation.rattachement)}
         >
           <BarreProgressionEvaluation
             elementDeProgression="axes"
-            estValide={ficheEvaluation.isCriteresValides}
+            estValide={
+              ficheEvaluation.isCriteresValides || ficheEvaluation.readOnly
+            }
             estVerrouille={ficheEvaluation.readOnly}
             nombreNotes={ficheEvaluation.criteres.nombreTraites}
             nombreTotal={ficheEvaluation.criteres.nombreTotal}
