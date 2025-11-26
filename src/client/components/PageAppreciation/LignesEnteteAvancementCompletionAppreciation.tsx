@@ -1,22 +1,37 @@
 import { FicheEvaluation } from "@/server/evaluation/domain/FicheEvaluation";
 
+const compterAppreciationAvecAttention = (appreciation: FicheEvaluation[]) =>
+  appreciation.reduce(
+    (count, fiche) =>
+      count +
+      (!fiche.isObjectifsValides && !fiche.readOnly ? 1 : 0) +
+      (!fiche.isCriteresValides && !fiche.readOnly ? 1 : 0),
+    0,
+  );
+
+const compterAppreciationCompletes = (appreciation: FicheEvaluation[]) =>
+  appreciation.reduce(
+    (count, fiche) =>
+      count +
+      (fiche.isObjectifsValides || fiche.readOnly ? 1 : 0) +
+      (fiche.isCriteresValides || fiche.readOnly ? 1 : 0),
+    0,
+  );
+
 export const LignesEnteteAvancementCompletionAppreciation = ({
   autoEvaluation,
-  consolidation,
+  appreciation,
   instruction,
 }: {
   autoEvaluation: FicheEvaluation[];
-  consolidation: FicheEvaluation[];
+  appreciation: FicheEvaluation[];
   instruction: FicheEvaluation[];
 }) => {
-  const appreciationRequierentAttention = consolidation.filter(
-    (fiche) => !fiche.isObjectifsValides || !fiche.isCriteresValides,
-  ).length;
-  const appreciationCompletes = consolidation.filter(
-    (fiche) => fiche.isObjectifsValides && fiche.isCriteresValides,
-  ).length;
-  const autoEvaluationEnCours = autoEvaluation.length;
-  const instructionEnCours = instruction.length;
+  const appreciationRequierentAttention =
+    compterAppreciationAvecAttention(appreciation);
+  const appreciationCompletes = compterAppreciationCompletes(appreciation);
+  const autoEvaluationEnCours = autoEvaluation.length * 2;
+  const instructionEnCours = instruction.length * 2;
 
   return (
     <ul className="list-disc list-inside mt-4 mb-2">
