@@ -27,23 +27,17 @@ export class GenererPDFAutoEvaluationHandler {
     // Header
     content.push(
       {
-        text: "Auto-évaluation",
-        fontSize: 24,
+        text: `Auto-évaluation - ${autoEvaluation.rattachement.code} - ${autoEvaluation.rattachement.libelle}`,
+        fontSize: 16,
         bold: true,
         color: "#000091",
-        margin: [0, 0, 0, 10],
-      },
-      {
-        text: `${autoEvaluation.rattachement.code} - ${autoEvaluation.rattachement.libelle}`,
-        fontSize: 16,
-        color: "#666666",
-        margin: [0, 0, 0, 20],
+        margin: [0, 0, 0, 5],
       },
       {
         text: `Date : ${new Date(autoEvaluation.dateDerniereModification).toLocaleDateString("fr-FR")}`,
-        fontSize: 10,
+        fontSize: 8,
         color: "#666666",
-        margin: [0, 0, 0, 30],
+        margin: [0, 0, 0, 15],
       },
     );
 
@@ -51,10 +45,10 @@ export class GenererPDFAutoEvaluationHandler {
     if (autoEvaluation.objectifs.length > 0) {
       content.push({
         text: "Objectifs individuels",
-        fontSize: 18,
+        fontSize: 16,
         bold: true,
         color: "#000091",
-        margin: [0, 0, 0, 15],
+        margin: [0, 0, 0, 12],
       });
 
       const objectifsTableBody = [];
@@ -63,7 +57,7 @@ export class GenererPDFAutoEvaluationHandler {
         objectifsTableBody.push([
           {
             text: objectif.libelle,
-            fontSize: 12,
+            fontSize: 10,
             bold: true,
             colSpan: 2,
             margin: [5, 5, 5, 5],
@@ -74,14 +68,14 @@ export class GenererPDFAutoEvaluationHandler {
         objectifsTableBody.push([
           {
             text: objectif.evaluation.commentaire || "Aucun commentaire",
-            fontSize: 10,
+            fontSize: 8,
             color: objectif.evaluation.commentaire ? "#555555" : "#999999",
             italics: !objectif.evaluation.commentaire,
-            margin: [5, 5, 5, 5],
+            margin: [5, 5, 5, 15],
           },
           {
             text: formatterNote(objectif.evaluation.note),
-            fontSize: 11,
+            fontSize: 8,
             bold: true,
             alignment: "center",
             margin: [5, 5, 5, 5],
@@ -115,10 +109,11 @@ export class GenererPDFAutoEvaluationHandler {
     if (autoEvaluation.criteres.length > 0) {
       content.push({
         text: "Manière de servir",
-        fontSize: 18,
+        fontSize: 16,
         bold: true,
         color: "#000091",
         margin: [0, 0, 0, 15],
+        pageBreak: "before",
       });
 
       const criteresTableBody = [];
@@ -127,7 +122,7 @@ export class GenererPDFAutoEvaluationHandler {
         criteresTableBody.push([
           {
             text: critere.libelle,
-            fontSize: 12,
+            fontSize: 10,
             bold: true,
             colSpan: 2,
             margin: [5, 5, 5, 5],
@@ -138,14 +133,14 @@ export class GenererPDFAutoEvaluationHandler {
         criteresTableBody.push([
           {
             text: critere.evaluation.commentaire || "Aucun commentaire",
-            fontSize: 10,
+            fontSize: 8,
             color: critere.evaluation.commentaire ? "#555555" : "#999999",
             italics: !critere.evaluation.commentaire,
             margin: [5, 5, 5, 5],
           },
           {
             text: formatterNote(critere.evaluation.note),
-            fontSize: 11,
+            fontSize: 8,
             bold: true,
             alignment: "center",
             margin: [5, 5, 5, 5],
