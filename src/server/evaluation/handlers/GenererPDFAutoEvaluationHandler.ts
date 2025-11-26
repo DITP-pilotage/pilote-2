@@ -19,7 +19,7 @@ export class GenererPDFAutoEvaluationHandler {
 
     const formatterNote = (note: number | null): string => {
       if (note === null) return "Non évalué";
-      return `${note}/4`;
+      return `${note}/100`;
     };
 
     const content = [];
@@ -57,34 +57,58 @@ export class GenererPDFAutoEvaluationHandler {
         margin: [0, 0, 0, 15],
       });
 
-      autoEvaluation.objectifs.forEach((objectif, index) => {
-        content.push(
+      const objectifsTableBody = [];
+
+      autoEvaluation.objectifs.forEach((objectif) => {
+        objectifsTableBody.push([
           {
             text: objectif.libelle,
-            fontSize: 14,
+            fontSize: 12,
             bold: true,
-            margin: [0, index > 0 ? 15 : 0, 0, 5],
+            colSpan: 2,
+            margin: [5, 5, 5, 5],
+          },
+          {},
+        ]);
+
+        objectifsTableBody.push([
+          {
+            text: objectif.evaluation.commentaire || "Aucun commentaire",
+            fontSize: 10,
+            color: objectif.evaluation.commentaire ? "#555555" : "#999999",
+            italics: !objectif.evaluation.commentaire,
+            margin: [5, 5, 5, 5],
           },
           {
-            text: `Note : ${formatterNote(objectif.evaluation.note)}`,
-            fontSize: 12,
-            margin: [0, 0, 0, 5],
-            color: "#333333",
-          },
-        );
-
-        if (objectif.evaluation.commentaire) {
-          content.push({
-            text: objectif.evaluation.commentaire,
+            text: formatterNote(objectif.evaluation.note),
             fontSize: 11,
-            margin: [10, 0, 0, 0],
-            color: "#555555",
-            italics: true,
-          });
-        }
+            bold: true,
+            alignment: "center",
+            margin: [5, 5, 5, 5],
+            color: "#000091",
+          },
+        ]);
       });
 
-      content.push({ text: "", margin: [0, 20, 0, 0] });
+      content.push({
+        table: {
+          headerRows: 0,
+          widths: ["*", 80],
+          body: objectifsTableBody,
+        },
+        layout: {
+          hLineWidth: (i, node) => {
+            return i % 2 === 0 ? 1 : 0.5;
+          },
+          vLineWidth: () => 0.5,
+          hLineColor: () => "#CCCCCC",
+          vLineColor: () => "#CCCCCC",
+          fillColor: (i) => {
+            return i % 2 === 0 ? "#F6F6F6" : null;
+          },
+        },
+        margin: [0, 0, 0, 20],
+      });
     }
 
     // Critères section
@@ -97,31 +121,57 @@ export class GenererPDFAutoEvaluationHandler {
         margin: [0, 0, 0, 15],
       });
 
-      autoEvaluation.criteres.forEach((critere, index) => {
-        content.push(
+      const criteresTableBody = [];
+
+      autoEvaluation.criteres.forEach((critere) => {
+        criteresTableBody.push([
           {
             text: critere.libelle,
-            fontSize: 14,
+            fontSize: 12,
             bold: true,
-            margin: [0, index > 0 ? 15 : 0, 0, 5],
+            colSpan: 2,
+            margin: [5, 5, 5, 5],
+          },
+          {},
+        ]);
+
+        criteresTableBody.push([
+          {
+            text: critere.evaluation.commentaire || "Aucun commentaire",
+            fontSize: 10,
+            color: critere.evaluation.commentaire ? "#555555" : "#999999",
+            italics: !critere.evaluation.commentaire,
+            margin: [5, 5, 5, 5],
           },
           {
-            text: `Note : ${formatterNote(critere.evaluation.note)}`,
-            fontSize: 12,
-            margin: [0, 0, 0, 5],
-            color: "#333333",
-          },
-        );
-
-        if (critere.evaluation.commentaire) {
-          content.push({
-            text: critere.evaluation.commentaire,
+            text: formatterNote(critere.evaluation.note),
             fontSize: 11,
-            margin: [10, 0, 0, 0],
-            color: "#555555",
-            italics: true,
-          });
-        }
+            bold: true,
+            alignment: "center",
+            margin: [5, 5, 5, 5],
+            color: "#000091",
+          },
+        ]);
+      });
+
+      content.push({
+        table: {
+          headerRows: 0,
+          widths: ["*", 80],
+          body: criteresTableBody,
+        },
+        layout: {
+          hLineWidth: (i, node) => {
+            return i % 2 === 0 ? 1 : 0.5;
+          },
+          vLineWidth: () => 0.5,
+          hLineColor: () => "#CCCCCC",
+          vLineColor: () => "#CCCCCC",
+          fillColor: (i) => {
+            return i % 2 === 0 ? "#F6F6F6" : null;
+          },
+        },
+        margin: [0, 0, 0, 20],
       });
     }
 
