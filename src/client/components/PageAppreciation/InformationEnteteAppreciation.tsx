@@ -65,7 +65,7 @@ export const InformationEnteteAppreciation = ({
         </p>
         <div className="flex justify-center mb-4">
           <Lien
-            href="espace-appreciation"
+            href="appreciation/espace-appreciation"
             label="Accéder à mon espace d'appréciation"
             variant="button"
           />
@@ -88,7 +88,7 @@ export const InformationEnteteAppreciation = ({
         <p>Nous vous remercions pour votre collaboration.</p>
         <div className="flex justify-center mb-4">
           <Lien
-            href="espace-appreciation"
+            href="appreciation/espace-appreciation"
             label="Consulter mon espace d'appréciation"
             variant="button-secondary"
           />
