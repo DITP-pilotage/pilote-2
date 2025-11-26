@@ -22,6 +22,31 @@ export class GenererPDFAutoEvaluationHandler {
       return `${note}/100`;
     };
 
+    const stripHtml = (html: string): string => {
+      // Replace block-level elements with newlines
+      let text = html.replace(
+        /<\/(p|div|h[1-6]|ul|ol|li|blockquote|pre|table|tr|td|th)>/gi,
+        "\n",
+      );
+      // Replace <br> tags with newlines
+      text = text.replace(/<br\s*\/?>/gi, "\n");
+      // Replace list items with bullet points
+      text = text.replace(/<li[^>]*>/gi, "\n• ");
+      // Remove all remaining HTML tags
+      text = text.replace(/<[^>]*>/g, "");
+      // Decode common HTML entities
+      text = text
+        .replace(/&nbsp;/g, " ")
+        .replace(/&amp;/g, "&")
+        .replace(/&lt;/g, "<")
+        .replace(/&gt;/g, ">")
+        .replace(/&quot;/g, '"')
+        .replace(/&#39;/g, "'");
+      // Clean up multiple newlines and trim
+      text = text.replace(/\n\s*\n\s*\n/g, "\n\n").trim();
+      return text;
+    };
+
     const content: any[] = [];
 
     const rattachementLabel = `${autoEvaluation.rattachement.code} - ${autoEvaluation.rattachement.libelle}`;
@@ -182,10 +207,32 @@ export class GenererPDFAutoEvaluationHandler {
 
         fichesCadrageTableBody.push([
           {
-            text: objectif.descriptif || "Aucune description",
+            text: [
+              { text: "Descriptif :\n", bold: true },
+              {
+                text: objectif.descriptif || "Aucune description",
+                color: objectif.descriptif ? "#555555" : "#999999",
+                italics: !objectif.descriptif,
+              },
+            ],
             fontSize: 8,
-            color: objectif.descriptif ? "#555555" : "#999999",
-            italics: !objectif.descriptif,
+            margin: [5, 5, 5, 5],
+            colSpan: 2,
+          },
+          {},
+        ]);
+
+        fichesCadrageTableBody.push([
+          {
+            text: [
+              { text: "Indicateur + cible :\n", bold: true },
+              {
+                text: objectif.indicateurCible || "Aucun indicateur",
+                color: objectif.indicateurCible ? "#555555" : "#999999",
+                italics: !objectif.indicateurCible,
+              },
+            ],
+            fontSize: 8,
             margin: [5, 5, 5, 5],
             colSpan: 2,
           },
@@ -201,13 +248,13 @@ export class GenererPDFAutoEvaluationHandler {
         },
         layout: {
           hLineWidth: (i: number) => {
-            return i % 2 === 0 ? 1 : 0.5;
+            return i % 3 === 0 ? 1 : 0.5;
           },
           vLineWidth: () => 0.5,
           hLineColor: () => "#CCCCCC",
           vLineColor: () => "#CCCCCC",
           fillColor: (i: number) => {
-            return i % 2 === 0 ? "#F6F6F6" : null;
+            return i % 3 === 0 ? "#F6F6F6" : null;
           },
         },
         margin: [0, 0, 0, 20],
@@ -241,7 +288,9 @@ export class GenererPDFAutoEvaluationHandler {
 
         annexesCriteresTableBody.push([
           {
-            text: critere.evaluation.annexe || "Aucune annexe",
+            text: critere.evaluation.annexe
+              ? stripHtml(critere.evaluation.annexe)
+              : "Aucune annexe",
             fontSize: 8,
             color: critere.evaluation.annexe ? "#555555" : "#999999",
             italics: !critere.evaluation.annexe,
@@ -300,7 +349,9 @@ export class GenererPDFAutoEvaluationHandler {
 
         annexesObjectifsTableBody.push([
           {
-            text: objectif.evaluation.annexe || "Aucune annexe",
+            text: objectif.evaluation.annexe
+              ? stripHtml(objectif.evaluation.annexe)
+              : "Aucune annexe",
             fontSize: 8,
             color: objectif.evaluation.annexe ? "#555555" : "#999999",
             italics: !objectif.evaluation.annexe,
