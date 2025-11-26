@@ -1,15 +1,7 @@
 import { FicheEvaluation } from "@/server/evaluation/domain/FicheEvaluation";
 
-export const LignesEnteteAvancementCompletionAppreciation = ({
-  autoEvaluation,
-  consolidation,
-  instruction,
-}: {
-  autoEvaluation: FicheEvaluation[];
-  consolidation: FicheEvaluation[];
-  instruction: FicheEvaluation[];
-}) => {
-  const appreciationRequierentAttention = consolidation
+const compterAppreciationAvecAttention = (appreciation: FicheEvaluation[]) =>
+  appreciation
     .flatMap(
       (fiche) =>
         [
@@ -18,7 +10,9 @@ export const LignesEnteteAvancementCompletionAppreciation = ({
         ].filter(Boolean).length,
     )
     .reduce((a, b) => a + b, 0);
-  const appreciationCompletes = consolidation
+
+const compterAppreciationCompletes = (appreciation: FicheEvaluation[]) =>
+  appreciation
     .flatMap(
       (fiche) =>
         [
@@ -27,6 +21,19 @@ export const LignesEnteteAvancementCompletionAppreciation = ({
         ].filter(Boolean).length,
     )
     .reduce((a, b) => a + b, 0);
+
+export const LignesEnteteAvancementCompletionAppreciation = ({
+  autoEvaluation,
+  appreciation,
+  instruction,
+}: {
+  autoEvaluation: FicheEvaluation[];
+  appreciation: FicheEvaluation[];
+  instruction: FicheEvaluation[];
+}) => {
+  const appreciationRequierentAttention =
+    compterAppreciationAvecAttention(appreciation);
+  const appreciationCompletes = compterAppreciationCompletes(appreciation);
   const autoEvaluationEnCours = autoEvaluation.length * 2;
   const instructionEnCours = instruction.length * 2;
 

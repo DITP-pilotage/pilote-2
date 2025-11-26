@@ -30,8 +30,8 @@ export const ListePhaseEvaluation = () => {
               } formulaires`}
             </h2>
             <LignesEnteteAvancementCompletionAppreciation
+              appreciation={CONSOLIDATION}
               autoEvaluation={AUTO_EVALUATION}
-              consolidation={CONSOLIDATION}
               instruction={INSTRUCTION}
             />
             <Accordion.Root type="multiple">
