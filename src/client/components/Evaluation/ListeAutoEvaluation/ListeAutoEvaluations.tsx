@@ -1,6 +1,8 @@
 import { $Enums } from "@prisma/client";
+import { toast } from "sonner";
 import { LigneEnteteAvancementCompletionEvaluation } from "@/components/Evaluation/ListeAutoEvaluation/LigneEnteteAvancementCompletionEvaluation";
 import { BarreProgressionEvaluation } from "@/components/_commons/BarreProgressionEvaluation";
+import api from "@/server/infrastructure/api/trpc/api";
 import { BaseCardEvaluation } from "./BaseCardEvaluation";
 
 type FicheEvaluation = {
@@ -58,11 +60,53 @@ const formatterTexteCompletion = ({
       : "À COMPLÉTER";
 };
 
+const downloadPDF = (base64Data: string, filename: string) => {
+  const binaryString = atob(base64Data);
+  const bytes = new Uint8Array(binaryString.length);
+  for (let i = 0; i < binaryString.length; i++) {
+    bytes[i] = binaryString.charCodeAt(i);
+  }
+  const blob = new Blob([bytes], { type: "application/pdf" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = filename;
+  document.body.append(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
+};
+
 export const ListeAutoEvaluations = ({
   fichesEvaluation,
 }: {
   fichesEvaluation: FicheEvaluation[];
 }) => {
+  const genererPDF = api.evaluation.genererPDFAutoEvaluation.useMutation({
+    onSuccess: (base64Data, variables) => {
+      const fiche = fichesEvaluation.find(
+        (f) => f.id === variables.ficheEvaluationId,
+      );
+      const filename = fiche
+        ? `auto-evaluation-${fiche.rattachement.code}.pdf`
+        : "auto-evaluation.pdf";
+      downloadPDF(base64Data, filename);
+      toast.success("PDF généré avec succès", {
+        position: "top-right",
+        richColors: true,
+      });
+    },
+    onError: () => {
+      toast.error("Erreur lors de la génération du PDF", {
+        position: "top-right",
+        richColors: true,
+      });
+    },
+  });
+
+  const handleExportClick = (ficheEvaluationId: string) => {
+    genererPDF.mutate({ ficheEvaluationId });
+  };
   return (
     <div className="space-y-8">
       {fichesEvaluation.map((ficheEvaluation) => {
@@ -93,6 +137,15 @@ export const ListeAutoEvaluations = ({
                 />
               </ul>
             </header>
+
+            <button
+              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded disabled:opacity-50 disabled:cursor-not-allowed"
+              disabled={genererPDF.isLoading}
+              onClick={() => handleExportClick(ficheEvaluation.id)}
+              type="button"
+            >
+              {genererPDF.isLoading ? "Génération..." : "Exporter en PDF"}
+            </button>
 
             <div className="grid md:grid-cols-3 gap-4">
               <BaseCardEvaluation

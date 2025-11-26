@@ -16,6 +16,7 @@ import { validerSaisieObjectifsCommandSchema } from "@/server/evaluation/handler
 import { setTraitementEvaluationCommandSchema } from "@/server/evaluation/handlers/SetTraitementEvaluationHandler";
 import { retournerAutoEvaluationCommandSchema } from "@/server/evaluation/handlers/RetournerAutoEvaluationHandler";
 import { modifierObjectifCommandSchema } from "@/server/evaluation/handlers/ModifierObjectifHandler";
+import { genererPDFAutoEvaluationCommandSchema } from "@/server/evaluation/handlers/GenererPDFAutoEvaluationHandler";
 
 export const evaluationRouter = créerRouteurTRPC({
   getDroitsPiloteEval: procédureProtégée.query(async ({ ctx }) => {
@@ -270,5 +271,27 @@ export const evaluationRouter = créerRouteurTRPC({
       await getContainer("piloteEval")
         .resolve("modifierObjectifHandler")
         .execute(input);
+    }),
+
+  genererPDFAutoEvaluation: procédureProtégée
+    .input(genererPDFAutoEvaluationCommandSchema)
+    .mutation(async ({ input, ctx }) => {
+      const peutAccederFicheAutoEvaluation = await getContainer("piloteEval")
+        .resolve("accesFicheEvaluationService")
+        .peutAccederEtapeAutoEvaluation({
+          utilisateurId: ctx.session.user.id,
+          ficheEvaluationId: input.ficheEvaluationId,
+        });
+
+      if (!peutAccederFicheAutoEvaluation)
+        throw new ForbiddenError("Accès refusé à la fiche d'auto-évaluation");
+
+      return getContainer("piloteEval")
+        .resolve("genererPDFAutoEvaluationHandler")
+        .execute(() =>
+          getContainer("piloteEval")
+            .resolve("afficherAutoEvaluation")
+            .run({ ficheEvaluationId: input.ficheEvaluationId }),
+        );
     }),
 });
