@@ -92,7 +92,7 @@ export const FicheCadrageObjectif = ({
           <div>
             <Textarea
               charLimit={600}
-              className="max-h-[400px] overflow-y-auto"
+              className="max-h-[400px] overflow-y-auto !bg-dsfr-contrast-grey"
               control={form.control}
               label="Descriptif de l'objectif"
               name="descriptif"
@@ -104,7 +104,7 @@ export const FicheCadrageObjectif = ({
           <div>
             <Textarea
               charLimit={600}
-              className="max-h-[400px] overflow-y-auto"
+              className="max-h-[400px] overflow-y-auto !bg-dsfr-contrast-grey"
               control={form.control}
               label="Indicateur(s) et cible(s) associé(s)"
               name="indicateurCible"
