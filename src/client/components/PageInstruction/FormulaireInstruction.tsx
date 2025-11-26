@@ -1,3 +1,4 @@
+import { $Enums } from "@prisma/client";
 import { pageInstruction } from "@/components/PageInstruction/PageInstructionServerSideContext";
 import { TableauEvaluation } from "@/components/Evaluation/TableauEvaluation";
 import { useEnregistrerBrouillonInstruction } from "./useEnregistrerBrouillonInstruction";
@@ -10,6 +11,7 @@ export const FormulaireInstruction = () => {
   return (
     <TableauEvaluation
       criteres={criteres}
+      etape={$Enums.etape_evaluation_enum.INSTRUCTION}
       onEnregistrer={enregistrerBrouillon}
       rattachements={rattachements}
     />

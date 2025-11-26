@@ -128,6 +128,7 @@ export class AfficherConsolidationQuery {
           readOnly: isInstructionPhase
             ? true
             : (etapeConsolidation?.read_only ?? false),
+          etapeCourante: ficheEvaluation.etape_courante,
           objectifs: objectifsAvecEvaluations,
           criteres: criteresAvecEvaluations,
         };

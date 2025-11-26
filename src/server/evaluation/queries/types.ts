@@ -36,6 +36,7 @@ export type Rattachement = {
   libelle: string;
   ficheEvaluationId: string;
   readOnly: boolean;
+  etapeCourante: $Enums.etape_evaluation_enum;
   objectifs: Array<Objectif>;
   criteres: Array<{
     id: string;

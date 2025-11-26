@@ -183,11 +183,13 @@ export class AfficherInstructionQuery {
           (etape) => etape.type === $Enums.etape_evaluation_enum.INSTRUCTION,
         );
 
+        const ficheEvaluation = rattachement.fiche_evaluation[0];
         return {
           code: rattachement.code,
           libelle: rattachement.libelle,
-          ficheEvaluationId: rattachement.fiche_evaluation[0].id,
+          ficheEvaluationId: ficheEvaluation.id,
           readOnly: etapeInstruction?.read_only ?? false,
+          etapeCourante: ficheEvaluation.etape_courante,
           objectifs: objectifsAvecEvaluations,
           criteres: criteresAvecEvaluations,
         };
