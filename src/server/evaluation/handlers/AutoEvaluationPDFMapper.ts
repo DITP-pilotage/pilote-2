@@ -129,7 +129,7 @@ export class AutoEvaluationPDFMapper {
 
     return [
       createPageHeader({
-        title: "Auto-évaluation - Fiches de cadrage - Objectifs",
+        title: `Auto-évaluation - Fiches de cadrage - Objectifs - ${this.getRattachementLabel()}`,
         pageBreak: "before",
       }),
       createTable(tableBody, { rowModulo: 3 }),
@@ -162,7 +162,7 @@ export class AutoEvaluationPDFMapper {
 
     return [
       createPageHeader({
-        title: "Auto-évaluation - Annexes - Manière de servir",
+        title: `Auto-évaluation - Annexes - Manière de servir - ${this.getRattachementLabel()}`,
         pageBreak: "before",
       }),
       createTable(tableBody),
@@ -195,7 +195,7 @@ export class AutoEvaluationPDFMapper {
 
     return [
       createPageHeader({
-        title: "Auto-évaluation - Annexes - Objectifs",
+        title: `Auto-évaluation - Annexes - Objectifs - ${this.getRattachementLabel()}`,
         pageBreak: "before",
       }),
       createTable(tableBody),
