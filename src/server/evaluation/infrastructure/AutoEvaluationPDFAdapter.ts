@@ -81,6 +81,7 @@ export class AutoEvaluationPDFAdapter implements PDFContentAdapter {
             createScoreCell({ score: formatterNote(objectif.evaluation.note) }),
           ],
         ]),
+        { rowModulo: 2, widths: ["*", 80] },
       ),
     ];
   }
@@ -102,9 +103,6 @@ export class AutoEvaluationPDFAdapter implements PDFContentAdapter {
               }),
               margin: [5, 5, 5, 5],
             }),
-            {},
-          ],
-          [
             createText({
               text: createLabeledText({
                 label: "Indicateur + cible",
@@ -112,10 +110,9 @@ export class AutoEvaluationPDFAdapter implements PDFContentAdapter {
               }),
               margin: [5, 5, 5, 5],
             }),
-            {},
           ],
         ]),
-        { rowModulo: 3 },
+        { rowModulo: 3, widths: ["*", "*"] },
       ),
     ];
   }
@@ -131,17 +128,17 @@ export class AutoEvaluationPDFAdapter implements PDFContentAdapter {
           const annexeText = stripHtml(critere.evaluation.annexe);
 
           return [
-            [createSectionTitle({ title: critere.libelle }), {}],
+            [createSectionTitle({ title: critere.libelle, colSpan: 1 })],
             [
               createText({
                 text: annexeText || "Aucune annexe",
                 italics: !annexeText,
                 color: annexeText ? "#555555" : "#999999",
               }),
-              {},
             ],
           ];
         }),
+        { rowModulo: 2, widths: ["*"] },
       ),
     ];
   }
@@ -157,17 +154,17 @@ export class AutoEvaluationPDFAdapter implements PDFContentAdapter {
           const annexeText = stripHtml(objectif.evaluation.annexe);
 
           return [
-            [createSectionTitle({ title: objectif.libelle }), {}],
+            [createSectionTitle({ title: objectif.libelle, colSpan: 1 })],
             [
               createText({
                 text: annexeText || "Aucune annexe",
                 italics: !annexeText,
                 color: annexeText ? "#555555" : "#999999",
               }),
-              {},
             ],
           ];
         }),
+        { rowModulo: 2, widths: ["*"] },
       ),
     ];
   }

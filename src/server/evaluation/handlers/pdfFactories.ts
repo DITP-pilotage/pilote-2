@@ -45,12 +45,18 @@ export function createText(options: {
   };
 }
 
-export function createSectionTitle({ title }: { title: string }): TableCell {
+export function createSectionTitle({
+  title,
+  colSpan = 2,
+}: {
+  title: string;
+  colSpan?: number;
+}): TableCell {
   return {
     text: title,
     fontSize: 10,
     bold: true,
-    colSpan: 2,
+    colSpan,
     margin: [5, 5, 5, 5],
   };
 }
@@ -78,6 +84,7 @@ export function createCommentCell({
 
 interface TableLayout {
   rowModulo: number;
+  widths?: (string | number)[];
 }
 
 export function createTable(
@@ -87,7 +94,7 @@ export function createTable(
   return {
     table: {
       headerRows: 0,
-      widths: ["*", 80],
+      widths: layout.widths ?? ["*", 80],
       body,
     },
     layout: {
