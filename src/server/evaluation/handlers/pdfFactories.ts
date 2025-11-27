@@ -47,7 +47,7 @@ export function createText(options: {
 
 export function createSectionTitle({
   title,
-  colSpan = 2,
+  colSpan,
 }: {
   title: string;
   colSpan?: number;
@@ -56,7 +56,7 @@ export function createSectionTitle({
     text: title,
     fontSize: 10,
     bold: true,
-    colSpan,
+    ...(colSpan !== undefined && { colSpan }),
     margin: [5, 5, 5, 5],
   };
 }
@@ -84,17 +84,14 @@ export function createCommentCell({
 
 interface TableLayout {
   rowModulo: number;
-  widths?: (string | number)[];
+  widths: (string | number)[];
 }
 
-export function createTable(
-  body: TableCell[][],
-  layout: TableLayout = { rowModulo: 2 },
-): Content {
+export function createTable(body: TableCell[][], layout: TableLayout): Content {
   return {
     table: {
       headerRows: 0,
-      widths: layout.widths ?? ["*", 80],
+      widths: layout.widths,
       body,
     },
     layout: {

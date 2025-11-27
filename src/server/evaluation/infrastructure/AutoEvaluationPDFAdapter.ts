@@ -57,12 +57,13 @@ export class AutoEvaluationPDFAdapter implements PDFContentAdapter {
       }),
       createTable(
         this.autoEvaluation.criteres.flatMap((critere) => [
-          [createSectionTitle({ title: critere.libelle }), {}],
+          [createSectionTitle({ title: critere.libelle, colSpan: 2 }), {}],
           [
             createCommentCell({ comment: critere.evaluation.commentaire }),
             createScoreCell({ score: formatterNote(critere.evaluation.note) }),
           ],
         ]),
+        { rowModulo: 2, widths: ["*", 80] },
       ),
     ];
   }
@@ -75,7 +76,7 @@ export class AutoEvaluationPDFAdapter implements PDFContentAdapter {
       }),
       createTable(
         this.autoEvaluation.objectifs.flatMap((objectif) => [
-          [createSectionTitle({ title: objectif.libelle }), {}],
+          [createSectionTitle({ title: objectif.libelle, colSpan: 2 }), {}],
           [
             createCommentCell({ comment: objectif.evaluation.commentaire }),
             createScoreCell({ score: formatterNote(objectif.evaluation.note) }),
@@ -94,7 +95,7 @@ export class AutoEvaluationPDFAdapter implements PDFContentAdapter {
       }),
       createTable(
         this.autoEvaluation.objectifs.flatMap((objectif) => [
-          [createSectionTitle({ title: objectif.libelle }), {}],
+          [createSectionTitle({ title: objectif.libelle, colSpan: 2 }), {}],
           [
             createText({
               text: createLabeledText({
@@ -128,7 +129,7 @@ export class AutoEvaluationPDFAdapter implements PDFContentAdapter {
           const annexeText = stripHtml(critere.evaluation.annexe);
 
           return [
-            [createSectionTitle({ title: critere.libelle, colSpan: 1 })],
+            [createSectionTitle({ title: critere.libelle })],
             [
               createText({
                 text: annexeText || "Aucune annexe",
@@ -154,7 +155,7 @@ export class AutoEvaluationPDFAdapter implements PDFContentAdapter {
           const annexeText = stripHtml(objectif.evaluation.annexe);
 
           return [
-            [createSectionTitle({ title: objectif.libelle, colSpan: 1 })],
+            [createSectionTitle({ title: objectif.libelle })],
             [
               createText({
                 text: annexeText || "Aucune annexe",
