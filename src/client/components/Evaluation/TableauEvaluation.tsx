@@ -208,7 +208,10 @@ export const InnerTableauEvaluation = memo(function TableauEvaluation({
                               rattachementGroup.code === groupingValue,
                           );
                           label = rattachement?.libelle ?? "";
-                          if (rattachement?.etapeCourante != etape) {
+                          if (
+                            rattachement &&
+                            rattachement?.etapeCourante != etape
+                          ) {
                             warning = (
                               <span className="bg-orange-100 text-orange-700 font-medium px-3 py-1.5 rounded text-xs">
                                 Ce territoire est en{" "}
