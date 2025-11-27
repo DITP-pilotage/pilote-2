@@ -25,21 +25,17 @@ export function createPageHeader({
   };
 }
 
-interface TextOptions {
+export function createText(options: {
+  text: string | ContentText[];
   bold?: boolean;
   italics?: boolean;
   color?: string;
   fontSize?: number;
   alignment?: "left" | "center" | "right" | "justify";
   margin?: [number, number, number, number];
-}
-
-export function createText(
-  text: string | ContentText[],
-  options: TextOptions = {},
-): TableCell {
+}): TableCell {
   return {
-    text,
+    text: options.text,
     fontSize: options.fontSize ?? 8,
     bold: options.bold ?? false,
     italics: options.italics ?? false,
@@ -49,7 +45,7 @@ export function createText(
   };
 }
 
-export function createSectionTitle(title: string): TableCell {
+export function createSectionTitle({ title }: { title: string }): TableCell {
   return {
     text: title,
     fontSize: 10,
@@ -59,16 +55,22 @@ export function createSectionTitle(title: string): TableCell {
   };
 }
 
-export function createScoreCell(score: string): TableCell {
-  return createText(score, {
+export function createScoreCell({ score }: { score: string }): TableCell {
+  return createText({
+    text: score,
     bold: true,
     alignment: "center",
     color: COLORS.primary,
   });
 }
 
-export function createCommentCell(comment: string | null): TableCell {
-  return createText(comment || "Aucun commentaire", {
+export function createCommentCell({
+  comment,
+}: {
+  comment: string | null;
+}): TableCell {
+  return createText({
+    text: comment || "Aucun commentaire",
     color: comment ? COLORS.text : COLORS.textLight,
     italics: !comment,
   });
@@ -103,10 +105,13 @@ export function createTable(
   };
 }
 
-export function createLabeledText(
-  label: string,
-  text: string | null,
-): ContentText[] {
+export function createLabeledText({
+  label,
+  text,
+}: {
+  label: string;
+  text: string | null;
+}): ContentText[] {
   return [
     { text: `${label} :\n`, bold: true },
     {

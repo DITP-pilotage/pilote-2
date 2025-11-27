@@ -57,10 +57,10 @@ export class AutoEvaluationPDFMapper {
 
     this.autoEvaluation.criteres.forEach((critere) => {
       tableBody.push(
-        [createSectionTitle(critere.libelle), {}],
+        [createSectionTitle({ title: critere.libelle }), {}],
         [
-          createCommentCell(critere.evaluation.commentaire),
-          createScoreCell(formatterNote(critere.evaluation.note)),
+          createCommentCell({ comment: critere.evaluation.commentaire }),
+          createScoreCell({ score: formatterNote(critere.evaluation.note) }),
         ],
       );
     });
@@ -82,10 +82,10 @@ export class AutoEvaluationPDFMapper {
 
     this.autoEvaluation.objectifs.forEach((objectif) => {
       tableBody.push(
-        [createSectionTitle(objectif.libelle), {}],
+        [createSectionTitle({ title: objectif.libelle }), {}],
         [
-          createCommentCell(objectif.evaluation.commentaire),
-          createScoreCell(formatterNote(objectif.evaluation.note)),
+          createCommentCell({ comment: objectif.evaluation.commentaire }),
+          createScoreCell({ score: formatterNote(objectif.evaluation.note) }),
         ],
       );
     });
@@ -108,20 +108,25 @@ export class AutoEvaluationPDFMapper {
 
     this.autoEvaluation.objectifs.forEach((objectif) => {
       tableBody.push(
-        [createSectionTitle(objectif.libelle), {}],
+        [createSectionTitle({ title: objectif.libelle }), {}],
         [
-          createText(createLabeledText("Descriptif", objectif.descriptif), {
+          createText({
+            text: createLabeledText({
+              label: "Descriptif",
+              text: objectif.descriptif,
+            }),
             margin: [5, 5, 5, 5],
           }),
           {},
         ],
         [
-          createText(
-            createLabeledText("Indicateur + cible", objectif.indicateurCible),
-            {
-              margin: [5, 5, 5, 5],
-            },
-          ),
+          createText({
+            text: createLabeledText({
+              label: "Indicateur + cible",
+              text: objectif.indicateurCible,
+            }),
+            margin: [5, 5, 5, 5],
+          }),
           {},
         ],
       );
@@ -149,9 +154,10 @@ export class AutoEvaluationPDFMapper {
         : null;
 
       tableBody.push(
-        [createSectionTitle(critere.libelle), {}],
+        [createSectionTitle({ title: critere.libelle }), {}],
         [
-          createText(annexeText || "Aucune annexe", {
+          createText({
+            text: annexeText || "Aucune annexe",
             italics: !annexeText,
             color: annexeText ? "#555555" : "#999999",
           }),
@@ -182,9 +188,10 @@ export class AutoEvaluationPDFMapper {
         : null;
 
       tableBody.push(
-        [createSectionTitle(objectif.libelle), {}],
+        [createSectionTitle({ title: objectif.libelle }), {}],
         [
-          createText(annexeText || "Aucune annexe", {
+          createText({
+            text: annexeText || "Aucune annexe",
             italics: !annexeText,
             color: annexeText ? "#555555" : "#999999",
           }),
