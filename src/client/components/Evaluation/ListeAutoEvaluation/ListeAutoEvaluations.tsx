@@ -4,7 +4,7 @@ import { BarreProgressionEvaluation } from "@/components/_commons/BarreProgressi
 import { Bouton } from "@/components/_commons/Bouton/Bouton";
 import { Printer1Icon } from "@/components/_commons/Icones/Printer1Icon";
 import { Icone } from "@/components/_commons/Icone";
-import { useGenererPDF } from "@/components/Evaluation/ListeAutoEvaluation/useGenererPDF";
+import { useImprimerFiche } from "@/components/Evaluation/ListeAutoEvaluation/useImprimerFiche";
 import { BaseCardEvaluation } from "./BaseCardEvaluation";
 
 const formatterTitreEvaluation = ({
@@ -66,7 +66,7 @@ export const ListeAutoEvaluations = ({
 }: {
   fichesEvaluation: FicheEvaluation[];
 }) => {
-  const genererPDF = useGenererPDF(fichesEvaluation);
+  const genererPDF = useImprimerFiche();
 
   const handleExportClick = (ficheEvaluationId: string) => {
     genererPDF.mutate({ ficheEvaluationId });
@@ -97,7 +97,7 @@ export const ListeAutoEvaluations = ({
                       icone={Printer1Icon}
                     />
                   }
-                  label="Exporter en PDF"
+                  label="Imprimer la fiche"
                   onClick={() => handleExportClick(ficheEvaluation.id)}
                   size="sm"
                   type="button"
