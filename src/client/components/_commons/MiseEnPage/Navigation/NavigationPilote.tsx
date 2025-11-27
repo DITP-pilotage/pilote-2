@@ -86,8 +86,8 @@ export const NavigationPilote = () => {
         },
         {
           nom: "Centre d'aide",
-          lien: "/centreaide",
-          matcher: "/centreaide",
+          lien: "/centre-aide",
+          matcher: "/centre-aide",
           accessible: true,
           prefetch: false,
           target: "_blank",

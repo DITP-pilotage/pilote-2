@@ -2,7 +2,10 @@ const plugin = require("tailwindcss/plugin");
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: ["./src/**/*.{js,ts,jsx,tsx,mdx}"],
+  content: [
+    "./src/**/*.{js,ts,jsx,tsx,mdx}",
+    "./theme.config.*.tsx", // Pour le thème Nextra
+  ],
   theme: {
     extend: {
       colors: {
@@ -30,6 +33,7 @@ module.exports = {
         "dsfr-blue-france-925-hover": "#C1C1FB",
         "dsfr-blue-france-525": "#6A6AF4",
         "dsfr-blue-france-sun-113": "#000091",
+        "dsfr-blue-link": "#5493EF",
         "dsfr-grey-50": "#161616",
         "dsfr-grey-1000": "#F6F6F6",
         "dsfr-green-bourgeon-main-640": "#68A532",

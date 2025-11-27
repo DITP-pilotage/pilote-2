@@ -53,3 +53,6 @@ qodana.yaml
 /playwright/.cache/
 
 public/centreaide/
+
+#submodules
+src/pages/centre-aide-pilote-2

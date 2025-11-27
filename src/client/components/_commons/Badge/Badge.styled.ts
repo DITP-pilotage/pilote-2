@@ -28,6 +28,11 @@ const BadgeStyled = styled.div`
     color: var(--background-flat-error);
     background-color: var(--background-contrast-warning);
   }
+
+  &.badge-noir {
+    color: #ffffff;
+    background-color: #000;
+  }
 `;
 
 export default BadgeStyled;
