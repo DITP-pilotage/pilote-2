@@ -1,14 +1,13 @@
 import { Content, TableCell } from "pdfmake/interfaces";
 import { AfficherAutoEvaluationViewModel } from "@/server/evaluation/queries/AfficherAutoEvaluationQuery";
 import {
-  createPageHeader,
-  createPageHeaderWithBreak,
-  createTable,
-  createSectionTitle,
   createCommentCell,
-  createScoreCell,
-  createText,
   createLabeledText,
+  createPageHeader,
+  createScoreCell,
+  createSectionTitle,
+  createTable,
+  createText,
 } from "./pdfFactories";
 
 const formatterNote = (note: number | null): string => {
@@ -17,18 +16,18 @@ const formatterNote = (note: number | null): string => {
 };
 
 const stripHtml = (html: string): string => {
-  // Replace block-level elements with newlines
+  // Remplace les éléments de bloc par des sauts de ligne
   let text = html.replace(
     /<\/(p|div|h[1-6]|ul|ol|li|blockquote|pre|table|tr|td|th)>/gi,
     "\n",
   );
-  // Replace <br> tags with newlines
+  // Remplace les balises <br> par des sauts de ligne
   text = text.replace(/<br\s*\/?>/gi, "\n");
-  // Replace list items with bullet points
+  // Remplace les éléments de liste par des puces
   text = text.replace(/<li[^>]*>/gi, "\n• ");
-  // Remove all remaining HTML tags
+  // Supprime toutes les balises HTML restantes
   text = text.replace(/<[^>]*>/g, "");
-  // Decode common HTML entities
+  // Décode les entités HTML courantes
   text = text
     .replace(/&nbsp;/g, " ")
     .replace(/&amp;/g, "&")
@@ -36,7 +35,7 @@ const stripHtml = (html: string): string => {
     .replace(/&gt;/g, ">")
     .replace(/&quot;/g, '"')
     .replace(/&#39;/g, "'");
-  // Clean up multiple newlines and trim
+  // Nettoie les sauts de ligne multiples et retire les espaces superflus
   text = text.replace(/\n\s*\n\s*\n/g, "\n\n").trim();
   return text;
 };
@@ -67,9 +66,9 @@ export class AutoEvaluationPDFMapper {
     });
 
     return [
-      createPageHeader(
-        `Auto-évaluation - Manière de servir - ${this.getRattachementLabel()}`,
-      ),
+      createPageHeader({
+        title: `Auto-évaluation - Manière de servir - ${this.getRattachementLabel()}`,
+      }),
       createTable(tableBody),
     ];
   }
@@ -92,9 +91,10 @@ export class AutoEvaluationPDFMapper {
     });
 
     return [
-      createPageHeaderWithBreak(
-        `Auto-évaluation - Objectifs - ${this.getRattachementLabel()}`,
-      ),
+      createPageHeader({
+        title: `Auto-évaluation - Objectifs - ${this.getRattachementLabel()}`,
+        pageBreak: "before",
+      }),
       createTable(tableBody),
     ];
   }
@@ -128,9 +128,10 @@ export class AutoEvaluationPDFMapper {
     });
 
     return [
-      createPageHeaderWithBreak(
-        "Auto-évaluation - Fiches de cadrage - Objectifs",
-      ),
+      createPageHeader({
+        title: "Auto-évaluation - Fiches de cadrage - Objectifs",
+        pageBreak: "before",
+      }),
       createTable(tableBody, { rowModulo: 3 }),
     ];
   }
@@ -160,9 +161,10 @@ export class AutoEvaluationPDFMapper {
     });
 
     return [
-      createPageHeaderWithBreak(
-        "Auto-évaluation - Annexes - Manière de servir",
-      ),
+      createPageHeader({
+        title: "Auto-évaluation - Annexes - Manière de servir",
+        pageBreak: "before",
+      }),
       createTable(tableBody),
     ];
   }
@@ -192,7 +194,10 @@ export class AutoEvaluationPDFMapper {
     });
 
     return [
-      createPageHeaderWithBreak("Auto-évaluation - Annexes - Objectifs"),
+      createPageHeader({
+        title: "Auto-évaluation - Annexes - Objectifs",
+        pageBreak: "before",
+      }),
       createTable(tableBody),
     ];
   }

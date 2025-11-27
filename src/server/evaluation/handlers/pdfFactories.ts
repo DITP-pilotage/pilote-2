@@ -8,24 +8,20 @@ const COLORS = {
   backgroundLight: "#F6F6F6",
 } as const;
 
-export function createPageHeader(title: string): Content {
+export function createPageHeader({
+  title,
+  pageBreak,
+}: {
+  title: string;
+  pageBreak?: "before";
+}): Content {
   return {
     text: title,
     fontSize: 16,
     bold: true,
     color: COLORS.primary,
     margin: [0, 0, 0, 15],
-  };
-}
-
-export function createPageHeaderWithBreak(title: string): Content {
-  return {
-    text: title,
-    fontSize: 16,
-    bold: true,
-    color: COLORS.primary,
-    margin: [0, 0, 0, 15],
-    pageBreak: "before",
+    pageBreak,
   };
 }
 
