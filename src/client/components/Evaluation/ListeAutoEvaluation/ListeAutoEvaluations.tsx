@@ -3,6 +3,9 @@ import { toast } from "sonner";
 import { LigneEnteteAvancementCompletionEvaluation } from "@/components/Evaluation/ListeAutoEvaluation/LigneEnteteAvancementCompletionEvaluation";
 import { BarreProgressionEvaluation } from "@/components/_commons/BarreProgressionEvaluation";
 import api from "@/server/infrastructure/api/trpc/api";
+import { Bouton } from "@/components/_commons/Bouton/Bouton";
+import { Printer1Icon } from "@/components/_commons/Icones/Printer1Icon";
+import { Icone } from "@/components/_commons/Icone";
 import { BaseCardEvaluation } from "./BaseCardEvaluation";
 
 type FicheEvaluation = {
@@ -119,9 +122,27 @@ export const ListeAutoEvaluations = ({
         return (
           <div className="flex flex-col gap-2" key={ficheEvaluation.id}>
             <header>
-              <h2 className="!text-2xl !text-primary !mb-0">
-                {formatterTitreEvaluation(ficheEvaluation.rattachement)}
-              </h2>
+              <div className="flex justify-between items-center">
+                <h2 className="!text-2xl !text-primary !mb-0">
+                  {formatterTitreEvaluation(ficheEvaluation.rattachement)}
+                </h2>
+
+                <Bouton
+                  className="items-center"
+                  disabled={genererPDF.isLoading}
+                  iconLeft={
+                    <Icone
+                      className="w-4 h-4 !text-current !shrink-0"
+                      icone={Printer1Icon}
+                    />
+                  }
+                  label="Exporter en PDF"
+                  onClick={() => handleExportClick(ficheEvaluation.id)}
+                  size="sm"
+                  type="button"
+                  variant="link"
+                />
+              </div>
               <ul>
                 <LigneEnteteAvancementCompletionEvaluation
                   avancementCompletion={ficheEvaluation.objectifs}
@@ -137,15 +158,6 @@ export const ListeAutoEvaluations = ({
                 />
               </ul>
             </header>
-
-            <button
-              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded disabled:opacity-50 disabled:cursor-not-allowed"
-              disabled={genererPDF.isLoading}
-              onClick={() => handleExportClick(ficheEvaluation.id)}
-              type="button"
-            >
-              {genererPDF.isLoading ? "Génération..." : "Exporter en PDF"}
-            </button>
 
             <div className="grid md:grid-cols-3 gap-4">
               <BaseCardEvaluation
