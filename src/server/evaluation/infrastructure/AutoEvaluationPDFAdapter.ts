@@ -1,5 +1,6 @@
 import { Content } from "pdfmake/interfaces";
 import { AfficherAutoEvaluationViewModel } from "@/server/evaluation/queries/AfficherAutoEvaluationQuery";
+import { PDFContentAdapter } from "@/server/evaluation/domain/PDFContentAdapter";
 import {
   createCommentCell,
   createLabeledText,
@@ -8,7 +9,7 @@ import {
   createSectionTitle,
   createTable,
   createText,
-} from "./pdfFactories";
+} from "@/server/evaluation/handlers/pdfFactories";
 
 const formatterNote = (note: number | null): string => {
   if (note === null) return "Non évalué";
@@ -41,7 +42,7 @@ const stripHtml = (html: string | null) => {
   return text;
 };
 
-export class AutoEvaluationPDFMapper {
+export class AutoEvaluationPDFAdapter implements PDFContentAdapter {
   constructor(private autoEvaluation: AfficherAutoEvaluationViewModel) {}
 
   private getRattachementLabel(): string {
@@ -171,7 +172,7 @@ export class AutoEvaluationPDFMapper {
     ];
   }
 
-  mapToContent(): Content[] {
+  getContent(): Content[] {
     return [
       ...this.mapCriteresPage(),
       ...this.mapObjectifsPage(),

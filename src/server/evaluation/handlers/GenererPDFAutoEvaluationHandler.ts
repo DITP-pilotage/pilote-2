@@ -1,24 +1,16 @@
 import { z } from "zod";
 import { createPdf } from "pdfmake/build/pdfmake";
 import * as v from "pdfmake/build/vfs_fonts";
-import { AfficherAutoEvaluationViewModel } from "@/server/evaluation/queries/AfficherAutoEvaluationQuery";
-import { AutoEvaluationPDFMapper } from "./AutoEvaluationPDFMapper";
+
+import { PDFContentAdapter } from "@/server/evaluation/domain/PDFContentAdapter";
 
 export const genererPDFAutoEvaluationCommandSchema = z.object({
   ficheEvaluationId: z.string(),
 });
 
-export type GenererPDFAutoEvaluationCommand = z.infer<
-  typeof genererPDFAutoEvaluationCommandSchema
->;
-
 export class GenererPDFAutoEvaluationHandler {
-  async execute(
-    getAutoEvaluation: () => Promise<AfficherAutoEvaluationViewModel>,
-  ) {
-    const autoEvaluation = await getAutoEvaluation();
-    const mapper = new AutoEvaluationPDFMapper(autoEvaluation);
-    const content = mapper.mapToContent();
+  async execute(adapter: PDFContentAdapter) {
+    const content = adapter.getContent();
 
     const pdf = {
       content,
