@@ -1,4 +1,4 @@
-import { Content, TableCell } from "pdfmake/interfaces";
+import { Content } from "pdfmake/interfaces";
 import { AfficherAutoEvaluationViewModel } from "@/server/evaluation/queries/AfficherAutoEvaluationQuery";
 import {
   createCommentCell,
@@ -15,7 +15,8 @@ const formatterNote = (note: number | null): string => {
   return `${note}/100`;
 };
 
-const stripHtml = (html: string): string => {
+const stripHtml = (html: string | null) => {
+  if (!html) return null;
   // Remplace les éléments de bloc par des sauts de ligne
   let text = html.replace(
     /<\/(p|div|h[1-6]|ul|ol|li|blockquote|pre|table|tr|td|th)>/gi,
@@ -49,163 +50,124 @@ export class AutoEvaluationPDFMapper {
   }
 
   private mapCriteresPage(): Content[] {
-    if (this.autoEvaluation.criteres.length === 0) {
-      return [];
-    }
-
-    const tableBody: TableCell[][] = [];
-
-    this.autoEvaluation.criteres.forEach((critere) => {
-      tableBody.push(
-        [createSectionTitle({ title: critere.libelle }), {}],
-        [
-          createCommentCell({ comment: critere.evaluation.commentaire }),
-          createScoreCell({ score: formatterNote(critere.evaluation.note) }),
-        ],
-      );
-    });
-
     return [
       createPageHeader({
         title: `Auto-évaluation - Manière de servir - ${this.getRattachementLabel()}`,
       }),
-      createTable(tableBody),
+      createTable(
+        this.autoEvaluation.criteres.flatMap((critere) => [
+          [createSectionTitle({ title: critere.libelle }), {}],
+          [
+            createCommentCell({ comment: critere.evaluation.commentaire }),
+            createScoreCell({ score: formatterNote(critere.evaluation.note) }),
+          ],
+        ]),
+      ),
     ];
   }
 
   private mapObjectifsPage(): Content[] {
-    if (this.autoEvaluation.objectifs.length === 0) {
-      return [];
-    }
-
-    const tableBody: TableCell[][] = [];
-
-    this.autoEvaluation.objectifs.forEach((objectif) => {
-      tableBody.push(
-        [createSectionTitle({ title: objectif.libelle }), {}],
-        [
-          createCommentCell({ comment: objectif.evaluation.commentaire }),
-          createScoreCell({ score: formatterNote(objectif.evaluation.note) }),
-        ],
-      );
-    });
-
     return [
       createPageHeader({
         title: `Auto-évaluation - Objectifs - ${this.getRattachementLabel()}`,
         pageBreak: "before",
       }),
-      createTable(tableBody),
+      createTable(
+        this.autoEvaluation.objectifs.flatMap((objectif) => [
+          [createSectionTitle({ title: objectif.libelle }), {}],
+          [
+            createCommentCell({ comment: objectif.evaluation.commentaire }),
+            createScoreCell({ score: formatterNote(objectif.evaluation.note) }),
+          ],
+        ]),
+      ),
     ];
   }
 
   private mapFichesCadragePage(): Content[] {
-    if (this.autoEvaluation.objectifs.length === 0) {
-      return [];
-    }
-
-    const tableBody: TableCell[][] = [];
-
-    this.autoEvaluation.objectifs.forEach((objectif) => {
-      tableBody.push(
-        [createSectionTitle({ title: objectif.libelle }), {}],
-        [
-          createText({
-            text: createLabeledText({
-              label: "Descriptif",
-              text: objectif.descriptif,
-            }),
-            margin: [5, 5, 5, 5],
-          }),
-          {},
-        ],
-        [
-          createText({
-            text: createLabeledText({
-              label: "Indicateur + cible",
-              text: objectif.indicateurCible,
-            }),
-            margin: [5, 5, 5, 5],
-          }),
-          {},
-        ],
-      );
-    });
-
     return [
       createPageHeader({
         title: `Auto-évaluation - Fiches de cadrage - Objectifs - ${this.getRattachementLabel()}`,
         pageBreak: "before",
       }),
-      createTable(tableBody, { rowModulo: 3 }),
+      createTable(
+        this.autoEvaluation.objectifs.flatMap((objectif) => [
+          [createSectionTitle({ title: objectif.libelle }), {}],
+          [
+            createText({
+              text: createLabeledText({
+                label: "Descriptif",
+                text: objectif.descriptif,
+              }),
+              margin: [5, 5, 5, 5],
+            }),
+            {},
+          ],
+          [
+            createText({
+              text: createLabeledText({
+                label: "Indicateur + cible",
+                text: objectif.indicateurCible,
+              }),
+              margin: [5, 5, 5, 5],
+            }),
+            {},
+          ],
+        ]),
+        { rowModulo: 3 },
+      ),
     ];
   }
 
   private mapAnnexesCriteresPage(): Content[] {
-    if (this.autoEvaluation.criteres.length === 0) {
-      return [];
-    }
-
-    const tableBody: TableCell[][] = [];
-
-    this.autoEvaluation.criteres.forEach((critere) => {
-      const annexeText = critere.evaluation.annexe
-        ? stripHtml(critere.evaluation.annexe)
-        : null;
-
-      tableBody.push(
-        [createSectionTitle({ title: critere.libelle }), {}],
-        [
-          createText({
-            text: annexeText || "Aucune annexe",
-            italics: !annexeText,
-            color: annexeText ? "#555555" : "#999999",
-          }),
-          {},
-        ],
-      );
-    });
-
     return [
       createPageHeader({
         title: `Auto-évaluation - Annexes - Manière de servir - ${this.getRattachementLabel()}`,
         pageBreak: "before",
       }),
-      createTable(tableBody),
+      createTable(
+        this.autoEvaluation.criteres.flatMap((critere) => {
+          const annexeText = stripHtml(critere.evaluation.annexe);
+
+          return [
+            [createSectionTitle({ title: critere.libelle }), {}],
+            [
+              createText({
+                text: annexeText || "Aucune annexe",
+                italics: !annexeText,
+                color: annexeText ? "#555555" : "#999999",
+              }),
+              {},
+            ],
+          ];
+        }),
+      ),
     ];
   }
 
   private mapAnnexesObjectifsPage(): Content[] {
-    if (this.autoEvaluation.objectifs.length === 0) {
-      return [];
-    }
-
-    const tableBody: TableCell[][] = [];
-
-    this.autoEvaluation.objectifs.forEach((objectif) => {
-      const annexeText = objectif.evaluation.annexe
-        ? stripHtml(objectif.evaluation.annexe)
-        : null;
-
-      tableBody.push(
-        [createSectionTitle({ title: objectif.libelle }), {}],
-        [
-          createText({
-            text: annexeText || "Aucune annexe",
-            italics: !annexeText,
-            color: annexeText ? "#555555" : "#999999",
-          }),
-          {},
-        ],
-      );
-    });
-
     return [
       createPageHeader({
         title: `Auto-évaluation - Annexes - Objectifs - ${this.getRattachementLabel()}`,
         pageBreak: "before",
       }),
-      createTable(tableBody),
+      createTable(
+        this.autoEvaluation.objectifs.flatMap((objectif) => {
+          const annexeText = stripHtml(objectif.evaluation.annexe);
+
+          return [
+            [createSectionTitle({ title: objectif.libelle }), {}],
+            [
+              createText({
+                text: annexeText || "Aucune annexe",
+                italics: !annexeText,
+                color: annexeText ? "#555555" : "#999999",
+              }),
+              {},
+            ],
+          ];
+        }),
+      ),
     ];
   }
 
