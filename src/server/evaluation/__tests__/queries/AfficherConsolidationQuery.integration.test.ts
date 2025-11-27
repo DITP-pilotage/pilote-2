@@ -43,7 +43,7 @@ describe("AfficherConsolidationQuery", () => {
         data: {
           id: ficheEvaluationId,
           jalon: 2025,
-          etape_courante: "CONSOLIDATION",
+          etape_courante: $Enums.etape_evaluation_enum.CONSOLIDATION,
           rattachement_code: rattachementCode,
           etape_evaluations: {
             create: {
@@ -162,7 +162,7 @@ describe("AfficherConsolidationQuery", () => {
         data: {
           id: fiche1Id,
           jalon: 2025,
-          etape_courante: "CONSOLIDATION",
+          etape_courante: $Enums.etape_evaluation_enum.CONSOLIDATION,
           rattachement_code: rattachement1Code,
           etape_evaluations: {
             create: {
@@ -177,7 +177,7 @@ describe("AfficherConsolidationQuery", () => {
         data: {
           id: fiche2Id,
           jalon: 2025,
-          etape_courante: "CONSOLIDATION",
+          etape_courante: $Enums.etape_evaluation_enum.CONSOLIDATION,
           rattachement_code: rattachement2Code,
           etape_evaluations: {
             create: {
@@ -261,6 +261,7 @@ describe("AfficherConsolidationQuery", () => {
           code: rattachement1Code,
           libelle: "Rattachement 1",
           ficheEvaluationId: fiche1Id,
+          etapeCourante: "CONSOLIDATION",
           readOnly: false,
           objectifs: [
             {
@@ -347,6 +348,7 @@ describe("AfficherConsolidationQuery", () => {
           code: rattachement2Code,
           libelle: "Rattachement 2",
           ficheEvaluationId: fiche2Id,
+          etapeCourante: "CONSOLIDATION",
           readOnly: false,
           objectifs: [
             {
@@ -432,7 +434,7 @@ describe("AfficherConsolidationQuery", () => {
       ]);
     });
 
-    it("ne doit pas retourner les rattachements dans d'autres étapes", async () => {
+    it("ne doit pas retourner les rattachements en auto evaluation", async () => {
       // Given
       const utilisateurId = "e2234567-89ab-cdef-0123-456789abcdef";
       const rattachementCode = "REG-05";
@@ -547,7 +549,7 @@ describe("AfficherConsolidationQuery", () => {
         data: {
           id: ficheEvaluationId,
           jalon: 2025,
-          etape_courante: "CONSOLIDATION",
+          etape_courante: $Enums.etape_evaluation_enum.CONSOLIDATION,
           rattachement_code: rattachementCode,
           etape_evaluations: {
             create: [
@@ -607,6 +609,7 @@ describe("AfficherConsolidationQuery", () => {
           code: rattachementCode,
           libelle: "Rattachement multi-étape",
           ficheEvaluationId,
+          etapeCourante: "CONSOLIDATION",
           readOnly: false,
           objectifs: [
             {
@@ -699,7 +702,7 @@ describe("AfficherConsolidationQuery", () => {
         data: {
           id: ficheEvaluationId,
           jalon: 2025,
-          etape_courante: "CONSOLIDATION",
+          etape_courante: $Enums.etape_evaluation_enum.CONSOLIDATION,
           rattachement_code: rattachementCode,
           etape_evaluations: {
             create: {
@@ -729,6 +732,7 @@ describe("AfficherConsolidationQuery", () => {
           code: rattachementCode,
           libelle: "Rattachement sans évaluations",
           ficheEvaluationId,
+          etapeCourante: "CONSOLIDATION",
           readOnly: false,
           objectifs: [
             {
@@ -856,7 +860,7 @@ describe("AfficherConsolidationQuery", () => {
         data: {
           id: ficheEvaluationId,
           jalon: 2025,
-          etape_courante: "CONSOLIDATION",
+          etape_courante: $Enums.etape_evaluation_enum.CONSOLIDATION,
           rattachement_code: rattachementCode,
           etape_evaluations: {
             create: {
@@ -898,6 +902,7 @@ describe("AfficherConsolidationQuery", () => {
           code: rattachementCode,
           libelle: "Rattachement avec critères mixtes",
           ficheEvaluationId,
+          etapeCourante: "CONSOLIDATION",
           readOnly: false,
           objectifs: [],
           criteres: [
@@ -1009,7 +1014,7 @@ describe("AfficherConsolidationQuery", () => {
         data: {
           id: ficheEvaluationId,
           jalon: 2025,
-          etape_courante: "CONSOLIDATION",
+          etape_courante: $Enums.etape_evaluation_enum.CONSOLIDATION,
           rattachement_code: rattachementCode,
           etape_evaluations: {
             create: {
@@ -1051,6 +1056,7 @@ describe("AfficherConsolidationQuery", () => {
           code: rattachementCode,
           libelle: "Rattachement avec objectifs mixtes",
           ficheEvaluationId,
+          etapeCourante: "CONSOLIDATION",
           readOnly: false,
           objectifs: [
             {
@@ -1231,6 +1237,7 @@ describe("AfficherConsolidationQuery", () => {
           code: rattachementCode,
           libelle: "Rattachement en instruction",
           ficheEvaluationId,
+          etapeCourante: $Enums.etape_evaluation_enum.INSTRUCTION,
           readOnly: true,
           objectifs: [
             {
@@ -1366,7 +1373,7 @@ describe("AfficherConsolidationQuery", () => {
         data: {
           id: ficheEvaluationId,
           jalon: 2025,
-          etape_courante: "CONSOLIDATION",
+          etape_courante: $Enums.etape_evaluation_enum.CONSOLIDATION,
           rattachement_code: rattachementCode,
           etape_evaluations: {
             create: [
@@ -1454,6 +1461,7 @@ describe("AfficherConsolidationQuery", () => {
           code: rattachementCode,
           libelle: "Rattachement avec auto-évaluation",
           ficheEvaluationId,
+          etapeCourante: "CONSOLIDATION",
           readOnly: true,
           objectifs: [
             {
