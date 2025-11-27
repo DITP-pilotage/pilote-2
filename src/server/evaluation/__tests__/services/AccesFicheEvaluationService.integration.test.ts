@@ -33,6 +33,8 @@ describe("AccesFicheEvaluationService", () => {
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
+          groupe: rattachementCode,
+          ordre: 1,
           libelle: "Rattachement avec permission",
         },
       });
@@ -93,6 +95,8 @@ describe("AccesFicheEvaluationService", () => {
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
+          groupe: rattachementCode,
+          ordre: 1,
           libelle: "Rattachement réservé",
         },
       });
@@ -143,6 +147,8 @@ describe("AccesFicheEvaluationService", () => {
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
+          groupe: rattachementCode,
+          ordre: 1,
           libelle: "Rattachement consolidation",
         },
       });
@@ -204,6 +210,8 @@ describe("AccesFicheEvaluationService", () => {
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachement1Code,
+          groupe: rattachement1Code,
+          ordre: 1,
           libelle: "Rattachement 1",
         },
       });
@@ -211,6 +219,8 @@ describe("AccesFicheEvaluationService", () => {
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachement2Code,
+          groupe: rattachement2Code,
+          ordre: 1,
           libelle: "Rattachement 2",
         },
       });
@@ -271,6 +281,8 @@ describe("AccesFicheEvaluationService", () => {
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
+          groupe: rattachementCode,
+          ordre: 1,
           libelle: "Rattachement avec permission",
         },
       });
@@ -286,7 +298,7 @@ describe("AccesFicheEvaluationService", () => {
       });
 
       // When
-      const result = await service.peutAccederEtapeConsolidation({
+      const result = await service.peutAccederEtapeAppreciation({
         utilisateurId,
       });
 
@@ -313,12 +325,14 @@ describe("AccesFicheEvaluationService", () => {
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
+          groupe: rattachementCode,
+          ordre: 1,
           libelle: "Rattachement réservé",
         },
       });
 
       // When
-      const result = await service.peutAccederEtapeConsolidation({
+      const result = await service.peutAccederEtapeAppreciation({
         utilisateurId,
       });
 
@@ -345,6 +359,8 @@ describe("AccesFicheEvaluationService", () => {
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
+          groupe: rattachementCode,
+          ordre: 1,
           libelle: "Rattachement auto évaluation",
         },
       });
@@ -360,7 +376,7 @@ describe("AccesFicheEvaluationService", () => {
       });
 
       // When
-      const result = await service.peutAccederEtapeConsolidation({
+      const result = await service.peutAccederEtapeAppreciation({
         utilisateurId,
       });
 
@@ -389,6 +405,8 @@ describe("AccesFicheEvaluationService", () => {
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
+          groupe: rattachementCode,
+          ordre: 1,
           libelle: "Rattachement avec permission instruction",
         },
       });
@@ -431,6 +449,8 @@ describe("AccesFicheEvaluationService", () => {
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
+          groupe: rattachementCode,
+          ordre: 1,
           libelle: "Rattachement réservé instruction",
         },
       });
@@ -463,6 +483,8 @@ describe("AccesFicheEvaluationService", () => {
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
+          groupe: rattachementCode,
+          ordre: 1,
           libelle: "Rattachement consolidation",
         },
       });

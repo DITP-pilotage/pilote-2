@@ -37,7 +37,8 @@ WHERE
 	(base_mailles."maille"='REG' 	and cchantier.est_territorialise and it.indic_territo and maille_pilotage IN ('REG', 'DEPT')) OR
 	-- Pour NAT: Tous les indics
 	(base_mailles."maille"='NAT')
-ORDER BY spmi.id, base_mailles.maille)
+--ORDER BY spmi.id, base_mailles.maille
+)
 
 
 -- Récupération de la configuration temporelle
@@ -88,7 +89,7 @@ SELECT *,
 	coalesce(prochaine_date_maj > current_date, false) AS est_a_jour,
 	extract(day FROM prochaine_date_maj - current_date) AS prochaine_date_maj_jours
 FROM get_prochaine_date_maj
-ORDER BY indic_id, "maille"
+--ORDER BY indic_id, "maille"
 )
 
 SELECT * FROM get_est_a_jour_et_date_maj_jours

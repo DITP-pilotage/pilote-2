@@ -12,6 +12,8 @@ export const evaluationCommentaireSchema = z
   .string()
   .max(600, "Le commentaire ne doit pas dépasser 600 caractères.");
 
+export const evaluationAnnexeSchema = z.string();
+
 export const evaluationSchema = z.object({
   id: z.string(),
   note: evaluationNoteSchema.nullable(),

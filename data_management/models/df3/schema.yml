@@ -69,7 +69,7 @@ models:
         - Alors, **on retourne la valeur saisie *illégalement* au national**. En théorie, cette valeur devrait être ignorée, mais dans cette règle, on l'utilise pour combler le vide.
         - *Exemple:* une VC 2026 est indiquée au NAT mais pas encore territorialisée: on va l'afficher en attendant la territorialisation. Une fois que les VC DEPT seront renseignées, c'est bien la somme des VC DEPT qui va s'afficher en tant que VC 26. Même logique pour la VI.
   - name: agg_all
-    description: "Combinaision des tables d'aggrégation aux trois mailles (DEPT, REG, NAT)"
+    description: "Combinaison des tables d'aggrégation aux trois mailles (DEPT, REG, NAT)"
   - name: pivot_mesures
     description: "La table des mesures aggrégées (`agg_all`) est pivotée."
   - name: get_vca_jalon

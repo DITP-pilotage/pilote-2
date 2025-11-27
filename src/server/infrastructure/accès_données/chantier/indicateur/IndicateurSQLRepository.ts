@@ -20,6 +20,8 @@ import { prisma } from "@/server/db/prisma";
 export interface historique_valeurs {
   date: string;
   valeur: number;
+  taux_avancement_jalon?: number | null;
+  taux_avancement_mandat?: number | null;
 }
 
 export default class IndicateurSQLRepository implements IndicateurRepository {
@@ -76,7 +78,7 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
         dateValeurInitiale: formatDate(indicateurRow.date_valeur_initiale),
         // TODO(Tristan-10/10/2024) : Trouver une moyen de se débarasser du as unknown
         historiquesValeurs: (
-          indicateurRow.evolution_valeur_actuelle as unknown as historique_valeurs[]
+          indicateurRow.evolution_avancement as unknown as historique_valeurs[]
         ).sort((a, b) => comparerDates(a.date, b.date)),
         valeurAvancement: verifyValeurIsNotNullOrUndefined(
           indicateurTerritoireJalon?.valeur_actuelle,

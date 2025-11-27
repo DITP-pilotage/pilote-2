@@ -1,7 +1,7 @@
 import { Control, Controller, FieldValues, Path } from "react-hook-form";
 import { ComponentProps, RefObject, useImperativeHandle, useRef } from "react";
 import { clsxm } from "@/utils/clsxm";
-import { MessageErreur } from "@/components/PageEvaluation/MessageErreur";
+import { MessageErreur } from "@/components/PageAutoEvaluation/MessageErreur";
 
 export type TextareaRef = {
   focus: () => void;
@@ -12,15 +12,18 @@ export function Textarea<T extends FieldValues>({
   name,
   control,
   readOnly,
+  onChange,
   onBlur,
   className,
   textareaRef,
+  charLimit,
   ...props
 }: ComponentProps<"textarea"> & {
   label?: string;
   name: Path<T>;
   control: Control<T>;
   textareaRef?: RefObject<TextareaRef>;
+  charLimit?: number;
 }) {
   const internalRef = useRef<HTMLTextAreaElement | null>(null);
 
@@ -39,7 +42,7 @@ export function Textarea<T extends FieldValues>({
         return (
           <div className="flex flex-col gap-1">
             <label
-              className={clsxm("font-bold text-sm", {
+              className={clsxm("italic text-sm", {
                 "text-error": !!fieldState.error,
               })}
               htmlFor={fieldId}
@@ -62,6 +65,10 @@ export function Textarea<T extends FieldValues>({
                 field.onBlur();
                 onBlur?.(event);
               }}
+              onChange={(event) => {
+                field.onChange(event);
+                onChange?.(event);
+              }}
               ref={(node) => {
                 internalRef.current = node;
                 field.ref(node);
@@ -72,9 +79,11 @@ export function Textarea<T extends FieldValues>({
                 <MessageErreur>{fieldState.error.message}</MessageErreur>
               ) : null}
 
-              <span className="text-xs ml-auto">
-                {field.value.length} / 600
-              </span>
+              {charLimit != null && (
+                <span className="text-xs ml-auto">
+                  {field.value.length} / {charLimit}
+                </span>
+              )}
             </div>
           </div>
         );

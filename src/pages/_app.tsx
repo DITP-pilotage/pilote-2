@@ -14,6 +14,7 @@ import { Toaster } from "sonner";
 import MiseEnPage from "@/client/components/_commons/MiseEnPage/MiseEnPage";
 import useDétecterLargeurDÉcran from "@/client/hooks/useDétecterLargeurDÉcran";
 import api from "@/server/infrastructure/api/trpc/api";
+import { Tooltip } from "@/components/shared/Tooltip";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -118,12 +119,14 @@ function MonApplication({ Component, pageProps, nonce: appNonce }: MyAppProps) {
         />
       </Head>
       <QueryClientProvider client={queryClient}>
-        <SessionProvider session={pageProps.session}>
-          <MiseEnPage afficherLeLoader={afficherLeLoader}>
-            <Component {...pageProps} />
-            <Toaster />
-          </MiseEnPage>
-        </SessionProvider>
+        <Tooltip.Provider>
+          <SessionProvider session={pageProps.session}>
+            <MiseEnPage afficherLeLoader={afficherLeLoader}>
+              <Component {...pageProps} />
+              <Toaster />
+            </MiseEnPage>
+          </SessionProvider>
+        </Tooltip.Provider>
       </QueryClientProvider>
     </>
   );

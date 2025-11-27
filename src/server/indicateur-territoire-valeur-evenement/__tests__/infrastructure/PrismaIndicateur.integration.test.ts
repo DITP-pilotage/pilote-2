@@ -226,4 +226,54 @@ describe("PrismaIndicateurRepository", () => {
       expect(result).toEqual(dateRecente);
     });
   });
+
+  describe("#recupererInformationIndicateur", () => {
+    it("Doit retourner null quand l'indicateur n'existe pas", async () => {
+      // When
+      const result =
+        await prismaIndicateurRepository.recupererInformationIndicateur(
+          "IND-999",
+        );
+
+      // Then
+      expect(result).toBeNull();
+    });
+
+    it("Doit retourner le nom de l'indicateur, l'id du chantier et le nom du chantier", async () => {
+      // Given
+      await prisma.chantier_identite.create({
+        data: {
+          id: "CH-003",
+          nom: "Chantier Test 3",
+        },
+      });
+
+      await prisma.indicateur_identite.create({
+        data: {
+          id: "IND-003",
+          nom: "Indicateur Test 3",
+          est_barometre: false,
+          est_phare: false,
+          chantier_identite: {
+            connect: {
+              id: "CH-003",
+            },
+          },
+        },
+      });
+
+      // When
+      const result =
+        await prismaIndicateurRepository.recupererInformationIndicateur(
+          "IND-003",
+        );
+
+      // Then
+      expect(result).toEqual({
+        nom: "Indicateur Test 3",
+        chantierId: "CH-003",
+        chantierNom: "Chantier Test 3",
+      });
+    });
+  });
 });

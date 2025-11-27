@@ -56,6 +56,8 @@ describe("AfficherAutoEvaluationQuery", () => {
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
+          groupe: rattachementCode,
+          ordre: 1,
           libelle: "Rattachement 1",
           objectifs: {
             create: [
@@ -106,6 +108,7 @@ describe("AfficherAutoEvaluationQuery", () => {
             id: expect.any(String),
             note: null,
             commentaire: "",
+            annexe: "",
           },
           sousCriteres: [
             {
@@ -123,6 +126,7 @@ describe("AfficherAutoEvaluationQuery", () => {
             id: expect.any(String),
             note: null,
             commentaire: "",
+            annexe: "",
           },
           sousCriteres: [
             {
@@ -143,6 +147,7 @@ describe("AfficherAutoEvaluationQuery", () => {
             id: expect.any(String),
             note: null,
             commentaire: "",
+            annexe: "",
           },
         },
         {
@@ -154,6 +159,7 @@ describe("AfficherAutoEvaluationQuery", () => {
             id: expect.any(String),
             note: null,
             commentaire: "",
+            annexe: "",
           },
         },
       ]);
@@ -202,6 +208,8 @@ describe("AfficherAutoEvaluationQuery", () => {
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
+          groupe: rattachementCode,
+          ordre: 1,
           libelle: "Rattachement test",
           objectifs: {
             create: {
@@ -225,6 +233,7 @@ describe("AfficherAutoEvaluationQuery", () => {
             create: {
               id: etapeEvaluationId,
               type: "AUTO_EVALUATION",
+              objectifs_valides: true,
             },
           },
         },
@@ -238,6 +247,7 @@ describe("AfficherAutoEvaluationQuery", () => {
           auteur_id: utilisateurId,
           note: 4,
           commentaire: "Bon objectif",
+          annexe: "Une annexe",
         },
       });
 
@@ -249,6 +259,7 @@ describe("AfficherAutoEvaluationQuery", () => {
           auteur_id: utilisateurId,
           note: 3,
           commentaire: "Critère acceptable",
+          annexe: "Annexe critere",
         },
       });
 
@@ -265,6 +276,7 @@ describe("AfficherAutoEvaluationQuery", () => {
             id: evaluationSousCritereId,
             note: 3,
             commentaire: "Critère acceptable",
+            annexe: "Annexe critere",
           },
           sousCriteres: [
             {
@@ -285,10 +297,13 @@ describe("AfficherAutoEvaluationQuery", () => {
             id: evaluationObjectifId,
             note: 4,
             commentaire: "Bon objectif",
+            annexe: "Une annexe",
           },
         },
       ]);
       expect(result.readOnly).toBe(false);
+      expect(result.isObjectifsValides).toBe(true);
+      expect(result.isCriteresValides).toBe(false);
     });
 
     it("doit retourner readOnly=true quand l'étape courante n'est pas AUTO_EVALUATION", async () => {
@@ -300,6 +315,8 @@ describe("AfficherAutoEvaluationQuery", () => {
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
+          groupe: rattachementCode,
+          ordre: 1,
           libelle: "Rattachement read-only",
         },
       });
@@ -367,6 +384,8 @@ describe("AfficherAutoEvaluationQuery", () => {
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
+          groupe: rattachementCode,
+          ordre: 1,
           libelle: "Rattachement multiple",
         },
       });
@@ -400,6 +419,7 @@ describe("AfficherAutoEvaluationQuery", () => {
             id: expect.any(String),
             note: null,
             commentaire: "",
+            annexe: "",
           },
           sousCriteres: [
             {
@@ -474,6 +494,8 @@ describe("AfficherAutoEvaluationQuery", () => {
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
+          groupe: rattachementCode,
+          ordre: 1,
           libelle: "Rattachement isolation",
           objectifs: {
             create: {
@@ -516,6 +538,7 @@ describe("AfficherAutoEvaluationQuery", () => {
           auteur_id: utilisateur2Id,
           note: 5,
           commentaire: "Évaluation de consolidation",
+          annexe: "",
         },
       });
 
@@ -531,6 +554,7 @@ describe("AfficherAutoEvaluationQuery", () => {
             id: expect.any(String),
             note: null,
             commentaire: "",
+            annexe: "",
           },
           sousCriteres: [
             {
@@ -556,6 +580,8 @@ describe("AfficherAutoEvaluationQuery", () => {
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachement1Code,
+          groupe: rattachement1Code,
+          ordre: 1,
           libelle: "Rattachement 1",
         },
       });
@@ -563,6 +589,8 @@ describe("AfficherAutoEvaluationQuery", () => {
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachement2Code,
+          groupe: rattachement2Code,
+          ordre: 1,
           libelle: "Rattachement 2",
           objectifs: {
             create: {

@@ -7,29 +7,37 @@ export function InputNoteControlled<T extends FieldValues>({
   control,
   readOnly,
   onChange,
+  label,
   ...props
 }: ComponentProps<"input"> & {
   name: Path<T>;
   control: Control<T>;
+  label?: string;
 }) {
   return (
     <Controller
       control={control}
       name={name}
-      render={({ field, fieldState }) => (
-        <InputNote
-          {...props}
-          {...field}
-          disabled={readOnly}
-          errorMessage={fieldState.error?.message}
-          onChange={(e) => {
-            const value = e.target.valueAsNumber;
-            field.onChange(Number.isNaN(value) ? null : value);
-            onChange?.(e);
-          }}
-          value={field.value?.toString() ?? ""}
-        />
-      )}
+      render={({ field, fieldState }) => {
+        const fieldId = `${name}.note`;
+        return (
+          <InputNote
+            {...props}
+            {...field}
+            className="!bg-dsfr-contrast-grey"
+            disabled={readOnly}
+            errorMessage={fieldState.error?.message}
+            id={fieldId}
+            label={label}
+            onChange={(e) => {
+              const value = e.target.valueAsNumber;
+              field.onChange(Number.isNaN(value) ? null : value);
+              onChange?.(e);
+            }}
+            value={field.value?.toString() ?? ""}
+          />
+        );
+      }}
     />
   );
 }

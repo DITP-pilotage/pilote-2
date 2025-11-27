@@ -1,30 +1,45 @@
 import { FunctionComponent } from "react";
-import { GetServerSideProps, InferGetServerSidePropsType } from "next";
+import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next";
 import { getServerSession } from "next-auth/next";
+import { z } from "zod";
+import assert from "node:assert";
 import { PageFicheTerritoriale } from "@/components/PageFicheTerritoriale/PageFicheTerritoriale";
 import { authOptions } from "@/server/infrastructure/api/auth/[...nextauth]";
 import { estAutoriséAConsulterLaFicheTerritoriale } from "@/client/utils/fiche-territoriale/fiche-territoriale";
-import { FicheTerritorialeContrat } from "@/server/fiche-territoriale/app/contrats/FicheTerritorialeContrat";
 import { ficheTerritorialeHandler } from "@/server/fiche-territoriale/infrastructure/handlers/FicheTerritorialeHandler";
 import { getAnneeDateDeBascule } from "@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getAnneeDateDeBascule";
-import { configuration } from "@/config";
+import { configuration, configurationFeatureFlip } from "@/config";
 
-export const getServerSideProps: GetServerSideProps<{
-  ficheTerritoriale: FicheTerritorialeContrat;
-  jalon: number;
-}> = async ({ req, res, query }) => {
+export const getServerSideProps = async ({
+  req,
+  res,
+  query,
+}: GetServerSidePropsContext) => {
+  if (!configurationFeatureFlip().ficheTerritoriale) {
+    return {
+      redirect: {
+        destination: "/404",
+      },
+    };
+  }
+
+  const queryJalon = z.string().parse(query.jalon);
+  const queryTerritoireCode = z.string().parse(query.territoireCode);
+
   const session = await getServerSession(req, res, authOptions);
 
-  if (!session || !estAutoriséAConsulterLaFicheTerritoriale(session.profil)) {
+  assert(session);
+
+  if (!estAutoriséAConsulterLaFicheTerritoriale(session.profil)) {
     throw new Error("Not connected or not authorized ?");
   }
 
-  if (query.territoireCode === "NAT-FR") {
+  if (queryTerritoireCode === "NAT-FR") {
     throw new Error("Veuillez choisir un département ou une région");
   }
 
   const jalon =
-    Number.parseInt(query.jalon as string) ||
+    Number.parseInt(queryJalon as string) ||
     getAnneeDateDeBascule(
       new Date(),
       configuration().dateBasculeAffichageValeursAnneePrecedente,
@@ -32,7 +47,7 @@ export const getServerSideProps: GetServerSideProps<{
 
   const ficheTerritoriale =
     await ficheTerritorialeHandler().recupererFicheTerritoriale(
-      query.territoireCode as string,
+      queryTerritoireCode,
       jalon,
     );
 

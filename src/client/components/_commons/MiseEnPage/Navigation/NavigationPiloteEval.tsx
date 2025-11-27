@@ -32,9 +32,9 @@ export const NavigationPiloteEval = () => {
         },
         {
           nom: "Appréciation",
-          lien: "/evaluation/consolidation",
-          matcher: "/evaluation/consolidation",
-          accessible: droitsPiloteEval?.peutAccederConsolidation ?? false,
+          lien: "/evaluation/appreciation",
+          matcher: "/evaluation/appreciation",
+          accessible: droitsPiloteEval?.peutAccederAppreciation ?? false,
           prefetch: true,
           target: "_self",
         },

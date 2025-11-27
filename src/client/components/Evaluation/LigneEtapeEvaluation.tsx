@@ -1,14 +1,10 @@
 import { InputNote } from "@/components/_commons/InputNote";
+import {
+  FormCommentaireName,
+  FormNoteName,
+} from "@/components/Evaluation/form";
 import { CommentaireTextareaEvaluation } from "./CommentaireTextareaEvaluation";
 import { InputNoteEvaluation } from "./InputNoteEvaluation";
-
-type FormCommentaireName =
-  | `fichesEvaluation.${string}.objectifs.${string}.commentaire`
-  | `fichesEvaluation.${string}.criteres.${string}.commentaire`;
-
-type FormNoteName =
-  | `fichesEvaluation.${string}.objectifs.${string}.note`
-  | `fichesEvaluation.${string}.criteres.${string}.note`;
 
 export const LigneEtapeEvaluation = ({
   isEditable,
@@ -18,6 +14,7 @@ export const LigneEtapeEvaluation = ({
   noteName,
   commentaire,
   note,
+  onAutosave,
 }: {
   isEditable: boolean;
   commentaireLabel: string;
@@ -26,6 +23,7 @@ export const LigneEtapeEvaluation = ({
   noteName: FormNoteName;
   commentaire?: string | null;
   note?: number | null;
+  onAutosave?: (fieldName: FormCommentaireName | FormNoteName) => void;
 }) => {
   return (
     <div className="flex !mb-0 !-mx-4 first:border-t-0">
@@ -35,6 +33,7 @@ export const LigneEtapeEvaluation = ({
             disabled={false}
             label={commentaireLabel}
             name={commentaireName}
+            onAutosave={() => onAutosave?.(commentaireName)}
           />
         ) : (
           <>
@@ -49,7 +48,11 @@ export const LigneEtapeEvaluation = ({
         <strong className="text-sm block mb-1">{noteLabel}</strong>
         <div className="flex justify-end">
           {isEditable ? (
-            <InputNoteEvaluation disabled={false} name={noteName} />
+            <InputNoteEvaluation
+              disabled={false}
+              name={noteName}
+              onAutosave={() => onAutosave?.(noteName)}
+            />
           ) : (
             <InputNote disabled value={note ?? ""} />
           )}

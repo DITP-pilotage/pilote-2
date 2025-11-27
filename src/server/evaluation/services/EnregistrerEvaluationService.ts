@@ -2,8 +2,9 @@ import { z } from "zod";
 import { $Enums } from "@prisma/client";
 import { Transaction } from "@/server/db/Transaction";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
+import { SanitizerHTML } from "@/server/app/domain/SanitizerHTML";
 
-export const enregisterEvaluationCommandSchema = z.object({
+export const enregistrerEvaluationCommandSchema = z.object({
   ficheEvaluationId: z.string(),
   evaluationsCriteres: z
     .object({
@@ -11,6 +12,7 @@ export const enregisterEvaluationCommandSchema = z.object({
       critereId: z.string(),
       note: z.number().int().nullable(),
       commentaire: z.string(),
+      annexe: z.string().optional(),
     })
     .array(),
   evaluationsObjectifs: z
@@ -19,12 +21,13 @@ export const enregisterEvaluationCommandSchema = z.object({
       objectifId: z.string(),
       note: z.number().int().nullable(),
       commentaire: z.string(),
+      annexe: z.string().optional(),
     })
     .array(),
 });
 
 export type EnregistrerEvaluationCommandSchema = z.infer<
-  typeof enregisterEvaluationCommandSchema
+  typeof enregistrerEvaluationCommandSchema
 >;
 
 export class EnregistrerEvaluationService {
@@ -69,6 +72,9 @@ export class EnregistrerEvaluationService {
           objectif_id: evaluationObjectif.objectifId,
           note: evaluationObjectif.note,
           commentaire: evaluationObjectif.commentaire,
+          annexe: evaluationObjectif.annexe
+            ? SanitizerHTML.sanitize(evaluationObjectif.annexe)
+            : undefined,
         };
         await prisma.evaluation_objectif.upsert({
           where: { id: evaluationObjectif.id },
@@ -85,6 +91,9 @@ export class EnregistrerEvaluationService {
           critere_id: evaluationCritere.critereId,
           note: evaluationCritere.note,
           commentaire: evaluationCritere.commentaire,
+          annexe: evaluationCritere.annexe
+            ? SanitizerHTML.sanitize(evaluationCritere.annexe)
+            : undefined,
         };
         await prisma.evaluation_critere.upsert({
           where: { id: evaluationCritere.id },

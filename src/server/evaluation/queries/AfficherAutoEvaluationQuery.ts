@@ -11,6 +11,7 @@ export interface Critere {
     id: string;
     note: number | null;
     commentaire: string;
+    annexe: string;
   };
   sousCriteres: Array<{
     id: string;
@@ -28,15 +29,22 @@ export interface Objectif {
     id: string;
     note: number | null;
     commentaire: string;
+    annexe: string;
   };
 }
 
 export type AfficherAutoEvaluationViewModel = {
   ficheEvaluationId: string;
+  rattachement: {
+    code: string;
+    libelle: string;
+  };
   criteres: Critere[];
   objectifs: Objectif[];
   dateDerniereModification: string;
   readOnly: boolean;
+  isObjectifsValides: boolean;
+  isCriteresValides: boolean;
 };
 
 export class AfficherAutoEvaluationQuery {
@@ -51,6 +59,7 @@ export class AfficherAutoEvaluationQuery {
       .getInstance()
       .referentiel_critere.findMany({
         include: { sous_criteres: true },
+        orderBy: { id: "asc" },
       });
     const etapeAutoEvaluation = await this.dependencies.prisma
       .getInstance()
@@ -66,7 +75,7 @@ export class AfficherAutoEvaluationQuery {
             include: {
               rattachement: {
                 include: {
-                  objectifs: true,
+                  objectifs: { orderBy: { id: "asc" } },
                 },
               },
             },
@@ -76,6 +85,10 @@ export class AfficherAutoEvaluationQuery {
 
     return {
       ficheEvaluationId: etapeAutoEvaluation.fiche_evaluation.id,
+      rattachement: {
+        code: etapeAutoEvaluation.fiche_evaluation.rattachement.code,
+        libelle: etapeAutoEvaluation.fiche_evaluation.rattachement.libelle,
+      },
       criteres: criteres.map((critere) => {
         const evaluation = etapeAutoEvaluation.evaluations_criteres.find(
           (evaluationCritere) => evaluationCritere.critere_id === critere.id,
@@ -86,6 +99,7 @@ export class AfficherAutoEvaluationQuery {
             id: evaluation?.id ?? randomUUID(),
             note: evaluation?.note ?? null,
             commentaire: evaluation?.commentaire ?? "",
+            annexe: evaluation?.annexe ?? "",
           },
           sousCriteres: critere.sous_criteres.map((sousCritere) =>
             pick(sousCritere, ["id", "libelle", "descriptif"]),
@@ -106,6 +120,7 @@ export class AfficherAutoEvaluationQuery {
                 id: evaluation?.id ?? randomUUID(),
                 note: evaluation?.note ?? null,
                 commentaire: evaluation?.commentaire ?? "",
+                annexe: evaluation?.annexe ?? "",
               },
             };
           },
@@ -114,6 +129,8 @@ export class AfficherAutoEvaluationQuery {
       readOnly:
         etapeAutoEvaluation.fiche_evaluation.etape_courante !==
         $Enums.etape_evaluation_enum.AUTO_EVALUATION,
+      isObjectifsValides: etapeAutoEvaluation.objectifs_valides ?? false,
+      isCriteresValides: etapeAutoEvaluation.criteres_valides ?? false,
     };
   }
 }

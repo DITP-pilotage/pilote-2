@@ -1,0 +1,17 @@
+import { z } from "zod";
+import { useFormContext } from "react-hook-form";
+import {
+  evaluationAnnexeSchema,
+  evaluationSchema,
+} from "@/server/evaluation/schemas";
+
+export const formSchema = z.object({
+  criteres: evaluationSchema
+    .and(z.object({ annexe: evaluationAnnexeSchema }))
+    .array(),
+});
+
+export type FormValuesCriteres = z.infer<typeof formSchema>;
+
+export const useFormEvaluationCriteres = () =>
+  useFormContext<FormValuesCriteres>();

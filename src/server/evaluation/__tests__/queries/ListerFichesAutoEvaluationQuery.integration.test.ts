@@ -35,6 +35,8 @@ describe("ListerFichesAutoEvaluationQuery", () => {
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachement1Code,
+          groupe: rattachement1Code,
+          ordre: 1,
           libelle: "Rattachement 1",
         },
       });
@@ -42,6 +44,8 @@ describe("ListerFichesAutoEvaluationQuery", () => {
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachement2Code,
+          groupe: rattachement2Code,
+          ordre: 1,
           libelle: "Rattachement 2",
         },
       });
@@ -103,6 +107,8 @@ describe("ListerFichesAutoEvaluationQuery", () => {
       expect(result).toContainEqual({
         id: ficheEvaluation1Id,
         etapeCourante: "AUTO_EVALUATION",
+        isObjectifsValides: false,
+        isCriteresValides: false,
         rattachement: {
           code: rattachement1Code,
           libelle: "Rattachement 1",
@@ -122,6 +128,8 @@ describe("ListerFichesAutoEvaluationQuery", () => {
       expect(result).toContainEqual({
         id: ficheEvaluation2Id,
         etapeCourante: "CONSOLIDATION",
+        isObjectifsValides: false,
+        isCriteresValides: false,
         rattachement: {
           code: rattachement2Code,
           libelle: "Rattachement 2",
@@ -175,6 +183,8 @@ describe("ListerFichesAutoEvaluationQuery", () => {
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
+          groupe: rattachementCode,
+          ordre: 1,
           libelle: "Rattachement réservé",
         },
       });
@@ -234,6 +244,8 @@ describe("ListerFichesAutoEvaluationQuery", () => {
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
+          groupe: rattachementCode,
+          ordre: 1,
           libelle: "Rattachement consolidation",
         },
       });
@@ -309,6 +321,8 @@ describe("ListerFichesAutoEvaluationQuery", () => {
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
+          groupe: rattachementCode,
+          ordre: 1,
           libelle: "Rattachement avec note collective",
         },
       });
@@ -401,6 +415,8 @@ describe("ListerFichesAutoEvaluationQuery", () => {
       expect(result[0]).toEqual({
         id: ficheEvaluationId,
         etapeCourante: "AUTO_EVALUATION",
+        isObjectifsValides: false,
+        isCriteresValides: false,
         rattachement: {
           code: rattachementCode,
           libelle: "Rattachement avec note collective",

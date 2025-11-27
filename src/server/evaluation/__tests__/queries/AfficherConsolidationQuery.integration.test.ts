@@ -33,6 +33,8 @@ describe("AfficherConsolidationQuery", () => {
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
+          groupe: rattachementCode,
+          ordre: 1,
           libelle: "Rattachement sans accès",
         },
       });
@@ -123,6 +125,8 @@ describe("AfficherConsolidationQuery", () => {
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachement1Code,
+          groupe: rattachement1Code,
+          ordre: 1,
           libelle: "Rattachement 1",
           objectifs: {
             create: {
@@ -139,6 +143,8 @@ describe("AfficherConsolidationQuery", () => {
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachement2Code,
+          groupe: rattachement2Code,
+          ordre: 1,
           libelle: "Rattachement 2",
           objectifs: {
             create: {
@@ -270,6 +276,7 @@ describe("AfficherConsolidationQuery", () => {
                     note: 5,
                     commentaire: "Excellent",
                   },
+                  dateTraitement: null,
                 },
                 {
                   etape: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
@@ -278,6 +285,7 @@ describe("AfficherConsolidationQuery", () => {
                     note: null,
                     commentaire: "",
                   },
+                  dateTraitement: null,
                 },
               ],
             },
@@ -295,6 +303,7 @@ describe("AfficherConsolidationQuery", () => {
                     note: 4,
                     commentaire: "Bon critère",
                   },
+                  dateTraitement: null,
                 },
                 {
                   etape: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
@@ -303,6 +312,7 @@ describe("AfficherConsolidationQuery", () => {
                     note: null,
                     commentaire: "",
                   },
+                  dateTraitement: null,
                 },
               ],
             },
@@ -318,6 +328,7 @@ describe("AfficherConsolidationQuery", () => {
                     note: null,
                     commentaire: "",
                   },
+                  dateTraitement: null,
                 },
                 {
                   etape: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
@@ -326,6 +337,7 @@ describe("AfficherConsolidationQuery", () => {
                     note: null,
                     commentaire: "",
                   },
+                  dateTraitement: null,
                 },
               ],
             },
@@ -350,6 +362,7 @@ describe("AfficherConsolidationQuery", () => {
                     note: 3,
                     commentaire: "Moyen",
                   },
+                  dateTraitement: null,
                 },
                 {
                   etape: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
@@ -358,6 +371,7 @@ describe("AfficherConsolidationQuery", () => {
                     note: null,
                     commentaire: "",
                   },
+                  dateTraitement: null,
                 },
               ],
             },
@@ -375,6 +389,7 @@ describe("AfficherConsolidationQuery", () => {
                     note: null,
                     commentaire: "",
                   },
+                  dateTraitement: null,
                 },
                 {
                   etape: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
@@ -383,6 +398,7 @@ describe("AfficherConsolidationQuery", () => {
                     note: null,
                     commentaire: "",
                   },
+                  dateTraitement: null,
                 },
               ],
             },
@@ -398,6 +414,7 @@ describe("AfficherConsolidationQuery", () => {
                     note: 2,
                     commentaire: "Critère à améliorer",
                   },
+                  dateTraitement: null,
                 },
                 {
                   etape: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
@@ -406,6 +423,7 @@ describe("AfficherConsolidationQuery", () => {
                     note: null,
                     commentaire: "",
                   },
+                  dateTraitement: null,
                 },
               ],
             },
@@ -435,6 +453,8 @@ describe("AfficherConsolidationQuery", () => {
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
+          groupe: rattachementCode,
+          ordre: 1,
           libelle: "Rattachement en auto-évaluation",
         },
       });
@@ -508,6 +528,8 @@ describe("AfficherConsolidationQuery", () => {
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
+          groupe: rattachementCode,
+          ordre: 1,
           libelle: "Rattachement multi-étape",
           objectifs: {
             create: {
@@ -600,6 +622,7 @@ describe("AfficherConsolidationQuery", () => {
                     note: 4,
                     commentaire: "Évaluation consolidation",
                   },
+                  dateTraitement: null,
                 },
                 {
                   etape: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
@@ -608,6 +631,7 @@ describe("AfficherConsolidationQuery", () => {
                     note: 2,
                     commentaire: "Évaluation auto",
                   },
+                  dateTraitement: null,
                 },
               ],
             },
@@ -656,6 +680,8 @@ describe("AfficherConsolidationQuery", () => {
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
+          groupe: rattachementCode,
+          ordre: 1,
           libelle: "Rattachement sans évaluations",
           objectifs: {
             create: {
@@ -718,6 +744,7 @@ describe("AfficherConsolidationQuery", () => {
                     note: null,
                     commentaire: "",
                   },
+                  dateTraitement: null,
                 },
                 {
                   etape: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
@@ -726,6 +753,7 @@ describe("AfficherConsolidationQuery", () => {
                     note: null,
                     commentaire: "",
                   },
+                  dateTraitement: null,
                 },
               ],
             },
@@ -743,6 +771,7 @@ describe("AfficherConsolidationQuery", () => {
                     note: null,
                     commentaire: "",
                   },
+                  dateTraitement: null,
                 },
                 {
                   etape: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
@@ -751,6 +780,7 @@ describe("AfficherConsolidationQuery", () => {
                     note: null,
                     commentaire: "",
                   },
+                  dateTraitement: null,
                 },
               ],
             },
@@ -816,6 +846,8 @@ describe("AfficherConsolidationQuery", () => {
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
+          groupe: rattachementCode,
+          ordre: 1,
           libelle: "Rattachement avec critères mixtes",
         },
       });
@@ -881,6 +913,7 @@ describe("AfficherConsolidationQuery", () => {
                     note: 3,
                     commentaire: "Évaluation critère 1",
                   },
+                  dateTraitement: null,
                 },
                 {
                   etape: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
@@ -889,6 +922,7 @@ describe("AfficherConsolidationQuery", () => {
                     note: null,
                     commentaire: "",
                   },
+                  dateTraitement: null,
                 },
               ],
             },
@@ -904,6 +938,7 @@ describe("AfficherConsolidationQuery", () => {
                     note: null,
                     commentaire: "",
                   },
+                  dateTraitement: null,
                 },
                 {
                   etape: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
@@ -912,6 +947,7 @@ describe("AfficherConsolidationQuery", () => {
                     note: null,
                     commentaire: "",
                   },
+                  dateTraitement: null,
                 },
               ],
             },
@@ -945,6 +981,8 @@ describe("AfficherConsolidationQuery", () => {
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
+          groupe: rattachementCode,
+          ordre: 1,
           libelle: "Rattachement avec objectifs mixtes",
           objectifs: {
             create: [
@@ -1028,6 +1066,7 @@ describe("AfficherConsolidationQuery", () => {
                     note: 5,
                     commentaire: "Évaluation objectif 1",
                   },
+                  dateTraitement: null,
                 },
                 {
                   etape: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
@@ -1036,6 +1075,7 @@ describe("AfficherConsolidationQuery", () => {
                     note: null,
                     commentaire: "",
                   },
+                  dateTraitement: null,
                 },
               ],
             },
@@ -1052,6 +1092,7 @@ describe("AfficherConsolidationQuery", () => {
                     note: null,
                     commentaire: "",
                   },
+                  dateTraitement: null,
                 },
                 {
                   etape: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
@@ -1060,6 +1101,7 @@ describe("AfficherConsolidationQuery", () => {
                     note: null,
                     commentaire: "",
                   },
+                  dateTraitement: null,
                 },
               ],
             },
@@ -1125,6 +1167,8 @@ describe("AfficherConsolidationQuery", () => {
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
+          groupe: rattachementCode,
+          ordre: 1,
           libelle: "Rattachement avec auto-évaluation",
           objectifs: {
             create: {
@@ -1194,6 +1238,9 @@ describe("AfficherConsolidationQuery", () => {
       });
 
       // Évaluations en CONSOLIDATION
+      const dateTraitementObjectif = new Date("2025-01-15T10:30:00Z");
+      const dateTraitementCritere = new Date("2025-01-20T14:45:00Z");
+
       await prisma.evaluation_objectif.create({
         data: {
           id: evaluationObjectifConsoId,
@@ -1202,6 +1249,7 @@ describe("AfficherConsolidationQuery", () => {
           auteur_id: utilisateurId,
           note: 4,
           commentaire: "Consolidation objectif",
+          date_traitement: dateTraitementObjectif,
         },
       });
 
@@ -1213,6 +1261,7 @@ describe("AfficherConsolidationQuery", () => {
           auteur_id: utilisateurId,
           note: 5,
           commentaire: "Consolidation critère",
+          date_traitement: dateTraitementCritere,
         },
       });
 
@@ -1240,6 +1289,7 @@ describe("AfficherConsolidationQuery", () => {
                     note: 4,
                     commentaire: "Consolidation objectif",
                   },
+                  dateTraitement: dateTraitementObjectif.toISOString(),
                 },
                 {
                   etape: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
@@ -1248,6 +1298,7 @@ describe("AfficherConsolidationQuery", () => {
                     note: 3,
                     commentaire: "Auto-évaluation objectif",
                   },
+                  dateTraitement: null,
                 },
               ],
             },
@@ -1265,6 +1316,7 @@ describe("AfficherConsolidationQuery", () => {
                     note: 5,
                     commentaire: "Consolidation critère",
                   },
+                  dateTraitement: dateTraitementCritere.toISOString(),
                 },
                 {
                   etape: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
@@ -1273,6 +1325,7 @@ describe("AfficherConsolidationQuery", () => {
                     note: 2,
                     commentaire: "Auto-évaluation critère",
                   },
+                  dateTraitement: null,
                 },
               ],
             },

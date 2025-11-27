@@ -7,35 +7,35 @@ import {
   getGroupedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { useCallback, useMemo, useState } from "react";
-import { $Enums } from "@prisma/client";
+import { useMemo, useState } from "react";
 import pick from "lodash.pick";
-import { clsxm } from "@/utils/clsxm";
+import { parseAsArrayOf, parseAsString, useQueryStates } from "nuqs";
 import { TableauEvaluationRow } from "@/components/Evaluation/TableauEvaluation";
-import { Critere, Rattachement } from "@/server/evaluation/queries/types";
-import { LigneEtapeEvaluation } from "@/components/Evaluation/LigneEtapeEvaluation";
-import { BoutonAfficherFicheCadrage } from "@/components/Evaluation/BoutonAfficherFicheCadrage";
+import { Rattachement } from "@/server/evaluation/queries/types";
+import { CelluleEvaluation } from "@/components/Evaluation/CelluleEvaluation";
+import { useGetCritere } from "@/components/Evaluation/CriteresProvider";
 
 const columnHelper = createColumnHelper<TableauEvaluationRow>();
 
-export const useTableauEvaluation = ({
-  rattachements,
-  criteres,
-}: {
-  rattachements: Rattachement[];
-  criteres: Critere[];
-}) => {
-  const getCritere = useCallback(
-    (critereId: string) => {
-      const critereCible = criteres.find((critere) => critere.id === critereId);
-      if (critereCible == null)
-        throw new Error(`Critere introuvable: ${critereId}`);
-      return critereCible;
-    },
-    [criteres],
-  );
-  const [grouping, setGrouping] = useState<string[]>(["rattachementCode"]);
-  const data = useMemo<TableauEvaluationRow[]>(() => {
+const STATUTS_EVALUATION = {
+  TRAITE: { label: "Traité" },
+  NON_TRAITE: { label: "Non traité" },
+};
+
+const CATEGORIES = {
+  objectif: { label: "Objectifs" },
+  critere: { label: "Critères" },
+};
+
+type STATUT_EVALUATION = keyof typeof STATUTS_EVALUATION;
+
+const getStatutTraitement = (row: TableauEvaluationRow): STATUT_EVALUATION => {
+  return row.evaluations[0]?.dateTraitement != null ? "TRAITE" : "NON_TRAITE";
+};
+
+const useTableData = (rattachements: Rattachement[]) => {
+  const getCritere = useGetCritere();
+  return useMemo<TableauEvaluationRow[]>(() => {
     const rows: TableauEvaluationRow[] = [];
 
     rattachements.forEach((rattachement) => {
@@ -68,11 +68,22 @@ export const useTableauEvaluation = ({
 
     return rows;
   }, [getCritere, rattachements]);
+};
 
-  const columns = useMemo(
+export const COLONNES = {
+  RATTACHEMENT_CODE: "rattachementCode",
+  ID: "id",
+  CRITERE_ID: "critereId",
+  STATUT_TRAITEMENT: "statutTraitement",
+  CATEGORIE: "categorie",
+};
+
+const useTableColumns = (rattachements: Rattachement[]) => {
+  const getCritere = useGetCritere();
+  return useMemo(
     () => [
       columnHelper.accessor("rattachement.code", {
-        id: "rattachementCode",
+        id: COLONNES.RATTACHEMENT_CODE,
         header: "Rattachement",
         cell: (info) => {
           return (
@@ -97,121 +108,14 @@ export const useTableauEvaluation = ({
         getGroupingValue: (row) => row.rattachement.code,
       }),
       columnHelper.accessor("id", {
-        id: "id",
+        id: COLONNES.ID,
         header: "Évaluation",
-        cell: (info) => {
-          const currentGrouping = info.table.getState().grouping[0];
-          const row = info.row;
-          const commentaireName =
-            info.row.original.type === "objectif"
-              ? (`fichesEvaluation.${info.row.original.ficheEvaluationId}.objectifs.${info.row.original.id}.commentaire` as const)
-              : (`fichesEvaluation.${info.row.original.ficheEvaluationId}.criteres.${info.row.original.id}.commentaire` as const);
-          const noteName =
-            info.row.original.type === "objectif"
-              ? (`fichesEvaluation.${info.row.original.ficheEvaluationId}.objectifs.${info.row.original.id}.note` as const)
-              : (`fichesEvaluation.${info.row.original.ficheEvaluationId}.criteres.${info.row.original.id}.note` as const);
-
-          return (
-            <div className="space-y-4">
-              {(row.original.type === "objectif" ||
-                currentGrouping !== "critereId") && (
-                <div className="bg-gray-100 pb-2 border-b border-gray-200 -mx-4 px-4 pt-2 flex items-center justify-between gap-2 !mb-0">
-                  <div className="flex items-center gap-2">
-                    <span
-                      className={clsxm(
-                        "text-xs px-2 py-1.5 rounded-md capitalize font-medium",
-                        {
-                          "bg-blue-100 text-blue-600":
-                            row.original.type === "critere",
-                          "bg-green-100 text-green-600":
-                            row.original.type === "objectif",
-                        },
-                      )}
-                    >
-                      {row.original.type}
-                    </span>
-                    {row.original.libelle}
-                  </div>
-
-                  <div>
-                    <BoutonAfficherFicheCadrage
-                      critereOuObjectif={
-                        row.original.type === "objectif"
-                          ? { type: "objectif", objectif: row.original }
-                          : {
-                              type: "critere",
-                              critere: getCritere(row.original.id),
-                            }
-                      }
-                    />
-                  </div>
-                </div>
-              )}
-
-              <div className="divide-y divide-gray-200">
-                {row.original.evaluations.map((evalItem, index) => {
-                  const isEditable =
-                    index === 0 && !row.original.rattachement.readOnly;
-
-                  if (
-                    evalItem.etape === $Enums.etape_evaluation_enum.INSTRUCTION
-                  ) {
-                    return (
-                      <LigneEtapeEvaluation
-                        commentaire={evalItem.evaluation.commentaire}
-                        commentaireLabel="Commentaire d'instruction"
-                        commentaireName={commentaireName}
-                        isEditable={isEditable}
-                        key={evalItem.etape}
-                        note={evalItem.evaluation.note}
-                        noteLabel="Note d'instruction"
-                        noteName={noteName}
-                      />
-                    );
-                  } else if (
-                    evalItem.etape ===
-                    $Enums.etape_evaluation_enum.CONSOLIDATION
-                  ) {
-                    return (
-                      <LigneEtapeEvaluation
-                        commentaire={evalItem.evaluation.commentaire}
-                        commentaireLabel="Commentaire de consolidation"
-                        commentaireName={commentaireName}
-                        isEditable={isEditable}
-                        key={evalItem.etape}
-                        note={evalItem.evaluation.note}
-                        noteLabel="Note de consolidation"
-                        noteName={noteName}
-                      />
-                    );
-                  } else if (
-                    evalItem.etape ===
-                    $Enums.etape_evaluation_enum.AUTO_EVALUATION
-                  ) {
-                    return (
-                      <LigneEtapeEvaluation
-                        commentaire={evalItem.evaluation.commentaire}
-                        commentaireLabel="Commentaire de l'auto évalué"
-                        commentaireName={commentaireName}
-                        isEditable={false}
-                        key={evalItem.etape}
-                        note={evalItem.evaluation.note}
-                        noteLabel="Note auto-évaluation"
-                        noteName={noteName}
-                      />
-                    );
-                  }
-                  return null;
-                })}
-              </div>
-            </div>
-          );
-        },
+        cell: CelluleEvaluation,
         enableGrouping: false,
         enableColumnFilter: false,
       }),
       columnHelper.accessor((row) => (row.type === "critere" ? row.id : null), {
-        id: "critereId",
+        id: COLONNES.CRITERE_ID,
         header: "Critere",
         enableColumnFilter: true,
         filterFn: "arrIncludesSome",
@@ -219,9 +123,7 @@ export const useTableauEvaluation = ({
           filter: {
             label: "Filtrer par critère",
             labelToutesLesOptions: "Tous les critères",
-            getValueLabel: (value) =>
-              criteres.find((critere) => critere.id === value)?.libelle ??
-              value,
+            getValueLabel: (value) => getCritere(value)?.libelle ?? value,
           },
           grouping: {
             label: "Critère",
@@ -229,9 +131,112 @@ export const useTableauEvaluation = ({
         },
         getGroupingValue: (row) => (row.type === "critere" ? row.id : null),
       }),
+      columnHelper.accessor(getStatutTraitement, {
+        id: COLONNES.STATUT_TRAITEMENT,
+        enableColumnFilter: true,
+        filterFn: (row, columnId, filterValue) => {
+          const filter = Array.isArray(filterValue)
+            ? filterValue
+            : [filterValue];
+
+          if (filter.length === 0) {
+            return true;
+          }
+
+          return filter.includes(getStatutTraitement(row.original));
+        },
+        meta: {
+          filter: {
+            label: "Filtrer par statut",
+            labelToutesLesOptions: "Tous",
+            getValueLabel: (value: STATUT_EVALUATION) =>
+              STATUTS_EVALUATION[value].label,
+          },
+        },
+      }),
+      columnHelper.accessor((ligne) => ligne.type, {
+        id: COLONNES.CATEGORIE,
+        enableColumnFilter: true,
+        filterFn: (row, columnId, filterValue) => {
+          const filter = Array.isArray(filterValue)
+            ? filterValue
+            : [filterValue];
+
+          if (filter.length === 0) {
+            return true;
+          }
+
+          return filter.includes(row.original.type);
+        },
+        meta: {
+          filter: {
+            label: "Filtrer par catégorie",
+            labelToutesLesOptions: "Tous",
+            getValueLabel: (value: TableauEvaluationRow["type"]) =>
+              CATEGORIES[value].label,
+          },
+        },
+      }),
     ],
-    [rattachements, getCritere, criteres],
+    [rattachements, getCritere],
   );
+};
+
+const useColumnFilters = () => {
+  const [filters, setFilters] = useQueryStates(
+    {
+      territoire: parseAsArrayOf(parseAsString).withDefault([]),
+      critere: parseAsArrayOf(parseAsString).withDefault([]),
+      traite: parseAsArrayOf(parseAsString).withDefault([]),
+      categorie: parseAsArrayOf(parseAsString).withDefault([]),
+    },
+    {
+      shallow: false,
+      clearOnDefault: true,
+      history: "replace",
+    },
+  );
+  const columnFilters = useMemo(() => {
+    const columnFiltersArray = [];
+    if (filters.territoire.length > 0) {
+      columnFiltersArray.push({
+        id: COLONNES.RATTACHEMENT_CODE,
+        value: filters.territoire,
+      });
+    }
+    if (filters.critere.length > 0) {
+      columnFiltersArray.push({
+        id: COLONNES.CRITERE_ID,
+        value: filters.critere,
+      });
+    }
+    if (filters.traite.length > 0) {
+      columnFiltersArray.push({
+        id: COLONNES.STATUT_TRAITEMENT,
+        value: filters.traite,
+      });
+    }
+    if (filters.categorie.length > 0) {
+      columnFiltersArray.push({
+        id: COLONNES.CATEGORIE,
+        value: filters.categorie,
+      });
+    }
+    return columnFiltersArray;
+  }, [filters]);
+
+  return [columnFilters, setFilters] as const;
+};
+
+export const useTableauEvaluation = ({
+  rattachements,
+}: {
+  rattachements: Rattachement[];
+}) => {
+  const [grouping, setGrouping] = useState<string[]>(["rattachementCode"]);
+  const data = useTableData(rattachements);
+  const columns = useTableColumns(rattachements);
+  const [columnFilters, setFilters] = useColumnFilters();
 
   const table = useReactTable({
     data,
@@ -241,12 +246,57 @@ export const useTableauEvaluation = ({
     getExpandedRowModel: getExpandedRowModel(),
     getGroupedRowModel: getGroupedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
-    state: { grouping },
+    state: {
+      grouping,
+      columnFilters,
+    },
     onGroupingChange: setGrouping,
+    onColumnFiltersChange: (updater) => {
+      const newFilters =
+        typeof updater === "function" ? updater(columnFilters) : updater;
+
+      const territoireFilterValue = newFilters.find(
+        (filter) => filter.id === COLONNES.RATTACHEMENT_CODE,
+      )?.value;
+      const critereFilterValue = newFilters.find(
+        (filter) => filter.id === COLONNES.CRITERE_ID,
+      )?.value;
+      const traiteFilterValue = newFilters.find(
+        (filter) => filter.id === COLONNES.STATUT_TRAITEMENT,
+      )?.value;
+      const categorieFilterValue = newFilters.find(
+        (filter) => filter.id === COLONNES.CATEGORIE,
+      )?.value;
+
+      void setFilters({
+        territoire:
+          Array.isArray(territoireFilterValue) &&
+          territoireFilterValue.every((v) => typeof v === "string")
+            ? (territoireFilterValue as string[])
+            : [],
+        critere:
+          Array.isArray(critereFilterValue) &&
+          critereFilterValue.every((v) => typeof v === "string")
+            ? (critereFilterValue as string[])
+            : [],
+        traite:
+          Array.isArray(traiteFilterValue) &&
+          traiteFilterValue.every((v) => typeof v === "string")
+            ? (traiteFilterValue as string[])
+            : [],
+        categorie:
+          Array.isArray(categorieFilterValue) &&
+          categorieFilterValue.every((v) => typeof v === "string")
+            ? (categorieFilterValue as string[])
+            : [],
+      });
+    },
     initialState: {
       expanded: true,
       columnVisibility: {
-        critereId: false,
+        [COLONNES.CRITERE_ID]: false,
+        [COLONNES.STATUT_TRAITEMENT]: false,
+        [COLONNES.CATEGORIE]: false,
       },
     },
   });

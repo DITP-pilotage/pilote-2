@@ -1,5 +1,5 @@
 import { Bouton } from "@/components/_commons/Bouton/Bouton";
-import { useDebloquerFiches } from "@/components/PagePilotage/useDebloquerFiches";
+import { useModifierEtatFichesConsolidation } from "@/components/PagePilotage/useModifierEtatFichesConsolidation";
 
 export const BoutonDebloquerLaConsolidation = ({
   fichesSelectionneesIds,
@@ -8,10 +8,10 @@ export const BoutonDebloquerLaConsolidation = ({
   fichesSelectionneesIds: string[];
   disabled: boolean;
 }) => {
-  const debloquerFiches = useDebloquerFiches();
+  const { modifierEtat } = useModifierEtatFichesConsolidation();
 
   const handleDebloquerFiches = async () => {
-    await debloquerFiches(fichesSelectionneesIds);
+    await modifierEtat(fichesSelectionneesIds, false);
   };
 
   return (

@@ -12,7 +12,7 @@ select
 	chantier_id, zone_id, metric_date, count(indic_id) as n_taa_dispos
 from indic_taa_courant_dispo 
 group by chantier_id, zone_id, metric_date
-order by chantier_id, zone_id, metric_date desc
+--order by chantier_id, zone_id, metric_date desc
 )
 
 , rank_dates_taa_ch_dispo as (

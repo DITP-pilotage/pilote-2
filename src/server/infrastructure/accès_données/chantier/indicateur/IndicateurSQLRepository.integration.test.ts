@@ -246,7 +246,7 @@ describe("IndicateurSQLRepository", () => {
             date_valeur_initiale: new Date("2025-01-13"),
             est_a_jour: false,
             est_applicable: true,
-            evolution_valeur_actuelle: [
+            evolution_avancement: [
               { date: new Date("2024-06-12") },
             ] as unknown as Prisma.JsonArray,
             prochaine_date_maj_jours: 50,
@@ -269,7 +269,7 @@ describe("IndicateurSQLRepository", () => {
             date_valeur_initiale: new Date("2025-01-13"),
             est_a_jour: false,
             est_applicable: true,
-            evolution_valeur_actuelle: [
+            evolution_avancement: [
               { date: new Date("2024-06-12") },
             ] as unknown as Prisma.JsonArray,
             prochaine_date_maj_jours: 50,
@@ -300,7 +300,7 @@ describe("IndicateurSQLRepository", () => {
             date_valeur_initiale: new Date("2025-01-13"),
             est_a_jour: false,
             est_applicable: true,
-            evolution_valeur_actuelle: [
+            evolution_avancement: [
               { date: new Date("2024-06-12") },
             ] as unknown as Prisma.JsonArray,
             prochaine_date_maj_jours: 50,

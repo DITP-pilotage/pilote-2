@@ -14,11 +14,17 @@ import { AccepterAvecModificationPropositionValeurAvancementUseCase } from "./us
 import { RecupererHistoriqueIndicateurTerritoireValeurEvenementUseCase } from "./usecases/RecupererHistoriqueIndicateurTerritoireValeurEvenementUseCase";
 import { IndicateurRepository } from "./domain/ports/IndicateurRepository";
 import { PrismaIndicateurRepository } from "./infrastructure/PrismaIndicateurRepository";
+import { EnvoieEmailService } from "./domain/ports/EnvoieEmailService";
+import { BrevoEnvoieEmailService } from "./infrastructure/BrevoEnvoieEmailService";
+import { UtilisateurRepository } from "./domain/ports/UtilisateurRepository";
+import { PrismaUtilisateurRepository } from "./infrastructure/PrismaUtilisateurRepository";
 
 export type IndicateurTerritoireValeurEvenementDependencies = {
   indicateurTerritoireValeurEvenementRepository: IndicateurTerritoireValeurEvenementRepository;
   mesureIndicateurRepository: MesureIndicateurRepository;
   indicateurRepository: IndicateurRepository;
+  utilisateurRepository: UtilisateurRepository;
+  envoieEmailService: EnvoieEmailService;
   creerPropositionValeurAvancementUseCase: CreerPropositionValeurAvancementUseCase;
   accepterPropositionValeurAvancementUseCase: AccepterPropositionValeurAvancementUseCase;
   refuserPropositionValeurAvancementUseCase: RefuserPropositionValeurAvancementUseCase;
@@ -41,6 +47,8 @@ export const getIndicateurTerritoireValeurEvenementContainer = (
       ),
       mesureIndicateurRepository: asClass(PrismaMesureIndicateurRepository),
       indicateurRepository: asClass(PrismaIndicateurRepository),
+      utilisateurRepository: asClass(PrismaUtilisateurRepository),
+      envoieEmailService: asClass(BrevoEnvoieEmailService),
       creerPropositionValeurAvancementUseCase: asClass(
         CreerPropositionValeurAvancementUseCase,
       ),

@@ -2,7 +2,11 @@ import { $Enums } from "@prisma/client";
 import pick from "lodash.pick";
 import { randomUUID } from "node:crypto";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
-import { Critere, Rattachement } from "@/server/evaluation/queries/types";
+import {
+  Critere,
+  Objectif,
+  Rattachement,
+} from "@/server/evaluation/queries/types";
 
 type AfficherInstructionQueryResult = {
   criteres: Critere[];
@@ -79,7 +83,7 @@ export class AfficherInstructionQuery {
               objectif.id,
               $Enums.etape_evaluation_enum.CONSOLIDATION,
             );
-            const instructionEvaluation = this.findEvaluationObjectif(
+            const instruction = this.findEvaluationObjectif(
               etapesEvaluations,
               objectif.id,
               $Enums.etape_evaluation_enum.INSTRUCTION,
@@ -97,17 +101,26 @@ export class AfficherInstructionQuery {
               evaluations: [
                 {
                   etape: $Enums.etape_evaluation_enum.INSTRUCTION,
-                  evaluation: this.formatEvaluation(instructionEvaluation),
+                  evaluation: this.formatEvaluation(instruction),
+                  dateTraitement: instruction?.date_traitement
+                    ? new Date(instruction.date_traitement).toISOString()
+                    : null,
                 },
                 {
                   etape: $Enums.etape_evaluation_enum.CONSOLIDATION,
                   evaluation: this.formatEvaluation(consolidation),
+                  dateTraitement: consolidation?.date_traitement
+                    ? new Date(consolidation.date_traitement).toISOString()
+                    : null,
                 },
                 {
                   etape: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
                   evaluation: this.formatEvaluation(autoEvaluation),
+                  dateTraitement: autoEvaluation?.date_traitement
+                    ? new Date(autoEvaluation.date_traitement).toISOString()
+                    : null,
                 },
-              ],
+              ] satisfies Objectif["evaluations"],
             };
           });
 
@@ -142,16 +155,27 @@ export class AfficherInstructionQuery {
                 {
                   etape: $Enums.etape_evaluation_enum.INSTRUCTION,
                   evaluation: this.formatEvaluation(instructionEvaluation),
+                  dateTraitement: instructionEvaluation?.date_traitement
+                    ? new Date(
+                        instructionEvaluation.date_traitement,
+                      ).toISOString()
+                    : null,
                 },
                 {
                   etape: $Enums.etape_evaluation_enum.CONSOLIDATION,
                   evaluation: this.formatEvaluation(consolidation),
+                  dateTraitement: consolidation?.date_traitement
+                    ? new Date(consolidation.date_traitement).toISOString()
+                    : null,
                 },
                 {
                   etape: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
                   evaluation: this.formatEvaluation(autoEvaluation),
+                  dateTraitement: autoEvaluation?.date_traitement
+                    ? new Date(autoEvaluation.date_traitement).toISOString()
+                    : null,
                 },
-              ],
+              ] satisfies Rattachement["criteres"][number]["evaluations"],
             };
           });
 
@@ -285,6 +309,7 @@ export class AfficherInstructionQuery {
         objectif_id: string;
         note: number | null;
         commentaire: string;
+        date_traitement: Date | null;
       }>;
     }>,
     objectifId: string,
@@ -305,6 +330,7 @@ export class AfficherInstructionQuery {
         critere_id: string;
         note: number | null;
         commentaire: string;
+        date_traitement: Date | null;
       }>;
     }>,
     critereId: string,
@@ -318,7 +344,11 @@ export class AfficherInstructionQuery {
 
   private formatEvaluation(
     evaluation:
-      | { id: string; note: number | null; commentaire: string }
+      | {
+          id: string;
+          note: number | null;
+          commentaire: string;
+        }
       | undefined,
   ) {
     return {

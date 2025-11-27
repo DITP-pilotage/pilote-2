@@ -15,7 +15,7 @@ export function FiltresTableauEvaluation<T>({ table }: { table: Table<T> }) {
 
           return (
             <div className="flex items-center gap-2 !text-sm" key={column.id}>
-              <div className="font-semibold">
+              <div className="font-semibold whitespace-nowrap">
                 {column.columnDef.meta?.filter?.label} :
               </div>
               <div className="flex items-center flex-wrap gap-2">

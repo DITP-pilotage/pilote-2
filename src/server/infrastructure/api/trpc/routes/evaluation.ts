@@ -4,11 +4,18 @@ import {
 } from "@/server/infrastructure/api/trpc/trpc";
 import { getContainer } from "@/server/dependances";
 import { ForbiddenError } from "@/server/app/error-boundary/forbidden-error";
-import { soumettreAutoEvaluationCommandSchema } from "@/server/evaluation/handlers/SoumettreAutoEvaluationHandler";
-import { enregisterEvaluationCommandSchema } from "@/server/evaluation/services/EnregistrerEvaluationService";
-import { debloquerFichesConsolidationCommandSchema } from "@/server/evaluation/handlers/DebloquerFichesConsolidationHandler";
+import { enregistrerEvaluationCommandSchema } from "@/server/evaluation/services/EnregistrerEvaluationService";
+import { modifierEtatFichesConsolidationCommandSchema } from "@/server/evaluation/handlers/ModifierEtatFichesConsolidationHandler";
 import { modifierEtatFichesInstructionCommandSchema } from "@/server/evaluation/handlers/ModifierEtatFichesInstructionHandler";
+import { passerALaConsolidationCommandSchema } from "@/server/evaluation/handlers/PasserALaConsolidationHandler";
 import { passerALEtapeInstructionCommandSchema } from "@/server/evaluation/handlers/PasserALEtapeInstructionHandler";
+import { enregistrerEvaluationCriteresCommandSchema } from "@/server/evaluation/handlers/EnregistrerBrouillonAutoEvaluationCriteresHandler";
+import { enregistrerEvaluationObjectifsCommandSchema } from "@/server/evaluation/handlers/EnregistrerBrouillonAutoEvaluationObjectifsHandler";
+import { validerSaisieCriteresCommandSchema } from "@/server/evaluation/handlers/ValiderSaisieCriteresHandler";
+import { validerSaisieObjectifsCommandSchema } from "@/server/evaluation/handlers/ValiderSaisieObjectifsHandler";
+import { setTraitementEvaluationCommandSchema } from "@/server/evaluation/handlers/SetTraitementEvaluationHandler";
+import { retournerAutoEvaluationCommandSchema } from "@/server/evaluation/handlers/RetournerAutoEvaluationHandler";
+import { modifierObjectifCommandSchema } from "@/server/evaluation/handlers/ModifierObjectifHandler";
 
 export const evaluationRouter = créerRouteurTRPC({
   getDroitsPiloteEval: procédureProtégée.query(async ({ ctx }) => {
@@ -17,11 +24,11 @@ export const evaluationRouter = créerRouteurTRPC({
     );
 
     const [
-      peutAccederConsolidation,
+      peutAccederAppreciation,
       peutAccederInstruction,
       peutAccederPilotage,
     ] = await Promise.all([
-      accesFicheEvaluationService.peutAccederEtapeConsolidation({
+      accesFicheEvaluationService.peutAccederEtapeAppreciation({
         utilisateurId: ctx.session.user.id,
       }),
       accesFicheEvaluationService.peutAccederEtapeInstruction({
@@ -33,14 +40,14 @@ export const evaluationRouter = créerRouteurTRPC({
     ]);
 
     return {
-      peutAccederConsolidation,
+      peutAccederAppreciation,
       peutAccederInstruction,
       peutAccederPilotage,
     };
   }),
 
-  enregistrerBrouillonAutoEvaluation: procédureProtégée
-    .input(enregisterEvaluationCommandSchema)
+  enregistrerBrouillonAutoEvaluationObjectifs: procédureProtégée
+    .input(enregistrerEvaluationObjectifsCommandSchema)
     .mutation(async ({ input, ctx }) => {
       const peutAccederFicheAutoEvaluation = await getContainer("piloteEval")
         .resolve("accesFicheEvaluationService")
@@ -53,16 +60,70 @@ export const evaluationRouter = créerRouteurTRPC({
         throw new ForbiddenError("Accès refusé à la fiche d'auto-évaluation");
 
       await getContainer("piloteEval")
-        .resolve("enregistrerBrouillonAutoEvaluation")
+        .resolve("enregistrerBrouillonAutoEvaluationObjectifs")
+        .execute(input, ctx.session.user.id);
+    }),
+
+  enregistrerBrouillonAutoEvaluationCriteres: procédureProtégée
+    .input(enregistrerEvaluationCriteresCommandSchema)
+    .mutation(async ({ input, ctx }) => {
+      const peutAccederFicheAutoEvaluation = await getContainer("piloteEval")
+        .resolve("accesFicheEvaluationService")
+        .peutAccederEtapeAutoEvaluation({
+          utilisateurId: ctx.session.user.id,
+          ficheEvaluationId: input.ficheEvaluationId,
+        });
+
+      if (!peutAccederFicheAutoEvaluation)
+        throw new ForbiddenError("Accès refusé à la fiche d'auto-évaluation");
+
+      await getContainer("piloteEval")
+        .resolve("enregistrerBrouillonAutoEvaluationCriteres")
+        .execute(input, ctx.session.user.id);
+    }),
+
+  validerSaisieObjectifs: procédureProtégée
+    .input(validerSaisieObjectifsCommandSchema)
+    .mutation(async ({ input, ctx }) => {
+      const peutAccederFicheAutoEvaluation = await getContainer("piloteEval")
+        .resolve("accesFicheEvaluationService")
+        .peutAccederEtapeAutoEvaluation({
+          utilisateurId: ctx.session.user.id,
+          ficheEvaluationId: input.ficheEvaluationId,
+        });
+
+      if (!peutAccederFicheAutoEvaluation)
+        throw new ForbiddenError("Accès refusé à la fiche d'auto-évaluation");
+
+      await getContainer("piloteEval")
+        .resolve("validerSaisieObjectifs")
+        .execute(input, ctx.session.user.id);
+    }),
+
+  validerSaisieCriteres: procédureProtégée
+    .input(validerSaisieCriteresCommandSchema)
+    .mutation(async ({ input, ctx }) => {
+      const peutAccederFicheAutoEvaluation = await getContainer("piloteEval")
+        .resolve("accesFicheEvaluationService")
+        .peutAccederEtapeAutoEvaluation({
+          utilisateurId: ctx.session.user.id,
+          ficheEvaluationId: input.ficheEvaluationId,
+        });
+
+      if (!peutAccederFicheAutoEvaluation)
+        throw new ForbiddenError("Accès refusé à la fiche d'auto-évaluation");
+
+      await getContainer("piloteEval")
+        .resolve("validerSaisieCriteres")
         .execute(input, ctx.session.user.id);
     }),
 
   enregistrerBrouillonConsolidation: procédureProtégée
-    .input(enregisterEvaluationCommandSchema.array())
+    .input(enregistrerEvaluationCommandSchema.array())
     .mutation(async ({ input, ctx }) => {
       const peutAccederFicheAutoEvaluation = await getContainer("piloteEval")
         .resolve("accesFicheEvaluationService")
-        .peutAccederEtapeConsolidation({
+        .peutAccederEtapeAppreciation({
           utilisateurId: ctx.session.user.id,
         });
 
@@ -75,7 +136,7 @@ export const evaluationRouter = créerRouteurTRPC({
     }),
 
   enregistrerBrouillonInstruction: procédureProtégée
-    .input(enregisterEvaluationCommandSchema.array())
+    .input(enregistrerEvaluationCommandSchema.array())
     .mutation(async ({ input, ctx }) => {
       const peutAccederFicheInstruction = await getContainer("piloteEval")
         .resolve("accesFicheEvaluationService")
@@ -91,26 +152,8 @@ export const evaluationRouter = créerRouteurTRPC({
         .execute(input, ctx.session.user.id);
     }),
 
-  soumettreAutoEvaluation: procédureProtégée
-    .input(soumettreAutoEvaluationCommandSchema)
-    .mutation(async ({ input, ctx }) => {
-      const peutAccederFicheAutoEvaluation = await getContainer("piloteEval")
-        .resolve("accesFicheEvaluationService")
-        .peutAccederEtapeAutoEvaluation({
-          utilisateurId: ctx.session.user.id,
-          ficheEvaluationId: input.ficheEvaluationId,
-        });
-
-      if (!peutAccederFicheAutoEvaluation)
-        throw new ForbiddenError("Accès refusé à la fiche d'auto-évaluation");
-
-      await getContainer("piloteEval")
-        .resolve("soumettreAutoEvaluationHandler")
-        .execute(input, ctx.session.user.id);
-    }),
-
-  debloquerFichesConsolidation: procédureProtégée
-    .input(debloquerFichesConsolidationCommandSchema)
+  modifierEtatFichesConsolidation: procédureProtégée
+    .input(modifierEtatFichesConsolidationCommandSchema)
     .mutation(async ({ input, ctx }) => {
       const peutAccederPilotage = await getContainer("piloteEval")
         .resolve("accesFicheEvaluationService")
@@ -122,7 +165,7 @@ export const evaluationRouter = créerRouteurTRPC({
         throw new ForbiddenError("Accès refusé au pilotage");
 
       await getContainer("piloteEval")
-        .resolve("debloquerFichesConsolidationHandler")
+        .resolve("modifierEtatFichesConsolidationHandler")
         .execute(input);
     }),
 
@@ -143,6 +186,23 @@ export const evaluationRouter = créerRouteurTRPC({
         .execute(input);
     }),
 
+  passerALaConsolidation: procédureProtégée
+    .input(passerALaConsolidationCommandSchema)
+    .mutation(async ({ input, ctx }) => {
+      const peutAccederPilotage = await getContainer("piloteEval")
+        .resolve("accesFicheEvaluationService")
+        .peutAccederEtapePilotage({
+          applicationsAccessibles: ctx.session.applicationsAccessibles,
+        });
+
+      if (!peutAccederPilotage)
+        throw new ForbiddenError("Accès refusé au pilotage");
+
+      await getContainer("piloteEval")
+        .resolve("passerALaConsolidationHandler")
+        .execute(input, ctx.session.user.id);
+    }),
+
   passerALEtapeInstruction: procédureProtégée
     .input(passerALEtapeInstructionCommandSchema)
     .mutation(async ({ input, ctx }) => {
@@ -158,5 +218,57 @@ export const evaluationRouter = créerRouteurTRPC({
       await getContainer("piloteEval")
         .resolve("passerALEtapeInstructionHandler")
         .execute(input, ctx.session.user.id);
+    }),
+
+  setTraitementEvaluation: procédureProtégée
+    .input(setTraitementEvaluationCommandSchema)
+    .mutation(async ({ input, ctx }) => {
+      const peutAccederConsolidation = await getContainer("piloteEval")
+        .resolve("accesFicheEvaluationService")
+        .peutAccederEtapeAppreciation({
+          utilisateurId: ctx.session.user.id,
+        });
+
+      if (!peutAccederConsolidation)
+        throw new ForbiddenError("Accès refusé à la fiche d'auto-évaluation");
+
+      await getContainer("piloteEval")
+        .resolve("setTraitementEvaluationHandler")
+        .execute(input);
+    }),
+
+  retournerAutoEvaluation: procédureProtégée
+    .input(retournerAutoEvaluationCommandSchema)
+    .mutation(async ({ input, ctx }) => {
+      const peutAccederPilotage = await getContainer("piloteEval")
+        .resolve("accesFicheEvaluationService")
+        .peutAccederEtapePilotage({
+          applicationsAccessibles: ctx.session.applicationsAccessibles,
+        });
+
+      if (!peutAccederPilotage)
+        throw new ForbiddenError("Accès refusé au pilotage");
+
+      await getContainer("piloteEval")
+        .resolve("retournerAutoEvaluationHandler")
+        .execute(input);
+    }),
+
+  modifierObjectif: procédureProtégée
+    .input(modifierObjectifCommandSchema)
+    .mutation(async ({ input, ctx }) => {
+      const peutAccederFicheAutoEvaluation = await getContainer("piloteEval")
+        .resolve("accesFicheEvaluationService")
+        .peutAccederEtapeAutoEvaluation({
+          utilisateurId: ctx.session.user.id,
+          ficheEvaluationId: input.ficheEvaluationId,
+        });
+
+      if (!peutAccederFicheAutoEvaluation)
+        throw new ForbiddenError("Accès refusé à la fiche d'auto-évaluation");
+
+      await getContainer("piloteEval")
+        .resolve("modifierObjectifHandler")
+        .execute(input);
     }),
 });

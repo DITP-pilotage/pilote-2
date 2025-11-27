@@ -53,14 +53,14 @@ perform_decumul as (
             when va is null then null
             -- Si '_' -> on retourne va car pas de décumul demandé
             when param_vaca_decumul_from = '_' then va
-            -- Sinon, on soustraite la va courante à la va précédente, dans la limite de la fenetre définie par decumul_vaa_date
+            -- Sinon, on soustrait la va courante à la va précédente, dans la limite de la fenetre définie par decumul_vaa_date
             else coalesce(
                 va - lag(va, 1) over (
                     partition by
                         indic_id,
                         zone_id,
                         decumul_vaa_date
-                    order by metric_date::date
+                    order by metric_date::date ASC
                 ),
                 va
             )
@@ -77,6 +77,7 @@ compute_vaca as (
             -- Si 'current_value' -> on retourne directement va_decumul sans plus de calcul 
             when param_vaca_op = 'current_value' then va_decumul
             when param_vaca_partition_date = '_' then va_decumul
+            -- TODO : Use macro ? Sum using case when instead of window functions ?
             -- sum avec les différentes fenetres autorisées
             WHEN param_vaca_partition_date = 'from_previous_month::48'
             and param_vaca_op = 'sum' THEN sum(va_decumul) over w48

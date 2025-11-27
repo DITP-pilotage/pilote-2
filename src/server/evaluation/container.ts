@@ -1,19 +1,27 @@
 import { asClass, AwilixContainer } from "awilix";
 import { AfficherAutoEvaluationQuery } from "@/server/evaluation/queries/AfficherAutoEvaluationQuery";
 import { ListerFichesAutoEvaluationQuery } from "@/server/evaluation/queries/ListerFichesAutoEvaluationQuery";
+import { ListerFichesEvaluationParPhaseQuery } from "@/server/evaluation/queries/ListerFichesEvaluationParPhaseQuery";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { AccesFicheEvaluationService } from "@/server/evaluation/services/AccesFicheEvaluationService";
-import { SoumettreAutoEvaluationHandler } from "@/server/evaluation/handlers/SoumettreAutoEvaluationHandler";
 import { AfficherConsolidationQuery } from "@/server/evaluation/queries/AfficherConsolidationQuery";
 import { EnregistrerBrouillonConsolidationHandler } from "@/server/evaluation/handlers/EnregistrerBrouillonConsolidationHandler";
 import { AfficherPilotageQuery } from "@/server/evaluation/queries/AfficherPilotageQuery";
-import { DebloquerFichesConsolidationHandler } from "@/server/evaluation/handlers/DebloquerFichesConsolidationHandler";
+import { ModifierEtatFichesConsolidationHandler } from "@/server/evaluation/handlers/ModifierEtatFichesConsolidationHandler";
 import { PasserALEtapeInstructionHandler } from "@/server/evaluation/handlers/PasserALEtapeInstructionHandler";
 import { AfficherInstructionQuery } from "@/server/evaluation/queries/AfficherInstructionQuery";
 import { EnregistrerBrouillonInstructionHandler } from "@/server/evaluation/handlers/EnregistrerBrouillonInstructionHandler";
 import { ModifierEtatFichesInstructionHandler } from "@/server/evaluation/handlers/ModifierEtatFichesInstructionHandler";
 import { RecupererDetailsNoteCollectiveQuery } from "@/server/evaluation/queries/RecupererDetailsNoteCollectiveQuery";
-import { EnregistrerBrouillonAutoEvaluationHandler } from "./handlers/EnregistrerBrouillonAutoEvaluationHandler";
+import { SoumettreAutoEvaluationService } from "@/server/evaluation/services/SoumettreAutoEvaluationService";
+import { PasserALaConsolidationHandler } from "@/server/evaluation/handlers/PasserALaConsolidationHandler";
+import { EnregistrerBrouillonAutoEvaluationObjectifsHandler } from "./handlers/EnregistrerBrouillonAutoEvaluationObjectifsHandler";
+import { EnregistrerBrouillonAutoEvaluationCriteresHandler } from "./handlers/EnregistrerBrouillonAutoEvaluationCriteresHandler";
+import { ValiderSaisieCriteresHandler } from "./handlers/ValiderSaisieCriteresHandler";
+import { ValiderSaisieObjectifsHandler } from "./handlers/ValiderSaisieObjectifsHandler";
+import { SetTraitementEvaluationHandler } from "./handlers/SetTraitementEvaluationHandler";
+import { RetournerAutoEvaluationHandler } from "./handlers/RetournerAutoEvaluationHandler";
+import { ModifierObjectifHandler } from "./handlers/ModifierObjectifHandler";
 
 export type PiloteEvalDependencies = {
   afficherAutoEvaluation: AfficherAutoEvaluationQuery;
@@ -21,15 +29,23 @@ export type PiloteEvalDependencies = {
   afficherInstructionQuery: AfficherInstructionQuery;
   afficherPilotageQuery: AfficherPilotageQuery;
   listerFichesAutoEvaluation: ListerFichesAutoEvaluationQuery;
+  listerFichesEvaluationParPhaseQuery: ListerFichesEvaluationParPhaseQuery;
   recupererDetailsNoteCollectiveQuery: RecupererDetailsNoteCollectiveQuery;
-  enregistrerBrouillonAutoEvaluation: EnregistrerBrouillonAutoEvaluationHandler;
+  enregistrerBrouillonAutoEvaluationObjectifs: EnregistrerBrouillonAutoEvaluationObjectifsHandler;
+  enregistrerBrouillonAutoEvaluationCriteres: EnregistrerBrouillonAutoEvaluationCriteresHandler;
+  validerSaisieObjectifs: ValiderSaisieObjectifsHandler;
+  validerSaisieCriteres: ValiderSaisieCriteresHandler;
   enregistrerBrouillonConsolidationHandler: EnregistrerBrouillonConsolidationHandler;
   enregistrerBrouillonInstructionHandler: EnregistrerBrouillonInstructionHandler;
   accesFicheEvaluationService: AccesFicheEvaluationService;
-  soumettreAutoEvaluationHandler: SoumettreAutoEvaluationHandler;
-  debloquerFichesConsolidationHandler: DebloquerFichesConsolidationHandler;
+  soumettreAutoEvaluationService: SoumettreAutoEvaluationService;
+  modifierEtatFichesConsolidationHandler: ModifierEtatFichesConsolidationHandler;
   modifierEtatFichesInstructionHandler: ModifierEtatFichesInstructionHandler;
+  passerALaConsolidationHandler: PasserALaConsolidationHandler;
   passerALEtapeInstructionHandler: PasserALEtapeInstructionHandler;
+  setTraitementEvaluationHandler: SetTraitementEvaluationHandler;
+  retournerAutoEvaluationHandler: RetournerAutoEvaluationHandler;
+  modifierObjectifHandler: ModifierObjectifHandler;
 };
 
 export const getPiloteEvalContainer = (
@@ -41,12 +57,20 @@ export const getPiloteEvalContainer = (
     afficherInstructionQuery: asClass(AfficherInstructionQuery),
     afficherPilotageQuery: asClass(AfficherPilotageQuery),
     listerFichesAutoEvaluation: asClass(ListerFichesAutoEvaluationQuery),
+    listerFichesEvaluationParPhaseQuery: asClass(
+      ListerFichesEvaluationParPhaseQuery,
+    ),
     recupererDetailsNoteCollectiveQuery: asClass(
       RecupererDetailsNoteCollectiveQuery,
     ),
-    enregistrerBrouillonAutoEvaluation: asClass(
-      EnregistrerBrouillonAutoEvaluationHandler,
+    enregistrerBrouillonAutoEvaluationObjectifs: asClass(
+      EnregistrerBrouillonAutoEvaluationObjectifsHandler,
     ),
+    enregistrerBrouillonAutoEvaluationCriteres: asClass(
+      EnregistrerBrouillonAutoEvaluationCriteresHandler,
+    ),
+    validerSaisieObjectifs: asClass(ValiderSaisieObjectifsHandler),
+    validerSaisieCriteres: asClass(ValiderSaisieCriteresHandler),
     enregistrerBrouillonConsolidationHandler: asClass(
       EnregistrerBrouillonConsolidationHandler,
     ),
@@ -54,13 +78,17 @@ export const getPiloteEvalContainer = (
       EnregistrerBrouillonInstructionHandler,
     ),
     accesFicheEvaluationService: asClass(AccesFicheEvaluationService),
-    soumettreAutoEvaluationHandler: asClass(SoumettreAutoEvaluationHandler),
-    debloquerFichesConsolidationHandler: asClass(
-      DebloquerFichesConsolidationHandler,
+    soumettreAutoEvaluationService: asClass(SoumettreAutoEvaluationService),
+    modifierEtatFichesConsolidationHandler: asClass(
+      ModifierEtatFichesConsolidationHandler,
     ),
     modifierEtatFichesInstructionHandler: asClass(
       ModifierEtatFichesInstructionHandler,
     ),
+    passerALaConsolidationHandler: asClass(PasserALaConsolidationHandler),
     passerALEtapeInstructionHandler: asClass(PasserALEtapeInstructionHandler),
+    setTraitementEvaluationHandler: asClass(SetTraitementEvaluationHandler),
+    retournerAutoEvaluationHandler: asClass(RetournerAutoEvaluationHandler),
+    modifierObjectifHandler: asClass(ModifierObjectifHandler),
   });
 };

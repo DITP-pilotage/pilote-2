@@ -3,22 +3,33 @@ import { IndicateurTerritoireValeurEvenementRepository } from "@/server/indicate
 import { EvenementsSurDate } from "@/server/import-indicateur/domain/EvenementsSurDate";
 import { AccuserReceptionPropositionValeurUseCase } from "@/server/indicateur-territoire-valeur-evenement/usecases/AccuserReceptionPropositionValeurUseCase";
 import { IndicateurTerritoireValeurEvenement } from "@/server/indicateur-territoire-valeur-evenement/domain/IndicateurTerritoireValeurEvenement";
+import { IndicateurRepository } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/IndicateurRepository";
+import { UtilisateurRepository } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/UtilisateurRepository";
+import { EnvoieEmailService } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/EnvoieEmailService";
 
 describe("AccuserReceptionPropositionValeurUseCase", () => {
   let accuserReceptionPropositionValeurUseCase: AccuserReceptionPropositionValeurUseCase;
-
   let indicateurTerritoireValeurEvenementRepository: MockProxy<IndicateurTerritoireValeurEvenementRepository>;
+  let indicateurRepository: MockProxy<IndicateurRepository>;
+  let utilisateurRepository: MockProxy<UtilisateurRepository>;
+  let envoieEmailService: MockProxy<EnvoieEmailService>;
 
   beforeEach(() => {
     indicateurTerritoireValeurEvenementRepository =
       mock<IndicateurTerritoireValeurEvenementRepository>();
+    indicateurRepository = mock<IndicateurRepository>();
+    utilisateurRepository = mock<UtilisateurRepository>();
+    envoieEmailService = mock<EnvoieEmailService>();
     accuserReceptionPropositionValeurUseCase =
       new AccuserReceptionPropositionValeurUseCase({
         indicateurTerritoireValeurEvenementRepository,
+        indicateurRepository,
+        utilisateurRepository,
+        envoieEmailService,
       });
   });
 
-  it("Doit accuser réception d'une proposition de valeur d'avancement", async () => {
+  it("Doit accuser réception d'une proposition de valeur d'avancement et envoyer les emails aux auteurs et coordinateurs", async () => {
     // Given
     const input = {
       indicId: "IND-006",
@@ -33,13 +44,28 @@ describe("AccuserReceptionPropositionValeurUseCase", () => {
         {
           indicId: input.indicId,
           territoireCode: input.territoireCode,
-          typeEvenement: "PROPOSITION_VALEUR_CREEE",
+          typeEvenement: "VALEUR_CREEE",
           typeValeur: "VALEUR_AVANCEMENT",
-          dateValeur: new Date("2024-01-01"),
-          valeur: 10,
+          dateValeur: new Date(input.dateValeurAvancement),
+          valeur: 3,
           idAuteurModification: "user-1",
           correlationId: "corr-1",
           ordre: 1,
+          dateCreation: new Date("2022-01-01"),
+          donneesComplementaires: undefined,
+        },
+      ),
+      IndicateurTerritoireValeurEvenement.createValeurIndicateurTerritoireEvenement(
+        {
+          indicId: input.indicId,
+          territoireCode: input.territoireCode,
+          typeEvenement: "PROPOSITION_VALEUR_CREEE",
+          typeValeur: "VALEUR_AVANCEMENT",
+          dateValeur: new Date(input.dateValeurAvancement),
+          valeur: 10,
+          idAuteurModification: "user-1",
+          correlationId: "corr-1",
+          ordre: 2,
           dateCreation: new Date("2022-01-01"),
           donneesComplementaires: {
             motif: "Motif de la proposition",
@@ -54,11 +80,11 @@ describe("AccuserReceptionPropositionValeurUseCase", () => {
           territoireCode: input.territoireCode,
           typeEvenement: "PROPOSITION_VALEUR_MODIFIEE",
           typeValeur: "VALEUR_AVANCEMENT",
-          dateValeur: new Date("2024-02-01"),
+          dateValeur: new Date(input.dateValeurAvancement),
           valeur: 20,
           idAuteurModification: "user-2",
           correlationId: "corr-2",
-          ordre: 2,
+          ordre: 3,
           dateCreation: new Date("2022-01-01"),
           donneesComplementaires: {
             motif: "Modification de la proposition",
@@ -80,8 +106,24 @@ describe("AccuserReceptionPropositionValeurUseCase", () => {
       }),
     );
 
+    utilisateurRepository.recupererEmailsParUtilisateurIds.mockResolvedValue([
+      "auteur1@example.com",
+      "auteur2@example.com",
+    ]);
+
+    utilisateurRepository.recupererUtilisateursParProfilEtTerritoire.mockResolvedValue(
+      ["auteur1@example.com", "coordinateur2@example.com"],
+    );
+
+    indicateurRepository.recupererInformationIndicateur.mockResolvedValue({
+      nom: "Nom de l'indicateur",
+      chantierId: "CH-001",
+      chantierNom: "Nom du chantier",
+    });
+
     // When
     await accuserReceptionPropositionValeurUseCase.run(input);
+    await new Promise((resolve) => setImmediate(resolve));
 
     // Then
     expect(
@@ -95,9 +137,69 @@ describe("AccuserReceptionPropositionValeurUseCase", () => {
         dateValeur: new Date(input.dateValeurAvancement),
         valeur: 20,
         idAuteurModification: input.idAuteurAccuseReception,
-        ordre: 3,
+        ordre: 4,
         donneesComplementaires: { motif: "Motif de l'accusé de réception" },
       }),
     ]);
+
+    expect(
+      utilisateurRepository.recupererEmailsParUtilisateurIds,
+    ).toHaveBeenCalledWith(["user-2", "user-1"]);
+
+    expect(
+      utilisateurRepository.recupererUtilisateursParProfilEtTerritoire,
+    ).toHaveBeenCalledWith({
+      profil: "COORDINATEUR_DEPARTEMENT",
+      territoireCode: input.territoireCode,
+    });
+
+    expect(
+      envoieEmailService.envoieNotificationProposition,
+    ).toHaveBeenCalledTimes(3);
+    expect(
+      envoieEmailService.envoieNotificationProposition,
+    ).toHaveBeenCalledWith({
+      destinataires: [{ email: "auteur1@example.com" }],
+      templateId: 43,
+      parametres: {
+        chantierId: "CH-001",
+        chantierNom: "Nom du chantier",
+        indicateurId: input.indicId,
+        indicateurNom: "Nom de l'indicateur",
+        dateValeur: "06-2024",
+        valeurProposee: "20",
+        valeurAvancement: "3",
+      },
+    });
+    expect(
+      envoieEmailService.envoieNotificationProposition,
+    ).toHaveBeenCalledWith({
+      destinataires: [{ email: "auteur2@example.com" }],
+      templateId: 43,
+      parametres: {
+        chantierId: "CH-001",
+        chantierNom: "Nom du chantier",
+        indicateurId: input.indicId,
+        indicateurNom: "Nom de l'indicateur",
+        dateValeur: "06-2024",
+        valeurProposee: "20",
+        valeurAvancement: "3",
+      },
+    });
+    expect(
+      envoieEmailService.envoieNotificationProposition,
+    ).toHaveBeenCalledWith({
+      destinataires: [{ email: "coordinateur2@example.com" }],
+      templateId: 43,
+      parametres: {
+        chantierId: "CH-001",
+        chantierNom: "Nom du chantier",
+        indicateurId: input.indicId,
+        indicateurNom: "Nom de l'indicateur",
+        dateValeur: "06-2024",
+        valeurProposee: "20",
+        valeurAvancement: "3",
+      },
+    });
   });
 });

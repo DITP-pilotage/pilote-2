@@ -13,15 +13,17 @@ export const Bouton = ({
   label: string;
   iconLeft?: ReactNode;
   iconRight?: ReactNode;
-  variant?: "primary" | "secondary";
+  variant?: "primary" | "secondary" | "link";
   size?: "sm" | "default";
 } & ComponentProps<"button">) => {
   return (
     <button
       className={clsxm(
-        "fr-btn gap-2",
+        "gap-2",
         {
-          "fr-btn--secondary": variant === "secondary",
+          "fr-link flex": variant === "link",
+          "fr-btn fr-btn--secondary": variant === "secondary",
+          "fr-btn": variant === "primary",
           "fr-btn--sm": size === "sm",
         },
         className,

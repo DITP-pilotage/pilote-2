@@ -54,6 +54,8 @@ export class AfficherPilotageQuery {
           rattachement: {
             code: rattachement.code,
             libelle: rattachement.libelle,
+            groupe: rattachement.groupe,
+            ordre: rattachement.ordre,
           },
           evaluationsParCritereEtEtape,
           objectifs,
@@ -86,11 +88,18 @@ export class AfficherPilotageQuery {
           },
         },
       },
-      orderBy: {
-        rattachement: {
-          code: "asc",
+      orderBy: [
+        {
+          rattachement: {
+            groupe: "asc",
+          },
         },
-      },
+        {
+          rattachement: {
+            ordre: "asc",
+          },
+        },
+      ],
     });
   }
 
