@@ -1,34 +1,11 @@
 import { $Enums } from "@prisma/client";
-import { toast } from "sonner";
 import { LigneEnteteAvancementCompletionEvaluation } from "@/components/Evaluation/ListeAutoEvaluation/LigneEnteteAvancementCompletionEvaluation";
 import { BarreProgressionEvaluation } from "@/components/_commons/BarreProgressionEvaluation";
-import api from "@/server/infrastructure/api/trpc/api";
 import { Bouton } from "@/components/_commons/Bouton/Bouton";
 import { Printer1Icon } from "@/components/_commons/Icones/Printer1Icon";
 import { Icone } from "@/components/_commons/Icone";
+import { useGenererPDF } from "@/components/Evaluation/ListeAutoEvaluation/useGenererPDF";
 import { BaseCardEvaluation } from "./BaseCardEvaluation";
-
-type FicheEvaluation = {
-  id: string;
-  etapeCourante: $Enums.etape_evaluation_enum;
-  isObjectifsValides: boolean;
-  isCriteresValides: boolean;
-  rattachement: {
-    code: string;
-    libelle: string;
-  };
-  objectifs: {
-    moyenne: number | null;
-    nombreNotes: number;
-    nombreTotal: number;
-  };
-  criteres: {
-    moyenne: number | null;
-    nombreNotes: number;
-    nombreTotal: number;
-  };
-  noteCollective: number | null;
-};
 
 const formatterTitreEvaluation = ({
   code,
@@ -63,49 +40,33 @@ const formatterTexteCompletion = ({
       : "À COMPLÉTER";
 };
 
-const downloadPDF = (base64Data: string, filename: string) => {
-  const binaryString = atob(base64Data);
-  const bytes = new Uint8Array(binaryString.length);
-  for (let i = 0; i < binaryString.length; i++) {
-    bytes[i] = binaryString.charCodeAt(i);
-  }
-  const blob = new Blob([bytes], { type: "application/pdf" });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = filename;
-  document.body.append(link);
-  link.click();
-  link.remove();
-  URL.revokeObjectURL(url);
+export type FicheEvaluation = {
+  id: string;
+  etapeCourante: $Enums.etape_evaluation_enum;
+  isObjectifsValides: boolean;
+  isCriteresValides: boolean;
+  rattachement: {
+    code: string;
+    libelle: string;
+  };
+  objectifs: {
+    moyenne: number | null;
+    nombreNotes: number;
+    nombreTotal: number;
+  };
+  criteres: {
+    moyenne: number | null;
+    nombreNotes: number;
+    nombreTotal: number;
+  };
+  noteCollective: number | null;
 };
-
 export const ListeAutoEvaluations = ({
   fichesEvaluation,
 }: {
   fichesEvaluation: FicheEvaluation[];
 }) => {
-  const genererPDF = api.evaluation.genererPDFAutoEvaluation.useMutation({
-    onSuccess: (base64Data, variables) => {
-      const fiche = fichesEvaluation.find(
-        (f) => f.id === variables.ficheEvaluationId,
-      );
-      const filename = fiche
-        ? `auto-evaluation-${fiche.rattachement.code}.pdf`
-        : "auto-evaluation.pdf";
-      downloadPDF(base64Data, filename);
-      toast.success("PDF généré avec succès", {
-        position: "top-right",
-        richColors: true,
-      });
-    },
-    onError: () => {
-      toast.error("Erreur lors de la génération du PDF", {
-        position: "top-right",
-        richColors: true,
-      });
-    },
-  });
+  const genererPDF = useGenererPDF(fichesEvaluation);
 
   const handleExportClick = (ficheEvaluationId: string) => {
     genererPDF.mutate({ ficheEvaluationId });
