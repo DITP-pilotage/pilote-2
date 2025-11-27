@@ -5,7 +5,6 @@ const openPDFInNewTab = (base64Data: string) => {
   const binaryString = atob(base64Data);
   const bytes = new Uint8Array(binaryString.length);
   for (let i = 0; i < binaryString.length; i++) {
-    // eslint-disable-next-line unicorn/prefer-code-point
     bytes[i] = binaryString.charCodeAt(i);
   }
   const blob = new Blob([bytes], { type: "application/pdf" });

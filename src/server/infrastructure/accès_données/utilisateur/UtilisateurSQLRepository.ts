@@ -309,7 +309,6 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
       chantiersAccessibles = this._chantiersTerritorialisésIds;
     }
 
-    // eslint-disable-next-line unicorn/prefer-ternary
     if (
       [
         ProfilEnum.COORDINATEUR_REGION,

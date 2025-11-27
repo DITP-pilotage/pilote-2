@@ -24,7 +24,6 @@ export class SoumettreAutoEvaluationService {
       const existingConsolidation =
         await this.getExistingConsolidation(ficheEvaluationId);
 
-      // eslint-disable-next-line unicorn/prefer-ternary
       if (!existingConsolidation) {
         await this.creerEtapeConsolidation({
           auteurId,

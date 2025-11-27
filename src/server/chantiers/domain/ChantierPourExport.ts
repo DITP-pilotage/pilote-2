@@ -113,7 +113,6 @@ export const verifierOptionChantiersSignales = (
   chantierMeteo: Météo,
   chantierAUnePropositionsValeurAvancement: boolean,
 ) => {
-  // eslint-disable-next-line unicorn/prefer-ternary
   if (
     optionsExport.estEnAlerteAbscenceTauxAvancementDepartemental ||
     optionsExport.estEnAlerteBaisse ||

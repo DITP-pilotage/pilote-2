@@ -3,7 +3,6 @@ import mockRouter from "next-router-mock";
 import { DetailValidationFichierContrat } from "@/server/app/contrats/DetailValidationFichierContrat.interface";
 import ResultatValidationFichier from "@/components/PageImportIndicateur/ResultatValidationFichier/ResultatValidationFichier";
 
-// eslint-disable-next-line unicorn/prefer-module
 jest.mock("next/router", () => require("next-router-mock"));
 
 describe("ResultatValidationFichier", () => {

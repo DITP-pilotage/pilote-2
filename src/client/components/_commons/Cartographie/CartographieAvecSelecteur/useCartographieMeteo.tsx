@@ -12,7 +12,6 @@ const determinerRemplissage = (
   elementsDeLegende: CartographieÉlémentsDeLégende,
   estApplicable: boolean | null,
 ) => {
-  // eslint-disable-next-line unicorn/prefer-switch
   if (estApplicable === false)
     return elementsDeLegende.NON_APPLICABLE.remplissage;
   else if (valeur === "ORAGE") return elementsDeLegende.ORAGE.remplissage;
