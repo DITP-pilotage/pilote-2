@@ -23,7 +23,7 @@ export const getServerSideProps = async ({
     };
   }
 
-  const queryJalon = z.string().parse(query.jalon);
+  const queryJalon = z.string().parse(query.jalon || "2025");
   const queryTerritoireCode = z.string().parse(query.territoireCode);
 
   const session = await getServerSession(req, res, authOptions);
