@@ -14,6 +14,8 @@ class GithubRepo:
     def close(self):
         return self.g.close()
 
-    def getFileAsDataframe(self, path, branch):
+    def getFileAsDataframe(self, path, branch, dtype=None):
         csv_string = self.getFileContent(path, branch)
+        if dtype is not None:
+            return read_csv(io.BytesIO(csv_string.encode()), index_col=0, dtype=dtype)    
         return read_csv(io.BytesIO(csv_string.encode()), index_col=0)

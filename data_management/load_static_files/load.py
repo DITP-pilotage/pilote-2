@@ -57,8 +57,10 @@ with engine.connect() as con:
     for table_name, table_options in tables.items():
         print("Handling "+table_name)
 
+        # import custom data casting if it exists 
+        dtype=eval(table_options.get('dtype', 'None'))
         # Download table and add its content to database
-        csv_as_df = repo.getFileAsDataframe(table_options.get('path_in_repo'), repo_branch)
+        csv_as_df = repo.getFileAsDataframe(table_options.get('path_in_repo'), repo_branch, dtype=dtype)
         csv_as_df.to_sql(name=table_name, con=con, if_exists='replace', schema=table_options.get('schema'))
 
         # Commit for each table

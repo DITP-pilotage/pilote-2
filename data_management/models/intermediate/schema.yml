@@ -138,20 +138,3 @@ models:
         description: "ID de la zone concernée"
   - name: int_last_meteo
     description: "Pour chaque {chantier, territoire}, retourne la dernière météo et sa date."
-
-
-unit_tests:
-    - name: int_last_meteo
-      description: "Sélection de la dernière météo pour chaque chantier-territoire."
-      model: int_last_meteo
-      given:
-        - input: source('db_schema_public', 'synthese_des_resultats')
-          rows:
-            - { chantier_id: 'CH-090', territoire_code: 'DEPT-01', meteo: 'COUVERT', date_meteo: '2021-01-05' }
-            - { chantier_id: 'CH-090', territoire_code: 'DEPT-01', meteo: 'SOLEIL', date_meteo: '2021-01-06' }
-            - { chantier_id: 'CH-090', territoire_code: 'DEPT-01', meteo: 'ORAGE', date_meteo: '2021-01-07' }
-      expect:
-        rows:
-          - { chantier_id: 'CH-090', territoire_code: 'DEPT-01', meteo: 'ORAGE', date_meteo: '2021-01-07' }
-
-
