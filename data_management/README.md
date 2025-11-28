@@ -4,9 +4,9 @@ Ce répertoire administre les pipelines d'import, de chargement et transformatio
 ## Description
 
 
-La mise à jour des données de la datafactory se fait automatiquement vie l'exécution du script `scripts/run_datajobs.sh`. La fréquence de mise à jour est définie par le job cron de l'app Scalingo (exemple [pour la dev](https://dashboard.scalingo.com/apps/osc-secnum-fr1/dev-datajobs/resources)).
+La mise à jour des données de la datafactory se fait automatiquement via l'exécution du script `scripts/run_datajobs.sh`. La fréquence de mise à jour est définie par le job cron de l'app Scalingo (exemple [pour la dev](https://dashboard.scalingo.com/apps/osc-secnum-fr1/dev-datajobs/resources)).
 
-Les modèles de données *dbt* sont dans le dossier [models/](models/). La doc *dbt* est générée via `scripts/doc_dbt.sh`.
+Les modèles de données *dbt* sont dans le dossier [models/](models/). La doc *dbt* est générée via [`scripts/doc_dbt.sh`](scripts/doc_dbt.sh).
 
 ## Avant de démarrer
 
@@ -50,14 +50,14 @@ Utilisation des [commandes dbt](https://docs.getdbt.com/reference/dbt-commands):
 
 ```sh
 # Mise à jour des dépendances
-dbt deps
+pipenv run dbt deps
 # Exécution d'un modèle
-dbt run --select model_1
+pipenv run dbt run --select model_1
 ```
 
 ### [docker-conf] Installation
 
-L'application complète a été conteneurisées (partie webapp et data). Pour l'utiliser, il faut se place dans le dossier `data_management/` qui contient un fichier `docker-compose.yml`.
+L'application complète a été conteneurisées (partie webapp et data). Pour l'utiliser, il faut se placer dans le dossier `data_management/` qui contient un fichier `docker-compose.yml`.
 
 Pour l'utiliser:
 
@@ -332,8 +332,7 @@ Afin de mieux visualiser le DAG à l'intérieur du projet, nous vous proposons d
 Il est possible d'y avoir accès en exécutant la commande suivante : 
 
 ```bash
-source .env
-dbt docs generate && dbt docs serve
+pipenv run dbt docs generate && pipenv run dbt docs serve
 ```
 
 Cette ligne de commande ouvrira une interface web avec laquelle vous pourrez interagir. 

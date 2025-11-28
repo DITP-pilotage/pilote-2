@@ -1,3 +1,3 @@
 # Modèle de données
 
-TODO
+cf. [`data_factory/README.md`](data_management/README.md)
