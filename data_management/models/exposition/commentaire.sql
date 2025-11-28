@@ -2,7 +2,7 @@
 
 SELECT
     {{
-    dbt_utils.surrogate_key(
+    dbt_utils.generate_surrogate_key(
         [
             'chantier_id',
              'type',
