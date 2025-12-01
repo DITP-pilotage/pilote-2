@@ -384,9 +384,6 @@ html {
     padding-left: 0 !important;
     padding-right: 0 !important;
   }
-  ul {
-    list-style: none;
-  }
   a {
     background-image: none;
     text-decoration-line: none;
@@ -395,8 +392,13 @@ html {
     margin: 0;
   }
 
-  h3 {
+  .accordion-container h3 {
     font-size: 1rem;
+  }
+}
+.nextra-sidebar-container {
+  ul {
+    list-style: none;
   }
 }
 .nextra-nav-container {
