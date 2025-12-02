@@ -17,8 +17,10 @@ export const formatterTitreEvaluation = ({
 
 export const formatterTexteCompletion = ({
   estValide,
+  estVerrouille,
 }: {
   estValide: boolean;
+  estVerrouille: boolean;
 }) => {
-  return estValide ? "TRAITÉ" : "À TRAITER";
+  return estVerrouille ? "TRANSMIS" : estValide ? "TRAITÉ" : "À TRAITER";
 };

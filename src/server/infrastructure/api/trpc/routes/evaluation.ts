@@ -162,9 +162,13 @@ export const evaluationRouter = créerRouteurTRPC({
         .peutAccederEtapePilotage({
           applicationsAccessibles: ctx.session.applicationsAccessibles,
         });
-
-      if (!peutAccederPilotage)
-        throw new ForbiddenError("Accès refusé au pilotage");
+      const peutAccederFicheAppreciation = await getContainer("piloteEval")
+        .resolve("accesFicheEvaluationService")
+        .peutAccederEtapeAppreciation({
+          utilisateurId: ctx.session.user.id,
+        });
+      if (!peutAccederPilotage && !peutAccederFicheAppreciation)
+        throw new ForbiddenError("Accès refusé à la fiche en consolidation");
 
       await getContainer("piloteEval")
         .resolve("modifierEtatFichesConsolidationHandler")

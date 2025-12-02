@@ -9,6 +9,7 @@ import { Icone } from "@/components/_commons/Icone";
 import { LigneCardEvaluationAppreciation } from "@/components/PageAppreciation/LigneCardEvaluationAppreciation";
 import { LigneCardEvaluationInstruction } from "@/components/PageAppreciation/LigneCardEvaluationInstruction";
 import { LignesEnteteAvancementCompletionAppreciation } from "@/components/PageAppreciation/LignesEnteteAvancementCompletionAppreciation";
+import { ModaleTransmissionDITP } from "@/components/PageAppreciation/ModaleVerrouillageConsolidation/ModaleVerrouillageConsolidation";
 
 export const ListePhaseEvaluation = () => {
   const { fichesParGroupePuisPhase } =
@@ -19,16 +20,32 @@ export const ListePhaseEvaluation = () => {
     <div className="mx-auto w-full max-w-6xl mb-8">
       {Object.entries(fichesParGroupePuisPhase).map(([groupe, phases]) => {
         const { AUTO_EVALUATION, CONSOLIDATION, INSTRUCTION } = phases;
+        const modaleId = `modale-transmission-ditp-${groupe.replace(/\s+/g, "-").toLowerCase()}`;
         return (
           <div className="mb-8" key={groupe}>
-            <h2 className="!text-2xl !text-primary">
-              {`${groupe} - Vue détaillée des ${
-                (AUTO_EVALUATION.length +
-                  CONSOLIDATION.length +
-                  INSTRUCTION.length) *
-                2
-              } formulaires`}
-            </h2>
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="!text-2xl !text-primary !mb-0">
+                {`${groupe} - Vue détaillée des ${
+                  (AUTO_EVALUATION.length +
+                    CONSOLIDATION.length +
+                    INSTRUCTION.length) *
+                  2
+                } formulaires`}
+              </h2>
+              <button
+                aria-controls={modaleId}
+                className="fr-btn fr-btn--secondary"
+                data-fr-opened="false"
+                type="button"
+              >
+                Transmettre à la DITP
+              </button>
+            </div>
+            <ModaleTransmissionDITP
+              fichesConsolidation={CONSOLIDATION}
+              groupe={groupe}
+              idHtml={modaleId}
+            />
             <LignesEnteteAvancementCompletionAppreciation
               appreciation={CONSOLIDATION}
               autoEvaluation={AUTO_EVALUATION}
