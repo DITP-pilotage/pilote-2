@@ -7,7 +7,7 @@
   },
   "scripts": {
     "dev": "next dev | pino-pretty",
-    "build": "git clone git@github.com:DITP-pilotage/centre-aide-pilote-2.git ./src/pages/centre-aide-pilote-2 --depth 1 && npm run build:prod",
+    "build": "git submodule sync --recursive && git submodule update --init --recursive && npm run build:prod",
     "build:prod": "next build && node copy-assets.js && prisma migrate deploy && prisma db seed",
     "build:dev": "next build && node copy-assets.js && prisma migrate deploy && prisma db seed",
     "start": "node .next/standalone/server.js",
