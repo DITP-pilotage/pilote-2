@@ -160,19 +160,6 @@ models:
           *Exemple d'utilisation:* Utile lorsque l'on veut mettre à jour le calcul de TA retrospectivement. Par exemple, nous sommes en 2024, et une VA de déc-2023 est mise à jour. Pour connaitre le TAA tel qu'il aurait été en déc-23, il faut regarder ce TAA (TAA *à date*).
       - name: tag
         description: Taux d'Avancement Global (TAG). Indique l'avancement sur la période compète, utilise la VCG (déterminée dans `get_vcg`).
-  - name: df3_indicateur
-    description: |
-      Table des indicateurs construite par la datafactory dbt. Version reconstruite de zero. Règles:
-
-      - La liste des **indicateurs** provient de ref('metadata_indicateurs') 
-      - La liste des **zones** provient de `public.territoire`. Donc si l'on veut renvoyer des données pour d'autres zones (académies, façades maritimes, monde, ...), il faut leur créer un territoire correspondant.
-      - *redmine::621*: on récupère les `vig,vca,vcg` des tables `get_vig,get_vca,get_vcg` et non pas de `compute_ta_indic` (comme c'était le cas précédemment). En effet, sinon ces valeurs ne remontaient pas lorsque pas de VA.
-      - On retourne les **VACA** et non plus les **VA**
-    config:
-      docs:
-        node_color: "#cd7f32"
-      schema: public
-      tags: ["df3"]
   - name: get_n_indic_in_ta_expected
     description: |
       Pour chaque couple {chantier, zone}, indique **le nombre d'indicateurs ayant une pondération réelle > 0**. Règles:
@@ -201,17 +188,6 @@ models:
         description: "Prend les valeurs `[prev_month, today]` pour indiquer s'il s'agit du TA actuel ou du mois précédent."
       - name: date_ta
         description: "Il s'agit de la date du TA chantier. C'est la date la plus récente de mise à jour d'un indicateur pris en compte dans le TA du chantier."
-  - name: df3_chantier
-    description: |
-      Table des chantiers construite par la datafactory dbt. Version reconstruite de zero. Règles:
-
-      - certaines tables sont directement reprises du travail des prestataires: `synthese_triee_par_date`,`chantier_est_barometre`,`indicateurs_zones`,`indicateurs_zones_applicables`,`chantiers_zones_applicables`,
-      - un chantier C est applicable sur une zone Z si *au moins un indicateur* du chantier C est applicable sur la zone Z
-    config:
-      docs:
-        node_color: "#cd7f32"
-      schema: public
-      tags: ["df3"]
   - name: get_max_date_vaca_ch
     description: |
       Pour chaque {chantier, zone}, on retourne 2 dates qui indiquent les dates maximales que l'on peut prendre en compte pour les VACA indicateur pour calculer le `taux_avancement_ch` et surtout le `taux_avancement_precedent_ch`.

@@ -14,17 +14,19 @@ interface YamlColumn {
   name: string;
   data_type: "text" | "boolean";
   description: string;
-  meta: {
-    pilote_show: boolean;
-    pilote_alias: string;
-    pilote_edit_isEditable: boolean;
-    pilote_edit_regex: string;
-    pilote_edit_regexViolationMessage: string | null;
-    pilote_edit_boxType: "text" | "textarea" | "boolean" | "multi-select";
-    pilote_edit_acceptedValues: object;
-    pilote_create_defaultValue: string | number | null | boolean;
-    pilote_create_mandatory: boolean;
-    pilote_disp_dispDesc: boolean;
+  config: {
+    meta: {
+      pilote_show: boolean;
+      pilote_alias: string;
+      pilote_edit_isEditable: boolean;
+      pilote_edit_regex: string;
+      pilote_edit_regexViolationMessage: string | null;
+      pilote_edit_boxType: "text" | "textarea" | "boolean" | "multi-select";
+      pilote_edit_acceptedValues: object;
+      pilote_create_defaultValue: string | number | null | boolean;
+      pilote_create_mandatory: boolean;
+      pilote_disp_dispDesc: boolean;
+    };
   };
 }
 
@@ -44,21 +46,24 @@ const convertirEnInformationMetadataIndicateur = (
   yamlColumn: YamlColumn,
 ): InformationMetadataIndicateur => {
   const acceptedValues: YamlAcceptedValue[] =
-    (yamlColumn.meta.pilote_edit_acceptedValues as YamlAcceptedValue[]) || [];
+    (yamlColumn.config.meta
+      .pilote_edit_acceptedValues as YamlAcceptedValue[]) || [];
   return InformationMetadataIndicateur.creerInformationMetadataIndicateur({
     name: yamlColumn.name,
     dataType: yamlColumn.data_type,
     description: yamlColumn.description,
-    metaPiloteShow: yamlColumn.meta.pilote_show,
-    metaPiloteAlias: yamlColumn.meta.pilote_alias,
-    metaPiloteEditIsEditable: yamlColumn.meta.pilote_edit_isEditable,
-    metaPiloteEditRegex: yamlColumn.meta.pilote_edit_regex,
+    metaPiloteShow: yamlColumn.config.meta.pilote_show,
+    metaPiloteAlias: yamlColumn.config.meta.pilote_alias,
+    metaPiloteEditIsEditable: yamlColumn.config.meta.pilote_edit_isEditable,
+    metaPiloteEditRegex: yamlColumn.config.meta.pilote_edit_regex,
     metaPiloteEditRegexViolationMessage:
-      yamlColumn.meta.pilote_edit_regexViolationMessage,
-    metaPiloteEditBoxType: yamlColumn.meta.pilote_edit_boxType,
-    metaPiloteDefaultValue: yamlColumn.meta.pilote_create_defaultValue,
-    metaPiloteMandatory: yamlColumn.meta.pilote_create_mandatory || false,
-    metaPiloteDispDispDesc: yamlColumn.meta.pilote_disp_dispDesc || false,
+      yamlColumn.config.meta.pilote_edit_regexViolationMessage,
+    metaPiloteEditBoxType: yamlColumn.config.meta.pilote_edit_boxType,
+    metaPiloteDefaultValue: yamlColumn.config.meta.pilote_create_defaultValue,
+    metaPiloteMandatory:
+      yamlColumn.config.meta.pilote_create_mandatory || false,
+    metaPiloteDispDispDesc:
+      yamlColumn.config.meta.pilote_disp_dispDesc || false,
     acceptedValues: acceptedValues.map((acceptedValue) =>
       AcceptedValue.créerAcceptedValue({
         orderId: acceptedValue.order_id,
