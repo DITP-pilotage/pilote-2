@@ -462,6 +462,18 @@ sources:
                       "name": "Toutes zones sauf Corse",
                       "desc": "Tous départements et régions sauf Corse",
                     },
+                    {
+                      "order_id": 28,
+                      "value": "ZG-028",
+                      "name": "REP",
+                      "desc": "Tous territoires contenant des REP (8 terr exclus)",
+                    },
+                    {
+                      "order_id": 29,
+                      "value": "ZG-029",
+                      "name": "REP+",
+                      "desc": "Tous territoires contenant des REP+ (31 dept exclus)",
+                    },
                   ]
                 pilote_create_mandatory: false
                 pilote_create_defaultValue: ""
