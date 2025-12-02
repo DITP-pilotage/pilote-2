@@ -2,13 +2,13 @@ import { PasserALaConsolidationHandler } from "@/server/evaluation/handlers/Pass
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { prisma } from "@/server/db/prisma";
 import { PrismaTransaction } from "@/server/db/PrismaTransaction";
-import { SoumettreAutoEvaluationService } from "@/server/evaluation/services/SoumettreAutoEvaluationService";
+import { SoumettreEtapeEvaluationService } from "@/server/evaluation/services/SoumettreEtapeEvaluationService";
 
 describe("PasserALaConsolidationHandler", () => {
   let handler: PasserALaConsolidationHandler;
   const prismaPilote = new PrismaPilote();
   const transaction = new PrismaTransaction();
-  const soumettreAutoEvaluationService = new SoumettreAutoEvaluationService({
+  const soumettreEtapeEvaluationService = new SoumettreEtapeEvaluationService({
     transaction,
     prisma: prismaPilote,
   });
@@ -16,7 +16,7 @@ describe("PasserALaConsolidationHandler", () => {
   beforeEach(() => {
     handler = new PasserALaConsolidationHandler({
       transaction,
-      soumettreAutoEvaluationService,
+      soumettreEtapeEvaluationService: soumettreEtapeEvaluationService,
     });
   });
 

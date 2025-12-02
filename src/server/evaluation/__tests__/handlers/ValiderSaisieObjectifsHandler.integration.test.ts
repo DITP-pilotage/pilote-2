@@ -2,13 +2,13 @@ import { ValiderSaisieObjectifsHandler } from "@/server/evaluation/handlers/Vali
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { prisma } from "@/server/db/prisma";
 import { PrismaTransaction } from "@/server/db/PrismaTransaction";
-import { SoumettreAutoEvaluationService } from "@/server/evaluation/services/SoumettreAutoEvaluationService";
+import { SoumettreEtapeEvaluationService } from "@/server/evaluation/services/SoumettreEtapeEvaluationService";
 
 describe("ValiderSaisieObjectifsHandler", () => {
   let handler: ValiderSaisieObjectifsHandler;
   const prismaPilote = new PrismaPilote();
   const transaction = new PrismaTransaction();
-  const soumettreAutoEvaluationService = new SoumettreAutoEvaluationService({
+  const soumettreEtapeEvaluationService = new SoumettreEtapeEvaluationService({
     prisma: prismaPilote,
     transaction,
   });
@@ -17,7 +17,7 @@ describe("ValiderSaisieObjectifsHandler", () => {
     handler = new ValiderSaisieObjectifsHandler({
       prisma: prismaPilote,
       transaction,
-      soumettreAutoEvaluationService,
+      soumettreEtapeEvaluationService,
     });
   });
 

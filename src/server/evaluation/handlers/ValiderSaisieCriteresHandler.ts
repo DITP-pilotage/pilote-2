@@ -2,7 +2,7 @@ import { z } from "zod";
 import { $Enums } from "@prisma/client";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { Transaction } from "@/server/db/Transaction";
-import { SoumettreAutoEvaluationService } from "@/server/evaluation/services/SoumettreAutoEvaluationService";
+import { SoumettreEtapeEvaluationService } from "@/server/evaluation/services/SoumettreEtapeEvaluationService";
 
 export const validerSaisieCriteresCommandSchema = z.object({
   ficheEvaluationId: z.string(),
@@ -17,7 +17,7 @@ export class ValiderSaisieCriteresHandler {
     private readonly dependencies: {
       transaction: Transaction;
       prisma: PrismaPilote;
-      soumettreAutoEvaluationService: SoumettreAutoEvaluationService;
+      soumettreEtapeEvaluationService: SoumettreEtapeEvaluationService;
     },
   ) {}
 
@@ -42,10 +42,10 @@ export class ValiderSaisieCriteresHandler {
     });
 
     if (updatedEtape.objectifs_valides) {
-      await this.dependencies.soumettreAutoEvaluationService.execute(
-        command.ficheEvaluationId,
-        auteurId,
-      );
+      await this.dependencies.soumettreEtapeEvaluationService.execute({
+        ficheEvaluationId: command.ficheEvaluationId,
+        auteurId: auteurId,
+      });
     }
   }
 }

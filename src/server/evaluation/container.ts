@@ -13,7 +13,7 @@ import { AfficherInstructionQuery } from "@/server/evaluation/queries/AfficherIn
 import { EnregistrerBrouillonInstructionHandler } from "@/server/evaluation/handlers/EnregistrerBrouillonInstructionHandler";
 import { ModifierEtatFichesInstructionHandler } from "@/server/evaluation/handlers/ModifierEtatFichesInstructionHandler";
 import { RecupererDetailsNoteCollectiveQuery } from "@/server/evaluation/queries/RecupererDetailsNoteCollectiveQuery";
-import { SoumettreAutoEvaluationService } from "@/server/evaluation/services/SoumettreAutoEvaluationService";
+import { SoumettreEtapeEvaluationService } from "@/server/evaluation/services/SoumettreEtapeEvaluationService";
 import { PasserALaConsolidationHandler } from "@/server/evaluation/handlers/PasserALaConsolidationHandler";
 import { EnregistrerBrouillonAutoEvaluationObjectifsHandler } from "./handlers/EnregistrerBrouillonAutoEvaluationObjectifsHandler";
 import { EnregistrerBrouillonAutoEvaluationCriteresHandler } from "./handlers/EnregistrerBrouillonAutoEvaluationCriteresHandler";
@@ -40,7 +40,7 @@ export type PiloteEvalDependencies = {
   enregistrerBrouillonConsolidationHandler: EnregistrerBrouillonConsolidationHandler;
   enregistrerBrouillonInstructionHandler: EnregistrerBrouillonInstructionHandler;
   accesFicheEvaluationService: AccesFicheEvaluationService;
-  soumettreAutoEvaluationService: SoumettreAutoEvaluationService;
+  soumettreEtapeEvaluationService: SoumettreEtapeEvaluationService;
   modifierEtatFichesConsolidationHandler: ModifierEtatFichesConsolidationHandler;
   modifierEtatFichesInstructionHandler: ModifierEtatFichesInstructionHandler;
   passerALaConsolidationHandler: PasserALaConsolidationHandler;
@@ -82,7 +82,7 @@ export const getPiloteEvalContainer = (
       EnregistrerBrouillonInstructionHandler,
     ),
     accesFicheEvaluationService: asClass(AccesFicheEvaluationService),
-    soumettreAutoEvaluationService: asClass(SoumettreAutoEvaluationService),
+    soumettreEtapeEvaluationService: asClass(SoumettreEtapeEvaluationService),
     modifierEtatFichesConsolidationHandler: asClass(
       ModifierEtatFichesConsolidationHandler,
     ),

@@ -8,7 +8,7 @@ import { randomUUID } from "node:crypto";
 import { Transaction } from "@/server/db/Transaction";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 
-export class SoumettreAutoEvaluationService {
+export class SoumettreEtapeEvaluationService {
   constructor(
     private readonly dependencies: {
       transaction: Transaction;
@@ -16,7 +16,13 @@ export class SoumettreAutoEvaluationService {
     },
   ) {}
 
-  async execute(ficheEvaluationId: string, auteurId: string) {
+  async execute({
+    ficheEvaluationId,
+    auteurId,
+  }: {
+    ficheEvaluationId: string;
+    auteurId: string;
+  }) {
     const etapeAutoEvaluation =
       await this.getEtapeAutoEvaluation(ficheEvaluationId);
 
