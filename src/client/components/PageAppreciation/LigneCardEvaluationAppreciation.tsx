@@ -66,8 +66,8 @@ export const LigneCardEvaluationAppreciation = ({
           }
           texteBadge="Objectifs individuels"
           texteCompletion={formatterTexteCompletion({
-            estValide:
-              ficheEvaluation.isObjectifsValides || ficheEvaluation.readOnly,
+            estValide: ficheEvaluation.isObjectifsValides,
+            estVerrouille: ficheEvaluation.readOnly,
           })}
           texteLienNavigation="accéder à l'appréciation des objectifs individuels"
           titre={formatterTitreEvaluation(ficheEvaluation.rattachement)}
@@ -107,8 +107,8 @@ export const LigneCardEvaluationAppreciation = ({
           }
           texteBadge="Manière de servir"
           texteCompletion={formatterTexteCompletion({
-            estValide:
-              ficheEvaluation.isCriteresValides || ficheEvaluation.readOnly,
+            estValide: ficheEvaluation.isObjectifsValides,
+            estVerrouille: ficheEvaluation.readOnly,
           })}
           texteLienNavigation="accéder à l'appréciation de la manière de servir"
           titre={formatterTitreEvaluation(ficheEvaluation.rattachement)}
