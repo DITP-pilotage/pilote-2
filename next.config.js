@@ -1,6 +1,5 @@
 /** @type {import('next').NextConfig} */
-const https = require("https");
-const nextra = require("nextra").default;
+import nextra from "nextra";
 
 const withNextra = nextra({
   theme: "nextra-theme-docs",
@@ -15,6 +14,14 @@ const nextConfig = {
   pageExtensions: ["js", "jsx", "ts", "tsx", "md", "mdx"],
   compiler: {
     emotion: true,
+  },
+  async rewrites() {
+    return [
+      {
+        source: "/centreaide/:slug*",
+        destination: "/centre-aide-pilote-2/centre-aide/:slug*",
+      },
+    ];
   },
   webpack: function (config) {
     config.module.rules.push({
@@ -58,4 +65,4 @@ const nextConfig = {
   },
 };
 
-module.exports = withNextra(nextConfig);
+export default withNextra(nextConfig);
