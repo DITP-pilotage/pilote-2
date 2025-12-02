@@ -2,16 +2,20 @@ import { PasserALEtapeInstructionHandler } from "@/server/evaluation/handlers/Pa
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { prisma } from "@/server/db/prisma";
 import { PrismaTransaction } from "@/server/db/PrismaTransaction";
+import { SoumettreEtapeEvaluationService } from "@/server/evaluation/services/SoumettreEtapeEvaluationService";
 
 describe("PasserALEtapeInstructionHandler", () => {
   let handler: PasserALEtapeInstructionHandler;
   const prismaPilote = new PrismaPilote();
   const transaction = new PrismaTransaction();
+  const soumettreEtapeEvaluationService = new SoumettreEtapeEvaluationService({
+    prisma: prismaPilote,
+    transaction,
+  });
 
   beforeEach(() => {
     handler = new PasserALEtapeInstructionHandler({
-      prisma: prismaPilote,
-      transaction,
+      soumettreEtapeEvaluationService,
     });
   });
 
