@@ -29,14 +29,25 @@ export class PasserALEtapeInstructionHandler {
   ) {
     await this.dependencies.transaction.run(async () => {
       for (const ficheEvaluationId of ficheEvaluationIds) {
-        const etapeEvaluation =
+        const etapeConsolidation =
           await this.getEtapeConsolidation(ficheEvaluationId);
 
-        await this.creerEtapeInstruction({
-          auteurId,
-          ficheEvaluationId,
-          etapeEvaluation,
-        });
+        const existingInstruction =
+          await this.getExistingInstruction(ficheEvaluationId);
+
+        if (!existingInstruction) {
+          await this.creerEtapeInstruction({
+            auteurId,
+            ficheEvaluationId,
+            etapeEvaluation: etapeConsolidation,
+          });
+        } else {
+          await this.mettreAJourInstructionExistante({
+            etapeConsolidation,
+            instruction: existingInstruction,
+          });
+        }
+
         await this.setEtapeCouranteInstruction(ficheEvaluationId);
       }
     });
@@ -102,6 +113,73 @@ export class PasserALEtapeInstructionHandler {
         evaluations_criteres: true,
       },
     });
+  }
+
+  private getExistingInstruction(ficheEvaluationId: string) {
+    return this.prisma.etape_evaluation.findFirst({
+      where: {
+        fiche_evaluation_id: ficheEvaluationId,
+        type: $Enums.etape_evaluation_enum.INSTRUCTION,
+      },
+      include: {
+        evaluations_objectifs: true,
+        evaluations_criteres: true,
+      },
+    });
+  }
+
+  private async mettreAJourInstructionExistante({
+    etapeConsolidation,
+    instruction,
+  }: {
+    etapeConsolidation: etape_evaluation & {
+      evaluations_objectifs: evaluation_objectif[];
+      evaluations_criteres: evaluation_critere[];
+    };
+    instruction: etape_evaluation & {
+      evaluations_objectifs: evaluation_objectif[];
+      evaluations_criteres: evaluation_critere[];
+    };
+  }) {
+    for (const consolidationObjectif of etapeConsolidation.evaluations_objectifs) {
+      const instructionObjectif = instruction.evaluations_objectifs.find(
+        (evalObj) => evalObj.objectif_id === consolidationObjectif.objectif_id,
+      );
+
+      if (!instructionObjectif) continue;
+
+      if (instructionObjectif.note == null) {
+        await this.prisma.evaluation_objectif.update({
+          where: { id: instructionObjectif.id },
+          data: { note: consolidationObjectif.note },
+        });
+      } else if (instructionObjectif.note !== consolidationObjectif.note) {
+        await this.prisma.evaluation_objectif.update({
+          where: { id: instructionObjectif.id },
+          data: { date_traitement: null },
+        });
+      }
+    }
+
+    for (const consolidationCritere of etapeConsolidation.evaluations_criteres) {
+      const instructionCritere = instruction.evaluations_criteres.find(
+        (evalCrit) => evalCrit.critere_id === consolidationCritere.critere_id,
+      );
+
+      if (!instructionCritere) continue;
+
+      if (instructionCritere.note == null) {
+        await this.prisma.evaluation_critere.update({
+          where: { id: instructionCritere.id },
+          data: { note: consolidationCritere.note },
+        });
+      } else if (instructionCritere.note !== consolidationCritere.note) {
+        await this.prisma.evaluation_critere.update({
+          where: { id: instructionCritere.id },
+          data: { date_traitement: null },
+        });
+      }
+    }
   }
 
   private get prisma() {
