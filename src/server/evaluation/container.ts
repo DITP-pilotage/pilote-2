@@ -22,6 +22,7 @@ import { ValiderSaisieObjectifsHandler } from "./handlers/ValiderSaisieObjectifs
 import { SetTraitementEvaluationHandler } from "./handlers/SetTraitementEvaluationHandler";
 import { RetournerAutoEvaluationHandler } from "./handlers/RetournerAutoEvaluationHandler";
 import { ModifierObjectifHandler } from "./handlers/ModifierObjectifHandler";
+import { GenererPDFAutoEvaluationHandler } from "./handlers/GenererPDFAutoEvaluationHandler";
 
 export type PiloteEvalDependencies = {
   afficherAutoEvaluation: AfficherAutoEvaluationQuery;
@@ -46,6 +47,7 @@ export type PiloteEvalDependencies = {
   setTraitementEvaluationHandler: SetTraitementEvaluationHandler;
   retournerAutoEvaluationHandler: RetournerAutoEvaluationHandler;
   modifierObjectifHandler: ModifierObjectifHandler;
+  genererPDFAutoEvaluationHandler: GenererPDFAutoEvaluationHandler;
 };
 
 export const getPiloteEvalContainer = (
@@ -90,5 +92,6 @@ export const getPiloteEvalContainer = (
     setTraitementEvaluationHandler: asClass(SetTraitementEvaluationHandler),
     retournerAutoEvaluationHandler: asClass(RetournerAutoEvaluationHandler),
     modifierObjectifHandler: asClass(ModifierObjectifHandler),
+    genererPDFAutoEvaluationHandler: asClass(GenererPDFAutoEvaluationHandler),
   });
 };

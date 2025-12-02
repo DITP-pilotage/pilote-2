@@ -38,7 +38,6 @@ export default function usePageUtilisateur(utilisateur: Utilisateur) {
     },
   });
 
-  // eslint-disable-next-line unicorn/consistent-function-scoping
   const fermerLaModaleDeDesactivationUtilisateur = () => {
     if (typeof window.dsfr === "function") {
       window

@@ -10,7 +10,6 @@ function déterminerRemplissage(
   élémentsDeLégende: CartographieÉlémentsDeLégende,
   estApplicable: boolean | null,
 ) {
-  // eslint-disable-next-line unicorn/prefer-switch
   if (estApplicable === false)
     return élémentsDeLégende.NON_APPLICABLE.remplissage;
   else if (valeur === "ORAGE") return élémentsDeLégende.ORAGE.remplissage;

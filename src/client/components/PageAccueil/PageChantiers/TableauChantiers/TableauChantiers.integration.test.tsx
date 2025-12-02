@@ -12,7 +12,6 @@ import Ministère from "@/server/domain/ministère/Ministère.interface";
 import TableauChantiers from "./TableauChantiers";
 import { DonnéesTableauChantiers } from "./TableauChantiers.interface";
 
-// eslint-disable-next-line unicorn/prefer-module
 jest.mock("next/router", () => require("next-router-mock"));
 
 class TableauChantiersTest {

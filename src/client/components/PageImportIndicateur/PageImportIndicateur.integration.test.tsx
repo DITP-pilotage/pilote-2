@@ -23,7 +23,6 @@ jest.mock(
     },
 );
 
-// eslint-disable-next-line unicorn/prefer-module
 jest.mock("next/router", () => require("next-router-mock"));
 
 describe("PageImportIndicateur", () => {

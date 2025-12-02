@@ -5,7 +5,6 @@ import { Maille } from "@/server/domain/maille/Maille.interface";
 import { ChantierAccueilContratV2 } from "@/server/chantiers/app/contrats/ChantierAccueilContratV2";
 import { ChantierRapportDetailleContrat } from "@/server/chantiers/app/contrats/ChantierRapportDetailleContratV2";
 
-// eslint-disable-next-line unicorn/no-static-only-class
 export class Chantier {
   static recupererStatistiqueListeChantier(
     chantiers: ChantierRapportDetailleContrat[] | ChantierAccueilContratV2[],

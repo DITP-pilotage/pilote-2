@@ -1,29 +1,11 @@
 import { $Enums } from "@prisma/client";
 import { LigneEnteteAvancementCompletionEvaluation } from "@/components/Evaluation/ListeAutoEvaluation/LigneEnteteAvancementCompletionEvaluation";
 import { BarreProgressionEvaluation } from "@/components/_commons/BarreProgressionEvaluation";
+import { Bouton } from "@/components/_commons/Bouton/Bouton";
+import { Printer1Icon } from "@/components/_commons/Icones/Printer1Icon";
+import { Icone } from "@/components/_commons/Icone";
+import { useImprimerFiche } from "@/components/Evaluation/ListeAutoEvaluation/useImprimerFiche";
 import { BaseCardEvaluation } from "./BaseCardEvaluation";
-
-type FicheEvaluation = {
-  id: string;
-  etapeCourante: $Enums.etape_evaluation_enum;
-  isObjectifsValides: boolean;
-  isCriteresValides: boolean;
-  rattachement: {
-    code: string;
-    libelle: string;
-  };
-  objectifs: {
-    moyenne: number | null;
-    nombreNotes: number;
-    nombreTotal: number;
-  };
-  criteres: {
-    moyenne: number | null;
-    nombreNotes: number;
-    nombreTotal: number;
-  };
-  noteCollective: number | null;
-};
 
 const formatterTitreEvaluation = ({
   code,
@@ -58,11 +40,37 @@ const formatterTexteCompletion = ({
       : "À COMPLÉTER";
 };
 
+export type FicheEvaluation = {
+  id: string;
+  etapeCourante: $Enums.etape_evaluation_enum;
+  isObjectifsValides: boolean;
+  isCriteresValides: boolean;
+  rattachement: {
+    code: string;
+    libelle: string;
+  };
+  objectifs: {
+    moyenne: number | null;
+    nombreNotes: number;
+    nombreTotal: number;
+  };
+  criteres: {
+    moyenne: number | null;
+    nombreNotes: number;
+    nombreTotal: number;
+  };
+  noteCollective: number | null;
+};
 export const ListeAutoEvaluations = ({
   fichesEvaluation,
 }: {
   fichesEvaluation: FicheEvaluation[];
 }) => {
+  const genererPDF = useImprimerFiche();
+
+  const handleExportClick = (ficheEvaluationId: string) => {
+    genererPDF.mutate({ ficheEvaluationId });
+  };
   return (
     <div className="space-y-8">
       {fichesEvaluation.map((ficheEvaluation) => {
@@ -75,9 +83,27 @@ export const ListeAutoEvaluations = ({
         return (
           <div className="flex flex-col gap-2" key={ficheEvaluation.id}>
             <header>
-              <h2 className="!text-2xl !text-primary !mb-0">
-                {formatterTitreEvaluation(ficheEvaluation.rattachement)}
-              </h2>
+              <div className="flex justify-between items-center">
+                <h2 className="!text-2xl !text-primary !mb-0">
+                  {formatterTitreEvaluation(ficheEvaluation.rattachement)}
+                </h2>
+
+                <Bouton
+                  className="items-center"
+                  disabled={genererPDF.isLoading}
+                  iconLeft={
+                    <Icone
+                      className="w-4 h-4 !text-current !shrink-0"
+                      icone={Printer1Icon}
+                    />
+                  }
+                  label="Imprimer les auto-évaluations"
+                  onClick={() => handleExportClick(ficheEvaluation.id)}
+                  size="sm"
+                  type="button"
+                  variant="link"
+                />
+              </div>
               <ul>
                 <LigneEnteteAvancementCompletionEvaluation
                   avancementCompletion={ficheEvaluation.objectifs}
