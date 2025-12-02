@@ -21,6 +21,7 @@ import { ValiderSaisieCriteresHandler } from "./handlers/ValiderSaisieCriteresHa
 import { ValiderSaisieObjectifsHandler } from "./handlers/ValiderSaisieObjectifsHandler";
 import { SetTraitementEvaluationHandler } from "./handlers/SetTraitementEvaluationHandler";
 import { RetournerAutoEvaluationHandler } from "./handlers/RetournerAutoEvaluationHandler";
+import { RetournerAppreciationHandler } from "./handlers/RetournerAppreciationHandler";
 import { ModifierObjectifHandler } from "./handlers/ModifierObjectifHandler";
 import { GenererPDFAutoEvaluationHandler } from "./handlers/GenererPDFAutoEvaluationHandler";
 
@@ -46,6 +47,7 @@ export type PiloteEvalDependencies = {
   passerALEtapeInstructionHandler: PasserALEtapeInstructionHandler;
   setTraitementEvaluationHandler: SetTraitementEvaluationHandler;
   retournerAutoEvaluationHandler: RetournerAutoEvaluationHandler;
+  retournerAppreciationHandler: RetournerAppreciationHandler;
   modifierObjectifHandler: ModifierObjectifHandler;
   genererPDFAutoEvaluationHandler: GenererPDFAutoEvaluationHandler;
 };
@@ -91,6 +93,7 @@ export const getPiloteEvalContainer = (
     passerALEtapeInstructionHandler: asClass(PasserALEtapeInstructionHandler),
     setTraitementEvaluationHandler: asClass(SetTraitementEvaluationHandler),
     retournerAutoEvaluationHandler: asClass(RetournerAutoEvaluationHandler),
+    retournerAppreciationHandler: asClass(RetournerAppreciationHandler),
     modifierObjectifHandler: asClass(ModifierObjectifHandler),
     genererPDFAutoEvaluationHandler: asClass(GenererPDFAutoEvaluationHandler),
   });
