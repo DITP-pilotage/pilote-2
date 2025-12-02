@@ -2,6 +2,7 @@ import { Content } from "pdfmake/interfaces";
 import { AfficherAutoEvaluationViewModel } from "@/server/evaluation/queries/AfficherAutoEvaluationQuery";
 import { PDFContentAdapter } from "@/server/evaluation/domain/PDFContentAdapter";
 import {
+  COLORS,
   createCommentCell,
   createLabeledText,
   createPageHeader,
@@ -134,7 +135,7 @@ export class AutoEvaluationPDFAdapter implements PDFContentAdapter {
               createText({
                 text: annexeText || "Aucune annexe",
                 italics: !annexeText,
-                color: annexeText ? "#555555" : "#999999",
+                color: annexeText ? COLORS.text : COLORS.textLight,
               }),
             ],
           ];
@@ -160,7 +161,7 @@ export class AutoEvaluationPDFAdapter implements PDFContentAdapter {
               createText({
                 text: annexeText || "Aucune annexe",
                 italics: !annexeText,
-                color: annexeText ? "#555555" : "#999999",
+                color: annexeText ? COLORS.text : COLORS.textLight,
               }),
             ],
           ];

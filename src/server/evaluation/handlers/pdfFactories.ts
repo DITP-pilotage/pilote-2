@@ -1,6 +1,6 @@
 import { Content, ContentText, TableCell } from "pdfmake/interfaces";
 
-const COLORS = {
+export const COLORS = {
   primary: "#000091",
   text: "#555555",
   textLight: "#999999",
@@ -119,7 +119,7 @@ export function createLabeledText({
   return [
     { text: `${label} :\n`, bold: true },
     {
-      text: text || `Aucun${label.toLowerCase().replace(":", "")}`,
+      text: text || `Aucun ${label.toLowerCase().replace(":", "")}`,
       color: text ? COLORS.text : COLORS.textLight,
       italics: !text,
     },

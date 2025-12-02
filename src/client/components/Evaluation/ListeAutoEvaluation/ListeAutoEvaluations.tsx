@@ -97,7 +97,7 @@ export const ListeAutoEvaluations = ({
                       icone={Printer1Icon}
                     />
                   }
-                  label="Imprimer la fiche"
+                  label="Imprimer les auto-évaluations"
                   onClick={() => handleExportClick(ficheEvaluation.id)}
                   size="sm"
                   type="button"
