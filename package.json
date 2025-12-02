@@ -7,7 +7,7 @@
   },
   "scripts": {
     "dev": "next dev | pino-pretty",
-    "build": "next build && bash scripts/clone_centre_aide.sh && node copy-assets.js && prisma migrate deploy && prisma db seed",
+    "build": "next build && node copy-assets.js && prisma migrate deploy && prisma db seed",
     "build:dev": "next build && node copy-assets.js && prisma migrate deploy && prisma db seed",
     "start": "node .next/standalone/server.js",
     "lint": "prisma generate && npm run lint:eslint && npm run lint:tsc && npm run lint:stylelint",
@@ -203,6 +203,6 @@
     "tailwindcss": "^4.0.0",
     "ts-node": "^10.9.1",
     "tsconfig-paths": "^4.1.2",
-    "typescript": "^5.0.2"
+    "typescript": "5.2.2"
   }
 }

@@ -1,6 +1,6 @@
-import '@testing-library/jest-dom';
+import "@testing-library/jest-dom";
 
-import { TextEncoder, TextDecoder } from 'node:util';
+import { TextEncoder, TextDecoder } from "node:util";
 
-global.TextEncoder = TextEncoder;
-global.TextDecoder = TextDecoder as any;
+global.TextEncoder = TextEncoder as never;
+global.TextDecoder = TextDecoder as never;
