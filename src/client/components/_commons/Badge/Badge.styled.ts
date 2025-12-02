@@ -30,7 +30,7 @@ const BadgeStyled = styled.div`
   }
 
   &.badge-noir {
-    color: #ffffff;
+    color: #fff;
     background-color: #000;
   }
 `;
