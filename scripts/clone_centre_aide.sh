@@ -11,6 +11,6 @@ then
 fi
 
 rm -rf /tmp/centreaide public/centreaide
-git clone --depth 1 --branch retype-deploy --single-branch https://$CENTREAIDE_GITHUB_TOKEN@github.com/DITP-pilotage/centre-aide-pilote-2.git /tmp/centreaide
+git clone --depth 1 --branch main --single-branch https://$CENTREAIDE_GITHUB_TOKEN@github.com/DITP-pilotage/centre-aide-pilote-2.git /tmp/centreaide
 mkdir public/centreaide
 cp -r /tmp/centreaide/* public/centreaide
