@@ -19,93 +19,105 @@ export class SoumettreEtapeEvaluationService {
   async execute({
     ficheEvaluationId,
     auteurId,
+    nomEtapeCourante,
+    nomEtapeSuivante,
   }: {
     ficheEvaluationId: string;
     auteurId: string;
+    nomEtapeCourante: $Enums.etape_evaluation_enum;
+    nomEtapeSuivante: $Enums.etape_evaluation_enum;
   }) {
-    const etapeAutoEvaluation =
-      await this.getEtapeAutoEvaluation(ficheEvaluationId);
+    const etapeCourante = await this.getEtapeCourante(
+      ficheEvaluationId,
+      nomEtapeCourante,
+    );
 
     await this.dependencies.transaction.run(async () => {
-      const existingConsolidation =
-        await this.getExistingConsolidation(ficheEvaluationId);
+      const existingEtapeSuivante = await this.getExistingEtapeSuivante(
+        ficheEvaluationId,
+        nomEtapeSuivante,
+      );
 
-      if (!existingConsolidation) {
-        await this.creerEtapeConsolidation({
+      if (!existingEtapeSuivante) {
+        await this.creerEtapeSuivante({
           auteurId,
           ficheEvaluationId,
-          etapeAutoEvaluation,
+          etapeSuivante: nomEtapeSuivante,
+          etapeCourante,
         });
       } else {
-        await this.mettreAJourConsolidationExistante({
-          etapeAutoEvaluation,
-          consolidation: existingConsolidation,
+        await this.mettreAJourEtapeSuivanteExistante({
+          etapeCourante: etapeCourante,
+          etapeSuivante: existingEtapeSuivante,
         });
       }
 
-      await this.setEtapeCouranteConsolidation(ficheEvaluationId);
+      await this.setEtapeSuivante(ficheEvaluationId, nomEtapeSuivante);
     });
   }
 
-  private async mettreAJourConsolidationExistante({
-    etapeAutoEvaluation,
-    consolidation,
+  private async mettreAJourEtapeSuivanteExistante({
+    etapeCourante,
+    etapeSuivante,
   }: {
-    etapeAutoEvaluation: etape_evaluation & {
+    etapeCourante: etape_evaluation & {
       evaluations_objectifs: evaluation_objectif[];
       evaluations_criteres: evaluation_critere[];
     };
-    consolidation: etape_evaluation & {
+    etapeSuivante: etape_evaluation & {
       evaluations_objectifs: evaluation_objectif[];
       evaluations_criteres: evaluation_critere[];
     };
   }) {
-    for (const autoEvalObjectif of etapeAutoEvaluation.evaluations_objectifs) {
-      const consolidationObjectif = consolidation.evaluations_objectifs.find(
-        (evalObj) => evalObj.objectif_id === autoEvalObjectif.objectif_id,
+    for (const evaluation of etapeCourante.evaluations_objectifs) {
+      const evaluationEtapeSuivante = etapeSuivante.evaluations_objectifs.find(
+        (evalObj) => evalObj.objectif_id === evaluation.objectif_id,
       );
 
-      if (!consolidationObjectif) continue;
+      if (!evaluationEtapeSuivante) continue;
 
-      if (consolidationObjectif.note == null) {
+      if (evaluationEtapeSuivante.note == null) {
         await this.prisma.evaluation_objectif.update({
-          where: { id: consolidationObjectif.id },
-          data: { note: autoEvalObjectif.note },
+          where: { id: evaluationEtapeSuivante.id },
+          data: { note: evaluation.note },
         });
-      } else if (consolidationObjectif.note !== autoEvalObjectif.note) {
+      } else if (evaluationEtapeSuivante.note !== evaluation.note) {
         await this.prisma.evaluation_objectif.update({
-          where: { id: consolidationObjectif.id },
+          where: { id: evaluationEtapeSuivante.id },
           data: { date_traitement: null },
         });
       }
     }
 
-    for (const autoEvalCritere of etapeAutoEvaluation.evaluations_criteres) {
-      const consolidationCritere = consolidation.evaluations_criteres.find(
-        (evalCrit) => evalCrit.critere_id === autoEvalCritere.critere_id,
+    for (const evaluation of etapeCourante.evaluations_criteres) {
+      const evaluationEtapeSuivante = etapeSuivante.evaluations_criteres.find(
+        (evalCrit) => evalCrit.critere_id === evaluation.critere_id,
       );
 
-      if (!consolidationCritere) continue;
+      if (!evaluationEtapeSuivante) continue;
 
-      if (consolidationCritere.note == null) {
+      if (evaluationEtapeSuivante.note == null) {
         await this.prisma.evaluation_critere.update({
-          where: { id: consolidationCritere.id },
-          data: { note: autoEvalCritere.note },
+          where: { id: evaluationEtapeSuivante.id },
+          data: { note: evaluation.note },
         });
-      } else if (consolidationCritere.note !== autoEvalCritere.note) {
+      } else if (evaluationEtapeSuivante.note !== evaluation.note) {
         await this.prisma.evaluation_critere.update({
-          where: { id: consolidationCritere.id },
+          where: { id: evaluationEtapeSuivante.id },
           data: { date_traitement: null },
         });
       }
     }
   }
 
-  private getExistingConsolidation(ficheEvaluationId: string) {
+  private getExistingEtapeSuivante(
+    ficheEvaluationId: string,
+    etapeSuivante: $Enums.etape_evaluation_enum,
+  ) {
     return this.prisma.etape_evaluation.findFirst({
       where: {
         fiche_evaluation_id: ficheEvaluationId,
-        type: $Enums.etape_evaluation_enum.CONSOLIDATION,
+        type: etapeSuivante,
       },
       include: {
         evaluations_objectifs: true,
@@ -114,14 +126,16 @@ export class SoumettreEtapeEvaluationService {
     });
   }
 
-  private creerEtapeConsolidation({
+  private creerEtapeSuivante({
     auteurId,
     ficheEvaluationId,
-    etapeAutoEvaluation,
+    etapeSuivante,
+    etapeCourante,
   }: {
     auteurId: string;
     ficheEvaluationId: string;
-    etapeAutoEvaluation: etape_evaluation & {
+    etapeSuivante: $Enums.etape_evaluation_enum;
+    etapeCourante: etape_evaluation & {
       evaluations_objectifs: evaluation_objectif[];
       evaluations_criteres: evaluation_critere[];
     };
@@ -130,47 +144,49 @@ export class SoumettreEtapeEvaluationService {
       data: {
         id: randomUUID(),
         fiche_evaluation_id: ficheEvaluationId,
-        type: $Enums.etape_evaluation_enum.CONSOLIDATION,
+        type: etapeSuivante,
         evaluations_objectifs: {
-          create: etapeAutoEvaluation.evaluations_objectifs.map(
-            (evaluation) => ({
-              id: randomUUID(),
-              objectif_id: evaluation.objectif_id,
-              auteur_id: auteurId,
-              note: evaluation.note,
-              commentaire: "",
-            }),
-          ),
+          create: etapeCourante.evaluations_objectifs.map((evaluation) => ({
+            id: randomUUID(),
+            objectif_id: evaluation.objectif_id,
+            auteur_id: auteurId,
+            note: evaluation.note,
+            commentaire: "",
+          })),
         },
         evaluations_criteres: {
-          create: etapeAutoEvaluation.evaluations_criteres.map(
-            (evaluation) => ({
-              id: randomUUID(),
-              critere_id: evaluation.critere_id,
-              auteur_id: auteurId,
-              note: evaluation.note,
-              commentaire: "",
-            }),
-          ),
+          create: etapeCourante.evaluations_criteres.map((evaluation) => ({
+            id: randomUUID(),
+            critere_id: evaluation.critere_id,
+            auteur_id: auteurId,
+            note: evaluation.note,
+            commentaire: "",
+          })),
         },
       },
     });
   }
 
-  private setEtapeCouranteConsolidation(ficheEvaluationId: string) {
+  private setEtapeSuivante(
+    ficheEvaluationId: string,
+    etapeSuivante: $Enums.etape_evaluation_enum,
+  ) {
     return this.prisma.fiche_evaluation.update({
       where: { id: ficheEvaluationId },
-      data: { etape_courante: $Enums.etape_evaluation_enum.CONSOLIDATION },
+      data: { etape_courante: etapeSuivante },
     });
   }
 
-  private getEtapeAutoEvaluation(ficheEvaluationId: string) {
+  private getEtapeCourante(
+    ficheEvaluationId: string,
+    etapeCourante: $Enums.etape_evaluation_enum,
+  ) {
     return this.prisma.etape_evaluation.findFirstOrThrow({
       where: {
-        type: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
+        type: etapeCourante,
         fiche_evaluation: {
           id: ficheEvaluationId,
-          etape_courante: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
+          etape_courante: etapeCourante,
         },
       },
       include: {

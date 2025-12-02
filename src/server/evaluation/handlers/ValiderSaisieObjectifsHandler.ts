@@ -48,6 +48,8 @@ export class ValiderSaisieObjectifsHandler {
       await this.dependencies.soumettreEtapeEvaluationService.execute({
         ficheEvaluationId: command.ficheEvaluationId,
         auteurId: auteurId,
+        nomEtapeCourante: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
+        nomEtapeSuivante: $Enums.etape_evaluation_enum.CONSOLIDATION,
       });
     }
   }
