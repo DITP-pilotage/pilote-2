@@ -3,6 +3,9 @@ import { AfficherAutoEvaluationQuery } from "@/server/evaluation/queries/Affiche
 import { ListerFichesAutoEvaluationQuery } from "@/server/evaluation/queries/ListerFichesAutoEvaluationQuery";
 import { ListerFichesEvaluationParPhaseQuery } from "@/server/evaluation/queries/ListerFichesEvaluationParPhaseQuery";
 import { ListerUtilisateursPiloteEval } from "@/server/evaluation/queries/ListerUtilisateursPiloteEval";
+import { ListerCriteresPiloteEval } from "@/server/evaluation/queries/ListerCriteresPiloteEval";
+import { ListerRattachementsPiloteEval } from "@/server/evaluation/queries/ListerRattachementsPiloteEval";
+import { ListerObjectifsParRattachementPiloteEval } from "@/server/evaluation/queries/ListerObjectifsParRattachementPiloteEval";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { AccesFicheEvaluationService } from "@/server/evaluation/services/AccesFicheEvaluationService";
 import { AfficherConsolidationQuery } from "@/server/evaluation/queries/AfficherConsolidationQuery";
@@ -34,6 +37,9 @@ export type PiloteEvalDependencies = {
   listerFichesAutoEvaluation: ListerFichesAutoEvaluationQuery;
   listerFichesEvaluationParPhaseQuery: ListerFichesEvaluationParPhaseQuery;
   listerUtilisateursPiloteEval: ListerUtilisateursPiloteEval;
+  listerCriteresPiloteEval: ListerCriteresPiloteEval;
+  listerRattachementsPiloteEval: ListerRattachementsPiloteEval;
+  listerObjectifsParRattachementPiloteEval: ListerObjectifsParRattachementPiloteEval;
   recupererDetailsNoteCollectiveQuery: RecupererDetailsNoteCollectiveQuery;
   enregistrerBrouillonAutoEvaluationObjectifs: EnregistrerBrouillonAutoEvaluationObjectifsHandler;
   enregistrerBrouillonAutoEvaluationCriteres: EnregistrerBrouillonAutoEvaluationCriteresHandler;
@@ -67,6 +73,11 @@ export const getPiloteEvalContainer = (
       ListerFichesEvaluationParPhaseQuery,
     ),
     listerUtilisateursPiloteEval: asClass(ListerUtilisateursPiloteEval),
+    listerCriteresPiloteEval: asClass(ListerCriteresPiloteEval),
+    listerRattachementsPiloteEval: asClass(ListerRattachementsPiloteEval),
+    listerObjectifsParRattachementPiloteEval: asClass(
+      ListerObjectifsParRattachementPiloteEval,
+    ),
     recupererDetailsNoteCollectiveQuery: asClass(
       RecupererDetailsNoteCollectiveQuery,
     ),

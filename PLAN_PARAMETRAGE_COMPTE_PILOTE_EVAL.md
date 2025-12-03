@@ -407,9 +407,505 @@ export default function UtilisateursPage(
 - Tableau cliquable avec navigation au clic
 - Styles basiques (à adapter selon le design system DSFR)
 
+## Étape 2 : Page de détail utilisateur `/evaluation/utilisateur/[id]`
+
+### 2.1 Créer la page vide
+
+**Fichier à créer** : `src/pages/evaluation/utilisateur/[id].tsx`
+
+**Contenu de base** :
+- Page protégée nécessitant l'accès à PILOTE_EVAL_PILOTAGE
+- Layout utilisant le même style que la page liste des utilisateurs
+- Titre de la page : "Configuration des droits - [Nom de l'utilisateur]"
+- `getServerSideProps` avec récupération de l'ID depuis les params
+- Structure de base sans données pour l'instant
+
+**Structure initiale** :
+```typescript
+export const getServerSideProps = async ({
+  req,
+  res,
+  params,
+}: GetServerSidePropsContext) => {
+  const session = await getServerSession(req, res, authOptions);
+  assert(session);
+
+  const featureFlipping = configurationFeatureFlip();
+
+  if (
+    !featureFlipping.piloteEval ||
+    !session.applicationsAccessibles.includes(
+      $Enums.application_accessible.PILOTE_EVAL_PILOTAGE,
+    )
+  ) {
+    return {
+      redirect: {
+        destination: "/404",
+      },
+    };
+  }
+
+  const utilisateurId = params?.id as string;
+
+  // TODO: récupérer les données
+
+  return {
+    props: {
+      utilisateurId,
+    },
+  };
+};
+```
+
+### 2.2 Créer la query pour récupérer tous les critères
+
+#### 2.2.1 Tests d'intégration (TDD - RED d'abord)
+
+**Fichier à créer** : `src/server/evaluation/__tests__/queries/ListerCriteresPiloteEval.integration.test.ts`
+
+**Scénarios de test** :
+```typescript
+describe("ListerCriteresPiloteEval", () => {
+  describe("run", () => {
+    it("retourne tous les critères actifs", async () => {
+      // Given: 3 critères dans la base
+
+      // When
+      const resultat = await query.run();
+
+      // Then
+      expect(resultat).toHaveLength(3);
+    });
+
+    it("retourne les champs id, libelle, descriptif", async () => {
+      // Given: un critère
+
+      // When
+      const resultat = await query.run();
+
+      // Then
+      expect(resultat[0]).toEqual({
+        id: expect.any(String),
+        libelle: expect.any(String),
+        descriptif: expect.any(String),
+      });
+    });
+
+    it("retourne les sous-critères associés à chaque critère", async () => {
+      // Given: un critère avec 2 sous-critères
+
+      // When
+      const resultat = await query.run();
+
+      // Then
+      expect(resultat[0].sousCriteres).toHaveLength(2);
+      expect(resultat[0].sousCriteres[0]).toEqual({
+        id: expect.any(String),
+        libelle: expect.any(String),
+        descriptif: expect.any(String),
+      });
+    });
+
+    it("retourne un tableau vide pour un critère sans sous-critères", async () => {
+      // Given: un critère sans sous-critères
+
+      // When
+      const resultat = await query.run();
+
+      // Then
+      expect(resultat[0].sousCriteres).toEqual([]);
+    });
+
+    it("trie les critères par ordre de création", async () => {
+      // Given: 3 critères créés à des dates différentes
+
+      // When
+      const resultat = await query.run();
+
+      // Then: vérifier l'ordre
+    });
+  });
+});
+```
+
+**Données du schéma Prisma** :
+- Table : `referentiel_critere`
+- Relation : `referentiel_sous_critere` (via `sous_criteres`)
+
+#### 2.2.2 Implémentation de la query
+
+**Fichier à créer** : `src/server/evaluation/queries/ListerCriteresPiloteEval.ts`
+
+**Structure** :
+```typescript
+import { PrismaPilote } from "@/server/db/PrismaPilote";
+
+export type SousCritere = {
+  id: string;
+  libelle: string;
+  descriptif: string;
+};
+
+export type CriterePiloteEval = {
+  id: string;
+  libelle: string;
+  descriptif: string;
+  sousCriteres: SousCritere[];
+};
+
+export class ListerCriteresPiloteEval {
+  constructor(private readonly dependencies: { prisma: PrismaPilote }) {}
+
+  async run(): Promise<CriterePiloteEval[]> {
+    const criteres = await this.dependencies.prisma
+      .getInstance()
+      .referentiel_critere.findMany({
+        select: {
+          id: true,
+          libelle: true,
+          descriptif: true,
+          sous_criteres: {
+            select: {
+              id: true,
+              libelle: true,
+              descriptif: true,
+            },
+            orderBy: {
+              created_at: "asc",
+            },
+          },
+        },
+        orderBy: {
+          created_at: "asc",
+        },
+      });
+
+    return criteres.map((critere) => ({
+      id: critere.id,
+      libelle: critere.libelle,
+      descriptif: critere.descriptif,
+      sousCriteres: critere.sous_criteres,
+    }));
+  }
+}
+```
+
+### 2.3 Créer la query pour récupérer tous les rattachements
+
+#### 2.3.1 Tests d'intégration (TDD - RED d'abord)
+
+**Fichier à créer** : `src/server/evaluation/__tests__/queries/ListerRattachementsPiloteEval.integration.test.ts`
+
+**Scénarios de test** :
+```typescript
+describe("ListerRattachementsPiloteEval", () => {
+  describe("run", () => {
+    it("retourne tous les rattachements", async () => {
+      // Given: 5 rattachements dans la base
+
+      // When
+      const resultat = await query.run();
+
+      // Then
+      expect(resultat).toHaveLength(5);
+    });
+
+    it("retourne les champs code, libelle, groupe, ordre", async () => {
+      // Given: un rattachement
+
+      // When
+      const resultat = await query.run();
+
+      // Then
+      expect(resultat[0]).toEqual({
+        code: expect.any(String),
+        libelle: expect.any(String),
+        groupe: expect.any(String),
+        ordre: expect.any(Number),
+      });
+    });
+
+    it("trie les rattachements par ordre croissant", async () => {
+      // Given: 3 rattachements avec ordre 2, 1, 3
+
+      // When
+      const resultat = await query.run();
+
+      // Then
+      expect(resultat[0].ordre).toBe(1);
+      expect(resultat[1].ordre).toBe(2);
+      expect(resultat[2].ordre).toBe(3);
+    });
+
+    it("groupe les rattachements par groupe", async () => {
+      // Given: rattachements avec différents groupes
+
+      // When
+      const resultat = await query.run();
+
+      // Then: vérifier le regroupement
+    });
+  });
+});
+```
+
+**Données du schéma Prisma** :
+- Table : `referentiel_rattachement`
+
+#### 2.3.2 Implémentation de la query
+
+**Fichier à créer** : `src/server/evaluation/queries/ListerRattachementsPiloteEval.ts`
+
+**Structure** :
+```typescript
+import { PrismaPilote } from "@/server/db/PrismaPilote";
+
+export type RattachementPiloteEval = {
+  code: string;
+  libelle: string;
+  groupe: string;
+  ordre: number;
+};
+
+export class ListerRattachementsPiloteEval {
+  constructor(private readonly dependencies: { prisma: PrismaPilote }) {}
+
+  async run(): Promise<RattachementPiloteEval[]> {
+    return await this.dependencies.prisma
+      .getInstance()
+      .referentiel_rattachement.findMany({
+        select: {
+          code: true,
+          libelle: true,
+          groupe: true,
+          ordre: true,
+        },
+        orderBy: {
+          ordre: "asc",
+        },
+      });
+  }
+}
+```
+
+### 2.4 Créer la query pour récupérer les objectifs groupés par rattachement
+
+#### 2.4.1 Tests d'intégration (TDD - RED d'abord)
+
+**Fichier à créer** : `src/server/evaluation/__tests__/queries/ListerObjectifsParRattachementPiloteEval.integration.test.ts`
+
+**Scénarios de test** :
+```typescript
+describe("ListerObjectifsParRattachementPiloteEval", () => {
+  describe("run", () => {
+    it("retourne les objectifs groupés par rattachement", async () => {
+      // Given: 2 rattachements avec objectifs
+
+      // When
+      const resultat = await query.run();
+
+      // Then
+      expect(Object.keys(resultat)).toHaveLength(2);
+    });
+
+    it("retourne les champs id, libelle, descriptif, indicateur_cible, jalon, tutelle pour chaque objectif", async () => {
+      // Given: un objectif avec tutelle
+
+      // When
+      const resultat = await query.run();
+
+      // Then
+      const rattachementCode = Object.keys(resultat)[0];
+      expect(resultat[rattachementCode][0]).toEqual({
+        id: expect.any(String),
+        libelle: expect.any(String),
+        descriptif: expect.any(String),
+        indicateur_cible: expect.any(String),
+        jalon: expect.any(Number),
+        tutelle: {
+          id: expect.any(String),
+          nom: expect.any(String),
+        },
+      });
+    });
+
+    it("retourne null pour la tutelle si l'objectif n'en a pas", async () => {
+      // Given: un objectif sans tutelle
+
+      // When
+      const resultat = await query.run();
+
+      // Then
+      const rattachementCode = Object.keys(resultat)[0];
+      expect(resultat[rattachementCode][0].tutelle).toBeNull();
+    });
+
+    it("trie les objectifs par jalon puis par ordre de création", async () => {
+      // Given: objectifs avec différents jalons
+
+      // When
+      const resultat = await query.run();
+
+      // Then: vérifier l'ordre
+    });
+
+    it("retourne un objet vide si aucun objectif", async () => {
+      // Given: aucun objectif dans la base
+
+      // When
+      const resultat = await query.run();
+
+      // Then
+      expect(resultat).toEqual({});
+    });
+  });
+});
+```
+
+**Données du schéma Prisma** :
+- Table : `referentiel_objectif`
+- Relation : `referentiel_rattachement` (via `rattachement_code`)
+- Relation : `referentiel_tutelle` (via `tutelle_id`)
+
+#### 2.4.2 Implémentation de la query
+
+**Fichier à créer** : `src/server/evaluation/queries/ListerObjectifsParRattachementPiloteEval.ts`
+
+**Structure** :
+```typescript
+import { PrismaPilote } from "@/server/db/PrismaPilote";
+
+export type Tutelle = {
+  id: string;
+  nom: string;
+};
+
+export type ObjectifPiloteEval = {
+  id: string;
+  libelle: string;
+  descriptif: string;
+  indicateur_cible: string;
+  jalon: number;
+  tutelle: Tutelle | null;
+};
+
+export type ObjectifsParRattachement = Record<string, ObjectifPiloteEval[]>;
+
+export class ListerObjectifsParRattachementPiloteEval {
+  constructor(private readonly dependencies: { prisma: PrismaPilote }) {}
+
+  async run(): Promise<ObjectifsParRattachement> {
+    const objectifs = await this.dependencies.prisma
+      .getInstance()
+      .referentiel_objectif.findMany({
+        select: {
+          id: true,
+          libelle: true,
+          descriptif: true,
+          indicateur_cible: true,
+          jalon: true,
+          rattachement_code: true,
+          tutelle: {
+            select: {
+              id: true,
+              nom: true,
+            },
+          },
+        },
+        orderBy: [
+          { jalon: "asc" },
+          { created_at: "asc" },
+        ],
+      });
+
+    const objectifsParRattachement: ObjectifsParRattachement = {};
+
+    for (const objectif of objectifs) {
+      const rattachementCode = objectif.rattachement_code;
+
+      if (!objectifsParRattachement[rattachementCode]) {
+        objectifsParRattachement[rattachementCode] = [];
+      }
+
+      objectifsParRattachement[rattachementCode].push({
+        id: objectif.id,
+        libelle: objectif.libelle,
+        descriptif: objectif.descriptif,
+        indicateur_cible: objectif.indicateur_cible,
+        jalon: objectif.jalon,
+        tutelle: objectif.tutelle,
+      });
+    }
+
+    return objectifsParRattachement;
+  }
+}
+```
+
+### 2.5 Enregistrer les queries dans le conteneur Awilix
+
+**Fichier à modifier** : `src/server/evaluation/container.ts`
+
+**Modifications** :
+
+1. Ajouter les imports :
+```typescript
+import { ListerCriteresPiloteEval } from "@/server/evaluation/queries/ListerCriteresPiloteEval";
+import { ListerRattachementsPiloteEval } from "@/server/evaluation/queries/ListerRattachementsPiloteEval";
+import { ListerObjectifsParRattachementPiloteEval } from "@/server/evaluation/queries/ListerObjectifsParRattachementPiloteEval";
+```
+
+2. Ajouter dans le type `PiloteEvalDependencies` :
+```typescript
+listerCriteresPiloteEval: ListerCriteresPiloteEval;
+listerRattachementsPiloteEval: ListerRattachementsPiloteEval;
+listerObjectifsParRattachementPiloteEval: ListerObjectifsParRattachementPiloteEval;
+```
+
+3. Enregistrer dans le conteneur :
+```typescript
+listerCriteresPiloteEval: asClass(ListerCriteresPiloteEval),
+listerRattachementsPiloteEval: asClass(ListerRattachementsPiloteEval),
+listerObjectifsParRattachementPiloteEval: asClass(ListerObjectifsParRattachementPiloteEval),
+```
+
+### 2.6 Récupérer les données dans getServerSideProps
+
+**Fichier à modifier** : `src/pages/evaluation/utilisateur/[id].tsx`
+
+**Modifications dans getServerSideProps** :
+
+```typescript
+const utilisateurId = params?.id as string;
+
+const container = getContainer("piloteEval");
+
+const [criteres, rattachements, objectifsParRattachement] = await Promise.all([
+  container.resolve("listerCriteresPiloteEval").run(),
+  container.resolve("listerRattachementsPiloteEval").run(),
+  container.resolve("listerObjectifsParRattachementPiloteEval").run(),
+]);
+
+return {
+  props: {
+    utilisateurId,
+    criteres,
+    rattachements,
+    objectifsParRattachement,
+  },
+};
+```
+
+**Affichage dans la page** :
+- Afficher les informations de l'utilisateur (à récupérer dans une étape ultérieure)
+- Afficher les sections pour configurer les droits :
+  - Auto-évaluation (sélection de territoires)
+  - Consolidation (sélection de territoires)
+  - Instruction - Objectifs (sélection de territoires)
+  - Instruction - Manière de servir (sélection d'axes)
+
 ## Étapes suivantes (à définir)
 
-- Étape 2 : Page de détail utilisateur `/evaluation/utilisateur/[id]`
 - Étape 3 : Formulaire de configuration des droits par territoire/axe
 - Étape 4 : Sauvegarde et persistance des droits
 - Étape 5 : Mise à jour de la logique de permissions
