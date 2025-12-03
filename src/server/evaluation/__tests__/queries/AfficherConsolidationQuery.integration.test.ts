@@ -163,11 +163,13 @@ describe("AfficherConsolidationQuery", () => {
           id: fiche1Id,
           jalon: 2025,
           etape_courante: $Enums.etape_evaluation_enum.CONSOLIDATION,
+          updated_at: new Date("2025-10-10"),
           rattachement_code: rattachement1Code,
           etape_evaluations: {
             create: {
               id: etape1Id,
               type: "CONSOLIDATION",
+              updated_at: new Date("2025-10-10"),
             },
           },
         },
@@ -178,11 +180,13 @@ describe("AfficherConsolidationQuery", () => {
           id: fiche2Id,
           jalon: 2025,
           etape_courante: $Enums.etape_evaluation_enum.CONSOLIDATION,
+          updated_at: new Date("2025-10-10"),
           rattachement_code: rattachement2Code,
           etape_evaluations: {
             create: {
               id: etape2Id,
               type: "CONSOLIDATION",
+              updated_at: new Date("2025-10-10"),
             },
           },
         },
@@ -262,6 +266,7 @@ describe("AfficherConsolidationQuery", () => {
           libelle: "Rattachement 1",
           ficheEvaluationId: fiche1Id,
           etapeCourante: "CONSOLIDATION",
+          dateDerniereModification: "2025-10-10T00:00:00.000Z",
           readOnly: false,
           objectifs: [
             {
@@ -348,6 +353,7 @@ describe("AfficherConsolidationQuery", () => {
           code: rattachement2Code,
           libelle: "Rattachement 2",
           ficheEvaluationId: fiche2Id,
+          dateDerniereModification: "2025-10-10T00:00:00.000Z",
           etapeCourante: "CONSOLIDATION",
           readOnly: false,
           objectifs: [
@@ -560,6 +566,7 @@ describe("AfficherConsolidationQuery", () => {
               {
                 id: etapeConsolidationId,
                 type: "CONSOLIDATION",
+                updated_at: new Date("2025-10-10"),
               },
             ],
           },
@@ -609,6 +616,7 @@ describe("AfficherConsolidationQuery", () => {
           code: rattachementCode,
           libelle: "Rattachement multi-étape",
           ficheEvaluationId,
+          dateDerniereModification: "2025-10-10T00:00:00.000Z",
           etapeCourante: "CONSOLIDATION",
           readOnly: false,
           objectifs: [
@@ -708,6 +716,7 @@ describe("AfficherConsolidationQuery", () => {
             create: {
               id: etapeEvaluationId,
               type: "CONSOLIDATION",
+              updated_at: new Date("2025-10-10"),
             },
           },
         },
@@ -732,6 +741,7 @@ describe("AfficherConsolidationQuery", () => {
           code: rattachementCode,
           libelle: "Rattachement sans évaluations",
           ficheEvaluationId,
+          dateDerniereModification: "2025-10-10T00:00:00.000Z",
           etapeCourante: "CONSOLIDATION",
           readOnly: false,
           objectifs: [
@@ -866,6 +876,7 @@ describe("AfficherConsolidationQuery", () => {
             create: {
               id: etapeEvaluationId,
               type: "CONSOLIDATION",
+              updated_at: new Date("2025-10-10"),
             },
           },
         },
@@ -902,6 +913,7 @@ describe("AfficherConsolidationQuery", () => {
           code: rattachementCode,
           libelle: "Rattachement avec critères mixtes",
           ficheEvaluationId,
+          dateDerniereModification: "2025-10-10T00:00:00.000Z",
           etapeCourante: "CONSOLIDATION",
           readOnly: false,
           objectifs: [],
@@ -1020,6 +1032,7 @@ describe("AfficherConsolidationQuery", () => {
             create: {
               id: etapeEvaluationId,
               type: "CONSOLIDATION",
+              updated_at: new Date("2025-10-10"),
             },
           },
         },
@@ -1056,6 +1069,7 @@ describe("AfficherConsolidationQuery", () => {
           code: rattachementCode,
           libelle: "Rattachement avec objectifs mixtes",
           ficheEvaluationId,
+          dateDerniereModification: "2025-10-10T00:00:00.000Z",
           etapeCourante: "CONSOLIDATION",
           readOnly: false,
           objectifs: [
@@ -1190,6 +1204,7 @@ describe("AfficherConsolidationQuery", () => {
                 id: etapeConsolidationId,
                 type: "CONSOLIDATION",
                 read_only: false,
+                updated_at: new Date("2025-10-10"),
               },
             ],
           },
@@ -1237,6 +1252,7 @@ describe("AfficherConsolidationQuery", () => {
           code: rattachementCode,
           libelle: "Rattachement en instruction",
           ficheEvaluationId,
+          dateDerniereModification: "2025-10-10T00:00:00.000Z",
           etapeCourante: $Enums.etape_evaluation_enum.INSTRUCTION,
           readOnly: true,
           objectifs: [
@@ -1385,6 +1401,7 @@ describe("AfficherConsolidationQuery", () => {
                 id: etapeConsolidationId,
                 type: "CONSOLIDATION",
                 read_only: true,
+                updated_at: new Date("2025-10-10"),
               },
             ],
           },
@@ -1461,6 +1478,7 @@ describe("AfficherConsolidationQuery", () => {
           code: rattachementCode,
           libelle: "Rattachement avec auto-évaluation",
           ficheEvaluationId,
+          dateDerniereModification: "2025-10-10T00:00:00.000Z",
           etapeCourante: "CONSOLIDATION",
           readOnly: true,
           objectifs: [

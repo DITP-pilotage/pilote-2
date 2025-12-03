@@ -188,6 +188,8 @@ export class AfficherInstructionQuery {
           code: rattachement.code,
           libelle: rattachement.libelle,
           ficheEvaluationId: ficheEvaluation.id,
+          dateDerniereModification:
+            etapeInstruction?.updated_at.toISOString() ?? null,
           readOnly: etapeInstruction?.read_only ?? false,
           etapeCourante: ficheEvaluation.etape_courante,
           objectifs: objectifsAvecEvaluations,

@@ -125,6 +125,8 @@ export class AfficherConsolidationQuery {
           code: rattachement.code,
           libelle: rattachement.libelle,
           ficheEvaluationId: ficheEvaluation.id,
+          dateDerniereModification:
+            etapeConsolidation?.updated_at.toISOString() ?? null,
           readOnly: isInstructionPhase
             ? true
             : (etapeConsolidation?.read_only ?? false),

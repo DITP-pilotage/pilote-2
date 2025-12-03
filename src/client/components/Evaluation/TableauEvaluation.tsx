@@ -22,6 +22,7 @@ import {
 } from "@/components/Evaluation/CriteresProvider";
 import { AutosaveProvider } from "@/components/Evaluation/AutosaveProvider";
 import { EtapeEvaluationProvider } from "@/components/Evaluation/EtapeEvaluationProvider";
+import { formaterDate } from "@/client/utils/date/date";
 import {
   FormCommentaireName,
   FormNoteName,
@@ -115,6 +116,17 @@ export const InnerTableauEvaluation = memo(function TableauEvaluation({
     (rattachement) => rattachement.readOnly,
   );
 
+  const dateDerniereModification = rattachements.reduce<string | null>(
+    (latest, rattachement) => {
+      if (rattachement.dateDerniereModification == null) return latest;
+      if (latest == null) return rattachement.dateDerniereModification;
+      return new Date(rattachement.dateDerniereModification) > new Date(latest)
+        ? rattachement.dateDerniereModification
+        : latest;
+    },
+    null,
+  );
+
   return (
     <EtapeEvaluationProvider value={etape}>
       <AutosaveProvider value={handleAutosave}>
@@ -129,12 +141,22 @@ export const InnerTableauEvaluation = memo(function TableauEvaluation({
                 )}
               >
                 {!estEnLectureSeule && (
-                  <Bouton
-                    className="self-end"
-                    label="Enregistrer le brouillon"
-                    type="submit"
-                    variant="secondary"
-                  />
+                  <div className="flex flex-col items-end gap-1">
+                    <Bouton
+                      label="Enregistrer le brouillon"
+                      type="submit"
+                      variant="secondary"
+                    />
+                    {dateDerniereModification ? (
+                      <span className="italic text-sm">
+                        Dernière modification :{" "}
+                        {formaterDate(
+                          dateDerniereModification,
+                          "DD/MM/YYYY [à] H[h]mm",
+                        )}
+                      </span>
+                    ) : null}
+                  </div>
                 )}
                 <FiltresTableauEvaluation table={table} />
                 <GroupesTableauEvaluation table={table} />
