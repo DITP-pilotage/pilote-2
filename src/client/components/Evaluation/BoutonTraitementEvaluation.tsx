@@ -1,11 +1,11 @@
 import { toast } from "sonner";
 import { useId, useState } from "react";
-import { Switch } from "radix-ui";
 import api from "@/server/infrastructure/api/trpc/api";
 import { Icone } from "@/components/_commons/Icone";
 import { CheckLineIcon } from "@/components/_commons/Icones/CheckLineIcon";
 import { clsxm } from "@/utils/clsxm";
 import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
+import { Switch } from "@/components/shared/Switch";
 
 export const BoutonTraitementEvaluation = ({
   evaluationId,
@@ -57,29 +57,11 @@ export const BoutonTraitementEvaluation = ({
     <div className="flex flex-col gap-2 items-center">
       <Switch.Root
         checked={complete}
-        className={clsxm(
-          "w-11 relative !p-0",
-          "rounded-full border !border-primary",
-          "bg-white transition-colors data-[state=checked]:!bg-primary",
-          { "!border-gray-500 data-[state=checked]:!bg-gray-300": disabled },
-        )}
         disabled={disabled}
         id={id}
         onCheckedChange={handleClick}
       >
-        <Switch.Thumb
-          className={clsxm(
-            "h-7 w-7 block",
-            "rounded-full border !border-primary",
-            "translate-x-0 transition-transform data-[state=checked]:translate-x-4",
-            "bg-white",
-            { "!border-gray-500 !text-gray-500": disabled },
-            "children:hidden data-[state=checked]:children:block",
-            "flex items-center justify-center",
-          )}
-        >
-          <Icone className="h-5 w-5 text-current" icone={CheckLineIcon} />
-        </Switch.Thumb>
+        <Switch.Thumb disabled={disabled} />
       </Switch.Root>
 
       <label
