@@ -4,7 +4,6 @@ import { getServerSession } from "next-auth/next";
 import { $Enums } from "@prisma/client";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
 import { toast } from "sonner";
 import { useRouter } from "next/router";
 import assert from "node:assert";
@@ -20,79 +19,6 @@ import {
   ParametrageUtilisateurPiloteEvalFormulaire,
 } from "@/validation/parametrageUtilisateurPiloteEval";
 import MultiSelect from "@/components/_commons/MultiSelectNew/MultiSelect";
-
-type ObjectifPiloteEval = {
-  id: string;
-  libelle: string;
-};
-
-type AccordeonGroupeProps = {
-  groupe: string;
-  rattachements: { value: string; label: string }[];
-  objectifsParRattachement: Record<string, ObjectifPiloteEval[]>;
-  selectedCodes: string[];
-  onToggle: (code: string) => void;
-};
-
-const AccordeonGroupe = ({
-  groupe,
-  rattachements,
-  objectifsParRattachement,
-  selectedCodes,
-  onToggle,
-}: AccordeonGroupeProps) => {
-  const [expanded, setExpanded] = useState(false);
-
-  return (
-    <div className="border border-gray-200 rounded">
-      <button
-        className="w-full p-3 flex items-center justify-between bg-gray-50 hover:bg-gray-100 text-left"
-        onClick={() => setExpanded(!expanded)}
-        type="button"
-      >
-        <span className="font-semibold">{groupe}</span>
-        <span className="text-gray-600">{expanded ? "▼" : "▶"}</span>
-      </button>
-      {expanded ? (
-        <div className="p-3 space-y-2">
-          {rattachements.map((rattachement) => {
-            const objectifs =
-              objectifsParRattachement[rattachement.value] || [];
-            const isSelected = selectedCodes.includes(rattachement.value);
-
-            return (
-              <div
-                className="border-l-2 border-blue-400 pl-3"
-                key={rattachement.value}
-              >
-                <label className="flex items-start gap-2 cursor-pointer">
-                  <input
-                    checked={isSelected}
-                    className="mt-1"
-                    onChange={() => onToggle(rattachement.value)}
-                    type="checkbox"
-                  />
-                  <div className="flex-1">
-                    <span className="font-medium">{rattachement.label}</span>
-                    {objectifs.length > 0 && (
-                      <ul className="mt-1 text-sm text-gray-600 space-y-1">
-                        {objectifs.map((objectif) => (
-                          <li className="ml-4" key={objectif.id}>
-                            • {objectif.libelle}
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-                  </div>
-                </label>
-              </div>
-            );
-          })}
-        </div>
-      ) : null}
-    </div>
-  );
-};
 
 export const getServerSideProps = async ({
   req,
@@ -149,16 +75,7 @@ export const getServerSideProps = async ({
 const UtilisateurDetailPage = (
   props: InferGetServerSidePropsType<typeof getServerSideProps>,
 ) => {
-  const {
-    utilisateurId,
-    criteres,
-    rattachements,
-    objectifsParRattachement,
-    droitsUtilisateur,
-  } = props;
-
-  const [ouvertInstructionObjectifs, setOuvertInstructionObjectifs] =
-    useState(false);
+  const { utilisateurId, criteres, rattachements, droitsUtilisateur } = props;
 
   const router = useRouter();
   const modifierDroits = api.evaluation.modifierDroitsUtilisateur.useMutation();
@@ -179,6 +96,9 @@ const UtilisateurDetailPage = (
         },
         consolidation: {
           rattachementCodes: data.consolidation.rattachementCodes,
+        },
+        instructionManiereDeServir: {
+          critereCodes: data.instructionManiereDeServir.critereCodes,
         },
       },
       {
@@ -284,61 +204,15 @@ const UtilisateurDetailPage = (
                 <Controller
                   control={control}
                   name="instructionObjectifs.rattachementCodes"
-                  render={({ field }) => {
-                    const nombreSelections = field.value.length;
-
-                    return (
-                      <div>
-                        <label
-                          className="fr-label font-semibold"
-                          htmlFor="instruction-objectifs"
-                        >
-                          Instruction - Objectifs
-                        </label>
-                        <button
-                          className="fr-select fr-ellipsis w-full text-left"
-                          id="instruction-objectifs"
-                          onClick={() =>
-                            setOuvertInstructionObjectifs(
-                              !ouvertInstructionObjectifs,
-                            )
-                          }
-                          type="button"
-                        >
-                          {nombreSelections > 0
-                            ? `${nombreSelections} territoire(s) sélectionné(s)`
-                            : "Sélectionnez des territoires"}
-                        </button>
-                        {ouvertInstructionObjectifs ? (
-                          <div className="border border-gray-300 rounded mt-2 max-h-96 overflow-y-auto bg-white">
-                            <div className="p-4 space-y-4">
-                              {Object.entries(rattachementsGroupes).map(
-                                ([groupe, rattachementsGroupe]) => (
-                                  <AccordeonGroupe
-                                    groupe={groupe}
-                                    key={groupe}
-                                    objectifsParRattachement={
-                                      objectifsParRattachement
-                                    }
-                                    onToggle={(code) => {
-                                      const isSelected =
-                                        field.value.includes(code);
-                                      const newValue = isSelected
-                                        ? field.value.filter((c) => c !== code)
-                                        : [...field.value, code];
-                                      field.onChange(newValue);
-                                    }}
-                                    rattachements={rattachementsGroupe}
-                                    selectedCodes={field.value}
-                                  />
-                                ),
-                              )}
-                            </div>
-                          </div>
-                        ) : null}
-                      </div>
-                    );
-                  }}
+                  render={({ field }) => (
+                    <MultiSelect
+                      changementValeursSélectionnéesCallback={field.onChange}
+                      label="Instruction - Objectifs"
+                      optionsGroupées={rattachementsOptionsGroupees}
+                      suffixeLibellé="territoire(s) sélectionné(s)"
+                      valeursSélectionnéesParDéfaut={field.value}
+                    />
+                  )}
                 />
               </section>
 

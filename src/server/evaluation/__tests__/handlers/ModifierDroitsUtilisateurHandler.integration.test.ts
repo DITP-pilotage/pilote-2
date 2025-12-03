@@ -1,4 +1,5 @@
 import { $Enums } from "@prisma/client";
+import { randomUUID } from "node:crypto";
 import { ModifierDroitsUtilisateurHandler } from "@/server/evaluation/handlers/ModifierDroitsUtilisateurHandler";
 import { prisma } from "@/server/db/prisma";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
@@ -36,6 +37,22 @@ describe("ModifierDroitsUtilisateurHandler", () => {
       ],
       skipDuplicates: true,
     });
+
+    await prisma.referentiel_critere.createMany({
+      data: [
+        {
+          id: "9c60b99a-d716-49dc-b4d5-5a739f241a78",
+          libelle: "Critère 1",
+          descriptif: "Description du critère 1",
+        },
+        {
+          id: "3ec335a1-0737-4ddf-bdf1-11aa7d7f41fa",
+          libelle: "Critère 2",
+          descriptif: "Description du critère 2",
+        },
+      ],
+      skipDuplicates: true,
+    });
   });
 
   describe("execute", () => {
@@ -49,6 +66,9 @@ describe("ModifierDroitsUtilisateurHandler", () => {
         },
         consolidation: {
           rattachementCodes: [],
+        },
+        instructionManiereDeServir: {
+          critereCodes: [],
         },
       };
 
@@ -81,6 +101,9 @@ describe("ModifierDroitsUtilisateurHandler", () => {
         },
         consolidation: {
           rattachementCodes: ["REG-03"],
+        },
+        instructionManiereDeServir: {
+          critereCodes: [],
         },
       };
 
@@ -121,6 +144,9 @@ describe("ModifierDroitsUtilisateurHandler", () => {
         },
         consolidation: {
           rattachementCodes: [],
+        },
+        instructionManiereDeServir: {
+          critereCodes: [],
         },
       };
 
@@ -176,6 +202,9 @@ describe("ModifierDroitsUtilisateurHandler", () => {
         consolidation: {
           rattachementCodes: [],
         },
+        instructionManiereDeServir: {
+          critereCodes: [],
+        },
       };
 
       // When
@@ -215,6 +244,9 @@ describe("ModifierDroitsUtilisateurHandler", () => {
         consolidation: {
           rattachementCodes: [],
         },
+        instructionManiereDeServir: {
+          critereCodes: [],
+        },
       };
 
       // When
@@ -230,6 +262,202 @@ describe("ModifierDroitsUtilisateurHandler", () => {
         });
 
       expect(rattachements).toHaveLength(0);
+    });
+
+    it("crée tous les rattachements en instruction et les critères lorsque des critères sont fournis", async () => {
+      // Given: une commande avec 2 critères
+      const command = {
+        utilisateurId,
+        jalon: 2025,
+        autoEvaluation: {
+          rattachementCodes: [],
+        },
+        consolidation: {
+          rattachementCodes: [],
+        },
+        instructionManiereDeServir: {
+          critereCodes: [
+            "9c60b99a-d716-49dc-b4d5-5a739f241a78",
+            "3ec335a1-0737-4ddf-bdf1-11aa7d7f41fa",
+          ],
+        },
+      };
+
+      // When
+      await handler.execute(command);
+
+      // Then: tous les rattachements doivent être créés pour l'instruction
+      const rattachements =
+        await prisma.rattachement_utilisateur_etape_jalon.findMany({
+          where: {
+            utilisateur_id: utilisateurId,
+            jalon: 2025,
+            etape: $Enums.etape_evaluation_enum.INSTRUCTION,
+          },
+        });
+
+      expect(rattachements).toHaveLength(3);
+      expect(rattachements.map((r) => r.rattachement_code)).toEqual(
+        expect.arrayContaining(["REG-01", "REG-02", "REG-03"]),
+      );
+
+      // Then: les critères doivent être créés
+      const criteres = await prisma.instruction_critere.findMany({
+        where: {
+          rattachement_utilisateur_etape_jalon: {
+            utilisateur_id: utilisateurId,
+            jalon: 2025,
+            etape: $Enums.etape_evaluation_enum.INSTRUCTION,
+          },
+        },
+      });
+
+      expect(criteres).toHaveLength(6);
+      const criteresParRattachement = criteres.reduce(
+        (acc, c) => {
+          if (!acc[c.rattachement_utilisateur_etape_jalon_id])
+            acc[c.rattachement_utilisateur_etape_jalon_id] = [];
+          acc[c.rattachement_utilisateur_etape_jalon_id].push(c.critere_id);
+          return acc;
+        },
+        {} as Record<string, string[]>,
+      );
+
+      Object.values(criteresParRattachement).forEach((criteresIds) => {
+        expect(criteresIds).toEqual(
+          expect.arrayContaining([
+            "9c60b99a-d716-49dc-b4d5-5a739f241a78",
+            "3ec335a1-0737-4ddf-bdf1-11aa7d7f41fa",
+          ]),
+        );
+      });
+    });
+
+    it("supprime les rattachements instruction et critères existants lorsqu'aucun critère n'est fourni", async () => {
+      // Given: des rattachements et critères existants en instruction
+      const rattachement =
+        await prisma.rattachement_utilisateur_etape_jalon.create({
+          data: {
+            id: "a1b2c3d4-e5f6-4a5b-8c9d-0e1f2a3b4c5d",
+            utilisateur_id: utilisateurId,
+            rattachement_code: "REG-01",
+            etape: $Enums.etape_evaluation_enum.INSTRUCTION,
+            jalon: 2025,
+          },
+        });
+
+      await prisma.instruction_critere.create({
+        data: {
+          id: randomUUID(),
+          rattachement_utilisateur_etape_jalon_id: rattachement.id,
+          critere_id: "9c60b99a-d716-49dc-b4d5-5a739f241a78",
+        },
+      });
+
+      const command = {
+        utilisateurId,
+        jalon: 2025,
+        autoEvaluation: {
+          rattachementCodes: [],
+        },
+        consolidation: {
+          rattachementCodes: [],
+        },
+        instructionManiereDeServir: {
+          critereCodes: [],
+        },
+      };
+
+      // When
+      await handler.execute(command);
+
+      // Then: les rattachements instruction doivent être supprimés
+      const rattachements =
+        await prisma.rattachement_utilisateur_etape_jalon.findMany({
+          where: {
+            utilisateur_id: utilisateurId,
+            jalon: 2025,
+            etape: $Enums.etape_evaluation_enum.INSTRUCTION,
+          },
+        });
+
+      expect(rattachements).toHaveLength(0);
+
+      // Then: les critères doivent être supprimés (cascade)
+      const criteres = await prisma.instruction_critere.findMany({
+        where: {
+          rattachement_utilisateur_etape_jalon_id: rattachement.id,
+        },
+      });
+
+      expect(criteres).toHaveLength(0);
+    });
+
+    it("remplace les critères existants par les nouveaux", async () => {
+      // Given: un rattachement avec un critère existant
+      const rattachement =
+        await prisma.rattachement_utilisateur_etape_jalon.create({
+          data: {
+            id: "a1b2c3d4-e5f6-4a5b-8c9d-0e1f2a3b4c5d",
+            utilisateur_id: utilisateurId,
+            rattachement_code: "REG-01",
+            etape: $Enums.etape_evaluation_enum.INSTRUCTION,
+            jalon: 2025,
+          },
+        });
+
+      await prisma.instruction_critere.create({
+        data: {
+          id: randomUUID(),
+          rattachement_utilisateur_etape_jalon_id: rattachement.id,
+          critere_id: "9c60b99a-d716-49dc-b4d5-5a739f241a78",
+        },
+      });
+
+      const command = {
+        utilisateurId,
+        jalon: 2025,
+        autoEvaluation: {
+          rattachementCodes: [],
+        },
+        consolidation: {
+          rattachementCodes: [],
+        },
+        instructionManiereDeServir: {
+          critereCodes: ["3ec335a1-0737-4ddf-bdf1-11aa7d7f41fa"],
+        },
+      };
+
+      // When
+      await handler.execute(command);
+
+      // Then: tous les rattachements doivent être créés
+      const rattachements =
+        await prisma.rattachement_utilisateur_etape_jalon.findMany({
+          where: {
+            utilisateur_id: utilisateurId,
+            jalon: 2025,
+            etape: $Enums.etape_evaluation_enum.INSTRUCTION,
+          },
+        });
+
+      expect(rattachements).toHaveLength(3);
+
+      // Then: seul le nouveau critère doit être présent
+      const criteres = await prisma.instruction_critere.findMany({
+        where: {
+          rattachement_utilisateur_etape_jalon: {
+            utilisateur_id: utilisateurId,
+            jalon: 2025,
+            etape: $Enums.etape_evaluation_enum.INSTRUCTION,
+          },
+        },
+      });
+
+      expect(criteres).toHaveLength(3);
+      criteres.forEach((c) => {
+        expect(c.critere_id).toBe("3ec335a1-0737-4ddf-bdf1-11aa7d7f41fa");
+      });
     });
   });
 });
