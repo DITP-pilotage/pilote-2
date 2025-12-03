@@ -1,5 +1,6 @@
 import { toast } from "sonner";
-import { useState } from "react";
+import { useId, useState } from "react";
+import { Switch } from "radix-ui";
 import api from "@/server/infrastructure/api/trpc/api";
 import { Icone } from "@/components/_commons/Icone";
 import { CheckLineIcon } from "@/components/_commons/Icones/CheckLineIcon";
@@ -17,6 +18,7 @@ export const BoutonTraitementEvaluation = ({
   dateTraitement: string | null;
   disabled: boolean;
 }) => {
+  const id = useId();
   const [complete, setComplete] = useState(dateTraitement != null);
   const refreshRouter = useRefreshRouter();
   const setTraitement = api.evaluation.setTraitementEvaluation.useMutation({
@@ -52,35 +54,42 @@ export const BoutonTraitementEvaluation = ({
   };
 
   return (
-    <button
-      aria-pressed={dateTraitement != null}
-      className={clsxm(
-        "whitespace-nowrap inline-flex items-center gap-2 justify-end",
-        {
-          "cursor-not-allowed !opacity-50": disabled,
-        },
-      )}
-      disabled={setTraitement.isLoading || disabled}
-      onClick={handleClick}
-      type="button"
-    >
-      <span>{complete ? "Traité" : "Non traité"}</span>
-
-      <span
+    <div className="flex flex-col gap-2 items-center">
+      <Switch.Root
+        checked={complete}
         className={clsxm(
-          "rounded-full !p-0.5 !border-2 w-5 h-5 flex items-center justify-center",
-          {
-            "!border-green-600 !text-green-700 !bg-green-50 hover:bg-green-200":
-              complete,
-            "!border-gray-400 text-gray-400 !bg-white hover:bg-gray-100":
-              !complete,
-          },
+          "w-11 relative !p-0",
+          "rounded-full border !border-primary",
+          "bg-white transition-colors data-[state=checked]:!bg-primary",
+          { "!border-gray-500 data-[state=checked]:!bg-gray-300": disabled },
         )}
+        disabled={disabled}
+        id={id}
+        onCheckedChange={handleClick}
       >
-        {complete ? (
-          <Icone className="text-current" icone={CheckLineIcon} />
-        ) : null}
-      </span>
-    </button>
+        <Switch.Thumb
+          className={clsxm(
+            "h-7 w-7 block",
+            "rounded-full border !border-primary",
+            "translate-x-0 transition-transform data-[state=checked]:translate-x-4",
+            "bg-white",
+            { "!border-gray-500 !text-gray-500": disabled },
+            "children:hidden data-[state=checked]:children:block",
+            "flex items-center justify-center",
+          )}
+        >
+          <Icone className="h-5 w-5 text-current" icone={CheckLineIcon} />
+        </Switch.Thumb>
+      </Switch.Root>
+
+      <label
+        className={clsxm("text-sm", {
+          "text-primary": complete,
+        })}
+        htmlFor={id}
+      >
+        {complete ? "traité" : "non traité"}
+      </label>
+    </div>
   );
 };
