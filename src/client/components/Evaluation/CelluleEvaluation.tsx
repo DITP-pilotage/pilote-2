@@ -27,6 +27,7 @@ export const CelluleEvaluation = ({
       ? (`fichesEvaluation.${ligne.ficheEvaluationId}.objectifs.${ligne.id}.note` as const)
       : (`fichesEvaluation.${ligne.ficheEvaluationId}.criteres.${ligne.id}.note` as const);
   const form = useFormulaireEvaluation();
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const note = form.watch(noteName);
 
   // Nécessaire pour lire l'état mis à jour des champs
@@ -34,6 +35,7 @@ export const CelluleEvaluation = ({
   useFormState().isValid;
   const commentaireError = form.getFieldState(commentaireName).invalid;
   const noteError = form.getFieldState(noteName).invalid;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const disabled = commentaireError || noteError;
 
   const critereOuObjectif =

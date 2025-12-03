@@ -2,7 +2,7 @@ import { flexRender } from "@tanstack/react-table";
 import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { $Enums } from "@prisma/client";
-import { ComponentProps, memo, ReactNode, useCallback, useEffect } from "react";
+import { ComponentProps, memo, useCallback, useEffect } from "react";
 import { clsxm } from "@/utils/clsxm";
 import {
   Critere,
@@ -30,7 +30,6 @@ import {
   useFormSchema,
 } from "./form";
 import { FiltresTableauEvaluation } from "./FiltresTableauEvaluation";
-import { GroupesTableauEvaluation } from "./GroupesTableauEvaluation";
 
 export type TableauEvaluationRow =
   | {
