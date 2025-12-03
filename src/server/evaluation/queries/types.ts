@@ -17,6 +17,7 @@ export type Evaluation = {
   id: string;
   note: number | null;
   commentaire: string;
+  annexe: string | null;
 };
 
 export type Objectif = {

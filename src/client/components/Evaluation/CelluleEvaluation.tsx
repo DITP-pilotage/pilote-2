@@ -102,6 +102,7 @@ export const CelluleEvaluation = ({
           ) {
             return (
               <LigneEtapeEvaluation
+                annexe={evalItem.evaluation.annexe}
                 commentaire={evalItem.evaluation.commentaire}
                 commentaireLabel="Auto-évaluation"
                 commentaireName={commentaireName}

@@ -313,6 +313,7 @@ export class AfficherInstructionQuery {
         objectif_id: string;
         note: number | null;
         commentaire: string;
+        annexe: string;
         date_traitement: Date | null;
       }>;
     }>,
@@ -334,6 +335,7 @@ export class AfficherInstructionQuery {
         critere_id: string;
         note: number | null;
         commentaire: string;
+        annexe: string;
         date_traitement: Date | null;
       }>;
     }>,
@@ -352,6 +354,7 @@ export class AfficherInstructionQuery {
           id: string;
           note: number | null;
           commentaire: string;
+          annexe: string;
         }
       | undefined,
   ) {
@@ -359,6 +362,7 @@ export class AfficherInstructionQuery {
       id: evaluation?.id ?? randomUUID(),
       note: evaluation?.note ?? null,
       commentaire: evaluation?.commentaire ?? "",
+      annexe: evaluation?.annexe ?? "",
     };
   }
 }

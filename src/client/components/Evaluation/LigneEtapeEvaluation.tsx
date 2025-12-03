@@ -11,6 +11,7 @@ export const LigneEtapeEvaluation = ({
   commentaireName,
   noteName,
   commentaire,
+  annexe,
   note,
   onAutosave,
   onAfficherFicheCadrage,
@@ -20,6 +21,7 @@ export const LigneEtapeEvaluation = ({
   commentaireName: FormCommentaireName;
   noteName: FormNoteName;
   commentaire?: string | null;
+  annexe?: string | null;
   note?: number | null;
   onAutosave?: (fieldName: FormCommentaireName | FormNoteName) => void;
   onAfficherFicheCadrage?: () => void;
@@ -37,12 +39,28 @@ export const LigneEtapeEvaluation = ({
           />
         ) : (
           <>
-            <span className="italic text-sm block !font-medium mb-2">
-              {commentaireLabel}
-            </span>
-            <blockquote className="text-sm text-gray-700 italic pl-3 py-1 whitespace-pre-line">
-              {commentaire || "Aucun commentaire"}
-            </blockquote>
+            <div>
+              <span className="italic text-sm block !font-medium mb-2">
+                {commentaireLabel}
+              </span>
+              <blockquote className="text-sm text-gray-700 pl-3 py-1 whitespace-pre-line">
+                {commentaire || "Aucun commentaire"}
+              </blockquote>
+            </div>
+
+            {annexe ? (
+              <div className="mt-6">
+                <span className="italic text-sm block !font-medium mb-2">
+                  Annexe
+                </span>
+
+                <blockquote
+                  className="[&_*]:!text-sm text-gray-700 pl-3 py-1 whitespace-pre-line"
+                  // eslint-disable-next-line react/no-danger
+                  dangerouslySetInnerHTML={{ __html: annexe }}
+                />
+              </div>
+            ) : null}
           </>
         )}
       </div>
