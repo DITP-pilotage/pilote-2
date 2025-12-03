@@ -1,8 +1,6 @@
 import { toast } from "sonner";
 import { useId, useState } from "react";
 import api from "@/server/infrastructure/api/trpc/api";
-import { Icone } from "@/components/_commons/Icone";
-import { CheckLineIcon } from "@/components/_commons/Icones/CheckLineIcon";
 import { clsxm } from "@/utils/clsxm";
 import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
 import { Switch } from "@/components/shared/Switch";
