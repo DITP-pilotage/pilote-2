@@ -5,10 +5,13 @@ import { $Enums } from "@prisma/client";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
+import { toast } from "sonner";
+import { useRouter } from "next/router";
 import assert from "node:assert";
 import { getContainer } from "@/server/dependances";
 import { configurationFeatureFlip } from "@/config";
 import { authOptions } from "@/server/infrastructure/api/auth/[...nextauth]";
+import api from "@/server/infrastructure/api/trpc/api";
 import "@gouvfr/dsfr/dist/component/select/select.min.css"; // A Supprimer
 import "@gouvfr/dsfr/dist/component/form/form.min.css"; // A Supprimer
 
@@ -157,15 +160,43 @@ const UtilisateurDetailPage = (
   const [ouvertInstructionObjectifs, setOuvertInstructionObjectifs] =
     useState(false);
 
+  const router = useRouter();
+  const modifierDroits = api.evaluation.modifierDroitsUtilisateur.useMutation();
+
   const { control, handleSubmit } =
     useForm<ParametrageUtilisateurPiloteEvalFormulaire>({
       resolver: zodResolver(parametrageUtilisateurPiloteEvalSchema),
       defaultValues: droitsUtilisateur,
     });
 
-  const onSubmit = (data: ParametrageUtilisateurPiloteEvalFormulaire) => {
-    console.log("Données du formulaire :", data);
-    // TODO: implémenter la sauvegarde
+  const onSubmit = async (data: ParametrageUtilisateurPiloteEvalFormulaire) => {
+    await modifierDroits.mutateAsync(
+      {
+        utilisateurId,
+        jalon: 2025,
+        autoEvaluation: {
+          rattachementCodes: data.autoEvaluation.rattachementCodes,
+        },
+        consolidation: {
+          rattachementCodes: data.consolidation.rattachementCodes,
+        },
+      },
+      {
+        onSuccess: async () => {
+          toast.success("Droits modifiés avec succès", {
+            position: "top-right",
+            richColors: true,
+          });
+          await router.push("/evaluation/utilisateurs");
+        },
+        onError: () => {
+          toast.error("Erreur lors de la modification des droits", {
+            position: "top-right",
+            richColors: true,
+          });
+        },
+      },
+    );
   };
 
   const rattachementsGroupes = rattachements.reduce(

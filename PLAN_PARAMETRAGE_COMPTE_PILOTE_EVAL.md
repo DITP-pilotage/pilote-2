@@ -1683,10 +1683,457 @@ const UtilisateurDetailPage = (
 - ✅ Les tests doivent tous être en rouge avant l'implémentation (TDD)
 - ✅ Le jalon sera hard-codé à 2025 pour le moment
 
+## Étape 5 : Sauvegarde des droits (Auto-évaluation et Consolidation uniquement)
+
+### Contexte
+
+Pour cette étape, nous allons implémenter la sauvegarde des droits uniquement pour l'auto-évaluation et la consolidation. L'instruction sera implémentée plus tard car elle nécessite la gestion des critères et objectifs.
+
+La sauvegarde consiste à :
+1. Supprimer tous les rattachements existants pour l'utilisateur, le jalon et l'étape concernée
+2. Créer les nouveaux rattachements avec les codes sélectionnés
+
+### 5.1 Créer le handler vide
+
+**Fichier à créer** : `src/server/evaluation/handlers/ModifierDroitsUtilisateurHandler.ts`
+
+**Structure de base** (inspirée de `ModifierObjectifHandler`) :
+
+```typescript
+import { z } from "zod";
+import { Transaction } from "@/server/db/Transaction";
+import { PrismaPilote } from "@/server/db/PrismaPilote";
+import { getPrisma } from "@/server/db/PrismaTransaction";
+
+export const modifierDroitsUtilisateurCommandSchema = z.object({
+  utilisateurId: z.string().uuid(),
+  jalon: z.number(),
+  autoEvaluation: z.object({
+    rattachementCodes: z.array(z.string()),
+  }),
+  consolidation: z.object({
+    rattachementCodes: z.array(z.string()),
+  }),
+});
+
+export type ModifierDroitsUtilisateurCommand = z.infer<
+  typeof modifierDroitsUtilisateurCommandSchema
+>;
+
+export class ModifierDroitsUtilisateurHandler {
+  constructor(
+    private readonly dependencies: {
+      transaction: Transaction;
+      prisma: PrismaPilote;
+    },
+  ) {}
+
+  async execute(command: ModifierDroitsUtilisateurCommand): Promise<void> {
+    throw new Error("Not implemented");
+  }
+}
+```
+
+### 5.2 Créer les tests d'intégration (TDD - RED)
+
+**Fichier à créer** : `src/server/evaluation/__tests__/handlers/ModifierDroitsUtilisateurHandler.integration.test.ts`
+
+**Scénarios de test** :
+
+```typescript
+import { describe, it, expect, beforeEach } from "@jest/globals";
+import { ModifierDroitsUtilisateurHandler } from "@/server/evaluation/handlers/ModifierDroitsUtilisateurHandler";
+import { prisma } from "@/server/db/prisma";
+import { PrismaPilote } from "@/server/db/PrismaPilote";
+import { Transaction } from "@/server/db/Transaction";
+import { $Enums } from "@prisma/client";
+
+describe("ModifierDroitsUtilisateurHandler", () => {
+  let handler: ModifierDroitsUtilisateurHandler;
+  const prismaPilote = new PrismaPilote();
+  const transaction = new Transaction();
+  let utilisateurId: string;
+
+  beforeEach(async () => {
+    handler = new ModifierDroitsUtilisateurHandler({
+      transaction,
+      prisma: prismaPilote,
+    });
+
+    const utilisateur = await prisma.utilisateur.create({
+      data: {
+        email: "test-modifier-droits@example.com",
+        nom: "Test",
+        prenom: "User",
+        profilCode: "DITP_ADMIN",
+        applications_accessibles: [$Enums.application_accessible.PILOTE_EVAL],
+        date_creation: new Date(),
+      },
+    });
+    utilisateurId = utilisateur.id;
+
+    await prisma.referentiel_rattachement.createMany({
+      data: [
+        { code: "REG-01", libelle: "Région 01", groupe: "Régions", ordre: 1 },
+        { code: "REG-02", libelle: "Région 02", groupe: "Régions", ordre: 2 },
+        { code: "REG-03", libelle: "Région 03", groupe: "Régions", ordre: 3 },
+      ],
+      skipDuplicates: true,
+    });
+  });
+
+  describe("execute", () => {
+    it("crée les rattachements pour l'auto-évaluation", async () => {
+      // Given: une commande avec 2 rattachements en auto-évaluation
+      const command = {
+        utilisateurId,
+        jalon: 2025,
+        autoEvaluation: {
+          rattachementCodes: ["REG-01", "REG-02"],
+        },
+        consolidation: {
+          rattachementCodes: [],
+        },
+      };
+
+      // When
+      await handler.execute(command);
+
+      // Then
+      const rattachements = await prisma.rattachement_utilisateur_etape_jalon.findMany({
+        where: {
+          utilisateur_id: utilisateurId,
+          jalon: 2025,
+          etape: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
+        },
+      });
+
+      expect(rattachements).toHaveLength(2);
+      expect(rattachements.map((r) => r.rattachement_code)).toEqual(
+        expect.arrayContaining(["REG-01", "REG-02"]),
+      );
+    });
+
+    it("crée les rattachements pour la consolidation", async () => {
+      // Given: une commande avec 1 rattachement en consolidation
+      const command = {
+        utilisateurId,
+        jalon: 2025,
+        autoEvaluation: {
+          rattachementCodes: [],
+        },
+        consolidation: {
+          rattachementCodes: ["REG-03"],
+        },
+      };
+
+      // When
+      await handler.execute(command);
+
+      // Then
+      const rattachements = await prisma.rattachement_utilisateur_etape_jalon.findMany({
+        where: {
+          utilisateur_id: utilisateurId,
+          jalon: 2025,
+          etape: $Enums.etape_evaluation_enum.CONSOLIDATION,
+        },
+      });
+
+      expect(rattachements).toHaveLength(1);
+      expect(rattachements[0].rattachement_code).toBe("REG-03");
+    });
+
+    it("supprime les anciens rattachements et crée les nouveaux", async () => {
+      // Given: un rattachement existant en auto-évaluation
+      await prisma.rattachement_utilisateur_etape_jalon.create({
+        data: {
+          id: "a1b2c3d4-e5f6-4a5b-8c9d-0e1f2a3b4c5d",
+          utilisateur_id: utilisateurId,
+          rattachement_code: "REG-01",
+          etape: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
+          jalon: 2025,
+        },
+      });
+
+      const command = {
+        utilisateurId,
+        jalon: 2025,
+        autoEvaluation: {
+          rattachementCodes: ["REG-02", "REG-03"],
+        },
+        consolidation: {
+          rattachementCodes: [],
+        },
+      };
+
+      // When
+      await handler.execute(command);
+
+      // Then
+      const rattachements = await prisma.rattachement_utilisateur_etape_jalon.findMany({
+        where: {
+          utilisateur_id: utilisateurId,
+          jalon: 2025,
+          etape: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
+        },
+      });
+
+      expect(rattachements).toHaveLength(2);
+      expect(rattachements.map((r) => r.rattachement_code)).toEqual(
+        expect.arrayContaining(["REG-02", "REG-03"]),
+      );
+      expect(rattachements.map((r) => r.rattachement_code)).not.toContain("REG-01");
+    });
+
+    it("ne supprime que les rattachements du jalon spécifié", async () => {
+      // Given: des rattachements pour 2025 et 2024
+      await prisma.rattachement_utilisateur_etape_jalon.create({
+        data: {
+          id: "a1b2c3d4-e5f6-4a5b-8c9d-0e1f2a3b4c5d",
+          utilisateur_id: utilisateurId,
+          rattachement_code: "REG-01",
+          etape: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
+          jalon: 2025,
+        },
+      });
+      await prisma.rattachement_utilisateur_etape_jalon.create({
+        data: {
+          id: "b2c3d4e5-f6a7-4b5c-9d0e-1f2a3b4c5d6e",
+          utilisateur_id: utilisateurId,
+          rattachement_code: "REG-02",
+          etape: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
+          jalon: 2024,
+        },
+      });
+
+      const command = {
+        utilisateurId,
+        jalon: 2025,
+        autoEvaluation: {
+          rattachementCodes: ["REG-03"],
+        },
+        consolidation: {
+          rattachementCodes: [],
+        },
+      };
+
+      // When
+      await handler.execute(command);
+
+      // Then: le rattachement 2024 doit toujours exister
+      const rattachement2024 = await prisma.rattachement_utilisateur_etape_jalon.findFirst({
+        where: {
+          utilisateur_id: utilisateurId,
+          jalon: 2024,
+        },
+      });
+
+      expect(rattachement2024).not.toBeNull();
+      expect(rattachement2024?.rattachement_code).toBe("REG-02");
+    });
+
+    it("permet de supprimer tous les droits en passant des tableaux vides", async () => {
+      // Given: des rattachements existants
+      await prisma.rattachement_utilisateur_etape_jalon.create({
+        data: {
+          id: "a1b2c3d4-e5f6-4a5b-8c9d-0e1f2a3b4c5d",
+          utilisateur_id: utilisateurId,
+          rattachement_code: "REG-01",
+          etape: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
+          jalon: 2025,
+        },
+      });
+
+      const command = {
+        utilisateurId,
+        jalon: 2025,
+        autoEvaluation: {
+          rattachementCodes: [],
+        },
+        consolidation: {
+          rattachementCodes: [],
+        },
+      };
+
+      // When
+      await handler.execute(command);
+
+      // Then
+      const rattachements = await prisma.rattachement_utilisateur_etape_jalon.findMany({
+        where: {
+          utilisateur_id: utilisateurId,
+          jalon: 2025,
+        },
+      });
+
+      expect(rattachements).toHaveLength(0);
+    });
+  });
+});
+```
+
+### 5.3 Implémenter le handler
+
+**Logique d'implémentation** dans `ModifierDroitsUtilisateurHandler.ts` :
+
+```typescript
+async execute(command: ModifierDroitsUtilisateurCommand): Promise<void> {
+  await this.dependencies.transaction.run(async () => {
+    const prisma = getPrisma();
+
+    // Supprimer les anciens rattachements AUTO_EVALUATION pour ce jalon
+    await prisma.rattachement_utilisateur_etape_jalon.deleteMany({
+      where: {
+        utilisateur_id: command.utilisateurId,
+        jalon: command.jalon,
+        etape: "AUTO_EVALUATION",
+      },
+    });
+
+    // Supprimer les anciens rattachements CONSOLIDATION pour ce jalon
+    await prisma.rattachement_utilisateur_etape_jalon.deleteMany({
+      where: {
+        utilisateur_id: command.utilisateurId,
+        jalon: command.jalon,
+        etape: "CONSOLIDATION",
+      },
+    });
+
+    // Créer les nouveaux rattachements AUTO_EVALUATION
+    if (command.autoEvaluation.rattachementCodes.length > 0) {
+      await prisma.rattachement_utilisateur_etape_jalon.createMany({
+        data: command.autoEvaluation.rattachementCodes.map((code) => ({
+          id: randomUUID(),
+          utilisateur_id: command.utilisateurId,
+          rattachement_code: code,
+          etape: "AUTO_EVALUATION" as const,
+          jalon: command.jalon,
+        })),
+      });
+    }
+
+    // Créer les nouveaux rattachements CONSOLIDATION
+    if (command.consolidation.rattachementCodes.length > 0) {
+      await prisma.rattachement_utilisateur_etape_jalon.createMany({
+        data: command.consolidation.rattachementCodes.map((code) => ({
+          id: randomUUID(),
+          utilisateur_id: command.utilisateurId,
+          rattachement_code: code,
+          etape: "CONSOLIDATION" as const,
+          jalon: command.jalon,
+        })),
+      });
+    }
+  });
+}
+```
+
+### 5.4 Enregistrer le handler dans le container
+
+**Fichier à modifier** : `src/server/evaluation/container.ts`
+
+1. Import :
+```typescript
+import { ModifierDroitsUtilisateurHandler } from "@/server/evaluation/handlers/ModifierDroitsUtilisateurHandler";
+```
+
+2. Dans le type `PiloteEvalDependencies` :
+```typescript
+export type PiloteEvalDependencies = {
+  // ... autres dépendances
+  modifierDroitsUtilisateurHandler: ModifierDroitsUtilisateurHandler;
+};
+```
+
+3. Dans l'enregistrement :
+```typescript
+return initialContainer.createScope<PiloteEvalDependencies>().register({
+  // ... autres enregistrements
+  modifierDroitsUtilisateurHandler: asClass(ModifierDroitsUtilisateurHandler),
+});
+```
+
+### 5.5 Créer la route tRPC
+
+**Fichier à créer** : `src/server/infrastructure/api/trpc/routers/evaluation/modifierDroitsUtilisateur.ts`
+
+```typescript
+import { z } from "zod";
+import { protectedProcedure } from "@/server/infrastructure/api/trpc/trpc";
+import { getContainer } from "@/server/dependances";
+import { modifierDroitsUtilisateurCommandSchema } from "@/server/evaluation/handlers/ModifierDroitsUtilisateurHandler";
+
+export const modifierDroitsUtilisateur = protectedProcedure
+  .input(modifierDroitsUtilisateurCommandSchema)
+  .mutation(async ({ input }) => {
+    const container = getContainer("piloteEval");
+    await container
+      .resolve("modifierDroitsUtilisateurHandler")
+      .execute(input);
+  });
+```
+
+**Fichier à modifier** : `src/server/infrastructure/api/trpc/routers/evaluation.ts`
+
+Ajouter la route dans le router :
+
+```typescript
+import { modifierDroitsUtilisateur } from "./evaluation/modifierDroitsUtilisateur";
+
+export const evaluationRouter = createTRPCRouter({
+  // ... autres routes
+  modifierDroitsUtilisateur,
+});
+```
+
+### 5.6 Appeler au submit dans la page
+
+**Fichier à modifier** : `src/pages/evaluation/utilisateur/[id].tsx`
+
+```typescript
+import { trpc } from "@/client/utils/trpc";
+
+const UtilisateurDetailPage = (/*...*/) => {
+  // ...
+
+  const modifierDroitsMutation = trpc.evaluation.modifierDroitsUtilisateur.useMutation();
+
+  const onSubmit = async (data: ParametrageUtilisateurPiloteEvalFormulaire) => {
+    try {
+      await modifierDroitsMutation.mutateAsync({
+        utilisateurId,
+        jalon: 2025,
+        autoEvaluation: data.autoEvaluation,
+        consolidation: data.consolidation,
+      });
+
+      // TODO: afficher un message de succès
+      alert("Droits modifiés avec succès");
+    } catch (error) {
+      // TODO: afficher un message d'erreur
+      console.error("Erreur lors de la modification des droits:", error);
+    }
+  };
+
+  // ...
+};
+```
+
+### Points d'attention
+
+- ✅ Utiliser une transaction pour garantir la cohérence (supprimer puis créer)
+- ✅ Générer des UUID avec `randomUUID()` pour les nouveaux rattachements
+- ✅ Utiliser `deleteMany` et `createMany` pour optimiser les performances
+- ✅ Filtrer par `utilisateur_id`, `jalon` ET `etape` lors de la suppression
+- ✅ Ne pas créer de rattachements si le tableau est vide
+- ✅ Utiliser les valeurs d'enum avec `as const` pour TypeScript
+- ✅ Pour l'instant, on ne gère pas l'instruction (sera implémenté plus tard)
+- ✅ Ajouter une gestion d'erreur et un feedback utilisateur
+
 ## Étapes suivantes (à définir)
 
-- Étape 5 : Sauvegarde et persistance des droits modifiés
-- Étape 6 : Mise à jour de la logique de permissions
+- Étape 6 : Gestion de l'instruction (objectifs et critères)
+- Étape 7 : Mise à jour de la logique de permissions
 
 ## Notes techniques
 

@@ -18,6 +18,7 @@ import { retournerAutoEvaluationCommandSchema } from "@/server/evaluation/handle
 import { retournerAppreciationCommandSchema } from "@/server/evaluation/handlers/RetournerAppreciationHandler";
 import { modifierObjectifCommandSchema } from "@/server/evaluation/handlers/ModifierObjectifHandler";
 import { genererPDFAutoEvaluationCommandSchema } from "@/server/evaluation/handlers/GenererPDFAutoEvaluationHandler";
+import { modifierDroitsUtilisateurCommandSchema } from "@/server/evaluation/handlers/ModifierDroitsUtilisateurHandler";
 import { AutoEvaluationPDFAdapter } from "@/server/evaluation/infrastructure/AutoEvaluationPDFAdapter";
 
 export const evaluationRouter = créerRouteurTRPC({
@@ -316,5 +317,22 @@ export const evaluationRouter = créerRouteurTRPC({
       return getContainer("piloteEval")
         .resolve("genererPDFAutoEvaluationHandler")
         .execute(new AutoEvaluationPDFAdapter(autoEvaluation));
+    }),
+
+  modifierDroitsUtilisateur: procédureProtégée
+    .input(modifierDroitsUtilisateurCommandSchema)
+    .mutation(async ({ input, ctx }) => {
+      const peutAccederPilotage = await getContainer("piloteEval")
+        .resolve("accesFicheEvaluationService")
+        .peutAccederEtapePilotage({
+          applicationsAccessibles: ctx.session.applicationsAccessibles,
+        });
+
+      if (!peutAccederPilotage)
+        throw new ForbiddenError("Accès refusé au pilotage");
+
+      await getContainer("piloteEval")
+        .resolve("modifierDroitsUtilisateurHandler")
+        .execute(input);
     }),
 });
