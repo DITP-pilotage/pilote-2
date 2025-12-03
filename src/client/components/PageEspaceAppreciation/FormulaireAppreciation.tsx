@@ -14,6 +14,7 @@ export const FormulaireAppreciation = () => {
       etape={$Enums.etape_evaluation_enum.CONSOLIDATION}
       onEnregistrer={enregisterBrouillon}
       rattachements={rattachements}
+      titre="Espace d'appréciation"
     />
   );
 };

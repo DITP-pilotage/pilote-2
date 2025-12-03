@@ -3,7 +3,7 @@ import { ButtonTag } from "@/components/_commons/ButtonTag";
 
 export function FiltresTableauEvaluation<T>({ table }: { table: Table<T> }) {
   return (
-    <div className="space-y-2">
+    <div className="space-y-2 p-6">
       {table
         .getAllColumns()
         .filter((column) => column.getCanFilter())

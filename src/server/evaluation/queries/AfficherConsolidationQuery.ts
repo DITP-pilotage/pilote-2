@@ -125,6 +125,8 @@ export class AfficherConsolidationQuery {
           code: rattachement.code,
           libelle: rattachement.libelle,
           ficheEvaluationId: ficheEvaluation.id,
+          dateDerniereModification:
+            etapeConsolidation?.updated_at.toISOString() ?? null,
           readOnly: isInstructionPhase
             ? true
             : (etapeConsolidation?.read_only ?? false),
@@ -206,6 +208,7 @@ export class AfficherConsolidationQuery {
         objectif_id: string;
         note: number | null;
         commentaire: string;
+        annexe: string;
         date_traitement: Date | null;
       }>;
     }>,
@@ -227,6 +230,7 @@ export class AfficherConsolidationQuery {
         critere_id: string;
         note: number | null;
         commentaire: string;
+        annexe: string;
         date_traitement: Date | null;
       }>;
     }>,
@@ -245,6 +249,7 @@ export class AfficherConsolidationQuery {
           id: string;
           note: number | null;
           commentaire: string;
+          annexe: string;
         }
       | undefined,
   ): Evaluation {
@@ -252,6 +257,7 @@ export class AfficherConsolidationQuery {
       id: evaluation?.id ?? randomUUID(),
       note: evaluation?.note ?? null,
       commentaire: evaluation?.commentaire ?? "",
+      annexe: evaluation?.annexe ?? "",
     };
   }
 }

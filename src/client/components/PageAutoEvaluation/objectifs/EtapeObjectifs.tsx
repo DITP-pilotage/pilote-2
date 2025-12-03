@@ -99,7 +99,6 @@ export function EtapeObjectifs() {
               <div className="py-4 px-6 flex items-start justify-center border-l-1 border-black">
                 <InputNoteAutoEvaluation
                   control={form.control}
-                  label="Note"
                   name={noteName}
                   onAutosave={handleAutosave}
                   onFocus={afficherFicheCadrage}

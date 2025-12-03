@@ -1,26 +1,23 @@
 import { $Enums } from "@prisma/client";
-import { Row, Table } from "@tanstack/react-table";
+import { Row } from "@tanstack/react-table";
 import { useFormState } from "react-hook-form";
 import { TableauEvaluationRow } from "@/components/Evaluation/TableauEvaluation";
-import { clsxm } from "@/utils/clsxm";
 import { BoutonAfficherFicheCadrage } from "@/components/Evaluation/BoutonAfficherFicheCadrage";
-import { BoutonTraitementEvaluation } from "@/components/Evaluation/BoutonTraitementEvaluation";
 import { LigneEtapeEvaluation } from "@/components/Evaluation/LigneEtapeEvaluation";
 import { useGetCritere } from "@/components/Evaluation/CriteresProvider";
 import { useFormulaireEvaluation } from "@/components/Evaluation/form";
 import { useHandleAutosave } from "@/components/Evaluation/AutosaveProvider";
+import { useSetCritereOuObjectif } from "@/components/Evaluation/LayoutFicheCadrage";
 
 export const CelluleEvaluation = ({
-  table,
   row,
 }: {
-  table: Table<TableauEvaluationRow>;
   row: Row<TableauEvaluationRow>;
 }) => {
-  const currentGrouping = table.getState().grouping[0];
   const ligne = row.original;
   const onAutosave = useHandleAutosave();
   const getCritere = useGetCritere();
+  const setCritereOuObjectif = useSetCritereOuObjectif();
   const commentaireName =
     ligne.type === "objectif"
       ? (`fichesEvaluation.${ligne.ficheEvaluationId}.objectifs.${ligne.id}.commentaire` as const)
@@ -30,6 +27,7 @@ export const CelluleEvaluation = ({
       ? (`fichesEvaluation.${ligne.ficheEvaluationId}.objectifs.${ligne.id}.note` as const)
       : (`fichesEvaluation.${ligne.ficheEvaluationId}.criteres.${ligne.id}.note` as const);
   const form = useFormulaireEvaluation();
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const note = form.watch(noteName);
 
   // Nécessaire pour lire l'état mis à jour des champs
@@ -37,48 +35,35 @@ export const CelluleEvaluation = ({
   useFormState().isValid;
   const commentaireError = form.getFieldState(commentaireName).invalid;
   const noteError = form.getFieldState(noteName).invalid;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const disabled = commentaireError || noteError;
+
+  const critereOuObjectif =
+    ligne.type === "objectif"
+      ? ({ type: "objectif", objectif: ligne } as const)
+      : ({
+          type: "critere",
+          critere: getCritere(ligne.id),
+        } as const);
+
+  const afficherFicheCadrage = () => setCritereOuObjectif(critereOuObjectif);
 
   return (
     <div className="space-y-4">
-      {(ligne.type === "objectif" || currentGrouping !== "critereId") && (
-        <div className="bg-gray-100 pb-2 border-b border-gray-200 -mx-4 px-4 pt-2 flex items-center justify-between gap-2 !mb-0">
-          <div className="flex items-center gap-2">
-            <span
-              className={clsxm(
-                "whitespace-nowrap text-xs px-2 py-1.5 rounded-md capitalize font-medium",
-                {
-                  "bg-blue-100 text-blue-600": ligne.type === "critere",
-                  "bg-green-100 text-green-600": ligne.type === "objectif",
-                },
-              )}
-            >
-              {ligne.type}
-            </span>
-            {ligne.libelle}
-          </div>
-          <div className="flex items-center gap-4">
-            <BoutonAfficherFicheCadrage
-              critereOuObjectif={
-                ligne.type === "objectif"
-                  ? { type: "objectif", objectif: ligne }
-                  : {
-                      type: "critere",
-                      critere: getCritere(ligne.id),
-                    }
-              }
-            />
-            <BoutonTraitementEvaluation
-              dateTraitement={ligne.evaluations[0]?.dateTraitement ?? null}
-              disabled={note == null || ligne.rattachement.readOnly || disabled}
-              evaluationId={ligne.evaluations[0]?.evaluation.id}
-              typeEvaluation={
-                ligne.type === "objectif" ? "OBJECTIF" : "MANIERE_DE_SERVIR"
-              }
-            />
-          </div>
+      <div className="bg-dsfr-blue-france-925 pb-2 border-b border-gray-200 -mx-4 p-4 flex justify-between gap-2 !mb-0 min-h-[80px]">
+        <div className="text-primary font-bold text-sm line-clamp-2">
+          <span className="capitalize">{ligne.type}</span> - {ligne.libelle}
         </div>
-      )}
+        <BoutonAfficherFicheCadrage critereOuObjectif={critereOuObjectif} />
+        {/*<BoutonTraitementEvaluation*/}
+        {/*  dateTraitement={ligne.evaluations[0]?.dateTraitement ?? null}*/}
+        {/*  disabled={note == null || ligne.rattachement.readOnly || disabled}*/}
+        {/*  evaluationId={ligne.evaluations[0]?.evaluation.id}*/}
+        {/*  typeEvaluation={*/}
+        {/*    ligne.type === "objectif" ? "OBJECTIF" : "MANIERE_DE_SERVIR"*/}
+        {/*  }*/}
+        {/*/>*/}
+      </div>
 
       <div className="divide-y divide-gray-200">
         {ligne.evaluations.map((evalItem, index) => {
@@ -88,13 +73,13 @@ export const CelluleEvaluation = ({
             return (
               <LigneEtapeEvaluation
                 commentaire={evalItem.evaluation.commentaire}
-                commentaireLabel="Commentaire d'instruction"
+                commentaireLabel="Instruction"
                 commentaireName={commentaireName}
                 isEditable={isEditable}
                 key={evalItem.etape}
                 note={evalItem.evaluation.note}
-                noteLabel="Note d'instruction"
                 noteName={noteName}
+                onAfficherFicheCadrage={afficherFicheCadrage}
                 onAutosave={onAutosave}
               />
             );
@@ -104,13 +89,13 @@ export const CelluleEvaluation = ({
             return (
               <LigneEtapeEvaluation
                 commentaire={evalItem.evaluation.commentaire}
-                commentaireLabel="Commentaire de consolidation"
+                commentaireLabel="Appréciation"
                 commentaireName={commentaireName}
                 isEditable={isEditable}
                 key={evalItem.etape}
                 note={evalItem.evaluation.note}
-                noteLabel="Note de consolidation"
                 noteName={noteName}
+                onAfficherFicheCadrage={afficherFicheCadrage}
                 onAutosave={onAutosave}
               />
             );
@@ -119,13 +104,13 @@ export const CelluleEvaluation = ({
           ) {
             return (
               <LigneEtapeEvaluation
+                annexe={evalItem.evaluation.annexe}
                 commentaire={evalItem.evaluation.commentaire}
-                commentaireLabel="Commentaire de l'auto évalué"
+                commentaireLabel="Auto-évaluation"
                 commentaireName={commentaireName}
                 isEditable={false}
                 key={evalItem.etape}
                 note={evalItem.evaluation.note}
-                noteLabel="Note auto-évaluation"
                 noteName={noteName}
               />
             );

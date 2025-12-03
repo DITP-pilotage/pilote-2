@@ -1,4 +1,3 @@
-import { InputNote } from "@/components/_commons/InputNote";
 import {
   FormCommentaireName,
   FormNoteName,
@@ -9,21 +8,23 @@ import { InputNoteEvaluation } from "./InputNoteEvaluation";
 export const LigneEtapeEvaluation = ({
   isEditable,
   commentaireLabel,
-  noteLabel,
   commentaireName,
   noteName,
   commentaire,
+  annexe,
   note,
   onAutosave,
+  onAfficherFicheCadrage,
 }: {
   isEditable: boolean;
   commentaireLabel: string;
-  noteLabel: string;
   commentaireName: FormCommentaireName;
   noteName: FormNoteName;
   commentaire?: string | null;
+  annexe?: string | null;
   note?: number | null;
   onAutosave?: (fieldName: FormCommentaireName | FormNoteName) => void;
+  onAfficherFicheCadrage?: () => void;
 }) => {
   return (
     <div className="flex !mb-0 !-mx-4 first:border-t-0">
@@ -34,29 +35,50 @@ export const LigneEtapeEvaluation = ({
             label={commentaireLabel}
             name={commentaireName}
             onAutosave={() => onAutosave?.(commentaireName)}
+            onFocus={onAfficherFicheCadrage}
           />
         ) : (
           <>
-            <strong className="text-sm block mb-2">{commentaireLabel}</strong>
-            <blockquote className="text-sm text-gray-700 italic border-l-4 border-gray-300 pl-3 py-1 whitespace-pre-line">
-              {commentaire || "Aucun commentaire"}
-            </blockquote>
+            <div>
+              <span className="italic text-sm block !font-medium mb-2">
+                {commentaireLabel}
+              </span>
+              <blockquote className="text-sm text-gray-700 pl-3 py-1 whitespace-pre-line">
+                {commentaire || "Aucun commentaire"}
+              </blockquote>
+            </div>
+
+            {annexe ? (
+              <div className="mt-6">
+                <span className="italic text-sm block !font-medium mb-2">
+                  Annexe
+                </span>
+
+                <blockquote
+                  className="[&_*]:!text-sm text-gray-700 pl-3 py-1 whitespace-pre-line"
+                  // eslint-disable-next-line react/no-danger
+                  dangerouslySetInnerHTML={{ __html: annexe }}
+                />
+              </div>
+            ) : null}
           </>
         )}
       </div>
-      <div className="flex-shrink-0 w-[12rem] p-4">
-        <strong className="text-sm block mb-1">{noteLabel}</strong>
-        <div className="flex justify-end">
-          {isEditable ? (
-            <InputNoteEvaluation
-              disabled={false}
-              name={noteName}
-              onAutosave={() => onAutosave?.(noteName)}
-            />
-          ) : (
-            <InputNote disabled value={note ?? ""} />
-          )}
-        </div>
+      <div className="flex-shrink-0 w-[8rem] p-4 flex flex-col text-center">
+        {isEditable ? (
+          <InputNoteEvaluation
+            disabled={false}
+            label="Note / 100"
+            name={noteName}
+            onAutosave={() => onAutosave?.(noteName)}
+            onFocus={onAfficherFicheCadrage}
+          />
+        ) : (
+          <>
+            <strong className="text-sm block mb-1 italic">Note / 100</strong>
+            <span className="font-medium">{note ?? "-"}</span>
+          </>
+        )}
       </div>
     </div>
   );

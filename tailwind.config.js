@@ -30,6 +30,12 @@ module.exports = {
         "dsfr-blue-france-sun-113": "#000091",
         "dsfr-grey-50": "#161616",
         "dsfr-grey-1000": "#F6F6F6",
+        "dsfr-green-bourgeon-main-640": "#68A532",
+        "dsfr-green-bourgeon-975": "#E6FEDA",
+        "dsfr-green-menthe-main-548": "#009081",
+        "dsfr-green-menthe-975": "#DFFDF7",
+        "dsfr-green-emeraude-main-632": "#00A95F",
+        "dsfr-green-emeraude-975": "#E3FDEB",
       },
       keyframes: {
         "dropdown-fade-in": {
@@ -42,10 +48,16 @@ module.exports = {
         },
         "accordion-open": {
           "0%": { height: "0", opacity: "0" },
-          "100%": { height: "var(--radix-accordion-content-height)", opacity: "1" },
+          "100%": {
+            height: "var(--radix-accordion-content-height)",
+            opacity: "1",
+          },
         },
         "accordion-close": {
-          "0%": { height: "var(--radix-accordion-content-height)", opacity: "1" },
+          "0%": {
+            height: "var(--radix-accordion-content-height)",
+            opacity: "1",
+          },
           "100%": { height: "0", opacity: "0" },
         },
       },

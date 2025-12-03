@@ -188,6 +188,8 @@ export class AfficherInstructionQuery {
           code: rattachement.code,
           libelle: rattachement.libelle,
           ficheEvaluationId: ficheEvaluation.id,
+          dateDerniereModification:
+            etapeInstruction?.updated_at.toISOString() ?? null,
           readOnly: etapeInstruction?.read_only ?? false,
           etapeCourante: ficheEvaluation.etape_courante,
           objectifs: objectifsAvecEvaluations,
@@ -311,6 +313,7 @@ export class AfficherInstructionQuery {
         objectif_id: string;
         note: number | null;
         commentaire: string;
+        annexe: string;
         date_traitement: Date | null;
       }>;
     }>,
@@ -332,6 +335,7 @@ export class AfficherInstructionQuery {
         critere_id: string;
         note: number | null;
         commentaire: string;
+        annexe: string;
         date_traitement: Date | null;
       }>;
     }>,
@@ -350,6 +354,7 @@ export class AfficherInstructionQuery {
           id: string;
           note: number | null;
           commentaire: string;
+          annexe: string;
         }
       | undefined,
   ) {
@@ -357,6 +362,7 @@ export class AfficherInstructionQuery {
       id: evaluation?.id ?? randomUUID(),
       note: evaluation?.note ?? null,
       commentaire: evaluation?.commentaire ?? "",
+      annexe: evaluation?.annexe ?? "",
     };
   }
 }
