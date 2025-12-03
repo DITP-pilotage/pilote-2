@@ -904,9 +904,349 @@ return {
   - Instruction - Objectifs (sélection de territoires)
   - Instruction - Manière de servir (sélection d'axes)
 
+## Étape 3 : Formulaire de configuration des droits avec React Hook Form
+
+### Vue d'ensemble
+
+Créer un formulaire interactif permettant de configurer les droits d'un utilisateur pour :
+- Auto-évaluation (sélection de rattachements)
+- Consolidation (sélection de rattachements)
+- Instruction - Objectifs (sélection de rattachements)
+- Instruction - Manière de servir (sélection de critères)
+
+Le formulaire utilisera React Hook Form pour la gestion d'état et le composant MultiSelect existant pour les sélections multiples.
+
+### 3.1 Définir le schéma de validation avec Zod
+
+**Fichier à créer** : `src/validation/parametrageUtilisateurPiloteEval.ts`
+
+**Structure** :
+```typescript
+import { z } from "zod";
+
+export const parametrageUtilisateurPiloteEvalSchema = z.object({
+  autoEvaluation: z.object({
+    rattachementCodes: z.array(z.string()),
+  }),
+  consolidation: z.object({
+    rattachementCodes: z.array(z.string()),
+  }),
+  instructionObjectifs: z.object({
+    rattachementCodes: z.array(z.string()),
+  }),
+  instructionManiereDeServir: z.object({
+    critereCodes: z.array(z.string()),
+  }),
+});
+
+export type ParametrageUtilisateurPiloteEvalFormulaire = z.infer<
+  typeof parametrageUtilisateurPiloteEvalSchema
+>;
+```
+
+### 3.2 Initialiser React Hook Form dans la page
+
+**Fichier à modifier** : `src/pages/evaluation/utilisateur/[id].tsx`
+
+**Modifications** :
+
+1. Ajouter les imports :
+```typescript
+import { useForm, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  parametrageUtilisateurPiloteEvalSchema,
+  ParametrageUtilisateurPiloteEvalFormulaire,
+} from "@/validation/parametrageUtilisateurPiloteEval";
+import MultiSelect from "@/components/_commons/MultiSelectNew/MultiSelect";
+```
+
+2. Initialiser le formulaire :
+```typescript
+const {
+  control,
+  handleSubmit,
+  formState: { errors },
+} = useForm<ParametrageUtilisateurPiloteEvalFormulaire>({
+  resolver: zodResolver(parametrageUtilisateurPiloteEvalSchema),
+  defaultValues: {
+    autoEvaluation: {
+      rattachementCodes: [],
+    },
+    consolidation: {
+      rattachementCodes: [],
+    },
+    instructionObjectifs: {
+      rattachementCodes: [],
+    },
+    instructionManiereDeServir: {
+      critereCodes: [],
+    },
+  },
+});
+```
+
+3. Créer le handler de soumission (vide pour l'instant) :
+```typescript
+const onSubmit = (data: ParametrageUtilisateurPiloteEvalFormulaire) => {
+  console.log("Données du formulaire :", data);
+  // TODO: implémenter la sauvegarde
+};
+```
+
+### 3.3 Préparer les données pour les MultiSelect
+
+**Dans le composant de la page** :
+
+1. Transformer les rattachements en options groupées par groupe :
+```typescript
+const rattachementsParGroupe = rattachements.reduce(
+  (acc, rattachement) => {
+    if (!acc[rattachement.groupe]) {
+      acc[rattachement.groupe] = [];
+    }
+    acc[rattachement.groupe].push({
+      value: rattachement.code,
+      label: rattachement.libelle,
+    });
+    return acc;
+  },
+  {} as Record<string, { value: string; label: string }[]>
+);
+
+const optionsRattachementsGroupées = Object.entries(rattachementsParGroupe).map(
+  ([groupe, options]) => ({
+    label: groupe,
+    options,
+  })
+);
+```
+
+2. Transformer les critères en options :
+```typescript
+const optionsCritèresGroupées = [
+  {
+    label: "Critères",
+    options: criteres.map((critere) => ({
+      value: critere.id,
+      label: critere.libelle,
+    })),
+  },
+];
+```
+
+3. Transformer les objectifs par rattachement en options :
+```typescript
+const optionsObjectifsGroupées = Object.entries(objectifsParRattachement).map(
+  ([rattachementCode, objectifs]) => {
+    const rattachement = rattachements.find((r) => r.code === rattachementCode);
+    return {
+      label: rattachement?.libelle || rattachementCode,
+      options: objectifs.map((objectif) => ({
+        value: rattachementCode, // On sélectionne le rattachement, pas l'objectif individuel
+        label: objectif.libelle,
+      })),
+    };
+  }
+);
+```
+
+### 3.4 Intégrer les MultiSelect avec React Hook Form
+
+**Pour chaque section du formulaire** :
+
+#### Section Auto-évaluation
+
+```typescript
+<section className="bg-white p-6 rounded shadow-sm">
+  <h2 className="!text-2xl font-semibold mb-4">Auto-évaluation</h2>
+  <p className="text-gray-600 mb-4">
+    Sélection des territoires pour l'auto-évaluation
+  </p>
+
+  <Controller
+    control={control}
+    name="autoEvaluation.rattachementCodes"
+    render={({ field }) => (
+      <MultiSelect
+        afficherBoutonsSélection
+        changementValeursSélectionnéesCallback={field.onChange}
+        label="Sélectionner les territoires"
+        optionsGroupées={optionsRattachementsGroupées}
+        suffixeLibellé="territoire(s)"
+        valeursSélectionnéesParDéfaut={field.value}
+      />
+    )}
+  />
+  {errors.autoEvaluation?.rattachementCodes && (
+    <p className="text-red-500 text-sm mt-2">
+      {errors.autoEvaluation.rattachementCodes.message}
+    </p>
+  )}
+</section>
+```
+
+#### Section Consolidation
+
+```typescript
+<section className="bg-white p-6 rounded shadow-sm">
+  <h2 className="!text-2xl font-semibold mb-4">Consolidation</h2>
+  <p className="text-gray-600 mb-4">
+    Sélection des territoires pour la consolidation
+  </p>
+
+  <Controller
+    control={control}
+    name="consolidation.rattachementCodes"
+    render={({ field }) => (
+      <MultiSelect
+        afficherBoutonsSélection
+        changementValeursSélectionnéesCallback={field.onChange}
+        label="Sélectionner les territoires"
+        optionsGroupées={optionsRattachementsGroupées}
+        suffixeLibellé="territoire(s)"
+        valeursSélectionnéesParDéfaut={field.value}
+      />
+    )}
+  />
+  {errors.consolidation?.rattachementCodes && (
+    <p className="text-red-500 text-sm mt-2">
+      {errors.consolidation.rattachementCodes.message}
+    </p>
+  )}
+</section>
+```
+
+#### Section Instruction - Objectifs
+
+```typescript
+<section className="bg-white p-6 rounded shadow-sm">
+  <h2 className="!text-2xl font-semibold mb-4">Instruction - Objectifs</h2>
+  <p className="text-gray-600 mb-4">
+    Sélection des territoires pour l'instruction des objectifs
+  </p>
+
+  <Controller
+    control={control}
+    name="instructionObjectifs.rattachementCodes"
+    render={({ field }) => (
+      <MultiSelect
+        afficherBoutonsSélection
+        changementValeursSélectionnéesCallback={field.onChange}
+        label="Sélectionner les territoires"
+        optionsGroupées={optionsRattachementsGroupées}
+        suffixeLibellé="territoire(s)"
+        valeursSélectionnéesParDéfaut={field.value}
+      />
+    )}
+  />
+  {errors.instructionObjectifs?.rattachementCodes && (
+    <p className="text-red-500 text-sm mt-2">
+      {errors.instructionObjectifs.rattachementCodes.message}
+    </p>
+  )}
+</section>
+```
+
+#### Section Instruction - Manière de servir
+
+```typescript
+<section className="bg-white p-6 rounded shadow-sm">
+  <h2 className="!text-2xl font-semibold mb-4">
+    Instruction - Manière de servir
+  </h2>
+  <p className="text-gray-600 mb-4">
+    Sélection des critères pour l'instruction de la manière de servir
+  </p>
+
+  <Controller
+    control={control}
+    name="instructionManiereDeServir.critereCodes"
+    render={({ field }) => (
+      <MultiSelect
+        afficherBoutonsSélection
+        changementValeursSélectionnéesCallback={field.onChange}
+        label="Sélectionner les critères"
+        optionsGroupées={optionsCritèresGroupées}
+        suffixeLibellé="critère(s)"
+        valeursSélectionnéesParDéfaut={field.value}
+      />
+    )}
+  />
+  {errors.instructionManiereDeServir?.critereCodes && (
+    <p className="text-red-500 text-sm mt-2">
+      {errors.instructionManiereDeServir.critereCodes.message}
+    </p>
+  )}
+</section>
+```
+
+### 3.5 Ajouter un bouton de test (sans soumission)
+
+**Ajouter après les sections** :
+
+```typescript
+<div className="flex justify-end mt-6">
+  <button
+    className="fr-btn"
+    onClick={handleSubmit(onSubmit)}
+    type="button"
+  >
+    Enregistrer la configuration
+  </button>
+</div>
+```
+
+**Note** : Pour l'instant, le bouton affichera juste les données dans la console.
+
+### 3.6 Wrapper le tout dans un formulaire
+
+**Encapsuler les sections dans une balise form** :
+
+```typescript
+<form onSubmit={handleSubmit(onSubmit)}>
+  <div className="space-y-6">
+    {/* Toutes les sections ici */}
+  </div>
+
+  <div className="flex justify-end mt-6">
+    <button className="fr-btn" type="submit">
+      Enregistrer la configuration
+    </button>
+  </div>
+</form>
+```
+
+### Points d'attention
+
+- ✅ Utiliser `Controller` de React Hook Form pour chaque MultiSelect
+- ✅ Transformer les données en format attendu par MultiSelect (`optionsGroupées`)
+- ✅ Afficher les erreurs de validation sous chaque champ
+- ✅ Le bouton "Enregistrer" affichera les données dans la console (pas de sauvegarde pour l'instant)
+- ✅ Utiliser `afficherBoutonsSélection` pour permettre "Tout sélectionner" / "Tout désélectionner"
+- ✅ Les valeurs par défaut sont des tableaux vides (pas de droits pré-sélectionnés)
+
+### Structure du formulaire
+
+```typescript
+{
+  autoEvaluation: {
+    rattachementCodes: ["REG-01", "REG-02"]
+  },
+  consolidation: {
+    rattachementCodes: ["REG-01"]
+  },
+  instructionObjectifs: {
+    rattachementCodes: ["REG-02", "DROM-01"]
+  },
+  instructionManiereDeServir: {
+    critereCodes: ["critere-id-1", "critere-id-2"]
+  }
+}
+```
+
 ## Étapes suivantes (à définir)
 
-- Étape 3 : Formulaire de configuration des droits par territoire/axe
 - Étape 4 : Sauvegarde et persistance des droits
 - Étape 5 : Mise à jour de la logique de permissions
 
