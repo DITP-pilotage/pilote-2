@@ -58,7 +58,24 @@ export const CelluleEvaluation = ({
 
       <div className="divide-y divide-gray-200">
         {ligne.evaluations.map((evalItem, index) => {
-          const isEditable = index === 0 && !ligne.rattachement.readOnly;
+          const isEtapeCouranteEvaluation = index === 0;
+          const isEditable =
+            isEtapeCouranteEvaluation && !ligne.rattachement.readOnly;
+
+          const boutonTraitement = isEtapeCouranteEvaluation ? (
+            <BoutonTraitementEvaluation
+              dateTraitement={ligne.evaluations[0]?.dateTraitement ?? null}
+              disabled={
+                note == null ||
+                ligne.rattachement.readOnly ||
+                traitementDisabled
+              }
+              evaluationId={ligne.evaluations[0]?.evaluation.id}
+              typeEvaluation={
+                ligne.type === "objectif" ? "OBJECTIF" : "MANIERE_DE_SERVIR"
+              }
+            />
+          ) : null;
 
           if (evalItem.etape === $Enums.etape_evaluation_enum.INSTRUCTION) {
             return (
@@ -72,26 +89,7 @@ export const CelluleEvaluation = ({
                 noteName={noteName}
                 onAfficherFicheCadrage={afficherFicheCadrage}
                 onAutosave={onAutosave}
-                traitement={
-                  index == 0 ? (
-                    <BoutonTraitementEvaluation
-                      dateTraitement={
-                        ligne.evaluations[0]?.dateTraitement ?? null
-                      }
-                      disabled={
-                        note == null ||
-                        ligne.rattachement.readOnly ||
-                        traitementDisabled
-                      }
-                      evaluationId={ligne.evaluations[0]?.evaluation.id}
-                      typeEvaluation={
-                        ligne.type === "objectif"
-                          ? "OBJECTIF"
-                          : "MANIERE_DE_SERVIR"
-                      }
-                    />
-                  ) : null
-                }
+                traitement={boutonTraitement}
               />
             );
           } else if (
@@ -108,26 +106,7 @@ export const CelluleEvaluation = ({
                 noteName={noteName}
                 onAfficherFicheCadrage={afficherFicheCadrage}
                 onAutosave={onAutosave}
-                traitement={
-                  index == 0 ? (
-                    <BoutonTraitementEvaluation
-                      dateTraitement={
-                        ligne.evaluations[0]?.dateTraitement ?? null
-                      }
-                      disabled={
-                        note == null ||
-                        ligne.rattachement.readOnly ||
-                        traitementDisabled
-                      }
-                      evaluationId={ligne.evaluations[0]?.evaluation.id}
-                      typeEvaluation={
-                        ligne.type === "objectif"
-                          ? "OBJECTIF"
-                          : "MANIERE_DE_SERVIR"
-                      }
-                    />
-                  ) : null
-                }
+                traitement={boutonTraitement}
               />
             );
           } else if (
