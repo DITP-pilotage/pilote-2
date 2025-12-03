@@ -11,11 +11,13 @@ export const CommentaireTextareaEvaluation = ({
   disabled = false,
   label,
   onAutosave,
+  onFocus,
 }: {
   name: FormCommentaireName;
   disabled?: boolean;
   label: string;
   onAutosave?: () => void;
+  onFocus?: () => void;
 }) => {
   const form = useFormulaireEvaluation();
   const autosave = useAutosave({ onAutosave });
@@ -23,10 +25,12 @@ export const CommentaireTextareaEvaluation = ({
   return (
     <Textarea
       charLimit={600}
+      className="!bg-dsfr-contrast-grey"
       control={form.control}
       label={label}
       name={name}
       {...autosave}
+      onFocus={onFocus}
       readOnly={disabled}
     />
   );

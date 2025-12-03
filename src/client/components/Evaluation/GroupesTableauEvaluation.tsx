@@ -14,7 +14,7 @@ export function GroupesTableauEvaluation<T>({ table }: { table: Table<T> }) {
   if (groupableColumns.length === 0) return null;
 
   return (
-    <div className="flex items-center gap-2 !text-sm">
+    <div className="flex items-center gap-2 !text-sm py-6 mx-6 border-t !border-gray-400">
       <div className="font-semibold">Grouper par :</div>
       <div className="flex items-center flex-wrap gap-2">
         {groupableColumns.map((column) => {

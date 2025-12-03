@@ -42,7 +42,7 @@ export const LayoutFicheCadrage = ({
     <context.Provider value={setCritereOuObjectif}>
       <main
         className="grid grid grid-cols-[1fr_auto] min-[2000px]:grid-cols-[var(--col-width)_1fr_auto] !bg-white min-h-screen"
-        style={{ "--col-width": "600px" } as React.CSSProperties}
+        style={{ "--col-width": "450px" } as React.CSSProperties}
       >
         <div className="max-[2000px]:hidden" />
         <div className="flex flex-col items-center">{children}</div>

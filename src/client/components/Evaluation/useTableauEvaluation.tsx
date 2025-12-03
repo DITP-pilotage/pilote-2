@@ -7,13 +7,14 @@ import {
   getGroupedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import pick from "lodash.pick";
 import { parseAsArrayOf, parseAsString, useQueryStates } from "nuqs";
 import { TableauEvaluationRow } from "@/components/Evaluation/TableauEvaluation";
 import { Rattachement } from "@/server/evaluation/queries/types";
 import { CelluleEvaluation } from "@/components/Evaluation/CelluleEvaluation";
 import { useGetCritere } from "@/components/Evaluation/CriteresProvider";
+import { BadgeEtape } from "@/components/Evaluation/BadgeEtape";
 
 const columnHelper = createColumnHelper<TableauEvaluationRow>();
 
@@ -74,7 +75,6 @@ const useTableData = (rattachements: Rattachement[]) => {
 
 export const COLONNES = {
   RATTACHEMENT_CODE: "rattachementCode",
-  ID: "id",
   CRITERE_ID: "critereId",
   STATUT_TRAITEMENT: "statutTraitement",
   CATEGORIE: "categorie",
@@ -89,9 +89,14 @@ const useTableColumns = (rattachements: Rattachement[]) => {
         header: "Rattachement",
         cell: (info) => {
           return (
-            <span className="text-primary font-semibold">
-              {info.row.original.rattachement.libelle}
-            </span>
+            <div className="flex flex-col -mx-4 min-h-[80px]">
+              <div className="px-3 py-4 bg-dsfr-blue-france-925 flex flex-col gap-1 items-start">
+                <span className="text-primary font-semibold text-sm line-clamp-1">
+                  {info.row.original.rattachement.libelle}
+                </span>
+                <BadgeEtape etapeCourante={info.row.original.etapeCourante} />
+              </div>
+            </div>
           );
         },
         filterFn: "arrIncludesSome",
@@ -109,8 +114,7 @@ const useTableColumns = (rattachements: Rattachement[]) => {
         },
         getGroupingValue: (row) => row.rattachement.code,
       }),
-      columnHelper.accessor("id", {
-        id: COLONNES.ID,
+      columnHelper.display({
         header: "Évaluation",
         cell: CelluleEvaluation,
         enableGrouping: false,
@@ -235,7 +239,6 @@ export const useTableauEvaluation = ({
 }: {
   rattachements: Rattachement[];
 }) => {
-  const [grouping, setGrouping] = useState<string[]>(["rattachementCode"]);
   const data = useTableData(rattachements);
   const columns = useTableColumns(rattachements);
   const [columnFilters, setFilters] = useColumnFilters();
@@ -248,11 +251,7 @@ export const useTableauEvaluation = ({
     getExpandedRowModel: getExpandedRowModel(),
     getGroupedRowModel: getGroupedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
-    state: {
-      grouping,
-      columnFilters,
-    },
-    onGroupingChange: setGrouping,
+    state: { columnFilters },
     onColumnFiltersChange: (updater) => {
       const newFilters =
         typeof updater === "function" ? updater(columnFilters) : updater;

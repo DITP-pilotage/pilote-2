@@ -11,12 +11,16 @@ type FormCommentaireName =
 
 export const InputNoteEvaluation = ({
   name,
+  label,
   disabled = false,
   onAutosave,
+  onFocus,
 }: {
   name: FormNoteName;
   disabled?: boolean;
+  label: string;
   onAutosave?: () => void;
+  onFocus?: () => void;
 }) => {
   const form = useFormulaireEvaluation();
   const commentaireName = name.replace(".note", ".commentaire");
@@ -25,12 +29,14 @@ export const InputNoteEvaluation = ({
   return (
     <InputNoteControlled
       control={form.control}
+      label={label}
       name={name}
       {...autosave}
       onChange={async () => {
         await form.trigger(commentaireName as FormCommentaireName);
         autosave.onChange();
       }}
+      onFocus={onFocus}
       readOnly={disabled}
     />
   );

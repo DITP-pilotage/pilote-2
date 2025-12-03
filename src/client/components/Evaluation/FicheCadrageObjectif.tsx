@@ -116,11 +116,13 @@ export const FicheCadrageObjectif = ({
         </form>
       ) : (
         <>
-          <h3 className="!text-lg !mb-1">Descriptif</h3>
-          <p className="whitespace-pre-line">{objectif.descriptif}</p>
+          <h3 className="!text-base italic !mb-1">Descriptif</h3>
+          <p className="whitespace-pre-line !text-sm">{objectif.descriptif}</p>
 
-          <h3 className="!text-lg !mb-1">Indicateur + cible</h3>
-          <p className="whitespace-pre-line">{objectif.indicateurCible}</p>
+          <h3 className="!text-base italic !mb-1">Indicateur + cible</h3>
+          <p className="whitespace-pre-line !text-sm">
+            {objectif.indicateurCible}
+          </p>
         </>
       )}
     </div>

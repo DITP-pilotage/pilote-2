@@ -52,7 +52,7 @@ export function Textarea<T extends FieldValues>({
             <textarea
               {...props}
               className={clsxm(
-                "border !rounded-md !bg-white py-2 px-4 field-sizing-content",
+                "border !rounded-t !border-b-2 !border-b-gray-600 !bg-white py-2 px-4 field-sizing-content",
                 {
                   "!border-error": !!fieldState.error,
                 },
