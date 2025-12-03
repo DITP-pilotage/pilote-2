@@ -9,6 +9,7 @@ import { BoutonPasserEnInstruction } from "@/components/PagePilotage/BoutonPasse
 import { BoutonBloquerInstruction } from "@/components/PagePilotage/BoutonBloquerInstruction";
 import { BoutonDebloquerInstruction } from "@/components/PagePilotage/BoutonDebloquerInstruction";
 import { BoutonRetourAutoEvaluation } from "@/components/PagePilotage/BoutonRetourAutoEvaluation";
+import { BoutonRetourAppreciation } from "@/components/PagePilotage/BoutonRetourAppreciation";
 
 export const MenuActionTableauPilotage = ({
   fichesSelectionneesIds,
@@ -67,6 +68,10 @@ export const MenuActionTableauPilotage = ({
         <div className="flex gap-2">
           <BoutonPasserEnInstruction
             disabled={!peutModifierLaConsolidationViaPilotage}
+            fichesSelectionneesIds={fichesSelectionneesIds}
+          />
+          <BoutonRetourAppreciation
+            disabled={!peutModifierLInstructionViaPilotage}
             fichesSelectionneesIds={fichesSelectionneesIds}
           />
           <BoutonBloquerInstruction

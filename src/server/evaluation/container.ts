@@ -13,7 +13,7 @@ import { AfficherInstructionQuery } from "@/server/evaluation/queries/AfficherIn
 import { EnregistrerBrouillonInstructionHandler } from "@/server/evaluation/handlers/EnregistrerBrouillonInstructionHandler";
 import { ModifierEtatFichesInstructionHandler } from "@/server/evaluation/handlers/ModifierEtatFichesInstructionHandler";
 import { RecupererDetailsNoteCollectiveQuery } from "@/server/evaluation/queries/RecupererDetailsNoteCollectiveQuery";
-import { SoumettreAutoEvaluationService } from "@/server/evaluation/services/SoumettreAutoEvaluationService";
+import { SoumettreEtapeEvaluationService } from "@/server/evaluation/services/SoumettreEtapeEvaluationService";
 import { PasserALaConsolidationHandler } from "@/server/evaluation/handlers/PasserALaConsolidationHandler";
 import { EnregistrerBrouillonAutoEvaluationObjectifsHandler } from "./handlers/EnregistrerBrouillonAutoEvaluationObjectifsHandler";
 import { EnregistrerBrouillonAutoEvaluationCriteresHandler } from "./handlers/EnregistrerBrouillonAutoEvaluationCriteresHandler";
@@ -21,6 +21,7 @@ import { ValiderSaisieCriteresHandler } from "./handlers/ValiderSaisieCriteresHa
 import { ValiderSaisieObjectifsHandler } from "./handlers/ValiderSaisieObjectifsHandler";
 import { SetTraitementEvaluationHandler } from "./handlers/SetTraitementEvaluationHandler";
 import { RetournerAutoEvaluationHandler } from "./handlers/RetournerAutoEvaluationHandler";
+import { RetournerAppreciationHandler } from "./handlers/RetournerAppreciationHandler";
 import { ModifierObjectifHandler } from "./handlers/ModifierObjectifHandler";
 import { GenererPDFAutoEvaluationHandler } from "./handlers/GenererPDFAutoEvaluationHandler";
 
@@ -39,13 +40,14 @@ export type PiloteEvalDependencies = {
   enregistrerBrouillonConsolidationHandler: EnregistrerBrouillonConsolidationHandler;
   enregistrerBrouillonInstructionHandler: EnregistrerBrouillonInstructionHandler;
   accesFicheEvaluationService: AccesFicheEvaluationService;
-  soumettreAutoEvaluationService: SoumettreAutoEvaluationService;
+  soumettreEtapeEvaluationService: SoumettreEtapeEvaluationService;
   modifierEtatFichesConsolidationHandler: ModifierEtatFichesConsolidationHandler;
   modifierEtatFichesInstructionHandler: ModifierEtatFichesInstructionHandler;
   passerALaConsolidationHandler: PasserALaConsolidationHandler;
   passerALEtapeInstructionHandler: PasserALEtapeInstructionHandler;
   setTraitementEvaluationHandler: SetTraitementEvaluationHandler;
   retournerAutoEvaluationHandler: RetournerAutoEvaluationHandler;
+  retournerAppreciationHandler: RetournerAppreciationHandler;
   modifierObjectifHandler: ModifierObjectifHandler;
   genererPDFAutoEvaluationHandler: GenererPDFAutoEvaluationHandler;
 };
@@ -80,7 +82,7 @@ export const getPiloteEvalContainer = (
       EnregistrerBrouillonInstructionHandler,
     ),
     accesFicheEvaluationService: asClass(AccesFicheEvaluationService),
-    soumettreAutoEvaluationService: asClass(SoumettreAutoEvaluationService),
+    soumettreEtapeEvaluationService: asClass(SoumettreEtapeEvaluationService),
     modifierEtatFichesConsolidationHandler: asClass(
       ModifierEtatFichesConsolidationHandler,
     ),
@@ -91,6 +93,7 @@ export const getPiloteEvalContainer = (
     passerALEtapeInstructionHandler: asClass(PasserALEtapeInstructionHandler),
     setTraitementEvaluationHandler: asClass(SetTraitementEvaluationHandler),
     retournerAutoEvaluationHandler: asClass(RetournerAutoEvaluationHandler),
+    retournerAppreciationHandler: asClass(RetournerAppreciationHandler),
     modifierObjectifHandler: asClass(ModifierObjectifHandler),
     genererPDFAutoEvaluationHandler: asClass(GenererPDFAutoEvaluationHandler),
   });

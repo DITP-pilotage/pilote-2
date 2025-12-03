@@ -53,6 +53,6 @@ export const useEnregistrerBrouillonConsolidation = () => {
         },
       });
     },
-    [mutateAsync, refreshRouter],
+    [mutateAsync, props.rattachements, refreshRouter],
   );
 };
