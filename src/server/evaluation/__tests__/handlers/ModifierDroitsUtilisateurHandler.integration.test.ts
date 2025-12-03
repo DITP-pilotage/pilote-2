@@ -53,6 +53,36 @@ describe("ModifierDroitsUtilisateurHandler", () => {
       ],
       skipDuplicates: true,
     });
+
+    await prisma.referentiel_objectif.createMany({
+      data: [
+        {
+          id: "f1a2b3c4-d5e6-4a5b-8c9d-0e1f2a3b4c5d",
+          libelle: "Objectif 1 - REG-01",
+          descriptif: "Description objectif 1",
+          indicateur_cible: "100",
+          jalon: 2025,
+          rattachement_code: "REG-01",
+        },
+        {
+          id: "f2a2b3c4-d5e6-4a5b-8c9d-0e1f2a3b4c5d",
+          libelle: "Objectif 2 - REG-01",
+          descriptif: "Description objectif 2",
+          indicateur_cible: "200",
+          jalon: 2025,
+          rattachement_code: "REG-01",
+        },
+        {
+          id: "f3a2b3c4-d5e6-4a5b-8c9d-0e1f2a3b4c5d",
+          libelle: "Objectif 1 - REG-02",
+          descriptif: "Description objectif 1",
+          indicateur_cible: "150",
+          jalon: 2025,
+          rattachement_code: "REG-02",
+        },
+      ],
+      skipDuplicates: true,
+    });
   });
 
   describe("execute", () => {
@@ -65,6 +95,9 @@ describe("ModifierDroitsUtilisateurHandler", () => {
           rattachementCodes: ["REG-01", "REG-02"],
         },
         consolidation: {
+          rattachementCodes: [],
+        },
+        instructionObjectifs: {
           rattachementCodes: [],
         },
         instructionManiereDeServir: {
@@ -101,6 +134,9 @@ describe("ModifierDroitsUtilisateurHandler", () => {
         },
         consolidation: {
           rattachementCodes: ["REG-03"],
+        },
+        instructionObjectifs: {
+          rattachementCodes: [],
         },
         instructionManiereDeServir: {
           critereCodes: [],
@@ -143,6 +179,9 @@ describe("ModifierDroitsUtilisateurHandler", () => {
           rattachementCodes: ["REG-02", "REG-03"],
         },
         consolidation: {
+          rattachementCodes: [],
+        },
+        instructionObjectifs: {
           rattachementCodes: [],
         },
         instructionManiereDeServir: {
@@ -202,6 +241,9 @@ describe("ModifierDroitsUtilisateurHandler", () => {
         consolidation: {
           rattachementCodes: [],
         },
+        instructionObjectifs: {
+          rattachementCodes: [],
+        },
         instructionManiereDeServir: {
           critereCodes: [],
         },
@@ -244,6 +286,9 @@ describe("ModifierDroitsUtilisateurHandler", () => {
         consolidation: {
           rattachementCodes: [],
         },
+        instructionObjectifs: {
+          rattachementCodes: [],
+        },
         instructionManiereDeServir: {
           critereCodes: [],
         },
@@ -273,6 +318,9 @@ describe("ModifierDroitsUtilisateurHandler", () => {
           rattachementCodes: [],
         },
         consolidation: {
+          rattachementCodes: [],
+        },
+        instructionObjectifs: {
           rattachementCodes: [],
         },
         instructionManiereDeServir: {
@@ -363,6 +411,9 @@ describe("ModifierDroitsUtilisateurHandler", () => {
         consolidation: {
           rattachementCodes: [],
         },
+        instructionObjectifs: {
+          rattachementCodes: [],
+        },
         instructionManiereDeServir: {
           critereCodes: [],
         },
@@ -423,6 +474,9 @@ describe("ModifierDroitsUtilisateurHandler", () => {
         consolidation: {
           rattachementCodes: [],
         },
+        instructionObjectifs: {
+          rattachementCodes: [],
+        },
         instructionManiereDeServir: {
           critereCodes: ["3ec335a1-0737-4ddf-bdf1-11aa7d7f41fa"],
         },
@@ -458,6 +512,129 @@ describe("ModifierDroitsUtilisateurHandler", () => {
       criteres.forEach((c) => {
         expect(c.critere_id).toBe("3ec335a1-0737-4ddf-bdf1-11aa7d7f41fa");
       });
+    });
+
+    it("cree uniquement les rattachements selectionnes quand seuls des objectifs sont choisis", async () => {
+      // Given: une commande avec des objectifs mais pas de criteres
+      const command = {
+        utilisateurId,
+        jalon: 2025,
+        autoEvaluation: {
+          rattachementCodes: [],
+        },
+        consolidation: {
+          rattachementCodes: [],
+        },
+        instructionObjectifs: {
+          rattachementCodes: ["REG-01", "REG-02"],
+        },
+        instructionManiereDeServir: {
+          critereCodes: [],
+        },
+      };
+
+      // When
+      await handler.execute(command);
+
+      // Then: seuls les rattachements selectionnes doivent etre crees
+      const rattachements =
+        await prisma.rattachement_utilisateur_etape_jalon.findMany({
+          where: {
+            utilisateur_id: utilisateurId,
+            jalon: 2025,
+            etape: $Enums.etape_evaluation_enum.INSTRUCTION,
+          },
+        });
+
+      expect(rattachements).toHaveLength(2);
+      expect(rattachements.map((r) => r.rattachement_code)).toEqual(
+        expect.arrayContaining(["REG-01", "REG-02"]),
+      );
+    });
+
+    it("cree tous les rattachements quand objectifs ET criteres sont selectionnes", async () => {
+      // Given: une commande avec des objectifs ET des criteres
+      const command = {
+        utilisateurId,
+        jalon: 2025,
+        autoEvaluation: {
+          rattachementCodes: [],
+        },
+        consolidation: {
+          rattachementCodes: [],
+        },
+        instructionObjectifs: {
+          rattachementCodes: ["REG-01"],
+        },
+        instructionManiereDeServir: {
+          critereCodes: ["9c60b99a-d716-49dc-b4d5-5a739f241a78"],
+        },
+      };
+
+      // When
+      await handler.execute(command);
+
+      // Then: tous les rattachements doivent etre crees
+      const rattachements =
+        await prisma.rattachement_utilisateur_etape_jalon.findMany({
+          where: {
+            utilisateur_id: utilisateurId,
+            jalon: 2025,
+            etape: $Enums.etape_evaluation_enum.INSTRUCTION,
+          },
+        });
+
+      expect(rattachements).toHaveLength(3);
+      expect(rattachements.map((r) => r.rattachement_code)).toEqual(
+        expect.arrayContaining(["REG-01", "REG-02", "REG-03"]),
+      );
+    });
+
+    it("cree les objectifs d'instruction pour les rattachements selectionnes", async () => {
+      // Given: une commande avec des objectifs
+      const command = {
+        utilisateurId,
+        jalon: 2025,
+        autoEvaluation: {
+          rattachementCodes: [],
+        },
+        consolidation: {
+          rattachementCodes: [],
+        },
+        instructionObjectifs: {
+          rattachementCodes: ["REG-01", "REG-02"],
+        },
+        instructionManiereDeServir: {
+          critereCodes: [],
+        },
+      };
+
+      // When
+      await handler.execute(command);
+
+      // Then: les objectifs doivent etre crees
+      const objectifs = await prisma.instruction_objectif.findMany({
+        where: {
+          rattachement_utilisateur_etape_jalon: {
+            utilisateur_id: utilisateurId,
+            jalon: 2025,
+            etape: $Enums.etape_evaluation_enum.INSTRUCTION,
+          },
+        },
+        include: {
+          objectif: true,
+        },
+      });
+
+      expect(objectifs).toHaveLength(3);
+      const objectifIds = objectifs.map((o) => o.objectif_id);
+      expect(objectifIds).toEqual(
+        expect.arrayContaining([
+          "f1a2b3c4-d5e6-4a5b-8c9d-0e1f2a3b4c5d",
+          "f2a2b3c4-d5e6-4a5b-8c9d-0e1f2a3b4c5d",
+          "f3a2b3c4-d5e6-4a5b-8c9d-0e1f2a3b4c5d",
+        ]),
+      );
     });
   });
 });

@@ -35,6 +35,28 @@ describe("RecupererDroitsUtilisateurQuery", () => {
       ],
       skipDuplicates: true,
     });
+
+    await prisma.referentiel_objectif.createMany({
+      data: [
+        {
+          id: "f1a2b3c4-d5e6-4a5b-8c9d-0e1f2a3b4c5d",
+          libelle: "Objectif 1 - REG-04",
+          descriptif: "Description objectif 1",
+          indicateur_cible: "100",
+          jalon: 2025,
+          rattachement_code: "REG-04",
+        },
+        {
+          id: "f2a2b3c4-d5e6-4a5b-8c9d-0e1f2a3b4c5d",
+          libelle: "Objectif 1 - REG-05",
+          descriptif: "Description objectif 2",
+          indicateur_cible: "200",
+          jalon: 2025,
+          rattachement_code: "REG-05",
+        },
+      ],
+      skipDuplicates: true,
+    });
   });
 
   describe("run", () => {
@@ -93,15 +115,24 @@ describe("RecupererDroitsUtilisateurQuery", () => {
       expect(resultat.consolidation.rattachementCodes).toEqual(["REG-03"]);
     });
 
-    it("retourne les rattachements pour INSTRUCTION", async () => {
-      // Given: 1 rattachement en instruction pour le jalon 2025
-      await prisma.rattachement_utilisateur_etape_jalon.create({
+    it("retourne les rattachements pour INSTRUCTION avec objectifs", async () => {
+      // Given: 1 rattachement en instruction avec un objectif
+      const rattachementInstruction =
+        await prisma.rattachement_utilisateur_etape_jalon.create({
+          data: {
+            id: "d4e5f6a7-b8c9-4d5e-0f1a-3b4c5d6e7f8a",
+            utilisateur_id: utilisateurId,
+            rattachement_code: "REG-04",
+            etape: $Enums.etape_evaluation_enum.INSTRUCTION,
+            jalon: 2025,
+          },
+        });
+
+      await prisma.instruction_objectif.create({
         data: {
-          id: "d4e5f6a7-b8c9-4d5e-0f1a-3b4c5d6e7f8a",
-          utilisateur_id: utilisateurId,
-          rattachement_code: "REG-04",
-          etape: $Enums.etape_evaluation_enum.INSTRUCTION,
-          jalon: 2025,
+          id: "a1b2c3d4-e5f6-4a5b-8c9d-0e1f2a3b4c5d",
+          rattachement_utilisateur_etape_jalon_id: rattachementInstruction.id,
+          objectif_id: "f1a2b3c4-d5e6-4a5b-8c9d-0e1f2a3b4c5d",
         },
       });
 
@@ -115,6 +146,77 @@ describe("RecupererDroitsUtilisateurQuery", () => {
       expect(resultat.instructionObjectifs.rattachementCodes).toEqual([
         "REG-04",
       ]);
+    });
+
+    it("ne retourne pas les rattachements INSTRUCTION sans objectifs", async () => {
+      // Given: 1 rattachement en instruction sans objectif
+      await prisma.rattachement_utilisateur_etape_jalon.create({
+        data: {
+          id: "e5f6a7b8-c9d0-4e5f-1a2b-4c5d6e7f8a9b",
+          utilisateur_id: utilisateurId,
+          rattachement_code: "REG-06",
+          etape: $Enums.etape_evaluation_enum.INSTRUCTION,
+          jalon: 2025,
+        },
+      });
+
+      // When
+      const resultat = await query.run({
+        utilisateurId,
+        jalon: 2025,
+      });
+
+      // Then
+      expect(resultat.instructionObjectifs.rattachementCodes).toEqual([]);
+    });
+
+    it("retourne les rattachementCodes des objectifs et non du rattachement utilisateur", async () => {
+      // Given: 1 rattachement_utilisateur_etape_jalon avec code REG-07
+      // mais avec 2 instruction_objectif lies a des referentiel_objectif ayant rattachement_code REG-04 et REG-05
+      const rattachementInstruction =
+        await prisma.rattachement_utilisateur_etape_jalon.create({
+          data: {
+            id: "f6a7b8c9-d0e1-4f5a-2b3c-5d6e7f8a9b0c",
+            utilisateur_id: utilisateurId,
+            rattachement_code: "REG-07",
+            etape: $Enums.etape_evaluation_enum.INSTRUCTION,
+            jalon: 2025,
+          },
+        });
+
+      // Objectif f1a2b3c4 a rattachement_code: REG-04
+      await prisma.instruction_objectif.create({
+        data: {
+          id: "b1c2d3e4-f5a6-4b5c-9d0e-1f2a3b4c5d6e",
+          rattachement_utilisateur_etape_jalon_id: rattachementInstruction.id,
+          objectif_id: "f1a2b3c4-d5e6-4a5b-8c9d-0e1f2a3b4c5d",
+        },
+      });
+
+      // Objectif f2a2b3c4 a rattachement_code: REG-05
+      await prisma.instruction_objectif.create({
+        data: {
+          id: "c2d3e4f5-a6b7-4c5d-0e1f-2a3b4c5d6e7f",
+          rattachement_utilisateur_etape_jalon_id: rattachementInstruction.id,
+          objectif_id: "f2a2b3c4-d5e6-4a5b-8c9d-0e1f2a3b4c5d",
+        },
+      });
+
+      // When
+      const resultat = await query.run({
+        utilisateurId,
+        jalon: 2025,
+      });
+
+      // Then: doit retourner REG-04 et REG-05 (rattachement_code des objectifs)
+      // et PAS REG-07 (rattachement_code du rattachement_utilisateur_etape_jalon)
+      expect(resultat.instructionObjectifs.rattachementCodes).toHaveLength(2);
+      expect(resultat.instructionObjectifs.rattachementCodes).toEqual(
+        expect.arrayContaining(["REG-04", "REG-05"]),
+      );
+      expect(resultat.instructionObjectifs.rattachementCodes).not.toContain(
+        "REG-07",
+      );
     });
 
     it("retourne les critères pour INSTRUCTION", async () => {

@@ -97,6 +97,9 @@ const UtilisateurDetailPage = (
         consolidation: {
           rattachementCodes: data.consolidation.rattachementCodes,
         },
+        instructionObjectifs: {
+          rattachementCodes: data.instructionObjectifs.rattachementCodes,
+        },
         instructionManiereDeServir: {
           critereCodes: data.instructionManiereDeServir.critereCodes,
         },

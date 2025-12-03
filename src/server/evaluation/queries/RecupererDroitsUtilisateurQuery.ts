@@ -38,6 +38,16 @@ export class RecupererDroitsUtilisateurQuery {
               critere_id: true,
             },
           },
+          instruction_objectifs: {
+            select: {
+              objectif: {
+                select: {
+                  rattachement_code: true,
+                },
+              },
+              objectif_id: true,
+            },
+          },
         },
       });
 
@@ -69,9 +79,16 @@ export class RecupererDroitsUtilisateurQuery {
           );
           break;
         case "INSTRUCTION":
-          droits.instructionObjectifs.rattachementCodes.push(
-            rattachement.rattachement_code,
-          );
+          if (rattachement.instruction_objectifs.length > 0) {
+            droits.instructionObjectifs.rattachementCodes.push(
+              ...new Set(
+                rattachement.instruction_objectifs.map(
+                  (instructionObjectif) =>
+                    instructionObjectif.objectif.rattachement_code,
+                ),
+              ),
+            );
+          }
           for (const instructionCritere of rattachement.instruction_criteres) {
             if (
               !droits.instructionManiereDeServir.critereCodes.includes(

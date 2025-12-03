@@ -14,6 +14,9 @@ export const modifierDroitsUtilisateurCommandSchema = z.object({
   consolidation: z.object({
     rattachementCodes: z.array(z.string()),
   }),
+  instructionObjectifs: z.object({
+    rattachementCodes: z.array(z.string()),
+  }),
   instructionManiereDeServir: z.object({
     critereCodes: z.array(z.string()),
   }),
@@ -77,36 +80,88 @@ export class ModifierDroitsUtilisateurHandler {
         });
       }
 
-      if (command.instructionManiereDeServir.critereCodes.length > 0) {
-        const tousLesRattachements =
-          await prisma.referentiel_rattachement.findMany({
-            select: { code: true },
-          });
+      const aDesObjectifs =
+        command.instructionObjectifs.rattachementCodes.length > 0;
+      const aDesCriteres =
+        command.instructionManiereDeServir.critereCodes.length > 0;
 
-        const rattachementsCreés =
+      if (aDesObjectifs || aDesCriteres) {
+        let rattachementCodesACreer: string[] = [];
+
+        if (aDesObjectifs && !aDesCriteres) {
+          rattachementCodesACreer =
+            command.instructionObjectifs.rattachementCodes;
+        } else if (aDesCriteres) {
+          const tousLesRattachements =
+            await prisma.referentiel_rattachement.findMany({
+              select: { code: true },
+            });
+          rattachementCodesACreer = tousLesRattachements.map((r) => r.code);
+        }
+
+        const rattachementsCrees =
           await prisma.rattachement_utilisateur_etape_jalon.createManyAndReturn(
             {
-              data: tousLesRattachements.map((rattachement) => ({
+              data: rattachementCodesACreer.map((code) => ({
                 id: randomUUID(),
                 utilisateur_id: command.utilisateurId,
-                rattachement_code: rattachement.code,
+                rattachement_code: code,
                 etape: $Enums.etape_evaluation_enum.INSTRUCTION,
                 jalon: command.jalon,
               })),
             },
           );
 
-        const critèresÀCréer = rattachementsCreés.flatMap((rattachement) =>
-          command.instructionManiereDeServir.critereCodes.map((critereId) => ({
-            id: randomUUID(),
-            rattachement_utilisateur_etape_jalon_id: rattachement.id,
-            critere_id: critereId,
-          })),
-        );
+        const objectifsParRattachement =
+          await prisma.referentiel_objectif.findMany({
+            where: {
+              jalon: command.jalon,
+              rattachement_code: {
+                in: rattachementCodesACreer,
+              },
+            },
+            select: {
+              id: true,
+              rattachement_code: true,
+            },
+          });
 
-        if (critèresÀCréer.length > 0) {
+        const objectifsACreer = rattachementsCrees
+          .filter((rattachement) =>
+            command.instructionObjectifs.rattachementCodes.includes(
+              rattachement.rattachement_code,
+            ),
+          )
+          .flatMap((rattachement) => {
+            const objectifsDuRattachement = objectifsParRattachement.filter(
+              (obj) => obj.rattachement_code === rattachement.rattachement_code,
+            );
+            return objectifsDuRattachement.map((objectif) => ({
+              id: randomUUID(),
+              rattachement_utilisateur_etape_jalon_id: rattachement.id,
+              objectif_id: objectif.id,
+            }));
+          });
+
+        if (objectifsACreer.length > 0) {
+          await prisma.instruction_objectif.createMany({
+            data: objectifsACreer,
+          });
+        }
+
+        if (aDesCriteres) {
+          const criteresACreer = rattachementsCrees.flatMap((rattachement) =>
+            command.instructionManiereDeServir.critereCodes.map(
+              (critereId) => ({
+                id: randomUUID(),
+                rattachement_utilisateur_etape_jalon_id: rattachement.id,
+                critere_id: critereId,
+              }),
+            ),
+          );
+
           await prisma.instruction_critere.createMany({
-            data: critèresÀCréer,
+            data: criteresACreer,
           });
         }
       }
