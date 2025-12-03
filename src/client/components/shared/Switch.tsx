@@ -10,7 +10,7 @@ export const Switch = Object.assign({}, BaseSwitch, {
     className,
     ...props
   }: ComponentProps<typeof BaseSwitch.Root>) => (
-    <Switch.Root
+    <BaseSwitch.Root
       className={clsxm(
         "w-11 relative !p-0",
         "rounded-full border !border-primary",
@@ -23,14 +23,14 @@ export const Switch = Object.assign({}, BaseSwitch, {
       {...props}
     >
       {children}
-    </Switch.Root>
+    </BaseSwitch.Root>
   ),
   Thumb: ({
     className,
     disabled,
     ...props
   }: ComponentProps<typeof BaseSwitch.Thumb> & { disabled?: boolean }) => (
-    <Switch.Thumb
+    <BaseSwitch.Thumb
       className={clsxm(
         "h-7 w-7 block",
         "rounded-full border !border-primary",
@@ -44,6 +44,6 @@ export const Switch = Object.assign({}, BaseSwitch, {
       {...props}
     >
       <Icone className="h-5 w-5 text-current" icone={CheckLineIcon} />
-    </Switch.Thumb>
+    </BaseSwitch.Thumb>
   ),
 });
