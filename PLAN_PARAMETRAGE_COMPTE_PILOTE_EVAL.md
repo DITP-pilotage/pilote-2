@@ -1245,10 +1245,448 @@ const optionsObjectifsGroupées = Object.entries(objectifsParRattachement).map(
 }
 ```
 
+## Étape 4 : Récupération des droits existants de l'utilisateur
+
+### Contexte
+
+Les droits d'un utilisateur sont stockés dans la table `rattachement_utilisateur_etape_jalon` qui fait le lien entre :
+- Un utilisateur (`utilisateur_id`)
+- Un rattachement/territoire (`rattachement_code`)
+- Une étape d'évaluation (`etape`: AUTO_EVALUATION, CONSOLIDATION, INSTRUCTION)
+- Un jalon/année (`jalon`)
+
+Pour l'instruction, les détails supplémentaires sont dans :
+- `instruction_objectif` : liste des objectifs que l'utilisateur peut instruire
+- `instruction_critere` : liste des critères que l'utilisateur peut instruire
+
+### 4.1 Créer la query vide
+
+**Fichier à créer** : `src/server/evaluation/queries/RecupererDroitsUtilisateurQuery.ts`
+
+**Structure de base** :
+```typescript
+import { PrismaPilote } from "@/server/db/PrismaPilote";
+
+export type DroitsUtilisateur = {
+  autoEvaluation: {
+    rattachementCodes: string[];
+  };
+  consolidation: {
+    rattachementCodes: string[];
+  };
+  instructionObjectifs: {
+    rattachementCodes: string[];
+  };
+  instructionManiereDeServir: {
+    critereCodes: string[];
+  };
+};
+
+export class RecupererDroitsUtilisateurQuery {
+  constructor(private readonly dependencies: { prisma: PrismaPilote }) {}
+
+  async run({
+    utilisateurId,
+    jalon,
+  }: {
+    utilisateurId: string;
+    jalon: number;
+  }): Promise<DroitsUtilisateur> {
+    // À implémenter
+    throw new Error("Not implemented");
+  }
+}
+```
+
+### 4.2 Créer les tests d'intégration (TDD - RED)
+
+**Fichier à créer** : `src/server/evaluation/__tests__/queries/RecupererDroitsUtilisateurQuery.integration.test.ts`
+
+**Scénarios de test** :
+
+```typescript
+import { describe, it, expect, beforeEach } from "@jest/globals";
+import { RecupererDroitsUtilisateurQuery } from "@/server/evaluation/queries/RecupererDroitsUtilisateurQuery";
+import { prisma } from "@/server/db/PrismaClient";
+import { $Enums } from "@prisma/client";
+
+describe("RecupererDroitsUtilisateurQuery", () => {
+  let query: RecupererDroitsUtilisateurQuery;
+  let utilisateurId: string;
+
+  beforeEach(async () => {
+    query = new RecupererDroitsUtilisateurQuery({ prisma });
+
+    // Given: un utilisateur de test
+    const utilisateur = await prisma.getInstance().utilisateur.create({
+      data: {
+        email: "test@example.com",
+        nom: "Test",
+        prenom: "User",
+        profilCode: "DITP",
+        applications_accessibles: [$Enums.application_accessible.PILOTE_EVAL],
+      },
+    });
+    utilisateurId = utilisateur.id;
+  });
+
+  describe("run", () => {
+    it("retourne les rattachements pour AUTO_EVALUATION", async () => {
+      // Given: 2 rattachements en auto-évaluation pour le jalon 2025
+      await prisma.getInstance().rattachement_utilisateur_etape_jalon.create({
+        data: {
+          utilisateur_id: utilisateurId,
+          rattachement_code: "REG-01",
+          etape: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
+          jalon: 2025,
+        },
+      });
+      await prisma.getInstance().rattachement_utilisateur_etape_jalon.create({
+        data: {
+          utilisateur_id: utilisateurId,
+          rattachement_code: "REG-02",
+          etape: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
+          jalon: 2025,
+        },
+      });
+
+      // When
+      const resultat = await query.run({
+        utilisateurId,
+        jalon: 2025,
+      });
+
+      // Then
+      expect(resultat.autoEvaluation.rattachementCodes).toEqual(
+        expect.arrayContaining(["REG-01", "REG-02"])
+      );
+    });
+
+    it("retourne les rattachements pour CONSOLIDATION", async () => {
+      // Given: 1 rattachement en consolidation pour le jalon 2025
+      await prisma.getInstance().rattachement_utilisateur_etape_jalon.create({
+        data: {
+          utilisateur_id: utilisateurId,
+          rattachement_code: "REG-03",
+          etape: $Enums.etape_evaluation_enum.CONSOLIDATION,
+          jalon: 2025,
+        },
+      });
+
+      // When
+      const resultat = await query.run({
+        utilisateurId,
+        jalon: 2025,
+      });
+
+      // Then
+      expect(resultat.consolidation.rattachementCodes).toEqual(["REG-03"]);
+    });
+
+    it("retourne les rattachements pour INSTRUCTION avec objectifs", async () => {
+      // Given: 1 rattachement en instruction pour le jalon 2025
+      const rattachementInstruction = await prisma
+        .getInstance()
+        .rattachement_utilisateur_etape_jalon.create({
+          data: {
+            utilisateur_id: utilisateurId,
+            rattachement_code: "REG-04",
+            etape: $Enums.etape_evaluation_enum.INSTRUCTION,
+            jalon: 2025,
+          },
+        });
+
+      // When
+      const resultat = await query.run({
+        utilisateurId,
+        jalon: 2025,
+      });
+
+      // Then
+      expect(resultat.instructionObjectifs.rattachementCodes).toEqual([
+        "REG-04",
+      ]);
+    });
+
+    it("retourne les critères pour INSTRUCTION", async () => {
+      // Given: 1 rattachement en instruction avec 2 critères
+      const rattachementInstruction = await prisma
+        .getInstance()
+        .rattachement_utilisateur_etape_jalon.create({
+          data: {
+            utilisateur_id: utilisateurId,
+            rattachement_code: "REG-05",
+            etape: $Enums.etape_evaluation_enum.INSTRUCTION,
+            jalon: 2025,
+          },
+        });
+
+      await prisma.getInstance().instruction_critere.create({
+        data: {
+          rattachement_utilisateur_etape_jalon_id: rattachementInstruction.id,
+          critere_id: "critere-1",
+        },
+      });
+      await prisma.getInstance().instruction_critere.create({
+        data: {
+          rattachement_utilisateur_etape_jalon_id: rattachementInstruction.id,
+          critere_id: "critere-2",
+        },
+      });
+
+      // When
+      const resultat = await query.run({
+        utilisateurId,
+        jalon: 2025,
+      });
+
+      // Then
+      expect(resultat.instructionManiereDeServir.critereCodes).toEqual(
+        expect.arrayContaining(["critere-1", "critere-2"])
+      );
+    });
+
+    it("ne retourne que les droits pour le jalon spécifié", async () => {
+      // Given: des rattachements pour différents jalons
+      await prisma.getInstance().rattachement_utilisateur_etape_jalon.create({
+        data: {
+          utilisateur_id: utilisateurId,
+          rattachement_code: "REG-06",
+          etape: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
+          jalon: 2025,
+        },
+      });
+      await prisma.getInstance().rattachement_utilisateur_etape_jalon.create({
+        data: {
+          utilisateur_id: utilisateurId,
+          rattachement_code: "REG-07",
+          etape: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
+          jalon: 2024,
+        },
+      });
+
+      // When
+      const resultat = await query.run({
+        utilisateurId,
+        jalon: 2025,
+      });
+
+      // Then
+      expect(resultat.autoEvaluation.rattachementCodes).toEqual(["REG-06"]);
+      expect(resultat.autoEvaluation.rattachementCodes).not.toContain("REG-07");
+    });
+
+    it("retourne des tableaux vides si l'utilisateur n'a aucun droit", async () => {
+      // Given: un utilisateur sans droits
+
+      // When
+      const resultat = await query.run({
+        utilisateurId,
+        jalon: 2025,
+      });
+
+      // Then
+      expect(resultat).toEqual({
+        autoEvaluation: {
+          rattachementCodes: [],
+        },
+        consolidation: {
+          rattachementCodes: [],
+        },
+        instructionObjectifs: {
+          rattachementCodes: [],
+        },
+        instructionManiereDeServir: {
+          critereCodes: [],
+        },
+      });
+    });
+  });
+});
+```
+
+### 4.3 Implémenter la query
+
+**Dans le fichier** : `src/server/evaluation/queries/RecupererDroitsUtilisateurQuery.ts`
+
+**Logique d'implémentation** :
+
+1. Récupérer tous les `rattachement_utilisateur_etape_jalon` pour l'utilisateur et le jalon
+2. Filtrer par étape (AUTO_EVALUATION, CONSOLIDATION, INSTRUCTION)
+3. Pour l'instruction, récupérer aussi les `instruction_critere` associés
+4. Retourner la structure attendue
+
+```typescript
+async run({
+  utilisateurId,
+  jalon,
+}: {
+  utilisateurId: string;
+  jalon: number;
+}): Promise<DroitsUtilisateur> {
+  const rattachements = await this.dependencies.prisma
+    .getInstance()
+    .rattachement_utilisateur_etape_jalon.findMany({
+      where: {
+        utilisateur_id: utilisateurId,
+        jalon,
+      },
+      include: {
+        instruction_criteres: {
+          select: {
+            critere_id: true,
+          },
+        },
+      },
+    });
+
+  const droits: DroitsUtilisateur = {
+    autoEvaluation: {
+      rattachementCodes: [],
+    },
+    consolidation: {
+      rattachementCodes: [],
+    },
+    instructionObjectifs: {
+      rattachementCodes: [],
+    },
+    instructionManiereDeServir: {
+      critereCodes: [],
+    },
+  };
+
+  for (const rattachement of rattachements) {
+    switch (rattachement.etape) {
+      case "AUTO_EVALUATION":
+        droits.autoEvaluation.rattachementCodes.push(
+          rattachement.rattachement_code
+        );
+        break;
+      case "CONSOLIDATION":
+        droits.consolidation.rattachementCodes.push(
+          rattachement.rattachement_code
+        );
+        break;
+      case "INSTRUCTION":
+        droits.instructionObjectifs.rattachementCodes.push(
+          rattachement.rattachement_code
+        );
+        // Récupérer les critères
+        for (const instructionCritere of rattachement.instruction_criteres) {
+          if (
+            !droits.instructionManiereDeServir.critereCodes.includes(
+              instructionCritere.critere_id
+            )
+          ) {
+            droits.instructionManiereDeServir.critereCodes.push(
+              instructionCritere.critere_id
+            );
+          }
+        }
+        break;
+    }
+  }
+
+  return droits;
+}
+```
+
+### 4.4 Enregistrer la query dans le container
+
+**Fichier à modifier** : `src/server/evaluation/container.ts`
+
+**Ajouts** :
+
+1. Import :
+```typescript
+import { RecupererDroitsUtilisateurQuery } from "@/server/evaluation/queries/RecupererDroitsUtilisateurQuery";
+```
+
+2. Dans le type `PiloteEvalDependencies` :
+```typescript
+export type PiloteEvalDependencies = {
+  // ... autres dépendances
+  recupererDroitsUtilisateurQuery: RecupererDroitsUtilisateurQuery;
+};
+```
+
+3. Dans l'enregistrement :
+```typescript
+return initialContainer.createScope<PiloteEvalDependencies>().register({
+  // ... autres enregistrements
+  recupererDroitsUtilisateurQuery: asClass(RecupererDroitsUtilisateurQuery),
+});
+```
+
+### 4.5 Récupérer les droits dans la page et mettre à jour les valeurs par défaut
+
+**Fichier à modifier** : `src/pages/evaluation/utilisateur/[id].tsx`
+
+**Modifications dans `getServerSideProps`** :
+
+```typescript
+const [criteres, rattachements, objectifsParRattachement, droitsUtilisateur] =
+  await Promise.all([
+    container.resolve("listerCriteresPiloteEval").run(),
+    container.resolve("listerRattachementsPiloteEval").run(),
+    container.resolve("listerObjectifsParRattachementPiloteEval").run({
+      jalon: 2025,
+    }),
+    container.resolve("recupererDroitsUtilisateurQuery").run({
+      utilisateurId,
+      jalon: 2025,
+    }),
+  ]);
+
+return {
+  props: {
+    utilisateurId,
+    criteres,
+    rattachements,
+    objectifsParRattachement,
+    droitsUtilisateur,
+  },
+};
+```
+
+**Modifications dans le composant** :
+
+```typescript
+const UtilisateurDetailPage = (
+  props: InferGetServerSidePropsType<typeof getServerSideProps>,
+) => {
+  const {
+    utilisateurId,
+    criteres,
+    rattachements,
+    objectifsParRattachement,
+    droitsUtilisateur,
+  } = props;
+
+  const { control, handleSubmit } =
+    useForm<ParametrageUtilisateurPiloteEvalFormulaire>({
+      resolver: zodResolver(parametrageUtilisateurPiloteEvalSchema),
+      defaultValues: droitsUtilisateur, // Utiliser les droits existants
+    });
+
+  // ... reste du code
+};
+```
+
+### Points d'attention
+
+- ✅ Bien filtrer par `utilisateur_id` ET `jalon`
+- ✅ Gérer le cas où l'utilisateur n'a aucun droit (retourner des tableaux vides)
+- ✅ Pour l'instruction, récupérer à la fois les rattachements ET les critères
+- ✅ Éviter les doublons dans `critereCodes` (utiliser `includes` avant d'ajouter)
+- ✅ Utiliser `$Enums.etape_evaluation_enum` pour les valeurs d'enum
+- ✅ Les tests doivent tous être en rouge avant l'implémentation (TDD)
+- ✅ Le jalon sera hard-codé à 2025 pour le moment
+
 ## Étapes suivantes (à définir)
 
-- Étape 4 : Sauvegarde et persistance des droits
-- Étape 5 : Mise à jour de la logique de permissions
+- Étape 5 : Sauvegarde et persistance des droits modifiés
+- Étape 6 : Mise à jour de la logique de permissions
 
 ## Notes techniques
 

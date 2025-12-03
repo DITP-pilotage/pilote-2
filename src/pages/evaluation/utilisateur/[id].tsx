@@ -119,15 +119,18 @@ export const getServerSideProps = async ({
 
   const container = getContainer("piloteEval");
 
-  const [criteres, rattachements, objectifsParRattachement] = await Promise.all(
-    [
+  const [criteres, rattachements, objectifsParRattachement, droitsUtilisateur] =
+    await Promise.all([
       container.resolve("listerCriteresPiloteEval").run(),
       container.resolve("listerRattachementsPiloteEval").run(),
       container.resolve("listerObjectifsParRattachementPiloteEval").run({
         jalon: 2025,
       }),
-    ],
-  );
+      container.resolve("recupererDroitsUtilisateurQuery").run({
+        utilisateurId,
+        jalon: 2025,
+      }),
+    ]);
 
   return {
     props: {
@@ -135,6 +138,7 @@ export const getServerSideProps = async ({
       criteres,
       rattachements,
       objectifsParRattachement,
+      droitsUtilisateur,
     },
   };
 };
@@ -142,8 +146,13 @@ export const getServerSideProps = async ({
 const UtilisateurDetailPage = (
   props: InferGetServerSidePropsType<typeof getServerSideProps>,
 ) => {
-  const { utilisateurId, criteres, rattachements, objectifsParRattachement } =
-    props;
+  const {
+    utilisateurId,
+    criteres,
+    rattachements,
+    objectifsParRattachement,
+    droitsUtilisateur,
+  } = props;
 
   const [ouvertInstructionObjectifs, setOuvertInstructionObjectifs] =
     useState(false);
@@ -151,20 +160,7 @@ const UtilisateurDetailPage = (
   const { control, handleSubmit } =
     useForm<ParametrageUtilisateurPiloteEvalFormulaire>({
       resolver: zodResolver(parametrageUtilisateurPiloteEvalSchema),
-      defaultValues: {
-        autoEvaluation: {
-          rattachementCodes: [],
-        },
-        consolidation: {
-          rattachementCodes: [],
-        },
-        instructionObjectifs: {
-          rattachementCodes: [],
-        },
-        instructionManiereDeServir: {
-          critereCodes: [],
-        },
-      },
+      defaultValues: droitsUtilisateur,
     });
 
   const onSubmit = (data: ParametrageUtilisateurPiloteEvalFormulaire) => {
