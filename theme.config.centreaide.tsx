@@ -1,5 +1,6 @@
 import type { DocsThemeConfig } from "nextra-theme-docs";
 import Link from "next/link";
+import { NavigationFilter } from "@/client/components/CentreAide/NavigationFilter";
 
 const config: DocsThemeConfig = {
   logo: (
@@ -66,6 +67,14 @@ const config: DocsThemeConfig = {
     backToTop: () => {
       return <span>Revenir en haut</span>;
     },
+  },
+  main: ({ children }) => {
+    return (
+      <>
+        <NavigationFilter />
+        {children}
+      </>
+    );
   },
 };
 
