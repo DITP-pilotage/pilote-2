@@ -1,3 +1,4 @@
+import { ReactNode } from "react";
 import {
   FormCommentaireName,
   FormNoteName,
@@ -15,6 +16,7 @@ export const LigneEtapeEvaluation = ({
   note,
   onAutosave,
   onAfficherFicheCadrage,
+  traitement,
 }: {
   isEditable: boolean;
   commentaireLabel: string;
@@ -25,6 +27,7 @@ export const LigneEtapeEvaluation = ({
   note?: number | null;
   onAutosave?: (fieldName: FormCommentaireName | FormNoteName) => void;
   onAfficherFicheCadrage?: () => void;
+  traitement?: ReactNode;
 }) => {
   return (
     <div className="flex !mb-0 !-mx-4 first:border-t-0">
@@ -79,6 +82,8 @@ export const LigneEtapeEvaluation = ({
             <span className="font-medium">{note ?? "-"}</span>
           </>
         )}
+
+        {traitement}
       </div>
     </div>
   );

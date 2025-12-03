@@ -8,6 +8,7 @@ import { useGetCritere } from "@/components/Evaluation/CriteresProvider";
 import { useFormulaireEvaluation } from "@/components/Evaluation/form";
 import { useHandleAutosave } from "@/components/Evaluation/AutosaveProvider";
 import { useSetCritereOuObjectif } from "@/components/Evaluation/LayoutFicheCadrage";
+import { BoutonTraitementEvaluation } from "@/components/Evaluation/BoutonTraitementEvaluation";
 
 export const CelluleEvaluation = ({
   row,
@@ -27,7 +28,6 @@ export const CelluleEvaluation = ({
       ? (`fichesEvaluation.${ligne.ficheEvaluationId}.objectifs.${ligne.id}.note` as const)
       : (`fichesEvaluation.${ligne.ficheEvaluationId}.criteres.${ligne.id}.note` as const);
   const form = useFormulaireEvaluation();
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const note = form.watch(noteName);
 
   // Nécessaire pour lire l'état mis à jour des champs
@@ -35,8 +35,7 @@ export const CelluleEvaluation = ({
   useFormState().isValid;
   const commentaireError = form.getFieldState(commentaireName).invalid;
   const noteError = form.getFieldState(noteName).invalid;
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const disabled = commentaireError || noteError;
+  const traitementDisabled = commentaireError || noteError;
 
   const critereOuObjectif =
     ligne.type === "objectif"
@@ -55,14 +54,6 @@ export const CelluleEvaluation = ({
           <span className="capitalize">{ligne.type}</span> - {ligne.libelle}
         </div>
         <BoutonAfficherFicheCadrage critereOuObjectif={critereOuObjectif} />
-        {/*<BoutonTraitementEvaluation*/}
-        {/*  dateTraitement={ligne.evaluations[0]?.dateTraitement ?? null}*/}
-        {/*  disabled={note == null || ligne.rattachement.readOnly || disabled}*/}
-        {/*  evaluationId={ligne.evaluations[0]?.evaluation.id}*/}
-        {/*  typeEvaluation={*/}
-        {/*    ligne.type === "objectif" ? "OBJECTIF" : "MANIERE_DE_SERVIR"*/}
-        {/*  }*/}
-        {/*/>*/}
       </div>
 
       <div className="divide-y divide-gray-200">
@@ -81,6 +72,26 @@ export const CelluleEvaluation = ({
                 noteName={noteName}
                 onAfficherFicheCadrage={afficherFicheCadrage}
                 onAutosave={onAutosave}
+                traitement={
+                  index == 0 ? (
+                    <BoutonTraitementEvaluation
+                      dateTraitement={
+                        ligne.evaluations[0]?.dateTraitement ?? null
+                      }
+                      disabled={
+                        note == null ||
+                        ligne.rattachement.readOnly ||
+                        traitementDisabled
+                      }
+                      evaluationId={ligne.evaluations[0]?.evaluation.id}
+                      typeEvaluation={
+                        ligne.type === "objectif"
+                          ? "OBJECTIF"
+                          : "MANIERE_DE_SERVIR"
+                      }
+                    />
+                  ) : null
+                }
               />
             );
           } else if (
@@ -97,6 +108,26 @@ export const CelluleEvaluation = ({
                 noteName={noteName}
                 onAfficherFicheCadrage={afficherFicheCadrage}
                 onAutosave={onAutosave}
+                traitement={
+                  index == 0 ? (
+                    <BoutonTraitementEvaluation
+                      dateTraitement={
+                        ligne.evaluations[0]?.dateTraitement ?? null
+                      }
+                      disabled={
+                        note == null ||
+                        ligne.rattachement.readOnly ||
+                        traitementDisabled
+                      }
+                      evaluationId={ligne.evaluations[0]?.evaluation.id}
+                      typeEvaluation={
+                        ligne.type === "objectif"
+                          ? "OBJECTIF"
+                          : "MANIERE_DE_SERVIR"
+                      }
+                    />
+                  ) : null
+                }
               />
             );
           } else if (
