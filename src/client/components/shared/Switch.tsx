@@ -34,10 +34,10 @@ export const Switch = Object.assign({}, BaseSwitch, {
       className={clsxm(
         "h-7 w-7 block",
         "rounded-full border !border-primary",
-        "translate-x-0 transition-transform data-[state=checked]:translate-x-4",
+        "translate-x-0 transition-transform data-[state=checked]:!translate-x-4",
         "bg-white",
         { "!border-gray-500 !text-gray-500": disabled },
-        "children:hidden data-[state=checked]:children:block",
+        "children:!hidden data-[state=checked]:children:!block",
         "flex items-center justify-center",
         className,
       )}
