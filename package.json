@@ -33,7 +33,9 @@
     "test:database:init": "dotenv -e .env.test -- npm run database:init -- --force",
     "database:init": "prisma migrate reset",
     "database:init-force": "prisma migrate reset --force",
-    "database:migration": "prisma migrate dev"
+    "database:migration": "prisma migrate dev",
+    "centreaide:init": "git submodule update --init --recursive",
+    "centreaide:clean": "git submodule deinit -f src/pages/centre-aide-pilote-2"
   },
   "prisma": {
     "schema": "src/database/prisma/schema.prisma",
