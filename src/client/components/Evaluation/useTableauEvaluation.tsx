@@ -41,7 +41,7 @@ type STATUT_EVALUATION = keyof typeof STATUTS_EVALUATION;
 const getStatutTraitement = (row: TableauEvaluationRow): STATUT_EVALUATION =>
   row.evaluations[0]?.dateTraitement != null ? "TRAITE" : "NON_TRAITE";
 
-const getColumnFacetedUniqueValues = (column: Column<unknown>): string[] =>
+const getColumnFacetedUniqueValues = (column: Column<any>): string[] =>
   [...column.getFacetedUniqueValues().keys()].filter(Boolean);
 
 const useTableData = (rattachements: Rattachement[]) => {
@@ -168,10 +168,31 @@ const useTableColumns = (rattachements: Rattachement[]) => {
           filter: {
             type: "multiselect",
             label: "Filtrer par territoire",
-            getOptions: getColumnFacetedUniqueValues,
             getOptionLabel: (value) =>
               rattachements.find((rattachement) => rattachement.code === value)
                 ?.libelle ?? value,
+            getOptionGroups: (
+              column: Column<TableauEvaluationRow["rattachement"]>,
+            ) => {
+              const values = getColumnFacetedUniqueValues(column);
+              return [
+                {
+                  label: "Régions",
+                  options: values.filter((value) => value.startsWith("REG-")),
+                },
+                {
+                  label: "Départements",
+                  options: values.filter((value) => value.startsWith("DEPT-")),
+                },
+                {
+                  label: "Autres",
+                  options: values.filter(
+                    (value) =>
+                      !value.startsWith("REG-") && !value.startsWith("DEPT-"),
+                  ),
+                },
+              ];
+            },
           },
           grouping: {
             label: "Territoire",

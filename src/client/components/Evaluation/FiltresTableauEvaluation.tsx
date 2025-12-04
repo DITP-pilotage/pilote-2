@@ -1,4 +1,4 @@
-import { Table } from "@tanstack/react-table";
+import { FiltreMultiselectOptionGroup, Table } from "@tanstack/react-table";
 import { Checkbox } from "radix-ui";
 import { useId } from "react";
 import { ButtonTag } from "@/components/_commons/ButtonTag";
@@ -6,19 +6,19 @@ import { Icone } from "@/components/_commons/Icone";
 import { CheckLineIcon } from "@/components/_commons/Icones/CheckLineIcon";
 import { FilterIcon } from "@/components/_commons/Icones/FilterIcon";
 import { Bouton } from "@/components/_commons/Bouton/Bouton";
-import { DoubleChevronDroiteIcon } from "@/components/_commons/Icones/DoubleChevronDroiteIcon";
 import { ArrowSLine2Icon } from "@/components/_commons/Icones/ArrowSLine2Icon";
+import { Dropdown } from "@/components/shared/Dropdown";
 
 const MultiSelectFiltre = ({
   label,
   values,
-  options,
+  optionGroups,
   onChange,
   getOptionLabel,
 }: {
   label: string;
   values: string[];
-  options: string[];
+  optionGroups: FiltreMultiselectOptionGroup[];
   onChange(values: string[]): void;
   getOptionLabel(option: string): string;
 }) => {
@@ -26,13 +26,36 @@ const MultiSelectFiltre = ({
   return (
     <div className="flex items-center gap-2 !text-sm">
       <div className="font-semibold whitespace-nowrap">{label} :</div>
-      <button
-        className="!flex items-center gap-3 !px-4 !py-1.5 !font-medium border !rounded-t !border-b-2 !border-b-gray-600 !bg-dsfr-contrast-grey"
-        type="button"
-      >
-        {values.length} territoire(s) sélectionné(s)
-        <Icone className="text-current" icone={ArrowSLine2Icon} />
-      </button>
+      <Dropdown.Root>
+        <Dropdown.Trigger asChild>
+          <button
+            className="!flex items-center gap-3 !px-4 !py-1.5 !font-medium border !rounded-t !border-b-2 !border-b-gray-600 !bg-dsfr-contrast-grey"
+            type="button"
+          >
+            {values.length} territoire(s) sélectionné(s)
+            <Icone className="text-current" icone={ArrowSLine2Icon} />
+          </button>
+        </Dropdown.Trigger>
+
+        <Dropdown.Content align="start">
+          <div className="divide-y divide-dsfr-mention-grey -m-4 py-2">
+            {optionGroups
+              .filter((group) => group.options.length > 0)
+              .map((group) => (
+                <div className="px-4 py-1" key={group.label}>
+                  <div className="uppercase text-dsfr-mention-grey">
+                    {group.label}
+                  </div>
+                  <ul>
+                    {group.options.map((option) => {
+                      return <li key={option}>{getOptionLabel(option)}</li>;
+                    })}
+                  </ul>
+                </div>
+              ))}
+          </div>
+        </Dropdown.Content>
+      </Dropdown.Root>
     </div>
   );
 };
@@ -177,7 +200,7 @@ export function FiltresTableauEvaluation<T>({ table }: { table: Table<T> }) {
                   key={column.id}
                   label={filter.label}
                   onChange={(newValues) => column.setFilterValue(newValues)}
-                  options={filter.getOptions(column)}
+                  optionGroups={filter.getOptionGroups(column)}
                   values={(column.getFilterValue() as string[]) ?? []}
                 />
               );
