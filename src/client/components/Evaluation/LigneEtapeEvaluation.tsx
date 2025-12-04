@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { PropsWithChildren, ReactNode } from "react";
 import {
   FormCommentaireName,
   FormNoteName,
@@ -9,22 +9,18 @@ import { Tooltip } from "@/components/shared/Tooltip";
 import { CommentaireTextareaEvaluation } from "./CommentaireTextareaEvaluation";
 import { InputNoteEvaluation } from "./InputNoteEvaluation";
 
-function IconeEvaluationBloquee() {
-  return (
-    <Tooltip.Root>
-      <Tooltip.Trigger>
-        <Icone className="h-3 w-3" icone={LockIcon} />
-      </Tooltip.Trigger>
-      <Tooltip.Content>
-        La DITP prend connaissance de vos appréciations sur ce formulaire. Le
-        formulaire reste cependant consultable.
-      </Tooltip.Content>
-    </Tooltip.Root>
-  );
-}
+const IconeEvaluationBloquee = ({ children }: PropsWithChildren) => (
+  <Tooltip.Root>
+    <Tooltip.Trigger>
+      <Icone className="h-3 w-3" icone={LockIcon} />
+    </Tooltip.Trigger>
+    <Tooltip.Content>{children}</Tooltip.Content>
+  </Tooltip.Root>
+);
 
 export const LigneEtapeEvaluation = ({
   mode,
+  formulaireBloqueLabel,
   commentaireLabel,
   commentaireName,
   noteName,
@@ -36,6 +32,7 @@ export const LigneEtapeEvaluation = ({
   traitement,
 }: {
   mode: "editable" | "bloque" | "lecture-seule";
+  formulaireBloqueLabel?: string;
   commentaireLabel: string;
   commentaireName: FormCommentaireName;
   noteName: FormNoteName;
@@ -55,7 +52,11 @@ export const LigneEtapeEvaluation = ({
             label={
               <span className="flex items-center gap-1">
                 {commentaireLabel}
-                {mode === "bloque" && <IconeEvaluationBloquee />}
+                {mode === "bloque" && (
+                  <IconeEvaluationBloquee>
+                    {formulaireBloqueLabel}
+                  </IconeEvaluationBloquee>
+                )}
               </span>
             }
             name={commentaireName}
@@ -96,7 +97,11 @@ export const LigneEtapeEvaluation = ({
             label={
               <span className="flex items-center gap-1">
                 Note / 100
-                {mode === "bloque" && <IconeEvaluationBloquee />}
+                {mode === "bloque" && (
+                  <IconeEvaluationBloquee>
+                    {formulaireBloqueLabel}
+                  </IconeEvaluationBloquee>
+                )}
               </span>
             }
             name={noteName}
