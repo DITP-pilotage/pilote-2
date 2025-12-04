@@ -173,14 +173,15 @@ const UtilisateurDetailPage = (
 
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="space-y-6">
-              <section className="bg-white p-6 rounded shadow-sm">
+              <section className="bg-white p-6 rounded shadow-sm !mb-4">
+                <h2 className="!text-xl font-semibold mb-6">Auto-évaluation</h2>
                 <Controller
                   control={control}
                   name="autoEvaluation.rattachementCodes"
                   render={({ field }) => (
                     <MultiSelect
                       changementValeursSélectionnéesCallback={field.onChange}
-                      label="Auto-évaluation"
+                      label=""
                       optionsGroupées={rattachementsOptionsGroupees}
                       suffixeLibellé="territoire(s) sélectionné(s)"
                       valeursSélectionnéesParDéfaut={field.value}
@@ -190,13 +191,14 @@ const UtilisateurDetailPage = (
               </section>
 
               <section className="bg-white p-6 rounded shadow-sm">
+                <h2 className="!text-xl font-semibold !mb-4">Consolidation</h2>
                 <Controller
                   control={control}
                   name="consolidation.rattachementCodes"
                   render={({ field }) => (
                     <MultiSelect
                       changementValeursSélectionnéesCallback={field.onChange}
-                      label="Consolidation"
+                      label=""
                       optionsGroupées={rattachementsOptionsGroupees}
                       suffixeLibellé="territoire(s) sélectionné(s)"
                       valeursSélectionnéesParDéfaut={field.value}
@@ -205,36 +207,37 @@ const UtilisateurDetailPage = (
                 />
               </section>
 
-              <section className="bg-white p-6 rounded shadow-sm">
-                <Controller
-                  control={control}
-                  name="instructionObjectifs.rattachementCodes"
-                  render={({ field }) => (
-                    <MultiSelect
-                      changementValeursSélectionnéesCallback={field.onChange}
-                      label="Instruction - Objectifs"
-                      optionsGroupées={rattachementsOptionsGroupees}
-                      suffixeLibellé="territoire(s) sélectionné(s)"
-                      valeursSélectionnéesParDéfaut={field.value}
-                    />
-                  )}
-                />
-              </section>
+              <section className="bg-white p-6 rounded shadow-sm !mb-4">
+                <h2 className="!text-xl font-semibold mb-6">Instruction</h2>
+                <div className="space-y-6">
+                  <Controller
+                    control={control}
+                    name="instructionObjectifs.rattachementCodes"
+                    render={({ field }) => (
+                      <MultiSelect
+                        changementValeursSélectionnéesCallback={field.onChange}
+                        label="Objectifs"
+                        optionsGroupées={rattachementsOptionsGroupees}
+                        suffixeLibellé="territoire(s) sélectionné(s)"
+                        valeursSélectionnéesParDéfaut={field.value}
+                      />
+                    )}
+                  />
 
-              <section className="bg-white p-6 rounded shadow-sm">
-                <Controller
-                  control={control}
-                  name="instructionManiereDeServir.critereCodes"
-                  render={({ field }) => (
-                    <MultiSelect
-                      changementValeursSélectionnéesCallback={field.onChange}
-                      label="Instruction - Manière de servir"
-                      optionsGroupées={criteresOptionsGroupees}
-                      suffixeLibellé="critère(s) sélectionné(s)"
-                      valeursSélectionnéesParDéfaut={field.value}
-                    />
-                  )}
-                />
+                  <Controller
+                    control={control}
+                    name="instructionManiereDeServir.critereCodes"
+                    render={({ field }) => (
+                      <MultiSelect
+                        changementValeursSélectionnéesCallback={field.onChange}
+                        label="Manière de servir"
+                        optionsGroupées={criteresOptionsGroupees}
+                        suffixeLibellé="critère(s) sélectionné(s)"
+                        valeursSélectionnéesParDéfaut={field.value}
+                      />
+                    )}
+                  />
+                </div>
               </section>
 
               <div className="flex justify-end mt-6">

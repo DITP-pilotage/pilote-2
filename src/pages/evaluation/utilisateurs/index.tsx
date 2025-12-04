@@ -7,6 +7,7 @@ import assert from "node:assert";
 import { getContainer } from "@/server/dependances";
 import { configurationFeatureFlip } from "@/config";
 import { authOptions } from "@/server/infrastructure/api/auth/[...nextauth]";
+import { formaterDate } from "@/client/utils/date/date";
 
 export const getServerSideProps = async ({
   req,
@@ -83,6 +84,9 @@ const UtilisateursPage = (
                     <th className="border border-gray-300 p-3 text-left font-semibold">
                       Profil
                     </th>
+                    <th className="border border-gray-300 p-3 text-left font-semibold">
+                      Dernière modification
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -105,6 +109,12 @@ const UtilisateursPage = (
                       </td>
                       <td className="border border-gray-300 p-3">
                         {utilisateur.profilCode}
+                      </td>
+                      <td className="border border-gray-300 p-3">
+                        {formaterDate(
+                          utilisateur.dateDerniereModification,
+                          "DD/MM/YYYY",
+                        ) ?? "-"}
                       </td>
                     </tr>
                   ))}
