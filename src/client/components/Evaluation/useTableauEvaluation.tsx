@@ -111,7 +111,7 @@ const useTableColumns = (rattachements: Rattachement[]) => {
         },
         meta: {
           filter: {
-            type: "multi",
+            type: "checkboxes",
             label: "Filtrer par phase",
             getOptions: () => [
               $Enums.etape_evaluation_enum.AUTO_EVALUATION,
@@ -139,7 +139,7 @@ const useTableColumns = (rattachements: Rattachement[]) => {
         },
         meta: {
           filter: {
-            type: "single",
+            type: "tags",
             label: "Filtrer par statut",
             labelToutesLesOptions: "Tous",
             getOptions: () => ["TRAITE", "NON_TRAITE"],
@@ -166,7 +166,7 @@ const useTableColumns = (rattachements: Rattachement[]) => {
         filterFn: "arrIncludesSome",
         meta: {
           filter: {
-            type: "multi",
+            type: "checkboxes",
             label: "Filtrer par territoire",
             getOptions: getColumnFacetedUniqueValues,
             getOptionLabel: (value) =>
@@ -195,7 +195,7 @@ const useTableColumns = (rattachements: Rattachement[]) => {
         },
         meta: {
           filter: {
-            type: "single",
+            type: "tags",
             label: "Filtrer par catégorie",
             labelToutesLesOptions: "Tous",
             getOptions: () => ["objectif", "critere"],
@@ -217,7 +217,7 @@ const useTableColumns = (rattachements: Rattachement[]) => {
         filterFn: "arrIncludesSome",
         meta: {
           filter: {
-            type: "multi",
+            type: "checkboxes",
             label: "Filtrer par axe",
             getOptions: getColumnFacetedUniqueValues,
             getOptionLabel: (value) => getCritere(value)?.libelle ?? value,

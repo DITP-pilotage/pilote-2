@@ -7,7 +7,7 @@ import { CheckLineIcon } from "@/components/_commons/Icones/CheckLineIcon";
 import { FilterIcon } from "@/components/_commons/Icones/FilterIcon";
 import { Bouton } from "@/components/_commons/Bouton/Bouton";
 
-const MultiFiltre = ({
+const CheckboxesFiltre = ({
   label,
   values,
   options,
@@ -64,7 +64,7 @@ const MultiFiltre = ({
   );
 };
 
-const SingleFiltre = ({
+const TagsFiltre = ({
   label,
   labelToutesOptions,
   value,
@@ -128,9 +128,9 @@ export function FiltresTableauEvaluation<T>({ table }: { table: Table<T> }) {
           const filter = column.columnDef.meta?.filter;
           if (filter == null) return;
           switch (filter.type) {
-            case "multi": {
+            case "checkboxes": {
               return (
-                <MultiFiltre
+                <CheckboxesFiltre
                   getOptionLabel={(option) => filter.getOptionLabel(option)}
                   key={column.id}
                   label={filter.label}
@@ -140,12 +140,12 @@ export function FiltresTableauEvaluation<T>({ table }: { table: Table<T> }) {
                 />
               );
             }
-            case "single": {
+            case "tags": {
               const currentFilterValue = column.getFilterValue() as
                 | string[]
                 | undefined;
               return (
-                <SingleFiltre
+                <TagsFiltre
                   getOptionLabel={(option) => filter.getOptionLabel(option)}
                   key={column.id}
                   label={filter.label}

@@ -13,10 +13,13 @@ declare module "@tanstack/react-table" {
     tabIndex?: number;
     filter?:
       | (BaseFiltre & {
-          type: "multi";
+          type: "checkboxes";
         })
       | (BaseFiltre & {
-          type: "single";
+          type: "multiselect";
+        })
+      | (BaseFiltre & {
+          type: "tags";
           labelToutesLesOptions: string;
         });
     grouping?: {
