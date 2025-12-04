@@ -106,7 +106,7 @@ const useTableColumns = (rattachements: Rattachement[]) => {
             type: "single",
             label: "Filtrer par statut",
             labelToutesLesOptions: "Tous",
-            getOptions: getColumnFacetedUniqueValues,
+            getOptions: () => ["TRAITE", "NON_TRAITE"],
             getOptionLabel: (value: STATUT_EVALUATION) =>
               STATUTS_EVALUATION[value].label,
           },
@@ -162,7 +162,7 @@ const useTableColumns = (rattachements: Rattachement[]) => {
             type: "single",
             label: "Filtrer par catégorie",
             labelToutesLesOptions: "Tous",
-            getOptions: getColumnFacetedUniqueValues,
+            getOptions: () => ["objectif", "critere"],
             getOptionLabel: (value: TableauEvaluationRow["type"]) =>
               CATEGORIES[value].label,
           },
@@ -182,7 +182,7 @@ const useTableColumns = (rattachements: Rattachement[]) => {
         meta: {
           filter: {
             type: "multi",
-            label: "Filtrer par critère",
+            label: "Filtrer par axe",
             getOptions: getColumnFacetedUniqueValues,
             getOptionLabel: (value) => getCritere(value)?.libelle ?? value,
           },
