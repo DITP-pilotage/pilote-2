@@ -155,7 +155,7 @@ const useTableColumns = (rattachements: Rattachement[]) => {
         },
         meta: {
           filter: {
-            type: "multi",
+            type: "single",
             label: "Filtrer par catégorie",
             labelToutesLesOptions: "Tous",
             getValueLabel: (value: TableauEvaluationRow["type"]) =>
