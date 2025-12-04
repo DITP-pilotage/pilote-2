@@ -24,8 +24,8 @@ const STATUTS_EVALUATION = {
 };
 
 const CATEGORIES = {
-  objectif: { label: "Objectifs" },
-  critere: { label: "Critères" },
+  objectif: { label: "Objectifs individuels" },
+  critere: { label: "Manière de servir" },
 };
 
 type STATUT_EVALUATION = keyof typeof STATUTS_EVALUATION;
@@ -84,6 +84,29 @@ const useTableColumns = (rattachements: Rattachement[]) => {
   const getCritere = useGetCritere();
   return useMemo(
     () => [
+      columnHelper.accessor(getStatutTraitement, {
+        id: COLONNES.STATUT_TRAITEMENT,
+        enableColumnFilter: true,
+        filterFn: (row, columnId, filterValue) => {
+          const filter = Array.isArray(filterValue)
+            ? filterValue
+            : [filterValue];
+
+          if (filter.length === 0) {
+            return true;
+          }
+
+          return filter.includes(getStatutTraitement(row.original));
+        },
+        meta: {
+          filter: {
+            label: "Filtrer par statut",
+            labelToutesLesOptions: "Tous",
+            getValueLabel: (value: STATUT_EVALUATION) =>
+              STATUTS_EVALUATION[value].label,
+          },
+        },
+      }),
       columnHelper.accessor("rattachement.code", {
         id: COLONNES.RATTACHEMENT_CODE,
         header: "Rattachement",
@@ -114,52 +137,6 @@ const useTableColumns = (rattachements: Rattachement[]) => {
         },
         getGroupingValue: (row) => row.rattachement.code,
       }),
-      columnHelper.display({
-        header: "Évaluation",
-        cell: CelluleEvaluation,
-        enableGrouping: false,
-        enableColumnFilter: false,
-      }),
-      columnHelper.accessor((row) => (row.type === "critere" ? row.id : null), {
-        id: COLONNES.CRITERE_ID,
-        header: "Critere",
-        enableColumnFilter: true,
-        filterFn: "arrIncludesSome",
-        meta: {
-          filter: {
-            label: "Filtrer par critère",
-            labelToutesLesOptions: "Tous les critères",
-            getValueLabel: (value) => getCritere(value)?.libelle ?? value,
-          },
-          grouping: {
-            label: "Critère",
-          },
-        },
-        getGroupingValue: (row) => (row.type === "critere" ? row.id : null),
-      }),
-      columnHelper.accessor(getStatutTraitement, {
-        id: COLONNES.STATUT_TRAITEMENT,
-        enableColumnFilter: true,
-        filterFn: (row, columnId, filterValue) => {
-          const filter = Array.isArray(filterValue)
-            ? filterValue
-            : [filterValue];
-
-          if (filter.length === 0) {
-            return true;
-          }
-
-          return filter.includes(getStatutTraitement(row.original));
-        },
-        meta: {
-          filter: {
-            label: "Filtrer par statut",
-            labelToutesLesOptions: "Tous",
-            getValueLabel: (value: STATUT_EVALUATION) =>
-              STATUTS_EVALUATION[value].label,
-          },
-        },
-      }),
       columnHelper.accessor((ligne) => ligne.type, {
         id: COLONNES.CATEGORIE,
         enableColumnFilter: true,
@@ -182,6 +159,29 @@ const useTableColumns = (rattachements: Rattachement[]) => {
               CATEGORIES[value].label,
           },
         },
+      }),
+      columnHelper.display({
+        header: "Évaluation",
+        cell: CelluleEvaluation,
+        enableGrouping: false,
+        enableColumnFilter: false,
+      }),
+      columnHelper.accessor((row) => (row.type === "critere" ? row.id : null), {
+        id: COLONNES.CRITERE_ID,
+        header: "Critere",
+        enableColumnFilter: true,
+        filterFn: "arrIncludesSome",
+        meta: {
+          filter: {
+            label: "Filtrer par critère",
+            labelToutesLesOptions: "Tous les critères",
+            getValueLabel: (value) => getCritere(value)?.libelle ?? value,
+          },
+          grouping: {
+            label: "Critère",
+          },
+        },
+        getGroupingValue: (row) => (row.type === "critere" ? row.id : null),
       }),
     ],
     [rattachements, getCritere],
