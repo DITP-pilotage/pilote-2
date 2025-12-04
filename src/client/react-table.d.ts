@@ -3,6 +3,7 @@ import { Column, Table } from "@tanstack/react-table";
 type BaseFiltre = {
   label: string;
   getOptionLabel(value: string): string;
+  hidden?(table: Table<any>): boolean;
 };
 
 declare module "@tanstack/react-table" {

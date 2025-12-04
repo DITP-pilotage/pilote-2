@@ -253,6 +253,12 @@ const useTableColumns = (rattachements: Rattachement[]) => {
             label: "Filtrer par axe",
             getOptions: getColumnFacetedUniqueValues,
             getOptionLabel: (value) => getCritere(value)?.libelle ?? value,
+            hidden: (table) => {
+              const colonne = table.getColumn(COLONNES.CATEGORIE);
+              if (!colonne) return true;
+              const filterValue = colonne.getFilterValue() as string[];
+              return filterValue?.[0] !== "critere";
+            },
           },
           grouping: {
             label: "Critère",

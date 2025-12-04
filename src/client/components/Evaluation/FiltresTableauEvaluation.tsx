@@ -212,7 +212,9 @@ export function FiltresTableauEvaluation<T>({ table }: { table: Table<T> }) {
         .filter((column) => column.getCanFilter())
         .map((column) => {
           const filter = column.columnDef.meta?.filter;
-          if (filter == null) return;
+          if (filter == null) return null;
+          if (filter.hidden?.(table)) return null;
+
           switch (filter.type) {
             case "checkboxes": {
               return (
@@ -250,9 +252,9 @@ export function FiltresTableauEvaluation<T>({ table }: { table: Table<T> }) {
                   label={filter.label}
                   labelToutesOptions={filter.labelToutesLesOptions}
                   onChange={(newValue) => {
-                    column.setFilterValue(newValue == null ? [] : [newValue]);
+                    filter.onChange?.(newValue, table);
                     setTimeout(() => {
-                      filter.onChange?.(newValue, table);
+                      column.setFilterValue(newValue == null ? [] : [newValue]);
                     }, 0);
                   }}
                   options={filter.getOptions(column)}
