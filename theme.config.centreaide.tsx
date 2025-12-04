@@ -57,7 +57,10 @@ const config: DocsThemeConfig = {
   editLink: {
     component: null,
   },
-
+  nextThemes: {
+    defaultTheme: "light",
+    forcedTheme: "light",
+  },
   sidebar: {
     defaultMenuCollapseLevel: 1,
     toggleButton: false,
