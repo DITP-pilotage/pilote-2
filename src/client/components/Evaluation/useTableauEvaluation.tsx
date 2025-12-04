@@ -233,6 +233,12 @@ const useTableColumns = (rattachements: Rattachement[]) => {
   );
 };
 
+const toStringArray = (value: unknown): string[] => {
+  return Array.isArray(value) && value.every((v) => typeof v === "string")
+    ? (value as string[])
+    : [];
+};
+
 const useColumnFilters = () => {
   const [filters, setFilters] = useQueryStates(
     {
@@ -325,31 +331,11 @@ export const useTableauEvaluation = ({
       )?.value;
 
       void setFilters({
-        territoire:
-          Array.isArray(territoireFilterValue) &&
-          territoireFilterValue.every((v) => typeof v === "string")
-            ? (territoireFilterValue as string[])
-            : [],
-        critere:
-          Array.isArray(critereFilterValue) &&
-          critereFilterValue.every((v) => typeof v === "string")
-            ? (critereFilterValue as string[])
-            : [],
-        traite:
-          Array.isArray(traiteFilterValue) &&
-          traiteFilterValue.every((v) => typeof v === "string")
-            ? (traiteFilterValue as string[])
-            : [],
-        categorie:
-          Array.isArray(categorieFilterValue) &&
-          categorieFilterValue.every((v) => typeof v === "string")
-            ? (categorieFilterValue as string[])
-            : [],
-        phase:
-          Array.isArray(phaseFilterValue) &&
-          phaseFilterValue.every((v) => typeof v === "string")
-            ? (phaseFilterValue as string[])
-            : [],
+        territoire: toStringArray(territoireFilterValue),
+        critere: toStringArray(critereFilterValue),
+        traite: toStringArray(traiteFilterValue),
+        categorie: toStringArray(categorieFilterValue),
+        phase: toStringArray(phaseFilterValue),
       });
     },
     initialState: {
