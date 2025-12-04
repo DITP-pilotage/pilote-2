@@ -56,26 +56,28 @@ export function FiltresTableauEvaluation<T>({ table }: { table: Table<T> }) {
         .getAllColumns()
         .filter((column) => column.getCanFilter())
         .map((column) => {
-          const values = [...column.getFacetedUniqueValues().keys()].filter(
-            Boolean,
-          );
-          const currentFilter = (column.getFilterValue() as string[]) ?? [];
+          const filter = column.columnDef.meta?.filter;
+          if (filter == null) return;
+          switch (filter.type) {
+            case "multi": {
+              const values = [...column.getFacetedUniqueValues().keys()].filter(
+                Boolean,
+              );
+              return (
+                <MultiFiltre
+                  getOptionLabel={(option) => filter.getValueLabel(option)}
+                  key={column.id}
+                  label={filter.label}
+                  labelToutesOptions={filter.labelToutesLesOptions}
+                  onChange={(newValues) => column.setFilterValue(newValues)}
+                  options={values}
+                  values={(column.getFilterValue() as string[]) ?? []}
+                />
+              );
+            }
+          }
 
-          return (
-            <MultiFiltre
-              getOptionLabel={(option) =>
-                column.columnDef.meta?.filter?.getValueLabel(option)!
-              }
-              key={column.id}
-              label={column.columnDef.meta?.filter?.label!}
-              labelToutesOptions={
-                column.columnDef.meta?.filter?.labelToutesLesOptions!
-              }
-              onChange={(newValues) => column.setFilterValue(newValues)}
-              options={values}
-              values={currentFilter}
-            />
-          );
+          return null;
         })}
     </div>
   );
