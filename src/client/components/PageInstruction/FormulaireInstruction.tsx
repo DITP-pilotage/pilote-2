@@ -14,7 +14,7 @@ export const FormulaireInstruction = () => {
       etape={$Enums.etape_evaluation_enum.INSTRUCTION}
       onEnregistrer={enregistrerBrouillon}
       rattachements={rattachements}
-      titre="Formulaire d'instruction"
+      titre="Espace d'instruction"
     />
   );
 };

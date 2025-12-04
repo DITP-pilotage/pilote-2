@@ -1,5 +1,5 @@
 import { Control, Controller, FieldValues, Path } from "react-hook-form";
-import { ComponentProps } from "react";
+import { ComponentProps, ReactNode } from "react";
 import { InputNote } from "@/components/_commons/InputNote";
 
 export function InputNoteControlled<T extends FieldValues>({
@@ -12,7 +12,7 @@ export function InputNoteControlled<T extends FieldValues>({
 }: ComponentProps<"input"> & {
   name: Path<T>;
   control: Control<T>;
-  label?: string;
+  label?: ReactNode;
 }) {
   return (
     <Controller

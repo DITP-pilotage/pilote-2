@@ -1,13 +1,26 @@
-import { ReactNode } from "react";
+import { PropsWithChildren, ReactNode } from "react";
 import {
   FormCommentaireName,
   FormNoteName,
 } from "@/components/Evaluation/form";
+import { Icone } from "@/components/_commons/Icone";
+import { LockIcon } from "@/components/_commons/Icones/LockIcon";
+import { Tooltip } from "@/components/shared/Tooltip";
 import { CommentaireTextareaEvaluation } from "./CommentaireTextareaEvaluation";
 import { InputNoteEvaluation } from "./InputNoteEvaluation";
 
+const IconeEvaluationBloquee = ({ children }: PropsWithChildren) => (
+  <Tooltip.Root>
+    <Tooltip.Trigger>
+      <Icone className="h-3 w-3" icone={LockIcon} />
+    </Tooltip.Trigger>
+    <Tooltip.Content>{children}</Tooltip.Content>
+  </Tooltip.Root>
+);
+
 export const LigneEtapeEvaluation = ({
-  isEditable,
+  mode,
+  formulaireBloqueLabel,
   commentaireLabel,
   commentaireName,
   noteName,
@@ -18,7 +31,8 @@ export const LigneEtapeEvaluation = ({
   onAfficherFicheCadrage,
   traitement,
 }: {
-  isEditable: boolean;
+  mode: "editable" | "bloque" | "lecture-seule";
+  formulaireBloqueLabel?: string;
   commentaireLabel: string;
   commentaireName: FormCommentaireName;
   noteName: FormNoteName;
@@ -32,10 +46,19 @@ export const LigneEtapeEvaluation = ({
   return (
     <div className="flex !mb-0 !-mx-4 first:border-t-0">
       <div className="flex-1 border-r border-r-gray-200 p-4">
-        {isEditable ? (
+        {mode === "editable" || mode === "bloque" ? (
           <CommentaireTextareaEvaluation
-            disabled={false}
-            label={commentaireLabel}
+            disabled={mode === "bloque"}
+            label={
+              <span className="flex items-center gap-1">
+                {commentaireLabel}
+                {mode === "bloque" && (
+                  <IconeEvaluationBloquee>
+                    {formulaireBloqueLabel}
+                  </IconeEvaluationBloquee>
+                )}
+              </span>
+            }
             name={commentaireName}
             onAutosave={() => onAutosave?.(commentaireName)}
             onFocus={onAfficherFicheCadrage}
@@ -68,19 +91,28 @@ export const LigneEtapeEvaluation = ({
         )}
       </div>
       <div className="flex-shrink-0 w-[8rem] p-4 flex flex-col text-center">
-        {isEditable ? (
+        {mode === "editable" || mode === "bloque" ? (
           <InputNoteEvaluation
-            disabled={false}
-            label="Note / 100"
+            disabled={mode === "bloque"}
+            label={
+              <span className="flex items-center gap-1">
+                Note / 100
+                {mode === "bloque" && (
+                  <IconeEvaluationBloquee>
+                    {formulaireBloqueLabel}
+                  </IconeEvaluationBloquee>
+                )}
+              </span>
+            }
             name={noteName}
             onAutosave={() => onAutosave?.(noteName)}
             onFocus={onAfficherFicheCadrage}
           />
         ) : (
-          <>
+          <div className="flex flex-col mb-2">
             <strong className="text-sm block mb-1 italic">Note / 100</strong>
             <span className="font-medium">{note ?? "-"}</span>
-          </>
+          </div>
         )}
 
         {traitement}

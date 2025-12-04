@@ -1,10 +1,10 @@
-import { ComponentProps, forwardRef } from "react";
+import { ComponentProps, forwardRef, ReactNode } from "react";
 import { clsxm } from "@/utils/clsxm";
 import { MessageErreur } from "@/components/PageAutoEvaluation/MessageErreur";
 
 export const InputNote = forwardRef<
   HTMLInputElement,
-  ComponentProps<"input"> & { errorMessage?: string; label?: string }
+  ComponentProps<"input"> & { errorMessage?: string; label?: ReactNode }
 >(function InputNote({ errorMessage, label, className, id, ...props }, ref) {
   return (
     <div className="flex flex-col text-center">
