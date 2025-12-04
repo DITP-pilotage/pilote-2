@@ -6,6 +6,7 @@ module.exports = {
     "./src/**/*.{js,ts,jsx,tsx,mdx}",
     "./theme.config.*.tsx", // Pour le thème Nextra
   ],
+  darkMode: false,
   theme: {
     extend: {
       colors: {
