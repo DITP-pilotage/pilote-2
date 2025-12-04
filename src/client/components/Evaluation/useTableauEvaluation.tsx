@@ -128,7 +128,6 @@ const useTableColumns = (rattachements: Rattachement[]) => {
           filter: {
             type: "multi",
             label: "Filtrer par territoire",
-            labelToutesLesOptions: "Tous les territoires",
             getValueLabel: (value) =>
               rattachements.find((rattachement) => rattachement.code === value)
                 ?.libelle ?? value,
@@ -178,7 +177,6 @@ const useTableColumns = (rattachements: Rattachement[]) => {
           filter: {
             type: "multi",
             label: "Filtrer par critère",
-            labelToutesLesOptions: "Tous les critères",
             getValueLabel: (value) => getCritere(value)?.libelle ?? value,
           },
           grouping: {

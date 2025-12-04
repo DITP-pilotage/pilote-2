@@ -1,51 +1,66 @@
 import { Table } from "@tanstack/react-table";
+import { Checkbox } from "radix-ui";
+import { useId } from "react";
 import { ButtonTag } from "@/components/_commons/ButtonTag";
+import { Icone } from "@/components/_commons/Icone";
+import { CheckLineIcon } from "@/components/_commons/Icones/CheckLineIcon";
 
 const MultiFiltre = ({
   label,
-  labelToutesOptions,
   values,
   options,
   onChange,
   getOptionLabel,
 }: {
   label: string;
-  labelToutesOptions: string;
   values: string[];
   options: string[];
   onChange(values: string[]): void;
   getOptionLabel(option: string): string;
-}) => (
-  <div className="flex items-center gap-2 !text-sm">
-    <div className="font-semibold whitespace-nowrap">{label} :</div>
-    <div className="flex items-center flex-wrap gap-2">
-      <ButtonTag isActive={values.length === 0} onClick={() => onChange([])}>
-        {labelToutesOptions}
-      </ButtonTag>
-      {options.map((option) => {
-        const isActive = values.includes(option);
-        return (
-          <ButtonTag
-            isActive={isActive}
-            key={option}
-            onClick={() => {
-              if (isActive) {
-                onChange(
-                  values.filter((filterValue) => filterValue !== option),
-                );
-              } else {
-                onChange([...values, option]);
-              }
-            }}
-            type="button"
-          >
-            {getOptionLabel(option)}
-          </ButtonTag>
-        );
-      })}
+}) => {
+  const id = useId();
+  return (
+    <div className="flex items-center gap-2 !text-sm">
+      <div className="font-semibold whitespace-nowrap">{label} :</div>
+      <div className="flex items-center flex-wrap gap-2">
+        {options.map((option) => {
+          const isActive = values.includes(option);
+          const optionId = `${id}-${option}`;
+          return (
+            <label
+              className="flex items-center gap-2 cursor-pointer"
+              htmlFor={optionId}
+              key={option}
+            >
+              <Checkbox.Root
+                checked={isActive}
+                className="!border-2 !border-gray-500 w-4 h-4 transition-colors rounded flex items-center justify-center bg-white data-[state=checked]:!border-primary data-[state=checked]:bg-dsfr-blue-france-925"
+                id={optionId}
+                onCheckedChange={() => {
+                  if (isActive) {
+                    onChange(
+                      values.filter((filterValue) => filterValue !== option),
+                    );
+                  } else {
+                    onChange([...values, option]);
+                  }
+                }}
+              >
+                <Checkbox.Indicator>
+                  <Icone
+                    className="w-3.5 h-3.5 text-primary"
+                    icone={CheckLineIcon}
+                  />
+                </Checkbox.Indicator>
+              </Checkbox.Root>
+              {getOptionLabel(option)}
+            </label>
+          );
+        })}
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 const SingleFiltre = ({
   label,
@@ -110,7 +125,6 @@ export function FiltresTableauEvaluation<T>({ table }: { table: Table<T> }) {
                   getOptionLabel={(option) => filter.getValueLabel(option)}
                   key={column.id}
                   label={filter.label}
-                  labelToutesOptions={filter.labelToutesLesOptions}
                   onChange={(newValues) => column.setFilterValue(newValues)}
                   options={values}
                   values={(column.getFilterValue() as string[]) ?? []}

@@ -8,7 +8,6 @@ declare module "@tanstack/react-table" {
       | {
           type: "multi";
           label: string;
-          labelToutesLesOptions: string;
           getValueLabel(value: string): string;
         }
       | {
