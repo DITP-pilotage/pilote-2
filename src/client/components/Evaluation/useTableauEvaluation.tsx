@@ -1,4 +1,5 @@
 import {
+  Column,
   createColumnHelper,
   getCoreRowModel,
   getExpandedRowModel,
@@ -30,9 +31,11 @@ const CATEGORIES = {
 
 type STATUT_EVALUATION = keyof typeof STATUTS_EVALUATION;
 
-const getStatutTraitement = (row: TableauEvaluationRow): STATUT_EVALUATION => {
-  return row.evaluations[0]?.dateTraitement != null ? "TRAITE" : "NON_TRAITE";
-};
+const getStatutTraitement = (row: TableauEvaluationRow): STATUT_EVALUATION =>
+  row.evaluations[0]?.dateTraitement != null ? "TRAITE" : "NON_TRAITE";
+
+const getColumnFacetedUniqueValues = (column: Column<unknown>): string[] =>
+  [...column.getFacetedUniqueValues().keys()].filter(Boolean);
 
 const useTableData = (rattachements: Rattachement[]) => {
   const getCritere = useGetCritere();
@@ -103,7 +106,8 @@ const useTableColumns = (rattachements: Rattachement[]) => {
             type: "single",
             label: "Filtrer par statut",
             labelToutesLesOptions: "Tous",
-            getValueLabel: (value: STATUT_EVALUATION) =>
+            getOptions: getColumnFacetedUniqueValues,
+            getOptionLabel: (value: STATUT_EVALUATION) =>
               STATUTS_EVALUATION[value].label,
           },
         },
@@ -128,7 +132,8 @@ const useTableColumns = (rattachements: Rattachement[]) => {
           filter: {
             type: "multi",
             label: "Filtrer par territoire",
-            getValueLabel: (value) =>
+            getOptions: getColumnFacetedUniqueValues,
+            getOptionLabel: (value) =>
               rattachements.find((rattachement) => rattachement.code === value)
                 ?.libelle ?? value,
           },
@@ -157,7 +162,8 @@ const useTableColumns = (rattachements: Rattachement[]) => {
             type: "single",
             label: "Filtrer par catégorie",
             labelToutesLesOptions: "Tous",
-            getValueLabel: (value: TableauEvaluationRow["type"]) =>
+            getOptions: getColumnFacetedUniqueValues,
+            getOptionLabel: (value: TableauEvaluationRow["type"]) =>
               CATEGORIES[value].label,
           },
         },
@@ -177,7 +183,8 @@ const useTableColumns = (rattachements: Rattachement[]) => {
           filter: {
             type: "multi",
             label: "Filtrer par critère",
-            getValueLabel: (value) => getCritere(value)?.libelle ?? value,
+            getOptions: getColumnFacetedUniqueValues,
+            getOptionLabel: (value) => getCritere(value)?.libelle ?? value,
           },
           grouping: {
             label: "Critère",

@@ -117,37 +117,31 @@ export function FiltresTableauEvaluation<T>({ table }: { table: Table<T> }) {
           if (filter == null) return;
           switch (filter.type) {
             case "multi": {
-              const values = [...column.getFacetedUniqueValues().keys()].filter(
-                Boolean,
-              );
               return (
                 <MultiFiltre
-                  getOptionLabel={(option) => filter.getValueLabel(option)}
+                  getOptionLabel={(option) => filter.getOptionLabel(option)}
                   key={column.id}
                   label={filter.label}
                   onChange={(newValues) => column.setFilterValue(newValues)}
-                  options={values}
+                  options={filter.getOptions(column)}
                   values={(column.getFilterValue() as string[]) ?? []}
                 />
               );
             }
             case "single": {
-              const values = [...column.getFacetedUniqueValues().keys()].filter(
-                Boolean,
-              );
               const currentFilterValue = column.getFilterValue() as
                 | string[]
                 | undefined;
               return (
                 <SingleFiltre
-                  getOptionLabel={(option) => filter.getValueLabel(option)}
+                  getOptionLabel={(option) => filter.getOptionLabel(option)}
                   key={column.id}
                   label={filter.label}
                   labelToutesOptions={filter.labelToutesLesOptions}
                   onChange={(newValue) =>
                     column.setFilterValue(newValue == null ? [] : [newValue])
                   }
-                  options={values}
+                  options={filter.getOptions(column)}
                   value={currentFilterValue?.[0] ?? null}
                 />
               );
