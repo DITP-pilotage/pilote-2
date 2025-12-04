@@ -42,6 +42,7 @@ type STATUT_EVALUATION = keyof typeof STATUTS_EVALUATION;
 const getStatutTraitement = (row: TableauEvaluationRow): STATUT_EVALUATION =>
   row.evaluations[0]?.dateTraitement != null ? "TRAITE" : "NON_TRAITE";
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const getColumnFacetedUniqueValues = (column: Column<any>): string[] =>
   [...column.getFacetedUniqueValues().keys()].filter(Boolean);
 

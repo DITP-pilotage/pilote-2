@@ -3,6 +3,7 @@ import { Column, Table } from "@tanstack/react-table";
 type BaseFiltre = {
   label: string;
   getOptionLabel(value: string): string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   hidden?(table: Table<any>): boolean;
 };
 
