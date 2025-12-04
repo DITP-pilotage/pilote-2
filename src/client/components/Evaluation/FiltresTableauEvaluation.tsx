@@ -4,6 +4,8 @@ import { useId } from "react";
 import { ButtonTag } from "@/components/_commons/ButtonTag";
 import { Icone } from "@/components/_commons/Icone";
 import { CheckLineIcon } from "@/components/_commons/Icones/CheckLineIcon";
+import { FilterIcon } from "@/components/_commons/Icones/FilterIcon";
+import { Bouton } from "@/components/_commons/Bouton/Bouton";
 
 const MultiFiltre = ({
   label,
@@ -108,7 +110,17 @@ const SingleFiltre = ({
 
 export function FiltresTableauEvaluation<T>({ table }: { table: Table<T> }) {
   return (
-    <div className="space-y-2 p-6">
+    <section className="space-y-2 p-6">
+      <header className="flex items-baseline gap-2">
+        <Icone className="h-4.5 w-4.5 self-center" icone={FilterIcon} />
+        <h2 className="!text-base !mb-0 !text-primary">Filtrage</h2>
+        <Bouton
+          label="Réinitialiser les filtres"
+          onClick={() => table.resetColumnFilters(false)}
+          size="sm"
+          variant="link"
+        />
+      </header>
       {table
         .getAllColumns()
         .filter((column) => column.getCanFilter())
@@ -150,6 +162,6 @@ export function FiltresTableauEvaluation<T>({ table }: { table: Table<T> }) {
 
           return null;
         })}
-    </div>
+    </section>
   );
 }
