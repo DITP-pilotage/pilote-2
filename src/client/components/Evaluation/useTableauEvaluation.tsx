@@ -100,7 +100,7 @@ const useTableColumns = (rattachements: Rattachement[]) => {
         },
         meta: {
           filter: {
-            type: "multi",
+            type: "single",
             label: "Filtrer par statut",
             labelToutesLesOptions: "Tous",
             getValueLabel: (value: STATUT_EVALUATION) =>

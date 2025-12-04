@@ -4,12 +4,19 @@ declare module "@tanstack/react-table" {
   interface ColumnMeta {
     width?: string;
     tabIndex?: number;
-    filter?: {
-      type: "multi";
-      label: string;
-      labelToutesLesOptions: string;
-      getValueLabel(value: string): string;
-    };
+    filter?:
+      | {
+          type: "multi";
+          label: string;
+          labelToutesLesOptions: string;
+          getValueLabel(value: string): string;
+        }
+      | {
+          type: "single";
+          label: string;
+          labelToutesLesOptions: string;
+          getValueLabel(value: string): string;
+        };
     grouping?: {
       label: string;
     };
