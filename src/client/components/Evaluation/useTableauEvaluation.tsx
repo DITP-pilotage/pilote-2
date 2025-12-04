@@ -100,6 +100,7 @@ const useTableColumns = (rattachements: Rattachement[]) => {
         },
         meta: {
           filter: {
+            type: "multi",
             label: "Filtrer par statut",
             labelToutesLesOptions: "Tous",
             getValueLabel: (value: STATUT_EVALUATION) =>
@@ -125,6 +126,7 @@ const useTableColumns = (rattachements: Rattachement[]) => {
         filterFn: "arrIncludesSome",
         meta: {
           filter: {
+            type: "multi",
             label: "Filtrer par territoire",
             labelToutesLesOptions: "Tous les territoires",
             getValueLabel: (value) =>
@@ -153,6 +155,7 @@ const useTableColumns = (rattachements: Rattachement[]) => {
         },
         meta: {
           filter: {
+            type: "multi",
             label: "Filtrer par catégorie",
             labelToutesLesOptions: "Tous",
             getValueLabel: (value: TableauEvaluationRow["type"]) =>
@@ -173,6 +176,7 @@ const useTableColumns = (rattachements: Rattachement[]) => {
         filterFn: "arrIncludesSome",
         meta: {
           filter: {
+            type: "multi",
             label: "Filtrer par critère",
             labelToutesLesOptions: "Tous les critères",
             getValueLabel: (value) => getCritere(value)?.libelle ?? value,

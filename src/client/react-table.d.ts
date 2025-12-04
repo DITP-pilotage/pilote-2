@@ -5,6 +5,7 @@ declare module "@tanstack/react-table" {
     width?: string;
     tabIndex?: number;
     filter?: {
+      type: "multi";
       label: string;
       labelToutesLesOptions: string;
       getValueLabel(value: string): string;

@@ -1,6 +1,54 @@
 import { Table } from "@tanstack/react-table";
 import { ButtonTag } from "@/components/_commons/ButtonTag";
 
+function MultiFiltre({
+  label,
+  labelToutesOptions,
+  values,
+  options,
+  onChange,
+  getOptionLabel,
+}: {
+  label: string;
+  labelToutesOptions: string;
+  values: string[];
+  options: string[];
+  onChange(values: string[]): void;
+  getOptionLabel(option: string): string;
+}) {
+  return (
+    <div className="flex items-center gap-2 !text-sm">
+      <div className="font-semibold whitespace-nowrap">{label} :</div>
+      <div className="flex items-center flex-wrap gap-2">
+        <ButtonTag isActive={values.length === 0} onClick={() => onChange([])}>
+          {labelToutesOptions}
+        </ButtonTag>
+        {options.map((option) => {
+          const isActive = values.includes(option);
+          return (
+            <ButtonTag
+              isActive={isActive}
+              key={option}
+              onClick={() => {
+                if (isActive) {
+                  onChange(
+                    values.filter((filterValue) => filterValue !== option),
+                  );
+                } else {
+                  onChange([...values, option]);
+                }
+              }}
+              type="button"
+            >
+              {getOptionLabel(option)}
+            </ButtonTag>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 export function FiltresTableauEvaluation<T>({ table }: { table: Table<T> }) {
   return (
     <div className="space-y-2 p-6">
@@ -14,42 +62,19 @@ export function FiltresTableauEvaluation<T>({ table }: { table: Table<T> }) {
           const currentFilter = (column.getFilterValue() as string[]) ?? [];
 
           return (
-            <div className="flex items-center gap-2 !text-sm" key={column.id}>
-              <div className="font-semibold whitespace-nowrap">
-                {column.columnDef.meta?.filter?.label} :
-              </div>
-              <div className="flex items-center flex-wrap gap-2">
-                <ButtonTag
-                  isActive={currentFilter.length === 0}
-                  onClick={() => column.setFilterValue([])}
-                >
-                  {column.columnDef.meta?.filter?.labelToutesLesOptions}
-                </ButtonTag>
-                {values.map((value) => {
-                  const isActive = currentFilter.includes(value);
-                  return (
-                    <ButtonTag
-                      isActive={isActive}
-                      key={value}
-                      onClick={() => {
-                        if (isActive) {
-                          column.setFilterValue(
-                            currentFilter.filter(
-                              (filterValue) => filterValue !== value,
-                            ),
-                          );
-                        } else {
-                          column.setFilterValue([...currentFilter, value]);
-                        }
-                      }}
-                      type="button"
-                    >
-                      {column.columnDef.meta?.filter?.getValueLabel(value)}
-                    </ButtonTag>
-                  );
-                })}
-              </div>
-            </div>
+            <MultiFiltre
+              getOptionLabel={(option) =>
+                column.columnDef.meta?.filter?.getValueLabel(option)!
+              }
+              key={column.id}
+              label={column.columnDef.meta?.filter?.label!}
+              labelToutesOptions={
+                column.columnDef.meta?.filter?.labelToutesLesOptions!
+              }
+              onChange={(newValues) => column.setFilterValue(newValues)}
+              options={values}
+              values={currentFilter}
+            />
           );
         })}
     </div>
