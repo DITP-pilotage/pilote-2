@@ -14,13 +14,17 @@ const MultiSelectFiltre = ({
   optionGroups,
   onChange,
   getOptionLabel,
+  getPlaceholder,
 }: {
   label: string;
   values: string[];
   optionGroups: FiltreMultiselectOptionGroup[];
   onChange(values: string[]): void;
+  getPlaceholder(values: string[]): string;
   getOptionLabel(option: string): string;
 }) => {
+  const toutesLesOptions = optionGroups.flatMap((group) => group.options);
+  const toutSelectionne = values.length === toutesLesOptions.length;
   return (
     <div className="flex items-center gap-2 !text-sm">
       <div className="font-semibold whitespace-nowrap">{label} :</div>
@@ -30,13 +34,30 @@ const MultiSelectFiltre = ({
             className="!flex items-center gap-3 !px-4 !py-1.5 !font-medium border !rounded-t !border-b-2 !border-b-gray-600 !bg-dsfr-contrast-grey"
             type="button"
           >
-            {values.length} territoire(s) sélectionné(s)
+            {getPlaceholder(values)}
             <Icone className="text-current" icone={ArrowSLine2Icon} />
           </button>
         </Dropdown.Trigger>
 
         <Dropdown.Content align="start">
           <div className="divide-y divide-dsfr-mention-grey -m-4 pt-1">
+            <div>
+              <Bouton
+                className="w-full"
+                label={
+                  toutSelectionne ? "Tout désélectionner" : "Tout sélectionner"
+                }
+                onClick={() => {
+                  if (toutSelectionne) {
+                    onChange([]);
+                  } else {
+                    onChange(toutesLesOptions);
+                  }
+                }}
+                size="sm"
+                variant="link"
+              />
+            </div>
             {optionGroups
               .filter((group) => group.options.length > 0)
               .map((group) => (
@@ -209,6 +230,7 @@ export function FiltresTableauEvaluation<T>({ table }: { table: Table<T> }) {
               return (
                 <MultiSelectFiltre
                   getOptionLabel={(option) => filter.getOptionLabel(option)}
+                  getPlaceholder={(values) => filter.getPlaceholder(values)}
                   key={column.id}
                   label={filter.label}
                   onChange={(newValues) => column.setFilterValue(newValues)}

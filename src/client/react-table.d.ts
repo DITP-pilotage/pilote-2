@@ -22,6 +22,7 @@ declare module "@tanstack/react-table" {
         })
       | (BaseFiltre & {
           type: "multiselect";
+          getPlaceholder(values: string[]): string;
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           getOptionGroups(column: Column<any>): FiltreMultiselectOptionGroup[];
         })

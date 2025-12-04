@@ -168,6 +168,8 @@ const useTableColumns = (rattachements: Rattachement[]) => {
           filter: {
             type: "multiselect",
             label: "Filtrer par territoire",
+            getPlaceholder: (values) =>
+              `${values.length} territoire(s) sélectionné(s)`,
             getOptionLabel: (value) =>
               rattachements.find((rattachement) => rattachement.code === value)
                 ?.libelle ?? value,
