@@ -1,14 +1,41 @@
-import "@tanstack/react-table";
+import { Column, Table } from "@tanstack/react-table";
+
+type BaseFiltre = {
+  label: string;
+  getOptionLabel(value: string): string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  hidden?(table: Table<any>): boolean;
+};
 
 declare module "@tanstack/react-table" {
+  export type FiltreMultiselectOptionGroup = {
+    label: string;
+    options: string[];
+  };
+
   interface ColumnMeta {
     width?: string;
     tabIndex?: number;
-    filter?: {
-      label: string;
-      labelToutesLesOptions: string;
-      getValueLabel(value: string): string;
-    };
+    filter?:
+      | (BaseFiltre & {
+          type: "checkboxes";
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          getOptions(column: Column<any>): string[];
+        })
+      | (BaseFiltre & {
+          type: "multiselect";
+          getPlaceholder(values: string[]): string;
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          getOptionGroups(column: Column<any>): FiltreMultiselectOptionGroup[];
+        })
+      | (BaseFiltre & {
+          type: "tags";
+          labelToutesLesOptions: string;
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          onChange?(value: string | null, table: Table<any>): void;
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          getOptions(column: Column<any>): string[];
+        });
     grouping?: {
       label: string;
     };
