@@ -99,7 +99,7 @@ export class ModifierDroitsUtilisateurHandler {
           rattachementCodesACreer = tousLesRattachements.map((r) => r.code);
         }
 
-        const rattachementsCrees =
+        const rattachementsEtapeCrees =
           await prisma.rattachement_utilisateur_etape_jalon.createManyAndReturn(
             {
               data: rattachementCodesACreer.map((code) => ({
@@ -126,7 +126,7 @@ export class ModifierDroitsUtilisateurHandler {
             },
           });
 
-        const objectifsACreer = rattachementsCrees
+        const objectifsACreer = rattachementsEtapeCrees
           .filter((rattachement) =>
             command.instructionObjectifs.rattachementCodes.includes(
               rattachement.rattachement_code,
@@ -134,7 +134,8 @@ export class ModifierDroitsUtilisateurHandler {
           )
           .flatMap((rattachement) => {
             const objectifsDuRattachement = objectifsParRattachement.filter(
-              (obj) => obj.rattachement_code === rattachement.rattachement_code,
+              (objectif) =>
+                objectif.rattachement_code === rattachement.rattachement_code,
             );
             return objectifsDuRattachement.map((objectif) => ({
               id: randomUUID(),
@@ -150,14 +151,15 @@ export class ModifierDroitsUtilisateurHandler {
         }
 
         if (aDesCriteres) {
-          const criteresACreer = rattachementsCrees.flatMap((rattachement) =>
-            command.instructionManiereDeServir.critereCodes.map(
-              (critereId) => ({
-                id: randomUUID(),
-                rattachement_utilisateur_etape_jalon_id: rattachement.id,
-                critere_id: critereId,
-              }),
-            ),
+          const criteresACreer = rattachementsEtapeCrees.flatMap(
+            (rattachementEtape) =>
+              command.instructionManiereDeServir.critereCodes.map(
+                (critereId) => ({
+                  id: randomUUID(),
+                  rattachement_utilisateur_etape_jalon_id: rattachementEtape.id,
+                  critere_id: critereId,
+                }),
+              ),
           );
 
           await prisma.instruction_critere.createMany({
