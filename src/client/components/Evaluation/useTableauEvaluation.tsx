@@ -6,6 +6,7 @@ import {
   getFacetedUniqueValues,
   getFilteredRowModel,
   getGroupedRowModel,
+  Table,
   useReactTable,
 } from "@tanstack/react-table";
 import { useMemo } from "react";
@@ -224,6 +225,14 @@ const useTableColumns = (rattachements: Rattachement[]) => {
             getOptions: () => ["objectif", "critere"],
             getOptionLabel: (value: TableauEvaluationRow["type"]) =>
               CATEGORIES[value].label,
+            onChange: (
+              newValue: string | null,
+              table: Table<TableauEvaluationRow>,
+            ) => {
+              if (newValue === "critere") return;
+
+              table.getColumn(COLONNES.CRITERE_ID)?.setFilterValue([]);
+            },
           },
         },
       }),
@@ -272,7 +281,7 @@ const useColumnFilters = () => {
       phase: parseAsArrayOf(parseAsString).withDefault([]),
     },
     {
-      shallow: false,
+      shallow: true,
       clearOnDefault: true,
       history: "replace",
     },

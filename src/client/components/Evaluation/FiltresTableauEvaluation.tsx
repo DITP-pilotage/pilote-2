@@ -249,9 +249,12 @@ export function FiltresTableauEvaluation<T>({ table }: { table: Table<T> }) {
                   key={column.id}
                   label={filter.label}
                   labelToutesOptions={filter.labelToutesLesOptions}
-                  onChange={(newValue) =>
-                    column.setFilterValue(newValue == null ? [] : [newValue])
-                  }
+                  onChange={(newValue) => {
+                    column.setFilterValue(newValue == null ? [] : [newValue]);
+                    setTimeout(() => {
+                      filter.onChange?.(newValue, table);
+                    }, 0);
+                  }}
                   options={filter.getOptions(column)}
                   value={currentFilterValue?.[0] ?? null}
                 />

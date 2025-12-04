@@ -1,4 +1,4 @@
-import { Column } from "@tanstack/react-table";
+import { Column, Table } from "@tanstack/react-table";
 
 type BaseFiltre = {
   label: string;
@@ -29,6 +29,8 @@ declare module "@tanstack/react-table" {
       | (BaseFiltre & {
           type: "tags";
           labelToutesLesOptions: string;
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          onChange?(value: string | null, table: Table<any>): void;
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           getOptions(column: Column<any>): string[];
         });
