@@ -4,6 +4,9 @@ import MultiSelectGroupe from "@/components/_commons/MultiSelectNew/MultiSelectG
 import BoutonToutSélectionner from "@/components/_commons/BoutonsToutSélectionner/BoutonsToutSélectionner";
 import MultiSelectStyled from "./MultiSelect.styled";
 import useMultiSelect from "./useMultiSelect";
+import "@gouvfr/dsfr/dist/component/select/select.min.css";
+import "@gouvfr/dsfr/dist/component/input/input.min.css";
+import "@gouvfr/dsfr/dist/component/form/form.min.css";
 
 const MultiSelect: FunctionComponent<MultiSelectProps> = ({
   suffixeLibellé,
