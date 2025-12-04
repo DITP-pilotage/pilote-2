@@ -20,7 +20,7 @@ export const InputNote = forwardRef<
       ) : null}
       <input
         className={clsxm(
-          "!block border !rounded-t w-[10ch] px-4 py-2",
+          "!block border !rounded-t w-[10ch] !px-4 !py-2",
           "!border-b-2 !border-b-gray-600",
           "text-center",
           "[&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none",
