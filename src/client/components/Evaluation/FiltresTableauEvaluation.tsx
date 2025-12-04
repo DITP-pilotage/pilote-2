@@ -121,17 +121,20 @@ export function FiltresTableauEvaluation<T>({ table }: { table: Table<T> }) {
               const values = [...column.getFacetedUniqueValues().keys()].filter(
                 Boolean,
               );
+              const currentFilterValue = column.getFilterValue() as
+                | string[]
+                | undefined;
               return (
                 <SingleFiltre
                   getOptionLabel={(option) => filter.getValueLabel(option)}
                   key={column.id}
                   label={filter.label}
                   labelToutesOptions={filter.labelToutesLesOptions}
-                  onChange={(newValues) => column.setFilterValue(newValues)}
-                  options={values}
-                  value={
-                    (column.getFilterValue() as string | undefined) ?? null
+                  onChange={(newValue) =>
+                    column.setFilterValue(newValue == null ? [] : [newValue])
                   }
+                  options={values}
+                  value={currentFilterValue?.[0] ?? null}
                 />
               );
             }
