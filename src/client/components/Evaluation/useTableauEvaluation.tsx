@@ -11,6 +11,7 @@ import {
 import { useMemo } from "react";
 import pick from "lodash.pick";
 import { parseAsArrayOf, parseAsString, useQueryStates } from "nuqs";
+import { $Enums } from "@prisma/client";
 import { TableauEvaluationRow } from "@/components/Evaluation/TableauEvaluation";
 import { Rattachement } from "@/server/evaluation/queries/types";
 import { CelluleEvaluation } from "@/components/Evaluation/CelluleEvaluation";
@@ -18,6 +19,12 @@ import { useGetCritere } from "@/components/Evaluation/CriteresProvider";
 import { BadgeEtape } from "@/components/Evaluation/BadgeEtape";
 
 const columnHelper = createColumnHelper<TableauEvaluationRow>();
+
+const PHASES_EVALUATION = {
+  [$Enums.etape_evaluation_enum.AUTO_EVALUATION]: { label: "Auto-évalution" },
+  [$Enums.etape_evaluation_enum.CONSOLIDATION]: { label: "Appréciation" },
+  [$Enums.etape_evaluation_enum.INSTRUCTION]: { label: "Instruction" },
+};
 
 const STATUTS_EVALUATION = {
   TRAITE: { label: "Traité" },
@@ -77,6 +84,7 @@ const useTableData = (rattachements: Rattachement[]) => {
 };
 
 export const COLONNES = {
+  PHASE: "phase",
   RATTACHEMENT_CODE: "rattachementCode",
   CRITERE_ID: "critereId",
   STATUT_TRAITEMENT: "statutTraitement",
@@ -87,6 +95,34 @@ const useTableColumns = (rattachements: Rattachement[]) => {
   const getCritere = useGetCritere();
   return useMemo(
     () => [
+      columnHelper.accessor((row) => row.etapeCourante, {
+        id: COLONNES.PHASE,
+        enableColumnFilter: true,
+        filterFn: (row, columnId, filterValue) => {
+          const filter = Array.isArray(filterValue)
+            ? filterValue
+            : [filterValue];
+
+          if (filter.length === 0) {
+            return true;
+          }
+
+          return filter.includes(row.original.etapeCourante);
+        },
+        meta: {
+          filter: {
+            type: "multi",
+            label: "Filtrer par phase",
+            getOptions: () => [
+              $Enums.etape_evaluation_enum.AUTO_EVALUATION,
+              $Enums.etape_evaluation_enum.CONSOLIDATION,
+              $Enums.etape_evaluation_enum.INSTRUCTION,
+            ],
+            getOptionLabel: (value: $Enums.etape_evaluation_enum) =>
+              PHASES_EVALUATION[value].label,
+          },
+        },
+      }),
       columnHelper.accessor(getStatutTraitement, {
         id: COLONNES.STATUT_TRAITEMENT,
         enableColumnFilter: true,
@@ -204,6 +240,7 @@ const useColumnFilters = () => {
       critere: parseAsArrayOf(parseAsString).withDefault([]),
       traite: parseAsArrayOf(parseAsString).withDefault([]),
       categorie: parseAsArrayOf(parseAsString).withDefault([]),
+      phase: parseAsArrayOf(parseAsString).withDefault([]),
     },
     {
       shallow: false,
@@ -235,6 +272,12 @@ const useColumnFilters = () => {
       columnFiltersArray.push({
         id: COLONNES.CATEGORIE,
         value: filters.categorie,
+      });
+    }
+    if (filters.phase.length > 0) {
+      columnFiltersArray.push({
+        id: COLONNES.PHASE,
+        value: filters.phase,
       });
     }
     return columnFiltersArray;
@@ -277,6 +320,9 @@ export const useTableauEvaluation = ({
       const categorieFilterValue = newFilters.find(
         (filter) => filter.id === COLONNES.CATEGORIE,
       )?.value;
+      const phaseFilterValue = newFilters.find(
+        (filter) => filter.id === COLONNES.PHASE,
+      )?.value;
 
       void setFilters({
         territoire:
@@ -299,11 +345,17 @@ export const useTableauEvaluation = ({
           categorieFilterValue.every((v) => typeof v === "string")
             ? (categorieFilterValue as string[])
             : [],
+        phase:
+          Array.isArray(phaseFilterValue) &&
+          phaseFilterValue.every((v) => typeof v === "string")
+            ? (phaseFilterValue as string[])
+            : [],
       });
     },
     initialState: {
       expanded: true,
       columnVisibility: {
+        [COLONNES.PHASE]: false,
         [COLONNES.CRITERE_ID]: false,
         [COLONNES.STATUT_TRAITEMENT]: false,
         [COLONNES.CATEGORIE]: false,

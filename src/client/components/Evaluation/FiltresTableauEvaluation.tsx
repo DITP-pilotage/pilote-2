@@ -115,7 +115,6 @@ export function FiltresTableauEvaluation<T>({ table }: { table: Table<T> }) {
         .map((column) => {
           const filter = column.columnDef.meta?.filter;
           if (filter == null) return;
-          console.log(column.columnDef.id, filter.getOptions(column));
           switch (filter.type) {
             case "multi": {
               return (
