@@ -166,7 +166,7 @@ const useTableColumns = (rattachements: Rattachement[]) => {
         filterFn: "arrIncludesSome",
         meta: {
           filter: {
-            type: "checkboxes",
+            type: "multiselect",
             label: "Filtrer par territoire",
             getOptions: getColumnFacetedUniqueValues,
             getOptionLabel: (value) =>

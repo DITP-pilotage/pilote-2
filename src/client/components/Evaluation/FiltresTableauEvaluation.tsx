@@ -6,6 +6,36 @@ import { Icone } from "@/components/_commons/Icone";
 import { CheckLineIcon } from "@/components/_commons/Icones/CheckLineIcon";
 import { FilterIcon } from "@/components/_commons/Icones/FilterIcon";
 import { Bouton } from "@/components/_commons/Bouton/Bouton";
+import { DoubleChevronDroiteIcon } from "@/components/_commons/Icones/DoubleChevronDroiteIcon";
+import { ArrowSLine2Icon } from "@/components/_commons/Icones/ArrowSLine2Icon";
+
+const MultiSelectFiltre = ({
+  label,
+  values,
+  options,
+  onChange,
+  getOptionLabel,
+}: {
+  label: string;
+  values: string[];
+  options: string[];
+  onChange(values: string[]): void;
+  getOptionLabel(option: string): string;
+}) => {
+  const id = useId();
+  return (
+    <div className="flex items-center gap-2 !text-sm">
+      <div className="font-semibold whitespace-nowrap">{label} :</div>
+      <button
+        className="!flex items-center gap-3 !px-4 !py-1.5 !font-medium border !rounded-t !border-b-2 !border-b-gray-600 !bg-dsfr-contrast-grey"
+        type="button"
+      >
+        {values.length} territoire(s) sélectionné(s)
+        <Icone className="text-current" icone={ArrowSLine2Icon} />
+      </button>
+    </div>
+  );
+};
 
 const CheckboxesFiltre = ({
   label,
@@ -131,6 +161,18 @@ export function FiltresTableauEvaluation<T>({ table }: { table: Table<T> }) {
             case "checkboxes": {
               return (
                 <CheckboxesFiltre
+                  getOptionLabel={(option) => filter.getOptionLabel(option)}
+                  key={column.id}
+                  label={filter.label}
+                  onChange={(newValues) => column.setFilterValue(newValues)}
+                  options={filter.getOptions(column)}
+                  values={(column.getFilterValue() as string[]) ?? []}
+                />
+              );
+            }
+            case "multiselect": {
+              return (
+                <MultiSelectFiltre
                   getOptionLabel={(option) => filter.getOptionLabel(option)}
                   key={column.id}
                   label={filter.label}
