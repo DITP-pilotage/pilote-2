@@ -7,7 +7,7 @@
   },
   "scripts": {
     "dev": "next dev | pino-pretty",
-    "build": "next build && bash scripts/clone_centre_aide.sh && node copy-assets.js && prisma migrate deploy && prisma db seed",
+    "build": "bash scripts/clone_centre_aide.sh && next build && node copy-assets.js && prisma migrate deploy && prisma db seed",
     "build:dev": "next build && node copy-assets.js && prisma migrate deploy && prisma db seed",
     "start": "node .next/standalone/server.js",
     "lint": "prisma generate && npm run lint:eslint && npm run lint:tsc && npm run lint:stylelint",
@@ -33,7 +33,9 @@
     "test:database:init": "dotenv -e .env.test -- npm run database:init -- --force",
     "database:init": "prisma migrate reset",
     "database:init-force": "prisma migrate reset --force",
-    "database:migration": "prisma migrate dev"
+    "database:migration": "prisma migrate dev",
+    "centreaide:init": "git submodule update --init --recursive",
+    "centreaide:clean": "git submodule deinit -f src/pages/centre-aide-pilote-2"
   },
   "prisma": {
     "schema": "src/database/prisma/schema.prisma",
@@ -110,6 +112,8 @@
     "mime": "^3.0.0",
     "next": "^14.2.32",
     "next-auth": "^4.24.11",
+    "nextra": "^3.3.1",
+    "nextra-theme-docs": "^3.3.1",
     "nuqs": "^1.17.1",
     "pdfmake": "^0.2.20",
     "pino": "^8.11.0",
@@ -201,6 +205,6 @@
     "tailwindcss": "^4.0.0",
     "ts-node": "^10.9.1",
     "tsconfig-paths": "^4.1.2",
-    "typescript": "^5.0.2"
+    "typescript": "5.2.2"
   }
 }

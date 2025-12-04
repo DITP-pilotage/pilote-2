@@ -378,3 +378,32 @@ html {
 ::file-selector-button {
   all: revert;
 }
+
+.nextra-sidebar-container, .nextra-toc, .nextra-content, .nextra-nav-container {
+  .nextra-scrollbar {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+  a {
+    background-image: none;
+    text-decoration-line: none;
+  }
+  p, h3 {
+    margin: 0;
+  }
+
+  .accordion-container h3 {
+    font-size: 1rem;
+  }
+}
+.nextra-sidebar-container {
+  ul {
+    list-style: none;
+  }
+}
+.nextra-nav-container {
+  nav {
+    height: 92px;
+    padding-right: 0;
+  }
+}

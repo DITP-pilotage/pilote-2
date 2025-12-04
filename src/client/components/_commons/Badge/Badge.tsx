@@ -1,7 +1,14 @@
-import { FunctionComponent } from "react";
+import { FunctionComponent, ReactNode } from "react";
 import { clsxm } from "@/utils/clsxm";
-import MétéoBadgeProps, { BadgeType } from "./Badge.interface";
 import BadgeStyled from "./Badge.styled";
+import "@gouvfr/dsfr/dist/component/badge/badge.min.css";
+
+export type BadgeType = "rouge" | "jaune" | "bleu" | "vert" | "gris" | "noir";
+
+export interface BadgeProps {
+  children: ReactNode;
+  type: BadgeType;
+}
 
 const badgeÀPartirDuType: Record<BadgeType, string> = {
   rouge: "badge-rouge",
@@ -9,12 +16,10 @@ const badgeÀPartirDuType: Record<BadgeType, string> = {
   bleu: "badge-bleu",
   vert: "badge-vert",
   gris: "badge-gris",
+  noir: "badge-noir",
 };
 
-export const Badge: FunctionComponent<MétéoBadgeProps> = ({
-  children,
-  type,
-}) => {
+export const Badge: FunctionComponent<BadgeProps> = ({ children, type }) => {
   return (
     <BadgeStyled
       className={clsxm(
