@@ -172,7 +172,7 @@ const TagsFiltre = ({
         {labelToutesOptions}
       </ButtonTag>
       {options.map((option) => {
-        const isActive = value == option;
+        const isActive = value === option;
         return (
           <ButtonTag
             isActive={isActive}
