@@ -7,7 +7,7 @@ import { CommentaireTextareaEvaluation } from "./CommentaireTextareaEvaluation";
 import { InputNoteEvaluation } from "./InputNoteEvaluation";
 
 export const LigneEtapeEvaluation = ({
-  isEditable,
+  mode,
   commentaireLabel,
   commentaireName,
   noteName,
@@ -18,7 +18,7 @@ export const LigneEtapeEvaluation = ({
   onAfficherFicheCadrage,
   traitement,
 }: {
-  isEditable: boolean;
+  mode: "editable" | "bloque" | "lecture-seule";
   commentaireLabel: string;
   commentaireName: FormCommentaireName;
   noteName: FormNoteName;
@@ -32,7 +32,7 @@ export const LigneEtapeEvaluation = ({
   return (
     <div className="flex !mb-0 !-mx-4 first:border-t-0">
       <div className="flex-1 border-r border-r-gray-200 p-4">
-        {isEditable ? (
+        {mode === "editable" ? (
           <CommentaireTextareaEvaluation
             disabled={false}
             label={commentaireLabel}
@@ -68,7 +68,7 @@ export const LigneEtapeEvaluation = ({
         )}
       </div>
       <div className="flex-shrink-0 w-[8rem] p-4 flex flex-col text-center">
-        {isEditable ? (
+        {mode === "editable" ? (
           <InputNoteEvaluation
             disabled={false}
             label="Note / 100"

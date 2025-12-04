@@ -59,8 +59,11 @@ export const CelluleEvaluation = ({
       <div className="divide-y divide-gray-200">
         {ligne.evaluations.map((evalItem, index) => {
           const isEtapeCouranteEvaluation = index === 0;
-          const isEditable =
-            isEtapeCouranteEvaluation && !ligne.rattachement.readOnly;
+          const mode = !isEtapeCouranteEvaluation
+            ? "lecture-seule"
+            : ligne.rattachement.readOnly
+              ? "bloque"
+              : "editable";
 
           const boutonTraitement = isEtapeCouranteEvaluation ? (
             <BoutonTraitementEvaluation
@@ -83,8 +86,8 @@ export const CelluleEvaluation = ({
                 commentaire={evalItem.evaluation.commentaire}
                 commentaireLabel="Instruction"
                 commentaireName={commentaireName}
-                isEditable={isEditable}
                 key={evalItem.etape}
+                mode={mode}
                 note={evalItem.evaluation.note}
                 noteName={noteName}
                 onAfficherFicheCadrage={afficherFicheCadrage}
@@ -100,8 +103,8 @@ export const CelluleEvaluation = ({
                 commentaire={evalItem.evaluation.commentaire}
                 commentaireLabel="Appréciation"
                 commentaireName={commentaireName}
-                isEditable={isEditable}
                 key={evalItem.etape}
+                mode={mode}
                 note={evalItem.evaluation.note}
                 noteName={noteName}
                 onAfficherFicheCadrage={afficherFicheCadrage}
@@ -118,8 +121,8 @@ export const CelluleEvaluation = ({
                 commentaire={evalItem.evaluation.commentaire}
                 commentaireLabel="Auto-évaluation"
                 commentaireName={commentaireName}
-                isEditable={false}
                 key={evalItem.etape}
+                mode="lecture-seule"
                 note={evalItem.evaluation.note}
                 noteName={noteName}
               />
