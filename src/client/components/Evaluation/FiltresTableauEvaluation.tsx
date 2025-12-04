@@ -1,13 +1,12 @@
 import { FiltreMultiselectOptionGroup, Table } from "@tanstack/react-table";
-import { Checkbox } from "radix-ui";
 import { useId } from "react";
 import { ButtonTag } from "@/components/_commons/ButtonTag";
 import { Icone } from "@/components/_commons/Icone";
-import { CheckLineIcon } from "@/components/_commons/Icones/CheckLineIcon";
 import { FilterIcon } from "@/components/_commons/Icones/FilterIcon";
 import { Bouton } from "@/components/_commons/Bouton/Bouton";
 import { ArrowSLine2Icon } from "@/components/_commons/Icones/ArrowSLine2Icon";
 import { Dropdown } from "@/components/shared/Dropdown";
+import { Checkbox } from "@/components/shared/Checkbox";
 
 const MultiSelectFiltre = ({
   label,
@@ -22,7 +21,6 @@ const MultiSelectFiltre = ({
   onChange(values: string[]): void;
   getOptionLabel(option: string): string;
 }) => {
-  const id = useId();
   return (
     <div className="flex items-center gap-2 !text-sm">
       <div className="font-semibold whitespace-nowrap">{label} :</div>
@@ -38,17 +36,39 @@ const MultiSelectFiltre = ({
         </Dropdown.Trigger>
 
         <Dropdown.Content align="start">
-          <div className="divide-y divide-dsfr-mention-grey -m-4 py-2">
+          <div className="divide-y divide-dsfr-mention-grey -m-4 pt-1">
             {optionGroups
               .filter((group) => group.options.length > 0)
               .map((group) => (
-                <div className="px-4 py-1" key={group.label}>
-                  <div className="uppercase text-dsfr-mention-grey">
+                <div key={group.label}>
+                  <div className="uppercase text-dsfr-mention-grey px-4 py-1 pt-2">
                     {group.label}
                   </div>
-                  <ul>
+                  <ul className="!p-0 !m-0">
                     {group.options.map((option) => {
-                      return <li key={option}>{getOptionLabel(option)}</li>;
+                      const checked = values.includes(option);
+                      return (
+                        <li
+                          className="!list-none block !py-1 bg-dsfr-grey-925 even:bg-dsfr-grey-1000 !px-4"
+                          key={option}
+                        >
+                          <label className="flex items-center gap-2">
+                            <Checkbox
+                              checked={checked}
+                              onCheckedChange={() => {
+                                if (checked) {
+                                  onChange(
+                                    values.filter((value) => value !== option),
+                                  );
+                                } else {
+                                  onChange([...values, option]);
+                                }
+                              }}
+                            />
+                            {getOptionLabel(option)}
+                          </label>
+                        </li>
+                      );
                     })}
                   </ul>
                 </div>
@@ -87,9 +107,8 @@ const CheckboxesFiltre = ({
               htmlFor={optionId}
               key={option}
             >
-              <Checkbox.Root
+              <Checkbox
                 checked={isActive}
-                className="!border-2 !border-gray-500 w-4 h-4 transition-colors rounded flex items-center justify-center bg-white data-[state=checked]:!border-primary data-[state=checked]:bg-dsfr-blue-france-925"
                 id={optionId}
                 onCheckedChange={() => {
                   if (isActive) {
@@ -100,14 +119,7 @@ const CheckboxesFiltre = ({
                     onChange([...values, option]);
                   }
                 }}
-              >
-                <Checkbox.Indicator>
-                  <Icone
-                    className="w-3.5 h-3.5 text-primary"
-                    icone={CheckLineIcon}
-                  />
-                </Checkbox.Indicator>
-              </Checkbox.Root>
+              />
               {getOptionLabel(option)}
             </label>
           );
