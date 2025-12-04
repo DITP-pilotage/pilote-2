@@ -15,6 +15,11 @@ export type DroitsUtilisateur = {
   };
 };
 
+export type UtilisateurPiloteEval = {
+  email: string;
+  droitsUtilisateur: DroitsUtilisateur;
+};
+
 export class RecupererDroitsUtilisateurQuery {
   constructor(private readonly dependencies: { prisma: PrismaPilote }) {}
 
@@ -24,7 +29,18 @@ export class RecupererDroitsUtilisateurQuery {
   }: {
     utilisateurId: string;
     jalon: number;
-  }): Promise<DroitsUtilisateur> {
+  }): Promise<UtilisateurPiloteEval> {
+    const utilisateur = await this.dependencies.prisma
+      .getInstance()
+      .utilisateur.findUnique({
+        where: {
+          id: utilisateurId,
+        },
+        select: {
+          email: true,
+        },
+      });
+
     const rattachements = await this.dependencies.prisma
       .getInstance()
       .rattachement_utilisateur_etape_jalon.findMany({
@@ -104,6 +120,9 @@ export class RecupererDroitsUtilisateurQuery {
       }
     }
 
-    return droits;
+    return {
+      email: utilisateur?.email ?? "",
+      droitsUtilisateur: droits,
+    };
   }
 }

@@ -75,9 +75,10 @@ describe("RecupererDroitsUtilisateurQuery", () => {
       });
 
       // Then
-      expect(resultat.autoEvaluation.rattachementCodes).toEqual(
-        expect.arrayContaining(["REG-01", "REG-02"]),
-      );
+      expect(resultat.email).toEqual("test-droits@example.com");
+      expect(
+        resultat.droitsUtilisateur.autoEvaluation.rattachementCodes,
+      ).toEqual(expect.arrayContaining(["REG-01", "REG-02"]));
     });
 
     it("retourne les rattachements pour CONSOLIDATION", async () => {
@@ -117,10 +118,9 @@ describe("RecupererDroitsUtilisateurQuery", () => {
       });
 
       // Then
-      expect(resultat.consolidation.rattachementCodes).toEqual([
-        "REG-03",
-        "REG-04",
-      ]);
+      expect(
+        resultat.droitsUtilisateur.consolidation.rattachementCodes,
+      ).toEqual(["REG-03", "REG-04"]);
     });
 
     it("retourne les rattachements des objectifs sur lesquels l'utilisateur a des droits en INSTRUCTION", async () => {
@@ -200,10 +200,9 @@ describe("RecupererDroitsUtilisateurQuery", () => {
       });
 
       // Then
-      expect(resultat.instructionObjectifs.rattachementCodes).toEqual([
-        "REG-04",
-        "REG-05",
-      ]);
+      expect(
+        resultat.droitsUtilisateur.instructionObjectifs.rattachementCodes,
+      ).toEqual(["REG-04", "REG-05"]);
     });
 
     it("retourne les critères pour INSTRUCTION", async () => {
@@ -265,9 +264,9 @@ describe("RecupererDroitsUtilisateurQuery", () => {
       });
 
       // Then
-      expect(resultat.instructionManiereDeServir.critereCodes).toEqual(
-        expect.arrayContaining([critereId1, critereId2]),
-      );
+      expect(
+        resultat.droitsUtilisateur.instructionManiereDeServir.critereCodes,
+      ).toEqual(expect.arrayContaining([critereId1, critereId2]));
     });
 
     it("ne retourne que les droits pour le jalon spécifié", async () => {
@@ -298,8 +297,12 @@ describe("RecupererDroitsUtilisateurQuery", () => {
       });
 
       // Then
-      expect(resultat.autoEvaluation.rattachementCodes).toEqual(["REG-06"]);
-      expect(resultat.autoEvaluation.rattachementCodes).not.toContain("REG-07");
+      expect(
+        resultat.droitsUtilisateur.autoEvaluation.rattachementCodes,
+      ).toEqual(["REG-06"]);
+      expect(
+        resultat.droitsUtilisateur.autoEvaluation.rattachementCodes,
+      ).not.toContain("REG-07");
     });
 
     it("retourne des tableaux vides si l'utilisateur n'a aucun droit", async () => {
@@ -313,17 +316,20 @@ describe("RecupererDroitsUtilisateurQuery", () => {
 
       // Then
       expect(resultat).toEqual({
-        autoEvaluation: {
-          rattachementCodes: [],
-        },
-        consolidation: {
-          rattachementCodes: [],
-        },
-        instructionObjectifs: {
-          rattachementCodes: [],
-        },
-        instructionManiereDeServir: {
-          critereCodes: [],
+        email: "test-droits@example.com",
+        droitsUtilisateur: {
+          autoEvaluation: {
+            rattachementCodes: [],
+          },
+          consolidation: {
+            rattachementCodes: [],
+          },
+          instructionObjectifs: {
+            rattachementCodes: [],
+          },
+          instructionManiereDeServir: {
+            critereCodes: [],
+          },
         },
       });
     });

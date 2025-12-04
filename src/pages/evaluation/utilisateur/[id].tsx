@@ -48,7 +48,7 @@ export const getServerSideProps = async ({
 
   const container = getContainer("piloteEval");
 
-  const [criteres, rattachements, objectifsParRattachement, droitsUtilisateur] =
+  const [criteres, rattachements, objectifsParRattachement, utilisateur] =
     await Promise.all([
       container.resolve("listerCriteresPiloteEval").run(),
       container.resolve("listerRattachementsPiloteEval").run(),
@@ -67,7 +67,7 @@ export const getServerSideProps = async ({
       criteres,
       rattachements,
       objectifsParRattachement,
-      droitsUtilisateur,
+      utilisateur,
     },
   };
 };
@@ -75,10 +75,12 @@ export const getServerSideProps = async ({
 const UtilisateurDetailPage = (
   props: InferGetServerSidePropsType<typeof getServerSideProps>,
 ) => {
-  const { utilisateurId, criteres, rattachements, droitsUtilisateur } = props;
+  const { utilisateurId, criteres, rattachements, utilisateur } = props;
 
   const router = useRouter();
   const modifierDroits = api.evaluation.modifierDroitsUtilisateur.useMutation();
+
+  const { email, droitsUtilisateur } = utilisateur;
 
   const { control, handleSubmit } =
     useForm<ParametrageUtilisateurPiloteEvalFormulaire>({
@@ -166,7 +168,7 @@ const UtilisateurDetailPage = (
             <h1 className="!text-3xl font-bold mb-4">
               Configuration des droits - Utilisateur
             </h1>
-            <p className="text-gray-600">ID: {utilisateurId}</p>
+            <p className="font-bold text-italic">{email}</p>
           </header>
 
           <form onSubmit={handleSubmit(onSubmit)}>
