@@ -15,92 +15,94 @@ export const FormulaireConfigurationDroits = () => {
   return (
     <>
       <header className="mb-6">
-        <h1 className="!text-3xl font-bold mb-4">
-          Configuration des droits - Utilisateur
+        <h1 className="text-2xl font-bold text-dsfr-grey-50 mb-2">
+          Configuration des droits
         </h1>
-        <p className="font-bold text-italic">{email}</p>
+        <p className="text-sm font-semibold text-italic">{email}</p>
       </header>
 
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="space-y-6">
-          <section className="bg-white p-6 rounded shadow-sm !mb-4">
-            <h2 className="!text-xl font-semibold mb-6">Auto-évaluation</h2>
-            <Controller
-              control={control}
-              name="autoEvaluation.rattachementCodes"
-              render={({ field }) => (
-                <MultiSelect
-                  afficherBoutonsSélection
-                  changementValeursSélectionnéesCallback={field.onChange}
-                  label=""
-                  optionsGroupées={rattachementsOptionsGroupees}
-                  suffixeLibellé="territoire(s) sélectionné(s)"
-                  valeursSélectionnéesParDéfaut={field.value}
-                />
-              )}
-            />
-          </section>
-
-          <section className="bg-white p-6 rounded shadow-sm">
-            <h2 className="!text-xl font-semibold !mb-4">Consolidation</h2>
-            <Controller
-              control={control}
-              name="consolidation.rattachementCodes"
-              render={({ field }) => (
-                <MultiSelect
-                  afficherBoutonsSélection
-                  changementValeursSélectionnéesCallback={field.onChange}
-                  label=""
-                  optionsGroupées={rattachementsOptionsGroupees}
-                  suffixeLibellé="territoire(s) sélectionné(s)"
-                  valeursSélectionnéesParDéfaut={field.value}
-                />
-              )}
-            />
-          </section>
-
-          <section className="bg-white p-6 rounded shadow-sm !mb-4">
-            <h2 className="!text-xl font-semibold mb-6">Instruction</h2>
-            <div className="space-y-6">
+      <div className="bg-white p-8 rounded-sm shadow-sm">
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <div className="space-y-8">
+            <section>
+              <h2 className="!text-xl">Auto-évaluation</h2>
               <Controller
                 control={control}
-                name="instructionObjectifs.rattachementCodes"
+                name="autoEvaluation.rattachementCodes"
                 render={({ field }) => (
                   <MultiSelect
                     afficherBoutonsSélection
                     changementValeursSélectionnéesCallback={field.onChange}
-                    label="Objectifs"
+                    label=""
                     optionsGroupées={rattachementsOptionsGroupees}
                     suffixeLibellé="territoire(s) sélectionné(s)"
                     valeursSélectionnéesParDéfaut={field.value}
                   />
                 )}
               />
+            </section>
 
+            <section>
+              <h2 className="!text-xl">Consolidation</h2>
               <Controller
                 control={control}
-                name="instructionManiereDeServir.critereCodes"
+                name="consolidation.rattachementCodes"
                 render={({ field }) => (
                   <MultiSelect
                     afficherBoutonsSélection
                     changementValeursSélectionnéesCallback={field.onChange}
-                    label="Manière de servir"
-                    optionsGroupées={criteresOptionsGroupees}
-                    suffixeLibellé="critère(s) sélectionné(s)"
+                    label=""
+                    optionsGroupées={rattachementsOptionsGroupees}
+                    suffixeLibellé="territoire(s) sélectionné(s)"
                     valeursSélectionnéesParDéfaut={field.value}
                   />
                 )}
               />
-            </div>
-          </section>
+            </section>
 
-          <div className="flex justify-end mt-6">
-            <button className="fr-btn" type="submit">
-              Enregistrer
-            </button>
+            <section>
+              <h2 className="!text-xl">Instruction</h2>
+              <div className="space-y-6">
+                <Controller
+                  control={control}
+                  name="instructionObjectifs.rattachementCodes"
+                  render={({ field }) => (
+                    <MultiSelect
+                      afficherBoutonsSélection
+                      changementValeursSélectionnéesCallback={field.onChange}
+                      label="Objectifs"
+                      optionsGroupées={rattachementsOptionsGroupees}
+                      suffixeLibellé="territoire(s) sélectionné(s)"
+                      valeursSélectionnéesParDéfaut={field.value}
+                    />
+                  )}
+                />
+
+                <Controller
+                  control={control}
+                  name="instructionManiereDeServir.critereCodes"
+                  render={({ field }) => (
+                    <MultiSelect
+                      afficherBoutonsSélection
+                      changementValeursSélectionnéesCallback={field.onChange}
+                      label="Manière de servir"
+                      optionsGroupées={criteresOptionsGroupees}
+                      suffixeLibellé="critère(s) sélectionné(s)"
+                      valeursSélectionnéesParDéfaut={field.value}
+                    />
+                  )}
+                />
+              </div>
+            </section>
+
+            <div className="flex justify-end pt-4">
+              <button className="fr-btn" type="submit">
+                Enregistrer
+              </button>
+            </div>
           </div>
-        </div>
-      </form>
+        </form>
+      </div>
     </>
   );
 };
