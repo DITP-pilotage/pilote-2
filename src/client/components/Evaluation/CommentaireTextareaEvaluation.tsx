@@ -1,3 +1,4 @@
+import { ReactNode } from "react";
 import { useFormulaireEvaluation } from "@/components/Evaluation/form";
 import { Textarea } from "@/components/_commons/Textarea";
 import { useAutosave } from "@/components/Evaluation/useAutosave";
@@ -15,7 +16,7 @@ export const CommentaireTextareaEvaluation = ({
 }: {
   name: FormCommentaireName;
   disabled?: boolean;
-  label: string;
+  label: ReactNode;
   onAutosave?: () => void;
   onFocus?: () => void;
 }) => {

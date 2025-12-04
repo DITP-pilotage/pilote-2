@@ -1,3 +1,4 @@
+import { ReactNode } from "react";
 import { useFormulaireEvaluation } from "@/components/Evaluation/form";
 import { InputNoteControlled } from "@/components/_commons/InputNoteControlled";
 import { useAutosave } from "@/components/Evaluation/useAutosave";
@@ -18,7 +19,7 @@ export const InputNoteEvaluation = ({
 }: {
   name: FormNoteName;
   disabled?: boolean;
-  label: string;
+  label: ReactNode;
   onAutosave?: () => void;
   onFocus?: () => void;
 }) => {

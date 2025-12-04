@@ -1,5 +1,11 @@
 import { Control, Controller, FieldValues, Path } from "react-hook-form";
-import { ComponentProps, RefObject, useImperativeHandle, useRef } from "react";
+import {
+  ComponentProps,
+  ReactNode,
+  RefObject,
+  useImperativeHandle,
+  useRef,
+} from "react";
 import { clsxm } from "@/utils/clsxm";
 import { MessageErreur } from "@/components/PageAutoEvaluation/MessageErreur";
 
@@ -19,7 +25,7 @@ export function Textarea<T extends FieldValues>({
   charLimit,
   ...props
 }: ComponentProps<"textarea"> & {
-  label?: string;
+  label?: ReactNode;
   name: Path<T>;
   control: Control<T>;
   textareaRef?: RefObject<TextareaRef>;
@@ -42,7 +48,7 @@ export function Textarea<T extends FieldValues>({
         return (
           <div className="flex flex-col gap-1">
             <label
-              className={clsxm("italic text-sm", {
+              className={clsxm("italic text-sm font-semibold", {
                 "text-error": !!fieldState.error,
               })}
               htmlFor={fieldId}
