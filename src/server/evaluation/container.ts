@@ -2,6 +2,11 @@ import { asClass, AwilixContainer } from "awilix";
 import { AfficherAutoEvaluationQuery } from "@/server/evaluation/queries/AfficherAutoEvaluationQuery";
 import { ListerFichesAutoEvaluationQuery } from "@/server/evaluation/queries/ListerFichesAutoEvaluationQuery";
 import { ListerFichesEvaluationParPhaseQuery } from "@/server/evaluation/queries/ListerFichesEvaluationParPhaseQuery";
+import { ListerUtilisateursPiloteEval } from "@/server/evaluation/queries/ListerUtilisateursPiloteEval";
+import { ListerCriteresPiloteEval } from "@/server/evaluation/queries/ListerCriteresPiloteEval";
+import { ListerRattachementsPiloteEval } from "@/server/evaluation/queries/ListerRattachementsPiloteEval";
+import { ListerObjectifsParRattachementPiloteEval } from "@/server/evaluation/queries/ListerObjectifsParRattachementPiloteEval";
+import { RecupererDroitsUtilisateurQuery } from "@/server/evaluation/queries/RecupererDroitsUtilisateurQuery";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { AccesFicheEvaluationService } from "@/server/evaluation/services/AccesFicheEvaluationService";
 import { AfficherConsolidationQuery } from "@/server/evaluation/queries/AfficherConsolidationQuery";
@@ -24,6 +29,7 @@ import { RetournerAutoEvaluationHandler } from "./handlers/RetournerAutoEvaluati
 import { RetournerAppreciationHandler } from "./handlers/RetournerAppreciationHandler";
 import { ModifierObjectifHandler } from "./handlers/ModifierObjectifHandler";
 import { GenererPDFAutoEvaluationHandler } from "./handlers/GenererPDFAutoEvaluationHandler";
+import { ModifierDroitsUtilisateurHandler } from "./handlers/ModifierDroitsUtilisateurHandler";
 
 export type PiloteEvalDependencies = {
   afficherAutoEvaluation: AfficherAutoEvaluationQuery;
@@ -32,6 +38,11 @@ export type PiloteEvalDependencies = {
   afficherPilotageQuery: AfficherPilotageQuery;
   listerFichesAutoEvaluation: ListerFichesAutoEvaluationQuery;
   listerFichesEvaluationParPhaseQuery: ListerFichesEvaluationParPhaseQuery;
+  listerUtilisateursPiloteEval: ListerUtilisateursPiloteEval;
+  listerCriteresPiloteEval: ListerCriteresPiloteEval;
+  listerRattachementsPiloteEval: ListerRattachementsPiloteEval;
+  listerObjectifsParRattachementPiloteEval: ListerObjectifsParRattachementPiloteEval;
+  recupererDroitsUtilisateurQuery: RecupererDroitsUtilisateurQuery;
   recupererDetailsNoteCollectiveQuery: RecupererDetailsNoteCollectiveQuery;
   enregistrerBrouillonAutoEvaluationObjectifs: EnregistrerBrouillonAutoEvaluationObjectifsHandler;
   enregistrerBrouillonAutoEvaluationCriteres: EnregistrerBrouillonAutoEvaluationCriteresHandler;
@@ -50,6 +61,7 @@ export type PiloteEvalDependencies = {
   retournerAppreciationHandler: RetournerAppreciationHandler;
   modifierObjectifHandler: ModifierObjectifHandler;
   genererPDFAutoEvaluationHandler: GenererPDFAutoEvaluationHandler;
+  modifierDroitsUtilisateurHandler: ModifierDroitsUtilisateurHandler;
 };
 
 export const getPiloteEvalContainer = (
@@ -64,6 +76,13 @@ export const getPiloteEvalContainer = (
     listerFichesEvaluationParPhaseQuery: asClass(
       ListerFichesEvaluationParPhaseQuery,
     ),
+    listerUtilisateursPiloteEval: asClass(ListerUtilisateursPiloteEval),
+    listerCriteresPiloteEval: asClass(ListerCriteresPiloteEval),
+    listerRattachementsPiloteEval: asClass(ListerRattachementsPiloteEval),
+    listerObjectifsParRattachementPiloteEval: asClass(
+      ListerObjectifsParRattachementPiloteEval,
+    ),
+    recupererDroitsUtilisateurQuery: asClass(RecupererDroitsUtilisateurQuery),
     recupererDetailsNoteCollectiveQuery: asClass(
       RecupererDetailsNoteCollectiveQuery,
     ),
@@ -96,5 +115,6 @@ export const getPiloteEvalContainer = (
     retournerAppreciationHandler: asClass(RetournerAppreciationHandler),
     modifierObjectifHandler: asClass(ModifierObjectifHandler),
     genererPDFAutoEvaluationHandler: asClass(GenererPDFAutoEvaluationHandler),
+    modifierDroitsUtilisateurHandler: asClass(ModifierDroitsUtilisateurHandler),
   });
 };

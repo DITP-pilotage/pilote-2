@@ -54,6 +54,14 @@ export const NavigationPiloteEval = () => {
           prefetch: true,
           target: "_self",
         },
+        {
+          nom: "Utilisateurs",
+          lien: "/evaluation/utilisateurs",
+          matcher: "/evaluation/utilisateurs",
+          accessible: droitsPiloteEval?.peutAccederPilotage ?? false,
+          prefetch: true,
+          target: "_self",
+        },
       ]}
     />
   );
