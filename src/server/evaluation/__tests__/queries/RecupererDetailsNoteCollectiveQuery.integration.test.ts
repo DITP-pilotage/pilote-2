@@ -93,6 +93,96 @@ describe("RecupererDetailsNoteCollectiveQuery", () => {
         ],
       });
 
+      await prisma.chantier_territoire.createMany({
+        data: [
+          {
+            id: "CH-101",
+            territoire_code: rattachementCode,
+            code_insee: "75",
+            maille: "DEPT",
+            zone_id: "zone-1",
+          },
+          {
+            id: "CH-101",
+            territoire_code: "DEPT-01",
+            code_insee: "01",
+            maille: "DEPT",
+            zone_id: "zone-1",
+          },
+          {
+            id: "CH-102",
+            territoire_code: rattachementCode,
+            code_insee: "75",
+            maille: "DEPT",
+            zone_id: "zone-1",
+          },
+          {
+            id: "CH-102",
+            territoire_code: "DEPT-01",
+            code_insee: "01",
+            maille: "DEPT",
+            zone_id: "zone-1",
+          },
+          {
+            id: "CH-103",
+            territoire_code: rattachementCode,
+            code_insee: "75",
+            maille: "DEPT",
+            zone_id: "zone-1",
+          },
+        ],
+      });
+
+      await prisma.chantier_territoire_jalon.createMany({
+        data: [
+          {
+            id: "CH-101",
+            territoire_code: rattachementCode,
+            code_insee: "75",
+            maille: "DEPT",
+            zone_id: "zone-1",
+            jalon: jalon,
+            taux_avancement: 80.0,
+          },
+          {
+            id: "CH-101",
+            territoire_code: "DEPT-01",
+            code_insee: "01",
+            maille: "DEPT",
+            zone_id: "zone-1",
+            jalon: jalon,
+            taux_avancement: 95.0,
+          },
+          {
+            id: "CH-102",
+            territoire_code: rattachementCode,
+            code_insee: "75",
+            maille: "DEPT",
+            zone_id: "zone-1",
+            jalon: jalon,
+            taux_avancement: 85.0,
+          },
+          {
+            id: "CH-102",
+            territoire_code: "DEPT-01",
+            code_insee: "01",
+            maille: "DEPT",
+            zone_id: "zone-1",
+            jalon: 2024,
+            taux_avancement: 90.0,
+          },
+          {
+            id: "CH-103",
+            territoire_code: rattachementCode,
+            code_insee: "75",
+            maille: "DEPT",
+            zone_id: "zone-1",
+            jalon: jalon,
+            taux_avancement: 92.0,
+          },
+        ],
+      });
+
       await prisma.chantier_evaluation.createMany({
         data: [
           {
@@ -158,25 +248,28 @@ describe("RecupererDetailsNoteCollectiveQuery", () => {
           nom: "Chantier Alpha",
           icone_ministere: "icone-ministere-1.svg",
           taux_avancement: 75.5,
+          taux_avancement_pilote: 80.0,
         },
         {
           id: "CH-102",
           nom: "Chantier Beta",
           icone_ministere: "icone-ministere-2.svg",
           taux_avancement: 82.3,
+          taux_avancement_pilote: 85.0,
         },
         {
           id: "CH-103",
           nom: "Chantier Gamma",
           icone_ministere: "icone-ministere-1.svg",
           taux_avancement: 90,
+          taux_avancement_pilote: 92.0,
         },
       ]);
     });
 
     it("ne doit retourner que les chantiers de la dernière date_calcul", async () => {
       // Given
-      const rattachementCode = "REG-302";
+      const rattachementCode = "REG-84";
       const jalon = 2025;
 
       await prisma.ministere.create({
@@ -208,7 +301,7 @@ describe("RecupererDetailsNoteCollectiveQuery", () => {
           code: rattachementCode,
           groupe: rattachementCode,
           ordre: 1,
-          libelle: "Région 302",
+          libelle: "Région 84",
         },
       });
 
@@ -221,12 +314,54 @@ describe("RecupererDetailsNoteCollectiveQuery", () => {
         },
       });
 
+      await prisma.chantier_territoire.createMany({
+        data: [
+          {
+            id: "CH-201",
+            territoire_code: rattachementCode,
+            code_insee: "84",
+            maille: "REG",
+            zone_id: "zone-2",
+          },
+          {
+            id: "CH-202",
+            territoire_code: rattachementCode,
+            code_insee: "84",
+            maille: "REG",
+            zone_id: "zone-2",
+          },
+        ],
+      });
+
+      await prisma.chantier_territoire_jalon.createMany({
+        data: [
+          {
+            id: "CH-201",
+            territoire_code: rattachementCode,
+            code_insee: "84",
+            maille: "REG",
+            zone_id: "zone-2",
+            jalon: jalon,
+            taux_avancement: 68.0,
+          },
+          {
+            id: "CH-202",
+            territoire_code: rattachementCode,
+            code_insee: "84",
+            maille: "REG",
+            zone_id: "zone-2",
+            jalon: jalon,
+            taux_avancement: 73.0,
+          },
+        ],
+      });
+
       await prisma.chantier_evaluation.createMany({
         data: [
           {
             id: "CH-201",
             territoire_code: rattachementCode,
-            code_insee: "302",
+            code_insee: "84",
             maille: "REG",
             zone_id: "zone-2",
             taux_avancement: 40,
@@ -236,7 +371,7 @@ describe("RecupererDetailsNoteCollectiveQuery", () => {
           {
             id: "CH-202",
             territoire_code: rattachementCode,
-            code_insee: "302",
+            code_insee: "84",
             maille: "REG",
             zone_id: "zone-2",
             taux_avancement: 45,
@@ -246,7 +381,7 @@ describe("RecupererDetailsNoteCollectiveQuery", () => {
           {
             id: "CH-201",
             territoire_code: rattachementCode,
-            code_insee: "302",
+            code_insee: "84",
             maille: "REG",
             zone_id: "zone-2",
             taux_avancement: 65,
@@ -256,7 +391,7 @@ describe("RecupererDetailsNoteCollectiveQuery", () => {
           {
             id: "CH-202",
             territoire_code: rattachementCode,
-            code_insee: "302",
+            code_insee: "84",
             maille: "REG",
             zone_id: "zone-2",
             taux_avancement: 70,
@@ -276,12 +411,14 @@ describe("RecupererDetailsNoteCollectiveQuery", () => {
           nom: "Chantier Delta",
           icone_ministere: "icone-ministere-3.svg",
           taux_avancement: 65,
+          taux_avancement_pilote: 68.0,
         },
         {
           id: "CH-202",
           nom: "Chantier Epsilon",
           icone_ministere: "icone-ministere-3.svg",
           taux_avancement: 70,
+          taux_avancement_pilote: 73.0,
         },
       ]);
     });
@@ -303,7 +440,7 @@ describe("RecupererDetailsNoteCollectiveQuery", () => {
 
     it("doit gérer correctement les chantiers sans ministère", async () => {
       // Given
-      const rattachementCode = "REG-304";
+      const rattachementCode = "REG-84";
       const jalon = 2025;
 
       await prisma.chantier_identite.create({
@@ -319,7 +456,7 @@ describe("RecupererDetailsNoteCollectiveQuery", () => {
           code: rattachementCode,
           groupe: rattachementCode,
           ordre: 1,
-          libelle: "Région 304",
+          libelle: "Région 84",
         },
       });
 
@@ -332,11 +469,33 @@ describe("RecupererDetailsNoteCollectiveQuery", () => {
         },
       });
 
+      await prisma.chantier_territoire.create({
+        data: {
+          id: "CH-401",
+          territoire_code: rattachementCode,
+          code_insee: "84",
+          maille: "REG",
+          zone_id: "zone-4",
+        },
+      });
+
+      await prisma.chantier_territoire_jalon.create({
+        data: {
+          id: "CH-401",
+          territoire_code: rattachementCode,
+          code_insee: "84",
+          maille: "REG",
+          zone_id: "zone-4",
+          jalon: jalon,
+          taux_avancement: 91.0,
+        },
+      });
+
       await prisma.chantier_evaluation.create({
         data: {
           id: "CH-401",
           territoire_code: rattachementCode,
-          code_insee: "304",
+          code_insee: "84",
           maille: "REG",
           zone_id: "zone-4",
           taux_avancement: 88,
@@ -355,6 +514,7 @@ describe("RecupererDetailsNoteCollectiveQuery", () => {
           nom: "Chantier Sans Ministère",
           icone_ministere: null,
           taux_avancement: 88,
+          taux_avancement_pilote: 91.0,
         },
       ]);
     });

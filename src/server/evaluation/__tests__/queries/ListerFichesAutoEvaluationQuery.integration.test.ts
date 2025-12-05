@@ -285,7 +285,7 @@ describe("ListerFichesAutoEvaluationQuery", () => {
 
     it("doit calculer la note collective à partir des chantiers_evaluation de la dernière date_calcul", async () => {
       // Given
-      const rattachementCode = "REG-205";
+      const rattachementCode = "REG-84";
       const utilisateurId = "f8a7b6c5-4d3e-2f1a-0b9c-8d7e6f5a4b3c";
       const ficheEvaluationId = "a1b2c3d4-e5f6-7890-abcd-ef1234567890";
       const etapeEvaluationId = "b2c3d4e5-f6a7-8901-bcde-f12345678901";
@@ -303,6 +303,64 @@ describe("ListerFichesAutoEvaluationQuery", () => {
           {
             id: "CH-003",
             nom: "Chantier 1",
+          },
+        ],
+      });
+
+      await prisma.chantier_territoire.createMany({
+        data: [
+          {
+            id: "CH-001",
+            territoire_code: rattachementCode,
+            code_insee: "84",
+            maille: "REG",
+            zone_id: "zone-2",
+          },
+          {
+            id: "CH-002",
+            territoire_code: rattachementCode,
+            code_insee: "84",
+            maille: "REG",
+            zone_id: "zone-2",
+          },
+          {
+            id: "CH-003",
+            territoire_code: rattachementCode,
+            code_insee: "84",
+            maille: "REG",
+            zone_id: "zone-2",
+          },
+        ],
+      });
+
+      await prisma.chantier_territoire_jalon.createMany({
+        data: [
+          {
+            id: "CH-001",
+            territoire_code: rattachementCode,
+            code_insee: "84",
+            maille: "REG",
+            zone_id: "zone-2",
+            jalon: 2025,
+            taux_avancement: 68.0,
+          },
+          {
+            id: "CH-002",
+            territoire_code: rattachementCode,
+            code_insee: "84",
+            maille: "REG",
+            zone_id: "zone-2",
+            jalon: 2025,
+            taux_avancement: 73.0,
+          },
+          {
+            id: "CH-003",
+            territoire_code: rattachementCode,
+            code_insee: "84",
+            maille: "REG",
+            zone_id: "zone-2",
+            jalon: 2025,
+            taux_avancement: 73.0,
           },
         ],
       });

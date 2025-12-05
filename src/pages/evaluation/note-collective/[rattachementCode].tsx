@@ -50,6 +50,29 @@ const PageDetailsNoteCollective = (
 ) => {
   const { chantiersEvaluation } = props;
 
+  const moyenneNote =
+    chantiersEvaluation.length > 0
+      ? chantiersEvaluation.reduce(
+          (acc, chantier) => ({
+            total: acc.total + (chantier.taux_avancement ?? 0),
+            count: acc.count + (chantier.taux_avancement !== null ? 1 : 0),
+          }),
+          { total: 0, count: 0 },
+        )
+      : null;
+
+  const moyenneNotePilote =
+    chantiersEvaluation.length > 0
+      ? chantiersEvaluation.reduce(
+          (acc, chantier) => ({
+            total: acc.total + (chantier.taux_avancement_pilote ?? 0),
+            count:
+              acc.count + (chantier.taux_avancement_pilote !== null ? 1 : 0),
+          }),
+          { total: 0, count: 0 },
+        )
+      : null;
+
   return (
     <main className="py-6 pt-0">
       <Head>
@@ -63,6 +86,47 @@ const PageDetailsNoteCollective = (
               Bienvenue sur le détail de votre note collective
             </h1>
           </header>
+
+          {moyenneNote !== null &&
+            moyenneNotePilote !== null &&
+            moyenneNote.count > 0 &&
+            moyenneNotePilote.count > 0 && (
+              <div className="mb-6 grid grid-cols-2 gap-4">
+                <div className="bg-white border-2 border-gray-200 rounded-lg p-4">
+                  <div className="flex flex-col items-center justify-center">
+                    <span className="text-xs font-medium !font-bold uppercase tracking-wide mb-2">
+                      note
+                    </span>
+                    <div className="flex items-baseline gap-1.5">
+                      <span className="text-3xl font-bold text-purple-700">
+                        {Math.round(moyenneNote.total / moyenneNote.count)}
+                      </span>
+                      <span className="text-lg font-medium text-gray-400">
+                        / 100
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-white border-2 border-gray-200 rounded-lg p-4">
+                  <div className="flex flex-col items-center justify-center">
+                    <span className="text-xs font-medium !font-bold uppercase tracking-wide mb-2">
+                      note Pilote
+                    </span>
+                    <div className="flex items-baseline gap-1.5">
+                      <span className="text-3xl font-bold text-blue-700">
+                        {Math.round(
+                          moyenneNotePilote.total / moyenneNotePilote.count,
+                        )}
+                      </span>
+                      <span className="text-lg font-medium text-gray-400">
+                        / 100
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
 
           <div className="bg-white rounded shadow">
             <header className="p-6">
@@ -82,6 +146,9 @@ const PageDetailsNoteCollective = (
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b">
                         Note
                       </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b">
+                        Note Pilote
+                      </th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200">
@@ -89,7 +156,7 @@ const PageDetailsNoteCollective = (
                       <tr>
                         <td
                           className="px-6 py-4 text-center text-gray-500"
-                          colSpan={2}
+                          colSpan={3}
                         >
                           Aucun chantier trouvé
                         </td>
@@ -114,9 +181,17 @@ const PageDetailsNoteCollective = (
                                 {Math.round(chantier.taux_avancement)} / 100
                               </span>
                             ) : (
-                              <span className="text-sm text-gray-500">
-                                Non renseigné
+                              <span className="text-sm text-gray-500">ND</span>
+                            )}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            {chantier.taux_avancement_pilote !== null ? (
+                              <span className="text-xs px-2 py-1.5 rounded-md whitespace-nowrap bg-blue-100 text-blue-700">
+                                {Math.round(chantier.taux_avancement_pilote)} /
+                                100
                               </span>
+                            ) : (
+                              <span className="text-sm text-gray-500">ND</span>
                             )}
                           </td>
                         </tr>

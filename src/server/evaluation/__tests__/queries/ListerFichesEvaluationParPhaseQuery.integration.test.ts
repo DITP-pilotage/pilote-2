@@ -260,7 +260,7 @@ describe("ListerFichesEvaluationParPhaseQuery", () => {
 
     it("doit calculer la note collective à partir des chantiers_evaluation de la dernière date_calcul", async () => {
       const utilisateurId = "14fb275c-328f-4189-ae1e-f94176335b5c";
-      const rattachementCode = "REG-20";
+      const rattachementCode = "REG-84";
       const ficheId = "e4725255-1327-494f-acbe-22ebc1d27ad4";
 
       await prisma.chantier_identite.createMany({
@@ -272,6 +272,48 @@ describe("ListerFichesEvaluationParPhaseQuery", () => {
           {
             id: "CH-NC-002",
             nom: "Chantier NC 2",
+          },
+        ],
+      });
+
+      await prisma.chantier_territoire.createMany({
+        data: [
+          {
+            id: "CH-NC-001",
+            territoire_code: rattachementCode,
+            code_insee: "84",
+            maille: "REG",
+            zone_id: "zone-2",
+          },
+          {
+            id: "CH-NC-002",
+            territoire_code: rattachementCode,
+            code_insee: "84",
+            maille: "REG",
+            zone_id: "zone-2",
+          },
+        ],
+      });
+
+      await prisma.chantier_territoire_jalon.createMany({
+        data: [
+          {
+            id: "CH-NC-001",
+            territoire_code: rattachementCode,
+            code_insee: "84",
+            maille: "REG",
+            zone_id: "zone-2",
+            jalon: 2025,
+            taux_avancement: 68.0,
+          },
+          {
+            id: "CH-NC-002",
+            territoire_code: rattachementCode,
+            code_insee: "84",
+            maille: "REG",
+            zone_id: "zone-2",
+            jalon: 2025,
+            taux_avancement: 73.0,
           },
         ],
       });

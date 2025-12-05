@@ -34,7 +34,15 @@ export class RecupererDetailsNoteCollectiveQuery {
           date_calcul: derniereDateCalcul.date_calcul,
         },
         include: {
-          chantier_identite: true,
+          chantier_territoire_jalon: {
+            include: {
+              chantier_territoire: {
+                include: {
+                  chantier_identite: true,
+                },
+              },
+            },
+          },
         },
       });
 
@@ -43,16 +51,21 @@ export class RecupererDetailsNoteCollectiveQuery {
       .ministere.findMany();
 
     return chantiersEvaluation.map((chantier) => {
-      const ministereId = chantier.chantier_identite.ministeres[0];
+      const ministereId =
+        chantier.chantier_territoire_jalon.chantier_territoire.chantier_identite
+          .ministeres[0];
       const ministereChantier = ministeres.find(
         (ministere) => ministere.id === ministereId,
       );
 
       return {
         id: chantier.id,
-        nom: chantier.chantier_identite.nom,
+        nom: chantier.chantier_territoire_jalon.chantier_territoire
+          .chantier_identite.nom,
         icone_ministere: ministereChantier?.icone ?? null,
         taux_avancement: chantier.taux_avancement,
+        taux_avancement_pilote:
+          chantier.chantier_territoire_jalon.taux_avancement,
       };
     });
   }
