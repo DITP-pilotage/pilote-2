@@ -1,3 +1,4 @@
+import { $Enums } from "@prisma/client";
 import {
   créerRouteurTRPC,
   procédureProtégée,
@@ -20,6 +21,7 @@ import { modifierObjectifCommandSchema } from "@/server/evaluation/handlers/Modi
 import { genererPDFAutoEvaluationCommandSchema } from "@/server/evaluation/handlers/GenererPDFAutoEvaluationHandler";
 import { modifierDroitsUtilisateurCommandSchema } from "@/server/evaluation/handlers/ModifierDroitsUtilisateurHandler";
 import { AutoEvaluationPDFAdapter } from "@/server/evaluation/infrastructure/AutoEvaluationPDFAdapter";
+import { EvaluationsAdapter } from "@/server/evaluation/infrastructure/EvaluationsAdapter";
 
 export const evaluationRouter = créerRouteurTRPC({
   getDroitsPiloteEval: procédureProtégée.query(async ({ ctx }) => {
@@ -335,4 +337,52 @@ export const evaluationRouter = créerRouteurTRPC({
         .resolve("modifierDroitsUtilisateurHandler")
         .execute(input);
     }),
+
+  genererPDFAppreciation: procédureProtégée.mutation(async ({ ctx }) => {
+    const peutAccederFicheAppreciation = await getContainer("piloteEval")
+      .resolve("accesFicheEvaluationService")
+      .peutAccederEtapeAppreciation({
+        utilisateurId: ctx.session.user.id,
+      });
+
+    if (!peutAccederFicheAppreciation)
+      throw new ForbiddenError("Accès refusé à la fiche d'appréciation");
+
+    const consolidationData = await getContainer("piloteEval")
+      .resolve("afficherConsolidationQuery")
+      .run({ utilisateurId: ctx.session.user.id });
+
+    return getContainer("piloteEval")
+      .resolve("genererPDFAutoEvaluationHandler")
+      .execute(
+        new EvaluationsAdapter(
+          consolidationData,
+          $Enums.etape_evaluation_enum.CONSOLIDATION,
+        ),
+      );
+  }),
+
+  genererPDFInstruction: procédureProtégée.mutation(async ({ ctx }) => {
+    const peutAccederFicheInstruction = await getContainer("piloteEval")
+      .resolve("accesFicheEvaluationService")
+      .peutAccederEtapeInstruction({
+        utilisateurId: ctx.session.user.id,
+      });
+
+    if (!peutAccederFicheInstruction)
+      throw new ForbiddenError("Accès refusé à la fiche d'instruction");
+
+    const instructionData = await getContainer("piloteEval")
+      .resolve("afficherInstructionQuery")
+      .execute({ utilisateurId: ctx.session.user.id });
+
+    return getContainer("piloteEval")
+      .resolve("genererPDFAutoEvaluationHandler")
+      .execute(
+        new EvaluationsAdapter(
+          instructionData,
+          $Enums.etape_evaluation_enum.INSTRUCTION,
+        ),
+      );
+  }),
 });

@@ -77,7 +77,7 @@ export const BoutonApplicationsPilote = () => {
           type="button"
         >
           <Icone icone={GridIcon} />
-          <span className="pl-2 pr-1">La suite PILOTE</span>
+          <span className="pl-2 pr-1">La Suite PILOTE</span>
           <Icone
             className={clsxm(
               "transition-transform duration-200 ease-in-out",
@@ -92,7 +92,7 @@ export const BoutonApplicationsPilote = () => {
         <div className="flex items-center gap-3 pb-4 border-b border-gray-200">
           <img alt="" className="w-8" src="/favicon/favicon.svg" />
           <div className="flex flex-col">
-            <span className="font-bold text-base">La suite PILOTE</span>
+            <span className="font-bold text-base">La Suite PILOTE</span>
             <span className="text-xs">
               Piloter l'action publique par le résultat
             </span>
