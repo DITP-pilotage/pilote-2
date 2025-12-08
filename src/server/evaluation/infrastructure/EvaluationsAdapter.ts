@@ -84,7 +84,7 @@ export class EvaluationsAdapter implements PDFContentAdapter {
             return [];
           }
 
-          const rows: any[][] = [
+          const rows = [
             [createSectionTitle({ title: critere.libelle, colSpan: 2 }), {}],
           ];
 
@@ -121,7 +121,7 @@ export class EvaluationsAdapter implements PDFContentAdapter {
       }),
       createTable(
         rattachement.objectifs.flatMap((objectif) => {
-          const rows: any[][] = [
+          const rows = [
             [createSectionTitle({ title: objectif.libelle, colSpan: 2 }), {}],
           ];
 
@@ -199,9 +199,7 @@ export class EvaluationsAdapter implements PDFContentAdapter {
             return [];
           }
 
-          const rows: any[][] = [
-            [createSectionTitle({ title: critere.libelle })],
-          ];
+          const rows = [[createSectionTitle({ title: critere.libelle })]];
 
           critereRattachement.evaluations.forEach((evaluationData) => {
             const etapeLabel = getEtapeLabel(evaluationData.etape);
@@ -236,9 +234,7 @@ export class EvaluationsAdapter implements PDFContentAdapter {
       }),
       createTable(
         rattachement.objectifs.flatMap((objectif) => {
-          const rows: any[][] = [
-            [createSectionTitle({ title: objectif.libelle })],
-          ];
+          const rows = [[createSectionTitle({ title: objectif.libelle })]];
 
           objectif.evaluations.forEach((evaluationData) => {
             const etapeLabel = getEtapeLabel(evaluationData.etape);
