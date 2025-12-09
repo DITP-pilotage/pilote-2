@@ -107,7 +107,7 @@ export const LigneCardEvaluationAppreciation = ({
           }
           texteBadge="Manière de servir"
           texteCompletion={formatterTexteCompletion({
-            estValide: ficheEvaluation.isObjectifsValides,
+            estValide: ficheEvaluation.isCriteresValides,
             estVerrouille: ficheEvaluation.readOnly,
           })}
           texteLienNavigation="accéder à l'appréciation de la manière de servir"
