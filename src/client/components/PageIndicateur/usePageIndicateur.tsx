@@ -1,27 +1,68 @@
-import { SubmitHandler, useForm, useFormContext } from "react-hook-form";
+import { SubmitHandler, useForm } from "react-hook-form";
 import { useState } from "react";
 import { useRouter } from "next/router";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { MetadataParametrageIndicateurForm } from "@/components/PageIndicateur/FicheIndicateur/SectionDétailsMetadataIndicateur/useDetailMetadataIndicateurForm";
 import api from "@/server/infrastructure/api/trpc/api";
 import { récupérerUnCookie } from "@/client/utils/cookies";
 import { MetadataParametrageIndicateurContrat } from "@/server/app/contrats/MetadataParametrageIndicateurContrat";
-import { MetadataParametrageParametreCalculIndicateurForm } from "@/components/PageIndicateur/FicheIndicateur/SectionDétailsMetadataParametreCalculIndicateur/useDétailsMetadataParametreCalculIndicateurForm";
-import { MetadataSelectionIndicateurForm } from "@/components/PageIndicateur/FicheIndicateur/SectionSelectionIndicateur/useSelectionIndicateurForm";
 import { validationMetadataIndicateurFormulaire } from "@/validation/metadataIndicateur";
 import AlerteProps from "@/components/_commons/Alerte/Alerte.interface";
-import { MetadataParametrageParametreIndicateurDepartementaleForm } from "@/components/PageIndicateur/FicheIndicateur/SectionDétailsMetadataParametreIndicateurDepartementale/useDétailsMetadataParametreIndicateurDepartementaleForm";
-import { MetadataParametrageParametreIndicateurRegionaleForm } from "@/components/PageIndicateur/FicheIndicateur/SectionDétailsMetadataParametreIndicateurRegionale/useDétailsMetadataParametreIndicateurRegionaleForm";
-import { MetadataParametrageParametreIndicateurNationaleForm } from "@/components/PageIndicateur/FicheIndicateur/SectionDétailsMetadataParametreIndicateurNationale/useDétailsMetadataParametreIndicateurNationaleForm";
-import { MetadataParametrageParametrePonderationIndicateurForm } from "@/components/PageIndicateur/FicheIndicateur/SectionDétailsMetadataParametrePonderationIndicateur/useDétailsMetadataParametrePonderationndicateurForm";
 
-type MetadataParametrageAutresIndicateurForm = {
+export type MetadataIndicateurForm = {
+  indicParentCh: string;
+  indicParentIndic: string;
+  indicNom: string;
+  indicDescr: string;
+  indicType: string;
+  indicUnite: string | null;
+  indicSchema: string;
+  zgApplicable: string;
+  indicTerritorialise: boolean;
+  indicIsBaro: boolean;
+  indicMethodeCalcul: string;
+  indicSource: string;
+  indicSourceUrl: string | null;
+  periodicite: string;
+  delaiDisponibilite: string;
+  indicNomBaro: string | null;
+  indicDescrBaro: string | null;
+  paramVacaDecumulFrom: string;
+  paramVacaPartitionDate: string;
+  paramVacaOp: string;
+  paramVacgDecumulFrom: string;
+  paramVacgPartitionDate: string;
+  paramVacgOp: string;
+  tendance: string;
+  viDeptFrom: string;
+  viDeptOp: string;
+  vaDeptFrom: string;
+  vaDeptOp: string;
+  vcDeptFrom: string;
+  vcDeptOp: string;
+  viRegFrom: string;
+  viRegOp: string;
+  vaRegFrom: string;
+  vaRegOp: string;
+  vcRegFrom: string;
+  vcRegOp: string;
+  viNatFrom: string;
+  viNatOp: string;
+  vaNatFrom: string;
+  vaNatOp: string;
+  vcNatFrom: string;
+  vcNatOp: string;
+  indicHiddenPilote: string;
+  poidsPourcentDept: string;
+  poidsPourcentReg: string;
+  poidsPourcentNat: string;
+  poidsPourcentEvalNat: string;
+  poidsPourcentEvalReg: string;
+  poidsPourcentEvalDept: string;
   indicIsPerseverant: boolean;
   indicIsPhare: boolean;
   reformePrioritaire: string | null;
   projetAnnuelPerf: boolean;
   detailProjetAnnuelPerf: string | null;
-  indicTerritorialise: boolean;
   frequenceTerritoriale: string;
   mailles: string | null;
   adminSource: string;
@@ -38,15 +79,6 @@ type MetadataParametrageAutresIndicateurForm = {
   cibleAttendue: boolean;
   couvertureTemporelle: string;
 };
-
-export type MetadataIndicateurForm = MetadataParametrageIndicateurForm &
-  MetadataParametrageParametreCalculIndicateurForm &
-  MetadataParametrageParametreIndicateurDepartementaleForm &
-  MetadataParametrageParametreIndicateurRegionaleForm &
-  MetadataParametrageParametreIndicateurNationaleForm &
-  MetadataSelectionIndicateurForm &
-  MetadataParametrageParametrePonderationIndicateurForm &
-  MetadataParametrageAutresIndicateurForm;
 
 export const usePageIndicateur = (
   indicateur: MetadataParametrageIndicateurContrat,
@@ -122,7 +154,7 @@ export const usePageIndicateur = (
       csrf: récupérerUnCookie("csrf") ?? "",
       ...data,
       indicParentIndic:
-        data.indicParentIndic === "Aucun indicateur selectionné"
+        data.indicParentIndic === "Aucun indicateur sélectionné"
           ? null
           : data.indicParentIndic,
     };
@@ -137,7 +169,7 @@ export const usePageIndicateur = (
       csrf: récupérerUnCookie("csrf") ?? "",
       ...data,
       indicParentIndic:
-        data.indicParentIndic === "Aucun indicateur selectionné"
+        data.indicParentIndic === "Aucun indicateur sélectionné"
           ? null
           : data.indicParentIndic,
     };

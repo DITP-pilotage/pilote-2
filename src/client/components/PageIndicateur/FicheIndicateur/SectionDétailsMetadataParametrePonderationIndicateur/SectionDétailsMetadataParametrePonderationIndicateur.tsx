@@ -1,10 +1,9 @@
 import { FunctionComponent } from "react";
 import Titre from "@/components/_commons/Titre/Titre";
-import useDétailsMetadataParametrePonderationIndicateurForm from "@/components/PageIndicateur/FicheIndicateur/SectionDétailsMetadataParametrePonderationIndicateur/useDétailsMetadataParametrePonderationndicateurForm";
 import { MetadataParametrageIndicateurContrat } from "@/server/app/contrats/MetadataParametrageIndicateurContrat";
 import { MapInformationMetadataIndicateurContrat } from "@/server/app/contrats/InformationMetadataIndicateurContrat";
 import { MetadataIndicateurInput } from "@/components/PageIndicateur/FicheIndicateur/commons/MetadataIndicateurInput";
-import useDetailMetadataIndicateurForm from "@/client/components/PageIndicateur/FicheIndicateur/SectionDétailsMetadataIndicateur/useDetailMetadataIndicateurForm";
+import { useMetadataIndicateurForm } from "@/components/PageIndicateur/useMetadataIndicateurForm";
 
 const SectionDétailsMetadataParametrePonderationIndicateur: FunctionComponent<{
   indicateur: MetadataParametrageIndicateurContrat;
@@ -15,9 +14,8 @@ const SectionDétailsMetadataParametrePonderationIndicateur: FunctionComponent<{
   estEnCoursDeModification,
   mapInformationMetadataIndicateur,
 }) => {
-  const { register, errors } =
-    useDétailsMetadataParametrePonderationIndicateurForm();
-  const { indicateurEstTerritorialise } = useDetailMetadataIndicateurForm();
+  const form = useMetadataIndicateurForm();
+  const indicateurEstTerritorialise = form.getValues("indicTerritorialise");
 
   return (
     <div>
@@ -28,44 +26,35 @@ const SectionDétailsMetadataParametrePonderationIndicateur: FunctionComponent<{
         <div className="fr-col-12 fr-col-md-4">
           <MetadataIndicateurInput
             disabled={!indicateurEstTerritorialise}
-            erreurMessage={errors.poidsPourcentDept?.message}
+            erreurMessage={form.formState.errors.poidsPourcentDept?.message}
             estEnCoursDeModification={estEnCoursDeModification}
             htmlName="poidsPourcentDept"
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.poids_pourcent_dept_declaree
             }
-            register={register("poidsPourcentDept", {
-              value: `${indicateur.poidsPourcentDept}`,
-            })}
             valeurAffiché={`${indicateur.poidsPourcentDept}`}
           />
         </div>
         <div className="fr-col-12 fr-col-md-4">
           <MetadataIndicateurInput
             disabled={!indicateurEstTerritorialise}
-            erreurMessage={errors.poidsPourcentReg?.message}
+            erreurMessage={form.formState.errors.poidsPourcentReg?.message}
             estEnCoursDeModification={estEnCoursDeModification}
             htmlName="poidsPourcentReg"
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.poids_pourcent_reg_declaree
             }
-            register={register("poidsPourcentReg", {
-              value: `${indicateur.poidsPourcentReg}`,
-            })}
             valeurAffiché={`${indicateur.poidsPourcentReg}`}
           />
         </div>
         <div className="fr-col-12 fr-col-md-4">
           <MetadataIndicateurInput
-            erreurMessage={errors.poidsPourcentNat?.message}
+            erreurMessage={form.formState.errors.poidsPourcentNat?.message}
             estEnCoursDeModification={estEnCoursDeModification}
             htmlName="poidsPourcentNat"
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.poids_pourcent_nat_declaree
             }
-            register={register("poidsPourcentNat", {
-              value: `${indicateur.poidsPourcentNat}`,
-            })}
             valeurAffiché={`${indicateur.poidsPourcentNat}`}
           />
         </div>
@@ -73,43 +62,34 @@ const SectionDétailsMetadataParametrePonderationIndicateur: FunctionComponent<{
       <div className="fr-grid-row fr-grid-row--gutters">
         <div className="fr-col-12 fr-col-md-4">
           <MetadataIndicateurInput
-            erreurMessage={errors.poidsPourcentEvalDept?.message}
+            erreurMessage={form.formState.errors.poidsPourcentEvalDept?.message}
             estEnCoursDeModification={estEnCoursDeModification}
             htmlName="poidsPourcentEvalDept"
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.poids_pourcent_eval_dept_declaree
             }
-            register={register("poidsPourcentEvalDept", {
-              value: `${indicateur.poidsPourcentEvalDept}`,
-            })}
             valeurAffiché={`${indicateur.poidsPourcentEvalDept}`}
           />
         </div>
         <div className="fr-col-12 fr-col-md-4">
           <MetadataIndicateurInput
-            erreurMessage={errors.poidsPourcentEvalReg?.message}
+            erreurMessage={form.formState.errors.poidsPourcentEvalReg?.message}
             estEnCoursDeModification={estEnCoursDeModification}
             htmlName="poidsPourcentEvalReg"
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.poids_pourcent_eval_reg_declaree
             }
-            register={register("poidsPourcentEvalReg", {
-              value: `${indicateur.poidsPourcentEvalReg}`,
-            })}
             valeurAffiché={`${indicateur.poidsPourcentEvalReg}`}
           />
         </div>
         <div className="fr-col-12 fr-col-md-4">
           <MetadataIndicateurInput
-            erreurMessage={errors.poidsPourcentEvalNat?.message}
+            erreurMessage={form.formState.errors.poidsPourcentEvalNat?.message}
             estEnCoursDeModification={estEnCoursDeModification}
             htmlName="poidsPourcentEvalNat"
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.poids_pourcent_eval_nat_declaree
             }
-            register={register("poidsPourcentEvalNat", {
-              value: `${indicateur.poidsPourcentEvalNat}`,
-            })}
             valeurAffiché={`${indicateur.poidsPourcentEvalNat}`}
           />
         </div>

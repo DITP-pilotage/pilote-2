@@ -1,8 +1,5 @@
 import { FunctionComponent } from "react";
 import Titre from "@/components/_commons/Titre/Titre";
-import useDétailsMetadataParametreIndicateurNationaleForm, {
-  MetadataParametrageParametreIndicateurNationaleForm,
-} from "@/components/PageIndicateur/FicheIndicateur/SectionDétailsMetadataParametreIndicateurNationale/useDétailsMetadataParametreIndicateurNationaleForm";
 import { MapInformationMetadataIndicateurContrat } from "@/server/app/contrats/InformationMetadataIndicateurContrat";
 import { MetadataParametrageIndicateurContrat } from "@/server/app/contrats/MetadataParametrageIndicateurContrat";
 import { MetadataIndicateurSelecteur } from "@/components/PageIndicateur/FicheIndicateur/commons/MetadataIndicateurSelecteur";
@@ -10,6 +7,13 @@ import {
   mappingAcceptedValues,
   mappingDisplayAcceptedValues,
 } from "@/components/PageIndicateur/FicheIndicateur/commons/utils";
+import { useMetadataIndicateurForm } from "@/components/PageIndicateur/useMetadataIndicateurForm";
+import { MetadataIndicateurForm } from "@/components/PageIndicateur/usePageIndicateur";
+
+type ValeurNatFrom = Pick<
+  MetadataIndicateurForm,
+  "viNatFrom" | "viNatOp" | "vaNatFrom" | "vaNatOp" | "vcNatFrom" | "vcNatOp"
+>;
 
 const SectionDétailsMetadataParametreIndicateurNationale: FunctionComponent<{
   indicateur: MetadataParametrageIndicateurContrat;
@@ -20,14 +24,13 @@ const SectionDétailsMetadataParametreIndicateurNationale: FunctionComponent<{
   estEnCoursDeModification,
   mapInformationMetadataIndicateur,
 }) => {
-  const { register, getValues, errors, setValue } =
-    useDétailsMetadataParametreIndicateurNationaleForm();
+  const { getValues, setValue } = useMetadataIndicateurForm();
 
   const valeursNatFromDesactiveNatOp = new Set(["_", "user_input"]);
   const ALaModificationValeurNatFrom = (
-    variableFrom: keyof MetadataParametrageParametreIndicateurNationaleForm,
+    variableFrom: keyof ValeurNatFrom,
     valeurFrom: string,
-    variableOp: keyof MetadataParametrageParametreIndicateurNationaleForm,
+    variableOp: keyof ValeurNatFrom,
     variableParDefautOp: string,
   ) => {
     setValue(variableFrom, valeurFrom);
@@ -44,7 +47,6 @@ const SectionDétailsMetadataParametreIndicateurNationale: FunctionComponent<{
       <div className="fr-grid-row fr-grid-row--gutters">
         <div className="fr-col-12 fr-col-md-4">
           <MetadataIndicateurSelecteur
-            erreurMessage={errors.viNatFrom?.message}
             estEnCoursDeModification={estEnCoursDeModification}
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.vi_nat_from
@@ -54,13 +56,8 @@ const SectionDétailsMetadataParametreIndicateurNationale: FunctionComponent<{
               indicateur,
               "vi_nat_from",
             )}
-            valeurAffiché={mappingDisplayAcceptedValues(
-              mapInformationMetadataIndicateur,
-              indicateur,
-              "vi_nat_from",
-              "viNatFrom",
-            )}
-            valeurModifiéeCallback={(valeur) => {
+            name="viNatFrom"
+            onChangeSideEffect={(valeur) => {
               ALaModificationValeurNatFrom(
                 "viNatFrom",
                 valeur,
@@ -69,12 +66,16 @@ const SectionDétailsMetadataParametreIndicateurNationale: FunctionComponent<{
                   .metaPiloteDefaultValue as string,
               );
             }}
-            values={getValues("viNatFrom")}
+            valeurAffiché={mappingDisplayAcceptedValues(
+              mapInformationMetadataIndicateur,
+              indicateur,
+              "vi_nat_from",
+              "viNatFrom",
+            )}
           />
         </div>
         <div className="fr-col-12 fr-col-md-4">
           <MetadataIndicateurSelecteur
-            erreurMessage={errors.vaNatFrom?.message}
             estEnCoursDeModification={estEnCoursDeModification}
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.va_nat_from
@@ -84,13 +85,8 @@ const SectionDétailsMetadataParametreIndicateurNationale: FunctionComponent<{
               indicateur,
               "va_nat_from",
             )}
-            valeurAffiché={mappingDisplayAcceptedValues(
-              mapInformationMetadataIndicateur,
-              indicateur,
-              "va_nat_from",
-              "vaNatFrom",
-            )}
-            valeurModifiéeCallback={(valeur) => {
+            name="vaNatFrom"
+            onChangeSideEffect={(valeur) => {
               ALaModificationValeurNatFrom(
                 "vaNatFrom",
                 valeur,
@@ -99,12 +95,16 @@ const SectionDétailsMetadataParametreIndicateurNationale: FunctionComponent<{
                   .metaPiloteDefaultValue as string,
               );
             }}
-            values={getValues("vaNatFrom")}
+            valeurAffiché={mappingDisplayAcceptedValues(
+              mapInformationMetadataIndicateur,
+              indicateur,
+              "va_nat_from",
+              "vaNatFrom",
+            )}
           />
         </div>
         <div className="fr-col-12 fr-col-md-4">
           <MetadataIndicateurSelecteur
-            erreurMessage={errors.vcNatFrom?.message}
             estEnCoursDeModification={estEnCoursDeModification}
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.vc_nat_from
@@ -114,13 +114,8 @@ const SectionDétailsMetadataParametreIndicateurNationale: FunctionComponent<{
               indicateur,
               "vc_nat_from",
             )}
-            valeurAffiché={mappingDisplayAcceptedValues(
-              mapInformationMetadataIndicateur,
-              indicateur,
-              "vc_nat_from",
-              "vcNatFrom",
-            )}
-            valeurModifiéeCallback={(valeur) => {
+            name="vcNatFrom"
+            onChangeSideEffect={(valeur) => {
               ALaModificationValeurNatFrom(
                 "vcNatFrom",
                 valeur,
@@ -129,14 +124,18 @@ const SectionDétailsMetadataParametreIndicateurNationale: FunctionComponent<{
                   .metaPiloteDefaultValue as string,
               );
             }}
-            values={getValues("vcNatFrom")}
+            valeurAffiché={mappingDisplayAcceptedValues(
+              mapInformationMetadataIndicateur,
+              indicateur,
+              "vc_nat_from",
+              "vcNatFrom",
+            )}
           />
         </div>
       </div>
       <div className="fr-grid-row fr-grid-row--gutters">
         <div className="fr-col-12 fr-col-md-4">
           <MetadataIndicateurSelecteur
-            erreurMessage={errors.viNatOp?.message}
             estDesactive={valeursNatFromDesactiveNatOp.has(
               getValues("viNatFrom"),
             )}
@@ -152,19 +151,17 @@ const SectionDétailsMetadataParametreIndicateurNationale: FunctionComponent<{
               indicateur,
               "vi_nat_op",
             )}
-            register={register("viNatOp")}
+            name="viNatOp"
             valeurAffiché={mappingDisplayAcceptedValues(
               mapInformationMetadataIndicateur,
               indicateur,
               "vi_nat_op",
               "viNatOp",
             )}
-            values={getValues("viNatOp")}
           />
         </div>
         <div className="fr-col-12 fr-col-md-4">
           <MetadataIndicateurSelecteur
-            erreurMessage={errors.vaNatOp?.message}
             estDesactive={valeursNatFromDesactiveNatOp.has(
               getValues("vaNatFrom"),
             )}
@@ -180,19 +177,17 @@ const SectionDétailsMetadataParametreIndicateurNationale: FunctionComponent<{
               indicateur,
               "va_nat_op",
             )}
-            register={register("vaNatOp")}
+            name="vaNatOp"
             valeurAffiché={mappingDisplayAcceptedValues(
               mapInformationMetadataIndicateur,
               indicateur,
               "va_nat_op",
               "vaNatOp",
             )}
-            values={getValues("vaNatOp")}
           />
         </div>
         <div className="fr-col-12 fr-col-md-4">
           <MetadataIndicateurSelecteur
-            erreurMessage={errors.vcNatOp?.message}
             estDesactive={valeursNatFromDesactiveNatOp.has(
               getValues("vcNatFrom"),
             )}
@@ -208,14 +203,13 @@ const SectionDétailsMetadataParametreIndicateurNationale: FunctionComponent<{
               indicateur,
               "vc_nat_op",
             )}
-            register={register("vcNatOp")}
+            name="vcNatOp"
             valeurAffiché={mappingDisplayAcceptedValues(
               mapInformationMetadataIndicateur,
               indicateur,
               "vc_nat_op",
               "vcNatOp",
             )}
-            values={getValues("vcNatOp")}
           />
         </div>
       </div>

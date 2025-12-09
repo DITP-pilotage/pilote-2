@@ -1,6 +1,5 @@
 import { FunctionComponent } from "react";
 import Titre from "@/components/_commons/Titre/Titre";
-import useSectionDétailsMetadataAutresIndicateurForm from "@/components/PageIndicateur/FicheIndicateur/SectionDétailsMetadataAutresIndicateur/useDétailsMetadataAutresIndicateurForm";
 import { MetadataParametrageIndicateurContrat } from "@/server/app/contrats/MetadataParametrageIndicateurContrat";
 import { MapInformationMetadataIndicateurContrat } from "@/server/app/contrats/InformationMetadataIndicateurContrat";
 import { MetadataIndicateurInput } from "@/components/PageIndicateur/FicheIndicateur/commons/MetadataIndicateurInput";
@@ -11,6 +10,7 @@ import {
   mappingAcceptedValues,
   mappingDisplayAcceptedValues,
 } from "@/client/components/PageIndicateur/FicheIndicateur/commons/utils";
+import { useMetadataIndicateurForm } from "@/components/PageIndicateur/useMetadataIndicateurForm";
 
 const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
   indicateur: MetadataParametrageIndicateurContrat;
@@ -23,10 +23,8 @@ const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
 }) => {
   const {
     register,
-    getValues,
     formState: { errors },
-    control,
-  } = useSectionDétailsMetadataAutresIndicateurForm();
+  } = useMetadataIndicateurForm();
   return (
     <div>
       <Titre baliseHtml="h2" className="fr-h5">
@@ -41,7 +39,6 @@ const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.mailles
             }
-            register={register("mailles", { value: indicateur?.mailles })}
             valeurAffiché={indicateur.mailles || "_"}
           />
         </div>
@@ -53,9 +50,6 @@ const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.frequence_territoriale
             }
-            register={register("frequenceTerritoriale", {
-              value: `${indicateur?.frequenceTerritoriale}`,
-            })}
             valeurAffiché={`${indicateur.frequenceTerritoriale}`}
           />
         </div>
@@ -69,9 +63,6 @@ const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.admin_source
             }
-            register={register("adminSource", {
-              value: indicateur?.adminSource,
-            })}
             valeurAffiché={indicateur.adminSource || "_"}
           />
         </div>
@@ -83,7 +74,6 @@ const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.si_source
             }
-            register={register("siSource", { value: indicateur?.siSource })}
             valeurAffiché={indicateur.siSource || "_"}
           />
         </div>
@@ -107,9 +97,6 @@ const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.modalites_donnee_ouverte
             }
-            register={register("modalitesDonneeOuverte", {
-              value: indicateur?.modalitesDonneeOuverte,
-            })}
             valeurAffiché={indicateur.modalitesDonneeOuverte || "_"}
           />
         </div>
@@ -123,9 +110,6 @@ const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.resp_donnees
             }
-            register={register("respDonnees", {
-              value: indicateur?.respDonnees,
-            })}
             valeurAffiché={indicateur.respDonnees || "_"}
           />
         </div>
@@ -137,9 +121,6 @@ const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.resp_donnees_email
             }
-            register={register("respDonneesEmail", {
-              value: indicateur?.respDonneesEmail,
-            })}
             valeurAffiché={indicateur.respDonneesEmail || "_"}
           />
         </div>
@@ -153,9 +134,6 @@ const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.contact_technique
             }
-            register={register("contactTechnique", {
-              value: indicateur?.contactTechnique,
-            })}
             valeurAffiché={indicateur.contactTechnique || "_"}
           />
         </div>
@@ -167,9 +145,6 @@ const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.contact_technique_email
             }
-            register={register("contactTechniqueEmail", {
-              value: indicateur?.contactTechniqueEmail,
-            })}
             valeurAffiché={indicateur.contactTechniqueEmail || "_"}
           />
         </div>
@@ -193,9 +168,6 @@ const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.reforme_prioritaire
             }
-            register={register("reformePrioritaire", {
-              value: indicateur?.reformePrioritaire,
-            })}
             valeurAffiché={indicateur.reformePrioritaire || "_"}
           />
         </div>
@@ -219,9 +191,6 @@ const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.detail_projet_annuel_perf
             }
-            register={register("detailProjetAnnuelPerf", {
-              value: indicateur?.detailProjetAnnuelPerf,
-            })}
             valeurAffiché={indicateur.detailProjetAnnuelPerf || "_"}
           />
         </div>
@@ -249,9 +218,6 @@ const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.methode_collecte
             }
-            register={register("methodeCollecte", {
-              value: indicateur?.methodeCollecte,
-            })}
             valeurAffiché={indicateur.methodeCollecte || "_"}
           />
         </div>
@@ -259,7 +225,6 @@ const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
       <div className="fr-grid-row fr-grid-row--gutters">
         <div className="fr-col-12 fr-col-md-6">
           <MetadataIndicateurSelecteur
-            erreurMessage={errors.maillePilotage?.message}
             estEnCoursDeModification={estEnCoursDeModification}
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.maille_pilotage
@@ -269,19 +234,17 @@ const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
               indicateur,
               "maille_pilotage",
             )}
-            register={register("maillePilotage")}
+            name="maillePilotage"
             valeurAffiché={mappingDisplayAcceptedValues(
               mapInformationMetadataIndicateur,
               indicateur,
               "maille_pilotage",
               "maillePilotage",
             )}
-            values={getValues("maillePilotage") || ""}
           />
         </div>
         <div className="fr-col-12 fr-col-md-6">
           <MetadataIndicateurSelecteur
-            erreurMessage={errors.couvertureTemporelle?.message}
             estEnCoursDeModification={estEnCoursDeModification}
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.couverture_temporelle
@@ -291,14 +254,13 @@ const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
               indicateur,
               "couverture_temporelle",
             )}
-            register={register("couvertureTemporelle")}
+            name="couvertureTemporelle"
             valeurAffiché={mappingDisplayAcceptedValues(
               mapInformationMetadataIndicateur,
               indicateur,
               "couverture_temporelle",
               "couvertureTemporelle",
             )}
-            values={getValues("couvertureTemporelle") || ""}
           />
         </div>
       </div>

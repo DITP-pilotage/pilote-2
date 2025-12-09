@@ -1,5 +1,4 @@
 import { FunctionComponent } from "react";
-import useDetailMetadataIndicateurForm from "@/components/PageIndicateur/FicheIndicateur/SectionDétailsMetadataIndicateur/useDetailMetadataIndicateurForm";
 import { MetadataParametrageIndicateurContrat } from "@/server/app/contrats/MetadataParametrageIndicateurContrat";
 import { MapInformationMetadataIndicateurContrat } from "@/server/app/contrats/InformationMetadataIndicateurContrat";
 import { ChantierSynthétisé } from "@/server/domain/chantier/Chantier.interface";
@@ -12,7 +11,9 @@ import {
 } from "@/components/PageIndicateur/FicheIndicateur/commons/utils";
 import { MetadataIndicateurInterrupteur } from "@/components/PageIndicateur/FicheIndicateur/commons/MetadataIndicateurInterrupteur";
 import { MetadataIndicateurSelecteurAvecRecherche } from "@/components/PageIndicateur/FicheIndicateur/commons/MetadataIndicateurSelecteurAvecRecherche";
-import useDétailsMetadataParametrePonderationIndicateurForm from "@/client/components/PageIndicateur/FicheIndicateur/SectionDétailsMetadataParametrePonderationIndicateur/useDétailsMetadataParametrePonderationndicateurForm";
+import { useMetadataIndicateurForm } from "@/components/PageIndicateur/useMetadataIndicateurForm";
+import { SélecteurOption } from "@/components/_commons/Sélecteur/Sélecteur.interface";
+import api from "@/server/infrastructure/api/trpc/api";
 
 const SectionDétailsMetadataIndicateur: FunctionComponent<{
   indicateur: MetadataParametrageIndicateurContrat;
@@ -28,11 +29,48 @@ const SectionDétailsMetadataIndicateur: FunctionComponent<{
   const {
     register,
     getValues,
+    formState: { errors },
     setValue,
-    errors,
-    metadataIndicateurs,
-    optionsIndicateurParent,
-  } = useDetailMetadataIndicateurForm();
+  } = useMetadataIndicateurForm();
+
+  const { data: metadataIndicateurs = [] } =
+    api.metadataIndicateur.récupérerMetadataIndicateurFiltrés.useQuery({
+      filtres: {
+        chantiers:
+          !getValues("indicParentCh") || getValues("indicParentCh") === "_"
+            ? ["Aucun chantier séléctionné"]
+            : [getValues("indicParentCh")],
+        perimetresMinisteriels: [],
+        estTerritorialise: false,
+        estBarometre: false,
+      },
+    });
+
+  let optionsIndicateurParent: SélecteurOption<string>[];
+  if (!getValues("indicParentCh") || getValues("indicParentCh") === "_") {
+    optionsIndicateurParent = [
+      { valeur: "_", libellé: "Selectionner d'abord un chantier" },
+    ];
+  } else {
+    optionsIndicateurParent =
+      metadataIndicateurs.length === 0
+        ? [
+            {
+              valeur: "Aucun indicateur sélectionné",
+              libellé: "Aucun indicateur parent disponible",
+            },
+          ]
+        : [
+            {
+              valeur: "Aucun indicateur selectionné",
+              libellé: "Pas d'indicateur parent",
+            },
+            ...metadataIndicateurs.map((optionIndicateur) => ({
+              valeur: optionIndicateur.indicId,
+              libellé: `${optionIndicateur.indicId} ${optionIndicateur.indicNom}`,
+            })),
+          ];
+  }
 
   const optionsParentCh = [
     ...chantiers.map((chantier) => ({
@@ -42,8 +80,7 @@ const SectionDétailsMetadataIndicateur: FunctionComponent<{
     { valeur: "_", libellé: "Aucun chantier selectionné" },
   ];
 
-  const { setValuePonderation } =
-    useDétailsMetadataParametrePonderationIndicateurForm();
+  const setValuePonderation = useMetadataIndicateurForm().setValue;
 
   function displayParentIndic(indicParentIndic: string | null) {
     return indicParentIndic
@@ -85,15 +122,13 @@ const SectionDétailsMetadataIndicateur: FunctionComponent<{
         </div>
         <div className="fr-col-12 fr-col-md-6">
           <MetadataIndicateurSelecteur
-            erreurMessage={errors.indicParentIndic?.message}
             estEnCoursDeModification={estEnCoursDeModification}
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.indic_parent_indic
             }
             listeValeur={optionsIndicateurParent}
-            register={register("indicParentIndic")}
+            name="indicParentIndic"
             valeurAffiché={displayParentIndic(indicateur.indicParentIndic)}
-            values={getValues("indicParentIndic")}
           />
         </div>
       </div>
@@ -128,7 +163,6 @@ const SectionDétailsMetadataIndicateur: FunctionComponent<{
       <div className="fr-grid-row fr-grid-row--gutters">
         <div className="fr-col-12 fr-col-md-6">
           <MetadataIndicateurSelecteur
-            erreurMessage={errors.indicType?.message}
             estEnCoursDeModification={estEnCoursDeModification}
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.indic_type
@@ -138,19 +172,17 @@ const SectionDétailsMetadataIndicateur: FunctionComponent<{
               indicateur,
               "indic_type",
             )}
-            register={register("indicType")}
+            name="indicType"
             valeurAffiché={mappingDisplayAcceptedValues(
               mapInformationMetadataIndicateur,
               indicateur,
               "indic_type",
               "indicType",
             )}
-            values={getValues("indicType")}
           />
         </div>
         <div className="fr-col-12 fr-col-md-6">
           <MetadataIndicateurSelecteur
-            erreurMessage={errors.indicSchema?.message}
             estEnCoursDeModification={estEnCoursDeModification}
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.indic_schema
@@ -160,14 +192,13 @@ const SectionDétailsMetadataIndicateur: FunctionComponent<{
               indicateur,
               "indic_schema",
             )}
-            register={register("indicSchema")}
+            name="indicSchema"
             valeurAffiché={mappingDisplayAcceptedValues(
               mapInformationMetadataIndicateur,
               indicateur,
               "indic_schema",
               "indicSchema",
             )}
-            values={getValues("indicSchema")}
           />
         </div>
       </div>
@@ -180,13 +211,11 @@ const SectionDétailsMetadataIndicateur: FunctionComponent<{
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.indic_unite
             }
-            register={register("indicUnite", { value: indicateur?.indicUnite })}
             valeurAffiché={indicateur.indicUnite || "_"}
           />
         </div>
         <div className="fr-col-12 fr-col-md-6">
           <MetadataIndicateurSelecteur
-            erreurMessage={errors.zgApplicable?.message}
             estEnCoursDeModification={estEnCoursDeModification}
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.zg_applicable
@@ -196,14 +225,13 @@ const SectionDétailsMetadataIndicateur: FunctionComponent<{
               indicateur,
               "zg_applicable",
             )}
-            register={register("zgApplicable")}
+            name="zgApplicable"
             valeurAffiché={mappingDisplayAcceptedValues(
               mapInformationMetadataIndicateur,
               indicateur,
               "zg_applicable",
               "zgApplicable",
             )}
-            values={getValues("zgApplicable")}
           />
         </div>
       </div>
@@ -245,9 +273,6 @@ const SectionDétailsMetadataIndicateur: FunctionComponent<{
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.indic_nom_baro
             }
-            register={register("indicNomBaro", {
-              value: indicateur?.indicNomBaro,
-            })}
             valeurAffiché={indicateur.indicNomBaro || "_"}
           />
         </div>
@@ -260,9 +285,6 @@ const SectionDétailsMetadataIndicateur: FunctionComponent<{
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.indic_descr_baro
             }
-            register={register("indicDescrBaro", {
-              value: indicateur?.indicDescrBaro,
-            })}
             valeurAffiché={indicateur.indicDescrBaro || "_"}
           />
         </div>
@@ -290,9 +312,6 @@ const SectionDétailsMetadataIndicateur: FunctionComponent<{
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.indic_source_url
             }
-            register={register("indicSourceUrl", {
-              value: indicateur?.indicSourceUrl,
-            })}
             valeurAffiché={indicateur.indicSourceUrl || "_"}
           />
         </div>
@@ -300,7 +319,6 @@ const SectionDétailsMetadataIndicateur: FunctionComponent<{
       <div className="fr-grid-row fr-grid-row--gutters">
         <div className="fr-col-12 fr-col-md-6">
           <MetadataIndicateurSelecteur
-            erreurMessage={errors.periodicite?.message}
             estEnCoursDeModification={estEnCoursDeModification}
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.periodicite
@@ -310,14 +328,13 @@ const SectionDétailsMetadataIndicateur: FunctionComponent<{
               indicateur,
               "periodicite",
             )}
-            register={register("periodicite")}
+            name="periodicite"
             valeurAffiché={mappingDisplayAcceptedValues(
               mapInformationMetadataIndicateur,
               indicateur,
               "periodicite",
               "periodicite",
             )}
-            values={getValues("periodicite")}
           />
         </div>
         <div className="fr-col-12 fr-col-md-6">
@@ -328,9 +345,6 @@ const SectionDétailsMetadataIndicateur: FunctionComponent<{
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.delai_disponibilite
             }
-            register={register("delaiDisponibilite", {
-              value: `${indicateur?.delaiDisponibilite}`,
-            })}
             valeurAffiché={`${indicateur.delaiDisponibilite}`}
           />
         </div>

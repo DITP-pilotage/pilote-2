@@ -3,7 +3,7 @@ import { FunctionComponent } from "react";
 import { InformationMetadataIndicateurContrat } from "@/server/app/contrats/InformationMetadataIndicateurContrat";
 import { MetadataIndicateurChamp } from "@/components/PageIndicateur/FicheIndicateur/commons/MetadataIndicateurChamp";
 import Interrupteur from "@/components/_commons/Interrupteur/Interrupteur";
-import { useForm } from "@/components/PageIndicateur/useForm";
+import { useMetadataIndicateurForm } from "@/components/PageIndicateur/useMetadataIndicateurForm";
 
 export const MetadataIndicateurInterrupteur: FunctionComponent<{
   informationMetadataIndicateur: InformationMetadataIndicateurContrat;
@@ -25,7 +25,7 @@ export const MetadataIndicateurInterrupteur: FunctionComponent<{
   valeurAffiché,
   onChangeSideEffect,
 }) => {
-  const form = useForm();
+  const form = useMetadataIndicateurForm();
   return (
     <MetadataIndicateurChamp
       estEnCoursDeModification={estEnCoursDeModification}
