@@ -26,7 +26,6 @@ const SectionDétailsMetadataParametrePonderationIndicateur: FunctionComponent<{
         <div className="fr-col-12 fr-col-md-4">
           <MetadataIndicateurInput
             disabled={!indicateurEstTerritorialise}
-            erreurMessage={form.formState.errors.poidsPourcentDept?.message}
             estEnCoursDeModification={estEnCoursDeModification}
             htmlName="poidsPourcentDept"
             informationMetadataIndicateur={
@@ -38,7 +37,6 @@ const SectionDétailsMetadataParametrePonderationIndicateur: FunctionComponent<{
         <div className="fr-col-12 fr-col-md-4">
           <MetadataIndicateurInput
             disabled={!indicateurEstTerritorialise}
-            erreurMessage={form.formState.errors.poidsPourcentReg?.message}
             estEnCoursDeModification={estEnCoursDeModification}
             htmlName="poidsPourcentReg"
             informationMetadataIndicateur={
@@ -49,7 +47,6 @@ const SectionDétailsMetadataParametrePonderationIndicateur: FunctionComponent<{
         </div>
         <div className="fr-col-12 fr-col-md-4">
           <MetadataIndicateurInput
-            erreurMessage={form.formState.errors.poidsPourcentNat?.message}
             estEnCoursDeModification={estEnCoursDeModification}
             htmlName="poidsPourcentNat"
             informationMetadataIndicateur={
@@ -62,7 +59,6 @@ const SectionDétailsMetadataParametrePonderationIndicateur: FunctionComponent<{
       <div className="fr-grid-row fr-grid-row--gutters">
         <div className="fr-col-12 fr-col-md-4">
           <MetadataIndicateurInput
-            erreurMessage={form.formState.errors.poidsPourcentEvalDept?.message}
             estEnCoursDeModification={estEnCoursDeModification}
             htmlName="poidsPourcentEvalDept"
             informationMetadataIndicateur={
@@ -73,7 +69,6 @@ const SectionDétailsMetadataParametrePonderationIndicateur: FunctionComponent<{
         </div>
         <div className="fr-col-12 fr-col-md-4">
           <MetadataIndicateurInput
-            erreurMessage={form.formState.errors.poidsPourcentEvalReg?.message}
             estEnCoursDeModification={estEnCoursDeModification}
             htmlName="poidsPourcentEvalReg"
             informationMetadataIndicateur={
@@ -84,7 +79,6 @@ const SectionDétailsMetadataParametrePonderationIndicateur: FunctionComponent<{
         </div>
         <div className="fr-col-12 fr-col-md-4">
           <MetadataIndicateurInput
-            erreurMessage={form.formState.errors.poidsPourcentEvalNat?.message}
             estEnCoursDeModification={estEnCoursDeModification}
             htmlName="poidsPourcentEvalNat"
             informationMetadataIndicateur={

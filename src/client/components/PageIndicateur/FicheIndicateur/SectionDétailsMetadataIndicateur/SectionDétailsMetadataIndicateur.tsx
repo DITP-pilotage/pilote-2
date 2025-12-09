@@ -205,7 +205,6 @@ const SectionDétailsMetadataIndicateur: FunctionComponent<{
       <div className="fr-grid-row fr-grid-row--gutters">
         <div className="fr-col-12 fr-col-md-6">
           <MetadataIndicateurInput
-            erreurMessage={errors.indicUnite?.message}
             estEnCoursDeModification={estEnCoursDeModification}
             htmlName="indicUnite"
             informationMetadataIndicateur={
@@ -267,7 +266,6 @@ const SectionDétailsMetadataIndicateur: FunctionComponent<{
         <div className="fr-col-12 fr-col-md-6">
           <MetadataIndicateurInput
             disabled={!getValues("indicIsBaro")}
-            erreurMessage={errors.indicNomBaro?.message}
             estEnCoursDeModification={estEnCoursDeModification}
             htmlName="indicNomBaro"
             informationMetadataIndicateur={
@@ -279,7 +277,6 @@ const SectionDétailsMetadataIndicateur: FunctionComponent<{
         <div className="fr-col-12 fr-col-md-6">
           <MetadataIndicateurInput
             disabled={!getValues("indicIsBaro")}
-            erreurMessage={errors.indicDescrBaro?.message}
             estEnCoursDeModification={estEnCoursDeModification}
             htmlName="indicDescrBaro"
             informationMetadataIndicateur={
@@ -306,7 +303,6 @@ const SectionDétailsMetadataIndicateur: FunctionComponent<{
         </div>
         <div className="fr-col-12 fr-col-md-6">
           <MetadataIndicateurInput
-            erreurMessage={errors.indicSourceUrl?.message}
             estEnCoursDeModification={estEnCoursDeModification}
             htmlName="indicSourceUrl"
             informationMetadataIndicateur={
@@ -339,7 +335,6 @@ const SectionDétailsMetadataIndicateur: FunctionComponent<{
         </div>
         <div className="fr-col-12 fr-col-md-6">
           <MetadataIndicateurInput
-            erreurMessage={errors.delaiDisponibilite?.message}
             estEnCoursDeModification={estEnCoursDeModification}
             htmlName="delaiDisponibilite"
             informationMetadataIndicateur={

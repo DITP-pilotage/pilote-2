@@ -6,7 +6,6 @@ import Input from "@/components/_commons/Input/Input";
 import { useMetadataIndicateurForm } from "@/components/PageIndicateur/useMetadataIndicateurForm";
 
 export const MetadataIndicateurInput: FunctionComponent<{
-  erreurMessage?: string;
   htmlName:
     | "mailles"
     | "frequenceTerritoriale"
@@ -36,7 +35,6 @@ export const MetadataIndicateurInput: FunctionComponent<{
   valeurAffiché: string;
   disabled?: boolean;
 }> = ({
-  erreurMessage,
   htmlName,
   informationMetadataIndicateur,
   estEnCoursDeModification,
@@ -57,7 +55,7 @@ export const MetadataIndicateurInput: FunctionComponent<{
           return (
             <Input
               disabled={disabled}
-              erreurMessage={erreurMessage}
+              erreurMessage={form.formState.errors[htmlName]?.message}
               htmlName={htmlName}
               onChange={field.onChange}
               type="text"

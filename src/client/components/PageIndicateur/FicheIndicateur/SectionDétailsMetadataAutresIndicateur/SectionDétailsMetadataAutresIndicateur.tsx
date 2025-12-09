@@ -33,7 +33,6 @@ const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
       <div className="fr-grid-row fr-grid-row--gutters">
         <div className="fr-col-12 fr-col-md-6">
           <MetadataIndicateurInput
-            erreurMessage={errors.mailles?.message}
             estEnCoursDeModification={estEnCoursDeModification}
             htmlName="mailles"
             informationMetadataIndicateur={
@@ -44,7 +43,6 @@ const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
         </div>
         <div className="fr-col-12 fr-col-md-6">
           <MetadataIndicateurInput
-            erreurMessage={errors.frequenceTerritoriale?.message}
             estEnCoursDeModification={estEnCoursDeModification}
             htmlName="frequenceTerritoriale"
             informationMetadataIndicateur={
@@ -57,7 +55,6 @@ const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
       <div className="fr-grid-row fr-grid-row--gutters">
         <div className="fr-col-12 fr-col-md-6">
           <MetadataIndicateurInput
-            erreurMessage={errors.adminSource?.message}
             estEnCoursDeModification={estEnCoursDeModification}
             htmlName="adminSource"
             informationMetadataIndicateur={
@@ -68,7 +65,6 @@ const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
         </div>
         <div className="fr-col-12 fr-col-md-6">
           <MetadataIndicateurInput
-            erreurMessage={errors.siSource?.message}
             estEnCoursDeModification={estEnCoursDeModification}
             htmlName="siSource"
             informationMetadataIndicateur={
@@ -91,7 +87,6 @@ const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
         </div>
         <div className="fr-col-12 fr-col-md-6">
           <MetadataIndicateurInput
-            erreurMessage={errors.modalitesDonneeOuverte?.message}
             estEnCoursDeModification={estEnCoursDeModification}
             htmlName="modalitesDonneeOuverte"
             informationMetadataIndicateur={
@@ -104,7 +99,6 @@ const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
       <div className="fr-grid-row fr-grid-row--gutters">
         <div className="fr-col-12 fr-col-md-6">
           <MetadataIndicateurInput
-            erreurMessage={errors.respDonnees?.message}
             estEnCoursDeModification={estEnCoursDeModification}
             htmlName="respDonnees"
             informationMetadataIndicateur={
@@ -115,7 +109,6 @@ const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
         </div>
         <div className="fr-col-12 fr-col-md-6">
           <MetadataIndicateurInput
-            erreurMessage={errors.respDonneesEmail?.message}
             estEnCoursDeModification={estEnCoursDeModification}
             htmlName="respDonneesEmail"
             informationMetadataIndicateur={
@@ -128,7 +121,6 @@ const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
       <div className="fr-grid-row fr-grid-row--gutters">
         <div className="fr-col-12 fr-col-md-6">
           <MetadataIndicateurInput
-            erreurMessage={errors.contactTechnique?.message}
             estEnCoursDeModification={estEnCoursDeModification}
             htmlName="contactTechnique"
             informationMetadataIndicateur={
@@ -139,7 +131,6 @@ const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
         </div>
         <div className="fr-col-12 fr-col-md-6">
           <MetadataIndicateurInput
-            erreurMessage={errors.contactTechniqueEmail?.message}
             estEnCoursDeModification={estEnCoursDeModification}
             htmlName="contactTechniqueEmail"
             informationMetadataIndicateur={
@@ -162,7 +153,6 @@ const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
         </div>
         <div className="fr-col-12 fr-col-md-6">
           <MetadataIndicateurInput
-            erreurMessage={errors.reformePrioritaire?.message}
             estEnCoursDeModification={estEnCoursDeModification}
             htmlName="reformePrioritaire"
             informationMetadataIndicateur={
@@ -185,7 +175,6 @@ const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
         </div>
         <div className="fr-col-12 fr-col-md-6">
           <MetadataIndicateurInput
-            erreurMessage={errors.detailProjetAnnuelPerf?.message}
             estEnCoursDeModification={estEnCoursDeModification}
             htmlName="detailProjetAnnuelPerf"
             informationMetadataIndicateur={
@@ -212,7 +201,6 @@ const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
         </div>
         <div className="fr-col-12 fr-col-md-6">
           <MetadataIndicateurInput
-            erreurMessage={errors.methodeCollecte?.message}
             estEnCoursDeModification={estEnCoursDeModification}
             htmlName="methodeCollecte"
             informationMetadataIndicateur={
