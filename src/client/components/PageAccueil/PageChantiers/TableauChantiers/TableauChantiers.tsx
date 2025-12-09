@@ -52,16 +52,18 @@ const TableauChantiers: FunctionComponent<TableauChantiersProps> = ({
       chantiersArchives={chantiersSontArchives}
       className="fr-table fr-m-0 fr-p-0"
     >
-      <div className="tableau-actions fr-mb-3v">
-        <div className="tableau-actions-gauche">
-          <div className="barre-de-recherche">
+      <div className="flex flex-col justify-between md:flex-row gap-4 md:items-center">
+        <div className="flex flex-col md:flex-row gap-4">
+          <div className="w-80">
             <BarreDeRecherche
               changementDeLaRechercheCallback={changementDeLaRechercheCallback}
               valeur={valeurDeLaRecherche}
             />
           </div>
           <Interrupteur
-            auChangement={async () => {
+            checked={estGroupe}
+            libellé="Grouper par ministère"
+            onChange={async () => {
               sauvegarderFiltres({ groupeParMinistere: !estGroupe });
               setPagination(1);
               await setEstGroupe(!estGroupe);
@@ -70,9 +72,6 @@ const TableauChantiers: FunctionComponent<TableauChantiersProps> = ({
                 undefined
               );
             }}
-            checked={estGroupe}
-            id="interrupteur-grouper-par-ministères"
-            libellé="Grouper par ministère"
           />
         </div>
         <div className="tableau-actions-droite">

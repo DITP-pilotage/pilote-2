@@ -1,4 +1,4 @@
-import { SubmitHandler, useForm } from "react-hook-form";
+import { SubmitHandler, useForm, useFormContext } from "react-hook-form";
 import { useState } from "react";
 import { useRouter } from "next/router";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -7,7 +7,6 @@ import api from "@/server/infrastructure/api/trpc/api";
 import { récupérerUnCookie } from "@/client/utils/cookies";
 import { MetadataParametrageIndicateurContrat } from "@/server/app/contrats/MetadataParametrageIndicateurContrat";
 import { MetadataParametrageParametreCalculIndicateurForm } from "@/components/PageIndicateur/FicheIndicateur/SectionDétailsMetadataParametreCalculIndicateur/useDétailsMetadataParametreCalculIndicateurForm";
-import { MetadataParametrageAutresIndicateurForm } from "@/components/PageIndicateur/FicheIndicateur/SectionDétailsMetadataAutresIndicateur/useDétailsMetadataAutresIndicateurForm";
 import { MetadataSelectionIndicateurForm } from "@/components/PageIndicateur/FicheIndicateur/SectionSelectionIndicateur/useSelectionIndicateurForm";
 import { validationMetadataIndicateurFormulaire } from "@/validation/metadataIndicateur";
 import AlerteProps from "@/components/_commons/Alerte/Alerte.interface";
@@ -16,7 +15,31 @@ import { MetadataParametrageParametreIndicateurRegionaleForm } from "@/component
 import { MetadataParametrageParametreIndicateurNationaleForm } from "@/components/PageIndicateur/FicheIndicateur/SectionDétailsMetadataParametreIndicateurNationale/useDétailsMetadataParametreIndicateurNationaleForm";
 import { MetadataParametrageParametrePonderationIndicateurForm } from "@/components/PageIndicateur/FicheIndicateur/SectionDétailsMetadataParametrePonderationIndicateur/useDétailsMetadataParametrePonderationndicateurForm";
 
-type MetadataIndicateurForm = MetadataParametrageIndicateurForm &
+type MetadataParametrageAutresIndicateurForm = {
+  indicIsPerseverant: boolean;
+  indicIsPhare: boolean;
+  reformePrioritaire: string | null;
+  projetAnnuelPerf: boolean;
+  detailProjetAnnuelPerf: string | null;
+  indicTerritorialise: boolean;
+  frequenceTerritoriale: string;
+  mailles: string | null;
+  adminSource: string;
+  methodeCollecte: string | null;
+  siSource: string | null;
+  donneeOuverte: boolean;
+  modalitesDonneeOuverte: string | null;
+  respDonnees: string | null;
+  respDonneesEmail: string | null;
+  contactTechnique: string | null;
+  contactTechniqueEmail: string;
+  commentaire: string | null;
+  maillePilotage: string;
+  cibleAttendue: boolean;
+  couvertureTemporelle: string;
+};
+
+export type MetadataIndicateurForm = MetadataParametrageIndicateurForm &
   MetadataParametrageParametreCalculIndicateurForm &
   MetadataParametrageParametreIndicateurDepartementaleForm &
   MetadataParametrageParametreIndicateurRegionaleForm &

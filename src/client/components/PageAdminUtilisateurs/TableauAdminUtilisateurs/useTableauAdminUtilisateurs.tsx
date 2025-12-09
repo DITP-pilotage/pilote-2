@@ -33,7 +33,7 @@ const reactTableColonnesHelper =
   createColumnHelper<UtilisateurListeGestionContrat>();
 const colonnes = [
   reactTableColonnesHelper.accessor("email", {
-    header: "Adresse électronique",
+    header: "Email",
     cell: (props) => props.getValue(),
   }),
   reactTableColonnesHelper.accessor("nom", {
@@ -56,7 +56,7 @@ const colonnes = [
     (row) =>
       `${formaterDate(row.dateModification, "DD/MM/YYYY")} par ${row.auteurModification}`,
     {
-      header: "Dernière modification",
+      header: "Dernière modif.",
       cell: (props) => props.getValue(),
       sortingFn: (a, b) => {
         const dateA = new Date(a.original.dateModification);

@@ -6,6 +6,7 @@ export const useMessageInformationForm = () => {
     register,
     watch,
     getValues,
+    setValue,
     formState: { errors },
   } = useFormContext<ContenuForm>();
 
@@ -16,5 +17,6 @@ export const useMessageInformationForm = () => {
     register,
     errors,
     getValues,
+    setValue,
   };
 };

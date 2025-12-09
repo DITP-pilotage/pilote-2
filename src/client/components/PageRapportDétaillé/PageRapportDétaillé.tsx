@@ -136,10 +136,9 @@ const PageRapportDétaillé: FunctionComponent<PageRapportDétailléProps> = ({
             />
             <div className="fr-mb-3w interrupteur-chantiers">
               <Interrupteur
-                auChangement={setAfficherLesChantiers}
                 checked={afficherLesChantiers}
-                id="afficher-chantiers"
                 libellé="Afficher le détail des chantiers"
+                onChange={setAfficherLesChantiers}
               />
             </div>
             <RapportDétailléVueDEnsemble

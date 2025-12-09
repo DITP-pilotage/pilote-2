@@ -47,12 +47,11 @@ export const EtapeDonneeChantierACollecter = () => {
       </p>
       <div className="flex justify-end">
         <Interrupteur
-          auChangement={setAfficherDetail}
           checked={afficherDetail}
           className="fr-pb-0"
           direction="inverse"
-          id="afficher-detail"
           libellé="afficher le détail"
+          onChange={setAfficherDetail}
         />
       </div>
       <div className="fr-fieldset__element fr-pl-0 fr-pb-2w border-b">

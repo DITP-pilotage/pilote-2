@@ -8,7 +8,6 @@ import { useCurrentApplication } from "@/client/hooks/useCurrentApplication";
 import { récupérerUnCookie } from "@/client/utils/cookies";
 import { BoutonContacterEquipePilote } from "@/components/PageAccueil/BoutonContacterEquipePilote";
 import { Utilisateur } from "@/components/_commons/MiseEnPage/EnTete/Utilisateur/Utilisateur";
-import { BoutonSeConnecter } from "@/components/_commons/BoutonSeConnecter";
 import MenuItemGestionContenu from "@/components/_commons/MiseEnPage/Navigation/MenuItemGestionContenu";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
 
@@ -97,19 +96,9 @@ export const BaseNavigation = ({ pages }: { pages: LienNavigation[] }) => {
         >
           Fermer
         </button>
-        <div className="fr-header__menu-links">
-          <ul>
-            <li className="fr-mr-md-2w">
-              <BoutonContacterEquipePilote />
-            </li>
-            <li>
-              {session?.user?.email ? (
-                <Utilisateur email={session.user.email} />
-              ) : (
-                <BoutonSeConnecter />
-              )}
-            </li>
-          </ul>
+        <div className="fr-header__menu-links flex flex-column gap-4 divide-y divide-gray-200 pb-4">
+          <BoutonContacterEquipePilote />
+          <Utilisateur email={session!.user!.email!} />
         </div>
         <nav
           aria-label="Menu principal"

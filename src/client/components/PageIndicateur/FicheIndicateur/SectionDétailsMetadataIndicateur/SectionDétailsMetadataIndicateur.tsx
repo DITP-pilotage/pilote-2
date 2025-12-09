@@ -210,19 +210,17 @@ const SectionDétailsMetadataIndicateur: FunctionComponent<{
       <div className="fr-grid-row fr-grid-row--gutters">
         <div className="fr-col-12 fr-col-md-6">
           <MetadataIndicateurInterrupteur
-            auChangement={(valeur) => {
-              setValue("indicTerritorialise", valeur);
-              if (!valeur) {
-                setValuePonderation("poidsPourcentDept", "0");
-                setValuePonderation("poidsPourcentReg", "0");
-              }
-            }}
             estEnCoursDeModification={estEnCoursDeModification}
             htmlName="indicTerritorialise"
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.indic_territorialise
             }
-            isChecked={getValues("indicTerritorialise")}
+            onChangeSideEffect={(valeur) => {
+              if (!valeur) {
+                setValuePonderation("poidsPourcentDept", "0");
+                setValuePonderation("poidsPourcentReg", "0");
+              }
+            }}
             valeurAffiché={indicateur.indicTerritorialise ? "Oui" : "Non"}
           />
         </div>
@@ -233,8 +231,6 @@ const SectionDétailsMetadataIndicateur: FunctionComponent<{
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.indic_is_baro
             }
-            isChecked={getValues("indicIsBaro")}
-            register={register("indicIsBaro")}
             valeurAffiché={indicateur.indicIsBaro ? "Oui" : "Non"}
           />
         </div>

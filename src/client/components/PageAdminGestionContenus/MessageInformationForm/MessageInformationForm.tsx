@@ -5,10 +5,10 @@ import { useMessageInformationForm } from "@/components/PageAdminGestionContenus
 import TextArea from "@/components/_commons/TextArea/TextArea";
 
 const MessageInformationForm: FunctionComponent<{}> = () => {
-  const { errors, register, getValues } = useMessageInformationForm();
+  const { errors, register, getValues, setValue } = useMessageInformationForm();
   return (
-    <>
-      <div className="flex flex-column fr-pb-2w">
+    <div className="flex flex-col gap-4">
+      <div className="flex flex-column">
         <p className="fr-text--md bold fr-mb-1v relative">
           Type de message et de bannière
         </p>
@@ -36,15 +36,12 @@ const MessageInformationForm: FunctionComponent<{}> = () => {
           register={register("bandeauTexte")}
         />
       </div>
-      <div className="flex fr-pb-2w">
-        <Interrupteur
-          checked={getValues("isBandeauActif")}
-          id="isBandeauActif"
-          libellé="Activer la bannière"
-          messageSecondaire="Activer la bannière pour la rendre visible à tous les utilisateurs de PILOTE"
-          register={register("isBandeauActif")}
-        />
-      </div>
+      <Interrupteur
+        checked={getValues("isBandeauActif")}
+        libellé="Activer la bannière"
+        messageSecondaire="Activer la bannière pour la rendre visible à tous les utilisateurs de PILOTE"
+        onChange={(isChecked) => setValue("isBandeauActif", isChecked)}
+      />
       <div className="w-full flex justify-end">
         <button
           className="fr-btn fr-mr-2w"
@@ -54,7 +51,7 @@ const MessageInformationForm: FunctionComponent<{}> = () => {
           Valider les modifications
         </button>
       </div>
-    </>
+    </div>
   );
 };
 

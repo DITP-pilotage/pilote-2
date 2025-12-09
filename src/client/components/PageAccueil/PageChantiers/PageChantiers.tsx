@@ -257,16 +257,12 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
                 </Infobulle>
               </TitreInfobulleConteneur>
             </div>
-            <div className="fr-grid-row fr-mx-n1v fr-mx-md-n1w">
+            <div className="flex flex-col sm:flex-row gap-2">
               {remontéesAlertes.map(
                 ({ nomCritère, libellé, nombre, estActivée }) =>
                   (process.env.NEXT_PUBLIC_FF_ALERTES_BAISSE === "true" ||
                     nomCritère !== "estEnAlerteBaisse") && (
-                    <div
-                      className="fr-col fr-px-1v fr-px-md-1w"
-                      key={libellé}
-                      title={libellé}
-                    >
+                    <div key={libellé} title={libellé}>
                       <RemontéeAlerte
                         estActivée={estActivée}
                         libellé={libellé}

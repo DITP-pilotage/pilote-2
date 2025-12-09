@@ -21,8 +21,12 @@ const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
   estEnCoursDeModification,
   mapInformationMetadataIndicateur,
 }) => {
-  const { register, getValues, errors } =
-    useSectionDétailsMetadataAutresIndicateurForm();
+  const {
+    register,
+    getValues,
+    formState: { errors },
+    control,
+  } = useSectionDétailsMetadataAutresIndicateurForm();
   return (
     <div>
       <Titre baliseHtml="h2" className="fr-h5">
@@ -92,8 +96,6 @@ const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.donnee_ouverte
             }
-            isChecked={getValues("donneeOuverte")}
-            register={register("donneeOuverte")}
             valeurAffiché={indicateur.donneeOuverte ? "Oui" : "Non"}
           />
         </div>
@@ -180,8 +182,6 @@ const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.indic_is_perseverant
             }
-            isChecked={getValues("indicIsPerseverant")}
-            register={register("indicIsPerseverant")}
             valeurAffiché={indicateur.indicIsPerseverant ? "Oui" : "Non"}
           />
         </div>
@@ -208,8 +208,6 @@ const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.projet_annuel_perf
             }
-            isChecked={getValues("projetAnnuelPerf")}
-            register={register("projetAnnuelPerf")}
             valeurAffiché={indicateur.projetAnnuelPerf ? "Oui" : "Non"}
           />
         </div>
@@ -312,8 +310,6 @@ const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.cible_attendue
             }
-            isChecked={getValues("cibleAttendue")}
-            register={register("cibleAttendue")}
             valeurAffiché={indicateur.cibleAttendue ? "Oui" : "Non"}
           />
         </div>
@@ -324,8 +320,6 @@ const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.indic_is_phare
             }
-            isChecked={getValues("indicIsPhare")}
-            register={register("indicIsPhare")}
             valeurAffiché={indicateur.indicIsPhare ? "Oui" : "Non"}
           />
         </div>
