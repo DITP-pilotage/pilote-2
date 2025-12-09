@@ -1,7 +1,7 @@
 /* eslint-disable react/iframe-missing-sandbox */
 import { FunctionComponent, useRef } from "react";
 import { useSession } from "next-auth/react";
-import Modale from "@/components/_commons/Modale/Modale";
+import Modale__legacy from "@/components/_commons/Modale/Modale__legacy";
 import api from "@/server/infrastructure/api/trpc/api";
 import { récupérerUnCookie } from "@/client/utils/cookies";
 const ID_HTML_MODALE_VIDEO_ACCUEIL = "modale-video-accueil";
@@ -14,7 +14,7 @@ export const ModaleVideoAccueil: FunctionComponent = () => {
     api.utilisateur.desactiverVideoAccueil.useMutation();
 
   return (
-    <Modale
+    <Modale__legacy
       fermetureCallback={() => {
         if (session?.user.id) {
           if (iframeRef.current) {
@@ -53,6 +53,6 @@ export const ModaleVideoAccueil: FunctionComponent = () => {
           </button>
         </div>
       </div>
-    </Modale>
+    </Modale__legacy>
   );
 };

@@ -1,6 +1,6 @@
 import { FunctionComponent } from "react";
 import { FormProvider } from "react-hook-form";
-import Modale from "@/components/_commons/Modale/Modale";
+import Modale__legacy from "@/components/_commons/Modale/Modale__legacy";
 
 import useModalePropositionValeurAvancementV2, {
   estChampMoisValide,
@@ -56,7 +56,7 @@ export const ModalePropositionValeurAvancementV2: FunctionComponent<{
   };
 
   return (
-    <Modale
+    <Modale__legacy
       fermetureCallback={refreshRouter}
       idHtml={generatedHTMLID}
       tailleModale="lg"
@@ -457,6 +457,6 @@ export const ModalePropositionValeurAvancementV2: FunctionComponent<{
           )}
         </div>
       )}
-    </Modale>
+    </Modale__legacy>
   );
 };

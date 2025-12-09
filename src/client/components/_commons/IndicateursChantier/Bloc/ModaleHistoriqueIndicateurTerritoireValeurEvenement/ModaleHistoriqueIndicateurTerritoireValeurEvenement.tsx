@@ -1,6 +1,6 @@
 import { Fragment, FunctionComponent } from "react";
 import clsx from "clsx";
-import Modale from "@/components/_commons/Modale/Modale";
+import Modale__legacy from "@/components/_commons/Modale/Modale__legacy";
 import Loader from "@/components/_commons/Loader/Loader";
 import { formaterDate } from "@/client/utils/date/date";
 import { Infobulle } from "@/components/_commons/Infobulle/Infobulle";
@@ -186,7 +186,7 @@ export const ModaleHistoriqueIndicateurTerritoireValeurEvenement: FunctionCompon
   );
 
   return (
-    <Modale
+    <Modale__legacy
       idHtml={generatedHTMLID}
       scrollable
       tailleModale="lg"
@@ -313,6 +313,6 @@ export const ModaleHistoriqueIndicateurTerritoireValeurEvenement: FunctionCompon
           })}
         </div>
       )}
-    </Modale>
+    </Modale__legacy>
   );
 };

@@ -1,5 +1,5 @@
 import { FunctionComponent } from "react";
-import Modale from "@/components/_commons/Modale/Modale";
+import Modale__legacy from "@/components/_commons/Modale/Modale__legacy";
 import { FicheEvaluation } from "@/server/evaluation/domain/FicheEvaluation";
 import { Icone } from "@/components/_commons/Icone";
 import { LockIcon } from "@/components/_commons/Icones/LockIcon";
@@ -24,7 +24,11 @@ export const ModaleTransmissionDITP: FunctionComponent<
   } = useModaleVerrouillageConsolidation(fichesConsolidation);
 
   return (
-    <Modale idHtml={idHtml} tailleModale="lg" titre="Transmettre à la DITP">
+    <Modale__legacy
+      idHtml={idHtml}
+      tailleModale="lg"
+      titre="Transmettre à la DITP"
+    >
       <div className="flex flex-col gap-4">
         <p className="text-gray-600">
           Sélectionnez les territoires que vous souhaitez transmettre à la DITP
@@ -120,6 +124,6 @@ export const ModaleTransmissionDITP: FunctionComponent<
           </button>
         </div>
       </div>
-    </Modale>
+    </Modale__legacy>
   );
 };

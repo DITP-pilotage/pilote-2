@@ -1,6 +1,6 @@
 import { FunctionComponent } from "react";
 import { createPortal } from "react-dom";
-import Modale from "@/components/_commons/Modale/Modale";
+import Modale__legacy from "@/components/_commons/Modale/Modale__legacy";
 
 interface ConfirmerValidationSaisieProps {
   generatedHTMLID: string;
@@ -19,7 +19,7 @@ export const ConfirmerValidationSaisie: FunctionComponent<
       : "votre manière de servir";
 
   return createPortal(
-    <Modale idHtml={generatedHTMLID} tailleModale="md">
+    <Modale__legacy idHtml={generatedHTMLID} tailleModale="md">
       <h2 className="fr-h4 fr-mb-2w">Confirmation de validation</h2>
       <p className="fr-text fr-mb-2w">
         Vous êtes sur le point de valider définitivement l'auto-évaluation de{" "}
@@ -51,7 +51,7 @@ export const ConfirmerValidationSaisie: FunctionComponent<
           Confirmer la validation
         </button>
       </div>
-    </Modale>,
+    </Modale__legacy>,
     document.body,
   );
 };

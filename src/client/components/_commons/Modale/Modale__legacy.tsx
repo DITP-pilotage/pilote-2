@@ -8,7 +8,7 @@ import ModaleProps from "./Modale.interface";
 import ModaleStyled from "./Modale.styled";
 import useModale from "./useModale";
 
-const Modale: FunctionComponent<ModaleProps> = ({
+const Modale__legacy: FunctionComponent<ModaleProps> = ({
   children,
   titre,
   sousTitre,
@@ -69,4 +69,4 @@ const Modale: FunctionComponent<ModaleProps> = ({
   );
 };
 
-export default Modale;
+export default Modale__legacy;

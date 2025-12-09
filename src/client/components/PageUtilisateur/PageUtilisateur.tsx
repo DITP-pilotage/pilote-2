@@ -8,7 +8,7 @@ import Titre from "@/components/_commons/Titre/Titre";
 import Bloc from "@/components/_commons/Bloc/Bloc";
 import FicheUtilisateur from "@/components/PageUtilisateur/FicheUtilisateur/FicheUtilisateur";
 import Alerte from "@/components/_commons/Alerte/Alerte";
-import Modale from "@/client/components/_commons/Modale/Modale";
+import Modale__legacy from "@/components/_commons/Modale/Modale__legacy";
 import { Bouton } from "@/client/components/_commons/Bouton/Bouton";
 import BandeauInformation from "@/components/_commons/BandeauInformation/BandeauInformation";
 import { useGestionTokenAPI } from "@/components/PageAdminGestionTokenAPI/useGestionTokenAPI";
@@ -133,7 +133,7 @@ const PageUtilisateur: FunctionComponent<PageUtilisateurProps> = ({
                         </p>
                       </div>
                     ) : null}
-                    <Modale
+                    <Modale__legacy
                       idHtml="desactiver-compte"
                       titre="Désactivation de compte"
                     >
@@ -155,7 +155,7 @@ const PageUtilisateur: FunctionComponent<PageUtilisateurProps> = ({
                           variant="primary"
                         />
                       </div>
-                    </Modale>
+                    </Modale__legacy>
                   </div>
                 )}
               {!!utilisateur.dateDesactivation &&
@@ -173,7 +173,7 @@ const PageUtilisateur: FunctionComponent<PageUtilisateurProps> = ({
                     >
                       Réactiver le compte
                     </button>
-                    <Modale
+                    <Modale__legacy
                       idHtml="reactiver-compte"
                       titre="Réactivation de compte"
                     >
@@ -197,7 +197,7 @@ const PageUtilisateur: FunctionComponent<PageUtilisateurProps> = ({
                           variant="primary"
                         />
                       </div>
-                    </Modale>
+                    </Modale__legacy>
                   </div>
                 )}
             </div>

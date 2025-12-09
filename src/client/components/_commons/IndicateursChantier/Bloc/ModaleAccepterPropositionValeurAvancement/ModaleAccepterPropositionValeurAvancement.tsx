@@ -1,6 +1,6 @@
 import { FunctionComponent } from "react";
 import { FormProvider } from "react-hook-form";
-import Modale from "@/components/_commons/Modale/Modale";
+import Modale__legacy from "@/components/_commons/Modale/Modale__legacy";
 import Indicateur from "@/server/domain/indicateur/Indicateur.interface";
 import type { DétailsIndicateur } from "@/server/domain/indicateur/DétailsIndicateur.interface";
 
@@ -47,7 +47,7 @@ export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<{
   const decision = reactHookForm.watch("decision");
 
   return (
-    <Modale
+    <Modale__legacy
       fermetureCallback={refreshRouter}
       idHtml={generatedHTMLID}
       tailleModale="lg"
@@ -369,6 +369,6 @@ export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<{
           </span>
         </div>
       )}
-    </Modale>
+    </Modale__legacy>
   );
 };

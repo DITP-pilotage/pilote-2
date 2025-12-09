@@ -1,5 +1,5 @@
 import { FunctionComponent } from "react";
-import Modale from "@/components/_commons/Modale/Modale";
+import Modale__legacy from "@/components/_commons/Modale/Modale__legacy";
 import Titre from "@/components/_commons/Titre/Titre";
 import Input from "@/components/_commons/Input/Input";
 import { useModaleInscriptionInfolettre } from "./useModaleInscriptionInfolettre";
@@ -16,7 +16,7 @@ export const ModaleInscriptionInfolettre: FunctionComponent = () => {
   } = useModaleInscriptionInfolettre();
 
   return (
-    <Modale
+    <Modale__legacy
       fermetureCallback={handleFermetureModale}
       idHtml={ID_HTML_MODALE_INSCRIPTION_INFOLETTRE}
       tailleModale="md"
@@ -99,6 +99,6 @@ export const ModaleInscriptionInfolettre: FunctionComponent = () => {
           </span>
         </div>
       )}
-    </Modale>
+    </Modale__legacy>
   );
 };

@@ -1,5 +1,5 @@
 import { Fragment } from "react";
-import Modale from "@/components/_commons/Modale/Modale";
+import Modale__legacy from "@/components/_commons/Modale/Modale__legacy";
 import MétéoBadge from "@/components/_commons/Meteo/Badge/MétéoBadge";
 import { MeteoPicto } from "@/components/_commons/Meteo/Picto/MeteoPicto";
 import SynthèseDesRésultatsAffichage from "@/components/PageChantier/SynthèseDesRésultatsChantier/Affichage/Affichage";
@@ -27,7 +27,7 @@ const SynthèseDesRésultatsHistorique = () => {
       >
         Voir l'historique
       </BoutonSousLigné>
-      <Modale
+      <Modale__legacy
         idHtml={ID_HTML}
         ouvertureCallback={récupérerHistoriqueSynthèseDesRésultats}
         sousTitre={territoireSélectionné.nomAffiché}
@@ -59,7 +59,7 @@ const SynthèseDesRésultatsHistorique = () => {
             <p>Chargement de l'historique...</p>
           )}
         </SynthèseDesRésultatsHistoriqueStyled>
-      </Modale>
+      </Modale__legacy>
     </>
   );
 };

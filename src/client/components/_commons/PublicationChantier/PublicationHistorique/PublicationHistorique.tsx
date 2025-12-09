@@ -1,5 +1,5 @@
 import { Fragment, FunctionComponent, useMemo } from "react";
-import Modale from "@/components/_commons/Modale/Modale";
+import Modale__legacy from "@/components/_commons/Modale/Modale__legacy";
 import { BoutonSousLigné } from "@/components/_commons/BoutonSousLigné/BoutonSousLigné";
 import PublicationAffichage from "@/components/_commons/PublicationChantier/PublicationAffichage/PublicationAffichage";
 import PublicationHistoriqueProps from "./PublicationHistorique.interface";
@@ -26,7 +26,7 @@ const PublicationHistorique: FunctionComponent<PublicationHistoriqueProps> = ({
       >
         Voir l'historique
       </BoutonSousLigné>
-      <Modale
+      <Modale__legacy
         idHtml={ID_HTML}
         ouvertureCallback={récupérerPublications}
         sousTitre={nomTerritoire}
@@ -49,7 +49,7 @@ const PublicationHistorique: FunctionComponent<PublicationHistoriqueProps> = ({
             <p>Chargement de l'historique...</p>
           )}
         </div>
-      </Modale>
+      </Modale__legacy>
     </>
   );
 };

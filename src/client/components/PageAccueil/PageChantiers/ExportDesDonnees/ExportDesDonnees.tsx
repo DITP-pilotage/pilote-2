@@ -1,7 +1,7 @@
 import "@gouvfr/dsfr/dist/component/radio/radio.min.css";
 import { FunctionComponent } from "react";
 import { parseAsInteger, parseAsStringLiteral, useQueryState } from "nuqs";
-import Modale from "@/components/_commons/Modale/Modale";
+import Modale__legacy from "@/components/_commons/Modale/Modale__legacy";
 import IndicateurDEtapes from "@/components/_commons/IndicateurDEtapes/IndicateurDEtapes";
 import { EtapeContenuAExporter } from "@/components/PageAccueil/PageChantiers/ExportDesDonnees/EtapeContenuAExporter";
 import { EtapeDonneeChantierACollecter } from "@/components/PageAccueil/PageChantiers/ExportDesDonnees/EtapeDonneeChantierACollecter";
@@ -67,7 +67,7 @@ export const ExportDesDonnees: FunctionComponent<{
   );
 
   return (
-    <Modale
+    <Modale__legacy
       fermetureCallback={fermetureCallback}
       idHtml={idHtmlModale}
       tailleModale="lg"
@@ -97,6 +97,6 @@ export const ExportDesDonnees: FunctionComponent<{
         Stepper.ETAPE_DONNEE_EN_COURS_DE_TELECHARGEMENT.numeroEtape ? (
         <EtapeDonneeEnCoursDeTelechargement />
       ) : null}
-    </Modale>
+    </Modale__legacy>
   );
 };
