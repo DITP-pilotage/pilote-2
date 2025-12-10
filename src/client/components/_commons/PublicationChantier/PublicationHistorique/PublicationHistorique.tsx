@@ -21,6 +21,7 @@ const PublicationHistorique: FunctionComponent<PublicationHistoriqueProps> = ({
           récupérerPublications();
         }
       }}
+      sousTitre={nomTerritoire}
       title={`Historique - ${entité}`}
       trigger={
         <BoutonSousLigné className="fr-mt-1w" type="button">
@@ -28,10 +29,6 @@ const PublicationHistorique: FunctionComponent<PublicationHistoriqueProps> = ({
         </BoutonSousLigné>
       }
     >
-      {nomTerritoire ? (
-        <p className="fr-text--lg bold">{nomTerritoire}</p>
-      ) : null}
-
       <div>
         {publications ? (
           publications.map(

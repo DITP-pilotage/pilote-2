@@ -7,6 +7,7 @@ import { clsxm } from "@/utils/clsxm";
 export const Modal = ({
   trigger,
   title,
+  sousTitre,
   titleHidden = false,
   children,
   ...props
@@ -15,6 +16,7 @@ export const Modal = ({
   "open" | "onOpenChange" | "children"
 > & {
   title: ReactNode;
+  sousTitre?: string;
   titleHidden?: boolean;
   trigger?: ReactNode;
 }) => {
@@ -45,6 +47,7 @@ export const Modal = ({
             >
               {title}
             </Dialog.Title>
+            {sousTitre ? <p className="fr-text--lg bold">{sousTitre}</p> : null}
             {children}
           </div>
         </Dialog.Content>
