@@ -20,8 +20,8 @@ export const Modal = ({
       {trigger ? <Dialog.Trigger asChild>{trigger}</Dialog.Trigger> : null}
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 !bg-black/50 z-10" />
-        <Dialog.Content className="fixed inset-8 z-10 flex items-center justify-center !pointer-events-none">
-          <div className="relative w-full max-w-[1000px] bg-white p-8 rounded-md shadow-md !pointer-events-auto">
+        <Dialog.Content className="fixed inset-0 md:inset-8 z-10 flex items-end md:items-center md:justify-center !pointer-events-none">
+          <div className="relative w-full max-w-[1000px] bg-white p-8 rounded-t-md md:rounded-md shadow-md !pointer-events-auto [word-break:break-word]">
             <Dialog.Close asChild>
               <button
                 className="!text-primary flex align-center gap-1 px-4 py-2 absolute top-2 right-4 !text-sm"
