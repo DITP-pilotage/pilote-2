@@ -1,6 +1,6 @@
-import { FunctionComponent } from "react";
+import { FunctionComponent, PropsWithChildren } from "react";
 import { FormProvider } from "react-hook-form";
-import Modale__legacy from "@/components/_commons/Modale/Modale__legacy";
+import { Modal } from "@/components/shared/Modal";
 import Indicateur from "@/server/domain/indicateur/Indicateur.interface";
 import type { DétailsIndicateur } from "@/server/domain/indicateur/DétailsIndicateur.interface";
 import { formaterDate } from "@/client/utils/date/date";
@@ -12,20 +12,21 @@ import useModaleSuppressionValeurAvancementV2, {
   Stepper,
 } from "./useModaleSuppressionValeurAvancementV2";
 
-export const ModaleSuppressionValeurAvancementV2: FunctionComponent<{
-  indicateur: Indicateur;
-  detailIndicateur: DétailsIndicateur;
-  generatedHTMLID: string;
-  territoireCode: string;
-  territoireCodeInsee: string;
-  territoireNom: string;
-}> = ({
+export const ModaleSuppressionValeurAvancementV2: FunctionComponent<
+  PropsWithChildren<{
+    indicateur: Indicateur;
+    detailIndicateur: DétailsIndicateur;
+    territoireCode: string;
+    territoireCodeInsee: string;
+    territoireNom: string;
+  }>
+> = ({
   indicateur,
   detailIndicateur,
-  generatedHTMLID,
   territoireCode,
   territoireCodeInsee,
   territoireNom,
+  children,
 }) => {
   const {
     reactHookForm,
@@ -43,10 +44,15 @@ export const ModaleSuppressionValeurAvancementV2: FunctionComponent<{
   const refreshRouter = useRefreshRouter();
 
   return (
-    <Modale__legacy
-      fermetureCallback={refreshRouter}
-      idHtml={generatedHTMLID}
-      tailleModale="lg"
+    <Modal
+      onOpenChange={(open) => {
+        if (!open) {
+          refreshRouter();
+        }
+      }}
+      title="Supprimer la proposition"
+      titleHidden
+      trigger={children}
     >
       {etapePropositionValeurAvancement ? (
         <>
@@ -247,6 +253,6 @@ export const ModaleSuppressionValeurAvancementV2: FunctionComponent<{
           </span>
         </div>
       )}
-    </Modale__legacy>
+    </Modal>
   );
 };
