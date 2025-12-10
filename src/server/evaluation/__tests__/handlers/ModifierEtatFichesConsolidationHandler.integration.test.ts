@@ -1,18 +1,24 @@
 import { $Enums } from "@prisma/client";
+import { mock, MockProxy } from "jest-mock-extended";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { prisma } from "@/server/db/prisma";
 import { PrismaTransaction } from "@/server/db/PrismaTransaction";
 import { ModifierEtatFichesConsolidationHandler } from "@/server/evaluation/handlers/ModifierEtatFichesConsolidationHandler";
+import { NotificationEmailService } from "@/server/evaluation/services/NotificationEmailService";
+import { ProfilEnum } from "@/server/app/enum/profil.enum";
 
 describe("ModifierEtatFichesConsolidationHandler", () => {
   let handler: ModifierEtatFichesConsolidationHandler;
+  let notificationEmailService: MockProxy<NotificationEmailService>;
   const prismaPilote = new PrismaPilote();
   const transaction = new PrismaTransaction();
 
   beforeEach(() => {
+    notificationEmailService = mock<NotificationEmailService>();
     handler = new ModifierEtatFichesConsolidationHandler({
       prisma: prismaPilote,
       transaction,
+      notificationEmailService,
     });
   });
 
@@ -437,6 +443,277 @@ describe("ModifierEtatFichesConsolidationHandler", () => {
       });
 
       expect(etapeConso?.read_only).toBe(true);
+    });
+
+    it("Lors du blocage de fiches doit envoyer un email de notification aux utilisateurs rattachés à l'étape de consolidation pour le rattachement", async () => {
+      // Given
+      const rattachement1Code = "REG-NOTIF-01";
+      const rattachement2Code = "REG-NOTIF-02";
+      const rattachement3Code = "REG-NOTIF-03";
+
+      const fiche1Id = "b1c2d3e4-f5a6-7890-bcde-111111111111";
+      const fiche2Id = "b1c2d3e4-f5a6-7890-bcde-222222222222";
+      const fiche3Id = "b1c2d3e4-f5a6-7890-bcde-333333333333";
+
+      const etape1Id = "c1d2e3f4-a5b6-7890-cdef-111111111111";
+      const etape2Id = "c1d2e3f4-a5b6-7890-cdef-222222222222";
+      const etape3Id = "c1d2e3f4-a5b6-7890-cdef-333333333333";
+      const etape4Id = "c1d2e3f4-a5b6-7890-cdef-444444444444";
+
+      const utilisateur1Id = "d1e2f3a4-b5c6-7890-defa-111111111111";
+      const utilisateur2Id = "d1e2f3a4-b5c6-7890-defa-222222222222";
+      const utilisateur3Id = "d1e2f3a4-b5c6-7890-defa-333333333333";
+      const utilisateur4Id = "d1e2f3a4-b5c6-7890-defa-444444444444";
+
+      await prisma.utilisateur.createMany({
+        data: [
+          {
+            id: utilisateur1Id,
+            email: "notif1@example.com",
+            nom: "Notif",
+            prenom: "Un",
+            fonction: "Fonction notif 1",
+            date_creation: new Date().toISOString(),
+            profilCode: ProfilEnum.DITP_ADMIN,
+          },
+          {
+            id: utilisateur2Id,
+            email: "notif2@example.com",
+            nom: "Notif",
+            prenom: "Deux",
+            fonction: "Fonction notif 2",
+            date_creation: new Date().toISOString(),
+            profilCode: ProfilEnum.DITP_ADMIN,
+          },
+          {
+            id: utilisateur3Id,
+            email: "notif3@example.com",
+            nom: "Notif",
+            prenom: "Trois",
+            fonction: "Fonction notif 3",
+            date_creation: new Date().toISOString(),
+            profilCode: ProfilEnum.DITP_ADMIN,
+          },
+          {
+            id: utilisateur4Id,
+            email: "notif4@example.com",
+            nom: "Notif",
+            prenom: "Quatre",
+            fonction: "Fonction notif 4",
+            date_creation: new Date().toISOString(),
+            profilCode: ProfilEnum.DITP_ADMIN,
+          },
+        ],
+      });
+
+      await prisma.referentiel_rattachement.createMany({
+        data: [
+          {
+            code: rattachement1Code,
+            libelle: "Rattachement notification 1",
+            groupe: rattachement1Code,
+            ordre: 1,
+          },
+          {
+            code: rattachement2Code,
+            libelle: "Rattachement notification 2",
+            groupe: rattachement2Code,
+            ordre: 1,
+          },
+          {
+            code: rattachement3Code,
+            libelle: "Rattachement notification 3",
+            groupe: rattachement3Code,
+            ordre: 1,
+          },
+        ],
+      });
+
+      await prisma.fiche_evaluation.createMany({
+        data: [
+          {
+            id: fiche1Id,
+            jalon: 2025,
+            etape_courante: $Enums.etape_evaluation_enum.CONSOLIDATION,
+            rattachement_code: rattachement1Code,
+          },
+          {
+            id: fiche2Id,
+            jalon: 2025,
+            etape_courante: $Enums.etape_evaluation_enum.CONSOLIDATION,
+            rattachement_code: rattachement2Code,
+          },
+          {
+            id: fiche3Id,
+            jalon: 2025,
+            etape_courante: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
+            rattachement_code: rattachement3Code,
+          },
+        ],
+      });
+
+      await prisma.etape_evaluation.createMany({
+        data: [
+          {
+            id: etape1Id,
+            fiche_evaluation_id: fiche1Id,
+            type: $Enums.etape_evaluation_enum.CONSOLIDATION,
+            read_only: false,
+          },
+          {
+            id: etape2Id,
+            fiche_evaluation_id: fiche2Id,
+            type: $Enums.etape_evaluation_enum.CONSOLIDATION,
+            read_only: false,
+          },
+          {
+            id: etape3Id,
+            fiche_evaluation_id: fiche3Id,
+            type: $Enums.etape_evaluation_enum.CONSOLIDATION,
+            read_only: false,
+          },
+          {
+            id: etape4Id,
+            fiche_evaluation_id: fiche2Id,
+            type: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
+            read_only: false,
+          },
+        ],
+      });
+
+      await prisma.rattachement_utilisateur_etape_jalon.createMany({
+        data: [
+          {
+            id: "e1f2a3b4-c5d6-7890-efab-111111111111",
+            utilisateur_id: utilisateur1Id,
+            rattachement_code: rattachement1Code,
+            jalon: 2025,
+            etape: $Enums.etape_evaluation_enum.CONSOLIDATION,
+          },
+          {
+            id: "e1f2a3b4-c5d6-7890-efab-222222222222",
+            utilisateur_id: utilisateur2Id,
+            rattachement_code: rattachement2Code,
+            jalon: 2025,
+            etape: $Enums.etape_evaluation_enum.CONSOLIDATION,
+          },
+          {
+            id: "e1f2a3b4-c5d6-7890-efab-333333333333",
+            utilisateur_id: utilisateur3Id,
+            rattachement_code: rattachement3Code,
+            jalon: 2025,
+            etape: $Enums.etape_evaluation_enum.CONSOLIDATION,
+          },
+          {
+            id: "e1f2a3b4-c5d6-7890-efab-444444444444",
+            utilisateur_id: utilisateur4Id,
+            rattachement_code: rattachement2Code,
+            jalon: 2025,
+            etape: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
+          },
+          {
+            id: "e1f2a3b4-c5d6-7890-efab-555555555555",
+            utilisateur_id: utilisateur2Id,
+            rattachement_code: rattachement1Code,
+            jalon: 2025,
+            etape: $Enums.etape_evaluation_enum.CONSOLIDATION,
+          },
+        ],
+      });
+
+      // When
+      await handler.execute({
+        ficheEvaluationIds: [fiche1Id, fiche2Id],
+        readOnly: true,
+      });
+
+      // Then
+      expect(notificationEmailService.execute).toHaveBeenCalledTimes(2);
+      expect(notificationEmailService.execute).toHaveBeenNthCalledWith(1, {
+        destinataires: [{ email: "notif1@example.com" }],
+        params: {
+          listeTerritoires: ["Rattachement notification 1"],
+        },
+        templateId: 56,
+      });
+      expect(notificationEmailService.execute).toHaveBeenNthCalledWith(2, {
+        destinataires: [{ email: "notif2@example.com" }],
+        params: {
+          listeTerritoires: [
+            "Rattachement notification 1",
+            "Rattachement notification 2",
+          ],
+        },
+        templateId: 56,
+      });
+    });
+
+    it("ne doit pas envoyer d'email de notification lors du déblocage de fiches", async () => {
+      // Given
+      const rattachementCode = "REG-NO-NOTIF-01";
+      const ficheId = "f1a2b3c4-d5e6-7890-fabc-111111111111";
+      const etapeId = "a2b3c4d5-e6f7-8901-abcd-111111111111";
+      const utilisateurId = "b3c4d5e6-f7a8-9012-bcde-111111111111";
+
+      await prisma.utilisateur.create({
+        data: {
+          id: utilisateurId,
+          email: "no-notif@example.com",
+          nom: "NoNotif",
+          prenom: "User",
+          fonction: "Fonction",
+          date_creation: new Date().toISOString(),
+          profil: {
+            connect: {
+              code: ProfilEnum.DITP_ADMIN,
+            },
+          },
+        },
+      });
+
+      await prisma.referentiel_rattachement.create({
+        data: {
+          code: rattachementCode,
+          libelle: "Rattachement sans notification",
+          groupe: rattachementCode,
+          ordre: 1,
+        },
+      });
+
+      await prisma.fiche_evaluation.create({
+        data: {
+          id: ficheId,
+          jalon: 2025,
+          etape_courante: $Enums.etape_evaluation_enum.CONSOLIDATION,
+          rattachement_code: rattachementCode,
+          etape_evaluations: {
+            create: {
+              id: etapeId,
+              type: $Enums.etape_evaluation_enum.CONSOLIDATION,
+              read_only: true,
+            },
+          },
+        },
+      });
+
+      await prisma.rattachement_utilisateur_etape_jalon.create({
+        data: {
+          id: "c4d5e6f7-a8b9-0123-cdef-111111111111",
+          utilisateur_id: utilisateurId,
+          rattachement_code: rattachementCode,
+          jalon: 2025,
+          etape: $Enums.etape_evaluation_enum.CONSOLIDATION,
+        },
+      });
+
+      // When
+      await handler.execute({
+        ficheEvaluationIds: [ficheId],
+        readOnly: false,
+      });
+
+      // Then
+      expect(notificationEmailService.execute).not.toHaveBeenCalled();
     });
   });
 });
