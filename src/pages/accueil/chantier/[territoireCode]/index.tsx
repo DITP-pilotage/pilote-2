@@ -360,6 +360,9 @@ const ChantierLayout = ({
       session?.profil || "",
     );
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
+  const [isModaleInfolettreOpen, setIsModaleInfolettreOpen] = useState(
+    doitAfficherLaModaleInfolettre,
+  );
 
   const filtresStatut = useQueryState(
     "statut",
@@ -461,15 +464,10 @@ const ChantierLayout = ({
               <div aria-controls="modale-video-accueil" data-fr-opened="true" />
             </>
           ) : null}
-          {doitAfficherLaModaleInfolettre ? (
-            <>
-              <ModaleInscriptionInfolettre />
-              <div
-                aria-controls="modale-inscription-infolettre"
-                data-fr-opened="true"
-              />
-            </>
-          ) : null}
+          <ModaleInscriptionInfolettre
+            onOpenChange={setIsModaleInfolettreOpen}
+            open={isModaleInfolettreOpen}
+          />
         </div>
       </div>
     </IndexStyled>
