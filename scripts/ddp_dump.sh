@@ -39,5 +39,4 @@ time pg_dump -d $CONN_STR_PROD --verbose \
     --table public.evaluation_critere \
     --table public.instruction_objectif \
     --table public.instruction_critere \
-    --table public.chantier_evaluation \
     --file=$DUMP_DEST

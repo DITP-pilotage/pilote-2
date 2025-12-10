@@ -246,23 +246,26 @@ describe("RecupererDetailsNoteCollectiveQuery", () => {
         {
           id: "CH-101",
           nom: "Chantier Alpha",
-          icone_ministere: "icone-ministere-1.svg",
-          taux_avancement: 75.5,
-          taux_avancement_pilote: 80.0,
+          iconeMinistere: "icone-ministere-1.svg",
+          tauxAvancement: 75.5,
+          tauxAvancementPilote: 80.0,
+          indicateurs: [],
         },
         {
           id: "CH-102",
           nom: "Chantier Beta",
-          icone_ministere: "icone-ministere-2.svg",
-          taux_avancement: 82.3,
-          taux_avancement_pilote: 85.0,
+          iconeMinistere: "icone-ministere-2.svg",
+          tauxAvancement: 82.3,
+          tauxAvancementPilote: 85.0,
+          indicateurs: [],
         },
         {
           id: "CH-103",
           nom: "Chantier Gamma",
-          icone_ministere: "icone-ministere-1.svg",
-          taux_avancement: 90,
-          taux_avancement_pilote: 92.0,
+          iconeMinistere: "icone-ministere-1.svg",
+          tauxAvancement: 90,
+          tauxAvancementPilote: 92.0,
+          indicateurs: [],
         },
       ]);
     });
@@ -409,16 +412,18 @@ describe("RecupererDetailsNoteCollectiveQuery", () => {
         {
           id: "CH-201",
           nom: "Chantier Delta",
-          icone_ministere: "icone-ministere-3.svg",
-          taux_avancement: 65,
-          taux_avancement_pilote: 68.0,
+          iconeMinistere: "icone-ministere-3.svg",
+          tauxAvancement: 65,
+          tauxAvancementPilote: 68.0,
+          indicateurs: [],
         },
         {
           id: "CH-202",
           nom: "Chantier Epsilon",
-          icone_ministere: "icone-ministere-3.svg",
-          taux_avancement: 70,
-          taux_avancement_pilote: 73.0,
+          iconeMinistere: "icone-ministere-3.svg",
+          tauxAvancement: 70,
+          tauxAvancementPilote: 73.0,
+          indicateurs: [],
         },
       ]);
     });
@@ -512,9 +517,436 @@ describe("RecupererDetailsNoteCollectiveQuery", () => {
         {
           id: "CH-401",
           nom: "Chantier Sans Ministère",
-          icone_ministere: null,
-          taux_avancement: 88,
-          taux_avancement_pilote: 91.0,
+          iconeMinistere: null,
+          tauxAvancement: 88,
+          tauxAvancementPilote: 91.0,
+          indicateurs: [],
+        },
+      ]);
+    });
+
+    it("doit remonter les indicateurs liés au chantier evaluation", async () => {
+      // Given
+      const rattachementCode = "DEPT-44";
+      const jalon = 2025;
+
+      await prisma.ministere.createMany({
+        data: [
+          {
+            id: "MIN-500",
+            acronyme: "MIN5",
+            nom: "Ministère 5",
+            icone: "icone-ministere-5.svg",
+          },
+        ],
+      });
+
+      await prisma.chantier_identite.createMany({
+        data: [
+          {
+            id: "CH-500",
+            nom: "Chantier avec Indicateurs",
+            ministeres: ["MIN-500"],
+          },
+          {
+            id: "CH-501",
+            nom: "Autre Chantier",
+            ministeres: ["MIN-500"],
+          },
+        ],
+      });
+
+      await prisma.indicateur_identite.createMany({
+        data: [
+          {
+            id: "IND-001",
+            nom: "Indicateur Alpha",
+            chantier_id: "CH-500",
+          },
+          {
+            id: "IND-002",
+            nom: "Indicateur Beta",
+            chantier_id: "CH-500",
+          },
+          {
+            id: "IND-003",
+            nom: "Indicateur Gamma",
+            chantier_id: "CH-500",
+          },
+          {
+            id: "IND-004",
+            nom: "Indicateur Autre Chantier",
+            chantier_id: "CH-501",
+          },
+          {
+            id: "IND-005",
+            nom: "Indicateur Autre Territoire",
+            chantier_id: "CH-500",
+          },
+        ],
+      });
+
+      await prisma.referentiel_rattachement.createMany({
+        data: [
+          {
+            code: rattachementCode,
+            groupe: rattachementCode,
+            ordre: 1,
+            libelle: "Département 44",
+          },
+          {
+            code: "DEPT-33",
+            groupe: "DEPT-33",
+            ordre: 1,
+            libelle: "Département 33",
+          },
+        ],
+      });
+
+      await prisma.fiche_evaluation.createMany({
+        data: [
+          {
+            id: "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+            rattachement_code: rattachementCode,
+            jalon: jalon,
+            etape_courante: "AUTO_EVALUATION",
+          },
+          {
+            id: "b2c3d4e5-f6a7-4890-b123-456789abcdef",
+            rattachement_code: "DEPT-33",
+            jalon: jalon,
+            etape_courante: "AUTO_EVALUATION",
+          },
+        ],
+      });
+
+      await prisma.chantier_territoire.createMany({
+        data: [
+          {
+            id: "CH-500",
+            territoire_code: rattachementCode,
+            code_insee: "44",
+            maille: "DEPT",
+            zone_id: "zone-500",
+          },
+          {
+            id: "CH-501",
+            territoire_code: rattachementCode,
+            code_insee: "44",
+            maille: "DEPT",
+            zone_id: "zone-500",
+          },
+          {
+            id: "CH-500",
+            territoire_code: "DEPT-33",
+            code_insee: "33",
+            maille: "DEPT",
+            zone_id: "zone-501",
+          },
+        ],
+      });
+
+      await prisma.chantier_territoire_jalon.createMany({
+        data: [
+          {
+            id: "CH-500",
+            territoire_code: rattachementCode,
+            code_insee: "44",
+            maille: "DEPT",
+            zone_id: "zone-500",
+            jalon: jalon,
+            taux_avancement: 78.5,
+          },
+          {
+            id: "CH-501",
+            territoire_code: rattachementCode,
+            code_insee: "44",
+            maille: "DEPT",
+            zone_id: "zone-500",
+            jalon: jalon,
+            taux_avancement: 55.0,
+          },
+          {
+            id: "CH-500",
+            territoire_code: "DEPT-33",
+            code_insee: "33",
+            maille: "DEPT",
+            zone_id: "zone-501",
+            jalon: jalon,
+            taux_avancement: 65.0,
+          },
+        ],
+      });
+
+      await prisma.chantier_evaluation.createMany({
+        data: [
+          {
+            id: "CH-500",
+            territoire_code: rattachementCode,
+            code_insee: "44",
+            maille: "DEPT",
+            zone_id: "zone-500",
+            taux_avancement: 72.8,
+            date_calcul: new Date("2025-03-10"),
+            jalon: jalon,
+          },
+          {
+            id: "CH-500",
+            territoire_code: rattachementCode,
+            code_insee: "44",
+            maille: "DEPT",
+            zone_id: "zone-500",
+            taux_avancement: 72.8,
+            date_calcul: new Date("2025-02-01"),
+            jalon: jalon,
+          },
+          {
+            id: "CH-501",
+            territoire_code: rattachementCode,
+            code_insee: "44",
+            maille: "DEPT",
+            zone_id: "zone-500",
+            taux_avancement: 50.0,
+            date_calcul: new Date("2025-03-10"),
+            jalon: jalon,
+          },
+          {
+            id: "CH-500",
+            territoire_code: "DEPT-33",
+            code_insee: "33",
+            maille: "DEPT",
+            zone_id: "zone-501",
+            taux_avancement: 60.0,
+            date_calcul: new Date("2025-03-10"),
+            jalon: jalon,
+          },
+        ],
+      });
+
+      await prisma.indicateur_territoire.createMany({
+        data: [
+          {
+            id: "IND-001",
+            chantier_id: "CH-500",
+            territoire_code: rattachementCode,
+            code_insee: "44",
+            maille: "DEPT",
+            zone_id: "zone-500",
+          },
+          {
+            id: "IND-002",
+            chantier_id: "CH-500",
+            territoire_code: rattachementCode,
+            code_insee: "44",
+            maille: "DEPT",
+            zone_id: "zone-500",
+          },
+          {
+            id: "IND-003",
+            chantier_id: "CH-500",
+            territoire_code: rattachementCode,
+            code_insee: "44",
+            maille: "DEPT",
+            zone_id: "zone-500",
+          },
+          {
+            id: "IND-004",
+            chantier_id: "CH-501",
+            territoire_code: rattachementCode,
+            code_insee: "44",
+            maille: "DEPT",
+            zone_id: "zone-500",
+          },
+          {
+            id: "IND-005",
+            chantier_id: "CH-500",
+            territoire_code: "DEPT-33",
+            code_insee: "33",
+            maille: "DEPT",
+            zone_id: "zone-501",
+          },
+        ],
+      });
+
+      await prisma.indicateur_territoire_jalon.createMany({
+        data: [
+          {
+            id: "IND-001",
+            territoire_code: rattachementCode,
+            code_insee: "44",
+            maille: "DEPT",
+            zone_id: "zone-500",
+            jalon: jalon,
+            taux_avancement: 85.0,
+          },
+          {
+            id: "IND-002",
+            territoire_code: rattachementCode,
+            code_insee: "44",
+            maille: "DEPT",
+            zone_id: "zone-500",
+            jalon: jalon,
+            taux_avancement: 92.5,
+          },
+          {
+            id: "IND-003",
+            territoire_code: rattachementCode,
+            code_insee: "44",
+            maille: "DEPT",
+            zone_id: "zone-500",
+            jalon: jalon,
+            taux_avancement: null,
+          },
+          {
+            id: "IND-004",
+            territoire_code: rattachementCode,
+            code_insee: "44",
+            maille: "DEPT",
+            zone_id: "zone-500",
+            jalon: jalon,
+            taux_avancement: 70.0,
+          },
+          {
+            id: "IND-005",
+            territoire_code: "DEPT-33",
+            code_insee: "33",
+            maille: "DEPT",
+            zone_id: "zone-501",
+            jalon: jalon,
+            taux_avancement: 75.0,
+          },
+        ],
+      });
+
+      await prisma.indicateur_evaluation.createMany({
+        data: [
+          {
+            id: "IND-001",
+            chantier_id: "CH-500",
+            territoire_code: rattachementCode,
+            code_insee: "44",
+            maille: "DEPT",
+            zone_id: "zone-500",
+            taux_avancement: 80.2,
+            ponderation_declaree: 0.33,
+            ponderation_reelle: 0.33,
+            date_calcul: new Date("2025-03-10"),
+            jalon: jalon,
+          },
+          {
+            id: "IND-002",
+            chantier_id: "CH-500",
+            territoire_code: rattachementCode,
+            code_insee: "44",
+            maille: "DEPT",
+            zone_id: "zone-500",
+            taux_avancement: 88.5,
+            ponderation_declaree: 0.33,
+            ponderation_reelle: 0.33,
+            date_calcul: new Date("2025-03-10"),
+            jalon: jalon,
+          },
+          {
+            id: "IND-003",
+            chantier_id: "CH-500",
+            territoire_code: rattachementCode,
+            code_insee: "44",
+            maille: "DEPT",
+            zone_id: "zone-500",
+            taux_avancement: null,
+            ponderation_declaree: 0.34,
+            ponderation_reelle: 0.34,
+            date_calcul: new Date("2025-03-10"),
+            jalon: jalon,
+          },
+          {
+            id: "IND-004",
+            chantier_id: "CH-501",
+            territoire_code: rattachementCode,
+            code_insee: "44",
+            maille: "DEPT",
+            zone_id: "zone-500",
+            taux_avancement: 68.0,
+            ponderation_declaree: 1.0,
+            ponderation_reelle: 1.0,
+            date_calcul: new Date("2025-03-10"),
+            jalon: jalon,
+          },
+          {
+            id: "IND-005",
+            chantier_id: "CH-500",
+            territoire_code: "DEPT-33",
+            code_insee: "33",
+            maille: "DEPT",
+            zone_id: "zone-501",
+            taux_avancement: 70.0,
+            ponderation_declaree: 1.0,
+            ponderation_reelle: 1.0,
+            date_calcul: new Date("2025-03-10"),
+            jalon: jalon,
+          },
+          {
+            id: "IND-001",
+            chantier_id: "CH-500",
+            territoire_code: rattachementCode,
+            code_insee: "44",
+            maille: "DEPT",
+            zone_id: "zone-500",
+            taux_avancement: 45.0,
+            ponderation_declaree: 0.33,
+            ponderation_reelle: 0.33,
+            date_calcul: new Date("2025-02-01"),
+            jalon: jalon,
+          },
+        ],
+      });
+
+      // When
+      const result = await query.run({ rattachementCode, jalon });
+
+      // Then
+      expect(result).toEqual([
+        {
+          id: "CH-500",
+          nom: "Chantier avec Indicateurs",
+          iconeMinistere: "icone-ministere-5.svg",
+          tauxAvancement: 72.8,
+          tauxAvancementPilote: 78.5,
+          indicateurs: [
+            {
+              id: "IND-001",
+              nom: "Indicateur Alpha",
+              tauxAvancement: 80.2,
+              tauxAvancementPilote: 85.0,
+            },
+            {
+              id: "IND-002",
+              nom: "Indicateur Beta",
+              tauxAvancement: 88.5,
+              tauxAvancementPilote: 92.5,
+            },
+            {
+              id: "IND-003",
+              nom: "Indicateur Gamma",
+              tauxAvancement: null,
+              tauxAvancementPilote: null,
+            },
+          ],
+        },
+        {
+          id: "CH-501",
+          nom: "Autre Chantier",
+          iconeMinistere: "icone-ministere-5.svg",
+          tauxAvancement: 50.0,
+          tauxAvancementPilote: 55.0,
+          indicateurs: [
+            {
+              id: "IND-004",
+              nom: "Indicateur Autre Chantier",
+              tauxAvancement: 68.0,
+              tauxAvancementPilote: 70.0,
+            },
+          ],
         },
       ]);
     });

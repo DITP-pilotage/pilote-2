@@ -72,9 +72,10 @@ async function sauvegardeNotes() {
   for (const chantier of chantiers) {
     await prisma.chantier_evaluation.upsert({
       where: {
-        id_territoire_code_date_calcul: {
+        id_territoire_code_jalon_date_calcul: {
           id: chantier.id,
           territoire_code: chantier.territoire_code,
+          jalon: 2025,
           date_calcul: dateCalcul,
         },
       },

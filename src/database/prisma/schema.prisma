@@ -265,13 +265,14 @@ model indicateur_territoire_jalon {
   maille                      Maille
   jalon                       Int
   zone_id                     String
-  date_valeur_cible           DateTime?             @db.Date
+  date_valeur_cible           DateTime?               @db.Date
   taux_avancement             Float?
   valeur_cible                Float?
   taux_avancement_proposition Float?
-  date_valeur_actuelle        DateTime?             @db.Date
+  date_valeur_actuelle        DateTime?               @db.Date
   valeur_actuelle             Float?
-  indicateur_territoire       indicateur_territoire @relation(fields: [id, territoire_code], references: [id, territoire_code], onDelete: Cascade, onUpdate: Cascade)
+  indicateur_territoire       indicateur_territoire   @relation(fields: [id, territoire_code], references: [id, territoire_code], onDelete: Cascade, onUpdate: Cascade)
+  indicateur_evaluation       indicateur_evaluation[]
 
   @@id([id, territoire_code, jalon])
   @@index([id, territoire_code])
@@ -947,23 +948,26 @@ model chantier_evaluation {
   jalon                     Int                       @default(2025)
   fiche_evaluation          fiche_evaluation?         @relation(fields: [territoire_code, jalon], references: [rattachement_code, jalon], onDelete: Cascade, onUpdate: Cascade)
   chantier_territoire_jalon chantier_territoire_jalon @relation(fields: [id, territoire_code, jalon], references: [id, territoire_code, jalon], onDelete: Cascade, onUpdate: Cascade)
+  indicateur_evaluation     indicateur_evaluation[]
 
-  @@id([id, territoire_code, date_calcul])
+  @@id([id, territoire_code, jalon, date_calcul])
   @@schema("public")
 }
 
 model indicateur_evaluation {
-  id                   String
-  chantier_id          String
-  territoire_code      String
-  code_insee           String
-  maille               Maille
-  zone_id              String
-  taux_avancement      Float?
-  ponderation_declaree Float
-  ponderation_reelle   Float
-  date_calcul          DateTime @db.Date
-  jalon                Int      @default(2025)
+  id                          String
+  chantier_id                 String
+  territoire_code             String
+  code_insee                  String
+  maille                      Maille
+  zone_id                     String
+  taux_avancement             Float?
+  ponderation_declaree        Float
+  ponderation_reelle          Float
+  date_calcul                 DateTime                    @db.Date
+  jalon                       Int                         @default(2025)
+  chantier_evaluation         chantier_evaluation         @relation(fields: [chantier_id, territoire_code, date_calcul, jalon], references: [id, territoire_code, date_calcul, jalon], onDelete: Cascade, onUpdate: Cascade)
+  indicateur_territoire_jalon indicateur_territoire_jalon @relation(fields: [id, territoire_code, jalon], references: [id, territoire_code, jalon], onDelete: Cascade, onUpdate: Cascade)
 
   @@id([id, territoire_code, date_calcul])
   @@schema("public")

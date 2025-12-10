@@ -1,5 +1,21 @@
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 
+type IndicateurDetailsNoteCollective = {
+  id: string;
+  nom: string;
+  tauxAvancement: number | null;
+  tauxAvancementPilote: number | null;
+};
+
+type DetailsNoteCollectiveResult = {
+  id: string;
+  nom: string;
+  iconeMinistere: string | null;
+  tauxAvancement: number | null;
+  tauxAvancementPilote: number | null;
+  indicateurs: IndicateurDetailsNoteCollective[];
+};
+
 export class RecupererDetailsNoteCollectiveQuery {
   constructor(private readonly dependencies: { prisma: PrismaPilote }) {}
 
@@ -9,7 +25,7 @@ export class RecupererDetailsNoteCollectiveQuery {
   }: {
     rattachementCode: string;
     jalon: number;
-  }) {
+  }): Promise<DetailsNoteCollectiveResult[]> {
     const derniereDateCalcul = await this.dependencies.prisma
       .getInstance()
       .chantier_evaluation.findFirst({
@@ -33,12 +49,40 @@ export class RecupererDetailsNoteCollectiveQuery {
           jalon,
           date_calcul: derniereDateCalcul.date_calcul,
         },
-        include: {
+        select: {
+          id: true,
+          taux_avancement: true,
           chantier_territoire_jalon: {
-            include: {
+            select: {
+              taux_avancement: true,
               chantier_territoire: {
-                include: {
-                  chantier_identite: true,
+                select: {
+                  chantier_identite: {
+                    select: {
+                      nom: true,
+                      ministeres: true,
+                    },
+                  },
+                },
+              },
+            },
+          },
+          indicateur_evaluation: {
+            select: {
+              id: true,
+              taux_avancement: true,
+              indicateur_territoire_jalon: {
+                select: {
+                  taux_avancement: true,
+                  indicateur_territoire: {
+                    select: {
+                      indicateur_identite: {
+                        select: {
+                          nom: true,
+                        },
+                      },
+                    },
+                  },
                 },
               },
             },
@@ -58,14 +102,24 @@ export class RecupererDetailsNoteCollectiveQuery {
         (ministere) => ministere.id === ministereId,
       );
 
+      const indicateurs = chantier.indicateur_evaluation.map((indicateur) => ({
+        id: indicateur.id,
+        nom: indicateur.indicateur_territoire_jalon.indicateur_territoire
+          .indicateur_identite.nom,
+        tauxAvancement: indicateur.taux_avancement,
+        tauxAvancementPilote:
+          indicateur.indicateur_territoire_jalon.taux_avancement,
+      }));
+
       return {
         id: chantier.id,
         nom: chantier.chantier_territoire_jalon.chantier_territoire
           .chantier_identite.nom,
-        icone_ministere: ministereChantier?.icone ?? null,
-        taux_avancement: chantier.taux_avancement,
-        taux_avancement_pilote:
+        iconeMinistere: ministereChantier?.icone ?? null,
+        tauxAvancement: chantier.taux_avancement,
+        tauxAvancementPilote:
           chantier.chantier_territoire_jalon.taux_avancement,
+        indicateurs,
       };
     });
   }
