@@ -363,6 +363,9 @@ const ChantierLayout = ({
   const [isModaleInfolettreOpen, setIsModaleInfolettreOpen] = useState(
     doitAfficherLaModaleInfolettre,
   );
+  const [isModaleVideoAccueilOpen, setIsModaleVideoAccueilOpen] = useState(
+    doitAfficherModaleVideoAccueil,
+  );
 
   const filtresStatut = useQueryState(
     "statut",
@@ -458,12 +461,10 @@ const ChantierLayout = ({
             repartitionMeteosChantiers={repartitionMeteosChantiers}
             territoireCode={territoireCode}
           />
-          {doitAfficherModaleVideoAccueil ? (
-            <>
-              <ModaleVideoAccueil />
-              <div aria-controls="modale-video-accueil" data-fr-opened="true" />
-            </>
-          ) : null}
+          <ModaleVideoAccueil
+            onOpenChange={setIsModaleVideoAccueilOpen}
+            open={isModaleVideoAccueilOpen}
+          />
           <ModaleInscriptionInfolettre
             onOpenChange={setIsModaleInfolettreOpen}
             open={isModaleInfolettreOpen}
