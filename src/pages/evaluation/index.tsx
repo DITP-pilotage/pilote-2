@@ -30,20 +30,9 @@ export const getServerSideProps = async ({
   }
 
   const utilisateurId = session.user.id;
-  const fichesEvaluation = await getContainer("piloteEval")
-    .resolve("listerFichesAutoEvaluation")
-    .run({ utilisateurId: utilisateurId });
   const accesFicheEvaluationService = getContainer("piloteEval").resolve(
     "accesFicheEvaluationService",
   );
-
-  if (fichesEvaluation.length > 0) {
-    return {
-      redirect: {
-        destination: `/evaluation/auto-evaluation`,
-      },
-    };
-  }
 
   if (
     await accesFicheEvaluationService.peutAccederEtapeAppreciation({
