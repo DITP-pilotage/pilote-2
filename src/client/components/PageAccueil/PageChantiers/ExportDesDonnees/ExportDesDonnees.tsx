@@ -1,7 +1,7 @@
 import "@gouvfr/dsfr/dist/component/radio/radio.min.css";
-import { FunctionComponent } from "react";
+import { FunctionComponent, PropsWithChildren } from "react";
 import { parseAsInteger, parseAsStringLiteral, useQueryState } from "nuqs";
-import Modale__legacy from "@/components/_commons/Modale/Modale__legacy";
+import { Modal } from "@/components/shared/Modal";
 import IndicateurDEtapes from "@/components/_commons/IndicateurDEtapes/IndicateurDEtapes";
 import { EtapeContenuAExporter } from "@/components/PageAccueil/PageChantiers/ExportDesDonnees/EtapeContenuAExporter";
 import { EtapeDonneeChantierACollecter } from "@/components/PageAccueil/PageChantiers/ExportDesDonnees/EtapeDonneeChantierACollecter";
@@ -34,11 +34,13 @@ const Stepper = {
   },
 };
 
-export const ExportDesDonnees: FunctionComponent<{
-  fermetureCallback: () => void;
-  territoireCodeSelectionne: string;
-  idHtmlModale: string;
-}> = ({ fermetureCallback, territoireCodeSelectionne, idHtmlModale }) => {
+export const ExportDesDonnees: FunctionComponent<
+  PropsWithChildren<{
+    territoireCodeSelectionne: string;
+    open: boolean;
+    onOpenChange: (open: boolean) => void;
+  }>
+> = ({ territoireCodeSelectionne, open, onOpenChange, children }) => {
   const étapes = [
     Stepper.ETAPE_ELEMENTS_A_EXPORTER.titreEtape,
     Stepper.ETAPE_PERIMETRE_EXPORT.titreEtape,
@@ -67,10 +69,12 @@ export const ExportDesDonnees: FunctionComponent<{
   );
 
   return (
-    <Modale__legacy
-      fermetureCallback={fermetureCallback}
-      idHtml={idHtmlModale}
-      tailleModale="lg"
+    <Modal
+      onOpenChange={onOpenChange}
+      open={open}
+      title="Exporter les données"
+      titleHidden
+      trigger={children}
     >
       <IndicateurDEtapes
         sousTitreEtape="Exporter les données"
@@ -97,6 +101,6 @@ export const ExportDesDonnees: FunctionComponent<{
         Stepper.ETAPE_DONNEE_EN_COURS_DE_TELECHARGEMENT.numeroEtape ? (
         <EtapeDonneeEnCoursDeTelechargement />
       ) : null}
-    </Modale__legacy>
+    </Modal>
   );
 };

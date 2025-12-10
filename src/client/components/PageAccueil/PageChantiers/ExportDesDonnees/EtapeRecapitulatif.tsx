@@ -7,6 +7,7 @@ import {
   useQueryState,
   useQueryStates,
 } from "nuqs";
+import { Dialog } from "radix-ui";
 import { horodatage } from "@/client/utils/date/date";
 import api from "@/server/infrastructure/api/trpc/api";
 import { getAnneeDateDeBascule } from "@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getAnneeDateDeBascule";
@@ -285,14 +286,15 @@ export const EtapeRecapitulatif = ({
         }}
       >
         <div className="w-full flex justify-end fr-mt-2w gap-4">
-          <button
-            aria-controls="modale-exporter-les-données-v2"
-            className="!text-primary font-medium !px-4"
-            title="Fermer la fenêtre modale"
-            type="button"
-          >
-            Annuler
-          </button>
+          <Dialog.Close asChild>
+            <button
+              className="!text-primary font-medium !px-4"
+              title="Fermer la fenêtre modale"
+              type="button"
+            >
+              Annuler
+            </button>
+          </Dialog.Close>
           <button
             className="!text-primary font-medium !border !border-primary !py-2 !px-4"
             onClick={() => setEtapeCourante(3)}
