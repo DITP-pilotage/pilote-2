@@ -30,6 +30,7 @@ import { RetournerAppreciationHandler } from "./handlers/RetournerAppreciationHa
 import { ModifierObjectifHandler } from "./handlers/ModifierObjectifHandler";
 import { GenererPDFAutoEvaluationHandler } from "./handlers/GenererPDFAutoEvaluationHandler";
 import { ModifierDroitsUtilisateurHandler } from "./handlers/ModifierDroitsUtilisateurHandler";
+import { NotificationEmailService } from "./services/NotificationEmailService";
 
 export type PiloteEvalDependencies = {
   afficherAutoEvaluation: AfficherAutoEvaluationQuery;
@@ -62,6 +63,7 @@ export type PiloteEvalDependencies = {
   modifierObjectifHandler: ModifierObjectifHandler;
   genererPDFAutoEvaluationHandler: GenererPDFAutoEvaluationHandler;
   modifierDroitsUtilisateurHandler: ModifierDroitsUtilisateurHandler;
+  notificationEmailService: NotificationEmailService;
 };
 
 export const getPiloteEvalContainer = (
@@ -116,5 +118,6 @@ export const getPiloteEvalContainer = (
     modifierObjectifHandler: asClass(ModifierObjectifHandler),
     genererPDFAutoEvaluationHandler: asClass(GenererPDFAutoEvaluationHandler),
     modifierDroitsUtilisateurHandler: asClass(ModifierDroitsUtilisateurHandler),
+    notificationEmailService: asClass(NotificationEmailService),
   });
 };
