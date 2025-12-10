@@ -1,4 +1,4 @@
-import { useId } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
 import { useRouter } from "next/router";
 import api from "@/server/infrastructure/api/trpc/api";
@@ -12,7 +12,7 @@ export const BoutonValiderSaisieObjectifs = ({
 }: {
   ficheEvaluationId: string;
 }) => {
-  const idModale = useId();
+  const [open, setOpen] = useState(false);
   const validerSaisie = api.evaluation.validerSaisieObjectifs.useMutation();
   const router = useRouter();
   const form = useFormEvaluationObjectifs();
@@ -25,6 +25,7 @@ export const BoutonValiderSaisieObjectifs = ({
     if (!isFormValid) return;
 
     await form.handleSubmit(enregistrerBrouillon)();
+    setOpen(true);
   };
 
   const handleConfirmValidation = async () => {
@@ -51,9 +52,7 @@ export const BoutonValiderSaisieObjectifs = ({
   return (
     <div>
       <button
-        aria-controls={idModale}
         className="fr-btn"
-        data-fr-opened="false"
         disabled={validerSaisie.isLoading}
         onClick={handleOpenModal}
         type="button"
@@ -63,9 +62,10 @@ export const BoutonValiderSaisieObjectifs = ({
       </button>
       <ConfirmerValidationSaisie
         annee={2025}
-        generatedHTMLID={idModale}
         isPending={validerSaisie.isLoading}
         onConfirm={handleConfirmValidation}
+        onOpenChange={setOpen}
+        open={open}
         typeEvaluation="objectifs"
       />
     </div>
