@@ -58,7 +58,9 @@ export const Modale = ({
               {title}
             </Dialog.Title>
             {sousTitre ? <p className="fr-text--lg bold">{sousTitre}</p> : null}
-            {children}
+            <div className="max-h-[70vh] overflow-y-auto -mx-8 px-8">
+              {children}
+            </div>
           </div>
         </Dialog.Content>
       </Dialog.Portal>
