@@ -4,6 +4,7 @@ import { Transaction } from "@/server/db/Transaction";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { getPrisma } from "@/server/db/PrismaTransaction";
 import { NotificationEmailService } from "@/server/evaluation/services/NotificationEmailService";
+import { formatterTitreEvaluation } from "@/components/PageAppreciation/utilsTexteEvaluation";
 
 export const modifierEtatFichesConsolidationCommandSchema = z.object({
   ficheEvaluationIds: z.array(z.string()),
@@ -112,6 +113,7 @@ export class ModifierEtatFichesConsolidationHandler {
               rattachement: {
                 select: {
                   libelle: true,
+                  code: true,
                 },
               },
             },
@@ -122,7 +124,11 @@ export class ModifierEtatFichesConsolidationHandler {
       return utilisateurs.map((utilisateur) => ({
         email: utilisateur.email,
         rattachements: utilisateur.rattachement_utilisateur_etape_jalons.map(
-          (rattachement) => rattachement.rattachement.libelle,
+          (rattachement) =>
+            formatterTitreEvaluation({
+              code: rattachement.rattachement.code,
+              libelle: rattachement.rattachement.libelle,
+            }),
         ),
       }));
     });

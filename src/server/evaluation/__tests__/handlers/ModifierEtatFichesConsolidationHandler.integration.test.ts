@@ -447,9 +447,9 @@ describe("ModifierEtatFichesConsolidationHandler", () => {
 
     it("Lors du blocage de fiches doit envoyer un email de notification aux utilisateurs rattachés à l'étape de consolidation pour le rattachement", async () => {
       // Given
-      const rattachement1Code = "REG-NOTIF-01";
-      const rattachement2Code = "REG-NOTIF-02";
-      const rattachement3Code = "REG-NOTIF-03";
+      const rattachement1Code = "DEPT-01";
+      const rattachement2Code = "REG-02";
+      const rattachement3Code = "DEPT-03";
 
       const fiche1Id = "b1c2d3e4-f5a6-7890-bcde-111111111111";
       const fiche2Id = "b1c2d3e4-f5a6-7890-bcde-222222222222";
@@ -510,19 +510,19 @@ describe("ModifierEtatFichesConsolidationHandler", () => {
         data: [
           {
             code: rattachement1Code,
-            libelle: "Rattachement notification 1",
+            libelle: "Rattachement1",
             groupe: rattachement1Code,
             ordre: 1,
           },
           {
             code: rattachement2Code,
-            libelle: "Rattachement notification 2",
+            libelle: "Rattachement2",
             groupe: rattachement2Code,
             ordre: 1,
           },
           {
             code: rattachement3Code,
-            libelle: "Rattachement notification 3",
+            libelle: "Rattachement3",
             groupe: rattachement3Code,
             ordre: 1,
           },
@@ -632,17 +632,14 @@ describe("ModifierEtatFichesConsolidationHandler", () => {
       expect(notificationEmailService.execute).toHaveBeenNthCalledWith(1, {
         destinataires: [{ email: "notif1@example.com" }],
         params: {
-          listeTerritoires: ["Rattachement notification 1"],
+          listeTerritoires: ["01 - Rattachement1"],
         },
         templateId: 56,
       });
       expect(notificationEmailService.execute).toHaveBeenNthCalledWith(2, {
         destinataires: [{ email: "notif2@example.com" }],
         params: {
-          listeTerritoires: [
-            "Rattachement notification 1",
-            "Rattachement notification 2",
-          ],
+          listeTerritoires: ["01 - Rattachement1", "Région Rattachement2"],
         },
         templateId: 56,
       });
