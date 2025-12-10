@@ -1,6 +1,6 @@
 import { FunctionComponent, PropsWithChildren } from "react";
 import { FormProvider } from "react-hook-form";
-import { Modal } from "@/components/shared/Modal";
+import { Modale } from "@/components/shared/Modale";
 
 import useModalePropositionValeurAvancementV2, {
   estChampMoisValide,
@@ -56,7 +56,7 @@ export const ModalePropositionValeurAvancementV2: FunctionComponent<
   };
 
   return (
-    <Modal
+    <Modale
       onOpenChange={(open) => {
         if (!open) {
           refreshRouter();
@@ -462,6 +462,6 @@ export const ModalePropositionValeurAvancementV2: FunctionComponent<
           )}
         </div>
       )}
-    </Modal>
+    </Modale>
   );
 };

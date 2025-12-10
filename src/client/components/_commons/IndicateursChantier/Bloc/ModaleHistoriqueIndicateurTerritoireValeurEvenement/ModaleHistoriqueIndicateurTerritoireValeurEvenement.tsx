@@ -6,7 +6,7 @@ import { Infobulle } from "@/components/_commons/Infobulle/Infobulle";
 import { DonneesComplementaires } from "@/server/indicateur-territoire-valeur-evenement/domain/IndicateurTerritoireValeurEvenement";
 import { toISODateTime } from "@/server/app/domain/Dates";
 import { useBlocIndicateurContext } from "@/components/PageChantier/useBlocIndicateurContext";
-import { Modal } from "@/components/shared/Modal";
+import { Modale } from "@/components/shared/Modale";
 import { useModaleHistoriqueIndicateurTerritoireValeurEvenement } from "./useModaleHistoriqueIndicateurTerritoireValeurEvenement";
 
 export const ModaleHistoriqueIndicateurTerritoireValeurEvenement = ({
@@ -186,7 +186,7 @@ export const ModaleHistoriqueIndicateurTerritoireValeurEvenement = ({
   );
 
   return (
-    <Modal
+    <Modale
       title="Historique des actions sur les valeurs d'avancement"
       trigger={children}
     >
@@ -311,6 +311,6 @@ export const ModaleHistoriqueIndicateurTerritoireValeurEvenement = ({
           })}
         </div>
       )}
-    </Modal>
+    </Modale>
   );
 };

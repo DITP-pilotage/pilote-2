@@ -1,6 +1,6 @@
 import { FunctionComponent, PropsWithChildren } from "react";
 import { FormProvider } from "react-hook-form";
-import { Modal } from "@/components/shared/Modal";
+import { Modale } from "@/components/shared/Modale";
 import Indicateur from "@/server/domain/indicateur/Indicateur.interface";
 import type { DétailsIndicateur } from "@/server/domain/indicateur/DétailsIndicateur.interface";
 import { formaterDate } from "@/client/utils/date/date";
@@ -44,7 +44,7 @@ export const ModaleSuppressionValeurAvancementV2: FunctionComponent<
   const refreshRouter = useRefreshRouter();
 
   return (
-    <Modal
+    <Modale
       onOpenChange={(open) => {
         if (!open) {
           refreshRouter();
@@ -253,6 +253,6 @@ export const ModaleSuppressionValeurAvancementV2: FunctionComponent<
           </span>
         </div>
       )}
-    </Modal>
+    </Modale>
   );
 };

@@ -1,5 +1,5 @@
 import { Fragment, FunctionComponent } from "react";
-import { Modal } from "@/components/shared/Modal";
+import { Modale } from "@/components/shared/Modale";
 import { BoutonSousLigné } from "@/components/_commons/BoutonSousLigné/BoutonSousLigné";
 import PublicationAffichage from "@/components/_commons/PublicationChantier/PublicationAffichage/PublicationAffichage";
 import PublicationHistoriqueProps from "./PublicationHistorique.interface";
@@ -15,7 +15,7 @@ const PublicationHistorique: FunctionComponent<PublicationHistoriqueProps> = ({
     usePublicationHistorique(type, entité, réformeId, maille);
 
   return (
-    <Modal
+    <Modale
       onOpenChange={(open) => {
         if (open) {
           récupérerPublications();
@@ -46,7 +46,7 @@ const PublicationHistorique: FunctionComponent<PublicationHistoriqueProps> = ({
           <p>Chargement de l'historique...</p>
         )}
       </div>
-    </Modal>
+    </Modale>
   );
 };
 

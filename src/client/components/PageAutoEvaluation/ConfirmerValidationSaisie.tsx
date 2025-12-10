@@ -1,6 +1,6 @@
 import { FunctionComponent } from "react";
 import { Dialog } from "radix-ui";
-import { Modal } from "@/components/shared/Modal";
+import { Modale } from "@/components/shared/Modale";
 
 interface ConfirmerValidationSaisieProps {
   typeEvaluation: "objectifs" | "manieres-de-servir";
@@ -20,9 +20,10 @@ export const ConfirmerValidationSaisie: FunctionComponent<
       : "votre manière de servir";
 
   return (
-    <Modal
+    <Modale
       onOpenChange={onOpenChange}
       open={open}
+      size="md"
       title="Confirmation de validation"
     >
       <p className="fr-text fr-mb-2w">
@@ -55,6 +56,6 @@ export const ConfirmerValidationSaisie: FunctionComponent<
           Confirmer la validation
         </button>
       </div>
-    </Modal>
+    </Modale>
   );
 };

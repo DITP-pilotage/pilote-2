@@ -1,5 +1,5 @@
 import { Fragment } from "react";
-import { Modal } from "@/components/shared/Modal";
+import { Modale } from "@/components/shared/Modale";
 import MétéoBadge from "@/components/_commons/Meteo/Badge/MétéoBadge";
 import { MeteoPicto } from "@/components/_commons/Meteo/Picto/MeteoPicto";
 import SynthèseDesRésultatsAffichage from "@/components/PageChantier/SynthèseDesRésultatsChantier/Affichage/Affichage";
@@ -16,7 +16,7 @@ const SynthèseDesRésultatsHistorique = () => {
   const territoireSélectionné = useTerritoireSelectionne();
 
   return (
-    <Modal
+    <Modale
       onOpenChange={(open) => {
         if (open) {
           récupérerHistoriqueSynthèseDesRésultats();
@@ -56,7 +56,7 @@ const SynthèseDesRésultatsHistorique = () => {
           <p>Chargement de l'historique...</p>
         )}
       </SynthèseDesRésultatsHistoriqueStyled>
-    </Modal>
+    </Modale>
   );
 };
 

@@ -1,6 +1,6 @@
 import { FunctionComponent, PropsWithChildren } from "react";
 import { Dialog } from "radix-ui";
-import { Modal } from "@/components/shared/Modal";
+import { Modale } from "@/components/shared/Modale";
 import { FicheEvaluation } from "@/server/evaluation/domain/FicheEvaluation";
 import { Icone } from "@/components/_commons/Icone";
 import { LockIcon } from "@/components/_commons/Icones/LockIcon";
@@ -24,7 +24,7 @@ export const ModaleTransmissionDITP: FunctionComponent<
   } = useModaleVerrouillageConsolidation(fichesConsolidation);
 
   return (
-    <Modal title="Transmettre à la DITP" trigger={children}>
+    <Modale title="Transmettre à la DITP" trigger={children}>
       <div className="flex flex-col gap-4">
         <p className="text-gray-600">
           Sélectionnez les territoires que vous souhaitez transmettre à la DITP
@@ -117,6 +117,6 @@ export const ModaleTransmissionDITP: FunctionComponent<
           </button>
         </div>
       </div>
-    </Modal>
+    </Modale>
   );
 };

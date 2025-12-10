@@ -1,5 +1,5 @@
 import { FunctionComponent } from "react";
-import { Modal } from "@/components/shared/Modal";
+import { Modale } from "@/components/shared/Modale";
 import Titre from "@/components/_commons/Titre/Titre";
 import Input from "@/components/_commons/Input/Input";
 import { useModaleInscriptionInfolettre } from "./useModaleInscriptionInfolettre";
@@ -17,7 +17,7 @@ export const ModaleInscriptionInfolettre: FunctionComponent<{
   } = useModaleInscriptionInfolettre();
 
   return (
-    <Modal
+    <Modale
       onOpenChange={(isOpen) => {
         if (!isOpen) {
           handleFermetureModale();
@@ -25,6 +25,7 @@ export const ModaleInscriptionInfolettre: FunctionComponent<{
         onOpenChange(isOpen);
       }}
       open={open}
+      size="md"
       title="Ne manquez pas les actualités de PILOTE"
       titleHidden
     >
@@ -106,6 +107,6 @@ export const ModaleInscriptionInfolettre: FunctionComponent<{
           </span>
         </div>
       )}
-    </Modal>
+    </Modale>
   );
 };

@@ -1,7 +1,7 @@
 import "@gouvfr/dsfr/dist/component/radio/radio.min.css";
 import { FunctionComponent, PropsWithChildren } from "react";
 import { parseAsInteger, parseAsStringLiteral, useQueryState } from "nuqs";
-import { Modal } from "@/components/shared/Modal";
+import { Modale } from "@/components/shared/Modale";
 import IndicateurDEtapes from "@/components/_commons/IndicateurDEtapes/IndicateurDEtapes";
 import { EtapeContenuAExporter } from "@/components/PageAccueil/PageChantiers/ExportDesDonnees/EtapeContenuAExporter";
 import { EtapeDonneeChantierACollecter } from "@/components/PageAccueil/PageChantiers/ExportDesDonnees/EtapeDonneeChantierACollecter";
@@ -69,7 +69,7 @@ export const ExportDesDonnees: FunctionComponent<
   );
 
   return (
-    <Modal
+    <Modale
       onOpenChange={onOpenChange}
       open={open}
       title="Exporter les données"
@@ -101,6 +101,6 @@ export const ExportDesDonnees: FunctionComponent<
         Stepper.ETAPE_DONNEE_EN_COURS_DE_TELECHARGEMENT.numeroEtape ? (
         <EtapeDonneeEnCoursDeTelechargement />
       ) : null}
-    </Modal>
+    </Modale>
   );
 };

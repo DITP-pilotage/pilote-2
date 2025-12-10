@@ -9,7 +9,7 @@ import Titre from "@/components/_commons/Titre/Titre";
 import Bloc from "@/components/_commons/Bloc/Bloc";
 import FicheUtilisateur from "@/components/PageUtilisateur/FicheUtilisateur/FicheUtilisateur";
 import Alerte from "@/components/_commons/Alerte/Alerte";
-import { Modal } from "@/components/shared/Modal";
+import { Modale } from "@/components/shared/Modale";
 import { Bouton } from "@/client/components/_commons/Bouton/Bouton";
 import BandeauInformation from "@/components/_commons/BandeauInformation/BandeauInformation";
 import { useGestionTokenAPI } from "@/components/PageAdminGestionTokenAPI/useGestionTokenAPI";
@@ -106,7 +106,7 @@ const PageUtilisateur: FunctionComponent<PageUtilisateurProps> = ({
                         Générer un token d'authentification
                       </button>
                     ) : null}
-                    <Modal
+                    <Modale
                       title="Désactivation de compte"
                       trigger={
                         <button className="fr-text desactiver" type="button">
@@ -133,7 +133,7 @@ const PageUtilisateur: FunctionComponent<PageUtilisateurProps> = ({
                           variant="primary"
                         />
                       </div>
-                    </Modal>
+                    </Modale>
                     {alerte ? (
                       <div className="fr-my-2w">
                         <Alerte
@@ -161,7 +161,7 @@ const PageUtilisateur: FunctionComponent<PageUtilisateurProps> = ({
                   utilisateur.profil,
                 ) && (
                   <div className="fr-grid-row fr-mt-4w">
-                    <Modal
+                    <Modale
                       title="Réactivation de compte"
                       trigger={
                         <button className="fr-btn" type="button">
@@ -190,7 +190,7 @@ const PageUtilisateur: FunctionComponent<PageUtilisateurProps> = ({
                           variant="primary"
                         />
                       </div>
-                    </Modal>
+                    </Modale>
                   </div>
                 )}
             </div>

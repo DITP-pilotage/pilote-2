@@ -2,7 +2,7 @@
 import { FunctionComponent, useRef } from "react";
 import { useSession } from "next-auth/react";
 import { Dialog } from "radix-ui";
-import { Modal } from "@/components/shared/Modal";
+import { Modale } from "@/components/shared/Modale";
 import api from "@/server/infrastructure/api/trpc/api";
 import { récupérerUnCookie } from "@/client/utils/cookies";
 
@@ -17,7 +17,7 @@ export const ModaleVideoAccueil: FunctionComponent<{
     api.utilisateur.desactiverVideoAccueil.useMutation();
 
   return (
-    <Modal
+    <Modale
       onOpenChange={(isOpen) => {
         if (!isOpen && session?.user.id) {
           if (iframeRef.current) {
@@ -49,16 +49,12 @@ export const ModaleVideoAccueil: FunctionComponent<{
             de PILOTE
           </p>
           <Dialog.Close asChild>
-            <button
-              className="fr-btn"
-              title="Passer la vidéo"
-              type="button"
-            >
+            <button className="fr-btn" title="Passer la vidéo" type="button">
               Passer
             </button>
           </Dialog.Close>
         </div>
       </div>
-    </Modal>
+    </Modale>
   );
 };
