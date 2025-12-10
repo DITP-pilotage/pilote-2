@@ -1,6 +1,6 @@
-import { FunctionComponent } from "react";
+import { FunctionComponent, PropsWithChildren } from "react";
 import { FormProvider } from "react-hook-form";
-import Modale__legacy from "@/components/_commons/Modale/Modale__legacy";
+import { Modal } from "@/components/shared/Modal";
 import Indicateur from "@/server/domain/indicateur/Indicateur.interface";
 import type { DétailsIndicateur } from "@/server/domain/indicateur/DétailsIndicateur.interface";
 
@@ -15,20 +15,21 @@ import { ComparaisonValeurBox } from "@/components/_commons/IndicateursChantier/
 import { LIMITE_CARACTERES_DOCUMENTATION_PROPOSITION } from "@/validation/proposition-valeur-avancement";
 import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
 
-export const ModaleAccuserReceptionPropositionValeurAvancement: FunctionComponent<{
-  indicateur: Indicateur;
-  detailIndicateur: DétailsIndicateur;
-  generatedHTMLID: string;
-  territoireCode: string;
-  territoireCodeInsee: string;
-  territoireNom: string;
-}> = ({
+export const ModaleAccuserReceptionPropositionValeurAvancement: FunctionComponent<
+  PropsWithChildren<{
+    indicateur: Indicateur;
+    detailIndicateur: DétailsIndicateur;
+    territoireCode: string;
+    territoireCodeInsee: string;
+    territoireNom: string;
+  }>
+> = ({
   indicateur,
   detailIndicateur,
-  generatedHTMLID,
   territoireCode,
   territoireCodeInsee,
   territoireNom,
+  children,
 }) => {
   const {
     reactHookForm,
@@ -44,10 +45,14 @@ export const ModaleAccuserReceptionPropositionValeurAvancement: FunctionComponen
   const refreshRouter = useRefreshRouter();
 
   return (
-    <Modale__legacy
-      fermetureCallback={refreshRouter}
-      idHtml={generatedHTMLID}
-      tailleModale="lg"
+    <Modal
+      onOpenChange={(open) => {
+        if (!open) {
+          refreshRouter();
+        }
+      }}
+      title="Accuser réception"
+      trigger={children}
     >
       {etapeAccuserReception ? (
         <>
@@ -240,6 +245,6 @@ export const ModaleAccuserReceptionPropositionValeurAvancement: FunctionComponen
           </span>
         </div>
       )}
-    </Modale__legacy>
+    </Modal>
   );
 };
