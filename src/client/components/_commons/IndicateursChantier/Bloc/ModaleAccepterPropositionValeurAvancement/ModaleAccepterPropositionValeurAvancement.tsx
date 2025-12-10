@@ -1,6 +1,6 @@
-import { FunctionComponent } from "react";
+import { FunctionComponent, PropsWithChildren } from "react";
 import { FormProvider } from "react-hook-form";
-import Modale__legacy from "@/components/_commons/Modale/Modale__legacy";
+import { Modal } from "@/components/shared/Modal";
 import Indicateur from "@/server/domain/indicateur/Indicateur.interface";
 import type { DétailsIndicateur } from "@/server/domain/indicateur/DétailsIndicateur.interface";
 
@@ -16,20 +16,21 @@ import Input from "@/components/_commons/Input/Input";
 import { ComparaisonValeurBox } from "@/components/_commons/IndicateursChantier/Bloc/ComparaisonValeurBox";
 import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
 
-export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<{
-  indicateur: Indicateur;
-  detailIndicateur: DétailsIndicateur;
-  generatedHTMLID: string;
-  territoireCode: string;
-  territoireCodeInsee: string;
-  territoireNom: string;
-}> = ({
+export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<
+  PropsWithChildren<{
+    indicateur: Indicateur;
+    detailIndicateur: DétailsIndicateur;
+    territoireCode: string;
+    territoireCodeInsee: string;
+    territoireNom: string;
+  }>
+> = ({
   indicateur,
   detailIndicateur,
-  generatedHTMLID,
   territoireCode,
   territoireCodeInsee,
   territoireNom,
+  children,
 }) => {
   const {
     reactHookForm,
@@ -47,10 +48,14 @@ export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<{
   const decision = reactHookForm.watch("decision");
 
   return (
-    <Modale__legacy
-      fermetureCallback={refreshRouter}
-      idHtml={generatedHTMLID}
-      tailleModale="lg"
+    <Modal
+      onOpenChange={(open) => {
+        if (!open) {
+          refreshRouter();
+        }
+      }}
+      title="Prendre une décision"
+      trigger={children}
     >
       {etapePropositionValeurAvancement ? (
         <>
@@ -369,6 +374,6 @@ export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<{
           </span>
         </div>
       )}
-    </Modale__legacy>
+    </Modal>
   );
 };
