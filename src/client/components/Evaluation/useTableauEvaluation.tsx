@@ -22,7 +22,6 @@ import { BadgeEtape } from "@/components/Evaluation/BadgeEtape";
 const columnHelper = createColumnHelper<TableauEvaluationRow>();
 
 const PHASES_EVALUATION = {
-  [$Enums.etape_evaluation_enum.AUTO_EVALUATION]: { label: "Auto-évaluation" },
   [$Enums.etape_evaluation_enum.CONSOLIDATION]: { label: "Appréciation" },
   [$Enums.etape_evaluation_enum.INSTRUCTION]: { label: "Instruction" },
 };
@@ -116,11 +115,10 @@ const useTableColumns = (rattachements: Rattachement[]) => {
             type: "checkboxes",
             label: "Filtrer par phase",
             getOptions: () => [
-              $Enums.etape_evaluation_enum.AUTO_EVALUATION,
               $Enums.etape_evaluation_enum.CONSOLIDATION,
               $Enums.etape_evaluation_enum.INSTRUCTION,
             ],
-            getOptionLabel: (value: $Enums.etape_evaluation_enum) =>
+            getOptionLabel: (value: keyof typeof PHASES_EVALUATION) =>
               PHASES_EVALUATION[value].label,
           },
         },
