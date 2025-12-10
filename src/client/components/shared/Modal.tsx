@@ -35,7 +35,7 @@ export const Modal = ({
                 />
               </button>
             </Dialog.Close>
-            <Dialog.Title className="!text-primary !text-2xl !mb-0">
+            <Dialog.Title className="!text-primary !text-2xl !mb-4">
               {title}
             </Dialog.Title>
             {children}
