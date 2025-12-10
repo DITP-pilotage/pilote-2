@@ -20,7 +20,6 @@ export const ListePhaseEvaluation = () => {
     <div className="mx-auto w-full max-w-6xl mb-8">
       {Object.entries(fichesParGroupePuisPhase).map(([groupe, phases]) => {
         const { AUTO_EVALUATION, CONSOLIDATION, INSTRUCTION } = phases;
-        const modaleId = `modale-transmission-ditp-${groupe.replace(/\s+/g, "-").toLowerCase()}`;
         return (
           <div className="mb-8" key={groupe}>
             <div className="flex justify-between items-center mb-4">
@@ -32,20 +31,15 @@ export const ListePhaseEvaluation = () => {
                   2
                 } formulaires`}
               </h2>
-              <button
-                aria-controls={modaleId}
-                className="fr-btn fr-btn--secondary"
-                data-fr-opened="false"
-                type="button"
+              <ModaleTransmissionDITP
+                fichesConsolidation={CONSOLIDATION}
+                groupe={groupe}
               >
-                Transmettre à la DITP
-              </button>
+                <button className="fr-btn fr-btn--secondary" type="button">
+                  Transmettre à la DITP
+                </button>
+              </ModaleTransmissionDITP>
             </div>
-            <ModaleTransmissionDITP
-              fichesConsolidation={CONSOLIDATION}
-              groupe={groupe}
-              idHtml={modaleId}
-            />
             <LignesEnteteAvancementCompletionAppreciation
               appreciation={CONSOLIDATION}
               autoEvaluation={AUTO_EVALUATION}
