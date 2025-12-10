@@ -138,46 +138,6 @@ export const getCommentairesCriteresInvalides = (
       critereId,
     }));
 
-export const useFormSchema = (rattachements: Rattachement[]) => {
-  return useMemo(() => {
-    return baseFormSchema.superRefine((form, ctx) => {
-      for (const {
-        ficheEvaluationId,
-        objectifId,
-      } of getCommentairesObjectifsInvalides(rattachements, form)) {
-        ctx.addIssue({
-          code: "custom",
-          message: "Le motif est obligatoire lorsque la note est modifiée",
-          path: [
-            "fichesEvaluation",
-            ficheEvaluationId,
-            "objectifs",
-            objectifId,
-            "commentaire",
-          ],
-        });
-      }
-
-      for (const {
-        ficheEvaluationId,
-        critereId,
-      } of getCommentairesCriteresInvalides(rattachements, form)) {
-        ctx.addIssue({
-          code: "custom",
-          message: "Le motif est obligatoire lorsque la note est modifiée",
-          path: [
-            "fichesEvaluation",
-            ficheEvaluationId,
-            "criteres",
-            critereId,
-            "commentaire",
-          ],
-        });
-      }
-    });
-  }, [rattachements]);
-};
-
 export type FormObjectifCommentaireName =
   `fichesEvaluation.${string}.objectifs.${string}.commentaire`;
 export type FormObjectifNoteName =

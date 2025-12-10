@@ -23,11 +23,11 @@ import { EtapeEvaluationProvider } from "@/components/Evaluation/EtapeEvaluation
 import { SetFicheCadrageInitiale } from "@/components/Evaluation/SetFicheCadrageInitiale";
 import { HeaderTableauEvaluation } from "@/components/Evaluation/HeaderTableauEvaluation";
 import {
+  baseFormSchema,
   FormCommentaireName,
   FormNoteName,
   FormValues,
   getFichesEvaluationParDefaut,
-  useFormSchema,
 } from "./form";
 import { FiltresTableauEvaluation } from "./FiltresTableauEvaluation";
 
@@ -85,9 +85,8 @@ export const InnerTableauEvaluation = memo(function TableauEvaluation({
   ) => Promise<void>;
 }) {
   const criteres = useCriteres();
-  const formSchema = useFormSchema(rattachements);
   const form = useForm<FormValues>({
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(baseFormSchema),
     mode: "onChange",
     defaultValues: {
       fichesEvaluation: getFichesEvaluationParDefaut(rattachements),
