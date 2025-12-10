@@ -52,6 +52,7 @@ export const ModaleAccuserReceptionPropositionValeurAvancement: FunctionComponen
         }
       }}
       title="Accuser réception"
+      titleHidden
       trigger={children}
     >
       {etapeAccuserReception ? (

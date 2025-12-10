@@ -55,6 +55,7 @@ export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<
         }
       }}
       title="Prendre une décision"
+      titleHidden
       trigger={children}
     >
       {etapePropositionValeurAvancement ? (

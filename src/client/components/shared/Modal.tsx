@@ -2,10 +2,12 @@ import { Dialog } from "radix-ui";
 import { ComponentProps, ReactNode } from "react";
 import { Icone } from "@/components/_commons/Icone";
 import { CloseLineIcon } from "@/components/_commons/Icones/CloseLineIcon";
+import { clsxm } from "@/utils/clsxm";
 
 export const Modal = ({
   trigger,
   title,
+  titleHidden = false,
   children,
   ...props
 }: Pick<
@@ -13,6 +15,7 @@ export const Modal = ({
   "open" | "onOpenChange" | "children"
 > & {
   title: ReactNode;
+  titleHidden?: boolean;
   trigger?: ReactNode;
 }) => {
   return (
@@ -35,7 +38,11 @@ export const Modal = ({
                 />
               </button>
             </Dialog.Close>
-            <Dialog.Title className="!text-primary !text-2xl !mb-4">
+            <Dialog.Title
+              className={clsxm("!text-primary !text-2xl !mb-4", {
+                "sr-only": titleHidden,
+              })}
+            >
               {title}
             </Dialog.Title>
             {children}
