@@ -73,11 +73,6 @@ export class AfficherInstructionQuery {
         const objectifsAvecEvaluations = rattachement.objectifs
           .filter((objectif) => objectifsAccessibles.includes(objectif.id))
           .map((objectif) => {
-            const autoEvaluation = this.findEvaluationObjectif(
-              etapesEvaluations,
-              objectif.id,
-              $Enums.etape_evaluation_enum.AUTO_EVALUATION,
-            );
             const consolidation = this.findEvaluationObjectif(
               etapesEvaluations,
               objectif.id,
@@ -113,13 +108,6 @@ export class AfficherInstructionQuery {
                     ? new Date(consolidation.date_traitement).toISOString()
                     : null,
                 },
-                {
-                  etape: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
-                  evaluation: this.formatEvaluation(autoEvaluation),
-                  dateTraitement: autoEvaluation?.date_traitement
-                    ? new Date(autoEvaluation.date_traitement).toISOString()
-                    : null,
-                },
               ] satisfies Objectif["evaluations"],
             };
           });
@@ -132,11 +120,6 @@ export class AfficherInstructionQuery {
         const criteresAvecEvaluations = tousCriteresRattachement
           .filter((critere) => criteresAccessibles.includes(critere.id))
           .map((critere) => {
-            const autoEvaluation = this.findEvaluationCritere(
-              etapesEvaluations,
-              critere.id,
-              $Enums.etape_evaluation_enum.AUTO_EVALUATION,
-            );
             const consolidation = this.findEvaluationCritere(
               etapesEvaluations,
               critere.id,
@@ -166,13 +149,6 @@ export class AfficherInstructionQuery {
                   evaluation: this.formatEvaluation(consolidation),
                   dateTraitement: consolidation?.date_traitement
                     ? new Date(consolidation.date_traitement).toISOString()
-                    : null,
-                },
-                {
-                  etape: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
-                  evaluation: this.formatEvaluation(autoEvaluation),
-                  dateTraitement: autoEvaluation?.date_traitement
-                    ? new Date(autoEvaluation.date_traitement).toISOString()
                     : null,
                 },
               ] satisfies Rattachement["criteres"][number]["evaluations"],
@@ -287,7 +263,6 @@ export class AfficherInstructionQuery {
                 where: {
                   type: {
                     in: [
-                      $Enums.etape_evaluation_enum.AUTO_EVALUATION,
                       $Enums.etape_evaluation_enum.CONSOLIDATION,
                       $Enums.etape_evaluation_enum.INSTRUCTION,
                     ],
