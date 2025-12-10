@@ -27,7 +27,6 @@ const SectionDétailsMetadataIndicateur: FunctionComponent<{
   chantiers,
 }) => {
   const {
-    register,
     getValues,
     formState: { errors },
     setValue,
@@ -93,31 +92,24 @@ const SectionDétailsMetadataIndicateur: FunctionComponent<{
       <div className="fr-grid-row fr-grid-row--gutters">
         <div className="fr-col-12 fr-col-md-6">
           <MetadataIndicateurTextArea
-            erreurMessage={errors.indicNom?.message}
             estEnCoursDeModification={estEnCoursDeModification}
-            htmlName="indicNom"
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.indic_nom
             }
-            register={register("indicNom", { value: indicateur?.indicNom })}
-            valeurAffiché={indicateur.indicNom || "_"}
+            name="indicNom"
           />
         </div>
       </div>
       <div className="fr-grid-row fr-grid-row--gutters">
         <div className="fr-col-12 fr-col-md-6">
           <MetadataIndicateurSelecteurAvecRecherche
-            erreurMessage={errors.indicParentCh?.message}
             estEnCoursDeModification={estEnCoursDeModification}
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.indic_parent_ch
             }
             listeValeur={optionsParentCh}
+            name="indicParentCh"
             valeurAffiché={`${indicateur.indicParentCh} - ${chantiers.find((chantier) => chantier.id === indicateur.indicParentCh)?.nom}`}
-            valeurModifiéeCallback={(valeur) =>
-              setValue("indicParentCh", valeur)
-            }
-            values={getValues("indicParentCh")}
           />
         </div>
         <div className="fr-col-12 fr-col-md-6">
@@ -135,28 +127,20 @@ const SectionDétailsMetadataIndicateur: FunctionComponent<{
       <div className="fr-grid-row fr-grid-row--gutters">
         <div className="fr-col-12 fr-col-md-6">
           <MetadataIndicateurTextArea
-            erreurMessage={errors.indicDescr?.message}
             estEnCoursDeModification={estEnCoursDeModification}
-            htmlName="indicDescr"
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.indic_descr
             }
-            register={register("indicDescr", { value: indicateur?.indicDescr })}
-            valeurAffiché={indicateur.indicDescr}
+            name="indicDescr"
           />
         </div>
         <div className="fr-col-12 fr-col-md-6">
           <MetadataIndicateurTextArea
-            erreurMessage={errors.indicMethodeCalcul?.message}
             estEnCoursDeModification={estEnCoursDeModification}
-            htmlName="indicMethodeCalcul"
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.indic_methode_calcul
             }
-            register={register("indicMethodeCalcul", {
-              value: indicateur?.indicMethodeCalcul,
-            })}
-            valeurAffiché={indicateur.indicMethodeCalcul || "_"}
+            name="indicMethodeCalcul"
           />
         </div>
       </div>
@@ -289,16 +273,11 @@ const SectionDétailsMetadataIndicateur: FunctionComponent<{
       <div className="fr-grid-row fr-grid-row--gutters">
         <div className="fr-col-12 fr-col-md-6">
           <MetadataIndicateurTextArea
-            erreurMessage={errors.indicSource?.message}
             estEnCoursDeModification={estEnCoursDeModification}
-            htmlName="indicSource"
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.indic_source
             }
-            register={register("indicSource", {
-              value: indicateur?.indicSource,
-            })}
-            valeurAffiché={indicateur.indicSource || "_"}
+            name="indicSource"
           />
         </div>
         <div className="fr-col-12 fr-col-md-6">

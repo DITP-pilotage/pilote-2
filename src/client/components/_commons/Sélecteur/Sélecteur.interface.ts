@@ -15,7 +15,7 @@ export type SélecteurOption<T> = {
 export default interface SélecteurProps<T> {
   htmlName: string;
   options: SélecteurOption<T>[];
-  valeurModifiéeCallback?: (valeur: T) => void;
+  onChange?: (valeur: T) => void;
   valeurSélectionnée?: T;
   texteAide?: string;
   erreur?: FieldError | Merge<FieldError, FieldErrorsImpl<{}>>;

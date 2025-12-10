@@ -74,14 +74,14 @@ export const MetadataIndicateurSelecteur: FunctionComponent<{
               errorMessage={form.formState.errors[name]?.message}
               estDesactive={estDesactive}
               htmlName={name}
-              options={listeValeur}
-              valeurModifiéeCallback={(value) => {
+              onChange={(value) => {
                 field.onChange(value);
                 if (onChangeSideEffect) {
                   onChangeSideEffect(value);
                 }
               }}
-              valeurSélectionnée={`${field.value || "_"}`}
+              options={listeValeur}
+              valeurSélectionnée={field.value || "_"}
             />
           );
         }}

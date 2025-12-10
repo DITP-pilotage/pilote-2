@@ -5,12 +5,11 @@ import { MapInformationMetadataIndicateurContrat } from "@/server/app/contrats/I
 import { MetadataIndicateurInput } from "@/components/PageIndicateur/FicheIndicateur/commons/MetadataIndicateurInput";
 import { MetadataIndicateurTextArea } from "@/components/PageIndicateur/FicheIndicateur/commons/MetadataIndicateurTextArea";
 import { MetadataIndicateurInterrupteur } from "@/components/PageIndicateur/FicheIndicateur/commons/MetadataIndicateurInterrupteur";
-import { MetadataIndicateurSelecteur } from "@/client/components/PageIndicateur/FicheIndicateur/commons/MetadataIndicateurSelecteur";
+import { MetadataIndicateurSelecteur } from "@/components/PageIndicateur/FicheIndicateur/commons/MetadataIndicateurSelecteur";
 import {
   mappingAcceptedValues,
   mappingDisplayAcceptedValues,
-} from "@/client/components/PageIndicateur/FicheIndicateur/commons/utils";
-import { useMetadataIndicateurForm } from "@/components/PageIndicateur/useMetadataIndicateurForm";
+} from "@/components/PageIndicateur/FicheIndicateur/commons/utils";
 
 const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
   indicateur: MetadataParametrageIndicateurContrat;
@@ -21,10 +20,6 @@ const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
   estEnCoursDeModification,
   mapInformationMetadataIndicateur,
 }) => {
-  const {
-    register,
-    formState: { errors },
-  } = useMetadataIndicateurForm();
   return (
     <div>
       <Titre baliseHtml="h2" className="fr-h5">
@@ -187,16 +182,11 @@ const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
       <div className="fr-grid-row fr-grid-row--gutters">
         <div className="fr-col-12 fr-col-md-6">
           <MetadataIndicateurTextArea
-            erreurMessage={errors.commentaire?.message}
             estEnCoursDeModification={estEnCoursDeModification}
-            htmlName="commentaire"
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.commentaire
             }
-            register={register("commentaire", {
-              value: indicateur?.commentaire,
-            })}
-            valeurAffiché={indicateur.commentaire || "_"}
+            name="commentaire"
           />
         </div>
         <div className="fr-col-12 fr-col-md-6">

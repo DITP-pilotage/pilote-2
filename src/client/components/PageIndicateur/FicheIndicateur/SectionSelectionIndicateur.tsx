@@ -1,6 +1,6 @@
 import { FunctionComponent } from "react";
 import { Controller } from "react-hook-form";
-import SélecteurIndicateurActif from "@/components/PageIndicateur/FicheIndicateur/SectionSelectionIndicateur/SélecteurIndicateurActif/SélecteurIndicateurActif";
+import { SélecteurIndicateurActif } from "@/components/PageIndicateur/FicheIndicateur/commons/SélecteurIndicateurActif";
 import { useMetadataIndicateurForm } from "@/components/PageIndicateur/useMetadataIndicateurForm";
 
 interface SectionSelectionIndicateurProps {
@@ -17,15 +17,13 @@ const SectionSelectionIndicateur: FunctionComponent<
       <Controller
         control={form.control}
         name="indicHiddenPilote"
-        render={({ field }) => {
-          return (
-            <SélecteurIndicateurActif
-              estEnCoursDeModification={estEnCoursDeModification}
-              etatIndicateurSélectionné={field.value}
-              setEtatIndicateurSélectionné={field.onChange}
-            />
-          );
-        }}
+        render={({ field }) => (
+          <SélecteurIndicateurActif
+            estEnCoursDeModification={estEnCoursDeModification}
+            onChange={field.onChange}
+            value={field.value}
+          />
+        )}
       />
     </div>
   );

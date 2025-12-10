@@ -2,21 +2,5 @@ import { useFormContext } from "react-hook-form";
 import { ContenuForm } from "@/components/PageAdminGestionContenus/useMessageInformation";
 
 export const useMessageInformationForm = () => {
-  const {
-    register,
-    watch,
-    getValues,
-    setValue,
-    formState: { errors },
-  } = useFormContext<ContenuForm>();
-
-  watch("bandeauType");
-  watch("isBandeauActif");
-
-  return {
-    register,
-    errors,
-    getValues,
-    setValue,
-  };
+  return useFormContext<ContenuForm>();
 };
