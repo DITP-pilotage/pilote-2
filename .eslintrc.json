@@ -116,6 +116,7 @@
     "react/no-array-index-key": "off",
     "react/prefer-read-only-props": "off",
     "react/no-multi-comp": "off",
-    "prettier/prettier": "error"
+    "prettier/prettier": "error",
+    "jsx-a11y/label-has-associated-control": "off"
   }
 }
