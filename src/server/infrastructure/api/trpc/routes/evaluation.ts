@@ -22,6 +22,7 @@ import { genererPDFAutoEvaluationCommandSchema } from "@/server/evaluation/handl
 import { modifierDroitsUtilisateurCommandSchema } from "@/server/evaluation/handlers/ModifierDroitsUtilisateurHandler";
 import { AutoEvaluationPDFAdapter } from "@/server/evaluation/infrastructure/AutoEvaluationPDFAdapter";
 import { EvaluationsAdapter } from "@/server/evaluation/infrastructure/EvaluationsAdapter";
+import { transmettreAppreciationInputSchema } from "@/server/evaluation/handlers/TransmettreAppreciationHandler";
 
 export const evaluationRouter = créerRouteurTRPC({
   getDroitsPiloteEval: procédureProtégée.query(async ({ ctx }) => {
@@ -166,17 +167,33 @@ export const evaluationRouter = créerRouteurTRPC({
         .peutAccederEtapePilotage({
           applicationsAccessibles: ctx.session.applicationsAccessibles,
         });
+
+      if (!peutAccederPilotage)
+        throw new ForbiddenError("Accès refusé au pilotage");
+
+      await getContainer("piloteEval")
+        .resolve("modifierEtatFichesConsolidationHandler")
+        .execute(input);
+    }),
+
+  transmettreAppreciation: procédureProtégée
+    .input(transmettreAppreciationInputSchema)
+    .mutation(async ({ input, ctx }) => {
       const peutAccederFicheAppreciation = await getContainer("piloteEval")
         .resolve("accesFicheEvaluationService")
         .peutAccederEtapeAppreciation({
           utilisateurId: ctx.session.user.id,
         });
-      if (!peutAccederPilotage && !peutAccederFicheAppreciation)
-        throw new ForbiddenError("Accès refusé à la fiche en consolidation");
+
+      if (!peutAccederFicheAppreciation)
+        throw new ForbiddenError("Accès refusé à l'appréciation");
 
       await getContainer("piloteEval")
-        .resolve("modifierEtatFichesConsolidationHandler")
-        .execute(input);
+        .resolve("transmettreAppreciationHandler")
+        .execute({
+          ...input,
+          utilisateurId: ctx.session.user.id,
+        });
     }),
 
   modifierEtatFichesInstruction: procédureProtégée

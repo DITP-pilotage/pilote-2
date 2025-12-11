@@ -31,7 +31,7 @@ export const useTransmissionDITP = (fichesConsolidation: FicheEvaluation[]) => {
   const [etapeTransmission, setEtapeTransmission] =
     useState<EtapeTransmission | null>(EtapeTransmission.SELECTION_TERRITOIRES);
 
-  const mutation = api.evaluation.modifierEtatFichesConsolidation.useMutation();
+  const mutation = api.evaluation.transmettreAppreciation.useMutation();
   const refreshRouter = useRefreshRouter();
 
   const fichesSelectionnables = fichesConsolidation.filter(
@@ -70,10 +70,7 @@ export const useTransmissionDITP = (fichesConsolidation: FicheEvaluation[]) => {
 
   const verrouillerLaConsolidation = async () => {
     await mutation.mutateAsync(
-      {
-        ficheEvaluationIds: fichesSelectionnees,
-        readOnly: true,
-      },
+      { ficheEvaluationIds: fichesSelectionnees },
       {
         onSuccess: async () => {
           toast.success(
