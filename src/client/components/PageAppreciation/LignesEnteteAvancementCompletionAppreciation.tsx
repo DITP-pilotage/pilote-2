@@ -36,7 +36,7 @@ export const LignesEnteteAvancementCompletionAppreciation = ({
   return (
     <ul className="list-disc list-inside mt-4 mb-2">
       {appreciationRequierentAttention > 0 && (
-        <li className="!text-pilote-yellow">
+        <li className="!text-warning">
           <b>Phase d'appréciation</b> : {appreciationRequierentAttention}{" "}
           formulaire(s){" "}
           {appreciationRequierentAttention === 1 ? "requiert" : "requièrent"}{" "}

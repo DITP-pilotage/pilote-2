@@ -42,7 +42,7 @@ export const BarreProgressionEvaluation = ({
           <div
             className={clsxm("h-2 rounded-full", {
               "bg-primary": estValide,
-              "bg-pilote-yellow": !estValide,
+              "bg-warning": !estValide,
             })}
             style={{
               width: `${(nombreNotes / nombreTotal) * 100}%`,

@@ -45,7 +45,7 @@ export const ListePhaseEvaluation = () => {
               autoEvaluation={AUTO_EVALUATION}
               instruction={INSTRUCTION}
             />
-            <Accordion.Root type="multiple">
+            <Accordion.Root className="flex flex-col gap-6" type="multiple">
               <Accordion.Item value="appreciation">
                 <Accordion.Header>
                   <Accordion.Trigger>
@@ -55,12 +55,13 @@ export const ListePhaseEvaluation = () => {
                 </Accordion.Header>
                 <Accordion.Content>
                   {CONSOLIDATION.length > 0 ? (
-                    <div className="flex flex-col gap-4 mt-4">
+                    <div className="flex flex-col gap-4">
                       <div>
                         <Bouton
+                          className="!text-xs"
                           iconLeft={
                             <Icone
-                              className="w-6 h-6"
+                              className="w-4 h-4"
                               icone={
                                 afficherObjectifsCollectifs
                                   ? EyeOffIcon
@@ -92,9 +93,7 @@ export const ListePhaseEvaluation = () => {
                       ))}
                     </div>
                   ) : (
-                    <div className="mt-4 mb-2">
-                      Aucun territoire n'est dans cette phase
-                    </div>
+                    <span>Aucun territoire n'est dans cette phase</span>
                   )}
                 </Accordion.Content>
               </Accordion.Item>
@@ -107,12 +106,13 @@ export const ListePhaseEvaluation = () => {
                     </Accordion.Trigger>
                   </Accordion.Header>
                   <Accordion.Content>
-                    <div className="flex flex-col gap-4 mt-4">
+                    <div className="flex flex-col gap-4">
                       <div>
                         <Bouton
+                          className="!text-xs"
                           iconLeft={
                             <Icone
-                              className="w-6 h-6"
+                              className="w-4 h-4"
                               icone={
                                 afficherObjectifsCollectifs
                                   ? EyeOffIcon
@@ -155,12 +155,13 @@ export const ListePhaseEvaluation = () => {
                 </Accordion.Header>
                 <Accordion.Content>
                   {INSTRUCTION.length > 0 ? (
-                    <div className="flex flex-col gap-4 mt-4">
+                    <div className="flex flex-col gap-4">
                       <div>
                         <Bouton
+                          className="!text-xs"
                           iconLeft={
                             <Icone
-                              className="w-6 h-6"
+                              className="w-4 h-4"
                               icone={
                                 afficherObjectifsCollectifs
                                   ? EyeOffIcon
@@ -192,9 +193,7 @@ export const ListePhaseEvaluation = () => {
                       ))}
                     </div>
                   ) : (
-                    <div className="mt-4 mb-2">
-                      Aucun territoire n'est dans cette phase
-                    </div>
+                    <span>Aucun territoire n'est dans cette phase</span>
                   )}
                 </Accordion.Content>
               </Accordion.Item>
