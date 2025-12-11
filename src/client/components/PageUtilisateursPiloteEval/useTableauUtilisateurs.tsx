@@ -2,6 +2,8 @@ import {
   createColumnHelper,
   getCoreRowModel,
   getFilteredRowModel,
+  getSortedRowModel,
+  SortingState,
   useReactTable,
 } from "@tanstack/react-table";
 import { useMemo, useState } from "react";
@@ -17,7 +19,14 @@ const useTableColumns = () => {
     () => [
       columnHelper.accessor("email", {
         header: "Email",
-        cell: (info) => info.getValue(),
+        cell: (info) => (
+          <div
+            className="max-w-xs overflow-hidden text-ellipsis whitespace-nowrap"
+            title={info.getValue()}
+          >
+            {info.getValue()}
+          </div>
+        ),
       }),
       columnHelper.accessor("nom", {
         header: "Nom",
@@ -51,16 +60,22 @@ export const useTableauUtilisateurs = ({
 }) => {
   const columns = useTableColumns();
   const [globalFilter, setGlobalFilter] = useState("");
+  const [sorting, setSorting] = useState<SortingState>([
+    { id: "dateDerniereModification", desc: true },
+  ]);
 
   const table = useReactTable({
     data: utilisateurs,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
+    getSortedRowModel: getSortedRowModel(),
     state: {
       globalFilter,
+      sorting,
     },
     onGlobalFilterChange: setGlobalFilter,
+    onSortingChange: setSorting,
     globalFilterFn: (row, _columnId, filterValue) => {
       const search = filterValue.toLowerCase();
       const utilisateur = row.original;

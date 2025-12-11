@@ -39,13 +39,26 @@ export const TableauUtilisateurs = () => {
                   key={headerGroup.id}
                 >
                   {headerGroup.headers.map((header) => (
-                    <th className="px-4 py-3" key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
+                    <th
+                      className="px-4 py-3 cursor-pointer select-none hover:bg-dsfr-blue-france-925-hover"
+                      key={header.id}
+                      onClick={header.column.getToggleSortingHandler()}
+                    >
+                      {header.isPlaceholder ? null : (
+                        <div className="flex items-center gap-2">
+                          {flexRender(
                             header.column.columnDef.header,
                             header.getContext(),
                           )}
+                          {header.column.getIsSorted() === "asc" ? (
+                            <span>↑</span>
+                          ) : header.column.getIsSorted() === "desc" ? (
+                            <span>↓</span>
+                          ) : (
+                            <span className="opacity-30">↕</span>
+                          )}
+                        </div>
+                      )}
                     </th>
                   ))}
                 </tr>
