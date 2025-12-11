@@ -1,5 +1,5 @@
 import { Controller } from "react-hook-form";
-import MultiSelect from "@/components/_commons/MultiSelectNew/MultiSelect";
+import { MultiSelectFiltre } from "@/components/_commons/MultiSelectFiltre/MultiSelectFiltre";
 import { useFormulaireConfigurationDroits } from "@/components/PageUtilisateurPiloteEval/useFormulaireConfigurationDroits";
 
 export const FormulaireConfigurationDroits = () => {
@@ -30,13 +30,11 @@ export const FormulaireConfigurationDroits = () => {
                 control={control}
                 name="autoEvaluation.rattachementCodes"
                 render={({ field }) => (
-                  <MultiSelect
-                    afficherBoutonsSélection
-                    changementValeursSélectionnéesCallback={field.onChange}
-                    label=""
-                    optionsGroupées={rattachementsOptionsGroupees}
-                    suffixeLibellé="territoire(s) sélectionné(s)"
-                    valeursSélectionnéesParDéfaut={field.value}
+                  <MultiSelectFiltre
+                    onChange={field.onChange}
+                    optionGroups={rattachementsOptionsGroupees}
+                    suffixLabel="territoire(s) sélectionné(s)"
+                    values={field.value}
                   />
                 )}
               />
@@ -48,13 +46,11 @@ export const FormulaireConfigurationDroits = () => {
                 control={control}
                 name="consolidation.rattachementCodes"
                 render={({ field }) => (
-                  <MultiSelect
-                    afficherBoutonsSélection
-                    changementValeursSélectionnéesCallback={field.onChange}
-                    label=""
-                    optionsGroupées={rattachementsOptionsGroupees}
-                    suffixeLibellé="territoire(s) sélectionné(s)"
-                    valeursSélectionnéesParDéfaut={field.value}
+                  <MultiSelectFiltre
+                    onChange={field.onChange}
+                    optionGroups={rattachementsOptionsGroupees}
+                    suffixLabel="territoire(s) sélectionné(s)"
+                    values={field.value}
                   />
                 )}
               />
@@ -67,13 +63,13 @@ export const FormulaireConfigurationDroits = () => {
                   control={control}
                   name="instructionObjectifs.rattachementCodes"
                   render={({ field }) => (
-                    <MultiSelect
-                      afficherBoutonsSélection
-                      changementValeursSélectionnéesCallback={field.onChange}
+                    <MultiSelectFiltre
+                      className="flex-col items-start"
                       label="Objectifs"
-                      optionsGroupées={rattachementsOptionsGroupees}
-                      suffixeLibellé="territoire(s) sélectionné(s)"
-                      valeursSélectionnéesParDéfaut={field.value}
+                      onChange={field.onChange}
+                      optionGroups={rattachementsOptionsGroupees}
+                      suffixLabel="territoire(s) sélectionné(s)"
+                      values={field.value}
                     />
                   )}
                 />
@@ -82,13 +78,13 @@ export const FormulaireConfigurationDroits = () => {
                   control={control}
                   name="instructionManiereDeServir.critereCodes"
                   render={({ field }) => (
-                    <MultiSelect
-                      afficherBoutonsSélection
-                      changementValeursSélectionnéesCallback={field.onChange}
+                    <MultiSelectFiltre
+                      className="flex-col items-start"
                       label="Manière de servir"
-                      optionsGroupées={criteresOptionsGroupees}
-                      suffixeLibellé="critère(s) sélectionné(s)"
-                      valeursSélectionnéesParDéfaut={field.value}
+                      onChange={field.onChange}
+                      optionGroups={criteresOptionsGroupees}
+                      suffixLabel="critère(s) sélectionné(s)"
+                      values={field.value}
                     />
                   )}
                 />
