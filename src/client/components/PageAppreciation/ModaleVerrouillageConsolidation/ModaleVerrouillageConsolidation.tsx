@@ -35,6 +35,9 @@ export const ModaleTransmissionDITP = ({
   } = useModaleVerrouillageConsolidation(fichesAppreciation);
   const refreshRouter = useRefreshRouter();
 
+  const estTraitee = (fiche: FicheEvaluation) =>
+    fiche.isCriteresValides && fiche.isObjectifsValides;
+
   return (
     <Modale
       onOpenChange={(open) => {
@@ -126,8 +129,7 @@ export const ModaleTransmissionDITP = ({
                           fiche.rattachement.code.startsWith("REG-")
                             ? `Région ${fiche.rattachement.libelle}`
                             : `${fiche.rattachement.code.split("DEPT-")[1]} - ${fiche.rattachement.libelle}`;
-                        const traite =
-                          fiche.isCriteresValides && fiche.isObjectifsValides;
+                        const traite = estTraitee(fiche);
 
                         return (
                           <label
@@ -196,8 +198,6 @@ export const ModaleTransmissionDITP = ({
                     {fichesAppreciation
                       .filter((fiche) => fichesSelectionnees.includes(fiche.id))
                       .map((fiche) => {
-                        const estTraitee =
-                          fiche.isObjectifsValides && fiche.isCriteresValides;
                         return (
                           <li
                             className="flex items-center gap-2 mb-1"
@@ -221,7 +221,7 @@ export const ModaleTransmissionDITP = ({
                               {fiche.rattachement.libelle} (
                               {fiche.rattachement.code})
                             </span>
-                            {!estTraitee && (
+                            {!estTraitee(fiche) && (
                               <Icone
                                 className="text-dsfr-mention-grey w-4 h-4"
                                 icone={WarningIcon}
@@ -232,11 +232,9 @@ export const ModaleTransmissionDITP = ({
                       })}
                   </ul>
 
-                  {fichesAppreciation.some((fiche) => {
-                    const estTraitee =
-                      fiche.isObjectifsValides && fiche.isCriteresValides;
-                    return !estTraitee;
-                  }) && (
+                  {fichesAppreciation
+                    .filter((fiche) => fichesSelectionnees.includes(fiche.id))
+                    .some((fiche) => !estTraitee(fiche)) && (
                     <div className="mt-6">
                       <Alerte
                         message="Vous vous apprêtez à transmettre les appréciations des territoires listés ci-dessus. Nous attirons votre attention sur le fait que certaines d'entre elles sont traitées partiellement. Toutes les appréciations transmises (qu'elles soient marquées comme traitées ou non) ne pourront plus être modifiées. Elles resteront cependant accessibles dans cet espace, pour consultation et impression."
