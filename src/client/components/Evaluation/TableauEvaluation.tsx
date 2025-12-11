@@ -13,14 +13,12 @@ import {
   COLONNES,
   useTableauEvaluation,
 } from "@/components/Evaluation/useTableauEvaluation";
-import { LayoutFicheCadrage } from "@/components/Evaluation/LayoutFicheCadrage";
 import {
   CriteresProvider,
   useCriteres,
 } from "@/components/Evaluation/CriteresProvider";
 import { AutosaveProvider } from "@/components/Evaluation/AutosaveProvider";
 import { EtapeEvaluationProvider } from "@/components/Evaluation/EtapeEvaluationProvider";
-import { SetFicheCadrageInitiale } from "@/components/Evaluation/SetFicheCadrageInitiale";
 import { HeaderTableauEvaluation } from "@/components/Evaluation/HeaderTableauEvaluation";
 import {
   baseFormSchema,
@@ -131,64 +129,61 @@ export const InnerTableauEvaluation = memo(function TableauEvaluation({
       <AutosaveProvider value={handleAutosave}>
         <CriteresProvider criteres={criteres}>
           <FormProvider {...form}>
-            <LayoutFicheCadrage>
-              <SetFicheCadrageInitiale table={table} />
-              <div className="max-w-[1200px] px-8">
-                <form
-                  className="flex flex-col gap-3 py-6 w-full grow border-x border-gray-200"
-                  onSubmit={form.handleSubmit(
-                    (values) => onEnregistrer(values, true),
-                    () => table.resetColumnFilters(),
-                  )}
-                >
-                  <HeaderTableauEvaluation
-                    dateDerniereModification={dateDerniereModification}
-                    estEnLectureSeule={estEnLectureSeule}
-                    etape={etape}
-                    titre={titre}
-                  />
-                  <FiltresTableauEvaluation table={table} />
+            <div className="max-w-[1200px] px-8">
+              <form
+                className="flex flex-col gap-3 py-6 w-full grow border-x border-gray-200"
+                onSubmit={form.handleSubmit(
+                  (values) => onEnregistrer(values, true),
+                  () => table.resetColumnFilters(),
+                )}
+              >
+                <HeaderTableauEvaluation
+                  dateDerniereModification={dateDerniereModification}
+                  estEnLectureSeule={estEnLectureSeule}
+                  etape={etape}
+                  titre={titre}
+                />
+                <FiltresTableauEvaluation table={table} />
 
-                  <table className="table-fixed w-full border-collapse">
-                    <colgroup>
-                      {table.getHeaderGroups()[0].headers.map((header) => (
-                        <col
-                          className={clsxm({
-                            "w-[150px]":
-                              header.column.id === COLONNES.RATTACHEMENT_CODE,
-                          })}
-                          key={header.id}
-                        />
-                      ))}
-                    </colgroup>
-                    <tbody>
-                      {rows.map((row) => {
-                        return (
-                          <tr key={row.id}>
-                            {row.getVisibleCells().map((cell) => (
-                              <td
-                                className={clsxm(
-                                  "border border-gray-300 px-4",
-                                  "first:!border-l-0 last:!border-r-0",
-                                  "align-top",
-                                  cell.column.id === "id" && "w-auto",
-                                )}
-                                key={cell.id}
-                              >
-                                {flexRender(
-                                  cell.column.columnDef.cell,
-                                  cell.getContext(),
-                                )}
-                              </td>
-                            ))}
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </table>
-                </form>
-              </div>
-            </LayoutFicheCadrage>
+                <table className="table-fixed w-full border-collapse">
+                  <colgroup>
+                    {table.getHeaderGroups()[0].headers.map((header) => (
+                      <col
+                        className={clsxm({
+                          "w-[150px]":
+                            header.column.id === COLONNES.RATTACHEMENT_CODE,
+                        })}
+                        key={header.id}
+                      />
+                    ))}
+                  </colgroup>
+                  <tbody>
+                    {rows.map((row) => {
+                      return (
+                        <tr key={row.id}>
+                          {row.getVisibleCells().map((cell) => (
+                            <td
+                              className={clsxm(
+                                "border border-gray-300 px-4",
+                                "first:!border-l-0 last:!border-r-0",
+                                "align-top",
+                                cell.column.id === "id" && "w-auto",
+                              )}
+                              key={cell.id}
+                            >
+                              {flexRender(
+                                cell.column.columnDef.cell,
+                                cell.getContext(),
+                              )}
+                            </td>
+                          ))}
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </form>
+            </div>
           </FormProvider>
         </CriteresProvider>
       </AutosaveProvider>

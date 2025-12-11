@@ -7,7 +7,6 @@ import { LigneEtapeEvaluation } from "@/components/Evaluation/LigneEtapeEvaluati
 import { useGetCritere } from "@/components/Evaluation/CriteresProvider";
 import { useFormulaireEvaluation } from "@/components/Evaluation/form";
 import { useHandleAutosave } from "@/components/Evaluation/AutosaveProvider";
-import { useSetCritereOuObjectif } from "@/components/Evaluation/LayoutFicheCadrage";
 import { BoutonTraitementEvaluation } from "@/components/Evaluation/BoutonTraitementEvaluation";
 
 export const CelluleEvaluation = ({
@@ -18,7 +17,6 @@ export const CelluleEvaluation = ({
   const ligne = row.original;
   const onAutosave = useHandleAutosave();
   const getCritere = useGetCritere();
-  const setCritereOuObjectif = useSetCritereOuObjectif();
   const commentaireName =
     ligne.type === "objectif"
       ? (`fichesEvaluation.${ligne.ficheEvaluationId}.objectifs.${ligne.id}.commentaire` as const)
@@ -45,7 +43,7 @@ export const CelluleEvaluation = ({
           critere: getCritere(ligne.id),
         } as const);
 
-  const afficherFicheCadrage = () => setCritereOuObjectif(critereOuObjectif);
+  const afficherFicheCadrage = () => console.log(critereOuObjectif);
 
   return (
     <div className="space-y-4">
