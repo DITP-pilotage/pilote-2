@@ -39,7 +39,7 @@ export const Modale = ({
           >
             <Dialog.Close asChild>
               <button
-                className="!text-primary flex align-center gap-1 px-4 py-2 absolute top-2 right-4 !text-sm"
+                className="!text-primary flex items-center gap-1 px-4 py-2 absolute top-2 right-4 !text-sm"
                 title="Fermer la fenêtre modale"
                 type="button"
               >
