@@ -3,6 +3,7 @@ import { Dialog } from "radix-ui";
 import { FormProvider } from "react-hook-form";
 import { PropsWithChildren } from "react";
 import { Modale } from "@/components/shared/Modale";
+import { Checkbox } from "@/components/shared/Checkbox";
 import { FicheEvaluation } from "@/server/evaluation/domain/FicheEvaluation";
 import {
   EtapeTransmission,
@@ -103,49 +104,44 @@ export const ModaleTransmissionDITP = ({
                       </p>
                     </div>
                   ) : (
-                    <div className="grid grid-cols-3 gap-3">
-                      <div className="col-span-3 flex items-center gap-3 p-3 border-2 border-primary rounded bg-blue-50">
-                        <input
+                    <div className="grid grid-cols-3 gap-4">
+                      <label className="col-span-3 flex items-center gap-3 cursor-pointer">
+                        <Checkbox
                           checked={tousSelectionnes}
-                          className="fr-checkbox"
-                          id="checkbox-tout-selectionner"
-                          onChange={toggleTout}
-                          type="checkbox"
+                          onCheckedChange={toggleTout}
                         />
-                        <label
-                          className="flex-1 cursor-pointer font-medium"
-                          htmlFor="checkbox-tout-selectionner"
-                        >
-                          Sélectionner tous les territoires
-                        </label>
-                      </div>
+                        <span className="text-base italic">
+                          sélectionner tous les territoires
+                        </span>
+                      </label>
 
-                      {fichesSelectionnables.map((fiche) => (
-                        <div
-                          className="flex items-center gap-2 p-3 border rounded border-gray-300 hover:bg-gray-50"
-                          key={fiche.id}
-                        >
-                          <input
-                            {...reactHookForm.register(
-                              `territoiresSelectionnes.${fiche.id}`,
-                            )}
-                            className="fr-checkbox"
-                            id={`checkbox-${fiche.id}`}
-                            type="checkbox"
-                          />
+                      {fichesSelectionnables.map((fiche) => {
+                        const territoireLabel = fiche.rattachement.code
+                          ? `${fiche.rattachement.code} - ${fiche.rattachement.libelle}`
+                          : fiche.rattachement.libelle;
+
+                        return (
                           <label
-                            className="flex-1 cursor-pointer text-sm"
-                            htmlFor={`checkbox-${fiche.id}`}
+                            className="flex items-center gap-3 cursor-pointer"
+                            key={fiche.id}
                           >
-                            <div className="font-medium">
-                              {fiche.rattachement.libelle}
-                            </div>
-                            <div className="text-xs text-gray-500">
-                              {fiche.rattachement.code}
-                            </div>
+                            <Checkbox
+                              checked={
+                                reactHookForm.watch(
+                                  `territoiresSelectionnes.${fiche.id}`,
+                                ) ?? false
+                              }
+                              onCheckedChange={(checked) => {
+                                reactHookForm.setValue(
+                                  `territoiresSelectionnes.${fiche.id}`,
+                                  checked === true,
+                                );
+                              }}
+                            />
+                            <span className="text-base">{territoireLabel}</span>
                           </label>
-                        </div>
-                      ))}
+                        );
+                      })}
                     </div>
                   )}
 
