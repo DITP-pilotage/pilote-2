@@ -35,23 +35,15 @@ export const CelluleEvaluation = ({
   const noteError = form.getFieldState(noteName).invalid;
   const traitementDisabled = commentaireError || noteError;
 
-  const critereOuObjectif =
-    ligne.type === "objectif"
-      ? ({ type: "objectif", objectif: ligne } as const)
-      : ({
-          type: "critere",
-          critere: getCritere(ligne.id),
-        } as const);
-
-  const afficherFicheCadrage = () => console.log(critereOuObjectif);
-
   return (
     <div className="space-y-4">
       <div className="bg-dsfr-blue-france-925 pb-2 border-b border-gray-200 -mx-4 p-4 flex justify-between gap-2 !mb-0 min-h-[80px]">
         <div className="text-primary font-bold text-sm line-clamp-2">
           <span className="capitalize">{ligne.type}</span> - {ligne.libelle}
         </div>
-        <BoutonAfficherFicheCadrage critereOuObjectif={critereOuObjectif} />
+        {ligne.type === "critere" && (
+          <BoutonAfficherFicheCadrage critere={getCritere(ligne.id)} />
+        )}
       </div>
 
       <div className="divide-y divide-gray-200">
@@ -89,7 +81,6 @@ export const CelluleEvaluation = ({
                 mode={mode}
                 note={evalItem.evaluation.note}
                 noteName={noteName}
-                onAfficherFicheCadrage={afficherFicheCadrage}
                 onAutosave={onAutosave}
                 traitement={boutonTraitement}
               />
@@ -107,7 +98,6 @@ export const CelluleEvaluation = ({
                 mode={mode}
                 note={evalItem.evaluation.note}
                 noteName={noteName}
-                onAfficherFicheCadrage={afficherFicheCadrage}
                 onAutosave={onAutosave}
                 traitement={boutonTraitement}
               />

@@ -129,7 +129,7 @@ export const InnerTableauEvaluation = memo(function TableauEvaluation({
       <AutosaveProvider value={handleAutosave}>
         <CriteresProvider criteres={criteres}>
           <FormProvider {...form}>
-            <div className="max-w-[1200px] px-8">
+            <div className="max-w-[1200px] mx-auto bg-white px-8">
               <form
                 className="flex flex-col gap-3 py-6 w-full grow border-x border-gray-200"
                 onSubmit={form.handleSubmit(
@@ -198,7 +198,9 @@ export const TableauEvaluation = (
 ) => {
   return (
     <CriteresProvider criteres={props.criteres}>
-      <InnerTableauEvaluation {...props} />
+      <div className="bg-dsfr-alt-blue-france">
+        <InnerTableauEvaluation {...props} />
+      </div>
     </CriteresProvider>
   );
 };

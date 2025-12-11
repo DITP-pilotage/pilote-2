@@ -28,7 +28,6 @@ export const LigneEtapeEvaluation = ({
   annexe,
   note,
   onAutosave,
-  onAfficherFicheCadrage,
   traitement,
 }: {
   mode: "editable" | "bloque" | "lecture-seule";
@@ -40,7 +39,6 @@ export const LigneEtapeEvaluation = ({
   annexe?: string | null;
   note?: number | null;
   onAutosave?: (fieldName: FormCommentaireName | FormNoteName) => void;
-  onAfficherFicheCadrage?: () => void;
   traitement?: ReactNode;
 }) => {
   return (
@@ -61,7 +59,6 @@ export const LigneEtapeEvaluation = ({
             }
             name={commentaireName}
             onAutosave={() => onAutosave?.(commentaireName)}
-            onFocus={onAfficherFicheCadrage}
           />
         ) : (
           <>
@@ -106,7 +103,6 @@ export const LigneEtapeEvaluation = ({
             }
             name={noteName}
             onAutosave={() => onAutosave?.(noteName)}
-            onFocus={onAfficherFicheCadrage}
           />
         ) : (
           <div className="flex flex-col mb-2">
