@@ -98,15 +98,15 @@ export const ListePhaseEvaluation = () => {
                   )}
                 </Accordion.Content>
               </Accordion.Item>
-              <Accordion.Item value="auto-evaluation">
-                <Accordion.Header>
-                  <Accordion.Trigger>
-                    Territoire(s) en phase d'auto-évaluation - 
-                    {AUTO_EVALUATION.length * 2} formulaire(s) en cours
-                  </Accordion.Trigger>
-                </Accordion.Header>
-                <Accordion.Content>
-                  {AUTO_EVALUATION.length > 0 ? (
+              {AUTO_EVALUATION.length > 0 ? (
+                <Accordion.Item value="auto-evaluation">
+                  <Accordion.Header>
+                    <Accordion.Trigger>
+                      Territoire(s) en phase d'auto-évaluation - 
+                      {AUTO_EVALUATION.length * 2} formulaire(s) en cours
+                    </Accordion.Trigger>
+                  </Accordion.Header>
+                  <Accordion.Content>
                     <div className="flex flex-col gap-4 mt-4">
                       <div>
                         <Bouton
@@ -143,13 +143,9 @@ export const ListePhaseEvaluation = () => {
                         />
                       ))}
                     </div>
-                  ) : (
-                    <div className="mt-4 mb-2">
-                      Aucun territoire n'est dans cette phase
-                    </div>
-                  )}
-                </Accordion.Content>
-              </Accordion.Item>
+                  </Accordion.Content>
+                </Accordion.Item>
+              ) : null}
               <Accordion.Item value="instruction">
                 <Accordion.Header>
                   <Accordion.Trigger>
