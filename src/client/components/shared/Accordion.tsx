@@ -23,7 +23,10 @@ export const Accordion = Object.assign({}, RadixAccordion, {
   }: ComponentProps<typeof RadixAccordion.Header>) => (
     <RadixAccordion.Header
       {...props}
-      className={clsxm("flex !mb-0 !bg-dsfr-blue-france-925", props.className)}
+      className={clsxm(
+        "flex !mb-0 !bg-dsfr-blue-france-925 border-t !border-t-primary",
+        props.className,
+      )}
     >
       {children}
     </RadixAccordion.Header>
@@ -67,13 +70,15 @@ export const Accordion = Object.assign({}, RadixAccordion, {
     <RadixAccordion.Content
       {...props}
       className={clsxm(
+        "!bg-dsfr-alt-blue-france",
+        "!px-6 !pb-6 !pt-4",
         "overflow-hidden",
         "data-[state=open]:animate-accordion-open",
         "data-[state=closed]:animate-accordion-close",
         props.className,
       )}
     >
-      <div className="px-2 pb-4">{children}</div>
+      {children}
     </RadixAccordion.Content>
   ),
 });

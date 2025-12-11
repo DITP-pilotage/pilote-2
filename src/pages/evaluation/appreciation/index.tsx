@@ -86,7 +86,7 @@ export default function PageAppreciation(
 
   return (
     <pageAppreciation.ServerSidePropsProvider value={props}>
-      <main className="py-6 pt-0">
+      <main className="py-6 pt-0 !bg-white">
         <Head>
           <title>PILOTE - Appréciation</title>
         </Head>
