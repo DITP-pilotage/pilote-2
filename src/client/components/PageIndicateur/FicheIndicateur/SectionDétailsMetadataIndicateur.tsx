@@ -26,11 +26,7 @@ const SectionDétailsMetadataIndicateur: FunctionComponent<{
   mapInformationMetadataIndicateur,
   chantiers,
 }) => {
-  const {
-    getValues,
-    formState: { errors },
-    setValue,
-  } = useMetadataIndicateurForm();
+  const { getValues } = useMetadataIndicateurForm();
 
   const { data: metadataIndicateurs = [] } =
     api.metadataIndicateur.récupérerMetadataIndicateurFiltrés.useQuery({
@@ -55,13 +51,13 @@ const SectionDétailsMetadataIndicateur: FunctionComponent<{
       metadataIndicateurs.length === 0
         ? [
             {
-              valeur: "Aucun indicateur sélectionné",
+              valeur: "",
               libellé: "Aucun indicateur parent disponible",
             },
           ]
         : [
             {
-              valeur: "Aucun indicateur selectionné",
+              valeur: "",
               libellé: "Pas d'indicateur parent",
             },
             ...metadataIndicateurs.map((optionIndicateur) => ({

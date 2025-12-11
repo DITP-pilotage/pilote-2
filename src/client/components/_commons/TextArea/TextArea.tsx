@@ -29,6 +29,7 @@ const TextArea: FunctionComponent<
     >
       {children}
       <textarea
+        autoComplete="off"
         className={clsxm(
           `fr-input`,
           {

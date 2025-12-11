@@ -43,6 +43,7 @@ const Input: FunctionComponent<PropsWithChildren<InputProps>> = ({
     >
       {children}
       <input
+        autoComplete="off"
         className={`fr-input${erreur !== undefined || erreurMessage ? " fr-input-group--error" : ""}${className !== undefined ? " " + className : ""}`}
         disabled={disabled}
         id={htmlName}
