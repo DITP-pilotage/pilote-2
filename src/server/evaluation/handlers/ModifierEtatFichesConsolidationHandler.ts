@@ -56,11 +56,11 @@ export class ModifierEtatFichesConsolidationHandler {
         command.ficheEvaluationIds,
       );
 
-      await this.envoieNotificiations(utilisateursANotifier).catch();
+      await this.envoieNotifications(utilisateursANotifier).catch();
     }
   }
 
-  private async envoieNotificiations(
+  private async envoieNotifications(
     utilisateursANotifier: { email: string; rattachements: string[] }[],
   ) {
     for (const utilisateur of utilisateursANotifier) {

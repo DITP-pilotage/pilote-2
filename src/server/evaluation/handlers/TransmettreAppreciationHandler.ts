@@ -63,7 +63,7 @@ export class TransmettreAppreciationHandler {
     const utilisateursANotifier =
       await this.getUtilisateursANotifier(fichesAccessibles);
 
-    await this.envoieNotificiations(utilisateursANotifier).catch();
+    await this.envoieNotifications(utilisateursANotifier).catch();
   }
 
   private async getFichesAccessibles(
@@ -105,7 +105,7 @@ export class TransmettreAppreciationHandler {
     });
   }
 
-  private async envoieNotificiations(
+  private async envoieNotifications(
     utilisateursANotifier: { email: string; rattachements: string[] }[],
   ) {
     for (const utilisateur of utilisateursANotifier) {
