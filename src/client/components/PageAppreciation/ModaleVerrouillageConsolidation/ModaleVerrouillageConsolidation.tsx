@@ -14,6 +14,7 @@ import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
 import { Icone } from "@/components/_commons/Icone";
 import { WarningIcon } from "@/components/_commons/Icones/WarningIcon";
 import Alerte from "@/components/_commons/Alerte/Alerte";
+import { ArrowLine3Icon } from "@/components/_commons/Icones/ArrowLine3Icon";
 
 export const ModaleTransmissionDITP = ({
   fichesAppreciation,
@@ -169,10 +170,7 @@ export const ModaleTransmissionDITP = ({
 
                   <div className="w-full flex justify-end !mt-8 gap-2">
                     <Dialog.Close asChild>
-                      <button
-                        className="fr-btn fr-btn--secondary"
-                        type="button"
-                      >
+                      <button className="fr-link !px-4" type="button">
                         Annuler
                       </button>
                     </Dialog.Close>
@@ -198,44 +196,65 @@ export const ModaleTransmissionDITP = ({
                   <ul className="mb-4">
                     {fichesAppreciation
                       .filter((fiche) => fichesSelectionnees.includes(fiche.id))
-                      .map((fiche) => (
-                        <li
-                          className="flex items-center gap-2 mb-1"
-                          key={fiche.id}
-                        >
-                          <svg
-                            aria-hidden="true"
-                            className="w-5 h-5 text-green-600"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
+                      .map((fiche) => {
+                        const estTraitee =
+                          fiche.isObjectifsValides && fiche.isCriteresValides;
+                        return (
+                          <li
+                            className="flex items-center gap-2 mb-1"
+                            key={fiche.id}
                           >
-                            <path
-                              d="M5 13l4 4L19 7"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                            />
-                          </svg>
-                          <span>
-                            {fiche.rattachement.libelle} (
-                            {fiche.rattachement.code})
-                          </span>
-                        </li>
-                      ))}
+                            <svg
+                              aria-hidden="true"
+                              className="w-5 h-5 text-green-600"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                d="M5 13l4 4L19 7"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                              />
+                            </svg>
+                            <span>
+                              {fiche.rattachement.libelle} (
+                              {fiche.rattachement.code})
+                            </span>
+                            {!estTraitee && (
+                              <Icone
+                                className="text-dsfr-mention-grey w-4 h-4"
+                                icone={WarningIcon}
+                              />
+                            )}
+                          </li>
+                        );
+                      })}
                   </ul>
+
+                  {fichesAppreciation.some((fiche) => {
+                    const estTraitee =
+                      fiche.isObjectifsValides && fiche.isCriteresValides;
+                    return !estTraitee;
+                  }) && (
+                    <div className="mt-6">
+                      <Alerte
+                        message="Vous vous apprêtez à transmettre les appréciations des territoires listés ci-dessus. Nous attirons votre attention sur le fait que certaines d'entre elles sont traitées partiellement. Toutes les appréciations transmises (qu'elles soient marquées comme traitées ou non) ne pourront plus être modifiées. Elles resteront cependant accessibles dans cet espace, pour consultation et impression."
+                        titre="Pour certains des territoires sélectionnés, les appréciations ne sont pas toutes marquées comme traitées"
+                        type="warning"
+                      />
+                    </div>
+                  )}
 
                   <div className="w-full flex justify-end !mt-8 gap-2">
                     <Dialog.Close asChild>
-                      <button
-                        className="fr-btn fr-btn--secondary"
-                        type="button"
-                      >
+                      <button className="fr-link !px-4" type="button">
                         Annuler
                       </button>
                     </Dialog.Close>
                     <button
-                      className="fr-btn fr-btn--secondary"
+                      className="fr-btn fr-btn--secondary gap-3"
                       onClick={() =>
                         setEtapeTransmission(
                           EtapeTransmission.SELECTION_TERRITOIRES,
@@ -243,6 +262,7 @@ export const ModaleTransmissionDITP = ({
                       }
                       type="button"
                     >
+                      <Icone icone={ArrowLine3Icon} />
                       Étape précédente
                     </button>
                     <button className="fr-btn" type="submit">
