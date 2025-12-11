@@ -46,7 +46,7 @@ export const ModaleTransmissionDITP = ({
     >
       {etapeTransmission ? (
         <>
-          <div className="fr-stepper fr-mb-1w">
+          <div className="fr-stepper !mb-1">
             <h2 className="fr-stepper__title">
               <span>{`${Stepper[etapeTransmission].titre}`}</span>
               <span className="fr-stepper__state">
@@ -73,8 +73,8 @@ export const ModaleTransmissionDITP = ({
               })}
             >
               {etapeTransmission === EtapeTransmission.SELECTION_TERRITOIRES ? (
-                <>
-                  <p className="fr-text--sm fr-mb-2w">
+                <div className="pt-6 space-y-4">
+                  <p className="!text-sm mb-4">
                     Vous pouvez transmettre vos appréciations à la DITP en
                     plusieurs fois, territoire par territoire. Le cas échéant,
                     l'ensemble de vos appréciations (sur les objectifs
@@ -82,20 +82,20 @@ export const ModaleTransmissionDITP = ({
                     vue d'être instruites.
                   </p>
 
-                  <p className="fr-text--sm fr-mb-2w">
+                  <p className="!text-sm mb-4">
                     Une fois transmises, les appréciations d'un territoire
                     (qu'elles soient marquées comme traitées ou non) ne seront
                     plus modifiables mais resteront consultables et imprimables.
                   </p>
 
-                  <hr className="fr-mb-2w" />
+                  <hr className="mb-4" />
 
-                  <h3 className="fr-h6 fr-mb-1w">
+                  <h3 className="font-bold !text-base !mb-2">
                     Territoires dont les appréciations n'ont pas encore été
                     transmises
                   </h3>
 
-                  <p className="fr-text--sm fr-mb-2w">
+                  <p className="!text-sm !mb-4">
                     Indiquez ci-dessous les territoires dont vous souhaitez
                     transmettre toutes les appréciations :
                   </p>
@@ -184,20 +184,20 @@ export const ModaleTransmissionDITP = ({
                       Étape suivante
                     </button>
                   </div>
-                </>
+                </div>
               ) : (
-                <>
-                  <p className="fr-text--sm fr-mb-2w">
+                <div className="pt-6 mt-6 space-y-6">
+                  <p className="!text-sm mb-4">
                     Veuillez vérifier ci-dessous la liste des territoires dont
                     vous souhaitez transmettre vos appréciations :
                   </p>
 
-                  <ul className="fr-mb-2w">
+                  <ul className="mb-4">
                     {fichesAppreciation
                       .filter((fiche) => fichesSelectionnees.includes(fiche.id))
                       .map((fiche) => (
                         <li
-                          className="flex items-center gap-2 fr-mb-1w"
+                          className="flex items-center gap-2 mb-1"
                           key={fiche.id}
                         >
                           <svg
@@ -222,7 +222,7 @@ export const ModaleTransmissionDITP = ({
                       ))}
                   </ul>
 
-                  <div className="w-full flex justify-end fr-mt-2w gap-2">
+                  <div className="w-full flex justify-end !mt-8 gap-2">
                     <Dialog.Close asChild>
                       <button
                         className="fr-btn fr-btn--secondary"
@@ -246,7 +246,7 @@ export const ModaleTransmissionDITP = ({
                       Valider
                     </button>
                   </div>
-                </>
+                </div>
               )}
             </form>
           </FormProvider>
