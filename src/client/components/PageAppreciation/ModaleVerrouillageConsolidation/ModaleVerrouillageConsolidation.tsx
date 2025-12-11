@@ -11,12 +11,14 @@ import {
   useTransmissionDITP as useModaleVerrouillageConsolidation,
 } from "@/components/PageAppreciation/ModaleVerrouillageConsolidation/useModaleVerrouillageConsolidation";
 import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
+import { Icone } from "@/components/_commons/Icone";
+import { WarningIcon } from "@/components/_commons/Icones/WarningIcon";
 
 export const ModaleTransmissionDITP = ({
-  fichesConsolidation,
+  fichesAppreciation,
   children,
 }: PropsWithChildren<{
-  fichesConsolidation: FicheEvaluation[];
+  fichesAppreciation: FicheEvaluation[];
 }>) => {
   const {
     reactHookForm,
@@ -27,7 +29,7 @@ export const ModaleTransmissionDITP = ({
     tousSelectionnes,
     toggleTout,
     verrouillerLaConsolidation,
-  } = useModaleVerrouillageConsolidation(fichesConsolidation);
+  } = useModaleVerrouillageConsolidation(fichesAppreciation);
   const refreshRouter = useRefreshRouter();
 
   return (
@@ -105,7 +107,7 @@ export const ModaleTransmissionDITP = ({
                       </p>
                     </div>
                   ) : (
-                    <div className="grid grid-cols-3 gap-4">
+                    <div className="grid grid-cols-3 gap-x-4 gap-y-6">
                       <label className="col-span-3 flex items-center gap-3 cursor-pointer">
                         <Checkbox
                           checked={tousSelectionnes}
@@ -121,6 +123,8 @@ export const ModaleTransmissionDITP = ({
                           fiche.rattachement.code.startsWith("REG-")
                             ? `Région ${fiche.rattachement.libelle}`
                             : `${fiche.rattachement.code.split("DEPT-")[1]} - ${fiche.rattachement.libelle}`;
+                        const traite =
+                          fiche.isCriteresValides && fiche.isObjectifsValides;
 
                         return (
                           <label
@@ -140,7 +144,20 @@ export const ModaleTransmissionDITP = ({
                                 );
                               }}
                             />
-                            <span className="text-base">{territoireLabel}</span>
+                            <span className="relative">
+                              <span className="text-base">
+                                {territoireLabel}
+                              </span>
+                              {!traite && (
+                                <span className="absolute top-full left-0 whitespace-nowrap text-xs text-dsfr-mention-grey flex items-center gap-1">
+                                  <Icone
+                                    className="h-3 w-3 text-current"
+                                    icone={WarningIcon}
+                                  />
+                                  traité partiellement
+                                </span>
+                              )}
+                            </span>
                           </label>
                         );
                       })}
@@ -176,7 +193,7 @@ export const ModaleTransmissionDITP = ({
                   </p>
 
                   <ul className="fr-mb-2w">
-                    {fichesConsolidation
+                    {fichesAppreciation
                       .filter((fiche) => fichesSelectionnees.includes(fiche.id))
                       .map((fiche) => (
                         <li

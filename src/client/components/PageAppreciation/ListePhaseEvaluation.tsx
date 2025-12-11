@@ -75,7 +75,7 @@ export const ListePhaseEvaluation = () => {
                         />
 
                         <ModaleTransmissionDITP
-                          fichesConsolidation={CONSOLIDATION}
+                          fichesAppreciation={CONSOLIDATION}
                           groupe={groupe}
                         >
                           <button
