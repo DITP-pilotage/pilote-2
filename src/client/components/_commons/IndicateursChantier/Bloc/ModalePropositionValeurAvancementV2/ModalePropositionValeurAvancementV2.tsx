@@ -1,6 +1,6 @@
-import { FunctionComponent } from "react";
+import { FunctionComponent, PropsWithChildren } from "react";
 import { FormProvider } from "react-hook-form";
-import Modale from "@/components/_commons/Modale/Modale";
+import { Modale } from "@/components/shared/Modale";
 
 import useModalePropositionValeurAvancementV2, {
   estChampMoisValide,
@@ -17,9 +17,9 @@ import { LIMITE_CARACTERES_DOCUMENTATION_PROPOSITION } from "@/validation/propos
 import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
 import { useBlocIndicateurContext } from "@/components/PageChantier/useBlocIndicateurContext";
 
-export const ModalePropositionValeurAvancementV2: FunctionComponent<{
-  generatedHTMLID: string;
-}> = ({ generatedHTMLID }) => {
+export const ModalePropositionValeurAvancementV2: FunctionComponent<
+  PropsWithChildren
+> = ({ children }) => {
   const {
     reactHookForm,
     creerPropositonValeurAvancement,
@@ -57,9 +57,14 @@ export const ModalePropositionValeurAvancementV2: FunctionComponent<{
 
   return (
     <Modale
-      fermetureCallback={refreshRouter}
-      idHtml={generatedHTMLID}
-      tailleModale="lg"
+      onOpenChange={(open) => {
+        if (!open) {
+          refreshRouter();
+        }
+      }}
+      title="Proposer une valeur d'avancement"
+      titleHidden
+      trigger={children}
     >
       {etapePropositionValeurAvancement ? (
         <>

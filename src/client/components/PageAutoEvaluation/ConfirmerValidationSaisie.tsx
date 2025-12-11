@@ -1,26 +1,31 @@
 import { FunctionComponent } from "react";
-import { createPortal } from "react-dom";
-import Modale from "@/components/_commons/Modale/Modale";
+import { Dialog } from "radix-ui";
+import { Modale } from "@/components/shared/Modale";
 
 interface ConfirmerValidationSaisieProps {
-  generatedHTMLID: string;
   typeEvaluation: "objectifs" | "manieres-de-servir";
   annee: number;
   onConfirm: () => void;
   isPending: boolean;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
 }
 
 export const ConfirmerValidationSaisie: FunctionComponent<
   ConfirmerValidationSaisieProps
-> = ({ generatedHTMLID, typeEvaluation, annee, onConfirm, isPending }) => {
+> = ({ typeEvaluation, annee, onConfirm, isPending, open, onOpenChange }) => {
   const typeLabel =
     typeEvaluation === "objectifs"
       ? "vos objectifs individuels"
       : "votre manière de servir";
 
-  return createPortal(
-    <Modale idHtml={generatedHTMLID} tailleModale="md">
-      <h2 className="fr-h4 fr-mb-2w">Confirmation de validation</h2>
+  return (
+    <Modale
+      onOpenChange={onOpenChange}
+      open={open}
+      size="md"
+      title="Confirmation de validation"
+    >
       <p className="fr-text fr-mb-2w">
         Vous êtes sur le point de valider définitivement l'auto-évaluation de{" "}
         {typeLabel} pour l'année {annee}.
@@ -33,15 +38,15 @@ export const ConfirmerValidationSaisie: FunctionComponent<
         <strong>Souhaitez-vous confirmer cette validation ?</strong>
       </p>
       <div className="w-full flex justify-end gap-2">
-        <button
-          aria-controls={generatedHTMLID}
-          className="fr-btn fr-btn--secondary"
-          data-fr-opened="false"
-          disabled={isPending}
-          type="button"
-        >
-          Annuler
-        </button>
+        <Dialog.Close asChild>
+          <button
+            className="fr-btn fr-btn--secondary"
+            disabled={isPending}
+            type="button"
+          >
+            Annuler
+          </button>
+        </Dialog.Close>
         <button
           className="fr-btn"
           disabled={isPending}
@@ -51,7 +56,6 @@ export const ConfirmerValidationSaisie: FunctionComponent<
           Confirmer la validation
         </button>
       </div>
-    </Modale>,
-    document.body,
+    </Modale>
   );
 };

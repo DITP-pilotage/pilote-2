@@ -4,7 +4,6 @@ import {
   parseAsStringLiteral,
   useQueryStates,
 } from "nuqs";
-import { useId } from "react";
 import { ExportDesDonnees } from "@/components/PageAccueil/PageChantiers/ExportDesDonnees/ExportDesDonnees";
 import { Icone } from "@/components/_commons/Icone";
 import { Download1Icon } from "@/components/_commons/Icones/Download1Icon";
@@ -30,28 +29,16 @@ export const BoutonExportDesDonnees = ({
       }),
   });
 
-  const idHtmlModale = useId();
-
   return (
-    <>
-      <button
-        aria-controls={idHtmlModale}
-        className="flex gap-1 !p-0 pb-0.5 !text-sm !text-primary border-b border-blue-france"
-        data-fr-opened={optionsExport.isModaleExportCsvOuverte}
-        onClick={() => {
+    <ExportDesDonnees
+      onOpenChange={(open) => {
+        if (open) {
           setOptionsExport({
             isModaleExportCsvOuverte: true,
             etapeCourante: 1,
             typeExport: "chantiers",
           });
-        }}
-        type="button"
-      >
-        <Icone className="w-4 h-4" icone={Download1Icon} />
-        Exporter les données
-      </button>
-      <ExportDesDonnees
-        fermetureCallback={() => {
+        } else {
           setOptionsExport(
             {
               etapeCourante: 1,
@@ -65,10 +52,18 @@ export const BoutonExportDesDonnees = ({
             },
             { clearOnDefault: true, shallow: true },
           );
-        }}
-        idHtmlModale={idHtmlModale}
-        territoireCodeSelectionne={territoireCode}
-      />
-    </>
+        }
+      }}
+      open={optionsExport.isModaleExportCsvOuverte}
+      territoireCodeSelectionne={territoireCode}
+    >
+      <button
+        className="flex gap-1 !p-0 pb-0.5 !text-sm !text-primary border-b border-blue-france"
+        type="button"
+      >
+        <Icone className="w-4 h-4" icone={Download1Icon} />
+        Exporter les données
+      </button>
+    </ExportDesDonnees>
   );
 };

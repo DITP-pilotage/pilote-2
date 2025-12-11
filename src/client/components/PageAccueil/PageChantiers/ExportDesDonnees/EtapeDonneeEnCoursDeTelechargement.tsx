@@ -1,4 +1,5 @@
 import { parseAsInteger, useQueryState } from "nuqs";
+import { Dialog } from "radix-ui";
 import Alerte from "@/components/_commons/Alerte/Alerte";
 
 export const EtapeDonneeEnCoursDeTelechargement = () => {
@@ -18,14 +19,15 @@ export const EtapeDonneeEnCoursDeTelechargement = () => {
         type="succès"
       />
       <div className="w-full flex justify-end fr-mt-2w">
-        <button
-          aria-controls="modale-exporter-les-données-v2"
-          className="fr-link fr-mr-2w"
-          title="Fermer la fenêtre modale"
-          type="button"
-        >
-          Annuler
-        </button>
+        <Dialog.Close asChild>
+          <button
+            className="fr-link fr-mr-2w"
+            title="Fermer la fenêtre modale"
+            type="button"
+          >
+            Annuler
+          </button>
+        </Dialog.Close>
         <button
           className="fr-btn fr-btn--secondary fr-mr-2w"
           onClick={() => setEtapeCourante(4)}

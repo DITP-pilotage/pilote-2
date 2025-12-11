@@ -1,4 +1,3 @@
-import { useId } from "react";
 import { DétailsIndicateur } from "@/server/domain/indicateur/DétailsIndicateur.interface";
 import { DétailTerritoire } from "@/server/domain/territoire/Territoire.interface";
 import { BoutonSousLigné } from "@/components/_commons/BoutonSousLigné/BoutonSousLigné";
@@ -14,29 +13,23 @@ export const BoutonAccuserReceptionProposition = ({
   detailIndicateur: DétailsIndicateur;
   détailTerritoireSélectionné: DétailTerritoire;
 }) => {
-  const modaleId = useId();
-
   const { indicateur, territoireCode } = useBlocIndicateurContext();
 
   return (
-    <>
+    <ModaleAccuserReceptionPropositionValeurAvancement
+      detailIndicateur={detailIndicateur}
+      indicateur={indicateur}
+      territoireCode={territoireCode}
+      territoireCodeInsee={détailTerritoireSélectionné.codeInsee}
+      territoireNom={détailTerritoireSélectionné.nom}
+    >
       <BoutonSousLigné
-        aria-controls={modaleId}
         className="!text-dsfr-moutarde-main-679"
-        dataFrOpened={false}
         iconLeft={<Icone className="text-current h-4 w-4" icone={Mail1Icon} />}
         type="button"
       >
         Accuser réception
       </BoutonSousLigné>
-      <ModaleAccuserReceptionPropositionValeurAvancement
-        detailIndicateur={detailIndicateur}
-        generatedHTMLID={modaleId}
-        indicateur={indicateur}
-        territoireCode={territoireCode}
-        territoireCodeInsee={détailTerritoireSélectionné.codeInsee}
-        territoireNom={détailTerritoireSélectionné.nom}
-      />
-    </>
+    </ModaleAccuserReceptionPropositionValeurAvancement>
   );
 };

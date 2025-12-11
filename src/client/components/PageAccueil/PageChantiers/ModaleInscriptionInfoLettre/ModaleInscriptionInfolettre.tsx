@@ -1,12 +1,13 @@
 import { FunctionComponent } from "react";
-import Modale from "@/components/_commons/Modale/Modale";
+import { Modale } from "@/components/shared/Modale";
 import Titre from "@/components/_commons/Titre/Titre";
 import Input from "@/components/_commons/Input/Input";
 import { useModaleInscriptionInfolettre } from "./useModaleInscriptionInfolettre";
 
-const ID_HTML_MODALE_INSCRIPTION_INFOLETTRE = "modale-inscription-infolettre";
-
-export const ModaleInscriptionInfolettre: FunctionComponent = () => {
+export const ModaleInscriptionInfolettre: FunctionComponent<{
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+}> = ({ open, onOpenChange }) => {
   const {
     register,
     handleFermetureModale,
@@ -17,9 +18,16 @@ export const ModaleInscriptionInfolettre: FunctionComponent = () => {
 
   return (
     <Modale
-      fermetureCallback={handleFermetureModale}
-      idHtml={ID_HTML_MODALE_INSCRIPTION_INFOLETTRE}
-      tailleModale="md"
+      onOpenChange={(isOpen) => {
+        if (!isOpen) {
+          handleFermetureModale();
+        }
+        onOpenChange(isOpen);
+      }}
+      open={open}
+      size="md"
+      title="Ne manquez pas les actualités de PILOTE"
+      titleHidden
     >
       {!succesEnvoieEmail ? (
         <div>

@@ -1,12 +1,15 @@
 /* eslint-disable react/iframe-missing-sandbox */
 import { FunctionComponent, useRef } from "react";
 import { useSession } from "next-auth/react";
-import Modale from "@/components/_commons/Modale/Modale";
+import { Dialog } from "radix-ui";
+import { Modale } from "@/components/shared/Modale";
 import api from "@/server/infrastructure/api/trpc/api";
 import { récupérerUnCookie } from "@/client/utils/cookies";
-const ID_HTML_MODALE_VIDEO_ACCUEIL = "modale-video-accueil";
 
-export const ModaleVideoAccueil: FunctionComponent = () => {
+export const ModaleVideoAccueil: FunctionComponent<{
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+}> = ({ open, onOpenChange }) => {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const { data: session } = useSession();
 
@@ -15,8 +18,8 @@ export const ModaleVideoAccueil: FunctionComponent = () => {
 
   return (
     <Modale
-      fermetureCallback={() => {
-        if (session?.user.id) {
+      onOpenChange={(isOpen) => {
+        if (!isOpen && session?.user.id) {
           if (iframeRef.current) {
             iframeRef.current.src = "";
           }
@@ -25,9 +28,11 @@ export const ModaleVideoAccueil: FunctionComponent = () => {
             utilisateurId: session.user.id,
           });
         }
+        onOpenChange(isOpen);
       }}
-      idHtml={ID_HTML_MODALE_VIDEO_ACCUEIL}
-      tailleModale="lg"
+      open={open}
+      title="Vidéo d'accueil"
+      titleHidden
     >
       <div>
         <iframe
@@ -43,14 +48,11 @@ export const ModaleVideoAccueil: FunctionComponent = () => {
             Retrouvez cette vidéo et d'autres ressources dans le centre d'aide
             de PILOTE
           </p>
-          <button
-            aria-controls={ID_HTML_MODALE_VIDEO_ACCUEIL}
-            className="fr-btn"
-            title="Passer la vidéo"
-            type="button"
-          >
-            Passer
-          </button>
+          <Dialog.Close asChild>
+            <button className="fr-btn" title="Passer la vidéo" type="button">
+              Passer
+            </button>
+          </Dialog.Close>
         </div>
       </div>
     </Modale>

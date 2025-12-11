@@ -1,4 +1,3 @@
-import { useId } from "react";
 import { DétailsIndicateur } from "@/server/domain/indicateur/DétailsIndicateur.interface";
 import Indicateur from "@/server/domain/indicateur/Indicateur.interface";
 import { ModaleSuppressionValeurAvancementV2 } from "@/components/_commons/IndicateursChantier/Bloc/ModaleSuppressionValeurAvancementV2/ModaleSuppressionValeurAvancementV2";
@@ -17,27 +16,21 @@ export const BoutonSupprimerProposition = ({
   territoireCode: string;
   détailTerritoireSélectionné: DétailTerritoire;
 }) => {
-  const modaleId = useId();
-
   return (
-    <>
+    <ModaleSuppressionValeurAvancementV2
+      detailIndicateur={detailIndicateur}
+      indicateur={indicateur}
+      territoireCode={territoireCode}
+      territoireCodeInsee={détailTerritoireSélectionné.codeInsee}
+      territoireNom={détailTerritoireSélectionné.nom}
+    >
       <button
-        aria-controls={modaleId}
         className="fr-btn gap-2 fr-btn--secondary bouton-proposition-valeur-davancement"
-        data-fr-opened="false"
         type="button"
       >
         <Icone className="h-4 w-4 text-current" icone={Delete1Icon} />
         Supprimer la proposition
       </button>
-      <ModaleSuppressionValeurAvancementV2
-        detailIndicateur={detailIndicateur}
-        generatedHTMLID={modaleId}
-        indicateur={indicateur}
-        territoireCode={territoireCode}
-        territoireCodeInsee={détailTerritoireSélectionné.codeInsee}
-        territoireNom={détailTerritoireSélectionné.nom}
-      />
-    </>
+    </ModaleSuppressionValeurAvancementV2>
   );
 };

@@ -2,13 +2,14 @@ import "@gouvfr/dsfr/dist/component/table/table.min.css";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { FunctionComponent } from "react";
+import { Dialog } from "radix-ui";
 import FilAriane from "@/components/_commons/FilAriane/FilAriane";
 import PageUtilisateurStyled from "@/components/PageUtilisateur/PageUtilisateur.styled";
 import Titre from "@/components/_commons/Titre/Titre";
 import Bloc from "@/components/_commons/Bloc/Bloc";
 import FicheUtilisateur from "@/components/PageUtilisateur/FicheUtilisateur/FicheUtilisateur";
 import Alerte from "@/components/_commons/Alerte/Alerte";
-import Modale from "@/client/components/_commons/Modale/Modale";
+import { Modale } from "@/components/shared/Modale";
 import { Bouton } from "@/client/components/_commons/Bouton/Bouton";
 import BandeauInformation from "@/components/_commons/BandeauInformation/BandeauInformation";
 import { useGestionTokenAPI } from "@/components/PageAdminGestionTokenAPI/useGestionTokenAPI";
@@ -29,13 +30,11 @@ const PageUtilisateur: FunctionComponent<PageUtilisateurProps> = ({
 }) => {
   const {
     desactiverUtilisateur,
-    fermerLaModaleDeDesactivationUtilisateur,
     modificationEstImpossible,
     donnneContenuBandeau,
     habilitationsAGenererUnTokenDAuthentification,
     vérifierFFTokenAPIEstDisponible,
     reactiverUtilisateur,
-    fermerLaModaleDeReactivationUtilisateur,
   } = usePageUtilisateur(utilisateur);
   const chemin = [{ nom: "Gestion des comptes", lien: "/admin/utilisateurs" }];
   const { data: session } = useSession();
@@ -107,14 +106,34 @@ const PageUtilisateur: FunctionComponent<PageUtilisateurProps> = ({
                         Générer un token d'authentification
                       </button>
                     ) : null}
-                    <button
-                      aria-controls="desactiver-compte"
-                      className="fr-text desactiver"
-                      data-fr-opened={false}
-                      type="button"
+                    <Modale
+                      title="Désactivation de compte"
+                      trigger={
+                        <button className="fr-text desactiver" type="button">
+                          Désactiver le compte
+                        </button>
+                      }
                     >
-                      Désactiver le compte
-                    </button>
+                      <div>
+                        Vous êtes sur le point de désactiver le compte de{" "}
+                        <span className="uppercase">{utilisateur.prénom}</span>{" "}
+                        <span className="uppercase">{utilisateur.nom}.</span>
+                      </div>
+                      <div className="fr-grid-row fr-grid-row--right fr-mt-4w">
+                        <Dialog.Close asChild>
+                          <Bouton
+                            className="!mr-2"
+                            label="Annuler"
+                            variant="secondary"
+                          />
+                        </Dialog.Close>
+                        <Bouton
+                          label="Confirmer la désactivation"
+                          onClick={desactiverUtilisateur}
+                          variant="primary"
+                        />
+                      </div>
+                    </Modale>
                     {alerte ? (
                       <div className="fr-my-2w">
                         <Alerte
@@ -133,29 +152,6 @@ const PageUtilisateur: FunctionComponent<PageUtilisateurProps> = ({
                         </p>
                       </div>
                     ) : null}
-                    <Modale
-                      idHtml="desactiver-compte"
-                      titre="Désactivation de compte"
-                    >
-                      <div>
-                        Vous êtes sur le point de désactiver le compte de{" "}
-                        <span className="uppercase">{utilisateur.prénom}</span>{" "}
-                        <span className="uppercase">{utilisateur.nom}.</span>
-                      </div>
-                      <div className="fr-grid-row fr-grid-row--right fr-mt-4w">
-                        <Bouton
-                          className="!mr-2"
-                          label="Annuler"
-                          onClick={fermerLaModaleDeDesactivationUtilisateur}
-                          variant="secondary"
-                        />
-                        <Bouton
-                          label="Confirmer la désactivation"
-                          onClick={desactiverUtilisateur}
-                          variant="primary"
-                        />
-                      </div>
-                    </Modale>
                   </div>
                 )}
               {!!utilisateur.dateDesactivation &&
@@ -165,17 +161,13 @@ const PageUtilisateur: FunctionComponent<PageUtilisateurProps> = ({
                   utilisateur.profil,
                 ) && (
                   <div className="fr-grid-row fr-mt-4w">
-                    <button
-                      aria-controls="reactiver-compte"
-                      className="fr-btn"
-                      data-fr-opened={false}
-                      type="button"
-                    >
-                      Réactiver le compte
-                    </button>
                     <Modale
-                      idHtml="reactiver-compte"
-                      titre="Réactivation de compte"
+                      title="Réactivation de compte"
+                      trigger={
+                        <button className="fr-btn" type="button">
+                          Réactiver le compte
+                        </button>
+                      }
                     >
                       <div>
                         Vous êtes sur le point de réactiver le compte de{" "}
@@ -185,12 +177,13 @@ const PageUtilisateur: FunctionComponent<PageUtilisateurProps> = ({
                         transmis automatiquement.
                       </div>
                       <div className="fr-grid-row fr-grid-row--right fr-mt-4w">
-                        <Bouton
-                          className="!mr-2"
-                          label="Annuler"
-                          onClick={fermerLaModaleDeReactivationUtilisateur}
-                          variant="secondary"
-                        />
+                        <Dialog.Close asChild>
+                          <Bouton
+                            className="!mr-2"
+                            label="Annuler"
+                            variant="secondary"
+                          />
+                        </Dialog.Close>
                         <Bouton
                           label="Confirmer la réactivation"
                           onClick={reactiverUtilisateur}

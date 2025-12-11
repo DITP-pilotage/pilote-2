@@ -1,19 +1,19 @@
-import { FunctionComponent } from "react";
-import Modale from "@/components/_commons/Modale/Modale";
+import { FunctionComponent, PropsWithChildren } from "react";
+import { Dialog } from "radix-ui";
+import { Modale } from "@/components/shared/Modale";
 import { FicheEvaluation } from "@/server/evaluation/domain/FicheEvaluation";
 import { Icone } from "@/components/_commons/Icone";
 import { LockIcon } from "@/components/_commons/Icones/LockIcon";
 import { useTransmissionDITP as useModaleVerrouillageConsolidation } from "@/components/PageAppreciation/ModaleVerrouillageConsolidation/useModaleVerrouillageConsolidation";
 
 interface ModaleTransmissionDITPProps {
-  idHtml: string;
   groupe: string;
   fichesConsolidation: FicheEvaluation[];
 }
 
 export const ModaleTransmissionDITP: FunctionComponent<
-  ModaleTransmissionDITPProps
-> = ({ idHtml, groupe, fichesConsolidation }) => {
+  PropsWithChildren<ModaleTransmissionDITPProps>
+> = ({ groupe, fichesConsolidation, children }) => {
   const {
     fichesSelectionnees,
     fichesSelectionnables,
@@ -24,7 +24,7 @@ export const ModaleTransmissionDITP: FunctionComponent<
   } = useModaleVerrouillageConsolidation(fichesConsolidation);
 
   return (
-    <Modale idHtml={idHtml} tailleModale="lg" titre="Transmettre à la DITP">
+    <Modale title="Transmettre à la DITP" trigger={children}>
       <div className="flex flex-col gap-4">
         <p className="text-gray-600">
           Sélectionnez les territoires que vous souhaitez transmettre à la DITP
@@ -102,15 +102,12 @@ export const ModaleTransmissionDITP: FunctionComponent<
         )}
 
         <div className="flex justify-end gap-2 mt-4">
+          <Dialog.Close asChild>
+            <button className="fr-btn fr-btn--secondary" type="button">
+              Annuler
+            </button>
+          </Dialog.Close>
           <button
-            aria-controls={idHtml}
-            className="fr-btn fr-btn--secondary"
-            type="button"
-          >
-            Annuler
-          </button>
-          <button
-            aria-controls={idHtml}
             className="fr-btn"
             disabled={fichesSelectionnees.size === 0}
             onClick={verrouillerLaConsolidation}

@@ -1,17 +1,17 @@
-import { Fragment, FunctionComponent } from "react";
+import { Fragment, PropsWithChildren } from "react";
 import clsx from "clsx";
-import Modale from "@/components/_commons/Modale/Modale";
 import Loader from "@/components/_commons/Loader/Loader";
 import { formaterDate } from "@/client/utils/date/date";
 import { Infobulle } from "@/components/_commons/Infobulle/Infobulle";
 import { DonneesComplementaires } from "@/server/indicateur-territoire-valeur-evenement/domain/IndicateurTerritoireValeurEvenement";
 import { toISODateTime } from "@/server/app/domain/Dates";
 import { useBlocIndicateurContext } from "@/components/PageChantier/useBlocIndicateurContext";
+import { Modale } from "@/components/shared/Modale";
 import { useModaleHistoriqueIndicateurTerritoireValeurEvenement } from "./useModaleHistoriqueIndicateurTerritoireValeurEvenement";
 
-export const ModaleHistoriqueIndicateurTerritoireValeurEvenement: FunctionComponent<{
-  generatedHTMLID: string;
-}> = ({ generatedHTMLID }) => {
+export const ModaleHistoriqueIndicateurTerritoireValeurEvenement = ({
+  children,
+}: PropsWithChildren) => {
   const { indicateur, chantier, territoireSélectionné } =
     useBlocIndicateurContext();
 
@@ -187,10 +187,8 @@ export const ModaleHistoriqueIndicateurTerritoireValeurEvenement: FunctionCompon
 
   return (
     <Modale
-      idHtml={generatedHTMLID}
-      scrollable
-      tailleModale="lg"
-      titre="Historique des actions sur les valeurs d'avancement"
+      title="Historique des actions sur les valeurs d'avancement"
+      trigger={children}
     >
       <div className="fr-grid-row fr-mt-1w">
         <span className="fr-text--lg fr-text--bold fr-mb-0 fr-col-2 !texte-blue-france">
