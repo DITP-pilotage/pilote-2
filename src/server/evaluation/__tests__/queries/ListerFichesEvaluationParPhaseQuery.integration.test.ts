@@ -780,7 +780,7 @@ describe("ListerFichesEvaluationParPhaseQuery", () => {
     it("ne doit pas inclure les évaluations AUTO_EVALUATION dans les moyennesParPhase ni dans le calcul des notes", async () => {
       const utilisateurId = "a1b2c3d4-e5f6-7890-abcd-ef1234567890";
       const rattachementCode = "REG-60";
-      const ficheId = "fiche-test-auto-eval-filter";
+      const ficheId = "59cdb7c8-4f5a-4d72-bd21-fd67342c8d69";
 
       await prisma.utilisateur.create({
         data: {
@@ -804,7 +804,7 @@ describe("ListerFichesEvaluationParPhaseQuery", () => {
 
       await prisma.rattachement_utilisateur_etape_jalon.create({
         data: {
-          id: "rattachement-auto-eval-filter",
+          id: "46c5169b-7236-42e2-8787-81bf532080a5",
           rattachement_code: rattachementCode,
           utilisateur_id: utilisateurId,
           etape: $Enums.etape_evaluation_enum.CONSOLIDATION,
@@ -812,8 +812,8 @@ describe("ListerFichesEvaluationParPhaseQuery", () => {
         },
       });
 
-      const objectifId = "objectif-auto-eval-filter";
-      const critereId = "critere-auto-eval-filter";
+      const objectifId = "ac3eae3d-ca09-4353-b0cd-6797a2bb59dd";
+      const critereId = "4419e3ad-7dcd-4c5f-b90a-8137f2ec7ffc";
 
       await prisma.referentiel_objectif.create({
         data: {
@@ -842,12 +842,12 @@ describe("ListerFichesEvaluationParPhaseQuery", () => {
           etape_evaluations: {
             create: [
               {
-                id: "etape-auto-eval",
+                id: "072298ed-3d75-4edd-bd83-dbe6f5bfd1cb",
                 type: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
                 evaluations_objectifs: {
                   create: [
                     {
-                      id: "eval-obj-auto",
+                      id: "dfcded76-c476-4743-8031-c818567289a5",
                       commentaire: "Note auto-évaluation",
                       auteur_id: utilisateurId,
                       objectif_id: objectifId,
@@ -858,7 +858,7 @@ describe("ListerFichesEvaluationParPhaseQuery", () => {
                 evaluations_criteres: {
                   create: [
                     {
-                      id: "eval-crit-auto",
+                      id: "9efa0d00-7160-49ba-88a3-dfdb9760e430",
                       commentaire: "Note auto-évaluation",
                       auteur_id: utilisateurId,
                       critere_id: critereId,
@@ -868,12 +868,12 @@ describe("ListerFichesEvaluationParPhaseQuery", () => {
                 },
               },
               {
-                id: "etape-consolidation",
+                id: "5fab71fa-3153-462b-a7d8-c2090be27384",
                 type: $Enums.etape_evaluation_enum.CONSOLIDATION,
                 evaluations_objectifs: {
                   create: [
                     {
-                      id: "eval-obj-conso",
+                      id: "4681b49e-6eac-4f40-b986-97e00286edef",
                       commentaire: "Note consolidation",
                       auteur_id: utilisateurId,
                       objectif_id: objectifId,
@@ -885,7 +885,7 @@ describe("ListerFichesEvaluationParPhaseQuery", () => {
                 evaluations_criteres: {
                   create: [
                     {
-                      id: "eval-crit-conso",
+                      id: "7924a508-b255-43ac-bd9e-b7b27f39804b",
                       commentaire: "Note consolidation",
                       auteur_id: utilisateurId,
                       critere_id: critereId,
