@@ -13,6 +13,7 @@ import {
 import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
 import { Icone } from "@/components/_commons/Icone";
 import { WarningIcon } from "@/components/_commons/Icones/WarningIcon";
+import Alerte from "@/components/_commons/Alerte/Alerte";
 
 export const ModaleTransmissionDITP = ({
   fichesAppreciation,
@@ -29,6 +30,7 @@ export const ModaleTransmissionDITP = ({
     tousSelectionnes,
     toggleTout,
     verrouillerLaConsolidation,
+    reset,
   } = useModaleVerrouillageConsolidation(fichesAppreciation);
   const refreshRouter = useRefreshRouter();
 
@@ -37,6 +39,7 @@ export const ModaleTransmissionDITP = ({
       onOpenChange={(open) => {
         if (!open) {
           refreshRouter();
+          reset();
         }
       }}
       size="md"
@@ -164,7 +167,7 @@ export const ModaleTransmissionDITP = ({
                     </div>
                   )}
 
-                  <div className="w-full flex justify-end fr-mt-2w gap-2">
+                  <div className="w-full flex justify-end !mt-8 gap-2">
                     <Dialog.Close asChild>
                       <button
                         className="fr-btn fr-btn--secondary"
@@ -252,11 +255,13 @@ export const ModaleTransmissionDITP = ({
           </FormProvider>
         </>
       ) : (
-        <div className="fr-alert fr-alert--success fr-mt-2w">
-          <h3 className="fr-alert__title">
-            Les territoires ont été transmis à la DITP avec succès
-          </h3>
-        </div>
+        <Alerte
+          message="Un mail de confirmation vient de vous être envoyé. La DITP va
+            prendre connaissance de vos appréciations et vous tiendra informé du
+            passage en instruction des territoires concernés."
+          titre="Les appréciations ont été transmises correctement"
+          type="succès"
+        />
       )}
     </Modale>
   );

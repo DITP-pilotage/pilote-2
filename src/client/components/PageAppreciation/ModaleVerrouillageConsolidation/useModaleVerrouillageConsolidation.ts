@@ -97,5 +97,9 @@ export const useTransmissionDITP = (fichesConsolidation: FicheEvaluation[]) => {
     toggleTout,
     verrouillerLaConsolidation,
     fichesConsolidation,
+    reset: () => {
+      setEtapeTransmission(EtapeTransmission.SELECTION_TERRITOIRES);
+      reactHookForm.reset();
+    },
   };
 };

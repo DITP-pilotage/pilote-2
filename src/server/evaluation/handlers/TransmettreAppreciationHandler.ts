@@ -42,9 +42,7 @@ export class TransmettreAppreciationHandler {
       command.ficheEvaluationIds,
     );
 
-    if (fichesAccessibles.length === 0) {
-      return;
-    }
+    if (fichesAccessibles.length === 0) return;
 
     await this.dependencies.transaction.run(async () => {
       const prisma = getPrisma();
