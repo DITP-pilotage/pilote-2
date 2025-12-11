@@ -1,6 +1,4 @@
 import { useSession } from "next-auth/react";
-import { Session } from "next-auth";
-import { $Enums } from "@prisma/client";
 import api from "@/server/infrastructure/api/trpc/api";
 import { BaseNavigation } from "./BaseNavigation";
 
