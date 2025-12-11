@@ -1,122 +1,248 @@
-import { FunctionComponent, PropsWithChildren } from "react";
+import "@gouvfr/dsfr/dist/component/stepper/stepper.min.css";
 import { Dialog } from "radix-ui";
+import { FormProvider } from "react-hook-form";
+import { PropsWithChildren } from "react";
 import { Modale } from "@/components/shared/Modale";
 import { FicheEvaluation } from "@/server/evaluation/domain/FicheEvaluation";
-import { Icone } from "@/components/_commons/Icone";
-import { LockIcon } from "@/components/_commons/Icones/LockIcon";
-import { useTransmissionDITP as useModaleVerrouillageConsolidation } from "@/components/PageAppreciation/ModaleVerrouillageConsolidation/useModaleVerrouillageConsolidation";
+import {
+  EtapeTransmission,
+  Stepper,
+  useTransmissionDITP as useModaleVerrouillageConsolidation,
+} from "@/components/PageAppreciation/ModaleVerrouillageConsolidation/useModaleVerrouillageConsolidation";
+import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
 
-interface ModaleTransmissionDITPProps {
-  groupe: string;
+export const ModaleTransmissionDITP = ({
+  fichesConsolidation,
+  children,
+}: PropsWithChildren<{
   fichesConsolidation: FicheEvaluation[];
-}
-
-export const ModaleTransmissionDITP: FunctionComponent<
-  PropsWithChildren<ModaleTransmissionDITPProps>
-> = ({ groupe, fichesConsolidation, children }) => {
+}>) => {
   const {
-    fichesSelectionnees,
+    reactHookForm,
+    etapeTransmission,
+    setEtapeTransmission,
     fichesSelectionnables,
+    fichesSelectionnees,
     tousSelectionnes,
-    toggleFiche,
     toggleTout,
     verrouillerLaConsolidation,
   } = useModaleVerrouillageConsolidation(fichesConsolidation);
+  const refreshRouter = useRefreshRouter();
 
   return (
-    <Modale title="Transmettre à la DITP" trigger={children}>
-      <div className="flex flex-col gap-4">
-        <p className="text-gray-600">
-          Sélectionnez les territoires que vous souhaitez transmettre à la DITP
-          pour la région <span className="font-bold">{groupe}</span>.
-        </p>
-
-        {fichesConsolidation.length === 0 ? (
-          <div className="fr-alert fr-alert--info">
-            <p className="fr-alert__title">
-              Aucun territoire en phase d'appréciation
-            </p>
+    <Modale
+      onOpenChange={(open) => {
+        if (!open) {
+          refreshRouter();
+        }
+      }}
+      title="Transmettre les appréciations"
+      titleHidden
+      trigger={children}
+    >
+      {etapeTransmission ? (
+        <>
+          <div className="fr-stepper fr-mb-1w">
+            <h2 className="fr-stepper__title">
+              <span>{`${Stepper[etapeTransmission].titre}`}</span>
+              <span className="fr-stepper__state">
+                {`Transmettre les appréciations - Étape ${Stepper[etapeTransmission].numeroEtape} sur 2`}
+              </span>
+            </h2>
+            <div
+              className="fr-stepper__steps"
+              data-fr-current-step={Stepper[etapeTransmission].numeroEtape}
+              data-fr-steps="2"
+            />
+            {Stepper[etapeTransmission].etapeSuivante ? (
+              <p className="fr-stepper__details">
+                <span className="fr-text--bold">Étape suivante :</span>
+                {` ${Stepper[etapeTransmission].etapeSuivante}`}
+              </p>
+            ) : null}
           </div>
-        ) : (
-          <div className="flex flex-col gap-2">
-            {fichesSelectionnables.length > 0 && (
-              <div className="flex items-center gap-3 p-3 border-2 border-primary rounded bg-blue-50">
-                <input
-                  checked={tousSelectionnes}
-                  className="fr-checkbox"
-                  id="checkbox-tout-selectionner"
-                  onChange={toggleTout}
-                  type="checkbox"
-                />
-                <label
-                  className="flex-1 cursor-pointer font-medium"
-                  htmlFor="checkbox-tout-selectionner"
-                >
-                  {tousSelectionnes
-                    ? "Tout désélectionner"
-                    : "Tout sélectionner"}
-                </label>
-              </div>
-            )}
 
-            {fichesConsolidation.map((fiche) => {
-              const estSelectionne = fichesSelectionnees.has(fiche.id);
-              const estDesactive = fiche.readOnly;
+          <FormProvider {...reactHookForm}>
+            <form
+              onSubmit={reactHookForm.handleSubmit(() => {
+                verrouillerLaConsolidation();
+              })}
+            >
+              {etapeTransmission === EtapeTransmission.SELECTION_TERRITOIRES ? (
+                <>
+                  <p className="fr-text--sm fr-mb-2w">
+                    Vous pouvez transmettre vos appréciations à la DITP en
+                    plusieurs fois, territoire par territoire. Le cas échéant,
+                    l'ensemble de vos appréciations (sur les objectifs
+                    individuels et sur la manière de servir) sont transmises en
+                    vue d'être instruites.
+                  </p>
 
-              return (
-                <div
-                  className={`flex items-center gap-3 p-3 border rounded ${
-                    estDesactive
-                      ? "bg-gray-50 border-gray-300"
-                      : "border-gray-300 hover:bg-gray-50"
-                  }`}
-                  key={fiche.id}
-                >
-                  <input
-                    checked={estSelectionne}
-                    className="fr-checkbox"
-                    disabled={estDesactive}
-                    id={`checkbox-${fiche.id}`}
-                    onChange={() => toggleFiche(fiche.id)}
-                    type="checkbox"
-                  />
-                  {estDesactive ? (
-                    <Icone className="w-5 h-5 text-gray-400" icone={LockIcon} />
-                  ) : null}
-                  <label
-                    className={`flex-1 cursor-pointer ${estDesactive ? "text-gray-400" : ""}`}
-                    htmlFor={`checkbox-${fiche.id}`}
-                  >
-                    <div className="font-medium">
-                      {fiche.rattachement.libelle}
+                  <p className="fr-text--sm fr-mb-2w">
+                    Une fois transmises, les appréciations d'un territoire
+                    (qu'elles soient marquées comme traitées ou non) ne seront
+                    plus modifiables mais resteront consultables et imprimables.
+                  </p>
+
+                  <hr className="fr-mb-2w" />
+
+                  <h3 className="fr-h6 fr-mb-1w">
+                    Territoires dont les appréciations n'ont pas encore été
+                    transmises
+                  </h3>
+
+                  <p className="fr-text--sm fr-mb-2w">
+                    Indiquez ci-dessous les territoires dont vous souhaitez
+                    transmettre toutes les appréciations :
+                  </p>
+
+                  {fichesSelectionnables.length === 0 ? (
+                    <div className="fr-alert fr-alert--info">
+                      <p className="fr-alert__title">
+                        Aucun territoire disponible pour transmission
+                      </p>
                     </div>
-                    <div className="text-sm text-gray-500">
-                      {fiche.rattachement.code}
-                      {estDesactive ? " - Verrouillé" : null}
-                    </div>
-                  </label>
-                </div>
-              );
-            })}
-          </div>
-        )}
+                  ) : (
+                    <div className="grid grid-cols-3 gap-3">
+                      <div className="col-span-3 flex items-center gap-3 p-3 border-2 border-primary rounded bg-blue-50">
+                        <input
+                          checked={tousSelectionnes}
+                          className="fr-checkbox"
+                          id="checkbox-tout-selectionner"
+                          onChange={toggleTout}
+                          type="checkbox"
+                        />
+                        <label
+                          className="flex-1 cursor-pointer font-medium"
+                          htmlFor="checkbox-tout-selectionner"
+                        >
+                          Sélectionner tous les territoires
+                        </label>
+                      </div>
 
-        <div className="flex justify-end gap-2 mt-4">
-          <Dialog.Close asChild>
-            <button className="fr-btn fr-btn--secondary" type="button">
-              Annuler
-            </button>
-          </Dialog.Close>
-          <button
-            className="fr-btn"
-            disabled={fichesSelectionnees.size === 0}
-            onClick={verrouillerLaConsolidation}
-            type="button"
-          >
-            Transmettre ({fichesSelectionnees.size})
-          </button>
+                      {fichesSelectionnables.map((fiche) => (
+                        <div
+                          className="flex items-center gap-2 p-3 border rounded border-gray-300 hover:bg-gray-50"
+                          key={fiche.id}
+                        >
+                          <input
+                            {...reactHookForm.register(
+                              `territoiresSelectionnes.${fiche.id}`,
+                            )}
+                            className="fr-checkbox"
+                            id={`checkbox-${fiche.id}`}
+                            type="checkbox"
+                          />
+                          <label
+                            className="flex-1 cursor-pointer text-sm"
+                            htmlFor={`checkbox-${fiche.id}`}
+                          >
+                            <div className="font-medium">
+                              {fiche.rattachement.libelle}
+                            </div>
+                            <div className="text-xs text-gray-500">
+                              {fiche.rattachement.code}
+                            </div>
+                          </label>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  <div className="w-full flex justify-end fr-mt-2w gap-2">
+                    <Dialog.Close asChild>
+                      <button
+                        className="fr-btn fr-btn--secondary"
+                        type="button"
+                      >
+                        Annuler
+                      </button>
+                    </Dialog.Close>
+                    <button
+                      className="fr-btn"
+                      disabled={fichesSelectionnees.length === 0}
+                      onClick={() =>
+                        setEtapeTransmission(EtapeTransmission.VALIDATION)
+                      }
+                      type="button"
+                    >
+                      Étape suivante
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <p className="fr-text--sm fr-mb-2w">
+                    Veuillez vérifier ci-dessous la liste des territoires dont
+                    vous souhaitez transmettre vos appréciations :
+                  </p>
+
+                  <ul className="fr-mb-2w">
+                    {fichesConsolidation
+                      .filter((fiche) => fichesSelectionnees.includes(fiche.id))
+                      .map((fiche) => (
+                        <li
+                          className="flex items-center gap-2 fr-mb-1w"
+                          key={fiche.id}
+                        >
+                          <svg
+                            aria-hidden="true"
+                            className="w-5 h-5 text-green-600"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              d="M5 13l4 4L19 7"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                            />
+                          </svg>
+                          <span>
+                            {fiche.rattachement.libelle} (
+                            {fiche.rattachement.code})
+                          </span>
+                        </li>
+                      ))}
+                  </ul>
+
+                  <div className="w-full flex justify-end fr-mt-2w gap-2">
+                    <Dialog.Close asChild>
+                      <button
+                        className="fr-btn fr-btn--secondary"
+                        type="button"
+                      >
+                        Annuler
+                      </button>
+                    </Dialog.Close>
+                    <button
+                      className="fr-btn fr-btn--secondary"
+                      onClick={() =>
+                        setEtapeTransmission(
+                          EtapeTransmission.SELECTION_TERRITOIRES,
+                        )
+                      }
+                      type="button"
+                    >
+                      Étape précédente
+                    </button>
+                    <button className="fr-btn" type="submit">
+                      Valider
+                    </button>
+                  </div>
+                </>
+              )}
+            </form>
+          </FormProvider>
+        </>
+      ) : (
+        <div className="fr-alert fr-alert--success fr-mt-2w">
+          <h3 className="fr-alert__title">
+            Les territoires ont été transmis à la DITP avec succès
+          </h3>
         </div>
-      </div>
+      )}
     </Modale>
   );
 };
