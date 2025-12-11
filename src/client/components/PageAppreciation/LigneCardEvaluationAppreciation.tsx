@@ -52,12 +52,6 @@ export const LigneCardEvaluationAppreciation = ({
                 ficheEvaluation.objectifs.moyennesParPhase.CONSOLIDATION ||
                 null,
             },
-            {
-              libelle: "auto-évaluation",
-              moyenne:
-                ficheEvaluation.objectifs.moyennesParPhase.AUTO_EVALUATION ||
-                null,
-            },
           ]}
           statutCompletion={
             ficheEvaluation.readOnly || ficheEvaluation.isObjectifsValides
@@ -92,12 +86,6 @@ export const LigneCardEvaluationAppreciation = ({
               misEnAvant: true,
               moyenne:
                 ficheEvaluation.criteres.moyennesParPhase.CONSOLIDATION || null,
-            },
-            {
-              libelle: "auto-évaluation",
-              moyenne:
-                ficheEvaluation.criteres.moyennesParPhase.AUTO_EVALUATION ||
-                null,
             },
           ]}
           statutCompletion={
