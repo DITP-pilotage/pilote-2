@@ -48,12 +48,6 @@ export const LigneCardEvaluationInstruction = ({
               moyenne:
                 ficheEvaluation.criteres.moyennesParPhase.CONSOLIDATION || null,
             },
-            {
-              libelle: "auto-évaluation",
-              moyenne:
-                ficheEvaluation.criteres.moyennesParPhase.AUTO_EVALUATION ||
-                null,
-            },
           ]}
           texteBadge="Objectifs individuels"
           texteLienNavigation="consulter l'appréciation des objectifs individuels"
@@ -67,12 +61,6 @@ export const LigneCardEvaluationInstruction = ({
               misEnAvant: true,
               moyenne:
                 ficheEvaluation.criteres.moyennesParPhase.CONSOLIDATION || null,
-            },
-            {
-              libelle: "auto-évaluation",
-              moyenne:
-                ficheEvaluation.criteres.moyennesParPhase.AUTO_EVALUATION ||
-                null,
             },
           ]}
           texteBadge="Manière de servir"
