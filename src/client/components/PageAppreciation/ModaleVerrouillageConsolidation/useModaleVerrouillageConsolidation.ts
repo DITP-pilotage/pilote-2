@@ -28,9 +28,9 @@ type FormData = {
 };
 
 export const useTransmissionDITP = (fichesConsolidation: FicheEvaluation[]) => {
-  const [etapeTransmission, setEtapeTransmission] = useState<EtapeTransmission | null>(
-    EtapeTransmission.SELECTION_TERRITOIRES,
-  );
+  const [etapeTransmission, setEtapeTransmission] =
+    useState<EtapeTransmission | null>(EtapeTransmission.SELECTION_TERRITOIRES);
+
   const mutation = api.evaluation.modifierEtatFichesConsolidation.useMutation();
   const refreshRouter = useRefreshRouter();
 
@@ -47,7 +47,9 @@ export const useTransmissionDITP = (fichesConsolidation: FicheEvaluation[]) => {
     },
   });
 
-  const territoiresSelectionnes = reactHookForm.watch("territoiresSelectionnes");
+  const territoiresSelectionnes = reactHookForm.watch(
+    "territoiresSelectionnes",
+  );
   const fichesSelectionnees = Object.entries(territoiresSelectionnes)
     .filter(([, isSelected]) => isSelected)
     .map(([ficheId]) => ficheId);
@@ -59,7 +61,10 @@ export const useTransmissionDITP = (fichesConsolidation: FicheEvaluation[]) => {
   const toggleTout = () => {
     const nouvelleValeur = !tousSelectionnes;
     fichesSelectionnables.forEach((fiche) => {
-      reactHookForm.setValue(`territoiresSelectionnes.${fiche.id}`, nouvelleValeur);
+      reactHookForm.setValue(
+        `territoiresSelectionnes.${fiche.id}`,
+        nouvelleValeur,
+      );
     });
   };
 
