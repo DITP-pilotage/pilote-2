@@ -37,6 +37,7 @@ export const ModaleTransmissionDITP = ({
           refreshRouter();
         }
       }}
+      size="md"
       title="Transmettre les appréciations"
       titleHidden
       trigger={children}
@@ -116,9 +117,10 @@ export const ModaleTransmissionDITP = ({
                       </label>
 
                       {fichesSelectionnables.map((fiche) => {
-                        const territoireLabel = fiche.rattachement.code
-                          ? `${fiche.rattachement.code} - ${fiche.rattachement.libelle}`
-                          : fiche.rattachement.libelle;
+                        const territoireLabel =
+                          fiche.rattachement.code.startsWith("REG-")
+                            ? `Région ${fiche.rattachement.libelle}`
+                            : `${fiche.rattachement.code.split("DEPT-")[1]} - ${fiche.rattachement.libelle}`;
 
                         return (
                           <label
