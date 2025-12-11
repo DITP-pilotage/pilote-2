@@ -84,6 +84,9 @@ export class ListerFichesEvaluationParPhaseQuery {
               evaluations_objectifs: true,
               evaluations_criteres: true,
             },
+            where: {
+              type: { not: $Enums.etape_evaluation_enum.AUTO_EVALUATION },
+            },
           },
           chantiers_evaluation: {
             where: derniereDateCalcul

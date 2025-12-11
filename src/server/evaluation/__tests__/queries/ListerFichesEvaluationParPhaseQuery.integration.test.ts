@@ -145,72 +145,6 @@ describe("ListerFichesEvaluationParPhaseQuery", () => {
       const result = await query.run({ utilisateurId });
 
       expect(result).toEqual({
-        "Région 01": {
-          [$Enums.etape_evaluation_enum.AUTO_EVALUATION]: [
-            {
-              id: ficheAutoEval1Id,
-              etapeCourante: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
-              readOnly: false,
-              isObjectifsValides: true,
-              isCriteresValides: true,
-              rattachement: {
-                code: regGroupeCode,
-                libelle: "Région 01",
-              },
-              objectifs: {
-                moyenne: null,
-                moyennesParPhase: {
-                  [$Enums.etape_evaluation_enum.AUTO_EVALUATION]: null,
-                },
-                nombreNotes: 0,
-                nombreTotal: 0,
-                nombreTraites: 0,
-              },
-              criteres: {
-                moyenne: null,
-                moyennesParPhase: {
-                  [$Enums.etape_evaluation_enum.AUTO_EVALUATION]: null,
-                },
-                nombreNotes: 0,
-                nombreTotal: 0,
-                nombreTraites: 0,
-              },
-              noteCollective: null,
-            },
-            {
-              id: ficheAutoEval2Id,
-              etapeCourante: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
-              readOnly: false,
-              isObjectifsValides: true,
-              isCriteresValides: true,
-              rattachement: {
-                code: regRattachementCode,
-                libelle: "Région 02",
-              },
-              objectifs: {
-                moyenne: null,
-                moyennesParPhase: {
-                  [$Enums.etape_evaluation_enum.AUTO_EVALUATION]: null,
-                },
-                nombreTraites: 0,
-                nombreNotes: 0,
-                nombreTotal: 0,
-              },
-              criteres: {
-                moyenne: null,
-                moyennesParPhase: {
-                  [$Enums.etape_evaluation_enum.AUTO_EVALUATION]: null,
-                },
-                nombreTraites: 0,
-                nombreNotes: 0,
-                nombreTotal: 0,
-              },
-              noteCollective: null,
-            },
-          ],
-          [$Enums.etape_evaluation_enum.CONSOLIDATION]: [],
-          [$Enums.etape_evaluation_enum.INSTRUCTION]: [],
-        },
         "Département 01": {
           [$Enums.etape_evaluation_enum.AUTO_EVALUATION]: [],
           [$Enums.etape_evaluation_enum.CONSOLIDATION]: [
@@ -321,11 +255,7 @@ describe("ListerFichesEvaluationParPhaseQuery", () => {
       });
 
       expect(resultSansPermission).toEqual({});
-      expect(
-        resultAvecPermission["Région restreinte"][
-          $Enums.etape_evaluation_enum.AUTO_EVALUATION
-        ],
-      ).toHaveLength(1);
+      expect(resultAvecPermission).toEqual({});
     });
 
     it("doit calculer la note collective à partir des chantiers_evaluation de la dernière date_calcul", async () => {
@@ -642,7 +572,6 @@ describe("ListerFichesEvaluationParPhaseQuery", () => {
           objectifs: {
             moyenne: 35,
             moyennesParPhase: {
-              [$Enums.etape_evaluation_enum.AUTO_EVALUATION]: 15,
               [$Enums.etape_evaluation_enum.CONSOLIDATION]: 35,
             },
             nombreNotes: 2,
@@ -652,7 +581,6 @@ describe("ListerFichesEvaluationParPhaseQuery", () => {
           criteres: {
             moyenne: 25,
             moyennesParPhase: {
-              [$Enums.etape_evaluation_enum.AUTO_EVALUATION]: 15,
               [$Enums.etape_evaluation_enum.CONSOLIDATION]: 25,
             },
             nombreNotes: 1,
@@ -722,50 +650,7 @@ describe("ListerFichesEvaluationParPhaseQuery", () => {
 
       const result = await query.run({ utilisateurId });
 
-      expect(
-        result["Région multi-phases"][
-          $Enums.etape_evaluation_enum.AUTO_EVALUATION
-        ],
-      ).toEqual([
-        {
-          id: ficheId,
-          etapeCourante: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
-          isObjectifsValides: true,
-          isCriteresValides: true,
-          readOnly: false,
-          rattachement: {
-            code: rattachementCode,
-            libelle: "Région multi-phases",
-          },
-          objectifs: {
-            moyenne: null,
-            moyennesParPhase: {
-              [$Enums.etape_evaluation_enum.AUTO_EVALUATION]: null,
-              [$Enums.etape_evaluation_enum.CONSOLIDATION]: null,
-            },
-            nombreNotes: 0,
-            nombreTotal: 0,
-            nombreTraites: 0,
-          },
-          criteres: {
-            moyenne: null,
-            moyennesParPhase: {
-              [$Enums.etape_evaluation_enum.AUTO_EVALUATION]: null,
-              [$Enums.etape_evaluation_enum.CONSOLIDATION]: null,
-            },
-            nombreNotes: 0,
-            nombreTotal: 0,
-            nombreTraites: 0,
-          },
-          noteCollective: null,
-        },
-      ]);
-
-      expect(
-        result["Région multi-phases"][
-          $Enums.etape_evaluation_enum.CONSOLIDATION
-        ],
-      ).toEqual([]);
+      expect(result).toEqual({});
     });
 
     it("doit ordonner les fiches par ordre du rattachement dans chaque groupe", async () => {
@@ -889,12 +774,170 @@ describe("ListerFichesEvaluationParPhaseQuery", () => {
 
       const result = await query.run({ utilisateurId });
 
-      const fichesAutoEval =
-        result["Région 30"][$Enums.etape_evaluation_enum.AUTO_EVALUATION];
-      expect(fichesAutoEval).toHaveLength(3);
-      expect(fichesAutoEval[0].rattachement.code).toBe(rattachement2Code);
-      expect(fichesAutoEval[1].rattachement.code).toBe(rattachement3Code);
-      expect(fichesAutoEval[2].rattachement.code).toBe(rattachement1Code);
+      expect(result).toEqual({});
+    });
+
+    it("ne doit pas inclure les évaluations AUTO_EVALUATION dans les moyennesParPhase ni dans le calcul des notes", async () => {
+      const utilisateurId = "a1b2c3d4-e5f6-7890-abcd-ef1234567890";
+      const rattachementCode = "REG-60";
+      const ficheId = "59cdb7c8-4f5a-4d72-bd21-fd67342c8d69";
+
+      await prisma.utilisateur.create({
+        data: {
+          id: utilisateurId,
+          email: "user-auto-eval-filter@example.com",
+          nom: "UserAutoEvalFilter",
+          prenom: "Test",
+          date_creation: new Date(),
+          profilCode: "DITP_ADMIN",
+        },
+      });
+
+      await prisma.referentiel_rattachement.create({
+        data: {
+          code: rattachementCode,
+          groupe: rattachementCode,
+          ordre: 1,
+          libelle: "Région test auto-évaluation",
+        },
+      });
+
+      await prisma.rattachement_utilisateur_etape_jalon.create({
+        data: {
+          id: "46c5169b-7236-42e2-8787-81bf532080a5",
+          rattachement_code: rattachementCode,
+          utilisateur_id: utilisateurId,
+          etape: $Enums.etape_evaluation_enum.CONSOLIDATION,
+          jalon: 2025,
+        },
+      });
+
+      const objectifId = "ac3eae3d-ca09-4353-b0cd-6797a2bb59dd";
+      const critereId = "4419e3ad-7dcd-4c5f-b90a-8137f2ec7ffc";
+
+      await prisma.referentiel_objectif.create({
+        data: {
+          id: objectifId,
+          descriptif: "objectif test",
+          jalon: 2025,
+          rattachement_code: rattachementCode,
+          libelle: "Objectif test",
+        },
+      });
+
+      await prisma.referentiel_critere.create({
+        data: {
+          id: critereId,
+          descriptif: "Critère test",
+          libelle: "Critère test",
+        },
+      });
+
+      await prisma.fiche_evaluation.create({
+        data: {
+          id: ficheId,
+          jalon: 2025,
+          etape_courante: $Enums.etape_evaluation_enum.CONSOLIDATION,
+          rattachement_code: rattachementCode,
+          etape_evaluations: {
+            create: [
+              {
+                id: "072298ed-3d75-4edd-bd83-dbe6f5bfd1cb",
+                type: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
+                evaluations_objectifs: {
+                  create: [
+                    {
+                      id: "dfcded76-c476-4743-8031-c818567289a5",
+                      commentaire: "Note auto-évaluation",
+                      auteur_id: utilisateurId,
+                      objectif_id: objectifId,
+                      note: 50,
+                    },
+                  ],
+                },
+                evaluations_criteres: {
+                  create: [
+                    {
+                      id: "9efa0d00-7160-49ba-88a3-dfdb9760e430",
+                      commentaire: "Note auto-évaluation",
+                      auteur_id: utilisateurId,
+                      critere_id: critereId,
+                      note: 60,
+                    },
+                  ],
+                },
+              },
+              {
+                id: "5fab71fa-3153-462b-a7d8-c2090be27384",
+                type: $Enums.etape_evaluation_enum.CONSOLIDATION,
+                evaluations_objectifs: {
+                  create: [
+                    {
+                      id: "4681b49e-6eac-4f40-b986-97e00286edef",
+                      commentaire: "Note consolidation",
+                      auteur_id: utilisateurId,
+                      objectif_id: objectifId,
+                      note: 70,
+                      date_traitement: new Date(),
+                    },
+                  ],
+                },
+                evaluations_criteres: {
+                  create: [
+                    {
+                      id: "7924a508-b255-43ac-bd9e-b7b27f39804b",
+                      commentaire: "Note consolidation",
+                      auteur_id: utilisateurId,
+                      critere_id: critereId,
+                      note: 80,
+                      date_traitement: new Date(),
+                    },
+                  ],
+                },
+              },
+            ],
+          },
+        },
+      });
+
+      const result = await query.run({ utilisateurId });
+
+      expect(
+        result["Région test auto-évaluation"][
+          $Enums.etape_evaluation_enum.CONSOLIDATION
+        ],
+      ).toEqual([
+        {
+          id: ficheId,
+          etapeCourante: $Enums.etape_evaluation_enum.CONSOLIDATION,
+          isObjectifsValides: true,
+          isCriteresValides: true,
+          readOnly: false,
+          rattachement: {
+            code: rattachementCode,
+            libelle: "Région test auto-évaluation",
+          },
+          objectifs: {
+            moyenne: 70,
+            moyennesParPhase: {
+              [$Enums.etape_evaluation_enum.CONSOLIDATION]: 70,
+            },
+            nombreNotes: 1,
+            nombreTotal: 1,
+            nombreTraites: 1,
+          },
+          criteres: {
+            moyenne: 80,
+            moyennesParPhase: {
+              [$Enums.etape_evaluation_enum.CONSOLIDATION]: 80,
+            },
+            nombreNotes: 1,
+            nombreTotal: 1,
+            nombreTraites: 1,
+          },
+          noteCollective: null,
+        },
+      ]);
     });
   });
 });

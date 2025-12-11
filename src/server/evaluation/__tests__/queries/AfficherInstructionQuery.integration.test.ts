@@ -277,7 +277,7 @@ describe("AfficherInstructionQuery", () => {
       });
     });
 
-    it("doit récupérer les évaluations AUTO_EVALUATION, CONSOLIDATION et INSTRUCTION pour les objectifs", async () => {
+    it("doit récupérer les évaluations CONSOLIDATION et INSTRUCTION pour les objectifs", async () => {
       // Given
       const rattachementCode = "REG-TEST-04";
       const utilisateurId = "d5cff9fd-fd0a-4287-8a38-5efbd7300336";
@@ -455,21 +455,11 @@ describe("AfficherInstructionQuery", () => {
             },
             dateTraitement: null,
           },
-          {
-            etape: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
-            evaluation: {
-              id: evaluationAutoId,
-              note: 10,
-              commentaire: "Évaluation auto",
-              annexe: "",
-            },
-            dateTraitement: null,
-          },
         ],
       });
     });
 
-    it("doit récupérer les évaluations AUTO_EVALUATION, CONSOLIDATION et INSTRUCTION pour les critères", async () => {
+    it("doit récupérer les évaluations CONSOLIDATION et INSTRUCTION pour les critères", async () => {
       // Given
       const rattachementCode = "REG-TEST-05";
       const utilisateurId = "4c9bd9fc-a5b2-4ce3-9d48-2a4dddec7030";
@@ -646,16 +636,6 @@ describe("AfficherInstructionQuery", () => {
               id: evaluationConsoId,
               note: 11,
               commentaire: "Évaluation consolidation critère",
-              annexe: "",
-            },
-            dateTraitement: null,
-          },
-          {
-            etape: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
-            evaluation: {
-              id: evaluationAutoId,
-              note: 8,
-              commentaire: "Évaluation auto critère",
               annexe: "",
             },
             dateTraitement: null,

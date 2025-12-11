@@ -286,16 +286,6 @@ describe("AfficherConsolidationQuery", () => {
                   },
                   dateTraitement: null,
                 },
-                {
-                  etape: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
-                  evaluation: {
-                    id: expect.any(String),
-                    note: null,
-                    commentaire: "",
-                    annexe: "",
-                  },
-                  dateTraitement: null,
-                },
               ],
             },
           ],
@@ -315,16 +305,6 @@ describe("AfficherConsolidationQuery", () => {
                   },
                   dateTraitement: null,
                 },
-                {
-                  etape: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
-                  evaluation: {
-                    id: expect.any(String),
-                    note: null,
-                    commentaire: "",
-                    annexe: "",
-                  },
-                  dateTraitement: null,
-                },
               ],
             },
             {
@@ -334,16 +314,6 @@ describe("AfficherConsolidationQuery", () => {
               evaluations: [
                 {
                   etape: $Enums.etape_evaluation_enum.CONSOLIDATION,
-                  evaluation: {
-                    id: expect.any(String),
-                    note: null,
-                    commentaire: "",
-                    annexe: "",
-                  },
-                  dateTraitement: null,
-                },
-                {
-                  etape: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
                   evaluation: {
                     id: expect.any(String),
                     note: null,
@@ -380,16 +350,6 @@ describe("AfficherConsolidationQuery", () => {
                   },
                   dateTraitement: null,
                 },
-                {
-                  etape: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
-                  evaluation: {
-                    id: expect.any(String),
-                    note: null,
-                    commentaire: "",
-                    annexe: "",
-                  },
-                  dateTraitement: null,
-                },
               ],
             },
           ],
@@ -401,16 +361,6 @@ describe("AfficherConsolidationQuery", () => {
               evaluations: [
                 {
                   etape: $Enums.etape_evaluation_enum.CONSOLIDATION,
-                  evaluation: {
-                    id: expect.any(String),
-                    note: null,
-                    commentaire: "",
-                    annexe: "",
-                  },
-                  dateTraitement: null,
-                },
-                {
-                  etape: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
                   evaluation: {
                     id: expect.any(String),
                     note: null,
@@ -432,16 +382,6 @@ describe("AfficherConsolidationQuery", () => {
                     id: evaluationCritere2Id,
                     note: 2,
                     commentaire: "Critère à améliorer",
-                    annexe: "",
-                  },
-                  dateTraitement: null,
-                },
-                {
-                  etape: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
-                  evaluation: {
-                    id: expect.any(String),
-                    note: null,
-                    commentaire: "",
                     annexe: "",
                   },
                   dateTraitement: null,
@@ -649,16 +589,6 @@ describe("AfficherConsolidationQuery", () => {
                   },
                   dateTraitement: null,
                 },
-                {
-                  etape: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
-                  evaluation: {
-                    id: evaluationAutoId,
-                    note: 2,
-                    commentaire: "Évaluation auto",
-                    annexe: "",
-                  },
-                  dateTraitement: null,
-                },
               ],
             },
           ],
@@ -776,16 +706,6 @@ describe("AfficherConsolidationQuery", () => {
                   },
                   dateTraitement: null,
                 },
-                {
-                  etape: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
-                  evaluation: {
-                    id: expect.any(String),
-                    note: null,
-                    commentaire: "",
-                    annexe: "",
-                  },
-                  dateTraitement: null,
-                },
               ],
             },
           ],
@@ -797,16 +717,6 @@ describe("AfficherConsolidationQuery", () => {
               evaluations: [
                 {
                   etape: $Enums.etape_evaluation_enum.CONSOLIDATION,
-                  evaluation: {
-                    id: expect.any(String),
-                    note: null,
-                    commentaire: "",
-                    annexe: "",
-                  },
-                  dateTraitement: null,
-                },
-                {
-                  etape: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
                   evaluation: {
                     id: expect.any(String),
                     note: null,
@@ -952,16 +862,6 @@ describe("AfficherConsolidationQuery", () => {
                   },
                   dateTraitement: null,
                 },
-                {
-                  etape: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
-                  evaluation: {
-                    id: expect.any(String),
-                    note: null,
-                    commentaire: "",
-                    annexe: "",
-                  },
-                  dateTraitement: null,
-                },
               ],
             },
             {
@@ -971,16 +871,6 @@ describe("AfficherConsolidationQuery", () => {
               evaluations: [
                 {
                   etape: $Enums.etape_evaluation_enum.CONSOLIDATION,
-                  evaluation: {
-                    id: expect.any(String),
-                    note: null,
-                    commentaire: "",
-                    annexe: "",
-                  },
-                  dateTraitement: null,
-                },
-                {
-                  etape: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
                   evaluation: {
                     id: expect.any(String),
                     note: null,
@@ -1112,16 +1002,6 @@ describe("AfficherConsolidationQuery", () => {
                   },
                   dateTraitement: null,
                 },
-                {
-                  etape: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
-                  evaluation: {
-                    id: expect.any(String),
-                    note: null,
-                    commentaire: "",
-                    annexe: "",
-                  },
-                  dateTraitement: null,
-                },
               ],
             },
             {
@@ -1132,16 +1012,6 @@ describe("AfficherConsolidationQuery", () => {
               evaluations: [
                 {
                   etape: $Enums.etape_evaluation_enum.CONSOLIDATION,
-                  evaluation: {
-                    id: expect.any(String),
-                    note: null,
-                    commentaire: "",
-                    annexe: "",
-                  },
-                  dateTraitement: null,
-                },
-                {
-                  etape: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
                   evaluation: {
                     id: expect.any(String),
                     note: null,
@@ -1299,16 +1169,6 @@ describe("AfficherConsolidationQuery", () => {
                   },
                   dateTraitement: null,
                 },
-                {
-                  etape: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
-                  evaluation: {
-                    id: expect.any(String),
-                    note: null,
-                    commentaire: "",
-                    annexe: "",
-                  },
-                  dateTraitement: null,
-                },
               ],
             },
           ],
@@ -1328,16 +1188,6 @@ describe("AfficherConsolidationQuery", () => {
                   },
                   dateTraitement: null,
                 },
-                {
-                  etape: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
-                  evaluation: {
-                    id: expect.any(String),
-                    note: null,
-                    commentaire: "",
-                    annexe: "",
-                  },
-                  dateTraitement: null,
-                },
               ],
             },
           ]),
@@ -1345,7 +1195,7 @@ describe("AfficherConsolidationQuery", () => {
       ]);
     });
 
-    it("doit retourner les données d'auto-évaluation pour chaque objectif et critère", async () => {
+    it("ne doit retourner que les données de consolidation même si des données d'auto-évaluation existent", async () => {
       // Given
       const utilisateurId = "c4634567-89ab-cdef-0123-456789abcdef";
       const utilisateurAutoId = "d4634567-89ab-cdef-0123-456789abcdef";
@@ -1529,16 +1379,6 @@ describe("AfficherConsolidationQuery", () => {
                   },
                   dateTraitement: dateTraitementObjectif.toISOString(),
                 },
-                {
-                  etape: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
-                  evaluation: {
-                    id: evaluationObjectifAutoId,
-                    note: 3,
-                    commentaire: "Auto-évaluation objectif",
-                    annexe: "",
-                  },
-                  dateTraitement: null,
-                },
               ],
             },
           ],
@@ -1557,16 +1397,6 @@ describe("AfficherConsolidationQuery", () => {
                     annexe: "",
                   },
                   dateTraitement: dateTraitementCritere.toISOString(),
-                },
-                {
-                  etape: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
-                  evaluation: {
-                    id: evaluationCritereAutoId,
-                    note: 2,
-                    commentaire: "Auto-évaluation critère",
-                    annexe: "",
-                  },
-                  dateTraitement: null,
                 },
               ],
             },

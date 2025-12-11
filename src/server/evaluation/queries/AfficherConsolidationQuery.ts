@@ -46,12 +46,6 @@ export class AfficherConsolidationQuery {
               objectif.id,
               $Enums.etape_evaluation_enum.CONSOLIDATION,
             );
-            const autoEvaluation = this.findEvaluationObjectif(
-              etapesEvaluations,
-              objectif.id,
-              $Enums.etape_evaluation_enum.AUTO_EVALUATION,
-            );
-
             return {
               ...pick(objectif, ["id", "libelle", "descriptif"]),
               indicateurCible: objectif.indicateur_cible,
@@ -65,13 +59,6 @@ export class AfficherConsolidationQuery {
                       ).toISOString()
                     : null,
                 },
-                {
-                  etape: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
-                  evaluation: this.formatEvaluation(autoEvaluation),
-                  dateTraitement: autoEvaluation?.date_traitement
-                    ? new Date(autoEvaluation.date_traitement).toISOString()
-                    : null,
-                },
               ] satisfies Objectif["evaluations"],
             };
           },
@@ -82,11 +69,6 @@ export class AfficherConsolidationQuery {
             etapesEvaluations,
             critere.id,
             $Enums.etape_evaluation_enum.CONSOLIDATION,
-          );
-          const autoEvaluation = this.findEvaluationCritere(
-            etapesEvaluations,
-            critere.id,
-            $Enums.etape_evaluation_enum.AUTO_EVALUATION,
           );
 
           return {
@@ -99,13 +81,6 @@ export class AfficherConsolidationQuery {
                   ? new Date(
                       consolidationEvaluation.date_traitement,
                     ).toISOString()
-                  : null,
-              },
-              {
-                etape: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
-                evaluation: this.formatEvaluation(autoEvaluation),
-                dateTraitement: autoEvaluation?.date_traitement
-                  ? new Date(autoEvaluation.date_traitement).toISOString()
                   : null,
               },
             ] satisfies Rattachement["criteres"][number]["evaluations"],
@@ -182,10 +157,7 @@ export class AfficherConsolidationQuery {
               etape_evaluations: {
                 where: {
                   type: {
-                    in: [
-                      $Enums.etape_evaluation_enum.AUTO_EVALUATION,
-                      $Enums.etape_evaluation_enum.CONSOLIDATION,
-                    ],
+                    in: [$Enums.etape_evaluation_enum.CONSOLIDATION],
                   },
                 },
                 include: {
