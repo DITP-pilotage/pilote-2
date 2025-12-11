@@ -33,7 +33,7 @@ const reactTableColonnesHelper =
   createColumnHelper<UtilisateurListeGestionContrat>();
 const colonnes = [
   reactTableColonnesHelper.accessor("email", {
-    header: "Email",
+    header: "Adresse électronique",
     cell: (props) => props.getValue(),
   }),
   reactTableColonnesHelper.accessor("nom", {
