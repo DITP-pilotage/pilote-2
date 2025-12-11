@@ -105,11 +105,10 @@ export const ModaleTransmissionDITP = ({
                   </p>
 
                   {fichesSelectionnables.length === 0 ? (
-                    <div className="fr-alert fr-alert--info">
-                      <p className="fr-alert__title">
-                        Aucun territoire disponible pour transmission
-                      </p>
-                    </div>
+                    <Alerte
+                      titre="Aucun territoire disponible pour transmission"
+                      type="info"
+                    />
                   ) : (
                     <div className="grid grid-cols-3 gap-x-4 gap-y-6">
                       <label className="col-span-3 flex items-center gap-3 cursor-pointer">
