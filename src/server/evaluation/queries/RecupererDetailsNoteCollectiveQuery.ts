@@ -5,6 +5,7 @@ type IndicateurDetailsNoteCollective = {
   nom: string;
   tauxAvancement: number | null;
   tauxAvancementPilote: number | null;
+  ponderation: number;
 };
 
 type DetailsNoteCollectiveResult = {
@@ -71,6 +72,7 @@ export class RecupererDetailsNoteCollectiveQuery {
             select: {
               id: true,
               taux_avancement: true,
+              ponderation_reelle: true,
               indicateur_territoire_jalon: {
                 select: {
                   taux_avancement: true,
@@ -109,6 +111,7 @@ export class RecupererDetailsNoteCollectiveQuery {
         tauxAvancement: indicateur.taux_avancement,
         tauxAvancementPilote:
           indicateur.indicateur_territoire_jalon.taux_avancement,
+        ponderation: indicateur.ponderation_reelle,
       }));
 
       return {

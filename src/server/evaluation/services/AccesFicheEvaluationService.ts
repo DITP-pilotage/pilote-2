@@ -18,6 +18,20 @@ export class AccesFicheEvaluationService {
     );
   }
 
+  async peutAccederEtapeAutoEvaluationRattachement({
+    utilisateurId,
+    rattachementCode,
+  }: {
+    utilisateurId: string;
+    rattachementCode: string;
+  }): Promise<boolean> {
+    return this.peutAccederEtapePourRattachement(
+      utilisateurId,
+      $Enums.etape_evaluation_enum.AUTO_EVALUATION,
+      rattachementCode,
+    );
+  }
+
   async peutAccederEtapeAppreciation({
     utilisateurId,
   }: {
@@ -84,6 +98,24 @@ export class AccesFicheEvaluationService {
         where: {
           etape,
           utilisateur_id: utilisateurId,
+        },
+      });
+
+    return resultat != 0;
+  }
+
+  private async peutAccederEtapePourRattachement(
+    utilisateurId: string,
+    etape: $Enums.etape_evaluation_enum,
+    rattachementCode: string,
+  ) {
+    const resultat = await this.dependencies.prisma
+      .getInstance()
+      .rattachement_utilisateur_etape_jalon.count({
+        where: {
+          etape,
+          utilisateur_id: utilisateurId,
+          rattachement_code: rattachementCode,
         },
       });
 
