@@ -155,6 +155,11 @@ const config = convict({
       default: "ToBeDefined",
       env: "CENTREAIDE_GITHUB_TOKEN",
     },
+    assetsFolder: {
+      format: String,
+      default: "ToBeDefined",
+      env: "CENTREAIDE_ASSETS_FOLDER",
+    },
   },
   featureFlip: {
     nouvellePageAccueil: {
