@@ -1,7 +1,10 @@
 import type { NextApiRequest, NextApiResponse } from "next";
+import { getServerSession } from "next-auth/next";
 import { readFile } from "fs/promises";
 import { join } from "path";
+import assert from "node:assert/strict";
 import { configuration } from "@/config";
+import { authOptions } from "@/server/infrastructure/api/auth/[...nextauth]";
 
 export default async function handler(
   req: NextApiRequest,
@@ -9,15 +12,16 @@ export default async function handler(
 ) {
   const filename = req.query.filename as string | undefined;
 
+  const session = await getServerSession(req, res, authOptions);
+  assert(session);
+
   if (!filename) {
     res.status(400).send("Missing filename query parameter");
     return;
   }
 
-  // Sécurisation du nom de fichier
   const safeFilename = filename.replace(/[^a-zA-Z0-9._-]/g, "");
 
-  // Détection MIME
   const ext = safeFilename.split(".").pop()?.toLowerCase();
 
   const mimeTypes: Record<string, string> = {
