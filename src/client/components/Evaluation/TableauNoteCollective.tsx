@@ -4,33 +4,11 @@ import BarreDeProgression from "@/client/components/_commons/BarreDeProgression/
 import { Icone } from "@/client/components/_commons/Icone";
 import { ArrowSLine1Icon } from "@/client/components/_commons/Icones/ArrowSLine1Icon";
 import { ArrowSLine2Icon } from "@/client/components/_commons/Icones/ArrowSLine2Icon";
+import { pageNoteCollective } from "@/components/Evaluation/PageNoteCollectiveServerSideContext";
 
-type Indicateur = {
-  id: string;
-  nom: string;
-  tauxAvancement: number | null;
-  tauxAvancementPilote: number | null;
-  ponderation: number;
-};
-
-type Chantier = {
-  id: string;
-  nom: string;
-  iconeMinistere: string | null;
-  tauxAvancement: number | null;
-  tauxAvancementPilote: number | null;
-  indicateurs: Indicateur[];
-};
-
-export const TableauNoteCollective = ({
-  chantiersEvaluation,
-  rattachement,
-  baseUrl,
-}: {
-  chantiersEvaluation: Chantier[];
-  rattachement: string;
-  baseUrl: string;
-}) => {
+export const TableauNoteCollective = () => {
+  const { chantiersEvaluation, rattachementCode, baseUrl } =
+    pageNoteCollective.useServerSidePropsContext();
   const [expandedChantiers, setExpandedChantiers] = useState<Set<string>>(
     new Set(),
   );
@@ -104,7 +82,7 @@ export const TableauNoteCollective = ({
                           />
                           <a
                             className="!text-primary whitespace-nowrap flex-shrink-0"
-                            href={`${baseUrl}/chantier/${chantier.id}/${rattachement}`}
+                            href={`${baseUrl}/chantier/${chantier.id}/${rattachementCode}`}
                           >
                             {chantier.id}
                           </a>
@@ -136,7 +114,7 @@ export const TableauNoteCollective = ({
                               <div className="flex items-center gap-3">
                                 <a
                                   className="ml-9 !text-primary whitespace-nowrap flex-shrink-0"
-                                  href={`${baseUrl}/chantier/${chantier.id}/${rattachement}`}
+                                  href={`${baseUrl}/chantier/${chantier.id}/${rattachementCode}`}
                                 >
                                   {indicateur.id}
                                 </a>
