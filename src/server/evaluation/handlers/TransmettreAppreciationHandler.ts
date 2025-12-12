@@ -6,16 +6,20 @@ import { getPrisma } from "@/server/db/PrismaTransaction";
 import { NotificationEmailService } from "@/server/evaluation/services/NotificationEmailService";
 import { formatterTitreEvaluation } from "@/components/PageAppreciation/utilsTexteEvaluation";
 
-export const modifierEtatFichesConsolidationCommandSchema = z.object({
+export const transmettreAppreciationInputSchema = z.object({
   ficheEvaluationIds: z.array(z.string()),
-  readOnly: z.boolean(),
 });
 
-export type ModifierEtatFichesConsolidationCommand = z.infer<
-  typeof modifierEtatFichesConsolidationCommandSchema
+export const transmettreAppreciationCommandSchema =
+  transmettreAppreciationInputSchema.extend({
+    utilisateurId: z.string(),
+  });
+
+export type TransmettreAppreciationCommand = z.infer<
+  typeof transmettreAppreciationCommandSchema
 >;
 
-export class ModifierEtatFichesConsolidationHandler {
+export class TransmettreAppreciationHandler {
   private readonly notificationEmailService: NotificationEmailService;
 
   constructor(
@@ -28,12 +32,17 @@ export class ModifierEtatFichesConsolidationHandler {
     this.notificationEmailService = dependencies.notificationEmailService;
   }
 
-  async execute(
-    command: ModifierEtatFichesConsolidationCommand,
-  ): Promise<void> {
+  async execute(command: TransmettreAppreciationCommand): Promise<void> {
     if (command.ficheEvaluationIds.length === 0) {
       return;
     }
+
+    const fichesAccessibles = await this.getFichesAccessibles(
+      command.utilisateurId,
+      command.ficheEvaluationIds,
+    );
+
+    if (fichesAccessibles.length === 0) return;
 
     await this.dependencies.transaction.run(async () => {
       const prisma = getPrisma();
@@ -41,23 +50,59 @@ export class ModifierEtatFichesConsolidationHandler {
       await prisma.etape_evaluation.updateMany({
         where: {
           fiche_evaluation_id: {
-            in: command.ficheEvaluationIds,
+            in: fichesAccessibles,
           },
           type: $Enums.etape_evaluation_enum.CONSOLIDATION,
         },
         data: {
-          read_only: command.readOnly,
+          read_only: true,
         },
       });
     });
 
-    if (command.readOnly) {
-      const utilisateursANotifier = await this.getUtilisateursANotifier(
-        command.ficheEvaluationIds,
+    const utilisateursANotifier =
+      await this.getUtilisateursANotifier(fichesAccessibles);
+
+    await this.envoieNotifications(utilisateursANotifier).catch();
+  }
+
+  private async getFichesAccessibles(
+    utilisateurId: string,
+    ficheEvaluationIds: string[],
+  ): Promise<string[]> {
+    return this.dependencies.transaction.run(async () => {
+      const prisma = getPrisma();
+
+      const rattachementsAccessibles =
+        await prisma.rattachement_utilisateur_etape_jalon.findMany({
+          where: {
+            utilisateur_id: utilisateurId,
+            etape: $Enums.etape_evaluation_enum.CONSOLIDATION,
+            jalon: 2025,
+          },
+          select: {
+            rattachement_code: true,
+          },
+        });
+
+      const rattachementCodes = rattachementsAccessibles.map(
+        (r) => r.rattachement_code,
       );
 
-      await this.envoieNotifications(utilisateursANotifier).catch();
-    }
+      if (rattachementCodes.length === 0) {
+        return [];
+      }
+
+      const fichesAccessibles = await prisma.fiche_evaluation.findMany({
+        where: {
+          id: { in: ficheEvaluationIds },
+          rattachement_code: { in: rattachementCodes },
+        },
+        select: { id: true },
+      });
+
+      return fichesAccessibles.map((fiche) => fiche.id);
+    });
   }
 
   private async envoieNotifications(

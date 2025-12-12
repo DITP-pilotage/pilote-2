@@ -31,14 +31,6 @@ export const ListePhaseEvaluation = () => {
                   2
                 } formulaires`}
               </h2>
-              <ModaleTransmissionDITP
-                fichesConsolidation={CONSOLIDATION}
-                groupe={groupe}
-              >
-                <button className="fr-btn fr-btn--secondary" type="button">
-                  Transmettre à la DITP
-                </button>
-              </ModaleTransmissionDITP>
             </div>
             <LignesEnteteAvancementCompletionAppreciation
               appreciation={CONSOLIDATION}
@@ -56,7 +48,7 @@ export const ListePhaseEvaluation = () => {
                 <Accordion.Content>
                   {CONSOLIDATION.length > 0 ? (
                     <div className="flex flex-col gap-4">
-                      <div>
+                      <div className="flex items-center justify-between">
                         <Bouton
                           className="!text-xs"
                           iconLeft={
@@ -81,6 +73,17 @@ export const ListePhaseEvaluation = () => {
                           }
                           variant="link"
                         />
+
+                        <ModaleTransmissionDITP
+                          fichesAppreciation={CONSOLIDATION}
+                        >
+                          <button
+                            className="fr-btn fr-btn--secondary fr-btn--sm"
+                            type="button"
+                          >
+                            Transmettre à la DITP
+                          </button>
+                        </ModaleTransmissionDITP>
                       </div>
                       {CONSOLIDATION.map((ficheEvaluation) => (
                         <LigneCardEvaluationAppreciation
