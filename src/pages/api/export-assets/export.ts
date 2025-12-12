@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { getServerSession } from "next-auth/next";
-import { readFile } from "fs/promises";
+import { createReadStream, statSync } from "fs";
 import { join } from "path";
 import assert from "node:assert/strict";
 import { configuration } from "@/config";
@@ -10,10 +10,10 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
-  const filename = req.query.filename as string | undefined;
-
   const session = await getServerSession(req, res, authOptions);
   assert(session);
+
+  const filename = req.query.filename as string | undefined;
 
   if (!filename) {
     res.status(400).send("Missing filename query parameter");
@@ -42,15 +42,21 @@ export default async function handler(
       configuration().centreaide.assetsFolder,
       safeFilename,
     );
-    const fileBuffer = await readFile(filePath);
 
-    // Headers pour forcer le téléchargement
+    const stats = statSync(filePath);
+
     res.setHeader("Content-Type", contentType);
     res.setHeader(
       "Content-Disposition",
       `attachment; filename="${safeFilename}"`,
     );
-    res.send(fileBuffer);
+    res.setHeader("Content-Length", stats.size);
+
+    const stream = createReadStream(filePath);
+    stream.pipe(res);
+    stream.on("error", () => {
+      res.status(500).end("Error reading file");
+    });
   } catch (err) {
     res.status(404).send("File not found");
   }
