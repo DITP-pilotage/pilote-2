@@ -20,8 +20,9 @@ export const getServerSideProps = async ({
   assert(session);
 
   const featureFlipping = configurationFeatureFlip();
+  const container = getContainer("piloteEval");
 
-  const peutAccederEtapeAutoEvaluation = await getContainer("piloteEval")
+  const peutAccederEtapeAutoEvaluation = await container
     .resolve("accesFicheEvaluationService")
     .peutAccederEtapeAutoEvaluationRattachement({
       utilisateurId: session.user.id,
@@ -41,8 +42,6 @@ export const getServerSideProps = async ({
       },
     };
   }
-
-  const container = getContainer("piloteEval");
 
   const rattachements = await container
     .resolve("getRattachementPourEtapeQuery")

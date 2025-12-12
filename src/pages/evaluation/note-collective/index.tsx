@@ -4,7 +4,7 @@ import { $Enums } from "@prisma/client";
 import assert from "node:assert";
 import { configurationFeatureFlip } from "@/config";
 import { authOptions } from "@/server/infrastructure/api/auth/[...nextauth]";
-import { prisma } from "@/server/db/prisma";
+import { getContainer } from "@/server/dependances";
 
 export const getServerSideProps = async ({
   req,
@@ -29,19 +29,12 @@ export const getServerSideProps = async ({
     };
   }
 
-  const rattachements = await prisma.referentiel_rattachement.findMany({
-    where: {
-      rattachement_utilisateur_etape_jalon: {
-        some: {
-          utilisateur_id: session.user.id,
-          etape: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
-        },
-      },
-    },
-    select: {
-      code: true,
-    },
-  });
+  const rattachements = await getContainer("piloteEval")
+    .resolve("getRattachementPourEtapeQuery")
+    .run({
+      utilisateurId: session.user.id,
+      etape: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
+    });
 
   if (rattachements[0]) {
     return {
