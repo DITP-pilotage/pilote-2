@@ -33,6 +33,7 @@ module.exports = {
         "dsfr-blue-france-850": "#CACAFB",
         "dsfr-blue-france-925": "#E3E3FD",
         "dsfr-blue-france-925-hover": "#C1C1FB",
+        "dsfr-blue-france-950": "#ECECFE",
         "dsfr-blue-france-525": "#6A6AF4",
         "dsfr-blue-france-sun-113": "#000091",
         "dsfr-blue-link": "#5493EF",

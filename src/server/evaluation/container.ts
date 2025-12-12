@@ -7,6 +7,7 @@ import { ListerCriteresPiloteEval } from "@/server/evaluation/queries/ListerCrit
 import { ListerRattachementsPiloteEval } from "@/server/evaluation/queries/ListerRattachementsPiloteEval";
 import { ListerObjectifsParRattachementPiloteEval } from "@/server/evaluation/queries/ListerObjectifsParRattachementPiloteEval";
 import { RecupererDroitsUtilisateurQuery } from "@/server/evaluation/queries/RecupererDroitsUtilisateurQuery";
+import { GetRattachementPourEtapeQuery } from "@/server/evaluation/queries/GetRattachementPourEtapeQuery";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { AccesFicheEvaluationService } from "@/server/evaluation/services/AccesFicheEvaluationService";
 import { AfficherConsolidationQuery } from "@/server/evaluation/queries/AfficherConsolidationQuery";
@@ -46,6 +47,7 @@ export type PiloteEvalDependencies = {
   listerObjectifsParRattachementPiloteEval: ListerObjectifsParRattachementPiloteEval;
   recupererDroitsUtilisateurQuery: RecupererDroitsUtilisateurQuery;
   recupererDetailsNoteCollectiveQuery: RecupererDetailsNoteCollectiveQuery;
+  getRattachementPourEtapeQuery: GetRattachementPourEtapeQuery;
   enregistrerBrouillonAutoEvaluationObjectifs: EnregistrerBrouillonAutoEvaluationObjectifsHandler;
   enregistrerBrouillonAutoEvaluationCriteres: EnregistrerBrouillonAutoEvaluationCriteresHandler;
   validerSaisieObjectifs: ValiderSaisieObjectifsHandler;
@@ -90,6 +92,7 @@ export const getPiloteEvalContainer = (
     recupererDetailsNoteCollectiveQuery: asClass(
       RecupererDetailsNoteCollectiveQuery,
     ),
+    getRattachementPourEtapeQuery: asClass(GetRattachementPourEtapeQuery),
     enregistrerBrouillonAutoEvaluationObjectifs: asClass(
       EnregistrerBrouillonAutoEvaluationObjectifsHandler,
     ),
