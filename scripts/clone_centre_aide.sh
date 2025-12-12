@@ -1,5 +1,5 @@
 # Uniquement sur du local
-if [ -z $CENTREAIDE_GITHUB_FOLDER ] || [ -z $CENTREAIDE_GITHUB_TOKEN ];
+if [ -z $CENTREAIDE_GITHUB_BRANCH ] || [ -z $CENTREAIDE_GITHUB_TOKEN ];
 then
   if [ -f .env ];
   then

@@ -18,7 +18,8 @@ CREATE TABLE "raw_data"."metadata_indicateurs" (
     "indic_hidden_pilote" BOOLEAN,
     "indic_schema" TEXT,
     "zg_applicable" TEXT,
-
+    "indic_territorialise" BOOLEAN,
+    "mailles" TEXT,
     CONSTRAINT "metadata_indicateurs_pkey" PRIMARY KEY ("indic_id")
 );
 
@@ -53,7 +54,6 @@ CREATE TABLE "raw_data"."metadata_parametrage_indicateurs" (
     "poids_pourcent_reg" INTEGER,
     "poids_pourcent_nat" INTEGER,
     "tendance" TEXT,
-
     CONSTRAINT "metadata_parametrage_indicateurs_pkey" PRIMARY KEY ("indic_id")
 );
 
@@ -78,6 +78,5 @@ CREATE TABLE "raw_data"."metadata_indicateurs_complementaire" (
     "contact_technique" TEXT,
     "contact_technique_email" TEXT,
     "commentaire" TEXT,
-
     CONSTRAINT "metadata_indicateurs_complementaire_pkey" PRIMARY KEY ("indic_id")
 );
