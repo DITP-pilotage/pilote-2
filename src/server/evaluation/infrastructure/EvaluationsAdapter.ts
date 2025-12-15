@@ -161,30 +161,30 @@ export class EvaluationsAdapter implements PDFContentAdapter {
 
     return [
       createPageHeader({
-        title: `${this.getTitlePrefix()} - Fiches de cadrage - Objectifs - ${rattachement.code} - ${rattachement.libelle}`,
+        title: `${this.getTitlePrefix()} - Fiches de cadrage - Manière de servir - ${rattachement.code} - ${rattachement.libelle}`,
         pageBreak: "before",
       }),
       createTable(
-        rattachement.objectifs.flatMap((objectif) => [
-          [createSectionTitle({ title: objectif.libelle, colSpan: 2 }), {}],
-          [
-            createText({
-              text: createLabeledText({
-                label: "Descriptif",
-                text: objectif.descriptif,
+        rattachement.criteres.flatMap((evaluation) => {
+          const critere = this.data.criteres.find(
+            ({ id }) => id === evaluation.id,
+          );
+          if (!critere) return [];
+
+          return [
+            [createSectionTitle({ title: critere.libelle })],
+            [
+              createText({
+                text: createLabeledText({
+                  label: "Descriptif",
+                  text: critere.descriptif,
+                }),
+                margin: [5, 5, 5, 5],
               }),
-              margin: [5, 5, 5, 5],
-            }),
-            createText({
-              text: createLabeledText({
-                label: "Indicateur + cible",
-                text: objectif.indicateurCible,
-              }),
-              margin: [5, 5, 5, 5],
-            }),
-          ],
-        ]),
-        { rowModulo: 3, widths: ["*", "*"] },
+            ],
+          ];
+        }),
+        { rowModulo: 2, widths: ["*"] },
       ),
     ];
   }
