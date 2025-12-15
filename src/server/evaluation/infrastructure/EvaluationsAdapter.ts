@@ -181,84 +181,6 @@ export class EvaluationsAdapter implements PDFContentAdapter {
     ];
   }
 
-  private mapAnnexesCriteresPageForRattachement(
-    rattachement: Rattachement,
-  ): Content[] {
-    return [
-      createPageHeader({
-        title: `${this.getTitlePrefix()} - Annexes - Manière de servir - ${rattachement.code} - ${rattachement.libelle}`,
-        pageBreak: "before",
-      }),
-      createTable(
-        this.data.criteres.flatMap((critere) => {
-          const critereRattachement = rattachement.criteres.find(
-            (c) => c.id === critere.id,
-          );
-
-          if (!critereRattachement) {
-            return [];
-          }
-
-          const rows = [[createSectionTitle({ title: critere.libelle })]];
-
-          critereRattachement.evaluations.forEach((evaluationData) => {
-            const etapeLabel = getEtapeLabel(evaluationData.etape);
-            const annexeText = stripHtml(evaluationData.evaluation.annexe);
-
-            rows.push([
-              createText({
-                text: createLabeledText({
-                  label: etapeLabel,
-                  text: annexeText,
-                }),
-                italics: !annexeText,
-                color: annexeText ? COLORS.text : COLORS.textLight,
-              }),
-            ]);
-          });
-
-          return rows;
-        }),
-        { rowModulo: 2, widths: ["*"] },
-      ),
-    ];
-  }
-
-  private mapAnnexesObjectifsPageForRattachement(
-    rattachement: Rattachement,
-  ): Content[] {
-    return [
-      createPageHeader({
-        title: `${this.getTitlePrefix()} - Annexes - Objectifs - ${rattachement.code} - ${rattachement.libelle}`,
-        pageBreak: "before",
-      }),
-      createTable(
-        rattachement.objectifs.flatMap((objectif) => {
-          const rows = [[createSectionTitle({ title: objectif.libelle })]];
-
-          objectif.evaluations.forEach((evaluationData) => {
-            const etapeLabel = getEtapeLabel(evaluationData.etape);
-            const annexeText = stripHtml(evaluationData.evaluation.annexe);
-
-            rows.push([
-              createText({
-                text: createLabeledText({
-                  label: etapeLabel,
-                  text: annexeText,
-                }),
-                italics: !annexeText,
-                color: annexeText ? COLORS.text : COLORS.textLight,
-              }),
-            ]);
-          });
-
-          return rows;
-        }),
-        { rowModulo: 2, widths: ["*"] },
-      ),
-    ];
-  }
-
   getContent(): Content[] {
     const content: Content[] = [];
 
@@ -268,10 +190,6 @@ export class EvaluationsAdapter implements PDFContentAdapter {
       );
       content.push(...this.mapObjectifsPageForRattachement(rattachement));
       content.push(...this.mapFichesCadragePageForRattachement(rattachement));
-      content.push(...this.mapAnnexesCriteresPageForRattachement(rattachement));
-      content.push(
-        ...this.mapAnnexesObjectifsPageForRattachement(rattachement),
-      );
     });
 
     return content;
