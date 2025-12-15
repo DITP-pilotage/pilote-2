@@ -31,7 +31,6 @@ public/
 middleware.ts
 next.config.js
 next-env.d.ts
-package.json
 package-lock.json
 playwright.config.ts
 postcss.config.mjs
