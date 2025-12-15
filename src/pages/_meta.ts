@@ -5,7 +5,7 @@ export default {
     display: "hidden",
   },
   "centre-aide-pilote-2": {
-    display: "normal",
+    display: "children",
     title: "Centre d'aide Pilote 2",
   },
 } satisfies DynamicMeta;
