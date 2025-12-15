@@ -1,17 +1,21 @@
 import { formaterDate } from "@/client/utils/date/date";
 import { nettoyerUneChaîneDeCaractèresPourAffichageHTML } from "@/client/utils/strings";
 import { BoutonsAffichage } from "@/components/PageChantier/SynthèseDesRésultatsChantier/BoutonsAffichage/BoutonsAffichage";
+import SynthèseDesRésultats from "@/server/domain/chantier/synthèseDesRésultats/SynthèseDesRésultats.interface";
 import useAffichage from "./useAffichage";
 
-const SynthèseDesRésultatsAffichage = () => {
+const SynthèseDesRésultatsAffichage = ({
+  itemHistoriqueSyntheseDesResultats: synthèseDesRésultats,
+}: {
+  itemHistoriqueSyntheseDesResultats: SynthèseDesRésultats;
+}) => {
   const {
-    synthèseDesRésultats,
     contenuAAfficher,
     afficherBoutonsAffichage,
     afficherContenuComplet,
     déplierLeContenu,
     replierLeContenu,
-  } = useAffichage();
+  } = useAffichage(synthèseDesRésultats);
 
   if (!synthèseDesRésultats) {
     return (

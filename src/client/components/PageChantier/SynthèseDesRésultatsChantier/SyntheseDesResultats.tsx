@@ -78,7 +78,9 @@ const SyntheseDesResultats: FunctionComponent<SyntheseDesResultatsProps> = ({
                   ) : null}
                 </div>
                 <div>
-                  <SynthèseDesRésultatsAffichage />
+                  <SynthèseDesRésultatsAffichage
+                    itemHistoriqueSyntheseDesResultats={synthèseDesRésultats}
+                  />
                 </div>
               </div>
               {estInteractif ? (

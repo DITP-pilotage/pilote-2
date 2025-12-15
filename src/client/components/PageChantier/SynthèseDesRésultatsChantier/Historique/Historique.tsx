@@ -47,7 +47,9 @@ const SynthèseDesRésultatsHistorique = () => {
                   )}
                 </div>
                 <div className="fr-pl-md-3w">
-                  <SynthèseDesRésultatsAffichage />
+                  <SynthèseDesRésultatsAffichage
+                    itemHistoriqueSyntheseDesResultats={synthèse}
+                  />
                 </div>
               </div>
             </Fragment>

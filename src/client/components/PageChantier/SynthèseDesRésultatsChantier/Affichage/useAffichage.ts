@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { LIMITE_CARACTÈRES_AFFICHAGE_SYNTHÈSE_DES_RÉSULTATS } from "@/validation/synthèseDesRésultats";
-import { pageChantier } from "@/components/PageChantier/PageChantierServerSideContext";
+import SynthèseDesRésultats from "@/server/domain/chantier/synthèseDesRésultats/SynthèseDesRésultats.interface";
 
-export default function useAffichage() {
-  const { synthèseDesRésultats } = pageChantier.useServerSidePropsContext();
+export default function useAffichage(
+  synthèseDesRésultats: SynthèseDesRésultats,
+) {
   const [afficherContenuComplet, setAfficherContenuComplet] = useState(false);
   const [afficherBoutonsAffichage, setAfficherBoutonsAffichage] =
     useState(false);
