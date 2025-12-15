@@ -1,13 +1,14 @@
 import { ComponentType, PropsWithChildren } from "react";
 import { Icone } from "@/components/_commons/Icone";
 import { QuestionIcon } from "@/components/_commons/Icones/QuestionIcon";
+import { InformationPleineIcon } from "@/components/_commons/Icones/InformationPleineIcon";
 
 const mapIconeVersComponent: Record<
   "question" | "information",
   ComponentType<{ className: string; fill: string }>
 > = {
   question: QuestionIcon,
-  information: QuestionIcon,
+  information: InformationPleineIcon,
 };
 
 export const MiseEnAvant = ({
