@@ -1,3 +1,41 @@
+.cache
+CLAUDE.md
+copy-assets.js
+cron.json
+doc
+docker
+docker-compose.prod.yml
+docker-compose.yml
+docker-compose.yml
+.editorconfig
+.env.ci
+.env.example
+.env.test
+.env.test.example
+.eslintrc.json
+.gitconfig
+.github
+.gitmodules
+.gitignore
+jest*
+README*
 node_modules
 data_management
 auth
+tests
+.claude
+.github
+.idea
+.git
+ src/                         # Code source (compilé dans .next)
+.next/cache                   # Cache de build
+.next/types                   # Types générés
+public/                       # Copié dans .next/standalone/public
+prisma/migrations/            # Pas besoin des migrations en prod (déjà appliquées)
+scripts/                      # Scripts de dev
+playwright-report/
+test-results/
+coverage/
+*.test.ts
+*.test.tsx
+README.md
