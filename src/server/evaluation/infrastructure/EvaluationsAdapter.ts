@@ -114,6 +114,10 @@ export class EvaluationsAdapter implements PDFContentAdapter {
   private mapObjectifsPageForRattachement(
     rattachement: Rattachement,
   ): Content[] {
+    if (rattachement.objectifs.length === 0) {
+      return [];
+    }
+
     return [
       createPageHeader({
         title: `${this.getTitlePrefix()} - Objectifs - ${rattachement.code} - ${rattachement.libelle}`,
@@ -151,6 +155,10 @@ export class EvaluationsAdapter implements PDFContentAdapter {
   private mapFichesCadragePageForRattachement(
     rattachement: Rattachement,
   ): Content[] {
+    if (rattachement.objectifs.length === 0) {
+      return [];
+    }
+
     return [
       createPageHeader({
         title: `${this.getTitlePrefix()} - Fiches de cadrage - Objectifs - ${rattachement.code} - ${rattachement.libelle}`,
