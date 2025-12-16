@@ -1,8 +1,10 @@
 -- depends_on: {{ ref('chantier_territoire') }}
 
 {{ config(
-    materialized = 'incremental', 
-    unique_key = ['id', 'territoire_code', 'jalon'])
+        materialized = 'incremental', 
+        unique_key = ['id', 'territoire_code', 'jalon'],
+        incremental_strategy='merge'
+    )
 }}
 
 WITH
