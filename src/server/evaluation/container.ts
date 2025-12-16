@@ -29,7 +29,7 @@ import { SetTraitementEvaluationHandler } from "./handlers/SetTraitementEvaluati
 import { RetournerAutoEvaluationHandler } from "./handlers/RetournerAutoEvaluationHandler";
 import { RetournerAppreciationHandler } from "./handlers/RetournerAppreciationHandler";
 import { ModifierObjectifHandler } from "./handlers/ModifierObjectifHandler";
-import { GenererPDFAutoEvaluationHandler } from "./handlers/GenererPDFAutoEvaluationHandler";
+import { GenererPDFEvaluationHandler } from "./handlers/GenererPDFEvaluationHandler";
 import { ModifierDroitsUtilisateurHandler } from "./handlers/ModifierDroitsUtilisateurHandler";
 import { NotificationEmailService } from "./services/NotificationEmailService";
 import { TransmettreAppreciationHandler } from "./handlers/TransmettreAppreciationHandler";
@@ -64,7 +64,7 @@ export type PiloteEvalDependencies = {
   retournerAutoEvaluationHandler: RetournerAutoEvaluationHandler;
   retournerAppreciationHandler: RetournerAppreciationHandler;
   modifierObjectifHandler: ModifierObjectifHandler;
-  genererPDFAutoEvaluationHandler: GenererPDFAutoEvaluationHandler;
+  genererPDFEvaluationHandler: GenererPDFEvaluationHandler;
   modifierDroitsUtilisateurHandler: ModifierDroitsUtilisateurHandler;
   notificationEmailService: NotificationEmailService;
   transmettreAppreciationHandler: TransmettreAppreciationHandler;
@@ -121,7 +121,7 @@ export const getPiloteEvalContainer = (
     retournerAutoEvaluationHandler: asClass(RetournerAutoEvaluationHandler),
     retournerAppreciationHandler: asClass(RetournerAppreciationHandler),
     modifierObjectifHandler: asClass(ModifierObjectifHandler),
-    genererPDFAutoEvaluationHandler: asClass(GenererPDFAutoEvaluationHandler),
+    genererPDFEvaluationHandler: asClass(GenererPDFEvaluationHandler),
     modifierDroitsUtilisateurHandler: asClass(ModifierDroitsUtilisateurHandler),
     notificationEmailService: asClass(NotificationEmailService),
     transmettreAppreciationHandler: asClass(TransmettreAppreciationHandler),

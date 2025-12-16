@@ -3,7 +3,6 @@ import { Content } from "pdfmake/interfaces";
 import { PDFContentAdapter } from "@/server/evaluation/domain/PDFContentAdapter";
 import { Rattachement, Critere } from "@/server/evaluation/queries/types";
 import {
-  COLORS,
   createLabeledText,
   createPageHeader,
   createScoreCell,
@@ -15,26 +14,6 @@ import {
 const formatterNote = (note: number | null): string => {
   if (note === null) return "Non évalué";
   return `${note}/100`;
-};
-
-const stripHtml = (html: string | null) => {
-  if (!html) return null;
-  let text = html.replace(
-    /<\/(p|div|h[1-6]|ul|ol|li|blockquote|pre|table|tr|td|th)>/gi,
-    "\n",
-  );
-  text = text.replace(/<br\s*\/?>/gi, "\n");
-  text = text.replace(/<li[^>]*>/gi, "\n• ");
-  text = text.replace(/<[^>]*>/g, "");
-  text = text
-    .replace(/&nbsp;/g, " ")
-    .replace(/&amp;/g, "&")
-    .replace(/&lt;/g, "<")
-    .replace(/&gt;/g, ">")
-    .replace(/&quot;/g, '"')
-    .replace(/&#39;/g, "'");
-  text = text.replace(/\n\s*\n\s*\n/g, "\n\n").trim();
-  return text;
 };
 
 const getEtapeLabel = (etape: $Enums.etape_evaluation_enum): string => {
@@ -114,6 +93,10 @@ export class EvaluationsAdapter implements PDFContentAdapter {
   private mapObjectifsPageForRattachement(
     rattachement: Rattachement,
   ): Content[] {
+    if (rattachement.objectifs.length === 0) {
+      return [];
+    }
+
     return [
       createPageHeader({
         title: `${this.getTitlePrefix()} - Objectifs - ${rattachement.code} - ${rattachement.libelle}`,
@@ -151,108 +134,34 @@ export class EvaluationsAdapter implements PDFContentAdapter {
   private mapFichesCadragePageForRattachement(
     rattachement: Rattachement,
   ): Content[] {
-    return [
-      createPageHeader({
-        title: `${this.getTitlePrefix()} - Fiches de cadrage - Objectifs - ${rattachement.code} - ${rattachement.libelle}`,
-        pageBreak: "before",
-      }),
-      createTable(
-        rattachement.objectifs.flatMap((objectif) => [
-          [createSectionTitle({ title: objectif.libelle, colSpan: 2 }), {}],
-          [
-            createText({
-              text: createLabeledText({
-                label: "Descriptif",
-                text: objectif.descriptif,
-              }),
-              margin: [5, 5, 5, 5],
-            }),
-            createText({
-              text: createLabeledText({
-                label: "Indicateur + cible",
-                text: objectif.indicateurCible,
-              }),
-              margin: [5, 5, 5, 5],
-            }),
-          ],
-        ]),
-        { rowModulo: 3, widths: ["*", "*"] },
-      ),
-    ];
-  }
+    if (rattachement.objectifs.length === 0) {
+      return [];
+    }
 
-  private mapAnnexesCriteresPageForRattachement(
-    rattachement: Rattachement,
-  ): Content[] {
     return [
       createPageHeader({
-        title: `${this.getTitlePrefix()} - Annexes - Manière de servir - ${rattachement.code} - ${rattachement.libelle}`,
+        title: `${this.getTitlePrefix()} - Fiches de cadrage - Manière de servir - ${rattachement.code} - ${rattachement.libelle}`,
         pageBreak: "before",
       }),
       createTable(
-        this.data.criteres.flatMap((critere) => {
-          const critereRattachement = rattachement.criteres.find(
-            (c) => c.id === critere.id,
+        rattachement.criteres.flatMap((evaluation) => {
+          const critere = this.data.criteres.find(
+            ({ id }) => id === evaluation.id,
           );
+          if (!critere) return [];
 
-          if (!critereRattachement) {
-            return [];
-          }
-
-          const rows = [[createSectionTitle({ title: critere.libelle })]];
-
-          critereRattachement.evaluations.forEach((evaluationData) => {
-            const etapeLabel = getEtapeLabel(evaluationData.etape);
-            const annexeText = stripHtml(evaluationData.evaluation.annexe);
-
-            rows.push([
+          return [
+            [createSectionTitle({ title: critere.libelle })],
+            [
               createText({
                 text: createLabeledText({
-                  label: etapeLabel,
-                  text: annexeText,
+                  label: "Descriptif",
+                  text: critere.descriptif,
                 }),
-                italics: !annexeText,
-                color: annexeText ? COLORS.text : COLORS.textLight,
+                margin: [5, 5, 5, 5],
               }),
-            ]);
-          });
-
-          return rows;
-        }),
-        { rowModulo: 2, widths: ["*"] },
-      ),
-    ];
-  }
-
-  private mapAnnexesObjectifsPageForRattachement(
-    rattachement: Rattachement,
-  ): Content[] {
-    return [
-      createPageHeader({
-        title: `${this.getTitlePrefix()} - Annexes - Objectifs - ${rattachement.code} - ${rattachement.libelle}`,
-        pageBreak: "before",
-      }),
-      createTable(
-        rattachement.objectifs.flatMap((objectif) => {
-          const rows = [[createSectionTitle({ title: objectif.libelle })]];
-
-          objectif.evaluations.forEach((evaluationData) => {
-            const etapeLabel = getEtapeLabel(evaluationData.etape);
-            const annexeText = stripHtml(evaluationData.evaluation.annexe);
-
-            rows.push([
-              createText({
-                text: createLabeledText({
-                  label: etapeLabel,
-                  text: annexeText,
-                }),
-                italics: !annexeText,
-                color: annexeText ? COLORS.text : COLORS.textLight,
-              }),
-            ]);
-          });
-
-          return rows;
+            ],
+          ];
         }),
         { rowModulo: 2, widths: ["*"] },
       ),
@@ -268,10 +177,6 @@ export class EvaluationsAdapter implements PDFContentAdapter {
       );
       content.push(...this.mapObjectifsPageForRattachement(rattachement));
       content.push(...this.mapFichesCadragePageForRattachement(rattachement));
-      content.push(...this.mapAnnexesCriteresPageForRattachement(rattachement));
-      content.push(
-        ...this.mapAnnexesObjectifsPageForRattachement(rattachement),
-      );
     });
 
     return content;

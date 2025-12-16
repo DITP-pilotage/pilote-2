@@ -8,7 +8,7 @@ export const genererPDFAutoEvaluationCommandSchema = z.object({
   ficheEvaluationId: z.string(),
 });
 
-export class GenererPDFAutoEvaluationHandler {
+export class GenererPDFEvaluationHandler {
   async execute(adapter: PDFContentAdapter) {
     const content = adapter.getContent();
 

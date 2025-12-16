@@ -18,7 +18,7 @@ import { setTraitementEvaluationCommandSchema } from "@/server/evaluation/handle
 import { retournerAutoEvaluationCommandSchema } from "@/server/evaluation/handlers/RetournerAutoEvaluationHandler";
 import { retournerAppreciationCommandSchema } from "@/server/evaluation/handlers/RetournerAppreciationHandler";
 import { modifierObjectifCommandSchema } from "@/server/evaluation/handlers/ModifierObjectifHandler";
-import { genererPDFAutoEvaluationCommandSchema } from "@/server/evaluation/handlers/GenererPDFAutoEvaluationHandler";
+import { genererPDFAutoEvaluationCommandSchema } from "@/server/evaluation/handlers/GenererPDFEvaluationHandler";
 import { modifierDroitsUtilisateurCommandSchema } from "@/server/evaluation/handlers/ModifierDroitsUtilisateurHandler";
 import { AutoEvaluationPDFAdapter } from "@/server/evaluation/infrastructure/AutoEvaluationPDFAdapter";
 import { EvaluationsAdapter } from "@/server/evaluation/infrastructure/EvaluationsAdapter";
@@ -334,7 +334,7 @@ export const evaluationRouter = créerRouteurTRPC({
         .run({ ficheEvaluationId: input.ficheEvaluationId });
 
       return getContainer("piloteEval")
-        .resolve("genererPDFAutoEvaluationHandler")
+        .resolve("genererPDFEvaluationHandler")
         .execute(new AutoEvaluationPDFAdapter(autoEvaluation));
     }),
 
@@ -370,7 +370,7 @@ export const evaluationRouter = créerRouteurTRPC({
       .run({ utilisateurId: ctx.session.user.id });
 
     return getContainer("piloteEval")
-      .resolve("genererPDFAutoEvaluationHandler")
+      .resolve("genererPDFEvaluationHandler")
       .execute(
         new EvaluationsAdapter(
           consolidationData,
@@ -394,7 +394,7 @@ export const evaluationRouter = créerRouteurTRPC({
       .execute({ utilisateurId: ctx.session.user.id });
 
     return getContainer("piloteEval")
-      .resolve("genererPDFAutoEvaluationHandler")
+      .resolve("genererPDFEvaluationHandler")
       .execute(
         new EvaluationsAdapter(
           instructionData,
