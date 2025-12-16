@@ -11,15 +11,23 @@ const OPTIONS = [
   { id: "e", label: "E", value: 10 },
 ];
 
-export const SelectNoteLettre = ({
+const noteToLabel = (note: number | null | undefined): string => {
+  if (note == null) return "-";
+  const option = OPTIONS.find((option) => option.value === note);
+  return option ? `${option.label} (${option.value}%)` : String(note);
+};
+
+export const InputNoteAppreciation = ({
   name,
   label,
-  disabled,
+  mode,
+  note,
   onAutosave,
 }: {
   name: FormNoteName;
   label: ReactNode;
-  disabled?: boolean;
+  mode: "editable" | "bloque" | "lecture-seule";
+  note?: number | null;
   onAutosave?: () => void;
 }) => {
   const form = useFormulaireEvaluation();
@@ -35,6 +43,15 @@ export const SelectNoteLettre = ({
     onAutosave?.();
   };
 
+  if (mode === "lecture-seule") {
+    return (
+      <div className="flex flex-col mb-2">
+        <strong className="text-sm block mb-1 italic">Résultat</strong>
+        <span className="font-medium">{noteToLabel(note)}</span>
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col mb-2">
       <label className="text-sm block mb-1 italic font-medium" htmlFor={name}>
@@ -42,7 +59,7 @@ export const SelectNoteLettre = ({
       </label>
       <select
         className="border border-gray-300 rounded !px-2 !py-1 text-center font-medium"
-        disabled={disabled}
+        disabled={mode === "bloque"}
         id={name}
         onChange={handleChange}
         value={field.value ?? ""}

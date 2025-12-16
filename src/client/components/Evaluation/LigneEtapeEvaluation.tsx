@@ -8,8 +8,8 @@ import { Icone } from "@/components/_commons/Icone";
 import { LockIcon } from "@/components/_commons/Icones/LockIcon";
 import { Tooltip } from "@/components/shared/Tooltip";
 import { CommentaireTextareaEvaluation } from "./CommentaireTextareaEvaluation";
-import { InputNoteEvaluation } from "./InputNoteEvaluation";
-import { SelectNoteLettre } from "./SelectNoteLettre";
+import { InputNoteAppreciation } from "./InputNoteAppreciation";
+import { InputNoteDefault } from "./InputNoteDefault";
 
 const IconeEvaluationBloquee = ({ children }: PropsWithChildren) => (
   <Tooltip.Root>
@@ -92,45 +92,40 @@ export const LigneEtapeEvaluation = ({
         )}
       </div>
       <div className="flex-shrink-0 w-[8rem] p-4 flex flex-col text-center">
-        {mode === "editable" || mode === "bloque" ? (
-          etape === $Enums.etape_evaluation_enum.CONSOLIDATION ? (
-            <SelectNoteLettre
-              disabled={mode === "bloque"}
-              label={
-                <span className="flex items-center gap-1">
-                  Résultat
-                  {mode === "bloque" && (
-                    <IconeEvaluationBloquee>
-                      {formulaireBloqueLabel}
-                    </IconeEvaluationBloquee>
-                  )}
-                </span>
-              }
-              name={noteName}
-              onAutosave={() => onAutosave?.(noteName)}
-            />
-          ) : (
-            <InputNoteEvaluation
-              disabled={mode === "bloque"}
-              label={
-                <span className="flex items-center gap-1">
-                  Résultat / 100
-                  {mode === "bloque" && (
-                    <IconeEvaluationBloquee>
-                      {formulaireBloqueLabel}
-                    </IconeEvaluationBloquee>
-                  )}
-                </span>
-              }
-              name={noteName}
-              onAutosave={() => onAutosave?.(noteName)}
-            />
-          )
+        {etape === $Enums.etape_evaluation_enum.CONSOLIDATION ? (
+          <InputNoteAppreciation
+            label={
+              <span className="flex items-center gap-1">
+                Résultat
+                {mode === "bloque" && (
+                  <IconeEvaluationBloquee>
+                    {formulaireBloqueLabel}
+                  </IconeEvaluationBloquee>
+                )}
+              </span>
+            }
+            mode={mode}
+            name={noteName}
+            note={note}
+            onAutosave={() => onAutosave?.(noteName)}
+          />
         ) : (
-          <div className="flex flex-col mb-2">
-            <strong className="text-sm block mb-1 italic">Note / 100</strong>
-            <span className="font-medium">{note ?? "-"}</span>
-          </div>
+          <InputNoteDefault
+            label={
+              <span className="flex items-center gap-1">
+                Résultat / 100
+                {mode === "bloque" && (
+                  <IconeEvaluationBloquee>
+                    {formulaireBloqueLabel}
+                  </IconeEvaluationBloquee>
+                )}
+              </span>
+            }
+            mode={mode}
+            name={noteName}
+            note={note}
+            onAutosave={() => onAutosave?.(noteName)}
+          />
         )}
 
         {traitement}
