@@ -12,7 +12,7 @@ export const Switch = Object.assign({}, BaseSwitch, {
   }: ComponentProps<typeof BaseSwitch.Root>) => (
     <BaseSwitch.Root
       className={clsxm(
-        "w-11 relative !p-0",
+        "w-10 relative !p-0",
         "rounded-full border !border-primary",
         "bg-white transition-colors data-[state=checked]:!bg-primary",
         {
@@ -32,7 +32,7 @@ export const Switch = Object.assign({}, BaseSwitch, {
   }: ComponentProps<typeof BaseSwitch.Thumb> & { disabled?: boolean }) => (
     <BaseSwitch.Thumb
       className={clsxm(
-        "h-7 w-7 block",
+        "h-6 w-6 block",
         "rounded-full border !border-primary",
         "translate-x-0 transition-transform data-[state=checked]:!translate-x-4",
         "bg-white",
