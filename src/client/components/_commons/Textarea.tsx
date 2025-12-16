@@ -48,7 +48,7 @@ export function Textarea<T extends FieldValues>({
         return (
           <div className="flex flex-col gap-1">
             <label
-              className={clsxm("italic text-sm font-semibold", {
+              className={clsxm("italic !text-xs font-medium", {
                 "text-error": !!fieldState.error,
               })}
               htmlFor={fieldId}
@@ -58,7 +58,7 @@ export function Textarea<T extends FieldValues>({
             <textarea
               {...props}
               className={clsxm(
-                "border !rounded-t !border-b-2 !border-b-gray-600 !bg-white !py-2 !px-4 field-sizing-content",
+                "border !rounded-t !border-b !border-b-gray-600 !bg-white !py-2 !px-4 field-sizing-content",
                 {
                   "!border-error": !!fieldState.error,
                 },
@@ -86,7 +86,7 @@ export function Textarea<T extends FieldValues>({
               ) : null}
 
               {charLimit != null && (
-                <span className="text-xs ml-auto">
+                <span className="text-[10px] ml-auto">
                   {field.value.length} / {charLimit}
                 </span>
               )}

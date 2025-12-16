@@ -18,8 +18,10 @@ export const InputNoteDefault = ({
   if (mode === "lecture-seule") {
     return (
       <div className="flex flex-col mb-2">
-        <strong className="text-sm block mb-1 italic">Résultat / 100</strong>
-        <span className="font-medium">{note ?? "-"}</span>
+        <span className="text-xs block mb-1 italic font-medium">
+          Résultat / 100
+        </span>
+        <span className="font-medium text-sm">{note ?? "-"}</span>
       </div>
     );
   }
