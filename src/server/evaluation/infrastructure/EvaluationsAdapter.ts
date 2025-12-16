@@ -3,7 +3,6 @@ import { Content } from "pdfmake/interfaces";
 import { PDFContentAdapter } from "@/server/evaluation/domain/PDFContentAdapter";
 import { Rattachement, Critere } from "@/server/evaluation/queries/types";
 import {
-  COLORS,
   createLabeledText,
   createPageHeader,
   createScoreCell,
@@ -15,26 +14,6 @@ import {
 const formatterNote = (note: number | null): string => {
   if (note === null) return "Non évalué";
   return `${note}/100`;
-};
-
-const stripHtml = (html: string | null) => {
-  if (!html) return null;
-  let text = html.replace(
-    /<\/(p|div|h[1-6]|ul|ol|li|blockquote|pre|table|tr|td|th)>/gi,
-    "\n",
-  );
-  text = text.replace(/<br\s*\/?>/gi, "\n");
-  text = text.replace(/<li[^>]*>/gi, "\n• ");
-  text = text.replace(/<[^>]*>/g, "");
-  text = text
-    .replace(/&nbsp;/g, " ")
-    .replace(/&amp;/g, "&")
-    .replace(/&lt;/g, "<")
-    .replace(/&gt;/g, ">")
-    .replace(/&quot;/g, '"')
-    .replace(/&#39;/g, "'");
-  text = text.replace(/\n\s*\n\s*\n/g, "\n\n").trim();
-  return text;
 };
 
 const getEtapeLabel = (etape: $Enums.etape_evaluation_enum): string => {
