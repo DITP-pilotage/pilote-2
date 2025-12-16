@@ -93,6 +93,7 @@ export const CelluleEvaluation = ({
                 commentaire={evalItem.evaluation.commentaire}
                 commentaireLabel="Appréciation"
                 commentaireName={commentaireName}
+                etape={evalItem.etape}
                 formulaireBloqueLabel="La DITP prend connaissance de vos appréciations sur ce formulaire. Le formulaire reste cependant consultable."
                 key={evalItem.etape}
                 mode={mode}
