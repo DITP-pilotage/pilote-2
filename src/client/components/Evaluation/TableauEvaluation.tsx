@@ -124,7 +124,7 @@ export const InnerTableauEvaluation = memo(function TableauEvaluation({
     <EtapeEvaluationProvider value={etape}>
       <AutosaveProvider value={handleAutosave}>
         <FormProvider {...form}>
-          <div className="max-w-[1200px] mx-auto bg-white px-8">
+          <div className="max-w-[1200px] mx-auto bg-white">
             <form
               className="flex flex-col gap-3 py-6 w-full grow border-x border-gray-200"
               onSubmit={form.handleSubmit(

@@ -33,7 +33,7 @@ export const HeaderTableauEvaluation = ({
 
   return (
     <header className="flex justify-between items-end border-b !border-dsfr-blue-france-sun-113 p-6">
-      <h1 className="!text-2xl !mb-0">{titre}</h1>
+      <h1 className="!text-2xl !mb-0 !text-primary">{titre}</h1>
       <div className="flex flex-col items-end gap-1">
         {!estEnLectureSeule && (
           <Bouton
