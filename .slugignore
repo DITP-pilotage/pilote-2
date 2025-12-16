@@ -9,7 +9,6 @@ docker-compose.yml
 .editorconfig
 .env.ci
 .env.example
-.env.test
 .env.test.example
 .eslintrc.json
 .gitconfig
@@ -24,7 +23,6 @@ auth
 tests
 .next/cache
 public/
-.bashrc
 .dockerignore
 .eslintignore
 middleware.ts
