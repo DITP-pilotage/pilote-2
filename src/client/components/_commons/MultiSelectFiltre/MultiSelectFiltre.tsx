@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Icone } from "@/components/_commons/Icone";
 import { Bouton } from "@/components/_commons/Bouton/Bouton";
 import { ArrowSLine2Icon } from "@/components/_commons/Icones/ArrowSLine2Icon";
@@ -20,6 +21,7 @@ export const MultiSelectFiltre = ({
   getOptionLabel,
   getPlaceholder: getPlaceholderProp,
   showGroupSelection = true,
+  showSearch = true,
 }: {
   label?: string;
   values: string[];
@@ -30,7 +32,24 @@ export const MultiSelectFiltre = ({
   getOptionLabel?(value: string): string;
   getPlaceholder?(values: string[]): string;
   showGroupSelection?: boolean;
+  showSearch?: boolean;
 }) => {
+  const [recherche, setRecherche] = useState("");
+
+  const groupesOptionsFiltres = showSearch
+    ? optionGroups
+        .map((group) => ({
+          ...group,
+          options: group.options.filter((valeurOption) => {
+            const labelOption = getOptionLabel
+              ? getOptionLabel(valeurOption)
+              : valeurOption;
+            return labelOption.toLowerCase().includes(recherche.toLowerCase());
+          }),
+        }))
+        .filter((group) => group.options.length > 0)
+    : optionGroups;
+
   const toutesLesOptions = optionGroups.flatMap((group) => group.options);
   const toutSelectionne = values.length === toutesLesOptions.length;
 
@@ -83,8 +102,19 @@ export const MultiSelectFiltre = ({
                 size="sm"
                 variant="link"
               />
+              {showSearch ? (
+                <div className="px-4 pb-2 pt-1">
+                  <input
+                    className="w-full !px-3 !py-2 !border-b-2 !border-primary !text-sm !bg-dsfr-alt-blue-france !placeholder-dsfr-mention-grey placeholder:italic"
+                    onChange={(event) => setRecherche(event.target.value)}
+                    placeholder="Rechercher"
+                    type="text"
+                    value={recherche}
+                  />
+                </div>
+              ) : null}
             </div>
-            {optionGroups
+            {groupesOptionsFiltres
               .filter((group) => group.options.length > 0)
               .map((group) => {
                 const groupValues = group.options;

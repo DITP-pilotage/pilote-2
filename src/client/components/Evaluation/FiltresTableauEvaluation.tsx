@@ -144,6 +144,7 @@ export function FiltresTableauEvaluation<T>({ table }: { table: Table<T> }) {
                   onChange={(newValues) => column.setFilterValue(newValues)}
                   optionGroups={filter.getOptionGroups(column)}
                   showGroupSelection={false}
+                  showSearch={false}
                   values={(column.getFilterValue() as string[]) ?? []}
                 />
               );
