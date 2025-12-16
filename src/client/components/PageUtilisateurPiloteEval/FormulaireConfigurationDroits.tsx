@@ -13,6 +13,8 @@ export const FormulaireConfigurationDroits = () => {
     onSubmit,
     rattachementsOptionsGroupees,
     criteresOptionsGroupees,
+    getRattachementLabel,
+    getCritereLabel,
   } = useFormulaireConfigurationDroits();
 
   return (
@@ -44,6 +46,7 @@ export const FormulaireConfigurationDroits = () => {
                 name="autoEvaluation.rattachementCodes"
                 render={({ field }) => (
                   <MultiSelectFiltre
+                    getOptionLabel={getRattachementLabel}
                     onChange={field.onChange}
                     optionGroups={rattachementsOptionsGroupees}
                     suffixLabel="territoire(s) sélectionné(s)"
@@ -60,6 +63,7 @@ export const FormulaireConfigurationDroits = () => {
                 name="consolidation.rattachementCodes"
                 render={({ field }) => (
                   <MultiSelectFiltre
+                    getOptionLabel={getRattachementLabel}
                     onChange={field.onChange}
                     optionGroups={rattachementsOptionsGroupees}
                     suffixLabel="territoire(s) sélectionné(s)"
@@ -78,6 +82,7 @@ export const FormulaireConfigurationDroits = () => {
                   render={({ field }) => (
                     <MultiSelectFiltre
                       className="flex-col items-start"
+                      getOptionLabel={getRattachementLabel}
                       label="Objectifs"
                       onChange={field.onChange}
                       optionGroups={rattachementsOptionsGroupees}
@@ -93,6 +98,7 @@ export const FormulaireConfigurationDroits = () => {
                   render={({ field }) => (
                     <MultiSelectFiltre
                       className="flex-col items-start"
+                      getOptionLabel={getCritereLabel}
                       label="Manière de servir"
                       onChange={field.onChange}
                       optionGroups={criteresOptionsGroupees}
