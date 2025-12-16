@@ -28,7 +28,9 @@ export const EnTete = () => {
     "Des opérations de maintenance sont en cours et peuvent perturber le fonctionnement normal de PILOTE. En cas de difficultés : pilote.ditp@modernisation.gouv.fr";
   const bandeauType = messageInformation?.bandeauType || "WARNING";
   const peutVoirLeBoutonApplicationsPilote =
-    process.env.NEXT_PUBLIC_FF_PILOTE_EVAL === "true";
+    process.env.NEXT_PUBLIC_FF_PILOTE_EVAL === "true" &&
+    (process.env.NEXT_PUBLIC_FF_ACCES_PILOTE === "true" ||
+      session?.profil === "DITP_ADMIN");
 
   return (
     <header className="fr-header" role="banner">
