@@ -1,6 +1,9 @@
 import { Controller } from "react-hook-form";
+import Link from "next/link";
 import { MultiSelectFiltre } from "@/components/_commons/MultiSelectFiltre/MultiSelectFiltre";
 import { useFormulaireConfigurationDroits } from "@/components/PageUtilisateurPiloteEval/useFormulaireConfigurationDroits";
+import { Icone } from "@/client/components/_commons/Icone";
+import { ArrowLine3Icon } from "@/client/components/_commons/Icones/ArrowLine3Icon";
 
 export const FormulaireConfigurationDroits = () => {
   const {
@@ -15,6 +18,16 @@ export const FormulaireConfigurationDroits = () => {
   return (
     <>
       <header className="mb-6">
+        <div className="flex">
+          <Link
+            aria-label="Retour à l'accueil"
+            className="flex items-center gap-2 !text-primary mb-4"
+            href="/evaluation/utilisateurs"
+          >
+            <Icone className="w-4 h-4" icone={ArrowLine3Icon} />
+            Retour
+          </Link>
+        </div>
         <h1 className="text-2xl font-bold text-dsfr-grey-50 mb-2">
           Configuration des droits
         </h1>
