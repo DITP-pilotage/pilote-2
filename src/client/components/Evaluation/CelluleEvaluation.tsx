@@ -47,8 +47,9 @@ export const CelluleEvaluation = ({
       </div>
 
       <div className="divide-y divide-gray-200">
-        {ligne.evaluations.map((evalItem, index) => {
-          const isEtapeCouranteEvaluation = index === 0;
+        {ligne.evaluations.map((evalItem) => {
+          const isEtapeCouranteEvaluation =
+            evalItem.etape === row.original.etapeCourante;
           const mode = !isEtapeCouranteEvaluation
             ? "lecture-seule"
             : ligne.rattachement.readOnly
