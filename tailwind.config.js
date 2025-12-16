@@ -45,6 +45,10 @@ module.exports = {
         "dsfr-green-menthe-975": "#DFFDF7",
         "dsfr-green-emeraude-main-632": "#00A95F",
         "dsfr-green-emeraude-975": "#E3FDEB",
+        "dsfr-brown-cafe-creme-sun-383": "#685C48",
+        "dsfr-brown-cafe-creme-950": "#F7ECDB",
+        "dsfr-pink-macaron-sun-406": "#8D533E",
+        "dsfr-pink-macaron-950": "#FEE9E6",
       },
       keyframes: {
         "dropdown-fade-in": {

@@ -8,6 +8,7 @@ import { useGetCritere } from "@/components/Evaluation/CriteresProvider";
 import { useFormulaireEvaluation } from "@/components/Evaluation/form";
 import { useHandleAutosave } from "@/components/Evaluation/AutosaveProvider";
 import { BoutonTraitementEvaluation } from "@/components/Evaluation/BoutonTraitementEvaluation";
+import { BadgeType } from "@/components/Evaluation/BadgeType";
 
 export const CelluleEvaluation = ({
   row,
@@ -38,8 +39,11 @@ export const CelluleEvaluation = ({
   return (
     <div className="space-y-4">
       <div className="bg-dsfr-blue-france-925 pb-2 border-b border-gray-200 -mx-4 p-4 flex justify-between gap-2 !mb-0 min-h-[80px]">
-        <div className="text-primary font-bold text-sm line-clamp-2">
-          <span className="capitalize">{ligne.type}</span> - {ligne.libelle}
+        <div className="text-primary font-bold text-sm flex flex-col gap-1 items-start">
+          <span className="line-clamp-1" title={ligne.libelle}>
+            {ligne.libelle}
+          </span>
+          <BadgeType type={ligne.type} />
         </div>
         {ligne.type === "critere" && (
           <BoutonAfficherFicheCadrage critere={getCritere(ligne.id)} />
