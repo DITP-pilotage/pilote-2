@@ -13,7 +13,7 @@ const OPTIONS = [
 
 const noteToLabel = (note: number | null | undefined): string => {
   if (note == null) return "-";
-  const option = OPTIONS.find((option) => option.value === note);
+  const option = OPTIONS.find(({ value }) => value === note);
   return option ? `${option.label} (${option.value}%)` : String(note);
 };
 
@@ -38,8 +38,8 @@ export const InputNoteAppreciation = ({
 
   const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const parsedValue = parseInt(event.target.value, 10);
-    const note = isNaN(parsedValue) ? null : parsedValue;
-    field.onChange(note);
+    const nouvelleNote = isNaN(parsedValue) ? null : parsedValue;
+    field.onChange(nouvelleNote);
     onAutosave?.();
   };
 
