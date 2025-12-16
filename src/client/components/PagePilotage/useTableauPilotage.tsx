@@ -210,34 +210,40 @@ export const useTableauPilotage = () => {
       }),
     );
 
-    const objectifColumns = Array.from({ length: 5 }, (_, objectifIndex) =>
-      columnHelper.group({
-        id: `objectif-${objectifIndex + 1}`,
-        header: () => (
-          <div className="text-xs font-medium flex flex-col items-center">
-            <div className="bg-green-50 text-green-700 px-2 py-1 rounded mb-1 inline-block">
-              Objectif {objectifIndex + 1}
+    const MAX_OBJECTIFS = fichesEvaluation.reduce(
+      (max, fiche) => Math.max(max, fiche.objectifs.length),
+      0,
+    );
+    const objectifColumns = Array.from(
+      { length: MAX_OBJECTIFS },
+      (_, objectifIndex) =>
+        columnHelper.group({
+          id: `objectif-${objectifIndex + 1}`,
+          header: () => (
+            <div className="text-xs font-medium flex flex-col items-center">
+              <div className="bg-green-50 text-green-700 px-2 py-1 rounded mb-1 inline-block">
+                Objectif {objectifIndex + 1}
+              </div>
             </div>
-          </div>
-        ),
-        columns: ETAPES.map((etape, index) =>
-          columnHelper.display({
-            id: `objectif-${objectifIndex + 1}-${etape.key}`,
-            header: etape.label,
-            cell: (info) => {
-              const objectif = info.row.original.objectifs[objectifIndex];
-              const note = objectif?.evaluations[etape.key];
-              return <div className="text-center">{note ?? "-"}</div>;
-            },
-            size: 100,
-            meta: {
-              positioning: {
-                lastInGroup: index === ETAPES.length - 1,
+          ),
+          columns: ETAPES.map((etape, index) =>
+            columnHelper.display({
+              id: `objectif-${objectifIndex + 1}-${etape.key}`,
+              header: etape.label,
+              cell: (info) => {
+                const objectif = info.row.original.objectifs[objectifIndex];
+                const note = objectif?.evaluations[etape.key];
+                return <div className="text-center">{note ?? "-"}</div>;
               },
-            },
-          }),
-        ),
-      }),
+              size: 100,
+              meta: {
+                positioning: {
+                  lastInGroup: index === ETAPES.length - 1,
+                },
+              },
+            }),
+          ),
+        }),
     );
 
     return [...stickyColumns, ...critereColumns, ...objectifColumns];
