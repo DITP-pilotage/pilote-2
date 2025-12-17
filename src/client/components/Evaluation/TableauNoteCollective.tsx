@@ -1,13 +1,15 @@
 import { useState } from "react";
+import Link from "next/link";
 import { IconeMinistere } from "@/client/utils/mapperIconeMinistereVersIcone";
 import BarreDeProgression from "@/client/components/_commons/BarreDeProgression/BarreDeProgression";
-import { Icone } from "@/client/components/_commons/Icone";
-import { ArrowSLine1Icon } from "@/client/components/_commons/Icones/ArrowSLine1Icon";
-import { ArrowSLine2Icon } from "@/client/components/_commons/Icones/ArrowSLine2Icon";
 import { pageNoteCollective } from "@/components/Evaluation/PageNoteCollectiveServerSideContext";
+import { Bouton } from "@/components/_commons/Bouton/Bouton";
+import { Icone } from "@/components/_commons/Icone";
+import { EyeIcon } from "@/components/_commons/Icones/EyeIcon";
+import { EyeOffIcon } from "@/components/_commons/Icones/EyeOffIcon";
 
 export const TableauNoteCollective = () => {
-  const { chantiersEvaluation, rattachementCode, baseUrl } =
+  const { chantiersEvaluation, rattachementCode, baseUrl, rattachements } =
     pageNoteCollective.useServerSidePropsContext();
   const [expandedChantiers, setExpandedChantiers] = useState<Set<string>>(
     new Set(),
@@ -25,11 +27,15 @@ export const TableauNoteCollective = () => {
     });
   };
 
+  const nomTerritoire = rattachements.find(
+    (rattachement) => rattachement.code === rattachementCode,
+  )?.libelle;
+
   return (
     <div>
       <header className="pb-4">
         <span className="text-xl font-bold">
-          Détail des chantiers et objectifs collectifs de votre territoire
+          {`Liste des objectifs collectifs applicables pour : ${nomTerritoire} (${chantiersEvaluation.length})`}
         </span>
       </header>
 
@@ -38,14 +44,13 @@ export const TableauNoteCollective = () => {
           <thead className="bg-dsfr-blue-france-925 !border-b-2 !border-dsfr-grey-200 text-left text-sm font-bold text-dsfr-gray-500 tracking-wider">
             <tr>
               <th className="px-6 py-3">Chantier</th>
-              <th className="px-4 py-3 w-35">Note / 100</th>
-              <th className="w-24" />
+              <th className="px-4 py-3 w-38">Résultat</th>
             </tr>
           </thead>
           <tbody className="!divide-y !divide-dsfr-grey-925">
             {chantiersEvaluation.length === 0 ? (
               <tr>
-                <td className="px-6 py-4 text-center text-gray-500" colSpan={3}>
+                <td className="px-6 py-4 text-center text-gray-500" colSpan={2}>
                   Aucun chantier trouvé
                 </td>
               </tr>
@@ -62,46 +67,58 @@ export const TableauNoteCollective = () => {
                   <>
                     <tr
                       aria-expanded={isExpanded}
-                      className={`${bgColor} hover:opacity-80 cursor-pointer whitespace-nowrap text-sm !text-dsfr-grey-50`}
+                      className={`${bgColor} whitespace-nowrap text-sm !text-dsfr-grey-50`}
                       key={chantier.id}
-                      onClick={() => toggleChantier(chantier.id)}
-                      onKeyDown={(event) => {
-                        if (event.key === "Enter" || event.key === " ") {
-                          event.preventDefault();
-                          toggleChantier(chantier.id);
-                        }
-                      }}
-                      role="button"
                       tabIndex={0}
                     >
                       <td className="px-6 py-4 whitespace-normal">
-                        <div className="flex items-center gap-3">
-                          <IconeMinistere
-                            className="text-dsfr-blue-france-sun-113 flex-shrink-0"
-                            icone={chantier.iconeMinistere}
-                          />
-                          <a
-                            className="!text-primary whitespace-nowrap flex-shrink-0"
-                            href={`${baseUrl}/chantier/${chantier.id}/${rattachementCode}`}
-                          >
-                            {chantier.id}
-                          </a>
-                          <span>- {chantier.nom}</span>
+                        <div className="flex flex-col gap-2">
+                          <div className="flex items-center gap-3">
+                            <IconeMinistere
+                              className="text-dsfr-blue-france-sun-113 flex-shrink-0"
+                              icone={chantier.iconeMinistere}
+                            />
+                            {chantier.nom}
+                          </div>
+                          <div className="flex items-center gap-4 ml-9">
+                            <Bouton
+                              className="!text-xs"
+                              iconLeft={
+                                <Icone
+                                  className="w-4 h-4"
+                                  icone={isExpanded ? EyeOffIcon : EyeIcon}
+                                />
+                              }
+                              label={
+                                isExpanded
+                                  ? "Masquer le détails des indicateurs"
+                                  : "Afficher le détail des indicateurs"
+                              }
+                              onClick={(event) => {
+                                event.stopPropagation();
+                                toggleChantier(chantier.id);
+                              }}
+                              variant="link"
+                            />
+                            <Link
+                              className="!text-primary !text-xs"
+                              href={`${baseUrl}/chantier/${chantier.id}/${rattachementCode}`}
+                              target="_blank"
+                            >
+                              Voir le détail du chantier
+                            </Link>
+                          </div>
                         </div>
                       </td>
-                      <td>
+                      <td className="px-4 py-3">
                         <BarreDeProgression
                           afficherTexte
                           fond="blanc"
+                          positionTexte="dessus"
                           taille="sm"
+                          texteCentre
                           valeur={chantier.tauxAvancement}
                           variante="primaire"
-                        />
-                      </td>
-                      <td className="px-6 py-4 flex justify-end">
-                        <Icone
-                          className="w-5 h-5"
-                          icone={isExpanded ? ArrowSLine2Icon : ArrowSLine1Icon}
                         />
                       </td>
                     </tr>
@@ -110,30 +127,24 @@ export const TableauNoteCollective = () => {
                       hasIndicateurs ? (
                         chantier.indicateurs.map((indicateur) => (
                           <tr key={indicateur.id}>
-                            <td className="px-6 py-3 text-sm !text-dsfr-grey-50 whitespace-nowrap">
-                              <div className="flex items-center gap-3">
-                                <a
-                                  className="ml-9 !text-primary whitespace-nowrap flex-shrink-0"
-                                  href={`${baseUrl}/chantier/${chantier.id}/${rattachementCode}`}
-                                >
-                                  {indicateur.id}
-                                </a>
-                                <span>- {indicateur.nom}</span>
+                            <td className="px-6 py-2 text-sm !text-dsfr-grey-50 whitespace-normal">
+                              <div className="ml-9 italic">
+                                {indicateur.nom}
                               </div>
                             </td>
-                            <td>
+                            <td className="px-4 py-2">
                               <BarreDeProgression
                                 afficherTexte
                                 fond="gris-clair"
+                                positionTexte="dessus"
                                 taille="sm"
+                                texteCentre
                                 valeur={indicateur.tauxAvancement}
                                 variante="secondaire"
                               />
-                            </td>
-                            <td className="px-6 py-3 text-right">
-                              <div className="text-[10px]/[12px] italic !text-dsfr-mention-grey">
-                                <div>poids :</div>
-                                <div>{Math.round(indicateur.ponderation)}%</div>
+                              <div className="flex justify-center text-[10px]/[12px] italic !text-dsfr-mention-grey mt-1">
+                                pondération :{" "}
+                                {Math.round(indicateur.ponderation)}%
                               </div>
                             </td>
                           </tr>
@@ -142,7 +153,7 @@ export const TableauNoteCollective = () => {
                         <tr>
                           <td
                             className="px-6 py-3 text-center text-sm !text-dsfr-grey-50 italic"
-                            colSpan={3}
+                            colSpan={2}
                           >
                             Aucun indicateur pour ce chantier
                           </td>
