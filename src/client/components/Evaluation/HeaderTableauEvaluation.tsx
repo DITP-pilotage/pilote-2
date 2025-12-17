@@ -33,12 +33,12 @@ export const HeaderTableauEvaluation = ({
 
   return (
     <header className="flex justify-between items-end border-b !border-dsfr-blue-france-sun-113 p-6">
-      <h1 className="!text-xl !mb-0">{titre}</h1>
+      <h1 className="!text-2xl !mb-0 !text-primary">{titre}</h1>
       <div className="flex flex-col items-end gap-1">
         {!estEnLectureSeule && (
           <Bouton
-            className="underline flex items-center gap-1 !-mr-4"
-            iconLeft={<Icone className="!h-4 !w-4" icone={SaveIcon} />}
+            className="underline flex items-center gap-1 !-mr-4 !text-xs"
+            iconLeft={<Icone className="!h-3 !w-3" icone={SaveIcon} />}
             label="Enregistrer le brouillon"
             size="sm"
             type="submit"
@@ -46,14 +46,14 @@ export const HeaderTableauEvaluation = ({
           />
         )}
         {dateDerniereModification ? (
-          <span className="italic text-sm">
+          <span className="italic text-xs">
             Dernière modification :{" "}
             {formaterDate(dateDerniereModification, "DD/MM/YYYY [à] H[h]mm")}
           </span>
         ) : null}
         <Bouton
-          className="underline flex items-center gap-1 !-mr-4"
-          iconLeft={<Icone className="!h-4 !w-4" icone={Printer1Icon} />}
+          className="underline flex items-center gap-1 !-mr-4 !text-xs"
+          iconLeft={<Icone className="!h-3 !w-3" icone={Printer1Icon} />}
           label="Imprimer"
           onClick={handleImprimer}
           size="sm"

@@ -46,15 +46,15 @@ export const InputNoteAppreciation = ({
   if (mode === "lecture-seule") {
     return (
       <div className="flex flex-col mb-2">
-        <strong className="text-sm block mb-1 italic">Résultat</strong>
-        <span className="font-medium">{noteToLabel(note)}</span>
+        <span className="text-xs block mb-1 italic font-medium">Résultat</span>
+        <span className="font-medium text-sm">{noteToLabel(note)}</span>
       </div>
     );
   }
 
   return (
     <div className="flex flex-col mb-2">
-      <label className="text-sm block mb-1 italic font-medium" htmlFor={name}>
+      <label className="text-xs block mb-1 italic font-medium" htmlFor={name}>
         {label}
       </label>
       <select

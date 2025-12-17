@@ -26,7 +26,7 @@ export const CommentaireTextareaEvaluation = ({
   return (
     <Textarea
       charLimit={600}
-      className="!bg-dsfr-contrast-grey"
+      className="!bg-dsfr-contrast-grey !text-sm font-normal min-h-[38px]"
       control={form.control}
       label={label}
       name={name}
