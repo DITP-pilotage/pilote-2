@@ -56,6 +56,9 @@ async function sauvegardeNotes() {
       id: { in: LISTE_CHANTIERS_INCLUS_FICHE_EVALUATION },
       territoire_code: { in: rattachements },
       jalon: 2025,
+      chantier_territoire: {
+        est_applicable: true,
+      },
     },
     select: {
       id: true,
@@ -72,6 +75,9 @@ async function sauvegardeNotes() {
       indicateur_territoire: {
         chantier_id: { in: LISTE_CHANTIERS_INCLUS_FICHE_EVALUATION },
         ponderation_zone_reel_eval: { not: null, gt: 0 },
+        chantier_territoire: {
+          est_applicable: true,
+        },
       },
       jalon: 2025,
       territoire_code: { in: rattachements },
@@ -95,74 +101,48 @@ async function sauvegardeNotes() {
 
   const dateCalcul = new Date();
 
-  for (const chantier of chantiers) {
-    await prisma.chantier_evaluation.upsert({
-      where: {
-        id_territoire_code_jalon_date_calcul: {
-          id: chantier.id,
-          territoire_code: chantier.territoire_code,
-          jalon: 2025,
-          date_calcul: dateCalcul,
-        },
-      },
-      update: {
-        maille: chantier.maille,
-        code_insee: chantier.code_insee,
-        taux_avancement: chantier.taux_avancement_eval,
-        zone_id: chantier.zone_id,
-        jalon: 2025,
-      },
-      create: {
-        id: chantier.id,
-        territoire_code: chantier.territoire_code,
-        maille: chantier.maille,
-        code_insee: chantier.code_insee,
-        taux_avancement: chantier.taux_avancement_eval,
-        zone_id: chantier.zone_id,
-        date_calcul: dateCalcul,
-        jalon: 2025,
-      },
-    });
-  }
+  await prisma.chantier_evaluation.deleteMany({
+    where: {
+      date_calcul: dateCalcul,
+    },
+  });
 
-  for (const indicateur of indicateurs) {
-    await prisma.indicateur_evaluation.upsert({
-      where: {
-        id_territoire_code_date_calcul: {
-          id: indicateur.id,
-          territoire_code: indicateur.territoire_code,
-          date_calcul: dateCalcul,
-        },
-      },
-      update: {
-        chantier_id: indicateur.indicateur_territoire.chantier_id,
-        maille: indicateur.maille,
-        code_insee: indicateur.code_insee,
-        taux_avancement: indicateur.taux_avancement,
-        zone_id: indicateur.zone_id,
-        ponderation_declaree:
-          indicateur.indicateur_territoire.ponderation_zone_declaree_eval!,
-        ponderation_reelle:
-          indicateur.indicateur_territoire.ponderation_zone_reel_eval!,
-        jalon: 2025,
-      },
-      create: {
-        id: indicateur.id,
-        chantier_id: indicateur.indicateur_territoire.chantier_id,
-        territoire_code: indicateur.territoire_code,
-        maille: indicateur.maille,
-        code_insee: indicateur.code_insee,
-        taux_avancement: indicateur.taux_avancement,
-        zone_id: indicateur.zone_id,
-        ponderation_declaree:
-          indicateur.indicateur_territoire.ponderation_zone_declaree_eval!,
-        ponderation_reelle:
-          indicateur.indicateur_territoire.ponderation_zone_reel_eval!,
-        date_calcul: dateCalcul,
-        jalon: 2025,
-      },
-    });
-  }
+  await prisma.indicateur_evaluation.deleteMany({
+    where: {
+      date_calcul: dateCalcul,
+    },
+  });
+
+  await prisma.chantier_evaluation.createMany({
+    data: chantiers.map((chantier) => ({
+      id: chantier.id,
+      territoire_code: chantier.territoire_code,
+      maille: chantier.maille,
+      code_insee: chantier.code_insee,
+      taux_avancement: chantier.taux_avancement_eval,
+      zone_id: chantier.zone_id,
+      date_calcul: dateCalcul,
+      jalon: 2025,
+    })),
+  });
+
+  await prisma.indicateur_evaluation.createMany({
+    data: indicateurs.map((indicateur) => ({
+      id: indicateur.id,
+      chantier_id: indicateur.indicateur_territoire.chantier_id,
+      territoire_code: indicateur.territoire_code,
+      maille: indicateur.maille,
+      code_insee: indicateur.code_insee,
+      taux_avancement: indicateur.taux_avancement,
+      zone_id: indicateur.zone_id,
+      ponderation_declaree:
+        indicateur.indicateur_territoire.ponderation_zone_declaree_eval!,
+      ponderation_reelle:
+        indicateur.indicateur_territoire.ponderation_zone_reel_eval!,
+      date_calcul: dateCalcul,
+      jalon: 2025,
+    })),
+  });
 }
 
 sauvegardeNotes()
