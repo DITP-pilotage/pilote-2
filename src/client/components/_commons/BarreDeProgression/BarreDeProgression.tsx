@@ -1,5 +1,6 @@
 import { FunctionComponent, ReactNode } from "react";
 import { Infobulle } from "@/client/components/_commons/Infobulle/Infobulle";
+import { clsxm } from "@/utils/clsxm";
 import { BarreDeProgressionStyled } from "./BarreDeProgression.styled";
 
 export type BarreDeProgressionVariante =
@@ -25,6 +26,7 @@ interface BarreDeProgressionProps {
   positionTexte?: BarreDeProgressionPositionTexte;
   afficherTexte?: boolean;
   texteInfobulle?: ReactNode;
+  texteCentre?: boolean;
 }
 
 const dimensions = {
@@ -44,12 +46,13 @@ const BarreDeProgression: FunctionComponent<BarreDeProgressionProps> = ({
   valeur,
   afficherTexte = true,
   texteInfobulle,
+  texteCentre = false,
 }) => {
   const pourcentageAffiché = valeur === null ? "- %" : `${valeur.toFixed(0)} %`;
 
   return (
     <BarreDeProgressionStyled
-      className={`barre-de-progression gap-2 flex texte-${positionTexte} w-full`}
+      className={`barre-de-progression flex texte-${positionTexte} w-full`}
     >
       <div className="barre">
         <progress
@@ -61,7 +64,11 @@ const BarreDeProgression: FunctionComponent<BarreDeProgressionProps> = ({
         </progress>
       </div>
       {afficherTexte ? (
-        <div className={`flex pourcentage texte-${positionTexte}`}>
+        <div
+          className={clsxm(`flex pourcentage texte-${positionTexte}`, {
+            "justify-center": texteCentre,
+          })}
+        >
           <p
             className={`${dimensions[taille].classNameDsfr} pourcentage--${fond} pourcentage--${taille} fr-mb-0 bold fr-mr-1w`}
           >
