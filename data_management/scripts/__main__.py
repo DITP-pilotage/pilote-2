@@ -7,7 +7,7 @@ from notify import notify
 """
 Exemple d'utilisation :
 
-$  python3 scripts/__main__.py
+$  FULL_DJ=false pipenv run python3 scripts/__main__.py
 """
 
 # Message d'erreur généré en cas de  problème lors de l'exécution des jobs
@@ -43,7 +43,7 @@ def run_datajobs() -> int:
     print("> Exécution des datajobs suivants:", JOBS_TO_RUN)
     # Select jobs to run for current env
     for file in JOBS_TO_RUN:
-        returncode = subprocess.Popen([file], stdin=subprocess.PIPE).wait()
+        returncode = subprocess.Popen(["pipenv", "run", file], stdin=subprocess.PIPE).wait()
         if returncode > 0:
             notify(ERROR_MSG)
             sys.exit(returncode)
