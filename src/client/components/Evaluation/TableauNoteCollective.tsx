@@ -35,7 +35,7 @@ export const TableauNoteCollective = () => {
     <div>
       <header className="pb-4">
         <span className="text-xl font-bold">
-          {`Détail des chantiers et objectifs collectifs pour : ${nomTerritoire}`}
+          {`Liste des objectifs collectifs applicables pour : ${nomTerritoire} (${chantiersEvaluation.length})`}
         </span>
       </header>
 
