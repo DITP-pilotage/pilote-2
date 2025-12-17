@@ -58,7 +58,7 @@ export const InputNoteAppreciation = ({
         {label}
       </label>
       <select
-        className="border border-gray-300 rounded !px-2 !py-1 text-center font-medium"
+        className="border !border-b-gray-600 !rounded-t !px-2 !py-1.5 text-center font-medium !bg-dsfr-contrast-grey "
         disabled={mode === "bloque"}
         id={name}
         onChange={handleChange}
