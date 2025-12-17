@@ -49,6 +49,7 @@ export class RecupererDetailsNoteCollectiveQuery {
           territoire_code: rattachementCode,
           jalon,
           date_calcul: derniereDateCalcul.date_calcul,
+          taux_avancement: { not: null },
         },
         select: {
           id: true,

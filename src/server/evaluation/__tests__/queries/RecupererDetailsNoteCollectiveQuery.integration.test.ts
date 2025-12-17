@@ -954,5 +954,135 @@ describe("RecupererDetailsNoteCollectiveQuery", () => {
         },
       ]);
     });
+
+    it("ne doit pas retourner les chantiers avec un taux d'avancement null", async () => {
+      // Given
+      const rattachementCode = "REG-93";
+      const jalon = 2025;
+
+      await prisma.ministere.create({
+        data: {
+          id: "MIN-600",
+          acronyme: "MIN6",
+          nom: "Ministère 6",
+          icone: "icone-ministere-6.svg",
+        },
+      });
+
+      await prisma.chantier_identite.createMany({
+        data: [
+          {
+            id: "CH-600",
+            nom: "Chantier avec taux null",
+            ministeres: ["MIN-600"],
+          },
+          {
+            id: "CH-601",
+            nom: "Chantier avec taux valide",
+            ministeres: ["MIN-600"],
+          },
+        ],
+      });
+
+      await prisma.referentiel_rattachement.create({
+        data: {
+          code: rattachementCode,
+          groupe: rattachementCode,
+          ordre: 1,
+          libelle: "Région 93",
+        },
+      });
+
+      await prisma.fiche_evaluation.create({
+        data: {
+          id: "c3d4e5f6-a7b8-4901-c234-56789abcdef0",
+          rattachement_code: rattachementCode,
+          jalon: jalon,
+          etape_courante: "AUTO_EVALUATION",
+        },
+      });
+
+      await prisma.chantier_territoire.createMany({
+        data: [
+          {
+            id: "CH-600",
+            territoire_code: rattachementCode,
+            code_insee: "93",
+            maille: "REG",
+            zone_id: "zone-600",
+          },
+          {
+            id: "CH-601",
+            territoire_code: rattachementCode,
+            code_insee: "93",
+            maille: "REG",
+            zone_id: "zone-600",
+          },
+        ],
+      });
+
+      await prisma.chantier_territoire_jalon.createMany({
+        data: [
+          {
+            id: "CH-600",
+            territoire_code: rattachementCode,
+            code_insee: "93",
+            maille: "REG",
+            zone_id: "zone-600",
+            jalon: jalon,
+            taux_avancement: 75.0,
+          },
+          {
+            id: "CH-601",
+            territoire_code: rattachementCode,
+            code_insee: "93",
+            maille: "REG",
+            zone_id: "zone-600",
+            jalon: jalon,
+            taux_avancement: 80.0,
+          },
+        ],
+      });
+
+      await prisma.chantier_evaluation.createMany({
+        data: [
+          {
+            id: "CH-600",
+            territoire_code: rattachementCode,
+            code_insee: "93",
+            maille: "REG",
+            zone_id: "zone-600",
+            taux_avancement: null,
+            date_calcul: new Date("2025-03-15"),
+            jalon: jalon,
+          },
+          {
+            id: "CH-601",
+            territoire_code: rattachementCode,
+            code_insee: "93",
+            maille: "REG",
+            zone_id: "zone-600",
+            taux_avancement: 78.5,
+            date_calcul: new Date("2025-03-15"),
+            jalon: jalon,
+          },
+        ],
+      });
+
+      // When
+      const result = await query.run({ rattachementCode, jalon });
+
+      // Then
+      expect(result).toEqual([
+        {
+          id: "CH-601",
+          nom: "Chantier avec taux valide",
+          iconeMinistere: "icone-ministere-6.svg",
+          tauxAvancement: 78.5,
+          tauxAvancementPilote: 80.0,
+          indicateurs: [],
+        },
+      ]);
+    });
   });
 });
