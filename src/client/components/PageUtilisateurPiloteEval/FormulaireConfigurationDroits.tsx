@@ -46,6 +46,7 @@ export const FormulaireConfigurationDroits = () => {
                 name="autoEvaluation.rattachementCodes"
                 render={({ field }) => (
                   <MultiSelectFiltre
+                    classNameBouton="w-80"
                     getOptionLabel={getRattachementLabel}
                     onChange={field.onChange}
                     optionGroups={rattachementsOptionsGroupees}
@@ -63,6 +64,7 @@ export const FormulaireConfigurationDroits = () => {
                 name="consolidation.rattachementCodes"
                 render={({ field }) => (
                   <MultiSelectFiltre
+                    classNameBouton="w-80"
                     getOptionLabel={getRattachementLabel}
                     onChange={field.onChange}
                     optionGroups={rattachementsOptionsGroupees}
@@ -82,6 +84,7 @@ export const FormulaireConfigurationDroits = () => {
                   render={({ field }) => (
                     <MultiSelectFiltre
                       className="flex-col items-start"
+                      classNameBouton="w-80"
                       getOptionLabel={getRattachementLabel}
                       label="Objectifs"
                       onChange={field.onChange}
@@ -98,6 +101,7 @@ export const FormulaireConfigurationDroits = () => {
                   render={({ field }) => (
                     <MultiSelectFiltre
                       className="flex-col items-start"
+                      classNameBouton="w-80"
                       getOptionLabel={getCritereLabel}
                       label="Manière de servir"
                       onChange={field.onChange}

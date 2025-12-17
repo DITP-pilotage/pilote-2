@@ -22,6 +22,7 @@ export const MultiSelectFiltre = ({
   getPlaceholder: getPlaceholderProp,
   showGroupSelection = true,
   showSearch = true,
+  classNameBouton,
 }: {
   label?: string;
   values: string[];
@@ -33,6 +34,7 @@ export const MultiSelectFiltre = ({
   getPlaceholder?(values: string[]): string;
   showGroupSelection?: boolean;
   showSearch?: boolean;
+  classNameBouton?: string;
 }) => {
   const [recherche, setRecherche] = useState("");
 
@@ -76,7 +78,10 @@ export const MultiSelectFiltre = ({
       <Dropdown.Root>
         <Dropdown.Trigger asChild>
           <button
-            className="!flex items-center gap-3 !px-4 !py-1.5 !font-medium border !rounded-t !border-b-2 !border-b-gray-600 !bg-dsfr-contrast-grey"
+            className={clsxm(
+              "!flex items-center justify-between gap-3 !px-4 !py-1.5 !font-medium border !rounded-t !border-b-2 !border-b-gray-600 !bg-dsfr-contrast-grey",
+              classNameBouton,
+            )}
             type="button"
           >
             {getPlaceholder()}
@@ -84,7 +89,10 @@ export const MultiSelectFiltre = ({
           </button>
         </Dropdown.Trigger>
 
-        <Dropdown.Content align="start">
+        <Dropdown.Content
+          align="start"
+          className="!w-[var(--radix-dropdown-menu-trigger-width)]"
+        >
           <div className="divide-y divide-dsfr-mention-grey -m-4 max-h-96 overflow-y-auto">
             <div className="sticky top-0 bg-white z-10">
               <Bouton
@@ -105,6 +113,7 @@ export const MultiSelectFiltre = ({
               {showSearch ? (
                 <div className="px-4 pb-2 pt-1">
                   <input
+                    aria-label="Rechercher"
                     className="w-full !px-3 !py-2 !border-b-2 !border-primary !text-sm !bg-dsfr-alt-blue-france !placeholder-dsfr-mention-grey placeholder:italic"
                     onChange={(event) => setRecherche(event.target.value)}
                     placeholder="Rechercher"
