@@ -60,19 +60,21 @@ export const useFormulaireConfigurationDroits = () => {
     );
   };
 
+  const rattachementsMap = new Map(
+    rattachements.map((r) => [r.code, r.libelle]),
+  );
+  const criteresMap = new Map(criteres.map((c) => [c.id, c.libelle]));
+
   const rattachementsGroupes = rattachements.reduce(
     (acc, rattachement) => {
       const groupe = rattachement.groupe;
       if (!acc[groupe]) {
         acc[groupe] = [];
       }
-      acc[groupe].push({
-        value: rattachement.code,
-        label: rattachement.libelle,
-      });
+      acc[groupe].push(rattachement.code);
       return acc;
     },
-    {} as Record<string, { value: string; label: string }[]>,
+    {} as Record<string, string[]>,
   );
 
   const rattachementsOptionsGroupees = Object.entries(rattachementsGroupes).map(
@@ -85,12 +87,13 @@ export const useFormulaireConfigurationDroits = () => {
   const criteresOptionsGroupees = [
     {
       label: "Critères",
-      options: criteres.map((critere) => ({
-        value: critere.id,
-        label: critere.libelle,
-      })),
+      options: criteres.map((critere) => critere.id),
     },
   ];
+
+  const getRattachementLabel = (code: string) =>
+    rattachementsMap.get(code) ?? code;
+  const getCritereLabel = (id: string) => criteresMap.get(id) ?? id;
 
   return {
     email,
@@ -99,5 +102,7 @@ export const useFormulaireConfigurationDroits = () => {
     onSubmit,
     rattachementsOptionsGroupees,
     criteresOptionsGroupees,
+    getRattachementLabel,
+    getCritereLabel,
   };
 };

@@ -1,11 +1,15 @@
 import { useRouter } from "next/router";
-import { formaterDate } from "@/client/utils/date/date";
+import { flexRender } from "@tanstack/react-table";
 import { pageUtilisateursPiloteEval } from "@/components/PageUtilisateursPiloteEval/PageUtilisateursServerSideContext";
+import { useTableauUtilisateurs } from "@/components/PageUtilisateursPiloteEval/useTableauUtilisateurs";
 
 export const TableauUtilisateurs = () => {
   const { utilisateurs } =
     pageUtilisateursPiloteEval.useServerSidePropsContext();
   const router = useRouter();
+  const { table, globalFilter, setGlobalFilter } = useTableauUtilisateurs({
+    utilisateurs,
+  });
 
   if (utilisateurs.length === 0) {
     return (
@@ -16,46 +20,81 @@ export const TableauUtilisateurs = () => {
   }
 
   return (
-    <div className="overflow-x-auto bg-white shadow-sm rounded-sm">
-      <table className="w-full border-collapse">
-        <thead>
-          <tr className="bg-dsfr-blue-france-925 border-b-2 text-left font-bold text-sm">
-            <th className="px-4 py-3">Email</th>
-            <th className="px-4 py-3">Nom</th>
-            <th className="px-4 py-3">Prénom</th>
-            <th className="px-4 py-3">Profil</th>
-            <th className="px-4 py-3">Dernière modification</th>
-          </tr>
-        </thead>
-        <tbody className="divide-y divide-dsfr-grey-925 text-sm">
-          {utilisateurs.map((utilisateur, index) => (
-            <tr
-              className={`cursor-pointer transition-colors hover:bg-dsfr-alt-blue-france ${
-                index % 2 === 0 ? "bg-white" : "bg-dsfr-grey-1000"
-              }`}
-              key={utilisateur.id}
-              onClick={() =>
-                router.push(`/evaluation/utilisateur/${utilisateur.id}`)
-              }
-            >
-              <td className="px-4 py-3">{utilisateur.email}</td>
-              <td className="px-4 py-3">{utilisateur.nom}</td>
-              <td className="px-4 py-3">{utilisateur.prenom}</td>
-              <td className="px-4 py-3">
-                <span className="inline-flex items-center px-2.5 py-0.5 rounded-sm text-xs font-medium bg-dsfr-blue-france-925 text-dsfr-blue-france-sun-113">
-                  {utilisateur.profilCode}
-                </span>
-              </td>
-              <td className="px-4 py-3">
-                {formaterDate(
-                  utilisateur.dateDerniereModification,
-                  "DD/MM/YYYY",
-                ) ?? "-"}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+    <div className="bg-white p-8 rounded shadow-sm">
+      <div className="!space-y-4">
+        <input
+          className="!px-4 !py-2 !border-b-2 !border-primary !bg-dsfr-alt-blue-france !placeholder-dsfr-mention-grey placeholder:italic"
+          onChange={(event) => setGlobalFilter(event.target.value)}
+          placeholder="Rechercher"
+          type="text"
+          value={globalFilter ?? ""}
+        />
+
+        <div className="overflow-x-auto">
+          <table className="w-full border-collapse">
+            <thead>
+              {table.getHeaderGroups().map((headerGroup) => (
+                <tr
+                  className="bg-dsfr-blue-france-925 border-b-2 text-left font-bold text-sm"
+                  key={headerGroup.id}
+                >
+                  {headerGroup.headers.map((header) => (
+                    <th
+                      className="px-4 py-3 cursor-pointer select-none hover:bg-dsfr-blue-france-925-hover"
+                      key={header.id}
+                      onClick={header.column.getToggleSortingHandler()}
+                    >
+                      {header.isPlaceholder ? null : (
+                        <div className="flex items-center gap-2">
+                          {flexRender(
+                            header.column.columnDef.header,
+                            header.getContext(),
+                          )}
+                          {header.column.getIsSorted() === "asc" ? (
+                            <span>↑</span>
+                          ) : header.column.getIsSorted() === "desc" ? (
+                            <span>↓</span>
+                          ) : (
+                            <span className="opacity-30">↕</span>
+                          )}
+                        </div>
+                      )}
+                    </th>
+                  ))}
+                </tr>
+              ))}
+            </thead>
+            <tbody className="divide-y divide-dsfr-grey-925 text-sm">
+              {table.getRowModel().rows.map((row, index) => (
+                <tr
+                  className={`cursor-pointer transition-colors hover:bg-dsfr-alt-blue-france ${
+                    index % 2 === 0 ? "bg-white" : "bg-dsfr-grey-1000"
+                  }`}
+                  key={row.id}
+                  onClick={() =>
+                    router.push(`/evaluation/utilisateur/${row.original.id}`)
+                  }
+                >
+                  {row.getVisibleCells().map((cell) => (
+                    <td className="px-4 py-3" key={cell.id}>
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext(),
+                      )}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        {table.getRowModel().rows.length === 0 && (
+          <p className="text-center text-dsfr-grey-625 py-4">
+            Aucun résultat trouvé.
+          </p>
+        )}
+      </div>
     </div>
   );
 };

@@ -1,105 +1,11 @@
-import { FiltreMultiselectOptionGroup, Table } from "@tanstack/react-table";
+import { Table } from "@tanstack/react-table";
 import { useId } from "react";
 import { ButtonTag } from "@/components/_commons/ButtonTag";
 import { Icone } from "@/components/_commons/Icone";
 import { FilterIcon } from "@/components/_commons/Icones/FilterIcon";
 import { Bouton } from "@/components/_commons/Bouton/Bouton";
-import { ArrowSLine2Icon } from "@/components/_commons/Icones/ArrowSLine2Icon";
-import { Dropdown } from "@/components/shared/Dropdown";
 import { Checkbox } from "@/components/shared/Checkbox";
-
-const MultiSelectFiltre = ({
-  label,
-  values,
-  optionGroups,
-  onChange,
-  getOptionLabel,
-  getPlaceholder,
-}: {
-  label: string;
-  values: string[];
-  optionGroups: FiltreMultiselectOptionGroup[];
-  onChange(values: string[]): void;
-  getPlaceholder(values: string[]): string;
-  getOptionLabel(option: string): string;
-}) => {
-  const toutesLesOptions = optionGroups.flatMap((group) => group.options);
-  const toutSelectionne = values.length === toutesLesOptions.length;
-  return (
-    <div className="flex items-center gap-2 !text-sm">
-      <div className="font-semibold whitespace-nowrap">{label} :</div>
-      <Dropdown.Root>
-        <Dropdown.Trigger asChild>
-          <button
-            className="!flex items-center gap-3 !px-4 !py-1.5 !font-medium border !rounded-t !border-b-2 !border-b-gray-600 !bg-dsfr-contrast-grey"
-            type="button"
-          >
-            {getPlaceholder(values)}
-            <Icone className="text-current" icone={ArrowSLine2Icon} />
-          </button>
-        </Dropdown.Trigger>
-
-        <Dropdown.Content align="start">
-          <div className="divide-y divide-dsfr-mention-grey -m-4 pt-1">
-            <div>
-              <Bouton
-                className="w-full"
-                label={
-                  toutSelectionne ? "Tout désélectionner" : "Tout sélectionner"
-                }
-                onClick={() => {
-                  if (toutSelectionne) {
-                    onChange([]);
-                  } else {
-                    onChange(toutesLesOptions);
-                  }
-                }}
-                size="sm"
-                variant="link"
-              />
-            </div>
-            {optionGroups
-              .filter((group) => group.options.length > 0)
-              .map((group) => (
-                <div key={group.label}>
-                  <div className="uppercase text-dsfr-mention-grey px-4 py-1 pt-2">
-                    {group.label}
-                  </div>
-                  <ul className="!p-0 !m-0">
-                    {group.options.map((option) => {
-                      const checked = values.includes(option);
-                      return (
-                        <li
-                          className="!list-none block !py-1 bg-dsfr-grey-925 even:bg-dsfr-grey-1000 !px-4"
-                          key={option}
-                        >
-                          <label className="flex items-center gap-2">
-                            <Checkbox
-                              checked={checked}
-                              onCheckedChange={() => {
-                                if (checked) {
-                                  onChange(
-                                    values.filter((value) => value !== option),
-                                  );
-                                } else {
-                                  onChange([...values, option]);
-                                }
-                              }}
-                            />
-                            {getOptionLabel(option)}
-                          </label>
-                        </li>
-                      );
-                    })}
-                  </ul>
-                </div>
-              ))}
-          </div>
-        </Dropdown.Content>
-      </Dropdown.Root>
-    </div>
-  );
-};
+import { MultiSelectFiltre } from "@/components/_commons/MultiSelectFiltre/MultiSelectFiltre";
 
 const CheckboxesFiltre = ({
   label,
@@ -237,6 +143,8 @@ export function FiltresTableauEvaluation<T>({ table }: { table: Table<T> }) {
                   label={filter.label}
                   onChange={(newValues) => column.setFilterValue(newValues)}
                   optionGroups={filter.getOptionGroups(column)}
+                  showGroupSelection={false}
+                  showSearch={false}
                   values={(column.getFilterValue() as string[]) ?? []}
                 />
               );
@@ -263,8 +171,6 @@ export function FiltresTableauEvaluation<T>({ table }: { table: Table<T> }) {
               );
             }
           }
-
-          return null;
         })}
     </section>
   );
