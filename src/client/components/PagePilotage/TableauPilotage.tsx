@@ -41,7 +41,10 @@ const HeaderCell = ({ children }: PropsWithChildren) => (
 
     <div className="grid grid-cols-3">
       {ETAPES.map((etape) => (
-        <div className="text-sm whitespace-nowrap text-center p-2" key={etape.key}>
+        <div
+          className="text-sm whitespace-nowrap text-center p-2"
+          key={etape.key}
+        >
           {etape.label}
         </div>
       ))}
@@ -93,7 +96,7 @@ export const TableauPilotage = () => {
         </div>
 
         <div
-          className="w-full grid gap-4"
+          className="w-full grid gap-x-4"
           style={{
             gridTemplateColumns: gridTemplateColumns.join(" "),
           }}
@@ -119,7 +122,7 @@ export const TableauPilotage = () => {
                 Objectif {objectif.index}
               </HeaderCell>
             )}
-          </HeaderGroup>>
+          </HeaderGroup>
 
           {/* Data Rows */}
           {table.getRowModel().rows.map((rowGroup) => {
@@ -127,21 +130,34 @@ export const TableauPilotage = () => {
 
             return (
               <Fragment key={rowGroup.id}>
-                <div className="col-span-full">
+                <div className="bg-black text-white mt-4 text-center p-2 font-bold">
                   {ficheGroup.rattachementGroupe}
                 </div>
 
-                <div className="grid grid-cols-subgrid border !border-2 !border-red-500">
+                <div
+                  style={{
+                    gridColumn: `span ${gridTemplateColumns.length - 1}`,
+                  }}
+                />
+
+                <div className="grid grid-cols-subgrid border !border-black">
                   {rowGroup.subRows.map((row) => {
                     const fiche = row.original;
                     return (
-                      <div key={fiche.id}>{fiche.rattachementLibelle}</div>
+                      <div
+                        className="border-b !border-black last:!border-none p-2"
+                        key={fiche.id}
+                      >
+                        <span className="font-semibold">
+                          {fiche.rattachementLibelle}
+                        </span>
+                      </div>
                     );
                   })}
                 </div>
 
                 <div
-                  className="grid grid-cols-subgrid border !border-2 !border-green-500"
+                  className="grid gap-0 grid-cols-subgrid border-l border-t !border-black"
                   style={{ gridColumn: `span ${criteres.length}` }}
                 >
                   {criteres.map((critere) => {
@@ -150,7 +166,10 @@ export const TableauPilotage = () => {
                         {rowGroup.subRows.map((row) => {
                           const fiche = row.original;
                           return (
-                            <div className="grid grid-cols-3" key={fiche.id}>
+                            <div
+                              className="grid grid-cols-3 border-b !border-black border-r"
+                              key={fiche.id}
+                            >
                               {ETAPES.map((etape) => {
                                 const evaluation =
                                   row.original.evaluationsParCritereEtEtape[
@@ -159,7 +178,7 @@ export const TableauPilotage = () => {
 
                                 return (
                                   <div
-                                    className="px-4 py-3 text-left text-sm whitespace-nowrap"
+                                    className="px-4 py-3 text-center text-sm whitespace-nowrap"
                                     key={etape.key}
                                   >
                                     {evaluation ?? "-"}
