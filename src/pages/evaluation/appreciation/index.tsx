@@ -191,7 +191,7 @@ export default function PageAppreciation(
                       individuels et la manière de servir est ensuite intégrée à
                       la moyenne des résultats constatés pour les objectifs
                       collectifs. La moyenne globale participera à fixer le
-                      montant du complément indemnitaire annuelle de chaque
+                      montant du complément indemnitaire annuel de chaque
                       préfet.
                     </p>
                   </div>
