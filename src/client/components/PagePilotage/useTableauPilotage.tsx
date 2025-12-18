@@ -3,7 +3,7 @@ import {
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { useMemo, useState, useEffect, useRef } from "react";
+import { useMemo, useState } from "react";
 import { $Enums } from "@prisma/client";
 import { pagePilotage } from "@/components/PagePilotage/PagePilotageServerSideContext";
 import { BadgeFicheEtape } from "@/components/_commons/BadgeFicheEtape/BadgeFicheEtape";
@@ -35,34 +35,6 @@ const ETAPES: { key: $Enums.etape_evaluation_enum; label: string }[] = [
   { key: "INSTRUCTION", label: "Instruction" },
 ];
 
-const IndeterminateCheckbox = ({
-  checked,
-  indeterminate,
-  onChange,
-}: {
-  checked: boolean;
-  indeterminate: boolean;
-  onChange: (event: unknown) => void;
-}) => {
-  const ref = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    if (ref.current) {
-      ref.current.indeterminate = indeterminate;
-    }
-  }, [indeterminate]);
-
-  return (
-    <input
-      checked={checked}
-      className="cursor-pointer"
-      onChange={onChange}
-      ref={ref}
-      type="checkbox"
-    />
-  );
-};
-
 export const useTableauPilotage = () => {
   const { fichesEvaluation, criteres } =
     pagePilotage.useServerSidePropsContext().pilotage;
@@ -87,13 +59,7 @@ export const useTableauPilotage = () => {
     const stickyColumns = [
       columnHelper.display({
         id: "select",
-        header: ({ table }) => (
-          <IndeterminateCheckbox
-            checked={table.getIsAllRowsSelected()}
-            indeterminate={table.getIsSomeRowsSelected()}
-            onChange={table.getToggleAllRowsSelectedHandler()}
-          />
-        ),
+        header: "",
         cell: ({ row }) => (
           <input
             checked={row.getIsSelected()}

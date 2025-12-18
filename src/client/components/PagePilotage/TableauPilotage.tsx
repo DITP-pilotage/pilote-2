@@ -12,6 +12,8 @@ export const TableauPilotage = () => {
     .map((col) => `${col.getSize()}px`)
     .join(" ");
 
+  const selectedCount = fichesSelectionneesIds.length;
+
   return (
     <div className="space-y-4">
       <div className="flex justify-between">
@@ -30,13 +32,28 @@ export const TableauPilotage = () => {
           }}
         >
           <div
-            className="contents"
+            className="px-4 py-3 flex items-center gap-2 sticky top-0 z-40 bg-white"
             style={{
-              position: "sticky",
-              top: 0,
-              zIndex: 1,
+              gridColumn: `1 / -1`,
             }}
           >
+            <input
+              checked={table.getIsAllRowsSelected()}
+              className="cursor-pointer"
+              onChange={table.getToggleAllRowsSelectedHandler()}
+              ref={(el) => {
+                if (el) {
+                  el.indeterminate = table.getIsSomeRowsSelected();
+                }
+              }}
+              type="checkbox"
+            />
+            <span className="text-sm text-gray-700">
+              {selectedCount} ligne(s) sélectionnée(s)
+            </span>
+          </div>
+
+          <div className="contents">
             {table.getHeaderGroups().map((headerGroup, groupIndex) =>
               headerGroup.headers.map((header, index) => {
                 const meta = header.column.columnDef.meta;
@@ -47,17 +64,14 @@ export const TableauPilotage = () => {
 
                 return (
                   <div
-                    className={clsxm(
-                      "border-b !border-gray-200 bg-gray-50 px-4 py-3 text-left text-sm font-semibold text-gray-900 whitespace-nowrap",
-                      {
-                        "not-last:border-r":
-                          header.colSpan === 1 && !meta?.positioning?.sticky,
-                        "not-last:border-r-2":
-                          lastSticky ||
-                          header.colSpan > 1 ||
-                          meta?.positioning?.lastInGroup,
-                      },
-                    )}
+                    className={clsxm("px-4 py-3 text-left text-sm", {
+                      "not-last:border-r":
+                        header.colSpan === 1 && !meta?.positioning?.sticky,
+                      "not-last:border-r-2":
+                        lastSticky ||
+                        header.colSpan > 1 ||
+                        meta?.positioning?.lastInGroup,
+                    })}
                     key={header.id}
                     style={{
                       gridColumn:
@@ -65,7 +79,7 @@ export const TableauPilotage = () => {
                           ? `span ${header.colSpan}`
                           : undefined,
                       position: "sticky",
-                      top: groupIndex * 52,
+                      top: 52 + groupIndex * 52,
                       ...(meta?.positioning?.sticky === "left"
                         ? {
                             left: meta?.positioning?.stickyOffset,
