@@ -38,17 +38,13 @@ export const LignesEnteteAvancementCompletionAppreciation = ({
       {appreciationRequierentAttention > 0 && (
         <li className="!text-warning">
           <b>Phase d'appréciation</b> : {appreciationRequierentAttention}{" "}
-          formulaire(s){" "}
-          {appreciationRequierentAttention === 1 ? "requiert" : "requièrent"}{" "}
-          votre attention
+          formulaire(s) non transmis à ce jour
         </li>
       )}
       {appreciationCompletes > 0 && (
         <li className="!text-primary">
-          <b>Phase d'appréciation</b> : {appreciationCompletes} formulaire(s){" "}
-          {appreciationCompletes === 1 ? "est complété" : "sont complétés"}{" "}
-          et/ou en train d'être vérifié
-          {appreciationCompletes === 1 ? "" : "s"} par la DITP
+          <b>Phase d'appréciation</b> : {appreciationCompletes} formulaire(s)
+          transmis et en attente d'être instruit(s)
         </li>
       )}
       {autoEvaluationEnCours > 0 && (
