@@ -9,7 +9,6 @@ import { Icone } from "@/components/_commons/Icone";
 import { LigneCardEvaluationAppreciation } from "@/components/PageAppreciation/LigneCardEvaluationAppreciation";
 import { LigneCardEvaluationInstruction } from "@/components/PageAppreciation/LigneCardEvaluationInstruction";
 import { LignesEnteteAvancementCompletionAppreciation } from "@/components/PageAppreciation/LignesEnteteAvancementCompletionAppreciation";
-import { ModaleTransmissionDITP } from "@/components/PageAppreciation/ModaleVerrouillageConsolidation/ModaleVerrouillageConsolidation";
 
 export const ListePhaseEvaluation = () => {
   const { fichesParGroupePuisPhase } =
@@ -48,7 +47,7 @@ export const ListePhaseEvaluation = () => {
                 <Accordion.Content>
                   {CONSOLIDATION.length > 0 ? (
                     <div className="flex flex-col gap-4">
-                      <div className="flex items-center justify-between">
+                      <div>
                         <Bouton
                           className="!text-xs"
                           iconLeft={
@@ -73,17 +72,6 @@ export const ListePhaseEvaluation = () => {
                           }
                           variant="link"
                         />
-
-                        <ModaleTransmissionDITP
-                          fichesAppreciation={CONSOLIDATION}
-                        >
-                          <button
-                            className="fr-btn fr-btn--secondary fr-btn--sm"
-                            type="button"
-                          >
-                            Transmettre à la DITP
-                          </button>
-                        </ModaleTransmissionDITP>
                       </div>
                       {CONSOLIDATION.map((ficheEvaluation) => (
                         <LigneCardEvaluationAppreciation

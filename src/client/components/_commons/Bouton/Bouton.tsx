@@ -1,21 +1,27 @@
-import { ComponentProps, ReactNode } from "react";
+import { ComponentProps, forwardRef, ReactNode } from "react";
 import { clsxm } from "@/utils/clsxm";
 
-export const Bouton = ({
-  label,
-  iconLeft,
-  iconRight,
-  variant,
-  className,
-  size = "default",
-  ...props
-}: {
-  label: string;
-  iconLeft?: ReactNode;
-  iconRight?: ReactNode;
-  variant?: "primary" | "secondary" | "link";
-  size?: "sm" | "default";
-} & ComponentProps<"button">) => {
+export const Bouton = forwardRef<
+  HTMLButtonElement,
+  {
+    label: string;
+    iconLeft?: ReactNode;
+    iconRight?: ReactNode;
+    variant?: "primary" | "secondary" | "link";
+    size?: "sm" | "default";
+  } & ComponentProps<"button">
+>(function Bouton(
+  {
+    label,
+    iconLeft,
+    iconRight,
+    variant,
+    className,
+    size = "default",
+    ...props
+  },
+  ref,
+) {
   return (
     <button
       className={clsxm(
@@ -28,6 +34,7 @@ export const Bouton = ({
         },
         className,
       )}
+      ref={ref}
       type="button"
       {...props}
     >
@@ -36,4 +43,4 @@ export const Bouton = ({
       {iconRight}
     </button>
   );
-};
+});
