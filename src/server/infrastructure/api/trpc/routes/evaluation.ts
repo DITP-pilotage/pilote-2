@@ -34,6 +34,7 @@ export const evaluationRouter = créerRouteurTRPC({
       peutAccederAppreciation,
       peutAccederInstruction,
       peutAccederPilotage,
+      peutAccederNoteCollective,
     ] = await Promise.all([
       accesFicheEvaluationService.peutAccederEtapeAppreciation({
         utilisateurId: ctx.session.user.id,
@@ -44,12 +45,16 @@ export const evaluationRouter = créerRouteurTRPC({
       accesFicheEvaluationService.peutAccederEtapePilotage({
         applicationsAccessibles: ctx.session.applicationsAccessibles,
       }),
+      accesFicheEvaluationService.peutAccederNoteCollective({
+        utilisateurId: ctx.session.user.id,
+      }),
     ]);
 
     return {
       peutAccederAppreciation,
       peutAccederInstruction,
       peutAccederPilotage,
+      peutAccederNoteCollective,
     };
   }),
 

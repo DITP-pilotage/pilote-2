@@ -23,10 +23,18 @@ export const NavigationPiloteEval = () => {
     <BaseNavigation
       pages={[
         {
+          nom: "Accueil",
+          lien: "/evaluation/accueil",
+          matcher: "/evaluation/accueil",
+          accessible: estAutoriseAAccederAPiloteEval(session),
+          prefetch: true,
+          target: "_self",
+        },
+        {
           nom: "Objectifs collectifs",
           lien: "/evaluation/note-collective",
           matcher: "/evaluation/note-collective",
-          accessible: estAutoriseAAccederAPiloteEval(session),
+          accessible: droitsPiloteEval?.peutAccederNoteCollective ?? false,
           prefetch: true,
           target: "_self",
         },

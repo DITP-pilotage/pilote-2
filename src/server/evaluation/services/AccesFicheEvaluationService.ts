@@ -32,6 +32,17 @@ export class AccesFicheEvaluationService {
     );
   }
 
+  async peutAccederNoteCollective({
+    utilisateurId,
+  }: {
+    utilisateurId: string;
+  }): Promise<boolean> {
+    return this.peutAccederEtape(
+      utilisateurId,
+      $Enums.etape_evaluation_enum.AUTO_EVALUATION,
+    );
+  }
+
   async peutAccederEtapeAppreciation({
     utilisateurId,
   }: {
