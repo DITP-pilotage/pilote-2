@@ -21,6 +21,7 @@ const IconeEvaluationBloquee = ({ children }: PropsWithChildren) => (
 );
 
 export const LigneEtapeEvaluation = ({
+  type,
   mode,
   formulaireBloqueLabel,
   commentaireLabel,
@@ -33,6 +34,7 @@ export const LigneEtapeEvaluation = ({
   traitement,
   etape,
 }: {
+  type: "objectif" | "critere";
   mode: "editable" | "bloque" | "lecture-seule";
   formulaireBloqueLabel?: string;
   commentaireLabel: string;
@@ -92,7 +94,8 @@ export const LigneEtapeEvaluation = ({
         )}
       </div>
       <div className="flex-shrink-0 w-[8rem] p-4 flex flex-col text-center">
-        {etape === $Enums.etape_evaluation_enum.CONSOLIDATION ? (
+        {type === "critere" &&
+        etape === $Enums.etape_evaluation_enum.CONSOLIDATION ? (
           <InputNoteAppreciation
             label={
               <span className="flex items-center gap-1">

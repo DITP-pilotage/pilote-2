@@ -88,6 +88,7 @@ export const CelluleEvaluation = ({
                 noteName={noteName}
                 onAutosave={onAutosave}
                 traitement={boutonTraitement}
+                type={ligne.type}
               />
             );
           } else if (
@@ -106,6 +107,7 @@ export const CelluleEvaluation = ({
                 noteName={noteName}
                 onAutosave={onAutosave}
                 traitement={boutonTraitement}
+                type={ligne.type}
               />
             );
           } else if (
@@ -121,6 +123,7 @@ export const CelluleEvaluation = ({
                 mode="lecture-seule"
                 note={evalItem.evaluation.note}
                 noteName={noteName}
+                type={ligne.type}
               />
             );
           }
