@@ -1,4 +1,7 @@
 import { Lien } from "@/components/_commons/Lien/Lien";
+import { ModaleTransmissionDITP } from "@/components/PageAppreciation/ModaleVerrouillageConsolidation/ModaleVerrouillageConsolidation";
+import { Bouton } from "@/components/_commons/Bouton/Bouton";
+import { pageAppreciation } from "@/components/PageAppreciation/PageAppreciationServerSideContext";
 
 export const InformationEnteteAppreciation = ({
   statutCompletionAppreciation = "PAS_DEBUTE",
@@ -9,6 +12,11 @@ export const InformationEnteteAppreciation = ({
     | "APPRECIATION_EN_COURS"
     | "TERMINE";
 }) => {
+  const { fichesParGroupePuisPhase } =
+    pageAppreciation.useServerSidePropsContext();
+  const fiches = Object.values(fichesParGroupePuisPhase)
+    .map((groupes) => groupes.CONSOLIDATION)
+    .flat();
   if (statutCompletionAppreciation === "PAS_DEBUTE") {
     return null;
   }
@@ -23,7 +31,7 @@ export const InformationEnteteAppreciation = ({
             Renseigner les appréciations
           </h3>
           <p className="!mb-0">
-            L’espace d'appréciation vous permet de saisir vos appréciations
+            L'espace d'appréciation vous permet de saisir vos appréciations
             (résultats quantitatifs et commentaires) :
           </p>
           <ul>
@@ -48,7 +56,7 @@ export const InformationEnteteAppreciation = ({
           </h3>
           <p className="!mb-0">
             À tout moment, vous pouvez transmettre vos appréciations afin
-            qu’elles soient instruites par les administrations centrales.
+            qu'elles soient instruites par les administrations centrales.
           </p>
           <p className="!mb-0">
             Le parcours ci-dessous vous permet de choisir les territoires dont
@@ -57,11 +65,9 @@ export const InformationEnteteAppreciation = ({
           </p>
 
           <div className="flex justify-center pt-6 mt-auto">
-            <Lien
-              href="appreciation/espace-appreciation"
-              label="Transmettre mes appréciations"
-              variant="button"
-            />
+            <ModaleTransmissionDITP fichesAppreciation={fiches}>
+              <Bouton label="Transmettre à la DITP" variant="primary" />
+            </ModaleTransmissionDITP>
           </div>
         </div>
       </div>
@@ -73,7 +79,7 @@ export const InformationEnteteAppreciation = ({
       <div className="mt-10">
         <h3 className="!text-primary !text-2xl !mb-4">Vos appréciations</h3>
         <p className="!mb-0">
-          La phase d’appréciation est close, toutes vos appréciations ont été
+          La phase d'appréciation est close, toutes vos appréciations ont été
           transmises pour instruction.
         </p>
         <p>Nous vous remercions pour votre collaboration.</p>
