@@ -13,6 +13,8 @@ import { BadgeFicheEtape } from "@/components/_commons/BadgeFicheEtape/BadgeFich
 import { Icone } from "@/components/_commons/Icone";
 import { LockIcon } from "@/components/_commons/Icones/LockIcon";
 import { LockUnlockIcon } from "@/components/_commons/Icones/LockUnlockIcon";
+import { BadgeType } from "@/components/Evaluation/BadgeType";
+import { BadgeEtape } from "@/components/Evaluation/BadgeEtape";
 
 function HeaderGroup<T>({
   label,
@@ -184,11 +186,25 @@ export const TableauPilotage = () => {
           {/* Data Rows */}
           {table.getRowModel().rows.map((rowGroup) => {
             const ficheGroup = rowGroup.original;
+            const groupChecked = false; // TODO
 
             return (
               <Fragment key={rowGroup.id}>
-                <div className="bg-black text-white mt-4 text-center p-2 font-bold">
-                  {ficheGroup.rattachementGroupe}
+                <div className="flex mt-4 ">
+                  <div className="p-2 border-t border-l !border-black">
+                    <input
+                      checked={groupChecked}
+                      className="cursor-pointer"
+                      onChange={() => {
+                        // TODO
+                      }}
+                      type="checkbox"
+                    />
+                  </div>
+
+                  <div className="grow bg-black text-white text-center p-2 font-bold">
+                    {ficheGroup.rattachementGroupe}
+                  </div>
                 </div>
 
                 <div
@@ -202,12 +218,32 @@ export const TableauPilotage = () => {
                     const fiche = row.original;
                     return (
                       <div
-                        className="border-b !border-black last:!border-none p-2"
+                        className="flex items-center gap-2  border-b !border-black last:!border-none p-2"
                         key={fiche.id}
                       >
-                        <span className="font-semibold">
-                          {fiche.rattachementLibelle}
-                        </span>
+                        <input
+                          checked={row.getIsSelected()}
+                          className="cursor-pointer"
+                          onChange={row.getToggleSelectedHandler()}
+                          type="checkbox"
+                        />
+
+                        <div className="grid grid-cols-3 items-center grow">
+                          <div>
+                            <BadgeEtape
+                              etapeCourante={fiche.etapeCourante}
+                              short
+                            />
+                          </div>
+
+                          <span className="font-semibold text-center">
+                            {fiche.rattachementCode}
+                          </span>
+
+                          <span className="font-semibold">
+                            {fiche.rattachementLibelle}
+                          </span>
+                        </div>
                       </div>
                     );
                   })}
