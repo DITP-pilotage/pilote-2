@@ -1,6 +1,9 @@
 import { Fragment, PropsWithChildren, ReactNode } from "react";
+import { $Enums } from "@prisma/client";
+import { Row } from "@tanstack/react-table";
 import {
   ETAPES,
+  FicheEvaluationRow,
   useTableauPilotage,
 } from "@/components/PagePilotage/useTableauPilotage";
 import { clsxm } from "@/utils/clsxm";
@@ -34,17 +37,14 @@ function HeaderGroup<T>({
 }
 
 const HeaderCell = ({ children }: PropsWithChildren) => (
-  <div className="text-sm border-r !border-black last:!border-0">
+  <div className="border-r !border-black last:!border-0">
     <div className="p-2 font-medium flex flex-col items-center border-b !border-black ">
       <div className="line-clamp-1">{children}</div>
     </div>
 
     <div className="grid grid-cols-3">
       {ETAPES.map((etape) => (
-        <div
-          className="text-sm whitespace-nowrap text-center p-2"
-          key={etape.key}
-        >
+        <div className="whitespace-nowrap text-center p-2" key={etape.key}>
           {etape.label}
         </div>
       ))}
@@ -52,8 +52,62 @@ const HeaderCell = ({ children }: PropsWithChildren) => (
   </div>
 );
 
+function EvaluationsBlock<T>({
+  items,
+  rowGroup,
+  getEvaluation,
+}: {
+  items: T[];
+  rowGroup: Row<FicheEvaluationRow>;
+  getEvaluation(options: {
+    item: T;
+    row: Row<FicheEvaluationRow>;
+    etape: $Enums.etape_evaluation_enum;
+  }): number | null;
+}) {
+  return (
+    <div
+      className="grid gap-0 grid-cols-subgrid border-l border-t !border-black"
+      style={{ gridColumn: `span ${items.length}` }}
+    >
+      {items.map((item) => {
+        return (
+          <>
+            {rowGroup.subRows.map((row) => {
+              const fiche = row.original;
+              return (
+                <div
+                  className="grid grid-cols-3 border-b !border-black border-r"
+                  key={fiche.id}
+                >
+                  {ETAPES.map((etape) => {
+                    const evaluation = getEvaluation({
+                      item,
+                      row,
+                      etape: etape.key,
+                    });
+
+                    return (
+                      <div
+                        className="px-4 py-3 text-center whitespace-nowrap"
+                        key={etape.key}
+                      >
+                        {evaluation ?? "-"}
+                      </div>
+                    );
+                  })}
+                </div>
+              );
+            })}
+          </>
+        );
+      })}
+    </div>
+  );
+}
+
 export const TableauPilotage = () => {
-  const { table, fichesSelectionneesIds, criteres, maxObjectifs, ETAPES } =
+  const { table, fichesSelectionneesIds, criteres, maxObjectifs } =
     useTableauPilotage();
 
   const selectedCount = fichesSelectionneesIds.length;
@@ -77,7 +131,7 @@ export const TableauPilotage = () => {
         />
       </div>
 
-      <div className="overflow-auto border border-gray-200 rounded-lg max-h-[75vh]">
+      <div className="overflow-auto border border-gray-200 rounded-lg max-h-[75vh] text-xs">
         <div className="sticky top-0 left-0 z-40 bg-white px-4 py-3 flex items-center gap-2 border-b border-gray-200">
           <input
             checked={table.getIsAllRowsSelected()}
@@ -90,7 +144,7 @@ export const TableauPilotage = () => {
             }}
             type="checkbox"
           />
-          <span className="text-sm text-gray-700">
+          <span className="text-gray-700">
             {selectedCount} ligne(s) sélectionnée(s)
           </span>
         </div>
@@ -156,75 +210,26 @@ export const TableauPilotage = () => {
                   })}
                 </div>
 
-                <div
-                  className="grid gap-0 grid-cols-subgrid border-l border-t !border-black"
-                  style={{ gridColumn: `span ${criteres.length}` }}
-                >
-                  {criteres.map((critere) => {
-                    return (
-                      <>
-                        {rowGroup.subRows.map((row) => {
-                          const fiche = row.original;
-                          return (
-                            <div
-                              className="grid grid-cols-3 border-b !border-black border-r"
-                              key={fiche.id}
-                            >
-                              {ETAPES.map((etape) => {
-                                const evaluation =
-                                  row.original.evaluationsParCritereEtEtape[
-                                    critere.id
-                                  ]?.[etape.key];
+                <EvaluationsBlock
+                  getEvaluation={({ row, item, etape }) => {
+                    return row.original.evaluationsParCritereEtEtape[item.id]?.[
+                      etape
+                    ];
+                  }}
+                  items={criteres}
+                  rowGroup={rowGroup}
+                />
 
-                                return (
-                                  <div
-                                    className="px-4 py-3 text-center text-sm whitespace-nowrap"
-                                    key={etape.key}
-                                  >
-                                    {evaluation ?? "-"}
-                                  </div>
-                                );
-                              })}
-                            </div>
-                          );
-                        })}
-                      </>
-                    );
-                  })}
-                </div>
-
-                <div
-                  className="grid grid-cols-subgrid border !border-2 !border-blue-500"
-                  style={{ gridColumn: `span ${maxObjectifs}` }}
-                >
-                  {Array.from({ length: maxObjectifs }).map((_, index) => {
-                    return (
-                      <>
-                        {rowGroup.subRows.map((row) => {
-                          const fiche = row.original;
-                          const objectif = row.original.objectifs[index];
-
-                          return (
-                            <div className="grid grid-cols-3" key={fiche.id}>
-                              {ETAPES.map((etape) => {
-                                const evaluation =
-                                  objectif?.evaluations[etape.key];
-                                return (
-                                  <div
-                                    className="px-4 py-3 text-left text-sm whitespace-nowrap"
-                                    key={etape.key}
-                                  >
-                                    {evaluation ?? "-"}
-                                  </div>
-                                );
-                              })}
-                            </div>
-                          );
-                        })}
-                      </>
-                    );
-                  })}
-                </div>
+                <EvaluationsBlock
+                  getEvaluation={({ row, item, etape }) => {
+                    const objectif = row.original.objectifs[item.index];
+                    return objectif?.evaluations[etape];
+                  }}
+                  items={Array.from({ length: maxObjectifs }).map(
+                    (_, index) => ({ index }),
+                  )}
+                  rowGroup={rowGroup}
+                />
               </Fragment>
             );
           })}

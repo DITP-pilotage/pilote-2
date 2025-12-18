@@ -8,7 +8,7 @@ import { useMemo, useState } from "react";
 import { $Enums } from "@prisma/client";
 import { pagePilotage } from "@/components/PagePilotage/PagePilotageServerSideContext";
 
-type FicheEvaluationRow = {
+export type FicheEvaluationRow = {
   id: string;
   readOnly: boolean;
   rattachementCode: string;
