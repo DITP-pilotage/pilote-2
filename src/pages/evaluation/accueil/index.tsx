@@ -113,7 +113,7 @@ const AccueilEvaluationPage = () => {
                       src={carteFranceSvg}
                     />
                   </div>
-                  <div className="pt-4 pb-8 px-8">
+                  <div className="p-4">
                     <h3 className="!text-xl !mb-3">Pour tous les préfets</h3>
                     <span className="!font-bold">
                       Tableau de bord personnalisé des résultats par préfet :
@@ -132,7 +132,7 @@ const AccueilEvaluationPage = () => {
                       src={visualisationDonnéesSvg}
                     />
                   </div>
-                  <div className="pt-4 pb-8 px-8">
+                  <div className="p-4">
                     <h3 className="!text-xl !mb-3">
                       Pour les préfets de régions
                     </h3>
@@ -154,7 +154,7 @@ const AccueilEvaluationPage = () => {
                       src={cityHallSvg}
                     />
                   </div>
-                  <div className="pt-4 pb-8 px-8">
+                  <div className="p-4">
                     <h3 className="!text-xl !mb-3">
                       Pour les administrations centrales
                     </h3>
