@@ -103,22 +103,16 @@ export default function PageAppreciation(
                   value={statutCompletionAppreciation}
                 />
               </div>
-              <h2 className="!text-2xl !text-primary">Calendrier</h2>
+              <h2 className="!text-2xl !text-primary">
+                L'appréciation par les préfets de région
+              </h2>
               <p className="text-gray-600 !mb-0">
-                La phase d'appréciation est :
+                Dans le cadre de l’évaluation des résultats des objectifs
+                interministériels des préfets, le Premier Ministre a chargé les
+                préfets de région de transmettre leur appréciation des résultats
+                des objectifs individuels et de la manière de servir des préfets
+                de département.
               </p>
-              <ul>
-                <li>
-                  ouverte dès réception des auto-évaluations transmises par les
-                  préfets (au plus tard début février 2026)
-                </li>
-                <li>et close à la fin du mois de février 2026.</li>
-              </ul>
-              <p>
-                À l'échéance qui vous a été fixée, les appréciations – mêmes
-                incomplètes – seront réceptionnées par la DITP pour instruction.
-              </p>
-              <h2 className="!text-2xl !text-primary">Vos appréciations</h2>
               <InformationEnteteAppreciation
                 statutCompletionAppreciation={statutCompletionAppreciation}
               />

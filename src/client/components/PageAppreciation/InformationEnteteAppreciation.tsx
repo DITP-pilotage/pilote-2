@@ -10,75 +10,70 @@ export const InformationEnteteAppreciation = ({
     | "TERMINE";
 }) => {
   if (statutCompletionAppreciation === "PAS_DEBUTE") {
-    return (
-      <p>
-        Lorsque la phase d'appréciation sera lancée, vous serez invités à porter
-        une appréciation sur les auto-évaluations que vos territoires ont
-        renseigné pour chacun des items requis – soit, pour un territoire : 4 à
-        5 objectifs collectifs + 3 axes sur la manière de servir.
-      </p>
-    );
+    return null;
   }
   if (statutCompletionAppreciation === "AUTO_EVAL_EN_COURS") {
-    return (
-      <>
-        <p>
-          Lorsque la phase d'appréciation sera lancée, vous serez invités à
-          porter une appréciation sur les auto-évaluations que vos territoires
-          ont renseigné pour chacun des items requis – soit, pour un territoire
-          : 4 à 5 objectifs collectifs + 3 axes sur la manière de servir.
-        </p>
-        <p>
-          À toutes fins utiles, la section suivante vous propose une vue
-          détaillée, formulaire par formulaire, des auto-évaluations en cours.
-        </p>
-      </>
-    );
+    return null;
   }
   if (statutCompletionAppreciation === "APPRECIATION_EN_COURS") {
     return (
-      <>
-        <p className="!mb-0">
-          Lorsque la phase d'appréciation sera lancée, vous serez invités à
-          porter une appréciation sur les auto-évaluations que vos territoires
-          ont renseigné pour chacun des items requis – soit, pour un territoire
-          : 4 à 5 objectifs collectifs + 3 axes sur la manière de servir.
-        </p>
-        <p>
-          Votre espace d'appréciation agrège ces items pour tous les territoires
-          dans un tableau unique que vous pouvez trier et filtrer selon vos
-          besoins.
-        </p>
-        <p className="!mb-0">Pour un item donné, merci de renseigner :</p>
-        <ul>
-          <li>la note que vous retenez,</li>
-          <li>
-            ainsi que votre commentaire (dans l'éventualité où votre note serait
-            différente de la note proposée en auto-évaluation).
-          </li>
-        </ul>
-        <p>
-          Une fois que vous avez renseigné un item, n'hésitez pas à le "marquer
-          comme traité" grâce à la case prévue à cet effet : cette
-          fonctionnalité vous permettra de suivre l'avancement de votre travail
-          tout au long du processus.
-        </p>
-        <div className="flex justify-center mb-4">
-          <Lien
-            href="appreciation/espace-appreciation"
-            label="Accéder à mon espace d'appréciation"
-            variant="button"
-          />
+      <div className="grid md:grid-cols-2 mt-10">
+        <div>
+          <h3 className="!text-primary !text-2xl !text-center !mb-4">
+            Renseigner les appréciations
+          </h3>
+          <p className="!mb-0">
+            L’espace d'appréciation vous permet de saisir vos appréciations
+            (résultats quantitatifs et commentaires) :
+          </p>
+          <ul>
+            <li>
+              pour chaque objectif individuel et chaque axe de la manière de
+              servir,
+            </li>
+            <li>et pour tous les territoires de votre région.</li>
+          </ul>
+          <div className="flex justify-center pt-6 mt-auto">
+            <Lien
+              href="appreciation/espace-appreciation"
+              label="Accéder à mon espace d'appréciation"
+              variant="button"
+            />
+          </div>
         </div>
-      </>
+
+        <div>
+          <h3 className="!text-primary !text-2xl !text-center !mb-4">
+            Transmettre les appréciations
+          </h3>
+          <p className="!mb-0">
+            À tout moment, vous pouvez transmettre vos appréciations afin
+            qu’elles soient instruites par les administrations centrales.
+          </p>
+          <p className="!mb-0">
+            Le parcours ci-dessous vous permet de choisir les territoires dont
+            vous souhaitez transmettre les appréciations. À ce titre, vous
+            pouvez transmettre vos appréciations en plusieurs fois.
+          </p>
+
+          <div className="flex justify-center pt-6 mt-auto">
+            <Lien
+              href="appreciation/espace-appreciation"
+              label="Transmettre mes appréciations"
+              variant="button"
+            />
+          </div>
+        </div>
+      </div>
     );
   }
 
   if (statutCompletionAppreciation === "TERMINE") {
     return (
-      <>
+      <div className="mt-10">
+        <h3 className="!text-primary !text-2xl !mb-4">Vos appréciations</h3>
         <p className="!mb-0">
-          La phase d'appréciation est close, toutes vos appréciations ont été
+          La phase d’appréciation est close, toutes vos appréciations ont été
           transmises pour instruction.
         </p>
         <p>Nous vous remercions pour votre collaboration.</p>
@@ -89,7 +84,7 @@ export const InformationEnteteAppreciation = ({
             variant="button-secondary"
           />
         </div>
-      </>
+      </div>
     );
   }
 };
