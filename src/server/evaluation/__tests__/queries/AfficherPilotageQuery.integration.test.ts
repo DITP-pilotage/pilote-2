@@ -104,6 +104,7 @@ describe("#AfficherPilotageQuery", () => {
             groupe: "Groupe A",
             ordre: 1,
           },
+          noteObjectifsCollectifs: null,
           evaluationsParCritereEtEtape: {
             [critere1Id]: {
               AUTO_EVALUATION: null,
@@ -293,6 +294,7 @@ describe("#AfficherPilotageQuery", () => {
             groupe: "Groupe B",
             ordre: 1,
           },
+          noteObjectifsCollectifs: null,
           evaluationsParCritereEtEtape: {
             [critereId]: {
               AUTO_EVALUATION: 3,
@@ -673,6 +675,168 @@ describe("#AfficherPilotageQuery", () => {
           ordre: 2,
         },
       ]);
+    });
+
+    it("doit calculer la noteObjectifsCollectifs comme moyenne des taux d'avancement des chantiers", async () => {
+      // Given
+      const critereId = "8a9b0c1d-2e3f-4567-8901-234567890123";
+      const rattachementCode = "DEPT-91";
+      const ficheEvaluationId = "9b0c1d2e-3f4a-5678-9012-345678901234";
+      const jalon = 2025;
+
+      await prisma.ministere.create({
+        data: {
+          id: "MIN-TEST",
+          acronyme: "TEST",
+          nom: "Ministère Test",
+          icone: "icone-test.svg",
+        },
+      });
+
+      await prisma.referentiel_critere.create({
+        data: {
+          id: critereId,
+          libelle: "Critère test objectifs collectifs",
+          descriptif: "Description critère test",
+        },
+      });
+
+      await prisma.referentiel_rattachement.create({
+        data: {
+          code: rattachementCode,
+          groupe: "Groupe Test",
+          ordre: 1,
+          libelle: "Rattachement Test",
+        },
+      });
+
+      await prisma.chantier_identite.createMany({
+        data: [
+          {
+            id: "CH-201",
+            nom: "Chantier Test 1",
+            ministeres: ["MIN-TEST"],
+          },
+          {
+            id: "CH-202",
+            nom: "Chantier Test 2",
+            ministeres: ["MIN-TEST"],
+          },
+          {
+            id: "CH-203",
+            nom: "Chantier Test 3",
+            ministeres: ["MIN-TEST"],
+          },
+        ],
+      });
+
+      await prisma.fiche_evaluation.create({
+        data: {
+          id: ficheEvaluationId,
+          jalon: jalon,
+          etape_courante: "AUTO_EVALUATION",
+          rattachement_code: rattachementCode,
+        },
+      });
+
+      await prisma.chantier_territoire.createMany({
+        data: [
+          {
+            id: "CH-201",
+            territoire_code: rattachementCode,
+            code_insee: "91",
+            maille: "DEPT",
+            zone_id: "zone-test",
+          },
+          {
+            id: "CH-202",
+            territoire_code: rattachementCode,
+            code_insee: "91",
+            maille: "DEPT",
+            zone_id: "zone-test",
+          },
+          {
+            id: "CH-203",
+            territoire_code: rattachementCode,
+            code_insee: "91",
+            maille: "DEPT",
+            zone_id: "zone-test",
+          },
+        ],
+      });
+
+      await prisma.chantier_territoire_jalon.createMany({
+        data: [
+          {
+            id: "CH-201",
+            territoire_code: rattachementCode,
+            code_insee: "91",
+            maille: "DEPT",
+            zone_id: "zone-test",
+            jalon: jalon,
+          },
+          {
+            id: "CH-202",
+            territoire_code: rattachementCode,
+            code_insee: "91",
+            maille: "DEPT",
+            zone_id: "zone-test",
+            jalon: jalon,
+          },
+          {
+            id: "CH-203",
+            territoire_code: rattachementCode,
+            code_insee: "91",
+            maille: "DEPT",
+            zone_id: "zone-test",
+            jalon: jalon,
+          },
+        ],
+      });
+
+      await prisma.chantier_evaluation.createMany({
+        data: [
+          {
+            id: "CH-201",
+            territoire_code: rattachementCode,
+            code_insee: "91",
+            maille: "DEPT",
+            zone_id: "zone-test",
+            taux_avancement: 70.0,
+            date_calcul: new Date("2025-02-15"),
+            jalon: jalon,
+          },
+          {
+            id: "CH-202",
+            territoire_code: rattachementCode,
+            code_insee: "91",
+            maille: "DEPT",
+            zone_id: "zone-test",
+            taux_avancement: 80.0,
+            date_calcul: new Date("2025-02-15"),
+            jalon: jalon,
+          },
+          {
+            id: "CH-203",
+            territoire_code: rattachementCode,
+            code_insee: "91",
+            maille: "DEPT",
+            zone_id: "zone-test",
+            taux_avancement: null,
+            date_calcul: new Date("2025-02-15"),
+            jalon: jalon,
+          },
+        ],
+      });
+
+      // When
+      const result = await query.run();
+
+      // Then
+      const ficheResult = result.fichesEvaluation.find(
+        (fiche) => fiche.id === ficheEvaluationId,
+      );
+      expect(ficheResult?.noteObjectifsCollectifs).toEqual(75);
     });
   });
 });
