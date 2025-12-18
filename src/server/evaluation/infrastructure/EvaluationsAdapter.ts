@@ -154,10 +154,20 @@ export class EvaluationsAdapter implements PDFContentAdapter {
             [createSectionTitle({ title: critere.libelle })],
             [
               createText({
-                text: createLabeledText({
-                  label: "Descriptif",
-                  text: critere.descriptif,
-                }),
+                text: [
+                  ...createLabeledText({
+                    label: "Descriptif",
+                    text: critere.descriptif,
+                  }),
+                  ...critere.sousCriteres
+                    .map((sousCritere) => [
+                      createLabeledText({
+                        label: `\n\nSous-critère : ${sousCritere.libelle}`,
+                        text: sousCritere.descriptif,
+                      }),
+                    ])
+                    .flat(),
+                ].flat(),
                 margin: [5, 5, 5, 5],
               }),
             ],
