@@ -89,10 +89,13 @@ function EvaluationsBlock<T>({
 
                     return (
                       <div
-                        className="px-4 py-3 text-center whitespace-nowrap"
+                        className={clsxm(
+                          "flex items-center justify-center text-center whitespace-nowrap",
+                          { "bg-dsfr-grey-925": evaluation == null },
+                        )}
                         key={etape.key}
                       >
-                        {evaluation ?? "-"}
+                        {evaluation ?? " "}
                       </div>
                     );
                   })}
