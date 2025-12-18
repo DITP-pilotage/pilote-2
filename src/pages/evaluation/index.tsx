@@ -2,7 +2,6 @@ import { GetServerSidePropsContext } from "next";
 import { getServerSession } from "next-auth/next";
 import { $Enums } from "@prisma/client";
 import assert from "node:assert";
-import { getContainer } from "@/server/dependances";
 import { configurationFeatureFlip } from "@/config";
 import { authOptions } from "@/server/infrastructure/api/auth/[...nextauth]";
 
@@ -29,45 +28,11 @@ export const getServerSideProps = async ({
     };
   }
 
-  const utilisateurId = session.user.id;
-  const accesFicheEvaluationService = getContainer("piloteEval").resolve(
-    "accesFicheEvaluationService",
-  );
-
-  if (
-    await accesFicheEvaluationService.peutAccederEtapeAppreciation({
-      utilisateurId,
-    })
-  )
-    return {
-      redirect: {
-        destination: `/evaluation/appreciation`,
-      },
-    };
-
-  if (
-    await accesFicheEvaluationService.peutAccederEtapeInstruction({
-      utilisateurId,
-    })
-  )
-    return {
-      redirect: {
-        destination: `/evaluation/instruction`,
-      },
-    };
-
-  if (
-    await accesFicheEvaluationService.peutAccederEtapePilotage({
-      applicationsAccessibles: session.applicationsAccessibles,
-    })
-  )
-    return {
-      redirect: {
-        destination: `/evaluation/pilotage`,
-      },
-    };
-
-  return { props: {} };
+  return {
+    redirect: {
+      destination: `/evaluation/accueil`,
+    },
+  };
 };
 
 const EvaluationIndexPage = () => null;
