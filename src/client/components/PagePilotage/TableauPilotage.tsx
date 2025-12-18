@@ -24,6 +24,23 @@ export const TableauPilotage = () => {
       </div>
 
       <div className="overflow-auto border border-gray-200 rounded-lg max-h-[75vh]">
+        <div className="sticky top-0 left-0 z-40 bg-white px-4 py-3 flex items-center gap-2 border-b border-gray-200">
+          <input
+            checked={table.getIsAllRowsSelected()}
+            className="cursor-pointer"
+            onChange={table.getToggleAllRowsSelectedHandler()}
+            ref={(el) => {
+              if (el) {
+                el.indeterminate = table.getIsSomeRowsSelected();
+              }
+            }}
+            type="checkbox"
+          />
+          <span className="text-sm text-gray-700">
+            {selectedCount} ligne(s) sélectionnée(s)
+          </span>
+        </div>
+
         <div
           className="w-full"
           style={{
@@ -31,28 +48,6 @@ export const TableauPilotage = () => {
             gridTemplateColumns,
           }}
         >
-          <div
-            className="px-4 py-3 flex items-center gap-2 sticky top-0 z-40 bg-white"
-            style={{
-              gridColumn: `1 / -1`,
-            }}
-          >
-            <input
-              checked={table.getIsAllRowsSelected()}
-              className="cursor-pointer"
-              onChange={table.getToggleAllRowsSelectedHandler()}
-              ref={(el) => {
-                if (el) {
-                  el.indeterminate = table.getIsSomeRowsSelected();
-                }
-              }}
-              type="checkbox"
-            />
-            <span className="text-sm text-gray-700">
-              {selectedCount} ligne(s) sélectionnée(s)
-            </span>
-          </div>
-
           <div className="contents">
             {table.getHeaderGroups().map((headerGroup, groupIndex) =>
               headerGroup.headers.map((header, index) => {
