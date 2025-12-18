@@ -227,5 +227,16 @@ export const useTableauPilotage = () => {
     getRowId: (row) => row.id,
   });
 
-  return { table, fichesSelectionneesIds: Object.keys(rowSelection) };
+  const maxObjectifs = fichesEvaluation.reduce(
+    (max, fiche) => Math.max(max, fiche.objectifs.length),
+    0,
+  );
+
+  return {
+    table,
+    fichesSelectionneesIds: Object.keys(rowSelection),
+    criteres,
+    maxObjectifs,
+    ETAPES,
+  };
 };
