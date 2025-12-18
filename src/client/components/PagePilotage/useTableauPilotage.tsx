@@ -1,15 +1,12 @@
 import {
   createColumnHelper,
   getCoreRowModel,
+  getGroupedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
 import { useMemo, useState } from "react";
 import { $Enums } from "@prisma/client";
 import { pagePilotage } from "@/components/PagePilotage/PagePilotageServerSideContext";
-import { BadgeFicheEtape } from "@/components/_commons/BadgeFicheEtape/BadgeFicheEtape";
-import { Icone } from "@/components/_commons/Icone";
-import { LockIcon } from "@/components/_commons/Icones/LockIcon";
-import { LockUnlockIcon } from "@/components/_commons/Icones/LockUnlockIcon";
 
 type FicheEvaluationRow = {
   id: string;
@@ -29,7 +26,26 @@ type FicheEvaluationRow = {
 
 const columnHelper = createColumnHelper<FicheEvaluationRow>();
 
-const ETAPES: { key: $Enums.etape_evaluation_enum; label: string }[] = [
+const columns = [
+  columnHelper.display({
+    id: "select",
+    header: "",
+    cell: ({ row }) => (
+      <input
+        checked={row.getIsSelected()}
+        className="cursor-pointer"
+        disabled={!row.getCanSelect()}
+        onChange={row.getToggleSelectedHandler()}
+        type="checkbox"
+      />
+    ),
+  }),
+  columnHelper.accessor("rattachementGroupe", {
+    id: "rattachementGroupe",
+  }),
+];
+
+export const ETAPES: { key: $Enums.etape_evaluation_enum; label: string }[] = [
   { key: "AUTO_EVALUATION", label: "ÉVAL" },
   { key: "CONSOLIDATION", label: "APPR" },
   { key: "INSTRUCTION", label: "INSTR" },
@@ -55,170 +71,14 @@ export const useTableauPilotage = () => {
     }));
   }, [fichesEvaluation]);
 
-  const columns = useMemo(() => {
-    const stickyColumns = [
-      columnHelper.display({
-        id: "select",
-        header: "",
-        cell: ({ row }) => (
-          <input
-            checked={row.getIsSelected()}
-            className="cursor-pointer"
-            disabled={!row.getCanSelect()}
-            onChange={row.getToggleSelectedHandler()}
-            type="checkbox"
-          />
-        ),
-        size: 45,
-        meta: {
-          positioning: {
-            sticky: "left",
-            stickyOffset: 0,
-          },
-        },
-      }),
-      columnHelper.accessor("readOnly", {
-        id: "statut",
-        header: "",
-        cell: (info) => (
-          <div className="text-center text-xl">
-            {info.getValue() ? (
-              <Icone className="h-4 w-4" icone={LockIcon} />
-            ) : (
-              <Icone className="h-4 w-4" icone={LockUnlockIcon} />
-            )}
-          </div>
-        ),
-        size: 50,
-        meta: {
-          positioning: {
-            sticky: "left",
-            stickyOffset: 45,
-          },
-        },
-      }),
-      columnHelper.accessor("etapeCourante", {
-        id: "etape",
-        header: "Étape",
-        cell: (info) => <BadgeFicheEtape etape={info.getValue()} />,
-        size: 150,
-        meta: {
-          positioning: {
-            sticky: "left",
-            stickyOffset: 93,
-          },
-        },
-      }),
-      columnHelper.accessor("rattachementCode", {
-        id: "code",
-        header: "Code",
-        cell: (info) => (
-          <div className="font-mono text-sm whitespace-nowrap">
-            {info.getValue()}
-          </div>
-        ),
-        size: 120,
-        meta: {
-          positioning: {
-            sticky: "left",
-            stickyOffset: 164,
-          },
-        },
-      }),
-      columnHelper.accessor("rattachementLibelle", {
-        id: "libelle",
-        header: "Territoire",
-        cell: (info) => (
-          <div className="font-semibold whitespace-nowrap">
-            {info.getValue()}
-          </div>
-        ),
-        size: 250,
-        meta: {
-          positioning: {
-            sticky: "left",
-            stickyOffset: 255,
-          },
-        },
-      }),
-    ];
-
-    const critereColumns = criteres.map((critere) =>
-      columnHelper.group({
-        id: `critere-${critere.id}`,
-        header: () => (
-          <div className="text-xs font-medium flex flex-col items-center">
-            <div className="bg-blue-50 text-blue-700 px-2 py-1 rounded mb-1 inline-block">
-              Critère
-            </div>
-            <div>{critere.libelle}</div>
-          </div>
-        ),
-        columns: ETAPES.map((etape, index) =>
-          columnHelper.display({
-            id: `critere-${critere.id}-${etape.key}`,
-            header: etape.label,
-            cell: (info) => {
-              const note =
-                info.row.original.evaluationsParCritereEtEtape[critere.id]?.[
-                  etape.key
-                ];
-              return <div className="text-center">{note ?? "-"}</div>;
-            },
-            size: 100,
-            meta: {
-              positioning: {
-                lastInGroup: index === ETAPES.length - 1,
-              },
-            },
-          }),
-        ),
-      }),
-    );
-
-    const MAX_OBJECTIFS = fichesEvaluation.reduce(
-      (max, fiche) => Math.max(max, fiche.objectifs.length),
-      0,
-    );
-    const objectifColumns = Array.from(
-      { length: MAX_OBJECTIFS },
-      (_, objectifIndex) =>
-        columnHelper.group({
-          id: `objectif-${objectifIndex + 1}`,
-          header: () => (
-            <div className="text-xs font-medium flex flex-col items-center">
-              <div className="bg-green-50 text-green-700 px-2 py-1 rounded mb-1 inline-block">
-                Objectif {objectifIndex + 1}
-              </div>
-            </div>
-          ),
-          columns: ETAPES.map((etape, index) =>
-            columnHelper.display({
-              id: `objectif-${objectifIndex + 1}-${etape.key}`,
-              header: etape.label,
-              cell: (info) => {
-                const objectif = info.row.original.objectifs[objectifIndex];
-                const note = objectif?.evaluations[etape.key];
-                return <div className="text-center">{note ?? "-"}</div>;
-              },
-              size: 100,
-              meta: {
-                positioning: {
-                  lastInGroup: index === ETAPES.length - 1,
-                },
-              },
-            }),
-          ),
-        }),
-    );
-
-    return [...stickyColumns, ...critereColumns, ...objectifColumns];
-  }, [criteres]);
-
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
+    getGroupedRowModel: getGroupedRowModel(),
+    initialState: {
+      grouping: ["rattachementGroupe"],
+    },
     state: {
       rowSelection,
     },

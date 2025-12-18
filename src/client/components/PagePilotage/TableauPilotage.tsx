@@ -1,5 +1,8 @@
-import { Fragment } from "react";
-import { useTableauPilotage } from "@/components/PagePilotage/useTableauPilotage";
+import { Fragment, PropsWithChildren, ReactNode } from "react";
+import {
+  ETAPES,
+  useTableauPilotage,
+} from "@/components/PagePilotage/useTableauPilotage";
 import { clsxm } from "@/utils/clsxm";
 import { LegendeTableauPilotage } from "@/components/PagePilotage/LegendeTableauPilotage";
 import { MenuActionTableauPilotage } from "@/components/PagePilotage/MenuActionTableauPilotage";
@@ -7,6 +10,44 @@ import { BadgeFicheEtape } from "@/components/_commons/BadgeFicheEtape/BadgeFich
 import { Icone } from "@/components/_commons/Icone";
 import { LockIcon } from "@/components/_commons/Icones/LockIcon";
 import { LockUnlockIcon } from "@/components/_commons/Icones/LockUnlockIcon";
+
+function HeaderGroup<T>({
+  label,
+  items,
+  children,
+}: {
+  label: string;
+  items: T[];
+  children: (item: T) => ReactNode;
+}) {
+  return (
+    <div
+      className="grid gap-0 grid-cols-subgrid border !border-black"
+      style={{ gridColumn: `span ${items.length}` }}
+    >
+      <div className="col-span-full text-center font-bold p-2 border-b !border-black">
+        {label}
+      </div>
+      {items.map(children)}
+    </div>
+  );
+}
+
+const HeaderCell = ({ children }: PropsWithChildren) => (
+  <div className="text-sm border-r !border-black last:!border-0">
+    <div className="p-2 font-medium flex flex-col items-center border-b !border-black ">
+      <div className="line-clamp-1">{children}</div>
+    </div>
+
+    <div className="grid grid-cols-3">
+      {ETAPES.map((etape) => (
+        <div className="text-sm whitespace-nowrap text-center p-2" key={etape.key}>
+          {etape.label}
+        </div>
+      ))}
+    </div>
+  </div>
+);
 
 export const TableauPilotage = () => {
   const { table, fichesSelectionneesIds, criteres, maxObjectifs, ETAPES } =
@@ -59,247 +100,113 @@ export const TableauPilotage = () => {
         >
           <div />
 
-          {/* Critères group headers */}
-          <div
-            className="grid gap-0 grid-cols-subgrid border !border-2 !border-red-500"
-            style={{ gridColumn: `span ${criteres.length}` }}
+          <HeaderGroup items={criteres} label="Manière de servir">
+            {(critere) => (
+              <HeaderCell key={`critere-header-${critere.id}`}>
+                {critere.libelle}
+              </HeaderCell>
+            )}
+          </HeaderGroup>
+
+          <HeaderGroup
+            items={Array.from({ length: maxObjectifs }).map((_, index) => ({
+              index,
+            }))}
+            label="Objectifs individuels"
           >
-            <div className="col-span-full">Manière de servir</div>
-            {criteres.map((critere) => (
-              <div
-                className="px-4 py-3 text-left text-sm"
-                key={`critere-header-${critere.id}`}
-              >
-                <div className="text-xs font-medium flex flex-col items-center">
-                  <div className="bg-blue-50 text-blue-700 px-2 py-1 rounded mb-1 inline-block">
-                    Critère
-                  </div>
-                  <div>{critere.libelle}</div>
-                </div>
-
-                <div className="grid grid-cols-3">
-                  {ETAPES.map((etape) => (
-                    <div
-                      className="px-4 py-3 text-left text-sm whitespace-nowrap"
-                      key={etape.key}
-                    >
-                      {etape.label}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Objectifs group headers */}
-          <div
-            className="grid gap-0 grid-cols-subgrid  border !border-2 !border-blue-500"
-            style={{ gridColumn: `span ${maxObjectifs}` }}
-          >
-            <div className="col-span-full">Objectifs individuels</div>
-            {[...Array(maxObjectifs)].map((_, index) => (
-              <div
-                className="px-4 py-3 text-left text-sm"
-                key={`objectif-header-${index}`}
-              >
-                <div className="text-xs font-medium flex flex-col items-center">
-                  <div className="bg-green-50 text-green-700 px-2 py-1 rounded mb-1 inline-block">
-                    Objectif {index + 1}
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-3">
-                  {ETAPES.map((etape) => (
-                    <div
-                      className="px-4 py-3 text-left text-sm whitespace-nowrap"
-                      key={etape.key}
-                    >
-                      {etape.label}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
+            {(objectif) => (
+              <HeaderCell key={`objectif-header-${objectif.index}`}>
+                Objectif {objectif.index}
+              </HeaderCell>
+            )}
+          </HeaderGroup>>
 
           {/* Data Rows */}
-          {table.getRowModel().rows.map((row, rowIndex) => {
-            const fiche = row.original;
-            const previousRow = table.getRowModel().rows[rowIndex - 1];
-            const isNewGroup =
-              previousRow == null ||
-              previousRow.original.rattachementGroupe !==
-                fiche.rattachementGroupe;
+          {table.getRowModel().rows.map((rowGroup) => {
+            const ficheGroup = rowGroup.original;
 
-            const spanObjectifs = maxObjectifs - fiche.objectifs.length;
             return (
-              <Fragment key={row.id}>
-                {isNewGroup ? (
-                  <div className="col-span-full">Nom region groupe</div>
-                ) : null}
+              <Fragment key={rowGroup.id}>
+                <div className="col-span-full">
+                  {ficheGroup.rattachementGroupe}
+                </div>
 
-                <div>en tete ligne</div>
+                <div className="grid grid-cols-subgrid border !border-2 !border-red-500">
+                  {rowGroup.subRows.map((row) => {
+                    const fiche = row.original;
+                    return (
+                      <div key={fiche.id}>{fiche.rattachementLibelle}</div>
+                    );
+                  })}
+                </div>
 
-                {criteres.map((critere) => (
-                  <div key={critere.id}>crit</div>
-                ))}
+                <div
+                  className="grid grid-cols-subgrid border !border-2 !border-green-500"
+                  style={{ gridColumn: `span ${criteres.length}` }}
+                >
+                  {criteres.map((critere) => {
+                    return (
+                      <>
+                        {rowGroup.subRows.map((row) => {
+                          const fiche = row.original;
+                          return (
+                            <div className="grid grid-cols-3" key={fiche.id}>
+                              {ETAPES.map((etape) => {
+                                const evaluation =
+                                  row.original.evaluationsParCritereEtEtape[
+                                    critere.id
+                                  ]?.[etape.key];
 
-                {fiche.objectifs.map((objectif) => (
-                  <div key={objectif.id}>obj</div>
-                ))}
+                                return (
+                                  <div
+                                    className="px-4 py-3 text-left text-sm whitespace-nowrap"
+                                    key={etape.key}
+                                  >
+                                    {evaluation ?? "-"}
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          );
+                        })}
+                      </>
+                    );
+                  })}
+                </div>
 
-                {spanObjectifs > 0 && (
-                  <div
-                    style={{
-                      gridColumn: `span ${spanObjectifs}`,
-                    }}
-                  />
-                )}
+                <div
+                  className="grid grid-cols-subgrid border !border-2 !border-blue-500"
+                  style={{ gridColumn: `span ${maxObjectifs}` }}
+                >
+                  {Array.from({ length: maxObjectifs }).map((_, index) => {
+                    return (
+                      <>
+                        {rowGroup.subRows.map((row) => {
+                          const fiche = row.original;
+                          const objectif = row.original.objectifs[index];
+
+                          return (
+                            <div className="grid grid-cols-3" key={fiche.id}>
+                              {ETAPES.map((etape) => {
+                                const evaluation =
+                                  objectif?.evaluations[etape.key];
+                                return (
+                                  <div
+                                    className="px-4 py-3 text-left text-sm whitespace-nowrap"
+                                    key={etape.key}
+                                  >
+                                    {evaluation ?? "-"}
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          );
+                        })}
+                      </>
+                    );
+                  })}
+                </div>
               </Fragment>
-            );
-
-            return (
-              <div className="contents group" key={row.id}>
-                {/* Checkbox */}
-                <div
-                  className={clsxm(
-                    "px-4 py-3 border-gray-200 text-sm text-gray-900 bg-white group-hover:bg-gray-50 transition-colors border-b border-gray-100",
-                    {
-                      "border-t": isNewGroup,
-                    },
-                  )}
-                  style={{
-                    position: "sticky",
-                    left: 0,
-                  }}
-                >
-                  <input
-                    checked={row.getIsSelected()}
-                    className="cursor-pointer"
-                    disabled={!row.getCanSelect()}
-                    onChange={row.getToggleSelectedHandler()}
-                    type="checkbox"
-                  />
-                </div>
-
-                {/* Lock Icon */}
-                <div
-                  className={clsxm(
-                    "px-4 py-3 border-gray-200 text-sm text-gray-900 bg-white group-hover:bg-gray-50 transition-colors border-b border-gray-100",
-                    {
-                      "border-t": isNewGroup,
-                    },
-                  )}
-                  style={{
-                    position: "sticky",
-                    left: 45,
-                  }}
-                >
-                  <div className="text-center text-xl">
-                    {fiche.readOnly ? (
-                      <Icone className="h-4 w-4" icone={LockIcon} />
-                    ) : (
-                      <Icone className="h-4 w-4" icone={LockUnlockIcon} />
-                    )}
-                  </div>
-                </div>
-
-                {/* Etape Badge */}
-                <div
-                  className={clsxm(
-                    "px-4 py-3 border-gray-200 text-sm text-gray-900 bg-white group-hover:bg-gray-50 transition-colors border-b border-gray-100",
-                    {
-                      "border-t": isNewGroup,
-                    },
-                  )}
-                  style={{
-                    position: "sticky",
-                    left: 93,
-                  }}
-                >
-                  <BadgeFicheEtape etape={fiche.etapeCourante} />
-                </div>
-
-                {/* Code */}
-                <div
-                  className={clsxm(
-                    "px-4 py-3 border-gray-200 text-sm text-gray-900 bg-white group-hover:bg-gray-50 transition-colors border-b border-gray-100",
-                    {
-                      "border-t": isNewGroup,
-                    },
-                  )}
-                  style={{
-                    position: "sticky",
-                    left: 164,
-                  }}
-                >
-                  <div className="font-mono text-sm whitespace-nowrap">
-                    {fiche.rattachementCode}
-                  </div>
-                </div>
-
-                {/* Territoire */}
-                <div
-                  className={clsxm(
-                    "px-4 py-3 border-gray-200 text-sm text-gray-900 bg-white group-hover:bg-gray-50 transition-colors border-b border-gray-100",
-                    {
-                      "border-t": isNewGroup,
-                    },
-                  )}
-                  style={{
-                    position: "sticky",
-                    left: 255,
-                  }}
-                >
-                  <div className="font-semibold whitespace-nowrap">
-                    {fiche.rattachementLibelle}
-                  </div>
-                </div>
-
-                {/* Critères evaluations */}
-                {criteres.map((critere) =>
-                  ETAPES.map((etape) => {
-                    const note =
-                      fiche.evaluationsParCritereEtEtape[critere.id]?.[
-                        etape.key
-                      ];
-                    return (
-                      <div
-                        className={clsxm(
-                          "px-4 py-3 border-gray-200 text-sm text-gray-900 bg-white group-hover:bg-gray-50 transition-colors border-b border-gray-100",
-                          {
-                            "border-t": isNewGroup,
-                          },
-                        )}
-                        key={`critere-cell-${critere.id}-${etape.key}`}
-                      >
-                        <div className="text-center">{note ?? "-"}</div>
-                      </div>
-                    );
-                  }),
-                )}
-
-                {/* Objectifs evaluations */}
-                {[...Array(maxObjectifs)].map((_, objectifIndex) => {
-                  const objectif = fiche.objectifs[objectifIndex];
-                  return ETAPES.map((etape) => {
-                    const note = objectif?.evaluations[etape.key];
-                    return (
-                      <div
-                        className={clsxm(
-                          "px-4 py-3 border-gray-200 text-sm text-gray-900 bg-white group-hover:bg-gray-50 transition-colors border-b border-gray-100",
-                          {
-                            "border-t": isNewGroup,
-                          },
-                        )}
-                        key={`objectif-cell-${objectifIndex}-${etape.key}`}
-                      >
-                        <div className="text-center">{note ?? "-"}</div>
-                      </div>
-                    );
-                  });
-                })}
-              </div>
             );
           })}
         </div>
