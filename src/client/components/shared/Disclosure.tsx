@@ -22,6 +22,7 @@ export const Disclosure = ({
           >
             {trigger}
             <svg
+              aria-hidden="true"
               className="w-4 h-4 transition-transform duration-200 ease-in-out group-data-[state=open]:rotate-180"
               fill="none"
               stroke="currentColor"
