@@ -30,9 +30,9 @@ type FicheEvaluationRow = {
 const columnHelper = createColumnHelper<FicheEvaluationRow>();
 
 const ETAPES: { key: $Enums.etape_evaluation_enum; label: string }[] = [
-  { key: "AUTO_EVALUATION", label: "Auto-évaluation" },
-  { key: "CONSOLIDATION", label: "Consolidation" },
-  { key: "INSTRUCTION", label: "Instruction" },
+  { key: "AUTO_EVALUATION", label: "ÉVAL" },
+  { key: "CONSOLIDATION", label: "APPR" },
+  { key: "INSTRUCTION", label: "INSTR" },
 ];
 
 export const useTableauPilotage = () => {

@@ -1,3 +1,4 @@
+import { Fragment } from "react";
 import { useTableauPilotage } from "@/components/PagePilotage/useTableauPilotage";
 import { clsxm } from "@/utils/clsxm";
 import { LegendeTableauPilotage } from "@/components/PagePilotage/LegendeTableauPilotage";
@@ -13,17 +14,15 @@ export const TableauPilotage = () => {
 
   const selectedCount = fichesSelectionneesIds.length;
 
-  const stickyColumnWidths = [45, 50, 150, 120, 250];
-
   const gridTemplateColumns = [
-    ...stickyColumnWidths.map((w) => `${w}px`),
-    ...Array(criteres.length * 3)
+    "350px",
+    ...Array(criteres.length)
       .fill(0)
-      .map(() => "100px"),
-    ...Array(maxObjectifs * 3)
+      .map(() => "170px"),
+    ...Array(maxObjectifs)
       .fill(0)
-      .map(() => "100px"),
-  ].join(" ");
+      .map(() => "170px"),
+  ];
 
   return (
     <div className="space-y-4">
@@ -53,48 +52,23 @@ export const TableauPilotage = () => {
         </div>
 
         <div
-          className="w-full"
+          className="w-full grid gap-4"
           style={{
-            display: "grid",
-            gridTemplateColumns,
+            gridTemplateColumns: gridTemplateColumns.join(" "),
           }}
         >
-          {/* Header Row 1: Critères and Objectifs groups */}
-          <div className="contents">
-            {/* Sticky columns headers - first row */}
-            {[...Array(5)].map((_, index) => (
-              <div
-                className="px-4 py-3 text-left text-sm"
-                key={`header-sticky-${index}`}
-                style={{
-                  position: "sticky",
-                  top: 52,
-                  left:
-                    index === 0
-                      ? 0
-                      : index === 1
-                        ? 45
-                        : index === 2
-                          ? 93
-                          : index === 3
-                            ? 164
-                            : 255,
-                  zIndex: 30,
-                }}
-              />
-            ))}
+          <div />
 
-            {/* Critères group headers */}
+          {/* Critères group headers */}
+          <div
+            className="grid gap-0 grid-cols-subgrid border !border-2 !border-red-500"
+            style={{ gridColumn: `span ${criteres.length}` }}
+          >
+            <div className="col-span-full">Manière de servir</div>
             {criteres.map((critere) => (
               <div
                 className="px-4 py-3 text-left text-sm"
                 key={`critere-header-${critere.id}`}
-                style={{
-                  gridColumn: "span 3",
-                  position: "sticky",
-                  top: 52,
-                  zIndex: 20,
-                }}
               >
                 <div className="text-xs font-medium flex flex-col items-center">
                   <div className="bg-blue-50 text-blue-700 px-2 py-1 rounded mb-1 inline-block">
@@ -102,118 +76,50 @@ export const TableauPilotage = () => {
                   </div>
                   <div>{critere.libelle}</div>
                 </div>
+
+                <div className="grid grid-cols-3">
+                  {ETAPES.map((etape) => (
+                    <div
+                      className="px-4 py-3 text-left text-sm whitespace-nowrap"
+                      key={etape.key}
+                    >
+                      {etape.label}
+                    </div>
+                  ))}
+                </div>
               </div>
             ))}
+          </div>
 
-            {/* Objectifs group headers */}
+          {/* Objectifs group headers */}
+          <div
+            className="grid gap-0 grid-cols-subgrid  border !border-2 !border-blue-500"
+            style={{ gridColumn: `span ${maxObjectifs}` }}
+          >
+            <div className="col-span-full">Objectifs individuels</div>
             {[...Array(maxObjectifs)].map((_, index) => (
               <div
                 className="px-4 py-3 text-left text-sm"
                 key={`objectif-header-${index}`}
-                style={{
-                  gridColumn: "span 3",
-                  position: "sticky",
-                  top: 52,
-                  zIndex: 20,
-                }}
               >
                 <div className="text-xs font-medium flex flex-col items-center">
                   <div className="bg-green-50 text-green-700 px-2 py-1 rounded mb-1 inline-block">
                     Objectif {index + 1}
                   </div>
                 </div>
+
+                <div className="grid grid-cols-3">
+                  {ETAPES.map((etape) => (
+                    <div
+                      className="px-4 py-3 text-left text-sm whitespace-nowrap"
+                      key={etape.key}
+                    >
+                      {etape.label}
+                    </div>
+                  ))}
+                </div>
               </div>
             ))}
-          </div>
-
-          {/* Header Row 2: Etape labels */}
-          <div className="contents">
-            {/* Sticky columns headers - second row */}
-            <div
-              className="px-4 py-3 text-left text-sm"
-              style={{
-                position: "sticky",
-                top: 104,
-                left: 0,
-                zIndex: 30,
-              }}
-            />
-            <div
-              className="px-4 py-3 text-left text-sm"
-              style={{
-                position: "sticky",
-                top: 104,
-                left: 45,
-                zIndex: 30,
-              }}
-            />
-            <div
-              className="px-4 py-3 text-left text-sm"
-              style={{
-                position: "sticky",
-                top: 104,
-                left: 93,
-                zIndex: 30,
-              }}
-            >
-              Étape
-            </div>
-            <div
-              className="px-4 py-3 text-left text-sm"
-              style={{
-                position: "sticky",
-                top: 104,
-                left: 164,
-                zIndex: 30,
-              }}
-            >
-              Code
-            </div>
-            <div
-              className="px-4 py-3 text-left text-sm"
-              style={{
-                position: "sticky",
-                top: 104,
-                left: 255,
-                zIndex: 30,
-              }}
-            >
-              Territoire
-            </div>
-
-            {/* Etapes for each critère */}
-            {criteres.map((critere) =>
-              ETAPES.map((etape) => (
-                <div
-                  className="px-4 py-3 text-left text-sm"
-                  key={`critere-etape-${critere.id}-${etape.key}`}
-                  style={{
-                    position: "sticky",
-                    top: 104,
-                    zIndex: 20,
-                  }}
-                >
-                  {etape.label}
-                </div>
-              )),
-            )}
-
-            {/* Etapes for each objectif */}
-            {[...Array(maxObjectifs)].map((_, index) =>
-              ETAPES.map((etape) => (
-                <div
-                  className="px-4 py-3 text-left text-sm"
-                  key={`objectif-etape-${index}-${etape.key}`}
-                  style={{
-                    position: "sticky",
-                    top: 104,
-                    zIndex: 20,
-                  }}
-                >
-                  {etape.label}
-                </div>
-              )),
-            )}
           </div>
 
           {/* Data Rows */}
@@ -221,10 +127,36 @@ export const TableauPilotage = () => {
             const fiche = row.original;
             const previousRow = table.getRowModel().rows[rowIndex - 1];
             const isNewGroup =
-              rowIndex > 0 &&
-              previousRow &&
+              previousRow == null ||
               previousRow.original.rattachementGroupe !==
                 fiche.rattachementGroupe;
+
+            const spanObjectifs = maxObjectifs - fiche.objectifs.length;
+            return (
+              <Fragment key={row.id}>
+                {isNewGroup ? (
+                  <div className="col-span-full">Nom region groupe</div>
+                ) : null}
+
+                <div>en tete ligne</div>
+
+                {criteres.map((critere) => (
+                  <div key={critere.id}>crit</div>
+                ))}
+
+                {fiche.objectifs.map((objectif) => (
+                  <div key={objectif.id}>obj</div>
+                ))}
+
+                {spanObjectifs > 0 && (
+                  <div
+                    style={{
+                      gridColumn: `span ${spanObjectifs}`,
+                    }}
+                  />
+                )}
+              </Fragment>
+            );
 
             return (
               <div className="contents group" key={row.id}>
