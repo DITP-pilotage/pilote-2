@@ -29,12 +29,12 @@ export const ListePhaseEvaluation = () => {
 
             <p className="!mb-1">
               Vous trouverez ci-dessous une synthèse des résultats retenus sur
-              chacune des composantes et l’avancement de vos appréciations.
+              chacune des composantes et l'avancement de vos appréciations.
             </p>
 
             <p className="!mb-1">
-              Les tuiles “Objectifs individuels” (respectivement “Manière de
-              servir”) vous donnent accès à votre espace d’appréciation filtré :
+              Les tuiles "Objectifs individuels” (respectivement "Manière de
+              servir”) vous donnent accès à votre espace d'appréciation filtré :
             </p>
 
             <ul className="!mt-0 !mb-4">
