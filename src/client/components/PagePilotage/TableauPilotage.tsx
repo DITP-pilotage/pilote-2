@@ -232,7 +232,7 @@ export const TableauPilotage = () => {
                   </div>
 
                   <div className="grow bg-black text-white text-center p-2 font-bold">
-                    {ficheGroup.rattachementGroupe}
+                    {ficheGroup.rattachementLibelle}
                   </div>
                 </div>
 
