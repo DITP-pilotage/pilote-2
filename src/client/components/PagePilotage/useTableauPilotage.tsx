@@ -27,19 +27,6 @@ export type FicheEvaluationRow = {
 const columnHelper = createColumnHelper<FicheEvaluationRow>();
 
 const columns = [
-  columnHelper.display({
-    id: "select",
-    header: "",
-    cell: ({ row }) => (
-      <input
-        checked={row.getIsSelected()}
-        className="cursor-pointer"
-        disabled={!row.getCanSelect()}
-        onChange={row.getToggleSelectedHandler()}
-        type="checkbox"
-      />
-    ),
-  }),
   columnHelper.accessor("rattachementGroupe", {
     id: "rattachementGroupe",
   }),

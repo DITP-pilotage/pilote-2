@@ -111,6 +111,11 @@ function EvaluationsBlock<T>({
   );
 }
 
+function afficherRattachementCode(code: string) {
+  if (code.startsWith("REG-")) return code;
+  return code.replace("DEPT-", "");
+}
+
 export const TableauPilotage = () => {
   const { table, fichesSelectionneesIds, criteres, maxObjectifs } =
     useTableauPilotage();
@@ -243,6 +248,13 @@ export const TableauPilotage = () => {
                           type="checkbox"
                         />
 
+                        <div className="p-1">
+                          <Icone
+                            className="h-4 w-4"
+                            icone={fiche.readOnly ? LockIcon : LockUnlockIcon}
+                          />
+                        </div>
+
                         <div className="grid grid-cols-3 items-center grow">
                           <div>
                             <BadgeEtape
@@ -252,7 +264,7 @@ export const TableauPilotage = () => {
                           </div>
 
                           <span className="font-semibold text-center">
-                            {fiche.rattachementCode}
+                            {afficherRattachementCode(fiche.rattachementCode)}
                           </span>
 
                           <span className="font-semibold">

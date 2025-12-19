@@ -8,17 +8,17 @@ import { SuccessIcon } from "@/components/_commons/Icones/SuccessIcon";
 const VARIANTS = {
   [$Enums.etape_evaluation_enum.AUTO_EVALUATION]: {
     label: "Auto-évaluation",
-    labelShort: "Éval",
+    labelShort: "Éval.",
     icone: QuillPen1Icon,
   },
   [$Enums.etape_evaluation_enum.CONSOLIDATION]: {
     label: "Appréciation",
-    labelShort: "Appr",
+    labelShort: "Appr.",
     icone: SuccessIcon,
   },
   [$Enums.etape_evaluation_enum.INSTRUCTION]: {
     label: "Instruction",
-    labelShort: "Instr",
+    labelShort: "Instr.",
     icone: DraftPleineIcon,
   },
 };
