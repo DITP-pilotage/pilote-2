@@ -121,7 +121,7 @@ export const TableauPilotage = () => {
   const selectedCount = fichesSelectionneesIds.length;
 
   const gridTemplateColumns = [
-    "350px",
+    "380px",
     ...Array(criteres.length)
       .fill(0)
       .map(() => "170px"),

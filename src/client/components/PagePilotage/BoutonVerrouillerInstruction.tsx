@@ -1,4 +1,6 @@
 import { useModifierEtatFichesInstruction } from "@/components/PagePilotage/useModifierEtatFichesInstruction";
+import { Icone } from "@/components/_commons/Icone";
+import { LockIcon } from "@/components/_commons/Icones/LockIcon";
 
 export const BoutonVerrouillerInstruction = ({
   fichesSelectionneesIds,
@@ -15,11 +17,12 @@ export const BoutonVerrouillerInstruction = ({
 
   return (
     <button
-      className="fr-link text-left !text-xs"
+      className="fr-link text-left !text-xs !flex items-center gap-1"
       disabled={disabled}
       onClick={handleBloquerFiches}
       type="button"
     >
+      <Icone className="inline h-3 w-3" icone={LockIcon} />
       verouiller l'instruction
     </button>
   );

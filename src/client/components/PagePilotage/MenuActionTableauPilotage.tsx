@@ -41,7 +41,7 @@ export const MenuActionTableauPilotage = ({
   );
 
   return (
-    <div className="grid grid-cols-2 gap-1 p-2 sticky left-0 z-2 bg-white">
+    <div className="grid grid-cols-2 gap-1 p-4 sticky left-0 z-2 bg-white">
       <BoutonRetourAutoEvaluation
         disabled={!peutModifierLaConsolidationViaPilotage}
         fichesSelectionneesIds={fichesSelectionneesIds}
