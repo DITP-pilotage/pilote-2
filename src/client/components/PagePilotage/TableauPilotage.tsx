@@ -146,7 +146,7 @@ export const TableauPilotage = () => {
             gridTemplateColumns: gridTemplateColumns.join(" "),
           }}
         >
-          <div className="grid grid-cols-subgrid col-span-full sticky top-0 bg-white">
+          <div className="grid grid-cols-subgrid col-span-full sticky top-0 bg-white z-1">
             <div className="col-span-full px-4 py-4 flex items-center gap-2">
               <input
                 checked={table.getIsAllRowsSelected()}
@@ -207,7 +207,7 @@ export const TableauPilotage = () => {
 
             return (
               <Fragment key={rowGroup.id}>
-                <div className="flex mt-4 ">
+                <div className="flex mt-4 sticky left-0">
                   <div className="p-2 border-t border-l !border-black">
                     <input
                       checked={allSelected}
@@ -233,12 +233,12 @@ export const TableauPilotage = () => {
                   }}
                 />
 
-                <div className="grid grid-cols-subgrid border !border-black">
+                <div className="grid grid-cols-subgrid border !border-black sticky left-0 bg-white">
                   {rowGroup.subRows.map((row) => {
                     const fiche = row.original;
                     return (
                       <div
-                        className="flex items-center gap-2  border-b !border-black last:!border-none p-2"
+                        className="flex items-center gap-2 border-b !border-black last:!border-none p-2"
                         key={fiche.id}
                       >
                         <input
