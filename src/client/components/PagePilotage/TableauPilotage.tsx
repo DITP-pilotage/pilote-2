@@ -178,7 +178,7 @@ export const TableauPilotage = () => {
           >
             {(objectif) => (
               <HeaderCell key={`objectif-header-${objectif.index}`}>
-                Objectif {objectif.index}
+                Objectif {objectif.index + 1}
               </HeaderCell>
             )}
           </HeaderGroup>
