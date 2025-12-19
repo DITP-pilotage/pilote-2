@@ -2,14 +2,12 @@ import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next";
 import { getServerSession } from "next-auth/next";
 import { $Enums } from "@prisma/client";
 import Head from "next/head";
-import { useState } from "react";
 import assert from "node:assert";
 import { getContainer } from "@/server/dependances";
 import { authOptions } from "@/server/infrastructure/api/auth/[...nextauth]";
 import { configurationFeatureFlip } from "@/config";
 import { pageAppreciation } from "@/components/PageAppreciation/PageAppreciationServerSideContext";
 import { InformationEnteteAppreciation } from "@/components/PageAppreciation/InformationEnteteAppreciation";
-import { SelecteurPhaseAppreciation } from "@/components/PageAppreciation/SelecteurPhaseAppreciation";
 import { ListePhaseEvaluation } from "@/components/PageAppreciation/ListePhaseEvaluation";
 import { Disclosure } from "@/components/shared/Disclosure";
 
@@ -73,17 +71,13 @@ export default function PageAppreciation(
   const appreciationEnCours = nombreAppreciation > 0;
   const autoEvaluationEnCours = nombreAutoEvaluation > 0;
 
-  const statutInitial = appreciationTerminee
+  const statutCompletionAppreciation = appreciationTerminee
     ? "TERMINE"
     : appreciationEnCours
       ? "APPRECIATION_EN_COURS"
       : autoEvaluationEnCours
         ? "AUTO_EVAL_EN_COURS"
         : "PAS_DEBUTE";
-  const [statutCompletionAppreciation, setStatutCompletionAppreciation] =
-    useState<
-      "PAS_DEBUTE" | "AUTO_EVAL_EN_COURS" | "APPRECIATION_EN_COURS" | "TERMINE"
-    >(statutInitial);
 
   return (
     <pageAppreciation.ServerSidePropsProvider value={props}>
@@ -99,10 +93,6 @@ export default function PageAppreciation(
                 <h1 className="!text-3xl font-bold mb-2">
                   Bienvenue sur votre espace d'appréciation 2025
                 </h1>
-                <SelecteurPhaseAppreciation
-                  onChange={setStatutCompletionAppreciation}
-                  value={statutCompletionAppreciation}
-                />
               </div>
               <h2 className="!text-2xl !text-primary">
                 L'appréciation par les préfets de région
