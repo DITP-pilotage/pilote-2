@@ -3,6 +3,7 @@ import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { $Enums } from "@prisma/client";
 import { ComponentProps, memo, useCallback, useEffect } from "react";
+import Link from "next/link";
 import { clsxm } from "@/utils/clsxm";
 import {
   Critere,
@@ -138,6 +139,45 @@ export const InnerTableauEvaluation = memo(function TableauEvaluation({
                 etape={etape}
                 titre={titre}
               />
+
+              <div>
+                <p>
+                  Renseignez ici les <strong>résultats quantitatifs</strong> et
+                  les <strong>commentaires</strong> pour chaque objectif
+                  individuel et manière de servir.
+                </p>
+
+                <p>
+                  Une fois un élément évalué,{" "}
+                  <strong>marquez-le comme traité</strong> pour suivre
+                  l'avancement de votre travail.
+                </p>
+
+                <p>
+                  Lorsque tous les éléments sont traités, vous pouvez
+                  <strong>transmettre les résultats</strong> pour létape
+                  suivante. Tant que les résultats ne sont pas transmis, ils
+                  sont visibles uniquement au niveau régional et modifiables à
+                  tout moment.
+                </p>
+
+                <p>
+                  Les options de <strong>filtrage</strong> vous permettent
+                  d'adapter la vue. Vous pouvez les utiliser pour travailler par
+                  territoire ou par item, selon votre préférence.
+                </p>
+
+                <p>
+                  Pour plus de détails, consultez le{" "}
+                  <Link
+                    href="/centre-aide-pilote-2/centre-aide-eval"
+                    target="_blank"
+                  >
+                    centre d'aide
+                  </Link>
+                  .
+                </p>
+              </div>
               <FiltresTableauEvaluation table={table} />
 
               <table className="table-fixed w-full border-collapse">
