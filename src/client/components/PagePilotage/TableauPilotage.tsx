@@ -9,11 +9,9 @@ import {
 import { clsxm } from "@/utils/clsxm";
 import { LegendeTableauPilotage } from "@/components/PagePilotage/LegendeTableauPilotage";
 import { MenuActionTableauPilotage } from "@/components/PagePilotage/MenuActionTableauPilotage";
-import { BadgeFicheEtape } from "@/components/_commons/BadgeFicheEtape/BadgeFicheEtape";
 import { Icone } from "@/components/_commons/Icone";
 import { LockIcon } from "@/components/_commons/Icones/LockIcon";
 import { LockUnlockIcon } from "@/components/_commons/Icones/LockUnlockIcon";
-import { BadgeType } from "@/components/Evaluation/BadgeType";
 import { BadgeEtape } from "@/components/Evaluation/BadgeEtape";
 
 function HeaderGroup<T>({
@@ -142,51 +140,53 @@ export const TableauPilotage = () => {
       </div>
 
       <div className="overflow-auto border border-gray-200 rounded-lg max-h-[75vh] text-xs">
-        <div className="sticky top-0 left-0 z-40 bg-white px-4 py-3 flex items-center gap-2 border-b border-gray-200">
-          <input
-            checked={table.getIsAllRowsSelected()}
-            className="cursor-pointer"
-            onChange={table.getToggleAllRowsSelectedHandler()}
-            ref={(el) => {
-              if (el) {
-                el.indeterminate = table.getIsSomeRowsSelected();
-              }
-            }}
-            type="checkbox"
-          />
-          <span className="text-gray-700">
-            {selectedCount} ligne(s) sélectionnée(s)
-          </span>
-        </div>
-
         <div
           className="w-full grid gap-x-4"
           style={{
             gridTemplateColumns: gridTemplateColumns.join(" "),
           }}
         >
-          <div />
+          <div className="grid grid-cols-subgrid col-span-full sticky top-0 bg-white">
+            <div className="col-span-full px-4 py-4 flex items-center gap-2">
+              <input
+                checked={table.getIsAllRowsSelected()}
+                className="cursor-pointer"
+                onChange={table.getToggleAllRowsSelectedHandler()}
+                ref={(el) => {
+                  if (el) {
+                    el.indeterminate = table.getIsSomeRowsSelected();
+                  }
+                }}
+                type="checkbox"
+              />
+              <span className="font-semibold">
+                {selectedCount} ligne(s) sélectionnée(s)
+              </span>
+            </div>
 
-          <HeaderGroup items={criteres} label="Manière de servir">
-            {(critere) => (
-              <HeaderCell key={`critere-header-${critere.id}`}>
-                {critere.libelle}
-              </HeaderCell>
-            )}
-          </HeaderGroup>
+            <div />
 
-          <HeaderGroup
-            items={Array.from({ length: maxObjectifs }).map((_, index) => ({
-              index,
-            }))}
-            label="Objectifs individuels"
-          >
-            {(objectif) => (
-              <HeaderCell key={`objectif-header-${objectif.index}`}>
-                Objectif {objectif.index + 1}
-              </HeaderCell>
-            )}
-          </HeaderGroup>
+            <HeaderGroup items={criteres} label="Manière de servir">
+              {(critere) => (
+                <HeaderCell key={`critere-header-${critere.id}`}>
+                  {critere.libelle}
+                </HeaderCell>
+              )}
+            </HeaderGroup>
+
+            <HeaderGroup
+              items={Array.from({ length: maxObjectifs }).map((_, index) => ({
+                index,
+              }))}
+              label="Objectifs individuels"
+            >
+              {(objectif) => (
+                <HeaderCell key={`objectif-header-${objectif.index}`}>
+                  Objectif {objectif.index + 1}
+                </HeaderCell>
+              )}
+            </HeaderGroup>
+          </div>
 
           {/* Data Rows */}
           {table.getRowModel().rows.map((rowGroup) => {
