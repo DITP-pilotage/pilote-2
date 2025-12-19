@@ -131,25 +131,18 @@ export class EvaluationsAdapter implements PDFContentAdapter {
     ];
   }
 
-  private mapFichesCadragePageForRattachement(
-    rattachement: Rattachement,
-  ): Content[] {
-    if (rattachement.objectifs.length === 0) {
+  private mapFichesCadragePage(): Content[] {
+    if (this.data.criteres.length === 0) {
       return [];
     }
 
     return [
       createPageHeader({
-        title: `${this.getTitlePrefix()} - Fiches de cadrage - Manière de servir - ${rattachement.code} - ${rattachement.libelle}`,
+        title: `${this.getTitlePrefix()} - Fiches de cadrage - Manière de servir`,
         pageBreak: "before",
       }),
       createTable(
-        rattachement.criteres.flatMap((evaluation) => {
-          const critere = this.data.criteres.find(
-            ({ id }) => id === evaluation.id,
-          );
-          if (!critere) return [];
-
+        this.data.criteres.flatMap((critere) => {
           return [
             [createSectionTitle({ title: critere.libelle })],
             [
@@ -186,8 +179,9 @@ export class EvaluationsAdapter implements PDFContentAdapter {
         ...this.mapCriteresPageForRattachement(rattachement, index === 0),
       );
       content.push(...this.mapObjectifsPageForRattachement(rattachement));
-      content.push(...this.mapFichesCadragePageForRattachement(rattachement));
     });
+
+    content.push(...this.mapFichesCadragePage());
 
     return content;
   }
