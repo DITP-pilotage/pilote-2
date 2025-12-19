@@ -1,9 +1,11 @@
 import { $Enums } from "@prisma/client";
+import { Fragment } from "react";
 import { Bouton } from "@/components/_commons/Bouton/Bouton";
 import { Icone } from "@/components/_commons/Icone";
 import { SaveIcon } from "@/components/_commons/Icones/SaveIcon";
 import { formaterDate } from "@/client/utils/date/date";
 import { Printer1Icon } from "@/components/_commons/Icones/Printer1Icon";
+import { pageEspaceAppreciation } from "@/components/PageEspaceAppreciation/PageEspaceAppreciationServerSideContext";
 import {
   useImprimerFichesAppreciation,
   useImprimerFichesInstruction,
@@ -22,6 +24,10 @@ export const HeaderTableauEvaluation = ({
 }) => {
   const imprimerAppreciation = useImprimerFichesAppreciation();
   const imprimerInstruction = useImprimerFichesInstruction();
+  const { rattachements } = pageEspaceAppreciation.useServerSidePropsContext();
+  const regions = rattachements.filter(
+    (rattachement) => !rattachement.code.startsWith("DEPT-"),
+  );
 
   const handleImprimer = () => {
     if (etape === $Enums.etape_evaluation_enum.CONSOLIDATION) {
@@ -33,7 +39,18 @@ export const HeaderTableauEvaluation = ({
 
   return (
     <header className="flex justify-between items-end border-b !border-dsfr-blue-france-sun-113 p-6">
-      <h1 className="!text-2xl !mb-0 !text-primary">{titre}</h1>
+      <div>
+        <h1 className="!text-2xl !mb-0 !text-primary">{titre}</h1>
+        <div className="mt-3">
+          de la région et des départements de :{" "}
+          {regions.map((region, i) => (
+            <Fragment key={region.code}>
+              <strong>{region.libelle}</strong>
+              {i < regions.length - 1 && ", "}
+            </Fragment>
+          ))}
+        </div>
+      </div>
       <div className="flex flex-col items-end gap-1">
         {!estEnLectureSeule && (
           <Bouton
