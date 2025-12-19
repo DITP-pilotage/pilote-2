@@ -138,28 +138,43 @@ export const TableauPilotage = () => {
             gridTemplateColumns: gridTemplateColumns.join(" "),
           }}
         >
-          <div className="grid grid-cols-subgrid col-span-full sticky top-0 bg-white z-1">
-            <div className="col-span-full px-4 py-4 flex items-center gap-2 sticky left-0 bg-white z-2">
-              <input
-                checked={table.getIsAllRowsSelected()}
-                className="cursor-pointer"
-                onChange={table.getToggleAllRowsSelectedHandler()}
-                ref={(el) => {
-                  if (el) {
-                    el.indeterminate = table.getIsSomeRowsSelected();
-                  }
-                }}
-                type="checkbox"
-              />
-              <span className="font-semibold">
-                {selectedCount} ligne(s) sélectionnée(s)
-              </span>
-            </div>
+          {/* Header Row 1: Checkbox and Selection Count */}
+          <div className="px-4 py-2 flex items-center gap-2 sticky left-0 top-0 bg-white z-10">
+            <input
+              checked={table.getIsAllRowsSelected()}
+              className="cursor-pointer"
+              onChange={table.getToggleAllRowsSelectedHandler()}
+              ref={(el) => {
+                if (el) {
+                  el.indeterminate = table.getIsSomeRowsSelected();
+                }
+              }}
+              type="checkbox"
+            />
+            <span className="font-semibold">
+              {selectedCount} ligne(s) sélectionnée(s)
+            </span>
+          </div>
 
+          <div
+            className="sticky top-0 bg-white z-1"
+            style={{ gridColumn: `span ${gridTemplateColumns.length - 1}` }}
+          />
+
+          {/* Header Row 2: Actions and Column Headers */}
+          <div className="sticky left-0 bg-white z-10" style={{ top: "32px" }}>
             <MenuActionTableauPilotage
               fichesSelectionneesIds={fichesSelectionneesIds}
             />
+          </div>
 
+          <div
+            className="grid grid-cols-subgrid sticky bg-white z-1"
+            style={{
+              gridColumn: `span ${criteres.length + maxObjectifs}`,
+              top: "32px",
+            }}
+          >
             <HeaderGroup items={criteres} label="Manière de servir">
               {(critere) => (
                 <HeaderCell key={`critere-header-${critere.id}`}>
