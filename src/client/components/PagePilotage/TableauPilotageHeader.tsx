@@ -92,10 +92,25 @@ export const TableauPilotageHeader = ({
       <div
         className="grid grid-cols-subgrid sticky bg-white z-1"
         style={{
-          gridColumn: `span ${criteres.length + maxObjectifs}`,
+          gridColumn: `span ${1 + criteres.length + maxObjectifs}`,
           top: "32px",
         }}
       >
+        <div
+          className="border !border-black grid grid-cols-subgrid"
+          style={{ gridColumn: 1 }}
+        >
+          <div className="col-span-full text-center font-bold p-2 border-b !border-black">
+            Objectifs collectifs
+          </div>
+          <div
+            className="p-2 font-medium flex flex-col items-center"
+            style={{ gridRow: "span 2" }}
+          >
+            <div className="line-clamp-1">Note</div>
+          </div>
+        </div>
+
         <HeaderGroup items={criteres} label="Manière de servir">
           {(critere) => (
             <HeaderCell key={`critere-header-${critere.id}`}>

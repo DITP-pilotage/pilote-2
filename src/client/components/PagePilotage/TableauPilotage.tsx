@@ -11,6 +11,7 @@ export const TableauPilotage = () => {
 
   const gridTemplateColumns = [
     "380px",
+    "170px",
     ...Array(criteres.length)
       .fill(0)
       .map(() => "170px"),
@@ -40,6 +41,20 @@ export const TableauPilotage = () => {
                 columnCount={gridTemplateColumns.length}
                 rowGroup={rowGroup}
               />
+
+              {/* TODO: insérer objectifs collectifs ici */}
+              <div
+                className="grid grid-cols-subgrid border-t border-l border-r !border-black"
+                style={{ gridColumn: "span 1" }}
+              >
+                {rowGroup.subRows.map((row) => {
+                  return (
+                    <div className="border-b !border-black" key={row.id}>
+                      todo
+                    </div>
+                  );
+                })}
+              </div>
 
               <EvaluationsBlock
                 getEvaluation={({ row, item, etape }) => {
