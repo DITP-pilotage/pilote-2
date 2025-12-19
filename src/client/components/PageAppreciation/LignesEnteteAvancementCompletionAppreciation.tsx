@@ -56,8 +56,7 @@ export const LignesEnteteAvancementCompletionAppreciation = ({
       )}
       {instructionEnCours > 0 && (
         <li className="!text-grey-200">
-          <b>Phase d'instruction</b> : {instructionEnCours} formulaire(s){" "}
-          {instructionEnCours === 1 ? "est passé" : "sont passés"} en
+          <b>Phase d'instruction</b> : {instructionEnCours} formulaire(s) en
           instruction
         </li>
       )}
