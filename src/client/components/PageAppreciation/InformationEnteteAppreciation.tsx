@@ -25,48 +25,57 @@ export const InformationEnteteAppreciation = ({
   }
   if (statutCompletionAppreciation === "APPRECIATION_EN_COURS") {
     return (
-      <div className="grid md:grid-cols-2 mt-10">
-        <div>
-          <h3 className="!text-primary !text-2xl !text-center !mb-4">
+      <div className="grid md:grid-cols-2 mt-10 gap-6">
+        <div className="bg-dsfr-grey-1000 border !border-b-2 !border-dsfr-grey-900 !border-b-primary py-6 px-8 flex flex-col gap-4">
+          <h3 className="!text-primary !text-2xl !mb-6">
             Renseigner les appréciations
           </h3>
-          <p className="!mb-0">
-            L'espace d'appréciation vous permet de saisir vos appréciations
-            (résultats quantitatifs et commentaires) :
-          </p>
-          <ul>
-            <li>
-              pour chaque objectif individuel et chaque axe de la manière de
-              servir,
-            </li>
-            <li>et pour tous les territoires de votre région.</li>
-          </ul>
-          <div className="flex justify-center pt-6 mt-auto">
+          <div className="flex flex-col gap-1">
+            <p className="!mb-0">
+              L'espace d'appréciation vous permet de saisir vos appréciations
+              (résultats quantitatifs et commentaires) :
+            </p>
+            <ul className="!m-0">
+              <li>
+                pour chaque objectif individuel et chaque axe de la manière de
+                servir,
+              </li>
+              <li>et pour tous les territoires de votre région.</li>
+            </ul>
+          </div>
+          <div className="mt-auto">
             <Lien
+              className="!w-full !justify-center"
               href="appreciation/espace-appreciation"
-              label="Accéder à mon espace d'appréciation"
+              label="Accéder à l'espace d'appréciation"
               variant="button"
             />
           </div>
         </div>
 
-        <div>
-          <h3 className="!text-primary !text-2xl !text-center !mb-4">
+        <div className="bg-dsfr-grey-1000 border !border-b-2 !border-dsfr-grey-900 !border-b-primary py-6 px-8 flex flex-col gap-4">
+          <h3 className="!text-primary !text-2xl !mb-6">
             Transmettre les appréciations
           </h3>
-          <p className="!mb-0">
-            À tout moment, vous pouvez transmettre vos appréciations afin
-            qu'elles soient instruites par les administrations centrales.
-          </p>
-          <p className="!mb-0">
-            Le parcours ci-dessous vous permet de choisir les territoires dont
-            vous souhaitez transmettre les appréciations. À ce titre, vous
-            pouvez transmettre vos appréciations en plusieurs fois.
-          </p>
+          <div className="flex flex-col gap-1">
+            <p className="!mb-0">
+              À tout moment, vous pouvez transmettre vos appréciations afin
+              qu'elles soient instruites par les administrations centrales.
+            </p>
+            <p className="!mb-0">
+              Le parcours ci-dessous vous permet de choisir les territoires dont
+              vous souhaitez transmettre les appréciations. À ce titre, vous
+              pouvez transmettre vos appréciations en plusieurs fois.
+            </p>
+          </div>
 
-          <div className="flex justify-center pt-6 mt-auto">
+          <div className="mt-auto">
             <ModaleTransmissionDITP fichesAppreciation={fiches}>
-              <Bouton label="Transmettre à la DITP" variant="primary" />
+              <Bouton
+                className="!w-full !justify-center"
+                label="Transmettre les appréciations"
+                variant="primary"
+              />
             </ModaleTransmissionDITP>
           </div>
         </div>
