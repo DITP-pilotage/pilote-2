@@ -93,7 +93,7 @@ export default function PageAppreciation(
         </Head>
 
         <div className="min-h-[60vh] py-12">
-          <div className="mx-auto w-full max-w-6xl">
+          <div className="mx-auto w-full max-w-6xl mb-8">
             <header className="mb-6">
               <div className="flex justify-between">
                 <h1 className="!text-3xl font-bold mb-2">
