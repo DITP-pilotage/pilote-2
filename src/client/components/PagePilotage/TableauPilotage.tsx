@@ -7,7 +7,6 @@ import {
   useTableauPilotage,
 } from "@/components/PagePilotage/useTableauPilotage";
 import { clsxm } from "@/utils/clsxm";
-import { LegendeTableauPilotage } from "@/components/PagePilotage/LegendeTableauPilotage";
 import { MenuActionTableauPilotage } from "@/components/PagePilotage/MenuActionTableauPilotage";
 import { Icone } from "@/components/_commons/Icone";
 import { LockIcon } from "@/components/_commons/Icones/LockIcon";
@@ -132,11 +131,7 @@ export const TableauPilotage = () => {
 
   return (
     <div className="space-y-4">
-      <div className="flex justify-between">
-        <LegendeTableauPilotage />
-      </div>
-
-      <div className="overflow-auto border border-gray-200 rounded-lg max-h-[75vh] text-xs">
+      <div className="text-xs">
         <div
           className="w-full grid gap-x-4"
           style={{
@@ -144,7 +139,7 @@ export const TableauPilotage = () => {
           }}
         >
           <div className="grid grid-cols-subgrid col-span-full sticky top-0 bg-white z-1">
-            <div className="col-span-full px-4 py-4 flex items-center gap-2">
+            <div className="col-span-full px-4 py-4 flex items-center gap-2 sticky left-0 bg-white z-2">
               <input
                 checked={table.getIsAllRowsSelected()}
                 className="cursor-pointer"
