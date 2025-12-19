@@ -97,7 +97,7 @@ export const CelluleEvaluation = ({
             return (
               <LigneEtapeEvaluation
                 commentaire={evalItem.evaluation.commentaire}
-                commentaireLabel="Appréciation"
+                commentaireLabel="Commentaire d'appréciation par le préfet de région"
                 commentaireName={commentaireName}
                 etape={evalItem.etape}
                 formulaireBloqueLabel="La DITP prend connaissance de vos appréciations sur ce formulaire. Le formulaire reste cependant consultable."
