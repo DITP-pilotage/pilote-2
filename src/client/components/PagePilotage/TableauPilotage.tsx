@@ -186,17 +186,32 @@ export const TableauPilotage = () => {
           {/* Data Rows */}
           {table.getRowModel().rows.map((rowGroup) => {
             const ficheGroup = rowGroup.original;
-            const groupChecked = false; // TODO
+            const allSelected = rowGroup.subRows.every((row) =>
+              row.getIsSelected(),
+            );
+            const someSelected = rowGroup.subRows.some((row) =>
+              row.getIsSelected(),
+            );
+            const groupIndeterminate = someSelected && !allSelected;
+
+            const handleGroupToggle = () => {
+              rowGroup.subRows.forEach((row) => {
+                row.toggleSelected(!allSelected);
+              });
+            };
 
             return (
               <Fragment key={rowGroup.id}>
                 <div className="flex mt-4 ">
                   <div className="p-2 border-t border-l !border-black">
                     <input
-                      checked={groupChecked}
+                      checked={allSelected}
                       className="cursor-pointer"
-                      onChange={() => {
-                        // TODO
+                      onChange={handleGroupToggle}
+                      ref={(el) => {
+                        if (el) {
+                          el.indeterminate = groupIndeterminate;
+                        }
                       }}
                       type="checkbox"
                     />
