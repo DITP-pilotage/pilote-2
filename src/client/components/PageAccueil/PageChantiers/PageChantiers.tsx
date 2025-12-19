@@ -121,9 +121,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
                         <JaugeDeProgression
                           couleur={chantiersSontArchives ? "gris" : "bleu"}
                           libellé="Taux d'avancement à échéance 2026"
-                          pourcentage={
-                            avancementsAgrégés?.global.moyenne || null
-                          }
+                          pourcentage={avancementsAgrégés?.global.moyenne}
                           taille="lg"
                         />
                       </div>
