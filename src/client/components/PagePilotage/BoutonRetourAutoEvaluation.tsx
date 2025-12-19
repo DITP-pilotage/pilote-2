@@ -1,4 +1,3 @@
-import { Bouton } from "@/components/_commons/Bouton/Bouton";
 import { useRetournerAutoEvaluation } from "./useRetournerAutoEvaluation";
 
 export const BoutonRetourAutoEvaluation = ({
@@ -15,12 +14,13 @@ export const BoutonRetourAutoEvaluation = ({
   };
 
   return (
-    <Bouton
-      className="!text-sm"
+    <button
+      className="fr-link text-left !text-xs"
       disabled={disabled}
-      label="Retour en auto-évaluation"
       onClick={handleRetournerAutoEvaluation}
-      variant="secondary"
-    />
+      type="button"
+    >
+      retour en auto-évaluation
+    </button>
   );
 };

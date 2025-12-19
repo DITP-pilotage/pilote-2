@@ -134,9 +134,6 @@ export const TableauPilotage = () => {
     <div className="space-y-4">
       <div className="flex justify-between">
         <LegendeTableauPilotage />
-        <MenuActionTableauPilotage
-          fichesSelectionneesIds={fichesSelectionneesIds}
-        />
       </div>
 
       <div className="overflow-auto border border-gray-200 rounded-lg max-h-[75vh] text-xs">
@@ -164,7 +161,9 @@ export const TableauPilotage = () => {
               </span>
             </div>
 
-            <div />
+            <MenuActionTableauPilotage
+              fichesSelectionneesIds={fichesSelectionneesIds}
+            />
 
             <HeaderGroup items={criteres} label="Manière de servir">
               {(critere) => (

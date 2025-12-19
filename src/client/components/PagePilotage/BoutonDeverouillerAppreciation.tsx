@@ -1,7 +1,6 @@
-import { Bouton } from "@/components/_commons/Bouton/Bouton";
 import { useModifierEtatFichesConsolidation } from "@/components/PagePilotage/useModifierEtatFichesConsolidation";
 
-export const BoutonDebloquerLaConsolidation = ({
+export const BoutonDeverouillerAppreciation = ({
   fichesSelectionneesIds,
   disabled,
 }: {
@@ -15,12 +14,13 @@ export const BoutonDebloquerLaConsolidation = ({
   };
 
   return (
-    <Bouton
-      className="!text-sm"
+    <button
+      className="fr-link text-left !text-xs"
       disabled={disabled}
-      label="Débloquer la consolidation"
       onClick={handleDebloquerFiches}
-      variant="secondary"
-    />
+      type="button"
+    >
+      déverouiller l'appréciation
+    </button>
   );
 };

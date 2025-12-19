@@ -1,4 +1,3 @@
-import { Bouton } from "@/components/_commons/Bouton/Bouton";
 import { useRetournerAppreciation } from "./useRetournerAppreciation";
 
 export const BoutonRetourAppreciation = ({
@@ -15,12 +14,13 @@ export const BoutonRetourAppreciation = ({
   };
 
   return (
-    <Bouton
-      className="!text-sm"
+    <button
+      className="fr-link text-left !text-xs"
       disabled={disabled}
-      label="Retour en appréciation"
       onClick={handleRetournerAppreciation}
-      variant="secondary"
-    />
+      type="button"
+    >
+      retour en appréciation
+    </button>
   );
 };

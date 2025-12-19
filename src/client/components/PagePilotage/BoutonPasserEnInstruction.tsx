@@ -1,4 +1,3 @@
-import { Bouton } from "@/components/_commons/Bouton/Bouton";
 import { usePasserALEtapeInstruction } from "@/components/PagePilotage/usePasserALEtapeInstruction";
 
 export const BoutonPasserEnInstruction = ({
@@ -15,12 +14,13 @@ export const BoutonPasserEnInstruction = ({
   };
 
   return (
-    <Bouton
-      className="!text-sm"
+    <button
+      className="fr-link text-left !text-xs"
       disabled={disabled}
-      label="Passer en instruction"
       onClick={handlePasserEnInstruction}
-      variant="secondary"
-    />
+      type="button"
+    >
+      passer en instruction
+    </button>
   );
 };

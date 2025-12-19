@@ -1,7 +1,6 @@
-import { Bouton } from "@/components/_commons/Bouton/Bouton";
 import { useModifierEtatFichesInstruction } from "@/components/PagePilotage/useModifierEtatFichesInstruction";
 
-export const BoutonBloquerInstruction = ({
+export const BoutonVerrouillerInstruction = ({
   fichesSelectionneesIds,
   disabled,
 }: {
@@ -15,12 +14,13 @@ export const BoutonBloquerInstruction = ({
   };
 
   return (
-    <Bouton
-      className="!text-sm"
+    <button
+      className="fr-link text-left !text-xs"
       disabled={disabled}
-      label="Bloquer l'instruction"
       onClick={handleBloquerFiches}
-      variant="secondary"
-    />
+      type="button"
+    >
+      verouiller l'instruction
+    </button>
   );
 };

@@ -1,7 +1,6 @@
-import { Bouton } from "@/components/_commons/Bouton/Bouton";
 import { useModifierEtatFichesInstruction } from "@/components/PagePilotage/useModifierEtatFichesInstruction";
 
-export const BoutonDebloquerInstruction = ({
+export const BoutonDeverrouillerInstruction = ({
   fichesSelectionneesIds,
   disabled,
 }: {
@@ -15,12 +14,13 @@ export const BoutonDebloquerInstruction = ({
   };
 
   return (
-    <Bouton
-      className="!text-sm"
+    <button
+      className="fr-link text-left !text-xs"
       disabled={disabled}
-      label="Débloquer l'instruction"
       onClick={handleDebloquerFiches}
-      variant="secondary"
-    />
+      type="button"
+    >
+      déverrouiller l'instruction
+    </button>
   );
 };
