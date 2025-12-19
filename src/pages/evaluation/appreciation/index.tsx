@@ -9,7 +9,11 @@ import { configurationFeatureFlip } from "@/config";
 import { pageAppreciation } from "@/components/PageAppreciation/PageAppreciationServerSideContext";
 import { InformationEnteteAppreciation } from "@/components/PageAppreciation/InformationEnteteAppreciation";
 import { ListePhaseEvaluation } from "@/components/PageAppreciation/ListePhaseEvaluation";
-import { Disclosure } from "@/components/shared/Disclosure";
+import {
+  Disclosure,
+  DisclosureIndicator,
+} from "@/components/shared/Disclosure";
+import { clsxm } from "@/utils/clsxm";
 
 export const getServerSideProps = async ({
   req,
@@ -104,7 +108,20 @@ export default function PageAppreciation(
                 des objectifs individuels et de la manière de servir des préfets
                 de département.
               </p>
-              <Disclosure trigger="En savoir plus">
+              <Disclosure
+                trigger={
+                  <button
+                    className={clsxm(
+                      "fr-link !inline-flex items-center gap-2 !font-normal",
+                      "!p-0 !mb-0",
+                    )}
+                    type="button"
+                  >
+                    En savoir plus
+                    <DisclosureIndicator />
+                  </button>
+                }
+              >
                 <div className="flex flex-col gap-4">
                   <div>
                     <p className="!mb-0">

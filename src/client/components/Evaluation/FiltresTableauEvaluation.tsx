@@ -102,8 +102,8 @@ const TagsFiltre = ({
 
 export function FiltresTableauEvaluation<T>({ table }: { table: Table<T> }) {
   return (
-    <section className="space-y-2 p-6">
-      <header className="flex items-baseline gap-2">
+    <section className="space-y-2 px-6 pb-6">
+      <header className="flex items-baseline gap-2 border-t pt-3">
         <Icone className="h-4.5 w-4.5 self-center" icone={FilterIcon} />
         <h2 className="!text-base !mb-0 !text-primary">Filtrage</h2>
         <Bouton

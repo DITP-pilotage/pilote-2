@@ -3,6 +3,7 @@ import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { $Enums } from "@prisma/client";
 import { ComponentProps, memo, useCallback, useEffect } from "react";
+import Link from "next/link";
 import { clsxm } from "@/utils/clsxm";
 import {
   Critere,
@@ -17,6 +18,12 @@ import { CriteresProvider } from "@/components/Evaluation/CriteresProvider";
 import { AutosaveProvider } from "@/components/Evaluation/AutosaveProvider";
 import { EtapeEvaluationProvider } from "@/components/Evaluation/EtapeEvaluationProvider";
 import { HeaderTableauEvaluation } from "@/components/Evaluation/HeaderTableauEvaluation";
+import {
+  Disclosure,
+  DisclosureIndicator,
+} from "@/components/shared/Disclosure";
+import { Icone } from "@/components/_commons/Icone";
+import { QuestionIcon } from "@/components/_commons/Icones/QuestionIcon";
 import {
   baseFormSchema,
   FormCommentaireName,
@@ -138,6 +145,60 @@ export const InnerTableauEvaluation = memo(function TableauEvaluation({
                 etape={etape}
                 titre={titre}
               />
+
+              <div className="px-6 py-3">
+                <Disclosure
+                  trigger={
+                    <button
+                      className="w-full !p-0 !text-base hover:!bg-transparent !text-primary flex items-center gap-2"
+                      type="button"
+                    >
+                      <Icone icone={QuestionIcon} /> Comment réaliser vos
+                      appréciations ?
+                      <DisclosureIndicator className="ml-auto" />
+                    </button>
+                  }
+                >
+                  <div className="flex flex-col gap-2 children:!mb-0">
+                    <p>
+                      Renseignez ici les <strong>résultats quantitatifs</strong>{" "}
+                      et les <strong>commentaires</strong> pour chaque objectif
+                      individuel et manière de servir.
+                    </p>
+
+                    <p>
+                      Une fois un élément évalué,{" "}
+                      <strong>marquez-le comme traité</strong> pour suivre
+                      l'avancement de votre travail.
+                    </p>
+
+                    <p>
+                      Lorsque tous les éléments sont traités, vous pouvez{" "}
+                      <strong>transmettre les résultats</strong> pour létape
+                      suivante. Tant que les résultats ne sont pas transmis, ils
+                      sont visibles uniquement au niveau régional et modifiables
+                      à tout moment.
+                    </p>
+
+                    <p>
+                      Les options de <strong>filtrage</strong> vous permettent
+                      d'adapter la vue. Vous pouvez les utiliser pour travailler
+                      par territoire ou par item, selon votre préférence.
+                    </p>
+
+                    <p>
+                      Pour plus de détails, consultez le{" "}
+                      <Link
+                        href="/centre-aide-pilote-2/centre-aide-eval"
+                        target="_blank"
+                      >
+                        centre d'aide
+                      </Link>
+                      .
+                    </p>
+                  </div>
+                </Disclosure>
+              </div>
               <FiltresTableauEvaluation table={table} />
 
               <table className="table-fixed w-full border-collapse">
