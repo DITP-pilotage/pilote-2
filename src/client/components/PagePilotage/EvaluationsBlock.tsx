@@ -24,11 +24,11 @@ export function EvaluationsBlock<T>({
       className="grid gap-0 grid-cols-subgrid border-l border-t !border-black"
       style={{ gridColumn: `span ${items.length}` }}
     >
-      {items.map((item) => (
-        <>
-          {rowGroup.subRows.map((row) => {
-            const fiche = row.original;
-            return (
+      {rowGroup.subRows.map((row) => {
+        const fiche = row.original;
+        return (
+          <>
+            {items.map((item) => (
               <div
                 className="grid grid-cols-3 border-b !border-black border-r"
                 key={fiche.id}
@@ -53,10 +53,10 @@ export function EvaluationsBlock<T>({
                   );
                 })}
               </div>
-            );
-          })}
-        </>
-      ))}
+            ))}
+          </>
+        );
+      })}
     </div>
   );
 }
