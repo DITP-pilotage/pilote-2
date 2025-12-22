@@ -1,4 +1,5 @@
-import { Bouton } from "@/components/_commons/Bouton/Bouton";
+import { Icone } from "@/components/_commons/Icone";
+import { QuillPenIcon } from "@/components/_commons/Icones/QuillPenIcon";
 import { useRetournerAutoEvaluation } from "./useRetournerAutoEvaluation";
 
 export const BoutonRetourAutoEvaluation = ({
@@ -15,12 +16,14 @@ export const BoutonRetourAutoEvaluation = ({
   };
 
   return (
-    <Bouton
-      className="!text-sm"
+    <button
+      className="fr-link text-left !text-xs !flex items-center gap-1"
       disabled={disabled}
-      label="Retour en auto-évaluation"
       onClick={handleRetournerAutoEvaluation}
-      variant="secondary"
-    />
+      type="button"
+    >
+      <Icone className="inline h-3 w-3" icone={QuillPenIcon} />
+      retour en auto-évaluation
+    </button>
   );
 };

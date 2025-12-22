@@ -1,5 +1,6 @@
-import { Bouton } from "@/components/_commons/Bouton/Bouton";
 import { usePasserALEtapeInstruction } from "@/components/PagePilotage/usePasserALEtapeInstruction";
+import { Icone } from "@/components/_commons/Icone";
+import { DraftPleineIcon } from "@/components/_commons/Icones/DraftPleineIcon";
 
 export const BoutonPasserEnInstruction = ({
   fichesSelectionneesIds,
@@ -15,12 +16,14 @@ export const BoutonPasserEnInstruction = ({
   };
 
   return (
-    <Bouton
-      className="!text-sm"
+    <button
+      className="fr-link text-left !text-xs !flex items-center gap-1"
       disabled={disabled}
-      label="Passer en instruction"
       onClick={handlePasserEnInstruction}
-      variant="secondary"
-    />
+      type="button"
+    >
+      <Icone className="inline h-3 w-3" icone={DraftPleineIcon} />
+      passer en instruction
+    </button>
   );
 };

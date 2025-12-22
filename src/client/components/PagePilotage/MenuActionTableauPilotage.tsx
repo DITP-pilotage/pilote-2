@@ -2,12 +2,12 @@ import { useMemo } from "react";
 import keyBy from "lodash.keyby";
 import { $Enums } from "@prisma/client";
 import { pagePilotage } from "@/components/PagePilotage/PagePilotageServerSideContext";
-import { BoutonPasserALaConsolidation } from "@/components/PagePilotage/BoutonPasserALaConsolidation";
-import { BoutonDebloquerLaConsolidation } from "@/components/PagePilotage/BoutonDebloquerLaConsolidation";
-import { BoutonBloquerLaConsolidation } from "@/components/PagePilotage/BoutonBloquerLaConsolidation";
+import { BoutonPasserAAppreciation } from "@/components/PagePilotage/BoutonPasserAAppreciation";
+import { BoutonDeverouillerAppreciation } from "@/components/PagePilotage/BoutonDeverouillerAppreciation";
+import { BoutonVerrouillerAppreciation } from "@/components/PagePilotage/BoutonVerrouillerAppreciation";
 import { BoutonPasserEnInstruction } from "@/components/PagePilotage/BoutonPasserEnInstruction";
-import { BoutonBloquerInstruction } from "@/components/PagePilotage/BoutonBloquerInstruction";
-import { BoutonDebloquerInstruction } from "@/components/PagePilotage/BoutonDebloquerInstruction";
+import { BoutonVerrouillerInstruction } from "@/components/PagePilotage/BoutonVerrouillerInstruction";
+import { BoutonDeverrouillerInstruction } from "@/components/PagePilotage/BoutonDeverrouillerInstruction";
 import { BoutonRetourAutoEvaluation } from "@/components/PagePilotage/BoutonRetourAutoEvaluation";
 import { BoutonRetourAppreciation } from "@/components/PagePilotage/BoutonRetourAppreciation";
 
@@ -41,49 +41,39 @@ export const MenuActionTableauPilotage = ({
   );
 
   return (
-    <div className="flex flex-col gap-3 px-3 py-2 rounded border border-gray-200">
-      <p className="!text-sm font-semibold !mb-0">
-        {selectedCount} ligne{selectedCount > 1 ? "s" : ""} sélectionné
-        {selectedCount > 1 ? "s" : ""}
-      </p>
-      <div className="flex flex-col gap-2">
-        <div className="flex gap-2">
-          <BoutonPasserALaConsolidation
-            disabled={!peutPasserALaConsolidation}
-            fichesSelectionneesIds={fichesSelectionneesIds}
-          />
-          <BoutonRetourAutoEvaluation
-            disabled={!peutModifierLaConsolidationViaPilotage}
-            fichesSelectionneesIds={fichesSelectionneesIds}
-          />
-          <BoutonDebloquerLaConsolidation
-            disabled={!peutModifierLaConsolidationViaPilotage}
-            fichesSelectionneesIds={fichesSelectionneesIds}
-          />
-          <BoutonBloquerLaConsolidation
-            disabled={!peutModifierLaConsolidationViaPilotage}
-            fichesSelectionneesIds={fichesSelectionneesIds}
-          />
-        </div>
-        <div className="flex gap-2">
-          <BoutonPasserEnInstruction
-            disabled={!peutModifierLaConsolidationViaPilotage}
-            fichesSelectionneesIds={fichesSelectionneesIds}
-          />
-          <BoutonRetourAppreciation
-            disabled={!peutModifierLInstructionViaPilotage}
-            fichesSelectionneesIds={fichesSelectionneesIds}
-          />
-          <BoutonBloquerInstruction
-            disabled={!peutModifierLInstructionViaPilotage}
-            fichesSelectionneesIds={fichesSelectionneesIds}
-          />
-          <BoutonDebloquerInstruction
-            disabled={!peutModifierLInstructionViaPilotage}
-            fichesSelectionneesIds={fichesSelectionneesIds}
-          />
-        </div>
-      </div>
+    <div className="grid grid-cols-2 gap-1 p-4 sticky left-0 z-2 bg-white">
+      <BoutonRetourAutoEvaluation
+        disabled={!peutModifierLaConsolidationViaPilotage}
+        fichesSelectionneesIds={fichesSelectionneesIds}
+      />
+      <BoutonVerrouillerAppreciation
+        disabled={!peutModifierLaConsolidationViaPilotage}
+        fichesSelectionneesIds={fichesSelectionneesIds}
+      />
+      <BoutonPasserAAppreciation
+        disabled={!peutPasserALaConsolidation}
+        fichesSelectionneesIds={fichesSelectionneesIds}
+      />
+      <BoutonDeverouillerAppreciation
+        disabled={!peutModifierLaConsolidationViaPilotage}
+        fichesSelectionneesIds={fichesSelectionneesIds}
+      />
+      <BoutonRetourAppreciation
+        disabled={!peutModifierLInstructionViaPilotage}
+        fichesSelectionneesIds={fichesSelectionneesIds}
+      />
+      <BoutonVerrouillerInstruction
+        disabled={!peutModifierLInstructionViaPilotage}
+        fichesSelectionneesIds={fichesSelectionneesIds}
+      />
+      <BoutonPasserEnInstruction
+        disabled={!peutModifierLaConsolidationViaPilotage}
+        fichesSelectionneesIds={fichesSelectionneesIds}
+      />
+      <BoutonDeverrouillerInstruction
+        disabled={!peutModifierLInstructionViaPilotage}
+        fichesSelectionneesIds={fichesSelectionneesIds}
+      />
     </div>
   );
 };

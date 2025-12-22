@@ -1,7 +1,8 @@
-import { Bouton } from "@/components/_commons/Bouton/Bouton";
 import { useModifierEtatFichesInstruction } from "@/components/PagePilotage/useModifierEtatFichesInstruction";
+import { Icone } from "@/components/_commons/Icone";
+import { LockUnlockIcon } from "@/components/_commons/Icones/LockUnlockIcon";
 
-export const BoutonDebloquerInstruction = ({
+export const BoutonDeverrouillerInstruction = ({
   fichesSelectionneesIds,
   disabled,
 }: {
@@ -15,12 +16,14 @@ export const BoutonDebloquerInstruction = ({
   };
 
   return (
-    <Bouton
-      className="!text-sm"
+    <button
+      className="fr-link text-left !text-xs !flex items-center gap-1"
       disabled={disabled}
-      label="Débloquer l'instruction"
       onClick={handleDebloquerFiches}
-      variant="secondary"
-    />
+      type="button"
+    >
+      <Icone className="inline h-3 w-3" icone={LockUnlockIcon} />
+      déverrouiller l'instruction
+    </button>
   );
 };

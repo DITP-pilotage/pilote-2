@@ -1,4 +1,5 @@
-import { Bouton } from "@/components/_commons/Bouton/Bouton";
+import { Icone } from "@/components/_commons/Icone";
+import { Success1Icon } from "@/components/_commons/Icones/Success1Icon";
 import { useRetournerAppreciation } from "./useRetournerAppreciation";
 
 export const BoutonRetourAppreciation = ({
@@ -15,12 +16,14 @@ export const BoutonRetourAppreciation = ({
   };
 
   return (
-    <Bouton
-      className="!text-sm"
+    <button
+      className="fr-link text-left !text-xs !flex items-center gap-1"
       disabled={disabled}
-      label="Retour en appréciation"
       onClick={handleRetournerAppreciation}
-      variant="secondary"
-    />
+      type="button"
+    >
+      <Icone className="inline h-3 w-3" icone={Success1Icon} />
+      retour en appréciation
+    </button>
   );
 };

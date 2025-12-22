@@ -8,23 +8,30 @@ import { SuccessIcon } from "@/components/_commons/Icones/SuccessIcon";
 const VARIANTS = {
   [$Enums.etape_evaluation_enum.AUTO_EVALUATION]: {
     label: "Auto-évaluation",
+    labelShort: "Éval.",
     icone: QuillPen1Icon,
   },
   [$Enums.etape_evaluation_enum.CONSOLIDATION]: {
     label: "Appréciation",
+    labelShort: "Appr.",
     icone: SuccessIcon,
   },
   [$Enums.etape_evaluation_enum.INSTRUCTION]: {
     label: "Instruction",
+    labelShort: "Instr.",
     icone: DraftPleineIcon,
   },
 };
 
 export const BadgeEtape = ({
   etapeCourante,
+  short = false,
 }: {
   etapeCourante: $Enums.etape_evaluation_enum;
+  short?: boolean;
 }) => {
+  const variant = VARIANTS[etapeCourante];
+  const label = short ? variant.labelShort : variant.label;
   return (
     <span
       className={clsxm(
@@ -36,14 +43,12 @@ export const BadgeEtape = ({
             etapeCourante === $Enums.etape_evaluation_enum.CONSOLIDATION,
           "bg-dsfr-green-emeraude-975 text-dsfr-green-emeraude-main-632":
             etapeCourante === $Enums.etape_evaluation_enum.INSTRUCTION,
+          uppercase: short,
         },
       )}
     >
-      <Icone
-        className="text-current h-4 w-4"
-        icone={VARIANTS[etapeCourante].icone}
-      />
-      <span className="line-clamp-1">{VARIANTS[etapeCourante].label}</span>
+      <Icone className="text-current h-4 w-4" icone={variant.icone} />
+      <span className="line-clamp-1">{label}</span>
     </span>
   );
 };

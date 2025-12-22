@@ -1,7 +1,8 @@
-import { Bouton } from "@/components/_commons/Bouton/Bouton";
 import { usePasserALaConsolidation } from "@/components/PagePilotage/usePasserALaConsolidation";
+import { Icone } from "@/components/_commons/Icone";
+import { SuccessIcon } from "@/components/_commons/Icones/SuccessIcon";
 
-export const BoutonPasserALaConsolidation = ({
+export const BoutonPasserAAppreciation = ({
   fichesSelectionneesIds,
   disabled,
 }: {
@@ -15,12 +16,14 @@ export const BoutonPasserALaConsolidation = ({
   };
 
   return (
-    <Bouton
-      className="!text-sm"
+    <button
+      className="fr-link text-left !text-xs !flex items-center gap-1"
       disabled={disabled}
-      label="Passer en consolidation"
       onClick={handlePasserALaConsolidation}
-      variant="secondary"
-    />
+      type="button"
+    >
+      <Icone className="inline h-3 w-3" icone={SuccessIcon} />
+      passer en appréciation
+    </button>
   );
 };

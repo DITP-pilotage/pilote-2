@@ -1,7 +1,8 @@
-import { Bouton } from "@/components/_commons/Bouton/Bouton";
 import { useModifierEtatFichesConsolidation } from "@/components/PagePilotage/useModifierEtatFichesConsolidation";
+import { Icone } from "@/components/_commons/Icone";
+import { LockIcon } from "@/components/_commons/Icones/LockIcon";
 
-export const BoutonBloquerLaConsolidation = ({
+export const BoutonVerrouillerAppreciation = ({
   fichesSelectionneesIds,
   disabled,
 }: {
@@ -15,12 +16,14 @@ export const BoutonBloquerLaConsolidation = ({
   };
 
   return (
-    <Bouton
-      className="!text-sm"
+    <button
+      className="fr-link text-left !text-xs !flex items-center gap-1"
       disabled={disabled}
-      label="Bloquer la consolidation"
       onClick={handleBloquerFiches}
-      variant="secondary"
-    />
+      type="button"
+    >
+      <Icone className="inline h-3 w-3" icone={LockIcon} />
+      vérouiller l'appréciation
+    </button>
   );
 };
