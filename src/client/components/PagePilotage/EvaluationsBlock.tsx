@@ -12,6 +12,7 @@ export function EvaluationsBlock<T extends { id: string | number }>({
   items,
   rowGroup,
   getEvaluation,
+  moyennes,
 }: {
   items: T[];
   rowGroup: Row<FicheEvaluationRow>;
@@ -20,11 +21,12 @@ export function EvaluationsBlock<T extends { id: string | number }>({
     row: Row<FicheEvaluationRow>;
     etape: $Enums.etape_evaluation_enum;
   }): number | null;
+  moyennes: Record<string, Record<string, number>>;
 }) {
   return (
     <div
       className="grid gap-0 grid-cols-subgrid border-l border-t !border-black"
-      style={{ gridColumn: `span ${items.length}` }}
+      style={{ gridColumn: `span ${items.length + 1}` }}
     >
       {rowGroup.subRows.map((row) => {
         const fiche = row.original;
@@ -77,6 +79,23 @@ export function EvaluationsBlock<T extends { id: string | number }>({
                 })}
               </div>
             ))}
+            <div className="grid grid-cols-3 border-b !border-black border-r">
+              {ETAPES.map((etape) => {
+                const moyenne =
+                  moyennes[fiche.rattachementCode]?.[etape.key] ?? null;
+                return (
+                  <div
+                    className={clsxm(
+                      "flex items-center justify-center text-center font-bold whitespace-nowrap",
+                      { "bg-dsfr-grey-925": moyenne == null },
+                    )}
+                    key={etape.key}
+                  >
+                    {moyenne != null ? moyenne.toFixed() : " "}
+                  </div>
+                );
+              })}
+            </div>
           </React.Fragment>
         );
       })}

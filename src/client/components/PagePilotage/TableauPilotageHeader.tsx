@@ -8,6 +8,36 @@ import {
 import { pagePilotage } from "@/components/PagePilotage/PagePilotageServerSideContext";
 import { useObjectifsCount } from "@/components/PagePilotage/useObjectifsCount";
 import { MenuActionTableauPilotage } from "@/components/PagePilotage/MenuActionTableauPilotage";
+import { clsxm } from "@/utils/clsxm";
+
+const HeaderCell = ({
+  children,
+  boldEtape,
+  className
+}: PropsWithChildren<{ boldEtape?: boolean, className?: string }>) => (
+  <div className="border-r !border-black last:!border-0">
+    <div className={clsxm(
+        "p-2 font-medium flex flex-col items-center border-b !border-black",
+        className,
+      )}
+    >
+      <div className="line-clamp-1">{children}</div>
+    </div>
+
+    <div className="grid grid-cols-3">
+      {ETAPES.map((etape) => (
+        <div
+          className={clsxm("whitespace-nowrap text-center p-2", {
+            "font-bold": boldEtape,
+          })}
+          key={etape.key}
+        >
+          {etape.label}
+        </div>
+      ))}
+    </div>
+  </div>
+);
 import { Icone } from "@/components/_commons/Icone";
 import { Bouton } from "@/components/_commons/Bouton/Bouton";
 import { ModaleFicheCadrage } from "@/components/Evaluation/ModaleFicheCadrage";
@@ -39,39 +69,18 @@ function HeaderGroup<T>({
   return (
     <div
       className="grid gap-0 grid-cols-subgrid border !border-black"
-      style={{ gridColumn: `span ${items.length}` }}
+      style={{ gridColumn: `span ${items.length + 1}` }}
     >
       <div className="col-span-full text-center font-bold p-2 border-b !border-black">
         {label}
       </div>
       {items.map(children)}
+      <HeaderCell boldEtape>
+        <span className="font-bold">Moyenne</span>
+      </HeaderCell>
     </div>
   );
 }
-
-const HeaderCell = ({
-  children,
-  className,
-}: PropsWithChildren<{ className?: string }>) => (
-  <div className="border-r !border-black last:!border-0">
-    <div
-      className={clsxm(
-        "p-2 font-medium flex flex-col items-center border-b !border-black",
-        className,
-      )}
-    >
-      <div className="line-clamp-1">{children}</div>
-    </div>
-
-    <div className="grid grid-cols-3">
-      {ETAPES.map((etape) => (
-        <div className="whitespace-nowrap text-center p-2" key={etape.key}>
-          {etape.label}
-        </div>
-      ))}
-    </div>
-  </div>
-);
 
 export const TableauPilotageHeader = ({
   table,
@@ -119,7 +128,7 @@ export const TableauPilotageHeader = ({
       <div
         className="grid grid-cols-subgrid sticky bg-white z-1"
         style={{
-          gridColumn: `span ${1 + criteres.length + maxObjectifs}`,
+          gridColumn: `span ${4 + criteres.length + maxObjectifs}`,
           top: "32px",
         }}
       >
@@ -173,6 +182,11 @@ export const TableauPilotageHeader = ({
               Objectif {objectif.index + 1}
             </HeaderCell>
           )}
+        </HeaderGroup>
+        <HeaderGroup items={[]} label="Synthèse">
+          {() => {
+            return undefined;
+          }}
         </HeaderGroup>
       </div>
     </>

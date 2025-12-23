@@ -1,5 +1,8 @@
 import { Fragment } from "react";
-import { useTableauPilotage } from "@/components/PagePilotage/useTableauPilotage";
+import {
+  ETAPES,
+  useTableauPilotage,
+} from "@/components/PagePilotage/useTableauPilotage";
 import { useObjectifsCount } from "@/components/PagePilotage/useObjectifsCount";
 import { TableauPilotageHeader } from "@/components/PagePilotage/TableauPilotageHeader";
 import { EnteteGroupeRattachement } from "@/components/PagePilotage/EnteteGroupeRattachement";
@@ -7,18 +10,25 @@ import { EvaluationsBlock } from "@/components/PagePilotage/EvaluationsBlock";
 import { clsxm } from "@/utils/clsxm";
 
 export const TableauPilotage = () => {
-  const { table, fichesSelectionneesIds, criteres } = useTableauPilotage();
+  const {
+    table,
+    fichesSelectionneesIds,
+    criteres,
+    moyennesCriteres,
+    moyennesObjectifs,
+  } = useTableauPilotage();
   const maxObjectifs = useObjectifsCount();
 
   const gridTemplateColumns = [
     "400px",
     "170px",
-    ...Array(criteres.length)
+    ...Array(criteres.length + 1)
       .fill(0)
       .map(() => "170px"),
-    ...Array(maxObjectifs)
+    ...Array(maxObjectifs + 1)
       .fill(0)
       .map(() => "170px"),
+    "170px",
   ];
 
   return (
@@ -74,6 +84,7 @@ export const TableauPilotage = () => {
                   ];
                 }}
                 items={criteres}
+                moyennes={moyennesCriteres}
                 rowGroup={rowGroup}
               />
 
@@ -86,8 +97,54 @@ export const TableauPilotage = () => {
                   id: index,
                   index,
                 }))}
+                moyennes={moyennesObjectifs}
                 rowGroup={rowGroup}
               />
+
+              <div
+                className="grid gap-0 grid-cols-subgrid border-l border-t !border-black"
+                style={{ gridColumn: "span 1" }}
+              >
+                {rowGroup.subRows.map((row) => {
+                  const fiche = row.original;
+                  return (
+                    <div
+                      className="grid grid-cols-3 border-b !border-black border-r"
+                      key={`${fiche.id}-${fiche.rattachementCode}`}
+                    >
+                      {ETAPES.map((etape) => {
+                        const rattachementCode = fiche.rattachementCode;
+                        const moyenneCritere =
+                          moyennesCriteres[rattachementCode]?.[etape.key];
+                        const moyenneObjectif =
+                          moyennesObjectifs[rattachementCode]?.[etape.key];
+                        const noteObjectifs = fiche.noteObjectifsCollectifs;
+
+                        const moyenne =
+                          moyenneCritere != null &&
+                          moyenneObjectif != null &&
+                          noteObjectifs != null
+                            ? moyenneCritere * 0.3 +
+                              moyenneObjectif * 0.4 +
+                              noteObjectifs * 0.3
+                            : null;
+
+                        return (
+                          <div
+                            className={clsxm(
+                              "flex items-center justify-center text-center font-bold whitespace-nowrap",
+                              { "bg-dsfr-grey-925": moyenne == null },
+                            )}
+                            key={etape.key}
+                          >
+                            {moyenne != null ? moyenne.toFixed() : " "}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  );
+                })}
+              </div>
             </Fragment>
           ))}
         </div>
