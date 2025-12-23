@@ -4,6 +4,7 @@ import { useObjectifsCount } from "@/components/PagePilotage/useObjectifsCount";
 import { TableauPilotageHeader } from "@/components/PagePilotage/TableauPilotageHeader";
 import { EnteteGroupeRattachement } from "@/components/PagePilotage/EnteteGroupeRattachement";
 import { EvaluationsBlock } from "@/components/PagePilotage/EvaluationsBlock";
+import { clsxm } from "@/utils/clsxm";
 
 export const TableauPilotage = () => {
   const { table, fichesSelectionneesIds, criteres } = useTableauPilotage();
@@ -42,15 +43,23 @@ export const TableauPilotage = () => {
                 rowGroup={rowGroup}
               />
 
-              {/* TODO: insérer objectifs collectifs ici */}
               <div
                 className="grid grid-cols-subgrid border-t border-l border-r !border-black"
                 style={{ gridColumn: "span 1" }}
               >
                 {rowGroup.subRows.map((row) => {
                   return (
-                    <div className="border-b !border-black" key={row.id}>
-                      todo
+                    <div
+                      className={clsxm(
+                        "border-b !border-black flex items-center justify-center font-bold",
+                        {
+                          "bg-dsfr-grey-925":
+                            row.original.noteObjectifsCollectifs == null,
+                        },
+                      )}
+                      key={row.id}
+                    >
+                      {row.original.noteObjectifsCollectifs}
                     </div>
                   );
                 })}

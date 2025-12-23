@@ -18,6 +18,10 @@ export class AfficherPilotageQuery {
       fichesEvaluation: fichesEvaluation.map((fiche) => {
         const rattachement = fiche.rattachement;
 
+        const noteObjectifsCollectifs = this.buldNoteObjectifsCollectifs(
+          fiche.chantiers_evaluation,
+        );
+
         const evaluationsParCritereEtEtape = this.buildEvaluationsMap(
           fiche.etape_evaluations,
           criteres.map((critere) => critere.id),
@@ -59,9 +63,37 @@ export class AfficherPilotageQuery {
           },
           evaluationsParCritereEtEtape,
           objectifs,
+          noteObjectifsCollectifs,
         };
       }),
     };
+  }
+
+  private buldNoteObjectifsCollectifs(
+    chantiersObjectifsCollectifs: {
+      maille: $Enums.Maille;
+      code_insee: string;
+      zone_id: string;
+      id: string;
+      territoire_code: string;
+      jalon: number;
+      taux_avancement: number | null;
+      date_calcul: Date;
+    }[],
+  ) {
+    const objectifsCollectifs =
+      chantiersObjectifsCollectifs.length > 0
+        ? chantiersObjectifsCollectifs.reduce(
+            (acc, chantier) => ({
+              total: acc.total + (chantier.taux_avancement ?? 0),
+              count: acc.count + (chantier.taux_avancement !== null ? 1 : 0),
+            }),
+            { total: 0, count: 0 },
+          )
+        : null;
+    return objectifsCollectifs && objectifsCollectifs.count > 0
+      ? Math.round(objectifsCollectifs.total / objectifsCollectifs.count)
+      : null;
   }
 
   private fetchFichesEvaluation() {
@@ -72,6 +104,7 @@ export class AfficherPilotageQuery {
             objectifs: { orderBy: { libelle: "asc" } },
           },
         },
+        chantiers_evaluation: true,
         etape_evaluations: {
           where: {
             type: {

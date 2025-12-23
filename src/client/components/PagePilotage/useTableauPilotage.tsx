@@ -22,6 +22,7 @@ export type FicheEvaluationRow = {
     libelle: string;
     evaluations: Record<string, number | null>;
   }>;
+  noteObjectifsCollectifs: number | null;
 };
 
 const columnHelper = createColumnHelper<FicheEvaluationRow>();
@@ -55,6 +56,7 @@ export const useTableauPilotage = () => {
       etapeCourante: fiche.etapeCourante,
       evaluationsParCritereEtEtape: fiche.evaluationsParCritereEtEtape,
       objectifs: fiche.objectifs,
+      noteObjectifsCollectifs: fiche.noteObjectifsCollectifs,
     }));
   }, [fichesEvaluation]);
 
