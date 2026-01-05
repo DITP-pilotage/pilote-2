@@ -31,7 +31,12 @@ const HeaderCell = ({
   children,
   boldEtape,
   className,
-}: PropsWithChildren<{ boldEtape?: boolean; className?: string }>) => (
+  isObjectif,
+}: PropsWithChildren<{
+  boldEtape?: boolean;
+  className?: string;
+  isObjectif?: boolean;
+}>) => (
   <div className="border-r !border-black last:!border-0">
     <div
       className={clsxm(
@@ -42,7 +47,13 @@ const HeaderCell = ({
       <div className="line-clamp-1">{children}</div>
     </div>
 
-    <div className="grid grid-cols-3">
+    <div
+      className={clsxm("grid ", {
+        "grid-cols-[30px_1fr_1fr_1fr]": isObjectif,
+        "grid-cols-3": !isObjectif,
+      })}
+    >
+      {isObjectif ? <div className="!border-r" /> : null}
       {ETAPES.map((etape) => (
         <div
           className={clsxm("whitespace-nowrap text-center p-2", {
@@ -178,7 +189,7 @@ export const TableauPilotageHeader = ({
           label="Objectifs individuels"
         >
           {(objectif) => (
-            <HeaderCell key={`objectif-header-${objectif.index}`}>
+            <HeaderCell isObjectif key={`objectif-header-${objectif.index}`}>
               Objectif {objectif.index + 1}
             </HeaderCell>
           )}

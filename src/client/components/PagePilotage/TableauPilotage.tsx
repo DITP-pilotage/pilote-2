@@ -90,6 +90,11 @@ export const TableauPilotage = () => {
                   const objectif = row.original.objectifs[item.index];
                   return objectif?.evaluations[etape];
                 }}
+                getNomObjectif={({ row, item }) => {
+                  const objectif = row.original.objectifs[item.index];
+                  return objectif?.libelle ?? "ND";
+                }}
+                isObjectif
                 getMoyenne={({ row, etape }) => {
                   return row.original.moyennesCriteres[etape];
                 }}
