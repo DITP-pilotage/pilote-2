@@ -29,9 +29,9 @@ export const BarreProgressionEvaluation = ({
               <Icone className="w-4 h-4" icone={LockIcon} />
             </Tooltip.Trigger>
             <Tooltip.Content>
-              La DITP prend connaissance de vos appréciations sur ce formulaire
-              et en a suspendu momentanément l'édition. Le formulaire reste
-              cependant consultable.
+              Les appréciations ont été transmises pour instruction en
+              administration centrale. Elles sont consultables mais plus
+              modifiables.
             </Tooltip.Content>
           </Tooltip.Root>
         ) : null}
