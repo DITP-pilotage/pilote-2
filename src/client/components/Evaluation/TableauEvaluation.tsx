@@ -143,6 +143,7 @@ export const InnerTableauEvaluation = memo(function TableauEvaluation({
                 dateDerniereModification={dateDerniereModification}
                 estEnLectureSeule={estEnLectureSeule}
                 etape={etape}
+                rattachements={rattachements}
                 titre={titre}
               />
 

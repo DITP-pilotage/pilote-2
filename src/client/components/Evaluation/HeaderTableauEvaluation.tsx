@@ -5,7 +5,7 @@ import { Icone } from "@/components/_commons/Icone";
 import { SaveIcon } from "@/components/_commons/Icones/SaveIcon";
 import { formaterDate } from "@/client/utils/date/date";
 import { Printer1Icon } from "@/components/_commons/Icones/Printer1Icon";
-import { pageEspaceAppreciation } from "@/components/PageEspaceAppreciation/PageEspaceAppreciationServerSideContext";
+import { Rattachement } from "@/server/evaluation/queries/types";
 import {
   useImprimerFichesAppreciation,
   useImprimerFichesInstruction,
@@ -16,15 +16,16 @@ export const HeaderTableauEvaluation = ({
   estEnLectureSeule,
   titre,
   etape,
+  rattachements,
 }: {
   titre: string;
   estEnLectureSeule: boolean;
   dateDerniereModification: string | null;
   etape: $Enums.etape_evaluation_enum;
+  rattachements: Rattachement[];
 }) => {
   const imprimerAppreciation = useImprimerFichesAppreciation();
   const imprimerInstruction = useImprimerFichesInstruction();
-  const { rattachements } = pageEspaceAppreciation.useServerSidePropsContext();
   const regions = rattachements.filter(
     (rattachement) => !rattachement.code.startsWith("DEPT-"),
   );
