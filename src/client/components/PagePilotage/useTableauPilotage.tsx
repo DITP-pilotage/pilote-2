@@ -23,6 +23,9 @@ export type FicheEvaluationRow = {
     evaluations: Record<string, number | null>;
   }>;
   noteObjectifsCollectifs: number | null;
+  moyennesCriteres: Record<string, number | null>;
+  moyennesObjectifs: Record<string, number | null>;
+  synthese: Record<string, number | null>;
 };
 
 const columnHelper = createColumnHelper<FicheEvaluationRow>();
@@ -81,6 +84,9 @@ export const useTableauPilotage = () => {
       evaluationsParCritereEtEtape: fiche.evaluationsParCritereEtEtape,
       objectifs: fiche.objectifs,
       noteObjectifsCollectifs: fiche.noteObjectifsCollectifs,
+      moyennesCriteres: fiche.moyennesCriteres,
+      moyennesObjectifs: fiche.moyennesObjectifs,
+      synthese: fiche.synthese,
     }));
   }, [fichesEvaluation]);
 
@@ -100,113 +106,9 @@ export const useTableauPilotage = () => {
     getRowId: (row) => row.id,
   });
 
-  const moyennesCriteres = useMemo<
-    Record<string, Record<string, number>>
-  >(() => {
-    const evaluationsCriteresAccumulees: Record<
-      string,
-      Record<string, number[]>
-    > = {};
-
-    table.getRowModel().rows.forEach((rowGroup) => {
-      rowGroup.subRows.forEach((row) => {
-        const fiche = row.original;
-        const rattachementCode = fiche.rattachementCode;
-
-        if (!evaluationsCriteresAccumulees[rattachementCode]) {
-          evaluationsCriteresAccumulees[rattachementCode] = {};
-        }
-
-        criteres.forEach((critere) => {
-          const evaluationsParEtape =
-            fiche.evaluationsParCritereEtEtape[critere.id];
-          if (evaluationsParEtape) {
-            Object.entries(evaluationsParEtape).forEach(
-              ([etape, evaluation]) => {
-                if (evaluation != null) {
-                  if (!evaluationsCriteresAccumulees[rattachementCode][etape]) {
-                    evaluationsCriteresAccumulees[rattachementCode][etape] = [];
-                  }
-                  evaluationsCriteresAccumulees[rattachementCode][etape].push(
-                    evaluation,
-                  );
-                }
-              },
-            );
-          }
-        });
-      });
-    });
-
-    const result: Record<string, Record<string, number>> = {};
-    Object.entries(evaluationsCriteresAccumulees).forEach(
-      ([rattachementCode, evaluationsParEtape]) => {
-        result[rattachementCode] = {};
-        Object.entries(evaluationsParEtape).forEach(([etape, values]) => {
-          const moyenne =
-            values.reduce((sum, val) => sum + val, 0) / values.length;
-          result[rattachementCode][etape] = moyenne;
-        });
-      },
-    );
-
-    return result;
-  }, [table, criteres]);
-
-  const moyennesObjectifs = useMemo<
-    Record<string, Record<string, number>>
-  >(() => {
-    const evaluationsObjectifsAccumulees: Record<
-      string,
-      Record<string, number[]>
-    > = {};
-
-    table.getRowModel().rows.forEach((rowGroup) => {
-      rowGroup.subRows.forEach((row) => {
-        const fiche = row.original;
-        const rattachementCode = fiche.rattachementCode;
-
-        if (!evaluationsObjectifsAccumulees[rattachementCode]) {
-          evaluationsObjectifsAccumulees[rattachementCode] = {};
-        }
-
-        fiche.objectifs.forEach((objectif) => {
-          Object.entries(objectif.evaluations).forEach(
-            ([etape, evaluation]) => {
-              if (evaluation != null) {
-                if (!evaluationsObjectifsAccumulees[rattachementCode][etape]) {
-                  evaluationsObjectifsAccumulees[rattachementCode][etape] = [];
-                }
-                evaluationsObjectifsAccumulees[rattachementCode][etape].push(
-                  evaluation,
-                );
-              }
-            },
-          );
-        });
-      });
-    });
-
-    const result: Record<string, Record<string, number>> = {};
-    Object.entries(evaluationsObjectifsAccumulees).forEach(
-      ([rattachementCode, evaluationsParEtape]) => {
-        result[rattachementCode] = {};
-        Object.entries(evaluationsParEtape).forEach(([etape, values]) => {
-          const moyenne =
-            values.reduce((sum, val) => sum + val, 0) / values.length;
-          result[rattachementCode][etape] = moyenne;
-        });
-      },
-    );
-
-    return result;
-  }, [table]);
-
   return {
     table,
     fichesSelectionneesIds: Object.keys(rowSelection),
     criteres,
-    moyennesCriteres,
-    moyennesObjectifs,
   };
 };

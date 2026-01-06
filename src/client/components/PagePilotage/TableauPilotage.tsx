@@ -10,22 +10,16 @@ import { EvaluationsBlock } from "@/components/PagePilotage/EvaluationsBlock";
 import { clsxm } from "@/utils/clsxm";
 
 export const TableauPilotage = () => {
-  const {
-    table,
-    fichesSelectionneesIds,
-    criteres,
-    moyennesCriteres,
-    moyennesObjectifs,
-  } = useTableauPilotage();
+  const { table, fichesSelectionneesIds, criteres } = useTableauPilotage();
   const maxObjectifs = useObjectifsCount();
 
   const gridTemplateColumns = [
     "400px",
     "170px",
-    ...Array(criteres.length + 1)
+    ...Array(criteres.length + 1) // Ajout d'une colonne pour les moyennes
       .fill(0)
       .map(() => "170px"),
-    ...Array(maxObjectifs + 1)
+    ...Array(maxObjectifs + 1) // Ajout d'une colonne pour les moyennes
       .fill(0)
       .map(() => "170px"),
     "170px",
@@ -83,8 +77,10 @@ export const TableauPilotage = () => {
                     etape
                   ];
                 }}
+                getMoyenne={({ row, etape }) => {
+                  return row.original.moyennesCriteres[etape];
+                }}
                 items={criteres}
-                moyennes={moyennesCriteres}
                 rowGroup={rowGroup}
               />
 
@@ -93,11 +89,13 @@ export const TableauPilotage = () => {
                   const objectif = row.original.objectifs[item.index];
                   return objectif?.evaluations[etape];
                 }}
+                getMoyenne={({ row, etape }) => {
+                  return row.original.moyennesCriteres[etape];
+                }}
                 items={Array.from({ length: maxObjectifs }).map((_, index) => ({
                   id: index,
                   index,
                 }))}
-                moyennes={moyennesObjectifs}
                 rowGroup={rowGroup}
               />
 
@@ -113,22 +111,7 @@ export const TableauPilotage = () => {
                       key={`${fiche.id}-${fiche.rattachementCode}`}
                     >
                       {ETAPES.map((etape) => {
-                        const rattachementCode = fiche.rattachementCode;
-                        const moyenneCritere =
-                          moyennesCriteres[rattachementCode]?.[etape.key];
-                        const moyenneObjectif =
-                          moyennesObjectifs[rattachementCode]?.[etape.key];
-                        const noteObjectifs = fiche.noteObjectifsCollectifs;
-
-                        const moyenne =
-                          moyenneCritere != null &&
-                          moyenneObjectif != null &&
-                          noteObjectifs != null
-                            ? moyenneCritere * 0.3 +
-                              moyenneObjectif * 0.4 +
-                              noteObjectifs * 0.3
-                            : null;
-
+                        const moyenne = fiche.synthese[etape.key];
                         return (
                           <div
                             className={clsxm(

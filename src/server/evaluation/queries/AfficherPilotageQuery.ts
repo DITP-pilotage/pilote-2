@@ -35,6 +35,26 @@ export class AfficherPilotageQuery {
           "critere",
         );
 
+        const moyennesCriteres = this.calculerMoyennes(
+          evaluationsParCritereEtEtape,
+        );
+
+        const evaluationsParObjectifEtEtape = this.buildEvaluationsMap(
+          fiche.etape_evaluations,
+          rattachement.objectifs.map((objectif) => objectif.id),
+          "objectif",
+        );
+
+        const moyennesObjectifs = this.calculerMoyennes(
+          evaluationsParObjectifEtEtape,
+        );
+
+        const synthese = this.calculerSynthese(
+          moyennesCriteres,
+          moyennesObjectifs,
+          noteObjectifsCollectifs,
+        );
+
         const objectifs = rattachement.objectifs.map((objectif) => {
           const evaluationsParEtape = this.buildEvaluationsMap(
             fiche.etape_evaluations,
@@ -69,6 +89,9 @@ export class AfficherPilotageQuery {
             ordre: rattachement.ordre,
           },
           evaluationsParCritereEtEtape,
+          moyennesCriteres,
+          moyennesObjectifs,
+          synthese,
           objectifs,
           noteObjectifsCollectifs,
         };
@@ -198,5 +221,74 @@ export class AfficherPilotageQuery {
     });
 
     return map;
+  }
+
+  private calculerMoyennes(
+    evaluationsMap: Record<
+      string,
+      Record<$Enums.etape_evaluation_enum, number | null>
+    >,
+  ): Record<$Enums.etape_evaluation_enum, number | null> {
+    const etapes: $Enums.etape_evaluation_enum[] = [
+      $Enums.etape_evaluation_enum.AUTO_EVALUATION,
+      $Enums.etape_evaluation_enum.CONSOLIDATION,
+      $Enums.etape_evaluation_enum.INSTRUCTION,
+    ];
+
+    const moyennes: Record<$Enums.etape_evaluation_enum, number | null> = {
+      AUTO_EVALUATION: null,
+      CONSOLIDATION: null,
+      INSTRUCTION: null,
+    };
+
+    etapes.forEach((etape) => {
+      const notes = Object.values(evaluationsMap)
+        .map((evaluations) => evaluations[etape])
+        .filter((note): note is number => note !== null);
+
+      if (notes.length > 0) {
+        const somme = notes.reduce((acc, note) => acc + note, 0);
+        moyennes[etape] = Math.round(somme / notes.length);
+      }
+    });
+
+    return moyennes;
+  }
+
+  private calculerSynthese(
+    moyennesCriteres: Record<$Enums.etape_evaluation_enum, number | null>,
+    moyennesObjectifs: Record<$Enums.etape_evaluation_enum, number | null>,
+    noteObjectifsCollectifs: number | null,
+  ): Record<$Enums.etape_evaluation_enum, number | null> {
+    const etapes: $Enums.etape_evaluation_enum[] = [
+      $Enums.etape_evaluation_enum.AUTO_EVALUATION,
+      $Enums.etape_evaluation_enum.CONSOLIDATION,
+      $Enums.etape_evaluation_enum.INSTRUCTION,
+    ];
+
+    const synthese: Record<$Enums.etape_evaluation_enum, number | null> = {
+      AUTO_EVALUATION: null,
+      CONSOLIDATION: null,
+      INSTRUCTION: null,
+    };
+
+    etapes.forEach((etape) => {
+      const moyenneCritere = moyennesCriteres[etape];
+      const moyenneObjectif = moyennesObjectifs[etape];
+
+      if (
+        moyenneCritere !== null &&
+        moyenneObjectif !== null &&
+        noteObjectifsCollectifs !== null
+      ) {
+        synthese[etape] = Math.round(
+          0.3 * moyenneCritere +
+            0.4 * moyenneObjectif +
+            0.3 * noteObjectifsCollectifs,
+        );
+      }
+    });
+
+    return synthese;
   }
 }

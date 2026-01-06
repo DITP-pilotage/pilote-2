@@ -12,7 +12,7 @@ export function EvaluationsBlock<T extends { id: string | number }>({
   items,
   rowGroup,
   getEvaluation,
-  moyennes,
+  getMoyenne,
 }: {
   items: T[];
   rowGroup: Row<FicheEvaluationRow>;
@@ -21,7 +21,10 @@ export function EvaluationsBlock<T extends { id: string | number }>({
     row: Row<FicheEvaluationRow>;
     etape: $Enums.etape_evaluation_enum;
   }): number | null;
-  moyennes: Record<string, Record<string, number>>;
+  getMoyenne(options: {
+    row: Row<FicheEvaluationRow>;
+    etape: $Enums.etape_evaluation_enum;
+  }): number | null;
 }) {
   return (
     <div
@@ -81,8 +84,7 @@ export function EvaluationsBlock<T extends { id: string | number }>({
             ))}
             <div className="grid grid-cols-3 border-b !border-black border-r">
               {ETAPES.map((etape) => {
-                const moyenne =
-                  moyennes[fiche.rattachementCode]?.[etape.key] ?? null;
+                const moyenne = getMoyenne({ row, etape: etape.key });
                 return (
                   <div
                     className={clsxm(
