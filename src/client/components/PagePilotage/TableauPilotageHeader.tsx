@@ -7,6 +7,11 @@ import {
 import { pagePilotage } from "@/components/PagePilotage/PagePilotageServerSideContext";
 import { useObjectifsCount } from "@/components/PagePilotage/useObjectifsCount";
 import { MenuActionTableauPilotage } from "@/components/PagePilotage/MenuActionTableauPilotage";
+import { Icone } from "@/components/_commons/Icone";
+import { PencilIcon } from "@/components/_commons/Icones/PencilIcon";
+import { BoutonAfficherFicheCadrage } from "@/components/Evaluation/BoutonAfficherFicheCadrage";
+import { Bouton } from "@/components/_commons/Bouton/Bouton";
+import { ModaleFicheCadrage } from "@/components/Evaluation/ModaleFicheCadrage";
 
 function HeaderGroup<T>({
   label,
@@ -114,7 +119,9 @@ export const TableauPilotageHeader = ({
         <HeaderGroup items={criteres} label="Manière de servir">
           {(critere) => (
             <HeaderCell key={`critere-header-${critere.id}`}>
-              {critere.libelle}
+              <ModaleFicheCadrage critere={critere}>
+                <Bouton label={critere.libelle} />
+              </ModaleFicheCadrage>
             </HeaderCell>
           )}
         </HeaderGroup>
