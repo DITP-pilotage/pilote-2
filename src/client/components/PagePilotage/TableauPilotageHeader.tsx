@@ -136,8 +136,16 @@ export const TableauPilotageHeader = ({
               <HeaderCell key={`critere-header-${critere.id}`}>
                 <ModaleFicheCadrage critere={critere}>
                   <Bouton
-                    iconLeft={<Icone icone={IconComponent} />}
-                    label={critere.libelle}
+                    className="!flex items-center text-left"
+                    iconLeft={
+                      <Icone
+                        className="shrink-0 w-4 h-4"
+                        icone={IconComponent}
+                      />
+                    }
+                    label={
+                      <span className="line-clamp-1">{critere.libelle}</span>
+                    }
                   />
                 </ModaleFicheCadrage>
               </HeaderCell>

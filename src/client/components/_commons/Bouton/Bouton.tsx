@@ -4,7 +4,7 @@ import { clsxm } from "@/utils/clsxm";
 export const Bouton = forwardRef<
   HTMLButtonElement,
   {
-    label: string;
+    label: ReactNode;
     iconLeft?: ReactNode;
     iconRight?: ReactNode;
     variant?: "primary" | "secondary" | "link";
