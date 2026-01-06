@@ -15,11 +15,9 @@ export function EvaluationsBlock<T extends { id: string | number }>({
   items,
   rowGroup,
   getEvaluation,
-  getNomObjectif,
-  isObjectif,
+  getTooltipLabel,
   getMoyenne,
 }: {
-  isObjectif?: boolean;
   items: T[];
   rowGroup: Row<FicheEvaluationRow>;
   getEvaluation(options: {
@@ -27,7 +25,7 @@ export function EvaluationsBlock<T extends { id: string | number }>({
     row: Row<FicheEvaluationRow>;
     etape: $Enums.etape_evaluation_enum;
   }): number | null;
-  getNomObjectif?(options: { item: T; row: Row<FicheEvaluationRow> }): string;
+  getTooltipLabel?(options: { item: T; row: Row<FicheEvaluationRow> }): string;
   getMoyenne(options: {
     row: Row<FicheEvaluationRow>;
     etape: $Enums.etape_evaluation_enum;
@@ -45,19 +43,26 @@ export function EvaluationsBlock<T extends { id: string | number }>({
             {items.map((item) => (
               <div
                 className={clsxm("grid border-b !border-black border-r", {
-                  "grid-cols-[30px_1fr_1fr_1fr]": isObjectif,
-                  "grid-cols-3": !isObjectif,
+                  "grid-cols-[30px_1fr_1fr_1fr]": getTooltipLabel,
+                  "grid-cols-3": !getTooltipLabel,
                 })}
                 key={item.id}
               >
-                {isObjectif ? (
+                {getTooltipLabel ? (
                   <div className="flex justify-center items-center !border-r">
                     <Tooltip.Root>
-                      <Tooltip.Trigger className="!px-0">
-                        <Icone className="h-4 w-4" icone={TodoIcon} />
+                      <Tooltip.Trigger
+                        aria-label="Afficher le nom de l'objectif"
+                        className="!px-0"
+                      >
+                        <Icone
+                          aria-hidden
+                          className="h-4 w-4"
+                          icone={TodoIcon}
+                        />
                       </Tooltip.Trigger>
                       <Tooltip.Content>
-                        {getNomObjectif?.({ item, row })}
+                        {getTooltipLabel?.({ item, row })}
                       </Tooltip.Content>
                     </Tooltip.Root>
                   </div>

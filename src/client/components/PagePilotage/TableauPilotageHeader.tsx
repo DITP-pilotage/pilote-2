@@ -53,7 +53,9 @@ const HeaderCell = ({
         "grid-cols-3": !isObjectif,
       })}
     >
-      {isObjectif ? <div className="!border-r" /> : null}
+      {isObjectif ? (
+        <div aria-label="Libellé objectif" className="!border-r" />
+      ) : null}
       {ETAPES.map((etape) => (
         <div
           className={clsxm("whitespace-nowrap text-center p-2", {
