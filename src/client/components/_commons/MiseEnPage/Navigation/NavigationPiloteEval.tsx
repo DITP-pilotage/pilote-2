@@ -33,7 +33,7 @@ export const NavigationPiloteEval = () => {
         {
           nom: "Objectifs collectifs",
           lien: "/evaluation/note-collective",
-          matcher: "/evaluation/note-collective",
+          matcher: "/evaluation/note-collective/[rattachementCode]",
           accessible: droitsPiloteEval?.peutAccederNoteCollective ?? false,
           prefetch: true,
           target: "_self",
