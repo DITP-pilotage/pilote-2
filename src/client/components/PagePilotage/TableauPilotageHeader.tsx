@@ -1,5 +1,6 @@
-import { PropsWithChildren, ReactNode } from "react";
+import { ComponentType, PropsWithChildren, ReactNode } from "react";
 import { Table } from "@tanstack/react-table";
+import { $Enums } from "@prisma/client";
 import {
   ETAPES,
   FicheEvaluationRow,
@@ -8,10 +9,22 @@ import { pagePilotage } from "@/components/PagePilotage/PagePilotageServerSideCo
 import { useObjectifsCount } from "@/components/PagePilotage/useObjectifsCount";
 import { MenuActionTableauPilotage } from "@/components/PagePilotage/MenuActionTableauPilotage";
 import { Icone } from "@/components/_commons/Icone";
-import { PencilIcon } from "@/components/_commons/Icones/PencilIcon";
-import { BoutonAfficherFicheCadrage } from "@/components/Evaluation/BoutonAfficherFicheCadrage";
 import { Bouton } from "@/components/_commons/Bouton/Bouton";
 import { ModaleFicheCadrage } from "@/components/Evaluation/ModaleFicheCadrage";
+import { Survey1Icon } from "@/components/_commons/Icones/Survey1Icon";
+import { Sparkling1Icon } from "@/components/_commons/Icones/Sparkling1Icon";
+import { Lightbulb1Icon } from "@/components/_commons/Icones/Lightbulb1Icon";
+import { Chat21Icon } from "@/components/_commons/Icones/Chat21Icon";
+
+const CRITERE_TYPE_TO_ICON: Record<
+  $Enums.type_critere,
+  ComponentType<{ className: string; fill: string }>
+> = {
+  COMMUNICATION: Chat21Icon,
+  SERVICES_PUBLICS: Sparkling1Icon,
+  SIMPLIFICATION: Lightbulb1Icon,
+  FEUILLE_DE_ROUTE: Survey1Icon,
+};
 
 function HeaderGroup<T>({
   label,
@@ -117,13 +130,19 @@ export const TableauPilotageHeader = ({
         </div>
 
         <HeaderGroup items={criteres} label="Manière de servir">
-          {(critere) => (
-            <HeaderCell key={`critere-header-${critere.id}`}>
-              <ModaleFicheCadrage critere={critere}>
-                <Bouton label={critere.libelle} />
-              </ModaleFicheCadrage>
-            </HeaderCell>
-          )}
+          {(critere) => {
+            const IconComponent = CRITERE_TYPE_TO_ICON[critere.type];
+            return (
+              <HeaderCell key={`critere-header-${critere.id}`}>
+                <ModaleFicheCadrage critere={critere}>
+                  <Bouton
+                    iconLeft={<Icone icone={IconComponent} />}
+                    label={critere.libelle}
+                  />
+                </ModaleFicheCadrage>
+              </HeaderCell>
+            );
+          }}
         </HeaderGroup>
 
         <HeaderGroup

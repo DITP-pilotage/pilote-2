@@ -29,7 +29,7 @@ export class AfficherConsolidationQuery {
 
     return {
       criteres: tousCriteres.map((critere) => ({
-        ...pick(critere, ["id", "libelle", "descriptif"]),
+        ...pick(critere, ["id", "libelle", "descriptif", "type"]),
         sousCriteres: critere.sous_criteres.map((sousCritere) =>
           pick(sousCritere, ["id", "libelle", "descriptif"]),
         ),

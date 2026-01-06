@@ -97,6 +97,7 @@ describe("AfficherConsolidationQuery", () => {
           id: critere1Id,
           libelle: "Critère rattachement 1",
           descriptif: "Description critère 1",
+          type: "COMMUNICATION",
           sous_criteres: {
             create: {
               id: sousCritere1Id,
@@ -112,6 +113,7 @@ describe("AfficherConsolidationQuery", () => {
           id: critere2Id,
           libelle: "Critère rattachement 2",
           descriptif: "Description critère 2",
+          type: "SERVICES_PUBLICS",
           sous_criteres: {
             create: {
               id: sousCritere2Id,
@@ -623,6 +625,7 @@ describe("AfficherConsolidationQuery", () => {
           id: critereId,
           libelle: "Critère sans évaluation",
           descriptif: "Description critère",
+          type: "SIMPLIFICATION",
           sous_criteres: {
             create: {
               id: sousCritereId,
@@ -761,6 +764,7 @@ describe("AfficherConsolidationQuery", () => {
           id: critere1Id,
           libelle: "Critère 1",
           descriptif: "Description critère 1",
+          type: "FEUILLE_DE_ROUTE",
           sous_criteres: {
             create: {
               id: sousCritere1Id,
@@ -776,6 +780,7 @@ describe("AfficherConsolidationQuery", () => {
           id: critere2Id,
           libelle: "Critère 2",
           descriptif: "Description critère 2",
+          type: "COMMUNICATION",
           sous_criteres: {
             create: {
               id: sousCritere2Id,
@@ -1057,6 +1062,7 @@ describe("AfficherConsolidationQuery", () => {
           id: critereId,
           libelle: "Critère en instruction",
           descriptif: "Description critère",
+          type: "SERVICES_PUBLICS",
           sous_criteres: {
             create: {
               id: sousCritereId,
@@ -1238,6 +1244,7 @@ describe("AfficherConsolidationQuery", () => {
           id: critereId,
           libelle: "Critère avec auto-évaluation",
           descriptif: "Description critère",
+          type: "SIMPLIFICATION",
           sous_criteres: {
             create: {
               id: sousCritereId,

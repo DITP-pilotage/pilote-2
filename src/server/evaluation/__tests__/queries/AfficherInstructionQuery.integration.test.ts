@@ -178,6 +178,7 @@ describe("AfficherInstructionQuery", () => {
           id: critere1Id,
           libelle: "Critère à instruire",
           descriptif: "Description critère 1",
+          type: "COMMUNICATION",
           sous_criteres: {
             create: {
               id: sousCritere1Id,
@@ -193,6 +194,7 @@ describe("AfficherInstructionQuery", () => {
           id: critere2Id,
           libelle: "Critère non à instruire",
           descriptif: "Description critère 2",
+          type: "SERVICES_PUBLICS",
           sous_criteres: {
             create: {
               id: sousCritere2Id,
@@ -267,6 +269,7 @@ describe("AfficherInstructionQuery", () => {
         id: critere1Id,
         libelle: "Critère à instruire",
         descriptif: "Description critère 1",
+        type: "COMMUNICATION",
         sousCriteres: [
           {
             id: sousCritere1Id,
@@ -515,6 +518,7 @@ describe("AfficherInstructionQuery", () => {
           id: critereId,
           libelle: "Critère avec 3 évaluations",
           descriptif: "Description critère",
+          type: "SIMPLIFICATION",
           sous_criteres: {
             create: {
               id: sousCritereId,
@@ -942,21 +946,25 @@ describe("AfficherInstructionQuery", () => {
             id: critere1Id,
             libelle: "Critère unique rattachement 1",
             descriptif: "Description",
+            type: "COMMUNICATION",
           },
           {
             id: critere2Id,
             libelle: "Critère unique rattachement 2",
             descriptif: "Description",
+            type: "SERVICES_PUBLICS",
           },
           {
             id: critere3Id,
             libelle: "Critère commun aux 2",
             descriptif: "Description",
+            type: "SIMPLIFICATION",
           },
           {
             id: critere4Id,
             libelle: "Critère dans aucun des 2",
             descriptif: "Description",
+            type: "FEUILLE_DE_ROUTE",
           },
         ],
       });
@@ -1068,18 +1076,21 @@ describe("AfficherInstructionQuery", () => {
             id: critere1Id,
             libelle: "Critère unique rattachement 1",
             descriptif: "Description",
+            type: "COMMUNICATION",
             sousCriteres: [],
           },
           {
             id: critere2Id,
             libelle: "Critère unique rattachement 2",
             descriptif: "Description",
+            type: "SERVICES_PUBLICS",
             sousCriteres: [],
           },
           {
             id: critere3Id,
             libelle: "Critère commun aux 2",
             descriptif: "Description",
+            type: "SIMPLIFICATION",
             sousCriteres: [],
           },
         ]),

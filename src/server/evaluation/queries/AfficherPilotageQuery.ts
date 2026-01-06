@@ -15,6 +15,7 @@ export class AfficherPilotageQuery {
         id: critere.id,
         libelle: critere.libelle,
         descriptif: critere.descriptif,
+        type: critere.type,
         sousCriteres: critere.sous_criteres.map((sousCritere) => ({
           id: sousCritere.id,
           libelle: sousCritere.libelle,
