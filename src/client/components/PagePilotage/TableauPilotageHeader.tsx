@@ -11,19 +11,19 @@ import { MenuActionTableauPilotage } from "@/components/PagePilotage/MenuActionT
 import { Icone } from "@/components/_commons/Icone";
 import { Bouton } from "@/components/_commons/Bouton/Bouton";
 import { ModaleFicheCadrage } from "@/components/Evaluation/ModaleFicheCadrage";
-import { Survey1Icon } from "@/components/_commons/Icones/Survey1Icon";
-import { Sparkling1Icon } from "@/components/_commons/Icones/Sparkling1Icon";
-import { Lightbulb1Icon } from "@/components/_commons/Icones/Lightbulb1Icon";
-import { Chat21Icon } from "@/components/_commons/Icones/Chat21Icon";
+import { Chat2Icon } from "@/components/_commons/Icones/Chat2Icon";
+import { LightbulbIcon } from "@/components/_commons/Icones/LightbulbIcon";
+import { SurveyIcon } from "@/components/_commons/Icones/SurveyIcon";
+import { SparklingIcon } from "@/components/_commons/Icones/SparklingIcon";
 
 const CRITERE_TYPE_TO_ICON: Record<
   $Enums.type_critere,
   ComponentType<{ className: string; fill: string }>
 > = {
-  COMMUNICATION: Chat21Icon,
-  SERVICES_PUBLICS: Sparkling1Icon,
-  SIMPLIFICATION: Lightbulb1Icon,
-  FEUILLE_DE_ROUTE: Survey1Icon,
+  COMMUNICATION: Chat2Icon,
+  SERVICES_PUBLICS: SparklingIcon,
+  SIMPLIFICATION: LightbulbIcon,
+  FEUILLE_DE_ROUTE: SurveyIcon,
 };
 
 function HeaderGroup<T>({
