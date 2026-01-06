@@ -15,6 +15,7 @@ import { Chat2Icon } from "@/components/_commons/Icones/Chat2Icon";
 import { LightbulbIcon } from "@/components/_commons/Icones/LightbulbIcon";
 import { SurveyIcon } from "@/components/_commons/Icones/SurveyIcon";
 import { SparklingIcon } from "@/components/_commons/Icones/SparklingIcon";
+import { clsxm } from "@/utils/clsxm";
 
 const CRITERE_TYPE_TO_ICON: Record<
   $Enums.type_critere,
@@ -48,9 +49,17 @@ function HeaderGroup<T>({
   );
 }
 
-const HeaderCell = ({ children }: PropsWithChildren) => (
+const HeaderCell = ({
+  children,
+  className,
+}: PropsWithChildren<{ className?: string }>) => (
   <div className="border-r !border-black last:!border-0">
-    <div className="p-2 font-medium flex flex-col items-center border-b !border-black ">
+    <div
+      className={clsxm(
+        "p-2 font-medium flex flex-col items-center border-b !border-black",
+        className,
+      )}
+    >
       <div className="line-clamp-1">{children}</div>
     </div>
 
@@ -133,10 +142,10 @@ export const TableauPilotageHeader = ({
           {(critere) => {
             const IconComponent = CRITERE_TYPE_TO_ICON[critere.type];
             return (
-              <HeaderCell key={`critere-header-${critere.id}`}>
+              <HeaderCell className="!p-1" key={`critere-header-${critere.id}`}>
                 <ModaleFicheCadrage critere={critere}>
                   <Bouton
-                    className="!flex items-center text-left"
+                    className="!flex items-center text-left !px-2 !py-1"
                     iconLeft={
                       <Icone
                         className="shrink-0 w-4 h-4"
