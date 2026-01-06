@@ -23,7 +23,7 @@ export const BoutonVerrouillerInstruction = ({
       type="button"
     >
       <Icone className="inline h-3 w-3" icone={LockIcon} />
-      verouiller l'instruction
+      verrouiller l'instruction
     </button>
   );
 };

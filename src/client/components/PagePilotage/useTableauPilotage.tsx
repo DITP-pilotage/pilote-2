@@ -39,6 +39,30 @@ export const ETAPES: { key: $Enums.etape_evaluation_enum; label: string }[] = [
   { key: "INSTRUCTION", label: "INSTR" },
 ];
 
+const ETAPES_ORDER: Record<$Enums.etape_evaluation_enum, number> = {
+  AUTO_EVALUATION: 0,
+  CONSOLIDATION: 1,
+  INSTRUCTION: 2,
+};
+
+export type PhaseStatus = "before" | "current" | "after";
+
+export const getPhaseStatus = (
+  etape: $Enums.etape_evaluation_enum,
+  etapeCourante: $Enums.etape_evaluation_enum,
+): PhaseStatus => {
+  const etapeOrder = ETAPES_ORDER[etape];
+  const etapeCouranteOrder = ETAPES_ORDER[etapeCourante];
+
+  if (etapeOrder < etapeCouranteOrder) {
+    return "before";
+  } else if (etapeOrder === etapeCouranteOrder) {
+    return "current";
+  } else {
+    return "after";
+  }
+};
+
 export const useTableauPilotage = () => {
   const { fichesEvaluation, criteres } =
     pagePilotage.useServerSidePropsContext().pilotage;
