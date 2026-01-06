@@ -86,10 +86,14 @@ describe("#AfficherPilotageQuery", () => {
         {
           id: critere1Id,
           libelle: "Critère 1",
+          descriptif: "Description critère 1",
+          sousCriteres: [],
         },
         {
           id: critere2Id,
           libelle: "Critère 2",
+          descriptif: "Description critère 2",
+          sousCriteres: [],
         },
       ]);
       expect(result.fichesEvaluation).toEqual([
@@ -280,6 +284,8 @@ describe("#AfficherPilotageQuery", () => {
         {
           id: critereId,
           libelle: "Critère test",
+          descriptif: "Description critère test",
+          sousCriteres: [],
         },
       ]);
       expect(result.fichesEvaluation).toEqual([
@@ -378,14 +384,20 @@ describe("#AfficherPilotageQuery", () => {
         {
           id: critere1Id,
           libelle: "Critère A",
+          descriptif: "Description critère A",
+          sousCriteres: [],
         },
         {
           id: critere2Id,
           libelle: "Critère B",
+          descriptif: "Description critère B",
+          sousCriteres: [],
         },
         {
           id: critere3Id,
           libelle: "Critère C",
+          descriptif: "Description critère C",
+          sousCriteres: [],
         },
       ]);
       expect(result.fichesEvaluation[0].evaluationsParCritereEtEtape).toEqual({
