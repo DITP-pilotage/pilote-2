@@ -1,3 +1,4 @@
+import React from "react";
 import { Row } from "@tanstack/react-table";
 import { $Enums } from "@prisma/client";
 import {
@@ -28,7 +29,7 @@ export function EvaluationsBlock<T extends { id: string | number }>({
       {rowGroup.subRows.map((row) => {
         const fiche = row.original;
         return (
-          <>
+          <React.Fragment key={row.id}>
             {items.map((item) => (
               <div
                 className="grid grid-cols-3 border-b !border-black border-r"
@@ -76,7 +77,7 @@ export function EvaluationsBlock<T extends { id: string | number }>({
                 })}
               </div>
             ))}
-          </>
+          </React.Fragment>
         );
       })}
     </div>
