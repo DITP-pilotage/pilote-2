@@ -64,8 +64,8 @@ export function EvaluationsBlock<T>({
                       className={clsxm(
                         "flex items-center justify-center text-center whitespace-nowrap",
                         {
-                          "bg-[#EEEEEE]": isAfterPhase,
-                          "text-[#0078F3]": shouldShowBlueText,
+                          "bg-dsfr-contrast-grey": isAfterPhase,
+                          "text-dsfr-info-main-525": shouldShowBlueText,
                         },
                       )}
                       key={etape.key}

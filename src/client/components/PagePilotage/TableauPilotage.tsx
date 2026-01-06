@@ -55,7 +55,8 @@ export const TableauPilotage = () => {
                       className={clsxm(
                         "border-b !border-black flex items-center justify-center font-bold",
                         {
-                          "bg-[#EEEEEE]": noteObjectifsCollectifs == null,
+                          "bg-dsfr-contrast-grey":
+                            noteObjectifsCollectifs == null,
                         },
                       )}
                       key={row.id}
