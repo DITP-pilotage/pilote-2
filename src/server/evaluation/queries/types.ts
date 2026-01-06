@@ -10,6 +10,7 @@ export type Critere = {
   id: string;
   libelle: string;
   descriptif: string;
+  type: $Enums.type_critere;
   sousCriteres: Array<SousCritere>;
 };
 

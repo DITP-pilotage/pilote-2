@@ -27,11 +27,13 @@ describe("#AfficherPilotageQuery", () => {
             id: critere1Id,
             libelle: "Critère 1",
             descriptif: "Description critère 1",
+            type: "COMMUNICATION",
           },
           {
             id: critere2Id,
             libelle: "Critère 2",
             descriptif: "Description critère 2",
+            type: "SERVICES_PUBLICS",
           },
         ],
       });
@@ -86,10 +88,16 @@ describe("#AfficherPilotageQuery", () => {
         {
           id: critere1Id,
           libelle: "Critère 1",
+          descriptif: "Description critère 1",
+          type: "COMMUNICATION",
+          sousCriteres: [],
         },
         {
           id: critere2Id,
           libelle: "Critère 2",
+          descriptif: "Description critère 2",
+          type: "SERVICES_PUBLICS",
+          sousCriteres: [],
         },
       ]);
       expect(result.fichesEvaluation).toEqual([
@@ -168,6 +176,7 @@ describe("#AfficherPilotageQuery", () => {
           id: critereId,
           libelle: "Critère test",
           descriptif: "Description critère test",
+          type: "SIMPLIFICATION",
         },
       });
 
@@ -280,6 +289,9 @@ describe("#AfficherPilotageQuery", () => {
         {
           id: critereId,
           libelle: "Critère test",
+          descriptif: "Description critère test",
+          type: "SIMPLIFICATION",
+          sousCriteres: [],
         },
       ]);
       expect(result.fichesEvaluation).toEqual([
@@ -332,16 +344,19 @@ describe("#AfficherPilotageQuery", () => {
             id: critere1Id,
             libelle: "Critère A",
             descriptif: "Description critère A",
+            type: "COMMUNICATION",
           },
           {
             id: critere2Id,
             libelle: "Critère B",
             descriptif: "Description critère B",
+            type: "SERVICES_PUBLICS",
           },
           {
             id: critere3Id,
             libelle: "Critère C",
             descriptif: "Description critère C",
+            type: "SIMPLIFICATION",
           },
         ],
       });
@@ -378,14 +393,23 @@ describe("#AfficherPilotageQuery", () => {
         {
           id: critere1Id,
           libelle: "Critère A",
+          descriptif: "Description critère A",
+          type: "COMMUNICATION",
+          sousCriteres: [],
         },
         {
           id: critere2Id,
           libelle: "Critère B",
+          descriptif: "Description critère B",
+          type: "SERVICES_PUBLICS",
+          sousCriteres: [],
         },
         {
           id: critere3Id,
           libelle: "Critère C",
+          descriptif: "Description critère C",
+          type: "SIMPLIFICATION",
+          sousCriteres: [],
         },
       ]);
       expect(result.fichesEvaluation[0].evaluationsParCritereEtEtape).toEqual({
@@ -425,6 +449,7 @@ describe("#AfficherPilotageQuery", () => {
           id: critereId,
           libelle: "Critère objectifs",
           descriptif: "Description critère objectifs",
+          type: "FEUILLE_DE_ROUTE",
         },
       });
 
@@ -576,6 +601,7 @@ describe("#AfficherPilotageQuery", () => {
           id: critereId,
           libelle: "Critère ordre",
           descriptif: "Description critère ordre",
+          type: "COMMUNICATION",
         },
       });
 
@@ -698,6 +724,7 @@ describe("#AfficherPilotageQuery", () => {
           id: critereId,
           libelle: "Critère test objectifs collectifs",
           descriptif: "Description critère test",
+          type: "SERVICES_PUBLICS",
         },
       });
 

@@ -759,11 +759,21 @@ model referentiel_tutelle {
   @@schema("public")
 }
 
+enum type_critere {
+  COMMUNICATION
+  FEUILLE_DE_ROUTE
+  SERVICES_PUBLICS
+  SIMPLIFICATION
+
+  @@schema("public")
+}
+
 model referentiel_critere {
   id                  String                     @id @db.Uuid
   libelle             String
   descriptif          String
   sous_criteres       referentiel_sous_critere[]
+  type                type_critere               @default(COMMUNICATION)
   created_at          DateTime                   @default(now())
   updated_at          DateTime                   @updatedAt
   evaluation_critere  evaluation_critere[]

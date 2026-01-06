@@ -37,7 +37,7 @@ export class AfficherInstructionQuery {
         rattachementUtilisateurEtapeJalon,
       ).forEach((critere) => {
         tousCriteresMap.set(critere.id, {
-          ...pick(critere, ["id", "libelle", "descriptif"]),
+          ...pick(critere, ["id", "libelle", "descriptif", "type"]),
           sousCriteres: critere.sous_criteres.map((sousCritere) =>
             pick(sousCritere, ["id", "libelle", "descriptif"]),
           ),
@@ -183,6 +183,7 @@ export class AfficherInstructionQuery {
               id: string;
               libelle: string;
               descriptif: string;
+              type: $Enums.type_critere;
               sous_criteres: Array<{
                 id: string;
                 libelle: string;
@@ -247,6 +248,7 @@ export class AfficherInstructionQuery {
                       id: true,
                       libelle: true,
                       descriptif: true,
+                      type: true,
                       sous_criteres: true,
                     },
                   },

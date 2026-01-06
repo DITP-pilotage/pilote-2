@@ -14,6 +14,13 @@ export class AfficherPilotageQuery {
       criteres: criteres.map((critere) => ({
         id: critere.id,
         libelle: critere.libelle,
+        descriptif: critere.descriptif,
+        type: critere.type,
+        sousCriteres: critere.sous_criteres.map((sousCritere) => ({
+          id: sousCritere.id,
+          libelle: sousCritere.libelle,
+          descriptif: sousCritere.descriptif,
+        })),
       })),
       fichesEvaluation: fichesEvaluation.map((fiche) => {
         const rattachement = fiche.rattachement;
@@ -138,6 +145,7 @@ export class AfficherPilotageQuery {
 
   private fetchCriteres() {
     return this.dependencies.prisma.getInstance().referentiel_critere.findMany({
+      include: { sous_criteres: true },
       orderBy: { libelle: "asc" },
     });
   }
