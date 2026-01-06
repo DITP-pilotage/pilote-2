@@ -1,6 +1,7 @@
 import { Fragment } from "react";
 import {
   ETAPES,
+  getInformationsAffichageCellule,
   useTableauPilotage,
 } from "@/components/PagePilotage/useTableauPilotage";
 import { useObjectifsCount } from "@/components/PagePilotage/useObjectifsCount";
@@ -111,16 +112,28 @@ export const TableauPilotage = () => {
                       key={`${fiche.id}-${fiche.rattachementCode}`}
                     >
                       {ETAPES.map((etape) => {
-                        const moyenne = fiche.synthese[etape.key];
+                        const moyennePonderee = fiche.synthese[etape.key];
+                        const {
+                          isAfterPhase,
+                          shouldShowBlueText,
+                          shouldShowDash,
+                        } = getInformationsAffichageCellule(
+                          fiche,
+                          moyennePonderee,
+                          etape,
+                        );
                         return (
                           <div
                             className={clsxm(
                               "flex items-center justify-center text-center font-bold whitespace-nowrap",
-                              { "bg-dsfr-grey-925": moyenne == null },
+                              {
+                                "bg-dsfr-contrast-grey": isAfterPhase,
+                                "text-dsfr-info-main-525": shouldShowBlueText,
+                              },
                             )}
                             key={etape.key}
                           >
-                            {moyenne != null ? moyenne.toFixed() : " "}
+                            {shouldShowDash ? "–" : moyennePonderee}
                           </div>
                         );
                       })}

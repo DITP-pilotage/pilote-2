@@ -9,14 +9,32 @@ import { pagePilotage } from "@/components/PagePilotage/PagePilotageServerSideCo
 import { useObjectifsCount } from "@/components/PagePilotage/useObjectifsCount";
 import { MenuActionTableauPilotage } from "@/components/PagePilotage/MenuActionTableauPilotage";
 import { clsxm } from "@/utils/clsxm";
+import { Icone } from "@/components/_commons/Icone";
+import { Bouton } from "@/components/_commons/Bouton/Bouton";
+import { ModaleFicheCadrage } from "@/components/Evaluation/ModaleFicheCadrage";
+import { Chat2Icon } from "@/components/_commons/Icones/Chat2Icon";
+import { LightbulbIcon } from "@/components/_commons/Icones/LightbulbIcon";
+import { SurveyIcon } from "@/components/_commons/Icones/SurveyIcon";
+import { SparklingIcon } from "@/components/_commons/Icones/SparklingIcon";
+
+const CRITERE_TYPE_TO_ICON: Record<
+  $Enums.type_critere,
+  ComponentType<{ className: string; fill: string }>
+> = {
+  COMMUNICATION: Chat2Icon,
+  SERVICES_PUBLICS: SparklingIcon,
+  SIMPLIFICATION: LightbulbIcon,
+  FEUILLE_DE_ROUTE: SurveyIcon,
+};
 
 const HeaderCell = ({
   children,
   boldEtape,
-  className
-}: PropsWithChildren<{ boldEtape?: boolean, className?: string }>) => (
+  className,
+}: PropsWithChildren<{ boldEtape?: boolean; className?: string }>) => (
   <div className="border-r !border-black last:!border-0">
-    <div className={clsxm(
+    <div
+      className={clsxm(
         "p-2 font-medium flex flex-col items-center border-b !border-black",
         className,
       )}
@@ -38,24 +56,6 @@ const HeaderCell = ({
     </div>
   </div>
 );
-import { Icone } from "@/components/_commons/Icone";
-import { Bouton } from "@/components/_commons/Bouton/Bouton";
-import { ModaleFicheCadrage } from "@/components/Evaluation/ModaleFicheCadrage";
-import { Chat2Icon } from "@/components/_commons/Icones/Chat2Icon";
-import { LightbulbIcon } from "@/components/_commons/Icones/LightbulbIcon";
-import { SurveyIcon } from "@/components/_commons/Icones/SurveyIcon";
-import { SparklingIcon } from "@/components/_commons/Icones/SparklingIcon";
-import { clsxm } from "@/utils/clsxm";
-
-const CRITERE_TYPE_TO_ICON: Record<
-  $Enums.type_critere,
-  ComponentType<{ className: string; fill: string }>
-> = {
-  COMMUNICATION: Chat2Icon,
-  SERVICES_PUBLICS: SparklingIcon,
-  SIMPLIFICATION: LightbulbIcon,
-  FEUILLE_DE_ROUTE: SurveyIcon,
-};
 
 function HeaderGroup<T>({
   label,

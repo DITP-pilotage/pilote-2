@@ -66,6 +66,25 @@ export const getPhaseStatus = (
   }
 };
 
+export const getInformationsAffichageCellule = (
+  fiche: FicheEvaluationRow,
+  valeur: number | null,
+  etape: { key: $Enums.etape_evaluation_enum; label: string },
+) => {
+  const phaseStatus = getPhaseStatus(etape.key, fiche.etapeCourante);
+
+  const isAfterPhase = phaseStatus === "after";
+  const isBeforePhase = phaseStatus === "before";
+  const isCurrentPhase = phaseStatus === "current";
+  const isReadOnly = fiche.readOnly;
+
+  const shouldShowBlueText = isBeforePhase || (isCurrentPhase && isReadOnly);
+  const shouldShowDash =
+    valeur == null ||
+    (etape.key === "AUTO_EVALUATION" && isCurrentPhase && !isReadOnly);
+  return { isAfterPhase, shouldShowBlueText, shouldShowDash };
+};
+
 export const useTableauPilotage = () => {
   const { fichesEvaluation, criteres } =
     pagePilotage.useServerSidePropsContext().pilotage;
