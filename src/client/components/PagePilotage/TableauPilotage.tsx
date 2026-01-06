@@ -83,6 +83,7 @@ export const TableauPilotage = () => {
                   return objectif?.evaluations[etape];
                 }}
                 items={Array.from({ length: maxObjectifs }).map((_, index) => ({
+                  id: index,
                   index,
                 }))}
                 rowGroup={rowGroup}

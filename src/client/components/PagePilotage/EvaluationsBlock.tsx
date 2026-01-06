@@ -7,7 +7,7 @@ import {
 } from "@/components/PagePilotage/useTableauPilotage";
 import { clsxm } from "@/utils/clsxm";
 
-export function EvaluationsBlock<T>({
+export function EvaluationsBlock<T extends { id: string | number }>({
   items,
   rowGroup,
   getEvaluation,
@@ -32,7 +32,7 @@ export function EvaluationsBlock<T>({
             {items.map((item) => (
               <div
                 className="grid grid-cols-3 border-b !border-black border-r"
-                key={fiche.id}
+                key={item.id}
               >
                 {ETAPES.map((etape) => {
                   const evaluation = getEvaluation({
