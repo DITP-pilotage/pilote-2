@@ -48,18 +48,19 @@ export const TableauPilotage = () => {
                 style={{ gridColumn: "span 1" }}
               >
                 {rowGroup.subRows.map((row) => {
+                  const noteObjectifsCollectifs =
+                    row.original.noteObjectifsCollectifs;
                   return (
                     <div
                       className={clsxm(
                         "border-b !border-black flex items-center justify-center font-bold",
                         {
-                          "bg-dsfr-grey-925":
-                            row.original.noteObjectifsCollectifs == null,
+                          "bg-[#EEEEEE]": noteObjectifsCollectifs == null,
                         },
                       )}
                       key={row.id}
                     >
-                      {row.original.noteObjectifsCollectifs}
+                      {noteObjectifsCollectifs ?? "–"}
                     </div>
                   );
                 })}
