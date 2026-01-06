@@ -18,7 +18,8 @@ import { prisma } from "@/server/db/prisma";
 const criteres: referentiel_critere[] = [
   {
     id: "831cb1a5-036b-4609-a560-68cd1852397f",
-    libelle: "Transparence des marchés publics",
+    libelle: "Services publics",
+    type: "SERVICES_PUBLICS",
     descriptif:
       "Publication, accessibilité et traçabilité des appels d'offres et attributions.",
     created_at: new Date("2025-10-07T10:00:00"),
@@ -26,7 +27,8 @@ const criteres: referentiel_critere[] = [
   },
   {
     id: "dedffbcf-97dc-40c9-9df4-a5be78617ba6",
-    libelle: "Délais d'exécution des chantiers",
+    libelle: "Gouvernance",
+    type: "FEUILLE_DE_ROUTE",
     descriptif:
       "Respect des jalons, pilotage des retards, communication aux parties prenantes.",
     created_at: new Date("2025-10-07T10:00:00"),
@@ -34,7 +36,8 @@ const criteres: referentiel_critere[] = [
   },
   {
     id: "9cc999b6-b0da-48c5-bae7-2b9d38e5f1bd",
-    libelle: "Impact territorial et environnemental",
+    libelle: "Simplification",
+    type: "SIMPLIFICATION",
     descriptif:
       "Insertion locale, nuisances maîtrisées, clauses environnementales.",
     created_at: new Date("2025-10-07T10:00:00"),

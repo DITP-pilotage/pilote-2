@@ -773,7 +773,7 @@ model referentiel_critere {
   libelle             String
   descriptif          String
   sous_criteres       referentiel_sous_critere[]
-  type                type_critere
+  type                type_critere               @default(COMMUNICATION)
   created_at          DateTime                   @default(now())
   updated_at          DateTime                   @updatedAt
   evaluation_critere  evaluation_critere[]
