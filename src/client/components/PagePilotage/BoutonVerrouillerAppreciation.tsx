@@ -23,7 +23,7 @@ export const BoutonVerrouillerAppreciation = ({
       type="button"
     >
       <Icone className="inline h-3 w-3" icone={LockIcon} />
-      vérouiller l'appréciation
+      verrouiller l'appréciation
     </button>
   );
 };

@@ -11,7 +11,7 @@ export const TableauPilotage = () => {
   const maxObjectifs = useObjectifsCount();
 
   const gridTemplateColumns = [
-    "380px",
+    "400px",
     "170px",
     ...Array(criteres.length)
       .fill(0)
