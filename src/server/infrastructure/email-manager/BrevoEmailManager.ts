@@ -7,7 +7,7 @@ import {
 } from "@getbrevo/brevo";
 import { configuration } from "@/config";
 import { ProfilCode } from "@/server/gestion-utilisateur/domain/Profil";
-import { EmailManager } from "./EmailManager.interface";
+import { EmailManager } from "./EmailManager";
 
 export class BrevoEmailManager implements EmailManager {
   private readonly transactionalEmailsApi: TransactionalEmailsApi;
