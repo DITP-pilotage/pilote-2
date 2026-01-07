@@ -10,7 +10,7 @@ import { getPrisma } from "@/server/db/PrismaTransaction";
  *   const rattachement = await f.rattachement();
  *   const fiche = await f.fiche({ rattachement_code: rattachement.code });
  */
-export const f = {
+export const fixtures = {
   async utilisateur(
     overrides: Partial<Prisma.utilisateurUncheckedCreateInput> = {},
   ) {
