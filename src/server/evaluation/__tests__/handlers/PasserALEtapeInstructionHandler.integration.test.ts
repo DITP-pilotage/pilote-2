@@ -26,9 +26,7 @@ describe("PasserALEtapeInstructionHandler", () => {
       createIntegrationTest(async () => {
         // Given
         const utilisateur = await fixtures.utilisateur();
-        const rattachement = await fixtures.rattachement();
         const fiche = await fixtures.fiche({
-          rattachement_code: rattachement.code,
           etape_courante: "AUTO_EVALUATION",
         });
         await fixtures.evaluation({
@@ -128,15 +126,11 @@ describe("PasserALEtapeInstructionHandler", () => {
       createIntegrationTest(async (tx) => {
         // Given
         const utilisateur = await fixtures.utilisateur();
-        const rattachement1 = await fixtures.rattachement();
-        const rattachement2 = await fixtures.rattachement();
 
         const fiche1 = await fixtures.fiche({
-          rattachement_code: rattachement1.code,
           etape_courante: "CONSOLIDATION",
         });
         const fiche2 = await fixtures.fiche({
-          rattachement_code: rattachement2.code,
           etape_courante: "CONSOLIDATION",
         });
 
@@ -512,12 +506,10 @@ describe("PasserALEtapeInstructionHandler", () => {
       createIntegrationTest(async (tx) => {
         // Given
         const utilisateur = await fixtures.utilisateur();
-        const rattachement = await fixtures.rattachement();
         const critere1 = await fixtures.critere({ libelle: "Critère 1" });
         const critere2 = await fixtures.critere({ libelle: "Critère 2" });
 
         const fiche = await fixtures.fiche({
-          rattachement_code: rattachement.code,
           etape_courante: "CONSOLIDATION",
         });
 

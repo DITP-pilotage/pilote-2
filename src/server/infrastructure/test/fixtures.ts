@@ -77,16 +77,22 @@ export const fixtures = {
 
   async fiche(
     overrides: Partial<Prisma.fiche_evaluationUncheckedCreateInput> & {
-      rattachement_code: string;
-    },
+      rattachement_code?: string;
+    } = {},
   ) {
     const prisma = getPrisma();
+    const rattachement_code =
+      overrides.rattachement_code == null
+        ? (await fixtures.rattachement()).code
+        : overrides.rattachement_code;
+
     return prisma.fiche_evaluation.create({
       data: {
         id: randomUUID(),
         jalon: 2025,
         etape_courante: "AUTO_EVALUATION",
         ...overrides,
+        rattachement_code,
       },
     });
   },
