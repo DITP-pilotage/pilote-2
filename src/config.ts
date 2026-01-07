@@ -368,6 +368,12 @@ const config = convict({
       default: "ToBeDefined",
       env: "BREVO_API_KEY",
     },
+    disableEmails: {
+      format: Boolean,
+      default: false,
+      doc: "Désactive l'envoi réel d'emails et les opérations Brevo (contacts, listes). Utilise un stub qui log en console. Toujours activé en environnement de test.",
+      env: "DISABLE_EMAILS",
+    },
   },
 });
 
@@ -383,6 +389,11 @@ config.set(
   "keycloak.logoutUrl",
   config.get("keycloak.issuer") + "/protocol/openid-connect/logout",
 );
+
+// Force disable emails in test environment
+if (config.get("env") === "test") {
+  config.set("brevo.disableEmails", true);
+}
 
 config.validate({ allowed: "strict" });
 
