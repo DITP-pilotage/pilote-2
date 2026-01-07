@@ -23,6 +23,14 @@ describe("RecupererDroitsUtilisateurQuery", () => {
     });
     utilisateurId = utilisateur.id;
 
+    await prisma.referentiel_rattachement_groupe.create({
+      data: {
+        code: "Régions",
+        libelle: "Libellé Régions",
+        ordre: 1,
+      },
+    });
+
     await prisma.referentiel_rattachement.createMany({
       data: [
         { code: "REG-01", libelle: "Région 01", groupe: "Régions", ordre: 1 },

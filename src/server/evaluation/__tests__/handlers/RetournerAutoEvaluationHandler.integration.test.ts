@@ -21,6 +21,16 @@ describe("RetournerAutoEvaluationHandler", () => {
       const rattachementCode = "REG-600";
       const ficheEvaluationId = "a1b2c3d4-5e6f-7a8b-9c0d-1e2f3a4b5c6e";
 
+      await prisma.referentiel_rattachement_groupe.createMany({
+        data: [
+          {
+            code: rattachementCode,
+            libelle: "Groupe rattachement",
+            ordre: 1,
+          },
+        ],
+      });
+
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
@@ -55,6 +65,21 @@ describe("RetournerAutoEvaluationHandler", () => {
       const rattachementCode2 = "REG-602";
       const ficheEvaluationId1 = "b2c3d4e5-6f7a-8b9c-0d1e-2f3a4b5c6d7f";
       const ficheEvaluationId2 = "8835d5de-b194-481d-b427-3fbcc837c550";
+
+      await prisma.referentiel_rattachement_groupe.createMany({
+        data: [
+          {
+            code: rattachementCode1,
+            libelle: "Groupe rattachement",
+            ordre: 1,
+          },
+          {
+            code: rattachementCode2,
+            libelle: "Groupe rattachement",
+            ordre: 2,
+          },
+        ],
+      });
 
       await prisma.referentiel_rattachement.createMany({
         data: [
@@ -105,6 +130,16 @@ describe("RetournerAutoEvaluationHandler", () => {
       const rattachementCode = "REG-603";
       const ficheEvaluationId = "0773b227-797d-4555-891b-6c7ea455aa36";
 
+      await prisma.referentiel_rattachement_groupe.createMany({
+        data: [
+          {
+            code: rattachementCode,
+            libelle: "Groupe rattachement",
+            ordre: 1,
+          },
+        ],
+      });
+
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
@@ -152,6 +187,16 @@ describe("RetournerAutoEvaluationHandler", () => {
       const rattachementCode = "REG-604";
       const ficheEvaluationId = "55c8075a-cae2-444e-9214-8d730f71e47a";
       const etapeAutoEvaluationId = "7e391c6b-4cae-4431-83a8-c2eef41f103c";
+
+      await prisma.referentiel_rattachement_groupe.createMany({
+        data: [
+          {
+            code: rattachementCode,
+            libelle: "Groupe rattachement",
+            ordre: 1,
+          },
+        ],
+      });
 
       await prisma.referentiel_rattachement.create({
         data: {

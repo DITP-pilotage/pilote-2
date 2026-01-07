@@ -50,6 +50,26 @@ describe("TransmettreAppreciationHandler", () => {
         },
       });
 
+      await prisma.referentiel_rattachement_groupe.createMany({
+        data: [
+          {
+            code: rattachement1Code,
+            libelle: `Libellé ${rattachement1Code}`,
+            ordre: 1,
+          },
+          {
+            code: rattachement2Code,
+            libelle: `Libellé ${rattachement2Code}`,
+            ordre: 1,
+          },
+          {
+            code: rattachement3Code,
+            libelle: `Libellé ${rattachement3Code}`,
+            ordre: 1,
+          },
+        ],
+      });
+
       await prisma.referentiel_rattachement.createMany({
         data: [
           {
@@ -182,6 +202,14 @@ describe("TransmettreAppreciationHandler", () => {
         },
       });
 
+      await prisma.referentiel_rattachement_groupe.create({
+        data: {
+          code: rattachementCode,
+          libelle: `Libellé ${rattachementCode}`,
+          ordre: 1,
+        },
+      });
+
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
@@ -284,6 +312,21 @@ describe("TransmettreAppreciationHandler", () => {
             fonction: "Fonction",
             date_creation: new Date().toISOString(),
             profilCode: ProfilEnum.DITP_ADMIN,
+          },
+        ],
+      });
+
+      await prisma.referentiel_rattachement_groupe.createMany({
+        data: [
+          {
+            code: rattachement1Code,
+            libelle: `Libellé ${rattachement1Code}`,
+            ordre: 1,
+          },
+          {
+            code: rattachement2Code,
+            libelle: `Libellé ${rattachement2Code}`,
+            ordre: 1,
           },
         ],
       });
@@ -403,6 +446,14 @@ describe("TransmettreAppreciationHandler", () => {
           fonction: "Fonction",
           date_creation: new Date().toISOString(),
           profilCode: ProfilEnum.DITP_ADMIN,
+        },
+      });
+
+      await prisma.referentiel_rattachement_groupe.create({
+        data: {
+          code: rattachementCode,
+          libelle: `Libellé ${rattachementCode}`,
+          ordre: 1,
         },
       });
 

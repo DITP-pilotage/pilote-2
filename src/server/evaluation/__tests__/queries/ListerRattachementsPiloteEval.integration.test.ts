@@ -13,6 +13,13 @@ describe("ListerRattachementsPiloteEval", () => {
   describe("run", () => {
     it("retourne tous les rattachements", async () => {
       // Given
+      await prisma.referentiel_rattachement_groupe.createMany({
+        data: [
+          { code: "REG", libelle: "Groupe Régions", ordre: 1 },
+          { code: "DROM", libelle: "Groupe DROM", ordre: 1 },
+        ],
+      });
+
       await prisma.referentiel_rattachement.createMany({
         data: [
           {
@@ -57,6 +64,14 @@ describe("ListerRattachementsPiloteEval", () => {
 
     it("retourne les champs code, libelle, groupe, ordre", async () => {
       // Given
+      await prisma.referentiel_rattachement_groupe.create({
+        data: {
+          code: "REG",
+          libelle: "Groupe Régions",
+          ordre: 1,
+        },
+      });
+
       await prisma.referentiel_rattachement.create({
         data: {
           code: "REG-75",

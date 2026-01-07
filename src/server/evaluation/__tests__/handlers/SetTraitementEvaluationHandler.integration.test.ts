@@ -39,6 +39,14 @@ describe("SetTraitementEvaluationHandler", () => {
           },
         });
 
+        await prisma.referentiel_rattachement_groupe.create({
+          data: {
+            code: rattachementCode,
+            libelle: rattachementCode,
+            ordre: 1,
+          },
+        });
+
         await prisma.referentiel_rattachement.create({
           data: {
             code: rattachementCode,
@@ -118,6 +126,14 @@ describe("SetTraitementEvaluationHandler", () => {
             fonction: "Administrateur",
             profilCode: ProfilEnum.DITP_ADMIN,
             date_creation: new Date(),
+          },
+        });
+
+        await prisma.referentiel_rattachement_groupe.create({
+          data: {
+            code: rattachementCode,
+            libelle: rattachementCode,
+            ordre: 1,
           },
         });
 
@@ -213,6 +229,14 @@ describe("SetTraitementEvaluationHandler", () => {
           },
         });
 
+        await prisma.referentiel_rattachement_groupe.create({
+          data: {
+            code: rattachementCode,
+            libelle: rattachementCode,
+            ordre: 1,
+          },
+        });
+
         await prisma.referentiel_rattachement.create({
           data: {
             code: rattachementCode,
@@ -294,6 +318,14 @@ describe("SetTraitementEvaluationHandler", () => {
           },
         });
 
+        await prisma.referentiel_rattachement_groupe.create({
+          data: {
+            code: rattachementCode,
+            libelle: rattachementCode,
+            ordre: 1,
+          },
+        });
+
         await prisma.referentiel_rattachement.create({
           data: {
             code: rattachementCode,
@@ -364,6 +396,14 @@ describe("SetTraitementEvaluationHandler", () => {
           fonction: "Administrateur",
           profilCode: ProfilEnum.DITP_ADMIN,
           date_creation: new Date(),
+        },
+      });
+
+      await prisma.referentiel_rattachement_groupe.create({
+        data: {
+          code: rattachementCode,
+          libelle: rattachementCode,
+          ordre: 1,
         },
       });
 
@@ -449,6 +489,14 @@ describe("SetTraitementEvaluationHandler", () => {
         },
       });
 
+      await prisma.referentiel_rattachement_groupe.create({
+        data: {
+          code: rattachementCode,
+          libelle: rattachementCode,
+          ordre: 1,
+        },
+      });
+
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
@@ -526,6 +574,14 @@ describe("SetTraitementEvaluationHandler", () => {
           fonction: "Administrateur",
           profilCode: ProfilEnum.DITP_ADMIN,
           date_creation: new Date(),
+        },
+      });
+
+      await prisma.referentiel_rattachement_groupe.create({
+        data: {
+          code: rattachementCode,
+          libelle: rattachementCode,
+          ordre: 1,
         },
       });
 
@@ -612,6 +668,14 @@ describe("SetTraitementEvaluationHandler", () => {
           id: critereId,
           libelle: "Critère 7",
           descriptif: "Description critère 7",
+        },
+      });
+
+      await prisma.referentiel_rattachement_groupe.create({
+        data: {
+          code: rattachementCode,
+          libelle: rattachementCode,
+          ordre: 1,
         },
       });
 

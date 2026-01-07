@@ -53,6 +53,17 @@ describe("RecupererDetailsNoteCollectiveQuery", () => {
         ],
       });
 
+      await prisma.referentiel_rattachement_groupe.createMany({
+        data: [
+          {
+            code: rattachementCode,
+            libelle: "Groupe Département 75",
+            ordre: 1,
+          },
+          { code: "DEPT-01", libelle: "Groupe Département 01", ordre: 1 },
+        ],
+      });
+
       await prisma.referentiel_rattachement.createMany({
         data: [
           {
@@ -299,6 +310,16 @@ describe("RecupererDetailsNoteCollectiveQuery", () => {
         ],
       });
 
+      await prisma.referentiel_rattachement_groupe.createMany({
+        data: [
+          {
+            code: rattachementCode,
+            libelle: "Groupe rattachement",
+            ordre: 1,
+          },
+        ],
+      });
+
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
@@ -456,6 +477,14 @@ describe("RecupererDetailsNoteCollectiveQuery", () => {
         },
       });
 
+      await prisma.referentiel_rattachement_groupe.create({
+        data: {
+          code: rattachementCode,
+          libelle: "Groupe Région 84",
+          ordre: 1,
+        },
+      });
+
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
@@ -583,6 +612,17 @@ describe("RecupererDetailsNoteCollectiveQuery", () => {
             nom: "Indicateur Autre Territoire",
             chantier_id: "CH-500",
           },
+        ],
+      });
+
+      await prisma.referentiel_rattachement_groupe.createMany({
+        data: [
+          {
+            code: rattachementCode,
+            libelle: "Groupe Département 44",
+            ordre: 1,
+          },
+          { code: "DEPT-33", libelle: "Groupe Département 33", ordre: 1 },
         ],
       });
 
@@ -982,6 +1022,14 @@ describe("RecupererDetailsNoteCollectiveQuery", () => {
             ministeres: ["MIN-600"],
           },
         ],
+      });
+
+      await prisma.referentiel_rattachement_groupe.create({
+        data: {
+          code: rattachementCode,
+          libelle: "Groupe Région 93",
+          ordre: 1,
+        },
       });
 
       await prisma.referentiel_rattachement.create({

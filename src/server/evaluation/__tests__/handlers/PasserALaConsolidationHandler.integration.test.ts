@@ -38,6 +38,14 @@ describe("PasserALaConsolidationHandler", () => {
         },
       });
 
+      await prisma.referentiel_rattachement_groupe.create({
+        data: {
+          code: rattachementCode,
+          libelle: "Groupe consolidation test",
+          ordre: 1,
+        },
+      });
+
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
@@ -117,6 +125,14 @@ describe("PasserALaConsolidationHandler", () => {
               descriptif: "Description",
             },
           },
+        },
+      });
+
+      await prisma.referentiel_rattachement_groupe.create({
+        data: {
+          code: rattachementCode,
+          libelle: "Groupe consolidation clone",
+          ordre: 1,
         },
       });
 
@@ -241,6 +257,21 @@ describe("PasserALaConsolidationHandler", () => {
         },
       });
 
+      await prisma.referentiel_rattachement_groupe.createMany({
+        data: [
+          {
+            code: rattachementCode,
+            libelle: "Groupe consolidation multiple",
+            ordre: 1,
+          },
+          {
+            code: rattachementCode2,
+            libelle: "Groupe consolidation multiple 2",
+            ordre: 1,
+          },
+        ],
+      });
+
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
@@ -337,6 +368,14 @@ describe("PasserALaConsolidationHandler", () => {
           prenom: "Existing",
           date_creation: new Date(),
           profilCode: "DITP_ADMIN",
+        },
+      });
+
+      await prisma.referentiel_rattachement_groupe.create({
+        data: {
+          code: rattachementCode,
+          libelle: "Groupe existing consolidation",
+          ordre: 1,
         },
       });
 
@@ -461,6 +500,14 @@ describe("PasserALaConsolidationHandler", () => {
         },
       });
 
+      await prisma.referentiel_rattachement_groupe.create({
+        data: {
+          code: rattachementCode,
+          libelle: "Groupe copy note",
+          ordre: 1,
+        },
+      });
+
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
@@ -582,6 +629,14 @@ describe("PasserALaConsolidationHandler", () => {
           id: critereId,
           libelle: "Critère keep",
           descriptif: "Description",
+        },
+      });
+
+      await prisma.referentiel_rattachement_groupe.create({
+        data: {
+          code: rattachementCode,
+          libelle: "Groupe keep note",
+          ordre: 1,
         },
       });
 
@@ -710,6 +765,14 @@ describe("PasserALaConsolidationHandler", () => {
         },
       });
 
+      await prisma.referentiel_rattachement_groupe.create({
+        data: {
+          code: rattachementCode,
+          libelle: "Groupe reset date",
+          ordre: 1,
+        },
+      });
+
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
@@ -829,6 +892,14 @@ describe("PasserALaConsolidationHandler", () => {
         },
       });
 
+      await prisma.referentiel_rattachement_groupe.create({
+        data: {
+          code: rattachementCode,
+          libelle: "Groupe same note",
+          ordre: 1,
+        },
+      });
+
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
@@ -919,6 +990,14 @@ describe("PasserALaConsolidationHandler", () => {
           prenom: "NoDate",
           date_creation: new Date(),
           profilCode: "DITP_ADMIN",
+        },
+      });
+
+      await prisma.referentiel_rattachement_groupe.create({
+        data: {
+          code: rattachementCode,
+          libelle: "Groupe no date",
+          ordre: 1,
         },
       });
 

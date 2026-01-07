@@ -28,6 +28,14 @@ describe("AfficherInstructionQuery", () => {
         },
       });
 
+      await prisma.referentiel_rattachement_groupe.create({
+        data: {
+          code: rattachementCode,
+          libelle: "Groupe sans accès instruction",
+          ordre: 1,
+        },
+      });
+
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
@@ -65,6 +73,14 @@ describe("AfficherInstructionQuery", () => {
           prenom: "Objectifs",
           date_creation: new Date(),
           profilCode: "DITP_ADMIN",
+        },
+      });
+
+      await prisma.referentiel_rattachement_groupe.create({
+        data: {
+          code: rattachementCode,
+          libelle: "Groupe avec objectifs filtrés",
+          ordre: 1,
         },
       });
 
@@ -205,6 +221,14 @@ describe("AfficherInstructionQuery", () => {
         },
       });
 
+      await prisma.referentiel_rattachement_groupe.create({
+        data: {
+          code: rattachementCode,
+          libelle: "Groupe avec critères filtrés",
+          ordre: 1,
+        },
+      });
+
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
@@ -327,6 +351,14 @@ describe("AfficherInstructionQuery", () => {
           prenom: "User",
           date_creation: new Date(),
           profilCode: "DITP_ADMIN",
+        },
+      });
+
+      await prisma.referentiel_rattachement_groupe.create({
+        data: {
+          code: rattachementCode,
+          libelle: "Groupe avec 3 étapes",
+          ordre: 1,
         },
       });
 
@@ -529,6 +561,14 @@ describe("AfficherInstructionQuery", () => {
         },
       });
 
+      await prisma.referentiel_rattachement_groupe.create({
+        data: {
+          code: rattachementCode,
+          libelle: "Groupe critère 3 étapes",
+          ordre: 1,
+        },
+      });
+
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
@@ -679,6 +719,14 @@ describe("AfficherInstructionQuery", () => {
         },
       });
 
+      await prisma.referentiel_rattachement_groupe.create({
+        data: {
+          code: rattachementCode,
+          libelle: "Groupe avec tutelles",
+          ordre: 1,
+        },
+      });
+
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
@@ -797,6 +845,21 @@ describe("AfficherInstructionQuery", () => {
           date_creation: new Date(),
           profilCode: "DITP_ADMIN",
         },
+      });
+
+      await prisma.referentiel_rattachement_groupe.createMany({
+        data: [
+          {
+            code: rattachement1Code,
+            libelle: "Groupe Rattachement 1",
+            ordre: 1,
+          },
+          {
+            code: rattachement2Code,
+            libelle: "Groupe Rattachement 2",
+            ordre: 1,
+          },
+        ],
       });
 
       await prisma.referentiel_rattachement.create({
@@ -965,6 +1028,21 @@ describe("AfficherInstructionQuery", () => {
             libelle: "Critère dans aucun des 2",
             descriptif: "Description",
             type: "FEUILLE_DE_ROUTE",
+          },
+        ],
+      });
+
+      await prisma.referentiel_rattachement_groupe.createMany({
+        data: [
+          {
+            code: rattachement1Code,
+            libelle: "Groupe Rattachement 1 filtrage",
+            ordre: 1,
+          },
+          {
+            code: rattachement2Code,
+            libelle: "Groupe Rattachement 2 filtrage",
+            ordre: 1,
           },
         ],
       });

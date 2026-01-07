@@ -43,6 +43,36 @@ describe("ModifierEtatFichesConsolidationHandler", () => {
       const etape4Id = "52b1baa6-b140-4970-a848-f3eda3eca0c6";
       const etape5Id = "e1960814-e123-46ab-b465-0e9e98e41f79";
 
+      await prisma.referentiel_rattachement_groupe.createMany({
+        data: [
+          {
+            code: rattachement1Code,
+            libelle: "Groupe consolidation 1",
+            ordre: 1,
+          },
+          {
+            code: rattachement2Code,
+            libelle: "Groupe consolidation 2",
+            ordre: 1,
+          },
+          {
+            code: rattachement3Code,
+            libelle: "Groupe consolidation 3",
+            ordre: 1,
+          },
+          {
+            code: rattachement4Code,
+            libelle: "Groupe consolidation 4",
+            ordre: 1,
+          },
+          {
+            code: rattachement5Code,
+            libelle: "Groupe consolidation 5",
+            ordre: 1,
+          },
+        ],
+      });
+
       await prisma.referentiel_rattachement.createMany({
         data: [
           {
@@ -198,6 +228,16 @@ describe("ModifierEtatFichesConsolidationHandler", () => {
       const etape4Id = "f1b2c3d4-e5a6-8901-bcde-444444444444";
       const etape5Id = "f1b2c3d4-e5a6-8901-bcde-555555555555";
 
+      await prisma.referentiel_rattachement_groupe.createMany({
+        data: [
+          { code: rattachement1Code, libelle: "Groupe bloquer 1", ordre: 1 },
+          { code: rattachement2Code, libelle: "Groupe bloquer 2", ordre: 1 },
+          { code: rattachement3Code, libelle: "Groupe bloquer 3", ordre: 1 },
+          { code: rattachement4Code, libelle: "Groupe bloquer 4", ordre: 1 },
+          { code: rattachement5Code, libelle: "Groupe bloquer 5", ordre: 1 },
+        ],
+      });
+
       await prisma.referentiel_rattachement.createMany({
         data: [
           {
@@ -341,6 +381,14 @@ describe("ModifierEtatFichesConsolidationHandler", () => {
       const etapeConsoId = "b09b1d44-bdd4-406b-86bd-96afeb6b7559";
       const etapeInstructionId = "c4d5e6f7-a8b9-0123-4567-123456789012";
 
+      await prisma.referentiel_rattachement_groupe.create({
+        data: {
+          code: rattachementCode,
+          libelle: "Groupe multi-étapes",
+          ordre: 1,
+        },
+      });
+
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
@@ -405,6 +453,14 @@ describe("ModifierEtatFichesConsolidationHandler", () => {
       const rattachementCode = "REG-CONSO-12";
       const ficheEvaluationId = "d5e6f7a8-b9c0-1234-5678-123456789012";
       const etapeConsoId = "e6f7a8b9-c0d1-2345-6789-123456789012";
+
+      await prisma.referentiel_rattachement_groupe.create({
+        data: {
+          code: rattachementCode,
+          libelle: "Groupe vide",
+          ordre: 1,
+        },
+      });
 
       await prisma.referentiel_rattachement.create({
         data: {
@@ -503,6 +559,14 @@ describe("ModifierEtatFichesConsolidationHandler", () => {
             date_creation: new Date().toISOString(),
             profilCode: ProfilEnum.DITP_ADMIN,
           },
+        ],
+      });
+
+      await prisma.referentiel_rattachement_groupe.createMany({
+        data: [
+          { code: rattachement1Code, libelle: "Groupe 1", ordre: 1 },
+          { code: rattachement2Code, libelle: "Groupe 2", ordre: 1 },
+          { code: rattachement3Code, libelle: "Groupe 3", ordre: 1 },
         ],
       });
 
@@ -665,6 +729,14 @@ describe("ModifierEtatFichesConsolidationHandler", () => {
               code: ProfilEnum.DITP_ADMIN,
             },
           },
+        },
+      });
+
+      await prisma.referentiel_rattachement_groupe.create({
+        data: {
+          code: rattachementCode,
+          libelle: "Groupe sans notification",
+          ordre: 1,
         },
       });
 

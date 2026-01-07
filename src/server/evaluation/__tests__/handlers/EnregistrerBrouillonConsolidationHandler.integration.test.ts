@@ -39,6 +39,14 @@ describe("EnregistrerBrouillonConsolidationHandler", () => {
         },
       });
 
+      await prisma.referentiel_rattachement_groupe.create({
+        data: {
+          code: rattachementCode,
+          libelle: `Libellé ${rattachementCode}`,
+          ordre: 1,
+        },
+      });
+
       await prisma.referentiel_critere.create({
         data: {
           id: critereId,
@@ -162,6 +170,14 @@ describe("EnregistrerBrouillonConsolidationHandler", () => {
           prenom: "User",
           date_creation: new Date(),
           profilCode: "DITP_ADMIN",
+        },
+      });
+
+      await prisma.referentiel_rattachement_groupe.create({
+        data: {
+          code: rattachementCode,
+          libelle: `Libellé ${rattachementCode}`,
+          ordre: 1,
         },
       });
 
@@ -300,6 +316,14 @@ describe("EnregistrerBrouillonConsolidationHandler", () => {
         },
       });
 
+      await prisma.referentiel_rattachement_groupe.create({
+        data: {
+          code: rattachementCode,
+          libelle: `Libellé ${rattachementCode}`,
+          ordre: 1,
+        },
+      });
+
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
@@ -365,6 +389,14 @@ describe("EnregistrerBrouillonConsolidationHandler", () => {
           prenom: "User",
           date_creation: new Date(),
           profilCode: "DITP_ADMIN",
+        },
+      });
+
+      await prisma.referentiel_rattachement_groupe.create({
+        data: {
+          code: rattachementCode,
+          libelle: `Libellé ${rattachementCode}`,
+          ordre: 1,
         },
       });
 
@@ -477,6 +509,14 @@ describe("EnregistrerBrouillonConsolidationHandler", () => {
           prenom: "User",
           date_creation: new Date(),
           profilCode: "DITP_ADMIN",
+        },
+      });
+
+      await prisma.referentiel_rattachement_groupe.create({
+        data: {
+          code: rattachementCode,
+          libelle: `Libellé ${rattachementCode}`,
+          ordre: 1,
         },
       });
 

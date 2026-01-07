@@ -30,6 +30,14 @@ describe("AfficherConsolidationQuery", () => {
         },
       });
 
+      await prisma.referentiel_rattachement_groupe.create({
+        data: {
+          code: rattachementCode,
+          libelle: "Groupe sans accès",
+          ordre: 1,
+        },
+      });
+
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
@@ -122,6 +130,21 @@ describe("AfficherConsolidationQuery", () => {
             },
           },
         },
+      });
+
+      await prisma.referentiel_rattachement_groupe.createMany({
+        data: [
+          {
+            code: rattachement1Code,
+            libelle: "Groupe Rattachement 1",
+            ordre: 1,
+          },
+          {
+            code: rattachement2Code,
+            libelle: "Groupe Rattachement 2",
+            ordre: 1,
+          },
+        ],
       });
 
       await prisma.referentiel_rattachement.create({
@@ -413,6 +436,14 @@ describe("AfficherConsolidationQuery", () => {
         },
       });
 
+      await prisma.referentiel_rattachement_groupe.create({
+        data: {
+          code: rattachementCode,
+          libelle: "Groupe en auto-évaluation",
+          ordre: 1,
+        },
+      });
+
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
@@ -485,6 +516,14 @@ describe("AfficherConsolidationQuery", () => {
           prenom: "User",
           date_creation: new Date(),
           profilCode: "DITP_ADMIN",
+        },
+      });
+
+      await prisma.referentiel_rattachement_groupe.create({
+        data: {
+          code: rattachementCode,
+          libelle: "Groupe multi-étape",
+          ordre: 1,
         },
       });
 
@@ -633,6 +672,14 @@ describe("AfficherConsolidationQuery", () => {
               descriptif: "Description sous-critère",
             },
           },
+        },
+      });
+
+      await prisma.referentiel_rattachement_groupe.create({
+        data: {
+          code: rattachementCode,
+          libelle: "Groupe sans évaluations",
+          ordre: 1,
         },
       });
 
@@ -791,6 +838,14 @@ describe("AfficherConsolidationQuery", () => {
         },
       });
 
+      await prisma.referentiel_rattachement_groupe.create({
+        data: {
+          code: rattachementCode,
+          libelle: "Groupe avec critères mixtes",
+          ordre: 1,
+        },
+      });
+
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
@@ -909,6 +964,14 @@ describe("AfficherConsolidationQuery", () => {
           prenom: "Objectifs",
           date_creation: new Date(),
           profilCode: "DITP_ADMIN",
+        },
+      });
+
+      await prisma.referentiel_rattachement_groupe.create({
+        data: {
+          code: rattachementCode,
+          libelle: "Groupe avec objectifs mixtes",
+          ordre: 1,
         },
       });
 
@@ -1070,6 +1133,14 @@ describe("AfficherConsolidationQuery", () => {
               descriptif: "Description sous-critère",
             },
           },
+        },
+      });
+
+      await prisma.referentiel_rattachement_groupe.create({
+        data: {
+          code: rattachementCode,
+          libelle: "Groupe en instruction",
+          ordre: 1,
         },
       });
 
@@ -1252,6 +1323,14 @@ describe("AfficherConsolidationQuery", () => {
               descriptif: "Description sous-critère",
             },
           },
+        },
+      });
+
+      await prisma.referentiel_rattachement_groupe.create({
+        data: {
+          code: rattachementCode,
+          libelle: "Groupe avec auto-évaluation",
+          ordre: 1,
         },
       });
 

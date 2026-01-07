@@ -226,6 +226,14 @@ describe("ListerUtilisateursPiloteEval", () => {
         },
       });
 
+      await prisma.referentiel_rattachement_groupe.create({
+        data: {
+          code: "Test",
+          libelle: "Libellé Test",
+          ordre: 1,
+        },
+      });
+
       await prisma.referentiel_rattachement.createMany({
         data: [
           { code: "TEST-02", libelle: "Test 02", groupe: "Test", ordre: 2 },

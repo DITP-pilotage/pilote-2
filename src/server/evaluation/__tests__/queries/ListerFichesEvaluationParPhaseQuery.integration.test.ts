@@ -35,6 +35,13 @@ describe("ListerFichesEvaluationParPhaseQuery", () => {
         },
       });
 
+      await prisma.referentiel_rattachement_groupe.createMany({
+        data: [
+          { code: regGroupeCode, libelle: "Groupe Région 01", ordre: 1 },
+          { code: deptGroupeCode, libelle: "Groupe Département 01", ordre: 1 },
+        ],
+      });
+
       await prisma.referentiel_rattachement.createMany({
         data: [
           {
@@ -213,6 +220,14 @@ describe("ListerFichesEvaluationParPhaseQuery", () => {
         ],
       });
 
+      await prisma.referentiel_rattachement_groupe.create({
+        data: {
+          code: rattachementCode,
+          libelle: "Groupe Région restreinte",
+          ordre: 1,
+        },
+      });
+
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
@@ -326,6 +341,14 @@ describe("ListerFichesEvaluationParPhaseQuery", () => {
           prenom: "Test",
           date_creation: new Date(),
           profilCode: "DITP_ADMIN",
+        },
+      });
+
+      await prisma.referentiel_rattachement_groupe.create({
+        data: {
+          code: rattachementCode,
+          libelle: "Groupe Région avec note collective",
+          ordre: 1,
         },
       });
 
@@ -461,6 +484,14 @@ describe("ListerFichesEvaluationParPhaseQuery", () => {
           prenom: "Test",
           date_creation: new Date(),
           profilCode: "DITP_ADMIN",
+        },
+      });
+
+      await prisma.referentiel_rattachement_groupe.create({
+        data: {
+          code: rattachementCode,
+          libelle: "Groupe Région moyennes phases",
+          ordre: 1,
         },
       });
 
@@ -650,6 +681,14 @@ describe("ListerFichesEvaluationParPhaseQuery", () => {
         },
       });
 
+      await prisma.referentiel_rattachement_groupe.create({
+        data: {
+          code: rattachementCode,
+          libelle: "Groupe Région multi-phases",
+          ordre: 1,
+        },
+      });
+
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
@@ -713,6 +752,14 @@ describe("ListerFichesEvaluationParPhaseQuery", () => {
           prenom: "Test",
           date_creation: new Date(),
           profilCode: "DITP_ADMIN",
+        },
+      });
+
+      await prisma.referentiel_rattachement_groupe.create({
+        data: {
+          code: groupeCode,
+          libelle: "Groupe Région 30",
+          ordre: 1,
         },
       });
 
@@ -832,6 +879,14 @@ describe("ListerFichesEvaluationParPhaseQuery", () => {
           prenom: "Test",
           date_creation: new Date(),
           profilCode: "DITP_ADMIN",
+        },
+      });
+
+      await prisma.referentiel_rattachement_groupe.create({
+        data: {
+          code: rattachementCode,
+          libelle: "Groupe Région test auto-évaluation",
+          ordre: 1,
         },
       });
 
