@@ -7,6 +7,7 @@ export class StubEmailManager implements EmailManager {
     templateId: number,
     params: object,
   ): Promise<void> {
+    // eslint-disable-next-line no-console
     console.log("📧 [STUB] Email sending disabled - Would have sent email:", {
       destinataires: destinataires.map((d) => d.email),
       templateId,
@@ -21,6 +22,7 @@ export class StubEmailManager implements EmailManager {
     profil: ProfilCode,
     listesDiffusionIds: number[],
   ): Promise<void> {
+    // eslint-disable-next-line no-console
     console.log(
       "👤 [STUB] Email sending disabled - Would have created contact:",
       {
@@ -34,6 +36,7 @@ export class StubEmailManager implements EmailManager {
   }
 
   async deleteContact(email: string): Promise<void> {
+    // eslint-disable-next-line no-console
     console.log(
       "🗑️  [STUB] Email sending disabled - Would have deleted contact:",
       {
@@ -50,6 +53,7 @@ export class StubEmailManager implements EmailManager {
     listesDiffusionAAjouterIds: number[],
     listesDiffusionASupprimerIds: number[],
   ): Promise<void> {
+    // eslint-disable-next-line no-console
     console.log(
       "✏️  [STUB] Email sending disabled - Would have updated contact:",
       {
@@ -67,6 +71,7 @@ export class StubEmailManager implements EmailManager {
     email: string,
     listesDiffusionIds: number[],
   ): Promise<void> {
+    // eslint-disable-next-line no-console
     console.log(
       "📋 [STUB] Email sending disabled - Would have added contact to lists:",
       {
