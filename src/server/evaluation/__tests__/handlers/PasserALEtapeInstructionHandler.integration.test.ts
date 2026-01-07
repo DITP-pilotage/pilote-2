@@ -1,13 +1,14 @@
 import { PasserALEtapeInstructionHandler } from "@/server/evaluation/handlers/PasserALEtapeInstructionHandler";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { prisma } from "@/server/db/prisma";
-import { PrismaTransaction } from "@/server/db/PrismaTransaction";
+import { InMemoryTransaction } from "@/server/db/InMemoryTransaction";
 import { SoumettreEtapeEvaluationService } from "@/server/evaluation/services/SoumettreEtapeEvaluationService";
+import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
 
 describe("PasserALEtapeInstructionHandler", () => {
   let handler: PasserALEtapeInstructionHandler;
   const prismaPilote = new PrismaPilote();
-  const transaction = new PrismaTransaction();
+  const transaction = new InMemoryTransaction();
   const soumettreEtapeEvaluationService = new SoumettreEtapeEvaluationService({
     prisma: prismaPilote,
     transaction,
@@ -20,63 +21,58 @@ describe("PasserALEtapeInstructionHandler", () => {
   });
 
   describe("execute", () => {
-    it("doit échouer si la fiche n'est pas en étape CONSOLIDATION", async () => {
-      // Given
-      const rattachementCode = "REG-400";
-      const ficheEvaluationId = "e8f9c2d1-4a5b-4d8c-9e2f-1a3b4c5d6e7f";
-      const utilisateurId = "f9a0c3d2-5b6c-4e9d-0f3a-2b4c5d6e7f8a";
+    it(
+      "doit échouer si la fiche n'est pas en étape CONSOLIDATION",
+      createIntegrationTest(async (prisma2) => {
+        // Given
+        const rattachementCode = "REG-400";
+        const ficheEvaluationId = "e8f9c2d1-4a5b-4d8c-9e2f-1a3b4c5d6e7f";
+        const utilisateurId = "f9a0c3d2-5b6c-4e9d-0f3a-2b4c5d6e7f8a";
 
-      await prisma.utilisateur.create({
-        data: {
-          id: utilisateurId,
-          email: "test.instruction1@example.com",
-          nom: "Instruction",
-          prenom: "Test1",
-          date_creation: new Date(),
-          profilCode: "DITP_ADMIN",
-        },
-      });
+        await prisma2.utilisateur.create({
+          data: {
+            id: utilisateurId,
+            email: "test.instruction1@example.com",
+            nom: "Instruction",
+            prenom: "Test1",
+            date_creation: new Date(),
+            profilCode: "DITP_ADMIN",
+          },
+        });
 
-      await prisma.referentiel_rattachement_groupe.create({
-        data: {
-          code: rattachementCode,
-          libelle: rattachementCode,
-          ordre: 1,
-        },
-      });
+        await prisma2.referentiel_rattachement.create({
+          data: {
+            code: rattachementCode,
+            groupe: rattachementCode,
+            ordre: 1,
+            libelle: "Rattachement instruction test",
+          },
+        });
 
-      await prisma.referentiel_rattachement.create({
-        data: {
-          code: rattachementCode,
-          groupe: rattachementCode,
-          ordre: 1,
-          libelle: "Rattachement instruction test",
-        },
-      });
-
-      await prisma.fiche_evaluation.create({
-        data: {
-          id: ficheEvaluationId,
-          jalon: 2025,
-          etape_courante: "AUTO_EVALUATION", // Pas en consolidation
-          rattachement_code: rattachementCode,
-          etape_evaluations: {
-            create: {
-              id: "a1b2c3d4-5e6f-7a8b-9c0d-1e2f3a4b5c6d",
-              type: "CONSOLIDATION",
+        await prisma2.fiche_evaluation.create({
+          data: {
+            id: ficheEvaluationId,
+            jalon: 2025,
+            etape_courante: "AUTO_EVALUATION",
+            rattachement_code: rattachementCode,
+            etape_evaluations: {
+              create: {
+                id: "a1b2c3d4-5e6f-7a8b-9c0d-1e2f3a4b5c6d",
+                type: "CONSOLIDATION",
+              },
             },
           },
-        },
-      });
+        });
 
-      // When/Then
-      await expect(
-        handler.execute(
-          { ficheEvaluationIds: [ficheEvaluationId] },
-          utilisateurId,
-        ),
-      ).rejects.toThrow();
-    });
+        // When/Then
+        await expect(
+          handler.execute(
+            { ficheEvaluationIds: [ficheEvaluationId] },
+            utilisateurId,
+          ),
+        ).rejects.toThrow();
+      }),
+    );
 
     it("doit créer une étape INSTRUCTION avec les évaluations clonées", async () => {
       // Given
@@ -124,14 +120,6 @@ describe("PasserALEtapeInstructionHandler", () => {
               descriptif: "Description",
             },
           },
-        },
-      });
-
-      await prisma.referentiel_rattachement_groupe.create({
-        data: {
-          code: rattachementCode,
-          libelle: rattachementCode,
-          ordre: 1,
         },
       });
 
@@ -249,14 +237,6 @@ describe("PasserALEtapeInstructionHandler", () => {
         },
       });
 
-      await prisma.referentiel_rattachement_groupe.create({
-        data: {
-          code: rattachementCode,
-          libelle: rattachementCode,
-          ordre: 1,
-        },
-      });
-
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
@@ -369,14 +349,6 @@ describe("PasserALEtapeInstructionHandler", () => {
           id: critereId,
           libelle: "Critère existing instruction",
           descriptif: "Description",
-        },
-      });
-
-      await prisma.referentiel_rattachement_groupe.create({
-        data: {
-          code: rattachementCode,
-          libelle: rattachementCode,
-          ordre: 1,
         },
       });
 
@@ -498,14 +470,6 @@ describe("PasserALEtapeInstructionHandler", () => {
         },
       });
 
-      await prisma.referentiel_rattachement_groupe.create({
-        data: {
-          code: rattachementCode,
-          libelle: rattachementCode,
-          ordre: 1,
-        },
-      });
-
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
@@ -612,14 +576,6 @@ describe("PasserALEtapeInstructionHandler", () => {
           id: critereId,
           libelle: "Critère date traitement",
           descriptif: "Description",
-        },
-      });
-
-      await prisma.referentiel_rattachement_groupe.create({
-        data: {
-          code: rattachementCode,
-          libelle: rattachementCode,
-          ordre: 1,
         },
       });
 

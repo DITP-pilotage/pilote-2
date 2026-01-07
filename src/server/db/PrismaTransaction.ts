@@ -5,7 +5,7 @@ import { Transaction } from "@/server/db/Transaction";
 export type PilotePrismaClient = Parameters<
   Parameters<typeof prisma.$transaction>[0]
 >[0];
-const txStore = new AsyncLocalStorage<PilotePrismaClient>();
+export const txStore = new AsyncLocalStorage<PilotePrismaClient>();
 
 export class PrismaTransaction implements Transaction {
   async run<T>(scope: () => Promise<T>): Promise<T> {
