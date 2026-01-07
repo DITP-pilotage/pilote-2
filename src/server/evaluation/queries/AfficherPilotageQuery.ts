@@ -87,6 +87,11 @@ export class AfficherPilotageQuery {
             libelle: rattachement.libelle,
             groupe: rattachement.groupe,
             ordre: rattachement.ordre,
+            referentielRattachementGroupe: {
+              code: rattachement.referentiel_rattachement_groupe.code,
+              libelle: rattachement.referentiel_rattachement_groupe.libelle,
+              ordre: rattachement.referentiel_rattachement_groupe.ordre,
+            },
           },
           evaluationsParCritereEtEtape,
           moyennesCriteres,
@@ -132,6 +137,7 @@ export class AfficherPilotageQuery {
         rattachement: {
           include: {
             objectifs: { orderBy: { libelle: "asc" } },
+            referentiel_rattachement_groupe: true,
           },
         },
         chantiers_evaluation: true,
@@ -154,7 +160,9 @@ export class AfficherPilotageQuery {
       orderBy: [
         {
           rattachement: {
-            groupe: "asc",
+            referentiel_rattachement_groupe: {
+              ordre: "asc",
+            },
           },
         },
         {

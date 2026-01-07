@@ -15,6 +15,9 @@ export type FicheEvaluationRow = {
   rattachementLibelle: string;
   rattachementGroupe: string;
   rattachementOrdre: number;
+  rattachementGroupeCode: string;
+  rattachementGroupeLibelle: string;
+  rattachementGroupeOrdre: number;
   etapeCourante: $Enums.etape_evaluation_enum;
   evaluationsParCritereEtEtape: Record<string, Record<string, number | null>>;
   objectifs: Array<{
@@ -31,8 +34,8 @@ export type FicheEvaluationRow = {
 const columnHelper = createColumnHelper<FicheEvaluationRow>();
 
 const columns = [
-  columnHelper.accessor("rattachementGroupe", {
-    id: "rattachementGroupe",
+  columnHelper.accessor("rattachementGroupeCode", {
+    id: "rattachementGroupeCode",
   }),
 ];
 
@@ -99,6 +102,12 @@ export const useTableauPilotage = () => {
       rattachementLibelle: fiche.rattachement.libelle,
       rattachementGroupe: fiche.rattachement.groupe,
       rattachementOrdre: fiche.rattachement.ordre,
+      rattachementGroupeCode:
+        fiche.rattachement.referentielRattachementGroupe.code,
+      rattachementGroupeLibelle:
+        fiche.rattachement.referentielRattachementGroupe.libelle,
+      rattachementGroupeOrdre:
+        fiche.rattachement.referentielRattachementGroupe.ordre,
       etapeCourante: fiche.etapeCourante,
       evaluationsParCritereEtEtape: fiche.evaluationsParCritereEtEtape,
       objectifs: fiche.objectifs,
@@ -115,7 +124,7 @@ export const useTableauPilotage = () => {
     getCoreRowModel: getCoreRowModel(),
     getGroupedRowModel: getGroupedRowModel(),
     initialState: {
-      grouping: ["rattachementGroupe"],
+      grouping: ["rattachementGroupeCode"],
     },
     state: {
       rowSelection,
