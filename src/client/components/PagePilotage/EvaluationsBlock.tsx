@@ -7,11 +7,15 @@ import {
   getInformationsAffichageCellule,
 } from "@/components/PagePilotage/useTableauPilotage";
 import { clsxm } from "@/utils/clsxm";
+import { Icone } from "@/client/components/_commons/Icone";
+import { TodoIcon } from "@/client/components/_commons/Icones/TodoIcon";
+import { Tooltip } from "@/client/components/shared/Tooltip";
 
 export function EvaluationsBlock<T extends { id: string | number }>({
   items,
   rowGroup,
   getEvaluation,
+  getTooltipLabel,
   getMoyenne,
 }: {
   items: T[];
@@ -21,6 +25,7 @@ export function EvaluationsBlock<T extends { id: string | number }>({
     row: Row<FicheEvaluationRow>;
     etape: $Enums.etape_evaluation_enum;
   }): number | null;
+  getTooltipLabel?(options: { item: T; row: Row<FicheEvaluationRow> }): string;
   getMoyenne(options: {
     row: Row<FicheEvaluationRow>;
     etape: $Enums.etape_evaluation_enum;
@@ -37,9 +42,31 @@ export function EvaluationsBlock<T extends { id: string | number }>({
           <React.Fragment key={row.id}>
             {items.map((item) => (
               <div
-                className="grid grid-cols-3 border-b !border-black border-r"
+                className={clsxm("grid border-b !border-black border-r", {
+                  "grid-cols-[30px_1fr_1fr_1fr]": getTooltipLabel,
+                  "grid-cols-3": !getTooltipLabel,
+                })}
                 key={item.id}
               >
+                {getTooltipLabel ? (
+                  <div className="flex justify-center items-center !border-r">
+                    <Tooltip.Root>
+                      <Tooltip.Trigger
+                        aria-label="Afficher le nom de l'objectif"
+                        className="!px-0"
+                      >
+                        <Icone
+                          aria-hidden
+                          className="h-4 w-4"
+                          icone={TodoIcon}
+                        />
+                      </Tooltip.Trigger>
+                      <Tooltip.Content>
+                        {getTooltipLabel?.({ item, row })}
+                      </Tooltip.Content>
+                    </Tooltip.Root>
+                  </div>
+                ) : null}
                 {ETAPES.map((etape) => {
                   const evaluation = getEvaluation({
                     item,

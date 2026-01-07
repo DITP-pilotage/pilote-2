@@ -93,6 +93,10 @@ export const TableauPilotage = () => {
                 getMoyenne={({ row, etape }) => {
                   return row.original.moyennesCriteres[etape];
                 }}
+                getTooltipLabel={({ row, item }) => {
+                  const objectif = row.original.objectifs[item.index];
+                  return objectif?.libelle ?? "ND";
+                }}
                 items={Array.from({ length: maxObjectifs }).map((_, index) => ({
                   id: index,
                   index,
