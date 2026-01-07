@@ -88,10 +88,7 @@ export class SoumettreEtapeEvaluationService {
             commentaire: "",
           },
         });
-        continue;
-      }
-
-      if (evaluationEtapeSuivante.note == null) {
+      } else if (evaluationEtapeSuivante.note == null) {
         await this.prisma.evaluation_objectif.update({
           where: { id: evaluationEtapeSuivante.id },
           data: { note: evaluation.note },
@@ -120,10 +117,7 @@ export class SoumettreEtapeEvaluationService {
             commentaire: "",
           },
         });
-        continue;
-      }
-
-      if (evaluationEtapeSuivante.note == null) {
+      } else if (evaluationEtapeSuivante.note == null) {
         await this.prisma.evaluation_critere.update({
           where: { id: evaluationEtapeSuivante.id },
           data: { note: evaluation.note },
