@@ -39,7 +39,6 @@ export class SoumettreEtapeEvaluationService {
       );
 
       if (!existingEtapeSuivante) {
-        console.log("-> pas d'étape suivante existante, création");
         await this.creerEtapeSuivante({
           auteurId,
           ficheEvaluationId,
@@ -47,10 +46,6 @@ export class SoumettreEtapeEvaluationService {
           etapeCourante,
         });
       } else {
-        console.log(
-          "-> étape suivante existante, mise à jour",
-          existingEtapeSuivante,
-        );
         await this.mettreAJourEtapeSuivanteExistante({
           etapeCourante: etapeCourante,
           etapeSuivante: existingEtapeSuivante,
@@ -80,12 +75,6 @@ export class SoumettreEtapeEvaluationService {
     for (const evaluation of etapeCourante.evaluations_objectifs) {
       const evaluationEtapeSuivante = etapeSuivante.evaluations_objectifs.find(
         (evalObj) => evalObj.objectif_id === evaluation.objectif_id,
-      );
-
-      console.log(
-        "-> traitement objectif",
-        evaluation.objectif_id,
-        evaluationEtapeSuivante,
       );
 
       if (!evaluationEtapeSuivante) {
@@ -119,14 +108,6 @@ export class SoumettreEtapeEvaluationService {
       const evaluationEtapeSuivante = etapeSuivante.evaluations_criteres.find(
         (evalCrit) => evalCrit.critere_id === evaluation.critere_id,
       );
-
-      console.log(
-        "-> traitement critère",
-        evaluation.critere_id,
-        evaluationEtapeSuivante,
-      );
-
-      console.log(etapeSuivante.evaluations_criteres);
 
       if (!evaluationEtapeSuivante) {
         await this.prisma.evaluation_critere.create({
