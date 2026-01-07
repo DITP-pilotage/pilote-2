@@ -804,6 +804,18 @@ model referentiel_rattachement {
   objectifs                            referentiel_objectif[]
   fiche_evaluation                     fiche_evaluation[]
   rattachement_utilisateur_etape_jalon rattachement_utilisateur_etape_jalon[]
+  referentiel_rattachement_groupe      referentiel_rattachement_groupe        @relation(fields: [groupe], references: [code], onDelete: Cascade, onUpdate: Cascade)
+
+  @@schema("public")
+}
+
+model referentiel_rattachement_groupe {
+  code                     String                     @id
+  libelle                  String
+  ordre                    Int
+  created_at               DateTime                   @default(now())
+  updated_at               DateTime                   @updatedAt @default(now())
+  referentiel_rattachement referentiel_rattachement[]
 
   @@schema("public")
 }
