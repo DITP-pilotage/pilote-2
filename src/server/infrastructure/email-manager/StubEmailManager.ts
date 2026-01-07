@@ -1,5 +1,5 @@
-import { EmailManager } from "./EmailManager.interface";
 import { ProfilCode } from "@/server/gestion-utilisateur/domain/Profil";
+import { EmailManager } from "./EmailManager.interface";
 
 export class StubEmailManager implements EmailManager {
   async sendTransactionalEmail(
@@ -21,19 +21,25 @@ export class StubEmailManager implements EmailManager {
     profil: ProfilCode,
     listesDiffusionIds: number[],
   ): Promise<void> {
-    console.log("👤 [STUB] Email sending disabled - Would have created contact:", {
-      email,
-      nom,
-      prenom,
-      profil,
-      listesDiffusionIds,
-    });
+    console.log(
+      "👤 [STUB] Email sending disabled - Would have created contact:",
+      {
+        email,
+        nom,
+        prenom,
+        profil,
+        listesDiffusionIds,
+      },
+    );
   }
 
   async deleteContact(email: string): Promise<void> {
-    console.log("🗑️  [STUB] Email sending disabled - Would have deleted contact:", {
-      email,
-    });
+    console.log(
+      "🗑️  [STUB] Email sending disabled - Would have deleted contact:",
+      {
+        email,
+      },
+    );
   }
 
   async updateContact(
@@ -44,23 +50,29 @@ export class StubEmailManager implements EmailManager {
     listesDiffusionAAjouterIds: number[],
     listesDiffusionASupprimerIds: number[],
   ): Promise<void> {
-    console.log("✏️  [STUB] Email sending disabled - Would have updated contact:", {
-      email,
-      nom,
-      prenom,
-      profil,
-      listesDiffusionAAjouterIds,
-      listesDiffusionASupprimerIds,
-    });
+    console.log(
+      "✏️  [STUB] Email sending disabled - Would have updated contact:",
+      {
+        email,
+        nom,
+        prenom,
+        profil,
+        listesDiffusionAAjouterIds,
+        listesDiffusionASupprimerIds,
+      },
+    );
   }
 
   async addContactToLists(
     email: string,
     listesDiffusionIds: number[],
   ): Promise<void> {
-    console.log("📋 [STUB] Email sending disabled - Would have added contact to lists:", {
-      email,
-      listesDiffusionIds,
-    });
+    console.log(
+      "📋 [STUB] Email sending disabled - Would have added contact to lists:",
+      {
+        email,
+        listesDiffusionIds,
+      },
+    );
   }
 }
