@@ -672,5 +672,262 @@ describe("PasserALEtapeInstructionHandler", () => {
       expect(evaluationCritere.note).toBe(1);
       expect(evaluationCritere.date_traitement).toBeNull();
     });
+
+    it("doit créer l'évaluation d'objectif manquante si elle n'existe pas en instruction", async () => {
+      // Given
+      const rattachementCode = "REG-407";
+      const ficheEvaluationId = "f3a4b5c6-d7e8-f9a0-b1c2-d3e4f5a6b7c8";
+      const etapeConsolidationId = "a4b5c6d7-e8f9-a0b1-c2d3-e4f5a6b7c8d9";
+      const etapeInstructionId = "b5c6d7e8-f9a0-b1c2-d3e4-f5a6b7c8d9e0";
+      const utilisateurId = "c6d7e8f9-a0b1-c2d3-e4f5-a6b7c8d9e0f1";
+      const objectifId1 = "d7e8f9a0-b1c2-d3e4-f5a6-b7c8d9e0f1a2";
+      const objectifId2 = "e8f9a0b1-c2d3-e4f5-a6b7-c8d9e0f1a2b3";
+      const evaluationObjectifConsolidationId1 =
+        "f9a0b1c2-d3e4-f5a6-b7c8-d9e0f1a2b3c4";
+      const evaluationObjectifConsolidationId2 =
+        "a0b1c2d3-e4f5-a6b7-c8d9-e0f1a2b3c4d5";
+      const evaluationObjectifInstructionId1 =
+        "b1c2d3e4-f5a6-b7c8-d9e0-f1a2b3c4d5e6";
+
+      await prisma.utilisateur.create({
+        data: {
+          id: utilisateurId,
+          email: "test.instruction8@example.com",
+          nom: "Instruction",
+          prenom: "Test8",
+          date_creation: new Date(),
+          profilCode: "DITP_ADMIN",
+        },
+      });
+
+      await prisma.referentiel_rattachement.create({
+        data: {
+          code: rattachementCode,
+          groupe: rattachementCode,
+          ordre: 1,
+          libelle: "Rattachement objectif manquant",
+          objectifs: {
+            create: [
+              {
+                id: objectifId1,
+                libelle: "Objectif 1",
+                descriptif: "Description",
+                jalon: 2025,
+              },
+              {
+                id: objectifId2,
+                libelle: "Objectif 2",
+                descriptif: "Description",
+                jalon: 2025,
+              },
+            ],
+          },
+        },
+      });
+
+      await prisma.fiche_evaluation.create({
+        data: {
+          id: ficheEvaluationId,
+          jalon: 2025,
+          etape_courante: "CONSOLIDATION",
+          rattachement_code: rattachementCode,
+          etape_evaluations: {
+            create: [
+              {
+                id: etapeConsolidationId,
+                type: "CONSOLIDATION",
+                evaluations_objectifs: {
+                  create: [
+                    {
+                      id: evaluationObjectifConsolidationId1,
+                      objectif_id: objectifId1,
+                      auteur_id: utilisateurId,
+                      note: 3,
+                      commentaire: "Objectif 1 consolidé",
+                    },
+                    {
+                      id: evaluationObjectifConsolidationId2,
+                      objectif_id: objectifId2,
+                      auteur_id: utilisateurId,
+                      note: 4,
+                      commentaire: "Objectif 2 consolidé",
+                    },
+                  ],
+                },
+              },
+              {
+                id: etapeInstructionId,
+                type: "INSTRUCTION",
+                evaluations_objectifs: {
+                  create: {
+                    id: evaluationObjectifInstructionId1,
+                    objectif_id: objectifId1,
+                    auteur_id: utilisateurId,
+                    note: null,
+                    commentaire: "",
+                  },
+                },
+              },
+            ],
+          },
+        },
+      });
+
+      // When
+      await handler.execute(
+        { ficheEvaluationIds: [ficheEvaluationId] },
+        utilisateurId,
+      );
+
+      // Then
+      const evaluationsObjectifs = await prisma.evaluation_objectif.findMany({
+        where: {
+          etape_evaluation_id: etapeInstructionId,
+        },
+        orderBy: { objectif_id: "asc" },
+      });
+
+      expect(evaluationsObjectifs).toEqual([
+        expect.objectContaining({
+          objectif_id: objectifId1,
+          auteur_id: utilisateurId,
+          note: 3,
+        }),
+        expect.objectContaining({
+          objectif_id: objectifId2,
+          auteur_id: utilisateurId,
+          note: 4,
+          commentaire: "",
+        }),
+      ]);
+    });
+
+    it("doit créer l'évaluation de critère manquante si elle n'existe pas en instruction", async () => {
+      // Given
+      const rattachementCode = "REG-408";
+      const ficheEvaluationId = "c6d7e8f9-a0b1-c2d3-e4f5-a6b7c8d9e0f1";
+      const etapeConsolidationId = "d7e8f9a0-b1c2-d3e4-f5a6-b7c8d9e0f1a2";
+      const etapeInstructionId = "e8f9a0b1-c2d3-e4f5-a6b7-c8d9e0f1a2b3";
+      const utilisateurId = "f9a0b1c2-d3e4-f5a6-b7c8-d9e0f1a2b3c4";
+      const critereId1 = "a0b1c2d3-e4f5-a6b7-c8d9-e0f1a2b3c4d5";
+      const critereId2 = "b1c2d3e4-f5a6-b7c8-d9e0-f1a2b3c4d5e6";
+      const evaluationCritereConsolidationId1 =
+        "c2d3e4f5-a6b7-c8d9-e0f1-a2b3c4d5e6f7";
+      const evaluationCritereConsolidationId2 =
+        "d3e4f5a6-b7c8-d9e0-f1a2-b3c4d5e6f7a8";
+      const evaluationCritereInstructionId1 =
+        "e4f5a6b7-c8d9-e0f1-a2b3-c4d5e6f7a8b9";
+
+      await prisma.utilisateur.create({
+        data: {
+          id: utilisateurId,
+          email: "test.instruction9@example.com",
+          nom: "Instruction",
+          prenom: "Test9",
+          date_creation: new Date(),
+          profilCode: "DITP_ADMIN",
+        },
+      });
+
+      await prisma.referentiel_critere.createMany({
+        data: [
+          {
+            id: critereId1,
+            libelle: "Critère 1",
+            descriptif: "Description",
+          },
+          {
+            id: critereId2,
+            libelle: "Critère 2",
+            descriptif: "Description",
+          },
+        ],
+      });
+
+      await prisma.referentiel_rattachement.create({
+        data: {
+          code: rattachementCode,
+          groupe: rattachementCode,
+          ordre: 1,
+          libelle: "Rattachement critère manquant",
+        },
+      });
+
+      await prisma.fiche_evaluation.create({
+        data: {
+          id: ficheEvaluationId,
+          jalon: 2025,
+          etape_courante: "CONSOLIDATION",
+          rattachement_code: rattachementCode,
+          etape_evaluations: {
+            create: [
+              {
+                id: etapeConsolidationId,
+                type: "CONSOLIDATION",
+                evaluations_criteres: {
+                  create: [
+                    {
+                      id: evaluationCritereConsolidationId1,
+                      critere_id: critereId1,
+                      auteur_id: utilisateurId,
+                      note: 2,
+                      commentaire: "Critère 1 consolidé",
+                    },
+                    {
+                      id: evaluationCritereConsolidationId2,
+                      critere_id: critereId2,
+                      auteur_id: utilisateurId,
+                      note: 5,
+                      commentaire: "Critère 2 consolidé",
+                    },
+                  ],
+                },
+              },
+              {
+                id: etapeInstructionId,
+                type: "INSTRUCTION",
+                evaluations_criteres: {
+                  create: {
+                    id: evaluationCritereInstructionId1,
+                    critere_id: critereId1,
+                    auteur_id: utilisateurId,
+                    note: null,
+                    commentaire: "",
+                  },
+                },
+              },
+            ],
+          },
+        },
+      });
+
+      // When
+      await handler.execute(
+        { ficheEvaluationIds: [ficheEvaluationId] },
+        utilisateurId,
+      );
+
+      // Then
+      const evaluationsCriteres = await prisma.evaluation_critere.findMany({
+        where: {
+          etape_evaluation_id: etapeInstructionId,
+        },
+        orderBy: { critere_id: "asc" },
+      });
+
+      expect(evaluationsCriteres).toEqual([
+        expect.objectContaining({
+          critere_id: critereId1,
+          auteur_id: utilisateurId,
+          note: 2,
+        }),
+        expect.objectContaining({
+          critere_id: critereId2,
+          auteur_id: utilisateurId,
+          note: 5,
+          commentaire: "",
+        }),
+      ]);
+    });
   });
 });

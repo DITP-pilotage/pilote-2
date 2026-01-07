@@ -49,6 +49,7 @@ export class SoumettreEtapeEvaluationService {
         await this.mettreAJourEtapeSuivanteExistante({
           etapeCourante: etapeCourante,
           etapeSuivante: existingEtapeSuivante,
+          auteurId,
         });
       }
 
@@ -59,6 +60,7 @@ export class SoumettreEtapeEvaluationService {
   private async mettreAJourEtapeSuivanteExistante({
     etapeCourante,
     etapeSuivante,
+    auteurId,
   }: {
     etapeCourante: etape_evaluation & {
       evaluations_objectifs: evaluation_objectif[];
@@ -68,15 +70,25 @@ export class SoumettreEtapeEvaluationService {
       evaluations_objectifs: evaluation_objectif[];
       evaluations_criteres: evaluation_critere[];
     };
+    auteurId: string;
   }) {
     for (const evaluation of etapeCourante.evaluations_objectifs) {
       const evaluationEtapeSuivante = etapeSuivante.evaluations_objectifs.find(
         (evalObj) => evalObj.objectif_id === evaluation.objectif_id,
       );
 
-      if (!evaluationEtapeSuivante) continue;
-
-      if (evaluationEtapeSuivante.note == null) {
+      if (!evaluationEtapeSuivante) {
+        await this.prisma.evaluation_objectif.create({
+          data: {
+            id: randomUUID(),
+            etape_evaluation_id: etapeSuivante.id,
+            objectif_id: evaluation.objectif_id,
+            auteur_id: auteurId,
+            note: evaluation.note,
+            commentaire: "",
+          },
+        });
+      } else if (evaluationEtapeSuivante.note == null) {
         await this.prisma.evaluation_objectif.update({
           where: { id: evaluationEtapeSuivante.id },
           data: { note: evaluation.note },
@@ -94,9 +106,18 @@ export class SoumettreEtapeEvaluationService {
         (evalCrit) => evalCrit.critere_id === evaluation.critere_id,
       );
 
-      if (!evaluationEtapeSuivante) continue;
-
-      if (evaluationEtapeSuivante.note == null) {
+      if (!evaluationEtapeSuivante) {
+        await this.prisma.evaluation_critere.create({
+          data: {
+            id: randomUUID(),
+            etape_evaluation_id: etapeSuivante.id,
+            critere_id: evaluation.critere_id,
+            auteur_id: auteurId,
+            note: evaluation.note,
+            commentaire: "",
+          },
+        });
+      } else if (evaluationEtapeSuivante.note == null) {
         await this.prisma.evaluation_critere.update({
           where: { id: evaluationEtapeSuivante.id },
           data: { note: evaluation.note },
