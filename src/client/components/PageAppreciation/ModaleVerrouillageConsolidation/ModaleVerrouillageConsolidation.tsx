@@ -15,6 +15,17 @@ import { Icone } from "@/components/_commons/Icone";
 import { WarningIcon } from "@/components/_commons/Icones/WarningIcon";
 import Alerte from "@/components/_commons/Alerte/Alerte";
 import { ArrowLine3Icon } from "@/components/_commons/Icones/ArrowLine3Icon";
+import { Tooltip } from "@/components/shared/Tooltip";
+
+const TooltipNonTraite = ({ children }: PropsWithChildren) => (
+  <Tooltip.Root>
+    <Tooltip.Trigger className="!my-0">{children}</Tooltip.Trigger>
+    <Tooltip.Content>
+      Les appréciations de ce territoire ne sont pas toutes marquées comme
+      traitées.
+    </Tooltip.Content>
+  </Tooltip.Root>
+);
 
 export const ModaleTransmissionDITP = ({
   fichesAppreciation,
@@ -154,13 +165,15 @@ export const ModaleTransmissionDITP = ({
                                 {territoireLabel}
                               </span>
                               {!traite && (
-                                <span className="absolute top-full left-0 whitespace-nowrap text-xs text-dsfr-mention-grey flex items-center gap-1">
-                                  <Icone
-                                    className="h-3 w-3 text-current"
-                                    icone={WarningIcon}
-                                  />
-                                  traité partiellement
-                                </span>
+                                <TooltipNonTraite>
+                                  <span className="absolute top-full left-0 whitespace-nowrap text-xs text-dsfr-mention-grey flex items-center gap-1">
+                                    <Icone
+                                      className="h-3 w-3 text-current"
+                                      icone={WarningIcon}
+                                    />
+                                    traité partiellement
+                                  </span>
+                                </TooltipNonTraite>
                               )}
                             </span>
                           </label>
@@ -222,10 +235,12 @@ export const ModaleTransmissionDITP = ({
                               {fiche.rattachement.code})
                             </span>
                             {!estTraitee(fiche) && (
-                              <Icone
-                                className="text-dsfr-mention-grey w-4 h-4"
-                                icone={WarningIcon}
-                              />
+                              <TooltipNonTraite>
+                                <Icone
+                                  className="text-dsfr-mention-grey w-4 h-4"
+                                  icone={WarningIcon}
+                                />
+                              </TooltipNonTraite>
                             )}
                           </li>
                         );
