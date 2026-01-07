@@ -819,6 +819,16 @@ describe("#AfficherPilotageQuery", () => {
         },
       });
 
+      await prisma.referentiel_rattachement_groupe.createMany({
+        data: [
+          {
+            code: "Groupe Z",
+            libelle: "Groupe rattachement",
+            ordre: 1,
+          },
+        ],
+      });
+
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
@@ -912,6 +922,16 @@ describe("#AfficherPilotageQuery", () => {
             id: critere3Id,
             libelle: "Critère 3",
             descriptif: "Description critère 3",
+          },
+        ],
+      });
+
+      await prisma.referentiel_rattachement_groupe.createMany({
+        data: [
+          {
+            code: "Groupe Y",
+            libelle: "Groupe rattachement",
+            ordre: 1,
           },
         ],
       });
@@ -1116,6 +1136,26 @@ describe("#AfficherPilotageQuery", () => {
         ],
       });
 
+      await prisma.referentiel_rattachement_groupe.createMany({
+        data: [
+          {
+            code: rattachementCode,
+            libelle: "Groupe rattachement",
+            ordre: 1,
+          },
+        ],
+      });
+
+      await prisma.referentiel_rattachement_groupe.createMany({
+        data: [
+          {
+            code: "Groupe Synthèse",
+            libelle: "Groupe rattachement",
+            ordre: 1,
+          },
+        ],
+      });
+
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
@@ -1261,6 +1301,16 @@ describe("#AfficherPilotageQuery", () => {
             id: critere2Id,
             libelle: "Critère calcul 2",
             descriptif: "Description critère calcul 2",
+          },
+        ],
+      });
+
+      await prisma.referentiel_rattachement_groupe.createMany({
+        data: [
+          {
+            code: "Groupe Calcul",
+            libelle: "Groupe rattachement",
+            ordre: 1,
           },
         ],
       });
