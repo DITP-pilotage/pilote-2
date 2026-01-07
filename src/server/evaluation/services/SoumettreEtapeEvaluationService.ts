@@ -39,6 +39,7 @@ export class SoumettreEtapeEvaluationService {
       );
 
       if (!existingEtapeSuivante) {
+        console.log("-> pas d'étape suivante existante, création");
         await this.creerEtapeSuivante({
           auteurId,
           ficheEvaluationId,
@@ -46,9 +47,14 @@ export class SoumettreEtapeEvaluationService {
           etapeCourante,
         });
       } else {
+        console.log(
+          "-> étape suivante existante, mise à jour",
+          existingEtapeSuivante,
+        );
         await this.mettreAJourEtapeSuivanteExistante({
           etapeCourante: etapeCourante,
           etapeSuivante: existingEtapeSuivante,
+          auteurId,
         });
       }
 
@@ -59,6 +65,7 @@ export class SoumettreEtapeEvaluationService {
   private async mettreAJourEtapeSuivanteExistante({
     etapeCourante,
     etapeSuivante,
+    auteurId,
   }: {
     etapeCourante: etape_evaluation & {
       evaluations_objectifs: evaluation_objectif[];
@@ -68,13 +75,32 @@ export class SoumettreEtapeEvaluationService {
       evaluations_objectifs: evaluation_objectif[];
       evaluations_criteres: evaluation_critere[];
     };
+    auteurId: string;
   }) {
     for (const evaluation of etapeCourante.evaluations_objectifs) {
       const evaluationEtapeSuivante = etapeSuivante.evaluations_objectifs.find(
         (evalObj) => evalObj.objectif_id === evaluation.objectif_id,
       );
 
-      if (!evaluationEtapeSuivante) continue;
+      console.log(
+        "-> traitement objectif",
+        evaluation.objectif_id,
+        evaluationEtapeSuivante,
+      );
+
+      if (!evaluationEtapeSuivante) {
+        await this.prisma.evaluation_objectif.create({
+          data: {
+            id: randomUUID(),
+            etape_evaluation_id: etapeSuivante.id,
+            objectif_id: evaluation.objectif_id,
+            auteur_id: auteurId,
+            note: evaluation.note,
+            commentaire: "",
+          },
+        });
+        continue;
+      }
 
       if (evaluationEtapeSuivante.note == null) {
         await this.prisma.evaluation_objectif.update({
@@ -94,7 +120,27 @@ export class SoumettreEtapeEvaluationService {
         (evalCrit) => evalCrit.critere_id === evaluation.critere_id,
       );
 
-      if (!evaluationEtapeSuivante) continue;
+      console.log(
+        "-> traitement critère",
+        evaluation.critere_id,
+        evaluationEtapeSuivante,
+      );
+
+      console.log(etapeSuivante.evaluations_criteres);
+
+      if (!evaluationEtapeSuivante) {
+        await this.prisma.evaluation_critere.create({
+          data: {
+            id: randomUUID(),
+            etape_evaluation_id: etapeSuivante.id,
+            critere_id: evaluation.critere_id,
+            auteur_id: auteurId,
+            note: evaluation.note,
+            commentaire: "",
+          },
+        });
+        continue;
+      }
 
       if (evaluationEtapeSuivante.note == null) {
         await this.prisma.evaluation_critere.update({
