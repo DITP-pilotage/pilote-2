@@ -1,5 +1,9 @@
 import { Fragment } from "react";
-import { useTableauPilotage } from "@/components/PagePilotage/useTableauPilotage";
+import {
+  ETAPES,
+  getInformationsAffichageCellule,
+  useTableauPilotage,
+} from "@/components/PagePilotage/useTableauPilotage";
 import { useObjectifsCount } from "@/components/PagePilotage/useObjectifsCount";
 import { TableauPilotageHeader } from "@/components/PagePilotage/TableauPilotageHeader";
 import { EnteteGroupeRattachement } from "@/components/PagePilotage/EnteteGroupeRattachement";
@@ -13,12 +17,13 @@ export const TableauPilotage = () => {
   const gridTemplateColumns = [
     "400px",
     "170px",
-    ...Array(criteres.length)
+    ...Array(criteres.length + 1) // Ajout d'une colonne pour les moyennes
       .fill(0)
       .map(() => "170px"),
-    ...Array(maxObjectifs)
+    ...Array(maxObjectifs + 1) // Ajout d'une colonne pour les moyennes
       .fill(0)
       .map(() => "170px"),
+    "170px",
   ];
 
   return (
@@ -73,6 +78,9 @@ export const TableauPilotage = () => {
                     etape
                   ];
                 }}
+                getMoyenne={({ row, etape }) => {
+                  return row.original.moyennesCriteres[etape];
+                }}
                 items={criteres}
                 rowGroup={rowGroup}
               />
@@ -82,12 +90,57 @@ export const TableauPilotage = () => {
                   const objectif = row.original.objectifs[item.index];
                   return objectif?.evaluations[etape];
                 }}
+                getMoyenne={({ row, etape }) => {
+                  return row.original.moyennesCriteres[etape];
+                }}
                 items={Array.from({ length: maxObjectifs }).map((_, index) => ({
                   id: index,
                   index,
                 }))}
                 rowGroup={rowGroup}
               />
+
+              <div
+                className="grid gap-0 grid-cols-subgrid border-l border-t !border-black"
+                style={{ gridColumn: "span 1" }}
+              >
+                {rowGroup.subRows.map((row) => {
+                  const fiche = row.original;
+                  return (
+                    <div
+                      className="grid grid-cols-3 border-b !border-black border-r"
+                      key={`${fiche.id}-${fiche.rattachementCode}`}
+                    >
+                      {ETAPES.map((etape) => {
+                        const moyennePonderee = fiche.synthese[etape.key];
+                        const {
+                          isAfterPhase,
+                          shouldShowBlueText,
+                          shouldShowDash,
+                        } = getInformationsAffichageCellule(
+                          fiche,
+                          moyennePonderee,
+                          etape,
+                        );
+                        return (
+                          <div
+                            className={clsxm(
+                              "flex items-center justify-center text-center font-bold whitespace-nowrap",
+                              {
+                                "bg-dsfr-contrast-grey": isAfterPhase,
+                                "text-dsfr-info-main-525": shouldShowBlueText,
+                              },
+                            )}
+                            key={etape.key}
+                          >
+                            {shouldShowDash ? "–" : moyennePonderee}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  );
+                })}
+              </div>
             </Fragment>
           ))}
         </div>
