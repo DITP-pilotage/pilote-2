@@ -1,150 +1,10 @@
-import type { Prisma } from "@prisma/client";
-import { randomUUID } from "node:crypto";
 import { PasserALEtapeInstructionHandler } from "@/server/evaluation/handlers/PasserALEtapeInstructionHandler";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { InMemoryTransaction } from "@/server/db/InMemoryTransaction";
 import { SoumettreEtapeEvaluationService } from "@/server/evaluation/services/SoumettreEtapeEvaluationService";
 import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
 import { getPrisma } from "@/server/db/PrismaTransaction";
-
-// ============================================================================
-// Fixture Factories - Simple composable building blocks
-// ============================================================================
-
-async function utilisateur(
-  overrides: Partial<Prisma.utilisateurUncheckedCreateInput> = {},
-) {
-  const prisma = getPrisma();
-  return prisma.utilisateur.create({
-    data: {
-      id: randomUUID(),
-      email: `user-${randomUUID().slice(0, 8)}@example.com`,
-      nom: "Test",
-      prenom: "User",
-      date_creation: new Date(),
-      profilCode: "DITP_ADMIN",
-      ...overrides,
-    },
-  });
-}
-
-async function rattachement(
-  overrides: Partial<Prisma.referentiel_rattachementUncheckedCreateInput> = {},
-) {
-  const prisma = getPrisma();
-  const code = overrides.code || `REG-${randomUUID().slice(0, 6)}`;
-  return prisma.referentiel_rattachement.create({
-    data: {
-      code,
-      groupe: code,
-      ordre: 1,
-      libelle: `Rattachement ${code}`,
-      ...overrides,
-    },
-  });
-}
-
-async function critere(
-  overrides: Partial<Prisma.referentiel_critereUncheckedCreateInput> = {},
-) {
-  const prisma = getPrisma();
-  return prisma.referentiel_critere.create({
-    data: {
-      id: randomUUID(),
-      libelle: "Critère test",
-      descriptif: "Description",
-      ...overrides,
-    },
-  });
-}
-
-async function objectif(
-  overrides: Partial<Prisma.referentiel_objectifUncheckedCreateInput> & {
-    rattachement_code: string;
-  },
-) {
-  const prisma = getPrisma();
-  return prisma.referentiel_objectif.create({
-    data: {
-      id: randomUUID(),
-      libelle: "Objectif test",
-      descriptif: "Description",
-      jalon: 2025,
-      ...overrides,
-    },
-  });
-}
-
-async function fiche(
-  overrides: Partial<Prisma.fiche_evaluationUncheckedCreateInput> & {
-    rattachement_code: string;
-  },
-) {
-  const prisma = getPrisma();
-  return prisma.fiche_evaluation.create({
-    data: {
-      id: randomUUID(),
-      jalon: 2025,
-      etape_courante: "AUTO_EVALUATION",
-      ...overrides,
-    },
-  });
-}
-
-async function evaluation(
-  overrides: Partial<Prisma.etape_evaluationUncheckedCreateInput> & {
-    fiche_evaluation_id: string;
-  },
-) {
-  const prisma = getPrisma();
-  return prisma.etape_evaluation.create({
-    data: {
-      id: randomUUID(),
-      type: "AUTO_EVALUATION",
-      ...overrides,
-    },
-  });
-}
-
-async function evaluationObjectif(
-  overrides: Partial<Prisma.evaluation_objectifUncheckedCreateInput> & {
-    etape_evaluation_id: string;
-    objectif_id: string;
-    auteur_id: string;
-  },
-) {
-  const prisma = getPrisma();
-  return prisma.evaluation_objectif.create({
-    data: {
-      id: randomUUID(),
-      note: null,
-      commentaire: "",
-      ...overrides,
-    },
-  });
-}
-
-async function evaluationCritere(
-  overrides: Partial<Prisma.evaluation_critereUncheckedCreateInput> & {
-    etape_evaluation_id: string;
-    critere_id: string;
-    auteur_id: string;
-  },
-) {
-  const prisma = getPrisma();
-  return prisma.evaluation_critere.create({
-    data: {
-      id: randomUUID(),
-      note: null,
-      commentaire: "",
-      ...overrides,
-    },
-  });
-}
-
-// ============================================================================
-// Tests
-// ============================================================================
+import { f } from "@/server/infrastructure/test/fixtures";
 
 describe("PasserALEtapeInstructionHandler", () => {
   let handler: PasserALEtapeInstructionHandler;
@@ -166,20 +26,20 @@ describe("PasserALEtapeInstructionHandler", () => {
       "doit échouer si la fiche n'est pas en étape CONSOLIDATION",
       createIntegrationTest(async () => {
         // Given
-        const user = await utilisateur();
-        const rat = await rattachement();
-        const ficheData = await fiche({
-          rattachement_code: rat.code,
+        const utilisateur = await f.utilisateur();
+        const rattachement = await f.rattachement();
+        const fiche = await f.fiche({
+          rattachement_code: rattachement.code,
           etape_courante: "AUTO_EVALUATION",
         });
-        await evaluation({
-          fiche_evaluation_id: ficheData.id,
+        await f.evaluation({
+          fiche_evaluation_id: fiche.id,
           type: "CONSOLIDATION",
         });
 
         // When/Then
         await expect(
-          handler.execute({ ficheEvaluationIds: [ficheData.id] }, user.id),
+          handler.execute({ ficheEvaluationIds: [fiche.id] }, utilisateur.id),
         ).rejects.toThrow();
       }),
     );
@@ -188,37 +48,37 @@ describe("PasserALEtapeInstructionHandler", () => {
       "doit créer une étape INSTRUCTION avec les évaluations clonées",
       createIntegrationTest(async () => {
         // Given
-        const auteurInitial = await utilisateur();
-        const nouvelAuteur = await utilisateur();
+        const auteurInitial = await f.utilisateur();
+        const nouvelAuteur = await f.utilisateur();
 
-        const rat = await rattachement();
-        const obj = await objectif({
-          rattachement_code: rat.code,
+        const rattachement = await f.rattachement();
+        const objectif = await f.objectif({
+          rattachement_code: rattachement.code,
           libelle: "Objectif instruction",
         });
-        const crit = await critere({ libelle: "Critère instruction" });
+        const critere = await f.critere({ libelle: "Critère instruction" });
 
-        const ficheData = await fiche({
-          rattachement_code: rat.code,
+        const fiche = await f.fiche({
+          rattachement_code: rattachement.code,
           etape_courante: "CONSOLIDATION",
         });
 
-        const etapeConsolidation = await evaluation({
-          fiche_evaluation_id: ficheData.id,
+        const etapeConsolidation = await f.evaluation({
+          fiche_evaluation_id: fiche.id,
           type: "CONSOLIDATION",
         });
 
-        await evaluationObjectif({
+        await f.evaluationObjectif({
           etape_evaluation_id: etapeConsolidation.id,
-          objectif_id: obj.id,
+          objectif_id: objectif.id,
           auteur_id: auteurInitial.id,
           note: 3,
           commentaire: "Objectif consolidé",
         });
 
-        await evaluationCritere({
+        await f.evaluationCritere({
           etape_evaluation_id: etapeConsolidation.id,
-          critere_id: crit.id,
+          critere_id: critere.id,
           auteur_id: auteurInitial.id,
           note: 2,
           commentaire: "Critère consolidé",
@@ -226,7 +86,7 @@ describe("PasserALEtapeInstructionHandler", () => {
 
         // When
         await handler.execute(
-          { ficheEvaluationIds: [ficheData.id] },
+          { ficheEvaluationIds: [fiche.id] },
           nouvelAuteur.id,
         );
 
@@ -235,7 +95,7 @@ describe("PasserALEtapeInstructionHandler", () => {
         const etapeInstruction = await prisma.etape_evaluation.findFirstOrThrow(
           {
             where: {
-              fiche_evaluation_id: ficheData.id,
+              fiche_evaluation_id: fiche.id,
               type: "INSTRUCTION",
             },
             include: {
@@ -247,7 +107,7 @@ describe("PasserALEtapeInstructionHandler", () => {
 
         expect(etapeInstruction.evaluations_objectifs).toEqual([
           expect.objectContaining({
-            objectif_id: obj.id,
+            objectif_id: objectif.id,
             auteur_id: nouvelAuteur.id,
             note: 3,
             commentaire: "",
@@ -256,7 +116,7 @@ describe("PasserALEtapeInstructionHandler", () => {
 
         expect(etapeInstruction.evaluations_criteres).toEqual([
           expect.objectContaining({
-            critere_id: crit.id,
+            critere_id: critere.id,
             auteur_id: nouvelAuteur.id,
             note: 2,
             commentaire: "",
