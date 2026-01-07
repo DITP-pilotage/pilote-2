@@ -1,23 +1,12 @@
-import {
-  CreateContact,
-  ContactsApi,
-  UpdateContact,
-  SendSmtpEmail,
-  TransactionalEmailsApi,
-} from "@getbrevo/brevo";
 import { ContactInfoLettresService } from "@/server/gestion-utilisateur/domain/ports/ContactInfoLettresService";
-import { configuration } from "@/config";
 import { ProfilCode } from "@/server/gestion-utilisateur/domain/Profil";
-
-const contactsApi = new ContactsApi();
-contactsApi.setApiKey(0, configuration().brevo.apiKey);
-
-const emailApi = new TransactionalEmailsApi();
-emailApi.setApiKey(0, configuration().brevo.apiKey);
+import { EmailManager } from "@/server/infrastructure/email-manager";
 
 export class BrevoContactInfoLettresService
   implements ContactInfoLettresService
 {
+  constructor(private readonly deps: { emailManager: EmailManager }) {}
+
   async creerContact(
     email: string,
     nom: string,
@@ -25,19 +14,17 @@ export class BrevoContactInfoLettresService
     profil: ProfilCode,
     listesDiffusionIds: number[],
   ): Promise<void> {
-    const contact = new CreateContact();
-    contact.email = email;
-    contact.attributes = {
-      PRENOM: prenom,
-      NOM: nom,
-      PROFIL: profil,
-    };
-    contact.listIds = listesDiffusionIds;
-    await contactsApi.createContact(contact);
+    await this.deps.emailManager.createContact(
+      email,
+      nom,
+      prenom,
+      profil,
+      listesDiffusionIds,
+    );
   }
 
   async supprimerContact(email: string): Promise<void> {
-    await contactsApi.deleteContact(email);
+    await this.deps.emailManager.deleteContact(email);
   }
 
   async modifierContact(
@@ -48,26 +35,21 @@ export class BrevoContactInfoLettresService
     listesDiffusionAAjouterIds: number[],
     listesDiffusionASupprimerIds: number[],
   ): Promise<void> {
-    await contactsApi.updateContact(email, {
-      attributes: {
-        PRENOM: prenom,
-        NOM: nom,
-        PROFIL: profil,
-      },
-      listIds: listesDiffusionAAjouterIds,
-      unlinkListIds: listesDiffusionASupprimerIds,
-    });
+    await this.deps.emailManager.updateContact(
+      email,
+      nom,
+      prenom,
+      profil,
+      listesDiffusionAAjouterIds,
+      listesDiffusionASupprimerIds,
+    );
   }
 
   async ajouterContactAUneInfoLettre(
     email: string,
     listesDiffusionIds: number[],
   ): Promise<void> {
-    const updatePayload: UpdateContact = {
-      listIds: listesDiffusionIds,
-    };
-
-    await contactsApi.updateContact(email, updatePayload);
+    await this.deps.emailManager.addContactToLists(email, listesDiffusionIds);
   }
 
   async envoieUnEmail(
@@ -75,10 +57,10 @@ export class BrevoContactInfoLettresService
     templateId: number,
     parametres: object,
   ): Promise<void> {
-    let email = new SendSmtpEmail();
-    email.to = destinataires;
-    email.templateId = templateId;
-    email.params = parametres;
-    await emailApi.sendTransacEmail(email);
+    await this.deps.emailManager.sendTransactionalEmail(
+      destinataires,
+      templateId,
+      parametres,
+    );
   }
 }

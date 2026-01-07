@@ -1,19 +1,18 @@
-import { SendSmtpEmail, TransactionalEmailsApi } from "@getbrevo/brevo";
 import { EnvoieEmailService } from "@/server/chantiers/domain/ports/EnvoieEmailService";
-
-const apiInstance = new TransactionalEmailsApi();
-apiInstance.setApiKey(0, process.env.BREVO_API_KEY ?? "");
+import { EmailManager } from "@/server/infrastructure/email-manager";
 
 export class BrevoEnvoieEmailService implements EnvoieEmailService {
+  constructor(private readonly deps: { emailManager: EmailManager }) {}
+
   async envoieUnEmail(
     destinataires: { email: string }[],
     templateId: number,
     parametres: object,
   ): Promise<void> {
-    let email = new SendSmtpEmail();
-    email.to = destinataires;
-    email.templateId = templateId;
-    email.params = parametres;
-    await apiInstance.sendTransacEmail(email);
+    await this.deps.emailManager.sendTransactionalEmail(
+      destinataires,
+      templateId,
+      parametres,
+    );
   }
 }

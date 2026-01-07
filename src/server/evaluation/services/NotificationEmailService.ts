@@ -1,13 +1,7 @@
-import { SendSmtpEmail, TransactionalEmailsApi } from "@getbrevo/brevo";
-import { configuration } from "@/config";
+import { EmailManager } from "@/server/infrastructure/email-manager";
 
 export class NotificationEmailService {
-  private readonly apiInstance: TransactionalEmailsApi;
-
-  constructor() {
-    this.apiInstance = new TransactionalEmailsApi();
-    this.apiInstance.setApiKey(0, configuration().brevo.apiKey);
-  }
+  constructor(private readonly deps: { emailManager: EmailManager }) {}
 
   async execute({
     destinataires,
@@ -20,10 +14,10 @@ export class NotificationEmailService {
       listeTerritoires: string[];
     };
   }) {
-    let email = new SendSmtpEmail();
-    email.to = destinataires;
-    email.templateId = templateId;
-    email.params = params;
-    await this.apiInstance.sendTransacEmail(email);
+    await this.deps.emailManager.sendTransactionalEmail(
+      destinataires,
+      templateId,
+      params,
+    );
   }
 }

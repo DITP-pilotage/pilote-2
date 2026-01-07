@@ -1,5 +1,11 @@
-import { AwilixContainer, asClass } from "awilix";
+import { AwilixContainer, asClass, asFunction } from "awilix";
 import { DatajobsExecutionQueries } from "@/server/datajobs-execution/DatajobsExecution";
+import {
+  EmailManager,
+  BrevoEmailManager,
+  StubEmailManager,
+} from "@/server/infrastructure/email-manager";
+import { configuration } from "@/config";
 import { PrismaPilote } from "./db/PrismaPilote";
 import { Transaction } from "./db/Transaction";
 import { PrismaIndicateurTerritoireValeurEvenementRepository } from "./indicateur-territoire-valeur-evenement/infrastructure/PrismaIndicateurTerritoireValeurEvenementRepository";
@@ -14,6 +20,7 @@ export type InitialDependencies = {
 export interface TransversalDependencies {
   indicateurTerritoireValeurEvenementRepository: IndicateurTerritoireValeurEvenementRepository;
   datajobsExecutionQueries: DatajobsExecutionQueries;
+  emailManager: EmailManager;
 }
 
 export function getInitialContainerWithTransversalDependencies(): AwilixContainer<InitialDependencies> {
@@ -24,5 +31,10 @@ export function getInitialContainerWithTransversalDependencies(): AwilixContaine
       PrismaIndicateurTerritoireValeurEvenementRepository,
     ),
     datajobsExecutionQueries: asClass(DatajobsExecutionQueries),
+    emailManager: asFunction(() => {
+      return configuration().brevo.disableEmails
+        ? new StubEmailManager()
+        : new BrevoEmailManager();
+    }).singleton(),
   });
 }

@@ -1,15 +1,13 @@
-import { SendSmtpEmail, TransactionalEmailsApi } from "@getbrevo/brevo";
 import {
   EnvoieEmailService,
   ParametresEmailProposition,
   TypeEvenementAvecNotifications,
 } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/EnvoieEmailService";
-import { configuration } from "@/config";
-
-const apiInstance = new TransactionalEmailsApi();
-apiInstance.setApiKey(0, configuration().brevo.apiKey);
+import { EmailManager } from "@/server/infrastructure/email-manager";
 
 export class BrevoEnvoieEmailService implements EnvoieEmailService {
+  constructor(private readonly deps: { emailManager: EmailManager }) {}
+
   async envoieNotificationProposition<
     T extends TypeEvenementAvecNotifications,
   >(args: {
@@ -17,10 +15,10 @@ export class BrevoEnvoieEmailService implements EnvoieEmailService {
     templateId: number;
     parametres: ParametresEmailProposition<T>;
   }) {
-    let email = new SendSmtpEmail();
-    email.to = args.destinataires;
-    email.templateId = args.templateId;
-    email.params = args.parametres;
-    await apiInstance.sendTransacEmail(email);
+    await this.deps.emailManager.sendTransactionalEmail(
+      args.destinataires,
+      args.templateId,
+      args.parametres,
+    );
   }
 }
