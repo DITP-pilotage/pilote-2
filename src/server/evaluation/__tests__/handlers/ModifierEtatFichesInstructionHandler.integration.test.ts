@@ -1,4 +1,3 @@
-import { $Enums } from "@prisma/client";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { InMemoryTransaction } from "@/server/db/InMemoryTransaction";
 import { ModifierEtatFichesInstructionHandler } from "@/server/evaluation/handlers/ModifierEtatFichesInstructionHandler";
@@ -99,51 +98,40 @@ describe("ModifierEtatFichesInstructionHandler", () => {
       "doit bloquer plusieurs fiches instruction en une seule opération",
       createIntegrationTest(async (tx) => {
         // Given
-        const fiche1 = await fixtures.fiche({
-          etape_courante: "INSTRUCTION",
-        });
-        const fiche2 = await fixtures.fiche({
-          etape_courante: "INSTRUCTION",
-        });
-        const fiche3 = await fixtures.fiche({
-          etape_courante: "INSTRUCTION",
-        });
-        const fiche4 = await fixtures.fiche({
-          etape_courante: "INSTRUCTION",
-        });
-        const fiche5 = await fixtures.fiche({
-          etape_courante: "CONSOLIDATION",
-        });
-
         const etape1 = await fixtures.etapeEvaluation({
-          fiche_evaluation_id: fiche1.id,
           type: "INSTRUCTION",
           read_only: false,
+          fiche: { etape_courante: "INSTRUCTION" },
         });
         const etape2 = await fixtures.etapeEvaluation({
-          fiche_evaluation_id: fiche2.id,
           type: "INSTRUCTION",
           read_only: false,
+          fiche: { etape_courante: "INSTRUCTION" },
         });
         const etape3 = await fixtures.etapeEvaluation({
-          fiche_evaluation_id: fiche3.id,
           type: "INSTRUCTION",
           read_only: true,
+          fiche: { etape_courante: "INSTRUCTION" },
         });
         const etape4 = await fixtures.etapeEvaluation({
-          fiche_evaluation_id: fiche4.id,
           type: "INSTRUCTION",
           read_only: false,
+          fiche: { etape_courante: "INSTRUCTION" },
         });
         const etape5 = await fixtures.etapeEvaluation({
-          fiche_evaluation_id: fiche5.id,
           type: "CONSOLIDATION",
           read_only: false,
+          fiche: { etape_courante: "CONSOLIDATION" },
         });
 
         // When
         await handler.execute({
-          ficheEvaluationIds: [fiche1.id, fiche2.id, fiche3.id, fiche5.id],
+          ficheEvaluationIds: [
+            etape1.fiche_evaluation_id,
+            etape2.fiche_evaluation_id,
+            etape3.fiche_evaluation_id,
+            etape5.fiche_evaluation_id,
+          ],
           readOnly: true,
         });
 
@@ -223,13 +211,10 @@ describe("ModifierEtatFichesInstructionHandler", () => {
       "ne doit rien faire si la liste de fiches est vide",
       createIntegrationTest(async (tx) => {
         // Given
-        const fiche = await fixtures.fiche({
-          etape_courante: "INSTRUCTION",
-        });
         const etapeInstruction = await fixtures.etapeEvaluation({
-          fiche_evaluation_id: fiche.id,
           type: "INSTRUCTION",
           read_only: true,
+          fiche: { etape_courante: "INSTRUCTION" },
         });
 
         // When
