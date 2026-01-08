@@ -29,7 +29,7 @@ describe("PasserALEtapeInstructionHandler", () => {
         const fiche = await fixtures.fiche({
           etape_courante: "AUTO_EVALUATION",
         });
-        await fixtures.evaluation({
+        await fixtures.etapeEvaluation({
           fiche_evaluation_id: fiche.id,
           type: "CONSOLIDATION",
         });
@@ -62,7 +62,7 @@ describe("PasserALEtapeInstructionHandler", () => {
           etape_courante: "CONSOLIDATION",
         });
 
-        const etapeConsolidation = await fixtures.evaluation({
+        const etapeConsolidation = await fixtures.etapeEvaluation({
           fiche_evaluation_id: fiche.id,
           type: "CONSOLIDATION",
         });
@@ -134,11 +134,11 @@ describe("PasserALEtapeInstructionHandler", () => {
           etape_courante: "CONSOLIDATION",
         });
 
-        await fixtures.evaluation({
+        await fixtures.etapeEvaluation({
           fiche_evaluation_id: fiche1.id,
           type: "CONSOLIDATION",
         });
-        await fixtures.evaluation({
+        await fixtures.etapeEvaluation({
           fiche_evaluation_id: fiche2.id,
           type: "CONSOLIDATION",
         });
@@ -193,7 +193,7 @@ describe("PasserALEtapeInstructionHandler", () => {
           etape_courante: "CONSOLIDATION",
         });
 
-        const etapeConsolidation = await fixtures.evaluation({
+        const etapeConsolidation = await fixtures.etapeEvaluation({
           fiche_evaluation_id: fiche.id,
           type: "CONSOLIDATION",
         });
@@ -215,7 +215,7 @@ describe("PasserALEtapeInstructionHandler", () => {
         });
 
         // Existing INSTRUCTION step with no notes
-        const etapeInstruction = await fixtures.evaluation({
+        const etapeInstruction = await fixtures.etapeEvaluation({
           fiche_evaluation_id: fiche.id,
           type: "INSTRUCTION",
         });
@@ -273,7 +273,7 @@ describe("PasserALEtapeInstructionHandler", () => {
           etape_courante: "CONSOLIDATION",
         });
 
-        const etapeConsolidation = await fixtures.evaluation({
+        const etapeConsolidation = await fixtures.etapeEvaluation({
           fiche_evaluation_id: fiche.id,
           type: "CONSOLIDATION",
         });
@@ -287,7 +287,7 @@ describe("PasserALEtapeInstructionHandler", () => {
         });
 
         // INSTRUCTION step with existing note
-        const etapeInstruction = await fixtures.evaluation({
+        const etapeInstruction = await fixtures.etapeEvaluation({
           fiche_evaluation_id: fiche.id,
           type: "INSTRUCTION",
         });
@@ -340,7 +340,7 @@ describe("PasserALEtapeInstructionHandler", () => {
           etape_courante: "CONSOLIDATION",
         });
 
-        const etapeConsolidation = await fixtures.evaluation({
+        const etapeConsolidation = await fixtures.etapeEvaluation({
           fiche_evaluation_id: fiche.id,
           type: "CONSOLIDATION",
         });
@@ -362,7 +362,7 @@ describe("PasserALEtapeInstructionHandler", () => {
         });
 
         // INSTRUCTION step with different notes and date_traitement set
-        const etapeInstruction = await fixtures.evaluation({
+        const etapeInstruction = await fixtures.etapeEvaluation({
           fiche_evaluation_id: fiche.id,
           type: "INSTRUCTION",
         });
@@ -436,7 +436,7 @@ describe("PasserALEtapeInstructionHandler", () => {
           etape_courante: "CONSOLIDATION",
         });
 
-        const etapeConsolidation = await fixtures.evaluation({
+        const etapeConsolidation = await fixtures.etapeEvaluation({
           fiche_evaluation_id: fiche.id,
           type: "CONSOLIDATION",
         });
@@ -458,7 +458,7 @@ describe("PasserALEtapeInstructionHandler", () => {
         });
 
         // INSTRUCTION step with only objectif1 (objectif2 is missing)
-        const etapeInstruction = await fixtures.evaluation({
+        const etapeInstruction = await fixtures.etapeEvaluation({
           fiche_evaluation_id: fiche.id,
           type: "INSTRUCTION",
         });
@@ -513,7 +513,7 @@ describe("PasserALEtapeInstructionHandler", () => {
           etape_courante: "CONSOLIDATION",
         });
 
-        const etapeConsolidation = await fixtures.evaluation({
+        const etapeConsolidation = await fixtures.etapeEvaluation({
           fiche_evaluation_id: fiche.id,
           type: "CONSOLIDATION",
         });
@@ -535,7 +535,7 @@ describe("PasserALEtapeInstructionHandler", () => {
         });
 
         // INSTRUCTION step with only critere1 (critere2 is missing)
-        const etapeInstruction = await fixtures.evaluation({
+        const etapeInstruction = await fixtures.etapeEvaluation({
           fiche_evaluation_id: fiche.id,
           type: "INSTRUCTION",
         });

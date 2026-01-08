@@ -30,7 +30,7 @@ describe("PasserALaConsolidationHandler", () => {
         const fiche = await fixtures.fiche({
           etape_courante: "CONSOLIDATION",
         });
-        await fixtures.evaluation({
+        await fixtures.etapeEvaluation({
           fiche_evaluation_id: fiche.id,
           type: "AUTO_EVALUATION",
         });
@@ -63,7 +63,7 @@ describe("PasserALaConsolidationHandler", () => {
           etape_courante: "AUTO_EVALUATION",
         });
 
-        const etapeAutoEvaluation = await fixtures.evaluation({
+        const etapeAutoEvaluation = await fixtures.etapeEvaluation({
           fiche_evaluation_id: fiche.id,
           type: "AUTO_EVALUATION",
         });
@@ -146,11 +146,11 @@ describe("PasserALaConsolidationHandler", () => {
           etape_courante: "AUTO_EVALUATION",
         });
 
-        await fixtures.evaluation({
+        await fixtures.etapeEvaluation({
           fiche_evaluation_id: fiche1.id,
           type: "AUTO_EVALUATION",
         });
-        await fixtures.evaluation({
+        await fixtures.etapeEvaluation({
           fiche_evaluation_id: fiche2.id,
           type: "AUTO_EVALUATION",
         });
@@ -200,7 +200,7 @@ describe("PasserALaConsolidationHandler", () => {
           etape_courante: "AUTO_EVALUATION",
         });
 
-        const etapeAutoEvaluation = await fixtures.evaluation({
+        const etapeAutoEvaluation = await fixtures.etapeEvaluation({
           fiche_evaluation_id: fiche.id,
           type: "AUTO_EVALUATION",
         });
@@ -214,7 +214,7 @@ describe("PasserALaConsolidationHandler", () => {
         });
 
         // Existing CONSOLIDATION step
-        const etapeConsolidationExistante = await fixtures.evaluation({
+        const etapeConsolidationExistante = await fixtures.etapeEvaluation({
           fiche_evaluation_id: fiche.id,
           type: "CONSOLIDATION",
         });
@@ -280,7 +280,7 @@ describe("PasserALaConsolidationHandler", () => {
           etape_courante: "AUTO_EVALUATION",
         });
 
-        const etapeAutoEvaluation = await fixtures.evaluation({
+        const etapeAutoEvaluation = await fixtures.etapeEvaluation({
           fiche_evaluation_id: fiche.id,
           type: "AUTO_EVALUATION",
         });
@@ -302,7 +302,7 @@ describe("PasserALaConsolidationHandler", () => {
         });
 
         // Existing CONSOLIDATION with null notes
-        const etapeConsolidation = await fixtures.evaluation({
+        const etapeConsolidation = await fixtures.etapeEvaluation({
           fiche_evaluation_id: fiche.id,
           type: "CONSOLIDATION",
         });
@@ -359,7 +359,7 @@ describe("PasserALaConsolidationHandler", () => {
           etape_courante: "AUTO_EVALUATION",
         });
 
-        const etapeAutoEvaluation = await fixtures.evaluation({
+        const etapeAutoEvaluation = await fixtures.etapeEvaluation({
           fiche_evaluation_id: fiche.id,
           type: "AUTO_EVALUATION",
         });
@@ -381,7 +381,7 @@ describe("PasserALaConsolidationHandler", () => {
         });
 
         // Existing CONSOLIDATION with existing notes
-        const etapeConsolidation = await fixtures.evaluation({
+        const etapeConsolidation = await fixtures.etapeEvaluation({
           fiche_evaluation_id: fiche.id,
           type: "CONSOLIDATION",
         });
@@ -439,7 +439,7 @@ describe("PasserALaConsolidationHandler", () => {
           etape_courante: "AUTO_EVALUATION",
         });
 
-        const etapeAutoEvaluation = await fixtures.evaluation({
+        const etapeAutoEvaluation = await fixtures.etapeEvaluation({
           fiche_evaluation_id: fiche.id,
           type: "AUTO_EVALUATION",
         });
@@ -461,7 +461,7 @@ describe("PasserALaConsolidationHandler", () => {
         });
 
         // Existing CONSOLIDATION with different notes and date_traitement set
-        const etapeConsolidation = await fixtures.evaluation({
+        const etapeConsolidation = await fixtures.etapeEvaluation({
           fiche_evaluation_id: fiche.id,
           type: "CONSOLIDATION",
         });
@@ -522,7 +522,7 @@ describe("PasserALaConsolidationHandler", () => {
           etape_courante: "AUTO_EVALUATION",
         });
 
-        const etapeAutoEvaluation = await fixtures.evaluation({
+        const etapeAutoEvaluation = await fixtures.etapeEvaluation({
           fiche_evaluation_id: fiche.id,
           type: "AUTO_EVALUATION",
         });
@@ -536,7 +536,7 @@ describe("PasserALaConsolidationHandler", () => {
         });
 
         // Existing CONSOLIDATION with same note and date_traitement set
-        const etapeConsolidation = await fixtures.evaluation({
+        const etapeConsolidation = await fixtures.etapeEvaluation({
           fiche_evaluation_id: fiche.id,
           type: "CONSOLIDATION",
         });
@@ -581,7 +581,7 @@ describe("PasserALaConsolidationHandler", () => {
           etape_courante: "AUTO_EVALUATION",
         });
 
-        const etapeAutoEvaluation = await fixtures.evaluation({
+        const etapeAutoEvaluation = await fixtures.etapeEvaluation({
           fiche_evaluation_id: fiche.id,
           type: "AUTO_EVALUATION",
         });
@@ -595,7 +595,7 @@ describe("PasserALaConsolidationHandler", () => {
         });
 
         // Existing CONSOLIDATION with different note and date_traitement null
-        const etapeConsolidation = await fixtures.evaluation({
+        const etapeConsolidation = await fixtures.etapeEvaluation({
           fiche_evaluation_id: fiche.id,
           type: "CONSOLIDATION",
         });
