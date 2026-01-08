@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import { EnregistrerBrouillonConsolidationHandler } from "@/server/evaluation/handlers/EnregistrerBrouillonConsolidationHandler";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { InMemoryTransaction } from "@/server/db/InMemoryTransaction";
@@ -23,27 +24,23 @@ describe("EnregistrerBrouillonConsolidationHandler", () => {
         // Given
         const utilisateur = await fixtures.utilisateur();
         const critere = await fixtures.critere();
-        const rattachement = await fixtures.rattachement();
-        const objectif = await fixtures.objectif({
-          rattachement_code: rattachement.code,
-        });
-        const fiche = await fixtures.fiche({
-          rattachement_code: rattachement.code,
-          etape_courante: "CONSOLIDATION",
-        });
+        const objectif = await fixtures.objectif();
         const etape = await fixtures.etapeEvaluation({
-          fiche_evaluation_id: fiche.id,
+          fiche: {
+            rattachement_code: objectif.rattachement_code,
+            etape_courante: "CONSOLIDATION",
+          },
           type: "CONSOLIDATION",
         });
 
-        const evaluationObjectifId = "a7b8c9d0-e1f2-3456-1234-567890123456";
-        const evaluationCritereId = "b8c9d0e1-f2a3-4567-2345-678901234567";
+        const evaluationObjectifId = randomUUID();
+        const evaluationCritereId = randomUUID();
 
         // When
         await handler.execute(
           [
             {
-              ficheEvaluationId: fiche.id,
+              ficheEvaluationId: etape.fiche_evaluation_id,
               evaluationsObjectifs: [
                 {
                   id: evaluationObjectifId,
@@ -102,16 +99,12 @@ describe("EnregistrerBrouillonConsolidationHandler", () => {
         // Given
         const utilisateur = await fixtures.utilisateur();
         const critere = await fixtures.critere();
-        const rattachement = await fixtures.rattachement();
-        const objectif = await fixtures.objectif({
-          rattachement_code: rattachement.code,
-        });
-        const fiche = await fixtures.fiche({
-          rattachement_code: rattachement.code,
-          etape_courante: "CONSOLIDATION",
-        });
+        const objectif = await fixtures.objectif();
         const etape = await fixtures.etapeEvaluation({
-          fiche_evaluation_id: fiche.id,
+          fiche: {
+            rattachement_code: objectif.rattachement_code,
+            etape_courante: "CONSOLIDATION",
+          },
           type: "CONSOLIDATION",
         });
 
@@ -134,7 +127,7 @@ describe("EnregistrerBrouillonConsolidationHandler", () => {
         await handler.execute(
           [
             {
-              ficheEvaluationId: fiche.id,
+              ficheEvaluationId: etape.fiche_evaluation_id,
               evaluationsObjectifs: [
                 {
                   id: evalObjectif.id,
@@ -222,27 +215,23 @@ describe("EnregistrerBrouillonConsolidationHandler", () => {
         // Given
         const utilisateur = await fixtures.utilisateur();
         const critere = await fixtures.critere();
-        const rattachement = await fixtures.rattachement();
-        const objectif = await fixtures.objectif({
-          rattachement_code: rattachement.code,
-        });
-        const fiche = await fixtures.fiche({
-          rattachement_code: rattachement.code,
-          etape_courante: "CONSOLIDATION",
-        });
+        const objectif = await fixtures.objectif();
         const etape = await fixtures.etapeEvaluation({
-          fiche_evaluation_id: fiche.id,
+          fiche: {
+            rattachement_code: objectif.rattachement_code,
+            etape_courante: "CONSOLIDATION",
+          },
           type: "CONSOLIDATION",
         });
 
-        const evaluationObjectifId = "1b9dc0fe-6a00-404c-a0aa-d2f3bcbcfe23";
-        const evaluationCritereId = "f061f13f-b742-4828-b3e4-3b8aa8341f27";
+        const evaluationObjectifId = randomUUID();
+        const evaluationCritereId = randomUUID();
 
         // When
         await handler.execute(
           [
             {
-              ficheEvaluationId: fiche.id,
+              ficheEvaluationId: etape.fiche_evaluation_id,
               evaluationsObjectifs: [
                 {
                   id: evaluationObjectifId,
@@ -291,11 +280,8 @@ describe("EnregistrerBrouillonConsolidationHandler", () => {
       createIntegrationTest(async () => {
         // Given
         const utilisateur = await fixtures.utilisateur();
-        const fiche = await fixtures.fiche({
-          etape_courante: "INSTRUCTION",
-        });
-        await fixtures.etapeEvaluation({
-          fiche_evaluation_id: fiche.id,
+        const etape = await fixtures.etapeEvaluation({
+          fiche: { etape_courante: "INSTRUCTION" },
           type: "CONSOLIDATION",
         });
 
@@ -304,7 +290,7 @@ describe("EnregistrerBrouillonConsolidationHandler", () => {
           handler.execute(
             [
               {
-                ficheEvaluationId: fiche.id,
+                ficheEvaluationId: etape.fiche_evaluation_id,
                 evaluationsObjectifs: [],
                 evaluationsCriteres: [],
               },
