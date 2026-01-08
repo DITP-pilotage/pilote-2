@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { InMemoryTransaction } from "@/server/db/InMemoryTransaction";
 import { ModifierObjectifHandler } from "@/server/evaluation/handlers/ModifierObjectifHandler";
@@ -21,16 +22,14 @@ describe("ModifierObjectifHandler", () => {
       "doit modifier le descriptif et l'indicateur cible de l'objectif",
       createIntegrationTest(async (tx) => {
         // Given
-        const rattachement = await fixtures.rattachement();
         const objectif = await fixtures.objectif({
-          rattachement_code: rattachement.code,
           libelle: "Objectif 1",
           descriptif: "Description initiale",
           indicateur_cible: "Indicateur initial",
         });
 
         const fiche = await fixtures.fiche({
-          rattachement_code: rattachement.code,
+          rattachement_code: objectif.rattachement_code,
           etape_courante: "AUTO_EVALUATION",
         });
 
@@ -56,18 +55,16 @@ describe("ModifierObjectifHandler", () => {
       "doit échouer si l'objectif n'est pas lié à la fiche d'évaluation",
       createIntegrationTest(async () => {
         // Given
-        const rattachement1 = await fixtures.rattachement();
-        const rattachement2 = await fixtures.rattachement();
+        const autreRattachement = await fixtures.rattachement();
 
         const objectif = await fixtures.objectif({
-          rattachement_code: rattachement1.code,
           libelle: "Objectif 2",
           descriptif: "Description initiale",
           indicateur_cible: "Indicateur initial",
         });
 
         const fiche = await fixtures.fiche({
-          rattachement_code: rattachement2.code,
+          rattachement_code: autreRattachement.code,
           etape_courante: "AUTO_EVALUATION",
         });
 
@@ -90,7 +87,7 @@ describe("ModifierObjectifHandler", () => {
         const fiche = await fixtures.fiche({
           etape_courante: "AUTO_EVALUATION",
         });
-        const nonExistentObjectifId = "e1f2a3b4-c5d6-7890-ef12-333333333333";
+        const nonExistentObjectifId = randomUUID();
 
         // When/Then
         await expect(
