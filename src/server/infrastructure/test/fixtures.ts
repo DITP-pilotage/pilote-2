@@ -60,10 +60,15 @@ export const fixtures = {
 
   async objectif(
     overrides: Partial<Prisma.referentiel_objectifUncheckedCreateInput> & {
-      rattachement_code: string;
-    },
+      rattachement_code?: string;
+    } = {},
   ) {
     const prisma = getPrisma();
+    const rattachement_code =
+      overrides.rattachement_code == null
+        ? (await fixtures.rattachement()).code
+        : overrides.rattachement_code;
+
     return prisma.referentiel_objectif.create({
       data: {
         id: randomUUID(),
@@ -71,6 +76,7 @@ export const fixtures = {
         descriptif: "Description",
         jalon: 2025,
         ...overrides,
+        rattachement_code,
       },
     });
   },
