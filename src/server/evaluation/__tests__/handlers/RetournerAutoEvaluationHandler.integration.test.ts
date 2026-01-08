@@ -1,12 +1,13 @@
 import { RetournerAutoEvaluationHandler } from "@/server/evaluation/handlers/RetournerAutoEvaluationHandler";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
-import { prisma } from "@/server/db/prisma";
-import { PrismaTransaction } from "@/server/db/PrismaTransaction";
+import { InMemoryTransaction } from "@/server/db/InMemoryTransaction";
+import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
+import { fixtures } from "@/server/infrastructure/test/fixtures";
 
 describe("RetournerAutoEvaluationHandler", () => {
   let handler: RetournerAutoEvaluationHandler;
   const prismaPilote = new PrismaPilote();
-  const transaction = new PrismaTransaction();
+  const transaction = new InMemoryTransaction();
 
   beforeEach(() => {
     handler = new RetournerAutoEvaluationHandler({
@@ -16,239 +17,116 @@ describe("RetournerAutoEvaluationHandler", () => {
   });
 
   describe("#execute", () => {
-    it("doit échouer si une fiche n'est pas en étape CONSOLIDATION", async () => {
-      // Given
-      const rattachementCode = "REG-600";
-      const ficheEvaluationId = "a1b2c3d4-5e6f-7a8b-9c0d-1e2f3a4b5c6e";
-
-      await prisma.referentiel_rattachement_groupe.createMany({
-        data: [
-          {
-            code: rattachementCode,
-            libelle: "Groupe rattachement",
-            ordre: 1,
-          },
-        ],
-      });
-
-      await prisma.referentiel_rattachement.create({
-        data: {
-          code: rattachementCode,
-          groupe: rattachementCode,
-          ordre: 1,
-          libelle: "Rattachement retour auto-eval test",
-        },
-      });
-
-      await prisma.fiche_evaluation.create({
-        data: {
-          id: ficheEvaluationId,
-          jalon: 2025,
+    it(
+      "doit échouer si une fiche n'est pas en étape CONSOLIDATION",
+      createIntegrationTest(async () => {
+        // Given
+        const fiche = await fixtures.fiche({
           etape_courante: "AUTO_EVALUATION",
-          rattachement_code: rattachementCode,
-        },
-      });
-
-      // When/Then
-      await expect(
-        handler.execute({
-          ficheEvaluationIds: [ficheEvaluationId],
-        }),
-      ).rejects.toThrow(
-        "Toutes les fiches doivent être en étape CONSOLIDATION pour retourner à l'auto-évaluation",
-      );
-    });
-
-    it("doit échouer si une fiche parmi plusieurs n'est pas en étape CONSOLIDATION", async () => {
-      // Given
-      const rattachementCode1 = "REG-601";
-      const rattachementCode2 = "REG-602";
-      const ficheEvaluationId1 = "b2c3d4e5-6f7a-8b9c-0d1e-2f3a4b5c6d7f";
-      const ficheEvaluationId2 = "8835d5de-b194-481d-b427-3fbcc837c550";
-
-      await prisma.referentiel_rattachement_groupe.createMany({
-        data: [
-          {
-            code: rattachementCode1,
-            libelle: "Groupe rattachement",
-            ordre: 1,
-          },
-          {
-            code: rattachementCode2,
-            libelle: "Groupe rattachement",
-            ordre: 2,
-          },
-        ],
-      });
-
-      await prisma.referentiel_rattachement.createMany({
-        data: [
-          {
-            code: rattachementCode1,
-            groupe: rattachementCode1,
-            ordre: 1,
-            libelle: "Rattachement retour test 1",
-          },
-          {
-            code: rattachementCode2,
-            groupe: rattachementCode2,
-            ordre: 1,
-            libelle: "Rattachement retour test 2",
-          },
-        ],
-      });
-
-      await prisma.fiche_evaluation.createMany({
-        data: [
-          {
-            id: ficheEvaluationId1,
-            jalon: 2025,
-            etape_courante: "CONSOLIDATION",
-            rattachement_code: rattachementCode1,
-          },
-          {
-            id: ficheEvaluationId2,
-            jalon: 2025,
-            etape_courante: "INSTRUCTION",
-            rattachement_code: rattachementCode2,
-          },
-        ],
-      });
-
-      // When/Then
-      await expect(
-        handler.execute({
-          ficheEvaluationIds: [ficheEvaluationId1, ficheEvaluationId2],
-        }),
-      ).rejects.toThrow(
-        "Toutes les fiches doivent être en étape CONSOLIDATION pour retourner à l'auto-évaluation",
-      );
-    });
-
-    it("doit mettre à jour l'étape courante vers AUTO_EVALUATION", async () => {
-      // Given
-      const rattachementCode = "REG-603";
-      const ficheEvaluationId = "0773b227-797d-4555-891b-6c7ea455aa36";
-
-      await prisma.referentiel_rattachement_groupe.createMany({
-        data: [
-          {
-            code: rattachementCode,
-            libelle: "Groupe rattachement",
-            ordre: 1,
-          },
-        ],
-      });
-
-      await prisma.referentiel_rattachement.create({
-        data: {
-          code: rattachementCode,
-          groupe: rattachementCode,
-          ordre: 1,
-          libelle: "Rattachement retour succès",
-        },
-      });
-
-      await prisma.fiche_evaluation.create({
-        data: {
-          id: ficheEvaluationId,
-          jalon: 2025,
-          etape_courante: "CONSOLIDATION",
-          rattachement_code: rattachementCode,
-          etape_evaluations: {
-            create: [
-              {
-                id: "f86111b7-1ee5-48fd-9f88-48c845ce95b9",
-                type: "AUTO_EVALUATION",
-              },
-              {
-                id: "46013437-2043-4e3c-9bf2-3f4219d81fe8",
-                type: "CONSOLIDATION",
-              },
-            ],
-          },
-        },
-      });
-
-      // When
-      await handler.execute({
-        ficheEvaluationIds: [ficheEvaluationId],
-      });
-
-      // Then
-      const ficheEvaluation = await prisma.fiche_evaluation.findUniqueOrThrow({
-        where: { id: ficheEvaluationId },
-      });
-      expect(ficheEvaluation.etape_courante).toBe("AUTO_EVALUATION");
-    });
-
-    it("doit remettre l'étape AUTO_EVALUATION en écriture", async () => {
-      // Given
-      const rattachementCode = "REG-604";
-      const ficheEvaluationId = "55c8075a-cae2-444e-9214-8d730f71e47a";
-      const etapeAutoEvaluationId = "7e391c6b-4cae-4431-83a8-c2eef41f103c";
-
-      await prisma.referentiel_rattachement_groupe.createMany({
-        data: [
-          {
-            code: rattachementCode,
-            libelle: "Groupe rattachement",
-            ordre: 1,
-          },
-        ],
-      });
-
-      await prisma.referentiel_rattachement.create({
-        data: {
-          code: rattachementCode,
-          groupe: rattachementCode,
-          ordre: 1,
-          libelle: "Rattachement retour reset flags",
-        },
-      });
-
-      await prisma.fiche_evaluation.create({
-        data: {
-          id: ficheEvaluationId,
-          jalon: 2025,
-          etape_courante: "CONSOLIDATION",
-          rattachement_code: rattachementCode,
-          etape_evaluations: {
-            create: [
-              {
-                id: etapeAutoEvaluationId,
-                type: "AUTO_EVALUATION",
-                read_only: true,
-                objectifs_valides: true,
-                criteres_valides: true,
-              },
-              {
-                id: "71153e0d-c648-4e61-b47d-5a0eebdbf5de",
-                type: "CONSOLIDATION",
-              },
-            ],
-          },
-        },
-      });
-
-      // When
-      await handler.execute({
-        ficheEvaluationIds: [ficheEvaluationId],
-      });
-
-      // Then
-      const etapeAutoEvaluation =
-        await prisma.etape_evaluation.findUniqueOrThrow({
-          where: { id: etapeAutoEvaluationId },
         });
 
-      expect(etapeAutoEvaluation).toEqual(
-        expect.objectContaining({
-          read_only: false,
-          objectifs_valides: false,
-          criteres_valides: false,
-        }),
-      );
-    });
+        // When/Then
+        await expect(
+          handler.execute({
+            ficheEvaluationIds: [fiche.id],
+          }),
+        ).rejects.toThrow(
+          "Toutes les fiches doivent être en étape CONSOLIDATION pour retourner à l'auto-évaluation",
+        );
+      }),
+    );
+
+    it(
+      "doit échouer si une fiche parmi plusieurs n'est pas en étape CONSOLIDATION",
+      createIntegrationTest(async () => {
+        // Given
+        const fiche1 = await fixtures.fiche({
+          etape_courante: "CONSOLIDATION",
+        });
+        const fiche2 = await fixtures.fiche({
+          etape_courante: "INSTRUCTION",
+        });
+
+        // When/Then
+        await expect(
+          handler.execute({
+            ficheEvaluationIds: [fiche1.id, fiche2.id],
+          }),
+        ).rejects.toThrow(
+          "Toutes les fiches doivent être en étape CONSOLIDATION pour retourner à l'auto-évaluation",
+        );
+      }),
+    );
+
+    it(
+      "doit mettre à jour l'étape courante vers AUTO_EVALUATION",
+      createIntegrationTest(async (tx) => {
+        // Given
+        const fiche = await fixtures.fiche({
+          etape_courante: "CONSOLIDATION",
+        });
+
+        await fixtures.etapeEvaluation({
+          fiche_evaluation_id: fiche.id,
+          type: "AUTO_EVALUATION",
+        });
+        await fixtures.etapeEvaluation({
+          fiche_evaluation_id: fiche.id,
+          type: "CONSOLIDATION",
+        });
+
+        // When
+        await handler.execute({
+          ficheEvaluationIds: [fiche.id],
+        });
+
+        // Then
+        const ficheEvaluation = await tx.fiche_evaluation.findUniqueOrThrow({
+          where: { id: fiche.id },
+        });
+        expect(ficheEvaluation.etape_courante).toBe("AUTO_EVALUATION");
+      }),
+    );
+
+    it(
+      "doit remettre l'étape AUTO_EVALUATION en écriture",
+      createIntegrationTest(async (tx) => {
+        // Given
+        const fiche = await fixtures.fiche({
+          etape_courante: "CONSOLIDATION",
+        });
+
+        const etapeAutoEvaluation = await fixtures.etapeEvaluation({
+          fiche_evaluation_id: fiche.id,
+          type: "AUTO_EVALUATION",
+          read_only: true,
+          objectifs_valides: true,
+          criteres_valides: true,
+        });
+
+        await fixtures.etapeEvaluation({
+          fiche_evaluation_id: fiche.id,
+          type: "CONSOLIDATION",
+        });
+
+        // When
+        await handler.execute({
+          ficheEvaluationIds: [fiche.id],
+        });
+
+        // Then
+        const etapeUpdated = await tx.etape_evaluation.findUniqueOrThrow({
+          where: { id: etapeAutoEvaluation.id },
+        });
+
+        expect(etapeUpdated).toEqual(
+          expect.objectContaining({
+            read_only: false,
+            objectifs_valides: false,
+            criteres_valides: false,
+          }),
+        );
+      }),
+    );
   });
 });
