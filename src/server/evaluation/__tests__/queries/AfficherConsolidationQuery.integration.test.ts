@@ -405,7 +405,7 @@ describe("AfficherConsolidationQuery", () => {
     );
 
     it(
-      "doit retourner les rattachements sans évaluations quand aucune évaluation n'existe",
+      "doit retourner les rattachements avec des évaluations vides par défaut",
       createIntegrationTest(async () => {
         // Given
         const utilisateur = await f.utilisateur({
