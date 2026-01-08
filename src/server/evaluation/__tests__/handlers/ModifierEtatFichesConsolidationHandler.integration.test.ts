@@ -28,51 +28,40 @@ describe("ModifierEtatFichesConsolidationHandler", () => {
       "doit débloquer plusieurs fiches consolidation en une seule opération",
       createIntegrationTest(async (tx) => {
         // Given
-        const fiche1 = await fixtures.fiche({
-          etape_courante: "CONSOLIDATION",
-        });
-        const fiche2 = await fixtures.fiche({
-          etape_courante: "CONSOLIDATION",
-        });
-        const fiche3 = await fixtures.fiche({
-          etape_courante: "CONSOLIDATION",
-        });
-        const fiche4 = await fixtures.fiche({
-          etape_courante: "CONSOLIDATION",
-        });
-        const fiche5 = await fixtures.fiche({
-          etape_courante: "INSTRUCTION",
-        });
-
         const etape1 = await fixtures.etapeEvaluation({
-          fiche_evaluation_id: fiche1.id,
           type: "CONSOLIDATION",
           read_only: true,
+          fiche: { etape_courante: "CONSOLIDATION" },
         });
         const etape2 = await fixtures.etapeEvaluation({
-          fiche_evaluation_id: fiche2.id,
           type: "CONSOLIDATION",
           read_only: true,
+          fiche: { etape_courante: "CONSOLIDATION" },
         });
         const etape3 = await fixtures.etapeEvaluation({
-          fiche_evaluation_id: fiche3.id,
           type: "CONSOLIDATION",
           read_only: false,
+          fiche: { etape_courante: "CONSOLIDATION" },
         });
         const etape4 = await fixtures.etapeEvaluation({
-          fiche_evaluation_id: fiche4.id,
           type: "CONSOLIDATION",
           read_only: true,
+          fiche: { etape_courante: "CONSOLIDATION" },
         });
         const etape5 = await fixtures.etapeEvaluation({
-          fiche_evaluation_id: fiche5.id,
           type: "INSTRUCTION",
           read_only: true,
+          fiche: { etape_courante: "CONSOLIDATION" },
         });
 
         // When
         await handler.execute({
-          ficheEvaluationIds: [fiche1.id, fiche2.id, fiche3.id, fiche5.id],
+          ficheEvaluationIds: [
+            etape1.fiche_evaluation_id,
+            etape2.fiche_evaluation_id,
+            etape3.fiche_evaluation_id,
+            etape5.fiche_evaluation_id,
+          ],
           readOnly: false,
         });
 
@@ -105,51 +94,40 @@ describe("ModifierEtatFichesConsolidationHandler", () => {
       "doit bloquer plusieurs fiches consolidation en une seule opération",
       createIntegrationTest(async (tx) => {
         // Given
-        const fiche1 = await fixtures.fiche({
-          etape_courante: "CONSOLIDATION",
-        });
-        const fiche2 = await fixtures.fiche({
-          etape_courante: "CONSOLIDATION",
-        });
-        const fiche3 = await fixtures.fiche({
-          etape_courante: "CONSOLIDATION",
-        });
-        const fiche4 = await fixtures.fiche({
-          etape_courante: "CONSOLIDATION",
-        });
-        const fiche5 = await fixtures.fiche({
-          etape_courante: "INSTRUCTION",
-        });
-
         const etape1 = await fixtures.etapeEvaluation({
-          fiche_evaluation_id: fiche1.id,
           type: "CONSOLIDATION",
           read_only: false,
+          fiche: { etape_courante: "CONSOLIDATION" },
         });
         const etape2 = await fixtures.etapeEvaluation({
-          fiche_evaluation_id: fiche2.id,
           type: "CONSOLIDATION",
           read_only: false,
+          fiche: { etape_courante: "CONSOLIDATION" },
         });
         const etape3 = await fixtures.etapeEvaluation({
-          fiche_evaluation_id: fiche3.id,
           type: "CONSOLIDATION",
           read_only: true,
+          fiche: { etape_courante: "CONSOLIDATION" },
         });
         const etape4 = await fixtures.etapeEvaluation({
-          fiche_evaluation_id: fiche4.id,
           type: "CONSOLIDATION",
           read_only: false,
+          fiche: { etape_courante: "CONSOLIDATION" },
         });
         const etape5 = await fixtures.etapeEvaluation({
-          fiche_evaluation_id: fiche5.id,
           type: "INSTRUCTION",
           read_only: false,
+          fiche: { etape_courante: "INSTRUCTION" },
         });
 
         // When
         await handler.execute({
-          ficheEvaluationIds: [fiche1.id, fiche2.id, fiche3.id, fiche5.id],
+          ficheEvaluationIds: [
+            etape1.fiche_evaluation_id,
+            etape2.fiche_evaluation_id,
+            etape3.fiche_evaluation_id,
+            etape5.fiche_evaluation_id,
+          ],
           readOnly: true,
         });
 
@@ -182,9 +160,7 @@ describe("ModifierEtatFichesConsolidationHandler", () => {
       "ne doit modifier que l'étape CONSOLIDATION et pas les autres étapes",
       createIntegrationTest(async (tx) => {
         // Given
-        const fiche = await fixtures.fiche({
-          etape_courante: "CONSOLIDATION",
-        });
+        const fiche = await fixtures.fiche({ etape_courante: "CONSOLIDATION" });
 
         const etapeAuto = await fixtures.etapeEvaluation({
           fiche_evaluation_id: fiche.id,
@@ -229,11 +205,8 @@ describe("ModifierEtatFichesConsolidationHandler", () => {
       "ne doit rien faire si la liste de fiches est vide",
       createIntegrationTest(async (tx) => {
         // Given
-        const fiche = await fixtures.fiche({
-          etape_courante: "CONSOLIDATION",
-        });
         const etapeConso = await fixtures.etapeEvaluation({
-          fiche_evaluation_id: fiche.id,
+          fiche: { etape_courante: "CONSOLIDATION" },
           type: "CONSOLIDATION",
           read_only: true,
         });
@@ -255,7 +228,7 @@ describe("ModifierEtatFichesConsolidationHandler", () => {
 
     it(
       "Lors du blocage de fiches doit envoyer un email de notification aux utilisateurs rattachés à l'étape de consolidation pour le rattachement",
-      createIntegrationTest(async (tx) => {
+      createIntegrationTest(async () => {
         // Given
         const utilisateur1 = await fixtures.utilisateur({
           email: "notif1@example.com",
@@ -374,16 +347,13 @@ describe("ModifierEtatFichesConsolidationHandler", () => {
 
     it(
       "ne doit pas envoyer d'email de notification lors du déblocage de fiches",
-      createIntegrationTest(async (tx) => {
+      createIntegrationTest(async () => {
         // Given
         const utilisateur = await fixtures.utilisateur({
           profilCode: ProfilEnum.DITP_ADMIN,
         });
 
-        const rattachement = await fixtures.rattachement();
-
         const fiche = await fixtures.fiche({
-          rattachement_code: rattachement.code,
           etape_courante: "CONSOLIDATION",
         });
 
@@ -395,7 +365,7 @@ describe("ModifierEtatFichesConsolidationHandler", () => {
 
         await fixtures.rattachementUtilisateurEtapeJalon({
           utilisateur_id: utilisateur.id,
-          rattachement_code: rattachement.code,
+          rattachement_code: fiche.rattachement_code,
           etape: $Enums.etape_evaluation_enum.CONSOLIDATION,
         });
 
