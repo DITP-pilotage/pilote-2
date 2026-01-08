@@ -119,6 +119,7 @@ export class ModifierEtatFichesConsolidationHandler {
             },
           },
         },
+        orderBy: { email: "asc" },
       });
 
       return utilisateurs.map((utilisateur) => ({
