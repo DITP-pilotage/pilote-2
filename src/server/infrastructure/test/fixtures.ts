@@ -1,4 +1,4 @@
-import type { Prisma } from "@prisma/client";
+import { $Enums, Prisma } from "@prisma/client";
 import { randomUUID } from "node:crypto";
 import { getPrisma } from "@/server/db/PrismaTransaction";
 
@@ -97,17 +97,26 @@ export const fixtures = {
     });
   },
 
-  async evaluation(
+  async etapeEvaluation(
     overrides: Partial<Prisma.etape_evaluationUncheckedCreateInput> & {
-      fiche_evaluation_id: string;
-    },
+      fiche_evaluation_id?: string;
+      fiche?: Partial<Prisma.fiche_evaluationUncheckedCreateInput>;
+    } = {},
   ) {
     const prisma = getPrisma();
+    const { fiche, ...rest } = overrides;
+
+    const fiche_evaluation_id =
+      rest.fiche_evaluation_id == null
+        ? (await fixtures.fiche(fiche ?? {})).id
+        : rest.fiche_evaluation_id;
+
     return prisma.etape_evaluation.create({
       data: {
         id: randomUUID(),
         type: "AUTO_EVALUATION",
-        ...overrides,
+        ...rest,
+        fiche_evaluation_id,
       },
     });
   },
@@ -152,7 +161,7 @@ export const fixtures = {
     overrides: Partial<Prisma.rattachement_utilisateur_etape_jalonUncheckedCreateInput> & {
       utilisateur_id: string;
       rattachement_code: string;
-      etape: Prisma.etape_evaluation_enum;
+      etape: $Enums.etape_evaluation_enum;
     },
   ) {
     const prisma = getPrisma();
