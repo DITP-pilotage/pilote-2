@@ -22,6 +22,16 @@ describe("ListerObjectifsParRattachementPiloteEval", () => {
       const objectif3Id = "c3d4e5f6-a7b8-9012-cdef-123456789012";
       const objectif4Id = "d4e5f6a7-b8c9-0123-def0-123456789013";
 
+      await prisma.referentiel_rattachement_groupe.createMany({
+        data: [
+          {
+            code: "REG",
+            libelle: "Groupe rattachement",
+            ordre: 1,
+          },
+        ],
+      });
+
       await prisma.referentiel_rattachement.createMany({
         data: [
           {
@@ -91,6 +101,16 @@ describe("ListerObjectifsParRattachementPiloteEval", () => {
       const tutelleId = "e5f6a7b8-c9d0-1234-ef01-234567890123";
       const objectifId = "f6a7b8c9-d0e1-2345-f012-345678901234";
 
+      await prisma.referentiel_rattachement_groupe.createMany({
+        data: [
+          {
+            code: "REG",
+            libelle: "Groupe rattachement 1",
+            ordre: 1,
+          },
+        ],
+      });
+
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
@@ -134,6 +154,16 @@ describe("ListerObjectifsParRattachementPiloteEval", () => {
       // Given
       const rattachementCode = "REG-30";
       const objectifId = "c9d0e1f2-a3b4-5678-2345-678901234567";
+
+      await prisma.referentiel_rattachement_groupe.createMany({
+        data: [
+          {
+            code: "REG",
+            libelle: "Groupe modifier objectif 2A",
+            ordre: 1,
+          },
+        ],
+      });
 
       await prisma.referentiel_rattachement.create({
         data: {

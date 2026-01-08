@@ -53,6 +53,14 @@ describe("AfficherAutoEvaluationQuery", () => {
         },
       });
 
+      await prisma.referentiel_rattachement_groupe.create({
+        data: {
+          code: rattachementCode,
+          libelle: rattachementCode,
+          ordre: 1,
+        },
+      });
+
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
@@ -205,6 +213,14 @@ describe("AfficherAutoEvaluationQuery", () => {
         },
       });
 
+      await prisma.referentiel_rattachement_groupe.create({
+        data: {
+          code: rattachementCode,
+          libelle: rattachementCode,
+          ordre: 1,
+        },
+      });
+
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
@@ -312,6 +328,14 @@ describe("AfficherAutoEvaluationQuery", () => {
       const ficheEvaluationId = "8eee737b-b5c0-4fa3-b7c1-f8d8586c83ca";
       const etapeEvaluationId = "53b83d91-646e-4274-b370-a70681723483";
 
+      await prisma.referentiel_rattachement_groupe.create({
+        data: {
+          code: rattachementCode,
+          libelle: rattachementCode,
+          ordre: 1,
+        },
+      });
+
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
@@ -378,6 +402,14 @@ describe("AfficherAutoEvaluationQuery", () => {
               },
             ],
           },
+        },
+      });
+
+      await prisma.referentiel_rattachement_groupe.create({
+        data: {
+          code: rattachementCode,
+          libelle: rattachementCode,
+          ordre: 1,
         },
       });
 
@@ -491,6 +523,14 @@ describe("AfficherAutoEvaluationQuery", () => {
         },
       });
 
+      await prisma.referentiel_rattachement_groupe.create({
+        data: {
+          code: rattachementCode,
+          libelle: rattachementCode,
+          ordre: 1,
+        },
+      });
+
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
@@ -577,12 +617,28 @@ describe("AfficherAutoEvaluationQuery", () => {
       const etapeEvaluation1Id = "f102386f-91ed-469b-8c3d-2c211e2b5046";
       const etapeEvaluation2Id = "cdef279e-5ed4-407d-be0e-bc273ec0e560";
 
+      await prisma.referentiel_rattachement_groupe.create({
+        data: {
+          code: rattachement1Code,
+          libelle: rattachement1Code,
+          ordre: 1,
+        },
+      });
+
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachement1Code,
           groupe: rattachement1Code,
           ordre: 1,
           libelle: "Rattachement 1",
+        },
+      });
+
+      await prisma.referentiel_rattachement_groupe.create({
+        data: {
+          code: rattachement2Code,
+          libelle: rattachement2Code,
+          ordre: 1,
         },
       });
 

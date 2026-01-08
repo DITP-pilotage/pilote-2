@@ -52,6 +52,16 @@ describe("EnregistrerBrouillonAutoEvaluationCriteresHandler", () => {
         },
       });
 
+      await prisma.referentiel_rattachement_groupe.createMany({
+        data: [
+          {
+            code: rattachementCode,
+            libelle: "Groupe rattachement",
+            ordre: 1,
+          },
+        ],
+      });
+
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
@@ -144,6 +154,16 @@ describe("EnregistrerBrouillonAutoEvaluationCriteresHandler", () => {
         },
       });
 
+      await prisma.referentiel_rattachement_groupe.createMany({
+        data: [
+          {
+            code: rattachementCode,
+            libelle: "Groupe rattachement",
+            ordre: 1,
+          },
+        ],
+      });
+
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
@@ -225,6 +245,16 @@ describe("EnregistrerBrouillonAutoEvaluationCriteresHandler", () => {
         },
       });
 
+      await prisma.referentiel_rattachement_groupe.createMany({
+        data: [
+          {
+            code: rattachementCode,
+            libelle: "Groupe rattachement",
+            ordre: 1,
+          },
+        ],
+      });
+
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
@@ -303,6 +333,16 @@ describe("EnregistrerBrouillonAutoEvaluationCriteresHandler", () => {
         },
       });
 
+      await prisma.referentiel_rattachement_groupe.createMany({
+        data: [
+          {
+            code: rattachementCode,
+            libelle: "Groupe rattachement",
+            ordre: 1,
+          },
+        ],
+      });
+
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
@@ -371,6 +411,16 @@ describe("EnregistrerBrouillonAutoEvaluationCriteresHandler", () => {
           date_creation: new Date(),
           profilCode: "DITP_ADMIN",
         },
+      });
+
+      await prisma.referentiel_rattachement_groupe.createMany({
+        data: [
+          {
+            code: rattachementCode,
+            libelle: "Groupe rattachement",
+            ordre: 1,
+          },
+        ],
       });
 
       await prisma.referentiel_rattachement.create({

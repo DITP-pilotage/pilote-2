@@ -46,7 +46,7 @@ export const EnteteGroupeRattachement = ({
         </div>
 
         <div className="grow bg-black text-white text-center p-2 font-bold">
-          {ficheGroup.rattachementLibelle}
+          {ficheGroup.rattachementGroupeLibelle}
         </div>
       </div>
 

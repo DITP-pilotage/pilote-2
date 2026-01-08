@@ -1,0 +1,1 @@
+ALTER TABLE "public"."referentiel_rattachement" ADD CONSTRAINT "referentiel_rattachement_groupe_fkey" FOREIGN KEY ("groupe") REFERENCES "public"."referentiel_rattachement_groupe"("code") ON DELETE CASCADE ON UPDATE CASCADE;

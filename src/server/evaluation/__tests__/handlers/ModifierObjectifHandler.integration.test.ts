@@ -22,6 +22,14 @@ describe("ModifierObjectifHandler", () => {
       const ficheEvaluationId = "a1b2c3d4-e5f6-7890-abcd-111111111111";
       const objectifId = "e1f2a3b4-c5d6-7890-ef12-111111111111";
 
+      await prisma.referentiel_rattachement_groupe.create({
+        data: {
+          code: rattachementCode,
+          libelle: "Groupe modifier objectif 1",
+          ordre: 1,
+        },
+      });
+
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
@@ -71,6 +79,21 @@ describe("ModifierObjectifHandler", () => {
       const rattachementCode2 = "REG-MODIFIER-OBJ-02B";
       const ficheEvaluationId = "a1b2c3d4-e5f6-7890-abcd-222222222222";
       const objectifId = "e1f2a3b4-c5d6-7890-ef12-222222222222";
+
+      await prisma.referentiel_rattachement_groupe.createMany({
+        data: [
+          {
+            code: rattachementCode1,
+            libelle: "Groupe modifier objectif 2A",
+            ordre: 1,
+          },
+          {
+            code: rattachementCode2,
+            libelle: "Groupe modifier objectif 2B",
+            ordre: 2,
+          },
+        ],
+      });
 
       await prisma.referentiel_rattachement.create({
         data: {

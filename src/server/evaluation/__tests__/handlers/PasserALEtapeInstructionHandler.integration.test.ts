@@ -37,6 +37,14 @@ describe("PasserALEtapeInstructionHandler", () => {
         },
       });
 
+      await prisma.referentiel_rattachement_groupe.create({
+        data: {
+          code: rattachementCode,
+          libelle: rattachementCode,
+          ordre: 1,
+        },
+      });
+
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
@@ -116,6 +124,14 @@ describe("PasserALEtapeInstructionHandler", () => {
               descriptif: "Description",
             },
           },
+        },
+      });
+
+      await prisma.referentiel_rattachement_groupe.create({
+        data: {
+          code: rattachementCode,
+          libelle: rattachementCode,
+          ordre: 1,
         },
       });
 
@@ -233,6 +249,14 @@ describe("PasserALEtapeInstructionHandler", () => {
         },
       });
 
+      await prisma.referentiel_rattachement_groupe.create({
+        data: {
+          code: rattachementCode,
+          libelle: rattachementCode,
+          ordre: 1,
+        },
+      });
+
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
@@ -345,6 +369,14 @@ describe("PasserALEtapeInstructionHandler", () => {
           id: critereId,
           libelle: "Critère existing instruction",
           descriptif: "Description",
+        },
+      });
+
+      await prisma.referentiel_rattachement_groupe.create({
+        data: {
+          code: rattachementCode,
+          libelle: rattachementCode,
+          ordre: 1,
         },
       });
 
@@ -466,6 +498,14 @@ describe("PasserALEtapeInstructionHandler", () => {
         },
       });
 
+      await prisma.referentiel_rattachement_groupe.create({
+        data: {
+          code: rattachementCode,
+          libelle: rattachementCode,
+          ordre: 1,
+        },
+      });
+
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
@@ -572,6 +612,14 @@ describe("PasserALEtapeInstructionHandler", () => {
           id: critereId,
           libelle: "Critère date traitement",
           descriptif: "Description",
+        },
+      });
+
+      await prisma.referentiel_rattachement_groupe.create({
+        data: {
+          code: rattachementCode,
+          libelle: rattachementCode,
+          ordre: 1,
         },
       });
 

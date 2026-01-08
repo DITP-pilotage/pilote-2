@@ -37,6 +37,36 @@ describe("ModifierEtatFichesInstructionHandler", () => {
       const etape4Id = "b1c2d3e4-f5a6-8901-bcde-444444444444";
       const etape5Id = "b1c2d3e4-f5a6-8901-bcde-555555555555";
 
+      await prisma.referentiel_rattachement_groupe.createMany({
+        data: [
+          {
+            code: rattachement1Code,
+            libelle: `Libellé ${rattachement1Code}`,
+            ordre: 1,
+          },
+          {
+            code: rattachement2Code,
+            libelle: `Libellé ${rattachement2Code}`,
+            ordre: 1,
+          },
+          {
+            code: rattachement3Code,
+            libelle: `Libellé ${rattachement3Code}`,
+            ordre: 1,
+          },
+          {
+            code: rattachement4Code,
+            libelle: `Libellé ${rattachement4Code}`,
+            ordre: 1,
+          },
+          {
+            code: rattachement5Code,
+            libelle: `Libellé ${rattachement5Code}`,
+            ordre: 1,
+          },
+        ],
+      });
+
       await prisma.referentiel_rattachement.createMany({
         data: [
           {
@@ -192,6 +222,36 @@ describe("ModifierEtatFichesInstructionHandler", () => {
       const etape4Id = "d1e2f3a4-b5c6-8901-def1-444444444444";
       const etape5Id = "d1e2f3a4-b5c6-8901-def1-555555555555";
 
+      await prisma.referentiel_rattachement_groupe.createMany({
+        data: [
+          {
+            code: rattachement1Code,
+            libelle: `Libellé ${rattachement1Code}`,
+            ordre: 1,
+          },
+          {
+            code: rattachement2Code,
+            libelle: `Libellé ${rattachement2Code}`,
+            ordre: 1,
+          },
+          {
+            code: rattachement3Code,
+            libelle: `Libellé ${rattachement3Code}`,
+            ordre: 1,
+          },
+          {
+            code: rattachement4Code,
+            libelle: `Libellé ${rattachement4Code}`,
+            ordre: 1,
+          },
+          {
+            code: rattachement5Code,
+            libelle: `Libellé ${rattachement5Code}`,
+            ordre: 1,
+          },
+        ],
+      });
+
       await prisma.referentiel_rattachement.createMany({
         data: [
           {
@@ -335,6 +395,14 @@ describe("ModifierEtatFichesInstructionHandler", () => {
       const etapeConsoId = "a2b3c4d5-e6f7-9012-1234-123456789012";
       const etapeInstructionId = "b3c4d5e6-f7a8-0123-2345-123456789012";
 
+      await prisma.referentiel_rattachement_groupe.create({
+        data: {
+          code: rattachementCode,
+          libelle: `Libellé ${rattachementCode}`,
+          ordre: 1,
+        },
+      });
+
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
@@ -399,6 +467,14 @@ describe("ModifierEtatFichesInstructionHandler", () => {
       const rattachementCode = "REG-INST-12";
       const ficheEvaluationId = "c3d4e5f6-a7b8-9012-3456-123456789012";
       const etapeInstructionId = "d4e5f6a7-b8c9-0123-4567-123456789012";
+
+      await prisma.referentiel_rattachement_groupe.create({
+        data: {
+          code: rattachementCode,
+          libelle: `Libellé ${rattachementCode}`,
+          ordre: 1,
+        },
+      });
 
       await prisma.referentiel_rattachement.create({
         data: {

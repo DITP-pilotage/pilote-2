@@ -30,6 +30,14 @@ describe("AccesFicheEvaluationService", () => {
         },
       });
 
+      await prisma.referentiel_rattachement_groupe.create({
+        data: {
+          code: rattachementCode,
+          libelle: rattachementCode,
+          ordre: 1,
+        },
+      });
+
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
@@ -92,6 +100,14 @@ describe("AccesFicheEvaluationService", () => {
         },
       });
 
+      await prisma.referentiel_rattachement_groupe.create({
+        data: {
+          code: rattachementCode,
+          libelle: rattachementCode,
+          ordre: 1,
+        },
+      });
+
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
@@ -141,6 +157,14 @@ describe("AccesFicheEvaluationService", () => {
           prenom: "Test",
           date_creation: new Date(),
           profilCode: "DITP_ADMIN",
+        },
+      });
+
+      await prisma.referentiel_rattachement_groupe.create({
+        data: {
+          code: rattachementCode,
+          libelle: rattachementCode,
+          ordre: 1,
         },
       });
 
@@ -207,12 +231,28 @@ describe("AccesFicheEvaluationService", () => {
         },
       });
 
+      await prisma.referentiel_rattachement_groupe.create({
+        data: {
+          code: rattachement1Code,
+          libelle: rattachement1Code,
+          ordre: 1,
+        },
+      });
+
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachement1Code,
           groupe: rattachement1Code,
           ordre: 1,
           libelle: "Rattachement 1",
+        },
+      });
+
+      await prisma.referentiel_rattachement_groupe.create({
+        data: {
+          code: rattachement2Code,
+          libelle: rattachement2Code,
+          ordre: 1,
         },
       });
 
@@ -278,6 +318,14 @@ describe("AccesFicheEvaluationService", () => {
         },
       });
 
+      await prisma.referentiel_rattachement_groupe.create({
+        data: {
+          code: rattachementCode,
+          libelle: rattachementCode,
+          ordre: 1,
+        },
+      });
+
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
@@ -322,6 +370,14 @@ describe("AccesFicheEvaluationService", () => {
         },
       });
 
+      await prisma.referentiel_rattachement_groupe.create({
+        data: {
+          code: rattachementCode,
+          libelle: rattachementCode,
+          ordre: 1,
+        },
+      });
+
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
@@ -353,6 +409,14 @@ describe("AccesFicheEvaluationService", () => {
           prenom: "Test",
           date_creation: new Date(),
           profilCode: "DITP_ADMIN",
+        },
+      });
+
+      await prisma.referentiel_rattachement_groupe.create({
+        data: {
+          code: rattachementCode,
+          libelle: rattachementCode,
+          ordre: 1,
         },
       });
 
@@ -402,6 +466,14 @@ describe("AccesFicheEvaluationService", () => {
         },
       });
 
+      await prisma.referentiel_rattachement_groupe.create({
+        data: {
+          code: rattachementCode,
+          libelle: rattachementCode,
+          ordre: 1,
+        },
+      });
+
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
@@ -446,6 +518,14 @@ describe("AccesFicheEvaluationService", () => {
         },
       });
 
+      await prisma.referentiel_rattachement_groupe.create({
+        data: {
+          code: rattachementCode,
+          libelle: rattachementCode,
+          ordre: 1,
+        },
+      });
+
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
@@ -477,6 +557,14 @@ describe("AccesFicheEvaluationService", () => {
           prenom: "Test",
           date_creation: new Date(),
           profilCode: "DITP_ADMIN",
+        },
+      });
+
+      await prisma.referentiel_rattachement_groupe.create({
+        data: {
+          code: rattachementCode,
+          libelle: rattachementCode,
+          ordre: 1,
         },
       });
 

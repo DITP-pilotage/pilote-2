@@ -36,6 +36,14 @@ describe("EnregistrerBrouillonAutoEvaluationObjectifsHandler", () => {
         },
       });
 
+      await prisma.referentiel_rattachement_groupe.create({
+        data: {
+          code: rattachementCode,
+          libelle: `Libellé ${rattachementCode}`,
+          ordre: 1,
+        },
+      });
+
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
@@ -117,6 +125,14 @@ describe("EnregistrerBrouillonAutoEvaluationObjectifsHandler", () => {
           prenom: "User",
           date_creation: new Date(),
           profilCode: "DITP_ADMIN",
+        },
+      });
+
+      await prisma.referentiel_rattachement_groupe.create({
+        data: {
+          code: rattachementCode,
+          libelle: `Libellé ${rattachementCode}`,
+          ordre: 1,
         },
       });
 
@@ -209,6 +225,14 @@ describe("EnregistrerBrouillonAutoEvaluationObjectifsHandler", () => {
         },
       });
 
+      await prisma.referentiel_rattachement_groupe.create({
+        data: {
+          code: rattachementCode,
+          libelle: `Libellé ${rattachementCode}`,
+          ordre: 1,
+        },
+      });
+
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
@@ -268,6 +292,14 @@ describe("EnregistrerBrouillonAutoEvaluationObjectifsHandler", () => {
           prenom: "User",
           date_creation: new Date(),
           profilCode: "DITP_ADMIN",
+        },
+      });
+
+      await prisma.referentiel_rattachement_groupe.create({
+        data: {
+          code: rattachementCode,
+          libelle: `Libellé ${rattachementCode}`,
+          ordre: 1,
         },
       });
 
@@ -346,6 +378,14 @@ describe("EnregistrerBrouillonAutoEvaluationObjectifsHandler", () => {
           prenom: "User",
           date_creation: new Date(),
           profilCode: "DITP_ADMIN",
+        },
+      });
+
+      await prisma.referentiel_rattachement_groupe.create({
+        data: {
+          code: rattachementCode,
+          libelle: `Libellé ${rattachementCode}`,
+          ordre: 1,
         },
       });
 

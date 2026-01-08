@@ -38,6 +38,14 @@ describe("#AfficherPilotageQuery", () => {
         ],
       });
 
+      await prisma.referentiel_rattachement_groupe.create({
+        data: {
+          code: "Groupe A",
+          libelle: "Libellé Groupe A",
+          ordre: 1,
+        },
+      });
+
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
@@ -111,6 +119,11 @@ describe("#AfficherPilotageQuery", () => {
             libelle: "Rattachement 1",
             groupe: "Groupe A",
             ordre: 1,
+            referentielRattachementGroupe: {
+              code: "Groupe A",
+              libelle: "Libellé Groupe A",
+              ordre: 1,
+            },
           },
           noteObjectifsCollectifs: null,
 
@@ -193,6 +206,14 @@ describe("#AfficherPilotageQuery", () => {
           libelle: "Critère test",
           descriptif: "Description critère test",
           type: "SIMPLIFICATION",
+        },
+      });
+
+      await prisma.referentiel_rattachement_groupe.create({
+        data: {
+          code: "Groupe B",
+          libelle: "Libellé Groupe B",
+          ordre: 2,
         },
       });
 
@@ -321,6 +342,11 @@ describe("#AfficherPilotageQuery", () => {
             libelle: "Rattachement test",
             groupe: "Groupe B",
             ordre: 1,
+            referentielRattachementGroupe: {
+              code: "Groupe B",
+              libelle: "Libellé Groupe B",
+              ordre: 2,
+            },
           },
           noteObjectifsCollectifs: null,
           evaluationsParCritereEtEtape: {
@@ -375,6 +401,14 @@ describe("#AfficherPilotageQuery", () => {
             type: "SIMPLIFICATION",
           },
         ],
+      });
+
+      await prisma.referentiel_rattachement_groupe.create({
+        data: {
+          code: "Groupe C",
+          libelle: "Libellé Groupe C",
+          ordre: 3,
+        },
       });
 
       await prisma.referentiel_rattachement.create({
@@ -467,6 +501,21 @@ describe("#AfficherPilotageQuery", () => {
           descriptif: "Description critère objectifs",
           type: "FEUILLE_DE_ROUTE",
         },
+      });
+
+      await prisma.referentiel_rattachement_groupe.createMany({
+        data: [
+          {
+            code: "Groupe D",
+            libelle: "Libellé Groupe D",
+            ordre: 4,
+          },
+          {
+            code: "Groupe E",
+            libelle: "Libellé Groupe E",
+            ordre: 5,
+          },
+        ],
       });
 
       await prisma.referentiel_rattachement.create({
@@ -621,6 +670,21 @@ describe("#AfficherPilotageQuery", () => {
         },
       });
 
+      await prisma.referentiel_rattachement_groupe.createMany({
+        data: [
+          {
+            code: "Groupe A",
+            libelle: "Libellé Groupe A",
+            ordre: 1,
+          },
+          {
+            code: "Groupe B",
+            libelle: "Libellé Groupe B",
+            ordre: 2,
+          },
+        ],
+      });
+
       await prisma.referentiel_rattachement.createMany({
         data: [
           {
@@ -697,24 +761,44 @@ describe("#AfficherPilotageQuery", () => {
           libelle: "Rattachement A1",
           groupe: "Groupe A",
           ordre: 1,
+          referentielRattachementGroupe: {
+            code: "Groupe A",
+            libelle: "Libellé Groupe A",
+            ordre: 1,
+          },
         },
         {
           code: rattachement2Code,
           libelle: "Rattachement A2",
           groupe: "Groupe A",
           ordre: 2,
+          referentielRattachementGroupe: {
+            code: "Groupe A",
+            libelle: "Libellé Groupe A",
+            ordre: 1,
+          },
         },
         {
           code: rattachement3Code,
           libelle: "Rattachement B1",
           groupe: "Groupe B",
           ordre: 1,
+          referentielRattachementGroupe: {
+            code: "Groupe B",
+            libelle: "Libellé Groupe B",
+            ordre: 2,
+          },
         },
         {
           code: rattachement1Code,
           libelle: "Rattachement B2",
           groupe: "Groupe B",
           ordre: 2,
+          referentielRattachementGroupe: {
+            code: "Groupe B",
+            libelle: "Libellé Groupe B",
+            ordre: 2,
+          },
         },
       ]);
     });
@@ -733,6 +817,16 @@ describe("#AfficherPilotageQuery", () => {
           libelle: "Critère sans évaluation",
           descriptif: "Description critère",
         },
+      });
+
+      await prisma.referentiel_rattachement_groupe.createMany({
+        data: [
+          {
+            code: "Groupe Z",
+            libelle: "Groupe rattachement",
+            ordre: 1,
+          },
+        ],
       });
 
       await prisma.referentiel_rattachement.create({
@@ -828,6 +922,16 @@ describe("#AfficherPilotageQuery", () => {
             id: critere3Id,
             libelle: "Critère 3",
             descriptif: "Description critère 3",
+          },
+        ],
+      });
+
+      await prisma.referentiel_rattachement_groupe.createMany({
+        data: [
+          {
+            code: "Groupe Y",
+            libelle: "Groupe rattachement",
+            ordre: 1,
           },
         ],
       });
@@ -1032,6 +1136,26 @@ describe("#AfficherPilotageQuery", () => {
         ],
       });
 
+      await prisma.referentiel_rattachement_groupe.createMany({
+        data: [
+          {
+            code: rattachementCode,
+            libelle: "Groupe rattachement",
+            ordre: 1,
+          },
+        ],
+      });
+
+      await prisma.referentiel_rattachement_groupe.createMany({
+        data: [
+          {
+            code: "Groupe Synthèse",
+            libelle: "Groupe rattachement",
+            ordre: 1,
+          },
+        ],
+      });
+
       await prisma.referentiel_rattachement.create({
         data: {
           code: rattachementCode,
@@ -1177,6 +1301,16 @@ describe("#AfficherPilotageQuery", () => {
             id: critere2Id,
             libelle: "Critère calcul 2",
             descriptif: "Description critère calcul 2",
+          },
+        ],
+      });
+
+      await prisma.referentiel_rattachement_groupe.createMany({
+        data: [
+          {
+            code: "Groupe Calcul",
+            libelle: "Groupe rattachement",
+            ordre: 1,
           },
         ],
       });
@@ -1455,6 +1589,14 @@ describe("#AfficherPilotageQuery", () => {
           libelle: "Critère test objectifs collectifs",
           descriptif: "Description critère test",
           type: "SERVICES_PUBLICS",
+        },
+      });
+
+      await prisma.referentiel_rattachement_groupe.create({
+        data: {
+          code: "Groupe Test",
+          libelle: "Libellé Groupe Test",
+          ordre: 1,
         },
       });
 
