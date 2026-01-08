@@ -339,7 +339,7 @@ describe("ListerFichesEvaluationParPhaseQuery", () => {
     );
 
     it(
-      "doit inclure les moyennes de toutes les phases précédentes dans moyennesParPhase",
+      "doit calculer moyennesParPhase uniquement pour la phase CONSOLIDATION",
       createIntegrationTest(async () => {
         // Given
         const utilisateur = await f.utilisateur();
@@ -561,37 +561,41 @@ describe("ListerFichesEvaluationParPhaseQuery", () => {
         });
 
         const fiche1 = await f.fiche({
-          etape_courante: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
+          etape_courante: $Enums.etape_evaluation_enum.CONSOLIDATION,
           rattachement_code: rattachement1.code,
         });
         await f.etapeEvaluation({
           fiche_evaluation_id: fiche1.id,
-          type: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
+          type: $Enums.etape_evaluation_enum.CONSOLIDATION,
         });
 
         const fiche2 = await f.fiche({
-          etape_courante: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
+          etape_courante: $Enums.etape_evaluation_enum.CONSOLIDATION,
           rattachement_code: rattachement2.code,
         });
         await f.etapeEvaluation({
           fiche_evaluation_id: fiche2.id,
-          type: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
+          type: $Enums.etape_evaluation_enum.CONSOLIDATION,
         });
 
         const fiche3 = await f.fiche({
-          etape_courante: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
+          etape_courante: $Enums.etape_evaluation_enum.CONSOLIDATION,
           rattachement_code: rattachement3.code,
         });
         await f.etapeEvaluation({
           fiche_evaluation_id: fiche3.id,
-          type: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
+          type: $Enums.etape_evaluation_enum.CONSOLIDATION,
         });
 
         // When
         const result = await query.run({ utilisateurId: utilisateur.id });
 
         // Then
-        expect(result).toEqual({});
+        expect(
+          result["Région 30"][$Enums.etape_evaluation_enum.CONSOLIDATION].map(
+            (fiche) => fiche.id,
+          ),
+        ).toEqual([fiche2.id, fiche3.id, fiche1.id]);
       }),
     );
 
