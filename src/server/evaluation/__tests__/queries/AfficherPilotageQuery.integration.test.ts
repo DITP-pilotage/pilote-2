@@ -958,7 +958,7 @@ describe("#AfficherPilotageQuery", () => {
           rattachement_code: rattachement.code,
         });
 
-        const objectif2 = await f.objectif({
+        await f.objectif({
           libelle: "Objectif synthèse 2",
           descriptif: "Description objectif synthèse 2",
           jalon: 2025,

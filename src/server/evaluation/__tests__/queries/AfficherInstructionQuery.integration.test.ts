@@ -51,7 +51,7 @@ describe("AfficherInstructionQuery", () => {
           descriptif: "Description objectif 1",
           indicateur_cible: "Atteindre 90% de conformité",
         });
-        const objectif2 = await f.objectif({
+        await f.objectif({
           rattachement_code: rattachement.code,
           libelle: "Objectif non à instruire",
           descriptif: "Description objectif 2",
@@ -636,7 +636,7 @@ describe("AfficherInstructionQuery", () => {
           rattachement_code: rattachement1.code,
           etape_courante: "INSTRUCTION",
         });
-        const etapeInstruction1 = await f.etapeEvaluation({
+        await f.etapeEvaluation({
           fiche_evaluation_id: fiche1.id,
           type: "INSTRUCTION",
         });
@@ -645,7 +645,7 @@ describe("AfficherInstructionQuery", () => {
           rattachement_code: rattachement2.code,
           etape_courante: "INSTRUCTION",
         });
-        const etapeInstruction2 = await f.etapeEvaluation({
+        await f.etapeEvaluation({
           fiche_evaluation_id: fiche2.id,
           type: "INSTRUCTION",
         });
