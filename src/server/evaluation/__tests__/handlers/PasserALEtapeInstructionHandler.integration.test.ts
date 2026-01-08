@@ -482,7 +482,7 @@ describe("PasserALEtapeInstructionHandler", () => {
           where: {
             etape_evaluation_id: etapeInstruction.id,
           },
-          orderBy: { objectif_id: "asc" },
+          orderBy: { note: "asc" },
         });
 
         expect(evaluationsObjectifs).toEqual([
@@ -559,7 +559,7 @@ describe("PasserALEtapeInstructionHandler", () => {
           where: {
             etape_evaluation_id: etapeInstruction.id,
           },
-          orderBy: { critere_id: "asc" },
+          orderBy: { note: "asc" },
         });
 
         expect(evaluationsCriteres).toEqual([
