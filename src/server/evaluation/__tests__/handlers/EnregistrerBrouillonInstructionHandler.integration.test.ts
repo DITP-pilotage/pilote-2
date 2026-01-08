@@ -23,8 +23,8 @@ describe("EnregistrerBrouillonInstructionHandler", () => {
       createIntegrationTest(async (tx) => {
         // Given
         const utilisateur = await fixtures.utilisateur();
-        const critere = await fixtures.critere();
         const objectif = await fixtures.objectif();
+        const critere = await fixtures.critere();
         const etape = await fixtures.etapeEvaluation({
           fiche: {
             rattachement_code: objectif.rattachement_code,
@@ -96,7 +96,6 @@ describe("EnregistrerBrouillonInstructionHandler", () => {
       createIntegrationTest(async (tx) => {
         // Given
         const utilisateur = await fixtures.utilisateur();
-        const critere = await fixtures.critere();
         const objectif = await fixtures.objectif();
         const etape = await fixtures.etapeEvaluation({
           fiche: {
@@ -115,7 +114,6 @@ describe("EnregistrerBrouillonInstructionHandler", () => {
         });
         const evalCritere = await fixtures.evaluationCritere({
           etape_evaluation_id: etape.id,
-          critere_id: critere.id,
           auteur_id: utilisateur.id,
           note: 1,
           commentaire: "Initial critère",
@@ -129,7 +127,7 @@ describe("EnregistrerBrouillonInstructionHandler", () => {
               evaluationsObjectifs: [
                 {
                   id: evalObjectif.id,
-                  objectifId: objectif.id,
+                  objectifId: evalObjectif.objectif_id,
                   note: 5,
                   commentaire: "Updated comment",
                   annexe: "une annexe 1",
@@ -138,7 +136,7 @@ describe("EnregistrerBrouillonInstructionHandler", () => {
               evaluationsCriteres: [
                 {
                   id: evalCritere.id,
-                  critereId: critere.id,
+                  critereId: evalCritere.critere_id,
                   note: 4,
                   commentaire: "Updated critère",
                   annexe: "une annexe 2",
