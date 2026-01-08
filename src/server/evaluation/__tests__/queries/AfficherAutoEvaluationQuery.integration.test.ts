@@ -14,7 +14,7 @@ describe("AfficherAutoEvaluationQuery", () => {
 
   describe("run", () => {
     it(
-      "doit retourner les critères et objectifs sans évaluations quand aucune évaluation n'existe",
+      "doit retourner les critères et objectifs avec des évaluations vides par défaut",
       createIntegrationTest(async () => {
         // Given
         const critere1 = await fixtures.critere({
