@@ -17,7 +17,7 @@ describe("PasserALaConsolidationHandler", () => {
   beforeEach(() => {
     handler = new PasserALaConsolidationHandler({
       transaction,
-      soumettreEtapeEvaluationService: soumettreEtapeEvaluationService,
+      soumettreEtapeEvaluationService,
     });
   });
 
@@ -27,17 +27,17 @@ describe("PasserALaConsolidationHandler", () => {
       createIntegrationTest(async () => {
         // Given
         const utilisateur = await fixtures.utilisateur();
-        const fiche = await fixtures.fiche({
-          etape_courante: "CONSOLIDATION",
-        });
-        await fixtures.etapeEvaluation({
-          fiche_evaluation_id: fiche.id,
+        const etape = await fixtures.etapeEvaluation({
+          fiche: { etape_courante: "CONSOLIDATION" },
           type: "AUTO_EVALUATION",
         });
 
         // When/Then
         await expect(
-          handler.execute({ ficheEvaluationIds: [fiche.id] }, utilisateur.id),
+          handler.execute(
+            { ficheEvaluationIds: [etape.fiche_evaluation_id] },
+            utilisateur.id,
+          ),
         ).rejects.toThrow();
       }),
     );
@@ -49,22 +49,15 @@ describe("PasserALaConsolidationHandler", () => {
         const auteurInitial = await fixtures.utilisateur();
         const nouvelAuteur = await fixtures.utilisateur();
 
-        const rattachement = await fixtures.rattachement();
         const objectif = await fixtures.objectif({
-          rattachement_code: rattachement.code,
           libelle: "Objectif consolidation",
-        });
-        const critere = await fixtures.critere({
-          libelle: "Critère consolidation",
-        });
-
-        const fiche = await fixtures.fiche({
-          rattachement_code: rattachement.code,
-          etape_courante: "AUTO_EVALUATION",
         });
 
         const etapeAutoEvaluation = await fixtures.etapeEvaluation({
-          fiche_evaluation_id: fiche.id,
+          fiche: {
+            rattachement_code: objectif.rattachement_code,
+            etape_courante: "AUTO_EVALUATION",
+          },
           type: "AUTO_EVALUATION",
         });
 
@@ -78,7 +71,6 @@ describe("PasserALaConsolidationHandler", () => {
 
         const evalCritAutoEval = await fixtures.evaluationCritere({
           etape_evaluation_id: etapeAutoEvaluation.id,
-          critere_id: critere.id,
           auteur_id: auteurInitial.id,
           note: 3,
           commentaire: "Critère auto-évalué",
@@ -86,14 +78,14 @@ describe("PasserALaConsolidationHandler", () => {
 
         // When
         await handler.execute(
-          { ficheEvaluationIds: [fiche.id] },
+          { ficheEvaluationIds: [etapeAutoEvaluation.fiche_evaluation_id] },
           nouvelAuteur.id,
         );
 
         // Then
         const etapeConsolidation = await tx.etape_evaluation.findFirstOrThrow({
           where: {
-            fiche_evaluation_id: fiche.id,
+            fiche_evaluation_id: etapeAutoEvaluation.fiche_evaluation_id,
             type: "CONSOLIDATION",
           },
           include: {
@@ -116,7 +108,7 @@ describe("PasserALaConsolidationHandler", () => {
 
         expect(etapeConsolidation.evaluations_criteres).toEqual([
           expect.objectContaining({
-            critere_id: critere.id,
+            critere_id: evalCritAutoEval.critere_id,
             auteur_id: nouvelAuteur.id,
             note: 3,
             commentaire: "",
@@ -127,7 +119,7 @@ describe("PasserALaConsolidationHandler", () => {
         );
 
         const ficheEvaluation = await tx.fiche_evaluation.findUniqueOrThrow({
-          where: { id: fiche.id },
+          where: { id: etapeAutoEvaluation.fiche_evaluation_id },
         });
         expect(ficheEvaluation.etape_courante).toBe("CONSOLIDATION");
       }),
@@ -139,31 +131,33 @@ describe("PasserALaConsolidationHandler", () => {
         // Given
         const utilisateur = await fixtures.utilisateur();
 
-        const fiche1 = await fixtures.fiche({
-          etape_courante: "AUTO_EVALUATION",
-        });
-        const fiche2 = await fixtures.fiche({
-          etape_courante: "AUTO_EVALUATION",
-        });
-
-        await fixtures.etapeEvaluation({
-          fiche_evaluation_id: fiche1.id,
+        const etape1 = await fixtures.etapeEvaluation({
           type: "AUTO_EVALUATION",
+          fiche: { etape_courante: "AUTO_EVALUATION" },
         });
-        await fixtures.etapeEvaluation({
-          fiche_evaluation_id: fiche2.id,
+        const etape2 = await fixtures.etapeEvaluation({
           type: "AUTO_EVALUATION",
+          fiche: { etape_courante: "AUTO_EVALUATION" },
         });
 
         // When
         await handler.execute(
-          { ficheEvaluationIds: [fiche1.id, fiche2.id] },
+          {
+            ficheEvaluationIds: [
+              etape1.fiche_evaluation_id,
+              etape2.fiche_evaluation_id,
+            ],
+          },
           utilisateur.id,
         );
 
         // Then
         const fichesEvaluation = await tx.fiche_evaluation.findMany({
-          where: { id: { in: [fiche1.id, fiche2.id] } },
+          where: {
+            id: {
+              in: [etape1.fiche_evaluation_id, etape2.fiche_evaluation_id],
+            },
+          },
         });
 
         expect(fichesEvaluation).toHaveLength(2);
@@ -175,7 +169,9 @@ describe("PasserALaConsolidationHandler", () => {
 
         const etapesConsolidation = await tx.etape_evaluation.findMany({
           where: {
-            fiche_evaluation_id: { in: [fiche1.id, fiche2.id] },
+            fiche_evaluation_id: {
+              in: [etape1.fiche_evaluation_id, etape2.fiche_evaluation_id],
+            },
             type: "CONSOLIDATION",
           },
         });
@@ -189,22 +185,17 @@ describe("PasserALaConsolidationHandler", () => {
       createIntegrationTest(async (tx) => {
         // Given - fiche qui est revenue en AUTO_EVALUATION après avoir été en CONSOLIDATION
         const utilisateur = await fixtures.utilisateur();
-        const rattachement = await fixtures.rattachement();
         const objectif = await fixtures.objectif({
-          rattachement_code: rattachement.code,
           libelle: "Objectif existing",
         });
 
-        const fiche = await fixtures.fiche({
-          rattachement_code: rattachement.code,
-          etape_courante: "AUTO_EVALUATION",
-        });
-
         const etapeAutoEvaluation = await fixtures.etapeEvaluation({
-          fiche_evaluation_id: fiche.id,
           type: "AUTO_EVALUATION",
+          fiche: {
+            rattachement_code: objectif.rattachement_code,
+            etape_courante: "AUTO_EVALUATION",
+          },
         });
-
         await fixtures.evaluationObjectif({
           etape_evaluation_id: etapeAutoEvaluation.id,
           objectif_id: objectif.id,
@@ -215,7 +206,7 @@ describe("PasserALaConsolidationHandler", () => {
 
         // Existing CONSOLIDATION step
         const etapeConsolidationExistante = await fixtures.etapeEvaluation({
-          fiche_evaluation_id: fiche.id,
+          fiche_evaluation_id: etapeAutoEvaluation.fiche_evaluation_id,
           type: "CONSOLIDATION",
         });
 
@@ -231,14 +222,14 @@ describe("PasserALaConsolidationHandler", () => {
 
         // When
         await handler.execute(
-          { ficheEvaluationIds: [fiche.id] },
+          { ficheEvaluationIds: [etapeAutoEvaluation.fiche_evaluation_id] },
           utilisateur.id,
         );
 
         // Then - should only have one CONSOLIDATION step (the existing one)
         const etapesConsolidation = await tx.etape_evaluation.findMany({
           where: {
-            fiche_evaluation_id: fiche.id,
+            fiche_evaluation_id: etapeAutoEvaluation.fiche_evaluation_id,
             type: "CONSOLIDATION",
           },
           include: {
@@ -257,7 +248,7 @@ describe("PasserALaConsolidationHandler", () => {
         ]);
 
         const ficheEvaluation = await tx.fiche_evaluation.findUniqueOrThrow({
-          where: { id: fiche.id },
+          where: { id: etapeAutoEvaluation.fiche_evaluation_id },
         });
         expect(ficheEvaluation.etape_courante).toBe("CONSOLIDATION");
       }),
@@ -268,23 +259,17 @@ describe("PasserALaConsolidationHandler", () => {
       createIntegrationTest(async (tx) => {
         // Given
         const utilisateur = await fixtures.utilisateur();
-        const rattachement = await fixtures.rattachement();
         const objectif = await fixtures.objectif({
-          rattachement_code: rattachement.code,
           libelle: "Objectif copy",
-        });
-        const critere = await fixtures.critere({ libelle: "Critère copy" });
-
-        const fiche = await fixtures.fiche({
-          rattachement_code: rattachement.code,
-          etape_courante: "AUTO_EVALUATION",
         });
 
         const etapeAutoEvaluation = await fixtures.etapeEvaluation({
-          fiche_evaluation_id: fiche.id,
           type: "AUTO_EVALUATION",
+          fiche: {
+            rattachement_code: objectif.rattachement_code,
+            etape_courante: "AUTO_EVALUATION",
+          },
         });
-
         await fixtures.evaluationObjectif({
           etape_evaluation_id: etapeAutoEvaluation.id,
           objectif_id: objectif.id,
@@ -292,18 +277,15 @@ describe("PasserALaConsolidationHandler", () => {
           note: 80,
           commentaire: "Auto-évalué",
         });
-
-        await fixtures.evaluationCritere({
+        const evaluationCritere = await fixtures.evaluationCritere({
           etape_evaluation_id: etapeAutoEvaluation.id,
-          critere_id: critere.id,
           auteur_id: utilisateur.id,
           note: 70,
           commentaire: "Auto-évalué critère",
         });
-
         // Existing CONSOLIDATION with null notes
         const etapeConsolidation = await fixtures.etapeEvaluation({
-          fiche_evaluation_id: fiche.id,
+          fiche_evaluation_id: etapeAutoEvaluation.fiche_evaluation_id,
           type: "CONSOLIDATION",
         });
 
@@ -317,7 +299,7 @@ describe("PasserALaConsolidationHandler", () => {
 
         const evalCritConsolidation = await fixtures.evaluationCritere({
           etape_evaluation_id: etapeConsolidation.id,
-          critere_id: critere.id,
+          critere_id: evaluationCritere.critere_id,
           auteur_id: utilisateur.id,
           note: null,
           commentaire: "",
@@ -325,7 +307,7 @@ describe("PasserALaConsolidationHandler", () => {
 
         // When
         await handler.execute(
-          { ficheEvaluationIds: [fiche.id] },
+          { ficheEvaluationIds: [etapeAutoEvaluation.fiche_evaluation_id] },
           utilisateur.id,
         );
 
@@ -347,15 +329,13 @@ describe("PasserALaConsolidationHandler", () => {
       createIntegrationTest(async (tx) => {
         // Given
         const utilisateur = await fixtures.utilisateur();
-        const rattachement = await fixtures.rattachement();
         const objectif = await fixtures.objectif({
-          rattachement_code: rattachement.code,
           libelle: "Objectif keep",
         });
         const critere = await fixtures.critere({ libelle: "Critère keep" });
 
         const fiche = await fixtures.fiche({
-          rattachement_code: rattachement.code,
+          rattachement_code: objectif.rattachement_code,
           etape_courante: "AUTO_EVALUATION",
         });
 
@@ -426,16 +406,14 @@ describe("PasserALaConsolidationHandler", () => {
       createIntegrationTest(async (tx) => {
         // Given
         const utilisateur = await fixtures.utilisateur();
-        const rattachement = await fixtures.rattachement();
         const objectif = await fixtures.objectif({
-          rattachement_code: rattachement.code,
           libelle: "Objectif reset",
         });
         const critere = await fixtures.critere({ libelle: "Critère reset" });
         const dateTraitement = new Date("2025-01-15");
 
         const fiche = await fixtures.fiche({
-          rattachement_code: rattachement.code,
+          rattachement_code: objectif.rattachement_code,
           etape_courante: "AUTO_EVALUATION",
         });
 
@@ -510,15 +488,13 @@ describe("PasserALaConsolidationHandler", () => {
       createIntegrationTest(async (tx) => {
         // Given
         const utilisateur = await fixtures.utilisateur();
-        const rattachement = await fixtures.rattachement();
         const objectif = await fixtures.objectif({
-          rattachement_code: rattachement.code,
           libelle: "Objectif same",
         });
         const dateTraitement = new Date("2025-01-15");
 
         const fiche = await fixtures.fiche({
-          rattachement_code: rattachement.code,
+          rattachement_code: objectif.rattachement_code,
           etape_courante: "AUTO_EVALUATION",
         });
 
@@ -570,14 +546,12 @@ describe("PasserALaConsolidationHandler", () => {
       createIntegrationTest(async (tx) => {
         // Given
         const utilisateur = await fixtures.utilisateur();
-        const rattachement = await fixtures.rattachement();
         const objectif = await fixtures.objectif({
-          rattachement_code: rattachement.code,
           libelle: "Objectif no date",
         });
 
         const fiche = await fixtures.fiche({
-          rattachement_code: rattachement.code,
+          rattachement_code: objectif.rattachement_code,
           etape_courante: "AUTO_EVALUATION",
         });
 
