@@ -67,14 +67,12 @@ describe("EnregistrerBrouillonAutoEvaluationCriteresHandler", () => {
       createIntegrationTest(async (tx) => {
         // Given
         const utilisateur = await fixtures.utilisateur();
-        const critere = await fixtures.critere();
         const etape = await fixtures.etapeEvaluation({
           type: "AUTO_EVALUATION",
         });
 
         const evalCritere = await fixtures.evaluationCritere({
           etape_evaluation_id: etape.id,
-          critere_id: critere.id,
           auteur_id: utilisateur.id,
           note: 1,
           commentaire: "Initial critère",
@@ -87,7 +85,7 @@ describe("EnregistrerBrouillonAutoEvaluationCriteresHandler", () => {
             evaluationsCriteres: [
               {
                 id: evalCritere.id,
-                critereId: critere.id,
+                critereId: evalCritere.critere_id,
                 note: 4,
                 commentaire: "Updated critère",
                 annexe: "une annexe",

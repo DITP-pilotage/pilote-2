@@ -98,7 +98,6 @@ describe("EnregistrerBrouillonConsolidationHandler", () => {
       createIntegrationTest(async (tx) => {
         // Given
         const utilisateur = await fixtures.utilisateur();
-        const critere = await fixtures.critere();
         const objectif = await fixtures.objectif();
         const etape = await fixtures.etapeEvaluation({
           fiche: {
@@ -117,7 +116,6 @@ describe("EnregistrerBrouillonConsolidationHandler", () => {
         });
         const evalCritere = await fixtures.evaluationCritere({
           etape_evaluation_id: etape.id,
-          critere_id: critere.id,
           auteur_id: utilisateur.id,
           note: 1,
           commentaire: "Initial critère",
@@ -140,7 +138,7 @@ describe("EnregistrerBrouillonConsolidationHandler", () => {
               evaluationsCriteres: [
                 {
                   id: evalCritere.id,
-                  critereId: critere.id,
+                  critereId: evalCritere.critere_id,
                   note: 4,
                   commentaire: "Updated critère",
                   annexe: "une annexe 2",
