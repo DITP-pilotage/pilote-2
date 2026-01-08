@@ -28,18 +28,40 @@ export const fixtures = {
     });
   },
 
+  async rattachementGroupe(
+    overrides: Partial<Prisma.referentiel_rattachement_groupeUncheckedCreateInput> = {},
+  ) {
+    const prisma = getPrisma();
+    const code = overrides.code || `GRP-${randomUUID().slice(0, 6)}`;
+    return prisma.referentiel_rattachement_groupe.create({
+      data: {
+        code,
+        ordre: 1,
+        libelle: `Groupe ${code}`,
+        ...overrides,
+      },
+    });
+  },
+
   async rattachement(
-    overrides: Partial<Prisma.referentiel_rattachementUncheckedCreateInput> = {},
+    overrides: Partial<Prisma.referentiel_rattachementUncheckedCreateInput> & {
+      groupe?: string;
+    } = {},
   ) {
     const prisma = getPrisma();
     const code = overrides.code || `REG-${randomUUID().slice(0, 6)}`;
+    const groupe =
+      overrides.groupe == null
+        ? (await fixtures.rattachementGroupe()).code
+        : overrides.groupe;
+
     return prisma.referentiel_rattachement.create({
       data: {
         code,
-        groupe: code,
         ordre: 1,
         libelle: `Rattachement ${code}`,
         ...overrides,
+        groupe,
       },
     });
   },
