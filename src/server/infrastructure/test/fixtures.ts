@@ -130,17 +130,23 @@ export const fixtures = {
   async evaluationObjectif(
     overrides: Partial<Prisma.evaluation_objectifUncheckedCreateInput> & {
       etape_evaluation_id: string;
-      objectif_id: string;
+      objectif_id?: string;
       auteur_id: string;
     },
   ) {
     const prisma = getPrisma();
+    const objectif_id =
+      overrides.objectif_id == null
+        ? (await fixtures.objectif()).id
+        : overrides.objectif_id;
+
     return prisma.evaluation_objectif.create({
       data: {
         id: randomUUID(),
         note: null,
         commentaire: "",
         ...overrides,
+        objectif_id,
       },
     });
   },
@@ -148,17 +154,23 @@ export const fixtures = {
   async evaluationCritere(
     overrides: Partial<Prisma.evaluation_critereUncheckedCreateInput> & {
       etape_evaluation_id: string;
-      critere_id: string;
+      critere_id?: string;
       auteur_id: string;
     },
   ) {
     const prisma = getPrisma();
+    const critere_id =
+      overrides.critere_id == null
+        ? (await fixtures.critere()).id
+        : overrides.critere_id;
+
     return prisma.evaluation_critere.create({
       data: {
         id: randomUUID(),
         note: null,
         commentaire: "",
         ...overrides,
+        critere_id,
       },
     });
   },
