@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import { EnregistrerBrouillonInstructionHandler } from "@/server/evaluation/handlers/EnregistrerBrouillonInstructionHandler";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { InMemoryTransaction } from "@/server/db/InMemoryTransaction";
@@ -23,27 +24,23 @@ describe("EnregistrerBrouillonInstructionHandler", () => {
         // Given
         const utilisateur = await fixtures.utilisateur();
         const critere = await fixtures.critere();
-        const rattachement = await fixtures.rattachement();
-        const objectif = await fixtures.objectif({
-          rattachement_code: rattachement.code,
-        });
-        const fiche = await fixtures.fiche({
-          rattachement_code: rattachement.code,
-          etape_courante: "INSTRUCTION",
-        });
+        const objectif = await fixtures.objectif();
         const etape = await fixtures.etapeEvaluation({
-          fiche_evaluation_id: fiche.id,
+          fiche: {
+            rattachement_code: objectif.rattachement_code,
+            etape_courante: "INSTRUCTION",
+          },
           type: "INSTRUCTION",
         });
 
-        const evaluationObjectifId = "a7b8c9d0-e1f2-3456-1234-567890123456";
-        const evaluationCritereId = "b8c9d0e1-f2a3-4567-2345-678901234567";
+        const evaluationObjectifId = randomUUID();
+        const evaluationCritereId = randomUUID();
 
         // When
         await handler.execute(
           [
             {
-              ficheEvaluationId: fiche.id,
+              ficheEvaluationId: etape.fiche_evaluation_id,
               evaluationsObjectifs: [
                 {
                   id: evaluationObjectifId,
@@ -100,16 +97,12 @@ describe("EnregistrerBrouillonInstructionHandler", () => {
         // Given
         const utilisateur = await fixtures.utilisateur();
         const critere = await fixtures.critere();
-        const rattachement = await fixtures.rattachement();
-        const objectif = await fixtures.objectif({
-          rattachement_code: rattachement.code,
-        });
-        const fiche = await fixtures.fiche({
-          rattachement_code: rattachement.code,
-          etape_courante: "INSTRUCTION",
-        });
+        const objectif = await fixtures.objectif();
         const etape = await fixtures.etapeEvaluation({
-          fiche_evaluation_id: fiche.id,
+          fiche: {
+            rattachement_code: objectif.rattachement_code,
+            etape_courante: "INSTRUCTION",
+          },
           type: "INSTRUCTION",
         });
 
@@ -132,7 +125,7 @@ describe("EnregistrerBrouillonInstructionHandler", () => {
         await handler.execute(
           [
             {
-              ficheEvaluationId: fiche.id,
+              ficheEvaluationId: etape.fiche_evaluation_id,
               evaluationsObjectifs: [
                 {
                   id: evalObjectif.id,
@@ -180,12 +173,9 @@ describe("EnregistrerBrouillonInstructionHandler", () => {
       createIntegrationTest(async (tx) => {
         // Given
         const utilisateur = await fixtures.utilisateur();
-        const fiche = await fixtures.fiche({
-          etape_courante: "INSTRUCTION",
-        });
         const initialDate = new Date("2025-01-01T00:00:00Z");
         const etape = await fixtures.etapeEvaluation({
-          fiche_evaluation_id: fiche.id,
+          fiche: { etape_courante: "INSTRUCTION" },
           type: "INSTRUCTION",
           updated_at: initialDate,
         });
@@ -194,7 +184,7 @@ describe("EnregistrerBrouillonInstructionHandler", () => {
         await handler.execute(
           [
             {
-              ficheEvaluationId: fiche.id,
+              ficheEvaluationId: etape.fiche_evaluation_id,
               evaluationsObjectifs: [],
               evaluationsCriteres: [],
             },
@@ -218,27 +208,23 @@ describe("EnregistrerBrouillonInstructionHandler", () => {
         // Given
         const utilisateur = await fixtures.utilisateur();
         const critere = await fixtures.critere();
-        const rattachement = await fixtures.rattachement();
-        const objectif = await fixtures.objectif({
-          rattachement_code: rattachement.code,
-        });
-        const fiche = await fixtures.fiche({
-          rattachement_code: rattachement.code,
-          etape_courante: "INSTRUCTION",
-        });
+        const objectif = await fixtures.objectif();
         const etape = await fixtures.etapeEvaluation({
-          fiche_evaluation_id: fiche.id,
+          fiche: {
+            rattachement_code: objectif.rattachement_code,
+            etape_courante: "INSTRUCTION",
+          },
           type: "INSTRUCTION",
         });
 
-        const evaluationObjectifId = "1b9dc0fe-6a00-404c-a0aa-d2f3bcbcfe23";
-        const evaluationCritereId = "f061f13f-b742-4828-b3e4-3b8aa8341f27";
+        const evaluationObjectifId = randomUUID();
+        const evaluationCritereId = randomUUID();
 
         // When
         await handler.execute(
           [
             {
-              ficheEvaluationId: fiche.id,
+              ficheEvaluationId: etape.fiche_evaluation_id,
               evaluationsObjectifs: [
                 {
                   id: evaluationObjectifId,
@@ -286,11 +272,10 @@ describe("EnregistrerBrouillonInstructionHandler", () => {
       createIntegrationTest(async () => {
         // Given
         const utilisateur = await fixtures.utilisateur();
-        const fiche = await fixtures.fiche({
-          etape_courante: "CONSOLIDATION",
-        });
-        await fixtures.etapeEvaluation({
-          fiche_evaluation_id: fiche.id,
+        const etape = await fixtures.etapeEvaluation({
+          fiche: {
+            etape_courante: "CONSOLIDATION",
+          },
           type: "INSTRUCTION",
         });
 
@@ -299,7 +284,7 @@ describe("EnregistrerBrouillonInstructionHandler", () => {
           handler.execute(
             [
               {
-                ficheEvaluationId: fiche.id,
+                ficheEvaluationId: etape.fiche_evaluation_id,
                 evaluationsObjectifs: [],
                 evaluationsCriteres: [],
               },
