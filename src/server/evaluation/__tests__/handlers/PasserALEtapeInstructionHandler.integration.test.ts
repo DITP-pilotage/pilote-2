@@ -26,17 +26,17 @@ describe("PasserALEtapeInstructionHandler", () => {
       createIntegrationTest(async () => {
         // Given
         const utilisateur = await fixtures.utilisateur();
-        const fiche = await fixtures.fiche({
-          etape_courante: "AUTO_EVALUATION",
-        });
-        await fixtures.etapeEvaluation({
-          fiche_evaluation_id: fiche.id,
+        const etape = await fixtures.etapeEvaluation({
+          fiche: { etape_courante: "AUTO_EVALUATION" },
           type: "CONSOLIDATION",
         });
 
         // When/Then
         await expect(
-          handler.execute({ ficheEvaluationIds: [fiche.id] }, utilisateur.id),
+          handler.execute(
+            { ficheEvaluationIds: [etape.fiche_evaluation_id] },
+            utilisateur.id,
+          ),
         ).rejects.toThrow();
       }),
     );
