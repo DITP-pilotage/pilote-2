@@ -31,15 +31,19 @@ export class ListerFichesEvaluationParPhaseQuery {
     const tousLesRattachements = await this.dependencies.prisma
       .getInstance()
       .referentiel_rattachement.findMany({
+        // TODO: il faudra utiliser les groupes ici ?
+        where: {
+          ordre: 0,
+        },
         select: {
-          code: true,
+          groupe: true,
           libelle: true,
         },
       });
 
     const mapCodeVersLibelle = new Map(
       tousLesRattachements.map((rattachement) => [
-        rattachement.code,
+        rattachement.groupe,
         rattachement.libelle,
       ]),
     );

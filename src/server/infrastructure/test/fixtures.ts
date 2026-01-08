@@ -58,7 +58,7 @@ export const fixtures = {
     return prisma.referentiel_rattachement.create({
       data: {
         code,
-        ordre: 1,
+        ordre: 0,
         libelle: `Rattachement ${code}`,
         ...overrides,
         groupe,
