@@ -1,528 +1,505 @@
 import { $Enums } from "@prisma/client";
 import { ModifierDroitsUtilisateurHandler } from "@/server/evaluation/handlers/ModifierDroitsUtilisateurHandler";
-import { prisma } from "@/server/db/prisma";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
-import { PrismaTransaction } from "@/server/db/PrismaTransaction";
+import { InMemoryTransaction } from "@/server/db/InMemoryTransaction";
+import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
+import { fixtures } from "@/server/infrastructure/test/fixtures";
 
 describe("ModifierDroitsUtilisateurHandler", () => {
   let handler: ModifierDroitsUtilisateurHandler;
   const prismaPilote = new PrismaPilote();
-  const transaction = new PrismaTransaction();
-  let utilisateurId: string;
-  const critereId1 = "178261fb-cfa3-4559-8b3a-1f7efb4bd559";
-  const critereId2 = "3a46e36a-051f-46b9-b35a-38121e09e8f6";
-  const critereId3 = "23d32811-5223-44f0-8f3b-2a9ae1b34c90";
-  const objectifId1 = "9da92e0d-a0f6-4e29-b9a4-f3e44dab46c1";
-  const objectifId2 = "cee4001c-7ec6-4627-8b52-e8b2abf8a54a";
-  const objectifId3 = "74fa69bb-4fec-47a6-8e70-37ffb68b1bbf";
-  const objectifId4 = "08c74b75-8caf-4c12-bd2f-edae49df67d5";
+  const transaction = new InMemoryTransaction();
 
-  beforeEach(async () => {
+  beforeEach(() => {
     handler = new ModifierDroitsUtilisateurHandler({
       transaction,
       prisma: prismaPilote,
     });
-
-    const utilisateur = await prisma.utilisateur.create({
-      data: {
-        email: "test-modifier-droits@example.com",
-        nom: "Test",
-        prenom: "User",
-        profilCode: "DITP_ADMIN",
-        applications_accessibles: [$Enums.application_accessible.PILOTE_EVAL],
-        date_creation: new Date(),
-      },
-    });
-    utilisateurId = utilisateur.id;
-
-    await prisma.referentiel_rattachement_groupe.create({
-      data: {
-        code: "Régions",
-        libelle: "Régions",
-        ordre: 1,
-      },
-    });
-
-    await prisma.referentiel_rattachement.createMany({
-      data: [
-        { code: "REG-01", libelle: "Région 01", groupe: "Régions", ordre: 1 },
-        { code: "REG-02", libelle: "Région 02", groupe: "Régions", ordre: 2 },
-        { code: "REG-03", libelle: "Région 03", groupe: "Régions", ordre: 3 },
-      ],
-      skipDuplicates: true,
-    });
-
-    await prisma.referentiel_critere.createMany({
-      data: [
-        {
-          id: critereId1,
-          libelle: "Critère 1",
-          descriptif: "Description du critère 1",
-        },
-        {
-          id: critereId2,
-          libelle: "Critère 2",
-          descriptif: "Description du critère 2",
-        },
-        {
-          id: critereId3,
-          libelle: "Critère 3",
-          descriptif: "Description critère 3",
-        },
-      ],
-      skipDuplicates: true,
-    });
-
-    await prisma.referentiel_objectif.createMany({
-      data: [
-        {
-          id: objectifId1,
-          libelle: "Objectif 1 - REG-01",
-          descriptif: "Description objectif 1",
-          indicateur_cible: "100",
-          jalon: 2025,
-          rattachement_code: "REG-01",
-        },
-        {
-          id: objectifId2,
-          libelle: "Objectif 2 - REG-01",
-          descriptif: "Description objectif 2",
-          indicateur_cible: "200",
-          jalon: 2025,
-          rattachement_code: "REG-01",
-        },
-        {
-          id: objectifId3,
-          libelle: "Objectif 1 - REG-02",
-          descriptif: "Description objectif 1",
-          indicateur_cible: "150",
-          jalon: 2025,
-          rattachement_code: "REG-02",
-        },
-        {
-          id: objectifId4,
-          libelle: "Objectif 1 - REG-03",
-          descriptif: "Description objectif 1",
-          indicateur_cible: "150",
-          jalon: 2025,
-          rattachement_code: "REG-03",
-        },
-      ],
-    });
   });
 
   describe("execute", () => {
-    it("crée les rattachements pour l'auto-évaluation", async () => {
-      // Given
-      const command = {
-        utilisateurId,
-        jalon: 2025,
-        autoEvaluation: {
-          rattachementCodes: ["REG-01", "REG-02"],
-        },
-        consolidation: {
-          rattachementCodes: [],
-        },
-        instructionObjectifs: {
-          rattachementCodes: [],
-        },
-        instructionManiereDeServir: {
-          critereCodes: [],
-        },
-      };
+    it(
+      "crée les rattachements pour l'auto-évaluation",
+      createIntegrationTest(async (tx) => {
+        // Given
+        const utilisateur = await fixtures.utilisateur();
+        const rattachement1 = await fixtures.rattachement({ code: "REG-01" });
+        const rattachement2 = await fixtures.rattachement({ code: "REG-02" });
 
-      // When
-      await handler.execute(command);
-
-      // Then
-      const rattachements =
-        await prisma.rattachement_utilisateur_etape_jalon.findMany({
-          where: {
-            utilisateur_id: utilisateurId,
-            jalon: 2025,
-            etape: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
+        const command = {
+          utilisateurId: utilisateur.id,
+          jalon: 2025,
+          autoEvaluation: {
+            rattachementCodes: [rattachement1.code, rattachement2.code],
           },
+          consolidation: {
+            rattachementCodes: [],
+          },
+          instructionObjectifs: {
+            rattachementCodes: [],
+          },
+          instructionManiereDeServir: {
+            critereCodes: [],
+          },
+        };
+
+        // When
+        await handler.execute(command);
+
+        // Then
+        const rattachements =
+          await tx.rattachement_utilisateur_etape_jalon.findMany({
+            where: {
+              utilisateur_id: utilisateur.id,
+              jalon: 2025,
+              etape: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
+            },
+          });
+
+        expect(rattachements).toHaveLength(2);
+        expect(rattachements.map((r) => r.rattachement_code)).toEqual(
+          expect.arrayContaining([rattachement1.code, rattachement2.code]),
+        );
+      }),
+    );
+
+    it(
+      "crée les rattachements pour la consolidation",
+      createIntegrationTest(async (tx) => {
+        // Given
+        const utilisateur = await fixtures.utilisateur();
+        const rattachement = await fixtures.rattachement({ code: "REG-03" });
+
+        const command = {
+          utilisateurId: utilisateur.id,
+          jalon: 2025,
+          autoEvaluation: {
+            rattachementCodes: [],
+          },
+          consolidation: {
+            rattachementCodes: [rattachement.code],
+          },
+          instructionObjectifs: {
+            rattachementCodes: [],
+          },
+          instructionManiereDeServir: {
+            critereCodes: [],
+          },
+        };
+
+        // When
+        await handler.execute(command);
+
+        // Then
+        const rattachements =
+          await tx.rattachement_utilisateur_etape_jalon.findMany({
+            where: {
+              utilisateur_id: utilisateur.id,
+              jalon: 2025,
+              etape: $Enums.etape_evaluation_enum.CONSOLIDATION,
+            },
+          });
+
+        expect(rattachements).toHaveLength(1);
+        expect(rattachements[0].rattachement_code).toBe(rattachement.code);
+      }),
+    );
+
+    it(
+      "supprime les anciens rattachements et crée les nouveaux",
+      createIntegrationTest(async (tx) => {
+        // Given
+        const utilisateur = await fixtures.utilisateur();
+        const rattachement1 = await fixtures.rattachement({ code: "REG-01" });
+        const rattachement2 = await fixtures.rattachement({ code: "REG-02" });
+        const rattachement3 = await fixtures.rattachement({ code: "REG-03" });
+
+        await fixtures.rattachementUtilisateurEtapeJalon({
+          utilisateur_id: utilisateur.id,
+          rattachement_code: rattachement1.code,
+          etape: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
         });
 
-      expect(rattachements).toHaveLength(2);
-      expect(rattachements.map((r) => r.rattachement_code)).toEqual(
-        expect.arrayContaining(["REG-01", "REG-02"]),
-      );
-    });
-
-    it("crée les rattachements pour la consolidation", async () => {
-      // Given: une commande avec 1 rattachement en consolidation
-      const command = {
-        utilisateurId,
-        jalon: 2025,
-        autoEvaluation: {
-          rattachementCodes: [],
-        },
-        consolidation: {
-          rattachementCodes: ["REG-03"],
-        },
-        instructionObjectifs: {
-          rattachementCodes: [],
-        },
-        instructionManiereDeServir: {
-          critereCodes: [],
-        },
-      };
-
-      // When
-      await handler.execute(command);
-
-      // Then
-      const rattachements =
-        await prisma.rattachement_utilisateur_etape_jalon.findMany({
-          where: {
-            utilisateur_id: utilisateurId,
-            jalon: 2025,
-            etape: $Enums.etape_evaluation_enum.CONSOLIDATION,
+        const command = {
+          utilisateurId: utilisateur.id,
+          jalon: 2025,
+          autoEvaluation: {
+            rattachementCodes: [rattachement2.code, rattachement3.code],
           },
-        });
+          consolidation: {
+            rattachementCodes: [],
+          },
+          instructionObjectifs: {
+            rattachementCodes: [],
+          },
+          instructionManiereDeServir: {
+            critereCodes: [],
+          },
+        };
 
-      expect(rattachements).toHaveLength(1);
-      expect(rattachements[0].rattachement_code).toBe("REG-03");
-    });
+        // When
+        await handler.execute(command);
 
-    it("supprime les anciens rattachements et crée les nouveaux", async () => {
-      // Given: un rattachement existant en auto-évaluation
-      await prisma.rattachement_utilisateur_etape_jalon.create({
-        data: {
-          id: "a1b2c3d4-e5f6-4a5b-8c9d-0e1f2a3b4c5d",
-          utilisateur_id: utilisateurId,
-          rattachement_code: "REG-01",
+        // Then
+        const rattachements =
+          await tx.rattachement_utilisateur_etape_jalon.findMany({
+            where: {
+              utilisateur_id: utilisateur.id,
+              jalon: 2025,
+              etape: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
+            },
+          });
+
+        expect(rattachements).toHaveLength(2);
+        expect(rattachements.map((r) => r.rattachement_code)).toEqual(
+          expect.arrayContaining([rattachement2.code, rattachement3.code]),
+        );
+        expect(rattachements.map((r) => r.rattachement_code)).not.toContain(
+          rattachement1.code,
+        );
+      }),
+    );
+
+    it(
+      "ne supprime que les rattachements du jalon spécifié",
+      createIntegrationTest(async (tx) => {
+        // Given
+        const utilisateur = await fixtures.utilisateur();
+        const rattachement1 = await fixtures.rattachement({ code: "REG-01" });
+        const rattachement2 = await fixtures.rattachement({ code: "REG-02" });
+        const rattachement3 = await fixtures.rattachement({ code: "REG-03" });
+
+        await fixtures.rattachementUtilisateurEtapeJalon({
+          utilisateur_id: utilisateur.id,
+          rattachement_code: rattachement1.code,
           etape: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
           jalon: 2025,
-        },
-      });
-
-      const command = {
-        utilisateurId,
-        jalon: 2025,
-        autoEvaluation: {
-          rattachementCodes: ["REG-02", "REG-03"],
-        },
-        consolidation: {
-          rattachementCodes: [],
-        },
-        instructionObjectifs: {
-          rattachementCodes: [],
-        },
-        instructionManiereDeServir: {
-          critereCodes: [],
-        },
-      };
-
-      // When
-      await handler.execute(command);
-
-      // Then
-      const rattachements =
-        await prisma.rattachement_utilisateur_etape_jalon.findMany({
-          where: {
-            utilisateur_id: utilisateurId,
-            jalon: 2025,
-            etape: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
-          },
         });
-
-      expect(rattachements).toHaveLength(2);
-      expect(rattachements.map((r) => r.rattachement_code)).toEqual(
-        expect.arrayContaining(["REG-02", "REG-03"]),
-      );
-      expect(rattachements.map((r) => r.rattachement_code)).not.toContain(
-        "REG-01",
-      );
-    });
-
-    it("ne supprime que les rattachements du jalon spécifié", async () => {
-      // Given: des rattachements pour 2025 et 2024
-      await prisma.rattachement_utilisateur_etape_jalon.create({
-        data: {
-          id: "a1b2c3d4-e5f6-4a5b-8c9d-0e1f2a3b4c5d",
-          utilisateur_id: utilisateurId,
-          rattachement_code: "REG-01",
-          etape: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
-          jalon: 2025,
-        },
-      });
-      await prisma.rattachement_utilisateur_etape_jalon.create({
-        data: {
-          id: "b2c3d4e5-f6a7-4b5c-9d0e-1f2a3b4c5d6e",
-          utilisateur_id: utilisateurId,
-          rattachement_code: "REG-02",
+        await fixtures.rattachementUtilisateurEtapeJalon({
+          utilisateur_id: utilisateur.id,
+          rattachement_code: rattachement2.code,
           etape: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
           jalon: 2024,
-        },
-      });
+        });
 
-      const command = {
-        utilisateurId,
-        jalon: 2025,
-        autoEvaluation: {
-          rattachementCodes: ["REG-03"],
-        },
-        consolidation: {
-          rattachementCodes: [],
-        },
-        instructionObjectifs: {
-          rattachementCodes: [],
-        },
-        instructionManiereDeServir: {
-          critereCodes: [],
-        },
-      };
+        const command = {
+          utilisateurId: utilisateur.id,
+          jalon: 2025,
+          autoEvaluation: {
+            rattachementCodes: [rattachement3.code],
+          },
+          consolidation: {
+            rattachementCodes: [],
+          },
+          instructionObjectifs: {
+            rattachementCodes: [],
+          },
+          instructionManiereDeServir: {
+            critereCodes: [],
+          },
+        };
 
-      // When
-      await handler.execute(command);
+        // When
+        await handler.execute(command);
 
-      // Then
-      const rattachement2024 =
-        await prisma.rattachement_utilisateur_etape_jalon.findFirst({
+        // Then
+        const rattachement2024 =
+          await tx.rattachement_utilisateur_etape_jalon.findFirst({
+            where: {
+              utilisateur_id: utilisateur.id,
+              jalon: 2024,
+            },
+          });
+
+        expect(rattachement2024).not.toBeNull();
+        expect(rattachement2024?.rattachement_code).toBe(rattachement2.code);
+      }),
+    );
+
+    it(
+      "Supprime tous les droits en passant des tableaux vides",
+      createIntegrationTest(async (tx) => {
+        // Given
+        const utilisateur = await fixtures.utilisateur();
+        const rattachement = await fixtures.rattachement({ code: "REG-01" });
+
+        await fixtures.rattachementUtilisateurEtapeJalon({
+          utilisateur_id: utilisateur.id,
+          rattachement_code: rattachement.code,
+          etape: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
+        });
+        await fixtures.rattachementUtilisateurEtapeJalon({
+          utilisateur_id: utilisateur.id,
+          rattachement_code: rattachement.code,
+          etape: $Enums.etape_evaluation_enum.CONSOLIDATION,
+        });
+
+        const command = {
+          utilisateurId: utilisateur.id,
+          jalon: 2025,
+          autoEvaluation: {
+            rattachementCodes: [],
+          },
+          consolidation: {
+            rattachementCodes: [],
+          },
+          instructionObjectifs: {
+            rattachementCodes: [],
+          },
+          instructionManiereDeServir: {
+            critereCodes: [],
+          },
+        };
+
+        // When
+        await handler.execute(command);
+
+        // Then
+        const rattachements =
+          await tx.rattachement_utilisateur_etape_jalon.findMany({
+            where: {
+              utilisateur_id: utilisateur.id,
+              jalon: 2025,
+            },
+          });
+
+        expect(rattachements).toHaveLength(0);
+      }),
+    );
+
+    it(
+      "Donne accès à tous les rattachements en instruction et aux critères donnés lorsque des critères sont fournis",
+      createIntegrationTest(async (tx) => {
+        // Given
+        const utilisateur = await fixtures.utilisateur();
+        const rattachement1 = await fixtures.rattachement({ code: "REG-01" });
+        const rattachement2 = await fixtures.rattachement({ code: "REG-02" });
+        const rattachement3 = await fixtures.rattachement({ code: "REG-03" });
+        const critere1 = await fixtures.critere();
+        const critere2 = await fixtures.critere();
+
+        const command = {
+          utilisateurId: utilisateur.id,
+          jalon: 2025,
+          autoEvaluation: {
+            rattachementCodes: [],
+          },
+          consolidation: {
+            rattachementCodes: [],
+          },
+          instructionObjectifs: {
+            rattachementCodes: [],
+          },
+          instructionManiereDeServir: {
+            critereCodes: [critere1.id, critere2.id],
+          },
+        };
+
+        // When
+        await handler.execute(command);
+
+        // Then
+        const rattachementsEtapes =
+          await tx.rattachement_utilisateur_etape_jalon.findMany({
+            where: {
+              utilisateur_id: utilisateur.id,
+              jalon: 2025,
+              etape: $Enums.etape_evaluation_enum.INSTRUCTION,
+            },
+          });
+
+        const criteresInstruction = await tx.instruction_critere.findMany({
           where: {
-            utilisateur_id: utilisateurId,
-            jalon: 2024,
+            rattachement_utilisateur_etape_jalon: {
+              utilisateur_id: utilisateur.id,
+              jalon: 2025,
+              etape: $Enums.etape_evaluation_enum.INSTRUCTION,
+            },
           },
         });
 
-      expect(rattachement2024).not.toBeNull();
-      expect(rattachement2024?.rattachement_code).toBe("REG-02");
-    });
-
-    it("Supprime tous les droits en passant des tableaux vides", async () => {
-      // Given: des rattachements existants
-      await prisma.rattachement_utilisateur_etape_jalon.createMany({
-        data: [
-          {
-            id: "a1b2c3d4-e5f6-4a5b-8c9d-0e1f2a3b4c5d",
-            utilisateur_id: utilisateurId,
-            rattachement_code: "REG-01",
-            etape: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
-            jalon: 2025,
-          },
-          {
-            id: "f313b9cf-0a14-496c-9d71-31db80406d69",
-            utilisateur_id: utilisateurId,
-            rattachement_code: "REG-01",
-            etape: $Enums.etape_evaluation_enum.CONSOLIDATION,
-            jalon: 2025,
-          },
-        ],
-      });
-
-      const command = {
-        utilisateurId,
-        jalon: 2025,
-        autoEvaluation: {
-          rattachementCodes: [],
-        },
-        consolidation: {
-          rattachementCodes: [],
-        },
-        instructionObjectifs: {
-          rattachementCodes: [],
-        },
-        instructionManiereDeServir: {
-          critereCodes: [],
-        },
-      };
-
-      // When
-      await handler.execute(command);
-
-      // Then
-      const rattachements =
-        await prisma.rattachement_utilisateur_etape_jalon.findMany({
-          where: {
-            utilisateur_id: utilisateurId,
-            jalon: 2025,
-          },
-        });
-
-      expect(rattachements).toHaveLength(0);
-    });
-
-    it("Donne accès à tous les rattachements en instruction et aux critères donnés lorsque des critères sont fournis", async () => {
-      // Given: une commande avec 2 critères
-      const command = {
-        utilisateurId,
-        jalon: 2025,
-        autoEvaluation: {
-          rattachementCodes: [],
-        },
-        consolidation: {
-          rattachementCodes: [],
-        },
-        instructionObjectifs: {
-          rattachementCodes: [],
-        },
-        instructionManiereDeServir: {
-          critereCodes: [critereId1, critereId2],
-        },
-      };
-
-      // When
-      await handler.execute(command);
-
-      // Then
-      const rattachementsEtapes =
-        await prisma.rattachement_utilisateur_etape_jalon.findMany({
-          where: {
-            utilisateur_id: utilisateurId,
-            jalon: 2025,
-            etape: $Enums.etape_evaluation_enum.INSTRUCTION,
-          },
-        });
-
-      const criteresInstruction = await prisma.instruction_critere.findMany({
-        where: {
-          rattachement_utilisateur_etape_jalon: {
-            utilisateur_id: utilisateurId,
-            jalon: 2025,
-            etape: $Enums.etape_evaluation_enum.INSTRUCTION,
-          },
-        },
-      });
-
-      expect(rattachementsEtapes).toHaveLength(3);
-      expect(
-        rattachementsEtapes.map(
-          (rattachementEtape) => rattachementEtape.rattachement_code,
-        ),
-      ).toEqual(expect.arrayContaining(["REG-01", "REG-02", "REG-03"]));
-
-      expect(criteresInstruction).toHaveLength(6);
-      for (const rattachementEtape of rattachementsEtapes) {
-        const criteresInstructionRattachement = criteresInstruction.filter(
-          (critereInstruction) =>
-            critereInstruction.rattachement_utilisateur_etape_jalon_id ===
-            rattachementEtape.id,
-        );
-        expect(criteresInstructionRattachement).toHaveLength(2);
+        expect(rattachementsEtapes).toHaveLength(3);
         expect(
-          criteresInstructionRattachement.map(
-            (critereInstruction) => critereInstruction.critere_id,
+          rattachementsEtapes.map(
+            (rattachementEtape) => rattachementEtape.rattachement_code,
           ),
-        ).toEqual(expect.arrayContaining([critereId1, critereId2]));
-      }
-    });
+        ).toEqual(
+          expect.arrayContaining([
+            rattachement1.code,
+            rattachement2.code,
+            rattachement3.code,
+          ]),
+        );
 
-    it("cree uniquement les rattachements selectionnes en instruction quand seuls des objectifs sont choisis et donne accès aux objectifs associés aux rattachements", async () => {
-      // Given: une commande avec des objectifs mais pas de criteres
-      const command = {
-        utilisateurId,
-        jalon: 2025,
-        autoEvaluation: {
-          rattachementCodes: [],
-        },
-        consolidation: {
-          rattachementCodes: [],
-        },
-        instructionObjectifs: {
-          rattachementCodes: ["REG-01", "REG-02"],
-        },
-        instructionManiereDeServir: {
-          critereCodes: [],
-        },
-      };
+        expect(criteresInstruction).toHaveLength(6);
+        for (const rattachementEtape of rattachementsEtapes) {
+          const criteresInstructionRattachement = criteresInstruction.filter(
+            (critereInstruction) =>
+              critereInstruction.rattachement_utilisateur_etape_jalon_id ===
+              rattachementEtape.id,
+          );
+          expect(criteresInstructionRattachement).toHaveLength(2);
+          expect(
+            criteresInstructionRattachement.map(
+              (critereInstruction) => critereInstruction.critere_id,
+            ),
+          ).toEqual(expect.arrayContaining([critere1.id, critere2.id]));
+        }
+      }),
+    );
 
-      // When
-      await handler.execute(command);
+    it(
+      "cree uniquement les rattachements selectionnes en instruction quand seuls des objectifs sont choisis et donne accès aux objectifs associés aux rattachements",
+      createIntegrationTest(async (tx) => {
+        // Given
+        const utilisateur = await fixtures.utilisateur();
+        const rattachement1 = await fixtures.rattachement({ code: "REG-01" });
+        const rattachement2 = await fixtures.rattachement({ code: "REG-02" });
+        const rattachement3 = await fixtures.rattachement({ code: "REG-03" });
 
-      // Then
-      const rattachementsEtapes =
-        await prisma.rattachement_utilisateur_etape_jalon.findMany({
-          where: {
-            utilisateur_id: utilisateurId,
-            jalon: 2025,
-            etape: $Enums.etape_evaluation_enum.INSTRUCTION,
-          },
+        const objectif1 = await fixtures.objectif({
+          rattachement_code: rattachement1.code,
+        });
+        const objectif2 = await fixtures.objectif({
+          rattachement_code: rattachement1.code,
+        });
+        const objectif3 = await fixtures.objectif({
+          rattachement_code: rattachement2.code,
+        });
+        await fixtures.objectif({
+          rattachement_code: rattachement3.code,
         });
 
-      const objectifsInstruction = await prisma.instruction_objectif.findMany(
-        {},
-      );
-
-      expect(rattachementsEtapes).toHaveLength(2);
-      expect(
-        rattachementsEtapes.map(
-          (rattachementEtape) => rattachementEtape.rattachement_code,
-        ),
-      ).toEqual(expect.arrayContaining(["REG-01", "REG-02"]));
-
-      const rattachementEtapeReg01 = rattachementsEtapes.find(
-        (rattachementEtape) => rattachementEtape.rattachement_code === "REG-01",
-      );
-      const rattachementEtapeReg02 = rattachementsEtapes.find(
-        (rattachementEtape) => rattachementEtape.rattachement_code === "REG-02",
-      );
-
-      const objectifsInstructionReg01 = objectifsInstruction.filter(
-        (objectifInstruction) =>
-          objectifInstruction.rattachement_utilisateur_etape_jalon_id ===
-          rattachementEtapeReg01!.id,
-      );
-
-      const objectifsInstructionReg02 = objectifsInstruction.filter(
-        (objectifInstruction) =>
-          objectifInstruction.rattachement_utilisateur_etape_jalon_id ===
-          rattachementEtapeReg02!.id,
-      );
-
-      expect(objectifsInstructionReg01).toHaveLength(2);
-      expect(
-        objectifsInstructionReg01.map((objectif) => objectif.objectif_id),
-      ).toEqual(expect.arrayContaining([objectifId1, objectifId2]));
-      expect(objectifsInstructionReg02).toHaveLength(1);
-      expect(
-        objectifsInstructionReg02.map((objectif) => objectif.objectif_id),
-      ).toEqual(expect.arrayContaining([objectifId3]));
-    });
-
-    it("gere le cas où des objectifs et des criteres sont selectionnes", async () => {
-      // Given: une commande avec des objectifs ET des criteres
-      const command = {
-        utilisateurId,
-        jalon: 2025,
-        autoEvaluation: {
-          rattachementCodes: [],
-        },
-        consolidation: {
-          rattachementCodes: [],
-        },
-        instructionObjectifs: {
-          rattachementCodes: ["REG-01"],
-        },
-        instructionManiereDeServir: {
-          critereCodes: [critereId1],
-        },
-      };
-
-      // When
-      await handler.execute(command);
-
-      // Then: tous les rattachements doivent etre crees
-      const rattachements =
-        await prisma.rattachement_utilisateur_etape_jalon.findMany({
-          where: {
-            utilisateur_id: utilisateurId,
-            jalon: 2025,
-            etape: $Enums.etape_evaluation_enum.INSTRUCTION,
+        const command = {
+          utilisateurId: utilisateur.id,
+          jalon: 2025,
+          autoEvaluation: {
+            rattachementCodes: [],
           },
-        });
-      const instructionCriteres = await prisma.instruction_critere.findMany({});
-      const instructionObjectifs = await prisma.instruction_objectif.findMany(
-        {},
-      );
+          consolidation: {
+            rattachementCodes: [],
+          },
+          instructionObjectifs: {
+            rattachementCodes: [rattachement1.code, rattachement2.code],
+          },
+          instructionManiereDeServir: {
+            critereCodes: [],
+          },
+        };
 
-      expect(rattachements).toHaveLength(3);
-      expect(rattachements.map((r) => r.rattachement_code)).toEqual(
-        expect.arrayContaining(["REG-01", "REG-02", "REG-03"]),
-      );
-      expect(instructionCriteres).toHaveLength(3);
-      expect(instructionObjectifs).toHaveLength(2);
-    });
+        // When
+        await handler.execute(command);
+
+        // Then
+        const rattachementsEtapes =
+          await tx.rattachement_utilisateur_etape_jalon.findMany({
+            where: {
+              utilisateur_id: utilisateur.id,
+              jalon: 2025,
+              etape: $Enums.etape_evaluation_enum.INSTRUCTION,
+            },
+          });
+
+        const objectifsInstruction = await tx.instruction_objectif.findMany({});
+
+        expect(rattachementsEtapes).toHaveLength(2);
+        expect(
+          rattachementsEtapes.map(
+            (rattachementEtape) => rattachementEtape.rattachement_code,
+          ),
+        ).toEqual(
+          expect.arrayContaining([rattachement1.code, rattachement2.code]),
+        );
+
+        const rattachementEtapeReg01 = rattachementsEtapes.find(
+          (rattachementEtape) =>
+            rattachementEtape.rattachement_code === rattachement1.code,
+        );
+        const rattachementEtapeReg02 = rattachementsEtapes.find(
+          (rattachementEtape) =>
+            rattachementEtape.rattachement_code === rattachement2.code,
+        );
+
+        const objectifsInstructionReg01 = objectifsInstruction.filter(
+          (objectifInstruction) =>
+            objectifInstruction.rattachement_utilisateur_etape_jalon_id ===
+            rattachementEtapeReg01!.id,
+        );
+
+        const objectifsInstructionReg02 = objectifsInstruction.filter(
+          (objectifInstruction) =>
+            objectifInstruction.rattachement_utilisateur_etape_jalon_id ===
+            rattachementEtapeReg02!.id,
+        );
+
+        expect(objectifsInstructionReg01).toHaveLength(2);
+        expect(
+          objectifsInstructionReg01.map((objectif) => objectif.objectif_id),
+        ).toEqual(expect.arrayContaining([objectif1.id, objectif2.id]));
+        expect(objectifsInstructionReg02).toHaveLength(1);
+        expect(
+          objectifsInstructionReg02.map((objectif) => objectif.objectif_id),
+        ).toEqual(expect.arrayContaining([objectif3.id]));
+      }),
+    );
+
+    it(
+      "gere le cas où des objectifs et des criteres sont selectionnes",
+      createIntegrationTest(async (tx) => {
+        // Given
+        const utilisateur = await fixtures.utilisateur();
+        const rattachement1 = await fixtures.rattachement({ code: "REG-01" });
+        const rattachement2 = await fixtures.rattachement({ code: "REG-02" });
+        const rattachement3 = await fixtures.rattachement({ code: "REG-03" });
+
+        await fixtures.objectif({ rattachement_code: rattachement1.code });
+        await fixtures.objectif({ rattachement_code: rattachement1.code });
+
+        const critere = await fixtures.critere();
+
+        const command = {
+          utilisateurId: utilisateur.id,
+          jalon: 2025,
+          autoEvaluation: {
+            rattachementCodes: [],
+          },
+          consolidation: {
+            rattachementCodes: [],
+          },
+          instructionObjectifs: {
+            rattachementCodes: [rattachement1.code],
+          },
+          instructionManiereDeServir: {
+            critereCodes: [critere.id],
+          },
+        };
+
+        // When
+        await handler.execute(command);
+
+        // Then
+        const rattachements =
+          await tx.rattachement_utilisateur_etape_jalon.findMany({
+            where: {
+              utilisateur_id: utilisateur.id,
+              jalon: 2025,
+              etape: $Enums.etape_evaluation_enum.INSTRUCTION,
+            },
+          });
+        const instructionCriteres = await tx.instruction_critere.findMany({});
+        const instructionObjectifs = await tx.instruction_objectif.findMany({});
+
+        expect(rattachements).toHaveLength(3);
+        expect(rattachements.map((r) => r.rattachement_code)).toEqual(
+          expect.arrayContaining([
+            rattachement1.code,
+            rattachement2.code,
+            rattachement3.code,
+          ]),
+        );
+        expect(instructionCriteres).toHaveLength(3);
+        expect(instructionObjectifs).toHaveLength(2);
+      }),
+    );
   });
 });

@@ -147,4 +147,21 @@ export const fixtures = {
       },
     });
   },
+
+  async rattachementUtilisateurEtapeJalon(
+    overrides: Partial<Prisma.rattachement_utilisateur_etape_jalonUncheckedCreateInput> & {
+      utilisateur_id: string;
+      rattachement_code: string;
+      etape: Prisma.etape_evaluation_enum;
+    },
+  ) {
+    const prisma = getPrisma();
+    return prisma.rattachement_utilisateur_etape_jalon.create({
+      data: {
+        id: randomUUID(),
+        jalon: 2025,
+        ...overrides,
+      },
+    });
+  },
 };
