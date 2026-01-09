@@ -3,9 +3,7 @@ import { FormProvider } from "react-hook-form";
 import { Modale } from "@/components/shared/Modale";
 
 import useModalePropositionValeurAvancementV2, {
-  estChampMoisValide,
   EtapePropositionValeurAvancement,
-  reformatterChampsMois,
   Stepper,
 } from "@/components/_commons/IndicateursChantier/Bloc/ModalePropositionValeurAvancementV2/useModalePropositionValeurAvancementV2";
 import Input from "@/components/_commons/Input/Input";
@@ -16,6 +14,7 @@ import { Infobulle } from "@/components/_commons/Infobulle/Infobulle";
 import { LIMITE_CARACTERES_DOCUMENTATION_PROPOSITION } from "@/validation/proposition-valeur-avancement";
 import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
 import { useBlocIndicateurContext } from "@/components/PageChantier/useBlocIndicateurContext";
+import { SelecteurNew } from "@/components/_commons/SelecteurNew/SelecteurNew";
 
 export const ModalePropositionValeurAvancementV2: FunctionComponent<
   PropsWithChildren
@@ -28,10 +27,10 @@ export const ModalePropositionValeurAvancementV2: FunctionComponent<
     auteurModification,
     EtapeSuivanteEstDesactive,
     estUneModificationDeProposition,
+    optionsMois,
   } = useModalePropositionValeurAvancementV2();
 
   const refreshRouter = useRefreshRouter();
-
   const {
     indicateur,
     detailIndicateurDuTerritoire,
@@ -41,19 +40,6 @@ export const ModalePropositionValeurAvancementV2: FunctionComponent<
     },
     configurationFeatureFlipping,
   } = useBlocIndicateurContext();
-
-  const handleMoisValeurAvancementBlur = () => {
-    const currentValue = reactHookForm.getValues("moisValeurAvancement");
-    if (currentValue && estChampMoisValide(currentValue)) {
-      reactHookForm.setValue(
-        "moisValeurAvancement",
-        reformatterChampsMois(currentValue),
-        {
-          shouldValidate: true,
-        },
-      );
-    }
-  };
 
   return (
     <Modale
@@ -229,27 +215,33 @@ export const ModalePropositionValeurAvancementV2: FunctionComponent<
                   {configurationFeatureFlipping.pvaValeurDifferente &&
                   !estUneModificationDeProposition ? (
                     <div className="fr-mt-2w">
-                      <label className="fr-label" htmlFor="valeurAvancement">
-                        Date de la valeur d'avancement proposée
-                        <ChampObligatoire />
-                      </label>
-                      <Input
-                        className="fr-mt-1v input--sm"
-                        classNameGroupe="fr-mb-1v"
+                      <SelecteurNew
                         erreurMessage={
                           reactHookForm.formState.errors.moisValeurAvancement
                             ?.message
                         }
                         htmlName="moisValeurAvancement"
-                        register={reactHookForm.register(
+                        libelle={
+                          <>
+                            Date de la valeur d'avancement proposée
+                            <ChampObligatoire />
+                          </>
+                        }
+                        onChange={(valeur) => {
+                          reactHookForm.setValue(
+                            "moisValeurAvancement",
+                            valeur,
+                            {
+                              shouldValidate: true,
+                            },
+                          );
+                        }}
+                        options={optionsMois}
+                        valeurSelectionnee={reactHookForm.watch(
                           "moisValeurAvancement",
-                          {
-                            onBlur: handleMoisValeurAvancementBlur,
-                          },
                         )}
-                        type="text"
                       />
-                      <span className="flex texte-gris fr-text--xs">
+                      <span className="flex texte-gris fr-text--xs !mt-1">
                         Dernière date de la valeur d'avancement :
                         {formaterDate(
                           detailIndicateurDuTerritoire.dateValeurAvancementMandat,

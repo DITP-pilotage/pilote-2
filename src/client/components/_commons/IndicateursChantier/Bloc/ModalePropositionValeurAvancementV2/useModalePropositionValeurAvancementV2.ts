@@ -11,6 +11,7 @@ import {
   estPropositionCreee,
   estPropositionModifiee,
 } from "@/components/_commons/IndicateursChantier/Bloc/utils";
+import { SelecteurNewOption } from "@/components/_commons/SelecteurNew/SelecteurNew";
 
 export enum EtapePropositionValeurAvancement {
   SAISIE_VALEUR_ACTUELLE = "SAISIE_VALEUR_ACTUELLE",
@@ -19,11 +20,6 @@ export enum EtapePropositionValeurAvancement {
 
 export const estChampMoisValide = (value: string) =>
   new RegExp(/^(0?[1-9]|1[0-2])\/\d{4}$/).test(value);
-
-export const reformatterChampsMois = (value: string) => {
-  const [mois, annee] = value.split("/");
-  return `${mois.padStart(2, "0")}/${annee}`;
-};
 
 const baseFormSchema = z.object({
   valeurAvancement: z
@@ -101,6 +97,40 @@ const formatterMois = (date: string) => {
   const annee = new Date(date).getFullYear();
   const mois = new Date(date).getMonth() + 1;
   return `${mois.toString().padStart(2, "0")}/${annee}`;
+};
+
+const genererOptionsMois = (
+  dateDebut: string,
+  periodicite: string | null,
+): SelecteurNewOption<string>[] => {
+  const options: SelecteurNewOption<string>[] = [];
+  const maintenant = new Date();
+
+  const incrementMois =
+    periodicite === "Semestrielle"
+      ? 6
+      : periodicite === "Trimestrielle"
+        ? 3
+        : periodicite === "Annuelle"
+          ? 12
+          : 1;
+
+  const dateActuelle = new Date(dateDebut);
+
+  while (dateActuelle <= maintenant) {
+    const mois = (dateActuelle.getMonth() + 1).toString().padStart(2, "0");
+    const annee = dateActuelle.getFullYear();
+    const valeur = `${mois}/${annee}`;
+
+    options.push({
+      libelle: valeur,
+      valeur,
+    });
+
+    dateActuelle.setMonth(dateActuelle.getMonth() + incrementMois);
+  }
+
+  return options;
 };
 
 const useModalePropositionValeurAvancementV2 = () => {
@@ -218,6 +248,18 @@ const useModalePropositionValeurAvancementV2 = () => {
     Number.parseFloat(reactHookForm.getValues("valeurAvancement")) ===
       detailIndicateurDuTerritoire.valeurAvancementMandat;
 
+  const optionsMois = useMemo(
+    () =>
+      genererOptionsMois(
+        detailIndicateurDuTerritoire.dateValeurAvancementMandat!,
+        indicateur.periodicite,
+      ),
+    [
+      detailIndicateurDuTerritoire.dateValeurAvancementMandat,
+      indicateur.periodicite,
+    ],
+  );
+
   return {
     reactHookForm,
     creerPropositonValeurAvancement,
@@ -226,6 +268,7 @@ const useModalePropositionValeurAvancementV2 = () => {
     auteurModification,
     EtapeSuivanteEstDesactive,
     estUneModificationDeProposition,
+    optionsMois,
   };
 };
 
