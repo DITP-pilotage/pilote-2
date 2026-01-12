@@ -91,7 +91,7 @@ export const TableauPilotage = () => {
                   return objectif?.evaluations[etape];
                 }}
                 getMoyenne={({ row, etape }) => {
-                  return row.original.moyennesCriteres[etape];
+                  return row.original.moyennesObjectifs[etape];
                 }}
                 getTooltipLabel={({ row, item }) => {
                   const objectif = row.original.objectifs[item.index];
