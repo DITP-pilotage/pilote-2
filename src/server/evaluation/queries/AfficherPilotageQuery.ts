@@ -131,7 +131,18 @@ export class AfficherPilotageQuery {
       : null;
   }
 
-  private fetchFichesEvaluation() {
+  private async fetchFichesEvaluation() {
+    const derniereDateNoteCollectives = await this.dependencies.prisma
+      .getInstance()
+      .chantier_evaluation.findFirst({
+        orderBy: {
+          date_calcul: "desc",
+        },
+        select: {
+          date_calcul: true,
+        },
+      });
+
     return this.dependencies.prisma.getInstance().fiche_evaluation.findMany({
       include: {
         rattachement: {
@@ -140,7 +151,11 @@ export class AfficherPilotageQuery {
             referentiel_rattachement_groupe: true,
           },
         },
-        chantiers_evaluation: true,
+        chantiers_evaluation: {
+          where: {
+            date_calcul: derniereDateNoteCollectives?.date_calcul,
+          },
+        },
         etape_evaluations: {
           where: {
             type: {
