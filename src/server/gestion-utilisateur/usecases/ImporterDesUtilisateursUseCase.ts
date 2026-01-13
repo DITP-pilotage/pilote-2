@@ -1,12 +1,16 @@
 import { objectEntries } from "@/client/utils/objects/objects";
 import { TerritoireRepository } from "@/server/gestion-utilisateur/domain/ports/TerritoireRepository";
-import { UtilisateurÀCréerOuMettreÀJourSansHabilitation } from "@/server/domain/utilisateur/Utilisateur.interface";
+import {
+  profilsInfolettreCoordinateur,
+  UtilisateurÀCréerOuMettreÀJourSansHabilitation,
+} from "@/server/domain/utilisateur/Utilisateur.interface";
 import { UtilisateurIAMRepository } from "@/server/gestion-utilisateur/domain/ports/UtilisateurIAMRepository";
 import { UtilisateurRepository } from "@/server/gestion-utilisateur/domain/ports/UtilisateurRepository";
 import { HabilitationsÀCréerOuMettreÀJourCalculées } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
 import { ChantierRepository } from "@/server/gestion-utilisateur/domain/ports/ChantierRepository";
 import { PerimetreMinisterielRepository } from "@/server/gestion-utilisateur/domain/ports/PerimetreMinisterielRepository";
+import { ContactInfoLettresService } from "@/server/gestion-utilisateur/domain/ports/ContactInfoLettresService";
 
 type Dependencies = {
   utilisateurRepository: UtilisateurRepository;
@@ -14,6 +18,7 @@ type Dependencies = {
   territoireRepository: TerritoireRepository;
   chantierRepository: ChantierRepository;
   perimetreMinisterielRepository: PerimetreMinisterielRepository;
+  contactInfoLettresService: ContactInfoLettresService;
 };
 
 export default class ImporterDesUtilisateursUseCase {
@@ -27,18 +32,22 @@ export default class ImporterDesUtilisateursUseCase {
 
   private readonly perimetreMinisterielRepository: PerimetreMinisterielRepository;
 
+  private readonly contactInfoLettresService: ContactInfoLettresService;
+
   constructor({
     utilisateurRepository,
     utilisateurIAMRepository,
     territoireRepository,
     chantierRepository,
     perimetreMinisterielRepository,
+    contactInfoLettresService,
   }: Dependencies) {
     this.utilisateurRepository = utilisateurRepository;
     this.utilisateurIAMRepository = utilisateurIAMRepository;
     this.territoireRepository = territoireRepository;
     this.chantierRepository = chantierRepository;
     this.perimetreMinisterielRepository = perimetreMinisterielRepository;
+    this.contactInfoLettresService = contactInfoLettresService;
   }
 
   // eslint-disable-next-line sonarjs/cognitive-complexity
@@ -109,6 +118,20 @@ export default class ImporterDesUtilisateursUseCase {
         });
       }
 
+      const utilisateurExistant =
+        await this.utilisateurRepository.verifierExistenceUtilisateur(
+          utilisateur.email,
+        );
+
+      const utilisateurAvantModification = utilisateurExistant
+        ? await this.utilisateurRepository.récupérer(
+            utilisateur.email,
+            listeTerritoiresCodes,
+            listePerimetresMinisteriels,
+            listeInformationsChantiersUtilisateurs,
+          )
+        : null;
+
       const auteur = await this.utilisateurRepository.récupérer(
         utilisateur.auteurEmail,
         listeTerritoiresCodes,
@@ -125,12 +148,58 @@ export default class ImporterDesUtilisateursUseCase {
         utilisateur,
         auteur ? auteur.id : auteurGenerique!.id,
       );
+
+      if (process.env.NEXT_PUBLIC_FF_LIEN_CONTACT_BREVO === "true") {
+        if (utilisateurExistant && utilisateurAvantModification) {
+          const listesDiffusionAAjouter =
+            profilsInfolettreCoordinateur.includes(utilisateur.profil) &&
+            !profilsInfolettreCoordinateur.includes(
+              utilisateurAvantModification.profil,
+            )
+              ? [3]
+              : [];
+          const listesDiffusionASupprimer =
+            profilsInfolettreCoordinateur.includes(
+              utilisateurAvantModification.profil,
+            ) && !profilsInfolettreCoordinateur.includes(utilisateur.profil)
+              ? [3]
+              : [];
+          await this.contactInfoLettresService.modifierContact(
+            utilisateur.email,
+            utilisateur.nom,
+            utilisateur.prénom,
+            utilisateur.profil,
+            listesDiffusionAAjouter,
+            listesDiffusionASupprimer,
+          );
+        } else {
+          const listesDiffusion = profilsInfolettreCoordinateur.includes(
+            utilisateur.profil,
+          )
+            ? [3]
+            : [];
+          await this.contactInfoLettresService.creerContact(
+            utilisateur.email,
+            utilisateur.nom,
+            utilisateur.prénom,
+            utilisateur.profil,
+            listesDiffusion,
+          );
+        }
+      }
+
+      if (process.env.IMPORT_KEYCLOAK_URL && !utilisateurExistant) {
+        const utilisateursPourIAM = [
+          {
+            nom: utilisateur.nom,
+            prénom: utilisateur.prénom,
+            email: utilisateur.email,
+          },
+        ];
+        await this.utilisateurIAMRepository.ajouteUtilisateurs(
+          utilisateursPourIAM,
+        );
+      }
     }
-    const utilisateursPourIAM = utilisateurs.map((utilisateur) => ({
-      nom: utilisateur.nom,
-      prénom: utilisateur.prénom,
-      email: utilisateur.email,
-    }));
-    await this.utilisateurIAMRepository.ajouteUtilisateurs(utilisateursPourIAM);
   }
 }
