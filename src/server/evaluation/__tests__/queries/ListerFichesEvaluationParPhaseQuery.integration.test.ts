@@ -101,7 +101,7 @@ describe("ListerFichesEvaluationParPhaseQuery", () => {
 
         // Then
         expect(result).toEqual({
-          "Département 01": {
+          "Groupe Département 01": {
             [$Enums.etape_evaluation_enum.AUTO_EVALUATION]: [],
             [$Enums.etape_evaluation_enum.CONSOLIDATION]: [
               {
@@ -300,7 +300,7 @@ describe("ListerFichesEvaluationParPhaseQuery", () => {
 
         // Then
         expect(
-          result["Région avec note collective"][
+          result["Groupe Région avec note collective"][
             $Enums.etape_evaluation_enum.INSTRUCTION
           ],
         ).toEqual([
@@ -436,7 +436,7 @@ describe("ListerFichesEvaluationParPhaseQuery", () => {
 
         // Then
         expect(
-          result["Région moyennes phases"][
+          result["Groupe Région moyennes phases"][
             $Enums.etape_evaluation_enum.CONSOLIDATION
           ],
         ).toEqual([
@@ -592,7 +592,7 @@ describe("ListerFichesEvaluationParPhaseQuery", () => {
 
         // Then
         expect(
-          result["Région 30"][$Enums.etape_evaluation_enum.CONSOLIDATION].map(
+          result["Groupe Région 30"][$Enums.etape_evaluation_enum.CONSOLIDATION].map(
             (fiche) => fiche.id,
           ),
         ).toEqual([fiche2.id, fiche3.id, fiche1.id]);
@@ -679,7 +679,7 @@ describe("ListerFichesEvaluationParPhaseQuery", () => {
 
         // Then
         expect(
-          result["Région test auto-évaluation"][
+          result["Groupe Région test auto-évaluation"][
             $Enums.etape_evaluation_enum.CONSOLIDATION
           ],
         ).toEqual([
