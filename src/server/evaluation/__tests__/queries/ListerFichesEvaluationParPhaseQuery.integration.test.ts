@@ -162,12 +162,12 @@ describe("ListerFichesEvaluationParPhaseQuery", () => {
         });
 
         const fiche = await f.fiche({
-          etape_courante: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
+          etape_courante: $Enums.etape_evaluation_enum.CONSOLIDATION,
           rattachement_code: rattachement.code,
         });
         await f.etapeEvaluation({
           fiche_evaluation_id: fiche.id,
-          type: $Enums.etape_evaluation_enum.AUTO_EVALUATION,
+          type: $Enums.etape_evaluation_enum.CONSOLIDATION,
         });
 
         // When
@@ -180,7 +180,44 @@ describe("ListerFichesEvaluationParPhaseQuery", () => {
 
         // Then
         expect(resultSansPermission).toEqual({});
-        expect(resultAvecPermission).toEqual({});
+        expect(resultAvecPermission).toEqual({
+          "Groupe Région restreinte": {
+            [$Enums.etape_evaluation_enum.AUTO_EVALUATION]: [],
+            [$Enums.etape_evaluation_enum.CONSOLIDATION]: [
+              {
+                id: fiche.id,
+                etapeCourante: $Enums.etape_evaluation_enum.CONSOLIDATION,
+                readOnly: false,
+                isObjectifsValides: true,
+                isCriteresValides: true,
+                rattachement: {
+                  code: rattachement.code,
+                  libelle: "Région restreinte",
+                },
+                objectifs: {
+                  moyenne: null,
+                  moyennesParPhase: {
+                    [$Enums.etape_evaluation_enum.CONSOLIDATION]: null,
+                  },
+                  nombreNotes: 0,
+                  nombreTotal: 0,
+                  nombreTraites: 0,
+                },
+                criteres: {
+                  moyenne: null,
+                  moyennesParPhase: {
+                    [$Enums.etape_evaluation_enum.CONSOLIDATION]: null,
+                  },
+                  nombreNotes: 0,
+                  nombreTotal: 0,
+                  nombreTraites: 0,
+                },
+                noteCollective: null,
+              },
+            ],
+            [$Enums.etape_evaluation_enum.INSTRUCTION]: [],
+          },
+        });
       }),
     );
 
