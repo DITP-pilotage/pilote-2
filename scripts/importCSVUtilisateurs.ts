@@ -1,12 +1,8 @@
 import { loadEnvConfig } from "@next/env";
-import { createObjectCsvWriter } from "csv-writer";
 import process from "node:process";
 import assert from "node:assert/strict";
 import logger from "@/server/infrastructure/Logger";
 import UtilisateurCSVParseur from "@/server/infrastructure/import_csv/utilisateur/UtilisateurCSVParseur";
-import { RecupererListeUtilisateursExistantsUseCase } from "@/server/gestion-utilisateur/usecases/RecupererListeUtilisateursExistantsUseCase";
-import { CsvRecord } from "@/server/infrastructure/import_csv/utilisateur/UtilisateurCSVParseur.interface";
-import { UtilisateurSQLRepository } from "@/server/infrastructure/accès_données/utilisateur/UtilisateurSQLRepository";
 import { getContainer } from "@/server/dependances";
 
 const projectDir = process.cwd();
@@ -34,10 +30,6 @@ loadEnvConfig(projectDir); // ⚠️ À appeler avant nos imports, because Confi
       copier le contenu du CSV local dans ce fichier et sauvegarder
       npx ts-node scripts/importCSVUtilisateurs.ts /tmp/import.csv | npx pino-pretty | tee -a /tmp/import.log
 
-  - Comment faire l'import sur uniquement les nouveaux comptes et récupérer les doublons :
-      * En local : npx ts-node scripts/importCSVUtilisateurs.ts /chemin/fichier/local/import.csv true /chemin/fichier/local/output.csv | npx pino-pretty
-      * En production : npx ts-node scripts/importCSVUtilisateurs.ts /tmp/import.csv true /tmp/output.csv | npx pino-pretty | tee -a /tmp/import.log
-
   - Remarques :
       Le CSV doit être encodé en utf8, et nous n'avons testé que sans BOM.
       Le CSV doit contenir le même nombre de champs pour toutes les lignes, séparés par des ",".
@@ -60,69 +52,16 @@ loadEnvConfig(projectDir); // ⚠️ À appeler avant nos imports, because Confi
       Utiliser ces valeurs pour renseigner les variables d'env IMPORT_KEYCLOAK_URL - IMPORT_CLIENT_ID - IMPORT_CLIENT_SECRET
 */
 
-function ecrireCsvUtilisateurs(
-  outputName: string,
-  utilisateurFormatCsv: CsvRecord[],
-) {
-  const csvWriter = createObjectCsvWriter({
-    path: outputName,
-    header: [
-      { id: "nom", title: "nom" },
-      { id: "prénom", title: "prénom" },
-      { id: "email", title: "email" },
-      { id: "profil", title: "profil" },
-      { id: "scope:", title: "scope:" },
-      { id: "territoires", title: "territoires" },
-      { id: "périmètreIds", title: "périmètreIds" },
-      { id: "chantierIds", title: "chantierIds" },
-      { id: "auteurEmail", title: "auteurEmail" },
-    ],
-  });
-
-  csvWriter
-    .writeRecords(utilisateurFormatCsv)
-    .then(() => {
-      logger.info("Écriture CSV terminée");
-    })
-    .catch((error) => {
-      logger.error("Erreur lors de l'écriture CSV", error);
-    });
-}
-
 async function main() {
   const filename = process.argv[2];
-  const importNouveauCompteUniquement = process.argv[3] === "true";
-  const outputName = process.argv[4];
   assert(filename, "Nom de fichier CSV manquant");
 
   const container = getContainer("gestionUtilisateur");
-  const utilisateurRepository = new UtilisateurSQLRepository();
 
-  const contenuParsé = new UtilisateurCSVParseur(filename).parse();
-  let utilisateursFormatCsv = contenuParsé.csvRecords;
-  let utilisateurs = contenuParsé.parsedCsvRecords;
+  const contenuParsé = new UtilisateurCSVParseur(filename).parse()
+    .parsedCsvRecords;
 
-  if (importNouveauCompteUniquement) {
-    assert(outputName, "Nom du fichier de sortie manquant");
-    const utilisateursExistants =
-      await new RecupererListeUtilisateursExistantsUseCase(
-        utilisateurRepository,
-      ).run(utilisateurs);
-    utilisateurs = utilisateurs.filter(
-      (utilisateur) => !utilisateursExistants.includes(utilisateur.email),
-    );
-    utilisateursFormatCsv = utilisateursFormatCsv.filter((utilisateur) =>
-      utilisateursExistants.includes(utilisateur.email),
-    );
-    if (utilisateursExistants.length > 0) {
-      logger.info(
-        `Les comptes suivants existent déjà et ne seront pas importés : ${utilisateursExistants}`,
-      );
-      ecrireCsvUtilisateurs(outputName, utilisateursFormatCsv);
-    }
-  }
-
-  await container.resolve("importerDesUtilisateursUseCase").run(utilisateurs);
+  await container.resolve("importerDesUtilisateursUseCase").run(contenuParsé);
 }
 
 const isMain = eval("require.main === module");
