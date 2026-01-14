@@ -34,7 +34,8 @@ jobs:
       postgres:
         image: postgres:16.2-alpine
         env:
-          POSTGRES_USER: postgresql
+          POSTGRES_DB: postgres
+          POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
           POSTGRES_PORT: 7433
         options: >-
