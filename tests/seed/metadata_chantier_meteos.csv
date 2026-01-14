@@ -1,0 +1,5 @@
+ch_meteo_id,ch_meteo_name,ch_meteo_descr,ch_meteo_name_dfakto
+SOLEIL,Objectif sécurisé,Pas d’obstacle sur ce chantier,Aucun obstacle
+COUVERT,Objectif atteignable,Obstacle sr ce chantier,Obstacle modéré
+NUAGE,Appuis nécessaires,Le chantier a un risque de ne pas aboutir,Situation à risque
+ORAGE,Objectif compromis,Risque trop important pour la bonne réalisation du chantier,Risque avéré

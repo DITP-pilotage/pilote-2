@@ -1,0 +1,6 @@
+indic_type_id,indic_type_name,indic_type_descr,indic_type_rank
+IMPACT,Indicateur d'impact,L’indicateur traduit l’objectif du chantier ; il rend compte de l’impact perçu dans la vie quotidienne des Français,PRINCIPAL
+DEPL,Indicateur de déploiement,Ils permettent de mesurer et de suivre le déploiement des actions et des moyens permettant d’atteindre les objectifs d’impact,PRINCIPAL
+Q_SERV,Indicateurs de perception et de qualité de service,Indicateurs de perception et de qualité de service,COMPLEMENTAIRE
+REBOND,Indicateurs de suivi des externalités et effets rebond,Indicateurs de suivi des externalités et effets rebond,COMPLEMENTAIRE
+CONTEXTE,Indicateur de contexte,Pour aider à la compréhension et à l’interprétation des indicateurs d’impact ou de déploiement,COMPLEMENTAIRE

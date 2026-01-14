@@ -1,0 +1,15 @@
+indic_id,vi_dept_from,vi_dept_op,va_dept_from,va_dept_op,vc_dept_from,vc_dept_op,vi_reg_from,vi_reg_op,va_reg_from,va_reg_op,vc_reg_from,vc_reg_op,vi_nat_from,vi_nat_op,va_nat_from,va_nat_op,vc_nat_from,vc_nat_op,param_vaca_decumul_from,param_vaca_partition_date,param_vaca_op,param_vacg_decumul_from,param_vacg_partition_date,param_vacg_op,tendance,poids_pourcent_dept_declaree,poids_pourcent_nat_declaree,poids_pourcent_reg_declaree,poids_pourcent_eval_dept_declaree,poids_pourcent_eval_nat_declaree,poids_pourcent_eval_reg_declaree
+IND-005,_,_,_,_,_,_,user_input,sum,user_input,_,user_input,_,REG,sum,REG,sum,REG,sum,_,_,current_value,_,_,current_value,HAUSSE,0,20,33,0,20,33
+IND-021,user_input,_,user_input,_,user_input,_,DEPT,sum,DEPT,sum,DEPT,sum,DEPT,sum,DEPT,sum,DEPT,sum,_,from_year_start,sum,_,from_year_start,sum,HAUSSE,0,0,0,0,0,0
+IND-022,user_input,_,user_input,_,user_input,_,DEPT,sum,DEPT,sum,DEPT,sum,DEPT,sum,DEPT,sum,DEPT,sum,_,from_year_start,sum,_,from_year_start,sum,HAUSSE,0,0,0,0,0,0
+IND-023,user_input,_,user_input,_,user_input,_,DEPT,sum,DEPT,sum,DEPT,sum,DEPT,sum,DEPT,sum,DEPT,sum,_,from_year_start,sum,_,from_year_start,sum,HAUSSE,0,0,0,0,0,0
+IND-024,user_input,_,user_input,_,user_input,_,DEPT,sum,DEPT,sum,DEPT,sum,DEPT,sum,DEPT,sum,DEPT,sum,_,from_year_start,sum,_,from_year_start,sum,HAUSSE,0,0,0,0,0,0
+IND-034,user_input,_,user_input,_,user_input,_,user_input,_,user_input,_,user_input,_,user_input,_,user_input,_,user_input,_,_,_,current_value,_,_,current_value,HAUSSE,40,0,0,40,0,0
+IND-588,_,_,_,_,_,_,user_input,_,user_input,_,user_input,_,REG,sum,REG,sum,REG,sum,_,_,current_value,_,_,current_value,HAUSSE,0,25,100,0,25,100
+IND-633,user_input,_,user_input,_,user_input,_,DEPT,sum,DEPT,sum,DEPT,sum,DEPT,sum,DEPT,sum,DEPT,sum,_,_,current_value,_,_,current_value,HAUSSE,50,25,50,100,30,75
+IND-690,user_input,_,user_input,_,_,_,user_input,_,user_input,_,user_input,_,user_input,_,user_input,_,user_input,_,_,_,current_value,_,_,current_value,HAUSSE,0,20,20,0,20,20
+IND-691,user_input,_,user_input,_,_,_,user_input,_,user_input,_,user_input,_,user_input,_,user_input,_,user_input,_,_,_,current_value,_,_,current_value,HAUSSE,0,20,20,0,20,20
+IND-694,user_input,_,user_input,_,_,_,user_input,_,user_input,_,user_input,_,user_input,_,user_input,_,user_input,_,_,_,current_value,_,_,current_value,HAUSSE,0,20,20,0,20,20
+IND-695,user_input,_,user_input,_,_,_,user_input,_,user_input,_,user_input,_,user_input,_,user_input,_,user_input,_,_,_,current_value,_,_,current_value,HAUSSE,0,20,20,0,20,20
+IND-696,user_input,_,user_input,_,_,_,user_input,_,user_input,_,user_input,_,user_input,_,user_input,_,user_input,_,_,_,current_value,_,_,current_value,HAUSSE,0,20,20,0,20,20
+IND-838,user_input,_,user_input,_,user_input,_,user_input,_,user_input,_,user_input,_,user_input,_,user_input,_,user_input,_,_,_,current_value,_,_,current_value,BAISSE,0,33,33,0,33,33

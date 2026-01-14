@@ -1,0 +1,32 @@
+perimetre_id,per_nom,per_short,per_picto,per_porteur_id,per_porteur_name_short,per_top_dfakto
+PER-001,Agriculture,AGRI,,130,-,Agriculture
+PER-002,Armées,ARM,,150,-,Armées
+PER-003,"Autonomie, Handicap",HANDI,,120,-,"Autonomie, Handicap"
+PER-004,Aménagement du territoire,,,190,-,"Cohésion territoires, ville"
+PER-005,Comptes publics,,,290,-,Comptes Publics
+PER-006,Culture,,,140,-,Culture
+PER-007,Vie associative,VA,,1009,-,Vie associative
+PER-008,Économie et Entreprises,,,290,-,"Economie, Industrie"
+PER-009,Éducation nationale,,,180,-,Éducation nationale
+PER-010,Égalité Femmes-Hommes,,,1007,-,Égalité Femmes-Hommes
+PER-011,Enfance et Famille,,,120,-,Enfance
+PER-012,"Enseignement supérieur, Recherche",,,280,-,"Enseignement supérieur, Recherche"
+PER-013,Europe et Affaires étrangères,,,110,-,Europe et Affaires étrangères​
+PER-014,Intérieur,,,200,-,Intérieur​
+PER-015,Justice,,,220,-,Justice
+PER-016,Logement,,,190,-,Logement
+PER-017,Mer et Biodiversité,,,190,-,Mer
+PER-018,Outre-Mer,,,200,-,Outre-Mer
+PER-019,Premier Ministre,,,1009,-,Premier Ministre
+PER-020,Renouveau Démocratique,,,1006,-,Renouveau Démocratique
+PER-021,Santé,,,120,-,Santé
+PER-022,Solidarité,,,120,-,Solidarité
+PER-023,Sports,,,340,-,Sports et JOP 2024
+PER-024,Transformation et Fonction Publiques,,,250,-,Transformation et Fonction Publiques
+PER-025,Transition Écologique,,,190,-,Transition Ecologique
+PER-026,Industrie et Énergie,,,290,-,Transition Energétique
+PER-027,Transports,,,190,-,Transports
+PER-028,"Travail, Emploi",,,120,-,"Travail, Emploi et Insertion"
+PER-029,todo,,,,-,todo
+PER-030,Numérique et IA,NUM,,290,-,Numérique
+PER-031,Jeunesse,,,340,-,-
