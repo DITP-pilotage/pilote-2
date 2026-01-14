@@ -629,9 +629,9 @@ describe("ListerFichesEvaluationParPhaseQuery", () => {
 
         // Then
         expect(
-          result["Groupe Région 30"][$Enums.etape_evaluation_enum.CONSOLIDATION].map(
-            (fiche) => fiche.id,
-          ),
+          result["Groupe Région 30"][
+            $Enums.etape_evaluation_enum.CONSOLIDATION
+          ].map((fiche) => fiche.id),
         ).toEqual([fiche2.id, fiche3.id, fiche1.id]);
       }),
     );
