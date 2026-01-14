@@ -59,6 +59,10 @@ psql -d "$DATABASE_URL" -c "\COPY raw_data.metadata_indicateurs_complementaire F
 echo "Chargement metadata_indicateurs_hidden..."
 psql -d "$DATABASE_URL" -c "\COPY raw_data.metadata_indicateurs_hidden FROM '$SCRIPT_DIR/metadata_indicateurs_hidden.csv' WITH (FORMAT csv, HEADER true)"
 
+# Table des rapports d'import (doit être chargée avant mesure_indicateur)
+echo "Chargement rapport_import_mesure_indicateur..."
+psql -d "$DATABASE_URL" -c "\COPY public.rapport_import_mesure_indicateur FROM '$SCRIPT_DIR/rapport_import_mesure_indicateur.csv' WITH (FORMAT csv, HEADER true)"
+
 # Table finale
 echo "Chargement mesure_indicateur..."
 psql -d "$DATABASE_URL" -c "\COPY raw_data.mesure_indicateur FROM '$SCRIPT_DIR/mesure_indicateur.csv' WITH (FORMAT csv, HEADER true)"
