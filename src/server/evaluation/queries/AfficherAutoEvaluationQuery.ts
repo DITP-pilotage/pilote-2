@@ -59,7 +59,7 @@ export class AfficherAutoEvaluationQuery {
       .getInstance()
       .referentiel_critere.findMany({
         include: { sous_criteres: true },
-        orderBy: { id: "asc" },
+        orderBy: { libelle: "asc" },
       });
     const etapeAutoEvaluation = await this.dependencies.prisma
       .getInstance()
@@ -75,7 +75,7 @@ export class AfficherAutoEvaluationQuery {
             include: {
               rattachement: {
                 include: {
-                  objectifs: { orderBy: { id: "asc" } },
+                  objectifs: { orderBy: { libelle: "asc" } },
                 },
               },
             },

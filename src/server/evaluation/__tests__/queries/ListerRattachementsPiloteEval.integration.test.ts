@@ -1,6 +1,7 @@
 import { PrismaPilote } from "@/server/db/PrismaPilote";
-import { prisma } from "@/server/db/prisma";
 import { ListerRattachementsPiloteEval } from "@/server/evaluation/queries/ListerRattachementsPiloteEval";
+import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
+import { fixtures } from "@/server/infrastructure/test/fixtures";
 
 describe("ListerRattachementsPiloteEval", () => {
   let query: ListerRattachementsPiloteEval;
@@ -11,97 +12,99 @@ describe("ListerRattachementsPiloteEval", () => {
   });
 
   describe("run", () => {
-    it("retourne tous les rattachements", async () => {
-      // Given
-      await prisma.referentiel_rattachement_groupe.createMany({
-        data: [
-          { code: "REG", libelle: "Groupe Régions", ordre: 1 },
-          { code: "DROM", libelle: "Groupe DROM", ordre: 1 },
-        ],
-      });
-
-      await prisma.referentiel_rattachement.createMany({
-        data: [
-          {
-            code: "REG-01",
-            libelle: "Auvergne-Rhône-Alpes",
-            groupe: "REG",
-            ordre: 1,
-          },
-          {
-            code: "REG-02",
-            libelle: "Bourgogne-Franche-Comté",
-            groupe: "REG",
-            ordre: 2,
-          },
-          {
-            code: "REG-03",
-            libelle: "Bretagne",
-            groupe: "REG",
-            ordre: 3,
-          },
-          {
-            code: "DROM-01",
-            libelle: "Guadeloupe",
-            groupe: "DROM",
-            ordre: 1,
-          },
-          {
-            code: "DROM-02",
-            libelle: "Martinique",
-            groupe: "DROM",
-            ordre: 2,
-          },
-        ],
-      });
-
-      // When
-      const resultat = await query.run();
-
-      // Then
-      expect(resultat).toHaveLength(5);
-    });
-
-    it("retourne les champs code, libelle, groupe, ordre", async () => {
-      // Given
-      await prisma.referentiel_rattachement_groupe.create({
-        data: {
+    it(
+      "retourne tous les rattachements",
+      createIntegrationTest(async () => {
+        // Given
+        const groupe1 = await fixtures.rattachementGroupe({
           code: "REG",
           libelle: "Groupe Régions",
-          ordre: 1,
-        },
-      });
+        });
+        const groupe2 = await fixtures.rattachementGroupe({
+          code: "DROM",
+          libelle: "Groupe DROM",
+        });
 
-      await prisma.referentiel_rattachement.create({
-        data: {
+        await fixtures.rattachement({
+          code: "REG-01",
+          libelle: "Auvergne-Rhône-Alpes",
+          groupe: groupe1.code,
+          ordre: 1,
+        });
+        await fixtures.rattachement({
+          code: "REG-02",
+          libelle: "Bourgogne-Franche-Comté",
+          groupe: groupe1.code,
+          ordre: 2,
+        });
+        await fixtures.rattachement({
+          code: "REG-03",
+          libelle: "Bretagne",
+          groupe: groupe1.code,
+          ordre: 3,
+        });
+        await fixtures.rattachement({
+          code: "DROM-01",
+          libelle: "Guadeloupe",
+          groupe: groupe2.code,
+          ordre: 1,
+        });
+        await fixtures.rattachement({
+          code: "DROM-02",
+          libelle: "Martinique",
+          groupe: groupe2.code,
+          ordre: 2,
+        });
+
+        // When
+        const resultat = await query.run();
+
+        // Then
+        expect(resultat).toHaveLength(5);
+      }),
+    );
+
+    it(
+      "retourne les champs code, libelle, groupe, ordre",
+      createIntegrationTest(async () => {
+        // Given
+        const groupe = await fixtures.rattachementGroupe({
+          code: "REG",
+          libelle: "Groupe Régions",
+        });
+
+        await fixtures.rattachement({
+          code: "REG-75",
+          libelle: "Île-de-France",
+          groupe: groupe.code,
+          ordre: 10,
+        });
+
+        // When
+        const resultat = await query.run();
+
+        // Then
+        expect(resultat).toHaveLength(1);
+        expect(resultat[0]).toEqual({
           code: "REG-75",
           libelle: "Île-de-France",
           groupe: "REG",
           ordre: 10,
-        },
-      });
+        });
+      }),
+    );
 
-      // When
-      const resultat = await query.run();
+    it(
+      "retourne un tableau vide si aucun rattachement",
+      createIntegrationTest(async () => {
+        // Given
 
-      // Then
-      expect(resultat).toHaveLength(1);
-      expect(resultat[0]).toEqual({
-        code: "REG-75",
-        libelle: "Île-de-France",
-        groupe: "REG",
-        ordre: 10,
-      });
-    });
+        // When
+        const resultat = await query.run();
 
-    it("retourne un tableau vide si aucun rattachement", async () => {
-      // Given: aucun rattachement dans la base
-
-      // When
-      const resultat = await query.run();
-
-      // Then
-      expect(resultat).toEqual([]);
-    });
+        // Then
+        expect(resultat).toEqual([]);
+      }),
+    );
   });
 });

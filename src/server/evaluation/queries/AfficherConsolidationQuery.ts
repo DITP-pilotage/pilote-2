@@ -124,6 +124,7 @@ export class AfficherConsolidationQuery {
     return this.dependencies.prisma
       .getInstance()
       .referentiel_rattachement.findMany({
+        orderBy: { libelle: "asc" },
         where: {
           fiche_evaluation: {
             some: {

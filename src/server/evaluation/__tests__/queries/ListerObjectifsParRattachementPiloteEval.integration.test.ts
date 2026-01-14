@@ -1,6 +1,7 @@
 import { PrismaPilote } from "@/server/db/PrismaPilote";
-import { prisma } from "@/server/db/prisma";
 import { ListerObjectifsParRattachementPiloteEval } from "@/server/evaluation/queries/ListerObjectifsParRattachementPiloteEval";
+import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
+import { fixtures } from "@/server/infrastructure/test/fixtures";
 
 describe("ListerObjectifsParRattachementPiloteEval", () => {
   let query: ListerObjectifsParRattachementPiloteEval;
@@ -13,183 +14,88 @@ describe("ListerObjectifsParRattachementPiloteEval", () => {
   });
 
   describe("run", () => {
-    it("retourne les objectifs groupés par rattachement pour un jalon donné", async () => {
-      // Given
-      const rattachement1Code = "REG-01";
-      const rattachement2Code = "REG-02";
-      const objectif1Id = "a1b2c3d4-e5f6-7890-abcd-ef1234567890";
-      const objectif2Id = "b2c3d4e5-f6a7-8901-bcde-f12345678901";
-      const objectif3Id = "c3d4e5f6-a7b8-9012-cdef-123456789012";
-      const objectif4Id = "d4e5f6a7-b8c9-0123-def0-123456789013";
+    it(
+      "retourne les objectifs groupés par rattachement pour un jalon donné",
+      createIntegrationTest(async () => {
+        // Given
+        const rattachement1 = await fixtures.rattachement();
+        const rattachement2 = await fixtures.rattachement();
 
-      await prisma.referentiel_rattachement_groupe.createMany({
-        data: [
-          {
-            code: "REG",
-            libelle: "Groupe rattachement",
-            ordre: 1,
-          },
-        ],
-      });
+        await fixtures.objectif({
+          libelle: "Objectif 1 - Jalon 2025",
+          jalon: 2025,
+          rattachement_code: rattachement1.code,
+        });
+        await fixtures.objectif({
+          libelle: "Objectif 2 - Jalon 2025",
+          jalon: 2025,
+          rattachement_code: rattachement1.code,
+        });
+        await fixtures.objectif({
+          libelle: "Objectif 3 - Jalon 2025",
+          jalon: 2025,
+          rattachement_code: rattachement2.code,
+        });
+        await fixtures.objectif({
+          libelle: "Objectif 4 - Jalon 2026",
+          jalon: 2026,
+          rattachement_code: rattachement1.code,
+        });
 
-      await prisma.referentiel_rattachement.createMany({
-        data: [
-          {
-            code: rattachement1Code,
-            libelle: "Rattachement 1",
-            groupe: "REG",
-            ordre: 1,
-          },
-          {
-            code: rattachement2Code,
-            libelle: "Rattachement 2",
-            groupe: "REG",
-            ordre: 2,
-          },
-        ],
-      });
+        // When
+        const resultat = await query.run({ jalon: 2025 });
 
-      await prisma.referentiel_objectif.createMany({
-        data: [
-          {
-            id: objectif1Id,
-            libelle: "Objectif 1 - Jalon 2025",
-            descriptif: "Description objectif 1",
-            indicateur_cible: "Indicateur 1",
-            jalon: 2025,
-            rattachement_code: rattachement1Code,
-          },
-          {
-            id: objectif2Id,
-            libelle: "Objectif 2 - Jalon 2025",
-            descriptif: "Description objectif 2",
-            indicateur_cible: "Indicateur 2",
-            jalon: 2025,
-            rattachement_code: rattachement1Code,
-          },
-          {
-            id: objectif3Id,
-            libelle: "Objectif 3 - Jalon 2025",
-            descriptif: "Description objectif 3",
-            indicateur_cible: "Indicateur 3",
-            jalon: 2025,
-            rattachement_code: rattachement2Code,
-          },
-          {
-            id: objectif4Id,
-            libelle: "Objectif 4 - Jalon 2026",
-            descriptif: "Description objectif 4",
-            indicateur_cible: "Indicateur 4",
-            jalon: 2026,
-            rattachement_code: rattachement1Code,
-          },
-        ],
-      });
+        // Then
+        expect(Object.keys(resultat)).toHaveLength(2);
+        expect(resultat[rattachement1.code]).toHaveLength(2);
+        expect(resultat[rattachement2.code]).toHaveLength(1);
+      }),
+    );
 
-      // When
-      const resultat = await query.run({ jalon: 2025 });
+    it(
+      "retourne uniquement les champs id et libelle pour chaque objectif",
+      createIntegrationTest(async () => {
+        // Given
+        const rattachement = await fixtures.rattachement();
 
-      // Then
-      expect(Object.keys(resultat)).toHaveLength(2);
-      expect(resultat[rattachement1Code]).toHaveLength(2);
-      expect(resultat[rattachement2Code]).toHaveLength(1);
-    });
-
-    it("retourne uniquement les champs id et libelle pour chaque objectif", async () => {
-      // Given
-      const rattachementCode = "REG-10";
-      const tutelleId = "e5f6a7b8-c9d0-1234-ef01-234567890123";
-      const objectifId = "f6a7b8c9-d0e1-2345-f012-345678901234";
-
-      await prisma.referentiel_rattachement_groupe.createMany({
-        data: [
-          {
-            code: "REG",
-            libelle: "Groupe rattachement 1",
-            ordre: 1,
-          },
-        ],
-      });
-
-      await prisma.referentiel_rattachement.create({
-        data: {
-          code: rattachementCode,
-          libelle: "Rattachement test",
-          groupe: "REG",
-          ordre: 10,
-        },
-      });
-
-      await prisma.referentiel_tutelle.create({
-        data: {
-          id: tutelleId,
-          nom: "Tutelle test",
-        },
-      });
-
-      await prisma.referentiel_objectif.create({
-        data: {
-          id: objectifId,
+        const objectif = await fixtures.objectif({
           libelle: "Objectif test",
           descriptif: "Description de l'objectif",
           indicateur_cible: "Indicateur cible",
           jalon: 2025,
-          rattachement_code: rattachementCode,
-          tutelle_id: tutelleId,
-        },
-      });
+          rattachement_code: rattachement.code,
+        });
 
-      // When
-      const resultat = await query.run({ jalon: 2025 });
+        // When
+        const resultat = await query.run({ jalon: 2025 });
 
-      // Then
-      expect(resultat[rattachementCode]).toHaveLength(1);
-      expect(resultat[rattachementCode][0]).toEqual({
-        id: objectifId,
-        libelle: "Objectif test",
-      });
-    });
+        // Then
+        expect(resultat[rattachement.code]).toHaveLength(1);
+        expect(resultat[rattachement.code][0]).toEqual({
+          id: objectif.id,
+          libelle: "Objectif test",
+        });
+      }),
+    );
 
-    it("retourne un objet vide si aucun objectif pour le jalon donné", async () => {
-      // Given
-      const rattachementCode = "REG-30";
-      const objectifId = "c9d0e1f2-a3b4-5678-2345-678901234567";
+    it(
+      "retourne un objet vide si aucun objectif pour le jalon donné",
+      createIntegrationTest(async () => {
+        // Given
+        const rattachement = await fixtures.rattachement();
 
-      await prisma.referentiel_rattachement_groupe.createMany({
-        data: [
-          {
-            code: "REG",
-            libelle: "Groupe modifier objectif 2A",
-            ordre: 1,
-          },
-        ],
-      });
-
-      await prisma.referentiel_rattachement.create({
-        data: {
-          code: rattachementCode,
-          libelle: "Rattachement",
-          groupe: "REG",
-          ordre: 30,
-        },
-      });
-
-      await prisma.referentiel_objectif.create({
-        data: {
-          id: objectifId,
+        await fixtures.objectif({
           libelle: "Objectif 2026",
-          descriptif: "Description",
-          indicateur_cible: "Indicateur",
           jalon: 2026,
-          rattachement_code: rattachementCode,
-        },
-      });
+          rattachement_code: rattachement.code,
+        });
 
-      // When
-      const resultat = await query.run({ jalon: 2025 });
+        // When
+        const resultat = await query.run({ jalon: 2025 });
 
-      // Then
-      expect(resultat).toEqual({});
-    });
+        // Then
+        expect(resultat).toEqual({});
+      }),
+    );
   });
 });

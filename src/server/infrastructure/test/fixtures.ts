@@ -58,7 +58,7 @@ export const fixtures = {
     return prisma.referentiel_rattachement.create({
       data: {
         code,
-        ordre: 1,
+        ordre: 0,
         libelle: `Rattachement ${code}`,
         ...overrides,
         groupe,
@@ -76,6 +76,28 @@ export const fixtures = {
         libelle: "Critère test",
         descriptif: "Description",
         ...overrides,
+      },
+    });
+  },
+
+  async sousCritere(
+    overrides: Partial<Prisma.referentiel_sous_critereUncheckedCreateInput> & {
+      parent_id?: string;
+    } = {},
+  ) {
+    const prisma = getPrisma();
+    const parent_id =
+      overrides.parent_id == null
+        ? (await fixtures.critere()).id
+        : overrides.parent_id;
+
+    return prisma.referentiel_sous_critere.create({
+      data: {
+        id: randomUUID(),
+        libelle: "Sous-critère test",
+        descriptif: "Description",
+        ...overrides,
+        parent_id,
       },
     });
   },
@@ -209,6 +231,137 @@ export const fixtures = {
       data: {
         id: randomUUID(),
         jalon: 2025,
+        ...overrides,
+      },
+    });
+  },
+
+  async instructionObjectif(
+    overrides: Partial<Prisma.instruction_objectifUncheckedCreateInput> & {
+      rattachement_utilisateur_etape_jalon_id: string;
+      objectif_id: string;
+    },
+  ) {
+    const prisma = getPrisma();
+    return prisma.instruction_objectif.create({
+      data: {
+        id: randomUUID(),
+        ...overrides,
+      },
+    });
+  },
+
+  async instructionCritere(
+    overrides: Partial<Prisma.instruction_critereUncheckedCreateInput> & {
+      rattachement_utilisateur_etape_jalon_id: string;
+      critere_id: string;
+    },
+  ) {
+    const prisma = getPrisma();
+    return prisma.instruction_critere.create({
+      data: {
+        id: randomUUID(),
+        ...overrides,
+      },
+    });
+  },
+
+  async tutelle(
+    overrides: Partial<Prisma.referentiel_tutelleUncheckedCreateInput> = {},
+  ) {
+    const prisma = getPrisma();
+    return prisma.referentiel_tutelle.create({
+      data: {
+        id: randomUUID(),
+        nom: "Tutelle test",
+        ...overrides,
+      },
+    });
+  },
+
+  async territoire(
+    overrides: Partial<Prisma.territoireUncheckedCreateInput> & {
+      code: string;
+    },
+  ) {
+    const prisma = getPrisma();
+    return prisma.territoire.create({
+      data: {
+        nom: `Territoire ${overrides.code}`,
+        nom_affiche: `Territoire ${overrides.code}`,
+        maille: "DEPT",
+        code_insee: overrides.code,
+        zone_id: `zone-${randomUUID().slice(0, 6)}`,
+        ...overrides,
+      },
+    });
+  },
+
+  async chantierIdentite(
+    overrides: Partial<Prisma.chantier_identiteUncheckedCreateInput> = {},
+  ) {
+    const prisma = getPrisma();
+    const id = overrides.id || `CH-${randomUUID().slice(0, 6)}`;
+    return prisma.chantier_identite.create({
+      data: {
+        nom: `Chantier ${id}`,
+        ...overrides,
+        id,
+      },
+    });
+  },
+
+  async chantierTerritoire(
+    overrides: Partial<Prisma.chantier_territoireUncheckedCreateInput> & {
+      id: string;
+      territoire_code: string;
+    },
+  ) {
+    const prisma = getPrisma();
+    return prisma.chantier_territoire.create({
+      data: {
+        code_insee: "75",
+        maille: "DEPT",
+        zone_id: "zone-1",
+        ...overrides,
+      },
+    });
+  },
+
+  async chantierTerritoireJalon(
+    overrides: Partial<Prisma.chantier_territoire_jalonUncheckedCreateInput> & {
+      id: string;
+      territoire_code: string;
+    },
+  ) {
+    const prisma = getPrisma();
+    return prisma.chantier_territoire_jalon.create({
+      data: {
+        code_insee: "75",
+        maille: "DEPT",
+        zone_id: "zone-1",
+        jalon: 2025,
+        taux_avancement: null,
+        ...overrides,
+      },
+    });
+  },
+
+  async chantierEvaluation(
+    overrides: Partial<Prisma.chantier_evaluationUncheckedCreateInput> & {
+      id: string;
+      territoire_code: string;
+    },
+  ) {
+    const prisma = getPrisma();
+    return prisma.chantier_evaluation.create({
+      data: {
+        code_insee: "75",
+        maille: "DEPT",
+        zone_id: "zone-1",
+        jalon: 2025,
+        taux_avancement: null,
+        date_calcul: new Date(),
         ...overrides,
       },
     });

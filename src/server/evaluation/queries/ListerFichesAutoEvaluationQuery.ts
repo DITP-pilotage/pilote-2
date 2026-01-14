@@ -30,7 +30,7 @@ export class ListerFichesAutoEvaluationQuery {
       .fiche_evaluation.findMany({
         orderBy: {
           rattachement: {
-            code: "asc",
+            libelle: "asc",
           },
         },
         where: {
