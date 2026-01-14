@@ -32,7 +32,7 @@ jobs:
     runs-on: ubuntu-latest
     services:
       postgres:
-        image: postgres:16.6.0
+        image: postgres:16.2-alpine
         env:
           POSTGRES_USER: postgresql
           POSTGRES_PASSWORD: secret
