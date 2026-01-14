@@ -37,7 +37,6 @@ jobs:
           POSTGRES_DB: postgres
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
-          POSTGRES_PORT: 7433
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
