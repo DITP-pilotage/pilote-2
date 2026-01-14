@@ -75,7 +75,7 @@ export class AfficherAutoEvaluationQuery {
             include: {
               rattachement: {
                 include: {
-                  objectifs: { orderBy: { id: "asc" } },
+                  objectifs: { orderBy: { libelle: "asc" } },
                 },
               },
             },
