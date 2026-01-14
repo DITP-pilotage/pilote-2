@@ -4,6 +4,11 @@ set -e
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 
+# Load E2E environment variables
+set -a
+source "$PROJECT_ROOT/.env.e2e"
+set +a
+
 echo "=== Etape 1: Chargement du schema SQL ==="
 psql -d "$DATABASE_URL" -f "$SCRIPT_DIR/schema.sql"
 
