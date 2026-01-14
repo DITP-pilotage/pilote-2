@@ -143,3 +143,4 @@ When working on PVA functionality, focus on:
 - When it's possible, use $Enums from @prisma to handle values and types
 - Never launch tests by yourself, the user will ALWAYS launch them by himself
 - write ADR in french
+- use this ADR as the base structure for writing ADRs : @docs/architecture/decisions/0001-record-architecture-decisions.md
