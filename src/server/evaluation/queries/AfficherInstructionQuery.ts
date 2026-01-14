@@ -221,7 +221,7 @@ export class AfficherInstructionQuery {
           },
         },
         orderBy: {
-          code: "asc",
+          libelle: "asc",
         },
         include: {
           objectifs: {
