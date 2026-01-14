@@ -1,12 +1,4 @@
 import convict from "convict";
-import dotenv from "dotenv";
-import { join } from "node:path";
-
-const env = process.env.NODE_ENV ? `.${process.env.NODE_ENV}` : "";
-
-const envPath = join(process.cwd(), `/.env${env}`);
-
-dotenv.config({ path: envPath, override: true });
 
 const config = convict({
   env: {
