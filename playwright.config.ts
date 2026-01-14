@@ -1,15 +1,15 @@
-import { defineConfig, devices } from '@playwright/test';
+import { defineConfig, devices } from "@playwright/test";
 
 /**
  * Load environment variables from .env.e2e file
  */
-require('dotenv').config({ path: '.env.e2e' });
+require("dotenv").config({ path: ".env.e2e" });
 
 /**
  * See https://playwright.dev/docs/test-configuration.
  */
 export default defineConfig({
-  testDir: './tests',
+  testDir: "./tests",
   /* Run tests in files in parallel */
   fullyParallel: false,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
@@ -17,62 +17,65 @@ export default defineConfig({
   /* Retry on CI only */
   retries: 2,
   globalTimeout: 2_000_000,
-  outputDir: 'test-results',
+  outputDir: "test-results",
   /* Opt out of parallel tests on CI. */
   workers: process.env.CI ? 1 : undefined,
   /* Reporter à utiliser. Voir https://playwright.dev/docs/test-reporters */
-  reporter: process.env.ENVIRONMENT === 'E2E'
-    ? [['github'], ['json', { outputFile: 'test-results/results.json' }]]
-    : [['html', { open: 'always' }]],
+  reporter:
+    process.env.ENVIRONMENT === "E2E"
+      ? [["github"], ["json", { outputFile: "test-results/results.json" }]]
+      : [["html", { open: "always" }]],
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
     // baseURL: 'http://127.0.0.1:3000',
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
-    trace: 'on-first-retry',
-    
+    trace: "on-first-retry",
+
     // Configuration spéciale pour Scalingo (environnement E2E)
-    ...(process.env.ENVIRONMENT === 'E2E' && {
+    ...(process.env.ENVIRONMENT === "E2E" && {
       // Désactiver les vidéos et screenshots pour économiser les ressources
       headless: true,
-      video: 'retain-on-failure',
-      screenshot: 'only-on-failure',
+      video: "retain-on-failure",
+      screenshot: "only-on-failure",
       // Timeout plus court sur Scalingo
       actionTimeout: 10_000,
       navigationTimeout: 30_000,
-      acceptDownloads: true,  
+      acceptDownloads: true,
       ignoreHTTPSErrors: true,
-      waitForLoadState: 'networkidle',
+      waitForLoadState: "networkidle",
     }),
   },
 
   /* Configure projects for major browsers */
-  projects: process.env.ENVIRONMENT === 'E2E' 
-    ? [
-      {
-        name: 'chromium-headless',
-        use: {
-          ...devices['Desktop Chrome'],
-          headless: true,
-          launchOptions: {
-            headless: true,
-            args: [
-              '--no-sandbox',
-              '--disable-setuid-sandbox',
-              '--disable-dev-shm-usage',
-              '--disable-gpu',
-            ],
+  projects:
+    process.env.ENVIRONMENT === "E2E"
+      ? [
+          {
+            name: "chromium-headless",
+            use: {
+              ...devices["Desktop Chrome"],
+              headless: true,
+              launchOptions: {
+                headless: true,
+                args: [
+                  "--no-sandbox",
+                  "--disable-setuid-sandbox",
+                  "--disable-dev-shm-usage",
+                  "--disable-gpu",
+                ],
+              },
+            },
           },
-        },
-      },
-    ] : [
-      // Configuration normale pour le développement
-      {
-        name: 'chromium',
-        use: {
-          ...devices['Desktop Chrome'],
-        },
-      },
-    ],
+        ]
+      : [
+          // Configuration normale pour le développement
+          {
+            name: "chromium",
+            use: {
+              ...devices["Desktop Chrome"],
+            },
+          },
+        ],
 });
