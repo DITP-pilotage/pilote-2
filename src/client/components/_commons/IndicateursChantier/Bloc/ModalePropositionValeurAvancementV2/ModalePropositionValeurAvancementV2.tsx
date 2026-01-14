@@ -200,14 +200,7 @@ export const ModalePropositionValeurAvancementV2: FunctionComponent<
                         )}
 
                         <span className="flex justify-center texte-gris">
-                          (
-                          {formaterDate(
-                            detailIndicateurDuTerritoire.proposition
-                              ?.dateValeurAvancement ??
-                              detailIndicateurDuTerritoire.dateValeurAvancementMandat,
-                            "MM/YYYY",
-                          )}
-                          )
+                          ({reactHookForm.watch("moisValeurAvancement")})
                         </span>
                       </div>
                     </div>

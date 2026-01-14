@@ -196,7 +196,7 @@ export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<
                       <span className="flex texte-gris fr-text--xs">
                         (
                         {formaterDate(
-                          detailIndicateur.dateValeurAvancementMandat,
+                          detailIndicateur.proposition?.dateValeurAvancement,
                           "MM/YYYY",
                         )}
                         )
