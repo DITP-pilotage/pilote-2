@@ -9,14 +9,23 @@ set -a
 source "$PROJECT_ROOT/.env.e2e"
 set +a
 
-echo "=== Etape 1: Chargement du schema SQL ==="
+echo "=== Etape 1: Suppression et recreation des schemas ==="
+psql -d "$DATABASE_URL" <<EOF
+DROP SCHEMA IF EXISTS public CASCADE;
+DROP SCHEMA IF EXISTS raw_data CASCADE;
+CREATE SCHEMA public;
+CREATE SCHEMA raw_data;
+EOF
+
+echo "=== Etape 2: Chargement du schema SQL ==="
 psql -d "$DATABASE_URL" -f "$SCRIPT_DIR/schema.sql"
 
-echo "=== Etape 2: Seed des utilisateurs de test ==="
+echo "=== Etape 3: Seed des utilisateurs de test ==="
 cd "$PROJECT_ROOT"
+npx ts-node src/database/prisma/seed.ts
 npx ts-node scripts/seedUtilisateursTest.ts
 
-echo "=== Etape 3: Chargement des CSV ==="
+echo "=== Etape 4: Chargement des CSV ==="
 
 # Tables sans dependances
 echo "Chargement metadata_axes..."
