@@ -142,3 +142,4 @@ When working on PVA functionality, focus on:
 - no 1 or 2 character variable. eg e -> error, ev -> event
 - When it's possible, use $Enums from @prisma to handle values and types
 - Never launch tests by yourself, the user will ALWAYS launch them by himself
+- write ADR in french
