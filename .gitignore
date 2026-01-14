@@ -36,7 +36,6 @@ yarn-error.log*
 
 /db/
 .env
-.env.test
 .env.prod
 .idea/
 .vscode/
@@ -46,7 +45,6 @@ qodana.yaml
 
 /uploads
 
-.env.test
 /test-results/
 /playwright-report/
 /blob-report/
