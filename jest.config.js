@@ -28,6 +28,7 @@ module.exports = async () => {
         ...nextJSGlobalConf,
         displayName: 'Node - server integration tests',
         testEnvironment: 'node',
+        setupFiles: ['<rootDir>/jest.env.setup.js'],
         setupFilesAfterEnv: ['<rootDir>/src/server/infrastructure/test/integrationTestSetup.ts', 'jest-extended/all'],
         roots: ['<rootDir>/src/server'],
         testMatch: ['**/*.integration.test.*', '**/__tests__/**/*.integration.test.ts'],
@@ -45,6 +46,7 @@ module.exports = async () => {
         ...nextJSGlobalConf,
         displayName: 'Node - server & scripts unit tests',
         testEnvironment: 'node',
+        setupFiles: ['<rootDir>/jest.env.setup.js'],
         setupFilesAfterEnv: ['jest-extended/all'],
         roots: ['<rootDir>/src/server', '<rootDir>/scripts'],
         testMatch: ['**/*.unit.test.*'],
@@ -61,6 +63,7 @@ module.exports = async () => {
         ...nextJSGlobalConf,
         displayName: 'JsDom - client tests',
         testEnvironment: 'jest-environment-jsdom',
+        setupFiles: ['<rootDir>/jest.env.setup.js'],
         setupFilesAfterEnv: ['<rootDir>/jest.setup.ts', 'jest-extended/all'],
         testMatch: ['**/*.unit.test.*', '**/*.integration.test.*'],
         transformIgnorePatterns: [
