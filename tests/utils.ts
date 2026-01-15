@@ -111,8 +111,8 @@ export const authentificationApiDirProjetFn = async ({
   apiDirProjetIndicateurAssocie: string;
 }> => {
   const apiDirProjetUsername = "equipe.dir.projet@example.com";
-  const apiDirProjetChantierAssocie = "CH-051";
-  const apiDirProjetIndicateurAssocie = "IND-838";
+  const apiDirProjetChantierAssocie = "CH-129";
+  const apiDirProjetIndicateurAssocie = "IND-021";
 
   const { apiToken } = await authentificationApiFn({
     page,
