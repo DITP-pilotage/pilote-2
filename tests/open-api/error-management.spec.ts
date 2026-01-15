@@ -1,5 +1,4 @@
 import { APIRequestContext, APIResponse, expect, test } from "@playwright/test";
-import { configuration } from "@/config";
 import {
   authentificationApiDirProjetFn,
   suppressionAuthentificationApiFn,
@@ -18,7 +17,7 @@ test.describe("Error - endpoint chantier", async () => {
 
     await test.step("Création du context - Authorization Pilote - cecile - EQUIPE_DIR_PROJET", async () => {
       apiContext = await playwright.request.newContext({
-        baseURL: configuration().baseUrl,
+        baseURL: process.env.BASE_URL,
         extraHTTPHeaders: {
           Authorization: `Bearer ${apiDirProjetToken}`,
         },
@@ -57,7 +56,7 @@ test.describe("Error - endpoint indicateur", async () => {
 
     await test.step("Création du context - Authorization Pilote - equipe.dir.projet@example.com - EQUIPE_DIR_PROJET", async () => {
       apiContext = await playwright.request.newContext({
-        baseURL: configuration().baseUrl,
+        baseURL: process.env.BASE_URL,
         extraHTTPHeaders: {
           Authorization: `Bearer ${apiDirProjetToken}`,
         },
@@ -96,7 +95,7 @@ test.describe("Error - endpoint indicateur", async () => {
 
     await test.step("Création du context - Authorization Pilote - equipe.dir.projet@example.com - EQUIPE_DIR_PROJET", async () => {
       apiContext = await playwright.request.newContext({
-        baseURL: configuration().baseUrl,
+        baseURL: process.env.BASE_URL,
         extraHTTPHeaders: {
           Authorization: `Bearer ${apiDirProjetToken}`,
         },

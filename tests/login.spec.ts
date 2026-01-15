@@ -1,9 +1,8 @@
 import { expect, test } from "@playwright/test";
-import { configuration } from "@/config";
 import { loginFn } from "./utils";
 
 test("doit arriver sur la landing page", async ({ page }) => {
-  await page.goto(configuration().baseUrl);
+  await page.goto("/");
 
   // Expect a title "to contain" a substring.
   await expect(page).toHaveTitle(
@@ -17,6 +16,6 @@ test("doit pouvoir se connecter", async ({ page }) => {
   await expect(
     page
       .getByRole("banner")
-      .getByRole("button", { name: configuration().e2e.username }),
+      .getByRole("button", { name: process.env.E2E_USERNAME! }),
   ).toBeVisible();
 });

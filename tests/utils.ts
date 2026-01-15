@@ -1,14 +1,12 @@
 import { Page } from "playwright-core";
 import { expect, test } from "@playwright/test";
 
-import { configuration } from "@/config";
-
 export const loginFn = async ({ page }: { page: Page }) => {
-  const username = configuration().e2e.username;
-  const password = configuration().e2e.password;
+  const username = process.env.E2E_USERNAME!;
+  const password = process.env.DEV_PASSWORD!;
 
   await test.step(`Authentification de l'utilisateur ${username} avec le rôle DITP_ADMIN`, async () => {
-    await page.goto(configuration().baseUrl);
+    await page.goto("/");
 
     await page
       .getByRole("banner")
@@ -55,7 +53,7 @@ export const authentificationApiFn = async ({
   await loginFn({ page });
 
   await test.step(`Création du token API pour l'utilisateur ${apiUsername}`, async () => {
-    await page.goto(`${configuration().baseUrl}/admin/gestion-token-api`);
+    await page.goto("/admin/gestion-token-api");
     await page.waitForURL("**/admin/gestion-token-api");
 
     expect(page.getByText(apiUsername)).not.toBeVisible();
@@ -84,7 +82,7 @@ export const authentificationApiDITPADMINFn = async ({
 }: {
   page: Page;
 }): Promise<{ apiDITPADMINToken: string; apiDITPADMINUsername: string }> => {
-  const apiDITPADMINUsername = configuration().e2e.apiDITPADMINUsername;
+  const apiDITPADMINUsername = process.env.API_DITP_USERNAME!;
 
   const { apiToken } = await authentificationApiFn({
     page,
@@ -104,11 +102,11 @@ export const authentificationApiDirProjetFn = async ({
   apiDirProjetChantierAssocie: string;
   apiDirProjetIndicateurAssocie: string;
 }> => {
-  const apiDirProjetUsername = configuration().e2e.apiDirProjetUsername;
+  const apiDirProjetUsername = process.env.API_DIR_PROJET_USERNAME!;
   const apiDirProjetChantierAssocie =
-    configuration().e2e.apiDirProjetChantierAssocie;
+    process.env.API_DIR_PROJET_CHANTIER_ASSOCIE!;
   const apiDirProjetIndicateurAssocie =
-    configuration().e2e.apiDirProjetIndicateurAssocie;
+    process.env.API_DIR_PROJET_INDICATEUR_ASSOCIE!;
 
   const { apiToken } = await authentificationApiFn({
     page,
@@ -133,7 +131,7 @@ export const suppressionAuthentificationApiFn = async ({
   let apiToken: string = "";
 
   await test.step(`Suppression du token API pour l'utilisateur ${apiUsername}`, async () => {
-    await page.goto(`${configuration().baseUrl}/admin/gestion-token-api`);
+    await page.goto("/admin/gestion-token-api");
     await page.waitForURL("**/admin/gestion-token-api");
 
     expect(page.getByText(apiUsername)).toBeVisible();

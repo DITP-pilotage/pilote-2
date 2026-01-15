@@ -1,6 +1,5 @@
 import { APIRequestContext, APIResponse, expect, test } from "@playwright/test";
 import { DonneeChantierContrat } from "@/server/chantiers/app/contrats/DonneeChantierContrat";
-import { configuration } from "@/config";
 import {
   authentificationApiDirProjetFn,
   suppressionAuthentificationApiFn,
@@ -21,7 +20,7 @@ test("Quand on a accès au chantier, doit remonter une réponse 200 OK avec les 
 
   await test.step("Création du context - Authorization Pilote - equipe.dir.projet@example.com - EQUIPE_DIR_PROJET", async () => {
     apiContext = await playwright.request.newContext({
-      baseURL: configuration().baseUrl,
+      baseURL: process.env.BASE_URL,
       extraHTTPHeaders: {
         Authorization: `Bearer ${apiDirProjetToken}`,
       },
