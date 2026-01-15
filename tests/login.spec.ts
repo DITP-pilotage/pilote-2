@@ -1,25 +1,20 @@
 import { expect, test } from "@playwright/test";
-import { loginFn, seedDatabase } from "./utils";
+import { seedDatabase } from "./utils";
+import { PageAccueilNonConnecte } from "./pages/page-accueil-non-connecte";
+import { AppActions } from "./actions/app.actions";
 
 test.beforeAll(() => {
   seedDatabase();
 });
 
 test("doit arriver sur la landing page", async ({ page }) => {
-  await page.goto("/");
-
-  // Expect a title "to contain" a substring.
-  await expect(page).toHaveTitle(
-    /PILOTE - Piloter l'action publique par les résultats/,
-  );
+  const pageAccueilNonConnecte = new PageAccueilNonConnecte(page);
+  await pageAccueilNonConnecte.goto();
+  await pageAccueilNonConnecte.expectTitle();
 });
 
 test("doit pouvoir se connecter", async ({ page }) => {
-  await loginFn({ page });
-
-  await expect(
-    page
-      .getByRole("banner")
-      .getByRole("button", { name: process.env.E2E_USERNAME! }),
-  ).toBeVisible();
+  const appActions = new AppActions(page);
+  const pageAccueil = await appActions.loginAs();
+  await pageAccueil.header.expectUserLoggedIn(process.env.E2E_USERNAME!);
 });
