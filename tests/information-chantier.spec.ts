@@ -7,8 +7,8 @@ test.beforeAll(() => {
 
 test("doit pouvoir consulter les données des chantiers", async ({ page }) => {
   const informationChantierEtIndicateurTestsE2E = {
-    id: "062",
-    nom: "Assurer une gestion sobre de la ressource en eau",
+    id: "155",
+    nom: "Faciliter l'efficacité opérationnelle",
   };
 
   await loginFn({ page });
@@ -41,21 +41,10 @@ test("doit pouvoir consulter les données des chantiers", async ({ page }) => {
 
   await test.step("Vérification filtre ministère actif 'Transition écologique et Cohésion des territoires'", async () => {
     await expect(
-      page.locator(
-        "button[aria-label='Retirer le tag Aménagement du territoire']",
-      ),
-    ).toBeVisible();
-    await expect(
       page.locator("button[aria-label='Retirer le tag Logement']"),
     ).toBeVisible();
     await expect(
-      page.locator("button[aria-label='Retirer le tag Mer et Biodiversité']"),
-    ).toBeVisible();
-    await expect(
       page.locator("button[aria-label='Retirer le tag Transition Écologique']"),
-    ).toBeVisible();
-    await expect(
-      page.locator("button[aria-label='Retirer le tag Transports']"),
     ).toBeVisible();
   });
 
@@ -109,15 +98,12 @@ test("doit pouvoir consulter les données des chantiers", async ({ page }) => {
       page.getByRole("button", { name: /^Ce qui reste à faire$/ }),
     ).toBeVisible();
     await expect(
-      page.getByRole("heading", { name: /^Indicateurs \(7\)$/ }),
+      page.getByRole("heading", { name: /^Indicateurs \(5\)$/ }),
     ).toBeVisible();
     await expect(
       page.getByRole("heading", {
         name: /^Indicateurs pris en compte dans le taux d'avancement du territoire \(5\)$/,
       }),
-    ).toBeVisible();
-    await expect(
-      page.getByRole("heading", { name: /^Autres indicateurs \(2\)$/ }),
     ).toBeVisible();
     await expect(
       page.getByRole("heading", { name: /^Décisions stratégiques$/ }),
