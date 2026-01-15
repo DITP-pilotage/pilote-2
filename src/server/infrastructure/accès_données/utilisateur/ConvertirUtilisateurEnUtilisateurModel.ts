@@ -20,6 +20,10 @@ export const convertirEnModel = (utilisateurAConvertir: {
   | "date_visualisation_video_accueil"
   | "date_visualisation_popup_infolettre"
   | "date_inscription_infolettre"
+  | "date_premiere_relance_desactivation"
+  | "date_deuxieme_relance_desactivation"
+  | "date_desactivation_programee"
+  | "date_derniere_connexion"
 > => {
   return {
     email: utilisateurAConvertir.email,
