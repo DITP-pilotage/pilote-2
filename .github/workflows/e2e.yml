@@ -19,6 +19,20 @@ jobs:
   e2e-tests:
     runs-on: ubuntu-22.04
     timeout-minutes: 30
+    services:
+      postgres:
+        image: postgres:16.2-alpine
+        env:
+          POSTGRES_DB: postgres
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 7474:5432
 
     steps:
       - name: Checkout repository
