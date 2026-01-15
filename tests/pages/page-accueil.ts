@@ -2,13 +2,16 @@ import { Page, expect } from "@playwright/test";
 import { BasePage } from "./base.page";
 import { HeaderComponent } from "../components/header.component";
 import { PageChantier } from "./page-chantier";
+import { ExportCsvModal } from "../components/export-csv.modal";
 
 export class PageAccueil extends BasePage {
   readonly header: HeaderComponent;
+  readonly exportModal: ExportCsvModal;
 
   constructor(page: Page) {
     super(page);
     this.header = new HeaderComponent(page);
+    this.exportModal = new ExportCsvModal(page);
   }
 
   async expectStructure(): Promise<void> {

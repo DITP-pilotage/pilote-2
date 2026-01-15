@@ -1,97 +1,65 @@
 import { Download, expect, test } from "@playwright/test";
 import fs from "node:fs";
-import { loginFn, seedDatabase } from "./utils";
+import { seedDatabase } from "./utils";
+import { AppActions } from "./actions/app.actions";
 
 test.beforeAll(() => {
   seedDatabase();
 });
 
-test("doit pouvoir exporter les données des indicateurs sous format CSV", async ({
-  page,
-}) => {
-  test.setTimeout(60_000);
-  await loginFn({ page });
+test("doit pouvoir exporter les données des indicateurs sous format CSV", async ({ page }) => {
+  const appActions = new AppActions(page);
+  const pageAccueil = await appActions.loginAs();
 
   await test.step("Ouverture de la modale d'export csv à l'étape 1 - Éléments à exporter", async () => {
-    await page.getByRole("button", { name: /Exporter les données/ }).click();
+    await pageAccueil.openExportModal();
     await page.waitForURL(
       "**/accueil/chantier/NAT-FR?isModaleExportCsvOuverte=true&etapeCourante=1&typeExport=chantiers",
     );
-    await expect(
-      page.getByRole("heading", { name: /Éléments à exporter/ }),
-    ).toBeVisible();
-    await expect(
-      page.getByRole("heading", {
-        name: /Exporter les données - Étape 1 sur 5/,
-      }),
-    ).toBeVisible();
+    await pageAccueil.exportModal.expectStep(1, /Éléments à exporter/);
   });
 
   await test.step("Choix de l'export indicateurs", async () => {
-    await page
-      .getByLabel(/les indicateurs des chantiers/)
-      .check({ force: true });
-    await expect(
-      page.getByLabel("les indicateurs des chantiers"),
-    ).toBeChecked();
+    await pageAccueil.exportModal.selectExportType("indicateurs");
+    await expect(page.getByLabel("les indicateurs des chantiers")).toBeChecked();
     await page.waitForURL(
       "**/accueil/chantier/NAT-FR?isModaleExportCsvOuverte=true&etapeCourante=1&typeExport=indicateurs&optionsExport=identifiant",
     );
   });
 
   await test.step("Passage à l'étape 2 - Périmètre de l'export", async () => {
-    await page.getByRole("button", { name: /Étape suivante/ }).click();
+    await pageAccueil.exportModal.nextStep();
     await page.waitForURL(
       "**/accueil/chantier/NAT-FR?isModaleExportCsvOuverte=true&etapeCourante=2&typeExport=indicateurs&optionsExport=identifiant",
     );
-    await expect(
-      page.getByRole("heading", { name: /Périmètre de l'export/ }),
-    ).toBeVisible();
-    await expect(
-      page.getByRole("heading", {
-        name: /Exporter les données - Étape 2 sur 5/,
-      }),
-    ).toBeVisible();
+    await pageAccueil.exportModal.expectStep(2, /Périmètre de l'export/);
   });
 
   await test.step("Choix de l'export chantier sans filtres", async () => {
-    await page.getByLabel(/exporter tous les éléments/).check();
+    await pageAccueil.exportModal.selectPerimeter(false);
     await expect(page.getByLabel("exporter tous les éléments")).toBeChecked();
   });
 
   await test.step("Passage à l'étape 3 - Données à collecter", async () => {
-    await page.getByRole("button", { name: /Étape suivante/ }).click();
+    await pageAccueil.exportModal.nextStep();
     await page.waitForURL(
       "**/accueil/chantier/NAT-FR?isModaleExportCsvOuverte=true&etapeCourante=3&typeExport=indicateurs&optionsExport=identifiant",
     );
-    await expect(
-      page.getByRole("heading", { name: /Données à collecter/ }),
-    ).toBeVisible();
-    await expect(
-      page.getByRole("heading", {
-        name: /Exporter les données - Étape 3 sur 5/,
-      }),
-    ).toBeVisible();
+    await pageAccueil.exportModal.expectStep(3, /Données à collecter/);
   });
 
   await test.step("Vérification des possibilités de choix d'export - identifiants", async () => {
     await expect(
-      page.getByLabel(
-        /identifiants de l'indicateur, du chantier associé et du territoire/,
-      ),
+      page.getByLabel(/identifiants de l'indicateur, du chantier associé et du territoire/),
     ).toBeVisible();
     await expect(
-      page.getByLabel(
-        /identifiants de l'indicateur, du chantier associé et du territoire/,
-      ),
+      page.getByLabel(/identifiants de l'indicateur, du chantier associé et du territoire/),
     ).toBeChecked();
   });
 
   await test.step("Vérification des possibilités de choix d'export - cadrage de l'indicateur", async () => {
     await expect(page.getByLabel(/cadrage de l'indicateur/)).toBeVisible();
-    await page
-      .getByRole("checkbox", { name: /cadrage de l'indicateur/ })
-      .setChecked(true, { force: true });
+    await pageAccueil.exportModal.checkDataOption(/cadrage de l'indicateur/);
     await page.waitForURL(
       "**/accueil/chantier/NAT-FR?isModaleExportCsvOuverte=true&etapeCourante=3&typeExport=indicateurs&optionsExport=identifiant,cadrage",
     );
@@ -102,11 +70,9 @@ test("doit pouvoir exporter les données des indicateurs sous format CSV", async
     await expect(
       page.getByLabel(/gouvernance de l'indicateur et du chantier associé/),
     ).toBeVisible();
-    await page
-      .getByRole("checkbox", {
-        name: /gouvernance de l'indicateur et du chantier associé/,
-      })
-      .setChecked(true, { force: true });
+    await pageAccueil.exportModal.checkDataOption(
+      /gouvernance de l'indicateur et du chantier associé/,
+    );
     await page.waitForURL(
       "**/accueil/chantier/NAT-FR?isModaleExportCsvOuverte=true&etapeCourante=3&typeExport=indicateurs&optionsExport=identifiant,cadrage,gouvernance",
     );
@@ -116,73 +82,44 @@ test("doit pouvoir exporter les données des indicateurs sous format CSV", async
   });
 
   await test.step("Vérification des possibilités de choix d'export - données descriptives de l'indicateur sur le territoire", async () => {
-    await expect(
-      page.getByLabel(/données de l'indicateur sur le territoire/),
-    ).toBeVisible();
-    await page
-      .getByRole("checkbox", {
-        name: /données de l'indicateur sur le territoire/,
-      })
-      .setChecked(true, { force: true });
+    await expect(page.getByLabel(/données de l'indicateur sur le territoire/)).toBeVisible();
+    await pageAccueil.exportModal.checkDataOption(/données de l'indicateur sur le territoire/);
     await page.waitForURL(
       "**/accueil/chantier/NAT-FR?isModaleExportCsvOuverte=true&etapeCourante=3&typeExport=indicateurs&optionsExport=identifiant,cadrage,gouvernance,description",
     );
-    await expect(
-      page.getByLabel(/données de l'indicateur sur le territoire/),
-    ).toBeChecked();
+    await expect(page.getByLabel(/données de l'indicateur sur le territoire/)).toBeChecked();
   });
 
   await test.step("Vérification des possibilités de choix d'export - données descriptives du chantier associé sur le territoire", async () => {
-    await expect(
-      page.getByLabel(/données du chantier associé sur le territoire/),
-    ).toBeVisible();
-    await page
-      .getByRole("checkbox", {
-        name: /données du chantier associé sur le territoire/,
-      })
-      .setChecked(true, { force: true });
+    await expect(page.getByLabel(/données du chantier associé sur le territoire/)).toBeVisible();
+    await pageAccueil.exportModal.checkDataOption(/données du chantier associé sur le territoire/);
     await page.waitForURL(
       "**/accueil/chantier/NAT-FR?isModaleExportCsvOuverte=true&etapeCourante=3&typeExport=indicateurs&optionsExport=identifiant,cadrage,gouvernance,description,description-chantier",
     );
-    await expect(
-      page.getByLabel(/données du chantier associé sur le territoire/),
-    ).toBeChecked();
+    await expect(page.getByLabel(/données du chantier associé sur le territoire/)).toBeChecked();
   });
 
   await test.step("Vérification des possibilités de choix d'export - météo et synthèse des résultats du chantier associé sur le territoire", async () => {
     await expect(
-      page.getByLabel(
-        /météo et synthèse des résultats du chantier associé sur le territoire/,
-      ),
+      page.getByLabel(/météo et synthèse des résultats du chantier associé sur le territoire/),
     ).toBeVisible();
-    await page
-      .getByRole("checkbox", {
-        name: /météo et synthèse des résultats du chantier associé sur le territoire/,
-      })
-      .setChecked(true, { force: true });
+    await pageAccueil.exportModal.checkDataOption(
+      /météo et synthèse des résultats du chantier associé sur le territoire/,
+    );
     await page.waitForURL(
       "**/accueil/chantier/NAT-FR?isModaleExportCsvOuverte=true&etapeCourante=3&typeExport=indicateurs&optionsExport=identifiant,cadrage,gouvernance,description,description-chantier,synthese",
     );
     await expect(
-      page.getByLabel(
-        /météo et synthèse des résultats du chantier associé sur le territoire/,
-      ),
+      page.getByLabel(/météo et synthèse des résultats du chantier associé sur le territoire/),
     ).toBeChecked();
   });
 
   await test.step("Passage à l'étape 4 - Récapitulatif et validation - partie vérification transmission paramètre", async () => {
-    await page.getByRole("button", { name: /Étape suivante/ }).click();
+    await pageAccueil.exportModal.nextStep();
     await page.waitForURL(
       "**/accueil/chantier/NAT-FR?isModaleExportCsvOuverte=true&etapeCourante=4&typeExport=indicateurs&optionsExport=identifiant,cadrage,gouvernance,description,description-chantier,synthese",
     );
-    await expect(
-      page.getByRole("heading", { name: /Récapitulatif et validation/ }),
-    ).toBeVisible();
-    await expect(
-      page.getByRole("heading", {
-        name: /Exporter les données - Étape 4 sur 5/,
-      }),
-    ).toBeVisible();
+    await pageAccueil.exportModal.expectStep(4, /Récapitulatif et validation/);
   });
 
   let download: Download;
@@ -195,29 +132,11 @@ test("doit pouvoir exporter les données des indicateurs sous format CSV", async
       await page.waitForURL(
         "**/accueil/chantier/NAT-FR?isModaleExportCsvOuverte=true&etapeCourante=4&typeExport=indicateurs&optionsExport=identifiant,gouvernance",
       );
-      await expect(
-        page.getByRole("heading", { name: /Récapitulatif et validation/ }),
-      ).toBeVisible();
-      await expect(
-        page.getByRole("heading", {
-          name: /Exporter les données - Étape 4 sur 5/,
-        }),
-      ).toBeVisible();
+      await pageAccueil.exportModal.expectStep(4, /Récapitulatif et validation/);
 
-      const downloadPromise = page.waitForEvent("download", {
-        timeout: 120_000,
-      });
+      download = await pageAccueil.exportModal.download();
 
-      await page
-        .getByTestId("form-export")
-        .getByRole("button", { name: /Exporter les données/ })
-        .click();
-
-      download = await downloadPromise;
-
-      expect(download.suggestedFilename()).toMatch(
-        /PILOTE-Indicateurs-.*\.csv/,
-      );
+      expect(download.suggestedFilename()).toMatch(/PILOTE-Indicateurs-.*\.csv/);
     });
 
     await test.step("vérification du fichier identifiant et cadrage", async () => {
@@ -238,20 +157,9 @@ test("doit pouvoir exporter les données des indicateurs sous format CSV", async
         "**/accueil/chantier/NAT-FR?isModaleExportCsvOuverte=true&etapeCourante=4&typeExport=indicateurs&optionsExport=identifiant,gouvernance,description",
       );
 
-      const downloadPromise = page.waitForEvent("download", {
-        timeout: 120_000,
-      });
+      download = await pageAccueil.exportModal.download();
 
-      await page
-        .getByTestId("form-export")
-        .getByRole("button", { name: /Exporter les données/ })
-        .click();
-
-      download = await downloadPromise;
-
-      expect(download.suggestedFilename()).toMatch(
-        /PILOTE-Indicateurs-.*\.csv/,
-      );
+      expect(download.suggestedFilename()).toMatch(/PILOTE-Indicateurs-.*\.csv/);
     });
 
     await test.step("vérification du fichier identifiant, gouvernance, valeur descriptive", async () => {

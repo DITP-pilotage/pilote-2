@@ -1,6 +1,7 @@
 import { Page, expect } from "@playwright/test";
 import { BasePage } from "./base.page";
 import { HeaderComponent } from "../components/header.component";
+import { PageMiseAJourDonnees } from "./page-mise-a-jour-donnees";
 
 export class PageChantier extends BasePage {
   readonly header: HeaderComponent;
@@ -12,6 +13,12 @@ export class PageChantier extends BasePage {
 
   async expectTitle(id: string, nom: string): Promise<void> {
     await expect(this.page).toHaveTitle(`Chantier ${id} - ${nom} - PILOTE`);
+  }
+
+  async gotoMiseAJourDonnees(chantierId: string): Promise<PageMiseAJourDonnees> {
+    await this.page.getByRole("link", { name: /Mettre à jour les données/ }).click();
+    await this.page.waitForURL(`**/chantier/CH-${chantierId}/indicateurs`);
+    return new PageMiseAJourDonnees(this.page);
   }
 
   async expectStructure(): Promise<void> {

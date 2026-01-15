@@ -1,44 +1,32 @@
 import { Download, expect, test } from "@playwright/test";
 import fs from "node:fs";
-import { loginFn, seedDatabase } from "./utils";
+import { seedDatabase } from "./utils";
+import { AppActions } from "./actions/app.actions";
 
 test.beforeAll(() => {
   seedDatabase();
 });
 
-test("doit pouvoir exporter les données des indicateurs sous format CSV", async ({
-  page,
-}) => {
+test("doit pouvoir exporter les données des indicateurs sous format CSV", async ({ page }) => {
+  const appActions = new AppActions(page);
+  const pageAccueil = await appActions.loginAs();
   test.setTimeout(60_000);
-  await loginFn({ page });
 
   await test.step("Selection d'un perimètre pour réduire la quantité de chantier exporté", async () => {
-    await page.getByRole("button", { name: /Filtrer par ministères/ }).click();
-    await page.getByRole("button", { name: /Intérieur et Outre-mer/ }).click();
-    await page.waitForURL(
-      "**/accueil/chantier/NAT-FR?pageIndex=1&perimetres=PER-014",
-    );
+    await pageAccueil.filterByMinistere("Intérieur et Outre-mer");
+    await page.waitForURL("**/accueil/chantier/NAT-FR?pageIndex=1&perimetres=PER-014");
   });
 
   await test.step("Ouverture de la modale d'export csv à l'étape 1 - Éléments à exporter", async () => {
-    await page.getByRole("button", { name: /Exporter les données/ }).click();
+    await pageAccueil.openExportModal();
     await page.waitForURL(
       "**/accueil/chantier/NAT-FR?pageIndex=1&perimetres=PER-014&isModaleExportCsvOuverte=true&etapeCourante=1&typeExport=chantiers",
     );
-    await expect(
-      page.getByRole("heading", { name: /Éléments à exporter/ }),
-    ).toBeVisible();
-    await expect(
-      page.getByRole("heading", {
-        name: /Exporter les données - Étape 1 sur 5/,
-      }),
-    ).toBeVisible();
+    await pageAccueil.exportModal.expectStep(1, /Éléments à exporter/);
   });
 
   await test.step("Choix de l'export indicateurs", async () => {
-    await page
-      .getByLabel(/l'historique des indicateurs/)
-      .check({ force: true });
+    await pageAccueil.exportModal.selectExportType("historique-indicateurs");
     await expect(page.getByLabel(/l'historique des indicateurs/)).toBeChecked();
     await page.waitForURL(
       "**/accueil/chantier/NAT-FR?pageIndex=1&perimetres=PER-014&isModaleExportCsvOuverte=true&etapeCourante=1&typeExport=historique-indicateurs&optionsExport=identifiant,valeur-cible,valeur-avancement",
@@ -46,75 +34,47 @@ test("doit pouvoir exporter les données des indicateurs sous format CSV", async
   });
 
   await test.step("Passage à l'étape 2 - Périmètre de l'export", async () => {
-    await page.getByRole("button", { name: /Étape suivante/ }).click();
+    await pageAccueil.exportModal.nextStep();
     await page.waitForURL(
       "**/accueil/chantier/NAT-FR?pageIndex=1&perimetres=PER-014&isModaleExportCsvOuverte=true&etapeCourante=2&typeExport=historique-indicateurs&optionsExport=identifiant,valeur-cible,valeur-avancement",
     );
-    await page
-      .getByLabel(
-        /exporter les éléments de la sélection présentement active dans PILOTE/,
-      )
-      .check({ force: true });
+    await pageAccueil.exportModal.selectPerimeter(true);
     await page.waitForURL(
       "**/accueil/chantier/NAT-FR?pageIndex=1&perimetres=PER-014&isModaleExportCsvOuverte=true&etapeCourante=2&typeExport=historique-indicateurs&optionsExport=identifiant,valeur-cible,valeur-avancement&isAvecFiltre=true",
     );
-    await expect(
-      page.getByRole("heading", { name: /Périmètre de l'export/ }),
-    ).toBeVisible();
-    await expect(
-      page.getByRole("heading", {
-        name: /Exporter les données - Étape 2 sur 5/,
-      }),
-    ).toBeVisible();
+    await pageAccueil.exportModal.expectStep(2, /Périmètre de l'export/);
   });
 
   await test.step("Passage à l'étape 3 - Données à collecter - choix données avec filtres", async () => {
-    await page.getByRole("button", { name: /Étape suivante/ }).click();
+    await pageAccueil.exportModal.nextStep();
     await page.waitForURL(
       "**/accueil/chantier/NAT-FR?pageIndex=1&perimetres=PER-014&isModaleExportCsvOuverte=true&etapeCourante=3&typeExport=historique-indicateurs&optionsExport=identifiant,valeur-cible,valeur-avancement&isAvecFiltre=true",
     );
-    await expect(
-      page.getByRole("heading", { name: /Données à collecter/ }),
-    ).toBeVisible();
-    await expect(
-      page.getByRole("heading", {
-        name: /Exporter les données - Étape 3 sur 5/,
-      }),
-    ).toBeVisible();
+    await pageAccueil.exportModal.expectStep(3, /Données à collecter/);
   });
 
   await test.step("Vérification des possibilités de choix d'export - identifiants", async () => {
     await expect(
       page.getByLabel(/identifiants de l'indicateur et du territoire/),
     ).toBeVisible();
-    await expect(
-      page.getByLabel(/identifiants de l'indicateur et du territoire/),
-    ).toBeChecked();
+    await expect(page.getByLabel(/identifiants de l'indicateur et du territoire/)).toBeChecked();
   });
 
   await test.step("Vérification des possibilités de choix d'export - valeur initiale et valeur cible", async () => {
     await expect(
-      page.getByLabel(
-        /valeur initiale et valeurs cibles\* de l'indicateur sur le territoire/,
-      ),
+      page.getByLabel(/valeur initiale et valeurs cibles\* de l'indicateur sur le territoire/),
     ).toBeVisible();
     await expect(
-      page.getByLabel(
-        /valeur initiale et valeurs cibles\* de l'indicateur sur le territoire/,
-      ),
+      page.getByLabel(/valeur initiale et valeurs cibles\* de l'indicateur sur le territoire/),
     ).toBeChecked();
   });
 
   await test.step("Vérification des possibilités de choix d'export - valeur avancement", async () => {
     await expect(
-      page.getByLabel(
-        /valeurs d'avancement de l'indicateur sur le territoire, mois par mois/,
-      ),
+      page.getByLabel(/valeurs d'avancement de l'indicateur sur le territoire, mois par mois/),
     ).toBeVisible();
     await expect(
-      page.getByLabel(
-        /valeurs d'avancement de l'indicateur sur le territoire, mois par mois/,
-      ),
+      page.getByLabel(/valeurs d'avancement de l'indicateur sur le territoire, mois par mois/),
     ).toBeChecked();
   });
 
@@ -122,33 +82,15 @@ test("doit pouvoir exporter les données des indicateurs sous format CSV", async
 
   await test.step("Retour à l'étape 4 - Récapitulatif et validation - partie téléchargement et vérification du fichier", async () => {
     await test.step("Téléchargement du fichier", async () => {
-      await page.getByRole("button", { name: /Étape suivante/ }).click();
+      await pageAccueil.exportModal.nextStep();
       await page.waitForURL(
         "**/accueil/chantier/NAT-FR?pageIndex=1&perimetres=PER-014&isModaleExportCsvOuverte=true&etapeCourante=4&typeExport=historique-indicateurs&optionsExport=identifiant,valeur-cible,valeur-avancement&isAvecFiltre=true",
       );
-      await expect(
-        page.getByRole("heading", { name: /Récapitulatif et validation/ }),
-      ).toBeVisible();
-      await expect(
-        page.getByRole("heading", {
-          name: /Exporter les données - Étape 4 sur 5/,
-        }),
-      ).toBeVisible();
+      await pageAccueil.exportModal.expectStep(4, /Récapitulatif et validation/);
 
-      const downloadPromise = page.waitForEvent("download", {
-        timeout: 120_000,
-      });
+      download = await pageAccueil.exportModal.download();
 
-      await page
-        .getByTestId("form-export")
-        .getByRole("button", { name: /Exporter les données/ })
-        .click();
-
-      download = await downloadPromise;
-
-      expect(download.suggestedFilename()).toMatch(
-        /PILOTE-Historique-Indicateurs-.*\.csv/,
-      );
+      expect(download.suggestedFilename()).toMatch(/PILOTE-Historique-Indicateurs-.*\.csv/);
     });
 
     await test.step("vérification du fichier identifiant et cadrage", async () => {
