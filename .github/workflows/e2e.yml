@@ -4,51 +4,12 @@ on:
   schedule:
     - cron: "0 8,14 * * *"
   workflow_dispatch: # Pour déclencher manuellement
-    inputs:
-      environment:
-        description: "Environnement à tester"
-        required: true
-        default: "tests-e2e-webapp.osc-secnum-fr1.scalingo.io"
-        type: choice
-        options:
-          - tests-e2e-webapp.osc-secnum-fr1.scalingo.io
-      browser:
-        description: "Navigateur pour les tests"
-        required: true
-        default: "chromium"
-        type: choice
-        options:
-          - chromium
-          - firefox
-          - webkit
-      workers:
-        description: "Nombre de workers parallèles"
-        required: true
-        default: "1"
-        type: choice
-        options:
-          - "1"
       notify_tchap:
         description: "Envoyer notification Tchap"
         required: true
         default: true
         type: boolean
-      test_pattern:
-        description: "Pattern de tests à exécuter (optionnel)"
-        required: false
-        default: ""
-        type: string
 env:
-  # Variables d'environnement pour les tests
-  ENVIRONMENT: E2E
-  E2E_USERNAME: ${{ secrets.E2E_USERNAME }}
-  DEV_PASSWORD: ${{ secrets.DEV_PASSWORD }}
-  API_DITP_USERNAME: ${{ secrets.API_DITP_USERNAME }}
-  API_DIR_PROJET_USERNAME: ${{ secrets.API_DIR_PROJET_USERNAME }}
-  API_DIR_PROJET_CHANTIER_ASSOCIE: ${{ secrets.API_DIR_PROJET_CHANTIER_ASSOCIE }}
-  API_DIR_PROJET_INDICATEUR_ASSOCIE: ${{ secrets.API_DIR_PROJET_INDICATEUR_ASSOCIE }}
-  BASE_URL: https://tests-e2e-webapp.osc-secnum-fr1.scalingo.io
-
   # Notifications Tchap
   TCHAP_BASE_URL: ${{ secrets.TCHAP_BASE_URL }}
   TCHAP_ACCESS_TOKEN: ${{ secrets.TCHAP_ACCESS_TOKEN }}
@@ -81,8 +42,6 @@ jobs:
           set -e
           npx playwright test --workers=1
         env:
-          # URL de votre app Scalingo
-          PLAYWRIGHT_BASE_URL: ${{ env.BASE_URL }}
           CI: true
           PLAYWRIGHT_HEADLESS: true
 
