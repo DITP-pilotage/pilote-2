@@ -278,4 +278,99 @@ describe("PrismaUtilisateurRepository", () => {
       );
     });
   });
+
+  describe("recupererComptesInactifs", function () {
+    test("retourne un tableau vide si aucun compte inactif", async () => {
+      // Given
+      const dateReference = new Date("2025-01-15");
+      await prisma.getInstance().utilisateur.create({
+        data: {
+          nom: "Actif",
+          prenom: "Utilisateur",
+          email: "actif@test.com",
+          profilCode: ProfilEnum.DITP_ADMIN,
+          date_creation: new Date(),
+          date_derniere_connexion: new Date("2024-06-01"),
+        },
+      });
+
+      // When
+      const result =
+        await utilisateurRepository.recupererComptesInactifs(dateReference);
+
+      // Then
+      expect(result).toEqual([]);
+    });
+
+    test("retourne les utilisateurs non desactives qui ont une date de derniere connexion supérieure à un an par rapport à la date de reference", async () => {
+      // Given
+      const dateReference = new Date("2025-01-15");
+      const datePremiereRelance = new Date("2024-12-01");
+      const dateDeuxiemeRelance = new Date("2024-12-24");
+      const dateDesactivationProgramee = new Date("2024-12-31");
+
+      await prisma.getInstance().utilisateur.createMany({
+        data: [
+          {
+            nom: "Inactif",
+            prenom: "AvecRelances",
+            email: "inactif.relances@test.com",
+            profilCode: ProfilEnum.DITP_ADMIN,
+            date_creation: new Date(),
+            date_derniere_connexion: new Date("2023-06-01"),
+            date_premiere_relance_desactivation: datePremiereRelance,
+            date_deuxieme_relance_desactivation: dateDeuxiemeRelance,
+            date_desactivation_programee: dateDesactivationProgramee,
+          },
+          {
+            nom: "Inactif",
+            prenom: "SansRelances",
+            email: "inactif.sans.relances@test.com",
+            profilCode: ProfilEnum.DITP_ADMIN,
+            date_creation: new Date(),
+            date_derniere_connexion: new Date("2024-01-14"),
+          },
+          {
+            nom: "Actif",
+            prenom: "Recent",
+            email: "actif.recent@test.com",
+            profilCode: ProfilEnum.DITP_ADMIN,
+            date_creation: new Date(),
+            date_derniere_connexion: new Date("2024-06-01"),
+          },
+          {
+            nom: "Desactive",
+            prenom: "Utilisateur",
+            email: "desactive@test.com",
+            profilCode: ProfilEnum.DITP_ADMIN,
+            date_creation: new Date(),
+            date_derniere_connexion: new Date("2023-01-01"),
+            date_desactivation: new Date("2024-01-01"),
+          },
+        ],
+      });
+
+      // When
+      const result =
+        await utilisateurRepository.recupererComptesInactifs(dateReference);
+
+      // Then
+      expect(result).toEqual([
+        {
+          email: "inactif.relances@test.com",
+          datePremiereRelanceDesactivation: datePremiereRelance,
+          dateDeuxiemeRelanceDesactivation: dateDeuxiemeRelance,
+          dateDesactivationProgramee: dateDesactivationProgramee,
+          dateDerniereConnexion: new Date("2023-06-01"),
+        },
+        {
+          email: "inactif.sans.relances@test.com",
+          datePremiereRelanceDesactivation: null,
+          dateDeuxiemeRelanceDesactivation: null,
+          dateDesactivationProgramee: null,
+          dateDerniereConnexion: new Date("2024-01-14"),
+        },
+      ]);
+    });
+  });
 });

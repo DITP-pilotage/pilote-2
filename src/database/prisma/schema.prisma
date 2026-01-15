@@ -585,6 +585,10 @@ model utilisateur {
   rattachement_utilisateur_etape_jalons  rattachement_utilisateur_etape_jalon[]
   evaluation_objectif                    evaluation_objectif[]
   evaluation_critere                     evaluation_critere[]
+  date_premiere_relance_desactivation    DateTime?
+  date_deuxieme_relance_desactivation    DateTime?
+  date_desactivation_programee           DateTime?
+  date_derniere_connexion                DateTime                                 @default(now())
 
   @@schema("public")
 }

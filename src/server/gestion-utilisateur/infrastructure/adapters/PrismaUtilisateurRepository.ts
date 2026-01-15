@@ -982,4 +982,43 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
       data: habilitationsÀCréer,
     });
   }
+
+  async recupererComptesInactifs(dateReference: Date): Promise<
+    {
+      email: string;
+      datePremiereRelanceDesactivation: Date | null;
+      dateDeuxiemeRelanceDesactivation: Date | null;
+      dateDesactivationProgramee: Date | null;
+      dateDerniereConnexion: Date;
+    }[]
+  > {
+    const dateSeuilInactivite = new Date(dateReference);
+    dateSeuilInactivite.setFullYear(dateSeuilInactivite.getFullYear() - 1);
+
+    const comptesInactifs = await this.prisma.utilisateur.findMany({
+      where: {
+        date_desactivation: null,
+        date_derniere_connexion: {
+          lt: dateSeuilInactivite,
+        },
+      },
+      select: {
+        email: true,
+        date_premiere_relance_desactivation: true,
+        date_deuxieme_relance_desactivation: true,
+        date_desactivation_programee: true,
+        date_derniere_connexion: true,
+      },
+    });
+
+    return comptesInactifs.map((compte) => ({
+      email: compte.email,
+      datePremiereRelanceDesactivation:
+        compte.date_premiere_relance_desactivation,
+      dateDeuxiemeRelanceDesactivation:
+        compte.date_deuxieme_relance_desactivation,
+      dateDesactivationProgramee: compte.date_desactivation_programee,
+      dateDerniereConnexion: compte.date_derniere_connexion,
+    }));
+  }
 }

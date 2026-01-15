@@ -84,4 +84,13 @@ export interface UtilisateurRepository {
   ): Promise<void>;
   recupererUtilisateurEmail(id: string): Promise<string | null>;
   recupererUtilisateurId(email: string): Promise<string | null>;
+  recupererComptesInactifs(dateReference: Date): Promise<
+    {
+      email: string;
+      datePremiereRelanceDesactivation: Date | null;
+      dateDeuxiemeRelanceDesactivation: Date | null;
+      dateDesactivationProgramee: Date | null;
+      dateDerniereConnexion: Date;
+    }[]
+  >;
 }
