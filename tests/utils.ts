@@ -1,5 +1,4 @@
-import { Page } from "playwright-core";
-import { expect, test } from "@playwright/test";
+import { expect, test, Page } from "@playwright/test";
 import { execSync } from "child_process";
 
 export const seedDatabase = () =>

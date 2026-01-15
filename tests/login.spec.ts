@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { test } from "@playwright/test";
 import { seedDatabase } from "./utils";
 import { PageAccueilNonConnecte } from "./pages/page-accueil-non-connecte";
 import { AppActions } from "./actions/app.actions";

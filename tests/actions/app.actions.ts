@@ -1,4 +1,4 @@
-import { expect, Page } from "@playwright/test";
+import { Page } from "@playwright/test";
 import { PageAccueilNonConnecte } from "../pages/page-accueil-non-connecte";
 import { PageLogin } from "../pages/page-login";
 import { PageAccueil } from "../pages/page-accueil";
