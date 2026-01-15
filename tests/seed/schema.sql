@@ -16,13 +16,12 @@ SET check_function_bodies = false;
 SET xmloption = content;
 SET client_min_messages = warning;
 SET row_security = off;
-
 --
 -- Name: public; Type: SCHEMA; Schema: -; Owner: postgres
 --
 
 CREATE SCHEMA public;
-
+CREATE EXTENSION IF NOT EXISTS unaccent WITH SCHEMA public;
 
 ALTER SCHEMA public OWNER TO postgres;
 
@@ -31,6 +30,7 @@ ALTER SCHEMA public OWNER TO postgres;
 --
 
 CREATE SCHEMA raw_data;
+CREATE EXTENSION IF NOT EXISTS unaccent WITH SCHEMA raw_data;
 
 
 ALTER SCHEMA raw_data OWNER TO postgres;

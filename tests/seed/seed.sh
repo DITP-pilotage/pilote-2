@@ -14,8 +14,6 @@ echo "=== Etape 1: Suppression et recreation des schemas ==="
 psql -d "$DATABASE_URL" <<EOF
 DROP SCHEMA IF EXISTS public CASCADE;
 DROP SCHEMA IF EXISTS raw_data CASCADE;
-CREATE SCHEMA public;
-CREATE SCHEMA raw_data;
 EOF
 
 echo "=== Etape 2: Chargement du schema SQL ==="
