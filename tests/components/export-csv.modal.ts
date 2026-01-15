@@ -30,7 +30,9 @@ export class ExportCsvModal {
   async selectPerimeter(withFilters: boolean): Promise<void> {
     if (withFilters) {
       await this.page
-        .getByLabel(/exporter les éléments de la sélection présentement active dans PILOTE/)
+        .getByLabel(
+          /exporter les éléments de la sélection présentement active dans PILOTE/,
+        )
         .check({ force: true });
     } else {
       await this.page.getByLabel(/exporter tous les éléments/).check();
@@ -38,7 +40,9 @@ export class ExportCsvModal {
   }
 
   async checkDataOption(label: string | RegExp): Promise<void> {
-    await this.page.getByRole("checkbox", { name: label }).setChecked(true, { force: true });
+    await this.page
+      .getByRole("checkbox", { name: label })
+      .setChecked(true, { force: true });
   }
 
   async nextStep(): Promise<void> {
@@ -47,7 +51,9 @@ export class ExportCsvModal {
 
   async download(timeout = 120_000): Promise<Download> {
     const downloadPromise = this.page.waitForEvent("download", { timeout });
-    await this.form.getByRole("button", { name: /Exporter les données/ }).click();
+    await this.form
+      .getByRole("button", { name: /Exporter les données/ })
+      .click();
     return downloadPromise;
   }
 }

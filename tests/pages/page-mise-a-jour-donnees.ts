@@ -10,11 +10,16 @@ export class PageMiseAJourDonnees extends BasePage {
 
   async expectStep(step: number): Promise<void> {
     await expect(
-      this.page.getByRole("heading", { name: new RegExp(`Étape ${step} sur 3`) }),
+      this.page.getByRole("heading", {
+        name: new RegExp(`Étape ${step} sur 3`),
+      }),
     ).toBeVisible();
   }
 
-  async selectIndicateur(indicateurId: string, indicateurNom: string): Promise<void> {
+  async selectIndicateur(
+    indicateurId: string,
+    indicateurNom: string,
+  ): Promise<void> {
     await expect(
       this.page.getByRole("heading", { name: /Sélectionnez l'indicateur/ }),
     ).toBeVisible();
@@ -36,19 +41,28 @@ export class PageMiseAJourDonnees extends BasePage {
   }
 
   async verifyFile(): Promise<void> {
-    await this.page.getByRole("button", { name: /Vérifier le fichier/ }).click();
+    await this.page
+      .getByRole("button", { name: /Vérifier le fichier/ })
+      .click();
   }
 
   async submitData(): Promise<void> {
-    await this.page.getByRole("button", { name: /Transmettre les données/ }).first().click();
+    await this.page
+      .getByRole("button", { name: /Transmettre les données/ })
+      .first()
+      .click();
   }
 
   async expectFileValid(): Promise<void> {
-    await expect(this.page.getByText(/Bravo, le fichier est conforme !/)).toBeVisible();
+    await expect(
+      this.page.getByText(/Bravo, le fichier est conforme !/),
+    ).toBeVisible();
   }
 
   async expectFileInvalid(): Promise<void> {
-    await expect(this.page.getByText(/Le fichier ne peut pas être importé/)).toBeVisible();
+    await expect(
+      this.page.getByText(/Le fichier ne peut pas être importé/),
+    ).toBeVisible();
   }
 
   async expectImportSuccess(indicateurId: string): Promise<void> {

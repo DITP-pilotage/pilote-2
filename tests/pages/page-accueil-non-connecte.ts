@@ -15,6 +15,8 @@ export class PageAccueilNonConnecte extends BasePage {
   }
 
   async expectTitle(): Promise<void> {
-    await expect(this.page).toHaveTitle(/PILOTE - Piloter l'action publique par les résultats/);
+    await expect(this.page).toHaveTitle(
+      /PILOTE - Piloter l'action publique par les résultats/,
+    );
   }
 }

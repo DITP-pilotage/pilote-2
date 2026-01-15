@@ -20,7 +20,9 @@ test("doit pouvoir consulter les données des chantiers", async ({ page }) => {
   });
 
   await test.step("Ajout du filtre ministère 'Transition écologique et Cohésion des territoires'", async () => {
-    await pageAccueil.filterByMinistere("Transition écologique et Cohésion des territoires");
+    await pageAccueil.filterByMinistere(
+      "Transition écologique et Cohésion des territoires",
+    );
   });
 
   await test.step("Vérification filtre ministère actif 'Transition écologique et Cohésion des territoires'", async () => {
@@ -33,7 +35,10 @@ test("doit pouvoir consulter les données des chantiers", async ({ page }) => {
       page.getByRole("table").getByRole("cell", { name: chantier.nom }),
     ).toBeVisible();
 
-    const pageChantier = await pageAccueil.selectChantier(chantier.nom, chantier.id);
+    const pageChantier = await pageAccueil.selectChantier(
+      chantier.nom,
+      chantier.id,
+    );
 
     await test.step(`Vérification de la structure de la page chantier "${chantier.nom}"`, async () => {
       await pageChantier.expectTitle(chantier.id, chantier.nom);

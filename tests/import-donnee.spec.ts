@@ -22,20 +22,30 @@ test("doit pouvoir importer des données", async ({ page }) => {
     await expect(
       page.getByRole("table").getByRole("cell", { name: chantier.nom }),
     ).toBeVisible();
-    const pageChantier = await pageAccueil.selectChantier(chantier.nom, chantier.id);
+    const pageChantier = await pageAccueil.selectChantier(
+      chantier.nom,
+      chantier.id,
+    );
 
     await test.step('Navigation vers la page "Mise à jour des données"', async () => {
-      await expect(page.getByRole("link", { name: /Mettre à jour les données/ })).toBeVisible();
+      await expect(
+        page.getByRole("link", { name: /Mettre à jour les données/ }),
+      ).toBeVisible();
       const pageMaj = await pageChantier.gotoMiseAJourDonnees(chantier.id);
 
       await test.step(`Sélection de l'indicateur ${chantier.indicateurId}`, async () => {
         await pageMaj.expectTitle(chantier.id);
-        await pageMaj.selectIndicateur(chantier.indicateurId, chantier.indicateurNom);
+        await pageMaj.selectIndicateur(
+          chantier.indicateurId,
+          chantier.indicateurNom,
+        );
       });
 
       await test.step("Passage à l'étape suivante 'Charger le fichier'", async () => {
         await pageMaj.nextStep();
-        await page.waitForURL(`**/chantier/CH-${chantier.id}/indicateurs?etapeCourante=2**`);
+        await page.waitForURL(
+          `**/chantier/CH-${chantier.id}/indicateurs?etapeCourante=2**`,
+        );
         await pageMaj.expectStep(2);
       });
 
@@ -43,8 +53,22 @@ test("doit pouvoir importer des données", async ({ page }) => {
         const invalidCsv = stringify(
           [
             ["IND-97", "D12", "Aveyron", "2023-03-31", "va", "5"],
-            [chantier.indicateurId, "D13", "Bouches-du-Rhône", "2023-01-17", "va", "12"],
-            [chantier.indicateurId, "D14", "Calvados", "2023-02-26", "va", "20"],
+            [
+              chantier.indicateurId,
+              "D13",
+              "Bouches-du-Rhône",
+              "2023-01-17",
+              "va",
+              "12",
+            ],
+            [
+              chantier.indicateurId,
+              "D14",
+              "Calvados",
+              "2023-02-26",
+              "va",
+              "20",
+            ],
           ],
           {
             header: true,
@@ -68,7 +92,9 @@ test("doit pouvoir importer des données", async ({ page }) => {
 
       await test.step("Vérification que le fichier n'est pas conforme", async () => {
         await pageMaj.expectFileInvalid();
-        await expect(page.getByText(/IND-97 ne respecte pas le motif imposé/)).toBeVisible();
+        await expect(
+          page.getByText(/IND-97 ne respecte pas le motif imposé/),
+        ).toBeVisible();
         await expect(
           page.getByText(
             `L'indicateur IND-97 ne correpond pas à l'indicateur choisis (${chantier.indicateurId})`,
@@ -80,8 +106,22 @@ test("doit pouvoir importer des données", async ({ page }) => {
         const validCsv = stringify(
           [
             [chantier.indicateurId, "D12", "Aveyron", "2023-03-31", "va", "5"],
-            [chantier.indicateurId, "D13", "Bouches-du-Rhône", "2023-01-17", "va", "12"],
-            [chantier.indicateurId, "D14", "Calvados", "2023-02-26", "va", "20"],
+            [
+              chantier.indicateurId,
+              "D13",
+              "Bouches-du-Rhône",
+              "2023-01-17",
+              "va",
+              "12",
+            ],
+            [
+              chantier.indicateurId,
+              "D14",
+              "Calvados",
+              "2023-02-26",
+              "va",
+              "20",
+            ],
           ],
           {
             header: true,
@@ -109,7 +149,9 @@ test("doit pouvoir importer des données", async ({ page }) => {
 
       await test.step('Passage à l\'étape suivante "Transmettre les données"', async () => {
         await pageMaj.nextStep();
-        await page.waitForURL(`**/chantier/CH-${chantier.id}/indicateurs?etapeCourante=3**`);
+        await page.waitForURL(
+          `**/chantier/CH-${chantier.id}/indicateurs?etapeCourante=3**`,
+        );
         await pageMaj.expectStep(3);
       });
 

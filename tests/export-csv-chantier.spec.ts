@@ -7,7 +7,9 @@ test.beforeAll(() => {
   seedDatabase();
 });
 
-test("doit pouvoir exporter les données des chantiers sous format CSV", async ({ page }) => {
+test("doit pouvoir exporter les données des chantiers sous format CSV", async ({
+  page,
+}) => {
   const appActions = new AppActions(page);
   const pageAccueil = await appActions.loginAs();
   test.setTimeout(150_000);
@@ -47,8 +49,12 @@ test("doit pouvoir exporter les données des chantiers sous format CSV", async (
   });
 
   await test.step("Vérification des possibilités de choix d'export - identifiants", async () => {
-    await expect(page.getByLabel(/identifiants du chantier et du territoire/)).toBeVisible();
-    await expect(page.getByLabel(/identifiants du chantier et du territoire/)).toBeChecked();
+    await expect(
+      page.getByLabel(/identifiants du chantier et du territoire/),
+    ).toBeVisible();
+    await expect(
+      page.getByLabel(/identifiants du chantier et du territoire/),
+    ).toBeChecked();
   });
 
   await test.step("Vérification des possibilités de choix d'export - gouvernance du chantier", async () => {
@@ -94,17 +100,25 @@ test("doit pouvoir exporter les données des chantiers sous format CSV", async (
   });
 
   await test.step("Vérification des possibilités de choix d'export - données de comparaison du chantier", async () => {
-    await expect(page.getByLabel(/données de comparaison du chantier/)).toBeVisible();
-    await pageAccueil.exportModal.checkDataOption("données de comparaison du chantier");
+    await expect(
+      page.getByLabel(/données de comparaison du chantier/),
+    ).toBeVisible();
+    await pageAccueil.exportModal.checkDataOption(
+      "données de comparaison du chantier",
+    );
     await page.waitForURL(
       "**/accueil/chantier/NAT-FR?isModaleExportCsvOuverte=true&etapeCourante=3&typeExport=chantiers&optionsExport=identifiant,gouvernance,responsabilite,objectif,description,comparaison",
     );
-    await expect(page.getByLabel("données de comparaison du chantier")).toBeChecked();
+    await expect(
+      page.getByLabel("données de comparaison du chantier"),
+    ).toBeChecked();
   });
 
   await test.step("Vérification des possibilités de choix d'export - météo et synthèse des résultats du chantier sur le territoire", async () => {
     await expect(
-      page.getByLabel(/météo et synthèse des résultats du chantier sur le territoire/),
+      page.getByLabel(
+        /météo et synthèse des résultats du chantier sur le territoire/,
+      ),
     ).toBeVisible();
     await pageAccueil.exportModal.checkDataOption(
       "météo et synthèse des résultats du chantier sur le territoire",
@@ -113,7 +127,9 @@ test("doit pouvoir exporter les données des chantiers sous format CSV", async (
       "**/accueil/chantier/NAT-FR?isModaleExportCsvOuverte=true&etapeCourante=3&typeExport=chantiers&optionsExport=identifiant,gouvernance,responsabilite,objectif,description,comparaison,synthese",
     );
     await expect(
-      page.getByLabel("météo et synthèse des résultats du chantier sur le territoire"),
+      page.getByLabel(
+        "météo et synthèse des résultats du chantier sur le territoire",
+      ),
     ).toBeChecked();
   });
 
@@ -159,7 +175,10 @@ test("doit pouvoir exporter les données des chantiers sous format CSV", async (
       await page.waitForURL(
         "**/accueil/chantier/NAT-FR?isModaleExportCsvOuverte=true&etapeCourante=4&typeExport=chantiers&optionsExport=identifiant,gouvernance",
       );
-      await pageAccueil.exportModal.expectStep(4, /Récapitulatif et validation/);
+      await pageAccueil.exportModal.expectStep(
+        4,
+        /Récapitulatif et validation/,
+      );
 
       download = await pageAccueil.exportModal.download();
 

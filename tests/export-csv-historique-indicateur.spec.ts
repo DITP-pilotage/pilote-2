@@ -7,14 +7,18 @@ test.beforeAll(() => {
   seedDatabase();
 });
 
-test("doit pouvoir exporter les données des indicateurs sous format CSV", async ({ page }) => {
+test("doit pouvoir exporter les données des indicateurs sous format CSV", async ({
+  page,
+}) => {
   const appActions = new AppActions(page);
   const pageAccueil = await appActions.loginAs();
   test.setTimeout(60_000);
 
   await test.step("Selection d'un perimètre pour réduire la quantité de chantier exporté", async () => {
     await pageAccueil.filterByMinistere("Intérieur et Outre-mer");
-    await page.waitForURL("**/accueil/chantier/NAT-FR?pageIndex=1&perimetres=PER-014");
+    await page.waitForURL(
+      "**/accueil/chantier/NAT-FR?pageIndex=1&perimetres=PER-014",
+    );
   });
 
   await test.step("Ouverture de la modale d'export csv à l'étape 1 - Éléments à exporter", async () => {
@@ -57,24 +61,34 @@ test("doit pouvoir exporter les données des indicateurs sous format CSV", async
     await expect(
       page.getByLabel(/identifiants de l'indicateur et du territoire/),
     ).toBeVisible();
-    await expect(page.getByLabel(/identifiants de l'indicateur et du territoire/)).toBeChecked();
+    await expect(
+      page.getByLabel(/identifiants de l'indicateur et du territoire/),
+    ).toBeChecked();
   });
 
   await test.step("Vérification des possibilités de choix d'export - valeur initiale et valeur cible", async () => {
     await expect(
-      page.getByLabel(/valeur initiale et valeurs cibles\* de l'indicateur sur le territoire/),
+      page.getByLabel(
+        /valeur initiale et valeurs cibles\* de l'indicateur sur le territoire/,
+      ),
     ).toBeVisible();
     await expect(
-      page.getByLabel(/valeur initiale et valeurs cibles\* de l'indicateur sur le territoire/),
+      page.getByLabel(
+        /valeur initiale et valeurs cibles\* de l'indicateur sur le territoire/,
+      ),
     ).toBeChecked();
   });
 
   await test.step("Vérification des possibilités de choix d'export - valeur avancement", async () => {
     await expect(
-      page.getByLabel(/valeurs d'avancement de l'indicateur sur le territoire, mois par mois/),
+      page.getByLabel(
+        /valeurs d'avancement de l'indicateur sur le territoire, mois par mois/,
+      ),
     ).toBeVisible();
     await expect(
-      page.getByLabel(/valeurs d'avancement de l'indicateur sur le territoire, mois par mois/),
+      page.getByLabel(
+        /valeurs d'avancement de l'indicateur sur le territoire, mois par mois/,
+      ),
     ).toBeChecked();
   });
 
@@ -86,11 +100,16 @@ test("doit pouvoir exporter les données des indicateurs sous format CSV", async
       await page.waitForURL(
         "**/accueil/chantier/NAT-FR?pageIndex=1&perimetres=PER-014&isModaleExportCsvOuverte=true&etapeCourante=4&typeExport=historique-indicateurs&optionsExport=identifiant,valeur-cible,valeur-avancement&isAvecFiltre=true",
       );
-      await pageAccueil.exportModal.expectStep(4, /Récapitulatif et validation/);
+      await pageAccueil.exportModal.expectStep(
+        4,
+        /Récapitulatif et validation/,
+      );
 
       download = await pageAccueil.exportModal.download();
 
-      expect(download.suggestedFilename()).toMatch(/PILOTE-Historique-Indicateurs-.*\.csv/);
+      expect(download.suggestedFilename()).toMatch(
+        /PILOTE-Historique-Indicateurs-.*\.csv/,
+      );
     });
 
     await test.step("vérification du fichier identifiant et cadrage", async () => {

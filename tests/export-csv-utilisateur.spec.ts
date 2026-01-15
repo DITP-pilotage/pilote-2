@@ -8,7 +8,9 @@ test.beforeAll(() => {
   seedDatabase();
 });
 
-test("doit pouvoir exporter les données des utilisateurs sous format CSV", async ({ page }) => {
+test("doit pouvoir exporter les données des utilisateurs sous format CSV", async ({
+  page,
+}) => {
   const appActions = new AppActions(page);
   await appActions.loginAs();
 
@@ -21,7 +23,9 @@ test("doit pouvoir exporter les données des utilisateurs sous format CSV", asyn
     await test.step("Téléchargement du fichier", async () => {
       download = await pageUtilisateurs.exportCsv();
 
-      expect(download.suggestedFilename()).toMatch(/PILOTE-Utilisateurs-.*\.csv/);
+      expect(download.suggestedFilename()).toMatch(
+        /PILOTE-Utilisateurs-.*\.csv/,
+      );
     });
 
     await test.step("vérification du fichier identifiant et cadrage", async () => {
