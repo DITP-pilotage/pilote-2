@@ -90,7 +90,7 @@ export const authentificationApiDITPADMINFn = async ({
 }: {
   page: Page;
 }): Promise<{ apiDITPADMINToken: string; apiDITPADMINUsername: string }> => {
-  const apiDITPADMINUsername = process.env.API_DITP_USERNAME!;
+  const apiDITPADMINUsername = "ditp.admin@example.com";
 
   const { apiToken } = await authentificationApiFn({
     page,
@@ -110,11 +110,9 @@ export const authentificationApiDirProjetFn = async ({
   apiDirProjetChantierAssocie: string;
   apiDirProjetIndicateurAssocie: string;
 }> => {
-  const apiDirProjetUsername = process.env.API_DIR_PROJET_USERNAME!;
-  const apiDirProjetChantierAssocie =
-    process.env.API_DIR_PROJET_CHANTIER_ASSOCIE!;
-  const apiDirProjetIndicateurAssocie =
-    process.env.API_DIR_PROJET_INDICATEUR_ASSOCIE!;
+  const apiDirProjetUsername = "equipe.dir.projet@example.com";
+  const apiDirProjetChantierAssocie = "CH-051";
+  const apiDirProjetIndicateurAssocie = "IND-838";
 
   const { apiToken } = await authentificationApiFn({
     page,
