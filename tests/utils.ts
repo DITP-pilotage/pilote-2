@@ -3,6 +3,9 @@ import { expect, test } from "@playwright/test";
 import { execSync } from "child_process";
 
 export const seedDatabase = () => {
+  console.log("-----------------------------------");
+  console.log("CWD:", process.cwd());
+  console.log("-----------------------------------");
   execSync("./tests/seed/seed.sh", {
     stdio: "inherit",
     cwd: process.cwd(),
