@@ -2,15 +2,11 @@ import { Page } from "playwright-core";
 import { expect, test } from "@playwright/test";
 import { execSync } from "child_process";
 
-export const seedDatabase = () => {
-  console.log("-----------------------------------");
-  console.log("CWD:", process.cwd());
-  console.log("-----------------------------------");
+export const seedDatabase = () =>
   execSync("./tests/seed/seed.sh", {
     stdio: "inherit",
     cwd: process.cwd(),
   });
-};
 
 export const loginFn = async ({ page }: { page: Page }) => {
   const username = process.env.E2E_USERNAME!;
