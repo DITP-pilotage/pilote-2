@@ -1,20 +1,13 @@
-import { loadEnvConfig } from '@next/env';
-import { createObjectCsvWriter } from 'csv-writer';
-import process from 'node:process';
-import assert from 'node:assert/strict';
-import logger from '@/server/infrastructure/Logger';
-import UtilisateurCSVParseur from '@/server/infrastructure/import_csv/utilisateur/UtilisateurCSVParseur';
-import ImporterDesUtilisateursUseCase from '@/server/gestion-utilisateur/usecases/ImporterDesUtilisateursUseCase';
-import { RecupererListeUtilisateursExistantsUseCase }
-  from '@/server/gestion-utilisateur/usecases/RecupererListeUtilisateursExistantsUseCase';
-import { CsvRecord } from '@/server/infrastructure/import_csv/utilisateur/UtilisateurCSVParseur.interface';
-import { UtilisateurSQLRepository } from '@/server/infrastructure/accès_données/utilisateur/UtilisateurSQLRepository';
-import UtilisateurIAMKeycloakRepository
-  from '@/server/infrastructure/accès_données/utilisateur/UtilisateurIAMKeycloakRepository';
-import { TerritoireSQLRepository } from '@/server/infrastructure/accès_données/territoire/TerritoireSQLRepository';
+import { loadEnvConfig } from "@next/env";
+import process from "node:process";
+import assert from "node:assert/strict";
+import logger from "@/server/infrastructure/Logger";
+import UtilisateurCSVParseur from "@/server/infrastructure/import_csv/utilisateur/UtilisateurCSVParseur";
+import { getInitialContainerWithTransversalDependencies } from "@/server/InitialDependencies";
+import { getGestionUtilisateurContainer } from "@/server/gestion-utilisateur/container";
 
 const projectDir = process.cwd();
-loadEnvConfig(projectDir);  // ⚠️ À appeler avant nos imports, because Configuration.ts est aussi chargée côté front
+loadEnvConfig(projectDir); // ⚠️ À appeler avant nos imports, because Configuration.ts est aussi chargée côté front
 
 /**
  - Format CSV attendu:
@@ -38,10 +31,6 @@ loadEnvConfig(projectDir);  // ⚠️ À appeler avant nos imports, because Conf
       copier le contenu du CSV local dans ce fichier et sauvegarder
       npx ts-node scripts/importCSVUtilisateurs.ts /tmp/import.csv | npx pino-pretty | tee -a /tmp/import.log
 
-  - Comment faire l'import sur uniquement les nouveaux comptes et récupérer les doublons :
-      * En local : npx ts-node scripts/importCSVUtilisateurs.ts /chemin/fichier/local/import.csv true /chemin/fichier/local/output.csv | npx pino-pretty
-      * En production : npx ts-node scripts/importCSVUtilisateurs.ts /tmp/import.csv true /tmp/output.csv | npx pino-pretty | tee -a /tmp/import.log
-
   - Remarques :
       Le CSV doit être encodé en utf8, et nous n'avons testé que sans BOM.
       Le CSV doit contenir le même nombre de champs pour toutes les lignes, séparés par des ",".
@@ -64,71 +53,27 @@ loadEnvConfig(projectDir);  // ⚠️ À appeler avant nos imports, because Conf
       Utiliser ces valeurs pour renseigner les variables d'env IMPORT_KEYCLOAK_URL - IMPORT_CLIENT_ID - IMPORT_CLIENT_SECRET
 */
 
-function ecrireCsvUtilisateurs(outputName: string, utilisateurFormatCsv: CsvRecord[]) {
-  const csvWriter = createObjectCsvWriter({
-    path: outputName,
-    header: [
-      { id: 'nom', title: 'nom' },
-      { id: 'prénom', title: 'prénom' },
-      { id: 'email', title: 'email' },
-      { id: 'profil', title: 'profil' },
-      { id: 'scope:', title: 'scope:' },
-      { id: 'territoires', title: 'territoires' },
-      { id: 'périmètreIds', title: 'périmètreIds' },
-      { id: 'chantierIds', title: 'chantierIds' },
-      { id: 'auteurEmail', title: 'auteurEmail' },
-    ],
-  });
-  
-  csvWriter.writeRecords(utilisateurFormatCsv)
-    .then(() => {
-      logger.info('Écriture CSV terminée');
-    })
-    .catch((error) => {
-      logger.error('Erreur lors de l\'écriture CSV', error);
-    });
-}
-
 async function main() {
-  const filename = process.argv[2]; 
-  const importNouveauCompteUniquement = process.argv[3] === 'true';
-  const outputName = process.argv[4];
-  assert(filename, 'Nom de fichier CSV manquant');
+  const filename = process.argv[2];
+  assert(filename, "Nom de fichier CSV manquant");
 
-  const keycloakUrl = process.env.IMPORT_KEYCLOAK_URL as string;
-  const clientId = process.env.IMPORT_CLIENT_ID as string;
-  const clientSecret = process.env.IMPORT_CLIENT_SECRET as string;
+  const initialContainer = getInitialContainerWithTransversalDependencies();
+  const container = getGestionUtilisateurContainer(initialContainer);
 
-  const utilisateurIAMRepository = new UtilisateurIAMKeycloakRepository(keycloakUrl, clientId, clientSecret);
-  const utilisateurRepository = new UtilisateurSQLRepository();
-  const territoireRepository = new TerritoireSQLRepository();
+  const contenuParsé = new UtilisateurCSVParseur(filename).parse()
+    .parsedCsvRecords;
 
-  const contenuParsé = new UtilisateurCSVParseur(filename).parse();
-  let utilisateursFormatCsv = contenuParsé.csvRecords;
-  let utilisateurs = contenuParsé.parsedCsvRecords;
-
-  if (importNouveauCompteUniquement) {
-    assert(outputName, 'Nom du fichier de sortie manquant');
-    const utilisateursExistants = await new RecupererListeUtilisateursExistantsUseCase(utilisateurRepository).run(utilisateurs);
-    utilisateurs = utilisateurs.filter(utilisateur => !utilisateursExistants.includes(utilisateur.email));
-    utilisateursFormatCsv = utilisateursFormatCsv.filter(utilisateur => utilisateursExistants.includes(utilisateur.email));
-    if (utilisateursExistants.length > 0) {
-      logger.info(`Les comptes suivants existent déjà et ne seront pas importés : ${utilisateursExistants}`);
-      ecrireCsvUtilisateurs(outputName, utilisateursFormatCsv);
-    }
-  }
-
-  await new ImporterDesUtilisateursUseCase(utilisateurRepository, utilisateurIAMRepository, territoireRepository).run(utilisateurs);
+  await container.resolve("importerDesUtilisateursUseCase").run(contenuParsé);
 }
 
-const isMain = eval('require.main === module');
+const isMain = eval("require.main === module");
 if (isMain) {
   main()
     .then(() => {
-      logger.info('Import OK.');
+      logger.info("Import OK.");
     })
     .catch((error) => {
       logger.error(error);
-      throw new Error('Import échoué.', { cause: error });
+      throw new Error("Import échoué.", { cause: error });
     });
 }
