@@ -1,3 +1,4 @@
+import { expect } from "@playwright/test";
 import { BasePage } from "./base.page";
 
 export class PageLogin extends BasePage {
@@ -20,5 +21,9 @@ export class PageLogin extends BasePage {
 
   async submit(): Promise<void> {
     await this.submitButton.click();
+    await this.page.waitForURL("**/accueil/chantier/**");
+    await expect(this.page).toHaveTitle(
+      /PILOTE - Piloter l'action publique par les résultats/,
+    );
   }
 }
