@@ -27,6 +27,20 @@ services:
       - POSTGRES_USER=${PGUSER}
       - POSTGRES_PASSWORD=${PGPASSWORD}
 
+  postgres_e2e:
+    hostname: postgres_e2e
+    container_name: pilote_postgres_e2e
+    depends_on:
+      - pilote_traefik
+    image: postgres:16.2-alpine
+    shm_size: 1g
+    ports:
+      - "${POSTGRES_E2E_PORT:-7474}:5432"
+    environment:
+      - POSTGRES_USER=${PGUSER}
+      - POSTGRES_PASSWORD=${PGPASSWORD}
+
+
   pilote_traefik:
     container_name: pilote_traefik
     image: traefik:v2.10

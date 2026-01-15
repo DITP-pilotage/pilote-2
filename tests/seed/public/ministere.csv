@@ -1,0 +1,17 @@
+id,nom,icone,a_supprimer,acronyme
+110,Europe et Affaires Étrangères,remix::earth::fill,false,MEAE
+120,"Travail, Santé et Solidarités",material-icons::business_center::filled,false,MTSS
+130,Agriculture et Souveraineté alimentaire,remix::seedling::fill,false,MASA
+140,Culture,remix::book-open::fill,false,MC
+150,Armées,material-icons::radar::filled,false,MINARM
+180,Éducation Nationale,remix::ball-pen::fill,false,MENJ
+190,Transition écologique et Cohésion des territoires,dsfr::sun::fill,false,MTECT
+200,Intérieur et Outre-mer,remix::alarm-warning::fill,false,MI
+220,Justice,remix::scales-3::fill,false,MINJ
+250,Transformation et Fonction publiques,remix::team::fill,false,MTFP
+280,Enseignement supérieur et Recherche,material-icons::school::filled,false,MESR
+290,"Économie, Finances et Souveraineté industrielle et numérique",material-icons::factory::filled,false,MEFSIN
+340,"Sports, jeunesse et vie associative",remix::football::fill,false,MSJVA
+1006,Renouveau démocratique,material-symbols::how_to_vote::filled,false,MDRD
+1007,Egalité entre les Femmes et les Hommes,material-symbols::equal::outlined,false,MDEFH
+1009,Premier Ministre,remix::government::fill,false,PM

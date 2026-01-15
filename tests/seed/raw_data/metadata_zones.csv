@@ -1,0 +1,184 @@
+zone_id,nom,zone_code,zone_type,zone_parent
+A01,Paris,01,ACAD,R11
+A02,Aix-Marseille,02,ACAD,R93
+A03,Besançon,03,ACAD,R27
+A04,Bordeaux,04,ACAD,R75
+A06,Clermont-Ferrand,06,ACAD,R84
+A07,Dijon,07,ACAD,R27
+A08,Grenoble,08,ACAD,R84
+A09,Lille,09,ACAD,R32
+A10,Lyon,10,ACAD,R84
+A11,Montpellier,11,ACAD,R76
+A12,Nancy-Metz,12,ACAD,R44
+A13,Poitiers,13,ACAD,R75
+A14,Rennes,14,ACAD,R53
+A15,Strasbourg,15,ACAD,R44
+A16,Toulouse,16,ACAD,R76
+A17,Nantes,17,ACAD,R52
+A18,Orléans-Tours,18,ACAD,R24
+A19,Reims,19,ACAD,R44
+A20,Amiens,20,ACAD,R32
+A22,Limoges,22,ACAD,R75
+A23,Nice,23,ACAD,R93
+A24,Créteil,24,ACAD,R11
+A25,Versailles,25,ACAD,R11
+A27,Corse,27,ACAD,R94
+A28,La Réunion,28,ACAD,R04
+A31,Martinique,31,ACAD,R02
+A32,Guadeloupe,32,ACAD,R01
+A33,Guyane,33,ACAD,R03
+A40,Académie Nouvell C ?,40,ACAD,COM
+A41,Académie Polynésie ?,41,ACAD,COM
+A42,Académie W&F ?,42,ACAD,COM
+A43,Mayotte,43,ACAD,R06
+A44,Académie spmq ?,44,ACAD,COM
+A70,Normandie,70,ACAD,R28
+COM,Collectivité d'outre-mer,COM,REG,FRANCE
+D01,Ain,01,DEPT,A10 | R84
+D02,Aisne,02,DEPT,A20 | R32
+D03,Allier,03,DEPT,A06 | R84
+D04,Alpes-de-Haute-Provence,04,DEPT,A02 | R93
+D05,Hautes-Alpes,05,DEPT,A02 | R93
+D06,Alpes-Maritimes,06,DEPT,A23 | R93 | FM04 | ZFE03
+D07,Ardèche,07,DEPT,A08 | R84
+D08,Ardennes,08,DEPT,A19 | R44
+D09,Ariège,09,DEPT,A16 | R76
+D10,Aube,10,DEPT,A19 | R44
+D11,Aude,11,DEPT,A11 | R76 | FM04
+D12,Aveyron,12,DEPT,A16 | R76
+D13,Bouches-du-Rhône,13,DEPT,A02 | R93 | FM04 | ZFE03 | PORT02
+D14,Calvados,14,DEPT,A70 | R28 | FM01 | ZFE05
+D15,Cantal,15,DEPT,A06 | R84
+D16,Charente,16,DEPT,A13 | R75
+D17,Charente-Maritime,17,DEPT,A13 | R75 | FM03
+D18,Cher,18,DEPT,A18 | R24
+D19,Corrèze,19,DEPT,A22 | R75
+D21,Côte-d'Or,21,DEPT,A07 | R27 | ZFE06
+D22,Côtes-d'Armor,22,DEPT,A14 | R53 | FM02
+D23,Creuse,23,DEPT,A22 | R75
+D24,Dordogne,24,DEPT,A04 | R75
+D25,Doubs,25,DEPT,A03 | R27
+D26,Drôme,26,DEPT,A08 | R84
+D27,Eure,27,DEPT,A70 | R28
+D28,Eure-et-Loir,28,DEPT,A18 | R24
+D29,Finistère,29,DEPT,A14 | R53 | FM02 | ZFE07
+D2A,Corse-du-Sud,2A,DEPT,A27 | R94 | FM04
+D2B,Haute-Corse,2B,DEPT,A27 | R94 | FM04
+D30,Gard,30,DEPT,A11 | R76 | FM04 | ZFE04
+D31,Haute-Garonne,31,DEPT,A16 | R76 | ZFE04
+D32,Gers,32,DEPT,A16 | R76
+D33,Gironde,33,DEPT,A04 | R75 | FM03 | ZFE08
+D34,Hérault,34,DEPT,A11 | R76 | FM04 | ZFE04
+D35,Ille-et-Vilaine,35,DEPT,A14 | R53 | FM02 | ZFE07
+D36,Indre,36,DEPT,A18 | R24
+D37,Indre-et-Loire,37,DEPT,A18 | R24 | ZFE09
+D38,Isère,38,DEPT,A08 | R84 | ZFE01
+D39,Jura,39,DEPT,A03 | R27
+D40,Landes,40,DEPT,A04 | R75 | FM03
+D41,Loir-et-Cher,41,DEPT,A18 | R24
+D42,Loire,42,DEPT,A10 | R84 | ZFE01
+D43,Haute-Loire,43,DEPT,A06 | R84
+D44,Loire-Atlantique,44,DEPT,A17 | R52 | FM02 | ZFE10
+D45,Loiret,45,DEPT,A18 | R24 | ZFE09
+D46,Lot,46,DEPT,A16 | R76
+D47,Lot-et-Garonne,47,DEPT,A04 | R75
+D48,Lozère,48,DEPT,A11 | R76
+D49,Maine-et-Loire,49,DEPT,A17 | R52 | ZFE10
+D50,Manche,50,DEPT,A70 | R28 | FM01
+D51,Marne,51,DEPT,A19 | R44 | ZFE11
+D52,Haute-Marne,52,DEPT,A19 | R44
+D53,Mayenne,53,DEPT,A17 | R52
+D54,Meurthe-et-Moselle,54,DEPT,A12 | R44 | ZFE11
+D55,Meuse,55,DEPT,A12 | R44
+D56,Morbihan,56,DEPT,A14 | R53 | FM02
+D57,Moselle,57,DEPT,A12 | R44 | ZFE11
+D58,Nièvre,58,DEPT,A07 | R27
+D59,Nord,59,DEPT,A09 | R32 | FM01 | PORT04 | ZFE12
+D60,Oise,60,DEPT,A20 | R32
+D61,Orne,61,DEPT,A70 | R28
+D62,Pas-de-Calais,62,DEPT,A09 | R32 | FM01 | ZFE12
+D63,Puy-de-Dôme,63,DEPT,A06 | R84 | ZFE01
+D64,Pyrénées-Atlantiques,64,DEPT,A04 | R75 | FM03 | ZFE08
+D65,Hautes-Pyrénées,65,DEPT,A16 | R76
+D66,Pyrénées-Orientales,66,DEPT,A11 | R76 | FM04 | ZFE08
+D67,Bas-Rhin,67,DEPT,A15 | R44 | ZFE11
+D68,Haut-Rhin,68,DEPT,A15 | R44 | ZFE11
+D69,Rhône,69,DEPT,A10 | R84 | ZFE01
+D70,Haute-Saône,70,DEPT,A03 | R27
+D71,Saône-et-Loire,71,DEPT,A07 | R27
+D72,Sarthe,72,DEPT,A17 | R52
+D73,Savoie,73,DEPT,A08 | R84 | ZFE01
+D74,Haute-Savoie,74,DEPT,A08 | R84 | ZFE01
+D75,Paris,75,DEPT,A01 | R11 | ZFE02 | PORT03
+D76,Seine-Maritime,76,DEPT,A70 | R28 | FM01 | PORT01 | ZFE05
+D77,Seine-et-Marne,77,DEPT,A24 | R11
+D78,Yvelines,78,DEPT,A25 | R11
+D79,Deux-Sèvres,79,DEPT,A13 | R75
+D80,Somme,80,DEPT,A20 | R32 | FM01
+D81,Tarn,81,DEPT,A16 | R76
+D82,Tarn-et-Garonne,82,DEPT,A16 | R76
+D83,Var,83,DEPT,A23 | R93 | FM04 | ZFE03
+D84,Vaucluse,84,DEPT,A02 | R93 | ZFE03
+D85,Vendée,85,DEPT,A17 | R52 | FM02
+D86,Vienne,86,DEPT,A13 | R75
+D87,Haute-Vienne,87,DEPT,A22 | R75 | ZFE08
+D88,Vosges,88,DEPT,A12 | R44
+D89,Yonne,89,DEPT,A07 | R27
+D90,Territoire de Belfort,90,DEPT,A03 | R27
+D91,Essonne,91,DEPT,A25 | R11
+D92,Hauts-de-Seine,92,DEPT,A25 | R11
+D93,Seine-Saint-Denis,93,DEPT,A24 | R11
+D94,Val-de-Marne,94,DEPT,A24 | R11
+D95,Val-d'Oise,95,DEPT,A25 | R11
+D971,Guadeloupe,971,DEPT,A32 | R01
+D972,Martinique,972,DEPT,A31 | R02
+D973,Guyane,973,DEPT,A33 | R03
+D974,La Réunion,974,DEPT,A28 | R04
+D975,Saint-Pierre-et-Miquelon,975,DEPT,A44 | COM
+D976,Mayotte,976,DEPT,A43 | R06
+D977,Saint-Barthélemy,977,DEPT,A32 | COM
+D978,Saint-Martin,978,DEPT,A32 | COM
+D984,Terres australes et antarctiques françaises,984,DEPT,COM
+D986,Wallis-et-Futuna,986,DEPT,A42 | COM
+D987,Polynésie française,987,DEPT,A41 | COM
+D988,Nouvelle-Calédonie,988,DEPT,A40 | COM
+D989,Clipperton,989,DEPT,COM
+FRANCE,National,FR,NAT,
+R01,Guadeloupe,01,REG,FRANCE
+R02,Martinique,02,REG,FRANCE
+R03,Guyane,03,REG,FRANCE
+R04,La Réunion,04,REG,FRANCE
+R06,Mayotte,06,REG,FRANCE
+R11,Île-de-France,11,REG,FRANCE | ZFE02 | PORT03
+R24,Centre-Val de Loire,24,REG,FRANCE | ZFE09
+R27,Bourgogne-Franche-Comté,27,REG,FRANCE | ZFE06
+R28,Normandie,28,REG,FRANCE | FM01 | PORT01 | ZFE05
+R32,Hauts-de-France,32,REG,FRANCE | FM01 | PORT04 | ZFE12
+R44,Grand Est,44,REG,FRANCE | ZFE11
+R52,Pays de la Loire,52,REG,FRANCE | FM02 | ZFE10
+R53,Bretagne,53,REG,FRANCE | FM02 | ZFE07
+R75,Nouvelle-Aquitaine,75,REG,FRANCE | FM03 | ZFE08
+R76,Occitanie,76,REG,FRANCE | FM04 | ZFE04
+R84,Auvergne-Rhône-Alpes,84,REG,FRANCE | ZFE01
+R93,Provence-Alpes-Côte d'Azur,93,REG,FRANCE | FM04 | ZFE03 | PORT02
+R94,Corse,94,REG,FRANCE | FM04
+FM01,Manche-Est - Mer du Nord,01,FM,FRANCE
+FM02,Nord Atlantique - Manche Ouest,02,FM,FRANCE
+FM03,Sud-Atlantique,03,FM,FRANCE
+FM04,Méditerranée,04,FM,FRANCE
+ZFE01,"ZFE AURA (Grenoble, Saint-Etienne, Clermont-Ferrand, Lyon, Chambéry, Annecy, Annemasse)",01,ZFE,FRANCE
+ZFE02,ZFE IDF (Paris),02,ZFE,FRANCE
+ZFE03,"ZFE PACA (Nice, Aix-Marseille, Toulon, Avignon)",03,ZFE,FRANCE
+ZFE04,"ZFE Occitanie (Nîmes, Toulouse, Montpellier, Perpignan)",04,ZFE,FRANCE
+PORT01,Port Le Havre et Rouen,01,PORT,FRANCE
+PORT02,Port Fos,02,PORT,FRANCE
+PORT03,Port Paris,03,PORT,FRANCE
+PORT04,Port Dunkerque,04,PORT,FRANCE
+ZFE05,"ZFE Normandie (Caen, Le Havre, Rouen)",05,ZFE,FRANCE
+ZFE06,ZFE BFC (Dijon),06,ZFE,FRANCE
+ZFE07,"ZFE Bretagne (Brest, Rennes)",07,ZFE,FRANCE
+ZFE08,"ZFE Nouvelle-Aquitaine (Bordeaux, Bayonne, Pau, Limoges)",08,ZFE,FRANCE
+ZFE09,"ZFE CVL (Tours, Orléans)",09,ZFE,FRANCE
+ZFE10,"ZFE PDL (Nantes, Angers, Le Mans)",10,ZFE,FRANCE
+ZFE11,"ZFE Grand-Est (Reims, Nancy, Metz, Strasbourg, Mulhouse)",11,ZFE,FRANCE
+ZFE12,"ZFE Hauts-de-France (Dunkerque, Lille, Valenciennes, Béthune, Douai-Lens, Amiens)",12,ZFE,FRANCE

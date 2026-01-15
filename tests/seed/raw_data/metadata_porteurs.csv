@@ -1,0 +1,90 @@
+porteur_id,porteur_short,porteur_name,porteur_desc,porteur_type_id,porteur_type_short,porteur_type_name,porteur_directeur,porteur_name_short,porteur_picto
+1,NONE,Aucun,Pas de porteur,5,AUTRE,Autre,Aucun,Aucun,
+2,PENDING,Provisoire,"Porteur provisoire, pas définitif",5,AUTRE,Autre,Aucun,Provisoire,
+110,MEAE,Ministère de l'Europe et des Affaires Etrangères,,1,MIN,Ministère,,Europe et Affaires Étrangères,remix::earth::fill
+120,MTSS,"Ministère du Travail, de la Santé et des Solidarités",,1,MIN,Ministère,,"Travail, Santé et Solidarités",material-icons::business_center::filled
+130,MASA,Ministère de l'Agriculture et de la Souveraineté alimentaire,,1,MIN,Ministère,,Agriculture et Souveraineté alimentaire,remix::seedling::fill
+140,MC,Ministère de la Culture,,1,MIN,Ministère,,Culture,remix::book-open::fill
+150,MINARM,Ministère des Armées,,1,MIN,Ministère,,Armées,material-icons::radar::filled
+180,MENJ,Ministère de l'Education Nationale,,1,MIN,Ministère,,Éducation Nationale,remix::ball-pen::fill
+190,MTECT,Ministère de la Transition écologique et de la Cohésion des territoires,,1,MIN,Ministère,,Transition écologique et Cohésion des territoires,dsfr::sun::fill
+200,MI,Ministère de l'Intérieur,,1,MIN,Ministère,,Intérieur et Outre-mer,remix::alarm-warning::fill
+220,MINJ,Ministère de la Justice,Le min de la justice,1,MIN,Ministère,,Justice,remix::scales-3::fill
+250,MTFP,Ministère de la Transformation et de la Fonction publiques,,1,MIN,Ministère,,Transformation et Fonction publiques,remix::team::fill
+280,MESR,Ministère de l'Enseignement supérieur et de la Recherche,,1,MIN,Ministère,,Enseignement supérieur et Recherche,material-icons::school::filled
+290,MEFSIN,"Ministère de l'Économie, des Finances et de la Souveraineté industrielle et numérique",,1,MIN,Ministère,,"Économie, Finances et Souveraineté industrielle et numérique",material-icons::factory::filled
+340,MSJVA,"Ministère des Sports, de la Jeunesse et de la Vie associative",,1,MIN,Ministère,,"Sports, jeunesse et vie associative",remix::football::fill
+1001,SGPI,Secrétariat général pour l'investissement,,7,DAC,Direction d'administration centrale,Bruno BONNELL,,
+1002,SGPE,Secrétariat général à la planification écologique,,7,DAC,Direction d'administration centrale,Antoine PELLION,,
+1004,DIJOP,Délégation interministérielle aux jeux olympiques et paralympiques,,7,DAC,Direction d'administration centrale,Michel CADOT,,
+1006,MDRD,"Ministre déléguée auprès du Premier ministre, chargée du Renouveau démocratique",,1,MIN,Ministère,,Renouveau démocratique,material-symbols::how_to_vote::filled
+1007,MDEFH,"Ministre déléguée auprès du Premier ministre, chargée de l'Égalité entre les femmes et les hommes, et de la lutte contre les discriminations",,1,MIN,Ministère,,Egalité entre les Femmes et les Hommes,material-symbols::equal::outlined
+1009,PM,Premier Ministre,,1,MIN,Ministère,,Premier Ministre,remix::government::fill
+2002,ANCT,Agence nationale de cohésion des territoires,,7,DAC,Direction d'administration centrale,Henri PREVOST,,
+2003,ANRU,Agence Nationale pour la Rénovation Urbaine,,7,DAC,Direction d'administration centrale,Anne-Claire MIALOT,,
+2004,ATIGIP,Agence du travail d'intérêt général et de l'insertion professionnelle des personnes placées sous main de justice,,7,DAC,Direction d'administration centrale,Bruno Clément-Petremann,,
+2005,CGDD,Commissariat général au développement durable,,7,DAC,Direction d'administration centrale,Brice HUET,,
+2007,DAE,Direction des achats de l'État,,7,DAC,Direction d'administration centrale,François Adam,,
+2008,DAP,Direction de l'administration pénitencière,,7,DAC,Direction d'administration centrale,Laurence Venet-Lopez,,
+2009,DB,Direction du budget,,7,DAC,Direction d'administration centrale,Mélanie Joder,,
+2010,DFAE,Direction des Français à l'étranger et de l'administration consulaire,,7,DAC,Direction d'administration centrale,Pauline CARMONA,,
+2012,DG2TDC,"Délégation générale à la transmission, aux territoires et à la démocratie culturelle",,7,DAC,Direction d'administration centrale,Noël Corbin,,
+2013,DGAFP,Direction générale de l'administration et de la fonction publique,,7,DAC,Direction d'administration centrale,Nathalie Colin,,
+2015,DGAMPA,"Direction générale des affaires maritimes, de la pêche et de l'aquaculture",,7,DAC,Direction d'administration centrale,Eric Banel,,
+2016,DGCCRF,"Direction générale de la concurrence, de la consommation et de la répression des fraudes",,7,DAC,Direction d'administration centrale,Sarah Lacoche,,
+2018,DGCS,Direction générale de la cohésion sociale,,7,DAC,Direction d'administration centrale,Jean-Benoît Dujol,,
+2021,DGE,Direction générale des entreprises,,7,DAC,Direction d'administration centrale,Thomas Courbe,,
+2023,DGEC,Direction générale de l'énergie et du climat,,7,DAC,Direction d'administration centrale,Sophie MOURLON,,
+2024,DGEF,Direction générale des étrangers en France,,7,DAC,Direction d'administration centrale,Eric Jalon,,
+2026,DGEFP,Délégation générale à l'emploi et à la formation professionnelle,,7,DAC,Direction d'administration centrale,Benjamin MAURICE,,
+2028,DGESCO,Direction générale de l'enseignement scolaire,,7,DAC,Direction d'administration centrale,Caroline PASCAL,,
+2029,DGESIP,Direction générale de l'enseignement supérieur et de l'insertion professionnelle,,7,DAC,Direction d'administration centrale,Olivier GINEZ,,
+2030,DGFIP,Direction générale des Finances publiques,,7,DAC,Direction d'administration centrale,Amélie VERDIER,,
+2032,DGITM,"Direction générale des infrastructures, des transports et des mobilités",,7,DAC,Direction d'administration centrale,Rodolphe GINTZ,,
+2033,DGM,"Direction générale de la mondialisation, de la culture, de l'enseignement et du développement international",,7,DAC,Direction d'administration centrale,Aurélien LECHEVALLIER,,
+2035,DGOM,Direction générale des outre-mer,,7,DAC,Direction d'administration centrale,Olivier Jacob,,
+2037,DGOS,Direction générale de l'offre de soins,,7,DAC,Direction d'administration centrale,Marie DAUDÉ,,
+2039,DGPR,Direction Générale de la Prévention des Risques,,7,DAC,Direction d'administration centrale,Cédric BOURILLET,,
+2040,DGRH,Direction générale des ressources humaines,,7,DAC,Direction d'administration centrale,Boris MELMOUX-EUDE,,
+2041,DGRI,Direction générale de la recherche et de l'innovation,,7,DAC,Direction d'administration centrale,Nicolas JEAN JEAN,,
+2043,DGS,Direction générale de la santé,,7,DAC,Direction d'administration centrale,Didier LEPELLETIER,,
+2044,DGT,Direction générale du travail,,7,DAC,Direction d'administration centrale,Pierre RAMAIN,,
+2047,DIE,Direction de l'immobilier de l'État,,7,DAC,Direction d'administration centrale,Alain RESPLANDY-BERNARD,,
+2048,DIESE,Délégation interministérielle à l’encadrement supérieur de l’État,,7,DAC,Direction d'administration centrale,Émilie PIETTE,,
+2049,DIHAL,Délégation interministérielle à l'hébergement et à l'accès au logement,,7,DAC,Direction d'administration centrale,Jérôme D'HARCOURT,,
+2052,DITP,Direction interministérielle de la transformation publique,,7,DAC,Direction d'administration centrale,Thierry LAMBERT,,
+2053,DGSNU,Déléguée générale au service national universel,,7,DAC,Direction d'administration centrale,Corinne ORZECHOWSKI,,
+2054,DJEPVA,"Direction de la jeunesse, de l'éducation populaire et de la vie associative",,7,DAC,Direction d'administration centrale,Thibaut DE SAINT POL,,
+2055,DLF,Direction de la Législation fiscale,,7,DAC,Direction d'administration centrale,Bruno MAUCHAUFFÉE,,
+2056,DS,Direction des sports,,7,DAC,Direction d'administration centrale,Fabienne BOURDAIS,,
+2057,DSJ,Direction des services judiciaires,,7,DAC,Direction d'administration centrale,Paul HUBER,,
+2058,DSS,Direction de la sécurité sociale,,7,DAC,Direction d'administration centrale,Pierre PRIBILE,,
+2060,MFR,Mission France Recouvrement,,7,DAC,Direction d'administration centrale,-,,
+2062,PJJ,Direction de la protection judiciaire de la jeunesse,,7,DAC,Direction d'administration centrale,Caroline NISAND,,
+2067,DAEI,Délégation aux affaires européennes et internationales,,5,AUTRE,Autre,-,DAEI,
+2068,DGDDI,Direction générale des douanes et droits indirects,,7,DAC,Direction d'administration centrale,Isabelle BRAUN-LEMAIRE,,
+2069,DGGN,Direction générale de la gendarmerie nationale,,7,DAC,Direction d'administration centrale,Hubert BONNEAU,,
+2070,DGPN,Direction générale de la Police nationale,,7,DAC,Direction d'administration centrale,Louis LAUGIER,,
+2071,DHUP,"Direction de l'Habitat, de l'Urbanisme et des Paysages",,7,DAC,Direction d'administration centrale,Damien Botteghi,,
+2073,DILCRAH,"Délégation Interministérielle à la Lutte Contre le Racisme, l'Antisémitisme et la Haine anti-LGBT",,4,DI,Délégation interministérielle,Matthias OTT,,
+2074,DIA,Délégation Interministérielle à l'Accessibilité,,7,DAC,Direction d'administration centrale,Isabelle SAURAT,,
+2075,DSNJ,Direction du service national et de la jeunesse,,7,DAC,Direction d'administration centrale,Dominique ARBIOL,,
+2076,MILDECA,Mission interministérielle de lutte contre les drogues et les conduites addictives,,5,AUTRE,Autre,-,MILDECA,
+2077,DGAC,Direction générale de l'Aviation civile,,7,DAC,Direction d'administration centrale,Marc BOREL,,
+2078,DRH,Direction des ressources humaines du ministère des Armées,,7,DAC,Direction d'administration centrale,Thibaut DE VANSSAY DE BLAVOUS,,
+2079,EMA,État-major des armées,,7,DAC,Direction d'administration centrale,Thierry BURKHARD,,
+2080,DGPE,Direction générale de la performance économique et environnementale des entreprises ,,7,DAC,Direction d'administration centrale,Philippe DUCLAUD,,
+2081,DGER,Direction générale de l'enseignement et de la recherche ,,7,DAC,Direction d'administration centrale,Benoît BONAIME,,
+2082,DGAL,Direction générale de l’alimentation,,7,DAC,Direction d'administration centrale,Maud Faipoux,,
+2083,CIPDR,Comité interministériel de prévention de la délinquance et de la radicalisation,,7,DAC,Direction d'administration centrale,Etienne Apaire,,
+2084,SGMJ,Secrétariat général du Ministère de la Justice,,7,DAC,Direction d'administration centrale,Carine CHEVRIER,,
+2085,SGMJ,Secrétariat général du Ministère de la Justice(adj),,7,DAC,Direction d'administration centrale,Philippe CLERGEOT,,
+2086,DDE,Direction de la diplomatie économique,,7,DAC,Direction d'administration centrale,Ludovic POUILLE,,
+2087,DIAN,Direction de l’intégration et de l’accès à la nationalité,,7,DAC,Direction d'administration centrale,David COSTE,,
+2088,DNS,Délégation ministérielle au numérique en santé,,7,AUTRE,Délégation ministérielle,Hela Ghariani,DNS,
+2089,DIA-TND,Délégation interministérielle à l'autisme et aux troubles du neuro-développement,,7,AUTRE,Délégation interministérielle,Etienne POT,DIA-TND,
+2091,DGALN,"Direction générale de l'aménagement, du logement et de la nature",,7,DAC,Direction d'administration centrale,Philippe MAZENC,,
+2092,DINUM,Direction interministérielle du numérique,,7,DAC,Direction d'administration centrale,Stéphanie SCHAER,,
+2093,DNPAF,DNPAF,,7,DAC,Direction d'administration centrale,Valérie Minne,,
+2094,DGDCER,"Direction générale de la démocratie culturelle, des enseignements et de la recherche",,7,DAC,Direction d'administration centrale,Naomi PERES,,
+2095,SGDSN," ""Secrétariat général de la défense et de la sécurité nationale""",,7,DAC,Direction d'administration centrale,Nicolas ROCHE,,

@@ -1,6 +1,10 @@
 import { Download, expect, test } from "@playwright/test";
 import fs from "node:fs";
-import { loginFn } from "./utils";
+import { loginFn, seedDatabase } from "./utils";
+
+test.beforeAll(() => {
+  seedDatabase();
+});
 
 test("doit pouvoir exporter les données des utilisateurs sous format CSV", async ({
   page,

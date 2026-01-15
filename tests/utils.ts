@@ -1,14 +1,19 @@
 import { Page } from "playwright-core";
 import { expect, test } from "@playwright/test";
+import { execSync } from "child_process";
 
-import { configuration } from "@/config";
+export const seedDatabase = () =>
+  execSync("./tests/seed/seed.sh", {
+    stdio: "inherit",
+    cwd: process.cwd(),
+  });
 
 export const loginFn = async ({ page }: { page: Page }) => {
-  const username = configuration().e2e.username;
-  const password = configuration().e2e.password;
+  const username = process.env.E2E_USERNAME!;
+  const password = process.env.DEV_PASSWORD!;
 
   await test.step(`Authentification de l'utilisateur ${username} avec le rôle DITP_ADMIN`, async () => {
-    await page.goto(configuration().baseUrl);
+    await page.goto("/");
 
     await page
       .getByRole("banner")
@@ -55,7 +60,7 @@ export const authentificationApiFn = async ({
   await loginFn({ page });
 
   await test.step(`Création du token API pour l'utilisateur ${apiUsername}`, async () => {
-    await page.goto(`${configuration().baseUrl}/admin/gestion-token-api`);
+    await page.goto("/admin/gestion-token-api");
     await page.waitForURL("**/admin/gestion-token-api");
 
     expect(page.getByText(apiUsername)).not.toBeVisible();
@@ -84,7 +89,7 @@ export const authentificationApiDITPADMINFn = async ({
 }: {
   page: Page;
 }): Promise<{ apiDITPADMINToken: string; apiDITPADMINUsername: string }> => {
-  const apiDITPADMINUsername = configuration().e2e.apiDITPADMINUsername;
+  const apiDITPADMINUsername = "ditp.admin@example.com";
 
   const { apiToken } = await authentificationApiFn({
     page,
@@ -104,11 +109,9 @@ export const authentificationApiDirProjetFn = async ({
   apiDirProjetChantierAssocie: string;
   apiDirProjetIndicateurAssocie: string;
 }> => {
-  const apiDirProjetUsername = configuration().e2e.apiDirProjetUsername;
-  const apiDirProjetChantierAssocie =
-    configuration().e2e.apiDirProjetChantierAssocie;
-  const apiDirProjetIndicateurAssocie =
-    configuration().e2e.apiDirProjetIndicateurAssocie;
+  const apiDirProjetUsername = "equipe.dir.projet@example.com";
+  const apiDirProjetChantierAssocie = "CH-129";
+  const apiDirProjetIndicateurAssocie = "IND-021";
 
   const { apiToken } = await authentificationApiFn({
     page,
@@ -133,13 +136,13 @@ export const suppressionAuthentificationApiFn = async ({
   let apiToken: string = "";
 
   await test.step(`Suppression du token API pour l'utilisateur ${apiUsername}`, async () => {
-    await page.goto(`${configuration().baseUrl}/admin/gestion-token-api`);
+    await page.goto("/admin/gestion-token-api");
     await page.waitForURL("**/admin/gestion-token-api");
 
-    expect(page.getByText(apiUsername)).toBeVisible();
+    expect(page.getByRole("cell", { name: apiUsername })).toBeVisible();
 
     await page
-      .getByText(apiUsername)
+      .getByRole("cell", { name: apiUsername })
       .locator("..")
       .getByRole("button", { name: /Supprimer le token API/ })
       .click();

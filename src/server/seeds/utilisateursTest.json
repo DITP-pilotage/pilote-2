@@ -277,19 +277,19 @@
         "scopeCode": "lecture",
         "territoires": [],
         "perimetres": [],
-        "chantiers": ["CH-054", "CH-058", "CH-062", "CH-051"]
+        "chantiers": ["CH-054", "CH-058", "CH-062", "CH-051", "CH-129"]
       },
       {
         "scopeCode": "saisieCommentaire",
         "territoires": ["NAT"],
         "perimetres": [],
-        "chantiers": ["CH-054", "CH-058", "CH-062", "CH-051"]
+        "chantiers": ["CH-054", "CH-058", "CH-062", "CH-051", "CH-129"]
       },
       {
         "scopeCode": "saisieIndicateur",
         "territoires": [],
         "perimetres": [],
-        "chantiers": ["CH-054", "CH-058", "CH-062", "CH-051"]
+        "chantiers": ["CH-054", "CH-058", "CH-062", "CH-051", "CH-129"]
       }
     ]
   },

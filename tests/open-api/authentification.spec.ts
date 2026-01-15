@@ -1,12 +1,16 @@
 import { APIRequestContext, APIResponse, expect, test } from "@playwright/test";
-import { configuration } from "@/config";
 import {
   authentificationApiDITPADMINFn,
+  seedDatabase,
   suppressionAuthentificationApiFn,
 } from "../utils";
 
 let apiContext: APIRequestContext;
 let result: APIResponse;
+
+test.beforeAll(() => {
+  seedDatabase();
+});
 
 test.describe("Authentification", () => {
   test("quand on ne dispose pas d'un header Authorization, doit remonter une erreur 401 Unauthorized", async ({
@@ -14,7 +18,7 @@ test.describe("Authentification", () => {
   }) => {
     await test.step("Création du context sans header Authorization", async () => {
       apiContext = await playwright.request.newContext({
-        baseURL: configuration().baseUrl,
+        baseURL: process.env.BASE_URL,
       });
     });
 
@@ -34,7 +38,7 @@ test.describe("Authentification", () => {
   }) => {
     await test.step("Création du context avec header Authorization + valeur incorrect", async () => {
       apiContext = await playwright.request.newContext({
-        baseURL: configuration().baseUrl,
+        baseURL: process.env.BASE_URL,
         extraHTTPHeaders: {
           Authorization: "invalid",
         },
@@ -57,7 +61,7 @@ test.describe("Authentification", () => {
   }) => {
     await test.step("Création du context avec header Authorization et valeur Bearer + JWT non pilote", async () => {
       apiContext = await playwright.request.newContext({
-        baseURL: configuration().baseUrl,
+        baseURL: process.env.BASE_URL,
         extraHTTPHeaders: {
           Authorization:
             "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c",
@@ -86,7 +90,7 @@ test.describe("Authentification", () => {
 
       await test.step("Création du context avec header Authorization et valeur Bearer + JWT pilote", async () => {
         apiContext = await playwright.request.newContext({
-          baseURL: configuration().baseUrl,
+          baseURL: process.env.BASE_URL,
           extraHTTPHeaders: {
             Authorization: `Bearer ${apiDITPADMINToken}`,
           },

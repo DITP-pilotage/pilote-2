@@ -1,0 +1,31 @@
+id,nom,ministere,ministere_id,a_supprimer
+PER-001,Agriculture,-,130,false
+PER-002,Armées,-,150,false
+PER-003,"Autonomie, Handicap",-,120,false
+PER-004,Aménagement du territoire,-,190,false
+PER-005,Comptes publics,-,290,false
+PER-006,Culture,-,140,false
+PER-007,Vie associative,-,1009,false
+PER-008,Économie et Entreprises,-,290,false
+PER-009,Éducation nationale,-,180,false
+PER-010,Égalité Femmes-Hommes,-,1007,false
+PER-011,Enfance et Famille,-,120,false
+PER-012,"Enseignement supérieur, Recherche",-,280,false
+PER-013,Europe et Affaires étrangères,-,110,false
+PER-014,Intérieur,-,200,false
+PER-015,Justice,-,220,false
+PER-016,Logement,-,190,false
+PER-017,Mer et Biodiversité,-,190,false
+PER-018,Outre-Mer,-,200,false
+PER-019,Premier Ministre,-,1009,false
+PER-020,Renouveau Démocratique,-,1006,false
+PER-021,Santé,-,120,false
+PER-022,Solidarité,-,120,false
+PER-023,Sports,-,340,false
+PER-024,Transformation et Fonction Publiques,-,250,false
+PER-025,Transition Écologique,-,190,false
+PER-026,Industrie et Énergie,-,290,false
+PER-027,Transports,-,190,false
+PER-028,"Travail, Emploi",-,120,false
+PER-030,Numérique et IA,-,290,false
+PER-031,Jeunesse,-,340,false

@@ -1,17 +1,20 @@
 import { expect, test } from "@playwright/test";
 
 import { stringify } from "csv-stringify/sync";
-import { loginFn } from "./utils";
+import { loginFn, seedDatabase } from "./utils";
+
+test.beforeAll(() => {
+  seedDatabase();
+});
 
 test("doit pouvoir importer des données", async ({ page }) => {
   await loginFn({ page });
 
   const informationChantierEtIndicateurPourTestsE2E = {
-    id: "121",
-    nom: "Mieux accompagner les aidants",
-    indicateurId: "IND-812",
-    indicateurNom:
-      "Nombre de plateformes de répit dédiées aux aidants de personnes handicapées",
+    id: "129",
+    nom: "Moderniser la gestion des ressources",
+    indicateurId: "IND-021",
+    indicateurNom: "Nombre de conformité aux standards",
   };
 
   await test.step(`Navigation vers la page chantier "${informationChantierEtIndicateurPourTestsE2E.nom}"`, async () => {
