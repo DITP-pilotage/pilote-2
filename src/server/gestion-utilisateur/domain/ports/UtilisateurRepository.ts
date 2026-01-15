@@ -53,7 +53,7 @@ export interface UtilisateurRepository {
     dateVisualisation: Date,
   ): Promise<void>;
   reinitialiserEtatVisualisationVideoAccueil(email: string): Promise<void>;
-  recupererComptesInactifs(
+  recupererComptesDesactives(
     dateDesactivationMax: Date,
   ): Promise<{ id: string; email: string }[]>;
   anonymiserAuteurs(

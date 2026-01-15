@@ -65,7 +65,7 @@ describe("SupprimerLesComptesDesactivesUseCase", () => {
     const utilisateurAsupprimerId = utilisateursAsupprimer.map(
       (utilisateur) => utilisateur.id,
     );
-    utilisateurRepository.recupererComptesInactifs.mockResolvedValue(
+    utilisateurRepository.recupererComptesDesactives.mockResolvedValue(
       utilisateursAsupprimer,
     );
 

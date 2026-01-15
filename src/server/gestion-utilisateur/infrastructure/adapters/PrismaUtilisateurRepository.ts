@@ -519,7 +519,7 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
     });
   }
 
-  async recupererComptesInactifs(
+  async recupererComptesDesactives(
     dateDesactivationMax: Date,
   ): Promise<{ id: string; email: string }[]> {
     const utilisateursInactifs = await this.prisma.utilisateur.findMany({

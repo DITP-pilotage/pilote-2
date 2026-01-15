@@ -73,7 +73,7 @@ export class SupprimerLesComptesDesactivesUseCase {
       dateDesactivationMax.getFullYear() - NOMBRE_ANNEE_AVANT_SUPPRESSION,
     );
     const utilisateursInactifs =
-      await this.utilisateurRepository.recupererComptesInactifs(
+      await this.utilisateurRepository.recupererComptesDesactives(
         dateDesactivationMax,
       );
     logger.info(`${utilisateursInactifs.length} utilisateurs à supprimer`);
