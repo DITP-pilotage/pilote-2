@@ -1021,4 +1021,34 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
       dateDerniereConnexion: compte.date_derniere_connexion,
     }));
   }
+
+  async mettreAJourDatePremiereRelanceDesactivation(
+    email: string,
+    date: Date,
+  ): Promise<void> {
+    await this.prisma.utilisateur.update({
+      where: { email: email.toLowerCase() },
+      data: { date_premiere_relance_desactivation: date },
+    });
+  }
+
+  async mettreAJourDateDeuxiemeRelanceDesactivation(
+    email: string,
+    date: Date,
+  ): Promise<void> {
+    await this.prisma.utilisateur.update({
+      where: { email: email.toLowerCase() },
+      data: { date_deuxieme_relance_desactivation: date },
+    });
+  }
+
+  async mettreAJourDateDesactivationProgramee(
+    email: string,
+    date: Date,
+  ): Promise<void> {
+    await this.prisma.utilisateur.update({
+      where: { email: email.toLowerCase() },
+      data: { date_desactivation_programee: date },
+    });
+  }
 }

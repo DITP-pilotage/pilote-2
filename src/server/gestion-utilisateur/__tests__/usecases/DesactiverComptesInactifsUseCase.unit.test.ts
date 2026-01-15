@@ -33,22 +33,22 @@ describe("DesactiverComptesInactifsUseCase", () => {
       AUTEUR_ID_SYSTEME,
     );
 
-    // Configuration des feature flags et variables d'environnement
     baseConfig.set("featureFlip.lienContactBrevo", true);
     baseConfig.set("import.keycloakUrl", "http://keycloak.test");
   });
 
-  it("désactive un compte inactif depuis plus de 90 jours", async () => {
+  it("désactive un compte dont la date de désactivation programmée est atteinte", async () => {
     // Given
     const emailUtilisateur = "utilisateur.inactif@test.com";
-    utilisateurIAMRepository.recupererComptesInactifsDepuisKeycloak.mockResolvedValue(
-      [
-        {
-          email: emailUtilisateur,
-          joursInactivite: 91,
-        },
-      ],
-    );
+    utilisateurRepository.recupererComptesInactifs.mockResolvedValue([
+      {
+        email: emailUtilisateur,
+        datePremiereRelanceDesactivation: new Date("2024-12-01"),
+        dateDeuxiemeRelanceDesactivation: new Date("2024-12-24"),
+        dateDesactivationProgramee: new Date("2024-12-31"),
+        dateDerniereConnexion: new Date("2023-06-01"),
+      },
+    ]);
 
     // When
     const resultat = await desactiverComptesInactifsUseCase.run();
@@ -78,17 +78,18 @@ describe("DesactiverComptesInactifsUseCase", () => {
     });
   });
 
-  it("envoie un mail J-30 pour un compte inactif depuis 60 jours", async () => {
+  it("envoie un mail J-30 et set la date de première relance si elle est null", async () => {
     // Given
-    const emailUtilisateur = "utilisateur.bientot.inactif@test.com";
-    utilisateurIAMRepository.recupererComptesInactifsDepuisKeycloak.mockResolvedValue(
-      [
-        {
-          email: emailUtilisateur,
-          joursInactivite: 60,
-        },
-      ],
-    );
+    const emailUtilisateur = "utilisateur.sans.relance@test.com";
+    utilisateurRepository.recupererComptesInactifs.mockResolvedValue([
+      {
+        email: emailUtilisateur,
+        datePremiereRelanceDesactivation: null,
+        dateDeuxiemeRelanceDesactivation: null,
+        dateDesactivationProgramee: null,
+        dateDerniereConnexion: new Date("2023-06-01"),
+      },
+    ]);
 
     // When
     const resultat = await desactiverComptesInactifsUseCase.run();
@@ -99,6 +100,9 @@ describe("DesactiverComptesInactifsUseCase", () => {
       39,
       { joursAvantDesactivation: 30 },
     );
+    expect(
+      utilisateurRepository.mettreAJourDatePremiereRelanceDesactivation,
+    ).toHaveBeenCalledWith(emailUtilisateur, expect.any(Date));
 
     expect(utilisateurRepository.desactiver).not.toHaveBeenCalled();
 
@@ -112,17 +116,21 @@ describe("DesactiverComptesInactifsUseCase", () => {
     });
   });
 
-  it("envoie un mail J-7 pour un compte inactif depuis 83 jours", async () => {
+  it("envoie un mail J-7 et set les dates si 23 jours après la première relance", async () => {
     // Given
-    const emailUtilisateur = "utilisateur.tres.bientot.inactif@test.com";
-    utilisateurIAMRepository.recupererComptesInactifsDepuisKeycloak.mockResolvedValue(
-      [
-        {
-          email: emailUtilisateur,
-          joursInactivite: 83,
-        },
-      ],
-    );
+    const emailUtilisateur = "utilisateur.relance.j7@test.com";
+    const datePremiereRelance = new Date();
+    datePremiereRelance.setDate(datePremiereRelance.getDate() - 25);
+
+    utilisateurRepository.recupererComptesInactifs.mockResolvedValue([
+      {
+        email: emailUtilisateur,
+        datePremiereRelanceDesactivation: datePremiereRelance,
+        dateDeuxiemeRelanceDesactivation: null,
+        dateDesactivationProgramee: null,
+        dateDerniereConnexion: new Date("2023-06-01"),
+      },
+    ]);
 
     // When
     const resultat = await desactiverComptesInactifsUseCase.run();
@@ -133,6 +141,12 @@ describe("DesactiverComptesInactifsUseCase", () => {
       39,
       { joursAvantDesactivation: 7 },
     );
+    expect(
+      utilisateurRepository.mettreAJourDateDeuxiemeRelanceDesactivation,
+    ).toHaveBeenCalledWith(emailUtilisateur, expect.any(Date));
+    expect(
+      utilisateurRepository.mettreAJourDateDesactivationProgramee,
+    ).toHaveBeenCalledWith(emailUtilisateur, expect.any(Date));
 
     expect(utilisateurRepository.desactiver).not.toHaveBeenCalled();
 
@@ -146,16 +160,67 @@ describe("DesactiverComptesInactifsUseCase", () => {
     });
   });
 
-  it("applique les bonnes actions selon le nombre de jours d'inactivité", async () => {
+  it("ne fait rien si la première relance a été envoyée mais les 23 jours ne sont pas écoulés", async () => {
     // Given
-    utilisateurIAMRepository.recupererComptesInactifsDepuisKeycloak.mockResolvedValue(
-      [
-        { email: "compte.desactiver@test.com", joursInactivite: 150 },
-        { email: "compte.mail.j30@test.com", joursInactivite: 60 },
-        { email: "compte.mail.j7@test.com", joursInactivite: 83 },
-        { email: "compte.inactif.70j@test.com", joursInactivite: 70 },
-      ],
-    );
+    const emailUtilisateur = "utilisateur.attente@test.com";
+    const datePremiereRelance = new Date();
+    datePremiereRelance.setDate(datePremiereRelance.getDate() - 10);
+
+    utilisateurRepository.recupererComptesInactifs.mockResolvedValue([
+      {
+        email: emailUtilisateur,
+        datePremiereRelanceDesactivation: datePremiereRelance,
+        dateDeuxiemeRelanceDesactivation: null,
+        dateDesactivationProgramee: null,
+        dateDerniereConnexion: new Date("2023-06-01"),
+      },
+    ]);
+
+    // When
+    const resultat = await desactiverComptesInactifsUseCase.run();
+
+    // Then
+    expect(contactInfoLettresService.envoieUnEmail).not.toHaveBeenCalled();
+    expect(utilisateurRepository.desactiver).not.toHaveBeenCalled();
+
+    expect(resultat).toEqual({
+      comptesTotaux: 1,
+      comptesDesactives: 0,
+      detailsMails: {
+        mailsJ7: 0,
+        mailsJ30: 0,
+      },
+    });
+  });
+
+  it("applique les bonnes actions selon l'état des dates de relance", async () => {
+    // Given
+    const datePremiereRelanceJ7 = new Date();
+    datePremiereRelanceJ7.setDate(datePremiereRelanceJ7.getDate() - 25);
+
+    utilisateurRepository.recupererComptesInactifs.mockResolvedValue([
+      {
+        email: "compte.desactiver@test.com",
+        datePremiereRelanceDesactivation: new Date("2024-12-01"),
+        dateDeuxiemeRelanceDesactivation: new Date("2024-12-24"),
+        dateDesactivationProgramee: new Date("2024-12-31"),
+        dateDerniereConnexion: new Date("2023-06-01"),
+      },
+      {
+        email: "compte.mail.j30@test.com",
+        datePremiereRelanceDesactivation: null,
+        dateDeuxiemeRelanceDesactivation: null,
+        dateDesactivationProgramee: null,
+        dateDerniereConnexion: new Date("2023-06-01"),
+      },
+      {
+        email: "compte.mail.j7@test.com",
+        datePremiereRelanceDesactivation: datePremiereRelanceJ7,
+        dateDeuxiemeRelanceDesactivation: null,
+        dateDesactivationProgramee: null,
+        dateDerniereConnexion: new Date("2023-06-01"),
+      },
+    ]);
 
     // When
     const resultat = await desactiverComptesInactifsUseCase.run();
@@ -164,7 +229,7 @@ describe("DesactiverComptesInactifsUseCase", () => {
     expect(utilisateurRepository.desactiver).toHaveBeenCalledTimes(1);
     expect(contactInfoLettresService.envoieUnEmail).toHaveBeenCalledTimes(2);
     expect(resultat).toEqual({
-      comptesTotaux: 4,
+      comptesTotaux: 3,
       comptesDesactives: 1,
       detailsMails: {
         mailsJ7: 1,

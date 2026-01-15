@@ -93,4 +93,16 @@ export interface UtilisateurRepository {
       dateDerniereConnexion: Date;
     }[]
   >;
+  mettreAJourDatePremiereRelanceDesactivation(
+    email: string,
+    date: Date,
+  ): Promise<void>;
+  mettreAJourDateDeuxiemeRelanceDesactivation(
+    email: string,
+    date: Date,
+  ): Promise<void>;
+  mettreAJourDateDesactivationProgramee(
+    email: string,
+    date: Date,
+  ): Promise<void>;
 }
