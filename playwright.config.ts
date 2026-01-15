@@ -24,6 +24,13 @@ export default defineConfig({
   reporter: process.env.CI
     ? [["github"], ["json", { outputFile: "test-results/results.json" }]]
     : [["html", { open: "always" }]],
+  webServer: {
+    command: "npm run test:e2e:server",
+    url: process.env.BASE_URL!,
+    reuseExistingServer: !process.env.CI,
+    stdout: "ignore",
+    stderr: "pipe",
+  },
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
