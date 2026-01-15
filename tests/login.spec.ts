@@ -1,5 +1,9 @@
 import { expect, test } from "@playwright/test";
-import { loginFn } from "./utils";
+import { loginFn, seedDatabase } from "./utils";
+
+test.beforeAll(() => {
+  seedDatabase();
+});
 
 test("doit arriver sur la landing page", async ({ page }) => {
   await page.goto("/");

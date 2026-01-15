@@ -18,8 +18,8 @@ export default defineConfig({
   retries: 2,
   globalTimeout: 2_000_000,
   outputDir: "test-results",
-  /* Opt out of parallel tests on CI. */
-  workers: process.env.CI ? 1 : undefined,
+  /* Run serially for test isolation */
+  workers: 1,
   /* Reporter à utiliser. Voir https://playwright.dev/docs/test-reporters */
   reporter: process.env.CI
     ? [["github"], ["json", { outputFile: "test-results/results.json" }]]

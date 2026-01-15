@@ -1,7 +1,11 @@
 import { expect, test } from "@playwright/test";
 
 import { stringify } from "csv-stringify/sync";
-import { loginFn } from "./utils";
+import { loginFn, seedDatabase } from "./utils";
+
+test.beforeAll(() => {
+  seedDatabase();
+});
 
 test("doit pouvoir importer des données", async ({ page }) => {
   await loginFn({ page });

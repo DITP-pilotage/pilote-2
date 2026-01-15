@@ -1,11 +1,16 @@
 import { APIRequestContext, APIResponse, expect, test } from "@playwright/test";
 import {
   authentificationApiDirProjetFn,
+  seedDatabase,
   suppressionAuthentificationApiFn,
 } from "../utils";
 
 let apiContext: APIRequestContext;
 let result: APIResponse;
+
+test.beforeAll(() => {
+  seedDatabase();
+});
 
 test.describe("Error - endpoint chantier", async () => {
   test("quand on a pas accès au chantier, doit remonter une erreur 403 ForbiddenError", async ({

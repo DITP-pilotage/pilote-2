@@ -1,11 +1,16 @@
 import { APIRequestContext, APIResponse, expect, test } from "@playwright/test";
 import {
   authentificationApiDITPADMINFn,
+  seedDatabase,
   suppressionAuthentificationApiFn,
 } from "../utils";
 
 let apiContext: APIRequestContext;
 let result: APIResponse;
+
+test.beforeAll(() => {
+  seedDatabase();
+});
 
 test.describe("Authentification", () => {
   test("quand on ne dispose pas d'un header Authorization, doit remonter une erreur 401 Unauthorized", async ({

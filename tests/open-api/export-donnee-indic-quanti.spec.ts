@@ -5,11 +5,16 @@ import {
 } from "@/server/chantiers/app/contrats/DonneeIndicateurContrat";
 import {
   authentificationApiDirProjetFn,
+  seedDatabase,
   suppressionAuthentificationApiFn,
 } from "../utils";
 
 let apiContext: APIRequestContext;
 let result: APIResponse;
+
+test.beforeAll(() => {
+  seedDatabase();
+});
 
 test("Quand on a accès au chantier, doit remonter une réponse 200 OK avec les données de l'indicateur", async ({
   playwright,
