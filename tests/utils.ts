@@ -140,10 +140,10 @@ export const suppressionAuthentificationApiFn = async ({
     await page.goto("/admin/gestion-token-api");
     await page.waitForURL("**/admin/gestion-token-api");
 
-    expect(page.getByText(apiUsername)).toBeVisible();
+    expect(page.getByRole("cell", { name: apiUsername })).toBeVisible();
 
     await page
-      .getByText(apiUsername)
+      .getByRole("cell", { name: apiUsername })
       .locator("..")
       .getByRole("button", { name: /Supprimer le token API/ })
       .click();
