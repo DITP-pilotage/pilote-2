@@ -11,6 +11,7 @@ export default function IndicateursRapportDetaille({
   détailsIndicateurs,
   typeDeRéforme,
   categoriesIndicateurRepartition,
+  jalon,
 }: IndicateursProps) {
   const codeInseeSélectionnée = territoireCode?.split("-")[1];
   if (indicateurs.length === 0) {
@@ -55,6 +56,7 @@ export default function IndicateursRapportDetaille({
                       <IndicateurBloc
                         détailsIndicateurs={détailsIndicateurs}
                         indicateur={indicateur}
+                        jalon={jalon}
                         key={indicateur.id}
                         territoireCode={territoireCode}
                         typeDeRéforme={typeDeRéforme}

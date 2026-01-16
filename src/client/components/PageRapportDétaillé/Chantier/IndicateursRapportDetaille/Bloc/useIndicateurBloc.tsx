@@ -54,6 +54,7 @@ export default function useIndicateurBloc(
   détailsIndicateur: DétailsIndicateurTerritoire,
   typeDeRéforme: "chantier",
   territoireSélectionné: DétailTerritoire,
+  jalon: number,
 ) {
   const estVueTuile = estLargeurDÉcranActuelleMoinsLargeQue("sm");
 
@@ -106,7 +107,7 @@ export default function useIndicateurBloc(
       enableSorting: false,
     }),
     reactTableColonnesHelper.accessor("données.valeurCibleAnnuelle", {
-      header: "Cible " + new Date().getFullYear().toString(),
+      header: "Cible " + jalon,
       id: "cibleAnnuelle",
       cell: (valeurCibleAnnuelle) => (
         <ValeurEtDate
@@ -120,7 +121,7 @@ export default function useIndicateurBloc(
       enableSorting: false,
     }),
     reactTableColonnesHelper.accessor("données.avancement.annuel", {
-      header: "Avancement " + new Date().getFullYear().toString(),
+      header: "Avancement " + jalon,
       id: "avancementAnnuel",
       cell: (avancementAnnuel) => (
         <BarreDeProgression
