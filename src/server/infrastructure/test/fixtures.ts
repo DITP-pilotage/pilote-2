@@ -366,4 +366,21 @@ export const fixtures = {
       },
     });
   },
+
+  async habilitation(
+    overrides: Partial<Prisma.habilitationUncheckedCreateInput> & {
+      utilisateurId: string;
+    },
+  ) {
+    const prisma = getPrisma();
+    return prisma.habilitation.create({
+      data: {
+        scopeCode: "lecture",
+        territoires: [],
+        perimetres: [],
+        chantiers: [],
+        ...overrides,
+      },
+    });
+  },
 };

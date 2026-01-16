@@ -254,7 +254,7 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
   }
 
   async verifierExistenceUtilisateur(email: string): Promise<boolean> {
-    const utilisateur = await this.prisma.utilisateur.findFirst({
+    const utilisateur = await this.prisma.getInstance().utilisateur.findFirst({
       where: {
         email,
       },
@@ -264,7 +264,7 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
   }
 
   async desactiver(email: string, auteurId: string): Promise<void> {
-    await this.prisma.utilisateur.updateMany({
+    await this.prisma.getInstance().utilisateur.updateMany({
       where: {
         email: email.toLowerCase(),
       },
@@ -277,7 +277,7 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
   }
 
   async reactiver(email: string, auteurId: string): Promise<void> {
-    await this.prisma.utilisateur.updateMany({
+    await this.prisma.getInstance().utilisateur.updateMany({
       where: {
         email: email.toLowerCase(),
       },
@@ -306,19 +306,19 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
       valeurDeLaRecherche.toLowerCase(),
     );
 
-    const unaccentedUtilisateur = await this.prisma.$queryRawUnsafe<
-      { id: string }[]
-    >(
-      `SELECT id FROM utilisateur where LOWER(unaccent(nom)) ILIKE $1
+    const unaccentedUtilisateur = await this.prisma
+      .getInstance()
+      .$queryRawUnsafe<{ id: string }[]>(
+        `SELECT id FROM utilisateur where LOWER(unaccent(nom)) ILIKE $1
       OR LOWER(unaccent(email)) ILIKE $1
       OR LOWER(unaccent(prenom)) ILIKE $1
       OR LOWER(unaccent(fonction)) ILIKE $1
       OR LOWER(unaccent(profil_code)) ILIKE $1
     `,
-      `%${valeurDeLaRechercheSansAccentEtEnLowerCase}%`,
-    );
+        `%${valeurDeLaRechercheSansAccentEtEnLowerCase}%`,
+      );
 
-    const utilisateurs = await this.prisma.utilisateur.findMany({
+    const utilisateurs = await this.prisma.getInstance().utilisateur.findMany({
       include: {
         profil: true,
         habilitation: true,
@@ -363,19 +363,19 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
       valeurDeLaRecherche.toLowerCase(),
     );
 
-    const unaccentedUtilisateur = await this.prisma.$queryRawUnsafe<
-      { id: string }[]
-    >(
-      `SELECT id FROM utilisateur where LOWER(unaccent(nom)) ILIKE $1
+    const unaccentedUtilisateur = await this.prisma
+      .getInstance()
+      .$queryRawUnsafe<{ id: string }[]>(
+        `SELECT id FROM utilisateur where LOWER(unaccent(nom)) ILIKE $1
       OR LOWER(unaccent(email)) ILIKE $1
       OR LOWER(unaccent(prenom)) ILIKE $1
       OR LOWER(unaccent(fonction)) ILIKE $1
       OR LOWER(unaccent(profil_code)) ILIKE $1
     `,
-      `%${valeurDeLaRechercheSansAccentEtEnLowerCase}%`,
-    );
+        `%${valeurDeLaRechercheSansAccentEtEnLowerCase}%`,
+      );
 
-    const utilisateurs = await this.prisma.utilisateur.findMany({
+    const utilisateurs = await this.prisma.getInstance().utilisateur.findMany({
       include: {
         profil: true,
         habilitation: true,
@@ -412,7 +412,7 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
     listePerimetresMinisteriels: string[],
     listeInformationsChantiersUtilisateurs: InformationChantierUtilisateur[],
   ): Promise<Utilisateur | null> {
-    const row = await this.prisma.utilisateur.findUnique({
+    const row = await this.prisma.getInstance().utilisateur.findUnique({
       where: { email: email.toLowerCase() },
       include: {
         profil: true,
@@ -440,7 +440,7 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
       (territoireElement) => territoireElement.code,
     );
 
-    const utilisateurs = await this.prisma.utilisateur.findMany({
+    const utilisateurs = await this.prisma.getInstance().utilisateur.findMany({
       where: {
         OR: [
           {
@@ -510,7 +510,7 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
   async supprimerListeUtilisateur(
     utilisateursASupprimerIds: string[],
   ): Promise<void> {
-    await this.prisma.utilisateur.deleteMany({
+    await this.prisma.getInstance().utilisateur.deleteMany({
       where: {
         id: {
           in: utilisateursASupprimerIds,
@@ -522,13 +522,15 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
   async recupererComptesDesactives(
     dateDesactivationMax: Date,
   ): Promise<{ id: string; email: string }[]> {
-    const utilisateursInactifs = await this.prisma.utilisateur.findMany({
-      where: {
-        date_desactivation: {
-          lt: dateDesactivationMax,
+    const utilisateursInactifs = await this.prisma
+      .getInstance()
+      .utilisateur.findMany({
+        where: {
+          date_desactivation: {
+            lt: dateDesactivationMax,
+          },
         },
-      },
-    });
+      });
 
     return utilisateursInactifs.map((utilisateurInactif) => ({
       id: utilisateurInactif.id,
@@ -540,14 +542,16 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
     auteursAAnonymiserIds: string[],
     emailAuteurRemplacement: string,
   ): Promise<void> {
-    const auteurAnonyme = await this.prisma.utilisateur.findFirst({
-      where: {
-        email: emailAuteurRemplacement,
-      },
-    });
+    const auteurAnonyme = await this.prisma
+      .getInstance()
+      .utilisateur.findFirst({
+        where: {
+          email: emailAuteurRemplacement,
+        },
+      });
 
     if (auteurAnonyme) {
-      await this.prisma.utilisateur.updateMany({
+      await this.prisma.getInstance().utilisateur.updateMany({
         where: {
           auteur_id_creation: {
             in: auteursAAnonymiserIds,
@@ -557,7 +561,7 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
           auteur_id_creation: auteurAnonyme.id,
         },
       });
-      await this.prisma.utilisateur.updateMany({
+      await this.prisma.getInstance().utilisateur.updateMany({
         where: {
           auteur_id_modification: {
             in: auteursAAnonymiserIds,
@@ -656,8 +660,9 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
   async recupererEtatVisualisationVideoAccueil(
     utilisateurId: string,
   ): Promise<boolean> {
-    const etatVisualisationVideoAccueil =
-      await this.prisma.utilisateur.findUnique({
+    const etatVisualisationVideoAccueil = await this.prisma
+      .getInstance()
+      .utilisateur.findUnique({
         where: { id: utilisateurId },
         select: {
           date_visualisation_video_accueil: true,
@@ -672,7 +677,7 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
   async recupererDateVisualisationVideoAccueil(
     utilisateurId: string,
   ): Promise<Date | null> {
-    const utilisateur = await this.prisma.utilisateur.findUnique({
+    const utilisateur = await this.prisma.getInstance().utilisateur.findUnique({
       where: { id: utilisateurId },
       select: {
         date_visualisation_video_accueil: true,
@@ -685,7 +690,7 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
   async recupererDateInscriptionInfolettre(
     utilisateurId: string,
   ): Promise<Date | null> {
-    const utilisateur = await this.prisma.utilisateur.findUnique({
+    const utilisateur = await this.prisma.getInstance().utilisateur.findUnique({
       where: { id: utilisateurId },
       select: {
         date_inscription_infolettre: true,
@@ -698,7 +703,7 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
   async recupererDateVisualisationPopupInfolettre(
     utilisateurId: string,
   ): Promise<Date | null> {
-    const utilisateur = await this.prisma.utilisateur.findUnique({
+    const utilisateur = await this.prisma.getInstance().utilisateur.findUnique({
       where: { id: utilisateurId },
       select: {
         date_visualisation_popup_infolettre: true,
@@ -712,7 +717,7 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
     utilisateurId: string,
     dateVisualisation: Date,
   ): Promise<void> {
-    await this.prisma.utilisateur.update({
+    await this.prisma.getInstance().utilisateur.update({
       where: { id: utilisateurId },
       data: { date_visualisation_video_accueil: dateVisualisation },
     });
@@ -722,7 +727,7 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
     email: string,
     dateInscriptionInfolettre: Date,
   ): Promise<void> {
-    await this.prisma.utilisateur.update({
+    await this.prisma.getInstance().utilisateur.update({
       where: { email: email },
       data: { date_inscription_infolettre: dateInscriptionInfolettre },
     });
@@ -732,7 +737,7 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
     utilisateurId: string,
     dateVisualisationPopupInfolettre: Date,
   ): Promise<void> {
-    await this.prisma.utilisateur.update({
+    await this.prisma.getInstance().utilisateur.update({
       where: { id: utilisateurId },
       data: {
         date_visualisation_popup_infolettre: dateVisualisationPopupInfolettre,
@@ -743,7 +748,7 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
   async reinitialiserEtatVisualisationVideoAccueil(
     email: string,
   ): Promise<void> {
-    await this.prisma.utilisateur.update({
+    await this.prisma.getInstance().utilisateur.update({
       where: { email },
       data: { date_visualisation_video_accueil: null },
     });
@@ -911,7 +916,7 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
   async recupererUtilisateurEmail(
     utilisateurId: string,
   ): Promise<string | null> {
-    const utilisateur = await this.prisma.utilisateur.findUnique({
+    const utilisateur = await this.prisma.getInstance().utilisateur.findUnique({
       where: { id: utilisateurId },
       select: { email: true },
     });
@@ -920,7 +925,7 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
   }
 
   async recupererUtilisateurId(email: string): Promise<string | null> {
-    const utilisateur = await this.prisma.utilisateur.findUnique({
+    const utilisateur = await this.prisma.getInstance().utilisateur.findUnique({
       where: { email: email.toLowerCase() },
       select: { id: true },
     });
@@ -934,33 +939,35 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
     },
     auteurId: string,
   ): Promise<void> {
-    const utilisateurCrééOuMisÀJour = await this.prisma.utilisateur.upsert({
-      create: {
-        email: utilisateur.email.toLocaleLowerCase(),
-        nom: utilisateur.nom,
-        prenom: utilisateur.prénom,
-        profilCode: utilisateur.profil,
-        fonction: utilisateur.fonction,
-        applications_accessibles: utilisateur.applicationsAccessibles,
-        auteur_id_modification: auteurId,
-        date_modification: new Date(),
-        auteur_id_creation: auteurId,
-        date_creation: new Date(),
-      },
-      update: {
-        email: utilisateur.email.toLocaleLowerCase(),
-        nom: utilisateur.nom,
-        prenom: utilisateur.prénom,
-        profilCode: utilisateur.profil,
-        fonction: utilisateur.fonction,
-        applications_accessibles: utilisateur.applicationsAccessibles,
-        auteur_id_modification: auteurId,
-        date_modification: new Date(),
-      },
-      where: {
-        email: utilisateur.email.toLowerCase(),
-      },
-    });
+    const utilisateurCrééOuMisÀJour = await this.prisma
+      .getInstance()
+      .utilisateur.upsert({
+        create: {
+          email: utilisateur.email.toLocaleLowerCase(),
+          nom: utilisateur.nom,
+          prenom: utilisateur.prénom,
+          profilCode: utilisateur.profil,
+          fonction: utilisateur.fonction,
+          applications_accessibles: utilisateur.applicationsAccessibles,
+          auteur_id_modification: auteurId,
+          date_modification: new Date(),
+          auteur_id_creation: auteurId,
+          date_creation: new Date(),
+        },
+        update: {
+          email: utilisateur.email.toLocaleLowerCase(),
+          nom: utilisateur.nom,
+          prenom: utilisateur.prénom,
+          profilCode: utilisateur.profil,
+          fonction: utilisateur.fonction,
+          applications_accessibles: utilisateur.applicationsAccessibles,
+          auteur_id_modification: auteurId,
+          date_modification: new Date(),
+        },
+        where: {
+          email: utilisateur.email.toLowerCase(),
+        },
+      });
 
     const habilitationsÀCréer = Object.entries(utilisateur.habilitations).map(
       (habilitation) => ({
@@ -972,13 +979,13 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
       }),
     );
 
-    await this.prisma.habilitation.deleteMany({
+    await this.prisma.getInstance().habilitation.deleteMany({
       where: {
         utilisateurId: utilisateurCrééOuMisÀJour.id,
       },
     });
 
-    await this.prisma.habilitation.createMany({
+    await this.prisma.getInstance().habilitation.createMany({
       data: habilitationsÀCréer,
     });
   }
@@ -995,21 +1002,23 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
     const dateSeuilInactivite = new Date(dateReference);
     dateSeuilInactivite.setFullYear(dateSeuilInactivite.getFullYear() - 1);
 
-    const comptesInactifs = await this.prisma.utilisateur.findMany({
-      where: {
-        date_desactivation: null,
-        date_derniere_connexion: {
-          lt: dateSeuilInactivite,
+    const comptesInactifs = await this.prisma
+      .getInstance()
+      .utilisateur.findMany({
+        where: {
+          date_desactivation: null,
+          date_derniere_connexion: {
+            lt: dateSeuilInactivite,
+          },
         },
-      },
-      select: {
-        email: true,
-        date_premiere_relance_desactivation: true,
-        date_deuxieme_relance_desactivation: true,
-        date_desactivation_programee: true,
-        date_derniere_connexion: true,
-      },
-    });
+        select: {
+          email: true,
+          date_premiere_relance_desactivation: true,
+          date_deuxieme_relance_desactivation: true,
+          date_desactivation_programee: true,
+          date_derniere_connexion: true,
+        },
+      });
 
     return comptesInactifs.map((compte) => ({
       email: compte.email,
@@ -1026,7 +1035,7 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
     email: string,
     date: Date,
   ): Promise<void> {
-    await this.prisma.utilisateur.update({
+    await this.prisma.getInstance().utilisateur.update({
       where: { email: email.toLowerCase() },
       data: { date_premiere_relance_desactivation: date },
     });
@@ -1036,7 +1045,7 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
     email: string,
     date: Date,
   ): Promise<void> {
-    await this.prisma.utilisateur.update({
+    await this.prisma.getInstance().utilisateur.update({
       where: { email: email.toLowerCase() },
       data: { date_deuxieme_relance_desactivation: date },
     });
@@ -1046,7 +1055,7 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
     email: string,
     date: Date,
   ): Promise<void> {
-    await this.prisma.utilisateur.update({
+    await this.prisma.getInstance().utilisateur.update({
       where: { email: email.toLowerCase() },
       data: { date_desactivation_programee: date },
     });
@@ -1056,7 +1065,7 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
     email: string,
     date: Date,
   ): Promise<void> {
-    await this.prisma.utilisateur.update({
+    await this.prisma.getInstance().utilisateur.update({
       where: { email: email.toLowerCase() },
       data: {
         date_derniere_connexion: date,
