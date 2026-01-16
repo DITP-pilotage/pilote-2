@@ -17,6 +17,7 @@ interface IndicateurBlocProps {
   détailsIndicateurs: DétailsIndicateurs;
   territoireCode: string;
   typeDeRéforme: "chantier";
+  jalon: number;
 }
 
 const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
@@ -24,6 +25,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
   détailsIndicateurs,
   territoireCode,
   typeDeRéforme,
+  jalon,
 }) => {
   const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
 
@@ -33,6 +35,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
     détailsIndicateur,
     typeDeRéforme,
     territoireSélectionné,
+    jalon,
   );
 
   return (

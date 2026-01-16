@@ -260,6 +260,7 @@ const RapportDétailléChantier: FunctionComponent<
                   }
                   détailsIndicateurs={détailsIndicateurs}
                   indicateurs={indicateurs}
+                  jalon={jalon}
                   listeRubriquesIndicateurs={listeRubriquesIndicateursChantier}
                   territoireCode={territoireCode}
                   typeDeRéforme="chantier"
