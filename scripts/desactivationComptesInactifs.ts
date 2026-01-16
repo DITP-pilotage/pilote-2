@@ -1,13 +1,13 @@
 import { loadEnvConfig } from "@next/env";
 import logger from "@/server/infrastructure/Logger";
 import { getGestionUtilisateurContainer } from "@/server/gestion-utilisateur/container";
-import { getInitialContainer } from "@/server/initial-container";
+import { getInitialContainerWithTransversalDependencies } from "@/server/InitialDependencies";
 
 const projectDir = process.cwd();
 loadEnvConfig(projectDir);
 
 async function main() {
-  const initialContainer = getInitialContainer();
+  const initialContainer = getInitialContainerWithTransversalDependencies();
   const container = getGestionUtilisateurContainer(initialContainer);
 
   return container.resolve("desactiverComptesInactifsUseCase").run();

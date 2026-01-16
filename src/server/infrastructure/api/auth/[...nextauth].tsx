@@ -6,6 +6,7 @@ import { JWT } from "next-auth/jwt";
 import logger from "@/server/infrastructure/Logger";
 import { dependencies } from "@/server/infrastructure/Dependencies";
 import { configuration } from "@/config";
+import { getContainer } from "@/server/dependances";
 
 export const keycloak = KeycloakProvider({
   clientId: configuration().keycloak.clientId,
@@ -219,6 +220,15 @@ export const authOptions: AuthOptions = {
           "NextAuth JWT callback called from login",
         );
         logger.debug({ token, user, account, profile, isNewUser });
+
+        if (user.email) {
+          const utilisateurRepository =
+            getContainer("gestionUtilisateur").cradle.utilisateurRepository;
+          await utilisateurRepository.mettreAJourDateDerniereConnexion(
+            user.email,
+            new Date(),
+          );
+        }
 
         return {
           accessToken: account.access_token,
