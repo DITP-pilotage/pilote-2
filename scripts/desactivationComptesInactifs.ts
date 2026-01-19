@@ -24,10 +24,10 @@ if (isMain) {
       logger.info(`   - Comptes inactifs trouvés : ${resultat.comptesTotaux}`);
       logger.info(`   - Comptes désactivés : ${resultat.comptesDesactives}`);
       logger.info(
-        `   - Mails J-7 (96 jours d'inactivité) : ${resultat.detailsMails.mailsJ7}`,
+        `   - Deuxième relance : ${resultat.detailsMails.mailsDeuxiemeRelance}`,
       );
       logger.info(
-        `   - Mails J-30 (92 jours d'inactivité) : ${resultat.detailsMails.mailsJ30}`,
+        `   - Première relance : ${resultat.detailsMails.mailsPremiereRelance}`,
       );
     })
     .catch((error) => {

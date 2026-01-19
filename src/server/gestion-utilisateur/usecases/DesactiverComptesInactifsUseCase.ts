@@ -16,10 +16,15 @@ export interface DesactiverComptesInactifsResultat {
   comptesTotaux: number;
   comptesDesactives: number;
   detailsMails: {
-    mailsJ7: number;
-    mailsJ30: number;
+    mailsPremiereRelance: number;
+    mailsDeuxiemeRelance: number;
   };
 }
+
+const TEMPLATE_MAIL_ID = 39;
+const NOMBRE_JOUR_ENTRE_RELANCES = 23;
+const NOMBRE_JOUR_AVANT_DESACTIVATION_PREMIERE_RELANCE = 30;
+const NOMBRE_JOUR_AVANT_DESACTIVATION_DEUXIEME_RELANCE = 7;
 
 export class DesactiverComptesInactifsUseCase {
   private utilisateurRepository: UtilisateurRepository;
@@ -64,8 +69,8 @@ export class DesactiverComptesInactifsUseCase {
     logger.info(`${comptesInactifs.length} comptes inactifs trouvés`);
 
     let comptesDesactives = 0;
-    let mailsJ7 = 0;
-    let mailsJ30 = 0;
+    let mailsPremiereRelance = 0;
+    let mailsDeuxiemeRelance = 0;
 
     for (const compte of comptesInactifs) {
       const {
@@ -97,27 +102,37 @@ export class DesactiverComptesInactifsUseCase {
 
         comptesDesactives++;
       } else if (!datePremiereRelanceDesactivation) {
-        await this.contactInfoLettresService.envoieUnEmail([{ email }], 39, {
-          joursAvantDesactivation: 30,
-        });
+        await this.contactInfoLettresService.envoieUnEmail(
+          [{ email }],
+          TEMPLATE_MAIL_ID,
+          {
+            joursAvantDesactivation:
+              NOMBRE_JOUR_AVANT_DESACTIVATION_PREMIERE_RELANCE,
+          },
+        );
         await this.utilisateurRepository.mettreAJourDatePremiereRelanceDesactivation(
           email,
           aujourdHui,
         );
-        logger.info(`Mail J-30 envoyé à ${email}`);
-        mailsJ30++;
+        logger.info(`Première relance envoyée à ${email}`);
+        mailsPremiereRelance++;
       } else if (!dateDeuxiemeRelanceDesactivation) {
         const dateLimiteDeuxiemeRelance = new Date(
           datePremiereRelanceDesactivation,
         );
         dateLimiteDeuxiemeRelance.setDate(
-          dateLimiteDeuxiemeRelance.getDate() + 23,
+          dateLimiteDeuxiemeRelance.getDate() + NOMBRE_JOUR_ENTRE_RELANCES,
         );
 
         if (dateLimiteDeuxiemeRelance <= aujourdHui) {
-          await this.contactInfoLettresService.envoieUnEmail([{ email }], 39, {
-            joursAvantDesactivation: 7,
-          });
+          await this.contactInfoLettresService.envoieUnEmail(
+            [{ email }],
+            TEMPLATE_MAIL_ID,
+            {
+              joursAvantDesactivation:
+                NOMBRE_JOUR_AVANT_DESACTIVATION_DEUXIEME_RELANCE,
+            },
+          );
 
           const dateDesactivation = new Date(aujourdHui);
           dateDesactivation.setDate(dateDesactivation.getDate() + 7);
@@ -131,8 +146,8 @@ export class DesactiverComptesInactifsUseCase {
             dateDesactivation,
           );
 
-          logger.info(`Mail J-7 envoyé à ${email}`);
-          mailsJ7++;
+          logger.info(`Deuxieme relance envoyée à ${email}`);
+          mailsDeuxiemeRelance++;
         }
       }
     }
@@ -141,8 +156,8 @@ export class DesactiverComptesInactifsUseCase {
       comptesTotaux: comptesInactifs.length,
       comptesDesactives,
       detailsMails: {
-        mailsJ7,
-        mailsJ30,
+        mailsPremiereRelance,
+        mailsDeuxiemeRelance,
       },
     };
   }

@@ -72,8 +72,8 @@ describe("DesactiverComptesInactifsUseCase", () => {
       comptesTotaux: 1,
       comptesDesactives: 1,
       detailsMails: {
-        mailsJ7: 0,
-        mailsJ30: 0,
+        mailsDeuxiemeRelance: 0,
+        mailsPremiereRelance: 0,
       },
     });
   });
@@ -110,8 +110,8 @@ describe("DesactiverComptesInactifsUseCase", () => {
       comptesTotaux: 1,
       comptesDesactives: 0,
       detailsMails: {
-        mailsJ7: 0,
-        mailsJ30: 1,
+        mailsDeuxiemeRelance: 0,
+        mailsPremiereRelance: 1,
       },
     });
   });
@@ -154,8 +154,8 @@ describe("DesactiverComptesInactifsUseCase", () => {
       comptesTotaux: 1,
       comptesDesactives: 0,
       detailsMails: {
-        mailsJ7: 1,
-        mailsJ30: 0,
+        mailsDeuxiemeRelance: 1,
+        mailsPremiereRelance: 0,
       },
     });
   });
@@ -187,8 +187,8 @@ describe("DesactiverComptesInactifsUseCase", () => {
       comptesTotaux: 1,
       comptesDesactives: 0,
       detailsMails: {
-        mailsJ7: 0,
-        mailsJ30: 0,
+        mailsDeuxiemeRelance: 0,
+        mailsPremiereRelance: 0,
       },
     });
   });
@@ -232,8 +232,8 @@ describe("DesactiverComptesInactifsUseCase", () => {
       comptesTotaux: 3,
       comptesDesactives: 1,
       detailsMails: {
-        mailsJ7: 1,
-        mailsJ30: 1,
+        mailsDeuxiemeRelance: 1,
+        mailsPremiereRelance: 1,
       },
     });
   });
