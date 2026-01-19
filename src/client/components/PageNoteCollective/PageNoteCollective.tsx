@@ -70,13 +70,13 @@ export const ContenuPageNoteCollective = () => {
                 <span className="pt-2">Territoire : </span>
                 <Sélecteur
                   htmlName="select-territoire"
+                  onChange={handleRattachementChange}
                   options={rattachements.map((rattachement) => {
                     return {
                       valeur: rattachement.code,
                       libellé: rattachement.libelle,
                     };
                   })}
-                  valeurModifiéeCallback={handleRattachementChange}
                   valeurSélectionnée={rattachementCode}
                 />
               </div>
