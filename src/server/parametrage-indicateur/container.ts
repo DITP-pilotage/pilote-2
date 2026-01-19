@@ -12,7 +12,6 @@ import { ImportMasseMetadataIndicateurHandler } from "@/server/parametrage-indic
 import ImportMasseMetadataIndicateurUseCase from "@/server/parametrage-indicateur/usecases/ImportMasseMetadataIndicateurUseCase";
 import { MetadataParametrageIndicateurRepository } from "@/server/parametrage-indicateur/domain/port/MetadataParametrageIndicateurRepository";
 import { PrismaHistorisationModificationRepository } from "@/server/infrastructure/accès_données/historisationModification/PrismaHistorisationModificationRepository";
-import { YamlInformationMetadataIndicateurRepository } from "@/server/parametrage-indicateur/infrastructure/adapters/YamlInformationMetadataIndicateurRepository";
 import { PrismaMetadataParametrageIndicateurRepository } from "@/server/parametrage-indicateur/infrastructure/adapters/PrismaMetadataParametrageIndicateurRepository";
 import { PrismaMetadataParametrageIndicateurQuery } from "@/server/parametrage-indicateur/infrastructure/queries/PrismaMetadataParametrageIndicateurQuery";
 import { GetMetadataIndicateurConfigurationQuery } from "@/server/parametrage-indicateur/queries/GetMetadataIndicateurConfigurationQuery";
@@ -47,9 +46,6 @@ export const getParametrageIndicateurContainer = (
     .register({
       historisationModificationRepository: asClass(
         PrismaHistorisationModificationRepository,
-      ),
-      informationMetadataIndicateurRepository: asClass(
-        YamlInformationMetadataIndicateurRepository,
       ),
       creerUneMetadataIndicateurUseCase: asClass(
         CreerUneMetadataIndicateurUseCase,
