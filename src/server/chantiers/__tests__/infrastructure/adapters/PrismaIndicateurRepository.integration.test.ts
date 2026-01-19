@@ -6744,4 +6744,444 @@ describe("PrismaIndicateurRepository", () => {
       expect(result.get("CH-001")![1].mailles).toHaveLength(2);
     });
   });
+
+  describe("#recupererDatesDernierImports", () => {
+    it("retourne la date de création la plus récente parmi les événements VALEUR_CREEE et VALEUR_MODIFIEE pour chaque indicateur", async () => {
+      // Given
+      await prisma.chantier_identite.create({
+        data: {
+          id: "CH-001",
+          nom: "Chantier 001",
+        },
+      });
+
+      await prisma.indicateur_identite.createMany({
+        data: [
+          { id: "IND-001", nom: "Indicateur 001", chantier_id: "CH-001" },
+          { id: "IND-002", nom: "Indicateur 002", chantier_id: "CH-001" },
+        ],
+      });
+
+      await prisma.chantier_territoire.create({
+        data: {
+          id: "CH-001",
+          maille: "NAT",
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          zone_id: "NAT-FR",
+        },
+      });
+
+      await prisma.indicateur_territoire.createMany({
+        data: [
+          {
+            id: "IND-001",
+            chantier_id: "CH-001",
+            maille: "NAT",
+            territoire_code: "NAT-FR",
+            code_insee: "FR",
+            zone_id: "NAT-FR",
+          },
+          {
+            id: "IND-002",
+            chantier_id: "CH-001",
+            maille: "NAT",
+            territoire_code: "NAT-FR",
+            code_insee: "FR",
+            zone_id: "NAT-FR",
+          },
+        ],
+      });
+
+      const auteurId = "bc6281a8-78f2-4792-951b-fa66c1320dc1";
+      await prisma.utilisateur.create({
+        data: {
+          id: auteurId,
+          email: "user@test.com",
+          profilCode: ProfilEnum.DITP_ADMIN,
+          nom: "user",
+          prenom: "user",
+          date_creation: new Date(),
+        },
+      });
+
+      await prisma.indicateur_territoire_valeur_evenement.createMany({
+        data: [
+          {
+            id: "43a88e60-486a-4649-8999-5ae3fbcbacce",
+            indic_id: "IND-001",
+            territoire_code: "NAT-FR",
+            type_evenement: EvenementValeurEnum.VALEUR_CREEE,
+            date_creation: new Date("2026-01-01T10:00:00.000Z"),
+            valeur: 10,
+            date_valeur: new Date("2026-01-01"),
+            ordre: 1,
+            id_auteur_modification: auteurId,
+            type_valeur: "VALEUR_AVANCEMENT",
+            donnees_complementaires: {},
+            correlation_id: "53107919-74e6-4305-8a3e-899b3aea2c93",
+          },
+          {
+            id: "53a88e60-486a-4649-8999-5ae3fbcbacce",
+            indic_id: "IND-001",
+            territoire_code: "NAT-FR",
+            type_evenement: EvenementValeurEnum.VALEUR_MODIFIEE,
+            date_creation: new Date("2026-01-15T10:00:00.000Z"),
+            id_auteur_modification: auteurId,
+            type_valeur: "VALEUR_AVANCEMENT",
+            donnees_complementaires: {},
+            correlation_id: "63107919-74e6-4305-8a3e-899b3aea2c93",
+            valeur: 15,
+            date_valeur: new Date("2026-01-15"),
+            ordre: 2,
+          },
+          {
+            id: "63a88e60-486a-4649-8999-5ae3fbcbacce",
+            indic_id: "IND-002",
+            territoire_code: "NAT-FR",
+            type_evenement: EvenementValeurEnum.VALEUR_CREEE,
+            date_creation: new Date("2026-01-20T10:00:00.000Z"),
+            id_auteur_modification: auteurId,
+            type_valeur: "VALEUR_AVANCEMENT",
+            donnees_complementaires: {},
+            correlation_id: "73107919-74e6-4305-8a3e-899b3aea2c93",
+            valeur: 20,
+            date_valeur: new Date("2026-01-20"),
+            ordre: 1,
+          },
+        ],
+      });
+
+      // When
+      const result =
+        await prismaIndicateurRepository.recupererDatesDernierImports(
+          new Date("2026-02-01T00:00:00.000Z"),
+        );
+
+      // Then
+      expect(result.get("IND-001")).toEqual(
+        new Date("2026-01-15T10:00:00.000Z"),
+      );
+      expect(result.get("IND-002")).toEqual(
+        new Date("2026-01-20T10:00:00.000Z"),
+      );
+    });
+
+    it("ignore les événements dont la date de création est supérieure ou égale à la date d'exécution des datajobs", async () => {
+      // Given
+      await prisma.chantier_identite.create({
+        data: {
+          id: "CH-001",
+          nom: "Chantier 001",
+        },
+      });
+
+      await prisma.indicateur_identite.create({
+        data: {
+          id: "IND-001",
+          nom: "Indicateur 001",
+          chantier_id: "CH-001",
+        },
+      });
+
+      await prisma.chantier_territoire.create({
+        data: {
+          id: "CH-001",
+          maille: "NAT",
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          zone_id: "NAT-FR",
+        },
+      });
+
+      await prisma.indicateur_territoire.create({
+        data: {
+          id: "IND-001",
+          chantier_id: "CH-001",
+          maille: "NAT",
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          zone_id: "NAT-FR",
+        },
+      });
+
+      const auteurId = "cc6281a8-78f2-4792-951b-fa66c1320dc1";
+      await prisma.utilisateur.create({
+        data: {
+          id: auteurId,
+          email: "user@test.com",
+          profilCode: ProfilEnum.DITP_ADMIN,
+          nom: "user",
+          prenom: "user",
+          date_creation: new Date(),
+        },
+      });
+
+      await prisma.indicateur_territoire_valeur_evenement.createMany({
+        data: [
+          {
+            id: "a3a88e60-486a-4649-8999-5ae3fbcbacce",
+            indic_id: "IND-001",
+            territoire_code: "NAT-FR",
+            type_evenement: EvenementValeurEnum.VALEUR_CREEE,
+            date_creation: new Date("2026-01-10T10:00:00.000Z"),
+            id_auteur_modification: auteurId,
+            type_valeur: "VALEUR_AVANCEMENT",
+            donnees_complementaires: {},
+            correlation_id: "a3107919-74e6-4305-8a3e-899b3aea2c93",
+            valeur: 10,
+            date_valeur: new Date("2026-01-10"),
+            ordre: 1,
+          },
+          {
+            id: "b3a88e60-486a-4649-8999-5ae3fbcbacce",
+            indic_id: "IND-001",
+            territoire_code: "NAT-FR",
+            type_evenement: EvenementValeurEnum.VALEUR_MODIFIEE,
+            date_creation: new Date("2026-02-01T10:00:00.000Z"),
+            id_auteur_modification: auteurId,
+            type_valeur: "VALEUR_AVANCEMENT",
+            donnees_complementaires: {},
+            correlation_id: "b3107919-74e6-4305-8a3e-899b3aea2c93",
+            valeur: 15,
+            date_valeur: new Date("2026-02-01"),
+            ordre: 2,
+          },
+        ],
+      });
+
+      // When
+      const result =
+        await prismaIndicateurRepository.recupererDatesDernierImports(
+          new Date("2026-02-01T00:00:00.000Z"),
+        );
+
+      // Then
+      expect(result.get("IND-001")).toEqual(
+        new Date("2026-01-10T10:00:00.000Z"),
+      );
+    });
+
+    it("retourne la date la plus récente parmi les événements de plusieurs territoires pour un même indicateur", async () => {
+      // Given
+      await prisma.chantier_identite.create({
+        data: {
+          id: "CH-001",
+          nom: "Chantier 001",
+        },
+      });
+
+      await prisma.indicateur_identite.create({
+        data: {
+          id: "IND-001",
+          nom: "Indicateur 001",
+          chantier_id: "CH-001",
+        },
+      });
+
+      await prisma.chantier_territoire.createMany({
+        data: [
+          {
+            id: "CH-001",
+            maille: "NAT",
+            territoire_code: "NAT-FR",
+            code_insee: "FR",
+            zone_id: "NAT-FR",
+          },
+          {
+            id: "CH-001",
+            maille: "REG",
+            territoire_code: "REG-11",
+            code_insee: "11",
+            zone_id: "REG-11",
+          },
+        ],
+      });
+
+      await prisma.indicateur_territoire.createMany({
+        data: [
+          {
+            id: "IND-001",
+            chantier_id: "CH-001",
+            maille: "NAT",
+            territoire_code: "NAT-FR",
+            code_insee: "FR",
+            zone_id: "NAT-FR",
+          },
+          {
+            id: "IND-001",
+            chantier_id: "CH-001",
+            maille: "REG",
+            territoire_code: "REG-11",
+            code_insee: "11",
+            zone_id: "REG-11",
+          },
+        ],
+      });
+
+      const auteurId = "dc6281a8-78f2-4792-951b-fa66c1320dc1";
+      await prisma.utilisateur.create({
+        data: {
+          id: auteurId,
+          email: "user@test.com",
+          profilCode: ProfilEnum.DITP_ADMIN,
+          nom: "user",
+          prenom: "user",
+          date_creation: new Date(),
+        },
+      });
+
+      await prisma.indicateur_territoire_valeur_evenement.createMany({
+        data: [
+          {
+            id: "c3a88e60-486a-4649-8999-5ae3fbcbacce",
+            indic_id: "IND-001",
+            territoire_code: "NAT-FR",
+            type_evenement: EvenementValeurEnum.VALEUR_CREEE,
+            date_creation: new Date("2026-01-05T10:00:00.000Z"),
+            id_auteur_modification: auteurId,
+            type_valeur: "VALEUR_AVANCEMENT",
+            donnees_complementaires: {},
+            correlation_id: "c3107919-74e6-4305-8a3e-899b3aea2c93",
+            valeur: 10,
+            date_valeur: new Date("2026-01-05"),
+            ordre: 1,
+          },
+          {
+            id: "d3a88e60-486a-4649-8999-5ae3fbcbacce",
+            indic_id: "IND-001",
+            territoire_code: "REG-11",
+            type_evenement: EvenementValeurEnum.VALEUR_CREEE,
+            date_creation: new Date("2026-01-20T10:00:00.000Z"),
+            id_auteur_modification: auteurId,
+            type_valeur: "VALEUR_AVANCEMENT",
+            donnees_complementaires: {},
+            correlation_id: "d3107919-74e6-4305-8a3e-899b3aea2c93",
+            valeur: 20,
+            date_valeur: new Date("2026-01-20"),
+            ordre: 1,
+          },
+        ],
+      });
+
+      // When
+      const result =
+        await prismaIndicateurRepository.recupererDatesDernierImports(
+          new Date("2026-02-01T00:00:00.000Z"),
+        );
+
+      // Then
+      expect(result.get("IND-001")).toEqual(
+        new Date("2026-01-20T10:00:00.000Z"),
+      );
+    });
+
+    it("ignore les événements qui ne sont pas de type VALEUR_CREEE ou VALEUR_MODIFIEE", async () => {
+      // Given
+      await prisma.chantier_identite.create({
+        data: {
+          id: "CH-001",
+          nom: "Chantier 001",
+        },
+      });
+
+      await prisma.indicateur_identite.create({
+        data: {
+          id: "IND-001",
+          nom: "Indicateur 001",
+          chantier_id: "CH-001",
+        },
+      });
+
+      await prisma.chantier_territoire.create({
+        data: {
+          id: "CH-001",
+          maille: "NAT",
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          zone_id: "NAT-FR",
+        },
+      });
+
+      await prisma.indicateur_territoire.create({
+        data: {
+          id: "IND-001",
+          chantier_id: "CH-001",
+          maille: "NAT",
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          zone_id: "NAT-FR",
+        },
+      });
+
+      const auteurId = "ec6281a8-78f2-4792-951b-fa66c1320dc1";
+      await prisma.utilisateur.create({
+        data: {
+          id: auteurId,
+          email: "user@test.com",
+          profilCode: ProfilEnum.DITP_ADMIN,
+          nom: "user",
+          prenom: "user",
+          date_creation: new Date(),
+        },
+      });
+
+      await prisma.indicateur_territoire_valeur_evenement.createMany({
+        data: [
+          {
+            id: "e3a88e60-486a-4649-8999-5ae3fbcbacce",
+            indic_id: "IND-001",
+            territoire_code: "NAT-FR",
+            type_evenement: EvenementValeurEnum.VALEUR_CREEE,
+            date_creation: new Date("2026-01-05T10:00:00.000Z"),
+            id_auteur_modification: auteurId,
+            type_valeur: "VALEUR_AVANCEMENT",
+            donnees_complementaires: {},
+            correlation_id: "e3107919-74e6-4305-8a3e-899b3aea2c93",
+            valeur: 10,
+            date_valeur: new Date("2026-01-05"),
+            ordre: 1,
+          },
+          {
+            id: "f3a88e60-486a-4649-8999-5ae3fbcbacce",
+            indic_id: "IND-001",
+            territoire_code: "NAT-FR",
+            type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_CREEE,
+            date_creation: new Date("2026-01-25T10:00:00.000Z"),
+            id_auteur_modification: auteurId,
+            type_valeur: "VALEUR_AVANCEMENT",
+            donnees_complementaires: {},
+            correlation_id: "f3107919-74e6-4305-8a3e-899b3aea2c93",
+            valeur: 20,
+            date_valeur: new Date("2026-01-25"),
+            ordre: 2,
+          },
+        ],
+      });
+
+      // When
+      const result =
+        await prismaIndicateurRepository.recupererDatesDernierImports(
+          new Date("2026-02-01T00:00:00.000Z"),
+        );
+
+      // Then
+      expect(result.get("IND-001")).toEqual(
+        new Date("2026-01-05T10:00:00.000Z"),
+      );
+    });
+
+    it("retourne une Map vide quand il n'y a pas d'événements", async () => {
+      // Given - pas d'événements créés
+
+      // When
+      const result =
+        await prismaIndicateurRepository.recupererDatesDernierImports(
+          new Date("2026-02-01T00:00:00.000Z"),
+        );
+
+      // Then
+      expect(result.size).toEqual(0);
+    });
+  });
 });
