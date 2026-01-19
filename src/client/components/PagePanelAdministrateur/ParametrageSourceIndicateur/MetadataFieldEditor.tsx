@@ -65,7 +65,7 @@ export const MetadataFieldEditor = ({ fieldIndex }: { fieldIndex: number }) => {
                 <option value="">Aucun</option>
                 <option value="text">Texte</option>
                 <option value="textarea">Zone de texte</option>
-                <option value="boolean">☑Booléen</option>
+                <option value="boolean">Booléen</option>
                 <option value="multi-select">Multi-select</option>
               </SelectMetadata>
             </div>

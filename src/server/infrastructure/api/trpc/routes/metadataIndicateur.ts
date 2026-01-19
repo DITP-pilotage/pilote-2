@@ -5,8 +5,9 @@ import {
   vérifierSiLeCSRFEstValide,
 } from "@/server/infrastructure/api/trpc/trpc";
 import {
+  createValidationMetadataIndicateurFormulaire,
   validationFiltresPourListeMetadataIndicateur,
-  validationMetadataIndicateurFormulaire,
+  ValidationMetadataIndicateurFormulaire,
 } from "@/validation/metadataIndicateur";
 import {
   MetadataParametrageIndicateurContrat,
@@ -14,14 +15,88 @@ import {
   presenterEnMetadataParametrageIndicateurContrat,
   presenterEnMetadataParametrageIndicateurInformationContrat,
 } from "@/server/app/contrats/MetadataParametrageIndicateurContrat";
+import { presenterEnMapInformationMetadataIndicateurContrat } from "@/server/app/contrats/InformationMetadataIndicateurContrat";
 import { zodValidateurCSRF } from "@/validation/publication";
 import { MetadataParametrageIndicateurForm } from "@/server/parametrage-indicateur/domain/MetadataParametrageIndicateurInputForm";
 import { getContainer } from "@/server/dependances";
 import { defaultHistoriqueInformation } from "@/server/parametrage-indicateur/domain/DefaultHistoriqueInformation";
 import { enregistrerMetadataIndicateurCommandSchema } from "@/server/parametrage-indicateur/handlers/EnregistrerMetadataIndicateurHandler";
 
+const validationMetadataIndicateurInput = z.object({
+  indicId: z.string(),
+  indicParentIndic: z.string().nullable(),
+  indicParentCh: z.string(),
+  indicNom: z.string(),
+  indicNomBaro: z.string().nullable(),
+  indicDescr: z.string(),
+  indicDescrBaro: z.string().nullable(),
+  indicIsPerseverant: z.boolean(),
+  indicIsPhare: z.boolean(),
+  indicIsBaro: z.boolean(),
+  indicType: z.string(),
+  indicSource: z.string().nullable(),
+  indicSourceUrl: z.string().nullable(),
+  indicMethodeCalcul: z.string().nullable(),
+  indicUnite: z.string().nullable(),
+  indicHiddenPilote: z.string(),
+  indicSchema: z.string().nullable(),
+  zgApplicable: z.string().nullable(),
+  viDeptFrom: z.string(),
+  viDeptOp: z.string().optional(),
+  vaDeptFrom: z.string(),
+  vaDeptOp: z.string().optional(),
+  vcDeptFrom: z.string(),
+  vcDeptOp: z.string().optional(),
+  viRegFrom: z.string(),
+  viRegOp: z.string().optional(),
+  vaRegFrom: z.string(),
+  vaRegOp: z.string().optional(),
+  vcRegFrom: z.string(),
+  vcRegOp: z.string().optional(),
+  viNatFrom: z.string(),
+  viNatOp: z.string().optional(),
+  vaNatFrom: z.string(),
+  vaNatOp: z.string().optional(),
+  vcNatFrom: z.string(),
+  vcNatOp: z.string().optional(),
+  paramVacaDecumulFrom: z.string(),
+  paramVacaPartitionDate: z.string(),
+  paramVacaOp: z.string(),
+  paramVacgDecumulFrom: z.string(),
+  paramVacgPartitionDate: z.string(),
+  paramVacgOp: z.string(),
+  poidsPourcentDept: z.string(),
+  poidsPourcentReg: z.string(),
+  poidsPourcentNat: z.string(),
+  poidsPourcentEvalNat: z.string(),
+  poidsPourcentEvalReg: z.string(),
+  poidsPourcentEvalDept: z.string(),
+  tendance: z.string(),
+  reformePrioritaire: z.string().nullable(),
+  projetAnnuelPerf: z.boolean(),
+  detailProjetAnnuelPerf: z.string().nullable(),
+  periodicite: z.string(),
+  delaiDisponibilite: z.string(),
+  indicTerritorialise: z.boolean(),
+  frequenceTerritoriale: z.string(),
+  mailles: z.string().nullable(),
+  adminSource: z.string(),
+  methodeCollecte: z.string().nullable(),
+  siSource: z.string().nullable(),
+  donneeOuverte: z.boolean(),
+  modalitesDonneeOuverte: z.string().nullable(),
+  respDonnees: z.string().nullable(),
+  respDonneesEmail: z.string().nullable(),
+  contactTechnique: z.string().nullable(),
+  contactTechniqueEmail: z.string().nullable(),
+  commentaire: z.string().nullable(),
+  maillePilotage: z.string(),
+  cibleAttendue: z.boolean(),
+  couvertureTemporelle: z.string(),
+});
+
 const convertirEnMetadataParametrageIndicateurForm = (
-  input: z.infer<typeof validationMetadataIndicateurFormulaire>,
+  input: z.infer<ValidationMetadataIndicateurFormulaire>,
 ): MetadataParametrageIndicateurForm => {
   return {
     indicId: input.indicId,
@@ -43,32 +118,23 @@ const convertirEnMetadataParametrageIndicateurForm = (
     indicSchema: input.indicSchema || "",
     zgApplicable: input.zgApplicable || null,
     viDeptFrom: input.viDeptFrom,
-    // @ts-expect-error à vérifier, avant input était de type any...
-    viDeptOp: input.viDeptOp,
+    viDeptOp: input.viDeptOp ?? "",
     vaDeptFrom: input.vaDeptFrom,
-    // @ts-expect-error à vérifier, avant input était de type any...
-    vaDeptOp: input.vaDeptOp,
+    vaDeptOp: input.vaDeptOp ?? "",
     vcDeptFrom: input.vcDeptFrom,
-    // @ts-expect-error à vérifier, avant input était de type any...
-    vcDeptOp: input.vcDeptOp,
+    vcDeptOp: input.vcDeptOp ?? "",
     viRegFrom: input.viRegFrom,
-    // @ts-expect-error à vérifier, avant input était de type any...
-    viRegOp: input.viRegOp,
+    viRegOp: input.viRegOp ?? "",
     vaRegFrom: input.vaRegFrom,
-    // @ts-expect-error à vérifier, avant input était de type any...
-    vaRegOp: input.vaRegOp,
+    vaRegOp: input.vaRegOp ?? "",
     vcRegFrom: input.vcRegFrom,
-    // @ts-expect-error à vérifier, avant input était de type any...
-    vcRegOp: input.vcRegOp,
+    vcRegOp: input.vcRegOp ?? "",
     viNatFrom: input.viNatFrom,
-    // @ts-expect-error à vérifier, avant input était de type any...
-    viNatOp: input.viNatOp,
+    viNatOp: input.viNatOp ?? "",
     vaNatFrom: input.vaNatFrom,
-    // @ts-expect-error à vérifier, avant input était de type any...
-    vaNatOp: input.vaNatOp,
+    vaNatOp: input.vaNatOp ?? "",
     vcNatFrom: input.vcNatFrom,
-    // @ts-expect-error à vérifier, avant input était de type any...
-    vcNatOp: input.vcNatOp,
+    vcNatOp: input.vcNatOp ?? "",
     paramVacaDecumulFrom: input.paramVacaDecumulFrom,
     paramVacaPartitionDate: input.paramVacaPartitionDate,
     paramVacaOp: input.paramVacaOp,
@@ -117,11 +183,9 @@ const convertirEnMetadataParametrageIndicateurForm = (
     contactTechnique: input.contactTechnique || null,
     contactTechniqueEmail: input.contactTechniqueEmail || "",
     commentaire: input.commentaire || null,
-    // @ts-expect-error à vérifier, avant input était de type any...
-    maillePilotage: input.maillePilotage || null,
+    maillePilotage: input.maillePilotage || "",
     cibleAttendue: input.cibleAttendue,
-    // @ts-expect-error à vérifier, avant input était de type any...
-    couvertureTemporelle: input.couvertureTemporelle || null,
+    couvertureTemporelle: input.couvertureTemporelle || "",
   };
 };
 
@@ -208,7 +272,7 @@ export const metadataIndicateurRouter = créerRouteurTRPC({
     },
   ),
   modifier: procédureProtégée
-    .input(validationMetadataIndicateurFormulaire.and(zodValidateurCSRF))
+    .input(validationMetadataIndicateurInput.and(zodValidateurCSRF))
     .mutation(async ({ input, ctx }) => {
       vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
 
@@ -216,16 +280,25 @@ export const metadataIndicateurRouter = créerRouteurTRPC({
         .resolve("habilitationService")
         .recupererHabilitations(ctx.session);
       habilitations.verifierAutorisationModificationMetadataIndicateur();
+
+      const informationMetadata = await getContainer("parametrageIndicateur")
+        .resolve("récupérerInformationMetadataIndicateurUseCase")
+        .run();
+      const metadata =
+        presenterEnMapInformationMetadataIndicateurContrat(informationMetadata);
+      const validationSchema =
+        createValidationMetadataIndicateurFormulaire(metadata);
+      const validatedInput = validationSchema.parse(input);
 
       return getContainer("parametrageIndicateur")
         .resolve("modifierUneMetadataIndicateurUseCase")
         .run(
           ctx.session.user.id as string,
-          convertirEnMetadataParametrageIndicateurForm(input),
+          convertirEnMetadataParametrageIndicateurForm(validatedInput),
         );
     }),
   creer: procédureProtégée
-    .input(validationMetadataIndicateurFormulaire.and(zodValidateurCSRF))
+    .input(validationMetadataIndicateurInput.and(zodValidateurCSRF))
     .mutation(async ({ input, ctx }) => {
       vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
 
@@ -234,11 +307,20 @@ export const metadataIndicateurRouter = créerRouteurTRPC({
         .recupererHabilitations(ctx.session);
       habilitations.verifierAutorisationModificationMetadataIndicateur();
 
+      const informationMetadata = await getContainer("parametrageIndicateur")
+        .resolve("récupérerInformationMetadataIndicateurUseCase")
+        .run();
+      const metadata =
+        presenterEnMapInformationMetadataIndicateurContrat(informationMetadata);
+      const validationSchema =
+        createValidationMetadataIndicateurFormulaire(metadata);
+      const validatedInput = validationSchema.parse(input);
+
       return getContainer("parametrageIndicateur")
         .resolve("creerUneMetadataIndicateurUseCase")
         .run(
           ctx.session.user.id as string,
-          convertirEnMetadataParametrageIndicateurForm(input),
+          convertirEnMetadataParametrageIndicateurForm(validatedInput),
         );
     }),
   enregistrerMetadataIndicateur: procédureProtégée

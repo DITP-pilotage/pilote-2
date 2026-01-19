@@ -1,5 +1,4 @@
 import { asClass, AwilixContainer } from "awilix";
-import { InformationMetadataIndicateurRepository } from "@/server/parametrage-indicateur/domain/ports/InformationMetadataIndicateurRepository";
 import { HistorisationModificationRepository } from "@/server/domain/historisationModification/HistorisationModificationRepository";
 import CreerUneMetadataIndicateurUseCase from "@/server/parametrage-indicateur/usecases/CreerUneMetadataIndicateurUseCase";
 import ModifierUneMetadataIndicateurUseCase from "@/server/parametrage-indicateur/usecases/ModifierUneMetadataIndicateurUseCase";
@@ -19,7 +18,6 @@ import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { EnregistrerMetadataIndicateurHandler } from "@/server/parametrage-indicateur/handlers/EnregistrerMetadataIndicateurHandler";
 
 export type ParametrageIndicateurDependencies = {
-  informationMetadataIndicateurRepository: InformationMetadataIndicateurRepository;
   historisationModificationRepository: HistorisationModificationRepository;
   creerUneMetadataIndicateurUseCase: CreerUneMetadataIndicateurUseCase;
   modifierUneMetadataIndicateurUseCase: ModifierUneMetadataIndicateurUseCase;

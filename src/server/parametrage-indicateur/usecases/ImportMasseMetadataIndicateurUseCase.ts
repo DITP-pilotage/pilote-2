@@ -4,8 +4,10 @@ import { MetadataParametrageIndicateurRepository } from "@/server/parametrage-in
 import { ImportMetadataIndicateur } from "@/server/parametrage-indicateur/domain/ImportMetadataIndicateur";
 import logger from "@/server/infrastructure/Logger";
 import { supprimerLeFichier } from "@/server/import-indicateur/infrastructure/adapters/FichierService";
-import { validationImportMetadataIndicateurFormulaire } from "@/validation/metadataIndicateur";
+import { createValidationImportMetadataIndicateurFormulaire } from "@/validation/metadataIndicateur";
 import { BadRequestError } from "@/server/app/error-boundary/bad-request-error";
+import RécupérerInformationMetadataIndicateurUseCase from "@/server/parametrage-indicateur/usecases/RécupérerInformationMetadataIndicateurUseCase";
+import { presenterEnMapInformationMetadataIndicateurContrat } from "@/server/app/contrats/InformationMetadataIndicateurContrat";
 
 type RecordCSVImport = Record<
   (typeof AvailableHeaderCSVImport)[number],
@@ -187,13 +189,21 @@ const AvailableHeaderCSVImport = [
 const TEXT_LABEL_CREATION_ID = "CREATE-ID";
 type Dependencies = {
   metadataParametrageIndicateurRepository: MetadataParametrageIndicateurRepository;
+  récupérerInformationMetadataIndicateurUseCase: RécupérerInformationMetadataIndicateurUseCase;
 };
 export default class ImportMasseMetadataIndicateurUseCase {
   private _metadataParametrageIndicateurRepository: MetadataParametrageIndicateurRepository;
 
-  constructor({ metadataParametrageIndicateurRepository }: Dependencies) {
+  private _récupérerInformationMetadataIndicateurUseCase: RécupérerInformationMetadataIndicateurUseCase;
+
+  constructor({
+    metadataParametrageIndicateurRepository,
+    récupérerInformationMetadataIndicateurUseCase,
+  }: Dependencies) {
     this._metadataParametrageIndicateurRepository =
       metadataParametrageIndicateurRepository;
+    this._récupérerInformationMetadataIndicateurUseCase =
+      récupérerInformationMetadataIndicateurUseCase;
   }
 
   async run({ nomDuFichier }: { nomDuFichier: string }) {
@@ -214,6 +224,13 @@ export default class ImportMasseMetadataIndicateurUseCase {
     supprimerLeFichier(nomDuFichier);
 
     logger.info("Import de masse en cours");
+
+    const informationMetadata =
+      await this._récupérerInformationMetadataIndicateurUseCase.run();
+    const metadata =
+      presenterEnMapInformationMetadataIndicateurContrat(informationMetadata);
+    const validationSchema =
+      createValidationImportMetadataIndicateurFormulaire(metadata);
 
     if (listeRecordCsvImport.length > 0) {
       if (
@@ -278,9 +295,7 @@ export default class ImportMasseMetadataIndicateurUseCase {
                 indic_id: indicId,
               });
 
-            validationImportMetadataIndicateurFormulaire.parse(
-              importMetadataIndicateur,
-            );
+            validationSchema.parse(importMetadataIndicateur);
 
             return importMetadataIndicateur;
           });

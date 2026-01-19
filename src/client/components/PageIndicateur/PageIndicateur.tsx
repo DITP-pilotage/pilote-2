@@ -47,7 +47,7 @@ const PageIndicateur: FunctionComponent<PageIndicateurProps> = ({
     setEstEnCoursDeModification,
     alerte,
     reinitialiserIndicateur,
-  } = usePageIndicateur(indicateur);
+  } = usePageIndicateur(indicateur, mapInformationMetadataIndicateur);
 
   return (
     <PageIndicateurStyled className="fr-pt-2w">

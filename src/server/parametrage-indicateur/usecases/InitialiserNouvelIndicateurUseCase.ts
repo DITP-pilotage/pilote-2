@@ -3,14 +3,14 @@ import { presenterEnMapInformationMetadataIndicateurContrat } from "@/server/app
 import RécupérerInformationMetadataIndicateurUseCase from "@/server/parametrage-indicateur/usecases/RécupérerInformationMetadataIndicateurUseCase";
 
 type Dependencies = {
-  recupererInformationMetadataIndicateurUseCase: RécupérerInformationMetadataIndicateurUseCase;
+  récupérerInformationMetadataIndicateurUseCase: RécupérerInformationMetadataIndicateurUseCase;
 };
 export default class InitialiserNouvelIndicateurUseCase {
   constructor(private dependencies: Dependencies) {}
 
   async run(indicId: string): Promise<MetadataParametrageIndicateur> {
     const listeInformation = presenterEnMapInformationMetadataIndicateurContrat(
-      await this.dependencies.recupererInformationMetadataIndicateurUseCase.run(),
+      await this.dependencies.récupérerInformationMetadataIndicateurUseCase.run(),
     );
 
     return MetadataParametrageIndicateur.creerMetadataParametrageIndicateur({
