@@ -23,9 +23,7 @@ export const gestionContenuRouter = créerRouteurTRPC({
       const habilitations = await getContainer("gestionUtilisateur")
         .resolve("habilitationService")
         .recupererHabilitations(ctx.session);
-      habilitations.verifierAutorisationModificationGestionContenu(
-        ctx.session.profil,
-      );
+      habilitations.verifierAutorisationModificationGestionContenu();
 
       const modifierMessageInformationUseCase =
         new ModifierMessageInformationUseCase({

@@ -32,7 +32,7 @@ export default class Habilitation {
 
   verifierAutorisationModificationTokenAPI() {
     if (
-      PROFIL_AUTORISE_A_MODIFICATION_TOKEN_API.has(this.dependencies.profil)
+      !PROFIL_AUTORISE_A_MODIFICATION_TOKEN_API.has(this.dependencies.profil)
     ) {
       throw new UnauthorizedError(
         "Vous n'êtes pas autorisé a effectuer cette action",
