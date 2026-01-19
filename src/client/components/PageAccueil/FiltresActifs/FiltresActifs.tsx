@@ -12,7 +12,6 @@ import { NOMS_CODES_MAILLES } from "@/server/infrastructure/accès_données/mail
 import { listeStatuts } from "@/client/constants/statut";
 import { BoutonReintialiserLesFiltres } from "@/components/PageAccueil/BoutonReintialiserLesFiltres";
 import "@gouvfr/dsfr/dist/component/accordion/accordion.min.css";
-import { Icone } from "@/components/_commons/Icone";
 import { CloseLineIcon } from "@/components/_commons/Icones/CloseLineIcon";
 import FiltresActifsStyled from "./FiltresActifs.styled";
 
@@ -148,12 +147,7 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({
                     <Tag
                       color="warning"
                       doitAvoirUneTailleFixe
-                      iconRight={
-                        <Icone
-                          className="w-4 h-4 !text-current"
-                          icone={CloseLineIcon}
-                        />
-                      }
+                      iconRight={CloseLineIcon}
                       libelle="Taux d'avancement non calculé en raison d'indicateurs non renseignés"
                       onClick={() => {
                         filtres.estEnAlerteTauxAvancementNonCalculé = false;
@@ -171,12 +165,7 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({
                     <Tag
                       color="warning"
                       doitAvoirUneTailleFixe
-                      iconRight={
-                        <Icone
-                          className="w-4 h-4 !text-current"
-                          icone={CloseLineIcon}
-                        />
-                      }
+                      iconRight={CloseLineIcon}
                       libelle={`Chantier(s) avec un retard de 10 points par rapport à leur médiane ${mailleSelectionnee}`}
                       onClick={() => {
                         filtres.estEnAlerteÉcart = false;
@@ -193,12 +182,7 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({
                     <Tag
                       color="warning"
                       doitAvoirUneTailleFixe
-                      iconRight={
-                        <Icone
-                          className="w-4 h-4 !text-current"
-                          icone={CloseLineIcon}
-                        />
-                      }
+                      iconRight={CloseLineIcon}
                       libelle="Chantier(s) avec tendance en baisse"
                       onClick={() => {
                         filtres.estEnAlerteBaisse = false;
@@ -215,12 +199,7 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({
                     <Tag
                       color="warning"
                       doitAvoirUneTailleFixe
-                      iconRight={
-                        <Icone
-                          className="w-4 h-4 !text-current"
-                          icone={CloseLineIcon}
-                        />
-                      }
+                      iconRight={CloseLineIcon}
                       libelle="Chantier(s) avec météo et synthèse des résultats non renseignés"
                       onClick={() => {
                         filtres.estEnAlerteMétéoNonRenseignée = false;
@@ -239,12 +218,7 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({
                     <Tag
                       color="warning"
                       doitAvoirUneTailleFixe
-                      iconRight={
-                        <Icone
-                          className="w-4 h-4 !text-current"
-                          icone={CloseLineIcon}
-                        />
-                      }
+                      iconRight={CloseLineIcon}
                       libelle="Chantier(s) sans taux d'avancement au niveau départemental"
                       onClick={() => {
                         filtres.estEnAlerteAbscenceTauxAvancementDepartemental = false;
@@ -263,12 +237,7 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({
                     <Tag
                       color="warning"
                       doitAvoirUneTailleFixe
-                      iconRight={
-                        <Icone
-                          className="w-4 h-4 !text-current"
-                          icone={CloseLineIcon}
-                        />
-                      }
+                      iconRight={CloseLineIcon}
                       libelle="Chantier(s) avec proposition(s) de valeur d'avancement"
                       onClick={() => {
                         filtres.estEnAlertePossedePropositionsValeurAvancement = false;
@@ -304,12 +273,7 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({
                       <Tag
                         color="yellow-moutarde"
                         doitAvoirUneTailleFixe
-                        iconRight={
-                          <Icone
-                            className="w-4 h-4 !text-current"
-                            icone={CloseLineIcon}
-                          />
-                        }
+                        iconRight={CloseLineIcon}
                         libelle={libellésMétéos[meteo]}
                         onClick={() => {
                           let arrFiltreMeteos = filtres.meteos
@@ -350,12 +314,7 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({
                     <li key={`tag-axe-${perimetreId}`}>
                       <Tag
                         doitAvoirUneTailleFixe
-                        iconRight={
-                          <Icone
-                            className="w-4 h-4 !text-current"
-                            icone={CloseLineIcon}
-                          />
-                        }
+                        iconRight={CloseLineIcon}
                         isActive
                         libelle={
                           ministèresAvecUnSeulPérimètre.has(perimetreId)
@@ -406,12 +365,7 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({
                     <li key={`tag-axe-${axeId}`}>
                       <Tag
                         doitAvoirUneTailleFixe
-                        iconRight={
-                          <Icone
-                            className="w-4 h-4 !text-current"
-                            icone={CloseLineIcon}
-                          />
-                        }
+                        iconRight={CloseLineIcon}
                         isActive
                         libelle={retrouverNomFiltre(axeId, axes)}
                         onClick={() => {
@@ -444,12 +398,7 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({
                 <li key={`tag-statut-${filtres.statut}`}>
                   <Tag
                     doitAvoirUneTailleFixe
-                    iconRight={
-                      <Icone
-                        className="w-4 h-4 !text-current"
-                        icone={CloseLineIcon}
-                      />
-                    }
+                    iconRight={CloseLineIcon}
                     isActive
                     libelle={retrouverNomFiltre(filtres.statut, listeStatuts)}
                     onClick={() => {
@@ -482,12 +431,7 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({
                     <li key={`tag-territorialisation-${territorialisation}`}>
                       <Tag
                         doitAvoirUneTailleFixe
-                        iconRight={
-                          <Icone
-                            className="w-4 h-4 !text-current"
-                            icone={CloseLineIcon}
-                          />
-                        }
+                        iconRight={CloseLineIcon}
                         isActive
                         libelle={
                           NOMS_CODES_MAILLES[territorialisation as Maille]
@@ -534,12 +478,7 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({
                   <li>
                     <Tag
                       doitAvoirUneTailleFixe
-                      iconRight={
-                        <Icone
-                          className="w-4 h-4 !text-current"
-                          icone={CloseLineIcon}
-                        />
-                      }
+                      iconRight={CloseLineIcon}
                       isActive
                       libelle="Chantiers du baromètre"
                       onClick={() => {
@@ -570,12 +509,7 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({
                   <Tag
                     color="blue-info-main"
                     doitAvoirUneTailleFixe
-                    iconRight={
-                      <Icone
-                        className="w-4 h-4 !text-current"
-                        icone={CloseLineIcon}
-                      />
-                    }
+                    iconRight={CloseLineIcon}
                     libelle={filtres.q}
                     onClick={() => {
                       sauvegarderFiltres({ q: "" });

@@ -1,6 +1,7 @@
 import "@gouvfr/dsfr/dist/component/tag/tag.min.css";
-import { FunctionComponent, ReactNode } from "react";
+import { FunctionComponent, ComponentType } from "react";
 import { clsxm } from "@/utils/clsxm";
+import { Icone } from "@/components/_commons/Icone";
 
 interface TagProps {
   libelle: string;
@@ -8,8 +9,8 @@ interface TagProps {
   color?: "blue-france" | "warning" | "yellow-moutarde" | "blue-info-main";
   size?: "sm" | "md";
   doitAvoirUneTailleFixe?: boolean;
-  iconLeft?: ReactNode;
-  iconRight?: ReactNode;
+  iconLeft?: ComponentType<{ className: string; fill: string }>;
+  iconRight?: ComponentType<{ className: string; fill: string }>;
   isActive?: boolean;
 }
 
@@ -35,7 +36,9 @@ export const Tag: FunctionComponent<TagProps> = ({
       onClick={onClick}
       type="button"
     >
-      {iconLeft}
+      {iconLeft ? (
+        <Icone className="w-4 h-4 !text-current" icone={iconLeft} />
+      ) : null}
       <span
         className={clsxm({
           "!max-w-[30ch] truncate": doitAvoirUneTailleFixe,
@@ -43,7 +46,9 @@ export const Tag: FunctionComponent<TagProps> = ({
       >
         {libelle}
       </span>
-      {iconRight}
+      {iconRight ? (
+        <Icone className="w-4 h-4 !text-current" icone={iconRight} />
+      ) : null}
     </button>
   );
 };
