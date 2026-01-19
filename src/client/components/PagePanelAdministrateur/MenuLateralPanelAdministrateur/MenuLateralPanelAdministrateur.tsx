@@ -8,24 +8,14 @@ interface MenuLateralPanelAdministrateurProps {
 
 const menuItems = [
   {
-    label: "Paramétrage source indicateur",
-    href: "/panel-administrateur/parametrage-source-indicateur",
-    pageKey: "parametrage-source-indicateur",
+    label: "Paramétrage metadata indicateur",
+    href: "/panel-administrateur/parametrage-metadata-indicateur",
+    pageKey: "parametrage-metadata-indicateur",
   },
   {
-    label: "🚧 Droits utilisateurs 🚧",
-    href: "/panel-administrateur/droits-utilisateurs",
+    label: "🚧 Paramétrage metadata chantier 🚧",
+    href: "/panel-administrateur/parametrage-metadata-chantier",
     pageKey: "metadata-chantier",
-  },
-  {
-    label: "🚧 Metadata chantier 🚧",
-    href: "/panel-administrateur/metadata-chantier",
-    pageKey: "metadata-chantier",
-  },
-  {
-    label: "🚧 Centre d'aide 🚧",
-    href: "/panel-administrateur/centre-aide",
-    pageKey: "centre-aide",
   },
   {
     label: "🚧 Nouveauté 🚧",

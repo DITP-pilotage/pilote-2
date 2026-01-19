@@ -1,12 +1,10 @@
-import Link from "next/link";
+import { Dropdown } from "@/components/shared/Dropdown";
 
 export const BoutonPanelAdministrateur = () => (
-  <Link
-    className="!p-0"
-    href="/panel-administrateur/parametrage-source-indicateur"
-    title="Panel Administrateur"
-    type="button"
+  <Dropdown.Link
+    className="rounded min-w-[250px] !flex items-center gap-3 !py-2 !mx-0"
+    href="/panel-administrateur/parametrage-metadata-indicateur"
   >
     Panel administrateur
-  </Link>
+  </Dropdown.Link>
 );

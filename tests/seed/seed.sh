@@ -10,11 +10,7 @@ set -a
 source "$PROJECT_ROOT/.env.e2e"
 set +a
 
-psql -q -d "$DATABASE_URL" <<EOF
-SET client_min_messages = WARNING;
-DROP SCHEMA IF EXISTS public CASCADE;
-DROP SCHEMA IF EXISTS raw_data CASCADE;
-EOF
+npx prisma migrate reset --force
 
 psql -q -d "$DATABASE_URL" -f "$SCRIPT_DIR/schema.sql"
 

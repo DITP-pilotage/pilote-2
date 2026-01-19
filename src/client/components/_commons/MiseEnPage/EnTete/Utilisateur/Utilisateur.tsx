@@ -35,7 +35,7 @@ export const Utilisateur = ({ email }: { email: string }) => {
           />
         </button>
       </Dropdown.Trigger>
-      <Dropdown.Content align="end">
+      <Dropdown.Content align="end" className="flex flex-col gap-4">
         {panelAdminEstDisponible ? <BoutonPanelAdministrateur /> : null}
         <BoutonSeDeconnecter />
       </Dropdown.Content>
