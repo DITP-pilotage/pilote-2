@@ -64,10 +64,11 @@ export default class Habilitation {
     }
   }
 
-  verifierAutorisationModificationGestionContenu(profil: ProfilCode | null) {
+  verifierAutorisationModificationGestionContenu() {
     if (
-      !profil ||
-      !PROFIL_AUTORISE_A_MODIFICATION_GESTION_CONTENU.has(profil)
+      !PROFIL_AUTORISE_A_MODIFICATION_GESTION_CONTENU.has(
+        this.dependencies.profil,
+      )
     ) {
       throw new UnauthorizedError(
         "Vous n'êtes pas autorisé a effectuer cette action",
