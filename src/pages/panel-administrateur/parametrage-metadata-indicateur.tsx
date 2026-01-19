@@ -7,7 +7,7 @@ import { pageParametrageSourceContext } from "@/components/PagePanelAdministrate
 import Habilitation from "@/server/gestion-utilisateur/domain/habilitation/Habilitation";
 import { getContainer } from "@/server/dependances";
 import { configurationFeatureFlip } from "@/config";
-import { NextPanelAdministrateurLayout } from "./layout";
+import { NextPanelAdministrateurLayout } from "@/components/PagePanelAdministrateur/PanelAdministrateurLayout/layout";
 
 export const getServerSideProps = async ({
   req,
