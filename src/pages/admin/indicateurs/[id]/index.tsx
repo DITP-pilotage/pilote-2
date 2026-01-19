@@ -52,7 +52,7 @@ export async function getServerSideProps({
     .resolve("habilitationService")
     .recupererHabilitations(session);
 
-  habilitations.verifierAutorisationLectureMetadataIndicateur(session.profil);
+  habilitations.verifierAutorisationLectureMetadataIndicateur();
 
   let indicateurDemandé: MetadataParametrageIndicateurContrat;
   let creationReussie = query._action === "creation-reussie";
@@ -89,7 +89,7 @@ export async function getServerSideProps({
 
   const mapInformationMetadataIndicateur =
     presenterEnMapInformationMetadataIndicateurContrat(
-      getContainer("parametrageIndicateur")
+      await getContainer("parametrageIndicateur")
         .resolve("récupérerInformationMetadataIndicateurUseCase")
         .run(),
     );

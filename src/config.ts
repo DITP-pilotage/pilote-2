@@ -264,6 +264,11 @@ const config = convict({
       default: false,
       env: "NEXT_PUBLIC_FF_PILOTE_EVAL",
     },
+    panelAdmin: {
+      format: Boolean,
+      default: false,
+      env: "NEXT_PUBLIC_FF_PANEL_ADMIN",
+    },
   },
   analytics: {
     doc: "Matomo Analytics",

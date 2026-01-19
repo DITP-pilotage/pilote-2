@@ -1,46 +1,10 @@
 import { HabilitationBuilder } from "@/server/gestion-utilisateur/domain/habilitation/HabilitationBuilder";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
 import { UnauthorizedError } from "@/server/app/error-boundary/unauthorized-error";
-import {
-  TerritoiresNonAutorisésSuppressionUtilisateurErreur,
-  ChantiersNonAutorisésSuppressionUtilisateurErreur,
-  ProfilNonAutorisésSuppressionUtilisateurErreur,
-  TerritoiresNonAutorisésCreationModificationUtilisateurErreur,
-  ChantiersNonAutorisésCreationModificationUtilisateurErreur,
-} from "@/server/utils/errors";
-import { Profil } from "@/server/domain/profil/Profil.interface";
 import { RapportDirecteurProjetChantierInformation } from "@/server/chantiers/domain/PropositionValeurAvancementChantierInformation";
 import { ProfilCode } from "@/server/gestion-utilisateur/domain/Utilisateur.interface";
 
 describe("Habilitation", () => {
-  // Helper function pour créer un profil mock
-  const creerProfilMock = (overrides: Partial<Profil> = {}): Profil => ({
-    code: ProfilEnum.DITP_ADMIN,
-    nom: "Test Profil",
-    chantiers: {
-      lecture: {
-        tous: false,
-        tousTerritorialisés: false,
-        tousTerritoires: false,
-        brouillons: false,
-      },
-      saisieCommentaire: {
-        tousTerritoires: false,
-        saisiePossible: false,
-      },
-      saisieIndicateur: {
-        tousTerritoires: false,
-      },
-    },
-    utilisateurs: {
-      modificationPossible: true,
-      tousTerritoires: false,
-      tousChantiers: false,
-    },
-    ...overrides,
-  });
-
-  // Helper function pour créer des données de proposition valeur avancement
   const creerPropositionValeurAvancementMock = (
     overrides: Partial<RapportDirecteurProjetChantierInformation> = {},
   ): RapportDirecteurProjetChantierInformation => ({
@@ -54,77 +18,55 @@ describe("Habilitation", () => {
   describe("verifierAutorisationModificationTokenAPI", () => {
     it("devrait autoriser un utilisateur DITP_ADMIN à modifier les tokens API", () => {
       // Given
-      const habilitation = new HabilitationBuilder().build();
+      const habilitation = new HabilitationBuilder()
+        .avecProfilCode(ProfilEnum.DITP_ADMIN)
+        .build();
 
       // When & THEN
       expect(() => {
-        habilitation.verifierAutorisationModificationTokenAPI(
-          ProfilEnum.DITP_ADMIN,
-        );
+        habilitation.verifierAutorisationModificationTokenAPI();
       }).not.toThrow();
     });
 
     it("devrait rejeter un utilisateur non autorisé à modifier les tokens API", () => {
       // Given
-      const habilitation = new HabilitationBuilder().build();
+      const habilitation = new HabilitationBuilder()
+        .avecProfilCode(ProfilEnum.PREFET_REGION)
+        .build();
 
       // When & THEN
       expect(() => {
-        habilitation.verifierAutorisationModificationTokenAPI(
-          ProfilEnum.PREFET_REGION,
-        );
+        habilitation.verifierAutorisationModificationTokenAPI();
       }).toThrow(UnauthorizedError);
 
       expect(() => {
-        habilitation.verifierAutorisationModificationTokenAPI(
-          ProfilEnum.PREFET_REGION,
-        );
+        habilitation.verifierAutorisationModificationTokenAPI();
       }).toThrow("Vous n'êtes pas autorisé a effectuer cette action");
-    });
-
-    it("devrait rejeter si le profil est null", () => {
-      // Given
-      const habilitation = new HabilitationBuilder().build();
-
-      // When & THEN
-      expect(() => {
-        habilitation.verifierAutorisationModificationTokenAPI(null);
-      }).toThrow(UnauthorizedError);
     });
   });
 
   describe("verifierAutorisationLectureMetadataIndicateur", () => {
     it("devrait autoriser un utilisateur DITP_ADMIN à lire les metadata indicateur", () => {
       // Given
-      const habilitation = new HabilitationBuilder().build();
+      const habilitation = new HabilitationBuilder()
+        .avecProfilCode(ProfilEnum.DITP_ADMIN)
+        .build();
 
       // When & THEN
       expect(() => {
-        habilitation.verifierAutorisationLectureMetadataIndicateur(
-          ProfilEnum.DITP_ADMIN,
-        );
+        habilitation.verifierAutorisationLectureMetadataIndicateur();
       }).not.toThrow();
     });
 
     it("devrait rejeter un utilisateur non autorisé à lire les metadata indicateur", () => {
       // Given
-      const habilitation = new HabilitationBuilder().build();
+      const habilitation = new HabilitationBuilder()
+        .avecProfilCode(ProfilEnum.COORDINATEUR_REGION)
+        .build();
 
       // When & THEN
       expect(() => {
-        habilitation.verifierAutorisationLectureMetadataIndicateur(
-          ProfilEnum.COORDINATEUR_REGION,
-        );
-      }).toThrow(UnauthorizedError);
-    });
-
-    it("devrait rejeter si le profil est null", () => {
-      // Given
-      const habilitation = new HabilitationBuilder().build();
-
-      // When & THEN
-      expect(() => {
-        habilitation.verifierAutorisationLectureMetadataIndicateur(null);
+        habilitation.verifierAutorisationLectureMetadataIndicateur();
       }).toThrow(UnauthorizedError);
     });
   });
@@ -132,35 +74,25 @@ describe("Habilitation", () => {
   describe("verifierAutorisationModificationMetadataIndicateur", () => {
     it("devrait autoriser un utilisateur DITP_ADMIN à modifier les metadata indicateur", () => {
       // Given
-      const habilitation = new HabilitationBuilder().build();
+      const habilitation = new HabilitationBuilder()
+        .avecProfilCode(ProfilEnum.DITP_ADMIN)
+        .build();
 
       // When & THEN
       expect(() => {
-        habilitation.verifierAutorisationModificationMetadataIndicateur(
-          ProfilEnum.DITP_ADMIN,
-        );
+        habilitation.verifierAutorisationModificationMetadataIndicateur();
       }).not.toThrow();
     });
 
     it("devrait rejeter un utilisateur non autorisé à modifier les metadata indicateur", () => {
       // Given
-      const habilitation = new HabilitationBuilder().build();
+      const habilitation = new HabilitationBuilder()
+        .avecProfilCode(ProfilEnum.DIR_PROJET)
+        .build();
 
       // When & THEN
       expect(() => {
-        habilitation.verifierAutorisationModificationMetadataIndicateur(
-          ProfilEnum.DIR_PROJET,
-        );
-      }).toThrow(UnauthorizedError);
-    });
-
-    it("devrait rejeter si le profil est null", () => {
-      // Given
-      const habilitation = new HabilitationBuilder().build();
-
-      // When & THEN
-      expect(() => {
-        habilitation.verifierAutorisationModificationMetadataIndicateur(null);
+        habilitation.verifierAutorisationModificationMetadataIndicateur();
       }).toThrow(UnauthorizedError);
     });
   });
@@ -168,35 +100,25 @@ describe("Habilitation", () => {
   describe("verifierAutorisationModificationGestionContenu", () => {
     it("devrait autoriser un utilisateur DITP_ADMIN à modifier la gestion de contenu", () => {
       // Given
-      const habilitation = new HabilitationBuilder().build();
+      const habilitation = new HabilitationBuilder()
+        .avecProfilCode(ProfilEnum.DITP_ADMIN)
+        .build();
 
       // When & THEN
       expect(() => {
-        habilitation.verifierAutorisationModificationGestionContenu(
-          ProfilEnum.DITP_ADMIN,
-        );
+        habilitation.verifierAutorisationModificationGestionContenu();
       }).not.toThrow();
     });
 
     it("devrait rejeter un utilisateur non autorisé à modifier la gestion de contenu", () => {
       // Given
-      const habilitation = new HabilitationBuilder().build();
+      const habilitation = new HabilitationBuilder()
+        .avecProfilCode(ProfilEnum.EQUIPE_DIR_PROJET)
+        .build();
 
       // When & THEN
       expect(() => {
-        habilitation.verifierAutorisationModificationGestionContenu(
-          ProfilEnum.EQUIPE_DIR_PROJET,
-        );
-      }).toThrow(UnauthorizedError);
-    });
-
-    it("devrait rejeter si le profil est null", () => {
-      // Given
-      const habilitation = new HabilitationBuilder().build();
-
-      // When & THEN
-      expect(() => {
-        habilitation.verifierAutorisationModificationGestionContenu(null);
+        habilitation.verifierAutorisationModificationGestionContenu();
       }).toThrow(UnauthorizedError);
     });
   });
@@ -204,11 +126,10 @@ describe("Habilitation", () => {
   describe("verifierAutorisationModificationPropositionValeurAvancement", () => {
     it("devrait autoriser les profils autorisés à modifier les propositions valeur avancement", () => {
       // Given
-      const habilitation = new HabilitationBuilder().build();
       const chantiersIdsAutorisés = ["chantier-1", "chantier-2"];
       const proposition = creerPropositionValeurAvancementMock();
 
-      const profilsAutorisés = [
+      const profilsAutorisés: ProfilCode[] = [
         ProfilEnum.DITP_ADMIN,
         ProfilEnum.PREFET_DEPARTEMENT,
         ProfilEnum.PREFET_REGION,
@@ -220,10 +141,12 @@ describe("Habilitation", () => {
 
       // When & THEN
       profilsAutorisés.forEach((profil) => {
+        const habilitation = new HabilitationBuilder()
+          .avecChantiersIdsSaisieCommentaire(chantiersIdsAutorisés)
+          .avecProfilCode(profil)
+          .build();
         expect(() => {
           habilitation.verifierAutorisationModificationPropositionValeurAvancement(
-            profil as ProfilCode,
-            chantiersIdsAutorisés,
             proposition,
           );
         }).not.toThrow();
@@ -232,15 +155,18 @@ describe("Habilitation", () => {
 
     it("devrait rejeter les profils non autorisés à modifier les propositions valeur avancement", () => {
       // Given
-      const habilitation = new HabilitationBuilder().build();
       const chantiersIdsAutorisés = ["chantier-1", "chantier-2"];
+
+      const habilitation = new HabilitationBuilder()
+        .avecChantiersIdsSaisieCommentaire(chantiersIdsAutorisés)
+        .avecProfilCode(ProfilEnum.DIR_PROJET)
+        .build();
+
       const proposition = creerPropositionValeurAvancementMock();
 
       // When & THEN
       expect(() => {
         habilitation.verifierAutorisationModificationPropositionValeurAvancement(
-          ProfilEnum.DIR_PROJET as ProfilCode,
-          chantiersIdsAutorisés,
           proposition,
         );
       }).toThrow(UnauthorizedError);
@@ -248,17 +174,19 @@ describe("Habilitation", () => {
 
     it("devrait rejeter si le chantier n'est pas dans la liste des chantiers autorisés", () => {
       // Given
-      const habilitation = new HabilitationBuilder().build();
       const chantiersIdsAutorisés = ["chantier-2", "chantier-3"];
       const proposition = creerPropositionValeurAvancementMock({
         id: "chantier-1",
       });
 
+      const habilitation = new HabilitationBuilder()
+        .avecChantiersIdsSaisieCommentaire(chantiersIdsAutorisés)
+        .avecProfilCode(ProfilEnum.DITP_ADMIN)
+        .build();
+
       // When & THEN
       expect(() => {
         habilitation.verifierAutorisationModificationPropositionValeurAvancement(
-          ProfilEnum.DITP_ADMIN,
-          chantiersIdsAutorisés,
           proposition,
         );
       }).toThrow(UnauthorizedError);
@@ -266,8 +194,10 @@ describe("Habilitation", () => {
 
     it("devrait rejeter si le chantier est archivé", () => {
       // Given
-      const habilitation = new HabilitationBuilder().build();
-      const chantiersIdsAutorisés = ["chantier-1"];
+      const habilitation = new HabilitationBuilder()
+        .avecChantiersIdsSaisieCommentaire(["chantier-1"])
+        .avecProfilCode(ProfilEnum.DITP_ADMIN)
+        .build();
       const proposition = creerPropositionValeurAvancementMock({
         id: "chantier-1",
         statut: "ARCHIVE",
@@ -276,24 +206,6 @@ describe("Habilitation", () => {
       // When & THEN
       expect(() => {
         habilitation.verifierAutorisationModificationPropositionValeurAvancement(
-          ProfilEnum.DITP_ADMIN,
-          chantiersIdsAutorisés,
-          proposition,
-        );
-      }).toThrow(UnauthorizedError);
-    });
-
-    it("devrait rejeter si le profil est null", () => {
-      // Given
-      const habilitation = new HabilitationBuilder().build();
-      const chantiersIdsAutorisés = ["chantier-1"];
-      const proposition = creerPropositionValeurAvancementMock();
-
-      // When & THEN
-      expect(() => {
-        habilitation.verifierAutorisationModificationPropositionValeurAvancement(
-          null,
-          chantiersIdsAutorisés,
           proposition,
         );
       }).toThrow(UnauthorizedError);
@@ -303,13 +215,10 @@ describe("Habilitation", () => {
   describe("verifierAutorisationAcceptationOuRefusPropositionValeurAvancement", () => {
     it("devrait autoriser les profils autorisés à accepter les propositions valeur avancement", () => {
       // Given
-      const habilitation = new HabilitationBuilder()
-        .avecChantiersIdsSaisieCommentaire(["chantier-1", "chantier-2"])
-        .avecChantiersIdsSaisieIndicateur(["chantier-1", "chantier-2"]) // Nécessaire pour SECRETARIAT_GENERAL
-        .build();
+      const chantiersIds = ["chantier-1", "chantier-2"];
       const proposition = creerPropositionValeurAvancementMock();
 
-      const profilsAutorisés = [
+      const profilsAutorisés: ProfilCode[] = [
         ProfilEnum.DIR_PROJET,
         ProfilEnum.EQUIPE_DIR_PROJET,
         ProfilEnum.SECRETARIAT_GENERAL,
@@ -317,10 +226,13 @@ describe("Habilitation", () => {
 
       // When & THEN
       profilsAutorisés.forEach((profil) => {
+        const habilitation = new HabilitationBuilder()
+          .avecChantiersIdsSaisieCommentaire(chantiersIds)
+          .avecChantiersIdsSaisieIndicateur(chantiersIds)
+          .avecProfilCode(profil)
+          .build();
         expect(() => {
           habilitation.verifierAutorisationAcceptationOuRefusPropositionValeurAvancement(
-            profil as ProfilCode,
-            habilitation["_habilitations"],
             proposition,
           );
         }).not.toThrow();
@@ -332,14 +244,13 @@ describe("Habilitation", () => {
       const habilitation = new HabilitationBuilder()
         .avecChantiersIdsSaisieCommentaire(["chantier-1"])
         .avecChantiersIdsSaisieIndicateur(["chantier-1"])
+        .avecProfilCode(ProfilEnum.SECRETARIAT_GENERAL)
         .build();
       const proposition = creerPropositionValeurAvancementMock();
 
       // When & THEN
       expect(() => {
         habilitation.verifierAutorisationAcceptationOuRefusPropositionValeurAvancement(
-          ProfilEnum.SECRETARIAT_GENERAL as ProfilCode,
-          habilitation["_habilitations"],
           proposition,
         );
       }).not.toThrow();
@@ -349,14 +260,13 @@ describe("Habilitation", () => {
       // Given
       const habilitation = new HabilitationBuilder()
         .avecChantiersIdsSaisieCommentaire(["chantier-1"])
-        .build(); // Pas de chantier dans saisieIndicateur
+        .avecProfilCode(ProfilEnum.SECRETARIAT_GENERAL)
+        .build();
       const proposition = creerPropositionValeurAvancementMock();
 
       // When & THEN
       expect(() => {
         habilitation.verifierAutorisationAcceptationOuRefusPropositionValeurAvancement(
-          ProfilEnum.SECRETARIAT_GENERAL as ProfilCode,
-          habilitation["_habilitations"],
           proposition,
         );
       }).toThrow(UnauthorizedError);
@@ -366,33 +276,32 @@ describe("Habilitation", () => {
       // Given
       const habilitation = new HabilitationBuilder()
         .avecChantiersIdsSaisieCommentaire(["chantier-1", "chantier-2"])
+        .avecProfilCode(ProfilEnum.COORDINATEUR_REGION)
         .build();
       const proposition = creerPropositionValeurAvancementMock();
 
       // When & THEN
       expect(() => {
         habilitation.verifierAutorisationAcceptationOuRefusPropositionValeurAvancement(
-          ProfilEnum.COORDINATEUR_REGION as ProfilCode,
-          habilitation["_habilitations"],
           proposition,
         );
       }).toThrow(UnauthorizedError);
     });
 
-    it("devrait rejeter si le chantier n'est pas dans saisieCommentaire", () => {
+    it("devrait rejeter si le chantier n'est pas dans saisieIndicateur", () => {
       // Given
       const habilitation = new HabilitationBuilder()
         .avecChantiersIdsSaisieCommentaire(["chantier-2", "chantier-3"])
+        .avecChantiersIdsSaisieIndicateur(["chantier-2", "chantier-3"])
+        .avecProfilCode(ProfilEnum.DIR_PROJET)
         .build();
       const proposition = creerPropositionValeurAvancementMock({
-        id: "chantier-1", // Pas dans saisieCommentaire
+        id: "chantier-1",
       });
 
       // When & THEN
       expect(() => {
         habilitation.verifierAutorisationAcceptationOuRefusPropositionValeurAvancement(
-          ProfilEnum.DIR_PROJET as ProfilCode,
-          habilitation["_habilitations"],
           proposition,
         );
       }).toThrow(UnauthorizedError);
@@ -402,6 +311,8 @@ describe("Habilitation", () => {
       // Given
       const habilitation = new HabilitationBuilder()
         .avecChantiersIdsSaisieCommentaire(["chantier-1"])
+        .avecChantiersIdsSaisieIndicateur(["chantier-1"])
+        .avecProfilCode(ProfilEnum.DIR_PROJET)
         .build();
       const proposition = creerPropositionValeurAvancementMock({
         id: "chantier-1",
@@ -411,397 +322,26 @@ describe("Habilitation", () => {
       // When & THEN
       expect(() => {
         habilitation.verifierAutorisationAcceptationOuRefusPropositionValeurAvancement(
-          ProfilEnum.DIR_PROJET as ProfilCode,
-          habilitation["_habilitations"],
           proposition,
         );
       }).toThrow(UnauthorizedError);
     });
 
-    it("devrait rejeter si le profil est null", () => {
+    it("devrait rejeter DITP_ADMIN à accepter les propositions valeur avancement", () => {
       // Given
       const habilitation = new HabilitationBuilder()
         .avecChantiersIdsSaisieCommentaire(["chantier-1"])
+        .avecChantiersIdsSaisieIndicateur(["chantier-1"])
+        .avecProfilCode(ProfilEnum.DITP_ADMIN)
         .build();
       const proposition = creerPropositionValeurAvancementMock();
 
       // When & THEN
       expect(() => {
         habilitation.verifierAutorisationAcceptationOuRefusPropositionValeurAvancement(
-          null,
-          habilitation["_habilitations"],
           proposition,
         );
       }).toThrow(UnauthorizedError);
-    });
-  });
-
-  describe("vérifierLesHabilitationsEnSuppressionUtilisateur", () => {
-    it("devrait réussir quand toutes les conditions sont remplies", () => {
-      // Given
-      const habilitation = new HabilitationBuilder()
-        .avecTerritoireCodesGestionUtilisateur(["75", "92", "93"])
-        .avecChantiersIdsGestionUtilisateur([
-          "chantier-1",
-          "chantier-2",
-          "chantier-3",
-        ])
-        .build();
-
-      const profil = creerProfilMock({
-        utilisateurs: {
-          modificationPossible: true,
-          tousTerritoires: true,
-          tousChantiers: true,
-        },
-      });
-
-      const chantiersIds = ["chantier-1", "chantier-2"];
-      const territoiresCodes = ["75", "92"];
-
-      // When & THEN
-      expect(() => {
-        habilitation.vérifierLesHabilitationsEnSuppressionUtilisateur(
-          chantiersIds,
-          territoiresCodes,
-          profil,
-        );
-      }).not.toThrow();
-    });
-
-    it("devrait lever ProfilNonAutorisésSuppressionUtilisateurErreur si le profil est null", () => {
-      // Given
-      const habilitation = new HabilitationBuilder().build();
-      const chantiersIds = ["chantier-1"];
-      const territoiresCodes = ["75"];
-
-      // When & THEN
-      expect(() => {
-        habilitation.vérifierLesHabilitationsEnSuppressionUtilisateur(
-          chantiersIds,
-          territoiresCodes,
-          null,
-        );
-      }).toThrow(ProfilNonAutorisésSuppressionUtilisateurErreur);
-    });
-
-    it("devrait lever ProfilNonAutorisésSuppressionUtilisateurErreur si modificationPossible est false", () => {
-      // Given
-      const habilitation = new HabilitationBuilder().build();
-      const profil = creerProfilMock({
-        utilisateurs: {
-          modificationPossible: false,
-          tousTerritoires: true,
-          tousChantiers: true,
-        },
-      });
-
-      const chantiersIds = ["chantier-1"];
-      const territoiresCodes = ["75"];
-
-      // When & THEN
-      expect(() => {
-        habilitation.vérifierLesHabilitationsEnSuppressionUtilisateur(
-          chantiersIds,
-          territoiresCodes,
-          profil,
-        );
-      }).toThrow(ProfilNonAutorisésSuppressionUtilisateurErreur);
-    });
-
-    it("devrait lever TerritoiresNonAutorisésSuppressionUtilisateurErreur quand l'utilisateur n'a pas accès à tous les territoires demandés", () => {
-      // Given
-      const habilitation = new HabilitationBuilder()
-        .avecTerritoireCodesGestionUtilisateur(["75", "92"]) // L'utilisateur n'a accès qu'à Paris et Hauts-de-Seine
-        .build();
-
-      const profil = creerProfilMock({
-        utilisateurs: {
-          modificationPossible: true,
-          tousTerritoires: false,
-          tousChantiers: true, // Le profil veut gérer tous les chantiers
-        },
-      });
-
-      const chantiersIds = ["chantier-1", "chantier-2"];
-      const territoiresCodes = ["75", "92", "93"]; // On demande l'accès à la Seine-Saint-Denis en plus
-
-      // When & THEN
-      expect(() => {
-        habilitation.vérifierLesHabilitationsEnSuppressionUtilisateur(
-          chantiersIds,
-          territoiresCodes,
-          profil,
-        );
-      }).toThrow(TerritoiresNonAutorisésSuppressionUtilisateurErreur);
-    });
-
-    it("devrait lever ChantiersNonAutorisésSuppressionUtilisateurErreur quand l'utilisateur n'a pas accès à tous les chantiers demandés", () => {
-      // Given
-      const habilitation = new HabilitationBuilder()
-        .avecTerritoireCodesGestionUtilisateur(["75", "92"])
-        .avecChantiersIdsGestionUtilisateur(["chantier-1", "chantier-2"]) // Accès limité aux chantiers
-        .build();
-
-      const profil = creerProfilMock({
-        utilisateurs: {
-          modificationPossible: true,
-          tousTerritoires: true, // Le profil veut gérer tous les territoires
-          tousChantiers: false,
-        },
-      });
-
-      const chantiersIds = ["chantier-1", "chantier-3"]; // chantier-3 n'est pas autorisé
-      const territoiresCodes = ["75"];
-
-      // When & THEN
-      expect(() => {
-        habilitation.vérifierLesHabilitationsEnSuppressionUtilisateur(
-          chantiersIds,
-          territoiresCodes,
-          profil,
-        );
-      }).toThrow(ChantiersNonAutorisésSuppressionUtilisateurErreur);
-    });
-
-    it("devrait réussir quand l'utilisateur a accès à un sur-ensemble des territoires et chantiers demandés", () => {
-      // Given
-      const habilitation = new HabilitationBuilder()
-        .avecTerritoireCodesGestionUtilisateur(["75", "92", "93", "94"]) // Plus de territoires autorisés
-        .avecChantiersIdsGestionUtilisateur([
-          "chantier-1",
-          "chantier-2",
-          "chantier-3",
-        ]) // Plus de chantiers autorisés
-        .build();
-
-      const profil = creerProfilMock({
-        utilisateurs: {
-          modificationPossible: true,
-          tousTerritoires: true,
-          tousChantiers: true,
-        },
-      });
-
-      const chantiersIds = ["chantier-1", "chantier-2"]; // Sous-ensemble des chantiers autorisés
-      const territoiresCodes = ["75", "92"]; // Sous-ensemble des territoires autorisés
-
-      // When & THEN
-      expect(() => {
-        habilitation.vérifierLesHabilitationsEnSuppressionUtilisateur(
-          chantiersIds,
-          territoiresCodes,
-          profil,
-        );
-      }).not.toThrow();
-    });
-  });
-
-  describe("vérifierLesHabilitationsEnCréationModificationUtilisateur", () => {
-    it("devrait réussir quand toutes les conditions sont remplies", () => {
-      // Given
-      const habilitation = new HabilitationBuilder()
-        .avecTerritoireCodesGestionUtilisateur(["75", "92", "93"])
-        .avecChantiersIdsGestionUtilisateur([
-          "chantier-1",
-          "chantier-2",
-          "chantier-3",
-        ])
-        .build();
-
-      const profil = creerProfilMock({
-        utilisateurs: {
-          modificationPossible: true,
-          tousTerritoires: true,
-          tousChantiers: true,
-        },
-      });
-
-      const chantiersIds = ["chantier-1", "chantier-2"];
-      const territoiresCodes = ["75", "92"];
-
-      // When & THEN
-      expect(() => {
-        habilitation.vérifierLesHabilitationsEnCréationModificationUtilisateur(
-          chantiersIds,
-          territoiresCodes,
-          profil,
-        );
-      }).not.toThrow();
-    });
-
-    it("devrait lever ProfilNonAutorisésSuppressionUtilisateurErreur si le profil est null", () => {
-      // Given
-      const habilitation = new HabilitationBuilder().build();
-      const chantiersIds = ["chantier-1"];
-      const territoiresCodes = ["75"];
-
-      // When & THEN
-      expect(() => {
-        habilitation.vérifierLesHabilitationsEnCréationModificationUtilisateur(
-          chantiersIds,
-          territoiresCodes,
-          null,
-        );
-      }).toThrow(ProfilNonAutorisésSuppressionUtilisateurErreur);
-    });
-
-    it("devrait lever ProfilNonAutorisésSuppressionUtilisateurErreur si modificationPossible est false", () => {
-      // Given
-      const habilitation = new HabilitationBuilder().build();
-      const profil = creerProfilMock({
-        utilisateurs: {
-          modificationPossible: false,
-          tousTerritoires: true,
-          tousChantiers: true,
-        },
-      });
-
-      const chantiersIds = ["chantier-1"];
-      const territoiresCodes = ["75"];
-
-      // When & THEN
-      expect(() => {
-        habilitation.vérifierLesHabilitationsEnCréationModificationUtilisateur(
-          chantiersIds,
-          territoiresCodes,
-          profil,
-        );
-      }).toThrow(ProfilNonAutorisésSuppressionUtilisateurErreur);
-    });
-
-    it("devrait lever TerritoiresNonAutorisésCreationModificationUtilisateurErreur quand l'utilisateur n'a pas accès à tous les territoires demandés", () => {
-      // Given
-      const habilitation = new HabilitationBuilder()
-        .avecTerritoireCodesGestionUtilisateur(["75", "92"])
-        .build();
-
-      const profil = creerProfilMock({
-        utilisateurs: {
-          modificationPossible: true,
-          tousTerritoires: false,
-          tousChantiers: true,
-        },
-      });
-
-      const chantiersIds = ["chantier-1", "chantier-2"];
-      const territoiresCodes = ["75", "92", "93"]; // Territoire 93 non autorisé
-
-      // When & THEN
-      expect(() => {
-        habilitation.vérifierLesHabilitationsEnCréationModificationUtilisateur(
-          chantiersIds,
-          territoiresCodes,
-          profil,
-        );
-      }).toThrow(TerritoiresNonAutorisésCreationModificationUtilisateurErreur);
-    });
-
-    it("devrait lever ChantiersNonAutorisésCreationModificationUtilisateurErreur quand l'utilisateur n'a pas accès à tous les chantiers demandés", () => {
-      // Given
-      const habilitation = new HabilitationBuilder()
-        .avecTerritoireCodesGestionUtilisateur(["75", "92"])
-        .avecChantiersIdsGestionUtilisateur(["chantier-1", "chantier-2"])
-        .build();
-
-      const profil = creerProfilMock({
-        utilisateurs: {
-          modificationPossible: true,
-          tousTerritoires: true,
-          tousChantiers: false,
-        },
-      });
-
-      const chantiersIds = ["chantier-1", "chantier-3"]; // chantier-3 non autorisé
-      const territoiresCodes = ["75"];
-
-      // When & THEN
-      expect(() => {
-        habilitation.vérifierLesHabilitationsEnCréationModificationUtilisateur(
-          chantiersIds,
-          territoiresCodes,
-          profil,
-        );
-      }).toThrow(ChantiersNonAutorisésCreationModificationUtilisateurErreur);
-    });
-
-    it("devrait réussir avec des tableaux vides", () => {
-      // Given
-      const habilitation = new HabilitationBuilder().build();
-      const profil = creerProfilMock({
-        utilisateurs: {
-          modificationPossible: true,
-          tousTerritoires: true,
-          tousChantiers: true,
-        },
-      });
-
-      // When & THEN
-      expect(() => {
-        habilitation.vérifierLesHabilitationsEnCréationModificationUtilisateur(
-          [],
-          [],
-          profil,
-        );
-      }).not.toThrow();
-    });
-  });
-
-  describe("Cas de test pour la logique des profils et autorisations", () => {
-    it("devrait gérer correctement le cas où tousChantiers est false mais tousTerritoires est true", () => {
-      // Given
-      const habilitation = new HabilitationBuilder()
-        .avecTerritoireCodesGestionUtilisateur(["75", "92"])
-        .avecChantiersIdsGestionUtilisateur(["chantier-1"])
-        .build();
-
-      const profil = creerProfilMock({
-        utilisateurs: {
-          modificationPossible: true,
-          tousTerritoires: true, // Vérifie les chantiers
-          tousChantiers: false, // Ne vérifie pas les territoires
-        },
-      });
-
-      const chantiersIds = ["chantier-1"]; // Chantier autorisé (important car tousTerritoires=true)
-      const territoiresCodes = ["999"]; // Territoire non autorisé, mais pas vérifié car tousChantiers=false
-
-      // When & THEN
-      expect(() => {
-        habilitation.vérifierLesHabilitationsEnSuppressionUtilisateur(
-          chantiersIds,
-          territoiresCodes,
-          profil,
-        );
-      }).not.toThrow();
-    });
-
-    it("devrait gérer correctement le cas où tousTerritoires est false mais tousChantiers est true", () => {
-      // Given
-      const habilitation = new HabilitationBuilder()
-        .avecTerritoireCodesGestionUtilisateur(["75"])
-        .avecChantiersIdsGestionUtilisateur(["chantier-1", "chantier-2"])
-        .build();
-
-      const profil = creerProfilMock({
-        utilisateurs: {
-          modificationPossible: true,
-          tousTerritoires: false, // Ne vérifie pas les chantiers
-          tousChantiers: true, // Vérifie les territoires
-        },
-      });
-
-      const chantiersIds = ["chantier-999"]; // Chantier non autorisé, mais pas vérifié car tousTerritoires=false
-      const territoiresCodes = ["75"]; // Territoire autorisé (important car tousChantiers=true)
-
-      // When & THEN
-      expect(() => {
-        habilitation.vérifierLesHabilitationsEnSuppressionUtilisateur(
-          chantiersIds,
-          territoiresCodes,
-          profil,
-        );
-      }).not.toThrow();
     });
   });
 });

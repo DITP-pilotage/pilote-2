@@ -994,3 +994,45 @@ model indicateur_evaluation {
   @@id([id, territoire_code, date_calcul])
   @@schema("public")
 }
+
+enum type_groupe_metadata_indicateur {
+  METADATA_INDICATEURS
+  METADATA_PARAMETRAGE_INDICATEURS
+  METADATA_INDICATEURS_COMPLEMENTAIRE
+
+  @@schema("public")
+}
+
+model metadata_indicateur {
+  name                           String                             @id
+  data_type                      String
+  description                    String
+  est_visible                    Boolean
+  alias                          String
+  est_editable                   Boolean
+  validation_regex               String
+  validation_regex_error_message String?
+  edit_box_type                  String?
+  default_value                  String?
+  est_obligatoire                Boolean
+  doit_afficher_la_description   Boolean
+  groupe                         type_groupe_metadata_indicateur
+  bloc_id                        Int?
+  valeurs_acceptees              metadata_indicateur_valeur_acceptee[]
+
+  @@schema("public")
+}
+
+model metadata_indicateur_valeur_acceptee {
+  id                       String              @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  metadata_indicateur_name String
+  ordre                    Int
+  valeur                   String
+  nom                      String
+  description              String
+  metadata_indicateur      metadata_indicateur @relation(fields: [metadata_indicateur_name], references: [name], onDelete: Cascade, onUpdate: Cascade)
+
+  @@unique([metadata_indicateur_name, ordre])
+  @@schema("public")
+}
+

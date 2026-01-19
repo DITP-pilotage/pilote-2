@@ -1,5 +1,4 @@
 import { asClass, AwilixContainer } from "awilix";
-import { InformationMetadataIndicateurRepository } from "@/server/parametrage-indicateur/domain/ports/InformationMetadataIndicateurRepository";
 import { HistorisationModificationRepository } from "@/server/domain/historisationModification/HistorisationModificationRepository";
 import CreerUneMetadataIndicateurUseCase from "@/server/parametrage-indicateur/usecases/CreerUneMetadataIndicateurUseCase";
 import ModifierUneMetadataIndicateurUseCase from "@/server/parametrage-indicateur/usecases/ModifierUneMetadataIndicateurUseCase";
@@ -12,13 +11,13 @@ import { ImportMasseMetadataIndicateurHandler } from "@/server/parametrage-indic
 import ImportMasseMetadataIndicateurUseCase from "@/server/parametrage-indicateur/usecases/ImportMasseMetadataIndicateurUseCase";
 import { MetadataParametrageIndicateurRepository } from "@/server/parametrage-indicateur/domain/port/MetadataParametrageIndicateurRepository";
 import { PrismaHistorisationModificationRepository } from "@/server/infrastructure/accès_données/historisationModification/PrismaHistorisationModificationRepository";
-import { YamlInformationMetadataIndicateurRepository } from "@/server/parametrage-indicateur/infrastructure/adapters/YamlInformationMetadataIndicateurRepository";
 import { PrismaMetadataParametrageIndicateurRepository } from "@/server/parametrage-indicateur/infrastructure/adapters/PrismaMetadataParametrageIndicateurRepository";
 import { PrismaMetadataParametrageIndicateurQuery } from "@/server/parametrage-indicateur/infrastructure/queries/PrismaMetadataParametrageIndicateurQuery";
+import { GetMetadataIndicateurConfigurationQuery } from "@/server/parametrage-indicateur/queries/GetMetadataIndicateurConfigurationQuery";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
+import { EnregistrerMetadataIndicateurHandler } from "@/server/parametrage-indicateur/handlers/EnregistrerMetadataIndicateurHandler";
 
 export type ParametrageIndicateurDependencies = {
-  informationMetadataIndicateurRepository: InformationMetadataIndicateurRepository;
   historisationModificationRepository: HistorisationModificationRepository;
   creerUneMetadataIndicateurUseCase: CreerUneMetadataIndicateurUseCase;
   modifierUneMetadataIndicateurUseCase: ModifierUneMetadataIndicateurUseCase;
@@ -31,6 +30,8 @@ export type ParametrageIndicateurDependencies = {
   importMasseMetadataIndicateurUseCase: ImportMasseMetadataIndicateurUseCase;
   metadataParametrageIndicateurRepository: MetadataParametrageIndicateurRepository;
   metadataParametrageIndicateurQuery: PrismaMetadataParametrageIndicateurQuery;
+  getMetadataIndicateurConfigurationQuery: GetMetadataIndicateurConfigurationQuery;
+  enregistrerMetadataIndicateurHandler: EnregistrerMetadataIndicateurHandler;
 };
 
 export const getParametrageIndicateurContainer = (
@@ -43,9 +44,6 @@ export const getParametrageIndicateurContainer = (
     .register({
       historisationModificationRepository: asClass(
         PrismaHistorisationModificationRepository,
-      ),
-      informationMetadataIndicateurRepository: asClass(
-        YamlInformationMetadataIndicateurRepository,
       ),
       creerUneMetadataIndicateurUseCase: asClass(
         CreerUneMetadataIndicateurUseCase,
@@ -77,6 +75,12 @@ export const getParametrageIndicateurContainer = (
       ),
       metadataParametrageIndicateurQuery: asClass(
         PrismaMetadataParametrageIndicateurQuery,
+      ),
+      getMetadataIndicateurConfigurationQuery: asClass(
+        GetMetadataIndicateurConfigurationQuery,
+      ),
+      enregistrerMetadataIndicateurHandler: asClass(
+        EnregistrerMetadataIndicateurHandler,
       ),
     });
 };

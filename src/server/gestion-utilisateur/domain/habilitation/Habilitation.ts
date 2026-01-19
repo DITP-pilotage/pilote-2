@@ -1,14 +1,3 @@
-import Chantier from "@/server/domain/chantier/Chantier.interface";
-import { Territoire } from "@/server/domain/territoire/Territoire.interface";
-import {
-  ChantiersNonAutorisésCreationModificationUtilisateurErreur,
-  ChantiersNonAutorisésSuppressionUtilisateurErreur,
-  ProfilNonAutorisésSuppressionUtilisateurErreur,
-  TerritoiresNonAutorisésCreationModificationUtilisateurErreur,
-  TerritoiresNonAutorisésSuppressionUtilisateurErreur,
-} from "@/server/utils/errors";
-import { toutesLesValeursDuTableauSontContenuesDansLAutreTableau } from "@/client/utils/arrays";
-import { Profil } from "@/server/domain/profil/Profil.interface";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
 import { ProfilCode } from "@/server/gestion-utilisateur/domain/Utilisateur.interface";
 import { UnauthorizedError } from "@/server/app/error-boundary/unauthorized-error";
@@ -34,90 +23,16 @@ const PROFIL_AUTORISE_A_MODIFIER_PROPOSITION_VALEUR_AVANCEMENT = new Set([
 ]);
 
 export default class Habilitation {
-  private _habilitations: Habilitations;
+  constructor(
+    private readonly dependencies: {
+      habilitations: Habilitations;
+      profil: ProfilCode;
+    },
+  ) {}
 
-  constructor({ habilitations }: { habilitations: Habilitations }) {
-    this._habilitations = habilitations;
-  }
-
-  vérifierLesHabilitationsEnSuppressionUtilisateur(
-    chantiersIds: Chantier["id"][],
-    territoiresCodes: Territoire["code"][],
-    profil: Profil | null,
-  ) {
-    if (!profil || !profil.utilisateurs.modificationPossible) {
-      throw new ProfilNonAutorisésSuppressionUtilisateurErreur();
-    }
-
+  verifierAutorisationModificationTokenAPI() {
     if (
-      profil.utilisateurs.tousChantiers &&
-      !toutesLesValeursDuTableauSontContenuesDansLAutreTableau(
-        territoiresCodes,
-        this._habilitations.gestionUtilisateur.territoires,
-      )
-    ) {
-      throw new TerritoiresNonAutorisésSuppressionUtilisateurErreur();
-    }
-
-    if (
-      profil.utilisateurs.tousTerritoires &&
-      !toutesLesValeursDuTableauSontContenuesDansLAutreTableau(
-        chantiersIds,
-        this._habilitations.gestionUtilisateur.chantiers,
-      )
-    )
-      throw new ChantiersNonAutorisésSuppressionUtilisateurErreur();
-  }
-
-  vérifierLesHabilitationsEnCréationModificationUtilisateur(
-    chantiersIds: Chantier["id"][],
-    territoiresCodes: Territoire["code"][],
-    profil: Profil | null,
-  ) {
-    if (!profil || !profil.utilisateurs.modificationPossible) {
-      throw new ProfilNonAutorisésSuppressionUtilisateurErreur();
-    }
-    if (
-      profil.utilisateurs.tousChantiers &&
-      !toutesLesValeursDuTableauSontContenuesDansLAutreTableau(
-        territoiresCodes,
-        this._habilitations.gestionUtilisateur.territoires,
-      )
-    ) {
-      throw new TerritoiresNonAutorisésCreationModificationUtilisateurErreur();
-    }
-    if (
-      profil.utilisateurs.tousTerritoires &&
-      !toutesLesValeursDuTableauSontContenuesDansLAutreTableau(
-        chantiersIds,
-        this._habilitations.gestionUtilisateur.chantiers,
-      )
-    )
-      throw new ChantiersNonAutorisésCreationModificationUtilisateurErreur();
-  }
-
-  verifierAutorisationModificationTokenAPI(profil: ProfilCode | null) {
-    if (!profil || !PROFIL_AUTORISE_A_MODIFICATION_TOKEN_API.has(profil)) {
-      throw new UnauthorizedError(
-        "Vous n'êtes pas autorisé a effectuer cette action",
-      );
-    }
-  }
-
-  verifierAutorisationLectureMetadataIndicateur(profil: ProfilCode | null) {
-    if (!profil || !PROFIL_AUTORISE_A_LECTURE_METADATA_INDICATEUR.has(profil)) {
-      throw new UnauthorizedError(
-        "Vous n'êtes pas autorisé a effectuer cette action",
-      );
-    }
-  }
-
-  verifierAutorisationModificationMetadataIndicateur(
-    profil: ProfilCode | null,
-  ) {
-    if (
-      !profil ||
-      !PROFIL_AUTORISE_A_MODIFICATION_METADATA_INDICATEUR.has(profil)
+      !PROFIL_AUTORISE_A_MODIFICATION_TOKEN_API.has(this.dependencies.profil)
     ) {
       throw new UnauthorizedError(
         "Vous n'êtes pas autorisé a effectuer cette action",
@@ -125,10 +40,35 @@ export default class Habilitation {
     }
   }
 
-  verifierAutorisationModificationGestionContenu(profil: ProfilCode | null) {
+  verifierAutorisationLectureMetadataIndicateur() {
     if (
-      !profil ||
-      !PROFIL_AUTORISE_A_MODIFICATION_GESTION_CONTENU.has(profil)
+      !PROFIL_AUTORISE_A_LECTURE_METADATA_INDICATEUR.has(
+        this.dependencies.profil,
+      )
+    ) {
+      throw new UnauthorizedError(
+        "Vous n'êtes pas autorisé a effectuer cette action",
+      );
+    }
+  }
+
+  verifierAutorisationModificationMetadataIndicateur() {
+    if (
+      !PROFIL_AUTORISE_A_MODIFICATION_METADATA_INDICATEUR.has(
+        this.dependencies.profil,
+      )
+    ) {
+      throw new UnauthorizedError(
+        "Vous n'êtes pas autorisé a effectuer cette action",
+      );
+    }
+  }
+
+  verifierAutorisationModificationGestionContenu() {
+    if (
+      !PROFIL_AUTORISE_A_MODIFICATION_GESTION_CONTENU.has(
+        this.dependencies.profil,
+      )
     ) {
       throw new UnauthorizedError(
         "Vous n'êtes pas autorisé a effectuer cette action",
@@ -137,16 +77,16 @@ export default class Habilitation {
   }
 
   verifierAutorisationModificationPropositionValeurAvancement(
-    profil: ProfilCode | null,
-    chantiersIdsAutorisés: string[],
     propositionValeurAvancementChantierInformation: RapportDirecteurProjetChantierInformation,
   ) {
-    const estAutoriseAModifierLesCommentaires = chantiersIdsAutorisés.includes(
-      propositionValeurAvancementChantierInformation.id,
-    );
+    const estAutoriseAModifierLesCommentaires =
+      this.dependencies.habilitations.saisieCommentaire.chantiers.includes(
+        propositionValeurAvancementChantierInformation.id,
+      );
     if (
-      !profil ||
-      !PROFIL_AUTORISE_A_MODIFIER_PROPOSITION_VALEUR_AVANCEMENT.has(profil) ||
+      !PROFIL_AUTORISE_A_MODIFIER_PROPOSITION_VALEUR_AVANCEMENT.has(
+        this.dependencies.profil,
+      ) ||
       propositionValeurAvancementChantierInformation.statut === "ARCHIVE" ||
       !estAutoriseAModifierLesCommentaires
     ) {
@@ -157,17 +97,14 @@ export default class Habilitation {
   }
 
   verifierAutorisationAcceptationOuRefusPropositionValeurAvancement(
-    profil: ProfilCode | null,
-    habilitations: Habilitations,
     propositionValeurAvancementChantierInformation: RapportDirecteurProjetChantierInformation,
   ) {
     const estAutoriseAImportSurLeChantier =
-      habilitations.saisieIndicateur.chantiers.includes(
+      this.dependencies.habilitations.saisieIndicateur.chantiers.includes(
         propositionValeurAvancementChantierInformation.id,
       );
     if (
-      !profil ||
-      profil === ProfilEnum.DITP_ADMIN ||
+      this.dependencies.profil === ProfilEnum.DITP_ADMIN ||
       propositionValeurAvancementChantierInformation.statut === "ARCHIVE" ||
       !estAutoriseAImportSurLeChantier
     ) {
@@ -175,5 +112,9 @@ export default class Habilitation {
         "Vous n'êtes pas autorisé a effectuer cette action",
       );
     }
+  }
+
+  estAutoriseAAccederALaPageAdmin() {
+    return this.dependencies.profil === ProfilEnum.DITP_ADMIN;
   }
 }

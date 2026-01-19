@@ -106,7 +106,6 @@
     "form-data": "^4.0.0",
     "formidable": "^3.5.4",
     "isomorphic-dompurify": "^1.2.0",
-    "js-yaml-loader": "^1.2.2",
     "lodash.groupby": "^4.6.0",
     "lodash.keyby": "^4.6.0",
     "lodash.mapvalues": "^4.6.0",

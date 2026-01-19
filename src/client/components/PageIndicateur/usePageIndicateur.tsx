@@ -1,11 +1,12 @@
 import { SubmitHandler, useForm } from "react-hook-form";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useRouter } from "next/router";
 import { zodResolver } from "@hookform/resolvers/zod";
 import api from "@/server/infrastructure/api/trpc/api";
 import { récupérerUnCookie } from "@/client/utils/cookies";
 import { MetadataParametrageIndicateurContrat } from "@/server/app/contrats/MetadataParametrageIndicateurContrat";
-import { validationMetadataIndicateurFormulaire } from "@/validation/metadataIndicateur";
+import { MapInformationMetadataIndicateurContrat } from "@/server/app/contrats/InformationMetadataIndicateurContrat";
+import { createValidationMetadataIndicateurFormulaire } from "@/validation/metadataIndicateur";
 import AlerteProps from "@/components/_commons/Alerte/Alerte.interface";
 
 export type MetadataIndicateurForm = {
@@ -82,14 +83,23 @@ export type MetadataIndicateurForm = {
 
 export const usePageIndicateur = (
   indicateur: MetadataParametrageIndicateurContrat,
+  mapInformationMetadataIndicateur: MapInformationMetadataIndicateurContrat,
 ) => {
   const router = useRouter();
   const [alerte, setAlerte] = useState<AlerteProps | null>(null);
   const [estEnCoursDeModification, setEstEnCoursDeModification] =
     useState<boolean>(false);
 
+  const validationSchema = useMemo(
+    () =>
+      createValidationMetadataIndicateurFormulaire(
+        mapInformationMetadataIndicateur,
+      ),
+    [mapInformationMetadataIndicateur],
+  );
+
   const reactHookForm = useForm<MetadataIndicateurForm>({
-    resolver: zodResolver(validationMetadataIndicateurFormulaire),
+    resolver: zodResolver(validationSchema),
     defaultValues: {
       ...indicateur,
       indicHiddenPilote: indicateur.indicHiddenPilote ? "false" : "true",

@@ -31,8 +31,6 @@ export const propositionValeurAvancementRouter = créerRouteurTRPC({
         .recupererHabilitations(ctx.session);
 
       habilitations.verifierAutorisationModificationPropositionValeurAvancement(
-        ctx.session.profil,
-        ctx.session.habilitations.saisieCommentaire.chantiers,
         propositionValeurAvancementChantierInformation,
       );
 
@@ -67,8 +65,6 @@ export const propositionValeurAvancementRouter = créerRouteurTRPC({
         .recupererHabilitations(ctx.session);
 
       habilitations.verifierAutorisationModificationPropositionValeurAvancement(
-        ctx.session.profil,
-        ctx.session.habilitations.saisieCommentaire.chantiers,
         propositionValeurAvancementChantierInformation,
       );
 
@@ -119,8 +115,6 @@ export const propositionValeurAvancementRouter = créerRouteurTRPC({
         .recupererHabilitations(ctx.session);
 
       habilitations.verifierAutorisationAcceptationOuRefusPropositionValeurAvancement(
-        ctx.session.profil,
-        ctx.session.habilitations,
         propositionValeurAvancementChantierInformation,
       );
 
@@ -153,8 +147,6 @@ export const propositionValeurAvancementRouter = créerRouteurTRPC({
         .recupererHabilitations(ctx.session);
 
       habilitations.verifierAutorisationAcceptationOuRefusPropositionValeurAvancement(
-        ctx.session.profil,
-        ctx.session.habilitations,
         propositionValeurAvancementChantierInformation,
       );
 
@@ -188,8 +180,6 @@ export const propositionValeurAvancementRouter = créerRouteurTRPC({
         .recupererHabilitations(ctx.session);
 
       habilitations.verifierAutorisationAcceptationOuRefusPropositionValeurAvancement(
-        ctx.session.profil,
-        ctx.session.habilitations,
         propositionValeurAvancementChantierInformation,
       );
 
@@ -222,8 +212,6 @@ export const propositionValeurAvancementRouter = créerRouteurTRPC({
         .recupererHabilitations(ctx.session);
 
       habilitations.verifierAutorisationAcceptationOuRefusPropositionValeurAvancement(
-        ctx.session.profil,
-        ctx.session.habilitations,
         propositionValeurAvancementChantierInformation,
       );
 
