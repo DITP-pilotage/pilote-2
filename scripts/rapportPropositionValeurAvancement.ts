@@ -2,7 +2,7 @@ import { loadEnvConfig } from "@next/env";
 import process from "node:process";
 import logger from "@/server/infrastructure/Logger";
 import { envoieMessageTchap } from "@/server/utils/notification-tchap";
-import { getInitialContainer } from "@/server/initial-container";
+import { getInitialContainerWithTransversalDependencies } from "@/server/InitialDependencies";
 import { getChantiersContainer } from "@/server/chantiers/container";
 
 const projectDir = process.cwd();
@@ -11,7 +11,7 @@ const baseUrl = process.env.TCHAP_BASE_URL ?? "";
 const roomId = process.env.TCHAP_ROOM_ID_RAPPORT_PVA ?? "";
 const accessToken = process.env.TCHAP_ACCESS_TOKEN ?? "";
 async function main() {
-  const initialContainer = getInitialContainer();
+  const initialContainer = getInitialContainerWithTransversalDependencies();
   const { emailsEnEchec } = await getChantiersContainer(initialContainer)
     .resolve("envoyerLesRapportsPropositionValeurAvancementUseCase")
     .run();
