@@ -96,9 +96,13 @@ export const BaseNavigation = ({ pages }: { pages: LienNavigation[] }) => {
         >
           Fermer
         </button>
-        <div className="fr-header__menu-links flex flex-column gap-4 divide-y divide-gray-200 pb-4">
-          <BoutonContacterEquipePilote />
-          <Utilisateur email={session!.user!.email!} />
+        <div className="fr-header__menu-links flex flex-column gap-2 divide-y divide-gray-200 border-b border-b-gray-200 pb-2">
+          <div className="pb-2">
+            <BoutonContacterEquipePilote />
+          </div>
+          <div className="flex">
+            <Utilisateur email={session!.user!.email!} />
+          </div>
         </div>
         <nav
           aria-label="Menu principal"

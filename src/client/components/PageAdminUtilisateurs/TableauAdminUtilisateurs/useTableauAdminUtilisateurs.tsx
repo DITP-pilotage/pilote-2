@@ -56,7 +56,7 @@ const colonnes = [
     (row) =>
       `${formaterDate(row.dateModification, "DD/MM/YYYY")} par ${row.auteurModification}`,
     {
-      header: "Dernière modif.",
+      header: "Dernière modification",
       cell: (props) => props.getValue(),
       sortingFn: (a, b) => {
         const dateA = new Date(a.original.dateModification);

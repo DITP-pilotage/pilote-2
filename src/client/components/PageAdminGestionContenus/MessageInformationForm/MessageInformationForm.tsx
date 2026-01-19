@@ -16,7 +16,7 @@ const MessageInformationForm: FunctionComponent<{}> = () => {
         <div className="flex">
           <Controller
             control={form.control}
-            name="bandeauTexte"
+            name="bandeauType"
             render={({ field }) => {
               return (
                 <Sélecteur

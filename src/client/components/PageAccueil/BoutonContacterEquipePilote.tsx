@@ -10,11 +10,9 @@ export const BoutonContacterEquipePilote = ({
   variant?: ComponentProps<typeof Lien>["variant"];
 }) => (
   <Lien
-    className={clsxm("bg-none")}
+    className={clsxm("!bg-none shadow-none !text-sm !font-normal")}
     href="mailto:pilote.ditp@modernisation.gouv.fr"
-    iconLeft={
-      <Icone className="fr-mr-2v text-current" icone={EnveloppeContourIcon} />
-    }
+    iconLeft={<Icone className="text-current" icone={EnveloppeContourIcon} />}
     label={"Contacter l'équipe PILOTE"}
     variant={variant}
   />
