@@ -5,6 +5,7 @@ export type DetailsIndicateursTerritoireContrat = DétailsIndicateurTerritoire;
 
 export const presenterEnDetailsIndicateursTerritoireContrat = (
   detailsIndicateurs: DetailsIndicateurTerritoire,
+  dateDernierImport: Date | null,
 ): DetailsIndicateursTerritoireContrat => {
   return Object.entries(detailsIndicateurs).reduce(
     (acc, [codeInsee, detailsTerritoire]) => {
@@ -36,7 +37,7 @@ export const presenterEnDetailsIndicateursTerritoireContrat = (
           detailsTerritoire.propositionStatutDirectionProjet,
         unité: detailsTerritoire.unite,
         est_applicable: detailsTerritoire.estApplicable,
-        dateImport: detailsTerritoire.dateImport,
+        dateImport: dateDernierImport?.toLocaleString() ?? null,
         pondération: detailsTerritoire.ponderation,
         prochaineDateValeurAvancement:
           detailsTerritoire.prochaineDateValeurAvancement,

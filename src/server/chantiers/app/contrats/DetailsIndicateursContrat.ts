@@ -6,9 +6,13 @@ export type DetailsIndicateursContrat = DétailsIndicateurs;
 
 export const presenterEnDetailsIndicateursContrat = (
   detailsIndicateurs: DetailsIndicateurs,
+  datesDerniersImports: Map<string, Date | null>,
 ): DetailsIndicateursContrat => {
   return Object.entries(detailsIndicateurs).reduce((acc, [id, details]) => {
-    acc[id] = presenterEnDetailsIndicateursTerritoireContrat(details);
+    acc[id] = presenterEnDetailsIndicateursTerritoireContrat(
+      details,
+      datesDerniersImports.get(id) ?? null,
+    );
     return acc;
   }, {} as DetailsIndicateursContrat);
 };
