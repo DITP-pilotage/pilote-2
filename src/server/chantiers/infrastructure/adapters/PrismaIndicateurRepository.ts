@@ -1311,4 +1311,38 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
 
     return indicateursParChantier;
   }
+
+  async recupererDatesDernierImports(
+    dateDerniereExecutionDatajobs: Date,
+  ): Promise<Map<string, Date | null>> {
+    const evenements =
+      await prisma.indicateur_territoire_valeur_evenement.findMany({
+        where: {
+          type_evenement: {
+            in: [
+              EvenementValeurEnum.VALEUR_CREEE,
+              EvenementValeurEnum.VALEUR_MODIFIEE,
+            ],
+          },
+          date_creation: {
+            lt: dateDerniereExecutionDatajobs,
+          },
+        },
+        select: {
+          date_creation: true,
+          indic_id: true,
+        },
+      });
+
+    return evenements.reduce((map, evenement) => {
+      const indicateurId = evenement.indic_id;
+      const dateActuelle = map.get(indicateurId);
+
+      if (!dateActuelle || evenement.date_creation > dateActuelle) {
+        map.set(indicateurId, evenement.date_creation);
+      }
+
+      return map;
+    }, new Map<string, Date | null>());
+  }
 }
