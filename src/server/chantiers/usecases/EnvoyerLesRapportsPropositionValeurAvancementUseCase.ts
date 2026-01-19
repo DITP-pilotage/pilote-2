@@ -1,3 +1,4 @@
+import logger from "@/server/infrastructure/Logger";
 import { ChantierRepository } from "@/server/chantiers/domain/ports/ChantierRepository";
 import { EnvoieEmailService } from "@/server/chantiers/domain/ports/EnvoieEmailService";
 import { UtilisateurRepository } from "@/server/chantiers/domain/ports/UtilisateurRepository";
@@ -84,7 +85,11 @@ export class EnvoyerLesRapportsPropositionValeurAvancementUseCase {
           4,
           { chantiers, conseiller_email: conseillerEmail, texteIntro },
         );
-      } catch {
+      } catch (error) {
+        logger.info(
+          `Erreur lors de l'envoi de l'email à ${directeur.email}:`,
+          error,
+        );
         emailsEnEchec.push(directeur.email);
       }
     }
