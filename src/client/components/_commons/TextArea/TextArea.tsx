@@ -1,45 +1,52 @@
 import "@gouvfr/dsfr/dist/component/form/form.min.css";
 import "@gouvfr/dsfr/dist/component/input/input.min.css";
 import { FunctionComponent, PropsWithChildren } from "react";
-import {
-  FieldError,
-  FieldErrorsImpl,
-  Merge,
-  UseFormRegisterReturn,
-} from "react-hook-form";
+import { clsxm } from "@/utils/clsxm";
 
 const TextArea: FunctionComponent<
   PropsWithChildren<{
     htmlName: string;
-    erreur?: FieldError | Merge<FieldError, FieldErrorsImpl<{}>>;
-    erreurMessage?: string;
-    register: UseFormRegisterReturn;
+    erreurMessage: string | undefined;
+    value?: string;
+    onChange?: (value: string) => void;
     disabled?: boolean;
     className?: string;
   }>
 > = ({
   children,
-  erreur,
   erreurMessage,
+  value,
+  onChange,
   htmlName,
-  register,
   disabled = false,
   className = "",
 }) => {
   return (
     <div
-      className={`fr-input-group ${erreur !== undefined || erreurMessage ? "fr-input-group--error" : ""}`}
+      className={clsxm("fr-input-group", {
+        "fr-input-group--error": erreurMessage,
+      })}
     >
       {children}
       <textarea
-        className={`fr-input${erreur !== undefined || erreurMessage ? " fr-input-group--error" : ""}${className !== undefined ? " " + className : ""}`}
+        autoComplete="off"
+        className={clsxm(
+          `fr-input`,
+          {
+            "fr-input-group--error": erreurMessage,
+          },
+          className,
+        )}
         disabled={disabled}
         id={htmlName}
-        {...register}
+        onChange={(event) => {
+          onChange?.(event.target.value);
+        }}
+        value={value}
       />
-      {(erreurMessage !== undefined || erreur !== undefined) && (
+      {erreurMessage !== undefined ? (
         <p className="fr-error-text fr-mt-1v">{erreurMessage?.toString()}</p>
-      )}
+      ) : null}
     </div>
   );
 };

@@ -1,30 +1,30 @@
-import { FunctionComponent } from "react";
-import clsx from "clsx";
+import { FunctionComponent, ReactNode } from "react";
 import BlocStyled from "@/components/_commons/Bloc/Bloc.styled";
 import { Infobulle } from "@/components/_commons/Infobulle/Infobulle";
+import { clsxm } from "@/utils/clsxm";
 
 interface BlocProps {
-  children: React.ReactNode;
+  children: ReactNode;
   contenuClassesSupplémentaires?: string;
   className?: string;
   titre?: string;
-  contenuInfobulle?: React.ReactNode;
+  contenuInfobulle?: ReactNode;
   backgroundClassNameTitre?: string;
 }
 
 const Bloc: FunctionComponent<BlocProps> = ({
   children,
-  contenuClassesSupplémentaires = "fr-p-2w",
+  contenuClassesSupplémentaires = "!p-4",
   titre,
   contenuInfobulle,
   className = "",
   backgroundClassNameTitre,
 }) => {
   return (
-    <BlocStyled className={`bloc-container${className ? ` ${className}` : ""}`}>
+    <BlocStyled className={clsxm("bloc-container", className)}>
       {titre ? (
         <div
-          className={clsx(
+          className={clsxm(
             "titre fr-mb-0 fr-p-2w fr-text--sm fr-text--bold flex align-center justify-start relative w-full",
             backgroundClassNameTitre,
           )}
@@ -39,9 +39,7 @@ const Bloc: FunctionComponent<BlocProps> = ({
           </div>
         </div>
       ) : null}
-      <div
-        className={`bloc__contenu${contenuClassesSupplémentaires ? ` ${contenuClassesSupplémentaires}` : ""}`}
-      >
+      <div className={clsxm("bloc__contenu", contenuClassesSupplémentaires)}>
         {children}
       </div>
     </BlocStyled>

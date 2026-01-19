@@ -9,6 +9,7 @@ import BarreDeRecherche from "@/components/_commons/BarreDeRecherche/BarreDeRech
 import Titre from "@/components/_commons/Titre/Titre";
 import TableauAdminUtilisateursContenu from "@/components/PageAdminUtilisateurs/TableauAdminUtilisateurs/Contenu/TableauAdminUtilisateursContenu";
 import { UtilisateurListeGestionContrat } from "@/server/app/contrats/UtilisateurListeGestionContrat";
+import Tag from "@/components/_commons/Tag/Tag";
 
 const TableauAdminUtilisateurs: FunctionComponent<{
   listeUtilisateurs: UtilisateurListeGestionContrat[];
@@ -53,40 +54,37 @@ const TableauAdminUtilisateurs: FunctionComponent<{
       <Titre baliseHtml="h2" className="fr-h4 fr-mt-3w  fr-mb-0 titre-tableau">
         {`${nombreUtilisateur} ${nombreUtilisateur > 1 ? "comptes" : "compte"}`}
       </Titre>
-      <div className="fr-mt-2w">
-        <button
-          className={`fr-tag fr-mr-1w ${verifierTypeEstPresent(/desactive/, typeCompte) && verifierTypeEstPresent(/actif/, typeCompte) ? "fr-tag-active" : ""}`}
-          id="tag-comptes-tous"
-          key="tag-comptes-tous"
+      <div className="flex gap-2 !mt-4">
+        <Tag
+          isActive={
+            verifierTypeEstPresent(/desactive/, typeCompte) &&
+            verifierTypeEstPresent(/actif/, typeCompte)
+          }
+          libelle="Tous"
           onClick={() => {
             modifierFiltre(["actif", "desactive"]);
           }}
-          type="button"
-        >
-          Tous
-        </button>
-        <button
-          className={`fr-tag fr-mr-1w ${verifierTypeEstPresent(/actif/, typeCompte) && !verifierTypeEstPresent(/desactive/, typeCompte) ? "fr-tag-active" : ""}`}
-          id="tag-comptes-actifs"
-          key="tag-comptes-actifs"
+        />
+        <Tag
+          isActive={
+            verifierTypeEstPresent(/actif/, typeCompte) &&
+            !verifierTypeEstPresent(/desactive/, typeCompte)
+          }
+          libelle="Comptes actifs"
           onClick={() => {
             modifierFiltre(["actif"]);
           }}
-          type="button"
-        >
-          Comptes actifs
-        </button>
-        <button
-          className={`fr-tag fr-mr-1w ${verifierTypeEstPresent(/desactive/, typeCompte) && !verifierTypeEstPresent(/actif/, typeCompte) ? "fr-tag-active" : ""}`}
-          id="tag-comptes-desactives"
-          key="tag-comptes-desactives"
+        />
+        <Tag
+          isActive={
+            verifierTypeEstPresent(/desactive/, typeCompte) &&
+            !verifierTypeEstPresent(/actif/, typeCompte)
+          }
+          libelle="Comptes désactivés"
           onClick={() => {
             modifierFiltre(["desactive"]);
           }}
-          type="button"
-        >
-          Comptes désactivés
-        </button>
+        />
       </div>
       <div className="fr-table">
         <table className="tableau fr-m-0 fr-p-0">

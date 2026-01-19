@@ -103,8 +103,8 @@ const CartographieAvecSelecteur: FunctionComponent<{
     <>
       <Sélecteur
         htmlName="selecteur-carte"
+        onChange={aLaSelectionCartographie}
         options={optionsCartographie}
-        valeurModifiéeCallback={aLaSelectionCartographie}
         valeurSélectionnée={cartographieSelectionnee}
       />
       <Cartographie

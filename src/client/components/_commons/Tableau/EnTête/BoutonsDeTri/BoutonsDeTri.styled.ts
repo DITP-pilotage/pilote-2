@@ -2,7 +2,6 @@ import styled from "@emotion/styled";
 
 const BoutonsDeTriStyled = styled.div`
   display: flex;
-  flex-direction: column;
   align-items: center;
 
   @media (min-width: 576px) {

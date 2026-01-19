@@ -201,11 +201,11 @@ const PageLanding = () => {
         </section>
         <section className="bloc-questions">
           <div className="fr-container">
-            <div className="fr-grid-row fr-py-8w conteneur-contact">
+            <div className="fr-grid-row fr-py-8w conteneur-contact flex items-center">
               <Titre baliseHtml="h2" className="fr-h3 fr-m-0">
                 Vous avez des questions ?
               </Titre>
-              <BoutonContacterEquipePilote className="!texte-white" />
+              <BoutonContacterEquipePilote variant="button" />
             </div>
           </div>
         </section>

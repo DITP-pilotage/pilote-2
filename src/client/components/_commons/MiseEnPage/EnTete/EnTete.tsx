@@ -69,27 +69,19 @@ export const EnTete = () => {
             </div>
             <div className="fr-header__tools">
               <div className="fr-header__tools-links">
-                <ul className="flex align-center gap-4">
-                  <li>
-                    <BoutonContacterEquipePilote />
-                  </li>
+                <div className="flex align-center gap-4">
+                  <BoutonContacterEquipePilote />
                   {session?.user?.email ? (
                     <>
                       {peutVoirLeBoutonApplicationsPilote ? (
-                        <li>
-                          <BoutonApplicationsPilote />
-                        </li>
+                        <BoutonApplicationsPilote />
                       ) : null}
-                      <li>
-                        <Utilisateur email={session.user.email} />
-                      </li>
+                      <Utilisateur email={session.user.email} />
                     </>
                   ) : (
-                    <li>
-                      <BoutonSeConnecter />
-                    </li>
+                    <BoutonSeConnecter />
                   )}
-                </ul>
+                </div>
               </div>
             </div>
           </div>

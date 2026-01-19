@@ -51,7 +51,7 @@ const AdminIndicateurBarreLatérale: FunctionComponent<
       setEstOuvert={setEstOuverteBarreLatérale}
     >
       <BarreLatéraleEncart>
-        <div className="fr-mb-2w">
+        <div className="flex flex-col gap-4">
           <MultiSelectPérimètreMinistériel
             changementValeursSélectionnéesCallback={(perimetresMinisteriel) => {
               sauvegarderFiltres({
@@ -63,8 +63,6 @@ const AdminIndicateurBarreLatérale: FunctionComponent<
               filtresActifs.perimetresMinisteriels
             }
           />
-        </div>
-        <div className="fr-mb-2w">
           <MultiSelectChantier
             changementValeursSélectionnéesCallback={(chantier) => {
               sauvegarderFiltres({ chantiers: chantier });
@@ -72,23 +70,21 @@ const AdminIndicateurBarreLatérale: FunctionComponent<
             chantiers={chantierAAfficher ?? []}
             chantiersIdsSélectionnésParDéfaut={filtresActifs.chantiers}
           />
+          <Interrupteur
+            checked={filtresActifs.estTerritorialise}
+            libellé="Indicateurs territorialisés"
+            onChange={(estTerritorialise) => {
+              sauvegarderFiltres({ estTerritorialise: estTerritorialise });
+            }}
+          />
+          <Interrupteur
+            checked={filtresActifs.estBarometre}
+            libellé="Indicateurs du baromètre"
+            onChange={(estBarometre) => {
+              sauvegarderFiltres({ estBarometre: estBarometre });
+            }}
+          />
         </div>
-        <Interrupteur
-          auChangement={(estTerritorialise) => {
-            sauvegarderFiltres({ estTerritorialise: estTerritorialise });
-          }}
-          checked={filtresActifs.estTerritorialise}
-          id="estTerritorialise"
-          libellé="Indicateurs territorialisés"
-        />
-        <Interrupteur
-          auChangement={(estBarometre) => {
-            sauvegarderFiltres({ estBarometre: estBarometre });
-          }}
-          checked={filtresActifs.estBarometre}
-          id="estBarometre"
-          libellé="Indicateurs du baromètre"
-        />
       </BarreLatéraleEncart>
       <div className="fr-px-3w fr-py-2w">
         <Titre baliseHtml="h2" className="fr-h4">
@@ -119,7 +115,7 @@ const AdminIndicateurBarreLatérale: FunctionComponent<
               <Tag
                 key={perimetreId}
                 libelle={label}
-                suppressionCallback={() => {
+                onClick={() => {
                   const filtresApresSuppression =
                     filtresActifs.perimetresMinisteriels.toSpliced(
                       filtresActifs.perimetresMinisteriels.indexOf(perimetreId),
@@ -150,7 +146,7 @@ const AdminIndicateurBarreLatérale: FunctionComponent<
               <Tag
                 key={chantierId}
                 libelle={label}
-                suppressionCallback={() => {
+                onClick={() => {
                   const filtresApresSuppression =
                     filtresActifs.chantiers.toSpliced(
                       filtresActifs.chantiers.indexOf(chantierId),
@@ -171,20 +167,20 @@ const AdminIndicateurBarreLatérale: FunctionComponent<
           Autre(s) filtre(s)
         </button>
         <div className="fr-collapse" id="fr-sidemenu-item-autres-filtres">
-          {!!filtresActifs.estTerritorialise ? (
+          {filtresActifs.estTerritorialise ? (
             <Tag
               key="estTerritorialise"
               libelle="Indicateurs territorialisés"
-              suppressionCallback={() => {
+              onClick={() => {
                 sauvegarderFiltres({ estTerritorialise: false });
               }}
             />
           ) : null}
-          {!!filtresActifs.estBarometre ? (
+          {filtresActifs.estBarometre ? (
             <Tag
               key="estBarometre"
               libelle="Indicateurs du baromètre"
-              suppressionCallback={() => {
+              onClick={() => {
                 sauvegarderFiltres({ estBarometre: false });
               }}
             />

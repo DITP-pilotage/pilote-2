@@ -1,17 +1,21 @@
 import { FunctionComponent } from "react";
 import Titre from "@/components/_commons/Titre/Titre";
-import useDétailsMetadataParametreIndicateurDepartementaleForm, {
-  MetadataParametrageParametreIndicateurDepartementaleForm,
-} from "@/components/PageIndicateur/FicheIndicateur/SectionDétailsMetadataParametreIndicateurDepartementale/useDétailsMetadataParametreIndicateurDepartementaleForm";
 import { MapInformationMetadataIndicateurContrat } from "@/server/app/contrats/InformationMetadataIndicateurContrat";
+import { MetadataParametrageIndicateurContrat } from "@/server/app/contrats/MetadataParametrageIndicateurContrat";
 import { MetadataIndicateurSelecteur } from "@/components/PageIndicateur/FicheIndicateur/commons/MetadataIndicateurSelecteur";
 import {
   mappingAcceptedValues,
   mappingDisplayAcceptedValues,
 } from "@/components/PageIndicateur/FicheIndicateur/commons/utils";
-import { MetadataParametrageIndicateurContrat } from "@/server/app/contrats/MetadataParametrageIndicateurContrat";
+import { useMetadataIndicateurForm } from "@/components/PageIndicateur/useMetadataIndicateurForm";
+import { MetadataIndicateurForm } from "@/components/PageIndicateur/usePageIndicateur";
 
-const SectionDétailsMetadataParametreIndicateurDepartementale: FunctionComponent<{
+type ValeurNatFrom = Pick<
+  MetadataIndicateurForm,
+  "viNatFrom" | "viNatOp" | "vaNatFrom" | "vaNatOp" | "vcNatFrom" | "vcNatOp"
+>;
+
+const SectionDétailsMetadataParametreIndicateurNationale: FunctionComponent<{
   indicateur: MetadataParametrageIndicateurContrat;
   estEnCoursDeModification: boolean;
   mapInformationMetadataIndicateur: MapInformationMetadataIndicateurContrat;
@@ -20,18 +24,17 @@ const SectionDétailsMetadataParametreIndicateurDepartementale: FunctionComponen
   estEnCoursDeModification,
   mapInformationMetadataIndicateur,
 }) => {
-  const { register, getValues, errors, setValue } =
-    useDétailsMetadataParametreIndicateurDepartementaleForm();
+  const { getValues, setValue } = useMetadataIndicateurForm();
 
-  const valeursDeptFromDesactiveDeptOp = new Set(["_", "user_input"]);
-  const ALaModificationValeurDeptFrom = (
-    variableFrom: keyof MetadataParametrageParametreIndicateurDepartementaleForm,
+  const valeursNatFromDesactiveNatOp = new Set(["_", "user_input"]);
+  const ALaModificationValeurNatFrom = (
+    variableFrom: keyof ValeurNatFrom,
     valeurFrom: string,
-    variableOp: keyof MetadataParametrageParametreIndicateurDepartementaleForm,
+    variableOp: keyof ValeurNatFrom,
     variableParDefautOp: string,
   ) => {
     setValue(variableFrom, valeurFrom);
-    if (valeursDeptFromDesactiveDeptOp.has(valeurFrom)) {
+    if (valeursNatFromDesactiveNatOp.has(valeurFrom)) {
       setValue(variableOp, variableParDefautOp);
     }
   };
@@ -39,183 +42,174 @@ const SectionDétailsMetadataParametreIndicateurDepartementale: FunctionComponen
   return (
     <div>
       <Titre baliseHtml="h2" className="fr-h5">
-        Maille départementale
+        Maille nationale
       </Titre>
       <div className="fr-grid-row fr-grid-row--gutters">
         <div className="fr-col-12 fr-col-md-4">
           <MetadataIndicateurSelecteur
-            erreurMessage={errors.viDeptFrom?.message}
             estEnCoursDeModification={estEnCoursDeModification}
             informationMetadataIndicateur={
-              mapInformationMetadataIndicateur.vi_dept_from
+              mapInformationMetadataIndicateur.vi_nat_from
             }
             listeValeur={mappingAcceptedValues(
               mapInformationMetadataIndicateur,
               indicateur,
-              "vi_dept_from",
+              "vi_nat_from",
             )}
-            valeurAffiché={mappingDisplayAcceptedValues(
-              mapInformationMetadataIndicateur,
-              indicateur,
-              "vi_dept_from",
-              "viDeptFrom",
-            )}
-            valeurModifiéeCallback={(valeur) => {
-              ALaModificationValeurDeptFrom(
-                "viDeptFrom",
+            name="viNatFrom"
+            onChangeSideEffect={(valeur) => {
+              ALaModificationValeurNatFrom(
+                "viNatFrom",
                 valeur,
-                "viDeptOp",
-                mapInformationMetadataIndicateur.vi_dept_from
+                "viNatOp",
+                mapInformationMetadataIndicateur.vi_nat_op
                   .metaPiloteDefaultValue as string,
               );
             }}
-            values={getValues("viDeptFrom")}
+            valeurAffiché={mappingDisplayAcceptedValues(
+              mapInformationMetadataIndicateur,
+              indicateur,
+              "vi_nat_from",
+              "viNatFrom",
+            )}
           />
         </div>
         <div className="fr-col-12 fr-col-md-4">
           <MetadataIndicateurSelecteur
-            erreurMessage={errors.vaDeptFrom?.message}
             estEnCoursDeModification={estEnCoursDeModification}
             informationMetadataIndicateur={
-              mapInformationMetadataIndicateur.va_dept_from
+              mapInformationMetadataIndicateur.va_nat_from
             }
             listeValeur={mappingAcceptedValues(
               mapInformationMetadataIndicateur,
               indicateur,
-              "va_dept_from",
+              "va_nat_from",
             )}
-            valeurAffiché={mappingDisplayAcceptedValues(
-              mapInformationMetadataIndicateur,
-              indicateur,
-              "va_dept_from",
-              "vaDeptFrom",
-            )}
-            valeurModifiéeCallback={(valeur) => {
-              ALaModificationValeurDeptFrom(
-                "vaDeptFrom",
+            name="vaNatFrom"
+            onChangeSideEffect={(valeur) => {
+              ALaModificationValeurNatFrom(
+                "vaNatFrom",
                 valeur,
-                "vaDeptOp",
-                mapInformationMetadataIndicateur.va_dept_from
+                "vaNatOp",
+                mapInformationMetadataIndicateur.va_nat_op
                   .metaPiloteDefaultValue as string,
               );
             }}
-            values={getValues("vaDeptFrom")}
+            valeurAffiché={mappingDisplayAcceptedValues(
+              mapInformationMetadataIndicateur,
+              indicateur,
+              "va_nat_from",
+              "vaNatFrom",
+            )}
           />
         </div>
         <div className="fr-col-12 fr-col-md-4">
           <MetadataIndicateurSelecteur
-            erreurMessage={errors.vcDeptFrom?.message}
             estEnCoursDeModification={estEnCoursDeModification}
             informationMetadataIndicateur={
-              mapInformationMetadataIndicateur.vc_dept_from
+              mapInformationMetadataIndicateur.vc_nat_from
             }
             listeValeur={mappingAcceptedValues(
               mapInformationMetadataIndicateur,
               indicateur,
-              "vc_dept_from",
+              "vc_nat_from",
             )}
-            valeurAffiché={mappingDisplayAcceptedValues(
-              mapInformationMetadataIndicateur,
-              indicateur,
-              "vc_dept_from",
-              "vcDeptFrom",
-            )}
-            valeurModifiéeCallback={(valeur) => {
-              ALaModificationValeurDeptFrom(
-                "vcDeptFrom",
+            name="vcNatFrom"
+            onChangeSideEffect={(valeur) => {
+              ALaModificationValeurNatFrom(
+                "vcNatFrom",
                 valeur,
-                "vcDeptOp",
-                mapInformationMetadataIndicateur.vc_dept_from
+                "vcNatOp",
+                mapInformationMetadataIndicateur.va_nat_op
                   .metaPiloteDefaultValue as string,
               );
             }}
-            values={getValues("vcDeptFrom")}
+            valeurAffiché={mappingDisplayAcceptedValues(
+              mapInformationMetadataIndicateur,
+              indicateur,
+              "vc_nat_from",
+              "vcNatFrom",
+            )}
           />
         </div>
       </div>
       <div className="fr-grid-row fr-grid-row--gutters">
         <div className="fr-col-12 fr-col-md-4">
           <MetadataIndicateurSelecteur
-            erreurMessage={errors.viDeptOp?.message}
-            estDesactive={valeursDeptFromDesactiveDeptOp.has(
-              getValues("viDeptFrom"),
+            estDesactive={valeursNatFromDesactiveNatOp.has(
+              getValues("viNatFrom"),
             )}
             estEnCoursDeModification={estEnCoursDeModification}
             estMandatory={
-              !valeursDeptFromDesactiveDeptOp.has(getValues("viDeptFrom"))
+              !valeursNatFromDesactiveNatOp.has(getValues("viNatFrom"))
             }
             informationMetadataIndicateur={
-              mapInformationMetadataIndicateur.vi_dept_op
+              mapInformationMetadataIndicateur.vi_nat_op
             }
             listeValeur={mappingAcceptedValues(
               mapInformationMetadataIndicateur,
               indicateur,
-              "vi_dept_op",
+              "vi_nat_op",
             )}
-            register={register("viDeptOp")}
+            name="viNatOp"
             valeurAffiché={mappingDisplayAcceptedValues(
               mapInformationMetadataIndicateur,
               indicateur,
-              "vi_dept_op",
-              "viDeptOp",
+              "vi_nat_op",
+              "viNatOp",
             )}
-            values={getValues("viDeptOp")}
           />
         </div>
         <div className="fr-col-12 fr-col-md-4">
           <MetadataIndicateurSelecteur
-            erreurMessage={errors.vaDeptOp?.message}
-            estDesactive={valeursDeptFromDesactiveDeptOp.has(
-              getValues("vaDeptFrom"),
+            estDesactive={valeursNatFromDesactiveNatOp.has(
+              getValues("vaNatFrom"),
             )}
             estEnCoursDeModification={estEnCoursDeModification}
             estMandatory={
-              !valeursDeptFromDesactiveDeptOp.has(getValues("vaDeptFrom"))
+              !valeursNatFromDesactiveNatOp.has(getValues("vaNatFrom"))
             }
             informationMetadataIndicateur={
-              mapInformationMetadataIndicateur.va_dept_op
+              mapInformationMetadataIndicateur.va_nat_op
             }
             listeValeur={mappingAcceptedValues(
               mapInformationMetadataIndicateur,
               indicateur,
-              "va_dept_op",
+              "va_nat_op",
             )}
-            register={register("vaDeptOp")}
+            name="vaNatOp"
             valeurAffiché={mappingDisplayAcceptedValues(
               mapInformationMetadataIndicateur,
               indicateur,
-              "va_dept_op",
-              "vaDeptOp",
+              "va_nat_op",
+              "vaNatOp",
             )}
-            values={getValues("vaDeptOp")}
           />
         </div>
         <div className="fr-col-12 fr-col-md-4">
           <MetadataIndicateurSelecteur
-            erreurMessage={errors.vcDeptOp?.message}
-            estDesactive={valeursDeptFromDesactiveDeptOp.has(
-              getValues("vcDeptFrom"),
+            estDesactive={valeursNatFromDesactiveNatOp.has(
+              getValues("vcNatFrom"),
             )}
             estEnCoursDeModification={estEnCoursDeModification}
             estMandatory={
-              !valeursDeptFromDesactiveDeptOp.has(getValues("vcDeptFrom"))
+              !valeursNatFromDesactiveNatOp.has(getValues("vcNatFrom"))
             }
             informationMetadataIndicateur={
-              mapInformationMetadataIndicateur.vc_dept_op
+              mapInformationMetadataIndicateur.vc_nat_op
             }
             listeValeur={mappingAcceptedValues(
               mapInformationMetadataIndicateur,
               indicateur,
-              "vc_dept_op",
+              "vc_nat_op",
             )}
-            register={register("vcDeptOp")}
+            name="vcNatOp"
             valeurAffiché={mappingDisplayAcceptedValues(
               mapInformationMetadataIndicateur,
               indicateur,
-              "vc_dept_op",
-              "vcDeptOp",
+              "vc_nat_op",
+              "vcNatOp",
             )}
-            values={getValues("vcDeptOp")}
           />
         </div>
       </div>
@@ -224,4 +218,4 @@ const SectionDétailsMetadataParametreIndicateurDepartementale: FunctionComponen
   );
 };
 
-export default SectionDétailsMetadataParametreIndicateurDepartementale;
+export default SectionDétailsMetadataParametreIndicateurNationale;

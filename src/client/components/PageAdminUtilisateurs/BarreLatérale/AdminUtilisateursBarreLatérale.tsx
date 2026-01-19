@@ -191,7 +191,7 @@ export const AdminUtilisateursBarreLatérale: FunctionComponent<
               <Tag
                 key={territoireCode}
                 libelle={libellé}
-                suppressionCallback={() => {
+                onClick={() => {
                   const arrFiltre = filtres.territoires.split(",");
                   arrFiltre.splice(arrFiltre.indexOf(territoireCode), 1);
                   modifierFiltre(arrFiltre, "territoires");
@@ -224,7 +224,7 @@ export const AdminUtilisateursBarreLatérale: FunctionComponent<
                 <Tag
                   key={perimetreMinisterielId}
                   libelle={libellé}
-                  suppressionCallback={() => {
+                  onClick={() => {
                     const arrFiltre = filtres.perimetresMinisteriels.split(",");
                     arrFiltre.splice(
                       arrFiltre.indexOf(perimetreMinisterielId),
@@ -254,7 +254,7 @@ export const AdminUtilisateursBarreLatérale: FunctionComponent<
               <Tag
                 key={chantierId}
                 libelle={libellé}
-                suppressionCallback={() => {
+                onClick={() => {
                   const arrFiltre = filtres.chantiers.split(",");
                   arrFiltre.splice(arrFiltre.indexOf(chantierId), 1);
                   modifierFiltre(arrFiltre, "chantiers");
@@ -279,7 +279,7 @@ export const AdminUtilisateursBarreLatérale: FunctionComponent<
               <Tag
                 key={profilCode}
                 libelle={libellé}
-                suppressionCallback={() => {
+                onClick={() => {
                   const arrFiltre = filtres.profils.split(",");
                   arrFiltre.splice(arrFiltre.indexOf(profilCode), 1);
                   modifierFiltre(arrFiltre, "profils");

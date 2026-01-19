@@ -1,13 +1,12 @@
 import "@gouvfr/dsfr/dist/component/toggle/toggle.min.css";
-import { ChangeEvent, FunctionComponent } from "react";
-import { UseFormRegisterReturn } from "react-hook-form";
+import { FunctionComponent, useId } from "react";
+import { clsxm } from "@/utils/clsxm";
+import { Switch } from "@/components/shared/Switch";
 
 interface InterrupteurProps {
   checked: boolean;
-  id: string;
-  auChangement?: (estCochée: boolean) => void;
+  onChange: (isChecked: boolean) => void;
   libellé: string;
-  register?: UseFormRegisterReturn;
   messageSecondaire?: string;
   direction?: "initial" | "inverse";
   className?: string;
@@ -15,31 +14,37 @@ interface InterrupteurProps {
 
 const Interrupteur: FunctionComponent<InterrupteurProps> = ({
   checked,
-  id,
   libellé,
-  auChangement,
-  register,
+  onChange,
   messageSecondaire,
   direction,
   className,
 }) => {
+  const id = useId();
   return (
-    <div
-      className={`fr-toggle${direction === "inverse" ? " fr-toggle--label-left" : ""}${className ? ` ${className}` : ""}`}
-    >
-      <input
-        checked={checked}
-        className="fr-toggle__input"
-        id={`interrupteur-${id}`}
-        onChange={(event: ChangeEvent<HTMLInputElement>) =>
-          auChangement && auChangement(event.currentTarget.checked)
-        }
-        type="checkbox"
-        {...register}
-      />
-      <label className="fr-toggle__label" htmlFor={`interrupteur-${id}`}>
-        {libellé}
-      </label>
+    <div className="flex flex-col">
+      <div
+        className={clsxm(
+          "flex flex-row gap-2 items-center",
+          {
+            "!flex-row-reverse": direction === "inverse",
+          },
+          className,
+        )}
+      >
+        <Switch.Root checked={checked} id={id} onCheckedChange={onChange}>
+          <Switch.Thumb />
+        </Switch.Root>
+
+        <label
+          className={clsxm("text-sm", {
+            "text-primary": checked,
+          })}
+          htmlFor={id}
+        >
+          {libellé}
+        </label>
+      </div>
       {messageSecondaire ? (
         <p className="fr-hint-text" id="toggle-698-hint-text">
           {messageSecondaire}

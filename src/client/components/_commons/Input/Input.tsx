@@ -18,7 +18,8 @@ interface InputProps {
   texteAide?: string;
   erreur?: FieldError | Merge<FieldError, FieldErrorsImpl<{}>>;
   erreurMessage?: string;
-  register: UseFormRegisterReturn;
+  register?: UseFormRegisterReturn;
+  onChange?: (value: string) => void;
   disabled?: boolean;
   className?: string;
   classNameGroupe?: string;
@@ -31,6 +32,7 @@ const Input: FunctionComponent<PropsWithChildren<InputProps>> = ({
   erreurMessage,
   htmlName,
   register,
+  onChange,
   disabled,
   className,
   classNameGroupe,
@@ -41,9 +43,13 @@ const Input: FunctionComponent<PropsWithChildren<InputProps>> = ({
     >
       {children}
       <input
+        autoComplete="off"
         className={`fr-input${erreur !== undefined || erreurMessage ? " fr-input-group--error" : ""}${className !== undefined ? " " + className : ""}`}
         disabled={disabled}
         id={htmlName}
+        onChange={(event) => {
+          onChange?.(event.target.value);
+        }}
         type={type}
         {...register}
       />

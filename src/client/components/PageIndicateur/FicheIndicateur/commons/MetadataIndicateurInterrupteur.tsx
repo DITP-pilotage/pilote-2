@@ -1,38 +1,54 @@
-import { UseFormRegisterReturn } from "react-hook-form";
+import { Controller } from "react-hook-form";
 import { FunctionComponent } from "react";
 import { InformationMetadataIndicateurContrat } from "@/server/app/contrats/InformationMetadataIndicateurContrat";
 import { MetadataIndicateurChamp } from "@/components/PageIndicateur/FicheIndicateur/commons/MetadataIndicateurChamp";
 import Interrupteur from "@/components/_commons/Interrupteur/Interrupteur";
+import { useMetadataIndicateurForm } from "@/components/PageIndicateur/useMetadataIndicateurForm";
 
 export const MetadataIndicateurInterrupteur: FunctionComponent<{
   informationMetadataIndicateur: InformationMetadataIndicateurContrat;
   estEnCoursDeModification: boolean;
-  htmlName: string;
-  register?: UseFormRegisterReturn<string>;
-  isChecked: boolean;
+  htmlName:
+    | "indicIsPerseverant"
+    | "indicIsPhare"
+    | "indicIsBaro"
+    | "projetAnnuelPerf"
+    | "indicTerritorialise"
+    | "donneeOuverte"
+    | "cibleAttendue";
   valeurAffiché: string;
-  auChangement?: (estCochée: boolean) => void;
+  onChangeSideEffect?: (isChecked: boolean) => void;
 }> = ({
   informationMetadataIndicateur,
   estEnCoursDeModification,
   htmlName,
-  register,
-  isChecked,
   valeurAffiché,
-  auChangement,
+  onChangeSideEffect,
 }) => {
+  const form = useMetadataIndicateurForm();
   return (
     <MetadataIndicateurChamp
       estEnCoursDeModification={estEnCoursDeModification}
       informationMetadataIndicateur={informationMetadataIndicateur}
       valeurAffiché={valeurAffiché}
     >
-      <Interrupteur
-        auChangement={auChangement}
-        checked={isChecked}
-        id={htmlName}
-        libellé={isChecked ? "Oui" : "Non"}
-        register={register}
+      <Controller
+        control={form.control}
+        name={htmlName}
+        render={({ field }) => {
+          return (
+            <Interrupteur
+              checked={field.value}
+              libellé={field.value ? "Oui" : "Non"}
+              onChange={(isChecked) => {
+                field.onChange(isChecked);
+                if (onChangeSideEffect) {
+                  onChangeSideEffect(isChecked);
+                }
+              }}
+            />
+          );
+        }}
       />
     </MetadataIndicateurChamp>
   );

@@ -10,7 +10,7 @@ const Sélecteur = <T extends string>({
   errorMessage,
   texteFantôme,
   texteAide,
-  valeurModifiéeCallback,
+  onChange,
   valeurSélectionnée,
   estDesactive,
 }: SélecteurProps<T>) => {
@@ -30,8 +30,7 @@ const Sélecteur = <T extends string>({
         disabled={estDesactive}
         name={htmlName}
         onChange={(événement) =>
-          valeurModifiéeCallback &&
-          valeurModifiéeCallback(événement.currentTarget.value as T)
+          onChange && onChange(événement.currentTarget.value as T)
         }
         value={valeurSélectionnée || ""}
         {...register}

@@ -33,11 +33,10 @@ const LineChartLegende: FunctionComponent<LineChartLegendeProps> = ({
     <LineChartLegendeStyled className="fr-mt-1w fr-ml-8w fr-mr-4w">
       <div className="flex align-center">
         <Interrupteur
-          auChangement={() => setAfficherLesCibles(!afficherLesCibles)}
           checked={afficherLesCibles}
           direction="inverse"
-          id={`interrupteur-valeurs-cibles-${id}`}
           libellé="afficher les valeurs cibles"
+          onChange={() => setAfficherLesCibles(!afficherLesCibles)}
         />
         <span className="fr-ml-4w fr-mr-1w">zoomer sur : </span>
         {periodesSelectionnablesZoom.map((periode) => (

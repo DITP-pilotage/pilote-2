@@ -101,10 +101,10 @@ const SaisieDesInformationsUtilisateur: FunctionComponent<
         erreur={errors.profil}
         htmlName="profil"
         libellé="Profil"
+        onChange={changementProfilSelectionne}
         options={optionsProfil}
         texteAide="Les droits attribués dépendent du profil sélectionné."
         texteFantôme="Sélectionner un profil"
-        valeurModifiéeCallback={changementProfilSelectionne}
         valeurSélectionnée={profilCodeSelectionne}
       />
       <div

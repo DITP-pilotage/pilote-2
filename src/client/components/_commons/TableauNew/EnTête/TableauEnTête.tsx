@@ -30,23 +30,25 @@ export default function TableauEnTête<T>({ tableau }: TableauEnTêteProps<T>) {
                 width: header.column.columnDef.meta?.width ?? undefined,
               }}
             >
-              <p className="fr-mb-0 fr-text--sm label">
-                {flexRender(
-                  header.column.columnDef.header,
-                  header.getContext(),
+              <div className="flex flex-col justify-between w-full">
+                <span className="bold">
+                  {flexRender(
+                    header.column.columnDef.header,
+                    header.getContext(),
+                  )}
+                </span>
+                {header.column.getCanSort() && (
+                  <BoutonsDeTri
+                    changementDirectionDeTriCallback={(tri) =>
+                      tri === false
+                        ? header.column.clearSorting()
+                        : header.column.toggleSorting(tri === "desc")
+                    }
+                    directionDeTri={header.column.getIsSorted()}
+                    nomColonneÀTrier={header.column.columnDef.id ?? ""}
+                  />
                 )}
-              </p>
-              {header.column.getCanSort() && (
-                <BoutonsDeTri
-                  changementDirectionDeTriCallback={(tri) =>
-                    tri === false
-                      ? header.column.clearSorting()
-                      : header.column.toggleSorting(tri === "desc")
-                  }
-                  directionDeTri={header.column.getIsSorted()}
-                  nomColonneÀTrier={header.column.columnDef.id ?? ""}
-                />
-              )}
+              </div>
             </th>
           ))}
         </tr>

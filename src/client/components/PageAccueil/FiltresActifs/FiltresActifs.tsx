@@ -11,8 +11,9 @@ import { libellésMétéos } from "@/server/domain/météo/Météo.interface";
 import { NOMS_CODES_MAILLES } from "@/server/infrastructure/accès_données/maille/mailleSQLParser";
 import { listeStatuts } from "@/client/constants/statut";
 import { BoutonReintialiserLesFiltres } from "@/components/PageAccueil/BoutonReintialiserLesFiltres";
-import FiltresActifsStyled from "./FiltresActifs.styled";
 import "@gouvfr/dsfr/dist/component/accordion/accordion.min.css";
+import { CloseLineIcon } from "@/components/_commons/Icones/CloseLineIcon";
+import FiltresActifsStyled from "./FiltresActifs.styled";
 
 interface FiltresActifsProps {
   ministères: Ministère[];
@@ -146,15 +147,16 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({
                     <Tag
                       color="warning"
                       doitAvoirUneTailleFixe
+                      iconRight={CloseLineIcon}
                       libelle="Taux d'avancement non calculé en raison d'indicateurs non renseignés"
-                      size="sm"
-                      suppressionCallback={() => {
+                      onClick={() => {
                         filtres.estEnAlerteTauxAvancementNonCalculé = false;
                         sauvegarderFiltres({
                           estEnAlerteTauxAvancementNonCalculé: false,
                         });
                         return setFiltres(filtres);
                       }}
+                      size="sm"
                     />
                   </li>
                 ) : null}
@@ -163,14 +165,15 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({
                     <Tag
                       color="warning"
                       doitAvoirUneTailleFixe
+                      iconRight={CloseLineIcon}
                       libelle={`Chantier(s) avec un retard de 10 points par rapport à leur médiane ${mailleSelectionnee}`}
-                      size="sm"
-                      suppressionCallback={() => {
+                      onClick={() => {
                         filtres.estEnAlerteÉcart = false;
 
                         sauvegarderFiltres({ estEnAlerteÉcart: false });
                         return setFiltres(filtres);
                       }}
+                      size="sm"
                     />
                   </li>
                 ) : null}
@@ -179,14 +182,15 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({
                     <Tag
                       color="warning"
                       doitAvoirUneTailleFixe
+                      iconRight={CloseLineIcon}
                       libelle="Chantier(s) avec tendance en baisse"
-                      size="sm"
-                      suppressionCallback={() => {
+                      onClick={() => {
                         filtres.estEnAlerteBaisse = false;
 
                         sauvegarderFiltres({ estEnAlerteBaisse: false });
                         return setFiltres(filtres);
                       }}
+                      size="sm"
                     />
                   </li>
                 ) : null}
@@ -195,9 +199,9 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({
                     <Tag
                       color="warning"
                       doitAvoirUneTailleFixe
+                      iconRight={CloseLineIcon}
                       libelle="Chantier(s) avec météo et synthèse des résultats non renseignés"
-                      size="sm"
-                      suppressionCallback={() => {
+                      onClick={() => {
                         filtres.estEnAlerteMétéoNonRenseignée = false;
 
                         sauvegarderFiltres({
@@ -205,6 +209,7 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({
                         });
                         return setFiltres(filtres);
                       }}
+                      size="sm"
                     />
                   </li>
                 ) : null}
@@ -213,9 +218,9 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({
                     <Tag
                       color="warning"
                       doitAvoirUneTailleFixe
+                      iconRight={CloseLineIcon}
                       libelle="Chantier(s) sans taux d'avancement au niveau départemental"
-                      size="sm"
-                      suppressionCallback={() => {
+                      onClick={() => {
                         filtres.estEnAlerteAbscenceTauxAvancementDepartemental = false;
 
                         sauvegarderFiltres({
@@ -223,6 +228,7 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({
                         });
                         return setFiltres(filtres);
                       }}
+                      size="sm"
                     />
                   </li>
                 ) : null}
@@ -231,9 +237,9 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({
                     <Tag
                       color="warning"
                       doitAvoirUneTailleFixe
+                      iconRight={CloseLineIcon}
                       libelle="Chantier(s) avec proposition(s) de valeur d'avancement"
-                      size="sm"
-                      suppressionCallback={() => {
+                      onClick={() => {
                         filtres.estEnAlertePossedePropositionsValeurAvancement = false;
 
                         sauvegarderFiltres({
@@ -241,6 +247,7 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({
                         });
                         return setFiltres(filtres);
                       }}
+                      size="sm"
                     />
                   </li>
                 ) : null}
@@ -266,9 +273,9 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({
                       <Tag
                         color="yellow-moutarde"
                         doitAvoirUneTailleFixe
+                        iconRight={CloseLineIcon}
                         libelle={libellésMétéos[meteo]}
-                        size="sm"
-                        suppressionCallback={() => {
+                        onClick={() => {
                           let arrFiltreMeteos = filtres.meteos
                             .split(",")
                             .filter(Boolean);
@@ -282,6 +289,7 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({
                             meteos: arrFiltreMeteos.join(","),
                           });
                         }}
+                        size="sm"
                       />
                     </li>
                   ))}
@@ -306,6 +314,8 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({
                     <li key={`tag-axe-${perimetreId}`}>
                       <Tag
                         doitAvoirUneTailleFixe
+                        iconRight={CloseLineIcon}
+                        isActive
                         libelle={
                           ministèresAvecUnSeulPérimètre.has(perimetreId)
                             ? retrouverNomFiltre(
@@ -314,8 +324,7 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({
                               )
                             : retrouverNomFiltre(perimetreId, listePerimetres)
                         }
-                        size="sm"
-                        suppressionCallback={() => {
+                        onClick={() => {
                           let arrFiltrePerimetres = filtres.perimetres
                             .split(",")
                             .filter(Boolean);
@@ -331,6 +340,7 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({
                             perimetres: arrFiltrePerimetres.join(","),
                           });
                         }}
+                        size="sm"
                       />
                     </li>
                   ))}
@@ -355,9 +365,10 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({
                     <li key={`tag-axe-${axeId}`}>
                       <Tag
                         doitAvoirUneTailleFixe
+                        iconRight={CloseLineIcon}
+                        isActive
                         libelle={retrouverNomFiltre(axeId, axes)}
-                        size="sm"
-                        suppressionCallback={() => {
+                        onClick={() => {
                           let arrFiltreAxes = filtres.axes
                             .split(",")
                             .filter(Boolean);
@@ -366,6 +377,7 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({
                           sauvegarderFiltres({ axes: arrFiltreAxes });
                           return setFiltres({ axes: arrFiltreAxes.join(",") });
                         }}
+                        size="sm"
                       />
                     </li>
                   ))}
@@ -386,12 +398,14 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({
                 <li key={`tag-statut-${filtres.statut}`}>
                   <Tag
                     doitAvoirUneTailleFixe
+                    iconRight={CloseLineIcon}
+                    isActive
                     libelle={retrouverNomFiltre(filtres.statut, listeStatuts)}
-                    size="sm"
-                    suppressionCallback={() => {
+                    onClick={() => {
                       sauvegarderFiltres({ statut: "PUBLIE" });
                       return setFiltres({ statut: "PUBLIE" });
                     }}
+                    size="sm"
                   />
                 </li>
               </ul>
@@ -417,11 +431,12 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({
                     <li key={`tag-territorialisation-${territorialisation}`}>
                       <Tag
                         doitAvoirUneTailleFixe
+                        iconRight={CloseLineIcon}
+                        isActive
                         libelle={
                           NOMS_CODES_MAILLES[territorialisation as Maille]
                         }
-                        size="sm"
-                        suppressionCallback={() => {
+                        onClick={() => {
                           let arrFiltreTerritorialisation =
                             filtres.territorialisation
                               .split(",")
@@ -441,6 +456,7 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({
                               arrFiltreTerritorialisation.join(","),
                           });
                         }}
+                        size="sm"
                       />
                     </li>
                   ))}
@@ -462,14 +478,16 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({
                   <li>
                     <Tag
                       doitAvoirUneTailleFixe
+                      iconRight={CloseLineIcon}
+                      isActive
                       libelle="Chantiers du baromètre"
-                      size="sm"
-                      suppressionCallback={() => {
+                      onClick={() => {
                         filtres.estBarometre = false;
 
                         sauvegarderFiltres({ estBarometre: false });
                         return setFiltres(filtres);
                       }}
+                      size="sm"
                     />
                   </li>
                 ) : null}
@@ -491,12 +509,13 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({
                   <Tag
                     color="blue-info-main"
                     doitAvoirUneTailleFixe
+                    iconRight={CloseLineIcon}
                     libelle={filtres.q}
-                    size="sm"
-                    suppressionCallback={() => {
+                    onClick={() => {
                       sauvegarderFiltres({ q: "" });
                       return setFiltres({ q: "" });
                     }}
+                    size="sm"
                   />
                 </li>
               </ul>

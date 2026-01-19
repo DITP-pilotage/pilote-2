@@ -58,8 +58,8 @@ const EtapeSelectionIndicateur: FunctionComponent<{
           <Sélecteur
             htmlName="indicateurId"
             libellé="Choix de l'indicateur"
+            onChange={valeurModifiéeCallback}
             options={options}
-            valeurModifiéeCallback={valeurModifiéeCallback}
             valeurSélectionnée={valeurSélectionnée}
           />
           <p className="fr-mt-3w">

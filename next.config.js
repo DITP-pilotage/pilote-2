@@ -1,11 +1,23 @@
 /** @type {import('next').NextConfig} */
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
 import nextra from "nextra";
 
-const withNextra = nextra({
-  theme: "nextra-theme-docs",
-  themeConfig: "./theme.config.centreaide.tsx",
-  staticImage: true,
-});
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const submodulePath = path.join(__dirname, "src/pages/centre-aide-pilote-2");
+const hasSubmodule =
+  fs.existsSync(submodulePath) && fs.readdirSync(submodulePath).length > 0;
+
+let withNextra = (config) => config;
+
+if (hasSubmodule) {
+  withNextra = nextra({
+    theme: "nextra-theme-docs",
+    themeConfig: "./theme.config.centreaide.tsx",
+    staticImage: true,
+  });
+}
 
 const nextConfig = {
   reactStrictMode: true,

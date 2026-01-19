@@ -1,8 +1,5 @@
 import { FunctionComponent } from "react";
 import Titre from "@/components/_commons/Titre/Titre";
-import useDétailsMetadataParametreIndicateurRegionaleForm, {
-  MetadataParametrageParametreIndicateurRegionaleForm,
-} from "@/components/PageIndicateur/FicheIndicateur/SectionDétailsMetadataParametreIndicateurRegionale/useDétailsMetadataParametreIndicateurRegionaleForm";
 import { MapInformationMetadataIndicateurContrat } from "@/server/app/contrats/InformationMetadataIndicateurContrat";
 import { MetadataParametrageIndicateurContrat } from "@/server/app/contrats/MetadataParametrageIndicateurContrat";
 import { MetadataIndicateurSelecteur } from "@/components/PageIndicateur/FicheIndicateur/commons/MetadataIndicateurSelecteur";
@@ -10,6 +7,8 @@ import {
   mappingAcceptedValues,
   mappingDisplayAcceptedValues,
 } from "@/components/PageIndicateur/FicheIndicateur/commons/utils";
+import { useMetadataIndicateurForm } from "@/components/PageIndicateur/useMetadataIndicateurForm";
+import { MetadataIndicateurForm } from "@/components/PageIndicateur/usePageIndicateur";
 
 const SectionDétailsMetadataParametreIndicateurRegionale: FunctionComponent<{
   indicateur: MetadataParametrageIndicateurContrat;
@@ -20,14 +19,18 @@ const SectionDétailsMetadataParametreIndicateurRegionale: FunctionComponent<{
   estEnCoursDeModification,
   mapInformationMetadataIndicateur,
 }) => {
-  const { register, getValues, errors, setValue } =
-    useDétailsMetadataParametreIndicateurRegionaleForm();
+  const { getValues, setValue } = useMetadataIndicateurForm();
+
+  type ValeurRegFrom = Pick<
+    MetadataIndicateurForm,
+    "viRegFrom" | "viRegOp" | "vaRegFrom" | "vaRegOp" | "vcRegFrom" | "vcRegOp"
+  >;
 
   const valeursRegFromDesactiveRegOp = new Set(["_", "user_input"]);
   const ALaModificationValeurRegFrom = (
-    variableFrom: keyof MetadataParametrageParametreIndicateurRegionaleForm,
+    variableFrom: keyof ValeurRegFrom,
     valeurFrom: string,
-    variableOp: keyof MetadataParametrageParametreIndicateurRegionaleForm,
+    variableOp: keyof ValeurRegFrom,
     variableParDefautOp: string,
   ) => {
     setValue(variableFrom, valeurFrom);
@@ -44,7 +47,6 @@ const SectionDétailsMetadataParametreIndicateurRegionale: FunctionComponent<{
       <div className="fr-grid-row fr-grid-row--gutters">
         <div className="fr-col-12 fr-col-md-4">
           <MetadataIndicateurSelecteur
-            erreurMessage={errors.viRegFrom?.message}
             estEnCoursDeModification={estEnCoursDeModification}
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.vi_reg_from
@@ -54,14 +56,8 @@ const SectionDétailsMetadataParametreIndicateurRegionale: FunctionComponent<{
               indicateur,
               "vi_reg_from",
             )}
-            register={register("viRegFrom")}
-            valeurAffiché={mappingDisplayAcceptedValues(
-              mapInformationMetadataIndicateur,
-              indicateur,
-              "vi_reg_from",
-              "viRegFrom",
-            )}
-            valeurModifiéeCallback={(valeur) => {
+            name="viRegFrom"
+            onChangeSideEffect={(valeur) => {
               ALaModificationValeurRegFrom(
                 "viRegFrom",
                 valeur,
@@ -70,12 +66,16 @@ const SectionDétailsMetadataParametreIndicateurRegionale: FunctionComponent<{
                   .metaPiloteDefaultValue as string,
               );
             }}
-            values={getValues("viRegFrom")}
+            valeurAffiché={mappingDisplayAcceptedValues(
+              mapInformationMetadataIndicateur,
+              indicateur,
+              "vi_reg_from",
+              "viRegFrom",
+            )}
           />
         </div>
         <div className="fr-col-12 fr-col-md-4">
           <MetadataIndicateurSelecteur
-            erreurMessage={errors.vaRegFrom?.message}
             estEnCoursDeModification={estEnCoursDeModification}
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.va_reg_from
@@ -85,13 +85,8 @@ const SectionDétailsMetadataParametreIndicateurRegionale: FunctionComponent<{
               indicateur,
               "va_reg_from",
             )}
-            valeurAffiché={mappingDisplayAcceptedValues(
-              mapInformationMetadataIndicateur,
-              indicateur,
-              "va_reg_from",
-              "vaRegFrom",
-            )}
-            valeurModifiéeCallback={(valeur) => {
+            name="vaRegFrom"
+            onChangeSideEffect={(valeur) => {
               ALaModificationValeurRegFrom(
                 "vaRegFrom",
                 valeur,
@@ -100,12 +95,16 @@ const SectionDétailsMetadataParametreIndicateurRegionale: FunctionComponent<{
                   .metaPiloteDefaultValue as string,
               );
             }}
-            values={getValues("vaRegFrom")}
+            valeurAffiché={mappingDisplayAcceptedValues(
+              mapInformationMetadataIndicateur,
+              indicateur,
+              "va_reg_from",
+              "vaRegFrom",
+            )}
           />
         </div>
         <div className="fr-col-12 fr-col-md-4">
           <MetadataIndicateurSelecteur
-            erreurMessage={errors.vcRegFrom?.message}
             estEnCoursDeModification={estEnCoursDeModification}
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.vc_reg_from
@@ -115,13 +114,8 @@ const SectionDétailsMetadataParametreIndicateurRegionale: FunctionComponent<{
               indicateur,
               "vc_reg_from",
             )}
-            valeurAffiché={mappingDisplayAcceptedValues(
-              mapInformationMetadataIndicateur,
-              indicateur,
-              "vc_reg_from",
-              "vcRegFrom",
-            )}
-            valeurModifiéeCallback={(valeur) => {
+            name="vcRegFrom"
+            onChangeSideEffect={(valeur) => {
               ALaModificationValeurRegFrom(
                 "vcRegFrom",
                 valeur,
@@ -130,14 +124,18 @@ const SectionDétailsMetadataParametreIndicateurRegionale: FunctionComponent<{
                   .metaPiloteDefaultValue as string,
               );
             }}
-            values={getValues("vcRegFrom")}
+            valeurAffiché={mappingDisplayAcceptedValues(
+              mapInformationMetadataIndicateur,
+              indicateur,
+              "vc_reg_from",
+              "vcRegFrom",
+            )}
           />
         </div>
       </div>
       <div className="fr-grid-row fr-grid-row--gutters">
         <div className="fr-col-12 fr-col-md-4">
           <MetadataIndicateurSelecteur
-            erreurMessage={errors.viRegOp?.message}
             estDesactive={valeursRegFromDesactiveRegOp.has(
               getValues("viRegFrom"),
             )}
@@ -153,19 +151,17 @@ const SectionDétailsMetadataParametreIndicateurRegionale: FunctionComponent<{
               indicateur,
               "vi_reg_op",
             )}
-            register={register("viRegOp")}
+            name="viRegOp"
             valeurAffiché={mappingDisplayAcceptedValues(
               mapInformationMetadataIndicateur,
               indicateur,
               "vi_reg_op",
               "viRegOp",
             )}
-            values={getValues("viRegOp")}
           />
         </div>
         <div className="fr-col-12 fr-col-md-4">
           <MetadataIndicateurSelecteur
-            erreurMessage={errors.vaRegOp?.message}
             estDesactive={valeursRegFromDesactiveRegOp.has(
               getValues("vaRegFrom"),
             )}
@@ -181,19 +177,17 @@ const SectionDétailsMetadataParametreIndicateurRegionale: FunctionComponent<{
               indicateur,
               "va_reg_op",
             )}
-            register={register("vaRegOp")}
+            name="vaRegOp"
             valeurAffiché={mappingDisplayAcceptedValues(
               mapInformationMetadataIndicateur,
               indicateur,
               "va_reg_op",
               "vaRegOp",
             )}
-            values={getValues("vaRegOp")}
           />
         </div>
         <div className="fr-col-12 fr-col-md-4">
           <MetadataIndicateurSelecteur
-            erreurMessage={errors.vcRegOp?.message}
             estDesactive={valeursRegFromDesactiveRegOp.has(
               getValues("vcRegFrom"),
             )}
@@ -209,14 +203,13 @@ const SectionDétailsMetadataParametreIndicateurRegionale: FunctionComponent<{
               indicateur,
               "vc_reg_op",
             )}
-            register={register("vcRegOp")}
+            name="vcRegOp"
             valeurAffiché={mappingDisplayAcceptedValues(
               mapInformationMetadataIndicateur,
               indicateur,
               "vc_reg_op",
               "vcRegOp",
             )}
-            values={getValues("vcRegOp")}
           />
         </div>
       </div>

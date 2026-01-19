@@ -17,7 +17,7 @@ export const Lien = ({
   return (
     <a
       className={clsxm(
-        "gap-2",
+        "flex gap-2 items-center",
         {
           "fr-link": variant === "primary",
           "fr-btn": variant === "button",

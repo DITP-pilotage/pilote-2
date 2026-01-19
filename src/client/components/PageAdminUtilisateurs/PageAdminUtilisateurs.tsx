@@ -100,7 +100,7 @@ const PageAdminUtilisateurs: FunctionComponent<{
         setEstOuverteBarreLatérale={setEstOuverteBarreLatérale}
       />
       <main>
-        <div className="fr-mt-4w fr-mx-4w fr-mb-3w">
+        <div className="!mt-8 !mb-6 md:!mx-4">
           {alerte ? (
             <div className="fr-my-4w">
               <Alerte
@@ -110,30 +110,25 @@ const PageAdminUtilisateurs: FunctionComponent<{
               />
             </div>
           ) : null}
-          <div className="fr-grid-row fr-grid-row--middle fr-mb-3w">
+          <div className="fr-grid-row fr-grid-row--middle fr-mb-3w !px-4">
             <div className="fr-col-12 fr-col-md-6">
               <Titre baliseHtml="h1" className="fr-h1 fr-mb-0">
                 Gestion des comptes
               </Titre>
             </div>
-            <div className="fr-col-12 fr-col-md-6">
-              <div className="flex justify-end align-center gap-2">
-                <ExportDesDonnees />
-                <Link
-                  className="!bg-primary !bg-none font-medium !text-white rounded flex align-center gap-2 !px-4 py-2 no-underline"
-                  href={donneLaRedirection()}
-                  title="Créer un compte"
-                >
-                  <Icone
-                    className="w-4 h-4 !text-current"
-                    icone={Success1Icon}
-                  />
-                  Créer un compte
-                </Link>
-              </div>
+            <div className="flex justify-end align-center gap-2 w-full">
+              <ExportDesDonnees />
+              <Link
+                className="!bg-primary !bg-none font-medium !text-white rounded flex align-center gap-2 !px-4 py-2 no-underline"
+                href={donneLaRedirection()}
+                title="Créer un compte"
+              >
+                <Icone className="w-4 h-4 !text-current" icone={Success1Icon} />
+                Créer un compte
+              </Link>
             </div>
           </div>
-          <Bloc>
+          <Bloc contenuClassesSupplémentaires="">
             <TableauAdminUtilisateurs
               listeUtilisateurs={listeUtilisateurs}
               nombreUtilisateur={nombreUtilisateur}
