@@ -80,7 +80,7 @@ export function useCartographieAvancementIndicateur(
         valeur: détailsIndicateur.avancement.global,
         valeurAnnuelle: détailsIndicateur.avancement.annuel,
         territoireCode: territoireCode,
-        estApplicable: détailsIndicateur.est_applicable,
+        estApplicable: détailsIndicateur.estApplicable,
       }),
     );
 

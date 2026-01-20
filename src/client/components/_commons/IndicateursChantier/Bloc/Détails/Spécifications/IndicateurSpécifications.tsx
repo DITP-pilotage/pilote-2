@@ -52,7 +52,7 @@ const IndicateurSpécifications: FunctionComponent<
       <p className="fr-text--md sous-titre fr-mt-2w">Source</p>
       <p className="fr-text--sm">{indicateur.source ?? libelléValeurNull}</p>
       <p className="fr-text--md sous-titre fr-mt-2w">Mise à jour</p>
-      {!detailIndicateurDuTerritoire.est_applicable ? (
+      {!detailIndicateurDuTerritoire.estApplicable ? (
         <p className="fr-text--sm">
           L'indicateur n'est pas applicable sur le territoire.
         </p>

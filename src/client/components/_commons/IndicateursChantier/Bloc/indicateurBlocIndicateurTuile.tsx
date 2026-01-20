@@ -18,11 +18,11 @@ const IndicateurBlocIndicateurTuile = () => {
     avancement,
     dateValeurCibleAnnuelle,
     valeurCibleAnnuelle,
-    unité,
+    unite,
   } = detailIndicateurDuTerritoire;
 
   const unitéAffichée =
-    unité?.toLocaleLowerCase() === "pourcentage" ? " %" : "";
+    unite?.toLocaleLowerCase() === "pourcentage" ? " %" : "";
 
   return (
     <IndicateurBlocIndicateurTuileStyled>

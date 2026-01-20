@@ -69,7 +69,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                 </p>
                 <IndicateurPonderation
                   indicateurPondération={
-                    détailsIndicateur[territoireCode].pondération ?? null
+                    détailsIndicateur[territoireCode].ponderation ?? null
                   }
                   territoireCode={territoireCode}
                 />

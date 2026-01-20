@@ -14,7 +14,7 @@ export const useIndicateurAlerteDateMaj = () => {
 
   const estIndicateurEnAlerte =
     !detailIndicateurDuTerritoire.estAJour &&
-    detailIndicateurDuTerritoire.est_applicable;
+    detailIndicateurDuTerritoire.estApplicable;
 
   return {
     estIndicateurEnAlerte,

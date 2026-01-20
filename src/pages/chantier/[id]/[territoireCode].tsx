@@ -182,14 +182,14 @@ export const getServerSideProps = async ({
                 indicateurA,
                 indicateurB,
                 détailsIndicateurs[indicateurA.id][territoireCode]
-                  ?.pondération ?? null,
+                  ?.ponderation ?? null,
                 détailsIndicateurs[indicateurB.id][territoireCode]
-                  ?.pondération ?? null,
+                  ?.ponderation ?? null,
               ),
             )
             .map((indicateur) => ({
               pondération: convertitEnPondération(
-                détailsIndicateurs[indicateur.id][territoireCode]?.pondération,
+                détailsIndicateurs[indicateur.id][territoireCode]?.ponderation,
               ),
               nom: indicateur.nom,
               type: indicateur.type,

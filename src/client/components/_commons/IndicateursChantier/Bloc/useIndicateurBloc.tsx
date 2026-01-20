@@ -1,8 +1,8 @@
-import { DétailsIndicateurTerritoire } from "@/server/domain/indicateur/DétailsIndicateur.interface";
 import { formaterDate } from "@/client/utils/date/date";
+import { DetailsIndicateursTerritoireContrat } from "@/server/chantiers/app/contrats/DetailsIndicateursTerritoireContrat";
 
 export const useIndicateurBloc = (
-  détailsIndicateur: DétailsIndicateurTerritoire,
+  détailsIndicateur: DetailsIndicateursTerritoireContrat,
   territoireCode: string,
 ) => {
   const dateDeMiseAJourIndicateur =
