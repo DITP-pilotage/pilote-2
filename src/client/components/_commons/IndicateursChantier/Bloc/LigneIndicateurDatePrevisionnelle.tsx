@@ -37,7 +37,7 @@ export const LigneIndicateurDatePrevisionnelle = () => {
       </p>
       <Infobulle
         classNameBouton={
-          estIndicateurEnAlerte ? "!text-dsfr-warning-425" : "!text-primary"
+          estIndicateurEnAlerte ? "text-dsfr-warning-425" : "text-primary"
         }
         classNameInfoBulle="tooltip-accordeon"
       >

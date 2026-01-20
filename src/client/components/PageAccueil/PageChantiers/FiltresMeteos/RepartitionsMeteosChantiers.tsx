@@ -59,7 +59,7 @@ const RepartitionsMeteosChantiers: FunctionComponent<
         >
           <button
             className={clsxm(
-              "h-full shadow-lg p-2 border !border-dsfr-grey-925 rounded flex flex-column items-center",
+              "h-full w-full shadow-lg p-2 border !border-dsfr-grey-925 rounded flex flex-column items-center",
               {
                 "!border-primary": meteos.includes(meteo),
               },
