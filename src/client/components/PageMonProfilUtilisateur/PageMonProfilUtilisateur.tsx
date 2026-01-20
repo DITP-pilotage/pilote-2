@@ -2,6 +2,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { z } from "zod";
+import { useSession } from "next-auth/react";
 import Bloc from "@/components/_commons/Bloc/Bloc";
 import Titre from "@/components/_commons/Titre/Titre";
 import InputAvecLabel from "@/components/_commons/InputAvecLabel/InputAvecLabel";
@@ -26,11 +27,13 @@ export const PageMonProfilUtilisateur = ({
     fonction: string | null;
   };
 }) => {
+  const session = useSession();
   const [alerte, setAlerte] = useState<AlerteProps | null>(null);
 
   const mutationModifierMonProfil =
     api.utilisateur.modifierMonProfil.useMutation({
-      onSuccess: () => {
+      onSuccess: async () => {
+        await session.update();
         setAlerte({
           type: "succès",
           titre: "Vos informations ont été modifiées avec succès",
@@ -69,12 +72,12 @@ export const PageMonProfilUtilisateur = ({
     <div className="fr-container py-10">
       <div className="flex flex-col gap-6">
         <Titre baliseHtml="h1" className="fr-h2 mb-0">
-          Mon profil utilisateur PILOTE
+          Mes informations PILOTE
         </Titre>
 
         {alerte ? <Alerte {...alerte} /> : null}
 
-        <Bloc titre="Mes informations">
+        <Bloc titre="Mon identité">
           <form
             className="flex flex-col gap-4"
             onSubmit={handleSubmit(soumettreFormulaire)}
