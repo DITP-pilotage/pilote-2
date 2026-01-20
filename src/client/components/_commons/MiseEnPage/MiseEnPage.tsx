@@ -3,7 +3,6 @@ import {
   FunctionComponent,
   Suspense,
   useCallback,
-  useEffect,
   useMemo,
   useState,
 } from "react";
@@ -13,23 +12,13 @@ import MiseEnPageStyled from "@/components/_commons/MiseEnPage/MiseEnPage.styled
 import api from "@/server/infrastructure/api/trpc/api";
 import { actionsTerritoiresStore } from "@/stores/useTerritoiresStore/useTerritoiresStore";
 import { ClientOnly } from "@/components/shared/ClientOnly";
+import { usePrefetchUtilisateurConnecte } from "@/client/hooks/usePrefetchUtilisateurConnecte";
 import { EnTete } from "./EnTete/EnTete";
 import PiedDePage from "./PiedDePage/PiedDePage";
 
 interface MiseEnPageProps {
   afficherLeLoader: boolean;
   children: React.ReactNode;
-}
-
-function usePrefetchUtilisateurConnecte() {
-  const session = useSession();
-  const [enabled, setEnabled] = useState(false);
-  api.profilUtilisateur.getUtilisateurConnecte.useQuery(undefined, { enabled });
-
-  useEffect(() => {
-    if (session.status !== "authenticated") return;
-    setEnabled(true);
-  }, [session.status]);
 }
 
 const MiseEnPage: FunctionComponent<MiseEnPageProps> = ({

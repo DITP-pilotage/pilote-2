@@ -24,6 +24,7 @@ export const profilUtilisateurRouter = créerRouteurTRPC({
       id: utilisateur.id,
       prenom: utilisateur.prénom,
       nom: utilisateur.nom,
+      email: utilisateur.email,
     };
   }),
 });
