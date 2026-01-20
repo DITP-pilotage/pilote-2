@@ -83,14 +83,4 @@ export interface UtilisateurRepository {
     dateVisualisationPopupInfolettre: Date,
   ): Promise<void>;
   recupererUtilisateurEmail(id: string): Promise<string | null>;
-  modifierProfil(
-    utilisateurId: string,
-    data: { nom: string; prenom: string; fonction: string | null },
-  ): Promise<void>;
-  recupererProfilUtilisateur(utilisateurId: string): Promise<{
-    nom: string;
-    prenom: string;
-    fonction: string | null;
-    email: string;
-  } | null>;
 }

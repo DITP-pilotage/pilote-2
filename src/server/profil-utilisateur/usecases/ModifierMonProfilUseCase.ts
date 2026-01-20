@@ -1,7 +1,7 @@
-import { UtilisateurRepository } from "@/server/gestion-utilisateur/domain/ports/UtilisateurRepository";
+import { ProfilUtilisateurRepository } from "@/server/profil-utilisateur/domain/ports/ProfilUtilisateurRepository";
 
 type Dependencies = {
-  utilisateurRepository: UtilisateurRepository;
+  profilUtilisateurRepository: ProfilUtilisateurRepository;
 };
 
 type ModifierMonProfilInput = {
@@ -11,17 +11,17 @@ type ModifierMonProfilInput = {
 };
 
 export class ModifierMonProfilUseCase {
-  private readonly utilisateurRepository: UtilisateurRepository;
+  private readonly profilUtilisateurRepository: ProfilUtilisateurRepository;
 
-  constructor({ utilisateurRepository }: Dependencies) {
-    this.utilisateurRepository = utilisateurRepository;
+  constructor({ profilUtilisateurRepository }: Dependencies) {
+    this.profilUtilisateurRepository = profilUtilisateurRepository;
   }
 
   async run(
     utilisateurId: string,
     input: ModifierMonProfilInput,
   ): Promise<void> {
-    await this.utilisateurRepository.modifierProfil(utilisateurId, {
+    await this.profilUtilisateurRepository.modifierProfil(utilisateurId, {
       nom: input.nom,
       prenom: input.prenom,
       fonction: input.fonction,

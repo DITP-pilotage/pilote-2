@@ -1,20 +1,20 @@
 import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
 import { fixtures } from "@/server/infrastructure/test/fixtures";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
-import { PrismaUtilisateurRepository } from "@/server/gestion-utilisateur/infrastructure/adapters/PrismaUtilisateurRepository";
+import { PrismaProfilUtilisateurRepository } from "@/server/profil-utilisateur/infrastructure/adapters/PrismaProfilUtilisateurRepository";
 import { ModifierMonProfilUseCase } from "@/server/profil-utilisateur/usecases/ModifierMonProfilUseCase";
 
 describe("ModifierMonProfilUseCase", () => {
   let useCase: ModifierMonProfilUseCase;
-  let utilisateurRepository: PrismaUtilisateurRepository;
+  let profilUtilisateurRepository: PrismaProfilUtilisateurRepository;
   const prismaPilote = new PrismaPilote();
 
   beforeEach(() => {
-    utilisateurRepository = new PrismaUtilisateurRepository({
+    profilUtilisateurRepository = new PrismaProfilUtilisateurRepository({
       prisma: prismaPilote,
     });
     useCase = new ModifierMonProfilUseCase({
-      utilisateurRepository,
+      profilUtilisateurRepository,
     });
   });
 
