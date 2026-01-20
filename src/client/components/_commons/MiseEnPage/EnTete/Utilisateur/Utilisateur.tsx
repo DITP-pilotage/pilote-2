@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useRouter } from "next/router";
+import Link from "next/link";
 import { Icone } from "@/components/_commons/Icone";
 import { Account1Icon } from "@/components/_commons/Icones/Account1Icon";
 import { ArrowSLine1Icon } from "@/components/_commons/Icones/ArrowSLine1Icon";
@@ -11,7 +11,6 @@ import api from "@/server/infrastructure/api/trpc/api";
 import { useProfilUtilisateurConnecte } from "@/client/hooks/useProfilUtilisateurConnecte";
 
 export const Utilisateur = () => {
-  const router = useRouter();
   const [estDeplie, setEstDeplie] = useState<boolean>(false);
   const { email, prenom, nom } = useProfilUtilisateurConnecte();
 
@@ -49,9 +48,11 @@ export const Utilisateur = () => {
 
         <Dropdown.Divider />
 
-        <Dropdown.Item onSelect={() => router.push("/mon-profil-utilisateur")}>
-          <Dropdown.Icone icone={Account1Icon} />
-          Mon profil utilisateur
+        <Dropdown.Item asChild>
+          <Link href="/mon-profil-utilisateur">
+            <Dropdown.Icone icone={Account1Icon} />
+            Mon profil utilisateur
+          </Link>
         </Dropdown.Item>
         {panelAdminEstDisponible ? <BoutonPanelAdministrateur /> : null}
 

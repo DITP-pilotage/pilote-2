@@ -53,6 +53,7 @@ export const Dropdown = Object.assign({}, DropdownMenu, {
         "!outline-none cursor-pointer",
         "hover:bg-gray-100 rounded transition-colors",
         "text-sm font-medium",
+        "!bg-none",
         className,
       )}
     />
