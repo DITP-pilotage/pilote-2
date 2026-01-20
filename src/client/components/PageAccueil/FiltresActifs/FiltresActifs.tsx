@@ -145,6 +145,7 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({
                 {filtres.estEnAlerteTauxAvancementNonCalculé ? (
                   <li>
                     <Tag
+                      ariaLabel="Taux d'avancement non calculé en raison d'indicateurs non renseignés"
                       color="warning"
                       doitAvoirUneTailleFixe
                       iconRight={CloseLineIcon}
@@ -163,6 +164,7 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({
                 {filtres.estEnAlerteÉcart ? (
                   <li>
                     <Tag
+                      ariaLabel={`Chantier(s) avec un retard de 10 points par rapport à leur médiane ${mailleSelectionnee}`}
                       color="warning"
                       doitAvoirUneTailleFixe
                       iconRight={CloseLineIcon}
@@ -180,6 +182,7 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({
                 {filtres.estEnAlerteBaisse ? (
                   <li>
                     <Tag
+                      ariaLabel="Chantier(s) avec tendance en baisse"
                       color="warning"
                       doitAvoirUneTailleFixe
                       iconRight={CloseLineIcon}
@@ -197,6 +200,7 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({
                 {filtres.estEnAlerteMétéoNonRenseignée ? (
                   <li>
                     <Tag
+                      ariaLabel="Chantier(s) avec météo et synthèse des résultats non renseignés"
                       color="warning"
                       doitAvoirUneTailleFixe
                       iconRight={CloseLineIcon}
@@ -216,6 +220,7 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({
                 {filtres.estEnAlerteAbscenceTauxAvancementDepartemental ? (
                   <li>
                     <Tag
+                      ariaLabel="Chantier(s) sans taux d'avancement au niveau départemental"
                       color="warning"
                       doitAvoirUneTailleFixe
                       iconRight={CloseLineIcon}
@@ -235,6 +240,7 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({
                 {filtres.estEnAlertePossedePropositionsValeurAvancement ? (
                   <li>
                     <Tag
+                      ariaLabel="Retirer le tag Chantier(s) avec proposition(s) de valeur d'avancement"
                       color="warning"
                       doitAvoirUneTailleFixe
                       iconRight={CloseLineIcon}
@@ -271,6 +277,7 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({
                   .map((meteo) => (
                     <li key={`tag-axe-${meteo}`}>
                       <Tag
+                        ariaLabel={`Retirer le tag ${libellésMétéos[meteo]}`}
                         color="yellow-moutarde"
                         doitAvoirUneTailleFixe
                         iconRight={CloseLineIcon}
@@ -313,6 +320,14 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({
                   .map((perimetreId) => (
                     <li key={`tag-axe-${perimetreId}`}>
                       <Tag
+                        ariaLabel={`Retirer le tag ${
+                          ministèresAvecUnSeulPérimètre.has(perimetreId)
+                            ? retrouverNomFiltre(
+                                ministèresAvecUnSeulPérimètre.get(perimetreId)!,
+                                ministères,
+                              )
+                            : retrouverNomFiltre(perimetreId, listePerimetres)
+                        }`}
                         doitAvoirUneTailleFixe
                         iconRight={CloseLineIcon}
                         isActive
@@ -364,6 +379,7 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({
                   .map((axeId) => (
                     <li key={`tag-axe-${axeId}`}>
                       <Tag
+                        ariaLabel={`Retirer le tag ${retrouverNomFiltre(axeId, axes)}`}
                         doitAvoirUneTailleFixe
                         iconRight={CloseLineIcon}
                         isActive
@@ -397,6 +413,7 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({
               >
                 <li key={`tag-statut-${filtres.statut}`}>
                   <Tag
+                    ariaLabel={`Retirer le tag ${retrouverNomFiltre(filtres.statut, listeStatuts)}`}
                     doitAvoirUneTailleFixe
                     iconRight={CloseLineIcon}
                     isActive
@@ -430,6 +447,7 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({
                   .map((territorialisation) => (
                     <li key={`tag-territorialisation-${territorialisation}`}>
                       <Tag
+                        ariaLabel={`Retirer le tag ${NOMS_CODES_MAILLES[territorialisation as Maille]}`}
                         doitAvoirUneTailleFixe
                         iconRight={CloseLineIcon}
                         isActive
@@ -477,6 +495,7 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({
                 {filtres.estBarometre ? (
                   <li>
                     <Tag
+                      ariaLabel="Retirer le tag Chantiers du baromètre"
                       doitAvoirUneTailleFixe
                       iconRight={CloseLineIcon}
                       isActive
@@ -507,6 +526,7 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({
               >
                 <li>
                   <Tag
+                    ariaLabel={`Retirer le tag ${filtres.q}`}
                     color="blue-info-main"
                     doitAvoirUneTailleFixe
                     iconRight={CloseLineIcon}

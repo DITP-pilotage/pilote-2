@@ -9,8 +9,8 @@ test.beforeAll(() => {
 test("doit pouvoir exporter les données des indicateurs sous format CSV", async ({
   page,
 }) => {
-  await loginFn({ page });
   test.setTimeout(60_000);
+  await loginFn({ page });
 
   await test.step("Ouverture de la modale d'export csv à l'étape 1 - Éléments à exporter", async () => {
     await page.getByRole("button", { name: /Exporter les données/ }).click();
