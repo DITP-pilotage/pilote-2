@@ -11,6 +11,7 @@ import { validationModifierMonProfil } from "@/validation/monProfil";
 import type AlerteProps from "@/components/_commons/Alerte/Alerte.interface";
 import api from "@/server/infrastructure/api/trpc/api";
 import { récupérerUnCookie } from "@/client/utils/cookies";
+import { useProfilUtilisateurConnecte } from "@/client/hooks/useProfilUtilisateurConnecte";
 
 type MonProfilUtilisateurFormInputs = z.infer<
   typeof validationModifierMonProfil
@@ -38,8 +39,7 @@ function useModifierProfilUtilisateur(setAlert: (props: AlerteProps) => void) {
 export const PageMonProfilUtilisateur = () => {
   const [alerte, setAlerte] = useState<AlerteProps | null>(null);
   const mutationModifierMonProfil = useModifierProfilUtilisateur(setAlerte);
-  const [utilisateur] =
-    api.profilUtilisateur.getUtilisateurConnecte.useSuspenseQuery();
+  const utilisateur = useProfilUtilisateurConnecte();
 
   const soumettreFormulaire = (data: MonProfilUtilisateurFormInputs) => {
     mutationModifierMonProfil.mutate({

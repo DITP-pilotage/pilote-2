@@ -15,13 +15,12 @@ import { LIMITE_CARACTERES_DOCUMENTATION_PROPOSITION } from "@/validation/propos
 import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
 import { useBlocIndicateurContext } from "@/components/PageChantier/useBlocIndicateurContext";
 import { SelecteurNew } from "@/components/_commons/SelecteurNew/SelecteurNew";
-import api from "@/server/infrastructure/api/trpc/api";
+import { useProfilUtilisateurConnecte } from "@/client/hooks/useProfilUtilisateurConnecte";
 
 export const ModalePropositionValeurAvancementV2: FunctionComponent<
   PropsWithChildren
 > = ({ children }) => {
-  const [utilisateur] =
-    api.profilUtilisateur.getUtilisateurConnecte.useSuspenseQuery();
+  const utilisateur = useProfilUtilisateurConnecte();
   const auteurModification = `${utilisateur.prenom} ${utilisateur.nom}`;
 
   const {

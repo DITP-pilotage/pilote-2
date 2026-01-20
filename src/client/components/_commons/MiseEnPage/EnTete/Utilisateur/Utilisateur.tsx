@@ -8,12 +8,12 @@ import { BoutonPanelAdministrateur } from "@/components/_commons/BoutonPanelAdmi
 import { clsxm } from "@/utils/clsxm";
 import { Dropdown } from "@/components/shared/Dropdown";
 import api from "@/server/infrastructure/api/trpc/api";
+import { useProfilUtilisateurConnecte } from "@/client/hooks/useProfilUtilisateurConnecte";
 
 export const Utilisateur = () => {
   const router = useRouter();
   const [estDeplie, setEstDeplie] = useState<boolean>(false);
-  const [{ email, prenom, nom }] =
-    api.profilUtilisateur.getUtilisateurConnecte.useSuspenseQuery();
+  const { email, prenom, nom } = useProfilUtilisateurConnecte();
 
   const { data: panelAdminEstDisponible } =
     api.gestionContenu.récupérerVariableContenu.useQuery({
