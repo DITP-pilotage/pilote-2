@@ -60,18 +60,23 @@ export class BrevoEmailManager implements EmailManager {
 
   async updateContact(
     email: string,
-    nom: string,
-    prenom: string,
-    profil: ProfilCode,
-    listesDiffusionAAjouterIds: number[],
-    listesDiffusionASupprimerIds: number[],
+    attributes: Partial<{ nom: string; prenom: string; profil: ProfilCode }>,
+    listesDiffusionAAjouterIds?: number[],
+    listesDiffusionASupprimerIds?: number[],
   ): Promise<void> {
+    const brevoAttributes: Record<string, string> = {};
+    if (attributes.prenom != null) {
+      brevoAttributes.PRENOM = attributes.prenom;
+    }
+    if (attributes.nom != null) {
+      brevoAttributes.NOM = attributes.nom;
+    }
+    if (attributes.profil != null) {
+      brevoAttributes.PROFIL = attributes.profil;
+    }
+
     const updatePayload: UpdateContact = {
-      attributes: {
-        PRENOM: prenom,
-        NOM: nom,
-        PROFIL: profil,
-      },
+      attributes: brevoAttributes,
       listIds: listesDiffusionAAjouterIds,
       unlinkListIds: listesDiffusionASupprimerIds,
     };

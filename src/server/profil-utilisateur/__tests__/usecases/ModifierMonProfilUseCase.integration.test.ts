@@ -1,3 +1,4 @@
+import { mock, MockProxy } from "jest-mock-extended";
 import { randomUUID } from "node:crypto";
 import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
 import { fixtures } from "@/server/infrastructure/test/fixtures";
@@ -5,18 +6,22 @@ import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { PrismaProfilUtilisateurRepository } from "@/server/profil-utilisateur/infrastructure/adapters/PrismaProfilUtilisateurRepository";
 import { ModifierMonProfilUseCase } from "@/server/profil-utilisateur/usecases/ModifierMonProfilUseCase";
 import { NotFoundError } from "@/server/app/error-boundary/not-found-error";
+import { ProfilModifieSideEffects } from "@/server/profil-utilisateur/domain/ports/ProfilModifieSideEffects";
 
 describe("ModifierMonProfilUseCase", () => {
   let useCase: ModifierMonProfilUseCase;
   let profilUtilisateurRepository: PrismaProfilUtilisateurRepository;
+  let profilModifieSideEffects: MockProxy<ProfilModifieSideEffects>;
   const prismaPilote = new PrismaPilote();
 
   beforeEach(() => {
     profilUtilisateurRepository = new PrismaProfilUtilisateurRepository({
       prisma: prismaPilote,
     });
+    profilModifieSideEffects = mock<ProfilModifieSideEffects>();
     useCase = new ModifierMonProfilUseCase({
       profilUtilisateurRepository,
+      profilModifieSideEffects,
     });
   });
 
@@ -139,6 +144,32 @@ describe("ModifierMonProfilUseCase", () => {
             fonction: null,
           }),
         ).rejects.toThrow(NotFoundError);
+      }),
+    );
+
+    it(
+      "appelle les side effects avec le profil modifie",
+      createIntegrationTest(async () => {
+        const utilisateur = await fixtures.utilisateur({
+          nom: "Ancien Nom",
+          prenom: "Ancien Prenom",
+          email: "test@example.com",
+          fonction: "Ancienne Fonction",
+        });
+
+        await useCase.run(utilisateur.id, {
+          nom: "Nouveau Nom",
+          prenom: "Nouveau Prenom",
+          fonction: "Nouvelle Fonction",
+        });
+
+        expect(profilModifieSideEffects.executer).toHaveBeenCalledWith({
+          id: utilisateur.id,
+          nom: "Nouveau Nom",
+          prenom: "Nouveau Prenom",
+          email: "test@example.com",
+          fonction: "Nouvelle Fonction",
+        });
       }),
     );
   });

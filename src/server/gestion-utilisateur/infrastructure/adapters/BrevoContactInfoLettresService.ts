@@ -37,9 +37,7 @@ export class BrevoContactInfoLettresService
   ): Promise<void> {
     await this.deps.emailManager.updateContact(
       email,
-      nom,
-      prenom,
-      profil,
+      { nom, prenom, profil },
       listesDiffusionAAjouterIds,
       listesDiffusionASupprimerIds,
     );

@@ -1,8 +1,10 @@
 import { ProfilUtilisateurRepository } from "@/server/profil-utilisateur/domain/ports/ProfilUtilisateurRepository";
 import { modifierProfilUtilisateur } from "@/server/profil-utilisateur/domain/ProfilUtilisateur";
+import { ProfilModifieSideEffects } from "@/server/profil-utilisateur/domain/ports/ProfilModifieSideEffects";
 
 type Dependencies = {
   profilUtilisateurRepository: ProfilUtilisateurRepository;
+  profilModifieSideEffects: ProfilModifieSideEffects;
 };
 
 type ModifierMonProfilInput = {
@@ -14,8 +16,14 @@ type ModifierMonProfilInput = {
 export class ModifierMonProfilUseCase {
   private readonly profilUtilisateurRepository: ProfilUtilisateurRepository;
 
-  constructor({ profilUtilisateurRepository }: Dependencies) {
+  private readonly profilModifieSideEffects: ProfilModifieSideEffects;
+
+  constructor({
+    profilUtilisateurRepository,
+    profilModifieSideEffects,
+  }: Dependencies) {
     this.profilUtilisateurRepository = profilUtilisateurRepository;
+    this.profilModifieSideEffects = profilModifieSideEffects;
   }
 
   async run(
@@ -32,5 +40,7 @@ export class ModifierMonProfilUseCase {
     });
 
     await this.profilUtilisateurRepository.sauvegarder(profilModifie);
+
+    this.profilModifieSideEffects.executer(profilModifie);
   }
 }
