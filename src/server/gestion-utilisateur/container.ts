@@ -17,6 +17,7 @@ import { RecupererTousLesTerritoiresUseCase } from "@/server/usecase/territoire/
 import { RecupererListeUtilisateursUseCase } from "@/server/gestion-utilisateur/usecases/RecupererListeUtilisateursUseCase";
 import { PrismaHistorisationModificationRepository } from "@/server/infrastructure/accès_données/historisationModification/PrismaHistorisationModificationRepository";
 import { HistorisationModificationRepository } from "@/server/domain/historisationModification/HistorisationModificationRepository";
+import { ModifierMonProfilUseCase } from "@/server/profil-utilisateur/usecases/ModifierMonProfilUseCase";
 import { UtilisateurRepository } from "./domain/ports/UtilisateurRepository";
 import { UtilisateurIAMRepository } from "./domain/ports/UtilisateurIAMRepository";
 import { TokenAPIInformationRepository } from "./domain/ports/TokenAPIInformationRepository";
@@ -51,7 +52,6 @@ import { AjouterUnContactAUneInfoLettreUseCase } from "./usecases/AjouterUnConta
 import { PrismaHabilitationService } from "./infrastructure/adapters/PrismaHabilitationService";
 import { HabilitationService } from "./domain/ports/HabilitationService";
 import ImporterDesUtilisateursUseCase from "./usecases/ImporterDesUtilisateursUseCase";
-import { ModifierMonProfilUseCase } from "./usecases/ModifierMonProfilUseCase";
 
 export type GestionUtilisateurDependencies = {
   utilisateurRepository: UtilisateurRepository;

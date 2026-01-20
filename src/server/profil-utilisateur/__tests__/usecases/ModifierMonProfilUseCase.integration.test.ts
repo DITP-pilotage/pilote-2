@@ -2,7 +2,7 @@ import { createIntegrationTest } from "@/server/infrastructure/test/createIntegr
 import { fixtures } from "@/server/infrastructure/test/fixtures";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { PrismaUtilisateurRepository } from "@/server/gestion-utilisateur/infrastructure/adapters/PrismaUtilisateurRepository";
-import { ModifierMonProfilUseCase } from "@/server/gestion-utilisateur/usecases/ModifierMonProfilUseCase";
+import { ModifierMonProfilUseCase } from "@/server/profil-utilisateur/usecases/ModifierMonProfilUseCase";
 
 describe("ModifierMonProfilUseCase", () => {
   let useCase: ModifierMonProfilUseCase;
