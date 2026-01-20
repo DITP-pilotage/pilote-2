@@ -260,8 +260,10 @@ export const authOptions: AuthOptions = {
 
       // Send properties to the client
       session.user = {
+        // TODO(CHAN 20/01/2026) : supprimer les anciennes infos de la session après déploiement
         ...piloteToken.user,
         id: utilisateur!.id,
+        email: utilisateur!.email,
       };
       session.accessToken = piloteToken.accessToken;
       session.profil = utilisateur?.profil;
