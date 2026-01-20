@@ -2,11 +2,6 @@ import { ProfilUtilisateurRepository } from "@/server/profil-utilisateur/domain/
 import { modifierProfilUtilisateur } from "@/server/profil-utilisateur/domain/ProfilUtilisateur";
 import { ProfilModifieSideEffects } from "@/server/profil-utilisateur/domain/ports/ProfilModifieSideEffects";
 
-type Dependencies = {
-  profilUtilisateurRepository: ProfilUtilisateurRepository;
-  profilModifieSideEffects: ProfilModifieSideEffects;
-};
-
 type ModifierMonProfilInput = {
   nom: string;
   prenom: string;
@@ -14,24 +9,19 @@ type ModifierMonProfilInput = {
 };
 
 export class ModifierMonProfilUseCase {
-  private readonly profilUtilisateurRepository: ProfilUtilisateurRepository;
-
-  private readonly profilModifieSideEffects: ProfilModifieSideEffects;
-
-  constructor({
-    profilUtilisateurRepository,
-    profilModifieSideEffects,
-  }: Dependencies) {
-    this.profilUtilisateurRepository = profilUtilisateurRepository;
-    this.profilModifieSideEffects = profilModifieSideEffects;
-  }
+  constructor(
+    private readonly deps: {
+      profilUtilisateurRepository: ProfilUtilisateurRepository;
+      profilModifieSideEffects: ProfilModifieSideEffects;
+    },
+  ) {}
 
   async run(
     utilisateurId: string,
     input: ModifierMonProfilInput,
   ): Promise<void> {
     const profil =
-      await this.profilUtilisateurRepository.recupererParId(utilisateurId);
+      await this.deps.profilUtilisateurRepository.recupererParId(utilisateurId);
 
     const profilModifie = modifierProfilUtilisateur(profil, {
       nom: input.nom,
@@ -39,8 +29,8 @@ export class ModifierMonProfilUseCase {
       fonction: input.fonction,
     });
 
-    await this.profilUtilisateurRepository.sauvegarder(profilModifie);
+    await this.deps.profilUtilisateurRepository.sauvegarder(profilModifie);
 
-    this.profilModifieSideEffects.executer(profilModifie);
+    this.deps.profilModifieSideEffects.executer(profilModifie);
   }
 }
