@@ -18,7 +18,8 @@ type MonProfilUtilisateurFormInputs = z.infer<
 
 export const PageMonProfilUtilisateur = () => {
   const [alerte, setAlerte] = useState<AlerteProps | null>(null);
-  const { refetch } = api.profilUtilisateur.getUtilisateurConnecte.useQuery();
+  const [utilisateur, { refetch }] =
+    api.profilUtilisateur.getUtilisateurConnecte.useSuspenseQuery();
 
   const mutationModifierMonProfil =
     api.utilisateur.modifierMonProfil.useMutation({
