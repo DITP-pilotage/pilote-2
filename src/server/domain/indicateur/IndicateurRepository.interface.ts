@@ -14,6 +14,7 @@ export default interface IndicateurRepository {
     maille: Maille,
     codeInsee: CodeInsee,
     jalon: number,
+    dateDerniereExecutionDatajobs: Date,
   ): Promise<Record<Chantier["id"], DétailsIndicateurs>>;
   recupererListeIndicateursPrisEnCompteDansCalculAvancementSurAuMoinsUnTerritoire(
     chantiersIds: Chantier["id"][],
