@@ -1,12 +1,9 @@
-import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next";
+import { GetServerSidePropsContext } from "next";
 import { PageMonProfilUtilisateur } from "@/components/PageMonProfilUtilisateur/PageMonProfilUtilisateur";
-import { getContainer } from "@/server/dependances";
 import { getServerAuthSession } from "@/server/infrastructure/api/auth/[...nextauth]";
 
-export default function NextPageMonProfilUtilisateur({
-  utilisateur,
-}: InferGetServerSidePropsType<typeof getServerSideProps>) {
-  return <PageMonProfilUtilisateur utilisateur={utilisateur} />;
+export default function NextPageMonProfilUtilisateur() {
+  return <PageMonProfilUtilisateur />;
 }
 
 export const getServerSideProps = async (
@@ -23,25 +20,7 @@ export const getServerSideProps = async (
     };
   }
 
-  const utilisateurRepository = getContainer("gestionUtilisateur").resolve(
-    "utilisateurRepository",
-  );
-
-  const profilUtilisateur =
-    await utilisateurRepository.recupererProfilUtilisateur(session.user.id);
-
-  if (!profilUtilisateur) {
-    return {
-      redirect: {
-        destination: "/",
-        permanent: false,
-      },
-    };
-  }
-
   return {
-    props: {
-      utilisateur: profilUtilisateur,
-    },
+    props: {},
   };
 };

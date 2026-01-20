@@ -2,7 +2,6 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { z } from "zod";
-import { useSession } from "next-auth/react";
 import Bloc from "@/components/_commons/Bloc/Bloc";
 import Titre from "@/components/_commons/Titre/Titre";
 import InputAvecLabel from "@/components/_commons/InputAvecLabel/InputAvecLabel";
@@ -17,23 +16,14 @@ type MonProfilUtilisateurFormInputs = z.infer<
   typeof validationModifierMonProfil
 >;
 
-export const PageMonProfilUtilisateur = ({
-  utilisateur,
-}: {
-  utilisateur: {
-    email: string;
-    nom: string;
-    prenom: string;
-    fonction: string | null;
-  };
-}) => {
-  const session = useSession();
+export const PageMonProfilUtilisateur = () => {
   const [alerte, setAlerte] = useState<AlerteProps | null>(null);
+  const { refetch } = api.profilUtilisateur.getUtilisateurConnecte.useQuery();
 
   const mutationModifierMonProfil =
     api.utilisateur.modifierMonProfil.useMutation({
       onSuccess: async () => {
-        await session.update();
+        await refetch();
         setAlerte({
           type: "succès",
           titre: "Vos informations ont été modifiées avec succès",

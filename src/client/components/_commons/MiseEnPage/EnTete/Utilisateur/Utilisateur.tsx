@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useRouter } from "next/router";
 import { Icone } from "@/components/_commons/Icone";
 import { Account1Icon } from "@/components/_commons/Icones/Account1Icon";
 import { ArrowSLine1Icon } from "@/components/_commons/Icones/ArrowSLine1Icon";
@@ -9,6 +10,7 @@ import { Dropdown } from "@/components/shared/Dropdown";
 import api from "@/server/infrastructure/api/trpc/api";
 
 export const Utilisateur = () => {
+  const router = useRouter();
   const [estDeplie, setEstDeplie] = useState<boolean>(false);
   const [{ email, prenom, nom }] =
     api.profilUtilisateur.getUtilisateurConnecte.useSuspenseQuery();
