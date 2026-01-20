@@ -47,9 +47,7 @@ export class StubEmailManager implements EmailManager {
 
   async updateContact(
     email: string,
-    nom: string,
-    prenom: string,
-    profil: ProfilCode,
+    attributes: Partial<{ nom: string; prenom: string; profil: ProfilCode }>,
     listesDiffusionAAjouterIds: number[],
     listesDiffusionASupprimerIds: number[],
   ): Promise<void> {
@@ -58,9 +56,7 @@ export class StubEmailManager implements EmailManager {
       "✏️  [STUB] Email sending disabled - Would have updated contact:",
       {
         email,
-        nom,
-        prenom,
-        profil,
+        attributes,
         listesDiffusionAAjouterIds,
         listesDiffusionASupprimerIds,
       },

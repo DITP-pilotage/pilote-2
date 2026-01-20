@@ -116,12 +116,4 @@ export const utilisateurRouter = créerRouteurTRPC({
         .resolve("desactiverPopupInfolettreUseCase")
         .execute(input.utilisateurId);
     }),
-  modifierMonProfil: procédureProtégée
-    .input(validationModifierMonProfil.merge(zodValidateurCSRF))
-    .mutation(async ({ input, ctx }) => {
-      vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
-      await getContainer("gestionUtilisateur")
-        .resolve("modifierMonProfilUseCase")
-        .run(ctx.session.user.id, input);
-    }),
 });

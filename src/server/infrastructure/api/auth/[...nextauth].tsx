@@ -262,7 +262,6 @@ export const authOptions: AuthOptions = {
       session.user = {
         // TODO(CHAN 20/01/2026) : supprimer les anciennes infos de la session après déploiement
         ...piloteToken.user,
-        name: `${utilisateur!.prénom} ${utilisateur!.nom}`,
         id: utilisateur!.id,
         email: utilisateur!.email,
       };

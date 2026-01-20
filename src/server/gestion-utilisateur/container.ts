@@ -89,7 +89,6 @@ export type GestionUtilisateurDependencies = {
   ajouterUnContactAUneInfoLettreUseCase: AjouterUnContactAUneInfoLettreUseCase;
   habilitationService: HabilitationService;
   importerDesUtilisateursUseCase: ImporterDesUtilisateursUseCase;
-  modifierMonProfilUseCase: ModifierMonProfilUseCase;
 };
 
 export const getGestionUtilisateurContainer = (
@@ -173,6 +172,5 @@ export const getGestionUtilisateurContainer = (
       ),
       habilitationService: asClass(PrismaHabilitationService),
       importerDesUtilisateursUseCase: asClass(ImporterDesUtilisateursUseCase),
-      modifierMonProfilUseCase: asClass(ModifierMonProfilUseCase),
     });
 };

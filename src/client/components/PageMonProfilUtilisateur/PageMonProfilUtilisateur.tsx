@@ -19,7 +19,7 @@ type MonProfilUtilisateurFormInputs = z.infer<
 
 function useModifierProfilUtilisateur(setAlert: (props: AlerteProps) => void) {
   const { refetch } = api.profilUtilisateur.getUtilisateurConnecte.useQuery();
-  return api.utilisateur.modifierMonProfil.useMutation({
+  return api.profilUtilisateur.modifierMonProfil.useMutation({
     onSuccess: async () => {
       await refetch();
       setAlert({
