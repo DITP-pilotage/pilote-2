@@ -4,6 +4,7 @@ interface TitreProps {
   children: React.ReactNode;
   baliseHtml: "h1" | "h2" | "h3" | "h4" | "h5" | "h6";
   className?: string;
+  title?: string;
   estInline?: boolean;
 }
 
@@ -11,6 +12,7 @@ const Titre: FunctionComponent<TitreProps> = ({
   children,
   baliseHtml,
   className,
+  title,
   estInline = false,
 }) => {
   const Balise = `${baliseHtml}` as keyof JSX.IntrinsicElements;
@@ -21,6 +23,7 @@ const Titre: FunctionComponent<TitreProps> = ({
       style={{
         display: estInline ? "inline" : undefined,
       }}
+      title={title}
     >
       {children}
     </Balise>

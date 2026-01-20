@@ -119,11 +119,11 @@ const PageAdminUtilisateurs: FunctionComponent<{
             <div className="flex justify-end align-center gap-2 w-full">
               <ExportDesDonnees />
               <Link
-                className="!bg-primary !bg-none font-medium !text-white rounded flex align-center gap-2 !px-4 py-2 no-underline"
+                className="!bg-primary !bg-none font-medium text-white rounded flex align-center gap-2 !px-4 py-2 no-underline"
                 href={donneLaRedirection()}
                 title="Créer un compte"
               >
-                <Icone className="w-4 h-4 !text-current" icone={Success1Icon} />
+                <Icone className="w-4 h-4 text-current" icone={Success1Icon} />
                 Créer un compte
               </Link>
             </div>

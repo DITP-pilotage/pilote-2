@@ -22,7 +22,7 @@ export default function SélecteurCustom<T extends string>({
   return (
     <SélecteurCustomStyled>
       <button
-        className="fr-select fr-ellipsis"
+        className="fr-select fr-ellipsis max-w-48 xl:max-w-64"
         id={htmlName}
         type="button"
         {...SélecteurBoutonProps}

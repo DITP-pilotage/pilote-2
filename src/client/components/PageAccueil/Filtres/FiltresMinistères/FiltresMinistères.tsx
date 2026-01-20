@@ -105,7 +105,10 @@ const FiltresMinistères: FunctionComponent<FiltresMinistèresProps> = ({
               >
                 <div className="tuile-ministère-contenu">
                   <IconeMinistere
-                    className="text-dsfr-blue-france-sun-113"
+                    className={clsxm({
+                      "text-dsfr-blue-france-sun-113": !estDéroulé(ministère),
+                      "text-white": estDéroulé(ministère),
+                    })}
                     icone={ministère.icône}
                   />
                   <span>{ministère.nom}</span>

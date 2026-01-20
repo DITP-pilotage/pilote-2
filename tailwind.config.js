@@ -7,6 +7,7 @@ module.exports = {
     "./theme.config.*.tsx", // Pour le thème Nextra
   ],
   darkMode: false,
+  important: true,
   theme: {
     extend: {
       colors: {
@@ -50,7 +51,7 @@ module.exports = {
         "dsfr-brown-cafe-creme-950": "#F7ECDB",
         "dsfr-pink-macaron-sun-406": "#8D533E",
         "dsfr-pink-macaron-950": "#FEE9E6",
-        "dsfr-grey-900": "#dddddd"
+        "dsfr-grey-900": "#dddddd",
       },
       keyframes: {
         "dropdown-fade-in": {

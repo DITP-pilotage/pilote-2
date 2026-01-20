@@ -56,7 +56,7 @@ export const Infobulle: FunctionComponent<
       >
         {styleIconInfoBulle === "information" ? (
           <Icone
-            className={clsxm("!text-current", classNameIcone)}
+            className={clsxm("text-current", classNameIcone)}
             icone={InformationPleineIcon}
           />
         ) : null}

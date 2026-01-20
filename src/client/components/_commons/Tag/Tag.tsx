@@ -29,7 +29,7 @@ export const Tag: FunctionComponent<TagProps> = ({
   return (
     <button
       aria-label={ariaLabel}
-      className={clsxm(`fr-tag flex gap-1 mr-2 !text-primary over`, {
+      className={clsxm(`fr-tag flex gap-1 !text-primary over`, {
         "fr-tag--sm": size === "sm",
         "!bg-primary !text-white": isActive,
         "!bg-[#0078f3] !text-white": color === "blue-info-main",
@@ -40,7 +40,7 @@ export const Tag: FunctionComponent<TagProps> = ({
       type="button"
     >
       {iconLeft ? (
-        <Icone className="w-4 h-4 !text-current" icone={iconLeft} />
+        <Icone className="w-4 h-4 text-current" icone={iconLeft} />
       ) : null}
       <span
         className={clsxm({
@@ -50,7 +50,7 @@ export const Tag: FunctionComponent<TagProps> = ({
         {libelle}
       </span>
       {iconRight ? (
-        <Icone className="w-4 h-4 !text-current" icone={iconRight} />
+        <Icone className="w-4 h-4 text-current" icone={iconRight} />
       ) : null}
     </button>
   );

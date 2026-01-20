@@ -74,6 +74,7 @@ const PageChantierEnTête: FunctionComponent<{
         className={clsxm("fr-h2 !mb-4 !mt-2 !text-dsfr-blue-france-sun-113", {
           "!text-dsfr-grey-200": chantierEstArchive,
         })}
+        title={chantier.nom}
       >
         {nomChantier}
       </Titre>
