@@ -171,7 +171,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                   <LigneIndicateurDatePrevisionnelle />
                   <IndicateurPonderation
                     indicateurPondération={
-                      detailIndicateurDuTerritoire.pondération ?? null
+                      detailIndicateurDuTerritoire.ponderation ?? null
                     }
                     territoireCode={territoireCode}
                   />
@@ -252,7 +252,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                     <td className="fr-mb-0 fr-p-0 fr-py-md-1w !text-sm text-center">
                       <ValeurEtDate
                         date={detailIndicateurDuTerritoire.dateValeurInitiale}
-                        unité={detailIndicateurDuTerritoire.unité}
+                        unité={detailIndicateurDuTerritoire.unite}
                         valeur={detailIndicateurDuTerritoire.valeurInitiale}
                       />
                     </td>
@@ -260,7 +260,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                     <td className="fr-mb-0 fr-p-0 fr-py-md-1w !text-sm text-center">
                       <ValeurEtDate
                         date={detailIndicateurDuTerritoire.dateValeurAvancement}
-                        unité={detailIndicateurDuTerritoire.unité}
+                        unité={detailIndicateurDuTerritoire.unite}
                         valeur={detailIndicateurDuTerritoire.valeurAvancement}
                       />
                     </td>
@@ -269,7 +269,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                         date={
                           detailIndicateurDuTerritoire.dateValeurCibleAnnuelle
                         }
-                        unité={detailIndicateurDuTerritoire.unité}
+                        unité={detailIndicateurDuTerritoire.unite}
                         valeur={
                           detailIndicateurDuTerritoire.valeurCibleAnnuelle
                         }
@@ -298,7 +298,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                         date={
                           detailIndicateurDuTerritoire.dateValeurAvancementMandat
                         }
-                        unité={detailIndicateurDuTerritoire.unité}
+                        unité={detailIndicateurDuTerritoire.unite}
                         valeur={
                           detailIndicateurDuTerritoire.valeurAvancementMandat
                         }
@@ -307,7 +307,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                     <td className="fr-mb-0 fr-p-0 fr-py-md-1w !text-sm text-center">
                       <ValeurEtDate
                         date={detailIndicateurDuTerritoire.dateValeurCible}
-                        unité={detailIndicateurDuTerritoire.unité}
+                        unité={detailIndicateurDuTerritoire.unite}
                         valeur={detailIndicateurDuTerritoire.valeurCible}
                       />
                     </td>
@@ -367,7 +367,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                                     .dateValeurInitiale
                                 }
                                 unité={
-                                  informationIndicateurComparé.données.unité
+                                  informationIndicateurComparé.données.unite
                                 }
                                 valeur={
                                   informationIndicateurComparé.données
@@ -382,7 +382,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                                     .dateValeurAvancement
                                 }
                                 unité={
-                                  informationIndicateurComparé.données.unité
+                                  informationIndicateurComparé.données.unite
                                 }
                                 valeur={
                                   informationIndicateurComparé.données
@@ -397,7 +397,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                                     .dateValeurCibleAnnuelle
                                 }
                                 unité={
-                                  informationIndicateurComparé.données.unité
+                                  informationIndicateurComparé.données.unite
                                 }
                                 valeur={
                                   informationIndicateurComparé.données
@@ -426,7 +426,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                                     .dateValeurAvancementMandat
                                 }
                                 unité={
-                                  informationIndicateurComparé.données.unité
+                                  informationIndicateurComparé.données.unite
                                 }
                                 valeur={
                                   informationIndicateurComparé.données
@@ -441,7 +441,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                                     .dateValeurCible
                                 }
                                 unité={
-                                  informationIndicateurComparé.données.unité
+                                  informationIndicateurComparé.données.unite
                                 }
                                 valeur={
                                   informationIndicateurComparé.données

@@ -34,10 +34,10 @@ const indicateurDétailsVide: IndicateurDétailsParTerritoire = {
     proposition: null,
     propositionStatutTerritoire: null,
     propositionStatutDirectionProjet: null,
-    unité: null,
-    est_applicable: false,
+    unite: null,
+    estApplicable: false,
     dateImport: null,
-    pondération: null,
+    ponderation: null,
     prochaineDateMaj: null,
     prochaineDateMajJours: null,
     prochaineDateValeurAvancement: null,
@@ -88,7 +88,7 @@ export default function useIndicateurBloc(
       cell: (valeurInitiale) => (
         <ValeurEtDate
           date={valeurInitiale.row.original.données.dateValeurInitiale}
-          unité={valeurInitiale.row.original.données.unité}
+          unité={valeurInitiale.row.original.données.unite}
           valeur={valeurInitiale.getValue()}
         />
       ),
@@ -100,7 +100,7 @@ export default function useIndicateurBloc(
       cell: (valeurAvancement) => (
         <ValeurEtDate
           date={valeurAvancement.row.original.données.dateValeurAvancement}
-          unité={valeurAvancement.row.original.données.unité}
+          unité={valeurAvancement.row.original.données.unite}
           valeur={valeurAvancement.getValue()}
         />
       ),
@@ -114,7 +114,7 @@ export default function useIndicateurBloc(
           date={
             valeurCibleAnnuelle.row.original.données.dateValeurCibleAnnuelle
           }
-          unité={valeurCibleAnnuelle.row.original.données.unité}
+          unité={valeurCibleAnnuelle.row.original.données.unite}
           valeur={valeurCibleAnnuelle.getValue()}
         />
       ),
@@ -141,7 +141,7 @@ export default function useIndicateurBloc(
       cell: (valeurCible) => (
         <ValeurEtDate
           date={valeurCible.row.original.données.dateValeurCible}
-          unité={valeurCible.row.original.données.unité}
+          unité={valeurCible.row.original.données.unite}
           valeur={valeurCible.getValue()}
         />
       ),
@@ -168,7 +168,7 @@ export default function useIndicateurBloc(
         <IndicateurBlocIndicateurTuile
           indicateurDétailsParTerritoire={indicateurCellContext.row.original}
           typeDeRéforme="chantier"
-          unité={indicateurCellContext.row.original.données.unité}
+          unité={indicateurCellContext.row.original.données.unite}
         />
       ),
       enableSorting: false,

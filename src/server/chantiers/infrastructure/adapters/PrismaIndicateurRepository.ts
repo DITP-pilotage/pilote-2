@@ -941,9 +941,6 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
         propositionStatutDirectionProjet,
         unite: indicateurRow?.indicateur_identite.unite_mesure ?? null,
         estApplicable: indicateurRow?.est_applicable ?? null,
-        dateImport:
-          indicateurRow?.indicateur_identite.dernier_import_date_indic?.toLocaleString() ??
-          null,
         ponderation: indicateurRow?.ponderation_zone_reel ?? null,
         prochaineDateMaj:
           indicateurRow?.prochaine_date_maj?.toLocaleString() ?? null,
@@ -1035,9 +1032,6 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
         propositionStatutDirectionProjet,
         unite: indicateurRow.indicateur_identite.unite_mesure,
         estApplicable: indicateurRow.est_applicable,
-        dateImport: formatDate(
-          indicateurRow.indicateur_identite.dernier_import_date_indic,
-        ),
         ponderation: indicateurRow.ponderation_zone_reel,
         prochaineDateValeurAvancement: formatDate(
           indicateurRow.prochaine_date_valeur_actuelle,

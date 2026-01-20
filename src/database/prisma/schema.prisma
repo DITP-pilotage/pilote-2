@@ -209,7 +209,6 @@ model indicateur_identite {
   mode_de_calcul             String?
   unite_mesure               String?
   a_supprimer                Boolean                 @default(true)
-  dernier_import_date_indic  DateTime?               @db.Date
   periodicite                String?
   delai_disponibilite        Int?
   parent_id                  String?

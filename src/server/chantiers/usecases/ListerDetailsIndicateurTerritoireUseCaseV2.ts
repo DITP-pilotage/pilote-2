@@ -53,10 +53,16 @@ export class ListerDetailsIndicateurTerritoireUseCaseV2 {
       ),
     );
 
+    const datesDerniersImports =
+      await this.indicateurRepository.recupererDatesDernierImports(
+        new Date(datajobsExecution.derniereDateExecution),
+      );
+
     return resultDétailsParMailles.reduce(
       (acc, val) => {
         acc[val.id] = presenterEnDetailsIndicateursTerritoireContrat(
           val.detailsTerritoire,
+          datesDerniersImports.get(val.id) ?? null,
         );
         return acc;
       },
