@@ -1,9 +1,17 @@
 import { GetServerSidePropsContext } from "next";
+import Head from "next/head";
 import { PageMonProfilUtilisateur } from "@/components/PageMonProfilUtilisateur/PageMonProfilUtilisateur";
 import { getServerAuthSession } from "@/server/infrastructure/api/auth/[...nextauth]";
 
 export default function NextPageMonProfilUtilisateur() {
-  return <PageMonProfilUtilisateur />;
+  return (
+    <>
+      <Head>
+        <title>Mon profil utilisateur</title>
+      </Head>
+      <PageMonProfilUtilisateur />
+    </>
+  );
 }
 
 export const getServerSideProps = async (
