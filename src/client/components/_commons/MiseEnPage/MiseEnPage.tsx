@@ -5,6 +5,8 @@ import Loader from "@/client/components/_commons/Loader/Loader";
 import MiseEnPageStyled from "@/components/_commons/MiseEnPage/MiseEnPage.styled";
 import api from "@/server/infrastructure/api/trpc/api";
 import { actionsTerritoiresStore } from "@/stores/useTerritoiresStore/useTerritoiresStore";
+import { ClientOnly } from "@/components/shared/ClientOnly";
+import { usePrefetchUtilisateurConnecte } from "@/client/hooks/usePrefetchUtilisateurConnecte";
 import { EnTete } from "./EnTete/EnTete";
 import PiedDePage from "./PiedDePage/PiedDePage";
 
@@ -30,6 +32,7 @@ const MiseEnPage: FunctionComponent<MiseEnPageProps> = ({
       refetchOnWindowFocus: false,
       enabled: false,
     });
+  usePrefetchUtilisateurConnecte();
 
   const récupérerLesTerritoires = useCallback(async () => {
     const { data: territoires } = await fetchRécupérerLesTerritoires();
@@ -68,7 +71,11 @@ const MiseEnPage: FunctionComponent<MiseEnPageProps> = ({
               </p>
             </div>
           ) : null}
-          {status === "unauthenticated" ? <PageLanding /> : children}
+          {status === "unauthenticated" ? (
+            <PageLanding />
+          ) : (
+            <ClientOnly>{children}</ClientOnly>
+          )}
           <PiedDePage />
         </div>
       )}

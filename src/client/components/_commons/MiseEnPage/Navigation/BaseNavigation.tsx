@@ -101,7 +101,7 @@ export const BaseNavigation = ({ pages }: { pages: LienNavigation[] }) => {
             <BoutonContacterEquipePilote />
           </div>
           <div className="flex">
-            <Utilisateur email={session!.user!.email!} />
+            <Utilisateur />
           </div>
         </div>
         <nav
