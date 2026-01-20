@@ -48,7 +48,7 @@ export const Utilisateur = () => {
         <Dropdown.Divider />
 
         <Dropdown.Item>
-          <Icone className="text-current h-5 w-5" icone={Account1Icon} />
+          <Dropdown.Icone icone={Account1Icon} />
           Mon profil utilisateur
         </Dropdown.Item>
         {panelAdminEstDisponible ? <BoutonPanelAdministrateur /> : null}

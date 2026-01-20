@@ -2,6 +2,8 @@ import { DropdownMenu } from "radix-ui";
 import { ComponentProps } from "react";
 import Link from "next/link";
 import { clsxm } from "@/utils/clsxm";
+import { Icone } from "@/components/_commons/Icone";
+import { Account1Icon } from "@/components/_commons/Icones/Account1Icon";
 
 export const Dropdown = Object.assign({}, DropdownMenu, {
   Content: ({
@@ -54,5 +56,8 @@ export const Dropdown = Object.assign({}, DropdownMenu, {
         className,
       )}
     />
+  ),
+  Icone: ({ className, ...props }: ComponentProps<typeof Icone>) => (
+    <Icone className={clsxm("text-current h-5 w-5", className)} {...props} />
   ),
 });
