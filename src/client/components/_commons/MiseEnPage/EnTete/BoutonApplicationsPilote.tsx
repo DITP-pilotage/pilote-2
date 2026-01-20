@@ -43,7 +43,7 @@ const SectionBouton = ({
       </span>
       <Dropdown.Link
         className={clsxm(
-          "border border-gray-200 rounded min-w-[250px] !flex items-center gap-3 !py-2 !mx-0",
+          "border border-gray-200 rounded min-w-[250px] flex items-center gap-3 !py-2 !mx-0",
           {
             "!bg-dsfr-alt-blue-france !text-primary":
               currentApplication === application.id,
