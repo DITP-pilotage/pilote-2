@@ -9,14 +9,12 @@ test.beforeAll(() => {
 test("doit pouvoir exporter les données des indicateurs sous format CSV", async ({
   page,
 }) => {
-  await loginFn({ page });
   test.setTimeout(60_000);
+  await loginFn({ page });
 
   await test.step("Selection d'un perimètre pour réduire la quantité de chantier exporté", async () => {
     await page.getByRole("button", { name: /Filtrer par ministères/ }).click();
-    await page
-      .getByRole("button", { name: /Intérieur et Outre-mer/ })
-      .click();
+    await page.getByRole("button", { name: /Intérieur et Outre-mer/ }).click();
     await page.waitForURL(
       "**/accueil/chantier/NAT-FR?pageIndex=1&perimetres=PER-014",
     );

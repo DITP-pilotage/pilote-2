@@ -9,8 +9,8 @@ test.beforeAll(() => {
 test("doit pouvoir exporter les données des utilisateurs sous format CSV", async ({
   page,
 }) => {
-  await loginFn({ page });
   test.setTimeout(150_000);
+  await loginFn({ page });
 
   await test.step("Navigation vers la page Utilisateur", async () => {
     await page.getByRole("link", { name: /Gestion des comptes/ }).click();

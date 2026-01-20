@@ -20,6 +20,8 @@ async function seedUsers() {
             profilCode: utilisateur.profilCode,
             date_creation: new Date(),
             date_modification: new Date(),
+            date_visualisation_video_accueil: new Date(),
+            date_inscription_infolettre: new Date(),
             auteur_id_creation: auteurImport?.id,
             auteur_id_modification: auteurImport?.id,
           },

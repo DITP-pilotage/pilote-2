@@ -12,6 +12,7 @@ interface TagProps {
   iconLeft?: ComponentType<{ className: string; fill: string }>;
   iconRight?: ComponentType<{ className: string; fill: string }>;
   isActive?: boolean;
+  ariaLabel?: string;
 }
 
 export const Tag: FunctionComponent<TagProps> = ({
@@ -23,9 +24,11 @@ export const Tag: FunctionComponent<TagProps> = ({
   iconRight,
   doitAvoirUneTailleFixe = false,
   isActive = false,
+  ariaLabel,
 }) => {
   return (
     <button
+      aria-label={ariaLabel}
       className={clsxm(`fr-tag flex gap-1 mr-2 !text-primary over`, {
         "fr-tag--sm": size === "sm",
         "!bg-primary !text-white": isActive,

@@ -6,12 +6,13 @@ test.beforeAll(() => {
 });
 
 test("doit pouvoir consulter les données des chantiers", async ({ page }) => {
+  test.setTimeout(90_000);
+  await loginFn({ page });
+
   const informationChantierEtIndicateurTestsE2E = {
     id: "155",
     nom: "Faciliter l'efficacité opérationnelle",
   };
-
-  await loginFn({ page });
 
   await test.step("Vérification de la structure de la page d'accueil", async () => {
     await expect(

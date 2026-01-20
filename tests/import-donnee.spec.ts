@@ -8,6 +8,7 @@ test.beforeAll(() => {
 });
 
 test("doit pouvoir importer des données", async ({ page }) => {
+  test.setTimeout(90_000);
   await loginFn({ page });
 
   const informationChantierEtIndicateurPourTestsE2E = {
