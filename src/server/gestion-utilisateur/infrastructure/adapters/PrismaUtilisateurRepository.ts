@@ -29,8 +29,6 @@ import {
 } from "@/server/gestion-utilisateur/domain/Utilisateur.interface";
 import { UtilisateurÀCréerOuMettreÀJourSansHabilitation } from "@/server/domain/utilisateur/Utilisateur.interface";
 
-import { PilotePrismaClient } from "@/server/db/PrismaTransaction";
-
 interface Dependencies {
   prisma: PrismaPilote;
 }
