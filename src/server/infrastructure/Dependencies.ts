@@ -41,6 +41,7 @@ import { PrismaSyntheseDesResultatsRepository } from "@/server/fiche-territorial
 import { PrismaIndicateurRepository as PrismaFicheTerritorialeIndicateurRepository } from "@/server/fiche-territoriale/infrastructure/adapters/PrismaIndicateurRepository";
 import { PrismaMinistereRepository } from "@/server/fiche-territoriale/infrastructure/adapters/PrismaMinistereRepository";
 import { PrismaIndicateurRepository as PrismaChantierIndicateurRepository } from "@/server/chantiers/infrastructure/adapters/PrismaIndicateurRepository";
+import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { TokenAPIInformationRepository } from "@/server/authentification/domain/ports/TokenAPIInformationRepository";
 import { TokenAPIService } from "@/server/authentification/domain/ports/TokenAPIService";
 import { TokenAPIJWTService } from "@/server/authentification/infrastructure/adapters/services/TokenAPIJWTService";
@@ -130,8 +131,9 @@ class Dependencies {
       new PrismaSyntheseDesResultatsRepository();
     this._ficheTerritorialeMinistereRepository =
       new PrismaMinistereRepository();
-    this._chantierIndicateurRepository =
-      new PrismaChantierIndicateurRepository();
+    this._chantierIndicateurRepository = new PrismaChantierIndicateurRepository(
+      { prisma: new PrismaPilote() },
+    );
     this._profilRepository = new ProfilSQLRepository();
     this._rapportRepository = new PrismaRapportRepository();
     this._périmètreMinistérielRepository =

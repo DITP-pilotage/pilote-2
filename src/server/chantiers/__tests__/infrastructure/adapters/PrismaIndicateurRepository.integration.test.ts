@@ -1,1206 +1,904 @@
-import { prisma } from "@/server/db/prisma";
 import { PrismaIndicateurRepository } from "@/server/chantiers/infrastructure/adapters/PrismaIndicateurRepository";
 import { EvenementValeurEnum } from "@/server/app/domain/EvenementValeurEnum";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
 import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
+import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
+import { fixtures } from "@/server/infrastructure/test/fixtures";
+import { PrismaPilote } from "@/server/db/PrismaPilote";
 
 describe("PrismaIndicateurRepository", () => {
   const dateDerniereExecutionDatajobs = new Date("2026-02-12T00:00:00.000Z");
+  const prismaPilote = new PrismaPilote();
   let prismaIndicateurRepository: PrismaIndicateurRepository;
 
   beforeEach(() => {
-    prismaIndicateurRepository = new PrismaIndicateurRepository();
+    prismaIndicateurRepository = new PrismaIndicateurRepository({
+      prisma: prismaPilote,
+    });
   });
 
   describe("#listerParIndicId", () => {
-    it("doit récupérer les données associés à l'indicateur", async () => {
-      // Given
-      const indicId = "IND-001";
-      await prisma.chantier_identite.create({
-        data: {
-          id: "CH-001",
-          nom: "Nom chantier OK",
-          directeurs_administration_centrale: ["DAC 1", "DAC 2"],
-          directeurs_projet: ["DP 1", "DP 2"],
-        },
-      });
+    it(
+      "doit récupérer les données associés à l'indicateur",
+      createIntegrationTest(async () => {
+        // Given
+        const chantier = await fixtures.chantierIdentite({ id: "CH-001" });
 
-      await prisma.chantier_territoire.createMany({
-        data: [
-          {
-            id: "CH-001",
-            code_insee: "FR",
-            maille: "NAT",
-            zone_id: "FRANCE",
-            territoire_code: "NAT-FR",
-          },
-          {
-            id: "CH-001",
-            code_insee: "FR",
-            maille: "REG",
-            zone_id: "R51",
-            territoire_code: "REG-01",
-          },
-        ],
-      });
-
-      await prisma.indicateur_identite.create({
-        data: {
-          id: "IND-001",
-          nom: "Indicateur OK",
-          chantier_id: "CH-001",
-          type_id: "IMPACT",
-        },
-      });
-
-      await prisma.indicateur_territoire.createMany({
-        data: [
-          {
-            id: "IND-001",
-            chantier_id: "CH-001",
-            code_insee: "FR",
-            maille: "NAT",
-            zone_id: "FRANCE",
-            territoire_code: "NAT-FR",
-            ponderation_zone_reel: 20,
-          },
-          {
-            id: "IND-001",
-            chantier_id: "CH-001",
-            code_insee: "01",
-            maille: "REG",
-            zone_id: "R51",
-            territoire_code: "REG-01",
-            ponderation_zone_reel: 20,
-          },
-        ],
-      });
-
-      await prisma.indicateur_territoire_jalon.createMany({
-        data: [
-          {
-            id: "IND-001",
-            code_insee: "FR",
-            maille: "NAT",
-            zone_id: "FRANCE",
-            territoire_code: "NAT-FR",
-            valeur_cible: 20,
-            date_valeur_cible: new Date("2024-12-06"),
-            taux_avancement: 13,
-            valeur_actuelle: 20,
-            date_valeur_actuelle: new Date("2024-12-06"),
-            jalon: 2024,
-          },
-          {
-            id: "IND-001",
-            code_insee: "FR",
-            maille: "NAT",
-            zone_id: "FRANCE",
-            territoire_code: "NAT-FR",
-            valeur_cible: 22,
-            date_valeur_cible: new Date("2025-12-06"),
-            taux_avancement: 13,
-            valeur_actuelle: 25,
-            date_valeur_actuelle: new Date("2025-12-06"),
-            jalon: 2025,
-          },
-          {
-            id: "IND-001",
-            code_insee: "01",
-            maille: "REG",
-            zone_id: "D51",
-            territoire_code: "REG-01",
-            valeur_cible: 22,
-            date_valeur_cible: new Date("2025-12-06"),
-            taux_avancement: 13,
-            jalon: 2025,
-            valeur_actuelle: 30,
-            date_valeur_actuelle: new Date("2025-12-06"),
-          },
-        ],
-      });
-
-      // When
-      const listeDonneesIndicateurs =
-        await prismaIndicateurRepository.listerParIndicId({
-          indicId,
-          jalon: 2025,
+        await fixtures.chantierTerritoire({
+          id: chantier.id,
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
         });
-      // Then
-      expect(listeDonneesIndicateurs).toHaveLength(2);
-      expect(listeDonneesIndicateurs[0].indicId).toEqual("IND-001");
-      expect(listeDonneesIndicateurs[0].territoireCode).toEqual("NAT-FR");
-      expect(listeDonneesIndicateurs[0].valeurCibleAnnuelle).toEqual(22);
-      expect(
-        listeDonneesIndicateurs[0].dateValeurCibleAnnuelle?.toISOString(),
-      ).toStartWith("2025-12-06");
-      expect(listeDonneesIndicateurs[0].tauxAvancementAnnuel).toEqual(13);
-      expect(listeDonneesIndicateurs[0].valeurAvancement).toEqual(25);
-      expect(
-        listeDonneesIndicateurs[0].dateValeurAvancement?.toISOString(),
-      ).toStartWith("2025-12-06");
-      expect(listeDonneesIndicateurs[1].indicId).toEqual("IND-001");
-      expect(listeDonneesIndicateurs[1].territoireCode).toEqual("REG-01");
-      expect(listeDonneesIndicateurs[1].valeurAvancement).toEqual(30);
-      expect(
-        listeDonneesIndicateurs[1].dateValeurAvancement?.toISOString(),
-      ).toStartWith("2025-12-06");
-    });
+        await fixtures.chantierTerritoire({
+          id: chantier.id,
+          territoire_code: "REG-01",
+          code_insee: "FR",
+          maille: "REG",
+          zone_id: "R51",
+        });
 
-    it("quand on donne un jalon, doit récupérer les données associés à l'indicateur", async () => {
-      // Given
-      const indicId = "IND-001";
-      await prisma.chantier_identite.create({
-        data: {
-          id: "CH-001",
-          nom: "Nom chantier OK",
-          directeurs_administration_centrale: ["DAC 1", "DAC 2"],
-          directeurs_projet: ["DP 1", "DP 2"],
-        },
-      });
-
-      await prisma.chantier_territoire.createMany({
-        data: [
-          {
-            id: "CH-001",
-            code_insee: "FR",
-            maille: "NAT",
-            zone_id: "FRANCE",
-            territoire_code: "NAT-FR",
-          },
-          {
-            id: "CH-001",
-            code_insee: "FR",
-            maille: "REG",
-            zone_id: "R51",
-            territoire_code: "REG-01",
-          },
-        ],
-      });
-
-      await prisma.indicateur_identite.create({
-        data: {
+        const indicateur = await fixtures.indicateurIdentite({
           id: "IND-001",
-          nom: "Indicateur OK",
-          chantier_id: "CH-001",
-          type_id: "IMPACT",
-        },
-      });
+          chantier_id: chantier.id,
+        });
 
-      await prisma.indicateur_territoire.createMany({
-        data: [
-          {
-            id: "IND-001",
-            chantier_id: "CH-001",
-            code_insee: "FR",
-            maille: "NAT",
-            zone_id: "FRANCE",
-            territoire_code: "NAT-FR",
-            ponderation_zone_reel: 20,
-          },
-          {
-            id: "IND-001",
-            chantier_id: "CH-001",
-            code_insee: "01",
-            maille: "REG",
-            zone_id: "R51",
-            territoire_code: "REG-01",
-            ponderation_zone_reel: 20,
-          },
-        ],
-      });
+        await fixtures.indicateurTerritoire({
+          id: indicateur.id,
+          chantier_id: chantier.id,
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+          ponderation_zone_reel: 20,
+        });
+        await fixtures.indicateurTerritoire({
+          id: indicateur.id,
+          chantier_id: chantier.id,
+          territoire_code: "REG-01",
+          code_insee: "01",
+          maille: "REG",
+          zone_id: "R51",
+          ponderation_zone_reel: 20,
+        });
 
-      await prisma.indicateur_territoire_jalon.createMany({
-        data: [
-          {
-            id: "IND-001",
-            code_insee: "FR",
-            maille: "NAT",
-            zone_id: "FRANCE",
-            territoire_code: "NAT-FR",
-            valeur_cible: 20,
-            date_valeur_cible: new Date("2024-12-06"),
-            taux_avancement: 13,
-            valeur_actuelle: 20,
-            date_valeur_actuelle: new Date("2024-12-06"),
-            jalon: 2024,
-          },
-          {
-            id: "IND-001",
-            code_insee: "FR",
-            maille: "NAT",
-            zone_id: "FRANCE",
-            territoire_code: "NAT-FR",
-            valeur_cible: 22,
-            date_valeur_cible: new Date("2025-12-06"),
-            taux_avancement: 13,
-            valeur_actuelle: 25,
-            date_valeur_actuelle: new Date("2025-12-06"),
-            jalon: 2025,
-          },
-          {
-            id: "IND-001",
-            code_insee: "01",
-            maille: "REG",
-            zone_id: "D51",
-            territoire_code: "REG-01",
-            valeur_cible: 22,
-            date_valeur_cible: new Date("2025-12-06"),
-            taux_avancement: 13,
-            jalon: 2025,
-            valeur_actuelle: 30,
-            date_valeur_actuelle: new Date("2025-12-06"),
-          },
-        ],
-      });
-
-      // When
-      const listeDonneesIndicateurs =
-        await prismaIndicateurRepository.listerParIndicId({
-          indicId,
+        // Jalon 2024 pour NAT-FR uniquement
+        await fixtures.indicateurTerritoireJalon({
+          id: indicateur.id,
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+          valeur_cible: 20,
+          date_valeur_cible: new Date("2024-12-06"),
+          taux_avancement: 13,
+          valeur_actuelle: 20,
+          date_valeur_actuelle: new Date("2024-12-06"),
           jalon: 2024,
         });
-      // Then
-      expect(listeDonneesIndicateurs).toHaveLength(2);
-      expect(listeDonneesIndicateurs[0].indicId).toEqual("IND-001");
-      expect(listeDonneesIndicateurs[0].territoireCode).toEqual("NAT-FR");
-      expect(listeDonneesIndicateurs[0].valeurCibleAnnuelle).toEqual(20);
-      expect(
-        listeDonneesIndicateurs[0].dateValeurCibleAnnuelle?.toISOString(),
-      ).toStartWith("2024-12-06");
-      expect(listeDonneesIndicateurs[0].tauxAvancementAnnuel).toEqual(13);
-      expect(listeDonneesIndicateurs[0].valeurAvancement).toEqual(20);
-      expect(
-        listeDonneesIndicateurs[0].dateValeurAvancement?.toISOString(),
-      ).toStartWith("2024-12-06");
-      expect(listeDonneesIndicateurs[1].indicId).toEqual("IND-001");
-      expect(listeDonneesIndicateurs[1].territoireCode).toEqual("REG-01");
-      expect(listeDonneesIndicateurs[1].valeurAvancement).toEqual(null);
-      expect(listeDonneesIndicateurs[1].dateValeurAvancement).toEqual(null);
-    });
+        // Jalon 2025 pour NAT-FR
+        await fixtures.indicateurTerritoireJalon({
+          id: indicateur.id,
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+          valeur_cible: 22,
+          date_valeur_cible: new Date("2025-12-06"),
+          taux_avancement: 13,
+          valeur_actuelle: 25,
+          date_valeur_actuelle: new Date("2025-12-06"),
+          jalon: 2025,
+        });
+        // Jalon 2025 pour REG-01
+        await fixtures.indicateurTerritoireJalon({
+          id: indicateur.id,
+          territoire_code: "REG-01",
+          code_insee: "01",
+          maille: "REG",
+          zone_id: "D51",
+          valeur_cible: 22,
+          date_valeur_cible: new Date("2025-12-06"),
+          taux_avancement: 13,
+          valeur_actuelle: 30,
+          date_valeur_actuelle: new Date("2025-12-06"),
+          jalon: 2025,
+        });
+
+        // When
+        const result = await prismaIndicateurRepository.listerParIndicId({
+          indicId: indicateur.id,
+          jalon: 2025,
+        });
+
+        // Then
+        expect(result).toEqual([
+          expect.objectContaining({
+            indicId: "IND-001",
+            territoireCode: "NAT-FR",
+            valeurCibleAnnuelle: 22,
+            tauxAvancementAnnuel: 13,
+            valeurAvancement: 25,
+          }),
+          expect.objectContaining({
+            indicId: "IND-001",
+            territoireCode: "REG-01",
+            valeurAvancement: 30,
+          }),
+        ]);
+        expect(result[0].dateValeurCibleAnnuelle?.toISOString()).toStartWith(
+          "2025-12-06",
+        );
+        expect(result[0].dateValeurAvancement?.toISOString()).toStartWith(
+          "2025-12-06",
+        );
+        expect(result[1].dateValeurAvancement?.toISOString()).toStartWith(
+          "2025-12-06",
+        );
+      }),
+    );
+
+    it(
+      "quand on donne un jalon, doit récupérer les données associés à l'indicateur",
+      createIntegrationTest(async () => {
+        // Given
+        const chantier = await fixtures.chantierIdentite({ id: "CH-001" });
+
+        await fixtures.chantierTerritoire({
+          id: chantier.id,
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+        });
+        await fixtures.chantierTerritoire({
+          id: chantier.id,
+          territoire_code: "REG-01",
+          code_insee: "FR",
+          maille: "REG",
+          zone_id: "R51",
+        });
+
+        const indicateur = await fixtures.indicateurIdentite({
+          id: "IND-001",
+          chantier_id: chantier.id,
+        });
+
+        await fixtures.indicateurTerritoire({
+          id: indicateur.id,
+          chantier_id: chantier.id,
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+          ponderation_zone_reel: 20,
+        });
+        await fixtures.indicateurTerritoire({
+          id: indicateur.id,
+          chantier_id: chantier.id,
+          territoire_code: "REG-01",
+          code_insee: "01",
+          maille: "REG",
+          zone_id: "R51",
+          ponderation_zone_reel: 20,
+        });
+
+        // Jalon 2024 pour NAT-FR uniquement
+        await fixtures.indicateurTerritoireJalon({
+          id: indicateur.id,
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+          valeur_cible: 20,
+          date_valeur_cible: new Date("2024-12-06"),
+          taux_avancement: 13,
+          valeur_actuelle: 20,
+          date_valeur_actuelle: new Date("2024-12-06"),
+          jalon: 2024,
+        });
+        // Jalon 2025 pour NAT-FR
+        await fixtures.indicateurTerritoireJalon({
+          id: indicateur.id,
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+          valeur_cible: 22,
+          date_valeur_cible: new Date("2025-12-06"),
+          taux_avancement: 13,
+          valeur_actuelle: 25,
+          date_valeur_actuelle: new Date("2025-12-06"),
+          jalon: 2025,
+        });
+        // Jalon 2025 pour REG-01
+        await fixtures.indicateurTerritoireJalon({
+          id: indicateur.id,
+          territoire_code: "REG-01",
+          code_insee: "01",
+          maille: "REG",
+          zone_id: "D51",
+          valeur_cible: 22,
+          date_valeur_cible: new Date("2025-12-06"),
+          taux_avancement: 13,
+          valeur_actuelle: 30,
+          date_valeur_actuelle: new Date("2025-12-06"),
+          jalon: 2025,
+        });
+
+        // When
+        const result = await prismaIndicateurRepository.listerParIndicId({
+          indicId: indicateur.id,
+          jalon: 2024,
+        });
+
+        // Then
+        expect(result).toEqual([
+          expect.objectContaining({
+            indicId: "IND-001",
+            territoireCode: "NAT-FR",
+            valeurCibleAnnuelle: 20,
+            tauxAvancementAnnuel: 13,
+            valeurAvancement: 20,
+          }),
+          expect.objectContaining({
+            indicId: "IND-001",
+            territoireCode: "REG-01",
+            valeurAvancement: null,
+            dateValeurAvancement: null,
+          }),
+        ]);
+        expect(result[0].dateValeurCibleAnnuelle?.toISOString()).toStartWith(
+          "2024-12-06",
+        );
+        expect(result[0].dateValeurAvancement?.toISOString()).toStartWith(
+          "2024-12-06",
+        );
+      }),
+    );
   });
 
   describe("#recupererDetailsParChantierIdEtTerritoire", () => {
-    it("sans PVA, retourne les détails des indicateurs pour un chantier et un territoire", async () => {
-      // Given
-      const chantierId = "CH-001";
-      const territoireCodes = ["NAT-FR"];
-      const jalon = 2025;
+    it(
+      "sans PVA, retourne les détails des indicateurs pour un chantier et un territoire",
+      createIntegrationTest(async () => {
+        // Given
+        const chantier = await fixtures.chantierIdentite({ id: "CH-001" });
 
-      await prisma.chantier_identite.createMany({
-        data: [
-          {
-            id: chantierId,
-            nom: "Chantier 001",
-            ministeres: ["1009"],
-            ministeres_acronymes: ["MINA"],
-          },
-        ],
-      });
+        await fixtures.chantierTerritoire({
+          id: chantier.id,
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+        });
+        await fixtures.chantierTerritoire({
+          id: chantier.id,
+          territoire_code: "DEPT-01",
+          code_insee: "01",
+          maille: "DEPT",
+          zone_id: "D01",
+        });
 
-      await prisma.chantier_territoire.createMany({
-        data: [
-          {
-            id: "CH-001",
-            maille: "NAT",
-            code_insee: "FR",
-            territoire_code: "NAT-FR",
-            zone_id: "FRANCE",
-          },
-          {
-            id: "CH-001",
-            maille: "DEPT",
-            code_insee: "01",
-            territoire_code: "DEPT-01",
-            zone_id: "D01",
-          },
-        ],
-      });
+        const indicateur = await fixtures.indicateurIdentite({
+          id: "IND-001",
+          chantier_id: chantier.id,
+          unite_mesure: "kg",
+        });
 
-      await prisma.indicateur_identite.createMany({
-        data: [
-          {
-            id: "IND-001",
-            nom: "Indicateur 001",
-            chantier_id: chantierId,
-            type_id: "IMPACT",
-            unite_mesure: "kg",
-          },
-        ],
-      });
+        await fixtures.indicateurTerritoire({
+          id: indicateur.id,
+          chantier_id: chantier.id,
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+          evolution_avancement: [
+            { date: new Date("2026-01-12"), valeur: 100 },
+            { date: new Date("2026-01-14"), valeur: 110 },
+          ],
+        });
+        await fixtures.indicateurTerritoire({
+          id: indicateur.id,
+          chantier_id: chantier.id,
+          territoire_code: "DEPT-01",
+          code_insee: "01",
+          maille: "DEPT",
+          zone_id: "D01",
+        });
 
-      await prisma.indicateur_territoire.createMany({
-        data: [
-          {
-            id: "IND-001",
-            chantier_id: chantierId,
-            maille: "NAT",
-            territoire_code: "NAT-FR",
-            code_insee: "FR",
-            zone_id: "FRANCE",
-            evolution_avancement: [
-              {
-                date: new Date("2026-01-12"),
-                valeur: 100,
-              },
-              {
-                date: new Date("2026-01-14"),
-                valeur: 110,
-              },
-            ],
-          },
-          {
-            id: "IND-001",
-            chantier_id: chantierId,
-            maille: "DEPT",
-            territoire_code: "DEPT-01",
-            code_insee: "01",
-            zone_id: "D01",
-          },
-        ],
-      });
+        await fixtures.indicateurTerritoireJalon({
+          id: indicateur.id,
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+          jalon: 2025,
+          valeur_actuelle: 110,
+          date_valeur_actuelle: new Date("2026-01-12"),
+        });
 
-      await prisma.indicateur_territoire_jalon.createMany({
-        data: [
-          {
-            id: "IND-001",
-            territoire_code: "NAT-FR",
-            code_insee: "FR",
-            maille: "NAT",
-            jalon: 2025,
-            zone_id: "FRANCE",
-            valeur_actuelle: 110,
-            date_valeur_actuelle: new Date("2026-01-12"),
-          },
-        ],
-      });
+        const utilisateur = await fixtures.utilisateur();
 
-      await prisma.utilisateur.create({
-        data: {
-          email: "jane.doe@test.com",
-          nom: "Jane",
-          prenom: "Doe",
-          id: "550e8400-e29b-41d4-a716-446655440001",
-          date_creation: new Date().toISOString(),
-          profil: {
-            connect: {
-              code: ProfilEnum.DITP_ADMIN,
-            },
-          },
-        },
-      });
-
-      await prisma.indicateur_territoire_valeur_evenement.createMany({
-        data: [
-          {
-            id: "550e8400-e29b-41d4-a716-446655440000",
-            indic_id: "IND-001",
-            territoire_code: "NAT-FR",
-            type_valeur: "VALEUR_AVANCEMENT",
-            donnees_complementaires: {},
-            type_evenement: EvenementValeurEnum.VALEUR_CREEE,
-            date_valeur: new Date("2026-01-12"),
-            ordre: 1,
-            date_modification: new Date("2026-01-12"),
-            date_creation: new Date("2026-01-12"),
-            id_auteur_modification: "550e8400-e29b-41d4-a716-446655440001",
-            correlation_id: "550e8400-e29b-41d4-a716-446655440002",
-            valeur: 100,
-          },
-          {
-            id: "550e8400-e29b-41d4-a716-446655440001",
-            indic_id: "IND-001",
-            territoire_code: "NAT-FR",
-            type_valeur: "VALEUR_AVANCEMENT",
-            donnees_complementaires: {},
-            type_evenement: EvenementValeurEnum.VALEUR_MODIFIEE,
-            date_valeur: new Date("2026-01-12"),
-            ordre: 2,
-            date_modification: new Date("2026-01-12"),
-            date_creation: new Date("2026-01-12"),
-            id_auteur_modification: "550e8400-e29b-41d4-a716-446655440001",
-            correlation_id: "550e8400-e29b-41d4-a716-446655440002",
-            valeur: 110,
-          },
-        ],
-      });
-
-      // When
-      const result =
-        await prismaIndicateurRepository.recupererDetailsParChantierIdEtTerritoire(
-          chantierId,
-          territoireCodes,
-          jalon,
-          dateDerniereExecutionDatajobs,
-        );
-
-      // Then
-      expect(result["IND-001"]["NAT-FR"].valeurAvancement).toEqual(110);
-      expect(result["IND-001"]["NAT-FR"].dateValeurAvancement).toEqual(
-        "2026-01-12T00:00:00.000Z",
-      );
-      expect(result["IND-001"]["NAT-FR"].proposition).toBeNull();
-      expect(result["IND-001"]["NAT-FR"].historiquesValeurs).toEqual([
-        {
-          date: "2026-01-12T00:00:00.000Z",
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur.id,
+          territoire_code: "NAT-FR",
+          type_evenement: EvenementValeurEnum.VALEUR_CREEE,
+          date_valeur: new Date("2026-01-12"),
+          date_creation: new Date("2026-01-12"),
+          id_auteur_modification: utilisateur.id,
+          ordre: 1,
           valeur: 100,
-        },
-        {
-          date: "2026-01-14T00:00:00.000Z",
+        });
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur.id,
+          territoire_code: "NAT-FR",
+          type_evenement: EvenementValeurEnum.VALEUR_MODIFIEE,
+          date_valeur: new Date("2026-01-12"),
+          date_creation: new Date("2026-01-12"),
+          id_auteur_modification: utilisateur.id,
+          ordre: 2,
           valeur: 110,
-        },
-      ]);
-    });
+        });
 
-    it("avec une PVA [CREEE], retourne les détails des indicateurs pour un chantier, territoire et proposition", async () => {
-      // Given
-      const chantierId = "CH-001";
-      const territoireCodes = ["NAT-FR"];
-      const jalon = 2025;
+        // When
+        const result =
+          await prismaIndicateurRepository.recupererDetailsParChantierIdEtTerritoire(
+            chantier.id,
+            ["NAT-FR"],
+            2025,
+            dateDerniereExecutionDatajobs,
+          );
 
-      await prisma.chantier_identite.createMany({
-        data: [
-          {
-            id: chantierId,
-            nom: "Chantier 001",
-            ministeres: ["1009"],
-            ministeres_acronymes: ["MINA"],
-          },
-        ],
-      });
+        // Then
+        expect(result["IND-001"]["NAT-FR"]).toEqual(
+          expect.objectContaining({
+            valeurAvancement: 110,
+            dateValeurAvancement: "2026-01-12T00:00:00.000Z",
+            proposition: null,
+            historiquesValeurs: [
+              { date: "2026-01-12T00:00:00.000Z", valeur: 100 },
+              { date: "2026-01-14T00:00:00.000Z", valeur: 110 },
+            ],
+          }),
+        );
+      }),
+    );
 
-      await prisma.chantier_territoire.createMany({
-        data: [
-          {
-            id: "CH-001",
-            maille: "NAT",
-            code_insee: "FR",
-            territoire_code: "NAT-FR",
-            zone_id: "FRANCE",
-          },
-          {
-            id: "CH-001",
-            maille: "DEPT",
-            code_insee: "01",
-            territoire_code: "DEPT-01",
-            zone_id: "D01",
-          },
-        ],
-      });
+    it(
+      "avec une PVA [CREEE], retourne les détails des indicateurs pour un chantier, territoire et proposition",
+      createIntegrationTest(async () => {
+        // Given
+        const chantier = await fixtures.chantierIdentite({ id: "CH-001" });
 
-      await prisma.indicateur_identite.createMany({
-        data: [
-          {
-            id: "IND-001",
-            nom: "Indicateur 001",
-            chantier_id: chantierId,
-            type_id: "IMPACT",
-            unite_mesure: "kg",
-          },
-        ],
-      });
+        await fixtures.chantierTerritoire({
+          id: chantier.id,
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+        });
+        await fixtures.chantierTerritoire({
+          id: chantier.id,
+          territoire_code: "DEPT-01",
+          code_insee: "01",
+          maille: "DEPT",
+          zone_id: "D01",
+        });
 
-      await prisma.indicateur_territoire.createMany({
-        data: [
-          {
-            id: "IND-001",
-            chantier_id: chantierId,
-            maille: "NAT",
-            territoire_code: "NAT-FR",
-            code_insee: "FR",
-            zone_id: "FRANCE",
-          },
-          {
-            id: "IND-001",
-            chantier_id: chantierId,
-            maille: "DEPT",
-            territoire_code: "DEPT-01",
-            code_insee: "01",
-            zone_id: "D01",
-          },
-        ],
-      });
+        const indicateur = await fixtures.indicateurIdentite({
+          id: "IND-001",
+          chantier_id: chantier.id,
+          unite_mesure: "kg",
+        });
 
-      await prisma.indicateur_territoire_jalon.createMany({
-        data: [
-          {
-            id: "IND-001",
-            territoire_code: "NAT-FR",
-            code_insee: "FR",
-            maille: "NAT",
-            jalon: 2025,
-            zone_id: "FRANCE",
-            valeur_actuelle: 110,
-            date_valeur_actuelle: new Date("2026-01-12"),
-          },
-        ],
-      });
+        await fixtures.indicateurTerritoire({
+          id: indicateur.id,
+          chantier_id: chantier.id,
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+        });
+        await fixtures.indicateurTerritoire({
+          id: indicateur.id,
+          chantier_id: chantier.id,
+          territoire_code: "DEPT-01",
+          code_insee: "01",
+          maille: "DEPT",
+          zone_id: "D01",
+        });
 
-      await prisma.utilisateur.create({
-        data: {
-          email: "jane.doe@test.com",
+        await fixtures.indicateurTerritoireJalon({
+          id: indicateur.id,
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+          jalon: 2025,
+          valeur_actuelle: 110,
+          date_valeur_actuelle: new Date("2026-01-12"),
+        });
+
+        const utilisateur = await fixtures.utilisateur({
           nom: "Doe",
           prenom: "Jane",
-          id: "550e8400-e29b-41d4-a716-446655440001",
-          date_creation: new Date().toISOString(),
-          profil: {
-            connect: {
-              code: ProfilEnum.DITP_ADMIN,
-            },
-          },
-        },
-      });
+        });
 
-      await prisma.indicateur_territoire_valeur_evenement.createMany({
-        data: [
-          {
-            id: "550e8400-e29b-41d4-a716-446655440000",
-            indic_id: "IND-001",
-            territoire_code: "NAT-FR",
-            type_valeur: "VALEUR_AVANCEMENT",
-            donnees_complementaires: {},
-            type_evenement: EvenementValeurEnum.VALEUR_CREEE,
-            date_valeur: new Date("2026-01-01"),
-            ordre: 1,
-            date_modification: new Date("2026-01-12"),
-            date_creation: new Date("2026-01-12"),
-            id_auteur_modification: "550e8400-e29b-41d4-a716-446655440001",
-            correlation_id: "550e8400-e29b-41d4-a716-446655440002",
-            valeur: 100,
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur.id,
+          territoire_code: "NAT-FR",
+          type_evenement: EvenementValeurEnum.VALEUR_CREEE,
+          date_valeur: new Date("2026-01-01"),
+          date_creation: new Date("2026-01-12"),
+          date_modification: new Date("2026-01-12"),
+          id_auteur_modification: utilisateur.id,
+          ordre: 1,
+          valeur: 100,
+        });
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur.id,
+          territoire_code: "NAT-FR",
+          type_evenement: EvenementValeurEnum.VALEUR_MODIFIEE,
+          date_valeur: new Date("2026-01-01"),
+          date_creation: new Date("2026-01-12"),
+          date_modification: new Date("2026-01-12"),
+          id_auteur_modification: utilisateur.id,
+          ordre: 2,
+          valeur: 110,
+        });
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur.id,
+          territoire_code: "NAT-FR",
+          type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_CREEE,
+          date_valeur: new Date("2026-01-01"),
+          date_creation: new Date("2026-01-12"),
+          date_modification: new Date("2026-01-12"),
+          id_auteur_modification: utilisateur.id,
+          ordre: 3,
+          valeur: 120,
+          donnees_complementaires: {
+            motif: "Motif de la proposition",
+            source_donnee_methode_calcul:
+              "Source de la donnée et méthode de calcul",
           },
-          {
-            id: "550e8400-e29b-41d4-a716-446655440001",
-            indic_id: "IND-001",
-            territoire_code: "NAT-FR",
-            type_valeur: "VALEUR_AVANCEMENT",
-            donnees_complementaires: {},
-            type_evenement: EvenementValeurEnum.VALEUR_MODIFIEE,
-            date_valeur: new Date("2026-01-01"),
-            ordre: 2,
-            date_modification: new Date("2026-01-12"),
-            date_creation: new Date("2026-01-12"),
-            id_auteur_modification: "550e8400-e29b-41d4-a716-446655440001",
-            correlation_id: "550e8400-e29b-41d4-a716-446655440002",
-            valeur: 110,
-          },
-          {
-            id: "550e8400-e29b-41d4-a716-446655440002",
-            indic_id: "IND-001",
-            territoire_code: "NAT-FR",
-            type_valeur: "VALEUR_AVANCEMENT",
-            donnees_complementaires: {
-              motif: "Motif de la proposition",
-              source_donnee_methode_calcul:
-                "Source de la donnée et méthode de calcul",
-            },
-            type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_CREEE,
-            date_valeur: new Date("2026-01-01"),
-            ordre: 3,
-            date_modification: new Date("2026-01-12"),
-            date_creation: new Date("2026-01-12"),
-            id_auteur_modification: "550e8400-e29b-41d4-a716-446655440001",
-            correlation_id: "550e8400-e29b-41d4-a716-446655440002",
-            valeur: 120,
-          },
-        ],
-      });
+        });
 
-      // When
-      const result =
-        await prismaIndicateurRepository.recupererDetailsParChantierIdEtTerritoire(
-          chantierId,
-          territoireCodes,
-          jalon,
-          dateDerniereExecutionDatajobs,
+        // When
+        const result =
+          await prismaIndicateurRepository.recupererDetailsParChantierIdEtTerritoire(
+            chantier.id,
+            ["NAT-FR"],
+            2025,
+            dateDerniereExecutionDatajobs,
+          );
+
+        // Then
+        expect(result["IND-001"]["NAT-FR"].valeurAvancement).toEqual(110);
+        expect(result["IND-001"]["NAT-FR"].dateValeurAvancement).toEqual(
+          "2026-01-12T00:00:00.000Z",
         );
+        expect(result["IND-001"]["NAT-FR"].proposition).toEqual({
+          valeurAvancement: 120,
+          tauxAvancement: null,
+          tauxAvancementIntermediaire: null,
+          statutTauxAvancement: "CALCULE",
+          auteur: "Jane Doe",
+          dateProposition: "2026-01-12T00:00:00.000Z",
+          dateValeurAvancement: "2026-01-01T00:00:00.000Z",
+          motif: "Motif de la proposition",
+          sourceDonneeEtMethodeCalcul:
+            "Source de la donnée et méthode de calcul",
+        });
+      }),
+    );
 
-      // Then
-      expect(result["IND-001"]["NAT-FR"].valeurAvancement).toEqual(110);
-      expect(result["IND-001"]["NAT-FR"].dateValeurAvancement).toEqual(
-        "2026-01-12T00:00:00.000Z",
-      );
-      expect(result["IND-001"]["NAT-FR"].proposition).toEqual({
-        valeurAvancement: 120,
-        tauxAvancement: null,
-        tauxAvancementIntermediaire: null,
-        statutTauxAvancement: "CALCULE",
-        auteur: "Jane Doe",
-        dateProposition: "2026-01-12T00:00:00.000Z",
-        dateValeurAvancement: "2026-01-01T00:00:00.000Z",
-        motif: "Motif de la proposition",
-        sourceDonneeEtMethodeCalcul: "Source de la donnée et méthode de calcul",
-      });
-    });
+    it(
+      "avec une PVA [CREEE] sur une date ultérieure, retourne les détails des indicateurs pour un chantier, territoire et proposition",
+      createIntegrationTest(async () => {
+        // Given
+        const chantier = await fixtures.chantierIdentite({ id: "CH-001" });
 
-    it("avec une PVA [CREEE] sur une date ultérieure, retourne les détails des indicateurs pour un chantier, territoire et proposition", async () => {
-      // Given
-      const chantierId = "CH-001";
-      const territoireCodes = ["NAT-FR"];
-      const jalon = 2025;
+        await fixtures.chantierTerritoire({
+          id: chantier.id,
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+        });
+        await fixtures.chantierTerritoire({
+          id: chantier.id,
+          territoire_code: "DEPT-01",
+          code_insee: "01",
+          maille: "DEPT",
+          zone_id: "D01",
+        });
 
-      await prisma.chantier_identite.createMany({
-        data: [
-          {
-            id: chantierId,
-            nom: "Chantier 001",
-            ministeres: ["1009"],
-            ministeres_acronymes: ["MINA"],
-          },
-        ],
-      });
+        const indicateur = await fixtures.indicateurIdentite({
+          id: "IND-001",
+          chantier_id: chantier.id,
+          unite_mesure: "kg",
+        });
 
-      await prisma.chantier_territoire.createMany({
-        data: [
-          {
-            id: "CH-001",
-            maille: "NAT",
-            code_insee: "FR",
-            territoire_code: "NAT-FR",
-            zone_id: "FRANCE",
-          },
-          {
-            id: "CH-001",
-            maille: "DEPT",
-            code_insee: "01",
-            territoire_code: "DEPT-01",
-            zone_id: "D01",
-          },
-        ],
-      });
+        await fixtures.indicateurTerritoire({
+          id: indicateur.id,
+          chantier_id: chantier.id,
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+        });
+        await fixtures.indicateurTerritoire({
+          id: indicateur.id,
+          chantier_id: chantier.id,
+          territoire_code: "DEPT-01",
+          code_insee: "01",
+          maille: "DEPT",
+          zone_id: "D01",
+        });
 
-      await prisma.indicateur_identite.createMany({
-        data: [
-          {
-            id: "IND-001",
-            nom: "Indicateur 001",
-            chantier_id: chantierId,
-            type_id: "IMPACT",
-            unite_mesure: "kg",
-          },
-        ],
-      });
+        await fixtures.indicateurTerritoireJalon({
+          id: indicateur.id,
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+          jalon: 2025,
+          valeur_actuelle: 110,
+          date_valeur_actuelle: new Date("2026-01-12"),
+        });
 
-      await prisma.indicateur_territoire.createMany({
-        data: [
-          {
-            id: "IND-001",
-            chantier_id: chantierId,
-            maille: "NAT",
-            territoire_code: "NAT-FR",
-            code_insee: "FR",
-            zone_id: "FRANCE",
-          },
-          {
-            id: "IND-001",
-            chantier_id: chantierId,
-            maille: "DEPT",
-            territoire_code: "DEPT-01",
-            code_insee: "01",
-            zone_id: "D01",
-          },
-        ],
-      });
-
-      await prisma.indicateur_territoire_jalon.createMany({
-        data: [
-          {
-            id: "IND-001",
-            territoire_code: "NAT-FR",
-            code_insee: "FR",
-            maille: "NAT",
-            jalon: 2025,
-            zone_id: "FRANCE",
-            valeur_actuelle: 110,
-            date_valeur_actuelle: new Date("2026-01-12"),
-          },
-        ],
-      });
-
-      await prisma.utilisateur.create({
-        data: {
-          email: "jane.doe@test.com",
+        const utilisateur = await fixtures.utilisateur({
           nom: "Doe",
           prenom: "Jane",
-          id: "550e8400-e29b-41d4-a716-446655440001",
-          date_creation: new Date().toISOString(),
-          profil: {
-            connect: {
-              code: ProfilEnum.DITP_ADMIN,
-            },
-          },
-        },
-      });
+        });
 
-      await prisma.indicateur_territoire_valeur_evenement.createMany({
-        data: [
-          {
-            id: "550e8400-e29b-41d4-a716-446655440000",
-            indic_id: "IND-001",
-            territoire_code: "NAT-FR",
-            type_valeur: "VALEUR_AVANCEMENT",
-            donnees_complementaires: {},
-            type_evenement: EvenementValeurEnum.VALEUR_CREEE,
-            date_valeur: new Date("2026-01-01"),
-            ordre: 1,
-            date_modification: new Date("2026-01-12"),
-            date_creation: new Date("2026-01-12"),
-            id_auteur_modification: "550e8400-e29b-41d4-a716-446655440001",
-            correlation_id: "550e8400-e29b-41d4-a716-446655440002",
-            valeur: 100,
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur.id,
+          territoire_code: "NAT-FR",
+          type_evenement: EvenementValeurEnum.VALEUR_CREEE,
+          date_valeur: new Date("2026-01-01"),
+          date_creation: new Date("2026-01-12"),
+          date_modification: new Date("2026-01-12"),
+          id_auteur_modification: utilisateur.id,
+          ordre: 1,
+          valeur: 100,
+        });
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur.id,
+          territoire_code: "NAT-FR",
+          type_evenement: EvenementValeurEnum.VALEUR_MODIFIEE,
+          date_valeur: new Date("2026-01-01"),
+          date_creation: new Date("2026-01-12"),
+          date_modification: new Date("2026-01-12"),
+          id_auteur_modification: utilisateur.id,
+          ordre: 2,
+          valeur: 110,
+        });
+        // PVA sur une date ultérieure (2026-02-01)
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur.id,
+          territoire_code: "NAT-FR",
+          type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_CREEE,
+          date_valeur: new Date("2026-02-01"),
+          date_creation: new Date("2026-01-12"),
+          date_modification: new Date("2026-01-12"),
+          id_auteur_modification: utilisateur.id,
+          ordre: 3,
+          valeur: 120,
+          donnees_complementaires: {
+            motif: "Motif de la proposition",
+            source_donnee_methode_calcul:
+              "Source de la donnée et méthode de calcul",
           },
-          {
-            id: "550e8400-e29b-41d4-a716-446655440001",
-            indic_id: "IND-001",
-            territoire_code: "NAT-FR",
-            type_valeur: "VALEUR_AVANCEMENT",
-            donnees_complementaires: {},
-            type_evenement: EvenementValeurEnum.VALEUR_MODIFIEE,
-            date_valeur: new Date("2026-01-01"),
-            ordre: 2,
-            date_modification: new Date("2026-01-12"),
-            date_creation: new Date("2026-01-12"),
-            id_auteur_modification: "550e8400-e29b-41d4-a716-446655440001",
-            correlation_id: "550e8400-e29b-41d4-a716-446655440002",
-            valeur: 110,
-          },
-          {
-            id: "550e8400-e29b-41d4-a716-446655440002",
-            indic_id: "IND-001",
-            territoire_code: "NAT-FR",
-            type_valeur: "VALEUR_AVANCEMENT",
-            donnees_complementaires: {
-              motif: "Motif de la proposition",
-              source_donnee_methode_calcul:
-                "Source de la donnée et méthode de calcul",
-            },
-            type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_CREEE,
-            date_valeur: new Date("2026-02-01"),
-            ordre: 3,
-            date_modification: new Date("2026-01-12"),
-            date_creation: new Date("2026-01-12"),
-            id_auteur_modification: "550e8400-e29b-41d4-a716-446655440001",
-            correlation_id: "550e8400-e29b-41d4-a716-446655440002",
-            valeur: 120,
-          },
-        ],
-      });
+        });
 
-      // When
-      const result =
-        await prismaIndicateurRepository.recupererDetailsParChantierIdEtTerritoire(
-          chantierId,
-          territoireCodes,
-          jalon,
-          dateDerniereExecutionDatajobs,
+        // When
+        const result =
+          await prismaIndicateurRepository.recupererDetailsParChantierIdEtTerritoire(
+            chantier.id,
+            ["NAT-FR"],
+            2025,
+            dateDerniereExecutionDatajobs,
+          );
+
+        // Then
+        expect(result["IND-001"]["NAT-FR"].valeurAvancement).toEqual(110);
+        expect(result["IND-001"]["NAT-FR"].dateValeurAvancement).toEqual(
+          "2026-01-12T00:00:00.000Z",
         );
+        expect(result["IND-001"]["NAT-FR"].proposition).toEqual({
+          valeurAvancement: 120,
+          tauxAvancement: null,
+          tauxAvancementIntermediaire: null,
+          statutTauxAvancement: "CALCULE",
+          auteur: "Jane Doe",
+          dateProposition: "2026-01-12T00:00:00.000Z",
+          dateValeurAvancement: "2026-02-01T00:00:00.000Z",
+          motif: "Motif de la proposition",
+          sourceDonneeEtMethodeCalcul:
+            "Source de la donnée et méthode de calcul",
+        });
+      }),
+    );
 
-      // Then
-      expect(result["IND-001"]["NAT-FR"].valeurAvancement).toEqual(110);
-      expect(result["IND-001"]["NAT-FR"].dateValeurAvancement).toEqual(
-        "2026-01-12T00:00:00.000Z",
-      );
-      expect(result["IND-001"]["NAT-FR"].proposition).toEqual({
-        valeurAvancement: 120,
-        tauxAvancement: null,
-        tauxAvancementIntermediaire: null,
-        statutTauxAvancement: "CALCULE",
-        auteur: "Jane Doe",
-        dateProposition: "2026-01-12T00:00:00.000Z",
-        dateValeurAvancement: "2026-02-01T00:00:00.000Z",
-        motif: "Motif de la proposition",
-        sourceDonneeEtMethodeCalcul: "Source de la donnée et méthode de calcul",
-      });
-    });
+    it(
+      "avec une PVA [CREEE, MODIFIEE], retourne les détails des indicateurs pour un chantier, territoire et dernière proposition",
+      createIntegrationTest(async () => {
+        // Given
+        const chantier = await fixtures.chantierIdentite({ id: "CH-001" });
 
-    it("avec une PVA [CREEE, MODIFIEE], retourne les détails des indicateurs pour un chantier, territoire et dernière proposition", async () => {
-      // Given
-      const chantierId = "CH-001";
-      const territoireCodes = ["NAT-FR"];
-      const jalon = 2025;
+        await fixtures.chantierTerritoire({
+          id: chantier.id,
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+        });
+        await fixtures.chantierTerritoire({
+          id: chantier.id,
+          territoire_code: "DEPT-01",
+          code_insee: "01",
+          maille: "DEPT",
+          zone_id: "D01",
+        });
 
-      await prisma.chantier_identite.createMany({
-        data: [
-          {
-            id: chantierId,
-            nom: "Chantier 001",
-            ministeres: ["1009"],
-            ministeres_acronymes: ["MINA"],
-          },
-        ],
-      });
+        const indicateur = await fixtures.indicateurIdentite({
+          id: "IND-001",
+          chantier_id: chantier.id,
+          unite_mesure: "kg",
+        });
 
-      await prisma.chantier_territoire.createMany({
-        data: [
-          {
-            id: "CH-001",
-            maille: "NAT",
-            code_insee: "FR",
-            territoire_code: "NAT-FR",
-            zone_id: "FRANCE",
-          },
-          {
-            id: "CH-001",
-            maille: "DEPT",
-            code_insee: "01",
-            territoire_code: "DEPT-01",
-            zone_id: "D01",
-          },
-        ],
-      });
+        await fixtures.indicateurTerritoire({
+          id: indicateur.id,
+          chantier_id: chantier.id,
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+        });
+        await fixtures.indicateurTerritoire({
+          id: indicateur.id,
+          chantier_id: chantier.id,
+          territoire_code: "DEPT-01",
+          code_insee: "01",
+          maille: "DEPT",
+          zone_id: "D01",
+        });
 
-      await prisma.indicateur_identite.createMany({
-        data: [
-          {
-            id: "IND-001",
-            nom: "Indicateur 001",
-            chantier_id: chantierId,
-            type_id: "IMPACT",
-            unite_mesure: "kg",
-          },
-        ],
-      });
+        await fixtures.indicateurTerritoireJalon({
+          id: indicateur.id,
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+          jalon: 2025,
+          valeur_actuelle: 110,
+          date_valeur_actuelle: new Date("2026-01-12"),
+        });
 
-      await prisma.indicateur_territoire.createMany({
-        data: [
-          {
-            id: "IND-001",
-            chantier_id: chantierId,
-            maille: "NAT",
-            territoire_code: "NAT-FR",
-            code_insee: "FR",
-            zone_id: "FRANCE",
-          },
-          {
-            id: "IND-001",
-            chantier_id: chantierId,
-            maille: "DEPT",
-            territoire_code: "DEPT-01",
-            code_insee: "01",
-            zone_id: "D01",
-          },
-        ],
-      });
-
-      await prisma.indicateur_territoire_jalon.createMany({
-        data: [
-          {
-            id: "IND-001",
-            territoire_code: "NAT-FR",
-            code_insee: "FR",
-            maille: "NAT",
-            jalon: 2025,
-            zone_id: "FRANCE",
-            valeur_actuelle: 110,
-            date_valeur_actuelle: new Date("2026-01-12"),
-          },
-        ],
-      });
-
-      await prisma.utilisateur.create({
-        data: {
-          email: "jane.doe@test.com",
+        const utilisateur = await fixtures.utilisateur({
           nom: "Doe",
           prenom: "Jane",
-          id: "550e8400-e29b-41d4-a716-446655440001",
-          date_creation: new Date().toISOString(),
-          profil: {
-            connect: {
-              code: ProfilEnum.DITP_ADMIN,
-            },
-          },
-        },
-      });
+        });
 
-      await prisma.indicateur_territoire_valeur_evenement.createMany({
-        data: [
-          {
-            id: "550e8400-e29b-41d4-a716-446655440000",
-            indic_id: "IND-001",
-            territoire_code: "NAT-FR",
-            type_valeur: "VALEUR_AVANCEMENT",
-            donnees_complementaires: {},
-            type_evenement: EvenementValeurEnum.VALEUR_CREEE,
-            date_valeur: new Date("2026-01-01"),
-            ordre: 1,
-            date_modification: new Date("2026-01-12"),
-            date_creation: new Date("2026-01-12"),
-            id_auteur_modification: "550e8400-e29b-41d4-a716-446655440001",
-            correlation_id: "550e8400-e29b-41d4-a716-446655440002",
-            valeur: 100,
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur.id,
+          territoire_code: "NAT-FR",
+          type_evenement: EvenementValeurEnum.VALEUR_CREEE,
+          date_valeur: new Date("2026-01-01"),
+          date_creation: new Date("2026-01-12"),
+          date_modification: new Date("2026-01-12"),
+          id_auteur_modification: utilisateur.id,
+          ordre: 1,
+          valeur: 100,
+        });
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur.id,
+          territoire_code: "NAT-FR",
+          type_evenement: EvenementValeurEnum.VALEUR_MODIFIEE,
+          date_valeur: new Date("2026-01-01"),
+          date_creation: new Date("2026-01-12"),
+          date_modification: new Date("2026-01-12"),
+          id_auteur_modification: utilisateur.id,
+          ordre: 2,
+          valeur: 110,
+        });
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur.id,
+          territoire_code: "NAT-FR",
+          type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_CREEE,
+          date_valeur: new Date("2026-01-01"),
+          date_creation: new Date("2026-01-12"),
+          date_modification: new Date("2026-01-12"),
+          id_auteur_modification: utilisateur.id,
+          ordre: 3,
+          valeur: 120,
+          donnees_complementaires: {
+            motif: "Motif de la proposition",
+            sourceDonneeEtMethodeCalcul:
+              "Source de la donnée et méthode de calcul",
           },
-          {
-            id: "550e8400-e29b-41d4-a716-446655440001",
-            indic_id: "IND-001",
-            territoire_code: "NAT-FR",
-            type_valeur: "VALEUR_AVANCEMENT",
-            donnees_complementaires: {},
-            type_evenement: EvenementValeurEnum.VALEUR_MODIFIEE,
-            date_valeur: new Date("2026-01-01"),
-            ordre: 2,
-            date_modification: new Date("2026-01-12"),
-            date_creation: new Date("2026-01-12"),
-            id_auteur_modification: "550e8400-e29b-41d4-a716-446655440001",
-            correlation_id: "550e8400-e29b-41d4-a716-446655440002",
-            valeur: 110,
-          },
-          {
-            id: "550e8400-e29b-41d4-a716-446655440002",
-            indic_id: "IND-001",
-            territoire_code: "NAT-FR",
-            type_valeur: "VALEUR_AVANCEMENT",
-            donnees_complementaires: {
-              motif: "Motif de la proposition",
-              sourceDonneeEtMethodeCalcul:
-                "Source de la donnée et méthode de calcul",
-            },
-            type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_CREEE,
-            date_valeur: new Date("2026-01-01"),
-            ordre: 3,
-            date_modification: new Date("2026-01-12"),
-            date_creation: new Date("2026-01-12"),
-            id_auteur_modification: "550e8400-e29b-41d4-a716-446655440001",
-            correlation_id: "550e8400-e29b-41d4-a716-446655440002",
-            valeur: 120,
-          },
-          {
-            id: "550e8400-e29b-41d4-a716-446655440003",
-            indic_id: "IND-001",
-            territoire_code: "NAT-FR",
-            type_valeur: "VALEUR_AVANCEMENT",
-            donnees_complementaires: {},
-            type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_MODIFIEE,
-            date_valeur: new Date("2026-01-01"),
-            ordre: 4,
-            date_modification: new Date("2026-01-12"),
-            date_creation: new Date("2026-01-12"),
-            id_auteur_modification: "550e8400-e29b-41d4-a716-446655440001",
-            correlation_id: "550e8400-e29b-41d4-a716-446655440002",
-            valeur: 140,
-          },
-        ],
-      });
+        });
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur.id,
+          territoire_code: "NAT-FR",
+          type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_MODIFIEE,
+          date_valeur: new Date("2026-01-01"),
+          date_creation: new Date("2026-01-12"),
+          date_modification: new Date("2026-01-12"),
+          id_auteur_modification: utilisateur.id,
+          ordre: 4,
+          valeur: 140,
+        });
 
-      // When
-      const result =
-        await prismaIndicateurRepository.recupererDetailsParChantierIdEtTerritoire(
-          chantierId,
-          territoireCodes,
-          jalon,
-          dateDerniereExecutionDatajobs,
+        // When
+        const result =
+          await prismaIndicateurRepository.recupererDetailsParChantierIdEtTerritoire(
+            chantier.id,
+            ["NAT-FR"],
+            2025,
+            dateDerniereExecutionDatajobs,
+          );
+
+        // Then
+        expect(result["IND-001"]["NAT-FR"].valeurAvancement).toEqual(110);
+        expect(result["IND-001"]["NAT-FR"].dateValeurAvancement).toEqual(
+          "2026-01-12T00:00:00.000Z",
         );
+        expect(result["IND-001"]["NAT-FR"].proposition).toEqual({
+          valeurAvancement: 140,
+          tauxAvancement: null,
+          tauxAvancementIntermediaire: null,
+          statutTauxAvancement: "CALCULE",
+          auteur: "Jane Doe",
+          dateProposition: "2026-01-12T00:00:00.000Z",
+          dateValeurAvancement: "2026-01-01T00:00:00.000Z",
+          motif: null,
+          sourceDonneeEtMethodeCalcul: null,
+        });
+      }),
+    );
 
-      // Then
-      expect(result["IND-001"]["NAT-FR"].valeurAvancement).toEqual(110);
-      expect(result["IND-001"]["NAT-FR"].dateValeurAvancement).toEqual(
-        "2026-01-12T00:00:00.000Z",
-      );
-      expect(result["IND-001"]["NAT-FR"].proposition).toEqual({
-        valeurAvancement: 140,
-        tauxAvancement: null,
-        tauxAvancementIntermediaire: null,
-        statutTauxAvancement: "CALCULE",
-        auteur: "Jane Doe",
-        dateProposition: "2026-01-12T00:00:00.000Z",
-        dateValeurAvancement: "2026-01-01T00:00:00.000Z",
-        motif: null,
-        sourceDonneeEtMethodeCalcul: null,
-      });
-    });
+    it(
+      "avec une PVA [CREEE, MODIFIEE] sur une date ultérieure, retourne les détails des indicateurs pour un chantier, territoire et dernière proposition",
+      createIntegrationTest(async () => {
+        // Given
+        const chantier = await fixtures.chantierIdentite({ id: "CH-001" });
 
-    it("avec une PVA [CREEE, MODIFIEE] sur une date ultérieure, retourne les détails des indicateurs pour un chantier, territoire et dernière proposition", async () => {
-      // Given
-      const chantierId = "CH-001";
-      const territoireCodes = ["NAT-FR"];
-      const jalon = 2025;
+        await fixtures.chantierTerritoire({
+          id: chantier.id,
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+        });
+        await fixtures.chantierTerritoire({
+          id: chantier.id,
+          territoire_code: "DEPT-01",
+          code_insee: "01",
+          maille: "DEPT",
+          zone_id: "D01",
+        });
 
-      await prisma.chantier_identite.createMany({
-        data: [
-          {
-            id: chantierId,
-            nom: "Chantier 001",
-            ministeres: ["1009"],
-            ministeres_acronymes: ["MINA"],
-          },
-        ],
-      });
+        const indicateur = await fixtures.indicateurIdentite({
+          id: "IND-001",
+          chantier_id: chantier.id,
+          unite_mesure: "kg",
+        });
 
-      await prisma.chantier_territoire.createMany({
-        data: [
-          {
-            id: "CH-001",
-            maille: "NAT",
-            code_insee: "FR",
-            territoire_code: "NAT-FR",
-            zone_id: "FRANCE",
-          },
-          {
-            id: "CH-001",
-            maille: "DEPT",
-            code_insee: "01",
-            territoire_code: "DEPT-01",
-            zone_id: "D01",
-          },
-        ],
-      });
+        await fixtures.indicateurTerritoire({
+          id: indicateur.id,
+          chantier_id: chantier.id,
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+        });
+        await fixtures.indicateurTerritoire({
+          id: indicateur.id,
+          chantier_id: chantier.id,
+          territoire_code: "DEPT-01",
+          code_insee: "01",
+          maille: "DEPT",
+          zone_id: "D01",
+        });
 
-      await prisma.indicateur_identite.createMany({
-        data: [
-          {
-            id: "IND-001",
-            nom: "Indicateur 001",
-            chantier_id: chantierId,
-            type_id: "IMPACT",
-            unite_mesure: "kg",
-          },
-        ],
-      });
+        await fixtures.indicateurTerritoireJalon({
+          id: indicateur.id,
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+          jalon: 2025,
+          valeur_actuelle: 110,
+          date_valeur_actuelle: new Date("2026-01-12"),
+        });
 
-      await prisma.indicateur_territoire.createMany({
-        data: [
-          {
-            id: "IND-001",
-            chantier_id: chantierId,
-            maille: "NAT",
-            territoire_code: "NAT-FR",
-            code_insee: "FR",
-            zone_id: "FRANCE",
-          },
-          {
-            id: "IND-001",
-            chantier_id: chantierId,
-            maille: "DEPT",
-            territoire_code: "DEPT-01",
-            code_insee: "01",
-            zone_id: "D01",
-          },
-        ],
-      });
-
-      await prisma.indicateur_territoire_jalon.createMany({
-        data: [
-          {
-            id: "IND-001",
-            territoire_code: "NAT-FR",
-            code_insee: "FR",
-            maille: "NAT",
-            jalon: 2025,
-            zone_id: "FRANCE",
-            valeur_actuelle: 110,
-            date_valeur_actuelle: new Date("2026-01-12"),
-          },
-        ],
-      });
-
-      await prisma.utilisateur.create({
-        data: {
-          email: "jane.doe@test.com",
+        const utilisateur = await fixtures.utilisateur({
           nom: "Doe",
           prenom: "Jane",
-          id: "550e8400-e29b-41d4-a716-446655440001",
-          date_creation: new Date().toISOString(),
-          profil: {
-            connect: {
-              code: ProfilEnum.DITP_ADMIN,
-            },
-          },
-        },
-      });
+        });
 
-      await prisma.indicateur_territoire_valeur_evenement.createMany({
-        data: [
-          {
-            id: "550e8400-e29b-41d4-a716-446655440000",
-            indic_id: "IND-001",
-            territoire_code: "NAT-FR",
-            type_valeur: "VALEUR_AVANCEMENT",
-            donnees_complementaires: {},
-            type_evenement: EvenementValeurEnum.VALEUR_CREEE,
-            date_valeur: new Date("2026-01-01"),
-            ordre: 1,
-            date_modification: new Date("2026-01-12"),
-            date_creation: new Date("2026-01-12"),
-            id_auteur_modification: "550e8400-e29b-41d4-a716-446655440001",
-            correlation_id: "550e8400-e29b-41d4-a716-446655440002",
-            valeur: 100,
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur.id,
+          territoire_code: "NAT-FR",
+          type_evenement: EvenementValeurEnum.VALEUR_CREEE,
+          date_valeur: new Date("2026-01-01"),
+          date_creation: new Date("2026-01-12"),
+          date_modification: new Date("2026-01-12"),
+          id_auteur_modification: utilisateur.id,
+          ordre: 1,
+          valeur: 100,
+        });
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur.id,
+          territoire_code: "NAT-FR",
+          type_evenement: EvenementValeurEnum.VALEUR_MODIFIEE,
+          date_valeur: new Date("2026-01-01"),
+          date_creation: new Date("2026-01-12"),
+          date_modification: new Date("2026-01-12"),
+          id_auteur_modification: utilisateur.id,
+          ordre: 2,
+          valeur: 110,
+        });
+        // PVA sur une date ultérieure (2026-02-01)
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur.id,
+          territoire_code: "NAT-FR",
+          type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_CREEE,
+          date_valeur: new Date("2026-02-01"),
+          date_creation: new Date("2026-01-12"),
+          date_modification: new Date("2026-01-12"),
+          id_auteur_modification: utilisateur.id,
+          ordre: 3,
+          valeur: 120,
+          donnees_complementaires: {
+            motif: "Motif de la proposition",
+            sourceDonneeEtMethodeCalcul:
+              "Source de la donnée et méthode de calcul",
           },
-          {
-            id: "550e8400-e29b-41d4-a716-446655440001",
-            indic_id: "IND-001",
-            territoire_code: "NAT-FR",
-            type_valeur: "VALEUR_AVANCEMENT",
-            donnees_complementaires: {},
-            type_evenement: EvenementValeurEnum.VALEUR_MODIFIEE,
-            date_valeur: new Date("2026-01-01"),
-            ordre: 2,
-            date_modification: new Date("2026-01-12"),
-            date_creation: new Date("2026-01-12"),
-            id_auteur_modification: "550e8400-e29b-41d4-a716-446655440001",
-            correlation_id: "550e8400-e29b-41d4-a716-446655440002",
-            valeur: 110,
-          },
-          {
-            id: "550e8400-e29b-41d4-a716-446655440002",
-            indic_id: "IND-001",
-            territoire_code: "NAT-FR",
-            type_valeur: "VALEUR_AVANCEMENT",
-            donnees_complementaires: {
-              motif: "Motif de la proposition",
-              sourceDonneeEtMethodeCalcul:
-                "Source de la donnée et méthode de calcul",
-            },
-            type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_CREEE,
-            date_valeur: new Date("2026-02-01"),
-            ordre: 3,
-            date_modification: new Date("2026-01-12"),
-            date_creation: new Date("2026-01-12"),
-            id_auteur_modification: "550e8400-e29b-41d4-a716-446655440001",
-            correlation_id: "550e8400-e29b-41d4-a716-446655440002",
-            valeur: 120,
-          },
-          {
-            id: "550e8400-e29b-41d4-a716-446655440003",
-            indic_id: "IND-001",
-            territoire_code: "NAT-FR",
-            type_valeur: "VALEUR_AVANCEMENT",
-            donnees_complementaires: {},
-            type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_MODIFIEE,
-            date_valeur: new Date("2026-02-01"),
-            ordre: 4,
-            date_modification: new Date("2026-01-12"),
-            date_creation: new Date("2026-01-12"),
-            id_auteur_modification: "550e8400-e29b-41d4-a716-446655440001",
-            correlation_id: "550e8400-e29b-41d4-a716-446655440002",
-            valeur: 140,
-          },
-        ],
-      });
+        });
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur.id,
+          territoire_code: "NAT-FR",
+          type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_MODIFIEE,
+          date_valeur: new Date("2026-02-01"),
+          date_creation: new Date("2026-01-12"),
+          date_modification: new Date("2026-01-12"),
+          id_auteur_modification: utilisateur.id,
+          ordre: 4,
+          valeur: 140,
+        });
 
-      // When
-      const result =
-        await prismaIndicateurRepository.recupererDetailsParChantierIdEtTerritoire(
-          chantierId,
-          territoireCodes,
-          jalon,
-          dateDerniereExecutionDatajobs,
+        // When
+        const result =
+          await prismaIndicateurRepository.recupererDetailsParChantierIdEtTerritoire(
+            chantier.id,
+            ["NAT-FR"],
+            2025,
+            dateDerniereExecutionDatajobs,
+          );
+
+        // Then
+        expect(result["IND-001"]["NAT-FR"].valeurAvancement).toEqual(110);
+        expect(result["IND-001"]["NAT-FR"].dateValeurAvancement).toEqual(
+          "2026-01-12T00:00:00.000Z",
         );
-
-      // Then
-      expect(result["IND-001"]["NAT-FR"].valeurAvancement).toEqual(110);
-      expect(result["IND-001"]["NAT-FR"].dateValeurAvancement).toEqual(
-        "2026-01-12T00:00:00.000Z",
-      );
-      expect(result["IND-001"]["NAT-FR"].proposition).toEqual({
-        valeurAvancement: 140,
-        tauxAvancement: null,
-        tauxAvancementIntermediaire: null,
-        statutTauxAvancement: "CALCULE",
-        auteur: "Jane Doe",
-        dateProposition: "2026-01-12T00:00:00.000Z",
-        dateValeurAvancement: "2026-02-01T00:00:00.000Z",
-        motif: null,
-        sourceDonneeEtMethodeCalcul: null,
-      });
-    });
+        expect(result["IND-001"]["NAT-FR"].proposition).toEqual({
+          valeurAvancement: 140,
+          tauxAvancement: null,
+          tauxAvancementIntermediaire: null,
+          statutTauxAvancement: "CALCULE",
+          auteur: "Jane Doe",
+          dateProposition: "2026-01-12T00:00:00.000Z",
+          dateValeurAvancement: "2026-02-01T00:00:00.000Z",
+          motif: null,
+          sourceDonneeEtMethodeCalcul: null,
+        });
+      }),
+    );
 
     it.each([
       [EvenementValeurEnum.PROPOSITION_VALEUR_SUPPRIMEE],
@@ -1209,190 +907,136 @@ describe("PrismaIndicateurRepository", () => {
       [EvenementValeurEnum.PROPOSITION_VALEUR_IGNOREE_VALEUR_HISTORISEE],
     ])(
       "avec une PVA [CREEE, MODIFIEE, %s], retourne les détails des indicateurs pour un chantier, territoire et aucune proposition",
-      async (evenement) => {
+      createIntegrationTest(async (_prisma, evenement) => {
         // Given
-        const chantierId = "CH-001";
         const territoireCodes = ["NAT-FR"];
         const jalon = 2025;
 
-        await prisma.chantier_identite.createMany({
-          data: [
-            {
-              id: chantierId,
-              nom: "Chantier 001",
-              ministeres: ["1009"],
-              ministeres_acronymes: ["MINA"],
-            },
-          ],
+        const chantier = await fixtures.chantierIdentite({
+          id: "CH-001",
+          nom: "Chantier 001",
+          ministeres: ["1009"],
+          ministeres_acronymes: ["MINA"],
         });
 
-        await prisma.chantier_territoire.createMany({
-          data: [
-            {
-              id: "CH-001",
-              maille: "NAT",
-              code_insee: "FR",
-              territoire_code: "NAT-FR",
-              zone_id: "FRANCE",
-            },
-            {
-              id: "CH-001",
-              maille: "DEPT",
-              code_insee: "01",
-              territoire_code: "DEPT-01",
-              zone_id: "D01",
-            },
-          ],
+        await fixtures.chantierTerritoire({
+          id: chantier.id,
+          territoire_code: "NAT-FR",
+          maille: "NAT",
+          code_insee: "FR",
+          zone_id: "FRANCE",
+        });
+        await fixtures.chantierTerritoire({
+          id: chantier.id,
+          territoire_code: "DEPT-01",
+          maille: "DEPT",
+          code_insee: "01",
+          zone_id: "D01",
         });
 
-        await prisma.indicateur_identite.createMany({
-          data: [
-            {
-              id: "IND-001",
-              nom: "Indicateur 001",
-              chantier_id: chantierId,
-              type_id: "IMPACT",
-              unite_mesure: "kg",
-            },
-          ],
+        const indicateur = await fixtures.indicateurIdentite({
+          id: "IND-001",
+          nom: "Indicateur 001",
+          chantier_id: chantier.id,
+          unite_mesure: "kg",
         });
 
-        await prisma.indicateur_territoire.createMany({
-          data: [
-            {
-              id: "IND-001",
-              chantier_id: chantierId,
-              maille: "NAT",
-              territoire_code: "NAT-FR",
-              code_insee: "FR",
-              zone_id: "FRANCE",
-            },
-            {
-              id: "IND-001",
-              chantier_id: chantierId,
-              maille: "DEPT",
-              territoire_code: "DEPT-01",
-              code_insee: "01",
-              zone_id: "D01",
-            },
-          ],
+        await fixtures.indicateurTerritoire({
+          id: indicateur.id,
+          chantier_id: chantier.id,
+          territoire_code: "NAT-FR",
+          maille: "NAT",
+          code_insee: "FR",
+          zone_id: "FRANCE",
+        });
+        await fixtures.indicateurTerritoire({
+          id: indicateur.id,
+          chantier_id: chantier.id,
+          territoire_code: "DEPT-01",
+          maille: "DEPT",
+          code_insee: "01",
+          zone_id: "D01",
         });
 
-        await prisma.indicateur_territoire_jalon.createMany({
-          data: [
-            {
-              id: "IND-001",
-              territoire_code: "NAT-FR",
-              code_insee: "FR",
-              maille: "NAT",
-              jalon: 2025,
-              zone_id: "FRANCE",
-              valeur_actuelle: 110,
-              date_valeur_actuelle: new Date("2026-01-12"),
-            },
-          ],
+        await fixtures.indicateurTerritoireJalon({
+          id: indicateur.id,
+          territoire_code: "NAT-FR",
+          maille: "NAT",
+          code_insee: "FR",
+          zone_id: "FRANCE",
+          jalon: 2025,
+          valeur_actuelle: 110,
+          date_valeur_actuelle: new Date("2026-01-12"),
         });
 
-        await prisma.utilisateur.create({
-          data: {
-            email: "jane.doe@test.com",
-            nom: "Doe",
-            prenom: "Jane",
-            id: "550e8400-e29b-41d4-a716-446655440001",
-            date_creation: new Date().toISOString(),
-            profil: {
-              connect: {
-                code: ProfilEnum.DITP_ADMIN,
-              },
-            },
-          },
+        const utilisateur = await fixtures.utilisateur();
+        const correlationId = "550e8400-e29b-41d4-a716-446655440002";
+
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur.id,
+          territoire_code: "NAT-FR",
+          type_evenement: EvenementValeurEnum.VALEUR_CREEE,
+          id_auteur_modification: utilisateur.id,
+          date_valeur: new Date("2026-01-12"),
+          ordre: 1,
+          date_modification: new Date("2026-01-12"),
+          date_creation: new Date("2026-01-12"),
+          correlation_id: correlationId,
+          valeur: 100,
         });
-
-        await prisma.indicateur_territoire_valeur_evenement.createMany({
-          data: [
-            {
-              id: "550e8400-e29b-41d4-a716-446655440000",
-              indic_id: "IND-001",
-              territoire_code: "NAT-FR",
-              type_valeur: "VALEUR_AVANCEMENT",
-              donnees_complementaires: {},
-              type_evenement: EvenementValeurEnum.VALEUR_CREEE,
-              date_valeur: new Date("2026-01-12"),
-              ordre: 1,
-              date_modification: new Date("2026-01-12"),
-              date_creation: new Date("2026-01-12"),
-              id_auteur_modification: "550e8400-e29b-41d4-a716-446655440001",
-              correlation_id: "550e8400-e29b-41d4-a716-446655440002",
-              valeur: 100,
-            },
-            {
-              id: "550e8400-e29b-41d4-a716-446655440001",
-              indic_id: "IND-001",
-              territoire_code: "NAT-FR",
-              type_valeur: "VALEUR_AVANCEMENT",
-              donnees_complementaires: {},
-              type_evenement: EvenementValeurEnum.VALEUR_MODIFIEE,
-              date_valeur: new Date("2026-01-12"),
-              ordre: 2,
-              date_modification: new Date("2026-01-12"),
-              date_creation: new Date("2026-01-12"),
-              id_auteur_modification: "550e8400-e29b-41d4-a716-446655440001",
-              correlation_id: "550e8400-e29b-41d4-a716-446655440002",
-              valeur: 110,
-            },
-            {
-              id: "550e8400-e29b-41d4-a716-446655440002",
-              indic_id: "IND-001",
-              territoire_code: "NAT-FR",
-              type_valeur: "VALEUR_AVANCEMENT",
-              donnees_complementaires: {},
-              type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_CREEE,
-              date_valeur: new Date("2026-01-12"),
-              ordre: 3,
-              date_modification: new Date("2026-01-12"),
-              date_creation: new Date("2026-01-12"),
-              id_auteur_modification: "550e8400-e29b-41d4-a716-446655440001",
-              correlation_id: "550e8400-e29b-41d4-a716-446655440002",
-              valeur: 120,
-            },
-            {
-              id: "550e8400-e29b-41d4-a716-446655440003",
-              indic_id: "IND-001",
-              territoire_code: "NAT-FR",
-              type_valeur: "VALEUR_AVANCEMENT",
-              donnees_complementaires: {},
-              type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_MODIFIEE,
-              date_valeur: new Date("2026-01-12"),
-              ordre: 4,
-              date_modification: new Date("2026-01-12"),
-              date_creation: new Date("2026-01-14"),
-              id_auteur_modification: "550e8400-e29b-41d4-a716-446655440001",
-              correlation_id: "550e8400-e29b-41d4-a716-446655440002",
-              valeur: 140,
-            },
-
-            {
-              id: "550e8400-e29b-41d4-a716-446655440004",
-              indic_id: "IND-001",
-              territoire_code: "NAT-FR",
-              type_valeur: "VALEUR_AVANCEMENT",
-              donnees_complementaires: {},
-              type_evenement: evenement,
-              date_valeur: new Date("2026-01-12"),
-              ordre: 5,
-              date_modification: new Date("2026-01-12"),
-              date_creation: new Date("2026-01-14"),
-              id_auteur_modification: "550e8400-e29b-41d4-a716-446655440001",
-              correlation_id: "550e8400-e29b-41d4-a716-446655440002",
-              valeur: 140,
-            },
-          ],
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur.id,
+          territoire_code: "NAT-FR",
+          type_evenement: EvenementValeurEnum.VALEUR_MODIFIEE,
+          id_auteur_modification: utilisateur.id,
+          date_valeur: new Date("2026-01-12"),
+          ordre: 2,
+          date_modification: new Date("2026-01-12"),
+          date_creation: new Date("2026-01-12"),
+          correlation_id: correlationId,
+          valeur: 110,
+        });
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur.id,
+          territoire_code: "NAT-FR",
+          type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_CREEE,
+          id_auteur_modification: utilisateur.id,
+          date_valeur: new Date("2026-01-12"),
+          ordre: 3,
+          date_modification: new Date("2026-01-12"),
+          date_creation: new Date("2026-01-12"),
+          correlation_id: correlationId,
+          valeur: 120,
+        });
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur.id,
+          territoire_code: "NAT-FR",
+          type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_MODIFIEE,
+          id_auteur_modification: utilisateur.id,
+          date_valeur: new Date("2026-01-12"),
+          ordre: 4,
+          date_modification: new Date("2026-01-12"),
+          date_creation: new Date("2026-01-14"),
+          correlation_id: correlationId,
+          valeur: 140,
+        });
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur.id,
+          territoire_code: "NAT-FR",
+          type_evenement: evenement,
+          id_auteur_modification: utilisateur.id,
+          date_valeur: new Date("2026-01-12"),
+          ordre: 5,
+          date_modification: new Date("2026-01-12"),
+          date_creation: new Date("2026-01-14"),
+          correlation_id: correlationId,
+          valeur: 140,
         });
 
         // When
         const result =
           await prismaIndicateurRepository.recupererDetailsParChantierIdEtTerritoire(
-            chantierId,
+            chantier.id,
             territoireCodes,
             jalon,
             dateDerniereExecutionDatajobs,
@@ -1404,7 +1048,7 @@ describe("PrismaIndicateurRepository", () => {
           "2026-01-12T00:00:00.000Z",
         );
         expect(result["IND-001"]["NAT-FR"].proposition).toBeNull();
-      },
+      }),
     );
 
     it.each([
@@ -1412,190 +1056,136 @@ describe("PrismaIndicateurRepository", () => {
       EvenementValeurEnum.PROPOSITION_VALEUR_ACCEPTEE_AVEC_MODIFICATION,
     ])(
       "avec une PVA [CREEE, MODIFIEE, %s], retourne les détails des indicateurs pour un chantier, territoire et la proposition",
-      async (evenement) => {
+      createIntegrationTest(async (_prisma, evenement) => {
         // Given
-        const chantierId = "CH-001";
         const territoireCodes = ["NAT-FR"];
         const jalon = 2025;
 
-        await prisma.chantier_identite.createMany({
-          data: [
-            {
-              id: chantierId,
-              nom: "Chantier 001",
-              ministeres: ["1009"],
-              ministeres_acronymes: ["MINA"],
-            },
-          ],
+        const chantier = await fixtures.chantierIdentite({
+          id: "CH-001",
+          nom: "Chantier 001",
+          ministeres: ["1009"],
+          ministeres_acronymes: ["MINA"],
         });
 
-        await prisma.chantier_territoire.createMany({
-          data: [
-            {
-              id: "CH-001",
-              maille: "NAT",
-              code_insee: "FR",
-              territoire_code: "NAT-FR",
-              zone_id: "FRANCE",
-            },
-            {
-              id: "CH-001",
-              maille: "DEPT",
-              code_insee: "01",
-              territoire_code: "DEPT-01",
-              zone_id: "D01",
-            },
-          ],
+        await fixtures.chantierTerritoire({
+          id: chantier.id,
+          territoire_code: "NAT-FR",
+          maille: "NAT",
+          code_insee: "FR",
+          zone_id: "FRANCE",
+        });
+        await fixtures.chantierTerritoire({
+          id: chantier.id,
+          territoire_code: "DEPT-01",
+          maille: "DEPT",
+          code_insee: "01",
+          zone_id: "D01",
         });
 
-        await prisma.indicateur_identite.createMany({
-          data: [
-            {
-              id: "IND-001",
-              nom: "Indicateur 001",
-              chantier_id: chantierId,
-              type_id: "IMPACT",
-              unite_mesure: "kg",
-            },
-          ],
+        const indicateur = await fixtures.indicateurIdentite({
+          id: "IND-001",
+          nom: "Indicateur 001",
+          chantier_id: chantier.id,
+          unite_mesure: "kg",
         });
 
-        await prisma.indicateur_territoire.createMany({
-          data: [
-            {
-              id: "IND-001",
-              chantier_id: chantierId,
-              maille: "NAT",
-              territoire_code: "NAT-FR",
-              code_insee: "FR",
-              zone_id: "FRANCE",
-            },
-            {
-              id: "IND-001",
-              chantier_id: chantierId,
-              maille: "DEPT",
-              territoire_code: "DEPT-01",
-              code_insee: "01",
-              zone_id: "D01",
-            },
-          ],
+        await fixtures.indicateurTerritoire({
+          id: indicateur.id,
+          chantier_id: chantier.id,
+          territoire_code: "NAT-FR",
+          maille: "NAT",
+          code_insee: "FR",
+          zone_id: "FRANCE",
+        });
+        await fixtures.indicateurTerritoire({
+          id: indicateur.id,
+          chantier_id: chantier.id,
+          territoire_code: "DEPT-01",
+          maille: "DEPT",
+          code_insee: "01",
+          zone_id: "D01",
         });
 
-        await prisma.indicateur_territoire_jalon.createMany({
-          data: [
-            {
-              id: "IND-001",
-              territoire_code: "NAT-FR",
-              code_insee: "FR",
-              maille: "NAT",
-              jalon: 2025,
-              zone_id: "FRANCE",
-              valeur_actuelle: 110,
-              date_valeur_actuelle: new Date("2026-01-12"),
-            },
-          ],
+        await fixtures.indicateurTerritoireJalon({
+          id: indicateur.id,
+          territoire_code: "NAT-FR",
+          maille: "NAT",
+          code_insee: "FR",
+          zone_id: "FRANCE",
+          jalon: 2025,
+          valeur_actuelle: 110,
+          date_valeur_actuelle: new Date("2026-01-12"),
         });
 
-        await prisma.utilisateur.create({
-          data: {
-            email: "jane.doe@test.com",
-            nom: "Doe",
-            prenom: "Jane",
-            id: "550e8400-e29b-41d4-a716-446655440001",
-            date_creation: new Date().toISOString(),
-            profil: {
-              connect: {
-                code: ProfilEnum.DITP_ADMIN,
-              },
-            },
-          },
+        const utilisateur = await fixtures.utilisateur();
+        const correlationId = "550e8400-e29b-41d4-a716-446655440002";
+
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur.id,
+          territoire_code: "NAT-FR",
+          type_evenement: EvenementValeurEnum.VALEUR_CREEE,
+          id_auteur_modification: utilisateur.id,
+          date_valeur: new Date("2026-01-12"),
+          ordre: 1,
+          date_modification: new Date("2026-01-12"),
+          date_creation: new Date("2026-01-12"),
+          correlation_id: correlationId,
+          valeur: 100,
         });
-
-        await prisma.indicateur_territoire_valeur_evenement.createMany({
-          data: [
-            {
-              id: "550e8400-e29b-41d4-a716-446655440000",
-              indic_id: "IND-001",
-              territoire_code: "NAT-FR",
-              type_valeur: "VALEUR_AVANCEMENT",
-              donnees_complementaires: {},
-              type_evenement: EvenementValeurEnum.VALEUR_CREEE,
-              date_valeur: new Date("2026-01-12"),
-              ordre: 1,
-              date_modification: new Date("2026-01-12"),
-              date_creation: new Date("2026-01-12"),
-              id_auteur_modification: "550e8400-e29b-41d4-a716-446655440001",
-              correlation_id: "550e8400-e29b-41d4-a716-446655440002",
-              valeur: 100,
-            },
-            {
-              id: "550e8400-e29b-41d4-a716-446655440001",
-              indic_id: "IND-001",
-              territoire_code: "NAT-FR",
-              type_valeur: "VALEUR_AVANCEMENT",
-              donnees_complementaires: {},
-              type_evenement: EvenementValeurEnum.VALEUR_MODIFIEE,
-              date_valeur: new Date("2026-01-12"),
-              ordre: 2,
-              date_modification: new Date("2026-01-12"),
-              date_creation: new Date("2026-01-12"),
-              id_auteur_modification: "550e8400-e29b-41d4-a716-446655440001",
-              correlation_id: "550e8400-e29b-41d4-a716-446655440002",
-              valeur: 110,
-            },
-            {
-              id: "550e8400-e29b-41d4-a716-446655440002",
-              indic_id: "IND-001",
-              territoire_code: "NAT-FR",
-              type_valeur: "VALEUR_AVANCEMENT",
-              donnees_complementaires: {},
-              type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_CREEE,
-              date_valeur: new Date("2026-01-12"),
-              ordre: 3,
-              date_modification: new Date("2026-01-12"),
-              date_creation: new Date("2026-01-12"),
-              id_auteur_modification: "550e8400-e29b-41d4-a716-446655440001",
-              correlation_id: "550e8400-e29b-41d4-a716-446655440002",
-              valeur: 120,
-            },
-            {
-              id: "550e8400-e29b-41d4-a716-446655440003",
-              indic_id: "IND-001",
-              territoire_code: "NAT-FR",
-              type_valeur: "VALEUR_AVANCEMENT",
-              donnees_complementaires: {},
-              type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_MODIFIEE,
-              date_valeur: new Date("2026-01-12"),
-              ordre: 4,
-              date_modification: new Date("2026-01-12"),
-              date_creation: new Date("2026-01-14"),
-              id_auteur_modification: "550e8400-e29b-41d4-a716-446655440001",
-              correlation_id: "550e8400-e29b-41d4-a716-446655440002",
-              valeur: 140,
-            },
-
-            {
-              id: "550e8400-e29b-41d4-a716-446655440004",
-              indic_id: "IND-001",
-              territoire_code: "NAT-FR",
-              type_valeur: "VALEUR_AVANCEMENT",
-              donnees_complementaires: {},
-              type_evenement: evenement,
-              date_valeur: new Date("2026-01-12"),
-              ordre: 5,
-              date_modification: new Date("2026-01-12"),
-              date_creation: new Date("2026-01-14"),
-              id_auteur_modification: "550e8400-e29b-41d4-a716-446655440001",
-              correlation_id: "550e8400-e29b-41d4-a716-446655440002",
-              valeur: 140,
-            },
-          ],
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur.id,
+          territoire_code: "NAT-FR",
+          type_evenement: EvenementValeurEnum.VALEUR_MODIFIEE,
+          id_auteur_modification: utilisateur.id,
+          date_valeur: new Date("2026-01-12"),
+          ordre: 2,
+          date_modification: new Date("2026-01-12"),
+          date_creation: new Date("2026-01-12"),
+          correlation_id: correlationId,
+          valeur: 110,
+        });
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur.id,
+          territoire_code: "NAT-FR",
+          type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_CREEE,
+          id_auteur_modification: utilisateur.id,
+          date_valeur: new Date("2026-01-12"),
+          ordre: 3,
+          date_modification: new Date("2026-01-12"),
+          date_creation: new Date("2026-01-12"),
+          correlation_id: correlationId,
+          valeur: 120,
+        });
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur.id,
+          territoire_code: "NAT-FR",
+          type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_MODIFIEE,
+          id_auteur_modification: utilisateur.id,
+          date_valeur: new Date("2026-01-12"),
+          ordre: 4,
+          date_modification: new Date("2026-01-12"),
+          date_creation: new Date("2026-01-14"),
+          correlation_id: correlationId,
+          valeur: 140,
+        });
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur.id,
+          territoire_code: "NAT-FR",
+          type_evenement: evenement,
+          id_auteur_modification: utilisateur.id,
+          date_valeur: new Date("2026-01-12"),
+          ordre: 5,
+          date_modification: new Date("2026-01-12"),
+          date_creation: new Date("2026-01-14"),
+          correlation_id: correlationId,
+          valeur: 140,
         });
 
         // When
         const result =
           await prismaIndicateurRepository.recupererDetailsParChantierIdEtTerritoire(
-            chantierId,
+            chantier.id,
             territoireCodes,
             jalon,
             dateDerniereExecutionDatajobs,
@@ -1607,239 +1197,174 @@ describe("PrismaIndicateurRepository", () => {
           "2026-01-12T00:00:00.000Z",
         );
         expect(result["IND-001"]["NAT-FR"].proposition).toBeNull();
-      },
+      }),
     );
 
-    it("avec une PVA [CREEE, MODIFIEE, SUPPRIMEE, CREEE], retourne les détails des indicateurs pour un chantier, territoire et nouvelle proposition", async () => {
-      // Given
-      const chantierId = "CH-001";
-      const territoireCodes = ["NAT-FR"];
-      const jalon = 2025;
+    it(
+      "avec une PVA [CREEE, MODIFIEE, SUPPRIMEE, CREEE], retourne les détails des indicateurs pour un chantier, territoire et nouvelle proposition",
+      createIntegrationTest(async () => {
+        // Given
+        const chantier = await fixtures.chantierIdentite({ id: "CH-001" });
 
-      await prisma.chantier_identite.createMany({
-        data: [
-          {
-            id: chantierId,
-            nom: "Chantier 001",
-            ministeres: ["1009"],
-            ministeres_acronymes: ["MINA"],
-          },
-        ],
-      });
+        await fixtures.chantierTerritoire({
+          id: chantier.id,
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+        });
+        await fixtures.chantierTerritoire({
+          id: chantier.id,
+          territoire_code: "DEPT-01",
+          code_insee: "01",
+          maille: "DEPT",
+          zone_id: "D01",
+        });
 
-      await prisma.chantier_territoire.createMany({
-        data: [
-          {
-            id: "CH-001",
-            maille: "NAT",
-            code_insee: "FR",
-            territoire_code: "NAT-FR",
-            zone_id: "FRANCE",
-          },
-          {
-            id: "CH-001",
-            maille: "DEPT",
-            code_insee: "01",
-            territoire_code: "DEPT-01",
-            zone_id: "D01",
-          },
-        ],
-      });
+        const indicateur = await fixtures.indicateurIdentite({
+          id: "IND-001",
+          chantier_id: chantier.id,
+          unite_mesure: "kg",
+        });
 
-      await prisma.indicateur_identite.createMany({
-        data: [
-          {
-            id: "IND-001",
-            nom: "Indicateur 001",
-            chantier_id: chantierId,
-            type_id: "IMPACT",
-            unite_mesure: "kg",
-          },
-        ],
-      });
+        await fixtures.indicateurTerritoire({
+          id: indicateur.id,
+          chantier_id: chantier.id,
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+        });
+        await fixtures.indicateurTerritoire({
+          id: indicateur.id,
+          chantier_id: chantier.id,
+          territoire_code: "DEPT-01",
+          code_insee: "01",
+          maille: "DEPT",
+          zone_id: "D01",
+        });
 
-      await prisma.indicateur_territoire.createMany({
-        data: [
-          {
-            id: "IND-001",
-            chantier_id: chantierId,
-            maille: "NAT",
-            territoire_code: "NAT-FR",
-            code_insee: "FR",
-            zone_id: "FRANCE",
-          },
-          {
-            id: "IND-001",
-            chantier_id: chantierId,
-            maille: "DEPT",
-            territoire_code: "DEPT-01",
-            code_insee: "01",
-            zone_id: "D01",
-          },
-        ],
-      });
+        await fixtures.indicateurTerritoireJalon({
+          id: indicateur.id,
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+          jalon: 2025,
+          valeur_actuelle: 110,
+          date_valeur_actuelle: new Date("2026-01-12"),
+        });
 
-      await prisma.indicateur_territoire_jalon.createMany({
-        data: [
-          {
-            id: "IND-001",
-            territoire_code: "NAT-FR",
-            code_insee: "FR",
-            maille: "NAT",
-            jalon: 2025,
-            zone_id: "FRANCE",
-            valeur_actuelle: 110,
-            date_valeur_actuelle: new Date("2026-01-12"),
-          },
-        ],
-      });
-
-      await prisma.utilisateur.create({
-        data: {
-          email: "jane.doe@test.com",
+        const utilisateur = await fixtures.utilisateur({
           nom: "Doe",
           prenom: "Jane",
-          id: "550e8400-e29b-41d4-a716-446655440001",
-          date_creation: new Date().toISOString(),
-          profil: {
-            connect: {
-              code: ProfilEnum.DITP_ADMIN,
-            },
-          },
-        },
-      });
+        });
 
-      await prisma.indicateur_territoire_valeur_evenement.createMany({
-        data: [
-          {
-            id: "550e8400-e29b-41d4-a716-446655440000",
-            indic_id: "IND-001",
-            territoire_code: "NAT-FR",
-            type_valeur: "VALEUR_AVANCEMENT",
-            donnees_complementaires: {},
-            type_evenement: EvenementValeurEnum.VALEUR_CREEE,
-            date_valeur: new Date("2026-01-01"),
-            ordre: 1,
-            date_modification: new Date("2026-01-12"),
-            date_creation: new Date("2026-01-12"),
-            id_auteur_modification: "550e8400-e29b-41d4-a716-446655440001",
-            correlation_id: "550e8400-e29b-41d4-a716-446655440002",
-            valeur: 100,
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur.id,
+          territoire_code: "NAT-FR",
+          type_evenement: EvenementValeurEnum.VALEUR_CREEE,
+          date_valeur: new Date("2026-01-01"),
+          date_creation: new Date("2026-01-12"),
+          date_modification: new Date("2026-01-12"),
+          id_auteur_modification: utilisateur.id,
+          ordre: 1,
+          valeur: 100,
+        });
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur.id,
+          territoire_code: "NAT-FR",
+          type_evenement: EvenementValeurEnum.VALEUR_MODIFIEE,
+          date_valeur: new Date("2026-01-01"),
+          date_creation: new Date("2026-01-12"),
+          date_modification: new Date("2026-01-12"),
+          id_auteur_modification: utilisateur.id,
+          ordre: 2,
+          valeur: 110,
+        });
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur.id,
+          territoire_code: "NAT-FR",
+          type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_CREEE,
+          date_valeur: new Date("2026-01-01"),
+          date_creation: new Date("2026-01-12"),
+          date_modification: new Date("2026-01-12"),
+          id_auteur_modification: utilisateur.id,
+          ordre: 3,
+          valeur: 120,
+          donnees_complementaires: {
+            motif: "Motif de la proposition",
+            source_donnee_methode_calcul:
+              "Source de la donnée et méthode de calcul",
           },
-          {
-            id: "550e8400-e29b-41d4-a716-446655440001",
-            indic_id: "IND-001",
-            territoire_code: "NAT-FR",
-            type_valeur: "VALEUR_AVANCEMENT",
-            donnees_complementaires: {},
-            type_evenement: EvenementValeurEnum.VALEUR_MODIFIEE,
-            date_valeur: new Date("2026-01-01"),
-            ordre: 2,
-            date_modification: new Date("2026-01-12"),
-            date_creation: new Date("2026-01-12"),
-            id_auteur_modification: "550e8400-e29b-41d4-a716-446655440001",
-            correlation_id: "550e8400-e29b-41d4-a716-446655440002",
-            valeur: 110,
+        });
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur.id,
+          territoire_code: "NAT-FR",
+          type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_MODIFIEE,
+          date_valeur: new Date("2026-01-01"),
+          date_creation: new Date("2026-01-12"),
+          date_modification: new Date("2026-01-12"),
+          id_auteur_modification: utilisateur.id,
+          ordre: 4,
+          valeur: 140,
+        });
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur.id,
+          territoire_code: "NAT-FR",
+          type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_SUPPRIMEE,
+          date_valeur: new Date("2026-01-01"),
+          date_creation: new Date("2026-01-12"),
+          date_modification: new Date("2026-01-12"),
+          id_auteur_modification: utilisateur.id,
+          ordre: 5,
+          valeur: 140,
+        });
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur.id,
+          territoire_code: "NAT-FR",
+          type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_CREEE,
+          date_valeur: new Date("2026-01-01"),
+          date_creation: new Date("2026-01-12"),
+          date_modification: new Date("2026-01-12"),
+          id_auteur_modification: utilisateur.id,
+          ordre: 6,
+          valeur: 150,
+          donnees_complementaires: {
+            motif: "Motif de la proposition 2",
+            source_donnee_methode_calcul:
+              "Source de la donnée et méthode de calcul 2",
           },
-          {
-            id: "550e8400-e29b-41d4-a716-446655440002",
-            indic_id: "IND-001",
-            territoire_code: "NAT-FR",
-            type_valeur: "VALEUR_AVANCEMENT",
-            donnees_complementaires: {
-              motif: "Motif de la proposition",
-              source_donnee_methode_calcul:
-                "Source de la donnée et méthode de calcul",
-            },
-            type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_CREEE,
-            date_valeur: new Date("2026-01-01"),
-            ordre: 3,
-            date_modification: new Date("2026-01-12"),
-            date_creation: new Date("2026-01-12"),
-            id_auteur_modification: "550e8400-e29b-41d4-a716-446655440001",
-            correlation_id: "550e8400-e29b-41d4-a716-446655440002",
-            valeur: 120,
-          },
-          {
-            id: "550e8400-e29b-41d4-a716-446655440003",
-            indic_id: "IND-001",
-            territoire_code: "NAT-FR",
-            type_valeur: "VALEUR_AVANCEMENT",
-            donnees_complementaires: {},
-            type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_MODIFIEE,
-            date_valeur: new Date("2026-01-01"),
-            ordre: 4,
-            date_modification: new Date("2026-01-12"),
-            date_creation: new Date("2026-01-12"),
-            id_auteur_modification: "550e8400-e29b-41d4-a716-446655440001",
-            correlation_id: "550e8400-e29b-41d4-a716-446655440002",
-            valeur: 140,
-          },
+        });
 
-          {
-            id: "550e8400-e29b-41d4-a716-446655440004",
-            indic_id: "IND-001",
-            territoire_code: "NAT-FR",
-            type_valeur: "VALEUR_AVANCEMENT",
-            donnees_complementaires: {},
-            type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_SUPPRIMEE,
-            date_valeur: new Date("2026-01-01"),
-            ordre: 5,
-            date_modification: new Date("2026-01-12"),
-            date_creation: new Date("2026-01-12"),
-            id_auteur_modification: "550e8400-e29b-41d4-a716-446655440001",
-            correlation_id: "550e8400-e29b-41d4-a716-446655440002",
-            valeur: 140,
-          },
-          {
-            id: "550e8400-e29b-41d4-a716-446655440005",
-            indic_id: "IND-001",
-            territoire_code: "NAT-FR",
-            type_valeur: "VALEUR_AVANCEMENT",
-            donnees_complementaires: {
-              motif: "Motif de la proposition 2",
-              source_donnee_methode_calcul:
-                "Source de la donnée et méthode de calcul 2",
-            },
-            type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_CREEE,
-            date_valeur: new Date("2026-01-01"),
-            ordre: 6,
-            date_modification: new Date("2026-01-12"),
-            date_creation: new Date("2026-01-12"),
-            id_auteur_modification: "550e8400-e29b-41d4-a716-446655440001",
-            correlation_id: "550e8400-e29b-41d4-a716-446655440002",
-            valeur: 150,
-          },
-        ],
-      });
+        // When
+        const result =
+          await prismaIndicateurRepository.recupererDetailsParChantierIdEtTerritoire(
+            chantier.id,
+            ["NAT-FR"],
+            2025,
+            dateDerniereExecutionDatajobs,
+          );
 
-      // When
-      const result =
-        await prismaIndicateurRepository.recupererDetailsParChantierIdEtTerritoire(
-          chantierId,
-          territoireCodes,
-          jalon,
-          dateDerniereExecutionDatajobs,
+        // Then
+        expect(result["IND-001"]["NAT-FR"].valeurAvancement).toEqual(110);
+        expect(result["IND-001"]["NAT-FR"].dateValeurAvancement).toEqual(
+          "2026-01-12T00:00:00.000Z",
         );
-
-      // Then
-      expect(result["IND-001"]["NAT-FR"].valeurAvancement).toEqual(110);
-      expect(result["IND-001"]["NAT-FR"].dateValeurAvancement).toEqual(
-        "2026-01-12T00:00:00.000Z",
-      );
-      expect(result["IND-001"]["NAT-FR"].proposition).toEqual({
-        valeurAvancement: 150,
-        tauxAvancement: null,
-        tauxAvancementIntermediaire: null,
-        statutTauxAvancement: "CALCULE",
-        auteur: "Jane Doe",
-        dateProposition: "2026-01-12T00:00:00.000Z",
-        dateValeurAvancement: "2026-01-01T00:00:00.000Z",
-        motif: "Motif de la proposition 2",
-        sourceDonneeEtMethodeCalcul:
-          "Source de la donnée et méthode de calcul 2",
-      });
-    });
+        expect(result["IND-001"]["NAT-FR"].proposition).toEqual({
+          valeurAvancement: 150,
+          tauxAvancement: null,
+          tauxAvancementIntermediaire: null,
+          statutTauxAvancement: "CALCULE",
+          auteur: "Jane Doe",
+          dateProposition: "2026-01-12T00:00:00.000Z",
+          dateValeurAvancement: "2026-01-01T00:00:00.000Z",
+          motif: "Motif de la proposition 2",
+          sourceDonneeEtMethodeCalcul:
+            "Source de la donnée et méthode de calcul 2",
+        });
+      }),
+    );
 
     it("lorsque le dernier évènement en date est de type PROPOSITION_VALEUR_REFUSEE, le propositionStatutTerritoire est null et le propositionStatutDirectionProjet est du même type avec la date de l'événement", async () => {
       // Given
@@ -2303,1404 +1828,1035 @@ describe("PrismaIndicateurRepository", () => {
       },
     );
 
-    it("lorsque le dernier évènement en date est de type PROPOSITION_VALEUR_SUPPRIMEE, le propositionStatutTerritoire est PROPOSITION_VALEUR_SUPPRIMEE et le propositionStatutDirectionProjet est null", async () => {
-      // Given
-      const chantierId = "CH-001";
-      const territoireCodes = ["NAT-FR"];
-      const jalon = 2025;
+    it(
+      "lorsque le dernier évènement en date est de type PROPOSITION_VALEUR_SUPPRIMEE, le propositionStatutTerritoire est PROPOSITION_VALEUR_SUPPRIMEE et le propositionStatutDirectionProjet est null",
+      createIntegrationTest(async () => {
+        // Given
+        const chantier = await fixtures.chantierIdentite({ id: "CH-001" });
 
-      await prisma.chantier_identite.createMany({
-        data: [
-          {
-            id: chantierId,
-            nom: "Chantier 001",
-            ministeres: ["1009"],
-            ministeres_acronymes: ["MINA"],
-          },
-        ],
-      });
+        await fixtures.chantierTerritoire({
+          id: chantier.id,
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+        });
 
-      await prisma.chantier_territoire.createMany({
-        data: [
-          {
-            id: "CH-001",
-            maille: "NAT",
-            code_insee: "FR",
-            territoire_code: "NAT-FR",
-            zone_id: "FRANCE",
-          },
-        ],
-      });
+        const indicateur = await fixtures.indicateurIdentite({
+          id: "IND-001",
+          chantier_id: chantier.id,
+        });
 
-      await prisma.indicateur_identite.createMany({
-        data: [
-          {
-            id: "IND-001",
-            nom: "Indicateur 001",
-            chantier_id: chantierId,
-            type_id: "IMPACT",
-          },
-        ],
-      });
+        await fixtures.indicateurTerritoire({
+          id: indicateur.id,
+          chantier_id: chantier.id,
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+          date_valeur_actuelle_mandat: new Date("2026-01-12"),
+        });
 
-      await prisma.indicateur_territoire.createMany({
-        data: [
-          {
-            id: "IND-001",
-            chantier_id: chantierId,
-            maille: "NAT",
-            territoire_code: "NAT-FR",
-            code_insee: "FR",
-            zone_id: "FRANCE",
-            date_valeur_actuelle_mandat: new Date("2026-01-12"),
-          },
-        ],
-      });
+        await fixtures.indicateurTerritoireJalon({
+          id: indicateur.id,
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+          jalon: 2025,
+          date_valeur_actuelle: new Date("2026-01-12"),
+        });
 
-      await prisma.indicateur_territoire_jalon.createMany({
-        data: [
-          {
-            id: "IND-001",
-            territoire_code: "NAT-FR",
-            code_insee: "FR",
-            maille: "NAT",
-            jalon: 2025,
-            zone_id: "FRANCE",
-            date_valeur_actuelle: new Date("2026-01-12"),
-          },
-        ],
-      });
-
-      await prisma.utilisateur.create({
-        data: {
-          email: "jane.doe4@test.com",
+        const utilisateur = await fixtures.utilisateur({
           nom: "Doe",
           prenom: "Jane",
-          id: "550e8400-e29b-41d4-a716-446655440004",
-          date_creation: new Date().toISOString(),
-          profil: {
-            connect: {
-              code: ProfilEnum.DITP_ADMIN,
-            },
-          },
-        },
-      });
+        });
 
-      await prisma.indicateur_territoire_valeur_evenement.createMany({
-        data: [
-          {
-            id: "550e8400-e29b-41d4-a716-446655440300",
-            indic_id: "IND-001",
-            territoire_code: "NAT-FR",
-            type_valeur: "VALEUR_AVANCEMENT",
-            donnees_complementaires: {},
-            type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_CREEE,
-            date_valeur: new Date("2026-01-12"),
-            ordre: 1,
-            date_modification: new Date("2026-01-12"),
-            date_creation: new Date("2026-01-12"),
-            id_auteur_modification: "550e8400-e29b-41d4-a716-446655440004",
-            correlation_id: "550e8400-e29b-41d4-a716-446655440005",
-            valeur: 100,
-          },
-          {
-            id: "550e8400-e29b-41d4-a716-446655440301",
-            indic_id: "IND-001",
-            territoire_code: "NAT-FR",
-            type_valeur: "VALEUR_AVANCEMENT",
-            donnees_complementaires: {},
-            type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_SUPPRIMEE,
-            date_valeur: new Date("2026-01-12"),
-            ordre: 2,
-            date_modification: new Date("2026-01-12"),
-            date_creation: new Date("2026-01-12"),
-            id_auteur_modification: "550e8400-e29b-41d4-a716-446655440004",
-            correlation_id: "550e8400-e29b-41d4-a716-446655440005",
-            valeur: 100,
-          },
-        ],
-      });
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur.id,
+          territoire_code: "NAT-FR",
+          type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_CREEE,
+          date_valeur: new Date("2026-01-12"),
+          date_creation: new Date("2026-01-12"),
+          date_modification: new Date("2026-01-12"),
+          id_auteur_modification: utilisateur.id,
+          ordre: 1,
+          valeur: 100,
+        });
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur.id,
+          territoire_code: "NAT-FR",
+          type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_SUPPRIMEE,
+          date_valeur: new Date("2026-01-12"),
+          date_creation: new Date("2026-01-12"),
+          date_modification: new Date("2026-01-12"),
+          id_auteur_modification: utilisateur.id,
+          ordre: 2,
+          valeur: 100,
+        });
 
-      // When
-      const result =
-        await prismaIndicateurRepository.recupererDetailsParChantierIdEtTerritoire(
-          chantierId,
-          territoireCodes,
-          jalon,
-          dateDerniereExecutionDatajobs,
+        // When
+        const result =
+          await prismaIndicateurRepository.recupererDetailsParChantierIdEtTerritoire(
+            chantier.id,
+            ["NAT-FR"],
+            2025,
+            dateDerniereExecutionDatajobs,
+          );
+
+        // Then
+        expect(result["IND-001"]["NAT-FR"].propositionStatutTerritoire).toEqual(
+          {
+            statut: "PROPOSITION_VALEUR_SUPPRIMEE",
+            date: "2026-01-12",
+            dateTime: "2026-01-12T00:00:00.000Z",
+          },
         );
+        expect(
+          result["IND-001"]["NAT-FR"].propositionStatutDirectionProjet,
+        ).toBeNull();
+      }),
+    );
 
-      // Then
-      expect(result["IND-001"]["NAT-FR"].propositionStatutTerritoire).toEqual({
-        statut: "PROPOSITION_VALEUR_SUPPRIMEE",
-        date: "2026-01-12",
-        dateTime: "2026-01-12T00:00:00.000Z",
-      });
-      expect(
-        result["IND-001"]["NAT-FR"].propositionStatutDirectionProjet,
-      ).toBeNull();
-    });
+    it(
+      "lorsque le dernier évènement en date est de type PROPOSITION_VALEUR_CREEE, le propositionStatutTerritoire est PROPOSITION_VALEUR_CREEE et le propositionStatutDirectionProjet est null",
+      createIntegrationTest(async () => {
+        // Given
+        const chantier = await fixtures.chantierIdentite({ id: "CH-001" });
 
-    it("lorsque le dernier évènement en date est de type PROPOSITION_VALEUR_CREEE, le propositionStatutTerritoire est PROPOSITION_VALEUR_CREEE et le propositionStatutDirectionProjet est null", async () => {
-      // Given
-      const chantierId = "CH-001";
-      const territoireCodes = ["NAT-FR"];
-      const jalon = 2025;
+        await fixtures.chantierTerritoire({
+          id: chantier.id,
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+        });
 
-      await prisma.chantier_identite.createMany({
-        data: [
-          {
-            id: chantierId,
-            nom: "Chantier 001",
-            ministeres: ["1009"],
-            ministeres_acronymes: ["MINA"],
-          },
-        ],
-      });
+        const indicateur = await fixtures.indicateurIdentite({
+          id: "IND-001",
+          chantier_id: chantier.id,
+        });
 
-      await prisma.chantier_territoire.createMany({
-        data: [
-          {
-            id: "CH-001",
-            maille: "NAT",
-            code_insee: "FR",
-            territoire_code: "NAT-FR",
-            zone_id: "FRANCE",
-          },
-        ],
-      });
+        await fixtures.indicateurTerritoire({
+          id: indicateur.id,
+          chantier_id: chantier.id,
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+          date_valeur_actuelle_mandat: new Date("2026-01-12"),
+        });
 
-      await prisma.indicateur_identite.createMany({
-        data: [
-          {
-            id: "IND-001",
-            nom: "Indicateur 001",
-            chantier_id: chantierId,
-            type_id: "IMPACT",
-          },
-        ],
-      });
+        await fixtures.indicateurTerritoireJalon({
+          id: indicateur.id,
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+          jalon: 2025,
+          date_valeur_actuelle: new Date("2026-01-12"),
+        });
 
-      await prisma.indicateur_territoire.createMany({
-        data: [
-          {
-            id: "IND-001",
-            chantier_id: chantierId,
-            maille: "NAT",
-            territoire_code: "NAT-FR",
-            code_insee: "FR",
-            zone_id: "FRANCE",
-            date_valeur_actuelle_mandat: new Date("2026-01-12"),
-          },
-        ],
-      });
-
-      await prisma.indicateur_territoire_jalon.createMany({
-        data: [
-          {
-            id: "IND-001",
-            territoire_code: "NAT-FR",
-            code_insee: "FR",
-            maille: "NAT",
-            jalon: 2025,
-            zone_id: "FRANCE",
-            date_valeur_actuelle: new Date("2026-01-12"),
-          },
-        ],
-      });
-
-      await prisma.utilisateur.create({
-        data: {
-          email: "jane.doe5@test.com",
+        const utilisateur = await fixtures.utilisateur({
           nom: "Doe",
           prenom: "Jane",
-          id: "550e8400-e29b-41d4-a716-446655440005",
-          date_creation: new Date().toISOString(),
-          profil: {
-            connect: {
-              code: ProfilEnum.DITP_ADMIN,
-            },
-          },
-        },
-      });
+        });
 
-      await prisma.indicateur_territoire_valeur_evenement.createMany({
-        data: [
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur.id,
+          territoire_code: "NAT-FR",
+          type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_CREEE,
+          date_valeur: new Date("2026-01-12"),
+          date_creation: new Date("2026-01-12"),
+          date_modification: new Date("2026-01-12"),
+          id_auteur_modification: utilisateur.id,
+          ordre: 1,
+          valeur: 100,
+        });
+
+        // When
+        const result =
+          await prismaIndicateurRepository.recupererDetailsParChantierIdEtTerritoire(
+            chantier.id,
+            ["NAT-FR"],
+            2025,
+            dateDerniereExecutionDatajobs,
+          );
+
+        // Then
+        expect(result["IND-001"]["NAT-FR"].propositionStatutTerritoire).toEqual(
           {
-            id: "550e8400-e29b-41d4-a716-446655440400",
-            indic_id: "IND-001",
-            territoire_code: "NAT-FR",
-            type_valeur: "VALEUR_AVANCEMENT",
-            donnees_complementaires: {},
-            type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_CREEE,
-            date_valeur: new Date("2026-01-12"),
-            ordre: 1,
-            date_modification: new Date("2026-01-12"),
-            date_creation: new Date("2026-01-12"),
-            id_auteur_modification: "550e8400-e29b-41d4-a716-446655440005",
-            correlation_id: "550e8400-e29b-41d4-a716-446655440006",
-            valeur: 100,
+            statut: "PROPOSITION_VALEUR_CREEE",
+            date: "2026-01-12",
+            dateTime: "2026-01-12T00:00:00.000Z",
           },
-        ],
-      });
-
-      // When
-      const result =
-        await prismaIndicateurRepository.recupererDetailsParChantierIdEtTerritoire(
-          chantierId,
-          territoireCodes,
-          jalon,
-          dateDerniereExecutionDatajobs,
         );
+        expect(
+          result["IND-001"]["NAT-FR"].propositionStatutDirectionProjet,
+        ).toBeNull();
+      }),
+    );
 
-      // Then
-      expect(result["IND-001"]["NAT-FR"].propositionStatutTerritoire).toEqual({
-        statut: "PROPOSITION_VALEUR_CREEE",
-        date: "2026-01-12",
-        dateTime: "2026-01-12T00:00:00.000Z",
-      });
-      expect(
-        result["IND-001"]["NAT-FR"].propositionStatutDirectionProjet,
-      ).toBeNull();
-    });
+    it(
+      "lorsque le dernier évènement en date est de type PROPOSITION_VALEUR_MODIFIEE, le propositionStatutTerritoire est PROPOSITION_VALEUR_MODIFIEE et le propositionStatutDirectionProjet est null",
+      createIntegrationTest(async () => {
+        // Given
+        const chantier = await fixtures.chantierIdentite({ id: "CH-001" });
 
-    it("lorsque le dernier évènement en date est de type PROPOSITION_VALEUR_MODIFIEE, le propositionStatutTerritoire est PROPOSITION_VALEUR_MODIFIEE et le propositionStatutDirectionProjet est null", async () => {
-      // Given
-      const chantierId = "CH-001";
-      const territoireCodes = ["NAT-FR"];
-      const jalon = 2025;
+        await fixtures.chantierTerritoire({
+          id: chantier.id,
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+        });
 
-      await prisma.chantier_identite.createMany({
-        data: [
-          {
-            id: chantierId,
-            nom: "Chantier 001",
-            ministeres: ["1009"],
-            ministeres_acronymes: ["MINA"],
-          },
-        ],
-      });
+        const indicateur = await fixtures.indicateurIdentite({
+          id: "IND-001",
+          chantier_id: chantier.id,
+        });
 
-      await prisma.chantier_territoire.createMany({
-        data: [
-          {
-            id: "CH-001",
-            maille: "NAT",
-            code_insee: "FR",
-            territoire_code: "NAT-FR",
-            zone_id: "FRANCE",
-          },
-        ],
-      });
+        await fixtures.indicateurTerritoire({
+          id: indicateur.id,
+          chantier_id: chantier.id,
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+          date_valeur_actuelle_mandat: new Date("2026-01-12"),
+        });
 
-      await prisma.indicateur_identite.createMany({
-        data: [
-          {
-            id: "IND-001",
-            nom: "Indicateur 001",
-            chantier_id: chantierId,
-            type_id: "IMPACT",
-          },
-        ],
-      });
+        await fixtures.indicateurTerritoireJalon({
+          id: indicateur.id,
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+          jalon: 2025,
+          date_valeur_actuelle: new Date("2026-01-12"),
+        });
 
-      await prisma.indicateur_territoire.createMany({
-        data: [
-          {
-            id: "IND-001",
-            chantier_id: chantierId,
-            maille: "NAT",
-            territoire_code: "NAT-FR",
-            code_insee: "FR",
-            zone_id: "FRANCE",
-            date_valeur_actuelle_mandat: new Date("2026-01-12"),
-          },
-        ],
-      });
-
-      await prisma.indicateur_territoire_jalon.createMany({
-        data: [
-          {
-            id: "IND-001",
-            territoire_code: "NAT-FR",
-            code_insee: "FR",
-            maille: "NAT",
-            jalon: 2025,
-            zone_id: "FRANCE",
-            date_valeur_actuelle: new Date("2026-01-12"),
-          },
-        ],
-      });
-
-      await prisma.utilisateur.create({
-        data: {
-          email: "jane.doe6@test.com",
+        const utilisateur = await fixtures.utilisateur({
           nom: "Doe",
           prenom: "Jane",
-          id: "550e8400-e29b-41d4-a716-446655440006",
-          date_creation: new Date().toISOString(),
-          profil: {
-            connect: {
-              code: ProfilEnum.DITP_ADMIN,
-            },
-          },
-        },
-      });
+        });
 
-      await prisma.indicateur_territoire_valeur_evenement.createMany({
-        data: [
-          {
-            id: "207aed34-158a-46b5-80d1-acebb72cd7e3",
-            indic_id: "IND-001",
-            territoire_code: "NAT-FR",
-            type_valeur: "VALEUR_AVANCEMENT",
-            donnees_complementaires: {},
-            type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_MODIFIEE,
-            date_valeur: new Date("2026-01-12"),
-            ordre: 3,
-            date_modification: new Date("2026-01-12"),
-            date_creation: new Date("2026-01-12"),
-            id_auteur_modification: "550e8400-e29b-41d4-a716-446655440006",
-            correlation_id: "550e8400-e29b-41d4-a716-446655440007",
-            valeur: 90,
-          },
-          {
-            id: "550e8400-e29b-41d4-a716-446655440500",
-            indic_id: "IND-001",
-            territoire_code: "NAT-FR",
-            type_valeur: "VALEUR_AVANCEMENT",
-            donnees_complementaires: {},
-            type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_MODIFIEE,
-            date_valeur: new Date("2026-01-12"),
-            ordre: 2,
-            date_modification: new Date("2026-01-12"),
-            date_creation: new Date("2026-01-12"),
-            id_auteur_modification: "550e8400-e29b-41d4-a716-446655440006",
-            correlation_id: "550e8400-e29b-41d4-a716-446655440007",
-            valeur: 100,
-          },
-          {
-            id: "3c9316d9-de73-439b-bf62-75fb280860b6",
-            indic_id: "IND-001",
-            territoire_code: "NAT-FR",
-            type_valeur: "VALEUR_AVANCEMENT",
-            donnees_complementaires: {},
-            type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_CREEE,
-            date_valeur: new Date("2026-01-12"),
-            ordre: 1,
-            date_modification: new Date("2026-01-12"),
-            date_creation: new Date("2026-01-12"),
-            id_auteur_modification: "550e8400-e29b-41d4-a716-446655440006",
-            correlation_id: "550e8400-e29b-41d4-a716-446655440007",
-            valeur: 10,
-          },
-        ],
-      });
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur.id,
+          territoire_code: "NAT-FR",
+          type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_CREEE,
+          date_valeur: new Date("2026-01-12"),
+          date_creation: new Date("2026-01-12"),
+          date_modification: new Date("2026-01-12"),
+          id_auteur_modification: utilisateur.id,
+          ordre: 1,
+          valeur: 10,
+        });
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur.id,
+          territoire_code: "NAT-FR",
+          type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_MODIFIEE,
+          date_valeur: new Date("2026-01-12"),
+          date_creation: new Date("2026-01-12"),
+          date_modification: new Date("2026-01-12"),
+          id_auteur_modification: utilisateur.id,
+          ordre: 2,
+          valeur: 100,
+        });
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur.id,
+          territoire_code: "NAT-FR",
+          type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_MODIFIEE,
+          date_valeur: new Date("2026-01-12"),
+          date_creation: new Date("2026-01-12"),
+          date_modification: new Date("2026-01-12"),
+          id_auteur_modification: utilisateur.id,
+          ordre: 3,
+          valeur: 90,
+        });
 
-      // When
-      const result =
-        await prismaIndicateurRepository.recupererDetailsParChantierIdEtTerritoire(
-          chantierId,
-          territoireCodes,
-          jalon,
-          dateDerniereExecutionDatajobs,
+        // When
+        const result =
+          await prismaIndicateurRepository.recupererDetailsParChantierIdEtTerritoire(
+            chantier.id,
+            ["NAT-FR"],
+            2025,
+            dateDerniereExecutionDatajobs,
+          );
+
+        // Then
+        expect(result["IND-001"]["NAT-FR"].propositionStatutTerritoire).toEqual(
+          {
+            statut: "PROPOSITION_VALEUR_MODIFIEE",
+            date: "2026-01-12",
+            dateTime: "2026-01-12T00:00:00.000Z",
+          },
         );
+        expect(
+          result["IND-001"]["NAT-FR"].propositionStatutDirectionProjet,
+        ).toBeNull();
+      }),
+    );
 
-      // Then
-      expect(result["IND-001"]["NAT-FR"].propositionStatutTerritoire).toEqual({
-        statut: "PROPOSITION_VALEUR_MODIFIEE",
-        date: "2026-01-12",
-        dateTime: "2026-01-12T00:00:00.000Z",
-      });
-      expect(
-        result["IND-001"]["NAT-FR"].propositionStatutDirectionProjet,
-      ).toBeNull();
-    });
+    it(
+      "s'assure que les événements sur différentes dates ne s'impactent pas mutuellement",
+      createIntegrationTest(async () => {
+        // Given
+        const chantier = await fixtures.chantierIdentite({ id: "CH-001" });
 
-    it("s'assure que les événements sur différentes dates ne s'impactent pas mutuellement", async () => {
-      // Given
-      const chantierId = "CH-001";
-      const territoireCodes = ["NAT-FR"];
-      const jalon = 2025;
+        await fixtures.chantierTerritoire({
+          id: chantier.id,
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+        });
 
-      await prisma.chantier_identite.createMany({
-        data: [
-          {
-            id: chantierId,
-            nom: "Chantier 001",
-            ministeres: ["1009"],
-            ministeres_acronymes: ["MINA"],
-          },
-        ],
-      });
+        const indicateur = await fixtures.indicateurIdentite({
+          id: "IND-001",
+          chantier_id: chantier.id,
+        });
 
-      await prisma.chantier_territoire.createMany({
-        data: [
-          {
-            id: "CH-001",
-            maille: "NAT",
-            code_insee: "FR",
-            territoire_code: "NAT-FR",
-            zone_id: "FRANCE",
-          },
-        ],
-      });
+        await fixtures.indicateurTerritoire({
+          id: indicateur.id,
+          chantier_id: chantier.id,
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+          date_valeur_actuelle_mandat: new Date("2026-01-15"),
+        });
 
-      await prisma.indicateur_identite.createMany({
-        data: [
-          {
-            id: "IND-001",
-            nom: "Indicateur 001",
-            chantier_id: chantierId,
-            type_id: "IMPACT",
-          },
-        ],
-      });
+        await fixtures.indicateurTerritoireJalon({
+          id: indicateur.id,
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+          jalon: 2025,
+          date_valeur_actuelle: new Date("2026-01-15"),
+        });
 
-      await prisma.indicateur_territoire.createMany({
-        data: [
-          {
-            id: "IND-001",
-            chantier_id: chantierId,
-            maille: "NAT",
-            territoire_code: "NAT-FR",
-            code_insee: "FR",
-            zone_id: "FRANCE",
-            date_valeur_actuelle_mandat: new Date("2026-01-15"),
-          },
-        ],
-      });
-
-      await prisma.indicateur_territoire_jalon.createMany({
-        data: [
-          {
-            id: "IND-001",
-            territoire_code: "NAT-FR",
-            code_insee: "FR",
-            maille: "NAT",
-            jalon: 2025,
-            zone_id: "FRANCE",
-            date_valeur_actuelle: new Date("2026-01-15"),
-          },
-        ],
-      });
-
-      await prisma.utilisateur.create({
-        data: {
-          email: "jane.doe7@test.com",
+        const utilisateur = await fixtures.utilisateur({
           nom: "Doe",
           prenom: "Jane",
-          id: "550e8400-e29b-41d4-a716-446655440007",
-          date_creation: new Date().toISOString(),
-          profil: {
-            connect: {
-              code: ProfilEnum.DITP_ADMIN,
-            },
-          },
-        },
-      });
+        });
 
-      await prisma.indicateur_territoire_valeur_evenement.createMany({
-        data: [
-          // Événement sur une date antérieure - ne devrait pas impacter
-          {
-            id: "550e8400-e29b-41d4-a716-446655440600",
-            indic_id: "IND-001",
-            territoire_code: "NAT-FR",
-            type_valeur: "VALEUR_AVANCEMENT",
-            donnees_complementaires: {},
-            type_evenement:
-              EvenementValeurEnum.PROPOSITION_VALEUR_ACCUSEE_RECEPTION,
-            date_valeur: new Date("2026-01-10"),
-            ordre: 1,
-            date_modification: new Date("2026-01-10"),
-            date_creation: new Date("2026-01-10"),
-            id_auteur_modification: "550e8400-e29b-41d4-a716-446655440007",
-            correlation_id: "550e8400-e29b-41d4-a716-446655440008",
-            valeur: 80,
-          },
-          // Événements sur la date la plus récente (date_valeur_actuelle)
-          {
-            id: "550e8400-e29b-41d4-a716-446655440601",
-            indic_id: "IND-001",
-            territoire_code: "NAT-FR",
-            type_valeur: "VALEUR_AVANCEMENT",
-            donnees_complementaires: {},
-            type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_CREEE,
-            date_valeur: new Date("2026-01-15"),
-            ordre: 1,
-            date_modification: new Date("2026-01-15"),
-            date_creation: new Date("2026-01-15"),
-            id_auteur_modification: "550e8400-e29b-41d4-a716-446655440007",
-            correlation_id: "550e8400-e29b-41d4-a716-446655440008",
-            valeur: 100,
-          },
-        ],
-      });
+        // Événement sur une date antérieure - ne devrait pas impacter
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur.id,
+          territoire_code: "NAT-FR",
+          type_evenement:
+            EvenementValeurEnum.PROPOSITION_VALEUR_ACCUSEE_RECEPTION,
+          date_valeur: new Date("2026-01-10"),
+          date_creation: new Date("2026-01-10"),
+          date_modification: new Date("2026-01-10"),
+          id_auteur_modification: utilisateur.id,
+          ordre: 1,
+          valeur: 80,
+        });
+        // Événements sur la date la plus récente (date_valeur_actuelle)
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur.id,
+          territoire_code: "NAT-FR",
+          type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_CREEE,
+          date_valeur: new Date("2026-01-15"),
+          date_creation: new Date("2026-01-15"),
+          date_modification: new Date("2026-01-15"),
+          id_auteur_modification: utilisateur.id,
+          ordre: 1,
+          valeur: 100,
+        });
 
-      // When
-      const result =
-        await prismaIndicateurRepository.recupererDetailsParChantierIdEtTerritoire(
-          chantierId,
-          territoireCodes,
-          jalon,
-          dateDerniereExecutionDatajobs,
+        // When
+        const result =
+          await prismaIndicateurRepository.recupererDetailsParChantierIdEtTerritoire(
+            chantier.id,
+            ["NAT-FR"],
+            2025,
+            dateDerniereExecutionDatajobs,
+          );
+
+        // Then
+        // Seuls les événements de la date la plus récente (2026-01-15) sont pris en compte
+        expect(result["IND-001"]["NAT-FR"].propositionStatutTerritoire).toEqual(
+          {
+            statut: "PROPOSITION_VALEUR_CREEE",
+            date: "2026-01-15",
+            dateTime: "2026-01-15T00:00:00.000Z",
+          },
         );
+        expect(
+          result["IND-001"]["NAT-FR"].propositionStatutDirectionProjet,
+        ).toBeNull();
+      }),
+    );
 
-      // Then
-      // Seuls les événements de la date la plus récente (2026-01-15) sont pris en compte
-      expect(result["IND-001"]["NAT-FR"].propositionStatutTerritoire).toEqual({
-        statut: "PROPOSITION_VALEUR_CREEE",
-        date: "2026-01-15",
-        dateTime: "2026-01-15T00:00:00.000Z",
-      });
-      expect(
-        result["IND-001"]["NAT-FR"].propositionStatutDirectionProjet,
-      ).toBeNull();
-    });
+    it(
+      "calcule le statutTauxAvancement EN_COURS quand la date de création de la proposition est postérieure à la dernière exécution des datajobs",
+      createIntegrationTest(async () => {
+        // Given
+        const chantier = await fixtures.chantierIdentite({ id: "CH-001" });
 
-    it("calcule le statutTauxAvancement EN_COURS quand la date de création de la proposition est postérieure à la dernière exécution des datajobs", async () => {
-      // Given
-      const chantierId = "CH-001";
-      const territoireCodes = ["NAT-FR"];
-      const jalon = 2025;
+        await fixtures.chantierTerritoire({
+          id: chantier.id,
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+        });
 
-      await prisma.chantier_identite.createMany({
-        data: [
-          {
-            id: chantierId,
-            nom: "Chantier 001",
-            ministeres: ["1009"],
-            ministeres_acronymes: ["MINA"],
-          },
-        ],
-      });
+        const indicateur = await fixtures.indicateurIdentite({
+          id: "IND-001",
+          chantier_id: chantier.id,
+          unite_mesure: "kg",
+          statut: "PUBLIE",
+        });
 
-      await prisma.chantier_territoire.createMany({
-        data: [
-          {
-            id: "CH-001",
-            maille: "NAT",
-            code_insee: "FR",
-            territoire_code: "NAT-FR",
-            zone_id: "FRANCE",
-          },
-        ],
-      });
+        await fixtures.indicateurTerritoire({
+          id: indicateur.id,
+          chantier_id: chantier.id,
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+        });
 
-      await prisma.indicateur_identite.createMany({
-        data: [
-          {
-            id: "IND-001",
-            nom: "Indicateur 001",
-            chantier_id: chantierId,
-            type_id: "IMPACT",
-            unite_mesure: "kg",
-            statut: "PUBLIE",
-          },
-        ],
-      });
-
-      await prisma.indicateur_territoire.createMany({
-        data: [
-          {
-            id: "IND-001",
-            chantier_id: chantierId,
-            maille: "NAT",
-            territoire_code: "NAT-FR",
-            code_insee: "FR",
-            zone_id: "FRANCE",
-          },
-        ],
-      });
-
-      await prisma.utilisateur.create({
-        data: {
-          email: "jane.doe@test.com",
+        const utilisateur = await fixtures.utilisateur({
           nom: "Doe",
           prenom: "Jane",
-          id: "550e8400-e29b-41d4-a716-446655440001",
-          date_creation: new Date().toISOString(),
-          profil: {
-            connect: {
-              code: ProfilEnum.DITP_ADMIN,
-            },
-          },
-        },
-      });
+        });
 
-      await prisma.indicateur_territoire_valeur_evenement.createMany({
-        data: [
-          {
-            id: "550e8400-e29b-41d4-a716-446655440000",
-            indic_id: "IND-001",
-            territoire_code: "NAT-FR",
-            type_valeur: "VALEUR_AVANCEMENT",
-            donnees_complementaires: {},
-            type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_CREEE,
-            date_valeur: new Date("2026-01-12"),
-            ordre: 1,
-            date_modification: new Date("2026-02-13"),
-            date_creation: new Date("2026-02-13"),
-            id_auteur_modification: "550e8400-e29b-41d4-a716-446655440001",
-            correlation_id: "550e8400-e29b-41d4-a716-446655440002",
-            valeur: 100,
-          },
-        ],
-      });
+        // date_creation postérieure à dateDerniereExecutionDatajobs (2026-02-12)
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur.id,
+          territoire_code: "NAT-FR",
+          type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_CREEE,
+          date_valeur: new Date("2026-01-12"),
+          date_creation: new Date("2026-02-13"),
+          date_modification: new Date("2026-02-13"),
+          id_auteur_modification: utilisateur.id,
+          ordre: 1,
+          valeur: 100,
+        });
 
-      // When
-      const result =
-        await prismaIndicateurRepository.recupererDetailsParChantierIdEtTerritoire(
-          chantierId,
-          territoireCodes,
-          jalon,
-          dateDerniereExecutionDatajobs,
-        );
+        // When
+        const result =
+          await prismaIndicateurRepository.recupererDetailsParChantierIdEtTerritoire(
+            chantier.id,
+            ["NAT-FR"],
+            2025,
+            dateDerniereExecutionDatajobs,
+          );
 
-      // Then
-      expect(
-        result["IND-001"]["NAT-FR"].proposition?.statutTauxAvancement,
-      ).toEqual("EN_COURS");
-    });
+        // Then
+        expect(
+          result["IND-001"]["NAT-FR"].proposition?.statutTauxAvancement,
+        ).toEqual("EN_COURS");
+      }),
+    );
 
-    it("calcule le statutTauxAvancement CALCULE quand la date de création de la proposition est antérieure à la dernière exécution des datajobs", async () => {
-      // Given
-      const chantierId = "CH-001";
-      const territoireCodes = ["NAT-FR"];
-      const jalon = 2025;
+    it(
+      "calcule le statutTauxAvancement CALCULE quand la date de création de la proposition est antérieure à la dernière exécution des datajobs",
+      createIntegrationTest(async () => {
+        // Given
+        const chantier = await fixtures.chantierIdentite({ id: "CH-001" });
 
-      await prisma.chantier_identite.createMany({
-        data: [
-          {
-            id: chantierId,
-            nom: "Chantier 001",
-            ministeres: ["1009"],
-            ministeres_acronymes: ["MINA"],
-          },
-        ],
-      });
+        await fixtures.chantierTerritoire({
+          id: chantier.id,
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+        });
 
-      await prisma.chantier_territoire.createMany({
-        data: [
-          {
-            id: "CH-001",
-            maille: "NAT",
-            code_insee: "FR",
-            territoire_code: "NAT-FR",
-            zone_id: "FRANCE",
-          },
-        ],
-      });
+        const indicateur = await fixtures.indicateurIdentite({
+          id: "IND-001",
+          chantier_id: chantier.id,
+          unite_mesure: "kg",
+          statut: "PUBLIE",
+        });
 
-      await prisma.indicateur_identite.createMany({
-        data: [
-          {
-            id: "IND-001",
-            nom: "Indicateur 001",
-            chantier_id: chantierId,
-            type_id: "IMPACT",
-            unite_mesure: "kg",
-            statut: "PUBLIE",
-          },
-        ],
-      });
+        await fixtures.indicateurTerritoire({
+          id: indicateur.id,
+          chantier_id: chantier.id,
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+        });
 
-      await prisma.indicateur_territoire.createMany({
-        data: [
-          {
-            id: "IND-001",
-            chantier_id: chantierId,
-            maille: "NAT",
-            territoire_code: "NAT-FR",
-            code_insee: "FR",
-            zone_id: "FRANCE",
-          },
-        ],
-      });
-
-      await prisma.utilisateur.create({
-        data: {
-          email: "jane.doe@test.com",
+        const utilisateur = await fixtures.utilisateur({
           nom: "Doe",
           prenom: "Jane",
-          id: "550e8400-e29b-41d4-a716-446655440001",
-          date_creation: new Date().toISOString(),
-          profil: {
-            connect: {
-              code: ProfilEnum.DITP_ADMIN,
-            },
-          },
-        },
-      });
+        });
 
-      await prisma.indicateur_territoire_valeur_evenement.createMany({
-        data: [
-          {
-            id: "550e8400-e29b-41d4-a716-446655440000",
-            indic_id: "IND-001",
-            territoire_code: "NAT-FR",
-            type_valeur: "VALEUR_AVANCEMENT",
-            donnees_complementaires: {},
-            type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_CREEE,
-            date_valeur: new Date("2026-01-12"),
-            ordre: 1,
-            date_modification: new Date("2026-01-12"),
-            date_creation: new Date("2026-01-12"), // Antérieure à la dernière exécution des datajobs
-            id_auteur_modification: "550e8400-e29b-41d4-a716-446655440001",
-            correlation_id: "550e8400-e29b-41d4-a716-446655440002",
-            valeur: 100,
-          },
-        ],
-      });
+        // date_creation antérieure à dateDerniereExecutionDatajobs (2026-02-12)
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur.id,
+          territoire_code: "NAT-FR",
+          type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_CREEE,
+          date_valeur: new Date("2026-01-12"),
+          date_creation: new Date("2026-01-12"),
+          date_modification: new Date("2026-01-12"),
+          id_auteur_modification: utilisateur.id,
+          ordre: 1,
+          valeur: 100,
+        });
 
-      // When
-      const result =
-        await prismaIndicateurRepository.recupererDetailsParChantierIdEtTerritoire(
-          chantierId,
-          territoireCodes,
-          jalon,
-          dateDerniereExecutionDatajobs,
-        );
+        // When
+        const result =
+          await prismaIndicateurRepository.recupererDetailsParChantierIdEtTerritoire(
+            chantier.id,
+            ["NAT-FR"],
+            2025,
+            dateDerniereExecutionDatajobs,
+          );
 
-      // Then
-      expect(
-        result["IND-001"]["NAT-FR"].proposition?.statutTauxAvancement,
-      ).toEqual("CALCULE");
-    });
+        // Then
+        expect(
+          result["IND-001"]["NAT-FR"].proposition?.statutTauxAvancement,
+        ).toEqual("CALCULE");
+      }),
+    );
   });
 
   describe("#récupérerDétailsTerritoirePourUnIndicateur", () => {
-    it("sans PVA, retourne les détails d'un indicateur sur tous les territoires territoire", async () => {
-      // Given
-      const chantiersIds = ["CH-001"];
-      const indicateurId = "IND-001";
-      const territoireCodes = ["DEPT-02", "DEPT-01"];
-      const jalon = 2025;
-      const habilitations: Habilitations = {
-        gestionUtilisateur: {
-          chantiers: chantiersIds,
-          territoires: territoireCodes,
-          périmètres: [],
-        },
-        lecture: {
-          chantiers: chantiersIds,
-          territoires: territoireCodes,
-          périmètres: [],
-        },
-        saisieCommentaire: {
-          chantiers: chantiersIds,
-          territoires: territoireCodes,
-          périmètres: [],
-        },
-        saisieIndicateur: {
-          chantiers: chantiersIds,
-          territoires: territoireCodes,
-          périmètres: [],
-        },
-        responsabilite: {
-          chantiers: chantiersIds,
-          territoires: territoireCodes,
-          périmètres: [],
-        },
-      };
+    it(
+      "sans PVA, retourne les détails d'un indicateur sur tous les territoires territoire",
+      createIntegrationTest(async () => {
+        // Given
+        const chantiersIds = ["CH-001"];
+        const indicateurId = "IND-001";
+        const territoireCodes = ["DEPT-02", "DEPT-01"];
+        const jalon = 2025;
+        const habilitations: Habilitations = {
+          gestionUtilisateur: {
+            chantiers: chantiersIds,
+            territoires: territoireCodes,
+            périmètres: [],
+          },
+          lecture: {
+            chantiers: chantiersIds,
+            territoires: territoireCodes,
+            périmètres: [],
+          },
+          saisieCommentaire: {
+            chantiers: chantiersIds,
+            territoires: territoireCodes,
+            périmètres: [],
+          },
+          saisieIndicateur: {
+            chantiers: chantiersIds,
+            territoires: territoireCodes,
+            périmètres: [],
+          },
+          responsabilite: {
+            chantiers: chantiersIds,
+            territoires: territoireCodes,
+            périmètres: [],
+          },
+        };
 
-      await prisma.chantier_identite.createMany({
-        data: [
-          {
-            id: "CH-001",
-            nom: "Chantier 001",
-            ministeres: ["1009"],
-            ministeres_acronymes: ["MINA"],
-          },
-        ],
-      });
+        const chantier = await fixtures.chantierIdentite({
+          id: "CH-001",
+          nom: "Chantier 001",
+          ministeres: ["1009"],
+          ministeres_acronymes: ["MINA"],
+        });
 
-      await prisma.chantier_territoire.createMany({
-        data: [
-          {
-            id: "CH-001",
-            maille: "DEPT",
-            code_insee: "02",
-            territoire_code: "DEPT-02",
-            zone_id: "FRANCE",
-          },
-          {
-            id: "CH-001",
-            maille: "DEPT",
-            code_insee: "01",
-            territoire_code: "DEPT-01",
-            zone_id: "D01",
-          },
-        ],
-      });
+        await fixtures.chantierTerritoire({
+          id: chantier.id,
+          territoire_code: "DEPT-02",
+          maille: "DEPT",
+          code_insee: "02",
+          zone_id: "FRANCE",
+        });
 
-      await prisma.indicateur_identite.createMany({
-        data: [
-          {
-            id: "IND-001",
-            nom: "Indicateur 001",
-            chantier_id: "CH-001",
-            type_id: "IMPACT",
-            unite_mesure: "kg",
-          },
-        ],
-      });
+        await fixtures.chantierTerritoire({
+          id: chantier.id,
+          territoire_code: "DEPT-01",
+          maille: "DEPT",
+          code_insee: "01",
+          zone_id: "D01",
+        });
 
-      await prisma.indicateur_territoire.createMany({
-        data: [
-          {
-            id: "IND-001",
-            chantier_id: "CH-001",
-            maille: "DEPT",
-            code_insee: "02",
-            territoire_code: "DEPT-02",
-            zone_id: "D02",
-            evolution_avancement: [
-              {
-                date: new Date("2026-01-12"),
-                valeur: 100,
-              },
-              {
-                date: new Date("2026-01-14"),
-                valeur: 110,
-              },
-            ],
-          },
-          {
-            id: "IND-001",
-            chantier_id: "CH-001",
-            maille: "DEPT",
-            territoire_code: "DEPT-01",
-            code_insee: "01",
-            zone_id: "D01",
-            valeur_actuelle_mandat: 10,
-            date_valeur_actuelle_mandat: new Date("2025-05-06"),
-          },
-        ],
-      });
+        const indicateur = await fixtures.indicateurIdentite({
+          id: "IND-001",
+          nom: "Indicateur 001",
+          chantier_id: chantier.id,
+          unite_mesure: "kg",
+        });
 
-      await prisma.indicateur_territoire_jalon.createMany({
-        data: [
-          {
-            id: "IND-001",
-            maille: "DEPT",
-            code_insee: "02",
-            territoire_code: "DEPT-02",
-            jalon: 2025,
-            zone_id: "D02",
-            valeur_actuelle: 110,
-            date_valeur_actuelle: new Date("2026-01-12"),
-          },
-        ],
-      });
-
-      await prisma.utilisateur.create({
-        data: {
-          email: "jane.doe@test.com",
-          nom: "Jane",
-          prenom: "Doe",
-          id: "550e8400-e29b-41d4-a716-446655440001",
-          date_creation: new Date().toISOString(),
-          profil: {
-            connect: {
-              code: ProfilEnum.DITP_ADMIN,
+        await fixtures.indicateurTerritoire({
+          id: indicateur.id,
+          chantier_id: chantier.id,
+          territoire_code: "DEPT-02",
+          maille: "DEPT",
+          code_insee: "02",
+          zone_id: "D02",
+          evolution_avancement: [
+            {
+              date: new Date("2026-01-12"),
+              valeur: 100,
             },
-          },
-        },
-      });
+            {
+              date: new Date("2026-01-14"),
+              valeur: 110,
+            },
+          ],
+        });
 
-      // When
-      const result =
-        await prismaIndicateurRepository.récupérerDétailsTerritoirePourUnIndicateur(
-          indicateurId,
-          habilitations,
-          ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT,
-          jalon,
-          dateDerniereExecutionDatajobs,
+        await fixtures.indicateurTerritoire({
+          id: indicateur.id,
+          chantier_id: chantier.id,
+          territoire_code: "DEPT-01",
+          maille: "DEPT",
+          code_insee: "01",
+          zone_id: "D01",
+          valeur_actuelle_mandat: 10,
+          date_valeur_actuelle_mandat: new Date("2025-05-06"),
+        });
+
+        await fixtures.indicateurTerritoireJalon({
+          id: indicateur.id,
+          territoire_code: "DEPT-02",
+          maille: "DEPT",
+          code_insee: "02",
+          zone_id: "D02",
+          jalon: 2025,
+          valeur_actuelle: 110,
+          date_valeur_actuelle: new Date("2026-01-12"),
+        });
+
+        await fixtures.utilisateur();
+
+        // When
+        const result =
+          await prismaIndicateurRepository.récupérerDétailsTerritoirePourUnIndicateur(
+            indicateurId,
+            habilitations,
+            ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT,
+            jalon,
+            dateDerniereExecutionDatajobs,
+          );
+
+        // Then
+        expect(result["DEPT-02"].valeurAvancement).toEqual(110);
+        expect(result["DEPT-02"].dateValeurAvancement).toEqual(
+          new Date("2026-01-12").toLocaleString(),
         );
+        expect(result["DEPT-02"].proposition).toBeNull();
+        expect(result["DEPT-02"].historiquesValeurs).toEqual([
+          {
+            date: "2026-01-12T00:00:00.000Z",
+            valeur: 100,
+          },
+          {
+            date: "2026-01-14T00:00:00.000Z",
+            valeur: 110,
+          },
+        ]);
 
-      // Then
-      expect(result["DEPT-02"].valeurAvancement).toEqual(110);
-      expect(result["DEPT-02"].dateValeurAvancement).toEqual(
-        new Date("2026-01-12").toLocaleString(),
-      );
-      expect(result["DEPT-02"].proposition).toBeNull();
-      expect(result["DEPT-02"].historiquesValeurs).toEqual([
-        {
-          date: "2026-01-12T00:00:00.000Z",
+        expect(result["DEPT-01"].valeurAvancementMandat).toEqual(10);
+        expect(result["DEPT-01"].dateValeurAvancementMandat).toEqual(
+          new Date("2025-05-06").toLocaleString(),
+        );
+        expect(result["DEPT-01"].proposition).toBeNull();
+        expect(result["DEPT-01"].historiquesValeurs).toEqual([]);
+      }),
+    );
+
+    it(
+      "avec une PVA [CREEE], retourne les détails des indicateurs pour un chantier, territoire et proposition",
+      createIntegrationTest(async () => {
+        // Given
+        const chantiersIds = ["CH-001"];
+        const indicateurId = "IND-001";
+        const territoireCodes = ["DEPT-02", "DEPT-01"];
+        const jalon = 2025;
+        const habilitations: Habilitations = {
+          gestionUtilisateur: {
+            chantiers: chantiersIds,
+            territoires: territoireCodes,
+            périmètres: [],
+          },
+          lecture: {
+            chantiers: chantiersIds,
+            territoires: territoireCodes,
+            périmètres: [],
+          },
+          saisieCommentaire: {
+            chantiers: chantiersIds,
+            territoires: territoireCodes,
+            périmètres: [],
+          },
+          saisieIndicateur: {
+            chantiers: chantiersIds,
+            territoires: territoireCodes,
+            périmètres: [],
+          },
+          responsabilite: {
+            chantiers: chantiersIds,
+            territoires: territoireCodes,
+            périmètres: [],
+          },
+        };
+
+        const chantier = await fixtures.chantierIdentite({
+          id: "CH-001",
+          nom: "Chantier 001",
+          ministeres: ["1009"],
+          ministeres_acronymes: ["MINA"],
+        });
+
+        await fixtures.chantierTerritoire({
+          id: chantier.id,
+          territoire_code: "DEPT-02",
+          maille: "DEPT",
+          code_insee: "02",
+          zone_id: "FRANCE",
+        });
+
+        await fixtures.chantierTerritoire({
+          id: chantier.id,
+          territoire_code: "DEPT-01",
+          maille: "DEPT",
+          code_insee: "01",
+          zone_id: "D01",
+        });
+
+        const indicateur = await fixtures.indicateurIdentite({
+          id: "IND-001",
+          nom: "Indicateur 001",
+          chantier_id: chantier.id,
+          unite_mesure: "kg",
+        });
+
+        await fixtures.indicateurTerritoire({
+          id: indicateur.id,
+          chantier_id: chantier.id,
+          territoire_code: "DEPT-02",
+          maille: "DEPT",
+          code_insee: "02",
+          zone_id: "D02",
+          evolution_avancement: [
+            {
+              date: new Date("2026-01-12"),
+              valeur: 100,
+            },
+            {
+              date: new Date("2026-01-14"),
+              valeur: 110,
+            },
+          ],
+        });
+
+        await fixtures.indicateurTerritoire({
+          id: indicateur.id,
+          chantier_id: chantier.id,
+          territoire_code: "DEPT-01",
+          maille: "DEPT",
+          code_insee: "01",
+          zone_id: "D01",
+          valeur_actuelle_mandat: 10,
+          date_valeur_actuelle_mandat: new Date("2025-05-06"),
+        });
+
+        await fixtures.indicateurTerritoireJalon({
+          id: indicateur.id,
+          territoire_code: "DEPT-02",
+          maille: "DEPT",
+          code_insee: "02",
+          zone_id: "D02",
+          jalon: 2025,
+          valeur_actuelle: 110,
+          date_valeur_actuelle: new Date("2026-01-12"),
+        });
+
+        // Auteur attendu dans le expect: "Jane Doe"
+        const utilisateur = await fixtures.utilisateur({
+          id: "550e8400-e29b-41d4-a716-446655440001",
+          prenom: "Jane",
+          nom: "Doe",
+        });
+
+        const correlationId = "550e8400-e29b-41d4-a716-446655440002";
+
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur.id,
+          territoire_code: "DEPT-02",
+          type_evenement: EvenementValeurEnum.VALEUR_CREEE,
+          id_auteur_modification: utilisateur.id,
+          date_valeur: new Date("2026-01-01"),
+          ordre: 1,
+          date_modification: new Date("2026-01-12"),
+          date_creation: new Date("2026-01-12"),
+          correlation_id: correlationId,
           valeur: 100,
-        },
-        {
-          date: "2026-01-14T00:00:00.000Z",
+        });
+
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur.id,
+          territoire_code: "DEPT-02",
+          type_evenement: EvenementValeurEnum.VALEUR_MODIFIEE,
+          id_auteur_modification: utilisateur.id,
+          date_valeur: new Date("2026-01-01"),
+          ordre: 2,
+          date_modification: new Date("2026-01-12"),
+          date_creation: new Date("2026-01-12"),
+          correlation_id: correlationId,
           valeur: 110,
-        },
-      ]);
+        });
 
-      expect(result["DEPT-01"].valeurAvancementMandat).toEqual(10);
-      expect(result["DEPT-01"].dateValeurAvancementMandat).toEqual(
-        new Date("2025-05-06").toLocaleString(),
-      );
-      expect(result["DEPT-01"].proposition).toBeNull();
-      expect(result["DEPT-01"].historiquesValeurs).toEqual([]);
-    });
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur.id,
+          territoire_code: "DEPT-02",
+          type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_CREEE,
+          id_auteur_modification: utilisateur.id,
+          date_valeur: new Date("2026-01-01"),
+          ordre: 3,
+          date_modification: new Date("2026-01-12"),
+          date_creation: new Date("2026-01-12"),
+          correlation_id: correlationId,
+          valeur: 120,
+          donnees_complementaires: {
+            motif: "Motif de la proposition",
+            source_donnee_methode_calcul:
+              "Source de la donnée et méthode de calcul",
+          },
+        });
 
-    it("avec une PVA [CREEE], retourne les détails des indicateurs pour un chantier, territoire et proposition", async () => {
-      // Given
-      const chantiersIds = ["CH-001"];
-      const indicateurId = "IND-001";
-      const territoireCodes = ["DEPT-02", "DEPT-01"];
-      const jalon = 2025;
-      const habilitations: Habilitations = {
-        gestionUtilisateur: {
-          chantiers: chantiersIds,
-          territoires: territoireCodes,
-          périmètres: [],
-        },
-        lecture: {
-          chantiers: chantiersIds,
-          territoires: territoireCodes,
-          périmètres: [],
-        },
-        saisieCommentaire: {
-          chantiers: chantiersIds,
-          territoires: territoireCodes,
-          périmètres: [],
-        },
-        saisieIndicateur: {
-          chantiers: chantiersIds,
-          territoires: territoireCodes,
-          périmètres: [],
-        },
-        responsabilite: {
-          chantiers: chantiersIds,
-          territoires: territoireCodes,
-          périmètres: [],
-        },
-      };
+        // When
+        const result =
+          await prismaIndicateurRepository.récupérerDétailsTerritoirePourUnIndicateur(
+            indicateurId,
+            habilitations,
+            ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT,
+            jalon,
+            dateDerniereExecutionDatajobs,
+          );
 
-      await prisma.chantier_identite.createMany({
-        data: [
-          {
-            id: "CH-001",
-            nom: "Chantier 001",
-            ministeres: ["1009"],
-            ministeres_acronymes: ["MINA"],
-          },
-        ],
-      });
-
-      await prisma.chantier_territoire.createMany({
-        data: [
-          {
-            id: "CH-001",
-            maille: "DEPT",
-            code_insee: "02",
-            territoire_code: "DEPT-02",
-            zone_id: "FRANCE",
-          },
-          {
-            id: "CH-001",
-            maille: "DEPT",
-            code_insee: "01",
-            territoire_code: "DEPT-01",
-            zone_id: "D01",
-          },
-        ],
-      });
-
-      await prisma.indicateur_identite.createMany({
-        data: [
-          {
-            id: "IND-001",
-            nom: "Indicateur 001",
-            chantier_id: "CH-001",
-            type_id: "IMPACT",
-            unite_mesure: "kg",
-          },
-        ],
-      });
-
-      await prisma.indicateur_territoire.createMany({
-        data: [
-          {
-            id: "IND-001",
-            chantier_id: "CH-001",
-            maille: "DEPT",
-            code_insee: "02",
-            territoire_code: "DEPT-02",
-            zone_id: "D02",
-            evolution_avancement: [
-              {
-                date: new Date("2026-01-12"),
-                valeur: 100,
-              },
-              {
-                date: new Date("2026-01-14"),
-                valeur: 110,
-              },
-            ],
-          },
-          {
-            id: "IND-001",
-            chantier_id: "CH-001",
-            maille: "DEPT",
-            territoire_code: "DEPT-01",
-            code_insee: "01",
-            zone_id: "D01",
-            valeur_actuelle_mandat: 10,
-            date_valeur_actuelle_mandat: new Date("2025-05-06"),
-          },
-        ],
-      });
-
-      await prisma.indicateur_territoire_jalon.createMany({
-        data: [
-          {
-            id: "IND-001",
-            maille: "DEPT",
-            code_insee: "02",
-            territoire_code: "DEPT-02",
-            jalon: 2025,
-            zone_id: "D02",
-            valeur_actuelle: 110,
-            date_valeur_actuelle: new Date("2026-01-12"),
-          },
-        ],
-      });
-
-      await prisma.utilisateur.create({
-        data: {
-          email: "jane.doe@test.com",
-          nom: "Doe",
-          prenom: "Jane",
-          id: "550e8400-e29b-41d4-a716-446655440001",
-          date_creation: new Date().toISOString(),
-          profil: {
-            connect: {
-              code: ProfilEnum.DITP_ADMIN,
-            },
-          },
-        },
-      });
-
-      await prisma.indicateur_territoire_valeur_evenement.createMany({
-        data: [
-          {
-            id: "550e8400-e29b-41d4-a716-446655440000",
-            indic_id: "IND-001",
-            territoire_code: "DEPT-02",
-            type_valeur: "VALEUR_AVANCEMENT",
-            donnees_complementaires: {},
-            type_evenement: EvenementValeurEnum.VALEUR_CREEE,
-            date_valeur: new Date("2026-01-01"),
-            ordre: 1,
-            date_modification: new Date("2026-01-12"),
-            date_creation: new Date("2026-01-12"),
-            id_auteur_modification: "550e8400-e29b-41d4-a716-446655440001",
-            correlation_id: "550e8400-e29b-41d4-a716-446655440002",
-            valeur: 100,
-          },
-          {
-            id: "550e8400-e29b-41d4-a716-446655440001",
-            indic_id: "IND-001",
-            territoire_code: "DEPT-02",
-            type_valeur: "VALEUR_AVANCEMENT",
-            donnees_complementaires: {},
-            type_evenement: EvenementValeurEnum.VALEUR_MODIFIEE,
-            date_valeur: new Date("2026-01-01"),
-            ordre: 2,
-            date_modification: new Date("2026-01-12"),
-            date_creation: new Date("2026-01-12"),
-            id_auteur_modification: "550e8400-e29b-41d4-a716-446655440001",
-            correlation_id: "550e8400-e29b-41d4-a716-446655440002",
-            valeur: 110,
-          },
-          {
-            id: "550e8400-e29b-41d4-a716-446655440002",
-            indic_id: "IND-001",
-            territoire_code: "DEPT-02",
-            type_valeur: "VALEUR_AVANCEMENT",
-            donnees_complementaires: {
-              motif: "Motif de la proposition",
-              source_donnee_methode_calcul:
-                "Source de la donnée et méthode de calcul",
-            },
-            type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_CREEE,
-            date_valeur: new Date("2026-01-01"),
-            ordre: 3,
-            date_modification: new Date("2026-01-12"),
-            date_creation: new Date("2026-01-12"),
-            id_auteur_modification: "550e8400-e29b-41d4-a716-446655440001",
-            correlation_id: "550e8400-e29b-41d4-a716-446655440002",
-            valeur: 120,
-          },
-        ],
-      });
-
-      // When
-      const result =
-        await prismaIndicateurRepository.récupérerDétailsTerritoirePourUnIndicateur(
-          indicateurId,
-          habilitations,
-          ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT,
-          jalon,
-          dateDerniereExecutionDatajobs,
+        // Then
+        expect(result["DEPT-02"].valeurAvancement).toEqual(110);
+        expect(result["DEPT-02"].dateValeurAvancement).toEqual(
+          new Date("2026-01-12").toLocaleString(),
         );
+        expect(result["DEPT-02"].proposition).toEqual({
+          valeurAvancement: 120,
+          tauxAvancement: null,
+          tauxAvancementIntermediaire: null,
+          statutTauxAvancement: "CALCULE",
+          auteur: "Jane Doe",
+          dateProposition: "2026-01-12T00:00:00.000Z",
+          dateValeurAvancement: "2026-01-01T00:00:00.000Z",
+          motif: "Motif de la proposition",
+          sourceDonneeEtMethodeCalcul:
+            "Source de la donnée et méthode de calcul",
+        });
+      }),
+    );
 
-      // Then
-      expect(result["DEPT-02"].valeurAvancement).toEqual(110);
-      expect(result["DEPT-02"].dateValeurAvancement).toEqual(
-        new Date("2026-01-12").toLocaleString(),
-      );
-      expect(result["DEPT-02"].proposition).toEqual({
-        valeurAvancement: 120,
-        tauxAvancement: null,
-        tauxAvancementIntermediaire: null,
-        statutTauxAvancement: "CALCULE",
-        auteur: "Jane Doe",
-        dateProposition: "2026-01-12T00:00:00.000Z",
-        dateValeurAvancement: "2026-01-01T00:00:00.000Z",
-        motif: "Motif de la proposition",
-        sourceDonneeEtMethodeCalcul: "Source de la donnée et méthode de calcul",
-      });
-    });
-
-    it("avec une PVA [CREEE, MODIFIEE], retourne les détails des indicateurs pour un chantier, territoire et dernière proposition", async () => {
-      // Given
-      const chantiersIds = ["CH-001"];
-      const indicateurId = "IND-001";
-      const territoireCodes = ["DEPT-02", "DEPT-01"];
-      const jalon = 2025;
-      const habilitations: Habilitations = {
-        gestionUtilisateur: {
-          chantiers: chantiersIds,
-          territoires: territoireCodes,
-          périmètres: [],
-        },
-        lecture: {
-          chantiers: chantiersIds,
-          territoires: territoireCodes,
-          périmètres: [],
-        },
-        saisieCommentaire: {
-          chantiers: chantiersIds,
-          territoires: territoireCodes,
-          périmètres: [],
-        },
-        saisieIndicateur: {
-          chantiers: chantiersIds,
-          territoires: territoireCodes,
-          périmètres: [],
-        },
-        responsabilite: {
-          chantiers: chantiersIds,
-          territoires: territoireCodes,
-          périmètres: [],
-        },
-      };
-
-      await prisma.chantier_identite.createMany({
-        data: [
-          {
-            id: "CH-001",
-            nom: "Chantier 001",
-            ministeres: ["1009"],
-            ministeres_acronymes: ["MINA"],
+    it(
+      "avec une PVA [CREEE, MODIFIEE], retourne les détails des indicateurs pour un chantier, territoire et dernière proposition",
+      createIntegrationTest(async () => {
+        // Given
+        const chantiersIds = ["CH-001"];
+        const indicateurId = "IND-001";
+        const territoireCodes = ["DEPT-02", "DEPT-01"];
+        const jalon = 2025;
+        const habilitations: Habilitations = {
+          gestionUtilisateur: {
+            chantiers: chantiersIds,
+            territoires: territoireCodes,
+            périmètres: [],
           },
-        ],
-      });
+          lecture: {
+            chantiers: chantiersIds,
+            territoires: territoireCodes,
+            périmètres: [],
+          },
+          saisieCommentaire: {
+            chantiers: chantiersIds,
+            territoires: territoireCodes,
+            périmètres: [],
+          },
+          saisieIndicateur: {
+            chantiers: chantiersIds,
+            territoires: territoireCodes,
+            périmètres: [],
+          },
+          responsabilite: {
+            chantiers: chantiersIds,
+            territoires: territoireCodes,
+            périmètres: [],
+          },
+        };
 
-      await prisma.chantier_territoire.createMany({
-        data: [
-          {
-            id: "CH-001",
-            maille: "DEPT",
-            code_insee: "02",
-            territoire_code: "DEPT-02",
-            zone_id: "FRANCE",
-          },
-          {
-            id: "CH-001",
-            maille: "DEPT",
-            code_insee: "01",
-            territoire_code: "DEPT-01",
-            zone_id: "D01",
-          },
-        ],
-      });
+        const chantier = await fixtures.chantierIdentite({
+          id: "CH-001",
+          nom: "Chantier 001",
+          ministeres: ["1009"],
+          ministeres_acronymes: ["MINA"],
+        });
 
-      await prisma.indicateur_identite.createMany({
-        data: [
-          {
-            id: "IND-001",
-            nom: "Indicateur 001",
-            chantier_id: "CH-001",
-            type_id: "IMPACT",
-            unite_mesure: "kg",
-          },
-        ],
-      });
+        await fixtures.chantierTerritoire({
+          id: chantier.id,
+          territoire_code: "DEPT-02",
+          maille: "DEPT",
+          code_insee: "02",
+          zone_id: "FRANCE",
+        });
 
-      await prisma.indicateur_territoire.createMany({
-        data: [
-          {
-            id: "IND-001",
-            chantier_id: "CH-001",
-            maille: "DEPT",
-            code_insee: "02",
-            territoire_code: "DEPT-02",
-            zone_id: "D02",
-            evolution_avancement: [
-              {
-                date: new Date("2026-01-12"),
-                valeur: 100,
-              },
-              {
-                date: new Date("2026-01-14"),
-                valeur: 110,
-              },
-            ],
-          },
-          {
-            id: "IND-001",
-            chantier_id: "CH-001",
-            maille: "DEPT",
-            territoire_code: "DEPT-01",
-            code_insee: "01",
-            zone_id: "D01",
-            valeur_actuelle_mandat: 10,
-            date_valeur_actuelle_mandat: new Date("2025-05-06"),
-          },
-        ],
-      });
+        await fixtures.chantierTerritoire({
+          id: chantier.id,
+          territoire_code: "DEPT-01",
+          maille: "DEPT",
+          code_insee: "01",
+          zone_id: "D01",
+        });
 
-      await prisma.indicateur_territoire_jalon.createMany({
-        data: [
-          {
-            id: "IND-001",
-            maille: "DEPT",
-            code_insee: "02",
-            territoire_code: "DEPT-02",
-            jalon: 2025,
-            zone_id: "D02",
-            valeur_actuelle: 110,
-            date_valeur_actuelle: new Date("2026-01-12"),
-          },
-        ],
-      });
+        const indicateur = await fixtures.indicateurIdentite({
+          id: "IND-001",
+          nom: "Indicateur 001",
+          chantier_id: chantier.id,
+          unite_mesure: "kg",
+        });
 
-      await prisma.utilisateur.create({
-        data: {
-          email: "jane.doe@test.com",
-          nom: "Doe",
-          prenom: "Jane",
+        await fixtures.indicateurTerritoire({
+          id: indicateur.id,
+          chantier_id: chantier.id,
+          territoire_code: "DEPT-02",
+          maille: "DEPT",
+          code_insee: "02",
+          zone_id: "D02",
+          evolution_avancement: [
+            {
+              date: new Date("2026-01-12"),
+              valeur: 100,
+            },
+            {
+              date: new Date("2026-01-14"),
+              valeur: 110,
+            },
+          ],
+        });
+
+        await fixtures.indicateurTerritoire({
+          id: indicateur.id,
+          chantier_id: chantier.id,
+          territoire_code: "DEPT-01",
+          maille: "DEPT",
+          code_insee: "01",
+          zone_id: "D01",
+          valeur_actuelle_mandat: 10,
+          date_valeur_actuelle_mandat: new Date("2025-05-06"),
+        });
+
+        await fixtures.indicateurTerritoireJalon({
+          id: indicateur.id,
+          territoire_code: "DEPT-02",
+          maille: "DEPT",
+          code_insee: "02",
+          zone_id: "D02",
+          jalon: 2025,
+          valeur_actuelle: 110,
+          date_valeur_actuelle: new Date("2026-01-12"),
+        });
+
+        const utilisateur = await fixtures.utilisateur({
           id: "550e8400-e29b-41d4-a716-446655440001",
-          date_creation: new Date().toISOString(),
-          profil: {
-            connect: {
-              code: ProfilEnum.DITP_ADMIN,
-            },
-          },
-        },
-      });
+          prenom: "Jane",
+          nom: "Doe",
+        });
 
-      await prisma.indicateur_territoire_valeur_evenement.createMany({
-        data: [
-          {
-            id: "550e8400-e29b-41d4-a716-446655440000",
-            indic_id: "IND-001",
-            territoire_code: "DEPT-02",
-            type_valeur: "VALEUR_AVANCEMENT",
-            donnees_complementaires: {},
-            type_evenement: EvenementValeurEnum.VALEUR_CREEE,
-            date_valeur: new Date("2026-01-01"),
-            ordre: 1,
-            date_modification: new Date("2026-01-12"),
-            date_creation: new Date("2026-01-12"),
-            id_auteur_modification: "550e8400-e29b-41d4-a716-446655440001",
-            correlation_id: "550e8400-e29b-41d4-a716-446655440002",
-            valeur: 100,
-          },
-          {
-            id: "550e8400-e29b-41d4-a716-446655440001",
-            indic_id: "IND-001",
-            territoire_code: "DEPT-02",
-            type_valeur: "VALEUR_AVANCEMENT",
-            donnees_complementaires: {},
-            type_evenement: EvenementValeurEnum.VALEUR_MODIFIEE,
-            date_valeur: new Date("2026-01-01"),
-            ordre: 2,
-            date_modification: new Date("2026-01-12"),
-            date_creation: new Date("2026-01-12"),
-            id_auteur_modification: "550e8400-e29b-41d4-a716-446655440001",
-            correlation_id: "550e8400-e29b-41d4-a716-446655440002",
-            valeur: 110,
-          },
-          {
-            id: "550e8400-e29b-41d4-a716-446655440002",
-            indic_id: "IND-001",
-            territoire_code: "DEPT-02",
-            type_valeur: "VALEUR_AVANCEMENT",
-            donnees_complementaires: {
-              motif: "Motif de la proposition",
-              sourceDonneeEtMethodeCalcul:
-                "Source de la donnée et méthode de calcul",
-            },
-            type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_CREEE,
-            date_valeur: new Date("2026-01-01"),
-            ordre: 3,
-            date_modification: new Date("2026-01-12"),
-            date_creation: new Date("2026-01-12"),
-            id_auteur_modification: "550e8400-e29b-41d4-a716-446655440001",
-            correlation_id: "550e8400-e29b-41d4-a716-446655440002",
-            valeur: 120,
-          },
-          {
-            id: "550e8400-e29b-41d4-a716-446655440003",
-            indic_id: "IND-001",
-            territoire_code: "DEPT-02",
-            type_valeur: "VALEUR_AVANCEMENT",
-            donnees_complementaires: {},
-            type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_MODIFIEE,
-            date_valeur: new Date("2026-01-01"),
-            ordre: 4,
-            date_modification: new Date("2026-01-12"),
-            date_creation: new Date("2026-01-12"),
-            id_auteur_modification: "550e8400-e29b-41d4-a716-446655440001",
-            correlation_id: "550e8400-e29b-41d4-a716-446655440002",
-            valeur: 140,
-          },
-        ],
-      });
+        const correlationId = "550e8400-e29b-41d4-a716-446655440002";
 
-      // When
-      const result =
-        await prismaIndicateurRepository.récupérerDétailsTerritoirePourUnIndicateur(
-          indicateurId,
-          habilitations,
-          ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT,
-          jalon,
-          dateDerniereExecutionDatajobs,
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur.id,
+          territoire_code: "DEPT-02",
+          type_evenement: EvenementValeurEnum.VALEUR_CREEE,
+          id_auteur_modification: utilisateur.id,
+          date_valeur: new Date("2026-01-01"),
+          ordre: 1,
+          date_modification: new Date("2026-01-12"),
+          date_creation: new Date("2026-01-12"),
+          correlation_id: correlationId,
+          valeur: 100,
+        });
+
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur.id,
+          territoire_code: "DEPT-02",
+          type_evenement: EvenementValeurEnum.VALEUR_MODIFIEE,
+          id_auteur_modification: utilisateur.id,
+          date_valeur: new Date("2026-01-01"),
+          ordre: 2,
+          date_modification: new Date("2026-01-12"),
+          date_creation: new Date("2026-01-12"),
+          correlation_id: correlationId,
+          valeur: 110,
+        });
+
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur.id,
+          territoire_code: "DEPT-02",
+          type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_CREEE,
+          id_auteur_modification: utilisateur.id,
+          date_valeur: new Date("2026-01-01"),
+          ordre: 3,
+          date_modification: new Date("2026-01-12"),
+          date_creation: new Date("2026-01-12"),
+          correlation_id: correlationId,
+          valeur: 120,
+          donnees_complementaires: {
+            motif: "Motif de la proposition",
+            sourceDonneeEtMethodeCalcul:
+              "Source de la donnée et méthode de calcul",
+          },
+        });
+
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur.id,
+          territoire_code: "DEPT-02",
+          type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_MODIFIEE,
+          id_auteur_modification: utilisateur.id,
+          date_valeur: new Date("2026-01-01"),
+          ordre: 4,
+          date_modification: new Date("2026-01-12"),
+          date_creation: new Date("2026-01-12"),
+          correlation_id: correlationId,
+          valeur: 140,
+        });
+
+        // When
+        const result =
+          await prismaIndicateurRepository.récupérerDétailsTerritoirePourUnIndicateur(
+            indicateurId,
+            habilitations,
+            ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT,
+            jalon,
+            dateDerniereExecutionDatajobs,
+          );
+
+        // Then
+        expect(result["DEPT-02"].valeurAvancement).toEqual(110);
+        expect(result["DEPT-02"].dateValeurAvancement).toEqual(
+          new Date("2026-01-12").toLocaleString(),
         );
-
-      // Then
-      expect(result["DEPT-02"].valeurAvancement).toEqual(110);
-      expect(result["DEPT-02"].dateValeurAvancement).toEqual(
-        new Date("2026-01-12").toLocaleString(),
-      );
-      expect(result["DEPT-02"].proposition).toEqual({
-        valeurAvancement: 140,
-        tauxAvancement: null,
-        tauxAvancementIntermediaire: null,
-        statutTauxAvancement: "CALCULE",
-        auteur: "Jane Doe",
-        dateProposition: "2026-01-12T00:00:00.000Z",
-        dateValeurAvancement: "2026-01-01T00:00:00.000Z",
-        motif: null,
-        sourceDonneeEtMethodeCalcul: null,
-      });
-    });
+        expect(result["DEPT-02"].proposition).toEqual({
+          valeurAvancement: 140,
+          tauxAvancement: null,
+          tauxAvancementIntermediaire: null,
+          statutTauxAvancement: "CALCULE",
+          auteur: "Jane Doe",
+          dateProposition: "2026-01-12T00:00:00.000Z",
+          dateValeurAvancement: "2026-01-01T00:00:00.000Z",
+          motif: null,
+          sourceDonneeEtMethodeCalcul: null,
+        });
+      }),
+    );
 
     it.each([
       [EvenementValeurEnum.PROPOSITION_VALEUR_SUPPRIMEE],
@@ -3709,7 +2865,7 @@ describe("PrismaIndicateurRepository", () => {
       [EvenementValeurEnum.PROPOSITION_VALEUR_IGNOREE_VALEUR_HISTORISEE],
     ])(
       "avec une PVA [CREEE, MODIFIEE, %s], retourne les détails des indicateurs pour un chantier, territoire et aucune proposition",
-      async (evenement) => {
+      createIntegrationTest(async (_prisma, evenement) => {
         // Given
         const chantiersIds = ["CH-001"];
         const indicateurId = "IND-001";
@@ -3743,190 +2899,137 @@ describe("PrismaIndicateurRepository", () => {
           },
         };
 
-        await prisma.chantier_identite.createMany({
-          data: [
-            {
-              id: "CH-001",
-              nom: "Chantier 001",
-              ministeres: ["1009"],
-              ministeres_acronymes: ["MINA"],
-            },
-          ],
+        const chantier = await fixtures.chantierIdentite({
+          id: "CH-001",
+          nom: "Chantier 001",
+          ministeres: ["1009"],
+          ministeres_acronymes: ["MINA"],
         });
 
-        await prisma.chantier_territoire.createMany({
-          data: [
-            {
-              id: "CH-001",
-              maille: "DEPT",
-              code_insee: "02",
-              territoire_code: "DEPT-02",
-              zone_id: "FRANCE",
-            },
-            {
-              id: "CH-001",
-              maille: "DEPT",
-              code_insee: "01",
-              territoire_code: "DEPT-01",
-              zone_id: "D01",
-            },
-          ],
+        await fixtures.chantierTerritoire({
+          id: chantier.id,
+          territoire_code: "DEPT-02",
+          maille: "DEPT",
+          code_insee: "02",
+          zone_id: "FRANCE",
+        });
+        await fixtures.chantierTerritoire({
+          id: chantier.id,
+          territoire_code: "DEPT-01",
+          maille: "DEPT",
+          code_insee: "01",
+          zone_id: "D01",
         });
 
-        await prisma.indicateur_identite.createMany({
-          data: [
-            {
-              id: "IND-001",
-              nom: "Indicateur 001",
-              chantier_id: "CH-001",
-              type_id: "IMPACT",
-              unite_mesure: "kg",
-            },
-          ],
+        const indicateur = await fixtures.indicateurIdentite({
+          id: "IND-001",
+          nom: "Indicateur 001",
+          chantier_id: chantier.id,
+          unite_mesure: "kg",
         });
 
-        await prisma.indicateur_territoire.createMany({
-          data: [
+        await fixtures.indicateurTerritoire({
+          id: indicateur.id,
+          chantier_id: chantier.id,
+          territoire_code: "DEPT-02",
+          maille: "DEPT",
+          code_insee: "02",
+          zone_id: "D02",
+          evolution_avancement: [
             {
-              id: "IND-001",
-              chantier_id: "CH-001",
-              maille: "DEPT",
-              code_insee: "02",
-              territoire_code: "DEPT-02",
-              zone_id: "D02",
-              evolution_avancement: [
-                {
-                  date: new Date("2026-01-12"),
-                  valeur: 100,
-                },
-                {
-                  date: new Date("2026-01-14"),
-                  valeur: 110,
-                },
-              ],
-            },
-            {
-              id: "IND-001",
-              chantier_id: "CH-001",
-              maille: "DEPT",
-              territoire_code: "DEPT-01",
-              code_insee: "01",
-              zone_id: "D01",
-              valeur_actuelle_mandat: 10,
-              date_valeur_actuelle_mandat: new Date("2025-05-06"),
-            },
-          ],
-        });
-
-        await prisma.indicateur_territoire_jalon.createMany({
-          data: [
-            {
-              id: "IND-001",
-              maille: "DEPT",
-              code_insee: "02",
-              territoire_code: "DEPT-02",
-              jalon: 2025,
-              zone_id: "D02",
-              valeur_actuelle: 110,
-              date_valeur_actuelle: new Date("2026-01-12"),
-            },
-          ],
-        });
-
-        await prisma.utilisateur.create({
-          data: {
-            email: "jane.doe@test.com",
-            nom: "Doe",
-            prenom: "Jane",
-            id: "550e8400-e29b-41d4-a716-446655440001",
-            date_creation: new Date().toISOString(),
-            profil: {
-              connect: {
-                code: ProfilEnum.DITP_ADMIN,
-              },
-            },
-          },
-        });
-
-        await prisma.indicateur_territoire_valeur_evenement.createMany({
-          data: [
-            {
-              id: "550e8400-e29b-41d4-a716-446655440000",
-              indic_id: "IND-001",
-              territoire_code: "DEPT-02",
-              type_valeur: "VALEUR_AVANCEMENT",
-              donnees_complementaires: {},
-              type_evenement: EvenementValeurEnum.VALEUR_CREEE,
-              date_valeur: new Date("2026-01-12"),
-              ordre: 1,
-              date_modification: new Date("2026-01-12"),
-              date_creation: new Date("2026-01-12"),
-              id_auteur_modification: "550e8400-e29b-41d4-a716-446655440001",
-              correlation_id: "550e8400-e29b-41d4-a716-446655440002",
+              date: new Date("2026-01-12"),
               valeur: 100,
             },
             {
-              id: "550e8400-e29b-41d4-a716-446655440001",
-              indic_id: "IND-001",
-              territoire_code: "DEPT-02",
-              type_valeur: "VALEUR_AVANCEMENT",
-              donnees_complementaires: {},
-              type_evenement: EvenementValeurEnum.VALEUR_MODIFIEE,
-              date_valeur: new Date("2026-01-12"),
-              ordre: 2,
-              date_modification: new Date("2026-01-12"),
-              date_creation: new Date("2026-01-12"),
-              id_auteur_modification: "550e8400-e29b-41d4-a716-446655440001",
-              correlation_id: "550e8400-e29b-41d4-a716-446655440002",
+              date: new Date("2026-01-14"),
               valeur: 110,
             },
-            {
-              id: "550e8400-e29b-41d4-a716-446655440002",
-              indic_id: "IND-001",
-              territoire_code: "DEPT-02",
-              type_valeur: "VALEUR_AVANCEMENT",
-              donnees_complementaires: {},
-              type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_CREEE,
-              date_valeur: new Date("2026-01-12"),
-              ordre: 3,
-              date_modification: new Date("2026-01-12"),
-              date_creation: new Date("2026-01-12"),
-              id_auteur_modification: "550e8400-e29b-41d4-a716-446655440001",
-              correlation_id: "550e8400-e29b-41d4-a716-446655440002",
-              valeur: 120,
-            },
-            {
-              id: "550e8400-e29b-41d4-a716-446655440003",
-              indic_id: "IND-001",
-              territoire_code: "DEPT-02",
-              type_valeur: "VALEUR_AVANCEMENT",
-              donnees_complementaires: {},
-              type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_MODIFIEE,
-              date_valeur: new Date("2026-01-12"),
-              ordre: 4,
-              date_modification: new Date("2026-01-12"),
-              date_creation: new Date("2026-01-14"),
-              id_auteur_modification: "550e8400-e29b-41d4-a716-446655440001",
-              correlation_id: "550e8400-e29b-41d4-a716-446655440002",
-              valeur: 140,
-            },
-
-            {
-              id: "550e8400-e29b-41d4-a716-446655440004",
-              indic_id: "IND-001",
-              territoire_code: "DEPT-02",
-              type_valeur: "VALEUR_AVANCEMENT",
-              donnees_complementaires: {},
-              type_evenement: evenement,
-              date_valeur: new Date("2026-01-12"),
-              ordre: 5,
-              date_modification: new Date("2026-01-12"),
-              date_creation: new Date("2026-01-14"),
-              id_auteur_modification: "550e8400-e29b-41d4-a716-446655440001",
-              correlation_id: "550e8400-e29b-41d4-a716-446655440002",
-              valeur: 140,
-            },
           ],
+        });
+        await fixtures.indicateurTerritoire({
+          id: indicateur.id,
+          chantier_id: chantier.id,
+          territoire_code: "DEPT-01",
+          maille: "DEPT",
+          code_insee: "01",
+          zone_id: "D01",
+          valeur_actuelle_mandat: 10,
+          date_valeur_actuelle_mandat: new Date("2025-05-06"),
+        });
+
+        await fixtures.indicateurTerritoireJalon({
+          id: indicateur.id,
+          territoire_code: "DEPT-02",
+          maille: "DEPT",
+          code_insee: "02",
+          zone_id: "D02",
+          jalon: 2025,
+          valeur_actuelle: 110,
+          date_valeur_actuelle: new Date("2026-01-12"),
+        });
+
+        const utilisateur = await fixtures.utilisateur();
+        const correlationId = "550e8400-e29b-41d4-a716-446655440002";
+
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur.id,
+          territoire_code: "DEPT-02",
+          type_evenement: EvenementValeurEnum.VALEUR_CREEE,
+          id_auteur_modification: utilisateur.id,
+          date_valeur: new Date("2026-01-12"),
+          ordre: 1,
+          date_modification: new Date("2026-01-12"),
+          date_creation: new Date("2026-01-12"),
+          correlation_id: correlationId,
+          valeur: 100,
+        });
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur.id,
+          territoire_code: "DEPT-02",
+          type_evenement: EvenementValeurEnum.VALEUR_MODIFIEE,
+          id_auteur_modification: utilisateur.id,
+          date_valeur: new Date("2026-01-12"),
+          ordre: 2,
+          date_modification: new Date("2026-01-12"),
+          date_creation: new Date("2026-01-12"),
+          correlation_id: correlationId,
+          valeur: 110,
+        });
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur.id,
+          territoire_code: "DEPT-02",
+          type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_CREEE,
+          id_auteur_modification: utilisateur.id,
+          date_valeur: new Date("2026-01-12"),
+          ordre: 3,
+          date_modification: new Date("2026-01-12"),
+          date_creation: new Date("2026-01-12"),
+          correlation_id: correlationId,
+          valeur: 120,
+        });
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur.id,
+          territoire_code: "DEPT-02",
+          type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_MODIFIEE,
+          id_auteur_modification: utilisateur.id,
+          date_valeur: new Date("2026-01-12"),
+          ordre: 4,
+          date_modification: new Date("2026-01-12"),
+          date_creation: new Date("2026-01-14"),
+          correlation_id: correlationId,
+          valeur: 140,
+        });
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur.id,
+          territoire_code: "DEPT-02",
+          type_evenement: evenement,
+          id_auteur_modification: utilisateur.id,
+          date_valeur: new Date("2026-01-12"),
+          ordre: 5,
+          date_modification: new Date("2026-01-12"),
+          date_creation: new Date("2026-01-14"),
+          correlation_id: correlationId,
+          valeur: 140,
         });
 
         // When
@@ -3945,7 +3048,7 @@ describe("PrismaIndicateurRepository", () => {
           new Date("2026-01-12").toLocaleString(),
         );
         expect(result["DEPT-02"].proposition).toBeNull();
-      },
+      }),
     );
 
     it.each([
@@ -3953,7 +3056,7 @@ describe("PrismaIndicateurRepository", () => {
       [EvenementValeurEnum.PROPOSITION_VALEUR_ACCEPTEE_AVEC_MODIFICATION],
     ])(
       "avec une PVA [CREEE, MODIFIEE, %s], retourne les détails des indicateurs pour un chantier, territoire et la proposition",
-      async (evenement) => {
+      createIntegrationTest(async (_prisma, evenement) => {
         // Given
         const chantiersIds = ["CH-001"];
         const indicateurId = "IND-001";
@@ -3987,190 +3090,137 @@ describe("PrismaIndicateurRepository", () => {
           },
         };
 
-        await prisma.chantier_identite.createMany({
-          data: [
-            {
-              id: "CH-001",
-              nom: "Chantier 001",
-              ministeres: ["1009"],
-              ministeres_acronymes: ["MINA"],
-            },
-          ],
+        const chantier = await fixtures.chantierIdentite({
+          id: "CH-001",
+          nom: "Chantier 001",
+          ministeres: ["1009"],
+          ministeres_acronymes: ["MINA"],
         });
 
-        await prisma.chantier_territoire.createMany({
-          data: [
-            {
-              id: "CH-001",
-              maille: "DEPT",
-              code_insee: "02",
-              territoire_code: "DEPT-02",
-              zone_id: "FRANCE",
-            },
-            {
-              id: "CH-001",
-              maille: "DEPT",
-              code_insee: "01",
-              territoire_code: "DEPT-01",
-              zone_id: "D01",
-            },
-          ],
+        await fixtures.chantierTerritoire({
+          id: chantier.id,
+          territoire_code: "DEPT-02",
+          maille: "DEPT",
+          code_insee: "02",
+          zone_id: "FRANCE",
+        });
+        await fixtures.chantierTerritoire({
+          id: chantier.id,
+          territoire_code: "DEPT-01",
+          maille: "DEPT",
+          code_insee: "01",
+          zone_id: "D01",
         });
 
-        await prisma.indicateur_identite.createMany({
-          data: [
-            {
-              id: "IND-001",
-              nom: "Indicateur 001",
-              chantier_id: "CH-001",
-              type_id: "IMPACT",
-              unite_mesure: "kg",
-            },
-          ],
+        const indicateur = await fixtures.indicateurIdentite({
+          id: "IND-001",
+          nom: "Indicateur 001",
+          chantier_id: chantier.id,
+          unite_mesure: "kg",
         });
 
-        await prisma.indicateur_territoire.createMany({
-          data: [
+        await fixtures.indicateurTerritoire({
+          id: indicateur.id,
+          chantier_id: chantier.id,
+          territoire_code: "DEPT-02",
+          maille: "DEPT",
+          code_insee: "02",
+          zone_id: "D02",
+          evolution_avancement: [
             {
-              id: "IND-001",
-              chantier_id: "CH-001",
-              maille: "DEPT",
-              code_insee: "02",
-              territoire_code: "DEPT-02",
-              zone_id: "D02",
-              evolution_avancement: [
-                {
-                  date: new Date("2026-01-12"),
-                  valeur: 100,
-                },
-                {
-                  date: new Date("2026-01-14"),
-                  valeur: 110,
-                },
-              ],
-            },
-            {
-              id: "IND-001",
-              chantier_id: "CH-001",
-              maille: "DEPT",
-              territoire_code: "DEPT-01",
-              code_insee: "01",
-              zone_id: "D01",
-              valeur_actuelle_mandat: 10,
-              date_valeur_actuelle_mandat: new Date("2025-05-06"),
-            },
-          ],
-        });
-
-        await prisma.indicateur_territoire_jalon.createMany({
-          data: [
-            {
-              id: "IND-001",
-              maille: "DEPT",
-              code_insee: "02",
-              territoire_code: "DEPT-02",
-              jalon: 2025,
-              zone_id: "D02",
-              valeur_actuelle: 110,
-              date_valeur_actuelle: new Date("2026-01-12"),
-            },
-          ],
-        });
-
-        await prisma.utilisateur.create({
-          data: {
-            email: "jane.doe@test.com",
-            nom: "Doe",
-            prenom: "Jane",
-            id: "550e8400-e29b-41d4-a716-446655440001",
-            date_creation: new Date().toISOString(),
-            profil: {
-              connect: {
-                code: ProfilEnum.DITP_ADMIN,
-              },
-            },
-          },
-        });
-
-        await prisma.indicateur_territoire_valeur_evenement.createMany({
-          data: [
-            {
-              id: "550e8400-e29b-41d4-a716-446655440000",
-              indic_id: "IND-001",
-              territoire_code: "DEPT-02",
-              type_valeur: "VALEUR_AVANCEMENT",
-              donnees_complementaires: {},
-              type_evenement: EvenementValeurEnum.VALEUR_CREEE,
-              date_valeur: new Date("2026-01-12"),
-              ordre: 1,
-              date_modification: new Date("2026-01-12"),
-              date_creation: new Date("2026-01-12"),
-              id_auteur_modification: "550e8400-e29b-41d4-a716-446655440001",
-              correlation_id: "550e8400-e29b-41d4-a716-446655440002",
+              date: new Date("2026-01-12"),
               valeur: 100,
             },
             {
-              id: "550e8400-e29b-41d4-a716-446655440001",
-              indic_id: "IND-001",
-              territoire_code: "DEPT-02",
-              type_valeur: "VALEUR_AVANCEMENT",
-              donnees_complementaires: {},
-              type_evenement: EvenementValeurEnum.VALEUR_MODIFIEE,
-              date_valeur: new Date("2026-01-12"),
-              ordre: 2,
-              date_modification: new Date("2026-01-12"),
-              date_creation: new Date("2026-01-12"),
-              id_auteur_modification: "550e8400-e29b-41d4-a716-446655440001",
-              correlation_id: "550e8400-e29b-41d4-a716-446655440002",
+              date: new Date("2026-01-14"),
               valeur: 110,
             },
-            {
-              id: "550e8400-e29b-41d4-a716-446655440002",
-              indic_id: "IND-001",
-              territoire_code: "DEPT-02",
-              type_valeur: "VALEUR_AVANCEMENT",
-              donnees_complementaires: {},
-              type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_CREEE,
-              date_valeur: new Date("2026-01-12"),
-              ordre: 3,
-              date_modification: new Date("2026-01-12"),
-              date_creation: new Date("2026-01-12"),
-              id_auteur_modification: "550e8400-e29b-41d4-a716-446655440001",
-              correlation_id: "550e8400-e29b-41d4-a716-446655440002",
-              valeur: 120,
-            },
-            {
-              id: "550e8400-e29b-41d4-a716-446655440003",
-              indic_id: "IND-001",
-              territoire_code: "DEPT-02",
-              type_valeur: "VALEUR_AVANCEMENT",
-              donnees_complementaires: {},
-              type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_MODIFIEE,
-              date_valeur: new Date("2026-01-12"),
-              ordre: 4,
-              date_modification: new Date("2026-01-12"),
-              date_creation: new Date("2026-01-14"),
-              id_auteur_modification: "550e8400-e29b-41d4-a716-446655440001",
-              correlation_id: "550e8400-e29b-41d4-a716-446655440002",
-              valeur: 140,
-            },
-
-            {
-              id: "550e8400-e29b-41d4-a716-446655440004",
-              indic_id: "IND-001",
-              territoire_code: "DEPT-02",
-              type_valeur: "VALEUR_AVANCEMENT",
-              donnees_complementaires: {},
-              type_evenement: evenement,
-              date_valeur: new Date("2026-01-12"),
-              ordre: 5,
-              date_modification: new Date("2026-01-12"),
-              date_creation: new Date("2026-01-14"),
-              id_auteur_modification: "550e8400-e29b-41d4-a716-446655440001",
-              correlation_id: "550e8400-e29b-41d4-a716-446655440002",
-              valeur: 140,
-            },
           ],
+        });
+        await fixtures.indicateurTerritoire({
+          id: indicateur.id,
+          chantier_id: chantier.id,
+          territoire_code: "DEPT-01",
+          maille: "DEPT",
+          code_insee: "01",
+          zone_id: "D01",
+          valeur_actuelle_mandat: 10,
+          date_valeur_actuelle_mandat: new Date("2025-05-06"),
+        });
+
+        await fixtures.indicateurTerritoireJalon({
+          id: indicateur.id,
+          territoire_code: "DEPT-02",
+          maille: "DEPT",
+          code_insee: "02",
+          zone_id: "D02",
+          jalon: 2025,
+          valeur_actuelle: 110,
+          date_valeur_actuelle: new Date("2026-01-12"),
+        });
+
+        const utilisateur = await fixtures.utilisateur();
+        const correlationId = "550e8400-e29b-41d4-a716-446655440002";
+
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur.id,
+          territoire_code: "DEPT-02",
+          type_evenement: EvenementValeurEnum.VALEUR_CREEE,
+          id_auteur_modification: utilisateur.id,
+          date_valeur: new Date("2026-01-12"),
+          ordre: 1,
+          date_modification: new Date("2026-01-12"),
+          date_creation: new Date("2026-01-12"),
+          correlation_id: correlationId,
+          valeur: 100,
+        });
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur.id,
+          territoire_code: "DEPT-02",
+          type_evenement: EvenementValeurEnum.VALEUR_MODIFIEE,
+          id_auteur_modification: utilisateur.id,
+          date_valeur: new Date("2026-01-12"),
+          ordre: 2,
+          date_modification: new Date("2026-01-12"),
+          date_creation: new Date("2026-01-12"),
+          correlation_id: correlationId,
+          valeur: 110,
+        });
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur.id,
+          territoire_code: "DEPT-02",
+          type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_CREEE,
+          id_auteur_modification: utilisateur.id,
+          date_valeur: new Date("2026-01-12"),
+          ordre: 3,
+          date_modification: new Date("2026-01-12"),
+          date_creation: new Date("2026-01-12"),
+          correlation_id: correlationId,
+          valeur: 120,
+        });
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur.id,
+          territoire_code: "DEPT-02",
+          type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_MODIFIEE,
+          id_auteur_modification: utilisateur.id,
+          date_valeur: new Date("2026-01-12"),
+          ordre: 4,
+          date_modification: new Date("2026-01-12"),
+          date_creation: new Date("2026-01-14"),
+          correlation_id: correlationId,
+          valeur: 140,
+        });
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur.id,
+          territoire_code: "DEPT-02",
+          type_evenement: evenement,
+          id_auteur_modification: utilisateur.id,
+          date_valeur: new Date("2026-01-12"),
+          ordre: 5,
+          date_modification: new Date("2026-01-12"),
+          date_creation: new Date("2026-01-14"),
+          correlation_id: correlationId,
+          valeur: 140,
         });
 
         // When
@@ -4189,2976 +3239,2457 @@ describe("PrismaIndicateurRepository", () => {
           new Date("2026-01-12").toLocaleString(),
         );
         expect(result["DEPT-02"].proposition).toBeNull();
-      },
+      }),
     );
 
-    it("avec une PVA [CREEE, MODIFIEE, SUPPRIMEE, CREEE], retourne les détails des indicateurs pour un chantier, territoire et nouvelle proposition", async () => {
-      // Given
-      const chantiersIds = ["CH-001"];
-      const indicateurId = "IND-001";
-      const territoireCodes = ["DEPT-02", "DEPT-01"];
-      const jalon = 2025;
-      const habilitations: Habilitations = {
-        gestionUtilisateur: {
-          chantiers: chantiersIds,
-          territoires: territoireCodes,
-          périmètres: [],
-        },
-        lecture: {
-          chantiers: chantiersIds,
-          territoires: territoireCodes,
-          périmètres: [],
-        },
-        saisieCommentaire: {
-          chantiers: chantiersIds,
-          territoires: territoireCodes,
-          périmètres: [],
-        },
-        saisieIndicateur: {
-          chantiers: chantiersIds,
-          territoires: territoireCodes,
-          périmètres: [],
-        },
-        responsabilite: {
-          chantiers: chantiersIds,
-          territoires: territoireCodes,
-          périmètres: [],
-        },
-      };
+    it(
+      "avec une PVA [CREEE, MODIFIEE, SUPPRIMEE, CREEE], retourne les détails des indicateurs pour un chantier, territoire et nouvelle proposition",
+      createIntegrationTest(async () => {
+        // Given
+        const chantiersIds = ["CH-001"];
+        const indicateurId = "IND-001";
+        const territoireCodes = ["DEPT-02", "DEPT-01"];
+        const jalon = 2025;
+        const habilitations: Habilitations = {
+          gestionUtilisateur: {
+            chantiers: chantiersIds,
+            territoires: territoireCodes,
+            périmètres: [],
+          },
+          lecture: {
+            chantiers: chantiersIds,
+            territoires: territoireCodes,
+            périmètres: [],
+          },
+          saisieCommentaire: {
+            chantiers: chantiersIds,
+            territoires: territoireCodes,
+            périmètres: [],
+          },
+          saisieIndicateur: {
+            chantiers: chantiersIds,
+            territoires: territoireCodes,
+            périmètres: [],
+          },
+          responsabilite: {
+            chantiers: chantiersIds,
+            territoires: territoireCodes,
+            périmètres: [],
+          },
+        };
 
-      await prisma.chantier_identite.createMany({
-        data: [
-          {
-            id: "CH-001",
-            nom: "Chantier 001",
-            ministeres: ["1009"],
-            ministeres_acronymes: ["MINA"],
-          },
-        ],
-      });
+        const chantier = await fixtures.chantierIdentite({
+          id: "CH-001",
+          nom: "Chantier 001",
+          ministeres: ["1009"],
+          ministeres_acronymes: ["MINA"],
+        });
 
-      await prisma.chantier_territoire.createMany({
-        data: [
-          {
-            id: "CH-001",
-            maille: "DEPT",
-            code_insee: "02",
-            territoire_code: "DEPT-02",
-            zone_id: "FRANCE",
-          },
-          {
-            id: "CH-001",
-            maille: "DEPT",
-            code_insee: "01",
-            territoire_code: "DEPT-01",
-            zone_id: "D01",
-          },
-        ],
-      });
+        await fixtures.chantierTerritoire({
+          id: chantier.id,
+          territoire_code: "DEPT-02",
+          maille: "DEPT",
+          code_insee: "02",
+          zone_id: "FRANCE",
+        });
 
-      await prisma.indicateur_identite.createMany({
-        data: [
-          {
-            id: "IND-001",
-            nom: "Indicateur 001",
-            chantier_id: "CH-001",
-            type_id: "IMPACT",
-            unite_mesure: "kg",
-          },
-        ],
-      });
+        await fixtures.chantierTerritoire({
+          id: chantier.id,
+          territoire_code: "DEPT-01",
+          maille: "DEPT",
+          code_insee: "01",
+          zone_id: "D01",
+        });
 
-      await prisma.indicateur_territoire.createMany({
-        data: [
-          {
-            id: "IND-001",
-            chantier_id: "CH-001",
-            maille: "DEPT",
-            code_insee: "02",
-            territoire_code: "DEPT-02",
-            zone_id: "D02",
-            evolution_avancement: [
-              {
-                date: new Date("2026-01-12"),
-                valeur: 100,
-              },
-              {
-                date: new Date("2026-01-14"),
-                valeur: 110,
-              },
-            ],
-          },
-          {
-            id: "IND-001",
-            chantier_id: "CH-001",
-            maille: "DEPT",
-            territoire_code: "DEPT-01",
-            code_insee: "01",
-            zone_id: "D01",
-            valeur_actuelle_mandat: 10,
-            date_valeur_actuelle_mandat: new Date("2025-05-06"),
-          },
-        ],
-      });
+        const indicateur = await fixtures.indicateurIdentite({
+          id: "IND-001",
+          nom: "Indicateur 001",
+          chantier_id: chantier.id,
+          unite_mesure: "kg",
+        });
 
-      await prisma.indicateur_territoire_jalon.createMany({
-        data: [
-          {
-            id: "IND-001",
-            maille: "DEPT",
-            code_insee: "02",
-            territoire_code: "DEPT-02",
-            jalon: 2025,
-            zone_id: "D02",
-            valeur_actuelle: 110,
-            date_valeur_actuelle: new Date("2026-01-12"),
-          },
-        ],
-      });
+        await fixtures.indicateurTerritoire({
+          id: indicateur.id,
+          chantier_id: chantier.id,
+          territoire_code: "DEPT-02",
+          maille: "DEPT",
+          code_insee: "02",
+          zone_id: "D02",
+          evolution_avancement: [
+            {
+              date: new Date("2026-01-12"),
+              valeur: 100,
+            },
+            {
+              date: new Date("2026-01-14"),
+              valeur: 110,
+            },
+          ],
+        });
 
-      await prisma.utilisateur.create({
-        data: {
-          email: "jane.doe@test.com",
-          nom: "Doe",
-          prenom: "Jane",
+        await fixtures.indicateurTerritoire({
+          id: indicateur.id,
+          chantier_id: chantier.id,
+          territoire_code: "DEPT-01",
+          maille: "DEPT",
+          code_insee: "01",
+          zone_id: "D01",
+          valeur_actuelle_mandat: 10,
+          date_valeur_actuelle_mandat: new Date("2025-05-06"),
+        });
+
+        await fixtures.indicateurTerritoireJalon({
+          id: indicateur.id,
+          territoire_code: "DEPT-02",
+          maille: "DEPT",
+          code_insee: "02",
+          zone_id: "D02",
+          jalon: 2025,
+          valeur_actuelle: 110,
+          date_valeur_actuelle: new Date("2026-01-12"),
+        });
+
+        const utilisateur = await fixtures.utilisateur({
           id: "550e8400-e29b-41d4-a716-446655440001",
-          date_creation: new Date().toISOString(),
-          profil: {
-            connect: {
-              code: ProfilEnum.DITP_ADMIN,
-            },
-          },
-        },
-      });
-
-      await prisma.indicateur_territoire_valeur_evenement.createMany({
-        data: [
-          {
-            id: "550e8400-e29b-41d4-a716-446655440000",
-            indic_id: "IND-001",
-            territoire_code: "DEPT-02",
-            type_valeur: "VALEUR_AVANCEMENT",
-            donnees_complementaires: {},
-            type_evenement: EvenementValeurEnum.VALEUR_CREEE,
-            date_valeur: new Date("2026-01-01"),
-            ordre: 1,
-            date_modification: new Date("2026-01-12"),
-            date_creation: new Date("2026-01-12"),
-            id_auteur_modification: "550e8400-e29b-41d4-a716-446655440001",
-            correlation_id: "550e8400-e29b-41d4-a716-446655440002",
-            valeur: 100,
-          },
-          {
-            id: "550e8400-e29b-41d4-a716-446655440001",
-            indic_id: "IND-001",
-            territoire_code: "DEPT-02",
-            type_valeur: "VALEUR_AVANCEMENT",
-            donnees_complementaires: {},
-            type_evenement: EvenementValeurEnum.VALEUR_MODIFIEE,
-            date_valeur: new Date("2026-01-01"),
-            ordre: 2,
-            date_modification: new Date("2026-01-12"),
-            date_creation: new Date("2026-01-12"),
-            id_auteur_modification: "550e8400-e29b-41d4-a716-446655440001",
-            correlation_id: "550e8400-e29b-41d4-a716-446655440002",
-            valeur: 110,
-          },
-          {
-            id: "550e8400-e29b-41d4-a716-446655440002",
-            indic_id: "IND-001",
-            territoire_code: "DEPT-02",
-            type_valeur: "VALEUR_AVANCEMENT",
-            donnees_complementaires: {
-              motif: "Motif de la proposition",
-              source_donnee_methode_calcul:
-                "Source de la donnée et méthode de calcul",
-            },
-            type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_CREEE,
-            date_valeur: new Date("2026-01-01"),
-            ordre: 3,
-            date_modification: new Date("2026-01-12"),
-            date_creation: new Date("2026-01-12"),
-            id_auteur_modification: "550e8400-e29b-41d4-a716-446655440001",
-            correlation_id: "550e8400-e29b-41d4-a716-446655440002",
-            valeur: 120,
-          },
-          {
-            id: "550e8400-e29b-41d4-a716-446655440003",
-            indic_id: "IND-001",
-            territoire_code: "DEPT-02",
-            type_valeur: "VALEUR_AVANCEMENT",
-            donnees_complementaires: {},
-            type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_MODIFIEE,
-            date_valeur: new Date("2026-01-01"),
-            ordre: 4,
-            date_modification: new Date("2026-01-12"),
-            date_creation: new Date("2026-01-12"),
-            id_auteur_modification: "550e8400-e29b-41d4-a716-446655440001",
-            correlation_id: "550e8400-e29b-41d4-a716-446655440002",
-            valeur: 140,
-          },
-
-          {
-            id: "550e8400-e29b-41d4-a716-446655440004",
-            indic_id: "IND-001",
-            territoire_code: "DEPT-02",
-            type_valeur: "VALEUR_AVANCEMENT",
-            donnees_complementaires: {},
-            type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_SUPPRIMEE,
-            date_valeur: new Date("2026-01-01"),
-            ordre: 5,
-            date_modification: new Date("2026-01-12"),
-            date_creation: new Date("2026-01-12"),
-            id_auteur_modification: "550e8400-e29b-41d4-a716-446655440001",
-            correlation_id: "550e8400-e29b-41d4-a716-446655440002",
-            valeur: 140,
-          },
-          {
-            id: "550e8400-e29b-41d4-a716-446655440005",
-            indic_id: "IND-001",
-            territoire_code: "DEPT-02",
-            type_valeur: "VALEUR_AVANCEMENT",
-            donnees_complementaires: {
-              motif: "Motif de la proposition 2",
-              source_donnee_methode_calcul:
-                "Source de la donnée et méthode de calcul 2",
-            },
-            type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_CREEE,
-            date_valeur: new Date("2026-01-01"),
-            ordre: 6,
-            date_modification: new Date("2026-01-12"),
-            date_creation: new Date("2026-01-12"),
-            id_auteur_modification: "550e8400-e29b-41d4-a716-446655440001",
-            correlation_id: "550e8400-e29b-41d4-a716-446655440002",
-            valeur: 150,
-          },
-        ],
-      });
-
-      // When
-      const result =
-        await prismaIndicateurRepository.récupérerDétailsTerritoirePourUnIndicateur(
-          indicateurId,
-          habilitations,
-          ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT,
-          jalon,
-          dateDerniereExecutionDatajobs,
-        );
-
-      // Then
-      expect(result["DEPT-02"].valeurAvancement).toEqual(110);
-      expect(result["DEPT-02"].dateValeurAvancement).toEqual(
-        new Date("2026-01-12").toLocaleString(),
-      );
-      expect(result["DEPT-02"].proposition).toEqual({
-        valeurAvancement: 150,
-        tauxAvancement: null,
-        tauxAvancementIntermediaire: null,
-        statutTauxAvancement: "CALCULE",
-        auteur: "Jane Doe",
-        dateProposition: "2026-01-12T00:00:00.000Z",
-        dateValeurAvancement: "2026-01-01T00:00:00.000Z",
-        motif: "Motif de la proposition 2",
-        sourceDonneeEtMethodeCalcul:
-          "Source de la donnée et méthode de calcul 2",
-      });
-    });
-
-    it("lorsque le dernier évènement en date est de type PROPOSITION_VALEUR_REFUSEE, le propositionStatutTerritoire est null et le propositionStatutDirectionProjet est PROPOSITION_VALEUR_REFUSEE avec la date de l'événement", async () => {
-      // Given
-      const chantiersIds = ["CH-001"];
-      const indicateurId = "IND-001";
-      const territoireCodes = ["DEPT-02", "DEPT-01"];
-      const jalon = 2025;
-      const habilitations: Habilitations = {
-        gestionUtilisateur: {
-          chantiers: chantiersIds,
-          territoires: territoireCodes,
-          périmètres: [],
-        },
-        lecture: {
-          chantiers: chantiersIds,
-          territoires: territoireCodes,
-          périmètres: [],
-        },
-        saisieCommentaire: {
-          chantiers: chantiersIds,
-          territoires: territoireCodes,
-          périmètres: [],
-        },
-        saisieIndicateur: {
-          chantiers: chantiersIds,
-          territoires: territoireCodes,
-          périmètres: [],
-        },
-        responsabilite: {
-          chantiers: chantiersIds,
-          territoires: territoireCodes,
-          périmètres: [],
-        },
-      };
-
-      await prisma.chantier_identite.createMany({
-        data: [
-          {
-            id: "CH-001",
-            nom: "Chantier 001",
-            ministeres: ["1009"],
-            ministeres_acronymes: ["MINA"],
-          },
-        ],
-      });
-
-      await prisma.chantier_territoire.createMany({
-        data: [
-          {
-            id: "CH-001",
-            maille: "DEPT",
-            code_insee: "02",
-            territoire_code: "DEPT-02",
-            zone_id: "FRANCE",
-          },
-          {
-            id: "CH-001",
-            maille: "DEPT",
-            code_insee: "01",
-            territoire_code: "DEPT-01",
-            zone_id: "D01",
-          },
-        ],
-      });
-
-      await prisma.indicateur_identite.createMany({
-        data: [
-          {
-            id: "IND-001",
-            nom: "Indicateur 001",
-            chantier_id: "CH-001",
-            type_id: "IMPACT",
-            unite_mesure: "kg",
-          },
-        ],
-      });
-
-      await prisma.indicateur_territoire.createMany({
-        data: [
-          {
-            id: "IND-001",
-            chantier_id: "CH-001",
-            maille: "DEPT",
-            code_insee: "02",
-            territoire_code: "DEPT-02",
-            zone_id: "D02",
-            date_valeur_actuelle_mandat: new Date("2026-01-12"),
-            evolution_avancement: [
-              {
-                date: new Date("2026-01-12"),
-                valeur: 100,
-              },
-              {
-                date: new Date("2026-01-14"),
-                valeur: 110,
-              },
-            ],
-          },
-          {
-            id: "IND-001",
-            chantier_id: "CH-001",
-            maille: "DEPT",
-            territoire_code: "DEPT-01",
-            code_insee: "01",
-            zone_id: "D01",
-            valeur_actuelle_mandat: 10,
-            date_valeur_actuelle_mandat: new Date("2025-05-06"),
-          },
-        ],
-      });
-
-      await prisma.indicateur_territoire_jalon.createMany({
-        data: [
-          {
-            id: "IND-001",
-            maille: "DEPT",
-            code_insee: "02",
-            territoire_code: "DEPT-02",
-            jalon: 2025,
-            zone_id: "D02",
-            valeur_actuelle: 110,
-            date_valeur_actuelle: new Date("2026-01-12"),
-          },
-        ],
-      });
-
-      await prisma.utilisateur.create({
-        data: {
-          email: "jane.doe@test.com",
-          nom: "Doe",
           prenom: "Jane",
+          nom: "Doe",
+        });
+
+        const correlationId = "550e8400-e29b-41d4-a716-446655440002";
+
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur.id,
+          territoire_code: "DEPT-02",
+          type_evenement: EvenementValeurEnum.VALEUR_CREEE,
+          id_auteur_modification: utilisateur.id,
+          date_valeur: new Date("2026-01-01"),
+          ordre: 1,
+          date_modification: new Date("2026-01-12"),
+          date_creation: new Date("2026-01-12"),
+          correlation_id: correlationId,
+          valeur: 100,
+        });
+
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur.id,
+          territoire_code: "DEPT-02",
+          type_evenement: EvenementValeurEnum.VALEUR_MODIFIEE,
+          id_auteur_modification: utilisateur.id,
+          date_valeur: new Date("2026-01-01"),
+          ordre: 2,
+          date_modification: new Date("2026-01-12"),
+          date_creation: new Date("2026-01-12"),
+          correlation_id: correlationId,
+          valeur: 110,
+        });
+
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur.id,
+          territoire_code: "DEPT-02",
+          type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_CREEE,
+          id_auteur_modification: utilisateur.id,
+          date_valeur: new Date("2026-01-01"),
+          ordre: 3,
+          date_modification: new Date("2026-01-12"),
+          date_creation: new Date("2026-01-12"),
+          correlation_id: correlationId,
+          valeur: 120,
+          donnees_complementaires: {
+            motif: "Motif de la proposition",
+            source_donnee_methode_calcul:
+              "Source de la donnée et méthode de calcul",
+          },
+        });
+
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur.id,
+          territoire_code: "DEPT-02",
+          type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_MODIFIEE,
+          id_auteur_modification: utilisateur.id,
+          date_valeur: new Date("2026-01-01"),
+          ordre: 4,
+          date_modification: new Date("2026-01-12"),
+          date_creation: new Date("2026-01-12"),
+          correlation_id: correlationId,
+          valeur: 140,
+        });
+
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur.id,
+          territoire_code: "DEPT-02",
+          type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_SUPPRIMEE,
+          id_auteur_modification: utilisateur.id,
+          date_valeur: new Date("2026-01-01"),
+          ordre: 5,
+          date_modification: new Date("2026-01-12"),
+          date_creation: new Date("2026-01-12"),
+          correlation_id: correlationId,
+          valeur: 140,
+        });
+
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur.id,
+          territoire_code: "DEPT-02",
+          type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_CREEE,
+          id_auteur_modification: utilisateur.id,
+          date_valeur: new Date("2026-01-01"),
+          ordre: 6,
+          date_modification: new Date("2026-01-12"),
+          date_creation: new Date("2026-01-12"),
+          correlation_id: correlationId,
+          valeur: 150,
+          donnees_complementaires: {
+            motif: "Motif de la proposition 2",
+            source_donnee_methode_calcul:
+              "Source de la donnée et méthode de calcul 2",
+          },
+        });
+
+        // When
+        const result =
+          await prismaIndicateurRepository.récupérerDétailsTerritoirePourUnIndicateur(
+            indicateurId,
+            habilitations,
+            ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT,
+            jalon,
+            dateDerniereExecutionDatajobs,
+          );
+
+        // Then
+        expect(result["DEPT-02"].valeurAvancement).toEqual(110);
+        expect(result["DEPT-02"].dateValeurAvancement).toEqual(
+          new Date("2026-01-12").toLocaleString(),
+        );
+        expect(result["DEPT-02"].proposition).toEqual({
+          valeurAvancement: 150,
+          tauxAvancement: null,
+          tauxAvancementIntermediaire: null,
+          statutTauxAvancement: "CALCULE",
+          auteur: "Jane Doe",
+          dateProposition: "2026-01-12T00:00:00.000Z",
+          dateValeurAvancement: "2026-01-01T00:00:00.000Z",
+          motif: "Motif de la proposition 2",
+          sourceDonneeEtMethodeCalcul:
+            "Source de la donnée et méthode de calcul 2",
+        });
+      }),
+    );
+
+    it(
+      "lorsque le dernier évènement en date est de type PROPOSITION_VALEUR_REFUSEE, le propositionStatutTerritoire est null et le propositionStatutDirectionProjet est PROPOSITION_VALEUR_REFUSEE avec la date de l'événement",
+      createIntegrationTest(async () => {
+        // Given
+        const chantiersIds = ["CH-001"];
+        const indicateurId = "IND-001";
+        const territoireCodes = ["DEPT-02", "DEPT-01"];
+        const jalon = 2025;
+        const habilitations: Habilitations = {
+          gestionUtilisateur: {
+            chantiers: chantiersIds,
+            territoires: territoireCodes,
+            périmètres: [],
+          },
+          lecture: {
+            chantiers: chantiersIds,
+            territoires: territoireCodes,
+            périmètres: [],
+          },
+          saisieCommentaire: {
+            chantiers: chantiersIds,
+            territoires: territoireCodes,
+            périmètres: [],
+          },
+          saisieIndicateur: {
+            chantiers: chantiersIds,
+            territoires: territoireCodes,
+            périmètres: [],
+          },
+          responsabilite: {
+            chantiers: chantiersIds,
+            territoires: territoireCodes,
+            périmètres: [],
+          },
+        };
+
+        const chantier = await fixtures.chantierIdentite({
+          id: "CH-001",
+          nom: "Chantier 001",
+          ministeres: ["1009"],
+          ministeres_acronymes: ["MINA"],
+        });
+
+        await fixtures.chantierTerritoire({
+          id: chantier.id,
+          territoire_code: "DEPT-02",
+          maille: "DEPT",
+          code_insee: "02",
+          zone_id: "FRANCE",
+        });
+
+        await fixtures.chantierTerritoire({
+          id: chantier.id,
+          territoire_code: "DEPT-01",
+          maille: "DEPT",
+          code_insee: "01",
+          zone_id: "D01",
+        });
+
+        const indicateur = await fixtures.indicateurIdentite({
+          id: "IND-001",
+          nom: "Indicateur 001",
+          chantier_id: chantier.id,
+          unite_mesure: "kg",
+        });
+
+        await fixtures.indicateurTerritoire({
+          id: indicateur.id,
+          chantier_id: chantier.id,
+          territoire_code: "DEPT-02",
+          maille: "DEPT",
+          code_insee: "02",
+          zone_id: "D02",
+          date_valeur_actuelle_mandat: new Date("2026-01-12"),
+          evolution_avancement: [
+            {
+              date: new Date("2026-01-12"),
+              valeur: 100,
+            },
+            {
+              date: new Date("2026-01-14"),
+              valeur: 110,
+            },
+          ],
+        });
+
+        await fixtures.indicateurTerritoire({
+          id: indicateur.id,
+          chantier_id: chantier.id,
+          territoire_code: "DEPT-01",
+          maille: "DEPT",
+          code_insee: "01",
+          zone_id: "D01",
+          valeur_actuelle_mandat: 10,
+          date_valeur_actuelle_mandat: new Date("2025-05-06"),
+        });
+
+        await fixtures.indicateurTerritoireJalon({
+          id: indicateur.id,
+          territoire_code: "DEPT-02",
+          maille: "DEPT",
+          code_insee: "02",
+          zone_id: "D02",
+          jalon: 2025,
+          valeur_actuelle: 110,
+          date_valeur_actuelle: new Date("2026-01-12"),
+        });
+
+        const utilisateur = await fixtures.utilisateur({
           id: "550e8400-e29b-41d4-a716-446655440001",
-          date_creation: new Date().toISOString(),
-          profil: {
-            connect: {
-              code: ProfilEnum.DITP_ADMIN,
-            },
-          },
-        },
-      });
-
-      await prisma.indicateur_territoire_valeur_evenement.createMany({
-        data: [
-          {
-            id: "550e8400-e29b-41d4-a716-446655440000",
-            indic_id: "IND-001",
-            territoire_code: "DEPT-02",
-            type_valeur: "VALEUR_AVANCEMENT",
-            donnees_complementaires: {},
-            type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_REFUSEE,
-            date_valeur: new Date("2026-01-12"),
-            ordre: 2,
-            date_modification: new Date("2026-01-12"),
-            date_creation: new Date("2026-01-12"),
-            id_auteur_modification: "550e8400-e29b-41d4-a716-446655440001",
-            correlation_id: "550e8400-e29b-41d4-a716-446655440002",
-            valeur: 100,
-          },
-          {
-            id: "d2d4153c-8561-42d5-8310-cae96337fd0a",
-            indic_id: "IND-001",
-            territoire_code: "DEPT-02",
-            type_valeur: "VALEUR_AVANCEMENT",
-            donnees_complementaires: {},
-            type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_CREEE,
-            date_valeur: new Date("2026-01-12"),
-            ordre: 1,
-            date_modification: new Date("2026-01-12"),
-            date_creation: new Date("2026-01-12"),
-            id_auteur_modification: "550e8400-e29b-41d4-a716-446655440001",
-            correlation_id: "550e8400-e29b-41d4-a716-446655440002",
-            valeur: 100,
-          },
-        ],
-      });
-
-      // When
-      const result =
-        await prismaIndicateurRepository.récupérerDétailsTerritoirePourUnIndicateur(
-          indicateurId,
-          habilitations,
-          ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT,
-          jalon,
-          dateDerniereExecutionDatajobs,
-        );
-
-      // Then
-
-      expect(result["DEPT-02"].propositionStatutTerritoire).toBeNull();
-      expect(result["DEPT-02"].propositionStatutDirectionProjet).toEqual({
-        statut: "PROPOSITION_VALEUR_REFUSEE",
-        date: "2026-01-12",
-        dateTime: "2026-01-12T00:00:00.000Z",
-      });
-    });
-
-    it("lorsque le dernier évènement en date est de type PROPOSITION_VALEUR_ACCUSEE_RECEPTION suivi de PROPOSITION_VALEUR_CREEE, le propositionStatutTerritoire est PROPOSITION_VALEUR_CREEE", async () => {
-      // Given
-      const chantiersIds = ["CH-001"];
-      const indicateurId = "IND-001";
-      const territoireCodes = ["DEPT-02", "DEPT-01"];
-      const jalon = 2025;
-      const habilitations: Habilitations = {
-        gestionUtilisateur: {
-          chantiers: chantiersIds,
-          territoires: territoireCodes,
-          périmètres: [],
-        },
-        lecture: {
-          chantiers: chantiersIds,
-          territoires: territoireCodes,
-          périmètres: [],
-        },
-        saisieCommentaire: {
-          chantiers: chantiersIds,
-          territoires: territoireCodes,
-          périmètres: [],
-        },
-        saisieIndicateur: {
-          chantiers: chantiersIds,
-          territoires: territoireCodes,
-          périmètres: [],
-        },
-        responsabilite: {
-          chantiers: chantiersIds,
-          territoires: territoireCodes,
-          périmètres: [],
-        },
-      };
-
-      await prisma.chantier_identite.createMany({
-        data: [
-          {
-            id: "CH-001",
-            nom: "Chantier 001",
-            ministeres: ["1009"],
-            ministeres_acronymes: ["MINA"],
-          },
-        ],
-      });
-
-      await prisma.chantier_territoire.createMany({
-        data: [
-          {
-            id: "CH-001",
-            maille: "DEPT",
-            code_insee: "02",
-            territoire_code: "DEPT-02",
-            zone_id: "FRANCE",
-          },
-          {
-            id: "CH-001",
-            maille: "DEPT",
-            code_insee: "01",
-            territoire_code: "DEPT-01",
-            zone_id: "D01",
-          },
-        ],
-      });
-
-      await prisma.indicateur_identite.createMany({
-        data: [
-          {
-            id: "IND-001",
-            nom: "Indicateur 001",
-            chantier_id: "CH-001",
-            type_id: "IMPACT",
-            unite_mesure: "kg",
-          },
-        ],
-      });
-
-      await prisma.indicateur_territoire.createMany({
-        data: [
-          {
-            id: "IND-001",
-            chantier_id: "CH-001",
-            maille: "DEPT",
-            code_insee: "02",
-            territoire_code: "DEPT-02",
-            zone_id: "D02",
-            date_valeur_actuelle_mandat: new Date("2026-01-12"),
-            evolution_avancement: [
-              {
-                date: new Date("2026-01-12"),
-                valeur: 100,
-              },
-              {
-                date: new Date("2026-01-14"),
-                valeur: 110,
-              },
-            ],
-          },
-          {
-            id: "IND-001",
-            chantier_id: "CH-001",
-            maille: "DEPT",
-            territoire_code: "DEPT-01",
-            code_insee: "01",
-            zone_id: "D01",
-            valeur_actuelle_mandat: 10,
-            date_valeur_actuelle_mandat: new Date("2025-05-06"),
-          },
-        ],
-      });
-
-      await prisma.indicateur_territoire_jalon.createMany({
-        data: [
-          {
-            id: "IND-001",
-            maille: "DEPT",
-            code_insee: "02",
-            territoire_code: "DEPT-02",
-            jalon: 2025,
-            zone_id: "D02",
-            valeur_actuelle: 110,
-            date_valeur_actuelle: new Date("2026-01-12"),
-          },
-        ],
-      });
-
-      await prisma.utilisateur.create({
-        data: {
-          email: "jane.doe@test.com",
-          nom: "Doe",
           prenom: "Jane",
+          nom: "Doe",
+        });
+
+        const correlationId = "550e8400-e29b-41d4-a716-446655440002";
+
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur.id,
+          territoire_code: "DEPT-02",
+          type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_CREEE,
+          id_auteur_modification: utilisateur.id,
+          date_valeur: new Date("2026-01-12"),
+          ordre: 1,
+          date_modification: new Date("2026-01-12"),
+          date_creation: new Date("2026-01-12"),
+          correlation_id: correlationId,
+          valeur: 100,
+        });
+
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur.id,
+          territoire_code: "DEPT-02",
+          type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_REFUSEE,
+          id_auteur_modification: utilisateur.id,
+          date_valeur: new Date("2026-01-12"),
+          ordre: 2,
+          date_modification: new Date("2026-01-12"),
+          date_creation: new Date("2026-01-12"),
+          correlation_id: correlationId,
+          valeur: 100,
+        });
+
+        // When
+        const result =
+          await prismaIndicateurRepository.récupérerDétailsTerritoirePourUnIndicateur(
+            indicateurId,
+            habilitations,
+            ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT,
+            jalon,
+            dateDerniereExecutionDatajobs,
+          );
+
+        // Then
+
+        expect(result["DEPT-02"].propositionStatutTerritoire).toBeNull();
+        expect(result["DEPT-02"].propositionStatutDirectionProjet).toEqual({
+          statut: "PROPOSITION_VALEUR_REFUSEE",
+          date: "2026-01-12",
+          dateTime: "2026-01-12T00:00:00.000Z",
+        });
+      }),
+    );
+
+    it(
+      "lorsque le dernier évènement en date est de type PROPOSITION_VALEUR_ACCUSEE_RECEPTION suivi de PROPOSITION_VALEUR_CREEE, le propositionStatutTerritoire est PROPOSITION_VALEUR_CREEE",
+      createIntegrationTest(async () => {
+        // Given
+        const chantiersIds = ["CH-001"];
+        const indicateurId = "IND-001";
+        const territoireCodes = ["DEPT-02", "DEPT-01"];
+        const jalon = 2025;
+        const habilitations: Habilitations = {
+          gestionUtilisateur: {
+            chantiers: chantiersIds,
+            territoires: territoireCodes,
+            périmètres: [],
+          },
+          lecture: {
+            chantiers: chantiersIds,
+            territoires: territoireCodes,
+            périmètres: [],
+          },
+          saisieCommentaire: {
+            chantiers: chantiersIds,
+            territoires: territoireCodes,
+            périmètres: [],
+          },
+          saisieIndicateur: {
+            chantiers: chantiersIds,
+            territoires: territoireCodes,
+            périmètres: [],
+          },
+          responsabilite: {
+            chantiers: chantiersIds,
+            territoires: territoireCodes,
+            périmètres: [],
+          },
+        };
+
+        const chantier = await fixtures.chantierIdentite({
+          id: "CH-001",
+          nom: "Chantier 001",
+          ministeres: ["1009"],
+          ministeres_acronymes: ["MINA"],
+        });
+
+        await fixtures.chantierTerritoire({
+          id: chantier.id,
+          territoire_code: "DEPT-02",
+          maille: "DEPT",
+          code_insee: "02",
+          zone_id: "FRANCE",
+        });
+
+        await fixtures.chantierTerritoire({
+          id: chantier.id,
+          territoire_code: "DEPT-01",
+          maille: "DEPT",
+          code_insee: "01",
+          zone_id: "D01",
+        });
+
+        const indicateur = await fixtures.indicateurIdentite({
+          id: "IND-001",
+          nom: "Indicateur 001",
+          chantier_id: chantier.id,
+          unite_mesure: "kg",
+        });
+
+        await fixtures.indicateurTerritoire({
+          id: indicateur.id,
+          chantier_id: chantier.id,
+          territoire_code: "DEPT-02",
+          maille: "DEPT",
+          code_insee: "02",
+          zone_id: "D02",
+          date_valeur_actuelle_mandat: new Date("2026-01-12"),
+          evolution_avancement: [
+            {
+              date: new Date("2026-01-12"),
+              valeur: 100,
+            },
+            {
+              date: new Date("2026-01-14"),
+              valeur: 110,
+            },
+          ],
+        });
+
+        await fixtures.indicateurTerritoire({
+          id: indicateur.id,
+          chantier_id: chantier.id,
+          territoire_code: "DEPT-01",
+          maille: "DEPT",
+          code_insee: "01",
+          zone_id: "D01",
+          valeur_actuelle_mandat: 10,
+          date_valeur_actuelle_mandat: new Date("2025-05-06"),
+        });
+
+        await fixtures.indicateurTerritoireJalon({
+          id: indicateur.id,
+          territoire_code: "DEPT-02",
+          maille: "DEPT",
+          code_insee: "02",
+          zone_id: "D02",
+          jalon: 2025,
+          valeur_actuelle: 110,
+          date_valeur_actuelle: new Date("2026-01-12"),
+        });
+
+        const utilisateur = await fixtures.utilisateur({
           id: "550e8400-e29b-41d4-a716-446655440001",
-          date_creation: new Date().toISOString(),
-          profil: {
-            connect: {
-              code: ProfilEnum.DITP_ADMIN,
-            },
-          },
-        },
-      });
-
-      await prisma.indicateur_territoire_valeur_evenement.createMany({
-        data: [
-          {
-            id: "550e8400-e29b-41d4-a716-446655440100",
-            indic_id: "IND-001",
-            territoire_code: "DEPT-02",
-            type_valeur: "VALEUR_AVANCEMENT",
-            donnees_complementaires: {},
-            type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_CREEE,
-            date_valeur: new Date("2026-01-12"),
-            ordre: 1,
-            date_modification: new Date("2026-01-12"),
-            date_creation: new Date("2026-01-12"),
-            id_auteur_modification: "550e8400-e29b-41d4-a716-446655440001",
-            correlation_id: "550e8400-e29b-41d4-a716-446655440003",
-            valeur: 100,
-          },
-          {
-            id: "550e8400-e29b-41d4-a716-446655440101",
-            indic_id: "IND-001",
-            territoire_code: "DEPT-02",
-            type_valeur: "VALEUR_AVANCEMENT",
-            donnees_complementaires: {},
-            type_evenement:
-              EvenementValeurEnum.PROPOSITION_VALEUR_ACCUSEE_RECEPTION,
-            date_valeur: new Date("2026-01-12"),
-            ordre: 2,
-            date_modification: new Date("2026-01-12"),
-            date_creation: new Date("2026-01-12"),
-            id_auteur_modification: "550e8400-e29b-41d4-a716-446655440001",
-            correlation_id: "550e8400-e29b-41d4-a716-446655440003",
-            valeur: 100,
-          },
-        ],
-      });
-
-      // When
-      const result =
-        await prismaIndicateurRepository.récupérerDétailsTerritoirePourUnIndicateur(
-          indicateurId,
-          habilitations,
-          ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT,
-          jalon,
-          dateDerniereExecutionDatajobs,
-        );
-
-      // Then
-      expect(result["DEPT-02"].propositionStatutTerritoire).toEqual({
-        statut: "PROPOSITION_VALEUR_CREEE",
-        date: "2026-01-12",
-        dateTime: "2026-01-12T00:00:00.000Z",
-      });
-      expect(result["DEPT-02"].propositionStatutDirectionProjet).toEqual({
-        statut: "PROPOSITION_VALEUR_ACCUSEE_RECEPTION",
-        date: "2026-01-12",
-        dateTime: "2026-01-12T00:00:00.000Z",
-      });
-    });
-
-    it("lorsque le dernier évènement en date est de type PROPOSITION_VALEUR_ACCUSEE_RECEPTION suivi de PROPOSITION_VALEUR_MODIFIEE, le propositionStatutTerritoire est PROPOSITION_VALEUR_MODIFIEE", async () => {
-      // Given
-      const chantiersIds = ["CH-001"];
-      const indicateurId = "IND-001";
-      const territoireCodes = ["DEPT-02", "DEPT-01"];
-      const jalon = 2025;
-      const habilitations: Habilitations = {
-        gestionUtilisateur: {
-          chantiers: chantiersIds,
-          territoires: territoireCodes,
-          périmètres: [],
-        },
-        lecture: {
-          chantiers: chantiersIds,
-          territoires: territoireCodes,
-          périmètres: [],
-        },
-        saisieCommentaire: {
-          chantiers: chantiersIds,
-          territoires: territoireCodes,
-          périmètres: [],
-        },
-        saisieIndicateur: {
-          chantiers: chantiersIds,
-          territoires: territoireCodes,
-          périmètres: [],
-        },
-        responsabilite: {
-          chantiers: chantiersIds,
-          territoires: territoireCodes,
-          périmètres: [],
-        },
-      };
-
-      await prisma.chantier_identite.createMany({
-        data: [
-          {
-            id: "CH-001",
-            nom: "Chantier 001",
-            ministeres: ["1009"],
-            ministeres_acronymes: ["MINA"],
-          },
-        ],
-      });
-
-      await prisma.chantier_territoire.createMany({
-        data: [
-          {
-            id: "CH-001",
-            maille: "DEPT",
-            code_insee: "02",
-            territoire_code: "DEPT-02",
-            zone_id: "FRANCE",
-          },
-          {
-            id: "CH-001",
-            maille: "DEPT",
-            code_insee: "01",
-            territoire_code: "DEPT-01",
-            zone_id: "D01",
-          },
-        ],
-      });
-
-      await prisma.indicateur_identite.createMany({
-        data: [
-          {
-            id: "IND-001",
-            nom: "Indicateur 001",
-            chantier_id: "CH-001",
-            type_id: "IMPACT",
-            unite_mesure: "kg",
-          },
-        ],
-      });
-
-      await prisma.indicateur_territoire.createMany({
-        data: [
-          {
-            id: "IND-001",
-            chantier_id: "CH-001",
-            maille: "DEPT",
-            code_insee: "02",
-            territoire_code: "DEPT-02",
-            zone_id: "D02",
-            date_valeur_actuelle_mandat: new Date("2026-01-12"),
-            evolution_avancement: [
-              {
-                date: new Date("2026-01-12"),
-                valeur: 100,
-              },
-              {
-                date: new Date("2026-01-14"),
-                valeur: 110,
-              },
-            ],
-          },
-          {
-            id: "IND-001",
-            chantier_id: "CH-001",
-            maille: "DEPT",
-            territoire_code: "DEPT-01",
-            code_insee: "01",
-            zone_id: "D01",
-            valeur_actuelle_mandat: 10,
-            date_valeur_actuelle_mandat: new Date("2025-05-06"),
-          },
-        ],
-      });
-
-      await prisma.indicateur_territoire_jalon.createMany({
-        data: [
-          {
-            id: "IND-001",
-            maille: "DEPT",
-            code_insee: "02",
-            territoire_code: "DEPT-02",
-            jalon: 2025,
-            zone_id: "D02",
-            valeur_actuelle: 110,
-            date_valeur_actuelle: new Date("2026-01-12"),
-          },
-        ],
-      });
-
-      await prisma.utilisateur.create({
-        data: {
-          email: "jane.doe@test.com",
-          nom: "Doe",
           prenom: "Jane",
+          nom: "Doe",
+        });
+
+        const correlationId = "550e8400-e29b-41d4-a716-446655440003";
+
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur.id,
+          territoire_code: "DEPT-02",
+          type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_CREEE,
+          id_auteur_modification: utilisateur.id,
+          date_valeur: new Date("2026-01-12"),
+          ordre: 1,
+          date_modification: new Date("2026-01-12"),
+          date_creation: new Date("2026-01-12"),
+          correlation_id: correlationId,
+          valeur: 100,
+        });
+
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur.id,
+          territoire_code: "DEPT-02",
+          type_evenement:
+            EvenementValeurEnum.PROPOSITION_VALEUR_ACCUSEE_RECEPTION,
+          id_auteur_modification: utilisateur.id,
+          date_valeur: new Date("2026-01-12"),
+          ordre: 2,
+          date_modification: new Date("2026-01-12"),
+          date_creation: new Date("2026-01-12"),
+          correlation_id: correlationId,
+          valeur: 100,
+        });
+
+        // When
+        const result =
+          await prismaIndicateurRepository.récupérerDétailsTerritoirePourUnIndicateur(
+            indicateurId,
+            habilitations,
+            ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT,
+            jalon,
+            dateDerniereExecutionDatajobs,
+          );
+
+        // Then
+        expect(result["DEPT-02"].propositionStatutTerritoire).toEqual({
+          statut: "PROPOSITION_VALEUR_CREEE",
+          date: "2026-01-12",
+          dateTime: "2026-01-12T00:00:00.000Z",
+        });
+        expect(result["DEPT-02"].propositionStatutDirectionProjet).toEqual({
+          statut: "PROPOSITION_VALEUR_ACCUSEE_RECEPTION",
+          date: "2026-01-12",
+          dateTime: "2026-01-12T00:00:00.000Z",
+        });
+      }),
+    );
+
+    it(
+      "lorsque le dernier évènement en date est de type PROPOSITION_VALEUR_ACCUSEE_RECEPTION suivi de PROPOSITION_VALEUR_MODIFIEE, le propositionStatutTerritoire est PROPOSITION_VALEUR_MODIFIEE",
+      createIntegrationTest(async () => {
+        // Given
+        const chantiersIds = ["CH-001"];
+        const indicateurId = "IND-001";
+        const territoireCodes = ["DEPT-02", "DEPT-01"];
+        const jalon = 2025;
+        const habilitations: Habilitations = {
+          gestionUtilisateur: {
+            chantiers: chantiersIds,
+            territoires: territoireCodes,
+            périmètres: [],
+          },
+          lecture: {
+            chantiers: chantiersIds,
+            territoires: territoireCodes,
+            périmètres: [],
+          },
+          saisieCommentaire: {
+            chantiers: chantiersIds,
+            territoires: territoireCodes,
+            périmètres: [],
+          },
+          saisieIndicateur: {
+            chantiers: chantiersIds,
+            territoires: territoireCodes,
+            périmètres: [],
+          },
+          responsabilite: {
+            chantiers: chantiersIds,
+            territoires: territoireCodes,
+            périmètres: [],
+          },
+        };
+
+        const chantier = await fixtures.chantierIdentite({
+          id: "CH-001",
+          nom: "Chantier 001",
+          ministeres: ["1009"],
+          ministeres_acronymes: ["MINA"],
+        });
+
+        await fixtures.chantierTerritoire({
+          id: chantier.id,
+          territoire_code: "DEPT-02",
+          maille: "DEPT",
+          code_insee: "02",
+          zone_id: "FRANCE",
+        });
+
+        await fixtures.chantierTerritoire({
+          id: chantier.id,
+          territoire_code: "DEPT-01",
+          maille: "DEPT",
+          code_insee: "01",
+          zone_id: "D01",
+        });
+
+        const indicateur = await fixtures.indicateurIdentite({
+          id: "IND-001",
+          nom: "Indicateur 001",
+          chantier_id: chantier.id,
+          unite_mesure: "kg",
+        });
+
+        await fixtures.indicateurTerritoire({
+          id: indicateur.id,
+          chantier_id: chantier.id,
+          territoire_code: "DEPT-02",
+          maille: "DEPT",
+          code_insee: "02",
+          zone_id: "D02",
+          date_valeur_actuelle_mandat: new Date("2026-01-12"),
+          evolution_avancement: [
+            {
+              date: new Date("2026-01-12"),
+              valeur: 100,
+            },
+            {
+              date: new Date("2026-01-14"),
+              valeur: 110,
+            },
+          ],
+        });
+
+        await fixtures.indicateurTerritoire({
+          id: indicateur.id,
+          chantier_id: chantier.id,
+          territoire_code: "DEPT-01",
+          maille: "DEPT",
+          code_insee: "01",
+          zone_id: "D01",
+          valeur_actuelle_mandat: 10,
+          date_valeur_actuelle_mandat: new Date("2025-05-06"),
+        });
+
+        await fixtures.indicateurTerritoireJalon({
+          id: indicateur.id,
+          territoire_code: "DEPT-02",
+          maille: "DEPT",
+          code_insee: "02",
+          zone_id: "D02",
+          jalon: 2025,
+          valeur_actuelle: 110,
+          date_valeur_actuelle: new Date("2026-01-12"),
+        });
+
+        const utilisateur = await fixtures.utilisateur({
           id: "550e8400-e29b-41d4-a716-446655440003",
-          date_creation: new Date().toISOString(),
-          profil: {
-            connect: {
-              code: ProfilEnum.DITP_ADMIN,
-            },
-          },
-        },
-      });
-
-      await prisma.indicateur_territoire_valeur_evenement.createMany({
-        data: [
-          {
-            id: "550e8400-e29b-41d4-a716-446655440200",
-            indic_id: "IND-001",
-            territoire_code: "DEPT-02",
-            type_valeur: "VALEUR_AVANCEMENT",
-            donnees_complementaires: {},
-            type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_CREEE,
-            date_valeur: new Date("2026-01-12"),
-            ordre: 1,
-            date_modification: new Date("2026-01-12"),
-            date_creation: new Date("2026-01-12"),
-            id_auteur_modification: "550e8400-e29b-41d4-a716-446655440003",
-            correlation_id: "550e8400-e29b-41d4-a716-446655440004",
-            valeur: 100,
-          },
-          {
-            id: "4bbe27d7-34a5-4cb9-b3bb-f681abe5544b",
-            indic_id: "IND-001",
-            territoire_code: "DEPT-02",
-            type_valeur: "VALEUR_AVANCEMENT",
-            donnees_complementaires: {},
-            type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_MODIFIEE,
-            date_valeur: new Date("2026-01-12"),
-            ordre: 2,
-            date_modification: new Date("2026-01-12"),
-            date_creation: new Date("2026-01-12"),
-            id_auteur_modification: "550e8400-e29b-41d4-a716-446655440003",
-            correlation_id: "550e8400-e29b-41d4-a716-446655440004",
-            valeur: 100,
-          },
-          {
-            id: "e617826b-0f39-4f64-a409-de83c65f2d2d",
-            indic_id: "IND-001",
-            territoire_code: "DEPT-02",
-            type_valeur: "VALEUR_AVANCEMENT",
-            donnees_complementaires: {},
-            type_evenement:
-              EvenementValeurEnum.PROPOSITION_VALEUR_ACCUSEE_RECEPTION,
-            date_valeur: new Date("2026-01-12"),
-            ordre: 3,
-            date_modification: new Date("2026-01-12"),
-            date_creation: new Date("2026-01-12"),
-            id_auteur_modification: "550e8400-e29b-41d4-a716-446655440003",
-            correlation_id: "550e8400-e29b-41d4-a716-446655440004",
-            valeur: 100,
-          },
-        ],
-      });
-
-      // When
-      const result =
-        await prismaIndicateurRepository.récupérerDétailsTerritoirePourUnIndicateur(
-          indicateurId,
-          habilitations,
-          ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT,
-          jalon,
-          dateDerniereExecutionDatajobs,
-        );
-
-      // Then
-      expect(result["DEPT-02"].propositionStatutTerritoire).toEqual({
-        statut: "PROPOSITION_VALEUR_MODIFIEE",
-        date: "2026-01-12",
-        dateTime: "2026-01-12T00:00:00.000Z",
-      });
-      expect(result["DEPT-02"].propositionStatutDirectionProjet).toEqual({
-        statut: "PROPOSITION_VALEUR_ACCUSEE_RECEPTION",
-        date: "2026-01-12",
-        dateTime: "2026-01-12T00:00:00.000Z",
-      });
-    });
-
-    it("lorsque le dernier évènement en date est de type PROPOSITION_VALEUR_SUPPRIMEE, le propositionStatutTerritoire est PROPOSITION_VALEUR_SUPPRIMEE et le propositionStatutDirectionProjet est null", async () => {
-      // Given
-      const chantiersIds = ["CH-001"];
-      const indicateurId = "IND-001";
-      const territoireCodes = ["DEPT-02", "DEPT-01"];
-      const jalon = 2025;
-      const habilitations: Habilitations = {
-        gestionUtilisateur: {
-          chantiers: chantiersIds,
-          territoires: territoireCodes,
-          périmètres: [],
-        },
-        lecture: {
-          chantiers: chantiersIds,
-          territoires: territoireCodes,
-          périmètres: [],
-        },
-        saisieCommentaire: {
-          chantiers: chantiersIds,
-          territoires: territoireCodes,
-          périmètres: [],
-        },
-        saisieIndicateur: {
-          chantiers: chantiersIds,
-          territoires: territoireCodes,
-          périmètres: [],
-        },
-        responsabilite: {
-          chantiers: chantiersIds,
-          territoires: territoireCodes,
-          périmètres: [],
-        },
-      };
-
-      await prisma.chantier_identite.createMany({
-        data: [
-          {
-            id: "CH-001",
-            nom: "Chantier 001",
-            ministeres: ["1009"],
-            ministeres_acronymes: ["MINA"],
-          },
-        ],
-      });
-
-      await prisma.chantier_territoire.createMany({
-        data: [
-          {
-            id: "CH-001",
-            maille: "DEPT",
-            code_insee: "02",
-            territoire_code: "DEPT-02",
-            zone_id: "FRANCE",
-          },
-          {
-            id: "CH-001",
-            maille: "DEPT",
-            code_insee: "01",
-            territoire_code: "DEPT-01",
-            zone_id: "D01",
-          },
-        ],
-      });
-
-      await prisma.indicateur_identite.createMany({
-        data: [
-          {
-            id: "IND-001",
-            nom: "Indicateur 001",
-            chantier_id: "CH-001",
-            type_id: "IMPACT",
-            unite_mesure: "kg",
-          },
-        ],
-      });
-
-      await prisma.indicateur_territoire.createMany({
-        data: [
-          {
-            id: "IND-001",
-            chantier_id: "CH-001",
-            maille: "DEPT",
-            code_insee: "02",
-            territoire_code: "DEPT-02",
-            zone_id: "D02",
-            date_valeur_actuelle_mandat: new Date("2026-01-12"),
-            evolution_avancement: [
-              {
-                date: new Date("2026-01-12"),
-                valeur: 100,
-              },
-              {
-                date: new Date("2026-01-14"),
-                valeur: 110,
-              },
-            ],
-          },
-          {
-            id: "IND-001",
-            chantier_id: "CH-001",
-            maille: "DEPT",
-            territoire_code: "DEPT-01",
-            code_insee: "01",
-            zone_id: "D01",
-            valeur_actuelle_mandat: 10,
-            date_valeur_actuelle_mandat: new Date("2025-05-06"),
-          },
-        ],
-      });
-
-      await prisma.indicateur_territoire_jalon.createMany({
-        data: [
-          {
-            id: "IND-001",
-            maille: "DEPT",
-            code_insee: "02",
-            territoire_code: "DEPT-02",
-            jalon: 2025,
-            zone_id: "D02",
-            valeur_actuelle: 110,
-            date_valeur_actuelle: new Date("2026-01-12"),
-          },
-        ],
-      });
-
-      await prisma.utilisateur.create({
-        data: {
-          email: "jane.doe4@test.com",
-          nom: "Doe",
           prenom: "Jane",
+          nom: "Doe",
+        });
+
+        const correlationId = "550e8400-e29b-41d4-a716-446655440004";
+
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur.id,
+          territoire_code: "DEPT-02",
+          type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_CREEE,
+          id_auteur_modification: utilisateur.id,
+          date_valeur: new Date("2026-01-12"),
+          ordre: 1,
+          date_modification: new Date("2026-01-12"),
+          date_creation: new Date("2026-01-12"),
+          correlation_id: correlationId,
+          valeur: 100,
+        });
+
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur.id,
+          territoire_code: "DEPT-02",
+          type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_MODIFIEE,
+          id_auteur_modification: utilisateur.id,
+          date_valeur: new Date("2026-01-12"),
+          ordre: 2,
+          date_modification: new Date("2026-01-12"),
+          date_creation: new Date("2026-01-12"),
+          correlation_id: correlationId,
+          valeur: 100,
+        });
+
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur.id,
+          territoire_code: "DEPT-02",
+          type_evenement:
+            EvenementValeurEnum.PROPOSITION_VALEUR_ACCUSEE_RECEPTION,
+          id_auteur_modification: utilisateur.id,
+          date_valeur: new Date("2026-01-12"),
+          ordre: 3,
+          date_modification: new Date("2026-01-12"),
+          date_creation: new Date("2026-01-12"),
+          correlation_id: correlationId,
+          valeur: 100,
+        });
+
+        // When
+        const result =
+          await prismaIndicateurRepository.récupérerDétailsTerritoirePourUnIndicateur(
+            indicateurId,
+            habilitations,
+            ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT,
+            jalon,
+            dateDerniereExecutionDatajobs,
+          );
+
+        // Then
+        expect(result["DEPT-02"].propositionStatutTerritoire).toEqual({
+          statut: "PROPOSITION_VALEUR_MODIFIEE",
+          date: "2026-01-12",
+          dateTime: "2026-01-12T00:00:00.000Z",
+        });
+        expect(result["DEPT-02"].propositionStatutDirectionProjet).toEqual({
+          statut: "PROPOSITION_VALEUR_ACCUSEE_RECEPTION",
+          date: "2026-01-12",
+          dateTime: "2026-01-12T00:00:00.000Z",
+        });
+      }),
+    );
+
+    it(
+      "lorsque le dernier évènement en date est de type PROPOSITION_VALEUR_SUPPRIMEE, le propositionStatutTerritoire est PROPOSITION_VALEUR_SUPPRIMEE et le propositionStatutDirectionProjet est null",
+      createIntegrationTest(async () => {
+        // Given
+        const chantiersIds = ["CH-001"];
+        const indicateurId = "IND-001";
+        const territoireCodes = ["DEPT-02", "DEPT-01"];
+        const jalon = 2025;
+        const habilitations: Habilitations = {
+          gestionUtilisateur: {
+            chantiers: chantiersIds,
+            territoires: territoireCodes,
+            périmètres: [],
+          },
+          lecture: {
+            chantiers: chantiersIds,
+            territoires: territoireCodes,
+            périmètres: [],
+          },
+          saisieCommentaire: {
+            chantiers: chantiersIds,
+            territoires: territoireCodes,
+            périmètres: [],
+          },
+          saisieIndicateur: {
+            chantiers: chantiersIds,
+            territoires: territoireCodes,
+            périmètres: [],
+          },
+          responsabilite: {
+            chantiers: chantiersIds,
+            territoires: territoireCodes,
+            périmètres: [],
+          },
+        };
+
+        const chantier = await fixtures.chantierIdentite({
+          id: "CH-001",
+          nom: "Chantier 001",
+          ministeres: ["1009"],
+          ministeres_acronymes: ["MINA"],
+        });
+
+        await fixtures.chantierTerritoire({
+          id: chantier.id,
+          territoire_code: "DEPT-02",
+          maille: "DEPT",
+          code_insee: "02",
+          zone_id: "FRANCE",
+        });
+
+        await fixtures.chantierTerritoire({
+          id: chantier.id,
+          territoire_code: "DEPT-01",
+          maille: "DEPT",
+          code_insee: "01",
+          zone_id: "D01",
+        });
+
+        const indicateur = await fixtures.indicateurIdentite({
+          id: "IND-001",
+          nom: "Indicateur 001",
+          chantier_id: chantier.id,
+          unite_mesure: "kg",
+        });
+
+        await fixtures.indicateurTerritoire({
+          id: indicateur.id,
+          chantier_id: chantier.id,
+          territoire_code: "DEPT-02",
+          maille: "DEPT",
+          code_insee: "02",
+          zone_id: "D02",
+          date_valeur_actuelle_mandat: new Date("2026-01-12"),
+          evolution_avancement: [
+            {
+              date: new Date("2026-01-12"),
+              valeur: 100,
+            },
+            {
+              date: new Date("2026-01-14"),
+              valeur: 110,
+            },
+          ],
+        });
+
+        await fixtures.indicateurTerritoire({
+          id: indicateur.id,
+          chantier_id: chantier.id,
+          territoire_code: "DEPT-01",
+          maille: "DEPT",
+          code_insee: "01",
+          zone_id: "D01",
+          valeur_actuelle_mandat: 10,
+          date_valeur_actuelle_mandat: new Date("2025-05-06"),
+        });
+
+        await fixtures.indicateurTerritoireJalon({
+          id: indicateur.id,
+          territoire_code: "DEPT-02",
+          maille: "DEPT",
+          code_insee: "02",
+          zone_id: "D02",
+          jalon: 2025,
+          valeur_actuelle: 110,
+          date_valeur_actuelle: new Date("2026-01-12"),
+        });
+
+        const utilisateur = await fixtures.utilisateur({
           id: "550e8400-e29b-41d4-a716-446655440004",
-          date_creation: new Date().toISOString(),
-          profil: {
-            connect: {
-              code: ProfilEnum.DITP_ADMIN,
-            },
-          },
-        },
-      });
-
-      await prisma.indicateur_territoire_valeur_evenement.createMany({
-        data: [
-          {
-            id: "550e8400-e29b-41d4-a716-446655440300",
-            indic_id: "IND-001",
-            territoire_code: "DEPT-02",
-            type_valeur: "VALEUR_AVANCEMENT",
-            donnees_complementaires: {},
-            type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_CREEE,
-            date_valeur: new Date("2026-01-12"),
-            ordre: 1,
-            date_modification: new Date("2026-01-12"),
-            date_creation: new Date("2026-01-12"),
-            id_auteur_modification: "550e8400-e29b-41d4-a716-446655440004",
-            correlation_id: "550e8400-e29b-41d4-a716-446655440005",
-            valeur: 100,
-          },
-          {
-            id: "550e8400-e29b-41d4-a716-446655440301",
-            indic_id: "IND-001",
-            territoire_code: "DEPT-02",
-            type_valeur: "VALEUR_AVANCEMENT",
-            donnees_complementaires: {},
-            type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_SUPPRIMEE,
-            date_valeur: new Date("2026-01-12"),
-            ordre: 2,
-            date_modification: new Date("2026-01-12"),
-            date_creation: new Date("2026-01-12"),
-            id_auteur_modification: "550e8400-e29b-41d4-a716-446655440004",
-            correlation_id: "550e8400-e29b-41d4-a716-446655440005",
-            valeur: 100,
-          },
-        ],
-      });
-
-      // When
-      const result =
-        await prismaIndicateurRepository.récupérerDétailsTerritoirePourUnIndicateur(
-          indicateurId,
-          habilitations,
-          ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT,
-          jalon,
-          dateDerniereExecutionDatajobs,
-        );
-
-      // Then
-      expect(result["DEPT-02"].propositionStatutTerritoire).toEqual({
-        statut: "PROPOSITION_VALEUR_SUPPRIMEE",
-        date: "2026-01-12",
-        dateTime: "2026-01-12T00:00:00.000Z",
-      });
-      expect(result["DEPT-02"].propositionStatutDirectionProjet).toBeNull();
-    });
-
-    it("lorsque le dernier évènement en date est de type PROPOSITION_VALEUR_CREEE, le propositionStatutTerritoire est PROPOSITION_VALEUR_CREEE et le propositionStatutDirectionProjet est null", async () => {
-      // Given
-      const chantiersIds = ["CH-001"];
-      const indicateurId = "IND-001";
-      const territoireCodes = ["DEPT-02", "DEPT-01"];
-      const jalon = 2025;
-      const habilitations: Habilitations = {
-        gestionUtilisateur: {
-          chantiers: chantiersIds,
-          territoires: territoireCodes,
-          périmètres: [],
-        },
-        lecture: {
-          chantiers: chantiersIds,
-          territoires: territoireCodes,
-          périmètres: [],
-        },
-        saisieCommentaire: {
-          chantiers: chantiersIds,
-          territoires: territoireCodes,
-          périmètres: [],
-        },
-        saisieIndicateur: {
-          chantiers: chantiersIds,
-          territoires: territoireCodes,
-          périmètres: [],
-        },
-        responsabilite: {
-          chantiers: chantiersIds,
-          territoires: territoireCodes,
-          périmètres: [],
-        },
-      };
-
-      await prisma.chantier_identite.createMany({
-        data: [
-          {
-            id: "CH-001",
-            nom: "Chantier 001",
-            ministeres: ["1009"],
-            ministeres_acronymes: ["MINA"],
-          },
-        ],
-      });
-
-      await prisma.chantier_territoire.createMany({
-        data: [
-          {
-            id: "CH-001",
-            maille: "DEPT",
-            code_insee: "02",
-            territoire_code: "DEPT-02",
-            zone_id: "FRANCE",
-          },
-          {
-            id: "CH-001",
-            maille: "DEPT",
-            code_insee: "01",
-            territoire_code: "DEPT-01",
-            zone_id: "D01",
-          },
-        ],
-      });
-
-      await prisma.indicateur_identite.createMany({
-        data: [
-          {
-            id: "IND-001",
-            nom: "Indicateur 001",
-            chantier_id: "CH-001",
-            type_id: "IMPACT",
-            unite_mesure: "kg",
-          },
-        ],
-      });
-
-      await prisma.indicateur_territoire.createMany({
-        data: [
-          {
-            id: "IND-001",
-            chantier_id: "CH-001",
-            maille: "DEPT",
-            code_insee: "02",
-            territoire_code: "DEPT-02",
-            zone_id: "D02",
-            date_valeur_actuelle_mandat: new Date("2026-01-12"),
-            evolution_avancement: [
-              {
-                date: new Date("2026-01-12"),
-                valeur: 100,
-              },
-              {
-                date: new Date("2026-01-14"),
-                valeur: 110,
-              },
-            ],
-          },
-          {
-            id: "IND-001",
-            chantier_id: "CH-001",
-            maille: "DEPT",
-            territoire_code: "DEPT-01",
-            code_insee: "01",
-            zone_id: "D01",
-            valeur_actuelle_mandat: 10,
-            date_valeur_actuelle_mandat: new Date("2025-05-06"),
-          },
-        ],
-      });
-
-      await prisma.indicateur_territoire_jalon.createMany({
-        data: [
-          {
-            id: "IND-001",
-            maille: "DEPT",
-            code_insee: "02",
-            territoire_code: "DEPT-02",
-            jalon: 2025,
-            zone_id: "D02",
-            valeur_actuelle: 110,
-            date_valeur_actuelle: new Date("2026-01-12"),
-          },
-        ],
-      });
-
-      await prisma.utilisateur.create({
-        data: {
-          email: "jane.doe5@test.com",
-          nom: "Doe",
           prenom: "Jane",
+          nom: "Doe",
+        });
+
+        const correlationId = "550e8400-e29b-41d4-a716-446655440005";
+
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur.id,
+          territoire_code: "DEPT-02",
+          type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_CREEE,
+          id_auteur_modification: utilisateur.id,
+          date_valeur: new Date("2026-01-12"),
+          ordre: 1,
+          date_modification: new Date("2026-01-12"),
+          date_creation: new Date("2026-01-12"),
+          correlation_id: correlationId,
+          valeur: 100,
+        });
+
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur.id,
+          territoire_code: "DEPT-02",
+          type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_SUPPRIMEE,
+          id_auteur_modification: utilisateur.id,
+          date_valeur: new Date("2026-01-12"),
+          ordre: 2,
+          date_modification: new Date("2026-01-12"),
+          date_creation: new Date("2026-01-12"),
+          correlation_id: correlationId,
+          valeur: 100,
+        });
+
+        // When
+        const result =
+          await prismaIndicateurRepository.récupérerDétailsTerritoirePourUnIndicateur(
+            indicateurId,
+            habilitations,
+            ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT,
+            jalon,
+            dateDerniereExecutionDatajobs,
+          );
+
+        // Then
+        expect(result["DEPT-02"].propositionStatutTerritoire).toEqual({
+          statut: "PROPOSITION_VALEUR_SUPPRIMEE",
+          date: "2026-01-12",
+          dateTime: "2026-01-12T00:00:00.000Z",
+        });
+        expect(result["DEPT-02"].propositionStatutDirectionProjet).toBeNull();
+      }),
+    );
+
+    it(
+      "lorsque le dernier évènement en date est de type PROPOSITION_VALEUR_CREEE, le propositionStatutTerritoire est PROPOSITION_VALEUR_CREEE et le propositionStatutDirectionProjet est null",
+      createIntegrationTest(async () => {
+        // Given
+        const chantiersIds = ["CH-001"];
+        const indicateurId = "IND-001";
+        const territoireCodes = ["DEPT-02", "DEPT-01"];
+        const jalon = 2025;
+        const habilitations: Habilitations = {
+          gestionUtilisateur: {
+            chantiers: chantiersIds,
+            territoires: territoireCodes,
+            périmètres: [],
+          },
+          lecture: {
+            chantiers: chantiersIds,
+            territoires: territoireCodes,
+            périmètres: [],
+          },
+          saisieCommentaire: {
+            chantiers: chantiersIds,
+            territoires: territoireCodes,
+            périmètres: [],
+          },
+          saisieIndicateur: {
+            chantiers: chantiersIds,
+            territoires: territoireCodes,
+            périmètres: [],
+          },
+          responsabilite: {
+            chantiers: chantiersIds,
+            territoires: territoireCodes,
+            périmètres: [],
+          },
+        };
+
+        const chantier = await fixtures.chantierIdentite({
+          id: "CH-001",
+          nom: "Chantier 001",
+          ministeres: ["1009"],
+          ministeres_acronymes: ["MINA"],
+        });
+
+        await fixtures.chantierTerritoire({
+          id: chantier.id,
+          territoire_code: "DEPT-02",
+          maille: "DEPT",
+          code_insee: "02",
+          zone_id: "FRANCE",
+        });
+
+        await fixtures.chantierTerritoire({
+          id: chantier.id,
+          territoire_code: "DEPT-01",
+          maille: "DEPT",
+          code_insee: "01",
+          zone_id: "D01",
+        });
+
+        const indicateur = await fixtures.indicateurIdentite({
+          id: "IND-001",
+          nom: "Indicateur 001",
+          chantier_id: chantier.id,
+          unite_mesure: "kg",
+        });
+
+        await fixtures.indicateurTerritoire({
+          id: indicateur.id,
+          chantier_id: chantier.id,
+          territoire_code: "DEPT-02",
+          maille: "DEPT",
+          code_insee: "02",
+          zone_id: "D02",
+          date_valeur_actuelle_mandat: new Date("2026-01-12"),
+          evolution_avancement: [
+            {
+              date: new Date("2026-01-12"),
+              valeur: 100,
+            },
+            {
+              date: new Date("2026-01-14"),
+              valeur: 110,
+            },
+          ],
+        });
+
+        await fixtures.indicateurTerritoire({
+          id: indicateur.id,
+          chantier_id: chantier.id,
+          territoire_code: "DEPT-01",
+          maille: "DEPT",
+          code_insee: "01",
+          zone_id: "D01",
+          valeur_actuelle_mandat: 10,
+          date_valeur_actuelle_mandat: new Date("2025-05-06"),
+        });
+
+        await fixtures.indicateurTerritoireJalon({
+          id: indicateur.id,
+          territoire_code: "DEPT-02",
+          maille: "DEPT",
+          code_insee: "02",
+          zone_id: "D02",
+          jalon: 2025,
+          valeur_actuelle: 110,
+          date_valeur_actuelle: new Date("2026-01-12"),
+        });
+
+        const utilisateur = await fixtures.utilisateur({
           id: "550e8400-e29b-41d4-a716-446655440005",
-          date_creation: new Date().toISOString(),
-          profil: {
-            connect: {
-              code: ProfilEnum.DITP_ADMIN,
-            },
-          },
-        },
-      });
-
-      await prisma.indicateur_territoire_valeur_evenement.createMany({
-        data: [
-          {
-            id: "550e8400-e29b-41d4-a716-446655440400",
-            indic_id: "IND-001",
-            territoire_code: "DEPT-02",
-            type_valeur: "VALEUR_AVANCEMENT",
-            donnees_complementaires: {},
-            type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_CREEE,
-            date_valeur: new Date("2026-01-12"),
-            ordre: 1,
-            date_modification: new Date("2026-01-12"),
-            date_creation: new Date("2026-01-12"),
-            id_auteur_modification: "550e8400-e29b-41d4-a716-446655440005",
-            correlation_id: "550e8400-e29b-41d4-a716-446655440006",
-            valeur: 100,
-          },
-        ],
-      });
-
-      // When
-      const result =
-        await prismaIndicateurRepository.récupérerDétailsTerritoirePourUnIndicateur(
-          indicateurId,
-          habilitations,
-          ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT,
-          jalon,
-          dateDerniereExecutionDatajobs,
-        );
-
-      // Then
-      expect(result["DEPT-02"].propositionStatutTerritoire).toEqual({
-        statut: "PROPOSITION_VALEUR_CREEE",
-        date: "2026-01-12",
-        dateTime: "2026-01-12T00:00:00.000Z",
-      });
-      expect(result["DEPT-02"].propositionStatutDirectionProjet).toBeNull();
-    });
-
-    it("lorsque le dernier évènement en date est de type PROPOSITION_VALEUR_MODIFIEE, le propositionStatutTerritoire est PROPOSITION_VALEUR_MODIFIEE et le propositionStatutDirectionProjet est null", async () => {
-      // Given
-      const chantiersIds = ["CH-001"];
-      const indicateurId = "IND-001";
-      const territoireCodes = ["DEPT-02", "DEPT-01"];
-      const jalon = 2025;
-      const habilitations: Habilitations = {
-        gestionUtilisateur: {
-          chantiers: chantiersIds,
-          territoires: territoireCodes,
-          périmètres: [],
-        },
-        lecture: {
-          chantiers: chantiersIds,
-          territoires: territoireCodes,
-          périmètres: [],
-        },
-        saisieCommentaire: {
-          chantiers: chantiersIds,
-          territoires: territoireCodes,
-          périmètres: [],
-        },
-        saisieIndicateur: {
-          chantiers: chantiersIds,
-          territoires: territoireCodes,
-          périmètres: [],
-        },
-        responsabilite: {
-          chantiers: chantiersIds,
-          territoires: territoireCodes,
-          périmètres: [],
-        },
-      };
-
-      await prisma.chantier_identite.createMany({
-        data: [
-          {
-            id: "CH-001",
-            nom: "Chantier 001",
-            ministeres: ["1009"],
-            ministeres_acronymes: ["MINA"],
-          },
-        ],
-      });
-
-      await prisma.chantier_territoire.createMany({
-        data: [
-          {
-            id: "CH-001",
-            maille: "DEPT",
-            code_insee: "02",
-            territoire_code: "DEPT-02",
-            zone_id: "FRANCE",
-          },
-          {
-            id: "CH-001",
-            maille: "DEPT",
-            code_insee: "01",
-            territoire_code: "DEPT-01",
-            zone_id: "D01",
-          },
-        ],
-      });
-
-      await prisma.indicateur_identite.createMany({
-        data: [
-          {
-            id: "IND-001",
-            nom: "Indicateur 001",
-            chantier_id: "CH-001",
-            type_id: "IMPACT",
-            unite_mesure: "kg",
-          },
-        ],
-      });
-
-      await prisma.indicateur_territoire.createMany({
-        data: [
-          {
-            id: "IND-001",
-            chantier_id: "CH-001",
-            maille: "DEPT",
-            code_insee: "02",
-            territoire_code: "DEPT-02",
-            zone_id: "D02",
-            date_valeur_actuelle_mandat: new Date("2026-01-12"),
-            evolution_avancement: [
-              {
-                date: new Date("2026-01-12"),
-                valeur: 100,
-              },
-              {
-                date: new Date("2026-01-14"),
-                valeur: 110,
-              },
-            ],
-          },
-          {
-            id: "IND-001",
-            chantier_id: "CH-001",
-            maille: "DEPT",
-            territoire_code: "DEPT-01",
-            code_insee: "01",
-            zone_id: "D01",
-            valeur_actuelle_mandat: 10,
-            date_valeur_actuelle_mandat: new Date("2025-05-06"),
-          },
-        ],
-      });
-
-      await prisma.indicateur_territoire_jalon.createMany({
-        data: [
-          {
-            id: "IND-001",
-            maille: "DEPT",
-            code_insee: "02",
-            territoire_code: "DEPT-02",
-            jalon: 2025,
-            zone_id: "D02",
-            valeur_actuelle: 110,
-            date_valeur_actuelle: new Date("2026-01-12"),
-          },
-        ],
-      });
-
-      await prisma.utilisateur.create({
-        data: {
-          email: "jane.doe6@test.com",
-          nom: "Doe",
           prenom: "Jane",
+          nom: "Doe",
+        });
+
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur.id,
+          territoire_code: "DEPT-02",
+          type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_CREEE,
+          id_auteur_modification: utilisateur.id,
+          date_valeur: new Date("2026-01-12"),
+          ordre: 1,
+          date_modification: new Date("2026-01-12"),
+          date_creation: new Date("2026-01-12"),
+          correlation_id: "550e8400-e29b-41d4-a716-446655440006",
+          valeur: 100,
+        });
+
+        // When
+        const result =
+          await prismaIndicateurRepository.récupérerDétailsTerritoirePourUnIndicateur(
+            indicateurId,
+            habilitations,
+            ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT,
+            jalon,
+            dateDerniereExecutionDatajobs,
+          );
+
+        // Then
+        expect(result["DEPT-02"].propositionStatutTerritoire).toEqual({
+          statut: "PROPOSITION_VALEUR_CREEE",
+          date: "2026-01-12",
+          dateTime: "2026-01-12T00:00:00.000Z",
+        });
+        expect(result["DEPT-02"].propositionStatutDirectionProjet).toBeNull();
+      }),
+    );
+
+    it(
+      "lorsque le dernier évènement en date est de type PROPOSITION_VALEUR_MODIFIEE, le propositionStatutTerritoire est PROPOSITION_VALEUR_MODIFIEE et le propositionStatutDirectionProjet est null",
+      createIntegrationTest(async () => {
+        // Given
+        const chantiersIds = ["CH-001"];
+        const indicateurId = "IND-001";
+        const territoireCodes = ["DEPT-02", "DEPT-01"];
+        const jalon = 2025;
+        const habilitations: Habilitations = {
+          gestionUtilisateur: {
+            chantiers: chantiersIds,
+            territoires: territoireCodes,
+            périmètres: [],
+          },
+          lecture: {
+            chantiers: chantiersIds,
+            territoires: territoireCodes,
+            périmètres: [],
+          },
+          saisieCommentaire: {
+            chantiers: chantiersIds,
+            territoires: territoireCodes,
+            périmètres: [],
+          },
+          saisieIndicateur: {
+            chantiers: chantiersIds,
+            territoires: territoireCodes,
+            périmètres: [],
+          },
+          responsabilite: {
+            chantiers: chantiersIds,
+            territoires: territoireCodes,
+            périmètres: [],
+          },
+        };
+
+        const chantier = await fixtures.chantierIdentite({
+          id: "CH-001",
+          nom: "Chantier 001",
+          ministeres: ["1009"],
+          ministeres_acronymes: ["MINA"],
+        });
+
+        await fixtures.chantierTerritoire({
+          id: chantier.id,
+          territoire_code: "DEPT-02",
+          maille: "DEPT",
+          code_insee: "02",
+          zone_id: "FRANCE",
+        });
+
+        await fixtures.chantierTerritoire({
+          id: chantier.id,
+          territoire_code: "DEPT-01",
+          maille: "DEPT",
+          code_insee: "01",
+          zone_id: "D01",
+        });
+
+        const indicateur = await fixtures.indicateurIdentite({
+          id: "IND-001",
+          nom: "Indicateur 001",
+          chantier_id: chantier.id,
+          unite_mesure: "kg",
+        });
+
+        await fixtures.indicateurTerritoire({
+          id: indicateur.id,
+          chantier_id: chantier.id,
+          territoire_code: "DEPT-02",
+          maille: "DEPT",
+          code_insee: "02",
+          zone_id: "D02",
+          date_valeur_actuelle_mandat: new Date("2026-01-12"),
+          evolution_avancement: [
+            {
+              date: new Date("2026-01-12"),
+              valeur: 100,
+            },
+            {
+              date: new Date("2026-01-14"),
+              valeur: 110,
+            },
+          ],
+        });
+
+        await fixtures.indicateurTerritoire({
+          id: indicateur.id,
+          chantier_id: chantier.id,
+          territoire_code: "DEPT-01",
+          maille: "DEPT",
+          code_insee: "01",
+          zone_id: "D01",
+          valeur_actuelle_mandat: 10,
+          date_valeur_actuelle_mandat: new Date("2025-05-06"),
+        });
+
+        await fixtures.indicateurTerritoireJalon({
+          id: indicateur.id,
+          territoire_code: "DEPT-02",
+          maille: "DEPT",
+          code_insee: "02",
+          zone_id: "D02",
+          jalon: 2025,
+          valeur_actuelle: 110,
+          date_valeur_actuelle: new Date("2026-01-12"),
+        });
+
+        const utilisateur = await fixtures.utilisateur({
           id: "550e8400-e29b-41d4-a716-446655440006",
-          date_creation: new Date().toISOString(),
-          profil: {
-            connect: {
-              code: ProfilEnum.DITP_ADMIN,
-            },
-          },
-        },
-      });
-
-      await prisma.indicateur_territoire_valeur_evenement.createMany({
-        data: [
-          {
-            id: "207aed34-158a-46b5-80d1-acebb72cd7e3",
-            indic_id: "IND-001",
-            territoire_code: "DEPT-02",
-            type_valeur: "VALEUR_AVANCEMENT",
-            donnees_complementaires: {},
-            type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_MODIFIEE,
-            date_valeur: new Date("2026-01-12"),
-            ordre: 3,
-            date_modification: new Date("2026-01-12"),
-            date_creation: new Date("2026-01-12"),
-            id_auteur_modification: "550e8400-e29b-41d4-a716-446655440006",
-            correlation_id: "550e8400-e29b-41d4-a716-446655440007",
-            valeur: 90,
-          },
-          {
-            id: "550e8400-e29b-41d4-a716-446655440500",
-            indic_id: "IND-001",
-            territoire_code: "DEPT-02",
-            type_valeur: "VALEUR_AVANCEMENT",
-            donnees_complementaires: {},
-            type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_MODIFIEE,
-            date_valeur: new Date("2026-01-12"),
-            ordre: 2,
-            date_modification: new Date("2026-01-12"),
-            date_creation: new Date("2026-01-12"),
-            id_auteur_modification: "550e8400-e29b-41d4-a716-446655440006",
-            correlation_id: "550e8400-e29b-41d4-a716-446655440007",
-            valeur: 100,
-          },
-          {
-            id: "3c9316d9-de73-439b-bf62-75fb280860b6",
-            indic_id: "IND-001",
-            territoire_code: "DEPT-02",
-            type_valeur: "VALEUR_AVANCEMENT",
-            donnees_complementaires: {},
-            type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_CREEE,
-            date_valeur: new Date("2026-01-12"),
-            ordre: 1,
-            date_modification: new Date("2026-01-12"),
-            date_creation: new Date("2026-01-12"),
-            id_auteur_modification: "550e8400-e29b-41d4-a716-446655440006",
-            correlation_id: "550e8400-e29b-41d4-a716-446655440007",
-            valeur: 10,
-          },
-        ],
-      });
-
-      // When
-      const result =
-        await prismaIndicateurRepository.récupérerDétailsTerritoirePourUnIndicateur(
-          indicateurId,
-          habilitations,
-          ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT,
-          jalon,
-          dateDerniereExecutionDatajobs,
-        );
-
-      // Then
-      expect(result["DEPT-02"].propositionStatutTerritoire).toEqual({
-        statut: "PROPOSITION_VALEUR_MODIFIEE",
-        date: "2026-01-12",
-        dateTime: "2026-01-12T00:00:00.000Z",
-      });
-      expect(result["DEPT-02"].propositionStatutDirectionProjet).toBeNull();
-    });
-
-    it("s'assure que les événements sur différentes dates ne s'impactent pas mutuellement", async () => {
-      // Given
-      const chantiersIds = ["CH-001"];
-      const indicateurId = "IND-001";
-      const territoireCodes = ["DEPT-02", "DEPT-01"];
-      const jalon = 2025;
-      const habilitations: Habilitations = {
-        gestionUtilisateur: {
-          chantiers: chantiersIds,
-          territoires: territoireCodes,
-          périmètres: [],
-        },
-        lecture: {
-          chantiers: chantiersIds,
-          territoires: territoireCodes,
-          périmètres: [],
-        },
-        saisieCommentaire: {
-          chantiers: chantiersIds,
-          territoires: territoireCodes,
-          périmètres: [],
-        },
-        saisieIndicateur: {
-          chantiers: chantiersIds,
-          territoires: territoireCodes,
-          périmètres: [],
-        },
-        responsabilite: {
-          chantiers: chantiersIds,
-          territoires: territoireCodes,
-          périmètres: [],
-        },
-      };
-
-      await prisma.chantier_identite.createMany({
-        data: [
-          {
-            id: "CH-001",
-            nom: "Chantier 001",
-            ministeres: ["1009"],
-            ministeres_acronymes: ["MINA"],
-          },
-        ],
-      });
-
-      await prisma.chantier_territoire.createMany({
-        data: [
-          {
-            id: "CH-001",
-            maille: "DEPT",
-            code_insee: "02",
-            territoire_code: "DEPT-02",
-            zone_id: "FRANCE",
-          },
-          {
-            id: "CH-001",
-            maille: "DEPT",
-            code_insee: "01",
-            territoire_code: "DEPT-01",
-            zone_id: "D01",
-          },
-        ],
-      });
-
-      await prisma.indicateur_identite.createMany({
-        data: [
-          {
-            id: "IND-001",
-            nom: "Indicateur 001",
-            chantier_id: "CH-001",
-            type_id: "IMPACT",
-            unite_mesure: "kg",
-          },
-        ],
-      });
-
-      await prisma.indicateur_territoire.createMany({
-        data: [
-          {
-            id: "IND-001",
-            chantier_id: "CH-001",
-            maille: "DEPT",
-            code_insee: "02",
-            territoire_code: "DEPT-02",
-            zone_id: "D02",
-            date_valeur_actuelle_mandat: new Date("2026-01-12"),
-            evolution_avancement: [
-              {
-                date: new Date("2026-01-12"),
-                valeur: 100,
-              },
-              {
-                date: new Date("2026-01-14"),
-                valeur: 110,
-              },
-            ],
-          },
-          {
-            id: "IND-001",
-            chantier_id: "CH-001",
-            maille: "DEPT",
-            territoire_code: "DEPT-01",
-            code_insee: "01",
-            zone_id: "D01",
-            valeur_actuelle_mandat: 10,
-            date_valeur_actuelle_mandat: new Date("2025-05-06"),
-          },
-        ],
-      });
-
-      await prisma.indicateur_territoire_jalon.createMany({
-        data: [
-          {
-            id: "IND-001",
-            maille: "DEPT",
-            code_insee: "02",
-            territoire_code: "DEPT-02",
-            jalon: 2025,
-            zone_id: "D02",
-            valeur_actuelle: 110,
-            date_valeur_actuelle: new Date("2026-01-12"),
-          },
-        ],
-      });
-
-      await prisma.utilisateur.create({
-        data: {
-          email: "jane.doe7@test.com",
-          nom: "Doe",
           prenom: "Jane",
-          id: "550e8400-e29b-41d4-a716-446655440007",
-          date_creation: new Date().toISOString(),
-          profil: {
-            connect: {
-              code: ProfilEnum.DITP_ADMIN,
+          nom: "Doe",
+        });
+
+        const correlationId = "550e8400-e29b-41d4-a716-446655440007";
+
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur.id,
+          territoire_code: "DEPT-02",
+          type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_CREEE,
+          id_auteur_modification: utilisateur.id,
+          date_valeur: new Date("2026-01-12"),
+          ordre: 1,
+          date_modification: new Date("2026-01-12"),
+          date_creation: new Date("2026-01-12"),
+          correlation_id: correlationId,
+          valeur: 10,
+        });
+
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur.id,
+          territoire_code: "DEPT-02",
+          type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_MODIFIEE,
+          id_auteur_modification: utilisateur.id,
+          date_valeur: new Date("2026-01-12"),
+          ordre: 2,
+          date_modification: new Date("2026-01-12"),
+          date_creation: new Date("2026-01-12"),
+          correlation_id: correlationId,
+          valeur: 100,
+        });
+
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur.id,
+          territoire_code: "DEPT-02",
+          type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_MODIFIEE,
+          id_auteur_modification: utilisateur.id,
+          date_valeur: new Date("2026-01-12"),
+          ordre: 3,
+          date_modification: new Date("2026-01-12"),
+          date_creation: new Date("2026-01-12"),
+          correlation_id: correlationId,
+          valeur: 90,
+        });
+
+        // When
+        const result =
+          await prismaIndicateurRepository.récupérerDétailsTerritoirePourUnIndicateur(
+            indicateurId,
+            habilitations,
+            ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT,
+            jalon,
+            dateDerniereExecutionDatajobs,
+          );
+
+        // Then
+        expect(result["DEPT-02"].propositionStatutTerritoire).toEqual({
+          statut: "PROPOSITION_VALEUR_MODIFIEE",
+          date: "2026-01-12",
+          dateTime: "2026-01-12T00:00:00.000Z",
+        });
+        expect(result["DEPT-02"].propositionStatutDirectionProjet).toBeNull();
+      }),
+    );
+
+    it(
+      "s'assure que les événements sur différentes dates ne s'impactent pas mutuellement",
+      createIntegrationTest(async () => {
+        // Given
+        const chantiersIds = ["CH-001"];
+        const indicateurId = "IND-001";
+        const territoireCodes = ["DEPT-02", "DEPT-01"];
+        const jalon = 2025;
+        const habilitations: Habilitations = {
+          gestionUtilisateur: {
+            chantiers: chantiersIds,
+            territoires: territoireCodes,
+            périmètres: [],
+          },
+          lecture: {
+            chantiers: chantiersIds,
+            territoires: territoireCodes,
+            périmètres: [],
+          },
+          saisieCommentaire: {
+            chantiers: chantiersIds,
+            territoires: territoireCodes,
+            périmètres: [],
+          },
+          saisieIndicateur: {
+            chantiers: chantiersIds,
+            territoires: territoireCodes,
+            périmètres: [],
+          },
+          responsabilite: {
+            chantiers: chantiersIds,
+            territoires: territoireCodes,
+            périmètres: [],
+          },
+        };
+
+        const chantier = await fixtures.chantierIdentite({
+          id: "CH-001",
+          nom: "Chantier 001",
+          ministeres: ["1009"],
+          ministeres_acronymes: ["MINA"],
+        });
+
+        await fixtures.chantierTerritoire({
+          id: chantier.id,
+          territoire_code: "DEPT-02",
+          maille: "DEPT",
+          code_insee: "02",
+          zone_id: "FRANCE",
+        });
+        await fixtures.chantierTerritoire({
+          id: chantier.id,
+          territoire_code: "DEPT-01",
+          maille: "DEPT",
+          code_insee: "01",
+          zone_id: "D01",
+        });
+
+        const indicateur = await fixtures.indicateurIdentite({
+          id: "IND-001",
+          nom: "Indicateur 001",
+          chantier_id: chantier.id,
+          unite_mesure: "kg",
+        });
+
+        await fixtures.indicateurTerritoire({
+          id: indicateur.id,
+          chantier_id: chantier.id,
+          territoire_code: "DEPT-02",
+          maille: "DEPT",
+          code_insee: "02",
+          zone_id: "D02",
+          date_valeur_actuelle_mandat: new Date("2026-01-12"),
+          evolution_avancement: [
+            {
+              date: new Date("2026-01-12"),
+              valeur: 100,
             },
-          },
-        },
-      });
-
-      await prisma.indicateur_territoire_valeur_evenement.createMany({
-        data: [
-          // Événement sur une date antérieure - ne devrait pas impacter
-          {
-            id: "550e8400-e29b-41d4-a716-446655440600",
-            indic_id: "IND-001",
-            territoire_code: "DEPT-02",
-            type_valeur: "VALEUR_AVANCEMENT",
-            donnees_complementaires: {},
-            type_evenement:
-              EvenementValeurEnum.PROPOSITION_VALEUR_ACCUSEE_RECEPTION,
-            date_valeur: new Date("2026-01-10"),
-            ordre: 1,
-            date_modification: new Date("2026-01-10"),
-            date_creation: new Date("2026-01-10"),
-            id_auteur_modification: "550e8400-e29b-41d4-a716-446655440007",
-            correlation_id: "550e8400-e29b-41d4-a716-446655440008",
-            valeur: 80,
-          },
-          // Événements sur la date la plus récente (date_valeur_actuelle)
-          {
-            id: "550e8400-e29b-41d4-a716-446655440601",
-            indic_id: "IND-001",
-            territoire_code: "DEPT-02",
-            type_valeur: "VALEUR_AVANCEMENT",
-            donnees_complementaires: {},
-            type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_CREEE,
-            date_valeur: new Date("2026-01-12"),
-            ordre: 1,
-            date_modification: new Date("2026-01-12"),
-            date_creation: new Date("2026-01-12"),
-            id_auteur_modification: "550e8400-e29b-41d4-a716-446655440007",
-            correlation_id: "550e8400-e29b-41d4-a716-446655440008",
-            valeur: 100,
-          },
-        ],
-      });
-
-      // When
-      const result =
-        await prismaIndicateurRepository.récupérerDétailsTerritoirePourUnIndicateur(
-          indicateurId,
-          habilitations,
-          ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT,
-          jalon,
-          dateDerniereExecutionDatajobs,
-        );
-
-      // Then
-      // Seuls les événements de la date la plus récente (2026-01-15) sont pris en compte
-      expect(result["DEPT-02"].propositionStatutTerritoire).toEqual({
-        statut: "PROPOSITION_VALEUR_CREEE",
-        date: "2026-01-12",
-        dateTime: "2026-01-12T00:00:00.000Z",
-      });
-      expect(result["DEPT-02"].propositionStatutDirectionProjet).toBeNull();
-    });
-
-    it("calcule le statutTauxAvancement EN_COURS quand la date de création de la proposition est postérieure à la dernière exécution des datajobs", async () => {
-      // Given
-      const chantiersIds = ["CH-001"];
-      const indicateurId = "IND-001";
-      const territoireCodes = ["DEPT-02"];
-      const jalon = 2025;
-      const habilitations: Habilitations = {
-        gestionUtilisateur: {
-          chantiers: chantiersIds,
-          territoires: territoireCodes,
-          périmètres: [],
-        },
-        lecture: {
-          chantiers: chantiersIds,
-          territoires: territoireCodes,
-          périmètres: [],
-        },
-        saisieCommentaire: {
-          chantiers: chantiersIds,
-          territoires: territoireCodes,
-          périmètres: [],
-        },
-        saisieIndicateur: {
-          chantiers: chantiersIds,
-          territoires: territoireCodes,
-          périmètres: [],
-        },
-        responsabilite: {
-          chantiers: chantiersIds,
-          territoires: territoireCodes,
-          périmètres: [],
-        },
-      };
-
-      await prisma.chantier_identite.createMany({
-        data: [
-          {
-            id: "CH-001",
-            nom: "Chantier 001",
-            ministeres: ["1009"],
-            ministeres_acronymes: ["MINA"],
-          },
-        ],
-      });
-
-      await prisma.chantier_territoire.createMany({
-        data: [
-          {
-            id: "CH-001",
-            maille: "DEPT",
-            code_insee: "02",
-            territoire_code: "DEPT-02",
-            zone_id: "FRANCE",
-          },
-        ],
-      });
-
-      await prisma.indicateur_identite.createMany({
-        data: [
-          {
-            id: "IND-001",
-            nom: "Indicateur 001",
-            chantier_id: "CH-001",
-            type_id: "IMPACT",
-            unite_mesure: "kg",
-            statut: "PUBLIE",
-          },
-        ],
-      });
-
-      await prisma.indicateur_territoire.createMany({
-        data: [
-          {
-            id: "IND-001",
-            chantier_id: "CH-001",
-            maille: "DEPT",
-            code_insee: "02",
-            territoire_code: "DEPT-02",
-            zone_id: "D02",
-          },
-        ],
-      });
-
-      await prisma.utilisateur.create({
-        data: {
-          email: "jane.doe@test.com",
-          nom: "Jane",
-          prenom: "Doe",
-          id: "550e8400-e29b-41d4-a716-446655440001",
-          date_creation: new Date().toISOString(),
-          profil: {
-            connect: {
-              code: ProfilEnum.DITP_ADMIN,
+            {
+              date: new Date("2026-01-14"),
+              valeur: 110,
             },
-          },
-        },
-      });
+          ],
+        });
+        await fixtures.indicateurTerritoire({
+          id: indicateur.id,
+          chantier_id: chantier.id,
+          territoire_code: "DEPT-01",
+          maille: "DEPT",
+          code_insee: "01",
+          zone_id: "D01",
+          valeur_actuelle_mandat: 10,
+          date_valeur_actuelle_mandat: new Date("2025-05-06"),
+        });
 
-      await prisma.indicateur_territoire_valeur_evenement.createMany({
-        data: [
-          {
-            id: "550e8400-e29b-41d4-a716-446655440000",
-            indic_id: "IND-001",
-            territoire_code: "DEPT-02",
-            type_valeur: "VALEUR_AVANCEMENT",
-            donnees_complementaires: {},
-            type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_CREEE,
-            date_valeur: new Date("2026-01-12"),
-            ordre: 1,
-            date_modification: new Date("2026-02-13"),
-            date_creation: new Date("2026-02-13"), // Postérieure à la dernière exécution des datajobs
-            id_auteur_modification: "550e8400-e29b-41d4-a716-446655440001",
-            correlation_id: "550e8400-e29b-41d4-a716-446655440002",
-            valeur: 100,
-          },
-        ],
-      });
+        await fixtures.indicateurTerritoireJalon({
+          id: indicateur.id,
+          territoire_code: "DEPT-02",
+          maille: "DEPT",
+          code_insee: "02",
+          zone_id: "D02",
+          jalon: 2025,
+          valeur_actuelle: 110,
+          date_valeur_actuelle: new Date("2026-01-12"),
+        });
 
-      // When
-      const result =
-        await prismaIndicateurRepository.récupérerDétailsTerritoirePourUnIndicateur(
-          indicateurId,
-          habilitations,
-          ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT,
-          jalon,
-          dateDerniereExecutionDatajobs,
+        const utilisateur = await fixtures.utilisateur();
+        const correlationId = "550e8400-e29b-41d4-a716-446655440008";
+
+        // Événement sur une date antérieure - ne devrait pas impacter
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur.id,
+          territoire_code: "DEPT-02",
+          type_evenement:
+            EvenementValeurEnum.PROPOSITION_VALEUR_ACCUSEE_RECEPTION,
+          id_auteur_modification: utilisateur.id,
+          date_valeur: new Date("2026-01-10"),
+          ordre: 1,
+          date_modification: new Date("2026-01-10"),
+          date_creation: new Date("2026-01-10"),
+          correlation_id: correlationId,
+          valeur: 80,
+        });
+        // Événements sur la date la plus récente (date_valeur_actuelle)
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur.id,
+          territoire_code: "DEPT-02",
+          type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_CREEE,
+          id_auteur_modification: utilisateur.id,
+          date_valeur: new Date("2026-01-12"),
+          ordre: 1,
+          date_modification: new Date("2026-01-12"),
+          date_creation: new Date("2026-01-12"),
+          correlation_id: correlationId,
+          valeur: 100,
+        });
+
+        // When
+        const result =
+          await prismaIndicateurRepository.récupérerDétailsTerritoirePourUnIndicateur(
+            indicateurId,
+            habilitations,
+            ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT,
+            jalon,
+            dateDerniereExecutionDatajobs,
+          );
+
+        // Then
+        // Seuls les événements de la date la plus récente (2026-01-15) sont pris en compte
+        expect(result["DEPT-02"].propositionStatutTerritoire).toEqual({
+          statut: "PROPOSITION_VALEUR_CREEE",
+          date: "2026-01-12",
+          dateTime: "2026-01-12T00:00:00.000Z",
+        });
+        expect(result["DEPT-02"].propositionStatutDirectionProjet).toBeNull();
+      }),
+    );
+
+    it(
+      "calcule le statutTauxAvancement EN_COURS quand la date de création de la proposition est postérieure à la dernière exécution des datajobs",
+      createIntegrationTest(async () => {
+        // Given
+        const chantiersIds = ["CH-001"];
+        const indicateurId = "IND-001";
+        const territoireCodes = ["DEPT-02"];
+        const jalon = 2025;
+        const habilitations: Habilitations = {
+          gestionUtilisateur: {
+            chantiers: chantiersIds,
+            territoires: territoireCodes,
+            périmètres: [],
+          },
+          lecture: {
+            chantiers: chantiersIds,
+            territoires: territoireCodes,
+            périmètres: [],
+          },
+          saisieCommentaire: {
+            chantiers: chantiersIds,
+            territoires: territoireCodes,
+            périmètres: [],
+          },
+          saisieIndicateur: {
+            chantiers: chantiersIds,
+            territoires: territoireCodes,
+            périmètres: [],
+          },
+          responsabilite: {
+            chantiers: chantiersIds,
+            territoires: territoireCodes,
+            périmètres: [],
+          },
+        };
+
+        const chantier = await fixtures.chantierIdentite({
+          id: "CH-001",
+          nom: "Chantier 001",
+          ministeres: ["1009"],
+          ministeres_acronymes: ["MINA"],
+        });
+
+        await fixtures.chantierTerritoire({
+          id: chantier.id,
+          territoire_code: "DEPT-02",
+          maille: "DEPT",
+          code_insee: "02",
+          zone_id: "FRANCE",
+        });
+
+        const indicateur = await fixtures.indicateurIdentite({
+          id: "IND-001",
+          nom: "Indicateur 001",
+          chantier_id: chantier.id,
+          unite_mesure: "kg",
+          statut: "PUBLIE",
+        });
+
+        await fixtures.indicateurTerritoire({
+          id: indicateur.id,
+          chantier_id: chantier.id,
+          territoire_code: "DEPT-02",
+          maille: "DEPT",
+          code_insee: "02",
+          zone_id: "D02",
+        });
+
+        const utilisateur = await fixtures.utilisateur();
+
+        // Postérieure à la dernière exécution des datajobs
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur.id,
+          territoire_code: "DEPT-02",
+          type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_CREEE,
+          id_auteur_modification: utilisateur.id,
+          date_valeur: new Date("2026-01-12"),
+          ordre: 1,
+          date_modification: new Date("2026-02-13"),
+          date_creation: new Date("2026-02-13"),
+          correlation_id: "550e8400-e29b-41d4-a716-446655440002",
+          valeur: 100,
+        });
+
+        // When
+        const result =
+          await prismaIndicateurRepository.récupérerDétailsTerritoirePourUnIndicateur(
+            indicateurId,
+            habilitations,
+            ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT,
+            jalon,
+            dateDerniereExecutionDatajobs,
+          );
+
+        // Then
+        expect(result["DEPT-02"].proposition?.statutTauxAvancement).toEqual(
+          "EN_COURS",
         );
+      }),
+    );
 
-      // Then
-      expect(result["DEPT-02"].proposition?.statutTauxAvancement).toEqual(
-        "EN_COURS",
-      );
-    });
-
-    it("calcule le statutTauxAvancement CALCULE quand la date de création de la proposition est antérieure à la dernière exécution des datajobs", async () => {
-      // Given
-      const chantiersIds = ["CH-001"];
-      const indicateurId = "IND-001";
-      const territoireCodes = ["DEPT-02"];
-      const jalon = 2025;
-      const habilitations: Habilitations = {
-        gestionUtilisateur: {
-          chantiers: chantiersIds,
-          territoires: territoireCodes,
-          périmètres: [],
-        },
-        lecture: {
-          chantiers: chantiersIds,
-          territoires: territoireCodes,
-          périmètres: [],
-        },
-        saisieCommentaire: {
-          chantiers: chantiersIds,
-          territoires: territoireCodes,
-          périmètres: [],
-        },
-        saisieIndicateur: {
-          chantiers: chantiersIds,
-          territoires: territoireCodes,
-          périmètres: [],
-        },
-        responsabilite: {
-          chantiers: chantiersIds,
-          territoires: territoireCodes,
-          périmètres: [],
-        },
-      };
-
-      await prisma.chantier_identite.createMany({
-        data: [
-          {
-            id: "CH-001",
-            nom: "Chantier 001",
-            ministeres: ["1009"],
-            ministeres_acronymes: ["MINA"],
+    it(
+      "calcule le statutTauxAvancement CALCULE quand la date de création de la proposition est antérieure à la dernière exécution des datajobs",
+      createIntegrationTest(async () => {
+        // Given
+        const chantiersIds = ["CH-001"];
+        const indicateurId = "IND-001";
+        const territoireCodes = ["DEPT-02"];
+        const jalon = 2025;
+        const habilitations: Habilitations = {
+          gestionUtilisateur: {
+            chantiers: chantiersIds,
+            territoires: territoireCodes,
+            périmètres: [],
           },
-        ],
-      });
-
-      await prisma.chantier_territoire.createMany({
-        data: [
-          {
-            id: "CH-001",
-            maille: "DEPT",
-            code_insee: "02",
-            territoire_code: "DEPT-02",
-            zone_id: "FRANCE",
+          lecture: {
+            chantiers: chantiersIds,
+            territoires: territoireCodes,
+            périmètres: [],
           },
-        ],
-      });
-
-      await prisma.indicateur_identite.createMany({
-        data: [
-          {
-            id: "IND-001",
-            nom: "Indicateur 001",
-            chantier_id: "CH-001",
-            type_id: "IMPACT",
-            unite_mesure: "kg",
-            statut: "PUBLIE",
+          saisieCommentaire: {
+            chantiers: chantiersIds,
+            territoires: territoireCodes,
+            périmètres: [],
           },
-        ],
-      });
-
-      await prisma.indicateur_territoire.createMany({
-        data: [
-          {
-            id: "IND-001",
-            chantier_id: "CH-001",
-            maille: "DEPT",
-            code_insee: "02",
-            territoire_code: "DEPT-02",
-            zone_id: "D02",
+          saisieIndicateur: {
+            chantiers: chantiersIds,
+            territoires: territoireCodes,
+            périmètres: [],
           },
-        ],
-      });
-
-      await prisma.utilisateur.create({
-        data: {
-          email: "jane.doe@test.com",
-          nom: "Jane",
-          prenom: "Doe",
-          id: "550e8400-e29b-41d4-a716-446655440001",
-          date_creation: new Date().toISOString(),
-          profil: {
-            connect: {
-              code: ProfilEnum.DITP_ADMIN,
-            },
+          responsabilite: {
+            chantiers: chantiersIds,
+            territoires: territoireCodes,
+            périmètres: [],
           },
-        },
-      });
+        };
 
-      await prisma.indicateur_territoire_valeur_evenement.createMany({
-        data: [
-          {
-            id: "550e8400-e29b-41d4-a716-446655440000",
-            indic_id: "IND-001",
-            territoire_code: "DEPT-02",
-            type_valeur: "VALEUR_AVANCEMENT",
-            donnees_complementaires: {},
-            type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_CREEE,
-            date_valeur: new Date("2026-01-12"),
-            ordre: 1,
-            date_modification: new Date("2026-01-12"),
-            date_creation: new Date("2026-01-12"),
-            id_auteur_modification: "550e8400-e29b-41d4-a716-446655440001",
-            correlation_id: "550e8400-e29b-41d4-a716-446655440002",
-            valeur: 100,
-          },
-        ],
-      });
+        const chantier = await fixtures.chantierIdentite({
+          id: "CH-001",
+          nom: "Chantier 001",
+          ministeres: ["1009"],
+          ministeres_acronymes: ["MINA"],
+        });
 
-      // When
-      const result =
-        await prismaIndicateurRepository.récupérerDétailsTerritoirePourUnIndicateur(
-          indicateurId,
-          habilitations,
-          ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT,
-          jalon,
-          dateDerniereExecutionDatajobs,
+        await fixtures.chantierTerritoire({
+          id: chantier.id,
+          territoire_code: "DEPT-02",
+          maille: "DEPT",
+          code_insee: "02",
+          zone_id: "FRANCE",
+        });
+
+        const indicateur = await fixtures.indicateurIdentite({
+          id: "IND-001",
+          nom: "Indicateur 001",
+          chantier_id: chantier.id,
+          unite_mesure: "kg",
+          statut: "PUBLIE",
+        });
+
+        await fixtures.indicateurTerritoire({
+          id: indicateur.id,
+          chantier_id: chantier.id,
+          territoire_code: "DEPT-02",
+          maille: "DEPT",
+          code_insee: "02",
+          zone_id: "D02",
+        });
+
+        const utilisateur = await fixtures.utilisateur();
+
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur.id,
+          territoire_code: "DEPT-02",
+          type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_CREEE,
+          id_auteur_modification: utilisateur.id,
+          date_valeur: new Date("2026-01-12"),
+          ordre: 1,
+          date_modification: new Date("2026-01-12"),
+          date_creation: new Date("2026-01-12"),
+          correlation_id: "550e8400-e29b-41d4-a716-446655440002",
+          valeur: 100,
+        });
+
+        // When
+        const result =
+          await prismaIndicateurRepository.récupérerDétailsTerritoirePourUnIndicateur(
+            indicateurId,
+            habilitations,
+            ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT,
+            jalon,
+            dateDerniereExecutionDatajobs,
+          );
+
+        // Then
+        expect(result["DEPT-02"].proposition?.statutTauxAvancement).toEqual(
+          "CALCULE",
         );
-
-      // Then
-      expect(result["DEPT-02"].proposition?.statutTauxAvancement).toEqual(
-        "CALCULE",
-      );
-    });
+      }),
+    );
   });
 
   describe("#recupererIndicateursNonAJourParChantierId", () => {
-    it("doit retourner les indicateurs non à jour (est_a_jour = false ou null) pour tous les chantiers publiés", async () => {
-      // Given
-      await prisma.chantier_identite.createMany({
-        data: [
-          {
-            id: "CH-001",
-            nom: "Chantier 001",
-            statut: "PUBLIE",
-          },
-          {
-            id: "CH-002",
-            nom: "Chantier 002",
-            statut: "PUBLIE",
-          },
-        ],
-      });
-
-      await prisma.chantier_territoire.createMany({
-        data: [
-          {
-            id: "CH-001",
-            territoire_code: "NAT-FR",
-            code_insee: "FR",
-            maille: "NAT",
-            zone_id: "FRANCE",
-          },
-          {
-            id: "CH-002",
-            territoire_code: "NAT-FR",
-            code_insee: "FR",
-            maille: "NAT",
-            zone_id: "FRANCE",
-          },
-        ],
-      });
-
-      await prisma.indicateur_identite.createMany({
-        data: [
-          {
-            id: "IND-001",
-            nom: "Indicateur 001",
-            chantier_id: "CH-001",
-            type_id: "IMPACT",
-            statut: "PUBLIE",
-          },
-          {
-            id: "IND-002",
-            nom: "Indicateur 002",
-            chantier_id: "CH-001",
-            type_id: "IMPACT",
-            statut: "PUBLIE",
-          },
-          {
-            id: "IND-003",
-            nom: "Indicateur 003",
-            chantier_id: "CH-002",
-            type_id: "IMPACT",
-            statut: "PUBLIE",
-          },
-        ],
-      });
-
-      await prisma.indicateur_territoire.createMany({
-        data: [
-          {
-            id: "IND-001",
-            chantier_id: "CH-001",
-            maille: "NAT",
-            territoire_code: "NAT-FR",
-            code_insee: "FR",
-            zone_id: "FRANCE",
-            est_applicable: true,
-            est_a_jour: false,
-          },
-          {
-            id: "IND-002",
-            chantier_id: "CH-001",
-            maille: "NAT",
-            territoire_code: "NAT-FR",
-            code_insee: "FR",
-            zone_id: "FRANCE",
-            est_applicable: true,
-            est_a_jour: true,
-          },
-          {
-            id: "IND-003",
-            chantier_id: "CH-002",
-            maille: "NAT",
-            territoire_code: "NAT-FR",
-            code_insee: "FR",
-            zone_id: "FRANCE",
-            est_applicable: true,
-            est_a_jour: null,
-          },
-        ],
-      });
-
-      // When
-      const result =
-        await prismaIndicateurRepository.recupererIndicateursNonAJourParChantierId();
-
-      // Then
-      expect(result.size).toEqual(2);
-      expect(result.get("CH-001")).toEqual(
-        expect.arrayContaining([
-          { id: "IND-001", nom: "Indicateur 001", mailles: ["NAT"] },
-        ]),
-      );
-      expect(result.get("CH-002")).toEqual([
-        { id: "IND-003", nom: "Indicateur 003", mailles: ["NAT"] },
-      ]);
-    });
-
-    it("doit exclure les indicateurs avec est_applicable = false ou null", async () => {
-      // Given
-      await prisma.chantier_identite.create({
-        data: {
+    it(
+      "doit retourner les indicateurs non à jour (est_a_jour = false ou null) pour tous les chantiers publiés",
+      createIntegrationTest(async () => {
+        // Given
+        const chantier1 = await fixtures.chantierIdentite({
           id: "CH-001",
-          nom: "Chantier 001",
           statut: "PUBLIE",
-        },
-      });
+        });
+        const chantier2 = await fixtures.chantierIdentite({
+          id: "CH-002",
+          statut: "PUBLIE",
+        });
 
-      await prisma.chantier_territoire.create({
-        data: {
-          id: "CH-001",
+        await fixtures.chantierTerritoire({
+          id: chantier1.id,
           territoire_code: "NAT-FR",
           code_insee: "FR",
           maille: "NAT",
           zone_id: "FRANCE",
-        },
-      });
-
-      await prisma.indicateur_identite.createMany({
-        data: [
-          {
-            id: "IND-001",
-            nom: "Indicateur 001",
-            chantier_id: "CH-001",
-            type_id: "IMPACT",
-            statut: "PUBLIE",
-          },
-          {
-            id: "IND-002",
-            nom: "Indicateur 002",
-            chantier_id: "CH-001",
-            type_id: "IMPACT",
-            statut: "PUBLIE",
-          },
-          {
-            id: "IND-003",
-            nom: "Indicateur 003",
-            chantier_id: "CH-001",
-            type_id: "IMPACT",
-            statut: "PUBLIE",
-          },
-        ],
-      });
-
-      await prisma.indicateur_territoire.createMany({
-        data: [
-          {
-            id: "IND-001",
-            chantier_id: "CH-001",
-            maille: "NAT",
-            territoire_code: "NAT-FR",
-            code_insee: "FR",
-            zone_id: "FRANCE",
-            est_applicable: false,
-            est_a_jour: false,
-          },
-          {
-            id: "IND-002",
-            chantier_id: "CH-001",
-            maille: "NAT",
-            territoire_code: "NAT-FR",
-            code_insee: "FR",
-            zone_id: "FRANCE",
-            est_applicable: null,
-            est_a_jour: false,
-          },
-          {
-            id: "IND-003",
-            chantier_id: "CH-001",
-            maille: "NAT",
-            territoire_code: "NAT-FR",
-            code_insee: "FR",
-            zone_id: "FRANCE",
-            est_applicable: true,
-            est_a_jour: false,
-          },
-        ],
-      });
-
-      // When
-      const result =
-        await prismaIndicateurRepository.recupererIndicateursNonAJourParChantierId();
-
-      // Then
-      expect(result.size).toEqual(1);
-      expect(result.get("CH-001")).toEqual([
-        { id: "IND-003", nom: "Indicateur 003", mailles: ["NAT"] },
-      ]);
-    });
-
-    it("doit retourner une Map vide si aucun indicateur n'est non à jour", async () => {
-      // Given
-      await prisma.chantier_identite.create({
-        data: {
-          id: "CH-001",
-          nom: "Chantier 001",
-          statut: "PUBLIE",
-        },
-      });
-
-      await prisma.chantier_territoire.create({
-        data: {
-          id: "CH-001",
+        });
+        await fixtures.chantierTerritoire({
+          id: chantier2.id,
           territoire_code: "NAT-FR",
           code_insee: "FR",
           maille: "NAT",
           zone_id: "FRANCE",
-        },
-      });
+        });
 
-      await prisma.indicateur_identite.create({
-        data: {
+        const indicateur1 = await fixtures.indicateurIdentite({
           id: "IND-001",
           nom: "Indicateur 001",
-          chantier_id: "CH-001",
+          chantier_id: chantier1.id,
+          statut: "PUBLIE",
+        });
+        const indicateur2 = await fixtures.indicateurIdentite({
+          id: "IND-002",
+          nom: "Indicateur 002",
+          chantier_id: chantier1.id,
+          statut: "PUBLIE",
+        });
+        const indicateur3 = await fixtures.indicateurIdentite({
+          id: "IND-003",
+          nom: "Indicateur 003",
+          chantier_id: chantier2.id,
+          statut: "PUBLIE",
+        });
+
+        await fixtures.indicateurTerritoire({
+          id: indicateur1.id,
+          chantier_id: chantier1.id,
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+          est_applicable: true,
+          est_a_jour: false,
+        });
+        await fixtures.indicateurTerritoire({
+          id: indicateur2.id,
+          chantier_id: chantier1.id,
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+          est_applicable: true,
+          est_a_jour: true,
+        });
+        await fixtures.indicateurTerritoire({
+          id: indicateur3.id,
+          chantier_id: chantier2.id,
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+          est_applicable: true,
+          est_a_jour: null,
+        });
+
+        // When
+        const result =
+          await prismaIndicateurRepository.recupererIndicateursNonAJourParChantierId();
+
+        // Then
+        expect(result.size).toEqual(2);
+        expect(result.get("CH-001")).toEqual(
+          expect.arrayContaining([
+            { id: "IND-001", nom: "Indicateur 001", mailles: ["NAT"] },
+          ]),
+        );
+        expect(result.get("CH-002")).toEqual([
+          { id: "IND-003", nom: "Indicateur 003", mailles: ["NAT"] },
+        ]);
+      }),
+    );
+
+    it(
+      "doit exclure les indicateurs avec est_applicable = false ou null",
+      createIntegrationTest(async () => {
+        // Given
+        const chantier = await fixtures.chantierIdentite({
+          id: "CH-001",
+          nom: "Chantier 001",
+          statut: "PUBLIE",
+        });
+
+        await fixtures.chantierTerritoire({
+          id: chantier.id,
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+        });
+
+        // IND-001: est_applicable = false
+        const indicateur1 = await fixtures.indicateurIdentite({
+          id: "IND-001",
+          nom: "Indicateur 001",
+          chantier_id: chantier.id,
+          statut: "PUBLIE",
+        });
+
+        await fixtures.indicateurTerritoire({
+          id: indicateur1.id,
+          chantier_id: chantier.id,
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+          est_applicable: false,
+          est_a_jour: false,
+        });
+
+        // IND-002: est_applicable = null
+        const indicateur2 = await fixtures.indicateurIdentite({
+          id: "IND-002",
+          nom: "Indicateur 002",
+          chantier_id: chantier.id,
+          statut: "PUBLIE",
+        });
+
+        await fixtures.indicateurTerritoire({
+          id: indicateur2.id,
+          chantier_id: chantier.id,
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+          est_applicable: null,
+          est_a_jour: false,
+        });
+
+        // IND-003: est_applicable = true (seul inclus)
+        const indicateur3 = await fixtures.indicateurIdentite({
+          id: "IND-003",
+          nom: "Indicateur 003",
+          chantier_id: chantier.id,
+          statut: "PUBLIE",
+        });
+
+        await fixtures.indicateurTerritoire({
+          id: indicateur3.id,
+          chantier_id: chantier.id,
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+          est_applicable: true,
+          est_a_jour: false,
+        });
+
+        // When
+        const result =
+          await prismaIndicateurRepository.recupererIndicateursNonAJourParChantierId();
+
+        // Then
+        expect(result.size).toEqual(1);
+        expect(result.get("CH-001")).toEqual([
+          { id: "IND-003", nom: "Indicateur 003", mailles: ["NAT"] },
+        ]);
+      }),
+    );
+
+    it(
+      "doit retourner une Map vide si aucun indicateur n'est non à jour",
+      createIntegrationTest(async () => {
+        // Given
+        const chantier = await fixtures.chantierIdentite({
+          id: "CH-001",
+          nom: "Chantier 001",
+          statut: "PUBLIE",
+        });
+
+        await fixtures.chantierTerritoire({
+          id: chantier.id,
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+        });
+
+        const indicateur = await fixtures.indicateurIdentite({
+          id: "IND-001",
+          nom: "Indicateur 001",
+          chantier_id: chantier.id,
+          statut: "PUBLIE",
+        });
+
+        await fixtures.indicateurTerritoire({
+          id: indicateur.id,
+          chantier_id: chantier.id,
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+          est_applicable: true,
+          est_a_jour: true,
+        });
+
+        // When
+        const result =
+          await prismaIndicateurRepository.recupererIndicateursNonAJourParChantierId();
+
+        // Then
+        expect(result.size).toEqual(0);
+      }),
+    );
+
+    it(
+      "doit retourner seulement les chantiers ayant au moins un indicateur non à jour",
+      createIntegrationTest(async () => {
+        // Given
+        const chantier1 = await fixtures.chantierIdentite({
+          id: "CH-001",
+          nom: "Chantier 001",
+          statut: "PUBLIE",
+        });
+
+        await fixtures.chantierTerritoire({
+          id: chantier1.id,
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+        });
+
+        const chantier2 = await fixtures.chantierIdentite({
+          id: "CH-002",
+          nom: "Chantier 002",
+          statut: "PUBLIE",
+        });
+
+        await fixtures.chantierTerritoire({
+          id: chantier2.id,
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+        });
+
+        // CH-001: indicateur non à jour
+        const indicateur1 = await fixtures.indicateurIdentite({
+          id: "IND-001",
+          nom: "Indicateur 001",
+          chantier_id: chantier1.id,
+          statut: "PUBLIE",
+        });
+
+        await fixtures.indicateurTerritoire({
+          id: indicateur1.id,
+          chantier_id: chantier1.id,
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+          est_applicable: true,
+          est_a_jour: false,
+        });
+
+        // CH-002: indicateur à jour
+        const indicateur2 = await fixtures.indicateurIdentite({
+          id: "IND-002",
+          nom: "Indicateur 002",
+          chantier_id: chantier2.id,
+          statut: "PUBLIE",
+        });
+
+        await fixtures.indicateurTerritoire({
+          id: indicateur2.id,
+          chantier_id: chantier2.id,
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+          est_applicable: true,
+          est_a_jour: true,
+        });
+
+        // When
+        const result =
+          await prismaIndicateurRepository.recupererIndicateursNonAJourParChantierId();
+
+        // Then
+        expect(result.size).toEqual(1);
+        expect(result.get("CH-001")).toEqual([
+          { id: "IND-001", nom: "Indicateur 001", mailles: ["NAT"] },
+        ]);
+        expect(result.has("CH-002")).toEqual(false);
+      }),
+    );
+
+    it(
+      "ne doit pas retourner les chantiers et les indicateurs non publiés",
+      // Given
+      createIntegrationTest(async () => {
+        const chantier1 = await fixtures.chantierIdentite({
+          id: "CH-001",
+          nom: "Chantier 001",
+          statut: "PUBLIE",
+        });
+
+        await fixtures.chantierTerritoire({
+          id: chantier1.id,
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+        });
+
+        const chantier2 = await fixtures.chantierIdentite({
+          id: "CH-002",
+          nom: "Chantier 002",
+          statut: "BROUILLON",
+        });
+
+        await fixtures.chantierTerritoire({
+          id: chantier2.id,
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+        });
+
+        const indicateur1 = await fixtures.indicateurIdentite({
+          id: "IND-001",
+          nom: "Indicateur 001",
+          chantier_id: chantier1.id,
+          statut: "PUBLIE",
+        });
+
+        await fixtures.indicateurTerritoire({
+          id: indicateur1.id,
+          chantier_id: chantier1.id,
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+          est_applicable: true,
+          est_a_jour: false,
+        });
+
+        const indicateur2 = await fixtures.indicateurIdentite({
+          id: "IND-002",
+          nom: "Indicateur 002",
+          chantier_id: chantier1.id,
+          statut: "SUPPRIME",
+        });
+
+        await fixtures.indicateurTerritoire({
+          id: indicateur2.id,
+          chantier_id: chantier1.id,
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+          est_applicable: true,
+          est_a_jour: false,
+        });
+
+        const indicateur3 = await fixtures.indicateurIdentite({
+          id: "IND-003",
+          nom: "Indicateur 003",
+          chantier_id: chantier2.id,
+          statut: "PUBLIE",
+        });
+
+        await fixtures.indicateurTerritoire({
+          id: indicateur3.id,
+          chantier_id: chantier2.id,
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+          est_applicable: true,
+          est_a_jour: false,
+        });
+
+        // When
+        const result =
+          await prismaIndicateurRepository.recupererIndicateursNonAJourParChantierId();
+
+        // Then
+        expect(result.size).toEqual(1);
+        expect(result.get("CH-001")).toEqual([
+          { id: "IND-001", nom: "Indicateur 001", mailles: ["NAT"] },
+        ]);
+        expect(result.has("CH-002")).toEqual(false);
+      }),
+    );
+
+    it(
+      "doit regrouper les mailles non à jour pour un même indicateur",
+      createIntegrationTest(async () => {
+        // Given
+
+        const chantier = await fixtures.chantierIdentite({
+          id: "CH-001",
+          nom: "Chantier 001",
+          statut: "PUBLIE",
+        });
+
+        await fixtures.chantierTerritoire({
+          id: chantier.id,
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+        });
+
+        await fixtures.chantierTerritoire({
+          id: chantier.id,
+          territoire_code: "REG-11",
+          code_insee: "11",
+          maille: "REG",
+          zone_id: "REG-11",
+        });
+
+        await fixtures.chantierTerritoire({
+          id: chantier.id,
+          territoire_code: "DEPT-75",
+          code_insee: "75",
+          maille: "DEPT",
+          zone_id: "DEPT-75",
+        });
+
+        const indicateur1 = await fixtures.indicateurIdentite({
+          id: "IND-001",
+          nom: "Indicateur 001",
+          chantier_id: chantier.id,
           type_id: "IMPACT",
           statut: "PUBLIE",
-        },
-      });
+        });
 
-      await prisma.indicateur_territoire.create({
-        data: {
-          id: "IND-001",
-          chantier_id: "CH-001",
+        fixtures.indicateurTerritoire({
+          id: indicateur1.id,
+          chantier_id: chantier.id,
+          maille: "NAT",
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          zone_id: "FRANCE",
+          est_applicable: true,
+          est_a_jour: false,
+        });
+
+        fixtures.indicateurTerritoire({
+          id: indicateur1.id,
+          chantier_id: chantier.id,
+          maille: "REG",
+          territoire_code: "REG-11",
+          code_insee: "11",
+          zone_id: "REG-11",
+          est_applicable: true,
+          est_a_jour: null,
+        });
+
+        fixtures.indicateurTerritoire({
+          id: indicateur1.id,
+          chantier_id: chantier.id,
+          maille: "DEPT",
+          territoire_code: "DEPT-75",
+          code_insee: "75",
+          zone_id: "DEPT-75",
+          est_applicable: true,
+          est_a_jour: true,
+        });
+
+        const indicateur2 = await fixtures.indicateurIdentite({
+          id: "IND-002",
+          nom: "Indicateur 002",
+          chantier_id: chantier.id,
+          type_id: "IMPACT",
+          statut: "PUBLIE",
+        });
+
+        fixtures.indicateurTerritoire({
+          id: indicateur2.id,
+          chantier_id: chantier.id,
           maille: "NAT",
           territoire_code: "NAT-FR",
           code_insee: "FR",
           zone_id: "FRANCE",
           est_applicable: true,
           est_a_jour: true,
-        },
-      });
+        });
 
-      // When
-      const result =
-        await prismaIndicateurRepository.recupererIndicateursNonAJourParChantierId();
+        fixtures.indicateurTerritoire({
+          id: indicateur2.id,
+          chantier_id: chantier.id,
+          maille: "REG",
+          territoire_code: "REG-11",
+          code_insee: "11",
+          zone_id: "REG-11",
+          est_applicable: true,
+          est_a_jour: false,
+        });
 
-      // Then
-      expect(result.size).toEqual(0);
-    });
+        fixtures.indicateurTerritoire({
+          id: indicateur2.id,
+          chantier_id: chantier.id,
+          maille: "DEPT",
+          territoire_code: "DEPT-75",
+          code_insee: "75",
+          zone_id: "DEPT-75",
+          est_applicable: true,
+          est_a_jour: false,
+        });
 
-    it("doit retourner seulement les chantiers ayant au moins un indicateur non à jour", async () => {
-      // Given
-      await prisma.chantier_identite.createMany({
-        data: [
-          {
-            id: "CH-001",
-            nom: "Chantier 001",
-            statut: "PUBLIE",
-          },
-          {
-            id: "CH-002",
-            nom: "Chantier 002",
-            statut: "PUBLIE",
-          },
-        ],
-      });
+        // When
+        const result =
+          await prismaIndicateurRepository.recupererIndicateursNonAJourParChantierId();
 
-      await prisma.chantier_territoire.createMany({
-        data: [
-          {
-            id: "CH-001",
-            territoire_code: "NAT-FR",
-            code_insee: "FR",
-            maille: "NAT",
-            zone_id: "FRANCE",
-          },
-          {
-            id: "CH-002",
-            territoire_code: "NAT-FR",
-            code_insee: "FR",
-            maille: "NAT",
-            zone_id: "FRANCE",
-          },
-        ],
-      });
-
-      await prisma.indicateur_identite.createMany({
-        data: [
+        // Then
+        expect(result.size).toEqual(1);
+        expect(result.get("CH-001")).toEqual([
           {
             id: "IND-001",
             nom: "Indicateur 001",
-            chantier_id: "CH-001",
-            type_id: "IMPACT",
-            statut: "PUBLIE",
+            mailles: expect.arrayContaining(["NAT", "REG"]),
           },
           {
             id: "IND-002",
             nom: "Indicateur 002",
-            chantier_id: "CH-002",
-            type_id: "IMPACT",
-            statut: "PUBLIE",
+            mailles: expect.arrayContaining(["REG", "DEPT"]),
           },
-        ],
-      });
-
-      await prisma.indicateur_territoire.createMany({
-        data: [
-          {
-            id: "IND-001",
-            chantier_id: "CH-001",
-            maille: "NAT",
-            territoire_code: "NAT-FR",
-            code_insee: "FR",
-            zone_id: "FRANCE",
-            est_applicable: true,
-            est_a_jour: false,
-          },
-          {
-            id: "IND-002",
-            chantier_id: "CH-002",
-            maille: "NAT",
-            territoire_code: "NAT-FR",
-            code_insee: "FR",
-            zone_id: "FRANCE",
-            est_applicable: true,
-            est_a_jour: true,
-          },
-        ],
-      });
-
-      // When
-      const result =
-        await prismaIndicateurRepository.recupererIndicateursNonAJourParChantierId();
-
-      // Then
-      expect(result.size).toEqual(1);
-      expect(result.get("CH-001")).toEqual([
-        { id: "IND-001", nom: "Indicateur 001", mailles: ["NAT"] },
-      ]);
-      expect(result.has("CH-002")).toEqual(false);
-    });
-
-    it("ne doit pas retourner les chantiers et les indicateurs non publiés", async () => {
-      // Given
-      await prisma.chantier_identite.createMany({
-        data: [
-          {
-            id: "CH-001",
-            nom: "Chantier 001",
-            statut: "PUBLIE",
-          },
-          {
-            id: "CH-002",
-            nom: "Chantier 002",
-            statut: "BROUILLON",
-          },
-        ],
-      });
-
-      await prisma.chantier_territoire.createMany({
-        data: [
-          {
-            id: "CH-001",
-            territoire_code: "NAT-FR",
-            code_insee: "FR",
-            maille: "NAT",
-            zone_id: "FRANCE",
-          },
-          {
-            id: "CH-002",
-            territoire_code: "NAT-FR",
-            code_insee: "FR",
-            maille: "NAT",
-            zone_id: "FRANCE",
-          },
-        ],
-      });
-
-      await prisma.indicateur_identite.createMany({
-        data: [
-          {
-            id: "IND-001",
-            nom: "Indicateur 001",
-            chantier_id: "CH-001",
-            type_id: "IMPACT",
-            statut: "PUBLIE",
-          },
-          {
-            id: "IND-002",
-            nom: "Indicateur 002",
-            chantier_id: "CH-001",
-            type_id: "IMPACT",
-            statut: "SUPPRIME",
-          },
-          {
-            id: "IND-003",
-            nom: "Indicateur 003",
-            chantier_id: "CH-002",
-            type_id: "IMPACT",
-            statut: "PUBLIE",
-          },
-        ],
-      });
-
-      await prisma.indicateur_territoire.createMany({
-        data: [
-          {
-            id: "IND-001",
-            chantier_id: "CH-001",
-            maille: "NAT",
-            territoire_code: "NAT-FR",
-            code_insee: "FR",
-            zone_id: "FRANCE",
-            est_applicable: true,
-            est_a_jour: false,
-          },
-          {
-            id: "IND-002",
-            chantier_id: "CH-001",
-            maille: "NAT",
-            territoire_code: "NAT-FR",
-            code_insee: "FR",
-            zone_id: "FRANCE",
-            est_applicable: true,
-            est_a_jour: false,
-          },
-          {
-            id: "IND-003",
-            chantier_id: "CH-002",
-            maille: "NAT",
-            territoire_code: "NAT-FR",
-            code_insee: "FR",
-            zone_id: "FRANCE",
-            est_applicable: true,
-            est_a_jour: false,
-          },
-        ],
-      });
-
-      // When
-      const result =
-        await prismaIndicateurRepository.recupererIndicateursNonAJourParChantierId();
-
-      // Then
-      expect(result.size).toEqual(1);
-      expect(result.get("CH-001")).toEqual([
-        { id: "IND-001", nom: "Indicateur 001", mailles: ["NAT"] },
-      ]);
-      expect(result.has("CH-002")).toEqual(false);
-    });
-
-    it("doit regrouper les mailles non à jour pour un même indicateur", async () => {
-      // Given
-      await prisma.chantier_identite.create({
-        data: {
-          id: "CH-001",
-          nom: "Chantier 001",
-          statut: "PUBLIE",
-        },
-      });
-
-      await prisma.chantier_territoire.createMany({
-        data: [
-          {
-            id: "CH-001",
-            territoire_code: "NAT-FR",
-            code_insee: "FR",
-            maille: "NAT",
-            zone_id: "FRANCE",
-          },
-          {
-            id: "CH-001",
-            territoire_code: "REG-11",
-            code_insee: "11",
-            maille: "REG",
-            zone_id: "REG-11",
-          },
-          {
-            id: "CH-001",
-            territoire_code: "DEPT-75",
-            code_insee: "75",
-            maille: "DEPT",
-            zone_id: "DEPT-75",
-          },
-        ],
-      });
-
-      await prisma.indicateur_identite.createMany({
-        data: [
-          {
-            id: "IND-001",
-            nom: "Indicateur 001",
-            chantier_id: "CH-001",
-            type_id: "IMPACT",
-            statut: "PUBLIE",
-          },
-          {
-            id: "IND-002",
-            nom: "Indicateur 002",
-            chantier_id: "CH-001",
-            type_id: "IMPACT",
-            statut: "PUBLIE",
-          },
-        ],
-      });
-
-      await prisma.indicateur_territoire.createMany({
-        data: [
-          {
-            id: "IND-001",
-            chantier_id: "CH-001",
-            maille: "NAT",
-            territoire_code: "NAT-FR",
-            code_insee: "FR",
-            zone_id: "FRANCE",
-            est_applicable: true,
-            est_a_jour: false,
-          },
-          {
-            id: "IND-001",
-            chantier_id: "CH-001",
-            maille: "REG",
-            territoire_code: "REG-11",
-            code_insee: "11",
-            zone_id: "REG-11",
-            est_applicable: true,
-            est_a_jour: null,
-          },
-          {
-            id: "IND-001",
-            chantier_id: "CH-001",
-            maille: "DEPT",
-            territoire_code: "DEPT-75",
-            code_insee: "75",
-            zone_id: "DEPT-75",
-            est_applicable: true,
-            est_a_jour: true,
-          },
-          {
-            id: "IND-002",
-            chantier_id: "CH-001",
-            maille: "NAT",
-            territoire_code: "NAT-FR",
-            code_insee: "FR",
-            zone_id: "FRANCE",
-            est_applicable: true,
-            est_a_jour: true,
-          },
-          {
-            id: "IND-002",
-            chantier_id: "CH-001",
-            maille: "REG",
-            territoire_code: "REG-11",
-            code_insee: "11",
-            zone_id: "REG-11",
-            est_applicable: true,
-            est_a_jour: false,
-          },
-          {
-            id: "IND-002",
-            chantier_id: "CH-001",
-            maille: "DEPT",
-            territoire_code: "DEPT-75",
-            code_insee: "75",
-            zone_id: "DEPT-75",
-            est_applicable: true,
-            est_a_jour: false,
-          },
-        ],
-      });
-
-      // When
-      const result =
-        await prismaIndicateurRepository.recupererIndicateursNonAJourParChantierId();
-
-      // Then
-      expect(result.size).toEqual(1);
-      expect(result.get("CH-001")).toEqual([
-        {
-          id: "IND-001",
-          nom: "Indicateur 001",
-          mailles: expect.arrayContaining(["NAT", "REG"]),
-        },
-        {
-          id: "IND-002",
-          nom: "Indicateur 002",
-          mailles: expect.arrayContaining(["REG", "DEPT"]),
-        },
-      ]);
-      expect(result.get("CH-001")![0].mailles).toHaveLength(2);
-      expect(result.get("CH-001")![1].mailles).toHaveLength(2);
-    });
+        ]);
+        expect(result.get("CH-001")![0].mailles).toHaveLength(2);
+        expect(result.get("CH-001")![1].mailles).toHaveLength(2);
+      }),
+    );
   });
 
   describe("#recupererDatesDernierImports", () => {
-    it("retourne la date de création la plus récente parmi les événements VALEUR_CREEE et VALEUR_MODIFIEE pour chaque indicateur", async () => {
-      // Given
-      await prisma.chantier_identite.create({
-        data: {
+    it(
+      "retourne la date de création la plus récente parmi les événements VALEUR_CREEE et VALEUR_MODIFIEE pour chaque indicateur",
+      createIntegrationTest(async () => {
+        // Given
+        const chantier = await fixtures.chantierIdentite({
           id: "CH-001",
           nom: "Chantier 001",
-        },
-      });
+        });
 
-      await prisma.indicateur_identite.createMany({
-        data: [
-          { id: "IND-001", nom: "Indicateur 001", chantier_id: "CH-001" },
-          { id: "IND-002", nom: "Indicateur 002", chantier_id: "CH-001" },
-        ],
-      });
-
-      await prisma.chantier_territoire.create({
-        data: {
-          id: "CH-001",
+        await fixtures.chantierTerritoire({
+          id: chantier.id,
           maille: "NAT",
           territoire_code: "NAT-FR",
           code_insee: "FR",
           zone_id: "NAT-FR",
-        },
-      });
+        });
 
-      await prisma.indicateur_territoire.createMany({
-        data: [
-          {
-            id: "IND-001",
-            chantier_id: "CH-001",
-            maille: "NAT",
-            territoire_code: "NAT-FR",
-            code_insee: "FR",
-            zone_id: "NAT-FR",
-          },
-          {
-            id: "IND-002",
-            chantier_id: "CH-001",
-            maille: "NAT",
-            territoire_code: "NAT-FR",
-            code_insee: "FR",
-            zone_id: "NAT-FR",
-          },
-        ],
-      });
-
-      const auteurId = "bc6281a8-78f2-4792-951b-fa66c1320dc1";
-      await prisma.utilisateur.create({
-        data: {
-          id: auteurId,
-          email: "user@test.com",
-          profilCode: ProfilEnum.DITP_ADMIN,
-          nom: "user",
-          prenom: "user",
-          date_creation: new Date(),
-        },
-      });
-
-      await prisma.indicateur_territoire_valeur_evenement.createMany({
-        data: [
-          {
-            id: "43a88e60-486a-4649-8999-5ae3fbcbacce",
-            indic_id: "IND-001",
-            territoire_code: "NAT-FR",
-            type_evenement: EvenementValeurEnum.VALEUR_CREEE,
-            date_creation: new Date("2026-01-01T10:00:00.000Z"),
-            valeur: 10,
-            date_valeur: new Date("2026-01-01"),
-            ordre: 1,
-            id_auteur_modification: auteurId,
-            type_valeur: "VALEUR_AVANCEMENT",
-            donnees_complementaires: {},
-            correlation_id: "53107919-74e6-4305-8a3e-899b3aea2c93",
-          },
-          {
-            id: "53a88e60-486a-4649-8999-5ae3fbcbacce",
-            indic_id: "IND-001",
-            territoire_code: "NAT-FR",
-            type_evenement: EvenementValeurEnum.VALEUR_MODIFIEE,
-            date_creation: new Date("2026-01-15T10:00:00.000Z"),
-            id_auteur_modification: auteurId,
-            type_valeur: "VALEUR_AVANCEMENT",
-            donnees_complementaires: {},
-            correlation_id: "63107919-74e6-4305-8a3e-899b3aea2c93",
-            valeur: 15,
-            date_valeur: new Date("2026-01-15"),
-            ordre: 2,
-          },
-          {
-            id: "63a88e60-486a-4649-8999-5ae3fbcbacce",
-            indic_id: "IND-002",
-            territoire_code: "NAT-FR",
-            type_evenement: EvenementValeurEnum.VALEUR_CREEE,
-            date_creation: new Date("2026-01-20T10:00:00.000Z"),
-            id_auteur_modification: auteurId,
-            type_valeur: "VALEUR_AVANCEMENT",
-            donnees_complementaires: {},
-            correlation_id: "73107919-74e6-4305-8a3e-899b3aea2c93",
-            valeur: 20,
-            date_valeur: new Date("2026-01-20"),
-            ordre: 1,
-          },
-        ],
-      });
-
-      // When
-      const result =
-        await prismaIndicateurRepository.recupererDatesDernierImports(
-          new Date("2026-02-01T00:00:00.000Z"),
-        );
-
-      // Then
-      expect(result.get("IND-001")).toEqual(
-        new Date("2026-01-15T10:00:00.000Z"),
-      );
-      expect(result.get("IND-002")).toEqual(
-        new Date("2026-01-20T10:00:00.000Z"),
-      );
-    });
-
-    it("ignore les événements dont la date de création est supérieure ou égale à la date d'exécution des datajobs", async () => {
-      // Given
-      await prisma.chantier_identite.create({
-        data: {
-          id: "CH-001",
-          nom: "Chantier 001",
-        },
-      });
-
-      await prisma.indicateur_identite.create({
-        data: {
+        const indicateur1 = await fixtures.indicateurIdentite({
           id: "IND-001",
           nom: "Indicateur 001",
-          chantier_id: "CH-001",
-        },
-      });
+          chantier_id: chantier.id,
+        });
 
-      await prisma.chantier_territoire.create({
-        data: {
-          id: "CH-001",
+        await fixtures.indicateurTerritoire({
+          id: indicateur1.id,
+          chantier_id: chantier.id,
           maille: "NAT",
           territoire_code: "NAT-FR",
           code_insee: "FR",
           zone_id: "NAT-FR",
-        },
-      });
+        });
 
-      await prisma.indicateur_territoire.create({
-        data: {
-          id: "IND-001",
-          chantier_id: "CH-001",
+        const indicateur2 = await fixtures.indicateurIdentite({
+          id: "IND-002",
+          nom: "Indicateur 002",
+          chantier_id: chantier.id,
+        });
+
+        await fixtures.indicateurTerritoire({
+          id: indicateur2.id,
+          chantier_id: chantier.id,
           maille: "NAT",
           territoire_code: "NAT-FR",
           code_insee: "FR",
           zone_id: "NAT-FR",
-        },
-      });
+        });
 
-      const auteurId = "cc6281a8-78f2-4792-951b-fa66c1320dc1";
-      await prisma.utilisateur.create({
-        data: {
-          id: auteurId,
-          email: "user@test.com",
-          profilCode: ProfilEnum.DITP_ADMIN,
-          nom: "user",
-          prenom: "user",
-          date_creation: new Date(),
-        },
-      });
+        const auteur = await fixtures.utilisateur();
 
-      await prisma.indicateur_territoire_valeur_evenement.createMany({
-        data: [
-          {
-            id: "a3a88e60-486a-4649-8999-5ae3fbcbacce",
-            indic_id: "IND-001",
-            territoire_code: "NAT-FR",
-            type_evenement: EvenementValeurEnum.VALEUR_CREEE,
-            date_creation: new Date("2026-01-10T10:00:00.000Z"),
-            id_auteur_modification: auteurId,
-            type_valeur: "VALEUR_AVANCEMENT",
-            donnees_complementaires: {},
-            correlation_id: "a3107919-74e6-4305-8a3e-899b3aea2c93",
-            valeur: 10,
-            date_valeur: new Date("2026-01-10"),
-            ordre: 1,
-          },
-          {
-            id: "b3a88e60-486a-4649-8999-5ae3fbcbacce",
-            indic_id: "IND-001",
-            territoire_code: "NAT-FR",
-            type_evenement: EvenementValeurEnum.VALEUR_MODIFIEE,
-            date_creation: new Date("2026-02-01T10:00:00.000Z"),
-            id_auteur_modification: auteurId,
-            type_valeur: "VALEUR_AVANCEMENT",
-            donnees_complementaires: {},
-            correlation_id: "b3107919-74e6-4305-8a3e-899b3aea2c93",
-            valeur: 15,
-            date_valeur: new Date("2026-02-01"),
-            ordre: 2,
-          },
-        ],
-      });
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur1.id,
+          territoire_code: "NAT-FR",
+          type_evenement: EvenementValeurEnum.VALEUR_CREEE,
+          date_creation: new Date("2026-01-01T10:00:00.000Z"),
+          id_auteur_modification: auteur.id,
+        });
 
-      // When
-      const result =
-        await prismaIndicateurRepository.recupererDatesDernierImports(
-          new Date("2026-02-01T00:00:00.000Z"),
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur1.id,
+          territoire_code: "NAT-FR",
+          type_evenement: EvenementValeurEnum.VALEUR_MODIFIEE,
+          date_creation: new Date("2026-01-15T10:00:00.000Z"),
+          id_auteur_modification: auteur.id,
+        });
+
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur2.id,
+          territoire_code: "NAT-FR",
+          type_evenement: EvenementValeurEnum.VALEUR_CREEE,
+          date_creation: new Date("2026-01-20T10:00:00.000Z"),
+          id_auteur_modification: auteur.id,
+        });
+
+        // When
+        const result =
+          await prismaIndicateurRepository.recupererDatesDernierImports(
+            new Date("2026-02-01T00:00:00.000Z"),
+          );
+
+        // Then
+        expect(result.get("IND-001")).toEqual(
+          new Date("2026-01-15T10:00:00.000Z"),
         );
+        expect(result.get("IND-002")).toEqual(
+          new Date("2026-01-20T10:00:00.000Z"),
+        );
+      }),
+    );
 
-      // Then
-      expect(result.get("IND-001")).toEqual(
-        new Date("2026-01-10T10:00:00.000Z"),
-      );
-    });
-
-    it("retourne la date la plus récente parmi les événements de plusieurs territoires pour un même indicateur", async () => {
-      // Given
-      await prisma.chantier_identite.create({
-        data: {
+    it(
+      "ignore les événements dont la date de création est supérieure ou égale à la date d'exécution des datajobs",
+      createIntegrationTest(async () => {
+        // Given
+        const chantier = await fixtures.chantierIdentite({
           id: "CH-001",
           nom: "Chantier 001",
-        },
-      });
+        });
 
-      await prisma.indicateur_identite.create({
-        data: {
+        await fixtures.chantierTerritoire({
+          id: chantier.id,
+          maille: "NAT",
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          zone_id: "NAT-FR",
+        });
+
+        const indicateur = await fixtures.indicateurIdentite({
           id: "IND-001",
           nom: "Indicateur 001",
-          chantier_id: "CH-001",
-        },
-      });
+          chantier_id: chantier.id,
+        });
 
-      await prisma.chantier_territoire.createMany({
-        data: [
-          {
-            id: "CH-001",
-            maille: "NAT",
-            territoire_code: "NAT-FR",
-            code_insee: "FR",
-            zone_id: "NAT-FR",
-          },
-          {
-            id: "CH-001",
-            maille: "REG",
-            territoire_code: "REG-11",
-            code_insee: "11",
-            zone_id: "REG-11",
-          },
-        ],
-      });
+        await fixtures.indicateurTerritoire({
+          id: indicateur.id,
+          chantier_id: chantier.id,
+          maille: "NAT",
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          zone_id: "NAT-FR",
+        });
 
-      await prisma.indicateur_territoire.createMany({
-        data: [
-          {
-            id: "IND-001",
-            chantier_id: "CH-001",
-            maille: "NAT",
-            territoire_code: "NAT-FR",
-            code_insee: "FR",
-            zone_id: "NAT-FR",
-          },
-          {
-            id: "IND-001",
-            chantier_id: "CH-001",
-            maille: "REG",
-            territoire_code: "REG-11",
-            code_insee: "11",
-            zone_id: "REG-11",
-          },
-        ],
-      });
+        const auteur = await fixtures.utilisateur();
 
-      const auteurId = "dc6281a8-78f2-4792-951b-fa66c1320dc1";
-      await prisma.utilisateur.create({
-        data: {
-          id: auteurId,
-          email: "user@test.com",
-          profilCode: ProfilEnum.DITP_ADMIN,
-          nom: "user",
-          prenom: "user",
-          date_creation: new Date(),
-        },
-      });
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur.id,
+          territoire_code: "NAT-FR",
+          type_evenement: EvenementValeurEnum.VALEUR_CREEE,
+          date_creation: new Date("2026-01-10T10:00:00.000Z"),
+          id_auteur_modification: auteur.id,
+        });
 
-      await prisma.indicateur_territoire_valeur_evenement.createMany({
-        data: [
-          {
-            id: "c3a88e60-486a-4649-8999-5ae3fbcbacce",
-            indic_id: "IND-001",
-            territoire_code: "NAT-FR",
-            type_evenement: EvenementValeurEnum.VALEUR_CREEE,
-            date_creation: new Date("2026-01-05T10:00:00.000Z"),
-            id_auteur_modification: auteurId,
-            type_valeur: "VALEUR_AVANCEMENT",
-            donnees_complementaires: {},
-            correlation_id: "c3107919-74e6-4305-8a3e-899b3aea2c93",
-            valeur: 10,
-            date_valeur: new Date("2026-01-05"),
-            ordre: 1,
-          },
-          {
-            id: "d3a88e60-486a-4649-8999-5ae3fbcbacce",
-            indic_id: "IND-001",
-            territoire_code: "REG-11",
-            type_evenement: EvenementValeurEnum.VALEUR_CREEE,
-            date_creation: new Date("2026-01-20T10:00:00.000Z"),
-            id_auteur_modification: auteurId,
-            type_valeur: "VALEUR_AVANCEMENT",
-            donnees_complementaires: {},
-            correlation_id: "d3107919-74e6-4305-8a3e-899b3aea2c93",
-            valeur: 20,
-            date_valeur: new Date("2026-01-20"),
-            ordre: 1,
-          },
-        ],
-      });
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur.id,
+          territoire_code: "NAT-FR",
+          type_evenement: EvenementValeurEnum.VALEUR_MODIFIEE,
+          date_creation: new Date("2026-02-01T10:00:00.000Z"),
+          id_auteur_modification: auteur.id,
+        });
 
-      // When
-      const result =
-        await prismaIndicateurRepository.recupererDatesDernierImports(
-          new Date("2026-02-01T00:00:00.000Z"),
+        // When
+        const result =
+          await prismaIndicateurRepository.recupererDatesDernierImports(
+            new Date("2026-02-01T00:00:00.000Z"),
+          );
+
+        // Then
+        expect(result.get("IND-001")).toEqual(
+          new Date("2026-01-10T10:00:00.000Z"),
         );
+      }),
+    );
 
-      // Then
-      expect(result.get("IND-001")).toEqual(
-        new Date("2026-01-20T10:00:00.000Z"),
-      );
-    });
-
-    it("ignore les événements qui ne sont pas de type VALEUR_CREEE ou VALEUR_MODIFIEE", async () => {
-      // Given
-      await prisma.chantier_identite.create({
-        data: {
+    it(
+      "retourne la date la plus récente parmi les événements de plusieurs territoires pour un même indicateur",
+      createIntegrationTest(async () => {
+        // Given
+        const chantier = await fixtures.chantierIdentite({
           id: "CH-001",
           nom: "Chantier 001",
-        },
-      });
+        });
 
-      await prisma.indicateur_identite.create({
-        data: {
+        await fixtures.chantierTerritoire({
+          id: chantier.id,
+          maille: "NAT",
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          zone_id: "NAT-FR",
+        });
+
+        await fixtures.chantierTerritoire({
+          id: chantier.id,
+          maille: "REG",
+          territoire_code: "REG-11",
+          code_insee: "11",
+          zone_id: "REG-11",
+        });
+
+        const indicateur = await fixtures.indicateurIdentite({
           id: "IND-001",
           nom: "Indicateur 001",
-          chantier_id: "CH-001",
-        },
-      });
+          chantier_id: chantier.id,
+        });
 
-      await prisma.chantier_territoire.create({
-        data: {
+        await fixtures.indicateurTerritoire({
+          id: indicateur.id,
+          chantier_id: chantier.id,
+          maille: "NAT",
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          zone_id: "NAT-FR",
+        });
+
+        await fixtures.indicateurTerritoire({
+          id: indicateur.id,
+          chantier_id: chantier.id,
+          maille: "REG",
+          territoire_code: "REG-11",
+          code_insee: "11",
+          zone_id: "REG-11",
+        });
+
+        const auteur = await fixtures.utilisateur();
+
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur.id,
+          territoire_code: "NAT-FR",
+          type_evenement: EvenementValeurEnum.VALEUR_CREEE,
+          date_creation: new Date("2026-01-05T10:00:00.000Z"),
+          id_auteur_modification: auteur.id,
+        });
+
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur.id,
+          territoire_code: "REG-11",
+          type_evenement: EvenementValeurEnum.VALEUR_CREEE,
+          date_creation: new Date("2026-01-20T10:00:00.000Z"),
+          id_auteur_modification: auteur.id,
+        });
+
+        // When
+        const result =
+          await prismaIndicateurRepository.recupererDatesDernierImports(
+            new Date("2026-02-01T00:00:00.000Z"),
+          );
+
+        // Then
+        expect(result.get("IND-001")).toEqual(
+          new Date("2026-01-20T10:00:00.000Z"),
+        );
+      }),
+    );
+
+    it(
+      "ignore les événements qui ne sont pas de type VALEUR_CREEE ou VALEUR_MODIFIEE",
+      createIntegrationTest(async () => {
+        // Given
+        const chantier = await fixtures.chantierIdentite({
           id: "CH-001",
+          nom: "Chantier 001",
+        });
+
+        await fixtures.chantierTerritoire({
+          id: chantier.id,
           maille: "NAT",
           territoire_code: "NAT-FR",
           code_insee: "FR",
           zone_id: "NAT-FR",
-        },
-      });
+        });
 
-      await prisma.indicateur_territoire.create({
-        data: {
+        const indicateur = await fixtures.indicateurIdentite({
           id: "IND-001",
-          chantier_id: "CH-001",
+          nom: "Indicateur 001",
+          chantier_id: chantier.id,
+        });
+
+        await fixtures.indicateurTerritoire({
+          id: indicateur.id,
+          chantier_id: chantier.id,
           maille: "NAT",
           territoire_code: "NAT-FR",
           code_insee: "FR",
           zone_id: "NAT-FR",
-        },
-      });
+        });
 
-      const auteurId = "ec6281a8-78f2-4792-951b-fa66c1320dc1";
-      await prisma.utilisateur.create({
-        data: {
-          id: auteurId,
-          email: "user@test.com",
-          profilCode: ProfilEnum.DITP_ADMIN,
-          nom: "user",
-          prenom: "user",
-          date_creation: new Date(),
-        },
-      });
+        const auteur = await fixtures.utilisateur();
 
-      await prisma.indicateur_territoire_valeur_evenement.createMany({
-        data: [
-          {
-            id: "e3a88e60-486a-4649-8999-5ae3fbcbacce",
-            indic_id: "IND-001",
-            territoire_code: "NAT-FR",
-            type_evenement: EvenementValeurEnum.VALEUR_CREEE,
-            date_creation: new Date("2026-01-05T10:00:00.000Z"),
-            id_auteur_modification: auteurId,
-            type_valeur: "VALEUR_AVANCEMENT",
-            donnees_complementaires: {},
-            correlation_id: "e3107919-74e6-4305-8a3e-899b3aea2c93",
-            valeur: 10,
-            date_valeur: new Date("2026-01-05"),
-            ordre: 1,
-          },
-          {
-            id: "f3a88e60-486a-4649-8999-5ae3fbcbacce",
-            indic_id: "IND-001",
-            territoire_code: "NAT-FR",
-            type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_CREEE,
-            date_creation: new Date("2026-01-25T10:00:00.000Z"),
-            id_auteur_modification: auteurId,
-            type_valeur: "VALEUR_AVANCEMENT",
-            donnees_complementaires: {},
-            correlation_id: "f3107919-74e6-4305-8a3e-899b3aea2c93",
-            valeur: 20,
-            date_valeur: new Date("2026-01-25"),
-            ordre: 2,
-          },
-        ],
-      });
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur.id,
+          territoire_code: "NAT-FR",
+          type_evenement: EvenementValeurEnum.VALEUR_CREEE,
+          date_creation: new Date("2026-01-05T10:00:00.000Z"),
+          id_auteur_modification: auteur.id,
+        });
 
-      // When
-      const result =
-        await prismaIndicateurRepository.recupererDatesDernierImports(
-          new Date("2026-02-01T00:00:00.000Z"),
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur.id,
+          territoire_code: "NAT-FR",
+          type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_CREEE,
+          date_creation: new Date("2026-01-25T10:00:00.000Z"),
+          id_auteur_modification: auteur.id,
+        });
+
+        // When
+        const result =
+          await prismaIndicateurRepository.recupererDatesDernierImports(
+            new Date("2026-02-01T00:00:00.000Z"),
+          );
+
+        // Then
+        expect(result.get("IND-001")).toEqual(
+          new Date("2026-01-05T10:00:00.000Z"),
         );
+      }),
+    );
 
-      // Then
-      expect(result.get("IND-001")).toEqual(
-        new Date("2026-01-05T10:00:00.000Z"),
-      );
-    });
+    it(
+      "retourne une Map vide quand il n'y a pas d'événements",
+      createIntegrationTest(async () => {
+        // Given - pas d'événements créés
 
-    it("retourne une Map vide quand il n'y a pas d'événements", async () => {
-      // Given - pas d'événements créés
+        // When
+        const result =
+          await prismaIndicateurRepository.recupererDatesDernierImports(
+            new Date("2026-02-01T00:00:00.000Z"),
+          );
 
-      // When
-      const result =
-        await prismaIndicateurRepository.recupererDatesDernierImports(
-          new Date("2026-02-01T00:00:00.000Z"),
-        );
-
-      // Then
-      expect(result.size).toEqual(0);
-    });
+        // Then
+        expect(result.size).toEqual(0);
+      }),
+    );
   });
 });
