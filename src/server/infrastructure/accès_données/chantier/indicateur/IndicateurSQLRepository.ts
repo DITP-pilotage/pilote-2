@@ -16,6 +16,7 @@ import Chantier from "@/server/domain/chantier/Chantier.interface";
 import { comparerDates, formatDate } from "@/client/utils/date/date";
 import { verifyValeurIsNotNullOrUndefined } from "@/server/utils/VerifyValeurIsNotNullOrUndefined";
 import { prisma } from "@/server/db/prisma";
+import { EvenementValeurEnum } from "@/server/app/domain/EvenementValeurEnum";
 
 export interface historique_valeurs {
   date: string;
@@ -55,6 +56,7 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
       indicateur_territoire_jalon: PrismaIndicateurTerritoireJalon[];
     })[],
     jalon: number,
+    datesDernierImports: Map<string, Date | null>,
   ): DétailsIndicateurs {
     const détailsIndicateurs: DétailsIndicateurs = {};
 
@@ -104,12 +106,12 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
         proposition: null,
         propositionStatutTerritoire: null,
         propositionStatutDirectionProjet: null,
-        unité: indicateurRow.indicateur_identite.unite_mesure,
-        est_applicable: indicateurRow.est_applicable,
+        unite: indicateurRow.indicateur_identite.unite_mesure,
+        estApplicable: indicateurRow.est_applicable,
         dateImport: formatDate(
-          indicateurRow.indicateur_identite.dernier_import_date_indic,
+          datesDernierImports.get(indicateurRow.id) ?? null,
         ),
-        pondération: indicateurRow.ponderation_zone_reel,
+        ponderation: indicateurRow.ponderation_zone_reel,
         prochaineDateValeurAvancement: formatDate(
           indicateurRow.prochaine_date_valeur_actuelle,
         ),
@@ -156,6 +158,7 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
     maille: Maille,
     codeInsee: CodeInsee,
     jalon: number,
+    dateDerniereExecutionDatajobs: Date,
   ): Promise<Record<Chantier["id"], DétailsIndicateurs>> {
     const indicateurs = await prisma.indicateur_territoire.findMany({
       where: {
@@ -179,6 +182,10 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
       },
     });
 
+    const datesDernierImports = await this._recupererDatesDernierImports(
+      dateDerniereExecutionDatajobs,
+    );
+
     return Object.fromEntries(
       indicateurs.map((indicateur) => [
         indicateur.indicateur_identite.chantier_id,
@@ -189,9 +196,44 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
               indicateur.indicateur_identite.chantier_id,
           ),
           jalon,
+          datesDernierImports,
         ),
       ]),
     );
+  }
+
+  private async _recupererDatesDernierImports(
+    dateDerniereExecutionDatajobs: Date,
+  ): Promise<Map<string, Date | null>> {
+    const evenements =
+      await prisma.indicateur_territoire_valeur_evenement.findMany({
+        where: {
+          type_evenement: {
+            in: [
+              EvenementValeurEnum.VALEUR_CREEE,
+              EvenementValeurEnum.VALEUR_MODIFIEE,
+            ],
+          },
+          date_creation: {
+            lt: dateDerniereExecutionDatajobs,
+          },
+        },
+        select: {
+          date_creation: true,
+          indic_id: true,
+        },
+      });
+
+    return evenements.reduce((map, evenement) => {
+      const indicateurId = evenement.indic_id;
+      const dateActuelle = map.get(indicateurId);
+
+      if (!dateActuelle || evenement.date_creation > dateActuelle) {
+        map.set(indicateurId, evenement.date_creation);
+      }
+
+      return map;
+    }, new Map<string, Date | null>());
   }
 
   async récupérerParChantierId(chantierId: string): Promise<Indicateur[]> {

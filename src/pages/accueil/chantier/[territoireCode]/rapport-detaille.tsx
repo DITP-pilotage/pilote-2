@@ -40,6 +40,7 @@ import { getAnneeDateDeBascule } from "@/components/_commons/IndicateursChantier
 import { configuration } from "@/config";
 import { getContainer } from "@/server/dependances";
 import { ChantierRapportDetailleContrat } from "@/server/chantiers/app/contrats/ChantierRapportDetailleContratV2";
+import { getInitialContainerWithTransversalDependencies } from "@/server/InitialDependencies";
 
 interface NextPageRapportDétailléProps {
   chantiers: ChantierRapportDetailleContrat[];
@@ -340,12 +341,17 @@ export const getServerSideProps: GetServerSideProps<
   const indicateursRepository = dependencies.getIndicateurRepository();
   const indicateursGroupésParChantier =
     await indicateursRepository.récupérerGroupésParChantier(chantiersIds);
+  const datajobsExecution =
+    await getInitialContainerWithTransversalDependencies()
+      .resolve("datajobsExecutionQueries")
+      .recupererEtatCourant();
   const détailsIndicateursGroupésParChantier =
     await indicateursRepository.récupérerDétailsGroupésParChantierEtParIndicateur(
       chantiersIds,
       mailleChantier,
       codeInseeSelectionne,
       jalon,
+      new Date(datajobsExecution.derniereDateExecution),
     );
   const listeIndicateursPrisEnCompteAvancement =
     await indicateursRepository.recupererListeIndicateursPrisEnCompteDansCalculAvancementSurAuMoinsUnTerritoire(

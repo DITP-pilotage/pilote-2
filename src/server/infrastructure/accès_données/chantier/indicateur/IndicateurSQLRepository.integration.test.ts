@@ -1,6 +1,8 @@
 import { Prisma } from "@prisma/client";
 import IndicateurSQLRepository from "@/server/infrastructure/accès_données/chantier/indicateur/IndicateurSQLRepository";
 import { prisma } from "@/server/db/prisma";
+import { EvenementValeurEnum } from "@/server/app/domain/EvenementValeurEnum";
+import { ProfilEnum } from "@/server/app/enum/profil.enum";
 
 describe("IndicateurSQLRepository", () => {
   let prismaIndicateurRepository: IndicateurSQLRepository;
@@ -191,7 +193,6 @@ describe("IndicateurSQLRepository", () => {
             id: "IND-001",
             nom: "Indicateur 001",
             chantier_id: "CH-001",
-            dernier_import_date_indic: new Date("2026-01-12"),
             type_id: "IMPACT",
             unite_mesure: "kg",
           },
@@ -199,7 +200,6 @@ describe("IndicateurSQLRepository", () => {
             id: "IND-002",
             nom: "Indicateur 002",
             chantier_id: "CH-002",
-            dernier_import_date_indic: new Date("2026-01-13"),
             unite_mesure: "mg",
             type_id: "IMPACT",
           },
@@ -433,6 +433,7 @@ describe("IndicateurSQLRepository", () => {
           "departementale",
           "01",
           jalon,
+          new Date(),
         );
 
       // Then
@@ -445,19 +446,19 @@ describe("IndicateurSQLRepository", () => {
                 global: null,
               },
               codeInsee: "01",
-              dateImport: new Date("2026-01-12").toISOString(),
+              dateImport: null,
               dateValeurAvancement: new Date("2025-01-13").toISOString(),
               dateValeurCible: new Date("2025-01-13").toISOString(),
               dateValeurCibleAnnuelle: new Date("2025-12-06").toISOString(),
               dateValeurInitiale: new Date("2025-01-13").toISOString(),
               estAJour: false,
-              est_applicable: true,
+              estApplicable: true,
               historiquesValeurs: [
                 {
                   date: new Date("2024-06-12").toISOString(),
                 },
               ],
-              pondération: 22,
+              ponderation: 22,
               prochaineDateMaj: new Date("2025-08-31").toISOString(),
               prochaineDateMajJours: 50,
               prochaineDateValeurAvancement: new Date(
@@ -465,7 +466,7 @@ describe("IndicateurSQLRepository", () => {
               ).toISOString(),
               proposition: null,
               tendance: "HAUSSE",
-              unité: "kg",
+              unite: "kg",
               valeurAvancement: 10,
               valeurCible: 11,
               valeurCibleAnnuelle: 24,
@@ -485,13 +486,13 @@ describe("IndicateurSQLRepository", () => {
               dateValeurCibleAnnuelle: new Date("2025-12-06").toISOString(),
               dateValeurInitiale: new Date("2025-01-13").toISOString(),
               estAJour: false,
-              est_applicable: true,
+              estApplicable: true,
               historiquesValeurs: [
                 {
                   date: new Date("2024-06-12").toISOString(),
                 },
               ],
-              pondération: null,
+              ponderation: null,
               prochaineDateMaj: new Date("2025-08-31").toISOString(),
               prochaineDateMajJours: 50,
               prochaineDateValeurAvancement: new Date(
@@ -499,7 +500,7 @@ describe("IndicateurSQLRepository", () => {
               ).toISOString(),
               proposition: null,
               tendance: "HAUSSE",
-              unité: null,
+              unite: null,
               valeurAvancement: 10,
               valeurCible: 11,
               valeurCibleAnnuelle: 22,
@@ -515,19 +516,19 @@ describe("IndicateurSQLRepository", () => {
                 global: null,
               },
               codeInsee: "01",
-              dateImport: new Date("2026-01-13").toISOString(),
+              dateImport: null,
               dateValeurAvancement: new Date("2025-01-13").toISOString(),
               dateValeurCible: new Date("2025-01-13").toISOString(),
               dateValeurCibleAnnuelle: new Date("2025-12-06").toISOString(),
               dateValeurInitiale: new Date("2025-01-13").toISOString(),
               estAJour: false,
-              est_applicable: true,
+              estApplicable: true,
               historiquesValeurs: [
                 {
                   date: new Date("2024-06-12").toISOString(),
                 },
               ],
-              pondération: null,
+              ponderation: null,
               prochaineDateMaj: new Date("2025-08-31").toISOString(),
               prochaineDateMajJours: 50,
               prochaineDateValeurAvancement: new Date(
@@ -535,7 +536,7 @@ describe("IndicateurSQLRepository", () => {
               ).toISOString(),
               proposition: null,
               tendance: "HAUSSE",
-              unité: "mg",
+              unite: "mg",
               valeurAvancement: 10,
               valeurCible: 11,
               valeurCibleAnnuelle: 24,
@@ -544,6 +545,191 @@ describe("IndicateurSQLRepository", () => {
           },
         },
       });
+    });
+
+    it("doit calculer la dateImport à partir des événements VALEUR_CREEE et VALEUR_MODIFIEE", async () => {
+      // Given
+      await prisma.chantier_identite.create({
+        data: {
+          id: "CH-001",
+          nom: "Chantier 001",
+        },
+      });
+
+      await prisma.chantier_territoire.createMany({
+        data: [
+          {
+            id: "CH-001",
+            code_insee: "01",
+            maille: "DEPT",
+            zone_id: "D01",
+            territoire_code: "DEPT-01",
+          },
+          {
+            id: "CH-001",
+            code_insee: "02",
+            maille: "DEPT",
+            zone_id: "D02",
+            territoire_code: "DEPT-02",
+          },
+        ],
+      });
+
+      await prisma.indicateur_identite.createMany({
+        data: [
+          {
+            id: "IND-001",
+            nom: "Indicateur 001",
+            chantier_id: "CH-001",
+            type_id: "IMPACT",
+          },
+          {
+            id: "IND-002",
+            nom: "Indicateur 002",
+            chantier_id: "CH-001",
+            type_id: "IMPACT",
+          },
+        ],
+      });
+
+      await prisma.indicateur_territoire.createMany({
+        data: [
+          {
+            id: "IND-001",
+            chantier_id: "CH-001",
+            code_insee: "01",
+            maille: "DEPT",
+            zone_id: "D01",
+            territoire_code: "DEPT-01",
+            evolution_avancement: [] as unknown as Prisma.JsonArray,
+          },
+          {
+            id: "IND-002",
+            chantier_id: "CH-001",
+            code_insee: "01",
+            maille: "DEPT",
+            zone_id: "D01",
+            territoire_code: "DEPT-02",
+            evolution_avancement: [] as unknown as Prisma.JsonArray,
+          },
+        ],
+      });
+
+      await prisma.indicateur_territoire_jalon.createMany({
+        data: [
+          {
+            id: "IND-001",
+            code_insee: "01",
+            maille: "DEPT",
+            zone_id: "D01",
+            territoire_code: "DEPT-01",
+            jalon: 2025,
+          },
+          {
+            id: "IND-002",
+            code_insee: "01",
+            maille: "DEPT",
+            zone_id: "D01",
+            territoire_code: "DEPT-02",
+            jalon: 2025,
+          },
+        ],
+      });
+
+      const auteurId = "fc6281a8-78f2-4792-951b-fa66c1320dc1";
+      await prisma.utilisateur.create({
+        data: {
+          id: auteurId,
+          email: "user@test.com",
+          profilCode: ProfilEnum.DITP_ADMIN,
+          nom: "user",
+          prenom: "user",
+          date_creation: new Date(),
+        },
+      });
+
+      await prisma.indicateur_territoire_valeur_evenement.createMany({
+        data: [
+          {
+            id: "11a88e60-486a-4649-8999-5ae3fbcbacce",
+            indic_id: "IND-001",
+            territoire_code: "DEPT-01",
+            type_evenement: EvenementValeurEnum.VALEUR_CREEE,
+            date_creation: new Date("2026-01-05T10:00:00.000Z"),
+            id_auteur_modification: auteurId,
+            type_valeur: "VALEUR_AVANCEMENT",
+            donnees_complementaires: {},
+            correlation_id: "11107919-74e6-4305-8a3e-899b3aea2c93",
+            valeur: 10,
+            date_valeur: new Date("2026-01-05"),
+            ordre: 1,
+          },
+          {
+            id: "22a88e60-486a-4649-8999-5ae3fbcbacce",
+            indic_id: "IND-001",
+            territoire_code: "DEPT-01",
+            type_evenement: EvenementValeurEnum.VALEUR_MODIFIEE,
+            date_creation: new Date("2026-01-15T10:00:00.000Z"),
+            id_auteur_modification: auteurId,
+            type_valeur: "VALEUR_AVANCEMENT",
+            donnees_complementaires: {},
+            correlation_id: "22107919-74e6-4305-8a3e-899b3aea2c93",
+            valeur: 15,
+            date_valeur: new Date("2026-01-15"),
+            ordre: 2,
+          },
+          {
+            id: "33a88e60-486a-4649-8999-5ae3fbcbacce",
+            indic_id: "IND-002",
+            territoire_code: "DEPT-02",
+            type_evenement: EvenementValeurEnum.VALEUR_CREEE,
+            date_creation: new Date("2026-01-20T10:00:00.000Z"),
+            id_auteur_modification: auteurId,
+            type_valeur: "VALEUR_AVANCEMENT",
+            donnees_complementaires: {},
+            correlation_id: "33107919-74e6-4305-8a3e-899b3aea2c93",
+            valeur: 20,
+            date_valeur: new Date("2026-01-20"),
+            ordre: 1,
+          },
+          {
+            id: "44a88e60-486a-4649-8999-5ae3fbcbacce",
+            indic_id: "IND-001",
+            territoire_code: "DEPT-01",
+            type_evenement: EvenementValeurEnum.VALEUR_MODIFIEE,
+            date_creation: new Date("2026-02-10T10:00:00.000Z"),
+            id_auteur_modification: auteurId,
+            type_valeur: "VALEUR_AVANCEMENT",
+            donnees_complementaires: {},
+            correlation_id: "44107919-74e6-4305-8a3e-899b3aea2c93",
+            valeur: 25,
+            date_valeur: new Date("2026-02-10"),
+            ordre: 3,
+          },
+        ],
+      });
+
+      const dateDerniereExecutionDatajobs = new Date(
+        "2026-02-01T00:00:00.000Z",
+      );
+
+      // When
+      const result =
+        await prismaIndicateurRepository.récupérerDétailsGroupésParChantierEtParIndicateur(
+          ["CH-001"],
+          "departementale",
+          "01",
+          2025,
+          dateDerniereExecutionDatajobs,
+        );
+
+      // Then
+      expect(result["CH-001"]["IND-001"]["DEPT-01"].dateImport).toEqual(
+        new Date("2026-01-15T10:00:00.000Z").toISOString(),
+      );
+      expect(result["CH-001"]["IND-002"]["DEPT-02"].dateImport).toEqual(
+        new Date("2026-01-20T10:00:00.000Z").toISOString(),
+      );
     });
   });
 
