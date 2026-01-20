@@ -7,6 +7,8 @@ source .env
 echo ">> Dumping data..."
 time pg_dump -d $CONN_STR_PROD --verbose \
     --no-owner --data-only --format custom --compress 9 \
+    --table public.metadata_indicateur \
+    --table public.metadata_indicateur_valeur_acceptee \
     --table public.chantier_identite \
     --table public.chantier_territoire \
     --table public.indicateur_identite \

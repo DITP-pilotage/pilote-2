@@ -9,11 +9,11 @@ import {
 import { clsxm } from "@/utils/clsxm";
 import { MessageErreur } from "@/components/PageAutoEvaluation/MessageErreur";
 
-export type TextareaRef = {
+export type InputRef = {
   focus: () => void;
 };
 
-export function Textarea<T extends FieldValues>({
+export function Input<T extends FieldValues>({
   label = "Commentaire",
   name,
   control,
@@ -22,20 +22,21 @@ export function Textarea<T extends FieldValues>({
   onChange,
   onBlur,
   className,
-  textareaRef,
+  required,
+  inputRef,
   charLimit,
   ...props
-}: ComponentProps<"textarea"> & {
+}: ComponentProps<"input"> & {
   label?: ReactNode;
   placeholder?: string;
   name: Path<T>;
   control: Control<T>;
-  textareaRef?: RefObject<TextareaRef>;
+  inputRef?: RefObject<InputRef>;
   charLimit?: number;
 }) {
-  const internalRef = useRef<HTMLTextAreaElement | null>(null);
+  const internalRef = useRef<HTMLInputElement | null>(null);
 
-  useImperativeHandle(textareaRef, () => ({
+  useImperativeHandle(inputRef, () => ({
     focus: () => {
       internalRef.current?.focus();
     },
@@ -55,9 +56,10 @@ export function Textarea<T extends FieldValues>({
               })}
               htmlFor={fieldId}
             >
-              {label}
+              {label}{" "}
+              {required ? <span className="text-red-500">*</span> : null}
             </label>
-            <textarea
+            <input
               {...props}
               className={clsxm(
                 "border !rounded-t !border-b !border-b-gray-600 !bg-white !py-2 !px-4 field-sizing-content",

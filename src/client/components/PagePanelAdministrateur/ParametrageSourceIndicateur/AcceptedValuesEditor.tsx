@@ -1,4 +1,5 @@
 import { Controller, useFieldArray } from "react-hook-form";
+import { Input } from "@/components/_commons/Input";
 import { useFormParametrageSource } from "./form";
 import { ValeurAccepte } from "./types";
 
@@ -29,10 +30,9 @@ export const AcceptedValuesEditor = ({
 
   return (
     <div className="fr-mt-2w">
-      <span className="fr-label font-bold">Valeurs acceptées</span>
       {fields.map((item, index) => (
-        <div className="border p-3 fr-mb-2w rounded" key={item.id}>
-          <div className="flex justify-between align-center fr-mb-1w">
+        <div className="border fr-mb-2w rounded" key={item.id}>
+          <div className="flex justify-between align-center fr-mb-1w border-b border-b-dsfr-blue-france-sun-113 p-3">
             <span className="font-bold">Valeur {index + 1}</span>
             <button
               className="fr-btn fr-btn--sm fr-btn--secondary"
@@ -42,88 +42,49 @@ export const AcceptedValuesEditor = ({
               Supprimer
             </button>
           </div>
-          <div className="fr-grid-row fr-grid-row--gutters">
+          <div className="fr-grid-row fr-grid-row--gutters p-3">
             <div className="fr-col-3">
-              <label
-                className="fr-label"
-                htmlFor={`metadataList.${fieldIndex}.listeValeursAcceptes.${index}.ordre`}
-              >
-                Ordre
-              </label>
-              <Controller
+              <Input
+                className="text-sm font-normal min-h-[38px]"
                 control={form.control}
+                id={`metadataList.${fieldIndex}.listeValeursAcceptes.${index}.ordre`}
+                label="Ordre"
                 name={`metadataList.${fieldIndex}.listeValeursAcceptes.${index}.ordre`}
-                render={({ field }) => (
-                  <input
-                    className="fr-input bg-white"
-                    id={`metadataList.${fieldIndex}.listeValeursAcceptes.${index}.ordre`}
-                    type="number"
-                    {...field}
-                    onChange={(e) =>
-                      field.onChange(Number.parseInt(e.target.value) || 0)
-                    }
-                  />
-                )}
+                placeholder="Ordre"
+                required
               />
             </div>
             <div className="fr-col-3">
-              <label
-                className="fr-label"
-                htmlFor={`metadataList.${fieldIndex}.listeValeursAcceptes.${index}.valeur`}
-              >
-                Valeur
-              </label>
-              <Controller
+              <Input
+                className="text-sm font-normal min-h-[38px]"
                 control={form.control}
+                id={`metadataList.${fieldIndex}.listeValeursAcceptes.${index}.valeur`}
+                label="Valeur"
                 name={`metadataList.${fieldIndex}.listeValeursAcceptes.${index}.valeur`}
-                render={({ field }) => (
-                  <input
-                    className="fr-input"
-                    id={`metadataList.${fieldIndex}.listeValeursAcceptes.${index}.valeur`}
-                    type="text"
-                    {...field}
-                  />
-                )}
+                placeholder="Valeur"
+                required
               />
             </div>
             <div className="fr-col-3">
-              <label
-                className="fr-label"
-                htmlFor={`metadataList.${fieldIndex}.listeValeursAcceptes.${index}.nom`}
-              >
-                Nom
-              </label>
-              <Controller
+              <Input
+                className="text-sm font-normal min-h-[38px]"
                 control={form.control}
+                id={`metadataList.${fieldIndex}.listeValeursAcceptes.${index}.nom`}
+                label="Nom affiché"
                 name={`metadataList.${fieldIndex}.listeValeursAcceptes.${index}.nom`}
-                render={({ field }) => (
-                  <input
-                    className="fr-input"
-                    id={`metadataList.${fieldIndex}.listeValeursAcceptes.${index}.nom`}
-                    type="text"
-                    {...field}
-                  />
-                )}
+                placeholder="Nom affiché"
+                required
               />
             </div>
             <div className="fr-col-3">
-              <label
-                className="fr-label"
-                htmlFor={`metadataList.${fieldIndex}.listeValeursAcceptes.${index}.description`}
-              >
-                Description
-              </label>
-              <Controller
+              <Input
+                className="text-sm font-normal min-h-[38px]"
                 control={form.control}
+                id={`metadataList.${fieldIndex}.listeValeursAcceptes.${index}.description`}
+                label="Description"
                 name={`metadataList.${fieldIndex}.listeValeursAcceptes.${index}.description`}
-                render={({ field }) => (
-                  <input
-                    className="fr-input"
-                    id={`metadataList.${fieldIndex}.listeValeursAcceptes.${index}.description`}
-                    type="text"
-                    {...field}
-                  />
-                )}
+                placeholder="Description"
+                required
               />
             </div>
           </div>
