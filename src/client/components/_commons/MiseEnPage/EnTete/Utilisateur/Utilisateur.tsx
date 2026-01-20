@@ -47,7 +47,7 @@ export const Utilisateur = () => {
 
         <Dropdown.Divider />
 
-        <Dropdown.Item>
+        <Dropdown.Item onSelect={() => router.push("/mon-profil-utilisateur")}>
           <Dropdown.Icone icone={Account1Icon} />
           Mon profil utilisateur
         </Dropdown.Item>
