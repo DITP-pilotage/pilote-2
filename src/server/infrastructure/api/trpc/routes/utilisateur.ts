@@ -11,7 +11,6 @@ import {
   validationReactiverUtilisateur,
   validationSupprimerUtilisateur,
 } from "@/validation/utilisateur";
-import { validationModifierMonProfil } from "@/validation/monProfil";
 import { zodValidateurCSRF } from "@/validation/publication";
 import { dependencies } from "@/server/infrastructure/Dependencies";
 import RécupérerUnProfilUseCase from "@/server/usecase/profil/RécupérerUnProfilUseCase";

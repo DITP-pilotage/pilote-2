@@ -17,7 +17,6 @@ import { RecupererTousLesTerritoiresUseCase } from "@/server/usecase/territoire/
 import { RecupererListeUtilisateursUseCase } from "@/server/gestion-utilisateur/usecases/RecupererListeUtilisateursUseCase";
 import { PrismaHistorisationModificationRepository } from "@/server/infrastructure/accès_données/historisationModification/PrismaHistorisationModificationRepository";
 import { HistorisationModificationRepository } from "@/server/domain/historisationModification/HistorisationModificationRepository";
-import { ModifierMonProfilUseCase } from "@/server/profil-utilisateur/usecases/ModifierMonProfilUseCase";
 import { UtilisateurRepository } from "./domain/ports/UtilisateurRepository";
 import { UtilisateurIAMRepository } from "./domain/ports/UtilisateurIAMRepository";
 import { TokenAPIInformationRepository } from "./domain/ports/TokenAPIInformationRepository";
