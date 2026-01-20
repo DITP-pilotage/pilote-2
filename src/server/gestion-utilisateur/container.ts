@@ -51,6 +51,7 @@ import { AjouterUnContactAUneInfoLettreUseCase } from "./usecases/AjouterUnConta
 import { PrismaHabilitationService } from "./infrastructure/adapters/PrismaHabilitationService";
 import { HabilitationService } from "./domain/ports/HabilitationService";
 import ImporterDesUtilisateursUseCase from "./usecases/ImporterDesUtilisateursUseCase";
+import { ModifierMonProfilUseCase } from "./usecases/ModifierMonProfilUseCase";
 
 export type GestionUtilisateurDependencies = {
   utilisateurRepository: UtilisateurRepository;
@@ -88,6 +89,7 @@ export type GestionUtilisateurDependencies = {
   ajouterUnContactAUneInfoLettreUseCase: AjouterUnContactAUneInfoLettreUseCase;
   habilitationService: HabilitationService;
   importerDesUtilisateursUseCase: ImporterDesUtilisateursUseCase;
+  modifierMonProfilUseCase: ModifierMonProfilUseCase;
 };
 
 export const getGestionUtilisateurContainer = (
@@ -171,5 +173,6 @@ export const getGestionUtilisateurContainer = (
       ),
       habilitationService: asClass(PrismaHabilitationService),
       importerDesUtilisateursUseCase: asClass(ImporterDesUtilisateursUseCase),
+      modifierMonProfilUseCase: asClass(ModifierMonProfilUseCase),
     });
 };

@@ -249,10 +249,10 @@ const créerLesHabilitations = (
 };
 
 export class PrismaUtilisateurRepository implements UtilisateurRepository {
-  private prisma: PilotePrismaClient;
+  constructor(private readonly deps: Dependencies) {}
 
-  constructor({ prisma }: Dependencies) {
-    this.prisma = prisma.getInstance();
+  get prisma() {
+    return this.deps.prisma.getInstance();
   }
 
   async verifierExistenceUtilisateur(email: string): Promise<boolean> {
@@ -974,5 +974,48 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
     await this.prisma.habilitation.createMany({
       data: habilitationsÀCréer,
     });
+  }
+
+  async modifierProfil(
+    utilisateurId: string,
+    data: { nom: string; prenom: string; fonction: string | null },
+  ): Promise<void> {
+    await this.prisma.utilisateur.update({
+      where: { id: utilisateurId },
+      data: {
+        nom: data.nom,
+        prenom: data.prenom,
+        fonction: data.fonction,
+        date_modification: new Date(),
+      },
+    });
+  }
+
+  async recupererProfilUtilisateur(utilisateurId: string): Promise<{
+    nom: string;
+    prenom: string;
+    fonction: string | null;
+    email: string;
+  } | null> {
+    const utilisateur = await this.prisma.utilisateur.findUnique({
+      where: { id: utilisateurId },
+      select: {
+        nom: true,
+        prenom: true,
+        fonction: true,
+        email: true,
+      },
+    });
+
+    if (!utilisateur) {
+      return null;
+    }
+
+    return {
+      nom: utilisateur.nom,
+      prenom: utilisateur.prenom,
+      fonction: utilisateur.fonction,
+      email: utilisateur.email,
+    };
   }
 }

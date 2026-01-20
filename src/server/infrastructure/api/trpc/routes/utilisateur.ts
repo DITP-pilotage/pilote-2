@@ -11,6 +11,7 @@ import {
   validationReactiverUtilisateur,
   validationSupprimerUtilisateur,
 } from "@/validation/utilisateur";
+import { validationModifierMonProfil } from "@/validation/monProfil";
 import { zodValidateurCSRF } from "@/validation/publication";
 import { dependencies } from "@/server/infrastructure/Dependencies";
 import RécupérerUnProfilUseCase from "@/server/usecase/profil/RécupérerUnProfilUseCase";
@@ -114,5 +115,13 @@ export const utilisateurRouter = créerRouteurTRPC({
       await getContainer("gestionUtilisateur")
         .resolve("desactiverPopupInfolettreUseCase")
         .execute(input.utilisateurId);
+    }),
+  modifierMonProfil: procédureProtégée
+    .input(validationModifierMonProfil.merge(zodValidateurCSRF))
+    .mutation(async ({ input, ctx }) => {
+      vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
+      await getContainer("gestionUtilisateur")
+        .resolve("modifierMonProfilUseCase")
+        .run(ctx.session.user.id, input);
     }),
 });
