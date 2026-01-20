@@ -42,4 +42,17 @@ export const Dropdown = Object.assign({}, DropdownMenu, {
       )}
     />
   ),
+  Divider: () => <div className="h-px bg-gray-200 -mx-4" role="separator" />,
+  Item: ({ className, ...props }: ComponentProps<typeof DropdownMenu.Item>) => (
+    <DropdownMenu.Item
+      {...props}
+      className={clsxm(
+        " -m-2 p-2 flex items-center gap-2",
+        "!outline-none cursor-pointer",
+        "hover:bg-gray-100 rounded transition-colors",
+        "text-sm font-medium",
+        className,
+      )}
+    />
+  ),
 });
