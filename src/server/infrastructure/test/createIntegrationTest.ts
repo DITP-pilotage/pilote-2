@@ -3,15 +3,15 @@ import { PilotePrismaClient, txStore } from "@/server/db/PrismaTransaction";
 
 const ROLLBACK = Symbol("rollback");
 
-export function createIntegrationTest(
-  testFn: (prisma: PilotePrismaClient) => Promise<void>,
+export function createIntegrationTest<T extends unknown[]>(
+  testFn: (prisma: PilotePrismaClient, ...args: T) => Promise<void>,
 ) {
-  return async () => {
+  return async (...args: T) => {
     try {
       await prisma.$transaction(
         async (tx) => {
           await txStore.run(tx, async () => {
-            await testFn(tx);
+            await testFn(tx, ...args);
           });
           // eslint-disable-next-line @typescript-eslint/no-throw-literal
           throw ROLLBACK;
