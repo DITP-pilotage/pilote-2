@@ -1,4 +1,5 @@
 import * as React from "react";
+import { Suspense } from "react";
 
 type ClientOnlyProps = {
   /** Rendered on the server, and on the client until hydration completes (optional). */
@@ -23,6 +24,6 @@ export function ClientOnly({ fallback = null, children }: ClientOnlyProps) {
   }, []);
 
   if (!mounted) return fallback;
-  if (typeof children === "function") return children();
-  return children;
+  if (typeof children === "function") return <Suspense>{children()}</Suspense>;
+  return <Suspense>children</Suspense>;
 }

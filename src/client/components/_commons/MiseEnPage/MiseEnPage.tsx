@@ -1,11 +1,5 @@
 import { useSession } from "next-auth/react";
-import {
-  FunctionComponent,
-  Suspense,
-  useCallback,
-  useMemo,
-  useState,
-} from "react";
+import { FunctionComponent, useCallback, useMemo, useState } from "react";
 import PageLanding from "@/components/PageLanding/PageLanding";
 import Loader from "@/client/components/_commons/Loader/Loader";
 import MiseEnPageStyled from "@/components/_commons/MiseEnPage/MiseEnPage.styled";
@@ -80,9 +74,7 @@ const MiseEnPage: FunctionComponent<MiseEnPageProps> = ({
           {status === "unauthenticated" ? (
             <PageLanding />
           ) : (
-            <ClientOnly>
-              <Suspense>{children}</Suspense>
-            </ClientOnly>
+            <ClientOnly>{children}</ClientOnly>
           )}
           <PiedDePage />
         </div>
