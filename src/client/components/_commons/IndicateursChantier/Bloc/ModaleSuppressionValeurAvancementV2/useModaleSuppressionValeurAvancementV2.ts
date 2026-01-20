@@ -1,6 +1,5 @@
 import { useForm } from "react-hook-form";
 import { useState } from "react";
-import { useSession } from "next-auth/react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Indicateur from "@/server/domain/indicateur/Indicateur.interface";
@@ -50,10 +49,6 @@ const useModaleSuppressionValeurAvancementV2 = ({
   detailIndicateur: DétailsIndicateur;
   territoireCode: string;
 }) => {
-  const { data: session } = useSession();
-
-  const auteurModification = session?.user.name!;
-
   const [
     etapePropositionValeurAvancement,
     setEtapePropositionValeurAvancement,
@@ -74,7 +69,6 @@ const useModaleSuppressionValeurAvancementV2 = ({
     const inputs = {
       csrf: récupérerUnCookie("csrf") ?? "",
       indicId: indicateur.id,
-      auteurModification,
       territoireCode,
       dateValeurAvancement: detailIndicateur.proposition!.dateValeurAvancement,
       motif: data.motifSuppression,
@@ -95,7 +89,6 @@ const useModaleSuppressionValeurAvancementV2 = ({
     supprimerPropositionValeurAvancement,
     etapePropositionValeurAvancement,
     setEtapePropositionValeurAvancement,
-    auteurModification,
     etapeSuivanteEstDesactive: !reactHookForm.formState.isValid,
   };
 };

@@ -1,16 +1,35 @@
 import { useSession } from "next-auth/react";
-import { FunctionComponent, useCallback, useMemo, useState } from "react";
+import {
+  FunctionComponent,
+  Suspense,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import PageLanding from "@/components/PageLanding/PageLanding";
 import Loader from "@/client/components/_commons/Loader/Loader";
 import MiseEnPageStyled from "@/components/_commons/MiseEnPage/MiseEnPage.styled";
 import api from "@/server/infrastructure/api/trpc/api";
 import { actionsTerritoiresStore } from "@/stores/useTerritoiresStore/useTerritoiresStore";
+import { ClientOnly } from "@/components/shared/ClientOnly";
 import { EnTete } from "./EnTete/EnTete";
 import PiedDePage from "./PiedDePage/PiedDePage";
 
 interface MiseEnPageProps {
   afficherLeLoader: boolean;
   children: React.ReactNode;
+}
+
+function usePrefetchUtilisateurConnecte() {
+  const session = useSession();
+  const [enabled, setEnabled] = useState(false);
+  api.profilUtilisateur.getUtilisateurConnecte.useQuery(undefined, { enabled });
+
+  useEffect(() => {
+    if (session.status !== "authenticated") return;
+    setEnabled(true);
+  }, [session.status]);
 }
 
 const MiseEnPage: FunctionComponent<MiseEnPageProps> = ({
@@ -30,6 +49,7 @@ const MiseEnPage: FunctionComponent<MiseEnPageProps> = ({
       refetchOnWindowFocus: false,
       enabled: false,
     });
+  usePrefetchUtilisateurConnecte();
 
   const récupérerLesTerritoires = useCallback(async () => {
     const { data: territoires } = await fetchRécupérerLesTerritoires();
@@ -68,7 +88,13 @@ const MiseEnPage: FunctionComponent<MiseEnPageProps> = ({
               </p>
             </div>
           ) : null}
-          {status === "unauthenticated" ? <PageLanding /> : children}
+          {status === "unauthenticated" ? (
+            <PageLanding />
+          ) : (
+            <ClientOnly>
+              <Suspense>{children}</Suspense>
+            </ClientOnly>
+          )}
           <PiedDePage />
         </div>
       )}

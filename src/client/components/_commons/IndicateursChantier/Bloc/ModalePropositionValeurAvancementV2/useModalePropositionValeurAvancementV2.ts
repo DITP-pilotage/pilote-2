@@ -134,10 +134,6 @@ const genererOptionsMois = (
 };
 
 const useModalePropositionValeurAvancementV2 = () => {
-  const { data: session } = useSession();
-
-  const auteurModification = session?.user.name;
-
   const { indicateur, detailIndicateurDuTerritoire, territoireCode } =
     useBlocIndicateurContext();
 
@@ -265,7 +261,6 @@ const useModalePropositionValeurAvancementV2 = () => {
     creerPropositonValeurAvancement,
     etapePropositionValeurAvancement,
     setEtapePropositionValeurAvancement,
-    auteurModification,
     EtapeSuivanteEstDesactive,
     estUneModificationDeProposition,
     optionsMois,

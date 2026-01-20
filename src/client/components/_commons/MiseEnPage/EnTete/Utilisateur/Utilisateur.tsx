@@ -10,6 +10,12 @@ import api from "@/server/infrastructure/api/trpc/api";
 
 export const Utilisateur = ({ email }: { email: string }) => {
   const [estDeplie, setEstDeplie] = useState<boolean>(false);
+  // const { data: user } = api.profilUtilisateur.getUtilisateurConnecte.useQuery(
+  //   undefined,
+  //   {
+  //     staleTime: 5 * 60 * 1000,
+  //   },
+  // );
 
   const { data: panelAdminEstDisponible } =
     api.gestionContenu.récupérerVariableContenu.useQuery({

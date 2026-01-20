@@ -9,6 +9,7 @@ import api from "@/server/infrastructure/api/trpc/api";
 import { BoutonContacterEquipePilote } from "@/components/PageAccueil/BoutonContacterEquipePilote";
 import { BoutonSeConnecter } from "@/components/_commons/BoutonSeConnecter";
 import { BoutonApplicationsPilote } from "@/components/_commons/MiseEnPage/EnTete/BoutonApplicationsPilote";
+import { ClientOnly } from "@/components/shared/ClientOnly";
 
 const useEntete = () => {
   const { data: messageInformation } =
@@ -69,19 +70,21 @@ export const EnTete = () => {
             </div>
             <div className="fr-header__tools">
               <div className="fr-header__tools-links">
-                <div className="flex align-center gap-4">
-                  <BoutonContacterEquipePilote />
-                  {session?.user?.email ? (
-                    <>
-                      {peutVoirLeBoutonApplicationsPilote ? (
-                        <BoutonApplicationsPilote />
-                      ) : null}
-                      <Utilisateur email={session.user.email} />
-                    </>
-                  ) : (
-                    <BoutonSeConnecter />
-                  )}
-                </div>
+                <ClientOnly>
+                  <div className="flex align-center gap-4">
+                    <BoutonContacterEquipePilote />
+                    {session?.user?.email ? (
+                      <>
+                        {peutVoirLeBoutonApplicationsPilote ? (
+                          <BoutonApplicationsPilote />
+                        ) : null}
+                        <Utilisateur email={session.user.email} />
+                      </>
+                    ) : (
+                      <BoutonSeConnecter />
+                    )}
+                  </div>
+                </ClientOnly>
               </div>
             </div>
           </div>

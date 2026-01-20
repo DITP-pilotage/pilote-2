@@ -15,16 +15,20 @@ import { LIMITE_CARACTERES_DOCUMENTATION_PROPOSITION } from "@/validation/propos
 import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
 import { useBlocIndicateurContext } from "@/components/PageChantier/useBlocIndicateurContext";
 import { SelecteurNew } from "@/components/_commons/SelecteurNew/SelecteurNew";
+import api from "@/server/infrastructure/api/trpc/api";
 
 export const ModalePropositionValeurAvancementV2: FunctionComponent<
   PropsWithChildren
 > = ({ children }) => {
+  const [utilisateur] =
+    api.profilUtilisateur.getUtilisateurConnecte.useSuspenseQuery();
+  const auteurModification = `${utilisateur.prenom} ${utilisateur.nom}`;
+
   const {
     reactHookForm,
     creerPropositonValeurAvancement,
     etapePropositionValeurAvancement,
     setEtapePropositionValeurAvancement,
-    auteurModification,
     EtapeSuivanteEstDesactive,
     estUneModificationDeProposition,
     optionsMois,
