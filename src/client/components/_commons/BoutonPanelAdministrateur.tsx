@@ -1,10 +1,18 @@
+import { useRouter } from "next/router";
 import { Dropdown } from "@/components/shared/Dropdown";
+import { Icone } from "@/components/_commons/Icone";
+import { Settings1Icon } from "@/components/_commons/Icones/Settings1Icon";
 
-export const BoutonPanelAdministrateur = () => (
-  <Dropdown.Link
-    className="rounded min-w-[250px] !flex items-center gap-3 !py-2 !mx-0"
-    href="/panel-administrateur/parametrage-metadata-indicateur"
-  >
-    Panel administrateur
-  </Dropdown.Link>
-);
+export const BoutonPanelAdministrateur = () => {
+  const router = useRouter();
+  return (
+    <Dropdown.Item
+      onSelect={() =>
+        router.push("/panel-administrateur/parametrage-metadata-indicateur")
+      }
+    >
+      <Icone className="text-current h-5 w-5" icone={Settings1Icon} />
+      Panel administrateur
+    </Dropdown.Item>
+  );
+};
