@@ -2,11 +2,13 @@ import { FunctionComponent, ReactNode } from "react";
 import { Controller } from "react-hook-form";
 import { clsxm } from "@/utils/clsxm";
 import { useFormParametrageSource } from "./form";
+import "@gouvfr/dsfr/dist/component/select/select.min.css";
 
 interface SelectMetadataProps {
   name:
     | `metadataList.${number}.dataType`
-    | `metadataList.${number}.editBoxType`;
+    | `metadataList.${number}.editBoxType`
+    | `metadataList.${number}.defaultValue`;
   label: string;
   required?: boolean;
   children: ReactNode;
@@ -35,12 +37,10 @@ export const SelectMetadata: FunctionComponent<SelectMetadataProps> = ({
         name={name}
         render={({ field, fieldState }) => (
           <select
-            className={clsxm(
-              "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all !bg-white",
-              {
-                "!border-red-500": !!fieldState.error,
-              },
-            )}
+            className={clsxm("fr-select fr-mt-1w", {
+              "!border-red-500": !!fieldState.error,
+              "fr-select--error": !!fieldState.error,
+            })}
             id={name}
             {...field}
             value={field.value?.toString() || ""}

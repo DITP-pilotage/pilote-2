@@ -7,7 +7,8 @@ interface CheckboxMetadataProps {
     | `metadataList.${number}.estVisible`
     | `metadataList.${number}.estEditable`
     | `metadataList.${number}.estObligatoire`
-    | `metadataList.${number}.doitAfficherLaDescription`;
+    | `metadataList.${number}.doitAfficherLaDescription`
+    | `metadataList.${number}.defaultValue`;
   label: string;
 }
 
