@@ -16,27 +16,30 @@ type MonProfilUtilisateurFormInputs = z.infer<
   typeof validationModifierMonProfil
 >;
 
+function useModifierProfilUtilisateur(setAlert: (props: AlerteProps) => void) {
+  const { refetch } = api.profilUtilisateur.getUtilisateurConnecte.useQuery();
+  return api.utilisateur.modifierMonProfil.useMutation({
+    onSuccess: async () => {
+      await refetch();
+      setAlert({
+        type: "succès",
+        titre: "Vos informations ont été modifiées avec succès",
+      });
+    },
+    onError: (error) => {
+      setAlert({
+        type: "erreur",
+        titre: error.message,
+      });
+    },
+  });
+}
+
 export const PageMonProfilUtilisateur = () => {
   const [alerte, setAlerte] = useState<AlerteProps | null>(null);
-  const [utilisateur, { refetch }] =
+  const mutationModifierMonProfil = useModifierProfilUtilisateur(setAlerte);
+  const [utilisateur] =
     api.profilUtilisateur.getUtilisateurConnecte.useSuspenseQuery();
-
-  const mutationModifierMonProfil =
-    api.utilisateur.modifierMonProfil.useMutation({
-      onSuccess: async () => {
-        await refetch();
-        setAlerte({
-          type: "succès",
-          titre: "Vos informations ont été modifiées avec succès",
-        });
-      },
-      onError: (error) => {
-        setAlerte({
-          type: "erreur",
-          titre: error.message,
-        });
-      },
-    });
 
   const soumettreFormulaire = (data: MonProfilUtilisateurFormInputs) => {
     mutationModifierMonProfil.mutate({
@@ -45,11 +48,7 @@ export const PageMonProfilUtilisateur = () => {
     });
   };
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<MonProfilUtilisateurFormInputs & { email: string }>({
+  const form = useForm<MonProfilUtilisateurFormInputs & { email: string }>({
     resolver: zodResolver(validationModifierMonProfil),
     defaultValues: {
       email: utilisateur.email,
@@ -71,38 +70,38 @@ export const PageMonProfilUtilisateur = () => {
         <Bloc titre="Mon identité">
           <form
             className="flex flex-col gap-4"
-            onSubmit={handleSubmit(soumettreFormulaire)}
+            onSubmit={form.handleSubmit(soumettreFormulaire)}
           >
             <InputAvecLabel
               disabled
               erreur={undefined}
               htmlName="email"
               libellé="Adresse électronique"
-              register={register("email")}
+              register={form.register("email")}
               type="email"
             />
 
             <InputAvecLabel
-              erreur={errors.prenom}
+              erreur={form.formState.errors.prenom}
               htmlName="prénom"
               libellé="Prénom"
-              register={register("prenom")}
+              register={form.register("prenom")}
               type="text"
             />
 
             <InputAvecLabel
-              erreur={errors.nom}
+              erreur={form.formState.errors.nom}
               htmlName="nom"
               libellé="Nom"
-              register={register("nom")}
+              register={form.register("nom")}
               type="text"
             />
 
             <InputAvecLabel
-              erreur={errors.fonction}
+              erreur={form.formState.errors.fonction}
               htmlName="fonction"
               libellé="Fonction"
-              register={register("fonction")}
+              register={form.register("fonction")}
               type="text"
             />
 
