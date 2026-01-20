@@ -1,8 +1,10 @@
+import { randomUUID } from "node:crypto";
 import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
 import { fixtures } from "@/server/infrastructure/test/fixtures";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { PrismaProfilUtilisateurRepository } from "@/server/profil-utilisateur/infrastructure/adapters/PrismaProfilUtilisateurRepository";
 import { ModifierMonProfilUseCase } from "@/server/profil-utilisateur/usecases/ModifierMonProfilUseCase";
+import { NotFoundError } from "@/server/app/error-boundary/not-found-error";
 
 describe("ModifierMonProfilUseCase", () => {
   let useCase: ModifierMonProfilUseCase;
@@ -124,6 +126,19 @@ describe("ModifierMonProfilUseCase", () => {
         expect(utilisateurModifie?.date_modification.getTime()).toBeGreaterThan(
           dateInitiale.getTime(),
         );
+      }),
+    );
+
+    it(
+      "lance une erreur si l'utilisateur n'existe pas",
+      createIntegrationTest(async () => {
+        await expect(
+          useCase.run(randomUUID(), {
+            nom: "Nouveau Nom",
+            prenom: "Nouveau Prenom",
+            fonction: null,
+          }),
+        ).rejects.toThrow(NotFoundError);
       }),
     );
   });

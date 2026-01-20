@@ -1,4 +1,5 @@
 import { ProfilUtilisateurRepository } from "@/server/profil-utilisateur/domain/ports/ProfilUtilisateurRepository";
+import { modifierProfilUtilisateur } from "@/server/profil-utilisateur/domain/ProfilUtilisateur";
 
 type Dependencies = {
   profilUtilisateurRepository: ProfilUtilisateurRepository;
@@ -21,10 +22,15 @@ export class ModifierMonProfilUseCase {
     utilisateurId: string,
     input: ModifierMonProfilInput,
   ): Promise<void> {
-    await this.profilUtilisateurRepository.modifierProfil(utilisateurId, {
+    const profil =
+      await this.profilUtilisateurRepository.recupererParId(utilisateurId);
+
+    const profilModifie = modifierProfilUtilisateur(profil, {
       nom: input.nom,
       prenom: input.prenom,
       fonction: input.fonction,
     });
+
+    await this.profilUtilisateurRepository.sauvegarder(profilModifie);
   }
 }

@@ -1,9 +1,7 @@
 import { ProfilUtilisateurRepository } from "@/server/profil-utilisateur/domain/ports/ProfilUtilisateurRepository";
-import {
-  creerProfilUtilisateur,
-  ProfilUtilisateur,
-} from "@/server/profil-utilisateur/domain/ProfilUtilisateur";
+import { ProfilUtilisateur } from "@/server/profil-utilisateur/domain/ProfilUtilisateur";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
+import { NotFoundError } from "@/server/app/error-boundary/not-found-error";
 
 interface Dependencies {
   prisma: PrismaPilote;
@@ -18,9 +16,7 @@ export class PrismaProfilUtilisateurRepository
     return this.deps.prisma.getInstance();
   }
 
-  async recupererParId(
-    utilisateurId: string,
-  ): Promise<ProfilUtilisateur | null> {
+  async recupererParId(utilisateurId: string): Promise<ProfilUtilisateur> {
     const utilisateur = await this.prisma.utilisateur.findUnique({
       where: { id: utilisateurId },
       select: {
@@ -33,7 +29,7 @@ export class PrismaProfilUtilisateurRepository
     });
 
     if (!utilisateur) {
-      return null;
+      throw new NotFoundError("Utilisateur non trouvé");
     }
 
     return {
@@ -45,17 +41,24 @@ export class PrismaProfilUtilisateurRepository
     };
   }
 
-  async modifierProfil(
-    utilisateurId: string,
-    data: { nom: string; prenom: string; fonction: string | null },
-  ): Promise<void> {
-    await this.prisma.utilisateur.update({
-      where: { id: utilisateurId },
-      data: {
-        nom: data.nom,
-        prenom: data.prenom,
-        fonction: data.fonction,
+  async sauvegarder(profil: ProfilUtilisateur): Promise<void> {
+    await this.prisma.utilisateur.upsert({
+      where: { id: profil.id },
+      update: {
+        nom: profil.nom,
+        prenom: profil.prenom,
+        fonction: profil.fonction,
         date_modification: new Date(),
+      },
+      create: {
+        id: profil.id,
+        nom: profil.nom,
+        prenom: profil.prenom,
+        email: profil.email,
+        fonction: profil.fonction,
+        date_creation: new Date(),
+        date_modification: new Date(),
+        profilCode: "DITP_ADMIN",
       },
     });
   }

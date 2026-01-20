@@ -21,3 +21,15 @@ export function creerProfilUtilisateur(data: {
     fonction: data.fonction,
   };
 }
+
+export function modifierProfilUtilisateur(
+  profil: ProfilUtilisateur,
+  modifications: { nom: string; prenom: string; fonction: string | null },
+): ProfilUtilisateur {
+  return {
+    ...profil,
+    nom: modifications.nom,
+    prenom: modifications.prenom,
+    fonction: modifications.fonction,
+  };
+}
