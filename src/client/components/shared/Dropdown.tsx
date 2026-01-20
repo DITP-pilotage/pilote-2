@@ -3,7 +3,6 @@ import { ComponentProps } from "react";
 import Link from "next/link";
 import { clsxm } from "@/utils/clsxm";
 import { Icone } from "@/components/_commons/Icone";
-import { Account1Icon } from "@/components/_commons/Icones/Account1Icon";
 
 export const Dropdown = Object.assign({}, DropdownMenu, {
   Content: ({
