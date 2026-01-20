@@ -59,7 +59,7 @@ export const PageMonProfilUtilisateur = () => {
   });
 
   return (
-    <div className="fr-container py-10">
+    <div className="max-w-screen-xl mx-auto py-10">
       <div className="flex flex-col gap-6">
         <Titre baliseHtml="h1" className="fr-h2 mb-0">
           Mes informations PILOTE
