@@ -76,6 +76,7 @@ export const PageMonProfilUtilisateur = () => {
               disabled
               erreur={undefined}
               htmlName="email"
+              isRequired
               libellé="Adresse électronique"
               register={form.register("email")}
               type="email"
@@ -84,6 +85,7 @@ export const PageMonProfilUtilisateur = () => {
             <InputAvecLabel
               erreur={form.formState.errors.prenom}
               htmlName="prénom"
+              isRequired
               libellé="Prénom"
               register={form.register("prenom")}
               type="text"
@@ -92,6 +94,7 @@ export const PageMonProfilUtilisateur = () => {
             <InputAvecLabel
               erreur={form.formState.errors.nom}
               htmlName="nom"
+              isRequired
               libellé="Nom"
               register={form.register("nom")}
               type="text"

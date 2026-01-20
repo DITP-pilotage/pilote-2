@@ -7,10 +7,12 @@ import {
   Merge,
   UseFormRegisterReturn,
 } from "react-hook-form";
+import { ChampObligatoire } from "@/components/PageIndicateur/ChampObligatoire";
 
 interface InputAvecLabelProps {
   type?: HTMLInputTypeAttribute;
   libellé: string;
+  isRequired?: boolean;
   htmlName: string;
   texteAide?: string;
   erreur?: FieldError | Merge<FieldError, FieldErrorsImpl<{}>>;
@@ -22,6 +24,7 @@ const InputAvecLabel: FunctionComponent<InputAvecLabelProps> = ({
   type = "text",
   erreur,
   libellé,
+  isRequired = false,
   htmlName,
   texteAide,
   register,
@@ -33,6 +36,7 @@ const InputAvecLabel: FunctionComponent<InputAvecLabelProps> = ({
     >
       <label className="fr-label" htmlFor={htmlName}>
         {libellé}
+        {isRequired ? <ChampObligatoire /> : null}
         {!!texteAide && <span className="fr-hint-text">{texteAide}</span>}
       </label>
       <input
