@@ -7,7 +7,8 @@ import "@gouvfr/dsfr/dist/component/select/select.min.css";
 interface SelectMetadataProps {
   name:
     | `metadataList.${number}.dataType`
-    | `metadataList.${number}.editBoxType`;
+    | `metadataList.${number}.editBoxType`
+    | `metadataList.${number}.defaultValue`;
   label: string;
   required?: boolean;
   children: ReactNode;

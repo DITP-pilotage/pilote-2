@@ -2,7 +2,6 @@ import { Lien } from "@/components/_commons/Lien/Lien";
 import { Input } from "@/components/_commons/Input";
 import { Textarea } from "@/components/_commons/Textarea";
 import { useFormParametrageSource } from "./form";
-import { InputMetadata } from "./InputMetadata";
 import { SelectMetadata } from "./SelectMetadata";
 import { CheckboxMetadata } from "./CheckboxMetadata";
 import { AcceptedValuesEditor } from "./AcceptedValuesEditor";
@@ -10,6 +9,9 @@ import { AcceptedValuesEditor } from "./AcceptedValuesEditor";
 export const MetadataFieldEditor = ({ fieldIndex }: { fieldIndex: number }) => {
   const form = useFormParametrageSource();
   const editBoxType = form.watch(`metadataList.${fieldIndex}.editBoxType`);
+  const listeValeursAcceptes = form.watch(
+    `metadataList.${fieldIndex}.listeValeursAcceptes`,
+  );
 
   return (
     <div className="bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden w-full">
@@ -85,13 +87,36 @@ export const MetadataFieldEditor = ({ fieldIndex }: { fieldIndex: number }) => {
               </div>
             )}
 
-            <Input
-              className="text-sm font-normal min-h-[38px]"
-              control={form.control}
-              label="Valeur par défaut"
-              name={`metadataList.${fieldIndex}.defaultValue`}
-              placeholder="Valeur par défaut..."
-            />
+            {editBoxType === "multi-select" && (
+              <SelectMetadata
+                label="Valeur par défaut"
+                name={`metadataList.${fieldIndex}.defaultValue`}
+              >
+                <option value="">Aucune valeur par défaut</option>
+                {listeValeursAcceptes?.map((valeur) => (
+                  <option key={valeur.valeur} value={valeur.valeur}>
+                    {valeur.nom || valeur.valeur}
+                  </option>
+                ))}
+              </SelectMetadata>
+            )}
+
+            {editBoxType === "boolean" && (
+              <CheckboxMetadata
+                label="Coché par défaut"
+                name={`metadataList.${fieldIndex}.defaultValue`}
+              />
+            )}
+
+            {editBoxType !== "multi-select" && editBoxType !== "boolean" && (
+              <Input
+                className="text-sm font-normal min-h-[38px]"
+                control={form.control}
+                label="Valeur par défaut"
+                name={`metadataList.${fieldIndex}.defaultValue`}
+                placeholder="Valeur par défaut..."
+              />
+            )}
           </div>
         </div>
 
