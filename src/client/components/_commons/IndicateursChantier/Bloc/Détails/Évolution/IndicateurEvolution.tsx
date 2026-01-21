@@ -7,7 +7,7 @@ import {
   PointElement,
   Tooltip,
 } from "chart.js";
-import { FunctionComponent, useEffect, useMemo, useRef, useState } from "react";
+import { FunctionComponent, useMemo, useRef, useState } from "react";
 import { toBlob, toPng } from "html-to-image";
 import { flushSync } from "react-dom";
 import { toast } from "sonner";
@@ -64,7 +64,7 @@ export const IndicateurEvolution: FunctionComponent<{
   const { options, donnéesParTerritoire } = useIndicateurEvolution();
 
   const {
-    optionsNew,
+    getOptions,
     afficherLesCibles,
     setAfficherLesCibles,
     territoiresAAfficher,
@@ -73,12 +73,11 @@ export const IndicateurEvolution: FunctionComponent<{
     changerLaPeriodeSelectionnee,
     periodesSelectionnablesZoom,
   } = useIndicateurEvolutionNew({
-    modeImpression,
     tousLesIndicateursDetails,
   });
 
   const chartConfig: ChartConfig = {
-    option: optionsNew,
+    getOptions,
     tousLesIndicateursDetails,
     territoiresAAfficher,
     setTerritoiresAAfficher,

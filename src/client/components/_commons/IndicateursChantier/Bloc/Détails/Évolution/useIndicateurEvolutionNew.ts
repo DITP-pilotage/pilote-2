@@ -1,7 +1,7 @@
 import type { LineSeriesOption } from "echarts/charts";
 import { TopLevelFormatterParams } from "echarts/types/dist/shared";
 import { ComposeOption } from "echarts/types/dist/echarts";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import type { IndicateurDetailsParTerritoire } from "@/client/components/_commons/IndicateursChantier/Bloc/IndicateurBloc.interface";
 import { formaterDate } from "@/client/utils/date/date";
 
@@ -87,10 +87,8 @@ const creerSerieCibles = (
 });
 
 export default function useIndicateurEvolutionNew({
-  modeImpression,
   tousLesIndicateursDetails,
 }: {
-  modeImpression: boolean;
   tousLesIndicateursDetails: IndicateurDetailsParTerritoire[];
 }) {
   const [afficherLesCibles, setAfficherLesCibles] = useState<boolean>(false);
@@ -247,8 +245,8 @@ export default function useIndicateurEvolutionNew({
 
   const { yMin, yMax } = CalculerBornesAxeY();
 
-  const optionsNew: ECOption = useMemo(
-    () => ({
+  const getOptions = useCallback(
+    (modeImpression: boolean) => ({
       tooltip: {
         formatter: formatterLaTooltip,
       },
@@ -396,20 +394,18 @@ export default function useIndicateurEvolutionNew({
       maxYear,
       minDate,
       minYear,
-      modeImpression,
       territoiresAAfficher,
       tousLesIndicateursDetails,
       yMax,
       yMin,
     ],
   );
-
   return {
     afficherLesCibles,
     setAfficherLesCibles,
     territoiresAAfficher,
     setTerritoiresAAfficher,
-    optionsNew,
+    getOptions: getOptions,
     periodesSelectionnablesZoom,
     changerLaPeriodeSelectionnee,
     periodeSelectionnee,

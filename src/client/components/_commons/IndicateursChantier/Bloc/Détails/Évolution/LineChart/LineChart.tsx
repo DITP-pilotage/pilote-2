@@ -12,7 +12,7 @@ import { LineChartStyled } from "./LineChart.styled";
 import LineChartLegende from "./LineChartLegende/LineChartLegende";
 
 export interface LineChartProps {
-  option: ECOption;
+  getOptions: (modeImpression: boolean) => ECOption;
   tousLesIndicateursDetails: IndicateurDetailsParTerritoire[];
   territoiresAAfficher: Record<string, boolean>;
   setTerritoiresAAfficher: Dispatch<Record<string, boolean>>;
@@ -25,7 +25,7 @@ export interface LineChartProps {
 }
 
 const LineChart: FunctionComponent<LineChartProps> = ({
-  option,
+  getOptions,
   tousLesIndicateursDetails,
   territoiresAAfficher,
   setTerritoiresAAfficher,
@@ -42,7 +42,10 @@ const LineChart: FunctionComponent<LineChartProps> = ({
   useEffect(() => {
     if (!ref.current) return;
     chart.current = echarts.init(ref.current);
-    chart.current.setOption({ ...option, animation: !modeImpression });
+    chart.current.setOption({
+      ...getOptions(modeImpression),
+      animation: !modeImpression,
+    });
 
     const handleResize = () => chart.current?.resize();
     window.addEventListener("resize", handleResize);
@@ -51,7 +54,7 @@ const LineChart: FunctionComponent<LineChartProps> = ({
       window.removeEventListener("resize", handleResize);
       chart.current?.dispose();
     };
-  }, [modeImpression, option]);
+  }, [modeImpression, getOptions]);
 
   return (
     <LineChartStyled>
