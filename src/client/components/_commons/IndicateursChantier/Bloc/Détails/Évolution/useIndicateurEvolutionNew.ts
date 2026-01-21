@@ -2,7 +2,7 @@ import type { LineSeriesOption } from "echarts/charts";
 import { TopLevelFormatterParams } from "echarts/types/dist/shared";
 import { ComposeOption } from "echarts/types/dist/echarts";
 import { useEffect, useState } from "react";
-import type { IndicateurDétailsParTerritoire } from "@/client/components/_commons/IndicateursChantier/Bloc/IndicateurBloc.interface";
+import type { IndicateurDetailsParTerritoire } from "@/client/components/_commons/IndicateursChantier/Bloc/IndicateurBloc.interface";
 import { formaterDate } from "@/client/utils/date/date";
 
 export type ECOption = ComposeOption<LineSeriesOption>;
@@ -30,7 +30,7 @@ export default function useIndicateurEvolutionNew({
   tousLesIndicateursDetails,
 }: {
   modeImpression: boolean;
-  tousLesIndicateursDetails: IndicateurDétailsParTerritoire[];
+  tousLesIndicateursDetails: IndicateurDetailsParTerritoire[];
 }) {
   const [afficherLesCibles, setAfficherLesCibles] = useState<boolean>(false);
   const [territoiresAAfficher, setTerritoiresAAfficher] = useState<
@@ -125,7 +125,7 @@ export default function useIndicateurEvolutionNew({
   };
 
   const creerSerie = (
-    indicateur: IndicateurDétailsParTerritoire,
+    indicateur: IndicateurDetailsParTerritoire,
     couleur: string,
   ): LineSeriesOption => ({
     name: indicateur.territoireNom,
@@ -143,7 +143,7 @@ export default function useIndicateurEvolutionNew({
   });
 
   const creerSerieCibles = (
-    indicateur: IndicateurDétailsParTerritoire,
+    indicateur: IndicateurDetailsParTerritoire,
     couleur: string,
   ): LineSeriesOption => ({
     name: `${indicateur.territoireNom} - Cible`,

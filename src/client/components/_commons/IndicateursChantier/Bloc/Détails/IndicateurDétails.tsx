@@ -1,8 +1,8 @@
 import { FunctionComponent, useState } from "react";
 import { parseAsString, useQueryState } from "nuqs";
-import { IndicateurÉvolution } from "@/components/_commons/IndicateursChantier/Bloc/Détails/Évolution/IndicateurÉvolution";
+import { IndicateurEvolution } from "@/components/_commons/IndicateursChantier/Bloc/Détails/Évolution/IndicateurEvolution";
 import IndicateurSpécifications from "@/components/_commons/IndicateursChantier/Bloc/Détails/Spécifications/IndicateurSpécifications";
-import { IndicateurDétailsParTerritoire } from "@/components/_commons/IndicateursChantier/Bloc/IndicateurBloc.interface";
+import { IndicateurDetailsParTerritoire } from "@/components/_commons/IndicateursChantier/Bloc/IndicateurBloc.interface";
 import { DétailsIndicateurs } from "@/server/domain/indicateur/DétailsIndicateur.interface";
 import { MailleInterne } from "@/server/domain/maille/Maille.interface";
 import CartographieAvecSelecteurIndicateur from "@/components/_commons/Cartographie/CartographieAvecSelecteurIndicateur/CartographieAvecSelecteurIndicateur";
@@ -15,7 +15,7 @@ export type CartographieIndicateurType =
   | "propositionValeur"
   | "valeurAvancement";
 interface IndicateurDétailsProps {
-  indicateurDétailsParTerritoiresComparés: IndicateurDétailsParTerritoire[];
+  indicateurDétailsParTerritoiresComparés: IndicateurDetailsParTerritoire[];
   dateDeMiseAJourIndicateur: string | null;
   detailsIndicateursTerritoire: DétailsIndicateurs;
   dateValeurAvancement: string | null;
@@ -182,11 +182,11 @@ export const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
               ) : null}
               {futOuvert && detailIndicateurDuTerritoire ? (
                 <section className="fr-col-12">
-                  <IndicateurÉvolution
+                  <IndicateurEvolution
                     dateDeMiseAJourIndicateur={
                       dateDeMiseAJourIndicateur ?? "Non renseignée"
                     }
-                    indicateurDétailsParTerritoiresComparés={
+                    indicateurDetailsParTerritoiresCompares={
                       indicateurDétailsParTerritoiresComparés
                     }
                     nouveauxGraphiquesSontActifs={nouveauxGraphiquesSontActifs}

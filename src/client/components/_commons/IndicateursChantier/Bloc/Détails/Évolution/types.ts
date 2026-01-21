@@ -1,13 +1,13 @@
 import type { Dispatch, ReactNode, SetStateAction } from "react";
 import type { ChartData, ChartOptions } from "chart.js";
+import type { IndicateurDetailsParTerritoire } from "@/client/components/_commons/IndicateursChantier/Bloc/IndicateurBloc.interface";
 import type { ECOption } from "./useIndicateurEvolutionNew";
-import type { IndicateurDétailsParTerritoire } from "../../IndicateurBloc.interface";
 
 export type BaseEvolutionMode = "impression" | "default";
 
 export interface ChartConfig {
   option: ECOption;
-  tousLesIndicateursDetails: IndicateurDétailsParTerritoire[];
+  tousLesIndicateursDetails: IndicateurDetailsParTerritoire[];
   territoiresAAfficher: Record<string, boolean>;
   setTerritoiresAAfficher: Dispatch<Record<string, boolean>>;
   afficherLesCibles: boolean;

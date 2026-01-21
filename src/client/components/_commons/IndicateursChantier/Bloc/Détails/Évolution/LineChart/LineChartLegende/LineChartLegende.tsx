@@ -1,6 +1,6 @@
 import { Dispatch, FunctionComponent, SetStateAction, useId } from "react";
 import { PALETTE_DSFR } from "@/client/components/_commons/IndicateursChantier/Bloc/Détails/Évolution/useIndicateurEvolutionNew";
-import { IndicateurDétailsParTerritoire } from "@/client/components/_commons/IndicateursChantier/Bloc/IndicateurBloc.interface";
+import { IndicateurDetailsParTerritoire } from "@/client/components/_commons/IndicateursChantier/Bloc/IndicateurBloc.interface";
 import Interrupteur from "@/components/_commons/Interrupteur/Interrupteur";
 import {
   CheckboxGroupeStyled,
@@ -8,7 +8,7 @@ import {
 } from "./LineChartLegende.styled";
 
 interface LineChartLegendeProps {
-  tousLesIndicateursDetails: IndicateurDétailsParTerritoire[];
+  tousLesIndicateursDetails: IndicateurDetailsParTerritoire[];
   territoiresAAfficher: Record<string, boolean>;
   setTerritoiresAAfficher: Dispatch<Record<string, boolean>>;
   afficherLesCibles: boolean;

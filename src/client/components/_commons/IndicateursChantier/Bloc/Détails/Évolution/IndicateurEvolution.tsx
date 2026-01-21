@@ -12,14 +12,14 @@ import { toBlob, toPng } from "html-to-image";
 import { flushSync } from "react-dom";
 import { useBlocIndicateurContext } from "@/components/PageChantier/useBlocIndicateurContext";
 import { useTerritoireSelectionne } from "@/components/PageChantier/PageChantierServerSideContext";
-import { IndicateurDétailsParTerritoire } from "@/client/components/_commons/IndicateursChantier/Bloc/IndicateurBloc.interface";
+import { IndicateurDetailsParTerritoire } from "@/client/components/_commons/IndicateursChantier/Bloc/IndicateurBloc.interface";
 import { Download1Icon } from "@/components/_commons/Icones/Download1Icon";
 import { ClipboardIcon } from "@/components/_commons/Icones/ClipboardIcon";
 import { Icone } from "@/components/_commons/Icone";
-import { useIndicateurÉvolution } from "./useIndicateurÉvolution";
+import { useIndicateurEvolution } from "./useIndicateurEvolution";
 import useIndicateurEvolutionNew from "./useIndicateurEvolutionNew";
 import { BaseIndicateurEvolution } from "./BaseIndicateurEvolution";
-import type { ChartConfig, IndicatorMetadata } from "./types";
+import { ChartConfig, IndicatorMetadata } from "./types";
 
 ChartJS.register(
   CategoryScale,
@@ -30,16 +30,12 @@ ChartJS.register(
   Legend,
 );
 
-type IndicateurÉvolutionProps = {
-  indicateurDétailsParTerritoiresComparés: IndicateurDétailsParTerritoire[];
+export const IndicateurEvolution: FunctionComponent<{
+  indicateurDetailsParTerritoiresCompares: IndicateurDetailsParTerritoire[];
   dateDeMiseAJourIndicateur: string | null;
   nouveauxGraphiquesSontActifs: boolean;
-};
-
-export const IndicateurÉvolution: FunctionComponent<
-  IndicateurÉvolutionProps
-> = ({
-  indicateurDétailsParTerritoiresComparés,
+}> = ({
+  indicateurDetailsParTerritoiresCompares,
   dateDeMiseAJourIndicateur,
   nouveauxGraphiquesSontActifs,
 }) => {
@@ -60,15 +56,15 @@ export const IndicateurÉvolution: FunctionComponent<
         territoireNom: detailTerritoireSelectionne.nom,
         territoireCode: detailTerritoireSelectionne.code,
       },
-      ...indicateurDétailsParTerritoiresComparés,
+      ...indicateurDetailsParTerritoiresCompares,
     ];
   }, [
     detailIndicateurDuTerritoire,
     detailTerritoireSelectionne,
-    indicateurDétailsParTerritoiresComparés,
+    indicateurDetailsParTerritoiresCompares,
   ]);
 
-  const { options, donnéesParTerritoire } = useIndicateurÉvolution();
+  const { options, donnéesParTerritoire } = useIndicateurEvolution();
 
   const {
     optionsNew,

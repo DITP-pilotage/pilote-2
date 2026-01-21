@@ -4,7 +4,7 @@ import { générerCouleursAléatoiresEntreDeuxCouleurs } from "@/client/utils/co
 import { useBlocIndicateurContext } from "@/components/PageChantier/useBlocIndicateurContext";
 import { useTerritoireSelectionne } from "@/components/PageChantier/PageChantierServerSideContext";
 
-export const useIndicateurÉvolution = () => {
+export const useIndicateurEvolution = () => {
   const { detailIndicateurDuTerritoire } = useBlocIndicateurContext();
   const detailTerritoireSelectionne = useTerritoireSelectionne();
   let donnéesParTerritoire: ChartData<"line">;
