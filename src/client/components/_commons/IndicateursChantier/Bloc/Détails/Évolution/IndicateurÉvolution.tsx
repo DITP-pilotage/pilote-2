@@ -9,13 +9,14 @@ import {
 } from "chart.js";
 import { Line } from "react-chartjs-2";
 import { FunctionComponent, useMemo, useRef, useState } from "react";
-import { toPng } from "html-to-image";
+import { toBlob, toPng } from "html-to-image";
 import { flushSync } from "react-dom";
 import Titre from "@/components/_commons/Titre/Titre";
 import { useBlocIndicateurContext } from "@/components/PageChantier/useBlocIndicateurContext";
 import { useTerritoireSelectionne } from "@/components/PageChantier/PageChantierServerSideContext";
 import { IndicateurDétailsParTerritoire } from "@/client/components/_commons/IndicateursChantier/Bloc/IndicateurBloc.interface";
 import { Download1Icon } from "@/components/_commons/Icones/Download1Icon";
+import { ClipboardIcon } from "@/components/_commons/Icones/ClipboardIcon";
 import { Icone } from "@/components/_commons/Icone";
 import { clsxm } from "@/utils/clsxm";
 import IndicateurÉvolutionStyled from "./IndicateurÉvolution.styled";
@@ -110,6 +111,37 @@ export const IndicateurÉvolution: FunctionComponent<
     }
   };
 
+  const copierDansLePressePapiers = async () => {
+    if (!composantRef.current) return;
+
+    flushSync(() => {
+      setModeImpression(true);
+    });
+
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 100));
+
+      const blob = await toBlob(composantRef.current, {
+        pixelRatio: 2,
+        backgroundColor: "#ffffff",
+      });
+
+      if (!blob) {
+        throw new Error("Impossible de créer l'image");
+      }
+
+      await navigator.clipboard.write([
+        new ClipboardItem({
+          "image/png": blob,
+        }),
+      ]);
+    } catch (error) {
+      console.error("Erreur lors de la copie dans le presse-papiers:", error);
+    } finally {
+      setModeImpression(false);
+    }
+  };
+
   return (
     <IndicateurÉvolutionStyled
       className={clsxm({
@@ -128,14 +160,24 @@ export const IndicateurÉvolution: FunctionComponent<
           </p>
         </div>
         {!modeImpression ? (
-          <button
-            className="flex items-center gap-2 !text-dsfr-blue-france-sun-113 font-medium text-sm"
-            onClick={enregistrerCommeImage}
-            type="button"
-          >
-            <Icone className="w-4 h-4" icone={Download1Icon} />
-            Enregistrer comme image
-          </button>
+          <div className="flex items-center gap-3">
+            <button
+              className="flex items-center gap-2 !text-dsfr-blue-france-sun-113 font-medium text-sm"
+              onClick={copierDansLePressePapiers}
+              type="button"
+            >
+              <Icone className="w-4 h-4" icone={ClipboardIcon} />
+              Copier dans le presse-papiers
+            </button>
+            <button
+              className="flex items-center gap-2 !text-dsfr-blue-france-sun-113 font-medium text-sm"
+              onClick={enregistrerCommeImage}
+              type="button"
+            >
+              <Icone className="w-4 h-4" icone={Download1Icon} />
+              Enregistrer comme image
+            </button>
+          </div>
         ) : null}
       </div>
       {donnéesParTerritoire.datasets.some(
