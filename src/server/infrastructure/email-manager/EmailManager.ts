@@ -16,11 +16,9 @@ export interface EmailManager {
   deleteContact(email: string): Promise<void>;
   updateContact(
     email: string,
-    nom: string,
-    prenom: string,
-    profil: ProfilCode,
-    listesDiffusionAAjouterIds: number[],
-    listesDiffusionASupprimerIds: number[],
+    attributes: Partial<{ nom: string; prenom: string; profil: ProfilCode }>,
+    listesDiffusionAAjouterIds?: number[],
+    listesDiffusionASupprimerIds?: number[],
   ): Promise<void>;
   addContactToLists(email: string, listesDiffusionIds: number[]): Promise<void>;
 }

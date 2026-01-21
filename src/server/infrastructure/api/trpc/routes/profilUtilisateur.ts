@@ -1,9 +1,12 @@
 import {
   créerRouteurTRPC,
   procédureProtégée,
+  vérifierSiLeCSRFEstValide,
 } from "@/server/infrastructure/api/trpc/trpc";
 import { UnauthorizedError } from "@/server/app/error-boundary/unauthorized-error";
-import { dependencies } from "@/server/infrastructure/Dependencies";
+import { getContainer } from "@/server/dependances";
+import { validationModifierMonProfil } from "@/validation/monProfil";
+import { zodValidateurCSRF } from "@/validation/publication";
 
 export const profilUtilisateurRouter = créerRouteurTRPC({
   getUtilisateurConnecte: procédureProtégée.query(async ({ ctx }) => {
@@ -12,19 +15,17 @@ export const profilUtilisateurRouter = créerRouteurTRPC({
       throw new UnauthorizedError("Utilisateur non authentifié");
     }
 
-    const utilisateur = await dependencies
-      .getUtilisateurRepository()
-      .récupérer(session.user.email);
-
-    if (utilisateur == null) {
-      throw new UnauthorizedError("Utilisateur non authentifié");
-    }
-
-    return {
-      id: utilisateur.id,
-      prenom: utilisateur.prénom,
-      nom: utilisateur.nom,
-      email: utilisateur.email,
-    };
+    const query = getContainer("profilUtilisateur").resolve(
+      "getProfilUtilisateurQuery",
+    );
+    return query.run(session.user.id);
   }),
+  modifierMonProfil: procédureProtégée
+    .input(validationModifierMonProfil.merge(zodValidateurCSRF))
+    .mutation(async ({ input, ctx }) => {
+      vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
+      await getContainer("profilUtilisateur")
+        .resolve("modifierMonProfilUseCase")
+        .run(ctx.session.user.id, input);
+    }),
 });

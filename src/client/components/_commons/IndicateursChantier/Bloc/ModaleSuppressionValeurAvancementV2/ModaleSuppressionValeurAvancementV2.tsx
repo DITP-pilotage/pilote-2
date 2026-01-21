@@ -7,7 +7,7 @@ import { formaterDate } from "@/client/utils/date/date";
 import TextAreaAvecLabel from "@/components/_commons/TextAreaAvecLabel/TextAreaAvecLabel";
 import { LIMITE_CARACTERES_DOCUMENTATION_PROPOSITION } from "@/validation/proposition-valeur-avancement";
 import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
-import api from "@/server/infrastructure/api/trpc/api";
+import { useProfilUtilisateurConnecte } from "@/client/hooks/useProfilUtilisateurConnecte";
 import useModaleSuppressionValeurAvancementV2, {
   EtapeSuppressionPropositionValeurAvancement,
   Stepper,
@@ -40,8 +40,7 @@ export const ModaleSuppressionValeurAvancementV2: FunctionComponent<
     detailIndicateur,
     territoireCode,
   });
-  const [utilisateur] =
-    api.profilUtilisateur.getUtilisateurConnecte.useSuspenseQuery();
+  const utilisateur = useProfilUtilisateurConnecte();
   const auteurModification = `${utilisateur.prenom} ${utilisateur.nom}`;
   const refreshRouter = useRefreshRouter();
 

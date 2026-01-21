@@ -2,6 +2,7 @@ import { DropdownMenu } from "radix-ui";
 import { ComponentProps } from "react";
 import Link from "next/link";
 import { clsxm } from "@/utils/clsxm";
+import { Icone } from "@/components/_commons/Icone";
 
 export const Dropdown = Object.assign({}, DropdownMenu, {
   Content: ({
@@ -13,6 +14,7 @@ export const Dropdown = Object.assign({}, DropdownMenu, {
         {...props}
         className={clsxm(
           props.className,
+          "max-sm:w-[100vw]",
           "bg-white rounded-md shadow-md border border-gray-100 px-4 py-3 z-10",
           "data-[state=open]:animate-dropdown-fade-in data-[state=closed]:animate-dropdown-fade-out",
         )}
@@ -41,5 +43,22 @@ export const Dropdown = Object.assign({}, DropdownMenu, {
         props.className,
       )}
     />
+  ),
+  Divider: () => <div className="h-px bg-gray-200 -mx-4" role="separator" />,
+  Item: ({ className, ...props }: ComponentProps<typeof DropdownMenu.Item>) => (
+    <DropdownMenu.Item
+      {...props}
+      className={clsxm(
+        " -m-2 p-2 flex items-center gap-2",
+        "!outline-none cursor-pointer",
+        "hover:bg-gray-100 rounded transition-colors",
+        "text-sm font-medium",
+        "!bg-none",
+        className,
+      )}
+    />
+  ),
+  Icone: ({ className, ...props }: ComponentProps<typeof Icone>) => (
+    <Icone className={clsxm("text-current h-5 w-5", className)} {...props} />
   ),
 });

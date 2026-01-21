@@ -1,4 +1,5 @@
 import { useState } from "react";
+import Link from "next/link";
 import { Icone } from "@/components/_commons/Icone";
 import { Account1Icon } from "@/components/_commons/Icones/Account1Icon";
 import { ArrowSLine1Icon } from "@/components/_commons/Icones/ArrowSLine1Icon";
@@ -7,11 +8,11 @@ import { BoutonPanelAdministrateur } from "@/components/_commons/BoutonPanelAdmi
 import { clsxm } from "@/utils/clsxm";
 import { Dropdown } from "@/components/shared/Dropdown";
 import api from "@/server/infrastructure/api/trpc/api";
+import { useProfilUtilisateurConnecte } from "@/client/hooks/useProfilUtilisateurConnecte";
 
 export const Utilisateur = () => {
   const [estDeplie, setEstDeplie] = useState<boolean>(false);
-  const [{ email }] =
-    api.profilUtilisateur.getUtilisateurConnecte.useSuspenseQuery();
+  const { email, prenom, nom } = useProfilUtilisateurConnecte();
 
   const { data: panelAdminEstDisponible } =
     api.gestionContenu.récupérerVariableContenu.useQuery({
@@ -27,7 +28,7 @@ export const Utilisateur = () => {
           type="button"
         >
           <Icone icone={Account1Icon} />
-          <span className="pl-2 pr-1">{email}</span>
+          <span className="pl-2 pr-1">Mon espace</span>
           <Icone
             className={clsxm(
               "transition-transform duration-200 ease-in-out",
@@ -38,7 +39,25 @@ export const Utilisateur = () => {
         </button>
       </Dropdown.Trigger>
       <Dropdown.Content align="end" className="flex flex-col gap-4">
+        <div className="flex flex-col">
+          <span className="font-bold text-base">
+            {prenom} {nom}
+          </span>
+          <span className="text-sm">{email}</span>
+        </div>
+
+        <Dropdown.Divider />
+
+        <Dropdown.Item asChild>
+          <Link href="/mon-profil-utilisateur">
+            <Dropdown.Icone icone={Account1Icon} />
+            Mon profil utilisateur
+          </Link>
+        </Dropdown.Item>
         {panelAdminEstDisponible ? <BoutonPanelAdministrateur /> : null}
+
+        <Dropdown.Divider />
+
         <BoutonSeDeconnecter />
       </Dropdown.Content>
     </Dropdown.Root>

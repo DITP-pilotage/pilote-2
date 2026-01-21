@@ -29,8 +29,6 @@ import {
 } from "@/server/gestion-utilisateur/domain/Utilisateur.interface";
 import { UtilisateurÀCréerOuMettreÀJourSansHabilitation } from "@/server/domain/utilisateur/Utilisateur.interface";
 
-import { PilotePrismaClient } from "@/server/db/PrismaTransaction";
-
 interface Dependencies {
   prisma: PrismaPilote;
 }
@@ -249,10 +247,10 @@ const créerLesHabilitations = (
 };
 
 export class PrismaUtilisateurRepository implements UtilisateurRepository {
-  private prisma: PilotePrismaClient;
+  constructor(private readonly deps: Dependencies) {}
 
-  constructor({ prisma }: Dependencies) {
-    this.prisma = prisma.getInstance();
+  get prisma() {
+    return this.deps.prisma.getInstance();
   }
 
   async verifierExistenceUtilisateur(email: string): Promise<boolean> {
