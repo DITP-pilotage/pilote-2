@@ -11,7 +11,7 @@ import { ECOption } from "@/client/components/_commons/IndicateursChantier/Bloc/
 import { LineChartStyled } from "./LineChart.styled";
 import LineChartLegende from "./LineChartLegende/LineChartLegende";
 
-interface LineChartProps {
+export interface LineChartProps {
   option: ECOption;
   tousLesIndicateursDetails: IndicateurDétailsParTerritoire[];
   territoiresAAfficher: Record<string, boolean>;

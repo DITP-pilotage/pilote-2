@@ -7,22 +7,19 @@ import {
   PointElement,
   Tooltip,
 } from "chart.js";
-import { Line } from "react-chartjs-2";
 import { FunctionComponent, useMemo, useRef, useState } from "react";
 import { toBlob, toPng } from "html-to-image";
 import { flushSync } from "react-dom";
-import Titre from "@/components/_commons/Titre/Titre";
 import { useBlocIndicateurContext } from "@/components/PageChantier/useBlocIndicateurContext";
 import { useTerritoireSelectionne } from "@/components/PageChantier/PageChantierServerSideContext";
 import { IndicateurDétailsParTerritoire } from "@/client/components/_commons/IndicateursChantier/Bloc/IndicateurBloc.interface";
 import { Download1Icon } from "@/components/_commons/Icones/Download1Icon";
 import { ClipboardIcon } from "@/components/_commons/Icones/ClipboardIcon";
 import { Icone } from "@/components/_commons/Icone";
-import IndicateurÉvolutionStyled from "./IndicateurÉvolution.styled";
 import { useIndicateurÉvolution } from "./useIndicateurÉvolution";
 import useIndicateurEvolutionNew from "./useIndicateurEvolutionNew";
-import LineChart from "./LineChart/LineChart";
-import "nprogress/nprogress.css";
+import { BaseIndicateurEvolution } from "./BaseIndicateurEvolution";
+import type { ChartConfig, IndicatorMetadata } from "./types";
 
 ChartJS.register(
   CategoryScale,
@@ -47,7 +44,7 @@ export const IndicateurÉvolution: FunctionComponent<
   nouveauxGraphiquesSontActifs,
 }) => {
   const { indicateur } = useBlocIndicateurContext();
-  const composantRef = useRef<HTMLDivElement>(null);
+  const composantRef = useRef<HTMLElement>(null);
   const [modeImpression, setModeImpression] = useState(false);
 
   const {
@@ -87,12 +84,31 @@ export const IndicateurÉvolution: FunctionComponent<
     tousLesIndicateursDetails,
   });
 
-  const enregistrerCommeImage = async () => {
-    if (!composantRef.current) return;
+  const chartConfig: ChartConfig = {
+    option: optionsNew,
+    tousLesIndicateursDetails,
+    territoiresAAfficher,
+    setTerritoiresAAfficher,
+    afficherLesCibles,
+    setAfficherLesCibles,
+    periodeSelectionnee,
+    changerLaPeriodeSelectionnee,
+    periodesSelectionnablesZoom,
+  };
 
+  const indicatorMetadata: IndicatorMetadata = {
+    nom: indicateur.nom,
+    id: indicateur.id,
+    dateDeMiseAJour: dateDeMiseAJourIndicateur,
+    source,
+  };
+
+  const enregistrerCommeImage = async () => {
     flushSync(() => {
       setModeImpression(true);
     });
+
+    if (!composantRef.current) return;
 
     try {
       await new Promise((resolve) => setTimeout(resolve, 1_000));
@@ -112,11 +128,11 @@ export const IndicateurÉvolution: FunctionComponent<
   };
 
   const copierDansLePressePapiers = async () => {
-    if (!composantRef.current) return;
-
     flushSync(() => {
       setModeImpression(true);
     });
+
+    if (!composantRef.current) return;
 
     try {
       await new Promise((resolve) => setTimeout(resolve, 1_000));
@@ -136,116 +152,61 @@ export const IndicateurÉvolution: FunctionComponent<
         }),
       ]);
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error("Erreur lors de la copie dans le presse-papiers:", error);
     } finally {
       setModeImpression(false);
     }
   };
 
+  const actionButtons = (
+    <div className="flex items-end flex-col gap-3">
+      <button
+        className="flex items-center gap-2 !text-dsfr-blue-france-sun-113 font-medium text-sm"
+        onClick={enregistrerCommeImage}
+        type="button"
+      >
+        <Icone className="w-4 h-4" icone={Download1Icon} />
+        Enregistrer comme image
+      </button>
+      <button
+        className="flex items-center gap-2 !text-dsfr-blue-france-sun-113 font-medium text-sm"
+        onClick={copierDansLePressePapiers}
+        type="button"
+      >
+        <Icone className="w-4 h-4" icone={ClipboardIcon} />
+        Copier dans le presse-papiers
+      </button>
+    </div>
+  );
+
   return (
     <div>
-      <div className="fixed inset-0 -z-1">
-        <div className="fr-container">
-          <IndicateurÉvolutionStyled className="!p-10" ref={composantRef}>
-            <div className="flex justify-between items-start gap-4 mb-2">
-              <div>
-                <Titre baliseHtml="h5" className="fr-text--lg fr-mb-0">
-                  Évolution de l'indicateur : {indicateur.nom} ({indicateur.id})
-                </Titre>
-
-                <p className="fr-text--xs !text-dsfr-mention-grey">
-                  {`Mis à jour le : ${dateDeMiseAJourIndicateur} | Source : ${source ?? "Non renseigné"}`}
-                </p>
-              </div>
-            </div>
-            {donnéesParTerritoire.datasets.some(
-              (dataset) => dataset.data.length > 0,
-            ) ? (
-              <div className="graphique-bloc">
-                <div className="graphique-conteneur">
-                  {nouveauxGraphiquesSontActifs ? (
-                    <LineChart
-                      afficherLesCibles={afficherLesCibles}
-                      changerLaPeriodeSelectionnee={
-                        changerLaPeriodeSelectionnee
-                      }
-                      modeImpression
-                      option={optionsNew}
-                      periodeSelectionnee={periodeSelectionnee}
-                      periodesSelectionnablesZoom={periodesSelectionnablesZoom}
-                      setAfficherLesCibles={setAfficherLesCibles}
-                      setTerritoiresAAfficher={setTerritoiresAAfficher}
-                      territoiresAAfficher={territoiresAAfficher}
-                      tousLesIndicateursDetails={tousLesIndicateursDetails}
-                    />
-                  ) : (
-                    <Line data={donnéesParTerritoire} options={options} />
-                  )}
-                </div>
-              </div>
-            ) : (
-              <p className="fr-badge fr-badge--no-icon">NON RENSEIGNÉ</p>
-            )}
-          </IndicateurÉvolutionStyled>
-        </div>
-      </div>
-
-      <IndicateurÉvolutionStyled>
-        <div className="flex justify-between items-start gap-4 mb-2">
-          <div>
-            <Titre baliseHtml="h5" className="fr-text--lg fr-mb-0">
-              Évolution de l'indicateur : {indicateur.nom} ({indicateur.id})
-            </Titre>
-
-            <p className="fr-text--xs !text-dsfr-mention-grey">
-              {`Mis à jour le : ${dateDeMiseAJourIndicateur} | Source : ${source ?? "Non renseigné"}`}
-            </p>
-          </div>
-          <div className="flex items-end flex-col gap-3">
-            <button
-              className="flex items-center gap-2 !text-dsfr-blue-france-sun-113 font-medium text-sm"
-              onClick={enregistrerCommeImage}
-              type="button"
-            >
-              <Icone className="w-4 h-4" icone={Download1Icon} />
-              Enregistrer comme image
-            </button>
-            <button
-              className="flex items-center gap-2 !text-dsfr-blue-france-sun-113 font-medium text-sm"
-              onClick={copierDansLePressePapiers}
-              type="button"
-            >
-              <Icone className="w-4 h-4" icone={ClipboardIcon} />
-              Copier dans le presse-papiers
-            </button>
+      {modeImpression ? (
+        <div className="fixed inset-0 -z-1">
+          <div className="fr-container">
+            <BaseIndicateurEvolution
+              chartConfig={chartConfig}
+              donnéesParTerritoire={donnéesParTerritoire}
+              indicateur={indicatorMetadata}
+              mode="impression"
+              nouveauxGraphiquesSontActifs={nouveauxGraphiquesSontActifs}
+              optionsLegacy={options}
+              ref={composantRef}
+            />
           </div>
         </div>
-        {donnéesParTerritoire.datasets.some(
-          (dataset) => dataset.data.length > 0,
-        ) ? (
-          <div className="graphique-bloc">
-            <div className="graphique-conteneur">
-              {nouveauxGraphiquesSontActifs ? (
-                <LineChart
-                  afficherLesCibles={afficherLesCibles}
-                  changerLaPeriodeSelectionnee={changerLaPeriodeSelectionnee}
-                  option={optionsNew}
-                  periodeSelectionnee={periodeSelectionnee}
-                  periodesSelectionnablesZoom={periodesSelectionnablesZoom}
-                  setAfficherLesCibles={setAfficherLesCibles}
-                  setTerritoiresAAfficher={setTerritoiresAAfficher}
-                  territoiresAAfficher={territoiresAAfficher}
-                  tousLesIndicateursDetails={tousLesIndicateursDetails}
-                />
-              ) : (
-                <Line data={donnéesParTerritoire} options={options} />
-              )}
-            </div>
-          </div>
-        ) : (
-          <p className="fr-badge fr-badge--no-icon">NON RENSEIGNÉ</p>
-        )}
-      </IndicateurÉvolutionStyled>
+      ) : null}
+
+      <BaseIndicateurEvolution
+        actions={actionButtons}
+        chartConfig={chartConfig}
+        donnéesParTerritoire={donnéesParTerritoire}
+        indicateur={indicatorMetadata}
+        mode="default"
+        nouveauxGraphiquesSontActifs={nouveauxGraphiquesSontActifs}
+        optionsLegacy={options}
+      />
     </div>
   );
 };
