@@ -11,7 +11,6 @@ import { Line } from "react-chartjs-2";
 import { FunctionComponent, useMemo, useRef, useState } from "react";
 import { toBlob, toPng } from "html-to-image";
 import { flushSync } from "react-dom";
-import NProgress from "nprogress";
 import Titre from "@/components/_commons/Titre/Titre";
 import { useBlocIndicateurContext } from "@/components/PageChantier/useBlocIndicateurContext";
 import { useTerritoireSelectionne } from "@/components/PageChantier/PageChantierServerSideContext";
@@ -19,7 +18,6 @@ import { IndicateurDétailsParTerritoire } from "@/client/components/_commons/In
 import { Download1Icon } from "@/components/_commons/Icones/Download1Icon";
 import { ClipboardIcon } from "@/components/_commons/Icones/ClipboardIcon";
 import { Icone } from "@/components/_commons/Icone";
-import { clsxm } from "@/utils/clsxm";
 import IndicateurÉvolutionStyled from "./IndicateurÉvolution.styled";
 import { useIndicateurÉvolution } from "./useIndicateurÉvolution";
 import useIndicateurEvolutionNew from "./useIndicateurEvolutionNew";
@@ -97,8 +95,6 @@ export const IndicateurÉvolution: FunctionComponent<
     });
 
     try {
-      NProgress.start();
-      NProgress.set(0.5);
       await new Promise((resolve) => setTimeout(resolve, 1_000));
 
       const dataUrl = await toPng(composantRef.current, {
@@ -111,7 +107,6 @@ export const IndicateurÉvolution: FunctionComponent<
       lien.href = dataUrl;
       lien.click();
     } finally {
-      NProgress.done();
       setModeImpression(false);
     }
   };
@@ -124,8 +119,6 @@ export const IndicateurÉvolution: FunctionComponent<
     });
 
     try {
-      NProgress.start();
-      NProgress.set(0.5);
       await new Promise((resolve) => setTimeout(resolve, 1_000));
 
       const blob = await toBlob(composantRef.current, {
@@ -145,7 +138,6 @@ export const IndicateurÉvolution: FunctionComponent<
     } catch (error) {
       console.error("Erreur lors de la copie dans le presse-papiers:", error);
     } finally {
-      NProgress.done();
       setModeImpression(false);
     }
   };
