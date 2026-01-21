@@ -21,6 +21,7 @@ interface LineChartProps {
   periodeSelectionnee: string;
   changerLaPeriodeSelectionnee: (periode: string) => void;
   periodesSelectionnablesZoom: string[];
+  modeImpression?: boolean;
 }
 
 const LineChart: FunctionComponent<LineChartProps> = ({
@@ -33,6 +34,7 @@ const LineChart: FunctionComponent<LineChartProps> = ({
   periodeSelectionnee,
   changerLaPeriodeSelectionnee,
   periodesSelectionnablesZoom,
+  modeImpression = false,
 }) => {
   const ref = useRef<HTMLDivElement | null>(null);
   const chart = useRef<echarts.EChartsType | null>(null);
@@ -40,7 +42,7 @@ const LineChart: FunctionComponent<LineChartProps> = ({
   useEffect(() => {
     if (!ref.current) return;
     chart.current = echarts.init(ref.current);
-    chart.current.setOption(option);
+    chart.current.setOption({ ...option, animation: !modeImpression });
 
     const handleResize = () => chart.current?.resize();
     window.addEventListener("resize", handleResize);
@@ -49,12 +51,13 @@ const LineChart: FunctionComponent<LineChartProps> = ({
       window.removeEventListener("resize", handleResize);
       chart.current?.dispose();
     };
-  }, [option]);
+  }, [modeImpression, option]);
 
   return (
     <LineChartStyled>
       <div className="container-graphique" ref={ref} />
       <LineChartLegende
+        afficherControls={!modeImpression}
         afficherLesCibles={afficherLesCibles}
         changerLaPeriodeSelectionnee={changerLaPeriodeSelectionnee}
         periodeSelectionnee={periodeSelectionnee}

@@ -25,9 +25,13 @@ export const PALETTE_DSFR = [
   "#AEA397",
 ];
 
-export default function useIndicateurEvolutionNew(
-  tousLesIndicateursDetails: IndicateurDétailsParTerritoire[],
-) {
+export default function useIndicateurEvolutionNew({
+  modeImpression,
+  tousLesIndicateursDetails,
+}: {
+  modeImpression: boolean;
+  tousLesIndicateursDetails: IndicateurDétailsParTerritoire[];
+}) {
   const [afficherLesCibles, setAfficherLesCibles] = useState<boolean>(false);
   const [territoiresAAfficher, setTerritoiresAAfficher] = useState<
     Record<string, boolean>
@@ -321,25 +325,27 @@ export default function useIndicateurEvolutionNew(
         },
       },
     },
-    dataZoom: [
-      {
-        type: "slider",
-        xAxisIndex: [0, 1, 2],
-        height: 25,
-        bottom: 10,
-        filterMode: "none",
-        labelFormatter: function (value: string) {
-          const date = new Date(value);
-          return formaterDate(date.toISOString(), "MM/YYYY");
-        },
-        textStyle: {
-          fontSize: 10,
-          overflow: "breakAll",
-        },
-        startValue: dataZoomPeriode.startValue,
-        endValue: dataZoomPeriode.endValue,
-      },
-    ],
+    dataZoom: modeImpression
+      ? []
+      : [
+          {
+            type: "slider",
+            xAxisIndex: [0, 1, 2],
+            height: 25,
+            bottom: 10,
+            filterMode: "none",
+            labelFormatter: function (value: string) {
+              const date = new Date(value);
+              return formaterDate(date.toISOString(), "MM/YYYY");
+            },
+            textStyle: {
+              fontSize: 10,
+              overflow: "breakAll",
+            },
+            startValue: dataZoomPeriode.startValue,
+            endValue: dataZoomPeriode.endValue,
+          },
+        ],
     grid: {
       left: 25,
       right: 60,
