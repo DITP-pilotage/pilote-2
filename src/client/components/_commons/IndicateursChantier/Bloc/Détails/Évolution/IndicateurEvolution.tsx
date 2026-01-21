@@ -40,14 +40,10 @@ export const IndicateurEvolution: FunctionComponent<{
   dateDeMiseAJourIndicateur,
   nouveauxGraphiquesSontActifs,
 }) => {
-  const { indicateur } = useBlocIndicateurContext();
+  const { detailIndicateurDuTerritoire, indicateur } =
+    useBlocIndicateurContext();
   const composantRef = useRef<HTMLElement>(null);
   const [modeImpression, setModeImpression] = useState(false);
-
-  const {
-    detailIndicateurDuTerritoire,
-    indicateur: { source },
-  } = useBlocIndicateurContext();
   const detailTerritoireSelectionne = useTerritoireSelectionne();
 
   const tousLesIndicateursDetails = useMemo(() => {
@@ -97,7 +93,7 @@ export const IndicateurEvolution: FunctionComponent<{
     nom: indicateur.nom,
     id: indicateur.id,
     dateDeMiseAJour: dateDeMiseAJourIndicateur,
-    source,
+    source: indicateur.source,
   };
 
   const genererImage = async (
@@ -111,7 +107,6 @@ export const IndicateurEvolution: FunctionComponent<{
 
     try {
       await new Promise((resolve) => setTimeout(resolve, 100));
-
       await callback(composantRef.current);
     } finally {
       setModeImpression(false);
