@@ -63,6 +63,7 @@ export type DetailsIndicateur = {
   } | null;
   unite: string | null;
   estApplicable: boolean | null;
+  dateImport: string | null;
   ponderation: number | null;
   prochaineDateValeurAvancement: string | null;
   prochaineDateMaj: string | null;

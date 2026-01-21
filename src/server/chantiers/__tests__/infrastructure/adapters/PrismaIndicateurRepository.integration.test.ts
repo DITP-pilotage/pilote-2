@@ -2319,6 +2319,401 @@ describe("PrismaIndicateurRepository", () => {
         ).toEqual("CALCULE");
       }),
     );
+
+    it(
+      "calcule dateImport comme la date_creation la plus récente des événements VALEUR_CREEE et VALEUR_MODIFIEE antérieurs à la date de dernière exécution des datajobs",
+      createIntegrationTest(async () => {
+        // Given
+        const chantier = await fixtures.chantierIdentite({ id: "CH-001" });
+
+        await fixtures.chantierTerritoire({
+          id: chantier.id,
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+        });
+        await fixtures.chantierTerritoire({
+          id: chantier.id,
+          territoire_code: "DEPT-01",
+          code_insee: "01",
+          maille: "DEPT",
+          zone_id: "D01",
+        });
+
+        const indicateur1 = await fixtures.indicateurIdentite({
+          id: "IND-001",
+          chantier_id: chantier.id,
+        });
+        const indicateur2 = await fixtures.indicateurIdentite({
+          id: "IND-002",
+          chantier_id: chantier.id,
+        });
+        const indicateur3 = await fixtures.indicateurIdentite({
+          id: "IND-003",
+          chantier_id: chantier.id,
+        });
+
+        await fixtures.indicateurTerritoire({
+          id: indicateur1.id,
+          chantier_id: chantier.id,
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+        });
+        await fixtures.indicateurTerritoire({
+          id: indicateur1.id,
+          chantier_id: chantier.id,
+          territoire_code: "DEPT-01",
+          code_insee: "01",
+          maille: "DEPT",
+          zone_id: "D01",
+        });
+        await fixtures.indicateurTerritoire({
+          id: indicateur2.id,
+          chantier_id: chantier.id,
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+        });
+        await fixtures.indicateurTerritoire({
+          id: indicateur3.id,
+          chantier_id: chantier.id,
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+        });
+
+        const utilisateur = await fixtures.utilisateur();
+
+        // IND-001 NAT-FR : événements VALEUR_CREEE et VALEUR_MODIFIEE avant dateDerniereExecutionDatajobs
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur1.id,
+          territoire_code: "NAT-FR",
+          type_evenement: EvenementValeurEnum.VALEUR_CREEE,
+          date_creation: new Date("2026-01-10T00:00:00.000Z"),
+          id_auteur_modification: utilisateur.id,
+        });
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur1.id,
+          territoire_code: "NAT-FR",
+          type_evenement: EvenementValeurEnum.VALEUR_MODIFIEE,
+          date_creation: new Date("2026-01-15T00:00:00.000Z"),
+          id_auteur_modification: utilisateur.id,
+        });
+
+        // IND-001 DEPT-01 : date_creation différente de NAT-FR
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur1.id,
+          territoire_code: "DEPT-01",
+          type_evenement: EvenementValeurEnum.VALEUR_CREEE,
+          date_creation: new Date("2026-01-20T00:00:00.000Z"),
+          id_auteur_modification: utilisateur.id,
+        });
+
+        // IND-002 NAT-FR : uniquement des événements PROPOSITION_* (pas d'import)
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur2.id,
+          territoire_code: "NAT-FR",
+          type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_CREEE,
+          date_creation: new Date("2026-01-10T00:00:00.000Z"),
+          id_auteur_modification: utilisateur.id,
+        });
+
+        // IND-003 NAT-FR : événements après dateDerniereExecutionDatajobs (pas d'import)
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur3.id,
+          territoire_code: "NAT-FR",
+          type_evenement: EvenementValeurEnum.VALEUR_CREEE,
+          date_creation: new Date("2026-03-01T00:00:00.000Z"),
+          id_auteur_modification: utilisateur.id,
+        });
+
+        // When
+        const result =
+          await prismaIndicateurRepository.recupererDetailsParChantierIdEtTerritoire(
+            chantier.id,
+            ["NAT-FR", "DEPT-01"],
+            2025,
+            dateDerniereExecutionDatajobs,
+          );
+
+        // Then
+        expect(result["IND-001"]["NAT-FR"].dateImport).toEqual(
+          new Date("2026-01-15T00:00:00.000Z").toLocaleString(),
+        );
+        expect(result["IND-001"]["DEPT-01"].dateImport).toEqual(
+          new Date("2026-01-20T00:00:00.000Z").toLocaleString(),
+        );
+        expect(result["IND-002"]["NAT-FR"].dateImport).toBeNull();
+        expect(result["IND-003"]["NAT-FR"].dateImport).toBeNull();
+      }),
+    );
+
+    it(
+      "pour un indicateur agrégé NAT avec va_nat_from=DEPT, calcule dateImport à partir des événements DEPT",
+      createIntegrationTest(async () => {
+        // Given
+        const chantier = await fixtures.chantierIdentite({ id: "CH-001" });
+
+        await fixtures.chantierTerritoire({
+          id: chantier.id,
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+        });
+        await fixtures.chantierTerritoire({
+          id: chantier.id,
+          territoire_code: "DEPT-01",
+          code_insee: "01",
+          maille: "DEPT",
+          zone_id: "D01",
+        });
+
+        const indicateur = await fixtures.indicateurIdentite({
+          id: "IND-001",
+          chantier_id: chantier.id,
+        });
+
+        await fixtures.metadataParametrageIndicateurs({
+          indic_id: indicateur.id,
+          va_nat_from: "DEPT",
+        });
+
+        await fixtures.indicateurTerritoire({
+          id: indicateur.id,
+          chantier_id: chantier.id,
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+        });
+        await fixtures.indicateurTerritoire({
+          id: indicateur.id,
+          chantier_id: chantier.id,
+          territoire_code: "DEPT-01",
+          code_insee: "01",
+          maille: "DEPT",
+          zone_id: "D01",
+        });
+
+        const utilisateur = await fixtures.utilisateur();
+
+        // Événement NAT-FR (ne doit pas être utilisé car va_nat_from=DEPT)
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur.id,
+          territoire_code: "NAT-FR",
+          type_evenement: EvenementValeurEnum.VALEUR_CREEE,
+          date_creation: new Date("2026-01-01T00:00:00.000Z"),
+          id_auteur_modification: utilisateur.id,
+        });
+
+        // Événements DEPT-01 (doivent être utilisés)
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur.id,
+          territoire_code: "DEPT-01",
+          type_evenement: EvenementValeurEnum.VALEUR_CREEE,
+          date_creation: new Date("2026-01-10T00:00:00.000Z"),
+          id_auteur_modification: utilisateur.id,
+        });
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur.id,
+          territoire_code: "DEPT-01",
+          type_evenement: EvenementValeurEnum.VALEUR_MODIFIEE,
+          date_creation: new Date("2026-01-20T00:00:00.000Z"),
+          id_auteur_modification: utilisateur.id,
+        });
+
+        // When
+        const result =
+          await prismaIndicateurRepository.recupererDetailsParChantierIdEtTerritoire(
+            chantier.id,
+            ["NAT-FR"],
+            2025,
+            dateDerniereExecutionDatajobs,
+          );
+
+        // Then
+        // NAT-FR utilise les événements DEPT (date la plus récente: 2026-01-20)
+        expect(result["IND-001"]["NAT-FR"].dateImport).toEqual(
+          new Date("2026-01-20T00:00:00.000Z").toLocaleString(),
+        );
+      }),
+    );
+
+    it(
+      "pour un indicateur agrégé NAT avec va_nat_from=REG, calcule dateImport à partir des événements REG",
+      createIntegrationTest(async () => {
+        // Given
+        const chantier = await fixtures.chantierIdentite({ id: "CH-001" });
+
+        await fixtures.chantierTerritoire({
+          id: chantier.id,
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+        });
+        await fixtures.chantierTerritoire({
+          id: chantier.id,
+          territoire_code: "REG-84",
+          code_insee: "84",
+          maille: "REG",
+          zone_id: "R84",
+        });
+
+        const indicateur = await fixtures.indicateurIdentite({
+          id: "IND-001",
+          chantier_id: chantier.id,
+        });
+
+        await fixtures.metadataParametrageIndicateurs({
+          indic_id: indicateur.id,
+          va_nat_from: "REG",
+        });
+
+        await fixtures.indicateurTerritoire({
+          id: indicateur.id,
+          chantier_id: chantier.id,
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+        });
+        await fixtures.indicateurTerritoire({
+          id: indicateur.id,
+          chantier_id: chantier.id,
+          territoire_code: "REG-84",
+          code_insee: "84",
+          maille: "REG",
+          zone_id: "R84",
+        });
+
+        const utilisateur = await fixtures.utilisateur();
+
+        // Événement NAT-FR (ne doit pas être utilisé car va_nat_from=REG)
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur.id,
+          territoire_code: "NAT-FR",
+          type_evenement: EvenementValeurEnum.VALEUR_CREEE,
+          date_creation: new Date("2026-01-01T00:00:00.000Z"),
+          id_auteur_modification: utilisateur.id,
+        });
+
+        // Événements REG-84 (doivent être utilisés)
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur.id,
+          territoire_code: "REG-84",
+          type_evenement: EvenementValeurEnum.VALEUR_CREEE,
+          date_creation: new Date("2026-01-15T00:00:00.000Z"),
+          id_auteur_modification: utilisateur.id,
+        });
+
+        // When
+        const result =
+          await prismaIndicateurRepository.recupererDetailsParChantierIdEtTerritoire(
+            chantier.id,
+            ["NAT-FR"],
+            2025,
+            dateDerniereExecutionDatajobs,
+          );
+
+        // Then
+        // NAT-FR utilise les événements REG (date: 2026-01-15)
+        expect(result["IND-001"]["NAT-FR"].dateImport).toEqual(
+          new Date("2026-01-15T00:00:00.000Z").toLocaleString(),
+        );
+      }),
+    );
+
+    it(
+      "pour un indicateur agrégé REG avec va_reg_from=DEPT, calcule dateImport à partir des événements DEPT",
+      createIntegrationTest(async () => {
+        // Given
+        const chantier = await fixtures.chantierIdentite({ id: "CH-001" });
+
+        await fixtures.chantierTerritoire({
+          id: chantier.id,
+          territoire_code: "REG-84",
+          code_insee: "84",
+          maille: "REG",
+          zone_id: "R84",
+        });
+        await fixtures.chantierTerritoire({
+          id: chantier.id,
+          territoire_code: "DEPT-01",
+          code_insee: "01",
+          maille: "DEPT",
+          zone_id: "D01",
+        });
+
+        const indicateur = await fixtures.indicateurIdentite({
+          id: "IND-001",
+          chantier_id: chantier.id,
+        });
+
+        await fixtures.metadataParametrageIndicateurs({
+          indic_id: indicateur.id,
+          va_reg_from: "DEPT",
+        });
+
+        await fixtures.indicateurTerritoire({
+          id: indicateur.id,
+          chantier_id: chantier.id,
+          territoire_code: "REG-84",
+          code_insee: "84",
+          maille: "REG",
+          zone_id: "R84",
+        });
+        await fixtures.indicateurTerritoire({
+          id: indicateur.id,
+          chantier_id: chantier.id,
+          territoire_code: "DEPT-01",
+          code_insee: "01",
+          maille: "DEPT",
+          zone_id: "D01",
+        });
+
+        const utilisateur = await fixtures.utilisateur();
+
+        // Événement REG-84 (ne doit pas être utilisé car va_reg_from=DEPT)
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur.id,
+          territoire_code: "REG-84",
+          type_evenement: EvenementValeurEnum.VALEUR_CREEE,
+          date_creation: new Date("2026-01-01T00:00:00.000Z"),
+          id_auteur_modification: utilisateur.id,
+        });
+
+        // Événements DEPT-01 (doivent être utilisés)
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur.id,
+          territoire_code: "DEPT-01",
+          type_evenement: EvenementValeurEnum.VALEUR_CREEE,
+          date_creation: new Date("2026-01-25T00:00:00.000Z"),
+          id_auteur_modification: utilisateur.id,
+        });
+
+        // When
+        const result =
+          await prismaIndicateurRepository.recupererDetailsParChantierIdEtTerritoire(
+            chantier.id,
+            ["REG-84"],
+            2025,
+            dateDerniereExecutionDatajobs,
+          );
+
+        // Then
+        // REG-84 utilise les événements DEPT (date: 2026-01-25)
+        expect(result["IND-001"]["REG-84"].dateImport).toEqual(
+          new Date("2026-01-25T00:00:00.000Z").toLocaleString(),
+        );
+      }),
+    );
   });
 
   describe("#récupérerDétailsTerritoirePourUnIndicateur", () => {
@@ -4827,6 +5222,387 @@ describe("PrismaIndicateurRepository", () => {
         );
       }),
     );
+
+    it(
+      "calcule dateImport comme la date_creation la plus récente des événements VALEUR_CREEE et VALEUR_MODIFIEE antérieurs à la date de dernière exécution des datajobs",
+      createIntegrationTest(async () => {
+        // Given
+        const chantiersIds = ["CH-001"];
+        const indicateurId = "IND-001";
+        const territoireCodes = ["DEPT-01", "DEPT-02", "DEPT-03"];
+        const jalon = 2025;
+        const habilitations: Habilitations = {
+          gestionUtilisateur: {
+            chantiers: chantiersIds,
+            territoires: territoireCodes,
+            périmètres: [],
+          },
+          lecture: {
+            chantiers: chantiersIds,
+            territoires: territoireCodes,
+            périmètres: [],
+          },
+          saisieCommentaire: {
+            chantiers: chantiersIds,
+            territoires: territoireCodes,
+            périmètres: [],
+          },
+          saisieIndicateur: {
+            chantiers: chantiersIds,
+            territoires: territoireCodes,
+            périmètres: [],
+          },
+          responsabilite: {
+            chantiers: chantiersIds,
+            territoires: territoireCodes,
+            périmètres: [],
+          },
+        };
+
+        const chantier = await fixtures.chantierIdentite({ id: "CH-001" });
+
+        await fixtures.chantierTerritoire({
+          id: chantier.id,
+          territoire_code: "DEPT-01",
+          code_insee: "01",
+          maille: "DEPT",
+          zone_id: "D01",
+        });
+        await fixtures.chantierTerritoire({
+          id: chantier.id,
+          territoire_code: "DEPT-02",
+          code_insee: "02",
+          maille: "DEPT",
+          zone_id: "D02",
+        });
+        await fixtures.chantierTerritoire({
+          id: chantier.id,
+          territoire_code: "DEPT-03",
+          code_insee: "03",
+          maille: "DEPT",
+          zone_id: "D03",
+        });
+
+        const indicateur = await fixtures.indicateurIdentite({
+          id: indicateurId,
+          chantier_id: chantier.id,
+        });
+
+        await fixtures.indicateurTerritoire({
+          id: indicateur.id,
+          chantier_id: chantier.id,
+          territoire_code: "DEPT-01",
+          code_insee: "01",
+          maille: "DEPT",
+          zone_id: "D01",
+        });
+        await fixtures.indicateurTerritoire({
+          id: indicateur.id,
+          chantier_id: chantier.id,
+          territoire_code: "DEPT-02",
+          code_insee: "02",
+          maille: "DEPT",
+          zone_id: "D02",
+        });
+        await fixtures.indicateurTerritoire({
+          id: indicateur.id,
+          chantier_id: chantier.id,
+          territoire_code: "DEPT-03",
+          code_insee: "03",
+          maille: "DEPT",
+          zone_id: "D03",
+        });
+
+        const utilisateur = await fixtures.utilisateur();
+
+        // DEPT-01 : événements VALEUR_CREEE et VALEUR_MODIFIEE avant dateDerniereExecutionDatajobs
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur.id,
+          territoire_code: "DEPT-01",
+          type_evenement: EvenementValeurEnum.VALEUR_CREEE,
+          date_creation: new Date("2026-01-10T00:00:00.000Z"),
+          id_auteur_modification: utilisateur.id,
+        });
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur.id,
+          territoire_code: "DEPT-01",
+          type_evenement: EvenementValeurEnum.VALEUR_MODIFIEE,
+          date_creation: new Date("2026-01-15T00:00:00.000Z"),
+          id_auteur_modification: utilisateur.id,
+        });
+
+        // DEPT-02 : uniquement des événements PROPOSITION_* (pas d'import)
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur.id,
+          territoire_code: "DEPT-02",
+          type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_CREEE,
+          date_creation: new Date("2026-01-10T00:00:00.000Z"),
+          id_auteur_modification: utilisateur.id,
+        });
+
+        // DEPT-03 : événements après dateDerniereExecutionDatajobs (pas d'import)
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur.id,
+          territoire_code: "DEPT-03",
+          type_evenement: EvenementValeurEnum.VALEUR_CREEE,
+          date_creation: new Date("2026-03-01T00:00:00.000Z"),
+          id_auteur_modification: utilisateur.id,
+        });
+
+        // When
+        const result =
+          await prismaIndicateurRepository.récupérerDétailsTerritoirePourUnIndicateur(
+            indicateurId,
+            habilitations,
+            ProfilEnum.SERVICES_DECONCENTRES_DEPARTEMENT,
+            jalon,
+            dateDerniereExecutionDatajobs,
+          );
+
+        // Then
+        expect(result["DEPT-01"].dateImport).toEqual(
+          new Date("2026-01-15T00:00:00.000Z").toLocaleString(),
+        );
+        expect(result["DEPT-02"].dateImport).toBeNull();
+        expect(result["DEPT-03"].dateImport).toBeNull();
+      }),
+    );
+
+    it(
+      "pour un indicateur agrégé NAT avec va_nat_from=DEPT, calcule dateImport à partir des événements DEPT",
+      createIntegrationTest(async () => {
+        // Given
+        const chantiersIds = ["CH-001"];
+        const indicateurId = "IND-001";
+        const territoireCodes = ["NAT-FR"];
+        const jalon = 2025;
+        const habilitations: Habilitations = {
+          gestionUtilisateur: {
+            chantiers: chantiersIds,
+            territoires: territoireCodes,
+            périmètres: [],
+          },
+          lecture: {
+            chantiers: chantiersIds,
+            territoires: territoireCodes,
+            périmètres: [],
+          },
+          saisieCommentaire: {
+            chantiers: chantiersIds,
+            territoires: territoireCodes,
+            périmètres: [],
+          },
+          saisieIndicateur: {
+            chantiers: chantiersIds,
+            territoires: territoireCodes,
+            périmètres: [],
+          },
+          responsabilite: {
+            chantiers: chantiersIds,
+            territoires: territoireCodes,
+            périmètres: [],
+          },
+        };
+
+        const chantier = await fixtures.chantierIdentite({ id: "CH-001" });
+
+        await fixtures.chantierTerritoire({
+          id: chantier.id,
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+        });
+        await fixtures.chantierTerritoire({
+          id: chantier.id,
+          territoire_code: "DEPT-01",
+          code_insee: "01",
+          maille: "DEPT",
+          zone_id: "D01",
+        });
+
+        const indicateur = await fixtures.indicateurIdentite({
+          id: indicateurId,
+          chantier_id: chantier.id,
+        });
+
+        await fixtures.metadataParametrageIndicateurs({
+          indic_id: indicateur.id,
+          va_nat_from: "DEPT",
+        });
+
+        await fixtures.indicateurTerritoire({
+          id: indicateur.id,
+          chantier_id: chantier.id,
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+        });
+        await fixtures.indicateurTerritoire({
+          id: indicateur.id,
+          chantier_id: chantier.id,
+          territoire_code: "DEPT-01",
+          code_insee: "01",
+          maille: "DEPT",
+          zone_id: "D01",
+        });
+
+        const utilisateur = await fixtures.utilisateur();
+
+        // Événement NAT-FR (ne doit pas être utilisé car va_nat_from=DEPT)
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur.id,
+          territoire_code: "NAT-FR",
+          type_evenement: EvenementValeurEnum.VALEUR_CREEE,
+          date_creation: new Date("2026-01-01T00:00:00.000Z"),
+          id_auteur_modification: utilisateur.id,
+        });
+
+        // Événements DEPT-01 (doivent être utilisés)
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur.id,
+          territoire_code: "DEPT-01",
+          type_evenement: EvenementValeurEnum.VALEUR_CREEE,
+          date_creation: new Date("2026-01-20T00:00:00.000Z"),
+          id_auteur_modification: utilisateur.id,
+        });
+
+        // When
+        const result =
+          await prismaIndicateurRepository.récupérerDétailsTerritoirePourUnIndicateur(
+            indicateurId,
+            habilitations,
+            ProfilEnum.DITP_ADMIN,
+            jalon,
+            dateDerniereExecutionDatajobs,
+          );
+
+        // Then
+        // NAT-FR utilise les événements DEPT (date: 2026-01-20)
+        expect(result["NAT-FR"].dateImport).toEqual(
+          new Date("2026-01-20T00:00:00.000Z").toLocaleString(),
+        );
+      }),
+    );
+
+    it(
+      "pour un indicateur agrégé REG avec va_reg_from=DEPT, calcule dateImport à partir des événements DEPT",
+      createIntegrationTest(async () => {
+        // Given
+        const chantiersIds = ["CH-001"];
+        const indicateurId = "IND-001";
+        const territoireCodes = ["REG-84"];
+        const jalon = 2025;
+        const habilitations: Habilitations = {
+          gestionUtilisateur: {
+            chantiers: chantiersIds,
+            territoires: territoireCodes,
+            périmètres: [],
+          },
+          lecture: {
+            chantiers: chantiersIds,
+            territoires: territoireCodes,
+            périmètres: [],
+          },
+          saisieCommentaire: {
+            chantiers: chantiersIds,
+            territoires: territoireCodes,
+            périmètres: [],
+          },
+          saisieIndicateur: {
+            chantiers: chantiersIds,
+            territoires: territoireCodes,
+            périmètres: [],
+          },
+          responsabilite: {
+            chantiers: chantiersIds,
+            territoires: territoireCodes,
+            périmètres: [],
+          },
+        };
+
+        const chantier = await fixtures.chantierIdentite({ id: "CH-001" });
+
+        await fixtures.chantierTerritoire({
+          id: chantier.id,
+          territoire_code: "REG-84",
+          code_insee: "84",
+          maille: "REG",
+          zone_id: "R84",
+        });
+        await fixtures.chantierTerritoire({
+          id: chantier.id,
+          territoire_code: "DEPT-01",
+          code_insee: "01",
+          maille: "DEPT",
+          zone_id: "D01",
+        });
+
+        const indicateur = await fixtures.indicateurIdentite({
+          id: indicateurId,
+          chantier_id: chantier.id,
+        });
+
+        await fixtures.metadataParametrageIndicateurs({
+          indic_id: indicateur.id,
+          va_reg_from: "DEPT",
+        });
+
+        await fixtures.indicateurTerritoire({
+          id: indicateur.id,
+          chantier_id: chantier.id,
+          territoire_code: "REG-84",
+          code_insee: "84",
+          maille: "REG",
+          zone_id: "R84",
+        });
+        await fixtures.indicateurTerritoire({
+          id: indicateur.id,
+          chantier_id: chantier.id,
+          territoire_code: "DEPT-01",
+          code_insee: "01",
+          maille: "DEPT",
+          zone_id: "D01",
+        });
+
+        const utilisateur = await fixtures.utilisateur();
+
+        // Événement REG-84 (ne doit pas être utilisé car va_reg_from=DEPT)
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur.id,
+          territoire_code: "REG-84",
+          type_evenement: EvenementValeurEnum.VALEUR_CREEE,
+          date_creation: new Date("2026-01-01T00:00:00.000Z"),
+          id_auteur_modification: utilisateur.id,
+        });
+
+        // Événements DEPT-01 (doivent être utilisés)
+        await fixtures.indicateurTerritoireValeurEvenement({
+          indic_id: indicateur.id,
+          territoire_code: "DEPT-01",
+          type_evenement: EvenementValeurEnum.VALEUR_CREEE,
+          date_creation: new Date("2026-01-25T00:00:00.000Z"),
+          id_auteur_modification: utilisateur.id,
+        });
+
+        // When
+        const result =
+          await prismaIndicateurRepository.récupérerDétailsTerritoirePourUnIndicateur(
+            indicateurId,
+            habilitations,
+            ProfilEnum.DITP_ADMIN,
+            jalon,
+            dateDerniereExecutionDatajobs,
+          );
+
+        // Then
+        // REG-84 utilise les événements DEPT (date: 2026-01-25)
+        expect(result["REG-84"].dateImport).toEqual(
+          new Date("2026-01-25T00:00:00.000Z").toLocaleString(),
+        );
+      }),
+    );
   });
 
   describe("#recupererIndicateursNonAJourParChantierId", () => {
@@ -5376,319 +6152,6 @@ describe("PrismaIndicateurRepository", () => {
         ]);
         expect(result.get("CH-001")![0].mailles).toHaveLength(2);
         expect(result.get("CH-001")![1].mailles).toHaveLength(2);
-      }),
-    );
-  });
-
-  describe("#recupererDatesDernierImports", () => {
-    it(
-      "retourne la date de création la plus récente parmi les événements VALEUR_CREEE et VALEUR_MODIFIEE pour chaque indicateur",
-      createIntegrationTest(async () => {
-        // Given
-        const chantier = await fixtures.chantierIdentite({
-          id: "CH-001",
-          nom: "Chantier 001",
-        });
-
-        await fixtures.chantierTerritoire({
-          id: chantier.id,
-          maille: "NAT",
-          territoire_code: "NAT-FR",
-          code_insee: "FR",
-          zone_id: "NAT-FR",
-        });
-
-        const indicateur1 = await fixtures.indicateurIdentite({
-          id: "IND-001",
-          nom: "Indicateur 001",
-          chantier_id: chantier.id,
-        });
-
-        await fixtures.indicateurTerritoire({
-          id: indicateur1.id,
-          chantier_id: chantier.id,
-          maille: "NAT",
-          territoire_code: "NAT-FR",
-          code_insee: "FR",
-          zone_id: "NAT-FR",
-        });
-
-        const indicateur2 = await fixtures.indicateurIdentite({
-          id: "IND-002",
-          nom: "Indicateur 002",
-          chantier_id: chantier.id,
-        });
-
-        await fixtures.indicateurTerritoire({
-          id: indicateur2.id,
-          chantier_id: chantier.id,
-          maille: "NAT",
-          territoire_code: "NAT-FR",
-          code_insee: "FR",
-          zone_id: "NAT-FR",
-        });
-
-        const auteur = await fixtures.utilisateur();
-
-        await fixtures.indicateurTerritoireValeurEvenement({
-          indic_id: indicateur1.id,
-          territoire_code: "NAT-FR",
-          type_evenement: EvenementValeurEnum.VALEUR_CREEE,
-          date_creation: new Date("2026-01-01T10:00:00.000Z"),
-          id_auteur_modification: auteur.id,
-        });
-
-        await fixtures.indicateurTerritoireValeurEvenement({
-          indic_id: indicateur1.id,
-          territoire_code: "NAT-FR",
-          type_evenement: EvenementValeurEnum.VALEUR_MODIFIEE,
-          date_creation: new Date("2026-01-15T10:00:00.000Z"),
-          id_auteur_modification: auteur.id,
-        });
-
-        await fixtures.indicateurTerritoireValeurEvenement({
-          indic_id: indicateur2.id,
-          territoire_code: "NAT-FR",
-          type_evenement: EvenementValeurEnum.VALEUR_CREEE,
-          date_creation: new Date("2026-01-20T10:00:00.000Z"),
-          id_auteur_modification: auteur.id,
-        });
-
-        // When
-        const result =
-          await prismaIndicateurRepository.recupererDatesDernierImports(
-            new Date("2026-02-01T00:00:00.000Z"),
-          );
-
-        // Then
-        expect(result.get("IND-001")).toEqual(
-          new Date("2026-01-15T10:00:00.000Z"),
-        );
-        expect(result.get("IND-002")).toEqual(
-          new Date("2026-01-20T10:00:00.000Z"),
-        );
-      }),
-    );
-
-    it(
-      "ignore les événements dont la date de création est supérieure ou égale à la date d'exécution des datajobs",
-      createIntegrationTest(async () => {
-        // Given
-        const chantier = await fixtures.chantierIdentite({
-          id: "CH-001",
-          nom: "Chantier 001",
-        });
-
-        await fixtures.chantierTerritoire({
-          id: chantier.id,
-          maille: "NAT",
-          territoire_code: "NAT-FR",
-          code_insee: "FR",
-          zone_id: "NAT-FR",
-        });
-
-        const indicateur = await fixtures.indicateurIdentite({
-          id: "IND-001",
-          nom: "Indicateur 001",
-          chantier_id: chantier.id,
-        });
-
-        await fixtures.indicateurTerritoire({
-          id: indicateur.id,
-          chantier_id: chantier.id,
-          maille: "NAT",
-          territoire_code: "NAT-FR",
-          code_insee: "FR",
-          zone_id: "NAT-FR",
-        });
-
-        const auteur = await fixtures.utilisateur();
-
-        await fixtures.indicateurTerritoireValeurEvenement({
-          indic_id: indicateur.id,
-          territoire_code: "NAT-FR",
-          type_evenement: EvenementValeurEnum.VALEUR_CREEE,
-          date_creation: new Date("2026-01-10T10:00:00.000Z"),
-          id_auteur_modification: auteur.id,
-        });
-
-        await fixtures.indicateurTerritoireValeurEvenement({
-          indic_id: indicateur.id,
-          territoire_code: "NAT-FR",
-          type_evenement: EvenementValeurEnum.VALEUR_MODIFIEE,
-          date_creation: new Date("2026-02-01T10:00:00.000Z"),
-          id_auteur_modification: auteur.id,
-        });
-
-        // When
-        const result =
-          await prismaIndicateurRepository.recupererDatesDernierImports(
-            new Date("2026-02-01T00:00:00.000Z"),
-          );
-
-        // Then
-        expect(result.get("IND-001")).toEqual(
-          new Date("2026-01-10T10:00:00.000Z"),
-        );
-      }),
-    );
-
-    it(
-      "retourne la date la plus récente parmi les événements de plusieurs territoires pour un même indicateur",
-      createIntegrationTest(async () => {
-        // Given
-        const chantier = await fixtures.chantierIdentite({
-          id: "CH-001",
-          nom: "Chantier 001",
-        });
-
-        await fixtures.chantierTerritoire({
-          id: chantier.id,
-          maille: "NAT",
-          territoire_code: "NAT-FR",
-          code_insee: "FR",
-          zone_id: "NAT-FR",
-        });
-
-        await fixtures.chantierTerritoire({
-          id: chantier.id,
-          maille: "REG",
-          territoire_code: "REG-11",
-          code_insee: "11",
-          zone_id: "REG-11",
-        });
-
-        const indicateur = await fixtures.indicateurIdentite({
-          id: "IND-001",
-          nom: "Indicateur 001",
-          chantier_id: chantier.id,
-        });
-
-        await fixtures.indicateurTerritoire({
-          id: indicateur.id,
-          chantier_id: chantier.id,
-          maille: "NAT",
-          territoire_code: "NAT-FR",
-          code_insee: "FR",
-          zone_id: "NAT-FR",
-        });
-
-        await fixtures.indicateurTerritoire({
-          id: indicateur.id,
-          chantier_id: chantier.id,
-          maille: "REG",
-          territoire_code: "REG-11",
-          code_insee: "11",
-          zone_id: "REG-11",
-        });
-
-        const auteur = await fixtures.utilisateur();
-
-        await fixtures.indicateurTerritoireValeurEvenement({
-          indic_id: indicateur.id,
-          territoire_code: "NAT-FR",
-          type_evenement: EvenementValeurEnum.VALEUR_CREEE,
-          date_creation: new Date("2026-01-05T10:00:00.000Z"),
-          id_auteur_modification: auteur.id,
-        });
-
-        await fixtures.indicateurTerritoireValeurEvenement({
-          indic_id: indicateur.id,
-          territoire_code: "REG-11",
-          type_evenement: EvenementValeurEnum.VALEUR_CREEE,
-          date_creation: new Date("2026-01-20T10:00:00.000Z"),
-          id_auteur_modification: auteur.id,
-        });
-
-        // When
-        const result =
-          await prismaIndicateurRepository.recupererDatesDernierImports(
-            new Date("2026-02-01T00:00:00.000Z"),
-          );
-
-        // Then
-        expect(result.get("IND-001")).toEqual(
-          new Date("2026-01-20T10:00:00.000Z"),
-        );
-      }),
-    );
-
-    it(
-      "ignore les événements qui ne sont pas de type VALEUR_CREEE ou VALEUR_MODIFIEE",
-      createIntegrationTest(async () => {
-        // Given
-        const chantier = await fixtures.chantierIdentite({
-          id: "CH-001",
-          nom: "Chantier 001",
-        });
-
-        await fixtures.chantierTerritoire({
-          id: chantier.id,
-          maille: "NAT",
-          territoire_code: "NAT-FR",
-          code_insee: "FR",
-          zone_id: "NAT-FR",
-        });
-
-        const indicateur = await fixtures.indicateurIdentite({
-          id: "IND-001",
-          nom: "Indicateur 001",
-          chantier_id: chantier.id,
-        });
-
-        await fixtures.indicateurTerritoire({
-          id: indicateur.id,
-          chantier_id: chantier.id,
-          maille: "NAT",
-          territoire_code: "NAT-FR",
-          code_insee: "FR",
-          zone_id: "NAT-FR",
-        });
-
-        const auteur = await fixtures.utilisateur();
-
-        await fixtures.indicateurTerritoireValeurEvenement({
-          indic_id: indicateur.id,
-          territoire_code: "NAT-FR",
-          type_evenement: EvenementValeurEnum.VALEUR_CREEE,
-          date_creation: new Date("2026-01-05T10:00:00.000Z"),
-          id_auteur_modification: auteur.id,
-        });
-
-        await fixtures.indicateurTerritoireValeurEvenement({
-          indic_id: indicateur.id,
-          territoire_code: "NAT-FR",
-          type_evenement: EvenementValeurEnum.PROPOSITION_VALEUR_CREEE,
-          date_creation: new Date("2026-01-25T10:00:00.000Z"),
-          id_auteur_modification: auteur.id,
-        });
-
-        // When
-        const result =
-          await prismaIndicateurRepository.recupererDatesDernierImports(
-            new Date("2026-02-01T00:00:00.000Z"),
-          );
-
-        // Then
-        expect(result.get("IND-001")).toEqual(
-          new Date("2026-01-05T10:00:00.000Z"),
-        );
-      }),
-    );
-
-    it(
-      "retourne une Map vide quand il n'y a pas d'événements",
-      createIntegrationTest(async () => {
-        // Given - pas d'événements créés
-
-        // When
-        const result =
-          await prismaIndicateurRepository.recupererDatesDernierImports(
-            new Date("2026-02-01T00:00:00.000Z"),
-          );
-
-        // Then
-        expect(result.size).toEqual(0);
       }),
     );
   });

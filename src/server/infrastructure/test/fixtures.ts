@@ -446,6 +446,19 @@ export const fixtures = {
     });
   },
 
+  async metadataParametrageIndicateurs(
+    overrides: Partial<Prisma.metadata_parametrage_indicateursUncheckedCreateInput> & {
+      indic_id: string;
+    },
+  ) {
+    const prisma = getPrisma();
+    return prisma.metadata_parametrage_indicateurs.create({
+      data: {
+        ...overrides,
+      },
+    });
+  },
+
   async actionCompteInactif(
     overrides: Partial<Prisma.action_compte_inactifUncheckedCreateInput> & {
       utilisateur_id: string;
