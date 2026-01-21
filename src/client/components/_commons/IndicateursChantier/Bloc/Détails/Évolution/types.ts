@@ -1,5 +1,4 @@
-import type { Dispatch, ReactNode, SetStateAction } from "react";
-import type { ChartData, ChartOptions } from "chart.js";
+import type { Dispatch, SetStateAction } from "react";
 import type { IndicateurDetailsParTerritoire } from "@/client/components/_commons/IndicateursChantier/Bloc/IndicateurBloc.interface";
 import type { ECOption } from "./useIndicateurEvolutionNew";
 
@@ -22,14 +21,4 @@ export interface IndicatorMetadata {
   id: string;
   dateDeMiseAJour: string | null;
   source: string | null;
-}
-
-export interface BaseEvolutionProps {
-  mode: BaseEvolutionMode;
-  actions?: ReactNode;
-  indicateur: IndicatorMetadata;
-  chartConfig: ChartConfig;
-  donnéesParTerritoire: ChartData<"line">;
-  optionsLegacy: ChartOptions<"line">;
-  nouveauxGraphiquesSontActifs: boolean;
 }

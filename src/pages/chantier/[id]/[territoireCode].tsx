@@ -111,7 +111,6 @@ export const getServerSideProps = async ({
       détailsIndicateurs,
       avancementsAgrégés,
       valeurFFPpgArchive,
-      nouveauxGraphiquesSontActifs,
     ] = await Promise.all([
       getContainer("chantiers")
         .resolve("recupererChantierUseCaseV2")
@@ -141,9 +140,6 @@ export const getServerSideProps = async ({
         .then(presenterEnAvancementsStatistiquesAccueilContrat),
       new RécupérerVariableContenuUseCase().run({
         nomVariableContenu: "NEXT_PUBLIC_FF_PPG_ARCHIVE",
-      }),
-      new RécupérerVariableContenuUseCase().run({
-        nomVariableContenu: "NEXT_PUBLIC_FF_NOUVEAUX_GRAPHIQUES",
       }),
     ]);
 
@@ -267,7 +263,6 @@ export const getServerSideProps = async ({
         cartographieDroiteIndicateur,
         cartographieGaucheIndicateur,
         donneesComparaisonDuTauxDAvancement,
-        nouveauxGraphiquesSontActifs,
         datajobsExecution,
         configurationFeatureFlipping: configuration().featureFlip,
       },

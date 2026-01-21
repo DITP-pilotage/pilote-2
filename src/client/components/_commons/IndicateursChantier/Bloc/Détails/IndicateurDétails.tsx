@@ -25,7 +25,6 @@ interface IndicateurDétailsProps {
   mailsDirecteursProjets: string[];
   cartographieDroiteIndicateur: CartographieIndicateurType;
   cartographieGaucheIndicateur: CartographieIndicateurType;
-  nouveauxGraphiquesSontActifs: boolean;
 }
 
 export const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
@@ -39,7 +38,6 @@ export const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
   mailsDirecteursProjets,
   cartographieDroiteIndicateur,
   cartographieGaucheIndicateur,
-  nouveauxGraphiquesSontActifs,
 }) => {
   const {
     indicateur,
@@ -189,7 +187,6 @@ export const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
                     indicateurDetailsParTerritoiresCompares={
                       indicateurDétailsParTerritoiresComparés
                     }
-                    nouveauxGraphiquesSontActifs={nouveauxGraphiquesSontActifs}
                   />
                 </section>
               ) : null}
