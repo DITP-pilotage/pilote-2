@@ -162,7 +162,6 @@
     "@types/lodash.pick": "^4.4.9",
     "@types/mime": "^3.0.1",
     "@types/node": "^18.15.10",
-    "@types/nprogress": "^0.2.3",
     "@types/pdfmake": "^0.2.12",
     "@types/react": "^18.0.30",
     "@types/react-dom": "^18.0.11",
