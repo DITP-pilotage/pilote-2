@@ -41,6 +41,10 @@ import {
   IndicateurTerritoireValeurEvenementDependencies,
 } from "./indicateur-territoire-valeur-evenement/container";
 import {
+  getImportCommentaireContainer,
+  ImportCommentaireDependencies,
+} from "./import-commentaire/container";
+import {
   getProfilUtilisateurContainer,
   ProfilUtilisateurDependencies,
 } from "./profil-utilisateur/container";
@@ -51,6 +55,7 @@ export type ContainerDependencies = {
   chantiers: AwilixContainer<ChantierDependencies>;
   parametrageIndicateur: AwilixContainer<ParametrageIndicateurDependencies>;
   importIndicateur: AwilixContainer<ImportIndicateurDependencies>;
+  importCommentaire: AwilixContainer<ImportCommentaireDependencies>;
   gestionUtilisateur: AwilixContainer<GestionUtilisateurDependencies>;
   ficheConducteur: AwilixContainer<FicheConducteurDependencies>;
   parametrageNouveautes: AwilixContainer<ParametrageNouveautesDependencies>;
@@ -75,6 +80,9 @@ function registerContainer(): ContainerDependencies {
       initialContainerWithTransversalDependencies,
     ),
     importIndicateur: getImportIndicateurContainer(
+      initialContainerWithTransversalDependencies,
+    ),
+    importCommentaire: getImportCommentaireContainer(
       initialContainerWithTransversalDependencies,
     ),
     gestionUtilisateur: getGestionUtilisateurContainer(

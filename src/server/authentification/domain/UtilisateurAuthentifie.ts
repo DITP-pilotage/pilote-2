@@ -61,6 +61,10 @@ export class UtilisateurAuthentifie {
     return this.habilitations.saisieIndicateur.chantiers.includes(chantierId);
   }
 
+  peutSaisirCommentaireSurChantier(chantierId: string): boolean {
+    return this.habilitations.saisieCommentaire.chantiers.includes(chantierId);
+  }
+
   static creerUtilisateurAuthentifie({
     id,
     email,
