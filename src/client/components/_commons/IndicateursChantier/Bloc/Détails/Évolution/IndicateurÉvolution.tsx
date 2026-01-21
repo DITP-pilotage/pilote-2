@@ -45,6 +45,7 @@ export const IndicateurÉvolution: FunctionComponent<
   dateDeMiseAJourIndicateur,
   nouveauxGraphiquesSontActifs,
 }) => {
+  const { indicateur } = useBlocIndicateurContext();
   const composantRef = useRef<HTMLDivElement>(null);
   const [modeImpression, setModeImpression] = useState(false);
 
@@ -120,7 +121,7 @@ export const IndicateurÉvolution: FunctionComponent<
     >
       <div className="flex justify-between items-start gap-4 mb-2">
         <Titre baliseHtml="h5" className="fr-text--lg fr-mb-0">
-          Évolution de l'indicateur
+          Évolution de l'indicateur : {indicateur.nom} ({indicateur.id})
         </Titre>
         {!modeImpression && (
           <button
