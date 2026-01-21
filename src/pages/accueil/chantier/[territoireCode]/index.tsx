@@ -37,6 +37,7 @@ import { ModaleInscriptionInfolettre } from "@/components/PageAccueil/PageChanti
 import { BoutonNavigationFicheTerritoriale } from "@/components/PageAccueil/BoutonNavigationFicheTerritoriale";
 import { BoutonNavigationRapportDetaille } from "@/components/BoutonNavigationRapportDetaille";
 import { BoutonExportDesDonnees } from "@/components/PageAccueil/BoutonExportDesDonnees";
+import logger from "@/server/infrastructure/Logger";
 import IndexStyled from "./index.styled";
 
 export const getServerSideProps = async ({
@@ -45,6 +46,8 @@ export const getServerSideProps = async ({
   query,
 }: GetServerSidePropsContext) => {
   const session = await getServerSession(req, res, authOptions);
+  logger.info({ session }, "Hello world info");
+  logger.error({ err: new Error("kaboom") }, "Hello world error");
 
   const pageIndex = Number.parseInt(query.pageIndex as string) || 1;
   const pageSize = Number.parseInt(query.pageSize as string) || 50;
