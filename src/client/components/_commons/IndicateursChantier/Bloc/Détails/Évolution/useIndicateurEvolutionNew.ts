@@ -1,7 +1,7 @@
 import type { LineSeriesOption } from "echarts/charts";
 import { TopLevelFormatterParams } from "echarts/types/dist/shared";
 import { ComposeOption } from "echarts/types/dist/echarts";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { IndicateurDetailsParTerritoire } from "@/client/components/_commons/IndicateursChantier/Bloc/IndicateurBloc.interface";
 import { formaterDate } from "@/client/utils/date/date";
 
@@ -24,6 +24,67 @@ export const PALETTE_DSFR = [
   "#009099",
   "#AEA397",
 ];
+
+const creerSerie = (
+  indicateur: IndicateurDetailsParTerritoire,
+  couleur: string,
+  territoiresAAfficher: Record<string, boolean>,
+): LineSeriesOption => ({
+  name: indicateur.territoireNom,
+  type: "line",
+  symbol: "circle",
+  showSymbol: true,
+  color: couleur,
+  data: territoiresAAfficher[indicateur.territoireNom]
+    ? indicateur.données.historiquesValeurs.map((valeur) => {
+        const date = new Date(valeur.date);
+        date.setDate(15);
+        return [date, valeur.valeur];
+      })
+    : undefined,
+});
+
+const creerSerieCibles = (
+  indicateur: IndicateurDetailsParTerritoire,
+  couleur: string,
+  territoiresAAfficher: Record<string, boolean>,
+  afficherLesCibles: boolean,
+  minDate: Date,
+  maxDate: Date,
+): LineSeriesOption => ({
+  name: `${indicateur.territoireNom} - Cible`,
+  type: "line",
+  symbol: "none",
+  showSymbol: false,
+  connectNulls: false,
+  color: couleur,
+  lineStyle: { type: "dashed", width: 2 },
+  silent: true,
+  data:
+    afficherLesCibles && territoiresAAfficher[indicateur.territoireNom]
+      ? indicateur.données.listeValeursCiblesAnnuelles.flatMap(
+          (cibleAnnuelle) => {
+            if (cibleAnnuelle.valeurCible === null) return [];
+
+            const debutAnnee =
+              new Date(`${cibleAnnuelle.annee}-01-01`) < minDate
+                ? minDate
+                : new Date(`${cibleAnnuelle.annee}-01-01`);
+
+            const finAnnee =
+              new Date(`${cibleAnnuelle.annee}-12-31`) > maxDate
+                ? maxDate
+                : new Date(`${cibleAnnuelle.annee}-12-31`);
+
+            return [
+              [debutAnnee, cibleAnnuelle.valeurCible],
+              [finAnnee, cibleAnnuelle.valeurCible],
+              null,
+            ];
+          },
+        )
+      : [],
+});
 
 export default function useIndicateurEvolutionNew({
   modeImpression,
@@ -65,19 +126,24 @@ export default function useIndicateurEvolutionNew({
     setTerritoiresAAfficher,
   ]);
 
-  let minDate = new Date();
-  let maxDate = new Date(0);
-  tousLesIndicateursDetails.forEach((indicateur) => {
-    indicateur.données.historiquesValeurs.forEach((valeur) => {
-      const date = new Date(valeur.date);
-      if (date < minDate) minDate = date;
-      if (date > maxDate) maxDate = date;
+  const [minDate, maxDate, maxDatePrev] = useMemo(() => {
+    let min = new Date();
+    let max = new Date(0);
+    let maxPrev = new Date(max);
+    max.setMonth(max.getMonth() + 1);
+    tousLesIndicateursDetails.forEach((indicateur) => {
+      indicateur.données.historiquesValeurs.forEach((valeur) => {
+        const date = new Date(valeur.date);
+        if (date < min) min = date;
+        if (date > max) max = date;
+      });
     });
-  });
-  const minYear = new Date(minDate).getFullYear();
-  const maxYear = maxDate.getFullYear();
-  const maxDatePrev = new Date(maxDate);
-  maxDate.setMonth(maxDate.getMonth() + 1);
+    return [min, max, maxPrev];
+  }, [tousLesIndicateursDetails]);
+
+  const [minYear, maxYear] = useMemo(() => {
+    return [new Date(minDate).getFullYear(), maxDate.getFullYear()];
+  }, [minDate, maxDate]);
 
   const periodesSelectionnablesZoom = Array.from(
     { length: maxYear - minYear + 1 },
@@ -123,62 +189,6 @@ export default function useIndicateurEvolutionNew({
       ];
     });
   };
-
-  const creerSerie = (
-    indicateur: IndicateurDetailsParTerritoire,
-    couleur: string,
-  ): LineSeriesOption => ({
-    name: indicateur.territoireNom,
-    type: "line",
-    symbol: "circle",
-    showSymbol: true,
-    color: couleur,
-    data: territoiresAAfficher[indicateur.territoireNom]
-      ? indicateur.données.historiquesValeurs.map((valeur) => {
-          const date = new Date(valeur.date);
-          date.setDate(15);
-          return [date, valeur.valeur];
-        })
-      : undefined,
-  });
-
-  const creerSerieCibles = (
-    indicateur: IndicateurDetailsParTerritoire,
-    couleur: string,
-  ): LineSeriesOption => ({
-    name: `${indicateur.territoireNom} - Cible`,
-    type: "line",
-    symbol: "none",
-    showSymbol: false,
-    connectNulls: false,
-    color: couleur,
-    lineStyle: { type: "dashed", width: 2 },
-    silent: true,
-    data:
-      afficherLesCibles && territoiresAAfficher[indicateur.territoireNom]
-        ? indicateur.données.listeValeursCiblesAnnuelles.flatMap(
-            (cibleAnnuelle) => {
-              if (cibleAnnuelle.valeurCible === null) return [];
-
-              const debutAnnee =
-                new Date(`${cibleAnnuelle.annee}-01-01`) < minDate
-                  ? minDate
-                  : new Date(`${cibleAnnuelle.annee}-01-01`);
-
-              const finAnnee =
-                new Date(`${cibleAnnuelle.annee}-12-31`) > maxDate
-                  ? maxDate
-                  : new Date(`${cibleAnnuelle.annee}-12-31`);
-
-              return [
-                [debutAnnee, cibleAnnuelle.valeurCible],
-                [finAnnee, cibleAnnuelle.valeurCible],
-                null,
-              ];
-            },
-          )
-        : [],
-  });
 
   const formatterLaTooltip = (parametres: TopLevelFormatterParams): string => {
     const dataParametres = Array.isArray(parametres)
@@ -237,138 +247,162 @@ export default function useIndicateurEvolutionNew({
 
   const { yMin, yMax } = CalculerBornesAxeY();
 
-  const optionsNew: ECOption = {
-    tooltip: {
-      formatter: formatterLaTooltip,
-    },
-    xAxis: [
-      {
-        type: "time",
-        min: minDate,
-        max: maxDate,
-        axisLabel: {
-          show: false,
-        },
-        splitLine: { show: true, z: 10 },
-        minInterval: 30 * 24 * 60 * 60 * 1000,
-        maxInterval: 30 * 24 * 60 * 60 * 1000,
+  const optionsNew: ECOption = useMemo(
+    () => ({
+      tooltip: {
+        formatter: formatterLaTooltip,
       },
-      {
-        type: "time",
-        position: "bottom",
-        offset: 5,
-        min: minDate,
-        max: maxDate,
-        scale: false,
-        axisTick: {
-          show: false,
-          interval: 0,
-        },
-        axisLabel: {
-          formatter: (value: string) => {
-            const date = new Date(value);
-            return date.getDate() === 15
-              ? (date.getMonth() + 1).toString().padStart(2, "0")
-              : "";
+      xAxis: [
+        {
+          type: "time",
+          min: minDate,
+          max: maxDate,
+          axisLabel: {
+            show: false,
           },
+          splitLine: { show: true, z: 10 },
+          minInterval: 30 * 24 * 60 * 60 * 1000,
+          maxInterval: 30 * 24 * 60 * 60 * 1000,
         },
-        axisLine: { show: false },
-        minInterval: 24 * 60 * 60 * 1000,
-        maxInterval: 24 * 60 * 60 * 1000,
-      },
-      {
-        type: "time",
-        position: "bottom",
-        offset: 25,
-        min: minDate,
-        max: maxDate,
-        scale: false,
-        axisLabel: {
-          formatter: (value: string) => {
-            const date = new Date(value);
-            if (minYear === maxYear) {
-              const moisDuMilieu = Math.ceil(
-                (maxDatePrev.getMonth() + minDate.getMonth()) / 2,
-              );
-              return date.getMonth() === moisDuMilieu
-                ? date.getFullYear().toString()
+        {
+          type: "time",
+          position: "bottom",
+          offset: 5,
+          min: minDate,
+          max: maxDate,
+          scale: false,
+          axisTick: {
+            show: false,
+            interval: 0,
+          },
+          axisLabel: {
+            formatter: (value: string) => {
+              const date = new Date(value);
+              return date.getDate() === 15
+                ? (date.getMonth() + 1).toString().padStart(2, "0")
                 : "";
-            }
-            return date.getMonth() === 6 ? date.getFullYear().toString() : "";
+            },
           },
-          fontWeight: "bold",
-          color: "#444",
+          axisLine: { show: false },
+          minInterval: 24 * 60 * 60 * 1000,
+          maxInterval: 24 * 60 * 60 * 1000,
         },
-        axisTick: {
-          show: false,
+        {
+          type: "time",
+          position: "bottom",
+          offset: 25,
+          min: minDate,
+          max: maxDate,
+          scale: false,
+          axisLabel: {
+            formatter: (value: string) => {
+              const date = new Date(value);
+              if (minYear === maxYear) {
+                const moisDuMilieu = Math.ceil(
+                  (maxDatePrev.getMonth() + minDate.getMonth()) / 2,
+                );
+                return date.getMonth() === moisDuMilieu
+                  ? date.getFullYear().toString()
+                  : "";
+              }
+              return date.getMonth() === 6 ? date.getFullYear().toString() : "";
+            },
+            fontWeight: "bold",
+            color: "#444",
+          },
+          axisTick: {
+            show: false,
+          },
+          axisLine: { show: false },
         },
-        axisLine: { show: false },
+      ],
+      yAxis: {
+        type: "value",
+        min: yMin,
+        max: yMax,
+        splitLine: { show: true },
+        axisLabel: {
+          showMaxLabel: false,
+          showMinLabel: false,
+          formatter: function (value: number) {
+            if (value >= 1_000_000_000) {
+              return (value / 1_000_000_000).toLocaleString("fr-FR") + " Md";
+            } else if (value >= 1_000_000) {
+              return (value / 1_000_000).toLocaleString("fr-FR") + " M";
+            } else if (value >= 1000) {
+              return (value / 1000).toLocaleString("fr-FR") + " k";
+            }
+            return value.toLocaleString("fr-FR");
+          },
+        },
       },
-    ],
-    yAxis: {
-      type: "value",
-      min: yMin,
-      max: yMax,
-      splitLine: { show: true },
-      axisLabel: {
-        showMaxLabel: false,
-        showMinLabel: false,
-        formatter: function (value: number) {
-          if (value >= 1_000_000_000) {
-            return (value / 1_000_000_000).toLocaleString("fr-FR") + " Md";
-          } else if (value >= 1_000_000) {
-            return (value / 1_000_000).toLocaleString("fr-FR") + " M";
-          } else if (value >= 1000) {
-            return (value / 1000).toLocaleString("fr-FR") + " k";
-          }
-          return value.toLocaleString("fr-FR");
+      dataZoom: [
+        {
+          type: "slider",
+          xAxisIndex: [0, 1, 2],
+          height: modeImpression ? 0 : 25,
+          bottom: modeImpression ? -10 : 10,
+          filterMode: "none",
+          labelFormatter: function (value: string) {
+            const date = new Date(value);
+            return formaterDate(date.toISOString(), "MM/YYYY");
+          },
+          textStyle: {
+            fontSize: 10,
+            overflow: "breakAll",
+          },
+          startValue: dataZoomPeriode.startValue,
+          endValue: dataZoomPeriode.endValue,
         },
+      ],
+      grid: {
+        left: 25,
+        right: 60,
+        top: 10,
+        bottom: 60,
+        outerBoundsMode: "same",
+        outerBoundsContain: "axisLabel",
       },
-    },
-    dataZoom: [
-      {
-        type: "slider",
-        xAxisIndex: [0, 1, 2],
-        height: modeImpression ? 0 : 25,
-        bottom: modeImpression ? -10 : 10,
-        filterMode: "none",
-        labelFormatter: function (value: string) {
-          const date = new Date(value);
-          return formaterDate(date.toISOString(), "MM/YYYY");
-        },
-        textStyle: {
-          fontSize: 10,
-          overflow: "breakAll",
-        },
-        startValue: dataZoomPeriode.startValue,
-        endValue: dataZoomPeriode.endValue,
-      },
+      series: [
+        ...tousLesIndicateursDetails.flatMap((indicateurDetail, index) => {
+          const couleur = PALETTE_DSFR[index % PALETTE_DSFR.length];
+          return [
+            creerSerie(indicateurDetail, couleur, territoiresAAfficher),
+            creerSerieCibles(
+              indicateurDetail,
+              couleur,
+              territoiresAAfficher,
+              afficherLesCibles,
+              minDate,
+              maxDate,
+            ),
+          ];
+        }),
+        {
+          type: "line",
+          markArea: {
+            silent: true,
+            data: genererFondAnnees(minYear, maxYear),
+          },
+        } as LineSeriesOption,
+      ],
+    }),
+    [
+      afficherLesCibles,
+      dataZoomPeriode.endValue,
+      dataZoomPeriode.startValue,
+      maxDate,
+      maxDatePrev,
+      maxYear,
+      minDate,
+      minYear,
+      modeImpression,
+      territoiresAAfficher,
+      tousLesIndicateursDetails,
+      yMax,
+      yMin,
     ],
-    grid: {
-      left: 25,
-      right: 60,
-      top: 10,
-      bottom: 60,
-      outerBoundsMode: "same",
-      outerBoundsContain: "axisLabel",
-    },
-    series: [
-      ...tousLesIndicateursDetails.flatMap((indicateurDetail, index) => {
-        const couleur = PALETTE_DSFR[index % PALETTE_DSFR.length];
-        return [
-          creerSerie(indicateurDetail, couleur),
-          creerSerieCibles(indicateurDetail, couleur),
-        ];
-      }),
-      {
-        type: "line",
-        markArea: {
-          silent: true,
-          data: genererFondAnnees(minYear, maxYear),
-        },
-      } as LineSeriesOption,
-    ],
-  };
+  );
 
   return {
     afficherLesCibles,

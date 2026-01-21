@@ -1,4 +1,4 @@
-import { Fragment, FunctionComponent, useState } from "react";
+import { Fragment, FunctionComponent, useMemo, useState } from "react";
 import Bloc from "@/components/_commons/Bloc/Bloc";
 import Titre from "@/components/_commons/Titre/Titre";
 import { IndicateurDétails } from "@/components/_commons/IndicateursChantier/Bloc/Détails/IndicateurDétails";
@@ -61,9 +61,9 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
 
   const estVueTuile = estLargeurDÉcranActuelleMoinsLargeQue("sm");
 
-  const detailTerritoiresCompares = territoiresCompares.map(
-    récupérerDétailsSurUnTerritoire,
-  );
+  const detailTerritoiresCompares = useMemo(() => {
+    return territoiresCompares.map(récupérerDétailsSurUnTerritoire);
+  }, [récupérerDétailsSurUnTerritoire, territoiresCompares]);
 
   const detailsIndicateur = détailsIndicateurs[indicateur.id];
 
@@ -74,17 +74,19 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
     dateValeurAvancement,
   } = useIndicateurBloc(detailsIndicateur, territoireCode);
 
-  const informationsIndicateursComparés = detailTerritoiresCompares
-    .map((territoireCompare) => ({
-      territoireNom: territoireCompare.nomAffiché,
-      code: territoireCompare.code,
-      données: detailsIndicateur[territoireCompare.code],
-    }))
-    .sort((indicateurDétailsTerritoire1, indicateurDétailsTerritoire2) =>
-      indicateurDétailsTerritoire1.données.codeInsee.localeCompare(
-        indicateurDétailsTerritoire2.données.codeInsee,
-      ),
-    );
+  const informationsIndicateursCompares = useMemo(() => {
+    return detailTerritoiresCompares
+      .map((territoireCompare) => ({
+        territoireNom: territoireCompare.nomAffiché,
+        code: territoireCompare.code,
+        données: detailsIndicateur[territoireCompare.code],
+      }))
+      .sort((indicateurDétailsTerritoire1, indicateurDétailsTerritoire2) =>
+        indicateurDétailsTerritoire1.données.codeInsee.localeCompare(
+          indicateurDétailsTerritoire2.données.codeInsee,
+        ),
+      );
+  }, [detailTerritoiresCompares, detailsIndicateur]);
 
   const getCalculAvancementMessage = (
     valeurInitiale: number | null,
@@ -346,7 +348,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                       />
                     ) : null
                   ) : null}
-                  {informationsIndicateursComparés.map(
+                  {informationsIndicateursCompares.map(
                     (informationIndicateurComparé) => {
                       return informationIndicateurComparé.données ? ( // TODO supprimer une fois le refacto fait ! A cause de la react query y'a quelques frames où informationIndicateurComparé.données est undefined
                         <Fragment
@@ -480,7 +482,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
               dateValeurAvancement={dateValeurAvancement}
               detailsIndicateursTerritoire={detailsIndicateursTerritoire}
               indicateurDétailsParTerritoiresComparés={
-                informationsIndicateursComparés
+                informationsIndicateursCompares
               }
               mailleQuery={mailleQuery}
               mailsDirecteursProjets={mailsDirecteursProjets}
