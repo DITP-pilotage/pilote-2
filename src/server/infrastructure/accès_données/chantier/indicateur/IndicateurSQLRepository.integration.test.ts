@@ -731,6 +731,293 @@ describe("IndicateurSQLRepository", () => {
         new Date("2026-01-20T10:00:00.000Z").toISOString(),
       );
     });
+
+    it("pour maille NAT avec va_nat_from=REG, calcule dateImport à partir des événements REG", async () => {
+      // Given
+      await prisma.chantier_identite.create({
+        data: { id: "CH-001", nom: "Chantier 001" },
+      });
+
+      await prisma.chantier_territoire.createMany({
+        data: [
+          {
+            id: "CH-001",
+            code_insee: "FR",
+            maille: "NAT",
+            zone_id: "FRANCE",
+            territoire_code: "NAT-FR",
+          },
+          {
+            id: "CH-001",
+            code_insee: "84",
+            maille: "REG",
+            zone_id: "R84",
+            territoire_code: "REG-84",
+          },
+        ],
+      });
+
+      await prisma.indicateur_identite.create({
+        data: {
+          id: "IND-001",
+          nom: "Indicateur 001",
+          chantier_id: "CH-001",
+          type_id: "IMPACT",
+        },
+      });
+
+      await prisma.metadata_parametrage_indicateurs.create({
+        data: {
+          indic_id: "IND-001",
+          va_nat_from: "REG",
+        },
+      });
+
+      await prisma.indicateur_territoire.create({
+        data: {
+          id: "IND-001",
+          chantier_id: "CH-001",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+          territoire_code: "NAT-FR",
+          evolution_avancement: [] as unknown as Prisma.JsonArray,
+        },
+      });
+
+      await prisma.indicateur_territoire.create({
+        data: {
+          id: "IND-001",
+          chantier_id: "CH-001",
+          code_insee: "84",
+          maille: "REG",
+          zone_id: "R84",
+          territoire_code: "REG-84",
+          evolution_avancement: [] as unknown as Prisma.JsonArray,
+        },
+      });
+
+      await prisma.indicateur_territoire_jalon.create({
+        data: {
+          id: "IND-001",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+          territoire_code: "NAT-FR",
+          jalon: 2025,
+        },
+      });
+
+      const auteurId = "fc6281a8-78f2-4792-951b-fa66c1320dc1";
+      await prisma.utilisateur.create({
+        data: {
+          id: auteurId,
+          email: "user@test.com",
+          profilCode: ProfilEnum.DITP_ADMIN,
+          nom: "user",
+          prenom: "user",
+          date_creation: new Date(),
+        },
+      });
+
+      // Événement NAT-FR (ne doit pas être utilisé car va_nat_from=REG)
+      await prisma.indicateur_territoire_valeur_evenement.create({
+        data: {
+          id: "11a88e60-486a-4649-8999-5ae3fbcbacce",
+          indic_id: "IND-001",
+          territoire_code: "NAT-FR",
+          type_evenement: EvenementValeurEnum.VALEUR_CREEE,
+          date_creation: new Date("2026-01-01T10:00:00.000Z"),
+          id_auteur_modification: auteurId,
+          type_valeur: "VALEUR_AVANCEMENT",
+          donnees_complementaires: {},
+          correlation_id: "11107919-74e6-4305-8a3e-899b3aea2c93",
+          valeur: 10,
+          date_valeur: new Date("2026-01-01"),
+          ordre: 1,
+        },
+      });
+
+      // Événement REG-84 (doit être utilisé)
+      await prisma.indicateur_territoire_valeur_evenement.create({
+        data: {
+          id: "22a88e60-486a-4649-8999-5ae3fbcbacce",
+          indic_id: "IND-001",
+          territoire_code: "REG-84",
+          type_evenement: EvenementValeurEnum.VALEUR_CREEE,
+          date_creation: new Date("2026-01-20T10:00:00.000Z"),
+          id_auteur_modification: auteurId,
+          type_valeur: "VALEUR_AVANCEMENT",
+          donnees_complementaires: {},
+          correlation_id: "22107919-74e6-4305-8a3e-899b3aea2c93",
+          valeur: 15,
+          date_valeur: new Date("2026-01-20"),
+          ordre: 1,
+        },
+      });
+
+      const dateDerniereExecutionDatajobs = new Date(
+        "2026-02-01T00:00:00.000Z",
+      );
+
+      // When
+      const result =
+        await prismaIndicateurRepository.récupérerDétailsGroupésParChantierEtParIndicateur(
+          ["CH-001"],
+          "nationale",
+          "FR",
+          2025,
+          dateDerniereExecutionDatajobs,
+        );
+
+      // Then - NAT-FR utilise les événements REG (date: 2026-01-20)
+      expect(result["CH-001"]["IND-001"]["NAT-FR"].dateImport).toEqual(
+        new Date("2026-01-20T10:00:00.000Z").toISOString(),
+      );
+    });
+
+    it("pour maille REG avec va_reg_from=DEPT, calcule dateImport à partir des événements DEPT", async () => {
+      // Given
+      await prisma.chantier_identite.create({
+        data: { id: "CH-001", nom: "Chantier 001" },
+      });
+
+      await prisma.chantier_territoire.createMany({
+        data: [
+          {
+            id: "CH-001",
+            code_insee: "84",
+            maille: "REG",
+            zone_id: "R84",
+            territoire_code: "REG-84",
+          },
+          {
+            id: "CH-001",
+            code_insee: "13",
+            maille: "DEPT",
+            zone_id: "D13",
+            territoire_code: "DEPT-13",
+          },
+        ],
+      });
+
+      await prisma.indicateur_identite.create({
+        data: {
+          id: "IND-001",
+          nom: "Indicateur 001",
+          chantier_id: "CH-001",
+          type_id: "IMPACT",
+        },
+      });
+
+      await prisma.metadata_parametrage_indicateurs.create({
+        data: {
+          indic_id: "IND-001",
+          va_reg_from: "DEPT",
+        },
+      });
+
+      await prisma.indicateur_territoire.createMany({
+        data: [
+          {
+            id: "IND-001",
+            chantier_id: "CH-001",
+            code_insee: "84",
+            maille: "REG",
+            zone_id: "R84",
+            territoire_code: "REG-84",
+            evolution_avancement: [] as unknown as Prisma.JsonArray,
+          },
+          {
+            id: "IND-001",
+            chantier_id: "CH-001",
+            code_insee: "13",
+            maille: "DEPT",
+            zone_id: "D13",
+            territoire_code: "DEPT-13",
+            evolution_avancement: [] as unknown as Prisma.JsonArray,
+          },
+        ],
+      });
+
+      await prisma.indicateur_territoire_jalon.create({
+        data: {
+          id: "IND-001",
+          code_insee: "84",
+          maille: "REG",
+          zone_id: "R84",
+          territoire_code: "REG-84",
+          jalon: 2025,
+        },
+      });
+
+      const auteurId = "fc6281a8-78f2-4792-951b-fa66c1320dc1";
+      await prisma.utilisateur.create({
+        data: {
+          id: auteurId,
+          email: "user@test.com",
+          profilCode: ProfilEnum.DITP_ADMIN,
+          nom: "user",
+          prenom: "user",
+          date_creation: new Date(),
+        },
+      });
+
+      // Événement REG-84 (ne doit pas être utilisé car va_reg_from=DEPT)
+      await prisma.indicateur_territoire_valeur_evenement.create({
+        data: {
+          id: "11a88e60-486a-4649-8999-5ae3fbcbacce",
+          indic_id: "IND-001",
+          territoire_code: "REG-84",
+          type_evenement: EvenementValeurEnum.VALEUR_CREEE,
+          date_creation: new Date("2026-01-01T10:00:00.000Z"),
+          id_auteur_modification: auteurId,
+          type_valeur: "VALEUR_AVANCEMENT",
+          donnees_complementaires: {},
+          correlation_id: "11107919-74e6-4305-8a3e-899b3aea2c93",
+          valeur: 10,
+          date_valeur: new Date("2026-01-01"),
+          ordre: 1,
+        },
+      });
+
+      // Événement DEPT-13 (doit être utilisé)
+      await prisma.indicateur_territoire_valeur_evenement.create({
+        data: {
+          id: "22a88e60-486a-4649-8999-5ae3fbcbacce",
+          indic_id: "IND-001",
+          territoire_code: "DEPT-13",
+          type_evenement: EvenementValeurEnum.VALEUR_CREEE,
+          date_creation: new Date("2026-01-25T10:00:00.000Z"),
+          id_auteur_modification: auteurId,
+          type_valeur: "VALEUR_AVANCEMENT",
+          donnees_complementaires: {},
+          correlation_id: "22107919-74e6-4305-8a3e-899b3aea2c93",
+          valeur: 15,
+          date_valeur: new Date("2026-01-25"),
+          ordre: 1,
+        },
+      });
+
+      const dateDerniereExecutionDatajobs = new Date(
+        "2026-02-01T00:00:00.000Z",
+      );
+
+      // When
+      const result =
+        await prismaIndicateurRepository.récupérerDétailsGroupésParChantierEtParIndicateur(
+          ["CH-001"],
+          "regionale",
+          "84",
+          2025,
+          dateDerniereExecutionDatajobs,
+        );
+
+      // Then - REG-84 utilise les événements DEPT (date: 2026-01-25)
+      expect(result["CH-001"]["IND-001"]["REG-84"].dateImport).toEqual(
+        new Date("2026-01-25T10:00:00.000Z").toISOString(),
+      );
+    });
   });
 
   describe("#récupérerParChantierId", () => {

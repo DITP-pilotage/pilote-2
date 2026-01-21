@@ -50,14 +50,14 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
     };
   }
 
-  private _mapDétailsToDomain(
+  private async _mapDétailsToDomain(
     indicateurs: (PrismaIndicateurTerritoire & {
       indicateur_identite: PrismaIndicateurIdentite;
       indicateur_territoire_jalon: PrismaIndicateurTerritoireJalon[];
     })[],
     jalon: number,
-    datesDernierImports: Map<string, Date | null>,
-  ): DétailsIndicateurs {
+    dateDerniereExecutionDatajobs: Date,
+  ): Promise<DétailsIndicateurs> {
     const détailsIndicateurs: DétailsIndicateurs = {};
 
     for (const indicateurRow of indicateurs) {
@@ -69,6 +69,12 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
         indicateurRow.indicateur_territoire_jalon.find(
           (indicateurJalon) => indicateurJalon.jalon === jalon,
         );
+
+      const dateImport = await this._calculerDateDernierImport(
+        indicateurRow.id,
+        indicateurRow.territoire_code,
+        dateDerniereExecutionDatajobs,
+      );
 
       détailsIndicateurs[indicateurRow.id][indicateurRow.territoire_code] = {
         dateValeurAvancementMandat: formatDate(
@@ -108,9 +114,7 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
         propositionStatutDirectionProjet: null,
         unite: indicateurRow.indicateur_identite.unite_mesure,
         estApplicable: indicateurRow.est_applicable,
-        dateImport: formatDate(
-          datesDernierImports.get(indicateurRow.id) ?? null,
-        ),
+        dateImport: formatDate(dateImport),
         ponderation: indicateurRow.ponderation_zone_reel,
         prochaineDateValeurAvancement: formatDate(
           indicateurRow.prochaine_date_valeur_actuelle,
@@ -182,32 +186,63 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
       },
     });
 
-    const datesDernierImports = await this._recupererDatesDernierImports(
-      dateDerniereExecutionDatajobs,
+    const chantierIds = [
+      ...new Set(indicateurs.map((ind) => ind.indicateur_identite.chantier_id)),
+    ];
+
+    const entries = await Promise.all(
+      chantierIds.map(async (chantierId) => {
+        const indicateursChantier = indicateurs.filter(
+          (ind) => ind.indicateur_identite.chantier_id === chantierId,
+        );
+        const details = await this._mapDétailsToDomain(
+          indicateursChantier,
+          jalon,
+          dateDerniereExecutionDatajobs,
+        );
+        return [chantierId, details] as const;
+      }),
     );
 
-    return Object.fromEntries(
-      indicateurs.map((indicateur) => [
-        indicateur.indicateur_identite.chantier_id,
-        this._mapDétailsToDomain(
-          indicateurs.filter(
-            (ind) =>
-              ind.indicateur_identite.chantier_id ===
-              indicateur.indicateur_identite.chantier_id,
-          ),
-          jalon,
-          datesDernierImports,
-        ),
-      ]),
-    );
+    return Object.fromEntries(entries);
   }
 
-  private async _recupererDatesDernierImports(
+  private async _calculerDateDernierImport(
+    indicId: string,
+    territoireCode: string,
     dateDerniereExecutionDatajobs: Date,
-  ): Promise<Map<string, Date | null>> {
+  ): Promise<Date | null> {
+    const maille = territoireCode.startsWith("NAT")
+      ? "NAT"
+      : territoireCode.startsWith("REG")
+        ? "REG"
+        : "DEPT";
+
+    let mailleSource: string | null = null;
+
+    if (maille === "NAT" || maille === "REG") {
+      const metadata = await prisma.metadata_parametrage_indicateurs.findFirst({
+        where: { indic_id: indicId },
+      });
+
+      if (
+        maille === "NAT" &&
+        metadata?.va_nat_from &&
+        ["DEPT", "REG"].includes(metadata.va_nat_from)
+      ) {
+        mailleSource = metadata.va_nat_from;
+      } else if (maille === "REG" && metadata?.va_reg_from === "DEPT") {
+        mailleSource = "DEPT";
+      }
+    }
+
     const evenements =
       await prisma.indicateur_territoire_valeur_evenement.findMany({
         where: {
+          indic_id: indicId,
+          territoire_code: mailleSource
+            ? { startsWith: mailleSource }
+            : territoireCode,
           type_evenement: {
             in: [
               EvenementValeurEnum.VALEUR_CREEE,
@@ -220,20 +255,18 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
         },
         select: {
           date_creation: true,
-          indic_id: true,
         },
       });
 
-    return evenements.reduce((map, evenement) => {
-      const indicateurId = evenement.indic_id;
-      const dateActuelle = map.get(indicateurId);
+    if (evenements.length === 0) {
+      return null;
+    }
 
-      if (!dateActuelle || evenement.date_creation > dateActuelle) {
-        map.set(indicateurId, evenement.date_creation);
-      }
-
-      return map;
-    }, new Map<string, Date | null>());
+    return evenements.reduce((maxDate, evenement) => {
+      return evenement.date_creation > maxDate
+        ? evenement.date_creation
+        : maxDate;
+    }, evenements[0].date_creation);
   }
 
   async récupérerParChantierId(chantierId: string): Promise<Indicateur[]> {
