@@ -151,18 +151,54 @@ export const IndicateurÉvolution: FunctionComponent<
   };
 
   return (
-    <div
-      className={clsxm({
-        "fixed inset-0 bg-black/50 z-10 p-10 flex items-center justify-center":
-          modeImpression,
-      })}
-    >
-      <IndicateurÉvolutionStyled
-        className={clsxm({
-          "!p-10 ": modeImpression,
-        })}
-        ref={composantRef}
-      >
+    <div>
+      <div className="fixed inset-0 -z-1">
+        <div className="fr-container">
+          <IndicateurÉvolutionStyled className="!p-10" ref={composantRef}>
+            <div className="flex justify-between items-start gap-4 mb-2">
+              <div>
+                <Titre baliseHtml="h5" className="fr-text--lg fr-mb-0">
+                  Évolution de l'indicateur : {indicateur.nom} ({indicateur.id})
+                </Titre>
+
+                <p className="fr-text--xs !text-dsfr-mention-grey">
+                  {`Mis à jour le : ${dateDeMiseAJourIndicateur} | Source : ${source ?? "Non renseigné"}`}
+                </p>
+              </div>
+            </div>
+            {donnéesParTerritoire.datasets.some(
+              (dataset) => dataset.data.length > 0,
+            ) ? (
+              <div className="graphique-bloc">
+                <div className="graphique-conteneur">
+                  {nouveauxGraphiquesSontActifs ? (
+                    <LineChart
+                      afficherLesCibles={afficherLesCibles}
+                      changerLaPeriodeSelectionnee={
+                        changerLaPeriodeSelectionnee
+                      }
+                      modeImpression
+                      option={optionsNew}
+                      periodeSelectionnee={periodeSelectionnee}
+                      periodesSelectionnablesZoom={periodesSelectionnablesZoom}
+                      setAfficherLesCibles={setAfficherLesCibles}
+                      setTerritoiresAAfficher={setTerritoiresAAfficher}
+                      territoiresAAfficher={territoiresAAfficher}
+                      tousLesIndicateursDetails={tousLesIndicateursDetails}
+                    />
+                  ) : (
+                    <Line data={donnéesParTerritoire} options={options} />
+                  )}
+                </div>
+              </div>
+            ) : (
+              <p className="fr-badge fr-badge--no-icon">NON RENSEIGNÉ</p>
+            )}
+          </IndicateurÉvolutionStyled>
+        </div>
+      </div>
+
+      <IndicateurÉvolutionStyled>
         <div className="flex justify-between items-start gap-4 mb-2">
           <div>
             <Titre baliseHtml="h5" className="fr-text--lg fr-mb-0">
@@ -173,26 +209,24 @@ export const IndicateurÉvolution: FunctionComponent<
               {`Mis à jour le : ${dateDeMiseAJourIndicateur} | Source : ${source ?? "Non renseigné"}`}
             </p>
           </div>
-          {!modeImpression ? (
-            <div className="flex items-end flex-col gap-3">
-              <button
-                className="flex items-center gap-2 !text-dsfr-blue-france-sun-113 font-medium text-sm"
-                onClick={enregistrerCommeImage}
-                type="button"
-              >
-                <Icone className="w-4 h-4" icone={Download1Icon} />
-                Enregistrer comme image
-              </button>
-              <button
-                className="flex items-center gap-2 !text-dsfr-blue-france-sun-113 font-medium text-sm"
-                onClick={copierDansLePressePapiers}
-                type="button"
-              >
-                <Icone className="w-4 h-4" icone={ClipboardIcon} />
-                Copier dans le presse-papiers
-              </button>
-            </div>
-          ) : null}
+          <div className="flex items-end flex-col gap-3">
+            <button
+              className="flex items-center gap-2 !text-dsfr-blue-france-sun-113 font-medium text-sm"
+              onClick={enregistrerCommeImage}
+              type="button"
+            >
+              <Icone className="w-4 h-4" icone={Download1Icon} />
+              Enregistrer comme image
+            </button>
+            <button
+              className="flex items-center gap-2 !text-dsfr-blue-france-sun-113 font-medium text-sm"
+              onClick={copierDansLePressePapiers}
+              type="button"
+            >
+              <Icone className="w-4 h-4" icone={ClipboardIcon} />
+              Copier dans le presse-papiers
+            </button>
+          </div>
         </div>
         {donnéesParTerritoire.datasets.some(
           (dataset) => dataset.data.length > 0,
@@ -203,7 +237,6 @@ export const IndicateurÉvolution: FunctionComponent<
                 <LineChart
                   afficherLesCibles={afficherLesCibles}
                   changerLaPeriodeSelectionnee={changerLaPeriodeSelectionnee}
-                  modeImpression={modeImpression}
                   option={optionsNew}
                   periodeSelectionnee={periodeSelectionnee}
                   periodesSelectionnablesZoom={periodesSelectionnablesZoom}
