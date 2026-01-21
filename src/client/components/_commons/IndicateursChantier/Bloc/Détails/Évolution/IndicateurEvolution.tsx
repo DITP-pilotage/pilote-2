@@ -121,7 +121,7 @@ export const IndicateurEvolution: FunctionComponent<{
       });
 
       const lien = document.createElement("a");
-      lien.download = `evolution-indicateur-${new Date().toISOString().split("T")[0]}.png`;
+      lien.download = `evolution-indicateur-${indicateur.id}.png`;
       lien.href = dataUrl;
       lien.click();
     });
