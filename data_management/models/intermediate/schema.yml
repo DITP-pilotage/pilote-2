@@ -36,39 +36,7 @@ models:
         description: Pondération en prenant en compte les *zones applicables*
       - name: poids_zone_reel
         description: "Pondération réelle: en prenant en compte les *zones applicables* + la remise sur **base 100**"
-        
-  - name: last_update_indic_zone
-    description: |
-      Pour chaque couple {indicateur-zone}, on indique le **rapport** et la **date** de ce rapport qui modifie cet indicateur sur cette zone.
 
-      Etant donné que l'on part de la table `raw_data.mesure_indicateur`, si une valeur qui est renvoyée à la webapp est issue d'une aggrégation, il n'existe **pas d'import correspondant** donc **aucune ligne** ne sera renvoyée pour ce couple {indicateur-zone}.
-    columns:
-      - name: indic_id
-        description: "Identifiant de l'indicateur"
-      - name: zone_id
-        description: "Identifiant de la zone"
-      - name: territoire_code
-        description: "Code du territoire. Utilisé par le front, équivalent à `zone_id`"
-      - name: dernier_import_rapport_id
-        description: "UUID du dernier rapport pour cet {indicateur-zone}"
-      - name: dernier_import_date
-        description: "Date du dernier rapport (`dernier_import_rapport_id`)"
-      - name: dernier_import_auteur
-        description: "Auteur du dernier rapport qui modifie cet indicateur sur cette zone"
-  - name: last_update_indic
-    description: |
-      Pour chaque {indicateur}, on indique le **rapport** et la **date** de ce rapport qui modifie cet indicateur sur **n'importe quelle zone**.
-
-      Cela permet par exemple d'avoir une date à afficher pour une **valeur issue d'une aggrégation**. En effet, dans ce cas, une valeur aggrégée issue de calculs peut être renvoyée vers le front mais n'est présente dans aucun rapport. 
-    columns:
-      - name: indic_id
-        description: "Identifiant de l'indicateur"
-      - name: dernier_import_rapport_id_indic
-        description: "UUID du dernier rapport pour cet {indicateur} (sur n'importe quelle zone)"
-      - name: dernier_import_date_indic
-        description: "Date du dernier rapport (`dernier_import_rapport_id_indic`)"
-      - name: dernier_import_auteur_indic
-        description: "Auteur du dernier rapport pour cet {indicateur} (sur n'importe quelle zone)"
   - name: int_directeurs_projets
     description: "Une ligne pour chaque chantier qui indique son/ses DP (Directeur de Projet)."
     columns:
@@ -105,7 +73,7 @@ models:
   - name: int_propositions_valeurs
     description: |
       Récupère les metadata des valeurs proposées. Règles:
-      
+
       - pour une date de valeur actuelle plusieurs propositions peuvent avoir été faites. On prend uniquement la dernière, c'est à dire celle avec la date de proposition la plus récente.
       - on ne garde que les propositions au statut **EN_COURS**
     columns:
