@@ -105,8 +105,6 @@ export const IndicateurÉvolution: FunctionComponent<
       lien.download = `evolution-indicateur-${new Date().toISOString().split("T")[0]}.png`;
       lien.href = dataUrl;
       lien.click();
-    } catch (error) {
-      console.error("Erreur lors de la capture de l'image:", error);
     } finally {
       setModeImpression(false);
     }
@@ -115,15 +113,21 @@ export const IndicateurÉvolution: FunctionComponent<
   return (
     <IndicateurÉvolutionStyled
       className={clsxm({
-        "!p-10": modeImpression,
+        "!p-10 ": modeImpression,
       })}
       ref={composantRef}
     >
       <div className="flex justify-between items-start gap-4 mb-2">
-        <Titre baliseHtml="h5" className="fr-text--lg fr-mb-0">
-          Évolution de l'indicateur : {indicateur.nom} ({indicateur.id})
-        </Titre>
-        {!modeImpression && (
+        <div>
+          <Titre baliseHtml="h5" className="fr-text--lg fr-mb-0">
+            Évolution de l'indicateur : {indicateur.nom} ({indicateur.id})
+          </Titre>
+
+          <p className="fr-text--xs !text-dsfr-mention-grey">
+            {`Mis à jour le : ${dateDeMiseAJourIndicateur} | Source : ${source ?? "Non renseigné"}`}
+          </p>
+        </div>
+        {!modeImpression ? (
           <button
             className="flex items-center gap-2 !text-dsfr-blue-france-sun-113 font-medium text-sm"
             onClick={enregistrerCommeImage}
@@ -132,11 +136,8 @@ export const IndicateurÉvolution: FunctionComponent<
             <Icone className="w-4 h-4" icone={Download1Icon} />
             Enregistrer comme image
           </button>
-        )}
+        ) : null}
       </div>
-      <p className="fr-text--xs !text-dsfr-mention-grey">
-        {`Mis à jour le : ${dateDeMiseAJourIndicateur} | Source : ${source ?? "Non renseigné"}`}
-      </p>
       {donnéesParTerritoire.datasets.some(
         (dataset) => dataset.data.length > 0,
       ) ? (
@@ -163,6 +164,20 @@ export const IndicateurÉvolution: FunctionComponent<
       ) : (
         <p className="fr-badge fr-badge--no-icon">NON RENSEIGNÉ</p>
       )}
+
+      {modeImpression ? (
+        <div className="flex justify-center mt-10">
+          <div className="flex items-center gap-4">
+            <p className="fr-logo !text-sm">Gouvernement</p>
+            <div className="flex flex-col">
+              <span className="!text-xl bold">PILOTE</span>
+              <span className="!text-sm">
+                Piloter l'action publique par les résultats
+              </span>
+            </div>
+          </div>
+        </div>
+      ) : null}
     </IndicateurÉvolutionStyled>
   );
 };
