@@ -10,6 +10,7 @@ import {
 import { FunctionComponent, useMemo, useRef, useState } from "react";
 import { toBlob, toPng } from "html-to-image";
 import { flushSync } from "react-dom";
+import { toast } from "sonner";
 import { useBlocIndicateurContext } from "@/components/PageChantier/useBlocIndicateurContext";
 import { useTerritoireSelectionne } from "@/components/PageChantier/PageChantierServerSideContext";
 import { IndicateurDetailsParTerritoire } from "@/client/components/_commons/IndicateursChantier/Bloc/IndicateurBloc.interface";
@@ -99,7 +100,9 @@ export const IndicateurEvolution: FunctionComponent<{
     source,
   };
 
-  const enregistrerCommeImage = async () => {
+  const genererImage = async (
+    callback: (element: HTMLElement) => void | Promise<void>,
+  ) => {
     flushSync(() => {
       setModeImpression(true);
     });
@@ -107,9 +110,17 @@ export const IndicateurEvolution: FunctionComponent<{
     if (!composantRef.current) return;
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1_000));
+      await new Promise((resolve) => setTimeout(resolve, 100));
 
-      const dataUrl = await toPng(composantRef.current, {
+      await callback(composantRef.current);
+    } finally {
+      setModeImpression(false);
+    }
+  };
+
+  const enregistrerCommeImage = async () => {
+    await genererImage(async (element) => {
+      const dataUrl = await toPng(element, {
         pixelRatio: 2,
         backgroundColor: "#ffffff",
       });
@@ -118,38 +129,27 @@ export const IndicateurEvolution: FunctionComponent<{
       lien.download = `evolution-indicateur-${new Date().toISOString().split("T")[0]}.png`;
       lien.href = dataUrl;
       lien.click();
-    } finally {
-      setModeImpression(false);
-    }
+    });
   };
 
   const copierDansLePressePapiers = async () => {
-    flushSync(() => {
-      setModeImpression(true);
-    });
-
-    if (!composantRef.current) return;
-
-    try {
-      await new Promise((resolve) => setTimeout(resolve, 1_000));
-
-      const blob = await toBlob(composantRef.current, {
+    await genererImage(async (element) => {
+      const blob = await toBlob(element, {
         pixelRatio: 2,
         backgroundColor: "#ffffff",
       });
-
-      if (!blob) {
-        throw new Error("Impossible de créer l'image");
-      }
+      if (blob == null) return;
 
       await navigator.clipboard.write([
         new ClipboardItem({
           "image/png": blob,
         }),
       ]);
-    } finally {
-      setModeImpression(false);
-    }
+
+      toast.success("Image copiée dans le presse-papiers", {
+        duration: 3000,
+      });
+    });
   };
 
   const actionButtons = (
