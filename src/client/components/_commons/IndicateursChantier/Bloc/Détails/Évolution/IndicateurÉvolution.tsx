@@ -153,7 +153,7 @@ export const IndicateurÉvolution: FunctionComponent<
   return (
     <div
       className={clsxm({
-        "fixed inset-0 bg-white z-10 p-10 flex items-center justify-center":
+        "fixed inset-0 bg-black/50 z-10 p-10 flex items-center justify-center":
           modeImpression,
       })}
     >
