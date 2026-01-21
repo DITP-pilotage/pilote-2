@@ -11,6 +11,7 @@ import { Line } from "react-chartjs-2";
 import { FunctionComponent, useMemo, useRef, useState } from "react";
 import { toBlob, toPng } from "html-to-image";
 import { flushSync } from "react-dom";
+import NProgress from "nprogress";
 import Titre from "@/components/_commons/Titre/Titre";
 import { useBlocIndicateurContext } from "@/components/PageChantier/useBlocIndicateurContext";
 import { useTerritoireSelectionne } from "@/components/PageChantier/PageChantierServerSideContext";
@@ -23,6 +24,7 @@ import IndicateurÉvolutionStyled from "./IndicateurÉvolution.styled";
 import { useIndicateurÉvolution } from "./useIndicateurÉvolution";
 import useIndicateurEvolutionNew from "./useIndicateurEvolutionNew";
 import LineChart from "./LineChart/LineChart";
+import "nprogress/nprogress.css";
 
 ChartJS.register(
   CategoryScale,
@@ -95,7 +97,9 @@ export const IndicateurÉvolution: FunctionComponent<
     });
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 100));
+      NProgress.start();
+      NProgress.set(0.5);
+      await new Promise((resolve) => setTimeout(resolve, 1_000));
 
       const dataUrl = await toPng(composantRef.current, {
         pixelRatio: 2,
@@ -107,6 +111,7 @@ export const IndicateurÉvolution: FunctionComponent<
       lien.href = dataUrl;
       lien.click();
     } finally {
+      NProgress.done();
       setModeImpression(false);
     }
   };
@@ -119,7 +124,9 @@ export const IndicateurÉvolution: FunctionComponent<
     });
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 100));
+      NProgress.start();
+      NProgress.set(0.5);
+      await new Promise((resolve) => setTimeout(resolve, 1_000));
 
       const blob = await toBlob(composantRef.current, {
         pixelRatio: 2,
@@ -138,88 +145,82 @@ export const IndicateurÉvolution: FunctionComponent<
     } catch (error) {
       console.error("Erreur lors de la copie dans le presse-papiers:", error);
     } finally {
+      NProgress.done();
       setModeImpression(false);
     }
   };
 
   return (
-    <IndicateurÉvolutionStyled
+    <div
       className={clsxm({
-        "!p-10 ": modeImpression,
+        "fixed inset-0 bg-white z-10 p-10 flex items-center justify-center":
+          modeImpression,
       })}
-      ref={composantRef}
     >
-      <div className="flex justify-between items-start gap-4 mb-2">
-        <div>
-          <Titre baliseHtml="h5" className="fr-text--lg fr-mb-0">
-            Évolution de l'indicateur : {indicateur.nom} ({indicateur.id})
-          </Titre>
+      <IndicateurÉvolutionStyled
+        className={clsxm({
+          "!p-10 ": modeImpression,
+        })}
+        ref={composantRef}
+      >
+        <div className="flex justify-between items-start gap-4 mb-2">
+          <div>
+            <Titre baliseHtml="h5" className="fr-text--lg fr-mb-0">
+              Évolution de l'indicateur : {indicateur.nom} ({indicateur.id})
+            </Titre>
 
-          <p className="fr-text--xs !text-dsfr-mention-grey">
-            {`Mis à jour le : ${dateDeMiseAJourIndicateur} | Source : ${source ?? "Non renseigné"}`}
-          </p>
-        </div>
-        {!modeImpression ? (
-          <div className="flex items-center gap-3">
-            <button
-              className="flex items-center gap-2 !text-dsfr-blue-france-sun-113 font-medium text-sm"
-              onClick={copierDansLePressePapiers}
-              type="button"
-            >
-              <Icone className="w-4 h-4" icone={ClipboardIcon} />
-              Copier dans le presse-papiers
-            </button>
-            <button
-              className="flex items-center gap-2 !text-dsfr-blue-france-sun-113 font-medium text-sm"
-              onClick={enregistrerCommeImage}
-              type="button"
-            >
-              <Icone className="w-4 h-4" icone={Download1Icon} />
-              Enregistrer comme image
-            </button>
+            <p className="fr-text--xs !text-dsfr-mention-grey">
+              {`Mis à jour le : ${dateDeMiseAJourIndicateur} | Source : ${source ?? "Non renseigné"}`}
+            </p>
           </div>
-        ) : null}
-      </div>
-      {donnéesParTerritoire.datasets.some(
-        (dataset) => dataset.data.length > 0,
-      ) ? (
-        <div className="graphique-bloc">
-          <div className="graphique-conteneur">
-            {nouveauxGraphiquesSontActifs ? (
-              <LineChart
-                afficherLesCibles={afficherLesCibles}
-                changerLaPeriodeSelectionnee={changerLaPeriodeSelectionnee}
-                modeImpression={modeImpression}
-                option={optionsNew}
-                periodeSelectionnee={periodeSelectionnee}
-                periodesSelectionnablesZoom={periodesSelectionnablesZoom}
-                setAfficherLesCibles={setAfficherLesCibles}
-                setTerritoiresAAfficher={setTerritoiresAAfficher}
-                territoiresAAfficher={territoiresAAfficher}
-                tousLesIndicateursDetails={tousLesIndicateursDetails}
-              />
-            ) : (
-              <Line data={donnéesParTerritoire} options={options} />
-            )}
-          </div>
+          {!modeImpression ? (
+            <div className="flex items-end flex-col gap-3">
+              <button
+                className="flex items-center gap-2 !text-dsfr-blue-france-sun-113 font-medium text-sm"
+                onClick={enregistrerCommeImage}
+                type="button"
+              >
+                <Icone className="w-4 h-4" icone={Download1Icon} />
+                Enregistrer comme image
+              </button>
+              <button
+                className="flex items-center gap-2 !text-dsfr-blue-france-sun-113 font-medium text-sm"
+                onClick={copierDansLePressePapiers}
+                type="button"
+              >
+                <Icone className="w-4 h-4" icone={ClipboardIcon} />
+                Copier dans le presse-papiers
+              </button>
+            </div>
+          ) : null}
         </div>
-      ) : (
-        <p className="fr-badge fr-badge--no-icon">NON RENSEIGNÉ</p>
-      )}
-
-      {modeImpression ? (
-        <div className="flex justify-center mt-10">
-          <div className="flex items-center gap-4">
-            <p className="fr-logo !text-sm">Gouvernement</p>
-            <div className="flex flex-col">
-              <span className="!text-xl bold">PILOTE</span>
-              <span className="!text-sm">
-                Piloter l'action publique par les résultats
-              </span>
+        {donnéesParTerritoire.datasets.some(
+          (dataset) => dataset.data.length > 0,
+        ) ? (
+          <div className="graphique-bloc">
+            <div className="graphique-conteneur">
+              {nouveauxGraphiquesSontActifs ? (
+                <LineChart
+                  afficherLesCibles={afficherLesCibles}
+                  changerLaPeriodeSelectionnee={changerLaPeriodeSelectionnee}
+                  modeImpression={modeImpression}
+                  option={optionsNew}
+                  periodeSelectionnee={periodeSelectionnee}
+                  periodesSelectionnablesZoom={periodesSelectionnablesZoom}
+                  setAfficherLesCibles={setAfficherLesCibles}
+                  setTerritoiresAAfficher={setTerritoiresAAfficher}
+                  territoiresAAfficher={territoiresAAfficher}
+                  tousLesIndicateursDetails={tousLesIndicateursDetails}
+                />
+              ) : (
+                <Line data={donnéesParTerritoire} options={options} />
+              )}
             </div>
           </div>
-        </div>
-      ) : null}
-    </IndicateurÉvolutionStyled>
+        ) : (
+          <p className="fr-badge fr-badge--no-icon">NON RENSEIGNÉ</p>
+        )}
+      </IndicateurÉvolutionStyled>
+    </div>
   );
 };

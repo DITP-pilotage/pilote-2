@@ -325,27 +325,25 @@ export default function useIndicateurEvolutionNew({
         },
       },
     },
-    dataZoom: modeImpression
-      ? []
-      : [
-          {
-            type: "slider",
-            xAxisIndex: [0, 1, 2],
-            height: 25,
-            bottom: 10,
-            filterMode: "none",
-            labelFormatter: function (value: string) {
-              const date = new Date(value);
-              return formaterDate(date.toISOString(), "MM/YYYY");
-            },
-            textStyle: {
-              fontSize: 10,
-              overflow: "breakAll",
-            },
-            startValue: dataZoomPeriode.startValue,
-            endValue: dataZoomPeriode.endValue,
-          },
-        ],
+    dataZoom: [
+      {
+        type: "slider",
+        xAxisIndex: [0, 1, 2],
+        height: modeImpression ? 0 : 25,
+        bottom: modeImpression ? -10 : 10,
+        filterMode: "none",
+        labelFormatter: function (value: string) {
+          const date = new Date(value);
+          return formaterDate(date.toISOString(), "MM/YYYY");
+        },
+        textStyle: {
+          fontSize: 10,
+          overflow: "breakAll",
+        },
+        startValue: dataZoomPeriode.startValue,
+        endValue: dataZoomPeriode.endValue,
+      },
+    ],
     grid: {
       left: 25,
       right: 60,
