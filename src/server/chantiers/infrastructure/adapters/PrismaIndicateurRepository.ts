@@ -883,7 +883,7 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
     );
   }
 
-  private convertirEnDetailsIndicateursTerritoires(
+  private async convertirEnDetailsIndicateursTerritoires(
     territoires: Pick<PrismaTerritoire, "code" | "code_insee">[],
     indicateurRows: (PrismaIndicateurTerritoire & {
       indicateur_identite: PrismaIndicateurIdentite;
@@ -893,10 +893,10 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
       })[];
     })[],
     dateDerniereExecutionDatajobs: Date,
-  ) {
-    let donnéesTerritoires: DetailsIndicateurTerritoire = {};
+  ): Promise<DetailsIndicateurTerritoire> {
+    const donnéesTerritoires: DetailsIndicateurTerritoire = {};
 
-    territoires.forEach((territoire) => {
+    for (const territoire of territoires) {
       const indicateurRow = indicateurRows.find(
         (indicateur) => indicateur.territoire_code === territoire.code,
       );
@@ -905,10 +905,18 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
 
       let propositionStatutTerritoire = null;
       let propositionStatutDirectionProjet = null;
+      let dateImport = null;
 
       if (indicateurRow) {
         ({ propositionStatutTerritoire, propositionStatutDirectionProjet } =
           this.calculerStatutsProposition(indicateurRow));
+
+        dateImport = await this.calculerDateDernierImport(
+          indicateurRow.id,
+          indicateurRow.territoire_code,
+          indicateurRow.indicateur_territoire_valeur_evenement,
+          dateDerniereExecutionDatajobs,
+        );
       }
 
       donnéesTerritoires[territoire.code] = {
@@ -966,6 +974,7 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
         propositionStatutDirectionProjet,
         unite: indicateurRow?.indicateur_identite.unite_mesure ?? null,
         estApplicable: indicateurRow?.est_applicable ?? null,
+        dateImport: dateImport ? dateImport.toLocaleString() : null,
         ponderation: indicateurRow?.ponderation_zone_reel ?? null,
         prochaineDateMaj:
           indicateurRow?.prochaine_date_maj?.toLocaleString() ?? null,
@@ -983,12 +992,12 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
             };
           }) ?? [],
       };
-    });
+    }
 
     return donnéesTerritoires;
   }
 
-  private convertirEnDetailsIndicateurs(
+  private async convertirEnDetailsIndicateurs(
     indicateurs: (PrismaIndicateurTerritoire & {
       indicateur_identite: PrismaIndicateurIdentite;
       indicateur_territoire_jalon: PrismaIndicateurTerritoireJalon[];
@@ -998,7 +1007,7 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
     })[],
     jalon: number,
     dateDerniereExecutionDatajobs: Date,
-  ): DetailsIndicateurs {
+  ): Promise<DetailsIndicateurs> {
     const détailsIndicateurs: DetailsIndicateurs = {};
 
     for (const indicateurRow of indicateurs) {
@@ -1013,6 +1022,13 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
 
       const { propositionStatutTerritoire, propositionStatutDirectionProjet } =
         this.calculerStatutsProposition(indicateurRow);
+
+      const dateImport = await this.calculerDateDernierImport(
+        indicateurRow.id,
+        indicateurRow.territoire_code,
+        indicateurRow.indicateur_territoire_valeur_evenement,
+        dateDerniereExecutionDatajobs,
+      );
 
       détailsIndicateurs[indicateurRow.id][indicateurRow.territoire_code] = {
         dateValeurAvancementMandat: formatDate(
@@ -1057,6 +1073,7 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
         propositionStatutDirectionProjet,
         unite: indicateurRow.indicateur_identite.unite_mesure,
         estApplicable: indicateurRow.est_applicable,
+        dateImport: dateImport?.toLocaleString() ?? null,
         ponderation: indicateurRow.ponderation_zone_reel,
         prochaineDateValeurAvancement: formatDate(
           indicateurRow.prochaine_date_valeur_actuelle,
@@ -1074,6 +1091,70 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
     }
 
     return détailsIndicateurs;
+  }
+
+  private async calculerDateDernierImport(
+    indicId: string,
+    territoireCode: string,
+    evenements: PrismaIndicateurTerritoireValeurEvenement[],
+    dateDerniereExecutionDatajobs: Date,
+  ): Promise<Date | null> {
+    const maille = territoireCode.startsWith("NAT")
+      ? "NAT"
+      : territoireCode.startsWith("REG")
+        ? "REG"
+        : "DEPT";
+
+    let evenementsAUtiliser = evenements;
+
+    if (maille === "NAT" || maille === "REG") {
+      const metadata = await this.prisma
+        .getInstance()
+        .metadata_parametrage_indicateurs.findFirst({
+          where: { indic_id: indicId },
+        });
+
+      let mailleSource: string | null = null;
+      if (
+        maille === "NAT" &&
+        metadata?.va_nat_from &&
+        ["DEPT", "REG"].includes(metadata.va_nat_from)
+      ) {
+        mailleSource = metadata.va_nat_from;
+      } else if (maille === "REG" && metadata?.va_reg_from === "DEPT") {
+        mailleSource = "DEPT";
+      }
+
+      if (mailleSource) {
+        evenementsAUtiliser = await this.prisma
+          .getInstance()
+          .indicateur_territoire_valeur_evenement.findMany({
+            where: {
+              indic_id: indicId,
+              territoire_code: { startsWith: mailleSource },
+            },
+          });
+      }
+    }
+
+    const evenementsImport = evenementsAUtiliser.filter(
+      (evenement) =>
+        [
+          EvenementValeurEnum.VALEUR_CREEE,
+          EvenementValeurEnum.VALEUR_MODIFIEE,
+        ].includes(evenement.type_evenement) &&
+        evenement.date_creation < dateDerniereExecutionDatajobs,
+    );
+
+    if (evenementsImport.length === 0) {
+      return null;
+    }
+
+    return evenementsImport.reduce((maxDate, evenement) => {
+      return evenement.date_creation > maxDate
+        ? evenement.date_creation
+        : maxDate;
+    }, evenementsImport[0].date_creation);
   }
 
   private recupererPropositionValeurAvancement(
@@ -1331,40 +1412,5 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
     }
 
     return indicateursParChantier;
-  }
-
-  async recupererDatesDernierImports(
-    dateDerniereExecutionDatajobs: Date,
-  ): Promise<Map<string, Date | null>> {
-    const evenements = await this.prisma
-      .getInstance()
-      .indicateur_territoire_valeur_evenement.findMany({
-        where: {
-          type_evenement: {
-            in: [
-              EvenementValeurEnum.VALEUR_CREEE,
-              EvenementValeurEnum.VALEUR_MODIFIEE,
-            ],
-          },
-          date_creation: {
-            lt: dateDerniereExecutionDatajobs,
-          },
-        },
-        select: {
-          date_creation: true,
-          indic_id: true,
-        },
-      });
-
-    return evenements.reduce((map, evenement) => {
-      const indicateurId = evenement.indic_id;
-      const dateActuelle = map.get(indicateurId);
-
-      if (!dateActuelle || evenement.date_creation > dateActuelle) {
-        map.set(indicateurId, evenement.date_creation);
-      }
-
-      return map;
-    }, new Map<string, Date | null>());
   }
 }

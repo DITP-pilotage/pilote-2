@@ -37,19 +37,14 @@ export class RecupererDetailsIndicateursV2UseCase {
       );
     });
 
-    // TODO(PVA:JOTA:2025-08-11): Il y a du metier dans le repository à enlever et mettre dans le use case
-    const [result, datesDernierImports] = await Promise.all([
-      this.indicateurRepository.recupererDetailsParChantierIdEtTerritoire(
+    const result =
+      await this.indicateurRepository.recupererDetailsParChantierIdEtTerritoire(
         chantierId,
         territoireCodes,
         jalon,
         new Date(datajobsExecution.derniereDateExecution),
-      ),
-      this.indicateurRepository.recupererDatesDernierImports(
-        new Date(datajobsExecution.derniereDateExecution),
-      ),
-    ]);
+      );
 
-    return presenterEnDetailsIndicateursContrat(result, datesDernierImports);
+    return presenterEnDetailsIndicateursContrat(result);
   }
 }
