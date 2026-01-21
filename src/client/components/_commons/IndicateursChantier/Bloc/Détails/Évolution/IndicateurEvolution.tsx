@@ -147,9 +147,6 @@ export const IndicateurEvolution: FunctionComponent<{
           "image/png": blob,
         }),
       ]);
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error("Erreur lors de la copie dans le presse-papiers:", error);
     } finally {
       setModeImpression(false);
     }
