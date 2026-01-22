@@ -128,7 +128,6 @@ export default function useIndicateurEvolutionNew({
     let min = new Date();
     let max = new Date(0);
     let maxPrev = new Date(max);
-    max.setMonth(max.getMonth() + 1);
     tousLesIndicateursDetails.forEach((indicateur) => {
       indicateur.données.historiquesValeurs.forEach((valeur) => {
         const date = new Date(valeur.date);
@@ -136,6 +135,7 @@ export default function useIndicateurEvolutionNew({
         if (date > max) max = date;
       });
     });
+    max.setMonth(max.getMonth() + 1);
     return [min, max, maxPrev];
   }, [tousLesIndicateursDetails]);
 
@@ -405,7 +405,7 @@ export default function useIndicateurEvolutionNew({
     setAfficherLesCibles,
     territoiresAAfficher,
     setTerritoiresAAfficher,
-    getOptions: getOptions,
+    getOptions,
     periodesSelectionnablesZoom,
     changerLaPeriodeSelectionnee,
     periodeSelectionnee,
