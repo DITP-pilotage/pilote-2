@@ -80,6 +80,14 @@ enum type_statut_proposition {
   @@schema("public")
 }
 
+enum statut_envoi_rapport {
+  CREE
+  ENVOYE
+  ECHEC
+
+  @@schema("public")
+}
+
 model chantier_identite {
   id                                    String                 @id
   nom                                   String
@@ -509,6 +517,33 @@ model rapport_import_mesure_indicateur {
   erreur_validation_fichier    erreur_validation_fichier[]
   mesure_indicateur            mesure_indicateur[]
 
+  @@schema("public")
+}
+
+model rapport_hebdomadaire_coordinateur {
+  id                      String               @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  coordinateur_id         String               @db.Uuid
+  coordinateur_email      String
+  coordinateur_nom        String
+  coordinateur_prenom     String
+  coordinateur_profil     String
+  territoire_code         String
+  territoire_nom          String
+  date_debut_periode      DateTime
+  date_fin_periode        DateTime
+  comptes_crees           Json
+  comptes_desactives      Json
+  statut_envoi            statut_envoi_rapport @default(CREE)
+  date_creation           DateTime             @default(now())
+  date_envoi              DateTime?
+  date_derniere_tentative DateTime?
+  nombre_tentatives       Int                  @default(0)
+  erreur_envoi            String?
+
+  @@unique([coordinateur_id, date_debut_periode, date_fin_periode])
+  @@index([statut_envoi])
+  @@index([date_creation])
+  @@index([coordinateur_email])
   @@schema("public")
 }
 

@@ -279,6 +279,11 @@ const config = convict({
       default: false,
       env: "NEXT_PUBLIC_FF_MON_PROFIL",
     },
+    rapportCoordinateurs: {
+      format: Boolean,
+      default: false,
+      env: "NEXT_PUBLIC_FF_RAPPORT_COORDINATEURS",
+    },
   },
   analytics: {
     doc: "Matomo Analytics",

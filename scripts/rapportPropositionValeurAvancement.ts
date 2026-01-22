@@ -1,3 +1,4 @@
+import "./load-env";
 import { loadEnvConfig } from "@next/env";
 import process from "node:process";
 import logger from "@/server/infrastructure/Logger";

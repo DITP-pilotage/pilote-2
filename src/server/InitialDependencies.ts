@@ -31,10 +31,10 @@ export function getInitialContainerWithTransversalDependencies(): AwilixContaine
       PrismaIndicateurTerritoireValeurEvenementRepository,
     ),
     datajobsExecutionQueries: asClass(DatajobsExecutionQueries),
-    emailManager: asFunction(() => {
-      return configuration().brevo.disableEmails
+    emailManager: asFunction(() =>
+      configuration().brevo.disableEmails
         ? new StubEmailManager()
-        : new BrevoEmailManager();
-    }).singleton(),
+        : new BrevoEmailManager(),
+    ).singleton(),
   });
 }
