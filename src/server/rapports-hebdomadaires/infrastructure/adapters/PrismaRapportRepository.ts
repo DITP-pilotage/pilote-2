@@ -1,8 +1,10 @@
-import { $Enums } from "@prisma/client";
+import { $Enums, Prisma } from "@prisma/client";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { RapportRepository } from "@/server/rapports-hebdomadaires/domain/ports/RapportRepository";
 import { RapportHebdomadaire } from "@/server/rapports-hebdomadaires/domain/RapportHebdomadaire";
 import { StatutEnvoi } from "@/server/rapports-hebdomadaires/domain/StatutEnvoi";
+import { ProfilCoordinateur } from "@/server/rapports-hebdomadaires/domain/Coordinateur";
+import { CompteActivite } from "@/server/rapports-hebdomadaires/domain/CompteActivite";
 
 interface Dependencies {
   prisma: PrismaPilote;
@@ -28,9 +30,10 @@ export class PrismaRapportRepository implements RapportRepository {
         territoire_nom: rapport.coordinateur.territoire.nom,
         date_debut_periode: rapport.periode.dateDebut,
         date_fin_periode: rapport.periode.dateFin,
-        comptes_crees: rapport.sectionActiviteComptes.comptesCreés as any,
+        comptes_crees: rapport.sectionActiviteComptes
+          .comptesCreés as unknown as Prisma.InputJsonValue,
         comptes_desactives: rapport.sectionActiviteComptes
-          .comptesDésactivés as any,
+          .comptesDésactivés as unknown as Prisma.InputJsonValue,
         statut_envoi: this.mapStatutToPrisma(rapport.statutEnvoi),
       },
     });
@@ -75,44 +78,45 @@ export class PrismaRapportRepository implements RapportRepository {
       },
     });
 
-    return rapports.map((r) => this.mapToDomain(r));
+    return rapports.map(
+      (row): RapportHebdomadaire => ({
+        id: row.id,
+        coordinateur: {
+          id: row.coordinateur_id,
+          email: row.coordinateur_email,
+          nom: row.coordinateur_nom,
+          prenom: row.coordinateur_prenom,
+          profil: row.coordinateur_profil as ProfilCoordinateur,
+          territoire: {
+            code: row.territoire_code,
+            nom: row.territoire_nom,
+            maille:
+              row.coordinateur_profil === "COORDINATEUR_REGION"
+                ? "REG"
+                : "DEPT",
+            codesEnfants: [],
+          },
+        },
+        periode: {
+          dateDebut: row.date_debut_periode,
+          dateFin: row.date_fin_periode,
+        },
+        sectionActiviteComptes: {
+          comptesCreés: row.comptes_crees as unknown as CompteActivite[],
+          comptesDésactivés:
+            row.comptes_desactives as unknown as CompteActivite[],
+        },
+        statutEnvoi: row.statut_envoi as StatutEnvoi,
+        dateCreation: row.date_creation,
+        dateEnvoi: row.date_envoi ?? undefined,
+        dateDerniereTentative: row.date_derniere_tentative ?? undefined,
+        nombreTentatives: row.nombre_tentatives,
+        erreurEnvoi: row.erreur_envoi ?? undefined,
+      }),
+    );
   }
 
   private mapStatutToPrisma(statut: StatutEnvoi): $Enums.statut_envoi_rapport {
     return statut as $Enums.statut_envoi_rapport;
-  }
-
-  private mapToDomain(row: any): RapportHebdomadaire {
-    return {
-      id: row.id,
-      coordinateur: {
-        id: row.coordinateur_id,
-        email: row.coordinateur_email,
-        nom: row.coordinateur_nom,
-        prenom: row.coordinateur_prenom,
-        profil: row.coordinateur_profil,
-        territoire: {
-          code: row.territoire_code,
-          nom: row.territoire_nom,
-          maille:
-            row.coordinateur_profil === "COORDINATEUR_REGION" ? "REG" : "DEPT",
-          codesEnfants: [],
-        },
-      },
-      periode: {
-        dateDebut: row.date_debut_periode,
-        dateFin: row.date_fin_periode,
-      },
-      sectionActiviteComptes: {
-        comptesCreés: row.comptes_crees,
-        comptesDésactivés: row.comptes_desactives,
-      },
-      statutEnvoi: row.statut_envoi as StatutEnvoi,
-      dateCreation: row.date_creation,
-      dateEnvoi: row.date_envoi ?? undefined,
-      dateDerniereTentative: row.date_derniere_tentative ?? undefined,
-      nombreTentatives: row.nombre_tentatives,
-      erreurEnvoi: row.erreur_envoi ?? undefined,
-    };
   }
 }
