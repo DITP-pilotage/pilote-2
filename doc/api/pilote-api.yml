@@ -82,10 +82,13 @@ info:
     *   Il n'est pas possible d'importer plusieurs valeurs pour la même zone, date, identifiant d'indicateur et type de valeur. Cela générerait une erreur.
 
     **Si vous rencontrez des difficultés, merci de nous contacter à l'adresse suivante** (en mentionnant *[api]* dans l'objet de votre mail): [pilote.ditp@modernisation.gouv.fr](mailto:pilote.ditp@modernisation.gouv.fr?subject=[api]%20&cc=colin.dugeai@modernisation.gouv.fr&body=%0D%0A%0D%0A%0D%0A%0D%0A%0D%0A%20tag:api)
+    
+    # 🔴Pour tester l'API, veuillez rentrer votre token API en cliquant sur le bouton "Authorize" au préalable 🔴
+
   contact: {}
 servers:
-  - url: 'http://localhost:3000/api/open-api'
-    description: Environnement de développement sur ordinateur local
+  - url: 'https://sandbox-webapp.osc-secnum-fr1.scalingo.io/api/open-api'
+    description: Environnement de sandbox pour tester l'API en sécurité
 paths:
   '/chantier/{chantier_id}/indicateur/{indicateur_id}/donnees':
     parameters:
@@ -192,7 +195,7 @@ paths:
       description: Obtenir les données du chantier au format JSON.
       security:
         - bearerAuth: []
-  '/chantier/{chantier_id}/commentaire':
+  '/chantier/{chantier_id}/commentaires':
     parameters:
       - schema:
           type: string

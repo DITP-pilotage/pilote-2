@@ -4,11 +4,7 @@ import {
   ImportCommentaireErrorResponse,
   ImportCommentaireSuccessResponse,
 } from "@/server/import-commentaire/app/contrats/ImportCommentaireAPIContrat";
-import {
-  authentificationApiDirProjetFn,
-  seedDatabase,
-  suppressionAuthentificationApiFn,
-} from "../utils";
+import { authentificationApiDirProjetFn, seedDatabase } from "../utils";
 
 let apiContext: APIRequestContext;
 let result: APIResponse;
@@ -36,7 +32,7 @@ test("Import de commentaires via l'API open-api", async ({
 
   await test.step("Import d'un commentaire valide sans date - doit retourner 200 OK", async () => {
     result = await apiContext.post(
-      `/api/open-api/chantier/${apiDirProjetChantierAssocie}/commentaire`,
+      `/api/open-api/chantier/${apiDirProjetChantierAssocie}/commentaires`,
       {
         data: {
           commentaires: [
@@ -62,7 +58,7 @@ test("Import de commentaires via l'API open-api", async ({
 
   await test.step("Import d'un commentaire avec une date antérieure - doit retourner 200 OK", async () => {
     result = await apiContext.post(
-      `/api/open-api/chantier/${apiDirProjetChantierAssocie}/commentaire`,
+      `/api/open-api/chantier/${apiDirProjetChantierAssocie}/commentaires`,
       {
         data: {
           commentaires: [
@@ -86,7 +82,7 @@ test("Import de commentaires via l'API open-api", async ({
 
   await test.step("Import de plusieurs commentaires valides - doit tous les créer", async () => {
     result = await apiContext.post(
-      `/api/open-api/chantier/${apiDirProjetChantierAssocie}/commentaire`,
+      `/api/open-api/chantier/${apiDirProjetChantierAssocie}/commentaires`,
       {
         data: {
           commentaires: [
@@ -124,7 +120,7 @@ test("Import de commentaires via l'API open-api", async ({
     const futurDateStr = futurDate.toISOString().split("T")[0];
 
     result = await apiContext.post(
-      `/api/open-api/chantier/${apiDirProjetChantierAssocie}/commentaire`,
+      `/api/open-api/chantier/${apiDirProjetChantierAssocie}/commentaires`,
       {
         data: {
           commentaires: [
@@ -150,7 +146,7 @@ test("Import de commentaires via l'API open-api", async ({
 
   await test.step("Import avec un type national sur une maille régionale - doit retourner 400", async () => {
     result = await apiContext.post(
-      `/api/open-api/chantier/${apiDirProjetChantierAssocie}/commentaire`,
+      `/api/open-api/chantier/${apiDirProjetChantierAssocie}/commentaires`,
       {
         data: {
           commentaires: [
@@ -177,7 +173,7 @@ test("Import de commentaires via l'API open-api", async ({
 
   await test.step("Import avec un type régional sur une maille nationale - doit retourner 400", async () => {
     result = await apiContext.post(
-      `/api/open-api/chantier/${apiDirProjetChantierAssocie}/commentaire`,
+      `/api/open-api/chantier/${apiDirProjetChantierAssocie}/commentaires`,
       {
         data: {
           commentaires: [
@@ -204,7 +200,7 @@ test("Import de commentaires via l'API open-api", async ({
 
   await test.step("Import avec un type invalide - doit retourner 400", async () => {
     result = await apiContext.post(
-      `/api/open-api/chantier/${apiDirProjetChantierAssocie}/commentaire`,
+      `/api/open-api/chantier/${apiDirProjetChantierAssocie}/commentaires`,
       {
         data: {
           commentaires: [
@@ -230,7 +226,7 @@ test("Import de commentaires via l'API open-api", async ({
     const chantierNonAutorise = "CH-999";
 
     result = await apiContext.post(
-      `/api/open-api/chantier/${chantierNonAutorise}/commentaire`,
+      `/api/open-api/chantier/${chantierNonAutorise}/commentaires`,
       {
         data: {
           commentaires: [

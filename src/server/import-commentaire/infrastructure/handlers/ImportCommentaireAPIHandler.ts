@@ -14,8 +14,6 @@ import {
   ImportCommentaireErrorResponse,
 } from "@/server/import-commentaire/app/contrats/ImportCommentaireAPIContrat";
 import { UtilisateurAuthentifie } from "@/server/authentification/domain/UtilisateurAuthentifie";
-import { getContainer } from "@/server/dependances";
-import logger from "@/server/infrastructure/Logger";
 
 export class ImportCommentaireAPIHandler {
   constructor(
