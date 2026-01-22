@@ -11,6 +11,19 @@
                     <p class="instruction">
                       ${message.summary}
                     </p>
+                    <#if message.summary?? && message.summary?contains("Action expir")>
+                      <p class="fr-mt-2w">
+                        <#if url.loginResetCredentialsUrl??>
+                          <a href="${url.loginResetCredentialsUrl}" class="fr-link">
+                            Demander un nouveau lien de création de mot de passe
+                          </a>
+                        <#elseif url.loginUrl??>
+                          <a href="${url.loginUrl}" class="fr-link">
+                            Retourner à la page de connexion
+                          </a>
+                        </#if>
+                      </p>
+                    </#if>
                     <#if client?? && client.baseUrl?has_content>
                       <p>
                         <a id="backToApplication" href="${client.baseUrl}">
