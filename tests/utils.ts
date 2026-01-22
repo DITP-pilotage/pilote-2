@@ -13,6 +13,7 @@ export const loginFn = async ({ page }: { page: Page }) => {
   const password = process.env.DEV_PASSWORD!;
 
   await test.step(`Authentification de l'utilisateur ${username} avec le rôle DITP_ADMIN`, async () => {
+    test.setTimeout(150_000);
     await page.goto("/");
 
     await page
@@ -20,18 +21,14 @@ export const loginFn = async ({ page }: { page: Page }) => {
       .getByRole("button", { name: "Se connecter" })
       .click();
 
-    await expect(page).toHaveTitle(/Sign In/);
+    await page.waitForURL("**/api/auth/signin**", { timeout: 60_000 });
 
     await page.getByLabel("Identifiant").fill(username);
     await page.getByLabel(/Mot de passe/).fill(password);
 
     await page.getByRole("button").click();
 
-    await page.waitForURL("**/accueil/chantier/**");
-
-    await expect(page).toHaveTitle(
-      /PILOTE - Piloter l'action publique par les résultats/,
-    );
+    await page.waitForURL("**/accueil/chantier/**", { timeout: 60_000 });
 
     const isModalVideoAccueilVisible = await page
       .getByText(

@@ -8,10 +8,6 @@ export interface ImportCommentaireContrat {
   date_commentaire?: string;
 }
 
-export interface DataImportCommentaireAPIContrat {
-  commentaires: ImportCommentaireContrat[];
-}
-
 export interface CommentaireImporteContrat {
   id: string;
   territoire: string;
@@ -21,7 +17,6 @@ export interface CommentaireImporteContrat {
 export interface ImportCommentaireSuccessResponse {
   success: true;
   message: string;
-  commentaires: CommentaireImporteContrat[];
 }
 
 export interface ImportCommentaireErreur {

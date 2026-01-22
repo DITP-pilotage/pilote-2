@@ -4,7 +4,6 @@ import { UtilisateurAuthentifieJWTService } from "@/server/authentification/infr
 import { dependencies } from "@/server/infrastructure/Dependencies";
 import { getContainer } from "@/server/dependances";
 import { errorBoundary } from "@/server/app/error-boundary/error-boundary";
-import { ForbiddenError } from "@/server/app/error-boundary/forbidden-error";
 import { BadRequestError } from "@/server/app/error-boundary/bad-request-error";
 
 export const config = {
@@ -29,22 +28,13 @@ const handle = async (request: NextApiRequest, response: NextApiResponse) => {
     case "POST": {
       logger.info("(API) Import des commentaires", `Chantier : ${chantierId}`);
 
-      if (
-        !utilisateurAuthentifie.peutSaisirCommentaireSurChantier(chantierId)
-      ) {
-        throw new ForbiddenError(
-          `Vous n'êtes pas autorisé à saisir des commentaires pour le chantier ${chantierId}`,
-        );
-      }
-
       await getContainer("importCommentaire")
         .resolve("importCommentaireAPIHandler")
         .handle({
           request,
           response,
           chantierId,
-          auteurId: utilisateurAuthentifie.id,
-          habilitations: utilisateurAuthentifie.habilitations,
+          utilisateurAuthentifie,
         });
 
       logger.info(

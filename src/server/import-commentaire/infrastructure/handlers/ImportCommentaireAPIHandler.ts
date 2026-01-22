@@ -1,31 +1,48 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { ZodError } from "zod";
-import { importCommentairesSchema } from "@/validation/importCommentaire";
+import {
+  importCommentairesSchema,
+  typesCommentaireAPINationaux,
+  typesCommentaireAPIRegionauxDepartementaux,
+} from "@/validation/importCommentaire";
 import { ImporterCommentairesUseCase } from "@/server/import-commentaire/usecases/ImporterCommentairesUseCase";
 import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
 import {
   ImportCommentaireAPIResponse,
+  ImportCommentaireContrat,
+  ImportCommentaireErreur,
   ImportCommentaireErrorResponse,
 } from "@/server/import-commentaire/app/contrats/ImportCommentaireAPIContrat";
+import { UtilisateurAuthentifie } from "@/server/authentification/domain/UtilisateurAuthentifie";
+import { getContainer } from "@/server/dependances";
+import logger from "@/server/infrastructure/Logger";
 
 export class ImportCommentaireAPIHandler {
   constructor(
-    private readonly importerCommentairesUseCase: ImporterCommentairesUseCase,
+    private readonly dependencies: {
+      importerCommentairesUseCase: ImporterCommentairesUseCase;
+    },
   ) {}
 
   async handle({
     request,
     response,
     chantierId,
-    auteurId,
-    habilitations,
+    utilisateurAuthentifie,
   }: {
     request: NextApiRequest;
     response: NextApiResponse<ImportCommentaireAPIResponse>;
     chantierId: string;
-    auteurId: string;
-    habilitations: Habilitations;
+    utilisateurAuthentifie: UtilisateurAuthentifie;
   }): Promise<void> {
+    if (!utilisateurAuthentifie.peutSaisirCommentaireSurChantier(chantierId)) {
+      response.status(403).json({
+        success: false,
+        message: `Vous n'êtes pas autorisé à saisir des commentaires pour le chantier ${chantierId}`,
+        erreurs: [],
+      });
+    }
+
     const body = await this.parseBody(request);
 
     const validationResult = importCommentairesSchema.safeParse(body);
@@ -36,26 +53,31 @@ export class ImportCommentaireAPIHandler {
       return;
     }
 
-    const result = await this.importerCommentairesUseCase.execute({
+    const erreurs = this.validerCommentaires(
+      validationResult.data.commentaires,
       chantierId,
-      commentaires: validationResult.data.commentaires,
-      auteurId,
-      habilitations,
-    });
+      utilisateurAuthentifie.habilitations,
+    );
 
-    if (result.success) {
-      response.status(200).json({
-        success: true,
-        message: "Les commentaires ont correctement été importés",
-        commentaires: result.commentaires!,
-      });
-    } else {
+    if (erreurs.length > 0) {
       response.status(400).json({
         success: false,
         message: "Une erreur est survenue lors de l'import des commentaires",
-        erreurs: result.erreurs!,
+        erreurs,
       });
     }
+
+    await this.dependencies.importerCommentairesUseCase.execute({
+      chantierId,
+      commentaires: validationResult.data.commentaires,
+      auteurId: utilisateurAuthentifie.id,
+      habilitations: utilisateurAuthentifie.habilitations,
+    });
+
+    response.status(200).json({
+      success: true,
+      message: "Les commentaires ont correctement été importés",
+    });
   }
 
   private async parseBody(request: NextApiRequest): Promise<unknown> {
@@ -97,5 +119,93 @@ export class ImportCommentaireAPIHandler {
       message: "Une erreur est survenue lors de l'import des commentaires",
       erreurs,
     };
+  }
+
+  private validerCommentaires(
+    commentaires: ImportCommentaireContrat[],
+    chantierId: string,
+    habilitations: Habilitations,
+  ): ImportCommentaireErreur[] {
+    const erreurs: ImportCommentaireErreur[] = [];
+
+    commentaires.forEach((commentaire, index) => {
+      const erreurHabilitation = this.validerHabilitation(
+        commentaire,
+        chantierId,
+        habilitations,
+      );
+      if (erreurHabilitation) {
+        erreurs.push({ index, ...erreurHabilitation });
+        return;
+      }
+
+      const erreurTypeMaille = this.validerTypeMaille(commentaire);
+      if (erreurTypeMaille) {
+        erreurs.push({ index, ...erreurTypeMaille });
+      }
+    });
+
+    return erreurs;
+  }
+
+  private validerHabilitation(
+    commentaire: ImportCommentaireContrat,
+    chantierId: string,
+    habilitations: Habilitations,
+  ): Omit<ImportCommentaireErreur, "index"> | null {
+    if (!habilitations.saisieCommentaire.chantiers.includes(chantierId)) {
+      return {
+        territoire: commentaire.territoire,
+        type: commentaire.type,
+        message: `Vous n'êtes pas autorisé à saisir des commentaires pour le chantier ${chantierId}`,
+      };
+    }
+
+    if (
+      !habilitations.saisieCommentaire.territoires.includes(
+        commentaire.territoire,
+      )
+    ) {
+      return {
+        territoire: commentaire.territoire,
+        type: commentaire.type,
+        message: `Vous n'êtes pas autorisé à saisir des commentaires pour le territoire ${commentaire.territoire}`,
+      };
+    }
+
+    return null;
+  }
+
+  private validerTypeMaille(
+    commentaire: ImportCommentaireContrat,
+  ): Omit<ImportCommentaireErreur, "index"> | null {
+    const maille = commentaire.territoire.split("-")[0];
+    const isMailleNationale = maille === "NAT";
+    const isMailleRegionaleOuDepartementale =
+      maille === "REG" || maille === "DEPT";
+
+    if (
+      isMailleNationale &&
+      !typesCommentaireAPINationaux.includes(commentaire.type)
+    ) {
+      return {
+        territoire: commentaire.territoire,
+        type: commentaire.type,
+        message: `Le type '${commentaire.type}' n'est pas autorisé pour la maille nationale. Types autorisés : ${typesCommentaireAPINationaux.join(", ")}`,
+      };
+    }
+
+    if (
+      isMailleRegionaleOuDepartementale &&
+      !typesCommentaireAPIRegionauxDepartementaux.includes(commentaire.type)
+    ) {
+      return {
+        territoire: commentaire.territoire,
+        type: commentaire.type,
+        message: `Le type '${commentaire.type}' n'est pas autorisé pour la maille ${maille === "REG" ? "régionale" : "départementale"}. Types autorisés : ${typesCommentaireAPIRegionauxDepartementaux.join(", ")}`,
+      };
+    }
+
+    return null;
   }
 }
