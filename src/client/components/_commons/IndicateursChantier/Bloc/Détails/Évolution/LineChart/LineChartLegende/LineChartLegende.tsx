@@ -1,6 +1,6 @@
 import { Dispatch, FunctionComponent, SetStateAction, useId } from "react";
 import { PALETTE_DSFR } from "@/client/components/_commons/IndicateursChantier/Bloc/Détails/Évolution/useIndicateurEvolutionNew";
-import { IndicateurDétailsParTerritoire } from "@/client/components/_commons/IndicateursChantier/Bloc/IndicateurBloc.interface";
+import { IndicateurDetailsParTerritoire } from "@/client/components/_commons/IndicateursChantier/Bloc/IndicateurBloc.interface";
 import Interrupteur from "@/components/_commons/Interrupteur/Interrupteur";
 import {
   CheckboxGroupeStyled,
@@ -8,7 +8,7 @@ import {
 } from "./LineChartLegende.styled";
 
 interface LineChartLegendeProps {
-  tousLesIndicateursDetails: IndicateurDétailsParTerritoire[];
+  tousLesIndicateursDetails: IndicateurDetailsParTerritoire[];
   territoiresAAfficher: Record<string, boolean>;
   setTerritoiresAAfficher: Dispatch<Record<string, boolean>>;
   afficherLesCibles: boolean;
@@ -16,6 +16,7 @@ interface LineChartLegendeProps {
   periodeSelectionnee: string;
   changerLaPeriodeSelectionnee: (periode: string) => void;
   periodesSelectionnablesZoom: string[];
+  afficherControls: boolean;
 }
 
 const LineChartLegende: FunctionComponent<LineChartLegendeProps> = ({
@@ -27,29 +28,32 @@ const LineChartLegende: FunctionComponent<LineChartLegendeProps> = ({
   periodeSelectionnee,
   changerLaPeriodeSelectionnee,
   periodesSelectionnablesZoom,
+  afficherControls,
 }) => {
   const id = useId();
   return (
     <LineChartLegendeStyled className="fr-mt-1w fr-ml-8w fr-mr-4w">
-      <div className="flex align-center">
-        <Interrupteur
-          checked={afficherLesCibles}
-          direction="inverse"
-          libellé="afficher les valeurs cibles"
-          onChange={() => setAfficherLesCibles(!afficherLesCibles)}
-        />
-        <span className="fr-ml-4w fr-mr-1w">zoomer sur : </span>
-        {periodesSelectionnablesZoom.map((periode) => (
-          <button
-            className={`fr-tag fr-mr-1w${periode === periodeSelectionnee ? " tag-selectionnee" : ""}`}
-            key={periode}
-            onClick={() => changerLaPeriodeSelectionnee(periode)}
-            type="button"
-          >
-            <p className="titre-ellipsis fr-text--sm">{periode}</p>
-          </button>
-        ))}
-      </div>
+      {afficherControls ? (
+        <div className="flex align-center">
+          <Interrupteur
+            checked={afficherLesCibles}
+            direction="inverse"
+            libellé="afficher les valeurs cibles"
+            onChange={() => setAfficherLesCibles(!afficherLesCibles)}
+          />
+          <span className="fr-ml-4w fr-mr-1w">zoomer sur : </span>
+          {periodesSelectionnablesZoom.map((periode) => (
+            <button
+              className={`fr-tag fr-mr-1w${periode === periodeSelectionnee ? " tag-selectionnee" : ""}`}
+              key={periode}
+              onClick={() => changerLaPeriodeSelectionnee(periode)}
+              type="button"
+            >
+              <p className="titre-ellipsis fr-text--sm">{periode}</p>
+            </button>
+          ))}
+        </div>
+      ) : null}
 
       <div className="fr-text fr-text--bold">Légende :</div>
       <div className="legend-checkbox-container">
