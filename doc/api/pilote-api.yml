@@ -34,7 +34,7 @@ info:
 
     ```
     curl -X 'GET' \
-      'https://pilote.modernisation.gouv.fr/api/open-api/chantier/CH-047/indicateur/IND-123/donnees' \
+      '<BASE_URL>/api/open-api/chantier/CH-047/indicateur/IND-123/donnees' \
       -H 'accept: application/json' \
       -H 'Authorization: Bearer <ACCESS_TOKEN>'
     ```
@@ -85,17 +85,7 @@ info:
   contact: {}
 servers:
   - url: 'http://localhost:3000/api/open-api'
-    description: Local
-  - url: 'http://172.17.0.1:3000/api/open-api'
-    description: Docker local
-  - url: 'https://pilote.modernisation.gouv.fr/api/open-api'
-    description: 'Pilote:prod'
-  - url: 'https://{urlPiloteDev}/api/open-api'
-    description: 'Pilote:custom'
-    variables:
-      urlPiloteDev:
-        default: to-replace
-        description: URL de base personnalisée
+    description: Environnement de développement sur ordinateur local
 paths:
   '/chantier/{chantier_id}/indicateur/{indicateur_id}/donnees':
     parameters:
