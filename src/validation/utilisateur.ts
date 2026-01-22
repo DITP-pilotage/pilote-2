@@ -73,13 +73,18 @@ export const validationInfosBaseUtilisateurSecretariatGeneral = z.object({
   applicationsAccessibles: z.array(z.nativeEnum($Enums.application_accessible)),
 });
 
+const DOMAINES_AUTORISES_COORDINATEUR = [".gouv.fr", ".caf.fr", ".cnafmail.fr"];
+
+const adresseEstValideCoordinateur = (adresse: string): boolean =>
+  DOMAINES_AUTORISES_COORDINATEUR.some((domaine) => adresse.endsWith(domaine));
+
 export const validationInfosBaseUtilisateurCoordinateur = z.object({
   email: z
     .string()
     .email()
     .min(1)
     .max(100)
-    .refine((value) => value.endsWith(".gouv.fr"), {
+    .refine((value) => adresseEstValideCoordinateur(value), {
       message: customErrorMail,
     }),
   nom: z.string().min(1).max(100),
