@@ -1,9 +1,8 @@
 import { APIRequestContext, APIResponse, expect, test } from "@playwright/test";
 import {
-  ImportCommentaireAPIResponse,
   ImportCommentaireErrorResponse,
   ImportCommentaireSuccessResponse,
-} from "@/server/import-commentaire/app/contrats/ImportCommentaireAPIContrat";
+} from "@/server/commentaires/app/contrats/ImportCommentaireAPIContrat";
 import { authentificationApiDirProjetFn, seedDatabase } from "../utils";
 
 let apiContext: APIRequestContext;
@@ -50,7 +49,6 @@ test("Import de commentaires via l'API open-api", async ({
 
     const responseBody =
       (await result.json()) as ImportCommentaireSuccessResponse;
-    expect(responseBody.success).toEqual(true);
     expect(responseBody.message).toEqual(
       "Les commentaires ont correctement été importés",
     );
@@ -77,7 +75,7 @@ test("Import de commentaires via l'API open-api", async ({
 
     const responseBody =
       (await result.json()) as ImportCommentaireSuccessResponse;
-    expect(responseBody.success).toEqual(true);
+    expect(responseBody.message).toBeDefined();
   });
 
   await test.step("Import de plusieurs commentaires valides - doit tous les créer", async () => {
@@ -111,7 +109,7 @@ test("Import de commentaires via l'API open-api", async ({
 
     const responseBody =
       (await result.json()) as ImportCommentaireSuccessResponse;
-    expect(responseBody.success).toEqual(true);
+    expect(responseBody.message).toBeDefined();
   });
 
   await test.step("Import avec une date dans le futur - doit retourner 400", async () => {
@@ -139,7 +137,6 @@ test("Import de commentaires via l'API open-api", async ({
 
     const responseBody =
       (await result.json()) as ImportCommentaireErrorResponse;
-    expect(responseBody.success).toEqual(false);
     expect(responseBody.erreurs).toBeDefined();
     expect(responseBody.erreurs.length).toBeGreaterThan(0);
   });
@@ -164,7 +161,6 @@ test("Import de commentaires via l'API open-api", async ({
 
     const responseBody =
       (await result.json()) as ImportCommentaireErrorResponse;
-    expect(responseBody.success).toEqual(false);
     expect(responseBody.erreurs).toHaveLength(1);
     expect(responseBody.erreurs[0].message).toContain(
       "n'est pas autorisé pour la maille régionale",
@@ -191,7 +187,6 @@ test("Import de commentaires via l'API open-api", async ({
 
     const responseBody =
       (await result.json()) as ImportCommentaireErrorResponse;
-    expect(responseBody.success).toEqual(false);
     expect(responseBody.erreurs).toHaveLength(1);
     expect(responseBody.erreurs[0].message).toContain(
       "n'est pas autorisé pour la maille nationale",
@@ -218,7 +213,6 @@ test("Import de commentaires via l'API open-api", async ({
 
     const responseBody =
       (await result.json()) as ImportCommentaireErrorResponse;
-    expect(responseBody.success).toEqual(false);
     expect(responseBody.erreurs).toBeDefined();
   });
 
@@ -241,8 +235,5 @@ test("Import de commentaires via l'API open-api", async ({
     );
 
     expect(result.status()).toEqual(403);
-
-    const responseBody = (await result.json()) as ImportCommentaireAPIResponse;
-    expect(responseBody.success).toEqual(false);
   });
 });

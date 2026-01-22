@@ -1,15 +1,10 @@
 import { randomUUID } from "node:crypto";
 import CommentaireRepository from "@/server/domain/chantier/commentaire/CommentaireRepository.interface";
-import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
-import { ImportCommentaireContrat } from "@/server/import-commentaire/app/contrats/ImportCommentaireAPIContrat";
-import { mapTypeCommentaireAPIVersDomaine } from "@/validation/importCommentaire";
-
-export interface ImporterCommentairesInput {
-  chantierId: string;
-  commentaires: ImportCommentaireContrat[];
-  auteurId: string;
-  habilitations: Habilitations;
-}
+import {
+  ImportCommentaireInput,
+  mapTypeCommentaireAPIVersDomaine,
+} from "@/validation/import-commentaire";
+import { CommentaireV2 } from "@/server/domain/chantier/commentaire/Commentaire.interface";
 
 export class ImporterCommentairesUseCase {
   constructor(
@@ -22,23 +17,30 @@ export class ImporterCommentairesUseCase {
     chantierId,
     commentaires,
     auteurId,
-  }: ImporterCommentairesInput): Promise<void> {
+  }: {
+    chantierId: string;
+    commentaires: ImportCommentaireInput[];
+    auteurId: string;
+  }): Promise<void> {
     for (const commentaire of commentaires) {
       const id = randomUUID();
       const date = commentaire.date_commentaire
         ? new Date(commentaire.date_commentaire)
         : new Date();
+
       const typeDomaine = mapTypeCommentaireAPIVersDomaine(commentaire.type);
 
-      await this.dependencies.commentaireRepository.créer(
+      const commentaireV2: CommentaireV2 = {
         chantierId,
-        commentaire.territoire,
+        territoireCode: commentaire.territoire,
         id,
-        commentaire.contenu,
-        auteurId,
-        typeDomaine,
+        contenu: commentaire.contenu,
+        auteur_id: auteurId,
+        type: typeDomaine,
         date,
-      );
+      };
+
+      await this.dependencies.commentaireRepository.save(commentaireV2);
     }
   }
 }

@@ -8,7 +8,7 @@ import {
   createValidationMetadataIndicateurFormulaire,
   validationFiltresPourListeMetadataIndicateur,
   ValidationMetadataIndicateurFormulaire,
-} from "@/validation/metadataIndicateur";
+} from "@/validation/metadata-indicateur";
 import {
   MetadataParametrageIndicateurContrat,
   MetadataParametrageIndicateurInformationContrat,

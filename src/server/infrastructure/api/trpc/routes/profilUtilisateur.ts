@@ -5,7 +5,7 @@ import {
 } from "@/server/infrastructure/api/trpc/trpc";
 import { UnauthorizedError } from "@/server/app/error-boundary/unauthorized-error";
 import { getContainer } from "@/server/dependances";
-import { validationModifierMonProfil } from "@/validation/monProfil";
+import { validationModifierMonProfil } from "@/validation/mon-profil";
 import { zodValidateurCSRF } from "@/validation/publication";
 
 export const profilUtilisateurRouter = créerRouteurTRPC({

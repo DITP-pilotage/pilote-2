@@ -25,6 +25,10 @@ import {
 } from "@/server/evaluation/container";
 import { configuration } from "@/config";
 import {
+  getImportCommentaireContainer,
+  ImportCommentaireDependencies,
+} from "@/server/commentaires/container";
+import {
   GestionUtilisateurDependencies,
   getGestionUtilisateurContainer,
 } from "./gestion-utilisateur/container";
@@ -40,10 +44,6 @@ import {
   getIndicateurTerritoireValeurEvenementContainer,
   IndicateurTerritoireValeurEvenementDependencies,
 } from "./indicateur-territoire-valeur-evenement/container";
-import {
-  getImportCommentaireContainer,
-  ImportCommentaireDependencies,
-} from "./import-commentaire/container";
 import {
   getProfilUtilisateurContainer,
   ProfilUtilisateurDependencies,

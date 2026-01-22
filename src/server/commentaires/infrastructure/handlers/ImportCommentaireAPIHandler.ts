@@ -1,18 +1,18 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { ZodError } from "zod";
 import {
+  ImportCommentaireInput,
   importCommentairesSchema,
   typesCommentaireAPINationaux,
   typesCommentaireAPIRegionauxDepartementaux,
-} from "@/validation/importCommentaire";
-import { ImporterCommentairesUseCase } from "@/server/import-commentaire/usecases/ImporterCommentairesUseCase";
+} from "@/validation/import-commentaire";
+import { ImporterCommentairesUseCase } from "@/server/commentaires/usecases/ImporterCommentairesUseCase";
 import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
 import {
   ImportCommentaireAPIResponse,
-  ImportCommentaireContrat,
   ImportCommentaireErreur,
   ImportCommentaireErrorResponse,
-} from "@/server/import-commentaire/app/contrats/ImportCommentaireAPIContrat";
+} from "@/server/commentaires/app/contrats/ImportCommentaireAPIContrat";
 import { UtilisateurAuthentifie } from "@/server/authentification/domain/UtilisateurAuthentifie";
 
 export class ImportCommentaireAPIHandler {
@@ -35,7 +35,6 @@ export class ImportCommentaireAPIHandler {
   }): Promise<void> {
     if (!utilisateurAuthentifie.peutSaisirCommentaireSurChantier(chantierId)) {
       response.status(403).json({
-        success: false,
         message: `Vous n'êtes pas autorisé à saisir des commentaires pour le chantier ${chantierId}`,
         erreurs: [],
       });
@@ -59,7 +58,6 @@ export class ImportCommentaireAPIHandler {
 
     if (erreurs.length > 0) {
       response.status(400).json({
-        success: false,
         message: "Une erreur est survenue lors de l'import des commentaires",
         erreurs,
       });
@@ -69,11 +67,9 @@ export class ImportCommentaireAPIHandler {
       chantierId,
       commentaires: validationResult.data.commentaires,
       auteurId: utilisateurAuthentifie.id,
-      habilitations: utilisateurAuthentifie.habilitations,
     });
 
     response.status(200).json({
-      success: true,
       message: "Les commentaires ont correctement été importés",
     });
   }
@@ -113,14 +109,13 @@ export class ImportCommentaireAPIHandler {
     });
 
     return {
-      success: false,
       message: "Une erreur est survenue lors de l'import des commentaires",
       erreurs,
     };
   }
 
   private validerCommentaires(
-    commentaires: ImportCommentaireContrat[],
+    commentaires: ImportCommentaireInput[],
     chantierId: string,
     habilitations: Habilitations,
   ): ImportCommentaireErreur[] {
@@ -147,7 +142,7 @@ export class ImportCommentaireAPIHandler {
   }
 
   private validerHabilitation(
-    commentaire: ImportCommentaireContrat,
+    commentaire: ImportCommentaireInput,
     chantierId: string,
     habilitations: Habilitations,
   ): Omit<ImportCommentaireErreur, "index"> | null {
@@ -175,7 +170,7 @@ export class ImportCommentaireAPIHandler {
   }
 
   private validerTypeMaille(
-    commentaire: ImportCommentaireContrat,
+    commentaire: ImportCommentaireInput,
   ): Omit<ImportCommentaireErreur, "index"> | null {
     const maille = commentaire.territoire.split("-")[0];
     const isMailleNationale = maille === "NAT";

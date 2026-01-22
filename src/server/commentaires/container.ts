@@ -1,6 +1,6 @@
 import { asClass, AwilixContainer } from "awilix";
-import { ImportCommentaireAPIHandler } from "@/server/import-commentaire/infrastructure/handlers/ImportCommentaireAPIHandler";
-import { ImporterCommentairesUseCase } from "@/server/import-commentaire/usecases/ImporterCommentairesUseCase";
+import { ImportCommentaireAPIHandler } from "@/server/commentaires/infrastructure/handlers/ImportCommentaireAPIHandler";
+import { ImporterCommentairesUseCase } from "@/server/commentaires/usecases/ImporterCommentairesUseCase";
 import CommentaireRepository from "@/server/domain/chantier/commentaire/CommentaireRepository.interface";
 import CommentaireSQLRepository from "@/server/infrastructure/accès_données/chantier/commentaire/CommentaireSQLRepository";
 import { PrismaPilote } from "@/server/db/PrismaPilote";

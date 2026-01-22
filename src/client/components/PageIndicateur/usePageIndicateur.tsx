@@ -6,7 +6,7 @@ import api from "@/server/infrastructure/api/trpc/api";
 import { récupérerUnCookie } from "@/client/utils/cookies";
 import { MetadataParametrageIndicateurContrat } from "@/server/app/contrats/MetadataParametrageIndicateurContrat";
 import { MapInformationMetadataIndicateurContrat } from "@/server/app/contrats/InformationMetadataIndicateurContrat";
-import { createValidationMetadataIndicateurFormulaire } from "@/validation/metadataIndicateur";
+import { createValidationMetadataIndicateurFormulaire } from "@/validation/metadata-indicateur";
 import AlerteProps from "@/components/_commons/Alerte/Alerte.interface";
 
 export type MetadataIndicateurForm = {

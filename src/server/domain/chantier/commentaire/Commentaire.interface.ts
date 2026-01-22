@@ -6,6 +6,16 @@ export type Commentaire = {
   type: TypeCommentaireChantier;
 } | null;
 
+export type CommentaireV2 = {
+  chantierId: string;
+  territoireCode: string;
+  id: string;
+  contenu: string;
+  auteur_id: string;
+  type: TypeCommentaireChantier;
+  date: Date;
+};
+
 export const typesCommentaireMailleNationale = [
   "autresRésultatsObtenusNonCorrélésAuxIndicateurs",
   "risquesEtFreinsÀLever",

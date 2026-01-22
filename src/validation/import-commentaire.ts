@@ -79,4 +79,3 @@ export const importCommentairesSchema = z.object({
 });
 
 export type ImportCommentaireInput = z.infer<typeof importCommentaireSchema>;
-export type ImportCommentairesInput = z.infer<typeof importCommentairesSchema>;
