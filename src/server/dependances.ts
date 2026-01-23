@@ -25,6 +25,10 @@ import {
 } from "@/server/evaluation/container";
 import { configuration } from "@/config";
 import {
+  getImportCommentaireContainer,
+  ImportCommentaireDependencies,
+} from "@/server/commentaires/container";
+import {
   GestionUtilisateurDependencies,
   getGestionUtilisateurContainer,
 } from "./gestion-utilisateur/container";
@@ -51,6 +55,7 @@ export type ContainerDependencies = {
   chantiers: AwilixContainer<ChantierDependencies>;
   parametrageIndicateur: AwilixContainer<ParametrageIndicateurDependencies>;
   importIndicateur: AwilixContainer<ImportIndicateurDependencies>;
+  importCommentaire: AwilixContainer<ImportCommentaireDependencies>;
   gestionUtilisateur: AwilixContainer<GestionUtilisateurDependencies>;
   ficheConducteur: AwilixContainer<FicheConducteurDependencies>;
   parametrageNouveautes: AwilixContainer<ParametrageNouveautesDependencies>;
@@ -75,6 +80,9 @@ function registerContainer(): ContainerDependencies {
       initialContainerWithTransversalDependencies,
     ),
     importIndicateur: getImportIndicateurContainer(
+      initialContainerWithTransversalDependencies,
+    ),
+    importCommentaire: getImportCommentaireContainer(
       initialContainerWithTransversalDependencies,
     ),
     gestionUtilisateur: getGestionUtilisateurContainer(

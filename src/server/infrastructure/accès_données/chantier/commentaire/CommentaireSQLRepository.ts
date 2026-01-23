@@ -2,12 +2,13 @@ import { commentaire as CommentairePrisma, utilisateur } from "@prisma/client";
 import CommentaireRepository from "@/server/domain/chantier/commentaire/CommentaireRepository.interface";
 import {
   Commentaire,
+  CommentaireV2,
   TypeCommentaireChantier,
 } from "@/server/domain/chantier/commentaire/Commentaire.interface";
 import Chantier from "@/server/domain/chantier/Chantier.interface";
 import { groupByAndTransform } from "@/client/utils/arrays";
 import { territoireCodeVersMailleCodeInsee } from "@/server/utils/territoires";
-import { prisma } from "@/server/db/prisma";
+import { getInitialContainerWithTransversalDependencies } from "@/server/InitialDependencies";
 
 export const NOMS_TYPES_COMMENTAIRES: Record<string, TypeCommentaireChantier> =
   {
@@ -32,6 +33,13 @@ export const CODES_TYPES_COMMENTAIRES: Record<TypeCommentaireChantier, string> =
   };
 
 export default class CommentaireSQLRepository implements CommentaireRepository {
+  private prismaClient =
+    getInitialContainerWithTransversalDependencies().resolve("prisma");
+
+  get prisma() {
+    return this.prismaClient.getInstance();
+  }
+
   private mapperVersDomaine(
     commentairePrisma: CommentairePrisma & {
       auteur_commentaire: utilisateur | null;
@@ -55,7 +63,7 @@ export default class CommentaireSQLRepository implements CommentaireRepository {
     territoireCode: string,
     type: TypeCommentaireChantier,
   ): Promise<Commentaire> {
-    const commentaireLePlusRécent = await prisma.commentaire.findFirst({
+    const commentaireLePlusRécent = await this.prisma.commentaire.findFirst({
       where: {
         chantier_id: chantierId,
         territoire_code: territoireCode,
@@ -77,7 +85,7 @@ export default class CommentaireSQLRepository implements CommentaireRepository {
     territoireCode: string,
     type: TypeCommentaireChantier,
   ): Promise<Commentaire[]> {
-    const commentaires = await prisma.commentaire.findMany({
+    const commentaires = await this.prisma.commentaire.findMany({
       where: {
         chantier_id: chantierId,
         territoire_code: territoireCode,
@@ -106,7 +114,7 @@ export default class CommentaireSQLRepository implements CommentaireRepository {
     const { maille, codeInsee } =
       territoireCodeVersMailleCodeInsee(territoireCode);
 
-    const commentaireCréé = await prisma.commentaire.create({
+    const commentaireCréé = await this.prisma.commentaire.create({
       data: {
         id: id,
         chantier_id: chantierId,
@@ -126,6 +134,26 @@ export default class CommentaireSQLRepository implements CommentaireRepository {
     return this.mapperVersDomaine(commentaireCréé);
   }
 
+  async save({
+    chantierId,
+    territoireCode,
+    id,
+    contenu,
+    auteur_id,
+    type,
+    date,
+  }: CommentaireV2): Promise<void> {
+    await this.créer(
+      chantierId,
+      territoireCode,
+      id,
+      contenu,
+      auteur_id,
+      type,
+      date,
+    );
+  }
+
   async récupérerLesPlusRécentsGroupésParChantier(
     listeChantierIds: Chantier["id"][],
     territoireCode: string,
@@ -133,7 +161,7 @@ export default class CommentaireSQLRepository implements CommentaireRepository {
     const { maille, codeInsee } =
       territoireCodeVersMailleCodeInsee(territoireCode);
 
-    const commentairesAvecAuteur = await prisma.$queryRaw<
+    const commentairesAvecAuteur = await this.prisma.$queryRaw<
       (CommentairePrisma & utilisateur)[]
     >`
       SELECT c.chantier_id, c.contenu, c.type, c.id, c.date, utilisateur.nom, utilisateur.prenom

@@ -7,7 +7,7 @@ import Titre from "@/components/_commons/Titre/Titre";
 import InputAvecLabel from "@/components/_commons/InputAvecLabel/InputAvecLabel";
 import { SubmitBouton } from "@/components/_commons/SubmitBouton/SubmitBouton";
 import Alerte from "@/components/_commons/Alerte/Alerte";
-import { validationModifierMonProfil } from "@/validation/monProfil";
+import { validationModifierMonProfil } from "@/validation/mon-profil";
 import type AlerteProps from "@/components/_commons/Alerte/Alerte.interface";
 import api from "@/server/infrastructure/api/trpc/api";
 import { récupérerUnCookie } from "@/client/utils/cookies";

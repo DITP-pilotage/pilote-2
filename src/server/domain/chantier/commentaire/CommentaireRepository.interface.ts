@@ -1,5 +1,6 @@
 import {
   Commentaire,
+  CommentaireV2,
   TypeCommentaireChantier,
 } from "@/server/domain/chantier/commentaire/Commentaire.interface";
 import Chantier from "@/server/domain/chantier/Chantier.interface";
@@ -19,6 +20,7 @@ export default interface CommentaireRepository {
     type: TypeCommentaireChantier,
     date: Date,
   ): Promise<Commentaire>;
+  save(commentaire: CommentaireV2): Promise<void>;
   récupérerLePlusRécent(
     chantierId: string,
     territoireCode: string,

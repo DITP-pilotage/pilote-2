@@ -8,9 +8,10 @@ info:
   description: |-
     Cette API permet d'interagir avec Pilote, le tableau de bord territorialisé de suivi des résultats des principaux chantiers du Gouvernement.
 
-    # Ce que l’API PILOTE vous permet de faire : 
-      - importer et mettre à jour les valeurs des indicateurs des chantiers 
-      - exporter les résultats des indicateurs et des chantiers 
+    # Ce que l'API PILOTE vous permet de faire :
+      - importer et mettre à jour les valeurs des indicateurs des chantiers
+      - importer les commentaires des chantiers
+      - exporter les résultats des indicateurs et des chantiers
       - exporter les commentaires des chantiers
 
     Cette API n'est accessible que pour les utilisateurs de PILOTE, agents de l'Etat. Les habilitations par API sont identiques à celles que vous avez sur PILOTE. Cela signifie que vous ne pouvez avoir accès qu'aux données qui vous sont déjà accessibles sur l'application. De même, vous pourrez uniquement réaliser des actions qui vous sont possibles depuis votre compte PILOTE. A ce titre, l’import et la mise à jour des indicateurs ne sont ouverts que pour les utilisateurs en administration centrale.
@@ -33,7 +34,7 @@ info:
 
     ```
     curl -X 'GET' \
-      'https://pilote.modernisation.gouv.fr/api/open-api/chantier/CH-047/indicateur/IND-123/donnees' \
+      '<BASE_URL>/api/open-api/chantier/CH-047/indicateur/IND-123/donnees' \
       -H 'accept: application/json' \
       -H 'Authorization: Bearer <ACCESS_TOKEN>'
     ```
@@ -81,20 +82,13 @@ info:
     *   Il n'est pas possible d'importer plusieurs valeurs pour la même zone, date, identifiant d'indicateur et type de valeur. Cela générerait une erreur.
 
     **Si vous rencontrez des difficultés, merci de nous contacter à l'adresse suivante** (en mentionnant *[api]* dans l'objet de votre mail): [pilote.ditp@modernisation.gouv.fr](mailto:pilote.ditp@modernisation.gouv.fr?subject=[api]%20&cc=colin.dugeai@modernisation.gouv.fr&body=%0D%0A%0D%0A%0D%0A%0D%0A%0D%0A%20tag:api)
+    
+    # 🔴Pour tester l'API, veuillez rentrer votre token API en cliquant sur le bouton "Authorize" au préalable 🔴
+
   contact: {}
 servers:
-  - url: 'http://localhost:3000/api/open-api'
-    description: Local
-  - url: 'http://172.17.0.1:3000/api/open-api'
-    description: Docker local
-  - url: 'https://pilote.modernisation.gouv.fr/api/open-api'
-    description: 'Pilote:prod'
-  - url: 'https://{urlPiloteDev}/api/open-api'
-    description: 'Pilote:custom'
-    variables:
-      urlPiloteDev:
-        default: to-replace
-        description: URL de base personnalisée
+  - url: 'https://sandbox-webapp.osc-secnum-fr1.scalingo.io/api/open-api'
+    description: Environnement de sandbox pour tester l'API en sécurité
 paths:
   '/chantier/{chantier_id}/indicateur/{indicateur_id}/donnees':
     parameters:
@@ -199,6 +193,56 @@ paths:
           description: Vous n'êtes pas autorisé à accéder au chantier.
       operationId: get-donnees-chantier
       description: Obtenir les données du chantier au format JSON.
+      security:
+        - bearerAuth: []
+  '/chantier/{chantier_id}/commentaires':
+    parameters:
+      - schema:
+          type: string
+          pattern: '^CH-\d{3}$'
+        name: chantier_id
+        in: path
+        required: true
+        description: ID Chantier
+    post:
+      summary: Import commentaires chantier
+      operationId: post-commentaires-chantier
+      tags:
+        - Commentaire
+      description: |-
+        Import de commentaires pour un chantier. Permet d'ajouter plusieurs commentaires en une seule requête.
+
+        Les types de commentaires autorisés dépendent de la maille du territoire :
+        - **Maille nationale (NAT-FR)** : `autres_resultats_obtenus_non_correles_aux_indicateurs`, `risques_et_freins_a_lever`, `solutions_et_actions_a_venir`, `exemples_concrets_de_reussite`
+        - **Maille régionale/départementale (REG-XX, DEPT-XX)** : `commentaires_sur_les_donnees`, `autres_resultats_obtenus`
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataImportCommentaireAPIContrat'
+        description: Liste des commentaires à importer.
+      responses:
+        '200':
+          description: Les commentaires ont été importés avec succès.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImportCommentaireSuccessResponse'
+        '400':
+          description: Erreur de validation des données.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImportCommentaireErrorResponse'
+        '401':
+          description: Non authentifié.
+        '403':
+          description: Vous n'êtes pas autorisé à saisir des commentaires pour ce chantier.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImportCommentaireErrorResponse'
       security:
         - bearerAuth: []
 components:
@@ -613,6 +657,157 @@ components:
                 type: string
                 x-stoplight:
                   id: umxzs3zaa5ulv
+    DataImportCommentaireAPIContrat:
+      title: DataImportCommentaireAPIContrat
+      x-stoplight:
+        id: import-commentaire-contrat
+      type: object
+      description: Format d'import des commentaires en JSON.
+      properties:
+        commentaires:
+          type: array
+          x-stoplight:
+            id: commentaires-array
+          description: Liste des commentaires à importer.
+          items:
+            $ref: '#/components/schemas/ImportCommentaireContrat'
+      required:
+        - commentaires
+    ImportCommentaireContrat:
+      title: ImportCommentaireContrat
+      x-stoplight:
+        id: import-commentaire-item
+      type: object
+      description: Un commentaire à importer.
+      properties:
+        territoire:
+          type: string
+          x-stoplight:
+            id: commentaire-territoire
+          description: Code du territoire au format NAT-XX, REG-XX ou DEPT-XX.
+          pattern: '^(NAT|REG|DEPT)-[A-Z0-9]+$'
+          example: NAT-FR
+        type:
+          type: string
+          x-stoplight:
+            id: commentaire-type
+          description: |-
+            Type de commentaire. Les types autorisés dépendent de la maille :
+            - Maille nationale : `autres_resultats_obtenus_non_correles_aux_indicateurs`, `risques_et_freins_a_lever`, `solutions_et_actions_a_venir`, `exemples_concrets_de_reussite`
+            - Maille régionale/départementale : `commentaires_sur_les_donnees`, `autres_resultats_obtenus`
+          enum:
+            - autres_resultats_obtenus_non_correles_aux_indicateurs
+            - risques_et_freins_a_lever
+            - solutions_et_actions_a_venir
+            - exemples_concrets_de_reussite
+            - commentaires_sur_les_donnees
+            - autres_resultats_obtenus
+          example: risques_et_freins_a_lever
+        contenu:
+          type: string
+          x-stoplight:
+            id: commentaire-contenu
+          description: Contenu du commentaire. Maximum 10000 caractères.
+          maxLength: 10000
+          minLength: 1
+          example: Description des risques identifiés sur le chantier.
+        date_commentaire:
+          type: string
+          x-stoplight:
+            id: commentaire-date
+          description: Date du commentaire au format YYYY-MM-DD. Si non fournie, la date du jour est utilisée. Ne peut pas être dans le futur.
+          format: date
+          example: '2026-01-15'
+      required:
+        - territoire
+        - type
+        - contenu
+    ImportCommentaireSuccessResponse:
+      title: ImportCommentaireSuccessResponse
+      x-stoplight:
+        id: import-commentaire-success
+      type: object
+      description: Réponse en cas de succès de l'import.
+      properties:
+        success:
+          type: boolean
+          x-stoplight:
+            id: success-flag
+          example: true
+          const: true
+        message:
+          type: string
+          x-stoplight:
+            id: success-message
+          example: Les commentaires ont correctement été importés
+      required:
+        - success
+        - message
+    ImportCommentaireErrorResponse:
+      title: ImportCommentaireErrorResponse
+      x-stoplight:
+        id: import-commentaire-error
+      type: object
+      description: Réponse en cas d'erreur lors de l'import.
+      properties:
+        success:
+          type: boolean
+          x-stoplight:
+            id: error-success-flag
+          example: false
+          const: false
+        message:
+          type: string
+          x-stoplight:
+            id: error-message
+          example: Une erreur est survenue lors de l'import des commentaires
+        erreurs:
+          type: array
+          x-stoplight:
+            id: error-list
+          description: Liste des erreurs détectées.
+          items:
+            $ref: '#/components/schemas/ImportCommentaireErreur'
+      required:
+        - success
+        - message
+        - erreurs
+    ImportCommentaireErreur:
+      title: ImportCommentaireErreur
+      x-stoplight:
+        id: import-commentaire-erreur-item
+      type: object
+      description: Détail d'une erreur sur un commentaire.
+      properties:
+        index:
+          type: integer
+          x-stoplight:
+            id: erreur-index
+          description: Index du commentaire en erreur dans le tableau.
+          example: 0
+        territoire:
+          type: string
+          x-stoplight:
+            id: erreur-territoire
+          description: Territoire du commentaire en erreur.
+          example: REG-84
+        type:
+          type: string
+          x-stoplight:
+            id: erreur-type
+          description: Type du commentaire en erreur.
+          example: risques_et_freins_a_lever
+        message:
+          type: string
+          x-stoplight:
+            id: erreur-message
+          description: Message décrivant l'erreur.
+          example: Le type 'risques_et_freins_a_lever' n'est pas autorisé pour la maille régionale.
+      required:
+        - index
+        - territoire
+        - type
+        - message
   securitySchemes:
     bearerAuth:
       type: http
@@ -625,6 +820,8 @@ tags:
     description: Opérations sur les chantiers prioritaires
   - name: Indicateur
     description: Opérations sur les indicateurs des chantiers prioritaires
+  - name: Commentaire
+    description: Opérations sur les commentaires des chantiers prioritaires
   - name: PPG
     description: Opérations sur les PPG (Politiques Prioritaires du Gouvernement)
   - name: En test
