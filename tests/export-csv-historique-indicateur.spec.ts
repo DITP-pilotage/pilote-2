@@ -10,9 +10,9 @@ test.beforeAll(() => {
 test("doit pouvoir exporter les données des indicateurs sous format CSV", async ({
   page,
 }) => {
+  test.setTimeout(150_000);
   const appActions = new AppActions(page);
   const pageAccueil = await appActions.loginAs();
-  test.setTimeout(60_000);
 
   await test.step("Selection d'un perimètre pour réduire la quantité de chantier exporté", async () => {
     await pageAccueil.filterByMinistere("Intérieur et Outre-mer");

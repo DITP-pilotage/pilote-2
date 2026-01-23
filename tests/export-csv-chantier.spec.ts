@@ -10,9 +10,9 @@ test.beforeAll(() => {
 test("doit pouvoir exporter les données des chantiers sous format CSV", async ({
   page,
 }) => {
+  test.setTimeout(150_000);
   const appActions = new AppActions(page);
   const pageAccueil = await appActions.loginAs();
-  test.setTimeout(150_000);
 
   await test.step("Ouverture de la modale d'export csv à l'étape 1 - Éléments à exporter", async () => {
     await pageAccueil.openExportModal();

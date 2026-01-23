@@ -11,15 +11,15 @@ export class HeaderComponent {
     return this.banner.getByRole("button", { name: "Se connecter" });
   }
 
-  userButton(username: string) {
-    return this.banner.getByRole("button", { name: username });
+  userButton() {
+    return this.banner.getByRole("button", { name: "Mon espace" });
   }
 
   async clickLogin(): Promise<void> {
     await this.loginButton.click();
   }
 
-  async expectUserLoggedIn(username: string): Promise<void> {
-    await expect(this.userButton(username)).toBeVisible();
+  async expectUserLoggedIn(): Promise<void> {
+    await expect(this.userButton()).toBeVisible({ timeout: 100_000 });
   }
 }

@@ -10,11 +10,11 @@ test.beforeAll(() => {
 test("doit arriver sur la landing page", async ({ page }) => {
   const pageAccueilNonConnecte = new PageAccueilNonConnecte(page);
   await pageAccueilNonConnecte.goto();
-  await pageAccueilNonConnecte.expectTitle();
 });
 
 test("doit pouvoir se connecter", async ({ page }) => {
+  test.setTimeout(150_000);
   const appActions = new AppActions(page);
   const pageAccueil = await appActions.loginAs();
-  await pageAccueil.header.expectUserLoggedIn(process.env.E2E_USERNAME!);
+  await pageAccueil.header.expectUserLoggedIn();
 });

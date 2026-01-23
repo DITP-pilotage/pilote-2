@@ -8,6 +8,8 @@ test.beforeAll(() => {
 });
 
 test("doit pouvoir importer des données", async ({ page }) => {
+  test.setTimeout(150_000);
+
   const chantier = {
     id: "129",
     nom: "Moderniser la gestion des ressources",

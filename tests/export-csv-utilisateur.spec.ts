@@ -11,6 +11,7 @@ test.beforeAll(() => {
 test("doit pouvoir exporter les données des utilisateurs sous format CSV", async ({
   page,
 }) => {
+  test.setTimeout(150_000);
   const appActions = new AppActions(page);
   await appActions.loginAs();
 

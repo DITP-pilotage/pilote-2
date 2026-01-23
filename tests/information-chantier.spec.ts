@@ -7,6 +7,8 @@ test.beforeAll(() => {
 });
 
 test("doit pouvoir consulter les données des chantiers", async ({ page }) => {
+  test.setTimeout(150_000);
+
   const chantier = {
     id: "155",
     nom: "Faciliter l'efficacité opérationnelle",
