@@ -717,7 +717,7 @@ components:
             id: commentaire-date
           description: Date du commentaire au format YYYY-MM-DD. Si non fournie, la date du jour est utilisée. Ne peut pas être dans le futur.
           format: date
-          example: '2024-06-15'
+          example: '2026-01-15'
       required:
         - territoire
         - type

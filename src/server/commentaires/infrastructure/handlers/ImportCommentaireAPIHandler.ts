@@ -38,9 +38,20 @@ export class ImportCommentaireAPIHandler {
         message: `Vous n'êtes pas autorisé à saisir des commentaires pour le chantier ${chantierId}`,
         erreurs: [],
       });
+      return;
     }
 
-    const body = await this.parseBody(request);
+    let body;
+
+    try {
+      body = await this.parseBody(request);
+    } catch (error) {
+      response.status(400).json({
+        message: "Le corps de la requête n'est pas un JSON valide",
+        erreurs: [],
+      });
+      return;
+    }
 
     const validationResult = importCommentairesSchema.safeParse(body);
 
@@ -61,6 +72,7 @@ export class ImportCommentaireAPIHandler {
         message: "Une erreur est survenue lors de l'import des commentaires",
         erreurs,
       });
+      return;
     }
 
     await this.dependencies.importerCommentairesUseCase.execute({
