@@ -54,14 +54,8 @@ test.describe("Authentification", () => {
   });
 
   test.describe("quand on dispose d'un header Authorization valide et que le token a été forgé par notre API", () => {
-    test("doit remonter une réponse 200 OK", async ({ page, playwright }) => {
-      test.setTimeout(150_000);
-
-      const apiContext = await ApiTestContext.create(
-        page,
-        playwright,
-        "DITP_ADMIN",
-      );
+    test("doit remonter une réponse 200 OK", async ({ playwright }) => {
+      const apiContext = await ApiTestContext.create(playwright, "DITP_ADMIN");
       const client = apiContext.getClient();
 
       const result = await client.healthcheck();
@@ -71,7 +65,7 @@ test.describe("Authentification", () => {
         resultat: `Bonjour ${apiContext.userEmail}, vous pouvez utiliser l'API.`,
       });
 
-      await apiContext.cleanup();
+      await apiContext.dispose();
     });
   });
 });

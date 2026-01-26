@@ -1,8 +1,7 @@
-import { Page } from "@playwright/test";
+import { encode } from "next-auth/jwt";
 import Playwright from "playwright-core";
+import { prisma } from "@/server/db/prisma";
 import { OpenApiClient } from "./open-api.client";
-import { AppActions } from "../../actions/app.actions";
-import { PageGestionTokenApi } from "../../pages/admin/page-gestion-token-api";
 
 export type UserProfile = "DITP_ADMIN" | "EQUIPE_DIR_PROJET";
 
@@ -24,11 +23,7 @@ const USER_PROFILES: Record<UserProfile, UserConfig> = {
 };
 
 export class ApiTestContext {
-  private token: string | null = null;
-
   private client: OpenApiClient | null = null;
-
-  private pageGestionToken: PageGestionTokenApi | null = null;
 
   readonly userEmail: string;
 
@@ -36,44 +31,45 @@ export class ApiTestContext {
 
   readonly indicateurId?: string;
 
-  private constructor(
-    private readonly page: Page,
-    private readonly playwright: typeof Playwright,
-    profile: UserProfile,
-  ) {
-    const config = USER_PROFILES[profile];
+  private constructor(client: OpenApiClient, config: UserConfig) {
+    this.client = client;
     this.userEmail = config.email;
     this.chantierId = config.chantierId;
     this.indicateurId = config.indicateurId;
   }
 
   static async create(
-    page: Page,
     playwright: typeof Playwright,
     profile: UserProfile,
   ): Promise<ApiTestContext> {
-    const context = new ApiTestContext(page, playwright, profile);
-    await context.setup();
-    return context;
-  }
+    const config = USER_PROFILES[profile];
 
-  private async setup(): Promise<void> {
-    const appActions = new AppActions(this.page);
-    await appActions.loginAs();
+    const token = await encode({
+      token: { email: config.email },
+      secret: process.env.TOKEN_API_SECRET!,
+      maxAge: 365 * 24 * 60 * 60,
+    });
 
-    this.pageGestionToken = new PageGestionTokenApi(this.page);
-    await this.pageGestionToken.goto();
-    this.token = await this.pageGestionToken.createToken(this.userEmail);
+    await prisma.token_api_information.upsert({
+      where: { email: config.email },
+      update: { date_creation: new Date().toISOString() },
+      create: {
+        email: config.email,
+        date_creation: new Date().toISOString(),
+      },
+    });
 
-    const apiContext = await this.playwright.request.newContext({
+    const apiContext = await playwright.request.newContext({
       baseURL: process.env.BASE_URL,
       extraHTTPHeaders: {
-        Authorization: `Bearer ${this.token}`,
+        Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
     });
 
-    this.client = new OpenApiClient(apiContext);
+    const client = new OpenApiClient(apiContext);
+
+    return new ApiTestContext(client, config);
   }
 
   getClient(): OpenApiClient {
@@ -83,14 +79,13 @@ export class ApiTestContext {
     return this.client;
   }
 
-  async cleanup(): Promise<void> {
+  async dispose(): Promise<void> {
     if (this.client) {
       await this.client.dispose();
     }
 
-    if (this.pageGestionToken && this.userEmail) {
-      await this.pageGestionToken.goto();
-      await this.pageGestionToken.deleteToken(this.userEmail);
-    }
+    await prisma.token_api_information.deleteMany({
+      where: { email: this.userEmail },
+    });
   }
 }

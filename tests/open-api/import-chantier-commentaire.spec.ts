@@ -11,14 +11,8 @@ test.beforeAll(() => {
   seedDatabase();
 });
 
-test("Import de commentaires via l'API open-api", async ({
-  playwright,
-  page,
-}) => {
-  test.setTimeout(150_000);
-
+test("Import de commentaires via l'API open-api", async ({ playwright }) => {
   const apiContext = await ApiTestContext.create(
-    page,
     playwright,
     "EQUIPE_DIR_PROJET",
   );
@@ -196,5 +190,5 @@ test("Import de commentaires via l'API open-api", async ({
     expect(result.status()).toEqual(403);
   });
 
-  await apiContext.cleanup();
+  await apiContext.dispose();
 });

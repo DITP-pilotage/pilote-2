@@ -57,7 +57,6 @@ tests/
 │   └── app.actions.ts
 ├── open-api/                 # Tests API
 │   ├── api-client/           # API Object Model
-│   │   ├── index.ts
 │   │   ├── open-api.client.ts
 │   │   ├── api-test-context.ts
 │   │   └── unauthenticated-api.client.ts
@@ -191,7 +190,14 @@ test("doit pouvoir consulter les données des chantiers", async ({ page }) => {
 
 Pour les tests de l'API Open API, nous utilisons un pattern similaire avec :
 - Un **client API** qui encapsule tous les endpoints
-- Un **contexte de test** qui gère automatiquement le cycle de vie des tokens d'authentification
+- Un **contexte de test** qui génère les tokens JWT directement (sans passer par l'UI)
+
+**Principe de génération des tokens** :
+L'API valide la signature JWT ET vérifie l'existence du token en base de données (`token_api_information`). On génère donc :
+1. Le JWT directement avec `next-auth/jwt`
+2. L'entrée en base avec Prisma (`upsert`)
+
+Cela évite de passer par l'UI tout en respectant la vérification en base.
 
 **Implémentation :**
 
@@ -224,41 +230,44 @@ export class OpenApiClient {
 }
 ```
 
-2. **Contexte de test avec gestion automatique des tokens** :
+2. **Contexte de test avec génération directe des tokens** :
 ```typescript
 // tests/open-api/api-client/api-test-context.ts
+import { encode } from "next-auth/jwt";
+import { prisma } from "@/server/db/prisma";
+
 export class ApiTestContext {
-  static async create(page: Page, playwright: Playwright, profile: UserProfile): Promise<ApiTestContext> {
-    const context = new ApiTestContext(page, playwright, profile);
-    await context.setup();
-    return context;
-  }
+  static async create(playwright: Playwright, profile: UserProfile): Promise<ApiTestContext> {
+    const config = USER_PROFILES[profile];
 
-  private async setup(): Promise<void> {
-    // Login via POM
-    const appActions = new AppActions(this.page);
-    await appActions.loginAs();
-
-    // Création du token via Page Object
-    this.pageGestionToken = new PageGestionTokenApi(this.page);
-    await this.pageGestionToken.goto();
-    this.token = await this.pageGestionToken.createToken(this.userEmail);
-
-    // Création du client API authentifié
-    const apiContext = await this.playwright.request.newContext({
-      baseURL: process.env.BASE_URL,
-      extraHTTPHeaders: {
-        Authorization: `Bearer ${this.token}`,
-      },
+    // Génération directe du JWT (même secret que l'API)
+    const token = await encode({
+      token: { email: config.email },
+      secret: process.env.NEXTAUTH_SECRET!,
+      maxAge: 365 * 24 * 60 * 60,
     });
-    this.client = new OpenApiClient(apiContext);
+
+    // Insertion en base (requis pour la validation API)
+    await prisma.token_api_information.upsert({
+      where: { email: config.email },
+      update: { date_creation: new Date().toISOString() },
+      create: { email: config.email, date_creation: new Date().toISOString() },
+    });
+
+    const apiContext = await playwright.request.newContext({
+      baseURL: process.env.BASE_URL,
+      extraHTTPHeaders: { Authorization: `Bearer ${token}` },
+    });
+
+    return new ApiTestContext(new OpenApiClient(apiContext), config);
   }
 
   getClient(): OpenApiClient { ... }
 
-  async cleanup(): Promise<void> {
-    // Suppression automatique du token
-    await this.pageGestionToken.deleteToken(this.userEmail);
+  async dispose(): Promise<void> {
+    await this.client.dispose();
+    // Cleanup de l'entrée en base
+    await prisma.token_api_information.deleteMany({ where: { email: this.userEmail } });
   }
 }
 ```
@@ -281,16 +290,15 @@ const USER_PROFILES: Record<UserProfile, UserConfig> = {
 ```typescript
 test("Quand on a accès au chantier, doit remonter une réponse 200 OK", async ({
   playwright,
-  page,
 }) => {
-  const apiContext = await ApiTestContext.create(page, playwright, "EQUIPE_DIR_PROJET");
+  const apiContext = await ApiTestContext.create(playwright, "EQUIPE_DIR_PROJET");
   const client = apiContext.getClient();
 
   const result = await client.getChantierDonnees(apiContext.chantierId!);
 
   expect(result.status()).toEqual(200);
 
-  await apiContext.cleanup();
+  await apiContext.dispose();
 });
 ```
 
@@ -306,7 +314,7 @@ test("Quand on a accès au chantier, doit remonter une réponse 200 OK", async (
 - **Composition flexible** : les composants peuvent être partagés entre pages
 - **Chaînage naturel** : les méthodes de navigation retournent le contexte approprié
 - **Tests plus faciles à écrire** : pour les humains ET les agents IA (Claude Code, Copilot, etc.)
-- **Gestion automatique des tokens** : plus besoin de créer/supprimer manuellement les tokens d'API
+- **Tests API ultra-rapides** : génération directe des JWT sans passer par l'UI (quelques ms vs ~15s)
 
 **Comparaison avant/après (UI):**
 ```typescript
@@ -325,20 +333,20 @@ await pageAccueil.header.expectUserLoggedIn();
 
 **Comparaison avant/après (API):**
 ```typescript
-// AVANT : gestion manuelle des tokens, code répétitif
+// AVANT : gestion manuelle des tokens via UI, code répétitif
 const { apiDirProjetToken, apiDirProjetUsername, apiDirProjetChantierAssocie } =
-  await authentificationApiDirProjetFn({ page });
+  await authentificationApiDirProjetFn({ page }); // Login UI + création token UI
 apiContext = await playwright.request.newContext({
   baseURL: process.env.BASE_URL,
   extraHTTPHeaders: { Authorization: `Bearer ${apiDirProjetToken}` },
 });
 result = await apiContext.get(`/api/open-api/chantier/${apiDirProjetChantierAssocie}/donnees`);
-await suppressionAuthentificationApiFn({ page, apiUsername: apiDirProjetUsername });
+await suppressionAuthentificationApiFn({ page, apiUsername: apiDirProjetUsername }); // Cleanup UI
 
-// APRÈS : contexte géré automatiquement, client typé
-const apiContext = await ApiTestContext.create(page, playwright, "EQUIPE_DIR_PROJET");
+// APRÈS : génération directe du JWT, pas d'UI, pas de cleanup
+const apiContext = await ApiTestContext.create(playwright, "EQUIPE_DIR_PROJET");
 const result = await apiContext.getClient().getChantierDonnees(apiContext.chantierId!);
-await apiContext.cleanup();
+await apiContext.dispose();
 ```
 
 **Inconvénients :**

@@ -9,12 +9,8 @@ test.beforeAll(() => {
 test.describe("Error - endpoint chantier", () => {
   test("quand on a pas accès au chantier, doit remonter une erreur 403 ForbiddenError", async ({
     playwright,
-    page,
   }) => {
-    test.setTimeout(150_000);
-
     const apiContext = await ApiTestContext.create(
-      page,
       playwright,
       "EQUIPE_DIR_PROJET",
     );
@@ -28,19 +24,15 @@ test.describe("Error - endpoint chantier", () => {
       success: false,
     });
 
-    await apiContext.cleanup();
+    await apiContext.dispose();
   });
 });
 
 test.describe("Error - endpoint indicateur", () => {
   test("quand on a pas accès à l'indicateur, doit remonter une erreur 403 ForbiddenError", async ({
     playwright,
-    page,
   }) => {
-    test.setTimeout(150_000);
-
     const apiContext = await ApiTestContext.create(
-      page,
       playwright,
       "EQUIPE_DIR_PROJET",
     );
@@ -54,17 +46,13 @@ test.describe("Error - endpoint indicateur", () => {
       success: false,
     });
 
-    await apiContext.cleanup();
+    await apiContext.dispose();
   });
 
   test("quand une erreur inattendue intervient, doit remonter une erreur 500 InternalServerError", async ({
     playwright,
-    page,
   }) => {
-    test.setTimeout(150_000);
-
     const apiContext = await ApiTestContext.create(
-      page,
       playwright,
       "EQUIPE_DIR_PROJET",
     );
@@ -78,6 +66,6 @@ test.describe("Error - endpoint indicateur", () => {
       success: false,
     });
 
-    await apiContext.cleanup();
+    await apiContext.dispose();
   });
 });

@@ -12,12 +12,8 @@ test.beforeAll(() => {
 
 test("Quand on a accès au chantier, doit remonter une réponse 200 OK avec les données de l'indicateur", async ({
   playwright,
-  page,
 }) => {
-  test.setTimeout(150_000);
-
   const apiContext = await ApiTestContext.create(
-    page,
     playwright,
     "EQUIPE_DIR_PROJET",
   );
@@ -72,5 +68,5 @@ test("Quand on a accès au chantier, doit remonter une réponse 200 OK avec les 
 
   expect(donneeTerritoire.zone_id).toBeDefined();
 
-  await apiContext.cleanup();
+  await apiContext.dispose();
 });
