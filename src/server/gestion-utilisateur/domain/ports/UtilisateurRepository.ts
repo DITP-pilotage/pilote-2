@@ -53,7 +53,7 @@ export interface UtilisateurRepository {
     dateVisualisation: Date,
   ): Promise<void>;
   reinitialiserEtatVisualisationVideoAccueil(email: string): Promise<void>;
-  recupererComptesInactifs(
+  recupererComptesDesactives(
     dateDesactivationMax: Date,
   ): Promise<{ id: string; email: string }[]>;
   anonymiserAuteurs(
@@ -83,4 +83,27 @@ export interface UtilisateurRepository {
     dateVisualisationPopupInfolettre: Date,
   ): Promise<void>;
   recupererUtilisateurEmail(id: string): Promise<string | null>;
+  recupererUtilisateurId(email: string): Promise<string | null>;
+  recupererComptesInactifs(dateReference: Date): Promise<
+    {
+      email: string;
+      datePremiereRelanceDesactivation: Date | null;
+      dateDeuxiemeRelanceDesactivation: Date | null;
+      dateDesactivationProgramee: Date | null;
+      dateDerniereConnexion: Date;
+    }[]
+  >;
+  mettreAJourDatePremiereRelanceDesactivation(
+    email: string,
+    date: Date,
+  ): Promise<void>;
+  mettreAJourDateDeuxiemeRelanceDesactivation(
+    email: string,
+    date: Date,
+  ): Promise<void>;
+  mettreAJourDateDesactivationProgramee(
+    email: string,
+    date: Date,
+  ): Promise<void>;
+  mettreAJourDateDerniereConnexion(email: string, date: Date): Promise<void>;
 }
