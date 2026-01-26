@@ -1,132 +1,83 @@
-import { APIRequestContext, APIResponse, expect, test } from "@playwright/test";
-import {
-  authentificationApiDirProjetFn,
-  seedDatabase,
-  suppressionAuthentificationApiFn,
-} from "../utils";
-
-let apiContext: APIRequestContext;
-let result: APIResponse;
+import { expect, test } from "@playwright/test";
+import { ApiTestContext } from "./api-client/api-test-context";
+import { seedDatabase } from "../utils";
 
 test.beforeAll(() => {
   seedDatabase();
 });
 
-test.describe("Error - endpoint chantier", async () => {
+test.describe("Error - endpoint chantier", () => {
   test("quand on a pas accès au chantier, doit remonter une erreur 403 ForbiddenError", async ({
     playwright,
     page,
   }) => {
-    const { apiDirProjetToken, apiDirProjetUsername } =
-      await authentificationApiDirProjetFn({ page });
+    test.setTimeout(150_000);
 
-    await test.step("Création du context - Authorization Pilote - cecile - EQUIPE_DIR_PROJET", async () => {
-      apiContext = await playwright.request.newContext({
-        baseURL: process.env.BASE_URL,
-        extraHTTPHeaders: {
-          Authorization: `Bearer ${apiDirProjetToken}`,
-        },
-      });
-    });
-
-    await test.step("Appel du endpoint /api/open-api/chantier/CH-039/donnees", async () => {
-      result = await apiContext.get("/api/open-api/chantier/CH-039/donnees");
-    });
-
-    await test.step("Vérification status égal 403 Forbidden", async () => {
-      expect(result.status()).toEqual(403);
-    });
-
-    await test.step('Vérification message égal "Vous n\'êtes pas autorisé à atteindre cette ressource"', async () => {
-      expect(await result.json()).toEqual({
-        message: "Vous n'êtes pas autorisé à accéder au chantier CH-039",
-        success: false,
-      });
-    });
-
-    await suppressionAuthentificationApiFn({
+    const apiContext = await ApiTestContext.create(
       page,
-      apiUsername: apiDirProjetUsername,
+      playwright,
+      "EQUIPE_DIR_PROJET",
+    );
+    const client = apiContext.getClient();
+
+    const result = await client.getChantierDonnees("CH-039");
+
+    expect(result.status()).toEqual(403);
+    expect(await result.json()).toEqual({
+      message: "Vous n'êtes pas autorisé à accéder au chantier CH-039",
+      success: false,
     });
+
+    await apiContext.cleanup();
   });
 });
 
-test.describe("Error - endpoint indicateur", async () => {
+test.describe("Error - endpoint indicateur", () => {
   test("quand on a pas accès à l'indicateur, doit remonter une erreur 403 ForbiddenError", async ({
     playwright,
     page,
   }) => {
-    const { apiDirProjetToken, apiDirProjetUsername } =
-      await authentificationApiDirProjetFn({ page });
+    test.setTimeout(150_000);
 
-    await test.step("Création du context - Authorization Pilote - equipe.dir.projet@example.com - EQUIPE_DIR_PROJET", async () => {
-      apiContext = await playwright.request.newContext({
-        baseURL: process.env.BASE_URL,
-        extraHTTPHeaders: {
-          Authorization: `Bearer ${apiDirProjetToken}`,
-        },
-      });
-    });
-
-    await test.step("Appel du endpoint /api/open-api/chantier/CH-039/indicateur/IND-718/donnees", async () => {
-      result = await apiContext.get(
-        "/api/open-api/chantier/CH-039/indicateur/IND-718/donnees",
-      );
-    });
-
-    await test.step("Vérification status égal 403 Forbidden", async () => {
-      expect(result.status()).toEqual(403);
-    });
-
-    await test.step('Vérification message égal "Vous n\'êtes pas autorisé à atteindre cette ressource"', async () => {
-      expect(await result.json()).toEqual({
-        message: "Vous n'êtes pas autorisé à accéder à l'indicateur IND-718",
-        success: false,
-      });
-    });
-
-    await suppressionAuthentificationApiFn({
+    const apiContext = await ApiTestContext.create(
       page,
-      apiUsername: apiDirProjetUsername,
+      playwright,
+      "EQUIPE_DIR_PROJET",
+    );
+    const client = apiContext.getClient();
+
+    const result = await client.getIndicateurDonnees("CH-039", "IND-718");
+
+    expect(result.status()).toEqual(403);
+    expect(await result.json()).toEqual({
+      message: "Vous n'êtes pas autorisé à accéder à l'indicateur IND-718",
+      success: false,
     });
+
+    await apiContext.cleanup();
   });
 
   test("quand une erreur inattendue intervient, doit remonter une erreur 500 InternalServerError", async ({
     playwright,
     page,
   }) => {
-    const { apiDirProjetToken, apiDirProjetUsername } =
-      await authentificationApiDirProjetFn({ page });
+    test.setTimeout(150_000);
 
-    await test.step("Création du context - Authorization Pilote - equipe.dir.projet@example.com - EQUIPE_DIR_PROJET", async () => {
-      apiContext = await playwright.request.newContext({
-        baseURL: process.env.BASE_URL,
-        extraHTTPHeaders: {
-          Authorization: `Bearer ${apiDirProjetToken}`,
-        },
-      });
-    });
-
-    await test.step("Appel du endpoint /api/open-api/chantier/CH-039/indicateur/IND-718/donnees", async () => {
-      result = await apiContext.get(
-        "/api/open-api/chantier/CH-039/indicateur/IND-718/donnees",
-      );
-    });
-
-    await test.step("Vérification status égal 403 Forbidden", async () => {
-      expect(result.status()).toEqual(403);
-    });
-
-    await test.step('Vérification message égal "Vous n\'êtes pas autorisé à atteindre cette ressource"', async () => {
-      expect(await result.json()).toEqual({
-        message: "Vous n'êtes pas autorisé à accéder à l'indicateur IND-718",
-        success: false,
-      });
-    });
-
-    await suppressionAuthentificationApiFn({
+    const apiContext = await ApiTestContext.create(
       page,
-      apiUsername: apiDirProjetUsername,
+      playwright,
+      "EQUIPE_DIR_PROJET",
+    );
+    const client = apiContext.getClient();
+
+    const result = await client.getIndicateurDonnees("CH-039", "IND-718");
+
+    expect(result.status()).toEqual(403);
+    expect(await result.json()).toEqual({
+      message: "Vous n'êtes pas autorisé à accéder à l'indicateur IND-718",
+      success: false,
     });
+
+    await apiContext.cleanup();
   });
 });

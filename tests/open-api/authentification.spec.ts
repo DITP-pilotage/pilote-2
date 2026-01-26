@@ -1,12 +1,7 @@
-import { APIRequestContext, APIResponse, expect, test } from "@playwright/test";
-import {
-  authentificationApiDITPADMINFn,
-  seedDatabase,
-  suppressionAuthentificationApiFn,
-} from "../utils";
-
-let apiContext: APIRequestContext;
-let result: APIResponse;
+import { expect, test } from "@playwright/test";
+import { createUnauthenticatedClient } from "./api-client/unauthenticated-api.client";
+import { ApiTestContext } from "./api-client/api-test-context";
+import { seedDatabase } from "../utils";
 
 test.beforeAll(() => {
   seedDatabase();
@@ -16,104 +11,67 @@ test.describe("Authentification", () => {
   test("quand on ne dispose pas d'un header Authorization, doit remonter une erreur 401 Unauthorized", async ({
     playwright,
   }) => {
-    await test.step("Création du context sans header Authorization", async () => {
-      apiContext = await playwright.request.newContext({
-        baseURL: process.env.BASE_URL,
-      });
+    const client = await createUnauthenticatedClient(playwright, {
+      skip: true,
     });
 
-    await test.step("Appel du endpoint /api/open-api/healthcheck", async () => {
-      result = await apiContext.get("/api/open-api/healthcheck");
-    });
+    const result = await client.healthcheck();
 
-    await test.step("Vérification status égal 401", async () => {
-      expect(result.status()).toEqual(401);
-    });
+    expect(result.status()).toEqual(401);
 
-    await apiContext.dispose();
+    await client.dispose();
   });
 
   test("quand on dispose d'un header Authorization invalide, doit remonter une erreur 400 Bad Request", async ({
     playwright,
   }) => {
-    await test.step("Création du context avec header Authorization + valeur incorrect", async () => {
-      apiContext = await playwright.request.newContext({
-        baseURL: process.env.BASE_URL,
-        extraHTTPHeaders: {
-          Authorization: "invalid",
-        },
-      });
+    const client = await createUnauthenticatedClient(playwright, {
+      value: "invalid",
     });
 
-    await test.step("Appel du endpoint /api/open-api/healthcheck", async () => {
-      result = await apiContext.get("/api/open-api/healthcheck");
-    });
+    const result = await client.healthcheck();
 
-    await test.step("Vérification status égal 400", async () => {
-      expect(result.status()).toEqual(400);
-    });
+    expect(result.status()).toEqual(400);
 
-    await apiContext.dispose();
+    await client.dispose();
   });
 
   test("quand on dispose d'un header Authorization valide mais que le token n'a pas été forgé par notre API, doit remonter une erreur 400 Request", async ({
     playwright,
   }) => {
-    await test.step("Création du context avec header Authorization et valeur Bearer + JWT non pilote", async () => {
-      apiContext = await playwright.request.newContext({
-        baseURL: process.env.BASE_URL,
-        extraHTTPHeaders: {
-          Authorization:
-            "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c",
-        },
-      });
+    const fakeJwt =
+      "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c";
+
+    const client = await createUnauthenticatedClient(playwright, {
+      value: fakeJwt,
     });
 
-    await test.step("Appel du endpoint /api/open-api/healthcheck", async () => {
-      result = await apiContext.get("/api/open-api/healthcheck");
-    });
+    const result = await client.healthcheck();
 
-    await test.step("Vérification status égal 400", async () => {
-      expect(result.status()).toEqual(400);
-    });
+    expect(result.status()).toEqual(400);
 
-    await apiContext.dispose();
+    await client.dispose();
   });
 
   test.describe("quand on dispose d'un header Authorization valide et que le token a été forgé par notre API", () => {
-    test("quand on dispose d'un header Authorization valide et que le token a été forgé par notre API, doit remonter une réponse 200 OK", async ({
-      page,
-      playwright,
-    }) => {
-      const { apiDITPADMINUsername, apiDITPADMINToken } =
-        await authentificationApiDITPADMINFn({ page });
+    test("doit remonter une réponse 200 OK", async ({ page, playwright }) => {
+      test.setTimeout(150_000);
 
-      await test.step("Création du context avec header Authorization et valeur Bearer + JWT pilote", async () => {
-        apiContext = await playwright.request.newContext({
-          baseURL: process.env.BASE_URL,
-          extraHTTPHeaders: {
-            Authorization: `Bearer ${apiDITPADMINToken}`,
-          },
-        });
-      });
-
-      await test.step("Appel du endpoint /api/open-api/healthcheck", async () => {
-        result = await apiContext.get("/api/open-api/healthcheck");
-      });
-
-      await test.step(`Vérification status égal 200 et que l'utilisateur appelant est bien '${apiDITPADMINUsername}'`, async () => {
-        expect(result.status()).toEqual(200);
-        expect(await result.json()).toEqual({
-          resultat: `Bonjour ${apiDITPADMINUsername}, vous pouvez utiliser l'API.`,
-        });
-      });
-
-      await suppressionAuthentificationApiFn({
+      const apiContext = await ApiTestContext.create(
         page,
-        apiUsername: apiDITPADMINUsername,
+        playwright,
+        "DITP_ADMIN",
+      );
+      const client = apiContext.getClient();
+
+      const result = await client.healthcheck();
+
+      expect(result.status()).toEqual(200);
+      expect(await result.json()).toEqual({
+        resultat: `Bonjour ${apiContext.userEmail}, vous pouvez utiliser l'API.`,
       });
 
-      await apiContext.dispose();
+      await apiContext.cleanup();
     });
   });
 });

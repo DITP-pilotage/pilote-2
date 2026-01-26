@@ -29,7 +29,9 @@ await page.getByRole("button").click();
 
 ## Décision
 
-Nous utilisons le pattern **Page Object Model (POM)** pour structurer nos tests E2E Playwright.
+Nous utilisons le pattern **Page Object Model (POM)** pour structurer nos tests E2E Playwright, ainsi qu'un **API Object Model** pour les tests d'API.
+
+### Page Object Model (tests UI)
 
 **Principe** :
 - Chaque page de l'application est représentée par une classe dédiée
@@ -46,13 +48,22 @@ tests/
 │   ├── page-accueil.ts
 │   ├── page-chantier.ts
 │   └── admin/
-│       └── page-utilisateurs.ts
+│       ├── page-utilisateurs.ts
+│       └── page-gestion-token-api.ts
 ├── components/               # Composants réutilisables
 │   ├── header.component.ts
 │   └── export-csv.modal.ts
 ├── actions/                  # Actions transversales
 │   └── app.actions.ts
-├── login.spec.ts             # Fichiers de test
+├── open-api/                 # Tests API
+│   ├── api-client/           # API Object Model
+│   │   ├── index.ts
+│   │   ├── open-api.client.ts
+│   │   ├── api-test-context.ts
+│   │   └── unauthenticated-api.client.ts
+│   ├── authentification.spec.ts
+│   └── ...
+├── login.spec.ts             # Fichiers de test UI
 ├── information-chantier.spec.ts
 └── ...
 ```
@@ -176,18 +187,128 @@ test("doit pouvoir consulter les données des chantiers", async ({ page }) => {
 
 **Exemple de référence** : `tests/information-chantier.spec.ts`
 
+### API Object Model (tests API)
+
+Pour les tests de l'API Open API, nous utilisons un pattern similaire avec :
+- Un **client API** qui encapsule tous les endpoints
+- Un **contexte de test** qui gère automatiquement le cycle de vie des tokens d'authentification
+
+**Implémentation :**
+
+1. **Client API** :
+```typescript
+// tests/open-api/api-client/open-api.client.ts
+export class OpenApiClient {
+  constructor(private readonly apiContext: APIRequestContext) {}
+
+  async healthcheck(): Promise<APIResponse> {
+    return this.apiContext.get("/api/open-api/healthcheck");
+  }
+
+  async getChantierDonnees(chantierId: string): Promise<APIResponse> {
+    return this.apiContext.get(`/api/open-api/chantier/${chantierId}/donnees`);
+  }
+
+  async getIndicateurDonnees(chantierId: string, indicateurId: string): Promise<APIResponse> {
+    return this.apiContext.get(
+      `/api/open-api/chantier/${chantierId}/indicateur/${indicateurId}/donnees`
+    );
+  }
+
+  async importCommentaires(chantierId: string, commentaires: CommentaireInput[]): Promise<APIResponse> {
+    return this.apiContext.post(
+      `/api/open-api/chantier/${chantierId}/commentaires`,
+      { data: { commentaires } }
+    );
+  }
+}
+```
+
+2. **Contexte de test avec gestion automatique des tokens** :
+```typescript
+// tests/open-api/api-client/api-test-context.ts
+export class ApiTestContext {
+  static async create(page: Page, playwright: Playwright, profile: UserProfile): Promise<ApiTestContext> {
+    const context = new ApiTestContext(page, playwright, profile);
+    await context.setup();
+    return context;
+  }
+
+  private async setup(): Promise<void> {
+    // Login via POM
+    const appActions = new AppActions(this.page);
+    await appActions.loginAs();
+
+    // Création du token via Page Object
+    this.pageGestionToken = new PageGestionTokenApi(this.page);
+    await this.pageGestionToken.goto();
+    this.token = await this.pageGestionToken.createToken(this.userEmail);
+
+    // Création du client API authentifié
+    const apiContext = await this.playwright.request.newContext({
+      baseURL: process.env.BASE_URL,
+      extraHTTPHeaders: {
+        Authorization: `Bearer ${this.token}`,
+      },
+    });
+    this.client = new OpenApiClient(apiContext);
+  }
+
+  getClient(): OpenApiClient { ... }
+
+  async cleanup(): Promise<void> {
+    // Suppression automatique du token
+    await this.pageGestionToken.deleteToken(this.userEmail);
+  }
+}
+```
+
+3. **Profils utilisateurs prédéfinis** :
+```typescript
+const USER_PROFILES: Record<UserProfile, UserConfig> = {
+  DITP_ADMIN: {
+    email: "ditp.admin@example.com",
+  },
+  EQUIPE_DIR_PROJET: {
+    email: "equipe.dir.projet@example.com",
+    chantierId: "CH-129",
+    indicateurId: "IND-021",
+  },
+};
+```
+
+**Exemple de test API** :
+```typescript
+test("Quand on a accès au chantier, doit remonter une réponse 200 OK", async ({
+  playwright,
+  page,
+}) => {
+  const apiContext = await ApiTestContext.create(page, playwright, "EQUIPE_DIR_PROJET");
+  const client = apiContext.getClient();
+
+  const result = await client.getChantierDonnees(apiContext.chantierId!);
+
+  expect(result.status()).toEqual(200);
+
+  await apiContext.cleanup();
+});
+```
+
+**Exemple de référence** : `tests/open-api/export-donnee-chantier.spec.ts`
+
 ## Conséquences
 
 **Avantages :**
-- **Maintenance centralisée** : un changement d'UI ne nécessite qu'une modification dans la classe de page
+- **Maintenance centralisée** : un changement d'UI ou d'API ne nécessite qu'une modification dans la classe concernée
 - **Réutilisabilité** : les interactions communes sont factorisées et réutilisables
 - **Lisibilité améliorée** : les tests expriment l'intention métier, pas les détails d'implémentation
-- **Auto-documentation** : les méthodes des pages documentent les actions possibles
+- **Auto-documentation** : les méthodes des pages/clients documentent les actions possibles
 - **Composition flexible** : les composants peuvent être partagés entre pages
 - **Chaînage naturel** : les méthodes de navigation retournent le contexte approprié
 - **Tests plus faciles à écrire** : pour les humains ET les agents IA (Claude Code, Copilot, etc.)
+- **Gestion automatique des tokens** : plus besoin de créer/supprimer manuellement les tokens d'API
 
-**Comparaison avant/après :**
+**Comparaison avant/après (UI):**
 ```typescript
 // AVANT : sélecteurs répétés, logique mélangée
 await page.getByRole("button", { name: "Se connecter" }).click();
@@ -202,13 +323,31 @@ const pageAccueil = await appActions.loginAs();
 await pageAccueil.header.expectUserLoggedIn();
 ```
 
+**Comparaison avant/après (API):**
+```typescript
+// AVANT : gestion manuelle des tokens, code répétitif
+const { apiDirProjetToken, apiDirProjetUsername, apiDirProjetChantierAssocie } =
+  await authentificationApiDirProjetFn({ page });
+apiContext = await playwright.request.newContext({
+  baseURL: process.env.BASE_URL,
+  extraHTTPHeaders: { Authorization: `Bearer ${apiDirProjetToken}` },
+});
+result = await apiContext.get(`/api/open-api/chantier/${apiDirProjetChantierAssocie}/donnees`);
+await suppressionAuthentificationApiFn({ page, apiUsername: apiDirProjetUsername });
+
+// APRÈS : contexte géré automatiquement, client typé
+const apiContext = await ApiTestContext.create(page, playwright, "EQUIPE_DIR_PROJET");
+const result = await apiContext.getClient().getChantierDonnees(apiContext.chantierId!);
+await apiContext.cleanup();
+```
+
 **Inconvénients :**
-- **Courbe d'apprentissage** : nécessite de comprendre la structure des pages et composants
-- **Effort initial** : création des classes de page avant d'écrire les premiers tests
-- **Indirection** : le code de test est séparé des sélecteurs, ce qui peut compliquer le débogage
+- **Courbe d'apprentissage** : nécessite de comprendre la structure des pages, composants et clients API
+- **Effort initial** : création des classes avant d'écrire les premiers tests
+- **Indirection** : le code de test est séparé des sélecteurs/endpoints, ce qui peut compliquer le débogage
 - **Sur-abstraction potentielle** : risque de créer trop de petites classes pour des cas simples
 
 **Impact sur l'équipe :**
 - Les tests E2E deviennent plus accessibles aux nouveaux développeurs
-- Les agents IA peuvent générer des tests de meilleure qualité en utilisant les pages existantes
-- L'effort de maintenance est transféré des tests individuels vers les classes de page partagées
+- Les agents IA peuvent générer des tests de meilleure qualité en utilisant les pages/clients existants
+- L'effort de maintenance est transféré des tests individuels vers les classes partagées
