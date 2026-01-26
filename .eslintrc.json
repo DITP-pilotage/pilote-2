@@ -61,7 +61,8 @@
           "**/*.spec.{ts,tsx}",
           "./jest.setup.ts",
           "src/server/infrastructure/test/global.d.ts",
-          "./playwright.config.ts"
+          "./playwright.config.ts",
+          "tests/**/*.ts"
         ],
         "optionalDependencies": false
       }
