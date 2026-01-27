@@ -17,23 +17,10 @@ export class PrismaRapportRepository implements RapportRepository {
   ): Promise<RapportHebdomadaire> {
     const prisma = this.deps.prisma.getInstance();
 
-    if (rapport.id) {
-      await prisma.rapport_hebdomadaire_coordinateur.update({
-        where: { id: rapport.id },
-        data: {
-          statut_envoi: rapport.statutEnvoi,
-          date_envoi: rapport.dateEnvoi,
-          date_derniere_tentative: rapport.dateDerniereTentative,
-          nombre_tentatives: rapport.nombreTentatives,
-          erreur_envoi: rapport.erreurEnvoi,
-        },
-      });
-
-      return rapport;
-    }
-
-    const created = await prisma.rapport_hebdomadaire_coordinateur.create({
-      data: {
+    await prisma.rapport_hebdomadaire_coordinateur.upsert({
+      where: { id: rapport.id },
+      create: {
+        id: rapport.id,
         coordinateur_id: rapport.coordinateur.id,
         coordinateur_email: rapport.coordinateur.email,
         coordinateur_nom: rapport.coordinateur.nom,
@@ -49,9 +36,16 @@ export class PrismaRapportRepository implements RapportRepository {
           .comptesDesactives as unknown as Prisma.InputJsonValue,
         statut_envoi: rapport.statutEnvoi,
       },
+      update: {
+        statut_envoi: rapport.statutEnvoi,
+        date_envoi: rapport.dateEnvoi,
+        date_derniere_tentative: rapport.dateDerniereTentative,
+        nombre_tentatives: rapport.nombreTentatives,
+        erreur_envoi: rapport.erreurEnvoi,
+      },
     });
 
-    return { ...rapport, id: created.id };
+    return rapport;
   }
 
   async recupererRapportsParStatut(

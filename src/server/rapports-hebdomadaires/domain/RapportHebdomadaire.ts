@@ -1,11 +1,12 @@
+import { $Enums } from "@prisma/client";
+import { randomUUID } from "node:crypto";
 import { Coordinateur } from "./Coordinateur";
 import { PeriodeRapport } from "./PeriodeRapport";
 import { SectionActiviteComptes } from "./SectionActiviteComptes";
 import { CompteActivite } from "./CompteActivite";
-import { $Enums } from "@prisma/client";
 
 export type RapportHebdomadaire = {
-  readonly id?: string;
+  readonly id: string;
   readonly coordinateur: Coordinateur;
   readonly periode: PeriodeRapport;
   readonly sectionActiviteComptes: SectionActiviteComptes;
@@ -25,6 +26,7 @@ export function creerRapportHebdomadaire(params: {
   dateCreation: Date;
 }): RapportHebdomadaire {
   return {
+    id: randomUUID(),
     coordinateur: params.coordinateur,
     periode: params.periode,
     sectionActiviteComptes: {
