@@ -3,6 +3,7 @@ import { InitialDependencies } from "@/server/InitialDependencies";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { EmailManager } from "@/server/infrastructure/email-manager";
 import { PrismaActiviteComptesQuery } from "@/server/gestion-utilisateur/infrastructure/queries/PrismaActiviteComptesQuery";
+import { PrismaUtilisateursQuery } from "@/server/gestion-utilisateur/infrastructure/queries/PrismaUtilisateursQuery";
 
 import { ActiviteComptesGateway } from "./domain/ports/ActiviteComptesGateway";
 import { CoordinateurGateway } from "./domain/ports/CoordinateurGateway";
@@ -10,7 +11,7 @@ import { RapportRepository } from "./domain/ports/RapportRepository";
 import { EnvoieEmailService } from "./domain/ports/EnvoieEmailService";
 
 import { GestionUtilisateurActiviteComptesGateway } from "./infrastructure/adapters/GestionUtilisateurActiviteComptesGateway";
-import { PrismaCoordinateurGateway } from "./infrastructure/adapters/PrismaCoordinateurGateway";
+import { GestionUtilisateurCoordinateurGateway } from "./infrastructure/adapters/GestionUtilisateurCoordinateurGateway";
 import { PrismaRapportRepository } from "./infrastructure/adapters/PrismaRapportRepository";
 import { BrevoEnvoieEmailService } from "./infrastructure/adapters/BrevoEnvoieEmailService";
 
@@ -19,6 +20,7 @@ import { EnvoyerRapportsHebdomadairesUseCase } from "./usecases/EnvoyerRapportsH
 
 export type RapportsHebdomadairesDependencies = {
   activiteComptesQuery: PrismaActiviteComptesQuery;
+  utilisateursQuery: PrismaUtilisateursQuery;
   activiteComptesGateway: ActiviteComptesGateway;
   coordinateurGateway: CoordinateurGateway;
   rapportRepository: RapportRepository;
@@ -41,8 +43,9 @@ export const getRapportsHebdomadairesContainer = (
     .createScope<RapportsHebdomadairesDependencies>()
     .register({
       activiteComptesQuery: asClass(PrismaActiviteComptesQuery),
+      utilisateursQuery: asClass(PrismaUtilisateursQuery),
       activiteComptesGateway: asClass(GestionUtilisateurActiviteComptesGateway),
-      coordinateurGateway: asClass(PrismaCoordinateurGateway),
+      coordinateurGateway: asClass(GestionUtilisateurCoordinateurGateway),
       rapportRepository: asClass(PrismaRapportRepository),
       envoieEmailService: asClass(BrevoEnvoieEmailService),
       produireRapportsHebdomadairesUseCase: asClass(

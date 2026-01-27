@@ -1,25 +1,38 @@
+import { $Enums } from "@prisma/client";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
-import { CoordinateurGateway } from "@/server/rapports-hebdomadaires/domain/ports/CoordinateurGateway";
-import {
-  Coordinateur,
-  ProfilCoordinateur,
-} from "@/server/rapports-hebdomadaires/domain/Coordinateur";
 
-export class PrismaCoordinateurGateway implements CoordinateurGateway {
-  constructor(
-    private readonly deps: {
-      prisma: PrismaPilote;
-    },
-  ) {}
+export type TerritoireDTO = {
+  code: string;
+  nom: string;
+  maille: "DEPT" | "REG" | "NAT";
+};
 
-  async recupererCoordinateurs(params: {
-    profils: ProfilCoordinateur[];
-  }): Promise<Coordinateur[]> {
-    const prisma = this.deps.prisma.getInstance();
+export type TerritoireAvecEnfantsDTO = TerritoireDTO & {
+  codesEnfants: string[];
+};
+
+export type UtilisateurDTO = {
+  id: string;
+  email: string;
+  nom: string;
+  prenom: string;
+  profilCode: string;
+  territoire: TerritoireAvecEnfantsDTO;
+};
+
+interface Dependencies {
+  prisma: PrismaPilote;
+}
+
+export class PrismaUtilisateursQuery {
+  constructor(private readonly dependencies: Dependencies) {}
+
+  async recupererParProfils(profils: string[]): Promise<UtilisateurDTO[]> {
+    const prisma = this.dependencies.prisma.getInstance();
 
     const utilisateurs = await prisma.utilisateur.findMany({
       where: {
-        profilCode: { in: params.profils },
+        profilCode: { in: profils },
         date_desactivation: null,
       },
       include: {
@@ -31,7 +44,7 @@ export class PrismaCoordinateurGateway implements CoordinateurGateway {
       },
     });
 
-    const coordinateurs: Coordinateur[] = [];
+    const utilisateursDTO: UtilisateurDTO[] = [];
 
     for (const utilisateur of utilisateurs) {
       const territoireCode = this.extraireTerritoirePrincipal(
@@ -50,22 +63,22 @@ export class PrismaCoordinateurGateway implements CoordinateurGateway {
 
       if (!territoire) continue;
 
-      coordinateurs.push({
+      utilisateursDTO.push({
         id: utilisateur.id,
         email: utilisateur.email,
         nom: utilisateur.nom,
         prenom: utilisateur.prenom,
-        profil: utilisateur.profilCode as ProfilCoordinateur,
+        profilCode: utilisateur.profilCode,
         territoire: {
           code: territoire.code,
           nom: territoire.nom,
-          maille: territoire.maille === "REG" ? "REG" : "DEPT",
+          maille: this.mapMaille(territoire.maille),
           codesEnfants: territoire.territoire_enfant.map((t) => t.code),
         },
       });
     }
 
-    return coordinateurs;
+    return utilisateursDTO;
   }
 
   private extraireTerritoirePrincipal(
@@ -75,5 +88,16 @@ export class PrismaCoordinateurGateway implements CoordinateurGateway {
       (h) => h.territoires.length > 0,
     );
     return habilitationAvecTerritoire?.territoires[0];
+  }
+
+  private mapMaille(maille: $Enums.Maille): "DEPT" | "REG" | "NAT" {
+    switch (maille) {
+      case "DEPT":
+        return "DEPT";
+      case "REG":
+        return "REG";
+      case "NAT":
+        return "NAT";
+    }
   }
 }

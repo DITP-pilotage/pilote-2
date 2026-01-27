@@ -51,9 +51,10 @@ export class ProduireRapportsHebdomadairesUseCase {
     });
 
     const coordinateurs =
-      await this.deps.coordinateurGateway.recupererCoordinateurs({
-        profils: ["COORDINATEUR_REGION", "COORDINATEUR_DEPARTEMENT"],
-      });
+      await this.deps.coordinateurGateway.recupererCoordinateurs([
+        "COORDINATEUR_REGION",
+        "COORDINATEUR_DEPARTEMENT",
+      ]);
 
     logger.info("Coordinateurs récupérés", {
       nombreCoordinateurs: coordinateurs.length,

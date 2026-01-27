@@ -2,10 +2,11 @@ import { createIntegrationTest } from "@/server/infrastructure/test/createIntegr
 import { fixtures } from "@/server/infrastructure/test/fixtures";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { PrismaActiviteComptesQuery } from "@/server/gestion-utilisateur/infrastructure/queries/PrismaActiviteComptesQuery";
+import { PrismaUtilisateursQuery } from "@/server/gestion-utilisateur/infrastructure/queries/PrismaUtilisateursQuery";
 import { getPrisma } from "@/server/db/PrismaTransaction";
 import { ProduireRapportsHebdomadairesUseCase } from "@/server/rapports-hebdomadaires/usecases/ProduireRapportsHebdomadairesUseCase";
 import { GestionUtilisateurActiviteComptesGateway } from "@/server/rapports-hebdomadaires/infrastructure/adapters/GestionUtilisateurActiviteComptesGateway";
-import { PrismaCoordinateurGateway } from "@/server/rapports-hebdomadaires/infrastructure/adapters/PrismaCoordinateurGateway";
+import { GestionUtilisateurCoordinateurGateway } from "@/server/rapports-hebdomadaires/infrastructure/adapters/GestionUtilisateurCoordinateurGateway";
 import { PrismaRapportRepository } from "@/server/rapports-hebdomadaires/infrastructure/adapters/PrismaRapportRepository";
 
 describe("ProduireRapportsHebdomadairesUseCase", () => {
@@ -19,8 +20,11 @@ describe("ProduireRapportsHebdomadairesUseCase", () => {
     const activiteComptesGateway = new GestionUtilisateurActiviteComptesGateway(
       { activiteComptesQuery },
     );
-    const coordinateurGateway = new PrismaCoordinateurGateway({
+    const utilisateursQuery = new PrismaUtilisateursQuery({
       prisma: prismaPilote,
+    });
+    const coordinateurGateway = new GestionUtilisateurCoordinateurGateway({
+      utilisateursQuery,
     });
     const rapportRepository = new PrismaRapportRepository({
       prisma: prismaPilote,
