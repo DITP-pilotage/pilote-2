@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
 import { fixtures } from "@/server/infrastructure/test/fixtures";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
@@ -42,7 +43,7 @@ describe("ProduireRapportsHebdomadairesUseCase", () => {
     createIntegrationTest(async () => {
       // Given
       const territoireReg = await fixtures.territoire({
-        code: "REG-11",
+        code: randomUUID(),
         nom: "Île-de-France",
         maille: "REG",
       });
@@ -55,12 +56,12 @@ describe("ProduireRapportsHebdomadairesUseCase", () => {
         territoires: [territoireReg.code],
       });
 
-      const compteCréé = await fixtures.utilisateur({
+      const compteCree = await fixtures.utilisateur({
         profilCode: "PREFET_REGION",
-        date_creation: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
+        date_creation: new Date(Date.now() - 1 * 60 * 60 * 1000),
       });
       await fixtures.habilitation({
-        utilisateurId: compteCréé.id,
+        utilisateurId: compteCree.id,
         territoires: [territoireReg.code],
       });
 
@@ -80,7 +81,7 @@ describe("ProduireRapportsHebdomadairesUseCase", () => {
       expect(rapports[0].comptes_crees).toEqual(
         expect.arrayContaining([
           expect.objectContaining({
-            email: compteCréé.email,
+            email: compteCree.email,
           }),
         ]),
       );
@@ -92,7 +93,7 @@ describe("ProduireRapportsHebdomadairesUseCase", () => {
     createIntegrationTest(async () => {
       // Given
       const territoireReg = await fixtures.territoire({
-        code: "REG-11",
+        code: randomUUID(),
         nom: "Île-de-France",
         maille: "REG",
       });
@@ -125,13 +126,13 @@ describe("ProduireRapportsHebdomadairesUseCase", () => {
     createIntegrationTest(async () => {
       // Given
       const territoireReg = await fixtures.territoire({
-        code: "REG-11",
+        code: randomUUID(),
         nom: "Île-de-France",
         maille: "REG",
       });
 
       const territoireDept = await fixtures.territoire({
-        code: "DEPT-75",
+        code: randomUUID(),
         nom: "Paris",
         maille: "DEPT",
         code_parent: territoireReg.code,
@@ -147,7 +148,7 @@ describe("ProduireRapportsHebdomadairesUseCase", () => {
 
       const compteDansRegion = await fixtures.utilisateur({
         profilCode: "PREFET_REGION",
-        date_creation: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
+        date_creation: new Date(Date.now() - 1 * 60 * 60 * 1000),
       });
       await fixtures.habilitation({
         utilisateurId: compteDansRegion.id,
@@ -156,7 +157,7 @@ describe("ProduireRapportsHebdomadairesUseCase", () => {
 
       const compteDansDept = await fixtures.utilisateur({
         profilCode: "PREFET_DEPARTEMENT",
-        date_creation: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
+        date_creation: new Date(Date.now() - 1 * 60 * 60 * 1000),
       });
       await fixtures.habilitation({
         utilisateurId: compteDansDept.id,
@@ -182,13 +183,13 @@ describe("ProduireRapportsHebdomadairesUseCase", () => {
     createIntegrationTest(async () => {
       // Given
       const territoireReg = await fixtures.territoire({
-        code: "REG-11",
+        code: randomUUID(),
         nom: "Île-de-France",
         maille: "REG",
       });
 
       const territoireDept = await fixtures.territoire({
-        code: "DEPT-75",
+        code: randomUUID(),
         nom: "Paris",
         maille: "DEPT",
         code_parent: territoireReg.code,
@@ -204,7 +205,7 @@ describe("ProduireRapportsHebdomadairesUseCase", () => {
 
       const compteDansRegion = await fixtures.utilisateur({
         profilCode: "PREFET_REGION",
-        date_creation: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
+        date_creation: new Date(Date.now() - 1 * 60 * 60 * 1000),
       });
       await fixtures.habilitation({
         utilisateurId: compteDansRegion.id,
@@ -213,7 +214,7 @@ describe("ProduireRapportsHebdomadairesUseCase", () => {
 
       const compteDansDept = await fixtures.utilisateur({
         profilCode: "PREFET_DEPARTEMENT",
-        date_creation: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
+        date_creation: new Date(Date.now() - 1 * 60 * 60 * 1000),
       });
       await fixtures.habilitation({
         utilisateurId: compteDansDept.id,
@@ -243,7 +244,7 @@ describe("ProduireRapportsHebdomadairesUseCase", () => {
     createIntegrationTest(async () => {
       // Given
       const territoireReg = await fixtures.territoire({
-        code: "REG-11",
+        code: randomUUID(),
         nom: "Île-de-France",
         maille: "REG",
       });
@@ -258,7 +259,7 @@ describe("ProduireRapportsHebdomadairesUseCase", () => {
 
       const comptePrefet = await fixtures.utilisateur({
         profilCode: "PREFET_REGION",
-        date_creation: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
+        date_creation: new Date(Date.now() - 1 * 60 * 60 * 1000),
       });
       await fixtures.habilitation({
         utilisateurId: comptePrefet.id,
@@ -267,7 +268,7 @@ describe("ProduireRapportsHebdomadairesUseCase", () => {
 
       const compteDitp = await fixtures.utilisateur({
         profilCode: "DITP_ADMIN",
-        date_creation: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
+        date_creation: new Date(Date.now() - 1 * 60 * 60 * 1000),
       });
       await fixtures.habilitation({
         utilisateurId: compteDitp.id,

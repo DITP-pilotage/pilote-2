@@ -117,6 +117,10 @@ export class ProduireRapportsHebdomadairesUseCase {
     const { coordinateur, activiteGlobale, periode, maintenant } = params;
 
     const evenementsFiltres = activiteGlobale.filter((evt) => {
+      if (evt.compte.email === coordinateur.email) {
+        return false;
+      }
+
       const codeTerritoire = evt.compte.territoires[0]?.code;
       return estDansPerimetreTerritorial({
         coordinateur,
