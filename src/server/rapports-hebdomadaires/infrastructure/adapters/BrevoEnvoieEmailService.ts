@@ -4,12 +4,12 @@ import { RapportHebdomadaire } from "@/server/rapports-hebdomadaires/domain/Rapp
 
 const TEMPLATE_ID_RAPPORT_COORDINATEURS = 5;
 
-interface Dependencies {
-  emailManager: EmailManager;
-}
-
 export class BrevoEnvoieEmailService implements EnvoieEmailService {
-  constructor(private readonly deps: Dependencies) {}
+  constructor(
+    private readonly deps: {
+      emailManager: EmailManager;
+    },
+  ) {}
 
   async envoyerRapportHebdomadaire(params: {
     rapport: RapportHebdomadaire;
@@ -22,7 +22,7 @@ export class BrevoEnvoieEmailService implements EnvoieEmailService {
       territoire: rapport.coordinateur.territoire.nom,
       dateDebut: this.formatDateFr(rapport.periode.dateDebut),
       dateFin: this.formatDateTimeFr(rapport.periode.dateFin),
-      comptesCreés: rapport.sectionActiviteComptes.comptesCrees.map((c) => ({
+      comptesCrees: rapport.sectionActiviteComptes.comptesCrees.map((c) => ({
         nom: c.nom,
         prenom: c.prenom,
         email: c.email,
@@ -32,15 +32,15 @@ export class BrevoEnvoieEmailService implements EnvoieEmailService {
             ? c.territoires.map((t) => t.nom).join(", ")
             : undefined,
       })),
-      comptesDésactivés: rapport.sectionActiviteComptes.comptesDesactives.map(
-        (c) => ({
-          nom: c.nom,
-          prenom: c.prenom,
-          email: c.email,
-          profil: c.profil,
+      comptesDesactives: rapport.sectionActiviteComptes.comptesDesactives.map(
+        (compte) => ({
+          nom: compte.nom,
+          prenom: compte.prenom,
+          email: compte.email,
+          profil: compte.profil,
           territoires:
-            c.territoires.length > 0
-              ? c.territoires.map((t) => t.nom).join(", ")
+            compte.territoires.length > 0
+              ? compte.territoires.map((t) => t.nom).join(", ")
               : undefined,
         }),
       ),

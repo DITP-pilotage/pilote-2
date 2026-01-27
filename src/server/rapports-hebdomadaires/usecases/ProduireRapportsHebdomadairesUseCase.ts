@@ -145,8 +145,8 @@ export class ProduireRapportsHebdomadairesUseCase {
     logger.info("Rapport créé", {
       rapportId: rapportSauvegarde.id,
       coordinateurEmail: coordinateur.email,
-      nombreComptesCreés: comptesCrees.length,
-      nombreComptesDésactivés: comptesDesactives.length,
+      nombreComptesCrees: comptesCrees.length,
+      nombreComptesDesactives: comptesDesactives.length,
     });
 
     return rapportSauvegarde;
