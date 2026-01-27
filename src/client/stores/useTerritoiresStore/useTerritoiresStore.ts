@@ -177,17 +177,9 @@ export const régionsTerritoiresStore = () =>
   useTerritoiresStore((étatActuel) => étatActuel.régions);
 export const territoiresTerritoiresStore = () =>
   useTerritoiresStore((étatActuel) => étatActuel.territoires);
-export const mailleSélectionnéeTerritoiresStore = () =>
-  useTerritoiresStore((étatActuel) => étatActuel.mailleSélectionnée);
 export const territoiresAccessiblesEnLectureStore = () =>
   useTerritoiresStore(
     (étatActuel) => étatActuel.territoiresAccessiblesEnLecture,
   );
 export const maillesAccessiblesEnLectureStore = () =>
   useTerritoiresStore((étatActuel) => étatActuel.maillesAccessiblesEnLecture);
-
-// TODO(JOTA: 29/08/2024): ne jamais utiliser ces stores, ils sont à supprimer
-export const territoireSélectionnéTerritoiresStore = () =>
-  useTerritoiresStore((étatActuel) => étatActuel.territoireSélectionné);
-export const territoiresComparésTerritoiresStore = () =>
-  useTerritoiresStore((étatActuel) => étatActuel.territoiresComparés);

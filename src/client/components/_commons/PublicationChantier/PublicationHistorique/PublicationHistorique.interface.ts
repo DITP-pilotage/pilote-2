@@ -5,4 +5,5 @@ export default interface PublicationHistoriqueProps {
   entité: PublicationProps["caractéristiques"]["entité"];
   réformeId: PublicationProps["réformeId"];
   maille: PublicationProps["maille"];
+  territoireCode;
 }

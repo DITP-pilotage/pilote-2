@@ -60,6 +60,7 @@ const Publication: FunctionComponent<PublicationProps> = ({
                     entité={caractéristiques.entité}
                     maille={maille}
                     réformeId={réformeId}
+                    territoireCode={territoireCode}
                     type={caractéristiques.type}
                   />
                 )}

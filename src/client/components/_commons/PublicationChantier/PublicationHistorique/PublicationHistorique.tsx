@@ -10,9 +10,10 @@ const PublicationHistorique: FunctionComponent<PublicationHistoriqueProps> = ({
   entité,
   réformeId,
   maille,
+  territoireCode,
 }) => {
   const { publications, nomTerritoire, récupérerPublications } =
-    usePublicationHistorique(type, entité, réformeId, maille);
+    usePublicationHistorique(type, entité, réformeId, maille, territoireCode);
 
   return (
     <Modale
