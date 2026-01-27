@@ -12,6 +12,10 @@ import { useProfilUtilisateurConnecte } from "@/client/hooks/useProfilUtilisateu
 import { Settings1Icon } from "@/components/_commons/Icones/Settings1Icon";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
 
+const peutAccederPanelAdministrateur = (
+  session: ReturnType<typeof useSession>,
+) => [ProfilEnum.DITP_ADMIN].includes(session.data?.profil);
+
 export const Utilisateur = () => {
   const [estDeplie, setEstDeplie] = useState<boolean>(false);
   const session = useSession();
@@ -21,8 +25,13 @@ export const Utilisateur = () => {
     api.gestionContenu.récupérerVariableContenu.useQuery({
       nomVariableContenu: "NEXT_PUBLIC_FF_PANEL_ADMIN",
     });
+  const { data: monProfilEstDisponible } =
+    api.gestionContenu.récupérerVariableContenu.useQuery({
+      nomVariableContenu: "NEXT_PUBLIC_FF_MON_PROFIL",
+    });
+
   const showPanelAdministrateur =
-    panelAdminEstDisponible && session.data?.profil === ProfilEnum.DITP_ADMIN;
+    panelAdminEstDisponible && peutAccederPanelAdministrateur(session);
 
   return (
     <Dropdown.Root onOpenChange={setEstDeplie} open={estDeplie}>
@@ -51,14 +60,18 @@ export const Utilisateur = () => {
           <span className="text-sm">{email}</span>
         </div>
 
-        <Dropdown.Divider />
+        {monProfilEstDisponible || showPanelAdministrateur ? (
+          <Dropdown.Divider />
+        ) : null}
 
-        <Dropdown.Item asChild>
-          <Link href="/mon-profil-utilisateur">
-            <Dropdown.Icone icone={Account1Icon} />
-            Mon profil utilisateur
-          </Link>
-        </Dropdown.Item>
+        {monProfilEstDisponible ? (
+          <Dropdown.Item asChild>
+            <Link href="/mon-profil-utilisateur">
+              <Dropdown.Icone icone={Account1Icon} />
+              Mon profil utilisateur
+            </Link>
+          </Dropdown.Item>
+        ) : null}
         {showPanelAdministrateur ? (
           <Dropdown.Item asChild>
             <Link href="/panel-administrateur/parametrage-metadata-indicateur">
