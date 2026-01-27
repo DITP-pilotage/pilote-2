@@ -138,16 +138,15 @@ export class ProduireRapportsHebdomadairesUseCase {
       dateCreation: maintenant,
     });
 
-    const rapportSauvegarde =
-      await this.deps.rapportRepository.sauvegarder(rapport);
+    await this.deps.rapportRepository.sauvegarder(rapport);
 
     logger.info("Rapport créé", {
-      rapportId: rapportSauvegarde.id,
+      rapportId: rapport.id,
       coordinateurEmail: coordinateur.email,
       nombreComptesCrees: comptesCrees.length,
       nombreComptesDesactives: comptesDesactives.length,
     });
 
-    return rapportSauvegarde;
+    return rapport;
   }
 }

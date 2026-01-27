@@ -12,9 +12,7 @@ export class PrismaRapportRepository implements RapportRepository {
     },
   ) {}
 
-  async sauvegarder(
-    rapport: RapportHebdomadaire,
-  ): Promise<RapportHebdomadaire> {
+  async sauvegarder(rapport: RapportHebdomadaire): Promise<void> {
     const prisma = this.deps.prisma.getInstance();
 
     await prisma.rapport_hebdomadaire_coordinateur.upsert({
@@ -44,8 +42,6 @@ export class PrismaRapportRepository implements RapportRepository {
         erreur_envoi: rapport.erreurEnvoi,
       },
     });
-
-    return rapport;
   }
 
   async recupererRapportsParStatut(
