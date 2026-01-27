@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { getPrisma } from "@/server/db/PrismaTransaction";
@@ -29,7 +30,7 @@ describe("EnvoyerRapportsHebdomadairesUseCase", () => {
 
       const rapport1 = await prisma.rapport_hebdomadaire_coordinateur.create({
         data: {
-          coordinateur_id: "coord-1",
+          coordinateur_id: randomUUID(),
           coordinateur_email: "coord1@example.com",
           coordinateur_nom: "Dupont",
           coordinateur_prenom: "Jean",
@@ -47,7 +48,7 @@ describe("EnvoyerRapportsHebdomadairesUseCase", () => {
 
       const rapport2 = await prisma.rapport_hebdomadaire_coordinateur.create({
         data: {
-          coordinateur_id: "coord-2",
+          coordinateur_id: randomUUID(),
           coordinateur_email: "coord2@example.com",
           coordinateur_nom: "Martin",
           coordinateur_prenom: "Sophie",
@@ -79,12 +80,12 @@ describe("EnvoyerRapportsHebdomadairesUseCase", () => {
       expect(result.emailsEnvoyes).toBe(2);
       expect(result.emailsEnEchec).toBe(0);
 
-      const rapportsAprès =
+      const rapportsApres =
         await prisma.rapport_hebdomadaire_coordinateur.findMany({
           where: { id: { in: [rapport1.id, rapport2.id] } },
         });
 
-      expect(rapportsAprès).toEqual(
+      expect(rapportsApres).toEqual(
         expect.arrayContaining([
           expect.objectContaining({
             id: rapport1.id,
@@ -112,7 +113,7 @@ describe("EnvoyerRapportsHebdomadairesUseCase", () => {
 
       const rapport = await prisma.rapport_hebdomadaire_coordinateur.create({
         data: {
-          coordinateur_id: "coord-1",
+          coordinateur_id: randomUUID(),
           coordinateur_email: "coord1@example.com",
           coordinateur_nom: "Dupont",
           coordinateur_prenom: "Jean",
@@ -150,12 +151,12 @@ describe("EnvoyerRapportsHebdomadairesUseCase", () => {
         },
       ]);
 
-      const rapportAprès =
+      const rapportApres =
         await prisma.rapport_hebdomadaire_coordinateur.findUnique({
           where: { id: rapport.id },
         });
 
-      expect(rapportAprès).toEqual(
+      expect(rapportApres).toEqual(
         expect.objectContaining({
           statut_envoi: "ECHEC",
           erreur_envoi: "Timeout Brevo",
@@ -175,7 +176,7 @@ describe("EnvoyerRapportsHebdomadairesUseCase", () => {
 
       const rapport1 = await prisma.rapport_hebdomadaire_coordinateur.create({
         data: {
-          coordinateur_id: "coord-1",
+          coordinateur_id: randomUUID(),
           coordinateur_email: "coord1@example.com",
           coordinateur_nom: "Dupont",
           coordinateur_prenom: "Jean",
@@ -193,7 +194,7 @@ describe("EnvoyerRapportsHebdomadairesUseCase", () => {
 
       const rapport2 = await prisma.rapport_hebdomadaire_coordinateur.create({
         data: {
-          coordinateur_id: "coord-2",
+          coordinateur_id: randomUUID(),
           coordinateur_email: "coord2@example.com",
           coordinateur_nom: "Martin",
           coordinateur_prenom: "Sophie",
@@ -236,17 +237,17 @@ describe("EnvoyerRapportsHebdomadairesUseCase", () => {
       expect(result.emailsEnvoyes).toBe(1);
       expect(result.emailsEnEchec).toBe(1);
 
-      const rapport1Après =
+      const rapport1Apres =
         await prisma.rapport_hebdomadaire_coordinateur.findUnique({
           where: { id: rapport1.id },
         });
-      const rapport2Après =
+      const rapport2Apres =
         await prisma.rapport_hebdomadaire_coordinateur.findUnique({
           where: { id: rapport2.id },
         });
 
-      expect(rapport1Après?.statut_envoi).toBe("ECHEC");
-      expect(rapport2Après?.statut_envoi).toBe("ENVOYE");
+      expect(rapport1Apres?.statut_envoi).toBe("ECHEC");
+      expect(rapport2Apres?.statut_envoi).toBe("ENVOYE");
     }),
   );
 
@@ -260,7 +261,7 @@ describe("EnvoyerRapportsHebdomadairesUseCase", () => {
 
       await prisma.rapport_hebdomadaire_coordinateur.create({
         data: {
-          coordinateur_id: "coord-1",
+          coordinateur_id: randomUUID(),
           coordinateur_email: "coord1@example.com",
           coordinateur_nom: "Dupont",
           coordinateur_prenom: "Jean",
@@ -278,7 +279,7 @@ describe("EnvoyerRapportsHebdomadairesUseCase", () => {
 
       await prisma.rapport_hebdomadaire_coordinateur.create({
         data: {
-          coordinateur_id: "coord-2",
+          coordinateur_id: randomUUID(),
           coordinateur_email: "coord2@example.com",
           coordinateur_nom: "Martin",
           coordinateur_prenom: "Sophie",
