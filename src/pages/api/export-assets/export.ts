@@ -23,7 +23,7 @@ export default async function handler(
     return;
   }
 
-  const safeRegex = /^[a-zA-Z0-9_]+\.(xlsx|ods)$/;
+  const safeRegex = /^[a-zA-Z0-9_]+\.(xlsx|ods|pdf)$/;
 
   if (!safeRegex.test(filename)) {
     res.status(400).send("Invalid filename");
@@ -35,6 +35,7 @@ export default async function handler(
   const mimeTypes: Record<string, string> = {
     xlsx: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     ods: "application/vnd.oasis.opendocument.spreadsheet",
+    pdf: "application/pdf",
   };
 
   const contentType = mimeTypes[ext ?? ""];
