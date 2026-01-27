@@ -70,7 +70,7 @@ export class ProduireRapportsHebdomadairesUseCase {
       nombreEvenements: activiteGlobale.length,
     });
 
-    let rapportsCreés = 0;
+    let rapportsCrees = 0;
     let coordinateursSansActivite = 0;
 
     for (const coordinateur of coordinateurs) {
@@ -83,7 +83,7 @@ export class ProduireRapportsHebdomadairesUseCase {
         });
 
         if (rapport) {
-          rapportsCreés++;
+          rapportsCrees++;
         } else {
           coordinateursSansActivite++;
         }
@@ -96,12 +96,12 @@ export class ProduireRapportsHebdomadairesUseCase {
     }
 
     logger.info("Phase 1 terminée", {
-      rapportsCreés,
+      rapportsCrees,
       coordinateursSansActivite,
     });
 
     return {
-      rapportsCrees: rapportsCreés,
+      rapportsCrees,
       coordinateursSansActivite,
       dateExecution: maintenant,
     };
@@ -123,18 +123,18 @@ export class ProduireRapportsHebdomadairesUseCase {
       });
     });
 
-    const { comptesCreés, comptesDésactivés } =
+    const { comptesCrees, comptesDesactives } =
       grouperEvenementsParType(evenementsFiltres);
 
-    if (comptesCreés.length === 0 && comptesDésactivés.length === 0) {
+    if (comptesCrees.length === 0 && comptesDesactives.length === 0) {
       return null;
     }
 
     const rapport = creerRapportHebdomadaire({
       coordinateur,
       periode,
-      comptesCreés,
-      comptesDésactivés,
+      comptesCrees,
+      comptesDesactives,
       dateCreation: maintenant,
     });
 
@@ -145,8 +145,8 @@ export class ProduireRapportsHebdomadairesUseCase {
     logger.info("Rapport créé", {
       rapportId: rapportSauvegarde.id,
       coordinateurEmail: coordinateur.email,
-      nombreComptesCreés: comptesCreés.length,
-      nombreComptesDésactivés: comptesDésactivés.length,
+      nombreComptesCreés: comptesCrees.length,
+      nombreComptesDésactivés: comptesDesactives.length,
     });
 
     return rapportSauvegarde;

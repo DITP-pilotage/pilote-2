@@ -37,7 +37,7 @@ async function main() {
   const messagePhase2Lines = [
     "## 📧 Rapports hebdomadaires coordinateurs - Phase 2 : Envoi",
     "",
-    `✅ **${resultEnvoi.emailsEnvoyés} emails envoyés avec succès**`,
+    `✅ **${resultEnvoi.emailsEnvoyes} emails envoyés avec succès**`,
   ];
 
   if (resultEnvoi.emailsEnEchec > 0) {

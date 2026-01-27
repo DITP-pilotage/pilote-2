@@ -13,11 +13,11 @@ describe("ProduireRapportsHebdomadairesUseCase", () => {
   const prismaPilote = new PrismaPilote();
 
   beforeEach(() => {
-    const prismaActiviteComptesQuery = new PrismaActiviteComptesQuery({
+    const activiteComptesQuery = new PrismaActiviteComptesQuery({
       prisma: prismaPilote,
     });
     const activiteComptesGateway = new GestionUtilisateurActiviteComptesGateway(
-      { prismaActiviteComptesQuery },
+      { activiteComptesQuery },
     );
     const coordinateurGateway = new PrismaCoordinateurGateway({
       prisma: prismaPilote,

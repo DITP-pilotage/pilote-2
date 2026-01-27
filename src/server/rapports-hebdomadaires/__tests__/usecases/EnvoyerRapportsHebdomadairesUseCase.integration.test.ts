@@ -76,7 +76,7 @@ describe("EnvoyerRapportsHebdomadairesUseCase", () => {
       const result = await useCase.run({ dateCreationMin: dateCreation });
 
       // Then
-      expect(result.emailsEnvoyés).toBe(2);
+      expect(result.emailsEnvoyes).toBe(2);
       expect(result.emailsEnEchec).toBe(0);
 
       const rapportsAprès =
@@ -141,7 +141,7 @@ describe("EnvoyerRapportsHebdomadairesUseCase", () => {
       const result = await useCase.run({ dateCreationMin: dateCreation });
 
       // Then
-      expect(result.emailsEnvoyés).toBe(0);
+      expect(result.emailsEnvoyes).toBe(0);
       expect(result.emailsEnEchec).toBe(1);
       expect(result.erreursDetails).toEqual([
         {
@@ -233,7 +233,7 @@ describe("EnvoyerRapportsHebdomadairesUseCase", () => {
       const result = await useCase.run({ dateCreationMin: dateCreation });
 
       // Then
-      expect(result.emailsEnvoyés).toBe(1);
+      expect(result.emailsEnvoyes).toBe(1);
       expect(result.emailsEnEchec).toBe(1);
 
       const rapport1Après =
@@ -307,7 +307,7 @@ describe("EnvoyerRapportsHebdomadairesUseCase", () => {
       const result = await useCase.run({ dateCreationMin: dateRecente });
 
       // Then
-      expect(result.emailsEnvoyés).toBe(1);
+      expect(result.emailsEnvoyes).toBe(1);
       expect(result.emailsEnEchec).toBe(0);
     }),
   );

@@ -18,7 +18,7 @@ import { ProduireRapportsHebdomadairesUseCase } from "./usecases/ProduireRapport
 import { EnvoyerRapportsHebdomadairesUseCase } from "./usecases/EnvoyerRapportsHebdomadairesUseCase";
 
 export type RapportsHebdomadairesDependencies = {
-  prismaActiviteComptesQuery: PrismaActiviteComptesQuery;
+  activiteComptesQuery: PrismaActiviteComptesQuery;
   activiteComptesGateway: ActiviteComptesGateway;
   coordinateurGateway: CoordinateurGateway;
   rapportRepository: RapportRepository;
@@ -40,7 +40,7 @@ export const getRapportsHebdomadairesContainer = (
   return initialContainer
     .createScope<RapportsHebdomadairesDependencies>()
     .register({
-      prismaActiviteComptesQuery: asClass(PrismaActiviteComptesQuery),
+      activiteComptesQuery: asClass(PrismaActiviteComptesQuery),
       activiteComptesGateway: asClass(GestionUtilisateurActiviteComptesGateway),
       coordinateurGateway: asClass(PrismaCoordinateurGateway),
       rapportRepository: asClass(PrismaRapportRepository),

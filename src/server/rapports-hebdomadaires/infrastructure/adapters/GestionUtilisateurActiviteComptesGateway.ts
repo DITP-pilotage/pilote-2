@@ -1,7 +1,7 @@
 import {
-  PrismaActiviteComptesQuery,
-  EvenementCompteDTO,
   CompteDTO,
+  EvenementCompteDTO,
+  PrismaActiviteComptesQuery,
 } from "@/server/gestion-utilisateur/infrastructure/queries/PrismaActiviteComptesQuery";
 import { ActiviteComptesGateway } from "@/server/rapports-hebdomadaires/domain/ports/ActiviteComptesGateway";
 import {
@@ -9,14 +9,14 @@ import {
   CompteActivite,
 } from "@/server/rapports-hebdomadaires/domain/CompteActivite";
 
-interface Dependencies {
-  prismaActiviteComptesQuery: PrismaActiviteComptesQuery;
-}
-
 export class GestionUtilisateurActiviteComptesGateway
   implements ActiviteComptesGateway
 {
-  constructor(private readonly deps: Dependencies) {}
+  constructor(
+    private readonly deps: {
+      activiteComptesQuery: PrismaActiviteComptesQuery;
+    },
+  ) {}
 
   async recupererActivite(params: {
     dateDebut: Date;
@@ -24,9 +24,7 @@ export class GestionUtilisateurActiviteComptesGateway
     profilCodes: string[];
   }): Promise<ActiviteComptes> {
     const evenements =
-      await this.deps.prismaActiviteComptesQuery.recupererActiviteComptes(
-        params,
-      );
+      await this.deps.activiteComptesQuery.recupererActiviteComptes(params);
 
     return evenements.map((evt) => this.mapToEvenementCompte(evt));
   }

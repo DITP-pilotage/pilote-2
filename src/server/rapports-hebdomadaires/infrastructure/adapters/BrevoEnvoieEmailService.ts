@@ -22,7 +22,7 @@ export class BrevoEnvoieEmailService implements EnvoieEmailService {
       territoire: rapport.coordinateur.territoire.nom,
       dateDebut: this.formatDateFr(rapport.periode.dateDebut),
       dateFin: this.formatDateTimeFr(rapport.periode.dateFin),
-      comptesCreés: rapport.sectionActiviteComptes.comptesCreés.map((c) => ({
+      comptesCreés: rapport.sectionActiviteComptes.comptesCrees.map((c) => ({
         nom: c.nom,
         prenom: c.prenom,
         email: c.email,
@@ -32,7 +32,7 @@ export class BrevoEnvoieEmailService implements EnvoieEmailService {
             ? c.territoires.map((t) => t.nom).join(", ")
             : undefined,
       })),
-      comptesDésactivés: rapport.sectionActiviteComptes.comptesDésactivés.map(
+      comptesDésactivés: rapport.sectionActiviteComptes.comptesDesactives.map(
         (c) => ({
           nom: c.nom,
           prenom: c.prenom,

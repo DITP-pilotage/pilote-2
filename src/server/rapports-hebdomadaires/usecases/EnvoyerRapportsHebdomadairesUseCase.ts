@@ -3,24 +3,24 @@ import { RapportRepository } from "@/server/rapports-hebdomadaires/domain/ports/
 import { EnvoieEmailService } from "@/server/rapports-hebdomadaires/domain/ports/EnvoieEmailService";
 import { StatutEnvoi } from "@/server/rapports-hebdomadaires/domain/StatutEnvoi";
 import {
-  marquerCommeEnvoye,
   marquerCommeEchec,
+  marquerCommeEnvoye,
   RapportHebdomadaire,
 } from "@/server/rapports-hebdomadaires/domain/RapportHebdomadaire";
 
 type EnvoyerRapportResult = {
-  emailsEnvoyés: number;
+  emailsEnvoyes: number;
   emailsEnEchec: number;
   erreursDetails: { email: string; erreur: string }[];
 };
 
-interface Dependencies {
-  rapportRepository: RapportRepository;
-  envoieEmailService: EnvoieEmailService;
-}
-
 export class EnvoyerRapportsHebdomadairesUseCase {
-  constructor(private readonly deps: Dependencies) {}
+  constructor(
+    private readonly deps: {
+      rapportRepository: RapportRepository;
+      envoieEmailService: EnvoieEmailService;
+    },
+  ) {}
 
   async run(params: { dateCreationMin?: Date }): Promise<EnvoyerRapportResult> {
     logger.info("Phase 2 démarrée");
@@ -35,14 +35,14 @@ export class EnvoyerRapportsHebdomadairesUseCase {
       nombreRapports: rapportsAEnvoyer.length,
     });
 
-    let emailsEnvoyés = 0;
+    let emailsEnvoyes = 0;
     let emailsEnEchec = 0;
     const erreursDetails: { email: string; erreur: string }[] = [];
 
     for (const rapport of rapportsAEnvoyer) {
       const result = await this.envoyerRapport(rapport);
       if (result.success) {
-        emailsEnvoyés++;
+        emailsEnvoyes++;
       } else {
         emailsEnEchec++;
         erreursDetails.push({
@@ -53,12 +53,12 @@ export class EnvoyerRapportsHebdomadairesUseCase {
     }
 
     logger.info("Phase 2 terminée", {
-      emailsEnvoyés,
+      emailsEnvoyes,
       emailsEnEchec,
     });
 
     return {
-      emailsEnvoyés,
+      emailsEnvoyes,
       emailsEnEchec,
       erreursDetails,
     };

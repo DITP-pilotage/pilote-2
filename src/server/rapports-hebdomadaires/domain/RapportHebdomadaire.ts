@@ -20,16 +20,16 @@ export type RapportHebdomadaire = {
 export function creerRapportHebdomadaire(params: {
   coordinateur: Coordinateur;
   periode: PeriodeRapport;
-  comptesCreés: readonly CompteActivite[];
-  comptesDésactivés: readonly CompteActivite[];
+  comptesCrees: readonly CompteActivite[];
+  comptesDesactives: readonly CompteActivite[];
   dateCreation: Date;
 }): RapportHebdomadaire {
   return {
     coordinateur: params.coordinateur,
     periode: params.periode,
     sectionActiviteComptes: {
-      comptesCreés: params.comptesCreés,
-      comptesDésactivés: params.comptesDésactivés,
+      comptesCrees: params.comptesCrees,
+      comptesDesactives: params.comptesDesactives,
     },
     statutEnvoi: StatutEnvoi.CREE,
     dateCreation: params.dateCreation,
@@ -62,11 +62,4 @@ export function marquerCommeEchec(params: {
     dateDerniereTentative: params.dateTentative,
     nombreTentatives: params.rapport.nombreTentatives + 1,
   };
-}
-
-export function aActivite(rapport: RapportHebdomadaire): boolean {
-  return (
-    rapport.sectionActiviteComptes.comptesCreés.length > 0 ||
-    rapport.sectionActiviteComptes.comptesDésactivés.length > 0
-  );
 }

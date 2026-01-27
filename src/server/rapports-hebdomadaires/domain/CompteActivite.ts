@@ -24,17 +24,17 @@ export type EvenementCompte =
 export type ActiviteComptes = readonly EvenementCompte[];
 
 export function grouperEvenementsParType(activite: ActiviteComptes): {
-  comptesCreés: readonly CompteActivite[];
-  comptesDésactivés: readonly CompteActivite[];
+  comptesCrees: readonly CompteActivite[];
+  comptesDesactives: readonly CompteActivite[];
 } {
   return {
-    comptesCreés: activite
+    comptesCrees: activite
       .filter(
         (e): e is Extract<EvenementCompte, { type: "COMPTE_CREE" }> =>
           e.type === "COMPTE_CREE",
       )
       .map((e) => e.compte),
-    comptesDésactivés: activite
+    comptesDesactives: activite
       .filter(
         (e): e is Extract<EvenementCompte, { type: "COMPTE_DESACTIVE" }> =>
           e.type === "COMPTE_DESACTIVE",

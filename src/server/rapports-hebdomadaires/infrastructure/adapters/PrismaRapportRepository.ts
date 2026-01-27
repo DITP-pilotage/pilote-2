@@ -31,9 +31,9 @@ export class PrismaRapportRepository implements RapportRepository {
         date_debut_periode: rapport.periode.dateDebut,
         date_fin_periode: rapport.periode.dateFin,
         comptes_crees: rapport.sectionActiviteComptes
-          .comptesCreés as unknown as Prisma.InputJsonValue,
+          .comptesCrees as unknown as Prisma.InputJsonValue,
         comptes_desactives: rapport.sectionActiviteComptes
-          .comptesDésactivés as unknown as Prisma.InputJsonValue,
+          .comptesDesactives as unknown as Prisma.InputJsonValue,
         statut_envoi: this.mapStatutToPrisma(rapport.statutEnvoi),
       },
     });
@@ -102,8 +102,8 @@ export class PrismaRapportRepository implements RapportRepository {
           dateFin: row.date_fin_periode,
         },
         sectionActiviteComptes: {
-          comptesCreés: row.comptes_crees as unknown as CompteActivite[],
-          comptesDésactivés:
+          comptesCrees: row.comptes_crees as unknown as CompteActivite[],
+          comptesDesactives:
             row.comptes_desactives as unknown as CompteActivite[],
         },
         statutEnvoi: row.statut_envoi as StatutEnvoi,
