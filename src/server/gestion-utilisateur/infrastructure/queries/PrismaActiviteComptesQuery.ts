@@ -35,7 +35,7 @@ export class PrismaActiviteComptesQuery {
     const prisma = this.dependencies.prisma.getInstance();
 
     // 1. Fetch created accounts in period
-    const comptesCreés = await prisma.utilisateur.findMany({
+    const comptesCrees = await prisma.utilisateur.findMany({
       where: {
         date_creation: { gte: params.dateDebut, lte: params.dateFin },
         profilCode: { in: params.profilCodes },
@@ -49,7 +49,7 @@ export class PrismaActiviteComptesQuery {
       },
     });
 
-    for (const utilisateur of comptesCreés) {
+    for (const utilisateur of comptesCrees) {
       const territoires = await this.recupererTousLesTerritoires(
         utilisateur.habilitation,
       );
@@ -61,8 +61,7 @@ export class PrismaActiviteComptesQuery {
       });
     }
 
-    // 2. Fetch deactivated accounts in period
-    const comptesDésactivés = await prisma.utilisateur.findMany({
+    const comptesDesactives = await prisma.utilisateur.findMany({
       where: {
         date_desactivation: { gte: params.dateDebut, lte: params.dateFin },
         profilCode: { in: params.profilCodes },
@@ -76,7 +75,7 @@ export class PrismaActiviteComptesQuery {
       },
     });
 
-    for (const utilisateur of comptesDésactivés) {
+    for (const utilisateur of comptesDesactives) {
       const territoires = await this.recupererTousLesTerritoires(
         utilisateur.habilitation,
       );
@@ -88,14 +87,12 @@ export class PrismaActiviteComptesQuery {
       });
     }
 
-    // Sort chronologically
     return evenements.sort((a, b) => a.date.getTime() - b.date.getTime());
   }
 
   private async recupererTousLesTerritoires(
     habilitations: { territoires: string[] }[],
   ): Promise<TerritoireDTO[]> {
-    // Collect all territory codes from all habilitations
     const tousLesCodes = new Set<string>();
     for (const habilitation of habilitations) {
       for (const code of habilitation.territoires) {
@@ -105,7 +102,6 @@ export class PrismaActiviteComptesQuery {
 
     if (tousLesCodes.size === 0) return [];
 
-    // Fetch all territories
     const territoires = await this.dependencies.prisma
       .getInstance()
       .territoire.findMany({

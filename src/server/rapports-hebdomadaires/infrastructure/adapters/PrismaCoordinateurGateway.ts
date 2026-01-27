@@ -5,12 +5,12 @@ import {
   ProfilCoordinateur,
 } from "@/server/rapports-hebdomadaires/domain/Coordinateur";
 
-interface Dependencies {
-  prisma: PrismaPilote;
-}
-
 export class PrismaCoordinateurGateway implements CoordinateurGateway {
-  constructor(private readonly deps: Dependencies) {}
+  constructor(
+    private readonly deps: {
+      prisma: PrismaPilote;
+    },
+  ) {}
 
   async recupererCoordinateurs(params: {
     profils: ProfilCoordinateur[];
