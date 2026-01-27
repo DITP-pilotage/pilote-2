@@ -4,11 +4,11 @@ import { Icone } from "@/components/_commons/Icone";
 import { Account1Icon } from "@/components/_commons/Icones/Account1Icon";
 import { ArrowSLine1Icon } from "@/components/_commons/Icones/ArrowSLine1Icon";
 import { BoutonSeDeconnecter } from "@/components/_commons/BoutonSeDeconnecter";
-import { BoutonPanelAdministrateur } from "@/components/_commons/BoutonPanelAdministrateur";
 import { clsxm } from "@/utils/clsxm";
 import { Dropdown } from "@/components/shared/Dropdown";
 import api from "@/server/infrastructure/api/trpc/api";
 import { useProfilUtilisateurConnecte } from "@/client/hooks/useProfilUtilisateurConnecte";
+import { Settings1Icon } from "@/components/_commons/Icones/Settings1Icon";
 
 export const Utilisateur = () => {
   const [estDeplie, setEstDeplie] = useState<boolean>(false);
@@ -54,7 +54,14 @@ export const Utilisateur = () => {
             Mon profil utilisateur
           </Link>
         </Dropdown.Item>
-        {panelAdminEstDisponible ? <BoutonPanelAdministrateur /> : null}
+        {panelAdminEstDisponible ? (
+          <Dropdown.Item asChild>
+            <Link href="/panel-administrateur/parametrage-metadata-indicateur">
+              <Dropdown.Icone icone={Settings1Icon} />
+              Panel administrateur
+            </Link>
+          </Dropdown.Item>
+        ) : null}
 
         <Dropdown.Divider />
 
