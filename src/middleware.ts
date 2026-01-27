@@ -99,7 +99,10 @@ export const middleware = async (
   }
 
   const pathname = request.nextUrl.pathname;
-  if (!pathname.startsWith("/api/open-api")) {
+  if (
+    !pathname.startsWith("/api/open-api") &&
+    !pathname.startsWith("/api/mcp")
+  ) {
     const authMiddleware = withAuth(
       async function middleware2(requestAuth) {
         const cookie = requestAuth.cookies.get("csrf");
