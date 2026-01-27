@@ -1,5 +1,6 @@
 import { useState } from "react";
 import Link from "next/link";
+import { useSession } from "next-auth/react";
 import { Icone } from "@/components/_commons/Icone";
 import { Account1Icon } from "@/components/_commons/Icones/Account1Icon";
 import { ArrowSLine1Icon } from "@/components/_commons/Icones/ArrowSLine1Icon";
@@ -9,15 +10,19 @@ import { Dropdown } from "@/components/shared/Dropdown";
 import api from "@/server/infrastructure/api/trpc/api";
 import { useProfilUtilisateurConnecte } from "@/client/hooks/useProfilUtilisateurConnecte";
 import { Settings1Icon } from "@/components/_commons/Icones/Settings1Icon";
+import { ProfilEnum } from "@/server/app/enum/profil.enum";
 
 export const Utilisateur = () => {
   const [estDeplie, setEstDeplie] = useState<boolean>(false);
+  const session = useSession();
   const { email, prenom, nom } = useProfilUtilisateurConnecte();
 
   const { data: panelAdminEstDisponible } =
     api.gestionContenu.récupérerVariableContenu.useQuery({
       nomVariableContenu: "NEXT_PUBLIC_FF_PANEL_ADMIN",
     });
+  const showPanelAdministrateur =
+    panelAdminEstDisponible && session.data?.profil === ProfilEnum.DITP_ADMIN;
 
   return (
     <Dropdown.Root onOpenChange={setEstDeplie} open={estDeplie}>
@@ -54,7 +59,7 @@ export const Utilisateur = () => {
             Mon profil utilisateur
           </Link>
         </Dropdown.Item>
-        {panelAdminEstDisponible ? (
+        {showPanelAdministrateur ? (
           <Dropdown.Item asChild>
             <Link href="/panel-administrateur/parametrage-metadata-indicateur">
               <Dropdown.Icone icone={Settings1Icon} />
