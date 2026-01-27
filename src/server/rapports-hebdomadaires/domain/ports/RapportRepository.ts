@@ -1,5 +1,5 @@
 import { RapportHebdomadaire } from "@/server/rapports-hebdomadaires/domain/RapportHebdomadaire";
-import { StatutEnvoi } from "@/server/rapports-hebdomadaires/domain/StatutEnvoi";
+import { $Enums } from "@prisma/client";
 
 export interface RapportRepository {
   sauvegarder(params: {
@@ -11,7 +11,7 @@ export interface RapportRepository {
   }): Promise<RapportHebdomadaire>;
 
   recupererRapportsParStatut(params: {
-    statut: StatutEnvoi;
+    statut: $Enums.statut_envoi_rapport;
     dateCreationMin?: Date;
   }): Promise<RapportHebdomadaire[]>;
 }

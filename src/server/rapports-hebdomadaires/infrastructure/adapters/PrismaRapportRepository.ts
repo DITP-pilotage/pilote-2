@@ -2,7 +2,6 @@ import { $Enums, Prisma } from "@prisma/client";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { RapportRepository } from "@/server/rapports-hebdomadaires/domain/ports/RapportRepository";
 import { RapportHebdomadaire } from "@/server/rapports-hebdomadaires/domain/RapportHebdomadaire";
-import { StatutEnvoi } from "@/server/rapports-hebdomadaires/domain/StatutEnvoi";
 import { ProfilCoordinateur } from "@/server/rapports-hebdomadaires/domain/Coordinateur";
 import { CompteActivite } from "@/server/rapports-hebdomadaires/domain/CompteActivite";
 
@@ -34,7 +33,7 @@ export class PrismaRapportRepository implements RapportRepository {
           .comptesCrees as unknown as Prisma.InputJsonValue,
         comptes_desactives: rapport.sectionActiviteComptes
           .comptesDesactives as unknown as Prisma.InputJsonValue,
-        statut_envoi: this.mapStatutToPrisma(rapport.statutEnvoi),
+        statut_envoi: rapport.statutEnvoi,
       },
     });
 
@@ -52,7 +51,7 @@ export class PrismaRapportRepository implements RapportRepository {
     await prisma.rapport_hebdomadaire_coordinateur.update({
       where: { id: rapport.id },
       data: {
-        statut_envoi: this.mapStatutToPrisma(rapport.statutEnvoi),
+        statut_envoi: rapport.statutEnvoi,
         date_envoi: rapport.dateEnvoi,
         date_derniere_tentative: rapport.dateDerniereTentative,
         nombre_tentatives: rapport.nombreTentatives,
@@ -64,14 +63,14 @@ export class PrismaRapportRepository implements RapportRepository {
   }
 
   async recupererRapportsParStatut(params: {
-    statut: StatutEnvoi;
+    statut: $Enums.statut_envoi_rapport;
     dateCreationMin?: Date;
   }): Promise<RapportHebdomadaire[]> {
     const prisma = this.deps.prisma.getInstance();
 
     const rapports = await prisma.rapport_hebdomadaire_coordinateur.findMany({
       where: {
-        statut_envoi: this.mapStatutToPrisma(params.statut),
+        statut_envoi: params.statut,
         ...(params.dateCreationMin && {
           date_creation: { gte: params.dateCreationMin },
         }),
@@ -106,7 +105,7 @@ export class PrismaRapportRepository implements RapportRepository {
           comptesDesactives:
             row.comptes_desactives as unknown as CompteActivite[],
         },
-        statutEnvoi: row.statut_envoi as StatutEnvoi,
+        statutEnvoi: row.statut_envoi,
         dateCreation: row.date_creation,
         dateEnvoi: row.date_envoi ?? undefined,
         dateDerniereTentative: row.date_derniere_tentative ?? undefined,
@@ -114,9 +113,5 @@ export class PrismaRapportRepository implements RapportRepository {
         erreurEnvoi: row.erreur_envoi ?? undefined,
       }),
     );
-  }
-
-  private mapStatutToPrisma(statut: StatutEnvoi): $Enums.statut_envoi_rapport {
-    return statut as $Enums.statut_envoi_rapport;
   }
 }

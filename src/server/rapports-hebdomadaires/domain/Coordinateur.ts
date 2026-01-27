@@ -16,7 +16,7 @@ export type Coordinateur = {
   };
 };
 
-export function estDansPerimetreGeographique(params: {
+export function estDansPerimetreTerritorial(params: {
   coordinateur: Coordinateur;
   codeTerritoireCompte: string | undefined;
 }): boolean {

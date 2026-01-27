@@ -1,12 +1,12 @@
 import logger from "@/server/infrastructure/Logger";
 import { RapportRepository } from "@/server/rapports-hebdomadaires/domain/ports/RapportRepository";
 import { EnvoieEmailService } from "@/server/rapports-hebdomadaires/domain/ports/EnvoieEmailService";
-import { StatutEnvoi } from "@/server/rapports-hebdomadaires/domain/StatutEnvoi";
 import {
   marquerCommeEchec,
   marquerCommeEnvoye,
   RapportHebdomadaire,
 } from "@/server/rapports-hebdomadaires/domain/RapportHebdomadaire";
+import { $Enums } from "@prisma/client";
 
 type EnvoyerRapportResult = {
   emailsEnvoyes: number;
@@ -27,7 +27,7 @@ export class EnvoyerRapportsHebdomadairesUseCase {
 
     const rapportsAEnvoyer =
       await this.deps.rapportRepository.recupererRapportsParStatut({
-        statut: StatutEnvoi.CREE,
+        statut: $Enums.statut_envoi_rapport.CREE,
         dateCreationMin: params.dateCreationMin,
       });
 

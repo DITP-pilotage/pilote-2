@@ -1,15 +1,15 @@
 import { Coordinateur } from "./Coordinateur";
 import { PeriodeRapport } from "./PeriodeRapport";
 import { SectionActiviteComptes } from "./SectionActiviteComptes";
-import { StatutEnvoi } from "./StatutEnvoi";
 import { CompteActivite } from "./CompteActivite";
+import { $Enums } from "@prisma/client";
 
 export type RapportHebdomadaire = {
   readonly id?: string;
   readonly coordinateur: Coordinateur;
   readonly periode: PeriodeRapport;
   readonly sectionActiviteComptes: SectionActiviteComptes;
-  readonly statutEnvoi: StatutEnvoi;
+  readonly statutEnvoi: $Enums.statut_envoi_rapport;
   readonly dateCreation: Date;
   readonly dateEnvoi?: Date;
   readonly dateDerniereTentative?: Date;
@@ -31,7 +31,7 @@ export function creerRapportHebdomadaire(params: {
       comptesCrees: params.comptesCrees,
       comptesDesactives: params.comptesDesactives,
     },
-    statutEnvoi: StatutEnvoi.CREE,
+    statutEnvoi: $Enums.statut_envoi_rapport.CREE,
     dateCreation: params.dateCreation,
     nombreTentatives: 0,
   };
@@ -43,7 +43,7 @@ export function marquerCommeEnvoye(params: {
 }): RapportHebdomadaire {
   return {
     ...params.rapport,
-    statutEnvoi: StatutEnvoi.ENVOYE,
+    statutEnvoi: $Enums.statut_envoi_rapport.ENVOYE,
     dateEnvoi: params.dateEnvoi,
     dateDerniereTentative: params.dateEnvoi,
     nombreTentatives: params.rapport.nombreTentatives + 1,
@@ -57,7 +57,7 @@ export function marquerCommeEchec(params: {
 }): RapportHebdomadaire {
   return {
     ...params.rapport,
-    statutEnvoi: StatutEnvoi.ECHEC,
+    statutEnvoi: $Enums.statut_envoi_rapport.ECHEC,
     erreurEnvoi: params.erreur,
     dateDerniereTentative: params.dateTentative,
     nombreTentatives: params.rapport.nombreTentatives + 1,

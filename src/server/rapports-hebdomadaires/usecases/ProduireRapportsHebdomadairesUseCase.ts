@@ -9,7 +9,7 @@ import {
 } from "@/server/rapports-hebdomadaires/domain/RapportHebdomadaire";
 import {
   Coordinateur,
-  estDansPerimetreGeographique,
+  estDansPerimetreTerritorial,
 } from "@/server/rapports-hebdomadaires/domain/Coordinateur";
 import {
   ActiviteComptes,
@@ -117,7 +117,7 @@ export class ProduireRapportsHebdomadairesUseCase {
 
     const evenementsFiltres = activiteGlobale.filter((evt) => {
       const codeTerritoire = evt.compte.territoires[0]?.code;
-      return estDansPerimetreGeographique({
+      return estDansPerimetreTerritorial({
         coordinateur,
         codeTerritoireCompte: codeTerritoire,
       });
