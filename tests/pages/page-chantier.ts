@@ -1,4 +1,5 @@
 import { Page, expect } from "@playwright/test";
+import { randomUUID } from "node:crypto";
 import { BasePage } from "./base.page";
 import { PageMiseAJourDonnees } from "./page-mise-a-jour-donnees";
 import { HeaderComponent } from "../components/header.component";
@@ -92,5 +93,34 @@ export class PageChantier extends BasePage {
         name: /^Exemples concrets de réussite$/,
       }),
     ).toBeVisible();
+  }
+
+  async expectHistoriqueCommentaire(): Promise<void> {
+    const id = randomUUID();
+    await this.page.getByLabel("bouton-modifier-risquesEtFreinsÀLever").click();
+    await this.page
+      .getByLabel("champ d'edition pour le contenu de risquesEtFreinsÀLever")
+      .fill(`Un commentaire test e2e ${id}`);
+
+    await this.page.getByText("Publier").click();
+
+    await this.page.waitForSelector("#alerte");
+
+    await expect(this.page.getByText("Modification effectuée")).toBeVisible();
+
+    await this.page
+      .getByLabel(
+        "Voir l'histoire des commentaires du type risquesEtFreinsÀLever",
+      )
+      .click();
+
+    const commentaireHistoriqueModal = this.page.getByRole("dialog");
+
+    await expect(commentaireHistoriqueModal).toContainText(
+      "Historique - commentaires",
+    );
+    await expect(commentaireHistoriqueModal).toContainText(
+      `Un commentaire test e2e ${id}`,
+    );
   }
 }

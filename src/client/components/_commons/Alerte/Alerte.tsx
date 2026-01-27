@@ -19,6 +19,7 @@ const Alerte: FunctionComponent<AlerteProps> = ({
   return (
     <div
       className={`${classesAlerte[type]} fr-alert ${classesSupplementaires}`}
+      id="alerte"
     >
       {!!titre && <h3 className="fr-alert__title">{titre}</h3>}
       {message ? <p className={classesMessagePolice}>{message}</p> : null}

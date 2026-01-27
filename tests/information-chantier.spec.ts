@@ -46,5 +46,9 @@ test("doit pouvoir consulter les données des chantiers", async ({ page }) => {
       await pageChantier.expectTitle(chantier.id, chantier.nom);
       await pageChantier.expectStructure();
     });
+
+    await test.step("Vérification de l'historique des commentaires", async () => {
+      await pageChantier.expectHistoriqueCommentaire();
+    });
   });
 });

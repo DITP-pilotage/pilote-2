@@ -66,6 +66,7 @@ const Publication: FunctionComponent<PublicationProps> = ({
                 )}
                 {modeÉcriture ? (
                   <button
+                    aria-label={`bouton-modifier-${caractéristiques.type}`}
                     className="fr-btn fr-btn--secondary !ml-6 gap-2 rounded"
                     onClick={activerLeModeÉdition}
                     type="button"

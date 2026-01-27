@@ -20,6 +20,8 @@ export class AppActions {
 
     await this.dismissPostLoginModals();
 
+    await this.page.waitForSelector("div#main");
+
     return new PageAccueil(this.page);
   }
 

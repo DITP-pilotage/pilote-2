@@ -74,7 +74,9 @@ const MiseEnPage: FunctionComponent<MiseEnPageProps> = ({
           {status === "unauthenticated" ? (
             <PageLanding />
           ) : (
-            <ClientOnly>{children}</ClientOnly>
+            <ClientOnly>
+              <div id="main">{children}</div>
+            </ClientOnly>
           )}
           <PiedDePage />
         </div>
