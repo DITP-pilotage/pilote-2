@@ -138,9 +138,8 @@ export class ProduireRapportsHebdomadairesUseCase {
       dateCreation: maintenant,
     });
 
-    const rapportSauvegarde = await this.deps.rapportRepository.sauvegarder({
-      rapport,
-    });
+    const rapportSauvegarde =
+      await this.deps.rapportRepository.sauvegarder(rapport);
 
     logger.info("Rapport créé", {
       rapportId: rapportSauvegarde.id,

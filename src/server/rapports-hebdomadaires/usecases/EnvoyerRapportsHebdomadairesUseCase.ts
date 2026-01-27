@@ -1,3 +1,4 @@
+import { $Enums } from "@prisma/client";
 import logger from "@/server/infrastructure/Logger";
 import { RapportRepository } from "@/server/rapports-hebdomadaires/domain/ports/RapportRepository";
 import { EnvoieEmailService } from "@/server/rapports-hebdomadaires/domain/ports/EnvoieEmailService";
@@ -6,7 +7,6 @@ import {
   marquerCommeEnvoye,
   RapportHebdomadaire,
 } from "@/server/rapports-hebdomadaires/domain/RapportHebdomadaire";
-import { $Enums } from "@prisma/client";
 
 type EnvoyerRapportResult = {
   emailsEnvoyes: number;
@@ -26,10 +26,10 @@ export class EnvoyerRapportsHebdomadairesUseCase {
     logger.info("Phase 2 démarrée");
 
     const rapportsAEnvoyer =
-      await this.deps.rapportRepository.recupererRapportsParStatut({
-        statut: $Enums.statut_envoi_rapport.CREE,
-        dateCreationMin: params.dateCreationMin,
-      });
+      await this.deps.rapportRepository.recupererRapportsParStatut(
+        $Enums.statut_envoi_rapport.CREE,
+        params.dateCreationMin,
+      );
 
     logger.info("Rapports à envoyer récupérés", {
       nombreRapports: rapportsAEnvoyer.length,
@@ -79,7 +79,7 @@ export class EnvoyerRapportsHebdomadairesUseCase {
         dateEnvoi: maintenant,
       });
 
-      await this.deps.rapportRepository.mettreAJour({ rapport: rapportEnvoye });
+      await this.deps.rapportRepository.sauvegarder(rapportEnvoye);
 
       logger.info("Email envoyé", {
         rapportId: rapport.id,
@@ -104,9 +104,7 @@ export class EnvoyerRapportsHebdomadairesUseCase {
         dateTentative: maintenant,
       });
 
-      await this.deps.rapportRepository.mettreAJour({
-        rapport: rapportEnEchec,
-      });
+      await this.deps.rapportRepository.sauvegarder(rapportEnEchec);
 
       return { success: false, erreur: messageErreur };
     }

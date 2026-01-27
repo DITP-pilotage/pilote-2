@@ -5,18 +5,32 @@ import { RapportHebdomadaire } from "@/server/rapports-hebdomadaires/domain/Rapp
 import { ProfilCoordinateur } from "@/server/rapports-hebdomadaires/domain/Coordinateur";
 import { CompteActivite } from "@/server/rapports-hebdomadaires/domain/CompteActivite";
 
-interface Dependencies {
-  prisma: PrismaPilote;
-}
-
 export class PrismaRapportRepository implements RapportRepository {
-  constructor(private readonly deps: Dependencies) {}
+  constructor(
+    private readonly deps: {
+      prisma: PrismaPilote;
+    },
+  ) {}
 
-  async sauvegarder(params: {
-    rapport: RapportHebdomadaire;
-  }): Promise<RapportHebdomadaire> {
-    const { rapport } = params;
+  async sauvegarder(
+    rapport: RapportHebdomadaire,
+  ): Promise<RapportHebdomadaire> {
     const prisma = this.deps.prisma.getInstance();
+
+    if (rapport.id) {
+      await prisma.rapport_hebdomadaire_coordinateur.update({
+        where: { id: rapport.id },
+        data: {
+          statut_envoi: rapport.statutEnvoi,
+          date_envoi: rapport.dateEnvoi,
+          date_derniere_tentative: rapport.dateDerniereTentative,
+          nombre_tentatives: rapport.nombreTentatives,
+          erreur_envoi: rapport.erreurEnvoi,
+        },
+      });
+
+      return rapport;
+    }
 
     const created = await prisma.rapport_hebdomadaire_coordinateur.create({
       data: {
@@ -40,39 +54,17 @@ export class PrismaRapportRepository implements RapportRepository {
     return { ...rapport, id: created.id };
   }
 
-  async mettreAJour(params: {
-    rapport: RapportHebdomadaire;
-  }): Promise<RapportHebdomadaire> {
-    const { rapport } = params;
-    if (!rapport.id) throw new Error("Cannot update rapport without id");
-
-    const prisma = this.deps.prisma.getInstance();
-
-    await prisma.rapport_hebdomadaire_coordinateur.update({
-      where: { id: rapport.id },
-      data: {
-        statut_envoi: rapport.statutEnvoi,
-        date_envoi: rapport.dateEnvoi,
-        date_derniere_tentative: rapport.dateDerniereTentative,
-        nombre_tentatives: rapport.nombreTentatives,
-        erreur_envoi: rapport.erreurEnvoi,
-      },
-    });
-
-    return rapport;
-  }
-
-  async recupererRapportsParStatut(params: {
-    statut: $Enums.statut_envoi_rapport;
-    dateCreationMin?: Date;
-  }): Promise<RapportHebdomadaire[]> {
+  async recupererRapportsParStatut(
+    statut: $Enums.statut_envoi_rapport,
+    dateCreationMin?: Date,
+  ): Promise<RapportHebdomadaire[]> {
     const prisma = this.deps.prisma.getInstance();
 
     const rapports = await prisma.rapport_hebdomadaire_coordinateur.findMany({
       where: {
-        statut_envoi: params.statut,
-        ...(params.dateCreationMin && {
-          date_creation: { gte: params.dateCreationMin },
+        statut_envoi: statut,
+        ...(dateCreationMin && {
+          date_creation: { gte: dateCreationMin },
         }),
       },
     });
