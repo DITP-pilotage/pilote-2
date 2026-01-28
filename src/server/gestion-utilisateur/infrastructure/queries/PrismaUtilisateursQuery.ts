@@ -63,18 +63,20 @@ export class PrismaUtilisateursQuery {
 
       if (territoires.length === 0) continue;
 
-      const territoiresFlat: TerritoireDTO[] = territoires.flatMap((t) => [
-        {
-          code: t.code,
-          nom: t.nom,
-          maille: this.mapMaille(t.maille),
-        },
-        ...t.territoire_enfant.map((enfant) => ({
-          code: enfant.code,
-          nom: enfant.nom,
-          maille: this.mapMaille(enfant.maille),
-        })),
-      ]);
+      const territoiresFlat: TerritoireDTO[] = territoires.flatMap(
+        (territoire) => [
+          {
+            code: territoire.code,
+            nom: territoire.nom,
+            maille: this.mapMaille(territoire.maille),
+          },
+          ...territoire.territoire_enfant.map((enfant) => ({
+            code: enfant.code,
+            nom: enfant.nom,
+            maille: this.mapMaille(enfant.maille),
+          })),
+        ],
+      );
 
       utilisateursDTO.push({
         id: utilisateur.id,

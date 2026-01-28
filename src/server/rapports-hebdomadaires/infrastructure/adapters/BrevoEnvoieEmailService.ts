@@ -16,12 +16,18 @@ export class BrevoEnvoieEmailService implements EnvoieEmailService {
   }): Promise<void> {
     const { rapport } = params;
 
+    const afficherComptesCrees =
+      rapport.sectionActiviteComptes.comptesCrees.length > 0;
+    const afficherComptesDesactives =
+      rapport.sectionActiviteComptes.comptesDesactives.length > 0;
+    const afficherSectionComptes =
+      afficherComptesCrees || afficherComptesDesactives;
     const templateParams = {
       prenom: rapport.coordinateur.prenom,
       nom: rapport.coordinateur.nom,
-      territoire: rapport.coordinateur.territoires
-        .map((t) => t.nom)
-        .join(", "),
+      territoire: rapport.coordinateur.territoires.map((t) => t.nom).join(", "),
+      afficherComptesCrees,
+      afficherSectionComptes,
       comptesCrees: rapport.sectionActiviteComptes.comptesCrees.map(
         (compte) => ({
           nom: compte.nom,
@@ -34,6 +40,7 @@ export class BrevoEnvoieEmailService implements EnvoieEmailService {
               : undefined,
         }),
       ),
+      afficherComptesDesactives,
       comptesDesactives: rapport.sectionActiviteComptes.comptesDesactives.map(
         (compte) => ({
           nom: compte.nom,
