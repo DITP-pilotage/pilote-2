@@ -229,7 +229,7 @@ describe("PrismaUtilisateurRepository", () => {
     );
 
     it(
-      "retourne les utilisateurs non desactives qui ont une date de derniere connexion supérieure à un an par rapport à la date de reference",
+      "retourne les utilisateurs non desactives qui ont une date de derniere connexion supérieure à 11 mois par rapport à la date de reference",
       createIntegrationTest(async () => {
         // Given
         const dateReference = new Date("2025-01-15");
@@ -244,7 +244,7 @@ describe("PrismaUtilisateurRepository", () => {
           date_desactivation_programee: dateDesactivationProgramee,
         });
         const inactifSansRelances = await fixtures.utilisateur({
-          date_derniere_connexion: new Date("2024-01-14"),
+          date_derniere_connexion: new Date("2024-01-17"),
         });
         // Utilisateur actif (connexion récente) - ne doit pas apparaître
         await fixtures.utilisateur({
@@ -273,7 +273,7 @@ describe("PrismaUtilisateurRepository", () => {
             datePremiereRelanceDesactivation: null,
             dateDeuxiemeRelanceDesactivation: null,
             dateDesactivationProgramee: null,
-            dateDerniereConnexion: new Date("2024-01-14"),
+            dateDerniereConnexion: new Date("2024-01-17"),
           },
         ]);
       }),
