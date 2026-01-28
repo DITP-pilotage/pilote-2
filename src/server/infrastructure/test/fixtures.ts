@@ -383,4 +383,43 @@ export const fixtures = {
       },
     });
   },
+
+  async rapportHebdomadaireCoordinateur(
+    overrides: Partial<Prisma.rapport_hebdomadaire_coordinateurUncheckedCreateInput> = {},
+  ) {
+    const prisma = getPrisma();
+    const coordinateur_id =
+      overrides.coordinateur_id ??
+      (
+        await fixtures.utilisateur({
+          profilCode: "COORDINATEUR_REGION",
+        })
+      ).id;
+
+    return prisma.rapport_hebdomadaire_coordinateur.create({
+      data: {
+        id: randomUUID(),
+        coordinateur_id,
+        date_debut_periode: new Date(),
+        date_fin_periode: new Date(),
+        contenu_rapport: {
+          coordinateur: {
+            email: "coordinateur@example.com",
+            nom: "Coordinateur",
+            prenom: "Test",
+            profil: "COORDINATEUR_REGION",
+            territoires: [
+              { code: "REG-11", nom: "Île-de-France", maille: "REG" },
+            ],
+          },
+          sectionActiviteComptes: {
+            comptesCrees: [],
+            comptesDesactives: [],
+          },
+        },
+        statut_envoi: "CREE",
+        ...overrides,
+      },
+    });
+  },
 };
