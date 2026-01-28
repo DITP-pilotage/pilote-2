@@ -993,7 +993,7 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
     }[]
   > {
     const dateSeuilInactivite = new Date(dateReference);
-    dateSeuilInactivite.setFullYear(dateSeuilInactivite.getFullYear() - 1);
+    dateSeuilInactivite.setMonth(dateSeuilInactivite.getMonth() - 11);
 
     const comptesInactifs = await this.prisma.utilisateur.findMany({
       where: {
