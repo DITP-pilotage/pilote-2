@@ -26,6 +26,7 @@ export const VARIABLE_CONTENU_DISPONIBLE_ENV = [
   "NEXT_PUBLIC_FF_VIDEO_ACCUEIL",
   "NEXT_PUBLIC_FF_NOUVEAUX_GRAPHIQUES",
   "NEXT_PUBLIC_FF_PANEL_ADMIN",
+  "NEXT_PUBLIC_FF_MON_PROFIL",
 ] as const;
 
 export type VariableContenuDisponibleEnv = {
@@ -50,4 +51,5 @@ export type VariableContenuDisponibleEnv = {
   NEXT_PUBLIC_FF_VIDEO_ACCUEIL: boolean;
   NEXT_PUBLIC_FF_NOUVEAUX_GRAPHIQUES: boolean;
   NEXT_PUBLIC_FF_PANEL_ADMIN: boolean;
+  NEXT_PUBLIC_FF_MON_PROFIL: boolean;
 };

@@ -92,6 +92,10 @@ export class RécupérerVariableContenuUseCase {
         return configuration().featureFlip
           .panelAdmin as VariableContenuDisponibleEnv[T];
       }
+      case "NEXT_PUBLIC_FF_MON_PROFIL": {
+        return configuration().featureFlip
+          .monProfil as VariableContenuDisponibleEnv[T];
+      }
     }
   }
 }
