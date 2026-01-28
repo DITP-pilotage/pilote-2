@@ -1,49 +1,34 @@
-import { APIRequestContext, APIResponse, expect, test } from "@playwright/test";
+import { expect, test } from "@playwright/test";
 import {
   ImportCommentaireErrorResponse,
   ImportCommentaireSuccessResponse,
 } from "@/server/commentaires/app/contrats/ImportCommentaireAPIContrat";
-import { authentificationApiDirProjetFn, seedDatabase } from "../utils";
-
-let apiContext: APIRequestContext;
-let result: APIResponse;
+import { ApiTestContext } from "./api-client/api-test-context";
+import { CommentaireInput } from "./api-client/open-api.client";
+import { seedDatabase } from "../utils";
 
 test.beforeAll(() => {
   seedDatabase();
 });
 
-test("Import de commentaires via l'API open-api", async ({
-  playwright,
-  page,
-}) => {
-  const { apiDirProjetToken, apiDirProjetChantierAssocie } =
-    await authentificationApiDirProjetFn({ page });
-
-  await test.step("Création du context - Authorization Pilote - equipe.dir.projet@example.com - EQUIPE_DIR_PROJET", async () => {
-    apiContext = await playwright.request.newContext({
-      baseURL: process.env.BASE_URL,
-      extraHTTPHeaders: {
-        Authorization: `Bearer ${apiDirProjetToken}`,
-        "Content-Type": "application/json",
-      },
-    });
-  });
+test("Import de commentaires via l'API open-api", async ({ playwright }) => {
+  const apiContext = await ApiTestContext.create(
+    playwright,
+    "EQUIPE_DIR_PROJET",
+  );
+  const client = apiContext.getClient();
+  const chantierId = apiContext.chantierId!;
 
   await test.step("Import d'un commentaire valide sans date - doit retourner 200 OK", async () => {
-    result = await apiContext.post(
-      `/api/open-api/chantier/${apiDirProjetChantierAssocie}/commentaires`,
+    const commentaires: CommentaireInput[] = [
       {
-        data: {
-          commentaires: [
-            {
-              territoire: "NAT-FR",
-              type: "risques_et_freins_a_lever",
-              contenu: "Contenu du commentaire de test e2e",
-            },
-          ],
-        },
+        territoire: "NAT-FR",
+        type: "risques_et_freins_a_lever",
+        contenu: "Contenu du commentaire de test e2e",
       },
-    );
+    ];
+
+    const result = await client.importCommentaires(chantierId, commentaires);
 
     expect(result.status()).toEqual(200);
 
@@ -55,21 +40,16 @@ test("Import de commentaires via l'API open-api", async ({
   });
 
   await test.step("Import d'un commentaire avec une date antérieure - doit retourner 200 OK", async () => {
-    result = await apiContext.post(
-      `/api/open-api/chantier/${apiDirProjetChantierAssocie}/commentaires`,
+    const commentaires: CommentaireInput[] = [
       {
-        data: {
-          commentaires: [
-            {
-              territoire: "NAT-FR",
-              type: "solutions_et_actions_a_venir",
-              contenu: "Commentaire avec date antérieure",
-              date_commentaire: "2024-01-15",
-            },
-          ],
-        },
+        territoire: "NAT-FR",
+        type: "solutions_et_actions_a_venir",
+        contenu: "Commentaire avec date antérieure",
+        date_commentaire: "2024-01-15",
       },
-    );
+    ];
+
+    const result = await client.importCommentaires(chantierId, commentaires);
 
     expect(result.status()).toEqual(200);
 
@@ -79,31 +59,26 @@ test("Import de commentaires via l'API open-api", async ({
   });
 
   await test.step("Import de plusieurs commentaires valides - doit tous les créer", async () => {
-    result = await apiContext.post(
-      `/api/open-api/chantier/${apiDirProjetChantierAssocie}/commentaires`,
+    const commentaires: CommentaireInput[] = [
       {
-        data: {
-          commentaires: [
-            {
-              territoire: "NAT-FR",
-              type: "risques_et_freins_a_lever",
-              contenu: "Premier commentaire",
-            },
-            {
-              territoire: "NAT-FR",
-              type: "solutions_et_actions_a_venir",
-              contenu: "Deuxième commentaire",
-            },
-            {
-              territoire: "NAT-FR",
-              type: "exemples_concrets_de_reussite",
-              contenu: "Troisième commentaire",
-              date_commentaire: "2024-06-01",
-            },
-          ],
-        },
+        territoire: "NAT-FR",
+        type: "risques_et_freins_a_lever",
+        contenu: "Premier commentaire",
       },
-    );
+      {
+        territoire: "NAT-FR",
+        type: "solutions_et_actions_a_venir",
+        contenu: "Deuxième commentaire",
+      },
+      {
+        territoire: "NAT-FR",
+        type: "exemples_concrets_de_reussite",
+        contenu: "Troisième commentaire",
+        date_commentaire: "2024-06-01",
+      },
+    ];
+
+    const result = await client.importCommentaires(chantierId, commentaires);
 
     expect(result.status()).toEqual(200);
 
@@ -117,21 +92,16 @@ test("Import de commentaires via l'API open-api", async ({
     futurDate.setFullYear(futurDate.getFullYear() + 1);
     const futurDateStr = futurDate.toISOString().split("T")[0];
 
-    result = await apiContext.post(
-      `/api/open-api/chantier/${apiDirProjetChantierAssocie}/commentaires`,
+    const commentaires: CommentaireInput[] = [
       {
-        data: {
-          commentaires: [
-            {
-              territoire: "NAT-FR",
-              type: "risques_et_freins_a_lever",
-              contenu: "Commentaire avec date future",
-              date_commentaire: futurDateStr,
-            },
-          ],
-        },
+        territoire: "NAT-FR",
+        type: "risques_et_freins_a_lever",
+        contenu: "Commentaire avec date future",
+        date_commentaire: futurDateStr,
       },
-    );
+    ];
+
+    const result = await client.importCommentaires(chantierId, commentaires);
 
     expect(result.status()).toEqual(400);
 
@@ -142,20 +112,15 @@ test("Import de commentaires via l'API open-api", async ({
   });
 
   await test.step("Import avec un type national sur une maille régionale - doit retourner 400", async () => {
-    result = await apiContext.post(
-      `/api/open-api/chantier/${apiDirProjetChantierAssocie}/commentaires`,
+    const commentaires: CommentaireInput[] = [
       {
-        data: {
-          commentaires: [
-            {
-              territoire: "REG-84",
-              type: "risques_et_freins_a_lever",
-              contenu: "Type national sur maille régionale",
-            },
-          ],
-        },
+        territoire: "REG-84",
+        type: "risques_et_freins_a_lever",
+        contenu: "Type national sur maille régionale",
       },
-    );
+    ];
+
+    const result = await client.importCommentaires(chantierId, commentaires);
 
     expect(result.status()).toEqual(400);
 
@@ -168,20 +133,15 @@ test("Import de commentaires via l'API open-api", async ({
   });
 
   await test.step("Import avec un type régional sur une maille nationale - doit retourner 400", async () => {
-    result = await apiContext.post(
-      `/api/open-api/chantier/${apiDirProjetChantierAssocie}/commentaires`,
+    const commentaires: CommentaireInput[] = [
       {
-        data: {
-          commentaires: [
-            {
-              territoire: "NAT-FR",
-              type: "commentaires_sur_les_donnees",
-              contenu: "Type régional sur maille nationale",
-            },
-          ],
-        },
+        territoire: "NAT-FR",
+        type: "commentaires_sur_les_donnees",
+        contenu: "Type régional sur maille nationale",
       },
-    );
+    ];
+
+    const result = await client.importCommentaires(chantierId, commentaires);
 
     expect(result.status()).toEqual(400);
 
@@ -194,20 +154,16 @@ test("Import de commentaires via l'API open-api", async ({
   });
 
   await test.step("Import avec un type invalide - doit retourner 400", async () => {
-    result = await apiContext.post(
-      `/api/open-api/chantier/${apiDirProjetChantierAssocie}/commentaires`,
+    const commentaires: CommentaireInput[] = [
       {
-        data: {
-          commentaires: [
-            {
-              territoire: "NAT-FR",
-              type: "type_inexistant",
-              contenu: "Commentaire avec type invalide",
-            },
-          ],
-        },
+        territoire: "NAT-FR",
+        // @ts-ignore on test justement un type inexistant
+        type: "type_inexistant",
+        contenu: "Commentaire avec type invalide",
       },
-    );
+    ];
+
+    const result = await client.importCommentaires(chantierId, commentaires);
 
     expect(result.status()).toEqual(400);
 
@@ -218,22 +174,21 @@ test("Import de commentaires via l'API open-api", async ({
 
   await test.step("Import sur un chantier non autorisé - doit retourner 403", async () => {
     const chantierNonAutorise = "CH-999";
-
-    result = await apiContext.post(
-      `/api/open-api/chantier/${chantierNonAutorise}/commentaires`,
+    const commentaires: CommentaireInput[] = [
       {
-        data: {
-          commentaires: [
-            {
-              territoire: "NAT-FR",
-              type: "risques_et_freins_a_lever",
-              contenu: "Tentative sur chantier non autorisé",
-            },
-          ],
-        },
+        territoire: "NAT-FR",
+        type: "risques_et_freins_a_lever",
+        contenu: "Tentative sur chantier non autorisé",
       },
+    ];
+
+    const result = await client.importCommentaires(
+      chantierNonAutorise,
+      commentaires,
     );
 
     expect(result.status()).toEqual(403);
   });
+
+  await apiContext.dispose();
 });
