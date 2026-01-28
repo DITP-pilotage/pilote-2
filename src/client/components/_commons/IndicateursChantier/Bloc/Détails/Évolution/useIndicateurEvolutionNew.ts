@@ -92,6 +92,7 @@ export default function useIndicateurEvolutionNew({
   tousLesIndicateursDetails: IndicateurDetailsParTerritoire[];
 }) {
   const [afficherLesCibles, setAfficherLesCibles] = useState<boolean>(false);
+  const [masquerSlider, setMasquerSlider] = useState<boolean>(false);
   const [territoiresAAfficher, setTerritoiresAAfficher] = useState<
     Record<string, boolean>
   >(() =>
@@ -135,8 +136,15 @@ export default function useIndicateurEvolutionNew({
         if (date > max) max = date;
       });
     });
-    max.setMonth(max.getMonth() + 1);
-    return [min, max, maxPrev];
+    if (min === max) {
+      setMasquerSlider(true);
+    } else {
+      setMasquerSlider(false);
+    }
+    const maxAreturn = new Date(max);
+    maxAreturn.setMonth(maxAreturn.getMonth() + 1);
+
+    return [min, maxAreturn, maxPrev];
   }, [tousLesIndicateursDetails]);
 
   const [minYear, maxYear] = useMemo(() => {
@@ -334,25 +342,27 @@ export default function useIndicateurEvolutionNew({
           },
         },
       },
-      dataZoom: [
-        {
-          type: "slider",
-          xAxisIndex: [0, 1, 2],
-          height: modeImpression ? 0 : 25,
-          bottom: modeImpression ? -10 : 10,
-          filterMode: "none",
-          labelFormatter: function (value: string) {
-            const date = new Date(value);
-            return formaterDate(date.toISOString(), "MM/YYYY");
-          },
-          textStyle: {
-            fontSize: 10,
-            overflow: "breakAll",
-          },
-          startValue: dataZoomPeriode.startValue,
-          endValue: dataZoomPeriode.endValue,
-        },
-      ],
+      dataZoom: masquerSlider
+        ? undefined
+        : [
+            {
+              type: "slider",
+              xAxisIndex: [0, 1, 2],
+              height: modeImpression ? 0 : 25,
+              bottom: modeImpression ? -10 : 10,
+              filterMode: "none",
+              labelFormatter: function (value: string) {
+                const date = new Date(value);
+                return formaterDate(date.toISOString(), "MM/YYYY");
+              },
+              textStyle: {
+                fontSize: 10,
+                overflow: "breakAll",
+              },
+              startValue: dataZoomPeriode.startValue,
+              endValue: dataZoomPeriode.endValue,
+            },
+          ],
       grid: {
         left: 25,
         right: 60,
@@ -398,6 +408,7 @@ export default function useIndicateurEvolutionNew({
       tousLesIndicateursDetails,
       yMax,
       yMin,
+      masquerSlider,
     ],
   );
   return {
