@@ -17,15 +17,14 @@ export type Coordinateur = {
   readonly territoires: readonly TerritoireCoordinateur[];
 };
 
-// TODO (CHAN - Rapport) : gestion du multi territoire
 export function estDansPerimetreTerritorial(params: {
   coordinateur: Coordinateur;
-  codeTerritoireCompte: string | undefined;
+  codesTerritoires: readonly string[];
 }): boolean {
-  const { coordinateur, codeTerritoireCompte } = params;
-  if (!codeTerritoireCompte) return false;
+  const { coordinateur, codesTerritoires } = params;
+  if (codesTerritoires.length === 0) return false;
 
-  return coordinateur.territoires.some(
-    (territoire) => territoire.code === codeTerritoireCompte,
+  return coordinateur.territoires.some((territoire) =>
+    codesTerritoires.includes(territoire.code),
   );
 }

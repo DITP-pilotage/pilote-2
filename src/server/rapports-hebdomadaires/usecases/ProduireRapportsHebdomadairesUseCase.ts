@@ -125,11 +125,11 @@ export class ProduireRapportsHebdomadairesUseCase {
         return false;
       }
 
-      // TODO (CHAN - Rapport) : gérer le multi territoire
-      const codeTerritoire = evenement.compte.territoires[0]?.code;
       return estDansPerimetreTerritorial({
         coordinateur,
-        codeTerritoireCompte: codeTerritoire,
+        codesTerritoires: evenement.compte.territoires.map(
+          (territoire) => territoire.code,
+        ),
       });
     });
 
