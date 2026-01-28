@@ -47,8 +47,18 @@ test("doit pouvoir consulter les données des chantiers", async ({ page }) => {
       await pageChantier.expectStructure();
     });
 
-    await test.step("Vérification de l'historique des commentaires", async () => {
+    await test.step("Vérification de l'historique des commentaires pour NAT-FR", async () => {
       await pageChantier.expectHistoriqueCommentaire();
+    });
+
+    await test.step("Navigation vers un DEPT", async () => {
+      await pageChantier.selectChantierAvecTerritoire(chantier.id, "REG-76");
+    });
+
+    await test.step("Vérification de l'historique des commentaires pour Occitanie", async () => {
+      await pageChantier.expectHistoriqueCommentaire(
+        "commentairesSurLesDonnées",
+      );
     });
   });
 });

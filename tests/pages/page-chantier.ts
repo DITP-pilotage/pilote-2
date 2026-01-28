@@ -26,6 +26,16 @@ export class PageChantier extends BasePage {
     return new PageMiseAJourDonnees(this.page);
   }
 
+  async selectChantierAvecTerritoire(
+    chantierId: string,
+    territoireCode: string,
+  ): Promise<void> {
+    await this.page.goto(`/chantier/CH-${chantierId}/${territoireCode}`);
+    await this.page.waitForURL(
+      `**/chantier/CH-${chantierId}/${territoireCode}`,
+    );
+  }
+
   async expectStructure(): Promise<void> {
     await expect(
       this.page.getByRole("heading", { name: /Avancement du chantier/ }),
@@ -95,11 +105,13 @@ export class PageChantier extends BasePage {
     ).toBeVisible();
   }
 
-  async expectHistoriqueCommentaire(): Promise<void> {
+  async expectHistoriqueCommentaire(
+    typeCommentaire: string = "risquesEtFreinsÀLever",
+  ): Promise<void> {
     const id = randomUUID();
-    await this.page.getByLabel("bouton-modifier-risquesEtFreinsÀLever").click();
+    await this.page.getByLabel(`bouton-modifier-${typeCommentaire}`).click();
     await this.page
-      .getByLabel("champ d'edition pour le contenu de risquesEtFreinsÀLever")
+      .getByLabel(`champ d'edition pour le contenu de ${typeCommentaire}`)
       .fill(`Un commentaire test e2e ${id}`);
 
     await this.page.getByText("Publier").click();
@@ -109,9 +121,7 @@ export class PageChantier extends BasePage {
     await expect(this.page.getByText("Modification effectuée")).toBeVisible();
 
     await this.page
-      .getByLabel(
-        "Voir l'histoire des commentaires du type risquesEtFreinsÀLever",
-      )
+      .getByLabel(`Voir l'histoire des commentaires du type ${typeCommentaire}`)
       .click();
 
     const commentaireHistoriqueModal = this.page.getByRole("dialog");
@@ -122,5 +132,7 @@ export class PageChantier extends BasePage {
     await expect(commentaireHistoriqueModal).toContainText(
       `Un commentaire test e2e ${id}`,
     );
+
+    await this.page.getByRole("button", { name: /Fermer/ }).click();
   }
 }

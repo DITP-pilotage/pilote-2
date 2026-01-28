@@ -17,15 +17,16 @@ export default defineConfig({
   /* Retry on CI only */
   retries: 2,
   globalTimeout: 2_000_000,
-  outputDir: "test-results",
+  outputDir: process.env.CI ? "test-results" : "/tmp/pilote-playwright/results",
   /* Run serially for test isolation */
   workers: 1,
   /* Reporter à utiliser. Voir https://playwright.dev/docs/test-reporters */
   reporter: process.env.CI
     ? [["github"], ["json", { outputFile: "test-results/results.json" }]]
-    : [["html", { open: "always" }]],
+    : [["html", { open: "always", outputFolder: "/tmp/pilote-playwright/report" }]],
   webServer: {
     command: "npm run test:e2e:server",
+    timeout: 120_000,
     url: process.env.BASE_URL!,
     reuseExistingServer: !process.env.CI,
     stdout: "ignore",
