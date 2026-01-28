@@ -50,7 +50,7 @@ export const IndicateurEvolution: FunctionComponent<{
     return [
       {
         données: detailIndicateurDuTerritoire,
-        territoireNom: detailTerritoireSelectionne.nom,
+        territoireNom: detailTerritoireSelectionne.nomAffiché,
         territoireCode: detailTerritoireSelectionne.code,
       },
       ...indicateurDetailsParTerritoiresCompares,

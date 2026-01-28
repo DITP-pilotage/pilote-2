@@ -246,9 +246,9 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                   </tr>
                 </thead>
                 <tbody>
-                  <tr key={détailTerritoireSélectionné.nom}>
+                  <tr key={détailTerritoireSélectionné.nomAffiché}>
                     <td className="fr-mb-0 fr-pl-2w fr-p-1w fr-py-md-1w !text-sm bold text-primary">
-                      {détailTerritoireSélectionné.nom}
+                      {détailTerritoireSélectionné.nomAffiché}
                     </td>
                     <td className="fr-mb-0 fr-p-0 fr-py-md-1w !text-sm text-center">
                       <ValeurEtDate
