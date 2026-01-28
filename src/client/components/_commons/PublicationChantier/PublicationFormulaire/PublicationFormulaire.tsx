@@ -60,6 +60,7 @@ const PublicationFormulaire: FunctionComponent<PublicationFormulaireProps> = ({
         className={`fr-mb-0 fr-input-group ${errors.contenu && "fr-input-group--error"}`}
       >
         <textarea
+          aria-label={`champ d'edition pour le contenu de ${caractéristiques.type}`}
           className="fr-input fr-text--sm fr-mb-0"
           rows={6}
           {...register("contenu")}
@@ -85,7 +86,12 @@ const PublicationFormulaire: FunctionComponent<PublicationFormulaireProps> = ({
       </div>
       <div className="fr-mt-1v flex partie-basse">
         <div className="actions">
-          <button className="fr-btn fr-mr-3w" disabled={!isValid} type="submit">
+          <button
+            className="fr-btn fr-mr-3w"
+            disabled={!isValid}
+            id={`bouton-publier-${caractéristiques.type}`}
+            type="submit"
+          >
             Publier
           </button>
           <button

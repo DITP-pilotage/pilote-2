@@ -1,4 +1,5 @@
 import { Page, expect } from "@playwright/test";
+import { randomUUID } from "node:crypto";
 import { BasePage } from "./base.page";
 import { PageMiseAJourDonnees } from "./page-mise-a-jour-donnees";
 import { HeaderComponent } from "../components/header.component";
@@ -23,6 +24,16 @@ export class PageChantier extends BasePage {
       .click();
     await this.page.waitForURL(`**/chantier/CH-${chantierId}/indicateurs`);
     return new PageMiseAJourDonnees(this.page);
+  }
+
+  async selectChantierAvecTerritoire(
+    chantierId: string,
+    territoireCode: string,
+  ): Promise<void> {
+    await this.page.goto(`/chantier/CH-${chantierId}/${territoireCode}`);
+    await this.page.waitForURL(
+      `**/chantier/CH-${chantierId}/${territoireCode}`,
+    );
   }
 
   async expectStructure(): Promise<void> {
@@ -92,5 +103,36 @@ export class PageChantier extends BasePage {
         name: /^Exemples concrets de réussite$/,
       }),
     ).toBeVisible();
+  }
+
+  async expectHistoriqueCommentaire(
+    typeCommentaire: string = "risquesEtFreinsÀLever",
+  ): Promise<void> {
+    const id = randomUUID();
+    await this.page.getByLabel(`bouton-modifier-${typeCommentaire}`).click();
+    await this.page
+      .getByLabel(`champ d'edition pour le contenu de ${typeCommentaire}`)
+      .fill(`Un commentaire test e2e ${id}`);
+
+    await this.page.getByText("Publier").click();
+
+    await this.page.waitForSelector("#alerte");
+
+    await expect(this.page.getByText("Modification effectuée")).toBeVisible();
+
+    await this.page
+      .getByLabel(`Voir l'histoire des commentaires du type ${typeCommentaire}`)
+      .click();
+
+    const commentaireHistoriqueModal = this.page.getByRole("dialog");
+
+    await expect(commentaireHistoriqueModal).toContainText(
+      "Historique - commentaires",
+    );
+    await expect(commentaireHistoriqueModal).toContainText(
+      `Un commentaire test e2e ${id}`,
+    );
+
+    await this.page.getByRole("button", { name: /Fermer/ }).click();
   }
 }

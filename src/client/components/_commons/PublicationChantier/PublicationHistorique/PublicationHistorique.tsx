@@ -10,9 +10,10 @@ const PublicationHistorique: FunctionComponent<PublicationHistoriqueProps> = ({
   entité,
   réformeId,
   maille,
+  territoireCode,
 }) => {
   const { publications, nomTerritoire, récupérerPublications } =
-    usePublicationHistorique(type, entité, réformeId, maille);
+    usePublicationHistorique(type, entité, réformeId, maille, territoireCode);
 
   return (
     <Modale
@@ -24,7 +25,11 @@ const PublicationHistorique: FunctionComponent<PublicationHistoriqueProps> = ({
       sousTitre={nomTerritoire}
       title={`Historique - ${entité}`}
       trigger={
-        <BoutonSousLigné className="fr-mt-1w" type="button">
+        <BoutonSousLigné
+          aria-label={`Voir l'histoire des ${entité} du type ${type}`}
+          className="fr-mt-1w"
+          type="button"
+        >
           Voir l'historique
         </BoutonSousLigné>
       }

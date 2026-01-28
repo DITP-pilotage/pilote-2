@@ -1,11 +1,11 @@
 import { useState } from "react";
-import { territoireSélectionnéTerritoiresStore } from "@/stores/useTerritoiresStore/useTerritoiresStore";
 import api from "@/server/infrastructure/api/trpc/api";
 import { RouterOutputs } from "@/server/infrastructure/api/trpc/trpc.interface";
 import {
   validationPublicationContexte,
   zodValidateurEntitéType,
 } from "@/validation/publication";
+import { actionsTerritoiresStore } from "@/stores/useTerritoiresStore/useTerritoiresStore";
 import PublicationHistoriqueProps from "./PublicationHistorique.interface";
 
 export default function usePublicationHistorique(
@@ -13,9 +13,12 @@ export default function usePublicationHistorique(
   entité: PublicationHistoriqueProps["entité"],
   réformeId: PublicationHistoriqueProps["réformeId"],
   maille: PublicationHistoriqueProps["maille"],
+  territoireCode: string,
 ) {
-  const territoireSélectionné = territoireSélectionnéTerritoiresStore();
   const typeDeRéforme = "chantier";
+  const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
+
+  const territoireSelectionne = récupérerDétailsSurUnTerritoire(territoireCode);
 
   const [publications, setPublications] =
     useState<RouterOutputs["publication"]["récupérerHistorique"]>();
@@ -24,7 +27,7 @@ export default function usePublicationHistorique(
     .and(zodValidateurEntitéType)
     .parse({
       réformeId,
-      territoireCode: territoireSélectionné!.code,
+      territoireCode,
       type,
       entité,
       typeDeRéforme,
@@ -43,7 +46,7 @@ export default function usePublicationHistorique(
   return {
     publications,
     nomTerritoire:
-      maille === "nationale" ? "France" : territoireSélectionné!.nom,
+      maille === "nationale" ? "France" : territoireSelectionne.nom,
     récupérerPublications,
   };
 }
