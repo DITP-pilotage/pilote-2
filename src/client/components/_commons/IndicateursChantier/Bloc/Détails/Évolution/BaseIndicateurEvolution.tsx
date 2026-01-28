@@ -55,7 +55,7 @@ export const BaseIndicateurEvolution = forwardRef<
           <p className="fr-badge fr-badge--no-icon">NON RENSEIGNÉ</p>
         )}
 
-        {modeImpression ? (
+        {modeImpression || true ? (
           <LogoPilote className="border-t border-gray-300 p-4 mt-4" />
         ) : null}
       </IndicateurÉvolutionStyled>
