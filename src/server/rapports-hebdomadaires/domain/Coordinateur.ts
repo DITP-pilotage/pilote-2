@@ -2,18 +2,19 @@ export type ProfilCoordinateur =
   | "COORDINATEUR_REGION"
   | "COORDINATEUR_DEPARTEMENT";
 
+export type TerritoireCoordinateur = {
+  readonly code: string;
+  readonly nom: string;
+  readonly maille: "REG" | "DEPT";
+};
+
 export type Coordinateur = {
   readonly id: string;
   readonly email: string;
   readonly nom: string;
   readonly prenom: string;
   readonly profil: ProfilCoordinateur;
-  readonly territoire: {
-    readonly code: string;
-    readonly nom: string;
-    readonly maille: "REG" | "DEPT";
-    readonly codesEnfants: readonly string[];
-  };
+  readonly territoires: readonly TerritoireCoordinateur[];
 };
 
 export function estDansPerimetreTerritorial(params: {
@@ -23,8 +24,7 @@ export function estDansPerimetreTerritorial(params: {
   const { coordinateur, codeTerritoireCompte } = params;
   if (!codeTerritoireCompte) return false;
 
-  return (
-    codeTerritoireCompte === coordinateur.territoire.code ||
-    coordinateur.territoire.codesEnfants.includes(codeTerritoireCompte)
+  return coordinateur.territoires.some(
+    (territoire) => territoire.code === codeTerritoireCompte
   );
 }

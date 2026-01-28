@@ -24,8 +24,8 @@ export class PrismaRapportRepository implements RapportRepository {
         coordinateur_nom: rapport.coordinateur.nom,
         coordinateur_prenom: rapport.coordinateur.prenom,
         coordinateur_profil: rapport.coordinateur.profil,
-        territoire_code: rapport.coordinateur.territoire.code,
-        territoire_nom: rapport.coordinateur.territoire.nom,
+        territoire_code: rapport.coordinateur.territoires[0]?.code ?? "",
+        territoire_nom: rapport.coordinateur.territoires[0]?.nom ?? "",
         date_debut_periode: rapport.periode.dateDebut,
         date_fin_periode: rapport.periode.dateFin,
         comptes_crees: rapport.sectionActiviteComptes
@@ -68,15 +68,16 @@ export class PrismaRapportRepository implements RapportRepository {
           nom: row.coordinateur_nom,
           prenom: row.coordinateur_prenom,
           profil: row.coordinateur_profil as ProfilCoordinateur,
-          territoire: {
-            code: row.territoire_code,
-            nom: row.territoire_nom,
-            maille:
-              row.coordinateur_profil === "COORDINATEUR_REGION"
-                ? "REG"
-                : "DEPT",
-            codesEnfants: [],
-          },
+          territoires: [
+            {
+              code: row.territoire_code,
+              nom: row.territoire_nom,
+              maille:
+                row.coordinateur_profil === "COORDINATEUR_REGION"
+                  ? "REG"
+                  : "DEPT",
+            },
+          ],
         },
         periode: {
           dateDebut: row.date_debut_periode,

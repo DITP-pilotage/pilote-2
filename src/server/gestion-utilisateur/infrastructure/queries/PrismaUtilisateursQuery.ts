@@ -7,17 +7,13 @@ export type TerritoireDTO = {
   maille: "DEPT" | "REG" | "NAT";
 };
 
-export type TerritoireAvecEnfantsDTO = TerritoireDTO & {
-  codesEnfants: string[];
-};
-
 export type UtilisateurDTO = {
   id: string;
   email: string;
   nom: string;
   prenom: string;
   profilCode: string;
-  territoire: TerritoireAvecEnfantsDTO;
+  territoires: TerritoireDTO[];
 };
 
 interface Dependencies {
@@ -47,21 +43,38 @@ export class PrismaUtilisateursQuery {
     const utilisateursDTO: UtilisateurDTO[] = [];
 
     for (const utilisateur of utilisateurs) {
-      const territoireCode = this.extraireTerritoirePrincipal(
+      const codesTerritoires = this.extraireTousLesTerritoires(
         utilisateur.habilitation,
       );
-      if (!territoireCode) continue;
+      if (codesTerritoires.length === 0) continue;
 
-      const territoire = await prisma.territoire.findUnique({
-        where: { code: territoireCode },
+      const territoires = await prisma.territoire.findMany({
+        where: { code: { in: codesTerritoires } },
         include: {
           territoire_enfant: {
-            select: { code: true },
+            select: {
+              code: true,
+              nom: true,
+              maille: true,
+            },
           },
         },
       });
 
-      if (!territoire) continue;
+      if (territoires.length === 0) continue;
+
+      const territoiresFlat: TerritoireDTO[] = territoires.flatMap((t) => [
+        {
+          code: t.code,
+          nom: t.nom,
+          maille: this.mapMaille(t.maille),
+        },
+        ...t.territoire_enfant.map((enfant) => ({
+          code: enfant.code,
+          nom: enfant.nom,
+          maille: this.mapMaille(enfant.maille),
+        })),
+      ]);
 
       utilisateursDTO.push({
         id: utilisateur.id,
@@ -69,25 +82,17 @@ export class PrismaUtilisateursQuery {
         nom: utilisateur.nom,
         prenom: utilisateur.prenom,
         profilCode: utilisateur.profilCode,
-        territoire: {
-          code: territoire.code,
-          nom: territoire.nom,
-          maille: this.mapMaille(territoire.maille),
-          codesEnfants: territoire.territoire_enfant.map((t) => t.code),
-        },
+        territoires: territoiresFlat,
       });
     }
 
     return utilisateursDTO;
   }
 
-  private extraireTerritoirePrincipal(
+  private extraireTousLesTerritoires(
     habilitations: { territoires: string[] }[],
-  ): string | undefined {
-    const habilitationAvecTerritoire = habilitations.find(
-      (h) => h.territoires.length > 0,
-    );
-    return habilitationAvecTerritoire?.territoires[0];
+  ): string[] {
+    return habilitations.flatMap((h) => h.territoires);
   }
 
   private mapMaille(maille: $Enums.Maille): "DEPT" | "REG" | "NAT" {

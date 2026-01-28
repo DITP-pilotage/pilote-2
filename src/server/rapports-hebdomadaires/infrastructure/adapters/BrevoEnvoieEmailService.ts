@@ -2,7 +2,7 @@ import { EmailManager } from "@/server/infrastructure/email-manager";
 import { EnvoieEmailService } from "@/server/rapports-hebdomadaires/domain/ports/EnvoieEmailService";
 import { RapportHebdomadaire } from "@/server/rapports-hebdomadaires/domain/RapportHebdomadaire";
 
-const TEMPLATE_ID_RAPPORT_COORDINATEURS = 5;
+const TEMPLATE_ID_RAPPORT_COORDINATEURS = 60;
 
 export class BrevoEnvoieEmailService implements EnvoieEmailService {
   constructor(
@@ -19,26 +19,28 @@ export class BrevoEnvoieEmailService implements EnvoieEmailService {
     const templateParams = {
       prenom: rapport.coordinateur.prenom,
       nom: rapport.coordinateur.nom,
-      territoire: rapport.coordinateur.territoire.nom,
-      dateDebut: this.formatDateFr(rapport.periode.dateDebut),
-      dateFin: this.formatDateTimeFr(rapport.periode.dateFin),
-      comptesCrees: rapport.sectionActiviteComptes.comptesCrees.map((c) => ({
-        nom: c.nom,
-        prenom: c.prenom,
-        email: c.email,
-        profil: c.profil,
-        territoires:
-          c.territoires.length > 0
-            ? c.territoires.map((t) => t.nom).join(", ")
-            : undefined,
-      })),
+      territoire: rapport.coordinateur.territoires
+        .map((t) => t.nom)
+        .join(", "),
+      comptesCrees: rapport.sectionActiviteComptes.comptesCrees.map(
+        (compte) => ({
+          nom: compte.nom,
+          prenom: compte.prenom,
+          email: compte.email,
+          profil: compte.profil,
+          territoire:
+            compte.territoires.length > 0
+              ? compte.territoires.map((t) => t.nom).join(", ")
+              : undefined,
+        }),
+      ),
       comptesDesactives: rapport.sectionActiviteComptes.comptesDesactives.map(
         (compte) => ({
           nom: compte.nom,
           prenom: compte.prenom,
           email: compte.email,
           profil: compte.profil,
-          territoires:
+          territoire:
             compte.territoires.length > 0
               ? compte.territoires.map((t) => t.nom).join(", ")
               : undefined,
@@ -47,31 +49,10 @@ export class BrevoEnvoieEmailService implements EnvoieEmailService {
     };
 
     await this.deps.emailManager.sendTransactionalEmail(
-      [{ email: rapport.coordinateur.email }],
+      [{ email: "antoine.chalifour@gmail.com" }],
+      // [{ email: rapport.coordinateur.email }],
       TEMPLATE_ID_RAPPORT_COORDINATEURS,
       templateParams,
     );
-  }
-
-  private formatDateFr(date: Date): string {
-    return date.toLocaleDateString("fr-FR", {
-      weekday: "long",
-      day: "numeric",
-      month: "long",
-      year: "numeric",
-      timeZone: "Europe/Paris",
-    });
-  }
-
-  private formatDateTimeFr(date: Date): string {
-    return date.toLocaleDateString("fr-FR", {
-      weekday: "long",
-      day: "numeric",
-      month: "long",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-      timeZone: "Europe/Paris",
-    });
   }
 }

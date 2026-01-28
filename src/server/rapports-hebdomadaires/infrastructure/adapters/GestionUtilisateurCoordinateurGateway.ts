@@ -35,12 +35,11 @@ export class GestionUtilisateurCoordinateurGateway
       nom: utilisateur.nom,
       prenom: utilisateur.prenom,
       profil: utilisateur.profilCode as ProfilCoordinateur,
-      territoire: {
-        code: utilisateur.territoire.code,
-        nom: utilisateur.territoire.nom,
-        maille: utilisateur.territoire.maille === "REG" ? "REG" : "DEPT",
-        codesEnfants: utilisateur.territoire.codesEnfants,
-      },
+      territoires: utilisateur.territoires.map((territoire) => ({
+        code: territoire.code,
+        nom: territoire.nom,
+        maille: territoire.maille === "REG" ? "REG" : "DEPT",
+      })),
     };
   }
 }
