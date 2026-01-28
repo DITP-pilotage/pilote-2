@@ -1,5 +1,6 @@
 import "./load-env";
 import process from "node:process";
+import assert from "node:assert/strict";
 import logger from "@/server/infrastructure/Logger";
 import { envoieMessageTchap } from "@/server/utils/notification-tchap";
 import { getInitialContainerWithTransversalDependencies } from "@/server/InitialDependencies";
@@ -9,14 +10,31 @@ const baseUrl = process.env.TCHAP_BASE_URL ?? "";
 const roomId = process.env.TCHAP_ROOM_ID_RAPPORT_COORDINATEURS ?? "";
 const accessToken = process.env.TCHAP_ACCESS_TOKEN ?? "";
 
+function parseOptionalDateArg(arg: string | undefined): Date {
+  if (!arg) {
+    return new Date();
+  }
+
+  const parsed = Date.parse(arg);
+  assert(!Number.isNaN(parsed), `Date invalide: ${arg}`);
+
+  return new Date(parsed);
+}
+
 async function main() {
+  const maintenant = parseOptionalDateArg(process.argv[2]);
+
+  logger.info("Génération des rapports hebdomadaires", {
+    dateExecution: maintenant.toISOString(),
+  });
+
   const initialContainer = getInitialContainerWithTransversalDependencies();
   const container = getRapportsHebdomadairesContainer(initialContainer);
 
   const produireUseCase = container.resolve(
     "produireRapportsHebdomadairesUseCase",
   );
-  const resultProduction = await produireUseCase.run();
+  const resultProduction = await produireUseCase.run({ maintenant });
 
   const messagePhase1 = [
     "## 📊 Rapports hebdomadaires coordinateurs - Phase 1 : Production",

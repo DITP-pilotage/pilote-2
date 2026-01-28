@@ -40,8 +40,8 @@ export class ProduireRapportsHebdomadairesUseCase {
     },
   ) {}
 
-  async run(): Promise<ProduireRapportResult> {
-    const maintenant = new Date();
+  async run(params?: { maintenant?: Date }): Promise<ProduireRapportResult> {
+    const maintenant = params?.maintenant ?? new Date();
     const periode = calculerPeriodeDernierLundiNeufHeures({ maintenant });
 
     logger.info("Phase 1 démarrée", {
