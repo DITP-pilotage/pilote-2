@@ -1,9 +1,48 @@
 import { $Enums, Prisma } from "@prisma/client";
+import { z } from "zod";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { RapportRepository } from "@/server/rapports-hebdomadaires/domain/ports/RapportRepository";
 import { RapportHebdomadaire } from "@/server/rapports-hebdomadaires/domain/RapportHebdomadaire";
 import { ProfilCoordinateur } from "@/server/rapports-hebdomadaires/domain/Coordinateur";
 import { CompteActivite } from "@/server/rapports-hebdomadaires/domain/CompteActivite";
+
+const contenuRapportSchema = z.object({
+  coordinateur: z.object({
+    email: z.string(),
+    nom: z.string(),
+    prenom: z.string(),
+    profil: z.enum(["COORDINATEUR_REGION", "COORDINATEUR_DEPARTEMENT"]),
+    territoires: z.array(
+      z.object({
+        code: z.string(),
+        nom: z.string(),
+        maille: z.enum(["REG", "DEPT"]),
+      }),
+    ),
+  }),
+  sectionActiviteComptes: z.object({
+    comptesCrees: z.array(
+      z.object({
+        email: z.string(),
+        nom: z.string(),
+        prenom: z.string(),
+        profil: z.string(),
+        territoires: z.array(z.object({ code: z.string(), nom: z.string() })),
+      }),
+    ),
+    comptesDesactives: z.array(
+      z.object({
+        email: z.string(),
+        nom: z.string(),
+        prenom: z.string(),
+        profil: z.string(),
+        territoires: z.array(z.object({ code: z.string(), nom: z.string() })),
+      }),
+    ),
+  }),
+});
+
+type ContenuRapport = z.infer<typeof contenuRapportSchema>;
 
 export class PrismaRapportRepository implements RapportRepository {
   constructor(
@@ -15,23 +54,25 @@ export class PrismaRapportRepository implements RapportRepository {
   async sauvegarder(rapport: RapportHebdomadaire): Promise<void> {
     const prisma = this.deps.prisma.getInstance();
 
+    const contenuRapport: ContenuRapport = {
+      coordinateur: {
+        email: rapport.coordinateur.email,
+        nom: rapport.coordinateur.nom,
+        prenom: rapport.coordinateur.prenom,
+        profil: rapport.coordinateur.profil,
+        territoires: rapport.coordinateur.territoires,
+      },
+      sectionActiviteComptes: rapport.sectionActiviteComptes,
+    };
+
     await prisma.rapport_hebdomadaire_coordinateur.upsert({
       where: { id: rapport.id },
       create: {
         id: rapport.id,
         coordinateur_id: rapport.coordinateur.id,
-        coordinateur_email: rapport.coordinateur.email,
-        coordinateur_nom: rapport.coordinateur.nom,
-        coordinateur_prenom: rapport.coordinateur.prenom,
-        coordinateur_profil: rapport.coordinateur.profil,
-        territoire_code: rapport.coordinateur.territoires[0]?.code ?? "",
-        territoire_nom: rapport.coordinateur.territoires[0]?.nom ?? "",
         date_debut_periode: rapport.periode.dateDebut,
         date_fin_periode: rapport.periode.dateFin,
-        comptes_crees: rapport.sectionActiviteComptes
-          .comptesCrees as unknown as Prisma.InputJsonValue,
-        comptes_desactives: rapport.sectionActiviteComptes
-          .comptesDesactives as unknown as Prisma.InputJsonValue,
+        contenu_rapport: contenuRapport as unknown as Prisma.InputJsonValue,
         statut_envoi: rapport.statutEnvoi,
       },
       update: {
@@ -59,43 +100,31 @@ export class PrismaRapportRepository implements RapportRepository {
       },
     });
 
-    return rapports.map(
-      (row): RapportHebdomadaire => ({
+    return rapports.map((row): RapportHebdomadaire => {
+      const contenu = contenuRapportSchema.parse(row.contenu_rapport);
+
+      return {
         id: row.id,
         coordinateur: {
           id: row.coordinateur_id,
-          email: row.coordinateur_email,
-          nom: row.coordinateur_nom,
-          prenom: row.coordinateur_prenom,
-          profil: row.coordinateur_profil as ProfilCoordinateur,
-          // TODO (CHAN - Rapport) : multi territoire
-          territoires: [
-            {
-              code: row.territoire_code,
-              nom: row.territoire_nom,
-              maille:
-                row.coordinateur_profil === "COORDINATEUR_REGION"
-                  ? "REG"
-                  : "DEPT",
-            },
-          ],
+          email: contenu.coordinateur.email,
+          nom: contenu.coordinateur.nom,
+          prenom: contenu.coordinateur.prenom,
+          profil: contenu.coordinateur.profil as ProfilCoordinateur,
+          territoires: contenu.coordinateur.territoires,
         },
         periode: {
           dateDebut: row.date_debut_periode,
           dateFin: row.date_fin_periode,
         },
-        sectionActiviteComptes: {
-          comptesCrees: row.comptes_crees as unknown as CompteActivite[],
-          comptesDesactives:
-            row.comptes_desactives as unknown as CompteActivite[],
-        },
+        sectionActiviteComptes: contenu.sectionActiviteComptes,
         statutEnvoi: row.statut_envoi,
         dateCreation: row.date_creation,
         dateEnvoi: row.date_envoi ?? undefined,
         dateDerniereTentative: row.date_derniere_tentative ?? undefined,
         nombreTentatives: row.nombre_tentatives,
         erreurEnvoi: row.erreur_envoi ?? undefined,
-      }),
-    );
+      };
+    });
   }
 }

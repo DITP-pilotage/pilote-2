@@ -78,12 +78,16 @@ describe("ProduireRapportsHebdomadairesUseCase", () => {
       });
       expect(rapports).toHaveLength(1);
       expect(rapports[0].statut_envoi).toBe("CREE");
-      expect(rapports[0].comptes_crees).toEqual(
-        expect.arrayContaining([
-          expect.objectContaining({
-            email: compteCree.email,
+      expect(rapports[0].contenu_rapport).toEqual(
+        expect.objectContaining({
+          sectionActiviteComptes: expect.objectContaining({
+            comptesCrees: expect.arrayContaining([
+              expect.objectContaining({
+                email: compteCree.email,
+              }),
+            ]),
           }),
-        ]),
+        }),
       );
     }),
   );
@@ -174,7 +178,16 @@ describe("ProduireRapportsHebdomadairesUseCase", () => {
       const rapports = await prisma.rapport_hebdomadaire_coordinateur.findMany({
         where: { coordinateur_id: coordinateur.id },
       });
-      expect(rapports[0].comptes_crees).toHaveLength(2);
+      expect(rapports[0].contenu_rapport).toEqual(
+        expect.objectContaining({
+          sectionActiviteComptes: expect.objectContaining({
+            comptesCrees: expect.arrayContaining([
+              expect.any(Object),
+              expect.any(Object),
+            ]),
+          }),
+        }),
+      );
     }),
   );
 
@@ -231,11 +244,17 @@ describe("ProduireRapportsHebdomadairesUseCase", () => {
       const rapports = await prisma.rapport_hebdomadaire_coordinateur.findMany({
         where: { coordinateur_id: coordinateur.id },
       });
-      expect(rapports[0].comptes_crees).toEqual([
+      expect(rapports[0].contenu_rapport).toEqual(
         expect.objectContaining({
-          email: compteDansDept.email,
+          sectionActiviteComptes: expect.objectContaining({
+            comptesCrees: [
+              expect.objectContaining({
+                email: compteDansDept.email,
+              }),
+            ],
+          }),
         }),
-      ]);
+      );
     }),
   );
 
@@ -285,11 +304,17 @@ describe("ProduireRapportsHebdomadairesUseCase", () => {
       const rapports = await prisma.rapport_hebdomadaire_coordinateur.findMany({
         where: { coordinateur_id: coordinateur.id },
       });
-      expect(rapports[0].comptes_crees).toEqual([
+      expect(rapports[0].contenu_rapport).toEqual(
         expect.objectContaining({
-          email: comptePrefet.email,
+          sectionActiviteComptes: expect.objectContaining({
+            comptesCrees: [
+              expect.objectContaining({
+                email: comptePrefet.email,
+              }),
+            ],
+          }),
         }),
-      ]);
+      );
     }),
   );
 });

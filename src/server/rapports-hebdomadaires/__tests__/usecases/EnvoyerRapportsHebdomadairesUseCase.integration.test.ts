@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
+import { fixtures } from "@/server/infrastructure/test/fixtures";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { getPrisma } from "@/server/db/PrismaTransaction";
 import { EnvoyerRapportsHebdomadairesUseCase } from "@/server/rapports-hebdomadaires/usecases/EnvoyerRapportsHebdomadairesUseCase";
@@ -28,19 +29,34 @@ describe("EnvoyerRapportsHebdomadairesUseCase", () => {
       const prisma = getPrisma();
       const dateCreation = new Date();
 
+      const coordinateur1 = await fixtures.utilisateur({
+        profilCode: "COORDINATEUR_REGION",
+      });
+      const coordinateur2 = await fixtures.utilisateur({
+        profilCode: "COORDINATEUR_DEPARTEMENT",
+      });
+
       const rapport1 = await prisma.rapport_hebdomadaire_coordinateur.create({
         data: {
-          coordinateur_id: randomUUID(),
-          coordinateur_email: "coord1@example.com",
-          coordinateur_nom: "Dupont",
-          coordinateur_prenom: "Jean",
-          coordinateur_profil: "COORDINATEUR_REGION",
-          territoire_code: "REG-11",
-          territoire_nom: "Île-de-France",
+          id: randomUUID(),
+          coordinateur_id: coordinateur1.id,
           date_debut_periode: new Date(),
           date_fin_periode: new Date(),
-          comptes_crees: [],
-          comptes_desactives: [],
+          contenu_rapport: {
+            coordinateur: {
+              email: "coord1@example.com",
+              nom: "Dupont",
+              prenom: "Jean",
+              profil: "COORDINATEUR_REGION",
+              territoires: [
+                { code: "REG-11", nom: "Île-de-France", maille: "REG" },
+              ],
+            },
+            sectionActiviteComptes: {
+              comptesCrees: [],
+              comptesDesactives: [],
+            },
+          },
           statut_envoi: "CREE",
           date_creation: dateCreation,
         },
@@ -48,17 +64,23 @@ describe("EnvoyerRapportsHebdomadairesUseCase", () => {
 
       const rapport2 = await prisma.rapport_hebdomadaire_coordinateur.create({
         data: {
-          coordinateur_id: randomUUID(),
-          coordinateur_email: "coord2@example.com",
-          coordinateur_nom: "Martin",
-          coordinateur_prenom: "Sophie",
-          coordinateur_profil: "COORDINATEUR_DEPARTEMENT",
-          territoire_code: "DEPT-75",
-          territoire_nom: "Paris",
+          id: randomUUID(),
+          coordinateur_id: coordinateur2.id,
           date_debut_periode: new Date(),
           date_fin_periode: new Date(),
-          comptes_crees: [],
-          comptes_desactives: [],
+          contenu_rapport: {
+            coordinateur: {
+              email: "coord2@example.com",
+              nom: "Martin",
+              prenom: "Sophie",
+              profil: "COORDINATEUR_DEPARTEMENT",
+              territoires: [{ code: "DEPT-75", nom: "Paris", maille: "DEPT" }],
+            },
+            sectionActiviteComptes: {
+              comptesCrees: [],
+              comptesDesactives: [],
+            },
+          },
           statut_envoi: "CREE",
           date_creation: dateCreation,
         },
@@ -111,19 +133,31 @@ describe("EnvoyerRapportsHebdomadairesUseCase", () => {
       const prisma = getPrisma();
       const dateCreation = new Date();
 
+      const coordinateur = await fixtures.utilisateur({
+        profilCode: "COORDINATEUR_REGION",
+      });
+
       const rapport = await prisma.rapport_hebdomadaire_coordinateur.create({
         data: {
-          coordinateur_id: randomUUID(),
-          coordinateur_email: "coord1@example.com",
-          coordinateur_nom: "Dupont",
-          coordinateur_prenom: "Jean",
-          coordinateur_profil: "COORDINATEUR_REGION",
-          territoire_code: "REG-11",
-          territoire_nom: "Île-de-France",
+          id: randomUUID(),
+          coordinateur_id: coordinateur.id,
           date_debut_periode: new Date(),
           date_fin_periode: new Date(),
-          comptes_crees: [],
-          comptes_desactives: [],
+          contenu_rapport: {
+            coordinateur: {
+              email: "coord1@example.com",
+              nom: "Dupont",
+              prenom: "Jean",
+              profil: "COORDINATEUR_REGION",
+              territoires: [
+                { code: "REG-11", nom: "Île-de-France", maille: "REG" },
+              ],
+            },
+            sectionActiviteComptes: {
+              comptesCrees: [],
+              comptesDesactives: [],
+            },
+          },
           statut_envoi: "CREE",
           date_creation: dateCreation,
         },
@@ -174,19 +208,34 @@ describe("EnvoyerRapportsHebdomadairesUseCase", () => {
       const prisma = getPrisma();
       const dateCreation = new Date();
 
+      const coordinateur1 = await fixtures.utilisateur({
+        profilCode: "COORDINATEUR_REGION",
+      });
+      const coordinateur2 = await fixtures.utilisateur({
+        profilCode: "COORDINATEUR_DEPARTEMENT",
+      });
+
       const rapport1 = await prisma.rapport_hebdomadaire_coordinateur.create({
         data: {
-          coordinateur_id: randomUUID(),
-          coordinateur_email: "coord1@example.com",
-          coordinateur_nom: "Dupont",
-          coordinateur_prenom: "Jean",
-          coordinateur_profil: "COORDINATEUR_REGION",
-          territoire_code: "REG-11",
-          territoire_nom: "Île-de-France",
+          id: randomUUID(),
+          coordinateur_id: coordinateur1.id,
           date_debut_periode: new Date(),
           date_fin_periode: new Date(),
-          comptes_crees: [],
-          comptes_desactives: [],
+          contenu_rapport: {
+            coordinateur: {
+              email: "coord1@example.com",
+              nom: "Dupont",
+              prenom: "Jean",
+              profil: "COORDINATEUR_REGION",
+              territoires: [
+                { code: "REG-11", nom: "Île-de-France", maille: "REG" },
+              ],
+            },
+            sectionActiviteComptes: {
+              comptesCrees: [],
+              comptesDesactives: [],
+            },
+          },
           statut_envoi: "CREE",
           date_creation: dateCreation,
         },
@@ -194,17 +243,23 @@ describe("EnvoyerRapportsHebdomadairesUseCase", () => {
 
       const rapport2 = await prisma.rapport_hebdomadaire_coordinateur.create({
         data: {
-          coordinateur_id: randomUUID(),
-          coordinateur_email: "coord2@example.com",
-          coordinateur_nom: "Martin",
-          coordinateur_prenom: "Sophie",
-          coordinateur_profil: "COORDINATEUR_DEPARTEMENT",
-          territoire_code: "DEPT-75",
-          territoire_nom: "Paris",
+          id: randomUUID(),
+          coordinateur_id: coordinateur2.id,
           date_debut_periode: new Date(),
           date_fin_periode: new Date(),
-          comptes_crees: [],
-          comptes_desactives: [],
+          contenu_rapport: {
+            coordinateur: {
+              email: "coord2@example.com",
+              nom: "Martin",
+              prenom: "Sophie",
+              profil: "COORDINATEUR_DEPARTEMENT",
+              territoires: [{ code: "DEPT-75", nom: "Paris", maille: "DEPT" }],
+            },
+            sectionActiviteComptes: {
+              comptesCrees: [],
+              comptesDesactives: [],
+            },
+          },
           statut_envoi: "CREE",
           date_creation: dateCreation,
         },
@@ -259,19 +314,34 @@ describe("EnvoyerRapportsHebdomadairesUseCase", () => {
       const dateAncienne = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
       const dateRecente = new Date();
 
+      const coordinateur1 = await fixtures.utilisateur({
+        profilCode: "COORDINATEUR_REGION",
+      });
+      const coordinateur2 = await fixtures.utilisateur({
+        profilCode: "COORDINATEUR_DEPARTEMENT",
+      });
+
       await prisma.rapport_hebdomadaire_coordinateur.create({
         data: {
-          coordinateur_id: randomUUID(),
-          coordinateur_email: "coord1@example.com",
-          coordinateur_nom: "Dupont",
-          coordinateur_prenom: "Jean",
-          coordinateur_profil: "COORDINATEUR_REGION",
-          territoire_code: "REG-11",
-          territoire_nom: "Île-de-France",
+          id: randomUUID(),
+          coordinateur_id: coordinateur1.id,
           date_debut_periode: new Date(),
           date_fin_periode: new Date(),
-          comptes_crees: [],
-          comptes_desactives: [],
+          contenu_rapport: {
+            coordinateur: {
+              email: "coord1@example.com",
+              nom: "Dupont",
+              prenom: "Jean",
+              profil: "COORDINATEUR_REGION",
+              territoires: [
+                { code: "REG-11", nom: "Île-de-France", maille: "REG" },
+              ],
+            },
+            sectionActiviteComptes: {
+              comptesCrees: [],
+              comptesDesactives: [],
+            },
+          },
           statut_envoi: "CREE",
           date_creation: dateAncienne,
         },
@@ -279,17 +349,23 @@ describe("EnvoyerRapportsHebdomadairesUseCase", () => {
 
       await prisma.rapport_hebdomadaire_coordinateur.create({
         data: {
-          coordinateur_id: randomUUID(),
-          coordinateur_email: "coord2@example.com",
-          coordinateur_nom: "Martin",
-          coordinateur_prenom: "Sophie",
-          coordinateur_profil: "COORDINATEUR_DEPARTEMENT",
-          territoire_code: "DEPT-75",
-          territoire_nom: "Paris",
+          id: randomUUID(),
+          coordinateur_id: coordinateur2.id,
           date_debut_periode: new Date(),
           date_fin_periode: new Date(),
-          comptes_crees: [],
-          comptes_desactives: [],
+          contenu_rapport: {
+            coordinateur: {
+              email: "coord2@example.com",
+              nom: "Martin",
+              prenom: "Sophie",
+              profil: "COORDINATEUR_DEPARTEMENT",
+              territoires: [{ code: "DEPT-75", nom: "Paris", maille: "DEPT" }],
+            },
+            sectionActiviteComptes: {
+              comptesCrees: [],
+              comptesDesactives: [],
+            },
+          },
           statut_envoi: "CREE",
           date_creation: dateRecente,
         },
