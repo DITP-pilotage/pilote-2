@@ -1,6 +1,7 @@
 import { forwardRef } from "react";
 import { Line } from "react-chartjs-2";
 import Titre from "@/client/components/_commons/Titre/Titre";
+import { LogoPilote } from "@/components/_commons/LogoPilote";
 import LineChart from "./LineChart/LineChart";
 import IndicateurÉvolutionStyled from "./IndicateurÉvolution.styled";
 import type { BaseEvolutionProps } from "./types";
@@ -53,6 +54,10 @@ export const BaseIndicateurEvolution = forwardRef<
         ) : (
           <p className="fr-badge fr-badge--no-icon">NON RENSEIGNÉ</p>
         )}
+
+        {modeImpression ? (
+          <LogoPilote className="border-t border-gray-300 p-4 mt-4" />
+        ) : null}
       </IndicateurÉvolutionStyled>
     );
   },
