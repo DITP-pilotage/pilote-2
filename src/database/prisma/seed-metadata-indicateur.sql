@@ -141,7 +141,12 @@ INSERT INTO public.metadata_indicateur_valeur_acceptee (metadata_indicateur_name
 ('zg_applicable', 24, 'ZG-024', 'Education prioritaire', 'Territoires contenant des écoles en Education Prioritaire (Cantal,Haute-Loire,Lot et Lozère n''ont pas de REP)'),
 ('zg_applicable', 25, 'ZG-025', 'Bon état écologique des cours d''eau', 'Toutes zones sauf départements 09, 64, 75, 93 et DROM (pas de station de mesure)'),
 ('zg_applicable', 26, 'ZG-026', 'PCAET (CH-161)', 'Toutes zones sauf Lozère'),
-('zg_applicable', 27, 'ZG-027', 'Toutes zones sauf Corse', 'Tous départements et régions sauf Corse');
+('zg_applicable', 27, 'ZG-027', 'Toutes zones sauf Corse', 'Tous départements et régions sauf Corse'),
+('zg_applicable', 28, 'ZG-028', 'REP', 'Tous territoires contenant des REP (8 terr exclus)'),
+('zg_applicable', 29, 'ZG-029', 'REP+', 'Tous territoires contenant des REP+ (31 dept exclus)'),
+('zg_applicable', 30, 'ZG-030', 'Accessibilité tribunaux', 'CH-196 - Mise en accessibilité des tribunaux'),
+('zg_applicable', 31, 'ZG-031', 'Accessibilité PN', 'CH-196 - Mise en accessibilité des lieux Police Nationale'),
+('zg_applicable', 32, 'ZG-032', 'Accessibilité GN', 'CH-196 - Mise en accessibilité des lieux Gendarmerie Nationale');
 
 -- vi_dept_from, va_dept_from, vc_dept_from
 INSERT INTO public.metadata_indicateur_valeur_acceptee (metadata_indicateur_name, ordre, valeur, nom, description) VALUES
