@@ -3,7 +3,10 @@ import {
   EvenementCompteDTO,
   PrismaActiviteComptesQuery,
 } from "@/server/gestion-utilisateur/infrastructure/queries/PrismaActiviteComptesQuery";
-import { ActiviteComptesGateway } from "@/server/rapports-hebdomadaires/domain/ports/ActiviteComptesGateway";
+import {
+  ActiviteComptesGateway,
+  ProfilTerritorialise,
+} from "@/server/rapports-hebdomadaires/domain/ports/ActiviteComptesGateway";
 import {
   ActiviteComptes,
   CompteActivite,
@@ -21,7 +24,7 @@ export class GestionUtilisateurActiviteComptesGateway
   async recupererActivite(params: {
     dateDebut: Date;
     dateFin: Date;
-    profilCodes: string[];
+    profilCodes: ProfilTerritorialise[];
   }): Promise<ActiviteComptes> {
     const evenements =
       await this.deps.activiteComptesQuery.recupererActiviteComptes(params);

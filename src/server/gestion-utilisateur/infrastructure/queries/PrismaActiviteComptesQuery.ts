@@ -34,7 +34,6 @@ export class PrismaActiviteComptesQuery {
     const evenements: EvenementCompteDTO[] = [];
     const prisma = this.dependencies.prisma.getInstance();
 
-    // 1. Fetch created accounts in period
     const comptesCrees = await prisma.utilisateur.findMany({
       where: {
         date_creation: { gte: params.dateDebut, lte: params.dateFin },
@@ -109,10 +108,10 @@ export class PrismaActiviteComptesQuery {
         select: { code: true, nom: true, maille: true },
       });
 
-    return territoires.map((t) => ({
-      code: t.code,
-      nom: t.nom,
-      maille: this.mapMaille(t.maille),
+    return territoires.map((territoire) => ({
+      code: territoire.code,
+      nom: territoire.nom,
+      maille: territoire.maille,
     }));
   }
 
@@ -132,16 +131,5 @@ export class PrismaActiviteComptesQuery {
       profil: utilisateur.profilCode,
       territoires,
     };
-  }
-
-  private mapMaille(maille: $Enums.Maille): "DEPT" | "REG" | "NAT" {
-    switch (maille) {
-      case "DEPT":
-        return "DEPT";
-      case "REG":
-        return "REG";
-      case "NAT":
-        return "NAT";
-    }
   }
 }

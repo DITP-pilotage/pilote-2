@@ -1,5 +1,8 @@
 import logger from "@/server/infrastructure/Logger";
-import { ActiviteComptesGateway } from "@/server/rapports-hebdomadaires/domain/ports/ActiviteComptesGateway";
+import {
+  ActiviteComptesGateway,
+  ProfilTerritorialise,
+} from "@/server/rapports-hebdomadaires/domain/ports/ActiviteComptesGateway";
 import { CoordinateurGateway } from "@/server/rapports-hebdomadaires/domain/ports/CoordinateurGateway";
 import { RapportRepository } from "@/server/rapports-hebdomadaires/domain/ports/RapportRepository";
 import { calculerPeriodeDernierLundiNeufHeures } from "@/server/rapports-hebdomadaires/domain/PeriodeRapport";
@@ -16,7 +19,7 @@ import {
   grouperEvenementsParType,
 } from "@/server/rapports-hebdomadaires/domain/CompteActivite";
 
-const PROFILS_CONCERNES = [
+const PROFILS_CONCERNES: ProfilTerritorialise[] = [
   "COORDINATEUR_REGION",
   "COORDINATEUR_DEPARTEMENT",
   "PREFET_REGION",
