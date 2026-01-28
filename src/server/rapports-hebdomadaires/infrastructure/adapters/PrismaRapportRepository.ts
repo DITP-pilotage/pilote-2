@@ -4,7 +4,6 @@ import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { RapportRepository } from "@/server/rapports-hebdomadaires/domain/ports/RapportRepository";
 import { RapportHebdomadaire } from "@/server/rapports-hebdomadaires/domain/RapportHebdomadaire";
 import { ProfilCoordinateur } from "@/server/rapports-hebdomadaires/domain/Coordinateur";
-import { CompteActivite } from "@/server/rapports-hebdomadaires/domain/CompteActivite";
 
 const contenuRapportSchema = z.object({
   coordinateur: z.object({
