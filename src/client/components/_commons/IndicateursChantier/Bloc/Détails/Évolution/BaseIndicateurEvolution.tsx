@@ -55,17 +55,19 @@ export const BaseIndicateurEvolution = forwardRef<
           <p className="fr-badge fr-badge--no-icon">NON RENSEIGNÉ</p>
         )}
 
-        <div className="border-t border-gray-300 flex items-center gap-10 p-4 mt-4">
-          <p className="fr-logo">Gouvernement</p>
-          <div>
-            <Link href="/" title="Retour à l'accueil du site">
-              <p className="fr-header__service-title mb-0">PILOTE</p>
-            </Link>
-            <p className="fr-header__service-tagline fr-text--sm mb-0">
-              Piloter l'action publique par les résultats
-            </p>
+        {modeImpression ? (
+          <div className="border-t border-gray-300 flex items-center gap-10 p-4 mt-4">
+            <p className="fr-logo">Gouvernement</p>
+            <div>
+              <Link href="/" title="Retour à l'accueil du site">
+                <p className="fr-header__service-title mb-0">PILOTE</p>
+              </Link>
+              <p className="fr-header__service-tagline fr-text--sm mb-0">
+                Piloter l'action publique par les résultats
+              </p>
+            </div>
           </div>
-        </div>
+        ) : null}
       </IndicateurÉvolutionStyled>
     );
   },
