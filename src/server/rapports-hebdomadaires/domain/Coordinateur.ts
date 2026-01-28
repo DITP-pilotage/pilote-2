@@ -17,6 +17,7 @@ export type Coordinateur = {
   readonly territoires: readonly TerritoireCoordinateur[];
 };
 
+// TODO (CHAN - Rapport) : gestion du multi territoire
 export function estDansPerimetreTerritorial(params: {
   coordinateur: Coordinateur;
   codeTerritoireCompte: string | undefined;
@@ -25,6 +26,6 @@ export function estDansPerimetreTerritorial(params: {
   if (!codeTerritoireCompte) return false;
 
   return coordinateur.territoires.some(
-    (territoire) => territoire.code === codeTerritoireCompte
+    (territoire) => territoire.code === codeTerritoireCompte,
   );
 }

@@ -25,7 +25,9 @@ export class BrevoEnvoieEmailService implements EnvoieEmailService {
     const templateParams = {
       prenom: rapport.coordinateur.prenom,
       nom: rapport.coordinateur.nom,
-      territoire: rapport.coordinateur.territoires.map((t) => t.nom).join(", "),
+      territoire: rapport.coordinateur.territoires
+        .map((territoire) => territoire.nom)
+        .join(", "),
       afficherComptesCrees,
       afficherSectionComptes,
       comptesCrees: rapport.sectionActiviteComptes.comptesCrees.map(
@@ -56,6 +58,7 @@ export class BrevoEnvoieEmailService implements EnvoieEmailService {
     };
 
     await this.deps.emailManager.sendTransactionalEmail(
+      // TODO (CHAN - Rapport) : mettre le bon email quand débuggué :)
       [{ email: "antoine.chalifour@gmail.com" }],
       // [{ email: rapport.coordinateur.email }],
       TEMPLATE_ID_RAPPORT_COORDINATEURS,

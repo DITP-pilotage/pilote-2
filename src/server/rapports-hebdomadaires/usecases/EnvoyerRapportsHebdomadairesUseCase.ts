@@ -91,9 +91,6 @@ export class EnvoyerRapportsHebdomadairesUseCase {
       const messageErreur =
         error instanceof Error ? error.message : String(error);
 
-      console.log("----------------------------------");
-      console.log(error);
-      console.log("----------------------------------");
       logger.error("Échec envoi email", {
         rapportId: rapport.id,
         coordinateurEmail: rapport.coordinateur.email,

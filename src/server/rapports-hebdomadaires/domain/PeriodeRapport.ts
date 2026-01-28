@@ -8,7 +8,6 @@ export function calculerPeriodeDernierLundiNeufHeures(params: {
 }): PeriodeRapport {
   const { maintenant } = params;
 
-  // Find previous Monday
   const jourActuel = maintenant.getDay();
   const joursDepuisLundi = jourActuel === 0 ? 6 : jourActuel - 1;
 

@@ -3,10 +3,7 @@ import {
   Coordinateur,
   ProfilCoordinateur,
 } from "@/server/rapports-hebdomadaires/domain/Coordinateur";
-import {
-  PrismaUtilisateursQuery,
-  UtilisateurDTO,
-} from "@/server/gestion-utilisateur/infrastructure/queries/PrismaUtilisateursQuery";
+import { PrismaUtilisateursQuery } from "@/server/gestion-utilisateur/infrastructure/queries/PrismaUtilisateursQuery";
 
 export class GestionUtilisateurCoordinateurGateway
   implements CoordinateurGateway
@@ -23,13 +20,7 @@ export class GestionUtilisateurCoordinateurGateway
     const utilisateurs =
       await this.deps.utilisateursQuery.recupererParProfils(profils);
 
-    return utilisateurs.map((utilisateur) =>
-      this.mapToCoordinateur(utilisateur),
-    );
-  }
-
-  private mapToCoordinateur(utilisateur: UtilisateurDTO): Coordinateur {
-    return {
+    return utilisateurs.map((utilisateur) => ({
       id: utilisateur.id,
       email: utilisateur.email,
       nom: utilisateur.nom,
@@ -38,8 +29,9 @@ export class GestionUtilisateurCoordinateurGateway
       territoires: utilisateur.territoires.map((territoire) => ({
         code: territoire.code,
         nom: territoire.nom,
+        // TODO (CHAN - Rapport) : gérer la maille NAT
         maille: territoire.maille === "REG" ? "REG" : "DEPT",
       })),
-    };
+    }));
   }
 }

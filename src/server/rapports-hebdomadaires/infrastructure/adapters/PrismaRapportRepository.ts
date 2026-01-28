@@ -68,6 +68,7 @@ export class PrismaRapportRepository implements RapportRepository {
           nom: row.coordinateur_nom,
           prenom: row.coordinateur_prenom,
           profil: row.coordinateur_profil as ProfilCoordinateur,
+          // TODO (CHAN - Rapport) : multi territoire
           territoires: [
             {
               code: row.territoire_code,

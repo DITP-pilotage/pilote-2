@@ -119,12 +119,14 @@ export class ProduireRapportsHebdomadairesUseCase {
   }): Promise<RapportHebdomadaire | null> {
     const { coordinateur, activiteGlobale, periode, maintenant } = params;
 
-    const evenementsFiltres = activiteGlobale.filter((evt) => {
-      if (evt.compte.email === coordinateur.email) {
+    const evenementsFiltres = activiteGlobale.filter((evenement) => {
+      if (evenement.compte.email === coordinateur.email) {
+        // TODO (CHAN - Rapport) : au final, on exlut ou pas ?
         return false;
       }
 
-      const codeTerritoire = evt.compte.territoires[0]?.code;
+      // TODO (CHAN - Rapport) : gérer le multi territoire
+      const codeTerritoire = evenement.compte.territoires[0]?.code;
       return estDansPerimetreTerritorial({
         coordinateur,
         codeTerritoireCompte: codeTerritoire,
