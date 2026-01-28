@@ -10,6 +10,7 @@ import { BoutonContacterEquipePilote } from "@/components/PageAccueil/BoutonCont
 import { BoutonSeConnecter } from "@/components/_commons/BoutonSeConnecter";
 import { BoutonApplicationsPilote } from "@/components/_commons/MiseEnPage/EnTete/BoutonApplicationsPilote";
 import { ClientOnly } from "@/components/shared/ClientOnly";
+import { LogoPilote } from "@/components/_commons/LogoPilote";
 
 const InformationsEspaceConnecte = () => {
   const { data: session } = useSession();
@@ -57,17 +58,7 @@ export const EnTete = () => {
           <div className="fr-header__body-row">
             <div className="fr-header__brand fr-enlarge-link">
               <div className="fr-header__brand-top fr-grid-row">
-                <div className="fr-header__logo flex align-center fr-col-10 fr-col-md-11 fr-col-lg-12">
-                  <p className="fr-logo fr-mr-5v">Gouvernement</p>
-                  <div>
-                    <Link href="/" title="Retour à l'accueil du site">
-                      <p className="fr-header__service-title">PILOTE</p>
-                    </Link>
-                    <p className="fr-header__service-tagline fr-text--sm">
-                      Piloter l'action publique par les résultats
-                    </p>
-                  </div>
-                </div>
+                <LogoPilote />
                 {!!session ? (
                   <div className="fr-header__navbar fr-col-2 fr-col-md-1 fr-lg-col-0">
                     <button

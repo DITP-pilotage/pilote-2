@@ -1,7 +1,7 @@
 import { forwardRef } from "react";
 import { Line } from "react-chartjs-2";
-import Link from "next/link";
 import Titre from "@/client/components/_commons/Titre/Titre";
+import { LogoPilote } from "@/components/_commons/LogoPilote";
 import LineChart from "./LineChart/LineChart";
 import IndicateurÉvolutionStyled from "./IndicateurÉvolution.styled";
 import type { BaseEvolutionProps } from "./types";
@@ -56,17 +56,7 @@ export const BaseIndicateurEvolution = forwardRef<
         )}
 
         {modeImpression ? (
-          <div className="border-t border-gray-300 flex items-center gap-10 p-4 mt-4">
-            <p className="fr-logo">Gouvernement</p>
-            <div>
-              <Link href="/" title="Retour à l'accueil du site">
-                <p className="fr-header__service-title mb-0">PILOTE</p>
-              </Link>
-              <p className="fr-header__service-tagline fr-text--sm mb-0">
-                Piloter l'action publique par les résultats
-              </p>
-            </div>
-          </div>
+          <LogoPilote className="border-t border-gray-300 p-4 mt-4" />
         ) : null}
       </IndicateurÉvolutionStyled>
     );
