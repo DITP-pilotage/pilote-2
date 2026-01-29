@@ -16,7 +16,7 @@ describe("estDansPerimetreTerritorial", () => {
     territoires,
   });
 
-  describe("pas de territories à comparer", () => {
+  describe("pas de territoires à comparer", () => {
     it("retourne false", () => {
       const coordinateur = createCoordinateur([
         { code: "REG-01", nom: "Île-de-France", maille: "REG" },
