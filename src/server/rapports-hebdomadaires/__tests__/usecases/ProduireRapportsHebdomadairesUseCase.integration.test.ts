@@ -192,7 +192,7 @@ describe("ProduireRapportsHebdomadairesUseCase", () => {
   );
 
   it(
-    "les coordinateurs départementaux reçoivent uniquement les événements de leur département",
+    "les coordinateurs départementaux reçoivent les événements de leur département et de la région parente",
     createIntegrationTest(async () => {
       // Given
       const territoireReg = await fixtures.territoire({
@@ -247,11 +247,14 @@ describe("ProduireRapportsHebdomadairesUseCase", () => {
       expect(rapports[0].contenu_rapport).toEqual(
         expect.objectContaining({
           sectionActiviteComptes: expect.objectContaining({
-            comptesCrees: [
+            comptesCrees: expect.arrayContaining([
+              expect.objectContaining({
+                email: compteDansRegion.email,
+              }),
               expect.objectContaining({
                 email: compteDansDept.email,
               }),
-            ],
+            ]),
           }),
         }),
       );
