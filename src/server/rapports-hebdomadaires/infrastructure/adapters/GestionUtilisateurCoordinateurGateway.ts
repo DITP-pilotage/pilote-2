@@ -4,6 +4,7 @@ import {
   ProfilCoordinateur,
 } from "@/server/rapports-hebdomadaires/domain/Coordinateur";
 import { PrismaUtilisateursQuery } from "@/server/gestion-utilisateur/infrastructure/queries/PrismaUtilisateursQuery";
+import { filtrerTerritoireNat } from "@/server/rapports-hebdomadaires/infrastructure/adapters/utils/territoires";
 
 export class GestionUtilisateurCoordinateurGateway
   implements CoordinateurGateway
@@ -26,18 +27,7 @@ export class GestionUtilisateurCoordinateurGateway
       nom: utilisateur.nom,
       prenom: utilisateur.prenom,
       profil: utilisateur.profilCode as ProfilCoordinateur,
-      territoires: utilisateur.territoires.map((territoire) => ({
-        code: territoire.code,
-        nom: territoire.nom,
-        // TODO (CHAN - Rapport) : gérer la maille NAT
-        maille: territoire.maille === "REG" ? "REG" : "DEPT",
-        enfants: territoire.enfants.map((enfant) => ({
-          code: enfant.code,
-          nom: enfant.nom,
-          maille: enfant.maille === "REG" ? "REG" : "DEPT",
-          enfants: [],
-        })),
-      })),
+      territoires: utilisateur.territoires.filter(filtrerTerritoireNat),
     }));
   }
 }
