@@ -1,31 +1,31 @@
 export type CompteActivite = {
-  readonly email: string;
-  readonly nom: string;
-  readonly prenom: string;
-  readonly profil: string;
-  readonly territoires: readonly {
-    readonly code: string;
-    readonly nom: string;
+  email: string;
+  nom: string;
+  prenom: string;
+  profil: string;
+  territoires: {
+    code: string;
+    nom: string;
   }[];
 };
 
 export type EvenementCompte =
   | {
-      readonly type: "COMPTE_CREE";
-      readonly compte: CompteActivite;
-      readonly date: Date;
+      type: "COMPTE_CREE";
+      compte: CompteActivite;
+      date: Date;
     }
   | {
-      readonly type: "COMPTE_DESACTIVE";
-      readonly compte: CompteActivite;
-      readonly date: Date;
+      type: "COMPTE_DESACTIVE";
+      compte: CompteActivite;
+      date: Date;
     };
 
 export type ActiviteComptes = readonly EvenementCompte[];
 
 export function grouperEvenementsParType(activite: ActiviteComptes): {
-  comptesCrees: readonly CompteActivite[];
-  comptesDesactives: readonly CompteActivite[];
+  comptesCrees: CompteActivite[];
+  comptesDesactives: CompteActivite[];
 } {
   return {
     comptesCrees: activite

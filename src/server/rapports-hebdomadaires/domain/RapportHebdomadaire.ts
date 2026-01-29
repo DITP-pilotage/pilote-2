@@ -6,23 +6,23 @@ import { SectionActiviteComptes } from "./SectionActiviteComptes";
 import { CompteActivite } from "./CompteActivite";
 
 export type RapportHebdomadaire = {
-  readonly id: string;
-  readonly coordinateur: Coordinateur;
-  readonly periode: PeriodeRapport;
-  readonly sectionActiviteComptes: SectionActiviteComptes;
-  readonly statutEnvoi: $Enums.statut_envoi_rapport;
-  readonly dateCreation: Date;
-  readonly dateEnvoi?: Date;
-  readonly dateDerniereTentative?: Date;
-  readonly nombreTentatives: number;
-  readonly erreurEnvoi?: string;
+  id: string;
+  coordinateur: Coordinateur;
+  periode: PeriodeRapport;
+  sectionActiviteComptes: SectionActiviteComptes;
+  statutEnvoi: $Enums.statut_envoi_rapport;
+  dateCreation: Date;
+  dateEnvoi?: Date;
+  dateDerniereTentative?: Date;
+  nombreTentatives: number;
+  erreurEnvoi?: string;
 };
 
 export function creerRapportHebdomadaire(params: {
   coordinateur: Coordinateur;
   periode: PeriodeRapport;
-  comptesCrees: readonly CompteActivite[];
-  comptesDesactives: readonly CompteActivite[];
+  comptesCrees: CompteActivite[];
+  comptesDesactives: CompteActivite[];
   dateCreation: Date;
 }): RapportHebdomadaire {
   return {
