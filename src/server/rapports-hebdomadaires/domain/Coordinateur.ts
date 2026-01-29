@@ -6,6 +6,7 @@ export type TerritoireCoordinateur = {
   code: string;
   nom: string;
   maille: "REG" | "DEPT";
+  enfants: TerritoireCoordinateur[];
 };
 
 export type Coordinateur = {
@@ -24,7 +25,15 @@ export function estDansPerimetreTerritorial(params: {
   const { coordinateur, codesTerritoires } = params;
   if (codesTerritoires.length === 0) return false;
 
-  return coordinateur.territoires.some((territoire) =>
-    codesTerritoires.includes(territoire.code),
+  const getAllCodes = (territoire: TerritoireCoordinateur): string[] => [
+    territoire.code,
+    ...territoire.enfants.flatMap(getAllCodes),
+  ];
+
+  const tousLesCodesCoordinateur =
+    coordinateur.territoires.flatMap(getAllCodes);
+
+  return codesTerritoires.some((code) =>
+    tousLesCodesCoordinateur.includes(code),
   );
 }

@@ -1,10 +1,11 @@
-import { $Enums } from "@prisma/client";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
+import { mapTerritoiresToDTO } from "@/server/gestion-utilisateur/infrastructure/utils/territoires";
 
 export type TerritoireDTO = {
   code: string;
   nom: string;
   maille: "DEPT" | "REG" | "NAT";
+  enfants: TerritoireDTO[];
 };
 
 export type UtilisateurDTO = {
@@ -63,28 +64,13 @@ export class PrismaUtilisateursQuery {
 
       if (territoires.length === 0) continue;
 
-      const territoiresFlat: TerritoireDTO[] = territoires.flatMap(
-        (territoire) => [
-          {
-            code: territoire.code,
-            nom: territoire.nom,
-            maille: this.mapMaille(territoire.maille),
-          },
-          ...territoire.territoire_enfant.map((enfant) => ({
-            code: enfant.code,
-            nom: enfant.nom,
-            maille: this.mapMaille(enfant.maille),
-          })),
-        ],
-      );
-
       utilisateursDTO.push({
         id: utilisateur.id,
         email: utilisateur.email,
         nom: utilisateur.nom,
         prenom: utilisateur.prenom,
         profilCode: utilisateur.profilCode,
-        territoires: territoiresFlat,
+        territoires: mapTerritoiresToDTO(territoires),
       });
     }
 
@@ -95,16 +81,5 @@ export class PrismaUtilisateursQuery {
     habilitations: { territoires: string[] }[],
   ): string[] {
     return habilitations.flatMap((h) => h.territoires);
-  }
-
-  private mapMaille(maille: $Enums.Maille): "DEPT" | "REG" | "NAT" {
-    switch (maille) {
-      case "DEPT":
-        return "DEPT";
-      case "REG":
-        return "REG";
-      case "NAT":
-        return "NAT";
-    }
   }
 }

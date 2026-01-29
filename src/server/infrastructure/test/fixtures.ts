@@ -409,7 +409,12 @@ export const fixtures = {
             prenom: "Test",
             profil: "COORDINATEUR_REGION",
             territoires: [
-              { code: "REG-11", nom: "Île-de-France", maille: "REG" },
+              {
+                code: "REG-11",
+                nom: "Île-de-France",
+                maille: "REG",
+                enfants: [],
+              },
             ],
           },
           sectionActiviteComptes: {

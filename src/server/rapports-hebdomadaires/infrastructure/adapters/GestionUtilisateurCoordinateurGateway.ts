@@ -31,6 +31,12 @@ export class GestionUtilisateurCoordinateurGateway
         nom: territoire.nom,
         // TODO (CHAN - Rapport) : gérer la maille NAT
         maille: territoire.maille === "REG" ? "REG" : "DEPT",
+        enfants: territoire.enfants.map((enfant) => ({
+          code: enfant.code,
+          nom: enfant.nom,
+          maille: enfant.maille === "REG" ? "REG" : "DEPT",
+          enfants: [],
+        })),
       })),
     }));
   }

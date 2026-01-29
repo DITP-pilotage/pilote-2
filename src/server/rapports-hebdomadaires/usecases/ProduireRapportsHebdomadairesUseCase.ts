@@ -111,14 +111,17 @@ export class ProduireRapportsHebdomadairesUseCase {
     };
   }
 
-  private async creerRapportPourCoordinateur(params: {
+  private async creerRapportPourCoordinateur({
+    coordinateur,
+    activiteGlobale,
+    periode,
+    maintenant,
+  }: {
     coordinateur: Coordinateur;
     activiteGlobale: ActiviteComptes;
     periode: { dateDebut: Date; dateFin: Date };
     maintenant: Date;
   }): Promise<RapportHebdomadaire | null> {
-    const { coordinateur, activiteGlobale, periode, maintenant } = params;
-
     const evenementsFiltres = activiteGlobale.filter((evenement) => {
       if (evenement.compte.email === coordinateur.email) {
         // TODO (CHAN - Rapport) : au final, on exlut ou pas ?
@@ -127,9 +130,10 @@ export class ProduireRapportsHebdomadairesUseCase {
 
       return estDansPerimetreTerritorial({
         coordinateur,
-        codesTerritoires: evenement.compte.territoires.map(
-          (territoire) => territoire.code,
-        ),
+        codesTerritoires: evenement.compte.territoires.flatMap((territoire) => [
+          territoire.code,
+          ...territoire.enfants.map((enfant) => enfant.code),
+        ]),
       });
     });
 

@@ -1,9 +1,11 @@
 import { PrismaPilote } from "@/server/db/PrismaPilote";
+import { mapTerritoiresToDTO } from "@/server/gestion-utilisateur/infrastructure/utils/territoires";
 
 export type TerritoireDTO = {
   code: string;
   nom: string;
   maille: "DEPT" | "REG" | "NAT";
+  enfants: TerritoireDTO[];
 };
 
 export type CompteDTO = {
@@ -104,14 +106,18 @@ export class PrismaActiviteComptesQuery {
       .getInstance()
       .territoire.findMany({
         where: { code: { in: Array.from(tousLesCodes) } },
-        select: { code: true, nom: true, maille: true },
+        include: {
+          territoire_enfant: {
+            select: {
+              code: true,
+              nom: true,
+              maille: true,
+            },
+          },
+        },
       });
 
-    return territoires.map((territoire) => ({
-      code: territoire.code,
-      nom: territoire.nom,
-      maille: territoire.maille,
-    }));
+    return mapTerritoiresToDTO(territoires);
   }
 
   private mapToCompteDTO(

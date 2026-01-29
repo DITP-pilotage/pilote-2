@@ -1,12 +1,16 @@
+export type TerritoireCompte = {
+  code: string;
+  nom: string;
+  maille: "DEPT" | "REG" | "NAT";
+  enfants: TerritoireCompte[];
+};
+
 export type CompteActivite = {
   email: string;
   nom: string;
   prenom: string;
   profil: string;
-  territoires: {
-    code: string;
-    nom: string;
-  }[];
+  territoires: TerritoireCompte[];
 };
 
 export type EvenementCompte =

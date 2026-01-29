@@ -19,8 +19,8 @@ describe("PrismaActiviteComptesQuery", () => {
       const dateFin = new Date("2026-01-20T09:00:00Z");
 
       const territoire = await fixtures.territoire({
-        code: "REG-11",
-        nom: "Île-de-France",
+        code: "REG-99",
+        nom: "Région Test",
         maille: "REG",
       });
 
@@ -52,9 +52,10 @@ describe("PrismaActiviteComptesQuery", () => {
             profil: "PREFET_REGION",
             territoires: [
               {
-                code: "REG-11",
-                nom: "Île-de-France",
+                code: "REG-99",
+                nom: "Région Test",
                 maille: "REG",
+                enfants: [],
               },
             ],
           },
@@ -72,8 +73,8 @@ describe("PrismaActiviteComptesQuery", () => {
       const dateFin = new Date("2026-01-20T09:00:00Z");
 
       const territoire = await fixtures.territoire({
-        code: "DEPT-75",
-        nom: "Paris",
+        code: "DEPT-99",
+        nom: "Département Test",
         maille: "DEPT",
       });
 
@@ -106,9 +107,10 @@ describe("PrismaActiviteComptesQuery", () => {
             profil: "COORDINATEUR_DEPARTEMENT",
             territoires: [
               {
-                code: "DEPT-75",
-                nom: "Paris",
+                code: "DEPT-99",
+                nom: "Département Test",
                 maille: "DEPT",
+                enfants: [],
               },
             ],
           },
@@ -126,8 +128,8 @@ describe("PrismaActiviteComptesQuery", () => {
       const dateFin = new Date("2026-01-20T09:00:00Z");
 
       const territoire = await fixtures.territoire({
-        code: "REG-11",
-        nom: "Île-de-France",
+        code: "REG-99",
+        nom: "Région Test",
         maille: "REG",
       });
 
@@ -181,9 +183,10 @@ describe("PrismaActiviteComptesQuery", () => {
             profil: "COORDINATEUR_REGION",
             territoires: [
               {
-                code: "REG-11",
-                nom: "Île-de-France",
+                code: "REG-99",
+                nom: "Région Test",
                 maille: "REG",
+                enfants: [],
               },
             ],
           },
@@ -198,9 +201,10 @@ describe("PrismaActiviteComptesQuery", () => {
             profil: "PREFET_REGION",
             territoires: [
               {
-                code: "REG-11",
-                nom: "Île-de-France",
+                code: "REG-99",
+                nom: "Région Test",
                 maille: "REG",
+                enfants: [],
               },
             ],
           },
@@ -215,9 +219,10 @@ describe("PrismaActiviteComptesQuery", () => {
             profil: "SERVICES_DECONCENTRES_REGION",
             territoires: [
               {
-                code: "REG-11",
-                nom: "Île-de-France",
+                code: "REG-99",
+                nom: "Région Test",
                 maille: "REG",
+                enfants: [],
               },
             ],
           },
@@ -235,8 +240,8 @@ describe("PrismaActiviteComptesQuery", () => {
       const dateFin = new Date("2026-01-20T09:00:00Z");
 
       const territoire = await fixtures.territoire({
-        code: "REG-11",
-        nom: "Île-de-France",
+        code: "REG-99",
+        nom: "Région Test",
         maille: "REG",
       });
 
@@ -276,9 +281,10 @@ describe("PrismaActiviteComptesQuery", () => {
             profil: "PREFET_REGION",
             territoires: [
               {
-                code: "REG-11",
-                nom: "Île-de-France",
+                code: "REG-99",
+                nom: "Région Test",
                 maille: "REG",
+                enfants: [],
               },
             ],
           },
@@ -296,14 +302,14 @@ describe("PrismaActiviteComptesQuery", () => {
       const dateFin = new Date("2026-01-20T09:00:00Z");
 
       const territoireReg = await fixtures.territoire({
-        code: "REG-11",
-        nom: "Île-de-France",
+        code: "REG-98",
+        nom: "Région Test 2",
         maille: "REG",
       });
 
       const territoireDept = await fixtures.territoire({
-        code: "DEPT-75",
-        nom: "Paris",
+        code: "DEPT-98",
+        nom: "Département Test 2",
         maille: "DEPT",
       });
 
@@ -342,14 +348,16 @@ describe("PrismaActiviteComptesQuery", () => {
             profil: "COORDINATEUR_REGION",
             territoires: expect.arrayContaining([
               {
-                code: "REG-11",
-                nom: "Île-de-France",
+                code: "REG-98",
+                nom: "Région Test 2",
                 maille: "REG",
+                enfants: [],
               },
               {
-                code: "DEPT-75",
-                nom: "Paris",
+                code: "DEPT-98",
+                nom: "Département Test 2",
                 maille: "DEPT",
+                enfants: [],
               },
             ]),
           },
@@ -368,8 +376,8 @@ describe("PrismaActiviteComptesQuery", () => {
       const dateFin = new Date("2026-01-20T09:00:00Z");
 
       const territoire = await fixtures.territoire({
-        code: "REG-11",
-        nom: "Île-de-France",
+        code: "REG-99",
+        nom: "Région Test",
         maille: "REG",
       });
 
@@ -418,9 +426,10 @@ describe("PrismaActiviteComptesQuery", () => {
             profil: "PREFET_REGION",
             territoires: [
               {
-                code: "REG-11",
-                nom: "Île-de-France",
+                code: "REG-99",
+                nom: "Région Test",
                 maille: "REG",
+                enfants: [],
               },
             ],
           },

@@ -3,42 +3,15 @@ import { z } from "zod";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { RapportRepository } from "@/server/rapports-hebdomadaires/domain/ports/RapportRepository";
 import { RapportHebdomadaire } from "@/server/rapports-hebdomadaires/domain/RapportHebdomadaire";
-import { ProfilCoordinateur } from "@/server/rapports-hebdomadaires/domain/Coordinateur";
+import {
+  Coordinateur,
+  ProfilCoordinateur,
+} from "@/server/rapports-hebdomadaires/domain/Coordinateur";
+import { SectionActiviteComptes } from "@/server/rapports-hebdomadaires/domain/SectionActiviteComptes";
 
 const contenuRapportSchema = z.object({
-  coordinateur: z.object({
-    email: z.string(),
-    nom: z.string(),
-    prenom: z.string(),
-    profil: z.enum(["COORDINATEUR_REGION", "COORDINATEUR_DEPARTEMENT"]),
-    territoires: z.array(
-      z.object({
-        code: z.string(),
-        nom: z.string(),
-        maille: z.enum(["REG", "DEPT"]),
-      }),
-    ),
-  }),
-  sectionActiviteComptes: z.object({
-    comptesCrees: z.array(
-      z.object({
-        email: z.string(),
-        nom: z.string(),
-        prenom: z.string(),
-        profil: z.string(),
-        territoires: z.array(z.object({ code: z.string(), nom: z.string() })),
-      }),
-    ),
-    comptesDesactives: z.array(
-      z.object({
-        email: z.string(),
-        nom: z.string(),
-        prenom: z.string(),
-        profil: z.string(),
-        territoires: z.array(z.object({ code: z.string(), nom: z.string() })),
-      }),
-    ),
-  }),
+  coordinateur: z.custom<Coordinateur>(),
+  sectionActiviteComptes: z.custom<SectionActiviteComptes>(),
 });
 
 type ContenuRapport = z.infer<typeof contenuRapportSchema>;
@@ -54,13 +27,7 @@ export class PrismaRapportRepository implements RapportRepository {
     const prisma = this.deps.prisma.getInstance();
 
     const contenuRapport: ContenuRapport = {
-      coordinateur: {
-        email: rapport.coordinateur.email,
-        nom: rapport.coordinateur.nom,
-        prenom: rapport.coordinateur.prenom,
-        profil: rapport.coordinateur.profil,
-        territoires: rapport.coordinateur.territoires,
-      },
+      coordinateur: rapport.coordinateur,
       sectionActiviteComptes: rapport.sectionActiviteComptes,
     };
 
