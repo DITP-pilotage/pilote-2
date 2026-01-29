@@ -4,7 +4,7 @@
       <div class="fr-container fr-container--fluid fr-mb-md-14v">
         <div class="fr-grid-row fr-grid-row-gutters fr-grid-row--center">
           <div class="fr-col-11 fr-col-md-8 fr-col-lg-8">
-            <a href="${properties.URL_APPLICATION!}" class="fr-link">
+            <a href="${url.loginUrl}" class="fr-link">
               <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path fill-rule="evenodd" clip-rule="evenodd" d="M3.21802 5.33263H11.3327V6.66597H3.21802L6.79402 10.242L5.85135 11.1846L0.666016 5.9993L5.85135 0.813965L6.79402 1.75663L3.21802 5.33263Z" fill="#000091" />
               </svg>
