@@ -1,22 +1,24 @@
+import { DateTime } from "luxon";
+
 export type PeriodeRapport = {
   readonly dateDebut: Date;
   readonly dateFin: Date;
 };
 
-export function calculerPeriodeDernierLundiNeufHeures(params: {
+export function calculerPeriodeDernierLundiNeufHeures({
+  maintenant,
+}: {
   maintenant: Date;
 }): PeriodeRapport {
-  const { maintenant } = params;
+  const maintenantParis =
+    DateTime.fromJSDate(maintenant).setZone("Europe/Paris");
 
-  const jourActuel = maintenant.getDay();
-  const joursDepuisLundi = jourActuel === 0 ? 6 : jourActuel - 1;
-
-  const dernierLundi = new Date(maintenant);
-  dernierLundi.setDate(maintenant.getDate() - joursDepuisLundi);
-  dernierLundi.setHours(9, 0, 1, 0);
+  const dernierLundi = maintenantParis
+    .startOf("week")
+    .set({ hour: 9, minute: 0, second: 1, millisecond: 0 });
 
   return {
-    dateDebut: dernierLundi,
+    dateDebut: dernierLundi.toJSDate(),
     dateFin: maintenant,
   };
 }
