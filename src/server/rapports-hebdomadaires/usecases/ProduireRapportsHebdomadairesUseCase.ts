@@ -30,6 +30,7 @@ import {
   SectionChantierVA,
   EvenementVA,
   ActiviteIndicateurVA,
+  SectionIndicateurVA,
 } from "@/server/rapports-hebdomadaires/domain/SectionActiviteChantiersVA";
 
 const PROFILS_CONCERNES: ProfilTerritorialise[] = [
@@ -287,7 +288,10 @@ export class ProduireRapportsHebdomadairesUseCase {
 
     const activitesParChantier = new Map<
       string,
-      { chantier: ChantierAvecIndicateurs; indicateurs: Map<string, SectionIndicateurVA> }
+      {
+        chantier: ChantierAvecIndicateurs;
+        indicateurs: Map<string, SectionIndicateurVA>;
+      }
     >();
 
     for (const activite of activitesVA) {
@@ -333,7 +337,7 @@ export class ProduireRapportsHebdomadairesUseCase {
         },
         valeurAvant: activite.valeurAvant,
         valeurApres: activite.valeurApres,
-        dateChangement: activite.dateChangement,
+        dateChangement: activite.dateChangement.toISOString(),
       });
     }
 

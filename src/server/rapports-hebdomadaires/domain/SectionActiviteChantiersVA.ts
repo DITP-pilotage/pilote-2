@@ -45,7 +45,7 @@ export type SectionTerritoireVA = {
   territoire: TerritoireInfo;
   valeurAvant: number | null;
   valeurApres: number | null;
-  dateChangement: Date;
+  dateChangement: string;
 };
 
 export type SectionIndicateurVA = {

@@ -71,9 +71,9 @@ export class BrevoEnvoieEmailService implements EnvoieEmailService {
               territoire.valeurApres !== null
                 ? this.formatValeur(territoire.valeurApres)
                 : "-",
-            dateChangement: new Date(
-              territoire.dateChangement,
-            ).toLocaleDateString("fr-FR"),
+            dateChangement: new Date(territoire.dateChangement).toLocaleDateString(
+              "fr-FR",
+            ),
           })),
         ),
     );
