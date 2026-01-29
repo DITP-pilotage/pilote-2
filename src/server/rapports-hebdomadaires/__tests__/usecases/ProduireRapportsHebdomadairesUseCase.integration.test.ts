@@ -76,19 +76,21 @@ describe("ProduireRapportsHebdomadairesUseCase", () => {
       const rapports = await prisma.rapport_hebdomadaire_coordinateur.findMany({
         where: { coordinateur_id: coordinateur.id },
       });
-      expect(rapports).toHaveLength(1);
-      expect(rapports[0].statut_envoi).toBe("CREE");
-      expect(rapports[0].contenu_rapport).toEqual(
+      expect(rapports).toEqual([
         expect.objectContaining({
-          sectionActiviteComptes: expect.objectContaining({
-            comptesCrees: expect.arrayContaining([
-              expect.objectContaining({
-                email: compteCree.email,
-              }),
-            ]),
+          coordinateur_id: coordinateur.id,
+          statut_envoi: "CREE",
+          contenu_rapport: expect.objectContaining({
+            sectionActiviteComptes: expect.objectContaining({
+              comptesCrees: [
+                expect.objectContaining({
+                  email: compteCree.email,
+                }),
+              ],
+            }),
           }),
         }),
-      );
+      ]);
     }),
   );
 
@@ -178,16 +180,24 @@ describe("ProduireRapportsHebdomadairesUseCase", () => {
       const rapports = await prisma.rapport_hebdomadaire_coordinateur.findMany({
         where: { coordinateur_id: coordinateur.id },
       });
-      expect(rapports[0].contenu_rapport).toEqual(
+      expect(rapports).toEqual([
         expect.objectContaining({
-          sectionActiviteComptes: expect.objectContaining({
-            comptesCrees: expect.arrayContaining([
-              expect.any(Object),
-              expect.any(Object),
-            ]),
+          coordinateur_id: coordinateur.id,
+          statut_envoi: "CREE",
+          contenu_rapport: expect.objectContaining({
+            sectionActiviteComptes: expect.objectContaining({
+              comptesCrees: [
+                expect.objectContaining({
+                  email: compteDansRegion.email,
+                }),
+                expect.objectContaining({
+                  email: compteDansDept.email,
+                }),
+              ],
+            }),
           }),
         }),
-      );
+      ]);
     }),
   );
 
@@ -260,20 +270,24 @@ describe("ProduireRapportsHebdomadairesUseCase", () => {
       const rapports = await prisma.rapport_hebdomadaire_coordinateur.findMany({
         where: { coordinateur_id: coordinateur.id },
       });
-      expect(rapports[0].contenu_rapport).toEqual(
+      expect(rapports).toEqual([
         expect.objectContaining({
-          sectionActiviteComptes: expect.objectContaining({
-            comptesCrees: [
-              expect.objectContaining({
-                email: compteDansRegion.email,
-              }),
-              expect.objectContaining({
-                email: compteDansDept.email,
-              }),
-            ],
+          coordinateur_id: coordinateur.id,
+          statut_envoi: "CREE",
+          contenu_rapport: expect.objectContaining({
+            sectionActiviteComptes: expect.objectContaining({
+              comptesCrees: [
+                expect.objectContaining({
+                  email: compteDansRegion.email,
+                }),
+                expect.objectContaining({
+                  email: compteDansDept.email,
+                }),
+              ],
+            }),
           }),
         }),
-      );
+      ]);
     }),
   );
 
@@ -323,17 +337,21 @@ describe("ProduireRapportsHebdomadairesUseCase", () => {
       const rapports = await prisma.rapport_hebdomadaire_coordinateur.findMany({
         where: { coordinateur_id: coordinateur.id },
       });
-      expect(rapports[0].contenu_rapport).toEqual(
+      expect(rapports).toEqual([
         expect.objectContaining({
-          sectionActiviteComptes: expect.objectContaining({
-            comptesCrees: [
-              expect.objectContaining({
-                email: comptePrefet.email,
-              }),
-            ],
+          coordinateur_id: coordinateur.id,
+          statut_envoi: "CREE",
+          contenu_rapport: expect.objectContaining({
+            sectionActiviteComptes: expect.objectContaining({
+              comptesCrees: [
+                expect.objectContaining({
+                  email: comptePrefet.email,
+                }),
+              ],
+            }),
           }),
         }),
-      );
+      ]);
     }),
   );
 });

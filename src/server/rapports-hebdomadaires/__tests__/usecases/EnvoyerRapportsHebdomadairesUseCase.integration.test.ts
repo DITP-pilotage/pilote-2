@@ -3,7 +3,10 @@ import { fixtures } from "@/server/infrastructure/test/fixtures";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { getPrisma } from "@/server/db/PrismaTransaction";
 import { EnvoyerRapportsHebdomadairesUseCase } from "@/server/rapports-hebdomadaires/usecases/EnvoyerRapportsHebdomadairesUseCase";
-import { PrismaRapportRepository } from "@/server/rapports-hebdomadaires/infrastructure/adapters/PrismaRapportRepository";
+import {
+  ContenuRapport,
+  PrismaRapportRepository,
+} from "@/server/rapports-hebdomadaires/infrastructure/adapters/PrismaRapportRepository";
 import { EnvoieEmailService } from "@/server/rapports-hebdomadaires/domain/ports/EnvoieEmailService";
 
 class StubEnvoieEmailServiceSuccess implements EnvoieEmailService {
@@ -57,22 +60,22 @@ describe("EnvoyerRapportsHebdomadairesUseCase", () => {
           where: { id: { in: [rapport1.id, rapport2.id] } },
         });
 
-      expect(rapportsApres).toEqual(
-        expect.arrayContaining([
-          expect.objectContaining({
-            id: rapport1.id,
-            statut_envoi: "ENVOYE",
-            date_envoi: expect.any(Date),
-            nombre_tentatives: 1,
-          }),
-          expect.objectContaining({
-            id: rapport2.id,
-            statut_envoi: "ENVOYE",
-            date_envoi: expect.any(Date),
-            nombre_tentatives: 1,
-          }),
-        ]),
-      );
+      expect(rapportsApres).toEqual([
+        expect.objectContaining({
+          id: rapport1.id,
+          statut_envoi: "ENVOYE",
+          nombre_tentatives: 1,
+        }),
+        expect.objectContaining({
+          id: rapport2.id,
+          statut_envoi: "ENVOYE",
+          nombre_tentatives: 1,
+        }),
+      ]);
+
+      for (const rapport of rapportsApres) {
+        expect(rapport.date_envoi).not.toBeNull();
+      }
     }),
   );
 
@@ -104,7 +107,7 @@ describe("EnvoyerRapportsHebdomadairesUseCase", () => {
       expect(result.emailsEnEchec).toBe(1);
       expect(result.erreursDetails).toEqual([
         {
-          email: "coordinateur@example.com",
+          email: (rapport.contenu_rapport as ContenuRapport).coordinateur.email,
           erreur: "Timeout Brevo",
         },
       ]);
@@ -114,14 +117,16 @@ describe("EnvoyerRapportsHebdomadairesUseCase", () => {
           where: { id: rapport.id },
         });
 
+      expect(rapportApres).not.toBeNull();
       expect(rapportApres).toEqual(
         expect.objectContaining({
           statut_envoi: "ECHEC",
           erreur_envoi: "Timeout Brevo",
           nombre_tentatives: 1,
-          date_derniere_tentative: expect.any(Date),
         }),
       );
+
+      expect(rapportApres!.date_derniere_tentative).not.toBeNull();
     }),
   );
 
@@ -176,8 +181,10 @@ describe("EnvoyerRapportsHebdomadairesUseCase", () => {
           where: { id: rapport2.id },
         });
 
-      expect(rapport1Apres?.statut_envoi).toBe("ECHEC");
-      expect(rapport2Apres?.statut_envoi).toBe("ENVOYE");
+      expect(rapport1Apres).not.toBeNull();
+      expect(rapport1Apres!.statut_envoi).toBe("ECHEC");
+      expect(rapport2Apres).not.toBeNull();
+      expect(rapport2Apres!.statut_envoi).toBe("ENVOYE");
     }),
   );
 

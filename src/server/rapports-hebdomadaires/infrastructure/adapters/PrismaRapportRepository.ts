@@ -14,7 +14,7 @@ const contenuRapportSchema = z.object({
   sectionActiviteComptes: z.custom<SectionActiviteComptes>(),
 });
 
-type ContenuRapport = z.infer<typeof contenuRapportSchema>;
+export type ContenuRapport = z.infer<typeof contenuRapportSchema>;
 
 export class PrismaRapportRepository implements RapportRepository {
   constructor(
