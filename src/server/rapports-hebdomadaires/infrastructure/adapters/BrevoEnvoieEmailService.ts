@@ -53,6 +53,28 @@ export class BrevoEnvoieEmailService implements EnvoieEmailService {
             : undefined,
       }));
 
+    const afficherSectionChantiersVA =
+      rapport.sectionActiviteChantiersVA.chantiers.length > 0;
+
+    const chantiersVA = rapport.sectionActiviteChantiersVA.chantiers.map(
+      (chantier) => ({
+        nomChantier: chantier.chantier.nom,
+        indicateurs: chantier.indicateurs.map((indic) => ({
+          nomIndicateur: indic.indicateur.nom,
+          nomTerritoire: indic.territoire.nom,
+          valeurAvant:
+            indic.valeurAvant !== null
+              ? this.formatValeur(indic.valeurAvant)
+              : "-",
+          valeurApres:
+            indic.valeurApres !== null
+              ? this.formatValeur(indic.valeurApres)
+              : "-",
+          dateChangement: indic.dateChangement.toLocaleDateString("fr-FR"),
+        })),
+      }),
+    );
+
     const templateParams = {
       prenom: rapport.coordinateur.prenom,
       nom: rapport.coordinateur.nom,
@@ -64,6 +86,8 @@ export class BrevoEnvoieEmailService implements EnvoieEmailService {
       comptesCrees,
       afficherComptesDesactives,
       comptesDesactives,
+      afficherSectionChantiersVA,
+      chantiersVA,
     };
 
     await this.deps.emailManager.sendTransactionalEmail(
@@ -77,5 +101,9 @@ export class BrevoEnvoieEmailService implements EnvoieEmailService {
     const prisma = this.deps.prisma.getInstance();
     const profils = await prisma.profil.findMany();
     return new Map(profils.map((p) => [p.code, p.nom]));
+  }
+
+  private formatValeur(valeur: number): string {
+    return Number.isInteger(valeur) ? valeur.toString() : valeur.toFixed(1);
   }
 }

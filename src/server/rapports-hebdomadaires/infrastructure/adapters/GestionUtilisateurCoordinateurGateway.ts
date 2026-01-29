@@ -28,6 +28,7 @@ export class GestionUtilisateurCoordinateurGateway
       prenom: utilisateur.prenom,
       profil: utilisateur.profilCode as ProfilCoordinateur,
       territoires: utilisateur.territoires.filter(filtrerTerritoireNat),
+      chantiers: utilisateur.chantiers,
     }));
   }
 }

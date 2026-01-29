@@ -15,6 +15,7 @@ export type UtilisateurDTO = {
   prenom: string;
   profilCode: string;
   territoires: TerritoireDTO[];
+  chantiers: string[];
 };
 
 interface Dependencies {
@@ -36,6 +37,7 @@ export class PrismaUtilisateursQuery {
         habilitation: {
           select: {
             territoires: true,
+            chantiers: true,
           },
         },
       },
@@ -71,6 +73,7 @@ export class PrismaUtilisateursQuery {
         prenom: utilisateur.prenom,
         profilCode: utilisateur.profilCode,
         territoires: mapTerritoiresToDTO(territoires),
+        chantiers: this.extraireTousLesChantiers(utilisateur.habilitation),
       });
     }
 
@@ -81,5 +84,11 @@ export class PrismaUtilisateursQuery {
     habilitations: { territoires: string[] }[],
   ): string[] {
     return habilitations.flatMap((h) => h.territoires);
+  }
+
+  private extraireTousLesChantiers(
+    habilitations: { chantiers: string[] }[],
+  ): string[] {
+    return habilitations.flatMap((h) => h.chantiers);
   }
 }

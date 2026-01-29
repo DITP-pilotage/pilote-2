@@ -4,12 +4,14 @@ import { Coordinateur } from "./Coordinateur";
 import { PeriodeRapport } from "./PeriodeRapport";
 import { SectionActiviteComptes } from "./SectionActiviteComptes";
 import { CompteActivite } from "./CompteActivite";
+import { SectionActiviteChantiersVA } from "./SectionActiviteChantiersVA";
 
 export type RapportHebdomadaire = {
   id: string;
   coordinateur: Coordinateur;
   periode: PeriodeRapport;
   sectionActiviteComptes: SectionActiviteComptes;
+  sectionActiviteChantiersVA: SectionActiviteChantiersVA;
   statutEnvoi: $Enums.statut_envoi_rapport;
   dateCreation: Date;
   dateEnvoi?: Date;
@@ -23,6 +25,7 @@ export function creerRapportHebdomadaire(params: {
   periode: PeriodeRapport;
   comptesCrees: CompteActivite[];
   comptesDesactives: CompteActivite[];
+  sectionActiviteChantiersVA: SectionActiviteChantiersVA;
   dateCreation: Date;
 }): RapportHebdomadaire {
   return {
@@ -33,6 +36,7 @@ export function creerRapportHebdomadaire(params: {
       comptesCrees: params.comptesCrees,
       comptesDesactives: params.comptesDesactives,
     },
+    sectionActiviteChantiersVA: params.sectionActiviteChantiersVA,
     statutEnvoi: $Enums.statut_envoi_rapport.CREE,
     dateCreation: params.dateCreation,
     nombreTentatives: 0,

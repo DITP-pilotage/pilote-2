@@ -5,6 +5,11 @@ import {
 } from "@/server/rapports-hebdomadaires/domain/ports/ActiviteComptesGateway";
 import { CoordinateurGateway } from "@/server/rapports-hebdomadaires/domain/ports/CoordinateurGateway";
 import { RapportRepository } from "@/server/rapports-hebdomadaires/domain/ports/RapportRepository";
+import {
+  ChantierGateway,
+  ChantierAvecIndicateurs,
+} from "@/server/rapports-hebdomadaires/domain/ports/ChantierGateway";
+import { ActiviteVAGateway } from "@/server/rapports-hebdomadaires/domain/ports/ActiviteVAGateway";
 import { calculerPeriodeDernierLundiNeufHeures } from "@/server/rapports-hebdomadaires/domain/PeriodeRapport";
 import {
   creerRapportHebdomadaire,
@@ -12,12 +17,20 @@ import {
 } from "@/server/rapports-hebdomadaires/domain/RapportHebdomadaire";
 import {
   Coordinateur,
+  TerritoireCoordinateur,
   aDesDroitsSurTerritoire,
 } from "@/server/rapports-hebdomadaires/domain/Coordinateur";
 import {
   ActiviteComptes,
   grouperEvenementsParType,
 } from "@/server/rapports-hebdomadaires/domain/CompteActivite";
+import {
+  foldEvenementsVA,
+  SectionActiviteChantiersVA,
+  SectionChantierVA,
+  EvenementVA,
+  ActiviteIndicateurVA,
+} from "@/server/rapports-hebdomadaires/domain/SectionActiviteChantiersVA";
 
 const PROFILS_CONCERNES: ProfilTerritorialise[] = [
   "COORDINATEUR_REGION",
@@ -40,6 +53,8 @@ export class ProduireRapportsHebdomadairesUseCase {
       activiteComptesGateway: ActiviteComptesGateway;
       coordinateurGateway: CoordinateurGateway;
       rapportRepository: RapportRepository;
+      chantierGateway: ChantierGateway;
+      activiteVAGateway: ActiviteVAGateway;
     },
   ) {}
 
@@ -74,6 +89,48 @@ export class ProduireRapportsHebdomadairesUseCase {
       nombreEvenements: activiteGlobale.length,
     });
 
+    const tousLesChantierIds = [
+      ...new Set(coordinateurs.flatMap((c) => c.chantiers)),
+    ];
+
+    const chantiersAvecIndicateurs =
+      await this.deps.chantierGateway.recupererIndicateursParChantiers(
+        tousLesChantierIds,
+      );
+
+    const tousLesIndicateurIds = Object.values(
+      chantiersAvecIndicateurs,
+    ).flatMap((c) => c.indicateurs.map((i) => i.id));
+
+    const getAllCodes = (territoire: TerritoireCoordinateur): string[] => [
+      territoire.code,
+      ...territoire.enfants.flatMap(getAllCodes),
+    ];
+    const tousLesTerritoireCodes = [
+      ...new Set(
+        coordinateurs.flatMap((c) => c.territoires.flatMap(getAllCodes)),
+      ),
+    ];
+
+    const evenementsDansPeriode =
+      await this.deps.activiteVAGateway.recupererEvenementsDansPeriode({
+        indicateurIds: tousLesIndicateurIds,
+        territoireCodes: tousLesTerritoireCodes,
+        periode,
+      });
+
+    const evenementsAvantPeriode =
+      await this.deps.activiteVAGateway.recupererDernierEvenementAvantPeriode({
+        indicateurIds: tousLesIndicateurIds,
+        territoireCodes: tousLesTerritoireCodes,
+        dateDebut: periode.dateDebut,
+      });
+
+    logger.info("Activité VA récupérée", {
+      nombreEvenementsDansPeriode: evenementsDansPeriode.length,
+      nombreEvenementsAvantPeriode: evenementsAvantPeriode.length,
+    });
+
     let rapportsCrees = 0;
     let coordinateursSansActivite = 0;
 
@@ -84,6 +141,9 @@ export class ProduireRapportsHebdomadairesUseCase {
           activiteGlobale,
           periode,
           maintenant,
+          chantiersAvecIndicateurs,
+          evenementsDansPeriode,
+          evenementsAvantPeriode,
         });
 
         if (rapport) {
@@ -116,11 +176,17 @@ export class ProduireRapportsHebdomadairesUseCase {
     activiteGlobale,
     periode,
     maintenant,
+    chantiersAvecIndicateurs,
+    evenementsDansPeriode,
+    evenementsAvantPeriode,
   }: {
     coordinateur: Coordinateur;
     activiteGlobale: ActiviteComptes;
     periode: { dateDebut: Date; dateFin: Date };
     maintenant: Date;
+    chantiersAvecIndicateurs: Record<string, ChantierAvecIndicateurs>;
+    evenementsDansPeriode: EvenementVA[];
+    evenementsAvantPeriode: EvenementVA[];
   }): Promise<RapportHebdomadaire | null> {
     const evenementsFiltres = activiteGlobale.filter((evenement) => {
       if (evenement.compte.email === coordinateur.email) {
@@ -140,7 +206,45 @@ export class ProduireRapportsHebdomadairesUseCase {
     const { comptesCrees, comptesDesactives } =
       grouperEvenementsParType(evenementsFiltres);
 
-    if (comptesCrees.length === 0 && comptesDesactives.length === 0) {
+    const coordTerritoireCodes = coordinateur.territoires.flatMap((t) => [
+      t.code,
+      ...t.enfants.map((e) => e.code),
+    ]);
+
+    const coordChantierIds = coordinateur.chantiers;
+    const coordIndicateurIds = coordChantierIds.flatMap(
+      (cid) =>
+        chantiersAvecIndicateurs[cid]?.indicateurs.map((i) => i.id) || [],
+    );
+
+    const evenementsFiltresDansPeriode = evenementsDansPeriode.filter(
+      (e) =>
+        coordIndicateurIds.includes(e.indicateurId) &&
+        coordTerritoireCodes.includes(e.territoireCode),
+    );
+
+    const evenementsFiltresAvantPeriode = evenementsAvantPeriode.filter(
+      (e) =>
+        coordIndicateurIds.includes(e.indicateurId) &&
+        coordTerritoireCodes.includes(e.territoireCode),
+    );
+
+    const activitesVA = foldEvenementsVA({
+      evenementsDansPeriode: evenementsFiltresDansPeriode,
+      evenementsAvantPeriode: evenementsFiltresAvantPeriode,
+    });
+
+    const sectionActiviteChantiersVA = this.construireSectionChantiersVA({
+      activitesVA,
+      chantiersAvecIndicateurs,
+      coordChantierIds,
+    });
+
+    const hasAccountActivity =
+      comptesCrees.length > 0 || comptesDesactives.length > 0;
+    const hasVAActivity = sectionActiviteChantiersVA.chantiers.length > 0;
+
+    if (!hasAccountActivity && !hasVAActivity) {
       return null;
     }
 
@@ -149,6 +253,7 @@ export class ProduireRapportsHebdomadairesUseCase {
       periode,
       comptesCrees,
       comptesDesactives,
+      sectionActiviteChantiersVA,
       dateCreation: maintenant,
     });
 
@@ -159,8 +264,65 @@ export class ProduireRapportsHebdomadairesUseCase {
       coordinateurEmail: coordinateur.email,
       nombreComptesCrees: comptesCrees.length,
       nombreComptesDesactives: comptesDesactives.length,
+      nombreChangementsVA: sectionActiviteChantiersVA.chantiers.reduce(
+        (sum, c) => sum + c.indicateurs.length,
+        0,
+      ),
     });
 
     return rapport;
+  }
+
+  private construireSectionChantiersVA(params: {
+    activitesVA: ActiviteIndicateurVA[];
+    chantiersAvecIndicateurs: Record<string, ChantierAvecIndicateurs>;
+    coordChantierIds: string[];
+  }): SectionActiviteChantiersVA {
+    const { activitesVA, chantiersAvecIndicateurs, coordChantierIds } = params;
+
+    const activitesParChantier = new Map<string, SectionChantierVA>();
+
+    for (const activite of activitesVA) {
+      let chantierId: string | null = null;
+      let indicateurInfo: { id: string; nom: string } | null = null;
+
+      for (const [cid, chantier] of Object.entries(chantiersAvecIndicateurs)) {
+        const indic = chantier.indicateurs.find(
+          (i) => i.id === activite.indicateurId,
+        );
+        if (indic) {
+          chantierId = cid;
+          indicateurInfo = indic;
+          break;
+        }
+      }
+
+      if (!chantierId || !indicateurInfo) continue;
+      if (!coordChantierIds.includes(chantierId)) continue;
+
+      const chantier = chantiersAvecIndicateurs[chantierId];
+
+      if (!activitesParChantier.has(chantierId)) {
+        activitesParChantier.set(chantierId, {
+          chantier: { id: chantier.id, nom: chantier.nom },
+          indicateurs: [],
+        });
+      }
+
+      activitesParChantier.get(chantierId)!.indicateurs.push({
+        indicateur: indicateurInfo,
+        territoire: {
+          code: activite.territoireCode,
+          nom: activite.territoireNom,
+        },
+        valeurAvant: activite.valeurAvant,
+        valeurApres: activite.valeurApres,
+        dateChangement: activite.dateChangement,
+      });
+    }
+
+    return {
+      chantiers: Array.from(activitesParChantier.values()),
+    };
   }
 }

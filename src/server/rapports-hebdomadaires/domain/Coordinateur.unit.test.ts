@@ -14,6 +14,7 @@ describe("aDesDroitsSurTerritoire", () => {
     prenom: "Jean",
     profil: "COORDINATEUR_REGION",
     territoires,
+    chantiers: [],
   });
 
   describe("pas de territoires à comparer", () => {
