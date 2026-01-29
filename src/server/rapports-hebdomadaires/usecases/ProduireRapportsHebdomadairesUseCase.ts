@@ -285,7 +285,10 @@ export class ProduireRapportsHebdomadairesUseCase {
   }): SectionActiviteChantiersVA {
     const { activitesVA, chantiersAvecIndicateurs, coordChantierIds } = params;
 
-    const activitesParChantier = new Map<string, SectionChantierVA>();
+    const activitesParChantier = new Map<
+      string,
+      { chantier: ChantierAvecIndicateurs; indicateurs: Map<string, SectionIndicateurVA> }
+    >();
 
     for (const activite of activitesVA) {
       let chantierId: string | null = null;
@@ -309,13 +312,21 @@ export class ProduireRapportsHebdomadairesUseCase {
 
       if (!activitesParChantier.has(chantierId)) {
         activitesParChantier.set(chantierId, {
-          chantier: { id: chantier.id, nom: chantier.nom },
-          indicateurs: [],
+          chantier,
+          indicateurs: new Map(),
         });
       }
 
-      activitesParChantier.get(chantierId)!.indicateurs.push({
-        indicateur: indicateurInfo,
+      const chantierData = activitesParChantier.get(chantierId)!;
+
+      if (!chantierData.indicateurs.has(indicateurInfo.id)) {
+        chantierData.indicateurs.set(indicateurInfo.id, {
+          indicateur: indicateurInfo,
+          territoires: [],
+        });
+      }
+
+      chantierData.indicateurs.get(indicateurInfo.id)!.territoires.push({
         territoire: {
           code: activite.territoireCode,
           nom: activite.territoireNom,
@@ -327,7 +338,10 @@ export class ProduireRapportsHebdomadairesUseCase {
     }
 
     return {
-      chantiers: Array.from(activitesParChantier.values()),
+      chantiers: Array.from(activitesParChantier.values()).map((data) => ({
+        chantier: { id: data.chantier.id, nom: data.chantier.nom },
+        indicateurs: Array.from(data.indicateurs.values()),
+      })),
     };
   }
 }

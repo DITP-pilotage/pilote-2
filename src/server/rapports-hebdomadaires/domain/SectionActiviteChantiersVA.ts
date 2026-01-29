@@ -41,12 +41,16 @@ export type TerritoireInfo = {
   nom: string;
 };
 
-export type SectionIndicateurVA = {
-  indicateur: IndicateurInfo;
+export type SectionTerritoireVA = {
   territoire: TerritoireInfo;
   valeurAvant: number | null;
   valeurApres: number | null;
   dateChangement: Date;
+};
+
+export type SectionIndicateurVA = {
+  indicateur: IndicateurInfo;
+  territoires: SectionTerritoireVA[];
 };
 
 export type SectionChantierVA = {

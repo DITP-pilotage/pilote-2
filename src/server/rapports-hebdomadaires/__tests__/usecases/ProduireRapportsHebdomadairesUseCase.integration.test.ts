@@ -449,7 +449,11 @@ describe("ProduireRapportsHebdomadairesUseCase", () => {
                       indicateur: expect.objectContaining({
                         nom: "Indicateur Test",
                       }),
-                      valeurApres: 75,
+                      territoires: [
+                        expect.objectContaining({
+                          valeurApres: 75,
+                        }),
+                      ],
                     }),
                   ],
                 }),
