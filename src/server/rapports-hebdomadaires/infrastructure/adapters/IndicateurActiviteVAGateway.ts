@@ -10,7 +10,7 @@ import { RecupererTerritoiresQuery } from "@/server/indicateur-territoire-valeur
 export class IndicateurActiviteVAGateway implements ActiviteVAGateway {
   constructor(
     private readonly deps: {
-      evenementsQuery: RecupererEvenementsVAParPeriodeQuery;
+      evenementsVAQuery: RecupererEvenementsVAParPeriodeQuery;
       territoiresQuery: RecupererTerritoiresQuery;
     },
   ) {}
@@ -20,7 +20,7 @@ export class IndicateurActiviteVAGateway implements ActiviteVAGateway {
     territoireCodes: string[];
     periode: PeriodeRapport;
   }): Promise<EvenementVA[]> {
-    const dtos = await this.deps.evenementsQuery.recupererDansPeriode({
+    const dtos = await this.deps.evenementsVAQuery.recupererDansPeriode({
       indicateurIds: params.indicateurIds,
       territoireCodes: params.territoireCodes,
       dateDebut: params.periode.dateDebut,
@@ -46,7 +46,7 @@ export class IndicateurActiviteVAGateway implements ActiviteVAGateway {
     territoireCodes: string[];
     dateDebut: Date;
   }): Promise<EvenementVA[]> {
-    const dtos = await this.deps.evenementsQuery.recupererDernierAvantDate({
+    const dtos = await this.deps.evenementsVAQuery.recupererDernierAvantDate({
       indicateurIds: params.indicateurIds,
       territoireCodes: params.territoireCodes,
       dateAvant: params.dateDebut,

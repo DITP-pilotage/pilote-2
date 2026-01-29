@@ -1,5 +1,5 @@
-import { EvenementVA } from "../SectionActiviteChantiersVA";
-import { PeriodeRapport } from "../PeriodeRapport";
+import { EvenementVA } from "@/server/rapports-hebdomadaires/domain/SectionActiviteChantiersVA";
+import { PeriodeRapport } from "@/server/rapports-hebdomadaires/domain/PeriodeRapport";
 
 export type TerritoireInfo = {
   code: string;

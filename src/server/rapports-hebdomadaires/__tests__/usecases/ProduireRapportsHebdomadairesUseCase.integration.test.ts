@@ -48,7 +48,7 @@ describe("ProduireRapportsHebdomadairesUseCase", () => {
       prisma: prismaPilote,
     });
     const activiteVAGateway = new IndicateurActiviteVAGateway({
-      evenementsQuery: evenementsVAQuery,
+      evenementsVAQuery: evenementsVAQuery,
       territoiresQuery,
     });
 

@@ -90,7 +90,7 @@ export class ProduireRapportsHebdomadairesUseCase {
     });
 
     const tousLesChantierIds = [
-      ...new Set(coordinateurs.flatMap((c) => c.chantiers)),
+      ...new Set(coordinateurs.flatMap((chantier) => chantier.chantiers)),
     ];
 
     const chantiersAvecIndicateurs =
@@ -100,7 +100,9 @@ export class ProduireRapportsHebdomadairesUseCase {
 
     const tousLesIndicateurIds = Object.values(
       chantiersAvecIndicateurs,
-    ).flatMap((c) => c.indicateurs.map((i) => i.id));
+    ).flatMap((chantier) =>
+      chantier.indicateurs.map((indicateur) => indicateur.id),
+    );
 
     const getAllCodes = (territoire: TerritoireCoordinateur): string[] => [
       territoire.code,
@@ -152,10 +154,13 @@ export class ProduireRapportsHebdomadairesUseCase {
           coordinateursSansActivite++;
         }
       } catch (error) {
-        logger.error("Erreur lors de la création du rapport", {
-          coordinateurEmail: coordinateur.email,
-          erreur: error instanceof Error ? error.message : String(error),
-        });
+        logger.error(
+          {
+            coordinateurEmail: coordinateur.email,
+            erreur: error instanceof Error ? error.message : String(error),
+          },
+          "Erreur lors de la création du rapport",
+        );
       }
     }
 
