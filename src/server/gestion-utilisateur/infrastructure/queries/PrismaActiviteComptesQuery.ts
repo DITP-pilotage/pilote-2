@@ -18,12 +18,12 @@ export type EvenementCompteDTO =
   | { type: "COMPTE_CREE"; compte: CompteDTO; date: Date }
   | { type: "COMPTE_DESACTIVE"; compte: CompteDTO; date: Date };
 
-interface Dependencies {
-  prisma: PrismaPilote;
-}
-
 export class PrismaActiviteComptesQuery {
-  constructor(private readonly dependencies: Dependencies) {}
+  constructor(
+    private readonly dependencies: {
+      prisma: PrismaPilote;
+    },
+  ) {}
 
   async recupererActiviteComptes(params: {
     dateDebut: Date;
