@@ -18,6 +18,10 @@ Extension du système de rapports hebdomadaires pour inclure une nouvelle sectio
 
 Liste des changements de VA (Valeur d'Avancement) survenus sur les indicateurs des chantiers du coordinateur durant la période.
 
+**Structure hiérarchique** :
+- 1 section par chantier
+- Au sein de chaque section chantier : 1 sous-section par indicateur
+
 ### Données affichées par changement
 
 Pour chaque combinaison indicateur/territoire ayant eu au moins un changement dans la période :
@@ -84,6 +88,13 @@ Si la section est vide (0 changement) : la section n'est pas affichée dans l'em
 
 Extension du contexte existant avec de nouvelles dépendances vers les bounded contexts `chantiers` et `indicateur-territoire-valeur-evenement`.
 
+### Stratégie anti-N+1
+
+**Toutes les queries utilisent des fetches en batch** pour éviter les problèmes de performance N+1 :
+- Les queries retournent des `Record<key, value>` plutôt que des tableaux plats
+- Une seule requête DB par type de donnée (indicateurs, événements, valeurs avant)
+- Le groupement et le filtrage se font en mémoire après le fetch
+
 ### Nouvelles dépendances entre Bounded Contexts
 
 ```
@@ -143,33 +154,69 @@ src/server/gestion-utilisateur/
 // domain/SectionActiviteChantiersVA.ts
 
 export type ActiviteIndicateurVA = {
-  readonly chantierId: string;
-  readonly chantierNom: string;
-  readonly indicId: string;
-  readonly indicNom: string;
-  readonly territoireCode: string;
-  readonly territoireNom: string;
-  readonly dateChangement: Date;
-  readonly valeurAvant: number | null;
-  readonly valeurApres: number | null;
+  indicId: string;
+  indicNom: string;
+  territoireCode: string;
+  territoireNom: string;
+  dateChangement: Date;
+  valeurAvant: number | null;
+  valeurApres: number | null;
+};
+
+export type SectionChantierVA = {
+  chantierId: string;
+  chantierNom: string;
+  indicateurs: ActiviteIndicateurVA[];  // 1 sous-section par indicateur
 };
 
 export type SectionActiviteChantiersVA = {
-  readonly changementsVA: readonly ActiviteIndicateurVA[];
+  chantiers: SectionChantierVA[];  // 1 section par chantier
 };
+
+// Fonction pure pour le fold (logique métier)
+export function foldEvenementsVA(params: {
+  evenements: EvenementDTO[];
+  valeurAvant: number | null;
+}): ActiviteIndicateurVA | null {
+  // 1. Filtrer les événements de type VALEUR_* et VALEUR_AVANCEMENT
+  const evenementsVA = params.evenements.filter(ev =>
+    ['VALEUR_CREEE', 'VALEUR_MODIFIEE', 'VALEUR_HISTORISEE'].includes(ev.typeEvenement) &&
+    ev.typeValeur === 'VALEUR_AVANCEMENT'
+  );
+
+  if (evenementsVA.length === 0) return null;
+
+  // 2. Trier par date + ordre
+  const sorted = evenementsVA.sort((a, b) =>
+    a.dateCreation.getTime() - b.dateCreation.getTime() || a.ordre - b.ordre
+  );
+
+  // 3. Garder le dernier
+  const dernier = sorted[sorted.length - 1];
+
+  return {
+    indicId: dernier.indicId,
+    indicNom: dernier.indicNom,
+    territoireCode: dernier.territoireCode,
+    territoireNom: dernier.territoireNom,
+    dateChangement: dernier.dateCreation,
+    valeurAvant: params.valeurAvant,
+    valeurApres: dernier.valeur,
+  };
+}
 ```
 
 ```typescript
 // Mise à jour domain/Coordinateur.ts
 
 export type Coordinateur = {
-  readonly id: string;
-  readonly email: string;
-  readonly nom: string;
-  readonly prenom: string;
-  readonly profil: ProfilCoordinateur;
-  readonly territoires: readonly TerritoireCoordinateur[];
-  readonly chantiers: readonly string[];  // NOUVEAU - IDs des chantiers accessibles
+  id: string;
+  email: string;
+  nom: string;
+  prenom: string;
+  profil: ProfilCoordinateur;
+  territoires: TerritoireCoordinateur[];
+  chantiers: string[];  // NOUVEAU - IDs des chantiers accessibles
 };
 ```
 
@@ -177,17 +224,17 @@ export type Coordinateur = {
 // Mise à jour domain/RapportHebdomadaire.ts
 
 export type RapportHebdomadaire = {
-  readonly id: string;
-  readonly coordinateur: Coordinateur;
-  readonly periode: PeriodeRapport;
-  readonly sectionActiviteComptes: SectionActiviteComptes;
-  readonly sectionActiviteChantiersVA: SectionActiviteChantiersVA;  // NOUVEAU
-  readonly statutEnvoi: $Enums.statut_envoi_rapport;
-  readonly dateCreation: Date;
-  readonly dateEnvoi?: Date;
-  readonly dateDerniereTentative?: Date;
-  readonly nombreTentatives: number;
-  readonly erreurEnvoi?: string;
+  id: string;
+  coordinateur: Coordinateur;
+  periode: PeriodeRapport;
+  sectionActiviteComptes: SectionActiviteComptes;
+  sectionActiviteChantiersVA: SectionActiviteChantiersVA;  // NOUVEAU
+  statutEnvoi: $Enums.statut_envoi_rapport;
+  dateCreation: Date;
+  dateEnvoi?: Date;
+  dateDerniereTentative?: Date;
+  nombreTentatives: number;
+  erreurEnvoi?: string;
 };
 ```
 
@@ -197,16 +244,21 @@ export type RapportHebdomadaire = {
 // domain/ports/ChantierGateway.ts
 
 export type IndicateurPourRapport = {
-  readonly indicId: string;
-  readonly indicNom: string;
-  readonly chantierId: string;
-  readonly chantierNom: string;
+  indicId: string;
+  indicNom: string;
+};
+
+export type ChantierAvecIndicateurs = {
+  chantierId: string;
+  chantierNom: string;
+  indicateurs: IndicateurPourRapport[];
 };
 
 export interface ChantierGateway {
+  // Retourne un Record pour éviter les N+1
   recupererIndicateursParChantiers(
-    chantierIds: readonly string[]
-  ): Promise<IndicateurPourRapport[]>;
+    chantierIds: string[]
+  ): Promise<Record<string, ChantierAvecIndicateurs>>;
 }
 ```
 
@@ -216,11 +268,13 @@ export interface ChantierGateway {
 import { ActiviteIndicateurVA } from "../SectionActiviteChantiersVA";
 
 export interface ActiviteVAGateway {
+  // Retourne un Record groupé par indicId_territoireCode pour éviter les N+1
   recupererActiviteVA(params: {
-    indicIds: readonly string[];
+    indicIds: string[];
+    territoireCodes: string[];
     dateDebut: Date;
     dateFin: Date;
-  }): Promise<ActiviteIndicateurVA[]>;
+  }): Promise<Record<string, ActiviteIndicateurVA>>;  // key = `${indicId}_${territoireCode}`
 }
 ```
 
@@ -251,14 +305,21 @@ La query récupère les chantiers depuis le champ `chantiers` de la table `habil
 type IndicateurDTO = {
   indicId: string;
   indicNom: string;
+};
+
+type ChantierAvecIndicateursDTO = {
   chantierId: string;
   chantierNom: string;
+  indicateurs: IndicateurDTO[];
 };
 
 class RecupererIndicateursParChantiersQuery {
-  async handle(chantierIds: string[]): Promise<IndicateurDTO[]> {
+  // Retourne un Record pour éviter les N+1
+  async handle(chantierIds: string[]): Promise<Record<string, ChantierAvecIndicateursDTO>> {
     // Query indicateur_identite JOIN chantier_identite
     // WHERE chantier_id IN (chantierIds) AND statut = 'PUBLIE'
+    // Grouper par chantierId
+    // Retourner Record<chantierId, { chantierId, chantierNom, indicateurs: [...] }>
   }
 }
 ```
@@ -282,16 +343,21 @@ type EvenementDTO = {
 };
 
 class RecupererEvenementsParPeriodeQuery {
+  // Retourne un Record groupé par indicId_territoireCode pour éviter les N+1
   async handle(params: {
     indicIds: string[];
+    territoireCodes: string[];
     dateDebut: Date;
     dateFin: Date;
-  }): Promise<EvenementDTO[]> {
+  }): Promise<Record<string, EvenementDTO[]>> {
     // Query indicateur_territoire_valeur_evenement
     // JOIN territoire pour le nom
     // WHERE indic_id IN (indicIds)
+    // AND territoire_code IN (territoireCodes)
     // AND date_creation BETWEEN dateDebut AND dateFin
     // ORDER BY indic_id, territoire_code, date_creation, ordre
+    // Grouper par clé: `${indicId}_${territoireCode}`
+    // Retourner Record<key, EvenementDTO[]>
   }
 }
 ```
@@ -304,66 +370,54 @@ class RecupererEvenementsParPeriodeQuery {
 class EvenementsActiviteVAGateway implements ActiviteVAGateway {
   async recupererActiviteVA(params: {
     indicIds: string[];
+    territoireCodes: string[];
     dateDebut: Date;
     dateFin: Date;
-  }): Promise<ActiviteIndicateurVA[]> {
-    // 1. Récupérer tous les événements dans la période
-    const evenements = await this.recupererEvenementsQuery.handle(params);
+  }): Promise<Record<string, ActiviteIndicateurVA>> {
+    // 1. Récupérer tous les événements dans la période (batch)
+    const evenementsParGroupe = await this.recupererEvenementsQuery.handle({
+      indicIds: params.indicIds,
+      territoireCodes: params.territoireCodes,
+      dateDebut: params.dateDebut,
+      dateFin: params.dateFin,
+    });
 
-    // 2. Filtrer pour garder uniquement les changements de valeur VA
-    const evenementsVA = evenements.filter(ev =>
-      ['VALEUR_CREEE', 'VALEUR_MODIFIEE', 'VALEUR_HISTORISEE'].includes(ev.typeEvenement) &&
-      ev.typeValeur === 'VALEUR_AVANCEMENT'
-    );
+    // 2. Récupérer les valeurs AVANT la période (batch)
+    const valeursAvant = await this.recupererValeursAvantPeriode({
+      indicIds: params.indicIds,
+      territoireCodes: params.territoireCodes,
+      dateDebut: params.dateDebut,
+    });
 
-    // 3. Grouper par indicId + territoireCode
-    const groupes = this.grouperParIndicateurTerritoire(evenementsVA);
+    // 3. Pour chaque groupe (indicId_territoireCode), appliquer le fold (fonction pure)
+    const resultats: Record<string, ActiviteIndicateurVA> = {};
 
-    // 4. Pour chaque groupe, appliquer le fold
-    const resultats: ActiviteIndicateurVA[] = [];
+    for (const [key, evenements] of Object.entries(evenementsParGroupe)) {
+      const valeurAvant = valeursAvant[key] ?? null;
 
-    for (const [key, events] of groupes) {
-      const sorted = events.sort((a, b) =>
-        a.dateCreation.getTime() - b.dateCreation.getTime() || a.ordre - b.ordre
-      );
+      const activite = foldEvenementsVA({ evenements, valeurAvant });
 
-      const premier = sorted[0];
-      const dernier = sorted[sorted.length - 1];
-
-      // Récupérer la valeur AVANT la période
-      const valeurAvant = await this.recupererValeurAvantPeriode({
-        indicId: premier.indicId,
-        territoireCode: premier.territoireCode,
-        dateDebut: params.dateDebut,
-      });
-
-      resultats.push({
-        indicId: dernier.indicId,
-        indicNom: dernier.indicNom,  // À récupérer via join
-        chantierId: dernier.chantierId,
-        chantierNom: dernier.chantierNom,
-        territoireCode: dernier.territoireCode,
-        territoireNom: dernier.territoireNom,
-        dateChangement: dernier.dateCreation,
-        valeurAvant,
-        valeurApres: dernier.valeur,
-      });
+      if (activite !== null) {
+        resultats[key] = activite;
+      }
     }
 
     return resultats;
   }
 
-  private async recupererValeurAvantPeriode(params: {
-    indicId: string;
-    territoireCode: string;
+  // Récupération en batch pour éviter N+1
+  private async recupererValeursAvantPeriode(params: {
+    indicIds: string[];
+    territoireCodes: string[];
     dateDebut: Date;
-  }): Promise<number | null> {
-    // Query le dernier événement AVANT la période
-    // WHERE date_creation < dateDebut
+  }): Promise<Record<string, number>> {
+    // Query en batch tous les derniers événements AVANT la période
+    // WHERE (indic_id, territoire_code) IN (combinations)
+    // AND date_creation < dateDebut
     // AND type_valeur = 'VALEUR_AVANCEMENT'
     // AND type_evenement IN ('VALEUR_CREEE', 'VALEUR_MODIFIEE')
-    // ORDER BY date_creation DESC, ordre DESC
-    // LIMIT 1
+    // Utiliser window function ou subquery pour garder le dernier par groupe
+    // Retourner Record<`${indicId}_${territoireCode}`, valeur>
   }
 }
 ```
@@ -398,16 +452,22 @@ const contenuRapportSchema = z.object({
 
   // NOUVEAUX
   afficherSectionActiviteChantiersVA: boolean;
-  changementsVA: Array<{
+  chantiers: Array<{
     chantierNom: string;
-    indicateurNom: string;
-    territoire: string;          // "DEPT-75 - Paris"
-    dateChangement: string;      // "15/01/2026"
-    valeurAvant: string | null;  // "45.2" ou null
-    valeurApres: string | null;  // "52.8" ou null
+    indicateurs: Array<{
+      indicateurNom: string;
+      territoire: string;          // "DEPT-75 - Paris"
+      dateChangement: string;      // "15/01/2026"
+      valeurAvant: string | null;  // "45.2" ou null
+      valeurApres: string | null;  // "52.8" ou null
+    }>;
   }>;
 }
 ```
+
+**Structure d'affichage** :
+- 1 section par chantier
+- Dans chaque section chantier : liste des indicateurs avec leurs changements
 
 ## Flux de données
 
@@ -463,6 +523,22 @@ const contenuRapportSchema = z.object({
 
 ## Tests
 
+### Tests unitaires pour la logique de fold
+
+Fichier : `src/server/rapports-hebdomadaires/__tests__/domain/foldEvenementsVA.unit.test.ts`
+
+**Fonction pure à tester** : `foldEvenementsVA(evenements: EvenementDTO[], valeurAvant: number | null): ActiviteIndicateurVA`
+
+**Cas de tests** :
+1. ✅ Un seul événement dans la période : valeur avant + valeur après + date
+2. ✅ Plusieurs événements : garde le dernier + date du dernier
+3. ✅ Tri correct par date_creation puis ordre
+4. ✅ Filtrage des types d'événements (seuls VALEUR_*)
+5. ✅ Filtrage du type de valeur (seul VALEUR_AVANCEMENT)
+6. ✅ Gestion valeur avant null
+7. ✅ Gestion valeur après null
+8. ✅ Événements hors période ignorés
+
 ### Tests d'intégration à ajouter
 
 Fichier : `src/server/rapports-hebdomadaires/__tests__/usecases/ProduireRapportsHebdomadairesUseCase.integration.test.ts`
@@ -477,14 +553,16 @@ Fichier : `src/server/rapports-hebdomadaires/__tests__/usecases/ProduireRapports
 7. ✅ Filtrage par type de valeur (seul VALEUR_AVANCEMENT)
 8. ✅ Rapport créé si activité VA mais pas d'activité comptes
 9. ✅ Rapport créé si activité comptes mais pas d'activité VA
+10. ✅ Sections groupées par chantier
+11. ✅ Sous-sections par indicateur au sein d'un chantier
 
 ### Fixtures à ajouter
 
 Fichier : `src/server/infrastructure/test/fixtures.ts`
 
 ```typescript
-fixtures.chantierIdentite({ id?, nom? })
-fixtures.indicateurIdentite({ id?, chantierId, nom?, statut? })
+fixtures.chantierIdentite({ id, nom })
+fixtures.indicateurIdentite({ id, chantierId, nom, statut })
 fixtures.indicateurTerritoire({ indicId, territoireCode })
 fixtures.indicateurTerritoireValeurEvenement({
   indicId,
@@ -493,7 +571,7 @@ fixtures.indicateurTerritoireValeurEvenement({
   typeValeur,
   valeur,
   dateCreation,
-  ordre?
+  ordre
 })
 ```
 
@@ -523,33 +601,35 @@ fixtures.indicateurTerritoireValeurEvenement({
 - [ ] Section masquée si 0 changement VA
 - [ ] Rapport créé si activité VA même sans activité comptes
 
+**Structure de l'email** :
+- [ ] 1 section par chantier
+- [ ] Au sein de chaque section : 1 sous-section par indicateur
+
 ### Techniques
 
 - [ ] Nouvelles queries créées dans les bounded contexts respectifs
+- [ ] Queries retournent des `Record<key, value>` pour éviter N+1
 - [ ] Gateways implémentés avec le pattern existant (args objets, return domain types)
+- [ ] Fonction pure `foldEvenementsVA` dans le domaine
+- [ ] Tests unitaires pour la fonction `foldEvenementsVA`
 - [ ] Tests d'intégration avec pattern `createIntegrationTest` et `fixtures`
-- [ ] Types domaine immutables (`readonly`)
 - [ ] Container mis à jour avec les nouvelles dépendances
+- [ ] Fetch en batch pour les valeurs avant période (anti-N+1)
 
 ## Questions ouvertes
 
 ### À définir avec l'équipe
 
-1. **Affichage du chantier** :
-   - Option A : Grouper les changements par chantier dans l'email
-   - Option B : Liste plate triée par date
-   - **Décision** : À définir
-
-2. **Format des valeurs** :
+1. **Format des valeurs** :
    - Nombre de décimales à afficher
    - Affichage si valeur = null (ex: "-" ou "N/A")
    - **Décision** : À définir
 
-3. **Template email Brevo** :
+2. **Template email Brevo** :
    - Mise à jour du template existant (ID 60) ou nouveau template
    - **Décision** : À définir
 
-4. **Nom de l'indicateur** :
+3. **Nom de l'indicateur** :
    - Afficher le nom complet ou une version tronquée
    - **Décision** : À définir
 
