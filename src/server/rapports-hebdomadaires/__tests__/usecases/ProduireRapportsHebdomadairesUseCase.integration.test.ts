@@ -208,6 +208,13 @@ describe("ProduireRapportsHebdomadairesUseCase", () => {
         code_parent: territoireReg.code,
       });
 
+      const territoireAutreDept = await fixtures.territoire({
+        code: randomUUID(),
+        nom: "Hauts-de-Seine",
+        maille: "DEPT",
+        code_parent: territoireReg.code,
+      });
+
       const coordinateur = await fixtures.utilisateur({
         profilCode: "COORDINATEUR_DEPARTEMENT",
       });
@@ -234,6 +241,15 @@ describe("ProduireRapportsHebdomadairesUseCase", () => {
         territoires: [territoireDept.code],
       });
 
+      const compteDansAutreDept = await fixtures.utilisateur({
+        profilCode: "PREFET_DEPARTEMENT",
+        date_creation: new Date(Date.now() - 1 * 60 * 60 * 1000),
+      });
+      await fixtures.habilitation({
+        utilisateurId: compteDansAutreDept.id,
+        territoires: [territoireAutreDept.code],
+      });
+
       // When
       const result = await useCase.run();
 
@@ -247,14 +263,14 @@ describe("ProduireRapportsHebdomadairesUseCase", () => {
       expect(rapports[0].contenu_rapport).toEqual(
         expect.objectContaining({
           sectionActiviteComptes: expect.objectContaining({
-            comptesCrees: expect.arrayContaining([
+            comptesCrees: [
               expect.objectContaining({
                 email: compteDansRegion.email,
               }),
               expect.objectContaining({
                 email: compteDansDept.email,
               }),
-            ]),
+            ],
           }),
         }),
       );
