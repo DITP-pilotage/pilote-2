@@ -18,7 +18,7 @@ export type Coordinateur = {
   territoires: TerritoireCoordinateur[];
 };
 
-export function estDansPerimetreTerritorial(params: {
+export function aDesDroitsSurTerritoire(params: {
   coordinateur: Coordinateur;
   codesTerritoires: string[];
 }): boolean {

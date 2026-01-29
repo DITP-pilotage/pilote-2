@@ -12,7 +12,7 @@ import {
 } from "@/server/rapports-hebdomadaires/domain/RapportHebdomadaire";
 import {
   Coordinateur,
-  estDansPerimetreTerritorial,
+  aDesDroitsSurTerritoire,
 } from "@/server/rapports-hebdomadaires/domain/Coordinateur";
 import {
   ActiviteComptes,
@@ -128,7 +128,7 @@ export class ProduireRapportsHebdomadairesUseCase {
         return false;
       }
 
-      return estDansPerimetreTerritorial({
+      return aDesDroitsSurTerritoire({
         coordinateur,
         codesTerritoires: evenement.compte.territoires.flatMap((territoire) => [
           territoire.code,

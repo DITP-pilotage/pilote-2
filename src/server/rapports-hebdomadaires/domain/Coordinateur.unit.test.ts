@@ -1,10 +1,10 @@
 import {
   Coordinateur,
-  estDansPerimetreTerritorial,
+  aDesDroitsSurTerritoire,
   TerritoireCoordinateur,
 } from "./Coordinateur";
 
-describe("estDansPerimetreTerritorial", () => {
+describe("aDesDroitsSurTerritoire", () => {
   const createCoordinateur = (
     territoires: TerritoireCoordinateur[],
   ): Coordinateur => ({
@@ -22,7 +22,7 @@ describe("estDansPerimetreTerritorial", () => {
         { code: "REG-01", nom: "Île-de-France", maille: "REG", enfants: [] },
       ]);
 
-      const result = estDansPerimetreTerritorial({
+      const result = aDesDroitsSurTerritoire({
         coordinateur,
         codesTerritoires: [],
       });
@@ -37,7 +37,7 @@ describe("estDansPerimetreTerritorial", () => {
         { code: "REG-01", nom: "Île-de-France", maille: "REG", enfants: [] },
       ]);
 
-      const result = estDansPerimetreTerritorial({
+      const result = aDesDroitsSurTerritoire({
         coordinateur,
         codesTerritoires: ["REG-02"],
       });
@@ -51,7 +51,7 @@ describe("estDansPerimetreTerritorial", () => {
         { code: "DEPT-75", nom: "Paris", maille: "DEPT", enfants: [] },
       ]);
 
-      const result = estDansPerimetreTerritorial({
+      const result = aDesDroitsSurTerritoire({
         coordinateur,
         codesTerritoires: ["REG-02", "DEPT-69"],
       });
@@ -66,7 +66,7 @@ describe("estDansPerimetreTerritorial", () => {
         { code: "REG-01", nom: "Île-de-France", maille: "REG", enfants: [] },
       ]);
 
-      const result = estDansPerimetreTerritorial({
+      const result = aDesDroitsSurTerritoire({
         coordinateur,
         codesTerritoires: ["REG-01"],
       });
@@ -79,7 +79,7 @@ describe("estDansPerimetreTerritorial", () => {
         { code: "REG-01", nom: "Île-de-France", maille: "REG", enfants: [] },
       ]);
 
-      const result = estDansPerimetreTerritorial({
+      const result = aDesDroitsSurTerritoire({
         coordinateur,
         codesTerritoires: ["REG-02", "REG-01", "REG-03"],
       });
@@ -94,7 +94,7 @@ describe("estDansPerimetreTerritorial", () => {
         { code: "DEPT-92", nom: "Hauts-de-Seine", maille: "DEPT", enfants: [] },
       ]);
 
-      const result = estDansPerimetreTerritorial({
+      const result = aDesDroitsSurTerritoire({
         coordinateur,
         codesTerritoires: ["DEPT-69", "DEPT-92"],
       });
@@ -109,7 +109,7 @@ describe("estDansPerimetreTerritorial", () => {
         { code: "DEPT-92", nom: "Hauts-de-Seine", maille: "DEPT", enfants: [] },
       ]);
 
-      const result = estDansPerimetreTerritorial({
+      const result = aDesDroitsSurTerritoire({
         coordinateur,
         codesTerritoires: ["DEPT-75", "DEPT-92", "REG-02"],
       });
@@ -137,7 +137,7 @@ describe("estDansPerimetreTerritorial", () => {
         },
       ]);
 
-      const result = estDansPerimetreTerritorial({
+      const result = aDesDroitsSurTerritoire({
         coordinateur,
         codesTerritoires: ["DEPT-75"],
       });
@@ -157,7 +157,7 @@ describe("estDansPerimetreTerritorial", () => {
         },
       ]);
 
-      const result = estDansPerimetreTerritorial({
+      const result = aDesDroitsSurTerritoire({
         coordinateur,
         codesTerritoires: ["REG-01"],
       });
@@ -183,7 +183,7 @@ describe("estDansPerimetreTerritorial", () => {
         },
       ]);
 
-      const result = estDansPerimetreTerritorial({
+      const result = aDesDroitsSurTerritoire({
         coordinateur,
         codesTerritoires: ["DEPT-69"],
       });
@@ -209,7 +209,7 @@ describe("estDansPerimetreTerritorial", () => {
         },
       ]);
 
-      const result = estDansPerimetreTerritorial({
+      const result = aDesDroitsSurTerritoire({
         coordinateur,
         codesTerritoires: ["DEPT-75", "DEPT-92"],
       });
@@ -229,7 +229,7 @@ describe("estDansPerimetreTerritorial", () => {
         },
       ]);
 
-      const result = estDansPerimetreTerritorial({
+      const result = aDesDroitsSurTerritoire({
         coordinateur,
         codesTerritoires: ["DEPT-69", "DEPT-75", "DEPT-13"],
       });
