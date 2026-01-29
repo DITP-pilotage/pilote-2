@@ -34,7 +34,7 @@ const InformationsEspaceConnecte = () => {
 
 const useEntete = () => {
   const { data: messageInformation } =
-    api.gestionContenu.récupérerMessageInformation.useQuery();
+    api.gestionContenu.recupererMessageInformation.useQuery();
   return {
     messageInformation,
   };

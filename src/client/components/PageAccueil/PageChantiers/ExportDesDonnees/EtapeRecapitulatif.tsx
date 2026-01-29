@@ -85,7 +85,7 @@ export const EtapeRecapitulatif = ({
   );
 
   const { data: dataBasculeValeurAnneePrecedente } =
-    api.gestionContenu.récupérerVariableContenu.useQuery({
+    api.gestionContenu.recupererVariableContenu.useQuery({
       nomVariableContenu:
         "NEXT_PUBLIC_DATE_BASCULE_AFFICHAGE_VALEURS_ANNEE_PRECEDENTE",
     });

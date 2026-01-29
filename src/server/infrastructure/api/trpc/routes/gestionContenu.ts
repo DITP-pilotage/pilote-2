@@ -1,6 +1,7 @@
 import { z } from "zod";
 import {
   créerRouteurTRPC,
+  procédureNonConnecte,
   procédureProtégée,
 } from "@/server/infrastructure/api/trpc/trpc";
 import { validationContenu } from "@/validation/gestion-contenu";
@@ -35,7 +36,7 @@ export const gestionContenuRouter = créerRouteurTRPC({
         bandeauTexte: input.bandeauTexte,
       });
     }),
-  récupérerMessageInformation: procédureProtégée.query(async () => {
+  recupererMessageInformation: procédureNonConnecte.query(async () => {
     const récupérerMessageInformationUseCase =
       new RécupérerMessageInformationUseCase({
         gestionContenuRepository: dependencies.getGestionContenuRepository(),
@@ -43,7 +44,7 @@ export const gestionContenuRouter = créerRouteurTRPC({
     const messageInformation = await récupérerMessageInformationUseCase.run();
     return presenterEnMessageInformationContrat(messageInformation);
   }),
-  récupérerVariableContenu: procédureProtégée
+  recupererVariableContenu: procédureNonConnecte
     .input(validationVariableContenu)
     .query(({ input }) => {
       const récupérerVariableContenuUseCase =

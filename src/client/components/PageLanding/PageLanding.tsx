@@ -47,7 +47,7 @@ const PageLanding = () => {
                 </button>
               </div>
               <div className="fr-col-12 fr-col-lg-6 fr-hidden fr-unhidden-lg conteneur-capture-pilote">
-                <Image alt="" src={captureÉcranPilote} />
+                <Image alt="" priority src={captureÉcranPilote} />
               </div>
             </div>
           </div>

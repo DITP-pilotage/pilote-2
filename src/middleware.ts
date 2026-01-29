@@ -99,7 +99,16 @@ export const middleware = async (
   }
 
   const pathname = request.nextUrl.pathname;
-  if (!pathname.startsWith("/api/open-api")) {
+  const routesTrpcPubliques = [
+    "/api/trpc/gestionContenu.recupererMessageInformation",
+    "/api/trpc/gestionContenu.recupererVariableContenu",
+  ];
+
+  const estRoutePublique =
+    pathname.startsWith("/api/open-api") ||
+    routesTrpcPubliques.some((route) => pathname.startsWith(route));
+
+  if (!estRoutePublique) {
     const authMiddleware = withAuth(
       async function middleware2(requestAuth) {
         const cookie = requestAuth.cookies.get("csrf");
@@ -214,5 +223,5 @@ export const middleware = async (
 
 export const config = {
   // s'applique à toutes les urls sauf / - ^/js/ - _next/static - _next/image - favicon.ico
-  matcher: ["/((?!js/|_next/static|_next/image|favicon.ico).+)"],
+  matcher: ["/((?!js/|_next/static|_next/image|favicon.ico|favicon/).+)"],
 };

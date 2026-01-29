@@ -22,7 +22,7 @@ export default function usePageUtilisateur(utilisateur: Utilisateur) {
   const router = useRouter();
 
   const { data: tokenAPIEstDisponible } =
-    api.gestionContenu.récupérerVariableContenu.useQuery({
+    api.gestionContenu.recupererVariableContenu.useQuery({
       nomVariableContenu: "NEXT_PUBLIC_FF_GESTION_TOKEN_API",
     });
 

@@ -93,3 +93,4 @@ export const créerRouteurTRPC = trpc.router;
 export const procédureProtégée = trpc.procedure.use(
   vérifierSiUtilisateurEstConnectéTRPCMiddleware,
 );
+export const procédureNonConnecte = trpc.procedure;
