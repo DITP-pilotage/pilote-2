@@ -386,6 +386,12 @@ const config = convict({
       doc: "Désactive l'envoi réel d'emails et les opérations Brevo (contacts, listes). Utilise un stub qui log en console. Toujours activé en environnement de test.",
       env: "DISABLE_EMAILS",
     },
+    overrideEmailRecipient: {
+      format: String,
+      default: "",
+      doc: "Si défini, tous les emails sont envoyés à cette adresse au lieu des destinataires réels. Utile pour le debug.",
+      env: "BREVO_OVERRIDE_EMAIL_RECIPIENT",
+    },
   },
 });
 

@@ -67,9 +67,7 @@ export class BrevoEnvoieEmailService implements EnvoieEmailService {
     };
 
     await this.deps.emailManager.sendTransactionalEmail(
-      // TODO (CHAN - Rapport) : mettre le bon email quand débuggué :)
-      [{ email: "antoine.chalifour@gmail.com" }],
-      // [{ email: rapport.coordinateur.email }],
+      [{ email: rapport.coordinateur.email }],
       TEMPLATE_ID_RAPPORT_COORDINATEURS,
       templateParams,
     );
