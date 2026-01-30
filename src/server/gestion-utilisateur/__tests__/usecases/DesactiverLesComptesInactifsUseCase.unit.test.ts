@@ -147,7 +147,7 @@ describe("DesactiverLesComptesInactifsUseCase", () => {
     expect(actionCompteInactifRepository.sauvegarder).toHaveBeenCalledWith(
       expect.objectContaining({
         id: action.id,
-        statut: "ERREUR",
+        statut: "ECHEC",
         erreur: "Erreur BDD",
         nombreTentatives: 1,
         dateDerniereTentative: AUJOURD_HUI,
@@ -206,7 +206,7 @@ describe("DesactiverLesComptesInactifsUseCase", () => {
     expect(actionCompteInactifRepository.sauvegarder).toHaveBeenCalledWith(
       expect.objectContaining({
         id: action.id,
-        statut: "ERREUR",
+        statut: "ECHEC",
         erreur: "Nouvelle erreur",
         nombreTentatives: 3,
         dateDerniereTentative: AUJOURD_HUI,

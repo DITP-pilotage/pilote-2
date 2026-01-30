@@ -2,7 +2,7 @@
 CREATE TYPE "public"."type_action_compte_inactif" AS ENUM ('PREMIERE_RELANCE', 'DEUXIEME_RELANCE', 'DESACTIVATION');
 
 -- CreateEnum
-CREATE TYPE "public"."statut_action_compte_inactif" AS ENUM ('CREEE', 'SUCCES', 'ERREUR');
+CREATE TYPE "public"."statut_action_compte_inactif" AS ENUM ('CREEE', 'SUCCES', 'ECHEC');
 
 -- CreateTable
 CREATE TABLE "public"."action_compte_inactif" (

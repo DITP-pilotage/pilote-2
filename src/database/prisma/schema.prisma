@@ -818,7 +818,7 @@ model referentiel_rattachement_groupe {
   libelle                  String
   ordre                    Int
   created_at               DateTime                   @default(now())
-  updated_at               DateTime                   @updatedAt @default(now())
+  updated_at               DateTime                   @default(now()) @updatedAt
   referentiel_rattachement referentiel_rattachement[]
 
   @@schema("public")
@@ -1018,7 +1018,7 @@ enum type_action_compte_inactif {
 enum statut_action_compte_inactif {
   CREEE
   SUCCES
-  ERREUR
+  ECHEC
 
   @@schema("public")
 }
@@ -1038,7 +1038,7 @@ model action_compte_inactif {
 }
 
 model metadata_indicateur {
-  name                           String                             @id
+  name                           String                                @id
   data_type                      String
   description                    String
   est_visible                    Boolean
@@ -1069,4 +1069,3 @@ model metadata_indicateur_valeur_acceptee {
   @@unique([metadata_indicateur_name, ordre])
   @@schema("public")
 }
-

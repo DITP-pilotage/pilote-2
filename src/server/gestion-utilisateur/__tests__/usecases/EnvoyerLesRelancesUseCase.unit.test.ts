@@ -161,7 +161,7 @@ describe("EnvoyerLesRelancesUseCase", () => {
     expect(actionCompteInactifRepository.sauvegarder).toHaveBeenCalledWith(
       expect.objectContaining({
         id: action.id,
-        statut: "ERREUR",
+        statut: "ECHEC",
         erreur: "Erreur Brevo",
         nombreTentatives: 1,
         dateDerniereTentative: AUJOURD_HUI,
@@ -222,7 +222,7 @@ describe("EnvoyerLesRelancesUseCase", () => {
     expect(actionCompteInactifRepository.sauvegarder).toHaveBeenCalledWith(
       expect.objectContaining({
         id: action.id,
-        statut: "ERREUR",
+        statut: "ECHEC",
         erreur: "Nouvelle erreur",
         nombreTentatives: 3,
         dateDerniereTentative: AUJOURD_HUI,

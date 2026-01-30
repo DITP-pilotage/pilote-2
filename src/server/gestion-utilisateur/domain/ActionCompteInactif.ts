@@ -47,7 +47,7 @@ export function marquerCommeEchec(params: {
 }): ActionCompteInactif {
   return {
     ...params.action,
-    statut: "ERREUR",
+    statut: "ECHEC",
     nombreTentatives: params.action.nombreTentatives + 1,
     dateDerniereTentative: params.dateTentative,
     erreur: params.erreur,

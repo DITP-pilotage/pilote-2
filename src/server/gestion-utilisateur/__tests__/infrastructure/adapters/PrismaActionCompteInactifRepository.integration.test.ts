@@ -75,7 +75,7 @@ describe("PrismaActionCompteInactifRepository", () => {
         // When
         await repository.sauvegarder({
           ...action,
-          statut: "ERREUR",
+          statut: "ECHEC",
           dateDerniereTentative: new Date("2026-01-30T10:00:00Z"),
           nombreTentatives: 1,
           erreur: "Erreur Keycloak",
@@ -88,7 +88,7 @@ describe("PrismaActionCompteInactifRepository", () => {
         expect(result).toEqual([
           expect.objectContaining({
             id: actionId,
-            statut: "ERREUR",
+            statut: "ECHEC",
             nombre_tentatives: 1,
             erreur: "Erreur Keycloak",
           }),
