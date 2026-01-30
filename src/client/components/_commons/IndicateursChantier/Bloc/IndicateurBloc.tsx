@@ -46,7 +46,6 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
     cartographieDroiteIndicateur,
     cartographieGaucheIndicateur,
     datajobsExecution,
-    nouveauxGraphiquesSontActifs,
     configurationFeatureFlipping,
   } = pageChantier.useServerSidePropsContext();
 
@@ -486,7 +485,6 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
               }
               mailleQuery={mailleQuery}
               mailsDirecteursProjets={mailsDirecteursProjets}
-              nouveauxGraphiquesSontActifs={!!nouveauxGraphiquesSontActifs}
             />
           </section>
         </Bloc>

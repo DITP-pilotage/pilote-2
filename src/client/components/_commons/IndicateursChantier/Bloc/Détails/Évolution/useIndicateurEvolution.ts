@@ -1,4 +1,4 @@
-import { ChartData, ChartDataset, ChartOptions } from "chart.js";
+import { ChartData, ChartDataset } from "chart.js";
 import { comparerDates, formaterDate } from "@/client/utils/date/date";
 import { générerCouleursAléatoiresEntreDeuxCouleurs } from "@/client/utils/couleur/couleur";
 import { useBlocIndicateurContext } from "@/components/PageChantier/useBlocIndicateurContext";
@@ -14,21 +14,6 @@ export const useIndicateurEvolution = () => {
     "#083a25",
     1,
   );
-
-  const options: ChartOptions<"line"> = {
-    responsive: true,
-    maintainAspectRatio: false,
-    scales: {
-      x: { border: { dash: [2, 4] } },
-      y: { border: { dash: [2, 4] }, beginAtZero: true },
-    },
-    plugins: {
-      legend: {
-        position: "bottom" as const,
-        labels: { boxHeight: 0, boxWidth: 30, padding: 40 },
-      },
-    },
-  };
 
   const datesDeTousLesIndicateurs =
     detailIndicateurDuTerritoire.historiquesValeurs.map((h) => h.date);
@@ -85,6 +70,5 @@ export const useIndicateurEvolution = () => {
 
   return {
     donnéesParTerritoire,
-    options,
   };
 };

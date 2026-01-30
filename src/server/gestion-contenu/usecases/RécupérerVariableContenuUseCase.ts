@@ -84,10 +84,6 @@ export class RécupérerVariableContenuUseCase {
         return configuration().featureFlip
           .videoAccueil as VariableContenuDisponibleEnv[T];
       }
-      case "NEXT_PUBLIC_FF_NOUVEAUX_GRAPHIQUES": {
-        return configuration().featureFlip
-          .nouveauxGraphiques as VariableContenuDisponibleEnv[T];
-      }
       case "NEXT_PUBLIC_FF_PANEL_ADMIN": {
         return configuration().featureFlip
           .panelAdmin as VariableContenuDisponibleEnv[T];

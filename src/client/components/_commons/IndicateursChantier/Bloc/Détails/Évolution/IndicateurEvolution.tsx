@@ -34,11 +34,9 @@ ChartJS.register(
 export const IndicateurEvolution: FunctionComponent<{
   indicateurDetailsParTerritoiresCompares: IndicateurDetailsParTerritoire[];
   dateDeMiseAJourIndicateur: string | null;
-  nouveauxGraphiquesSontActifs: boolean;
 }> = ({
   indicateurDetailsParTerritoiresCompares,
   dateDeMiseAJourIndicateur,
-  nouveauxGraphiquesSontActifs,
 }) => {
   const { detailIndicateurDuTerritoire, indicateur } =
     useBlocIndicateurContext();
@@ -61,7 +59,7 @@ export const IndicateurEvolution: FunctionComponent<{
     indicateurDetailsParTerritoiresCompares,
   ]);
 
-  const { options, donnéesParTerritoire } = useIndicateurEvolution();
+  const { donnéesParTerritoire } = useIndicateurEvolution();
 
   const {
     getOptions,
@@ -177,8 +175,6 @@ export const IndicateurEvolution: FunctionComponent<{
               donnéesParTerritoire={donnéesParTerritoire}
               indicateur={indicatorMetadata}
               mode="impression"
-              nouveauxGraphiquesSontActifs={nouveauxGraphiquesSontActifs}
-              optionsLegacy={options}
               ref={composantRef}
             />
           </div>
@@ -191,8 +187,6 @@ export const IndicateurEvolution: FunctionComponent<{
         donnéesParTerritoire={donnéesParTerritoire}
         indicateur={indicatorMetadata}
         mode="default"
-        nouveauxGraphiquesSontActifs={nouveauxGraphiquesSontActifs}
-        optionsLegacy={options}
       />
     </div>
   );
