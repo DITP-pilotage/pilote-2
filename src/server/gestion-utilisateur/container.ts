@@ -50,7 +50,11 @@ import { DesactiverPopupInfolettreUseCase } from "./usecases/DesactiverPopupInfo
 import { AjouterUnContactAUneInfoLettreUseCase } from "./usecases/AjouterUnContactAUneInfoLettreUseCase";
 import { PrismaHabilitationService } from "./infrastructure/adapters/PrismaHabilitationService";
 import { HabilitationService } from "./domain/ports/HabilitationService";
-import { DesactiverComptesInactifsUseCase } from "./usecases/DesactiverComptesInactifsUseCase";
+import { ActionCompteInactifRepository } from "./domain/ports/ActionCompteInactifRepository";
+import { PrismaActionCompteInactifRepository } from "./infrastructure/adapters/PrismaActionCompteInactifRepository";
+import { CreerLesActionsComptesInactifsUseCase } from "./usecases/CreerLesActionsComptesInactifsUseCase";
+import { EnvoyerLesRelancesUseCase } from "./usecases/EnvoyerLesRelancesUseCase";
+import { DesactiverLesComptesInactifsUseCase } from "./usecases/DesactiverLesComptesInactifsUseCase";
 import ImporterDesUtilisateursUseCase from "./usecases/ImporterDesUtilisateursUseCase";
 
 export type GestionUtilisateurDependencies = {
@@ -88,7 +92,10 @@ export type GestionUtilisateurDependencies = {
   desactiverPopupInfolettreUseCase: DesactiverPopupInfolettreUseCase;
   ajouterUnContactAUneInfoLettreUseCase: AjouterUnContactAUneInfoLettreUseCase;
   habilitationService: HabilitationService;
-  desactiverComptesInactifsUseCase: DesactiverComptesInactifsUseCase;
+  actionCompteInactifRepository: ActionCompteInactifRepository;
+  creerLesActionsComptesInactifsUseCase: CreerLesActionsComptesInactifsUseCase;
+  envoyerLesRelancesUseCase: EnvoyerLesRelancesUseCase;
+  desactiverLesComptesInactifsUseCase: DesactiverLesComptesInactifsUseCase;
   importerDesUtilisateursUseCase: ImporterDesUtilisateursUseCase;
 };
 
@@ -172,8 +179,15 @@ export const getGestionUtilisateurContainer = (
         AjouterUnContactAUneInfoLettreUseCase,
       ),
       habilitationService: asClass(PrismaHabilitationService),
-      desactiverComptesInactifsUseCase: asClass(
-        DesactiverComptesInactifsUseCase,
+      actionCompteInactifRepository: asClass(
+        PrismaActionCompteInactifRepository,
+      ),
+      creerLesActionsComptesInactifsUseCase: asClass(
+        CreerLesActionsComptesInactifsUseCase,
+      ),
+      envoyerLesRelancesUseCase: asClass(EnvoyerLesRelancesUseCase),
+      desactiverLesComptesInactifsUseCase: asClass(
+        DesactiverLesComptesInactifsUseCase,
       ),
       importerDesUtilisateursUseCase: asClass(ImporterDesUtilisateursUseCase),
     });
