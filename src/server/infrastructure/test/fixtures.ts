@@ -367,6 +367,21 @@ export const fixtures = {
     });
   },
 
+  async actionCompteInactif(
+    overrides: Partial<Prisma.action_compte_inactifUncheckedCreateInput> & {
+      utilisateur_id: string;
+    },
+  ) {
+    const prisma = getPrisma();
+    return prisma.action_compte_inactif.create({
+      data: {
+        id: randomUUID(),
+        type_action: "PREMIERE_RELANCE",
+        ...overrides,
+      },
+    });
+  },
+
   async habilitation(
     overrides: Partial<Prisma.habilitationUncheckedCreateInput> & {
       utilisateurId: string;
