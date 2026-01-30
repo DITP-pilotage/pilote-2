@@ -1,6 +1,6 @@
 import { randomUUID } from "crypto";
 import { PrismaActionCompteInactifRepository } from "@/server/gestion-utilisateur/infrastructure/adapters/PrismaActionCompteInactifRepository";
-import { ActionCompteInactif } from "@/server/gestion-utilisateur/domain/ports/ActionCompteInactifRepository";
+import { ActionCompteInactif } from "@/server/gestion-utilisateur/domain/ActionCompteInactif";
 import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
 import { fixtures } from "@/server/infrastructure/test/fixtures";
 import { PrismaPilote } from "@/server/db/PrismaPilote";

@@ -1,12 +1,10 @@
 import { mock, MockProxy } from "jest-mock-extended";
 import { randomUUID } from "crypto";
 import { UtilisateurRepository } from "@/server/gestion-utilisateur/domain/ports/UtilisateurRepository";
-import {
-  ActionCompteInactif,
-  ActionCompteInactifRepository,
-} from "@/server/gestion-utilisateur/domain/ports/ActionCompteInactifRepository";
+import { ActionCompteInactifRepository } from "@/server/gestion-utilisateur/domain/ports/ActionCompteInactifRepository";
 import { ContactInfoLettresService } from "@/server/gestion-utilisateur/domain/ports/ContactInfoLettresService";
 import { EnvoyerLesRelancesUseCase } from "@/server/gestion-utilisateur/usecases/EnvoyerLesRelancesUseCase";
+import { ActionCompteInactif } from "@/server/gestion-utilisateur/domain/ActionCompteInactif";
 
 describe("EnvoyerLesRelancesUseCase", () => {
   let utilisateurRepository: MockProxy<UtilisateurRepository>;

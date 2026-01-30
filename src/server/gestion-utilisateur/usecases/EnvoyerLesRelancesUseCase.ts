@@ -1,10 +1,12 @@
 import { UtilisateurRepository } from "@/server/gestion-utilisateur/domain/ports/UtilisateurRepository";
-import {
-  ActionCompteInactif,
-  ActionCompteInactifRepository,
-} from "@/server/gestion-utilisateur/domain/ports/ActionCompteInactifRepository";
+import { ActionCompteInactifRepository } from "@/server/gestion-utilisateur/domain/ports/ActionCompteInactifRepository";
 import { ContactInfoLettresService } from "@/server/gestion-utilisateur/domain/ports/ContactInfoLettresService";
 import logger from "@/server/infrastructure/Logger";
+import {
+  ActionCompteInactif,
+  marquerCommeEchec,
+  marquerCommeSucces,
+} from "@/server/gestion-utilisateur/domain/ActionCompteInactif";
 
 type Dependencies = {
   utilisateurRepository: UtilisateurRepository;
@@ -54,11 +56,11 @@ export class EnvoyerLesRelancesUseCase {
       try {
         await this.executerRelance(action);
 
-        await this.actionCompteInactifRepository.sauvegarder({
-          ...action,
-          statut: "SUCCES",
+        const actionSucces = marquerCommeSucces({
+          action,
           dateSucces: new Date(),
         });
+        await this.actionCompteInactifRepository.sauvegarder(actionSucces);
 
         if (action.typeAction === "PREMIERE_RELANCE")
           premieresRelancesEnvoyees++;
@@ -70,13 +72,12 @@ export class EnvoyerLesRelancesUseCase {
           error,
         );
 
-        await this.actionCompteInactifRepository.sauvegarder({
-          ...action,
-          statut: "ERREUR",
-          nombreTentatives: action.nombreTentatives + 1,
-          dateDerniereTentative: new Date(),
+        const actionEchec = marquerCommeEchec({
+          action,
+          dateTentative: new Date(),
           erreur: error instanceof Error ? error.message : String(error),
         });
+        await this.actionCompteInactifRepository.sauvegarder(actionEchec);
 
         erreurs++;
       }

@@ -1,8 +1,8 @@
 import { $Enums } from "@prisma/client";
-import { randomUUID } from "crypto";
 import { UtilisateurRepository } from "@/server/gestion-utilisateur/domain/ports/UtilisateurRepository";
 import { ActionCompteInactifRepository } from "@/server/gestion-utilisateur/domain/ports/ActionCompteInactifRepository";
 import logger from "@/server/infrastructure/Logger";
+import { creerActionCompteInactif } from "@/server/gestion-utilisateur/domain/ActionCompteInactif";
 
 type Dependencies = {
   utilisateurRepository: UtilisateurRepository;
@@ -47,17 +47,12 @@ export class CreerLesActionsComptesInactifsUseCase {
       }
 
       try {
-        await this.actionCompteInactifRepository.sauvegarder({
-          id: randomUUID(),
+        const action = creerActionCompteInactif({
           utilisateurId: compte.email,
-          typeAction,
           dateCreation: aujourdHui,
-          statut: "CREEE",
-          dateSucces: null,
-          dateDerniereTentative: null,
-          nombreTentatives: 0,
-          erreur: null,
+          typeAction,
         });
+        await this.actionCompteInactifRepository.sauvegarder(action);
 
         if (typeAction === "PREMIERE_RELANCE") actionsPremiereRelance++;
         if (typeAction === "DEUXIEME_RELANCE") actionsDeuxiemeRelance++;

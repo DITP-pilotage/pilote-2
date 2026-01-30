@@ -1,9 +1,7 @@
 import { $Enums } from "@prisma/client";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
-import {
-  ActionCompteInactif,
-  ActionCompteInactifRepository,
-} from "@/server/gestion-utilisateur/domain/ports/ActionCompteInactifRepository";
+import { ActionCompteInactifRepository } from "@/server/gestion-utilisateur/domain/ports/ActionCompteInactifRepository";
+import { ActionCompteInactif } from "@/server/gestion-utilisateur/domain/ActionCompteInactif";
 
 export class PrismaActionCompteInactifRepository
   implements ActionCompteInactifRepository
@@ -19,10 +17,6 @@ export class PrismaActionCompteInactifRepository
         type_action: action.typeAction,
         date_creation: action.dateCreation,
         statut: action.statut,
-        date_succes: action.dateSucces,
-        date_derniere_tentative: action.dateDerniereTentative,
-        nombre_tentatives: action.nombreTentatives,
-        erreur: action.erreur,
       },
       update: {
         statut: action.statut,

@@ -5,6 +5,10 @@ import { TokenAPIInformationRepository } from "@/server/gestion-utilisateur/doma
 import { ContactInfoLettresService } from "@/server/gestion-utilisateur/domain/ports/ContactInfoLettresService";
 import logger from "@/server/infrastructure/Logger";
 import { configuration } from "@/config";
+import {
+  marquerCommeEchec,
+  marquerCommeSucces,
+} from "@/server/gestion-utilisateur/domain/ActionCompteInactif";
 
 type Dependencies = {
   utilisateurRepository: UtilisateurRepository;
@@ -87,11 +91,11 @@ export class DesactiverLesComptesInactifsUseCase {
           email,
         });
 
-        await this.actionCompteInactifRepository.sauvegarder({
-          ...action,
-          statut: "SUCCES",
+        const actionSucces = marquerCommeSucces({
+          action,
           dateSucces: new Date(),
         });
+        await this.actionCompteInactifRepository.sauvegarder(actionSucces);
 
         comptesDesactives++;
       } catch (error) {
@@ -100,13 +104,12 @@ export class DesactiverLesComptesInactifsUseCase {
           error,
         );
 
-        await this.actionCompteInactifRepository.sauvegarder({
-          ...action,
-          statut: "ERREUR",
-          nombreTentatives: action.nombreTentatives + 1,
-          dateDerniereTentative: new Date(),
+        const actionEchec = marquerCommeEchec({
+          action,
+          dateTentative: new Date(),
           erreur: error instanceof Error ? error.message : String(error),
         });
+        await this.actionCompteInactifRepository.sauvegarder(actionEchec);
 
         erreurs++;
       }
