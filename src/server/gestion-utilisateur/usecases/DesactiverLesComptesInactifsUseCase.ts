@@ -65,10 +65,10 @@ export class DesactiverLesComptesInactifsUseCase {
     }
 
     const actions =
-      await this.actionCompteInactifRepository.recupererActionsParTypeEtStatut(
-        ["DESACTIVATION"],
-        "CREEE",
-      );
+      await this.actionCompteInactifRepository.recupererActionsParTypeEtStatut({
+        typesAction: ["DESACTIVATION"],
+        statut: "CREEE",
+      });
 
     let comptesDesactives = 0;
     let erreurs = 0;

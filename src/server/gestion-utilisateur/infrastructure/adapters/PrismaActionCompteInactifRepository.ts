@@ -28,16 +28,16 @@ export class PrismaActionCompteInactifRepository
     });
   }
 
-  async recupererActionsParTypeEtStatut(
-    typesAction: $Enums.type_action_compte_inactif[],
-    statut: $Enums.statut_action_compte_inactif,
-  ): Promise<ActionCompteInactif[]> {
+  async recupererActionsParTypeEtStatut(params: {
+    typesAction: $Enums.type_action_compte_inactif[];
+    statut: $Enums.statut_action_compte_inactif;
+  }): Promise<ActionCompteInactif[]> {
     const actions = await this.dependencies.prisma
       .getInstance()
       .action_compte_inactif.findMany({
         where: {
-          type_action: { in: typesAction },
-          statut,
+          type_action: { in: params.typesAction },
+          statut: params.statut,
         },
       });
 

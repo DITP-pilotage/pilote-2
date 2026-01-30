@@ -37,17 +37,16 @@ describe("PrismaActionCompteInactifRepository", () => {
         await repository.sauvegarder(action);
 
         // Then
-        const result = await repository.recupererActionsParTypeEtStatut(
-          ["PREMIERE_RELANCE"],
-          "CREEE",
-        );
+        const result = await prismaPilote
+          .getInstance()
+          .action_compte_inactif.findMany();
         expect(result).toEqual([
           expect.objectContaining({
             id: action.id,
-            utilisateurId: utilisateur.id,
-            typeAction: "PREMIERE_RELANCE",
+            utilisateur_id: utilisateur.id,
+            type_action: "PREMIERE_RELANCE",
             statut: "CREEE",
-            nombreTentatives: 0,
+            nombre_tentatives: 0,
             erreur: null,
           }),
         ]);
@@ -83,15 +82,14 @@ describe("PrismaActionCompteInactifRepository", () => {
         });
 
         // Then
-        const result = await repository.recupererActionsParTypeEtStatut(
-          ["DESACTIVATION"],
-          "ERREUR",
-        );
+        const result = await prismaPilote
+          .getInstance()
+          .action_compte_inactif.findMany();
         expect(result).toEqual([
           expect.objectContaining({
             id: actionId,
             statut: "ERREUR",
-            nombreTentatives: 1,
+            nombre_tentatives: 1,
             erreur: "Erreur Keycloak",
           }),
         ]);
@@ -123,10 +121,10 @@ describe("PrismaActionCompteInactifRepository", () => {
         });
 
         // When
-        const result = await repository.recupererActionsParTypeEtStatut(
-          ["PREMIERE_RELANCE", "DEUXIEME_RELANCE"],
-          "CREEE",
-        );
+        const result = await repository.recupererActionsParTypeEtStatut({
+          typesAction: ["PREMIERE_RELANCE", "DEUXIEME_RELANCE"],
+          statut: "CREEE",
+        });
 
         // Then
         expect(result).toEqual([
@@ -142,10 +140,10 @@ describe("PrismaActionCompteInactifRepository", () => {
       "retourne un tableau vide quand aucune action ne correspond",
       createIntegrationTest(async () => {
         // When
-        const result = await repository.recupererActionsParTypeEtStatut(
-          ["DESACTIVATION"],
-          "CREEE",
-        );
+        const result = await repository.recupererActionsParTypeEtStatut({
+          typesAction: ["DESACTIVATION"],
+          statut: "CREEE",
+        });
 
         // Then
         expect(result).toEqual([]);

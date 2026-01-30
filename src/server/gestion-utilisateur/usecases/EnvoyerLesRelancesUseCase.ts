@@ -43,10 +43,10 @@ export class EnvoyerLesRelancesUseCase {
 
   async run(): Promise<EnvoyerLesRelancesResultat> {
     const actions =
-      await this.actionCompteInactifRepository.recupererActionsParTypeEtStatut(
-        ["PREMIERE_RELANCE", "DEUXIEME_RELANCE"],
-        "CREEE",
-      );
+      await this.actionCompteInactifRepository.recupererActionsParTypeEtStatut({
+        typesAction: ["PREMIERE_RELANCE", "DEUXIEME_RELANCE"],
+        statut: "CREEE",
+      });
 
     let premieresRelancesEnvoyees = 0;
     let deuxiemesRelancesEnvoyees = 0;
