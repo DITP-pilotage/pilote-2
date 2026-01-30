@@ -22,11 +22,11 @@ export const Utilisateur = () => {
   const { email, prenom, nom } = useProfilUtilisateurConnecte();
 
   const { data: panelAdminEstDisponible } =
-    api.gestionContenu.récupérerVariableContenu.useQuery({
+    api.gestionContenu.recupererVariableContenu.useQuery({
       nomVariableContenu: "NEXT_PUBLIC_FF_PANEL_ADMIN",
     });
   const { data: monProfilEstDisponible } =
-    api.gestionContenu.récupérerVariableContenu.useQuery({
+    api.gestionContenu.recupererVariableContenu.useQuery({
       nomVariableContenu: "NEXT_PUBLIC_FF_MON_PROFIL",
     });
 

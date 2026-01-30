@@ -27,11 +27,11 @@ const estAdministrateur = (session: Session | null) =>
 
 export const useNavigation = () => {
   const { data: applicationEstDisponible } =
-    api.gestionContenu.récupérerVariableContenu.useQuery({
+    api.gestionContenu.recupererVariableContenu.useQuery({
       nomVariableContenu: "NEXT_PUBLIC_FF_APPLICATION_INDISPONIBLE",
     });
   const { data: suiviCompletudeEstDisponible } =
-    api.gestionContenu.récupérerVariableContenu.useQuery({
+    api.gestionContenu.recupererVariableContenu.useQuery({
       nomVariableContenu: "NEXT_PUBLIC_FF_SUIVI_COMPLETUDE",
     });
 

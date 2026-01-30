@@ -10,7 +10,7 @@ export type JalonsAAfficherType = (typeof listeJalonAAfficher)[number];
 
 export const useSelecteurJalon = () => {
   const { data: dateBasculeValeurAnneePrecedente } =
-    api.gestionContenu.récupérerVariableContenu.useQuery({
+    api.gestionContenu.recupererVariableContenu.useQuery({
       nomVariableContenu:
         "NEXT_PUBLIC_DATE_BASCULE_AFFICHAGE_VALEURS_ANNEE_PRECEDENTE",
     });

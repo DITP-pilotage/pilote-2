@@ -31,7 +31,7 @@ export const FiltresSelectionUnique: FunctionComponent<
   const { data: session } = useSession();
 
   const { data: variableContenuFFPpgArchive } =
-    api.gestionContenu.récupérerVariableContenu.useQuery({
+    api.gestionContenu.recupererVariableContenu.useQuery({
       nomVariableContenu: "NEXT_PUBLIC_FF_PPG_ARCHIVE",
     });
   const profilPeutAccederAuxBrouillons =
