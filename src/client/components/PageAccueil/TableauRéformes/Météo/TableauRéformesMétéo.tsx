@@ -45,7 +45,7 @@ const TableauRéformesMétéo: FunctionComponent<TableauChantiersMétéoProps> =
         </span>
       )}
       {dateDeMàjDonnéesQualitatives ? (
-        <span className="!text-dsfr-mention-grey !text-xs">
+        <span className="!text-dsfr-mention-grey !text-[10px]">
           {`(${formaterDate(dateDeMàjDonnéesQualitatives, "MM/YYYY")})`}
         </span>
       ) : null}
