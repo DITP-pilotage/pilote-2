@@ -1,9 +1,9 @@
 import Image from "next/image";
 import { FunctionComponent } from "react";
 import LoaderStyled from "./Loader.styled";
-import marianneSvg from "/public/img/marianne.svg";
+import marianneSvg from "../../../../../public/img/marianne.svg";
 
-const Loader: FunctionComponent<{}> = () => {
+const Loader: FunctionComponent = () => {
   return (
     <LoaderStyled className="fr-grid-row fr-grid-row--center fr-grid-row--middle fr-py-2w">
       <div className="fr-col-12">

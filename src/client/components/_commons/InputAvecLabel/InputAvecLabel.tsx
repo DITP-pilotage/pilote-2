@@ -15,7 +15,7 @@ interface InputAvecLabelProps {
   isRequired?: boolean;
   htmlName: string;
   texteAide?: string;
-  erreur?: FieldError | Merge<FieldError, FieldErrorsImpl<{}>>;
+  erreur?: FieldError | Merge<FieldError, FieldErrorsImpl>;
   register: UseFormRegisterReturn;
   disabled?: boolean;
 }

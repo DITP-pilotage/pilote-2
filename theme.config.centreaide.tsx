@@ -9,7 +9,7 @@ const config: DocsThemeConfig = {
       <div className="flex flex-col">
         <span className="!text-xl bold">PILOTE</span>
         <span className="!text-sm">
-          Piloter l'action publique par les résultats
+          Piloter l&#39;action publique par les résultats
         </span>
       </div>
     </div>
@@ -21,7 +21,7 @@ const config: DocsThemeConfig = {
           className="!text-dsfr-blue-link"
           href="mailto:pilote.ditp@modernisation.gouv.fr"
         >
-          Contacter l'équipe Pilote
+          Contacter l&#39;équipe Pilote
         </Link>
         <Link className="!text-dsfr-blue-link" href="/">
           Accéder à Pilote

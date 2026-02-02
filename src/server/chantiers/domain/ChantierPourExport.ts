@@ -1,4 +1,3 @@
-/* eslint-disable sonarjs/prefer-single-boolean-return */
 import { Météo } from "@/server/domain/météo/Météo.interface";
 import { OptionsExport } from "@/server/usecase/chantier/OptionsExport";
 import { ProfilCode } from "@/server/domain/utilisateur/Utilisateur.interface";

@@ -30,7 +30,7 @@ export function Textarea<T extends FieldValues>({
   placeholder?: string;
   name: Path<T>;
   control: Control<T>;
-  textareaRef?: RefObject<TextareaRef>;
+  textareaRef?: RefObject<TextareaRef | null>;
   charLimit?: number;
 }) {
   const internalRef = useRef<HTMLTextAreaElement | null>(null);

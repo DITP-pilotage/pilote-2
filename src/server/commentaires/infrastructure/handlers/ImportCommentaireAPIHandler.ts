@@ -45,7 +45,7 @@ export class ImportCommentaireAPIHandler {
 
     try {
       body = await this.parseBody(request);
-    } catch (error) {
+    } catch {
       response.status(400).json({
         message: "Le corps de la requête n'est pas un JSON valide",
         erreurs: [],
@@ -95,10 +95,12 @@ export class ImportCommentaireAPIHandler {
       });
 
       request.on("end", () => {
-        const body = Buffer.concat(chunks).toString();
+        const body = Buffer.concat(
+          chunks as unknown as Uint8Array[],
+        ).toString();
         try {
           resolve(JSON.parse(body));
-        } catch (error) {
+        } catch {
           reject(new Error("Le corps de la requête n'est pas un JSON valide"));
         }
       });

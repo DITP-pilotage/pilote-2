@@ -85,7 +85,6 @@ export const LigneEtapeEvaluation = ({
 
                 <blockquote
                   className="[&_*]:!text-sm text-gray-700 pl-3 py-1 whitespace-pre-line"
-                  // eslint-disable-next-line react/no-danger
                   dangerouslySetInnerHTML={{ __html: annexe }}
                 />
               </div>

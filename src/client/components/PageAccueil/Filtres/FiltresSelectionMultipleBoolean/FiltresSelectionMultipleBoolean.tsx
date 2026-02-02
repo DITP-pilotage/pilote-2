@@ -9,15 +9,15 @@ import { FunctionComponent } from "react";
 import { sauvegarderFiltres } from "@/stores/useFiltresStoreNew/useFiltresStoreNew";
 import { FiltresSélectionMultipleStyled } from "./FiltresSelectionMultipleBoolean.styled";
 
-const availableFiltres = ["estBarometre", "estTerritorialise"] as const;
+type AvailableFiltres = "estBarometre" | "estTerritorialise";
 
-const valuesFiltres: Record<(typeof availableFiltres)[number], string> = {
+const valuesFiltres: Record<AvailableFiltres, string> = {
   estBarometre: "Chantiers du baromètre",
   estTerritorialise: "Chantiers territorialisés",
 };
 
 interface FiltresSelectionMultipleBooleanProps {
-  listeCategorieDeFiltre: Array<(typeof availableFiltres)[number]>;
+  listeCategorieDeFiltre: Array<AvailableFiltres>;
   libelle: string;
 }
 
@@ -25,7 +25,7 @@ export const FiltresSelectionMultipleBoolean: FunctionComponent<
   FiltresSelectionMultipleBooleanProps
 > = ({ listeCategorieDeFiltre, libelle }) => {
   const listesFiltres: Record<
-    (typeof availableFiltres)[number],
+    AvailableFiltres,
     ParserBuilder<boolean>
   > = listeCategorieDeFiltre.reduce(
     (acc, catégorieDeFiltre) => {
@@ -36,7 +36,7 @@ export const FiltresSelectionMultipleBoolean: FunctionComponent<
       });
       return acc;
     },
-    {} as Record<(typeof availableFiltres)[number], ParserBuilder<boolean>>,
+    {} as Record<AvailableFiltres, ParserBuilder<boolean>>,
   );
 
   const [filtresNew, setListeFiltresNew] = useQueryStates(listesFiltres, {

@@ -1,18 +1,16 @@
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next";
-import { getServerSession } from "next-auth/next";
 import { $Enums } from "@prisma/client";
 import assert from "node:assert";
 import { getContainer } from "@/server/dependances";
-import { authOptions } from "@/server/infrastructure/api/auth/[...nextauth]";
+import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
 import { pageInstruction } from "@/components/PageInstruction/PageInstructionServerSideContext";
 import { FormulaireInstruction } from "@/components/PageInstruction/FormulaireInstruction";
 import { configurationFeatureFlip } from "@/config";
 
-export const getServerSideProps = async ({
-  req,
-  res,
-}: GetServerSidePropsContext) => {
-  const session = await getServerSession(req, res, authOptions);
+export const getServerSideProps = async (
+  context: GetServerSidePropsContext,
+) => {
+  const session = await auth(context);
   assert(session);
 
   const featureFlipping = configurationFeatureFlip();

@@ -1,8 +1,7 @@
 import { FunctionComponent } from "react";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
-import { getServerSession } from "next-auth/next";
 import Head from "next/head";
-import { authOptions } from "@/server/infrastructure/api/auth/[...nextauth]";
+import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
 import { FicheConducteurContrat } from "@/server/fiche-conducteur/app/contrats/FicheConducteurContrat";
 import { PageFicheConducteur } from "@/components/PageFicheConducteur/PageFicheConducteur";
 import { RécupérerVariableContenuUseCase } from "@/server/gestion-contenu/usecases/RécupérerVariableContenuUseCase";
@@ -14,8 +13,9 @@ import { getContainer } from "@/server/dependances";
 export const getServerSideProps: GetServerSideProps<{
   ficheConducteur: FicheConducteurContrat;
   jalon: number;
-}> = async ({ req, res, query }) => {
-  const session = await getServerSession(req, res, authOptions);
+}> = async (context) => {
+  const { query } = context;
+  const session = await auth(context);
 
   const estFicheConducteurDisponible =
     new RécupérerVariableContenuUseCase().run({

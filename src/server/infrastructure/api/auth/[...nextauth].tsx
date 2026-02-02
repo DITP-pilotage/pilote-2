@@ -1,12 +1,11 @@
-import NextAuth, { AuthOptions, getServerSession, User } from "next-auth";
+import NextAuth from "next-auth";
+import type { NextAuthConfig } from "next-auth";
+import type { User } from "next-auth";
 import KeycloakProvider from "next-auth/providers/keycloak";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { GetServerSidePropsContext } from "next";
 import { JWT } from "next-auth/jwt";
 import logger from "@/server/infrastructure/Logger";
-import { dependencies } from "@/server/infrastructure/Dependencies";
 import { configuration } from "@/config";
-import { getContainer } from "@/server/dependances";
 
 export const keycloak = KeycloakProvider({
   clientId: configuration().keycloak.clientId,
@@ -170,12 +169,15 @@ const credentialsProvider = CredentialsProvider({
     password: { label: "Mot de passe", type: "password" },
   },
 
-  async authorize(credentials, _req): Promise<User | null> {
-    const password = credentials?.password;
-    const username = credentials?.username;
+  async authorize(credentials: Record<string, unknown>): Promise<User | null> {
+    const password = credentials?.password as string | undefined;
+    const username = credentials?.username as string | undefined;
     if (!username || password != configuration().devPassword) {
       return null;
     }
+    const { dependencies } = await import(
+      "@/server/infrastructure/Dependencies"
+    );
     const utilisateurRepository = dependencies.getUtilisateurRepository();
     const utilisateur = await utilisateurRepository.récupérer(username);
 
@@ -201,27 +203,45 @@ function _hasExpired(token: PiloteJWTPayload): Boolean {
 
 const toPiloteJWTPayload = (token: JWT) => token as PiloteJWTPayload;
 
-export const authOptions: AuthOptions = {
+export const authConfig: NextAuthConfig = {
   providers: !!configuration().devPassword ? [credentialsProvider] : [keycloak],
   debug: configuration().nextAuth.debug,
   session: {
     maxAge: configuration().nextAuth.sessionMaxAge,
   },
   events: {
-    signOut: ({ token }) => {
-      return doFinalSignoutHandshake(toPiloteJWTPayload(token));
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    signOut: (message: { session: any } | { token: JWT | null }) => {
+      if ("token" in message && message.token) {
+        return doFinalSignoutHandshake(toPiloteJWTPayload(message.token));
+      }
     },
   },
   callbacks: {
-    async jwt({ token, account, user, profile, isNewUser }) {
+    async jwt({
+      token,
+      account,
+      user,
+      profile,
+    }: {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      token: any;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      account?: any;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      user?: any;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      profile?: any;
+    }) {
       if (account != null && user != null) {
         logger.info(
           { userId: user.id },
           "NextAuth JWT callback called from login",
         );
-        logger.debug({ token, user, account, profile, isNewUser });
+        logger.debug({ token, user, account, profile });
 
         if (user.email) {
+          const { getContainer } = await import("@/server/dependances");
           const utilisateurRepository =
             getContainer("gestionUtilisateur").cradle.utilisateurRepository;
           await utilisateurRepository.mettreAJourDateDerniereConnexion(
@@ -253,8 +273,12 @@ export const authOptions: AuthOptions = {
       return refreshAccessToken(toPiloteJWTPayload(token));
     },
 
-    async session({ session, token }) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    async session({ session, token }: { session: any; token: any }) {
       const piloteToken = toPiloteJWTPayload(token);
+      const { dependencies } = await import(
+        "@/server/infrastructure/Dependencies"
+      );
       const utilisateurRepository = dependencies.getUtilisateurRepository();
       const utilisateur = await utilisateurRepository.récupérer(
         piloteToken.user.email,
@@ -277,7 +301,6 @@ export const authOptions: AuthOptions = {
       };
       session.accessToken = piloteToken.accessToken;
       session.profil = utilisateur?.profil;
-      // @ts-expect-error TODO(CHAN 10/09/2025): corriger les types dupliqués des habilitations
       session.habilitations = utilisateur!.habilitations;
       session.applicationsAccessibles = utilisateur!.applicationsAccessibles;
       session.profilAAccèsAuxChantiersBrouillons =
@@ -288,12 +311,4 @@ export const authOptions: AuthOptions = {
   },
 };
 
-export const getServerAuthSession = (ctx: {
-  req: GetServerSidePropsContext["req"];
-  res: GetServerSidePropsContext["res"];
-}) => {
-  return getServerSession(ctx.req, ctx.res, authOptions);
-};
-
-const handleNextAuth = NextAuth(authOptions);
-export default handleNextAuth;
+export const { auth, handlers } = NextAuth(authConfig);

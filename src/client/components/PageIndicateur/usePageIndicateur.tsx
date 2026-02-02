@@ -99,7 +99,8 @@ export const usePageIndicateur = (
   );
 
   const reactHookForm = useForm<MetadataIndicateurForm>({
-    resolver: zodResolver(validationSchema),
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    resolver: zodResolver(validationSchema) as any,
     defaultValues: {
       ...indicateur,
       indicHiddenPilote: indicateur.indicHiddenPilote ? "false" : "true",

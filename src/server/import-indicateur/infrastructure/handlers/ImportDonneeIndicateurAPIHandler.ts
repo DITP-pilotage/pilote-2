@@ -98,23 +98,28 @@ export class ImportDonneeIndicateurAPIHandler {
               return;
             }
           }
-          fs.writeFile(filePath, Buffer.from(stringifier), async (err) => {
-            if (err) {
-              reject(err);
-            }
+          fs.writeFile(
+            filePath,
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            Buffer.from(stringifier) as any,
+            async (err) => {
+              if (err) {
+                reject(err);
+              }
 
-            await this.importDonneeIndicateur({
-              cheminCompletDuFichier: filePath,
-              nomDuFichier: fileName,
-              indicateurId: request.query.indicateurId as string,
-              utilisateurAuteurDeLimportEmail: email,
-              isAdmin: profil === ProfilEnum.DITP_ADMIN,
-              auteurId: utilisateurId,
-              response,
-            });
+              await this.importDonneeIndicateur({
+                cheminCompletDuFichier: filePath,
+                nomDuFichier: fileName,
+                indicateurId: request.query.indicateurId as string,
+                utilisateurAuteurDeLimportEmail: email,
+                isAdmin: profil === ProfilEnum.DITP_ADMIN,
+                auteurId: utilisateurId,
+                response,
+              });
 
-            resolve();
-          });
+              resolve();
+            },
+          );
         });
       } catch (error) {
         return response.status(400).json({ message: (error as Error).message });

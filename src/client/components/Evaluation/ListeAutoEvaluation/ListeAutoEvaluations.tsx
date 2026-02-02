@@ -90,7 +90,7 @@ export const ListeAutoEvaluations = ({
 
                 <Bouton
                   className="items-center"
-                  disabled={genererPDF.isLoading}
+                  disabled={genererPDF.isPending}
                   iconLeft={
                     <Icone
                       className="w-4 h-4 !text-current !shrink-0"

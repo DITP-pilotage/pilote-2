@@ -3,7 +3,7 @@ import Link from "next/link";
 import PageCréerUtilisateurAideStyled from "./PageCréerUtilisateurAide.styled";
 import { DescriptionEtapes } from "./DescriptionEtapes/DescriptionEtapes";
 
-export const PageCréerUtilisateurAide: FunctionComponent<{}> = () => {
+export const PageCréerUtilisateurAide: FunctionComponent = () => {
   const etapes = [
     {
       titre: "Saisie des informations de l'utilisateur",

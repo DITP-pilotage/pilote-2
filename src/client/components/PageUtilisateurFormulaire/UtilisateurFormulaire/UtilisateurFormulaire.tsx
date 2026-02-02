@@ -40,7 +40,10 @@ const UtilisateurFormulaire: FunctionComponent<UtilisateurFormulaireProps> = ({
   );
 
   const reactHookForm = useForm<UtilisateurFormInputs>({
-    resolver: zodResolver(donneValidationInfosBaseUtilisateur(session!.profil)),
+    resolver: zodResolver(
+      donneValidationInfosBaseUtilisateur(session!.profil),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ) as any,
     defaultValues: {
       email: utilisateur?.email,
       nom: utilisateur?.nom,

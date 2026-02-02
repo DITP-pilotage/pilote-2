@@ -15,7 +15,7 @@ const DynamicSwaggerUI = dynamic(() => import("swagger-ui-react"), {
   ),
 });
 
-export const getServerSideProps: GetServerSideProps<{}> = async () => {
+export const getServerSideProps: GetServerSideProps = async () => {
   const estDocsAPIActive = new RécupérerVariableContenuUseCase().run({
     nomVariableContenu: "NEXT_PUBLIC_FF_DOCS_API",
   }) as boolean;

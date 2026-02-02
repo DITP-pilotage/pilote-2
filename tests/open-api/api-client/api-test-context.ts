@@ -48,6 +48,7 @@ export class ApiTestContext {
       token: { email: config.email },
       secret: process.env.TOKEN_API_SECRET!,
       maxAge: 365 * 24 * 60 * 60,
+      salt: "authjs.session-token",
     });
 
     await prisma.token_api_information.upsert({
@@ -67,7 +68,8 @@ export class ApiTestContext {
       },
     });
 
-    const client = new OpenApiClient(apiContext);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const client = new OpenApiClient(apiContext as any);
 
     return new ApiTestContext(client, config);
   }

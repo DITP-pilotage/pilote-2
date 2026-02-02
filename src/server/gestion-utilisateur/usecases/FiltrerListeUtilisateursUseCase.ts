@@ -1,4 +1,4 @@
-import { PROFILS_POSSIBLES_GESTION_UTILISATEUR_LECTURE } from "@/components/PageUtilisateurFormulaire/UtilisateurFormulaire/SaisieDesInformationsUtilisateur/useSaisieDesInformationsUtilisateur";
+import { PROFILS_POSSIBLES_GESTION_UTILISATEUR_LECTURE } from "@/server/domain/utilisateur/profils-gestion-utilisateur";
 import { ProfilCode } from "@/server/domain/utilisateur/Utilisateur.interface";
 import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
 import { UtilisateurListeGestion } from "@/server/gestion-utilisateur/domain/UtilisateurListeGestion.interface";

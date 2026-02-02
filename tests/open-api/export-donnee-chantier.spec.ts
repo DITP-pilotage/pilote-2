@@ -11,7 +11,8 @@ test("Quand on a accès au chantier, doit remonter une réponse 200 OK avec les 
   playwright,
 }) => {
   const apiContext = await ApiTestContext.create(
-    playwright,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    playwright as any,
     "EQUIPE_DIR_PROJET",
   );
   const client = apiContext.getClient();

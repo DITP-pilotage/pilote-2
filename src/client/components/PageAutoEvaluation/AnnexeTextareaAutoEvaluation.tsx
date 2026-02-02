@@ -25,7 +25,7 @@ export function AnnexeTextareaAutoEvaluation<T extends FieldValues>({
   onFocus?: () => void;
 }) {
   const [displayAnnexe, setDisplayAnnexe] = useState(false);
-  const editeurRef = useRef<EditeurRicheRef>(null);
+  const editeurRef = useRef<EditeurRicheRef | null>(null);
   const autosave = useAutosave({ onAutosave });
 
   return (

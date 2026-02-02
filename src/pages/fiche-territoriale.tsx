@@ -1,20 +1,18 @@
 import { FunctionComponent } from "react";
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next";
-import { getServerSession } from "next-auth/next";
 import { z } from "zod";
 import assert from "node:assert";
 import { PageFicheTerritoriale } from "@/components/PageFicheTerritoriale/PageFicheTerritoriale";
-import { authOptions } from "@/server/infrastructure/api/auth/[...nextauth]";
+import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
 import { estAutoriséAConsulterLaFicheTerritoriale } from "@/client/utils/fiche-territoriale/fiche-territoriale";
 import { ficheTerritorialeHandler } from "@/server/fiche-territoriale/infrastructure/handlers/FicheTerritorialeHandler";
 import { getAnneeDateDeBascule } from "@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getAnneeDateDeBascule";
 import { configuration, configurationFeatureFlip } from "@/config";
 
-export const getServerSideProps = async ({
-  req,
-  res,
-  query,
-}: GetServerSidePropsContext) => {
+export const getServerSideProps = async (
+  context: GetServerSidePropsContext,
+) => {
+  const { query } = context;
   if (!configurationFeatureFlip().ficheTerritoriale) {
     return {
       redirect: {
@@ -26,7 +24,7 @@ export const getServerSideProps = async ({
   const queryJalon = z.string().parse(query.jalon || "2025");
   const queryTerritoireCode = z.string().parse(query.territoireCode);
 
-  const session = await getServerSession(req, res, authOptions);
+  const session = await auth(context);
 
   assert(session);
 

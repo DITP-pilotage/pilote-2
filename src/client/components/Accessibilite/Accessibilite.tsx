@@ -3,7 +3,7 @@ import Link from "next/link";
 import Titre from "@/client/components/_commons/Titre/Titre";
 import Bloc from "@/components/_commons/Bloc/Bloc";
 
-const Accessibilite: FunctionComponent<{}> = () => {
+const Accessibilite: FunctionComponent = () => {
   return (
     <main>
       <div className="fr-container fr-pb-2w">

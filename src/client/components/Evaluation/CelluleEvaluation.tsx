@@ -30,7 +30,7 @@ export const CelluleEvaluation = ({
   const note = form.watch(noteName);
 
   // Nécessaire pour lire l'état mis à jour des champs
-  // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+
   useFormState().isValid;
   const commentaireError = form.getFieldState(commentaireName).invalid;
   const noteError = form.getFieldState(noteName).invalid;

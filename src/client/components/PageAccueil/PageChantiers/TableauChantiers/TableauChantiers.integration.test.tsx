@@ -119,7 +119,7 @@ class TableauChantiersTest {
           territoireCode={this.territoireCode}
         />,
       ),
-    );
+    ).then(() => {});
   }
 }
 
@@ -132,6 +132,7 @@ beforeEach(() => {
   // When
   tableau.render();
 });
+// eslint-disable-next-line jest/no-disabled-tests
 describe.skip("TableauChantiers", () => {
   test("le tableau comporte le nombre de lignes adéquat", () => {
     // Then
@@ -163,7 +164,9 @@ describe.skip("TableauChantiers", () => {
     });
   });
 
+  // eslint-disable-next-line jest/no-commented-out-tests
   // describe("quand l'utilisateur clique sur le bouton de tri décroissant d'une colonne", () => {
+  // eslint-disable-next-line jest/no-commented-out-tests
   //   test('les éléments du tableau sont triés par ordre décroissant', async () => {
   //     // When
   //     await tableau.trierSurLaColonne('trier la colonne "avancement" par ordre décroissant');

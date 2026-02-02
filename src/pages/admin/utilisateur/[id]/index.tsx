@@ -1,7 +1,7 @@
 import { GetServerSidePropsContext } from "next/types";
 import Head from "next/head";
 import { FunctionComponent } from "react";
-import { getServerAuthSession } from "@/server/infrastructure/api/auth/[...nextauth]";
+import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
 import Utilisateur from "@/server/domain/utilisateur/Utilisateur.interface";
 import PageUtilisateur from "@/components/PageUtilisateur/PageUtilisateur";
 import RécupérerUnUtilisateurUseCase from "@/server/gestion-utilisateur/usecases/RécupérerUnUtilisateurUseCase";
@@ -18,11 +18,10 @@ export interface NextPageAdminUtilisateurProps {
   tokenAPIInformation: TokenAPIInformationContrat;
 }
 
-export async function getServerSideProps({
-  req,
-  res,
-  params,
-}: GetServerSidePropsContext<{ id: Utilisateur["id"] }>) {
+export async function getServerSideProps(
+  context: GetServerSidePropsContext<{ id: Utilisateur["id"] }>,
+) {
+  const { params } = context;
   const redirigerVersPageAccueil = {
     redirect: {
       destination: "/",
@@ -30,7 +29,7 @@ export async function getServerSideProps({
     },
   };
 
-  const session = await getServerAuthSession({ req, res });
+  const session = await auth(context);
 
   if (!params?.id || !session || !session.habilitations) {
     return redirigerVersPageAccueil;

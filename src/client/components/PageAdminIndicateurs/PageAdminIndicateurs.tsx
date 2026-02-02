@@ -7,7 +7,7 @@ import TableauAdminIndicateurs from "@/components/PageAdminIndicateurs/TableauAd
 import usePageAdminIndicateurs from "@/components/PageAdminIndicateurs/UsePageAdminIndicateurs";
 import PageAdminIndicateursStyled from "./PageAdminIndicateurs.styled";
 
-const PageAdminIndicateurs: FunctionComponent<{}> = () => {
+const PageAdminIndicateurs: FunctionComponent = () => {
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
   const { naviguerVersCreationIndicateur } = usePageAdminIndicateurs();
 

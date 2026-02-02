@@ -15,7 +15,7 @@ const Titre: FunctionComponent<TitreProps> = ({
   title,
   estInline = false,
 }) => {
-  const Balise = `${baliseHtml}` as keyof JSX.IntrinsicElements;
+  const Balise = baliseHtml as React.ElementType;
 
   return (
     <Balise

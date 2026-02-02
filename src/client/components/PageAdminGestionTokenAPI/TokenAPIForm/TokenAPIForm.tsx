@@ -2,7 +2,7 @@ import { FunctionComponent } from "react";
 import Input from "@/components/_commons/Input/Input";
 import { useTokenAPIForm } from "@/components/PageAdminGestionTokenAPI/TokenAPIForm/useTokenAPIForm";
 
-const TokenAPIForm: FunctionComponent<{}> = () => {
+const TokenAPIForm: FunctionComponent = () => {
   const { errors, register } = useTokenAPIForm();
   return (
     <div className="fr-container">

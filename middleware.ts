@@ -28,6 +28,7 @@ function generateNonce(): string {
   return nonce;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function middleware(_request: NextRequest): NextResponse {
   const nonce = generateNonce();
   const response = NextResponse.next();

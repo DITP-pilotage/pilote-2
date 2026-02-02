@@ -1,21 +1,19 @@
 import Head from "next/head";
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next";
-import { getServerSession } from "next-auth/next";
 import { z } from "zod";
 import { $Enums } from "@prisma/client";
 import assert from "node:assert";
 import { getContainer } from "@/server/dependances";
 import { pageAutoEvaluationObjectifs } from "@/components/PageAutoEvaluation/objectifs/PageAutoEvaluationObjectifsServerSideContext";
 import { configurationFeatureFlip } from "@/config";
-import { authOptions } from "@/server/infrastructure/api/auth/[...nextauth]";
+import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
 import { FormulaireAutoEvaluationObjectifs } from "@/components/PageAutoEvaluation/objectifs/FormulaireAutoEvaluationObjectifs";
 
-export const getServerSideProps = async ({
-  req,
-  res,
-  params,
-}: GetServerSidePropsContext) => {
-  const session = await getServerSession(req, res, authOptions);
+export const getServerSideProps = async (
+  context: GetServerSidePropsContext,
+) => {
+  const { params } = context;
+  const session = await auth(context);
   const ficheEvaluationId = z.string().parse(params?.ficheEvaluationId);
 
   assert(session);

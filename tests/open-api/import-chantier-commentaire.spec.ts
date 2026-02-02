@@ -13,7 +13,8 @@ test.beforeAll(() => {
 
 test("Import de commentaires via l'API open-api", async ({ playwright }) => {
   const apiContext = await ApiTestContext.create(
-    playwright,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    playwright as any,
     "EQUIPE_DIR_PROJET",
   );
   const client = apiContext.getClient();

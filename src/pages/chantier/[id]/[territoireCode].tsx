@@ -1,11 +1,10 @@
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next";
 import Head from "next/head";
-import { getServerSession } from "next-auth/next";
 import { FunctionComponent } from "react";
 import assert from "node:assert/strict";
 import PageChantier from "@/components/PageChantier/PageChantier";
 import { dependencies } from "@/server/infrastructure/Dependencies";
-import { authOptions } from "@/server/infrastructure/api/auth/[...nextauth]";
+import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
 import { NonAutorisé } from "@/server/utils/errors";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
 import ChoixTerritoire from "@/components/PageChantier/ChoixTerritoire/ChoixTerritoire";
@@ -38,11 +37,10 @@ const redirigeLaPage = (destination: string) => ({
   },
 });
 
-export const getServerSideProps = async ({
-  req,
-  res,
-  query,
-}: GetServerSidePropsContext) => {
+export const getServerSideProps = async (
+  context: GetServerSidePropsContext,
+) => {
+  const { query } = context;
   if (!query?.id) {
     return {
       notFound: true,
@@ -65,7 +63,7 @@ export const getServerSideProps = async ({
   const cartographieDroiteIndicateur =
     (query.carteIndD as CartographieIndicateurType) || "valeurAvancement";
 
-  const session = await getServerSession(req, res, authOptions);
+  const session = await auth(context);
 
   assert(
     query.territoireCode,

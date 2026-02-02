@@ -1,7 +1,7 @@
 import Head from "next/head";
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next";
 import { FunctionComponent } from "react";
-import { getServerAuthSession } from "@/server/infrastructure/api/auth/[...nextauth]";
+import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
 import { FormulaireParametrageSourceIndicateur } from "@/components/PagePanelAdministrateur/ParametrageSourceIndicateur/FormulaireParametrageSourceIndicateur";
 import { pageParametrageSourceContext } from "@/components/PagePanelAdministrateur/ParametrageSourceIndicateur/PageParametrageSourceContext";
 import Habilitation from "@/server/gestion-utilisateur/domain/habilitation/Habilitation";
@@ -9,11 +9,10 @@ import { getContainer } from "@/server/dependances";
 import { configurationFeatureFlip } from "@/config";
 import { NextPanelAdministrateurLayout } from "@/components/PagePanelAdministrateur/PanelAdministrateurLayout/layout";
 
-export const getServerSideProps = async ({
-  req,
-  res,
-}: GetServerSidePropsContext) => {
-  const session = await getServerAuthSession({ req, res });
+export const getServerSideProps = async (
+  context: GetServerSidePropsContext,
+) => {
+  const session = await auth(context);
 
   const featureFlipping = configurationFeatureFlip();
 

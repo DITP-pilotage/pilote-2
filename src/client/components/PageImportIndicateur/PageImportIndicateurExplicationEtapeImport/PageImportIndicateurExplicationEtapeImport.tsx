@@ -37,35 +37,34 @@ const explicationsEtapeImport: ExplicationEtape[] = [
   },
 ];
 
-const PageImportIndicateurExplicationEtapeImport: FunctionComponent<{}> =
-  () => {
-    const { query } = useRouter();
-    const etapeCourante = query.etapeCourante ? Number(query.etapeCourante) : 1;
+const PageImportIndicateurExplicationEtapeImport: FunctionComponent = () => {
+  const { query } = useRouter();
+  const etapeCourante = query.etapeCourante ? Number(query.etapeCourante) : 1;
 
-    return (
-      <PageImportIndicateurExplicationEtapeImportStyled>
-        <div className="fr-container fr-pt-2w fr-pb-3w">
-          <Titre baliseHtml="h2" className="fr-h4">
-            {
-              wording.PAGE_IMPORT_MESURE_INDICATEUR
-                .SECTION_EXPLICATION_ETAPE_IMPORT.TITRE
-            }
-          </Titre>
-          <ol className="fr-grid-row fr-grid-row--gutters fr-m-0 fr-p-0">
-            {explicationsEtapeImport.map(({ titre, texte }, index) => (
-              <li className="fr-col-lg-4" key={titre}>
-                <ExplicationEtapeIndicateur
-                  etapeCourante={etapeCourante}
-                  numéro={index + 1}
-                  texte={texte}
-                  titre={titre}
-                />
-              </li>
-            ))}
-          </ol>
-        </div>
-      </PageImportIndicateurExplicationEtapeImportStyled>
-    );
-  };
+  return (
+    <PageImportIndicateurExplicationEtapeImportStyled>
+      <div className="fr-container fr-pt-2w fr-pb-3w">
+        <Titre baliseHtml="h2" className="fr-h4">
+          {
+            wording.PAGE_IMPORT_MESURE_INDICATEUR
+              .SECTION_EXPLICATION_ETAPE_IMPORT.TITRE
+          }
+        </Titre>
+        <ol className="fr-grid-row fr-grid-row--gutters fr-m-0 fr-p-0">
+          {explicationsEtapeImport.map(({ titre, texte }, index) => (
+            <li className="fr-col-lg-4" key={titre}>
+              <ExplicationEtapeIndicateur
+                etapeCourante={etapeCourante}
+                numéro={index + 1}
+                texte={texte}
+                titre={titre}
+              />
+            </li>
+          ))}
+        </ol>
+      </div>
+    </PageImportIndicateurExplicationEtapeImportStyled>
+  );
+};
 
 export default PageImportIndicateurExplicationEtapeImport;

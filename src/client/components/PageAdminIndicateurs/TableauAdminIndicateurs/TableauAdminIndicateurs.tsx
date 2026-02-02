@@ -12,7 +12,7 @@ import InputFichier from "@/components/_commons/InputFichier/InputFichier";
 import { SubmitBouton } from "@/components/_commons/SubmitBouton/SubmitBouton";
 import Alerte from "@/components/_commons/Alerte/Alerte";
 
-const TableauAdminIndicateurs: FunctionComponent<{}> = () => {
+const TableauAdminIndicateurs: FunctionComponent = () => {
   const {
     tableau,
     file,
@@ -50,7 +50,12 @@ const TableauAdminIndicateurs: FunctionComponent<{}> = () => {
             </div>
           </div>
           <div className="fr-col-12 fr-col-md-6">
-            <form className="boutons-formulaire" onSubmit={verifierLeFichier}>
+            <form
+              className="boutons-formulaire"
+              onSubmit={
+                verifierLeFichier as React.FormEventHandler<HTMLFormElement>
+              }
+            >
               <InputFichier accept=".csv" onChange={définirLeFichier} />
               <SubmitBouton
                 className="fr-my-2w fr-my-md-1w fr-text--sm no-wrap"

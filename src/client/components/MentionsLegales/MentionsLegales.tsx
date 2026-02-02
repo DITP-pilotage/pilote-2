@@ -2,7 +2,7 @@ import { FunctionComponent } from "react";
 import Titre from "@/components/_commons/Titre/Titre";
 import Bloc from "@/components/_commons/Bloc/Bloc";
 
-const MentionsLegales: FunctionComponent<{}> = () => {
+const MentionsLegales: FunctionComponent = () => {
   return (
     <main>
       <div className="fr-container fr-pb-2w">

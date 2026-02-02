@@ -11,7 +11,7 @@ import { Territoire } from "@/server/domain/territoire/Territoire.interface";
 import Chantier from "@/server/domain/chantier/Chantier.interface";
 import api from "@/server/infrastructure/api/trpc/api";
 import { profilsRégionaux } from "@/server/domain/utilisateur/Utilisateur.interface";
-import { AAccesATousLesUtilisateurs } from "@/components/PageUtilisateurFormulaire/UtilisateurFormulaire/SaisieDesInformationsUtilisateur/useSaisieDesInformationsUtilisateur";
+import { AAccesATousLesUtilisateurs } from "@/server/domain/utilisateur/profils-gestion-utilisateur";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
 import FicheUtilisateurProps from "./FicheUtilisateur.interface";
 

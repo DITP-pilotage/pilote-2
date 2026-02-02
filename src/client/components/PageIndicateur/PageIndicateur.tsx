@@ -62,13 +62,15 @@ const PageIndicateur: FunctionComponent<PageIndicateurProps> = ({
           <FormProvider {...reactHookForm}>
             <form
               method="post"
-              onSubmit={reactHookForm.handleSubmit((data) => {
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              onSubmit={reactHookForm.handleSubmit(((data: any) => {
                 if (estUneCréation) {
                   creerIndicateur({ ...data, indicId: indicateur.indicId });
                 } else {
                   modifierIndicateur({ ...data, indicId: indicateur.indicId });
                 }
-              })}
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              }) as any)}
             >
               <div className="flex">
                 <Link

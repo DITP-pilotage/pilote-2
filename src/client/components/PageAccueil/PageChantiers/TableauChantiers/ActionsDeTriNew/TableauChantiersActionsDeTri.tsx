@@ -5,8 +5,6 @@ import SélecteurCustom from "@/components/_commons/SelecteurCustom/SélecteurAv
 import BoutonsDeTri from "@/components/_commons/Tableau/EnTête/BoutonsDeTri/BoutonsDeTri";
 import TableauChantiersActionsDeTriStyled from "@/components/PageAccueil/PageChantiers/TableauChantiers/ActionsDeTri/TableauChantiersActionsDeTri.styled";
 
-interface TableauChantiersActionsDeTriProps {}
-
 const listeColonnesÀtrier = [
   {
     libellé: "Taux d'avancement",
@@ -49,9 +47,7 @@ const ZodSchemaSorting = z.object({
   desc: z.boolean(),
 });
 
-export const TableauChantiersActionsDeTri: FunctionComponent<
-  TableauChantiersActionsDeTriProps
-> = ({}) => {
+export const TableauChantiersActionsDeTri: FunctionComponent = () => {
   const [sorting, setSorting] = useQueryState(
     "sort",
     parseAsJson(ZodSchemaSorting.parse)

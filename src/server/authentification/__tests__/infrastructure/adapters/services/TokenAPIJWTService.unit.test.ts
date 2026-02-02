@@ -26,6 +26,7 @@ describe("TokenAPIJWTService", () => {
       const tokenDecode = await decode({
         token: result,
         secret: configuration().tokenAPI.secret,
+        salt: "authjs.session-token",
       });
       expect(tokenDecode?.email).toEqual("test@example.com");
     });
@@ -38,6 +39,7 @@ describe("TokenAPIJWTService", () => {
       const token = await encode({
         token: { email },
         secret: configuration().tokenAPI.secret,
+        salt: "authjs.session-token",
       });
       // When
       const result = await tokenAPIJWTService.decoderTokenAPI(token);

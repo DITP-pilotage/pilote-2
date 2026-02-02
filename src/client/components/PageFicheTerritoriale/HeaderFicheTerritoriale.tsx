@@ -1,7 +1,7 @@
 import { FunctionComponent } from "react";
 import HeaderFicheTerritorialeStyled from "@/components/PageFicheTerritoriale/HeaderFicheTerritoriale.styled";
 
-const HeaderFicheTerritoriale: FunctionComponent<{}> = () => {
+const HeaderFicheTerritoriale: FunctionComponent = () => {
   return (
     <HeaderFicheTerritorialeStyled>
       <header className="flex fr-px-4w fr-mb-0" role="banner">

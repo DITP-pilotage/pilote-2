@@ -12,9 +12,9 @@ const récupérerBaseUrl = () => {
 };
 
 const api = createTRPCNext<AppRouter>({
+  transformer: superjson,
   config({ ctx }) {
     return {
-      transformer: superjson,
       links: [
         loggerLink({
           enabled: (opts) =>
@@ -24,16 +24,18 @@ const api = createTRPCNext<AppRouter>({
         httpBatchLink({
           url: `${récupérerBaseUrl()}/api/trpc`,
           maxURLLength: 6000,
+          transformer: superjson,
+          headers() {
+            if (ctx?.req) {
+              return {
+                ...ctx.req.headers,
+                "x-ssr": "1",
+              };
+            }
+            return {};
+          },
         }),
       ],
-      headers() {
-        if (ctx?.req) {
-          return {
-            ...ctx.req.headers,
-            "x-ssr": "1",
-          };
-        }
-      },
     };
   },
 });

@@ -3,7 +3,7 @@ import { FunctionComponent } from "react";
 import Titre from "@/client/components/_commons/Titre/Titre";
 import Bloc from "@/client/components/_commons/Bloc/Bloc";
 
-const DonneesPersonnellesCookies: FunctionComponent<{}> = () => {
+const DonneesPersonnellesCookies: FunctionComponent = () => {
   return (
     <main>
       <div className="fr-container fr-pb-2w">

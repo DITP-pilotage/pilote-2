@@ -1,10 +1,10 @@
 import Head from "next/head";
 import { GetServerSideProps } from "next";
-import { getServerAuthSession } from "@/server/infrastructure/api/auth/[...nextauth]";
+import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
 import { NextPanelAdministrateurLayout } from "@/components/PagePanelAdministrateur/PanelAdministrateurLayout/layout";
 
-export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
-  const session = await getServerAuthSession({ req, res });
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const session = await auth(context);
   const redirigerVersPageAccueil = {
     redirect: {
       destination: "/",

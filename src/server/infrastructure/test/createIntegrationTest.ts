@@ -13,7 +13,6 @@ export function createIntegrationTest<T extends unknown[]>(
           await txStore.run(tx, async () => {
             await testFn(tx, ...args);
           });
-          // eslint-disable-next-line @typescript-eslint/no-throw-literal
           throw ROLLBACK;
         },
         {

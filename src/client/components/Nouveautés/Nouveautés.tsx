@@ -126,7 +126,6 @@ const Nouveautés: FunctionComponent<{
                         ) : (
                           <div
                             className="fr-content"
-                            // eslint-disable-next-line react/no-danger
                             dangerouslySetInnerHTML={{
                               __html: listeNouveautes[0].contenu,
                             }}
@@ -213,7 +212,6 @@ const Nouveautés: FunctionComponent<{
                                   ) : (
                                     <div
                                       className="fr-content"
-                                      // eslint-disable-next-line react/no-danger
                                       dangerouslySetInnerHTML={{
                                         __html: element.contenu,
                                       }}

@@ -1,7 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 
 export default function useStateRef<T>(valeurInitiale: T) {
-  // eslint-disable-next-line react/hook-use-state
   const [valeur, _setValeur] = useState(valeurInitiale);
 
   const ref = useRef(valeur);

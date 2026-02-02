@@ -1,6 +1,5 @@
 import { GetServerSidePropsResult } from "next";
 import { GetServerSidePropsContext } from "next/types";
-import { getServerSession } from "next-auth/next";
 import Head from "next/head";
 import { FunctionComponent } from "react";
 import { useSession } from "next-auth/react";
@@ -9,7 +8,7 @@ import Chantier from "@/server/domain/chantier/Chantier.interface";
 import { ChantierInformations } from "@/components/PageImportIndicateur/ChantierInformation.interface";
 import { dependencies } from "@/server/infrastructure/Dependencies";
 import Indicateur from "@/server/domain/indicateur/Indicateur.interface";
-import { authOptions } from "@/server/infrastructure/api/auth/[...nextauth]";
+import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
 import {
   presenterEnRapportContrat,
   RapportContrat,
@@ -39,12 +38,10 @@ type Params = {
   rapportId: string;
 };
 
-export async function getServerSideProps({
-  query,
-  params,
-  req,
-  res,
-}: GetServerSidePropsContext<Params>): Promise<GetServerSideProps> {
+export async function getServerSideProps(
+  context: GetServerSidePropsContext<Params>,
+): Promise<GetServerSideProps> {
+  const { query, params } = context;
   if (!params?.id) {
     return {
       notFound: true,
@@ -57,7 +54,7 @@ export async function getServerSideProps({
       configuration().dateBasculeAffichageValeursAnneePrecedente,
     );
 
-  const session = await getServerSession(req, res, authOptions);
+  const session = await auth(context);
   if (!session || !estAutoriséAImporterDesIndicateurs(session.profil)) {
     throw new Error("Not connected or not authorized ?");
   }

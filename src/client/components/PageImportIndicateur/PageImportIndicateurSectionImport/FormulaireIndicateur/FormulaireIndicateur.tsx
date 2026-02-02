@@ -24,7 +24,10 @@ const FormulaireIndicateur: FunctionComponent<FormulaireIndicateurProps> = ({
 
   return (
     <>
-      <form className="flex align-center fr-mb-3w" onSubmit={verifierLeFichier}>
+      <form
+        className="flex align-center fr-mb-3w"
+        onSubmit={verifierLeFichier as React.FormEventHandler<HTMLFormElement>}
+      >
         <InputFichier onChange={définirLeFichier} />
         <SubmitBouton
           disabled={!file}

@@ -11,7 +11,8 @@ test.describe("Authentification", () => {
   test("quand on ne dispose pas d'un header Authorization, doit remonter une erreur 401 Unauthorized", async ({
     playwright,
   }) => {
-    const client = await createUnauthenticatedClient(playwright, {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const client = await createUnauthenticatedClient(playwright as any, {
       skip: true,
     });
 
@@ -25,7 +26,8 @@ test.describe("Authentification", () => {
   test("quand on dispose d'un header Authorization invalide, doit remonter une erreur 400 Bad Request", async ({
     playwright,
   }) => {
-    const client = await createUnauthenticatedClient(playwright, {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const client = await createUnauthenticatedClient(playwright as any, {
       value: "invalid",
     });
 
@@ -42,7 +44,8 @@ test.describe("Authentification", () => {
     const fakeJwt =
       "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c";
 
-    const client = await createUnauthenticatedClient(playwright, {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const client = await createUnauthenticatedClient(playwright as any, {
       value: fakeJwt,
     });
 
@@ -55,7 +58,11 @@ test.describe("Authentification", () => {
 
   test.describe("quand on dispose d'un header Authorization valide et que le token a été forgé par notre API", () => {
     test("doit remonter une réponse 200 OK", async ({ playwright }) => {
-      const apiContext = await ApiTestContext.create(playwright, "DITP_ADMIN");
+      const apiContext = await ApiTestContext.create(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        playwright as any,
+        "DITP_ADMIN",
+      );
       const client = apiContext.getClient();
 
       const result = await client.healthcheck();

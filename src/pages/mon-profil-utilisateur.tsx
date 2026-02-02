@@ -1,7 +1,7 @@
 import { GetServerSidePropsContext } from "next";
 import Head from "next/head";
 import { PageMonProfilUtilisateur } from "@/components/PageMonProfilUtilisateur/PageMonProfilUtilisateur";
-import { getServerAuthSession } from "@/server/infrastructure/api/auth/[...nextauth]";
+import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
 
 export default function NextPageMonProfilUtilisateur() {
   return (
@@ -17,7 +17,7 @@ export default function NextPageMonProfilUtilisateur() {
 export const getServerSideProps = async (
   context: GetServerSidePropsContext,
 ) => {
-  const session = await getServerAuthSession(context);
+  const session = await auth(context);
 
   if (!session || !session.user) {
     return {

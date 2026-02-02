@@ -1,0 +1,9 @@
+{
+  "*": {
+    "display": "hidden"
+  },
+  "centre-aide-pilote-2": {
+    "display": "children",
+    "title": "Centre d'aide Pilote 2"
+  }
+}

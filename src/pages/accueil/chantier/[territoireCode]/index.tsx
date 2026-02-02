@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next";
-import { getServerSession } from "next-auth/next";
 import Head from "next/head";
 import { useSession } from "next-auth/react";
 import { parseAsStringLiteral, useQueryState } from "nuqs";
@@ -9,7 +8,7 @@ import PageChantiers from "@/components/PageAccueil/PageChantiers/PageChantiers"
 import BarreLatérale from "@/components/_commons/BarreLatérale/BarreLatérale";
 import BarreLatéraleEncart from "@/components/_commons/BarreLatérale/BarreLatéraleEncart/BarreLatéraleEncart";
 import { Filtres } from "@/components/PageAccueil/Filtres/Filtres";
-import { authOptions } from "@/server/infrastructure/api/auth/[...nextauth]";
+import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
 import { dependencies } from "@/server/infrastructure/Dependencies";
 import Axe from "@/server/domain/axe/Axe.interface";
 import Alerte from "@/server/domain/alerte/Alerte";
@@ -39,12 +38,11 @@ import { BoutonNavigationRapportDetaille } from "@/components/BoutonNavigationRa
 import { BoutonExportDesDonnees } from "@/components/PageAccueil/BoutonExportDesDonnees";
 import IndexStyled from "./index.styled";
 
-export const getServerSideProps = async ({
-  req,
-  res,
-  query,
-}: GetServerSidePropsContext) => {
-  const session = await getServerSession(req, res, authOptions);
+export const getServerSideProps = async (
+  context: GetServerSidePropsContext,
+) => {
+  const { query } = context;
+  const session = await auth(context);
 
   const pageIndex = Number.parseInt(query.pageIndex as string) || 1;
   const pageSize = Number.parseInt(query.pageSize as string) || 50;

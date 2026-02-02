@@ -20,7 +20,6 @@ const handle = async (request: NextApiRequest, response: NextApiResponse) => {
     profilRepository: dependencies.getAuthentificationProfilRepository(),
   }).recupererUtilisateurAuthentifie(token);
 
-  // eslint-disable-next-line sonarjs/no-small-switch
   switch (request.method) {
     case "GET": {
       logger.info(

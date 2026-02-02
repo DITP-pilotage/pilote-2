@@ -15,6 +15,7 @@ export class TokenAPIJWTService implements TokenAPIService {
       token: { email },
       secret: this.secret,
       maxAge: 365 * 24 * 60 * 60,
+      salt: "authjs.session-token",
     });
   }
 
@@ -22,7 +23,11 @@ export class TokenAPIJWTService implements TokenAPIService {
     token: string,
   ): Promise<TokenAPIInformation | undefined> {
     try {
-      return await decode({ token, secret: this.secret }).then((decodedJWT) => {
+      return await decode({
+        token,
+        secret: this.secret,
+        salt: "authjs.session-token",
+      }).then((decodedJWT) => {
         if (decodedJWT) {
           return TokenAPIInformation.creerTokenAPIInformation({
             email: decodedJWT.email as string,

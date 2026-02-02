@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { parseAsInteger, parseAsString, useQueryState } from "nuqs";
 import { useSession } from "next-auth/react";
 import { Dialog } from "radix-ui";

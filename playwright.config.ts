@@ -3,6 +3,7 @@ import { defineConfig, devices } from "@playwright/test";
 /**
  * Load environment variables from .env.e2e file
  */
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 require("dotenv").config({ path: ".env.e2e" });
 
 /**
@@ -23,7 +24,12 @@ export default defineConfig({
   /* Reporter à utiliser. Voir https://playwright.dev/docs/test-reporters */
   reporter: process.env.CI
     ? [["github"], ["json", { outputFile: "test-results/results.json" }]]
-    : [["html", { open: "always", outputFolder: "/tmp/pilote-playwright/report" }]],
+    : [
+        [
+          "html",
+          { open: "always", outputFolder: "/tmp/pilote-playwright/report" },
+        ],
+      ],
   webServer: {
     command: "npm run test:e2e:server",
     timeout: 120_000,

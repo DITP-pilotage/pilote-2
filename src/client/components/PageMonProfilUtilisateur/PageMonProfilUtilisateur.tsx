@@ -49,7 +49,8 @@ export const PageMonProfilUtilisateur = () => {
   };
 
   const form = useForm<MonProfilUtilisateurFormInputs & { email: string }>({
-    resolver: zodResolver(validationModifierMonProfil),
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    resolver: zodResolver(validationModifierMonProfil) as any,
     defaultValues: {
       email: utilisateur.email,
       nom: utilisateur.nom,
@@ -70,7 +71,8 @@ export const PageMonProfilUtilisateur = () => {
         <Bloc titre="Mon identité">
           <form
             className="flex flex-col gap-4"
-            onSubmit={form.handleSubmit(soumettreFormulaire)}
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            onSubmit={form.handleSubmit(soumettreFormulaire as any)}
           >
             <InputAvecLabel
               disabled
@@ -110,7 +112,7 @@ export const PageMonProfilUtilisateur = () => {
 
             <div className="flex justify-end">
               <SubmitBouton
-                disabled={mutationModifierMonProfil.isLoading}
+                disabled={mutationModifierMonProfil.isPending}
                 label="Enregistrer"
               />
             </div>

@@ -1,9 +1,8 @@
 import "@gouvfr/dsfr/dist/component/sidemenu/sidemenu.min.css";
 import Head from "next/head";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
-import { getServerSession } from "next-auth/next";
 import { FunctionComponent } from "react";
-import { authOptions } from "@/server/infrastructure/api/auth/[...nextauth]";
+import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
 import PageAdminGestionTokenAPI from "@/components/PageAdminGestionTokenAPI/PageAdminGestionTokenAPI";
 import { TokenAPIInformationContrat } from "@/server/authentification/app/contrats/TokenAPIInformationContrat";
 import { ListerTokenAPIInformationUseCase } from "@/server/authentification/usecases/ListerTokenAPIInformationUseCase";
@@ -19,8 +18,9 @@ export function estAutoriséAModifierLesTokensAPI(profil: string): boolean {
 export const getServerSideProps: GetServerSideProps<{
   listeTokenAPIInformation: TokenAPIInformationContrat[];
   suppressionReussie: boolean;
-}> = async ({ req, res, query }) => {
-  const session = await getServerSession(req, res, authOptions);
+}> = async (context) => {
+  const { query } = context;
+  const session = await auth(context);
   if (
     process.env.NEXT_PUBLIC_FF_GESTION_TOKEN_API !== "true" ||
     !session ||

@@ -1,6 +1,6 @@
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next";
 import Head from "next/head";
-import { getServerAuthSession } from "@/server/infrastructure/api/auth/[...nextauth]";
+import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
 import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
 import Utilisateur from "@/server/domain/utilisateur/Utilisateur.interface";
 import RécupérerUnUtilisateurUseCase from "@/server/gestion-utilisateur/usecases/RécupérerUnUtilisateurUseCase";
@@ -11,11 +11,10 @@ import { pageModifierUtilisateur } from "@/components/PageUtilisateurFormulaire/
 import { configurationFeatureFlip } from "@/config";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
 
-export const getServerSideProps = async ({
-  req,
-  res,
-  params,
-}: GetServerSidePropsContext<{ id: Utilisateur["id"] }>) => {
+export const getServerSideProps = async (
+  context: GetServerSidePropsContext<{ id: Utilisateur["id"] }>,
+) => {
+  const { params } = context;
   const redirigerVersPageAccueil = {
     redirect: {
       destination: "/",
@@ -23,7 +22,7 @@ export const getServerSideProps = async ({
     },
   };
 
-  const session = await getServerAuthSession({ req, res });
+  const session = await auth(context);
 
   if (!params?.id || !session || !session.habilitations) {
     return redirigerVersPageAccueil;

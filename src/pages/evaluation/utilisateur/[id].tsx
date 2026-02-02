@@ -1,20 +1,18 @@
 import Head from "next/head";
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next";
-import { getServerSession } from "next-auth/next";
 import { $Enums } from "@prisma/client";
 import assert from "node:assert";
 import { getContainer } from "@/server/dependances";
 import { configurationFeatureFlip } from "@/config";
-import { authOptions } from "@/server/infrastructure/api/auth/[...nextauth]";
+import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
 import { pageUtilisateurPiloteEval } from "@/components/PageUtilisateurPiloteEval/PageUtilisateurPiloteEvalServerSideContext";
 import { FormulaireConfigurationDroits } from "@/components/PageUtilisateurPiloteEval/FormulaireConfigurationDroits";
 
-export const getServerSideProps = async ({
-  req,
-  res,
-  params,
-}: GetServerSidePropsContext) => {
-  const session = await getServerSession(req, res, authOptions);
+export const getServerSideProps = async (
+  context: GetServerSidePropsContext,
+) => {
+  const { params } = context;
+  const session = await auth(context);
 
   assert(session);
 

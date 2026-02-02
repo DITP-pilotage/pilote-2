@@ -11,6 +11,7 @@ import { TRPCClientError } from "@trpc/client";
 import init from "@socialgouv/matomo-next";
 import Router, { useRouter } from "next/router";
 import { Toaster } from "sonner";
+import { NuqsAdapter } from "nuqs/adapters/next/pages";
 import MiseEnPage from "@/client/components/_commons/MiseEnPage/MiseEnPage";
 import useDétecterLargeurDÉcran from "@/client/hooks/useDétecterLargeurDÉcran";
 import api from "@/server/infrastructure/api/trpc/api";
@@ -104,7 +105,7 @@ function MonApplication({ Component, pageProps, nonce: appNonce }: MyAppProps) {
   }, [estRecordAnalyticsActive, matomoSiteId, matomoUrl]);
 
   return (
-    <>
+    <NuqsAdapter>
       <Script nonce={nonce} src="/js/dsfr/dsfr.module.min.js" type="module" />
       <Script noModule nonce={nonce} src="/js/dsfr/dsfr.nomodule.min.js" />
       <Head>
@@ -139,7 +140,7 @@ function MonApplication({ Component, pageProps, nonce: appNonce }: MyAppProps) {
           </SessionProvider>
         </Tooltip.Provider>
       </QueryClientProvider>
-    </>
+    </NuqsAdapter>
   );
 }
 

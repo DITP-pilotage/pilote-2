@@ -1,9 +1,8 @@
-import { getServerSession } from "next-auth/next";
 import Head from "next/head";
 import { GetServerSideProps } from "next";
 import { FunctionComponent } from "react";
 import assert from "node:assert/strict";
-import { authOptions } from "@/server/infrastructure/api/auth/[...nextauth]";
+import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
 import { dependencies } from "@/server/infrastructure/Dependencies";
 import PageRapportDétaillé from "@/components/PageRapportDétaillé/PageRapportDétaillé";
 import Indicateur from "@/server/domain/indicateur/Indicateur.interface";
@@ -82,8 +81,9 @@ const PROFILS_AUTORISE_VOIR_BROUILLONS = new Set([
 
 export const getServerSideProps: GetServerSideProps<
   NextPageRapportDétailléProps
-> = async ({ req, res, query }) => {
-  const session = await getServerSession(req, res, authOptions);
+> = async (context) => {
+  const { query } = context;
+  const session = await auth(context);
 
   assert(query.territoireCode, "Le territoire code est manquant");
   assert(session, "Vous devez être authentifié pour accéder a cette page");

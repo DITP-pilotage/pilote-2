@@ -2,8 +2,6 @@
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
-import nextra from "nextra";
-
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const submodulePath = path.join(__dirname, "src/pages/centre-aide-pilote-2");
 const hasSubmodule =
@@ -12,6 +10,7 @@ const hasSubmodule =
 let withNextra = (config) => config;
 
 if (hasSubmodule) {
+  const nextra = (await import("nextra")).default;
   withNextra = nextra({
     theme: "nextra-theme-docs",
     themeConfig: "./theme.config.centreaide.tsx",
@@ -21,11 +20,26 @@ if (hasSubmodule) {
 
 const nextConfig = {
   reactStrictMode: true,
-  swcMinify: true,
   output: "standalone",
+  bundlePagesRouterDependencies: true,
   pageExtensions: ["js", "jsx", "ts", "tsx", "md", "mdx"],
   compiler: {
     emotion: true,
+  },
+  turbopack: {
+    rules: {
+      "*.yaml": {
+        loaders: ["js-yaml-loader"],
+        as: "*.js",
+      },
+      "*.yml": {
+        loaders: ["js-yaml-loader"],
+        as: "*.js",
+      },
+    },
+    resolveAlias: {
+      "react-hook-form": "react-hook-form/dist/index.esm.mjs",
+    },
   },
   async rewrites() {
     return [

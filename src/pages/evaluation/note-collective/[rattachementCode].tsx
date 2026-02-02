@@ -1,20 +1,18 @@
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next";
-import { getServerSession } from "next-auth/next";
 import { z } from "zod";
 import { $Enums } from "@prisma/client";
 import assert from "node:assert";
 import { getContainer } from "@/server/dependances";
 import { configuration, configurationFeatureFlip } from "@/config";
-import { authOptions } from "@/server/infrastructure/api/auth/[...nextauth]";
+import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
 import { pageNoteCollective } from "@/components/Evaluation/PageNoteCollectiveServerSideContext";
 import { ContenuPageNoteCollective } from "@/components/PageNoteCollective/PageNoteCollective";
 
-export const getServerSideProps = async ({
-  req,
-  res,
-  params,
-}: GetServerSidePropsContext) => {
-  const session = await getServerSession(req, res, authOptions);
+export const getServerSideProps = async (
+  context: GetServerSidePropsContext,
+) => {
+  const { params } = context;
+  const session = await auth(context);
   const rattachementCode = z.string().parse(params?.rattachementCode);
 
   assert(session);
