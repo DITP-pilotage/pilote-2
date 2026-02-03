@@ -6,8 +6,8 @@ import {
 import { CoordinateurGateway } from "@/server/rapports-hebdomadaires/domain/ports/CoordinateurGateway";
 import { RapportRepository } from "@/server/rapports-hebdomadaires/domain/ports/RapportRepository";
 import {
-  ChantierGateway,
   ChantierAvecIndicateurs,
+  ChantierGateway,
 } from "@/server/rapports-hebdomadaires/domain/ports/ChantierGateway";
 import { ActiviteVAGateway } from "@/server/rapports-hebdomadaires/domain/ports/ActiviteVAGateway";
 import { calculerPeriodeDernierLundiNeufHeures } from "@/server/rapports-hebdomadaires/domain/PeriodeRapport";
@@ -16,8 +16,8 @@ import {
   RapportHebdomadaire,
 } from "@/server/rapports-hebdomadaires/domain/RapportHebdomadaire";
 import {
-  Coordinateur,
   aDesDroitsSurTerritoire,
+  Coordinateur,
 } from "@/server/rapports-hebdomadaires/domain/Coordinateur";
 import {
   ActiviteComptes,
@@ -25,9 +25,9 @@ import {
   grouperEvenementsParType,
 } from "@/server/rapports-hebdomadaires/domain/CompteActivite";
 import {
-  foldEvenementsVA,
-  SectionActiviteChantiersVA,
   ActiviteIndicateurVA,
+  foldEvenementsVA,
+  SectionChantierVA,
   SectionIndicateurVA,
 } from "@/server/rapports-hebdomadaires/domain/SectionActiviteChantiersVA";
 
@@ -92,7 +92,7 @@ export class ProduireRapportsHebdomadairesUseCase {
       activiteGlobale,
     });
 
-    const sectionActiviteChantiersVA = await this.produireSectionActiviteVA({
+    const chantiers = await this.produireSectionActiviteVA({
       coordinateur,
       chantiersAvecIndicateurs,
       periode,
@@ -103,7 +103,7 @@ export class ProduireRapportsHebdomadairesUseCase {
       periode,
       comptesCrees,
       comptesDesactives,
-      sectionActiviteChantiersVA,
+      chantiers,
       dateCreation: maintenant,
     });
 
@@ -118,7 +118,7 @@ export class ProduireRapportsHebdomadairesUseCase {
       coordinateurEmail: coordinateur.email,
       nombreComptesCrees: comptesCrees.length,
       nombreComptesDesactives: comptesDesactives.length,
-      nombreChangementsVA: sectionActiviteChantiersVA.chantiers.reduce(
+      nombreChangementsVA: chantiers.reduce(
         (total, chantier) => total + chantier.indicateurs.length,
         0,
       ),
@@ -131,7 +131,7 @@ export class ProduireRapportsHebdomadairesUseCase {
     activitesVA: ActiviteIndicateurVA[];
     chantiersAvecIndicateurs: Record<string, ChantierAvecIndicateurs>;
     coordChantierIds: string[];
-  }): SectionActiviteChantiersVA {
+  }): SectionChantierVA[] {
     const { activitesVA, chantiersAvecIndicateurs, coordChantierIds } = params;
 
     const activitesParChantier = new Map<
@@ -191,12 +191,10 @@ export class ProduireRapportsHebdomadairesUseCase {
       });
     }
 
-    return {
-      chantiers: Array.from(activitesParChantier.values()).map((data) => ({
-        chantier: { id: data.chantier.id, nom: data.chantier.nom },
-        indicateurs: Array.from(data.indicateurs.values()),
-      })),
-    };
+    return Array.from(activitesParChantier.values()).map((data) => ({
+      chantier: { id: data.chantier.id, nom: data.chantier.nom },
+      indicateurs: Array.from(data.indicateurs.values()),
+    }));
   }
 
   private calculerEtLoggerPeriode(maintenant: Date) {
@@ -345,7 +343,7 @@ export class ProduireRapportsHebdomadairesUseCase {
     coordinateur: Coordinateur;
     chantiersAvecIndicateurs: Record<string, ChantierAvecIndicateurs>;
     periode: { dateDebut: Date; dateFin: Date };
-  }): Promise<SectionActiviteChantiersVA> {
+  }): Promise<SectionChantierVA[]> {
     const coordTerritoireCodes = params.coordinateur.territoires.flatMap(
       (territoire) => [
         territoire.code,

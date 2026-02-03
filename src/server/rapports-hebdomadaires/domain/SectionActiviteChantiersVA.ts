@@ -58,10 +58,6 @@ export type SectionChantierVA = {
   indicateurs: SectionIndicateurVA[];
 };
 
-export type SectionActiviteChantiersVA = {
-  chantiers: SectionChantierVA[];
-};
-
 function grouperParIndicateurTerritoire(
   evenements: EvenementVA[],
 ): Map<string, EvenementVA[]> {

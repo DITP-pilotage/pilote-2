@@ -13,11 +13,11 @@ export class BrevoEnvoieEmailService implements EnvoieEmailService {
     },
   ) {}
 
-  async envoyerRapportHebdomadaire(params: {
+  async envoyerRapportHebdomadaire({
+    rapport,
+  }: {
     rapport: RapportHebdomadaire;
   }): Promise<void> {
-    const { rapport } = params;
-
     const profilsMap = await this.getProfilsMap();
     const mapProfilToLabel = (code: string) => profilsMap.get(code) ?? code;
 
@@ -53,29 +53,27 @@ export class BrevoEnvoieEmailService implements EnvoieEmailService {
             : undefined,
       }));
 
-    const afficherSectionChantiersVA =
-      rapport.sectionActiviteChantiersVA.chantiers.length > 0;
+    const afficherSectionChantiersVA = rapport.chantiers.length > 0;
 
-    const chantiersVA = rapport.sectionActiviteChantiersVA.chantiers.flatMap(
-      (chantier) =>
-        chantier.indicateurs.flatMap((indic) =>
-          indic.territoires.map((territoire) => ({
-            nomChantier: chantier.chantier.nom,
-            nomIndicateur: indic.indicateur.nom,
-            nomTerritoire: territoire.territoire.nom,
-            valeurAvant:
-              territoire.valeurAvant !== null
-                ? this.formatValeur(territoire.valeurAvant)
-                : "-",
-            valeurApres:
-              territoire.valeurApres !== null
-                ? this.formatValeur(territoire.valeurApres)
-                : "-",
-            dateChangement: new Date(
-              territoire.dateChangement,
-            ).toLocaleDateString("fr-FR"),
-          })),
-        ),
+    const chantiers = rapport.chantiers.map((chantier) =>
+      chantier.indicateurs.flatMap((indic) =>
+        indic.territoires.map((territoire) => ({
+          nomChantier: chantier.chantier.nom,
+          nomIndicateur: indic.indicateur.nom,
+          nomTerritoire: territoire.territoire.nom,
+          valeurAvant:
+            territoire.valeurAvant !== null
+              ? this.formatValeur(territoire.valeurAvant)
+              : "-",
+          valeurApres:
+            territoire.valeurApres !== null
+              ? this.formatValeur(territoire.valeurApres)
+              : "-",
+          dateChangement: new Date(
+            territoire.dateChangement,
+          ).toLocaleDateString("fr-FR"),
+        })),
+      ),
     );
 
     const templateParams = {
@@ -90,7 +88,7 @@ export class BrevoEnvoieEmailService implements EnvoieEmailService {
       afficherComptesDesactives,
       comptesDesactives,
       afficherSectionChantiersVA,
-      chantiersVA,
+      chantiers,
     };
 
     await this.deps.emailManager.sendTransactionalEmail(
