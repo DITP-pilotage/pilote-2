@@ -63,7 +63,7 @@ const PageLanding = () => {
                 {/* eslint-disable-next-line react/iframe-missing-sandbox */}
                 <iframe
                   allowFullScreen
-                  className="w-full mx-auto aspect-[580/328] max-w-4xl rounded-xl shadow-xl overflow-hidden"
+                  className="w-full mx-auto aspect-[580/328]  rounded-xl shadow-xl overflow-hidden"
                   sandbox="allow-scripts allow-same-origin"
                   scrolling="no"
                   src="https://video.finances.gouv.fr/watch/player/player/pubkey/0784da77311561a71a0a/id/f80fe1b5c28d78895f5523fe63b7a2/viewcode/default?buttons_to_show=.btn-play-pause"
