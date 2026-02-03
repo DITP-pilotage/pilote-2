@@ -1,9 +1,8 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { TokenAPIJWTService } from "@/server/authentification/infrastructure/adapters/services/TokenAPIJWTService";
-import { PiloteError } from "@/server/app/error-boundary/pilote-error";
 import { UnauthorizedError } from "@/server/app/error-boundary/unauthorized-error";
 import { BadRequestError } from "@/server/app/error-boundary/bad-request-error";
-import Logger from "@/server/infrastructure/Logger";
+import { errorHandler } from "@/server/app/error-boundary/error-handler";
 import { configuration } from "@/config";
 
 const verifierAuthentification = async (request: NextApiRequest) => {
@@ -28,31 +27,11 @@ const verifierAuthentification = async (request: NextApiRequest) => {
 export const endpointProtege =
   (...handlers: Function[]) =>
   async (request: NextApiRequest, response: NextApiResponse) => {
-    try {
-      await verifierAuthentification(request);
+    return errorHandler(async (req, res) => {
+      await verifierAuthentification(req);
 
       for (const handler of handlers) {
-        await handler(request, response);
+        await handler(req, res);
       }
-    } catch (error) {
-      if (error instanceof PiloteError) {
-        Logger.error(
-          "(API) Une erreur est survenue",
-          error.type,
-          error.message,
-        );
-        return response
-          .status(error.status)
-          .json({ success: false, message: error.message });
-      } else {
-        Logger.error(
-          `(API) Une erreur interne est survenue : ${(error as Error).message}`,
-        );
-        return response.status(500).json({
-          success: false,
-          message:
-            "Une erreur est survenue, veuillez contacter le support pour plus d'information",
-        });
-      }
-    }
+    })(request, response);
   };

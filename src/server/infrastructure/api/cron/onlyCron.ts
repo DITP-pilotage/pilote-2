@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { configuration } from "@/config";
+import { errorHandler } from "@/server/app/error-boundary/error-handler";
 
 export function onlyCron(
   handler: (req: NextApiRequest, res: NextApiResponse) => Promise<void>,
@@ -25,6 +26,6 @@ export function onlyCron(
         .json({ error: "Invalid CRON authentication secret" });
     }
 
-    await handler(req, res);
+    await errorHandler(handler)(req, res);
   };
 }
