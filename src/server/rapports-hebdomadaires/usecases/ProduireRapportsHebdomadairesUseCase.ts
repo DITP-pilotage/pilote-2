@@ -17,7 +17,6 @@ import {
 } from "@/server/rapports-hebdomadaires/domain/RapportHebdomadaire";
 import {
   Coordinateur,
-  TerritoireCoordinateur,
   aDesDroitsSurTerritoire,
 } from "@/server/rapports-hebdomadaires/domain/Coordinateur";
 import {
@@ -27,8 +26,6 @@ import {
 import {
   foldEvenementsVA,
   SectionActiviteChantiersVA,
-  SectionChantierVA,
-  EvenementVA,
   ActiviteIndicateurVA,
   SectionIndicateurVA,
 } from "@/server/rapports-hebdomadaires/domain/SectionActiviteChantiersVA";
@@ -99,41 +96,6 @@ export class ProduireRapportsHebdomadairesUseCase {
         tousLesChantierIds,
       );
 
-    const tousLesIndicateurIds = Object.values(
-      chantiersAvecIndicateurs,
-    ).flatMap((chantier) =>
-      chantier.indicateurs.map((indicateur) => indicateur.id),
-    );
-
-    const getAllCodes = (territoire: TerritoireCoordinateur): string[] => [
-      territoire.code,
-      ...territoire.enfants.flatMap(getAllCodes),
-    ];
-    const tousLesTerritoireCodes = [
-      ...new Set(
-        coordinateurs.flatMap((c) => c.territoires.flatMap(getAllCodes)),
-      ),
-    ];
-
-    const evenementsDansPeriode =
-      await this.deps.activiteVAGateway.recupererEvenementsDansPeriode({
-        indicateurIds: tousLesIndicateurIds,
-        territoireCodes: tousLesTerritoireCodes,
-        periode,
-      });
-
-    const evenementsAvantPeriode =
-      await this.deps.activiteVAGateway.recupererDernierEvenementAvantPeriode({
-        indicateurIds: tousLesIndicateurIds,
-        territoireCodes: tousLesTerritoireCodes,
-        dateDebut: periode.dateDebut,
-      });
-
-    logger.info("Activité VA récupérée", {
-      nombreEvenementsDansPeriode: evenementsDansPeriode.length,
-      nombreEvenementsAvantPeriode: evenementsAvantPeriode.length,
-    });
-
     let rapportsCrees = 0;
     let coordinateursSansActivite = 0;
 
@@ -145,8 +107,6 @@ export class ProduireRapportsHebdomadairesUseCase {
           periode,
           maintenant,
           chantiersAvecIndicateurs,
-          evenementsDansPeriode,
-          evenementsAvantPeriode,
         });
 
         if (rapport) {
@@ -183,16 +143,12 @@ export class ProduireRapportsHebdomadairesUseCase {
     periode,
     maintenant,
     chantiersAvecIndicateurs,
-    evenementsDansPeriode,
-    evenementsAvantPeriode,
   }: {
     coordinateur: Coordinateur;
     activiteGlobale: ActiviteComptes;
     periode: { dateDebut: Date; dateFin: Date };
     maintenant: Date;
     chantiersAvecIndicateurs: Record<string, ChantierAvecIndicateurs>;
-    evenementsDansPeriode: EvenementVA[];
-    evenementsAvantPeriode: EvenementVA[];
   }): Promise<RapportHebdomadaire | null> {
     const evenementsFiltres = activiteGlobale.filter((evenement) => {
       if (evenement.compte.email === coordinateur.email) {
@@ -223,21 +179,23 @@ export class ProduireRapportsHebdomadairesUseCase {
         chantiersAvecIndicateurs[cid]?.indicateurs.map((i) => i.id) || [],
     );
 
-    const evenementsFiltresDansPeriode = evenementsDansPeriode.filter(
-      (e) =>
-        coordIndicateurIds.includes(e.indicateurId) &&
-        coordTerritoireCodes.includes(e.territoireCode),
-    );
+    const evenementsDansPeriode =
+      await this.deps.activiteVAGateway.recupererEvenementsDansPeriode({
+        indicateurIds: coordIndicateurIds,
+        territoireCodes: coordTerritoireCodes,
+        periode,
+      });
 
-    const evenementsFiltresAvantPeriode = evenementsAvantPeriode.filter(
-      (e) =>
-        coordIndicateurIds.includes(e.indicateurId) &&
-        coordTerritoireCodes.includes(e.territoireCode),
-    );
+    const evenementsAvantPeriode =
+      await this.deps.activiteVAGateway.recupererDernierEvenementAvantPeriode({
+        indicateurIds: coordIndicateurIds,
+        territoireCodes: coordTerritoireCodes,
+        dateDebut: periode.dateDebut,
+      });
 
     const activitesVA = foldEvenementsVA({
-      evenementsDansPeriode: evenementsFiltresDansPeriode,
-      evenementsAvantPeriode: evenementsFiltresAvantPeriode,
+      evenementsDansPeriode,
+      evenementsAvantPeriode,
     });
 
     const sectionActiviteChantiersVA = this.construireSectionChantiersVA({
