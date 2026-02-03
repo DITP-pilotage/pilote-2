@@ -41,7 +41,6 @@ export class EnvoyerRapportsHebdomadairesUseCase {
 
     for (const rapport of rapportsAEnvoyer) {
       const result = await this.envoyerRapport(rapport);
-      break;
       if (result.success) {
         emailsEnvoyes++;
       } else {
