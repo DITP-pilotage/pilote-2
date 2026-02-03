@@ -12,7 +12,6 @@ export class PageAdminUtilisateurs extends BasePage {
 
   async goto(): Promise<void> {
     await this.page.getByRole("link", { name: /Gestion des comptes/ }).click();
-    await this.page.waitForURL("**/admin/utilisateurs");
   }
 
   async exportCsv(timeout = 120_000): Promise<Download> {

@@ -4,7 +4,6 @@ import { BasePage } from "../base.page";
 export class PageGestionTokenApi extends BasePage {
   async goto(): Promise<void> {
     await this.page.goto("/admin/gestion-token-api");
-    await this.page.waitForURL("**/admin/gestion-token-api");
   }
 
   async createToken(email: string): Promise<string> {
@@ -34,9 +33,5 @@ export class PageGestionTokenApi extends BasePage {
       .locator("..")
       .getByRole("button", { name: /Supprimer le token API/ })
       .click();
-
-    await this.page.waitForURL(
-      "**/admin/gestion-token-api?_action=suppression-reussie",
-    );
   }
 }

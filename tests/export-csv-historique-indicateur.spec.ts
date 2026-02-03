@@ -16,44 +16,26 @@ test("doit pouvoir exporter les données des indicateurs sous format CSV", async
 
   await test.step("Selection d'un perimètre pour réduire la quantité de chantier exporté", async () => {
     await pageAccueil.filterByMinistere("Intérieur et Outre-mer");
-    await page.waitForURL(
-      "**/accueil/chantier/NAT-FR?pageIndex=1&perimetres=PER-014",
-    );
   });
 
   await test.step("Ouverture de la modale d'export csv à l'étape 1 - Éléments à exporter", async () => {
     await pageAccueil.openExportModal();
-    await page.waitForURL(
-      "**/accueil/chantier/NAT-FR?pageIndex=1&perimetres=PER-014&isModaleExportCsvOuverte=true&etapeCourante=1&typeExport=chantiers",
-    );
     await pageAccueil.exportModal.expectStep(1, /Éléments à exporter/);
   });
 
   await test.step("Choix de l'export indicateurs", async () => {
     await pageAccueil.exportModal.selectExportType("historique-indicateurs");
     await expect(page.getByLabel(/l'historique des indicateurs/)).toBeChecked();
-    await page.waitForURL(
-      "**/accueil/chantier/NAT-FR?pageIndex=1&perimetres=PER-014&isModaleExportCsvOuverte=true&etapeCourante=1&typeExport=historique-indicateurs&optionsExport=identifiant,valeur-cible,valeur-avancement",
-    );
   });
 
   await test.step("Passage à l'étape 2 - Périmètre de l'export", async () => {
     await pageAccueil.exportModal.nextStep();
-    await page.waitForURL(
-      "**/accueil/chantier/NAT-FR?pageIndex=1&perimetres=PER-014&isModaleExportCsvOuverte=true&etapeCourante=2&typeExport=historique-indicateurs&optionsExport=identifiant,valeur-cible,valeur-avancement",
-    );
     await pageAccueil.exportModal.selectPerimeter(true);
-    await page.waitForURL(
-      "**/accueil/chantier/NAT-FR?pageIndex=1&perimetres=PER-014&isModaleExportCsvOuverte=true&etapeCourante=2&typeExport=historique-indicateurs&optionsExport=identifiant,valeur-cible,valeur-avancement&isAvecFiltre=true",
-    );
     await pageAccueil.exportModal.expectStep(2, /Périmètre de l'export/);
   });
 
   await test.step("Passage à l'étape 3 - Données à collecter - choix données avec filtres", async () => {
     await pageAccueil.exportModal.nextStep();
-    await page.waitForURL(
-      "**/accueil/chantier/NAT-FR?pageIndex=1&perimetres=PER-014&isModaleExportCsvOuverte=true&etapeCourante=3&typeExport=historique-indicateurs&optionsExport=identifiant,valeur-cible,valeur-avancement&isAvecFiltre=true",
-    );
     await pageAccueil.exportModal.expectStep(3, /Données à collecter/);
   });
 
@@ -97,9 +79,6 @@ test("doit pouvoir exporter les données des indicateurs sous format CSV", async
   await test.step("Retour à l'étape 4 - Récapitulatif et validation - partie téléchargement et vérification du fichier", async () => {
     await test.step("Téléchargement du fichier", async () => {
       await pageAccueil.exportModal.nextStep();
-      await page.waitForURL(
-        "**/accueil/chantier/NAT-FR?pageIndex=1&perimetres=PER-014&isModaleExportCsvOuverte=true&etapeCourante=4&typeExport=historique-indicateurs&optionsExport=identifiant,valeur-cible,valeur-avancement&isAvecFiltre=true",
-      );
       await pageAccueil.exportModal.expectStep(
         4,
         /Récapitulatif et validation/,

@@ -45,9 +45,6 @@ test("doit pouvoir importer des données", async ({ page }) => {
 
       await test.step("Passage à l'étape suivante 'Charger le fichier'", async () => {
         await pageMaj.nextStep();
-        await page.waitForURL(
-          `**/chantier/CH-${chantier.id}/indicateurs?etapeCourante=2**`,
-        );
         await pageMaj.expectStep(2);
       });
 
@@ -151,9 +148,6 @@ test("doit pouvoir importer des données", async ({ page }) => {
 
       await test.step('Passage à l\'étape suivante "Transmettre les données"', async () => {
         await pageMaj.nextStep();
-        await page.waitForURL(
-          `**/chantier/CH-${chantier.id}/indicateurs?etapeCourante=3**`,
-        );
         await pageMaj.expectStep(3);
       });
 

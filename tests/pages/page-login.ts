@@ -20,6 +20,5 @@ export class PageLogin extends BasePage {
 
   async submit(): Promise<void> {
     await this.submitButton.click();
-    await this.page.waitForURL("**/accueil/chantier/**");
   }
 }

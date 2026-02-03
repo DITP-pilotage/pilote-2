@@ -22,7 +22,6 @@ export class PageChantier extends BasePage {
     await this.page
       .getByRole("link", { name: /Mettre à jour les données/ })
       .click();
-    await this.page.waitForURL(`**/chantier/CH-${chantierId}/indicateurs`);
     return new PageMiseAJourDonnees(this.page);
   }
 

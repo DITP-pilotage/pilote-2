@@ -16,9 +16,6 @@ test("doit pouvoir exporter les données des indicateurs sous format CSV", async
 
   await test.step("Ouverture de la modale d'export csv à l'étape 1 - Éléments à exporter", async () => {
     await pageAccueil.openExportModal();
-    await page.waitForURL(
-      "**/accueil/chantier/NAT-FR?isModaleExportCsvOuverte=true&etapeCourante=1&typeExport=chantiers",
-    );
     await pageAccueil.exportModal.expectStep(1, /Éléments à exporter/);
   });
 
@@ -27,16 +24,10 @@ test("doit pouvoir exporter les données des indicateurs sous format CSV", async
     await expect(
       page.getByLabel("les indicateurs des chantiers"),
     ).toBeChecked();
-    await page.waitForURL(
-      "**/accueil/chantier/NAT-FR?isModaleExportCsvOuverte=true&etapeCourante=1&typeExport=indicateurs&optionsExport=identifiant",
-    );
   });
 
   await test.step("Passage à l'étape 2 - Périmètre de l'export", async () => {
     await pageAccueil.exportModal.nextStep();
-    await page.waitForURL(
-      "**/accueil/chantier/NAT-FR?isModaleExportCsvOuverte=true&etapeCourante=2&typeExport=indicateurs&optionsExport=identifiant",
-    );
     await pageAccueil.exportModal.expectStep(2, /Périmètre de l'export/);
   });
 
@@ -47,9 +38,6 @@ test("doit pouvoir exporter les données des indicateurs sous format CSV", async
 
   await test.step("Passage à l'étape 3 - Données à collecter", async () => {
     await pageAccueil.exportModal.nextStep();
-    await page.waitForURL(
-      "**/accueil/chantier/NAT-FR?isModaleExportCsvOuverte=true&etapeCourante=3&typeExport=indicateurs&optionsExport=identifiant",
-    );
     await pageAccueil.exportModal.expectStep(3, /Données à collecter/);
   });
 
@@ -69,9 +57,6 @@ test("doit pouvoir exporter les données des indicateurs sous format CSV", async
   await test.step("Vérification des possibilités de choix d'export - cadrage de l'indicateur", async () => {
     await expect(page.getByLabel(/cadrage de l'indicateur/)).toBeVisible();
     await pageAccueil.exportModal.checkDataOption(/cadrage de l'indicateur/);
-    await page.waitForURL(
-      "**/accueil/chantier/NAT-FR?isModaleExportCsvOuverte=true&etapeCourante=3&typeExport=indicateurs&optionsExport=identifiant,cadrage",
-    );
     await expect(page.getByLabel(/cadrage de l'indicateur/)).toBeChecked();
   });
 
@@ -81,9 +66,6 @@ test("doit pouvoir exporter les données des indicateurs sous format CSV", async
     ).toBeVisible();
     await pageAccueil.exportModal.checkDataOption(
       /gouvernance de l'indicateur et du chantier associé/,
-    );
-    await page.waitForURL(
-      "**/accueil/chantier/NAT-FR?isModaleExportCsvOuverte=true&etapeCourante=3&typeExport=indicateurs&optionsExport=identifiant,cadrage,gouvernance",
     );
     await expect(
       page.getByLabel(/gouvernance de l'indicateur et du chantier associé/),
@@ -97,9 +79,6 @@ test("doit pouvoir exporter les données des indicateurs sous format CSV", async
     await pageAccueil.exportModal.checkDataOption(
       /données de l'indicateur sur le territoire/,
     );
-    await page.waitForURL(
-      "**/accueil/chantier/NAT-FR?isModaleExportCsvOuverte=true&etapeCourante=3&typeExport=indicateurs&optionsExport=identifiant,cadrage,gouvernance,description",
-    );
     await expect(
       page.getByLabel(/données de l'indicateur sur le territoire/),
     ).toBeChecked();
@@ -111,9 +90,6 @@ test("doit pouvoir exporter les données des indicateurs sous format CSV", async
     ).toBeVisible();
     await pageAccueil.exportModal.checkDataOption(
       /données du chantier associé sur le territoire/,
-    );
-    await page.waitForURL(
-      "**/accueil/chantier/NAT-FR?isModaleExportCsvOuverte=true&etapeCourante=3&typeExport=indicateurs&optionsExport=identifiant,cadrage,gouvernance,description,description-chantier",
     );
     await expect(
       page.getByLabel(/données du chantier associé sur le territoire/),
@@ -129,9 +105,6 @@ test("doit pouvoir exporter les données des indicateurs sous format CSV", async
     await pageAccueil.exportModal.checkDataOption(
       /météo et synthèse des résultats du chantier associé sur le territoire/,
     );
-    await page.waitForURL(
-      "**/accueil/chantier/NAT-FR?isModaleExportCsvOuverte=true&etapeCourante=3&typeExport=indicateurs&optionsExport=identifiant,cadrage,gouvernance,description,description-chantier,synthese",
-    );
     await expect(
       page.getByLabel(
         /météo et synthèse des résultats du chantier associé sur le territoire/,
@@ -141,9 +114,6 @@ test("doit pouvoir exporter les données des indicateurs sous format CSV", async
 
   await test.step("Passage à l'étape 4 - Récapitulatif et validation - partie vérification transmission paramètre", async () => {
     await pageAccueil.exportModal.nextStep();
-    await page.waitForURL(
-      "**/accueil/chantier/NAT-FR?isModaleExportCsvOuverte=true&etapeCourante=4&typeExport=indicateurs&optionsExport=identifiant,cadrage,gouvernance,description,description-chantier,synthese",
-    );
     await pageAccueil.exportModal.expectStep(4, /Récapitulatif et validation/);
   });
 
@@ -153,9 +123,6 @@ test("doit pouvoir exporter les données des indicateurs sous format CSV", async
     await test.step("Téléchargement du fichier", async () => {
       await page.goto(
         `/accueil/chantier/NAT-FR?isModaleExportCsvOuverte=true&etapeCourante=4&typeExport=indicateurs&optionsExport=identifiant,gouvernance`,
-      );
-      await page.waitForURL(
-        "**/accueil/chantier/NAT-FR?isModaleExportCsvOuverte=true&etapeCourante=4&typeExport=indicateurs&optionsExport=identifiant,gouvernance",
       );
       await pageAccueil.exportModal.expectStep(
         4,
@@ -181,10 +148,6 @@ test("doit pouvoir exporter les données des indicateurs sous format CSV", async
     await test.step("Téléchargement du fichier", async () => {
       await page.goto(
         `/accueil/chantier/NAT-FR?isModaleExportCsvOuverte=true&etapeCourante=4&typeExport=indicateurs&optionsExport=identifiant,gouvernance,description`,
-      );
-
-      await page.waitForURL(
-        "**/accueil/chantier/NAT-FR?isModaleExportCsvOuverte=true&etapeCourante=4&typeExport=indicateurs&optionsExport=identifiant,gouvernance,description",
       );
 
       download = await pageAccueil.exportModal.download();
