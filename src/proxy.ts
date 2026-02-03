@@ -1,5 +1,5 @@
 import { getToken } from "next-auth/jwt";
-import { NextFetchEvent, NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 import logger from "./server/infrastructure/Logger";
 
@@ -61,10 +61,7 @@ async function validateKeycloakToken(token: string): Promise<boolean> {
   }
 }
 
-export const middleware = async (
-  request: NextRequest,
-  _event: NextFetchEvent,
-) => {
+export async function proxy(request: NextRequest) {
   const nonce = generateNonce();
 
   const response = NextResponse.next();
@@ -104,11 +101,15 @@ export const middleware = async (
 
   const estRoutePublique =
     pathname.startsWith("/api/open-api") ||
+    pathname.startsWith("/api/auth") ||
     pathname.startsWith("/api/admin/cron") ||
     routesTrpcPubliques.some((route) => pathname.startsWith(route));
 
   if (!estRoutePublique) {
-    const token = await getToken({ req: request });
+    const token = await getToken({
+      req: request,
+      secret: process.env.NEXTAUTH_SECRET,
+    });
 
     if (!token) {
       const redirectResponse = NextResponse.redirect(
@@ -224,16 +225,21 @@ export const middleware = async (
       }
     }
 
-    // CSRF handling
     const cookie = request.cookies.get("csrf")?.value;
+
+    // CSRF handling
     if (token.jti && (cookie === undefined || cookie !== token.jti)) {
       const jti = String(token.jti);
-      response.cookies.set("csrf", jti, { sameSite: "lax" });
+      response.cookies.set("csrf", jti, {
+        sameSite: "lax",
+        httpOnly: false,
+        path: "/",
+      });
     }
   }
 
   return response;
-};
+}
 
 export const config = {
   // s'applique à toutes les urls sauf / - ^/js/ - _next/static - _next/image - favicon.ico
