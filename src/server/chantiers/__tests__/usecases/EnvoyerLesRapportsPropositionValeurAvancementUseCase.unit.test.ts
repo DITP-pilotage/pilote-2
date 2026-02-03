@@ -40,24 +40,28 @@ describe("EnvoyerLesRapportsPropositionValeurAvancementUseCase", () => {
     // Given
     const listeDirecteursDeProjet: Utilisateur[] = [
       Utilisateur.creerUtilisateur({
+        id: "user-1",
         email: "directeur.test1@exemple.com",
         nom: "test1",
         prenom: "directeur",
         listeChantiers: ["CH-001"],
       }),
       Utilisateur.creerUtilisateur({
+        id: "user-2",
         email: "directeur.test2@exemple.com",
         nom: "test2",
         prenom: "directeur",
         listeChantiers: ["CH-002"],
       }),
       Utilisateur.creerUtilisateur({
+        id: "user-3",
         email: "directeur.test3@exemple.com",
         nom: "test3",
         prenom: "directeur",
         listeChantiers: ["CH-001", "CH-003"],
       }),
       Utilisateur.creerUtilisateur({
+        id: "user-4",
         email: "directeur.test4@exemple.com",
         nom: "test4",
         prenom: "directeur",
