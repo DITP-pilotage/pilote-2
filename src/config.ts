@@ -333,7 +333,7 @@ const config = convict({
   cron: {
     authSecret: {
       format: String,
-      default: "",
+      default: null,
       doc: "Secret partagé pour l'authentification des endpoints CRON",
       env: "CRON_AUTH_SECRET",
     },
