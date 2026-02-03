@@ -519,6 +519,25 @@ export const fixtures = {
     });
   },
 
+  async rapportPropositionsAvancement(
+    overrides: Partial<Prisma.rapport_propositions_avancementUncheckedCreateInput> & {
+      utilisateur_id: string;
+    },
+  ) {
+    const prisma = getPrisma();
+    return prisma.rapport_propositions_avancement.create({
+      data: {
+        id: randomUUID(),
+        contenu_rapport: {
+          chantiersAvecPropositions: [],
+          chantiersAvecIndicateursNonAJour: [],
+        },
+        statut_envoi: "CREE",
+        ...overrides,
+      },
+    });
+  },
+
   async mesureIndicateur(
     overrides: Partial<Prisma.mesure_indicateurUncheckedCreateInput> = {},
   ) {
