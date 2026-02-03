@@ -98,14 +98,6 @@ export class ProduireRapportsHebdomadairesUseCase {
       periode,
     });
 
-    const hasAccountActivity =
-      comptesCrees.length > 0 || comptesDesactives.length > 0;
-    const hasVAActivity = sectionActiviteChantiersVA.chantiers.length > 0;
-
-    if (!hasAccountActivity && !hasVAActivity) {
-      return null;
-    }
-
     const rapport = creerRapportHebdomadaire({
       coordinateur,
       periode,
@@ -114,6 +106,10 @@ export class ProduireRapportsHebdomadairesUseCase {
       sectionActiviteChantiersVA,
       dateCreation: maintenant,
     });
+
+    if (!rapport) {
+      return null;
+    }
 
     await this.deps.rapportRepository.sauvegarder(rapport);
 
