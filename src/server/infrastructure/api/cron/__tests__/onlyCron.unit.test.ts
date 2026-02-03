@@ -1,5 +1,8 @@
-import type { NextApiRequest, NextApiResponse } from "next";
 import { onlyCron } from "@/server/infrastructure/api/cron/onlyCron";
+import {
+  setupRequest,
+  setupResponse,
+} from "@/server/infrastructure/test/apiTestHelpers";
 
 jest.mock("@/config", () => ({
   configuration: jest.fn(() => ({
@@ -8,25 +11,6 @@ jest.mock("@/config", () => ({
     },
   })),
 }));
-
-function setupRequest(
-  overrides: Partial<{ method: string; headers: Record<string, string> }> = {},
-): NextApiRequest {
-  return {
-    method: "POST",
-    headers: {},
-    ...overrides,
-  } as any;
-}
-
-function setupResponse(): NextApiResponse & {
-  status: jest.Mock;
-  json: jest.Mock;
-} {
-  const json = jest.fn();
-  const status = jest.fn(() => ({ json }));
-  return { status, json } as any;
-}
 
 describe("onlyCron", () => {
   it("doit retourner 405 quand la méthode n'est pas POST", async () => {
