@@ -325,6 +325,14 @@ const config = convict({
       env: "INDICATEUR_ID_ACCESSIBLE_PAR_UTILISATEUR_EQUIPE_DIR_PROJET",
     },
   },
+  cron: {
+    authSecret: {
+      format: String,
+      default: "",
+      doc: "Secret partagé pour l'authentification des endpoints CRON",
+      env: "CRON_AUTH_SECRET",
+    },
+  },
   dateBasculeAffichageValeursAnneePrecedente: {
     format: String,
     default: "2000-01-31",
