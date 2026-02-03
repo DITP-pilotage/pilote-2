@@ -80,6 +80,14 @@ enum type_statut_proposition {
   @@schema("public")
 }
 
+enum statut_envoi_rapport {
+  CREE
+  ENVOYE
+  ECHEC
+
+  @@schema("public")
+}
+
 model chantier_identite {
   id                                    String                 @id
   nom                                   String
@@ -512,6 +520,26 @@ model rapport_import_mesure_indicateur {
   @@schema("public")
 }
 
+model rapport_hebdomadaire_coordinateur {
+  id                      String               @id @db.Uuid
+  coordinateur_id         String               @db.Uuid
+  coordinateur            utilisateur          @relation(fields: [coordinateur_id], references: [id])
+  date_debut_periode      DateTime
+  date_fin_periode        DateTime
+  contenu_rapport         Json
+  statut_envoi            statut_envoi_rapport @default(CREE)
+  date_creation           DateTime             @default(now())
+  date_envoi              DateTime?
+  date_derniere_tentative DateTime?
+  nombre_tentatives       Int                  @default(0)
+  erreur_envoi            String?
+
+  @@unique([coordinateur_id, date_debut_periode, date_fin_periode])
+  @@index([statut_envoi])
+  @@index([date_creation])
+  @@schema("public")
+}
+
 enum type_objectif {
   notre_ambition
   deja_fait
@@ -589,6 +617,7 @@ model utilisateur {
   date_deuxieme_relance_desactivation    DateTime?
   date_desactivation_programee           DateTime?
   date_derniere_connexion                DateTime                                 @default(now())
+  rapports_hebdomadaires                 rapport_hebdomadaire_coordinateur[]
 
   @@schema("public")
 }

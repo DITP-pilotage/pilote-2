@@ -11,7 +11,7 @@ export class StubEmailManager implements EmailManager {
     console.log("📧 [STUB] Email sending disabled - Would have sent email:", {
       destinataires: destinataires.map((d) => d.email),
       templateId,
-      params,
+      params: JSON.stringify(params, null, 2),
     });
   }
 

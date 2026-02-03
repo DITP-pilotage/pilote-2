@@ -1,0 +1,67 @@
+import { $Enums } from "@prisma/client";
+import { randomUUID } from "node:crypto";
+import { Coordinateur } from "./Coordinateur";
+import { PeriodeRapport } from "./PeriodeRapport";
+import { SectionActiviteComptes } from "./SectionActiviteComptes";
+import { CompteActivite } from "./CompteActivite";
+
+export type RapportHebdomadaire = {
+  id: string;
+  coordinateur: Coordinateur;
+  periode: PeriodeRapport;
+  sectionActiviteComptes: SectionActiviteComptes;
+  statutEnvoi: $Enums.statut_envoi_rapport;
+  dateCreation: Date;
+  dateEnvoi?: Date;
+  dateDerniereTentative?: Date;
+  nombreTentatives: number;
+  erreurEnvoi?: string;
+};
+
+export function creerRapportHebdomadaire(params: {
+  coordinateur: Coordinateur;
+  periode: PeriodeRapport;
+  comptesCrees: CompteActivite[];
+  comptesDesactives: CompteActivite[];
+  dateCreation: Date;
+}): RapportHebdomadaire {
+  return {
+    id: randomUUID(),
+    coordinateur: params.coordinateur,
+    periode: params.periode,
+    sectionActiviteComptes: {
+      comptesCrees: params.comptesCrees,
+      comptesDesactives: params.comptesDesactives,
+    },
+    statutEnvoi: $Enums.statut_envoi_rapport.CREE,
+    dateCreation: params.dateCreation,
+    nombreTentatives: 0,
+  };
+}
+
+export function marquerCommeEnvoye(params: {
+  rapport: RapportHebdomadaire;
+  dateEnvoi: Date;
+}): RapportHebdomadaire {
+  return {
+    ...params.rapport,
+    statutEnvoi: $Enums.statut_envoi_rapport.ENVOYE,
+    dateEnvoi: params.dateEnvoi,
+    dateDerniereTentative: params.dateEnvoi,
+    nombreTentatives: params.rapport.nombreTentatives + 1,
+  };
+}
+
+export function marquerCommeEchec(params: {
+  rapport: RapportHebdomadaire;
+  erreur: string;
+  dateTentative: Date;
+}): RapportHebdomadaire {
+  return {
+    ...params.rapport,
+    statutEnvoi: $Enums.statut_envoi_rapport.ECHEC,
+    erreurEnvoi: params.erreur,
+    dateDerniereTentative: params.dateTentative,
+    nombreTentatives: params.rapport.nombreTentatives + 1,
+  };
+}

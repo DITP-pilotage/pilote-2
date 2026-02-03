@@ -29,8 +29,12 @@ export class BrevoEmailManager implements EmailManager {
     templateId: number,
     params: object,
   ): Promise<void> {
+    const overrideEmail = configuration().brevo.overrideEmailRecipient;
+    const recipients = overrideEmail
+      ? [{ email: overrideEmail }]
+      : destinataires;
     const email = new SendSmtpEmail();
-    email.to = destinataires;
+    email.to = recipients;
     email.templateId = templateId;
     email.params = params;
     await this.transactionalEmailsApi.sendTransacEmail(email);
