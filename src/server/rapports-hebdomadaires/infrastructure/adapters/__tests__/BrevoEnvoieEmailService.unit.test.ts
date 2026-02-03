@@ -708,11 +708,73 @@ describe("createBrevoParams", () => {
 
       // Then
       expect(result.chantiers[0].indicateurs[0].territoires[0].nom).toBe(
-        "Paris",
+        "75 - Paris",
       );
     });
 
-    it("définit type_valeur à va", () => {
+    it("formate le nom du territoire pour un département", () => {
+      // Given
+      const rapport = createRapportHebdomadaire({
+        chantiers: [
+          createSectionChantierVA({
+            indicateurs: [
+              createSectionIndicateurVA({
+                territoires: [
+                  createSectionTerritoireVA({
+                    territoire: {
+                      code: "DEPT-92",
+                      nom: "Hauts-de-Seine",
+                    },
+                  }),
+                ],
+              }),
+            ],
+          }),
+        ],
+      });
+      const profilsMap = new Map<string, string>();
+
+      // When
+      const result = createBrevoParams({ profilsMap, rapport });
+
+      // Then
+      expect(result.chantiers[0].indicateurs[0].territoires[0].nom).toBe(
+        "92 - Hauts-de-Seine",
+      );
+    });
+
+    it("formate le nom du territoire pour une région", () => {
+      // Given
+      const rapport = createRapportHebdomadaire({
+        chantiers: [
+          createSectionChantierVA({
+            indicateurs: [
+              createSectionIndicateurVA({
+                territoires: [
+                  createSectionTerritoireVA({
+                    territoire: {
+                      code: "REG-11",
+                      nom: "Île-de-France",
+                    },
+                  }),
+                ],
+              }),
+            ],
+          }),
+        ],
+      });
+      const profilsMap = new Map<string, string>();
+
+      // When
+      const result = createBrevoParams({ profilsMap, rapport });
+
+      // Then
+      expect(result.chantiers[0].indicateurs[0].territoires[0].nom).toBe(
+        "Île-de-France",
+      );
+    });
+
+    it("définit type_indicateur à va", () => {
       // Given
       const rapport = createRapportHebdomadaire({
         chantiers: [createSectionChantierVA()],
@@ -724,7 +786,7 @@ describe("createBrevoParams", () => {
 
       // Then
       expect(
-        result.chantiers[0].indicateurs[0].territoires[0].type_valeur,
+        result.chantiers[0].indicateurs[0].territoires[0].type_indicateur,
       ).toBe("va");
     });
 

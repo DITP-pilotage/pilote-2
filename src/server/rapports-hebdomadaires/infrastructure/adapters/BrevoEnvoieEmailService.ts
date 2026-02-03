@@ -14,6 +14,14 @@ export const createBrevoParams = ({
 }) => {
   const mapProfilToLabel = (code: string) => profilsMap.get(code) ?? code;
 
+  const formatTerritoireNom = (territoire: { code: string; nom: string }) => {
+    if (territoire.code.startsWith("DEPT-")) {
+      const deptCode = territoire.code.replace("DEPT-", "");
+      return `${deptCode} - ${territoire.nom}`;
+    }
+    return territoire.nom;
+  };
+
   const afficherComptesCrees =
     rapport.sectionActiviteComptes.comptesCrees.length > 0;
   const afficherComptesDesactives =
@@ -55,8 +63,8 @@ export const createBrevoParams = ({
       id: indic.indicateur.id,
       nom: indic.indicateur.nom,
       territoires: indic.territoires.map((territoire) => ({
-        nom: territoire.territoire.nom,
-        type_valeur: "va",
+        nom: formatTerritoireNom(territoire.territoire),
+        type_indicateur: "va",
         valeur:
           territoire.valeurApres !== null
             ? Number.isInteger(territoire.valeurApres)
