@@ -21,6 +21,7 @@ import {
 } from "@/server/rapports-hebdomadaires/domain/Coordinateur";
 import {
   ActiviteComptes,
+  CompteActivite,
   grouperEvenementsParType,
 } from "@/server/rapports-hebdomadaires/domain/CompteActivite";
 import {
@@ -86,58 +87,15 @@ export class ProduireRapportsHebdomadairesUseCase {
     maintenant: Date;
     chantiersAvecIndicateurs: Record<string, ChantierAvecIndicateurs>;
   }): Promise<RapportHebdomadaire | null> {
-    const evenementsFiltres = activiteGlobale.filter((evenement) => {
-      if (evenement.compte.email === coordinateur.email) {
-        // TODO (CHAN - Rapport) : au final, on exlut ou pas ?
-        return false;
-      }
-
-      return aDesDroitsSurTerritoire({
-        coordinateur,
-        codesTerritoires: evenement.compte.territoires.flatMap((territoire) => [
-          territoire.code,
-          ...territoire.enfants.map((enfant) => enfant.code),
-        ]),
-      });
+    const { comptesCrees, comptesDesactives } = this.produireSectionComptes({
+      coordinateur,
+      activiteGlobale,
     });
 
-    const { comptesCrees, comptesDesactives } =
-      grouperEvenementsParType(evenementsFiltres);
-
-    const coordTerritoireCodes = coordinateur.territoires.flatMap((t) => [
-      t.code,
-      ...t.enfants.map((e) => e.code),
-    ]);
-
-    const coordChantierIds = coordinateur.chantiers;
-    const coordIndicateurIds = coordChantierIds.flatMap(
-      (cid) =>
-        chantiersAvecIndicateurs[cid]?.indicateurs.map((i) => i.id) || [],
-    );
-
-    const evenementsDansPeriode =
-      await this.deps.activiteVAGateway.recupererEvenementsDansPeriode({
-        indicateurIds: coordIndicateurIds,
-        territoireCodes: coordTerritoireCodes,
-        periode,
-      });
-
-    const evenementsAvantPeriode =
-      await this.deps.activiteVAGateway.recupererDernierEvenementAvantPeriode({
-        indicateurIds: coordIndicateurIds,
-        territoireCodes: coordTerritoireCodes,
-        dateDebut: periode.dateDebut,
-      });
-
-    const activitesVA = foldEvenementsVA({
-      evenementsDansPeriode,
-      evenementsAvantPeriode,
-    });
-
-    const sectionActiviteChantiersVA = this.construireSectionChantiersVA({
-      activitesVA,
+    const sectionActiviteChantiersVA = await this.produireSectionActiviteVA({
+      coordinateur,
       chantiersAvecIndicateurs,
-      coordChantierIds,
+      periode,
     });
 
     const hasAccountActivity =
@@ -165,7 +123,7 @@ export class ProduireRapportsHebdomadairesUseCase {
       nombreComptesCrees: comptesCrees.length,
       nombreComptesDesactives: comptesDesactives.length,
       nombreChangementsVA: sectionActiviteChantiersVA.chantiers.reduce(
-        (sum, c) => sum + c.indicateurs.length,
+        (total, chantier) => total + chantier.indicateurs.length,
         0,
       ),
     });
@@ -192,13 +150,15 @@ export class ProduireRapportsHebdomadairesUseCase {
       let chantierId: string | null = null;
       let indicateurInfo: { id: string; nom: string } | null = null;
 
-      for (const [cid, chantier] of Object.entries(chantiersAvecIndicateurs)) {
-        const indic = chantier.indicateurs.find(
-          (i) => i.id === activite.indicateurId,
+      for (const [chantierIdCandidat, chantier] of Object.entries(
+        chantiersAvecIndicateurs,
+      )) {
+        const indicateurTrouve = chantier.indicateurs.find(
+          (indicateur) => indicateur.id === activite.indicateurId,
         );
-        if (indic) {
-          chantierId = cid;
-          indicateurInfo = indic;
+        if (indicateurTrouve) {
+          chantierId = chantierIdCandidat;
+          indicateurInfo = indicateurTrouve;
           break;
         }
       }
@@ -347,5 +307,75 @@ export class ProduireRapportsHebdomadairesUseCase {
       coordinateursSansActivite,
       dateExecution: params.maintenant,
     };
+  }
+
+  private produireSectionComptes(params: {
+    coordinateur: Coordinateur;
+    activiteGlobale: ActiviteComptes;
+  }): {
+    comptesCrees: CompteActivite[];
+    comptesDesactives: CompteActivite[];
+  } {
+    const evenementsFiltres = params.activiteGlobale.filter((evenement) => {
+      if (evenement.compte.email === params.coordinateur.email) {
+        // TODO (CHAN - Rapport) : au final, on exlut ou pas ?
+        return false;
+      }
+
+      return aDesDroitsSurTerritoire({
+        coordinateur: params.coordinateur,
+        codesTerritoires: evenement.compte.territoires.flatMap((territoire) => [
+          territoire.code,
+          ...territoire.enfants.map((enfant) => enfant.code),
+        ]),
+      });
+    });
+
+    return grouperEvenementsParType(evenementsFiltres);
+  }
+
+  private async produireSectionActiviteVA(params: {
+    coordinateur: Coordinateur;
+    chantiersAvecIndicateurs: Record<string, ChantierAvecIndicateurs>;
+    periode: { dateDebut: Date; dateFin: Date };
+  }): Promise<SectionActiviteChantiersVA> {
+    const coordTerritoireCodes = params.coordinateur.territoires.flatMap(
+      (territoire) => [
+        territoire.code,
+        ...territoire.enfants.map((enfant) => enfant.code),
+      ],
+    );
+
+    const coordChantierIds = params.coordinateur.chantiers;
+    const coordIndicateurIds = coordChantierIds.flatMap(
+      (chantierId) =>
+        params.chantiersAvecIndicateurs[chantierId]?.indicateurs.map(
+          (indicateur) => indicateur.id,
+        ) || [],
+    );
+
+    const [evenementsDansPeriode, evenementsAvantPeriode] = await Promise.all([
+      this.deps.activiteVAGateway.recupererEvenementsDansPeriode({
+        indicateurIds: coordIndicateurIds,
+        territoireCodes: coordTerritoireCodes,
+        periode: params.periode,
+      }),
+      this.deps.activiteVAGateway.recupererDernierEvenementAvantPeriode({
+        indicateurIds: coordIndicateurIds,
+        territoireCodes: coordTerritoireCodes,
+        dateDebut: params.periode.dateDebut,
+      }),
+    ]);
+
+    const activitesVA = foldEvenementsVA({
+      evenementsDansPeriode,
+      evenementsAvantPeriode,
+    });
+
+    return this.construireSectionChantiersVA({
+      activitesVA,
+      chantiersAvecIndicateurs: params.chantiersAvecIndicateurs,
+      coordChantierIds,
+    });
   }
 }
