@@ -52,6 +52,27 @@ const PageLanding = () => {
             </div>
           </div>
         </section>
+        <section className="relative">
+          <div className="absolute bottom-0 inset-x-0 h-1/2 bg-white" />
+          <div className="fr-container fr-py-8w isolate">
+            <div className="fr-grid-row fr-grid-row--center">
+              <div className="fr-col-12 flex flex-col justify-center">
+                <Titre baliseHtml="h2" className="fr-h3">
+                  Découvrez PILOTE en vidéo
+                </Titre>
+                {/* eslint-disable-next-line react/iframe-missing-sandbox */}
+                <iframe
+                  allowFullScreen
+                  className="w-full mx-auto aspect-[580/328]  rounded-xl shadow-xl overflow-hidden"
+                  sandbox="allow-scripts allow-same-origin"
+                  scrolling="no"
+                  src="https://video.finances.gouv.fr/watch/player/player/pubkey/0784da77311561a71a0a/id/f80fe1b5c28d78895f5523fe63b7a2/viewcode/default?buttons_to_show=.btn-play-pause"
+                  title="Qu'est-ce que l'outil PILOTE ?"
+                />
+              </div>
+            </div>
+          </div>
+        </section>
         <section className="bloc-pour-qui">
           <div className="fr-container fr-py-8w">
             <div className="fr-grid-row fr-grid-row--gutters fr-grid-row--center">
