@@ -5,10 +5,11 @@ import { getInitialContainerWithTransversalDependencies } from "@/server/Initial
 import { getRapportsHebdomadairesContainer } from "@/server/rapports-hebdomadaires/container";
 import logger from "@/server/infrastructure/Logger";
 import { envoieMessageTchap } from "@/server/utils/notification-tchap";
+import { configuration, configurationFeatureFlip } from "@/config";
 
-const baseUrl = process.env.TCHAP_BASE_URL ?? "";
-const roomId = process.env.TCHAP_ROOM_ID_RAPPORT_COORDINATEURS ?? "";
-const accessToken = process.env.TCHAP_ACCESS_TOKEN ?? "";
+const baseUrl = configuration().tchap.baseUrl;
+const roomId = configuration().tchap.roomIdRapportCoordinateurs;
+const accessToken = configuration().tchap.accessToken;
 
 const querySchema = z.object({
   date: z
@@ -22,7 +23,7 @@ const querySchema = z.object({
 });
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (process.env.NEXT_PUBLIC_FF_RAPPORT_COORDINATEURS !== "true") {
+  if (!configurationFeatureFlip().rapportCoordinateurs) {
     return res.status(200).json({
       skipped: true,
       reason: "Feature flag NEXT_PUBLIC_FF_RAPPORT_COORDINATEURS is disabled",
