@@ -58,83 +58,19 @@ export class ProduireRapportsHebdomadairesUseCase {
 
   async run(params?: { maintenant?: Date }): Promise<ProduireRapportResult> {
     const maintenant = params?.maintenant ?? new Date();
-    const periode = calculerPeriodeDernierLundiNeufHeures({ maintenant });
 
-    logger.info("Phase 1 démarrée", {
-      dateExecution: maintenant.toISOString(),
-      periodeDebut: periode.dateDebut.toISOString(),
-      periodeFin: periode.dateFin.toISOString(),
+    const periode = this.calculerEtLoggerPeriode(maintenant);
+    const coordinateurs = await this.recupererCoordinateurs();
+    const { activiteGlobale, chantiersAvecIndicateurs } =
+      await this.recupererDonneesDeReference({ periode, coordinateurs });
+
+    return this.produireRapportsPourCoordinateurs({
+      coordinateurs,
+      activiteGlobale,
+      chantiersAvecIndicateurs,
+      periode,
+      maintenant,
     });
-
-    const coordinateurs =
-      await this.deps.coordinateurGateway.recupererCoordinateurs([
-        "COORDINATEUR_REGION",
-        "COORDINATEUR_DEPARTEMENT",
-      ]);
-
-    logger.info("Coordinateurs récupérés", {
-      nombreCoordinateurs: coordinateurs.length,
-    });
-
-    const activiteGlobale =
-      await this.deps.activiteComptesGateway.recupererActivite({
-        dateDebut: periode.dateDebut,
-        dateFin: periode.dateFin,
-        profilCodes: PROFILS_CONCERNES,
-      });
-
-    logger.info("Activité globale récupérée", {
-      nombreEvenements: activiteGlobale.length,
-    });
-
-    const tousLesChantierIds = [
-      ...new Set(coordinateurs.flatMap((chantier) => chantier.chantiers)),
-    ];
-
-    const chantiersAvecIndicateurs =
-      await this.deps.chantierGateway.recupererIndicateursParChantiers(
-        tousLesChantierIds,
-      );
-
-    let rapportsCrees = 0;
-    let coordinateursSansActivite = 0;
-
-    for (const coordinateur of coordinateurs) {
-      try {
-        const rapport = await this.creerRapportPourCoordinateur({
-          coordinateur,
-          activiteGlobale,
-          periode,
-          maintenant,
-          chantiersAvecIndicateurs,
-        });
-
-        if (rapport) {
-          rapportsCrees++;
-        } else {
-          coordinateursSansActivite++;
-        }
-      } catch (error) {
-        logger.error(
-          {
-            coordinateurEmail: coordinateur.email,
-            erreur: error instanceof Error ? error.message : String(error),
-          },
-          "Erreur lors de la création du rapport",
-        );
-      }
-    }
-
-    logger.info("Phase 1 terminée", {
-      rapportsCrees,
-      coordinateursSansActivite,
-    });
-
-    return {
-      rapportsCrees,
-      coordinateursSansActivite,
-      dateExecution: maintenant,
-    };
   }
 
   private async creerRapportPourCoordinateur({
@@ -304,6 +240,112 @@ export class ProduireRapportsHebdomadairesUseCase {
         chantier: { id: data.chantier.id, nom: data.chantier.nom },
         indicateurs: Array.from(data.indicateurs.values()),
       })),
+    };
+  }
+
+  private calculerEtLoggerPeriode(maintenant: Date) {
+    const periode = calculerPeriodeDernierLundiNeufHeures({ maintenant });
+
+    logger.info("Phase 1 démarrée", {
+      dateExecution: maintenant.toISOString(),
+      periodeDebut: periode.dateDebut.toISOString(),
+      periodeFin: periode.dateFin.toISOString(),
+    });
+
+    return periode;
+  }
+
+  private async recupererCoordinateurs(): Promise<Coordinateur[]> {
+    const coordinateurs =
+      await this.deps.coordinateurGateway.recupererCoordinateurs([
+        "COORDINATEUR_REGION",
+        "COORDINATEUR_DEPARTEMENT",
+      ]);
+
+    logger.info("Coordinateurs récupérés", {
+      nombreCoordinateurs: coordinateurs.length,
+    });
+
+    return coordinateurs;
+  }
+
+  private async recupererDonneesDeReference(params: {
+    periode: { dateDebut: Date; dateFin: Date };
+    coordinateurs: Coordinateur[];
+  }): Promise<{
+    activiteGlobale: ActiviteComptes;
+    chantiersAvecIndicateurs: Record<string, ChantierAvecIndicateurs>;
+  }> {
+    const activiteGlobale =
+      await this.deps.activiteComptesGateway.recupererActivite({
+        dateDebut: params.periode.dateDebut,
+        dateFin: params.periode.dateFin,
+        profilCodes: PROFILS_CONCERNES,
+      });
+
+    logger.info("Activité globale récupérée", {
+      nombreEvenements: activiteGlobale.length,
+    });
+
+    const tousLesChantierIds = [
+      ...new Set(
+        params.coordinateurs.flatMap((chantier) => chantier.chantiers),
+      ),
+    ];
+
+    const chantiersAvecIndicateurs =
+      await this.deps.chantierGateway.recupererIndicateursParChantiers(
+        tousLesChantierIds,
+      );
+
+    return { activiteGlobale, chantiersAvecIndicateurs };
+  }
+
+  private async produireRapportsPourCoordinateurs(params: {
+    coordinateurs: Coordinateur[];
+    activiteGlobale: ActiviteComptes;
+    chantiersAvecIndicateurs: Record<string, ChantierAvecIndicateurs>;
+    periode: { dateDebut: Date; dateFin: Date };
+    maintenant: Date;
+  }): Promise<ProduireRapportResult> {
+    let rapportsCrees = 0;
+    let coordinateursSansActivite = 0;
+
+    for (const coordinateur of params.coordinateurs) {
+      try {
+        const rapport = await this.creerRapportPourCoordinateur({
+          coordinateur,
+          activiteGlobale: params.activiteGlobale,
+          periode: params.periode,
+          maintenant: params.maintenant,
+          chantiersAvecIndicateurs: params.chantiersAvecIndicateurs,
+        });
+
+        if (rapport) {
+          rapportsCrees++;
+        } else {
+          coordinateursSansActivite++;
+        }
+      } catch (error) {
+        logger.error(
+          {
+            coordinateurEmail: coordinateur.email,
+            erreur: error instanceof Error ? error.message : String(error),
+          },
+          "Erreur lors de la création du rapport",
+        );
+      }
+    }
+
+    logger.info("Phase 1 terminée", {
+      rapportsCrees,
+      coordinateursSansActivite,
+    });
+
+    return {
+      rapportsCrees,
+      coordinateursSansActivite,
+      dateExecution: params.maintenant,
     };
   }
 }
