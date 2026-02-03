@@ -25,7 +25,7 @@ const verifierAuthentification = async (request: NextApiRequest) => {
   }).decoderTokenAPI(token.split(" ")[1]);
 };
 
-export const errorBoundary =
+export const endpointProtege =
   (...handlers: Function[]) =>
   async (request: NextApiRequest, response: NextApiResponse) => {
     try {

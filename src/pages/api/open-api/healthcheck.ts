@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 
 import { TokenAPIJWTService } from "@/server/authentification/infrastructure/adapters/services/TokenAPIJWTService";
-import { errorBoundary } from "@/server/app/error-boundary/error-boundary";
+import { endpointProtege } from "@/server/app/error-boundary/endpoint-protege";
 import { configuration } from "@/config";
 
 const handle = async (request: NextApiRequest, response: NextApiResponse) => {
@@ -14,4 +14,4 @@ const handle = async (request: NextApiRequest, response: NextApiResponse) => {
   });
 };
 
-export default errorBoundary(handle);
+export default endpointProtege(handle);

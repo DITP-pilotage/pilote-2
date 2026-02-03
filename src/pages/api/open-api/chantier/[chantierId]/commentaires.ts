@@ -3,7 +3,7 @@ import logger from "@/server/infrastructure/Logger";
 import { UtilisateurAuthentifieJWTService } from "@/server/authentification/infrastructure/adapters/services/UtilisateurAuthentifieJWTService";
 import { dependencies } from "@/server/infrastructure/Dependencies";
 import { getContainer } from "@/server/dependances";
-import { errorBoundary } from "@/server/app/error-boundary/error-boundary";
+import { endpointProtege } from "@/server/app/error-boundary/endpoint-protege";
 import { BadRequestError } from "@/server/app/error-boundary/bad-request-error";
 
 export const config = {
@@ -48,4 +48,4 @@ const handle = async (request: NextApiRequest, response: NextApiResponse) => {
   }
 };
 
-export default errorBoundary(handle);
+export default endpointProtege(handle);
