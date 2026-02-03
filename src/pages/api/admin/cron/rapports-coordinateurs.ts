@@ -23,10 +23,15 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   const roomId = configuration().tchap.roomIdRapportCoordinateurs;
   const accessToken = configuration().tchap.accessToken;
 
-  if (!configurationFeatureFlip().rapportCoordinateurs) {
+  if (
+    !configurationFeatureFlip().rapportCoordinateurs ||
+    configuration().scalingoEnvironment !== "PROD"
+  ) {
     return res.status(200).json({
       skipped: true,
-      reason: "Feature flag NEXT_PUBLIC_FF_RAPPORT_COORDINATEURS is disabled",
+      reason: !configurationFeatureFlip().rapportCoordinateurs
+        ? "Feature flag NEXT_PUBLIC_FF_RAPPORT_COORDINATEURS is disabled"
+        : "Environment is not PROD",
     });
   }
 
