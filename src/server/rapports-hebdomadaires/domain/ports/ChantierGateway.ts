@@ -13,4 +13,6 @@ export interface ChantierGateway {
   recupererIndicateursParChantiers(
     chantierIds: string[],
   ): Promise<Record<string, ChantierAvecIndicateurs>>;
+
+  recupererChantierIdsParPerimetres(perimetreIds: string[]): Promise<string[]>;
 }

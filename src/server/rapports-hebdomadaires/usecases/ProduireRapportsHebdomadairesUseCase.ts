@@ -243,10 +243,21 @@ export class ProduireRapportsHebdomadairesUseCase {
       nombreEvenements: activiteGlobale.length,
     });
 
+    const tousLesPerimetreIds = [
+      ...new Set(params.coordinateurs.flatMap((coord) => coord.perimetres)),
+    ];
+
+    const chantierIdsViaPerimetres =
+      await this.deps.chantierGateway.recupererChantierIdsParPerimetres(
+        tousLesPerimetreIds,
+      );
+
+    const chantiersDirects = params.coordinateurs.flatMap(
+      (coord) => coord.chantiers,
+    );
+
     const tousLesChantierIds = [
-      ...new Set(
-        params.coordinateurs.flatMap((chantier) => chantier.chantiers),
-      ),
+      ...new Set([...chantiersDirects, ...chantierIdsViaPerimetres]),
     ];
 
     const chantiersAvecIndicateurs =

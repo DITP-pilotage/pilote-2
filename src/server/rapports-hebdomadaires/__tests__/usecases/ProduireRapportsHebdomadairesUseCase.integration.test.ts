@@ -5,6 +5,7 @@ import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { PrismaActiviteComptesQuery } from "@/server/gestion-utilisateur/infrastructure/queries/PrismaActiviteComptesQuery";
 import { PrismaUtilisateursQuery } from "@/server/gestion-utilisateur/infrastructure/queries/PrismaUtilisateursQuery";
 import { RecupererIndicateursParChantiersQuery } from "@/server/chantiers/infrastructure/queries/RecupererIndicateursParChantiersQuery";
+import { RecupererChantierIdsParPerimetresQuery } from "@/server/chantiers/infrastructure/queries/RecupererChantierIdsParPerimetresQuery";
 import { RecupererEvenementsVAParPeriodeQuery } from "@/server/indicateur-territoire-valeur-evenement/infrastructure/queries/RecupererEvenementsVAParPeriodeQuery";
 import { RecupererTerritoiresQuery } from "@/server/indicateur-territoire-valeur-evenement/infrastructure/queries/RecupererTerritoiresQuery";
 import { getPrisma } from "@/server/db/PrismaTransaction";
@@ -38,8 +39,11 @@ describe("ProduireRapportsHebdomadairesUseCase", () => {
     const recupererIndicateursQuery = new RecupererIndicateursParChantiersQuery(
       { prisma: prismaPilote },
     );
+    const recupererChantierIdsParPerimetresQuery =
+      new RecupererChantierIdsParPerimetresQuery({ prisma: prismaPilote });
     const chantierGateway = new ChantiersChantierGateway({
       recupererIndicateursQuery,
+      recupererChantierIdsParPerimetresQuery,
     });
     const evenementsVAQuery = new RecupererEvenementsVAParPeriodeQuery({
       prisma: prismaPilote,

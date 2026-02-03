@@ -5,6 +5,7 @@ import { EmailManager } from "@/server/infrastructure/email-manager";
 import { PrismaActiviteComptesQuery } from "@/server/gestion-utilisateur/infrastructure/queries/PrismaActiviteComptesQuery";
 import { PrismaUtilisateursQuery } from "@/server/gestion-utilisateur/infrastructure/queries/PrismaUtilisateursQuery";
 import { RecupererIndicateursParChantiersQuery } from "@/server/chantiers/infrastructure/queries/RecupererIndicateursParChantiersQuery";
+import { RecupererChantierIdsParPerimetresQuery } from "@/server/chantiers/infrastructure/queries/RecupererChantierIdsParPerimetresQuery";
 import { RecupererEvenementsVAParPeriodeQuery } from "@/server/indicateur-territoire-valeur-evenement/infrastructure/queries/RecupererEvenementsVAParPeriodeQuery";
 import { RecupererTerritoiresQuery } from "@/server/indicateur-territoire-valeur-evenement/infrastructure/queries/RecupererTerritoiresQuery";
 
@@ -29,6 +30,7 @@ export type RapportsHebdomadairesDependencies = {
   activiteComptesQuery: PrismaActiviteComptesQuery;
   utilisateursQuery: PrismaUtilisateursQuery;
   recupererIndicateursQuery: RecupererIndicateursParChantiersQuery;
+  recupererChantierIdsParPerimetresQuery: RecupererChantierIdsParPerimetresQuery;
   evenementsVAQuery: RecupererEvenementsVAParPeriodeQuery;
   territoiresQuery: RecupererTerritoiresQuery;
   activiteComptesGateway: ActiviteComptesGateway;
@@ -57,6 +59,9 @@ export const getRapportsHebdomadairesContainer = (
       activiteComptesQuery: asClass(PrismaActiviteComptesQuery),
       utilisateursQuery: asClass(PrismaUtilisateursQuery),
       recupererIndicateursQuery: asClass(RecupererIndicateursParChantiersQuery),
+      recupererChantierIdsParPerimetresQuery: asClass(
+        RecupererChantierIdsParPerimetresQuery,
+      ),
       evenementsVAQuery: asClass(RecupererEvenementsVAParPeriodeQuery),
       territoiresQuery: asClass(RecupererTerritoiresQuery),
       activiteComptesGateway: asClass(GestionUtilisateurActiviteComptesGateway),
