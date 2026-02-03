@@ -16,9 +16,7 @@ export class PageChantier extends BasePage {
     await expect(this.page).toHaveTitle(`Chantier ${id} - ${nom} - PILOTE`);
   }
 
-  async gotoMiseAJourDonnees(
-    chantierId: string,
-  ): Promise<PageMiseAJourDonnees> {
+  async gotoMiseAJourDonnees(): Promise<PageMiseAJourDonnees> {
     await this.page
       .getByRole("link", { name: /Mettre à jour les données/ })
       .click();

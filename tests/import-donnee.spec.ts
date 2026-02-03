@@ -28,7 +28,7 @@ test("doit pouvoir importer des données", async ({ page }) => {
       await expect(
         page.getByRole("link", { name: /Mettre à jour les données/ }),
       ).toBeVisible();
-      const pageMaj = await pageChantier.gotoMiseAJourDonnees(chantier.id);
+      const pageMaj = await pageChantier.gotoMiseAJourDonnees();
 
       await test.step(`Sélection de l'indicateur ${chantier.indicateurId}`, async () => {
         await pageMaj.expectTitle(chantier.id);
