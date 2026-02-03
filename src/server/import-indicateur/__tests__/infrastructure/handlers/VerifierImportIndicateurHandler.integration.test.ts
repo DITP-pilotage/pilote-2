@@ -34,6 +34,24 @@ const DONNEE_DATE_2 = "31/12/2023";
 // Il y a un pb si on set un env var différente pour ces tests => to fix
 const BASE_URL_VALIDATA = "https://api.validata.etalab.studio";
 
+// next-auth v5 lit les cookies depuis le header "cookie", pas depuis req.cookies
+async function createMocksAvecSessionToken(
+  sessionToken: string,
+  indicateurId: string,
+) {
+  return createMocks<NextApiRequest, NextApiResponse>({
+    method: "POST",
+    body: new FormData(),
+    cookies: {
+      "authjs.session-token": sessionToken,
+    },
+    headers: {
+      cookie: `authjs.session-token=${sessionToken}`,
+    },
+    query: { indicateurId },
+  });
+}
+
 async function creeUnUtilisateurEnBase() {
   const auteurId = randomUUID();
   await prisma.utilisateur.create({
@@ -90,21 +108,13 @@ describe("VerifierImportIndicateurHandler", () => {
         );
 
       // When
-      const formData = new FormData();
-      const file = mock<File>();
-      formData.append("file", file);
-
-      const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
-        method: "POST",
-        body: formData,
-        cookies: {
-          "next-auth.session-token":
-            await getNextAuthSessionTokenPourUtilisateurEmail(
-              "ditp.admin@example.com",
-            ),
-        },
-        query: { indicateurId: "IND-001" },
-      });
+      const sessionToken = await getNextAuthSessionTokenPourUtilisateurEmail(
+        "ditp.admin@example.com",
+      );
+      const { req, res } = await createMocksAvecSessionToken(
+        sessionToken,
+        "IND-001",
+      );
 
       await getContainer("importIndicateur")
         .resolve("verifierFichierImportIndicateurHandler")
@@ -152,20 +162,13 @@ describe("VerifierImportIndicateurHandler", () => {
         .resolve("utilisateurRepository")
         .créerOuMettreÀJour(utilisateur, auteurId);
 
-      const formData = new FormData();
-      const file = mock<File>();
-      formData.append("file", file);
-      const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
-        method: "POST",
-        body: formData,
-        cookies: {
-          "next-auth.session-token":
-            await getNextAuthSessionTokenPourUtilisateurEmail(
-              "ditp.admin@example.com",
-            ),
-        },
-        query: { indicateurId: "IND-001" },
-      });
+      const sessionToken = await getNextAuthSessionTokenPourUtilisateurEmail(
+        "ditp.admin@example.com",
+      );
+      const { req, res } = await createMocksAvecSessionToken(
+        sessionToken,
+        "IND-001",
+      );
 
       // When
       await getContainer("importIndicateur")
@@ -224,20 +227,13 @@ describe("VerifierImportIndicateurHandler", () => {
         .resolve("utilisateurRepository")
         .créerOuMettreÀJour(utilisateur, auteurId);
 
-      const formData = new FormData();
-      const file = mock<File>();
-      formData.append("file", file);
-      const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
-        method: "POST",
-        body: formData,
-        cookies: {
-          "next-auth.session-token":
-            await getNextAuthSessionTokenPourUtilisateurEmail(
-              "ditp.admin@example.com",
-            ),
-        },
-        query: { indicateurId: "IND-001" },
-      });
+      const sessionToken = await getNextAuthSessionTokenPourUtilisateurEmail(
+        "ditp.admin@example.com",
+      );
+      const { req, res } = await createMocksAvecSessionToken(
+        sessionToken,
+        "IND-001",
+      );
 
       // When
       await getContainer("importIndicateur")
@@ -310,21 +306,13 @@ describe("VerifierImportIndicateurHandler", () => {
       );
 
     // When
-    const formData = new FormData();
-    const file = mock<File>();
-    formData.append("file", file);
-
-    const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
-      method: "POST",
-      body: formData,
-      cookies: {
-        "next-auth.session-token":
-          await getNextAuthSessionTokenPourUtilisateurEmail(
-            "ditp.admin@example.com",
-          ),
-      },
-      query: { indicateurId: "IND-001" },
-    });
+    const sessionToken = await getNextAuthSessionTokenPourUtilisateurEmail(
+      "ditp.admin@example.com",
+    );
+    const { req, res } = await createMocksAvecSessionToken(
+      sessionToken,
+      "IND-001",
+    );
 
     await getContainer("importIndicateur")
       .resolve("verifierFichierImportIndicateurHandler")
@@ -413,21 +401,14 @@ describe("VerifierImportIndicateurHandler", () => {
       );
 
     // When
-    const formData = new FormData();
-    const file = mock<File>();
-    formData.append("file", file);
+    const sessionToken = await getNextAuthSessionTokenPourUtilisateurEmail(
+      "ditp.admin@example.com",
+    );
+    const { req, res } = await createMocksAvecSessionToken(
+      sessionToken,
+      "IND-001",
+    );
 
-    const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
-      method: "POST",
-      body: formData,
-      cookies: {
-        "next-auth.session-token":
-          await getNextAuthSessionTokenPourUtilisateurEmail(
-            "ditp.admin@example.com",
-          ),
-      },
-      query: { indicateurId: "IND-001" },
-    });
     await getContainer("importIndicateur")
       .resolve("verifierFichierImportIndicateurHandler")
       .handle(req, res);

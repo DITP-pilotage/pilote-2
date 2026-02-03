@@ -1,8 +1,8 @@
-const nextJest = require('next/jest')
+const nextJest = require("next/jest");
 
 const createJestConfig = nextJest({
-  dir: './',
-})
+  dir: "./",
+});
 
 const globalConf = {
   moduleNameMapper: {
@@ -17,60 +17,64 @@ const globalConf = {
   },
 };
 
-const nextJSGlobalConfAsync = createJestConfig(globalConf)
+const nextJSGlobalConfAsync = createJestConfig(globalConf);
 
 module.exports = async () => {
-  const nextJSGlobalConf = await nextJSGlobalConfAsync()
+  const nextJSGlobalConf = await nextJSGlobalConfAsync();
 
   return {
     projects: [
       {
         ...nextJSGlobalConf,
-        displayName: 'Node - server integration tests',
-        testEnvironment: 'node',
-        setupFiles: ['<rootDir>/jest.env.setup.js'],
-        setupFilesAfterEnv: ['<rootDir>/src/server/infrastructure/test/integrationTestSetup.ts', 'jest-extended/all'],
-        roots: ['<rootDir>/src/server'],
-        testMatch: ['**/*.integration.test.*', '**/__tests__/**/*.integration.test.ts'],
+        displayName: "Node - server integration tests",
+        testEnvironment: "node",
+        setupFiles: ["<rootDir>/jest.env.setup.js"],
+        setupFilesAfterEnv: [
+          "<rootDir>/src/server/infrastructure/test/integrationTestSetup.ts",
+          "jest-extended/all",
+        ],
+        roots: ["<rootDir>/src/server"],
+        testMatch: [
+          "**/*.integration.test.*",
+          "**/__tests__/**/*.integration.test.ts",
+        ],
         maxWorkers: 1,
         transform: {
           "\\.yml$": "jest-transform-yaml",
-          '^.+\\.(js|jsx|ts|tsx)$': ['babel-jest', { presets: ['next/babel'], configFile: './tests/babel.config.json' }],
+          "^.+\\.(js|jsx|ts|tsx)$": [
+            "babel-jest",
+            {
+              presets: ["next/babel"],
+              configFile: "./tests/babel.config.json",
+            },
+          ],
         },
-        transformIgnorePatterns: [
-          '/node_modules/(?!@keycloak|url-join|url-template|camelize-ts)',
-          '^.+\\.module\\.(css|sass|scss)$',
-        ],
+        transformIgnorePatterns: ["^.+\\.module\\.(css|sass|scss)$"],
       },
       {
         ...nextJSGlobalConf,
-        displayName: 'Node - server & scripts unit tests',
-        testEnvironment: 'node',
-        setupFiles: ['<rootDir>/jest.env.setup.js'],
-        setupFilesAfterEnv: ['jest-extended/all'],
-        roots: ['<rootDir>/src/server', '<rootDir>/scripts'],
-        testMatch: ['**/*.unit.test.*'],
+        displayName: "Node - server & scripts unit tests",
+        testEnvironment: "node",
+        setupFiles: ["<rootDir>/jest.env.setup.js"],
+        setupFilesAfterEnv: ["jest-extended/all"],
+        roots: ["<rootDir>/src/server", "<rootDir>/scripts"],
+        testMatch: ["**/*.unit.test.*"],
         transform: {
           "\\.yml$": "jest-transform-yaml",
-          '^.+\\.(js|jsx|ts|tsx)$': ['babel-jest', { presets: ['next/babel'] }],
+          "^.+\\.(js|jsx|ts|tsx)$": ["babel-jest", { presets: ["next/babel"] }],
         },
-        transformIgnorePatterns: [
-          '/node_modules/(?!@keycloak|url-join|url-template|camelize-ts)',
-          '^.+\\.module\\.(css|sass|scss)$',
-        ],
+        transformIgnorePatterns: ["^.+\\.module\\.(css|sass|scss)$"],
       },
       {
         ...nextJSGlobalConf,
-        displayName: 'JsDom - client tests',
-        testEnvironment: 'jest-environment-jsdom',
-        setupFiles: ['<rootDir>/jest.env.setup.js'],
-        setupFilesAfterEnv: ['<rootDir>/jest.setup.ts', 'jest-extended/all'],
-        testMatch: ['**/*.unit.test.*', '**/*.integration.test.*'],
-        transformIgnorePatterns: [
-          '/node_modules/(?!@keycloak|url-join|url-template|camelize-ts)',
-        ],
-        roots: ['<rootDir>/src/client'],
+        displayName: "JsDom - client tests",
+        testEnvironment: "jest-environment-jsdom",
+        setupFiles: ["<rootDir>/jest.env.setup.js"],
+        setupFilesAfterEnv: ["<rootDir>/jest.setup.ts", "jest-extended/all"],
+        testMatch: ["**/*.unit.test.*", "**/*.integration.test.*"],
+        transformIgnorePatterns: [],
+        roots: ["<rootDir>/src/client"],
       },
-    ]
-  }
-}
+    ],
+  };
+};

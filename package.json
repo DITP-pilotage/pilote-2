@@ -192,7 +192,7 @@
     "jest-transform-yaml": "1.2.0",
     "next-router-mock": "0.9.13",
     "nock": "^13.3.0",
-    "node-mocks-http": "^1.12.2",
+    "node-mocks-http": "^1.17.2",
     "pino-pretty": "^10.0.0",
     "playwright-core": "1.42.1",
     "postcss-styled-components": "^0.2.1",
