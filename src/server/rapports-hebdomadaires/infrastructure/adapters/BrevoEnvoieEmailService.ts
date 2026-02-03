@@ -55,26 +55,25 @@ export class BrevoEnvoieEmailService implements EnvoieEmailService {
 
     const afficherSectionChantiersVA = rapport.chantiers.length > 0;
 
-    const chantiers = rapport.chantiers.map((chantier) =>
-      chantier.indicateurs.flatMap((indic) =>
-        indic.territoires.map((territoire) => ({
-          nomChantier: chantier.chantier.nom,
-          nomIndicateur: indic.indicateur.nom,
-          nomTerritoire: territoire.territoire.nom,
-          valeurAvant:
-            territoire.valeurAvant !== null
-              ? this.formatValeur(territoire.valeurAvant)
-              : "-",
-          valeurApres:
+    const chantiers = rapport.chantiers.map((chantier) => ({
+      id: chantier.chantier.id,
+      nom: chantier.chantier.nom,
+      indicateurs: chantier.indicateurs.flatMap((indic) => ({
+        id: indic.indicateur.id,
+        nom: indic.indicateur.nom,
+        territoires: indic.territoires.map((territoire) => ({
+          nom: territoire.territoire.nom,
+          type_valeur: "va",
+          valeur:
             territoire.valeurApres !== null
               ? this.formatValeur(territoire.valeurApres)
               : "-",
-          dateChangement: new Date(
+          date_indicateur: new Date(
             territoire.dateChangement,
           ).toLocaleDateString("fr-FR"),
         })),
-      ),
-    );
+      })),
+    }));
 
     const templateParams = {
       prenom: rapport.coordinateur.prenom,
