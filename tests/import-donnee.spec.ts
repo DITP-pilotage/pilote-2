@@ -1,11 +1,6 @@
 import { expect, test } from "@playwright/test";
 import { stringify } from "csv-stringify/sync";
-import { seedDatabase } from "./utils";
 import { AppActions } from "./actions/app.actions";
-
-test.beforeAll(() => {
-  seedDatabase();
-});
 
 test("doit pouvoir importer des données", async ({ page }) => {
   test.setTimeout(150_000);

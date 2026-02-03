@@ -1,11 +1,6 @@
 import { expect, test } from "@playwright/test";
 import { DonneeChantierContrat } from "@/server/chantiers/app/contrats/DonneeChantierContrat";
 import { ApiTestContext } from "./api-client/api-test-context";
-import { seedDatabase } from "../utils";
-
-test.beforeAll(() => {
-  seedDatabase();
-});
 
 test("Quand on a accès au chantier, doit remonter une réponse 200 OK avec les données de l'indicateur", async ({
   playwright,

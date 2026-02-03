@@ -24,7 +24,7 @@
     "test:client:integration": "jest src/client/.*.integration.test.*",
     "test:client:coverage": "npm run test:client -- --collectCoverage --collectCoverageFrom=src/client/**/*.{ts,tsx}",
     "test:server": "npm run test:server:unit && npm run test:server:integration",
-    "test:e2e": "npx playwright test --workers=1",
+    "test:e2e": "npx playwright test --workers=8",
     "test:e2e:seed": "./tests/seed/seed.sh",
     "test:e2e:ui": "npx playwright test --ui",
     "test:e2e:server": "dotenv -e .env.e2e npm run dev",

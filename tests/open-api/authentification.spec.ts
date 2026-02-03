@@ -1,11 +1,6 @@
 import { expect, test } from "@playwright/test";
 import { createUnauthenticatedClient } from "./api-client/unauthenticated-api.client";
 import { ApiTestContext } from "./api-client/api-test-context";
-import { seedDatabase } from "../utils";
-
-test.beforeAll(() => {
-  seedDatabase();
-});
 
 test.describe("Authentification", () => {
   test("quand on ne dispose pas d'un header Authorization, doit remonter une erreur 401 Unauthorized", async ({

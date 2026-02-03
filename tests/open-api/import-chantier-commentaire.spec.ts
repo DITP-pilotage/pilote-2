@@ -5,11 +5,6 @@ import {
 } from "@/server/commentaires/app/contrats/ImportCommentaireAPIContrat";
 import { ApiTestContext } from "./api-client/api-test-context";
 import { CommentaireInput } from "./api-client/open-api.client";
-import { seedDatabase } from "../utils";
-
-test.beforeAll(() => {
-  seedDatabase();
-});
 
 test("Import de commentaires via l'API open-api", async ({ playwright }) => {
   const apiContext = await ApiTestContext.create(

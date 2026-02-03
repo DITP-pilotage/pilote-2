@@ -1,11 +1,6 @@
 import { Download, expect, test } from "@playwright/test";
 import fs from "node:fs";
-import { seedDatabase } from "./utils";
 import { AppActions } from "./actions/app.actions";
-
-test.beforeAll(() => {
-  seedDatabase();
-});
 
 test("doit pouvoir exporter les données des indicateurs sous format CSV", async ({
   page,

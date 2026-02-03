@@ -10,6 +10,7 @@ require("dotenv").config({ path: ".env.e2e" });
  * See https://playwright.dev/docs/test-configuration.
  */
 export default defineConfig({
+  globalSetup: "./tests/global-setup.ts",
   testDir: "./tests",
   /* Run tests in files in parallel */
   fullyParallel: false,
@@ -20,7 +21,7 @@ export default defineConfig({
   globalTimeout: 2_000_000,
   outputDir: process.env.CI ? "test-results" : "/tmp/pilote-playwright/results",
   /* Run serially for test isolation */
-  workers: 1,
+  workers: 8,
   /* Reporter à utiliser. Voir https://playwright.dev/docs/test-reporters */
   reporter: process.env.CI
     ? [["github"], ["json", { outputFile: "test-results/results.json" }]]

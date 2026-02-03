@@ -1,12 +1,7 @@
 import { Download, expect, test } from "@playwright/test";
 import fs from "node:fs";
-import { seedDatabase } from "./utils";
 import { AppActions } from "./actions/app.actions";
 import { PageAdminUtilisateurs } from "./pages/admin/page-utilisateurs";
-
-test.beforeAll(() => {
-  seedDatabase();
-});
 
 test("doit pouvoir exporter les données des utilisateurs sous format CSV", async ({
   page,
