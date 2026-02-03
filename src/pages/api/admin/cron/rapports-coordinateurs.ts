@@ -7,10 +7,6 @@ import logger from "@/server/infrastructure/Logger";
 import { envoieMessageTchap } from "@/server/utils/notification-tchap";
 import { configuration, configurationFeatureFlip } from "@/config";
 
-const baseUrl = configuration().tchap.baseUrl;
-const roomId = configuration().tchap.roomIdRapportCoordinateurs;
-const accessToken = configuration().tchap.accessToken;
-
 const querySchema = z.object({
   date: z
     .string()
@@ -23,6 +19,10 @@ const querySchema = z.object({
 });
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
+  const baseUrl = configuration().tchap.baseUrl;
+  const roomId = configuration().tchap.roomIdRapportCoordinateurs;
+  const accessToken = configuration().tchap.accessToken;
+
   if (!configurationFeatureFlip().rapportCoordinateurs) {
     return res.status(200).json({
       skipped: true,

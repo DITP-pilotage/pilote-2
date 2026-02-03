@@ -6,11 +6,11 @@ import logger from "@/server/infrastructure/Logger";
 import { envoieMessageTchap } from "@/server/utils/notification-tchap";
 import { configuration, configurationFeatureFlip } from "@/config";
 
-const baseUrl = configuration().tchap.baseUrl;
-const roomId = configuration().tchap.roomIdRapportPva;
-const accessToken = configuration().tchap.accessToken;
-
 async function handler(req: NextApiRequest, res: NextApiResponse) {
+  const baseUrl = configuration().tchap.baseUrl;
+  const roomId = configuration().tchap.roomIdRapportPva;
+  const accessToken = configuration().tchap.accessToken;
+
   if (
     !configurationFeatureFlip().rapportPva ||
     configuration().scalingoEnvironment !== "PROD"
