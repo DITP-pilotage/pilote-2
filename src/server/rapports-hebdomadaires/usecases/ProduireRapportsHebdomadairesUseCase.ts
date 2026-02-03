@@ -351,7 +351,7 @@ export class ProduireRapportsHebdomadairesUseCase {
       ],
     );
 
-    const coordChantierIds = params.coordinateur.chantiers;
+    const coordChantierIds = Object.keys(params.chantiersAvecIndicateurs);
     const coordIndicateurIds = coordChantierIds.flatMap(
       (chantierId) =>
         params.chantiersAvecIndicateurs[chantierId]?.indicateurs.map(

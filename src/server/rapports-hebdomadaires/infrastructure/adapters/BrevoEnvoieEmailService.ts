@@ -90,6 +90,10 @@ export class BrevoEnvoieEmailService implements EnvoieEmailService {
       chantiers,
     };
 
+    console.log("-------------------------------");
+    console.log(JSON.stringify(templateParams, null, 2));
+    console.log("-------------------------------");
+
     await this.deps.emailManager.sendTransactionalEmail(
       [{ email: rapport.coordinateur.email }],
       TEMPLATE_ID_RAPPORT_COORDINATEURS,

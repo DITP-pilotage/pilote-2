@@ -444,25 +444,23 @@ describe("ProduireRapportsHebdomadairesUseCase", () => {
       expect(rapports).toEqual([
         expect.objectContaining({
           contenu_rapport: expect.objectContaining({
-            sectionActiviteChantiersVA: expect.objectContaining({
-              chantiers: [
-                expect.objectContaining({
-                  chantier: expect.objectContaining({ nom: "Chantier Test" }),
-                  indicateurs: [
-                    expect.objectContaining({
-                      indicateur: expect.objectContaining({
-                        nom: "Indicateur Test",
-                      }),
-                      territoires: [
-                        expect.objectContaining({
-                          valeurApres: 75,
-                        }),
-                      ],
+            sectionActiviteChantiersVA: [
+              expect.objectContaining({
+                chantier: expect.objectContaining({ nom: "Chantier Test" }),
+                indicateurs: [
+                  expect.objectContaining({
+                    indicateur: expect.objectContaining({
+                      nom: "Indicateur Test",
                     }),
-                  ],
-                }),
-              ],
-            }),
+                    territoires: [
+                      expect.objectContaining({
+                        valeurApres: 75,
+                      }),
+                    ],
+                  }),
+                ],
+              }),
+            ],
           }),
         }),
       ]);
@@ -547,6 +545,205 @@ describe("ProduireRapportsHebdomadairesUseCase", () => {
 
       expect(result.rapportsCrees).toBe(1);
       expect(result.coordinateursSansActivite).toBe(0);
+    }),
+  );
+
+  it(
+    "inclut les chantiers accessibles via les périmètres",
+    createIntegrationTest(async () => {
+      const territoire = await fixtures.territoire({
+        code: randomUUID(),
+        nom: "Paris",
+        maille: "DEPT",
+      });
+
+      const chantier = await fixtures.chantierIdentite({
+        nom: "Chantier via Périmètre",
+        statut: "PUBLIE",
+        perimetre_ids: ["PER-001"],
+      });
+
+      await fixtures.chantierTerritoire({
+        id: chantier.id,
+        territoire_code: territoire.code,
+      });
+
+      const indicateur = await fixtures.indicateurIdentite({
+        chantier_id: chantier.id,
+        nom: "Indicateur Test",
+      });
+
+      await fixtures.indicateurTerritoire({
+        id: indicateur.id,
+        territoire_code: territoire.code,
+        chantier_id: chantier.id,
+      });
+
+      const coordinateur = await fixtures.utilisateur({
+        profilCode: "COORDINATEUR_DEPARTEMENT",
+      });
+      await fixtures.habilitation({
+        utilisateurId: coordinateur.id,
+        territoires: [territoire.code],
+        perimetres: ["PER-001"],
+        chantiers: [],
+      });
+
+      const auteur = await fixtures.utilisateur();
+      await fixtures.indicateurTerritoireValeurEvenement({
+        indic_id: indicateur.id,
+        territoire_code: territoire.code,
+        id_auteur_modification: auteur.id,
+        type_evenement: "VALEUR_MODIFIEE",
+        valeur: 85,
+        date_creation: new Date(Date.now() - 1 * 60 * 60 * 1000),
+      });
+
+      const result = await useCase.run();
+
+      expect(result.rapportsCrees).toBe(1);
+
+      const prisma = getPrisma();
+      const rapports = await prisma.rapport_hebdomadaire_coordinateur.findMany({
+        where: { coordinateur_id: coordinateur.id },
+      });
+
+      expect(rapports).toEqual([
+        expect.objectContaining({
+          contenu_rapport: expect.objectContaining({
+            sectionActiviteChantiersVA: [
+              expect.objectContaining({
+                chantier: expect.objectContaining({
+                  nom: "Chantier via Périmètre",
+                }),
+                indicateurs: [
+                  expect.objectContaining({
+                    indicateur: expect.objectContaining({
+                      nom: "Indicateur Test",
+                    }),
+                    territoires: [
+                      expect.objectContaining({
+                        valeurApres: 85,
+                      }),
+                    ],
+                  }),
+                ],
+              }),
+            ],
+          }),
+        }),
+      ]);
+    }),
+  );
+
+  it(
+    "combine les chantiers directs et ceux accessibles via périmètres",
+    createIntegrationTest(async () => {
+      const territoire = await fixtures.territoire({
+        code: randomUUID(),
+        nom: "Paris",
+        maille: "DEPT",
+      });
+
+      const chantierDirect = await fixtures.chantierIdentite({
+        nom: "Chantier Direct",
+        statut: "PUBLIE",
+      });
+
+      await fixtures.chantierTerritoire({
+        id: chantierDirect.id,
+        territoire_code: territoire.code,
+      });
+
+      const indicateurDirect = await fixtures.indicateurIdentite({
+        chantier_id: chantierDirect.id,
+        nom: "Indicateur Direct",
+      });
+
+      await fixtures.indicateurTerritoire({
+        id: indicateurDirect.id,
+        territoire_code: territoire.code,
+        chantier_id: chantierDirect.id,
+      });
+
+      const chantierPerimetre = await fixtures.chantierIdentite({
+        nom: "Chantier Périmètre",
+        statut: "PUBLIE",
+        perimetre_ids: ["PER-002"],
+      });
+
+      await fixtures.chantierTerritoire({
+        id: chantierPerimetre.id,
+        territoire_code: territoire.code,
+      });
+
+      const indicateurPerimetre = await fixtures.indicateurIdentite({
+        chantier_id: chantierPerimetre.id,
+        nom: "Indicateur Périmètre",
+      });
+
+      await fixtures.indicateurTerritoire({
+        id: indicateurPerimetre.id,
+        territoire_code: territoire.code,
+        chantier_id: chantierPerimetre.id,
+      });
+
+      const coordinateur = await fixtures.utilisateur({
+        profilCode: "COORDINATEUR_DEPARTEMENT",
+      });
+      await fixtures.habilitation({
+        utilisateurId: coordinateur.id,
+        territoires: [territoire.code],
+        perimetres: ["PER-002"],
+        chantiers: [chantierDirect.id],
+      });
+
+      const auteur = await fixtures.utilisateur();
+      await fixtures.indicateurTerritoireValeurEvenement({
+        indic_id: indicateurDirect.id,
+        territoire_code: territoire.code,
+        id_auteur_modification: auteur.id,
+        type_evenement: "VALEUR_MODIFIEE",
+        valeur: 90,
+        date_creation: new Date(Date.now() - 1 * 60 * 60 * 1000),
+      });
+
+      await fixtures.indicateurTerritoireValeurEvenement({
+        indic_id: indicateurPerimetre.id,
+        territoire_code: territoire.code,
+        id_auteur_modification: auteur.id,
+        type_evenement: "VALEUR_MODIFIEE",
+        valeur: 95,
+        date_creation: new Date(Date.now() - 1 * 60 * 60 * 1000),
+      });
+
+      const result = await useCase.run();
+
+      expect(result.rapportsCrees).toBe(1);
+
+      const prisma = getPrisma();
+      const rapports = await prisma.rapport_hebdomadaire_coordinateur.findMany({
+        where: { coordinateur_id: coordinateur.id },
+      });
+
+      expect(rapports).toEqual([
+        expect.objectContaining({
+          contenu_rapport: expect.objectContaining({
+            sectionActiviteChantiersVA: expect.arrayContaining([
+              expect.objectContaining({
+                chantier: expect.objectContaining({
+                  nom: "Chantier Direct",
+                }),
+              }),
+              expect.objectContaining({
+                chantier: expect.objectContaining({
+                  nom: "Chantier Périmètre",
+                }),
+              }),
+            ]),
+          }),
+        }),
+      ]);
     }),
   );
 });
