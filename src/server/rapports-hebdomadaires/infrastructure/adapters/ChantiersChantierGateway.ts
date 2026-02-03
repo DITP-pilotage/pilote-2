@@ -37,8 +37,8 @@ export class ChantiersChantierGateway implements ChantierGateway {
   async recupererChantierIdsParPerimetres(
     perimetreIds: string[],
   ): Promise<string[]> {
-    return this.deps.recupererChantierIdsParPerimetresQuery.execute(
+    return this.deps.recupererChantierIdsParPerimetresQuery.execute({
       perimetreIds,
-    );
+    });
   }
 }
