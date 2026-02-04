@@ -4,10 +4,11 @@ import { ComponentType, HTMLAttributes } from "react";
 import { Accordion as _Accordion } from "@/client/components/shared/Accordion";
 import { Callout as _Callout } from "@/client/components/shared/Callout";
 import { Icone as _Icone } from "@/components/_commons/Icone";
+import { InformationPleineIcon } from "@/components/_commons/Icones/InformationPleineIcon";
 import { WarningIcon } from "@/components/_commons/Icones/WarningIcon";
 import { ArrowLine1Icon } from "@/components/_commons/Icones/ArrowLine1Icon";
 
-type IconComponent = ComponentType<{ className?: string; fill?: string }>;
+type IconComponent = ComponentType<{ className: string; fill: string }>;
 
 const calloutIconMap: Record<string, IconComponent> = {
   warning: WarningIcon,
@@ -25,7 +26,12 @@ export const CalloutIcon = ({
 }: HTMLAttributes<HTMLDivElement> & {
   type?: string;
   icone?: IconComponent;
-}) => <_Callout.Icon {...props} icone={type ? calloutIconMap[type] : props.icone} />;
+}) => (
+  <_Callout.Icon
+    {...props}
+    icone={(type ? calloutIconMap[type] : props.icone) ?? InformationPleineIcon}
+  />
+);
 
 export const CalloutText = _Callout.Text;
 
