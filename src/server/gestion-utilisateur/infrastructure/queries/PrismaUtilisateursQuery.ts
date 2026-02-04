@@ -1,4 +1,4 @@
-import keyBy from "lodash/keyBy";
+import keyBy from "lodash.keyby";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { mapTerritoiresToDTO } from "@/server/gestion-utilisateur/infrastructure/utils/territoires";
 
