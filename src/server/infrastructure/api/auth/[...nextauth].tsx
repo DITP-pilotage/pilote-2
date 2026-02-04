@@ -204,6 +204,7 @@ function _hasExpired(token: PiloteJWTPayload): Boolean {
 const toPiloteJWTPayload = (token: JWT) => token as PiloteJWTPayload;
 
 export const authConfig: NextAuthConfig = {
+  trustHost: true,
   providers: !!configuration().devPassword ? [credentialsProvider] : [keycloak],
   debug: configuration().nextAuth.debug,
   session: {

@@ -1,3 +1,5 @@
+"use client";
+
 import { Accordion as RadixAccordion } from "radix-ui";
 import { ComponentProps } from "react";
 import { clsxm } from "@/utils/clsxm";
