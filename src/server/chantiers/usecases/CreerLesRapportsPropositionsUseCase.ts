@@ -4,10 +4,7 @@ import { UtilisateurRepository } from "@/server/chantiers/domain/ports/Utilisate
 import { IndicateurTerritoireValeurEvenementRepository } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/IndicateurTerritoireValeurEvenementRepository";
 import { IndicateurRepository } from "@/server/chantiers/domain/ports/IndicateurRepository";
 import { RapportPropositionsAvancementRepository } from "@/server/chantiers/domain/ports/RapportPropositionsAvancementRepository";
-import {
-  creerRapportPropositionsAvancement,
-  ContenuRapport,
-} from "@/server/chantiers/domain/RapportPropositionsAvancement";
+import { creerRapportPropositionsAvancement } from "@/server/chantiers/domain/RapportPropositionsAvancement";
 import { genererParametresEnvoieRapportProposition } from "@/server/chantiers/app/contrats/ParametresEnvoieEmailRapportProposition";
 
 interface Dependencies {
@@ -60,19 +57,28 @@ export class CreerLesRapportsPropositionsUseCase {
 
     for (const directeur of listeDirecteursDeProjet) {
       try {
-        const contenuRapport = this.genererContenuRapport(
+        if (
+          !this.directeurADesChantiersConcernes(
+            directeur.listeChantiers,
+            propositionsParChantier,
+            indicateursNonAJourParChantier,
+          )
+        ) {
+          continue;
+        }
+
+        const contenuRapport = genererParametresEnvoieRapportProposition(
           directeur.listeChantiers,
           mapChantiersPropositionInformation,
           propositionsParChantier,
           indicateursNonAJourParChantier,
         );
 
-        if (this.rapportEstVide(contenuRapport)) {
-          continue;
-        }
-
         const rapport = creerRapportPropositionsAvancement({
-          utilisateurId: directeur.id,
+          utilisateur: {
+            id: directeur.id,
+            email: directeur.email,
+          },
           contenuRapport,
           dateCreation: new Date(),
         });
@@ -93,27 +99,15 @@ export class CreerLesRapportsPropositionsUseCase {
     return { rapportsCrees, erreursCreation };
   }
 
-  private genererContenuRapport(
-    listeChantierIds: string[],
-    mapChantiersInformation: Parameters<
-      typeof genererParametresEnvoieRapportProposition
-    >[1],
-    propositionsParChantier: Parameters<
-      typeof genererParametresEnvoieRapportProposition
-    >[2],
-    indicateursNonAJourParChantier: Parameters<
-      typeof genererParametresEnvoieRapportProposition
-    >[3],
-  ): ContenuRapport {
-    return genererParametresEnvoieRapportProposition(
-      listeChantierIds,
-      mapChantiersInformation,
-      propositionsParChantier,
-      indicateursNonAJourParChantier,
+  private directeurADesChantiersConcernes(
+    listeChantiers: string[],
+    propositionsParChantier: Map<string, unknown>,
+    indicateursNonAJourParChantier: Map<string, unknown>,
+  ): boolean {
+    return listeChantiers.some(
+      (chantierId) =>
+        propositionsParChantier.has(chantierId) ||
+        indicateursNonAJourParChantier.has(chantierId),
     );
-  }
-
-  private rapportEstVide(contenuRapport: ContenuRapport): boolean {
-    return contenuRapport.chantiers.length === 0;
   }
 }

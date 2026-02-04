@@ -23,7 +23,10 @@ describe("PrismaRapportPropositionsAvancementRepository", () => {
         const utilisateur = await fixtures.utilisateur();
         const rapport: RapportPropositionsAvancement = {
           id: randomUUID(),
-          utilisateurId: utilisateur.id,
+          utilisateur: {
+            id: utilisateur.id,
+            email: utilisateur.email,
+          },
           contenuRapport: {
             chantiers: [
               {
@@ -82,7 +85,10 @@ describe("PrismaRapportPropositionsAvancementRepository", () => {
 
         const rapportMisAJour: RapportPropositionsAvancement = {
           id: rapportExistant.id,
-          utilisateurId: utilisateur.id,
+          utilisateur: {
+            id: utilisateur.id,
+            email: utilisateur.email,
+          },
           contenuRapport: {
             chantiers: [],
             conseillerEmail: "",

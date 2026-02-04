@@ -33,10 +33,7 @@ export class EnvoyerLesRapportsPropositionsUseCase {
     const emailsEnEchec: string[] = [];
 
     for (const rapport of rapports) {
-      const email =
-        await this.dependencies.rapportPropositionsAvancementRepository.recupererEmailUtilisateur(
-          rapport.utilisateurId,
-        );
+      const email = rapport.utilisateur.email;
 
       try {
         const { chantiers, conseillerEmail, texteIntro } =

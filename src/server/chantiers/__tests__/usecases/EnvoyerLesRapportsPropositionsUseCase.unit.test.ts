@@ -7,12 +7,12 @@ import { EnvoyerLesRapportsPropositionsUseCase } from "@/server/chantiers/usecas
 function creerRapportTest(params: {
   id: string;
   utilisateurId: string;
-  email?: string;
+  utilisateurEmail: string;
   nombreTentatives?: number;
 }): RapportPropositionsAvancement {
   return {
     id: params.id,
-    utilisateurId: params.utilisateurId,
+    utilisateur: { id: params.utilisateurId, email: params.utilisateurEmail },
     contenuRapport: {
       chantiers: [
         {
@@ -91,21 +91,17 @@ describe("EnvoyerLesRapportsPropositionsUseCase", () => {
     const rapport = creerRapportTest({
       id: "rapport-1",
       utilisateurId: "user-1",
-      email: "directeur@test.com",
+      utilisateurEmail: "user1@example.com",
     });
     rapportPropositionsAvancementRepository.recupererRapportsParStatut.mockResolvedValue(
       [rapport],
     );
-    rapportPropositionsAvancementRepository.recupererEmailUtilisateur.mockResolvedValue(
-      "directeur@test.com",
-    );
-
     // When
     await useCase.run();
 
     // Then
     expect(envoieEmailService.envoieUnEmail).toHaveBeenCalledWith(
-      [{ email: "directeur@test.com" }],
+      [{ email: "user1@example.com" }],
       expect.any(Number),
       expect.any(Object),
     );
@@ -116,14 +112,11 @@ describe("EnvoyerLesRapportsPropositionsUseCase", () => {
     const rapport = creerRapportTest({
       id: "rapport-1",
       utilisateurId: "user-1",
+      utilisateurEmail: "user1@example.com",
     });
     rapportPropositionsAvancementRepository.recupererRapportsParStatut.mockResolvedValue(
       [rapport],
     );
-    rapportPropositionsAvancementRepository.recupererEmailUtilisateur.mockResolvedValue(
-      "directeur@test.com",
-    );
-
     // When
     await useCase.run();
 
@@ -143,12 +136,10 @@ describe("EnvoyerLesRapportsPropositionsUseCase", () => {
     const rapport = creerRapportTest({
       id: "rapport-1",
       utilisateurId: "user-1",
+      utilisateurEmail: "user1@example.com",
     });
     rapportPropositionsAvancementRepository.recupererRapportsParStatut.mockResolvedValue(
       [rapport],
-    );
-    rapportPropositionsAvancementRepository.recupererEmailUtilisateur.mockResolvedValue(
-      "directeur@test.com",
     );
     envoieEmailService.envoieUnEmail.mockRejectedValue(
       new Error("Erreur SMTP"),
@@ -174,13 +165,11 @@ describe("EnvoyerLesRapportsPropositionsUseCase", () => {
     const rapport = creerRapportTest({
       id: "rapport-1",
       utilisateurId: "user-1",
+      utilisateurEmail: "user1@example.com",
       nombreTentatives: 2,
     });
     rapportPropositionsAvancementRepository.recupererRapportsParStatut.mockResolvedValue(
       [rapport],
-    );
-    rapportPropositionsAvancementRepository.recupererEmailUtilisateur.mockResolvedValue(
-      "directeur@test.com",
     );
 
     // When
@@ -201,12 +190,10 @@ describe("EnvoyerLesRapportsPropositionsUseCase", () => {
     const rapport = creerRapportTest({
       id: "rapport-1",
       utilisateurId: "user-1",
+      utilisateurEmail: "user1@example.com",
     });
     rapportPropositionsAvancementRepository.recupererRapportsParStatut.mockResolvedValue(
       [rapport],
-    );
-    rapportPropositionsAvancementRepository.recupererEmailUtilisateur.mockResolvedValue(
-      "directeur@test.com",
     );
 
     // When
@@ -227,17 +214,16 @@ describe("EnvoyerLesRapportsPropositionsUseCase", () => {
     const rapport1 = creerRapportTest({
       id: "rapport-1",
       utilisateurId: "user-1",
+      utilisateurEmail: "user1@example.com",
     });
     const rapport2 = creerRapportTest({
       id: "rapport-2",
       utilisateurId: "user-2",
+      utilisateurEmail: "user1@example.com",
     });
     rapportPropositionsAvancementRepository.recupererRapportsParStatut.mockResolvedValue(
       [rapport1, rapport2],
     );
-    rapportPropositionsAvancementRepository.recupererEmailUtilisateur
-      .mockResolvedValueOnce("directeur1@test.com")
-      .mockResolvedValueOnce("directeur2@test.com");
 
     envoieEmailService.envoieUnEmail
       .mockRejectedValueOnce(new Error("Erreur SMTP"))
@@ -254,7 +240,7 @@ describe("EnvoyerLesRapportsPropositionsUseCase", () => {
     expect(resultat).toEqual({
       rapportsEnvoyes: 1,
       rapportsEnEchec: 1,
-      emailsEnEchec: ["directeur1@test.com"],
+      emailsEnEchec: ["user1@example.com"],
     });
   });
 
@@ -263,22 +249,21 @@ describe("EnvoyerLesRapportsPropositionsUseCase", () => {
     const rapport1 = creerRapportTest({
       id: "rapport-1",
       utilisateurId: "user-1",
+      utilisateurEmail: "user1@example.com",
     });
     const rapport2 = creerRapportTest({
       id: "rapport-2",
       utilisateurId: "user-2",
+      utilisateurEmail: "user2@example.com",
     });
     const rapport3 = creerRapportTest({
       id: "rapport-3",
       utilisateurId: "user-3",
+      utilisateurEmail: "user3@example.com",
     });
     rapportPropositionsAvancementRepository.recupererRapportsParStatut.mockResolvedValue(
       [rapport1, rapport2, rapport3],
     );
-    rapportPropositionsAvancementRepository.recupererEmailUtilisateur
-      .mockResolvedValueOnce("d1@test.com")
-      .mockResolvedValueOnce("d2@test.com")
-      .mockResolvedValueOnce("d3@test.com");
 
     envoieEmailService.envoieUnEmail
       .mockResolvedValueOnce(undefined)
@@ -292,7 +277,7 @@ describe("EnvoyerLesRapportsPropositionsUseCase", () => {
     expect(resultat).toEqual({
       rapportsEnvoyes: 2,
       rapportsEnEchec: 1,
-      emailsEnEchec: ["d2@test.com"],
+      emailsEnEchec: ["user2@example.com"],
     });
   });
 });

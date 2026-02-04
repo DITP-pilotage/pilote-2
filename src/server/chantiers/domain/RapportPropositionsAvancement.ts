@@ -36,7 +36,10 @@ export interface ContenuRapport {
 
 export interface RapportPropositionsAvancement {
   id: string;
-  utilisateurId: string;
+  utilisateur: {
+    id: string;
+    email: string;
+  };
   contenuRapport: ContenuRapport;
   statutEnvoi: $Enums.statut_envoi_rapport;
   dateCreation: Date;
@@ -47,7 +50,10 @@ export interface RapportPropositionsAvancement {
 }
 
 export function creerRapportPropositionsAvancement(params: {
-  utilisateurId: string;
+  utilisateur: {
+    id: string;
+    email: string;
+  };
   contenuRapport: ContenuRapport;
   dateCreation: Date;
 }): RapportPropositionsAvancement {

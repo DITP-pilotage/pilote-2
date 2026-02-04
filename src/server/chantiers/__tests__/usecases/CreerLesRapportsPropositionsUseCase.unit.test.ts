@@ -113,7 +113,10 @@ describe("CreerLesRapportsPropositionsUseCase", () => {
       rapportPropositionsAvancementRepository.sauvegarder,
     ).toHaveBeenCalledWith(
       expect.objectContaining({
-        utilisateurId: "user-1",
+        utilisateur: {
+          id: "user-1",
+          email: "directeur@test.com",
+        },
         statutEnvoi: "CREE",
         contenuRapport: expect.objectContaining({
           chantiers: [

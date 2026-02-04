@@ -6,5 +6,4 @@ export interface RapportPropositionsAvancementRepository {
   recupererRapportsParStatut(
     statut: $Enums.statut_envoi_rapport,
   ): Promise<RapportPropositionsAvancement[]>;
-  recupererEmailUtilisateur(utilisateurId: string): Promise<string>;
 }
