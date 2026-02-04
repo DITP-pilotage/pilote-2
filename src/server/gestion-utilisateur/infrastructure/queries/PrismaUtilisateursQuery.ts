@@ -1,3 +1,4 @@
+import keyBy from "lodash/keyBy";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { mapTerritoiresToDTO } from "@/server/gestion-utilisateur/infrastructure/utils/territoires";
 
@@ -41,45 +42,55 @@ export class PrismaUtilisateursQuery {
       },
     });
 
-    const utilisateursDTO: UtilisateurDTO[] = [];
+    const allCodes = utilisateurs.flatMap((utilisateur) =>
+      this.extraireTousLesTerritoires(utilisateur.habilitation),
+    );
 
-    for (const utilisateur of utilisateurs) {
-      const codesTerritoires = this.extraireTousLesTerritoires(
-        utilisateur.habilitation,
-      );
-      if (codesTerritoires.length === 0) continue;
+    if (allCodes.length === 0) return [];
 
-      const territoires = await prisma.territoire.findMany({
-        where: { code: { in: codesTerritoires } },
-        include: {
-          territoire_enfant: {
-            select: {
-              code: true,
-              nom: true,
-              maille: true,
-            },
-            orderBy: { code: "asc" },
+    const allTerritoires = await prisma.territoire.findMany({
+      where: { code: { in: allCodes } },
+      include: {
+        territoire_enfant: {
+          select: {
+            code: true,
+            nom: true,
+            maille: true,
           },
+          orderBy: { code: "asc" },
         },
-        orderBy: { code: "asc" },
-      });
+      },
+      orderBy: { code: "asc" },
+    });
 
-      if (territoires.length === 0) continue;
+    const territoiresByCode = keyBy(allTerritoires, "code");
 
-      const territoiresDTO = mapTerritoiresToDTO(territoires);
-      const territoiresDedupes = this.dedupliquerTerritoires(territoiresDTO);
+    return utilisateurs
+      .map((utilisateur) => {
+        const codes = this.extraireTousLesTerritoires(utilisateur.habilitation);
+        if (codes.length === 0) return null;
 
-      utilisateursDTO.push({
-        id: utilisateur.id,
-        email: utilisateur.email,
-        nom: utilisateur.nom,
-        prenom: utilisateur.prenom,
-        profilCode: utilisateur.profilCode,
-        territoires: territoiresDedupes,
-      });
-    }
+        const territoires = codes
+          .map((code) => territoiresByCode[code])
+          .filter((t) => t != null);
 
-    return utilisateursDTO;
+        if (territoires.length === 0) return null;
+
+        const territoiresDTO = mapTerritoiresToDTO(territoires);
+        const territoiresDedupes = this.dedupliquerTerritoires(territoiresDTO);
+
+        return {
+          id: utilisateur.id,
+          email: utilisateur.email,
+          nom: utilisateur.nom,
+          prenom: utilisateur.prenom,
+          profilCode: utilisateur.profilCode,
+          territoires: territoiresDedupes,
+        };
+      })
+      .filter(
+        (utilisateur): utilisateur is UtilisateurDTO => utilisateur != null,
+      );
   }
 
   private extraireTousLesTerritoires(

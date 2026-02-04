@@ -50,8 +50,6 @@ describe("PrismaUtilisateursQuery", () => {
                 enfants: [],
               },
             ],
-            chantiers: [],
-            perimetres: [],
           },
         ]);
       }),
@@ -67,14 +65,14 @@ describe("PrismaUtilisateursQuery", () => {
           maille: "REG",
         });
 
-        const territoireDept98 = await fixtures.territoire({
+        await fixtures.territoire({
           code: "DEPT-98",
           nom: "Département Test 1",
           maille: "DEPT",
           code_parent: territoireReg.code,
         });
 
-        const territoireDept97 = await fixtures.territoire({
+        await fixtures.territoire({
           code: "DEPT-97",
           nom: "Département Test 2",
           maille: "DEPT",
@@ -122,8 +120,6 @@ describe("PrismaUtilisateursQuery", () => {
                 ],
               },
             ],
-            chantiers: [],
-            perimetres: [],
           },
         ]);
       }),
@@ -198,8 +194,6 @@ describe("PrismaUtilisateursQuery", () => {
                 ],
               },
             ],
-            chantiers: [],
-            perimetres: [],
           },
         ]);
       }),
