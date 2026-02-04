@@ -92,7 +92,7 @@ export class ProduireRapportsHebdomadairesUseCase {
       activiteGlobale,
     });
 
-    const chantiers = await this.produireSectionActiviteVA({
+    const chantiers = await this.produireSectionActivite({
       coordinateur,
       chantiersAvecIndicateurs,
       periode,
@@ -118,7 +118,7 @@ export class ProduireRapportsHebdomadairesUseCase {
       coordinateurEmail: coordinateur.email,
       nombreComptesCrees: comptesCrees.length,
       nombreComptesDesactives: comptesDesactives.length,
-      nombreChangementsVA: chantiers.reduce(
+      nombreChangementsChantiers: chantiers.reduce(
         (total, chantier) => total + chantier.indicateurs.length,
         0,
       ),
@@ -339,7 +339,7 @@ export class ProduireRapportsHebdomadairesUseCase {
     return grouperEvenementsParType(evenementsFiltres);
   }
 
-  private async produireSectionActiviteVA(params: {
+  private async produireSectionActivite(params: {
     coordinateur: Coordinateur;
     chantiersAvecIndicateurs: Record<string, ChantierAvecIndicateurs>;
     periode: { dateDebut: Date; dateFin: Date };
