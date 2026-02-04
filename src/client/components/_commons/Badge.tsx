@@ -11,7 +11,8 @@ export interface BadgeProps {
 
 const badgeÀPartirDuType: Record<BadgeType, string> = {
   rouge: "text-error bg-dsfr-warning-950",
-  jaune: "text-dsfr-green-tilleul-verveine-sun bg-dsfr-green-tilleul-verveine-950",
+  jaune:
+    "text-dsfr-green-tilleul-verveine-sun bg-dsfr-green-tilleul-verveine-950",
   bleu: "text-dsfr-info-main-525 bg-dsfr-info-950",
   vert: "text-success bg-dsfr-green-emeraude-975",
   gris: "text-dsfr-mention-grey bg-dsfr-grey-925",

@@ -1,4 +1,5 @@
-import { useMDXComponents as getDocsMDXComponents } from 'nextra-theme-docs'
+import { useMDXComponents as getDocsMDXComponents } from "nextra-theme-docs";
+import Link from "next/link";
 import {
   CalloutRoot,
   CalloutIcon,
@@ -10,12 +11,9 @@ import {
   AccordionContent,
   Badge,
   Icone,
-  WarningIcon,
-  ArrowLine1Icon,
-} from '@/client/components/CentreAide/mdx-client-components'
-import Link from 'next/link'
+} from "@/client/components/CentreAide/mdx-client-components";
 
-const docsComponents = getDocsMDXComponents()
+const docsComponents = getDocsMDXComponents();
 
 const Accordion = Object.assign(AccordionRoot, {
   Root: AccordionRoot,
@@ -23,24 +21,24 @@ const Accordion = Object.assign(AccordionRoot, {
   Header: AccordionHeader,
   Trigger: AccordionTrigger,
   Content: AccordionContent,
-})
+});
 
 const Callout = Object.assign(CalloutRoot, {
   Root: CalloutRoot,
   Icon: CalloutIcon,
   Text: CalloutText,
-})
+});
 
-export function useMDXComponents(components?: Record<string, React.ComponentType>) {
+export function useMDXComponents(
+  components?: Record<string, React.ComponentType>,
+) {
   return {
     ...docsComponents,
     Callout,
     Accordion,
     Badge,
     Icone,
-    WarningIcon,
-    ArrowLine1Icon,
     Link,
     ...components,
-  }
+  };
 }
