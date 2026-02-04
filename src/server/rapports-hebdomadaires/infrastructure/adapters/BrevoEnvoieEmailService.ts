@@ -2,7 +2,7 @@ import { EmailManager } from "@/server/infrastructure/email-manager";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { EnvoieEmailService } from "@/server/rapports-hebdomadaires/domain/ports/EnvoieEmailService";
 import { RapportHebdomadaire } from "@/server/rapports-hebdomadaires/domain/RapportHebdomadaire";
-import { formaterDateParis } from "./formaterDateParis";
+import { PiloteDateFormatter } from "./PiloteDateFormatter";
 
 const TEMPLATE_ID_RAPPORT_COORDINATEURS = 60;
 
@@ -72,8 +72,8 @@ export const createBrevoParams = ({
               ? territoire.valeurAvancement.toString()
               : territoire.valeurAvancement.toFixed(1)
             : "-",
-        date_indicateur: formaterDateParis(territoire.dateValeur),
-        date_modification: formaterDateParis(territoire.dateEvenement),
+        date_indicateur: PiloteDateFormatter.isoDateFranceMetropolitaine(territoire.dateValeur),
+        date_modification: PiloteDateFormatter.isoDateFranceMetropolitaine(territoire.dateEvenement),
       })),
     })),
   }));
