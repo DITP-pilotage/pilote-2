@@ -8,18 +8,36 @@ describe("grouperEvenements", () => {
     overrides: Partial<EvenementVA> & {
       indicateurId: string;
       territoireCode: string;
+      indicateurNom?: string;
+      territoireNom?: string;
     },
-  ): EvenementVA => ({
-    id: "evt-1",
-    indicateurNom: "Indicateur Test",
-    territoireNom: "Paris",
-    typeEvenement: "VALEUR_MODIFIEE",
-    dateValeur: new Date("2025-01-15"),
-    valeur: 42,
-    dateCreation: new Date("2025-01-15T10:00:00Z"),
-    ordre: 1,
-    ...overrides,
-  });
+  ): EvenementVA => {
+    const {
+      indicateurId,
+      indicateurNom = "Indicateur Test",
+      territoireCode,
+      territoireNom = "Paris",
+      ...rest
+    } = overrides;
+
+    return {
+      id: "evt-1",
+      indicateur: {
+        id: indicateurId,
+        nom: indicateurNom,
+      },
+      territoire: {
+        code: territoireCode,
+        nom: territoireNom,
+      },
+      typeEvenement: "VALEUR_MODIFIEE",
+      dateValeur: new Date("2025-01-15"),
+      valeur: 42,
+      dateCreation: new Date("2025-01-15T10:00:00Z"),
+      ordre: 1,
+      ...rest,
+    };
+  };
 
   describe("quand il n'y a aucun événement", () => {
     it("retourne un tableau vide", () => {
@@ -53,10 +71,14 @@ describe("grouperEvenements", () => {
       // Then
       expect(result).toEqual([
         {
-          indicateurId: "IND-001",
-          indicateurNom: "Indicateur A",
-          territoireCode: "DEPT-75",
-          territoireNom: "Paris",
+          indicateur: {
+            id: "IND-001",
+            nom: "Indicateur A",
+          },
+          territoire: {
+            code: "DEPT-75",
+            nom: "Paris",
+          },
           valeurAvancement: 50,
           dateValeur: new Date("2025-01-15"),
         },
@@ -94,10 +116,14 @@ describe("grouperEvenements", () => {
       // Then
       expect(result).toEqual([
         {
-          indicateurId: "IND-001",
-          indicateurNom: "Indicateur Test",
-          territoireCode: "DEPT-75",
-          territoireNom: "Paris",
+          indicateur: {
+            id: "IND-001",
+            nom: "Indicateur Test",
+          },
+          territoire: {
+            code: "DEPT-75",
+            nom: "Paris",
+          },
           valeurAvancement: 50,
           dateValeur: new Date("2025-01-15"),
         },
@@ -133,10 +159,14 @@ describe("grouperEvenements", () => {
       // Then
       expect(result).toEqual([
         {
-          indicateurId: "IND-001",
-          indicateurNom: "Indicateur Test",
-          territoireCode: "DEPT-75",
-          territoireNom: "Paris",
+          indicateur: {
+            id: "IND-001",
+            nom: "Indicateur Test",
+          },
+          territoire: {
+            code: "DEPT-75",
+            nom: "Paris",
+          },
           valeurAvancement: 55,
           dateValeur: new Date("2025-01-15"),
         },
@@ -179,20 +209,20 @@ describe("grouperEvenements", () => {
       expect(result).toEqual(
         expect.arrayContaining([
           expect.objectContaining({
-            indicateurId: "IND-001",
-            territoireCode: "DEPT-75",
+            indicateur: expect.objectContaining({ id: "IND-001" }),
+            territoire: expect.objectContaining({ code: "DEPT-75" }),
             dateValeur: new Date("2025-01-15"),
             valeurAvancement: 50,
           }),
           expect.objectContaining({
-            indicateurId: "IND-001",
-            territoireCode: "DEPT-75",
+            indicateur: expect.objectContaining({ id: "IND-001" }),
+            territoire: expect.objectContaining({ code: "DEPT-75" }),
             dateValeur: new Date("2025-01-16"),
             valeurAvancement: 60,
           }),
           expect.objectContaining({
-            indicateurId: "IND-001",
-            territoireCode: "DEPT-75",
+            indicateur: expect.objectContaining({ id: "IND-001" }),
+            territoire: expect.objectContaining({ code: "DEPT-75" }),
             dateValeur: new Date("2025-01-17"),
             valeurAvancement: 70,
           }),
@@ -239,18 +269,18 @@ describe("grouperEvenements", () => {
       expect(result).toEqual(
         expect.arrayContaining([
           expect.objectContaining({
-            indicateurId: "IND-001",
-            territoireCode: "DEPT-75",
+            indicateur: expect.objectContaining({ id: "IND-001" }),
+            territoire: expect.objectContaining({ code: "DEPT-75" }),
             valeurAvancement: 50,
           }),
           expect.objectContaining({
-            indicateurId: "IND-001",
-            territoireCode: "DEPT-92",
+            indicateur: expect.objectContaining({ id: "IND-001" }),
+            territoire: expect.objectContaining({ code: "DEPT-92" }),
             valeurAvancement: 60,
           }),
           expect.objectContaining({
-            indicateurId: "IND-002",
-            territoireCode: "DEPT-75",
+            indicateur: expect.objectContaining({ id: "IND-002" }),
+            territoire: expect.objectContaining({ code: "DEPT-75" }),
             valeurAvancement: 70,
           }),
         ]),

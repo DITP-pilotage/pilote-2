@@ -150,7 +150,7 @@ export class ProduireRapportsHebdomadairesUseCase {
         chantiersAvecIndicateurs,
       )) {
         const indicateurTrouve = chantier.indicateurs.find(
-          (indicateur) => indicateur.id === activite.indicateurId,
+          (indicateur) => indicateur.id === activite.indicateur.id,
         );
         if (indicateurTrouve) {
           chantierId = chantierIdCandidat;
@@ -182,8 +182,8 @@ export class ProduireRapportsHebdomadairesUseCase {
       }
 
       chantierData.indicateurs.get(indicateurInfo.id)!.territoires.push({
-        code: activite.territoireCode,
-        nom: activite.territoireNom,
+        code: activite.territoire.code,
+        nom: activite.territoire.nom,
         valeurAvancement: activite.valeurAvancement,
         dateValeur: activite.dateValeur.toISOString(),
       });

@@ -1,7 +1,4 @@
-import {
-  ActiviteVAGateway,
-  TerritoireInfo,
-} from "@/server/rapports-hebdomadaires/domain/ports/ActiviteVAGateway";
+import { ActiviteVAGateway } from "@/server/rapports-hebdomadaires/domain/ports/ActiviteVAGateway";
 import { EvenementVA } from "@/server/rapports-hebdomadaires/domain/SectionActiviteChantiersVA";
 import { PeriodeRapport } from "@/server/rapports-hebdomadaires/domain/PeriodeRapport";
 import { RecupererEvenementsVAParPeriodeQuery } from "@/server/indicateur-territoire-valeur-evenement/infrastructure/queries/RecupererEvenementsVAParPeriodeQuery";
@@ -29,46 +26,19 @@ export class IndicateurActiviteVAGateway implements ActiviteVAGateway {
 
     return dtos.map((dto) => ({
       id: dto.id,
-      indicateurId: dto.indicateurId,
-      indicateurNom: dto.indicateurNom,
-      territoireCode: dto.territoireCode,
-      territoireNom: dto.territoireNom,
+      indicateur: {
+        id: dto.indicateurId,
+        nom: dto.indicateurNom,
+      },
+      territoire: {
+        code: dto.territoireCode,
+        nom: dto.territoireNom,
+      },
       typeEvenement: dto.typeEvenement,
       dateValeur: dto.dateValeur,
       valeur: dto.valeur,
       dateCreation: dto.dateCreation,
       ordre: dto.ordre,
     }));
-  }
-
-  async recupererDernierEvenementAvantPeriode(params: {
-    indicateurIds: string[];
-    territoireCodes: string[];
-    dateDebut: Date;
-  }): Promise<EvenementVA[]> {
-    const dtos = await this.deps.evenementsVAQuery.recupererDernierAvantDate({
-      indicateurIds: params.indicateurIds,
-      territoireCodes: params.territoireCodes,
-      dateAvant: params.dateDebut,
-    });
-
-    return dtos.map((dto) => ({
-      id: dto.id,
-      indicateurId: dto.indicateurId,
-      indicateurNom: dto.indicateurNom,
-      territoireCode: dto.territoireCode,
-      territoireNom: dto.territoireNom,
-      typeEvenement: dto.typeEvenement,
-      dateValeur: dto.dateValeur,
-      valeur: dto.valeur,
-      dateCreation: dto.dateCreation,
-      ordre: dto.ordre,
-    }));
-  }
-
-  async recupererTerritoires(
-    territoireCodes: string[],
-  ): Promise<Record<string, TerritoireInfo>> {
-    return this.deps.territoiresQuery.execute(territoireCodes);
   }
 }

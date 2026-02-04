@@ -5,10 +5,14 @@ export type TypeEvenementVA =
 
 export type EvenementVA = {
   id: string;
-  indicateurId: string;
-  indicateurNom: string;
-  territoireCode: string;
-  territoireNom: string;
+  indicateur: {
+    id: string;
+    nom: string;
+  };
+  territoire: {
+    code: string;
+    nom: string;
+  };
   typeEvenement: TypeEvenementVA;
   dateValeur: Date;
   valeur: number | null;
@@ -17,10 +21,14 @@ export type EvenementVA = {
 };
 
 export type ActiviteIndicateur = {
-  indicateurId: string;
-  indicateurNom: string;
-  territoireCode: string;
-  territoireNom: string;
+  indicateur: {
+    id: string;
+    nom: string;
+  };
+  territoire: {
+    code: string;
+    nom: string;
+  };
   valeurAvancement: number | null;
   dateValeur: Date;
 };
@@ -50,7 +58,7 @@ export function grouperEvenements(
   const grouped = new Map<string, EvenementVA[]>();
 
   for (const evenement of evenements) {
-    const key = `${evenement.indicateurId}|${evenement.territoireCode}|${evenement.dateValeur.toISOString()}`;
+    const key = `${evenement.indicateur.id}|${evenement.territoire.code}|${evenement.dateValeur.toISOString()}`;
     if (!grouped.has(key)) {
       grouped.set(key, []);
     }
@@ -69,10 +77,14 @@ export function grouperEvenements(
     const dernierEvenement = sorted[0];
 
     resultats.push({
-      indicateurId: dernierEvenement.indicateurId,
-      indicateurNom: dernierEvenement.indicateurNom,
-      territoireCode: dernierEvenement.territoireCode,
-      territoireNom: dernierEvenement.territoireNom,
+      indicateur: {
+        id: dernierEvenement.indicateur.id,
+        nom: dernierEvenement.indicateur.nom,
+      },
+      territoire: {
+        code: dernierEvenement.territoire.code,
+        nom: dernierEvenement.territoire.nom,
+      },
       valeurAvancement: dernierEvenement.valeur,
       dateValeur: dernierEvenement.dateValeur,
     });
