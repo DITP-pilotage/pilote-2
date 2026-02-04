@@ -502,20 +502,20 @@ describe("PrismaActiviteComptesQuery", () => {
       const dateFin = new Date("2026-01-20T09:00:00Z");
 
       const territoireReg = await fixtures.territoire({
-        code: "REG-85",
+        code: "REG-850",
         nom: "Région Test Dedup",
         maille: "REG",
       });
 
       const territoireDept84 = await fixtures.territoire({
-        code: "DEPT-84",
+        code: "DEPT-840",
         nom: "Département Test 1",
         maille: "DEPT",
         code_parent: territoireReg.code,
       });
 
       const territoireDept83 = await fixtures.territoire({
-        code: "DEPT-83",
+        code: "DEPT-830",
         nom: "Département Test 2",
         maille: "DEPT",
         code_parent: territoireReg.code,
@@ -553,19 +553,19 @@ describe("PrismaActiviteComptesQuery", () => {
             profil: "SERVICES_DECONCENTRES_REGION",
             territoires: [
               {
-                code: "REG-85",
+                code: "REG-850",
                 nom: "Région Test Dedup",
                 maille: "REG",
                 enfants: [
                   {
-                    code: "DEPT-83",
-                    nom: "Département Test 2",
+                    code: "DEPT-840",
+                    nom: "Département Test 1",
                     maille: "DEPT",
                     enfants: [],
                   },
                   {
-                    code: "DEPT-84",
-                    nom: "Département Test 1",
+                    code: "DEPT-830",
+                    nom: "Département Test 2",
                     maille: "DEPT",
                     enfants: [],
                   },
