@@ -57,21 +57,24 @@ export const createBrevoParams = ({
   const afficherSectionChantiersVA = rapport.chantiers.length > 0;
 
   const chantiers = rapport.chantiers.map((chantier) => ({
-    id: chantier.chantier.id,
-    nom: chantier.chantier.nom,
+    id: chantier.id,
+    nom: chantier.nom,
     indicateurs: chantier.indicateurs.flatMap((indic) => ({
-      id: indic.indicateur.id,
-      nom: indic.indicateur.nom,
+      id: indic.id,
+      nom: indic.nom,
       territoires: indic.territoires.map((territoire) => ({
-        nom: formatTerritoireNom(territoire.territoire),
+        nom: formatTerritoireNom({
+          code: territoire.code,
+          nom: territoire.nom,
+        }),
         type_indicateur: "va",
         valeur:
-          territoire.valeurApres !== null
-            ? Number.isInteger(territoire.valeurApres)
-              ? territoire.valeurApres.toString()
-              : territoire.valeurApres.toFixed(1)
+          territoire.valeurAvancement !== null
+            ? Number.isInteger(territoire.valeurAvancement)
+              ? territoire.valeurAvancement.toString()
+              : territoire.valeurAvancement.toFixed(1)
             : "-",
-        date_indicateur: new Date(territoire.dateChangement).toLocaleDateString(
+        date_indicateur: new Date(territoire.dateValeur).toLocaleDateString(
           "fr-FR",
         ),
       })),

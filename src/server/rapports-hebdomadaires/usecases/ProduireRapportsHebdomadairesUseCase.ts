@@ -25,10 +25,10 @@ import {
   grouperEvenementsParType,
 } from "@/server/rapports-hebdomadaires/domain/CompteActivite";
 import {
-  ActiviteIndicateurVA,
-  foldEvenementsVA,
-  SectionChantierVA,
-  SectionIndicateurVA,
+  ActiviteIndicateur,
+  grouperEvenements,
+  SectionChantier,
+  SectionIndicateur,
 } from "@/server/rapports-hebdomadaires/domain/SectionActiviteChantiersVA";
 
 const PROFILS_CONCERNES: ProfilTerritorialise[] = [
@@ -127,22 +127,22 @@ export class ProduireRapportsHebdomadairesUseCase {
     return rapport;
   }
 
-  private construireSectionChantiersVA(params: {
-    activitesVA: ActiviteIndicateurVA[];
+  private construireSectionChantiers(params: {
+    activites: ActiviteIndicateur[];
     chantiersAvecIndicateurs: Record<string, ChantierAvecIndicateurs>;
     coordChantierIds: string[];
-  }): SectionChantierVA[] {
-    const { activitesVA, chantiersAvecIndicateurs, coordChantierIds } = params;
+  }): SectionChantier[] {
+    const { activites, chantiersAvecIndicateurs, coordChantierIds } = params;
 
     const activitesParChantier = new Map<
       string,
       {
         chantier: ChantierAvecIndicateurs;
-        indicateurs: Map<string, SectionIndicateurVA>;
+        indicateurs: Map<string, SectionIndicateur>;
       }
     >();
 
-    for (const activite of activitesVA) {
+    for (const activite of activites) {
       let chantierId: string | null = null;
       let indicateurInfo: { id: string; nom: string } | null = null;
 
@@ -175,24 +175,23 @@ export class ProduireRapportsHebdomadairesUseCase {
 
       if (!chantierData.indicateurs.has(indicateurInfo.id)) {
         chantierData.indicateurs.set(indicateurInfo.id, {
-          indicateur: indicateurInfo,
+          id: indicateurInfo.id,
+          nom: indicateurInfo.nom,
           territoires: [],
         });
       }
 
       chantierData.indicateurs.get(indicateurInfo.id)!.territoires.push({
-        territoire: {
-          code: activite.territoireCode,
-          nom: activite.territoireNom,
-        },
-        valeurAvant: activite.valeurAvant,
-        valeurApres: activite.valeurApres,
-        dateChangement: activite.dateChangement.toISOString(),
+        code: activite.territoireCode,
+        nom: activite.territoireNom,
+        valeurAvancement: activite.valeurAvancement,
+        dateValeur: activite.dateValeur.toISOString(),
       });
     }
 
     return Array.from(activitesParChantier.values()).map((data) => ({
-      chantier: { id: data.chantier.id, nom: data.chantier.nom },
+      id: data.chantier.id,
+      nom: data.chantier.nom,
       indicateurs: Array.from(data.indicateurs.values()),
     }));
   }
@@ -343,7 +342,7 @@ export class ProduireRapportsHebdomadairesUseCase {
     coordinateur: Coordinateur;
     chantiersAvecIndicateurs: Record<string, ChantierAvecIndicateurs>;
     periode: { dateDebut: Date; dateFin: Date };
-  }): Promise<SectionChantierVA[]> {
+  }): Promise<SectionChantier[]> {
     const coordTerritoireCodes = params.coordinateur.territoires.flatMap(
       (territoire) => [
         territoire.code,
@@ -359,26 +358,17 @@ export class ProduireRapportsHebdomadairesUseCase {
         ) || [],
     );
 
-    const [evenementsDansPeriode, evenementsAvantPeriode] = await Promise.all([
-      this.deps.activiteVAGateway.recupererEvenementsDansPeriode({
+    const evenementsDansPeriode =
+      await this.deps.activiteVAGateway.recupererEvenementsDansPeriode({
         indicateurIds: coordIndicateurIds,
         territoireCodes: coordTerritoireCodes,
         periode: params.periode,
-      }),
-      this.deps.activiteVAGateway.recupererDernierEvenementAvantPeriode({
-        indicateurIds: coordIndicateurIds,
-        territoireCodes: coordTerritoireCodes,
-        dateDebut: params.periode.dateDebut,
-      }),
-    ]);
+      });
 
-    const activitesVA = foldEvenementsVA({
-      evenementsDansPeriode,
-      evenementsAvantPeriode,
-    });
+    const activites = grouperEvenements(evenementsDansPeriode);
 
-    return this.construireSectionChantiersVA({
-      activitesVA,
+    return this.construireSectionChantiers({
+      activites,
       chantiersAvecIndicateurs: params.chantiersAvecIndicateurs,
       coordChantierIds,
     });

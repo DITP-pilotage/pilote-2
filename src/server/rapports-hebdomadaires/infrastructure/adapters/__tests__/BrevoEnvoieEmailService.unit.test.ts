@@ -9,9 +9,9 @@ import {
   TerritoireCompte,
 } from "@/server/rapports-hebdomadaires/domain/CompteActivite";
 import {
-  SectionChantierVA,
-  SectionIndicateurVA,
-  SectionTerritoireVA,
+  SectionChantier,
+  SectionIndicateur,
+  SectionTerritoire,
 } from "@/server/rapports-hebdomadaires/domain/SectionActiviteChantiersVA";
 import { createBrevoParams } from "@/server/rapports-hebdomadaires/infrastructure/adapters/BrevoEnvoieEmailService";
 
@@ -61,29 +61,31 @@ describe("createBrevoParams", () => {
     ...overrides,
   });
 
-  const createSectionTerritoireVA = (
-    overrides: Partial<SectionTerritoireVA> = {},
-  ): SectionTerritoireVA => ({
-    territoire: { code: "DEPT-75", nom: "Paris" },
-    valeurAvant: null,
-    valeurApres: 50,
-    dateChangement: "2025-01-15T10:00:00Z",
+  const createSectionTerritoire = (
+    overrides: Partial<SectionTerritoire> = {},
+  ): SectionTerritoire => ({
+    code: "DEPT-75",
+    nom: "Paris",
+    valeurAvancement: 50,
+    dateValeur: "2025-01-15T10:00:00Z",
     ...overrides,
   });
 
-  const createSectionIndicateurVA = (
-    overrides: Partial<SectionIndicateurVA> = {},
-  ): SectionIndicateurVA => ({
-    indicateur: { id: "IND-001", nom: "Indicateur Test" },
-    territoires: [createSectionTerritoireVA()],
+  const createSectionIndicateur = (
+    overrides: Partial<SectionIndicateur> = {},
+  ): SectionIndicateur => ({
+    id: "IND-001",
+    nom: "Indicateur Test",
+    territoires: [createSectionTerritoire()],
     ...overrides,
   });
 
-  const createSectionChantierVA = (
-    overrides: Partial<SectionChantierVA> = {},
-  ): SectionChantierVA => ({
-    chantier: { id: "CH-001", nom: "Chantier Test" },
-    indicateurs: [createSectionIndicateurVA()],
+  const createSectionChantier = (
+    overrides: Partial<SectionChantier> = {},
+  ): SectionChantier => ({
+    id: "CH-001",
+    nom: "Chantier Test",
+    indicateurs: [createSectionIndicateur()],
     ...overrides,
   });
 
@@ -295,7 +297,7 @@ describe("createBrevoParams", () => {
     it("définit afficherSectionChantiersVA à true quand chantiers contient des données", () => {
       // Given
       const rapport = createRapportHebdomadaire({
-        chantiers: [createSectionChantierVA()],
+        chantiers: [createSectionChantier()],
       });
       const profilsMap = new Map<string, string>();
 
@@ -523,12 +525,12 @@ describe("createBrevoParams", () => {
       // Given
       const rapport = createRapportHebdomadaire({
         chantiers: [
-          createSectionChantierVA({
+          createSectionChantier({
             indicateurs: [
-              createSectionIndicateurVA({
+              createSectionIndicateur({
                 territoires: [
-                  createSectionTerritoireVA({
-                    valeurApres: 42,
+                  createSectionTerritoire({
+                    valeurAvancement: 42,
                   }),
                 ],
               }),
@@ -551,12 +553,12 @@ describe("createBrevoParams", () => {
       // Given
       const rapport = createRapportHebdomadaire({
         chantiers: [
-          createSectionChantierVA({
+          createSectionChantier({
             indicateurs: [
-              createSectionIndicateurVA({
+              createSectionIndicateur({
                 territoires: [
-                  createSectionTerritoireVA({
-                    valeurApres: 42.567,
+                  createSectionTerritoire({
+                    valeurAvancement: 42.567,
                   }),
                 ],
               }),
@@ -579,12 +581,12 @@ describe("createBrevoParams", () => {
       // Given
       const rapport = createRapportHebdomadaire({
         chantiers: [
-          createSectionChantierVA({
+          createSectionChantier({
             indicateurs: [
-              createSectionIndicateurVA({
+              createSectionIndicateur({
                 territoires: [
-                  createSectionTerritoireVA({
-                    valeurApres: null,
+                  createSectionTerritoire({
+                    valeurAvancement: null,
                   }),
                 ],
               }),
@@ -607,12 +609,12 @@ describe("createBrevoParams", () => {
       // Given
       const rapport = createRapportHebdomadaire({
         chantiers: [
-          createSectionChantierVA({
+          createSectionChantier({
             indicateurs: [
-              createSectionIndicateurVA({
+              createSectionIndicateur({
                 territoires: [
-                  createSectionTerritoireVA({
-                    dateChangement: "2025-01-15T10:00:00Z",
+                  createSectionTerritoire({
+                    dateValeur: "2025-01-15T10:00:00Z",
                   }),
                 ],
               }),
@@ -635,11 +637,9 @@ describe("createBrevoParams", () => {
       // Given
       const rapport = createRapportHebdomadaire({
         chantiers: [
-          createSectionChantierVA({
-            chantier: {
-              id: "CH-123",
-              nom: "Chantier Important",
-            },
+          createSectionChantier({
+            id: "CH-123",
+            nom: "Chantier Important",
           }),
         ],
       });
@@ -657,13 +657,11 @@ describe("createBrevoParams", () => {
       // Given
       const rapport = createRapportHebdomadaire({
         chantiers: [
-          createSectionChantierVA({
+          createSectionChantier({
             indicateurs: [
-              createSectionIndicateurVA({
-                indicateur: {
-                  id: "IND-456",
-                  nom: "Indicateur de suivi",
-                },
+              createSectionIndicateur({
+                id: "IND-456",
+                nom: "Indicateur de suivi",
               }),
             ],
           }),
@@ -685,15 +683,13 @@ describe("createBrevoParams", () => {
       // Given
       const rapport = createRapportHebdomadaire({
         chantiers: [
-          createSectionChantierVA({
+          createSectionChantier({
             indicateurs: [
-              createSectionIndicateurVA({
+              createSectionIndicateur({
                 territoires: [
-                  createSectionTerritoireVA({
-                    territoire: {
-                      code: "DEPT-75",
-                      nom: "Paris",
-                    },
+                  createSectionTerritoire({
+                    code: "DEPT-75",
+                    nom: "Paris",
                   }),
                 ],
               }),
@@ -716,15 +712,13 @@ describe("createBrevoParams", () => {
       // Given
       const rapport = createRapportHebdomadaire({
         chantiers: [
-          createSectionChantierVA({
+          createSectionChantier({
             indicateurs: [
-              createSectionIndicateurVA({
+              createSectionIndicateur({
                 territoires: [
-                  createSectionTerritoireVA({
-                    territoire: {
-                      code: "DEPT-92",
-                      nom: "Hauts-de-Seine",
-                    },
+                  createSectionTerritoire({
+                    code: "DEPT-92",
+                    nom: "Hauts-de-Seine",
                   }),
                 ],
               }),
@@ -747,15 +741,13 @@ describe("createBrevoParams", () => {
       // Given
       const rapport = createRapportHebdomadaire({
         chantiers: [
-          createSectionChantierVA({
+          createSectionChantier({
             indicateurs: [
-              createSectionIndicateurVA({
+              createSectionIndicateur({
                 territoires: [
-                  createSectionTerritoireVA({
-                    territoire: {
-                      code: "REG-11",
-                      nom: "Île-de-France",
-                    },
+                  createSectionTerritoire({
+                    code: "REG-11",
+                    nom: "Île-de-France",
                   }),
                 ],
               }),
@@ -777,7 +769,7 @@ describe("createBrevoParams", () => {
     it("définit type_indicateur à va", () => {
       // Given
       const rapport = createRapportHebdomadaire({
-        chantiers: [createSectionChantierVA()],
+        chantiers: [createSectionChantier()],
       });
       const profilsMap = new Map<string, string>();
 
@@ -794,42 +786,51 @@ describe("createBrevoParams", () => {
       // Given
       const rapport = createRapportHebdomadaire({
         chantiers: [
-          createSectionChantierVA({
-            chantier: { id: "CH-001", nom: "Chantier 1" },
+          createSectionChantier({
+            id: "CH-001",
+            nom: "Chantier 1",
             indicateurs: [
-              createSectionIndicateurVA({
-                indicateur: { id: "IND-001", nom: "Indicateur 1" },
+              createSectionIndicateur({
+                id: "IND-001",
+                nom: "Indicateur 1",
                 territoires: [
-                  createSectionTerritoireVA({
-                    territoire: { code: "DEPT-75", nom: "Paris" },
-                    valeurApres: 10,
+                  createSectionTerritoire({
+                    code: "DEPT-75",
+                    nom: "Paris",
+                    valeurAvancement: 10,
                   }),
-                  createSectionTerritoireVA({
-                    territoire: { code: "DEPT-92", nom: "Hauts-de-Seine" },
-                    valeurApres: 20.5,
+                  createSectionTerritoire({
+                    code: "DEPT-92",
+                    nom: "Hauts-de-Seine",
+                    valeurAvancement: 20.5,
                   }),
                 ],
               }),
-              createSectionIndicateurVA({
-                indicateur: { id: "IND-002", nom: "Indicateur 2" },
+              createSectionIndicateur({
+                id: "IND-002",
+                nom: "Indicateur 2",
                 territoires: [
-                  createSectionTerritoireVA({
-                    territoire: { code: "DEPT-75", nom: "Paris" },
-                    valeurApres: null,
+                  createSectionTerritoire({
+                    code: "DEPT-75",
+                    nom: "Paris",
+                    valeurAvancement: null,
                   }),
                 ],
               }),
             ],
           }),
-          createSectionChantierVA({
-            chantier: { id: "CH-002", nom: "Chantier 2" },
+          createSectionChantier({
+            id: "CH-002",
+            nom: "Chantier 2",
             indicateurs: [
-              createSectionIndicateurVA({
-                indicateur: { id: "IND-003", nom: "Indicateur 3" },
+              createSectionIndicateur({
+                id: "IND-003",
+                nom: "Indicateur 3",
                 territoires: [
-                  createSectionTerritoireVA({
-                    territoire: { code: "DEPT-93", nom: "Seine-Saint-Denis" },
-                    valeurApres: 100,
+                  createSectionTerritoire({
+                    code: "DEPT-93",
+                    nom: "Seine-Saint-Denis",
+                    valeurAvancement: 100,
                   }),
                 ],
               }),
