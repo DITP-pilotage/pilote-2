@@ -7,7 +7,6 @@ import { PrismaUtilisateursQuery } from "@/server/gestion-utilisateur/infrastruc
 import { RecupererIndicateursParChantiersQuery } from "@/server/chantiers/infrastructure/queries/RecupererIndicateursParChantiersQuery";
 import { RecupererChantierIdsParPerimetresQuery } from "@/server/chantiers/infrastructure/queries/RecupererChantierIdsParPerimetresQuery";
 import { RecupererEvenementsVAParPeriodeQuery } from "@/server/indicateur-territoire-valeur-evenement/infrastructure/queries/RecupererEvenementsVAParPeriodeQuery";
-import { RecupererTerritoiresQuery } from "@/server/indicateur-territoire-valeur-evenement/infrastructure/queries/RecupererTerritoiresQuery";
 import { getPrisma } from "@/server/db/PrismaTransaction";
 import { ProduireRapportsHebdomadairesUseCase } from "@/server/rapports-hebdomadaires/usecases/ProduireRapportsHebdomadairesUseCase";
 import { GestionUtilisateurActiviteComptesGateway } from "@/server/rapports-hebdomadaires/infrastructure/adapters/GestionUtilisateurActiviteComptesGateway";
@@ -48,12 +47,8 @@ describe("ProduireRapportsHebdomadairesUseCase", () => {
     const evenementsVAQuery = new RecupererEvenementsVAParPeriodeQuery({
       prisma: prismaPilote,
     });
-    const territoiresQuery = new RecupererTerritoiresQuery({
-      prisma: prismaPilote,
-    });
     const activiteVAGateway = new IndicateurActiviteVAGateway({
       evenementsVAQuery: evenementsVAQuery,
-      territoiresQuery,
     });
 
     useCase = new ProduireRapportsHebdomadairesUseCase({

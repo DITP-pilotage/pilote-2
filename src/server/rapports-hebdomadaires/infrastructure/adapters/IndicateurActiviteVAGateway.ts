@@ -2,13 +2,11 @@ import { ActiviteVAGateway } from "@/server/rapports-hebdomadaires/domain/ports/
 import { EvenementVA } from "@/server/rapports-hebdomadaires/domain/SectionActiviteChantiersVA";
 import { PeriodeRapport } from "@/server/rapports-hebdomadaires/domain/PeriodeRapport";
 import { RecupererEvenementsVAParPeriodeQuery } from "@/server/indicateur-territoire-valeur-evenement/infrastructure/queries/RecupererEvenementsVAParPeriodeQuery";
-import { RecupererTerritoiresQuery } from "@/server/indicateur-territoire-valeur-evenement/infrastructure/queries/RecupererTerritoiresQuery";
 
 export class IndicateurActiviteVAGateway implements ActiviteVAGateway {
   constructor(
     private readonly deps: {
       evenementsVAQuery: RecupererEvenementsVAParPeriodeQuery;
-      territoiresQuery: RecupererTerritoiresQuery;
     },
   ) {}
 
