@@ -25,14 +25,21 @@ describe("PrismaRapportPropositionsAvancementRepository", () => {
           id: randomUUID(),
           utilisateurId: utilisateur.id,
           contenuRapport: {
-            chantiersAvecPropositions: [
+            chantiers: [
               {
-                chantierId: "CH-001",
-                chantierNom: "Chantier Test",
-                nombrePropositions: 3,
+                nom_chantier: "Chantier Test",
+                id_chantier: "CH-001",
+                nombre_propositions: "3 propositions territoriales de valeur d'avancement",
+                conseiller_email: "conseiller@test.com",
+                afficherSectionPropositions: true,
+                indicateursPropositions: [],
+                afficherSectionMajIndicateur: false,
+                indicateursNonMisAJour: [],
+                nombreIndicateursNonMisAJour: "aucun indicateur à mettre à jour",
               },
             ],
-            chantiersAvecIndicateursNonAJour: [],
+            conseillerEmail: "conseiller@test.com",
+            texteIntro: "votre chantier prioritaire",
           },
           statutEnvoi: "CREE",
           dateCreation: new Date("2026-02-03"),
@@ -75,8 +82,9 @@ describe("PrismaRapportPropositionsAvancementRepository", () => {
           id: rapportExistant.id,
           utilisateurId: utilisateur.id,
           contenuRapport: {
-            chantiersAvecPropositions: [],
-            chantiersAvecIndicateursNonAJour: [],
+            chantiers: [],
+            conseillerEmail: "",
+            texteIntro: "",
           },
           statutEnvoi: "ECHEC",
           dateCreation: rapportExistant.date_creation,

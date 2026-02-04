@@ -8,9 +8,7 @@ import {
   creerRapportPropositionsAvancement,
   ContenuRapport,
 } from "@/server/chantiers/domain/RapportPropositionsAvancement";
-import { Utilisateur } from "@/server/chantiers/domain/Utilisateur";
-import { RapportDirecteurProjetChantierInformation } from "@/server/chantiers/domain/PropositionValeurAvancementChantierInformation";
-import { PropositionValeurAvancementRapport } from "@/server/chantiers/domain/ports/PropositionValeurAvancementRepository";
+import { genererParametresEnvoieRapportProposition } from "@/server/chantiers/app/contrats/ParametresEnvoieEmailRapportProposition";
 
 interface Dependencies {
   chantierRepository: ChantierRepository;
@@ -63,7 +61,7 @@ export class CreerLesRapportsPropositionsUseCase {
     for (const directeur of listeDirecteursDeProjet) {
       try {
         const contenuRapport = this.genererContenuRapport(
-          directeur,
+          directeur.listeChantiers,
           mapChantiersPropositionInformation,
           propositionsParChantier,
           indicateursNonAJourParChantier,
@@ -96,65 +94,26 @@ export class CreerLesRapportsPropositionsUseCase {
   }
 
   private genererContenuRapport(
-    directeur: Utilisateur,
-    mapChantiersInfo: Map<string, RapportDirecteurProjetChantierInformation>,
-    propositionsParChantier: Map<
-      string,
-      Map<string, PropositionValeurAvancementRapport[]>
-    >,
-    indicateursNonAJourParChantier: Map<
-      string,
-      { id: string; nom: string; mailles: string[] }[]
-    >,
+    listeChantierIds: string[],
+    mapChantiersInformation: Parameters<
+      typeof genererParametresEnvoieRapportProposition
+    >[1],
+    propositionsParChantier: Parameters<
+      typeof genererParametresEnvoieRapportProposition
+    >[2],
+    indicateursNonAJourParChantier: Parameters<
+      typeof genererParametresEnvoieRapportProposition
+    >[3],
   ): ContenuRapport {
-    const chantiersAvecPropositions: ContenuRapport["chantiersAvecPropositions"] =
-      [];
-    const chantiersAvecIndicateursNonAJour: ContenuRapport["chantiersAvecIndicateursNonAJour"] =
-      [];
-
-    for (const chantierId of directeur.listeChantiers) {
-      const chantierInfo = mapChantiersInfo.get(chantierId);
-      if (!chantierInfo) {
-        continue;
-      }
-
-      const propositionsChantier = propositionsParChantier.get(chantierId);
-      if (propositionsChantier && propositionsChantier.size > 0) {
-        let nombrePropositions = 0;
-        for (const propositions of propositionsChantier.values()) {
-          nombrePropositions += propositions.length;
-        }
-        chantiersAvecPropositions.push({
-          chantierId,
-          chantierNom: chantierInfo.nom,
-          nombrePropositions,
-        });
-      }
-
-      const indicateursNonAJour =
-        indicateursNonAJourParChantier.get(chantierId);
-      if (indicateursNonAJour && indicateursNonAJour.length > 0) {
-        chantiersAvecIndicateursNonAJour.push({
-          chantierId,
-          chantierNom: chantierInfo.nom,
-          indicateurs: indicateursNonAJour.map((ind) => ({
-            id: ind.id,
-            nom: ind.nom,
-          })),
-        });
-      }
-    }
-
-    return {
-      chantiersAvecPropositions,
-      chantiersAvecIndicateursNonAJour,
-    };
+    return genererParametresEnvoieRapportProposition(
+      listeChantierIds,
+      mapChantiersInformation,
+      propositionsParChantier,
+      indicateursNonAJourParChantier,
+    );
   }
 
   private rapportEstVide(contenuRapport: ContenuRapport): boolean {
-    return (
-      contenuRapport.chantiersAvecPropositions.length === 0 &&
-      contenuRapport.chantiersAvecIndicateursNonAJour.length === 0
-    );
+    return contenuRapport.chantiers.length === 0;
   }
 }

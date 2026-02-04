@@ -116,12 +116,15 @@ describe("CreerLesRapportsPropositionsUseCase", () => {
         utilisateurId: "user-1",
         statutEnvoi: "CREE",
         contenuRapport: expect.objectContaining({
-          chantiersAvecPropositions: [
+          chantiers: [
             expect.objectContaining({
-              chantierId: "CH-001",
-              chantierNom: "Chantier 1",
+              id_chantier: "CH-001",
+              nom_chantier: "Chantier 1",
+              afficherSectionPropositions: true,
             }),
           ],
+          conseillerEmail: "conseiller@test.com",
+          texteIntro: "votre chantier prioritaire",
         }),
       }),
     );
@@ -178,12 +181,13 @@ describe("CreerLesRapportsPropositionsUseCase", () => {
     ).toHaveBeenCalledWith(
       expect.objectContaining({
         contenuRapport: expect.objectContaining({
-          chantiersAvecIndicateursNonAJour: [
+          chantiers: [
             expect.objectContaining({
-              chantierId: "CH-001",
-              indicateurs: [
-                { id: "IND-001", nom: "Indicateur 1" },
-                { id: "IND-002", nom: "Indicateur 2" },
+              id_chantier: "CH-001",
+              afficherSectionMajIndicateur: true,
+              indicateursNonMisAJour: [
+                { id: "IND-001", nom: "Indicateur 1", mailles: ["NAT"] },
+                { id: "IND-002", nom: "Indicateur 2", mailles: ["REG"] },
               ],
             }),
           ],

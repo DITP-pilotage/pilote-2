@@ -529,8 +529,9 @@ export const fixtures = {
       data: {
         id: randomUUID(),
         contenu_rapport: {
-          chantiersAvecPropositions: [],
-          chantiersAvecIndicateursNonAJour: [],
+          chantiers: [],
+          conseillerEmail: "",
+          texteIntro: "",
         },
         statut_envoi: "CREE",
         ...overrides,

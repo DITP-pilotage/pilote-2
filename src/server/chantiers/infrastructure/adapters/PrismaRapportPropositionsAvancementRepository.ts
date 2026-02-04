@@ -54,4 +54,15 @@ export class PrismaRapportPropositionsAvancementRepository
       erreurEnvoi: rapport.erreur_envoi,
     }));
   }
+
+  async recupererEmailUtilisateur(utilisateurId: string): Promise<string> {
+    const utilisateur = await this.dependencies.prisma
+      .getInstance()
+      .utilisateur.findUniqueOrThrow({
+        where: { id: utilisateurId },
+        select: { email: true },
+      });
+
+    return utilisateur.email;
+  }
 }

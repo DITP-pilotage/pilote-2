@@ -1,17 +1,37 @@
 import { $Enums } from "@prisma/client";
 import { randomUUID } from "node:crypto";
 
+export interface IndicateurPropositionTerritoire {
+  code: string;
+  nom: string;
+  valeur_avancement: string;
+  date_valeur: string;
+  proposition: string;
+}
+
+export interface IndicateurProposition {
+  id: string;
+  nom: string;
+  unite: string;
+  territoires: IndicateurPropositionTerritoire[];
+}
+
+export interface ChantierRapport {
+  nom_chantier: string;
+  id_chantier: string;
+  nombre_propositions: string;
+  conseiller_email: string;
+  afficherSectionPropositions: boolean;
+  indicateursPropositions: IndicateurProposition[];
+  afficherSectionMajIndicateur: boolean;
+  indicateursNonMisAJour: { id: string; nom: string; mailles: string[] }[];
+  nombreIndicateursNonMisAJour: string;
+}
+
 export interface ContenuRapport {
-  chantiersAvecPropositions: {
-    chantierId: string;
-    chantierNom: string;
-    nombrePropositions: number;
-  }[];
-  chantiersAvecIndicateursNonAJour: {
-    chantierId: string;
-    chantierNom: string;
-    indicateurs: { id: string; nom: string }[];
-  }[];
+  chantiers: ChantierRapport[];
+  conseillerEmail: string;
+  texteIntro: string;
 }
 
 export interface RapportPropositionsAvancement {
