@@ -3,7 +3,7 @@ import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const submodulePath = path.join(__dirname, "src/pages/centre-aide-pilote-2");
+const submodulePath = path.join(__dirname, "src/content");
 const hasSubmodule =
   fs.existsSync(submodulePath) && fs.readdirSync(submodulePath).length > 0;
 
@@ -12,9 +12,7 @@ let withNextra = (config) => config;
 if (hasSubmodule) {
   const nextra = (await import("nextra")).default;
   withNextra = nextra({
-    theme: "nextra-theme-docs",
-    themeConfig: "./theme.config.centreaide.tsx",
-    staticImage: true,
+    contentDirBasePath: "/centre-aide-pilote-2",
   });
 }
 
@@ -36,9 +34,22 @@ const nextConfig = {
         loaders: ["js-yaml-loader"],
         as: "*.js",
       },
+      "*.pdf": {
+        loaders: ["raw-loader"],
+        as: "*.js",
+      },
+      "*.ods": {
+        loaders: ["raw-loader"],
+        as: "*.js",
+      },
+      "*.xlsx": {
+        loaders: ["raw-loader"],
+        as: "*.js",
+      },
     },
     resolveAlias: {
       "react-hook-form": "react-hook-form/dist/index.esm.mjs",
+      "next-mdx-import-source-file": "./src/mdx-components.tsx",
     },
   },
   async rewrites() {
@@ -53,6 +64,10 @@ const nextConfig = {
     config.module.rules.push({
       test: /\.ya?ml$/,
       use: "js-yaml-loader",
+    });
+    config.module.rules.push({
+      test: /\.(pdf|ods|xlsx)$/,
+      type: "asset/resource",
     });
     return config;
   },

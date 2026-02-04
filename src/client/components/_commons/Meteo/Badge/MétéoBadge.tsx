@@ -1,6 +1,6 @@
 import { FunctionComponent } from "react";
 import { libellésMétéos, Météo } from "@/server/domain/météo/Météo.interface";
-import { Badge, BadgeType } from "@/components/_commons/Badge/Badge";
+import { Badge, BadgeType } from "@/components/_commons/Badge";
 
 interface MétéoBadgeProps {
   météo: Météo;

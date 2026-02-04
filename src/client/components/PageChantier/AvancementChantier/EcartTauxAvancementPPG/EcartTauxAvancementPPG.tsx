@@ -1,5 +1,5 @@
 import { FunctionComponent } from "react";
-import { Badge } from "@/components/_commons/Badge/Badge";
+import { Badge } from "@/components/_commons/Badge";
 import { definirCouleurEcartArrondi } from "@/client/utils/chantier/écart/écart";
 import { DonneesComparaisonDuTauxDAvancementType } from "@/server/domain/territoire/Territoire.interface";
 

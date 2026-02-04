@@ -38,7 +38,7 @@
     "database:init-force": "prisma migrate reset --force",
     "database:migration": "prisma migrate dev",
     "centreaide:init": "git submodule update --init --recursive",
-    "centreaide:clean": "git submodule deinit -f src/pages/centre-aide-pilote-2"
+    "centreaide:clean": "git submodule deinit -f src/content"
   },
   "prisma": {
     "schema": "src/database/prisma/schema.prisma",
@@ -117,8 +117,8 @@
     "mime": "^3.0.0",
     "next": "^16.1.2",
     "next-auth": "5.0.0-beta.30",
-    "nextra": "^3.3.1",
-    "nextra-theme-docs": "^3.3.1",
+    "nextra": "^4.6.1",
+    "nextra-theme-docs": "^4.6.1",
     "nuqs": "^2.8.7",
     "pdfmake": "^0.2.20",
     "pino": "^8.11.0",
@@ -142,6 +142,8 @@
   },
   "devDependencies": {
     "@babel/plugin-transform-private-methods": "^7.25.9",
+    "@eslint/compat": "^1.2.5",
+    "@eslint/js": "^9.39.0",
     "@hookform/devtools": "^4.4.0",
     "@playwright/test": "^1.42.1",
     "@tailwindcss/postcss": "4.1.12",
@@ -168,9 +170,6 @@
     "@types/react-dom": "^19.2.3",
     "@types/sanitize-html": "^2.16.0",
     "@types/swagger-ui-react": "^4.18.3",
-    "@eslint/compat": "^1.2.5",
-    "@eslint/js": "^9.39.0",
-    "typescript-eslint": "^8.53.0",
     "eslint": "^9.39.0",
     "eslint-config-next": "16.1.2",
     "eslint-config-prettier": "^10.1.8",
@@ -199,6 +198,7 @@
     "prettier": "^3.6.2",
     "prisma": "6.2.1",
     "proj4": "^2.9.0",
+    "raw-loader": "^4.0.2",
     "reproject": "^1.2.7",
     "sass": "1.78.0",
     "stylelint": "^15.3.0",
@@ -209,6 +209,7 @@
     "tailwindcss": "^4.0.0",
     "ts-node": "^10.9.1",
     "tsconfig-paths": "^4.1.2",
-    "typescript": "5.9.3"
+    "typescript": "5.9.3",
+    "typescript-eslint": "^8.53.0"
   }
 }
