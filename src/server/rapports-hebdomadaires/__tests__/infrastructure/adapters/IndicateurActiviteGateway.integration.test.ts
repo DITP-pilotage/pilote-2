@@ -3,7 +3,6 @@ import { fixtures } from "@/server/infrastructure/test/fixtures";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { IndicateurActiviteGateway } from "@/server/rapports-hebdomadaires/infrastructure/adapters/IndicateurActiviteVAGateway";
 import { RecupererEvenementsVAParPeriodeQuery } from "@/server/indicateur-territoire-valeur-evenement/infrastructure/queries/RecupererEvenementsVAParPeriodeQuery";
-import { RecupererTerritoiresQuery } from "@/server/indicateur-territoire-valeur-evenement/infrastructure/queries/RecupererTerritoiresQuery";
 import { RecupererMesuresIndicateurParPeriodeQuery } from "@/server/chantiers/infrastructure/queries/RecupererMesuresIndicateurParPeriodeQuery";
 
 describe("IndicateurActiviteGateway", () => {
@@ -14,9 +13,6 @@ describe("IndicateurActiviteGateway", () => {
     const evenementsVAQuery = new RecupererEvenementsVAParPeriodeQuery({
       prisma: prismaPilote,
     });
-    const territoiresQuery = new RecupererTerritoiresQuery({
-      prisma: prismaPilote,
-    });
     const mesuresIndicateurQuery =
       new RecupererMesuresIndicateurParPeriodeQuery({
         prisma: prismaPilote,
@@ -24,7 +20,6 @@ describe("IndicateurActiviteGateway", () => {
 
     gateway = new IndicateurActiviteGateway({
       evenementsVAQuery,
-      territoiresQuery,
       mesuresIndicateurQuery,
     });
   });
