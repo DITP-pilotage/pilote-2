@@ -70,7 +70,8 @@
   ],
   "ts-node": {
     "compilerOptions": {
-      "module": "commonjs"
+      "module": "commonjs",
+      "moduleResolution": "node"
     },
     "require": [
       "tsconfig-paths/register"
