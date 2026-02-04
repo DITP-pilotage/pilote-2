@@ -29,13 +29,15 @@ describe("PrismaRapportPropositionsAvancementRepository", () => {
               {
                 nom_chantier: "Chantier Test",
                 id_chantier: "CH-001",
-                nombre_propositions: "3 propositions territoriales de valeur d'avancement",
+                nombre_propositions:
+                  "3 propositions territoriales de valeur d'avancement",
                 conseiller_email: "conseiller@test.com",
                 afficherSectionPropositions: true,
                 indicateursPropositions: [],
                 afficherSectionMajIndicateur: false,
                 indicateursNonMisAJour: [],
-                nombreIndicateursNonMisAJour: "aucun indicateur à mettre à jour",
+                nombreIndicateursNonMisAJour:
+                  "aucun indicateur à mettre à jour",
               },
             ],
             conseillerEmail: "conseiller@test.com",

@@ -95,7 +95,7 @@ export const genererParametresEnvoieRapportProposition = (
 
   return {
     chantiers: params,
-    conseillerEmail: params[0].conseiller_email,
+    conseillerEmail: params.length > 0 ? params[0].conseiller_email : "",
     texteIntro:
       params.length > 1
         ? "vos chantiers prioritaires"
