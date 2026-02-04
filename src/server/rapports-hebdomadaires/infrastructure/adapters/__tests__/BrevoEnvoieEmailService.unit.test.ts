@@ -68,6 +68,7 @@ describe("createBrevoParams", () => {
     nom: "Paris",
     valeurAvancement: 50,
     dateValeur: "2025-01-15T10:00:00Z",
+    dateEvenement: "2025-01-15T14:30:00Z",
     ...overrides,
   });
 
@@ -631,6 +632,34 @@ describe("createBrevoParams", () => {
       expect(
         result.chantiers[0].indicateurs[0].territoires[0].date_indicateur,
       ).toBe("15/01/2025");
+    });
+
+    it("formate date_modification avec l'heure sans secondes", () => {
+      // Given
+      const rapport = createRapportHebdomadaire({
+        chantiers: [
+          createSectionChantier({
+            indicateurs: [
+              createSectionIndicateur({
+                territoires: [
+                  createSectionTerritoire({
+                    dateEvenement: "2025-01-15T14:30:45Z",
+                  }),
+                ],
+              }),
+            ],
+          }),
+        ],
+      });
+      const profilsMap = new Map<string, string>();
+
+      // When
+      const result = createBrevoParams({ profilsMap, rapport });
+
+      // Then
+      expect(
+        result.chantiers[0].indicateurs[0].territoires[0].date_modification,
+      ).toBe("15/01/2025 15:30");
     });
 
     it("mappe id et nom du chantier correctement", () => {

@@ -31,6 +31,7 @@ export type ActiviteIndicateur = {
   };
   valeurAvancement: number | null;
   dateValeur: Date;
+  dateEvenement: Date;
 };
 
 export type SectionTerritoire = {
@@ -38,6 +39,7 @@ export type SectionTerritoire = {
   nom: string;
   valeurAvancement: number | null;
   dateValeur: string;
+  dateEvenement: string;
 };
 
 export type SectionIndicateur = {
@@ -87,6 +89,7 @@ export function grouperEvenements(
       },
       valeurAvancement: dernierEvenement.valeur,
       dateValeur: dernierEvenement.dateValeur,
+      dateEvenement: dernierEvenement.dateCreation,
     });
   }
 

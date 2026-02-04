@@ -77,6 +77,16 @@ export const createBrevoParams = ({
         date_indicateur: new Date(territoire.dateValeur).toLocaleDateString(
           "fr-FR",
         ),
+        date_modification: new Date(territoire.dateEvenement).toLocaleString(
+          "fr-FR",
+          {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+          },
+        ),
       })),
     })),
   }));

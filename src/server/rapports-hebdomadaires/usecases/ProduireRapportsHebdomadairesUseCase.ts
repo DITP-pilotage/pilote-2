@@ -186,6 +186,7 @@ export class ProduireRapportsHebdomadairesUseCase {
         nom: activite.territoire.nom,
         valeurAvancement: activite.valeurAvancement,
         dateValeur: activite.dateValeur.toISOString(),
+        dateEvenement: activite.dateEvenement.toISOString(),
       });
     }
 
