@@ -342,8 +342,6 @@ export class ProduireRapportsHebdomadairesUseCase {
         ) || [],
     );
 
-    // TODO (CHAN 04/02/2026): filtrer les événements VA par indicateur_territoire.est_applicable
-    //  meme si en pratique 0 evenements possibles sur les non applicables
     const evenementsDansPeriode =
       await this.deps.activiteVAGateway.recupererEvenementsDansPeriode({
         indicateurIds: coordIndicateurIds,
@@ -351,7 +349,24 @@ export class ProduireRapportsHebdomadairesUseCase {
         periode: params.periode,
       });
 
-    const activites = grouperEvenements(evenementsDansPeriode);
+    const indicateurTerritoiresApplicables = new Map<string, Set<string>>();
+    for (const chantier of Object.values(params.chantiersAvecIndicateurs)) {
+      for (const indicateur of chantier.indicateurs) {
+        indicateurTerritoiresApplicables.set(
+          indicateur.id,
+          new Set(indicateur.territoiresApplicables),
+        );
+      }
+    }
+
+    const evenementsFiltres = evenementsDansPeriode.filter((event) => {
+      const applicables = indicateurTerritoiresApplicables.get(
+        event.indicateur.id,
+      );
+      return applicables?.has(event.territoire.code) ?? false;
+    });
+
+    const activites = grouperEvenements(evenementsFiltres);
 
     return this.construireSectionChantiers({
       activites,

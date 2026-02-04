@@ -3,10 +3,14 @@ import { PrismaPilote } from "@/server/db/PrismaPilote";
 export type ChantierAvecIndicateursDTO = {
   id: string;
   nom: string;
-  indicateurs: { id: string; nom: string }[];
+  indicateurs: {
+    id: string;
+    nom: string;
+    territoiresApplicables: string[];
+  }[];
 };
 
-export class RecupererChantiersParTerritoiresQuery {
+export class RecupererChantiersApplicablesParTerritoiresQuery {
   constructor(private readonly deps: { prisma: PrismaPilote }) {}
 
   async execute(params: {
@@ -46,6 +50,15 @@ export class RecupererChantiersParTerritoiresQuery {
         id: true,
         nom: true,
         chantier_id: true,
+        indicateur_territoire: {
+          where: {
+            territoire_code: { in: params.territoireCodes },
+            est_applicable: true,
+          },
+          select: {
+            territoire_code: true,
+          },
+        },
       },
     });
 
@@ -56,7 +69,13 @@ export class RecupererChantiersParTerritoiresQuery {
         nom: chantier.nom,
         indicateurs: indicateurs
           .filter((indicateur) => indicateur.chantier_id === chantier.id)
-          .map((indicateur) => ({ id: indicateur.id, nom: indicateur.nom })),
+          .map((indicateur) => ({
+            id: indicateur.id,
+            nom: indicateur.nom,
+            territoiresApplicables: indicateur.indicateur_territoire.map(
+              (t) => t.territoire_code,
+            ),
+          })),
       };
     }
 

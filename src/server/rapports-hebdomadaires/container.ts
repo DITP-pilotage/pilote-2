@@ -4,7 +4,7 @@ import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { EmailManager } from "@/server/infrastructure/email-manager";
 import { PrismaActiviteComptesQuery } from "@/server/gestion-utilisateur/infrastructure/queries/PrismaActiviteComptesQuery";
 import { PrismaUtilisateursQuery } from "@/server/gestion-utilisateur/infrastructure/queries/PrismaUtilisateursQuery";
-import { RecupererChantiersParTerritoiresQuery } from "@/server/chantiers/infrastructure/queries/RecupererChantiersParTerritoiresQuery";
+import { RecupererChantiersApplicablesParTerritoiresQuery } from "@/server/chantiers/infrastructure/queries/RecupererChantiersApplicablesParTerritoiresQuery";
 import { RecupererEvenementsVAParPeriodeQuery } from "@/server/indicateur-territoire-valeur-evenement/infrastructure/queries/RecupererEvenementsVAParPeriodeQuery";
 
 import { ActiviteComptesGateway } from "./domain/ports/ActiviteComptesGateway";
@@ -27,7 +27,7 @@ import { EnvoyerRapportsHebdomadairesUseCase } from "./usecases/EnvoyerRapportsH
 export type RapportsHebdomadairesDependencies = {
   activiteComptesQuery: PrismaActiviteComptesQuery;
   utilisateursQuery: PrismaUtilisateursQuery;
-  recupererChantiersQuery: RecupererChantiersParTerritoiresQuery;
+  recupererChantiersQuery: RecupererChantiersApplicablesParTerritoiresQuery;
   evenementsVAQuery: RecupererEvenementsVAParPeriodeQuery;
   activiteComptesGateway: ActiviteComptesGateway;
   coordinateurGateway: CoordinateurGateway;
@@ -54,7 +54,7 @@ export const getRapportsHebdomadairesContainer = (
     .register({
       activiteComptesQuery: asClass(PrismaActiviteComptesQuery),
       utilisateursQuery: asClass(PrismaUtilisateursQuery),
-      recupererChantiersQuery: asClass(RecupererChantiersParTerritoiresQuery),
+      recupererChantiersQuery: asClass(RecupererChantiersApplicablesParTerritoiresQuery),
       evenementsVAQuery: asClass(RecupererEvenementsVAParPeriodeQuery),
       activiteComptesGateway: asClass(GestionUtilisateurActiviteComptesGateway),
       coordinateurGateway: asClass(GestionUtilisateurCoordinateurGateway),

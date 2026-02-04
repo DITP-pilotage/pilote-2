@@ -2,12 +2,12 @@ import {
   ChantierGateway,
   ChantierAvecIndicateurs,
 } from "@/server/rapports-hebdomadaires/domain/ports/ChantierGateway";
-import { RecupererChantiersParTerritoiresQuery } from "@/server/chantiers/infrastructure/queries/RecupererChantiersParTerritoiresQuery";
+import { RecupererChantiersApplicablesParTerritoiresQuery } from "@/server/chantiers/infrastructure/queries/RecupererChantiersApplicablesParTerritoiresQuery";
 
 export class ChantiersChantierGateway implements ChantierGateway {
   constructor(
     private readonly deps: {
-      recupererChantiersQuery: RecupererChantiersParTerritoiresQuery;
+      recupererChantiersQuery: RecupererChantiersApplicablesParTerritoiresQuery;
     },
   ) {}
 

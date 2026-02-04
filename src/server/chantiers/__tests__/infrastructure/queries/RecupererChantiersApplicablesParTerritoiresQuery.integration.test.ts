@@ -1,14 +1,14 @@
 import { $Enums } from "@prisma/client";
 import { randomUUID } from "crypto";
 import { fixtures } from "@/server/infrastructure/test/fixtures";
-import { RecupererChantiersParTerritoiresQuery } from "@/server/chantiers/infrastructure/queries/RecupererChantiersParTerritoiresQuery";
+import { RecupererChantiersApplicablesParTerritoiresQuery } from "@/server/chantiers/infrastructure/queries/RecupererChantiersApplicablesParTerritoiresQuery";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 
-describe("RecupererChantiersParTerritoiresQuery", () => {
-  let query: RecupererChantiersParTerritoiresQuery;
+describe("RecupererChantiersApplicablesParTerritoiresQuery", () => {
+  let query: RecupererChantiersApplicablesParTerritoiresQuery;
 
   beforeEach(() => {
-    query = new RecupererChantiersParTerritoiresQuery({
+    query = new RecupererChantiersApplicablesParTerritoiresQuery({
       prisma: new PrismaPilote(),
     });
   });
@@ -61,6 +61,7 @@ describe("RecupererChantiersParTerritoiresQuery", () => {
             {
               id: indicateur.id,
               nom: "Indicateur accessible",
+              territoiresApplicables: [territoire.code],
             },
           ],
         },
@@ -185,6 +186,7 @@ describe("RecupererChantiersParTerritoiresQuery", () => {
             {
               id: indicateurAccessible.id,
               nom: "Indicateur accessible",
+              territoiresApplicables: [territoire.code],
             },
           ],
         },
@@ -257,6 +259,10 @@ describe("RecupererChantiersParTerritoiresQuery", () => {
             {
               id: indicateur.id,
               nom: "Indicateur multi-territoires",
+              territoiresApplicables: expect.arrayContaining([
+                territoire1.code,
+                territoire2.code,
+              ]),
             },
           ],
         },
@@ -338,6 +344,104 @@ describe("RecupererChantiersParTerritoiresQuery", () => {
           indicateurs: [],
         },
       });
+    });
+
+    it("retourne uniquement les territoires applicables demandés pour chaque indicateur", async () => {
+      // given
+      const territoire1 = await fixtures.territoire({
+        code: randomUUID(),
+        nom: "Île-de-France",
+        maille: "REG",
+      });
+
+      const territoire2 = await fixtures.territoire({
+        code: randomUUID(),
+        nom: "Paris",
+        maille: "DEPT",
+      });
+
+      const territoire3 = await fixtures.territoire({
+        code: randomUUID(),
+        nom: "Hauts-de-Seine",
+        maille: "DEPT",
+      });
+
+      const chantier = await fixtures.chantierIdentite({
+        nom: "Chantier",
+        statut: $Enums.type_statut.PUBLIE,
+        est_territorialise: true,
+      });
+
+      await fixtures.chantierTerritoire({
+        id: chantier.id,
+        territoire_code: territoire1.code,
+        est_applicable: true,
+      });
+
+      await fixtures.chantierTerritoire({
+        id: chantier.id,
+        territoire_code: territoire2.code,
+        est_applicable: true,
+      });
+
+      await fixtures.chantierTerritoire({
+        id: chantier.id,
+        territoire_code: territoire3.code,
+        est_applicable: true,
+      });
+
+      const indicateur = await fixtures.indicateurIdentite({
+        chantier_id: chantier.id,
+        nom: "Indicateur",
+        statut: $Enums.type_statut_indicateur.PUBLIE,
+      });
+
+      await fixtures.indicateurTerritoire({
+        id: indicateur.id,
+        territoire_code: territoire1.code,
+        chantier_id: chantier.id,
+        est_applicable: true,
+      });
+
+      await fixtures.indicateurTerritoire({
+        id: indicateur.id,
+        territoire_code: territoire2.code,
+        chantier_id: chantier.id,
+        est_applicable: true,
+      });
+
+      await fixtures.indicateurTerritoire({
+        id: indicateur.id,
+        territoire_code: territoire3.code,
+        chantier_id: chantier.id,
+        est_applicable: false,
+      });
+
+      // when
+      const result = await query.execute({
+        territoireCodes: [territoire1.code, territoire2.code, territoire3.code],
+      });
+
+      // then
+      expect(result).toEqual({
+        [chantier.id]: {
+          id: chantier.id,
+          nom: "Chantier",
+          indicateurs: [
+            {
+              id: indicateur.id,
+              nom: "Indicateur",
+              territoiresApplicables: expect.arrayContaining([
+                territoire1.code,
+                territoire2.code,
+              ]),
+            },
+          ],
+        },
+      });
+      expect(
+        result[chantier.id].indicateurs[0].territoiresApplicables,
+      ).not.toContain(territoire3.code);
     });
   });
 });

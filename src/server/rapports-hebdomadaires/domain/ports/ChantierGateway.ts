@@ -1,6 +1,7 @@
 export type IndicateurInfo = {
   id: string;
   nom: string;
+  territoiresApplicables: string[];
 };
 
 export type ChantierAvecIndicateurs = {
