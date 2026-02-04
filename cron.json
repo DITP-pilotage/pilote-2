@@ -1,10 +1,10 @@
 {
   "jobs": [
     {
-      "command": "0 6 * * 1 /bin/bash scripts/run_rapport_pva.sh"
+      "command": "0 6 * * 1 curl -X POST -H \"Authorization: Bearer $CRON_AUTH_SECRET\" \"$APP_URL/api/admin/cron/rapports-pva\""
     },
     {
-      "command": "0 9 * * 1 /bin/bash scripts/run_rapport_coordinateurs.sh"
+      "command": "0 9 * * 1 curl -X POST -H \"Authorization: Bearer $CRON_AUTH_SECRET\" \"$APP_URL/api/admin/cron/rapports-coordinateurs\""
     }
   ]
 }

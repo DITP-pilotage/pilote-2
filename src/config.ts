@@ -279,6 +279,11 @@ const config = convict({
       default: false,
       env: "NEXT_PUBLIC_FF_RAPPORT_COORDINATEURS",
     },
+    rapportPva: {
+      format: Boolean,
+      default: false,
+      env: "NEXT_PUBLIC_FF_RAPPORT_PVA",
+    },
   },
   analytics: {
     doc: "Matomo Analytics",
@@ -324,6 +329,41 @@ const config = convict({
       default: "toBeDefinedForE2E",
       env: "INDICATEUR_ID_ACCESSIBLE_PAR_UTILISATEUR_EQUIPE_DIR_PROJET",
     },
+  },
+  cron: {
+    authSecret: {
+      format: String,
+      default: null,
+      doc: "Secret partagé pour l'authentification des endpoints CRON",
+      env: "CRON_AUTH_SECRET",
+    },
+  },
+  tchap: {
+    baseUrl: {
+      format: String,
+      default: "",
+      env: "TCHAP_BASE_URL",
+    },
+    accessToken: {
+      format: String,
+      default: "",
+      env: "TCHAP_ACCESS_TOKEN",
+    },
+    roomIdRapportCoordinateurs: {
+      format: String,
+      default: "",
+      env: "TCHAP_ROOM_ID_RAPPORT_COORDINATEURS",
+    },
+    roomIdRapportPva: {
+      format: String,
+      default: "",
+      env: "TCHAP_ROOM_ID_RAPPORT_PVA",
+    },
+  },
+  scalingoEnvironment: {
+    format: String,
+    default: "",
+    env: "ENVIRONMENT",
   },
   dateBasculeAffichageValeursAnneePrecedente: {
     format: String,

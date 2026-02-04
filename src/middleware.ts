@@ -106,6 +106,7 @@ export const middleware = async (
 
   const estRoutePublique =
     pathname.startsWith("/api/open-api") ||
+    pathname.startsWith("/api/admin/cron") ||
     routesTrpcPubliques.some((route) => pathname.startsWith(route));
 
   if (!estRoutePublique) {
