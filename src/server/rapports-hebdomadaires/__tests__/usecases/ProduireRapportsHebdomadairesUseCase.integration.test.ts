@@ -444,17 +444,15 @@ describe("ProduireRapportsHebdomadairesUseCase", () => {
       expect(rapports).toEqual([
         expect.objectContaining({
           contenu_rapport: expect.objectContaining({
-            sectionActiviteChantiersVA: [
+            sectionActiviteChantiers: [
               expect.objectContaining({
-                chantier: expect.objectContaining({ nom: "Chantier Test" }),
+                nom: "Chantier Test",
                 indicateurs: [
                   expect.objectContaining({
-                    indicateur: expect.objectContaining({
-                      nom: "Indicateur Test",
-                    }),
+                    nom: "Indicateur Test",
                     territoires: [
                       expect.objectContaining({
-                        valeurApres: 75,
+                        valeurAvancement: 75,
                       }),
                     ],
                   }),
@@ -611,19 +609,15 @@ describe("ProduireRapportsHebdomadairesUseCase", () => {
       expect(rapports).toEqual([
         expect.objectContaining({
           contenu_rapport: expect.objectContaining({
-            sectionActiviteChantiersVA: [
+            sectionActiviteChantiers: [
               expect.objectContaining({
-                chantier: expect.objectContaining({
-                  nom: "Chantier via Périmètre",
-                }),
+                nom: "Chantier via Périmètre",
                 indicateurs: [
                   expect.objectContaining({
-                    indicateur: expect.objectContaining({
-                      nom: "Indicateur Test",
-                    }),
+                    nom: "Indicateur Test",
                     territoires: [
                       expect.objectContaining({
-                        valeurApres: 85,
+                        valeurAvancement: 85,
                       }),
                     ],
                   }),
@@ -729,16 +723,12 @@ describe("ProduireRapportsHebdomadairesUseCase", () => {
       expect(rapports).toEqual([
         expect.objectContaining({
           contenu_rapport: expect.objectContaining({
-            sectionActiviteChantiersVA: expect.arrayContaining([
+            sectionActiviteChantiers: expect.arrayContaining([
               expect.objectContaining({
-                chantier: expect.objectContaining({
-                  nom: "Chantier Direct",
-                }),
+                nom: "Chantier Direct",
               }),
               expect.objectContaining({
-                chantier: expect.objectContaining({
-                  nom: "Chantier Périmètre",
-                }),
+                nom: "Chantier Périmètre",
               }),
             ]),
           }),
