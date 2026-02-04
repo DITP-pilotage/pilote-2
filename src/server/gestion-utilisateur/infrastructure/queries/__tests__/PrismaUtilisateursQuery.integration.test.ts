@@ -128,5 +128,81 @@ describe("PrismaUtilisateursQuery", () => {
         ]);
       }),
     );
+
+    it(
+      "déduplique les territoires quand l'habilitation contient REG et ses DEPTs",
+      createIntegrationTest(async () => {
+        // Given
+        const territoireReg = await fixtures.territoire({
+          code: "REG-88",
+          nom: "Région Test Dedup",
+          maille: "REG",
+        });
+
+        const territoireDept87 = await fixtures.territoire({
+          code: "DEPT-87",
+          nom: "Département Test 1",
+          maille: "DEPT",
+          code_parent: territoireReg.code,
+        });
+
+        const territoireDept86 = await fixtures.territoire({
+          code: "DEPT-86",
+          nom: "Département Test 2",
+          maille: "DEPT",
+          code_parent: territoireReg.code,
+        });
+
+        const utilisateur = await fixtures.utilisateur({
+          profilCode: "COORDINATEUR_REGION",
+        });
+
+        await fixtures.habilitation({
+          utilisateurId: utilisateur.id,
+          territoires: [
+            territoireReg.code,
+            territoireDept87.code,
+            territoireDept86.code,
+          ],
+        });
+
+        // When
+        const result = await query.recupererParProfils(["COORDINATEUR_REGION"]);
+
+        // Then
+        expect(result).toEqual([
+          {
+            id: utilisateur.id,
+            email: utilisateur.email,
+            nom: utilisateur.nom,
+            prenom: utilisateur.prenom,
+            profilCode: "COORDINATEUR_REGION",
+            territoires: [
+              {
+                code: "REG-88",
+                nom: "Région Test Dedup",
+                maille: "REG",
+                enfants: [
+                  {
+                    code: "DEPT-86",
+                    nom: "Département Test 2",
+                    maille: "DEPT",
+                    enfants: [],
+                  },
+                  {
+                    code: "DEPT-87",
+                    nom: "Département Test 1",
+                    maille: "DEPT",
+                    enfants: [],
+                  },
+                ],
+              },
+            ],
+            chantiers: [],
+            perimetres: [],
+          },
+        ]);
+      }),
+    );
   });
 });

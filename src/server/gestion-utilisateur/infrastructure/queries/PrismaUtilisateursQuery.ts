@@ -70,13 +70,16 @@ export class PrismaUtilisateursQuery {
 
       if (territoires.length === 0) continue;
 
+      const territoiresDTO = mapTerritoiresToDTO(territoires);
+      const territoiresDedupes = this.dedupliquerTerritoires(territoiresDTO);
+
       utilisateursDTO.push({
         id: utilisateur.id,
         email: utilisateur.email,
         nom: utilisateur.nom,
         prenom: utilisateur.prenom,
         profilCode: utilisateur.profilCode,
-        territoires: mapTerritoiresToDTO(territoires),
+        territoires: territoiresDedupes,
         chantiers: this.extraireTousLesChantiers(utilisateur.habilitation),
         perimetres: this.extraireTousLesPerimetres(utilisateur.habilitation),
       });
@@ -101,5 +104,18 @@ export class PrismaUtilisateursQuery {
     habilitations: { perimetres: string[] }[],
   ): string[] {
     return habilitations.flatMap((h) => h.perimetres);
+  }
+
+  private dedupliquerTerritoires(
+    territoires: TerritoireDTO[],
+  ): TerritoireDTO[] {
+    const childCodes = new Set<string>();
+    for (const territoire of territoires) {
+      for (const enfant of territoire.enfants) {
+        childCodes.add(enfant.code);
+      }
+    }
+
+    return territoires.filter((territoire) => !childCodes.has(territoire.code));
   }
 }

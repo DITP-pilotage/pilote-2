@@ -117,7 +117,21 @@ export class PrismaActiviteComptesQuery {
         },
       });
 
-    return mapTerritoiresToDTO(territoires);
+    const territoiresDTO = mapTerritoiresToDTO(territoires);
+    return this.dedupliquerTerritoires(territoiresDTO);
+  }
+
+  private dedupliquerTerritoires(
+    territoires: TerritoireDTO[],
+  ): TerritoireDTO[] {
+    const childCodes = new Set<string>();
+    for (const territoire of territoires) {
+      for (const enfant of territoire.enfants) {
+        childCodes.add(enfant.code);
+      }
+    }
+
+    return territoires.filter((territoire) => !childCodes.has(territoire.code));
   }
 
   private mapToCompteDTO(
