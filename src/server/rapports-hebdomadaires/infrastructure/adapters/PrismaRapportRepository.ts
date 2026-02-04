@@ -81,8 +81,6 @@ export class PrismaRapportRepository implements RapportRepository {
           prenom: contenu.coordinateur.prenom,
           profil: contenu.coordinateur.profil as ProfilCoordinateur,
           territoires: contenu.coordinateur.territoires,
-          chantiers: contenu.coordinateur.chantiers,
-          perimetres: contenu.coordinateur.perimetres ?? [],
         },
         periode: {
           dateDebut: row.date_debut_periode,

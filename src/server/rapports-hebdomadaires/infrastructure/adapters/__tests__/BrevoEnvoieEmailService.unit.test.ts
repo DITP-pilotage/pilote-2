@@ -35,8 +35,6 @@ describe("createBrevoParams", () => {
     prenom: "Jean",
     profil: "COORDINATEUR_REGION",
     territoires: [createTerritoireCoordinateur()],
-    chantiers: [],
-    perimetres: [],
     ...overrides,
   });
 

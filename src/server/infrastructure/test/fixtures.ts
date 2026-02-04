@@ -433,8 +433,6 @@ export const fixtures = {
                 enfants: [],
               },
             ],
-            chantiers: [],
-            perimetres: [],
           },
           sectionActiviteComptes: {
             comptesCrees: [],
