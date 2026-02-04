@@ -126,13 +126,15 @@ export class ProduireRapportsHebdomadairesUseCase {
     return rapport;
   }
 
-  private construireSectionChantiers(params: {
+  private construireSectionChantiers({
+    activites,
+    chantiersAvecIndicateurs,
+    coordChantierIds,
+  }: {
     activites: ActiviteIndicateur[];
     chantiersAvecIndicateurs: Record<string, ChantierAvecIndicateurs>;
     coordChantierIds: string[];
   }): SectionChantier[] {
-    const { activites, chantiersAvecIndicateurs, coordChantierIds } = params;
-
     const activitesParChantier = new Map<
       string,
       {

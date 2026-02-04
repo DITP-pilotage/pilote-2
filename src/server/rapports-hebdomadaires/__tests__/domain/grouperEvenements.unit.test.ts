@@ -30,7 +30,6 @@ describe("grouperEvenements", () => {
         code: territoireCode,
         nom: territoireNom,
       },
-      typeEvenement: "VALEUR_MODIFIEE",
       dateValeur: new Date("2025-01-15"),
       valeur: 42,
       dateCreation: new Date("2025-01-15T10:00:00Z"),

@@ -1,8 +1,3 @@
-export type TypeEvenementVA =
-  | "VALEUR_CREEE"
-  | "VALEUR_MODIFIEE"
-  | "VALEUR_HISTORISEE";
-
 export type EvenementVA = {
   id: string;
   indicateur: {
@@ -13,7 +8,6 @@ export type EvenementVA = {
     code: string;
     nom: string;
   };
-  typeEvenement: TypeEvenementVA;
   dateValeur: Date;
   valeur: number | null;
   dateCreation: Date;

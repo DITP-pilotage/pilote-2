@@ -22,21 +22,22 @@ export class IndicateurActiviteVAGateway implements ActiviteVAGateway {
       dateFin: params.periode.dateFin,
     });
 
-    return dtos.map((dto) => ({
-      id: dto.id,
-      indicateur: {
-        id: dto.indicateurId,
-        nom: dto.indicateurNom,
-      },
-      territoire: {
-        code: dto.territoireCode,
-        nom: dto.territoireNom,
-      },
-      typeEvenement: dto.typeEvenement,
-      dateValeur: dto.dateValeur,
-      valeur: dto.valeur,
-      dateCreation: dto.dateCreation,
-      ordre: dto.ordre,
-    }));
+    return dtos.map(
+      (dto): EvenementVA => ({
+        id: dto.id,
+        indicateur: {
+          id: dto.indicateurId,
+          nom: dto.indicateurNom,
+        },
+        territoire: {
+          code: dto.territoireCode,
+          nom: dto.territoireNom,
+        },
+        dateValeur: dto.dateValeur,
+        valeur: dto.valeur,
+        dateCreation: dto.dateCreation,
+        ordre: dto.ordre,
+      }),
+    );
   }
 }
