@@ -4,7 +4,6 @@ import { fixtures } from "@/server/infrastructure/test/fixtures";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { PrismaActiviteComptesQuery } from "@/server/gestion-utilisateur/infrastructure/queries/PrismaActiviteComptesQuery";
 import { PrismaUtilisateursQuery } from "@/server/gestion-utilisateur/infrastructure/queries/PrismaUtilisateursQuery";
-import { RecupererChantiersParTerritoiresQuery } from "@/server/chantiers/infrastructure/queries/RecupererChantiersParTerritoiresQuery";
 import { RecupererEvenementsVAParPeriodeQuery } from "@/server/indicateur-territoire-valeur-evenement/infrastructure/queries/RecupererEvenementsVAParPeriodeQuery";
 import { getPrisma } from "@/server/db/PrismaTransaction";
 import { ProduireRapportsHebdomadairesUseCase } from "@/server/rapports-hebdomadaires/usecases/ProduireRapportsHebdomadairesUseCase";
@@ -13,6 +12,7 @@ import { GestionUtilisateurCoordinateurGateway } from "@/server/rapports-hebdoma
 import { PrismaRapportRepository } from "@/server/rapports-hebdomadaires/infrastructure/adapters/PrismaRapportRepository";
 import { ChantiersChantierGateway } from "@/server/rapports-hebdomadaires/infrastructure/adapters/ChantiersChantierGateway";
 import { IndicateurActiviteVAGateway } from "@/server/rapports-hebdomadaires/infrastructure/adapters/IndicateurActiviteVAGateway";
+import { RecupererChantiersApplicablesParTerritoiresQuery } from "@/server/chantiers/infrastructure/queries/RecupererChantiersApplicablesParTerritoiresQuery";
 
 describe("ProduireRapportsHebdomadairesUseCase", () => {
   let useCase: ProduireRapportsHebdomadairesUseCase;
@@ -34,9 +34,10 @@ describe("ProduireRapportsHebdomadairesUseCase", () => {
     const rapportRepository = new PrismaRapportRepository({
       prisma: prismaPilote,
     });
-    const recupererChantiersQuery = new RecupererChantiersParTerritoiresQuery({
-      prisma: prismaPilote,
-    });
+    const recupererChantiersQuery =
+      new RecupererChantiersApplicablesParTerritoiresQuery({
+        prisma: prismaPilote,
+      });
     const chantierGateway = new ChantiersChantierGateway({
       recupererChantiersQuery,
     });
@@ -386,22 +387,26 @@ describe("ProduireRapportsHebdomadairesUseCase", () => {
         id: `CH-${randomUUID().slice(0, 6)}`,
         nom: "Chantier Test",
         statut: "PUBLIE",
+        est_territorialise: true,
       });
 
       await fixtures.chantierTerritoire({
         id: chantier.id,
         territoire_code: territoire.code,
+        est_applicable: true,
       });
 
       const indicateur = await fixtures.indicateurIdentite({
         chantier_id: chantier.id,
         nom: "Indicateur Test",
+        statut: "PUBLIE",
       });
 
       await fixtures.indicateurTerritoire({
         id: indicateur.id,
         territoire_code: territoire.code,
         chantier_id: chantier.id,
+        est_applicable: true,
       });
 
       const coordinateur = await fixtures.utilisateur({
@@ -493,22 +498,26 @@ describe("ProduireRapportsHebdomadairesUseCase", () => {
       const chantier = await fixtures.chantierIdentite({
         nom: "Chantier Test",
         statut: "PUBLIE",
+        est_territorialise: true,
       });
 
       await fixtures.chantierTerritoire({
         id: chantier.id,
         territoire_code: territoire.code,
+        est_applicable: true,
       });
 
       const indicateur = await fixtures.indicateurIdentite({
         chantier_id: chantier.id,
         nom: "Indicateur Test",
+        statut: "PUBLIE",
       });
 
       await fixtures.indicateurTerritoire({
         id: indicateur.id,
         territoire_code: territoire.code,
         chantier_id: chantier.id,
+        est_applicable: true,
       });
 
       const coordinateur = await fixtures.utilisateur({

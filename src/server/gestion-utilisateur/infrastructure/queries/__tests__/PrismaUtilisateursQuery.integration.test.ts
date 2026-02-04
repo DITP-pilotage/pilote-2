@@ -17,7 +17,7 @@ describe("PrismaUtilisateursQuery", () => {
       createIntegrationTest(async () => {
         // Given
         const territoire = await fixtures.territoire({
-          code: "DEPT-99",
+          code: "DEPT-990",
           nom: "Département Test",
           maille: "DEPT",
         });
@@ -44,7 +44,7 @@ describe("PrismaUtilisateursQuery", () => {
             profilCode: "PREFET_DEPARTEMENT",
             territoires: [
               {
-                code: "DEPT-99",
+                code: "DEPT-990",
                 nom: "Département Test",
                 maille: "DEPT",
                 enfants: [],
@@ -60,20 +60,20 @@ describe("PrismaUtilisateursQuery", () => {
       createIntegrationTest(async () => {
         // Given
         const territoireReg = await fixtures.territoire({
-          code: "REG-99",
+          code: "REG-990",
           nom: "Région Test",
           maille: "REG",
         });
 
         await fixtures.territoire({
-          code: "DEPT-98",
+          code: "DEPT-991",
           nom: "Département Test 1",
           maille: "DEPT",
           code_parent: territoireReg.code,
         });
 
         await fixtures.territoire({
-          code: "DEPT-97",
+          code: "DEPT-992",
           nom: "Département Test 2",
           maille: "DEPT",
           code_parent: territoireReg.code,
@@ -101,19 +101,19 @@ describe("PrismaUtilisateursQuery", () => {
             profilCode: "COORDINATEUR_REGION",
             territoires: [
               {
-                code: "REG-99",
+                code: "REG-990",
                 nom: "Région Test",
                 maille: "REG",
                 enfants: [
                   {
-                    code: "DEPT-97",
-                    nom: "Département Test 2",
+                    code: "DEPT-991",
+                    nom: "Département Test 1",
                     maille: "DEPT",
                     enfants: [],
                   },
                   {
-                    code: "DEPT-98",
-                    nom: "Département Test 1",
+                    code: "DEPT-992",
+                    nom: "Département Test 2",
                     maille: "DEPT",
                     enfants: [],
                   },
@@ -130,20 +130,20 @@ describe("PrismaUtilisateursQuery", () => {
       createIntegrationTest(async () => {
         // Given
         const territoireReg = await fixtures.territoire({
-          code: "REG-88",
+          code: "REG-880",
           nom: "Région Test Dedup",
           maille: "REG",
         });
 
         const territoireDept87 = await fixtures.territoire({
-          code: "DEPT-87",
+          code: "DEPT-881",
           nom: "Département Test 1",
           maille: "DEPT",
           code_parent: territoireReg.code,
         });
 
         const territoireDept86 = await fixtures.territoire({
-          code: "DEPT-86",
+          code: "DEPT-882",
           nom: "Département Test 2",
           maille: "DEPT",
           code_parent: territoireReg.code,
@@ -175,19 +175,19 @@ describe("PrismaUtilisateursQuery", () => {
             profilCode: "COORDINATEUR_REGION",
             territoires: [
               {
-                code: "REG-88",
+                code: "REG-880",
                 nom: "Région Test Dedup",
                 maille: "REG",
                 enfants: [
                   {
-                    code: "DEPT-86",
-                    nom: "Département Test 2",
+                    code: "DEPT-881",
+                    nom: "Département Test 1",
                     maille: "DEPT",
                     enfants: [],
                   },
                   {
-                    code: "DEPT-87",
-                    nom: "Département Test 1",
+                    code: "DEPT-882",
+                    nom: "Département Test 2",
                     maille: "DEPT",
                     enfants: [],
                   },

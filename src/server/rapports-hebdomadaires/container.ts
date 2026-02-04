@@ -54,7 +54,9 @@ export const getRapportsHebdomadairesContainer = (
     .register({
       activiteComptesQuery: asClass(PrismaActiviteComptesQuery),
       utilisateursQuery: asClass(PrismaUtilisateursQuery),
-      recupererChantiersQuery: asClass(RecupererChantiersApplicablesParTerritoiresQuery),
+      recupererChantiersQuery: asClass(
+        RecupererChantiersApplicablesParTerritoiresQuery,
+      ),
       evenementsVAQuery: asClass(RecupererEvenementsVAParPeriodeQuery),
       activiteComptesGateway: asClass(GestionUtilisateurActiviteComptesGateway),
       coordinateurGateway: asClass(GestionUtilisateurCoordinateurGateway),
