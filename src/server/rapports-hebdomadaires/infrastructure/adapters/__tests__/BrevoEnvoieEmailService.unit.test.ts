@@ -634,7 +634,7 @@ describe("createBrevoParams", () => {
       ).toBe("15/01/2025");
     });
 
-    it("formate date_modification avec l'heure sans secondes", () => {
+    it("formate date_modification sans l'heure", () => {
       // Given
       const rapport = createRapportHebdomadaire({
         chantiers: [
@@ -659,7 +659,7 @@ describe("createBrevoParams", () => {
       // Then
       expect(
         result.chantiers[0].indicateurs[0].territoires[0].date_modification,
-      ).toBe("15/01/2025 15:30");
+      ).toBe("15/01/2025");
     });
 
     it("mappe id et nom du chantier correctement", () => {

@@ -2,6 +2,7 @@ import { EmailManager } from "@/server/infrastructure/email-manager";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { EnvoieEmailService } from "@/server/rapports-hebdomadaires/domain/ports/EnvoieEmailService";
 import { RapportHebdomadaire } from "@/server/rapports-hebdomadaires/domain/RapportHebdomadaire";
+import { formaterDateParis } from "./formaterDateParis";
 
 const TEMPLATE_ID_RAPPORT_COORDINATEURS = 60;
 
@@ -63,10 +64,7 @@ export const createBrevoParams = ({
       id: indic.id,
       nom: indic.nom,
       territoires: indic.territoires.map((territoire) => ({
-        nom: formatTerritoireNom({
-          code: territoire.code,
-          nom: territoire.nom,
-        }),
+        nom: formatTerritoireNom(territoire),
         type_indicateur: "va",
         valeur:
           territoire.valeurAvancement !== null
@@ -74,19 +72,8 @@ export const createBrevoParams = ({
               ? territoire.valeurAvancement.toString()
               : territoire.valeurAvancement.toFixed(1)
             : "-",
-        date_indicateur: new Date(territoire.dateValeur).toLocaleDateString(
-          "fr-FR",
-        ),
-        date_modification: new Date(territoire.dateEvenement).toLocaleString(
-          "fr-FR",
-          {
-            day: "2-digit",
-            month: "2-digit",
-            year: "numeric",
-            hour: "2-digit",
-            minute: "2-digit",
-          },
-        ),
+        date_indicateur: formaterDateParis(territoire.dateValeur),
+        date_modification: formaterDateParis(territoire.dateEvenement),
       })),
     })),
   }));
