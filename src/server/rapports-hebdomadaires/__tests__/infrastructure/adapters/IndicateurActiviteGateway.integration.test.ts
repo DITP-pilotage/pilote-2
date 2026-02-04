@@ -37,7 +37,7 @@ describe("IndicateurActiviteGateway", () => {
       const dateFin = new Date("2024-01-31T23:59:59Z");
 
       const utilisateur = await fixtures.utilisateur();
-      const chantier = await fixtures.chantier();
+      const chantier = await fixtures.chantierIdentite();
       const indicateurIdentite = await fixtures.indicateurIdentite({
         id: "IND-001",
         nom: "Indicateur Test",
@@ -145,7 +145,7 @@ describe("IndicateurActiviteGateway", () => {
       const dateDebut = new Date("2024-01-01T00:00:00Z");
       const dateFin = new Date("2024-01-31T23:59:59Z");
 
-      const chantier = await fixtures.chantier();
+      const chantier = await fixtures.chantierIdentite();
       const indicateurIdentite = await fixtures.indicateurIdentite({
         id: "IND-002",
         nom: "Indicateur Tri",
@@ -248,7 +248,7 @@ describe("IndicateurActiviteGateway", () => {
       const dateDebut = new Date("2024-01-01T00:00:00Z");
       const dateFin = new Date("2024-01-31T23:59:59Z");
 
-      const chantier = await fixtures.chantier();
+      const chantier = await fixtures.chantierIdentite();
       const indicateurIdentite = await fixtures.indicateurIdentite({
         id: "IND-003",
         nom: "Indicateur Null",

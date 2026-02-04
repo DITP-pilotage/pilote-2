@@ -69,9 +69,11 @@ describe("RecupererMesuresIndicateurParPeriodeQuery", () => {
     createIntegrationTest(async () => {
       // Given
       const dateImport = new Date("2024-01-15T10:00:00Z");
+      const chantier = await fixtures.chantierIdentite();
       const indicateurIdentite = await fixtures.indicateurIdentite({
         id: "IND-001",
         nom: "Indicateur Test",
+        chantier_id: chantier.id,
       });
       const territoire = await fixtures.territoire({
         code: "DEPT-12",
@@ -117,9 +119,11 @@ describe("RecupererMesuresIndicateurParPeriodeQuery", () => {
     createIntegrationTest(async () => {
       // Given
       const dateImport = new Date("2024-01-15T10:00:00Z");
+      const chantier = await fixtures.chantierIdentite();
       const indicateurIdentite = await fixtures.indicateurIdentite({
         id: "IND-002",
         nom: "Indicateur Cible",
+        chantier_id: chantier.id,
       });
       const territoire = await fixtures.territoire({
         code: "REG-93",
@@ -165,9 +169,11 @@ describe("RecupererMesuresIndicateurParPeriodeQuery", () => {
     createIntegrationTest(async () => {
       // Given
       const dateImport = new Date("2024-01-15T10:00:00Z");
+      const chantier = await fixtures.chantierIdentite();
       const indicateurIdentite = await fixtures.indicateurIdentite({
         id: "IND-003",
         nom: "Indicateur Multiple",
+        chantier_id: chantier.id,
       });
       const territoire = await fixtures.territoire({
         code: "NAT-FR",
@@ -231,9 +237,11 @@ describe("RecupererMesuresIndicateurParPeriodeQuery", () => {
     "exclut les mesures hors période",
     createIntegrationTest(async () => {
       // Given
+      const chantier = await fixtures.chantierIdentite();
       const indicateurIdentite = await fixtures.indicateurIdentite({
         id: "IND-004",
         nom: "Indicateur Filtré",
+        chantier_id: chantier.id,
       });
       const territoire = await fixtures.territoire({
         code: "DEPT-75",
@@ -275,9 +283,11 @@ describe("RecupererMesuresIndicateurParPeriodeQuery", () => {
     createIntegrationTest(async () => {
       // Given
       const dateImport = new Date("2024-01-15T10:00:00Z");
+      const chantier = await fixtures.chantierIdentite();
       const indicateurIdentite = await fixtures.indicateurIdentite({
         id: "IND-005",
         nom: "Indicateur Null",
+        chantier_id: chantier.id,
       });
       const territoire = await fixtures.territoire({
         code: "DEPT-13",

@@ -64,7 +64,8 @@ describe("createBrevoParams", () => {
   ): SectionTerritoire => ({
     code: "DEPT-75",
     nom: "Paris",
-    valeurAvancement: 50,
+    typeValeur: "VALEUR_AVANCEMENT",
+    valeur: 50,
     dateValeur: "2025-01-15T10:00:00Z",
     dateEvenement: "2025-01-15T14:30:00Z",
     ...overrides,
@@ -676,7 +677,7 @@ describe("createBrevoParams", () => {
               createSectionIndicateur({
                 territoires: [
                   createSectionTerritoire({
-                    valeurAvancement: 42,
+                    valeur: 42,
                   }),
                 ],
               }),
@@ -704,7 +705,7 @@ describe("createBrevoParams", () => {
               createSectionIndicateur({
                 territoires: [
                   createSectionTerritoire({
-                    valeurAvancement: 42.567,
+                    valeur: 42.567,
                   }),
                 ],
               }),
@@ -732,7 +733,7 @@ describe("createBrevoParams", () => {
               createSectionIndicateur({
                 territoires: [
                   createSectionTerritoire({
-                    valeurAvancement: null,
+                    valeur: null,
                   }),
                 ],
               }),
@@ -971,12 +972,12 @@ describe("createBrevoParams", () => {
                   createSectionTerritoire({
                     code: "DEPT-75",
                     nom: "Paris",
-                    valeurAvancement: 10,
+                    valeur: 10,
                   }),
                   createSectionTerritoire({
                     code: "DEPT-92",
                     nom: "Hauts-de-Seine",
-                    valeurAvancement: 20.5,
+                    valeur: 20.5,
                   }),
                 ],
               }),
@@ -987,7 +988,7 @@ describe("createBrevoParams", () => {
                   createSectionTerritoire({
                     code: "DEPT-75",
                     nom: "Paris",
-                    valeurAvancement: null,
+                    valeur: null,
                   }),
                 ],
               }),
@@ -1004,7 +1005,7 @@ describe("createBrevoParams", () => {
                   createSectionTerritoire({
                     code: "DEPT-93",
                     nom: "Seine-Saint-Denis",
-                    valeurAvancement: 100,
+                    valeur: 100,
                   }),
                 ],
               }),

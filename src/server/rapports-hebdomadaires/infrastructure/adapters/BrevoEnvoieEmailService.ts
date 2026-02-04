@@ -72,8 +72,13 @@ export const createBrevoParams = ({
       nom: indic.nom,
       territoires: indic.territoires.map((territoire) => ({
         nom: formatTerritoireNom(territoire),
-        type_indicateur: "va",
-        valeur: formatValeurAvancement(territoire.valeurAvancement),
+        type_indicateur:
+          territoire.typeValeur === "VALEUR_AVANCEMENT"
+            ? "va"
+            : territoire.typeValeur === "VALEUR_INITIALE"
+              ? "vi"
+              : "vc",
+        valeur: formatValeurAvancement(territoire.valeur),
         date_indicateur: PiloteDateFormatter.isoDateFranceMetropolitaine(
           territoire.dateValeur,
         ),

@@ -11,8 +11,9 @@ import { GestionUtilisateurActiviteComptesGateway } from "@/server/rapports-hebd
 import { GestionUtilisateurCoordinateurGateway } from "@/server/rapports-hebdomadaires/infrastructure/adapters/GestionUtilisateurCoordinateurGateway";
 import { PrismaRapportRepository } from "@/server/rapports-hebdomadaires/infrastructure/adapters/PrismaRapportRepository";
 import { ChantiersChantierGateway } from "@/server/rapports-hebdomadaires/infrastructure/adapters/ChantiersChantierGateway";
-import { IndicateurActiviteVAGateway } from "@/server/rapports-hebdomadaires/infrastructure/adapters/IndicateurActiviteVAGateway";
 import { RecupererChantiersApplicablesParTerritoiresQuery } from "@/server/chantiers/infrastructure/queries/RecupererChantiersApplicablesParTerritoiresQuery";
+import { IndicateurActiviteGateway } from "@/server/rapports-hebdomadaires/infrastructure/adapters/IndicateurActiviteVAGateway";
+import { RecupererMesuresIndicateurParPeriodeQuery } from "@/server/chantiers/infrastructure/queries/RecupererMesuresIndicateurParPeriodeQuery";
 
 describe("ProduireRapportsHebdomadairesUseCase", () => {
   let useCase: ProduireRapportsHebdomadairesUseCase;
@@ -44,8 +45,13 @@ describe("ProduireRapportsHebdomadairesUseCase", () => {
     const evenementsVAQuery = new RecupererEvenementsVAParPeriodeQuery({
       prisma: prismaPilote,
     });
-    const activiteVAGateway = new IndicateurActiviteVAGateway({
+    const mesuresIndicateurQuery =
+      new RecupererMesuresIndicateurParPeriodeQuery({
+        prisma: prismaPilote,
+      });
+    const activiteIndicateurGateway = new IndicateurActiviteGateway({
       evenementsVAQuery: evenementsVAQuery,
+      mesuresIndicateurQuery,
     });
 
     useCase = new ProduireRapportsHebdomadairesUseCase({
@@ -53,7 +59,7 @@ describe("ProduireRapportsHebdomadairesUseCase", () => {
       coordinateurGateway,
       rapportRepository,
       chantierGateway,
-      activiteVAGateway,
+      activiteIndicateurGateway,
     });
   });
 
