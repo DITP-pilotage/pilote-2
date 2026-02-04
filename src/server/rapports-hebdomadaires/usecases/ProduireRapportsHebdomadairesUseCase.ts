@@ -9,7 +9,7 @@ import {
   ChantierAvecIndicateurs,
   ChantierGateway,
 } from "@/server/rapports-hebdomadaires/domain/ports/ChantierGateway";
-import { ActiviteVAGateway } from "@/server/rapports-hebdomadaires/domain/ports/ActiviteVAGateway";
+import { ActiviteIndicateurGateway } from "@/server/rapports-hebdomadaires/domain/ports/ActiviteVAGateway";
 import { calculerPeriodeDernierLundiNeufHeures } from "@/server/rapports-hebdomadaires/domain/PeriodeRapport";
 import {
   creerRapportHebdomadaire,
@@ -53,7 +53,7 @@ export class ProduireRapportsHebdomadairesUseCase {
       coordinateurGateway: CoordinateurGateway;
       rapportRepository: RapportRepository;
       chantierGateway: ChantierGateway;
-      activiteVAGateway: ActiviteVAGateway;
+      activiteIndicateurGateway: ActiviteIndicateurGateway;
     },
   ) {}
 
@@ -185,7 +185,8 @@ export class ProduireRapportsHebdomadairesUseCase {
       chantierData.indicateurs.get(indicateurInfo.id)!.territoires.push({
         code: activite.territoire.code,
         nom: activite.territoire.nom,
-        valeurAvancement: activite.valeurAvancement,
+        typeValeur: activite.typeValeur,
+        valeur: activite.valeur,
         dateValeur: activite.dateValeur.toISOString(),
         dateEvenement: activite.dateEvenement.toISOString(),
       });
@@ -345,7 +346,7 @@ export class ProduireRapportsHebdomadairesUseCase {
     );
 
     const evenementsDansPeriode =
-      await this.deps.activiteVAGateway.recupererEvenementsDansPeriode({
+      await this.deps.activiteIndicateurGateway.recupererEvenementsDansPeriode({
         indicateurIds: coordIndicateurIds,
         territoireCodes: coordTerritoireCodes,
         periode: params.periode,

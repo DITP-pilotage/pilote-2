@@ -1,4 +1,9 @@
-export type EvenementVA = {
+export type TypeValeurIndicateur =
+  | "VALEUR_AVANCEMENT"
+  | "VALEUR_INITIALE"
+  | "VALEUR_CIBLE";
+
+export type EvenementIndicateur = {
   id: string;
   indicateur: {
     id: string;
@@ -8,6 +13,7 @@ export type EvenementVA = {
     code: string;
     nom: string;
   };
+  typeValeur: TypeValeurIndicateur;
   dateValeur: Date;
   valeur: number | null;
   dateCreation: Date;
@@ -23,7 +29,8 @@ export type ActiviteIndicateur = {
     code: string;
     nom: string;
   };
-  valeurAvancement: number | null;
+  typeValeur: TypeValeurIndicateur;
+  valeur: number | null;
   dateValeur: Date;
   dateEvenement: Date;
 };
@@ -31,7 +38,8 @@ export type ActiviteIndicateur = {
 export type SectionTerritoire = {
   code: string;
   nom: string;
-  valeurAvancement: number | null;
+  typeValeur: TypeValeurIndicateur;
+  valeur: number | null;
   dateValeur: string;
   dateEvenement: string;
 };
@@ -49,12 +57,12 @@ export type SectionChantier = {
 };
 
 export function grouperEvenements(
-  evenements: EvenementVA[],
+  evenements: EvenementIndicateur[],
 ): ActiviteIndicateur[] {
-  const grouped = new Map<string, EvenementVA[]>();
+  const grouped = new Map<string, EvenementIndicateur[]>();
 
   for (const evenement of evenements) {
-    const key = `${evenement.indicateur.id}|${evenement.territoire.code}|${evenement.dateValeur.toISOString()}`;
+    const key = `${evenement.indicateur.id}|${evenement.territoire.code}|${evenement.typeValeur}|${evenement.dateValeur.toISOString()}`;
     if (!grouped.has(key)) {
       grouped.set(key, []);
     }
@@ -81,11 +89,18 @@ export function grouperEvenements(
         code: dernierEvenement.territoire.code,
         nom: dernierEvenement.territoire.nom,
       },
-      valeurAvancement: dernierEvenement.valeur,
+      typeValeur: dernierEvenement.typeValeur,
+      valeur: dernierEvenement.valeur,
       dateValeur: dernierEvenement.dateValeur,
       dateEvenement: dernierEvenement.dateCreation,
     });
   }
 
-  return resultats;
+  return resultats.sort((a, b) => {
+    const territoireCompare = a.territoire.code.localeCompare(
+      b.territoire.code,
+    );
+    if (territoireCompare !== 0) return territoireCompare;
+    return a.dateValeur.getTime() - b.dateValeur.getTime();
+  });
 }
