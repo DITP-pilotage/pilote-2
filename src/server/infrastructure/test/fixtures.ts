@@ -1,6 +1,7 @@
 import { $Enums, Prisma } from "@prisma/client";
 import { randomUUID } from "node:crypto";
 import { getPrisma } from "@/server/db/PrismaTransaction";
+import { ContenuRapport } from "@/server/rapports-hebdomadaires/infrastructure/adapters/PrismaRapportRepository";
 
 /**
  * Test fixtures - Simple composable building blocks for integration tests.
@@ -419,6 +420,7 @@ export const fixtures = {
         date_fin_periode: new Date(),
         contenu_rapport: {
           coordinateur: {
+            id: coordinateur_id,
             email: "coordinateur@example.com",
             nom: "Coordinateur",
             prenom: "Test",
@@ -432,15 +434,14 @@ export const fixtures = {
               },
             ],
             chantiers: [],
+            perimetres: [],
           },
           sectionActiviteComptes: {
             comptesCrees: [],
             comptesDesactives: [],
           },
-          sectionActiviteChantiersVA: {
-            chantiers: [],
-          },
-        },
+          sectionActiviteChantiers: [],
+        } satisfies ContenuRapport,
         statut_envoi: "CREE",
         ...overrides,
       },
