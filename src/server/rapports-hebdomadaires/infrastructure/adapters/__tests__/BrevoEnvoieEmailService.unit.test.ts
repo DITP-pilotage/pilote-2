@@ -119,6 +119,7 @@ describe("createBrevoParams", () => {
           nom: "Bernard",
           territoires: [
             createTerritoireCoordinateur({
+              code: "REG-11",
               nom: "Île-de-France",
             }),
           ],
@@ -135,14 +136,41 @@ describe("createBrevoParams", () => {
       expect(result.territoire).toBe("Île-de-France");
     });
 
+    it("formate le territoire du coordinateur avec le code département", () => {
+      // Given
+      const rapport = createRapportHebdomadaire({
+        coordinateur: createCoordinateur({
+          territoires: [
+            createTerritoireCoordinateur({
+              code: "DEPT-75",
+              nom: "Paris",
+            }),
+          ],
+        }),
+      });
+      const profilsMap = new Map<string, string>();
+
+      // When
+      const result = createBrevoParams({ profilsMap, rapport });
+
+      // Then
+      expect(result.territoire).toBe("75 - Paris");
+    });
+
     it("joint plusieurs territoires avec une virgule et un espace", () => {
       // Given
       const rapport = createRapportHebdomadaire({
         coordinateur: createCoordinateur({
           territoires: [
-            createTerritoireCoordinateur({ nom: "Île-de-France" }),
-            createTerritoireCoordinateur({ nom: "Hauts-de-France" }),
-            createTerritoireCoordinateur({ nom: "Normandie" }),
+            createTerritoireCoordinateur({
+              code: "REG-11",
+              nom: "Île-de-France",
+            }),
+            createTerritoireCoordinateur({
+              code: "REG-32",
+              nom: "Hauts-de-France",
+            }),
+            createTerritoireCoordinateur({ code: "REG-28", nom: "Normandie" }),
           ],
         }),
       });
@@ -154,6 +182,34 @@ describe("createBrevoParams", () => {
       // Then
       expect(result.territoire).toBe(
         "Île-de-France, Hauts-de-France, Normandie",
+      );
+    });
+
+    it("joint plusieurs territoires mixtes (départements et régions) avec formatage approprié", () => {
+      // Given
+      const rapport = createRapportHebdomadaire({
+        coordinateur: createCoordinateur({
+          territoires: [
+            createTerritoireCoordinateur({ code: "DEPT-75", nom: "Paris" }),
+            createTerritoireCoordinateur({
+              code: "REG-11",
+              nom: "Île-de-France",
+            }),
+            createTerritoireCoordinateur({
+              code: "DEPT-92",
+              nom: "Hauts-de-Seine",
+            }),
+          ],
+        }),
+      });
+      const profilsMap = new Map<string, string>();
+
+      // When
+      const result = createBrevoParams({ profilsMap, rapport });
+
+      // Then
+      expect(result.territoire).toBe(
+        "75 - Paris, Île-de-France, 92 - Hauts-de-Seine",
       );
     });
   });
@@ -406,6 +462,7 @@ describe("createBrevoParams", () => {
               profil: "PREFET_REGION",
               territoires: [
                 createTerritoireCompte({
+                  code: "REG-11",
                   nom: "Île-de-France",
                 }),
               ],
@@ -433,6 +490,32 @@ describe("createBrevoParams", () => {
       ]);
     });
 
+    it("formate le territoire avec le code département pour comptesCrees", () => {
+      // Given
+      const rapport = createRapportHebdomadaire({
+        sectionActiviteComptes: {
+          comptesCrees: [
+            createCompteActivite({
+              territoires: [
+                createTerritoireCompte({
+                  code: "DEPT-75",
+                  nom: "Paris",
+                }),
+              ],
+            }),
+          ],
+          comptesDesactives: [],
+        },
+      });
+      const profilsMap = new Map<string, string>();
+
+      // When
+      const result = createBrevoParams({ profilsMap, rapport });
+
+      // Then
+      expect(result.comptesCrees[0].territoire).toBe("75 - Paris");
+    });
+
     it("mappe tous les champs correctement pour comptesDesactives", () => {
       // Given
       const rapport = createRapportHebdomadaire({
@@ -446,6 +529,7 @@ describe("createBrevoParams", () => {
               profil: "COORDINATEUR_DEPARTEMENT",
               territoires: [
                 createTerritoireCompte({
+                  code: "DEPT-75",
                   nom: "Paris",
                 }),
               ],
@@ -467,9 +551,37 @@ describe("createBrevoParams", () => {
           prenom: "Bob",
           email: "bob.martin@example.com",
           profil: "Coordinateur de département",
-          territoire: "Paris",
+          territoire: "75 - Paris",
         },
       ]);
+    });
+
+    it("formate le territoire avec le code département pour comptesDesactives", () => {
+      // Given
+      const rapport = createRapportHebdomadaire({
+        sectionActiviteComptes: {
+          comptesCrees: [],
+          comptesDesactives: [
+            createCompteActivite({
+              territoires: [
+                createTerritoireCompte({
+                  code: "DEPT-92",
+                  nom: "Hauts-de-Seine",
+                }),
+              ],
+            }),
+          ],
+        },
+      });
+      const profilsMap = new Map<string, string>();
+
+      // When
+      const result = createBrevoParams({ profilsMap, rapport });
+
+      // Then
+      expect(result.comptesDesactives[0].territoire).toBe(
+        "92 - Hauts-de-Seine",
+      );
     });
 
     it("joint plusieurs territoires avec une virgule et un espace", () => {
@@ -479,9 +591,15 @@ describe("createBrevoParams", () => {
           comptesCrees: [
             createCompteActivite({
               territoires: [
-                createTerritoireCompte({ nom: "Paris" }),
-                createTerritoireCompte({ nom: "Hauts-de-Seine" }),
-                createTerritoireCompte({ nom: "Val-de-Marne" }),
+                createTerritoireCompte({ code: "DEPT-75", nom: "Paris" }),
+                createTerritoireCompte({
+                  code: "DEPT-92",
+                  nom: "Hauts-de-Seine",
+                }),
+                createTerritoireCompte({
+                  code: "DEPT-94",
+                  nom: "Val-de-Marne",
+                }),
               ],
             }),
           ],
@@ -495,7 +613,36 @@ describe("createBrevoParams", () => {
 
       // Then
       expect(result.comptesCrees[0].territoire).toBe(
-        "Paris, Hauts-de-Seine, Val-de-Marne",
+        "75 - Paris, 92 - Hauts-de-Seine, 94 - Val-de-Marne",
+      );
+    });
+
+    it("joint plusieurs territoires mixtes avec formatage approprié pour comptesCrees", () => {
+      // Given
+      const rapport = createRapportHebdomadaire({
+        sectionActiviteComptes: {
+          comptesCrees: [
+            createCompteActivite({
+              territoires: [
+                createTerritoireCompte({ code: "DEPT-75", nom: "Paris" }),
+                createTerritoireCompte({
+                  code: "REG-11",
+                  nom: "Île-de-France",
+                }),
+              ],
+            }),
+          ],
+          comptesDesactives: [],
+        },
+      });
+      const profilsMap = new Map<string, string>();
+
+      // When
+      const result = createBrevoParams({ profilsMap, rapport });
+
+      // Then
+      expect(result.comptesCrees[0].territoire).toBe(
+        "75 - Paris, Île-de-France",
       );
     });
 

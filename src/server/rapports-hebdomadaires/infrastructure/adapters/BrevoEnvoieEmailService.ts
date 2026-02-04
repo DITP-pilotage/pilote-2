@@ -23,6 +23,13 @@ export const createBrevoParams = ({
     return territoire.nom;
   };
 
+  const formatValeurAvancement = (valeur: number | null): string => {
+    if (valeur === null) {
+      return "-";
+    }
+    return Number.isInteger(valeur) ? valeur.toString() : valeur.toFixed(1);
+  };
+
   const afficherComptesCrees =
     rapport.sectionActiviteComptes.comptesCrees.length > 0;
   const afficherComptesDesactives =
@@ -38,7 +45,7 @@ export const createBrevoParams = ({
       profil: mapProfilToLabel(compte.profil),
       territoire:
         compte.territoires.length > 0
-          ? compte.territoires.map((t) => t.nom).join(", ")
+          ? compte.territoires.map(formatTerritoireNom).join(", ")
           : undefined,
     }),
   );
@@ -51,7 +58,7 @@ export const createBrevoParams = ({
       profil: mapProfilToLabel(compte.profil),
       territoire:
         compte.territoires.length > 0
-          ? compte.territoires.map((t) => t.nom).join(", ")
+          ? compte.territoires.map(formatTerritoireNom).join(", ")
           : undefined,
     }));
 
@@ -66,14 +73,13 @@ export const createBrevoParams = ({
       territoires: indic.territoires.map((territoire) => ({
         nom: formatTerritoireNom(territoire),
         type_indicateur: "va",
-        valeur:
-          territoire.valeurAvancement !== null
-            ? Number.isInteger(territoire.valeurAvancement)
-              ? territoire.valeurAvancement.toString()
-              : territoire.valeurAvancement.toFixed(1)
-            : "-",
-        date_indicateur: PiloteDateFormatter.isoDateFranceMetropolitaine(territoire.dateValeur),
-        date_modification: PiloteDateFormatter.isoDateFranceMetropolitaine(territoire.dateEvenement),
+        valeur: formatValeurAvancement(territoire.valeurAvancement),
+        date_indicateur: PiloteDateFormatter.isoDateFranceMetropolitaine(
+          territoire.dateValeur,
+        ),
+        date_modification: PiloteDateFormatter.isoDateFranceMetropolitaine(
+          territoire.dateEvenement,
+        ),
       })),
     })),
   }));
@@ -82,7 +88,7 @@ export const createBrevoParams = ({
     prenom: rapport.coordinateur.prenom,
     nom: rapport.coordinateur.nom,
     territoire: rapport.coordinateur.territoires
-      .map((territoire) => territoire.nom)
+      .map(formatTerritoireNom)
       .join(", "),
     afficherComptesCrees,
     afficherSectionComptes,
