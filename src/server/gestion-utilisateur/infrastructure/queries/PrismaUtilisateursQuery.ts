@@ -62,8 +62,10 @@ export class PrismaUtilisateursQuery {
               nom: true,
               maille: true,
             },
+            orderBy: { code: "asc" },
           },
         },
+        orderBy: { code: "asc" },
       });
 
       if (territoires.length === 0) continue;
