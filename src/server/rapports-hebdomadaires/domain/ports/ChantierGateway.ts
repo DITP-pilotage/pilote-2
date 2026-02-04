@@ -10,9 +10,7 @@ export type ChantierAvecIndicateurs = {
 };
 
 export interface ChantierGateway {
-  recupererIndicateursParChantiers(
-    chantierIds: string[],
-  ): Promise<Record<string, ChantierAvecIndicateurs>>;
-
-  recupererChantierIdsParPerimetres(perimetreIds: string[]): Promise<string[]>;
+  recupererChantiersAccessibles(params: {
+    territoireCodes: string[];
+  }): Promise<Record<string, ChantierAvecIndicateurs>>;
 }

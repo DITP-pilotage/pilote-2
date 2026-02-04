@@ -4,8 +4,7 @@ import { fixtures } from "@/server/infrastructure/test/fixtures";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { PrismaActiviteComptesQuery } from "@/server/gestion-utilisateur/infrastructure/queries/PrismaActiviteComptesQuery";
 import { PrismaUtilisateursQuery } from "@/server/gestion-utilisateur/infrastructure/queries/PrismaUtilisateursQuery";
-import { RecupererIndicateursParChantiersQuery } from "@/server/chantiers/infrastructure/queries/RecupererIndicateursParChantiersQuery";
-import { RecupererChantierIdsParPerimetresQuery } from "@/server/chantiers/infrastructure/queries/RecupererChantierIdsParPerimetresQuery";
+import { RecupererChantiersParTerritoiresQuery } from "@/server/chantiers/infrastructure/queries/RecupererChantiersParTerritoiresQuery";
 import { RecupererEvenementsVAParPeriodeQuery } from "@/server/indicateur-territoire-valeur-evenement/infrastructure/queries/RecupererEvenementsVAParPeriodeQuery";
 import { getPrisma } from "@/server/db/PrismaTransaction";
 import { ProduireRapportsHebdomadairesUseCase } from "@/server/rapports-hebdomadaires/usecases/ProduireRapportsHebdomadairesUseCase";
@@ -35,14 +34,11 @@ describe("ProduireRapportsHebdomadairesUseCase", () => {
     const rapportRepository = new PrismaRapportRepository({
       prisma: prismaPilote,
     });
-    const recupererIndicateursQuery = new RecupererIndicateursParChantiersQuery(
-      { prisma: prismaPilote },
-    );
-    const recupererChantierIdsParPerimetresQuery =
-      new RecupererChantierIdsParPerimetresQuery({ prisma: prismaPilote });
+    const recupererChantiersQuery = new RecupererChantiersParTerritoiresQuery({
+      prisma: prismaPilote,
+    });
     const chantierGateway = new ChantiersChantierGateway({
-      recupererIndicateursQuery,
-      recupererChantierIdsParPerimetresQuery,
+      recupererChantiersQuery,
     });
     const evenementsVAQuery = new RecupererEvenementsVAParPeriodeQuery({
       prisma: prismaPilote,
@@ -542,7 +538,7 @@ describe("ProduireRapportsHebdomadairesUseCase", () => {
   );
 
   it(
-    "inclut les chantiers accessibles via les périmètres",
+    "exclut les chantiers où est_territorialise = false",
     createIntegrationTest(async () => {
       const territoire = await fixtures.territoire({
         code: randomUUID(),
@@ -551,25 +547,28 @@ describe("ProduireRapportsHebdomadairesUseCase", () => {
       });
 
       const chantier = await fixtures.chantierIdentite({
-        nom: "Chantier via Périmètre",
+        nom: "Chantier non territorialisé",
         statut: "PUBLIE",
-        perimetre_ids: ["PER-001"],
+        est_territorialise: false,
       });
 
       await fixtures.chantierTerritoire({
         id: chantier.id,
         territoire_code: territoire.code,
+        est_applicable: true,
       });
 
       const indicateur = await fixtures.indicateurIdentite({
         chantier_id: chantier.id,
         nom: "Indicateur Test",
+        statut: "PUBLIE",
       });
 
       await fixtures.indicateurTerritoire({
         id: indicateur.id,
         territoire_code: territoire.code,
         chantier_id: chantier.id,
+        est_applicable: true,
       });
 
       const coordinateur = await fixtures.utilisateur({
@@ -578,8 +577,6 @@ describe("ProduireRapportsHebdomadairesUseCase", () => {
       await fixtures.habilitation({
         utilisateurId: coordinateur.id,
         territoires: [territoire.code],
-        perimetres: ["PER-001"],
-        chantiers: [],
       });
 
       const auteur = await fixtures.utilisateur();
@@ -594,39 +591,13 @@ describe("ProduireRapportsHebdomadairesUseCase", () => {
 
       const result = await useCase.run();
 
-      expect(result.rapportsCrees).toBe(1);
-
-      const prisma = getPrisma();
-      const rapports = await prisma.rapport_hebdomadaire_coordinateur.findMany({
-        where: { coordinateur_id: coordinateur.id },
-      });
-
-      expect(rapports).toEqual([
-        expect.objectContaining({
-          contenu_rapport: expect.objectContaining({
-            sectionActiviteChantiers: [
-              expect.objectContaining({
-                nom: "Chantier via Périmètre",
-                indicateurs: [
-                  expect.objectContaining({
-                    nom: "Indicateur Test",
-                    territoires: [
-                      expect.objectContaining({
-                        valeurAvancement: 85,
-                      }),
-                    ],
-                  }),
-                ],
-              }),
-            ],
-          }),
-        }),
-      ]);
+      expect(result.coordinateursSansActivite).toBe(1);
+      expect(result.rapportsCrees).toBe(0);
     }),
   );
 
   it(
-    "combine les chantiers directs et ceux accessibles via périmètres",
+    "exclut les chantiers où est_applicable = false",
     createIntegrationTest(async () => {
       const territoire = await fixtures.territoire({
         code: randomUUID(),
@@ -634,47 +605,29 @@ describe("ProduireRapportsHebdomadairesUseCase", () => {
         maille: "DEPT",
       });
 
-      const chantierDirect = await fixtures.chantierIdentite({
-        nom: "Chantier Direct",
+      const chantier = await fixtures.chantierIdentite({
+        nom: "Chantier non applicable",
         statut: "PUBLIE",
+        est_territorialise: true,
       });
 
       await fixtures.chantierTerritoire({
-        id: chantierDirect.id,
+        id: chantier.id,
         territoire_code: territoire.code,
+        est_applicable: false,
       });
 
-      const indicateurDirect = await fixtures.indicateurIdentite({
-        chantier_id: chantierDirect.id,
-        nom: "Indicateur Direct",
-      });
-
-      await fixtures.indicateurTerritoire({
-        id: indicateurDirect.id,
-        territoire_code: territoire.code,
-        chantier_id: chantierDirect.id,
-      });
-
-      const chantierPerimetre = await fixtures.chantierIdentite({
-        nom: "Chantier Périmètre",
+      const indicateur = await fixtures.indicateurIdentite({
+        chantier_id: chantier.id,
+        nom: "Indicateur Test",
         statut: "PUBLIE",
-        perimetre_ids: ["PER-002"],
-      });
-
-      await fixtures.chantierTerritoire({
-        id: chantierPerimetre.id,
-        territoire_code: territoire.code,
-      });
-
-      const indicateurPerimetre = await fixtures.indicateurIdentite({
-        chantier_id: chantierPerimetre.id,
-        nom: "Indicateur Périmètre",
       });
 
       await fixtures.indicateurTerritoire({
-        id: indicateurPerimetre.id,
+        id: indicateur.id,
         territoire_code: territoire.code,
-        chantier_id: chantierPerimetre.id,
+        chantier_id: chantier.id,
+        est_applicable: true,
       });
 
       const coordinateur = await fixtures.utilisateur({
@@ -683,52 +636,81 @@ describe("ProduireRapportsHebdomadairesUseCase", () => {
       await fixtures.habilitation({
         utilisateurId: coordinateur.id,
         territoires: [territoire.code],
-        perimetres: ["PER-002"],
-        chantiers: [chantierDirect.id],
       });
 
       const auteur = await fixtures.utilisateur();
       await fixtures.indicateurTerritoireValeurEvenement({
-        indic_id: indicateurDirect.id,
+        indic_id: indicateur.id,
         territoire_code: territoire.code,
         id_auteur_modification: auteur.id,
         type_evenement: "VALEUR_MODIFIEE",
-        valeur: 90,
-        date_creation: new Date(Date.now() - 1 * 60 * 60 * 1000),
-      });
-
-      await fixtures.indicateurTerritoireValeurEvenement({
-        indic_id: indicateurPerimetre.id,
-        territoire_code: territoire.code,
-        id_auteur_modification: auteur.id,
-        type_evenement: "VALEUR_MODIFIEE",
-        valeur: 95,
+        valeur: 85,
         date_creation: new Date(Date.now() - 1 * 60 * 60 * 1000),
       });
 
       const result = await useCase.run();
 
-      expect(result.rapportsCrees).toBe(1);
+      expect(result.coordinateursSansActivite).toBe(1);
+      expect(result.rapportsCrees).toBe(0);
+    }),
+  );
 
-      const prisma = getPrisma();
-      const rapports = await prisma.rapport_hebdomadaire_coordinateur.findMany({
-        where: { coordinateur_id: coordinateur.id },
+  it(
+    "exclut les indicateurs où est_applicable = false",
+    createIntegrationTest(async () => {
+      const territoire = await fixtures.territoire({
+        code: randomUUID(),
+        nom: "Paris",
+        maille: "DEPT",
       });
 
-      expect(rapports).toEqual([
-        expect.objectContaining({
-          contenu_rapport: expect.objectContaining({
-            sectionActiviteChantiers: expect.arrayContaining([
-              expect.objectContaining({
-                nom: "Chantier Direct",
-              }),
-              expect.objectContaining({
-                nom: "Chantier Périmètre",
-              }),
-            ]),
-          }),
-        }),
-      ]);
+      const chantier = await fixtures.chantierIdentite({
+        nom: "Chantier test",
+        statut: "PUBLIE",
+        est_territorialise: true,
+      });
+
+      await fixtures.chantierTerritoire({
+        id: chantier.id,
+        territoire_code: territoire.code,
+        est_applicable: true,
+      });
+
+      const indicateur = await fixtures.indicateurIdentite({
+        chantier_id: chantier.id,
+        nom: "Indicateur non applicable",
+        statut: "PUBLIE",
+      });
+
+      await fixtures.indicateurTerritoire({
+        id: indicateur.id,
+        territoire_code: territoire.code,
+        chantier_id: chantier.id,
+        est_applicable: false,
+      });
+
+      const coordinateur = await fixtures.utilisateur({
+        profilCode: "COORDINATEUR_DEPARTEMENT",
+      });
+      await fixtures.habilitation({
+        utilisateurId: coordinateur.id,
+        territoires: [territoire.code],
+      });
+
+      const auteur = await fixtures.utilisateur();
+      await fixtures.indicateurTerritoireValeurEvenement({
+        indic_id: indicateur.id,
+        territoire_code: territoire.code,
+        id_auteur_modification: auteur.id,
+        type_evenement: "VALEUR_MODIFIEE",
+        valeur: 85,
+        date_creation: new Date(Date.now() - 1 * 60 * 60 * 1000),
+      });
+
+      const result = await useCase.run();
+
+      expect(result.coordinateursSansActivite).toBe(1);
+      expect(result.rapportsCrees).toBe(0);
     }),
   );
 });

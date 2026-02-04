@@ -4,8 +4,7 @@ import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { EmailManager } from "@/server/infrastructure/email-manager";
 import { PrismaActiviteComptesQuery } from "@/server/gestion-utilisateur/infrastructure/queries/PrismaActiviteComptesQuery";
 import { PrismaUtilisateursQuery } from "@/server/gestion-utilisateur/infrastructure/queries/PrismaUtilisateursQuery";
-import { RecupererIndicateursParChantiersQuery } from "@/server/chantiers/infrastructure/queries/RecupererIndicateursParChantiersQuery";
-import { RecupererChantierIdsParPerimetresQuery } from "@/server/chantiers/infrastructure/queries/RecupererChantierIdsParPerimetresQuery";
+import { RecupererChantiersParTerritoiresQuery } from "@/server/chantiers/infrastructure/queries/RecupererChantiersParTerritoiresQuery";
 import { RecupererEvenementsVAParPeriodeQuery } from "@/server/indicateur-territoire-valeur-evenement/infrastructure/queries/RecupererEvenementsVAParPeriodeQuery";
 
 import { ActiviteComptesGateway } from "./domain/ports/ActiviteComptesGateway";
@@ -28,8 +27,7 @@ import { EnvoyerRapportsHebdomadairesUseCase } from "./usecases/EnvoyerRapportsH
 export type RapportsHebdomadairesDependencies = {
   activiteComptesQuery: PrismaActiviteComptesQuery;
   utilisateursQuery: PrismaUtilisateursQuery;
-  recupererIndicateursQuery: RecupererIndicateursParChantiersQuery;
-  recupererChantierIdsParPerimetresQuery: RecupererChantierIdsParPerimetresQuery;
+  recupererChantiersQuery: RecupererChantiersParTerritoiresQuery;
   evenementsVAQuery: RecupererEvenementsVAParPeriodeQuery;
   activiteComptesGateway: ActiviteComptesGateway;
   coordinateurGateway: CoordinateurGateway;
@@ -56,10 +54,7 @@ export const getRapportsHebdomadairesContainer = (
     .register({
       activiteComptesQuery: asClass(PrismaActiviteComptesQuery),
       utilisateursQuery: asClass(PrismaUtilisateursQuery),
-      recupererIndicateursQuery: asClass(RecupererIndicateursParChantiersQuery),
-      recupererChantierIdsParPerimetresQuery: asClass(
-        RecupererChantierIdsParPerimetresQuery,
-      ),
+      recupererChantiersQuery: asClass(RecupererChantiersParTerritoiresQuery),
       evenementsVAQuery: asClass(RecupererEvenementsVAParPeriodeQuery),
       activiteComptesGateway: asClass(GestionUtilisateurActiviteComptesGateway),
       coordinateurGateway: asClass(GestionUtilisateurCoordinateurGateway),

@@ -16,8 +16,6 @@ export type Coordinateur = {
   prenom: string;
   profil: ProfilCoordinateur;
   territoires: TerritoireCoordinateur[];
-  chantiers: string[];
-  perimetres: string[];
 };
 
 export function aDesDroitsSurTerritoire(params: {

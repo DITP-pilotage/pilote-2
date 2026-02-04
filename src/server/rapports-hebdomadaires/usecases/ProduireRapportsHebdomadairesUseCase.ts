@@ -62,13 +62,11 @@ export class ProduireRapportsHebdomadairesUseCase {
 
     const periode = this.calculerEtLoggerPeriode(maintenant);
     const coordinateurs = await this.recupererCoordinateurs();
-    const { activiteGlobale, chantiersAvecIndicateurs } =
-      await this.recupererDonneesDeReference({ periode, coordinateurs });
+    const activiteGlobale = await this.recupererDonneesDeReference({ periode });
 
     return this.produireRapportsPourCoordinateurs({
       coordinateurs,
       activiteGlobale,
-      chantiersAvecIndicateurs,
       periode,
       maintenant,
     });
@@ -79,18 +77,19 @@ export class ProduireRapportsHebdomadairesUseCase {
     activiteGlobale,
     periode,
     maintenant,
-    chantiersAvecIndicateurs,
   }: {
     coordinateur: Coordinateur;
     activiteGlobale: ActiviteComptes;
     periode: { dateDebut: Date; dateFin: Date };
     maintenant: Date;
-    chantiersAvecIndicateurs: Record<string, ChantierAvecIndicateurs>;
   }): Promise<RapportHebdomadaire | null> {
     const { comptesCrees, comptesDesactives } = this.produireSectionComptes({
       coordinateur,
       activiteGlobale,
     });
+
+    const chantiersAvecIndicateurs =
+      await this.recupererChantiersAccessiblesPourCoordinateur(coordinateur);
 
     const chantiers = await this.produireSectionActivite({
       coordinateur,
@@ -225,11 +224,7 @@ export class ProduireRapportsHebdomadairesUseCase {
 
   private async recupererDonneesDeReference(params: {
     periode: { dateDebut: Date; dateFin: Date };
-    coordinateurs: Coordinateur[];
-  }): Promise<{
-    activiteGlobale: ActiviteComptes;
-    chantiersAvecIndicateurs: Record<string, ChantierAvecIndicateurs>;
-  }> {
+  }): Promise<ActiviteComptes> {
     const activiteGlobale =
       await this.deps.activiteComptesGateway.recupererActivite({
         dateDebut: params.periode.dateDebut,
@@ -241,35 +236,24 @@ export class ProduireRapportsHebdomadairesUseCase {
       nombreEvenements: activiteGlobale.length,
     });
 
-    const tousLesPerimetreIds = [
-      ...new Set(params.coordinateurs.flatMap((coord) => coord.perimetres)),
-    ];
+    return activiteGlobale;
+  }
 
-    const chantierIdsViaPerimetres =
-      await this.deps.chantierGateway.recupererChantierIdsParPerimetres(
-        tousLesPerimetreIds,
-      );
-
-    const chantiersDirects = params.coordinateurs.flatMap(
-      (coord) => coord.chantiers,
-    );
-
-    const tousLesChantierIds = [
-      ...new Set([...chantiersDirects, ...chantierIdsViaPerimetres]),
-    ];
-
-    const chantiersAvecIndicateurs =
-      await this.deps.chantierGateway.recupererIndicateursParChantiers(
-        tousLesChantierIds,
-      );
-
-    return { activiteGlobale, chantiersAvecIndicateurs };
+  private async recupererChantiersAccessiblesPourCoordinateur(
+    coordinateur: Coordinateur,
+  ): Promise<Record<string, ChantierAvecIndicateurs>> {
+    const territoireCodes = coordinateur.territoires.flatMap((territoire) => [
+      territoire.code,
+      ...territoire.enfants.map((enfant) => enfant.code),
+    ]);
+    return this.deps.chantierGateway.recupererChantiersAccessibles({
+      territoireCodes,
+    });
   }
 
   private async produireRapportsPourCoordinateurs(params: {
     coordinateurs: Coordinateur[];
     activiteGlobale: ActiviteComptes;
-    chantiersAvecIndicateurs: Record<string, ChantierAvecIndicateurs>;
     periode: { dateDebut: Date; dateFin: Date };
     maintenant: Date;
   }): Promise<ProduireRapportResult> {
@@ -283,7 +267,6 @@ export class ProduireRapportsHebdomadairesUseCase {
           activiteGlobale: params.activiteGlobale,
           periode: params.periode,
           maintenant: params.maintenant,
-          chantiersAvecIndicateurs: params.chantiersAvecIndicateurs,
         });
 
         if (rapport) {
@@ -359,6 +342,8 @@ export class ProduireRapportsHebdomadairesUseCase {
         ) || [],
     );
 
+    // TODO (CHAN 04/02/2026): filtrer les événements VA par indicateur_territoire.est_applicable
+    //  meme si en pratique 0 evenements possibles sur les non applicables
     const evenementsDansPeriode =
       await this.deps.activiteVAGateway.recupererEvenementsDansPeriode({
         indicateurIds: coordIndicateurIds,

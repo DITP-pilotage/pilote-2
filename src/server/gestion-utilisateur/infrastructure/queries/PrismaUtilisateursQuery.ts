@@ -15,8 +15,6 @@ export type UtilisateurDTO = {
   prenom: string;
   profilCode: string;
   territoires: TerritoireDTO[];
-  chantiers: string[];
-  perimetres: string[];
 };
 
 interface Dependencies {
@@ -38,8 +36,6 @@ export class PrismaUtilisateursQuery {
         habilitation: {
           select: {
             territoires: true,
-            chantiers: true,
-            perimetres: true,
           },
         },
       },
@@ -80,8 +76,6 @@ export class PrismaUtilisateursQuery {
         prenom: utilisateur.prenom,
         profilCode: utilisateur.profilCode,
         territoires: territoiresDedupes,
-        chantiers: this.extraireTousLesChantiers(utilisateur.habilitation),
-        perimetres: this.extraireTousLesPerimetres(utilisateur.habilitation),
       });
     }
 
@@ -92,18 +86,6 @@ export class PrismaUtilisateursQuery {
     habilitations: { territoires: string[] }[],
   ): string[] {
     return habilitations.flatMap((h) => h.territoires);
-  }
-
-  private extraireTousLesChantiers(
-    habilitations: { chantiers: string[] }[],
-  ): string[] {
-    return habilitations.flatMap((h) => h.chantiers);
-  }
-
-  private extraireTousLesPerimetres(
-    habilitations: { perimetres: string[] }[],
-  ): string[] {
-    return habilitations.flatMap((h) => h.perimetres);
   }
 
   private dedupliquerTerritoires(
