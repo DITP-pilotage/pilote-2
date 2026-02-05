@@ -102,6 +102,8 @@ export function grouperEvenements(
       b.territoire.code,
     );
     if (territoireCompare !== 0) return territoireCompare;
-    return a.dateValeur.getTime() - b.dateValeur.getTime();
+    const dateValeurCompare = b.dateValeur.getTime() - a.dateValeur.getTime();
+    if (dateValeurCompare !== 0) return dateValeurCompare;
+    return b.dateEvenement.getTime() - a.dateEvenement.getTime();
   });
 }

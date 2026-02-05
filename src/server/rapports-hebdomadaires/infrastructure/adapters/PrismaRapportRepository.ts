@@ -8,7 +8,7 @@ import {
   ProfilCoordinateur,
 } from "@/server/rapports-hebdomadaires/domain/Coordinateur";
 import { SectionActiviteComptes } from "@/server/rapports-hebdomadaires/domain/SectionActiviteComptes";
-import { SectionChantier } from "@/server/rapports-hebdomadaires/domain/SectionActiviteChantiersVA";
+import { SectionChantier } from "@/server/rapports-hebdomadaires/domain/SectionActiviteChantiers";
 
 const contenuRapportSchema = z.object({
   coordinateur: z.custom<Coordinateur>(),

@@ -12,7 +12,7 @@ import {
   SectionChantier,
   SectionIndicateur,
   SectionTerritoire,
-} from "@/server/rapports-hebdomadaires/domain/SectionActiviteChantiersVA";
+} from "@/server/rapports-hebdomadaires/domain/SectionActiviteChantiers";
 import { createBrevoParams } from "@/server/rapports-hebdomadaires/infrastructure/adapters/BrevoEnvoieEmailService";
 
 describe("createBrevoParams", () => {

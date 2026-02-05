@@ -31,7 +31,7 @@ import {
   grouperEvenements,
   SectionChantier,
   SectionIndicateur,
-} from "@/server/rapports-hebdomadaires/domain/SectionActiviteChantiersVA";
+} from "@/server/rapports-hebdomadaires/domain/SectionActiviteChantiers";
 
 const PROFILS_CONCERNES: ProfilTerritorialise[] = [
   "COORDINATEUR_REGION",

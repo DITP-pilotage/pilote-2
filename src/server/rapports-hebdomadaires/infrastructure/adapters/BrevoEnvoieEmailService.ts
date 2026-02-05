@@ -2,7 +2,7 @@ import { EmailManager } from "@/server/infrastructure/email-manager";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { EnvoieEmailService } from "@/server/rapports-hebdomadaires/domain/ports/EnvoieEmailService";
 import { RapportHebdomadaire } from "@/server/rapports-hebdomadaires/domain/RapportHebdomadaire";
-import { TypeValeurIndicateur } from "@/server/rapports-hebdomadaires/domain/SectionActiviteChantiersVA";
+import { TypeValeurIndicateur } from "@/server/rapports-hebdomadaires/domain/SectionActiviteChantiers";
 import { PiloteDateFormatter } from "./PiloteDateFormatter";
 
 const TEMPLATE_ID_RAPPORT_COORDINATEURS = 60;

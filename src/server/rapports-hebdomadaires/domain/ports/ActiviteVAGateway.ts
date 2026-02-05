@@ -1,4 +1,4 @@
-import { EvenementIndicateur } from "@/server/rapports-hebdomadaires/domain/SectionActiviteChantiersVA";
+import { EvenementIndicateur } from "@/server/rapports-hebdomadaires/domain/SectionActiviteChantiers";
 import { PeriodeRapport } from "@/server/rapports-hebdomadaires/domain/PeriodeRapport";
 
 export interface ActiviteIndicateurGateway {

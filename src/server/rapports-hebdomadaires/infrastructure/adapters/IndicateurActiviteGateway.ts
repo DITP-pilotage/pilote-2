@@ -1,5 +1,5 @@
 import { ActiviteIndicateurGateway } from "@/server/rapports-hebdomadaires/domain/ports/ActiviteVAGateway";
-import { EvenementIndicateur } from "@/server/rapports-hebdomadaires/domain/SectionActiviteChantiersVA";
+import { EvenementIndicateur } from "@/server/rapports-hebdomadaires/domain/SectionActiviteChantiers";
 import { PeriodeRapport } from "@/server/rapports-hebdomadaires/domain/PeriodeRapport";
 import { RecupererEvenementsVAParPeriodeQuery } from "@/server/indicateur-territoire-valeur-evenement/infrastructure/queries/RecupererEvenementsVAParPeriodeQuery";
 import { RecupererMesuresIndicateurParPeriodeQuery } from "@/server/chantiers/infrastructure/queries/RecupererMesuresIndicateurParPeriodeQuery";

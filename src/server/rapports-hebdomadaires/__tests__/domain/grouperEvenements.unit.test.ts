@@ -2,7 +2,7 @@ import {
   grouperEvenements,
   EvenementIndicateur,
   TypeValeurIndicateur,
-} from "@/server/rapports-hebdomadaires/domain/SectionActiviteChantiersVA";
+} from "@/server/rapports-hebdomadaires/domain/SectionActiviteChantiers";
 
 describe("grouperEvenements", () => {
   const createEvenement = (
@@ -364,7 +364,7 @@ describe("grouperEvenements", () => {
       );
     });
 
-    it("trie par territoire code puis dateValeur", () => {
+    it("trie par territoire code puis dateValeur desc puis dateEvenement desc", () => {
       // Given
       const evenements = [
         createEvenement({
@@ -394,11 +394,11 @@ describe("grouperEvenements", () => {
       expect(result).toEqual([
         expect.objectContaining({
           territoire: expect.objectContaining({ code: "DEPT-75" }),
-          dateValeur: new Date("2025-01-15"),
+          dateValeur: new Date("2025-01-17"),
         }),
         expect.objectContaining({
           territoire: expect.objectContaining({ code: "DEPT-75" }),
-          dateValeur: new Date("2025-01-17"),
+          dateValeur: new Date("2025-01-15"),
         }),
         expect.objectContaining({
           territoire: expect.objectContaining({ code: "DEPT-92" }),
