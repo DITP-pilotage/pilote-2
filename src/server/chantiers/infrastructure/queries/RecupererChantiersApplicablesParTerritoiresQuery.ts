@@ -1,3 +1,4 @@
+import keyBy from "lodash.keyby";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 
 export type ChantierAvecIndicateursDTO = {
@@ -18,7 +19,7 @@ export class RecupererChantiersApplicablesParTerritoiresQuery {
   }): Promise<Record<string, ChantierAvecIndicateursDTO>> {
     const prisma = this.deps.prisma.getInstance();
 
-    const chantiers = await prisma.chantier_identite.findMany({
+    const prismaChantiers = await prisma.chantier_identite.findMany({
       where: {
         statut: "PUBLIE",
         est_territorialise: true,
@@ -29,56 +30,44 @@ export class RecupererChantiersApplicablesParTerritoiresQuery {
           },
         },
       },
-      select: {
-        id: true,
-        nom: true,
-      },
-    });
-
-    const indicateurs = await prisma.indicateur_identite.findMany({
-      where: {
-        statut: "PUBLIE",
-        chantier_id: { in: chantiers.map((chantier) => chantier.id) },
-        indicateur_territoire: {
-          some: {
-            territoire_code: { in: params.territoireCodes },
-            est_applicable: true,
-          },
-        },
-      },
-      select: {
-        id: true,
-        nom: true,
-        chantier_id: true,
-        indicateur_territoire: {
+      include: {
+        indicateur_identite: {
           where: {
-            territoire_code: { in: params.territoireCodes },
-            est_applicable: true,
+            statut: "PUBLIE",
+            indicateur_territoire: {
+              some: {
+                territoire_code: { in: params.territoireCodes },
+                est_applicable: true,
+              },
+            },
           },
-          select: {
-            territoire_code: true,
+          include: {
+            indicateur_territoire: {
+              where: {
+                territoire_code: { in: params.territoireCodes },
+                est_applicable: true,
+              },
+              select: {
+                territoire_code: true,
+              },
+            },
           },
         },
       },
     });
 
-    const result: Record<string, ChantierAvecIndicateursDTO> = {};
-    for (const chantier of chantiers) {
-      result[chantier.id] = {
-        id: chantier.id,
-        nom: chantier.nom,
-        indicateurs: indicateurs
-          .filter((indicateur) => indicateur.chantier_id === chantier.id)
-          .map((indicateur) => ({
-            id: indicateur.id,
-            nom: indicateur.nom,
-            territoiresApplicables: indicateur.indicateur_territoire.map(
-              (t) => t.territoire_code,
-            ),
-          })),
-      };
-    }
+    const chantiers = prismaChantiers.map((chantier) => ({
+      id: chantier.id,
+      nom: chantier.nom,
+      indicateurs: chantier.indicateur_identite.map((indicateur) => ({
+        id: indicateur.id,
+        nom: indicateur.nom,
+        territoiresApplicables: indicateur.indicateur_territoire.map(
+          (territoire) => territoire.territoire_code,
+        ),
+      })),
+    }));
 
-    return result;
+    return keyBy(chantiers, (chantier) => chantier.id);
   }
 }
