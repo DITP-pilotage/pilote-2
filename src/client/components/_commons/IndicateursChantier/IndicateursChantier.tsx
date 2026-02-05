@@ -36,7 +36,10 @@ const IndicateursChantier: FunctionComponent<IndicateursProps> = ({
 
   if (indicateursApplicablesIds.length === 0) {
     return (
-      <p>Aucun indicateur n'est disponible pour les territoires sélectionnés</p>
+      <Alerte
+        titre="Aucun indicateur n'est applicable pour les territoires sélectionnés"
+        type="info"
+      />
     );
   }
 

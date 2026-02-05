@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { FunctionComponent } from "react";
+import Alerte from "@/components/_commons/Alerte/Alerte";
 import Encart from "@/components/_commons/Encart/Encart";
 import {
   consignesDÉcritureObjectif,
@@ -69,10 +70,16 @@ const RapportDétailléChantier: FunctionComponent<
         chantier.dateTauxAvancementMandatValeurPrecedente,
     };
 
+  const indicateursApplicables = indicateurs.filter(
+    (indicateur) =>
+      détailsIndicateurs[indicateur.id]?.[territoireCode]?.est_applicable ===
+      true,
+  );
+
   const categoriesIndicateurRepartition: Record<
     CategoriesIndicateur,
     Indicateur[]
-  > = indicateurs.reduce(
+  > = indicateursApplicables.reduce(
     (acc, indicateur) => {
       if (
         (détailsIndicateurs[indicateur.id][territoireCode]?.pondération ?? 0) >
@@ -254,17 +261,26 @@ const RapportDétailléChantier: FunctionComponent<
                 >
                   Indicateurs
                 </Titre>
-                <IndicateursRapportDetaille
-                  categoriesIndicateurRepartition={
-                    categoriesIndicateurRepartition
-                  }
-                  détailsIndicateurs={détailsIndicateurs}
-                  indicateurs={indicateurs}
-                  jalon={jalon}
-                  listeRubriquesIndicateurs={listeRubriquesIndicateursChantier}
-                  territoireCode={territoireCode}
-                  typeDeRéforme="chantier"
-                />
+                {indicateursApplicables.length > 0 ? (
+                  <IndicateursRapportDetaille
+                    categoriesIndicateurRepartition={
+                      categoriesIndicateurRepartition
+                    }
+                    détailsIndicateurs={détailsIndicateurs}
+                    indicateurs={indicateurs}
+                    jalon={jalon}
+                    listeRubriquesIndicateurs={
+                      listeRubriquesIndicateursChantier
+                    }
+                    territoireCode={territoireCode}
+                    typeDeRéforme="chantier"
+                  />
+                ) : (
+                  <Alerte
+                    titre="Aucun indicateur n'est applicable pour le territoire sélectionné"
+                    type="info"
+                  />
+                )}
               </div>
             </section>
           </div>
