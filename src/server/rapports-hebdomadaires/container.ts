@@ -29,7 +29,7 @@ export type RapportsHebdomadairesDependencies = {
   activiteComptesQuery: PrismaActiviteComptesQuery;
   utilisateursQuery: PrismaUtilisateursQuery;
   recupererChantiersQuery: RecupererChantiersApplicablesParTerritoiresQuery;
-  recupererMesuresIndicateurQuery: RecupererMesuresIndicateurParPeriodeQuery;
+  mesuresIndicateurQuery: RecupererMesuresIndicateurParPeriodeQuery;
   evenementsVAQuery: RecupererEvenementsVAParPeriodeQuery;
   activiteComptesGateway: ActiviteComptesGateway;
   coordinateurGateway: CoordinateurGateway;
@@ -59,7 +59,7 @@ export const getRapportsHebdomadairesContainer = (
       recupererChantiersQuery: asClass(
         RecupererChantiersApplicablesParTerritoiresQuery,
       ),
-      recupererMesuresIndicateurQuery: asClass(
+      mesuresIndicateurQuery: asClass(
         RecupererMesuresIndicateurParPeriodeQuery,
       ),
       evenementsVAQuery: asClass(RecupererEvenementsVAParPeriodeQuery),
