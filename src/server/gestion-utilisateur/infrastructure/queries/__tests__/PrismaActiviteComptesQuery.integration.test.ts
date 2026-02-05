@@ -164,31 +164,31 @@ describe("PrismaActiviteComptesQuery", () => {
       const dateDebut = new Date("2026-01-13T09:00:01Z");
       const dateFin = new Date("2026-01-20T09:00:00Z");
 
-      const utilisateurCréé = await fixtures.utilisateur({
+      const utilisateurCree = await fixtures.utilisateur({
         profilCode: "PREFET_REGION",
         date_creation: new Date("2026-01-15T10:00:00Z"),
       });
       await fixtures.habilitation({
-        utilisateurId: utilisateurCréé.id,
+        utilisateurId: utilisateurCree.id,
         territoires: ["REG-11"],
       });
 
-      const utilisateurDésactivé = await fixtures.utilisateur({
+      const utilisateurDesactive = await fixtures.utilisateur({
         profilCode: "COORDINATEUR_REGION",
         date_creation: new Date("2026-01-01T10:00:00Z"),
         date_desactivation: new Date("2026-01-14T12:00:00Z"),
       });
       await fixtures.habilitation({
-        utilisateurId: utilisateurDésactivé.id,
+        utilisateurId: utilisateurDesactive.id,
         territoires: ["REG-11"],
       });
 
-      const utilisateurCréé2 = await fixtures.utilisateur({
+      const utilisateurCree2 = await fixtures.utilisateur({
         profilCode: "SERVICES_DECONCENTRES_REGION",
         date_creation: new Date("2026-01-18T16:00:00Z"),
       });
       await fixtures.habilitation({
-        utilisateurId: utilisateurCréé2.id,
+        utilisateurId: utilisateurCree2.id,
         territoires: ["REG-11"],
       });
 
@@ -208,9 +208,9 @@ describe("PrismaActiviteComptesQuery", () => {
         {
           type: "COMPTE_DESACTIVE",
           compte: {
-            email: utilisateurDésactivé.email,
-            nom: utilisateurDésactivé.nom,
-            prenom: utilisateurDésactivé.prenom,
+            email: utilisateurDesactive.email,
+            nom: utilisateurDesactive.nom,
+            prenom: utilisateurDesactive.prenom,
             profil: "COORDINATEUR_REGION",
             territoires: [
               {
@@ -275,9 +275,9 @@ describe("PrismaActiviteComptesQuery", () => {
         {
           type: "COMPTE_CREE",
           compte: {
-            email: utilisateurCréé.email,
-            nom: utilisateurCréé.nom,
-            prenom: utilisateurCréé.prenom,
+            email: utilisateurCree.email,
+            nom: utilisateurCree.nom,
+            prenom: utilisateurCree.prenom,
             profil: "PREFET_REGION",
             territoires: [
               {
@@ -342,9 +342,9 @@ describe("PrismaActiviteComptesQuery", () => {
         {
           type: "COMPTE_CREE",
           compte: {
-            email: utilisateurCréé2.email,
-            nom: utilisateurCréé2.nom,
-            prenom: utilisateurCréé2.prenom,
+            email: utilisateurCree2.email,
+            nom: utilisateurCree2.nom,
+            prenom: utilisateurCree2.prenom,
             profil: "SERVICES_DECONCENTRES_REGION",
             territoires: [
               {
@@ -712,12 +712,12 @@ describe("PrismaActiviteComptesQuery", () => {
         territoires: ["REG-11"],
       });
 
-      const utilisateurAprès = await fixtures.utilisateur({
+      const utilisateurApres = await fixtures.utilisateur({
         profilCode: "PREFET_REGION",
         date_creation: new Date("2026-01-20T09:00:01Z"),
       });
       await fixtures.habilitation({
-        utilisateurId: utilisateurAprès.id,
+        utilisateurId: utilisateurApres.id,
         territoires: ["REG-11"],
       });
 
