@@ -15,7 +15,7 @@ import useChoixTerritoire from "./useChoixTerritoire";
 import ChoixTerritoireStyled from "./ChoixTerritoire.styled";
 
 const ChoixTerritoire = () => {
-  const { chantier, territoireCode, mailleSelectionnee, mailleQuery } =
+  const { territoireCode, mailleSelectionnee, mailleQuery } =
     pageChantier.useServerSidePropsContext();
 
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
@@ -41,7 +41,6 @@ const ChoixTerritoire = () => {
             </Titre>
           ) : null}
           <SélecteursMaillesEtTerritoires
-            chantierMailles={chantier.mailles}
             pathname="/chantier/[id]/[territoireCode]"
             territoireCode={territoireCode}
           />

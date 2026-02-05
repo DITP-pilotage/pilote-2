@@ -1,10 +1,7 @@
 import { FunctionComponent } from "react";
 import { useRouter } from "next/router";
-import { useSession } from "next-auth/react";
-import Chantier from "@/server/domain/chantier/Chantier.interface";
 import { sauvegarderFiltres } from "@/stores/useFiltresStoreNew/useFiltresStoreNew";
 import { DétailTerritoire } from "@/server/domain/territoire/Territoire.interface";
-import { ProfilCode } from "@/server/domain/utilisateur/Utilisateur.interface";
 import { territoiresAccessiblesEnLectureStore } from "@/stores/useTerritoiresStore/useTerritoiresStore";
 import { trierParOrdreAlphabétique } from "@/client/utils/arrays";
 import {
@@ -16,10 +13,10 @@ import { InputGroupeTerritoire } from "@/components/_commons/InputGroupe/InputGr
 import { territoireCodeVersMailleCodeInsee } from "@/server/utils/territoires";
 
 interface SélecteursMaillesEtTerritoiresProps {
-  chantierMailles?: Chantier["mailles"];
   territoireCode: string;
   pathname: string;
   direction?: "horizontal" | "vertical";
+  territoiresApplicables?: string[];
 }
 
 const générerLesOptions = (
@@ -34,8 +31,7 @@ const générerLesOptions = (
 
 const construireLaListeDOptions = (
   territoiresAccessiblesEnLecture: DétailTerritoire[],
-  profil: ProfilCode | undefined,
-  chantierMailles?: Chantier["mailles"],
+  territoiresApplicables?: string[],
 ) => {
   const territoiresDisponiblesDept = territoiresAccessiblesEnLecture.filter(
     (territoire) => territoire.maille === "departementale",
@@ -51,8 +47,8 @@ const construireLaListeDOptions = (
         générerLesOptions(
           region.nomAffiché,
           region.code,
-          !!chantierMailles
-            ? (!chantierMailles["regionale"][region.code].estApplicable ?? true)
+          territoiresApplicables
+            ? !territoiresApplicables.includes(region.code)
             : false,
         ),
       ),
@@ -67,9 +63,8 @@ const construireLaListeDOptions = (
         générerLesOptions(
           departement.nomAffiché,
           departement.code,
-          !!chantierMailles
-            ? (!chantierMailles["departementale"][departement.code]
-                .estApplicable ?? true)
+          territoiresApplicables
+            ? !territoiresApplicables.includes(departement.code)
             : false,
         ),
       ),
@@ -84,10 +79,13 @@ const construireLaListeDOptions = (
 
 const SélecteursMaillesEtTerritoires: FunctionComponent<
   SélecteursMaillesEtTerritoiresProps
-> = ({ chantierMailles, territoireCode, pathname, direction = "vertical" }) => {
+> = ({
+  territoireCode,
+  pathname,
+  direction = "vertical",
+  territoiresApplicables,
+}) => {
   const router = useRouter();
-  const { data: session } = useSession();
-
   const territoiresAccessiblesEnLecture =
     territoiresAccessiblesEnLectureStore();
 
@@ -135,8 +133,7 @@ const SélecteursMaillesEtTerritoires: FunctionComponent<
       direction={direction}
       options={construireLaListeDOptions(
         territoiresAccessiblesEnLecture,
-        session?.profil,
-        chantierMailles,
+        territoiresApplicables,
       )}
       territoireCodeSelectionneParDefaut={territoireCode}
     />

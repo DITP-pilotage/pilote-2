@@ -14,6 +14,7 @@ type PanelMenuNavigationProps = {
   estAutoriseAVoirLeSelecteurDeMaille: boolean;
   setEstOuverteBarreLatérale: (estOuverte: boolean) => void;
   libelleMenuNavigation?: string;
+  territoiresApplicables?: string[];
 };
 
 export const PanelMenuNavigation = ({
@@ -23,6 +24,7 @@ export const PanelMenuNavigation = ({
   estAutoriseAVoirLeSelecteurDeMaille,
   setEstOuverteBarreLatérale,
   libelleMenuNavigation = "Filtrer",
+  territoiresApplicables,
 }: PanelMenuNavigationProps) => {
   return (
     <>
@@ -31,6 +33,7 @@ export const PanelMenuNavigation = ({
           direction="horizontal"
           pathname={pathname}
           territoireCode={territoireCode}
+          territoiresApplicables={territoiresApplicables}
         />
       </div>
       <div className="fr-col-12 fr-col-md-3 fr-pb-2w fr-px-2w">

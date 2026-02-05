@@ -205,6 +205,9 @@ export const presenterEnChantierContrat = (
       departementale: !!chantierIdentite.possede_meteo_departemental,
       regionale: !!chantierIdentite.possede_meteo_regional,
     },
+    territoiresApplicables: chantierIdentite.chantier_territoire
+      .filter((chantierTerritoire) => chantierTerritoire.est_applicable)
+      .map((chantierTerritoire) => chantierTerritoire.territoire_code),
   };
 
   if (chantierIdentite.directeurs_administration_centrale) {
