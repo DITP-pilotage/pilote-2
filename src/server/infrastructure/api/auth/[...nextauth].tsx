@@ -19,7 +19,10 @@ function _assertResponseOk(
   errorMessage: string,
 ): void {
   if (response.status < 200 || response.status >= 300) {
-    logger.error({ status: response.status, data: response.data }, errorMessage);
+    logger.error(
+      { status: response.status, data: response.data },
+      errorMessage,
+    );
     throw new Error(errorMessage);
   }
 }
