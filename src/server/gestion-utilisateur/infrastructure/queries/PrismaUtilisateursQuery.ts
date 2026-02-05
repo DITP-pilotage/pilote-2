@@ -72,7 +72,7 @@ export class PrismaUtilisateursQuery {
 
         const territoires = codes
           .map((code) => territoiresByCode[code])
-          .filter((t) => t != null);
+          .filter((territoire) => territoire != null);
 
         if (territoires.length === 0) return null;
 
