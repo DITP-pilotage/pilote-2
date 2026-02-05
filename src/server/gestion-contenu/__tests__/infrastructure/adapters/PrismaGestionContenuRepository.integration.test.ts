@@ -3,7 +3,12 @@ import { VARIABLE_CONTENU_DISPONIBLE } from "@/server/gestion-contenu/domain/Var
 import { PrismaGestionContenuRepository } from "@/server/gestion-contenu/infrastructure/adapters/PrismaGestionContenuRepository";
 
 describe("PrismaGestionContenuRepository", () => {
-  let prismaGestionContenuRepository!: PrismaGestionContenuRepository;
+  let prismaGestionContenuRepository: PrismaGestionContenuRepository;
+
+  beforeEach(() => {
+    prismaGestionContenuRepository = new PrismaGestionContenuRepository();
+  });
+
   it("quand la valeur est un string, doit mettre à jour variable de contenu", async () => {
     // Given
     const nomVariableContenu: keyof VARIABLE_CONTENU_DISPONIBLE =

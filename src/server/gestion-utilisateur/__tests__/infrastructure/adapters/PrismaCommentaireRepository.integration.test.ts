@@ -8,6 +8,7 @@ describe("PrismaCommentaireRepository", () => {
   beforeEach(() => {
     prismaCommentaireRepository = new PrismaCommentaireRepository();
   });
+
   describe("#anonymiserAuteurs", () => {
     test("doit anonymiser l'auteur des commentaires saisis par l'utilisateur supprimé", async () => {
       // Given
