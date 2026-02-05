@@ -33,6 +33,10 @@ describe("IndicateurActiviteGateway", () => {
 
       const utilisateur = await fixtures.utilisateur();
       const chantier = await fixtures.chantierIdentite();
+      await fixtures.chantierTerritoire({
+        id: chantier.id,
+        territoire_code: "DEPT-75",
+      });
       const indicateurIdentite = await fixtures.indicateurIdentite({
         id: "IND-001",
         nom: "Indicateur Test",
@@ -137,6 +141,14 @@ describe("IndicateurActiviteGateway", () => {
       const dateFin = new Date("2024-01-31T23:59:59Z");
 
       const chantier = await fixtures.chantierIdentite();
+      await fixtures.chantierTerritoire({
+        id: chantier.id,
+        territoire_code: "DEPT-75",
+      });
+      await fixtures.chantierTerritoire({
+        id: chantier.id,
+        territoire_code: "DEPT-92",
+      });
       const indicateurIdentite = await fixtures.indicateurIdentite({
         id: "IND-002",
         nom: "Indicateur Tri",
