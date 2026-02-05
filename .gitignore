@@ -51,6 +51,7 @@ qodana.yaml
 /playwright/.cache/
 
 public/centreaide/
+public/_pagefind/
 
 #submodules
 src/content/
