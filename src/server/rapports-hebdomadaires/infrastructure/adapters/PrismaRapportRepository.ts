@@ -8,10 +8,12 @@ import {
   ProfilCoordinateur,
 } from "@/server/rapports-hebdomadaires/domain/Coordinateur";
 import { SectionActiviteComptes } from "@/server/rapports-hebdomadaires/domain/SectionActiviteComptes";
+import { SectionChantier } from "@/server/rapports-hebdomadaires/domain/SectionActiviteChantiersVA";
 
 const contenuRapportSchema = z.object({
   coordinateur: z.custom<Coordinateur>(),
   sectionActiviteComptes: z.custom<SectionActiviteComptes>(),
+  sectionActiviteChantiers: z.custom<SectionChantier[]>(),
 });
 
 export type ContenuRapport = z.infer<typeof contenuRapportSchema>;
@@ -29,6 +31,7 @@ export class PrismaRapportRepository implements RapportRepository {
     const contenuRapport: ContenuRapport = {
       coordinateur: rapport.coordinateur,
       sectionActiviteComptes: rapport.sectionActiviteComptes,
+      sectionActiviteChantiers: rapport.chantiers,
     };
 
     await prisma.rapport_hebdomadaire_coordinateur.upsert({
@@ -84,6 +87,7 @@ export class PrismaRapportRepository implements RapportRepository {
           dateFin: row.date_fin_periode,
         },
         sectionActiviteComptes: contenu.sectionActiviteComptes,
+        chantiers: contenu.sectionActiviteChantiers,
         statutEnvoi: row.statut_envoi,
         dateCreation: row.date_creation,
         dateEnvoi: row.date_envoi ?? undefined,

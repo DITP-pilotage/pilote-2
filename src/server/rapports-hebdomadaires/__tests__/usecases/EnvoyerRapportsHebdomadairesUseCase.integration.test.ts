@@ -107,7 +107,8 @@ describe("EnvoyerRapportsHebdomadairesUseCase", () => {
       expect(result.emailsEnEchec).toBe(1);
       expect(result.erreursDetails).toEqual([
         {
-          email: (rapport.contenu_rapport as ContenuRapport).coordinateur.email,
+          email: (rapport.contenu_rapport as unknown as ContenuRapport)
+            .coordinateur.email,
           erreur: "Timeout Brevo",
         },
       ]);

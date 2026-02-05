@@ -5,19 +5,31 @@ import {
 } from "@/server/rapports-hebdomadaires/domain/ports/ActiviteComptesGateway";
 import { CoordinateurGateway } from "@/server/rapports-hebdomadaires/domain/ports/CoordinateurGateway";
 import { RapportRepository } from "@/server/rapports-hebdomadaires/domain/ports/RapportRepository";
+import {
+  ChantierAvecIndicateurs,
+  ChantierGateway,
+} from "@/server/rapports-hebdomadaires/domain/ports/ChantierGateway";
+import { ActiviteVAGateway } from "@/server/rapports-hebdomadaires/domain/ports/ActiviteVAGateway";
 import { calculerPeriodeDernierLundiNeufHeures } from "@/server/rapports-hebdomadaires/domain/PeriodeRapport";
 import {
   creerRapportHebdomadaire,
   RapportHebdomadaire,
 } from "@/server/rapports-hebdomadaires/domain/RapportHebdomadaire";
 import {
-  Coordinateur,
   aDesDroitsSurTerritoire,
+  Coordinateur,
 } from "@/server/rapports-hebdomadaires/domain/Coordinateur";
 import {
   ActiviteComptes,
+  CompteActivite,
   grouperEvenementsParType,
 } from "@/server/rapports-hebdomadaires/domain/CompteActivite";
+import {
+  ActiviteIndicateur,
+  grouperEvenements,
+  SectionChantier,
+  SectionIndicateur,
+} from "@/server/rapports-hebdomadaires/domain/SectionActiviteChantiersVA";
 
 const PROFILS_CONCERNES: ProfilTerritorialise[] = [
   "COORDINATEUR_REGION",
@@ -40,75 +52,24 @@ export class ProduireRapportsHebdomadairesUseCase {
       activiteComptesGateway: ActiviteComptesGateway;
       coordinateurGateway: CoordinateurGateway;
       rapportRepository: RapportRepository;
+      chantierGateway: ChantierGateway;
+      activiteVAGateway: ActiviteVAGateway;
     },
   ) {}
 
   async run(params?: { maintenant?: Date }): Promise<ProduireRapportResult> {
     const maintenant = params?.maintenant ?? new Date();
-    const periode = calculerPeriodeDernierLundiNeufHeures({ maintenant });
 
-    logger.info("Phase 1 démarrée", {
-      dateExecution: maintenant.toISOString(),
-      periodeDebut: periode.dateDebut.toISOString(),
-      periodeFin: periode.dateFin.toISOString(),
+    const periode = this.calculerEtLoggerPeriode(maintenant);
+    const coordinateurs = await this.recupererCoordinateurs();
+    const activiteGlobale = await this.recupererDonneesDeReference({ periode });
+
+    return this.produireRapportsPourCoordinateurs({
+      coordinateurs,
+      activiteGlobale,
+      periode,
+      maintenant,
     });
-
-    const coordinateurs =
-      await this.deps.coordinateurGateway.recupererCoordinateurs([
-        "COORDINATEUR_REGION",
-        "COORDINATEUR_DEPARTEMENT",
-      ]);
-
-    logger.info("Coordinateurs récupérés", {
-      nombreCoordinateurs: coordinateurs.length,
-    });
-
-    const activiteGlobale =
-      await this.deps.activiteComptesGateway.recupererActivite({
-        dateDebut: periode.dateDebut,
-        dateFin: periode.dateFin,
-        profilCodes: PROFILS_CONCERNES,
-      });
-
-    logger.info("Activité globale récupérée", {
-      nombreEvenements: activiteGlobale.length,
-    });
-
-    let rapportsCrees = 0;
-    let coordinateursSansActivite = 0;
-
-    for (const coordinateur of coordinateurs) {
-      try {
-        const rapport = await this.creerRapportPourCoordinateur({
-          coordinateur,
-          activiteGlobale,
-          periode,
-          maintenant,
-        });
-
-        if (rapport) {
-          rapportsCrees++;
-        } else {
-          coordinateursSansActivite++;
-        }
-      } catch (error) {
-        logger.error("Erreur lors de la création du rapport", {
-          coordinateurEmail: coordinateur.email,
-          erreur: error instanceof Error ? error.message : String(error),
-        });
-      }
-    }
-
-    logger.info("Phase 1 terminée", {
-      rapportsCrees,
-      coordinateursSansActivite,
-    });
-
-    return {
-      rapportsCrees,
-      coordinateursSansActivite,
-      dateExecution: maintenant,
-    };
   }
 
   private async creerRapportPourCoordinateur({
@@ -122,35 +83,32 @@ export class ProduireRapportsHebdomadairesUseCase {
     periode: { dateDebut: Date; dateFin: Date };
     maintenant: Date;
   }): Promise<RapportHebdomadaire | null> {
-    const evenementsFiltres = activiteGlobale.filter((evenement) => {
-      if (evenement.compte.email === coordinateur.email) {
-        // TODO (CHAN - Rapport) : au final, on exlut ou pas ?
-        return false;
-      }
-
-      return aDesDroitsSurTerritoire({
-        coordinateur,
-        codesTerritoires: evenement.compte.territoires.flatMap((territoire) => [
-          territoire.code,
-          ...territoire.enfants.map((enfant) => enfant.code),
-        ]),
-      });
+    const { comptesCrees, comptesDesactives } = this.produireSectionComptes({
+      coordinateur,
+      activiteGlobale,
     });
 
-    const { comptesCrees, comptesDesactives } =
-      grouperEvenementsParType(evenementsFiltres);
+    const chantiersAvecIndicateurs =
+      await this.recupererChantiersAccessiblesPourCoordinateur(coordinateur);
 
-    if (comptesCrees.length === 0 && comptesDesactives.length === 0) {
-      return null;
-    }
+    const chantiers = await this.produireSectionActivite({
+      coordinateur,
+      chantiersAvecIndicateurs,
+      periode,
+    });
 
     const rapport = creerRapportHebdomadaire({
       coordinateur,
       periode,
       comptesCrees,
       comptesDesactives,
+      chantiers,
       dateCreation: maintenant,
     });
+
+    if (!rapport) {
+      return null;
+    }
 
     await this.deps.rapportRepository.sauvegarder(rapport);
 
@@ -159,8 +117,261 @@ export class ProduireRapportsHebdomadairesUseCase {
       coordinateurEmail: coordinateur.email,
       nombreComptesCrees: comptesCrees.length,
       nombreComptesDesactives: comptesDesactives.length,
+      nombreChangementsChantiers: chantiers.reduce(
+        (total, chantier) => total + chantier.indicateurs.length,
+        0,
+      ),
     });
 
     return rapport;
+  }
+
+  private construireSectionChantiers(params: {
+    activites: ActiviteIndicateur[];
+    chantiersAvecIndicateurs: Record<string, ChantierAvecIndicateurs>;
+    coordChantierIds: string[];
+  }): SectionChantier[] {
+    const { activites, chantiersAvecIndicateurs, coordChantierIds } = params;
+
+    const activitesParChantier = new Map<
+      string,
+      {
+        chantier: ChantierAvecIndicateurs;
+        indicateurs: Map<string, SectionIndicateur>;
+      }
+    >();
+
+    for (const activite of activites) {
+      let chantierId: string | null = null;
+      let indicateurInfo: { id: string; nom: string } | null = null;
+
+      for (const [chantierIdCandidat, chantier] of Object.entries(
+        chantiersAvecIndicateurs,
+      )) {
+        const indicateurTrouve = chantier.indicateurs.find(
+          (indicateur) => indicateur.id === activite.indicateur.id,
+        );
+        if (indicateurTrouve) {
+          chantierId = chantierIdCandidat;
+          indicateurInfo = indicateurTrouve;
+          break;
+        }
+      }
+
+      if (!chantierId || !indicateurInfo) continue;
+      if (!coordChantierIds.includes(chantierId)) continue;
+
+      const chantier = chantiersAvecIndicateurs[chantierId];
+
+      if (!activitesParChantier.has(chantierId)) {
+        activitesParChantier.set(chantierId, {
+          chantier,
+          indicateurs: new Map(),
+        });
+      }
+
+      const chantierData = activitesParChantier.get(chantierId)!;
+
+      if (!chantierData.indicateurs.has(indicateurInfo.id)) {
+        chantierData.indicateurs.set(indicateurInfo.id, {
+          id: indicateurInfo.id,
+          nom: indicateurInfo.nom,
+          territoires: [],
+        });
+      }
+
+      chantierData.indicateurs.get(indicateurInfo.id)!.territoires.push({
+        code: activite.territoire.code,
+        nom: activite.territoire.nom,
+        valeurAvancement: activite.valeurAvancement,
+        dateValeur: activite.dateValeur.toISOString(),
+        dateEvenement: activite.dateEvenement.toISOString(),
+      });
+    }
+
+    return Array.from(activitesParChantier.values()).map((data) => ({
+      id: data.chantier.id,
+      nom: data.chantier.nom,
+      indicateurs: Array.from(data.indicateurs.values()),
+    }));
+  }
+
+  private calculerEtLoggerPeriode(maintenant: Date) {
+    const periode = calculerPeriodeDernierLundiNeufHeures({ maintenant });
+
+    logger.info("Phase 1 démarrée", {
+      dateExecution: maintenant.toISOString(),
+      periodeDebut: periode.dateDebut.toISOString(),
+      periodeFin: periode.dateFin.toISOString(),
+    });
+
+    return periode;
+  }
+
+  private async recupererCoordinateurs(): Promise<Coordinateur[]> {
+    const coordinateurs =
+      await this.deps.coordinateurGateway.recupererCoordinateurs([
+        "COORDINATEUR_REGION",
+        "COORDINATEUR_DEPARTEMENT",
+      ]);
+
+    logger.info("Coordinateurs récupérés", {
+      nombreCoordinateurs: coordinateurs.length,
+    });
+
+    return coordinateurs;
+  }
+
+  private async recupererDonneesDeReference(params: {
+    periode: { dateDebut: Date; dateFin: Date };
+  }): Promise<ActiviteComptes> {
+    const activiteGlobale =
+      await this.deps.activiteComptesGateway.recupererActivite({
+        dateDebut: params.periode.dateDebut,
+        dateFin: params.periode.dateFin,
+        profilCodes: PROFILS_CONCERNES,
+      });
+
+    logger.info("Activité globale récupérée", {
+      nombreEvenements: activiteGlobale.length,
+    });
+
+    return activiteGlobale;
+  }
+
+  private async recupererChantiersAccessiblesPourCoordinateur(
+    coordinateur: Coordinateur,
+  ): Promise<Record<string, ChantierAvecIndicateurs>> {
+    const territoireCodes = coordinateur.territoires.flatMap((territoire) => [
+      territoire.code,
+      ...territoire.enfants.map((enfant) => enfant.code),
+    ]);
+    return this.deps.chantierGateway.recupererChantiersAccessibles({
+      territoireCodes,
+    });
+  }
+
+  private async produireRapportsPourCoordinateurs(params: {
+    coordinateurs: Coordinateur[];
+    activiteGlobale: ActiviteComptes;
+    periode: { dateDebut: Date; dateFin: Date };
+    maintenant: Date;
+  }): Promise<ProduireRapportResult> {
+    let rapportsCrees = 0;
+    let coordinateursSansActivite = 0;
+
+    for (const coordinateur of params.coordinateurs) {
+      try {
+        const rapport = await this.creerRapportPourCoordinateur({
+          coordinateur,
+          activiteGlobale: params.activiteGlobale,
+          periode: params.periode,
+          maintenant: params.maintenant,
+        });
+
+        if (rapport) {
+          rapportsCrees++;
+        } else {
+          coordinateursSansActivite++;
+        }
+      } catch (error) {
+        logger.error(
+          {
+            coordinateurEmail: coordinateur.email,
+            erreur: error instanceof Error ? error.message : String(error),
+          },
+          "Erreur lors de la création du rapport",
+        );
+      }
+    }
+
+    logger.info("Phase 1 terminée", {
+      rapportsCrees,
+      coordinateursSansActivite,
+    });
+
+    return {
+      rapportsCrees,
+      coordinateursSansActivite,
+      dateExecution: params.maintenant,
+    };
+  }
+
+  private produireSectionComptes(params: {
+    coordinateur: Coordinateur;
+    activiteGlobale: ActiviteComptes;
+  }): {
+    comptesCrees: CompteActivite[];
+    comptesDesactives: CompteActivite[];
+  } {
+    const evenementsFiltres = params.activiteGlobale.filter((evenement) => {
+      if (evenement.compte.email === params.coordinateur.email) {
+        // TODO (CHAN - Rapport) : au final, on exlut ou pas ?
+        return false;
+      }
+
+      return aDesDroitsSurTerritoire({
+        coordinateur: params.coordinateur,
+        codesTerritoires: evenement.compte.territoires.flatMap((territoire) => [
+          territoire.code,
+          ...territoire.enfants.map((enfant) => enfant.code),
+        ]),
+      });
+    });
+
+    return grouperEvenementsParType(evenementsFiltres);
+  }
+
+  private async produireSectionActivite(params: {
+    coordinateur: Coordinateur;
+    chantiersAvecIndicateurs: Record<string, ChantierAvecIndicateurs>;
+    periode: { dateDebut: Date; dateFin: Date };
+  }): Promise<SectionChantier[]> {
+    const coordTerritoireCodes = params.coordinateur.territoires.flatMap(
+      (territoire) => [
+        territoire.code,
+        ...territoire.enfants.map((enfant) => enfant.code),
+      ],
+    );
+
+    const coordChantierIds = Object.keys(params.chantiersAvecIndicateurs);
+    const coordIndicateurIds = coordChantierIds.flatMap(
+      (chantierId) =>
+        params.chantiersAvecIndicateurs[chantierId]?.indicateurs.map(
+          (indicateur) => indicateur.id,
+        ) || [],
+    );
+
+    const evenementsDansPeriode =
+      await this.deps.activiteVAGateway.recupererEvenementsDansPeriode({
+        indicateurIds: coordIndicateurIds,
+        territoireCodes: coordTerritoireCodes,
+        periode: params.periode,
+      });
+
+    const indicateurTerritoiresApplicables = new Map<string, Set<string>>();
+    for (const chantier of Object.values(params.chantiersAvecIndicateurs)) {
+      for (const indicateur of chantier.indicateurs) {
+        indicateurTerritoiresApplicables.set(
+          indicateur.id,
+          new Set(indicateur.territoiresApplicables),
+        );
+      }
+    }
+
+    const evenementsFiltres = evenementsDansPeriode.filter((event) => {
+      const applicables = indicateurTerritoiresApplicables.get(
+        event.indicateur.id,
+      );
+      return applicables?.has(event.territoire.code) ?? false;
+    });
+
+    const activites = grouperEvenements(evenementsFiltres);
+
+    return this.construireSectionChantiers({
+      activites,
+      chantiersAvecIndicateurs: params.chantiersAvecIndicateurs,
+      coordChantierIds,
+    });
   }
 }

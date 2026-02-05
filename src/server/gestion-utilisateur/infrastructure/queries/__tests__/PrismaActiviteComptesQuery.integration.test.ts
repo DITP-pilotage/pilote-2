@@ -493,4 +493,89 @@ describe("PrismaActiviteComptesQuery", () => {
       ]);
     }),
   );
+
+  it(
+    "déduplique les territoires quand l'habilitation contient REG et ses DEPTs",
+    createIntegrationTest(async () => {
+      // Given
+      const dateDebut = new Date("2026-01-13T09:00:01Z");
+      const dateFin = new Date("2026-01-20T09:00:00Z");
+
+      const territoireReg = await fixtures.territoire({
+        code: "REG-850",
+        nom: "Région Test Dedup",
+        maille: "REG",
+      });
+
+      const territoireDept84 = await fixtures.territoire({
+        code: "DEPT-840",
+        nom: "Département Test 1",
+        maille: "DEPT",
+        code_parent: territoireReg.code,
+      });
+
+      const territoireDept83 = await fixtures.territoire({
+        code: "DEPT-830",
+        nom: "Département Test 2",
+        maille: "DEPT",
+        code_parent: territoireReg.code,
+      });
+
+      const utilisateur = await fixtures.utilisateur({
+        profilCode: "SERVICES_DECONCENTRES_REGION",
+        date_creation: new Date("2026-01-15T10:00:00Z"),
+      });
+
+      await fixtures.habilitation({
+        utilisateurId: utilisateur.id,
+        territoires: [
+          territoireReg.code,
+          territoireDept84.code,
+          territoireDept83.code,
+        ],
+      });
+
+      // When
+      const evenements = await query.recupererActiviteComptes({
+        dateDebut,
+        dateFin,
+        profilCodes: ["SERVICES_DECONCENTRES_REGION"],
+      });
+
+      // Then
+      expect(evenements).toEqual([
+        {
+          type: "COMPTE_CREE",
+          compte: {
+            email: utilisateur.email,
+            nom: utilisateur.nom,
+            prenom: utilisateur.prenom,
+            profil: "SERVICES_DECONCENTRES_REGION",
+            territoires: [
+              {
+                code: "REG-850",
+                nom: "Région Test Dedup",
+                maille: "REG",
+                enfants: [
+                  {
+                    code: "DEPT-840",
+                    nom: "Département Test 1",
+                    maille: "DEPT",
+                    enfants: [],
+                  },
+                  {
+                    code: "DEPT-830",
+                    nom: "Département Test 2",
+                    maille: "DEPT",
+                    enfants: [],
+                  },
+                ],
+              },
+            ],
+          },
+          date: new Date("2026-01-15T10:00:00Z"),
+        },
+      ]);
+    }),
+  );
 });

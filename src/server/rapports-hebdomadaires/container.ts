@@ -4,16 +4,22 @@ import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { EmailManager } from "@/server/infrastructure/email-manager";
 import { PrismaActiviteComptesQuery } from "@/server/gestion-utilisateur/infrastructure/queries/PrismaActiviteComptesQuery";
 import { PrismaUtilisateursQuery } from "@/server/gestion-utilisateur/infrastructure/queries/PrismaUtilisateursQuery";
+import { RecupererChantiersApplicablesParTerritoiresQuery } from "@/server/chantiers/infrastructure/queries/RecupererChantiersApplicablesParTerritoiresQuery";
+import { RecupererEvenementsVAParPeriodeQuery } from "@/server/indicateur-territoire-valeur-evenement/infrastructure/queries/RecupererEvenementsVAParPeriodeQuery";
 
 import { ActiviteComptesGateway } from "./domain/ports/ActiviteComptesGateway";
 import { CoordinateurGateway } from "./domain/ports/CoordinateurGateway";
 import { RapportRepository } from "./domain/ports/RapportRepository";
 import { EnvoieEmailService } from "./domain/ports/EnvoieEmailService";
+import { ChantierGateway } from "./domain/ports/ChantierGateway";
+import { ActiviteVAGateway } from "./domain/ports/ActiviteVAGateway";
 
 import { GestionUtilisateurActiviteComptesGateway } from "./infrastructure/adapters/GestionUtilisateurActiviteComptesGateway";
 import { GestionUtilisateurCoordinateurGateway } from "./infrastructure/adapters/GestionUtilisateurCoordinateurGateway";
 import { PrismaRapportRepository } from "./infrastructure/adapters/PrismaRapportRepository";
 import { BrevoEnvoieEmailService } from "./infrastructure/adapters/BrevoEnvoieEmailService";
+import { ChantiersChantierGateway } from "./infrastructure/adapters/ChantiersChantierGateway";
+import { IndicateurActiviteVAGateway } from "./infrastructure/adapters/IndicateurActiviteVAGateway";
 
 import { ProduireRapportsHebdomadairesUseCase } from "./usecases/ProduireRapportsHebdomadairesUseCase";
 import { EnvoyerRapportsHebdomadairesUseCase } from "./usecases/EnvoyerRapportsHebdomadairesUseCase";
@@ -21,10 +27,14 @@ import { EnvoyerRapportsHebdomadairesUseCase } from "./usecases/EnvoyerRapportsH
 export type RapportsHebdomadairesDependencies = {
   activiteComptesQuery: PrismaActiviteComptesQuery;
   utilisateursQuery: PrismaUtilisateursQuery;
+  recupererChantiersQuery: RecupererChantiersApplicablesParTerritoiresQuery;
+  evenementsVAQuery: RecupererEvenementsVAParPeriodeQuery;
   activiteComptesGateway: ActiviteComptesGateway;
   coordinateurGateway: CoordinateurGateway;
   rapportRepository: RapportRepository;
   envoieEmailService: EnvoieEmailService;
+  chantierGateway: ChantierGateway;
+  activiteVAGateway: ActiviteVAGateway;
   produireRapportsHebdomadairesUseCase: ProduireRapportsHebdomadairesUseCase;
   envoyerRapportsHebdomadairesUseCase: EnvoyerRapportsHebdomadairesUseCase;
 };
@@ -44,10 +54,16 @@ export const getRapportsHebdomadairesContainer = (
     .register({
       activiteComptesQuery: asClass(PrismaActiviteComptesQuery),
       utilisateursQuery: asClass(PrismaUtilisateursQuery),
+      recupererChantiersQuery: asClass(
+        RecupererChantiersApplicablesParTerritoiresQuery,
+      ),
+      evenementsVAQuery: asClass(RecupererEvenementsVAParPeriodeQuery),
       activiteComptesGateway: asClass(GestionUtilisateurActiviteComptesGateway),
       coordinateurGateway: asClass(GestionUtilisateurCoordinateurGateway),
       rapportRepository: asClass(PrismaRapportRepository),
       envoieEmailService: asClass(BrevoEnvoieEmailService),
+      chantierGateway: asClass(ChantiersChantierGateway),
+      activiteVAGateway: asClass(IndicateurActiviteVAGateway),
       produireRapportsHebdomadairesUseCase: asClass(
         ProduireRapportsHebdomadairesUseCase,
       ),

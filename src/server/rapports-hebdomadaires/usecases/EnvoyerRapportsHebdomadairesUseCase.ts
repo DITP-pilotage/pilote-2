@@ -91,12 +91,15 @@ export class EnvoyerRapportsHebdomadairesUseCase {
       const messageErreur =
         error instanceof Error ? error.message : String(error);
 
-      logger.error("Échec envoi email", {
-        rapportId: rapport.id,
-        coordinateurEmail: rapport.coordinateur.email,
-        erreur: messageErreur,
-        nombreTentatives: rapport.nombreTentatives + 1,
-      });
+      logger.error(
+        {
+          rapportId: rapport.id,
+          coordinateurEmail: rapport.coordinateur.email,
+          erreur: messageErreur,
+          nombreTentatives: rapport.nombreTentatives + 1,
+        },
+        "Échec envoi email",
+      );
 
       const rapportEnEchec = marquerCommeEchec({
         rapport,

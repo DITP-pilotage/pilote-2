@@ -1,6 +1,7 @@
 import { $Enums, Prisma } from "@prisma/client";
 import { randomUUID } from "node:crypto";
 import { getPrisma } from "@/server/db/PrismaTransaction";
+import { ContenuRapport } from "@/server/rapports-hebdomadaires/infrastructure/adapters/PrismaRapportRepository";
 
 /**
  * Test fixtures - Simple composable building blocks for integration tests.
@@ -419,6 +420,7 @@ export const fixtures = {
         date_fin_periode: new Date(),
         contenu_rapport: {
           coordinateur: {
+            id: coordinateur_id,
             email: "coordinateur@example.com",
             nom: "Coordinateur",
             prenom: "Test",
@@ -436,8 +438,68 @@ export const fixtures = {
             comptesCrees: [],
             comptesDesactives: [],
           },
-        },
+          sectionActiviteChantiers: [],
+        } satisfies ContenuRapport,
         statut_envoi: "CREE",
+        ...overrides,
+      },
+    });
+  },
+
+  async indicateurIdentite(
+    overrides: Partial<Prisma.indicateur_identiteUncheckedCreateInput> & {
+      chantier_id: string;
+    },
+  ) {
+    const prisma = getPrisma();
+    const id = overrides.id || `IND-${randomUUID().slice(0, 6)}`;
+    return prisma.indicateur_identite.create({
+      data: {
+        nom: `Indicateur ${id}`,
+        statut: "PUBLIE",
+        ...overrides,
+        id,
+      },
+    });
+  },
+
+  async indicateurTerritoire(
+    overrides: Partial<Prisma.indicateur_territoireUncheckedCreateInput> & {
+      id: string;
+      territoire_code: string;
+      chantier_id: string;
+    },
+  ) {
+    const prisma = getPrisma();
+    return prisma.indicateur_territoire.create({
+      data: {
+        maille: "DEPT",
+        code_insee: "75",
+        zone_id: "zone-1",
+        ...overrides,
+      },
+    });
+  },
+
+  async indicateurTerritoireValeurEvenement(
+    overrides: Partial<Prisma.indicateur_territoire_valeur_evenementUncheckedCreateInput> & {
+      indic_id: string;
+      territoire_code: string;
+      id_auteur_modification: string;
+    },
+  ) {
+    const prisma = getPrisma();
+    return prisma.indicateur_territoire_valeur_evenement.create({
+      data: {
+        id: randomUUID(),
+        type_evenement: "VALEUR_MODIFIEE",
+        type_valeur: "VALEUR_AVANCEMENT",
+        date_valeur: new Date(),
+        valeur: 50,
+        donnees_complementaires: {},
+        correlation_id: randomUUID(),
+        ordre: 1,
+        date_creation: new Date(),
         ...overrides,
       },
     });
