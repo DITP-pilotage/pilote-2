@@ -88,9 +88,9 @@ const colonnes = [
       return (
         <div className="flex justify-center">
           {props.getValue() === "desactive" ? (
-            <Icone className="!text-error" icone={CloseCircleIcon} />
+            <Icone className="text-error" icone={CloseCircleIcon} />
           ) : (
-            <Icone className="!text-success" icone={SuccessIcon} />
+            <Icone className="text-success" icone={SuccessIcon} />
           )}
         </div>
       );
