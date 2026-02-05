@@ -10,6 +10,7 @@ describe("IndicateurActiviteGateway", () => {
   const prismaPilote = new PrismaPilote();
 
   beforeEach(() => {
+    // TODO : renaming
     const evenementsVAQuery = new RecupererEvenementsVAParPeriodeQuery({
       prisma: prismaPilote,
     });

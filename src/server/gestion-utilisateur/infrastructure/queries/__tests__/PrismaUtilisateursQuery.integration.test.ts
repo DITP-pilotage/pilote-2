@@ -42,7 +42,7 @@ describe("PrismaUtilisateursQuery", () => {
             nom: utilisateur.nom,
             prenom: utilisateur.prenom,
             profilCode: "PREFET_DEPARTEMENT",
-            territoires: [
+            habilitationLectureTerritoires: [
               {
                 code: "DEPT-990",
                 nom: "Département Test",
@@ -99,7 +99,7 @@ describe("PrismaUtilisateursQuery", () => {
             nom: utilisateur.nom,
             prenom: utilisateur.prenom,
             profilCode: "COORDINATEUR_REGION",
-            territoires: [
+            habilitationLectureTerritoires: [
               {
                 code: "REG-990",
                 nom: "Région Test",
@@ -173,7 +173,7 @@ describe("PrismaUtilisateursQuery", () => {
             nom: utilisateur.nom,
             prenom: utilisateur.prenom,
             profilCode: "COORDINATEUR_REGION",
-            territoires: [
+            habilitationLectureTerritoires: [
               {
                 code: "REG-880",
                 nom: "Région Test Dedup",
@@ -192,6 +192,62 @@ describe("PrismaUtilisateursQuery", () => {
                     enfants: [],
                   },
                 ],
+              },
+            ],
+          },
+        ]);
+      }),
+    );
+
+    it(
+      "retourne uniquement les territoires avec le scope 'lecture'",
+      createIntegrationTest(async () => {
+        // Given
+        const territoireLecture = await fixtures.territoire({
+          code: "DEPT-771",
+          nom: "Territoire Lecture",
+          maille: "DEPT",
+        });
+
+        const territoireSaisieIndicateur = await fixtures.territoire({
+          code: "DEPT-772",
+          nom: "Territoire Saisie",
+          maille: "DEPT",
+        });
+
+        const utilisateur = await fixtures.utilisateur({
+          profilCode: "PREFET_DEPARTEMENT",
+        });
+
+        await fixtures.habilitation({
+          utilisateurId: utilisateur.id,
+          scopeCode: "lecture",
+          territoires: [territoireLecture.code],
+        });
+
+        await fixtures.habilitation({
+          utilisateurId: utilisateur.id,
+          scopeCode: "saisieIndicateur",
+          territoires: [territoireSaisieIndicateur.code],
+        });
+
+        // When
+        const result = await query.recupererParProfils(["PREFET_DEPARTEMENT"]);
+
+        // Then
+        expect(result).toEqual([
+          {
+            id: utilisateur.id,
+            email: utilisateur.email,
+            nom: utilisateur.nom,
+            prenom: utilisateur.prenom,
+            profilCode: "PREFET_DEPARTEMENT",
+            habilitationLectureTerritoires: [
+              {
+                code: "DEPT-771",
+                nom: "Territoire Lecture",
+                maille: "DEPT",
+                enfants: [],
               },
             ],
           },

@@ -17,6 +17,7 @@ export type EvenementIndicateur = {
   dateValeur: Date;
   valeur: number | null;
   dateCreation: Date;
+  // TODO : is it required ?
   ordre: number;
 };
 

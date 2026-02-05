@@ -72,6 +72,7 @@ export const createBrevoParams = ({
       nom: indic.nom,
       territoires: indic.territoires.map((territoire) => ({
         nom: formatTerritoireNom(territoire),
+        // TODO : extraire mapper ou table de correspondance
         type_indicateur:
           territoire.typeValeur === "VALEUR_AVANCEMENT"
             ? "va"

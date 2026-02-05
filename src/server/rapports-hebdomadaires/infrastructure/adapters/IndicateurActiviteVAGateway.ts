@@ -4,6 +4,7 @@ import { PeriodeRapport } from "@/server/rapports-hebdomadaires/domain/PeriodeRa
 import { RecupererEvenementsVAParPeriodeQuery } from "@/server/indicateur-territoire-valeur-evenement/infrastructure/queries/RecupererEvenementsVAParPeriodeQuery";
 import { RecupererMesuresIndicateurParPeriodeQuery } from "@/server/chantiers/infrastructure/queries/RecupererMesuresIndicateurParPeriodeQuery";
 
+// TODO : rename the file to match the class name
 export class IndicateurActiviteGateway implements ActiviteIndicateurGateway {
   constructor(
     private readonly deps: {
@@ -17,6 +18,7 @@ export class IndicateurActiviteGateway implements ActiviteIndicateurGateway {
     territoireCodes: string[];
     periode: PeriodeRapport;
   }): Promise<EvenementIndicateur[]> {
+    // TODO : renaming
     const [dtosVA, dtosVIVC] = await Promise.all([
       this.deps.evenementsVAQuery.recupererDansPeriode({
         indicateurIds: params.indicateurIds,
@@ -33,6 +35,7 @@ export class IndicateurActiviteGateway implements ActiviteIndicateurGateway {
       }),
     ]);
 
+    // TODO: renaming
     const evenementsVA: EvenementIndicateur[] = dtosVA.map((dto) => ({
       id: dto.id,
       indicateur: {
@@ -50,6 +53,7 @@ export class IndicateurActiviteGateway implements ActiviteIndicateurGateway {
       ordre: dto.ordre,
     }));
 
+    // TODO: renaming
     const evenementsVIVC: EvenementIndicateur[] = dtosVIVC.map((dto) => ({
       id: dto.id,
       indicateur: {

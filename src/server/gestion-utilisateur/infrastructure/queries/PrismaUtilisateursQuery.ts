@@ -15,7 +15,7 @@ export type UtilisateurDTO = {
   nom: string;
   prenom: string;
   profilCode: string;
-  territoires: TerritoireDTO[];
+  habilitationLectureTerritoires: TerritoireDTO[];
 };
 
 interface Dependencies {
@@ -35,6 +35,9 @@ export class PrismaUtilisateursQuery {
       },
       include: {
         habilitation: {
+          where: {
+            scopeCode: "lecture",
+          },
           select: {
             territoires: true,
           },
@@ -85,7 +88,7 @@ export class PrismaUtilisateursQuery {
           nom: utilisateur.nom,
           prenom: utilisateur.prenom,
           profilCode: utilisateur.profilCode,
-          territoires: territoiresDedupes,
+          habilitationLectureTerritoires: territoiresDedupes,
         };
       })
       .filter(

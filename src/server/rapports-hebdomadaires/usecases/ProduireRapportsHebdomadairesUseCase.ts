@@ -330,6 +330,7 @@ export class ProduireRapportsHebdomadairesUseCase {
     chantiersAvecIndicateurs: Record<string, ChantierAvecIndicateurs>;
     periode: { dateDebut: Date; dateFin: Date };
   }): Promise<SectionChantier[]> {
+    // TODO: clean this method
     const coordTerritoireCodes = params.coordinateur.territoires.flatMap(
       (territoire) => [
         territoire.code,
