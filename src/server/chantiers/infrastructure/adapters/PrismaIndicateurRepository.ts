@@ -1175,7 +1175,15 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
         break;
 
       case EvenementValeurEnum.PROPOSITION_VALEUR_ACCEPTEE:
-        propositionStatutTerritoire = null;
+        if (evenementPropositionValeur) {
+          propositionStatutTerritoire = {
+            statut: evenementPropositionValeur.type_evenement as
+              | EvenementValeurEnum.PROPOSITION_VALEUR_CREEE
+              | EvenementValeurEnum.PROPOSITION_VALEUR_MODIFIEE,
+            date: toISODate(evenementPropositionValeur.date_creation),
+            dateTime: toISODateTime(evenementPropositionValeur.date_creation),
+          };
+        }
         propositionStatutDirectionProjet = {
           statut: EvenementValeurEnum.PROPOSITION_VALEUR_ACCEPTEE,
           date: toISODate(dernierEvenement.date_creation),
@@ -1184,7 +1192,15 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
         break;
 
       case EvenementValeurEnum.PROPOSITION_VALEUR_ACCEPTEE_AVEC_MODIFICATION:
-        propositionStatutTerritoire = null;
+        if (evenementPropositionValeur) {
+          propositionStatutTerritoire = {
+            statut: evenementPropositionValeur.type_evenement as
+              | EvenementValeurEnum.PROPOSITION_VALEUR_CREEE
+              | EvenementValeurEnum.PROPOSITION_VALEUR_MODIFIEE,
+            date: toISODate(evenementPropositionValeur.date_creation),
+            dateTime: toISODateTime(evenementPropositionValeur.date_creation),
+          };
+        }
         propositionStatutDirectionProjet = {
           statut:
             EvenementValeurEnum.PROPOSITION_VALEUR_ACCEPTEE_AVEC_MODIFICATION,
