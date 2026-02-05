@@ -12,7 +12,7 @@ import { GestionUtilisateurCoordinateurGateway } from "@/server/rapports-hebdoma
 import { PrismaRapportRepository } from "@/server/rapports-hebdomadaires/infrastructure/adapters/PrismaRapportRepository";
 import { ChantiersChantierGateway } from "@/server/rapports-hebdomadaires/infrastructure/adapters/ChantiersChantierGateway";
 import { RecupererChantiersApplicablesParTerritoiresQuery } from "@/server/chantiers/infrastructure/queries/RecupererChantiersApplicablesParTerritoiresQuery";
-import { IndicateurActiviteGateway } from "@/server/rapports-hebdomadaires/infrastructure/adapters/IndicateurActiviteVAGateway";
+import { IndicateurActiviteGateway } from "@/server/rapports-hebdomadaires/infrastructure/adapters/IndicateurActiviteGateway";
 import { RecupererMesuresIndicateurParPeriodeQuery } from "@/server/chantiers/infrastructure/queries/RecupererMesuresIndicateurParPeriodeQuery";
 
 describe("ProduireRapportsHebdomadairesUseCase", () => {

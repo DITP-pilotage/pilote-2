@@ -20,7 +20,7 @@ import { GestionUtilisateurCoordinateurGateway } from "./infrastructure/adapters
 import { PrismaRapportRepository } from "./infrastructure/adapters/PrismaRapportRepository";
 import { BrevoEnvoieEmailService } from "./infrastructure/adapters/BrevoEnvoieEmailService";
 import { ChantiersChantierGateway } from "./infrastructure/adapters/ChantiersChantierGateway";
-import { IndicateurActiviteGateway } from "./infrastructure/adapters/IndicateurActiviteVAGateway";
+import { IndicateurActiviteGateway } from "./infrastructure/adapters/IndicateurActiviteGateway";
 
 import { ProduireRapportsHebdomadairesUseCase } from "./usecases/ProduireRapportsHebdomadairesUseCase";
 import { EnvoyerRapportsHebdomadairesUseCase } from "./usecases/EnvoyerRapportsHebdomadairesUseCase";
