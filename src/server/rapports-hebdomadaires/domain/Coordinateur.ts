@@ -18,6 +18,13 @@ export type Coordinateur = {
   territoires: TerritoireCoordinateur[];
 };
 
+export const getTerritoiresCoordinateur = (coordinateur: Coordinateur) => {
+  return coordinateur.territoires.flatMap((territoire) => [
+    territoire.code,
+    ...territoire.enfants.map((enfant) => enfant.code),
+  ]);
+};
+
 export function aDesDroitsSurTerritoire(params: {
   coordinateur: Coordinateur;
   codesTerritoires: string[];
@@ -25,13 +32,7 @@ export function aDesDroitsSurTerritoire(params: {
   const { coordinateur, codesTerritoires } = params;
   if (codesTerritoires.length === 0) return false;
 
-  const getAllCodes = (territoire: TerritoireCoordinateur): string[] => [
-    territoire.code,
-    ...territoire.enfants.flatMap(getAllCodes),
-  ];
-
-  const tousLesCodesCoordinateur =
-    coordinateur.territoires.flatMap(getAllCodes);
+  const tousLesCodesCoordinateur = getTerritoiresCoordinateur(coordinateur);
 
   return codesTerritoires.some((code) =>
     tousLesCodesCoordinateur.includes(code),

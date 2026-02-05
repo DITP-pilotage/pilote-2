@@ -8,6 +8,7 @@ import { RapportRepository } from "@/server/rapports-hebdomadaires/domain/ports/
 import {
   ChantierAvecIndicateurs,
   ChantierGateway,
+  getChantiersIndicateursIds,
 } from "@/server/rapports-hebdomadaires/domain/ports/ChantierGateway";
 import { ActiviteIndicateurGateway } from "@/server/rapports-hebdomadaires/domain/ports/ActiviteVAGateway";
 import { calculerPeriodeDernierLundiNeufHeures } from "@/server/rapports-hebdomadaires/domain/PeriodeRapport";
@@ -18,6 +19,7 @@ import {
 import {
   aDesDroitsSurTerritoire,
   Coordinateur,
+  getTerritoiresCoordinateur,
 } from "@/server/rapports-hebdomadaires/domain/Coordinateur";
 import {
   ActiviteComptes,
@@ -125,12 +127,11 @@ export class ProduireRapportsHebdomadairesUseCase {
   private construireSectionChantiers({
     activites,
     chantiersAvecIndicateurs,
-    coordChantierIds,
   }: {
     activites: ActiviteIndicateur[];
     chantiersAvecIndicateurs: Record<string, ChantierAvecIndicateurs>;
-    coordChantierIds: string[];
   }): SectionChantier[] {
+    const coordChantierIds = Object.keys(chantiersAvecIndicateurs);
     const activitesParChantier = new Map<
       string,
       {
@@ -221,13 +222,15 @@ export class ProduireRapportsHebdomadairesUseCase {
     return coordinateurs;
   }
 
-  private async recupererDonneesDeReference(params: {
+  private async recupererDonneesDeReference({
+    periode: { dateDebut, dateFin },
+  }: {
     periode: { dateDebut: Date; dateFin: Date };
   }): Promise<ActiviteComptes> {
     const activiteGlobale =
       await this.deps.activiteComptesGateway.recupererActivite({
-        dateDebut: params.periode.dateDebut,
-        dateFin: params.periode.dateFin,
+        dateDebut,
+        dateFin,
         profilCodes: PROFILS_CONCERNES,
       });
 
@@ -241,16 +244,17 @@ export class ProduireRapportsHebdomadairesUseCase {
   private async recupererChantiersAccessiblesPourCoordinateur(
     coordinateur: Coordinateur,
   ): Promise<Record<string, ChantierAvecIndicateurs>> {
-    const territoireCodes = coordinateur.territoires.flatMap((territoire) => [
-      territoire.code,
-      ...territoire.enfants.map((enfant) => enfant.code),
-    ]);
     return this.deps.chantierGateway.recupererChantiersAccessibles({
-      territoireCodes,
+      territoireCodes: getTerritoiresCoordinateur(coordinateur),
     });
   }
 
-  private async produireRapportsPourCoordinateurs(params: {
+  private async produireRapportsPourCoordinateurs({
+    activiteGlobale,
+    coordinateurs,
+    maintenant,
+    periode,
+  }: {
     coordinateurs: Coordinateur[];
     activiteGlobale: ActiviteComptes;
     periode: { dateDebut: Date; dateFin: Date };
@@ -259,13 +263,13 @@ export class ProduireRapportsHebdomadairesUseCase {
     let rapportsCrees = 0;
     let coordinateursSansActivite = 0;
 
-    for (const coordinateur of params.coordinateurs) {
+    for (const coordinateur of coordinateurs) {
       try {
         const rapport = await this.creerRapportPourCoordinateur({
           coordinateur,
-          activiteGlobale: params.activiteGlobale,
-          periode: params.periode,
-          maintenant: params.maintenant,
+          activiteGlobale,
+          periode,
+          maintenant,
         });
 
         if (rapport) {
@@ -292,25 +296,27 @@ export class ProduireRapportsHebdomadairesUseCase {
     return {
       rapportsCrees,
       coordinateursSansActivite,
-      dateExecution: params.maintenant,
+      dateExecution: maintenant,
     };
   }
 
-  private produireSectionComptes(params: {
+  private produireSectionComptes({
+    activiteGlobale,
+    coordinateur,
+  }: {
     coordinateur: Coordinateur;
     activiteGlobale: ActiviteComptes;
   }): {
     comptesCrees: CompteActivite[];
     comptesDesactives: CompteActivite[];
   } {
-    const evenementsFiltres = params.activiteGlobale.filter((evenement) => {
-      if (evenement.compte.email === params.coordinateur.email) {
-        // TODO (CHAN - Rapport) : au final, on exlut ou pas ?
+    const evenementsFiltres = activiteGlobale.filter((evenement) => {
+      if (evenement.compte.email === coordinateur.email) {
         return false;
       }
 
       return aDesDroitsSurTerritoire({
-        coordinateur: params.coordinateur,
+        coordinateur,
         codesTerritoires: evenement.compte.territoires.flatMap((territoire) => [
           territoire.code,
           ...territoire.enfants.map((enfant) => enfant.code),
@@ -321,36 +327,24 @@ export class ProduireRapportsHebdomadairesUseCase {
     return grouperEvenementsParType(evenementsFiltres);
   }
 
-  private async produireSectionActivite(params: {
+  private async produireSectionActivite({
+    coordinateur,
+    periode,
+  }: {
     coordinateur: Coordinateur;
     periode: { dateDebut: Date; dateFin: Date };
   }): Promise<SectionChantier[]> {
     const chantiersAvecIndicateurs =
-      await this.recupererChantiersAccessiblesPourCoordinateur(
-        params.coordinateur,
-      );
-
-    // TODO: clean this method
-    const coordTerritoireCodes = params.coordinateur.territoires.flatMap(
-      (territoire) => [
-        territoire.code,
-        ...territoire.enfants.map((enfant) => enfant.code),
-      ],
-    );
-
-    const coordChantierIds = Object.keys(chantiersAvecIndicateurs);
-    const coordIndicateurIds = coordChantierIds.flatMap(
-      (chantierId) =>
-        chantiersAvecIndicateurs[chantierId]?.indicateurs.map(
-          (indicateur) => indicateur.id,
-        ) || [],
-    );
+      await this.recupererChantiersAccessiblesPourCoordinateur(coordinateur);
+    const territoiresCoordinateur = getTerritoiresCoordinateur(coordinateur);
+    const chantiers = Object.values(chantiersAvecIndicateurs);
+    const indicateurIds = getChantiersIndicateursIds(chantiers);
 
     const evenementsDansPeriode =
       await this.deps.activiteIndicateurGateway.recupererEvenementsDansPeriode({
-        indicateurIds: coordIndicateurIds,
-        territoireCodes: coordTerritoireCodes,
-        periode: params.periode,
+        territoireCodes: territoiresCoordinateur,
+        indicateurIds,
+        periode,
       });
 
     const indicateurTerritoiresApplicables = new Map<string, Set<string>>();
@@ -363,11 +357,12 @@ export class ProduireRapportsHebdomadairesUseCase {
       }
     }
 
-    const evenementsFiltres = evenementsDansPeriode.filter((event) => {
-      const applicables = indicateurTerritoiresApplicables.get(
-        event.indicateur.id,
-      );
-      return applicables?.has(event.territoire.code) ?? false;
+    const evenementsFiltres = evenementsDansPeriode.filter((evenement) => {
+      const applicables =
+        indicateurTerritoiresApplicables.get(evenement.indicateur.id) ??
+        new Set();
+
+      return applicables.has(evenement.territoire.code);
     });
 
     const activites = grouperEvenements(evenementsFiltres);
@@ -375,7 +370,6 @@ export class ProduireRapportsHebdomadairesUseCase {
     return this.construireSectionChantiers({
       activites,
       chantiersAvecIndicateurs,
-      coordChantierIds,
     });
   }
 }

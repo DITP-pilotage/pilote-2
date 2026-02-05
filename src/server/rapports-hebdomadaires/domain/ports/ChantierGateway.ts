@@ -10,6 +10,14 @@ export type ChantierAvecIndicateurs = {
   indicateurs: IndicateurInfo[];
 };
 
+export const getChantiersIndicateursIds = (
+  chantiers: ChantierAvecIndicateurs[],
+) => {
+  return chantiers.flatMap((chantier) =>
+    chantier.indicateurs.map((indicateur) => indicateur.id),
+  );
+};
+
 export interface ChantierGateway {
   recupererChantiersAccessibles(params: {
     territoireCodes: string[];
