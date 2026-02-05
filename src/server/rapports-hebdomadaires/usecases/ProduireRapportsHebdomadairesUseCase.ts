@@ -88,12 +88,8 @@ export class ProduireRapportsHebdomadairesUseCase {
       activiteGlobale,
     });
 
-    const chantiersAvecIndicateurs =
-      await this.recupererChantiersAccessiblesPourCoordinateur(coordinateur);
-
     const chantiers = await this.produireSectionActivite({
       coordinateur,
-      chantiersAvecIndicateurs,
       periode,
     });
 
@@ -327,9 +323,13 @@ export class ProduireRapportsHebdomadairesUseCase {
 
   private async produireSectionActivite(params: {
     coordinateur: Coordinateur;
-    chantiersAvecIndicateurs: Record<string, ChantierAvecIndicateurs>;
     periode: { dateDebut: Date; dateFin: Date };
   }): Promise<SectionChantier[]> {
+    const chantiersAvecIndicateurs =
+      await this.recupererChantiersAccessiblesPourCoordinateur(
+        params.coordinateur,
+      );
+
     // TODO: clean this method
     const coordTerritoireCodes = params.coordinateur.territoires.flatMap(
       (territoire) => [
@@ -338,10 +338,10 @@ export class ProduireRapportsHebdomadairesUseCase {
       ],
     );
 
-    const coordChantierIds = Object.keys(params.chantiersAvecIndicateurs);
+    const coordChantierIds = Object.keys(chantiersAvecIndicateurs);
     const coordIndicateurIds = coordChantierIds.flatMap(
       (chantierId) =>
-        params.chantiersAvecIndicateurs[chantierId]?.indicateurs.map(
+        chantiersAvecIndicateurs[chantierId]?.indicateurs.map(
           (indicateur) => indicateur.id,
         ) || [],
     );
@@ -354,7 +354,7 @@ export class ProduireRapportsHebdomadairesUseCase {
       });
 
     const indicateurTerritoiresApplicables = new Map<string, Set<string>>();
-    for (const chantier of Object.values(params.chantiersAvecIndicateurs)) {
+    for (const chantier of Object.values(chantiersAvecIndicateurs)) {
       for (const indicateur of chantier.indicateurs) {
         indicateurTerritoiresApplicables.set(
           indicateur.id,
@@ -374,7 +374,7 @@ export class ProduireRapportsHebdomadairesUseCase {
 
     return this.construireSectionChantiers({
       activites,
-      chantiersAvecIndicateurs: params.chantiersAvecIndicateurs,
+      chantiersAvecIndicateurs,
       coordChantierIds,
     });
   }
