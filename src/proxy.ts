@@ -1,5 +1,6 @@
 import { getToken } from "next-auth/jwt";
 import { NextRequest, NextResponse } from "next/server";
+import axios from "axios";
 
 import logger from "./server/infrastructure/Logger";
 
@@ -38,23 +39,22 @@ async function validateKeycloakToken(token: string): Promise<boolean> {
       token,
     });
 
-    const response = await fetch(
+    const response = await axios.post(
       `${process.env.KEYCLOAK_ISSUER}/protocol/openid-connect/token/introspect`,
+      params.toString(),
       {
-        method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
         },
-        body: params,
+        validateStatus: () => true,
       },
     );
 
-    if (!response.ok) {
+    if (response.status < 200 || response.status >= 300) {
       return false;
     }
 
-    const data = (await response.json()) as { active: boolean };
-    return data.active === true;
+    return response.data?.active === true;
   } catch (error) {
     logger.error("Error validating Keycloak token:", error);
     return false;

@@ -4,6 +4,7 @@ import type { User } from "next-auth";
 import KeycloakProvider from "next-auth/providers/keycloak";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { JWT } from "next-auth/jwt";
+import axios from "axios";
 import logger from "@/server/infrastructure/Logger";
 import { configuration } from "@/config";
 
@@ -13,18 +14,12 @@ export const keycloak = KeycloakProvider({
   issuer: configuration().keycloak.issuer,
 });
 
-async function _assertResponseOk(
-  response: Response,
+function _assertResponseOk(
+  response: { status: number; data: unknown },
   errorMessage: string,
-): Promise<void> {
-  if (response && !response.ok) {
-    try {
-      const json = await response.json();
-      logger.error({ response, json }, errorMessage);
-    } catch {
-      const text = await response.text();
-      logger.error({ response, text }, errorMessage);
-    }
+): void {
+  if (response.status < 200 || response.status >= 300) {
+    logger.error({ status: response.status, data: response.data }, errorMessage);
     throw new Error(errorMessage);
   }
 }
@@ -45,23 +40,25 @@ async function doFinalSignoutHandshake(token: PiloteJWTPayload) {
 
       logger.debug({ logoutUrl: configuration().keycloak.logoutUrl, params });
 
-      const response = await fetch(configuration().keycloak.logoutUrl, {
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
+      const response = await axios.post(
+        configuration().keycloak.logoutUrl,
+        params.toString(),
+        {
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          validateStatus: () => true,
         },
-        method: "POST",
-        body: params,
-      });
+      );
       logger.debug(
         {
-          response,
-          ok: response?.ok,
-          statusText: response?.statusText,
-          body: response?.body,
+          status: response.status,
+          statusText: response.statusText,
+          data: response.data,
         },
         "Logout response",
       );
-      await _assertResponseOk(response, "Failed to logout");
+      _assertResponseOk(response, "Failed to logout");
 
       logger.info("Completed post-logout handshake");
     } catch (error: unknown) {
@@ -111,17 +108,19 @@ async function refreshAccessToken(
       };
       const sendData = new URLSearchParams(fields);
 
-      const response = await fetch(configuration().keycloak.tokenUrl, {
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
+      const response = await axios.post(
+        configuration().keycloak.tokenUrl,
+        sendData.toString(),
+        {
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          validateStatus: () => true,
         },
-        method: "POST",
-        body: sendData,
-      });
-      await _assertResponseOk(response, "Failed to refresh token");
+      );
+      _assertResponseOk(response, "Failed to refresh token");
 
-      const openIdTokenResponse =
-        (await response.json()) as OpenIdTokenResponse;
+      const openIdTokenResponse = response.data as OpenIdTokenResponse;
       logger.debug({ openIdTokenResponse }, "openid-connect/token response");
 
       const result = {
