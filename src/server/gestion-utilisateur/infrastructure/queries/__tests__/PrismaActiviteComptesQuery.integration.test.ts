@@ -291,7 +291,7 @@ describe("PrismaActiviteComptesQuery", () => {
       await fixtures.habilitation({
         utilisateurId: utilisateur.id,
         scopeCode: "saisieCommentaire",
-        territoires: ["DEPT-75"],
+        territoires: ["REG-44"],
       });
 
       // When
@@ -315,13 +315,123 @@ describe("PrismaActiviteComptesQuery", () => {
                 code: "REG-11",
                 nom: "Île-de-France",
                 maille: "REG",
-                enfants: expect.any(Array),
+                enfants: expect.arrayContaining([
+                  {
+                    code: "DEPT-75",
+                    nom: "Paris",
+                    maille: "DEPT",
+                    enfants: [],
+                  },
+                  {
+                    code: "DEPT-77",
+                    nom: "Seine-et-Marne",
+                    maille: "DEPT",
+                    enfants: [],
+                  },
+                  {
+                    code: "DEPT-78",
+                    nom: "Yvelines",
+                    maille: "DEPT",
+                    enfants: [],
+                  },
+                  {
+                    code: "DEPT-91",
+                    nom: "Essonne",
+                    maille: "DEPT",
+                    enfants: [],
+                  },
+                  {
+                    code: "DEPT-92",
+                    nom: "Hauts-de-Seine",
+                    maille: "DEPT",
+                    enfants: [],
+                  },
+                  {
+                    code: "DEPT-93",
+                    nom: "Seine-Saint-Denis",
+                    maille: "DEPT",
+                    enfants: [],
+                  },
+                  {
+                    code: "DEPT-94",
+                    nom: "Val-de-Marne",
+                    maille: "DEPT",
+                    enfants: [],
+                  },
+                  {
+                    code: "DEPT-95",
+                    nom: "Val-d'Oise",
+                    maille: "DEPT",
+                    enfants: [],
+                  },
+                ]),
               },
               {
-                code: "DEPT-75",
-                nom: "Paris",
-                maille: "DEPT",
-                enfants: [],
+                code: "REG-44",
+                nom: "Grand-Est",
+                maille: "REG",
+                enfants: expect.arrayContaining([
+                  {
+                    code: "DEPT-08",
+                    nom: "Ardennes",
+                    maille: "DEPT",
+                    enfants: [],
+                  },
+                  {
+                    code: "DEPT-10",
+                    nom: "Aube",
+                    maille: "DEPT",
+                    enfants: [],
+                  },
+                  {
+                    code: "DEPT-51",
+                    nom: "Marne",
+                    maille: "DEPT",
+                    enfants: [],
+                  },
+                  {
+                    code: "DEPT-52",
+                    nom: "Haute-Marne",
+                    maille: "DEPT",
+                    enfants: [],
+                  },
+                  {
+                    code: "DEPT-54",
+                    nom: "Meurthe-et-Moselle",
+                    maille: "DEPT",
+                    enfants: [],
+                  },
+                  {
+                    code: "DEPT-55",
+                    nom: "Meuse",
+                    maille: "DEPT",
+                    enfants: [],
+                  },
+                  {
+                    code: "DEPT-57",
+                    nom: "Moselle",
+                    maille: "DEPT",
+                    enfants: [],
+                  },
+                  {
+                    code: "DEPT-67",
+                    nom: "Bas-Rhin",
+                    maille: "DEPT",
+                    enfants: [],
+                  },
+                  {
+                    code: "DEPT-68",
+                    nom: "Haut-Rhin",
+                    maille: "DEPT",
+                    enfants: [],
+                  },
+                  {
+                    code: "DEPT-88",
+                    nom: "Vosges",
+                    maille: "DEPT",
+                    enfants: [],
+                  },
+                ]),
               },
             ]),
           },
