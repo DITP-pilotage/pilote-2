@@ -280,23 +280,6 @@ export const fixtures = {
     });
   },
 
-  async territoire(
-    overrides: Partial<Prisma.territoireUncheckedCreateInput> & {
-      code: string;
-    },
-  ) {
-    const prisma = getPrisma();
-    return prisma.territoire.create({
-      data: {
-        nom: `Territoire ${overrides.code}`,
-        nom_affiche: `Territoire ${overrides.code}`,
-        maille: "DEPT",
-        code_insee: overrides.code,
-        zone_id: `zone-${randomUUID().slice(0, 6)}`,
-        ...overrides,
-      },
-    });
-  },
 
   async chantierIdentite(
     overrides: Partial<Prisma.chantier_identiteUncheckedCreateInput> = {},

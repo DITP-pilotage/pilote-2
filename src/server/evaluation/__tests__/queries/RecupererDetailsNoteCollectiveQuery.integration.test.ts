@@ -21,11 +21,13 @@ describe("RecupererDetailsNoteCollectiveQuery", () => {
         const jalon = 2025;
 
         const rattachement = await f.rattachement({
+          code: "DEPT-75",
           libelle: "Département 75",
         });
         const rattachementCode = rattachement.code;
 
         const autreRattachement = await f.rattachement({
+          code: "DEPT-01",
           libelle: "Département 01",
         });
 
@@ -84,18 +86,6 @@ describe("RecupererDetailsNoteCollectiveQuery", () => {
             nom: "Chantier Gamma",
             ministeres: [ministere1.id],
           },
-        });
-
-        await f.territoire({
-          code: rattachementCode,
-          code_insee: "75",
-          maille: "DEPT",
-        });
-
-        await f.territoire({
-          code: autreRattachement.code,
-          code_insee: "01",
-          maille: "DEPT",
         });
 
         await prisma.chantier_territoire.createMany({
@@ -284,6 +274,7 @@ describe("RecupererDetailsNoteCollectiveQuery", () => {
         const jalon = 2025;
 
         const rattachement = await f.rattachement({
+          code: "REG-84",
           libelle: "Région 84",
         });
         const rattachementCode = rattachement.code;
@@ -316,12 +307,6 @@ describe("RecupererDetailsNoteCollectiveQuery", () => {
             nom: "Chantier Epsilon",
             ministeres: [ministere.id],
           },
-        });
-
-        await f.territoire({
-          code: rattachementCode,
-          code_insee: "84",
-          maille: "REG",
         });
 
         await prisma.chantier_territoire.createMany({
@@ -463,6 +448,7 @@ describe("RecupererDetailsNoteCollectiveQuery", () => {
         const jalon = 2025;
 
         const rattachement = await f.rattachement({
+          code: "REG-84",
           libelle: "Région 84",
         });
         const rattachementCode = rattachement.code;
@@ -478,12 +464,6 @@ describe("RecupererDetailsNoteCollectiveQuery", () => {
             nom: "Chantier Sans Ministère",
             ministeres: [],
           },
-        });
-
-        await f.territoire({
-          code: rattachementCode,
-          code_insee: "84",
-          maille: "REG",
         });
 
         await prisma.chantier_territoire.create({
@@ -546,11 +526,13 @@ describe("RecupererDetailsNoteCollectiveQuery", () => {
         const jalon = 2025;
 
         const rattachement = await f.rattachement({
+          code: "DEPT-44",
           libelle: "Département 44",
         });
         const rattachementCode = rattachement.code;
 
         const autreRattachement = await f.rattachement({
+          code: "DEPT-33",
           libelle: "Département 33",
         });
 
@@ -587,18 +569,6 @@ describe("RecupererDetailsNoteCollectiveQuery", () => {
             nom: "Autre Chantier",
             ministeres: [ministere.id],
           },
-        });
-
-        await f.territoire({
-          code: rattachementCode,
-          code_insee: "44",
-          maille: "DEPT",
-        });
-
-        await f.territoire({
-          code: autreRattachement.code,
-          code_insee: "33",
-          maille: "DEPT",
         });
 
         const indicateur1 = await prisma.indicateur_identite.create({
@@ -985,6 +955,7 @@ describe("RecupererDetailsNoteCollectiveQuery", () => {
         const jalon = 2025;
 
         const rattachement = await f.rattachement({
+          code: "REG-93",
           libelle: "Région 93",
         });
         const rattachementCode = rattachement.code;
@@ -1017,12 +988,6 @@ describe("RecupererDetailsNoteCollectiveQuery", () => {
             nom: "Chantier avec taux valide",
             ministeres: [ministere.id],
           },
-        });
-
-        await f.territoire({
-          code: rattachementCode,
-          code_insee: "93",
-          maille: "REG",
         });
 
         await prisma.chantier_territoire.createMany({

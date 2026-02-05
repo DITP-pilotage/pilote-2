@@ -10,7 +10,6 @@ describe("IndicateurActiviteGateway", () => {
   const prismaPilote = new PrismaPilote();
 
   beforeEach(() => {
-    // TODO : renaming
     const evenementsVAQuery = new RecupererEvenementsVAParPeriodeQuery({
       prisma: prismaPilote,
     });
@@ -39,19 +38,15 @@ describe("IndicateurActiviteGateway", () => {
         nom: "Indicateur Test",
         chantier_id: chantier.id,
       });
-      const territoire = await fixtures.territoire({
-        code: "DEPT-75",
-        nom: "Paris",
-      });
       const indicateurTerritoire = await fixtures.indicateurTerritoire({
         id: indicateurIdentite.id,
-        territoire_code: territoire.code,
+        territoire_code: "DEPT-75",
         chantier_id: chantier.id,
       });
 
       await fixtures.indicateurTerritoireValeurEvenement({
         indic_id: indicateurTerritoire.id,
-        territoire_code: territoire.code,
+        territoire_code: "DEPT-75",
         id_auteur_modification: utilisateur.id,
         type_evenement: "VALEUR_CREEE",
         type_valeur: "VALEUR_AVANCEMENT",
@@ -82,7 +77,7 @@ describe("IndicateurActiviteGateway", () => {
       // When
       const result = await gateway.recupererEvenementsDansPeriode({
         indicateurIds: [indicateurIdentite.id],
-        territoireCodes: [territoire.code],
+        territoireCodes: ["DEPT-75"],
         periode: { dateDebut, dateFin },
       });
 
@@ -96,8 +91,8 @@ describe("IndicateurActiviteGateway", () => {
               nom: indicateurIdentite.nom,
             },
             territoire: {
-              code: territoire.code,
-              nom: territoire.nom,
+              code: "DEPT-75",
+              nom: "Paris",
             },
             typeValeur: "VALEUR_AVANCEMENT",
             valeur: 50,
@@ -109,8 +104,8 @@ describe("IndicateurActiviteGateway", () => {
               nom: indicateurIdentite.nom,
             },
             territoire: {
-              code: territoire.code,
-              nom: territoire.nom,
+              code: "DEPT-75",
+              nom: "Paris",
             },
             typeValeur: "VALEUR_INITIALE",
             valeur: 100,
@@ -122,8 +117,8 @@ describe("IndicateurActiviteGateway", () => {
               nom: indicateurIdentite.nom,
             },
             territoire: {
-              code: territoire.code,
-              nom: territoire.nom,
+              code: "DEPT-75",
+              nom: "Paris",
             },
             typeValeur: "VALEUR_CIBLE",
             valeur: 200,
@@ -147,23 +142,15 @@ describe("IndicateurActiviteGateway", () => {
         nom: "Indicateur Tri",
         chantier_id: chantier.id,
       });
-      const territoire75 = await fixtures.territoire({
-        code: "DEPT-75",
-        nom: "Paris",
-      });
-      const territoire92 = await fixtures.territoire({
-        code: "DEPT-92",
-        nom: "Hauts-de-Seine",
-      });
 
       await fixtures.indicateurTerritoire({
         id: indicateurIdentite.id,
-        territoire_code: territoire75.code,
+        territoire_code: "DEPT-75",
         chantier_id: chantier.id,
       });
       await fixtures.indicateurTerritoire({
         id: indicateurIdentite.id,
-        territoire_code: territoire92.code,
+        territoire_code: "DEPT-92",
         chantier_id: chantier.id,
       });
 
@@ -197,7 +184,7 @@ describe("IndicateurActiviteGateway", () => {
       // When
       const result = await gateway.recupererEvenementsDansPeriode({
         indicateurIds: [indicateurIdentite.id],
-        territoireCodes: [territoire75.code, territoire92.code],
+        territoireCodes: ["DEPT-75", "DEPT-92"],
         periode: { dateDebut, dateFin },
       });
 
@@ -250,10 +237,6 @@ describe("IndicateurActiviteGateway", () => {
         nom: "Indicateur Null",
         chantier_id: chantier.id,
       });
-      const territoire = await fixtures.territoire({
-        code: "DEPT-13",
-        nom: "Bouches-du-Rhône",
-      });
 
       await fixtures.mesureIndicateur({
         indic_id: indicateurIdentite.id,
@@ -267,7 +250,7 @@ describe("IndicateurActiviteGateway", () => {
       // When
       const result = await gateway.recupererEvenementsDansPeriode({
         indicateurIds: [indicateurIdentite.id],
-        territoireCodes: [territoire.code],
+        territoireCodes: ["DEPT-13"],
         periode: { dateDebut, dateFin },
       });
 

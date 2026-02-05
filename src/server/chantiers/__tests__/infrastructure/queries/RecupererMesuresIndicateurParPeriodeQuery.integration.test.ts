@@ -75,10 +75,6 @@ describe("RecupererMesuresIndicateurParPeriodeQuery", () => {
         nom: "Indicateur Test",
         chantier_id: chantier.id,
       });
-      const territoire = await fixtures.territoire({
-        code: "DEPT-12",
-        nom: "Aveyron",
-      });
       const mesure = await fixtures.mesureIndicateur({
         indic_id: indicateurIdentite.id,
         zone_id: "D12",
@@ -91,7 +87,7 @@ describe("RecupererMesuresIndicateurParPeriodeQuery", () => {
       // When
       const result = await query.execute({
         indicateurIds: [indicateurIdentite.id],
-        territoireCodes: [territoire.code],
+        territoireCodes: ["DEPT-12"],
         dateDebut: new Date("2024-01-01"),
         dateFin: new Date("2024-01-31"),
         typesValeur: ["VALEUR_INITIALE"],
@@ -103,8 +99,8 @@ describe("RecupererMesuresIndicateurParPeriodeQuery", () => {
           id: mesure.id,
           indicateurId: indicateurIdentite.id,
           indicateurNom: indicateurIdentite.nom,
-          territoireCode: territoire.code,
-          territoireNom: territoire.nom,
+          territoireCode: "DEPT-12",
+          territoireNom: "Aveyron",
           typeValeur: "VALEUR_INITIALE",
           dateValeur: new Date("2024-01-01"),
           valeur: 100,
@@ -125,10 +121,6 @@ describe("RecupererMesuresIndicateurParPeriodeQuery", () => {
         nom: "Indicateur Cible",
         chantier_id: chantier.id,
       });
-      const territoire = await fixtures.territoire({
-        code: "REG-93",
-        nom: "Provence-Alpes-Côte d'Azur",
-      });
       const mesure = await fixtures.mesureIndicateur({
         indic_id: indicateurIdentite.id,
         zone_id: "R93",
@@ -141,7 +133,7 @@ describe("RecupererMesuresIndicateurParPeriodeQuery", () => {
       // When
       const result = await query.execute({
         indicateurIds: [indicateurIdentite.id],
-        territoireCodes: [territoire.code],
+        territoireCodes: ["REG-93"],
         dateDebut: new Date("2024-01-01"),
         dateFin: new Date("2024-01-31"),
         typesValeur: ["VALEUR_CIBLE"],
@@ -153,8 +145,8 @@ describe("RecupererMesuresIndicateurParPeriodeQuery", () => {
           id: mesure.id,
           indicateurId: indicateurIdentite.id,
           indicateurNom: indicateurIdentite.nom,
-          territoireCode: territoire.code,
-          territoireNom: territoire.nom,
+          territoireCode: "REG-93",
+          territoireNom: "Provence - Alpes - Côte d'Azur",
           typeValeur: "VALEUR_CIBLE",
           dateValeur: new Date("2024-01-01"),
           valeur: 200,
@@ -175,13 +167,9 @@ describe("RecupererMesuresIndicateurParPeriodeQuery", () => {
         nom: "Indicateur Multiple",
         chantier_id: chantier.id,
       });
-      const territoire = await fixtures.territoire({
-        code: "NAT-FR",
-        nom: "France",
-      });
       const mesureVI = await fixtures.mesureIndicateur({
         indic_id: indicateurIdentite.id,
-        zone_id: "France",
+        zone_id: "FRANCE",
         metric_date: "2024-01-01",
         metric_type: "vi",
         metric_value: "100",
@@ -189,7 +177,7 @@ describe("RecupererMesuresIndicateurParPeriodeQuery", () => {
       });
       const mesureVC = await fixtures.mesureIndicateur({
         indic_id: indicateurIdentite.id,
-        zone_id: "France",
+        zone_id: "FRANCE",
         metric_date: "2024-01-01",
         metric_type: "vc",
         metric_value: "200",
@@ -199,7 +187,7 @@ describe("RecupererMesuresIndicateurParPeriodeQuery", () => {
       // When
       const result = await query.execute({
         indicateurIds: [indicateurIdentite.id],
-        territoireCodes: [territoire.code],
+        territoireCodes: ["NAT-FR"],
         dateDebut: new Date("2024-01-01"),
         dateFin: new Date("2024-01-31"),
         typesValeur: ["VALEUR_INITIALE", "VALEUR_CIBLE"],
@@ -211,8 +199,8 @@ describe("RecupererMesuresIndicateurParPeriodeQuery", () => {
           id: mesureVI.id,
           indicateurId: indicateurIdentite.id,
           indicateurNom: indicateurIdentite.nom,
-          territoireCode: territoire.code,
-          territoireNom: territoire.nom,
+          territoireCode: "NAT-FR",
+          territoireNom: "France",
           typeValeur: "VALEUR_INITIALE",
           dateValeur: new Date("2024-01-01"),
           valeur: 100,
@@ -222,8 +210,8 @@ describe("RecupererMesuresIndicateurParPeriodeQuery", () => {
           id: mesureVC.id,
           indicateurId: indicateurIdentite.id,
           indicateurNom: indicateurIdentite.nom,
-          territoireCode: territoire.code,
-          territoireNom: territoire.nom,
+          territoireCode: "NAT-FR",
+          territoireNom: "France",
           typeValeur: "VALEUR_CIBLE",
           dateValeur: new Date("2024-01-01"),
           valeur: 200,
@@ -242,10 +230,6 @@ describe("RecupererMesuresIndicateurParPeriodeQuery", () => {
         id: "IND-004",
         nom: "Indicateur Filtré",
         chantier_id: chantier.id,
-      });
-      const territoire = await fixtures.territoire({
-        code: "DEPT-75",
-        nom: "Paris",
       });
       await fixtures.mesureIndicateur({
         indic_id: indicateurIdentite.id,
@@ -267,7 +251,7 @@ describe("RecupererMesuresIndicateurParPeriodeQuery", () => {
       // When
       const result = await query.execute({
         indicateurIds: [indicateurIdentite.id],
-        territoireCodes: [territoire.code],
+        territoireCodes: ["DEPT-75"],
         dateDebut: new Date("2024-01-01T00:00:00Z"),
         dateFin: new Date("2024-01-31T23:59:59Z"),
         typesValeur: ["VALEUR_INITIALE"],
@@ -289,10 +273,6 @@ describe("RecupererMesuresIndicateurParPeriodeQuery", () => {
         nom: "Indicateur Null",
         chantier_id: chantier.id,
       });
-      const territoire = await fixtures.territoire({
-        code: "DEPT-13",
-        nom: "Bouches-du-Rhône",
-      });
       const mesure = await fixtures.mesureIndicateur({
         indic_id: indicateurIdentite.id,
         zone_id: "D13",
@@ -305,7 +285,7 @@ describe("RecupererMesuresIndicateurParPeriodeQuery", () => {
       // When
       const result = await query.execute({
         indicateurIds: [indicateurIdentite.id],
-        territoireCodes: [territoire.code],
+        territoireCodes: ["DEPT-13"],
         dateDebut: new Date("2024-01-01"),
         dateFin: new Date("2024-01-31"),
         typesValeur: ["VALEUR_INITIALE"],
@@ -317,8 +297,8 @@ describe("RecupererMesuresIndicateurParPeriodeQuery", () => {
           id: mesure.id,
           indicateurId: indicateurIdentite.id,
           indicateurNom: indicateurIdentite.nom,
-          territoireCode: territoire.code,
-          territoireNom: territoire.nom,
+          territoireCode: "DEPT-13",
+          territoireNom: "Bouches-du-Rhône",
           typeValeur: "VALEUR_INITIALE",
           dateValeur: new Date("2024-01-01"),
           valeur: null,
