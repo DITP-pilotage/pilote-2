@@ -1,4 +1,3 @@
-import { randomUUID } from "node:crypto";
 import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
 import { fixtures } from "@/server/infrastructure/test/fixtures";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
@@ -396,7 +395,7 @@ describe("ProduireRapportsHebdomadairesUseCase", () => {
                     nom: "Indicateur Test",
                     territoires: [
                       expect.objectContaining({
-                        valeurAvancement: 75,
+                        valeur: 75,
                       }),
                     ],
                   }),
