@@ -4,7 +4,6 @@ import { PeriodeRapport } from "@/server/rapports-hebdomadaires/domain/PeriodeRa
 import { RecupererEvenementsVAParPeriodeQuery } from "@/server/indicateur-territoire-valeur-evenement/infrastructure/queries/RecupererEvenementsVAParPeriodeQuery";
 import { RecupererMesuresIndicateurParPeriodeQuery } from "@/server/chantiers/infrastructure/queries/RecupererMesuresIndicateurParPeriodeQuery";
 
-// TODO : rename the file to match the class name
 export class IndicateurActiviteGateway implements ActiviteIndicateurGateway {
   constructor(
     private readonly deps: {
@@ -18,58 +17,10 @@ export class IndicateurActiviteGateway implements ActiviteIndicateurGateway {
     territoireCodes: string[];
     periode: PeriodeRapport;
   }): Promise<EvenementIndicateur[]> {
-    // TODO : renaming
-    const [dtosVA, dtosVIVC] = await Promise.all([
-      this.deps.evenementsVAQuery.recupererDansPeriode({
-        indicateurIds: params.indicateurIds,
-        territoireCodes: params.territoireCodes,
-        dateDebut: params.periode.dateDebut,
-        dateFin: params.periode.dateFin,
-      }),
-      this.deps.mesuresIndicateurQuery.execute({
-        indicateurIds: params.indicateurIds,
-        territoireCodes: params.territoireCodes,
-        dateDebut: params.periode.dateDebut,
-        dateFin: params.periode.dateFin,
-        typesValeur: ["VALEUR_INITIALE", "VALEUR_CIBLE"],
-      }),
+    const [evenementsVA, evenementsVIVC] = await Promise.all([
+      this.getEvenementsVA(params),
+      this.getEvenementsVIVC(params),
     ]);
-
-    // TODO: renaming
-    const evenementsVA: EvenementIndicateur[] = dtosVA.map((dto) => ({
-      id: dto.id,
-      indicateur: {
-        id: dto.indicateurId,
-        nom: dto.indicateurNom,
-      },
-      territoire: {
-        code: dto.territoireCode,
-        nom: dto.territoireNom,
-      },
-      typeValeur: "VALEUR_AVANCEMENT" as const,
-      dateValeur: dto.dateValeur,
-      valeur: dto.valeur,
-      dateCreation: dto.dateCreation,
-      ordre: dto.ordre,
-    }));
-
-    // TODO: renaming
-    const evenementsVIVC: EvenementIndicateur[] = dtosVIVC.map((dto) => ({
-      id: dto.id,
-      indicateur: {
-        id: dto.indicateurId,
-        nom: dto.indicateurNom,
-      },
-      territoire: {
-        code: dto.territoireCode,
-        nom: dto.territoireNom,
-      },
-      typeValeur: dto.typeValeur,
-      dateValeur: dto.dateValeur,
-      valeur: dto.valeur,
-      dateCreation: dto.dateImport,
-      ordre: 0,
-    }));
 
     const allEvenements = [...evenementsVA, ...evenementsVIVC];
 
@@ -80,5 +31,66 @@ export class IndicateurActiviteGateway implements ActiviteIndicateurGateway {
       if (territoireCompare !== 0) return territoireCompare;
       return a.dateValeur.getTime() - b.dateValeur.getTime();
     });
+  }
+
+  private async getEvenementsVIVC(params: {
+    indicateurIds: string[];
+    territoireCodes: string[];
+    periode: PeriodeRapport;
+  }) {
+    const evenements = await this.deps.mesuresIndicateurQuery.execute({
+      indicateurIds: params.indicateurIds,
+      territoireCodes: params.territoireCodes,
+      dateDebut: params.periode.dateDebut,
+      dateFin: params.periode.dateFin,
+      typesValeur: ["VALEUR_INITIALE", "VALEUR_CIBLE"],
+    });
+
+    return evenements.map((evenement) => ({
+      id: evenement.id,
+      indicateur: {
+        id: evenement.indicateurId,
+        nom: evenement.indicateurNom,
+      },
+      territoire: {
+        code: evenement.territoireCode,
+        nom: evenement.territoireNom,
+      },
+      typeValeur: evenement.typeValeur,
+      dateValeur: evenement.dateValeur,
+      valeur: evenement.valeur,
+      dateCreation: evenement.dateImport,
+      ordre: 0,
+    }));
+  }
+
+  private async getEvenementsVA(params: {
+    indicateurIds: string[];
+    territoireCodes: string[];
+    periode: PeriodeRapport;
+  }) {
+    const evenements = await this.deps.evenementsVAQuery.recupererDansPeriode({
+      indicateurIds: params.indicateurIds,
+      territoireCodes: params.territoireCodes,
+      dateDebut: params.periode.dateDebut,
+      dateFin: params.periode.dateFin,
+    });
+
+    return evenements.map((evenement) => ({
+      id: evenement.id,
+      indicateur: {
+        id: evenement.indicateurId,
+        nom: evenement.indicateurNom,
+      },
+      territoire: {
+        code: evenement.territoireCode,
+        nom: evenement.territoireNom,
+      },
+      typeValeur: "VALEUR_AVANCEMENT" as const,
+      dateValeur: evenement.dateValeur,
+      valeur: evenement.valeur,
+      dateCreation: evenement.dateCreation,
+      ordre: evenement.ordre,
+    }));
   }
 }
