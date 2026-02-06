@@ -808,6 +808,12 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
             { territoire_code: { startsWith: "DEPT" } },
             { territoire_code: { startsWith: "REG" } },
           ],
+          type_evenement: {
+            in: ["VALEUR_CREEE", "VALEUR_MODIFIEE"],
+          },
+          date_creation: {
+            lt: dateDerniereExecutionDatajobs,
+          },
         },
       });
 
