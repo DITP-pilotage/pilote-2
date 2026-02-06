@@ -73,7 +73,12 @@ export const validationInfosBaseUtilisateurSecretariatGeneral = z.object({
   applicationsAccessibles: z.array(z.nativeEnum($Enums.application_accessible)),
 });
 
-const DOMAINES_AUTORISES_COORDINATEUR = [".gouv.fr", ".caf.fr", ".cnafmail.fr"];
+const DOMAINES_AUTORISES_COORDINATEUR = [
+  ".gouv.fr",
+  ".caf.fr",
+  ".cnafmail.fr",
+  "ars.sante.fr",
+];
 
 const adresseEstValideCoordinateur = (adresse: string): boolean =>
   DOMAINES_AUTORISES_COORDINATEUR.some((domaine) => adresse.endsWith(domaine));
