@@ -176,6 +176,7 @@ const PageChantier = () => {
             pathname={pathname}
             setEstOuverteBarreLatérale={setEstOuverteBarreLatérale}
             territoireCode={territoireCode}
+            territoiresApplicables={chantier.territoiresApplicables}
           />
           <BandeauEntetePageChantier
             alerteMiseAJourIndicateur={alerteMiseAJourIndicateur}

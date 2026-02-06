@@ -49,6 +49,7 @@ export default interface Chantier {
   ate: TypeAte;
   statut: TypeStatut;
   cibleAttendu: boolean;
+  territoiresApplicables: string[];
 }
 
 export type ChantierTendance = "BAISSE" | "HAUSSE" | "STAGNATION";

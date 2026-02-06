@@ -69,6 +69,8 @@ export default class ChantierBuilder {
 
   private _maillesApplicables: Chantier["maillesApplicables"];
 
+  private _territoiresApplicables: Chantier["territoiresApplicables"];
+
   constructor() {
     const axe = new AxeBuilder().build();
     const ppg = new PpgBuilder().build();
@@ -115,6 +117,7 @@ export default class ChantierBuilder {
       departementale: faker.datatype.boolean(),
       regionale: faker.datatype.boolean(),
     };
+    this._territoiresApplicables = [];
   }
 
   private _générerTerritoires(codesInsee: readonly CodeInsee[]) {
@@ -151,6 +154,7 @@ export default class ChantierBuilder {
       tauxAvancementDonnéeTerritorialisée:
         this._tauxAvancementDonnéeTerritorialisée,
       météoDonnéeTerritorialisée: this._météoDonnéeTerritorialisée,
+      territoiresApplicables: this._territoiresApplicables,
     };
   }
 }
