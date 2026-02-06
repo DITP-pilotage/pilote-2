@@ -55,6 +55,7 @@ const PageChantier = () => {
     jalon,
     donneesComparaisonDuTauxDAvancement,
     configurationFeatureFlipping,
+    territoiresCompares,
   } = pageChantier.useServerSidePropsContext();
 
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
@@ -133,6 +134,16 @@ const PageChantier = () => {
   const pathname = "/chantier/[id]/[territoireCode]";
 
   const estChantierArchive = chantier.statut === "ARCHIVE";
+
+  const territoiresCibles = [territoireCode, ...territoiresCompares];
+  const indicateursApplicablesIds = Object.keys(
+    detailsIndicateursTerritoire,
+  ).filter((indicateurId) =>
+    Object.entries(detailsIndicateursTerritoire[indicateurId] ?? {}).some(
+      ([key, value]) =>
+        territoiresCibles.includes(key) && value.est_applicable === true,
+    ),
+  );
 
   return (
     <PageChantierStyled className="flex">
@@ -340,7 +351,7 @@ const PageChantier = () => {
                     },
                   )}
                 >
-                  {`Indicateurs (${indicateurs.length})`}
+                  {`Indicateurs (${indicateursApplicablesIds.length})`}
                 </Titre>
                 {mailleSourceDonnees === "regionale" && (
                   <Alerte
@@ -361,6 +372,7 @@ const PageChantier = () => {
                   estAutoriseAProposerUneValeurAvancement={
                     estAutoriseAProposerUneValeurAvancement
                   }
+                  indicateursApplicablesIds={indicateursApplicablesIds}
                 />
               </section>
             </div>

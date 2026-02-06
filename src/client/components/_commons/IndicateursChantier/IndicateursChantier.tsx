@@ -17,6 +17,7 @@ interface IndicateursProps {
   estAutoriseAAccepterLesPropositionsDeValeurAvancement: boolean;
   alerteMiseAJourIndicateur: boolean;
   categoriesIndicateurRepartition: Record<CategoriesIndicateur, Indicateur[]>;
+  indicateursApplicablesIds: string[];
 }
 
 const IndicateursChantier: FunctionComponent<IndicateursProps> = ({
@@ -24,12 +25,22 @@ const IndicateursChantier: FunctionComponent<IndicateursProps> = ({
   estAutoriseAAccepterLesPropositionsDeValeurAvancement,
   alerteMiseAJourIndicateur,
   categoriesIndicateurRepartition,
+  indicateursApplicablesIds,
 }) => {
   const { territoireCode, indicateurs, détailsIndicateurs, chantier } =
     pageChantier.useServerSidePropsContext();
 
   if (indicateurs.length === 0) {
     return null;
+  }
+
+  if (indicateursApplicablesIds.length === 0) {
+    return (
+      <Alerte
+        titre="Aucun indicateur n'est applicable pour les territoires sélectionnés"
+        type="info"
+      />
+    );
   }
 
   return (
@@ -40,10 +51,11 @@ const IndicateursChantier: FunctionComponent<IndicateursProps> = ({
         </div>
       ) : null}
       {listeRubriquesIndicateursChantier.map((rubriqueIndicateur) => {
-        const indicateursDeCetteRubrique =
-          categoriesIndicateurRepartition[
-            rubriqueIndicateur.categorieIndicateur
-          ];
+        const indicateursDeCetteRubrique = categoriesIndicateurRepartition[
+          rubriqueIndicateur.categorieIndicateur
+        ].filter((indicateur) =>
+          indicateursApplicablesIds.includes(indicateur.id),
+        );
 
         if (indicateursDeCetteRubrique.length > 0) {
           return (
