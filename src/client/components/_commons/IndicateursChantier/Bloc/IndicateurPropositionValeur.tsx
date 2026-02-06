@@ -196,7 +196,7 @@ export const IndicateurPropositionValeur = ({
         par le territoire le{" "}
         <strong>
           {formaterDate(
-            detailIndicateurDuTerritoire.proposition?.dateProposition,
+            detailIndicateurDuTerritoire.propositionStatutTerritoire?.date,
             "DD/MM/YYYY",
           )}
         </strong>{" "}
