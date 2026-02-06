@@ -72,7 +72,7 @@ const RapportDétailléChantier: FunctionComponent<
 
   const indicateursApplicables = indicateurs.filter(
     (indicateur) =>
-      détailsIndicateurs[indicateur.id]?.[territoireCode]?.est_applicable ===
+      détailsIndicateurs[indicateur.id]?.[territoireCode]?.estApplicable ===
       true,
   );
 

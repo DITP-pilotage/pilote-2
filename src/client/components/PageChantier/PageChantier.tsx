@@ -141,7 +141,7 @@ const PageChantier = () => {
   ).filter((indicateurId) =>
     Object.entries(detailsIndicateursTerritoire[indicateurId] ?? {}).some(
       ([key, value]) =>
-        territoiresCibles.includes(key) && value.est_applicable === true,
+        territoiresCibles.includes(key) && value.estApplicable === true,
     ),
   );
 
