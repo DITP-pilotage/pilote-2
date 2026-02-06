@@ -2,26 +2,14 @@ import { Footer, Layout, Navbar } from "nextra-theme-docs";
 import { getPageMap } from "nextra/page-map";
 import type { ReactNode } from "react";
 import Link from "next/link";
+import { LogoPilote } from "@/components/_commons/LogoPilote";
 import "nextra-theme-docs/style.css";
 import "./nextra-theme-vars.css";
 import "@/client/styles/app.scss";
 import { NavigationFilterWrapper } from "./NavigationFilterWrapper";
 
 const navbar = (
-  <Navbar
-    logo={
-      <div className="flex items-center gap-4">
-        <p className="fr-logo !text-sm">Gouvernement</p>
-        <div className="flex flex-col">
-          <span className="!text-xl bold">PILOTE</span>
-          <span className="!text-sm">
-            Piloter l&#39;action publique par les résultats
-          </span>
-        </div>
-      </div>
-    }
-    projectLink=""
-  >
+  <Navbar logo={<LogoPilote />} projectLink="">
     <div className="flex align-center gap-4 ml-4 border-l pl-4">
       <Link
         className="!text-dsfr-blue-link"
