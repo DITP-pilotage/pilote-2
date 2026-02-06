@@ -273,7 +273,14 @@ export const authConfig: NextAuthConfig = {
       logger.info(
         "NextAuth JWT callback triggers refreshing (Access Token has expired)",
       );
-      return refreshAccessToken(toPiloteJWTPayload(token));
+      const refreshedToken = await refreshAccessToken(
+        toPiloteJWTPayload(token),
+      );
+      if (refreshedToken.error === "RefreshAccessTokenError") {
+        logger.error("Failed to refresh access token, invalidating session");
+        return null;
+      }
+      return refreshedToken;
     },
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

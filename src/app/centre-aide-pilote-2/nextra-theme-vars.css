@@ -18,3 +18,7 @@
 html {
   background: rgb(var(--nextra-bg));
 }
+
+h3 {
+  margin-top: 0;
+}

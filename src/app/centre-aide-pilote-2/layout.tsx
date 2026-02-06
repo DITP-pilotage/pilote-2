@@ -48,6 +48,7 @@ export default async function CentreAideLayout({
         backToTop: true,
       }}
       darkMode={false}
+      copyPageButton={false}
     >
       <NavigationFilterWrapper />
       {children}

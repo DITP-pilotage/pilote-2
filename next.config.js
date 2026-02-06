@@ -13,6 +13,7 @@ if (hasSubmodule) {
   const nextra = (await import("nextra")).default;
   withNextra = nextra({
     contentDirBasePath: "/centre-aide-pilote-2",
+    defaultShowCopyCode: false,
   });
 }
 
