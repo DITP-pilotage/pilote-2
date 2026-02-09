@@ -9,7 +9,7 @@ const MOTTO_DATA_URI =
 export const LogoPilote = ({ className }: { className?: string }) => (
   <div
     className={clsxm(
-      "flex items-center w-10/12 md:w-11/12 lg:w-full",
+      "flex items-center w-10/12 md:w-11/12 lg:w-full my-2",
       className,
     )}
   >
