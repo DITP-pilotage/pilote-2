@@ -29,8 +29,6 @@ export const CelluleEvaluation = ({
   const form = useFormulaireEvaluation();
   const note = form.watch(noteName);
 
-  // Nécessaire pour lire l'état mis à jour des champs
-
   useFormState().isValid;
   const commentaireError = form.getFieldState(commentaireName).invalid;
   const noteError = form.getFieldState(noteName).invalid;

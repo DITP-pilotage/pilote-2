@@ -60,7 +60,7 @@ const PageLanding = () => {
                 <Titre baliseHtml="h2" className="fr-h3">
                   Découvrez PILOTE en vidéo
                 </Titre>
-                {/* eslint-disable-next-line react/iframe-missing-sandbox */}
+                {}
                 <iframe
                   allowFullScreen
                   className="w-full mx-auto aspect-[580/328]  rounded-xl shadow-xl overflow-hidden"
@@ -191,7 +191,6 @@ const PageLanding = () => {
                   <div className="fr-card__body">
                     <div className="fr-card__content">
                       <Titre baliseHtml="h2" className="fr-h3">
-                        {}
                         <Link
                           href="https://www.gouvernement.fr/les-actions-du-gouvernement"
                           target="_blank"
