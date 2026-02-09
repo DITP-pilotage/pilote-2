@@ -24,7 +24,8 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
   if (
     !configurationFeatureFlip().rapportCoordinateurs ||
-    configuration().scalingoEnvironment !== "PROD"
+    true
+    // configuration().scalingoEnvironment !== "PROD"
   ) {
     return res.status(200).json({
       skipped: true,
