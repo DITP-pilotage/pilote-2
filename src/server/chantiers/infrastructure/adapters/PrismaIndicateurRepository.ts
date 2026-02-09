@@ -7,13 +7,13 @@ import {
   indicateur_territoire_valeur_evenement as PrismaIndicateurTerritoireValeurEvenement,
   territoire as PrismaTerritoire,
   utilisateur as PrismaUtilisateur,
+  metadata_parametrage_indicateurs as PrismaMetadataParametrageIndicateurs,
 } from "@prisma/client";
 import { DonneeIndicateur } from "@/server/chantiers/domain/DonneeIndicateur";
 import { IndicateurRepository } from "@/server/chantiers/domain/ports/IndicateurRepository";
 import { verifyValeurIsNotNullOrUndefined } from "@/server/utils/VerifyValeurIsNotNullOrUndefined";
 import { Météo } from "@/server/domain/météo/Météo.interface";
 import { IndicateurPourExport } from "@/server/chantiers/domain/IndicateurPourExport";
-import { prisma } from "@/server/db/prisma";
 import { historique_valeurs } from "@/server/infrastructure/accès_données/chantier/indicateur/IndicateurSQLRepository";
 import { HistoriqueIndicateurPourExport } from "@/server/chantiers/domain/HistoriqueIndicateurPourExport";
 import {
@@ -27,6 +27,7 @@ import {
   EVENEMENT_VALEUR_PROPOSITION_VALEUR_TERMINEE,
   EvenementValeurEnum,
 } from "@/server/app/domain/EvenementValeurEnum";
+import { calculerDateDernierImport } from "@/server/chantiers/domain/calculerDateDernierImport";
 import { toISODate, toISODateTime } from "@/server/app/domain/Dates";
 import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
 import {
@@ -34,6 +35,7 @@ import {
   profilsTerritoriaux,
 } from "@/server/domain/utilisateur/Utilisateur.interface";
 import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
+import { getInitialContainerWithTransversalDependencies } from "@/server/InitialDependencies";
 
 const convertirEnDonneeIndicateur = (
   prismaIndicateurIdentite: PrismaIndicateurIdentite & {
@@ -85,6 +87,13 @@ class ErreurIndicateurNonTrouvé extends Error {
 }
 
 export class PrismaIndicateurRepository implements IndicateurRepository {
+  private prismaClient =
+    getInitialContainerWithTransversalDependencies().resolve("prisma");
+
+  get prisma() {
+    return this.prismaClient.getInstance();
+  }
+
   async listerParIndicId({
     indicId,
     jalon,
@@ -92,20 +101,22 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
     indicId: string;
     jalon: number;
   }): Promise<DonneeIndicateur[]> {
-    const indicateurIdentite = await prisma.indicateur_identite.findUnique({
-      where: { id: indicId },
-      include: {
-        indicateur_territoire: {
-          include: {
-            indicateur_territoire_jalon: {
-              where: {
-                jalon,
+    const indicateurIdentite = await this.prisma.indicateur_identite.findUnique(
+      {
+        where: { id: indicId },
+        include: {
+          indicateur_territoire: {
+            include: {
+              indicateur_territoire_jalon: {
+                where: {
+                  jalon,
+                },
               },
             },
           },
         },
       },
-    });
+    );
 
     return indicateurIdentite
       ? convertirEnDonneeIndicateur(indicateurIdentite)
@@ -118,23 +129,24 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
     jalon: number,
     estAvecCadrage: boolean = false,
   ): Promise<IndicateurPourExport[]> {
-    const listeChantierTerritoires = await prisma.chantier_territoire.findMany({
-      where: {
-        id: chantierId,
-      },
-      select: {
-        territoire_code: true,
-        maille: true,
-        taux_avancement_mandat: true,
-        est_applicable: true,
-        nombre_propositions_valeur_actuelle: true,
-        territoire: {
-          select: {
-            code_parent: true,
+    const listeChantierTerritoires =
+      await this.prisma.chantier_territoire.findMany({
+        where: {
+          id: chantierId,
+        },
+        select: {
+          territoire_code: true,
+          maille: true,
+          taux_avancement_mandat: true,
+          est_applicable: true,
+          nombre_propositions_valeur_actuelle: true,
+          territoire: {
+            select: {
+              code_parent: true,
+            },
           },
         },
-      },
-    });
+      });
 
     const chantiersTerritoiresMailleDepartement =
       listeChantierTerritoires.filter(
@@ -145,7 +157,7 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
         (chantierTerritoire) => chantierTerritoire.est_applicable,
       );
 
-    const result = await prisma.indicateur_territoire.findMany({
+    const result = await this.prisma.indicateur_territoire.findMany({
       where: {
         territoire_code: {
           in: territoireCodesLecture,
@@ -256,22 +268,23 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
     }[] = [];
 
     if (estAvecCadrage) {
-      listeMetadataIndicateurs = await prisma.metadata_indicateurs.findMany({
-        where: {
-          indic_id: {
-            in: result.map((indicateur) => indicateur.indicateur_identite.id),
+      listeMetadataIndicateurs =
+        await this.prisma.metadata_indicateurs.findMany({
+          where: {
+            indic_id: {
+              in: result.map((indicateur) => indicateur.indicateur_identite.id),
+            },
           },
-        },
-        select: {
-          indic_id: true,
-          indic_descr: true,
-          indic_methode_calcul: true,
-          indic_source: true,
-        },
-      });
+          select: {
+            indic_id: true,
+            indic_descr: true,
+            indic_methode_calcul: true,
+            indic_source: true,
+          },
+        });
 
       listeMetadataIndicateursComplementaires =
-        await prisma.metadata_indicateurs_complementaire.findMany({
+        await this.prisma.metadata_indicateurs_complementaire.findMany({
           where: {
             indic_id: {
               in: result.map((indicateur) => indicateur.indicateur_identite.id),
@@ -501,7 +514,7 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
     territoireCodesLecture: string[],
     jalon: number,
   ): Promise<HistoriqueIndicateurPourExport[]> {
-    const result = await prisma.indicateur_identite.findMany({
+    const result = await this.prisma.indicateur_identite.findMany({
       where: {
         chantier_id: chantierId,
         statut: "PUBLIE",
@@ -746,7 +759,7 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
     jalon: number,
     dateDerniereExecutionDatajobs: Date,
   ): Promise<DetailsIndicateurs> {
-    const indicateurs = await prisma.indicateur_territoire.findMany({
+    const indicateurs = await this.prisma.indicateur_territoire.findMany({
       where: {
         territoire_code: { in: territoireCodes },
         indicateur_identite: {
@@ -781,10 +794,35 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
       },
     });
 
+    const indicateursId = indicateurs.map((indicateur) => indicateur.id);
+    const metadataIndicateur =
+      await this.prisma.metadata_parametrage_indicateurs.findMany({
+        where: { indic_id: { in: indicateursId } },
+      });
+
+    const evenementMailles =
+      await this.prisma.indicateur_territoire_valeur_evenement.findMany({
+        where: {
+          indic_id: { in: indicateursId },
+          OR: [
+            { territoire_code: { startsWith: "DEPT" } },
+            { territoire_code: { startsWith: "REG" } },
+          ],
+          type_evenement: {
+            in: ["VALEUR_CREEE", "VALEUR_MODIFIEE"],
+          },
+          date_creation: {
+            lt: dateDerniereExecutionDatajobs,
+          },
+        },
+      });
+
     return this.convertirEnDetailsIndicateurs(
       indicateurs,
       jalon,
       dateDerniereExecutionDatajobs,
+      evenementMailles,
+      metadataIndicateur,
     );
   }
 
@@ -801,60 +839,79 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
     const territoiresLecture =
       habilitation.récupérerListeTerritoireCodesAccessiblesEnLecture();
 
-    const listeIndicateursModel = await prisma.indicateur_territoire.findMany({
-      where: {
-        id: indicateurId,
-        indicateur_identite: {
-          chantier_id: { in: chantiersLecture },
-          statut: "PUBLIE",
-        },
-        territoire_code: !profilsTerritoriaux.includes(profil)
-          ? { in: territoiresLecture }
-          : undefined,
-      },
-      include: {
-        indicateur_identite: true,
-        indicateur_territoire_jalon: {
-          where: {
-            jalon,
+    const listeIndicateursModel =
+      await this.prisma.indicateur_territoire.findMany({
+        where: {
+          id: indicateurId,
+          indicateur_identite: {
+            chantier_id: { in: chantiersLecture },
+            statut: "PUBLIE",
           },
+          territoire_code: !profilsTerritoriaux.includes(profil)
+            ? { in: territoiresLecture }
+            : undefined,
         },
-        indicateur_territoire_valeur_evenement: {
-          include: {
-            auteur: {
-              select: {
-                nom: true,
-                prenom: true,
+        include: {
+          indicateur_identite: true,
+          indicateur_territoire_jalon: {
+            where: {
+              jalon,
+            },
+          },
+          indicateur_territoire_valeur_evenement: {
+            include: {
+              auteur: {
+                select: {
+                  nom: true,
+                  prenom: true,
+                },
               },
             },
+            orderBy: [
+              {
+                date_creation: "desc",
+              },
+              {
+                ordre: "desc",
+              },
+            ],
           },
-          orderBy: [
-            {
-              date_creation: "desc",
-            },
-            {
-              ordre: "desc",
-            },
-          ],
         },
-      },
-    });
+      });
 
     if (listeIndicateursModel.length === 0) {
       throw new ErreurIndicateurNonTrouvé(indicateurId);
     }
 
-    const territoires = await prisma.territoire.findMany({
+    const territoires = await this.prisma.territoire.findMany({
       select: {
         code: true,
         code_insee: true,
       },
     });
 
+    const metadataIndicateur =
+      await this.prisma.metadata_parametrage_indicateurs.findFirst({
+        where: { indic_id: indicateurId },
+      });
+
+    const evenementMailles =
+      await this.prisma.indicateur_territoire_valeur_evenement.findMany({
+        where: {
+          indic_id: indicateurId,
+          OR: [
+            { territoire_code: { startsWith: "DEPT" } },
+            { territoire_code: { startsWith: "REG" } },
+          ],
+        },
+      });
+
     return this.convertirEnDetailsIndicateursTerritoires(
       territoires,
       listeIndicateursModel,
       dateDerniereExecutionDatajobs,
+      evenementMailles,
+      metadataIndicateur,
     );
   }
 
@@ -868,10 +925,12 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
       })[];
     })[],
     dateDerniereExecutionDatajobs: Date,
-  ) {
-    let donnéesTerritoires: DetailsIndicateurTerritoire = {};
+    evenementsMailles: PrismaIndicateurTerritoireValeurEvenement[],
+    metadataIndicateur: PrismaMetadataParametrageIndicateurs | null,
+  ): DetailsIndicateurTerritoire {
+    const donnéesTerritoires: DetailsIndicateurTerritoire = {};
 
-    territoires.forEach((territoire) => {
+    for (const territoire of territoires) {
       const indicateurRow = indicateurRows.find(
         (indicateur) => indicateur.territoire_code === territoire.code,
       );
@@ -880,10 +939,20 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
 
       let propositionStatutTerritoire = null;
       let propositionStatutDirectionProjet = null;
+      let dateImport = null;
 
       if (indicateurRow) {
         ({ propositionStatutTerritoire, propositionStatutDirectionProjet } =
           this.calculerStatutsProposition(indicateurRow));
+
+        dateImport = calculerDateDernierImport(
+          indicateurRow.maille,
+          dateDerniereExecutionDatajobs,
+          indicateurRow.indicateur_territoire_valeur_evenement,
+          evenementsMailles,
+          metadataIndicateur?.va_nat_from ?? null,
+          metadataIndicateur?.va_reg_from ?? null,
+        );
       }
 
       donnéesTerritoires[territoire.code] = {
@@ -941,9 +1010,7 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
         propositionStatutDirectionProjet,
         unite: indicateurRow?.indicateur_identite.unite_mesure ?? null,
         estApplicable: indicateurRow?.est_applicable ?? null,
-        dateImport:
-          indicateurRow?.indicateur_identite.dernier_import_date_indic?.toLocaleString() ??
-          null,
+        dateImport: dateImport ? dateImport.toLocaleString() : null,
         ponderation: indicateurRow?.ponderation_zone_reel ?? null,
         prochaineDateMaj:
           indicateurRow?.prochaine_date_maj?.toLocaleString() ?? null,
@@ -961,7 +1028,7 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
             };
           }) ?? [],
       };
-    });
+    }
 
     return donnéesTerritoires;
   }
@@ -976,6 +1043,8 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
     })[],
     jalon: number,
     dateDerniereExecutionDatajobs: Date,
+    evenementsMailles: PrismaIndicateurTerritoireValeurEvenement[],
+    metadataIndicateur: PrismaMetadataParametrageIndicateurs[],
   ): DetailsIndicateurs {
     const détailsIndicateurs: DetailsIndicateurs = {};
 
@@ -991,6 +1060,20 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
 
       const { propositionStatutTerritoire, propositionStatutDirectionProjet } =
         this.calculerStatutsProposition(indicateurRow);
+
+      const metadataIndicateurCourant = metadataIndicateur.find(
+        (metadata) => metadata.indic_id === indicateurRow.id,
+      );
+      const dateImport = calculerDateDernierImport(
+        indicateurRow.maille,
+        dateDerniereExecutionDatajobs,
+        indicateurRow.indicateur_territoire_valeur_evenement,
+        evenementsMailles.filter(
+          (evenement) => evenement.indic_id === indicateurRow.id,
+        ),
+        metadataIndicateurCourant?.va_nat_from ?? null,
+        metadataIndicateurCourant?.va_reg_from ?? null,
+      );
 
       détailsIndicateurs[indicateurRow.id][indicateurRow.territoire_code] = {
         dateValeurAvancementMandat: formatDate(
@@ -1035,9 +1118,7 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
         propositionStatutDirectionProjet,
         unite: indicateurRow.indicateur_identite.unite_mesure,
         estApplicable: indicateurRow.est_applicable,
-        dateImport: formatDate(
-          indicateurRow.indicateur_identite.dernier_import_date_indic,
-        ),
+        dateImport: dateImport?.toLocaleString() ?? null,
         ponderation: indicateurRow.ponderation_zone_reel,
         prochaineDateValeurAvancement: formatDate(
           indicateurRow.prochaine_date_valeur_actuelle,
@@ -1254,7 +1335,7 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
   async recupererIndicateursNonAJourParChantierId(): Promise<
     Map<string, { id: string; nom: string; mailles: string[] }[]>
   > {
-    const indicateurs = await prisma.indicateur_territoire.findMany({
+    const indicateurs = await this.prisma.indicateur_territoire.findMany({
       where: {
         indicateur_identite: {
           statut: "PUBLIE",

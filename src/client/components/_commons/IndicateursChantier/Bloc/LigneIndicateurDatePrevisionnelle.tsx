@@ -11,7 +11,7 @@ export const LigneIndicateurDatePrevisionnelle = () => {
 
   if (chantier.statut === "ARCHIVE") return null;
 
-  const indicateurEstApplicable = detailIndicateurDuTerritoire.est_applicable;
+  const indicateurEstApplicable = detailIndicateurDuTerritoire.estApplicable;
   const dateProchaineDateMaj =
     formaterDate(detailIndicateurDuTerritoire.prochaineDateMaj, "MM/YYYY") ??
     null;

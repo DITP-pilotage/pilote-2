@@ -98,8 +98,8 @@ const IndicateursChantier: FunctionComponent<IndicateursProps> = ({
                     comparerIndicateur(
                       a,
                       b,
-                      détailsIndicateurs[a.id][territoireCode]?.pondération,
-                      détailsIndicateurs[b.id][territoireCode]?.pondération,
+                      détailsIndicateurs[a.id][territoireCode]?.ponderation,
+                      détailsIndicateurs[b.id][territoireCode]?.ponderation,
                     ),
                   )
                   .map((indicateur) => {

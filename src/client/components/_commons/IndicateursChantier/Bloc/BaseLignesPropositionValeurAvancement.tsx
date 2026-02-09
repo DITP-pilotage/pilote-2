@@ -91,7 +91,7 @@ export const BaseLignesPropositionValeurAvancement = ({
         <td className="fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm text-center text-dsfr-grey-200">
           <ValeurEtDate
             date={detailIndicateurDuTerritoire.dateValeurInitiale}
-            unité={detailIndicateurDuTerritoire.unité}
+            unité={detailIndicateurDuTerritoire.unite}
             valeur={detailIndicateurDuTerritoire.valeurInitiale}
           />
         </td>
@@ -103,7 +103,7 @@ export const BaseLignesPropositionValeurAvancement = ({
                 date={
                   detailIndicateurDuTerritoire.proposition.dateValeurAvancement
                 }
-                unité={detailIndicateurDuTerritoire.unité}
+                unité={detailIndicateurDuTerritoire.unite}
                 valeur={
                   detailIndicateurDuTerritoire.proposition.valeurAvancement
                 }
@@ -112,7 +112,7 @@ export const BaseLignesPropositionValeurAvancement = ({
             <td className="fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm text-center text-dsfr-grey-200">
               <ValeurEtDate
                 date={detailIndicateurDuTerritoire.dateValeurCibleAnnuelle}
-                unité={detailIndicateurDuTerritoire.unité}
+                unité={detailIndicateurDuTerritoire.unite}
                 valeur={detailIndicateurDuTerritoire.valeurCibleAnnuelle}
               />
             </td>
@@ -142,14 +142,14 @@ export const BaseLignesPropositionValeurAvancement = ({
         <td className="fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm texte-proposition text-center">
           <ValeurEtDate
             date={detailIndicateurDuTerritoire.proposition.dateValeurAvancement}
-            unité={detailIndicateurDuTerritoire.unité}
+            unité={detailIndicateurDuTerritoire.unite}
             valeur={detailIndicateurDuTerritoire.proposition.valeurAvancement}
           />
         </td>
         <td className="fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm text-center text-dsfr-grey-200">
           <ValeurEtDate
             date={detailIndicateurDuTerritoire.dateValeurCible}
-            unité={detailIndicateurDuTerritoire.unité}
+            unité={detailIndicateurDuTerritoire.unite}
             valeur={detailIndicateurDuTerritoire.valeurCible}
           />
         </td>

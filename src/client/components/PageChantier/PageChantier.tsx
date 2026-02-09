@@ -79,7 +79,7 @@ const PageChantier = () => {
     Object.values(détailsIndicateurs)
       .flatMap((values) => Object.values(values))
       .reduce((acc, val) => {
-        return !val.estAJour && (val.pondération || 0) > 0 && val.est_applicable
+        return !val.estAJour && (val.ponderation || 0) > 0 && val.estApplicable
           ? true
           : acc;
       }, false);
@@ -94,13 +94,13 @@ const PageChantier = () => {
   > = indicateurs.reduce(
     (acc, indicateur) => {
       if (
-        (détailsIndicateurs[indicateur.id][territoireCode]?.pondération ?? 0) >
+        (détailsIndicateurs[indicateur.id][territoireCode]?.ponderation ?? 0) >
         0
       ) {
         acc.participation_ta.push(indicateur);
       } else if (
         Object.values(detailsIndicateursTerritoire[indicateur.id]).some(
-          (detail) => detail.pondération !== null && detail.pondération > 0,
+          (detail) => detail.ponderation !== null && detail.ponderation > 0,
         )
       ) {
         acc.non_participation_ta.push(indicateur);
@@ -141,7 +141,7 @@ const PageChantier = () => {
   ).filter((indicateurId) =>
     Object.entries(detailsIndicateursTerritoire[indicateurId] ?? {}).some(
       ([key, value]) =>
-        territoiresCibles.includes(key) && value.est_applicable === true,
+        territoiresCibles.includes(key) && value.estApplicable === true,
     ),
   );
 

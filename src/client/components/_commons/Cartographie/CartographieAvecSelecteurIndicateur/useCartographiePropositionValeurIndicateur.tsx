@@ -34,7 +34,7 @@ export function useCartographiePropositionValeurIndicateur(
     ).map(([territoireCodeDonnee, detailsIndicateur]) => ({
       valeur: detailsIndicateur.proposition !== null ? "PROPOSITION" : null,
       territoireCode: territoireCodeDonnee as string,
-      estApplicable: detailsIndicateur.est_applicable,
+      estApplicable: detailsIndicateur.estApplicable,
     }));
 
     const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();

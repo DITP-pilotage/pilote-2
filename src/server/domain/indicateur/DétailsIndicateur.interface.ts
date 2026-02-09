@@ -50,10 +50,10 @@ export type DétailsIndicateur = {
   proposition: DetailIndicateurPropositionValeurAvancement | null;
   propositionStatutTerritoire: DetailsIndicateur["propositionStatutTerritoire"];
   propositionStatutDirectionProjet: DetailsIndicateur["propositionStatutDirectionProjet"];
-  unité: string | null;
-  est_applicable: boolean | null;
+  unite: string | null;
+  estApplicable: boolean | null;
   dateImport: string | null;
-  pondération: number | null;
+  ponderation: number | null;
   prochaineDateValeurAvancement: string | null;
   prochaineDateMaj: string | null;
   prochaineDateMajJours: number | null;

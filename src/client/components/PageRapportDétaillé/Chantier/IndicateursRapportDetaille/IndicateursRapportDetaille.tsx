@@ -46,9 +46,9 @@ export default function IndicateursRapportDetaille({
                       a,
                       b,
                       détailsIndicateurs[a.id][codeInseeSélectionnée]
-                        ?.pondération,
+                        ?.ponderation,
                       détailsIndicateurs[b.id][codeInseeSélectionnée]
-                        ?.pondération,
+                        ?.ponderation,
                     ),
                   )
                   .map((indicateur) => {

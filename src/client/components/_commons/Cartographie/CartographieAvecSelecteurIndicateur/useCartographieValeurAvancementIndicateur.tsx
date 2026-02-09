@@ -95,7 +95,7 @@ export function useCartographieValeurAvancementIndicateur(
         valeurCible: détailsIndicateur.valeurCible ?? null,
         valeurCibleAnnuelle: détailsIndicateur.valeurCibleAnnuelle ?? null,
         territoireCode: territoireCode,
-        estApplicable: détailsIndicateur.est_applicable,
+        estApplicable: détailsIndicateur.estApplicable,
       }),
     );
 

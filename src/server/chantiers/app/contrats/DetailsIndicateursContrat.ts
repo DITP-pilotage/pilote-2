@@ -1,8 +1,14 @@
 import { DetailsIndicateurs } from "@/server/chantiers/domain/DetailsIndicateurs";
-import { DétailsIndicateurs } from "@/server/domain/indicateur/DétailsIndicateur.interface";
-import { presenterEnDetailsIndicateursTerritoireContrat } from "@/server/chantiers/app/contrats/DetailsIndicateursTerritoireContrat";
+import {
+  DetailsIndicateursTerritoireContrat,
+  presenterEnDetailsIndicateursTerritoireContrat,
+} from "@/server/chantiers/app/contrats/DetailsIndicateursTerritoireContrat";
+import Indicateur from "@/server/domain/indicateur/Indicateur.interface";
 
-export type DetailsIndicateursContrat = DétailsIndicateurs;
+export type DetailsIndicateursContrat = Record<
+  Indicateur["id"],
+  DetailsIndicateursTerritoireContrat
+>;
 
 export const presenterEnDetailsIndicateursContrat = (
   detailsIndicateurs: DetailsIndicateurs,

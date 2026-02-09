@@ -368,6 +368,97 @@ export const fixtures = {
     });
   },
 
+  async indicateurIdentite(
+    overrides: Partial<Prisma.indicateur_identiteUncheckedCreateInput> & {
+      chantier_id: string;
+    },
+  ) {
+    const prisma = getPrisma();
+    const id = overrides.id || `IND-${randomUUID().slice(0, 6)}`;
+    return prisma.indicateur_identite.create({
+      data: {
+        nom: `Indicateur ${id}`,
+        type_id: "IMPACT",
+        ...overrides,
+        id,
+      },
+    });
+  },
+
+  async indicateurTerritoire(
+    overrides: Partial<Prisma.indicateur_territoireUncheckedCreateInput> & {
+      id: string;
+      chantier_id: string;
+      territoire_code: string;
+    },
+  ) {
+    const prisma = getPrisma();
+    return prisma.indicateur_territoire.create({
+      data: {
+        code_insee: "FR",
+        maille: "NAT",
+        zone_id: "FRANCE",
+        ...overrides,
+      },
+    });
+  },
+
+  async indicateurTerritoireJalon(
+    overrides: Partial<Prisma.indicateur_territoire_jalonUncheckedCreateInput> & {
+      id: string;
+      territoire_code: string;
+    },
+  ) {
+    const prisma = getPrisma();
+    return prisma.indicateur_territoire_jalon.create({
+      data: {
+        code_insee: "FR",
+        maille: "NAT",
+        zone_id: "FRANCE",
+        jalon: 2025,
+        ...overrides,
+      },
+    });
+  },
+
+  async indicateurTerritoireValeurEvenement(
+    overrides: Partial<Prisma.indicateur_territoire_valeur_evenementUncheckedCreateInput> & {
+      indic_id: string;
+      territoire_code: string;
+      id_auteur_modification: string;
+      type_evenement: $Enums.type_evenement;
+    },
+  ) {
+    const prisma = getPrisma();
+    return prisma.indicateur_territoire_valeur_evenement.create({
+      data: {
+        id: randomUUID(),
+        type_valeur: "VALEUR_AVANCEMENT",
+        donnees_complementaires: {},
+        date_valeur: new Date(),
+        ordre: 1,
+        date_modification: new Date(),
+        date_creation: new Date(),
+        correlation_id: randomUUID(),
+        valeur: 100,
+        ...overrides,
+      },
+    });
+  },
+
+  async metadataParametrageIndicateurs(
+    overrides: Partial<Prisma.metadata_parametrage_indicateursUncheckedCreateInput> & {
+      indic_id: string;
+    },
+  ) {
+    const prisma = getPrisma();
+    return prisma.metadata_parametrage_indicateurs.create({
+      data: {
+        ...overrides,
+      },
+    });
+  },
+
   async actionCompteInactif(
     overrides: Partial<Prisma.action_compte_inactifUncheckedCreateInput> & {
       utilisateur_id: string;
@@ -441,65 +532,6 @@ export const fixtures = {
           sectionActiviteChantiers: [],
         } satisfies ContenuRapport,
         statut_envoi: "CREE",
-        ...overrides,
-      },
-    });
-  },
-
-  async indicateurIdentite(
-    overrides: Partial<Prisma.indicateur_identiteUncheckedCreateInput> & {
-      chantier_id: string;
-    },
-  ) {
-    const prisma = getPrisma();
-    const id = overrides.id || `IND-${randomUUID().slice(0, 6)}`;
-    return prisma.indicateur_identite.create({
-      data: {
-        nom: `Indicateur ${id}`,
-        statut: "PUBLIE",
-        ...overrides,
-        id,
-      },
-    });
-  },
-
-  async indicateurTerritoire(
-    overrides: Partial<Prisma.indicateur_territoireUncheckedCreateInput> & {
-      id: string;
-      territoire_code: string;
-      chantier_id: string;
-    },
-  ) {
-    const prisma = getPrisma();
-    return prisma.indicateur_territoire.create({
-      data: {
-        maille: "DEPT",
-        code_insee: "75",
-        zone_id: "zone-1",
-        ...overrides,
-      },
-    });
-  },
-
-  async indicateurTerritoireValeurEvenement(
-    overrides: Partial<Prisma.indicateur_territoire_valeur_evenementUncheckedCreateInput> & {
-      indic_id: string;
-      territoire_code: string;
-      id_auteur_modification: string;
-    },
-  ) {
-    const prisma = getPrisma();
-    return prisma.indicateur_territoire_valeur_evenement.create({
-      data: {
-        id: randomUUID(),
-        type_evenement: "VALEUR_MODIFIEE",
-        type_valeur: "VALEUR_AVANCEMENT",
-        date_valeur: new Date(),
-        valeur: 50,
-        donnees_complementaires: {},
-        correlation_id: randomUUID(),
-        ordre: 1,
-        date_creation: new Date(),
         ...overrides,
       },
     });

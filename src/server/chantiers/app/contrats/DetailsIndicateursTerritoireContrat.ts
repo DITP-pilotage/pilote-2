@@ -1,7 +1,13 @@
-import { DétailsIndicateurTerritoire } from "@/server/domain/indicateur/DétailsIndicateur.interface";
-import { DetailsIndicateurTerritoire } from "@/server/chantiers/domain/DetailsIndicateurs";
+import { CodeInsee } from "@/server/domain/territoire/Territoire.interface";
+import {
+  DetailsIndicateur,
+  DetailsIndicateurTerritoire,
+} from "@/server/chantiers/domain/DetailsIndicateurs";
 
-export type DetailsIndicateursTerritoireContrat = DétailsIndicateurTerritoire;
+export type DetailsIndicateursTerritoireContrat = Record<
+  CodeInsee,
+  DetailsIndicateur
+>;
 
 export const presenterEnDetailsIndicateursTerritoireContrat = (
   detailsIndicateurs: DetailsIndicateurTerritoire,
@@ -34,10 +40,10 @@ export const presenterEnDetailsIndicateursTerritoireContrat = (
           detailsTerritoire.propositionStatutTerritoire,
         propositionStatutDirectionProjet:
           detailsTerritoire.propositionStatutDirectionProjet,
-        unité: detailsTerritoire.unite,
-        est_applicable: detailsTerritoire.estApplicable,
+        unite: detailsTerritoire.unite,
+        estApplicable: detailsTerritoire.estApplicable,
         dateImport: detailsTerritoire.dateImport,
-        pondération: detailsTerritoire.ponderation,
+        ponderation: detailsTerritoire.ponderation,
         prochaineDateValeurAvancement:
           detailsTerritoire.prochaineDateValeurAvancement,
         prochaineDateMaj: detailsTerritoire.prochaineDateMaj,

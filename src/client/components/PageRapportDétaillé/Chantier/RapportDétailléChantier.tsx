@@ -72,7 +72,7 @@ const RapportDétailléChantier: FunctionComponent<
 
   const indicateursApplicables = indicateurs.filter(
     (indicateur) =>
-      détailsIndicateurs[indicateur.id]?.[territoireCode]?.est_applicable ===
+      détailsIndicateurs[indicateur.id]?.[territoireCode]?.estApplicable ===
       true,
   );
 
@@ -82,7 +82,7 @@ const RapportDétailléChantier: FunctionComponent<
   > = indicateursApplicables.reduce(
     (acc, indicateur) => {
       if (
-        (détailsIndicateurs[indicateur.id][territoireCode]?.pondération ?? 0) >
+        (détailsIndicateurs[indicateur.id][territoireCode]?.ponderation ?? 0) >
         0
       ) {
         acc.participation_ta.push(indicateur);
