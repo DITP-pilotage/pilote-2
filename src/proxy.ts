@@ -134,88 +134,28 @@ export async function proxy(request: NextRequest) {
           { status: 303 },
         );
 
-        // Supprimer les cookies d'authentification (next-auth v4 legacy)
-        redirectResponse.cookies.set("next-auth.session-token", "", {
-          expires: new Date(0),
-          path: "/",
-          httpOnly: true,
-          secure: process.env.NODE_ENV === "production",
-          sameSite: "lax",
-        });
-        redirectResponse.cookies.set("next-auth.session-token.0", "", {
-          expires: new Date(0),
-          path: "/",
-          httpOnly: true,
-          secure: process.env.NODE_ENV === "production",
-          sameSite: "lax",
-        });
-        redirectResponse.cookies.set("next-auth.session-token.1", "", {
-          expires: new Date(0),
-          path: "/",
-          httpOnly: true,
-          secure: process.env.NODE_ENV === "production",
-          sameSite: "lax",
-        });
-        redirectResponse.cookies.set("__Secure-next-auth.session-token.0", "", {
-          expires: new Date(0),
-          path: "/",
-          httpOnly: true,
-          secure: process.env.NODE_ENV === "production",
-          sameSite: "lax",
-        });
-        redirectResponse.cookies.set("__Secure-next-auth.session-token.1", "", {
-          expires: new Date(0),
-          path: "/",
-          httpOnly: true,
-          secure: process.env.NODE_ENV === "production",
-          sameSite: "lax",
-        });
+        const authCookiePrefixes = [
+          "next-auth.session-token",
+          "__Secure-next-auth.session-token",
+          "authjs.session-token",
+          "__Secure-authjs.session-token",
+          "authjs.callback-url",
+          "authjs.csrf-token",
+          "next-auth.callback-url",
+          "next-auth.csrf-token",
+        ];
 
-        // Supprimer les cookies d'authentification (next-auth v5 / authjs)
-        redirectResponse.cookies.set("authjs.session-token", "", {
-          expires: new Date(0),
-          path: "/",
-          httpOnly: true,
-          secure: process.env.NODE_ENV === "production",
-          sameSite: "lax",
-        });
-        redirectResponse.cookies.set("__Secure-authjs.session-token", "", {
-          expires: new Date(0),
-          path: "/",
-          httpOnly: true,
-          secure: process.env.NODE_ENV === "production",
-          sameSite: "lax",
-        });
-        redirectResponse.cookies.set("authjs.callback-url", "", {
-          expires: new Date(0),
-          path: "/",
-          httpOnly: true,
-          secure: process.env.NODE_ENV === "production",
-          sameSite: "lax",
-        });
-        redirectResponse.cookies.set("authjs.csrf-token", "", {
-          expires: new Date(0),
-          path: "/",
-          httpOnly: true,
-          secure: process.env.NODE_ENV === "production",
-          sameSite: "lax",
-        });
-
-        redirectResponse.cookies.set("next-auth.callback-url", "", {
-          expires: new Date(0),
-          path: "/",
-          httpOnly: true,
-          secure: process.env.NODE_ENV === "production",
-          sameSite: "lax",
-        });
-
-        redirectResponse.cookies.set("next-auth.csrf-token", "", {
-          expires: new Date(0),
-          path: "/",
-          httpOnly: true,
-          secure: process.env.NODE_ENV === "production",
-          sameSite: "lax",
-        });
+        for (const { name } of request.cookies.getAll()) {
+          if (authCookiePrefixes.some((prefix) => name.startsWith(prefix))) {
+            redirectResponse.cookies.set(name, "", {
+              expires: new Date(0),
+              path: "/",
+              httpOnly: true,
+              secure: process.env.NODE_ENV === "production",
+              sameSite: "lax",
+            });
+          }
+        }
 
         // Supprimer également le cookie csrf personnalisé si utilisé
         redirectResponse.cookies.set("csrf", "", {
