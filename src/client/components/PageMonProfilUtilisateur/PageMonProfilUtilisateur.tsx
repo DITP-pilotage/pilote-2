@@ -70,8 +70,7 @@ export const PageMonProfilUtilisateur = () => {
         <Bloc titre="Mon identité">
           <form
             className="flex flex-col gap-4"
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            onSubmit={form.handleSubmit(soumettreFormulaire as any)}
+            onSubmit={form.handleSubmit(soumettreFormulaire)}
           >
             <InputAvecLabel
               disabled

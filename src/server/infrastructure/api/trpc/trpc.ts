@@ -17,8 +17,7 @@ const créerContextTRPCInterne = (opts: CreateContextOptions) => {
 export const créerContextTRPC = async (opts: CreateNextContextOptions) => {
   const { req, res } = opts;
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const session = await auth({ req, res } as any);
+  const session = await auth(req, res);
   const csrfDuCookie = req.cookies.csrf ?? null;
 
   return créerContextTRPCInterne({
