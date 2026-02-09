@@ -43,7 +43,10 @@
     "lodash-es": "4.17.23",
     "@asamuzakjp/css-color": {
       "@csstools/css-tokenizer": "^4.0.0"
-    }
+    },
+    "@tiptap/core": "3.19.0",
+    "@tiptap/pm": "3.19.0",
+    "@tiptap/extensions": "3.19.0"
   },
   "prisma": {
     "schema": "src/database/prisma/schema.prisma",
@@ -64,6 +67,7 @@
     ]
   },
   "dependencies": {
+    "@ai-sdk/openai": "^3.0.26",
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6",
     "@faker-js/faker": "^7.6.0",
@@ -77,6 +81,7 @@
     "@tanstack/react-query": "^5.90.19",
     "@tanstack/react-query-devtools": "^5.91.2",
     "@tanstack/react-table": "^8.8.4",
+    "@tiptap/core": "3.19.0",
     "@tiptap/extension-color": "3.19.0",
     "@tiptap/extension-link": "3.19.0",
     "@tiptap/extension-placeholder": "3.19.0",
@@ -89,6 +94,7 @@
     "@trpc/next": "^11.6.0",
     "@trpc/react-query": "^11.6.0",
     "@trpc/server": "^11.6.0",
+    "ai": "^6.0.78",
     "awilix": "^12.0.2",
     "axios": "^1.12.2",
     "chart.js": "^4.2.1",
