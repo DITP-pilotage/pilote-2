@@ -48,6 +48,7 @@ export default async function CentreAideLayout({
         backToTop: true,
       }}
       darkMode={false}
+      nextThemes={{ forcedTheme: "light" }}
       copyPageButton={false}
     >
       <NavigationFilterWrapper />
