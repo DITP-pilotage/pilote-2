@@ -40,6 +40,9 @@
     "centreaide:init": "git submodule update --init --recursive",
     "centreaide:clean": "git submodule deinit -f src/content"
   },
+  "overrides": {
+    "lodash-es": "4.17.23"
+  },
   "prisma": {
     "schema": "src/database/prisma/schema.prisma",
     "seed": "ts-node src/database/prisma/seed.ts"
@@ -102,7 +105,7 @@
     "dotenv-cli": "^7.1.0",
     "dotenv-expand": "11.0.6",
     "echarts": "^6.0.0",
-    "fast-xml-parser": "^4.5.0",
+    "fast-xml-parser": "5.3.5",
     "form-data": "^4.0.0",
     "formidable": "^3.5.4",
     "html-to-image": "^1.11.13",
@@ -111,7 +114,7 @@
     "lodash.groupby": "^4.6.0",
     "lodash.keyby": "^4.6.0",
     "lodash.mapvalues": "^4.6.0",
-    "lodash.pick": "^4.4.0",
+    "lodash.pick": "4.4.0",
     "luxon": "^3.7.2",
     "marked": "^15.0.7",
     "mime": "^3.0.0",
@@ -132,13 +135,13 @@
     "sharp": "^0.33.5",
     "sonner": "^2.0.7",
     "superjson": "^1.12.2",
-    "swagger-ui-react": "^5.28.1",
+    "swagger-ui-react": "5.31.0",
     "tailwind-merge": "^3.3.1",
     "tsx": "^4.19.3",
     "ws": "8.18.0",
     "yaml": "2.3.2",
     "zod": "^3.21.4",
-    "zustand": "^4.3.6"
+    "zustand": "5.0.11"
   },
   "devDependencies": {
     "@babel/plugin-transform-private-methods": "^7.25.9",
