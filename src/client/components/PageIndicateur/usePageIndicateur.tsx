@@ -10,7 +10,7 @@ import { MapInformationMetadataIndicateurContrat } from "@/server/app/contrats/I
 import { createValidationMetadataIndicateurFormulaire } from "@/validation/metadata-indicateur";
 import AlerteProps from "@/components/_commons/Alerte/Alerte.interface";
 
-type MetadataIndicateurForm = z.infer<
+export type MetadataIndicateurForm = z.infer<
   ReturnType<typeof createValidationMetadataIndicateurFormulaire>
 >;
 
