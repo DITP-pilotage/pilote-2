@@ -14,3 +14,4 @@ fi
 
 echo "Restore data to $CONN_STR_DEST"
 bash scripts/ddp_restore.sh
+bash scripts/anonymisation_utilisateurs.sh

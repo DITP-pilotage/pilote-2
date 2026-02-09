@@ -13,7 +13,7 @@ WITH rank_values_month AS (
         TO_CHAR(DATE_TRUNC('month', metric_date::DATE), 'YYYY-MM-DD')
             AS metric_date,
         metric_type,
-        metric_value::FLOAT,
+        metric_value::NUMERIC,
         zone_id,
         id,
         rapport_id,
