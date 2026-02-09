@@ -36,6 +36,7 @@ docker compose run --rm ddp bash docker/entrypoint.ddp.sh
 ## [local]
 bash scripts/ddp_dump.sh
 bash scripts/ddp_restore.sh
+bash scripts/anonymisation_utilisateurs.sh
 ```
 
 ## Scripts "daily"

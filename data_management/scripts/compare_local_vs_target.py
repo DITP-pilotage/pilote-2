@@ -69,16 +69,6 @@ def _normalize_cell(value: Any) -> Any:
         except TypeError:
             # In case elements are not comparable, just stringify the whole thing
             return str(value)
-    # String that looks like a Python list, e.g. "['a', 'b']"
-    if isinstance(value, str) and value.strip().startswith("[") and value.strip().endswith("]"):
-        raise Exception("test")
-        try:
-            parsed = ast.literal_eval(value)
-            if isinstance(parsed, (list, tuple, set)):
-                return str(sorted(_normalize_inner(v) for v in parsed))
-        except (ValueError, SyntaxError):
-            return value
-
     return value
 
 

@@ -66,6 +66,7 @@ FULL_DJ=true pipenv run bash scripts/run_datajobs.sh
 cd ..
 bash scripts/ddp_dump.sh
 bash scripts/ddp_restore.sh
+bash scripts/anonymisation_utilisateurs.sh
 ## (6) Lancer les datajobs en mode normal
 FULL_DJ=false pipenv run bash scripts/run_datajobs.sh
 ```
