@@ -1,16 +1,16 @@
 import Head from "next/head";
 import { GetServerSideProps } from "next";
 import { FunctionComponent } from "react";
-import { getServerSession } from "next-auth/next";
 import Nouveautés from "@/components/Nouveautés/Nouveautés";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
-import { authOptions } from "@/server/infrastructure/api/auth/[...nextauth]";
+import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
 import { getContainer } from "@/server/dependances";
 
 export const getServerSideProps: GetServerSideProps<{
   estAutoriseAModifierLesNouveautés: boolean;
-}> = async ({ req, res }) => {
-  const session = await getServerSession(req, res, authOptions);
+}> = async (context) => {
+  const { res } = context;
+  const session = await auth(context);
 
   const estAutoriseAModifierLesNouveautés =
     session?.profil === ProfilEnum.DITP_ADMIN;

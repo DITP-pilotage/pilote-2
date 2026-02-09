@@ -1,15 +1,11 @@
-import { getServerSession } from "next-auth/next";
 import Head from "next/head";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import { FunctionComponent } from "react";
-import { authOptions } from "@/server/infrastructure/api/auth/[...nextauth]";
+import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
 
-export const getServerSideProps: GetServerSideProps<{}> = async ({
-  req,
-  res,
-  query,
-}) => {
-  const session = await getServerSession(req, res, authOptions);
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const { req, query } = context;
+  const session = await auth(context);
 
   if (session) {
     const territoireCode = session.habilitations.lecture.territoires.includes(

@@ -1,0 +1,24 @@
+:root {
+  --nextra-primary-hue: 212deg;
+  --nextra-primary-saturation: 100%;
+  --nextra-primary-lightness: 45%;
+  --nextra-bg: 250, 250, 250;
+  --nextra-content-width: 90rem;
+}
+
+::selection {
+  background: hsla(
+    var(--nextra-primary-hue),
+    var(--nextra-primary-saturation),
+    var(--nextra-primary-lightness),
+    0.3
+  );
+}
+
+html {
+  background: rgb(var(--nextra-bg));
+}
+
+h3 {
+  margin-top: 0;
+}

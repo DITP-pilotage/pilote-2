@@ -1,10 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { seedDatabase } from "./utils";
 import { AppActions } from "./actions/app.actions";
-
-test.beforeAll(() => {
-  seedDatabase();
-});
 
 test("doit pouvoir consulter les données des chantiers", async ({ page }) => {
   test.setTimeout(150_000);
@@ -37,10 +32,7 @@ test("doit pouvoir consulter les données des chantiers", async ({ page }) => {
       page.getByRole("table").getByRole("cell", { name: chantier.nom }),
     ).toBeVisible();
 
-    const pageChantier = await pageAccueil.selectChantier(
-      chantier.nom,
-      chantier.id,
-    );
+    const pageChantier = await pageAccueil.selectChantier(chantier.nom);
 
     await test.step(`Vérification de la structure de la page chantier "${chantier.nom}"`, async () => {
       await pageChantier.expectTitle(chantier.id, chantier.nom);

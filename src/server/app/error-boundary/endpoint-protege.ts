@@ -1,4 +1,4 @@
-import { NextApiRequest, NextApiResponse } from "next";
+import { NextApiHandler, NextApiRequest, NextApiResponse } from "next";
 import { TokenAPIJWTService } from "@/server/authentification/infrastructure/adapters/services/TokenAPIJWTService";
 import { UnauthorizedError } from "@/server/app/error-boundary/unauthorized-error";
 import { BadRequestError } from "@/server/app/error-boundary/bad-request-error";
@@ -25,7 +25,7 @@ const verifierAuthentification = async (request: NextApiRequest) => {
 };
 
 export const endpointProtege =
-  (...handlers: Function[]) =>
+  (...handlers: NextApiHandler[]) =>
   async (request: NextApiRequest, response: NextApiResponse) => {
     return errorHandler(async (req, res) => {
       await verifierAuthentification(req);

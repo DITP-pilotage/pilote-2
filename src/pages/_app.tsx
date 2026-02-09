@@ -9,8 +9,9 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import Head from "next/head";
 import { TRPCClientError } from "@trpc/client";
 import init from "@socialgouv/matomo-next";
-import Router, { useRouter } from "next/router";
+import Router from "next/router";
 import { Toaster } from "sonner";
+import { NuqsAdapter } from "nuqs/adapters/next/pages";
 import MiseEnPage from "@/client/components/_commons/MiseEnPage/MiseEnPage";
 import useDétecterLargeurDÉcran from "@/client/hooks/useDétecterLargeurDÉcran";
 import api from "@/server/infrastructure/api/trpc/api";
@@ -44,13 +45,9 @@ type WindowAvecNonce = Window & { __nonce?: string };
 
 function MonApplication({ Component, pageProps, nonce: appNonce }: MyAppProps) {
   useDétecterLargeurDÉcran();
-  const router = useRouter();
 
   const [afficherLeLoader, setAfficherLeLoader] = useState(false);
   const [pageEnCoursDeChargement, setPageEnCoursDeChargement] = useState(false);
-
-  // Vérifier si c'est une page Nextra (centre d'aide)
-  const isNextraPage = router.pathname.startsWith("/centre-aide");
 
   // Utiliser le nonce passé par les props (côté serveur) ou le récupérer depuis window (côté client)
   const nonce =
@@ -104,7 +101,7 @@ function MonApplication({ Component, pageProps, nonce: appNonce }: MyAppProps) {
   }, [estRecordAnalyticsActive, matomoSiteId, matomoUrl]);
 
   return (
-    <>
+    <NuqsAdapter>
       <Script nonce={nonce} src="/js/dsfr/dsfr.module.min.js" type="module" />
       <Script noModule nonce={nonce} src="/js/dsfr/dsfr.nomodule.min.js" />
       <Head>
@@ -125,21 +122,14 @@ function MonApplication({ Component, pageProps, nonce: appNonce }: MyAppProps) {
       <QueryClientProvider client={queryClient}>
         <Tooltip.Provider>
           <SessionProvider session={pageProps.session}>
-            {isNextraPage ? (
-              <>
-                <Component {...pageProps} />
-                <Toaster />
-              </>
-            ) : (
-              <MiseEnPage afficherLeLoader={afficherLeLoader}>
-                <Component {...pageProps} />
-                <Toaster />
-              </MiseEnPage>
-            )}
+            <MiseEnPage afficherLeLoader={afficherLeLoader}>
+              <Component {...pageProps} />
+              <Toaster />
+            </MiseEnPage>
           </SessionProvider>
         </Tooltip.Provider>
       </QueryClientProvider>
-    </>
+    </NuqsAdapter>
   );
 }
 

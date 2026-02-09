@@ -1,4 +1,4 @@
-import Playwright from "playwright-core";
+import { APIRequest } from "@playwright/test";
 import { OpenApiClient } from "./open-api.client";
 
 export type AuthorizationHeader = {
@@ -7,7 +7,7 @@ export type AuthorizationHeader = {
 };
 
 export async function createUnauthenticatedClient(
-  playwright: typeof Playwright,
+  request: APIRequest,
   authorization?: AuthorizationHeader,
 ): Promise<OpenApiClient> {
   const extraHTTPHeaders: Record<string, string> = {};
@@ -16,7 +16,7 @@ export async function createUnauthenticatedClient(
     extraHTTPHeaders["Authorization"] = authorization.value;
   }
 
-  const apiContext = await playwright.request.newContext({
+  const apiContext = await request.newContext({
     baseURL: process.env.BASE_URL,
     extraHTTPHeaders,
   });

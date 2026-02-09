@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from "react";
+import { FunctionComponent } from "react";
 import { Icone } from "@/components/_commons/Icone";
 import { CheckLineIcon } from "@/components/_commons/Icones/CheckLineIcon";
 

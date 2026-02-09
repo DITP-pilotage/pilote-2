@@ -56,8 +56,8 @@ export const useModaleInscriptionInfolettre = () => {
     handleFermetureModale,
     handleSubmitForm,
     estConsentantALinscription,
-    isSubmitting: envoyerMailInscriptionInfolettre.isLoading,
-    isDesactivating: desactiverPopupInfolettre.isLoading,
+    isSubmitting: envoyerMailInscriptionInfolettre.isPending,
+    isDesactivating: desactiverPopupInfolettre.isPending,
     succesEnvoieEmail,
   };
 };

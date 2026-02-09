@@ -2,7 +2,7 @@ import { initTRPC, TRPCError } from "@trpc/server";
 import superjson from "superjson";
 import { ZodError } from "zod";
 import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
-import { getServerAuthSession } from "@/server/infrastructure/api/auth/[...nextauth]";
+import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
 import { NonAutorisé } from "@/server/utils/errors";
 import { PiloteError } from "@/server/app/error-boundary/pilote-error";
 import { CreateContextOptions } from "./trpc.interface";
@@ -17,7 +17,7 @@ const créerContextTRPCInterne = (opts: CreateContextOptions) => {
 export const créerContextTRPC = async (opts: CreateNextContextOptions) => {
   const { req, res } = opts;
 
-  const session = await getServerAuthSession({ req, res });
+  const session = await auth(req, res);
   const csrfDuCookie = req.cookies.csrf ?? null;
 
   return créerContextTRPCInterne({

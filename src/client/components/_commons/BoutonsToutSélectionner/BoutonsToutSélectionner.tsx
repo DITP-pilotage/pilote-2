@@ -9,7 +9,11 @@ interface BoutonToutSélectionnerProps {
 
 const BoutonToutSélectionner: FunctionComponent<
   BoutonToutSélectionnerProps
-> = ({ onClickToutSélectionner, onClickToutDésélectionner, className }) => {
+> = ({
+  onClickToutSélectionner,
+  onClickToutDésélectionner,
+  className = "",
+}) => {
   return (
     <ul
       className={`fr-btns-group fr-btns-group--inline fr-btns-group--sm${className ? " " + className : ""}`}
@@ -30,10 +34,6 @@ const BoutonToutSélectionner: FunctionComponent<
       </li>
     </ul>
   );
-};
-
-BoutonToutSélectionner.defaultProps = {
-  className: "",
 };
 
 export default BoutonToutSélectionner;

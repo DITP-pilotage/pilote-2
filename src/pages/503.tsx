@@ -2,7 +2,7 @@ import Head from "next/head";
 import { FunctionComponent } from "react";
 import Erreur503 from "@/components/Erreur/Erreur503";
 
-const Erreur503Personnalisée: FunctionComponent<{}> = () => {
+const Erreur503Personnalisée: FunctionComponent = () => {
   return (
     <>
       <Head>

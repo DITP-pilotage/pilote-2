@@ -21,7 +21,10 @@ const FormulairePublierImportIndicateur: FunctionComponent<
   );
 
   return (
-    <form className="flex justify-end" onSubmit={publierLeFichier}>
+    <form
+      className="flex justify-end"
+      onSubmit={publierLeFichier as React.FormEventHandler<HTMLFormElement>}
+    >
       <SubmitBouton
         label={
           wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT

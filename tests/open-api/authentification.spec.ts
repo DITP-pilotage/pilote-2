@@ -1,17 +1,12 @@
 import { expect, test } from "@playwright/test";
 import { createUnauthenticatedClient } from "./api-client/unauthenticated-api.client";
 import { ApiTestContext } from "./api-client/api-test-context";
-import { seedDatabase } from "../utils";
-
-test.beforeAll(() => {
-  seedDatabase();
-});
 
 test.describe("Authentification", () => {
   test("quand on ne dispose pas d'un header Authorization, doit remonter une erreur 401 Unauthorized", async ({
     playwright,
   }) => {
-    const client = await createUnauthenticatedClient(playwright, {
+    const client = await createUnauthenticatedClient(playwright.request, {
       skip: true,
     });
 
@@ -25,7 +20,7 @@ test.describe("Authentification", () => {
   test("quand on dispose d'un header Authorization invalide, doit remonter une erreur 400 Bad Request", async ({
     playwright,
   }) => {
-    const client = await createUnauthenticatedClient(playwright, {
+    const client = await createUnauthenticatedClient(playwright.request, {
       value: "invalid",
     });
 
@@ -42,7 +37,7 @@ test.describe("Authentification", () => {
     const fakeJwt =
       "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c";
 
-    const client = await createUnauthenticatedClient(playwright, {
+    const client = await createUnauthenticatedClient(playwright.request, {
       value: fakeJwt,
     });
 

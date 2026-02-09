@@ -2,7 +2,7 @@ import Head from "next/head";
 import { FunctionComponent } from "react";
 import Erreur404 from "@/components/Erreur/Erreur404";
 
-const Erreur403Unauthorized: FunctionComponent<{}> = () => {
+const Erreur403Unauthorized: FunctionComponent = () => {
   return (
     <>
       <Head>

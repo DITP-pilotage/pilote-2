@@ -1,7 +1,7 @@
 import { GetServerSidePropsContext } from "next/types";
 import Head from "next/head";
 import { FunctionComponent } from "react";
-import { getServerAuthSession } from "@/server/infrastructure/api/auth/[...nextauth]";
+import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
 import Utilisateur from "@/server/domain/utilisateur/Utilisateur.interface";
 import {
   MetadataParametrageIndicateurContrat,
@@ -26,15 +26,13 @@ export interface NextPageAdminUtilisateurProps {
   chantiers: ChantierSynthétisé[];
 }
 
-export async function getServerSideProps({
-  req,
-  res,
-  params,
-  query,
-}: GetServerSidePropsContext<{
-  id: Utilisateur["id"];
-  _action?: string;
-}>) {
+export async function getServerSideProps(
+  context: GetServerSidePropsContext<{
+    id: Utilisateur["id"];
+    _action?: string;
+  }>,
+) {
+  const { params, query } = context;
   const redirigerVersPageAccueil = {
     redirect: {
       destination: "/",
@@ -42,7 +40,7 @@ export async function getServerSideProps({
     },
   };
 
-  const session = await getServerAuthSession({ req, res });
+  const session = await auth(context);
 
   if (!params?.id || !session || !session.habilitations) {
     return redirigerVersPageAccueil;

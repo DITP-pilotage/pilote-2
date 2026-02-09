@@ -1,9 +1,8 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { getServerSession } from "next-auth/next";
 import { stringify } from "csv-stringify";
-import { Options } from "csv-stringify/lib/sync";
+import { Options } from "csv-stringify/sync";
 import assert from "node:assert/strict";
-import { authOptions } from "@/server/infrastructure/api/auth/[...nextauth]";
+import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
 import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
 import { OptionsExportUtilisateur } from "@/server/gestion-utilisateur/domain/OptionsExportUtilisateur";
 import { getContainer } from "@/server/dependances";
@@ -133,7 +132,7 @@ export const handleExportDesUtilisateurs = async (
   request: NextApiRequest,
   response: NextApiResponse,
 ): Promise<void> => {
-  const session = await getServerSession(request, response, authOptions);
+  const session = await auth(request, response);
   assert(session);
 
   response.setHeader("Content-Type", "text/csv");

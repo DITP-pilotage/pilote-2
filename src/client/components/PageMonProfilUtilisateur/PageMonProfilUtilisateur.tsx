@@ -110,7 +110,7 @@ export const PageMonProfilUtilisateur = () => {
 
             <div className="flex justify-end">
               <SubmitBouton
-                disabled={mutationModifierMonProfil.isLoading}
+                disabled={mutationModifierMonProfil.isPending}
                 label="Enregistrer"
               />
             </div>

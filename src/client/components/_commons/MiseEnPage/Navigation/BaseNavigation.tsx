@@ -1,6 +1,7 @@
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import Link from "next/link";
+import { keepPreviousData } from "@tanstack/react-query";
 import { $Enums } from "@prisma/client";
 import { Session } from "next-auth";
 import api from "@/server/infrastructure/api/trpc/api";
@@ -71,7 +72,7 @@ export const BaseNavigation = ({ pages }: { pages: LienNavigation[] }) => {
   const { data: listerNouveautes } = api.parametrageNouveautes.lister.useQuery(
     undefined,
     {
-      keepPreviousData: true,
+      placeholderData: keepPreviousData,
     },
   );
 

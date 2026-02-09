@@ -47,15 +47,14 @@ export class PageAccueil extends BasePage {
     await this.page.getByRole("button", { name: ministereName }).click();
   }
 
-  async selectChantier(
-    chantierName: string,
-    chantierId: string,
-  ): Promise<PageChantier> {
+  async selectChantier(chantierName: string): Promise<PageChantier> {
     await this.page
       .getByRole("table")
       .getByRole("cell", { name: chantierName })
       .click();
-    await this.page.waitForURL(`**/chantier/CH-${chantierId}/NAT-FR**`);
+    await expect(
+      this.page.getByRole("heading", { name: /Avancement du chantier/ }),
+    ).toBeVisible();
     return new PageChantier(this.page);
   }
 

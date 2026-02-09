@@ -22,7 +22,7 @@ interface ÉditeurRicheProps {
   onFocus?: () => void;
   placeholder?: string;
   estEnLectureSeule?: boolean;
-  editeurRef?: RefObject<TextareaRef>;
+  editeurRef?: RefObject<TextareaRef | null>;
 }
 
 export const EditeurRiche: FunctionComponent<ÉditeurRicheProps> = ({

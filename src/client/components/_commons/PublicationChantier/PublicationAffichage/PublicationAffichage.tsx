@@ -1,7 +1,7 @@
 import { FunctionComponent } from "react";
 import { formaterDate } from "@/client/utils/date/date";
 import { nettoyerUneChaîneDeCaractèresPourAffichageHTML } from "@/client/utils/strings";
-import { Badge } from "@/client/components/_commons/Badge/Badge";
+import { Badge } from "@/components/_commons/Badge";
 import PublicationProps from "@/client/components/_commons/PublicationChantier/Publication.interface";
 
 interface PublicationAffichageProps {
@@ -23,7 +23,6 @@ const PublicationAffichage: FunctionComponent<PublicationAffichageProps> = ({
       </p>
       <p
         className="fr-text--sm fr-mb-0"
-        // eslint-disable-next-line react/no-danger
         dangerouslySetInnerHTML={{
           __html: nettoyerUneChaîneDeCaractèresPourAffichageHTML(
             publication.contenu,

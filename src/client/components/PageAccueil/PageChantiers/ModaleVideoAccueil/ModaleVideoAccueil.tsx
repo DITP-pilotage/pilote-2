@@ -1,4 +1,3 @@
-/* eslint-disable react/iframe-missing-sandbox */
 import { FunctionComponent, useRef } from "react";
 import { useSession } from "next-auth/react";
 import { Dialog } from "radix-ui";

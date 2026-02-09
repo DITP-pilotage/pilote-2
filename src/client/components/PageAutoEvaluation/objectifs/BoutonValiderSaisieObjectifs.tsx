@@ -53,7 +53,7 @@ export const BoutonValiderSaisieObjectifs = ({
     <div>
       <button
         className="fr-btn"
-        disabled={validerSaisie.isLoading}
+        disabled={validerSaisie.isPending}
         onClick={handleOpenModal}
         type="button"
       >
@@ -62,7 +62,7 @@ export const BoutonValiderSaisieObjectifs = ({
       </button>
       <ConfirmerValidationSaisie
         annee={2025}
-        isPending={validerSaisie.isLoading}
+        isPending={validerSaisie.isPending}
         onConfirm={handleConfirmValidation}
         onOpenChange={setOpen}
         open={open}

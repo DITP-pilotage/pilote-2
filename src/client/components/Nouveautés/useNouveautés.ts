@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 
 import { useQueryState, parseAsString } from "nuqs";
+import { keepPreviousData } from "@tanstack/react-query";
 import api from "@/server/infrastructure/api/trpc/api";
 
 const initialContenu = `
@@ -27,7 +28,7 @@ export const useNouveautés = () => {
     isLoading: estChargementListeNouveautes,
     refetch: refetchListeNouveautes,
   } = api.parametrageNouveautes.lister.useQuery(undefined, {
-    keepPreviousData: true,
+    placeholderData: keepPreviousData,
   });
 
   const [estUnModeEdition, setEstUnModeEdition] = useState<boolean>(false);

@@ -1,5 +1,5 @@
 import "@gouvfr/dsfr/dist/component/checkbox/checkbox.min.css";
-import { Fragment, FunctionComponent, useId } from "react";
+import { FunctionComponent, useId } from "react";
 import { MultiSelectOptionGroupée } from "@/components/_commons/MultiSelect/MultiSelect.interface";
 
 interface MultiSelectGroupeProps {

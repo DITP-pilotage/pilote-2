@@ -6,7 +6,7 @@ import Document, {
   DocumentContext,
   DocumentInitialProps,
 } from "next/document";
-import React, { createElement } from "react";
+import { createElement } from "react";
 
 // Étendre l'interface DocumentInitialProps pour inclure le nonce
 interface MyDocumentProps extends DocumentInitialProps {
@@ -92,7 +92,7 @@ class MyDocument extends Document<MyDocumentProps> {
           {typeof window === "undefined" && nonce && !isDevelopment ? (
             <script
               // This is a safe usage of dangerouslySetInnerHTML to set the nonce for CSP
-              // eslint-disable-next-line react/no-danger
+
               dangerouslySetInnerHTML={{
                 __html: `window.__nonce = "${nonce}";`,
               }}

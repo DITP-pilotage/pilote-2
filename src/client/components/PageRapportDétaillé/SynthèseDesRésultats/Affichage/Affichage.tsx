@@ -34,7 +34,6 @@ const SynthèseDesRésultatsAffichage = ({
       </p>
       <p
         className="fr-text--sm fr-mb-0"
-        // eslint-disable-next-line react/no-danger
         dangerouslySetInnerHTML={{
           __html:
             nettoyerUneChaîneDeCaractèresPourAffichageHTML(contenuAAfficher),

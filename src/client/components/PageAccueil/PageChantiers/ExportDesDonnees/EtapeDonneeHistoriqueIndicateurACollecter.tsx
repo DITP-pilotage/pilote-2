@@ -1,4 +1,3 @@
-import React from "react";
 import { parseAsInteger, parseAsString, useQueryState } from "nuqs";
 import { Dialog } from "radix-ui";
 

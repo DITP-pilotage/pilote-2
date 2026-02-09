@@ -1,11 +1,6 @@
 import { expect, test } from "@playwright/test";
 import { stringify } from "csv-stringify/sync";
-import { seedDatabase } from "./utils";
 import { AppActions } from "./actions/app.actions";
-
-test.beforeAll(() => {
-  seedDatabase();
-});
 
 test("doit pouvoir importer des données", async ({ page }) => {
   test.setTimeout(150_000);
@@ -24,16 +19,14 @@ test("doit pouvoir importer des données", async ({ page }) => {
     await expect(
       page.getByRole("table").getByRole("cell", { name: chantier.nom }),
     ).toBeVisible();
-    const pageChantier = await pageAccueil.selectChantier(
-      chantier.nom,
-      chantier.id,
-    );
+    const pageChantier = await pageAccueil.selectChantier(chantier.nom);
 
     await test.step('Navigation vers la page "Mise à jour des données"', async () => {
       await expect(
         page.getByRole("link", { name: /Mettre à jour les données/ }),
       ).toBeVisible();
-      const pageMaj = await pageChantier.gotoMiseAJourDonnees(chantier.id);
+
+      const pageMaj = await pageChantier.gotoMiseAJourDonnees();
 
       await test.step(`Sélection de l'indicateur ${chantier.indicateurId}`, async () => {
         await pageMaj.expectTitle(chantier.id);
@@ -45,9 +38,6 @@ test("doit pouvoir importer des données", async ({ page }) => {
 
       await test.step("Passage à l'étape suivante 'Charger le fichier'", async () => {
         await pageMaj.nextStep();
-        await page.waitForURL(
-          `**/chantier/CH-${chantier.id}/indicateurs?etapeCourante=2**`,
-        );
         await pageMaj.expectStep(2);
       });
 
@@ -151,9 +141,6 @@ test("doit pouvoir importer des données", async ({ page }) => {
 
       await test.step('Passage à l\'étape suivante "Transmettre les données"', async () => {
         await pageMaj.nextStep();
-        await page.waitForURL(
-          `**/chantier/CH-${chantier.id}/indicateurs?etapeCourante=3**`,
-        );
         await pageMaj.expectStep(3);
       });
 

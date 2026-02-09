@@ -1,4 +1,5 @@
 import { marked } from "marked";
+import axios from "axios";
 import logger from "@/server/infrastructure/Logger";
 
 export function envoieMessageTchap(
@@ -18,19 +19,12 @@ export function envoieMessageTchap(
     formatted_body: marked(messageErreur),
   };
 
-  fetch(url, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(data),
-  })
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-      return response.json();
+  axios
+    .put(url, data, {
+      headers: {
+        "Content-Type": "application/json",
+      },
     })
-    .then((responseData) => logger.info("Message tchap envoyé", responseData))
+    .then((response) => logger.info("Message tchap envoyé", response.data))
     .catch((error) => logger.info("Erreur envoie message tchap:", error));
 }

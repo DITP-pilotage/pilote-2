@@ -18,7 +18,7 @@ export default interface SélecteurProps<T> {
   onChange?: (valeur: T) => void;
   valeurSélectionnée?: T;
   texteAide?: string;
-  erreur?: FieldError | Merge<FieldError, FieldErrorsImpl<{}>>;
+  erreur?: FieldError | Merge<FieldError, FieldErrorsImpl>;
   hasErrors?: boolean;
   errorMessage?: string;
   libellé?: string;

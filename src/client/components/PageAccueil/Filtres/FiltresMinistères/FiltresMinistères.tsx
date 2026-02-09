@@ -12,7 +12,7 @@ interface FiltresMinistèresProps {
   ministères: Ministère[];
 }
 
-const catégorieDeFiltre: "périmètresMinistériels" = "périmètresMinistériels";
+const catégorieDeFiltre = "périmètresMinistériels" as const;
 
 const FiltresMinistères: FunctionComponent<FiltresMinistèresProps> = ({
   ministères,

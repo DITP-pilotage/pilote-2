@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef } from "react";
 
 export const useAutosave = ({ onAutosave }: { onAutosave?: () => void }) => {
-  const timeoutRef = useRef<NodeJS.Timeout>();
+  const timeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
   const onAutosaveRef = useRef(onAutosave);
 
   useEffect(() => {

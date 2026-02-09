@@ -98,7 +98,7 @@ export class ImportDonneeIndicateurAPIHandler {
               return;
             }
           }
-          fs.writeFile(filePath, Buffer.from(stringifier), async (err) => {
+          fs.writeFile(filePath, stringifier, async (err) => {
             if (err) {
               reject(err);
             }

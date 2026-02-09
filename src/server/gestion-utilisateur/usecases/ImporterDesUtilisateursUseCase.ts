@@ -50,7 +50,6 @@ export default class ImporterDesUtilisateursUseCase {
     this.contactInfoLettresService = contactInfoLettresService;
   }
 
-  // eslint-disable-next-line sonarjs/cognitive-complexity
   async run(
     utilisateurs: (UtilisateurÀCréerOuMettreÀJourSansHabilitation & {
       habilitations: HabilitationsÀCréerOuMettreÀJourCalculées;

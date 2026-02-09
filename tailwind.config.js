@@ -51,6 +51,8 @@ module.exports = {
         "dsfr-brown-cafe-creme-950": "#F7ECDB",
         "dsfr-pink-macaron-sun-406": "#8D533E",
         "dsfr-pink-macaron-950": "#FEE9E6",
+        "dsfr-green-tilleul-verveine-950": "#fceeac",
+        "dsfr-green-tilleul-verveine-sun": "#695240",
         "dsfr-grey-900": "#dddddd",
       },
       keyframes: {

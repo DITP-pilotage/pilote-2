@@ -5,7 +5,7 @@ import PageImportIndicateurSectionRessourceStyled from "@/components/PageImportI
 import { wording } from "@/client/utils/i18n/i18n";
 import "@gouvfr/dsfr/dist/component/download/download.min.css";
 
-const PageImportIndicateurSectionRessource: FunctionComponent<{}> = () => {
+const PageImportIndicateurSectionRessource: FunctionComponent = () => {
   return (
     <PageImportIndicateurSectionRessourceStyled>
       <div className="fr-container fr-py-3w">

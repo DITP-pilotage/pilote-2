@@ -5,7 +5,7 @@ import {
 } from "next";
 import Head from "next/head";
 import { FunctionComponent } from "react";
-import { getServerAuthSession } from "@/server/infrastructure/api/auth/[...nextauth]";
+import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
 import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
 import PageAdminUtilisateurs from "@/components/PageAdminUtilisateurs/PageAdminUtilisateurs";
 import { ChantierSynthétisé } from "@/server/domain/chantier/Chantier.interface";
@@ -34,12 +34,11 @@ type UtilisateurProps = {
   nombreUtilisateur: number;
 };
 
-export const getServerSideProps: GetServerSideProps<UtilisateurProps> = async ({
-  req,
-  res,
-  query,
-}: GetServerSidePropsContext) => {
-  const session = await getServerAuthSession({ req, res });
+export const getServerSideProps: GetServerSideProps<UtilisateurProps> = async (
+  context: GetServerSidePropsContext,
+) => {
+  const { query } = context;
+  const session = await auth(context);
   const redirigerVersPageAccueil = {
     redirect: {
       destination: "/",

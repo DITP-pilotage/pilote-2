@@ -1,5 +1,5 @@
 import { encode } from "next-auth/jwt";
-import Playwright from "playwright-core";
+import { APIRequest } from "@playwright/test";
 import { prisma } from "@/server/db/prisma";
 import { OpenApiClient } from "./open-api.client";
 
@@ -39,7 +39,7 @@ export class ApiTestContext {
   }
 
   static async create(
-    playwright: typeof Playwright,
+    playwright: { request: APIRequest },
     profile: UserProfile,
   ): Promise<ApiTestContext> {
     const config = USER_PROFILES[profile];
@@ -48,6 +48,7 @@ export class ApiTestContext {
       token: { email: config.email },
       secret: process.env.TOKEN_API_SECRET!,
       maxAge: 365 * 24 * 60 * 60,
+      salt: "authjs.session-token",
     });
 
     await prisma.token_api_information.upsert({

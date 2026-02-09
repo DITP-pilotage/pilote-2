@@ -125,7 +125,7 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
       });
     });
   });
-  describe("#enregistrer", () => {
+  describe("#enregistrerTous", () => {
     it("Doit enregistrer plusieurs événements avec enregistrerTous", async () => {
       // Given
       const userId = "f47ac10b-58cc-4372-a567-0e02b2c3d480";

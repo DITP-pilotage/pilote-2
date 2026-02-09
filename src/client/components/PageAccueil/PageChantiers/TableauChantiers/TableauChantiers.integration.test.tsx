@@ -107,7 +107,7 @@ class TableauChantiersTest {
   }
 
   render() {
-    waitFor(() =>
+    return waitFor(() =>
       render(
         <TableauChantiers
           chantiersSontArchives={false}
@@ -125,13 +125,14 @@ class TableauChantiersTest {
 
 let tableau: TableauChantiersTest;
 
-beforeEach(() => {
+beforeEach(async () => {
   // Given
   tableau = new TableauChantiersTest();
 
   // When
-  tableau.render();
+  await tableau.render();
 });
+// eslint-disable-next-line jest/no-disabled-tests
 describe.skip("TableauChantiers", () => {
   test("le tableau comporte le nombre de lignes adéquat", () => {
     // Then
@@ -162,18 +163,6 @@ describe.skip("TableauChantiers", () => {
       expect(tableau.récupérerUneLigneDuTableau(3)).toHaveTextContent("99");
     });
   });
-
-  // describe("quand l'utilisateur clique sur le bouton de tri décroissant d'une colonne", () => {
-  //   test('les éléments du tableau sont triés par ordre décroissant', async () => {
-  //     // When
-  //     await tableau.trierSurLaColonne('trier la colonne "avancement" par ordre décroissant');
-
-  //     // Then
-  //     expect(tableau.récupérerUneLigneDuTableau(1)).toHaveTextContent('99');
-  //     expect(tableau.récupérerUneLigneDuTableau(2)).toHaveTextContent('98');
-  //     expect(tableau.récupérerUneLigneDuTableau(3)).toHaveTextContent('97');
-  //   });
-  // });
 
   test("la recherche applique un filtre sur les lignes", async () => {
     // When

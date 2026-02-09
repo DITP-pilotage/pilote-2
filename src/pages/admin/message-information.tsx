@@ -1,10 +1,9 @@
 import "@gouvfr/dsfr/dist/component/sidemenu/sidemenu.min.css";
 import Head from "next/head";
 import { GetServerSidePropsContext } from "next";
-import { getServerSession } from "next-auth/next";
 import { FunctionComponent } from "react";
 import PageMessageInformation from "@/components/PageAdminGestionContenus/PageMessageInformation";
-import { authOptions } from "@/server/infrastructure/api/auth/[...nextauth]";
+import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
 import { estAutoriséAModifierDesIndicateurs } from "@/client/utils/indicateur/indicateur";
 import {
   MessageInformationContrat,
@@ -31,12 +30,9 @@ const NextAdminMessageInformation: FunctionComponent<{
 };
 export default NextAdminMessageInformation;
 
-export async function getServerSideProps({
-  req,
-  res,
-  query,
-}: GetServerSidePropsContext) {
-  const session = await getServerSession(req, res, authOptions);
+export async function getServerSideProps(context: GetServerSidePropsContext) {
+  const { query } = context;
+  const session = await auth(context);
   if (!session || !estAutoriséAModifierDesIndicateurs(session.profil)) {
     throw new Error("Not connected or not authorized ?");
   }

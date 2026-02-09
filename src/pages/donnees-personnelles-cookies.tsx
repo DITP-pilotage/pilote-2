@@ -2,7 +2,7 @@ import Head from "next/head";
 import { FunctionComponent } from "react";
 import DonneesPersonnellesCookies from "@/components/DonnéesPersonnellesCookies/DonneesPersonnellesCookies";
 
-const NextPageCookies: FunctionComponent<{}> = () => {
+const NextPageCookies: FunctionComponent = () => {
   return (
     <>
       <Head>

@@ -1,10 +1,10 @@
-import React, { FunctionComponent } from "react";
+import { FunctionComponent } from "react";
 import { parseAsString, useQueryStates } from "nuqs";
 import { horodatage } from "@/client/utils/date/date";
 import { Icone } from "@/components/_commons/Icone";
 import { Download1Icon } from "@/components/_commons/Icones/Download1Icon";
 
-export const ExportDesDonnees: FunctionComponent<{}> = () => {
+export const ExportDesDonnees: FunctionComponent = () => {
   const [filtres] = useQueryStates(
     {
       territoires: parseAsString.withDefault(""),

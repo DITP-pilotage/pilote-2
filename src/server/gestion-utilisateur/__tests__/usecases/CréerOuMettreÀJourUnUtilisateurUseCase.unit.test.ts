@@ -383,9 +383,7 @@ describe("CréerOuMettreÀJourUnUtilisateurUseCase", () => {
         ["123"],
       );
     });
-  });
 
-  describe("L'utilisateur a un profil DIR_PROJET", () => {
     it("Crée l'utilisateur en base de données en prenant une liste de chantiers et une liste de périmètres en lecture et en n'accordant pas les droits de saisie indicateurs et commentaires", async () => {
       const habilitationsAttendues = {
         ...habilitationsVides,

@@ -51,7 +51,7 @@ export const BoutonValiderSaisieCriteres = ({
     <div>
       <button
         className="fr-btn"
-        disabled={validerSaisie.isLoading}
+        disabled={validerSaisie.isPending}
         onClick={handleOpenModal}
         type="button"
       >
@@ -60,7 +60,7 @@ export const BoutonValiderSaisieCriteres = ({
       </button>
       <ConfirmerValidationSaisie
         annee={2025}
-        isPending={validerSaisie.isLoading}
+        isPending={validerSaisie.isPending}
         onConfirm={handleConfirmValidation}
         onOpenChange={setOpen}
         open={open}

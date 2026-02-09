@@ -16,13 +16,13 @@ export class PageChantier extends BasePage {
     await expect(this.page).toHaveTitle(`Chantier ${id} - ${nom} - PILOTE`);
   }
 
-  async gotoMiseAJourDonnees(
-    chantierId: string,
-  ): Promise<PageMiseAJourDonnees> {
+  async gotoMiseAJourDonnees(): Promise<PageMiseAJourDonnees> {
     await this.page
       .getByRole("link", { name: /Mettre à jour les données/ })
       .click();
-    await this.page.waitForURL(`**/chantier/CH-${chantierId}/indicateurs`);
+    await expect(
+      this.page.getByRole("heading", { name: /Sélectionnez l'indicateur/ }),
+    ).toBeVisible();
     return new PageMiseAJourDonnees(this.page);
   }
 
@@ -31,9 +31,6 @@ export class PageChantier extends BasePage {
     territoireCode: string,
   ): Promise<void> {
     await this.page.goto(`/chantier/CH-${chantierId}/${territoireCode}`);
-    await this.page.waitForURL(
-      `**/chantier/CH-${chantierId}/${territoireCode}`,
-    );
   }
 
   async expectStructure(): Promise<void> {

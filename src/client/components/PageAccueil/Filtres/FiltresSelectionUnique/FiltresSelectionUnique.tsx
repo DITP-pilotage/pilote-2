@@ -18,10 +18,10 @@ import {
 import { Infobulle } from "@/components/_commons/Infobulle/Infobulle";
 import { FiltresSélectionUniqueStyled } from "./FiltresSelectionUnique.styled";
 
-const availableFiltres = ["statut"] as const;
+type AvailableFiltres = "statut";
 
 interface FiltresSelectionUniqueProps {
-  categorieDeFiltre: (typeof availableFiltres)[number];
+  categorieDeFiltre: AvailableFiltres;
   libelle: string;
 }
 

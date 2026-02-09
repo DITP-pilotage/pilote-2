@@ -5,7 +5,7 @@ import Sélecteur from "@/components/_commons/Sélecteur/Sélecteur";
 import { useMessageInformationForm } from "@/components/PageAdminGestionContenus/MessageInformationForm/useMessageInformationForm";
 import TextArea from "@/components/_commons/TextArea/TextArea";
 
-const MessageInformationForm: FunctionComponent<{}> = () => {
+const MessageInformationForm: FunctionComponent = () => {
   const form = useMessageInformationForm();
   return (
     <div className="flex flex-col gap-4">

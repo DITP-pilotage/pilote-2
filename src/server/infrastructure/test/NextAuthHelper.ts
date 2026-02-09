@@ -9,5 +9,6 @@ export const getNextAuthSessionTokenPourUtilisateurEmail = (
       user: { email: utilisateurEmail },
     },
     secret: configuration().nextAuth.secret,
+    salt: "authjs.session-token",
   });
 };

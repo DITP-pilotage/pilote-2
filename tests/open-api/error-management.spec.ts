@@ -1,10 +1,5 @@
 import { expect, test } from "@playwright/test";
 import { ApiTestContext } from "./api-client/api-test-context";
-import { seedDatabase } from "../utils";
-
-test.beforeAll(() => {
-  seedDatabase();
-});
 
 test.describe("Error - endpoint chantier", () => {
   test("quand on a pas accès au chantier, doit remonter une erreur 403 ForbiddenError", async ({

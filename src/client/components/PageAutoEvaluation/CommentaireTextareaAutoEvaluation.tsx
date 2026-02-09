@@ -17,7 +17,7 @@ export function CommentaireTextareaAutoEvaluation<T extends FieldValues>({
   onFocus?: () => void;
 }) {
   const autosave = useAutosave({ onAutosave });
-  const textareaRef = useRef<TextareaRef>(null);
+  const textareaRef = useRef<TextareaRef | null>(null);
 
   return (
     <Textarea

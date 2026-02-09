@@ -68,7 +68,6 @@ const useFiltresStoreNew = create<FiltresStore>((set, get) => ({
   },
 }));
 
-// eslint-disable-next-line react-hooks/rules-of-hooks
 export const sauvegarderFiltres =
   useFiltresStoreNew.getState().actions.sauvegarderFiltres;
 export const reinitialiserFiltres =

@@ -3,7 +3,7 @@ import Link from "next/link";
 import { FunctionComponent } from "react";
 import api from "@/server/infrastructure/api/trpc/api";
 
-const PiedDePage: FunctionComponent<{}> = () => {
+const PiedDePage: FunctionComponent = () => {
   const { data: estBoutonDocsAPIAffiche } =
     api.gestionContenu.recupererVariableContenu.useQuery({
       nomVariableContenu: "NEXT_PUBLIC_FF_DOCS_API",

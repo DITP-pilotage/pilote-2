@@ -1,7 +1,7 @@
 import { FunctionComponent } from "react";
 import PageErreur from "@/components/_commons/PageErreur/PageErreur";
 
-const Erreur404: FunctionComponent<{}> = () => {
+const Erreur404: FunctionComponent = () => {
   return (
     <PageErreur
       message=" Si vous avez tapé l'adresse web dans le navigateur, vérifiez qu'elle est correcte. La page n'est peut-être plus disponible."

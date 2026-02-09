@@ -13,10 +13,10 @@
     "noEmit": true,
     "esModuleInterop": true,
     "module": "esnext",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "jsx": "preserve",
+    "jsx": "react-jsx",
     "incremental": true,
     "baseUrl": "./src",
     "paths": {
@@ -50,25 +50,35 @@
       "@/config": [
         "config.ts"
       ]
-    }
+    },
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ]
   },
   "include": [
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    "/data_management/models/raw/ppg_metadata/schema.yml"
+    "/data_management/models/raw/ppg_metadata/schema.yml",
+    ".next/types/**/*.ts",
+    ".next/dev/types/**/*.ts"
   ],
   "exclude": [
     "node_modules"
   ],
   "ts-node": {
     "compilerOptions": {
-      "module": "commonjs"
+      "module": "commonjs",
+      "moduleResolution": "node"
     },
     "require": [
       "tsconfig-paths/register"
     ],
     "transpileOnly": true
   },
-  "files": ["src/server/infrastructure/test/global.d.ts"]
+  "files": [
+    "src/server/infrastructure/test/global.d.ts"
+  ]
 }
