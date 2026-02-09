@@ -21,7 +21,7 @@ export default defineConfig({
   globalTimeout: 2_000_000,
   outputDir: process.env.CI ? "test-results" : "/tmp/pilote-playwright/results",
   /* Run serially for test isolation */
-  workers: 8,
+  workers: 3,
   /* Reporter à utiliser. Voir https://playwright.dev/docs/test-reporters */
   reporter: process.env.CI
     ? [["github"], ["json", { outputFile: "test-results/results.json" }]]

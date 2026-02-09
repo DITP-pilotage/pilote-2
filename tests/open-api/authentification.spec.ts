@@ -3,13 +3,12 @@ import { createUnauthenticatedClient } from "./api-client/unauthenticated-api.cl
 import { ApiTestContext } from "./api-client/api-test-context";
 
 test.describe("Authentification", () => {
-  test("quand on ne dispose pas d'un header Authorization, doit remonter une erreur 401 Unauthorized", async (context) => {
-    const client = await createUnauthenticatedClient(
-      context.playwright.request,
-      {
-        skip: true,
-      },
-    );
+  test("quand on ne dispose pas d'un header Authorization, doit remonter une erreur 401 Unauthorized", async ({
+    playwright,
+  }) => {
+    const client = await createUnauthenticatedClient(playwright.request, {
+      skip: true,
+    });
 
     const result = await client.healthcheck();
 

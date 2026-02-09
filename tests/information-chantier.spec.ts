@@ -32,10 +32,7 @@ test("doit pouvoir consulter les données des chantiers", async ({ page }) => {
       page.getByRole("table").getByRole("cell", { name: chantier.nom }),
     ).toBeVisible();
 
-    const pageChantier = await pageAccueil.selectChantier(
-      chantier.nom,
-      chantier.id,
-    );
+    const pageChantier = await pageAccueil.selectChantier(chantier.nom);
 
     await test.step(`Vérification de la structure de la page chantier "${chantier.nom}"`, async () => {
       await pageChantier.expectTitle(chantier.id, chantier.nom);

@@ -20,9 +20,6 @@ if (hasSubmodule) {
 const nextConfig = {
   reactStrictMode: true,
   output: "standalone",
-  experimental: {
-    preloadEntriesOnStart: false,
-  },
   outputFileTracingRoot: __dirname,
   bundlePagesRouterDependencies: true,
   pageExtensions: ["js", "jsx", "ts", "tsx", "md", "mdx"],

@@ -19,15 +19,13 @@ test("doit pouvoir importer des données", async ({ page }) => {
     await expect(
       page.getByRole("table").getByRole("cell", { name: chantier.nom }),
     ).toBeVisible();
-    const pageChantier = await pageAccueil.selectChantier(
-      chantier.nom,
-      chantier.id,
-    );
+    const pageChantier = await pageAccueil.selectChantier(chantier.nom);
 
     await test.step('Navigation vers la page "Mise à jour des données"', async () => {
       await expect(
         page.getByRole("link", { name: /Mettre à jour les données/ }),
       ).toBeVisible();
+
       const pageMaj = await pageChantier.gotoMiseAJourDonnees();
 
       await test.step(`Sélection de l'indicateur ${chantier.indicateurId}`, async () => {
