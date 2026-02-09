@@ -107,7 +107,7 @@ class TableauChantiersTest {
   }
 
   render() {
-    waitFor(() =>
+    return waitFor(() =>
       render(
         <TableauChantiers
           chantiersSontArchives={false}
@@ -119,18 +119,18 @@ class TableauChantiersTest {
           territoireCode={this.territoireCode}
         />,
       ),
-    ).then(() => {});
+    );
   }
 }
 
 let tableau: TableauChantiersTest;
 
-beforeEach(() => {
+beforeEach(async () => {
   // Given
   tableau = new TableauChantiersTest();
 
   // When
-  tableau.render();
+  await tableau.render();
 });
 // eslint-disable-next-line jest/no-disabled-tests
 describe.skip("TableauChantiers", () => {

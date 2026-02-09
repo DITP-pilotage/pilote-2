@@ -213,29 +213,14 @@ export const authConfig: NextAuthConfig = {
     maxAge: configuration().nextAuth.sessionMaxAge,
   },
   events: {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    signOut: (message: { session: any } | { token: JWT | null }) => {
+    signOut: (message) => {
       if ("token" in message && message.token) {
         return doFinalSignoutHandshake(toPiloteJWTPayload(message.token));
       }
     },
   },
   callbacks: {
-    async jwt({
-      token,
-      account,
-      user,
-      profile,
-    }: {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      token: any;
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      account?: any;
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      user?: any;
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      profile?: any;
-    }) {
+    async jwt({ token, account, user, profile }) {
       if (account != null && user != null) {
         logger.info(
           { userId: user.id },
@@ -283,8 +268,7 @@ export const authConfig: NextAuthConfig = {
       return refreshedToken;
     },
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    async session({ session, token }: { session: any; token: any }) {
+    async session({ session, token }) {
       const piloteToken = toPiloteJWTPayload(token);
       const { dependencies } = await import(
         "@/server/infrastructure/Dependencies"
@@ -302,8 +286,8 @@ export const authConfig: NextAuthConfig = {
         "Session callback, adding habilitations to session",
       );
 
-      // Send properties to the client
       session.user = {
+        ...session.user,
         // TODO(CHAN 20/01/2026) : supprimer les anciennes infos de la session après déploiement
         ...piloteToken.user,
         id: utilisateur!.id,
@@ -311,6 +295,7 @@ export const authConfig: NextAuthConfig = {
       };
       session.accessToken = piloteToken.accessToken;
       session.profil = utilisateur?.profil;
+      // @ts-expect-error il y a une erreur ici car on est pas sur le même type d'habilitation, il faut continuer à migrer ca vers le domaine
       session.habilitations = utilisateur!.habilitations;
       session.applicationsAccessibles = utilisateur!.applicationsAccessibles;
       session.profilAAccèsAuxChantiersBrouillons =

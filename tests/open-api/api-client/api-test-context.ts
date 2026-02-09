@@ -1,5 +1,5 @@
 import { encode } from "next-auth/jwt";
-import Playwright from "playwright-core";
+import { APIRequest } from "@playwright/test";
 import { prisma } from "@/server/db/prisma";
 import { OpenApiClient } from "./open-api.client";
 
@@ -39,7 +39,7 @@ export class ApiTestContext {
   }
 
   static async create(
-    playwright: typeof Playwright,
+    playwright: { request: APIRequest },
     profile: UserProfile,
   ): Promise<ApiTestContext> {
     const config = USER_PROFILES[profile];
@@ -68,8 +68,7 @@ export class ApiTestContext {
       },
     });
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const client = new OpenApiClient(apiContext as any);
+    const client = new OpenApiClient(apiContext);
 
     return new ApiTestContext(client, config);
   }

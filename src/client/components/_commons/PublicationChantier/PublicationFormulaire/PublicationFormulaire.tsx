@@ -37,6 +37,7 @@ const PublicationFormulaire: FunctionComponent<PublicationFormulaireProps> = ({
     watch,
   } = useForm<PublicationFormulaireInputs>({
     mode: "all",
+    // Les types ne sont pas bons du tout, on va recoder les publications de toute manière
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     resolver: zodResolver(validationPublicationFormulaire) as any,
     defaultValues: {

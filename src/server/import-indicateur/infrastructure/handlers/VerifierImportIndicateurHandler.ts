@@ -54,8 +54,9 @@ export class VerifierFichierImportIndicateurHandler {
       nomVariableContenu: "NEXT_PUBLIC_SCHEMA_VALIDATA_URL",
     });
     const sessionToken = await getToken({
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      req: request as any,
+      req: {
+        headers: new Headers(request.headers as Record<string, string>),
+      },
       secureCookie: estSecuredEnv,
       secret: configuration().nextAuth.secret,
     });

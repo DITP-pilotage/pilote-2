@@ -1,4 +1,5 @@
 import { z } from "zod";
+import router from "next/router";
 import {
   typesCommentaireMailleNationale,
   typesCommentaireMailleRégionaleOuDépartementale,
@@ -53,5 +54,9 @@ export const validationPublicationFormulaire = validationPublicationContexte
           `La limite maximale de ${LIMITE_CARACTÈRES_PUBLICATION} caractères a été dépassée`,
         )
         .min(1, "Ce champ ne peut pas être vide"),
+
+      territoireCode: z.string(),
+      réformeId: z.string(),
+      typeDeRéforme: z.string(),
     }),
   );

@@ -7,7 +7,10 @@ import Titre from "@/components/_commons/Titre/Titre";
 import Bloc from "@/components/_commons/Bloc/Bloc";
 import PageIndicateurStyled from "@/components/PageIndicateur/PageIndicateur.styled";
 import FicheIndicateur from "@/components/PageIndicateur/FicheIndicateur/FicheIndicateur";
-import { usePageIndicateur } from "@/components/PageIndicateur/usePageIndicateur";
+import {
+  MetadataIndicateurForm,
+  usePageIndicateur,
+} from "@/components/PageIndicateur/usePageIndicateur";
 import Alerte from "@/components/_commons/Alerte/Alerte";
 import { MetadataParametrageIndicateurContrat } from "@/server/app/contrats/MetadataParametrageIndicateurContrat";
 import { MapInformationMetadataIndicateurContrat } from "@/server/app/contrats/InformationMetadataIndicateurContrat";
@@ -62,15 +65,18 @@ const PageIndicateur: FunctionComponent<PageIndicateurProps> = ({
           <FormProvider {...reactHookForm}>
             <form
               method="post"
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              onSubmit={reactHookForm.handleSubmit(((data: any) => {
-                if (estUneCréation) {
-                  creerIndicateur({ ...data, indicId: indicateur.indicId });
-                } else {
-                  modifierIndicateur({ ...data, indicId: indicateur.indicId });
-                }
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              }) as any)}
+              onSubmit={reactHookForm.handleSubmit(
+                (data: MetadataIndicateurForm) => {
+                  if (estUneCréation) {
+                    creerIndicateur({ ...data, indicId: indicateur.indicId });
+                  } else {
+                    modifierIndicateur({
+                      ...data,
+                      indicId: indicateur.indicId,
+                    });
+                  }
+                },
+              )}
             >
               <div className="flex">
                 <Link

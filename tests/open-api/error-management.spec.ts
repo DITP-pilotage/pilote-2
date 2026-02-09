@@ -6,8 +6,7 @@ test.describe("Error - endpoint chantier", () => {
     playwright,
   }) => {
     const apiContext = await ApiTestContext.create(
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      playwright as any,
+      playwright,
       "EQUIPE_DIR_PROJET",
     );
     const client = apiContext.getClient();
@@ -29,8 +28,7 @@ test.describe("Error - endpoint indicateur", () => {
     playwright,
   }) => {
     const apiContext = await ApiTestContext.create(
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      playwright as any,
+      playwright,
       "EQUIPE_DIR_PROJET",
     );
     const client = apiContext.getClient();
@@ -50,8 +48,7 @@ test.describe("Error - endpoint indicateur", () => {
     playwright,
   }) => {
     const apiContext = await ApiTestContext.create(
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      playwright as any,
+      playwright,
       "EQUIPE_DIR_PROJET",
     );
     const client = apiContext.getClient();

@@ -42,6 +42,7 @@ const UtilisateurFormulaire: FunctionComponent<UtilisateurFormulaireProps> = ({
   const reactHookForm = useForm<UtilisateurFormInputs>({
     resolver: zodResolver(
       donneValidationInfosBaseUtilisateur(session!.profil),
+      // il faut split des schemas en 3, la on a des if dans les schema zod s'y perd
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ) as any,
     defaultValues: {

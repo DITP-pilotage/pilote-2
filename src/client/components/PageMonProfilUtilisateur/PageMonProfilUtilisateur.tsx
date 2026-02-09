@@ -49,8 +49,7 @@ export const PageMonProfilUtilisateur = () => {
   };
 
   const form = useForm<MonProfilUtilisateurFormInputs & { email: string }>({
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    resolver: zodResolver(validationModifierMonProfil) as any,
+    resolver: zodResolver(validationModifierMonProfil),
     defaultValues: {
       email: utilisateur.email,
       nom: utilisateur.nom,

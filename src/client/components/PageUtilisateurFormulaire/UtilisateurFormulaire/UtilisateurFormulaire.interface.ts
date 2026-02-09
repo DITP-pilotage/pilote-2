@@ -1,5 +1,6 @@
+import { z } from "zod";
 import Utilisateur from "@/server/domain/utilisateur/Utilisateur.interface";
-import { RouterInputs } from "@/server/infrastructure/api/trpc/trpc.interface";
+import { donneValidationInfosBaseUtilisateur } from "@/validation/utilisateur";
 
 export interface UtilisateurFormulaireProps {
   utilisateur?: Utilisateur;
