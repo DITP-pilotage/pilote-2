@@ -7,7 +7,7 @@ PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 
 # Load E2E environment variables
 set -a
-source "$PROJECT_ROOT/.env.e2e"
+source "$PROJECT_ROOT/${ENV_FILE:-.env.e2e}"
 set +a
 
 npx prisma migrate reset --force
