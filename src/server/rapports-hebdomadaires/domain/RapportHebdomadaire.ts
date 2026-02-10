@@ -4,7 +4,7 @@ import { Coordinateur } from "./Coordinateur";
 import { PeriodeRapport } from "./PeriodeRapport";
 import { SectionActiviteComptes } from "./SectionActiviteComptes";
 import { CompteActivite } from "./CompteActivite";
-import { SectionChantier } from "./SectionActiviteChantiersVA";
+import { SectionChantier } from "./SectionActiviteChantiers";
 
 export type RapportHebdomadaire = {
   id: string;

@@ -27,7 +27,8 @@ export class GestionUtilisateurCoordinateurGateway
       nom: utilisateur.nom,
       prenom: utilisateur.prenom,
       profil: utilisateur.profilCode as ProfilCoordinateur,
-      territoires: utilisateur.territoires.filter(filtrerTerritoireNat),
+      territoires:
+        utilisateur.habilitationLectureTerritoires.filter(filtrerTerritoireNat),
     }));
   }
 }

@@ -1,5 +1,4 @@
 import { $Enums } from "@prisma/client";
-import { randomUUID } from "crypto";
 import { fixtures } from "@/server/infrastructure/test/fixtures";
 import { RecupererChantiersApplicablesParTerritoiresQuery } from "@/server/chantiers/infrastructure/queries/RecupererChantiersApplicablesParTerritoiresQuery";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
@@ -19,12 +18,6 @@ describe("RecupererChantiersApplicablesParTerritoiresQuery", () => {
       "retourne les chantiers où est_territorialise = true et est_applicable = true pour les territoires donnés",
       createIntegrationTest(async () => {
         // given
-        const territoire = await fixtures.territoire({
-          code: randomUUID(),
-          nom: "Île-de-France",
-          maille: "REG",
-        });
-
         const chantier = await fixtures.chantierIdentite({
           nom: "Chantier accessible",
           statut: $Enums.type_statut.PUBLIE,
@@ -33,7 +26,7 @@ describe("RecupererChantiersApplicablesParTerritoiresQuery", () => {
 
         await fixtures.chantierTerritoire({
           id: chantier.id,
-          territoire_code: territoire.code,
+          territoire_code: "REG-11",
           est_applicable: true,
         });
 
@@ -45,14 +38,14 @@ describe("RecupererChantiersApplicablesParTerritoiresQuery", () => {
 
         await fixtures.indicateurTerritoire({
           id: indicateur.id,
-          territoire_code: territoire.code,
+          territoire_code: "REG-11",
           chantier_id: chantier.id,
           est_applicable: true,
         });
 
         // when
         const result = await query.execute({
-          territoireCodes: [territoire.code],
+          territoireCodes: ["REG-11"],
         });
 
         // then
@@ -64,7 +57,7 @@ describe("RecupererChantiersApplicablesParTerritoiresQuery", () => {
               {
                 id: indicateur.id,
                 nom: "Indicateur accessible",
-                territoiresApplicables: [territoire.code],
+                territoiresApplicables: ["REG-11"],
               },
             ],
           },
@@ -76,12 +69,6 @@ describe("RecupererChantiersApplicablesParTerritoiresQuery", () => {
       "exclut les chantiers où est_territorialise = false",
       createIntegrationTest(async () => {
         // given
-        const territoire = await fixtures.territoire({
-          code: randomUUID(),
-          nom: "Île-de-France",
-          maille: "REG",
-        });
-
         const chantier = await fixtures.chantierIdentite({
           nom: "Chantier non territorialisé",
           statut: $Enums.type_statut.PUBLIE,
@@ -90,13 +77,13 @@ describe("RecupererChantiersApplicablesParTerritoiresQuery", () => {
 
         await fixtures.chantierTerritoire({
           id: chantier.id,
-          territoire_code: territoire.code,
+          territoire_code: "REG-11",
           est_applicable: true,
         });
 
         // when
         const result = await query.execute({
-          territoireCodes: [territoire.code],
+          territoireCodes: ["REG-11"],
         });
 
         // then
@@ -108,12 +95,6 @@ describe("RecupererChantiersApplicablesParTerritoiresQuery", () => {
       "exclut les chantiers où est_applicable = false pour les territoires donnés",
       createIntegrationTest(async () => {
         // given
-        const territoire = await fixtures.territoire({
-          code: randomUUID(),
-          nom: "Île-de-France",
-          maille: "REG",
-        });
-
         const chantier = await fixtures.chantierIdentite({
           nom: "Chantier non applicable",
           statut: $Enums.type_statut.PUBLIE,
@@ -122,13 +103,13 @@ describe("RecupererChantiersApplicablesParTerritoiresQuery", () => {
 
         await fixtures.chantierTerritoire({
           id: chantier.id,
-          territoire_code: territoire.code,
+          territoire_code: "REG-11",
           est_applicable: false,
         });
 
         // when
         const result = await query.execute({
-          territoireCodes: [territoire.code],
+          territoireCodes: ["REG-11"],
         });
 
         // then
@@ -140,12 +121,6 @@ describe("RecupererChantiersApplicablesParTerritoiresQuery", () => {
       "retourne uniquement les indicateurs où est_applicable = true pour les territoires donnés",
       createIntegrationTest(async () => {
         // given
-        const territoire = await fixtures.territoire({
-          code: randomUUID(),
-          nom: "Île-de-France",
-          maille: "REG",
-        });
-
         const chantier = await fixtures.chantierIdentite({
           nom: "Chantier accessible",
           statut: $Enums.type_statut.PUBLIE,
@@ -154,7 +129,7 @@ describe("RecupererChantiersApplicablesParTerritoiresQuery", () => {
 
         await fixtures.chantierTerritoire({
           id: chantier.id,
-          territoire_code: territoire.code,
+          territoire_code: "REG-11",
           est_applicable: true,
         });
 
@@ -166,7 +141,7 @@ describe("RecupererChantiersApplicablesParTerritoiresQuery", () => {
 
         await fixtures.indicateurTerritoire({
           id: indicateurAccessible.id,
-          territoire_code: territoire.code,
+          territoire_code: "REG-11",
           chantier_id: chantier.id,
           est_applicable: true,
         });
@@ -179,14 +154,14 @@ describe("RecupererChantiersApplicablesParTerritoiresQuery", () => {
 
         await fixtures.indicateurTerritoire({
           id: indicateurNonAccessible.id,
-          territoire_code: territoire.code,
+          territoire_code: "REG-11",
           chantier_id: chantier.id,
           est_applicable: false,
         });
 
         // when
         const result = await query.execute({
-          territoireCodes: [territoire.code],
+          territoireCodes: ["REG-11"],
         });
 
         // then
@@ -198,7 +173,7 @@ describe("RecupererChantiersApplicablesParTerritoiresQuery", () => {
               {
                 id: indicateurAccessible.id,
                 nom: "Indicateur accessible",
-                territoiresApplicables: [territoire.code],
+                territoiresApplicables: ["REG-11"],
               },
             ],
           },
@@ -210,18 +185,6 @@ describe("RecupererChantiersApplicablesParTerritoiresQuery", () => {
       "gère correctement plusieurs territoires",
       createIntegrationTest(async () => {
         // given
-        const territoire1 = await fixtures.territoire({
-          code: randomUUID(),
-          nom: "Île-de-France",
-          maille: "REG",
-        });
-
-        const territoire2 = await fixtures.territoire({
-          code: randomUUID(),
-          nom: "Paris",
-          maille: "DEPT",
-        });
-
         const chantier = await fixtures.chantierIdentite({
           nom: "Chantier multi-territoires",
           statut: $Enums.type_statut.PUBLIE,
@@ -230,13 +193,13 @@ describe("RecupererChantiersApplicablesParTerritoiresQuery", () => {
 
         await fixtures.chantierTerritoire({
           id: chantier.id,
-          territoire_code: territoire1.code,
+          territoire_code: "REG-11",
           est_applicable: true,
         });
 
         await fixtures.chantierTerritoire({
           id: chantier.id,
-          territoire_code: territoire2.code,
+          territoire_code: "DEPT-75",
           est_applicable: true,
         });
 
@@ -248,21 +211,21 @@ describe("RecupererChantiersApplicablesParTerritoiresQuery", () => {
 
         await fixtures.indicateurTerritoire({
           id: indicateur.id,
-          territoire_code: territoire1.code,
+          territoire_code: "REG-11",
           chantier_id: chantier.id,
           est_applicable: true,
         });
 
         await fixtures.indicateurTerritoire({
           id: indicateur.id,
-          territoire_code: territoire2.code,
+          territoire_code: "DEPT-75",
           chantier_id: chantier.id,
           est_applicable: true,
         });
 
         // when
         const result = await query.execute({
-          territoireCodes: [territoire1.code, territoire2.code],
+          territoireCodes: ["REG-11", "DEPT-75"],
         });
 
         // then
@@ -275,8 +238,8 @@ describe("RecupererChantiersApplicablesParTerritoiresQuery", () => {
                 id: indicateur.id,
                 nom: "Indicateur multi-territoires",
                 territoiresApplicables: expect.arrayContaining([
-                  territoire1.code,
-                  territoire2.code,
+                  "REG-11",
+                  "DEPT-75",
                 ]),
               },
             ],
@@ -289,12 +252,6 @@ describe("RecupererChantiersApplicablesParTerritoiresQuery", () => {
       "exclut les chantiers avec statut BROUILLON",
       createIntegrationTest(async () => {
         // given
-        const territoire = await fixtures.territoire({
-          code: randomUUID(),
-          nom: "Île-de-France",
-          maille: "REG",
-        });
-
         const chantier = await fixtures.chantierIdentite({
           nom: "Chantier brouillon",
           statut: $Enums.type_statut.BROUILLON,
@@ -303,13 +260,13 @@ describe("RecupererChantiersApplicablesParTerritoiresQuery", () => {
 
         await fixtures.chantierTerritoire({
           id: chantier.id,
-          territoire_code: territoire.code,
+          territoire_code: "REG-11",
           est_applicable: true,
         });
 
         // when
         const result = await query.execute({
-          territoireCodes: [territoire.code],
+          territoireCodes: ["REG-11"],
         });
 
         // then
@@ -321,12 +278,6 @@ describe("RecupererChantiersApplicablesParTerritoiresQuery", () => {
       "exclut les indicateurs avec statut SUPPRIME",
       createIntegrationTest(async () => {
         // given
-        const territoire = await fixtures.territoire({
-          code: randomUUID(),
-          nom: "Île-de-France",
-          maille: "REG",
-        });
-
         const chantier = await fixtures.chantierIdentite({
           nom: "Chantier accessible",
           statut: $Enums.type_statut.PUBLIE,
@@ -335,7 +286,7 @@ describe("RecupererChantiersApplicablesParTerritoiresQuery", () => {
 
         await fixtures.chantierTerritoire({
           id: chantier.id,
-          territoire_code: territoire.code,
+          territoire_code: "REG-11",
           est_applicable: true,
         });
 
@@ -347,14 +298,14 @@ describe("RecupererChantiersApplicablesParTerritoiresQuery", () => {
 
         await fixtures.indicateurTerritoire({
           id: indicateur.id,
-          territoire_code: territoire.code,
+          territoire_code: "REG-11",
           chantier_id: chantier.id,
           est_applicable: true,
         });
 
         // when
         const result = await query.execute({
-          territoireCodes: [territoire.code],
+          territoireCodes: ["REG-11"],
         });
 
         // then
@@ -372,24 +323,6 @@ describe("RecupererChantiersApplicablesParTerritoiresQuery", () => {
       "retourne uniquement les territoires applicables demandés pour chaque indicateur",
       createIntegrationTest(async () => {
         // given
-        const territoire1 = await fixtures.territoire({
-          code: randomUUID(),
-          nom: "Île-de-France",
-          maille: "REG",
-        });
-
-        const territoire2 = await fixtures.territoire({
-          code: randomUUID(),
-          nom: "Paris",
-          maille: "DEPT",
-        });
-
-        const territoire3 = await fixtures.territoire({
-          code: randomUUID(),
-          nom: "Hauts-de-Seine",
-          maille: "DEPT",
-        });
-
         const chantier = await fixtures.chantierIdentite({
           nom: "Chantier",
           statut: $Enums.type_statut.PUBLIE,
@@ -398,19 +331,19 @@ describe("RecupererChantiersApplicablesParTerritoiresQuery", () => {
 
         await fixtures.chantierTerritoire({
           id: chantier.id,
-          territoire_code: territoire1.code,
+          territoire_code: "REG-11",
           est_applicable: true,
         });
 
         await fixtures.chantierTerritoire({
           id: chantier.id,
-          territoire_code: territoire2.code,
+          territoire_code: "DEPT-75",
           est_applicable: true,
         });
 
         await fixtures.chantierTerritoire({
           id: chantier.id,
-          territoire_code: territoire3.code,
+          territoire_code: "DEPT-92",
           est_applicable: true,
         });
 
@@ -422,32 +355,28 @@ describe("RecupererChantiersApplicablesParTerritoiresQuery", () => {
 
         await fixtures.indicateurTerritoire({
           id: indicateur.id,
-          territoire_code: territoire1.code,
+          territoire_code: "REG-11",
           chantier_id: chantier.id,
           est_applicable: true,
         });
 
         await fixtures.indicateurTerritoire({
           id: indicateur.id,
-          territoire_code: territoire2.code,
+          territoire_code: "DEPT-75",
           chantier_id: chantier.id,
           est_applicable: true,
         });
 
         await fixtures.indicateurTerritoire({
           id: indicateur.id,
-          territoire_code: territoire3.code,
+          territoire_code: "DEPT-92",
           chantier_id: chantier.id,
           est_applicable: false,
         });
 
         // when
         const result = await query.execute({
-          territoireCodes: [
-            territoire1.code,
-            territoire2.code,
-            territoire3.code,
-          ],
+          territoireCodes: ["REG-11", "DEPT-75", "DEPT-92"],
         });
 
         // then
@@ -460,8 +389,8 @@ describe("RecupererChantiersApplicablesParTerritoiresQuery", () => {
                 id: indicateur.id,
                 nom: "Indicateur",
                 territoiresApplicables: expect.arrayContaining([
-                  territoire1.code,
-                  territoire2.code,
+                  "REG-11",
+                  "DEPT-75",
                 ]),
               },
             ],
@@ -469,7 +398,7 @@ describe("RecupererChantiersApplicablesParTerritoiresQuery", () => {
         });
         expect(
           result[chantier.id].indicateurs[0].territoiresApplicables,
-        ).not.toContain(territoire3.code);
+        ).not.toContain("DEPT-92");
       }),
     );
   });

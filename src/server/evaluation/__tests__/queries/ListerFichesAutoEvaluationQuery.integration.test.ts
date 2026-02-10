@@ -198,6 +198,7 @@ describe("ListerFichesAutoEvaluationQuery", () => {
 
         const rattachementGroupe = await f.rattachementGroupe();
         const rattachement = await f.rattachement({
+          code: "REG-84",
           groupe: rattachementGroupe.code,
           libelle: "Rattachement avec note collective",
         });
@@ -215,56 +216,52 @@ describe("ListerFichesAutoEvaluationQuery", () => {
           nom: "Chantier 3",
         });
 
-        const territoire = await f.territoire({
-          code: rattachement.code,
-        });
-
         await f.chantierTerritoire({
           id: chantier1.id,
-          territoire_code: territoire.code,
+          territoire_code: "REG-84",
           code_insee: "84",
           maille: "REG",
-          zone_id: "zone-2",
+          zone_id: "R84",
         });
         await f.chantierTerritoire({
           id: chantier2.id,
-          territoire_code: territoire.code,
+          territoire_code: "REG-84",
           code_insee: "84",
           maille: "REG",
-          zone_id: "zone-2",
+          zone_id: "R84",
         });
         await f.chantierTerritoire({
           id: chantier3.id,
-          territoire_code: territoire.code,
+          territoire_code: "REG-84",
           code_insee: "84",
           maille: "REG",
-          zone_id: "zone-2",
+          zone_id: "R84",
         });
 
         await f.chantierTerritoireJalon({
           id: chantier1.id,
-          territoire_code: territoire.code,
+          territoire_code: "REG-84",
           code_insee: "84",
           maille: "REG",
-          zone_id: "zone-2",
+          zone_id: "R84",
           jalon: 2025,
           taux_avancement: 68.0,
         });
         await f.chantierTerritoireJalon({
           id: chantier2.id,
-          territoire_code: territoire.code,
+          territoire_code: "REG-84",
           code_insee: "84",
           maille: "REG",
-          zone_id: "zone-2",
+          zone_id: "R84",
           jalon: 2025,
           taux_avancement: 73.0,
         });
         await f.chantierTerritoireJalon({
           id: chantier3.id,
-          territoire_code: territoire.code,
+          territoire_code: "REG-84",
           code_insee: "84",
           maille: "REG",
-          zone_id: "zone-2",
+          zone_id: "R84",
           jalon: 2025,
           taux_avancement: 73.0,
         });
@@ -290,7 +287,7 @@ describe("ListerFichesAutoEvaluationQuery", () => {
         // Older chantier_evaluation data (should be ignored)
         await f.chantierEvaluation({
           id: chantier1.id,
-          territoire_code: territoire.code,
+          territoire_code: "REG-84",
           code_insee: "75",
           maille: "DEPT",
           zone_id: "zone-1",
@@ -300,7 +297,7 @@ describe("ListerFichesAutoEvaluationQuery", () => {
         });
         await f.chantierEvaluation({
           id: chantier2.id,
-          territoire_code: territoire.code,
+          territoire_code: "REG-84",
           code_insee: "75",
           maille: "DEPT",
           zone_id: "zone-1",
@@ -312,7 +309,7 @@ describe("ListerFichesAutoEvaluationQuery", () => {
         // Latest chantier_evaluation data (should be used for calculation)
         await f.chantierEvaluation({
           id: chantier1.id,
-          territoire_code: territoire.code,
+          territoire_code: "REG-84",
           code_insee: "75",
           maille: "DEPT",
           zone_id: "zone-1",
@@ -322,7 +319,7 @@ describe("ListerFichesAutoEvaluationQuery", () => {
         });
         await f.chantierEvaluation({
           id: chantier2.id,
-          territoire_code: territoire.code,
+          territoire_code: "REG-84",
           code_insee: "75",
           maille: "DEPT",
           zone_id: "zone-1",
@@ -332,7 +329,7 @@ describe("ListerFichesAutoEvaluationQuery", () => {
         });
         await f.chantierEvaluation({
           id: chantier3.id,
-          territoire_code: territoire.code,
+          territoire_code: "REG-84",
           code_insee: "75",
           maille: "DEPT",
           zone_id: "zone-1",

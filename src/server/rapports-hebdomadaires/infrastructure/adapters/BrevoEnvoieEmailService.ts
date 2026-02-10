@@ -2,9 +2,15 @@ import { EmailManager } from "@/server/infrastructure/email-manager";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { EnvoieEmailService } from "@/server/rapports-hebdomadaires/domain/ports/EnvoieEmailService";
 import { RapportHebdomadaire } from "@/server/rapports-hebdomadaires/domain/RapportHebdomadaire";
+import { TypeValeurIndicateur } from "@/server/rapports-hebdomadaires/domain/SectionActiviteChantiers";
 import { PiloteDateFormatter } from "./PiloteDateFormatter";
 
 const TEMPLATE_ID_RAPPORT_COORDINATEURS = 60;
+const MAPPING: Record<TypeValeurIndicateur, string> = {
+  VALEUR_AVANCEMENT: "va",
+  VALEUR_INITIALE: "vi",
+  VALEUR_CIBLE: "vc",
+};
 
 export const createBrevoParams = ({
   profilsMap,
@@ -72,8 +78,8 @@ export const createBrevoParams = ({
       nom: indic.nom,
       territoires: indic.territoires.map((territoire) => ({
         nom: formatTerritoireNom(territoire),
-        type_indicateur: "va",
-        valeur: formatValeurAvancement(territoire.valeurAvancement),
+        type_indicateur: MAPPING[territoire.typeValeur],
+        valeur: formatValeurAvancement(territoire.valeur),
         date_indicateur: PiloteDateFormatter.isoDateFranceMetropolitaine(
           territoire.dateValeur,
         ),

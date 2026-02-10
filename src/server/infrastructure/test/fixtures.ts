@@ -280,24 +280,6 @@ export const fixtures = {
     });
   },
 
-  async territoire(
-    overrides: Partial<Prisma.territoireUncheckedCreateInput> & {
-      code: string;
-    },
-  ) {
-    const prisma = getPrisma();
-    return prisma.territoire.create({
-      data: {
-        nom: `Territoire ${overrides.code}`,
-        nom_affiche: `Territoire ${overrides.code}`,
-        maille: "DEPT",
-        code_insee: overrides.code,
-        zone_id: `zone-${randomUUID().slice(0, 6)}`,
-        ...overrides,
-      },
-    });
-  },
-
   async chantierIdentite(
     overrides: Partial<Prisma.chantier_identiteUncheckedCreateInput> = {},
   ) {
@@ -532,6 +514,24 @@ export const fixtures = {
           sectionActiviteChantiers: [],
         } satisfies ContenuRapport,
         statut_envoi: "CREE",
+        ...overrides,
+      },
+    });
+  },
+
+  async mesureIndicateur(
+    overrides: Partial<Prisma.mesure_indicateurUncheckedCreateInput> = {},
+  ) {
+    const prisma = getPrisma();
+    return prisma.mesure_indicateur.create({
+      data: {
+        id: randomUUID(),
+        indic_id: "IND-001",
+        zone_id: "D75",
+        metric_date: "2024-01-01",
+        metric_type: "vi",
+        metric_value: "100",
+        date_import: new Date(),
         ...overrides,
       },
     });
