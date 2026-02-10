@@ -116,6 +116,7 @@ const NextPageAdminIndicateur: FunctionComponent<
   creationReussie,
   chantiers,
 }) => {
+  console.log(indicateur);
   return (
     <>
       <Head>
