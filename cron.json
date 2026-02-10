@@ -5,6 +5,9 @@
     },
     {
       "command": "0 9 * * 1 curl -X POST -H \"Authorization: Bearer $CRON_AUTH_SECRET\" \"$APP_URL/api/admin/cron/rapports-coordinateurs\""
+    },
+    {
+      "command": "45 15 * * * curl -X POST -H \"Authorization: Bearer $CRON_AUTH_SECRET\" \"$APP_URL/api/admin/cron/desactivation-comptes\""
     }
   ]
 }
