@@ -1,5 +1,4 @@
 import { $Enums } from "@prisma/client";
-import { randomUUID } from "crypto";
 import { fixtures } from "@/server/infrastructure/test/fixtures";
 import { RecupererChantiersApplicablesParTerritoiresQuery } from "@/server/chantiers/infrastructure/queries/RecupererChantiersApplicablesParTerritoiresQuery";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
