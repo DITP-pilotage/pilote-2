@@ -769,6 +769,16 @@ model datajobs_execution {
   @@schema("public")
 }
 
+model llm_calls {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  prompt     String
+  user_email String
+  answer     Json
+  created_at DateTime @default(now())
+
+  @@schema("public")
+}
+
 enum type_evenement {
   VALEUR_CREEE
   VALEUR_MODIFIEE

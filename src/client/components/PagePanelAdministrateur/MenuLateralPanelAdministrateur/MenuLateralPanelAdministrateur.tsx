@@ -32,6 +32,11 @@ const menuItems = [
     href: "/panel-administrateur/feature-flipping",
     pageKey: "feature-flipping",
   },
+  {
+    label: "Albert",
+    href: "/panel-administrateur/albert",
+    pageKey: "albert",
+  },
 ] as const;
 
 export const MenuLateralPanelAdministrateur: FunctionComponent<
