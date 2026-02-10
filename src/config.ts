@@ -359,6 +359,11 @@ const config = convict({
       default: "",
       env: "TCHAP_ROOM_ID_RAPPORT_PVA",
     },
+    roomIdDesactivationComptes: {
+      format: String,
+      default: "",
+      env: "TCHAP_ROOM_ID_DESACTIVATION_COMPTES",
+    },
   },
   scalingoEnvironment: {
     format: String,
