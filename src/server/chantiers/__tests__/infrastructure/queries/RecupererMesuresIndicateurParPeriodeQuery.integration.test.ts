@@ -169,7 +169,7 @@ describe("RecupererMesuresIndicateurParPeriodeQuery", () => {
       });
       const mesureVI = await fixtures.mesureIndicateur({
         indic_id: indicateurIdentite.id,
-        zone_id: "FRANCE",
+        zone_id: "D75",
         metric_date: "2024-01-01",
         metric_type: "vi",
         metric_value: "100",
@@ -177,7 +177,7 @@ describe("RecupererMesuresIndicateurParPeriodeQuery", () => {
       });
       const mesureVC = await fixtures.mesureIndicateur({
         indic_id: indicateurIdentite.id,
-        zone_id: "FRANCE",
+        zone_id: "D75",
         metric_date: "2024-01-01",
         metric_type: "vc",
         metric_value: "200",
@@ -187,7 +187,7 @@ describe("RecupererMesuresIndicateurParPeriodeQuery", () => {
       // When
       const result = await query.execute({
         indicateurIds: [indicateurIdentite.id],
-        territoireCodes: ["NAT-FR"],
+        territoireCodes: ["DEPT-75"],
         dateDebut: new Date("2024-01-01"),
         dateFin: new Date("2024-01-31"),
         typesValeur: ["VALEUR_INITIALE", "VALEUR_CIBLE"],
@@ -199,8 +199,8 @@ describe("RecupererMesuresIndicateurParPeriodeQuery", () => {
           id: mesureVI.id,
           indicateurId: indicateurIdentite.id,
           indicateurNom: indicateurIdentite.nom,
-          territoireCode: "NAT-FR",
-          territoireNom: "France",
+          territoireCode: "DEPT-75",
+          territoireNom: "Paris",
           typeValeur: "VALEUR_INITIALE",
           dateValeur: new Date("2024-01-01"),
           valeur: 100,
@@ -210,8 +210,8 @@ describe("RecupererMesuresIndicateurParPeriodeQuery", () => {
           id: mesureVC.id,
           indicateurId: indicateurIdentite.id,
           indicateurNom: indicateurIdentite.nom,
-          territoireCode: "NAT-FR",
-          territoireNom: "France",
+          territoireCode: "DEPT-75",
+          territoireNom: "Paris",
           typeValeur: "VALEUR_CIBLE",
           dateValeur: new Date("2024-01-01"),
           valeur: 200,
