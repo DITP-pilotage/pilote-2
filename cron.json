@@ -2,6 +2,9 @@
   "jobs": [
     {
       "command": "0 6 * * 1 /bin/bash scripts/run_rapport_pva.sh"
+    },
+    {
+      "command": "45 15 * * * /bin/bash scripts/run_desactivation_comptes_inactifs.sh"
     }
   ]
 }
