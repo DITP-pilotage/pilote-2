@@ -76,7 +76,8 @@ def _diff_tables_row_by_row(
     source_url: str,
     target_url: str,
     qualified_table_name: str,
-) -> list[dict[str, Any]]:
+    normalize: bool = True,
+) -> tuple[list[dict[str, Any]], list[str]]:
     schema, table_name = _split_schema_and_table(qualified_table_name)
 
     source_df = _read_table_as_df(source_url, schema, table_name)
@@ -103,40 +104,46 @@ def _diff_tables_row_by_row(
             "[Table: %s] No common columns between source and target, skipping.",
             qualified_table_name,
         )
-        return []
+        return [], common_columns
 
-    source_aligned = source_df[common_columns].map(_normalize_cell).to_numpy().tolist()
-    target_aligned = target_df[common_columns].map(_normalize_cell).to_numpy().tolist()
+    # Optionally normalize values for comparison (rounding, list sorting, etc.)
+    if normalize:
+        source_aligned = (
+            source_df[common_columns].map(_normalize_cell).to_numpy().tolist()
+        )
+        target_aligned = (
+            target_df[common_columns].map(_normalize_cell).to_numpy().tolist()
+        )
+    else:
+        # Use raw values as-is
+        source_aligned = source_df[common_columns].to_numpy().tolist()
+        target_aligned = target_df[common_columns].to_numpy().tolist()
 
-    source_rows = {str(tuple(row)) for row in source_aligned}
-    target_rows = {str(tuple(row)) for row in target_aligned}
+    # Convert each row to list of [stringified, tuple] forms
+    source_rows = [[str(tuple(row)), tuple(row)] for row in source_aligned]
+    target_rows = [[str(tuple(row)), tuple(row)] for row in target_aligned]
 
-    only_in_source = source_rows - target_rows
-    only_in_target = target_rows - source_rows
+    target_row_strs = set(row[0] for row in target_rows)
+    source_row_strs = set(row[0] for row in source_rows)
+
+    only_in_source = [row[1] for row in source_rows if row[0] not in target_row_strs]
+    only_in_target = [row[1] for row in target_rows if row[0] not in source_row_strs]
 
     differences: list[dict[str, Any]] = []
 
     for row in only_in_source:
-        logger.info("[Table: %s]+, %s", qualified_table_name, row)
-        differences.append(
-            {
-                "table": qualified_table_name,
-                "side": "+",
-                "row": row,
-            }
-        )
+        logger.info("[Table: %s] Source-only row: %s", qualified_table_name, row)
+        entry = {"side": "source"}
+        entry.update({col: val for col, val in zip(common_columns, row)})
+        differences.append(entry)
 
     for row in only_in_target:
-        logger.info("[Table: %s]-, %s", qualified_table_name, row)
-        differences.append(
-            {
-                "table": qualified_table_name,
-                "side": "-",
-                "row": row,
-            }
-        )
+        logger.info("[Table: %s] Target-only row: %s", qualified_table_name, row)
+        entry = {"side": "target"}
+        entry.update({col: val for col, val in zip(common_columns, row)})
+        differences.append(entry)
 
-    return differences
+    return differences, common_columns
 
 
 parser = argparse.ArgumentParser()
@@ -152,7 +159,14 @@ parser.add_argument(
 parser.add_argument(
     "--output-csv",
     "-o",
-    help="Optional path to write differences as a CSV file.",
+    action="store_true",
+    help="If set, write differences as CSV files (one file per table) into the 'output/' folder next to this script.",
+)
+parser.add_argument(
+    "--raw",
+    "-r",
+    action="store_true",
+    help="If set, compare raw values without normalization (no rounding or list/tuple sorting).",
 )
 
 args = parser.parse_args()
@@ -178,14 +192,25 @@ all_differences: list[dict[str, Any]] = []
 
 for qualified_table_name in tables:
     logger.info("[DIFFING][Table: %s]", qualified_table_name)
-    all_differences.extend(
-        _diff_tables_row_by_row(
-            source_url=source_connection_string,
-            target_url=target_connection_string,
-            qualified_table_name=qualified_table_name,
-        )
+    differences, common_columns = _diff_tables_row_by_row(
+        source_url=source_connection_string,
+        target_url=target_connection_string,
+        qualified_table_name=qualified_table_name,
+        normalize=not args.raw,
     )
+    all_differences.extend([dict(d, table=qualified_table_name) for d in differences])
 
-if args.output_csv and all_differences:
-   df =  pd.DataFrame(all_differences)
-   df.sort_values(by=[df.columns[0], df.columns[2]]).to_csv(args.output_csv, index=False)
+    # For output per table if requested
+    if args.output_csv and differences:
+        # Ensure output directory exists (default: 'output' folder next to this script)
+        output_dir = os.path.join(os.path.dirname(__file__), "output")
+        os.makedirs(output_dir, exist_ok=True)
+        schema, table_name = _split_schema_and_table(qualified_table_name)
+        output_path = os.path.join(output_dir, f"{schema}.{table_name}.csv")
+
+        # Write the CSV with header: "side" plus the actual common_columns
+        df_table = pd.DataFrame(differences)
+        # Explicitly set column order: "side", then all common column names (sorted)
+        cols = ["side"] + list(common_columns)
+        # Write CSV
+        df_table.to_csv(output_path, columns=cols, index=False)

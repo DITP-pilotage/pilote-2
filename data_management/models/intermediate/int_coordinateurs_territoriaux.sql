@@ -1,7 +1,9 @@
 WITH coord_locaux AS (
-    SELECT 
-        ARRAY_AGG(INITCAP(u.prenom) || ' ' || INITCAP(u.nom)) AS nom, 
-        ARRAY_AGG(u.email) AS email, 
+    SELECT
+        -- On trie par email pour éviter les différences de tri
+        -- et que les noms soient associés aux bons emails
+        ARRAY_AGG(INITCAP(u.prenom) || ' ' || INITCAP(u.nom) order by email) AS nom, 
+        ARRAY_AGG(u.email order by email) AS email, 
         profil_code,
         UNNEST(h.territoires) AS territoire_code
     FROM 
