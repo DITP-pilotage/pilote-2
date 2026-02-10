@@ -36,6 +36,7 @@ import { ModaleInscriptionInfolettre } from "@/components/PageAccueil/PageChanti
 import { BoutonNavigationFicheTerritoriale } from "@/components/PageAccueil/BoutonNavigationFicheTerritoriale";
 import { BoutonNavigationRapportDetaille } from "@/components/BoutonNavigationRapportDetaille";
 import { BoutonExportDesDonnees } from "@/components/PageAccueil/BoutonExportDesDonnees";
+import { clsxm } from "@/utils/clsxm";
 import IndexStyled from "./index.styled";
 
 export const getServerSideProps = async (
@@ -397,7 +398,12 @@ const ChantierLayout = ({
           <BarreLatéraleEncart>
             <Titre
               baliseHtml="h1"
-              className={`fr-h2 fr-p-0 fr-mb-3w${chantiersSontArchives ? " titre-gris" : " fr-text-title--blue-france"}`}
+              className={clsxm(
+                `fr-h2 fr-p-0 fr-mb-3w`,
+                chantiersSontArchives
+                  ? "titre-gris"
+                  : "fr-text-title--blue-france",
+              )}
             >
               {`${nombreTotalChantiersAvecAlertes} ${nombreTotalChantiersAvecAlertes >= 2 ? "chantiers" : "chantier"}`}
             </Titre>

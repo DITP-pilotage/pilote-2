@@ -49,9 +49,6 @@ const PageChantierEnTête: FunctionComponent<{
   const queryParamString = getQueryParamString(getFiltresActifs());
   const hrefBoutonRetour = `/accueil/chantier/${territoireCode}${queryParamString.length > 0 ? `?${queryParamString}` : ""}`;
 
-  const nomChantier =
-    chantier.nom.length > 50 ? `${chantier.nom.slice(0, 50)}...` : chantier.nom;
-
   const chantierEstArchive = chantier.statut === "ARCHIVE";
   return (
     <div
@@ -71,12 +68,15 @@ const PageChantierEnTête: FunctionComponent<{
       </div>
       <Titre
         baliseHtml="h1"
-        className={clsxm("fr-h2 !mb-4 !mt-2 !text-dsfr-blue-france-sun-113", {
-          "!text-dsfr-grey-200": chantierEstArchive,
-        })}
+        className={clsxm(
+          "fr-h2 !mb-4 !mt-2 !text-dsfr-blue-france-sun-113 line-clamp-3",
+          {
+            "!text-dsfr-grey-200": chantierEstArchive,
+          },
+        )}
         title={chantier.nom}
       >
-        {nomChantier}
+        {chantier.nom}
       </Titre>
       <div className="!pb-6 !mb-6 border-b border-blue-france flex">
         <div className="icone-entete fr-mb-1w fr-pr-1w">
