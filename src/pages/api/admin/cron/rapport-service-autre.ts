@@ -9,13 +9,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   const baseUrl = configuration().tchap.baseUrl;
   const roomId = configuration().tchap.roomIdRapportServiceAutre;
   const accessToken = configuration().tchap.accessToken;
-
-  if (configuration().scalingoEnvironment !== "PROD") {
-    return res.status(200).json({
-      skipped: true,
-      reason: "Environment is not PROD",
-    });
-  }
+  const isProd = configuration().scalingoEnvironment === "PROD";
 
   try {
     const initialContainer = getInitialContainerWithTransversalDependencies();
@@ -48,7 +42,9 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       ...valeursDistinctes.map((valeur) => `* ${valeur}`),
     ].join("\n");
 
-    envoieMessageTchap(message, baseUrl, roomId, accessToken);
+    if (isProd) {
+      envoieMessageTchap(message, baseUrl, roomId, accessToken);
+    }
 
     const result = { count, valeursDistinctes };
     logger.info(
@@ -68,7 +64,9 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       "Veuillez regarder les logs pour en savoir plus.",
     ].join("\n");
 
-    envoieMessageTchap(messageErreur, baseUrl, roomId, accessToken);
+    if (isProd) {
+      envoieMessageTchap(messageErreur, baseUrl, roomId, accessToken);
+    }
 
     return res.status(500).json({ error: "Internal server error" });
   }
