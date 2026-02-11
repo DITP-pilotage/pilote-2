@@ -18,7 +18,6 @@
     "lint:tsc": "npx tsc",
     "lint:stylelint": "npx stylelint 'src/**/*.styled.{ts,tsx}'",
     "test": "vitest run",
-    "test:ci": "bash scripts/test_ci.sh",
     "test:client": "vitest run --project client",
     "test:client:unit": "vitest run --project client '.unit.test.'",
     "test:client:integration": "vitest run --project client '.integration.test.'",
