@@ -2,7 +2,7 @@ import { SelecteurNew } from "@/components/_commons/SelecteurNew/SelecteurNew";
 import { getServicesForMinistere } from "@/client/constants/referentiel-services";
 import { useMonProfilForm } from "./form";
 
-export default function SelectService() {
+export const SelectService = () => {
   const { watch, setValue, formState } = useMonProfilForm();
   const ministere = watch("ministere");
   const service = watch("service");
@@ -21,6 +21,7 @@ export default function SelectService() {
       className="fr-input-group"
       triggerClassName="w-full"
       options={options}
+      isRequired
       valeurSelectionnee={service || undefined}
       erreurMessage={formState.errors.service?.message}
       disabled={!ministere}
@@ -37,4 +38,4 @@ export default function SelectService() {
       }}
     />
   );
-}
+};

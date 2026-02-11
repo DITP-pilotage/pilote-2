@@ -7,7 +7,7 @@ const options = referentielServices.ministeres.map((ministere) => ({
   libelle: ministere.libelle,
 }));
 
-export default function SelectMinistere() {
+export const SelectMinistere = () => {
   const { watch, setValue, formState } = useMonProfilForm();
   const ministere = watch("ministere");
 
@@ -15,6 +15,7 @@ export default function SelectMinistere() {
     <SelecteurNew
       htmlName="ministere"
       libelle="Ministère"
+      isRequired
       className="fr-input-group"
       triggerClassName="w-full"
       options={options}
@@ -27,4 +28,4 @@ export default function SelectMinistere() {
       }}
     />
   );
-}
+};

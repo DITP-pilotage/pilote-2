@@ -13,8 +13,8 @@ import { récupérerUnCookie } from "@/client/utils/cookies";
 import { Icone } from "@/components/_commons/Icone";
 import { ArrowLine1Icon } from "@/components/_commons/Icones/ArrowLine1Icon";
 import useMonProfilFormulaire from "./useMonProfilFormulaire";
-import SelectMinistere from "./SelectMinistere";
-import SelectService from "./SelectService";
+import { SelectMinistere } from "./SelectMinistere";
+import { SelectService } from "./SelectService";
 import { useMonProfilForm } from "./form";
 
 type MonProfilUtilisateurFormInputs = z.infer<

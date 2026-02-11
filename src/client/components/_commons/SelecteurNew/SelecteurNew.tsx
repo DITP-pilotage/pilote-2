@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Select } from "@/components/shared/Select";
 import { clsxm } from "@/utils/clsxm";
+import { ChampObligatoire } from "@/components/PageIndicateur/ChampObligatoire";
 
 export type SelecteurNewOption<T> = {
   libelle: string;
@@ -20,6 +21,7 @@ export const SelecteurNew = <T extends string>({
   disabled = false,
   className,
   triggerClassName,
+  isRequired,
 }: {
   htmlName: string;
   options: SelecteurNewOption<T>[];
@@ -32,6 +34,7 @@ export const SelecteurNew = <T extends string>({
   disabled?: boolean;
   className?: string;
   triggerClassName?: string;
+  isRequired?: boolean;
 }) => {
   const [recherche, setRecherche] = useState("");
 
@@ -46,6 +49,7 @@ export const SelecteurNew = <T extends string>({
       {libelle ? (
         <label className="fr-label" htmlFor={htmlName}>
           {libelle}
+          {isRequired ? <ChampObligatoire /> : null}
         </label>
       ) : null}
 
