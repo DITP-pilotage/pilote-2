@@ -27,7 +27,10 @@ function slugify(text: string): string {
 }
 
 function genererReferentiel(): void {
-  const csvPath = path.join(process.cwd(), "referentiel-services-pilote.csv");
+  const csvPath = path.join(
+    process.cwd(),
+    "docs/referentiel-services-pilote.csv",
+  );
   const csvContent = fs.readFileSync(csvPath, "utf-8");
 
   const lines = csvContent.split("\n").slice(1); // Skip header
