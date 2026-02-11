@@ -69,27 +69,12 @@ const PageChantierEnTête: FunctionComponent<{
       <Titre
         baliseHtml="h1"
         className={clsxm(
-          "fr-h2 !mb-4 !mt-2 !text-dsfr-blue-france-sun-113 line-clamp-3",
+          "select-all fr-h2 !mb-4 !mt-2 !text-dsfr-blue-france-sun-113 line-clamp-3",
           {
             "!text-dsfr-grey-200": chantierEstArchive,
           },
         )}
         title={chantier.nom}
-        ref={(node) => {
-          if (node == null) return;
-
-          node.addEventListener("copy", (e) => {
-            if (e.clipboardData == null) returns;
-            e.clipboardData.setData("text/plain", chantier.nom);
-            e.preventDefault();
-          });
-
-          return () => {
-            console.log("---------------");
-            console.log("TODO: cleanup");
-            console.log("---------------");
-          };
-        }}
       >
         {chantier.nom}
       </Titre>
