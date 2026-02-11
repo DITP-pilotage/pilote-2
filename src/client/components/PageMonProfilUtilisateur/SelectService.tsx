@@ -18,6 +18,7 @@ export default function SelectService() {
     <SelecteurNew
       htmlName="service"
       libelle="Service"
+      className="fr-input-group"
       triggerClassName="w-full"
       options={options}
       valeurSelectionnee={service ?? undefined}

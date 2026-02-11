@@ -15,6 +15,7 @@ export default function SelectMinistere() {
     <SelecteurNew
       htmlName="ministere"
       libelle="Ministère"
+      className="fr-input-group"
       triggerClassName="w-full"
       options={options}
       valeurSelectionnee={ministere ?? undefined}

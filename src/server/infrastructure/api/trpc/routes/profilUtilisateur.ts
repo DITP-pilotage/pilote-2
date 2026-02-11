@@ -21,7 +21,7 @@ export const profilUtilisateurRouter = créerRouteurTRPC({
     return query.run(session.user.id);
   }),
   modifierMonProfil: procédureProtégée
-    .input(validationModifierMonProfil.merge(zodValidateurCSRF))
+    .input(validationModifierMonProfil.and(zodValidateurCSRF))
     .mutation(async ({ input, ctx }) => {
       vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
       await getContainer("profilUtilisateur")
