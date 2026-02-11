@@ -1,7 +1,7 @@
 import { InferGetServerSidePropsType } from "next";
 import { createServerSidePropsContext } from "@/hooks/createServerSidePropsContext";
 import { getServerSideProps } from "@/pages/chantier/[id]/[territoireCode]";
-import { actionsTerritoiresStore } from "@/stores/useTerritoiresStore/useTerritoiresStore";
+import { récupérerDétailsSurUnTerritoire } from "@/client/constants/territoires";
 
 export const pageChantier =
   createServerSidePropsContext<
@@ -10,6 +10,5 @@ export const pageChantier =
 
 export function useTerritoireSelectionne() {
   const { territoireCode } = pageChantier.useServerSidePropsContext();
-  const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
   return récupérerDétailsSurUnTerritoire(territoireCode);
 }

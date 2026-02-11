@@ -1,10 +1,7 @@
 import { useRouter } from "next/router";
 import { parseAsString, useQueryState } from "nuqs";
-import {
-  régionsTerritoiresStore,
-  territoiresAccessiblesEnLectureStore,
-} from "@/stores/useTerritoiresStore/useTerritoiresStore";
 import { DétailTerritoire } from "@/server/domain/territoire/Territoire.interface";
+import { listeTerritoires } from "@/client/constants/territoires";
 import {
   CartographieOptions,
   CartographieTerritoireAffiché,
@@ -19,7 +16,7 @@ export default function useCartographie(
     | "/chantier/[id]/[territoireCode]"
     | null,
 ) {
-  const régions = régionsTerritoiresStore();
+  const { régions, territoiresAccessiblesEnLecture } = listeTerritoires;
   const [territoiresCompares, setTerritoiresCompares] = useQueryState(
     "territoiresCompares",
     parseAsString.withDefault("").withOptions({
@@ -28,9 +25,6 @@ export default function useCartographie(
       clearOnDefault: true,
     }),
   );
-
-  const territoiresAccessiblesEnLecture =
-    territoiresAccessiblesEnLectureStore();
 
   const router = useRouter();
 

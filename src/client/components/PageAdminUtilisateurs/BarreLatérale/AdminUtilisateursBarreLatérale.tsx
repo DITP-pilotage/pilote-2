@@ -9,7 +9,6 @@ import { MultiSelectTerritoire } from "@/components/_commons/MultiSelectNew/Mult
 import { MultiSelectPérimètreMinistériel } from "@/components/_commons/MultiSelectNew/MultiSelectPérimètreMinistériel/MultiSelectPérimètreMinistériel";
 import { MultiSelectChantier } from "@/components/_commons/MultiSelectNew/MultiSelectChantier/MultiSelectChantier";
 import { Tag } from "@/components/_commons/Tag/Tag";
-import { territoiresTerritoiresStore } from "@/stores/useTerritoiresStore/useTerritoiresStore";
 import { MultiSelectProfil } from "@/components/_commons/MultiSelectNew/MultiSelectProfil/MultiSelectProfil";
 import {
   AAccesATousLesUtilisateurs,
@@ -19,6 +18,7 @@ import { ChantierSynthétisé } from "@/server/domain/chantier/Chantier.interfac
 import { PerimetreMinisteriel } from "@/server/gestion-utilisateur/domain/PerimetreMinisteriel";
 import { Profil } from "@/server/gestion-utilisateur/domain/Profil";
 import { TerritoireAvecNombreUtilisateurs } from "@/server/gestion-utilisateur/domain/Territoire";
+import { listeTerritoires } from "@/client/constants/territoires";
 
 interface AdminUtilisateursBarreLatéraleProps {
   estOuverteBarreLatérale: boolean;
@@ -42,7 +42,7 @@ export const AdminUtilisateursBarreLatérale: FunctionComponent<
   listeTerritoiresSelectionnable,
 }) => {
   const { data: session } = useSession();
-  const territoires = territoiresTerritoiresStore();
+  const { territoires } = listeTerritoires;
 
   const profilCréateur = listeProfils?.find(
     (profil) => profil.code === session?.profil,

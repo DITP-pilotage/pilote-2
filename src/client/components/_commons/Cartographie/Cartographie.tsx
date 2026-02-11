@@ -1,9 +1,9 @@
 import { FunctionComponent, ReactNode } from "react";
 import useCartographie from "@/components/_commons/Cartographie/useCartographie";
 import { CartographieOptions } from "@/components/_commons/Cartographie/useCartographie.interface";
-import { départementsTerritoiresStore } from "@/stores/useTerritoiresStore/useTerritoiresStore";
 import { CodeInsee } from "@/server/domain/territoire/Territoire.interface";
 import { MailleInterne } from "@/server/domain/maille/Maille.interface";
+import { listeTerritoires } from "@/client/constants/territoires";
 import { CartographieSVG } from "./SVG/CartographieSVG";
 
 type CartographieDonnées = {
@@ -42,7 +42,7 @@ const Cartographie: FunctionComponent<CartographieProps> = ({
   mailleSelectionnee,
   contoursGris = false,
 }) => {
-  const départements = départementsTerritoiresStore();
+  const { départements } = listeTerritoires;
   const { optionsParDéfaut, déterminerRégionsÀTracer, créerTerritoires } =
     useCartographie(territoireCode, pathname);
 

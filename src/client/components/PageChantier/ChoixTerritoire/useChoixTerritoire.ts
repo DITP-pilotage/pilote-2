@@ -1,10 +1,10 @@
 import { useMemo } from "react";
-import { territoiresTerritoiresStore } from "@/client/stores/useTerritoiresStore/useTerritoiresStore";
 import { CartographieDonnées } from "@/components/_commons/Cartographie/Cartographie.interface";
 import { MailleInterne } from "@/server/domain/maille/Maille.interface";
+import { listeTerritoires } from "@/client/constants/territoires";
 
 export default function useChoixTerritoire(mailleSélectionnée: MailleInterne) {
-  const territoires = territoiresTerritoiresStore();
+  const { territoires } = listeTerritoires;
 
   const donnéesCartographie = useMemo(() => {
     const donnéesFormatées: CartographieDonnées = {};

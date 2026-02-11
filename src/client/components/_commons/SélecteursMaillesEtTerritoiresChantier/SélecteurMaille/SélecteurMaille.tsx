@@ -1,16 +1,16 @@
 import { useRouter } from "next/router";
 import { FunctionComponent } from "react";
 import { MailleInterne } from "@/server/domain/maille/Maille.interface";
-import { maillesAccessiblesEnLectureStore } from "@/stores/useTerritoiresStore/useTerritoiresStore";
 import { objectEntries } from "@/client/utils/objects/objects";
 import { sauvegarderFiltres } from "@/stores/useFiltresStoreNew/useFiltresStoreNew";
+import { listeTerritoires } from "@/client/constants/territoires";
 import SélecteurMailleStyled from "./SélecteurMaille.styled";
 
 const SélecteurMaille: FunctionComponent<{
   pathname: string;
   mailleQuery: MailleInterne;
 }> = ({ pathname, mailleQuery }) => {
-  const maillesAccessiblesEnLecture = maillesAccessiblesEnLectureStore();
+  const { maillesAccessiblesEnLecture } = listeTerritoires;
   const router = useRouter();
 
   const maillesInternesAccessiblesEnLecture =

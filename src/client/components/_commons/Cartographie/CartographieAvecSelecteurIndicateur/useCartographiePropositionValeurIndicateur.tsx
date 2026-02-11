@@ -1,8 +1,8 @@
-import { actionsTerritoiresStore } from "@/stores/useTerritoiresStore/useTerritoiresStore";
 import { CartographieÉlémentsDeLégende } from "@/client/components/_commons/Cartographie/Légende/CartographieLégende.interface";
 import { CartographieDonnées } from "@/client/components/_commons/Cartographie/Cartographie.interface";
 import { objectEntries } from "@/client/utils/objects/objects";
 import { DétailsIndicateurTerritoire } from "@/server/domain/indicateur/DétailsIndicateur.interface";
+import { récupérerDétailsSurUnTerritoire } from "@/client/constants/territoires";
 
 type TypeProposition = "PROPOSITION" | "PROPOSITION_AVEC_PONDERATION";
 type DonneesCartographieProposition = {
@@ -36,8 +36,6 @@ export function useCartographiePropositionValeurIndicateur(
       territoireCode: territoireCodeDonnee as string,
       estApplicable: detailsIndicateur.estApplicable,
     }));
-
-    const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
 
     const tousApplicables: Boolean = donnees.every((d) => d.estApplicable);
 

@@ -2,13 +2,13 @@ import { useSession } from "next-auth/react";
 import { estAutoriséAImporterDesIndicateurs } from "@/client/utils/indicateur/indicateur";
 import { estAutoriséAConsulterLaFicheConducteur } from "@/client/utils/fiche-conducteur/fiche-conducteur";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
-import {
-  actionsTerritoiresStore,
-  territoiresTerritoiresStore,
-} from "@/stores/useTerritoiresStore/useTerritoiresStore";
 import { PROFIL_AUTORISE_A_VOIR_LES_ALERTES_MAJ_INDICATEURS } from "@/client/components/_commons/IndicateursChantier/Bloc/useIndicateurAlerteDateMaj";
 import { LISTE_PROFIL_TERRITORIALISE } from "@/server/app/domain/ProfilTerritorialise";
 import { pageChantier } from "@/components/PageChantier/PageChantierServerSideContext";
+import {
+  listeTerritoires,
+  récupérerDétailsSurUnTerritoire,
+} from "@/client/constants/territoires";
 
 const PROFIL_AUTORISE_A_VOIR_LES_PROPOSITIONS_DE_VALEUR_AVANCEMENT = new Set([
   ProfilEnum.DITP_ADMIN,
@@ -25,11 +25,9 @@ export const usePageChantier = () => {
   const { chantier, territoireCode, configurationFeatureFlipping } =
     pageChantier.useServerSidePropsContext();
 
-  const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
-
   const territoireSélectionné = récupérerDétailsSurUnTerritoire(territoireCode);
 
-  const territoires = territoiresTerritoiresStore();
+  const { territoires } = listeTerritoires;
 
   let estAutoriseAModifierLesPublications =
     territoireSélectionné.accèsSaisiePublication &&

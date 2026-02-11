@@ -1,5 +1,4 @@
 import { useMemo } from "react";
-import { actionsTerritoiresStore } from "@/client/stores/useTerritoiresStore/useTerritoiresStore";
 import { CartographieDonnées } from "@/components/_commons/Cartographie/Cartographie.interface";
 import {
   valeurMaximum,
@@ -8,6 +7,7 @@ import {
 import { interpolerCouleurs } from "@/client/utils/couleur/couleur";
 import { ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS } from "@/client/constants/légendes/élémentsDeLégendesCartographieAvancement";
 import { CartographieÉlémentsDeLégende } from "@/client/components/_commons/Cartographie/Légende/CartographieLégende.interface";
+import { récupérerDétailsSurUnTerritoire } from "@/client/constants/territoires";
 import { CartographieDonnéesValeurAvancement } from "./CartographieValeurAvancement.interface";
 
 const COULEUR_DÉPART = "#8bcdb1";
@@ -88,8 +88,6 @@ export default function useCartographieValeurAvancement(
   jalon: number,
   unité?: string | null,
 ) {
-  const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
-
   const valeurMin = useMemo(
     () => valeurMinimum(données.map((donnée) => donnée.valeur)),
     [données],
