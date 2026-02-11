@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Select } from "@/components/shared/Select";
 import { clsxm } from "@/utils/clsxm";
+import { ChampObligatoire } from "@/components/PageIndicateur/ChampObligatoire";
 
 export type SelecteurNewOption<T> = {
   libelle: string;
@@ -17,7 +18,10 @@ export const SelecteurNew = <T extends string>({
   libelle,
   placeholder = "Sélectionner...",
   showSearch = true,
+  disabled = false,
   className,
+  triggerClassName,
+  isRequired,
 }: {
   htmlName: string;
   options: SelecteurNewOption<T>[];
@@ -27,7 +31,10 @@ export const SelecteurNew = <T extends string>({
   libelle?: React.ReactNode;
   placeholder?: string;
   showSearch?: boolean;
+  disabled?: boolean;
   className?: string;
+  triggerClassName?: string;
+  isRequired?: boolean;
 }) => {
   const [recherche, setRecherche] = useState("");
 
@@ -42,20 +49,24 @@ export const SelecteurNew = <T extends string>({
       {libelle ? (
         <label className="fr-label" htmlFor={htmlName}>
           {libelle}
+          {isRequired ? <ChampObligatoire /> : null}
         </label>
       ) : null}
 
       <Select.Root
         onValueChange={(value) => onChange?.(value as T)}
         value={valeurSelectionnee}
+        disabled={disabled}
       >
         <Select.Trigger
-          className={clsxm("w-50", {
+          className={clsxm("w-50 text-left", triggerClassName, {
             "!border-b-red-500": erreurMessage,
           })}
           id={htmlName}
         >
-          <Select.Value placeholder={placeholder} />
+          <span className="line-clamp-1">
+            <Select.Value placeholder={placeholder} />
+          </span>
         </Select.Trigger>
 
         <Select.Content className="max-h-96 overflow-hidden !w-[var(--radix-select-trigger-width)]">

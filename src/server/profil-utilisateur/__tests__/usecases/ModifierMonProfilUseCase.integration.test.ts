@@ -39,6 +39,9 @@ describe("ModifierMonProfilUseCase", () => {
           nom: "Nouveau Nom",
           prenom: "Nouveau Prenom",
           fonction: "Nouvelle Fonction",
+          ministere: null,
+          service: null,
+          serviceAutre: null,
         });
 
         const utilisateurModifie = await tx.utilisateur.findUnique({
@@ -66,6 +69,9 @@ describe("ModifierMonProfilUseCase", () => {
           nom: "Nouveau Nom",
           prenom: "Prenom Original",
           fonction: "Fonction Originale",
+          ministere: null,
+          service: null,
+          serviceAutre: null,
         });
 
         const utilisateurModifie = await tx.utilisateur.findUnique({
@@ -93,6 +99,9 @@ describe("ModifierMonProfilUseCase", () => {
           nom: "Nom Test",
           prenom: "Prenom Test",
           fonction: null,
+          ministere: null,
+          service: null,
+          serviceAutre: null,
         });
 
         const utilisateurModifie = await tx.utilisateur.findUnique({
@@ -103,6 +112,44 @@ describe("ModifierMonProfilUseCase", () => {
           nom: "Nom Test",
           prenom: "Prenom Test",
           fonction: null,
+        });
+      }),
+    );
+
+    it(
+      "modifie le ministere et le service",
+      createIntegrationTest(async (tx) => {
+        const utilisateur = await fixtures.utilisateur({
+          nom: "Nom Test",
+          prenom: "Prenom Test",
+          fonction: "Fonction Test",
+          ministere: null,
+          service: null,
+          service_autre: null,
+        });
+
+        await useCase.run(utilisateur.id, {
+          nom: "Nom Test",
+          prenom: "Prenom Test",
+          fonction: "Fonction Test",
+          ministere: "ministere-de-la-justice",
+          service:
+            "direction-interregionale-de-la-protection-judiciaire-de-la-jeunesse-dirpjj",
+          serviceAutre: null,
+        });
+
+        const utilisateurModifie = await tx.utilisateur.findUnique({
+          where: { id: utilisateur.id },
+        });
+
+        expect(utilisateurModifie).toMatchObject({
+          nom: "Nom Test",
+          prenom: "Prenom Test",
+          fonction: "Fonction Test",
+          ministere: "ministere-de-la-justice",
+          service:
+            "direction-interregionale-de-la-protection-judiciaire-de-la-jeunesse-dirpjj",
+          service_autre: null,
         });
       }),
     );
@@ -121,6 +168,9 @@ describe("ModifierMonProfilUseCase", () => {
           nom: "Nouveau Nom",
           prenom: "Nouveau Prenom",
           fonction: null,
+          ministere: null,
+          service: null,
+          serviceAutre: null,
         });
 
         const utilisateurModifie = await tx.utilisateur.findUnique({
@@ -142,6 +192,9 @@ describe("ModifierMonProfilUseCase", () => {
             nom: "Nouveau Nom",
             prenom: "Nouveau Prenom",
             fonction: null,
+            ministere: null,
+            service: null,
+            serviceAutre: null,
           }),
         ).rejects.toThrow(NotFoundError);
       }),
@@ -161,6 +214,9 @@ describe("ModifierMonProfilUseCase", () => {
           nom: "Nouveau Nom",
           prenom: "Nouveau Prenom",
           fonction: "Nouvelle Fonction",
+          ministere: "ministere-de-l-interieur",
+          service: "prefecture-de-region",
+          serviceAutre: null,
         });
 
         expect(profilModifieSideEffects.executer).toHaveBeenCalledWith({
@@ -169,6 +225,9 @@ describe("ModifierMonProfilUseCase", () => {
           prenom: "Nouveau Prenom",
           email: "test@example.com",
           fonction: "Nouvelle Fonction",
+          ministere: "ministere-de-l-interieur",
+          service: "prefecture-de-region",
+          serviceAutre: null,
         });
       }),
     );

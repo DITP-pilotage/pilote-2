@@ -25,6 +25,9 @@ export class PrismaProfilUtilisateurRepository
         prenom: true,
         fonction: true,
         email: true,
+        ministere: true,
+        service: true,
+        service_autre: true,
       },
     });
 
@@ -38,6 +41,9 @@ export class PrismaProfilUtilisateurRepository
       prenom: utilisateur.prenom,
       email: utilisateur.email,
       fonction: utilisateur.fonction,
+      ministere: utilisateur.ministere,
+      service: utilisateur.service,
+      serviceAutre: utilisateur.service_autre,
     };
   }
 
@@ -48,6 +54,9 @@ export class PrismaProfilUtilisateurRepository
         nom: profil.nom,
         prenom: profil.prenom,
         fonction: profil.fonction,
+        ministere: profil.ministere,
+        service: profil.service,
+        service_autre: profil.serviceAutre,
         date_modification: new Date(),
       },
       create: {
@@ -56,6 +65,9 @@ export class PrismaProfilUtilisateurRepository
         prenom: profil.prenom,
         email: profil.email,
         fonction: profil.fonction,
+        ministere: profil.ministere,
+        service: profil.service,
+        service_autre: profil.serviceAutre,
         date_creation: new Date(),
         date_modification: new Date(),
         profilCode: "DITP_ADMIN",
