@@ -149,7 +149,7 @@ describe("ModifierMonProfilUseCase", () => {
           ministere: "ministere-de-la-justice",
           service:
             "direction-interregionale-de-la-protection-judiciaire-de-la-jeunesse-dirpjj",
-          serviceAutre: null,
+          service_autre: null,
         });
       }),
     );
