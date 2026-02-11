@@ -8,8 +8,8 @@ const options = referentielServices.ministeres.map((ministere) => ({
 }));
 
 export const SelectMinistere = () => {
-  const { watch, setValue, formState } = useMonProfilForm();
-  const ministere = watch("ministere");
+  const form = useMonProfilForm();
+  const ministere = form.watch("ministere");
 
   return (
     <SelecteurNew
@@ -20,11 +20,11 @@ export const SelectMinistere = () => {
       triggerClassName="w-full"
       options={options}
       valeurSelectionnee={ministere || undefined}
-      erreurMessage={formState.errors.ministere?.message}
+      erreurMessage={form.formState.errors.ministere?.message}
       onChange={(nouvelleValeur) => {
-        setValue("ministere", nouvelleValeur);
-        setValue("service", "");
-        setValue("serviceAutre", null);
+        form.setValue("ministere", nouvelleValeur);
+        form.setValue("service", "");
+        form.setValue("serviceAutre", null);
       }}
     />
   );

@@ -3,9 +3,9 @@ import { getServicesForMinistere } from "@/client/constants/referentiel-services
 import { useMonProfilForm } from "./form";
 
 export const SelectService = () => {
-  const { watch, setValue, formState } = useMonProfilForm();
-  const ministere = watch("ministere");
-  const service = watch("service");
+  const form = useMonProfilForm();
+  const ministere = form.watch("ministere");
+  const service = form.watch("service");
 
   const options = ministere
     ? getServicesForMinistere(ministere).map((service) => ({
@@ -16,6 +16,7 @@ export const SelectService = () => {
 
   return (
     <SelecteurNew
+      key={ministere}
       htmlName="service"
       libelle="Service"
       className="fr-input-group"
@@ -23,7 +24,7 @@ export const SelectService = () => {
       options={options}
       isRequired
       valeurSelectionnee={service || undefined}
-      erreurMessage={formState.errors.service?.message}
+      erreurMessage={form.formState.errors.service?.message}
       disabled={!ministere}
       placeholder={
         ministere
@@ -31,9 +32,9 @@ export const SelectService = () => {
           : "Veuillez d'abord sélectionner un ministère"
       }
       onChange={(nouvelleValeur) => {
-        setValue("service", nouvelleValeur);
+        form.setValue("service", nouvelleValeur);
         if (nouvelleValeur !== "autre") {
-          setValue("serviceAutre", null);
+          form.setValue("serviceAutre", null);
         }
       }}
     />
