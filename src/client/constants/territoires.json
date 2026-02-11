@@ -6,10 +6,7 @@
       "nomAffiché": "France",
       "codeInsee": "FR",
       "codeParent": null,
-      "maille": "nationale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "nationale"
     },
     {
       "code": "REG-84",
@@ -17,10 +14,7 @@
       "nomAffiché": "Auvergne-Rhône-Alpes",
       "codeInsee": "84",
       "codeParent": null,
-      "maille": "regionale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "regionale"
     },
     {
       "code": "REG-27",
@@ -28,10 +22,7 @@
       "nomAffiché": "Bourgogne-Franche-Comté",
       "codeInsee": "27",
       "codeParent": null,
-      "maille": "regionale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "regionale"
     },
     {
       "code": "REG-53",
@@ -39,10 +30,7 @@
       "nomAffiché": "Bretagne",
       "codeInsee": "53",
       "codeParent": null,
-      "maille": "regionale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "regionale"
     },
     {
       "code": "REG-24",
@@ -50,10 +38,7 @@
       "nomAffiché": "Centre-Val de Loire",
       "codeInsee": "24",
       "codeParent": null,
-      "maille": "regionale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "regionale"
     },
     {
       "code": "REG-94",
@@ -61,10 +46,7 @@
       "nomAffiché": "Corse",
       "codeInsee": "94",
       "codeParent": null,
-      "maille": "regionale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "regionale"
     },
     {
       "code": "REG-44",
@@ -72,10 +54,7 @@
       "nomAffiché": "Grand-Est",
       "codeInsee": "44",
       "codeParent": null,
-      "maille": "regionale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "regionale"
     },
     {
       "code": "REG-32",
@@ -83,10 +62,7 @@
       "nomAffiché": "Hauts-de-France",
       "codeInsee": "32",
       "codeParent": null,
-      "maille": "regionale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "regionale"
     },
     {
       "code": "REG-11",
@@ -94,10 +70,7 @@
       "nomAffiché": "Île-de-France",
       "codeInsee": "11",
       "codeParent": null,
-      "maille": "regionale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "regionale"
     },
     {
       "code": "REG-28",
@@ -105,10 +78,7 @@
       "nomAffiché": "Normandie",
       "codeInsee": "28",
       "codeParent": null,
-      "maille": "regionale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "regionale"
     },
     {
       "code": "REG-75",
@@ -116,10 +86,7 @@
       "nomAffiché": "Nouvelle Aquitaine",
       "codeInsee": "75",
       "codeParent": null,
-      "maille": "regionale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "regionale"
     },
     {
       "code": "REG-76",
@@ -127,10 +94,7 @@
       "nomAffiché": "Occitanie",
       "codeInsee": "76",
       "codeParent": null,
-      "maille": "regionale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "regionale"
     },
     {
       "code": "REG-52",
@@ -138,10 +102,7 @@
       "nomAffiché": "Pays de la Loire",
       "codeInsee": "52",
       "codeParent": null,
-      "maille": "regionale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "regionale"
     },
     {
       "code": "REG-93",
@@ -149,10 +110,7 @@
       "nomAffiché": "Provence - Alpes - Côte d'Azur",
       "codeInsee": "93",
       "codeParent": null,
-      "maille": "regionale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "regionale"
     },
     {
       "code": "REG-01",
@@ -160,10 +118,7 @@
       "nomAffiché": "Guadeloupe",
       "codeInsee": "01",
       "codeParent": null,
-      "maille": "regionale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "regionale"
     },
     {
       "code": "REG-02",
@@ -171,10 +126,7 @@
       "nomAffiché": "Martinique",
       "codeInsee": "02",
       "codeParent": null,
-      "maille": "regionale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "regionale"
     },
     {
       "code": "REG-03",
@@ -182,10 +134,7 @@
       "nomAffiché": "Guyane",
       "codeInsee": "03",
       "codeParent": null,
-      "maille": "regionale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "regionale"
     },
     {
       "code": "REG-06",
@@ -193,10 +142,7 @@
       "nomAffiché": "Mayotte",
       "codeInsee": "06",
       "codeParent": null,
-      "maille": "regionale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "regionale"
     },
     {
       "code": "REG-04",
@@ -204,10 +150,7 @@
       "nomAffiché": "La Réunion",
       "codeInsee": "04",
       "codeParent": null,
-      "maille": "regionale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "regionale"
     },
     {
       "code": "DEPT-08",
@@ -215,10 +158,7 @@
       "nomAffiché": "08 - Ardennes",
       "codeInsee": "08",
       "codeParent": "REG-44",
-      "maille": "departementale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "departementale"
     },
     {
       "code": "DEPT-09",
@@ -226,10 +166,7 @@
       "nomAffiché": "09 - Ariège",
       "codeInsee": "09",
       "codeParent": "REG-76",
-      "maille": "departementale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "departementale"
     },
     {
       "code": "DEPT-67",
@@ -237,10 +174,7 @@
       "nomAffiché": "67 - Bas-Rhin",
       "codeInsee": "67",
       "codeParent": "REG-44",
-      "maille": "departementale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "departementale"
     },
     {
       "code": "DEPT-10",
@@ -248,10 +182,7 @@
       "nomAffiché": "10 - Aube",
       "codeInsee": "10",
       "codeParent": "REG-44",
-      "maille": "departementale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "departementale"
     },
     {
       "code": "DEPT-972",
@@ -259,10 +190,7 @@
       "nomAffiché": "972 - Martinique",
       "codeInsee": "972",
       "codeParent": "REG-02",
-      "maille": "departementale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "departementale"
     },
     {
       "code": "DEPT-01",
@@ -270,10 +198,7 @@
       "nomAffiché": "01 - Ain",
       "codeInsee": "01",
       "codeParent": "REG-84",
-      "maille": "departementale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "departementale"
     },
     {
       "code": "DEPT-02",
@@ -281,10 +206,7 @@
       "nomAffiché": "02 - Aisne",
       "codeInsee": "02",
       "codeParent": "REG-32",
-      "maille": "departementale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "departementale"
     },
     {
       "code": "DEPT-03",
@@ -292,10 +214,7 @@
       "nomAffiché": "03 - Allier",
       "codeInsee": "03",
       "codeParent": "REG-84",
-      "maille": "departementale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "departementale"
     },
     {
       "code": "DEPT-04",
@@ -303,10 +222,7 @@
       "nomAffiché": "04 - Alpes-de-Haute-Provence",
       "codeInsee": "04",
       "codeParent": "REG-93",
-      "maille": "departementale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "departementale"
     },
     {
       "code": "DEPT-05",
@@ -314,10 +230,7 @@
       "nomAffiché": "05 - Hautes-Alpes",
       "codeInsee": "05",
       "codeParent": "REG-93",
-      "maille": "departementale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "departementale"
     },
     {
       "code": "DEPT-06",
@@ -325,10 +238,7 @@
       "nomAffiché": "06 - Alpes-Maritimes",
       "codeInsee": "06",
       "codeParent": "REG-93",
-      "maille": "departementale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "departementale"
     },
     {
       "code": "DEPT-07",
@@ -336,10 +246,7 @@
       "nomAffiché": "07 - Ardèche",
       "codeInsee": "07",
       "codeParent": "REG-84",
-      "maille": "departementale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "departementale"
     },
     {
       "code": "DEPT-11",
@@ -347,10 +254,7 @@
       "nomAffiché": "11 - Aude",
       "codeInsee": "11",
       "codeParent": "REG-76",
-      "maille": "departementale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "departementale"
     },
     {
       "code": "DEPT-12",
@@ -358,10 +262,7 @@
       "nomAffiché": "12 - Aveyron",
       "codeInsee": "12",
       "codeParent": "REG-76",
-      "maille": "departementale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "departementale"
     },
     {
       "code": "DEPT-13",
@@ -369,10 +270,7 @@
       "nomAffiché": "13 - Bouches-du-Rhône",
       "codeInsee": "13",
       "codeParent": "REG-93",
-      "maille": "departementale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "departementale"
     },
     {
       "code": "DEPT-14",
@@ -380,10 +278,7 @@
       "nomAffiché": "14 - Calvados",
       "codeInsee": "14",
       "codeParent": "REG-28",
-      "maille": "departementale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "departementale"
     },
     {
       "code": "DEPT-15",
@@ -391,10 +286,7 @@
       "nomAffiché": "15 - Cantal",
       "codeInsee": "15",
       "codeParent": "REG-84",
-      "maille": "departementale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "departementale"
     },
     {
       "code": "DEPT-16",
@@ -402,10 +294,7 @@
       "nomAffiché": "16 - Charente",
       "codeInsee": "16",
       "codeParent": "REG-75",
-      "maille": "departementale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "departementale"
     },
     {
       "code": "DEPT-17",
@@ -413,10 +302,7 @@
       "nomAffiché": "17 - Charente-Maritime",
       "codeInsee": "17",
       "codeParent": "REG-75",
-      "maille": "departementale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "departementale"
     },
     {
       "code": "DEPT-18",
@@ -424,10 +310,7 @@
       "nomAffiché": "18 - Cher",
       "codeInsee": "18",
       "codeParent": "REG-24",
-      "maille": "departementale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "departementale"
     },
     {
       "code": "DEPT-19",
@@ -435,10 +318,7 @@
       "nomAffiché": "19 - Corrèze",
       "codeInsee": "19",
       "codeParent": "REG-75",
-      "maille": "departementale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "departementale"
     },
     {
       "code": "DEPT-2A",
@@ -446,10 +326,7 @@
       "nomAffiché": "2A - Corse-du-Sud",
       "codeInsee": "2A",
       "codeParent": "REG-94",
-      "maille": "departementale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "departementale"
     },
     {
       "code": "DEPT-2B",
@@ -457,10 +334,7 @@
       "nomAffiché": "2B - Haute-Corse",
       "codeInsee": "2B",
       "codeParent": "REG-94",
-      "maille": "departementale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "departementale"
     },
     {
       "code": "DEPT-21",
@@ -468,10 +342,7 @@
       "nomAffiché": "21 - Côte-d'Or",
       "codeInsee": "21",
       "codeParent": "REG-27",
-      "maille": "departementale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "departementale"
     },
     {
       "code": "DEPT-22",
@@ -479,10 +350,7 @@
       "nomAffiché": "22 - Côtes-d'Armor",
       "codeInsee": "22",
       "codeParent": "REG-53",
-      "maille": "departementale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "departementale"
     },
     {
       "code": "DEPT-23",
@@ -490,10 +358,7 @@
       "nomAffiché": "23 - Creuse",
       "codeInsee": "23",
       "codeParent": "REG-75",
-      "maille": "departementale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "departementale"
     },
     {
       "code": "DEPT-24",
@@ -501,10 +366,7 @@
       "nomAffiché": "24 - Dordogne",
       "codeInsee": "24",
       "codeParent": "REG-75",
-      "maille": "departementale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "departementale"
     },
     {
       "code": "DEPT-25",
@@ -512,10 +374,7 @@
       "nomAffiché": "25 - Doubs",
       "codeInsee": "25",
       "codeParent": "REG-27",
-      "maille": "departementale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "departementale"
     },
     {
       "code": "DEPT-26",
@@ -523,10 +382,7 @@
       "nomAffiché": "26 - Drôme",
       "codeInsee": "26",
       "codeParent": "REG-84",
-      "maille": "departementale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "departementale"
     },
     {
       "code": "DEPT-27",
@@ -534,10 +390,7 @@
       "nomAffiché": "27 - Eure",
       "codeInsee": "27",
       "codeParent": "REG-28",
-      "maille": "departementale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "departementale"
     },
     {
       "code": "DEPT-28",
@@ -545,10 +398,7 @@
       "nomAffiché": "28 - Eure-et-Loir",
       "codeInsee": "28",
       "codeParent": "REG-24",
-      "maille": "departementale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "departementale"
     },
     {
       "code": "DEPT-29",
@@ -556,10 +406,7 @@
       "nomAffiché": "29 - Finistère",
       "codeInsee": "29",
       "codeParent": "REG-53",
-      "maille": "departementale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "departementale"
     },
     {
       "code": "DEPT-30",
@@ -567,10 +414,7 @@
       "nomAffiché": "30 - Gard",
       "codeInsee": "30",
       "codeParent": "REG-76",
-      "maille": "departementale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "departementale"
     },
     {
       "code": "DEPT-31",
@@ -578,10 +422,7 @@
       "nomAffiché": "31 - Haute-Garonne",
       "codeInsee": "31",
       "codeParent": "REG-76",
-      "maille": "departementale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "departementale"
     },
     {
       "code": "DEPT-32",
@@ -589,10 +430,7 @@
       "nomAffiché": "32 - Gers",
       "codeInsee": "32",
       "codeParent": "REG-76",
-      "maille": "departementale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "departementale"
     },
     {
       "code": "DEPT-33",
@@ -600,10 +438,7 @@
       "nomAffiché": "33 - Gironde",
       "codeInsee": "33",
       "codeParent": "REG-75",
-      "maille": "departementale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "departementale"
     },
     {
       "code": "DEPT-34",
@@ -611,10 +446,7 @@
       "nomAffiché": "34 - Hérault",
       "codeInsee": "34",
       "codeParent": "REG-76",
-      "maille": "departementale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "departementale"
     },
     {
       "code": "DEPT-35",
@@ -622,10 +454,7 @@
       "nomAffiché": "35 - Ille-et-Vilaine",
       "codeInsee": "35",
       "codeParent": "REG-53",
-      "maille": "departementale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "departementale"
     },
     {
       "code": "DEPT-36",
@@ -633,10 +462,7 @@
       "nomAffiché": "36 - Indre",
       "codeInsee": "36",
       "codeParent": "REG-24",
-      "maille": "departementale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "departementale"
     },
     {
       "code": "DEPT-37",
@@ -644,10 +470,7 @@
       "nomAffiché": "37 - Indre-et-Loire",
       "codeInsee": "37",
       "codeParent": "REG-24",
-      "maille": "departementale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "departementale"
     },
     {
       "code": "DEPT-38",
@@ -655,10 +478,7 @@
       "nomAffiché": "38 - Isère",
       "codeInsee": "38",
       "codeParent": "REG-84",
-      "maille": "departementale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "departementale"
     },
     {
       "code": "DEPT-39",
@@ -666,10 +486,7 @@
       "nomAffiché": "39 - Jura",
       "codeInsee": "39",
       "codeParent": "REG-27",
-      "maille": "departementale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "departementale"
     },
     {
       "code": "DEPT-40",
@@ -677,10 +494,7 @@
       "nomAffiché": "40 - Landes",
       "codeInsee": "40",
       "codeParent": "REG-75",
-      "maille": "departementale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "departementale"
     },
     {
       "code": "DEPT-41",
@@ -688,10 +502,7 @@
       "nomAffiché": "41 - Loir-et-Cher",
       "codeInsee": "41",
       "codeParent": "REG-24",
-      "maille": "departementale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "departementale"
     },
     {
       "code": "DEPT-973",
@@ -699,10 +510,7 @@
       "nomAffiché": "973 - Guyane",
       "codeInsee": "973",
       "codeParent": "REG-03",
-      "maille": "departementale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "departementale"
     },
     {
       "code": "DEPT-42",
@@ -710,10 +518,7 @@
       "nomAffiché": "42 - Loire",
       "codeInsee": "42",
       "codeParent": "REG-84",
-      "maille": "departementale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "departementale"
     },
     {
       "code": "DEPT-43",
@@ -721,10 +526,7 @@
       "nomAffiché": "43 - Haute-Loire",
       "codeInsee": "43",
       "codeParent": "REG-84",
-      "maille": "departementale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "departementale"
     },
     {
       "code": "DEPT-44",
@@ -732,10 +534,7 @@
       "nomAffiché": "44 - Loire-Atlantique",
       "codeInsee": "44",
       "codeParent": "REG-52",
-      "maille": "departementale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "departementale"
     },
     {
       "code": "DEPT-45",
@@ -743,10 +542,7 @@
       "nomAffiché": "45 - Loiret",
       "codeInsee": "45",
       "codeParent": "REG-24",
-      "maille": "departementale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "departementale"
     },
     {
       "code": "DEPT-46",
@@ -754,10 +550,7 @@
       "nomAffiché": "46 - Lot",
       "codeInsee": "46",
       "codeParent": "REG-76",
-      "maille": "departementale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "departementale"
     },
     {
       "code": "DEPT-47",
@@ -765,10 +558,7 @@
       "nomAffiché": "47 - Lot-et-Garonne",
       "codeInsee": "47",
       "codeParent": "REG-75",
-      "maille": "departementale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "departementale"
     },
     {
       "code": "DEPT-48",
@@ -776,10 +566,7 @@
       "nomAffiché": "48 - Lozère",
       "codeInsee": "48",
       "codeParent": "REG-76",
-      "maille": "departementale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "departementale"
     },
     {
       "code": "DEPT-49",
@@ -787,10 +574,7 @@
       "nomAffiché": "49 - Maine-et-Loire",
       "codeInsee": "49",
       "codeParent": "REG-52",
-      "maille": "departementale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "departementale"
     },
     {
       "code": "DEPT-50",
@@ -798,10 +582,7 @@
       "nomAffiché": "50 - Manche",
       "codeInsee": "50",
       "codeParent": "REG-28",
-      "maille": "departementale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "departementale"
     },
     {
       "code": "DEPT-51",
@@ -809,10 +590,7 @@
       "nomAffiché": "51 - Marne",
       "codeInsee": "51",
       "codeParent": "REG-44",
-      "maille": "departementale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "departementale"
     },
     {
       "code": "DEPT-52",
@@ -820,10 +598,7 @@
       "nomAffiché": "52 - Haute-Marne",
       "codeInsee": "52",
       "codeParent": "REG-44",
-      "maille": "departementale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "departementale"
     },
     {
       "code": "DEPT-53",
@@ -831,10 +606,7 @@
       "nomAffiché": "53 - Mayenne",
       "codeInsee": "53",
       "codeParent": "REG-52",
-      "maille": "departementale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "departementale"
     },
     {
       "code": "DEPT-54",
@@ -842,10 +614,7 @@
       "nomAffiché": "54 - Meurthe-et-Moselle",
       "codeInsee": "54",
       "codeParent": "REG-44",
-      "maille": "departementale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "departementale"
     },
     {
       "code": "DEPT-55",
@@ -853,10 +622,7 @@
       "nomAffiché": "55 - Meuse",
       "codeInsee": "55",
       "codeParent": "REG-44",
-      "maille": "departementale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "departementale"
     },
     {
       "code": "DEPT-56",
@@ -864,10 +630,7 @@
       "nomAffiché": "56 - Morbihan",
       "codeInsee": "56",
       "codeParent": "REG-53",
-      "maille": "departementale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "departementale"
     },
     {
       "code": "DEPT-57",
@@ -875,10 +638,7 @@
       "nomAffiché": "57 - Moselle",
       "codeInsee": "57",
       "codeParent": "REG-44",
-      "maille": "departementale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "departementale"
     },
     {
       "code": "DEPT-974",
@@ -886,10 +646,7 @@
       "nomAffiché": "974 - La Réunion",
       "codeInsee": "974",
       "codeParent": "REG-04",
-      "maille": "departementale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "departementale"
     },
     {
       "code": "DEPT-58",
@@ -897,10 +654,7 @@
       "nomAffiché": "58 - Nièvre",
       "codeInsee": "58",
       "codeParent": "REG-27",
-      "maille": "departementale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "departementale"
     },
     {
       "code": "DEPT-59",
@@ -908,10 +662,7 @@
       "nomAffiché": "59 - Nord",
       "codeInsee": "59",
       "codeParent": "REG-32",
-      "maille": "departementale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "departementale"
     },
     {
       "code": "DEPT-60",
@@ -919,10 +670,7 @@
       "nomAffiché": "60 - Oise",
       "codeInsee": "60",
       "codeParent": "REG-32",
-      "maille": "departementale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "departementale"
     },
     {
       "code": "DEPT-61",
@@ -930,10 +678,7 @@
       "nomAffiché": "61 - Orne",
       "codeInsee": "61",
       "codeParent": "REG-28",
-      "maille": "departementale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "departementale"
     },
     {
       "code": "DEPT-62",
@@ -941,10 +686,7 @@
       "nomAffiché": "62 - Pas-de-Calais",
       "codeInsee": "62",
       "codeParent": "REG-32",
-      "maille": "departementale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "departementale"
     },
     {
       "code": "DEPT-63",
@@ -952,10 +694,7 @@
       "nomAffiché": "63 - Puy-de-Dôme",
       "codeInsee": "63",
       "codeParent": "REG-84",
-      "maille": "departementale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "departementale"
     },
     {
       "code": "DEPT-64",
@@ -963,10 +702,7 @@
       "nomAffiché": "64 - Pyrénées-Atlantiques",
       "codeInsee": "64",
       "codeParent": "REG-75",
-      "maille": "departementale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "departementale"
     },
     {
       "code": "DEPT-65",
@@ -974,10 +710,7 @@
       "nomAffiché": "65 - Hautes-Pyrénées",
       "codeInsee": "65",
       "codeParent": "REG-76",
-      "maille": "departementale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "departementale"
     },
     {
       "code": "DEPT-66",
@@ -985,10 +718,7 @@
       "nomAffiché": "66 - Pyrénées-Orientales",
       "codeInsee": "66",
       "codeParent": "REG-76",
-      "maille": "departementale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "departementale"
     },
     {
       "code": "DEPT-68",
@@ -996,10 +726,7 @@
       "nomAffiché": "68 - Haut-Rhin",
       "codeInsee": "68",
       "codeParent": "REG-44",
-      "maille": "departementale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "departementale"
     },
     {
       "code": "DEPT-69",
@@ -1007,10 +734,7 @@
       "nomAffiché": "69 - Rhône",
       "codeInsee": "69",
       "codeParent": "REG-84",
-      "maille": "departementale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "departementale"
     },
     {
       "code": "DEPT-70",
@@ -1018,10 +742,7 @@
       "nomAffiché": "70 - Haute-Saône",
       "codeInsee": "70",
       "codeParent": "REG-27",
-      "maille": "departementale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "departementale"
     },
     {
       "code": "DEPT-71",
@@ -1029,10 +750,7 @@
       "nomAffiché": "71 - Saône-et-Loire",
       "codeInsee": "71",
       "codeParent": "REG-27",
-      "maille": "departementale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "departementale"
     },
     {
       "code": "DEPT-72",
@@ -1040,10 +758,7 @@
       "nomAffiché": "72 - Sarthe",
       "codeInsee": "72",
       "codeParent": "REG-52",
-      "maille": "departementale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "departementale"
     },
     {
       "code": "DEPT-73",
@@ -1051,10 +766,7 @@
       "nomAffiché": "73 - Savoie",
       "codeInsee": "73",
       "codeParent": "REG-84",
-      "maille": "departementale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "departementale"
     },
     {
       "code": "DEPT-74",
@@ -1062,10 +774,7 @@
       "nomAffiché": "74 - Haute-Savoie",
       "codeInsee": "74",
       "codeParent": "REG-84",
-      "maille": "departementale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "departementale"
     },
     {
       "code": "DEPT-75",
@@ -1073,10 +782,7 @@
       "nomAffiché": "75 - Paris",
       "codeInsee": "75",
       "codeParent": "REG-11",
-      "maille": "departementale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "departementale"
     },
     {
       "code": "DEPT-76",
@@ -1084,10 +790,7 @@
       "nomAffiché": "76 - Seine-Maritime",
       "codeInsee": "76",
       "codeParent": "REG-28",
-      "maille": "departementale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "departementale"
     },
     {
       "code": "DEPT-77",
@@ -1095,10 +798,7 @@
       "nomAffiché": "77 - Seine-et-Marne",
       "codeInsee": "77",
       "codeParent": "REG-11",
-      "maille": "departementale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "departementale"
     },
     {
       "code": "DEPT-78",
@@ -1106,10 +806,7 @@
       "nomAffiché": "78 - Yvelines",
       "codeInsee": "78",
       "codeParent": "REG-11",
-      "maille": "departementale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "departementale"
     },
     {
       "code": "DEPT-79",
@@ -1117,10 +814,7 @@
       "nomAffiché": "79 - Deux-Sèvres",
       "codeInsee": "79",
       "codeParent": "REG-75",
-      "maille": "departementale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "departementale"
     },
     {
       "code": "DEPT-80",
@@ -1128,10 +822,7 @@
       "nomAffiché": "80 - Somme",
       "codeInsee": "80",
       "codeParent": "REG-32",
-      "maille": "departementale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "departementale"
     },
     {
       "code": "DEPT-81",
@@ -1139,10 +830,7 @@
       "nomAffiché": "81 - Tarn",
       "codeInsee": "81",
       "codeParent": "REG-76",
-      "maille": "departementale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "departementale"
     },
     {
       "code": "DEPT-82",
@@ -1150,10 +838,7 @@
       "nomAffiché": "82 - Tarn-et-Garonne",
       "codeInsee": "82",
       "codeParent": "REG-76",
-      "maille": "departementale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "departementale"
     },
     {
       "code": "DEPT-83",
@@ -1161,10 +846,7 @@
       "nomAffiché": "83 - Var",
       "codeInsee": "83",
       "codeParent": "REG-93",
-      "maille": "departementale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "departementale"
     },
     {
       "code": "DEPT-84",
@@ -1172,10 +854,7 @@
       "nomAffiché": "84 - Vaucluse",
       "codeInsee": "84",
       "codeParent": "REG-93",
-      "maille": "departementale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "departementale"
     },
     {
       "code": "DEPT-85",
@@ -1183,10 +862,7 @@
       "nomAffiché": "85 - Vendée",
       "codeInsee": "85",
       "codeParent": "REG-52",
-      "maille": "departementale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "departementale"
     },
     {
       "code": "DEPT-86",
@@ -1194,10 +870,7 @@
       "nomAffiché": "86 - Vienne",
       "codeInsee": "86",
       "codeParent": "REG-75",
-      "maille": "departementale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "departementale"
     },
     {
       "code": "DEPT-87",
@@ -1205,10 +878,7 @@
       "nomAffiché": "87 - Haute-Vienne",
       "codeInsee": "87",
       "codeParent": "REG-75",
-      "maille": "departementale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "departementale"
     },
     {
       "code": "DEPT-88",
@@ -1216,10 +886,7 @@
       "nomAffiché": "88 - Vosges",
       "codeInsee": "88",
       "codeParent": "REG-44",
-      "maille": "departementale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "departementale"
     },
     {
       "code": "DEPT-89",
@@ -1227,10 +894,7 @@
       "nomAffiché": "89 - Yonne",
       "codeInsee": "89",
       "codeParent": "REG-27",
-      "maille": "departementale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "departementale"
     },
     {
       "code": "DEPT-90",
@@ -1238,10 +902,7 @@
       "nomAffiché": "90 - Territoire de Belfort",
       "codeInsee": "90",
       "codeParent": "REG-27",
-      "maille": "departementale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "departementale"
     },
     {
       "code": "DEPT-91",
@@ -1249,10 +910,7 @@
       "nomAffiché": "91 - Essonne",
       "codeInsee": "91",
       "codeParent": "REG-11",
-      "maille": "departementale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "departementale"
     },
     {
       "code": "DEPT-92",
@@ -1260,10 +918,7 @@
       "nomAffiché": "92 - Hauts-de-Seine",
       "codeInsee": "92",
       "codeParent": "REG-11",
-      "maille": "departementale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "departementale"
     },
     {
       "code": "DEPT-93",
@@ -1271,10 +926,7 @@
       "nomAffiché": "93 - Seine-Saint-Denis",
       "codeInsee": "93",
       "codeParent": "REG-11",
-      "maille": "departementale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "departementale"
     },
     {
       "code": "DEPT-94",
@@ -1282,10 +934,7 @@
       "nomAffiché": "94 - Val-de-Marne",
       "codeInsee": "94",
       "codeParent": "REG-11",
-      "maille": "departementale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "departementale"
     },
     {
       "code": "DEPT-95",
@@ -1293,10 +942,7 @@
       "nomAffiché": "95 - Val-d'Oise",
       "codeInsee": "95",
       "codeParent": "REG-11",
-      "maille": "departementale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "departementale"
     },
     {
       "code": "DEPT-971",
@@ -1304,10 +950,7 @@
       "nomAffiché": "971 - Guadeloupe",
       "codeInsee": "971",
       "codeParent": "REG-01",
-      "maille": "departementale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "departementale"
     },
     {
       "code": "DEPT-976",
@@ -1315,10 +958,7 @@
       "nomAffiché": "976 - Mayotte",
       "codeInsee": "976",
       "codeParent": "REG-06",
-      "maille": "departementale",
-      "accèsLecture": true,
-      "accèsSaisiePublication": true,
-      "accèsSaisieIndicateur": true
+      "maille": "departementale"
     }
   ]
 }

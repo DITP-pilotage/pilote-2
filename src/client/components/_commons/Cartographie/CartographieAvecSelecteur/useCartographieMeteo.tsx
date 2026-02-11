@@ -5,7 +5,7 @@ import { CartographieDonnées } from "@/client/components/_commons/Cartographie/
 import { objectEntries } from "@/client/utils/objects/objects";
 import { TerritoiresDonnées } from "@/server/domain/territoire/Territoire.interface";
 import { Maille } from "@/server/domain/maille/Maille.interface";
-import { récupérerDétailsSurUnTerritoire } from "@/client/constants/territoires";
+import { useTerritoireHabilitation } from "@/client/hooks/useTerritoireHabilitation";
 
 const determinerRemplissage = (
   valeur: Météo | null,
@@ -25,6 +25,8 @@ export const useCartographieMeteo = (
   chantierMailles: Record<Maille, TerritoiresDonnées>,
   elementsDeLegende: CartographieÉlémentsDeLégende,
 ) => {
+  const { récupérerDétailsSurUnTerritoire } = useTerritoireHabilitation();
+
   const useRecupererDonnees = () => {
     const donnees = objectEntries({
       ...chantierMailles.departementale,

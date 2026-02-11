@@ -3,14 +3,14 @@ import { FunctionComponent } from "react";
 import { MailleInterne } from "@/server/domain/maille/Maille.interface";
 import { objectEntries } from "@/client/utils/objects/objects";
 import { sauvegarderFiltres } from "@/stores/useFiltresStoreNew/useFiltresStoreNew";
-import { listeTerritoires } from "@/client/constants/territoires";
+import { useTerritoireHabilitation } from "@/client/hooks/useTerritoireHabilitation";
 import SélecteurMailleStyled from "./SélecteurMaille.styled";
 
 const SélecteurMaille: FunctionComponent<{
   pathname: string;
   mailleQuery: MailleInterne;
 }> = ({ pathname, mailleQuery }) => {
-  const { maillesAccessiblesEnLecture } = listeTerritoires;
+  const { maillesAccessiblesEnLecture } = useTerritoireHabilitation();
   const router = useRouter();
 
   const maillesInternesAccessiblesEnLecture =

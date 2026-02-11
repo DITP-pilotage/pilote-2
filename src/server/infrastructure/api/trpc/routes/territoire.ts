@@ -1,9 +1,5 @@
 import { z } from "zod";
-import {
-  DétailTerritoire,
-  TerritoireAvecNombreUtilisateurs,
-} from "@/server/domain/territoire/Territoire.interface";
-import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
+import { TerritoireAvecNombreUtilisateurs } from "@/server/domain/territoire/Territoire.interface";
 import { dependencies } from "@/server/infrastructure/Dependencies";
 import {
   créerRouteurTRPC,
@@ -16,26 +12,6 @@ const validation = z.object({
 });
 
 export const territoireRouter = créerRouteurTRPC({
-  récupérerTous: procédureProtégée.query(
-    async ({ ctx }): Promise<DétailTerritoire[]> => {
-      const territoires = await dependencies
-        .getTerritoireRepository()
-        .récupérerTous();
-      const habilitation = new Habilitation(ctx.session.habilitations);
-      return territoires.map((territoire) => ({
-        ...territoire,
-        accèsLecture: habilitation.peutAccéderAuTerritoire(territoire.code),
-        accèsSaisiePublication:
-          habilitation.peutSaisirDesPublicationsPourUnTerritoire(
-            territoire.code,
-          ),
-        accèsSaisieIndicateur:
-          habilitation.peutSaisirDesIndicateursPourUnTerritoire(
-            territoire.code,
-          ),
-      }));
-    },
-  ),
   récupérerListe: procédureProtégée
     .input(validation)
     .query(async ({ input }): Promise<TerritoireAvecNombreUtilisateurs[]> => {

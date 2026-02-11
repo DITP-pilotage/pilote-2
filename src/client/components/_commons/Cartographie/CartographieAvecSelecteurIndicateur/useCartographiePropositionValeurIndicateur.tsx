@@ -2,7 +2,7 @@ import { CartographieÉlémentsDeLégende } from "@/client/components/_commons/C
 import { CartographieDonnées } from "@/client/components/_commons/Cartographie/Cartographie.interface";
 import { objectEntries } from "@/client/utils/objects/objects";
 import { DétailsIndicateurTerritoire } from "@/server/domain/indicateur/DétailsIndicateur.interface";
-import { récupérerDétailsSurUnTerritoire } from "@/client/constants/territoires";
+import { useTerritoireHabilitation } from "@/client/hooks/useTerritoireHabilitation";
 
 type TypeProposition = "PROPOSITION" | "PROPOSITION_AVEC_PONDERATION";
 type DonneesCartographieProposition = {
@@ -28,6 +28,8 @@ export function useCartographiePropositionValeurIndicateur(
   detailsIndicateurTerritoire: DétailsIndicateurTerritoire,
   elementsDeLegende: CartographieÉlémentsDeLégende,
 ) {
+  const { récupérerDétailsSurUnTerritoire } = useTerritoireHabilitation();
+
   const useRecupererDonnees = () => {
     const donnees: DonneesCartographieProposition[] = objectEntries(
       detailsIndicateurTerritoire,

@@ -10,7 +10,7 @@ import {
 import { MultiSelectOption } from "@/components/_commons/MultiSelect/MultiSelect.interface";
 import { InputGroupeTerritoire } from "@/components/_commons/InputGroupe/InputGroupeTerritoire/InputGroupeTerritoire";
 import { territoireCodeVersMailleCodeInsee } from "@/server/utils/territoires";
-import { listeTerritoires } from "@/client/constants/territoires";
+import { useTerritoireHabilitation } from "@/client/hooks/useTerritoireHabilitation";
 
 interface SélecteursMaillesEtTerritoiresProps {
   territoireCode: string;
@@ -86,7 +86,7 @@ const SélecteursMaillesEtTerritoires: FunctionComponent<
   territoiresApplicables,
 }) => {
   const router = useRouter();
-  const { territoiresAccessiblesEnLecture } = listeTerritoires;
+  const { territoiresAccessiblesEnLecture } = useTerritoireHabilitation();
 
   const changerTerritoire = async (territoireCodeSelectionne: string) => {
     if (

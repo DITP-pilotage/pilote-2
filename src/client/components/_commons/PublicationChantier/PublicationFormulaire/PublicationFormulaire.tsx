@@ -7,7 +7,7 @@ import {
   validationPublicationFormulaire,
 } from "validation/publication";
 import CompteurCaractères from "@/components/_commons/CompteurCaractères/CompteurCaractères";
-import { récupérerDétailsSurUnTerritoire } from "@/client/constants/territoires";
+import { useTerritoireHabilitation } from "@/client/hooks/useTerritoireHabilitation";
 import PublicationFormulaireStyled from "./PublicationFormulaire.styled";
 import PublicationFormulaireProps, {
   PublicationFormulaireInputs,
@@ -22,6 +22,8 @@ const PublicationFormulaire: FunctionComponent<PublicationFormulaireProps> = ({
   annulationCallback,
   territoireCode,
 }) => {
+  const { récupérerDétailsSurUnTerritoire } = useTerritoireHabilitation();
+
   const territoireSélectionné = récupérerDétailsSurUnTerritoire(territoireCode);
 
   const { créerPublication } = usePublicationFormulaire(

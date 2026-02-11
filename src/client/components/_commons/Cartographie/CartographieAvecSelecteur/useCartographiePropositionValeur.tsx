@@ -4,7 +4,7 @@ import { CartographieDonnées } from "@/client/components/_commons/Cartographie/
 import { objectEntries } from "@/client/utils/objects/objects";
 import { TerritoiresDonnées } from "@/server/domain/territoire/Territoire.interface";
 import { Maille } from "@/server/domain/maille/Maille.interface";
-import { récupérerDétailsSurUnTerritoire } from "@/client/constants/territoires";
+import { useTerritoireHabilitation } from "@/client/hooks/useTerritoireHabilitation";
 
 type TypeProposition = "PROPOSITION" | "PROPOSITION_AVEC_PONDERATION";
 type DonneesCartographieProposition = {
@@ -39,6 +39,7 @@ export const useCartographiePropositionValeur = (
       territoireCode: territoireCodeDonnee as string,
       estApplicable: territoire.estApplicable,
     }));
+    const { récupérerDétailsSurUnTerritoire } = useTerritoireHabilitation();
 
     const legende = useMemo(() => {
       const tousApplicables: Boolean = donnees.every((d) => d.estApplicable);

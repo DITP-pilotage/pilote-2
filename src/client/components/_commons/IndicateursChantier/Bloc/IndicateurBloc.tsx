@@ -20,7 +20,7 @@ import {
 import { BadgeIndicateurEnAlerte } from "@/components/_commons/IndicateursChantier/Bloc/BadgeIndicateurEnAlerte";
 import { BadgeIndicateurBarometre } from "@/components/_commons/IndicateursChantier/Bloc/BadgeIndicateurBarometre";
 import { LigneIndicateurDatePrevisionnelle } from "@/components/_commons/IndicateursChantier/Bloc/LigneIndicateurDatePrevisionnelle";
-import { récupérerDétailsSurUnTerritoire } from "@/client/constants/territoires";
+import { useTerritoireHabilitation } from "@/client/hooks/useTerritoireHabilitation";
 import IndicateurBlocStyled from "./IndicateurBloc.styled";
 import { useIndicateurBloc } from "./useIndicateurBloc";
 
@@ -48,6 +48,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
     datajobsExecution,
     configurationFeatureFlipping,
   } = pageChantier.useServerSidePropsContext();
+  const { récupérerDétailsSurUnTerritoire } = useTerritoireHabilitation();
 
   const mailsDirecteursProjets = chantier.responsables.directeursProjet
     .map((directeur) => directeur.email)

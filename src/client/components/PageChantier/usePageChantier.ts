@@ -5,10 +5,7 @@ import { ProfilEnum } from "@/server/app/enum/profil.enum";
 import { PROFIL_AUTORISE_A_VOIR_LES_ALERTES_MAJ_INDICATEURS } from "@/client/components/_commons/IndicateursChantier/Bloc/useIndicateurAlerteDateMaj";
 import { LISTE_PROFIL_TERRITORIALISE } from "@/server/app/domain/ProfilTerritorialise";
 import { pageChantier } from "@/components/PageChantier/PageChantierServerSideContext";
-import {
-  listeTerritoires,
-  récupérerDétailsSurUnTerritoire,
-} from "@/client/constants/territoires";
+import { useTerritoireHabilitation } from "@/client/hooks/useTerritoireHabilitation";
 
 const PROFIL_AUTORISE_A_VOIR_LES_PROPOSITIONS_DE_VALEUR_AVANCEMENT = new Set([
   ProfilEnum.DITP_ADMIN,
@@ -25,9 +22,9 @@ export const usePageChantier = () => {
   const { chantier, territoireCode, configurationFeatureFlipping } =
     pageChantier.useServerSidePropsContext();
 
+  const { listeTerritoires, récupérerDétailsSurUnTerritoire } =
+    useTerritoireHabilitation();
   const territoireSélectionné = récupérerDétailsSurUnTerritoire(territoireCode);
-
-  const { territoires } = listeTerritoires;
 
   let estAutoriseAModifierLesPublications =
     territoireSélectionné.accèsSaisiePublication &&
@@ -69,7 +66,7 @@ export const usePageChantier = () => {
   }
 
   const estAutoriseAModifierLesObjectifs =
-    territoires.some(
+    listeTerritoires.some(
       (territoire) =>
         territoire.maille === "nationale" && territoire.accèsSaisiePublication,
     ) &&

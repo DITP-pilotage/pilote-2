@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { CartographieDonnées } from "@/components/_commons/Cartographie/Cartographie.interface";
 import { libellésMétéos, Météo } from "@/server/domain/météo/Météo.interface";
 import { CartographieÉlémentsDeLégende } from "@/client/components/_commons/Cartographie/Légende/CartographieLégende.interface";
-import { récupérerDétailsSurUnTerritoire } from "@/client/constants/territoires";
+import { useTerritoireHabilitation } from "@/client/hooks/useTerritoireHabilitation";
 import { CartographieDonnéesMétéo } from "./CartographieMétéo.interface";
 
 function déterminerRemplissage(
@@ -23,6 +23,8 @@ export default function useCartographieMétéo(
   données: CartographieDonnéesMétéo,
   élémentsDeLégende: CartographieÉlémentsDeLégende,
 ) {
+  const { récupérerDétailsSurUnTerritoire } = useTerritoireHabilitation();
+
   const légende = useMemo(() => {
     const tousApplicables: Boolean = données.every((d) => d.estApplicable);
     const tousNonNull: Boolean = données.every(

@@ -3,7 +3,7 @@ import { CartographieÉlémentsDeLégende } from "@/client/components/_commons/C
 import { CartographieDonnées } from "@/client/components/_commons/Cartographie/Cartographie.interface";
 import { objectEntries } from "@/client/utils/objects/objects";
 import { DétailsIndicateurTerritoire } from "@/server/domain/indicateur/DétailsIndicateur.interface";
-import { récupérerDétailsSurUnTerritoire } from "@/client/constants/territoires";
+import { useTerritoireHabilitation } from "@/client/hooks/useTerritoireHabilitation";
 
 function determinerValeurAffichee(
   valeur: number | null,
@@ -74,6 +74,8 @@ export function useCartographieAvancementIndicateur(
   jalon: number,
   typeAvancement: "JALON" | "MANDAT",
 ) {
+  const { récupérerDétailsSurUnTerritoire } = useTerritoireHabilitation();
+
   const useRecupererDonnees = () => {
     const donnees = objectEntries(detailsIndicateurTerritoire).map(
       ([territoireCode, détailsIndicateur]) => ({

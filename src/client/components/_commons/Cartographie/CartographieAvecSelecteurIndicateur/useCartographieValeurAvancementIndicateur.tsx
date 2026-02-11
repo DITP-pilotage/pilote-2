@@ -8,7 +8,7 @@ import { ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS } from "@/client/constants/lé
 import { CartographieÉlémentsDeLégende } from "@/client/components/_commons/Cartographie/Légende/CartographieLégende.interface";
 import { DétailsIndicateurTerritoire } from "@/server/domain/indicateur/DétailsIndicateur.interface";
 import { objectEntries } from "@/client/utils/objects/objects";
-import { récupérerDétailsSurUnTerritoire } from "@/client/constants/territoires";
+import { useTerritoireHabilitation } from "@/client/hooks/useTerritoireHabilitation";
 
 const COULEUR_DÉPART = "#8bcdb1";
 const COULEUR_ARRIVÉE = "#083a25";
@@ -88,6 +88,8 @@ export function useCartographieValeurAvancementIndicateur(
   jalon: number,
   unité?: string | null,
 ) {
+  const { récupérerDétailsSurUnTerritoire } = useTerritoireHabilitation();
+
   const useRecupererDonnees = () => {
     const donnees = objectEntries(detailsIndicateurTerritoire).map(
       ([territoireCode, détailsIndicateur]) => ({

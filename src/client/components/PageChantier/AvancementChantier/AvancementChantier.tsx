@@ -10,7 +10,7 @@ import { JaugeDeProgressionSmall } from "@/components/_commons/JaugeDeProgressio
 import { DonneesComparaisonDuTauxDAvancementType } from "@/server/domain/territoire/Territoire.interface";
 import { formaterDate } from "@/client/utils/date/date";
 import { BadgeTendance } from "@/components/PageAccueil/PageChantiers/TableauChantiers/Tendance/BadgeTendance";
-import { récupérerDétailsSurUnTerritoire } from "@/client/constants/territoires";
+import { useTerritoireHabilitation } from "@/client/hooks/useTerritoireHabilitation";
 import AvancementChantierStyled from "./AvancementChantier.styled";
 import EcartTauxAvancementPPG from "./EcartTauxAvancementPPG/EcartTauxAvancementPPG";
 
@@ -69,6 +69,8 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
   jalon,
   donneesComparaisonDuTauxDAvancement,
 }) => {
+  const { récupérerDétailsSurUnTerritoire } = useTerritoireHabilitation();
+
   const territoireSélectionné = récupérerDétailsSurUnTerritoire(territoireCode);
 
   const territoireSélectionnéParent = territoireSélectionné.codeParent

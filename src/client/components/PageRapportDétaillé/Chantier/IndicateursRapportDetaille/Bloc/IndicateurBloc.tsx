@@ -8,7 +8,7 @@ import { DétailsIndicateurs } from "@/server/domain/indicateur/DétailsIndicate
 import Indicateur from "@/server/domain/indicateur/Indicateur.interface";
 import { IndicateurTendance } from "@/components/_commons/IndicateurTendance/IndicateurTendance";
 import { IndicateurPonderation } from "@/components/_commons/IndicateursChantier/Bloc/Pondération/IndicateurPonderation";
-import { récupérerDétailsSurUnTerritoire } from "@/client/constants/territoires";
+import { useTerritoireHabilitation } from "@/client/hooks/useTerritoireHabilitation";
 import useIndicateurBloc from "./useIndicateurBloc";
 import IndicateurBlocStyled from "./IndicateurBloc.styled";
 
@@ -27,6 +27,8 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
   typeDeRéforme,
   jalon,
 }) => {
+  const { récupérerDétailsSurUnTerritoire } = useTerritoireHabilitation();
+
   const détailsIndicateur = détailsIndicateurs[indicateur.id];
   const territoireSélectionné = récupérerDétailsSurUnTerritoire(territoireCode);
   const { tableau, dateDeMiseAJourIndicateur } = useIndicateurBloc(

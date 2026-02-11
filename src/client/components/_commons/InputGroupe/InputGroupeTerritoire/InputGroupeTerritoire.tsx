@@ -1,7 +1,7 @@
 import { FunctionComponent } from "react";
 import InputGroupe from "@/client/components/_commons/InputGroupe/InputGroupe";
 import { InputGroupeOptionsGroupées } from "@/client/components/_commons/InputGroupe/InputGroupe.interface";
-import { récupérerDétailsSurUnTerritoire } from "@/client/constants/territoires";
+import { useTerritoireHabilitation } from "@/client/hooks/useTerritoireHabilitation";
 
 interface InputGroupeTerritoireProps {
   changementValeurSelectionneeCallback: (
@@ -20,6 +20,8 @@ export const InputGroupeTerritoire: FunctionComponent<
   options,
   direction,
 }) => {
+  const { récupérerDétailsSurUnTerritoire } = useTerritoireHabilitation();
+
   const territoireSélectionné = récupérerDétailsSurUnTerritoire(
     territoireCodeSelectionneParDefaut,
   );

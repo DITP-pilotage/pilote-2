@@ -28,7 +28,7 @@ import { ArrowGoBackIcon } from "@/components/_commons/Icones/ArrowGoBackIcon";
 import { Icone } from "@/components/_commons/Icone";
 import { Printer1Icon } from "@/components/_commons/Icones/Printer1Icon";
 import { ChantierRapportDetailleContrat } from "@/server/chantiers/app/contrats/ChantierRapportDetailleContratV2";
-import { récupérerDétailsSurUnTerritoire } from "@/client/constants/territoires";
+import { useTerritoireHabilitation } from "@/client/hooks/useTerritoireHabilitation";
 import FiltresSélectionnés from "./FiltresSélectionnés/FiltresSélectionnés";
 
 interface PageRapportDétailléProps {
@@ -85,6 +85,7 @@ const PageRapportDétaillé: FunctionComponent<PageRapportDétailléProps> = ({
   listeIndicateursPrisEnCompteAvancement,
   chantiersSontArchives,
 }) => {
+  const { récupérerDétailsSurUnTerritoire } = useTerritoireHabilitation();
   const territoireSélectionné = récupérerDétailsSurUnTerritoire(territoireCode);
   const [afficherLesChantiers, setAfficherLesChantiers] = useState(false);
 
