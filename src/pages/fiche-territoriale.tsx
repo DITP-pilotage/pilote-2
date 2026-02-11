@@ -1,6 +1,6 @@
 import { FunctionComponent } from "react";
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next";
-import { z } from "zod";
+import { createLoader, parseAsInteger, parseAsString } from "nuqs/server";
 import assert from "node:assert";
 import { PageFicheTerritoriale } from "@/components/PageFicheTerritoriale/PageFicheTerritoriale";
 import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
@@ -8,6 +8,11 @@ import { estAutoriséAConsulterLaFicheTerritoriale } from "@/client/utils/fiche-
 import { ficheTerritorialeHandler } from "@/server/fiche-territoriale/infrastructure/handlers/FicheTerritorialeHandler";
 import { getAnneeDateDeBascule } from "@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getAnneeDateDeBascule";
 import { configuration, configurationFeatureFlip } from "@/config";
+
+const loadSearchParams = createLoader({
+  jalon: parseAsInteger,
+  territoireCode: parseAsString,
+});
 
 export const getServerSideProps = async (
   context: GetServerSidePropsContext,
@@ -21,8 +26,10 @@ export const getServerSideProps = async (
     };
   }
 
-  const queryJalon = z.string().parse(query.jalon || "2025");
-  const queryTerritoireCode = z.string().parse(query.territoireCode);
+  const searchParams = loadSearchParams(query);
+  const queryTerritoireCode = searchParams.territoireCode;
+
+  assert(queryTerritoireCode, "Le territoire code est obligatoire");
 
   const session = await auth(context);
 
@@ -37,7 +44,7 @@ export const getServerSideProps = async (
   }
 
   const jalon =
-    Number.parseInt(queryJalon as string) ||
+    searchParams.jalon ??
     getAnneeDateDeBascule(
       new Date(),
       configuration().dateBasculeAffichageValeursAnneePrecedente,

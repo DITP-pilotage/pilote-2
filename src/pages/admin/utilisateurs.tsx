@@ -19,10 +19,7 @@ import {
   UtilisateurListeGestionContrat,
 } from "@/server/app/contrats/UtilisateurListeGestionContrat";
 import { TerritoireAvecNombreUtilisateurs } from "@/server/gestion-utilisateur/domain/Territoire";
-import {
-  PAGE_INDEX_DEFAUT,
-  TAILLE_DEFAUT_PAGINATION_UTILISATEUR,
-} from "@/client/constants/constantes";
+import { loadAdminUtilisateursSearchParams } from "@/client/searchParams/adminUtilisateursSearchParams";
 
 type UtilisateurProps = {
   listeChantiers: ChantierSynthétisé[];
@@ -64,9 +61,9 @@ export const getServerSideProps: GetServerSideProps<UtilisateurProps> = async (
       listeChantierIdLecture,
     });
 
-  const filtreChantiers = query.chantiers
-    ? (query.chantiers as string).split(",").filter(Boolean)
-    : [];
+  const searchParams = loadAdminUtilisateursSearchParams(query);
+
+  const filtreChantiers = searchParams.chantiers;
 
   const filtresChantiersSupplémentaires = listeChantiers.filter((chantier) =>
     chantier.périmètreIds.some((périmètreId) =>
@@ -75,47 +72,21 @@ export const getServerSideProps: GetServerSideProps<UtilisateurProps> = async (
   );
 
   const filtres: FiltreQueryParams = {
-    territoires: query.territoires
-      ? (query.territoires as string).split(",").filter(Boolean)
-      : [],
-    perimetresMinisteriels: query.perimetresMinisteriels
-      ? (query.perimetresMinisteriels as string).split(",").filter(Boolean)
-      : [],
+    territoires: searchParams.territoires,
+    perimetresMinisteriels: searchParams.perimetresMinisteriels,
     chantiers: filtreChantiers,
-    profils: query.profils
-      ? (((query.profils as string) || "")
-          .split(",")
-          .filter(Boolean) as ProfilCode[])
-      : [],
-    typeCompte: query.typeCompte
-      ? ((query.typeCompte as string).split(",").filter(Boolean) as (
-          | "actif"
-          | "desactive"
-        )[])
-      : ["actif", "desactive"],
+    profils: searchParams.profils as ProfilCode[],
+    typeCompte: searchParams.typeCompte as ("actif" | "desactive")[],
     chantiersAssociésAuxPérimètres:
       filtresChantiersSupplémentaires?.map((chantier) => chantier.id) ?? [],
   };
 
-  const pageIndex =
-    Number.parseInt(query.pageIndex as string) || PAGE_INDEX_DEFAUT;
-  const pageSize =
-    Number.parseInt(query.pageSize as string) ||
-    TAILLE_DEFAUT_PAGINATION_UTILISATEUR;
-
-  const sorting = query.sort
-    ? (JSON.parse(decodeURIComponent(query.sort as string)) as {
-        id: string;
-        desc: boolean;
-      }[])
-    : [
-        {
-          id: "Dernière modification",
-          desc: true,
-        },
-      ];
-
-  const valeurDeLaRecherche = (query.q as string) || "";
+  const {
+    pageIndex,
+    pageSize,
+    sort: sorting,
+    q: valeurDeLaRecherche,
+  } = searchParams;
 
   const listePerimetresMinisteriel = await getContainer("gestionUtilisateur")
     .resolve("recupererPerimetresMinisterielsUseCase")

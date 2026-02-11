@@ -40,6 +40,7 @@ import { configuration } from "@/config";
 import { getContainer } from "@/server/dependances";
 import { ChantierRapportDetailleContrat } from "@/server/chantiers/app/contrats/ChantierRapportDetailleContratV2";
 import { getInitialContainerWithTransversalDependencies } from "@/server/InitialDependencies";
+import { loadRapportDetailleSearchParams } from "@/client/searchParams/accueilSearchParams";
 
 interface NextPageRapportDétailléProps {
   chantiers: ChantierRapportDetailleContrat[];
@@ -84,6 +85,7 @@ export const getServerSideProps: GetServerSideProps<
 > = async (context) => {
   const { query } = context;
   const session = await auth(context);
+  const searchParams = loadRapportDetailleSearchParams(query);
 
   assert(query.territoireCode, "Le territoire code est manquant");
   assert(session, "Vous devez être authentifié pour accéder a cette page");
@@ -93,9 +95,9 @@ export const getServerSideProps: GetServerSideProps<
   const { maille, codeInsee: codeInseeSelectionne } =
     territoireCodeVersMailleCodeInsee(territoireCode);
 
-  const mailleQuery = (query.maille as MailleInterne) || "departementale";
+  const mailleQuery = searchParams.maille;
   const jalon =
-    Number.parseInt(query.jalon as string) ||
+    searchParams.jalon ??
     getAnneeDateDeBascule(
       new Date(),
       configuration().dateBasculeAffichageValeursAnneePrecedente,
@@ -111,39 +113,30 @@ export const getServerSideProps: GetServerSideProps<
   const mailleChantier = maille === "NAT" ? "nationale" : mailleSelectionnee;
 
   const filtres: FiltreQueryParams = {
-    perimetres: query.perimetres
-      ? (query.perimetres as string).split(",").filter(Boolean)
-      : [],
-    axes: query.axes ? (query.axes as string).split(",").filter(Boolean) : [],
+    perimetres: searchParams.perimetres,
+    axes: searchParams.axes,
     statut:
-      query.statut === "BROUILLON_ET_PUBLIE"
+      searchParams.statut === "BROUILLON_ET_PUBLIE"
         ? ["BROUILLON", "PUBLIE"]
-        : !!query.statut
-          ? [query.statut as string]
+        : searchParams.statut
+          ? [searchParams.statut]
           : ["PUBLIE"],
-    meteos: query.meteos
-      ? (query.meteos as string).split(",").filter(Boolean)
-      : [],
-    territorialisation: query.territorialisation
-      ? ((query.territorialisation as string)
-          .split(",")
-          .filter(Boolean) as Maille[])
-      : [],
-    estBarometre: query.estBarometre === "true",
-    valeurDeLaRecherche: query.q as string,
+    meteos: searchParams.meteos,
+    territorialisation: searchParams.territorialisation as Maille[],
+    estBarometre: searchParams.estBarometre,
+    valeurDeLaRecherche: searchParams.q ?? "",
   };
 
   const filtresAlertes = {
     estEnAlerteTauxAvancementNonCalculé:
-      query.estEnAlerteTauxAvancementNonCalculé === "true",
-    estEnAlerteÉcart: query.estEnAlerteÉcart === "true",
-    estEnAlerteBaisse: query.estEnAlerteBaisse === "true",
-    estEnAlerteMétéoNonRenseignée:
-      query.estEnAlerteMétéoNonRenseignée === "true",
+      searchParams.estEnAlerteTauxAvancementNonCalculé,
+    estEnAlerteÉcart: searchParams.estEnAlerteÉcart,
+    estEnAlerteBaisse: searchParams.estEnAlerteBaisse,
+    estEnAlerteMétéoNonRenseignée: searchParams.estEnAlerteMétéoNonRenseignée,
     estEnAlerteAbscenceTauxAvancementDepartemental:
-      query.estEnAlerteAbscenceTauxAvancementDepartemental === "true",
+      searchParams.estEnAlerteAbscenceTauxAvancementDepartemental,
     estEnAlertePossedePropositionsValeurAvancement:
-      query.estEnAlertePossedePropositionsValeurAvancement === "true",
+      searchParams.estEnAlertePossedePropositionsValeurAvancement,
   };
 
   const [ministères, axes] =
@@ -164,12 +157,7 @@ export const getServerSideProps: GetServerSideProps<
   const territoireSélectionné =
     await territoireRepository.récupérer(territoireCode);
 
-  const sorting = query.sort
-    ? (JSON.parse(query.sort as string) as { id: string; desc: boolean })
-    : {
-        id: "avancement",
-        desc: false,
-      };
+  const sorting = searchParams.sort;
 
   const mapAxes = new Map<string, Axe>(axes.map((axe) => [axe.id, axe]));
 
