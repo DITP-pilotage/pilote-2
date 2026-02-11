@@ -1,7 +1,6 @@
 import "@gouvfr/dsfr/dist/dsfr.min.css";
 import Link from "next/link";
 import { FunctionComponent } from "react";
-import { toast } from "sonner";
 import Titre from "@/components/_commons/Titre/Titre";
 import { getQueryParamString } from "@/client/utils/getQueryParamString";
 import { getFiltresActifs } from "@/client/stores/useFiltresStoreNew/useFiltresStoreNew";
@@ -67,34 +66,33 @@ const PageChantierEnTête: FunctionComponent<{
           Retour
         </Link>
       </div>
-      <div className="relative">
-        <Titre
-          baliseHtml="h1"
-          className={clsxm(
-            "fr-h2 !mb-4 !mt-2 !text-dsfr-blue-france-sun-113 line-clamp-3",
-            {
-              "!text-dsfr-grey-200": chantierEstArchive,
-            },
-          )}
-        >
-          {chantier.nom}
-        </Titre>
-        <button
-          aria-label="Copier le nom du chantier dans le presse-papier"
-          className="absolute inset-0 cursor-pointer bg-transparent hover:bg-transparent border-none p-0"
-          onClick={() => {
-            navigator.clipboard.writeText(chantier.nom).then(() => {
-              toast.info("Nom du chantier copié", {
-                position: "bottom-right",
-              });
-            });
-          }}
-          title={`Cliquer pour copier - ${chantier.nom}`}
-          type="button"
-        >
-          <span className="sr-only">Copier le nom du chantier</span>
-        </button>
-      </div>
+      <Titre
+        baliseHtml="h1"
+        className={clsxm(
+          "fr-h2 !mb-4 !mt-2 !text-dsfr-blue-france-sun-113 line-clamp-3",
+          {
+            "!text-dsfr-grey-200": chantierEstArchive,
+          },
+        )}
+        title={chantier.nom}
+        ref={(node) => {
+          if (node == null) return;
+
+          node.addEventListener("copy", (e) => {
+            if (e.clipboardData == null) returns;
+            e.clipboardData.setData("text/plain", chantier.nom);
+            e.preventDefault();
+          });
+
+          return () => {
+            console.log("---------------");
+            console.log("TODO: cleanup");
+            console.log("---------------");
+          };
+        }}
+      >
+        {chantier.nom}
+      </Titre>
       <div className="!pb-6 !mb-6 border-b border-blue-france flex">
         <div className="icone-entete fr-mb-1w fr-pr-1w">
           <IconeMinistere icone={responsables?.porteur?.icône} />
