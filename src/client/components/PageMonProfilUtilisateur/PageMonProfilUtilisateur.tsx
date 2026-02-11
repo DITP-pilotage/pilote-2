@@ -10,6 +10,8 @@ import { validationModifierMonProfil } from "@/validation/mon-profil";
 import type AlerteProps from "@/components/_commons/Alerte/Alerte.interface";
 import api from "@/server/infrastructure/api/trpc/api";
 import { récupérerUnCookie } from "@/client/utils/cookies";
+import { Icone } from "@/components/_commons/Icone";
+import { ArrowLine1Icon } from "@/components/_commons/Icones/ArrowLine1Icon";
 import useMonProfilFormulaire from "./useMonProfilFormulaire";
 import SelectMinistere from "./SelectMinistere";
 import SelectService from "./SelectService";
@@ -118,30 +120,43 @@ export const PageMonProfilUtilisateur = () => {
   };
 
   return (
-    <div className="max-w-screen-xl mx-auto py-10">
-      <div className="flex flex-col gap-6">
-        <Titre baliseHtml="h1" className="fr-h2 mb-0">
-          Mes informations PILOTE
-        </Titre>
+    <div className="bg-dsfr-alt-blue-france">
+      <div className="fr-container py-10">
+        <div className="flex flex-col gap-6">
+          <Titre baliseHtml="h1" className="fr-h1 text-primary fr-mt-4w mb-0">
+            Mon profil utilisateur
+          </Titre>
 
-        {alerte ? <Alerte {...alerte} /> : null}
+          {alerte ? <Alerte {...alerte} /> : null}
 
-        <FormProvider {...form}>
-          <form onSubmit={form.handleSubmit(soumettreFormulaire)}>
-            <Bloc titre="Mon identité">
-              <div className="flex flex-col gap-4">
+          <FormProvider {...form}>
+            <form onSubmit={form.handleSubmit(soumettreFormulaire)}>
+              <Bloc className="fr-px-10w fr-py-6w flex flex-col gap-4">
+                <div>
+                  <h2 className="!mb-2 !text-lg">Identification</h2>
+                  <p className="!text-xs !text-dsfr-mention-grey !mb-8">
+                    Tous les champs sont obligatoires.
+                  </p>
+                </div>
+
                 <PageMonProfilUtilisateurContent />
-              </div>
-            </Bloc>
 
-            <div className="flex justify-end">
-              <SubmitBouton
-                disabled={mutationModifierMonProfil.isPending}
-                label="Enregistrer"
-              />
-            </div>
-          </form>
-        </FormProvider>
+                <div className="flex justify-end">
+                  <SubmitBouton
+                    disabled={mutationModifierMonProfil.isPending}
+                    label="Enregistrer"
+                    iconRight={
+                      <Icone
+                        className="text-current h-4 w-4"
+                        icone={ArrowLine1Icon}
+                      />
+                    }
+                  />
+                </div>
+              </Bloc>
+            </form>
+          </FormProvider>
+        </div>
       </div>
     </div>
   );
