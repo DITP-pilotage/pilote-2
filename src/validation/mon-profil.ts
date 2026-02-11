@@ -10,14 +10,8 @@ export const validationModifierMonProfil = z
       .max(100)
       .transform((value) => value || null)
       .nullable(),
-    ministere: z
-      .string()
-      .transform((value) => value || null)
-      .nullable(),
-    service: z
-      .string()
-      .transform((value) => value || null)
-      .nullable(),
+    ministere: z.string().min(1, "Ce champ est obligatoire"),
+    service: z.string().min(1, "Ce champ est obligatoire"),
     serviceAutre: z
       .string()
       .max(200)

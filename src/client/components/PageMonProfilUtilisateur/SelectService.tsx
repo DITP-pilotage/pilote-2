@@ -21,7 +21,7 @@ export default function SelectService() {
       className="fr-input-group"
       triggerClassName="w-full"
       options={options}
-      valeurSelectionnee={service ?? undefined}
+      valeurSelectionnee={service || undefined}
       erreurMessage={formState.errors.service?.message}
       disabled={!ministere}
       placeholder={

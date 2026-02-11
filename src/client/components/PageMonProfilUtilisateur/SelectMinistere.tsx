@@ -18,11 +18,11 @@ export default function SelectMinistere() {
       className="fr-input-group"
       triggerClassName="w-full"
       options={options}
-      valeurSelectionnee={ministere ?? undefined}
+      valeurSelectionnee={ministere || undefined}
       erreurMessage={formState.errors.ministere?.message}
       onChange={(nouvelleValeur) => {
         setValue("ministere", nouvelleValeur);
-        setValue("service", null);
+        setValue("service", "");
         setValue("serviceAutre", null);
       }}
     />

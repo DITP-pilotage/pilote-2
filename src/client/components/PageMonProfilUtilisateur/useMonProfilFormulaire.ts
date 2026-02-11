@@ -13,8 +13,8 @@ export default function useMonProfilFormulaire() {
       prenom: profilUtilisateur.prenom,
       nom: profilUtilisateur.nom,
       fonction: profilUtilisateur.fonction || "",
-      ministere: profilUtilisateur.ministere || undefined,
-      service: profilUtilisateur.service || undefined,
+      ministere: profilUtilisateur.ministere || "",
+      service: profilUtilisateur.service || "",
       serviceAutre: profilUtilisateur.serviceAutre || undefined,
     },
   });
