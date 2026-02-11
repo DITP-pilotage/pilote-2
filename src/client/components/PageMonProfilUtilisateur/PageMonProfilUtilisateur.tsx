@@ -77,13 +77,21 @@ const PageMonProfilUtilisateurContent = () => {
       <SelectService />
 
       {serviceSelectionne === "autre" && (
-        <InputAvecLabel
-          htmlName="serviceAutre"
-          libellé="Précisez votre service"
-          register={register("serviceAutre")}
-          erreur={formState.errors.serviceAutre}
-          type="text"
-        />
+        <div>
+          <InputAvecLabel
+            className="fr-mb-1w"
+            htmlName="serviceAutre"
+            libellé="Précisez votre service"
+            register={register("serviceAutre")}
+            erreur={formState.errors.serviceAutre}
+            type="text"
+          />
+          <p className="fr-mb-0 !text-sm">
+            Afin de nous aider à compléter cette liste, merci de nous indiquer
+            votre rattachement. Cette information ne sera pas publiée dans un
+            premier temps.
+          </p>
+        </div>
       )}
 
       <InputAvecLabel

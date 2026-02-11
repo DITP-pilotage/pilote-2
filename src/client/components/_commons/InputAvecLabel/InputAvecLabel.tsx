@@ -8,6 +8,7 @@ import {
   UseFormRegisterReturn,
 } from "react-hook-form";
 import { ChampObligatoire } from "@/components/PageIndicateur/ChampObligatoire";
+import { clsxm } from "@/utils/clsxm";
 
 interface InputAvecLabelProps {
   type?: HTMLInputTypeAttribute;
@@ -18,6 +19,7 @@ interface InputAvecLabelProps {
   erreur?: FieldError | Merge<FieldError, FieldErrorsImpl>;
   register: UseFormRegisterReturn;
   disabled?: boolean;
+  className?: string;
 }
 
 const InputAvecLabel: FunctionComponent<InputAvecLabelProps> = ({
@@ -29,10 +31,15 @@ const InputAvecLabel: FunctionComponent<InputAvecLabelProps> = ({
   texteAide,
   register,
   disabled,
+  className,
 }) => {
   return (
     <div
-      className={`fr-input-group ${erreur !== undefined ? "fr-input-group--error" : ""}`}
+      className={clsxm(
+        `fr-input-group`,
+        erreur && "fr-input-group--error",
+        className,
+      )}
     >
       <label className="fr-label" htmlFor={htmlName}>
         {libellé}
