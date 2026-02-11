@@ -3,11 +3,13 @@ import {
   setupRequest,
   setupResponse,
 } from "@/server/infrastructure/test/apiTestHelpers";
-import { TokenAPIJWTService } from "@/server/authentification/infrastructure/adapters/services/TokenAPIJWTService";
 import { BadRequestError } from "@/server/app/error-boundary/bad-request-error";
 import { PiloteError } from "@/server/app/error-boundary/pilote-error";
 import Logger from "@/server/infrastructure/Logger";
-import { Mock } from "vitest";
+
+const { MockTokenAPIJWTService } = vi.hoisted(() => ({
+  MockTokenAPIJWTService: vi.fn(),
+}));
 
 vi.mock("@/config", () => ({
   configuration: vi.fn(() => ({
@@ -26,26 +28,21 @@ vi.mock("@/server/infrastructure/Logger", () => ({
 
 vi.mock(
   "@/server/authentification/infrastructure/adapters/services/TokenAPIJWTService",
-  () => {
-    const MockTokenAPIJWTService = vi.fn();
-    return {
-      TokenAPIJWTService: MockTokenAPIJWTService,
-    };
-  },
+  () => ({ TokenAPIJWTService: MockTokenAPIJWTService }),
 );
 
-const mockLoggerError = Logger.error as Mock;
+const mockLoggerError = Logger.error as ReturnType<typeof vi.fn>;
 
 describe("endpointProtege", () => {
-  let mockDecoderTokenAPI: Mock;
+  let mockDecoderTokenAPI: ReturnType<typeof vi.fn>;
 
   beforeEach(() => {
     vi.clearAllMocks();
     mockLoggerError.mockClear();
     mockDecoderTokenAPI = vi.fn();
-    vi.mocked(TokenAPIJWTService).mockImplementation(() => ({
+    MockTokenAPIJWTService.mockReturnValue({
       decoderTokenAPI: mockDecoderTokenAPI,
-    }));
+    });
   });
 
   describe("Authentication", () => {

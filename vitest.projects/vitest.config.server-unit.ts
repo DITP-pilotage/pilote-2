@@ -8,11 +8,10 @@ export default defineProject({
     root: './',
     environment: 'node',
     include: [
-      'src/server/**/__tests__/**/*.unit.test.{ts,tsx}',
+      'src/server/**/*.unit.test.{ts,tsx}',
       'scripts/**/*.unit.test.{ts,tsx}',
     ],
     setupFiles: ['./vitest.setup.server.ts'],
-    envFile: '.env.test',
     globals: true,
   },
 });

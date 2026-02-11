@@ -9,7 +9,7 @@ const PAGE_SUIVANTE = "Page suivante";
 const PAGE_PRECEDENTE = "Page précédente";
 
 class TableauPaginationTest {
-  changementDePageCallback: jest.Mock;
+  changementDePageCallback: ReturnType<typeof vi.fn>;
 
   constructor() {
     this.changementDePageCallback = vi.fn();

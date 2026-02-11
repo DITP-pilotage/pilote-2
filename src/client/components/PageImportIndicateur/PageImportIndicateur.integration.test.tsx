@@ -22,7 +22,7 @@ vi.mock(
     },
 );
 
-vi.mock("next/router", () => require("next-router-mock"));
+vi.mock("next/router", async () => await vi.importActual("next-router-mock"));
 
 describe("PageImportIndicateur", () => {
   describe("En tête", () => {

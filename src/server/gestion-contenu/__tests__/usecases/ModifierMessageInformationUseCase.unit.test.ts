@@ -32,12 +32,12 @@ describe("ModifierMessageInformationUseCase", () => {
       true,
     );
     expect(gestionContenuRepository.mettreAJourContenu).toHaveBeenNthCalledWith(
-      1,
+      2,
       "NEXT_BD_FF_BANDEAU_INDISPONIBILITE_TEXTE",
       "nouveau texte",
     );
     expect(gestionContenuRepository.mettreAJourContenu).toHaveBeenNthCalledWith(
-      1,
+      3,
       "NEXT_BD_FF_BANDEAU_INDISPONIBILITE_TYPE",
       "WARNING",
     );

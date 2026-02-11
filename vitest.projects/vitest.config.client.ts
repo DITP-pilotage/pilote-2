@@ -12,7 +12,18 @@ export default defineProject({
       'src/client/**/*.integration.test.{ts,tsx}',
     ],
     setupFiles: ['./vitest.setup.ts'],
-    envFile: '.env.test',
+    pool: 'threads',
     globals: true,
+    server: {
+      deps: {
+        inline: [
+          '@asamuzakjp/css-color',
+          '@csstools/css-tokenizer',
+          '@csstools/css-calc',
+          '@csstools/css-color-parser',
+          '@csstools/css-parser-algorithms',
+        ],
+      },
+    },
   },
 });

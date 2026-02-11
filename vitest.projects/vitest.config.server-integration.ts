@@ -7,18 +7,17 @@ export default defineProject({
     name: 'server-integration',
     root: './',
     environment: 'node',
-    include: ['src/server/**/__tests__/**/*.integration.test.{ts,tsx}'],
+    include: ['src/server/**/*.integration.test.{ts,tsx}'],
     setupFiles: [
-      './tests/integrationTestSetup.ts',
+      './src/server/infrastructure/test/integrationTestSetup.ts',
       './vitest.setup.server.ts',
     ],
     pool: 'forks',
-    poolOptions: {
-      forks: {
-        singleFork: true,
-      },
-    },
-    envFile: '.env.test',
+    singleFork: true,
+    fileParallelism: false,
     globals: true,
+  },
+  ssr: {
+    noExternal: ['next-auth'],
   },
 });
