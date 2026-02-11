@@ -38,7 +38,7 @@ describe("PrismaProfilUtilisateurRepository", () => {
           fonction: utilisateur.fonction,
           ministere: "ministere-de-l-interieur",
           service: "prefecture-de-region",
-          service_autre: null,
+          serviceAutre: null,
         });
       }),
     );
@@ -65,7 +65,7 @@ describe("PrismaProfilUtilisateurRepository", () => {
           fonction: utilisateur.fonction,
           ministere: "ministere-de-l-interieur",
           service: "autre",
-          service_autre: "Service très spécifique",
+          serviceAutre: "Service très spécifique",
         });
       }),
     );
@@ -92,7 +92,7 @@ describe("PrismaProfilUtilisateurRepository", () => {
           fonction: utilisateur.fonction,
           ministere: null,
           service: null,
-          service_autre: null,
+          serviceAutre: null,
         });
       }),
     );
@@ -237,7 +237,7 @@ describe("PrismaProfilUtilisateurRepository", () => {
           fonction: "Directeur",
           ministere: "ministere-de-la-culture",
           service: "direction-regionale-des-affaires-culturelles-drac",
-          service_autre: null,
+          serviceAutre: null,
         });
       }),
     );

@@ -39,7 +39,7 @@ describe("GetProfilUtilisateurQuery", () => {
           fonction: "Développeur",
           ministere: "ministere-de-l-interieur",
           service: "prefecture-de-region",
-          service_autre: null,
+          serviceAutre: null,
         });
       }),
     );
@@ -74,7 +74,7 @@ describe("GetProfilUtilisateurQuery", () => {
           fonction: null,
           ministere: null,
           service: null,
-          service_autre: null,
+          serviceAutre: null,
         });
       }),
     );
