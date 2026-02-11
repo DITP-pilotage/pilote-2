@@ -1,5 +1,5 @@
-import fs from 'node:fs';
-import path from 'node:path';
+import fs from "node:fs";
+import path from "node:path";
 
 interface ServiceReferentiel {
   slug: string;
@@ -18,26 +18,28 @@ interface Referentiel {
 
 function slugify(text: string): string {
   return text
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '') // Strip diacritics
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "") // Strip diacritics
     .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-') // Replace non-alphanum with dashes
-    .replace(/^-+|-+$/g, '') // Trim dashes
-    .replace(/-+/g, '-'); // Collapse multiple dashes
+    .replace(/[^a-z0-9]+/g, "-") // Replace non-alphanum with dashes
+    .replace(/^-+|-+$/g, "") // Trim dashes
+    .replace(/-+/g, "-"); // Collapse multiple dashes
 }
 
 function genererReferentiel(): void {
-  const csvPath = path.join(process.cwd(), 'referentiel-services-pilote.csv');
-  const csvContent = fs.readFileSync(csvPath, 'utf-8');
+  const csvPath = path.join(process.cwd(), "referentiel-services-pilote.csv");
+  const csvContent = fs.readFileSync(csvPath, "utf-8");
 
-  const lines = csvContent.split('\n').slice(1); // Skip header
+  const lines = csvContent.split("\n").slice(1); // Skip header
 
   const ministeresMap = new Map<string, MinistereReferentiel>();
 
   for (const line of lines) {
     if (!line.trim()) continue;
 
-    const [nomService, ministere] = line.split(';').map(field => field.trim());
+    const [nomService, ministere] = line
+      .split(";")
+      .map((field) => field.trim());
 
     if (!ministere || !nomService) continue;
 
@@ -55,7 +57,7 @@ function genererReferentiel(): void {
     const ministereData = ministeresMap.get(ministereSlug)!;
 
     // Avoid duplicates
-    if (!ministereData.services.some(s => s.slug === serviceSlug)) {
+    if (!ministereData.services.some((s) => s.slug === serviceSlug)) {
       ministereData.services.push({
         slug: serviceSlug,
         libelle: nomService,
@@ -64,10 +66,10 @@ function genererReferentiel(): void {
   }
 
   // Convert to array and sort
-  let ministeres = Array.from(ministeresMap.values());
+  const ministeres = Array.from(ministeresMap.values());
 
   // Move "Autre" ministere to the end
-  const autreIndex = ministeres.findIndex(m => m.slug === 'autre');
+  const autreIndex = ministeres.findIndex((m) => m.slug === "autre");
   if (autreIndex !== -1) {
     const [autre] = ministeres.splice(autreIndex, 1);
     ministeres.push(autre);
@@ -75,7 +77,9 @@ function genererReferentiel(): void {
 
   // For each ministere, move "Autre" service to the end
   for (const ministere of ministeres) {
-    const autreServiceIndex = ministere.services.findIndex(s => s.slug === 'autre');
+    const autreServiceIndex = ministere.services.findIndex(
+      (s) => s.slug === "autre",
+    );
     if (autreServiceIndex !== -1) {
       const [autreService] = ministere.services.splice(autreServiceIndex, 1);
       ministere.services.push(autreService);
@@ -86,17 +90,19 @@ function genererReferentiel(): void {
 
   const outputPath = path.join(
     process.cwd(),
-    'src',
-    'client',
-    'constants',
-    'referentiel-services.json'
+    "src",
+    "client",
+    "constants",
+    "referentiel-services.json",
   );
 
-  fs.writeFileSync(outputPath, JSON.stringify(referentiel, null, 2), 'utf-8');
+  fs.writeFileSync(outputPath, JSON.stringify(referentiel, null, 2), "utf-8");
 
   console.log(`✅ Référentiel généré : ${outputPath}`);
   console.log(`   ${referentiel.ministeres.length} ministères`);
-  console.log(`   ${referentiel.ministeres.reduce((acc, m) => acc + m.services.length, 0)} services au total`);
+  console.log(
+    `   ${referentiel.ministeres.reduce((acc, m) => acc + m.services.length, 0)} services au total`,
+  );
 }
 
 genererReferentiel();
