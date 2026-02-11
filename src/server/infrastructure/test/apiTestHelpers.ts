@@ -1,4 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { Mock } from "vitest";
 
 export function setupRequest(

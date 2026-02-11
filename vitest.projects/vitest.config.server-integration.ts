@@ -13,7 +13,6 @@ export default defineProject({
       './src/server/infrastructure/test/integrationTestSetup.ts',
     ],
     pool: 'forks',
-    singleFork: true,
     fileParallelism: false,
     globals: true,
   },

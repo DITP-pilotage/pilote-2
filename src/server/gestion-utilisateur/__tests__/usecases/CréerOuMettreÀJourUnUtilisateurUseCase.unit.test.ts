@@ -1,6 +1,6 @@
+import { Mock } from "vitest";
 import { mock } from "vitest-mock-extended";
 import { randomUUID } from "node:crypto";
-import { Mock } from "vitest";
 import UtilisateurÀCréerOuMettreÀJourBuilder from "@/server/domain/utilisateur/UtilisateurÀCréerOuMettreÀJour.builder";
 import { fakeTerritoires } from "@/server/domain/territoire/Territoire.builder";
 import { ProfilCode } from "@/server/domain/utilisateur/Utilisateur.interface";
