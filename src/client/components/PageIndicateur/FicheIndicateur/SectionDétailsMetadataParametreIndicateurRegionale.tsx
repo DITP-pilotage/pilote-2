@@ -19,7 +19,7 @@ const SectionDétailsMetadataParametreIndicateurRegionale: FunctionComponent<{
   estEnCoursDeModification,
   mapInformationMetadataIndicateur,
 }) => {
-  const { getValues, setValue } = useMetadataIndicateurForm();
+  const form = useMetadataIndicateurForm();
 
   type ValeurRegFrom = Pick<
     MetadataIndicateurForm,
@@ -27,15 +27,20 @@ const SectionDétailsMetadataParametreIndicateurRegionale: FunctionComponent<{
   >;
 
   const valeursRegFromDesactiveRegOp = new Set(["_", "user_input"]);
+
+  const viRegFromValue = form.watch("viRegFrom");
+  const vaRegFromValue = form.watch("vaRegFrom");
+  const vcRegFromValue = form.watch("vcRegFrom");
+
   const ALaModificationValeurRegFrom = (
     variableFrom: keyof ValeurRegFrom,
     valeurFrom: string,
     variableOp: keyof ValeurRegFrom,
     variableParDefautOp: string,
   ) => {
-    setValue(variableFrom, valeurFrom);
+    form.setValue(variableFrom, valeurFrom);
     if (valeursRegFromDesactiveRegOp.has(valeurFrom)) {
-      setValue(variableOp, variableParDefautOp);
+      form.setValue(variableOp, variableParDefautOp);
     }
   };
 
@@ -136,13 +141,9 @@ const SectionDétailsMetadataParametreIndicateurRegionale: FunctionComponent<{
       <div className="fr-grid-row fr-grid-row--gutters">
         <div className="fr-col-12 fr-col-md-4">
           <MetadataIndicateurSelecteur
-            estDesactive={valeursRegFromDesactiveRegOp.has(
-              getValues("viRegFrom"),
-            )}
+            estDesactive={valeursRegFromDesactiveRegOp.has(viRegFromValue)}
             estEnCoursDeModification={estEnCoursDeModification}
-            estMandatory={
-              !valeursRegFromDesactiveRegOp.has(getValues("viRegFrom"))
-            }
+            estMandatory={!valeursRegFromDesactiveRegOp.has(viRegFromValue)}
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.vi_reg_op
             }
@@ -162,13 +163,9 @@ const SectionDétailsMetadataParametreIndicateurRegionale: FunctionComponent<{
         </div>
         <div className="fr-col-12 fr-col-md-4">
           <MetadataIndicateurSelecteur
-            estDesactive={valeursRegFromDesactiveRegOp.has(
-              getValues("vaRegFrom"),
-            )}
+            estDesactive={valeursRegFromDesactiveRegOp.has(vaRegFromValue)}
             estEnCoursDeModification={estEnCoursDeModification}
-            estMandatory={
-              !valeursRegFromDesactiveRegOp.has(getValues("vaRegFrom"))
-            }
+            estMandatory={!valeursRegFromDesactiveRegOp.has(vaRegFromValue)}
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.va_reg_op
             }
@@ -188,13 +185,9 @@ const SectionDétailsMetadataParametreIndicateurRegionale: FunctionComponent<{
         </div>
         <div className="fr-col-12 fr-col-md-4">
           <MetadataIndicateurSelecteur
-            estDesactive={valeursRegFromDesactiveRegOp.has(
-              getValues("vcRegFrom"),
-            )}
+            estDesactive={valeursRegFromDesactiveRegOp.has(vcRegFromValue)}
             estEnCoursDeModification={estEnCoursDeModification}
-            estMandatory={
-              !valeursRegFromDesactiveRegOp.has(getValues("vcRegFrom"))
-            }
+            estMandatory={!valeursRegFromDesactiveRegOp.has(vcRegFromValue)}
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.vc_reg_op
             }

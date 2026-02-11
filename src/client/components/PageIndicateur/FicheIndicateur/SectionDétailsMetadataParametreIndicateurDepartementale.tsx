@@ -29,7 +29,11 @@ const SectionDétailsMetadataParametreIndicateurDepartementale: FunctionComponen
   estEnCoursDeModification,
   mapInformationMetadataIndicateur,
 }) => {
-  const { getValues, setValue } = useMetadataIndicateurForm();
+  const form = useMetadataIndicateurForm();
+
+  const viDeptFromValue = form.watch("viDeptFrom");
+  const vaDeptFromValue = form.watch("vaDeptFrom");
+  const vcDeptFromValue = form.watch("vcDeptFrom");
 
   const valeursDeptFromDesactiveDeptOp = new Set(["_", "user_input"]);
   const ALaModificationValeurDeptFrom = (
@@ -38,9 +42,9 @@ const SectionDétailsMetadataParametreIndicateurDepartementale: FunctionComponen
     variableOp: keyof ValeurDeptFrom,
     variableParDefautOp: string,
   ) => {
-    setValue(variableFrom, valeurFrom);
+    form.setValue(variableFrom, valeurFrom);
     if (valeursDeptFromDesactiveDeptOp.has(valeurFrom)) {
-      setValue(variableOp, variableParDefautOp);
+      form.setValue(variableOp, variableParDefautOp);
     }
   };
 
@@ -141,13 +145,9 @@ const SectionDétailsMetadataParametreIndicateurDepartementale: FunctionComponen
       <div className="fr-grid-row fr-grid-row--gutters">
         <div className="fr-col-12 fr-col-md-4">
           <MetadataIndicateurSelecteur
-            estDesactive={valeursDeptFromDesactiveDeptOp.has(
-              getValues("viDeptFrom"),
-            )}
+            estDesactive={valeursDeptFromDesactiveDeptOp.has(viDeptFromValue)}
             estEnCoursDeModification={estEnCoursDeModification}
-            estMandatory={
-              !valeursDeptFromDesactiveDeptOp.has(getValues("viDeptFrom"))
-            }
+            estMandatory={!valeursDeptFromDesactiveDeptOp.has(viDeptFromValue)}
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.vi_dept_op
             }
@@ -167,13 +167,9 @@ const SectionDétailsMetadataParametreIndicateurDepartementale: FunctionComponen
         </div>
         <div className="fr-col-12 fr-col-md-4">
           <MetadataIndicateurSelecteur
-            estDesactive={valeursDeptFromDesactiveDeptOp.has(
-              getValues("vaDeptFrom"),
-            )}
+            estDesactive={valeursDeptFromDesactiveDeptOp.has(vaDeptFromValue)}
             estEnCoursDeModification={estEnCoursDeModification}
-            estMandatory={
-              !valeursDeptFromDesactiveDeptOp.has(getValues("vaDeptFrom"))
-            }
+            estMandatory={!valeursDeptFromDesactiveDeptOp.has(vaDeptFromValue)}
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.va_dept_op
             }
@@ -193,13 +189,9 @@ const SectionDétailsMetadataParametreIndicateurDepartementale: FunctionComponen
         </div>
         <div className="fr-col-12 fr-col-md-4">
           <MetadataIndicateurSelecteur
-            estDesactive={valeursDeptFromDesactiveDeptOp.has(
-              getValues("vcDeptFrom"),
-            )}
+            estDesactive={valeursDeptFromDesactiveDeptOp.has(vcDeptFromValue)}
             estEnCoursDeModification={estEnCoursDeModification}
-            estMandatory={
-              !valeursDeptFromDesactiveDeptOp.has(getValues("vcDeptFrom"))
-            }
+            estMandatory={!valeursDeptFromDesactiveDeptOp.has(vcDeptFromValue)}
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.vc_dept_op
             }
