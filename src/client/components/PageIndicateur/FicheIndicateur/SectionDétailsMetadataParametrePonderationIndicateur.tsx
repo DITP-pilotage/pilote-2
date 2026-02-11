@@ -15,7 +15,7 @@ const SectionDétailsMetadataParametrePonderationIndicateur: FunctionComponent<{
   mapInformationMetadataIndicateur,
 }) => {
   const form = useMetadataIndicateurForm();
-  const indicateurEstTerritorialise = form.getValues("indicTerritorialise");
+  const indicateurEstTerritorialise = form.watch("indicTerritorialise");
 
   return (
     <div>

@@ -24,7 +24,11 @@ const SectionDétailsMetadataParametreIndicateurNationale: FunctionComponent<{
   estEnCoursDeModification,
   mapInformationMetadataIndicateur,
 }) => {
-  const { getValues, setValue } = useMetadataIndicateurForm();
+  const form = useMetadataIndicateurForm();
+
+  const viNatFromValue = form.watch("viNatFrom");
+  const vaNatFromValue = form.watch("vaNatFrom");
+  const vcNatFromValue = form.watch("vcNatFrom");
 
   const valeursNatFromDesactiveNatOp = new Set(["_", "user_input"]);
   const ALaModificationValeurNatFrom = (
@@ -33,9 +37,9 @@ const SectionDétailsMetadataParametreIndicateurNationale: FunctionComponent<{
     variableOp: keyof ValeurNatFrom,
     variableParDefautOp: string,
   ) => {
-    setValue(variableFrom, valeurFrom);
+    form.setValue(variableFrom, valeurFrom);
     if (valeursNatFromDesactiveNatOp.has(valeurFrom)) {
-      setValue(variableOp, variableParDefautOp);
+      form.setValue(variableOp, variableParDefautOp);
     }
   };
 
@@ -136,13 +140,9 @@ const SectionDétailsMetadataParametreIndicateurNationale: FunctionComponent<{
       <div className="fr-grid-row fr-grid-row--gutters">
         <div className="fr-col-12 fr-col-md-4">
           <MetadataIndicateurSelecteur
-            estDesactive={valeursNatFromDesactiveNatOp.has(
-              getValues("viNatFrom"),
-            )}
+            estDesactive={valeursNatFromDesactiveNatOp.has(viNatFromValue)}
             estEnCoursDeModification={estEnCoursDeModification}
-            estMandatory={
-              !valeursNatFromDesactiveNatOp.has(getValues("viNatFrom"))
-            }
+            estMandatory={!valeursNatFromDesactiveNatOp.has(viNatFromValue)}
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.vi_nat_op
             }
@@ -162,13 +162,9 @@ const SectionDétailsMetadataParametreIndicateurNationale: FunctionComponent<{
         </div>
         <div className="fr-col-12 fr-col-md-4">
           <MetadataIndicateurSelecteur
-            estDesactive={valeursNatFromDesactiveNatOp.has(
-              getValues("vaNatFrom"),
-            )}
+            estDesactive={valeursNatFromDesactiveNatOp.has(vaNatFromValue)}
             estEnCoursDeModification={estEnCoursDeModification}
-            estMandatory={
-              !valeursNatFromDesactiveNatOp.has(getValues("vaNatFrom"))
-            }
+            estMandatory={!valeursNatFromDesactiveNatOp.has(vaNatFromValue)}
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.va_nat_op
             }
@@ -188,13 +184,9 @@ const SectionDétailsMetadataParametreIndicateurNationale: FunctionComponent<{
         </div>
         <div className="fr-col-12 fr-col-md-4">
           <MetadataIndicateurSelecteur
-            estDesactive={valeursNatFromDesactiveNatOp.has(
-              getValues("vcNatFrom"),
-            )}
+            estDesactive={valeursNatFromDesactiveNatOp.has(vcNatFromValue)}
             estEnCoursDeModification={estEnCoursDeModification}
-            estMandatory={
-              !valeursNatFromDesactiveNatOp.has(getValues("vcNatFrom"))
-            }
+            estMandatory={!valeursNatFromDesactiveNatOp.has(vcNatFromValue)}
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.vc_nat_op
             }
