@@ -12,14 +12,11 @@ import { ProfilEnum } from "@/server/app/enum/profil.enum";
 import { getContainer } from "@/server/dependances";
 import { prisma } from "@/server/db/prisma";
 
-vi.mock(
-  "@/server/import-indicateur/infrastructure/handlers/ParseForm",
-  () => ({
-    parseForm: () => ({
-      file: mock<PersistentFile>(),
-    }),
+vi.mock("@/server/import-indicateur/infrastructure/handlers/ParseForm", () => ({
+  parseForm: () => ({
+    file: mock<PersistentFile>(),
   }),
-);
+}));
 vi.mock(
   "@/server/import-indicateur/infrastructure/adapters/FichierService.ts",
   () => ({

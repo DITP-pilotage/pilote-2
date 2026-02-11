@@ -131,9 +131,7 @@ describe("CréerOuMettreÀJourUnUtilisateurUseCase", () => {
     process.env.IMPORT_KEYCLOAK_URL = "https://keycloak.net";
     (stubUtilisateurRepository.créerOuMettreÀJour as Mock).mockClear();
     (stubUtilisateurIAMRepository.ajouteUtilisateurs as Mock).mockClear();
-    (
-      stubChantierRepository.récupérerChantiersSynthétisés as Mock
-    ).mockClear();
+    (stubChantierRepository.récupérerChantiersSynthétisés as Mock).mockClear();
   });
 
   afterEach(() => {
