@@ -125,10 +125,9 @@ export default function useIndicateurEvolutionNew({
     setTerritoiresAAfficher,
   ]);
 
-  const [minDate, maxDate, maxDatePrev] = useMemo(() => {
+  const [minDate, maxDate] = useMemo(() => {
     let min = new Date();
     let max = new Date(0);
-    let maxPrev = new Date(max);
     tousLesIndicateursDetails.forEach((indicateur) => {
       indicateur.données.historiquesValeurs.forEach((valeur) => {
         const date = new Date(valeur.date);
@@ -144,7 +143,7 @@ export default function useIndicateurEvolutionNew({
     const maxAreturn = new Date(max);
     maxAreturn.setMonth(maxAreturn.getMonth() + 1);
 
-    return [min, maxAreturn, maxPrev];
+    return [min, maxAreturn];
   }, [tousLesIndicateursDetails]);
 
   const [minYear, maxYear] = useMemo(() => {
@@ -177,6 +176,26 @@ export default function useIndicateurEvolutionNew({
       });
     }
   };
+
+  const dateDuMilieuParAnnee = useMemo(() => {
+    const result: Record<number, Date> = {};
+    const debutAnnee = minDate.getFullYear();
+    const finAnnee = maxDate.getFullYear();
+
+    for (let year = debutAnnee; year <= finAnnee; year++) {
+      const debutVisible =
+        year === debutAnnee ? minDate : new Date(`${year}-01-01`);
+      const finVisible =
+        year === finAnnee ? maxDate : new Date(`${year}-12-31`);
+      if (debutVisible.getTime() !== finVisible.getTime()) {
+        const milieu = new Date(
+          (debutVisible.getTime() + finVisible.getTime()) / 2,
+        );
+        result[year] = milieu;
+      }
+    }
+    return result;
+  }, [minDate, maxDate]);
 
   const genererFondAnnees = (startYear: number, endYear: number) => {
     return Array.from({ length: endYear - startYear + 1 }, (_, i) => {
@@ -303,15 +322,11 @@ export default function useIndicateurEvolutionNew({
           axisLabel: {
             formatter: (value: string) => {
               const date = new Date(value);
-              if (minYear === maxYear) {
-                const moisDuMilieu = Math.ceil(
-                  (maxDatePrev.getMonth() + minDate.getMonth()) / 2,
-                );
-                return date.getMonth() === moisDuMilieu
-                  ? date.getFullYear().toString()
-                  : "";
-              }
-              return date.getMonth() === 6 ? date.getFullYear().toString() : "";
+              const year = date.getFullYear();
+              return date.toDateString() ===
+                dateDuMilieuParAnnee[year]?.toDateString()
+                ? year.toString()
+                : "";
             },
             fontWeight: "bold",
             color: "#444",
@@ -320,6 +335,8 @@ export default function useIndicateurEvolutionNew({
             show: false,
           },
           axisLine: { show: false },
+          minInterval: 24 * 60 * 60 * 1000,
+          maxInterval: 24 * 60 * 60 * 1000,
         },
       ],
       yAxis: {
@@ -400,7 +417,7 @@ export default function useIndicateurEvolutionNew({
       dataZoomPeriode.endValue,
       dataZoomPeriode.startValue,
       maxDate,
-      maxDatePrev,
+      dateDuMilieuParAnnee,
       maxYear,
       minDate,
       minYear,
