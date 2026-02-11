@@ -80,10 +80,12 @@ export const usePageChantier = () => {
     ) &&
     chantier.statut !== "ARCHIVE";
 
+  const peutToujoursImporterDesIndicateurs = session!.profil === "DITP_ADMIN";
   const estAutoriseAImporterDesIndicateurs =
-    estAutoriséAImporterDesIndicateurs(session!.profil) &&
-    estAutoriseAImporterSurLeChantier &&
-    chantier.statut !== "ARCHIVE";
+    peutToujoursImporterDesIndicateurs ||
+    (estAutoriséAImporterDesIndicateurs(session!.profil) &&
+      estAutoriseAImporterSurLeChantier &&
+      chantier.statut !== "ARCHIVE");
 
   const estAutoriseAVoirLeBoutonFicheConducteur =
     !!configurationFeatureFlipping.ficheConducteur &&
