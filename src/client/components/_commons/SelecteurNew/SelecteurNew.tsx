@@ -59,12 +59,14 @@ export const SelecteurNew = <T extends string>({
         disabled={disabled}
       >
         <Select.Trigger
-          className={clsxm("w-50", triggerClassName, {
+          className={clsxm("w-50 text-left", triggerClassName, {
             "!border-b-red-500": erreurMessage,
           })}
           id={htmlName}
         >
-          <Select.Value placeholder={placeholder} />
+          <span className="line-clamp-1">
+            <Select.Value placeholder={placeholder} />
+          </span>
         </Select.Trigger>
 
         <Select.Content className="max-h-96 overflow-hidden !w-[var(--radix-select-trigger-width)]">

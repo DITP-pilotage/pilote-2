@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { useProfilUtilisateurConnecte } from "@/client/hooks/useProfilUtilisateurConnecte";
 import { monProfilFormSchema, MonProfilFormValues } from "./form";
 
-export default function useMonProfilFormulaire() {
+export function useMonProfilFormulaire() {
   const profilUtilisateur = useProfilUtilisateurConnecte();
 
   return useForm<MonProfilFormValues>({
@@ -15,7 +15,7 @@ export default function useMonProfilFormulaire() {
       fonction: profilUtilisateur.fonction || "",
       ministere: profilUtilisateur.ministere || "",
       service: profilUtilisateur.service || "",
-      serviceAutre: profilUtilisateur.serviceAutre || undefined,
+      serviceAutre: profilUtilisateur.serviceAutre || "",
     },
   });
 }

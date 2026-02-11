@@ -1,3 +1,4 @@
+import { Controller } from "react-hook-form";
 import { SelecteurNew } from "@/components/_commons/SelecteurNew/SelecteurNew";
 import { referentielServices } from "@/client/constants/referentiel-services";
 import { useMonProfilForm } from "./form";
@@ -9,23 +10,34 @@ const options = referentielServices.ministeres.map((ministere) => ({
 
 export const SelectMinistere = () => {
   const form = useMonProfilForm();
-  const ministere = form.watch("ministere");
 
   return (
-    <SelecteurNew
-      htmlName="ministere"
-      libelle="Ministère"
-      isRequired
-      className="fr-input-group"
-      triggerClassName="w-full"
-      options={options}
-      valeurSelectionnee={ministere || undefined}
-      erreurMessage={form.formState.errors.ministere?.message}
-      onChange={(nouvelleValeur) => {
-        form.setValue("ministere", nouvelleValeur);
-        form.setValue("service", "");
-        form.setValue("serviceAutre", null);
-      }}
+    <Controller
+      control={form.control}
+      name="ministere"
+      render={({ field, fieldState }) => (
+        <SelecteurNew
+          htmlName="ministere"
+          libelle="Ministère"
+          isRequired
+          className="fr-input-group"
+          triggerClassName="w-full"
+          options={options}
+          valeurSelectionnee={field.value || undefined}
+          erreurMessage={fieldState.error?.message}
+          onChange={(nouvelleValeur) => {
+            field.onChange(nouvelleValeur);
+            form.setValue("service", "", {
+              shouldDirty: true,
+              shouldTouch: true,
+            });
+            form.setValue("serviceAutre", null, {
+              shouldDirty: true,
+              shouldTouch: true,
+            });
+          }}
+        />
+      )}
     />
   );
 };

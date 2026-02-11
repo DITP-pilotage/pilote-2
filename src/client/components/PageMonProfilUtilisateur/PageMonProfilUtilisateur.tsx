@@ -12,7 +12,7 @@ import api from "@/server/infrastructure/api/trpc/api";
 import { récupérerUnCookie } from "@/client/utils/cookies";
 import { Icone } from "@/components/_commons/Icone";
 import { ArrowLine1Icon } from "@/components/_commons/Icones/ArrowLine1Icon";
-import useMonProfilFormulaire from "./useMonProfilFormulaire";
+import { useMonProfilFormulaire } from "./useMonProfilFormulaire";
 import { SelectMinistere } from "./SelectMinistere";
 import { SelectService } from "./SelectService";
 import { useMonProfilForm } from "./form";
@@ -83,12 +83,13 @@ const PageMonProfilUtilisateurContent = () => {
           <InputAvecLabel
             className="fr-mb-1w"
             htmlName="serviceAutre"
+            isRequired
             libellé="Précisez votre service"
             register={register("serviceAutre")}
             erreur={formState.errors.serviceAutre}
             type="text"
           />
-          <p className="fr-mb-0 !text-sm">
+          <p className="!text-sm">
             Afin de nous aider à compléter cette liste, merci de nous indiquer
             votre rattachement. Cette information ne sera pas publiée dans un
             premier temps.
