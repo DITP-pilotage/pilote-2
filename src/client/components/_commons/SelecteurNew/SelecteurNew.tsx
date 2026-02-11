@@ -17,7 +17,9 @@ export const SelecteurNew = <T extends string>({
   libelle,
   placeholder = "Sélectionner...",
   showSearch = true,
+  disabled = false,
   className,
+  triggerClassName,
 }: {
   htmlName: string;
   options: SelecteurNewOption<T>[];
@@ -27,7 +29,9 @@ export const SelecteurNew = <T extends string>({
   libelle?: React.ReactNode;
   placeholder?: string;
   showSearch?: boolean;
+  disabled?: boolean;
   className?: string;
+  triggerClassName?: string;
 }) => {
   const [recherche, setRecherche] = useState("");
 
@@ -48,9 +52,10 @@ export const SelecteurNew = <T extends string>({
       <Select.Root
         onValueChange={(value) => onChange?.(value as T)}
         value={valeurSelectionnee}
+        disabled={disabled}
       >
         <Select.Trigger
-          className={clsxm("w-50", {
+          className={clsxm("w-50", triggerClassName, {
             "!border-b-red-500": erreurMessage,
           })}
           id={htmlName}

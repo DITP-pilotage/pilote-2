@@ -24,6 +24,9 @@ describe("GetProfilUtilisateurQuery", () => {
           prenom: "Jean",
           email: "jean.dupont@example.com",
           fonction: "Développeur",
+          ministere: "ministere-de-l-interieur",
+          service: "prefecture-de-region",
+          service_autre: null,
         });
 
         const result = await query.run(utilisateur.id);
@@ -34,6 +37,9 @@ describe("GetProfilUtilisateurQuery", () => {
           prenom: "Jean",
           email: "jean.dupont@example.com",
           fonction: "Développeur",
+          ministere: "ministere-de-l-interieur",
+          service: "prefecture-de-region",
+          service_autre: null,
         });
       }),
     );
@@ -53,6 +59,9 @@ describe("GetProfilUtilisateurQuery", () => {
           prenom: "Marie",
           email: "marie.martin@example.com",
           fonction: null,
+          ministere: null,
+          service: null,
+          service_autre: null,
         });
 
         const result = await query.run(utilisateur.id);
@@ -63,6 +72,9 @@ describe("GetProfilUtilisateurQuery", () => {
           prenom: "Marie",
           email: "marie.martin@example.com",
           fonction: null,
+          ministere: null,
+          service: null,
+          service_autre: null,
         });
       }),
     );

@@ -9,4 +9,17 @@ export const validationModifierMonProfil = z.object({
     .max(100)
     .transform((value) => value || null)
     .nullable(),
+  ministere: z
+    .string()
+    .transform((value) => value || null)
+    .nullable(),
+  service: z
+    .string()
+    .transform((value) => value || null)
+    .nullable(),
+  serviceAutre: z
+    .string()
+    .max(200)
+    .transform((value) => value || null)
+    .nullable(),
 });

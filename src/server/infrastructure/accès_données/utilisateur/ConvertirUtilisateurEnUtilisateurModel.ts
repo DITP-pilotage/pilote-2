@@ -6,6 +6,9 @@ export const convertirEnModel = (utilisateurAConvertir: {
   prenom: string;
   profilCode: string;
   fonction: string | null;
+  ministere: string | null;
+  service: string | null;
+  serviceAutre: string | null;
   auteurIdModification: string;
   dateModification: Date;
   auteurIdCreation: string;
@@ -31,6 +34,9 @@ export const convertirEnModel = (utilisateurAConvertir: {
     prenom: utilisateurAConvertir.prenom,
     profilCode: utilisateurAConvertir.profilCode,
     fonction: utilisateurAConvertir.fonction,
+    ministere: utilisateurAConvertir.ministere,
+    service: utilisateurAConvertir.service,
+    service_autre: utilisateurAConvertir.serviceAutre,
     auteur_id_modification: utilisateurAConvertir.auteurIdModification,
     date_modification: utilisateurAConvertir.dateModification,
     auteur_id_creation: utilisateurAConvertir.auteurIdCreation,

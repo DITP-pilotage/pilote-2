@@ -1,0 +1,324 @@
+{
+  "ministeres": [
+    {
+      "slug": "ministere-de-l-agriculture-et-de-la-souverainete-alimentaire",
+      "libelle": "Ministère de l'Agriculture et de la Souveraineté Alimentaire",
+      "services": [
+        {
+          "slug": "direction-regionale-de-l-alimentation-de-l-agriculture-et-de-la-foret-draaf",
+          "libelle": "Direction régionale de l'Alimentation, de l'Agriculture et de la Forêt (DRAAF)"
+        },
+        {
+          "slug": "direction-regionale-et-interdepartementale-de-l-alimentation-de-l-agriculture-et-de-la-foret",
+          "libelle": "Direction régionale et interdépartementale de l'alimentation, de l'agriculture et de la forêt"
+        },
+        {
+          "slug": "autre",
+          "libelle": "Autre"
+        }
+      ]
+    },
+    {
+      "slug": "ministere-de-l-economie-des-finances-et-de-la-souverainete-industrielle-et-numerique",
+      "libelle": "Ministère de l'Économie, des Finances et de la Souveraineté industrielle et numérique",
+      "services": [
+        {
+          "slug": "direction-departementale-des-finances-publiques-ddfip",
+          "libelle": "Direction départementale des Finances publiques (DDFiP)"
+        },
+        {
+          "slug": "direction-regionale-des-douanes",
+          "libelle": "Direction régionale des douanes"
+        },
+        {
+          "slug": "direction-regionale-des-finances-publiques-drfip",
+          "libelle": "Direction régionale des Finances publiques (DRFiP)"
+        },
+        {
+          "slug": "direction-regionale-et-interregionale-des-douanes-et-droits-indirects-53",
+          "libelle": "Direction régionale et interrégionale des douanes et droits indirects (53)"
+        },
+        {
+          "slug": "autre",
+          "libelle": "Autre"
+        }
+      ]
+    },
+    {
+      "slug": "ministere-de-l-education-nationale",
+      "libelle": "Ministère de l'Éducation nationale",
+      "services": [
+        {
+          "slug": "delegation-regionale-academique-a-la-jeunesse-a-l-engagement-et-aux-sports",
+          "libelle": "Délégation régionale académique à la Jeunesse, à l'Engagement et aux Sports"
+        },
+        {
+          "slug": "direction-des-services-departementaux-de-l-education-nationale-dsden",
+          "libelle": "Direction des services départementaux de l'Éducation nationale (DSDEN)"
+        },
+        {
+          "slug": "rectorat-d-academie",
+          "libelle": "Rectorat d'académie"
+        },
+        {
+          "slug": "autre",
+          "libelle": "Autre"
+        }
+      ]
+    },
+    {
+      "slug": "ministere-de-l-enseignement-superieur-et-de-la-recherche",
+      "libelle": "Ministère de l'Enseignement supérieur et de la Recherche",
+      "services": [
+        {
+          "slug": "delegation-regionale-academique-a-la-recherche-et-a-l-innovation",
+          "libelle": "Délégation régionale académique à la Recherche et à l'Innovation"
+        },
+        {
+          "slug": "autre",
+          "libelle": "Autre"
+        }
+      ]
+    },
+    {
+      "slug": "ministere-de-l-interieur",
+      "libelle": "Ministère de l'Intérieur",
+      "services": [
+        {
+          "slug": "direction-departementale-de-l-emploi-du-travail-et-des-solidarites-ddets",
+          "libelle": "Direction départementale de l'emploi, du travail et des solidarités (DDETS)"
+        },
+        {
+          "slug": "direction-departementale-de-l-emploi-du-travail-et-des-solidarites-et-de-la-protection-des-populations-ddets-pp",
+          "libelle": "Direction départementale de l'emploi, du travail et des solidarités et de la protection des populations (DDETS-PP)"
+        },
+        {
+          "slug": "direction-departementale-de-la-police-nationale-ddpn",
+          "libelle": "Direction départementale de la police nationale (DDPN)"
+        },
+        {
+          "slug": "direction-departementale-de-la-protection-des-populations-ddpp",
+          "libelle": "Direction départementale de la protection des populations (DDPP)"
+        },
+        {
+          "slug": "direction-departementale-des-territoires-ddt",
+          "libelle": "Direction départementale des territoires (DDT)"
+        },
+        {
+          "slug": "direction-departementale-des-territoires-et-de-la-mer-ddtm",
+          "libelle": "Direction départementale des territoires et de la mer (DDTM)"
+        },
+        {
+          "slug": "prefecture-de-departement",
+          "libelle": "Préfecture de département"
+        },
+        {
+          "slug": "prefecture-de-region",
+          "libelle": "Préfecture de région"
+        },
+        {
+          "slug": "secretariat-general-commun-sgc-departemental",
+          "libelle": "Secrétariat général commun (SGC) départemental"
+        },
+        {
+          "slug": "service-departemental-d-incendie-et-de-secours-sdis",
+          "libelle": "Service départemental d'incendie et de secours (SDIS)"
+        },
+        {
+          "slug": "autre",
+          "libelle": "Autre"
+        }
+      ]
+    },
+    {
+      "slug": "ministere-de-la-culture",
+      "libelle": "Ministère de la Culture",
+      "services": [
+        {
+          "slug": "direction-regionale-des-affaires-culturelles-drac",
+          "libelle": "Direction régionale des Affaires culturelles (DRAC)"
+        },
+        {
+          "slug": "unite-territorial-ut-drac",
+          "libelle": "Unité territorial (UT) DRAC"
+        },
+        {
+          "slug": "autre",
+          "libelle": "Autre"
+        }
+      ]
+    },
+    {
+      "slug": "ministere-de-la-justice",
+      "libelle": "Ministère de la Justice",
+      "services": [
+        {
+          "slug": "delegation-departementale-aux-droits-des-femmes-et-a-l-egalite-dddfe",
+          "libelle": "Délégation départementale aux droits des femmes et à l'égalité (DDDFE)"
+        },
+        {
+          "slug": "delegation-regionale-aux-droits-des-femmes-et-a-l-egalite-drdfe",
+          "libelle": "Délégation régionale aux droits des femmes et à l'égalité (DRDFE)"
+        },
+        {
+          "slug": "direction-interregionale-de-la-protection-judiciaire-de-la-jeunesse-dirpjj",
+          "libelle": "Direction interrégionale de la protection judiciaire de la jeunesse (DIRPJJ)"
+        },
+        {
+          "slug": "direction-interregionale-des-services-penitentiaires-disp",
+          "libelle": "Direction interrégionale des services pénitentiaires (DISP)"
+        },
+        {
+          "slug": "service-penitentiaire-d-insertion-et-de-probation-spip",
+          "libelle": "Service pénitentiaire d'insertion et de probation (SPIP)"
+        },
+        {
+          "slug": "service-territorial-de-la-protection-judiciaire-de-la-jeunesse",
+          "libelle": "Service territorial de la protection judiciaire de la jeunesse"
+        },
+        {
+          "slug": "services-penitentiaires-d-insertion-et-de-probation",
+          "libelle": "Services pénitentiaires d'insertion et de probation"
+        },
+        {
+          "slug": "autre",
+          "libelle": "Autre"
+        }
+      ]
+    },
+    {
+      "slug": "ministere-de-la-transition-ecologique-et-de-la-cohesion-des-territoires",
+      "libelle": "Ministère de la Transition écologique et de la Cohésion des Territoires",
+      "services": [
+        {
+          "slug": "agence-de-l-environnement-et-de-la-maitrise-de-l-energie-ademe",
+          "libelle": "Agence de l’environnement et de la maîtrise de l’énergie (Ademe)"
+        },
+        {
+          "slug": "direction-interregionale-de-la-mer",
+          "libelle": "Direction interrégionale de la mer"
+        },
+        {
+          "slug": "direction-regionale-de-l-environnement-de-l-amenagement-et-du-logement-dreal",
+          "libelle": "Direction régionale de l’environnement, de l’aménagement et du logement (DREAL)"
+        },
+        {
+          "slug": "direction-regionale-et-interdepartementale-de-l-hebergement-et-du-logement",
+          "libelle": "Direction régionale et interdépartementale de l'hébergement et du logement"
+        },
+        {
+          "slug": "espace-conseil-france-renov",
+          "libelle": "Espace conseil France Rénov'"
+        },
+        {
+          "slug": "unite-territoriale-ut-dreal",
+          "libelle": "Unité territoriale (UT) DREAL"
+        },
+        {
+          "slug": "autre",
+          "libelle": "Autre"
+        }
+      ]
+    },
+    {
+      "slug": "ministere-des-armees",
+      "libelle": "Ministère des Armées",
+      "services": [
+        {
+          "slug": "delegation-militaire-departementale-dmd",
+          "libelle": "Délégation militaire départementale (DMD)"
+        },
+        {
+          "slug": "groupement-de-gendarmerie-departementale-ggd",
+          "libelle": "Groupement de gendarmerie départementale (GGD)"
+        },
+        {
+          "slug": "region-de-gendarmerie",
+          "libelle": "Région de Gendarmerie"
+        },
+        {
+          "slug": "autre",
+          "libelle": "Autre"
+        }
+      ]
+    },
+    {
+      "slug": "ministere-des-sports-de-la-jeunesse-et-de-la-vie-associative",
+      "libelle": "Ministère des Sports, de la Jeunesse et de la Vie Associative",
+      "services": [
+        {
+          "slug": "service-departemental-a-la-jeunesse-a-l-engagement-et-aux-sports-sdjes",
+          "libelle": "Service départemental à la jeunesse, à l’engagement et aux sports (SDJES)"
+        },
+        {
+          "slug": "autre",
+          "libelle": "Autre"
+        }
+      ]
+    },
+    {
+      "slug": "ministere-du-travail-de-la-sante-et-des-solidarites",
+      "libelle": "Ministère du Travail, de la Santé et des Solidarités",
+      "services": [
+        {
+          "slug": "agence-france-travail",
+          "libelle": "Agence France Travail"
+        },
+        {
+          "slug": "agence-regionale-de-sante-ars",
+          "libelle": "Agence régionale de santé (ARS)"
+        },
+        {
+          "slug": "agence-regionale-de-sante-ars-delegation-departementale",
+          "libelle": "Agence régionale de santé (ARS) - délégation départementale"
+        },
+        {
+          "slug": "caisse-d-allocations-familiales-caf-803",
+          "libelle": "Caisse d'allocations familiales (Caf) (803)"
+        },
+        {
+          "slug": "caisse-primaire-d-assurance-maladie",
+          "libelle": "Caisse primaire d'assurance maladie"
+        },
+        {
+          "slug": "direction-regionale-de-l-economie-de-l-emploi-du-travail-et-des-solidarites-dreets",
+          "libelle": "Direction régionale de l'économie, de l'emploi, du travail et des solidarités (DREETS)"
+        },
+        {
+          "slug": "france-travail",
+          "libelle": "France Travail"
+        },
+        {
+          "slug": "maison-departementale-des-personnes-handicapees-mdph",
+          "libelle": "Maison départementale des personnes handicapées (MDPH)"
+        },
+        {
+          "slug": "mutualite-sociale-agricole-msa",
+          "libelle": "Mutualité sociale agricole (MSA)"
+        },
+        {
+          "slug": "plateforme-d-accompagnement-et-de-repit-pour-les-aidants-de-personnes-agees",
+          "libelle": "Plateforme d'accompagnement et de répit pour les aidants de personnes âgées"
+        },
+        {
+          "slug": "union-de-recouvrement-des-cotisations-de-securite-sociale-et-d-allocations-familiales-urssaf",
+          "libelle": "Union de recouvrement des cotisations de sécurité sociale et d’allocations familiales (Urssaf)"
+        },
+        {
+          "slug": "autre",
+          "libelle": "Autre"
+        }
+      ]
+    },
+    {
+      "slug": "autre",
+      "libelle": "Autre",
+      "services": [
+        {
+          "slug": "autre",
+          "libelle": "Autre"
+        }
+      ]
+    }
+  ]
+}

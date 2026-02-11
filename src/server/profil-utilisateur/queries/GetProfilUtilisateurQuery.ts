@@ -11,6 +11,9 @@ type ProfilUtilisateurViewModel = {
   nom: string;
   email: string;
   fonction: string | null;
+  ministere: string | null;
+  service: string | null;
+  serviceAutre: string | null;
 };
 
 export class GetProfilUtilisateurQuery {
@@ -29,6 +32,9 @@ export class GetProfilUtilisateurQuery {
         prenom: true,
         email: true,
         fonction: true,
+        ministere: true,
+        service: true,
+        service_autre: true,
       },
     });
 
@@ -42,6 +48,9 @@ export class GetProfilUtilisateurQuery {
       nom: utilisateur.nom,
       email: utilisateur.email,
       fonction: utilisateur.fonction,
+      ministere: utilisateur.ministere,
+      service: utilisateur.service,
+      serviceAutre: utilisateur.service_autre,
     };
   }
 }

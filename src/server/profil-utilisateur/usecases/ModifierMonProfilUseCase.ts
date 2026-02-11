@@ -6,6 +6,9 @@ type ModifierMonProfilInput = {
   nom: string;
   prenom: string;
   fonction: string | null;
+  ministere: string | null;
+  service: string | null;
+  serviceAutre: string | null;
 };
 
 export class ModifierMonProfilUseCase {
@@ -27,6 +30,9 @@ export class ModifierMonProfilUseCase {
       nom: input.nom,
       prenom: input.prenom,
       fonction: input.fonction,
+      ministere: input.ministere,
+      service: input.service,
+      serviceAutre: input.serviceAutre,
     });
 
     await this.deps.profilUtilisateurRepository.sauvegarder(profilModifie);

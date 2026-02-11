@@ -1,5 +1,4 @@
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { FormProvider } from "react-hook-form";
 import { useState } from "react";
 import { z } from "zod";
 import Bloc from "@/components/_commons/Bloc/Bloc";
@@ -11,7 +10,10 @@ import { validationModifierMonProfil } from "@/validation/mon-profil";
 import type AlerteProps from "@/components/_commons/Alerte/Alerte.interface";
 import api from "@/server/infrastructure/api/trpc/api";
 import { récupérerUnCookie } from "@/client/utils/cookies";
-import { useProfilUtilisateurConnecte } from "@/client/hooks/useProfilUtilisateurConnecte";
+import useMonProfilFormulaire from "./useMonProfilFormulaire";
+import SelectMinistere from "./SelectMinistere";
+import SelectService from "./SelectService";
+import { useMonProfilForm } from "./form";
 
 type MonProfilUtilisateurFormInputs = z.infer<
   typeof validationModifierMonProfil
@@ -36,10 +38,69 @@ function useModifierProfilUtilisateur(setAlert: (props: AlerteProps) => void) {
   });
 }
 
+const PageMonProfilUtilisateurContent = () => {
+  const { watch, register, formState } = useMonProfilForm();
+  const serviceSelectionne = watch("service");
+
+  return (
+    <>
+      <InputAvecLabel
+        disabled
+        erreur={undefined}
+        htmlName="email"
+        isRequired
+        libellé="Adresse électronique"
+        register={register("email")}
+        type="email"
+      />
+
+      <InputAvecLabel
+        erreur={formState.errors.prenom}
+        htmlName="prénom"
+        isRequired
+        libellé="Prénom"
+        register={register("prenom")}
+        type="text"
+      />
+
+      <InputAvecLabel
+        erreur={formState.errors.nom}
+        htmlName="nom"
+        isRequired
+        libellé="Nom"
+        register={register("nom")}
+        type="text"
+      />
+
+      <SelectMinistere />
+
+      <SelectService />
+
+      {serviceSelectionne === "autre" && (
+        <InputAvecLabel
+          htmlName="serviceAutre"
+          libellé="Précisez votre service"
+          register={register("serviceAutre")}
+          erreur={formState.errors.serviceAutre}
+          type="text"
+        />
+      )}
+
+      <InputAvecLabel
+        erreur={formState.errors.fonction}
+        htmlName="fonction"
+        libellé="Fonction"
+        register={register("fonction")}
+        type="text"
+      />
+    </>
+  );
+};
+
 export const PageMonProfilUtilisateur = () => {
   const [alerte, setAlerte] = useState<AlerteProps | null>(null);
   const mutationModifierMonProfil = useModifierProfilUtilisateur(setAlerte);
-  const utilisateur = useProfilUtilisateurConnecte();
+  const form = useMonProfilFormulaire();
 
   const soumettreFormulaire = (data: MonProfilUtilisateurFormInputs) => {
     mutationModifierMonProfil.mutate({
@@ -47,16 +108,6 @@ export const PageMonProfilUtilisateur = () => {
       csrf: récupérerUnCookie("csrf") ?? "",
     });
   };
-
-  const form = useForm<MonProfilUtilisateurFormInputs & { email: string }>({
-    resolver: zodResolver(validationModifierMonProfil),
-    defaultValues: {
-      email: utilisateur.email,
-      nom: utilisateur.nom,
-      prenom: utilisateur.prenom,
-      fonction: utilisateur.fonction,
-    },
-  });
 
   return (
     <div className="max-w-screen-xl mx-auto py-10">
@@ -67,46 +118,13 @@ export const PageMonProfilUtilisateur = () => {
 
         {alerte ? <Alerte {...alerte} /> : null}
 
-        <Bloc titre="Mon identité">
-          <form
-            className="flex flex-col gap-4"
-            onSubmit={form.handleSubmit(soumettreFormulaire)}
-          >
-            <InputAvecLabel
-              disabled
-              erreur={undefined}
-              htmlName="email"
-              isRequired
-              libellé="Adresse électronique"
-              register={form.register("email")}
-              type="email"
-            />
-
-            <InputAvecLabel
-              erreur={form.formState.errors.prenom}
-              htmlName="prénom"
-              isRequired
-              libellé="Prénom"
-              register={form.register("prenom")}
-              type="text"
-            />
-
-            <InputAvecLabel
-              erreur={form.formState.errors.nom}
-              htmlName="nom"
-              isRequired
-              libellé="Nom"
-              register={form.register("nom")}
-              type="text"
-            />
-
-            <InputAvecLabel
-              erreur={form.formState.errors.fonction}
-              htmlName="fonction"
-              libellé="Fonction"
-              register={form.register("fonction")}
-              type="text"
-            />
+        <FormProvider {...form}>
+          <form onSubmit={form.handleSubmit(soumettreFormulaire)}>
+            <Bloc titre="Mon identité">
+              <div className="flex flex-col gap-4">
+                <PageMonProfilUtilisateurContent />
+              </div>
+            </Bloc>
 
             <div className="flex justify-end">
               <SubmitBouton
@@ -115,7 +133,7 @@ export const PageMonProfilUtilisateur = () => {
               />
             </div>
           </form>
-        </Bloc>
+        </FormProvider>
       </div>
     </div>
   );
