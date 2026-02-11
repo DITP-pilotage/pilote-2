@@ -40,8 +40,10 @@ describe("endpointProtege", () => {
     vi.clearAllMocks();
     mockLoggerError.mockClear();
     mockDecoderTokenAPI = vi.fn();
-    MockTokenAPIJWTService.mockReturnValue({
-      decoderTokenAPI: mockDecoderTokenAPI,
+    MockTokenAPIJWTService.mockImplementation(function() {
+      return {
+        decoderTokenAPI: mockDecoderTokenAPI,
+      };
     });
   });
 
