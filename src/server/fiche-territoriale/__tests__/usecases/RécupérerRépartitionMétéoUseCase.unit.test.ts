@@ -1,4 +1,4 @@
-import { mock, MockProxy } from "jest-mock-extended";
+import { mock, MockProxy } from "vitest-mock-extended";
 import { ChantierRepository } from "@/server/fiche-territoriale/domain/ports/ChantierRepository";
 import { TerritoireRepository } from "@/server/fiche-territoriale/domain/ports/TerritoireRepository";
 import { TerritoireBuilder } from "@/server/fiche-territoriale/app/builders/TerritoireBuilder";

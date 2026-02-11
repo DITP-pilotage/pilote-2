@@ -1,5 +1,6 @@
-import { mock } from "jest-mock-extended";
+import { mock } from "vitest-mock-extended";
 import { randomUUID } from "node:crypto";
+import { Mock } from "vitest";
 import UtilisateurÀCréerOuMettreÀJourBuilder from "@/server/domain/utilisateur/UtilisateurÀCréerOuMettreÀJour.builder";
 import { fakeTerritoires } from "@/server/domain/territoire/Territoire.builder";
 import { ProfilCode } from "@/server/domain/utilisateur/Utilisateur.interface";
@@ -125,13 +126,13 @@ describe("CréerOuMettreÀJourUnUtilisateurUseCase", () => {
   const oldEnv = process.env;
 
   beforeEach(() => {
-    jest.resetModules();
+    vi.resetModules();
     process.env = { ...oldEnv };
     process.env.IMPORT_KEYCLOAK_URL = "https://keycloak.net";
-    (stubUtilisateurRepository.créerOuMettreÀJour as jest.Mock).mockClear();
-    (stubUtilisateurIAMRepository.ajouteUtilisateurs as jest.Mock).mockClear();
+    (stubUtilisateurRepository.créerOuMettreÀJour as Mock).mockClear();
+    (stubUtilisateurIAMRepository.ajouteUtilisateurs as Mock).mockClear();
     (
-      stubChantierRepository.récupérerChantiersSynthétisés as jest.Mock
+      stubChantierRepository.récupérerChantiersSynthétisés as Mock
     ).mockClear();
   });
 

@@ -1,4 +1,4 @@
-import { mock, MockProxy } from "jest-mock-extended";
+import { mock, MockProxy } from "vitest-mock-extended";
 import { UtilisateurRepository } from "@/server/gestion-utilisateur/domain/ports/UtilisateurRepository";
 import { ActionCompteInactifRepository } from "@/server/gestion-utilisateur/domain/ports/ActionCompteInactifRepository";
 import { CreerLesActionsComptesInactifsUseCase } from "@/server/gestion-utilisateur/usecases/CreerLesActionsComptesInactifsUseCase";

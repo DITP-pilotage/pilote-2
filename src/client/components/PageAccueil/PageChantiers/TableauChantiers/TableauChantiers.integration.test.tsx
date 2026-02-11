@@ -12,7 +12,7 @@ import Ministère from "@/server/domain/ministère/Ministère.interface";
 import TableauChantiers from "./TableauChantiers";
 import { DonnéesTableauChantiers } from "./TableauChantiers.interface";
 
-jest.mock("next/router", () => require("next-router-mock"));
+vi.mock("next/router", () => require("next-router-mock"));
 
 class TableauChantiersTest {
   private ministèresDisponibles: Ministère[] = [

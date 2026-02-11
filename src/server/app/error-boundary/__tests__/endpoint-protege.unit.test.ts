@@ -7,36 +7,43 @@ import { TokenAPIJWTService } from "@/server/authentification/infrastructure/ada
 import { BadRequestError } from "@/server/app/error-boundary/bad-request-error";
 import { PiloteError } from "@/server/app/error-boundary/pilote-error";
 import Logger from "@/server/infrastructure/Logger";
+import { Mock } from "vitest";
 
-jest.mock("@/config", () => ({
-  configuration: jest.fn(() => ({
+vi.mock("@/config", () => ({
+  configuration: vi.fn(() => ({
     tokenAPI: {
       secret: "test-secret",
     },
   })),
 }));
 
-jest.mock("@/server/infrastructure/Logger", () => ({
+vi.mock("@/server/infrastructure/Logger", () => ({
   __esModule: true,
   default: {
-    error: jest.fn(),
+    error: vi.fn(),
   },
 }));
 
-jest.mock(
+vi.mock(
   "@/server/authentification/infrastructure/adapters/services/TokenAPIJWTService",
+  () => {
+    const MockTokenAPIJWTService = vi.fn();
+    return {
+      TokenAPIJWTService: MockTokenAPIJWTService,
+    };
+  },
 );
 
-const mockLoggerError = Logger.error as jest.Mock;
+const mockLoggerError = Logger.error as Mock;
 
 describe("endpointProtege", () => {
-  let mockDecoderTokenAPI: jest.Mock;
+  let mockDecoderTokenAPI: Mock;
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     mockLoggerError.mockClear();
-    mockDecoderTokenAPI = jest.fn();
-    (TokenAPIJWTService as jest.Mock).mockImplementation(() => ({
+    mockDecoderTokenAPI = vi.fn();
+    vi.mocked(TokenAPIJWTService).mockImplementation(() => ({
       decoderTokenAPI: mockDecoderTokenAPI,
     }));
   });
@@ -46,7 +53,7 @@ describe("endpointProtege", () => {
       // Given
       const request = setupRequest({ headers: {} });
       const response = setupResponse();
-      const handler = jest.fn();
+      const handler = vi.fn();
 
       // When
       await endpointProtege(handler)(request, response);
@@ -71,7 +78,7 @@ describe("endpointProtege", () => {
         headers: { authorization: "Basic some-token" },
       });
       const response = setupResponse();
-      const handler = jest.fn();
+      const handler = vi.fn();
 
       // When
       await endpointProtege(handler)(request, response);
@@ -96,7 +103,7 @@ describe("endpointProtege", () => {
         headers: { authorization: "Bearer" },
       });
       const response = setupResponse();
-      const handler = jest.fn();
+      const handler = vi.fn();
 
       // When
       await endpointProtege(handler)(request, response);
@@ -116,7 +123,7 @@ describe("endpointProtege", () => {
         headers: { authorization: "Bearer invalid-token" },
       });
       const response = setupResponse();
-      const handler = jest.fn();
+      const handler = vi.fn();
       mockDecoderTokenAPI.mockRejectedValue(
         new BadRequestError(
           "Le token n'a pas pu être décodé, veuillez vérifier qu'il est conforme au format JWT",
@@ -145,7 +152,7 @@ describe("endpointProtege", () => {
         headers: { authorization: "Bearer valid-token" },
       });
       const response = setupResponse();
-      const handler = jest.fn();
+      const handler = vi.fn();
       mockDecoderTokenAPI.mockResolvedValue({
         email: "test@example.com",
       });
@@ -166,13 +173,13 @@ describe("endpointProtege", () => {
       });
       const response = setupResponse();
       const callOrder: number[] = [];
-      const handler1 = jest.fn(async () => {
+      const handler1 = vi.fn(async () => {
         callOrder.push(1);
       });
-      const handler2 = jest.fn(async () => {
+      const handler2 = vi.fn(async () => {
         callOrder.push(2);
       });
-      const handler3 = jest.fn(async () => {
+      const handler3 = vi.fn(async () => {
         callOrder.push(3);
       });
       mockDecoderTokenAPI.mockResolvedValue({
@@ -203,7 +210,7 @@ describe("endpointProtege", () => {
         code: 422,
         type: "BusinessError",
       });
-      const handler = jest.fn().mockRejectedValue(error);
+      const handler = vi.fn().mockRejectedValue(error);
       mockDecoderTokenAPI.mockResolvedValue({
         email: "test@example.com",
       });
@@ -231,7 +238,7 @@ describe("endpointProtege", () => {
       });
       const response = setupResponse();
       const error = new Error("Une erreur technique inattendue");
-      const handler = jest.fn().mockRejectedValue(error);
+      const handler = vi.fn().mockRejectedValue(error);
       mockDecoderTokenAPI.mockResolvedValue({
         email: "test@example.com",
       });

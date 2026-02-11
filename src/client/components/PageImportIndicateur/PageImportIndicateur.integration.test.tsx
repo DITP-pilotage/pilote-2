@@ -7,14 +7,14 @@ import IndicateurBuilder from "@/server/domain/indicateur/Indicateur.builder";
 const CHANTIER_NOM =
   "Offrir à chaque enfant une éducation culturelle et artistique";
 
-jest.mock(
+vi.mock(
   "@/components/_commons/Cartographie/Cartographie.tsx",
   () =>
     function Cartographie() {
       return <span>Carto</span>;
     },
 );
-jest.mock(
+vi.mock(
   "@/components/_commons/IndicateursChantier/Bloc/Détails/Évolution/IndicateurEvolution.tsx",
   () =>
     function IndicateurChart() {
@@ -22,7 +22,7 @@ jest.mock(
     },
 );
 
-jest.mock("next/router", () => require("next-router-mock"));
+vi.mock("next/router", () => require("next-router-mock"));
 
 describe("PageImportIndicateur", () => {
   describe("En tête", () => {

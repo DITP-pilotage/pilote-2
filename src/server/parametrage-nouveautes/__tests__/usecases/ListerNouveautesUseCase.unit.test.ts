@@ -1,4 +1,4 @@
-import { mock, MockProxy } from "jest-mock-extended";
+import { mock, MockProxy } from "vitest-mock-extended";
 import { NouveauteRepository } from "@/server/parametrage-nouveautes/domain/ports/NouveauteRepository";
 import { ListerNouveautesUseCase } from "@/server/parametrage-nouveautes/usecases/ListerNouveautesUseCase";
 import { Nouveaute } from "@/server/parametrage-nouveautes/domain/Nouveaute";

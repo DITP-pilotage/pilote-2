@@ -1,4 +1,4 @@
-import { mock, MockProxy } from "jest-mock-extended";
+import { mock, MockProxy } from "vitest-mock-extended";
 import { ChantierBuilder } from "@/server/fiche-conducteur/app/builders/ChantierBuilder";
 import { ChantierRepository } from "@/server/fiche-conducteur/domain/ports/ChantierRepository";
 import { RécupérerAvancementUseCase } from "@/server/fiche-conducteur/usecases/RécupérerAvancementUseCase";

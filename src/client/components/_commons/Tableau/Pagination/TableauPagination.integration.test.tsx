@@ -12,7 +12,7 @@ class TableauPaginationTest {
   changementDePageCallback: jest.Mock;
 
   constructor() {
-    this.changementDePageCallback = jest.fn();
+    this.changementDePageCallback = vi.fn();
   }
 
   récupérerLesElementsDeListe() {

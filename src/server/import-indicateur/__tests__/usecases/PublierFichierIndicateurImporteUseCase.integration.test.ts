@@ -1,4 +1,4 @@
-import { captor, mock, MockProxy } from "jest-mock-extended";
+import { captor, mock, MockProxy } from "vitest-mock-extended";
 import { PublierFichierIndicateurImporteUseCase } from "@/server/import-indicateur/usecases/PublierFichierIndicateurImporteUseCase";
 import { MesureIndicateurTemporaireRepository } from "@/server/import-indicateur/domain/ports/MesureIndicateurTemporaireRepository.interface";
 import { RapportRepository } from "@/server/import-indicateur/domain/ports/RapportRepository";

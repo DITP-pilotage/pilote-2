@@ -1,4 +1,4 @@
-import { mock, MockProxy } from "jest-mock-extended";
+import { mock, MockProxy } from "vitest-mock-extended";
 import { GestionContenuRepository } from "@/server/gestion-contenu/domain/ports/GestionContenuRepository";
 import { ModifierMessageInformationUseCase } from "@/server/gestion-contenu/usecases/ModifierMessageInformationUseCase";
 

@@ -1,4 +1,4 @@
-import { mock, MockProxy } from "jest-mock-extended";
+import { mock, MockProxy } from "vitest-mock-extended";
 import { DonneeIndicateurBuilder } from "@/server/chantiers/app/builder/DonneeIndicateurBuilder";
 import { IndicateurRepository } from "@/server/chantiers/domain/ports/IndicateurRepository";
 import { ListerDonneesIndicateurParIndicIdUseCase } from "@/server/chantiers/usecases/ListerDonneesIndicateurParIndicIdUseCase";

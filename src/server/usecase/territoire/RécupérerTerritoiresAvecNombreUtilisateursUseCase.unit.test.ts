@@ -1,4 +1,4 @@
-import { mock, MockProxy } from "jest-mock-extended";
+import { mock, MockProxy } from "vitest-mock-extended";
 import TerritoireRepository from "@/server/domain/territoire/TerritoireRepository.interface";
 import UtilisateurRepository from "@/server/domain/utilisateur/UtilisateurRepository.interface";
 import TerritoireBuilder from "@/server/domain/territoire/Territoire.builder";

@@ -1,4 +1,4 @@
-import { anyString, mock, MockProxy } from "jest-mock-extended";
+import { anyString, mock, MockProxy } from "vitest-mock-extended";
 import { TokenAPIService } from "@/server/authentification/domain/ports/TokenAPIService";
 import { TokenAPIInformationRepository } from "@/server/authentification/domain/ports/TokenAPIInformationRepository";
 import { CreerTokenAPIUseCase } from "@/server/authentification/usecases/CreerTokenAPIUseCase";

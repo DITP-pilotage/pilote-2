@@ -1,4 +1,4 @@
-import { mock, MockProxy } from "jest-mock-extended";
+import { mock, MockProxy } from "vitest-mock-extended";
 import { UtilisateurRepository } from "@/server/gestion-utilisateur/domain/ports/UtilisateurRepository";
 import { RecupererEtatModaleInscriptionUseCase } from "@/server/gestion-utilisateur/usecases/RecupererEtatModaleInscriptionUseCase";
 
@@ -12,8 +12,8 @@ describe("RecupererEtatModaleInscriptionUseCase", () => {
       new RecupererEtatModaleInscriptionUseCase({
         utilisateurRepository,
       });
-    jest.useFakeTimers();
-    jest.setSystemTime(new Date("2025-06-17T08:06:12.411Z"));
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2025-06-17T08:06:12.411Z"));
   });
 
   it("Si l'utilisateur n'a pas déjà visionné la vidéo d'accueil retourne faux", async () => {

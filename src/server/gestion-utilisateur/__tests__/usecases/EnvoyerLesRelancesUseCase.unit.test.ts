@@ -1,4 +1,4 @@
-import { mock, MockProxy } from "jest-mock-extended";
+import { mock, MockProxy } from "vitest-mock-extended";
 import { randomUUID } from "crypto";
 import { UtilisateurRepository } from "@/server/gestion-utilisateur/domain/ports/UtilisateurRepository";
 import { ActionCompteInactifRepository } from "@/server/gestion-utilisateur/domain/ports/ActionCompteInactifRepository";
@@ -30,8 +30,8 @@ describe("EnvoyerLesRelancesUseCase", () => {
   });
 
   beforeEach(() => {
-    jest.useFakeTimers();
-    jest.setSystemTime(AUJOURD_HUI);
+    vi.useFakeTimers();
+    vi.setSystemTime(AUJOURD_HUI);
 
     utilisateurRepository = mock<UtilisateurRepository>();
     actionCompteInactifRepository = mock<ActionCompteInactifRepository>();
@@ -49,7 +49,7 @@ describe("EnvoyerLesRelancesUseCase", () => {
   });
 
   afterEach(() => {
-    jest.useRealTimers();
+    vi.useRealTimers();
   });
 
   it("ne fait rien quand aucune action de relance n'est à traiter", async () => {

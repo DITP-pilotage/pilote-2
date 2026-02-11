@@ -1,4 +1,4 @@
-import { mock, MockProxy } from "jest-mock-extended";
+import { mock, MockProxy } from "vitest-mock-extended";
 import { TokenAPIJWTService } from "@/server/authentification/infrastructure/adapters/services/TokenAPIJWTService";
 import { TokenAPIInformationBuilder } from "@/server/authentification/app/builder/TokenAPIInformationBuilder";
 import { UtilisateurBuilder } from "@/server/authentification/app/builder/UtilisateurBuilder";

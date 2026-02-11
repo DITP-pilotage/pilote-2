@@ -5,7 +5,7 @@ import CréerUnCommentaireUseCase from "./CréerUnCommentaireUseCase";
 
 const RANDOM_UUID = "123";
 
-jest.mock("node:crypto", () => ({
+vi.mock("node:crypto", () => ({
   randomUUID: () => RANDOM_UUID,
 }));
 
@@ -20,9 +20,9 @@ describe("CréerUnCommentaireUseCase", () => {
     const date = new Date("2023-03-22T00:00:00.000Z");
     const type = "risquesEtFreinsÀLever";
 
-    jest.useFakeTimers().setSystemTime(date);
+    vi.useFakeTimers().setSystemTime(date);
     const stubCommentaireRepository = {
-      créer: jest.fn(),
+      créer: vi.fn(),
     } as unknown as CommentaireRepository;
     const créerUnCommentaire = new CréerUnCommentaireUseCase(
       stubCommentaireRepository,
@@ -70,9 +70,9 @@ describe("CréerUnCommentaireUseCase", () => {
     const date = new Date("2023-03-22T00:00:00.000Z");
     const type = "risquesEtFreinsÀLever";
 
-    jest.useFakeTimers().setSystemTime(date);
+    vi.useFakeTimers().setSystemTime(date);
     const stubCommentaireRepository = {
-      créer: jest.fn().mockReturnValue({
+      créer: vi.fn().mockReturnValue({
         contenu,
         auteur,
         date,

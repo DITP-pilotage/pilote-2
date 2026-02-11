@@ -79,6 +79,7 @@
     "transpileOnly": true
   },
   "files": [
-    "src/server/infrastructure/test/global.d.ts"
+    "vitest.d.ts",
+    "jest-extended.d.ts"
   ]
 }

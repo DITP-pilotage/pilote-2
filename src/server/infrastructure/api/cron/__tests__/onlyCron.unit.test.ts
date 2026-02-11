@@ -4,8 +4,8 @@ import {
   setupResponse,
 } from "@/server/infrastructure/test/apiTestHelpers";
 
-jest.mock("@/config", () => ({
-  configuration: jest.fn(() => ({
+vi.mock("@/config", () => ({
+  configuration: vi.fn(() => ({
     cron: {
       authSecret: "valid-secret",
     },
@@ -17,7 +17,7 @@ describe("onlyCron", () => {
     // Given
     const request = setupRequest({ method: "GET" });
     const response = setupResponse();
-    const handler = jest.fn();
+    const handler = vi.fn();
 
     // When
     await onlyCron(handler)(request, response);
@@ -34,7 +34,7 @@ describe("onlyCron", () => {
     // Given
     const request = setupRequest({ headers: {} });
     const response = setupResponse();
-    const handler = jest.fn();
+    const handler = vi.fn();
 
     // When
     await onlyCron(handler)(request, response);
@@ -53,7 +53,7 @@ describe("onlyCron", () => {
       headers: { authorization: "Basic some-token" },
     });
     const response = setupResponse();
-    const handler = jest.fn();
+    const handler = vi.fn();
 
     // When
     await onlyCron(handler)(request, response);
@@ -72,7 +72,7 @@ describe("onlyCron", () => {
       headers: { authorization: "Bearer invalid-secret" },
     });
     const response = setupResponse();
-    const handler = jest.fn();
+    const handler = vi.fn();
 
     // When
     await onlyCron(handler)(request, response);
@@ -91,7 +91,7 @@ describe("onlyCron", () => {
       headers: { authorization: "Bearer valid-secret" },
     });
     const response = setupResponse();
-    const handler = jest.fn();
+    const handler = vi.fn();
 
     // When
     await onlyCron(handler)(request, response);

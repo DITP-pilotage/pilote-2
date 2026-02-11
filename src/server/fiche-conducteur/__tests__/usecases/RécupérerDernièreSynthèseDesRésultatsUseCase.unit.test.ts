@@ -1,4 +1,4 @@
-import { mock, MockProxy } from "jest-mock-extended";
+import { mock, MockProxy } from "vitest-mock-extended";
 import { SynthèseDesRésultatsRepository } from "@/server/fiche-conducteur/domain/ports/SynthèseDesRésultatsRepository";
 import { SyntheseDesResultatsBuilder } from "@/server/fiche-conducteur/app/builders/SyntheseDesResultatsBuilder";
 import { RécupérerDernièreSynthèseDesRésultatsUseCase } from "@/server/fiche-conducteur/usecases/RécupérerDernièreSynthèseDesRésultatsUseCase";

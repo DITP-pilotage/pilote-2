@@ -14,7 +14,7 @@ test("le tag comporte un bouton", () => {
 });
 
 test("le tag lance un event au clic", async () => {
-  const auClicCallback = jest.fn();
+  const auClicCallback = vi.fn();
 
   render(<Tag libelle="Texte du tag" onClick={auClicCallback} />);
   await userEvent.click(screen.getByRole("button"));
