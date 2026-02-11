@@ -9,8 +9,8 @@ export default defineProject({
     environment: 'node',
     include: ['src/server/**/*.integration.test.{ts,tsx}'],
     setupFiles: [
-      './src/server/infrastructure/test/integrationTestSetup.ts',
       './vitest.setup.server.ts',
+      './src/server/infrastructure/test/integrationTestSetup.ts',
     ],
     pool: 'forks',
     singleFork: true,
