@@ -56,27 +56,25 @@ export const SelecteurNew = <T extends string>({
 
   const isGrouped = isGroupedOptions(options);
 
-  const optionsFiltrees = showSearch
+  const rechercheNormalisee = recherche.toLowerCase();
+
+  const hasVisibleResults = showSearch
     ? isGrouped
-      ? options
-          .map((group) => {
-            const groupMatchesSearch = group.libelle
-              .toLowerCase()
-              .includes(recherche.toLowerCase());
-            const filteredOptions = groupMatchesSearch
-              ? group.options
-              : group.options.filter((option) =>
-                  option.libelle
-                    .toLowerCase()
-                    .includes(recherche.toLowerCase()),
-                );
-            return { ...group, options: filteredOptions };
-          })
-          .filter((group) => group.options.length > 0)
-      : options.filter((option) =>
-          option.libelle.toLowerCase().includes(recherche.toLowerCase()),
+      ? options.some((group) => {
+          const groupMatchesSearch = group.libelle
+            .toLowerCase()
+            .includes(rechercheNormalisee);
+          return (
+            groupMatchesSearch ||
+            group.options.some((option) =>
+              option.libelle.toLowerCase().includes(rechercheNormalisee),
+            )
+          );
+        })
+      : options.some((option) =>
+          option.libelle.toLowerCase().includes(rechercheNormalisee),
         )
-    : options;
+    : true;
 
   return (
     <div className={clsxm("flex flex-col gap-1", className)}>
@@ -136,43 +134,82 @@ export const SelecteurNew = <T extends string>({
           ) : null}
 
           <div className="max-h-80 overflow-y-auto">
-            {optionsFiltrees.length === 0 ? (
+            {!hasVisibleResults && (
               <div className="px-4 py-2 text-sm text-dsfr-mention-grey text-center">
                 Aucun résultat
               </div>
-            ) : isGrouped ? (
-              (optionsFiltrees as SelecteurNewOptionGroup<T>[]).map(
-                (group, index) => (
-                  <>
-                    {index > 0 && <Select.Separator />}
-                    <Select.Group key={String(group.valeur)}>
-                      <Select.Label>{group.libelle}</Select.Label>
-                      <div className="pl-3">
-                        {group.options.map((option) => (
-                          <Select.Item
-                            disabled={option.desactivee}
-                            key={String(option.valeur)}
-                            value={option.valeur}
-                          >
-                            {option.libelle}
-                          </Select.Item>
-                        ))}
-                      </div>
-                    </Select.Group>
-                  </>
-                ),
-              )
-            ) : (
-              (optionsFiltrees as SelecteurNewOption<T>[]).map((option) => (
-                <Select.Item
-                  disabled={option.desactivee}
-                  key={String(option.valeur)}
-                  value={option.valeur}
-                >
-                  {option.libelle}
-                </Select.Item>
-              ))
             )}
+            {isGrouped
+              ? (options as SelecteurNewOptionGroup<T>[]).map(
+                  (group, index) => {
+                    const groupMatchesSearch = group.libelle
+                      .toLowerCase()
+                      .includes(rechercheNormalisee);
+                    const hasMatchingOptions = group.options.some((option) =>
+                      option.libelle
+                        .toLowerCase()
+                        .includes(rechercheNormalisee),
+                    );
+                    const shouldHideGroup =
+                      showSearch &&
+                      recherche &&
+                      !groupMatchesSearch &&
+                      !hasMatchingOptions;
+
+                    return (
+                      <div
+                        key={String(group.valeur)}
+                        className={clsxm({ hidden: shouldHideGroup })}
+                      >
+                        {index > 0 && <Select.Separator />}
+                        <Select.Group>
+                          <Select.Label>{group.libelle}</Select.Label>
+                          <div className="pl-3">
+                            {group.options.map((option) => {
+                              const shouldHideOption =
+                                showSearch &&
+                                recherche &&
+                                !groupMatchesSearch &&
+                                !option.libelle
+                                  .toLowerCase()
+                                  .includes(rechercheNormalisee);
+
+                              return (
+                                <Select.Item
+                                  disabled={option.desactivee}
+                                  key={String(option.valeur)}
+                                  value={option.valeur}
+                                  className={clsxm({
+                                    hidden: shouldHideOption,
+                                  })}
+                                >
+                                  {option.libelle}
+                                </Select.Item>
+                              );
+                            })}
+                          </div>
+                        </Select.Group>
+                      </div>
+                    );
+                  },
+                )
+              : (options as SelecteurNewOption<T>[]).map((option) => {
+                  const shouldHideOption =
+                    showSearch &&
+                    recherche &&
+                    !option.libelle.toLowerCase().includes(rechercheNormalisee);
+
+                  return (
+                    <Select.Item
+                      disabled={option.desactivee}
+                      key={String(option.valeur)}
+                      value={option.valeur}
+                      className={clsxm({ hidden: shouldHideOption })}
+                    >
+                      {option.libelle}
+                    </Select.Item>
+                  );
+                })}
           </div>
         </Select.Content>
       </Select.Root>
