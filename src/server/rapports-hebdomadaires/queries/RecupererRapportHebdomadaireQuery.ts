@@ -1,5 +1,14 @@
 import { TRPCError } from "@trpc/server";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
+import { SectionActiviteComptes } from "@/server/rapports-hebdomadaires/domain/SectionActiviteComptes";
+import { SectionChantier } from "@/server/rapports-hebdomadaires/domain/SectionActiviteChantiers";
+import { Coordinateur } from "@/server/rapports-hebdomadaires/domain/Coordinateur";
+
+type ContenuRapport = {
+  coordinateur: Coordinateur;
+  sectionActiviteComptes: SectionActiviteComptes;
+  sectionActiviteChantiers: SectionChantier[];
+};
 
 export type RapportHebdomadaire = {
   id: string;
@@ -7,7 +16,7 @@ export type RapportHebdomadaire = {
   periodeFin: Date;
   statutEnvoi: string;
   dateCreation: Date;
-  contenuRapport: unknown;
+  contenuRapport: ContenuRapport;
 };
 
 export default class RecupererRapportHebdomadaireQuery {
@@ -39,7 +48,7 @@ export default class RecupererRapportHebdomadaireQuery {
       periodeFin: rapport.date_fin_periode,
       statutEnvoi: rapport.statut_envoi,
       dateCreation: rapport.date_creation,
-      contenuRapport: rapport.contenu_rapport,
+      contenuRapport: rapport.contenu_rapport as ContenuRapport,
     };
   }
 }

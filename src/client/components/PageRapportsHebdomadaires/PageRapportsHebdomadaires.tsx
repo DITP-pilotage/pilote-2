@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import { parseAsString, useQueryState } from "nuqs";
+import "@gouvfr/dsfr/dist/component/table/table.min.css";
 import api from "@/server/infrastructure/api/trpc/api";
 
 function RapportDetail({ rapportId }: { rapportId: string }) {
@@ -7,12 +8,125 @@ function RapportDetail({ rapportId }: { rapportId: string }) {
     rapportId,
   });
 
+  const formatDate = (date: Date) => {
+    return new Date(date).toLocaleDateString("fr-FR", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    });
+  };
+
+  const comptesCrees =
+    rapportDetail.contenuRapport.sectionActiviteComptes.comptesCrees;
+  const comptesDesactives =
+    rapportDetail.contenuRapport.sectionActiviteComptes.comptesDesactives;
+  const chantiers = rapportDetail.contenuRapport.sectionActiviteChantiers;
+
   return (
     <div className="p-6">
-      <h2 className="text-2xl font-bold mb-4">Détail du rapport</h2>
-      <pre className="bg-gray-100 p-4 rounded overflow-auto">
-        {JSON.stringify(rapportDetail, null, 2)}
-      </pre>
+      <h2 className="text-2xl font-bold mb-2">Détail du rapport</h2>
+      <p className="text-gray-600 mb-6">
+        {formatDate(rapportDetail.periodeDebut)} —{" "}
+        {formatDate(rapportDetail.periodeFin)}
+      </p>
+
+      {/* Section 1: Comptes créés */}
+      <h3 className="text-xl font-semibold mb-3">Comptes créés</h3>
+      {comptesCrees.length === 0 ? (
+        <p className="text-gray-500 mb-6">
+          Aucun compte créé sur cette période.
+        </p>
+      ) : (
+        <div className="fr-table mb-6">
+          <table>
+            <thead>
+              <tr>
+                <th>Nom</th>
+                <th>Prénom</th>
+                <th>Email</th>
+                <th>Profil</th>
+              </tr>
+            </thead>
+            <tbody>
+              {comptesCrees.map((compte) => (
+                <tr key={compte.email}>
+                  <td>{compte.nom}</td>
+                  <td>{compte.prenom}</td>
+                  <td>{compte.email}</td>
+                  <td>{compte.profil}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      {/* Section 2: Comptes désactivés */}
+      <h3 className="text-xl font-semibold mb-3">Comptes désactivés</h3>
+      {comptesDesactives.length === 0 ? (
+        <p className="text-gray-500 mb-6">
+          Aucun compte désactivé sur cette période.
+        </p>
+      ) : (
+        <div className="fr-table mb-6">
+          <table>
+            <thead>
+              <tr>
+                <th>Nom</th>
+                <th>Prénom</th>
+                <th>Email</th>
+                <th>Profil</th>
+              </tr>
+            </thead>
+            <tbody>
+              {comptesDesactives.map((compte) => (
+                <tr key={compte.email}>
+                  <td>{compte.nom}</td>
+                  <td>{compte.prenom}</td>
+                  <td>{compte.email}</td>
+                  <td>{compte.profil}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      {/* Section 3: Activité des chantiers */}
+      <h3 className="text-xl font-semibold mb-3">Activité des chantiers</h3>
+      {chantiers.length === 0 ? (
+        <p className="text-gray-500">
+          Aucune activité sur les chantiers pour cette période.
+        </p>
+      ) : (
+        <div className="fr-table">
+          <table>
+            <thead>
+              <tr>
+                <th>Chantier</th>
+                <th>Nombre d'indicateurs modifiés</th>
+                <th>Nombre de territoires impactés</th>
+              </tr>
+            </thead>
+            <tbody>
+              {chantiers.map((chantier) => {
+                const nombreIndicateurs = chantier.indicateurs.length;
+                const nombreTerritoires = chantier.indicateurs.flatMap(
+                  (indicateur) => indicateur.territoires,
+                ).length;
+
+                return (
+                  <tr key={chantier.id}>
+                    <td>{chantier.nom}</td>
+                    <td>{nombreIndicateurs}</td>
+                    <td>{nombreTerritoires}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   );
 }
