@@ -187,11 +187,10 @@ def _diff_tables_row_by_row(
             target_df[common_columns].map(_normalize_cell).to_numpy().tolist()
         )
     else:
-        # Use raw values as-is
         source_aligned = source_df[common_columns].to_numpy().tolist()
         target_aligned = target_df[common_columns].to_numpy().tolist()
 
-    # Convert each row to list of [stringified, tuple] forms
+    # On crée des arrays du row sous forme de string (pour la comparaison) et brut (pour l'output csv)
     source_rows = [[str(tuple(row)), tuple(row)] for row in source_aligned]
     target_rows = [[str(tuple(row)), tuple(row)] for row in target_aligned]
 

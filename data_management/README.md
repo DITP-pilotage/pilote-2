@@ -297,7 +297,9 @@ docker-compose run pilote_scripts scripts/7_fill_tables_public.sh
 
 ### Développement et comparaison des données local vs prod/dev
 
-Afin de pourvoir anticiper les conséquences de changements sur la datafactory il est possible d'utiliser le script python [`scripts/compare_local_vs_target.py`](scripts/compare_local_vs_target.py). Typiquement :
+Afin de pourvoir anticiper les conséquences de changements sur la datafactory il est possible d'utiliser le script python [`scripts/compare_local_vs_target.py`](scripts/compare_local_vs_target.py).
+
+Typiquement, après avoir créé un tunnel vers la dev, fait une descente de dev et lancé les jobs en local :
 ```bash
 pipenv run python scripts/compare_local_vs_target.py -o
 ```
