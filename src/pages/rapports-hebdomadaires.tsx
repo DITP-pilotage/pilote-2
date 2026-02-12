@@ -1,11 +1,10 @@
 import { type GetServerSideProps } from "next";
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/server/infrastructure/api/auth/[...nextauth]";
-import { ProfilEnum } from "@/server/domain/utilisateur/Utilisateur.interface";
+import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
+import { ProfilEnum } from "@/server/app/enum/profil.enum";
 import PageRapportsHebdomadaires from "@/client/components/PageRapportsHebdomadaires/PageRapportsHebdomadaires";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const session = await getServerSession(context.req, context.res, authOptions);
+  const session = await auth(context);
 
   if (
     !session ||

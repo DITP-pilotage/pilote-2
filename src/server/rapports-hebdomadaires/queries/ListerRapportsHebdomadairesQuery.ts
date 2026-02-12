@@ -1,6 +1,5 @@
 import { type $Enums } from "@prisma/client";
-
-import { type PrismaPilote } from "@/server/infrastructure/test/integrationTestHelper.interface";
+import { PrismaPilote } from "@/server/db/PrismaPilote";
 
 export type RapportHebdomadaireResume = {
   id: string;
@@ -11,33 +10,31 @@ export type RapportHebdomadaireResume = {
 };
 
 export default class ListerRapportsHebdomadairesQuery {
-  private prisma: PrismaPilote;
-
-  constructor({ prisma }: { prisma: PrismaPilote }) {
-    this.prisma = prisma;
-  }
+  constructor(private readonly deps: { prisma: PrismaPilote }) {}
 
   async run(coordinateurId: string): Promise<RapportHebdomadaireResume[]> {
-    const rapports = await this.prisma.rapport_hebdomadaire.findMany({
-      where: {
-        coordinateur_id: coordinateurId,
-      },
-      select: {
-        id: true,
-        periode_debut: true,
-        periode_fin: true,
-        statut_envoi: true,
-        date_creation: true,
-      },
-      orderBy: {
-        date_creation: "desc",
-      },
-    });
+    const rapports = await this.deps.prisma
+      .getInstance()
+      .rapport_hebdomadaire_coordinateur.findMany({
+        where: {
+          coordinateur_id: coordinateurId,
+        },
+        select: {
+          id: true,
+          date_debut_periode: true,
+          date_fin_periode: true,
+          statut_envoi: true,
+          date_creation: true,
+        },
+        orderBy: {
+          date_creation: "desc",
+        },
+      });
 
     return rapports.map((rapport) => ({
       id: rapport.id,
-      periodeDebut: rapport.periode_debut,
-      periodeFin: rapport.periode_fin,
+      periodeDebut: rapport.date_debut_periode,
+      periodeFin: rapport.date_fin_periode,
       statutEnvoi: rapport.statut_envoi,
       dateCreation: rapport.date_creation,
     }));

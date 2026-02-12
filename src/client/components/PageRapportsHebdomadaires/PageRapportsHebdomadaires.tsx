@@ -1,12 +1,11 @@
 import { Suspense } from "react";
 import { parseAsString, useQueryState } from "nuqs";
-import { api } from "@/client/utils/api";
+import api from "@/server/infrastructure/api/trpc/api";
 
 function RapportDetail({ rapportId }: { rapportId: string }) {
-  const { data: rapportDetail } =
-    api.rapportHebdomadaire.récupérer.useSuspenseQuery({
-      rapportId,
-    });
+  const [rapportDetail] = api.rapportHebdomadaire.récupérer.useSuspenseQuery({
+    rapportId,
+  });
 
   return (
     <div className="p-6">
@@ -20,7 +19,7 @@ function RapportDetail({ rapportId }: { rapportId: string }) {
 
 export default function PageRapportsHebdomadaires() {
   const [rapportId, setRapportId] = useQueryState("rapportId", parseAsString);
-  const { data: rapports } = api.rapportHebdomadaire.lister.useSuspenseQuery();
+  const [rapports] = api.rapportHebdomadaire.lister.useSuspenseQuery();
 
   const getStatutBadgeClass = (statut: string) => {
     switch (statut) {
