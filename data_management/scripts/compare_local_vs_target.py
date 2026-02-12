@@ -31,6 +31,70 @@ EXPOSITION_TABLES = [
     "synthese_des_resultats",
 ]
 
+parser = argparse.ArgumentParser()
+parser.add_argument(
+    "--tables",
+    "-t",
+    nargs="+",
+    help=(
+        "List of fully qualified table names to diff (schema.table). "
+        "If omitted, defaults to the EXPOSITION_TABLES list in the public schema."
+    ),
+)
+parser.add_argument(
+    "--output-csv",
+    "-o",
+    action="store_true",
+    default=True,
+    help="Write differences as CSV files (one file per table) into the 'output/' folder next to this script. Enabled by default.",
+)
+parser.add_argument(
+    "--normalize",
+    "-n",
+    action="store_true",
+    help="If set, normalize values before comparison (rounding, list/tuple sorting, etc.). Default is raw comparison."
+)
+parser.add_argument(
+    "--source",
+    help=(
+        "Override the default source PostgreSQL connection string. "
+        "If not set, constructed from PGHOST/PGPORT/PGUSER/PGPASSWORD/PGDATABASE env variables."
+    ),
+)
+parser.add_argument(
+    "--target",
+    help=(
+        "Override the default target PostgreSQL connection string. "
+        "If not set, defaults to CONN_STR_DEV environment variable."
+    ),
+)
+
+args = parser.parse_args()
+
+if args.tables:
+    tables = args.tables
+else:
+    tables = EXPOSITION_TABLES
+
+
+if args.source:
+    source_connection_string = args.source
+else:
+    pg_host = os.environ.get("PGHOST", "localhost")
+    pg_port = os.environ.get("PGPORT", "5432")
+    pg_user = os.environ.get("PGUSER", "postgresql")
+    pg_password = os.environ.get("PGPASSWORD", "secret")
+    pg_database = os.environ.get("PGDATABASE", "postgresql")
+    source_connection_string = (
+        f"postgresql://{pg_user}:{pg_password}@{pg_host}:{pg_port}/{pg_database}"
+    )
+
+if args.target:
+    target_connection_string = args.target
+else:
+    target_connection_string = os.environ["CONN_STR_DEV"]
+
+
 
 def _read_table_as_df(
     engine_url: str,
@@ -224,94 +288,35 @@ def _diff_tables_row_by_row(
     return differences, common_columns
 
 
-parser = argparse.ArgumentParser()
-parser.add_argument(
-    "--tables",
-    "-t",
-    nargs="+",
-    help=(
-        "List of fully qualified table names to diff (schema.table). "
-        "If omitted, defaults to the EXPOSITION_TABLES list in the public schema."
-    ),
-)
-parser.add_argument(
-    "--output-csv",
-    "-o",
-    action="store_true",
-    default=True,
-    help="Write differences as CSV files (one file per table) into the 'output/' folder next to this script. Enabled by default.",
-)
-parser.add_argument(
-    "--normalize",
-    "-n",
-    action="store_true",
-    help="If set, normalize values before comparison (rounding, list/tuple sorting, etc.). Default is raw comparison."
-)
-parser.add_argument(
-    "--source",
-    help=(
-        "Override the default source PostgreSQL connection string. "
-        "If not set, constructed from PGHOST/PGPORT/PGUSER/PGPASSWORD/PGDATABASE env variables."
-    ),
-)
-parser.add_argument(
-    "--target",
-    help=(
-        "Override the default target PostgreSQL connection string. "
-        "If not set, defaults to CONN_STR_DEV environment variable."
-    ),
-)
+def main():
+    all_differences: list[dict[str, Any]] = []
 
-args = parser.parse_args()
-
-if args.tables:
-    tables = args.tables
-else:
-    tables = EXPOSITION_TABLES
-
-
-if args.source:
-    source_connection_string = args.source
-else:
-    pg_host = os.environ.get("PGHOST", "localhost")
-    pg_port = os.environ.get("PGPORT", "5432")
-    pg_user = os.environ.get("PGUSER", "postgresql")
-    pg_password = os.environ.get("PGPASSWORD", "secret")
-    pg_database = os.environ.get("PGDATABASE", "postgresql")
-    source_connection_string = (
-        f"postgresql://{pg_user}:{pg_password}@{pg_host}:{pg_port}/{pg_database}"
-    )
-
-if args.target:
-    target_connection_string = args.target
-else:
-    target_connection_string = os.environ["CONN_STR_DEV"]
-
-all_differences: list[dict[str, Any]] = []
-
-for table_reference in tables:
-    schema, table_name = _split_schema_and_table(table_reference)
-    logger.info("[DIFFING][Table: %s]", table_reference)
-    differences, common_columns = _diff_tables_row_by_row(
-        source_url=source_connection_string,
-        target_url=target_connection_string,
-        schema=schema,
-        table_name=table_name,
-        normalize=args.normalize,
-    )
-    all_differences.extend([dict(d, table=f"{schema}.{table_name}") for d in differences])
-
-    if args.output_csv and differences:
-        #On crée le fichier de diff de la table dans le dossier output
-        output_dir = os.path.join(os.path.dirname(__file__), "output")
-        os.makedirs(output_dir, exist_ok=True)
-        output_path = os.path.join(output_dir, f"{schema}.{table_name}.csv")
-        df_table = pd.DataFrame(differences)
-        cols = ["side"] + list(common_columns)
-        df_table.to_csv(output_path, columns=cols, index=False)
-        logger.warning(
-            "[DIFFING][Table: %s] %d differences saved to %s",
-            f"{schema}.{table_name}",
-            len(differences),
-            output_path,
+    for table_reference in tables:
+        schema, table_name = _split_schema_and_table(table_reference)
+        logger.info("[DIFFING][Table: %s]", table_reference)
+        differences, common_columns = _diff_tables_row_by_row(
+            source_url=source_connection_string,
+            target_url=target_connection_string,
+            schema=schema,
+            table_name=table_name,
+            normalize=args.normalize,
         )
+        all_differences.extend([dict(d, table=f"{schema}.{table_name}") for d in differences])
+
+        if args.output_csv and differences:
+            # On crée le fichier de diff de la table dans le dossier output
+            output_dir = os.path.join(os.path.dirname(__file__), "output")
+            os.makedirs(output_dir, exist_ok=True)
+            output_path = os.path.join(output_dir, f"{schema}.{table_name}.csv")
+            df_table = pd.DataFrame(differences)
+            cols = ["side"] + list(common_columns)
+            df_table.to_csv(output_path, columns=cols, index=False)
+            logger.warning(
+                "[DIFFING][Table: %s] %d differences saved to %s",
+                f"{schema}.{table_name}",
+                len(differences),
+                output_path,
+            )
+
+if __name__ == "__main__":
+    main()
