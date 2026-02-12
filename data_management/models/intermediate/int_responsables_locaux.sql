@@ -16,8 +16,10 @@ WITH resp_locaux AS (
         AND u.date_desactivation is NULL
 )
 SELECT 
-	ARRAY_AGG(a.nom) as nom,
-	ARRAY_AGG(email) as email,
+	-- On trie par nom pour éviter les différences de tri
+	-- et que les emails soient associés aux bons noms
+	ARRAY_AGG(a.nom order by a.nom) as nom,
+	ARRAY_AGG(a.email order by a.nom) as email,
     chantier_id,
 	a.territoire_code,
     t.zone_id

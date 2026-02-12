@@ -50,8 +50,10 @@ dir_projets_complet AS (
 )
 
 SELECT 		
-    array_agg(nom) AS nom,
-    array_agg(email) AS email,
+    array_agg(nom order by nom) AS nom,
+    -- On trie par nom pour éviter les différences de tri
+    -- et que les emails soient associés aux bons noms
+    array_agg(email order by nom) AS email,
     chantier_id
 FROM dir_projets_complet
 GROUP BY chantier_id
