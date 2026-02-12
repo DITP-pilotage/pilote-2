@@ -12,6 +12,7 @@ npm run database:init
 echo ">> Descente de prod"
 bash scripts/ddp_dump.sh
 bash scripts/ddp_restore.sh
+bash scripts/anonymisation_utilisateurs.sh
 echo ">> Run dj prod"
 cd data_management
 FULL_DJ=false pipenv run /bin/bash scripts/run_datajobs.sh
