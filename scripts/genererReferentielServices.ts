@@ -71,6 +71,14 @@ function genererReferentiel(): void {
   // Convert to array and sort
   const ministeres = Array.from(ministeresMap.values());
 
+  // Sort ministères alphabetically by libelle
+  ministeres.sort((a, b) => a.libelle.localeCompare(b.libelle, "fr"));
+
+  // Sort services within each ministère alphabetically by libelle
+  for (const ministere of ministeres) {
+    ministere.services.sort((a, b) => a.libelle.localeCompare(b.libelle, "fr"));
+  }
+
   // Move "Autre" ministere to the end
   const autreIndex = ministeres.findIndex((m) => m.slug === "autre");
   if (autreIndex !== -1) {

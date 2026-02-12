@@ -13,7 +13,6 @@ import { récupérerUnCookie } from "@/client/utils/cookies";
 import { Icone } from "@/components/_commons/Icone";
 import { ArrowLine1Icon } from "@/components/_commons/Icones/ArrowLine1Icon";
 import { useMonProfilFormulaire } from "./useMonProfilFormulaire";
-import { SelectMinistere } from "./SelectMinistere";
 import { SelectService } from "./SelectService";
 import { useMonProfilForm } from "./form";
 
@@ -74,8 +73,6 @@ const PageMonProfilUtilisateurContent = () => {
         type="text"
       />
 
-      <SelectMinistere />
-
       <SelectService />
 
       {serviceSelectionne === "autre" && (
@@ -100,6 +97,7 @@ const PageMonProfilUtilisateurContent = () => {
       <InputAvecLabel
         erreur={formState.errors.fonction}
         htmlName="fonction"
+        isRequired
         libellé="Fonction"
         register={register("fonction")}
         type="text"

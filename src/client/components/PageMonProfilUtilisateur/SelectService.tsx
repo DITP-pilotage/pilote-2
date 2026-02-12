@@ -1,43 +1,65 @@
 import { Controller } from "react-hook-form";
-import { SelecteurNew } from "@/components/_commons/SelecteurNew/SelecteurNew";
-import { getServicesForMinistere } from "@/client/constants/referentiel-services";
+import {
+  SelecteurNew,
+  SelecteurNewOptionGroup,
+} from "@/components/_commons/SelecteurNew/SelecteurNew";
+import { referentielServices } from "@/client/constants/referentiel-services";
 import { useMonProfilForm } from "./form";
+
+const groupedOptions: SelecteurNewOptionGroup<string>[] =
+  referentielServices.ministeres.map((ministere) => ({
+    libelle: ministere.libelle,
+    valeur: ministere.slug,
+    options: ministere.services.map((service) => ({
+      libelle: service.libelle,
+      valeur: `${ministere.slug}::${service.slug}`,
+    })),
+  }));
 
 export const SelectService = () => {
   const form = useMonProfilForm();
   const ministere = form.watch("ministere");
+  const service = form.watch("service");
 
-  const options = ministere
-    ? getServicesForMinistere(ministere).map((service) => ({
-        valeur: service.slug,
-        libelle: service.libelle,
-      }))
-    : [];
+  const valeurSelectionnee =
+    ministere && service ? `${ministere}::${service}` : undefined;
+
+  const ministereError = form.formState.errors.ministere?.message;
+  const serviceError = form.formState.errors.service?.message;
+  const erreurMessage = ministereError || serviceError;
 
   return (
     <Controller
       control={form.control}
       name="service"
-      render={({ field, fieldState }) => (
+      render={() => (
         <SelecteurNew
-          key={ministere}
           htmlName="service"
-          libelle="Service"
+          libelle="Ministère et service"
           className="fr-input-group"
           triggerClassName="w-full"
-          options={options}
+          options={groupedOptions}
           isRequired
-          valeurSelectionnee={field.value || undefined}
-          erreurMessage={fieldState.error?.message}
-          disabled={!ministere}
-          placeholder={
-            ministere
-              ? "Sélectionner..."
-              : "Veuillez d'abord sélectionner un ministère"
-          }
-          onChange={(nouvelleValeur) => {
-            field.onChange(nouvelleValeur);
-            if (nouvelleValeur !== "autre") {
+          valeurSelectionnee={valeurSelectionnee}
+          erreurMessage={erreurMessage}
+          placeholder="Sélectionner..."
+          onChange={(compoundValue, group) => {
+            const [, serviceSlug] = compoundValue.split("::");
+            const ministereSlug = group?.valeur || "";
+
+            form.setValue("ministere", ministereSlug, {
+              shouldDirty: true,
+              shouldTouch: true,
+              shouldValidate: true,
+            });
+
+            form.setValue("service", serviceSlug, {
+              shouldDirty: true,
+              shouldTouch: true,
+              shouldValidate: true,
+            });
+
+            if (serviceSlug !== "autre") {
               form.setValue("serviceAutre", null, {
                 shouldDirty: true,
                 shouldTouch: true,

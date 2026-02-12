@@ -11,10 +11,6 @@
         {
           "slug": "direction-regionale-et-interdepartementale-de-l-alimentation-de-l-agriculture-et-de-la-foret",
           "libelle": "Direction régionale et interdépartementale de l'alimentation, de l'agriculture et de la forêt"
-        },
-        {
-          "slug": "autre",
-          "libelle": "Autre"
         }
       ]
     },
@@ -37,10 +33,6 @@
         {
           "slug": "direction-regionale-et-interregionale-des-douanes-et-droits-indirects-53",
           "libelle": "Direction régionale et interrégionale des douanes et droits indirects (53)"
-        },
-        {
-          "slug": "autre",
-          "libelle": "Autre"
         }
       ]
     },
@@ -59,10 +51,6 @@
         {
           "slug": "rectorat-d-academie",
           "libelle": "Rectorat d'académie"
-        },
-        {
-          "slug": "autre",
-          "libelle": "Autre"
         }
       ]
     },
@@ -73,10 +61,6 @@
         {
           "slug": "delegation-regionale-academique-a-la-recherche-et-a-l-innovation",
           "libelle": "Délégation régionale académique à la Recherche et à l'Innovation"
-        },
-        {
-          "slug": "autre",
-          "libelle": "Autre"
         }
       ]
     },
@@ -123,10 +107,6 @@
         {
           "slug": "service-departemental-d-incendie-et-de-secours-sdis",
           "libelle": "Service départemental d'incendie et de secours (SDIS)"
-        },
-        {
-          "slug": "autre",
-          "libelle": "Autre"
         }
       ]
     },
@@ -141,10 +121,6 @@
         {
           "slug": "unite-territorial-ut-drac",
           "libelle": "Unité territorial (UT) DRAC"
-        },
-        {
-          "slug": "autre",
-          "libelle": "Autre"
         }
       ]
     },
@@ -179,10 +155,6 @@
         {
           "slug": "services-penitentiaires-d-insertion-et-de-probation",
           "libelle": "Services pénitentiaires d'insertion et de probation"
-        },
-        {
-          "slug": "autre",
-          "libelle": "Autre"
         }
       ]
     },
@@ -213,10 +185,6 @@
         {
           "slug": "unite-territoriale-ut-dreal",
           "libelle": "Unité territoriale (UT) DREAL"
-        },
-        {
-          "slug": "autre",
-          "libelle": "Autre"
         }
       ]
     },
@@ -235,10 +203,6 @@
         {
           "slug": "region-de-gendarmerie",
           "libelle": "Région de Gendarmerie"
-        },
-        {
-          "slug": "autre",
-          "libelle": "Autre"
         }
       ]
     },
@@ -249,10 +213,6 @@
         {
           "slug": "service-departemental-a-la-jeunesse-a-l-engagement-et-aux-sports-sdjes",
           "libelle": "Service départemental à la jeunesse, à l’engagement et aux sports (SDJES)"
-        },
-        {
-          "slug": "autre",
-          "libelle": "Autre"
         }
       ]
     },
@@ -303,10 +263,6 @@
         {
           "slug": "union-de-recouvrement-des-cotisations-de-securite-sociale-et-d-allocations-familiales-urssaf",
           "libelle": "Union de recouvrement des cotisations de sécurité sociale et d’allocations familiales (Urssaf)"
-        },
-        {
-          "slug": "autre",
-          "libelle": "Autre"
         }
       ]
     },

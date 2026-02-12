@@ -9,6 +9,19 @@ export type SelecteurNewOption<T> = {
   desactivee?: boolean;
 };
 
+export type SelecteurNewOptionGroup<T extends string> = {
+  libelle: string;
+  valeur: T;
+  options: SelecteurNewOption<T>[];
+};
+
+function isGroupedOptions<T extends string>(
+  options: SelecteurNewOption<T>[] | SelecteurNewOptionGroup<T>[],
+): options is SelecteurNewOptionGroup<T>[] {
+  if (options.length === 0) return false;
+  return "options" in options[0];
+}
+
 export const SelecteurNew = <T extends string>({
   htmlName,
   options,
@@ -24,9 +37,9 @@ export const SelecteurNew = <T extends string>({
   isRequired,
 }: {
   htmlName: string;
-  options: SelecteurNewOption<T>[];
+  options: SelecteurNewOption<T>[] | SelecteurNewOptionGroup<T>[];
   erreurMessage?: string;
-  onChange?: (valeur: T) => void;
+  onChange?: (valeur: T, group?: SelecteurNewOptionGroup<T> | null) => void;
   valeurSelectionnee?: T;
   libelle?: React.ReactNode;
   placeholder?: string;
@@ -38,10 +51,28 @@ export const SelecteurNew = <T extends string>({
 }) => {
   const [recherche, setRecherche] = useState("");
 
+  const isGrouped = isGroupedOptions(options);
+
   const optionsFiltrees = showSearch
-    ? options.filter((option) =>
-        option.libelle.toLowerCase().includes(recherche.toLowerCase()),
-      )
+    ? isGrouped
+      ? options
+          .map((group) => {
+            const groupMatchesSearch = group.libelle
+              .toLowerCase()
+              .includes(recherche.toLowerCase());
+            const filteredOptions = groupMatchesSearch
+              ? group.options
+              : group.options.filter((option) =>
+                  option.libelle
+                    .toLowerCase()
+                    .includes(recherche.toLowerCase()),
+                );
+            return { ...group, options: filteredOptions };
+          })
+          .filter((group) => group.options.length > 0)
+      : options.filter((option) =>
+          option.libelle.toLowerCase().includes(recherche.toLowerCase()),
+        )
     : options;
 
   return (
@@ -54,7 +85,16 @@ export const SelecteurNew = <T extends string>({
       ) : null}
 
       <Select.Root
-        onValueChange={(value) => onChange?.(value as T)}
+        onValueChange={(value) => {
+          if (isGrouped) {
+            const group = (options as SelecteurNewOptionGroup<T>[]).find((g) =>
+              g.options.some((o) => o.valeur === value),
+            );
+            onChange?.(value as T, group || null);
+          } else {
+            onChange?.(value as T, null);
+          }
+        }}
         value={valeurSelectionnee}
         disabled={disabled}
       >
@@ -89,8 +129,23 @@ export const SelecteurNew = <T extends string>({
               <div className="px-4 py-2 text-sm text-dsfr-mention-grey text-center">
                 Aucun résultat
               </div>
+            ) : isGrouped ? (
+              (optionsFiltrees as SelecteurNewOptionGroup<T>[]).map((group) => (
+                <Select.Group key={String(group.valeur)}>
+                  <Select.Label>{group.libelle}</Select.Label>
+                  {group.options.map((option) => (
+                    <Select.Item
+                      disabled={option.desactivee}
+                      key={String(option.valeur)}
+                      value={option.valeur}
+                    >
+                      {option.libelle}
+                    </Select.Item>
+                  ))}
+                </Select.Group>
+              ))
             ) : (
-              optionsFiltrees.map((option) => (
+              (optionsFiltrees as SelecteurNewOption<T>[]).map((option) => (
                 <Select.Item
                   disabled={option.desactivee}
                   key={String(option.valeur)}
