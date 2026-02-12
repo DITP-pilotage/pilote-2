@@ -155,6 +155,15 @@ def _diff_tables_row_by_row(
     source_df = _read_table_as_df(source_url, table_name, schema)
     target_df = _read_table_as_df(target_url, table_name, schema)
 
+    # INSERT_YOUR_CODE
+    if len(source_df) != len(target_df):
+        logger.warning(
+            "[Table: %s] Row count mismatch. Source rows: %d, Target rows: %d.",
+            f"{schema}.{table_name}",
+            len(source_df),
+            len(target_df),
+        )
+
     # Align columns by name and order for comparison
     source_columns = set(source_df.columns)
     target_columns = set(target_df.columns)
@@ -231,13 +240,14 @@ parser.add_argument(
     "--output-csv",
     "-o",
     action="store_true",
-    help="If set, write differences as CSV files (one file per table) into the 'output/' folder next to this script.",
+    default=True,
+    help="Write differences as CSV files (one file per table) into the 'output/' folder next to this script. Enabled by default.",
 )
 parser.add_argument(
-    "--raw",
-    "-r",
+    "--normalize",
+    "-n",
     action="store_true",
-    help="If set, compare raw values without normalization (no rounding or list/tuple sorting).",
+    help="If set, normalize values before comparison (rounding, list/tuple sorting, etc.). Default is raw comparison."
 )
 parser.add_argument(
     "--source",
@@ -289,7 +299,7 @@ for table_reference in tables:
         target_url=target_connection_string,
         schema=schema,
         table_name=table_name,
-        normalize=not args.raw,
+        normalize=args.normalize,
     )
     all_differences.extend([dict(d, table=f"{schema}.{table_name}") for d in differences])
 
@@ -301,3 +311,9 @@ for table_reference in tables:
         df_table = pd.DataFrame(differences)
         cols = ["side"] + list(common_columns)
         df_table.to_csv(output_path, columns=cols, index=False)
+        logger.warning(
+            "[DIFFING][Table: %s] %d differences saved to %s",
+            f"{schema}.{table_name}",
+            len(differences),
+            output_path,
+        )
