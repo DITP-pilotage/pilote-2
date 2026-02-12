@@ -13,6 +13,7 @@ dbt_packages/
 
 seeds/ppg_metadata
 scripts/dumps/*
+scripts/output/*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
