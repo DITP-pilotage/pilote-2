@@ -301,8 +301,9 @@ Afin de pourvoir anticiper les conséquences de changements sur la datafactory i
 
 Typiquement, après avoir créé un tunnel vers la dev, fait une descente de dev et lancé les jobs en local :
 ```bash
-pipenv run python scripts/compare_local_vs_target.py -o
+pipenv run LOG_LEVEL=WARN PGHOST="localhost" python scripts/compare_local_vs_target.py
 ```
+
 Il est possible de préciser des connections strings de 2 bases de données différentes et de passer des noms de table précis au script (cf doc du script). Par défaut il compare une liste de tables d'exposition.
 
 L'option `-o` permet de générer l'output de fichiers csv pour dans le dossier [`scripts/output/`](scripts/output/) pour étudier en détail les différences entre les 2 tables.

@@ -155,7 +155,6 @@ def _diff_tables_row_by_row(
     source_df = _read_table_as_df(source_url, table_name, schema)
     target_df = _read_table_as_df(target_url, table_name, schema)
 
-    # INSERT_YOUR_CODE
     if len(source_df) != len(target_df):
         logger.warning(
             "[Table: %s] Row count mismatch. Source rows: %d, Target rows: %d.",
@@ -164,7 +163,6 @@ def _diff_tables_row_by_row(
             len(target_df),
         )
 
-    # Align columns by name and order for comparison
     source_columns = set(source_df.columns)
     target_columns = set(target_df.columns)
     common_columns = sorted(source_columns.intersection(target_columns))
@@ -187,7 +185,7 @@ def _diff_tables_row_by_row(
         )
         return [], common_columns
 
-    # Optionally normalize values for comparison (rounding, list sorting, etc.)
+    # Normalise si demandé (arrondi, ordonnancement des arrays, etc.)
     if normalize:
         source_aligned = (
             source_df[common_columns].map(_normalize_cell).to_numpy().tolist()
