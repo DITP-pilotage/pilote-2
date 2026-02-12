@@ -22,13 +22,11 @@ import { presenterEnAvancementsStatistiquesAccueilContrat } from "@/server/chant
 import { DonneesComparaisonDuTauxDAvancementType } from "@/server/domain/territoire/Territoire.interface";
 import { territoireCodeVersMailleCodeInsee } from "@/server/utils/territoires";
 import { RécupérerVariableContenuUseCase } from "@/server/gestion-contenu/usecases/RécupérerVariableContenuUseCase";
-import { MailleInterne } from "@/server/domain/maille/Maille.interface";
 import { getAnneeDateDeBascule } from "@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getAnneeDateDeBascule";
 import { configuration } from "@/config";
-import { CartographieType } from "@/components/PageChantier/Cartes/Cartes";
-import { CartographieIndicateurType } from "@/components/_commons/IndicateursChantier/Bloc/Détails/IndicateurDétails";
 import { getContainer } from "@/server/dependances";
 import { pageChantier } from "@/components/PageChantier/PageChantierServerSideContext";
+import { loadChantierDetailSearchParams } from "@/client/searchParams/chantierDetailSearchParams";
 
 const redirigeLaPage = (destination: string) => ({
   redirect: {
@@ -48,20 +46,17 @@ export const getServerSideProps = async (
   }
 
   const chantierId = query.id as string;
+  const searchParams = loadChantierDetailSearchParams(query);
   const jalon =
-    Number.parseInt(query.jalon as string) ||
+    searchParams.jalon ??
     getAnneeDateDeBascule(
       new Date(),
       configuration().dateBasculeAffichageValeursAnneePrecedente,
     );
-  const cartographieGaucheChantier =
-    (query.carteChG as CartographieType) || "avancementMandat";
-  const cartographieDroiteChantier =
-    (query.carteChD as CartographieType) || "meteo";
-  const cartographieGaucheIndicateur =
-    (query.carteIndG as CartographieIndicateurType) || "avancementMandat";
-  const cartographieDroiteIndicateur =
-    (query.carteIndD as CartographieIndicateurType) || "valeurAvancement";
+  const cartographieGaucheChantier = searchParams.carteChG;
+  const cartographieDroiteChantier = searchParams.carteChD;
+  const cartographieGaucheIndicateur = searchParams.carteIndG;
+  const cartographieDroiteIndicateur = searchParams.carteIndD;
 
   const session = await auth(context);
 
@@ -73,15 +68,14 @@ export const getServerSideProps = async (
   assert(session.habilitations, "La session ne dispose d'aucune habilitation");
 
   const territoireCode = query.territoireCode as string;
-  const territoiresCompares =
-    (query.territoiresCompares || "").length > 0
-      ? (query.territoiresCompares as string).split(",").filter(Boolean)
-      : [];
+  const territoiresCompares = searchParams.territoiresCompares
+    ? searchParams.territoiresCompares.split(",").filter(Boolean)
+    : [];
 
   const { maille: mailleTerritoireSelectionnee } =
     territoireCodeVersMailleCodeInsee(territoireCode);
 
-  const mailleQuery = (query.maille as MailleInterne) || "departementale";
+  const mailleQuery = searchParams.maille;
 
   const mailleSelectionnee =
     mailleTerritoireSelectionnee === "NAT"

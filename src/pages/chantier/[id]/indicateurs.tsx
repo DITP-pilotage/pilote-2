@@ -3,6 +3,7 @@ import { GetServerSidePropsContext } from "next/types";
 import Head from "next/head";
 import { FunctionComponent } from "react";
 import { useSession } from "next-auth/react";
+import { createLoader, parseAsInteger, parseAsString } from "nuqs/server";
 import PageImportIndicateur from "@/components/PageImportIndicateur/PageImportIndicateur";
 import Chantier from "@/server/domain/chantier/Chantier.interface";
 import { ChantierInformations } from "@/components/PageImportIndicateur/ChantierInformation.interface";
@@ -22,6 +23,11 @@ import { getFiltresActifs } from "@/stores/useFiltresStoreNew/useFiltresStoreNew
 import { getAnneeDateDeBascule } from "@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getAnneeDateDeBascule";
 import { configuration } from "@/config";
 import { getContainer } from "@/server/dependances";
+
+const loadSearchParams = createLoader({
+  jalon: parseAsInteger,
+  rapportId: parseAsString,
+});
 
 interface NextPageImportIndicateurProps {
   chantierInformations: ChantierInformations;
@@ -47,8 +53,9 @@ export async function getServerSideProps(
       notFound: true,
     };
   }
+  const searchParams = loadSearchParams(query);
   const jalon =
-    Number.parseInt(query.jalon as string) ||
+    searchParams.jalon ??
     getAnneeDateDeBascule(
       new Date(),
       configuration().dateBasculeAffichageValeursAnneePrecedente,
@@ -70,11 +77,11 @@ export async function getServerSideProps(
 
   let rapport: RapportContrat | null = null;
 
-  if (query.rapportId) {
+  if (searchParams.rapportId) {
     rapport = presenterEnRapportContrat(
       await dependencies
         .getRapportRepository()
-        .récupérerRapportParId(query.rapportId as string),
+        .récupérerRapportParId(searchParams.rapportId),
     );
   }
 
