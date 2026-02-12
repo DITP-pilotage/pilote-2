@@ -13,7 +13,6 @@ import { getContainer } from "@/server/dependances";
 import { FiltreQueryParams } from "@/server/gestion-utilisateur/app/contrats/FiltreQueryParams";
 import { Profil } from "@/server/gestion-utilisateur/domain/Profil";
 import { PerimetreMinisteriel } from "@/server/gestion-utilisateur/domain/PerimetreMinisteriel";
-import { ProfilCode } from "@/server/gestion-utilisateur/domain/Utilisateur.interface";
 import {
   presenterEnUtilisateurListeGestionContrat,
   UtilisateurListeGestionContrat,
@@ -75,8 +74,8 @@ export const getServerSideProps: GetServerSideProps<UtilisateurProps> = async (
     territoires: searchParams.territoires,
     perimetresMinisteriels: searchParams.perimetresMinisteriels,
     chantiers: filtreChantiers,
-    profils: searchParams.profils as ProfilCode[],
-    typeCompte: searchParams.typeCompte as ("actif" | "desactive")[],
+    profils: searchParams.profils,
+    typeCompte: searchParams.typeCompte,
     chantiersAssociésAuxPérimètres:
       filtresChantiersSupplémentaires?.map((chantier) => chantier.id) ?? [],
   };

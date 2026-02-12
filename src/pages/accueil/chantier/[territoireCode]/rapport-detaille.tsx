@@ -124,7 +124,7 @@ export const getServerSideProps: GetServerSideProps<
     meteos: searchParams.meteos,
     territorialisation: searchParams.territorialisation,
     estBarometre: searchParams.estBarometre,
-    valeurDeLaRecherche: searchParams.q ?? "",
+    valeurDeLaRecherche: searchParams.q,
   };
 
   const filtresAlertes = {

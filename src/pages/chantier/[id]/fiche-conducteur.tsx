@@ -1,7 +1,8 @@
 import { FunctionComponent } from "react";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import Head from "next/head";
-import { createLoader, parseAsInteger, parseAsString } from "nuqs/server";
+import { createLoader, parseAsInteger } from "nuqs/server";
+import assert from "node:assert";
 import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
 import { FicheConducteurContrat } from "@/server/fiche-conducteur/app/contrats/FicheConducteurContrat";
 import { PageFicheConducteur } from "@/components/PageFicheConducteur/PageFicheConducteur";
@@ -13,7 +14,6 @@ import { getContainer } from "@/server/dependances";
 
 const loadSearchParams = createLoader({
   jalon: parseAsInteger,
-  id: parseAsString,
 });
 
 export const getServerSideProps: GetServerSideProps<{
@@ -36,6 +36,9 @@ export const getServerSideProps: GetServerSideProps<{
     throw new Error("Not connected or not authorized ?");
   }
 
+  const id = context.params?.id;
+  assert(typeof id === "string", "L'id du chantier est obligatoire");
+
   const searchParams = loadSearchParams(query);
   const jalon =
     searchParams.jalon ??
@@ -46,11 +49,7 @@ export const getServerSideProps: GetServerSideProps<{
 
   const ficheConducteur = await getContainer("ficheConducteur")
     .resolve("ficheConducteurHandler")
-    .recupererFicheConducteur(
-      searchParams.id ?? (query.id as string),
-      "NAT-FR",
-      jalon,
-    );
+    .recupererFicheConducteur(id, "NAT-FR", jalon);
 
   return {
     props: {
