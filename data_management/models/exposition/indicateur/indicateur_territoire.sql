@@ -15,12 +15,15 @@ get_evol_vaca AS (
     SELECT
         indic_id,
         zone_id,
-        JSONB_AGG(JSONB_BUILD_OBJECT(
-            'date', metric_date,
-            'valeur', vaca,
-            'taux_avancement_jalon', taa_adate,
-            'taux_avancement_mandat', tag
-        )) AS evolution_avancement
+        JSONB_AGG(
+            JSONB_BUILD_OBJECT(
+                'date', metric_date,
+                'valeur', vaca,
+                'taux_avancement_jalon', taa_adate,
+                'taux_avancement_mandat', tag
+            )
+            ORDER BY metric_date
+        ) AS evolution_avancement
     FROM {{ ref('compute_ta_indic') }}
     WHERE vaca IS NOT NULL
     GROUP BY indic_id, zone_id
