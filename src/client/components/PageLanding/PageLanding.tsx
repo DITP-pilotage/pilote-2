@@ -66,7 +66,7 @@ const PageLanding = () => {
                   className="w-full mx-auto aspect-[580/328]  rounded-xl shadow-xl overflow-hidden"
                   sandbox="allow-scripts allow-same-origin"
                   scrolling="no"
-                  src="https://video.finances.gouv.fr/watch/player/player/pubkey/0784da77311561a71a0a/id/f80fe1b5c28d78895f5523fe63b7a2/viewcode/default?buttons_to_show=.btn-play-pause"
+                  src="https://video.finances.gouv.fr/watch/player/player/pubkey/0784da77311561a71a0a/id/f80fe1b5c28d78895f5523fe63b7a2/viewcode/default?buttons_to_show=.btn-play-pause .btn-volume .btn-fullscreen"
                   title="Qu'est-ce que l'outil PILOTE ?"
                 />
               </div>
