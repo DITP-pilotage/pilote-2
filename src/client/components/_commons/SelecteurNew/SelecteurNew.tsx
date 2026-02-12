@@ -54,6 +54,7 @@ export const SelecteurNew = <T extends string>({
 }) => {
   const [recherche, setRecherche] = useState("");
   const rechercheRef = useRef<HTMLInputElement>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   const isGrouped = isGroupedOptions(options);
 
@@ -101,7 +102,12 @@ export const SelecteurNew = <T extends string>({
         disabled={disabled}
         onOpenChange={(open) => {
           if (open) {
-            setTimeout(() => rechercheRef.current?.focus(), 0);
+            setTimeout(() => {
+              rechercheRef.current?.focus();
+              if (scrollContainerRef.current) {
+                scrollContainerRef.current.scrollTop = 0;
+              }
+            }, 0);
           } else {
             setRecherche("");
           }
@@ -124,7 +130,12 @@ export const SelecteurNew = <T extends string>({
               <input
                 aria-label="Rechercher"
                 className="w-full !px-3 !py-2 !border-b-2 !border-primary !text-sm !bg-dsfr-alt-blue-france !placeholder-dsfr-mention-grey placeholder:italic"
-                onChange={(event) => setRecherche(event.target.value)}
+                onChange={(event) => {
+                  setRecherche(event.target.value);
+                  if (scrollContainerRef.current) {
+                    scrollContainerRef.current.scrollTop = 0;
+                  }
+                }}
                 onKeyDown={(event) => event.stopPropagation()}
                 placeholder={placeholderRecherche}
                 type="text"
@@ -134,7 +145,7 @@ export const SelecteurNew = <T extends string>({
             </div>
           ) : null}
 
-          <div className="max-h-80 overflow-y-auto">
+          <div ref={scrollContainerRef} className="max-h-80 overflow-y-auto">
             {!hasVisibleResults && (
               <div className="px-4 py-2 text-sm text-dsfr-mention-grey text-center">
                 Aucun résultat
