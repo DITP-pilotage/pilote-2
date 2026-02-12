@@ -1,4 +1,3 @@
-import { actionsTerritoiresStore } from "@/client/stores/useTerritoiresStore/useTerritoiresStore";
 import { CartographieDonnées } from "@/components/_commons/Cartographie/Cartographie.interface";
 import {
   valeurMaximum,
@@ -9,6 +8,7 @@ import { ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS } from "@/client/constants/lé
 import { CartographieÉlémentsDeLégende } from "@/client/components/_commons/Cartographie/Légende/CartographieLégende.interface";
 import { DétailsIndicateurTerritoire } from "@/server/domain/indicateur/DétailsIndicateur.interface";
 import { objectEntries } from "@/client/utils/objects/objects";
+import { useTerritoireHabilitation } from "@/client/hooks/useTerritoireHabilitation";
 
 const COULEUR_DÉPART = "#8bcdb1";
 const COULEUR_ARRIVÉE = "#083a25";
@@ -88,6 +88,8 @@ export function useCartographieValeurAvancementIndicateur(
   jalon: number,
   unité?: string | null,
 ) {
+  const { récupérerDétailsSurUnTerritoire } = useTerritoireHabilitation();
+
   const useRecupererDonnees = () => {
     const donnees = objectEntries(detailsIndicateurTerritoire).map(
       ([territoireCode, détailsIndicateur]) => ({
@@ -98,8 +100,6 @@ export function useCartographieValeurAvancementIndicateur(
         estApplicable: détailsIndicateur.estApplicable,
       }),
     );
-
-    const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
 
     const valeurMin = valeurMinimum(donnees.map((donnee) => donnee.valeur));
     const valeurMax = valeurMaximum(donnees.map((donnee) => donnee.valeur));

@@ -1,9 +1,9 @@
 import { ReactNode } from "react";
-import { actionsTerritoiresStore } from "@/stores/useTerritoiresStore/useTerritoiresStore";
 import { CartographieÉlémentsDeLégende } from "@/client/components/_commons/Cartographie/Légende/CartographieLégende.interface";
 import { CartographieDonnées } from "@/client/components/_commons/Cartographie/Cartographie.interface";
 import { objectEntries } from "@/client/utils/objects/objects";
 import { DétailsIndicateurTerritoire } from "@/server/domain/indicateur/DétailsIndicateur.interface";
+import { useTerritoireHabilitation } from "@/client/hooks/useTerritoireHabilitation";
 
 function determinerValeurAffichee(
   valeur: number | null,
@@ -74,6 +74,8 @@ export function useCartographieAvancementIndicateur(
   jalon: number,
   typeAvancement: "JALON" | "MANDAT",
 ) {
+  const { récupérerDétailsSurUnTerritoire } = useTerritoireHabilitation();
+
   const useRecupererDonnees = () => {
     const donnees = objectEntries(detailsIndicateurTerritoire).map(
       ([territoireCode, détailsIndicateur]) => ({
@@ -83,8 +85,6 @@ export function useCartographieAvancementIndicateur(
         estApplicable: détailsIndicateur.estApplicable,
       }),
     );
-
-    const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
 
     const tousApplicables: Boolean = donnees.every((d) => d.estApplicable);
     const tousNonNull: Boolean = donnees.every((d) => d.valeur !== null);

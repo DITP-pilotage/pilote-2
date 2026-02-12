@@ -2,7 +2,6 @@ import { FunctionComponent } from "react";
 import { useRouter } from "next/router";
 import { sauvegarderFiltres } from "@/stores/useFiltresStoreNew/useFiltresStoreNew";
 import { DétailTerritoire } from "@/server/domain/territoire/Territoire.interface";
-import { territoiresAccessiblesEnLectureStore } from "@/stores/useTerritoiresStore/useTerritoiresStore";
 import { trierParOrdreAlphabétique } from "@/client/utils/arrays";
 import {
   InputGroupeOptionGroupée,
@@ -11,6 +10,7 @@ import {
 import { MultiSelectOption } from "@/components/_commons/MultiSelect/MultiSelect.interface";
 import { InputGroupeTerritoire } from "@/components/_commons/InputGroupe/InputGroupeTerritoire/InputGroupeTerritoire";
 import { territoireCodeVersMailleCodeInsee } from "@/server/utils/territoires";
+import { useTerritoireHabilitation } from "@/client/hooks/useTerritoireHabilitation";
 
 interface SélecteursMaillesEtTerritoiresProps {
   territoireCode: string;
@@ -86,8 +86,7 @@ const SélecteursMaillesEtTerritoires: FunctionComponent<
   territoiresApplicables,
 }) => {
   const router = useRouter();
-  const territoiresAccessiblesEnLecture =
-    territoiresAccessiblesEnLectureStore();
+  const { territoiresAccessiblesEnLecture } = useTerritoireHabilitation();
 
   const changerTerritoire = async (territoireCodeSelectionne: string) => {
     if (

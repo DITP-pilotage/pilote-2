@@ -1,10 +1,10 @@
 import { useMemo } from "react";
-import { actionsTerritoiresStore } from "@/stores/useTerritoiresStore/useTerritoiresStore";
 import { CartographieÉlémentsDeLégende } from "@/client/components/_commons/Cartographie/Légende/CartographieLégende.interface";
 import { CartographieDonnées } from "@/client/components/_commons/Cartographie/Cartographie.interface";
 import { objectEntries } from "@/client/utils/objects/objects";
 import { TerritoiresDonnées } from "@/server/domain/territoire/Territoire.interface";
 import { Maille } from "@/server/domain/maille/Maille.interface";
+import { useTerritoireHabilitation } from "@/client/hooks/useTerritoireHabilitation";
 
 type TypeProposition = "PROPOSITION" | "PROPOSITION_AVEC_PONDERATION";
 type DonneesCartographieProposition = {
@@ -30,6 +30,7 @@ export const useCartographiePropositionValeur = (
   chantierMailles: Record<Maille, TerritoiresDonnées>,
   elementsDeLegende: CartographieÉlémentsDeLégende,
 ) => {
+  const { récupérerDétailsSurUnTerritoire } = useTerritoireHabilitation();
   const useRecupererDonnees = () => {
     const donnees: DonneesCartographieProposition[] = objectEntries({
       ...chantierMailles.departementale,
@@ -39,8 +40,6 @@ export const useCartographiePropositionValeur = (
       territoireCode: territoireCodeDonnee as string,
       estApplicable: territoire.estApplicable,
     }));
-
-    const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
 
     const legende = useMemo(() => {
       const tousApplicables: Boolean = donnees.every((d) => d.estApplicable);

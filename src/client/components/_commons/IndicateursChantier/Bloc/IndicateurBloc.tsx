@@ -2,7 +2,6 @@ import { Fragment, FunctionComponent, useMemo, useState } from "react";
 import Bloc from "@/components/_commons/Bloc/Bloc";
 import Titre from "@/components/_commons/Titre/Titre";
 import { IndicateurDétails } from "@/components/_commons/IndicateursChantier/Bloc/Détails/IndicateurDétails";
-import { actionsTerritoiresStore } from "@/client/stores/useTerritoiresStore/useTerritoiresStore";
 import { IndicateurPonderation } from "@/components/_commons/IndicateursChantier/Bloc/Pondération/IndicateurPonderation";
 import "@gouvfr/dsfr/dist/component/table/table.min.css";
 import Indicateur from "@/server/domain/indicateur/Indicateur.interface";
@@ -21,6 +20,7 @@ import {
 import { BadgeIndicateurEnAlerte } from "@/components/_commons/IndicateursChantier/Bloc/BadgeIndicateurEnAlerte";
 import { BadgeIndicateurBarometre } from "@/components/_commons/IndicateursChantier/Bloc/BadgeIndicateurBarometre";
 import { LigneIndicateurDatePrevisionnelle } from "@/components/_commons/IndicateursChantier/Bloc/LigneIndicateurDatePrevisionnelle";
+import { useTerritoireHabilitation } from "@/client/hooks/useTerritoireHabilitation";
 import IndicateurBlocStyled from "./IndicateurBloc.styled";
 import { useIndicateurBloc } from "./useIndicateurBloc";
 
@@ -48,13 +48,12 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
     datajobsExecution,
     configurationFeatureFlipping,
   } = pageChantier.useServerSidePropsContext();
+  const { récupérerDétailsSurUnTerritoire } = useTerritoireHabilitation();
 
   const mailsDirecteursProjets = chantier.responsables.directeursProjet
     .map((directeur) => directeur.email)
     .filter(Boolean);
   const [propositionEstVisible, setPropositionEstVisible] = useState(false);
-
-  const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
 
   const détailTerritoireSélectionné = useTerritoireSelectionne();
 

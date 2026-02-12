@@ -1,7 +1,7 @@
 import { ReactNode, useMemo } from "react";
-import { actionsTerritoiresStore } from "@/stores/useTerritoiresStore/useTerritoiresStore";
 import { CartographieDonnées } from "@/components/_commons/Cartographie/Cartographie.interface";
 import { CartographieÉlémentsDeLégende } from "@/client/components/_commons/Cartographie/Légende/CartographieLégende.interface";
+import { useTerritoireHabilitation } from "@/client/hooks/useTerritoireHabilitation";
 import { CartographieDonnéesAvancement } from "./CartographieAvancement.interface";
 
 function déterminerValeurAffichée(
@@ -72,7 +72,7 @@ export default function useCartographieAvancement(
   élémentsDeLégende: CartographieÉlémentsDeLégende,
   jalon: number,
 ) {
-  const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
+  const { récupérerDétailsSurUnTerritoire } = useTerritoireHabilitation();
 
   const légende = useMemo(() => {
     const tousApplicables: Boolean = données.every((d) => d.estApplicable);

@@ -4,11 +4,11 @@ import Titre from "@/components/_commons/Titre/Titre";
 import Tableau from "@/components/_commons/Tableau/Tableau";
 import { PictoBaromètre } from "@/components/_commons/PictoBaromètre/PictoBaromètre";
 import { IndicateurDétailsParTerritoire } from "@/components/PageRapportDétaillé/Chantier/IndicateursRapportDetaille/Bloc/IndicateurBloc.interface";
-import { actionsTerritoiresStore } from "@/client/stores/useTerritoiresStore/useTerritoiresStore";
 import { DétailsIndicateurs } from "@/server/domain/indicateur/DétailsIndicateur.interface";
 import Indicateur from "@/server/domain/indicateur/Indicateur.interface";
 import { IndicateurTendance } from "@/components/_commons/IndicateurTendance/IndicateurTendance";
 import { IndicateurPonderation } from "@/components/_commons/IndicateursChantier/Bloc/Pondération/IndicateurPonderation";
+import { useTerritoireHabilitation } from "@/client/hooks/useTerritoireHabilitation";
 import useIndicateurBloc from "./useIndicateurBloc";
 import IndicateurBlocStyled from "./IndicateurBloc.styled";
 
@@ -27,7 +27,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
   typeDeRéforme,
   jalon,
 }) => {
-  const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
+  const { récupérerDétailsSurUnTerritoire } = useTerritoireHabilitation();
 
   const détailsIndicateur = détailsIndicateurs[indicateur.id];
   const territoireSélectionné = récupérerDétailsSurUnTerritoire(territoireCode);

@@ -1,10 +1,10 @@
 import { ReactNode, useMemo } from "react";
-import { actionsTerritoiresStore } from "@/stores/useTerritoiresStore/useTerritoiresStore";
 import { CartographieÉlémentsDeLégende } from "@/client/components/_commons/Cartographie/Légende/CartographieLégende.interface";
 import { CartographieDonnées } from "@/client/components/_commons/Cartographie/Cartographie.interface";
 import { objectEntries } from "@/client/utils/objects/objects";
 import { TerritoiresDonnées } from "@/server/domain/territoire/Territoire.interface";
 import { Maille } from "@/server/domain/maille/Maille.interface";
+import { useTerritoireHabilitation } from "@/client/hooks/useTerritoireHabilitation";
 
 const determinerValeurAffichee = (
   valeur: number | null,
@@ -75,6 +75,8 @@ export const useCartographieAvancement = (
   jalon: number,
   typeAvancement: "JALON" | "MANDAT",
 ) => {
+  const { récupérerDétailsSurUnTerritoire } = useTerritoireHabilitation();
+
   const useRecupererDonnees = () => {
     const donnees = objectEntries({
       ...chantierMailles.departementale,
@@ -85,8 +87,6 @@ export const useCartographieAvancement = (
       territoireCode: territoireCodeDonnee as string,
       estApplicable: territoire.estApplicable,
     }));
-
-    const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
 
     const legende = useMemo(() => {
       const tousApplicables: Boolean = donnees.every((d) => d.estApplicable);

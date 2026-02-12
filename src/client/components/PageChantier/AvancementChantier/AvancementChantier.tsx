@@ -1,6 +1,5 @@
 import { FunctionComponent } from "react";
 import Bloc from "@/components/_commons/Bloc/Bloc";
-import { actionsTerritoiresStore } from "@/stores/useTerritoiresStore/useTerritoiresStore";
 import AvancementsTerritoire from "@/components/_commons/AvancementsTerritoire/AvancementsTerritoire";
 import JaugeDeProgression from "@/components/_commons/JaugeDeProgression/JaugeDeProgression";
 import BarreDeProgression from "@/components/_commons/BarreDeProgression/BarreDeProgression";
@@ -11,6 +10,7 @@ import { JaugeDeProgressionSmall } from "@/components/_commons/JaugeDeProgressio
 import { DonneesComparaisonDuTauxDAvancementType } from "@/server/domain/territoire/Territoire.interface";
 import { formaterDate } from "@/client/utils/date/date";
 import { BadgeTendance } from "@/components/PageAccueil/PageChantiers/TableauChantiers/Tendance/BadgeTendance";
+import { useTerritoireHabilitation } from "@/client/hooks/useTerritoireHabilitation";
 import AvancementChantierStyled from "./AvancementChantier.styled";
 import EcartTauxAvancementPPG from "./EcartTauxAvancementPPG/EcartTauxAvancementPPG";
 
@@ -69,7 +69,7 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
   jalon,
   donneesComparaisonDuTauxDAvancement,
 }) => {
-  const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
+  const { récupérerDétailsSurUnTerritoire } = useTerritoireHabilitation();
 
   const territoireSélectionné = récupérerDétailsSurUnTerritoire(territoireCode);
 

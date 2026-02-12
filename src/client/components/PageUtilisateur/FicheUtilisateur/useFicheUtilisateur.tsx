@@ -1,9 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
 import {
-  actionsTerritoiresStore,
-  départementsTerritoiresStore,
-} from "@/stores/useTerritoiresStore/useTerritoiresStore";
-import {
   ScopeChantiers,
   ScopeUtilisateurs,
 } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
@@ -13,13 +9,16 @@ import api from "@/server/infrastructure/api/trpc/api";
 import { profilsRégionaux } from "@/server/domain/utilisateur/Utilisateur.interface";
 import { AAccesATousLesUtilisateurs } from "@/server/domain/utilisateur/profils-gestion-utilisateur";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
+import {
+  listeTerritoires,
+  récupérerDétailsSurUnTerritoire,
+} from "@/client/constants/territoires";
 import FicheUtilisateurProps from "./FicheUtilisateur.interface";
 
 export default function useFicheUtilisateur(
   utilisateur: FicheUtilisateurProps["utilisateur"],
 ) {
-  const départements = départementsTerritoiresStore();
-  const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
+  const { départements } = listeTerritoires;
   const { data: chantiers } =
     api.chantier.recupererTousLesInformationsChantiers.useQuery(undefined, {
       staleTime: Number.POSITIVE_INFINITY,

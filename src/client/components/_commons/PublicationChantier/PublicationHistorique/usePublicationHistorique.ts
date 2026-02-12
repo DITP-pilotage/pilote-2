@@ -5,7 +5,7 @@ import {
   validationPublicationContexte,
   zodValidateurEntitéType,
 } from "@/validation/publication";
-import { actionsTerritoiresStore } from "@/stores/useTerritoiresStore/useTerritoiresStore";
+import { useTerritoireHabilitation } from "@/client/hooks/useTerritoireHabilitation";
 import PublicationHistoriqueProps from "./PublicationHistorique.interface";
 
 export default function usePublicationHistorique(
@@ -15,8 +15,9 @@ export default function usePublicationHistorique(
   maille: PublicationHistoriqueProps["maille"],
   territoireCode: string,
 ) {
+  const { récupérerDétailsSurUnTerritoire } = useTerritoireHabilitation();
+
   const typeDeRéforme = "chantier";
-  const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
 
   const territoireSelectionne = récupérerDétailsSurUnTerritoire(territoireCode);
 

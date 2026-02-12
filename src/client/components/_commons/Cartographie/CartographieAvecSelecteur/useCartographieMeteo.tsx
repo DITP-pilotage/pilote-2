@@ -1,11 +1,11 @@
 import { useMemo } from "react";
-import { actionsTerritoiresStore } from "@/stores/useTerritoiresStore/useTerritoiresStore";
 import { libellésMétéos, Météo } from "@/server/domain/météo/Météo.interface";
 import { CartographieÉlémentsDeLégende } from "@/client/components/_commons/Cartographie/Légende/CartographieLégende.interface";
 import { CartographieDonnées } from "@/client/components/_commons/Cartographie/Cartographie.interface";
 import { objectEntries } from "@/client/utils/objects/objects";
 import { TerritoiresDonnées } from "@/server/domain/territoire/Territoire.interface";
 import { Maille } from "@/server/domain/maille/Maille.interface";
+import { useTerritoireHabilitation } from "@/client/hooks/useTerritoireHabilitation";
 
 const determinerRemplissage = (
   valeur: Météo | null,
@@ -25,6 +25,8 @@ export const useCartographieMeteo = (
   chantierMailles: Record<Maille, TerritoiresDonnées>,
   elementsDeLegende: CartographieÉlémentsDeLégende,
 ) => {
+  const { récupérerDétailsSurUnTerritoire } = useTerritoireHabilitation();
+
   const useRecupererDonnees = () => {
     const donnees = objectEntries({
       ...chantierMailles.departementale,
@@ -34,8 +36,6 @@ export const useCartographieMeteo = (
       territoireCode: territoireCodeDonnee as string,
       estApplicable: territoire.estApplicable,
     }));
-
-    const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
 
     const legende = useMemo(() => {
       const tousApplicables: Boolean = donnees.every((d) => d.estApplicable);
