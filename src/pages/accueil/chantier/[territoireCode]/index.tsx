@@ -20,7 +20,6 @@ import { ProfilEnum } from "@/server/app/enum/profil.enum";
 import { territoireCodeVersMailleCodeInsee } from "@/server/utils/territoires";
 import { Chantier } from "@/server/chantiers/domain/Chantier";
 import { FiltreQueryParams } from "@/server/chantiers/app/contrats/FiltreQueryParams";
-import { Maille } from "@/server/domain/maille/Maille.interface";
 import { RecupererRepartitionsMeteoChantiersUseCase } from "@/server/chantiers/usecases/RecupererRepartitionMeteoChantiersUseCase";
 import { presenterEnRépartitionsMétéosChantiersContrat } from "@/server/chantiers/app/contrats/RepartitionMeteoChantiersContrat";
 import { getAnneeDateDeBascule } from "@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getAnneeDateDeBascule";
@@ -114,7 +113,7 @@ export const getServerSideProps = async (
           ? [searchParams.statut]
           : ["PUBLIE"],
     meteos: searchParams.meteos,
-    territorialisation: searchParams.territorialisation as Maille[],
+    territorialisation: searchParams.territorialisation,
     estBarometre: searchParams.estBarometre,
     valeurDeLaRecherche: searchParams.q ?? "",
   };

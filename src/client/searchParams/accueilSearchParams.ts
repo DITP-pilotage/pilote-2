@@ -8,7 +8,10 @@ import {
   parseAsString,
   parseAsStringLiteral,
 } from "nuqs/server";
-import { maillesInternes } from "@/server/domain/maille/Maille.interface";
+import {
+  mailles,
+  maillesInternes,
+} from "@/server/domain/maille/Maille.interface";
 
 const sortingSchema = z.object({ id: z.string(), desc: z.boolean() });
 
@@ -25,7 +28,7 @@ const filtresParsers = {
   axes: parseAsArrayOf(parseAsString).withDefault([]),
   statut: parseAsString,
   meteos: parseAsArrayOf(parseAsString).withDefault([]),
-  territorialisation: parseAsArrayOf(parseAsString).withDefault([]),
+  territorialisation: parseAsArrayOf(parseAsStringLiteral([...mailles])).withDefault([]),
   estBarometre: parseAsBoolean.withDefault(false),
   q: parseAsString,
   estEnAlerteTauxAvancementNonCalculé: parseAsBoolean.withDefault(false),

@@ -31,7 +31,7 @@ import { territoireCodeVersMailleCodeInsee } from "@/server/utils/territoires";
 import { TypeAlerteChantier } from "@/server/chantiers/app/contrats/TypeAlerteChantier";
 import { Chantier } from "@/server/chantiers/domain/Chantier";
 import { FiltreQueryParams } from "@/server/chantiers/app/contrats/FiltreQueryParams";
-import { Maille, MailleInterne } from "@/server/domain/maille/Maille.interface";
+import { MailleInterne } from "@/server/domain/maille/Maille.interface";
 import { RepartitionMeteoContrat } from "@/server/fiche-territoriale/app/contrats/RepartitionMeteoContrat";
 import { presenterEnRépartitionsMétéosChantiersContrat } from "@/server/chantiers/app/contrats/RepartitionMeteoChantiersContrat";
 import { RecupererRepartitionsMeteoChantiersUseCase } from "@/server/chantiers/usecases/RecupererRepartitionMeteoChantiersUseCase";
@@ -122,7 +122,7 @@ export const getServerSideProps: GetServerSideProps<
           ? [searchParams.statut]
           : ["PUBLIE"],
     meteos: searchParams.meteos,
-    territorialisation: searchParams.territorialisation as Maille[],
+    territorialisation: searchParams.territorialisation,
     estBarometre: searchParams.estBarometre,
     valeurDeLaRecherche: searchParams.q ?? "",
   };
