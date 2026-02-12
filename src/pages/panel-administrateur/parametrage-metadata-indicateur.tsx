@@ -70,7 +70,7 @@ const NextPagePanelAdministrateurParametrageSourceIndicateur: FunctionComponent<
           Panel administrateur - Paramétrage source indicateur - PILOTE
         </title>
       </Head>
-      <NextPanelAdministrateurLayout pageActive="parametrage-source-indicateur">
+      <NextPanelAdministrateurLayout pageActive="parametrage-metadata-indicateur">
         <FormulaireParametrageSourceIndicateur />
       </NextPanelAdministrateurLayout>
     </pageParametrageSourceContext.ServerSidePropsProvider>
