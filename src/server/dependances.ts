@@ -52,6 +52,10 @@ import {
   getProfilUtilisateurContainer,
   ProfilUtilisateurDependencies,
 } from "./profil-utilisateur/container";
+import {
+  getRapportsHebdomadairesContainer,
+  RapportsHebdomadairesDependencies,
+} from "./rapports-hebdomadaires/container";
 
 export type ContainerDependencies = {
   main: AwilixContainer<InitialDependencies>;
@@ -67,6 +71,7 @@ export type ContainerDependencies = {
   piloteEval: AwilixContainer<PiloteEvalDependencies>;
   habilitationsCoordinateur: AwilixContainer<HabilitationsCoordinateurDependencies>;
   profilUtilisateur: AwilixContainer<ProfilUtilisateurDependencies>;
+  rapportsHebdomadaires: AwilixContainer<RapportsHebdomadairesDependencies>;
 };
 
 function registerContainer(): ContainerDependencies {
@@ -110,6 +115,9 @@ function registerContainer(): ContainerDependencies {
       initialContainerWithTransversalDependencies,
     ),
     profilUtilisateur: getProfilUtilisateurContainer(
+      initialContainerWithTransversalDependencies,
+    ),
+    rapportsHebdomadaires: getRapportsHebdomadairesContainer(
       initialContainerWithTransversalDependencies,
     ),
   };

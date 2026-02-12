@@ -6,6 +6,7 @@ import { gestionTokenAPIRouter } from "@/server/infrastructure/api/trpc/routes/g
 import { evaluationRouter } from "@/server/infrastructure/api/trpc/routes/evaluation";
 import { habilitationsCoordinateurRouter } from "@/server/infrastructure/api/trpc/routes/habilitationsCoordinateur";
 import { profilUtilisateurRouter } from "@/server/infrastructure/api/trpc/routes/profilUtilisateur";
+import { rapportHebdomadaireRouter } from "@/server/infrastructure/api/trpc/routes/rapportHebdomadaire";
 import { chantierRouter } from "./chantier";
 import { synthèseDesRésultatsRouter } from "./synthèseDesRésultats";
 import { publicationRouter } from "./publication";
@@ -33,4 +34,5 @@ export const appRouter = créerRouteurTRPC({
   evaluation: evaluationRouter,
   habilitationsCoordinateur: habilitationsCoordinateurRouter,
   profilUtilisateur: profilUtilisateurRouter,
+  rapportHebdomadaire: rapportHebdomadaireRouter,
 });
