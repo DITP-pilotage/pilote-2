@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { useSession } from "next-auth/react";
 import { territoires as _territoires } from "@/client/constants/territoires.json";
 import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
@@ -11,39 +12,47 @@ const territoires = _territoires as Territoire[];
 export const useTerritoireHabilitation = () => {
   const { data: session } = useSession();
 
-  const habilitation = new Habilitation(session!.habilitations);
+  const habilitations = session!.habilitations;
 
-  const listeTerritoires: DétailTerritoire[] = territoires.map(
-    (territoire) => ({
-      ...territoire,
-      accèsLecture: habilitation.peutAccéderAuTerritoire(territoire.code),
-      accèsSaisiePublication:
-        habilitation.peutSaisirDesPublicationsPourUnTerritoire(territoire.code),
-      accèsSaisieIndicateur:
-        habilitation.peutSaisirDesIndicateursPourUnTerritoire(territoire.code),
-    }),
-  );
+  return useMemo(() => {
+    const habilitation = new Habilitation(habilitations);
 
-  const territoiresAccessiblesEnLecture = listeTerritoires.filter(
-    (territoire) => territoire.accèsLecture,
-  );
+    const listeTerritoires: DétailTerritoire[] = territoires.map(
+      (territoire) => ({
+        ...territoire,
+        accèsLecture: habilitation.peutAccéderAuTerritoire(territoire.code),
+        accèsSaisiePublication:
+          habilitation.peutSaisirDesPublicationsPourUnTerritoire(
+            territoire.code,
+          ),
+        accèsSaisieIndicateur:
+          habilitation.peutSaisirDesIndicateursPourUnTerritoire(
+            territoire.code,
+          ),
+      }),
+    );
 
-  const maillesAccessiblesEnLecture = [
-    ...new Set(
-      territoiresAccessiblesEnLecture.map((territoire) => territoire.maille),
-    ),
-  ];
+    const territoiresAccessiblesEnLecture = listeTerritoires.filter(
+      (territoire) => territoire.accèsLecture,
+    );
 
-  const récupérerDétailsSurUnTerritoire = (territoireCode: string) => {
-    return listeTerritoires.find(
-      (territoire) => territoire.code === territoireCode,
-    )!;
-  };
+    const maillesAccessiblesEnLecture = [
+      ...new Set(
+        territoiresAccessiblesEnLecture.map((territoire) => territoire.maille),
+      ),
+    ];
 
-  return {
-    listeTerritoires,
-    territoiresAccessiblesEnLecture,
-    maillesAccessiblesEnLecture,
-    récupérerDétailsSurUnTerritoire,
-  };
+    const récupérerDétailsSurUnTerritoire = (territoireCode: string) => {
+      return listeTerritoires.find(
+        (territoire) => territoire.code === territoireCode,
+      )!;
+    };
+
+    return {
+      listeTerritoires,
+      territoiresAccessiblesEnLecture,
+      maillesAccessiblesEnLecture,
+      récupérerDétailsSurUnTerritoire,
+    };
+  }, [habilitations]);
 };

@@ -30,6 +30,7 @@ export const useCartographiePropositionValeur = (
   chantierMailles: Record<Maille, TerritoiresDonnées>,
   elementsDeLegende: CartographieÉlémentsDeLégende,
 ) => {
+  const { récupérerDétailsSurUnTerritoire } = useTerritoireHabilitation();
   const useRecupererDonnees = () => {
     const donnees: DonneesCartographieProposition[] = objectEntries({
       ...chantierMailles.departementale,
@@ -39,7 +40,6 @@ export const useCartographiePropositionValeur = (
       territoireCode: territoireCodeDonnee as string,
       estApplicable: territoire.estApplicable,
     }));
-    const { récupérerDétailsSurUnTerritoire } = useTerritoireHabilitation();
 
     const legende = useMemo(() => {
       const tousApplicables: Boolean = donnees.every((d) => d.estApplicable);
