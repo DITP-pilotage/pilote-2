@@ -29,7 +29,7 @@ export const SelectService = () => {
       render={() => (
         <SelecteurNew
           htmlName="service"
-          libelle="Périmètre ministériel et service"
+          libelle="Service"
           className="fr-input-group"
           triggerClassName="w-full"
           options={groupedOptions}

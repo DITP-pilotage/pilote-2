@@ -2,7 +2,7 @@
   "perimetresMinisteriels": [
     {
       "slug": "autonomie-handicap",
-      "libelle": "\"\"\"Autonomie, Handicap\"\"\"",
+      "libelle": "Autonomie, Handicap",
       "services": [
         {
           "slug": "maison-departementale-des-personnes-handicapees-mdph",
@@ -16,7 +16,7 @@
     },
     {
       "slug": "travail-emploi",
-      "libelle": "\"\"\"Travail, Emploi\"\"\"",
+      "libelle": "Travail, Emploi",
       "services": [
         {
           "slug": "agence-france-travail",
