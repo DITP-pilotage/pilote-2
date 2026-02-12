@@ -7,7 +7,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { ChangeEvent, useCallback } from "react";
+import { ChangeEvent, useCallback, useEffect, useRef, useState } from "react";
 import {
   parseAsArrayOf,
   parseAsInteger,
@@ -151,16 +151,35 @@ export const useTableauPageAdminUtilisateurs = (
       shallow: false,
       clearOnDefault: true,
       history: "push",
-      throttleMs: 400,
     }),
   );
 
+  const [rechercheLocale, setRechercheLocale] = useState(valeurDeLaRecherche);
+  const rechercheEnCoursRef = useRef(false);
+  const debounceTimerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
+
+  useEffect(() => {
+    if (!rechercheEnCoursRef.current) {
+      setRechercheLocale(valeurDeLaRecherche);
+    }
+  }, [valeurDeLaRecherche]);
+
+  useEffect(() => {
+    return () => clearTimeout(debounceTimerRef.current);
+  }, []);
+
   const changementDeLaRechercheCallback = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
-      setPagination({
-        pageIndex: 1,
-      });
-      setValeurDeLaRecherche(event.target.value);
+      const nouvelleValeur = event.target.value;
+      rechercheEnCoursRef.current = true;
+      setRechercheLocale(nouvelleValeur);
+
+      clearTimeout(debounceTimerRef.current);
+      debounceTimerRef.current = setTimeout(() => {
+        setPagination({ pageIndex: 1 });
+        setValeurDeLaRecherche(nouvelleValeur);
+        rechercheEnCoursRef.current = false;
+      }, 100);
     },
     [setPagination, setValeurDeLaRecherche],
   );
@@ -188,7 +207,7 @@ export const useTableauPageAdminUtilisateurs = (
   return {
     nombreElementPage: nombreUtilisateur,
     tableau,
-    valeurDeLaRecherche,
+    valeurDeLaRecherche: rechercheLocale,
     changementDeLaRechercheCallback,
     setPagination,
   };

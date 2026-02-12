@@ -106,4 +106,29 @@ export interface UtilisateurRepository {
     date: Date,
   ): Promise<void>;
   mettreAJourDateDerniereConnexion(email: string, date: Date): Promise<void>;
+  recupererFiltresEtPagines(params: {
+    sorting: { id: string; desc: boolean }[];
+    valeurDeLaRecherche: string;
+    filtres: {
+      territoires: string[];
+      perimetresMinisteriels: string[];
+      chantiers: string[];
+      chantiersAssociésAuxPérimètres: string[];
+      profils: string[];
+      typeCompte: ("actif" | "desactive")[];
+    };
+    autorisations: {
+      profilsAutorisés: string[] | null;
+      territoiresAutorisés: string[] | null;
+      chantiersAutorisés: string[] | null;
+    };
+    pagination: { pageIndex: number; pageSize: number };
+  }): Promise<{ utilisateurIds: string[]; totalCount: number }>;
+  recupererParIds(params: {
+    ids: string[];
+    sorting: { id: string; desc: boolean }[];
+    listeTerritoiresCodes: string[];
+    listePerimetresMinisteriels: string[];
+    listeInformationsChantiersUtilisateurs: InformationChantierUtilisateur[];
+  }): Promise<UtilisateurListeGestion[]>;
 }
