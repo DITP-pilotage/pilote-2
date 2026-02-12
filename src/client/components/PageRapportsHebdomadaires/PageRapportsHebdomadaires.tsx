@@ -2,25 +2,86 @@ import { Suspense } from "react";
 import { parseAsString, useQueryState } from "nuqs";
 import "@gouvfr/dsfr/dist/component/table/table.min.css";
 import api from "@/server/infrastructure/api/trpc/api";
+import { PiloteDateFormatter } from "@/server/rapports-hebdomadaires/infrastructure/adapters/PiloteDateFormatter";
+
+const formatDate = (date: Date) => {
+  return new Date(date).toLocaleDateString("fr-FR", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  });
+};
+
+const formatterTypeValeur = (typeValeur: string): string => {
+  switch (typeValeur) {
+    case "VALEUR_AVANCEMENT":
+      return "VA";
+    case "VALEUR_INITIALE":
+      return "VI";
+    case "VALEUR_CIBLE":
+      return "VC";
+    default:
+      return typeValeur;
+  }
+};
+
+const formatterProfil = (profil: string): string => {
+  switch (profil) {
+    case "COORDINATEUR_REGION":
+      return "Coordinateur PILOTE régional";
+    case "COORDINATEUR_DEPARTEMENT":
+      return "Coordinateur PILOTE départemental";
+    case "CABINET_MTFP":
+      return "Cabinet MTFP";
+    case "PM_ET_CABINET":
+      return "Première Ministre et cabinet";
+    case "PR":
+      return "Présidence de la République";
+    case "CABINET_MINISTERIEL":
+      return "Cabinets ministériels";
+    case "DIR_ADMIN_CENTRALE":
+      return "Direction d'administration centrale";
+    case "DROM":
+      return "DROM/Outre-Mer";
+    case "PREFET_DEPARTEMENT":
+      return "Préfet de département et collaborateurs";
+    case "PREFET_REGION":
+      return "Préfet de région et collaborateurs";
+    case "RESPONSABLE_DEPARTEMENT":
+      return "Responsable local départemental";
+    case "RESPONSABLE_REGION":
+      return "Responsable local régional";
+    case "SERVICES_DECONCENTRES_DEPARTEMENT":
+      return "Services déconcentrés départementaux";
+    case "SERVICES_DECONCENTRES_REGION":
+      return "Services déconcentrés régionaux";
+    case "SECRETARIAT_GENERAL":
+      return "Secrétariat général de ministère";
+    case "DIR_PROJET":
+      return "Directeur de projet";
+    case "EQUIPE_DIR_PROJET":
+      return "Équipe de Directeur de projet";
+    case "DITP_ADMIN":
+      return "DITP - Admin";
+    case "DITP_PILOTAGE":
+      return "DITP - Pilotage";
+    default:
+      return profil;
+  }
+};
 
 function RapportDetail({ rapportId }: { rapportId: string }) {
   const [rapportDetail] = api.rapportHebdomadaire.récupérer.useSuspenseQuery({
     rapportId,
   });
 
-  const formatDate = (date: Date) => {
-    return new Date(date).toLocaleDateString("fr-FR", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-    });
-  };
-
   const comptesCrees =
     rapportDetail.contenuRapport.sectionActiviteComptes.comptesCrees;
   const comptesDesactives =
     rapportDetail.contenuRapport.sectionActiviteComptes.comptesDesactives;
   const chantiers = rapportDetail.contenuRapport.sectionActiviteChantiers;
+  const territoireCode =
+    rapportDetail.contenuRapport.coordinateur.territoires[0]?.code || "NAT-FR";
 
   return (
     <div className="p-6">
@@ -53,7 +114,7 @@ function RapportDetail({ rapportId }: { rapportId: string }) {
                   <td>{compte.nom}</td>
                   <td>{compte.prenom}</td>
                   <td>{compte.email}</td>
-                  <td>{compte.profil}</td>
+                  <td>{formatterProfil(compte.profil)}</td>
                 </tr>
               ))}
             </tbody>
@@ -84,7 +145,7 @@ function RapportDetail({ rapportId }: { rapportId: string }) {
                   <td>{compte.nom}</td>
                   <td>{compte.prenom}</td>
                   <td>{compte.email}</td>
-                  <td>{compte.profil}</td>
+                  <td>{formatterProfil(compte.profil)}</td>
                 </tr>
               ))}
             </tbody>
@@ -99,33 +160,57 @@ function RapportDetail({ rapportId }: { rapportId: string }) {
           Aucune activité sur les chantiers pour cette période.
         </p>
       ) : (
-        <div className="fr-table">
-          <table>
-            <thead>
-              <tr>
-                <th>Chantier</th>
-                <th>Nombre d'indicateurs modifiés</th>
-                <th>Nombre de territoires impactés</th>
-              </tr>
-            </thead>
-            <tbody>
-              {chantiers.map((chantier) => {
-                const nombreIndicateurs = chantier.indicateurs.length;
-                const nombreTerritoires = chantier.indicateurs.flatMap(
-                  (indicateur) => indicateur.territoires,
-                ).length;
-
-                return (
-                  <tr key={chantier.id}>
-                    <td>{chantier.nom}</td>
-                    <td>{nombreIndicateurs}</td>
-                    <td>{nombreTerritoires}</td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
+        chantiers.map((chantier) => (
+          <div className="mb-6" key={chantier.id}>
+            <h4 className="text-lg font-medium mb-2">
+              <a
+                href={`/chantier/${chantier.id}/${territoireCode}`}
+                className="fr-link"
+              >
+                {chantier.nom}
+              </a>
+            </h4>
+            {chantier.indicateurs.map((indicateur) => (
+              <div className="mb-4" key={indicateur.id}>
+                <h5 className="text-base font-medium mb-1">{indicateur.nom}</h5>
+                <div className="fr-table">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Territoire</th>
+                        <th>Type de valeur</th>
+                        <th>Valeur</th>
+                        <th>Date de valeur</th>
+                        <th>Date d'événement</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {indicateur.territoires.map((territoire) => (
+                        <tr
+                          key={`${territoire.code}-${territoire.typeValeur}-${territoire.dateValeur}`}
+                        >
+                          <td>{territoire.nom}</td>
+                          <td>{formatterTypeValeur(territoire.typeValeur)}</td>
+                          <td>{territoire.valeur ?? "—"}</td>
+                          <td>
+                            {PiloteDateFormatter.isoDateFranceMetropolitaine(
+                              territoire.dateValeur,
+                            )}
+                          </td>
+                          <td>
+                            {PiloteDateFormatter.isoDateFranceMetropolitaine(
+                              territoire.dateEvenement,
+                            )}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            ))}
+          </div>
+        ))
       )}
     </div>
   );
@@ -146,14 +231,6 @@ export default function PageRapportsHebdomadaires() {
       default:
         return "bg-gray-100 text-gray-800";
     }
-  };
-
-  const formatDate = (date: Date) => {
-    return new Date(date).toLocaleDateString("fr-FR", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-    });
   };
 
   return (
