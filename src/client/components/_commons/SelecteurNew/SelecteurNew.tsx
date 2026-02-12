@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Select } from "@/components/shared/Select";
 import { clsxm } from "@/utils/clsxm";
 import { ChampObligatoire } from "@/components/PageIndicateur/ChampObligatoire";
@@ -35,6 +35,7 @@ export const SelecteurNew = <T extends string>({
   className,
   triggerClassName,
   isRequired,
+  placeholderRecherche = "Rechercher...",
 }: {
   htmlName: string;
   options: SelecteurNewOption<T>[] | SelecteurNewOptionGroup<T>[];
@@ -43,6 +44,7 @@ export const SelecteurNew = <T extends string>({
   valeurSelectionnee?: T;
   libelle?: React.ReactNode;
   placeholder?: string;
+  placeholderRecherche?: string;
   showSearch?: boolean;
   disabled?: boolean;
   className?: string;
@@ -50,6 +52,7 @@ export const SelecteurNew = <T extends string>({
   isRequired?: boolean;
 }) => {
   const [recherche, setRecherche] = useState("");
+  const rechercheRef = useRef<HTMLInputElement>(null);
 
   const isGrouped = isGroupedOptions(options);
 
@@ -97,6 +100,13 @@ export const SelecteurNew = <T extends string>({
         }}
         value={valeurSelectionnee}
         disabled={disabled}
+        onOpenChange={(open) => {
+          if (open) {
+            setTimeout(() => rechercheRef.current?.focus(), 0);
+          } else {
+            setRecherche("");
+          }
+        }}
       >
         <Select.Trigger
           className={clsxm("w-50 text-left", triggerClassName, {
@@ -117,9 +127,10 @@ export const SelecteurNew = <T extends string>({
                 className="w-full !px-3 !py-2 !border-b-2 !border-primary !text-sm !bg-dsfr-alt-blue-france !placeholder-dsfr-mention-grey placeholder:italic"
                 onChange={(event) => setRecherche(event.target.value)}
                 onKeyDown={(event) => event.stopPropagation()}
-                placeholder="Rechercher..."
+                placeholder={placeholderRecherche}
                 type="text"
                 value={recherche}
+                ref={rechercheRef}
               />
             </div>
           ) : null}
@@ -130,20 +141,27 @@ export const SelecteurNew = <T extends string>({
                 Aucun résultat
               </div>
             ) : isGrouped ? (
-              (optionsFiltrees as SelecteurNewOptionGroup<T>[]).map((group) => (
-                <Select.Group key={String(group.valeur)}>
-                  <Select.Label>{group.libelle}</Select.Label>
-                  {group.options.map((option) => (
-                    <Select.Item
-                      disabled={option.desactivee}
-                      key={String(option.valeur)}
-                      value={option.valeur}
-                    >
-                      {option.libelle}
-                    </Select.Item>
-                  ))}
-                </Select.Group>
-              ))
+              (optionsFiltrees as SelecteurNewOptionGroup<T>[]).map(
+                (group, index) => (
+                  <>
+                    {index > 0 && <Select.Separator />}
+                    <Select.Group key={String(group.valeur)}>
+                      <Select.Label>{group.libelle}</Select.Label>
+                      <div className="pl-3">
+                        {group.options.map((option) => (
+                          <Select.Item
+                            disabled={option.desactivee}
+                            key={String(option.valeur)}
+                            value={option.valeur}
+                          >
+                            {option.libelle}
+                          </Select.Item>
+                        ))}
+                      </div>
+                    </Select.Group>
+                  </>
+                ),
+              )
             ) : (
               (optionsFiltrees as SelecteurNewOption<T>[]).map((option) => (
                 <Select.Item

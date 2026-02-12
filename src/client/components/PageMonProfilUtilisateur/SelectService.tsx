@@ -32,6 +32,7 @@ export const SelectService = () => {
           libelle="Service"
           className="fr-input-group"
           triggerClassName="w-full"
+          placeholderRecherche="Rechercher un service ou un périmètre ministériel"
           options={groupedOptions}
           isRequired
           valeurSelectionnee={service}
