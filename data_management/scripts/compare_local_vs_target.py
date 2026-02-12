@@ -1,6 +1,7 @@
 import argparse
 import os
 import re
+import json
 import pandas as pd
 
 from typing import Any
@@ -15,20 +16,20 @@ logger = get_logger(__name__)
 
 
 EXPOSITION_TABLES = [
-    "axe",
-    "chantier_identite",
-    "chantier_territoire_jalon",
-    "chantier_territoire",
-    "commentaire",
-    "decision_strategique",
-    "indicateur_identite",
-    "indicateur_territoire_jalon",
-    "indicateur_territoire",
-    "ministere",
-    "objectif",
-    "perimetre",
-    "ppg",
-    "synthese_des_resultats",
+    "public.axe",
+    "public.chantier_identite",
+    "public.chantier_territoire_jalon",
+    "public.chantier_territoire",
+    "public.commentaire",
+    "public.decision_strategique",
+    "public.indicateur_identite",
+    "public.indicateur_territoire_jalon",
+    "public.indicateur_territoire",
+    "public.ministere",
+    "public.objectif",
+    "public.perimetre",
+    "public.ppg",
+    "public.synthese_des_resultats",
 ]
 
 parser = argparse.ArgumentParser()
@@ -42,11 +43,10 @@ parser.add_argument(
     ),
 )
 parser.add_argument(
-    "--output-csv",
-    "-o",
+    "--no_csv_output",
     action="store_true",
-    default=True,
-    help="Write differences as CSV files (one file per table) into the 'output/' folder next to this script. Enabled by default.",
+    default=False,
+    help="If set, do NOT write differences as CSV files. By default, CSV output is enabled.",
 )
 parser.add_argument(
     "--normalize",
@@ -92,7 +92,11 @@ else:
 if args.target:
     target_connection_string = args.target
 else:
-    target_connection_string = os.environ["CONN_STR_DEV"]
+    target_connection_string = os.environ.get("CONN_STR_DEV")
+    if not target_connection_string:
+        raise RuntimeError(
+            "No target connection string provided: pass --target or define CONN_STR_DEV in the environment."
+        )
 
 
 
@@ -114,7 +118,11 @@ def _read_table_as_df(
     """
     engine = create_engine(engine_url)
     sql = f'SELECT * FROM "{schema}"."{table_name}"'
-    return pd.read_sql(sql, engine)
+    try:
+        df = pd.read_sql(sql, engine)
+    finally:
+        engine.dispose()
+    return df
 
 
 def _split_schema_and_table(table_reference: str) -> tuple[str | None, str]:
@@ -149,6 +157,37 @@ def _split_schema_and_table(table_reference: str) -> tuple[str | None, str]:
     )
 
 
+def recursively_round(obj):
+    """
+    Recursively rounds any numeric value found under the key 'valeur' in a dictionary,
+    or any standalone numeric value, to 2 decimal places. The function traverses nested
+    structures including dicts, lists, tuples, and sets. Booleans are not rounded.
+
+    Args:
+        obj: The object to recursively process (dict, list, tuple, set, or numeric value).
+
+    Returns:
+        The processed object with applicable numeric values rounded to 2 decimals.
+    """
+    if isinstance(obj, dict):
+        new_obj = {}
+        for k, v in obj.items():
+            if k == "valeur" and isinstance(v, Real) and not isinstance(v, bool):
+                new_obj[k] = round(float(v), 2)
+            else:
+                new_obj[k] = recursively_round(v)
+        return new_obj
+    elif isinstance(obj, list):
+        return [recursively_round(v) for v in obj]
+    elif isinstance(obj, tuple):
+        return tuple(recursively_round(v) for v in obj)
+    elif isinstance(obj, set):
+        return sorted(recursively_round(v) for v in obj)
+    elif isinstance(obj, Real) and not isinstance(obj, bool):
+        return round(float(obj), 2)
+    else:
+        return obj
+
 def _normalize_within_cell(content):
     """
     If cell content is a dict with a "valeur" key and its value is numeric, round the value to 2 decimals.
@@ -161,10 +200,10 @@ def _normalize_within_cell(content):
         str: Stringified version of the cell value, possibly with rounded "valeur".
     """
     # If value is a dict with a "valeur" key and its value is a number, round value to 2 decimals
-    if isinstance(content, dict) and "valeur" in content and isinstance(content["valeur"], Real) and not isinstance(content["valeur"], bool):
-        rounded = round(float(content["valeur"]), 2)
-        content = {**content, "valeur": rounded}
-    return str(content)
+    normed = recursively_round(content)
+    if isinstance(normed, dict) or isinstance(normed, list):
+        return json.dumps(normed, sort_keys=True, ensure_ascii=False)
+    return str(normed)
 
 
 def _normalize_cell(value: Any) -> Any:
@@ -209,7 +248,7 @@ def _diff_tables_row_by_row(
         target_url (str): SQLAlchemy URL for the target database.
         schema (str): The schema containing the table.
         table_name (str): The table to compare.
-        normalize (bool, optional): If True, normalize values (round numbers, sort lists, etc). Defaults to True.
+        normalize (bool, optional): If True, normalize values (round numbers, sort lists, etc). Defaults to False.
 
     Returns:
         tuple[list[dict[str, Any]], list[str]]:
@@ -303,7 +342,7 @@ def main():
         )
         all_differences.extend([dict(d, table=f"{schema}.{table_name}") for d in differences])
 
-        if args.output_csv and differences:
+        if not args.no_csv_output and differences:
             # On crée le fichier de diff de la table dans le dossier output
             output_dir = os.path.join(os.path.dirname(__file__), "output")
             os.makedirs(output_dir, exist_ok=True)

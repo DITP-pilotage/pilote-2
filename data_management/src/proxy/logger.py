@@ -10,6 +10,7 @@ def get_logger(name: str = None) -> logging.Logger:
         level=getattr(logging, log_level, logging.INFO),
         format="[%(asctime)s][%(name)s][%(levelname)s] %(message)s",
         handlers=[logging.StreamHandler()],
+        force=True,
     )
 
     logger = logging.getLogger(name)
