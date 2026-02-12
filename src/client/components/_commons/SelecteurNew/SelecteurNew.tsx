@@ -2,6 +2,7 @@ import { useRef, useState } from "react";
 import { Select } from "@/components/shared/Select";
 import { clsxm } from "@/utils/clsxm";
 import { ChampObligatoire } from "@/components/PageIndicateur/ChampObligatoire";
+import { AnimateEntry } from "@/components/shared/AnimateEntry";
 
 export type SelecteurNewOption<T> = {
   libelle: string;
@@ -157,9 +158,9 @@ export const SelecteurNew = <T extends string>({
                       !hasMatchingOptions;
 
                     return (
-                      <div
+                      <AnimateEntry
                         key={String(group.valeur)}
-                        className={clsxm({ hidden: shouldHideGroup })}
+                        visible={!shouldHideGroup}
                       >
                         {index > 0 && <Select.Separator />}
                         <Select.Group>
@@ -175,21 +176,22 @@ export const SelecteurNew = <T extends string>({
                                   .includes(rechercheNormalisee);
 
                               return (
-                                <Select.Item
-                                  disabled={option.desactivee}
+                                <AnimateEntry
                                   key={String(option.valeur)}
-                                  value={option.valeur}
-                                  className={clsxm({
-                                    hidden: shouldHideOption,
-                                  })}
+                                  visible={!shouldHideOption}
                                 >
-                                  {option.libelle}
-                                </Select.Item>
+                                  <Select.Item
+                                    disabled={option.desactivee}
+                                    value={option.valeur}
+                                  >
+                                    {option.libelle}
+                                  </Select.Item>
+                                </AnimateEntry>
                               );
                             })}
                           </div>
                         </Select.Group>
-                      </div>
+                      </AnimateEntry>
                     );
                   },
                 )
@@ -200,14 +202,17 @@ export const SelecteurNew = <T extends string>({
                     !option.libelle.toLowerCase().includes(rechercheNormalisee);
 
                   return (
-                    <Select.Item
-                      disabled={option.desactivee}
+                    <AnimateEntry
                       key={String(option.valeur)}
-                      value={option.valeur}
-                      className={clsxm({ hidden: shouldHideOption })}
+                      visible={!shouldHideOption}
                     >
-                      {option.libelle}
-                    </Select.Item>
+                      <Select.Item
+                        disabled={option.desactivee}
+                        value={option.valeur}
+                      >
+                        {option.libelle}
+                      </Select.Item>
+                    </AnimateEntry>
                   );
                 })}
           </div>
