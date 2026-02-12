@@ -17,11 +17,10 @@ describe("PrismaProfilUtilisateurRepository", () => {
 
   describe("recupererParId", () => {
     it(
-      "retourne ministere, service et serviceAutre correctement",
+      "retourne service et serviceAutre correctement",
       createIntegrationTest(async () => {
         // Given
         const utilisateur = await fixtures.utilisateur({
-          ministere: "ministere-de-l-interieur",
           service: "prefecture-de-region",
           service_autre: null,
         });
@@ -36,7 +35,6 @@ describe("PrismaProfilUtilisateurRepository", () => {
           prenom: utilisateur.prenom,
           email: utilisateur.email,
           fonction: utilisateur.fonction,
-          ministere: "ministere-de-l-interieur",
           service: "prefecture-de-region",
           serviceAutre: null,
         });
@@ -48,7 +46,6 @@ describe("PrismaProfilUtilisateurRepository", () => {
       createIntegrationTest(async () => {
         // Given
         const utilisateur = await fixtures.utilisateur({
-          ministere: "ministere-de-l-interieur",
           service: "autre",
           service_autre: "Service très spécifique",
         });
@@ -63,7 +60,6 @@ describe("PrismaProfilUtilisateurRepository", () => {
           prenom: utilisateur.prenom,
           email: utilisateur.email,
           fonction: utilisateur.fonction,
-          ministere: "ministere-de-l-interieur",
           service: "autre",
           serviceAutre: "Service très spécifique",
         });
@@ -71,11 +67,10 @@ describe("PrismaProfilUtilisateurRepository", () => {
     );
 
     it(
-      "retourne null pour les 3 champs quand non renseignés",
+      "retourne null pour les 2 champs quand non renseignés",
       createIntegrationTest(async () => {
         // Given
         const utilisateur = await fixtures.utilisateur({
-          ministere: null,
           service: null,
           service_autre: null,
         });
@@ -90,7 +85,6 @@ describe("PrismaProfilUtilisateurRepository", () => {
           prenom: utilisateur.prenom,
           email: utilisateur.email,
           fonction: utilisateur.fonction,
-          ministere: null,
           service: null,
           serviceAutre: null,
         });
@@ -113,11 +107,10 @@ describe("PrismaProfilUtilisateurRepository", () => {
 
   describe("sauvegarder", () => {
     it(
-      "persiste ministere et service",
+      "persiste service",
       createIntegrationTest(async () => {
         // Given
         const utilisateur = await fixtures.utilisateur({
-          ministere: null,
           service: null,
           service_autre: null,
         });
@@ -128,7 +121,6 @@ describe("PrismaProfilUtilisateurRepository", () => {
           prenom: utilisateur.prenom,
           email: utilisateur.email,
           fonction: utilisateur.fonction,
-          ministere: "ministere-de-l-education-nationale",
           service: "rectorat-d-academie",
           serviceAutre: null,
         });
@@ -138,7 +130,6 @@ describe("PrismaProfilUtilisateurRepository", () => {
 
         // Then
         const result = await repository.recupererParId(utilisateur.id);
-        expect(result.ministere).toEqual("ministere-de-l-education-nationale");
         expect(result.service).toEqual("rectorat-d-academie");
         expect(result.serviceAutre).toBeNull();
       }),
@@ -149,7 +140,6 @@ describe("PrismaProfilUtilisateurRepository", () => {
       createIntegrationTest(async () => {
         // Given
         const utilisateur = await fixtures.utilisateur({
-          ministere: null,
           service: null,
           service_autre: null,
         });
@@ -160,9 +150,8 @@ describe("PrismaProfilUtilisateurRepository", () => {
           prenom: utilisateur.prenom,
           email: utilisateur.email,
           fonction: utilisateur.fonction,
-          ministere: "autre",
           service: "autre",
-          serviceAutre: "Ministère spécial",
+          serviceAutre: "Service spécial",
         });
 
         // When
@@ -170,9 +159,8 @@ describe("PrismaProfilUtilisateurRepository", () => {
 
         // Then
         const result = await repository.recupererParId(utilisateur.id);
-        expect(result.ministere).toEqual("autre");
         expect(result.service).toEqual("autre");
-        expect(result.serviceAutre).toEqual("Ministère spécial");
+        expect(result.serviceAutre).toEqual("Service spécial");
       }),
     );
 
@@ -181,7 +169,6 @@ describe("PrismaProfilUtilisateurRepository", () => {
       createIntegrationTest(async () => {
         // Given
         const utilisateur = await fixtures.utilisateur({
-          ministere: "ministere-de-l-interieur",
           service: "prefecture-de-departement",
           service_autre: null,
         });
@@ -192,7 +179,6 @@ describe("PrismaProfilUtilisateurRepository", () => {
           prenom: utilisateur.prenom,
           email: utilisateur.email,
           fonction: utilisateur.fonction,
-          ministere: null,
           service: null,
           serviceAutre: null,
         });
@@ -202,7 +188,6 @@ describe("PrismaProfilUtilisateurRepository", () => {
 
         // Then
         const result = await repository.recupererParId(utilisateur.id);
-        expect(result.ministere).toBeNull();
         expect(result.service).toBeNull();
         expect(result.serviceAutre).toBeNull();
       }),
@@ -219,7 +204,6 @@ describe("PrismaProfilUtilisateurRepository", () => {
           prenom: "Jean",
           email: "jean.dupont@example.fr",
           fonction: "Directeur",
-          ministere: "ministere-de-la-culture",
           service: "direction-regionale-des-affaires-culturelles-drac",
           serviceAutre: null,
         });
@@ -235,7 +219,6 @@ describe("PrismaProfilUtilisateurRepository", () => {
           prenom: "Jean",
           email: "jean.dupont@example.fr",
           fonction: "Directeur",
-          ministere: "ministere-de-la-culture",
           service: "direction-regionale-des-affaires-culturelles-drac",
           serviceAutre: null,
         });

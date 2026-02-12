@@ -13,7 +13,6 @@ export function useMonProfilFormulaire() {
       prenom: profilUtilisateur.prenom,
       nom: profilUtilisateur.nom,
       fonction: profilUtilisateur.fonction || "",
-      ministere: profilUtilisateur.ministere || "",
       service: profilUtilisateur.service || "",
       serviceAutre: profilUtilisateur.serviceAutre || "",
     },

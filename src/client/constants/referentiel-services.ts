@@ -5,23 +5,12 @@ export interface ServiceReferentiel {
   libelle: string;
 }
 
-export interface MinistereReferentiel {
+export interface PerimetreMinisterielReferentiel {
   slug: string;
   libelle: string;
   services: ServiceReferentiel[];
 }
 
 export const referentielServices = referentielData as {
-  ministeres: MinistereReferentiel[];
+  perimetresMinisteriels: PerimetreMinisterielReferentiel[];
 };
-
-export const ministereSlugs = referentielServices.ministeres.map((m) => m.slug);
-
-export function getServicesForMinistere(
-  ministereSlug: string,
-): ServiceReferentiel[] {
-  const ministere = referentielServices.ministeres.find(
-    (m) => m.slug === ministereSlug,
-  );
-  return ministere?.services ?? [];
-}
