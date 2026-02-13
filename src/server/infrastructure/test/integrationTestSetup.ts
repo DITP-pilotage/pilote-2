@@ -1,6 +1,10 @@
 import logger from "@/server/infrastructure/Logger";
 import { prisma } from "@/server/db/prisma";
 
+afterAll(async () => {
+  await prisma.$disconnect();
+});
+
 beforeEach(async () => {
   try {
     await prisma.$executeRawUnsafe(
@@ -42,9 +46,7 @@ beforeEach(async () => {
     .map((name) => `"raw_data"."${name}"`)
     .join(", ");
 
-  await prisma.$transaction([
-    prisma.$executeRawUnsafe(`TRUNCATE TABLE ${tables} CASCADE;`),
-    prisma.$executeRawUnsafe(`TRUNCATE TABLE ${tablesRawData} CASCADE;`),
-    prisma.mesure_indicateur.deleteMany(),
-  ]);
+  await prisma.$executeRawUnsafe(`TRUNCATE TABLE ${tables} CASCADE;`);
+  await prisma.$executeRawUnsafe(`TRUNCATE TABLE ${tablesRawData} CASCADE;`);
+  await prisma.mesure_indicateur.deleteMany();
 });

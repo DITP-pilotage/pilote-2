@@ -52,6 +52,9 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
 
+      - name: Initialize database
+        run: npm run test:database:init
+
       - name: Run test command
         run: npm test
 
