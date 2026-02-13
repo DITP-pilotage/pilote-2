@@ -39,7 +39,7 @@ describe("ModifierMonProfilUseCase", () => {
           nom: "Nouveau Nom",
           prenom: "Nouveau Prenom",
           fonction: "Nouvelle Fonction",
-                    service: null,
+          service: null,
           serviceAutre: null,
         });
 
@@ -68,7 +68,7 @@ describe("ModifierMonProfilUseCase", () => {
           nom: "Nouveau Nom",
           prenom: "Prenom Original",
           fonction: "Fonction Originale",
-                    service: null,
+          service: null,
           serviceAutre: null,
         });
 
@@ -97,7 +97,7 @@ describe("ModifierMonProfilUseCase", () => {
           nom: "Nom Test",
           prenom: "Prenom Test",
           fonction: null,
-                    service: null,
+          service: null,
           serviceAutre: null,
         });
 
@@ -162,7 +162,7 @@ describe("ModifierMonProfilUseCase", () => {
           nom: "Nouveau Nom",
           prenom: "Nouveau Prenom",
           fonction: null,
-                    service: null,
+          service: null,
           serviceAutre: null,
         });
 
@@ -185,7 +185,7 @@ describe("ModifierMonProfilUseCase", () => {
             nom: "Nouveau Nom",
             prenom: "Nouveau Prenom",
             fonction: null,
-                        service: null,
+            service: null,
             serviceAutre: null,
           }),
         ).rejects.toThrow(NotFoundError);
