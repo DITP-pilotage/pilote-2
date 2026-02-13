@@ -817,12 +817,27 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
         },
       });
 
+    const territoiresRegions = await this.prisma.territoire.findMany({
+      where: { code: { startsWith: "REG" } },
+      select: {
+        code: true,
+        territoire_enfant: { select: { code: true } },
+      },
+    });
+    const enfantsParTerritoire = new Map(
+      territoiresRegions.map((territoire) => [
+        territoire.code,
+        territoire.territoire_enfant.map((enfant) => enfant.code),
+      ]),
+    );
+
     return this.convertirEnDetailsIndicateurs(
       indicateurs,
       jalon,
       dateDerniereExecutionDatajobs,
       evenementMailles,
       metadataIndicateur,
+      enfantsParTerritoire,
     );
   }
 
@@ -887,6 +902,9 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
       select: {
         code: true,
         code_insee: true,
+        territoire_enfant: {
+          select: { code: true },
+        },
       },
     });
 
@@ -916,7 +934,9 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
   }
 
   private convertirEnDetailsIndicateursTerritoires(
-    territoires: Pick<PrismaTerritoire, "code" | "code_insee">[],
+    territoires: (Pick<PrismaTerritoire, "code" | "code_insee"> & {
+      territoire_enfant: Pick<PrismaTerritoire, "code">[];
+    })[],
     indicateurRows: (PrismaIndicateurTerritoire & {
       indicateur_identite: PrismaIndicateurIdentite;
       indicateur_territoire_jalon: PrismaIndicateurTerritoireJalon[];
@@ -952,6 +972,7 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
           evenementsMailles,
           metadataIndicateur?.va_nat_from ?? null,
           metadataIndicateur?.va_reg_from ?? null,
+          territoire.territoire_enfant.map((enfant) => enfant.code),
         );
       }
 
@@ -1045,6 +1066,7 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
     dateDerniereExecutionDatajobs: Date,
     evenementsMailles: PrismaIndicateurTerritoireValeurEvenement[],
     metadataIndicateur: PrismaMetadataParametrageIndicateurs[],
+    enfantsParTerritoire: Map<string, string[]>,
   ): DetailsIndicateurs {
     const détailsIndicateurs: DetailsIndicateurs = {};
 
@@ -1073,6 +1095,7 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
         ),
         metadataIndicateurCourant?.va_nat_from ?? null,
         metadataIndicateurCourant?.va_reg_from ?? null,
+        enfantsParTerritoire.get(indicateurRow.territoire_code) ?? [],
       );
 
       détailsIndicateurs[indicateurRow.id][indicateurRow.territoire_code] = {
