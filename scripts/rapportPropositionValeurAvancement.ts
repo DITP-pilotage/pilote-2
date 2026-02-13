@@ -42,7 +42,7 @@ const isMain = eval("require.main === module");
 if (isMain) {
   main()
     .then(async ({ resultatCreation, resultatEnvoi }) => {
-      logger.info("Envoie des rapports hebdomadaires terminé");
+      logger.info("Envoi des rapports hebdomadaires terminé");
       const message = [
         "## Rapports hebdomadaires des propositions de valeur d'avancement",
         "",
@@ -65,7 +65,7 @@ if (isMain) {
     })
     .catch((error) => {
       const messageEchecSuppression = [
-        "## ⚠️ Erreur lors de l'envoie des rapports de propositions de valeur d'avancement",
+        "## ⚠️ Erreur lors de l'envoi des rapports de propositions de valeur d'avancement",
         "Veuillez regarder les logs pour en savoir plus :",
         `- [Logs](${process.env.SCALINGO_LOGS_URL})`,
       ].join("\n");

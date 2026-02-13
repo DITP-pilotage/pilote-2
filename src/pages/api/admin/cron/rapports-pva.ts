@@ -39,7 +39,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       .run();
     logger.info("Phase 2 terminée", resultatEnvoi);
 
-    logger.info("Envoie des rapports hebdomadaires terminé");
+    logger.info("Envoi des rapports hebdomadaires terminé");
 
     const message = [
       "## Rapports hebdomadaires des propositions de valeur d'avancement",
@@ -66,7 +66,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     return res.status(200).json({ resultatCreation, resultatEnvoi });
   } catch (error) {
     const messageEchec = [
-      "## ⚠️ Erreur lors de l'envoie des rapports de propositions de valeur d'avancement",
+      "## ⚠️ Erreur lors de l'envoi des rapports de propositions de valeur d'avancement",
       "Veuillez regarder les logs pour en savoir plus :",
       `- [Logs](${process.env.SCALINGO_LOGS_URL})`,
     ].join("\n");
@@ -75,7 +75,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
     return res
       .status(500)
-      .json({ error: "Erreur lors de l'envoie des rapports" });
+      .json({ error: "Erreur lors de l'envoi des rapports" });
   }
 }
 
