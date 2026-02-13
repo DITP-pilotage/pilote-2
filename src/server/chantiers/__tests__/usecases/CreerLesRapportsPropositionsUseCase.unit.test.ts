@@ -1,4 +1,4 @@
-import { mock, MockProxy } from "jest-mock-extended";
+import { mock, MockProxy } from "vitest-mock-extended";
 import { ChantierRepository } from "@/server/chantiers/domain/ports/ChantierRepository";
 import { UtilisateurRepository } from "@/server/chantiers/domain/ports/UtilisateurRepository";
 import { IndicateurRepository } from "@/server/chantiers/domain/ports/IndicateurRepository";

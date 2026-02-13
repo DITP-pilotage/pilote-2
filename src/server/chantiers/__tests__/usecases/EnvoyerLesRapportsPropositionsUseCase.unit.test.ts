@@ -1,4 +1,4 @@
-import { mock, MockProxy } from "jest-mock-extended";
+import { mock, MockProxy } from "vitest-mock-extended";
 import { RapportPropositionsAvancementRepository } from "@/server/chantiers/domain/ports/RapportPropositionsAvancementRepository";
 import { EnvoieEmailService } from "@/server/chantiers/domain/ports/EnvoieEmailService";
 import { RapportPropositionsAvancement } from "@/server/chantiers/domain/RapportPropositionsAvancement";
