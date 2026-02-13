@@ -129,7 +129,6 @@ TODO nettoyer les commandes inutiles (+ dans package.json):
 | npm run lint:tsc                            | Lance le linter Typescript                                                                  |
 | npm run lint:stylelint                      | Lance le linter Stylelint                                                                   |
 | npm run test                                | Lance tous les tests (front et back)                                                        |
-| npm run test:ci                             | Utilisé par la CI. Lance tous les tests (front et back)                                     |
 | npm run test:client                         | Lance tous les tests côté front (dossier src/client)                                        |
 | npm run test:client:unit                    | Lance les tests unitaires côté front (dossier src/client)                                   |
 | npm run test:client:integration             | Lance les tests d'intégration côté front (dossier src/client)                               |

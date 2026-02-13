@@ -1,4 +1,4 @@
-import { MockProxy, mock } from "jest-mock-extended";
+import { MockProxy, mock } from "vitest-mock-extended";
 import { CreerNouveauteUseCase } from "@/server/parametrage-nouveautes/usecases/CreerNouveauteUseCase";
 import { NouveauteRepository } from "@/server/parametrage-nouveautes/domain/ports/NouveauteRepository";
 import { BadRequestError } from "@/server/app/error-boundary/bad-request-error";

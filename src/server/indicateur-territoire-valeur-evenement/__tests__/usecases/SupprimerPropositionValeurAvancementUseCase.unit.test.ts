@@ -1,4 +1,4 @@
-import { MockProxy, mock } from "jest-mock-extended";
+import { MockProxy, mock } from "vitest-mock-extended";
 import { IndicateurTerritoireValeurEvenementRepository } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/IndicateurTerritoireValeurEvenementRepository";
 import { EvenementsSurDate } from "@/server/import-indicateur/domain/EvenementsSurDate";
 import { IndicateurTerritoireValeurEvenement } from "@/server/indicateur-territoire-valeur-evenement/domain/IndicateurTerritoireValeurEvenement";

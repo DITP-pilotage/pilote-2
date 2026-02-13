@@ -1,4 +1,4 @@
-import { mock, MockProxy } from "jest-mock-extended";
+import { mock, MockProxy } from "vitest-mock-extended";
 import { ObjectifBuilder } from "@/server/fiche-conducteur/app/builders/ObjectifBuilder";
 import { ObjectifRepository } from "@/server/fiche-conducteur/domain/ports/ObjectifRepository";
 import { RécupérerPublicationsUseCase } from "@/server/fiche-conducteur/usecases/RécupérerPublicationsUseCase";

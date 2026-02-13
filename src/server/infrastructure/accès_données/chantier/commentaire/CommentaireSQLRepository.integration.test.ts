@@ -436,8 +436,4 @@ describe("CommentaireSQLRepository", () => {
       });
     });
   });
-
-  describe("#récupérerLesPlusRécentsGroupésParChantier", () => {
-    // pour l'instant testé dans RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase ....
-  });
 });

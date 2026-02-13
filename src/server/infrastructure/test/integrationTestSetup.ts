@@ -1,6 +1,10 @@
 import logger from "@/server/infrastructure/Logger";
 import { prisma } from "@/server/db/prisma";
 
+afterAll(async () => {
+  await prisma.$disconnect();
+});
+
 beforeEach(async () => {
   try {
     await prisma.$executeRawUnsafe(

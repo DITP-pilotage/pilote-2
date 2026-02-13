@@ -4,7 +4,7 @@ import CréerUnObjectifUseCase from "./CréerUnObjectifUseCase";
 
 const RANDOM_UUID = "123";
 
-jest.mock("node:crypto", () => ({
+vi.mock("node:crypto", () => ({
   randomUUID: () => RANDOM_UUID,
 }));
 
@@ -17,9 +17,9 @@ describe("CréerUnObjectifUseCase", () => {
     const date = new Date("2023-03-22T00:00:00.000Z");
     const type = "notreAmbition";
 
-    jest.useFakeTimers().setSystemTime(date);
+    vi.useFakeTimers().setSystemTime(date);
     const stubObjectifRepository = {
-      créer: jest.fn(),
+      créer: vi.fn(),
     } as unknown as ObjectifRepository;
     const créerUnObjectif = new CréerUnObjectifUseCase(stubObjectifRepository);
 
@@ -53,9 +53,9 @@ describe("CréerUnObjectifUseCase", () => {
     const date = new Date("2023-03-22T00:00:00.000Z");
     const type = "notreAmbition";
 
-    jest.useFakeTimers().setSystemTime(date);
+    vi.useFakeTimers().setSystemTime(date);
     const stubObjectifRepository = {
-      créer: jest.fn().mockReturnValue({
+      créer: vi.fn().mockReturnValue({
         contenu,
         auteur,
         date,

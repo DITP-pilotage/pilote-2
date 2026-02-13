@@ -1,6 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import { userEvent } from "@testing-library/user-event";
+import { Mock } from "vitest";
 import TableauPagination from "./TableauPagination";
 
 const PREMIERE_PAGE = "Première page";
@@ -9,10 +10,10 @@ const PAGE_SUIVANTE = "Page suivante";
 const PAGE_PRECEDENTE = "Page précédente";
 
 class TableauPaginationTest {
-  changementDePageCallback: jest.Mock;
+  changementDePageCallback: Mock<(numéroDePage: number) => void>;
 
   constructor() {
-    this.changementDePageCallback = jest.fn();
+    this.changementDePageCallback = vi.fn();
   }
 
   récupérerLesElementsDeListe() {

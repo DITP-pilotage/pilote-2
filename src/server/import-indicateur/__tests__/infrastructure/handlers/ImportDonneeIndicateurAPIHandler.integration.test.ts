@@ -1,5 +1,5 @@
 import nock from "nock";
-import { mock } from "jest-mock-extended";
+import { mock } from "vitest-mock-extended";
 import PersistentFile from "formidable/PersistentFile";
 import { createMocks } from "node-mocks-http";
 import { NextApiRequest, NextApiResponse } from "next";
@@ -11,15 +11,12 @@ import { ProfilEnum } from "@/server/app/enum/profil.enum";
 import { getContainer } from "@/server/dependances";
 import { prisma } from "@/server/db/prisma";
 
-jest.mock(
-  "@/server/import-indicateur/infrastructure/handlers/ParseForm",
-  () => ({
-    parseForm: () => ({
-      file: mock<PersistentFile>(),
-    }),
+vi.mock("@/server/import-indicateur/infrastructure/handlers/ParseForm", () => ({
+  parseForm: () => ({
+    file: mock<PersistentFile>(),
   }),
-);
-jest.mock(
+}));
+vi.mock(
   "@/server/import-indicateur/infrastructure/adapters/FichierService.ts",
   () => ({
     recupererFichier: () => "fichierRécupéré",

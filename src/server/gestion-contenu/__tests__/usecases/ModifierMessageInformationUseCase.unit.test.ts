@@ -1,4 +1,4 @@
-import { mock, MockProxy } from "jest-mock-extended";
+import { mock, MockProxy } from "vitest-mock-extended";
 import { GestionContenuRepository } from "@/server/gestion-contenu/domain/ports/GestionContenuRepository";
 import { ModifierMessageInformationUseCase } from "@/server/gestion-contenu/usecases/ModifierMessageInformationUseCase";
 
@@ -32,12 +32,12 @@ describe("ModifierMessageInformationUseCase", () => {
       true,
     );
     expect(gestionContenuRepository.mettreAJourContenu).toHaveBeenNthCalledWith(
-      1,
+      2,
       "NEXT_BD_FF_BANDEAU_INDISPONIBILITE_TEXTE",
       "nouveau texte",
     );
     expect(gestionContenuRepository.mettreAJourContenu).toHaveBeenNthCalledWith(
-      1,
+      3,
       "NEXT_BD_FF_BANDEAU_INDISPONIBILITE_TYPE",
       "WARNING",
     );

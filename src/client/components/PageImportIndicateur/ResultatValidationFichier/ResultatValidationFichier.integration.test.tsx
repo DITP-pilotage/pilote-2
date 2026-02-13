@@ -3,7 +3,7 @@ import mockRouter from "next-router-mock";
 import { DetailValidationFichierContrat } from "@/server/app/contrats/DetailValidationFichierContrat.interface";
 import ResultatValidationFichier from "@/components/PageImportIndicateur/ResultatValidationFichier/ResultatValidationFichier";
 
-jest.mock("next/router", () => require("next-router-mock"));
+vi.mock("next/router", async () => await vi.importActual("next-router-mock"));
 
 describe("ResultatValidationFichier", () => {
   it("quand le fichier est valide doit afficher que le fichier est correct", () => {

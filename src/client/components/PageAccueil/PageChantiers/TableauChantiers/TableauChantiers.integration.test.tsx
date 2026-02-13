@@ -12,7 +12,7 @@ import Ministère from "@/server/domain/ministère/Ministère.interface";
 import TableauChantiers from "./TableauChantiers";
 import { DonnéesTableauChantiers } from "./TableauChantiers.interface";
 
-jest.mock("next/router", () => require("next-router-mock"));
+vi.mock("next/router", async () => await vi.importActual("next-router-mock"));
 
 class TableauChantiersTest {
   private ministèresDisponibles: Ministère[] = [
@@ -132,7 +132,6 @@ beforeEach(async () => {
   // When
   await tableau.render();
 });
-// eslint-disable-next-line jest/no-disabled-tests
 describe.skip("TableauChantiers", () => {
   test("le tableau comporte le nombre de lignes adéquat", () => {
     // Then

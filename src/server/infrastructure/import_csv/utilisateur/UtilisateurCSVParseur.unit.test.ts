@@ -21,7 +21,7 @@ describe("UtilisateurCSVParseur", () => {
       ${utilisateurÀImporter2.nom},${utilisateurÀImporter2.prénom},"${utilisateurÀImporter2.email}",${utilisateurÀImporter2.profil},gestionUtilisateur,DEPT-34,,CH-004,\n
       ${utilisateurÀImporter2.nom},${utilisateurÀImporter2.prénom},"${utilisateurÀImporter2.email}",${utilisateurÀImporter2.profil},responsabilite,DEPT-34,,CH-004,`;
 
-    jest.spyOn(fs, "readFileSync").mockReturnValueOnce(contenuFichierCSV);
+    vi.spyOn(fs, "readFileSync").mockReturnValueOnce(contenuFichierCSV);
 
     const result = new UtilisateurCSVParseur("monfichier.csv").parse()
       .parsedCsvRecords;

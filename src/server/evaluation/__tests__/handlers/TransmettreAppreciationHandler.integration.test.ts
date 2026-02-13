@@ -1,5 +1,5 @@
 import { $Enums } from "@prisma/client";
-import { mock, MockProxy } from "jest-mock-extended";
+import { mock, MockProxy } from "vitest-mock-extended";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { InMemoryTransaction } from "@/server/db/InMemoryTransaction";
 import { TransmettreAppreciationHandler } from "@/server/evaluation/handlers/TransmettreAppreciationHandler";

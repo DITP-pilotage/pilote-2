@@ -7,7 +7,7 @@ import reactHooksPlugin from 'eslint-plugin-react-hooks';
 import jsxA11yPlugin from 'eslint-plugin-jsx-a11y';
 import importPlugin from 'eslint-plugin-import';
 import sonarjsPlugin from 'eslint-plugin-sonarjs';
-import jestPlugin from 'eslint-plugin-jest';
+import vitestPlugin from '@vitest/eslint-plugin';
 import testingLibraryPlugin from 'eslint-plugin-testing-library';
 import simpleImportSortPlugin from 'eslint-plugin-simple-import-sort';
 import noRelativeImportPathsPlugin from 'eslint-plugin-no-relative-import-paths';
@@ -28,7 +28,6 @@ export default tseslint.config(
       "*.config.js",
       "*.config.mjs",
       "copy-assets.js",
-      "jest.env.setup.js",
       "src/pages/centre-aide-pilote-2/**",
     ],
   },
@@ -167,8 +166,10 @@ export default tseslint.config(
           devDependencies: [
             "**/*.test.{ts,tsx}",
             "**/*.spec.{ts,tsx}",
-            "./jest.setup.ts",
-            "src/server/infrastructure/test/global.d.ts",
+            "./vitest.setup.ts",
+            "./vitest.setup.server.ts",
+            "./vitest.d.ts",
+            "./jest-extended.d.ts",
             "./playwright.config.ts",
             "tests/**/*.ts",
           ],
@@ -242,20 +243,20 @@ export default tseslint.config(
   {
     files: ["**/*.test.{ts,tsx}", "**/*.spec.{ts,tsx}", "tests/**/*.{ts,tsx}"],
     plugins: {
-      jest: jestPlugin,
+      vitest: vitestPlugin,
       "testing-library": testingLibraryPlugin,
     },
     rules: {
-      ...jestPlugin.configs["flat/recommended"].rules,
+      ...vitestPlugin.configs.recommended.rules,
       ...testingLibraryPlugin.configs["flat/react"].rules,
       // Disable rules not in old config to avoid mass pre-existing errors
       "testing-library/prefer-screen-queries": "off",
       "testing-library/no-node-access": "off",
       "testing-library/no-render-in-lifecycle": "off",
       "testing-library/no-wait-for-side-effects": "off",
-      "jest/expect-expect": "off",
-      "jest/valid-title": "off",
-      "jest/no-conditional-expect": "off",
+      "vitest/expect-expect": "off",
+      "vitest/valid-title": "off",
+      "vitest/no-conditional-expect": "off",
     },
   },
 

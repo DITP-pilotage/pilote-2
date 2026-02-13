@@ -1,4 +1,4 @@
-import { mock, MockProxy } from "jest-mock-extended";
+import { mock, MockProxy } from "vitest-mock-extended";
 import { ValidataFichierIndicateurValidationService } from "@/server/import-indicateur/infrastructure/adapters/ValidataFichierIndicateurValidationService";
 import { ReportErrorBuilder } from "@/server/import-indicateur/app/builder/ReportErrorBuilder";
 import { ReportValidataWithDataBuilder } from "@/server/import-indicateur/app/builder/ReportValidataWithDataBuilder";

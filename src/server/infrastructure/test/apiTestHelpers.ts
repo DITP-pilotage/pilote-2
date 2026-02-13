@@ -1,4 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { Mock } from "vitest";
 
 export function setupRequest(
   overrides: Partial<{ method: string; headers: Record<string, string> }> = {},
@@ -11,13 +13,13 @@ export function setupRequest(
 }
 
 export function setupResponse(): NextApiResponse & {
-  status: jest.Mock;
-  json: jest.Mock;
+  status: Mock;
+  json: Mock;
 } {
-  const json = jest.fn();
-  const status = jest.fn(() => ({ json }));
+  const json = vi.fn();
+  const status = vi.fn(() => ({ json }));
   return { status, json } as unknown as NextApiResponse & {
-    status: jest.Mock;
-    json: jest.Mock;
+    status: Mock;
+    json: Mock;
   };
 }

@@ -6,7 +6,7 @@ import Utilisateur from "@/server/domain/utilisateur/Utilisateur.interface";
 
 const RANDOM_UUID = "123";
 
-jest.mock("node:crypto", () => ({
+vi.mock("node:crypto", () => ({
   randomUUID: () => RANDOM_UUID,
 }));
 
@@ -21,12 +21,12 @@ describe("CréerUneSynthèseDesRésultatsUseCase", () => {
     const date = new Date("2023-03-22T00:00:00.000Z");
     const météo = "SOLEIL";
 
-    jest.useFakeTimers().setSystemTime(date);
+    vi.useFakeTimers().setSystemTime(date);
     const stubSynthèseDesRésultatsRepository = {
-      créer: jest.fn(),
+      créer: vi.fn(),
     } as unknown as SynthèseDesRésultatsRepository;
     const stubChantierRepository = {
-      modifierMétéo: jest.fn(),
+      modifierMétéo: vi.fn(),
     } as unknown as ChantierRepository;
     const créerUneSynthèseDesRésultats =
       new CréerUneSynthèseDesRésultatsUseCase(
@@ -76,9 +76,9 @@ describe("CréerUneSynthèseDesRésultatsUseCase", () => {
     const date = new Date("2023-03-22T00:00:00.000Z");
     const météo = "SOLEIL";
 
-    jest.useFakeTimers().setSystemTime(date);
+    vi.useFakeTimers().setSystemTime(date);
     const stubSynthèseDesRésultatsRepository = {
-      créer: jest.fn().mockReturnValue({
+      créer: vi.fn().mockReturnValue({
         contenu,
         auteur,
         date,
@@ -86,7 +86,7 @@ describe("CréerUneSynthèseDesRésultatsUseCase", () => {
       }),
     } as unknown as SynthèseDesRésultatsRepository;
     const stubChantierRepository = {
-      modifierMétéo: jest.fn(),
+      modifierMétéo: vi.fn(),
     } as unknown as ChantierRepository;
     const créerUneSynthèseDesRésultats =
       new CréerUneSynthèseDesRésultatsUseCase(

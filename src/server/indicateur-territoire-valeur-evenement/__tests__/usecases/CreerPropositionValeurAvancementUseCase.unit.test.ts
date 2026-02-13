@@ -1,4 +1,4 @@
-import { MockProxy, mock } from "jest-mock-extended";
+import { MockProxy, mock } from "vitest-mock-extended";
 import { CreerPropositionValeurAvancementUseCase } from "@/server/indicateur-territoire-valeur-evenement/usecases/CreerPropositionValeurAvancementUseCase";
 import { IndicateurTerritoireValeurEvenementRepository } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/IndicateurTerritoireValeurEvenementRepository";
 import { IndicateurRepository } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/IndicateurRepository";
