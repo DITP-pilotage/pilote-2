@@ -99,7 +99,6 @@ export class RecupererUtilisateursPaginesUseCase {
 
     const utilisateurs = await this.utilisateurRepository.recupererParIds({
       ids: utilisateurIds,
-      sorting,
       listeTerritoiresCodes,
       listePerimetresMinisteriels,
       listeInformationsChantiersUtilisateurs,

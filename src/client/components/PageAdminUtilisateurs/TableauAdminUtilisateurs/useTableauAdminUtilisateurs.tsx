@@ -9,7 +9,6 @@ import {
 } from "@tanstack/react-table";
 import { ChangeEvent, useCallback, useEffect, useRef, useState } from "react";
 import {
-  parseAsArrayOf,
   parseAsInteger,
   parseAsJson,
   parseAsString,
@@ -122,16 +121,18 @@ export const useTableauPageAdminUtilisateurs = (
     },
   );
 
-  const ZodSchemaSorting = z.object({
-    id: z
-      .string()
-      .regex(/email|nom|prénom|profil|fonction|Dernière modification/),
-    desc: z.boolean(),
-  });
+  const sortingArraySchema = z.array(
+    z.object({
+      id: z
+        .string()
+        .regex(/email|nom|prénom|profil|fonction|statut|territoire|Dernière modification/),
+      desc: z.boolean(),
+    }),
+  );
 
   const [sorting, setSorting] = useQueryState(
     "sort",
-    parseAsArrayOf<ColumnSort>(parseAsJson(ZodSchemaSorting.parse))
+    parseAsJson<ColumnSort[]>(sortingArraySchema.parse)
       .withDefault([
         {
           id: "Dernière modification",
@@ -202,6 +203,7 @@ export const useTableauPageAdminUtilisateurs = (
     onPaginationChange: setPagination,
     pageCount: Math.ceil(nombreUtilisateur / pagination.pageSize),
     manualPagination: true,
+    manualSorting: true,
   });
 
   return {

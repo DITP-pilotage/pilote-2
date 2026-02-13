@@ -126,7 +126,6 @@ export interface UtilisateurRepository {
   }): Promise<{ utilisateurIds: string[]; totalCount: number }>;
   recupererParIds(params: {
     ids: string[];
-    sorting: { id: string; desc: boolean }[];
     listeTerritoiresCodes: string[];
     listePerimetresMinisteriels: string[];
     listeInformationsChantiersUtilisateurs: InformationChantierUtilisateur[];

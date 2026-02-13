@@ -604,6 +604,9 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
       case "fonction": {
         return "fonction";
       }
+      case "statut": {
+        return "date_desactivation";
+      }
       case "Dernière modification": {
         return "date_modification";
       }
@@ -1180,6 +1183,10 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
         return "u.profil_code";
       case "fonction":
         return "u.fonction";
+      case "statut":
+        return "u.date_desactivation";
+      case "territoire":
+        return "(SELECT MIN(t.nom) FROM territoire t WHERE t.code = ANY(h.territoires))";
       case "Dernière modification":
         return "u.date_modification";
       default:
@@ -1189,13 +1196,11 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
 
   async recupererParIds({
     ids,
-    sorting,
     listeTerritoiresCodes,
     listePerimetresMinisteriels,
     listeInformationsChantiersUtilisateurs,
   }: {
     ids: string[];
-    sorting: { id: string; desc: boolean }[];
     listeTerritoiresCodes: string[];
     listePerimetresMinisteriels: string[];
     listeInformationsChantiersUtilisateurs: InformationChantierUtilisateur[];
@@ -1213,22 +1218,21 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
       where: {
         id: { in: ids },
       },
-      orderBy: sorting.reduce((acc, val) => {
-        acc[
-          this.convertirEnIdPrisma(
-            val.id,
-          ) as keyof Prisma.utilisateurOrderByWithRelationInput
-        ] = val.desc ? "desc" : "asc";
-        return acc;
-      }, {} as Prisma.utilisateurOrderByWithRelationInput),
     });
 
-    return utilisateurs.map(
-      this.convertirEnUtilisateurListeGestion({
-        listeTerritoiresCodes,
-        listePerimetresMinisteriels,
-        listeInformationsChantiersUtilisateurs,
-      }),
+    const utilisateursParId = new Map(
+      utilisateurs.map((utilisateur) => [utilisateur.id, utilisateur]),
     );
+
+    return ids
+      .map((id) => utilisateursParId.get(id)!)
+      .filter(Boolean)
+      .map(
+        this.convertirEnUtilisateurListeGestion({
+          listeTerritoiresCodes,
+          listePerimetresMinisteriels,
+          listeInformationsChantiersUtilisateurs,
+        }),
+      );
   }
 }
