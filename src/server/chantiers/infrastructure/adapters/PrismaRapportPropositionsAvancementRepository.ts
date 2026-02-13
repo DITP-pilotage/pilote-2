@@ -4,10 +4,14 @@ import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { RapportPropositionsAvancementRepository } from "@/server/chantiers/domain/ports/RapportPropositionsAvancementRepository";
 import {
   RapportPropositionsAvancement,
-  ContenuRapport,
+  ChantierRapport,
 } from "@/server/chantiers/domain/RapportPropositionsAvancement";
 
-const contenuRapportSchema = z.custom<ContenuRapport>();
+const contenuRapportSchema = z.object({
+  chantiers: z.custom<ChantierRapport[]>(),
+  conseillerEmail: z.string(),
+  texteIntro: z.string(),
+});
 
 export class PrismaRapportPropositionsAvancementRepository
   implements RapportPropositionsAvancementRepository
