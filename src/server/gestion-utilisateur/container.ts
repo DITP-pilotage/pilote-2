@@ -56,6 +56,7 @@ import { CreerLesActionsComptesInactifsUseCase } from "./usecases/CreerLesAction
 import { EnvoyerLesRelancesUseCase } from "./usecases/EnvoyerLesRelancesUseCase";
 import { DesactiverLesComptesInactifsUseCase } from "./usecases/DesactiverLesComptesInactifsUseCase";
 import ImporterDesUtilisateursUseCase from "./usecases/ImporterDesUtilisateursUseCase";
+import { RecupererUtilisateursPaginesUseCase } from "./usecases/RecupererUtilisateursPaginesUseCase";
 
 export type GestionUtilisateurDependencies = {
   utilisateurRepository: UtilisateurRepository;
@@ -97,6 +98,7 @@ export type GestionUtilisateurDependencies = {
   envoyerLesRelancesUseCase: EnvoyerLesRelancesUseCase;
   desactiverLesComptesInactifsUseCase: DesactiverLesComptesInactifsUseCase;
   importerDesUtilisateursUseCase: ImporterDesUtilisateursUseCase;
+  recupererUtilisateursPaginesUseCase: RecupererUtilisateursPaginesUseCase;
 };
 
 export const getGestionUtilisateurContainer = (
@@ -190,5 +192,8 @@ export const getGestionUtilisateurContainer = (
         DesactiverLesComptesInactifsUseCase,
       ),
       importerDesUtilisateursUseCase: asClass(ImporterDesUtilisateursUseCase),
+      recupererUtilisateursPaginesUseCase: asClass(
+        RecupererUtilisateursPaginesUseCase,
+      ),
     });
 };

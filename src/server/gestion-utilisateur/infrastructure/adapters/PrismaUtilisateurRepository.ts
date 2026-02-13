@@ -604,6 +604,9 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
       case "fonction": {
         return "fonction";
       }
+      case "statut": {
+        return "date_desactivation";
+      }
       case "Dernière modification": {
         return "date_modification";
       }
@@ -1065,5 +1068,175 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
         date_desactivation_programee: null,
       },
     });
+  }
+
+  async recupererFiltresEtPagines({
+    sorting,
+    valeurDeLaRecherche,
+    filtres,
+    autorisations,
+    pagination,
+  }: {
+    sorting: { id: string; desc: boolean };
+    valeurDeLaRecherche: string;
+    filtres: {
+      territoires: string[];
+      perimetresMinisteriels: string[];
+      chantiers: string[];
+      chantiersAssociésAuxPérimètres: string[];
+      profils: string[];
+      typeCompte: ("actif" | "desactive")[];
+    };
+    autorisations: {
+      profilsAutorisés: string[] | null;
+      territoiresAutorisés: string[] | null;
+      chantiersAutorisés: string[] | null;
+    };
+    pagination: { pageIndex: number; pageSize: number };
+  }): Promise<{ utilisateurIds: string[]; totalCount: number }> {
+    const recherche = removeAccents(valeurDeLaRecherche.toLowerCase());
+
+    const typeCompte =
+      filtres.typeCompte.includes("actif") &&
+      filtres.typeCompte.includes("desactive")
+        ? "both"
+        : filtres.typeCompte.includes("actif")
+          ? "actif"
+          : "desactive";
+
+    const orderByColumn = this.convertirEnColonneSQL(sorting.id);
+    const orderByDirection = sorting.desc ? "DESC" : "ASC";
+
+    const safePageIndex = Math.max(1, pagination.pageIndex);
+    const offset = (safePageIndex - 1) * pagination.pageSize;
+
+    const results = await this.prisma.$queryRawUnsafe<
+      { id: string; total_count: bigint }[]
+    >(
+      `
+      SELECT u.id, COUNT(*) OVER() as total_count
+      FROM utilisateur u
+      JOIN profil p ON u.profil_code = p.code
+      LEFT JOIN habilitation h ON h.utilisateur_id = u.id AND h.scope_code = 'lecture'
+      WHERE
+        -- recherche textuelle
+        ($1 = '' OR LOWER(unaccent(u.nom)) ILIKE '%' || $1 || '%'
+          OR LOWER(unaccent(u.email)) ILIKE '%' || $1 || '%'
+          OR LOWER(unaccent(u.prenom)) ILIKE '%' || $1 || '%'
+          OR LOWER(unaccent(u.fonction)) ILIKE '%' || $1 || '%'
+          OR LOWER(unaccent(u.profil_code)) ILIKE '%' || $1 || '%')
+        -- filtre profil
+        AND ($2::text[] IS NULL OR u.profil_code = ANY($2))
+        -- filtre type compte
+        AND (CASE WHEN $3 = 'both' THEN true
+                  WHEN $3 = 'actif' THEN u.date_desactivation IS NULL
+                  ELSE u.date_desactivation IS NOT NULL END)
+        -- filtre territoire
+        AND ($4::text[] IS NULL OR p.a_acces_tous_les_territoires_lecture = true OR h.territoires && $4)
+        -- filtre chantier
+        AND ($5::text[] IS NULL OR p.a_acces_tous_chantiers = true OR h.chantiers && $5)
+        -- filtre périmètre (via périmètres directs OU chantiers associés aux périmètres)
+        AND (
+          ($6::text[] IS NULL AND $7::text[] IS NULL)
+          OR p.a_acces_tous_chantiers = true
+          OR h.perimetres && $6
+          OR h.chantiers && $7
+        )
+        -- autorisation profil
+        AND ($8::text[] IS NULL OR u.profil_code = ANY($8))
+        -- autorisation territoire
+        AND ($9::text[] IS NULL OR p.a_acces_tous_les_territoires_lecture = true OR h.territoires && $9)
+        -- autorisation chantier
+        AND ($10::text[] IS NULL OR p.a_acces_tous_chantiers = true OR h.chantiers && $10)
+      ORDER BY ${orderByColumn} ${orderByDirection}
+      LIMIT $11 OFFSET $12
+      `,
+      recherche,
+      filtres.profils.length > 0 ? filtres.profils : null,
+      typeCompte,
+      filtres.territoires.length > 0 ? filtres.territoires : null,
+      filtres.chantiers.length > 0 ? filtres.chantiers : null,
+      filtres.perimetresMinisteriels.length > 0
+        ? filtres.perimetresMinisteriels
+        : null,
+      filtres.chantiersAssociésAuxPérimètres.length > 0
+        ? filtres.chantiersAssociésAuxPérimètres
+        : null,
+      autorisations.profilsAutorisés,
+      autorisations.territoiresAutorisés,
+      autorisations.chantiersAutorisés,
+      pagination.pageSize,
+      offset,
+    );
+
+    return {
+      utilisateurIds: results.map((row) => row.id),
+      totalCount: results.length > 0 ? Number(results[0].total_count) : 0,
+    };
+  }
+
+  private convertirEnColonneSQL(idSort: string): string {
+    switch (idSort) {
+      case "email":
+        return "u.email";
+      case "nom":
+        return "u.nom";
+      case "prénom":
+        return "u.prenom";
+      case "profil":
+        return "u.profil_code";
+      case "fonction":
+        return "u.fonction";
+      case "statut":
+        return "u.date_desactivation";
+      case "territoire":
+        return "COALESCE((SELECT MIN(t.nom) FROM territoire t WHERE t.code = ANY(h.territoires)), CASE WHEN p.a_acces_tous_les_territoires_lecture THEN 'Tous les territoires' ELSE '' END)";
+      case "Dernière modification":
+        return "u.date_modification";
+      default:
+        return "u.date_modification";
+    }
+  }
+
+  async recupererParIds({
+    ids,
+    listeTerritoiresCodes,
+    listePerimetresMinisteriels,
+    listeInformationsChantiersUtilisateurs,
+  }: {
+    ids: string[];
+    listeTerritoiresCodes: string[];
+    listePerimetresMinisteriels: string[];
+    listeInformationsChantiersUtilisateurs: InformationChantierUtilisateur[];
+  }): Promise<UtilisateurListeGestion[]> {
+    if (ids.length === 0) {
+      return [];
+    }
+
+    const utilisateurs = await this.prisma.utilisateur.findMany({
+      include: {
+        profil: true,
+        habilitation: true,
+        auteur_modification: true,
+      },
+      where: {
+        id: { in: ids },
+      },
+    });
+
+    const utilisateursParId = new Map(
+      utilisateurs.map((utilisateur) => [utilisateur.id, utilisateur]),
+    );
+
+    return ids
+      .map((id) => utilisateursParId.get(id)!)
+      .filter(Boolean)
+      .map(
+        this.convertirEnUtilisateurListeGestion({
+          listeTerritoiresCodes,
+          listePerimetresMinisteriels,
+          listeInformationsChantiersUtilisateurs,
+        }),
+      );
   }
 }

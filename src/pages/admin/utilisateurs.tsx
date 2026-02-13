@@ -10,7 +10,6 @@ import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation"
 import PageAdminUtilisateurs from "@/components/PageAdminUtilisateurs/PageAdminUtilisateurs";
 import { ChantierSynthétisé } from "@/server/domain/chantier/Chantier.interface";
 import { getContainer } from "@/server/dependances";
-import { FiltreQueryParams } from "@/server/gestion-utilisateur/app/contrats/FiltreQueryParams";
 import { Profil } from "@/server/gestion-utilisateur/domain/Profil";
 import { PerimetreMinisteriel } from "@/server/gestion-utilisateur/domain/PerimetreMinisteriel";
 import {
@@ -70,16 +69,6 @@ export const getServerSideProps: GetServerSideProps<UtilisateurProps> = async (
     ),
   );
 
-  const filtres: FiltreQueryParams = {
-    territoires: searchParams.territoires,
-    perimetresMinisteriels: searchParams.perimetresMinisteriels,
-    chantiers: filtreChantiers,
-    profils: searchParams.profils,
-    typeCompte: searchParams.typeCompte,
-    chantiersAssociésAuxPérimètres:
-      filtresChantiersSupplémentaires?.map((chantier) => chantier.id) ?? [],
-  };
-
   const {
     pageIndex,
     pageSize,
@@ -87,61 +76,63 @@ export const getServerSideProps: GetServerSideProps<UtilisateurProps> = async (
     q: valeurDeLaRecherche,
   } = searchParams;
 
-  const listePerimetresMinisteriel = await getContainer("gestionUtilisateur")
-    .resolve("recupererPerimetresMinisterielsUseCase")
-    .run({
-      perimetresMinisterielsIds: filtres.perimetresMinisteriels,
-    });
+  const tousLesPerimetresAccessiblesIds = [
+    ...new Set([
+      ...listeChantiers.flatMap((chantier) => chantier.périmètreIds),
+      ...session.habilitations.gestionUtilisateur.périmètres,
+    ]),
+  ];
 
-  const listePerimetresMinisterielSelectionnable = await getContainer(
-    "gestionUtilisateur",
-  )
-    .resolve("recupererPerimetresMinisterielsUseCase")
-    .run({
-      perimetresMinisterielsIds: [
-        ...new Set([
-          ...listeChantiers.flatMap((chantier) => chantier.périmètreIds),
-          ...session.habilitations.gestionUtilisateur.périmètres,
-        ]),
-      ],
-    });
-
-  const listeProfils = await getContainer("gestionUtilisateur")
-    .resolve("recupererListeProfilUseCase")
-    .run();
-
-  const [tousLesUtilisateurs, territoiresListe] = await Promise.all([
+  const [
+    tousLesPerimetres,
+    listeProfils,
+    { utilisateurs, totalCount },
+    territoiresListe,
+    listeTerritoiresSelectionnable,
+  ] = await Promise.all([
     getContainer("gestionUtilisateur")
-      .resolve("recupererListeUtilisateursUseCase")
+      .resolve("recupererPerimetresMinisterielsUseCase")
+      .run({ perimetresMinisterielsIds: tousLesPerimetresAccessiblesIds }),
+    getContainer("gestionUtilisateur")
+      .resolve("recupererListeProfilUseCase")
+      .run(),
+    getContainer("gestionUtilisateur")
+      .resolve("recupererUtilisateursPaginesUseCase")
       .run({
         sorting: Array.isArray(sorting) ? sorting : [sorting],
-        valeurDeLaRecherche: valeurDeLaRecherche,
+        valeurDeLaRecherche,
+        filtres: {
+          territoires: searchParams.territoires,
+          perimetresMinisteriels: searchParams.perimetresMinisteriels,
+          chantiers: filtreChantiers,
+          chantiersAssociésAuxPérimètres:
+            filtresChantiersSupplémentaires?.map((chantier) => chantier.id) ??
+            [],
+          profils: searchParams.profils,
+          typeCompte: searchParams.typeCompte,
+        },
+        pagination: { pageIndex, pageSize },
+        viewerProfil: session.profil,
+        viewerHabilitations: session.habilitations,
       }),
     getContainer("gestionUtilisateur")
       .resolve("recupererTousLesTerritoiresUseCase")
       .run(),
+    getContainer("gestionUtilisateur")
+      .resolve("recupererTerritoiresAvecNombreUtilisateursUseCase")
+      .run({
+        territoireCodes: session.habilitations.gestionUtilisateur.territoires,
+      }),
   ]);
 
-  const habilitation = new Habilitation(session.habilitations);
+  const listePerimetresMinisteriel =
+    searchParams.perimetresMinisteriels.length > 0
+      ? tousLesPerimetres.filter((perimetre) =>
+          searchParams.perimetresMinisteriels.includes(perimetre.id),
+        )
+      : tousLesPerimetres;
 
-  const utilisateursFiltrés = getContainer("gestionUtilisateur")
-    .resolve("filtrerListeUtilisateursUseCase")
-    .run({
-      utilisateurs: tousLesUtilisateurs,
-      filtresActifs: filtres,
-      profil: session.profil,
-      habilitation,
-    });
-
-  const listeTerritoiresSelectionnable = await getContainer(
-    "gestionUtilisateur",
-  )
-    .resolve("recupererTerritoiresAvecNombreUtilisateursUseCase")
-    .run({
-      territoireCodes: session.habilitations.gestionUtilisateur.territoires,
-    });
-
-  const nombreUtilisateur = utilisateursFiltrés.length;
+  const listePerimetresMinisterielSelectionnable = tousLesPerimetres;
 
   return {
     props: {
@@ -150,15 +141,13 @@ export const getServerSideProps: GetServerSideProps<UtilisateurProps> = async (
       listeProfils,
       listePerimetresMinisterielSelectionnable,
       listeTerritoiresSelectionnable,
-      listeUtilisateurs: utilisateursFiltrés
-        .splice((pageIndex - 1) * pageSize, pageSize)
-        .map((utilisateur) =>
-          presenterEnUtilisateurListeGestionContrat(
-            utilisateur,
-            territoiresListe,
-          ),
+      listeUtilisateurs: utilisateurs.map((utilisateur) =>
+        presenterEnUtilisateurListeGestionContrat(
+          utilisateur,
+          territoiresListe,
         ),
-      nombreUtilisateur,
+      ),
+      nombreUtilisateur: totalCount,
     },
   };
 };
