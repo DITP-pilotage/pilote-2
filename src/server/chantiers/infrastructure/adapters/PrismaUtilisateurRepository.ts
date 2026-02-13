@@ -80,6 +80,7 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
 
       utilisateursAvecChantiers.push(
         Utilisateur.creerUtilisateur({
+          id: utilisateur.id,
           email: utilisateur.email,
           nom: utilisateur.nom,
           prenom: utilisateur.prenom,

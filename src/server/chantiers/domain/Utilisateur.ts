@@ -1,4 +1,6 @@
 export class Utilisateur {
+  private readonly _id: string;
+
   private readonly _email: string;
 
   private readonly _nom: string;
@@ -8,20 +10,27 @@ export class Utilisateur {
   private readonly _listeChantiers: string[];
 
   private constructor({
+    id,
     email,
     nom,
     prenom,
     listeChantiers,
   }: {
+    id: string;
     email: string;
     nom: string;
     prenom: string;
     listeChantiers: string[];
   }) {
+    this._id = id;
     this._email = email;
     this._nom = nom;
     this._prenom = prenom;
     this._listeChantiers = listeChantiers;
+  }
+
+  get id(): string {
+    return this._id;
   }
 
   get email(): string {
@@ -41,17 +50,20 @@ export class Utilisateur {
   }
 
   static creerUtilisateur({
+    id,
     email,
     nom,
     prenom,
     listeChantiers,
   }: {
+    id: string;
     email: string;
     nom: string;
     prenom: string;
     listeChantiers: string[];
   }) {
     return new Utilisateur({
+      id: id,
       email: email,
       nom: nom,
       prenom: prenom,

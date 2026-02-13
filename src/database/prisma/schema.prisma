@@ -539,6 +539,23 @@ model rapport_hebdomadaire_coordinateur {
   @@schema("public")
 }
 
+model rapport_propositions_avancement {
+  id                      String               @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  utilisateur_id          String               @db.Uuid
+  utilisateur             utilisateur          @relation(fields: [utilisateur_id], references: [id], onDelete: Cascade)
+  contenu_rapport         Json
+  statut_envoi            statut_envoi_rapport @default(CREE)
+  date_creation           DateTime             @default(now())
+  date_envoi              DateTime?
+  date_derniere_tentative DateTime?
+  nombre_tentatives       Int                  @default(0)
+  erreur_envoi            String?
+
+  @@index([statut_envoi])
+  @@index([utilisateur_id])
+  @@schema("public")
+}
+
 enum type_objectif {
   notre_ambition
   deja_fait
@@ -620,6 +637,7 @@ model utilisateur {
   date_desactivation_programee           DateTime?
   date_derniere_connexion                DateTime                                 @default(now())
   rapports_hebdomadaires                 rapport_hebdomadaire_coordinateur[]
+  rapports_propositions_avancement       rapport_propositions_avancement[]
 
   @@schema("public")
 }

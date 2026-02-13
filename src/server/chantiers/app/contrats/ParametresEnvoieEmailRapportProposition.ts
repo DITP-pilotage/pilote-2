@@ -1,29 +1,10 @@
 import { PropositionValeurAvancementRapport } from "@/server/chantiers/domain/ports/PropositionValeurAvancementRepository";
 import { RapportDirecteurProjetChantierInformation } from "@/server/chantiers/domain/PropositionValeurAvancementChantierInformation";
-
-type ParamIndicateurPropositions = {
-  id: string;
-  nom: string;
-  unite: string;
-  territoires: {
-    code: string;
-    nom: string;
-    valeur_avancement: string;
-    date_valeur: string;
-    proposition: string;
-  }[];
-};
-type ParametreEnvoieRapportProposition = {
-  nom_chantier: string;
-  id_chantier: string;
-  nombre_propositions: string;
-  conseiller_email: string;
-  afficherSectionPropositions: boolean;
-  indicateursPropositions: ParamIndicateurPropositions[];
-  afficherSectionMajIndicateur: boolean;
-  indicateursNonMisAJour: { id: string; nom: string; mailles: string[] }[];
-  nombreIndicateursNonMisAJour: string;
-};
+import {
+  ContenuRapport,
+  ChantierRapport,
+  IndicateurProposition,
+} from "@/server/chantiers/domain/RapportPropositionsAvancement";
 
 export const genererParametresEnvoieRapportProposition = (
   listeChantierIds: string[],
@@ -39,12 +20,8 @@ export const genererParametresEnvoieRapportProposition = (
     string,
     { id: string; nom: string; mailles: string[] }[]
   >,
-): {
-  chantiers: ParametreEnvoieRapportProposition[];
-  conseillerEmail: string;
-  texteIntro: string;
-} => {
-  const params: ParametreEnvoieRapportProposition[] = [];
+): ContenuRapport => {
+  const params: ChantierRapport[] = [];
   for (const chantierId of listeChantierIds.sort()) {
     const chantier = mapChantiersInformation.get(chantierId);
     if (!chantier) {
@@ -57,7 +34,7 @@ export const genererParametresEnvoieRapportProposition = (
 
     let nombrePropositions = 0;
 
-    const indicateursPropositions: ParamIndicateurPropositions[] = [];
+    const indicateursPropositions: IndicateurProposition[] = [];
     if (mapPropositionsChantier) {
       for (const [
         indicId,
@@ -118,7 +95,7 @@ export const genererParametresEnvoieRapportProposition = (
 
   return {
     chantiers: params,
-    conseillerEmail: params[0].conseiller_email,
+    conseillerEmail: params.length > 0 ? params[0].conseiller_email : "",
     texteIntro:
       params.length > 1
         ? "vos chantiers prioritaires"

@@ -14,7 +14,6 @@ import { TerritoireRepository } from "./domain/ports/TerritoireRepository";
 import { PrismaTerritoireRepository } from "./infrastructure/adapters/PrismaTerritoireRepository";
 import { UtilisateurRepository } from "./domain/ports/UtilisateurRepository";
 import { PrismaUtilisateurRepository } from "./infrastructure/adapters/PrismaUtilisateurRepository";
-import { EnvoyerLesRapportsPropositionValeurAvancementUseCase } from "./usecases/EnvoyerLesRapportsPropositionValeurAvancementUseCase";
 import { EnvoieEmailService } from "./domain/ports/EnvoieEmailService";
 import { BrevoEnvoieEmailService } from "./infrastructure/adapters/BrevoEnvoieEmailService";
 import { RecupererDetailsIndicateursV2UseCase } from "./usecases/RecupererDetailsIndicateursV2UseCase";
@@ -27,6 +26,10 @@ import { MinistereRepository } from "./domain/ports/MinistereRepository";
 import PrismaMinistereRepository from "./infrastructure/adapters/PrismaMinistereRepository";
 import RecupererChantierUseCaseV2 from "./usecases/RecupererChantierUseCaseV2";
 import { ListerDetailsIndicateurTerritoireUseCaseV2 } from "./usecases/ListerDetailsIndicateurTerritoireUseCaseV2";
+import { RapportPropositionsAvancementRepository } from "./domain/ports/RapportPropositionsAvancementRepository";
+import { PrismaRapportPropositionsAvancementRepository } from "./infrastructure/adapters/PrismaRapportPropositionsAvancementRepository";
+import { CreerLesRapportsPropositionsUseCase } from "./usecases/CreerLesRapportsPropositionsUseCase";
+import { EnvoyerLesRapportsPropositionsUseCase } from "./usecases/EnvoyerLesRapportsPropositionsUseCase";
 
 export type ChantierDependencies = {
   chantierRepository: ChantierRepository;
@@ -40,13 +43,15 @@ export type ChantierDependencies = {
   exportCsvDesChantiersUseCase: ExportCsvDesChantiersUseCase;
   exportCsvDesIndicateursUseCase: ExportCsvDesIndicateursUseCase;
   exportCsvDesHistoriquesIndicateursUseCase: ExportCsvDesHistoriquesIndicateursUseCase;
-  envoyerLesRapportsPropositionValeurAvancementUseCase: EnvoyerLesRapportsPropositionValeurAvancementUseCase;
   recupererDetailsIndicateursV2UseCase: RecupererDetailsIndicateursV2UseCase;
   recupererChantiersAccessiblesEnLectureUseCaseV2: RecupererChantiersAccessiblesEnLectureUseCaseV2;
   recupererChantiersAccessiblesEnLectureUseCaseRapportDetailleV2: RecupererChantiersAccessiblesEnLectureUseCaseRapportDetailleV2;
   recupererChantierUseCaseV2: RecupererChantierUseCaseV2;
   listerDetailsIndicateurTerritoireUseCaseV2: ListerDetailsIndicateurTerritoireUseCaseV2;
   indicateurTerritoireValeurEvenementRepository: IndicateurTerritoireValeurEvenementRepository;
+  rapportPropositionsAvancementRepository: RapportPropositionsAvancementRepository;
+  creerLesRapportsPropositionsUseCase: CreerLesRapportsPropositionsUseCase;
+  envoyerLesRapportsPropositionsUseCase: EnvoyerLesRapportsPropositionsUseCase;
 };
 
 export const getChantiersContainer = (
@@ -68,8 +73,14 @@ export const getChantiersContainer = (
     exportCsvDesHistoriquesIndicateursUseCase: asClass(
       ExportCsvDesHistoriquesIndicateursUseCase,
     ),
-    envoyerLesRapportsPropositionValeurAvancementUseCase: asClass(
-      EnvoyerLesRapportsPropositionValeurAvancementUseCase,
+    rapportPropositionsAvancementRepository: asClass(
+      PrismaRapportPropositionsAvancementRepository,
+    ),
+    creerLesRapportsPropositionsUseCase: asClass(
+      CreerLesRapportsPropositionsUseCase,
+    ),
+    envoyerLesRapportsPropositionsUseCase: asClass(
+      EnvoyerLesRapportsPropositionsUseCase,
     ),
     recupererDetailsIndicateursV2UseCase: asClass(
       RecupererDetailsIndicateursV2UseCase,
