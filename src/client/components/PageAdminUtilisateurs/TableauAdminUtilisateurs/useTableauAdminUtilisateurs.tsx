@@ -125,7 +125,9 @@ export const useTableauPageAdminUtilisateurs = (
     z.object({
       id: z
         .string()
-        .regex(/email|nom|prénom|profil|fonction|statut|territoire|Dernière modification/),
+        .regex(
+          /email|nom|prénom|profil|fonction|statut|territoire|Dernière modification/,
+        ),
       desc: z.boolean(),
     }),
   );

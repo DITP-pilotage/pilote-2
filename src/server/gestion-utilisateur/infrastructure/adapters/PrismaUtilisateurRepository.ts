@@ -1186,7 +1186,7 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
       case "statut":
         return "u.date_desactivation";
       case "territoire":
-        return "(SELECT MIN(t.nom) FROM territoire t WHERE t.code = ANY(h.territoires))";
+        return "COALESCE((SELECT MIN(t.nom) FROM territoire t WHERE t.code = ANY(h.territoires)), CASE WHEN p.a_acces_tous_les_territoires_lecture THEN 'Tous les territoire' ELSE '' END)";
       case "Dernière modification":
         return "u.date_modification";
       default:
