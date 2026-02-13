@@ -2,10 +2,11 @@ import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next";
 import Head from "next/head";
 import { FunctionComponent } from "react";
 import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
-import { ProfilEnum } from "@/server/app/enum/profil.enum";
 import { getContainer } from "@/server/dependances";
 import PageHabilitationsCoordinateur from "@/components/PageHabilitationsCoordinateur/PageHabilitationsCoordinateur";
 import { pageHabilitationsCoordinateur } from "@/components/PageHabilitationsCoordinateur/PageHabilitationsCoordinateurServerSideContext";
+import Habilitation from "@/server/gestion-utilisateur/domain/habilitation/Habilitation";
+import { configurationFeatureFlip } from "@/config";
 import { NextPanelAdministrateurLayout } from "@/components/PagePanelAdministrateur/PanelAdministrateurLayout/layout";
 
 export const getServerSideProps = async (
@@ -13,7 +14,31 @@ export const getServerSideProps = async (
 ) => {
   const session = await auth(context);
 
-  if (!session || session.profil !== ProfilEnum.DITP_ADMIN) {
+  const featureFlipping = configurationFeatureFlip();
+
+  if (!featureFlipping.panelAdmin) {
+    return {
+      redirect: {
+        destination: "/404",
+      },
+    };
+  }
+
+  if (!session) {
+    return {
+      redirect: {
+        destination: "/",
+        permanent: false,
+      },
+    };
+  }
+
+  const habilitation = new Habilitation({
+    habilitations: session.habilitations,
+    profil: session.profil,
+  });
+
+  if (!habilitation.estAutoriseAAccederALaPageAdmin()) {
     return {
       redirect: {
         destination: "/",
