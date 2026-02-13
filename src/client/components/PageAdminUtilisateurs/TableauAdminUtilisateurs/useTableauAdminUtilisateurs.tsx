@@ -162,7 +162,7 @@ export const useTableauPageAdminUtilisateurs = (
     event: ChangeEvent<HTMLInputElement>,
   ) => {
     const nouvelleValeur = event.target.value;
-    const limitUrlUpdates = nouvelleValeur === "" ? undefined : debounce(100);
+    const limitUrlUpdates = nouvelleValeur === "" ? undefined : debounce(400);
     setValeurDeLaRecherche(nouvelleValeur, { limitUrlUpdates });
     setPagination({ pageIndex: 1 }, { limitUrlUpdates });
   };
