@@ -1077,7 +1077,7 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
     autorisations,
     pagination,
   }: {
-    sorting: { id: string; desc: boolean }[];
+    sorting: { id: string; desc: boolean };
     valeurDeLaRecherche: string;
     filtres: {
       territoires: string[];
@@ -1104,12 +1104,11 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
           ? "actif"
           : "desactive";
 
-    const orderByColumn = this.convertirEnColonneSQL(
-      sorting[0]?.id ?? "Dernière modification",
-    );
-    const orderByDirection = sorting[0]?.desc ? "DESC" : "ASC";
+    const orderByColumn = this.convertirEnColonneSQL(sorting.id);
+    const orderByDirection = sorting.desc ? "DESC" : "ASC";
 
-    const offset = (pagination.pageIndex - 1) * pagination.pageSize;
+    const safePageIndex = Math.max(1, pagination.pageIndex);
+    const offset = (safePageIndex - 1) * pagination.pageSize;
 
     const results = await this.prisma.$queryRawUnsafe<
       { id: string; total_count: bigint }[]
@@ -1137,7 +1136,12 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
         -- filtre chantier
         AND ($5::text[] IS NULL OR p.a_acces_tous_chantiers = true OR h.chantiers && $5)
         -- filtre périmètre (via périmètres directs OU chantiers associés aux périmètres)
-        AND ($6::text[] IS NULL OR p.a_acces_tous_chantiers = true OR h.perimetres && $6 OR h.chantiers && $7)
+        AND (
+          ($6::text[] IS NULL AND $7::text[] IS NULL)
+          OR p.a_acces_tous_chantiers = true
+          OR h.perimetres && $6
+          OR h.chantiers && $7
+        )
         -- autorisation profil
         AND ($8::text[] IS NULL OR u.profil_code = ANY($8))
         -- autorisation territoire
@@ -1186,7 +1190,7 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
       case "statut":
         return "u.date_desactivation";
       case "territoire":
-        return "COALESCE((SELECT MIN(t.nom) FROM territoire t WHERE t.code = ANY(h.territoires)), CASE WHEN p.a_acces_tous_les_territoires_lecture THEN 'Tous les territoire' ELSE '' END)";
+        return "COALESCE((SELECT MIN(t.nom) FROM territoire t WHERE t.code = ANY(h.territoires)), CASE WHEN p.a_acces_tous_les_territoires_lecture THEN 'Tous les territoires' ELSE '' END)";
       case "Dernière modification":
         return "u.date_modification";
       default:

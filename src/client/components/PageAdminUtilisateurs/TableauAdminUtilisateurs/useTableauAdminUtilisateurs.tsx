@@ -7,8 +7,9 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { ChangeEvent, useCallback, useEffect, useRef, useState } from "react";
+import { ChangeEvent } from "react";
 import {
+  debounce,
   parseAsInteger,
   parseAsJson,
   parseAsString,
@@ -157,35 +158,14 @@ export const useTableauPageAdminUtilisateurs = (
     }),
   );
 
-  const [rechercheLocale, setRechercheLocale] = useState(valeurDeLaRecherche);
-  const rechercheEnCoursRef = useRef(false);
-  const debounceTimerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
-
-  useEffect(() => {
-    if (!rechercheEnCoursRef.current) {
-      setRechercheLocale(valeurDeLaRecherche);
-    }
-  }, [valeurDeLaRecherche]);
-
-  useEffect(() => {
-    return () => clearTimeout(debounceTimerRef.current);
-  }, []);
-
-  const changementDeLaRechercheCallback = useCallback(
-    (event: ChangeEvent<HTMLInputElement>) => {
-      const nouvelleValeur = event.target.value;
-      rechercheEnCoursRef.current = true;
-      setRechercheLocale(nouvelleValeur);
-
-      clearTimeout(debounceTimerRef.current);
-      debounceTimerRef.current = setTimeout(() => {
-        setPagination({ pageIndex: 1 });
-        setValeurDeLaRecherche(nouvelleValeur);
-        rechercheEnCoursRef.current = false;
-      }, 100);
-    },
-    [setPagination, setValeurDeLaRecherche],
-  );
+  const changementDeLaRechercheCallback = (
+    event: ChangeEvent<HTMLInputElement>,
+  ) => {
+    const nouvelleValeur = event.target.value;
+    const limitUrlUpdates = nouvelleValeur === "" ? undefined : debounce(100);
+    setValeurDeLaRecherche(nouvelleValeur, { limitUrlUpdates });
+    setPagination({ pageIndex: 1 }, { limitUrlUpdates });
+  };
 
   const tableau = useReactTable({
     data: utilisateurs,
@@ -211,7 +191,7 @@ export const useTableauPageAdminUtilisateurs = (
   return {
     nombreElementPage: nombreUtilisateur,
     tableau,
-    valeurDeLaRecherche: rechercheLocale,
+    valeurDeLaRecherche,
     changementDeLaRechercheCallback,
     setPagination,
   };

@@ -63,8 +63,6 @@ export class RecupererUtilisateursPaginesUseCase {
   }): Promise<{ utilisateurs: UtilisateurListeGestion[]; totalCount: number }> {
     const profilsAutorisés = this.calculerProfilsAutorisés(viewerProfil);
 
-    // Quand le viewer n'est pas restreint (profilsAutorisés = null),
-    // on bypass toutes les autorisations (comme dans l'ancien FiltrerListeUtilisateursUseCase.utilisateurEstAutorisé)
     const territoiresAutorisés =
       profilsAutorisés !== null
         ? viewerHabilitations.gestionUtilisateur.territoires
@@ -76,7 +74,7 @@ export class RecupererUtilisateursPaginesUseCase {
 
     const { utilisateurIds, totalCount } =
       await this.utilisateurRepository.recupererFiltresEtPagines({
-        sorting,
+        sorting: sorting[0] ?? { id: "Dernière modification", desc: true },
         valeurDeLaRecherche,
         filtres,
         autorisations: {

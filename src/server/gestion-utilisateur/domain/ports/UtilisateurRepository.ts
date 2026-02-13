@@ -107,7 +107,7 @@ export interface UtilisateurRepository {
   ): Promise<void>;
   mettreAJourDateDerniereConnexion(email: string, date: Date): Promise<void>;
   recupererFiltresEtPagines(params: {
-    sorting: { id: string; desc: boolean }[];
+    sorting: { id: string; desc: boolean };
     valeurDeLaRecherche: string;
     filtres: {
       territoires: string[];
