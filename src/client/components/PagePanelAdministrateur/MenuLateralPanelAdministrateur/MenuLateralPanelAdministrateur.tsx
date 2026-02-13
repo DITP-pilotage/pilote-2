@@ -13,6 +13,11 @@ const menuItems = [
     pageKey: "parametrage-metadata-indicateur",
   },
   {
+    label: "Habilitations coordinateurs",
+    href: "/panel-administrateur/habilitations-coordinateur",
+    pageKey: "habilitations-coordinateur",
+  },
+  {
     label: "🚧 Paramétrage metadata chantier 🚧",
     href: "/panel-administrateur/parametrage-metadata-chantier",
     pageKey: "metadata-chantier",

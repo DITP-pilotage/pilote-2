@@ -4,6 +4,7 @@ import { metadataIndicateurRouter } from "@/server/infrastructure/api/trpc/route
 import { gestionContenuRouter } from "@/server/infrastructure/api/trpc/routes/gestionContenu";
 import { gestionTokenAPIRouter } from "@/server/infrastructure/api/trpc/routes/gestionTokenAPI";
 import { evaluationRouter } from "@/server/infrastructure/api/trpc/routes/evaluation";
+import { habilitationsCoordinateurRouter } from "@/server/infrastructure/api/trpc/routes/habilitationsCoordinateur";
 import { profilUtilisateurRouter } from "@/server/infrastructure/api/trpc/routes/profilUtilisateur";
 import { chantierRouter } from "./chantier";
 import { synthèseDesRésultatsRouter } from "./synthèseDesRésultats";
@@ -30,5 +31,6 @@ export const appRouter = créerRouteurTRPC({
   profil: profilRouter,
   parametrageNouveautes: parametrageNouveautesRouter,
   evaluation: evaluationRouter,
+  habilitationsCoordinateur: habilitationsCoordinateurRouter,
   profilUtilisateur: profilUtilisateurRouter,
 });

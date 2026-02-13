@@ -1,11 +1,11 @@
-import Head from "next/head";
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next";
+import Head from "next/head";
 import { FunctionComponent } from "react";
 import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
-import { FormulaireParametrageSourceIndicateur } from "@/components/PagePanelAdministrateur/ParametrageSourceIndicateur/FormulaireParametrageSourceIndicateur";
-import { pageParametrageSourceContext } from "@/components/PagePanelAdministrateur/ParametrageSourceIndicateur/PageParametrageSourceContext";
-import Habilitation from "@/server/gestion-utilisateur/domain/habilitation/Habilitation";
 import { getContainer } from "@/server/dependances";
+import PageHabilitationsCoordinateur from "@/components/PageHabilitationsCoordinateur/PageHabilitationsCoordinateur";
+import { pageHabilitationsCoordinateur } from "@/components/PageHabilitationsCoordinateur/PageHabilitationsCoordinateurServerSideContext";
+import Habilitation from "@/server/gestion-utilisateur/domain/habilitation/Habilitation";
 import { configurationFeatureFlip } from "@/config";
 import { NextPanelAdministrateurLayout } from "@/components/PagePanelAdministrateur/PanelAdministrateurLayout/layout";
 
@@ -47,34 +47,32 @@ export const getServerSideProps = async (
     };
   }
 
-  const { listeMetadonneesIndicateur } = await getContainer(
-    "parametrageIndicateur",
-  )
-    .resolve("getMetadataIndicateurConfigurationQuery")
+  const chantiers = await getContainer("habilitationsCoordinateur")
+    .resolve("recupererLesChantiersTerritorialisesQuery")
     .run();
 
   return {
     props: {
-      listeMetadonneesIndicateur,
+      chantiers,
     },
   };
 };
 
-const NextPagePanelAdministrateurParametrageSourceIndicateur: FunctionComponent<
+const NextPageHabilitationsCoordinateur: FunctionComponent<
   InferGetServerSidePropsType<typeof getServerSideProps>
 > = (props) => {
   return (
-    <pageParametrageSourceContext.ServerSidePropsProvider value={props}>
+    <pageHabilitationsCoordinateur.ServerSidePropsProvider value={props}>
       <Head>
         <title>
-          Panel administrateur - Paramétrage source indicateur - PILOTE
+          Panel Administrateur - Habilitations coordinateurs - PILOTE
         </title>
       </Head>
-      <NextPanelAdministrateurLayout pageActive="parametrage-metadata-indicateur">
-        <FormulaireParametrageSourceIndicateur />
+      <NextPanelAdministrateurLayout pageActive="habilitations-coordinateur">
+        <PageHabilitationsCoordinateur />
       </NextPanelAdministrateurLayout>
-    </pageParametrageSourceContext.ServerSidePropsProvider>
+    </pageHabilitationsCoordinateur.ServerSidePropsProvider>
   );
 };
 
-export default NextPagePanelAdministrateurParametrageSourceIndicateur;
+export default NextPageHabilitationsCoordinateur;
