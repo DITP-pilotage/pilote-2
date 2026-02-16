@@ -11,6 +11,7 @@ export function calculerDateDernierImport(
   evenementsMailles: PrismaIndicateurTerritoireValeurEvenement[],
   origineVaNat: string | null,
   origineVaReg: string | null,
+  codesTerritoiresEnfants: string[] = [],
 ): Date | null {
   let evenementsAUtiliser = evenementsTerritoire;
 
@@ -25,10 +26,17 @@ export function calculerDateDernierImport(
     } else if (maille === "REG" && origineVaReg === "DEPT") {
       mailleSource = "DEPT";
     }
+
     if (mailleSource) {
-      evenementsAUtiliser = evenementsMailles.filter((evenement) =>
-        evenement.territoire_code.startsWith(mailleSource!),
-      );
+      if (maille === "REG" && mailleSource === "DEPT") {
+        evenementsAUtiliser = evenementsMailles.filter((evenement) =>
+          codesTerritoiresEnfants.includes(evenement.territoire_code),
+        );
+      } else {
+        evenementsAUtiliser = evenementsMailles.filter((evenement) =>
+          evenement.territoire_code.startsWith(mailleSource!),
+        );
+      }
     }
   }
 

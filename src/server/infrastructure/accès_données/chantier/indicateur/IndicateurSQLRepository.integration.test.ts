@@ -723,7 +723,7 @@ describe("IndicateurSQLRepository", () => {
     );
 
     it(
-      "pour maille REG avec va_reg_from=DEPT, calcule dateImport à partir des événements DEPT",
+      "pour maille REG avec va_reg_from=DEPT, calcule dateImport à partir des événements des départements enfants",
       createIntegrationTest(async () => {
         // Given
         const chantier = await fixtures.chantierIdentite({ id: "CH-001" });
@@ -737,10 +737,10 @@ describe("IndicateurSQLRepository", () => {
         });
         await fixtures.chantierTerritoire({
           id: chantier.id,
-          territoire_code: "DEPT-13",
-          code_insee: "13",
+          territoire_code: "DEPT-69",
+          code_insee: "69",
           maille: "DEPT",
-          zone_id: "D13",
+          zone_id: "D69",
         });
 
         const indicateur = await fixtures.indicateurIdentite({
@@ -766,10 +766,10 @@ describe("IndicateurSQLRepository", () => {
         await fixtures.indicateurTerritoire({
           id: indicateur.id,
           chantier_id: chantier.id,
-          territoire_code: "DEPT-13",
-          code_insee: "13",
+          territoire_code: "DEPT-69",
+          code_insee: "69",
           maille: "DEPT",
-          zone_id: "D13",
+          zone_id: "D69",
           evolution_avancement: [] as unknown as Prisma.JsonArray,
         });
 
@@ -799,7 +799,7 @@ describe("IndicateurSQLRepository", () => {
         // Événement DEPT-13 (doit être utilisé)
         await fixtures.indicateurTerritoireValeurEvenement({
           indic_id: indicateur.id,
-          territoire_code: "DEPT-13",
+          territoire_code: "DEPT-69",
           type_evenement: EvenementValeurEnum.VALEUR_CREEE,
           date_creation: new Date("2026-01-25T10:00:00.000Z"),
           id_auteur_modification: utilisateur.id,

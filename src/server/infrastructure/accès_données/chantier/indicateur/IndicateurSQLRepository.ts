@@ -70,6 +70,7 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
     dateDerniereExecutionDatajobs: Date,
     evenementsMailles: PrismaIndicateurTerritoireValeurEvenement[],
     metadataIndicateurs: PrismaMetadataParametrageIndicateurs[],
+    enfantsParTerritoire: Map<string, string[]>,
   ): DétailsIndicateurs {
     const détailsIndicateurs: DétailsIndicateurs = {};
 
@@ -95,6 +96,7 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
         ),
         metadataIndicateurCourant?.va_nat_from ?? null,
         metadataIndicateurCourant?.va_reg_from ?? null,
+        enfantsParTerritoire.get(indicateurRow.territoire_code) ?? [],
       );
 
       détailsIndicateurs[indicateurRow.id][indicateurRow.territoire_code] = {
@@ -231,6 +233,20 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
         },
       });
 
+    const territoiresRegions = await this.prisma.territoire.findMany({
+      where: { code: { startsWith: "REG" } },
+      select: {
+        code: true,
+        territoire_enfant: { select: { code: true } },
+      },
+    });
+    const enfantsParTerritoire = new Map(
+      territoiresRegions.map((territoire) => [
+        territoire.code,
+        territoire.territoire_enfant.map((enfant) => enfant.code),
+      ]),
+    );
+
     const chantierIds = [
       ...new Set(indicateurs.map((ind) => ind.indicateur_identite.chantier_id)),
     ];
@@ -246,6 +262,7 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
           dateDerniereExecutionDatajobs,
           evenementsMailles,
           metadataIndicateurs,
+          enfantsParTerritoire,
         );
         return [chantierId, details] as const;
       }),

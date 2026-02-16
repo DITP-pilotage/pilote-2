@@ -261,7 +261,7 @@ describe("calculerDateDernierImport", () => {
   });
 
   describe("maille REG avec origineVaReg", () => {
-    it("utilise les événements DEPT quand origineVaReg est DEPT", () => {
+    it("utilise uniquement les événements des départements enfants quand origineVaReg est DEPT", () => {
       // Given
       const evenementsTerritoire = [
         creerEvenement({
@@ -281,6 +281,22 @@ describe("calculerDateDernierImport", () => {
           type_evenement: "VALEUR_CREEE",
           date_creation: new Date("2026-01-22"),
         }),
+        // département hors région REG-11
+        creerEvenement({
+          territoire_code: "DEPT-69",
+          type_evenement: "VALEUR_CREEE",
+          date_creation: new Date("2026-01-25"),
+        }),
+      ];
+      const codesTerritoiresEnfants = [
+        "DEPT-75",
+        "DEPT-92",
+        "DEPT-93",
+        "DEPT-94",
+        "DEPT-77",
+        "DEPT-78",
+        "DEPT-91",
+        "DEPT-95",
       ];
 
       // When
@@ -291,10 +307,51 @@ describe("calculerDateDernierImport", () => {
         evenementsMailles,
         null,
         "DEPT",
+        codesTerritoiresEnfants,
       );
 
       // Then
       expect(result).toEqual(new Date("2026-01-22"));
+    });
+
+    it("ignore les départements qui ne sont pas enfants de la région", () => {
+      // Given
+      const evenementsTerritoire = [
+        creerEvenement({
+          territoire_code: "REG-84",
+          type_evenement: "VALEUR_CREEE",
+          date_creation: new Date("2026-01-05"),
+        }),
+      ];
+      const evenementsMailles = [
+        // département enfant de REG-84
+        creerEvenement({
+          territoire_code: "DEPT-69",
+          type_evenement: "VALEUR_CREEE",
+          date_creation: new Date("2026-01-10"),
+        }),
+        // département hors REG-84
+        creerEvenement({
+          territoire_code: "DEPT-75",
+          type_evenement: "VALEUR_CREEE",
+          date_creation: new Date("2026-01-20"),
+        }),
+      ];
+      const codesTerritoiresEnfants = ["DEPT-69", "DEPT-01", "DEPT-03"];
+
+      // When
+      const result = calculerDateDernierImport(
+        "REG",
+        dateDerniereExecutionDatajobs,
+        evenementsTerritoire,
+        evenementsMailles,
+        null,
+        "DEPT",
+        codesTerritoiresEnfants,
+      );
+
+      // Then
+      expect(result).toEqual(new Date("2026-01-10"));
     });
 
     it("utilise les événements du territoire quand origineVaReg n'est pas DEPT", () => {

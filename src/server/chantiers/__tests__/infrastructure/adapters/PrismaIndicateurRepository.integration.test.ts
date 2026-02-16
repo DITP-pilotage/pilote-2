@@ -2469,7 +2469,7 @@ describe("PrismaIndicateurRepository", () => {
     );
 
     it(
-      "pour un indicateur agrégé REG avec va_reg_from=DEPT, calcule dateImport à partir des événements DEPT",
+      "pour un indicateur agrégé REG avec va_reg_from=DEPT, calcule dateImport à partir des événements DEPT enfants",
       createIntegrationTest(async () => {
         // Given
         const chantier = await fixtures.chantierIdentite({ id: "CH-001" });
@@ -5325,7 +5325,7 @@ describe("PrismaIndicateurRepository", () => {
     );
 
     it(
-      "pour un indicateur agrégé REG avec va_reg_from=DEPT, calcule dateImport à partir des événements DEPT",
+      "pour un indicateur agrégé REG avec va_reg_from=DEPT, calcule dateImport à partir des événements DEPT enfants",
       createIntegrationTest(async () => {
         // Given
         const chantiersIds = ["CH-001"];
