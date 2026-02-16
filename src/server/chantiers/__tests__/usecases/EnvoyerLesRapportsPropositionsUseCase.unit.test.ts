@@ -41,7 +41,8 @@ function creerRapportTest(params: {
           afficherSectionMajIndicateur: false,
           indicateursNonMisAJour: [],
           nombreIndicateursNonMisAJour: "aucun indicateur à mettre à jour",
-          nombreIndicateursAParametrer: "aucun indicateur à paramétrer",
+          nombreIndicateursAParametrer:
+            "aucun indicateur dont le taux d'avancement ne peut être calculé",
           afficherSectionParametrage: false,
           indicateursAParametrer: [],
         },

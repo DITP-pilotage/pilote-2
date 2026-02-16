@@ -87,7 +87,8 @@ describe("genererParametresEnvoieRapportProposition", () => {
         indicateursNonMisAJour: [],
         afficherSectionParametrage: false,
         indicateursAParametrer: [],
-        nombreIndicateursAParametrer: "aucun indicateur à paramétrer",
+        nombreIndicateursAParametrer:
+          "aucun indicateur dont le taux d'avancement ne peut être calculé",
       });
       expect(result.conseillerEmail).toEqual("conseiller1@exemple.com");
     });
@@ -700,7 +701,7 @@ describe("genererParametresEnvoieRapportProposition", () => {
         { id: "IND-002", nom: "Indicateur 2" },
       ]);
       expect(result.chantiers[0].nombreIndicateursAParametrer).toEqual(
-        "2 indicateurs à paramétrer",
+        "2 indicateurs dont le taux d'avancement ne peut être calculé",
       );
     });
 
@@ -762,7 +763,7 @@ describe("genererParametresEnvoieRapportProposition", () => {
       expect(result.chantiers[0].afficherSectionParametrage).toEqual(false);
       expect(result.chantiers[0].indicateursAParametrer).toEqual([]);
       expect(result.chantiers[0].nombreIndicateursAParametrer).toEqual(
-        "aucun indicateur à paramétrer",
+        "aucun indicateur dont le taux d'avancement ne peut être calculé",
       );
     });
   });

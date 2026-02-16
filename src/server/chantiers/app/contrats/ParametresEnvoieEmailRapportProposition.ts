@@ -104,10 +104,10 @@ export const genererParametresEnvoieRapportProposition = (
         indicateursAParametrer: indicateursAParametrer ?? [],
         nombreIndicateursAParametrer:
           nbIndicateursAParametrer === 0
-            ? "aucun indicateur à paramétrer"
+            ? "aucun indicateur dont le taux d'avancement ne peut être calculé"
             : nbIndicateursAParametrer > 1
-              ? `${nbIndicateursAParametrer} indicateurs à paramétrer`
-              : `${nbIndicateursAParametrer} indicateur à paramétrer`,
+              ? `${nbIndicateursAParametrer} indicateurs dont le taux d'avancement ne peut être calculé`
+              : `${nbIndicateursAParametrer} indicateur dont le taux d'avancement ne peut être calculé`,
       });
     }
   }
