@@ -17,7 +17,7 @@ get_evol_vaca AS (
         zone_id,
         JSONB_AGG(
             JSONB_BUILD_OBJECT(
-                'date', metric_date,
+                'date', TO_CHAR(metric_date, 'YYYY-MM-DD'),
                 'valeur', vaca,
                 'taux_avancement_jalon', taa_adate,
                 'taux_avancement_mandat', tag

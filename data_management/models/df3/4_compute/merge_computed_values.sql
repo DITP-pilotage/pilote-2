@@ -36,7 +36,7 @@ left join {{ ref('compute_vaca') }} b on a.indic_id = b.indic_id and a.zone_id =
 left join {{ ref('compute_vacg') }} c on a.indic_id = c.indic_id and a.zone_id = c.zone_id and a.metric_date = c.metric_date
 left join {{ ref('compute_vacp') }} vacp on a.indic_id = vacp.indic_id and a.zone_id = vacp.zone_id
 -- La VCA ici est à l'année de la VA (année de a.metric_date)
-left join {{ ref('get_vca_jalon') }} d on a.indic_id = d.indic_id and a.zone_id = d.zone_id and date_part('year', a.metric_date::date) = d.jalon
+left join {{ ref('get_vca_jalon') }} d on a.indic_id = d.indic_id and a.zone_id = d.zone_id and date_part('year', a.metric_date) = d.jalon
 -- La VCA ici est en date de l'année courante
 left join current_year_vca d2 on a.indic_id = d2.indic_id and a.zone_id = d2.zone_id
 left join {{ ref('get_vig') }} e on a.indic_id = e.indic_id and a.zone_id = e.zone_id

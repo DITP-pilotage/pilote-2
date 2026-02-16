@@ -18,7 +18,7 @@ add_decumul_start_date as (
         -- Date pour effectuer le decumul des VA
         case
         -- Si from_year_start -> 1er janvier de l'année de la mesure
-            when param_vaca_decumul_from = 'from_year_start' then date_trunc('year', metric_date::date)
+            when param_vaca_decumul_from = 'from_year_start' then date_trunc('year', metric_date)
             -- Si from_custom_date::X -> date X
             WHEN param_vaca_decumul_from like 'from_custom_date::%' THEN split_part(
                 param_vaca_decumul_from,
@@ -31,7 +31,7 @@ add_decumul_start_date as (
         -- Date pour effectuer le calcul des VACA
         case
         -- Si from_year_start -> 1er janvier de l'année de la mesure
-            when param_vaca_partition_date = 'from_year_start' then date_trunc('year', metric_date::date)
+            when param_vaca_partition_date = 'from_year_start' then date_trunc('year', metric_date)
             -- Si from_custom_date::X -> date X
             WHEN param_vaca_partition_date like 'from_custom_date::%' THEN split_part(
                 param_vaca_partition_date,
@@ -60,7 +60,7 @@ perform_decumul as (
                         indic_id,
                         zone_id,
                         decumul_vaa_date
-                    order by metric_date::date ASC
+                    order by metric_date ASC
                 ),
                 va
             )
@@ -102,16 +102,16 @@ compute_vaca as (
                 partition by
                     indic_id,
                     zone_id,
-                    date_trunc('year', metric_date::date)
-                order by metric_date::date
+                    date_trunc('year', metric_date)
+                order by metric_date
             )
             WHEN param_vaca_partition_date = 'from_year_start'
             and param_vaca_op = 'moy' THEN avg(va_decumul) over (
                 partition by
                     indic_id,
                     zone_id,
-                    date_trunc('year', metric_date::date)
-                order by metric_date::date
+                    date_trunc('year', metric_date)
+                order by metric_date
             )
             -- si calcul de VACA avec from_custom_date
             WHEN param_vaca_partition_date like 'from_custom_date::%'
@@ -120,7 +120,7 @@ compute_vaca as (
                     indic_id,
                     zone_id,
                     vaca_partition_date
-                order by metric_date::date
+                order by metric_date
             )
             WHEN param_vaca_partition_date like 'from_custom_date::%'
             and param_vaca_op = 'moy' THEN avg(va_decumul) over (
@@ -128,7 +128,7 @@ compute_vaca as (
                     indic_id,
                     zone_id,
                     vaca_partition_date
-                order by metric_date::date
+                order by metric_date
             )
             else null
         end as vaca
@@ -136,22 +136,22 @@ compute_vaca as (
     window w48 as (
             PARTITION BY
                 indic_id, zone_id
-            ORDER BY date_trunc('month', metric_date::date) asc RANGE BETWEEN INTERVAL '47 months' PRECEDING
+            ORDER BY date_trunc('month', metric_date) asc RANGE BETWEEN INTERVAL '47 months' PRECEDING
                 AND CURRENT ROW
         ), w12 as (
             PARTITION BY
                 indic_id, zone_id
-            ORDER BY date_trunc('month', metric_date::date) asc RANGE BETWEEN INTERVAL '11 months' PRECEDING
+            ORDER BY date_trunc('month', metric_date) asc RANGE BETWEEN INTERVAL '11 months' PRECEDING
                 AND CURRENT ROW
         ), w6 as (
             PARTITION BY
                 indic_id, zone_id
-            ORDER BY date_trunc('month', metric_date::date) asc RANGE BETWEEN INTERVAL '5 months' PRECEDING
+            ORDER BY date_trunc('month', metric_date) asc RANGE BETWEEN INTERVAL '5 months' PRECEDING
                 AND CURRENT ROW
         ), w3 as (
             PARTITION BY
                 indic_id, zone_id
-            ORDER BY date_trunc('month', metric_date::date) asc RANGE BETWEEN INTERVAL '2 months' PRECEDING
+            ORDER BY date_trunc('month', metric_date) asc RANGE BETWEEN INTERVAL '2 months' PRECEDING
                 AND CURRENT ROW
         )
 )
