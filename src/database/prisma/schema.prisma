@@ -602,7 +602,6 @@ model utilisateur {
   nom                                    String
   prenom                                 String
   fonction                               String?
-  ministere                              String?
   service                                String?
   service_autre                          String?
   profil                                 profil                                   @relation(fields: [profilCode], references: [code], onUpdate: Cascade)

@@ -6,14 +6,14 @@ interface ServiceReferentiel {
   libelle: string;
 }
 
-interface MinistereReferentiel {
+interface PerimetreMinisterielReferentiel {
   slug: string;
   libelle: string;
   services: ServiceReferentiel[];
 }
 
 interface Referentiel {
-  ministeres: MinistereReferentiel[];
+  perimetresMinisteriels: PerimetreMinisterielReferentiel[];
 }
 
 function slugify(text: string): string {
@@ -35,33 +35,35 @@ function genererReferentiel(): void {
 
   const lines = csvContent.split("\n").slice(1); // Skip header
 
-  const ministeresMap = new Map<string, MinistereReferentiel>();
+  const perimetresMap = new Map<string, PerimetreMinisterielReferentiel>();
 
   for (const line of lines) {
     if (!line.trim()) continue;
 
-    const [nomService, ministere] = line
-      .split(";")
-      .map((field) => field.trim());
+    const parts = line.split(";").map((field) => field.trim());
+    const nomService = parts[0];
+    const perimetreMinisteriel = parts[3]; // Perimetre_ministeriel is column 3
 
-    if (!ministere || !nomService) continue;
+    if (!nomService) continue;
 
-    const ministereSlug = slugify(ministere);
+    // Handle "Autre" row where Perimetre_ministeriel is empty
+    const perimetreLibelle = perimetreMinisteriel || "Autre";
+    const perimetreSlug = slugify(perimetreLibelle);
 
-    if (!ministeresMap.has(ministereSlug)) {
-      ministeresMap.set(ministereSlug, {
-        slug: ministereSlug,
-        libelle: ministere,
+    if (!perimetresMap.has(perimetreSlug)) {
+      perimetresMap.set(perimetreSlug, {
+        slug: perimetreSlug,
+        libelle: perimetreLibelle,
         services: [],
       });
     }
 
     const serviceSlug = slugify(nomService);
-    const ministereData = ministeresMap.get(ministereSlug)!;
+    const perimetreData = perimetresMap.get(perimetreSlug)!;
 
     // Avoid duplicates
-    if (!ministereData.services.some((s) => s.slug === serviceSlug)) {
-      ministereData.services.push({
+    if (!perimetreData.services.some((s) => s.slug === serviceSlug)) {
+      perimetreData.services.push({
         slug: serviceSlug,
         libelle: nomService,
       });
@@ -69,27 +71,35 @@ function genererReferentiel(): void {
   }
 
   // Convert to array and sort
-  const ministeres = Array.from(ministeresMap.values());
+  const perimetresMinisteriels = Array.from(perimetresMap.values());
 
-  // Move "Autre" ministere to the end
-  const autreIndex = ministeres.findIndex((m) => m.slug === "autre");
-  if (autreIndex !== -1) {
-    const [autre] = ministeres.splice(autreIndex, 1);
-    ministeres.push(autre);
+  // Sort périmètres alphabetically by libelle
+  perimetresMinisteriels.sort((a, b) => a.libelle.localeCompare(b.libelle, "fr"));
+
+  // Sort services within each périmètre alphabetically by libelle
+  for (const perimetre of perimetresMinisteriels) {
+    perimetre.services.sort((a, b) => a.libelle.localeCompare(b.libelle, "fr"));
   }
 
-  // For each ministere, move "Autre" service to the end
-  for (const ministere of ministeres) {
-    const autreServiceIndex = ministere.services.findIndex(
+  // Move "Autre" périmètre to the end
+  const autreIndex = perimetresMinisteriels.findIndex((m) => m.slug === "autre");
+  if (autreIndex !== -1) {
+    const [autre] = perimetresMinisteriels.splice(autreIndex, 1);
+    perimetresMinisteriels.push(autre);
+  }
+
+  // For each périmètre, move "Autre" service to the end
+  for (const perimetre of perimetresMinisteriels) {
+    const autreServiceIndex = perimetre.services.findIndex(
       (s) => s.slug === "autre",
     );
     if (autreServiceIndex !== -1) {
-      const [autreService] = ministere.services.splice(autreServiceIndex, 1);
-      ministere.services.push(autreService);
+      const [autreService] = perimetre.services.splice(autreServiceIndex, 1);
+      perimetre.services.push(autreService);
     }
   }
 
-  const referentiel: Referentiel = { ministeres };
+  const referentiel: Referentiel = { perimetresMinisteriels };
 
   const outputPath = path.join(
     process.cwd(),
@@ -102,9 +112,9 @@ function genererReferentiel(): void {
   fs.writeFileSync(outputPath, JSON.stringify(referentiel, null, 2), "utf-8");
 
   console.log(`✅ Référentiel généré : ${outputPath}`);
-  console.log(`   ${referentiel.ministeres.length} ministères`);
+  console.log(`   ${referentiel.perimetresMinisteriels.length} périmètres ministériels`);
   console.log(
-    `   ${referentiel.ministeres.reduce((acc, m) => acc + m.services.length, 0)} services au total`,
+    `   ${referentiel.perimetresMinisteriels.reduce((acc, p) => acc + p.services.length, 0)} services au total`,
   );
 }
 

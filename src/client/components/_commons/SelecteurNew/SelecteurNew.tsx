@@ -1,13 +1,27 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Select } from "@/components/shared/Select";
 import { clsxm } from "@/utils/clsxm";
 import { ChampObligatoire } from "@/components/PageIndicateur/ChampObligatoire";
+import { AnimateEntry } from "@/components/shared/AnimateEntry";
 
 export type SelecteurNewOption<T> = {
   libelle: string;
   valeur: T;
   desactivee?: boolean;
 };
+
+export type SelecteurNewOptionGroup<T extends string> = {
+  libelle: string;
+  valeur: T;
+  options: SelecteurNewOption<T>[];
+};
+
+function isGroupedOptions<T extends string>(
+  options: SelecteurNewOption<T>[] | SelecteurNewOptionGroup<T>[],
+): options is SelecteurNewOptionGroup<T>[] {
+  if (options.length === 0) return false;
+  return "options" in options[0];
+}
 
 export const SelecteurNew = <T extends string>({
   htmlName,
@@ -22,14 +36,16 @@ export const SelecteurNew = <T extends string>({
   className,
   triggerClassName,
   isRequired,
+  placeholderRecherche = "Rechercher...",
 }: {
   htmlName: string;
-  options: SelecteurNewOption<T>[];
+  options: SelecteurNewOption<T>[] | SelecteurNewOptionGroup<T>[];
   erreurMessage?: string;
-  onChange?: (valeur: T) => void;
+  onChange?: (valeur: T, group?: SelecteurNewOptionGroup<T> | null) => void;
   valeurSelectionnee?: T;
   libelle?: React.ReactNode;
   placeholder?: string;
+  placeholderRecherche?: string;
   showSearch?: boolean;
   disabled?: boolean;
   className?: string;
@@ -37,12 +53,30 @@ export const SelecteurNew = <T extends string>({
   isRequired?: boolean;
 }) => {
   const [recherche, setRecherche] = useState("");
+  const rechercheRef = useRef<HTMLInputElement>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
-  const optionsFiltrees = showSearch
-    ? options.filter((option) =>
-        option.libelle.toLowerCase().includes(recherche.toLowerCase()),
-      )
-    : options;
+  const isGrouped = isGroupedOptions(options);
+
+  const rechercheNormalisee = recherche.toLowerCase();
+
+  const hasVisibleResults = showSearch
+    ? isGrouped
+      ? options.some((group) => {
+          const groupMatchesSearch = group.libelle
+            .toLowerCase()
+            .includes(rechercheNormalisee);
+          return (
+            groupMatchesSearch ||
+            group.options.some((option) =>
+              option.libelle.toLowerCase().includes(rechercheNormalisee),
+            )
+          );
+        })
+      : options.some((option) =>
+          option.libelle.toLowerCase().includes(rechercheNormalisee),
+        )
+    : true;
 
   return (
     <div className={clsxm("flex flex-col gap-1", className)}>
@@ -54,9 +88,30 @@ export const SelecteurNew = <T extends string>({
       ) : null}
 
       <Select.Root
-        onValueChange={(value) => onChange?.(value as T)}
+        onValueChange={(value) => {
+          if (isGrouped) {
+            const group = (options as SelecteurNewOptionGroup<T>[]).find((g) =>
+              g.options.some((o) => o.valeur === value),
+            );
+            onChange?.(value as T, group || null);
+          } else {
+            onChange?.(value as T, null);
+          }
+        }}
         value={valeurSelectionnee}
         disabled={disabled}
+        onOpenChange={(open) => {
+          if (open) {
+            setTimeout(() => {
+              rechercheRef.current?.focus();
+              if (scrollContainerRef.current) {
+                scrollContainerRef.current.scrollTop = 0;
+              }
+            }, 0);
+          } else {
+            setRecherche("");
+          }
+        }}
       >
         <Select.Trigger
           className={clsxm("w-50 text-left", triggerClassName, {
@@ -75,31 +130,102 @@ export const SelecteurNew = <T extends string>({
               <input
                 aria-label="Rechercher"
                 className="w-full !px-3 !py-2 !border-b-2 !border-primary !text-sm !bg-dsfr-alt-blue-france !placeholder-dsfr-mention-grey placeholder:italic"
-                onChange={(event) => setRecherche(event.target.value)}
+                onChange={(event) => {
+                  setRecherche(event.target.value);
+                  if (scrollContainerRef.current) {
+                    scrollContainerRef.current.scrollTop = 0;
+                  }
+                }}
                 onKeyDown={(event) => event.stopPropagation()}
-                placeholder="Rechercher..."
+                placeholder={placeholderRecherche}
                 type="text"
                 value={recherche}
+                ref={rechercheRef}
               />
             </div>
           ) : null}
 
-          <div className="max-h-80 overflow-y-auto">
-            {optionsFiltrees.length === 0 ? (
+          <div ref={scrollContainerRef} className="max-h-80 overflow-y-auto">
+            {!hasVisibleResults && (
               <div className="px-4 py-2 text-sm text-dsfr-mention-grey text-center">
                 Aucun résultat
               </div>
-            ) : (
-              optionsFiltrees.map((option) => (
-                <Select.Item
-                  disabled={option.desactivee}
-                  key={String(option.valeur)}
-                  value={option.valeur}
-                >
-                  {option.libelle}
-                </Select.Item>
-              ))
             )}
+            {isGrouped
+              ? (options as SelecteurNewOptionGroup<T>[]).map(
+                  (group, index) => {
+                    const groupMatchesSearch = group.libelle
+                      .toLowerCase()
+                      .includes(rechercheNormalisee);
+                    const hasMatchingOptions = group.options.some((option) =>
+                      option.libelle
+                        .toLowerCase()
+                        .includes(rechercheNormalisee),
+                    );
+                    const shouldHideGroup =
+                      showSearch &&
+                      recherche &&
+                      !groupMatchesSearch &&
+                      !hasMatchingOptions;
+
+                    return (
+                      <AnimateEntry
+                        key={String(group.valeur)}
+                        visible={!shouldHideGroup}
+                      >
+                        {index > 0 && <Select.Separator />}
+                        <Select.Group>
+                          <Select.Label>{group.libelle}</Select.Label>
+                          <div className="pl-3">
+                            {group.options.map((option) => {
+                              const shouldHideOption =
+                                showSearch &&
+                                recherche &&
+                                !groupMatchesSearch &&
+                                !option.libelle
+                                  .toLowerCase()
+                                  .includes(rechercheNormalisee);
+
+                              return (
+                                <AnimateEntry
+                                  key={String(option.valeur)}
+                                  visible={!shouldHideOption}
+                                >
+                                  <Select.Item
+                                    disabled={option.desactivee}
+                                    value={option.valeur}
+                                  >
+                                    {option.libelle}
+                                  </Select.Item>
+                                </AnimateEntry>
+                              );
+                            })}
+                          </div>
+                        </Select.Group>
+                      </AnimateEntry>
+                    );
+                  },
+                )
+              : (options as SelecteurNewOption<T>[]).map((option) => {
+                  const shouldHideOption =
+                    showSearch &&
+                    recherche &&
+                    !option.libelle.toLowerCase().includes(rechercheNormalisee);
+
+                  return (
+                    <AnimateEntry
+                      key={String(option.valeur)}
+                      visible={!shouldHideOption}
+                    >
+                      <Select.Item
+                        disabled={option.desactivee}
+                        value={option.valeur}
+                      >
+                        {option.libelle}
+                      </Select.Item>
+                    </AnimateEntry>
+                  );
+                })}
           </div>
         </Select.Content>
       </Select.Root>

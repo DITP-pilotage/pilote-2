@@ -5,12 +5,7 @@ export const validationModifierMonProfil = z
     nom: z.string().min(1, "Ce champ est obligatoire").max(100),
     prenom: z.string().min(1, "Ce champ est obligatoire").max(100),
     email: z.string(),
-    fonction: z
-      .string()
-      .max(100)
-      .transform((value) => value || null)
-      .nullable(),
-    ministere: z.string().min(1, "Ce champ est obligatoire"),
+    fonction: z.string().min(1, "Ce champ est obligatoire").max(100),
     service: z.string().min(1, "Ce champ est obligatoire"),
     serviceAutre: z
       .string()

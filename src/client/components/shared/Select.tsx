@@ -69,7 +69,7 @@ export const Select = Object.assign({}, SelectPrimitive, {
     className,
     ...props
   }: ComponentProps<typeof SelectPrimitive.Group>) => (
-    <SelectPrimitive.Group className={clsxm("py-1", className)} {...props}>
+    <SelectPrimitive.Group className={clsxm("py-2", className)} {...props}>
       {children}
     </SelectPrimitive.Group>
   ),
@@ -80,7 +80,7 @@ export const Select = Object.assign({}, SelectPrimitive, {
   }: ComponentProps<typeof SelectPrimitive.Label>) => (
     <SelectPrimitive.Label
       className={clsxm(
-        "px-4 py-1 !text-xs font-bold text-dsfr-mention-grey uppercase",
+        "px-4 py-1 !text-xs font-bold textdsfr-grey-200 uppercase",
         className,
       )}
       {...props}
@@ -90,7 +90,7 @@ export const Select = Object.assign({}, SelectPrimitive, {
   ),
   Separator: (props: ComponentProps<typeof SelectPrimitive.Separator>) => (
     <SelectPrimitive.Separator
-      className={clsxm("h-px bg-dsfr-mention-grey my-1", props.className)}
+      className={clsxm("h-px bg-dsfr-contrast-grey my-1", props.className)}
       {...props}
     />
   ),

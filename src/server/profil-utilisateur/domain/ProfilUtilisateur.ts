@@ -4,7 +4,6 @@ export type ProfilUtilisateur = {
   prenom: string;
   email: string;
   fonction: string | null;
-  ministere: string | null;
   service: string | null;
   serviceAutre: string | null;
 };
@@ -15,7 +14,6 @@ export function creerProfilUtilisateur(data: {
   prenom: string;
   email: string;
   fonction: string | null;
-  ministere: string | null;
   service: string | null;
   serviceAutre: string | null;
 }): ProfilUtilisateur {
@@ -25,7 +23,6 @@ export function creerProfilUtilisateur(data: {
     prenom: data.prenom,
     email: data.email,
     fonction: data.fonction,
-    ministere: data.ministere,
     service: data.service,
     serviceAutre: data.serviceAutre,
   };
@@ -37,7 +34,6 @@ export function modifierProfilUtilisateur(
     nom: string;
     prenom: string;
     fonction: string | null;
-    ministere: string | null;
     service: string | null;
     serviceAutre: string | null;
   },
@@ -47,7 +43,6 @@ export function modifierProfilUtilisateur(
     nom: modifications.nom,
     prenom: modifications.prenom,
     fonction: modifications.fonction,
-    ministere: modifications.ministere,
     service: modifications.service,
     serviceAutre: modifications.serviceAutre,
   };
