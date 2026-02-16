@@ -6,6 +6,8 @@ import { IndicateurRepository } from "@/server/chantiers/domain/ports/Indicateur
 import { RapportPropositionsAvancementRepository } from "@/server/chantiers/domain/ports/RapportPropositionsAvancementRepository";
 import { creerRapportPropositionsAvancement } from "@/server/chantiers/domain/RapportPropositionsAvancement";
 import { genererParametresEnvoieRapportProposition } from "@/server/chantiers/app/contrats/ParametresEnvoieEmailRapportProposition";
+import { getAnneeDateDeBascule } from "@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getAnneeDateDeBascule";
+import { configuration } from "@/config";
 
 interface Dependencies {
   chantierRepository: ChantierRepository;
@@ -30,7 +32,10 @@ export class CreerLesRapportsPropositionsUseCase {
     const indicateursNonAJourParChantier =
       await this.dependencies.indicateurRepository.recupererIndicateursNonAJourParChantierId();
 
-    const jalon = new Date().getFullYear();
+    const jalon = getAnneeDateDeBascule(
+      new Date(),
+      configuration().dateBasculeAffichageValeursAnneePrecedente,
+    );
     const indicateursAParametrerParChantier =
       await this.dependencies.indicateurRepository.recupererIndicateursAParametrerParChantierId(
         jalon,
