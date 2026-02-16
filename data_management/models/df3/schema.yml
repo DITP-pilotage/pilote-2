@@ -2,11 +2,20 @@ version: 2
 
 models:
   - name: mesure_last
+    config:
+      materialized: table
     description: |
         Pour chaque {indic_id, metric_type, mois de la metric_date, zone_id}, on retourne la valeur la plus récente. Règles:
         - On ne garde que les mesures sur les **zones applicables** (voir `view_meta_indicateur` colonne `zg_applicable` et ref `int_indicateurs_zones_applicables` pour les détails)
         - Si 2 valeurs pour le meme {indic_id, metric_type, metric_month, zone_id}, on retourne celle avec la date d'import la plus récente.
         - On remplace la date de la metric date par le premier jour du mois
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - indic_id
+            - metric_type
+            - metric_date
+            - zone_id
   - name: agg_dept
     description: |
         Sélection des valeurs et calculs des aggrégation pour le niveau DEPT en fonction des paramètres. Règles:
