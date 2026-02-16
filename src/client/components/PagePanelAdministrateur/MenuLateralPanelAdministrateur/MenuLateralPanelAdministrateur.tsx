@@ -49,6 +49,9 @@ export const MenuLateralPanelAdministrateur: FunctionComponent<
       role="navigation"
     >
       <button
+        aria-controls="menu-lateral-contenu"
+        aria-expanded={!estReplie}
+        aria-label={estReplie ? "Déplier le menu" : "Replier le menu"}
         className="absolute -right-3 top-4 z-10 w-6 h-6 bg-white border border-gray-300 rounded-full flex items-center justify-center hover:bg-gray-100 shadow-sm"
         onClick={() => setEstReplie(!estReplie)}
         title={estReplie ? "Déplier le menu" : "Replier le menu"}
@@ -73,7 +76,7 @@ export const MenuLateralPanelAdministrateur: FunctionComponent<
       </button>
 
       {!estReplie && (
-        <div className="p-4">
+        <div className="p-4" id="menu-lateral-contenu">
           <div className="text-lg font-bold mb-4 text-gray-900">
             Panel Administrateur
           </div>

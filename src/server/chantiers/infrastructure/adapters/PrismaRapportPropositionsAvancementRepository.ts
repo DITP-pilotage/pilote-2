@@ -13,9 +13,7 @@ const contenuRapportSchema = z.object({
   texteIntro: z.string(),
 });
 
-export class PrismaRapportPropositionsAvancementRepository
-  implements RapportPropositionsAvancementRepository
-{
+export class PrismaRapportPropositionsAvancementRepository implements RapportPropositionsAvancementRepository {
   constructor(private readonly dependencies: { prisma: PrismaPilote }) {}
 
   async sauvegarder(rapport: RapportPropositionsAvancement): Promise<void> {

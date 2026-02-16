@@ -32,9 +32,7 @@ const convertirEnMesureIndicateurTemporaire = (
   });
 };
 
-export class PrismaMesureIndicateurTemporaireRepository
-  implements MesureIndicateurTemporaireRepository
-{
+export class PrismaMesureIndicateurTemporaireRepository implements MesureIndicateurTemporaireRepository {
   async sauvegarder(
     listeMesuresIndicateurTemporaire: MesureIndicateurTemporaire[],
   ): Promise<void> {

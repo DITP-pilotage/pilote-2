@@ -1,4 +1,5 @@
-import { FunctionComponent, ReactNode } from "react";
+import { FunctionComponent, ReactNode, useMemo } from "react";
+import DOMPurify from "isomorphic-dompurify";
 import { EditeurRiche } from "@/components/_commons/ÉditeurRiche/EditeurRiche";
 import { ContenuHtmlStyled } from "./EditeurContenu3Colonnes.styled";
 
@@ -39,6 +40,11 @@ export const EditeurContenu3Colonnes: FunctionComponent<
   onSauvegarder,
   contenuPreview,
 }) => {
+  const contenuPreviewSanitise = useMemo(
+    () => DOMPurify.sanitize(contenuPreview),
+    [contenuPreview],
+  );
+
   if (estChargement) {
     return <p>Chargement...</p>;
   }
@@ -57,19 +63,20 @@ export const EditeurContenu3Colonnes: FunctionComponent<
         </div>
         <div className="overflow-y-auto flex-1">
           {items.map((item) => (
-            <div
-              className={`px-4 py-3 cursor-pointer border-b border-gray-100 transition-colors hover:bg-gray-50 ${
+            <button
+              aria-pressed={item.id === itemSelectionneId}
+              className={`w-full text-left px-4 py-3 cursor-pointer border-b border-gray-100 transition-colors hover:bg-gray-50 ${
                 item.id === itemSelectionneId
                   ? "bg-dsfr-blue-france-950 border-l-[3px] border-l-primary"
                   : ""
               }`}
-              role="button"
               key={item.id}
               onClick={() => onSelectionItem(item.id)}
+              type="button"
             >
               <div className="font-bold text-sm">{item.label}</div>
               <div className="text-xs text-gray-500 mt-1">{item.sousTitre}</div>
-            </div>
+            </button>
           ))}
         </div>
       </div>
@@ -97,7 +104,7 @@ export const EditeurContenu3Colonnes: FunctionComponent<
       <div className="flex-1 border-l border-gray-200 overflow-y-auto p-4">
         <h3 className="text-base font-bold mb-4">Aperçu</h3>
         <ContenuHtmlStyled
-          dangerouslySetInnerHTML={{ __html: contenuPreview }}
+          dangerouslySetInnerHTML={{ __html: contenuPreviewSanitise }}
         />
       </div>
     </div>

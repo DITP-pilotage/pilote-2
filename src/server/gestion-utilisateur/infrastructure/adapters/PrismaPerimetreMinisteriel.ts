@@ -24,9 +24,7 @@ const convertirEnPerimetreMinisteriel = (
   };
 };
 
-export class PrismaPerimetreMinisterielRepository
-  implements PerimetreMinisterielRepository
-{
+export class PrismaPerimetreMinisterielRepository implements PerimetreMinisterielRepository {
   async lister(
     listePerimetresMinisterielsIds: string[],
   ): Promise<PerimetreMinisteriel[]> {

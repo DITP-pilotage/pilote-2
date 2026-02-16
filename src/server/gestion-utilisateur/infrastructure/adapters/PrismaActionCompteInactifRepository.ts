@@ -3,9 +3,7 @@ import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { ActionCompteInactifRepository } from "@/server/gestion-utilisateur/domain/ports/ActionCompteInactifRepository";
 import { ActionCompteInactif } from "@/server/gestion-utilisateur/domain/ActionCompteInactif";
 
-export class PrismaActionCompteInactifRepository
-  implements ActionCompteInactifRepository
-{
+export class PrismaActionCompteInactifRepository implements ActionCompteInactifRepository {
   constructor(private readonly dependencies: { prisma: PrismaPilote }) {}
 
   async sauvegarder(action: ActionCompteInactif): Promise<void> {

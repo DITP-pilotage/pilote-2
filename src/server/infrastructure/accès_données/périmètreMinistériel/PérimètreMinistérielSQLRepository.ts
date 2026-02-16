@@ -9,9 +9,7 @@ class ErreurPérimètreSansMinistère extends Error {
   }
 }
 
-export default class PérimètreMinistérielSQLRepository
-  implements PérimètreMinistérielRepository
-{
+export default class PérimètreMinistérielSQLRepository implements PérimètreMinistérielRepository {
   private _mapperVersDomaine(
     périmètre: PérimètreMinistérielPrisma,
   ): PérimètreMinistériel {

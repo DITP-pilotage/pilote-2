@@ -5,9 +5,7 @@ import {
 } from "@/server/rapports-hebdomadaires/domain/ports/ActiviteComptesGateway";
 import { ActiviteComptes } from "@/server/rapports-hebdomadaires/domain/CompteActivite";
 
-export class GestionUtilisateurActiviteComptesGateway
-  implements ActiviteComptesGateway
-{
+export class GestionUtilisateurActiviteComptesGateway implements ActiviteComptesGateway {
   constructor(
     private readonly deps: {
       activiteComptesQuery: PrismaActiviteComptesQuery;

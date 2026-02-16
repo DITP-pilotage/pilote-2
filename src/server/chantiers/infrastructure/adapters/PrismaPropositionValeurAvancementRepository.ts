@@ -28,9 +28,7 @@ const convertirEnModel = (
   };
 };
 
-export class PrismaPropositionValeurAvancementRepository
-  implements PropositionValeurAvancementRepository
-{
+export class PrismaPropositionValeurAvancementRepository implements PropositionValeurAvancementRepository {
   async creerPropositionValeurAvancement(
     propositionValeurAvancement: PropositionValeurAvancement,
   ): Promise<void> {

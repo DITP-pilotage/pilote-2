@@ -1,9 +1,7 @@
 import { prisma } from "@/server/db/prisma";
 import { PropositionValeurAvancementRepository } from "@/server/gestion-utilisateur/domain/ports/PropositionValeurAvancementRepository";
 
-export class PrismaPropositionValeurAvancementRepository
-  implements PropositionValeurAvancementRepository
-{
+export class PrismaPropositionValeurAvancementRepository implements PropositionValeurAvancementRepository {
   async anonymiserAuteurs(
     auteursAAnonymiserIds: string[],
     emailAuteurRemplacement: string,

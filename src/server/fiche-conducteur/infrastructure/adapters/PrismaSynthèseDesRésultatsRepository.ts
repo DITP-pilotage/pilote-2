@@ -20,9 +20,7 @@ interface Dependencies {
   prisma: PrismaPilote;
 }
 
-export class PrismaSynthèseDesRésultatsRepository
-  implements SynthèseDesRésultatsRepository
-{
+export class PrismaSynthèseDesRésultatsRepository implements SynthèseDesRésultatsRepository {
   private prisma: PilotePrismaClient;
 
   constructor({ prisma }: Dependencies) {

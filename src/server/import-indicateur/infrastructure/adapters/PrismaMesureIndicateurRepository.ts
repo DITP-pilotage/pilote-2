@@ -32,9 +32,7 @@ const convertirEnIndicateurData = (
   });
 };
 
-export class PrismaMesureIndicateurRepository
-  implements MesureIndicateurRepository
-{
+export class PrismaMesureIndicateurRepository implements MesureIndicateurRepository {
   async sauvegarder(listeIndicateursData: IndicateurData[]): Promise<void> {
     const listeMesuresIndicateursModel =
       listeIndicateursData.map(convertirEnModel);

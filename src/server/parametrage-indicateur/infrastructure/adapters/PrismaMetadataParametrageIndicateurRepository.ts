@@ -185,9 +185,7 @@ function convertirEnMetadataParametrageIndicateur(
       rawMetadataParametrageIndicateur.couverture_temporelle,
   });
 }
-export class PrismaMetadataParametrageIndicateurRepository
-  implements MetadataParametrageIndicateurRepository
-{
+export class PrismaMetadataParametrageIndicateurRepository implements MetadataParametrageIndicateurRepository {
   async recupererListeMetadataParametrageIndicateurEnFonctionDesFiltres(
     chantierIds: string[],
     perimetreIds: string[],

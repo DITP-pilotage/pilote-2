@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { keepPreviousData } from "@tanstack/react-query";
 import { toast } from "sonner";
 import api from "@/server/infrastructure/api/trpc/api";
@@ -22,9 +22,24 @@ const templateInitial = `
 </ul>
 `;
 
-const calculerProchaineVersion = (versionActuelle: string): string => {
-  const [major, minor, patch] = versionActuelle.split(".");
-  return [major, minor, +patch + 1].join(".");
+export const calculerProchaineVersion = (versionActuelle: string): string => {
+  const segments = versionActuelle.split(".");
+  if (segments.length !== 3) {
+    return versionActuelle;
+  }
+
+  const [major, minor, patchStr] = segments;
+  const patch = Number(patchStr);
+
+  if (!Number.isInteger(patch)) {
+    return versionActuelle;
+  }
+
+  return [major, minor, String(patch + 1)].join(".");
+};
+
+const normaliserDateEnYYYYMMDD = (date: string): string => {
+  return date.split("T")[0];
 };
 
 export const useEditionNouveaute = () => {
@@ -48,6 +63,12 @@ export const useEditionNouveaute = () => {
     listeNouveautes?.[0]?.version || "1.0.0",
   );
 
+  useEffect(() => {
+    if (estCreation && version === "") {
+      setVersion(prochaineVersion);
+    }
+  }, [estCreation, version, prochaineVersion]);
+
   const items: ItemListe[] = (listeNouveautes || []).map((nouveaute) => ({
     id: nouveaute.id,
     label: `Version ${nouveaute.version}`,
@@ -62,7 +83,7 @@ export const useEditionNouveaute = () => {
       setItemSelectionneId(id);
       setContenu(nouveaute.contenu);
       setVersion(nouveaute.version);
-      setDate(nouveaute.date);
+      setDate(normaliserDateEnYYYYMMDD(nouveaute.date));
       setEstCreation(false);
     },
     [listeNouveautes],
@@ -79,7 +100,7 @@ export const useEditionNouveaute = () => {
   const mutationCreer = api.parametrageNouveautes.creer.useMutation({
     onSuccess: (_data, variables) => {
       refetchListe();
-      setItemSelectionneId(variables.id!);
+      setItemSelectionneId(variables.id);
       setEstCreation(false);
       toast.success("Nouveauté créée avec succès", {
         duration: 3000,

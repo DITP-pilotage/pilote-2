@@ -9,9 +9,7 @@ const KEYCLOAK_REALM = "DITP";
 
 const DAY_IN_SECONDS = 3600 * 24;
 
-export default class UtilisateurIAMKeycloakRepository
-  implements UtilisateurIAMRepository
-{
+export default class UtilisateurIAMKeycloakRepository implements UtilisateurIAMRepository {
   private kcAdminClient: KcAdminClient | undefined;
 
   constructor(

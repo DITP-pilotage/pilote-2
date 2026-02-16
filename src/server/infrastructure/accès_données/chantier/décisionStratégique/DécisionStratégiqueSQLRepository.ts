@@ -24,9 +24,7 @@ export const CODES_TYPES_DÉCISION_STRATÉGIQUE: Record<
   suiviDesDécisionsStratégiques: "suivi_des_decisions",
 };
 
-export default class DécisionStratégiqueSQLRepository
-  implements DécisionStratégiqueRepository
-{
+export default class DécisionStratégiqueSQLRepository implements DécisionStratégiqueRepository {
   private mapperVersDomaine(
     décisionStratégique: DécisionStratégiquePrisma & {
       auteur_decision_strategique: utilisateur | null;

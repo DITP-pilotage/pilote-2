@@ -13,9 +13,7 @@ interface Dependencies {
   keycloakClientSecret: string;
 }
 
-export class KeycloakBrevoProfilModifieSideEffects
-  implements ProfilModifieSideEffects
-{
+export class KeycloakBrevoProfilModifieSideEffects implements ProfilModifieSideEffects {
   private readonly emailManager: EmailManager;
 
   private readonly keycloakUrl: string;

@@ -18,7 +18,7 @@ export class CreerNouveauteUseCase {
     version,
     date,
   }: {
-    id?: string;
+    id: string;
     contenu: string;
     version: string;
     date: string;

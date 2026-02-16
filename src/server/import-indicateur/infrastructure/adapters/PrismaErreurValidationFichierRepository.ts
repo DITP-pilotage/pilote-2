@@ -19,9 +19,7 @@ const convertirEnModel = (
   };
 };
 
-export class PrismaErreurValidationFichierRepository
-  implements ErreurValidationFichierRepository
-{
+export class PrismaErreurValidationFichierRepository implements ErreurValidationFichierRepository {
   async sauvegarder(
     listeErreursValidationFichier: ErreurValidationFichier[],
   ): Promise<void> {

@@ -12,9 +12,7 @@ import Chantier from "@/server/domain/chantier/Chantier.interface";
 import { territoireCodeVersMailleCodeInsee } from "@/server/utils/territoires";
 import { prisma } from "@/server/db/prisma";
 
-export class SynthèseDesRésultatsSQLRepository
-  implements SynthèseDesRésultatsRepository
-{
+export class SynthèseDesRésultatsSQLRepository implements SynthèseDesRésultatsRepository {
   private mapperVersDomaine(
     synthèse:
       | (synthese_des_resultats & { auteur_synthese: UtilisateurPrisma | null })
