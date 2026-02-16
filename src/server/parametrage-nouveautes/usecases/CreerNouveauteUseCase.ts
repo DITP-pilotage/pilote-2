@@ -13,10 +13,12 @@ export class CreerNouveauteUseCase {
   }
 
   async execute({
+    id,
     contenu,
     version,
     date,
   }: {
+    id?: string;
     contenu: string;
     version: string;
     date: string;
@@ -26,6 +28,7 @@ export class CreerNouveauteUseCase {
     const verifiedVersion = Nouveaute.verifyVersion(version);
 
     const nouveaute = Nouveaute.creerNouveaute({
+      id,
       contenu: contenuSanitized,
       version: verifiedVersion,
       date,

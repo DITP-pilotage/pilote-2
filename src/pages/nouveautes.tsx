@@ -2,19 +2,9 @@ import Head from "next/head";
 import { GetServerSideProps } from "next";
 import { FunctionComponent } from "react";
 import Nouveautés from "@/components/Nouveautés/Nouveautés";
-import { ProfilEnum } from "@/server/app/enum/profil.enum";
-import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
 import { getContainer } from "@/server/dependances";
 
-export const getServerSideProps: GetServerSideProps<{
-  estAutoriseAModifierLesNouveautés: boolean;
-}> = async (context) => {
-  const { res } = context;
-  const session = await auth(context);
-
-  const estAutoriseAModifierLesNouveautés =
-    session?.profil === ProfilEnum.DITP_ADMIN;
-
+export const getServerSideProps: GetServerSideProps = async ({ res }) => {
   const listeNouveautes = await getContainer("parametrageNouveautes")
     .resolve("listerNouveautesUseCase")
     .execute();
@@ -27,23 +17,17 @@ export const getServerSideProps: GetServerSideProps<{
   );
 
   return {
-    props: {
-      estAutoriseAModifierLesNouveautés,
-    },
+    props: {},
   };
 };
 
-const NextPageNouveautés: FunctionComponent<{
-  estAutoriseAModifierLesNouveautés: boolean;
-}> = ({ estAutoriseAModifierLesNouveautés }) => {
+const NextPageNouveautés: FunctionComponent = () => {
   return (
     <>
       <Head>
         <title>Nouveautés</title>
       </Head>
-      <Nouveautés
-        estAutoriseAModifierLesNouveautés={estAutoriseAModifierLesNouveautés}
-      />
+      <Nouveautés />
     </>
   );
 };

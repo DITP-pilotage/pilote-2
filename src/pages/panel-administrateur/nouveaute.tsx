@@ -2,6 +2,7 @@ import Head from "next/head";
 import { GetServerSideProps } from "next";
 import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
 import { NextPanelAdministrateurLayout } from "@/components/PagePanelAdministrateur/PanelAdministrateurLayout/layout";
+import { PagePanelAdministrateurNouveaute } from "@/components/PagePanelAdministrateur/PagePanelAdministrateurNouveaute/PagePanelAdministrateurNouveaute";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const session = await auth(context);
@@ -28,8 +29,7 @@ const NextPagePanelAdministrateurNouveaute = () => {
         <title>Panel Administrateur - Nouveauté - PILOTE</title>
       </Head>
       <NextPanelAdministrateurLayout pageActive="nouveaute">
-        <h2>Nouveauté</h2>
-        <p>Contenu à venir...</p>
+        <PagePanelAdministrateurNouveaute />
       </NextPanelAdministrateurLayout>
     </>
   );

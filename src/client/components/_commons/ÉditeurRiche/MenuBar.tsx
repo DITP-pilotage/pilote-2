@@ -1,4 +1,5 @@
 import { Editor } from "@tiptap/react";
+import { useCallback } from "react";
 import { Icone } from "@/components/_commons/Icone";
 import { ListOrderedIcon } from "@/components/_commons/Icones/ListOrderedIcon";
 import { clsxm } from "@/utils/clsxm";

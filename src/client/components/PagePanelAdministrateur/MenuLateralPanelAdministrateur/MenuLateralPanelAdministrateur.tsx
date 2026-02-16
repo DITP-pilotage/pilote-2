@@ -1,4 +1,4 @@
-import { FunctionComponent } from "react";
+import { FunctionComponent, useState } from "react";
 import Link from "next/link";
 import { clsxm } from "@/utils/clsxm";
 
@@ -23,7 +23,7 @@ const menuItems = [
     pageKey: "metadata-chantier",
   },
   {
-    label: "🚧 Nouveauté 🚧",
+    label: "Nouveauté",
     href: "/panel-administrateur/nouveaute",
     pageKey: "nouveaute",
   },
@@ -37,22 +37,43 @@ const menuItems = [
 export const MenuLateralPanelAdministrateur: FunctionComponent<
   MenuLateralPanelAdministrateurProps
 > = ({ pageActive }) => {
+  const [estReplie, setEstReplie] = useState(false);
+
   return (
     <nav
       aria-label="Menu latéral"
-      className="bg-white border-r border-gray-200 min-w-[250px] shrink-0"
+      className={clsxm(
+        "bg-white border-r border-gray-200 shrink-0 relative transition-all duration-200",
+        estReplie ? "w-[48px]" : "min-w-[250px]",
+      )}
       role="navigation"
     >
-      <div className="p-4">
-        <button
-          aria-controls="fr-sidemenu-wrapper"
-          aria-expanded="false"
-          className="hidden"
-          type="button"
+      <button
+        className="absolute -right-3 top-4 z-10 w-6 h-6 bg-white border border-gray-300 rounded-full flex items-center justify-center hover:bg-gray-100 shadow-sm"
+        onClick={() => setEstReplie(!estReplie)}
+        title={estReplie ? "Déplier le menu" : "Replier le menu"}
+        type="button"
+      >
+        <svg
+          className={clsxm(
+            "w-3 h-3 transition-transform duration-200",
+            estReplie && "rotate-180",
+          )}
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
         >
-          Panel Administrateur
-        </button>
-        <div id="fr-sidemenu-wrapper">
+          <path
+            d="M15 19l-7-7 7-7"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+          />
+        </svg>
+      </button>
+
+      {!estReplie && (
+        <div className="p-4">
           <div className="text-lg font-bold mb-4 text-gray-900">
             Panel Administrateur
           </div>
@@ -80,7 +101,7 @@ export const MenuLateralPanelAdministrateur: FunctionComponent<
             })}
           </ul>
         </div>
-      </div>
+      )}
     </nav>
   );
 };
