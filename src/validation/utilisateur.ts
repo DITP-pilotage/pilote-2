@@ -73,32 +73,51 @@ export const validationInfosBaseUtilisateurSecretariatGeneral = z.object({
   applicationsAccessibles: z.array(z.nativeEnum($Enums.application_accessible)),
 });
 
-const DOMAINES_AUTORISES_COORDINATEUR = [
+const DOMAINES_AUTORISES_COORDINATEUR_BASE = [
   ".gouv.fr",
   ".caf.fr",
   ".cnafmail.fr",
-  "ars.sante.fr",
 ];
 
-const adresseEstValideCoordinateur = (adresse: string): boolean =>
-  DOMAINES_AUTORISES_COORDINATEUR.some((domaine) => adresse.endsWith(domaine));
+const domainesAutorisesCoordinateur = (
+  creationCompteArsActive: boolean,
+): string[] => [
+  ...DOMAINES_AUTORISES_COORDINATEUR_BASE,
+  ...(creationCompteArsActive ? ["ars.sante.fr"] : []),
+];
 
-export const validationInfosBaseUtilisateurCoordinateur = z.object({
-  email: z
-    .string()
-    .email()
-    .min(1)
-    .max(100)
-    .refine((value) => adresseEstValideCoordinateur(value), {
-      message: customErrorMail,
-    }),
-  nom: z.string().min(1).max(100),
-  prénom: z.string().min(1).max(100),
-  fonction: z.string().max(100).nullable(),
-  profil: z.enum(profilsCodes),
-  saisieIndicateur: z.boolean(),
-  applicationsAccessibles: z.array(z.nativeEnum($Enums.application_accessible)),
-});
+const adresseEstValideCoordinateur = (
+  adresse: string,
+  creationCompteArsActive: boolean,
+): boolean =>
+  domainesAutorisesCoordinateur(creationCompteArsActive).some((domaine) =>
+    adresse.endsWith(domaine),
+  );
+
+export const validationInfosBaseUtilisateurCoordinateur = (
+  creationCompteArsActive: boolean,
+) =>
+  z.object({
+    email: z
+      .string()
+      .email()
+      .min(1)
+      .max(100)
+      .refine(
+        (value) => adresseEstValideCoordinateur(value, creationCompteArsActive),
+        {
+          message: customErrorMail,
+        },
+      ),
+    nom: z.string().min(1).max(100),
+    prénom: z.string().min(1).max(100),
+    fonction: z.string().max(100).nullable(),
+    profil: z.enum(profilsCodes),
+    saisieIndicateur: z.boolean(),
+    applicationsAccessibles: z.array(
+      z.nativeEnum($Enums.application_accessible),
+    ),
+  });
 
 export const validationInfosHabilitationsUtilisateur = z.object({
   habilitations: z.object({
@@ -147,10 +166,13 @@ export const codesTerritoiresDROM = [
   "DEPT-976",
 ];
 
-export const donneValidationInfosBaseUtilisateur = (profil: ProfilCode) => {
+export const donneValidationInfosBaseUtilisateur = (
+  profil: ProfilCode,
+  creationCompteArsActive: boolean = false,
+) => {
   return [ProfilEnum.DITP_ADMIN, ProfilEnum.DITP_PILOTAGE].includes(profil)
     ? validationInfosBaseUtilisateur
     : profil === ProfilEnum.SECRETARIAT_GENERAL
       ? validationInfosBaseUtilisateurSecretariatGeneral
-      : validationInfosBaseUtilisateurCoordinateur;
+      : validationInfosBaseUtilisateurCoordinateur(creationCompteArsActive);
 };

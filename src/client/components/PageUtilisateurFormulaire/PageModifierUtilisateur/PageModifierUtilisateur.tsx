@@ -4,8 +4,11 @@ import { pageModifierUtilisateur } from "@/components/PageUtilisateurFormulaire/
 import PageModifierUtilisateurStyled from "./PageModifierUtilisateur.styled";
 
 const PageModifierUtilisateur = () => {
-  const { utilisateur, estAutoriseAVoirLeSelecteurApplication } =
-    pageModifierUtilisateur.useServerSidePropsContext();
+  const {
+    utilisateur,
+    estAutoriseAVoirLeSelecteurApplication,
+    creationCompteArsActive,
+  } = pageModifierUtilisateur.useServerSidePropsContext();
 
   const chemin = [{ nom: "Gestion des comptes", lien: "/admin/utilisateurs" }];
 
@@ -18,6 +21,7 @@ const PageModifierUtilisateur = () => {
             estAutoriseAVoirLeSelecteurApplication={
               estAutoriseAVoirLeSelecteurApplication
             }
+            creationCompteArsActive={creationCompteArsActive}
             utilisateur={utilisateur}
           />
         </div>

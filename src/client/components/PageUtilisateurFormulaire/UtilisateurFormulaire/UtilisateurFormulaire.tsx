@@ -22,6 +22,7 @@ import SaisieDesInformationsUtilisateur from "./SaisieDesInformationsUtilisateur
 const UtilisateurFormulaire: FunctionComponent<UtilisateurFormulaireProps> = ({
   utilisateur,
   estAutoriseAVoirLeSelecteurApplication,
+  creationCompteArsActive,
 }) => {
   const étapes = [
     "Identifier l'utilisateur",
@@ -41,7 +42,10 @@ const UtilisateurFormulaire: FunctionComponent<UtilisateurFormulaireProps> = ({
 
   const reactHookForm = useForm<UtilisateurFormInputs>({
     resolver: zodResolver(
-      donneValidationInfosBaseUtilisateur(session!.profil),
+      donneValidationInfosBaseUtilisateur(
+        session!.profil,
+        creationCompteArsActive,
+      ),
       // il faut split des schemas en 3, la on a des if dans les schema zod s'y perd
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ) as any,
@@ -117,6 +121,7 @@ const UtilisateurFormulaire: FunctionComponent<UtilisateurFormulaireProps> = ({
             <form onSubmit={reactHookForm.handleSubmit(passerAuRécapitulatif)}>
               {etapeCourante === 1 && (
                 <SaisieDesInformationsUtilisateur
+                  creationCompteArsActive={creationCompteArsActive}
                   estAutoriseAVoirLeSelecteurApplication={
                     estAutoriseAVoirLeSelecteurApplication
                   }
