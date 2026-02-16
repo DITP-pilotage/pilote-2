@@ -30,10 +30,17 @@ export class CreerLesRapportsPropositionsUseCase {
     const indicateursNonAJourParChantier =
       await this.dependencies.indicateurRepository.recupererIndicateursNonAJourParChantierId();
 
+    const jalon = new Date().getFullYear();
+    const indicateursAParametrerParChantier =
+      await this.dependencies.indicateurRepository.recupererIndicateursAParametrerParChantierId(
+        jalon,
+      );
+
     const listeChantiersIdsRapport = [
       ...new Set([
         ...propositionsParChantier.keys(),
         ...indicateursNonAJourParChantier.keys(),
+        ...indicateursAParametrerParChantier.keys(),
       ]),
     ];
 
@@ -62,6 +69,7 @@ export class CreerLesRapportsPropositionsUseCase {
             directeur.listeChantiers,
             propositionsParChantier,
             indicateursNonAJourParChantier,
+            indicateursAParametrerParChantier,
           )
         ) {
           continue;
@@ -72,6 +80,7 @@ export class CreerLesRapportsPropositionsUseCase {
           mapChantiersPropositionInformation,
           propositionsParChantier,
           indicateursNonAJourParChantier,
+          indicateursAParametrerParChantier,
         );
 
         const rapport = creerRapportPropositionsAvancement({
@@ -103,11 +112,13 @@ export class CreerLesRapportsPropositionsUseCase {
     listeChantiers: string[],
     propositionsParChantier: Map<string, unknown>,
     indicateursNonAJourParChantier: Map<string, unknown>,
+    indicateursAParametrerParChantier: Map<string, unknown>,
   ): boolean {
     return listeChantiers.some(
       (chantierId) =>
         propositionsParChantier.has(chantierId) ||
-        indicateursNonAJourParChantier.has(chantierId),
+        indicateursNonAJourParChantier.has(chantierId) ||
+        indicateursAParametrerParChantier.has(chantierId),
     );
   }
 }

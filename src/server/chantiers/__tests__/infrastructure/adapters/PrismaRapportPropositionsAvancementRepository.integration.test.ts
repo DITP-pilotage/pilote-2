@@ -41,6 +41,9 @@ describe("PrismaRapportPropositionsAvancementRepository", () => {
                 indicateursNonMisAJour: [],
                 nombreIndicateursNonMisAJour:
                   "aucun indicateur à mettre à jour",
+                nombreIndicateursAParametrer: "aucun indicateur à paramétrer",
+                afficherSectionParametrage: false,
+                indicateursAParametrer: [],
               },
             ],
             conseillerEmail: "conseiller@test.com",

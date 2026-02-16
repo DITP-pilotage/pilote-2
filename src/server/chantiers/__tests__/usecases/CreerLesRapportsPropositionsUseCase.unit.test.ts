@@ -49,6 +49,10 @@ describe("CreerLesRapportsPropositionsUseCase", () => {
     rapportPropositionsAvancementRepository =
       mock<RapportPropositionsAvancementRepository>();
 
+    indicateurRepository.recupererIndicateursAParametrerParChantierId.mockResolvedValue(
+      new Map(),
+    );
+
     useCase = new CreerLesRapportsPropositionsUseCase({
       chantierRepository,
       utilisateurRepository,
@@ -350,6 +354,75 @@ describe("CreerLesRapportsPropositionsUseCase", () => {
     expect(resultat).toEqual({
       rapportsCrees: 1,
       erreursCreation: 1,
+    });
+  });
+
+  it("crée un rapport pour un directeur avec des indicateurs à paramétrer", async () => {
+    // Given
+    indicateurTerritoireValeurEvenementRepository.recupererLesPropositionsEnCoursParChantierIds.mockResolvedValue(
+      new Map(),
+    );
+    indicateurRepository.recupererIndicateursNonAJourParChantierId.mockResolvedValue(
+      new Map(),
+    );
+    indicateurRepository.recupererIndicateursAParametrerParChantierId.mockResolvedValue(
+      new Map([
+        [
+          "CH-001",
+          [
+            { id: "IND-001", nom: "Indicateur 1" },
+            { id: "IND-002", nom: "Indicateur 2" },
+          ],
+        ],
+      ]),
+    );
+    utilisateurRepository.recupererUtilisateursParProfilEtChantierIds.mockResolvedValue(
+      [
+        Utilisateur.creerUtilisateur({
+          id: "user-1",
+          email: "directeur@test.com",
+          nom: "Dupont",
+          prenom: "Jean",
+          listeChantiers: ["CH-001"],
+        }),
+      ],
+    );
+    chantierRepository.recupererListePropositionValeurAvancementChantierInformationParChantiersIds.mockResolvedValue(
+      [
+        {
+          id: "CH-001",
+          nom: "Chantier 1",
+          statut: "PUBLIE",
+          conseillerMail: "conseiller@test.com",
+        },
+      ],
+    );
+
+    // When
+    const resultat = await useCase.run();
+
+    // Then
+    expect(
+      rapportPropositionsAvancementRepository.sauvegarder,
+    ).toHaveBeenCalledWith(
+      expect.objectContaining({
+        contenuRapport: expect.objectContaining({
+          chantiers: [
+            expect.objectContaining({
+              id_chantier: "CH-001",
+              afficherSectionParametrage: true,
+              indicateursAParametrer: [
+                { id: "IND-001", nom: "Indicateur 1" },
+                { id: "IND-002", nom: "Indicateur 2" },
+              ],
+            }),
+          ],
+        }),
+      }),
+    );
+    expect(resultat).toEqual({
+      rapportsCrees: 1,
+      erreursCreation: 0,
     });
   });
 
