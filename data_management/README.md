@@ -295,6 +295,19 @@ bash scripts/7_fill_tables_public.sh
 docker-compose run pilote_scripts scripts/7_fill_tables_public.sh
 ```
 
+### Développement et comparaison des données local vs prod/dev
+
+Afin de pouvoir anticiper les conséquences de changements sur la datafactory il est possible d'utiliser le script python [`scripts/compare_local_vs_target.py`](scripts/compare_local_vs_target.py).
+
+Typiquement, après avoir créé un tunnel vers la dev, fait une descente de dev et lancé les jobs en local :
+```bash
+pipenv run LOG_LEVEL=WARN PGHOST="localhost" python scripts/compare_local_vs_target.py
+```
+
+Il est possible de préciser des connections strings de 2 bases de données différentes et de passer des noms de table précis au script (cf doc du script). Par défaut il compare une liste de tables d'exposition.
+
+Par défaut, le script génère des fichiers CSV dans le dossier [`scripts/output/`](scripts/output/) pour étudier en détail les différences entre les 2 tables.
+
 # Schéma des flux de données
 
 Ce document souhaite poser les bases des flux de données alimentant l'application _Pilote 2_.

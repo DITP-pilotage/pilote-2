@@ -15,12 +15,15 @@ get_evol_vaca AS (
     SELECT
         indic_id,
         zone_id,
-        JSONB_AGG(JSONB_BUILD_OBJECT(
-            'date', metric_date,
-            'valeur', vaca,
-            'taux_avancement_jalon', taa_adate,
-            'taux_avancement_mandat', tag
-        )) AS evolution_avancement
+        JSONB_AGG(
+            JSONB_BUILD_OBJECT(
+                'date', metric_date,
+                'valeur', vaca,
+                'taux_avancement_jalon', taa_adate,
+                'taux_avancement_mandat', tag
+            )
+            ORDER BY metric_date
+        ) AS evolution_avancement
     FROM {{ ref('compute_ta_indic') }}
     WHERE vaca IS NOT NULL
     GROUP BY indic_id, zone_id
@@ -34,10 +37,10 @@ SELECT
     territoire.code_insee,
     territoire.zone_id,
     gvcg.vcg AS valeur_cible_mandat,
-    a.tag AS taux_avancement_mandat,
-    a.date_valeur_actuelle::DATE AS date_valeur_actuelle_mandat,
+    last_vaca.tag AS taux_avancement_mandat,
+    last_vaca.date_valeur_actuelle::DATE AS date_valeur_actuelle_mandat,
     gvig.vig_date::DATE AS date_valeur_initiale,
-    a.vaca AS valeur_actuelle_mandat,
+    last_vaca.vaca AS valeur_actuelle_mandat,
     gvig.vig AS valeur_initiale,
     territoire.nom AS territoire_nom,
     gvcg.vcg_date::DATE AS date_valeur_cible_mandat,
@@ -68,7 +71,7 @@ SELECT
             THEN date_pro_maj.prochaine_date_maj_jours
     END AS prochaine_date_maj_jours,
     meta_indic_parametrage.tendance,
-    a.tap_global AS taux_avancement_mandat_proposition,
+    last_vaca.tap_global AS taux_avancement_mandat_proposition,
     CASE
         WHEN
             COALESCE(z_appl.est_applicable, TRUE)
@@ -86,8 +89,10 @@ LEFT JOIN {{ ref('stg_ppg_metadata__zones') }} AS meta_zone
     ON territoire.zone_id = meta_zone.id
 LEFT JOIN {{ ref('get_vcg') }} AS gvcg
     ON meta_indic.id = gvcg.indic_id AND territoire.zone_id = gvcg.zone_id
-LEFT JOIN {{ ref('get_last_vaca') }} AS a
-    ON meta_indic.id = a.indic_id AND territoire.zone_id = a.zone_id
+LEFT JOIN {{ ref('get_last_vaca') }} AS last_vaca
+    ON
+        meta_indic.id = last_vaca.indic_id
+        AND territoire.zone_id = last_vaca.zone_id
 LEFT JOIN {{ ref('get_vig') }} AS gvig
     ON meta_indic.id = gvig.indic_id AND territoire.zone_id = gvig.zone_id
 LEFT JOIN {{ ref('int_indicateurs_zones_applicables') }} AS z_appl

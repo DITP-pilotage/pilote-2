@@ -1,28 +1,49 @@
 WITH coord_locaux AS (
-    SELECT 
-        ARRAY_AGG(INITCAP(u.prenom) || ' ' || INITCAP(u.nom)) AS nom, 
-        ARRAY_AGG(u.email) AS email, 
-        profil_code,
-        UNNEST(h.territoires) AS territoire_code
-    FROM 
-        {{ source('db_schema_public', 'habilitation') }} h 
-        LEFT JOIN {{ source('db_schema_public', 'utilisateur') }} u ON h.utilisateur_id = u.id 
-    WHERE 
-        (u.profil_code = 'COORDINATEUR_REGION' OR u.profil_code = 'COORDINATEUR_DEPARTEMENT')
-        AND u.date_desactivation is NULL
-        AND h.scope_code = 'lecture'
-    GROUP BY territoire_code, u.profil_code
+    SELECT
+    -- On trie par email pour éviter les différences de tri
+    -- et que les noms soient associés aux bons emails
+    -- (email est PK d'utilisateurs dc pas de doublons)
+        ARRAY_AGG(
+            INITCAP(utilisateur.prenom)
+            || ' '
+            || INITCAP(utilisateur.nom)
+            ORDER BY utilisateur.email
+        )
+            AS nom,
+        ARRAY_AGG(utilisateur.email ORDER BY utilisateur.email) AS email,
+        utilisateur.profil_code,
+        UNNEST(habilitation.territoires) AS territoire_code
+    FROM
+        {{ source('db_schema_public', 'habilitation') }} AS habilitation
+    LEFT JOIN
+        {{ source('db_schema_public', 'utilisateur') }} AS utilisateur
+        ON habilitation.utilisateur_id = utilisateur.id
+    WHERE
+        (
+            utilisateur.profil_code = 'COORDINATEUR_REGION'
+            OR utilisateur.profil_code = 'COORDINATEUR_DEPARTEMENT'
+        )
+        AND utilisateur.date_desactivation IS NULL
+        AND habilitation.scope_code = 'lecture'
+    GROUP BY territoire_code, utilisateur.profil_code
 )
 
-SELECT 
-	a.nom,
-	email,
-	territoire_code,
-    t.zone_id
-FROM coord_locaux a
-left join {{ source('db_schema_public', 'territoire') }} t on a.territoire_code=t.code
-LEFT JOIN {{ ref('stg_ppg_metadata__zones') }} z ON t.zone_id=z.id
-WHERE 
-    (profil_code = 'COORDINATEUR_REGION' AND z.maille='REG')
-    OR 
-    (profil_code = 'COORDINATEUR_DEPARTEMENT' AND z.maille='DEPT')
+SELECT
+    coord_locaux.nom,
+    coord_locaux.email,
+    coord_locaux.territoire_code,
+    territoire.zone_id
+FROM coord_locaux
+LEFT JOIN
+    {{ source('db_schema_public', 'territoire') }} AS territoire
+    ON coord_locaux.territoire_code = territoire.code
+LEFT JOIN
+    {{ ref('stg_ppg_metadata__zones') }} AS zones
+    ON territoire.zone_id = zones.id
+WHERE
+    (coord_locaux.profil_code = 'COORDINATEUR_REGION' AND zones.maille = 'REG')
+    OR
+    (
+        coord_locaux.profil_code = 'COORDINATEUR_DEPARTEMENT'
+        AND zones.maille = 'DEPT'
+    )
