@@ -21,7 +21,7 @@ mesure_last_params_dept AS (
         metadata_indic.vc_dept_from,
         metadata_indic.vc_dept_op
     FROM
-        {{ ref('mesure_last_null_erase_keep_lastvalmonth') }}
+        {{ ref('mesure_last') }}
             AS mesure_lastvalmonth
     LEFT JOIN
         {{ source('parametrage_indicateurs', 'metadata_parametrage_indicateurs') }} -- noqa: LT05

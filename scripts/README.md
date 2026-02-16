@@ -43,6 +43,11 @@ bash scripts/anonymisation_utilisateurs.sh
 
 Voir [daily](./daily).
 
+
+## Scripts de migration
+
+Voir [migration](./migration/README.md).
+
 ## Exécuter sur Scalingo
 
 Etapes à réaliser sur Scalingo:

@@ -3,28 +3,10 @@ version: 2
 models:
   - name: mesure_last
     description: |
-        Pour chaque {indic_id, metric_type, metric_date, zone_id}, on retourne la valeur la plus récente. Règles:
-
+        Pour chaque {indic_id, metric_type, mois de la metric_date, zone_id}, on retourne la valeur la plus récente. Règles:
         - On ne garde que les mesures sur les **zones applicables** (voir `view_meta_indicateur` colonne `zg_applicable` et ref `int_indicateurs_zones_applicables` pour les détails)
-        - Si 2 valeurs pour le meme {indic_id, metric_type, metric_date, zone_id}, on retourne celle avec la date d'import la plus récente. On dit que c'est la valeur **valable**. Ex: `[{date_import1, 12-dec-25, va, 10}, {date_import2, 12-dec-25, va, 15}] => [{date_import2, 12-dec-25, va, 15}]`
-        - Si 2 valeurs dans le même mois, à des jours différents, on garde **les deux**. Ces deux valeurs sont des *valeurs valables*.
-        - Transformation de `'null'` et `''` vers un `NULL`
-
-        *Note:* Avant de charger la table des données importées (`source('import_from_files', 'mesure_indicateur')`), on remplace les valeurs `metric_date='2023-06-31'` par `metric_date='2023-06-30'`. C'est la table intermédiaire `fix_mesure_indicateur_06_31`.
-  - name: mesure_last_null_erase
-    description: |
-        On modifie la table précédente `mesure_last`. Si un `NULL` existe, on enlève toutes les autres valeurs du mois. Règles:
-
-        - Si un `NULL` est *valable*, on supprime toutes les autres valeurs *valables* de ce mois. Ex: `[{12-dec-25, va, 10}, {17-dec-25, va, 15}, {23-dec-25, va, NULL}] => [{23-dec-25, va, NULL}]`
-  - name: mesure_last_null_erase_keep_lastvalmonth
-    description: |
-        On modifie la table précédente `mesure_last_null_erase`. Règles:
-
-        - 1. Si plusieurs valeurs sont valables pour un même mois, on garde la valeur importée le plus récemment et on arrondit sa date au premier jour du mois.
-        - **Cas particulier:** si on ne peut pas déterminer la valeur *importée le plus récemment* (règle précédente inefficace), càd que 2 valeurs sont importées au même mois lors du même import, on sélectionne la valeur avec la `metric_date` la plus tardive dans le mois
-        - **Cas particulier:** si on ne peut pas déterminer la *`metric_date` la plus tardive* (règle précédente inefficace), càd que 2 valeurs sont importées lorsque 2 valeurs sont importées au même mois lors du même import, **avec la `metric_date`** -> C'est **impossible**, car le schema validata d'import des données empêche cela ([cf schema validata](https://github.com/DITP-pilotage/pilote-2/blob/43832f300e3b1ef97a35cc197388c23b49928333/public/schema/sans-contraintes.json#L114-L119))
-
-        *Bug corrigé [PIL-88](https://data-ditp.atlassian.net/browse/PIL-88):* Ce bug est survenu car avant ce correctif, pour déterminer la "valeur importée le plus récemment" (dans *1.*), on triait les *dates d'import* et non les *timestamp complets*. Donc si deux valeurs étaient importées le même jour, elles apparaissaient toutes deux au *rang=1* donc impossible de les départager.
+        - Si 2 valeurs pour le meme {indic_id, metric_type, metric_month, zone_id}, on retourne celle avec la date d'import la plus récente.
+        - On remplace la date de la metric date par le premier jour du mois
   - name: agg_dept
     description: |
         Sélection des valeurs et calculs des aggrégation pour le niveau DEPT en fonction des paramètres. Règles:
