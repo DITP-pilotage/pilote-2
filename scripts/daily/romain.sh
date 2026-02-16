@@ -1,7 +1,7 @@
 # Daily script to:
 #   - reset the db
 #   - exec descente de dev
-#   - run FULL_DJ datajobs
+#   - run datajobs with FULL_DJ=false
 # 
 # Warn: only with docker commands
 
