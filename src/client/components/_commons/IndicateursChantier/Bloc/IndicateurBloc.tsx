@@ -161,8 +161,8 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                     <strong>{indicateur.id}</strong>
                   </p>
                   <p className="fr-mb-0 fr-text--xs texte-gris">
-                    Dernière mise à jour des données (de l'indicateur, toutes
-                    zones confondues) :{" "}
+                    Dernière mise à jour de la valeur d'avancement pour le
+                    territoire :{" "}
                     <span className="bold">
                       {dateDeMiseAJourIndicateur ?? "Non renseignée"}
                     </span>

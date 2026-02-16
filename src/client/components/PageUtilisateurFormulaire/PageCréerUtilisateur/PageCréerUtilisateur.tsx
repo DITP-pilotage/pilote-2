@@ -4,7 +4,7 @@ import { pageCreerUtilisateur } from "@/components/PageUtilisateurFormulaire/Pag
 import PageCréerUtilisateurStyled from "./PageCréerUtilisateur.styled";
 
 const PageCréerUtilisateur = () => {
-  const { estAutoriseAVoirLeSelecteurApplication } =
+  const { estAutoriseAVoirLeSelecteurApplication, creationCompteArsActive } =
     pageCreerUtilisateur.useServerSidePropsContext();
   const chemin = [{ nom: "Gestion des comptes", lien: "/admin/utilisateurs" }];
 
@@ -17,6 +17,7 @@ const PageCréerUtilisateur = () => {
             estAutoriseAVoirLeSelecteurApplication={
               estAutoriseAVoirLeSelecteurApplication
             }
+            creationCompteArsActive={creationCompteArsActive}
           />
         </div>
       </main>

@@ -284,6 +284,11 @@ const config = convict({
       default: false,
       env: "NEXT_PUBLIC_FF_RAPPORT_PVA",
     },
+    creationCompteArs: {
+      format: Boolean,
+      default: false,
+      env: "NEXT_PUBLIC_FF_CREATION_COMPTE_ARS",
+    },
   },
   analytics: {
     doc: "Matomo Analytics",

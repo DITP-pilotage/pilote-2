@@ -32,6 +32,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
       estAutoriseAVoirLeSelecteurApplication:
         configurationFeatureFlip().piloteEval &&
         [ProfilEnum.DITP_ADMIN].includes(session.profil),
+      creationCompteArsActive: configurationFeatureFlip().creationCompteArs,
     },
   };
 }
