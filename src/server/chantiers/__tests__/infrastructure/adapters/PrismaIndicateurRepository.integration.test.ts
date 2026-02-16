@@ -5993,4 +5993,611 @@ describe("PrismaIndicateurRepository", () => {
       }),
     );
   });
+
+  describe("#recupererIndicateursAParametrerParChantierId", () => {
+    it(
+      "doit retourner les indicateurs sans valeur_initiale",
+      createIntegrationTest(async () => {
+        // Given
+        const chantier = await fixtures.chantierIdentite({
+          id: "CH-001",
+          statut: "PUBLIE",
+        });
+
+        await fixtures.chantierTerritoire({
+          id: chantier.id,
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+        });
+
+        const indicateur = await fixtures.indicateurIdentite({
+          id: "IND-001",
+          nom: "Indicateur 001",
+          chantier_id: chantier.id,
+          statut: "PUBLIE",
+        });
+
+        // valeur_initiale null, valeur_cible renseignée
+        await fixtures.indicateurTerritoire({
+          id: indicateur.id,
+          chantier_id: chantier.id,
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+          est_applicable: true,
+          est_a_jour: true,
+          valeur_initiale: null,
+        });
+
+        await fixtures.indicateurTerritoireJalon({
+          id: indicateur.id,
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+          jalon: 2025,
+          valeur_cible: 100,
+          date_valeur_cible: new Date("2025-12-31"),
+          valeur_actuelle: 50,
+          date_valeur_actuelle: new Date("2025-06-01"),
+          taux_avancement: 50,
+        });
+
+        // When
+        const result =
+          await prismaIndicateurRepository.recupererIndicateursAParametrerParChantierId(
+            2025,
+          );
+
+        // Then
+        expect(result.size).toEqual(1);
+        expect(result.get("CH-001")).toEqual([
+          { id: "IND-001", nom: "Indicateur 001" },
+        ]);
+      }),
+    );
+
+    it(
+      "doit retourner les indicateurs sans valeur_cible sur le jalon donné pour au moins un territoire",
+      createIntegrationTest(async () => {
+        // Given
+        const chantier = await fixtures.chantierIdentite({
+          id: "CH-001",
+          statut: "PUBLIE",
+        });
+
+        await fixtures.chantierTerritoire({
+          id: chantier.id,
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+        });
+
+        await fixtures.chantierTerritoire({
+          id: chantier.id,
+          territoire_code: "REG-11",
+          code_insee: "11",
+          maille: "REG",
+          zone_id: "REG-11",
+        });
+
+        const indicateur = await fixtures.indicateurIdentite({
+          id: "IND-001",
+          nom: "Indicateur 001",
+          chantier_id: chantier.id,
+          statut: "PUBLIE",
+        });
+
+        // NAT: valeur_initiale renseignée
+        await fixtures.indicateurTerritoire({
+          id: indicateur.id,
+          chantier_id: chantier.id,
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+          est_applicable: true,
+          est_a_jour: true,
+          valeur_initiale: 10,
+        });
+
+        // NAT: valeur_cible renseignée sur le jalon 2025
+        await fixtures.indicateurTerritoireJalon({
+          id: indicateur.id,
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+          jalon: 2025,
+          valeur_cible: 100,
+          date_valeur_cible: new Date("2025-12-31"),
+          valeur_actuelle: 50,
+          date_valeur_actuelle: new Date("2025-06-01"),
+          taux_avancement: 50,
+        });
+
+        // REG: valeur_initiale renseignée
+        await fixtures.indicateurTerritoire({
+          id: indicateur.id,
+          chantier_id: chantier.id,
+          territoire_code: "REG-11",
+          code_insee: "11",
+          maille: "REG",
+          zone_id: "REG-11",
+          est_applicable: true,
+          est_a_jour: true,
+          valeur_initiale: 10,
+        });
+
+        // REG: valeur_cible null sur le jalon 2025
+        await fixtures.indicateurTerritoireJalon({
+          id: indicateur.id,
+          territoire_code: "REG-11",
+          code_insee: "11",
+          maille: "REG",
+          zone_id: "REG-11",
+          jalon: 2025,
+          valeur_cible: null,
+          date_valeur_cible: null,
+          valeur_actuelle: 50,
+          date_valeur_actuelle: new Date("2025-06-01"),
+          taux_avancement: 50,
+        });
+
+        // When
+        const result =
+          await prismaIndicateurRepository.recupererIndicateursAParametrerParChantierId(
+            2025,
+          );
+
+        // Then
+        expect(result.size).toEqual(1);
+        expect(result.get("CH-001")).toEqual([
+          { id: "IND-001", nom: "Indicateur 001" },
+        ]);
+      }),
+    );
+
+    it(
+      "ne doit pas retourner les indicateurs ayant valeur_initiale ET valeur_cible renseignées",
+      createIntegrationTest(async () => {
+        // Given
+        const chantier = await fixtures.chantierIdentite({
+          id: "CH-001",
+          statut: "PUBLIE",
+        });
+
+        await fixtures.chantierTerritoire({
+          id: chantier.id,
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+        });
+
+        const indicateur = await fixtures.indicateurIdentite({
+          id: "IND-001",
+          nom: "Indicateur 001",
+          chantier_id: chantier.id,
+          statut: "PUBLIE",
+        });
+
+        await fixtures.indicateurTerritoire({
+          id: indicateur.id,
+          chantier_id: chantier.id,
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+          est_applicable: true,
+          est_a_jour: true,
+          valeur_initiale: 10,
+        });
+
+        await fixtures.indicateurTerritoireJalon({
+          id: indicateur.id,
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+          jalon: 2025,
+          valeur_cible: 100,
+          date_valeur_cible: new Date("2025-12-31"),
+          valeur_actuelle: 50,
+          date_valeur_actuelle: new Date("2025-06-01"),
+          taux_avancement: 50,
+        });
+
+        // When
+        const result =
+          await prismaIndicateurRepository.recupererIndicateursAParametrerParChantierId(
+            2025,
+          );
+
+        // Then
+        expect(result.size).toEqual(0);
+      }),
+    );
+
+    it(
+      "doit filtrer par statut publié des chantiers et indicateurs",
+      createIntegrationTest(async () => {
+        // Given
+        const chantierPublie = await fixtures.chantierIdentite({
+          id: "CH-001",
+          statut: "PUBLIE",
+        });
+
+        await fixtures.chantierTerritoire({
+          id: chantierPublie.id,
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+        });
+
+        const chantierBrouillon = await fixtures.chantierIdentite({
+          id: "CH-002",
+          statut: "BROUILLON",
+        });
+
+        await fixtures.chantierTerritoire({
+          id: chantierBrouillon.id,
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+        });
+
+        // Indicateur publié sur chantier publié (doit apparaitre)
+        const indicateur1 = await fixtures.indicateurIdentite({
+          id: "IND-001",
+          nom: "Indicateur 001",
+          chantier_id: chantierPublie.id,
+          statut: "PUBLIE",
+        });
+
+        await fixtures.indicateurTerritoire({
+          id: indicateur1.id,
+          chantier_id: chantierPublie.id,
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+          est_applicable: true,
+          valeur_initiale: null,
+        });
+
+        await fixtures.indicateurTerritoireJalon({
+          id: indicateur1.id,
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+          jalon: 2025,
+          valeur_cible: 100,
+          date_valeur_cible: new Date("2025-12-31"),
+          valeur_actuelle: 50,
+          date_valeur_actuelle: new Date("2025-06-01"),
+          taux_avancement: 50,
+        });
+
+        // Indicateur supprimé sur chantier publié (ne doit pas apparaitre)
+        const indicateur2 = await fixtures.indicateurIdentite({
+          id: "IND-002",
+          nom: "Indicateur 002",
+          chantier_id: chantierPublie.id,
+          statut: "SUPPRIME",
+        });
+
+        await fixtures.indicateurTerritoire({
+          id: indicateur2.id,
+          chantier_id: chantierPublie.id,
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+          est_applicable: true,
+          valeur_initiale: null,
+        });
+
+        await fixtures.indicateurTerritoireJalon({
+          id: indicateur2.id,
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+          jalon: 2025,
+          valeur_cible: 100,
+          date_valeur_cible: new Date("2025-12-31"),
+          valeur_actuelle: 50,
+          date_valeur_actuelle: new Date("2025-06-01"),
+          taux_avancement: 50,
+        });
+
+        // Indicateur publié sur chantier brouillon (ne doit pas apparaitre)
+        const indicateur3 = await fixtures.indicateurIdentite({
+          id: "IND-003",
+          nom: "Indicateur 003",
+          chantier_id: chantierBrouillon.id,
+          statut: "PUBLIE",
+        });
+
+        await fixtures.indicateurTerritoire({
+          id: indicateur3.id,
+          chantier_id: chantierBrouillon.id,
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+          est_applicable: true,
+          valeur_initiale: null,
+        });
+
+        await fixtures.indicateurTerritoireJalon({
+          id: indicateur3.id,
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+          jalon: 2025,
+          valeur_cible: 100,
+          date_valeur_cible: new Date("2025-12-31"),
+          valeur_actuelle: 50,
+          date_valeur_actuelle: new Date("2025-06-01"),
+          taux_avancement: 50,
+        });
+
+        // When
+        const result =
+          await prismaIndicateurRepository.recupererIndicateursAParametrerParChantierId(
+            2025,
+          );
+
+        // Then
+        expect(result.size).toEqual(1);
+        expect(result.get("CH-001")).toEqual([
+          { id: "IND-001", nom: "Indicateur 001" },
+        ]);
+        expect(result.has("CH-002")).toEqual(false);
+      }),
+    );
+
+    it(
+      "doit exclure les indicateurs avec est_applicable = false ou null",
+      createIntegrationTest(async () => {
+        // Given
+        const chantier = await fixtures.chantierIdentite({
+          id: "CH-001",
+          statut: "PUBLIE",
+        });
+
+        await fixtures.chantierTerritoire({
+          id: chantier.id,
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+        });
+
+        // est_applicable = false
+        const indicateur1 = await fixtures.indicateurIdentite({
+          id: "IND-001",
+          nom: "Indicateur 001",
+          chantier_id: chantier.id,
+          statut: "PUBLIE",
+        });
+
+        await fixtures.indicateurTerritoire({
+          id: indicateur1.id,
+          chantier_id: chantier.id,
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+          est_applicable: false,
+          valeur_initiale: null,
+        });
+
+        await fixtures.indicateurTerritoireJalon({
+          id: indicateur1.id,
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+          jalon: 2025,
+          valeur_cible: 100,
+          date_valeur_cible: new Date("2025-12-31"),
+          valeur_actuelle: 50,
+          date_valeur_actuelle: new Date("2025-06-01"),
+          taux_avancement: 50,
+        });
+
+        // est_applicable = true (seul inclus)
+        const indicateur2 = await fixtures.indicateurIdentite({
+          id: "IND-002",
+          nom: "Indicateur 002",
+          chantier_id: chantier.id,
+          statut: "PUBLIE",
+        });
+
+        await fixtures.indicateurTerritoire({
+          id: indicateur2.id,
+          chantier_id: chantier.id,
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+          est_applicable: true,
+          valeur_initiale: null,
+        });
+
+        await fixtures.indicateurTerritoireJalon({
+          id: indicateur2.id,
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+          jalon: 2025,
+          valeur_cible: 100,
+          date_valeur_cible: new Date("2025-12-31"),
+          valeur_actuelle: 50,
+          date_valeur_actuelle: new Date("2025-06-01"),
+          taux_avancement: 50,
+        });
+
+        // When
+        const result =
+          await prismaIndicateurRepository.recupererIndicateursAParametrerParChantierId(
+            2025,
+          );
+
+        // Then
+        expect(result.size).toEqual(1);
+        expect(result.get("CH-001")).toEqual([
+          { id: "IND-002", nom: "Indicateur 002" },
+        ]);
+      }),
+    );
+
+    it(
+      "doit retourner une Map vide quand tous les indicateurs sont paramétrés",
+      createIntegrationTest(async () => {
+        // Given
+        const chantier = await fixtures.chantierIdentite({
+          id: "CH-001",
+          statut: "PUBLIE",
+        });
+
+        await fixtures.chantierTerritoire({
+          id: chantier.id,
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+        });
+
+        const indicateur = await fixtures.indicateurIdentite({
+          id: "IND-001",
+          nom: "Indicateur 001",
+          chantier_id: chantier.id,
+          statut: "PUBLIE",
+        });
+
+        await fixtures.indicateurTerritoire({
+          id: indicateur.id,
+          chantier_id: chantier.id,
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+          est_applicable: true,
+          valeur_initiale: 10,
+        });
+
+        await fixtures.indicateurTerritoireJalon({
+          id: indicateur.id,
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+          jalon: 2025,
+          valeur_cible: 100,
+          date_valeur_cible: new Date("2025-12-31"),
+          valeur_actuelle: 50,
+          date_valeur_actuelle: new Date("2025-06-01"),
+          taux_avancement: 50,
+        });
+
+        // When
+        const result =
+          await prismaIndicateurRepository.recupererIndicateursAParametrerParChantierId(
+            2025,
+          );
+
+        // Then
+        expect(result.size).toEqual(0);
+      }),
+    );
+
+    it(
+      "ne doit pas retourner un indicateur sans valeur_cible sur un jalon différent du jalon demandé",
+      createIntegrationTest(async () => {
+        // Given
+        const chantier = await fixtures.chantierIdentite({
+          id: "CH-001",
+          statut: "PUBLIE",
+        });
+
+        await fixtures.chantierTerritoire({
+          id: chantier.id,
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+        });
+
+        const indicateur = await fixtures.indicateurIdentite({
+          id: "IND-001",
+          nom: "Indicateur 001",
+          chantier_id: chantier.id,
+          statut: "PUBLIE",
+        });
+
+        await fixtures.indicateurTerritoire({
+          id: indicateur.id,
+          chantier_id: chantier.id,
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+          est_applicable: true,
+          valeur_initiale: 10,
+        });
+
+        // valeur_cible null sur jalon 2024
+        await fixtures.indicateurTerritoireJalon({
+          id: indicateur.id,
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+          jalon: 2024,
+          valeur_cible: null,
+          date_valeur_cible: null,
+          valeur_actuelle: 50,
+          date_valeur_actuelle: new Date("2024-06-01"),
+          taux_avancement: 50,
+        });
+
+        // valeur_cible renseignée sur jalon 2025
+        await fixtures.indicateurTerritoireJalon({
+          id: indicateur.id,
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+          jalon: 2025,
+          valeur_cible: 100,
+          date_valeur_cible: new Date("2025-12-31"),
+          valeur_actuelle: 50,
+          date_valeur_actuelle: new Date("2025-06-01"),
+          taux_avancement: 50,
+        });
+
+        // When
+        const result =
+          await prismaIndicateurRepository.recupererIndicateursAParametrerParChantierId(
+            2025,
+          );
+
+        // Then
+        expect(result.size).toEqual(0);
+      }),
+    );
+  });
 });

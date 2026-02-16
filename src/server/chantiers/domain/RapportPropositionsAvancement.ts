@@ -26,6 +26,9 @@ export interface ChantierRapport {
   afficherSectionMajIndicateur: boolean;
   indicateursNonMisAJour: { id: string; nom: string; mailles: string[] }[];
   nombreIndicateursNonMisAJour: string;
+  afficherSectionParametrage: boolean;
+  indicateursAParametrer: { id: string; nom: string }[];
+  nombreIndicateursAParametrer: string;
 }
 
 export interface ContenuRapport {

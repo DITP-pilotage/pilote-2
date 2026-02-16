@@ -1415,4 +1415,66 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
 
     return indicateursParChantier;
   }
+
+  async recupererIndicateursAParametrerParChantierId(
+    jalon: number,
+  ): Promise<Map<string, { id: string; nom: string }[]>> {
+    const indicateurs = await this.prisma.indicateur_territoire.findMany({
+      where: {
+        indicateur_identite: {
+          statut: "PUBLIE",
+          chantier_identite: {
+            statut: "PUBLIE",
+          },
+        },
+        est_applicable: true,
+        OR: [
+          { valeur_initiale: null },
+          {
+            indicateur_territoire_jalon: {
+              some: {
+                jalon,
+                valeur_cible: null,
+              },
+            },
+          },
+        ],
+      },
+      select: {
+        indicateur_identite: {
+          select: {
+            id: true,
+            nom: true,
+            chantier_id: true,
+          },
+        },
+      },
+      distinct: ["id"],
+    });
+
+    const indicateursParChantier = new Map<
+      string,
+      { id: string; nom: string }[]
+    >();
+
+    for (const indicateur of indicateurs) {
+      const chantierId = indicateur.indicateur_identite.chantier_id;
+      const indicateurId = indicateur.indicateur_identite.id;
+      const indicateurNom = indicateur.indicateur_identite.nom;
+
+      if (!indicateursParChantier.has(chantierId)) {
+        indicateursParChantier.set(chantierId, []);
+      }
+
+      const indicateursChantier = indicateursParChantier.get(chantierId)!;
+      if (!indicateursChantier.some((indic) => indic.id === indicateurId)) {
+        indicateursChantier.push({
+          id: indicateurId,
+          nom: indicateurNom,
+        });
+      }
+    }
+
+    return indicateursParChantier;
+  }
 }

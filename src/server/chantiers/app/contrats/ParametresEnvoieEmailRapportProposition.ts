@@ -20,6 +20,7 @@ export const genererParametresEnvoieRapportProposition = (
     string,
     { id: string; nom: string; mailles: string[] }[]
   >,
+  indicateursAParametrerParChantier: Map<string, { id: string; nom: string }[]>,
 ): ContenuRapport => {
   const params: ChantierRapport[] = [];
   for (const chantierId of listeChantierIds.sort()) {
@@ -31,6 +32,8 @@ export const genererParametresEnvoieRapportProposition = (
     const mapPropositionsChantier = propositionsParChantier.get(chantierId);
     const indicateursNonMisAJour =
       indicateursNonAJourParChantier.get(chantierId);
+    const indicateursAParametrer =
+      indicateursAParametrerParChantier.get(chantierId);
 
     let nombrePropositions = 0;
 
@@ -66,9 +69,17 @@ export const genererParametresEnvoieRapportProposition = (
     const afficherSectionMajIndicateur = indicateursNonMisAJour
       ? indicateursNonMisAJour.length > 0
       : false;
+    const afficherSectionParametrage = indicateursAParametrer
+      ? indicateursAParametrer.length > 0
+      : false;
 
     const nombreIndicateursNonMisAJour = indicateursNonMisAJour?.length ?? 0;
-    if (afficherSectionMajIndicateur || afficherSectionPropositions) {
+    const nbIndicateursAParametrer = indicateursAParametrer?.length ?? 0;
+    if (
+      afficherSectionMajIndicateur ||
+      afficherSectionPropositions ||
+      afficherSectionParametrage
+    ) {
       params.push({
         nom_chantier: chantier.nom,
         id_chantier: chantier.id,
@@ -89,6 +100,14 @@ export const genererParametresEnvoieRapportProposition = (
             : nombreIndicateursNonMisAJour > 1
               ? `${nombreIndicateursNonMisAJour} indicateurs à mettre à jour`
               : `${nombreIndicateursNonMisAJour} indicateur à mettre à jour`,
+        afficherSectionParametrage,
+        indicateursAParametrer: indicateursAParametrer ?? [],
+        nombreIndicateursAParametrer:
+          nbIndicateursAParametrer === 0
+            ? "aucun indicateur dont le taux d'avancement ne peut être calculé"
+            : nbIndicateursAParametrer > 1
+              ? `${nbIndicateursAParametrer} indicateurs dont le taux d'avancement ne peut être calculé`
+              : `${nbIndicateursAParametrer} indicateur dont le taux d'avancement ne peut être calculé`,
       });
     }
   }

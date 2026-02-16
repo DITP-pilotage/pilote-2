@@ -6,6 +6,8 @@ import { IndicateurRepository } from "@/server/chantiers/domain/ports/Indicateur
 import { RapportPropositionsAvancementRepository } from "@/server/chantiers/domain/ports/RapportPropositionsAvancementRepository";
 import { creerRapportPropositionsAvancement } from "@/server/chantiers/domain/RapportPropositionsAvancement";
 import { genererParametresEnvoieRapportProposition } from "@/server/chantiers/app/contrats/ParametresEnvoieEmailRapportProposition";
+import { getAnneeDateDeBascule } from "@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getAnneeDateDeBascule";
+import { configuration } from "@/config";
 
 interface Dependencies {
   chantierRepository: ChantierRepository;
@@ -30,10 +32,20 @@ export class CreerLesRapportsPropositionsUseCase {
     const indicateursNonAJourParChantier =
       await this.dependencies.indicateurRepository.recupererIndicateursNonAJourParChantierId();
 
+    const jalon = getAnneeDateDeBascule(
+      new Date(),
+      configuration().dateBasculeAffichageValeursAnneePrecedente,
+    );
+    const indicateursAParametrerParChantier =
+      await this.dependencies.indicateurRepository.recupererIndicateursAParametrerParChantierId(
+        jalon,
+      );
+
     const listeChantiersIdsRapport = [
       ...new Set([
         ...propositionsParChantier.keys(),
         ...indicateursNonAJourParChantier.keys(),
+        ...indicateursAParametrerParChantier.keys(),
       ]),
     ];
 
@@ -62,6 +74,7 @@ export class CreerLesRapportsPropositionsUseCase {
             directeur.listeChantiers,
             propositionsParChantier,
             indicateursNonAJourParChantier,
+            indicateursAParametrerParChantier,
           )
         ) {
           continue;
@@ -72,6 +85,7 @@ export class CreerLesRapportsPropositionsUseCase {
           mapChantiersPropositionInformation,
           propositionsParChantier,
           indicateursNonAJourParChantier,
+          indicateursAParametrerParChantier,
         );
 
         const rapport = creerRapportPropositionsAvancement({
@@ -103,11 +117,13 @@ export class CreerLesRapportsPropositionsUseCase {
     listeChantiers: string[],
     propositionsParChantier: Map<string, unknown>,
     indicateursNonAJourParChantier: Map<string, unknown>,
+    indicateursAParametrerParChantier: Map<string, unknown>,
   ): boolean {
     return listeChantiers.some(
       (chantierId) =>
         propositionsParChantier.has(chantierId) ||
-        indicateursNonAJourParChantier.has(chantierId),
+        indicateursNonAJourParChantier.has(chantierId) ||
+        indicateursAParametrerParChantier.has(chantierId),
     );
   }
 }

@@ -54,6 +54,7 @@ describe("genererParametresEnvoieRapportProposition", () => {
         mapChantiersInformation,
         propositionsParChantier,
         new Map(),
+        new Map(),
       );
 
       // Then
@@ -84,6 +85,10 @@ describe("genererParametresEnvoieRapportProposition", () => {
         ],
         afficherSectionMajIndicateur: false,
         indicateursNonMisAJour: [],
+        afficherSectionParametrage: false,
+        indicateursAParametrer: [],
+        nombreIndicateursAParametrer:
+          "aucun indicateur dont le taux d'avancement ne peut être calculé",
       });
       expect(result.conseillerEmail).toEqual("conseiller1@exemple.com");
     });
@@ -172,6 +177,7 @@ describe("genererParametresEnvoieRapportProposition", () => {
         listeChantierIds,
         mapChantiersInformation,
         propositionsParChantier,
+        new Map(),
         new Map(),
       );
 
@@ -267,6 +273,7 @@ describe("genererParametresEnvoieRapportProposition", () => {
         mapChantiersInformation,
         propositionsParChantier,
         indicateursNonAJourParChantier,
+        new Map(),
       );
 
       // Then
@@ -333,6 +340,7 @@ describe("genererParametresEnvoieRapportProposition", () => {
         mapChantiersInformation,
         propositionsParChantier,
         indicateursNonAJourParChantier,
+        new Map(),
       );
 
       // Then
@@ -406,6 +414,7 @@ describe("genererParametresEnvoieRapportProposition", () => {
         mapChantiersInformation,
         propositionsParChantier,
         indicateursNonAJourParChantier,
+        new Map(),
       );
 
       // Then
@@ -464,6 +473,7 @@ describe("genererParametresEnvoieRapportProposition", () => {
         mapChantiersInformation,
         propositionsParChantier,
         new Map(),
+        new Map(),
       );
 
       // Then
@@ -514,6 +524,7 @@ describe("genererParametresEnvoieRapportProposition", () => {
         mapChantiersInformation,
         propositionsParChantier,
         indicateursNonAJourParChantier,
+        new Map(),
       );
 
       // Then
@@ -523,7 +534,7 @@ describe("genererParametresEnvoieRapportProposition", () => {
       expect(result.chantiers[0].afficherSectionMajIndicateur).toEqual(true);
     });
 
-    it("ne doit pas retourner un chantier sans propositions ni indicateurs non à jour", () => {
+    it("ne doit pas retourner un chantier sans propositions, ni indicateurs non à jour, ni indicateurs à paramétrer", () => {
       // Given
       const listeChantierIds = ["CH-001", "CH-002"];
       const mapChantiersInformation = new Map<
@@ -587,6 +598,7 @@ describe("genererParametresEnvoieRapportProposition", () => {
         mapChantiersInformation,
         propositionsParChantier,
         indicateursNonAJourParChantier,
+        new Map(),
       );
 
       // Then
@@ -595,6 +607,164 @@ describe("genererParametresEnvoieRapportProposition", () => {
       expect(
         result.chantiers.find((c) => c.id_chantier === "CH-002"),
       ).toBeUndefined();
+    });
+
+    it("doit retourner un chantier ayant uniquement des indicateurs à paramétrer", () => {
+      // Given
+      const listeChantierIds = ["CH-001"];
+      const mapChantiersInformation = new Map<
+        string,
+        RapportDirecteurProjetChantierInformation
+      >([
+        [
+          "CH-001",
+          {
+            id: "CH-001",
+            nom: "Chantier 1",
+            statut: "PUBLIE",
+            conseillerMail: "conseiller1@exemple.com",
+          },
+        ],
+      ]);
+
+      const indicateursAParametrerParChantier = new Map<
+        string,
+        { id: string; nom: string }[]
+      >([["CH-001", [{ id: "IND-001", nom: "Indicateur 1" }]]]);
+
+      // When
+      const result = genererParametresEnvoieRapportProposition(
+        listeChantierIds,
+        mapChantiersInformation,
+        new Map(),
+        new Map(),
+        indicateursAParametrerParChantier,
+      );
+
+      // Then
+      expect(result.chantiers).toHaveLength(1);
+      expect(result.chantiers[0].afficherSectionPropositions).toEqual(false);
+      expect(result.chantiers[0].afficherSectionMajIndicateur).toEqual(false);
+      expect(result.chantiers[0].afficherSectionParametrage).toEqual(true);
+      expect(result.chantiers[0].indicateursAParametrer).toEqual([
+        { id: "IND-001", nom: "Indicateur 1" },
+      ]);
+    });
+  });
+
+  describe("Indicateurs à paramétrer", () => {
+    it("doit afficher la section paramétrage quand il existe des indicateurs à paramétrer", () => {
+      // Given
+      const listeChantierIds = ["CH-001"];
+      const mapChantiersInformation = new Map<
+        string,
+        RapportDirecteurProjetChantierInformation
+      >([
+        [
+          "CH-001",
+          {
+            id: "CH-001",
+            nom: "Chantier 1",
+            statut: "PUBLIE",
+            conseillerMail: "conseiller1@exemple.com",
+          },
+        ],
+      ]);
+
+      const indicateursAParametrerParChantier = new Map<
+        string,
+        { id: string; nom: string }[]
+      >([
+        [
+          "CH-001",
+          [
+            { id: "IND-001", nom: "Indicateur 1" },
+            { id: "IND-002", nom: "Indicateur 2" },
+          ],
+        ],
+      ]);
+
+      // When
+      const result = genererParametresEnvoieRapportProposition(
+        listeChantierIds,
+        mapChantiersInformation,
+        new Map(),
+        new Map(),
+        indicateursAParametrerParChantier,
+      );
+
+      // Then
+      expect(result.chantiers).toHaveLength(1);
+      expect(result.chantiers[0].afficherSectionParametrage).toEqual(true);
+      expect(result.chantiers[0].indicateursAParametrer).toEqual([
+        { id: "IND-001", nom: "Indicateur 1" },
+        { id: "IND-002", nom: "Indicateur 2" },
+      ]);
+      expect(result.chantiers[0].nombreIndicateursAParametrer).toEqual(
+        "2 indicateurs dont le taux d'avancement ne peut être calculé",
+      );
+    });
+
+    it("ne doit pas afficher la section paramétrage quand il n'existe pas d'indicateurs à paramétrer", () => {
+      // Given
+      const listeChantierIds = ["CH-001"];
+      const mapChantiersInformation = new Map<
+        string,
+        RapportDirecteurProjetChantierInformation
+      >([
+        [
+          "CH-001",
+          {
+            id: "CH-001",
+            nom: "Chantier 1",
+            statut: "PUBLIE",
+            conseillerMail: "conseiller1@exemple.com",
+          },
+        ],
+      ]);
+
+      const propositionsParChantier = new Map<
+        string,
+        Map<string, PropositionValeurAvancementRapport[]>
+      >([
+        [
+          "CH-001",
+          new Map([
+            [
+              "IND-001",
+              [
+                {
+                  indicateurId: "IND-001",
+                  territoireCode: "DEPT-01",
+                  dateValeurAvancement: "2025-05-15",
+                  valeurAvancementProposee: "75",
+                  valeurAvancementReference: "70",
+                  nomIndicateur: "Indicateur 1",
+                  uniteIndicateur: "kg",
+                  nomTerritoire: "Ain",
+                },
+              ],
+            ],
+          ]),
+        ],
+      ]);
+
+      // When
+      const result = genererParametresEnvoieRapportProposition(
+        listeChantierIds,
+        mapChantiersInformation,
+        propositionsParChantier,
+        new Map(),
+        new Map(),
+      );
+
+      // Then
+      expect(result.chantiers).toHaveLength(1);
+      expect(result.chantiers[0].afficherSectionParametrage).toEqual(false);
+      expect(result.chantiers[0].indicateursAParametrer).toEqual([]);
+      expect(result.chantiers[0].nombreIndicateursAParametrer).toEqual(
+        "aucun indicateur dont le taux d'avancement ne peut être calculé",
+      );
     });
   });
 });
