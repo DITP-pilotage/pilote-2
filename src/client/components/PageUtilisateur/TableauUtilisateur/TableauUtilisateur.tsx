@@ -1,6 +1,7 @@
 import { FunctionComponent } from "react";
 import { formaterDate } from "@/client/utils/date/date";
 import { ProfilCode } from "@/server/domain/utilisateur/Utilisateur.interface";
+import { referentielServices } from "@/client/constants/referentiel-services";
 
 interface TableauUtilisateurProps {
   utilisateur: {
@@ -13,15 +14,51 @@ interface TableauUtilisateurProps {
     dateCreation?: string;
     auteurCreation?: string;
     fonction: string | null;
+    service: string | null;
+    serviceAutre: string | null;
+    perimetreMinisteriel: string | null;
   };
 }
 
 const TableauUtilisateur: FunctionComponent<TableauUtilisateurProps> = ({
   utilisateur,
 }) => {
+  const getPerimetreLibelle = (slug: string | null): string | null => {
+    if (!slug) return null;
+    const perimetre = referentielServices.perimetresMinisteriels.find(
+      (p) => p.slug === slug,
+    );
+    return perimetre?.libelle ?? slug;
+  };
+
+  const getServiceLibelle = (
+    perimetreSlug: string | null,
+    serviceSlug: string | null,
+    serviceAutre: string | null,
+  ): string | null => {
+    if (!serviceSlug) return null;
+    if (serviceSlug === "autre") return serviceAutre;
+    if (!perimetreSlug) return serviceSlug;
+
+    const perimetre = referentielServices.perimetresMinisteriels.find(
+      (p) => p.slug === perimetreSlug,
+    );
+    const service = perimetre?.services.find((s) => s.slug === serviceSlug);
+    return service?.libelle ?? serviceSlug;
+  };
+
+  const perimetreLibelle = getPerimetreLibelle(
+    utilisateur.perimetreMinisteriel,
+  );
+  const serviceLibelle = getServiceLibelle(
+    utilisateur.perimetreMinisteriel,
+    utilisateur.service,
+    utilisateur.serviceAutre,
+  );
+
   return (
     <div className="fr-table">
-      <table>
+      <table className="table">
         <thead>
           <tr>
             <th>Adresse électronique</th>
@@ -29,6 +66,8 @@ const TableauUtilisateur: FunctionComponent<TableauUtilisateurProps> = ({
             <th>Prénom</th>
             <th>Profil</th>
             <th>Fonction</th>
+            <th>Périmètre ministériel</th>
+            <th>Service</th>
             {!!utilisateur.auteurCreation && <th>Création du compte</th>}
             {!!utilisateur.auteurModification && <th>Dernière modification</th>}
           </tr>
@@ -42,6 +81,8 @@ const TableauUtilisateur: FunctionComponent<TableauUtilisateurProps> = ({
             <td title={utilisateur.fonction ?? undefined}>
               {utilisateur.fonction}
             </td>
+            <td title={perimetreLibelle ?? undefined}>{perimetreLibelle}</td>
+            <td title={serviceLibelle ?? undefined}>{serviceLibelle}</td>
             {!!utilisateur.auteurCreation && (
               <td
                 title={`${formaterDate(utilisateur.dateCreation, "DD/MM/YYYY")} par ${utilisateur.auteurCreation}`}
