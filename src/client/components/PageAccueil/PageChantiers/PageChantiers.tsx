@@ -17,7 +17,6 @@ import TitreInfobulleConteneur from "@/components/_commons/TitreInfobulleContene
 import RemontéeAlerte from "@/components/_commons/RemontéeAlerteChantier/RemontéeAlerte";
 import BadgeIcône from "@/components/_commons/BadgeIcône/BadgeIcône";
 import { JaugeDeProgressionSmall } from "@/components/_commons/JaugeDeProgressionSmall/JaugeDeProgressionSmall";
-import BarreDeProgression from "@/components/_commons/BarreDeProgression/BarreDeProgression";
 import Ministère from "@/server/domain/ministère/Ministère.interface";
 import {
   AvancementsGlobauxTerritoriauxMoyensContrat,
@@ -45,6 +44,7 @@ interface PageChantiersProps {
   avancementsGlobauxTerritoriauxMoyens: AvancementsGlobauxTerritoriauxMoyensContrat;
   repartitionMeteosChantiers: RepartitionMeteoContrat;
   jalon: number;
+  moyenneTerritoire: number | null;
 }
 
 const PageChantiers: FunctionComponent<PageChantiersProps> = ({
@@ -58,6 +58,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
   avancementsGlobauxTerritoriauxMoyens,
   repartitionMeteosChantiers,
   jalon,
+  moyenneTerritoire,
 }) => {
   const pathname = "/accueil/chantier/[territoireCode]";
   const { auClicTerritoireCallback } = useCartographie(
@@ -120,36 +121,10 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
                       <div className="flex w-full justify-center fr-px-1w fr-mt-1w">
                         <JaugeDeProgression
                           couleur={chantiersSontArchives ? "gris" : "bleu"}
-                          libellé="Taux d'avancement à échéance 2026"
-                          pourcentage={avancementsAgrégés?.global.moyenne}
+                          libellé={`Taux d'avancement à échéance ${jalon}`}
+                          pourcentage={moyenneTerritoire}
                           taille="lg"
                         />
-                      </div>
-                      <div className="fr-grid-row border-t fr-mt-1w">
-                        <div className="fr-mt-1w w-full">
-                          <p className="fr-text--xl fr-text--bold fr-mb-0 !text-dsfr-mention-grey">
-                            {`${(process.env.NEXT_PUBLIC_FF_TA_ANNUEL === "true" ? avancementsAgrégés?.annuel.moyenne?.toFixed(0) : null) ?? "- "}%`}
-                          </p>
-                          <BarreDeProgression
-                            afficherTexte={false}
-                            bordure={null}
-                            fond="gris-clair"
-                            positionTexte="dessus"
-                            taille="xxs"
-                            valeur={
-                              !!avancementsAgrégés &&
-                              process.env.NEXT_PUBLIC_FF_TA_ANNUEL === "true"
-                                ? avancementsAgrégés.annuel.moyenne
-                                : null
-                            }
-                            variante="secondaire"
-                          />
-                          <div className="flex flex-wrap justify-center">
-                            <p className="fr-text--xs fr-mb-0 fr-mt-1v text-center">
-                              Taux d'avancement à échéance {jalon}
-                            </p>
-                          </div>
-                        </div>
                       </div>
                     </Bloc>
                   </div>
@@ -165,7 +140,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
                             className="fr-text--lg fr-py-1v !mb-0"
                             estInline
                           >
-                            Répartition territoriale
+                            {`Répartition territoriale ${jalon}`}
                           </Titre>
                           <Infobulle>
                             {INFOBULLE_CONTENUS.chantiers.repartitions}
@@ -175,23 +150,17 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
                           <JaugeDeProgressionSmall
                             couleur={chantiersSontArchives ? "gris" : "vert"}
                             libellé="Maximum"
-                            pourcentage={
-                              avancementsAgrégés?.global.maximum || null
-                            }
+                            pourcentage={avancementsAgrégés.maximum || null}
                           />
                           <JaugeDeProgressionSmall
                             couleur={chantiersSontArchives ? "gris" : "violet"}
                             libellé="Médiane"
-                            pourcentage={
-                              avancementsAgrégés?.global.médiane || null
-                            }
+                            pourcentage={avancementsAgrégés.médiane || null}
                           />
                           <JaugeDeProgressionSmall
                             couleur={chantiersSontArchives ? "gris" : "orange"}
                             libellé="Minimum"
-                            pourcentage={
-                              avancementsAgrégés?.global.minimum || null
-                            }
+                            pourcentage={avancementsAgrégés.minimum || null}
                           />
                         </div>
                       </div>

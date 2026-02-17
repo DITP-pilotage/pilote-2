@@ -29,6 +29,7 @@ export default interface ChantierRepository {
     habilitations: Habilitations,
     listeChantier: Chantier["id"][],
     maille: Maille,
+    jalon: number,
   ): Promise<AvancementsStatistiques>;
   modifierMétéo(
     chantierId: string,

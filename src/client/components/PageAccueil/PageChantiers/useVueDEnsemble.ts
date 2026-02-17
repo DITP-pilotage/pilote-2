@@ -14,7 +14,7 @@ export default function useVueDEnsemble(
     (chantier) => ({
       id: chantier.id,
       nom: chantier.nom,
-      avancement: chantier.avancementGlobal,
+      avancement: chantier.avancement,
       météo: chantier.météo,
       typologie: {
         estBaromètre: chantier.estBaromètre,

@@ -52,9 +52,9 @@ export default function calculerChantierAvancements(
         moyenne:
           donnéesTerritoiresAgrégées.nationale.territoires["NAT-FR"].répartition
             .avancements.global.avancement,
-        médiane: avancementsAgrégés?.global.médiane ?? null,
-        minimum: avancementsAgrégés?.global.minimum ?? null,
-        maximum: avancementsAgrégés?.global.maximum ?? null,
+        médiane: avancementsAgrégés?.médiane ?? null,
+        minimum: avancementsAgrégés?.minimum ?? null,
+        maximum: avancementsAgrégés?.maximum ?? null,
         date: donnéesTerritoiresAgrégées.nationale.territoires["NAT-FR"]
           .répartition.avancements.global.date,
       },

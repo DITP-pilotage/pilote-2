@@ -72,9 +72,9 @@ const appliquerTri =
     switch (sorting.id) {
       case "avancement": {
         const donneeTriA =
-          chantierA.mailles[mailleChantier][territoireCode].avancement.global;
+          chantierA.mailles[mailleChantier][territoireCode].avancement.annuel;
         const donneeTriB =
-          chantierB.mailles[mailleChantier][territoireCode].avancement.global;
+          chantierB.mailles[mailleChantier][territoireCode].avancement.annuel;
 
         if (donneeTriA === null) {
           return 1;

@@ -45,6 +45,7 @@ export const useTableauChantiers = (
   ministèresDisponibles: Ministère[],
   nombreTotalChantiersAvecAlertes: number,
   chantiersSontArchives: boolean,
+  jalon: number,
 ) => {
   const [valeurDeLaRecherche, setValeurDeLaRecherche] = useQueryState(
     "q",
@@ -182,7 +183,7 @@ export const useTableauChantiers = (
       header: () => (
         <div className="flex align-center no-wrap">
           <span className="whitespace-normal break-normal">
-            Avancement 2026
+            {`Avancement ${jalon}`}
           </span>
           <Infobulle classNameBouton="infobulle-header-taux-avancement">
             {infobulles.chantiers.listeDesChantiersHeaderTauxAvancement}

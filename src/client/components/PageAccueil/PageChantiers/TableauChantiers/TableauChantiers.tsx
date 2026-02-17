@@ -29,6 +29,7 @@ const TableauChantiers: FunctionComponent<TableauChantiersProps> = ({
     ministèresDisponibles,
     nombreTotalChantiersAvecAlertes,
     chantiersSontArchives,
+    jalon,
   );
 
   return (

@@ -82,7 +82,7 @@ export interface ChantierAccueilContratV2 {
   écart: number | null;
   tendance: "BAISSE" | "HAUSSE" | "STAGNATION" | null;
   météo: Météo;
-  avancementGlobal: number | null;
+  avancement: number | null;
   aUnePropositionsValeurAvancement: boolean;
   aUnTauxAvancementDepartemental: boolean;
 }
@@ -295,8 +295,7 @@ export const presenterEnChantierAccueilContratV2 = (
     écart: newMaille[mailleChantier][territoireCode].écart,
     tendance: newMaille[mailleChantier][territoireCode].tendance,
     météo: newMaille[mailleChantier][territoireCode].météo,
-    avancementGlobal:
-      newMaille[mailleChantier][territoireCode].avancement.global,
+    avancement: newMaille[mailleChantier][territoireCode].avancement.annuel,
     aUnePropositionsValeurAvancement:
       newMaille[mailleChantier][territoireCode]
         .aUnePropositionsValeurAvancement,

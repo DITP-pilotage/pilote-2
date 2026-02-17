@@ -57,6 +57,7 @@ interface PageRapportDétailléProps {
   mapDonnéesCartographieMétéo: Map<string, CartographieDonnéesMétéo>;
   listeIndicateursPrisEnCompteAvancement: string[];
   chantiersSontArchives: boolean;
+  moyenneTauxAvancementTerritoire: number | null;
   masquerIndicateursNonApplicables: boolean;
 }
 
@@ -85,6 +86,7 @@ const PageRapportDétaillé: FunctionComponent<PageRapportDétailléProps> = ({
   mapDonnéesCartographieMétéo,
   listeIndicateursPrisEnCompteAvancement,
   chantiersSontArchives,
+  moyenneTauxAvancementTerritoire,
   masquerIndicateursNonApplicables,
 }) => {
   const { récupérerDétailsSurUnTerritoire } = useTerritoireHabilitation();
@@ -154,6 +156,7 @@ const PageRapportDétaillé: FunctionComponent<PageRapportDétailléProps> = ({
               mailleSelectionnee={mailleSelectionnee}
               repartitionMeteosChantiers={repartitionMeteosChantiers}
               territoireCode={territoireCode}
+              moyenneTauxAvancementTerritoire={moyenneTauxAvancementTerritoire}
             />
             {afficherLesChantiers ? (
               <div className="chantiers">

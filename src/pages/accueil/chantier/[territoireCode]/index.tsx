@@ -226,23 +226,16 @@ export const getServerSideProps = async (
       chantiersAvecAlertes.map((chantier) => chantier.id),
       mailleQuery,
       session.habilitations,
+      jalon,
     )
     .then(presenterEnAvancementsStatistiquesAccueilContrat);
   const donnéesTerritoiresAgrégées = new AgrégateurListeChantiersParTerritoire(
     chantiersAvecAlertes,
   ).agréger();
 
-  if (avancementsAgrégés) {
-    avancementsAgrégés.global.moyenne =
-      donnéesTerritoiresAgrégées[mailleChantier].territoires[
-        territoireCode
-      ].répartition.avancements.global.moyenne;
-    avancementsAgrégés.annuel.moyenne =
-      donnéesTerritoiresAgrégées[mailleChantier].territoires[
-        territoireCode
-      ].répartition.avancements.annuel.moyenne;
-  }
-
+  const moyenneTerritoire =
+    donnéesTerritoiresAgrégées[mailleChantier].territoires[territoireCode]
+      .répartition.avancements.annuel.moyenne;
   const avancementsGlobauxTerritoriauxMoyens = objectEntries({
     ...donnéesTerritoiresAgrégées.regionale.territoires,
     ...donnéesTerritoiresAgrégées.departementale.territoires,
@@ -297,6 +290,7 @@ export const getServerSideProps = async (
         estVideoAccueilActive && !doitAfficherModaleVideoAccueil,
       doitAfficherLaModaleInfolettre,
       doitAfficherLaFicheTerritoriale: estFicheTerritorialeActive,
+      moyenneTerritoire,
     },
   };
 };
@@ -339,6 +333,7 @@ const ChantierLayout = ({
   doitAfficherModaleVideoAccueil,
   doitAfficherLaModaleInfolettre,
   doitAfficherLaFicheTerritoriale,
+  moyenneTerritoire,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const { data: session } = useSession();
 
@@ -475,6 +470,7 @@ const ChantierLayout = ({
             nombreTotalChantiersAvecAlertes={nombreTotalChantiersAvecAlertes}
             repartitionMeteosChantiers={repartitionMeteosChantiers}
             territoireCode={territoireCode}
+            moyenneTerritoire={moyenneTerritoire}
           />
           <ModaleVideoAccueil
             onOpenChange={setIsModaleVideoAccueilOpen}
