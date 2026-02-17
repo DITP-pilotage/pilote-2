@@ -1,8 +1,26 @@
 {
   "perimetresMinisteriels": [
     {
-      "slug": "enseignement-superieur",
-      "libelle": "\"\"\"Enseignement supérieur",
+      "slug": "autonomie-handicap",
+      "libelle": "\"Autonomie, Handicap\"",
+      "services": [
+        {
+          "slug": "administration-centrale",
+          "libelle": "Administration centrale"
+        },
+        {
+          "slug": "maison-departementale-des-personnes-handicapees-mdph",
+          "libelle": "Maison départementale des personnes handicapées (MDPH)"
+        },
+        {
+          "slug": "plateforme-d-accompagnement-et-de-repit-pour-les-aidants-de-personnes-agees",
+          "libelle": "Plateforme d'accompagnement et de répit pour les aidants de personnes âgées"
+        }
+      ]
+    },
+    {
+      "slug": "enseignement-superieur-recherche",
+      "libelle": "\"Enseignement supérieur, Recherche\"",
       "services": [
         {
           "slug": "administration-centrale",
@@ -11,12 +29,28 @@
       ]
     },
     {
-      "slug": "ministere-du-travail",
-      "libelle": "\"Ministère du Travail",
+      "slug": "travail-emploi",
+      "libelle": "\"Travail, Emploi\"",
       "services": [
         {
-          "slug": "direction-regionale-de-l-economie",
-          "libelle": "\"Direction régionale de l'économie"
+          "slug": "administration-centrale",
+          "libelle": "Administration centrale"
+        },
+        {
+          "slug": "agence-france-travail",
+          "libelle": "Agence France Travail"
+        },
+        {
+          "slug": "direction-departementale-de-l-emploi-du-travail-et-des-solidarites-ddets",
+          "libelle": "Direction départementale de l'emploi, du travail et des solidarités (DDETS)"
+        },
+        {
+          "slug": "direction-departementale-de-l-emploi-du-travail-et-des-solidarites-et-de-la-protection-des-populations-ddets-pp",
+          "libelle": "Direction départementale de l'emploi, du travail et des solidarités et de la protection des populations (DDETS-PP)"
+        },
+        {
+          "slug": "france-travail",
+          "libelle": "France Travail"
         }
       ]
     },
@@ -27,6 +61,14 @@
         {
           "slug": "administration-centrale",
           "libelle": "Administration centrale"
+        },
+        {
+          "slug": "direction-regionale-de-l-alimentation-de-l-agriculture-et-de-la-foret-draaf",
+          "libelle": "Direction régionale de l'Alimentation, de l'Agriculture et de la Forêt (DRAAF)"
+        },
+        {
+          "slug": "direction-regionale-et-interdepartementale-de-l-alimentation-de-l-agriculture-et-de-la-foret",
+          "libelle": "Direction régionale et interdépartementale de l'alimentation, de l'agriculture et de la forêt "
         }
       ]
     },
@@ -55,6 +97,24 @@
       ]
     },
     {
+      "slug": "comptes-publics",
+      "libelle": "Comptes publics",
+      "services": [
+        {
+          "slug": "administration-centrale",
+          "libelle": "Administration centrale"
+        },
+        {
+          "slug": "direction-departementale-des-finances-publiques-ddfip",
+          "libelle": "Direction départementale des Finances publiques (DDFiP)"
+        },
+        {
+          "slug": "direction-regionale-des-finances-publiques-drfip",
+          "libelle": "Direction régionale des Finances publiques (DRFiP)"
+        }
+      ]
+    },
+    {
       "slug": "culture",
       "libelle": "Culture",
       "services": [
@@ -73,58 +133,24 @@
       ]
     },
     {
-      "slug": "de-la-jeunesse-et-de-la-vie-associative",
-      "libelle": "de la Jeunesse et de la Vie Associative\"",
+      "slug": "economie-et-entreprises",
+      "libelle": "Économie et Entreprises",
       "services": [
         {
-          "slug": "service-departemental-a-la-jeunesse",
-          "libelle": "\"Service départemental à la jeunesse"
-        }
-      ]
-    },
-    {
-      "slug": "departement",
-      "libelle": "Département",
-      "services": [
-        {
-          "slug": "direction-departementale-de-l-emploi",
-          "libelle": "\"Direction départementale de l'emploi"
+          "slug": "administration-centrale",
+          "libelle": "Administration centrale"
         },
         {
-          "slug": "agence-france-travail",
-          "libelle": "Agence France Travail"
+          "slug": "direction-regionale-de-l-economie-de-l-emploi-du-travail-et-des-solidarites-dreets",
+          "libelle": "Direction régionale de l'économie, de l'emploi, du travail et des solidarités (DREETS)"
         },
         {
-          "slug": "agence-regionale-de-sante-ars-delegation-departementale",
-          "libelle": "Agence régionale de santé (ARS) - délégation départementale"
+          "slug": "direction-regionale-des-douanes",
+          "libelle": "Direction régionale des douanes"
         },
         {
-          "slug": "caisse-d-allocations-familiales-caf",
-          "libelle": "Caisse d'allocations familiales (Caf)"
-        },
-        {
-          "slug": "caisse-primaire-d-assurance-maladie",
-          "libelle": "Caisse primaire d'assurance maladie"
-        },
-        {
-          "slug": "direction-departementale-des-finances-publiques-ddfip",
-          "libelle": "Direction départementale des Finances publiques (DDFiP)"
-        },
-        {
-          "slug": "maison-departementale-des-personnes-handicapees-mdph",
-          "libelle": "Maison départementale des personnes handicapées (MDPH)"
-        },
-        {
-          "slug": "mutualite-sociale-agricole-msa",
-          "libelle": "Mutualité sociale agricole (MSA)"
-        },
-        {
-          "slug": "plateforme-d-accompagnement-et-de-repit-pour-les-aidants-de-personnes-agees",
-          "libelle": "Plateforme d'accompagnement et de répit pour les aidants de personnes âgées"
-        },
-        {
-          "slug": "union-de-recouvrement-des-cotisations-de-securite-sociale-et-d-allocations-familiales-urssaf",
-          "libelle": "Union de recouvrement des cotisations de sécurité sociale et d’allocations familiales (Urssaf)"
+          "slug": "direction-regionale-et-interregionale-des-douanes-et-droits-indirects-53",
+          "libelle": "Direction régionale et interrégionale des douanes et droits indirects (53)"
         }
       ]
     },
@@ -155,6 +181,10 @@
       "libelle": "Égalité Femmes-Hommes",
       "services": [
         {
+          "slug": "administration-centrale",
+          "libelle": "Administration centrale"
+        },
+        {
           "slug": "delegation-departementale-aux-droits-des-femmes-et-a-l-egalite-dddfe",
           "libelle": "Délégation départementale aux droits des femmes et à l'égalité (DDDFE)"
         },
@@ -165,8 +195,8 @@
       ]
     },
     {
-      "slug": "et-de-la-lutte-contre-les-discriminations",
-      "libelle": "et de la lutte contre les discriminations\"",
+      "slug": "enfance-et-famille",
+      "libelle": "Enfance et Famille",
       "services": [
         {
           "slug": "administration-centrale",
@@ -177,6 +207,16 @@
     {
       "slug": "europe-et-affaires-etrangeres",
       "libelle": "Europe et Affaires étrangères",
+      "services": [
+        {
+          "slug": "administration-centrale",
+          "libelle": "Administration centrale"
+        }
+      ]
+    },
+    {
+      "slug": "industrie-et-energie",
+      "libelle": "Industrie et Énergie",
       "services": [
         {
           "slug": "administration-centrale",
@@ -235,6 +275,30 @@
       ]
     },
     {
+      "slug": "jeunesse",
+      "libelle": "Jeunesse",
+      "services": [
+        {
+          "slug": "administration-centrale",
+          "libelle": "Administration centrale"
+        },
+        {
+          "slug": "service-departemental-a-la-jeunesse-a-l-engagement-et-aux-sports-sdjes",
+          "libelle": "Service départemental à la jeunesse, à l’engagement et aux sports (SDJES)"
+        }
+      ]
+    },
+    {
+      "slug": "jeunesse-sports",
+      "libelle": "Jeunesse, Sports",
+      "services": [
+        {
+          "slug": "delegation-regionale-academique-a-la-jeunesse-a-l-engagement-et-aux-sports",
+          "libelle": "Délégation régionale académique à la Jeunesse, à l'Engagement et aux Sports"
+        }
+      ]
+    },
+    {
       "slug": "justice",
       "libelle": "Justice",
       "services": [
@@ -289,12 +353,12 @@
       ]
     },
     {
-      "slug": "national",
-      "libelle": "National",
+      "slug": "numerique-et-ia",
+      "libelle": "Numérique et IA",
       "services": [
         {
-          "slug": "france-travail",
-          "libelle": "France Travail"
+          "slug": "administration-centrale",
+          "libelle": "Administration centrale"
         }
       ]
     },
@@ -319,46 +383,62 @@
       ]
     },
     {
-      "slug": "region",
-      "libelle": "Région",
+      "slug": "renouveau-democratique",
+      "libelle": "Renouveau Démocratique",
       "services": [
         {
-          "slug": "delegation-regionale-academique-a-la-jeunesse",
-          "libelle": "\"Délégation régionale académique à la Jeunesse"
-        },
+          "slug": "administration-centrale",
+          "libelle": "Administration centrale"
+        }
+      ]
+    },
+    {
+      "slug": "sante",
+      "libelle": "Santé",
+      "services": [
         {
-          "slug": "direction-regionale-de-l-alimentation",
-          "libelle": "\"Direction régionale de l'Alimentation"
-        },
-        {
-          "slug": "direction-regionale-de-l-environnement",
-          "libelle": "\"Direction régionale de l’environnement"
-        },
-        {
-          "slug": "direction-regionale-et-interdepartementale-de-l-alimentation",
-          "libelle": "\"Direction régionale et interdépartementale de l'alimentation"
+          "slug": "administration-centrale",
+          "libelle": "Administration centrale"
         },
         {
           "slug": "agence-regionale-de-sante-ars",
           "libelle": "Agence régionale de santé (ARS)"
         },
         {
-          "slug": "direction-regionale-des-douanes",
-          "libelle": "Direction régionale des douanes"
+          "slug": "agence-regionale-de-sante-ars-delegation-departementale",
+          "libelle": "Agence régionale de santé (ARS) - délégation départementale"
         },
         {
-          "slug": "direction-regionale-des-finances-publiques-drfip",
-          "libelle": "Direction régionale des Finances publiques (DRFiP)"
-        },
-        {
-          "slug": "direction-regionale-et-interregionale-des-douanes-et-droits-indirects-53",
-          "libelle": "Direction régionale et interrégionale des douanes et droits indirects (53)"
+          "slug": "caisse-primaire-d-assurance-maladie",
+          "libelle": "Caisse primaire d'assurance maladie"
         }
       ]
     },
     {
-      "slug": "renouveau-democratique",
-      "libelle": "Renouveau Démocratique",
+      "slug": "solidarite",
+      "libelle": "Solidarité",
+      "services": [
+        {
+          "slug": "administration-centrale",
+          "libelle": "Administration centrale"
+        },
+        {
+          "slug": "caisse-d-allocations-familiales-caf",
+          "libelle": "Caisse d'allocations familiales (Caf)"
+        },
+        {
+          "slug": "mutualite-sociale-agricole-msa",
+          "libelle": "Mutualité sociale agricole (MSA)"
+        },
+        {
+          "slug": "union-de-recouvrement-des-cotisations-de-securite-sociale-et-d-allocations-familiales-urssaf",
+          "libelle": "Union de recouvrement des cotisations de sécurité sociale et d’allocations familiales (Urssaf)"
+        }
+      ]
+    },
+    {
+      "slug": "sports",
+      "libelle": "Sports",
       "services": [
         {
           "slug": "administration-centrale",
@@ -383,6 +463,10 @@
           "libelle": "Direction interrégionale de la mer"
         },
         {
+          "slug": "direction-regionale-de-l-environnement-de-l-amenagement-et-du-logement-dreal",
+          "libelle": "Direction régionale de l’environnement, de l’aménagement et du logement (DREAL)"
+        },
+        {
           "slug": "espace-conseil-france-renov",
           "libelle": "Espace conseil France Rénov'"
         },
@@ -403,8 +487,8 @@
       ]
     },
     {
-      "slug": "autre",
-      "libelle": "Autre",
+      "slug": "vie-associative",
+      "libelle": "Vie associative",
       "services": [
         {
           "slug": "administration-centrale",

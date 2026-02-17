@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
+import { parse } from "csv-parse/sync";
 
 interface ServiceReferentiel {
   slug: string;
@@ -14,6 +15,13 @@ interface PerimetreMinisterielReferentiel {
 
 interface Referentiel {
   perimetresMinisteriels: PerimetreMinisterielReferentiel[];
+}
+
+interface CsvRow {
+  Nom_du_service: string;
+  Ministere: string;
+  Echelon: string;
+  Perimetre_ministeriel: string;
 }
 
 function slugify(text: string): string {
@@ -33,16 +41,17 @@ function genererReferentiel(): void {
   );
   const csvContent = fs.readFileSync(csvPath, "utf-8");
 
-  const lines = csvContent.split("\n").slice(1); // Skip header
+  const rows: CsvRow[] = parse(csvContent, {
+    columns: true,
+    skipEmptyLines: true,
+    trim: true,
+  });
 
   const perimetresMap = new Map<string, PerimetreMinisterielReferentiel>();
 
-  for (const line of lines) {
-    if (!line.trim()) continue;
-
-    const parts = line.split(",").map((field) => field.trim());
-    const nomService = parts[0];
-    const perimetreMinisteriel = parts[3]; // Perimetre_ministeriel is column 3
+  for (const row of rows) {
+    const nomService = row.Nom_du_service;
+    const perimetreMinisteriel = row.Perimetre_ministeriel;
 
     if (!nomService) continue;
 
