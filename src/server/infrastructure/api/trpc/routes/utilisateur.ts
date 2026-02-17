@@ -18,16 +18,7 @@ import { getContainer } from "@/server/dependances";
 import { z } from "zod";
 
 const creerUtilisateurSchemaBase = validationInfosBaseUtilisateur
-  .merge(validationInfosHabilitationsUtilisateur)
-  .superRefine((data, ctx) => {
-    if (data.service === "autre" && !data.serviceAutre) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Ce champ est obligatoire",
-        path: ["serviceAutre"],
-      });
-    }
-  });
+  .and(validationInfosHabilitationsUtilisateur);
 
 export const utilisateurRouter = créerRouteurTRPC({
   créer: procédureProtégée

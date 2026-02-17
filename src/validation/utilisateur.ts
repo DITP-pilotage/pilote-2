@@ -48,6 +48,14 @@ export const validationInfosBaseUtilisateur = z.object({
   saisieIndicateur: z.boolean(),
   gestionUtilisateur: z.boolean(),
   applicationsAccessibles: z.array(z.nativeEnum($Enums.application_accessible)),
+}).superRefine((data, ctx) => {
+  if (data.service === "autre" && !data.serviceAutre) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: "Ce champ est obligatoire",
+      path: ["serviceAutre"],
+    });
+  }
 });
 
 const adresseEstValideSecretariatGeneral = (adresse: string) => {
@@ -75,6 +83,14 @@ export const validationInfosBaseUtilisateurSecretariatGeneral = z.object({
   profil: z.enum(profilsCodes),
   saisieIndicateur: z.boolean(),
   applicationsAccessibles: z.array(z.nativeEnum($Enums.application_accessible)),
+}).superRefine((data, ctx) => {
+  if (data.service === "autre" && !data.serviceAutre) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: "Ce champ est obligatoire",
+      path: ["serviceAutre"],
+    });
+  }
 });
 
 const DOMAINES_AUTORISES_COORDINATEUR_BASE = [
@@ -123,6 +139,14 @@ export const validationInfosBaseUtilisateurCoordinateur = (
     applicationsAccessibles: z.array(
       z.nativeEnum($Enums.application_accessible),
     ),
+  }).superRefine((data, ctx) => {
+    if (data.service === "autre" && !data.serviceAutre) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Ce champ est obligatoire",
+        path: ["serviceAutre"],
+      });
+    }
   });
 
 export const validationInfosHabilitationsUtilisateur = z.object({
