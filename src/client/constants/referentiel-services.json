@@ -1,60 +1,6 @@
 {
   "perimetresMinisteriels": [
     {
-      "slug": "autonomie-handicap",
-      "libelle": "\"Autonomie, Handicap\"",
-      "services": [
-        {
-          "slug": "administration-centrale",
-          "libelle": "Administration centrale"
-        },
-        {
-          "slug": "maison-departementale-des-personnes-handicapees-mdph",
-          "libelle": "Maison départementale des personnes handicapées (MDPH)"
-        },
-        {
-          "slug": "plateforme-d-accompagnement-et-de-repit-pour-les-aidants-de-personnes-agees",
-          "libelle": "Plateforme d'accompagnement et de répit pour les aidants de personnes âgées"
-        }
-      ]
-    },
-    {
-      "slug": "enseignement-superieur-recherche",
-      "libelle": "\"Enseignement supérieur, Recherche\"",
-      "services": [
-        {
-          "slug": "administration-centrale",
-          "libelle": "Administration centrale"
-        }
-      ]
-    },
-    {
-      "slug": "travail-emploi",
-      "libelle": "\"Travail, Emploi\"",
-      "services": [
-        {
-          "slug": "administration-centrale",
-          "libelle": "Administration centrale"
-        },
-        {
-          "slug": "agence-france-travail",
-          "libelle": "Agence France Travail"
-        },
-        {
-          "slug": "direction-departementale-de-l-emploi-du-travail-et-des-solidarites-ddets",
-          "libelle": "Direction départementale de l'emploi, du travail et des solidarités (DDETS)"
-        },
-        {
-          "slug": "direction-departementale-de-l-emploi-du-travail-et-des-solidarites-et-de-la-protection-des-populations-ddets-pp",
-          "libelle": "Direction départementale de l'emploi, du travail et des solidarités et de la protection des populations (DDETS-PP)"
-        },
-        {
-          "slug": "france-travail",
-          "libelle": "France Travail"
-        }
-      ]
-    },
-    {
       "slug": "agriculture",
       "libelle": "Agriculture",
       "services": [
@@ -93,6 +39,24 @@
         {
           "slug": "delegation-militaire-departementale-dmd",
           "libelle": "Délégation militaire départementale (DMD)"
+        }
+      ]
+    },
+    {
+      "slug": "autonomie-handicap",
+      "libelle": "Autonomie, Handicap",
+      "services": [
+        {
+          "slug": "administration-centrale",
+          "libelle": "Administration centrale"
+        },
+        {
+          "slug": "maison-departementale-des-personnes-handicapees-mdph",
+          "libelle": "Maison départementale des personnes handicapées (MDPH)"
+        },
+        {
+          "slug": "plateforme-d-accompagnement-et-de-repit-pour-les-aidants-de-personnes-agees",
+          "libelle": "Plateforme d'accompagnement et de répit pour les aidants de personnes âgées"
         }
       ]
     },
@@ -197,6 +161,16 @@
     {
       "slug": "enfance-et-famille",
       "libelle": "Enfance et Famille",
+      "services": [
+        {
+          "slug": "administration-centrale",
+          "libelle": "Administration centrale"
+        }
+      ]
+    },
+    {
+      "slug": "enseignement-superieur-recherche",
+      "libelle": "Enseignement supérieur, Recherche",
       "services": [
         {
           "slug": "administration-centrale",
@@ -483,6 +457,32 @@
         {
           "slug": "administration-centrale",
           "libelle": "Administration centrale"
+        }
+      ]
+    },
+    {
+      "slug": "travail-emploi",
+      "libelle": "Travail, Emploi",
+      "services": [
+        {
+          "slug": "administration-centrale",
+          "libelle": "Administration centrale"
+        },
+        {
+          "slug": "agence-france-travail",
+          "libelle": "Agence France Travail"
+        },
+        {
+          "slug": "direction-departementale-de-l-emploi-du-travail-et-des-solidarites-ddets",
+          "libelle": "Direction départementale de l'emploi, du travail et des solidarités (DDETS)"
+        },
+        {
+          "slug": "direction-departementale-de-l-emploi-du-travail-et-des-solidarites-et-de-la-protection-des-populations-ddets-pp",
+          "libelle": "Direction départementale de l'emploi, du travail et des solidarités et de la protection des populations (DDETS-PP)"
+        },
+        {
+          "slug": "france-travail",
+          "libelle": "France Travail"
         }
       ]
     },

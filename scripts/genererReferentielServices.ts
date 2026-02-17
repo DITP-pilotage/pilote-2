@@ -51,7 +51,7 @@ function genererReferentiel(): void {
 
   for (const row of rows) {
     const nomService = row.Nom_du_service;
-    const perimetreMinisteriel = row.Perimetre_ministeriel;
+    const perimetreMinisteriel = row.Perimetre_ministeriel.replace(/^"+|"+$/g, "");
 
     if (!nomService) continue;
 
