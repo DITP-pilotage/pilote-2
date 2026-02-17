@@ -1,307 +1,89 @@
-import { Suspense } from "react";
+import { Suspense, useState } from "react";
 import { parseAsString, useQueryState } from "nuqs";
-import "@gouvfr/dsfr/dist/component/table/table.min.css";
 import api from "@/server/infrastructure/api/trpc/api";
-import { PiloteDateFormatter } from "@/server/rapports-hebdomadaires/infrastructure/adapters/PiloteDateFormatter";
+import BarreLatérale from "@/components/_commons/BarreLatérale/BarreLatérale";
+import BarreLatéraleEncart from "@/components/_commons/BarreLatérale/BarreLatéraleEncart/BarreLatéraleEncart";
+import RapportDetail from "./RapportDetail";
+import PageRapportsHebdomadairesStyled from "./PageRapportsHebdomadaires.styled";
 
-const formatDate = (date: Date) => {
-  return new Date(date).toLocaleDateString("fr-FR", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-  });
+const formatterDateSemaine = (date: Date): string => {
+  const d = new Date(date);
+  const jour = d.getDate();
+  const jourFormaté = jour === 1 ? "1er" : String(jour);
+  const mois = d.toLocaleDateString("fr-FR", { month: "long" });
+  return `${jourFormaté} ${mois} ${d.getFullYear()}`;
 };
 
-const formatterTypeValeur = (typeValeur: string): string => {
-  switch (typeValeur) {
-    case "VALEUR_AVANCEMENT":
-      return "VA";
-    case "VALEUR_INITIALE":
-      return "VI";
-    case "VALEUR_CIBLE":
-      return "VC";
-    default:
-      return typeValeur;
-  }
-};
-
-const formatterProfil = (profil: string): string => {
-  switch (profil) {
-    case "COORDINATEUR_REGION":
-      return "Coordinateur PILOTE régional";
-    case "COORDINATEUR_DEPARTEMENT":
-      return "Coordinateur PILOTE départemental";
-    case "CABINET_MTFP":
-      return "Cabinet MTFP";
-    case "PM_ET_CABINET":
-      return "Première Ministre et cabinet";
-    case "PR":
-      return "Présidence de la République";
-    case "CABINET_MINISTERIEL":
-      return "Cabinets ministériels";
-    case "DIR_ADMIN_CENTRALE":
-      return "Direction d'administration centrale";
-    case "DROM":
-      return "DROM/Outre-Mer";
-    case "PREFET_DEPARTEMENT":
-      return "Préfet de département et collaborateurs";
-    case "PREFET_REGION":
-      return "Préfet de région et collaborateurs";
-    case "RESPONSABLE_DEPARTEMENT":
-      return "Responsable local départemental";
-    case "RESPONSABLE_REGION":
-      return "Responsable local régional";
-    case "SERVICES_DECONCENTRES_DEPARTEMENT":
-      return "Services déconcentrés départementaux";
-    case "SERVICES_DECONCENTRES_REGION":
-      return "Services déconcentrés régionaux";
-    case "SECRETARIAT_GENERAL":
-      return "Secrétariat général de ministère";
-    case "DIR_PROJET":
-      return "Directeur de projet";
-    case "EQUIPE_DIR_PROJET":
-      return "Équipe de Directeur de projet";
-    case "DITP_ADMIN":
-      return "DITP - Admin";
-    case "DITP_PILOTAGE":
-      return "DITP - Pilotage";
-    default:
-      return profil;
-  }
-};
-
-function RapportDetail({ rapportId }: { rapportId: string }) {
-  const [rapportDetail] = api.rapportHebdomadaire.récupérer.useSuspenseQuery({
-    rapportId,
-  });
-
-  const comptesCrees =
-    rapportDetail.contenuRapport.sectionActiviteComptes.comptesCrees;
-  const comptesDesactives =
-    rapportDetail.contenuRapport.sectionActiviteComptes.comptesDesactives;
-  const chantiers = rapportDetail.contenuRapport.sectionActiviteChantiers;
-  const territoireCode =
-    rapportDetail.contenuRapport.coordinateur.territoires[0]?.code || "NAT-FR";
-
-  return (
-    <div className="p-6">
-      <h2 className="text-2xl font-bold mb-2">Détail du rapport</h2>
-      <p className="text-gray-600 mb-6">
-        {formatDate(rapportDetail.periodeDebut)} —{" "}
-        {formatDate(rapportDetail.periodeFin)}
-      </p>
-
-      {/* Section 1: Comptes créés */}
-      <h3 className="text-xl font-semibold mb-3">Comptes créés</h3>
-      {comptesCrees.length === 0 ? (
-        <p className="text-gray-500 mb-6">
-          Aucun compte créé sur cette période.
-        </p>
-      ) : (
-        <div className="fr-table mb-6">
-          <table>
-            <thead>
-              <tr>
-                <th>Nom</th>
-                <th>Prénom</th>
-                <th>Email</th>
-                <th>Profil</th>
-              </tr>
-            </thead>
-            <tbody>
-              {comptesCrees.map((compte) => (
-                <tr key={compte.email}>
-                  <td>{compte.nom}</td>
-                  <td>{compte.prenom}</td>
-                  <td>{compte.email}</td>
-                  <td>{formatterProfil(compte.profil)}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
-
-      {/* Section 2: Comptes désactivés */}
-      <h3 className="text-xl font-semibold mb-3">Comptes désactivés</h3>
-      {comptesDesactives.length === 0 ? (
-        <p className="text-gray-500 mb-6">
-          Aucun compte désactivé sur cette période.
-        </p>
-      ) : (
-        <div className="fr-table mb-6">
-          <table>
-            <thead>
-              <tr>
-                <th>Nom</th>
-                <th>Prénom</th>
-                <th>Email</th>
-                <th>Profil</th>
-              </tr>
-            </thead>
-            <tbody>
-              {comptesDesactives.map((compte) => (
-                <tr key={compte.email}>
-                  <td>{compte.nom}</td>
-                  <td>{compte.prenom}</td>
-                  <td>{compte.email}</td>
-                  <td>{formatterProfil(compte.profil)}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
-
-      {/* Section 3: Activité des chantiers */}
-      <h3 className="text-xl font-semibold mb-3">Activité des chantiers</h3>
-      {chantiers.length === 0 ? (
-        <p className="text-gray-500">
-          Aucune activité sur les chantiers pour cette période.
-        </p>
-      ) : (
-        chantiers.map((chantier) => (
-          <div className="mb-6" key={chantier.id}>
-            <h4 className="text-lg font-medium mb-2">
-              <a
-                href={`/chantier/${chantier.id}/${territoireCode}`}
-                className="fr-link"
-              >
-                {chantier.nom}
-              </a>
-            </h4>
-            {chantier.indicateurs.map((indicateur) => (
-              <div className="mb-4" key={indicateur.id}>
-                <h5 className="text-base font-medium mb-1">{indicateur.nom}</h5>
-                <div className="fr-table">
-                  <table>
-                    <thead>
-                      <tr>
-                        <th>Territoire</th>
-                        <th>Type de valeur</th>
-                        <th>Valeur</th>
-                        <th>Date de valeur</th>
-                        <th>Date d'événement</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {indicateur.territoires.map((territoire) => (
-                        <tr
-                          key={`${territoire.code}-${territoire.typeValeur}-${territoire.dateValeur}`}
-                        >
-                          <td>{territoire.nom}</td>
-                          <td>{formatterTypeValeur(territoire.typeValeur)}</td>
-                          <td>{territoire.valeur ?? "—"}</td>
-                          <td>
-                            {PiloteDateFormatter.isoDateFranceMetropolitaine(
-                              territoire.dateValeur,
-                            )}
-                          </td>
-                          <td>
-                            {PiloteDateFormatter.isoDateFranceMetropolitaine(
-                              territoire.dateEvenement,
-                            )}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            ))}
-          </div>
-        ))
-      )}
-    </div>
-  );
-}
-
-export default function PageRapportsHebdomadaires() {
+const PageRapportsHebdomadaires = () => {
   const [rapportId, setRapportId] = useQueryState("rapportId", parseAsString);
   const [rapports] = api.rapportHebdomadaire.lister.useSuspenseQuery();
-
-  const getStatutBadgeClass = (statut: string) => {
-    switch (statut) {
-      case "ENVOYE":
-        return "bg-green-100 text-green-800";
-      case "EN_ATTENTE":
-        return "bg-yellow-100 text-yellow-800";
-      case "ERREUR":
-        return "bg-red-100 text-red-800";
-      default:
-        return "bg-gray-100 text-gray-800";
-    }
-  };
+  const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto py-8 px-4">
-        <h1 className="text-3xl font-bold mb-8">Rapports hebdomadaires</h1>
-
-        <div className="grid grid-cols-[20rem_1fr] gap-6">
-          {/* Liste des rapports */}
-          <div className="bg-white rounded-lg shadow">
-            <div className="p-4 border-b">
-              <h2 className="font-semibold">Mes rapports</h2>
-            </div>
-            <div className="divide-y">
-              {rapports.length === 0 ? (
-                <div className="p-4 text-gray-500 text-sm">
-                  Aucun rapport disponible
-                </div>
-              ) : (
-                rapports.map((rapport) => (
-                  <button
-                    key={rapport.id}
-                    onClick={() => setRapportId(rapport.id)}
-                    className={`w-full text-left p-4 hover:bg-gray-50 transition-colors ${
-                      rapportId === rapport.id ? "bg-blue-50" : ""
-                    }`}
-                  >
-                    <div className="flex flex-col gap-2">
-                      <div className="text-sm font-medium">
-                        {formatDate(rapport.periodeDebut)} -{" "}
-                        {formatDate(rapport.periodeFin)}
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <span
-                          className={`text-xs px-2 py-1 rounded-full font-medium ${getStatutBadgeClass(
-                            rapport.statutEnvoi,
-                          )}`}
-                        >
-                          {rapport.statutEnvoi}
-                        </span>
-                        <span className="text-xs text-gray-500">
-                          {formatDate(rapport.dateCreation)}
-                        </span>
-                      </div>
-                    </div>
-                  </button>
-                ))
-              )}
-            </div>
+    <PageRapportsHebdomadairesStyled className="flex">
+      <BarreLatérale
+        estOuvert={estOuverteBarreLatérale}
+        setEstOuvert={setEstOuverteBarreLatérale}
+      >
+        <BarreLatéraleEncart className="bg-dsfr-blue-france-925">
+          <div className="fr-text--sm fr-text--bold fr-mb-1w">
+            {rapports.length} rapport{rapports.length > 1 ? "s" : ""}
           </div>
+          <h2 className="fr-h6 fr-mb-2w">Mes rapports</h2>
+        </BarreLatéraleEncart>
 
-          {/* Détail du rapport */}
-          <div className="bg-white rounded-lg shadow">
-            {rapportId ? (
-              <Suspense
-                fallback={
-                  <div className="p-6 flex items-center justify-center">
-                    <div className="text-gray-500">Chargement...</div>
-                  </div>
-                }
+        <div>
+          {rapports.length === 0 ? (
+            <div className="fr-p-2w fr-text--sm">Aucun rapport disponible</div>
+          ) : (
+            rapports.map((rapport, index) => (
+              <button
+                key={rapport.id}
+                className={`w-full text-left fr-p-2w fr-text--sm ${
+                  rapportId === rapport.id ? "bg-dsfr-blue-france-950" : ""
+                } ${index > 0 ? "fr-border-top" : ""}`}
+                onClick={() => setRapportId(rapport.id)}
+                style={{
+                  border: "none",
+                  cursor: "pointer",
+                  transition: "background-color 0.2s",
+                }}
+                type="button"
               >
-                <RapportDetail rapportId={rapportId} />
-              </Suspense>
-            ) : (
-              <div className="p-6 flex items-center justify-center text-gray-500">
-                Sélectionnez un rapport pour voir les détails
-              </div>
-            )}
+                Semaine du {formatterDateSemaine(rapport.periodeDebut)}
+              </button>
+            ))
+          )}
+        </div>
+      </BarreLatérale>
+
+      <main>
+        <div className="horizontal-panel fr-background-blue-france-850">
+          <div className="fr-container fr-py-3w">
+            <h1 className="fr-h3 fr-mb-0">Rapports hebdomadaires</h1>
           </div>
         </div>
-      </div>
-    </div>
+
+        <div className="fr-container fr-py-4w">
+          {rapportId ? (
+            <Suspense
+              fallback={
+                <div className="fr-p-6w flex items-center justify-center">
+                  <div className="fr-text--sm">Chargement...</div>
+                </div>
+              }
+            >
+              <RapportDetail rapportId={rapportId} />
+            </Suspense>
+          ) : (
+            <div className="fr-p-6w flex items-center justify-center fr-text--sm">
+              Sélectionnez un rapport pour voir les détails
+            </div>
+          )}
+        </div>
+      </main>
+    </PageRapportsHebdomadairesStyled>
   );
-}
+};
+
+export default PageRapportsHebdomadaires;
