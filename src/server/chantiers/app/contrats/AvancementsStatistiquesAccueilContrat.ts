@@ -1,15 +1,9 @@
 import { AvancementsStatistiques } from "@/components/_commons/Avancements/Avancements.interface";
 
 export interface AvancementsStatistiquesAccueilContrat {
-  global: {
-    moyenne: number | null;
-    médiane: number | null;
-    minimum: number | null;
-    maximum: number | null;
-  };
-  annuel: {
-    moyenne: number | null;
-  };
+  médiane: number | null;
+  minimum: number | null;
+  maximum: number | null;
 }
 
 export type AvancementsGlobauxTerritoriauxMoyensContrat = {
@@ -23,29 +17,17 @@ export const presenterEnAvancementsStatistiquesAccueilContrat = (
   avancementsStatistiques: AvancementsStatistiques,
 ): AvancementsStatistiquesAccueilContrat => {
   return {
-    global: {
-      moyenne:
-        avancementsStatistiques?.global.moyenne != undefined
-          ? avancementsStatistiques?.global.moyenne
-          : null,
-      médiane:
-        avancementsStatistiques?.global.médiane != undefined
-          ? avancementsStatistiques?.global.médiane
-          : null,
-      minimum:
-        avancementsStatistiques?.global.minimum != undefined
-          ? avancementsStatistiques?.global.minimum
-          : null,
-      maximum:
-        avancementsStatistiques?.global.maximum != undefined
-          ? avancementsStatistiques?.global.maximum
-          : null,
-    },
-    annuel: {
-      moyenne:
-        avancementsStatistiques?.annuel.moyenne !== undefined
-          ? avancementsStatistiques?.annuel.moyenne
-          : null,
-    },
+    médiane:
+      avancementsStatistiques?.médiane != undefined
+        ? avancementsStatistiques?.médiane
+        : null,
+    minimum:
+      avancementsStatistiques?.minimum != undefined
+        ? avancementsStatistiques?.minimum
+        : null,
+    maximum:
+      avancementsStatistiques?.maximum != undefined
+        ? avancementsStatistiques?.maximum
+        : null,
   };
 };

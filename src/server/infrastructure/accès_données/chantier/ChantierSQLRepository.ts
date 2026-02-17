@@ -19,10 +19,7 @@ import {
 } from "@/server/domain/utilisateur/Utilisateur.interface";
 import { FiltreQueryParams } from "@/server/chantiers/app/contrats/FiltreQueryParams";
 import { removeAccents } from "@/server/utils/remove-accents";
-import {
-  calculerMoyenne,
-  calculerMédiane,
-} from "@/client/utils/statistiques/statistiques";
+import { calculerMédiane } from "@/client/utils/statistiques/statistiques";
 import { RepartitionMeteoChantiers } from "@/server/chantiers/domain/RepartitionMeteoChantiers";
 import { verifyValeurIsNotNullOrUndefined } from "@/server/utils/VerifyValeurIsNotNullOrUndefined";
 import { prisma } from "@/server/db/prisma";
@@ -121,6 +118,7 @@ export default class ChantierSQLRepository implements ChantierRepository {
     habilitations: Habilitations,
     listeChantier: Chantier["id"][],
     maille: Maille,
+    jalon: number,
   ): Promise<AvancementsStatistiques> {
     const habilitation = new Habilitation(habilitations);
     const chantiersAutorisés =
@@ -129,53 +127,43 @@ export default class ChantierSQLRepository implements ChantierRepository {
       chantiersAutorisés.includes(x),
     );
 
-    const listeMoyenneParTerritoire = await prisma.chantier_territoire.groupBy({
-      by: ["territoire_code"],
-      _avg: {
-        taux_avancement_mandat: true,
-      },
-      where: {
-        id: {
-          in: chantiersLecture || [],
+    const listeMoyenneParTerritoire =
+      await prisma.chantier_territoire_jalon.groupBy({
+        by: ["territoire_code"],
+        _avg: {
+          taux_avancement: true,
         },
-        maille: CODES_MAILLES[maille],
-        NOT: {
-          taux_avancement_mandat: {
-            equals: null,
+        where: {
+          id: {
+            in: chantiersLecture || [],
+          },
+          jalon: jalon,
+          maille: CODES_MAILLES[maille],
+          NOT: {
+            taux_avancement: {
+              equals: null,
+            },
           },
         },
-      },
-      orderBy: {
-        _avg: {
-          taux_avancement_mandat: "asc",
+        orderBy: {
+          _avg: {
+            taux_avancement: "asc",
+          },
         },
-      },
-    });
+      });
 
     return {
-      global: {
-        moyenne: calculerMoyenne(
-          listeMoyenneParTerritoire.map(
-            (moyenneParTerritoire) =>
-              moyenneParTerritoire._avg.taux_avancement_mandat,
-          ),
+      médiane: calculerMédiane(
+        listeMoyenneParTerritoire.map(
+          (moyenneParTerritoire) => moyenneParTerritoire._avg.taux_avancement,
         ),
-        médiane: calculerMédiane(
-          listeMoyenneParTerritoire.map(
-            (moyenneParTerritoire) =>
-              moyenneParTerritoire._avg.taux_avancement_mandat,
-          ),
-        ),
-        minimum: verifyValeurIsNotNullOrUndefined(
-          listeMoyenneParTerritoire.at(0)?._avg.taux_avancement_mandat,
-        ),
-        maximum: verifyValeurIsNotNullOrUndefined(
-          listeMoyenneParTerritoire.at(-1)?._avg.taux_avancement_mandat,
-        ),
-      },
-      annuel: {
-        moyenne: null,
-      },
+      ),
+      minimum: verifyValeurIsNotNullOrUndefined(
+        listeMoyenneParTerritoire.at(0)?._avg.taux_avancement,
+      ),
+      maximum: verifyValeurIsNotNullOrUndefined(
+        listeMoyenneParTerritoire.at(-1)?._avg.taux_avancement,
+      ),
     };
   }
 

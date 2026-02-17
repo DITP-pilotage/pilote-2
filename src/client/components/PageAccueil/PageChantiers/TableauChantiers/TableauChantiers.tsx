@@ -31,6 +31,7 @@ const TableauChantiers: FunctionComponent<TableauChantiersProps> = ({
     ministèresDisponibles,
     nombreTotalChantiersAvecAlertes,
     chantiersSontArchives,
+    jalon,
   );
 
   const [estGroupe, setEstGroupe] = useQueryState(
