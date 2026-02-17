@@ -179,6 +179,28 @@ export const useTableauChantiers = (
       cell: (cellContext) => cellContext.getValue(),
       enableGrouping: false,
     }),
+    reactTableColonnesHelper.accessor("tendance", {
+      header: () => (
+        <div className="flex align-center no-wrap">
+          <span>Tendance</span>
+          <Infobulle classNameBouton="infobulle-header-tendance">
+            {infobulles.chantiers.listeDesChantiersHeaderTendance}
+          </Infobulle>
+        </div>
+      ),
+      id: "tendance",
+      cell: (cellContext) => (
+        <BadgeTendance
+          estArchive={chantiersSontArchives}
+          tendance={cellContext.getValue()}
+        />
+      ),
+      enableGrouping: false,
+      meta: {
+        width: "9rem",
+        tabIndex: -1,
+      },
+    }),
     reactTableColonnesHelper.accessor("avancement", {
       header: () => (
         <div className="flex align-center no-wrap">
@@ -224,28 +246,6 @@ export const useTableauChantiers = (
       id: "dateDeMàjDonnéesQuantitatives",
       cell: (cellContext) => cellContext.getValue(),
       enableGrouping: false,
-    }),
-    reactTableColonnesHelper.accessor("tendance", {
-      header: () => (
-        <div className="flex align-center no-wrap">
-          <span>Tendance</span>
-          <Infobulle classNameBouton="infobulle-header-tendance">
-            {infobulles.chantiers.listeDesChantiersHeaderTendance}
-          </Infobulle>
-        </div>
-      ),
-      id: "tendance",
-      cell: (cellContext) => (
-        <BadgeTendance
-          estArchive={chantiersSontArchives}
-          tendance={cellContext.getValue()}
-        />
-      ),
-      enableGrouping: false,
-      meta: {
-        width: "9rem",
-        tabIndex: -1,
-      },
     }),
     reactTableColonnesHelper.accessor("écart", {
       header: () => (
