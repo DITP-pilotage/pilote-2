@@ -95,12 +95,6 @@ const SaisieDesInformationsUtilisateur: FunctionComponent<
         libellé="Prénom"
         register={register("prénom")}
       />
-      <InputAvecLabel
-        erreur={errors.fonction}
-        htmlName="fonction"
-        libellé="Fonction"
-        register={register("fonction")}
-      />
       <SelectServiceAdmin />
       {service === "autre" && (
         <div className="fr-mb-4w">
@@ -114,6 +108,12 @@ const SaisieDesInformationsUtilisateur: FunctionComponent<
           />
         </div>
       )}
+      <InputAvecLabel
+        erreur={errors.fonction}
+        htmlName="fonction"
+        libellé="Fonction"
+        register={register("fonction")}
+      />
       <Sélecteur
         erreur={errors.profil}
         htmlName="profil"
