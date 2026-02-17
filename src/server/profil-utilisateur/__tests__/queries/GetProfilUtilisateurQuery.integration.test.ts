@@ -36,6 +36,7 @@ describe("GetProfilUtilisateurQuery", () => {
           prenom: "Jean",
           email: "jean.dupont@example.com",
           fonction: "Développeur",
+          perimetreMinisteriel: null,
           service: "prefecture-de-region",
           serviceAutre: null,
         });
@@ -69,6 +70,7 @@ describe("GetProfilUtilisateurQuery", () => {
           prenom: "Marie",
           email: "marie.martin@example.com",
           fonction: null,
+          perimetreMinisteriel: null,
           service: null,
           serviceAutre: null,
         });

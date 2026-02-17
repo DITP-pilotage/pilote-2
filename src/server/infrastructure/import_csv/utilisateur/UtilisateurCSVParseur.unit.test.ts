@@ -40,6 +40,8 @@ describe("UtilisateurCSVParseur", () => {
         saisieIndicateur: true,
         gestionUtilisateur: true,
         auteurEmail: "ditp.admin@example.com",
+        service: null,
+        serviceAutre: null,
         applicationsAccessibles: [$Enums.application_accessible.PILOTE],
         habilitations: {
           lecture: {
@@ -71,6 +73,8 @@ describe("UtilisateurCSVParseur", () => {
         saisieIndicateur: true,
         gestionUtilisateur: true,
         auteurEmail: "",
+        service: null,
+        serviceAutre: null,
         habilitations: {
           lecture: {
             chantiers: ["CH-004", "CH-008", "CH-012"],
