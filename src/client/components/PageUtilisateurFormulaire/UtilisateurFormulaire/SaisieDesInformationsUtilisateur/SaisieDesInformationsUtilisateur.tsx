@@ -112,11 +112,6 @@ const SaisieDesInformationsUtilisateur: FunctionComponent<
             erreur={errors.serviceAutre}
             type="text"
           />
-          <p className="!text-sm">
-            Afin de nous aider à compléter cette liste, merci de nous indiquer
-            votre rattachement. Cette information ne sera pas publiée dans un
-            premier temps.
-          </p>
         </div>
       )}
       <Sélecteur
