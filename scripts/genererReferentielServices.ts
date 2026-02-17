@@ -51,7 +51,10 @@ function genererReferentiel(): void {
 
   for (const row of rows) {
     const nomService = row.Nom_du_service;
-    const perimetreMinisteriel = row.Perimetre_ministeriel.replace(/^"+|"+$/g, "");
+    const perimetreMinisteriel = row.Perimetre_ministeriel.replace(
+      /^"+|"+$/g,
+      "",
+    );
 
     if (!nomService) continue;
 
@@ -102,9 +105,11 @@ function genererReferentiel(): void {
   }
 
   // Ensure "Autre" périmètre exists at the end with "Autre" service
-  const autrePerimetre = perimetresMinisteriels.find((m) => m.slug === "autre");
+  const autrePerimetre = perimetresMinisteriels.find(
+    (perimetre) => perimetre.slug === "autre",
+  );
   if (autrePerimetre) {
-    if (!autrePerimetre.services.some((s) => s.slug === "autre")) {
+    if (!autrePerimetre.services.some((service) => service.slug === "autre")) {
       autrePerimetre.services.push({ slug: "autre", libelle: "Autre" });
     }
   } else {
@@ -118,7 +123,7 @@ function genererReferentiel(): void {
   // For each périmètre, move "Autre" service to the end
   for (const perimetre of perimetresMinisteriels) {
     const autreServiceIndex = perimetre.services.findIndex(
-      (s) => s.slug === "autre",
+      (service) => service.slug === "autre",
     );
     if (autreServiceIndex !== -1) {
       const [autreService] = perimetre.services.splice(autreServiceIndex, 1);
@@ -143,7 +148,7 @@ function genererReferentiel(): void {
     `   ${referentiel.perimetresMinisteriels.length} périmètres ministériels`,
   );
   console.log(
-    `   ${referentiel.perimetresMinisteriels.reduce((acc, p) => acc + p.services.length, 0)} services au total`,
+    `   ${referentiel.perimetresMinisteriels.reduce((acc, perimetre) => acc + perimetre.services.length, 0)} services au total`,
   );
 }
 
