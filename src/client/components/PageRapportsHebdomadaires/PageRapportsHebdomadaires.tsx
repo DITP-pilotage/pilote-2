@@ -57,14 +57,14 @@ const PageRapportsHebdomadaires = () => {
         </div>
       </BarreLatérale>
 
-      <main>
+      <main className="min-h-screen">
         <div className="horizontal-panel fr-background-blue-france-850">
           <div className="fr-container fr-py-3w">
             <h1 className="fr-h3 fr-mb-0">Rapports hebdomadaires</h1>
           </div>
         </div>
 
-        <div className="fr-container fr-py-4w">
+        <div className="fr-container">
           {rapportId ? (
             <Suspense
               fallback={

@@ -84,25 +84,24 @@ const RapportDetail = ({ rapportId }: { rapportId: string }) => {
     rapportDetail.contenuRapport.coordinateur.territoires[0]?.code || "NAT-FR";
 
   return (
-    <div className="fr-p-4w">
+    <div className="space-y-10 mt-10">
       <h2 className="fr-h2">
         Semaine du {formatterDateSemaine(rapportDetail.periodeDebut)} au{" "}
         {formatterDateSemaine(rapportDetail.periodeFin)}
       </h2>
 
-      <Bloc
-        backgroundClassNameTitre="bg-dsfr-blue-france-925"
-        contenuClassesSupplémentaires="!p-0"
-        titre="Comptes créés"
-      >
+      <Bloc contenuClassesSupplémentaires="!p-0">
+        <h3 className="fr-text--lg fr-mb-0 fr-p-2w">Comptes créés</h3>
         {comptesCrees.length === 0 ? (
-          <div className="fr-p-4w">
-            <p className="fr-text--sm">Aucun compte créé sur cette période.</p>
+          <div className="fr-p-4w border-t border-gray-200">
+            <p className="fr-text--sm fr-mb-0">
+              Aucun compte créé sur cette période.
+            </p>
           </div>
         ) : (
-          <div className="fr-table">
-            <table>
-              <thead>
+          <div className="fr-table fr-mb-0 fr-pt-0">
+            <table className="table">
+              <thead className="bg-dsfr-blue-france-925">
                 <tr>
                   <th>Nom</th>
                   <th>Prénom</th>
@@ -125,21 +124,18 @@ const RapportDetail = ({ rapportId }: { rapportId: string }) => {
         )}
       </Bloc>
 
-      <Bloc
-        backgroundClassNameTitre="bg-dsfr-blue-france-925"
-        contenuClassesSupplémentaires="!p-0"
-        titre="Comptes désactivés"
-      >
+      <Bloc contenuClassesSupplémentaires="!p-0">
+        <h3 className="fr-text--lg fr-mb-0 fr-p-2w">Comptes désactivés</h3>
         {comptesDesactives.length === 0 ? (
-          <div className="fr-p-4w">
-            <p className="fr-text--sm">
+          <div className="fr-p-4w border-t border-gray-200">
+            <p className="fr-text--sm fr-mb-0">
               Aucun compte désactivé sur cette période.
             </p>
           </div>
         ) : (
-          <div className="fr-table">
-            <table>
-              <thead>
+          <div className="fr-table fr-mb-0 fr-pt-0">
+            <table className="table">
+              <thead className="bg-dsfr-blue-france-925">
                 <tr>
                   <th>Nom</th>
                   <th>Prénom</th>
@@ -162,40 +158,41 @@ const RapportDetail = ({ rapportId }: { rapportId: string }) => {
         )}
       </Bloc>
 
-      <h3 className="fr-h3 fr-mt-4w">Activité des chantiers</h3>
       {chantiers.length === 0 ? (
         <p className="fr-text--sm">
           Aucune activité sur les chantiers pour cette période.
         </p>
       ) : (
         chantiers.map((chantier) => (
-          <section className="fr-accordion" key={chantier.id}>
-            <h4 className="fr-accordion__title">
-              <button
-                aria-controls={`accordion-chantier-${chantier.id}`}
-                aria-expanded={false}
-                className="fr-accordion__btn"
-                type="button"
-              >
-                {chantier.nom}
-              </button>
-            </h4>
-            <div
-              className="fr-collapse"
-              id={`accordion-chantier-${chantier.id}`}
-            >
+          <Bloc contenuClassesSupplémentaires="!p-0" key={chantier.id}>
+            <div className="fr-p-2w">
+              <h3 className="fr-text--lg fr-mb-0">{chantier.nom}</h3>
               <a
-                className="fr-link fr-mb-2w"
+                className="fr-link fr-text--sm"
                 href={`/chantier/${chantier.id}/${territoireCode}`}
               >
                 Voir le chantier
               </a>
-              {chantier.indicateurs.map((indicateur) => (
-                <div className="fr-mb-3w" key={indicateur.id}>
-                  <h5 className="fr-h5">{indicateur.nom}</h5>
-                  <div className="fr-table">
-                    <table>
-                      <thead>
+            </div>
+            {chantier.indicateurs.map((indicateur) => (
+              <section className="fr-accordion" key={indicateur.id}>
+                <h4 className="fr-accordion__title">
+                  <button
+                    aria-controls={`accordion-indicateur-${indicateur.id}`}
+                    aria-expanded={false}
+                    className="fr-accordion__btn"
+                    type="button"
+                  >
+                    {indicateur.nom}
+                  </button>
+                </h4>
+                <div
+                  className="fr-collapse"
+                  id={`accordion-indicateur-${indicateur.id}`}
+                >
+                  <div className="fr-table fr-mb-0 fr-pt-0">
+                    <table className="table">
+                      <thead className="bg-dsfr-blue-france-925">
                         <tr>
                           <th>Territoire</th>
                           <th>Type de valeur</th>
@@ -230,9 +227,9 @@ const RapportDetail = ({ rapportId }: { rapportId: string }) => {
                     </table>
                   </div>
                 </div>
-              ))}
-            </div>
-          </section>
+              </section>
+            ))}
+          </Bloc>
         ))
       )}
     </div>
