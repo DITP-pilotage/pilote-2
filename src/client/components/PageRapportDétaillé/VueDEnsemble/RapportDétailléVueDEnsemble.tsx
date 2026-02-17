@@ -34,6 +34,7 @@ interface RapportDétailléVueDEnsembleProps {
   mailleSelectionnee: MailleInterne;
   jalon: number;
   chantiersSontArchives: boolean;
+  moyenneTauxAvancementTerritoire: number | null;
 }
 
 const RapportDétailléVueDEnsemble: FunctionComponent<
@@ -48,6 +49,7 @@ const RapportDétailléVueDEnsemble: FunctionComponent<
   mailleSelectionnee,
   jalon,
   chantiersSontArchives,
+  moyenneTauxAvancementTerritoire,
 }) => {
   const { donnéesTableauChantiers, remontéesAlertes } = usePageRapportDétaillé(
     chantiers,
@@ -80,6 +82,7 @@ const RapportDétailléVueDEnsemble: FunctionComponent<
               avancements={avancementsAgrégés}
               chantiersSontArchives={chantiersSontArchives}
               jalon={jalon}
+              moyenneTauxAvancementTerritoire={moyenneTauxAvancementTerritoire}
             />
           </section>
           <hr className="fr-hr fr-my-3w fr-pb-1v" />

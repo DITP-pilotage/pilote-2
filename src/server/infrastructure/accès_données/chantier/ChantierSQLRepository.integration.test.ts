@@ -371,7 +371,6 @@ describe("ChantierSQLRepository", () => {
             code_insee: "87",
             meteo: "SOLEIL",
             territoire_code: "DEPT-87",
-            taux_avancement_mandat: 10,
           },
           {
             id: "CH-001",
@@ -380,7 +379,6 @@ describe("ChantierSQLRepository", () => {
             code_insee: "88",
             meteo: "COUVERT",
             territoire_code: "DEPT-88",
-            taux_avancement_mandat: 12,
           },
           {
             id: "CH-002",
@@ -389,7 +387,6 @@ describe("ChantierSQLRepository", () => {
             code_insee: "87",
             meteo: "NON_RENSEIGNEE",
             territoire_code: "DEPT-87",
-            taux_avancement_mandat: 14,
           },
           {
             id: "CH-002",
@@ -398,7 +395,6 @@ describe("ChantierSQLRepository", () => {
             code_insee: "88",
             meteo: "COUVERT",
             territoire_code: "DEPT-88",
-            taux_avancement_mandat: 16,
           },
           {
             id: "CH-002",
@@ -407,7 +403,6 @@ describe("ChantierSQLRepository", () => {
             code_insee: "01",
             meteo: "COUVERT",
             territoire_code: "REG-01",
-            taux_avancement_mandat: 50,
           },
           {
             id: "CH-003",
@@ -416,28 +411,82 @@ describe("ChantierSQLRepository", () => {
             code_insee: "87",
             meteo: "NON_RENSEIGNEE",
             territoire_code: "DEPT-87",
-            taux_avancement_mandat: 18,
           },
         ],
       });
+
+      await prisma.chantier_territoire_jalon.createMany({
+        data: [
+          {
+            id: "CH-001",
+            zone_id: "D87",
+            maille: "DEPT",
+            code_insee: "87",
+            territoire_code: "DEPT-87",
+            jalon: 2025,
+            taux_avancement: 10,
+          },
+          {
+            id: "CH-001",
+            zone_id: "D88",
+            maille: "DEPT",
+            code_insee: "88",
+            territoire_code: "DEPT-88",
+            jalon: 2025,
+            taux_avancement: 12,
+          },
+          {
+            id: "CH-002",
+            zone_id: "D87",
+            maille: "DEPT",
+            code_insee: "87",
+            territoire_code: "DEPT-87",
+            jalon: 2025,
+            taux_avancement: 14,
+          },
+          {
+            id: "CH-002",
+            zone_id: "D88",
+            maille: "DEPT",
+            code_insee: "88",
+            territoire_code: "DEPT-88",
+            jalon: 2025,
+            taux_avancement: 16,
+          },
+          {
+            id: "CH-002",
+            zone_id: "RO1",
+            maille: "REG",
+            code_insee: "01",
+            territoire_code: "REG-01",
+            jalon: 2025,
+            taux_avancement: 50,
+          },
+          {
+            id: "CH-003",
+            zone_id: "D87",
+            maille: "DEPT",
+            code_insee: "87",
+            territoire_code: "DEPT-87",
+            jalon: 2025,
+            taux_avancement: 18,
+          },
+        ],
+      });
+
       // When
       const result = await prismaChantierRepository.getChantierStatistiques(
         habilitation,
         listeChantierIds,
         "departementale",
+        2025,
       );
 
       // Then
       expect(result).toEqual({
-        global: {
-          moyenne: 13,
-          médiane: 13,
-          maximum: 14,
-          minimum: 12,
-        },
-        annuel: {
-          moyenne: null,
-        },
+        médiane: 13,
+        maximum: 14,
+        minimum: 12,
       });
     });
 
@@ -478,7 +527,6 @@ describe("ChantierSQLRepository", () => {
             code_insee: "87",
             meteo: "SOLEIL",
             territoire_code: "DEPT-87",
-            taux_avancement_mandat: 10,
           },
           {
             id: "CH-001",
@@ -487,7 +535,6 @@ describe("ChantierSQLRepository", () => {
             code_insee: "88",
             meteo: "COUVERT",
             territoire_code: "DEPT-88",
-            taux_avancement_mandat: 12,
           },
           {
             id: "CH-001",
@@ -496,7 +543,6 @@ describe("ChantierSQLRepository", () => {
             code_insee: "89",
             meteo: "COUVERT",
             territoire_code: "DEPT-89",
-            taux_avancement_mandat: 22,
           },
           {
             id: "CH-002",
@@ -505,7 +551,6 @@ describe("ChantierSQLRepository", () => {
             code_insee: "87",
             meteo: "NON_RENSEIGNEE",
             territoire_code: "DEPT-87",
-            taux_avancement_mandat: 14,
           },
           {
             id: "CH-002",
@@ -514,7 +559,6 @@ describe("ChantierSQLRepository", () => {
             code_insee: "88",
             meteo: "COUVERT",
             territoire_code: "DEPT-88",
-            taux_avancement_mandat: 16,
           },
           {
             id: "CH-002",
@@ -523,7 +567,6 @@ describe("ChantierSQLRepository", () => {
             code_insee: "01",
             meteo: "COUVERT",
             territoire_code: "REG-01",
-            taux_avancement_mandat: 50,
           },
           {
             id: "CH-003",
@@ -532,28 +575,195 @@ describe("ChantierSQLRepository", () => {
             code_insee: "87",
             meteo: "NON_RENSEIGNEE",
             territoire_code: "DEPT-87",
-            taux_avancement_mandat: 18,
           },
         ],
       });
+
+      await prisma.chantier_territoire_jalon.createMany({
+        data: [
+          {
+            id: "CH-001",
+            zone_id: "D87",
+            maille: "DEPT",
+            code_insee: "87",
+            territoire_code: "DEPT-87",
+            jalon: 2025,
+            taux_avancement: 10,
+          },
+          {
+            id: "CH-001",
+            zone_id: "D88",
+            maille: "DEPT",
+            code_insee: "88",
+            territoire_code: "DEPT-88",
+            jalon: 2025,
+            taux_avancement: 12,
+          },
+          {
+            id: "CH-001",
+            zone_id: "D89",
+            maille: "DEPT",
+            code_insee: "89",
+            territoire_code: "DEPT-89",
+            jalon: 2025,
+            taux_avancement: 22,
+          },
+          {
+            id: "CH-002",
+            zone_id: "D87",
+            maille: "DEPT",
+            code_insee: "87",
+            territoire_code: "DEPT-87",
+            jalon: 2025,
+            taux_avancement: 14,
+          },
+          {
+            id: "CH-002",
+            zone_id: "D88",
+            maille: "DEPT",
+            code_insee: "88",
+            territoire_code: "DEPT-88",
+            jalon: 2025,
+            taux_avancement: 16,
+          },
+          {
+            id: "CH-002",
+            zone_id: "RO1",
+            maille: "REG",
+            code_insee: "01",
+            territoire_code: "REG-01",
+            jalon: 2025,
+            taux_avancement: 50,
+          },
+          {
+            id: "CH-003",
+            zone_id: "D87",
+            maille: "DEPT",
+            code_insee: "87",
+            territoire_code: "DEPT-87",
+            jalon: 2025,
+            taux_avancement: 18,
+          },
+        ],
+      });
+
       // When
       const result = await prismaChantierRepository.getChantierStatistiques(
         habilitation,
         listeChantierIds,
         "departementale",
+        2025,
       );
 
       // Then
       expect(result).toEqual({
-        global: {
-          moyenne: 16,
-          médiane: 14,
-          maximum: 22,
-          minimum: 12,
+        médiane: 14,
+        maximum: 22,
+        minimum: 12,
+      });
+    });
+
+    it("calcule les statistiques pour le jalon sélectionné", async () => {
+      // Given
+      const listeChantierIds = ["CH-001", "CH-002"];
+
+      const habilitation = {
+        lecture: {
+          chantiers: ["CH-001", "CH-002"],
+          territoires: ["NAT-FR"],
         },
-        annuel: {
-          moyenne: null,
-        },
+      } as unknown as Utilisateur["habilitations"];
+
+      await prisma.chantier_identite.createMany({
+        data: [
+          {
+            id: "CH-001",
+            nom: "Chantier 001",
+          },
+          {
+            id: "CH-002",
+            nom: "Chantier 002",
+          },
+        ],
+      });
+
+      await prisma.chantier_territoire.createMany({
+        data: [
+          {
+            id: "CH-001",
+            zone_id: "D87",
+            maille: "DEPT",
+            code_insee: "87",
+            meteo: "SOLEIL",
+            territoire_code: "DEPT-87",
+          },
+          {
+            id: "CH-002",
+            zone_id: "D87",
+            maille: "DEPT",
+            code_insee: "87",
+            meteo: "COUVERT",
+            territoire_code: "DEPT-87",
+          },
+        ],
+      });
+
+      await prisma.chantier_territoire_jalon.createMany({
+        data: [
+          // Jalon 2025
+          {
+            id: "CH-001",
+            zone_id: "D87",
+            maille: "DEPT",
+            code_insee: "87",
+            territoire_code: "DEPT-87",
+            jalon: 2025,
+            taux_avancement: 10,
+          },
+          {
+            id: "CH-002",
+            zone_id: "D87",
+            maille: "DEPT",
+            code_insee: "87",
+            territoire_code: "DEPT-87",
+            jalon: 2025,
+            taux_avancement: 20,
+          },
+          // Jalon 2026 - valeurs différentes qui ne doivent pas être prises en compte
+          {
+            id: "CH-001",
+            zone_id: "D87",
+            maille: "DEPT",
+            code_insee: "87",
+            territoire_code: "DEPT-87",
+            jalon: 2026,
+            taux_avancement: 80,
+          },
+          {
+            id: "CH-002",
+            zone_id: "D87",
+            maille: "DEPT",
+            code_insee: "87",
+            territoire_code: "DEPT-87",
+            jalon: 2026,
+            taux_avancement: 90,
+          },
+        ],
+      });
+
+      // When
+      const result = await prismaChantierRepository.getChantierStatistiques(
+        habilitation,
+        listeChantierIds,
+        "departementale",
+        2025,
+      );
+
+      // Then
+      expect(result).toEqual({
+        médiane: 15,
+        minimum: 15,
+        maximum: 15,
       });
     });
   });

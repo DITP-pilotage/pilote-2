@@ -128,7 +128,7 @@ export const getServerSideProps = async (
       new RécupérerStatistiquesAvancementChantiersUseCase(
         dependencies.getChantierRepository(),
       )
-        .run([chantierId], mailleQuery, session.habilitations)
+        .run([chantierId], mailleQuery, session.habilitations, jalon)
         .then(presenterEnAvancementsStatistiquesAccueilContrat),
       new RécupérerVariableContenuUseCase().run({
         nomVariableContenu: "NEXT_PUBLIC_FF_PPG_ARCHIVE",
