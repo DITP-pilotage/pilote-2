@@ -890,6 +890,8 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
           ? `${auteurCreation.prenom} ${auteurCreation.nom}`
           : "Auteur Inconnu",
         fonction: utilisateurBrut.fonction,
+        service: utilisateurBrut.service,
+        serviceAutre: utilisateurBrut.service_autre,
         saisieCommentaire: this._aDesDroitsdeSaisieCommentaire(
           habilitations,
           utilisateurBrut.profil,
@@ -944,6 +946,8 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
         prenom: utilisateur.prénom,
         profilCode: utilisateur.profil,
         fonction: utilisateur.fonction,
+        service: utilisateur.service,
+        service_autre: utilisateur.serviceAutre,
         applications_accessibles: utilisateur.applicationsAccessibles,
         auteur_id_modification: auteurId,
         date_modification: new Date(),
@@ -956,6 +960,8 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
         prenom: utilisateur.prénom,
         profilCode: utilisateur.profil,
         fonction: utilisateur.fonction,
+        service: utilisateur.service,
+        service_autre: utilisateur.serviceAutre,
         applications_accessibles: utilisateur.applicationsAccessibles,
         auteur_id_modification: auteurId,
         date_modification: new Date(),

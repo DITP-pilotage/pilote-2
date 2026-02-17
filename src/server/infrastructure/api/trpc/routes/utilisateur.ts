@@ -15,14 +15,23 @@ import { zodValidateurCSRF } from "@/validation/publication";
 import { dependencies } from "@/server/infrastructure/Dependencies";
 import RécupérerUnProfilUseCase from "@/server/usecase/profil/RécupérerUnProfilUseCase";
 import { getContainer } from "@/server/dependances";
+import { z } from "zod";
 
-export const creerUtilisateurSchema = validationInfosBaseUtilisateur.merge(
-  validationInfosHabilitationsUtilisateur,
-);
+const creerUtilisateurSchemaBase = validationInfosBaseUtilisateur
+  .merge(validationInfosHabilitationsUtilisateur)
+  .superRefine((data, ctx) => {
+    if (data.service === "autre" && !data.serviceAutre) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Ce champ est obligatoire",
+        path: ["serviceAutre"],
+      });
+    }
+  });
 
 export const utilisateurRouter = créerRouteurTRPC({
   créer: procédureProtégée
-    .input(creerUtilisateurSchema.merge(zodValidateurCSRF))
+    .input(creerUtilisateurSchemaBase.and(zodValidateurCSRF))
     .mutation(async ({ input, ctx }) => {
       vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
       const profilAuteur = await new RécupérerUnProfilUseCase(
@@ -39,11 +48,7 @@ export const utilisateurRouter = créerRouteurTRPC({
         );
     }),
   modifier: procédureProtégée
-    .input(
-      validationInfosBaseUtilisateur
-        .merge(zodValidateurCSRF)
-        .merge(validationInfosHabilitationsUtilisateur),
-    )
+    .input(creerUtilisateurSchemaBase.and(zodValidateurCSRF))
     .mutation(async ({ input, ctx }) => {
       vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
       const profilAuteur = await new RécupérerUnProfilUseCase(

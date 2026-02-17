@@ -565,6 +565,8 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
         ? `${auteurCreation.prenom} ${auteurCreation.nom}`
         : "Auteur Inconnu",
       fonction: utilisateurBrut.fonction,
+      service: utilisateurBrut.service,
+      serviceAutre: utilisateurBrut.service_autre,
       saisieIndicateur: this._aDesDroitsdeSaisieIndicateur(
         habilitations,
         utilisateurBrut.profil,

@@ -54,6 +54,8 @@ const UtilisateurFormulaire: FunctionComponent<UtilisateurFormulaireProps> = ({
       nom: utilisateur?.nom,
       prénom: utilisateur?.prénom,
       fonction: utilisateur?.fonction,
+      service: utilisateur?.service ?? null,
+      serviceAutre: utilisateur?.serviceAutre ?? null,
       profil: utilisateur?.profil,
       gestionUtilisateur: utilisateur?.gestionUtilisateur,
       saisieIndicateur: utilisateur?.saisieIndicateur,

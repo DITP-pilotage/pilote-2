@@ -152,6 +152,8 @@ export default class UtilisateurÀCréerOuMettreÀJourBuilder {
       email: this._email,
       profil: this._profil,
       fonction: this._fonction,
+      service: null,
+      serviceAutre: null,
       saisieIndicateur: this._saisieIndicateur,
       gestionUtilisateur: this._gestionUtilisateur,
       applicationsAccessibles: [$Enums.application_accessible.PILOTE],
