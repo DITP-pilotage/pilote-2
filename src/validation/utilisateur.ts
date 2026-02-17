@@ -68,18 +68,6 @@ export const validationInfosBaseUtilisateur = z
         path: ["serviceAutre"],
       });
     }
-
-    if (
-      data.service &&
-      data.service !== "autre" &&
-      !data.perimetreMinisteriel
-    ) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Ce champ est obligatoire",
-        path: ["perimetreMinisteriel"],
-      });
-    }
   });
 
 const adresseEstValideSecretariatGeneral = (adresse: string) => {
@@ -125,18 +113,6 @@ export const validationInfosBaseUtilisateurSecretariatGeneral = z
         code: z.ZodIssueCode.custom,
         message: "Ce champ est obligatoire",
         path: ["serviceAutre"],
-      });
-    }
-
-    if (
-      data.service &&
-      data.service !== "autre" &&
-      !data.perimetreMinisteriel
-    ) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Ce champ est obligatoire",
-        path: ["perimetreMinisteriel"],
       });
     }
   });
@@ -204,18 +180,6 @@ export const validationInfosBaseUtilisateurCoordinateur = (
           code: z.ZodIssueCode.custom,
           message: "Ce champ est obligatoire",
           path: ["serviceAutre"],
-        });
-      }
-
-      if (
-        data.service &&
-        data.service !== "autre" &&
-        !data.perimetreMinisteriel
-      ) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: "Ce champ est obligatoire",
-          path: ["perimetreMinisteriel"],
         });
       }
     });

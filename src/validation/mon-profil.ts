@@ -22,12 +22,4 @@ export const validationModifierMonProfil = z
         path: ["serviceAutre"],
       });
     }
-
-    if (data.service !== "autre" && !data.perimetreMinisteriel) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Ce champ est obligatoire",
-        path: ["perimetreMinisteriel"],
-      });
-    }
   });
