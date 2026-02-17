@@ -6,6 +6,7 @@ export type ProfilUtilisateur = {
   fonction: string | null;
   service: string | null;
   serviceAutre: string | null;
+  perimetreMinisteriel: string | null;
 };
 
 export function creerProfilUtilisateur(data: {
@@ -16,6 +17,7 @@ export function creerProfilUtilisateur(data: {
   fonction: string | null;
   service: string | null;
   serviceAutre: string | null;
+  perimetreMinisteriel: string | null;
 }): ProfilUtilisateur {
   return {
     id: data.id,
@@ -25,6 +27,7 @@ export function creerProfilUtilisateur(data: {
     fonction: data.fonction,
     service: data.service,
     serviceAutre: data.serviceAutre,
+    perimetreMinisteriel: data.perimetreMinisteriel,
   };
 }
 
@@ -36,6 +39,7 @@ export function modifierProfilUtilisateur(
     fonction: string | null;
     service: string | null;
     serviceAutre: string | null;
+    perimetreMinisteriel: string | null;
   },
 ): ProfilUtilisateur {
   return {
@@ -45,5 +49,6 @@ export function modifierProfilUtilisateur(
     fonction: modifications.fonction,
     service: modifications.service,
     serviceAutre: modifications.serviceAutre,
+    perimetreMinisteriel: modifications.perimetreMinisteriel,
   };
 }

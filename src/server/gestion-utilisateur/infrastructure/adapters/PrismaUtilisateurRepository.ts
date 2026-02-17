@@ -892,6 +892,7 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
         fonction: utilisateurBrut.fonction,
         service: utilisateurBrut.service,
         serviceAutre: utilisateurBrut.service_autre,
+        perimetreMinisteriel: utilisateurBrut.perimetre_ministeriel,
         saisieCommentaire: this._aDesDroitsdeSaisieCommentaire(
           habilitations,
           utilisateurBrut.profil,
@@ -948,6 +949,7 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
         fonction: utilisateur.fonction,
         service: utilisateur.service,
         service_autre: utilisateur.serviceAutre,
+        perimetre_ministeriel: utilisateur.perimetreMinisteriel,
         applications_accessibles: utilisateur.applicationsAccessibles,
         auteur_id_modification: auteurId,
         date_modification: new Date(),
@@ -962,6 +964,7 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
         fonction: utilisateur.fonction,
         service: utilisateur.service,
         service_autre: utilisateur.serviceAutre,
+        perimetre_ministeriel: utilisateur.perimetreMinisteriel,
         applications_accessibles: utilisateur.applicationsAccessibles,
         auteur_id_modification: auteurId,
         date_modification: new Date(),

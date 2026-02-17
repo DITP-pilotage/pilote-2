@@ -68,6 +68,7 @@ type Utilisateur = {
   fonction: string | null;
   service: string | null;
   serviceAutre: string | null;
+  perimetreMinisteriel: string | null;
   saisieIndicateur: boolean;
   gestionUtilisateur: boolean;
   habilitations: Habilitations;
@@ -82,6 +83,7 @@ export type UtilisateurÀCréerOuMettreÀJour = {
   fonction: string | null;
   service: string | null;
   serviceAutre: string | null;
+  perimetreMinisteriel: string | null;
   profil: ProfilCode;
   saisieIndicateur: boolean;
   gestionUtilisateur: boolean;
@@ -96,6 +98,7 @@ export type UtilisateurÀCréerOuMettreÀJourSansHabilitation = {
   fonction: string | null;
   service: string | null;
   serviceAutre: string | null;
+  perimetreMinisteriel: string | null;
   profil: ProfilCode;
   saisieIndicateur: boolean;
   applicationsAccessibles: $Enums.application_accessible[];

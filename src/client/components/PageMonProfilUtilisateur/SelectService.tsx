@@ -12,13 +12,18 @@ const groupedOptions: SelecteurNewOptionGroup<string>[] =
     valeur: perimetre.slug,
     options: perimetre.services.map((service) => ({
       libelle: service.libelle,
-      valeur: service.slug,
+      valeur: `${perimetre.slug}--${service.slug}`,
     })),
   }));
 
 export const SelectService = () => {
   const form = useMonProfilForm();
   const service = form.watch("service");
+  const perimetreMinisteriel = form.watch("perimetreMinisteriel");
+
+  const valeurSelectionnee = perimetreMinisteriel && service
+    ? `${perimetreMinisteriel}--${service}`
+    : undefined;
 
   const serviceError = form.formState.errors.service?.message;
 
@@ -35,11 +40,21 @@ export const SelectService = () => {
           placeholderRecherche="Rechercher un service ou un périmètre ministériel"
           options={groupedOptions}
           isRequired
-          valeurSelectionnee={service}
+          valeurSelectionnee={valeurSelectionnee}
           erreurMessage={serviceError}
           placeholder="Sélectionner..."
-          onChange={(serviceSlug) => {
+          onChange={(compositeSlug, group) => {
+            const serviceSlug = compositeSlug.includes("--")
+              ? compositeSlug.split("--").slice(1).join("--")
+              : compositeSlug;
+
             form.setValue("service", serviceSlug, {
+              shouldDirty: true,
+              shouldTouch: true,
+              shouldValidate: true,
+            });
+
+            form.setValue("perimetreMinisteriel", group?.valeur ?? null, {
               shouldDirty: true,
               shouldTouch: true,
               shouldValidate: true,

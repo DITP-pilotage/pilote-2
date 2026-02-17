@@ -12,6 +12,7 @@ export const validationModifierMonProfil = z
       .max(200)
       .transform((value) => value || null)
       .nullable(),
+    perimetreMinisteriel: z.string().nullable(),
   })
   .superRefine((data, ctx) => {
     if (data.service === "autre" && !data.serviceAutre) {

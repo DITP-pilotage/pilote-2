@@ -66,6 +66,7 @@ export type UtilisateurÀCréerOuMettreÀJour = {
   fonction: string | null;
   service: string | null;
   serviceAutre: string | null;
+  perimetreMinisteriel: string | null;
   profil: ProfilCode;
   saisieIndicateur: boolean;
   saisieCommentaire: boolean;

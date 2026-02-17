@@ -44,6 +44,7 @@ export const validationInfosBaseUtilisateur = z.object({
   fonction: z.string().max(100).nullable(),
   service: z.string().nullable(),
   serviceAutre: z.string().max(200).transform((value) => value || null).nullable(),
+  perimetreMinisteriel: z.string().nullable(),
   profil: z.enum(profilsCodes),
   saisieIndicateur: z.boolean(),
   gestionUtilisateur: z.boolean(),
@@ -80,6 +81,7 @@ export const validationInfosBaseUtilisateurSecretariatGeneral = z.object({
   fonction: z.string().max(100).nullable(),
   service: z.string().nullable(),
   serviceAutre: z.string().max(200).transform((value) => value || null).nullable(),
+  perimetreMinisteriel: z.string().nullable(),
   profil: z.enum(profilsCodes),
   saisieIndicateur: z.boolean(),
   applicationsAccessibles: z.array(z.nativeEnum($Enums.application_accessible)),
@@ -134,6 +136,7 @@ export const validationInfosBaseUtilisateurCoordinateur = (
     fonction: z.string().max(100).nullable(),
     service: z.string().nullable(),
     serviceAutre: z.string().max(200).transform((value) => value || null).nullable(),
+    perimetreMinisteriel: z.string().nullable(),
     profil: z.enum(profilsCodes),
     saisieIndicateur: z.boolean(),
     applicationsAccessibles: z.array(

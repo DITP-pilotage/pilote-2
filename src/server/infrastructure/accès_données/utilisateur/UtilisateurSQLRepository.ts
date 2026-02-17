@@ -567,6 +567,7 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
       fonction: utilisateurBrut.fonction,
       service: utilisateurBrut.service,
       serviceAutre: utilisateurBrut.service_autre,
+      perimetreMinisteriel: utilisateurBrut.perimetre_ministeriel,
       saisieIndicateur: this._aDesDroitsdeSaisieIndicateur(
         habilitations,
         utilisateurBrut.profil,
