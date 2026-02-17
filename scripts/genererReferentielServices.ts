@@ -40,7 +40,7 @@ function genererReferentiel(): void {
   for (const line of lines) {
     if (!line.trim()) continue;
 
-    const parts = line.split(";").map((field) => field.trim());
+    const parts = line.split(",").map((field) => field.trim());
     const nomService = parts[0];
     const perimetreMinisteriel = parts[3]; // Perimetre_ministeriel is column 3
 
@@ -74,7 +74,9 @@ function genererReferentiel(): void {
   const perimetresMinisteriels = Array.from(perimetresMap.values());
 
   // Sort périmètres alphabetically by libelle
-  perimetresMinisteriels.sort((a, b) => a.libelle.localeCompare(b.libelle, "fr"));
+  perimetresMinisteriels.sort((a, b) =>
+    a.libelle.localeCompare(b.libelle, "fr"),
+  );
 
   // Sort services within each périmètre alphabetically by libelle
   for (const perimetre of perimetresMinisteriels) {
@@ -82,7 +84,9 @@ function genererReferentiel(): void {
   }
 
   // Move "Autre" périmètre to the end
-  const autreIndex = perimetresMinisteriels.findIndex((m) => m.slug === "autre");
+  const autreIndex = perimetresMinisteriels.findIndex(
+    (m) => m.slug === "autre",
+  );
   if (autreIndex !== -1) {
     const [autre] = perimetresMinisteriels.splice(autreIndex, 1);
     perimetresMinisteriels.push(autre);
@@ -112,7 +116,9 @@ function genererReferentiel(): void {
   fs.writeFileSync(outputPath, JSON.stringify(referentiel, null, 2), "utf-8");
 
   console.log(`✅ Référentiel généré : ${outputPath}`);
-  console.log(`   ${referentiel.perimetresMinisteriels.length} périmètres ministériels`);
+  console.log(
+    `   ${referentiel.perimetresMinisteriels.length} périmètres ministériels`,
+  );
   console.log(
     `   ${referentiel.perimetresMinisteriels.reduce((acc, p) => acc + p.services.length, 0)} services au total`,
   );

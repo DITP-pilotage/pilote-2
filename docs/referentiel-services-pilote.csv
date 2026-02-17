@@ -1,52 +1,80 @@
-Nom_du_service;Ministere;Echelon;Perimetre_ministeriel
-Autre;Autre;;
-Direction régionale de l'Alimentation, de l'Agriculture et de la Forêt (DRAAF);Ministère de l'Agriculture et de la Souveraineté Alimentaire;Région;Agriculture
-Direction régionale et interdépartementale de l'alimentation, de l'agriculture et de la forêt ;Ministère de l'Agriculture et de la Souveraineté Alimentaire;Région;Agriculture
-Direction départementale des Finances publiques (DDFiP);Ministère de l'Économie, des Finances et de la Souveraineté industrielle et numérique;Département;Comptes publics
-Direction régionale des douanes;Ministère de l'Économie, des Finances et de la Souveraineté industrielle et numérique;Région;Économie et Entreprises
-Direction régionale des Finances publiques (DRFiP);Ministère de l'Économie, des Finances et de la Souveraineté industrielle et numérique;Région;Comptes publics
-Direction régionale et interrégionale des douanes et droits indirects (53);Ministère de l'Économie, des Finances et de la Souveraineté industrielle et numérique;Région;Économie et Entreprises
-Délégation régionale académique à la Jeunesse, à l'Engagement et aux Sports;Ministère de l'Éducation nationale;Région;Jeunesse, Sports
-Direction des services départementaux de l'Éducation nationale (DSDEN);Ministère de l'Éducation nationale;Département;Éducation nationale
-Rectorat d'académie;Ministère de l'Éducation nationale;Région;Éducation nationale
-Délégation régionale académique à la Recherche et à l'Innovation;Ministère de l'Enseignement supérieur et de la Recherche;Région;Éducation nationale
-Direction départementale de l'emploi, du travail et des solidarités (DDETS);Ministère de l'Intérieur;Département;"""Travail, Emploi"""
-Direction départementale de l'emploi, du travail et des solidarités et de la protection des populations (DDETS-PP);Ministère de l'Intérieur;Département;"""Travail, Emploi"""
-Direction départementale de la police nationale (DDPN);Ministère de l'Intérieur;Département;Intérieur
-Direction départementale de la protection des populations (DDPP);Ministère de l'Intérieur;Département;Intérieur
-Direction départementale des territoires (DDT);Ministère de l'Intérieur;Département;Intérieur
-Direction départementale des territoires et de la mer (DDTM);Ministère de l'Intérieur;Département;Intérieur
-Préfecture de département;Ministère de l'Intérieur;Département;Intérieur
-Préfecture de région;Ministère de l'Intérieur;Région;Intérieur
-Secrétariat général commun (SGC) départemental;Ministère de l'Intérieur;Département;Intérieur
-Service départemental d'incendie et de secours (SDIS);Ministère de l'Intérieur;Département;Intérieur
-Direction régionale des Affaires culturelles (DRAC);Ministère de la Culture;Région;Culture
-Unité territorial (UT) DRAC;Ministère de la Culture;Département;Culture
-Délégation départementale aux droits des femmes et à l'égalité (DDDFE);Ministère de la Justice;Département;Égalité Femmes-Hommes
-Délégation régionale aux droits des femmes et à l'égalité (DRDFE);Ministère de la Justice;Région;Égalité Femmes-Hommes
-Direction interrégionale de la protection judiciaire de la jeunesse (DIRPJJ);Ministère de la Justice;Région;Justice
-Direction interrégionale des services pénitentiaires (DISP);Ministère de la Justice;Région;Justice
-Service pénitentiaire d'insertion et de probation (SPIP);Ministère de la Justice;Département;Justice
-Service territorial de la protection judiciaire de la jeunesse;Ministère de la Justice;Département;Justice
-Services pénitentiaires d'insertion et de probation;Ministère de la Justice;Département;Justice
-Agence de l’environnement et de la maîtrise de l’énergie (Ademe);Ministère de la Transition écologique et de la Cohésion des Territoires;National;Transition Écologique
-Direction interrégionale de la mer;Ministère de la Transition écologique et de la Cohésion des Territoires;Région;Transition Écologique
-Direction régionale de l’environnement, de l’aménagement et du logement (DREAL);Ministère de la Transition écologique et de la Cohésion des Territoires;Région;Transition Écologique
-Direction régionale et interdépartementale de l'hébergement et du logement;Ministère de la Transition écologique et de la Cohésion des Territoires;Région;Logement
-Espace conseil France Rénov';Ministère de la Transition écologique et de la Cohésion des Territoires;Département;Transition Écologique
-Unité territoriale (UT) DREAL;Ministère de la Transition écologique et de la Cohésion des Territoires;Département;Transition Écologique
-Délégation militaire départementale (DMD);Ministère des Armées;Département;Armées
-Groupement de gendarmerie départementale (GGD);Ministère des Armées;Département;Intérieur
-Région de Gendarmerie;Ministère des Armées;Région;Intérieur
-Service départemental à la jeunesse, à l’engagement et aux sports (SDJES);Ministère des Sports, de la Jeunesse et de la Vie Associative;Département;Jeunesse
-Agence France Travail;Ministère du Travail, de la Santé et des Solidarités;Département;"""Travail, Emploi"""
-Agence régionale de santé (ARS);Ministère du Travail, de la Santé et des Solidarités;Région;Santé
-Agence régionale de santé (ARS) - délégation départementale;Ministère du Travail, de la Santé et des Solidarités;Département;Santé
-Caisse d'allocations familiales (Caf) (803);Ministère du Travail, de la Santé et des Solidarités;Département;Solidarité
-Caisse primaire d'assurance maladie;Ministère du Travail, de la Santé et des Solidarités;Département;Santé
-Direction régionale de l'économie, de l'emploi, du travail et des solidarités (DREETS);Ministère du Travail, de la Santé et des Solidarités;Région;Économie et Entreprises
-France Travail;Ministère du Travail, de la Santé et des Solidarités;National;"""Travail, Emploi"""
-Maison départementale des personnes handicapées (MDPH);Ministère du Travail, de la Santé et des Solidarités;Département;"""Autonomie, Handicap"""
-Mutualité sociale agricole (MSA);Ministère du Travail, de la Santé et des Solidarités;Département;Solidarité
-Plateforme d'accompagnement et de répit pour les aidants de personnes âgées;Ministère du Travail, de la Santé et des Solidarités;Département;"""Autonomie, Handicap"""
-Union de recouvrement des cotisations de sécurité sociale et d’allocations familiales (Urssaf);Ministère du Travail, de la Santé et des Solidarités;Département;Solidarité
+Nom_du_service,Ministere,Echelon,Perimetre_ministeriel
+Préfecture de région,Ministère de l'Intérieur,Région,Intérieur
+"Direction régionale de l'Alimentation, de l'Agriculture et de la Forêt (DRAAF)",Ministère de l'Agriculture et de la Souveraineté Alimentaire,Région,Agriculture
+Direction régionale des Affaires culturelles (DRAC),Ministère de la Culture,Région,Culture
+"Direction régionale de l'économie, de l'emploi, du travail et des solidarités (DREETS)","Ministère du Travail, de la Santé et des Solidarités",Région,Économie et Entreprises
+"Direction régionale de l’environnement, de l’aménagement et du logement (DREAL)",Ministère de la Transition écologique et de la Cohésion des Territoires,Région,Transition Écologique
+Direction régionale des Finances publiques (DRFiP),"Ministère de l'Économie, des Finances et de la Souveraineté industrielle et numérique",Région,Comptes publics
+Direction régionale des douanes,"Ministère de l'Économie, des Finances et de la Souveraineté industrielle et numérique",Région,Économie et Entreprises
+Rectorat d'académie,Ministère de l'Éducation nationale,Région,Éducation nationale
+Délégation régionale académique à la Recherche et à l'Innovation,Ministère de l'Enseignement supérieur et de la Recherche,Région,Éducation nationale
+"Délégation régionale académique à la Jeunesse, à l'Engagement et aux Sports",Ministère de l'Éducation nationale,Région,"Jeunesse, Sports"
+Agence régionale de santé (ARS),"Ministère du Travail, de la Santé et des Solidarités",Région,Santé
+Région de Gendarmerie,Ministère des Armées,Région,Intérieur
+Préfecture de département,Ministère de l'Intérieur,Département,Intérieur
+Secrétariat général commun (SGC) départemental,Ministère de l'Intérieur,Département,Intérieur
+Direction départementale des territoires (DDT),Ministère de l'Intérieur,Département,Intérieur
+Direction départementale des territoires et de la mer (DDTM),Ministère de l'Intérieur,Département,Intérieur
+Direction départementale de la protection des populations (DDPP),Ministère de l'Intérieur,Département,Intérieur
+"Direction départementale de l'emploi, du travail et des solidarités (DDETS)",Ministère de l'Intérieur,Département,"""Travail, Emploi"""
+"Direction départementale de l'emploi, du travail et des solidarités et de la protection des populations (DDETS-PP)",Ministère de l'Intérieur,Département,"""Travail, Emploi"""
+Direction départementale de la police nationale (DDPN),Ministère de l'Intérieur,Département,Intérieur
+Groupement de gendarmerie départementale (GGD),Ministère des Armées,Département,Intérieur
+Délégation militaire départementale (DMD),Ministère des Armées,Département,Armées
+Direction départementale des Finances publiques (DDFiP),"Ministère de l'Économie, des Finances et de la Souveraineté industrielle et numérique",Département,Comptes publics
+Direction des services départementaux de l'Éducation nationale (DSDEN),Ministère de l'Éducation nationale,Département,Éducation nationale
+Service territorial de la protection judiciaire de la jeunesse,Ministère de la Justice,Département,Justice
+Services pénitentiaires d'insertion et de probation,Ministère de la Justice,Département,Justice
+Unité territoriale (UT) DREAL,Ministère de la Transition écologique et de la Cohésion des Territoires,Département,Transition Écologique
+Unité territorial (UT) DRAC,Ministère de la Culture,Département,Culture
+Direction régionale et interdépartementale de l'hébergement et du logement,Ministère de la Transition écologique et de la Cohésion des Territoires,Région,Logement
+"Direction régionale et interdépartementale de l'alimentation, de l'agriculture et de la forêt ",Ministère de l'Agriculture et de la Souveraineté Alimentaire,Région,Agriculture
+Caisse primaire d'assurance maladie,"Ministère du Travail, de la Santé et des Solidarités",Département,Santé
+Caisse d'allocations familiales (Caf),"Ministère du Travail, de la Santé et des Solidarités",Département,Solidarité
+Maison départementale des personnes handicapées (MDPH),"Ministère du Travail, de la Santé et des Solidarités",Département,"""Autonomie, Handicap"""
+Plateforme d'accompagnement et de répit pour les aidants de personnes âgées,"Ministère du Travail, de la Santé et des Solidarités",Département,"""Autonomie, Handicap"""
+Mutualité sociale agricole (MSA),"Ministère du Travail, de la Santé et des Solidarités",Département,Solidarité
+Union de recouvrement des cotisations de sécurité sociale et d’allocations familiales (Urssaf),"Ministère du Travail, de la Santé et des Solidarités",Département,Solidarité
+France Travail,"Ministère du Travail, de la Santé et des Solidarités",National,"""Travail, Emploi"""
+Agence France Travail,"Ministère du Travail, de la Santé et des Solidarités",Département,"""Travail, Emploi"""
+Service pénitentiaire d'insertion et de probation (SPIP),Ministère de la Justice,Département,Justice
+Délégation départementale aux droits des femmes et à l'égalité (DDDFE),Ministère de la Justice,Département,Égalité Femmes-Hommes
+Direction interrégionale de la protection judiciaire de la jeunesse (DIRPJJ),Ministère de la Justice,Région,Justice
+Délégation régionale aux droits des femmes et à l'égalité (DRDFE),Ministère de la Justice,Région,Égalité Femmes-Hommes
+Direction interrégionale des services pénitentiaires (DISP),Ministère de la Justice,Région,Justice
+"Service départemental à la jeunesse, à l’engagement et aux sports (SDJES)","Ministère des Sports, de la Jeunesse et de la Vie Associative",Département,Jeunesse
+Agence de l’environnement et de la maîtrise de l’énergie (Ademe),Ministère de la Transition écologique et de la Cohésion des Territoires,National,Transition Écologique
+Direction régionale et interrégionale des douanes et droits indirects (53),"Ministère de l'Économie, des Finances et de la Souveraineté industrielle et numérique",Région,Économie et Entreprises
+Direction interrégionale de la mer,Ministère de la Transition écologique et de la Cohésion des Territoires,Région,Transition Écologique
+Espace conseil France Rénov',Ministère de la Transition écologique et de la Cohésion des Territoires,Département,Transition Écologique
+Service départemental d'incendie et de secours (SDIS),Ministère de l'Intérieur,Département,Intérieur
+Agence régionale de santé (ARS) - délégation départementale,"Ministère du Travail, de la Santé et des Solidarités",Département,Santé
+Administration centrale,Ministère de l'Agriculture et de la Souveraineté Alimentaire,,Agriculture
+Administration centrale,Ministère des Armées,,Armées
+Administration centrale,"Ministère du Travail, de la Santé et des Solidarités",,"""Autonomie, Handicap"""
+Administration centrale,Ministère de la Transition écologique et de la Cohésion des Territoires,,Aménagement du territoire
+Administration centrale,"Ministère de l'Économie, des Finances et de la Souveraineté industrielle et numérique",,Comptes publics
+Administration centrale,Ministère de la Culture,,Culture
+Administration centrale,"Ministère des Sports, de la Jeunesse et de la Vie Associative",,Vie associative
+Administration centrale,"Ministère de l'Économie, des Finances et de la Souveraineté industrielle et numérique",,Économie et Entreprises
+Administration centrale,Ministère de l'Éducation nationale,,Éducation nationale
+Administration centrale,"Ministre déléguée auprès du Premier ministre, chargée de l'Égalité entre les femmes et les hommes, et de la lutte contre les discriminations",,Égalité Femmes-Hommes
+Administration centrale,"Ministère du Travail, de la Santé et des Solidarités",,Enfance et Famille
+Administration centrale,Ministère de l'Enseignement supérieur et de la Recherche,,"""Enseignement supérieur, Recherche"""
+Administration centrale,Ministère de l'Europe et des Affaires Etrangères,,Europe et Affaires étrangères
+Administration centrale,Ministère de l'Intérieur,,Intérieur
+Administration centrale,Ministère de la Justice,,Justice
+Administration centrale,Ministère de la Transition écologique et de la Cohésion des Territoires,,Logement
+Administration centrale,Ministère de la Transition écologique et de la Cohésion des Territoires,,Mer et Biodiversité
+Administration centrale,Ministère de l'Intérieur,,Outre-Mer
+Administration centrale,Premier Ministre,,Premier Ministre
+Administration centrale,Premier Ministre,,Renouveau Démocratique
+Administration centrale,"Ministère du Travail, de la Santé et des Solidarités",,Santé
+Administration centrale,"Ministère du Travail, de la Santé et des Solidarités",,Solidarité
+Administration centrale,"Ministère des Sports, de la Jeunesse et de la Vie Associative",,Sports
+Administration centrale,Ministère de la Transition écologique et de la Cohésion des Territoires,,Transition Écologique
+Administration centrale,"Ministère de l'Économie, des Finances et de la Souveraineté industrielle et numérique",,Industrie et Énergie
+Administration centrale,Ministère de la Transition écologique et de la Cohésion des Territoires,,Transports
+Administration centrale,"Ministère du Travail, de la Santé et des Solidarités",,"""Travail, Emploi"""
+Administration centrale,"Ministère de l'Économie, des Finances et de la Souveraineté industrielle et numérique",,Numérique et IA
+Administration centrale,"Ministère des Sports, de la Jeunesse et de la Vie Associative",,Jeunesse
