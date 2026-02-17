@@ -32,6 +32,7 @@ import { estAutoriséAConsulterLaFicheTerritoriale } from "@/client/utils/fiche-
 import { PanelMenuNavigation } from "@/components/_commons/PanelMenuNavigation/PanelMenuNavigation";
 import { FiltresActifs } from "@/components/PageAccueil/FiltresActifs/FiltresActifs";
 import { ModaleInscriptionInfolettre } from "@/components/PageAccueil/PageChantiers/ModaleInscriptionInfoLettre/ModaleInscriptionInfolettre";
+import { ModaleRenseignerService } from "@/components/PageAccueil/PageChantiers/ModaleRenseignerService/ModaleRenseignerService";
 import { BoutonNavigationFicheTerritoriale } from "@/components/PageAccueil/BoutonNavigationFicheTerritoriale";
 import { BoutonNavigationRapportDetaille } from "@/components/BoutonNavigationRapportDetaille";
 import { BoutonExportDesDonnees } from "@/components/PageAccueil/BoutonExportDesDonnees";
@@ -459,6 +460,7 @@ const ChantierLayout = ({
             onOpenChange={setIsModaleInfolettreOpen}
             open={isModaleInfolettreOpen}
           />
+          <ModaleRenseignerService />
         </div>
       </div>
     </IndexStyled>

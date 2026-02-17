@@ -20,7 +20,7 @@ export const Modale = ({
   sousTitre?: string;
   titleHidden?: boolean;
   trigger?: ReactNode;
-  size?: "md" | "lg";
+  size?: "sm" | "md" | "lg";
 }) => {
   return (
     <Dialog.Root {...props}>
@@ -34,6 +34,7 @@ export const Modale = ({
               {
                 "max-w-[1000px]": size === "lg",
                 "max-w-[900px]": size === "md",
+                "max-w-[600px]": size === "sm",
               },
             )}
           >
