@@ -17,9 +17,9 @@ interface TableauUtilisateurProps {
     dateCreation?: string;
     auteurCreation?: string;
     fonction: string | null;
-    service: string | null;
-    serviceAutre: string | null;
-    perimetreMinisteriel: string | null;
+    service?: string | null;
+    serviceAutre?: string | null;
+    perimetreMinisteriel?: string | null;
   };
 }
 

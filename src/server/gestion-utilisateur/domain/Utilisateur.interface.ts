@@ -49,6 +49,7 @@ export type Utilisateur = {
   dateCreation: string | null;
   auteurCreation: string | null;
   fonction: string | null;
+  perimetreMinisteriel: string | null;
   service: string | null;
   serviceAutre: string | null;
   saisieIndicateur: boolean;

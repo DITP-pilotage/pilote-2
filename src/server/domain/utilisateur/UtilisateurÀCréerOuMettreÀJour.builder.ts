@@ -152,6 +152,7 @@ export default class UtilisateurÀCréerOuMettreÀJourBuilder {
       email: this._email,
       profil: this._profil,
       fonction: this._fonction,
+      perimetreMinisteriel: null,
       service: null,
       serviceAutre: null,
       saisieIndicateur: this._saisieIndicateur,

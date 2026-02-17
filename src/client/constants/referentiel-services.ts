@@ -15,7 +15,9 @@ export const referentielServices = referentielData as {
   perimetresMinisteriels: PerimetreMinisterielReferentiel[];
 };
 
-export const getPerimetreLibelle = (slug: string | null): string | null => {
+export const getPerimetreLibelle = (
+  slug: string | null | undefined,
+): string | null => {
   if (!slug) return null;
   const perimetre = referentielServices.perimetresMinisteriels.find(
     (p) => p.slug === slug,
@@ -24,12 +26,12 @@ export const getPerimetreLibelle = (slug: string | null): string | null => {
 };
 
 export const getServiceLibelle = (
-  perimetreSlug: string | null,
-  serviceSlug: string | null,
-  serviceAutre: string | null,
+  perimetreSlug: string | null | undefined,
+  serviceSlug: string | null | undefined,
+  serviceAutre: string | null | undefined,
 ): string | null => {
   if (!serviceSlug) return null;
-  if (serviceSlug === "autre") return serviceAutre;
+  if (serviceSlug === "autre") return serviceAutre ?? null;
   if (!perimetreSlug) return null;
 
   const perimetre = referentielServices.perimetresMinisteriels.find(
