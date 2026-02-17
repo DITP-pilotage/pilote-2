@@ -5,6 +5,11 @@ import {
 } from "@/components/_commons/SelecteurNew/SelecteurNew";
 import { referentielServices } from "@/client/constants/referentiel-services";
 import { useMonProfilForm } from "./form";
+import {
+  buildCompositeServiceSlug,
+  parseCompositeServiceSlug,
+  buildValeurSelectionnee,
+} from "@/client/utils/service-slug";
 
 const groupedOptions: SelecteurNewOptionGroup<string>[] =
   referentielServices.perimetresMinisteriels.map((perimetre) => ({
@@ -12,7 +17,7 @@ const groupedOptions: SelecteurNewOptionGroup<string>[] =
     valeur: perimetre.slug,
     options: perimetre.services.map((service) => ({
       libelle: service.libelle,
-      valeur: `${perimetre.slug}--${service.slug}`,
+      valeur: buildCompositeServiceSlug(perimetre.slug, service.slug),
     })),
   }));
 
@@ -21,9 +26,10 @@ export const SelectService = () => {
   const service = form.watch("service");
   const perimetreMinisteriel = form.watch("perimetreMinisteriel");
 
-  const valeurSelectionnee = perimetreMinisteriel && service
-    ? `${perimetreMinisteriel}--${service}`
-    : undefined;
+  const valeurSelectionnee = buildValeurSelectionnee(
+    perimetreMinisteriel,
+    service,
+  );
 
   const serviceError = form.formState.errors.service?.message;
 
@@ -44,9 +50,7 @@ export const SelectService = () => {
           erreurMessage={serviceError}
           placeholder="Sélectionner..."
           onChange={(compositeSlug, group) => {
-            const serviceSlug = compositeSlug.includes("--")
-              ? compositeSlug.split("--").slice(1).join("--")
-              : compositeSlug;
+            const serviceSlug = parseCompositeServiceSlug(compositeSlug);
 
             form.setValue("service", serviceSlug, {
               shouldDirty: true,
@@ -54,7 +58,7 @@ export const SelectService = () => {
               shouldValidate: true,
             });
 
-            form.setValue("perimetreMinisteriel", group?.valeur ?? null, {
+            form.setValue("perimetreMinisteriel", group?.valeur ?? "", {
               shouldDirty: true,
               shouldTouch: true,
               shouldValidate: true,

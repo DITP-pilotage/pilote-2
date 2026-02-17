@@ -56,7 +56,7 @@ const UtilisateurFormulaire: FunctionComponent<UtilisateurFormulaireProps> = ({
       fonction: utilisateur?.fonction,
       service: utilisateur?.service ?? null,
       serviceAutre: utilisateur?.serviceAutre ?? null,
-      perimetreMinisteriel: utilisateur?.perimetreMinisteriel ?? null,
+      perimetreMinisteriel: utilisateur?.perimetreMinisteriel ?? "",
       profil: utilisateur?.profil,
       gestionUtilisateur: utilisateur?.gestionUtilisateur,
       saisieIndicateur: utilisateur?.saisieIndicateur,

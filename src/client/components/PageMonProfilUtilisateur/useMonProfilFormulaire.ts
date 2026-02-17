@@ -15,7 +15,7 @@ export function useMonProfilFormulaire() {
       fonction: profilUtilisateur.fonction || "",
       service: profilUtilisateur.service || "",
       serviceAutre: profilUtilisateur.serviceAutre || "",
-      perimetreMinisteriel: profilUtilisateur.perimetreMinisteriel || null,
+      perimetreMinisteriel: profilUtilisateur.perimetreMinisteriel || "",
     },
   });
 }

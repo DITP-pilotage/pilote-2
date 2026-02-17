@@ -12,7 +12,7 @@ export const validationModifierMonProfil = z
       .max(200)
       .transform((value) => value || null)
       .nullable(),
-    perimetreMinisteriel: z.string().nullable(),
+    perimetreMinisteriel: z.string(),
   })
   .superRefine((data, ctx) => {
     if (data.service === "autre" && !data.serviceAutre) {
@@ -20,6 +20,14 @@ export const validationModifierMonProfil = z
         code: z.ZodIssueCode.custom,
         message: "Ce champ est obligatoire",
         path: ["serviceAutre"],
+      });
+    }
+
+    if (data.service !== "autre" && !data.perimetreMinisteriel) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Ce champ est obligatoire",
+        path: ["perimetreMinisteriel"],
       });
     }
   });
