@@ -40,6 +40,7 @@ describe("UtilisateurCSVParseur", () => {
         saisieIndicateur: true,
         gestionUtilisateur: true,
         auteurEmail: "ditp.admin@example.com",
+        perimetreMinisteriel: null,
         service: null,
         serviceAutre: null,
         applicationsAccessibles: [$Enums.application_accessible.PILOTE],
@@ -73,6 +74,7 @@ describe("UtilisateurCSVParseur", () => {
         saisieIndicateur: true,
         gestionUtilisateur: true,
         auteurEmail: "",
+        perimetreMinisteriel: null,
         service: null,
         serviceAutre: null,
         habilitations: {
