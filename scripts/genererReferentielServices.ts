@@ -101,6 +101,20 @@ function genererReferentiel(): void {
     perimetresMinisteriels.push(autre);
   }
 
+  // Ensure "Autre" périmètre exists at the end with "Autre" service
+  const autrePerimetre = perimetresMinisteriels.find((m) => m.slug === "autre");
+  if (autrePerimetre) {
+    if (!autrePerimetre.services.some((s) => s.slug === "autre")) {
+      autrePerimetre.services.push({ slug: "autre", libelle: "Autre" });
+    }
+  } else {
+    perimetresMinisteriels.push({
+      slug: "autre",
+      libelle: "Autre",
+      services: [{ slug: "autre", libelle: "Autre" }],
+    });
+  }
+
   // For each périmètre, move "Autre" service to the end
   for (const perimetre of perimetresMinisteriels) {
     const autreServiceIndex = perimetre.services.findIndex(
