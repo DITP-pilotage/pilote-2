@@ -4,12 +4,12 @@ import {
   SelecteurNewOptionGroup,
 } from "@/components/_commons/SelecteurNew/SelecteurNew";
 import { referentielServices } from "@/client/constants/referentiel-services";
-import { useMonProfilForm } from "./form";
 import {
   buildCompositeValue,
   parseCompositeValue,
   buildCompositeSelectedValue,
 } from "@/components/_commons/SelecteurNew/composite-value";
+import { useMonProfilForm } from "./form";
 
 const groupedOptions: SelecteurNewOptionGroup<string>[] =
   referentielServices.perimetresMinisteriels.map((perimetre) => ({

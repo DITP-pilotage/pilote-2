@@ -15,7 +15,6 @@ import { zodValidateurCSRF } from "@/validation/publication";
 import { dependencies } from "@/server/infrastructure/Dependencies";
 import RécupérerUnProfilUseCase from "@/server/usecase/profil/RécupérerUnProfilUseCase";
 import { getContainer } from "@/server/dependances";
-import { z } from "zod";
 
 const creerUtilisateurSchemaBase = validationInfosBaseUtilisateur.and(
   validationInfosHabilitationsUtilisateur,
