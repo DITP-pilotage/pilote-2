@@ -42,8 +42,15 @@ export const validationInfosBaseUtilisateur = z
     email: z.string().email().min(1).max(100),
     nom: z.string().min(1).max(100),
     prénom: z.string().min(1).max(100),
-    fonction: z.string().max(100).nullable(),
-    service: z.string().nullable(),
+    fonction: z
+      .string()
+      .max(100)
+      .nullable()
+      .transform((value) => value || null),
+    service: z
+      .string()
+      .nullable()
+      .transform((value) => value || null),
     serviceAutre: z
       .string()
       .max(200)
