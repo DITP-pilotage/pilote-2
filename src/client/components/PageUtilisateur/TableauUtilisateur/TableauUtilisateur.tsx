@@ -1,7 +1,10 @@
 import { FunctionComponent } from "react";
 import { formaterDate } from "@/client/utils/date/date";
 import { ProfilCode } from "@/server/domain/utilisateur/Utilisateur.interface";
-import { getPerimetreLibelle, getServiceLibelle } from "@/client/constants/referentiel-services";
+import {
+  getPerimetreLibelle,
+  getServiceLibelle,
+} from "@/client/constants/referentiel-services";
 
 interface TableauUtilisateurProps {
   utilisateur: {

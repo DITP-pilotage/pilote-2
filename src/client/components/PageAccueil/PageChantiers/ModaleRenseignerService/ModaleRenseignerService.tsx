@@ -1,31 +1,21 @@
-import { FunctionComponent, useState } from "react";
+import { FunctionComponent } from "react";
 import Link from "next/link";
 import { Dialog } from "radix-ui";
 import { Modale } from "@/components/shared/Modale";
-import { useProfilUtilisateurConnecte } from "@/client/hooks/useProfilUtilisateurConnecte";
-import api from "@/server/infrastructure/api/trpc/api";
 import Alerte from "@/components/_commons/Alerte/Alerte";
 
-export const ModaleRenseignerService: FunctionComponent = () => {
-  const profil = useProfilUtilisateurConnecte();
-  const [variableContenu] =
-    api.gestionContenu.recupererVariableContenu.useSuspenseQuery({
-      nomVariableContenu: "NEXT_PUBLIC_FF_MON_PROFIL",
-    });
+interface ModaleRenseignerServiceProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+}
 
-  const monProfilEstDisponible = variableContenu;
-  const [isOpen, setIsOpen] = useState(
-    !!monProfilEstDisponible && profil.service == null,
-  );
-
-  if (!monProfilEstDisponible || profil.service) {
-    return null;
-  }
-
+export const ModaleRenseignerService: FunctionComponent<
+  ModaleRenseignerServiceProps
+> = ({ open, onOpenChange }) => {
   return (
     <Modale
-      onOpenChange={setIsOpen}
-      open={isOpen}
+      onOpenChange={onOpenChange}
+      open={open}
       size="sm"
       title="Complétez votre profil"
     >

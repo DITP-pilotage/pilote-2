@@ -17,8 +17,9 @@ import RécupérerUnProfilUseCase from "@/server/usecase/profil/RécupérerUnPro
 import { getContainer } from "@/server/dependances";
 import { z } from "zod";
 
-const creerUtilisateurSchemaBase = validationInfosBaseUtilisateur
-  .and(validationInfosHabilitationsUtilisateur);
+const creerUtilisateurSchemaBase = validationInfosBaseUtilisateur.and(
+  validationInfosHabilitationsUtilisateur,
+);
 
 export const utilisateurRouter = créerRouteurTRPC({
   créer: procédureProtégée

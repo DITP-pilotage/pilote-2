@@ -4,6 +4,8 @@ import Head from "next/head";
 import { useSession } from "next-auth/react";
 import { parseAsStringLiteral, useQueryState } from "nuqs";
 import assert from "node:assert/strict";
+import { useProfilUtilisateurConnecte } from "@/client/hooks/useProfilUtilisateurConnecte";
+import api from "@/server/infrastructure/api/trpc/api";
 import PageChantiers from "@/components/PageAccueil/PageChantiers/PageChantiers";
 import BarreLatérale from "@/components/_commons/BarreLatérale/BarreLatérale";
 import BarreLatéraleEncart from "@/components/_commons/BarreLatérale/BarreLatéraleEncart/BarreLatéraleEncart";
@@ -345,6 +347,17 @@ const ChantierLayout = ({
     PROFIL_REGIONAUX_AUTORISE_A_VOIR_FILTRE_TERRITORIALISE.has(
       session?.profil || "",
     );
+
+  const profil = useProfilUtilisateurConnecte();
+  const [variableContenu] =
+    api.gestionContenu.recupererVariableContenu.useSuspenseQuery({
+      nomVariableContenu: "NEXT_PUBLIC_FF_MON_PROFIL",
+    });
+
+  const monProfilEstDisponible = variableContenu;
+  const doitAfficherModaleRenseignerService =
+    !!monProfilEstDisponible && profil.service == null;
+
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
   const [isModaleInfolettreOpen, setIsModaleInfolettreOpen] = useState(
     doitAfficherLaModaleInfolettre,
@@ -352,6 +365,8 @@ const ChantierLayout = ({
   const [isModaleVideoAccueilOpen, setIsModaleVideoAccueilOpen] = useState(
     doitAfficherModaleVideoAccueil,
   );
+  const [isModaleRenseignerServiceOpen, setIsModaleRenseignerServiceOpen] =
+    useState(doitAfficherModaleRenseignerService);
 
   const filtresStatut = useQueryState(
     "statut",
@@ -456,11 +471,18 @@ const ChantierLayout = ({
             onOpenChange={setIsModaleVideoAccueilOpen}
             open={isModaleVideoAccueilOpen}
           />
+          <ModaleRenseignerService
+            onOpenChange={setIsModaleRenseignerServiceOpen}
+            open={!isModaleVideoAccueilOpen && isModaleRenseignerServiceOpen}
+          />
           <ModaleInscriptionInfolettre
             onOpenChange={setIsModaleInfolettreOpen}
-            open={isModaleInfolettreOpen}
+            open={
+              !isModaleVideoAccueilOpen &&
+              !isModaleRenseignerServiceOpen &&
+              isModaleInfolettreOpen
+            }
           />
-          <ModaleRenseignerService />
         </div>
       </div>
     </IndexStyled>
