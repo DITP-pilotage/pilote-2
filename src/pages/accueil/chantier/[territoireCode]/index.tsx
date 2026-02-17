@@ -184,7 +184,7 @@ export const getServerSideProps = async (
               Alerte.estEnAlerteBaisse(chantierDonnéesTerritoires.tendance)) ||
             (filtresAlertes.estEnAlerteTauxAvancementNonCalculé &&
               Alerte.estEnAlerteTauxAvancementNonCalculé(
-                chantierDonnéesTerritoires.avancement.global,
+                chantierDonnéesTerritoires.avancement.annuel,
                 chantier.cibleAttendu,
               )) ||
             (filtresAlertes.estEnAlerteAbscenceTauxAvancementDepartemental &&

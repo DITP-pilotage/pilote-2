@@ -302,7 +302,8 @@ export const presenterEnChantierAccueilContratV2 = (
     aUnTauxAvancementDepartemental:
       listeChantiersMailleDepartementaleApplicables.length === 0 ||
       listeChantiersMailleDepartementaleApplicables.some(
-        (chantier) => chantier.taux_avancement_mandat !== null,
+        (chantier) =>
+          chantier.chantier_territoire_jalon.at(0)?.taux_avancement !== null,
       ),
   };
 };
