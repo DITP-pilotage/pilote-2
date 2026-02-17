@@ -136,14 +136,15 @@ const PageChantier = () => {
   const estChantierArchive = chantier.statut === "ARCHIVE";
 
   const territoiresCibles = [territoireCode, ...territoiresCompares];
-  const indicateursApplicablesIds = Object.keys(
-    detailsIndicateursTerritoire,
-  ).filter((indicateurId) =>
-    Object.entries(detailsIndicateursTerritoire[indicateurId] ?? {}).some(
-      ([key, value]) =>
-        territoiresCibles.includes(key) && value.estApplicable === true,
-    ),
-  );
+  const indicateursApplicablesIds =
+    configurationFeatureFlipping.masquerIndicateursNonApplicables
+      ? Object.keys(detailsIndicateursTerritoire).filter((indicateurId) =>
+          Object.entries(detailsIndicateursTerritoire[indicateurId] ?? {}).some(
+            ([key, value]) =>
+              territoiresCibles.includes(key) && value.estApplicable === true,
+          ),
+        )
+      : Object.keys(detailsIndicateursTerritoire);
 
   return (
     <PageChantierStyled className="flex">

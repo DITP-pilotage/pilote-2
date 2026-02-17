@@ -289,6 +289,11 @@ const config = convict({
       default: false,
       env: "NEXT_PUBLIC_FF_CREATION_COMPTE_ARS",
     },
+    masquerIndicateursNonApplicables: {
+      format: Boolean,
+      default: false,
+      env: "NEXT_PUBLIC_FF_MASQUER_INDICATEURS_NON_APPLICABLES",
+    },
   },
   analytics: {
     doc: "Matomo Analytics",
