@@ -4,6 +4,7 @@ import { Dialog } from "radix-ui";
 import { Modale } from "@/components/shared/Modale";
 import { useProfilUtilisateurConnecte } from "@/client/hooks/useProfilUtilisateurConnecte";
 import api from "@/server/infrastructure/api/trpc/api";
+import Alerte from "@/components/_commons/Alerte/Alerte";
 
 export const ModaleRenseignerService: FunctionComponent = () => {
   const profil = useProfilUtilisateurConnecte();
@@ -29,10 +30,22 @@ export const ModaleRenseignerService: FunctionComponent = () => {
       title="Complétez votre profil"
     >
       <div>
-        <p className="fr-text--md fr-mb-4w">
-          Renseigner votre profil utilisateur contribue à la clarté des échanges
-          et à la lisibilité des actions réalisées sur la plateforme. Nous vous
-          invitons à le compléter.
+        <Alerte
+          type="info"
+          titre="Informations requises"
+          message={
+            <>
+              Pour personnaliser votre expérience et fournir des informations
+              utiles au pilotage de vos chantiers, nous vous invitons à
+              compléter ou à actualiser les deux informations suivantes dans
+              votre compte : <br />
+              - votre fonction <br />- votre service d'appartenance
+            </>
+          }
+        />
+        <p className="fr-text--md fr-mb-4w fr-mt-2w">
+          Vous pourrez toujours compléter ou modifier ces informations depuis la
+          page "Mon compte"
         </p>
         <div className="fr-mt-4w flex justify-end gap-3">
           <Dialog.Close asChild>

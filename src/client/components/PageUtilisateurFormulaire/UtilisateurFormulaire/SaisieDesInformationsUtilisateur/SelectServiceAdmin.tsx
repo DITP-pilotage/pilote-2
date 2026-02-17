@@ -6,10 +6,10 @@ import {
 import { referentielServices } from "@/client/constants/referentiel-services";
 import { UtilisateurFormInputs } from "../UtilisateurFormulaire.interface";
 import {
-  buildCompositeServiceSlug,
-  parseCompositeServiceSlug,
-  buildValeurSelectionnee,
-} from "@/client/utils/service-slug";
+  buildCompositeValue,
+  parseCompositeValue,
+  buildCompositeSelectedValue,
+} from "@/components/_commons/SelecteurNew/composite-value";
 
 const groupedOptions: SelecteurNewOptionGroup<string>[] =
   referentielServices.perimetresMinisteriels.map((perimetre) => ({
@@ -17,7 +17,7 @@ const groupedOptions: SelecteurNewOptionGroup<string>[] =
     valeur: perimetre.slug,
     options: perimetre.services.map((service) => ({
       libelle: service.libelle,
-      valeur: buildCompositeServiceSlug(perimetre.slug, service.slug),
+      valeur: buildCompositeValue(perimetre.slug, service.slug),
     })),
   }));
 
@@ -26,7 +26,7 @@ export const SelectServiceAdmin = () => {
   const service = form.watch("service");
   const perimetreMinisteriel = form.watch("perimetreMinisteriel");
 
-  const valeurSelectionnee = buildValeurSelectionnee(
+  const valeurSelectionnee = buildCompositeSelectedValue(
     perimetreMinisteriel,
     service,
   );
@@ -49,7 +49,7 @@ export const SelectServiceAdmin = () => {
           erreurMessage={serviceError}
           placeholder="Sélectionner..."
           onChange={(compositeSlug, group) => {
-            const serviceSlug = parseCompositeServiceSlug(compositeSlug);
+            const serviceSlug = parseCompositeValue(compositeSlug);
 
             form.setValue("service", serviceSlug, {
               shouldDirty: true,
