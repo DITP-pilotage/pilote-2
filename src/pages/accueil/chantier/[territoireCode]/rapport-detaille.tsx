@@ -36,7 +36,7 @@ import { RepartitionMeteoContrat } from "@/server/fiche-territoriale/app/contrat
 import { presenterEnRépartitionsMétéosChantiersContrat } from "@/server/chantiers/app/contrats/RepartitionMeteoChantiersContrat";
 import { RecupererRepartitionsMeteoChantiersUseCase } from "@/server/chantiers/usecases/RecupererRepartitionMeteoChantiersUseCase";
 import { getAnneeDateDeBascule } from "@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getAnneeDateDeBascule";
-import { configuration } from "@/config";
+import { configuration, configurationFeatureFlip } from "@/config";
 import { getContainer } from "@/server/dependances";
 import { ChantierRapportDetailleContrat } from "@/server/chantiers/app/contrats/ChantierRapportDetailleContratV2";
 import { getInitialContainerWithTransversalDependencies } from "@/server/InitialDependencies";
@@ -71,6 +71,7 @@ interface NextPageRapportDétailléProps {
   }[];
   listeIndicateursPrisEnCompteAvancement: string[];
   chantiersStatuts: string[];
+  masquerIndicateursNonApplicables: boolean;
 }
 
 const PROFILS_AUTORISE_VOIR_BROUILLONS = new Set([
@@ -479,6 +480,8 @@ export const getServerSideProps: GetServerSideProps<
       },
       listeIndicateursPrisEnCompteAvancement,
       chantiersStatuts: filtres.statut,
+      masquerIndicateursNonApplicables:
+        configurationFeatureFlip().masquerIndicateursNonApplicables,
     },
   };
 };
@@ -505,6 +508,7 @@ const NextPageRapportDétaillé: FunctionComponent<
   listeDonnéesCartographieMétéo,
   listeIndicateursPrisEnCompteAvancement,
   chantiersStatuts,
+  masquerIndicateursNonApplicables,
 }) => {
   const mapChantierStatistiques = new Map<
     string,
@@ -566,6 +570,7 @@ const NextPageRapportDétaillé: FunctionComponent<
         mapChantierStatistiques={mapChantierStatistiques}
         mapDonnéesCartographieAvancement={mapDonnéesCartographieAvancement}
         mapDonnéesCartographieMétéo={mapDonnéesCartographieMétéo}
+        masquerIndicateursNonApplicables={masquerIndicateursNonApplicables}
         ministères={ministères}
         publicationsGroupéesParChantier={publicationsGroupéesParChantier}
         repartitionMeteosChantiers={repartitionMeteosChantiers}

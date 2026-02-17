@@ -57,6 +57,7 @@ interface PageRapportDétailléProps {
   mapDonnéesCartographieMétéo: Map<string, CartographieDonnéesMétéo>;
   listeIndicateursPrisEnCompteAvancement: string[];
   chantiersSontArchives: boolean;
+  masquerIndicateursNonApplicables: boolean;
 }
 
 export const htmlId = {
@@ -84,6 +85,7 @@ const PageRapportDétaillé: FunctionComponent<PageRapportDétailléProps> = ({
   mapDonnéesCartographieMétéo,
   listeIndicateursPrisEnCompteAvancement,
   chantiersSontArchives,
+  masquerIndicateursNonApplicables,
 }) => {
   const { récupérerDétailsSurUnTerritoire } = useTerritoireHabilitation();
   const territoireSélectionné = récupérerDétailsSurUnTerritoire(territoireCode);
@@ -187,6 +189,9 @@ const PageRapportDétaillé: FunctionComponent<PageRapportDétailléProps> = ({
                     }
                     mailleSelectionnee={mailleSelectionnee}
                     mapChantierStatistiques={mapChantierStatistiques}
+                    masquerIndicateursNonApplicables={
+                      masquerIndicateursNonApplicables
+                    }
                     objectifs={
                       publicationsGroupéesParChantier.objectifs[chantier.id] ??
                       []

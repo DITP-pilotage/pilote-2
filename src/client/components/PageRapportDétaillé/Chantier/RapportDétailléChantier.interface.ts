@@ -27,4 +27,5 @@ export default interface RapportDétailléChantierProps {
   donnéesCartographieMétéo: CartographieDonnéesMétéo;
   jalon: number;
   listeIndicateursPrisEnCompteAvancement: string[];
+  masquerIndicateursNonApplicables: boolean;
 }

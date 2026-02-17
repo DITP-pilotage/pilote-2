@@ -53,6 +53,7 @@ const RapportDétailléChantier: FunctionComponent<
   donnéesCartographieMétéo,
   jalon,
   listeIndicateursPrisEnCompteAvancement,
+  masquerIndicateursNonApplicables,
 }) => {
   const listeResponsablesLocaux =
     chantier?.responsableLocalTerritoireSélectionné ?? [];
@@ -70,11 +71,13 @@ const RapportDétailléChantier: FunctionComponent<
         chantier.dateTauxAvancementMandatValeurPrecedente,
     };
 
-  const indicateursApplicables = indicateurs.filter(
-    (indicateur) =>
-      détailsIndicateurs[indicateur.id]?.[territoireCode]?.estApplicable ===
-      true,
-  );
+  const indicateursApplicables = masquerIndicateursNonApplicables
+    ? indicateurs.filter(
+        (indicateur) =>
+          détailsIndicateurs[indicateur.id]?.[territoireCode]?.estApplicable ===
+          true,
+      )
+    : indicateurs;
 
   const categoriesIndicateurRepartition: Record<
     CategoriesIndicateur,
