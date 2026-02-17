@@ -9,7 +9,7 @@ import {
   parseCompositeValue,
   buildCompositeSelectedValue,
 } from "@/components/_commons/SelecteurNew/composite-value";
-import { UtilisateurFormInputs } from "../UtilisateurFormulaire.interface";
+import { UtilisateurFormInputs } from "@/client/components/PageUtilisateurFormulaire/UtilisateurFormulaire/UtilisateurFormulaire.interface";
 
 const groupedOptions: SelecteurNewOptionGroup<string>[] =
   referentielServices.perimetresMinisteriels.map((perimetre) => ({
@@ -57,7 +57,7 @@ export const SelectServiceAdmin = () => {
               shouldValidate: true,
             });
 
-            form.setValue("perimetreMinisteriel", group?.valeur ?? null, {
+            form.setValue("perimetreMinisteriel", group?.valeur ?? "", {
               shouldDirty: true,
               shouldTouch: true,
               shouldValidate: true,
