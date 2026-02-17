@@ -1,4 +1,4 @@
-import { Controller } from "react-hook-form";
+import { Controller, useFormContext } from "react-hook-form";
 import {
   SelecteurNew,
   SelecteurNewOptionGroup,
@@ -9,7 +9,7 @@ import {
   parseCompositeValue,
   buildCompositeSelectedValue,
 } from "@/components/_commons/SelecteurNew/composite-value";
-import { useMonProfilForm } from "./form";
+import { UtilisateurFormInputs } from "@/client/components/PageUtilisateurFormulaire/UtilisateurFormulaire/UtilisateurFormulaire.interface";
 
 const groupedOptions: SelecteurNewOptionGroup<string>[] =
   referentielServices.perimetresMinisteriels.map((perimetre) => ({
@@ -21,8 +21,8 @@ const groupedOptions: SelecteurNewOptionGroup<string>[] =
     })),
   }));
 
-export const SelectService = () => {
-  const form = useMonProfilForm();
+export const SelectServiceAdmin = () => {
+  const form = useFormContext<UtilisateurFormInputs>();
   const service = form.watch("service");
   const perimetreMinisteriel = form.watch("perimetreMinisteriel");
 
@@ -45,7 +45,6 @@ export const SelectService = () => {
           triggerClassName="w-full"
           placeholderRecherche="Rechercher un service ou un périmètre ministériel"
           options={groupedOptions}
-          isRequired
           valeurSelectionnee={valeurSelectionnee}
           erreurMessage={serviceError}
           placeholder="Sélectionner..."

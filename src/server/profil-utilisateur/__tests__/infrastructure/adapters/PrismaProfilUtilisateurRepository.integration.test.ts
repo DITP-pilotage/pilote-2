@@ -21,7 +21,8 @@ describe("PrismaProfilUtilisateurRepository", () => {
       createIntegrationTest(async () => {
         // Given
         const utilisateur = await fixtures.utilisateur({
-          service: "prefecture-de-region",
+          perimetre_ministeriel: "culture",
+          service: "administration-centrale",
           service_autre: null,
         });
 
@@ -35,7 +36,8 @@ describe("PrismaProfilUtilisateurRepository", () => {
           prenom: utilisateur.prenom,
           email: utilisateur.email,
           fonction: utilisateur.fonction,
-          service: "prefecture-de-region",
+          perimetreMinisteriel: "culture",
+          service: "administration-centrale",
           serviceAutre: null,
         });
       }),
@@ -46,6 +48,7 @@ describe("PrismaProfilUtilisateurRepository", () => {
       createIntegrationTest(async () => {
         // Given
         const utilisateur = await fixtures.utilisateur({
+          perimetre_ministeriel: "autre",
           service: "autre",
           service_autre: "Service très spécifique",
         });
@@ -60,6 +63,7 @@ describe("PrismaProfilUtilisateurRepository", () => {
           prenom: utilisateur.prenom,
           email: utilisateur.email,
           fonction: utilisateur.fonction,
+          perimetreMinisteriel: "autre",
           service: "autre",
           serviceAutre: "Service très spécifique",
         });
@@ -85,6 +89,7 @@ describe("PrismaProfilUtilisateurRepository", () => {
           prenom: utilisateur.prenom,
           email: utilisateur.email,
           fonction: utilisateur.fonction,
+          perimetreMinisteriel: null,
           service: null,
           serviceAutre: null,
         });
@@ -121,6 +126,7 @@ describe("PrismaProfilUtilisateurRepository", () => {
           prenom: utilisateur.prenom,
           email: utilisateur.email,
           fonction: utilisateur.fonction,
+          perimetreMinisteriel: "education-nationale",
           service: "rectorat-d-academie",
           serviceAutre: null,
         });
@@ -130,6 +136,7 @@ describe("PrismaProfilUtilisateurRepository", () => {
 
         // Then
         const result = await repository.recupererParId(utilisateur.id);
+        expect(result.perimetreMinisteriel).toEqual("education-nationale");
         expect(result.service).toEqual("rectorat-d-academie");
         expect(result.serviceAutre).toBeNull();
       }),
@@ -152,6 +159,7 @@ describe("PrismaProfilUtilisateurRepository", () => {
           fonction: utilisateur.fonction,
           service: "autre",
           serviceAutre: "Service spécial",
+          perimetreMinisteriel: "autre",
         });
 
         // When
@@ -159,6 +167,7 @@ describe("PrismaProfilUtilisateurRepository", () => {
 
         // Then
         const result = await repository.recupererParId(utilisateur.id);
+        expect(result.perimetreMinisteriel).toEqual("autre");
         expect(result.service).toEqual("autre");
         expect(result.serviceAutre).toEqual("Service spécial");
       }),
@@ -181,6 +190,7 @@ describe("PrismaProfilUtilisateurRepository", () => {
           fonction: utilisateur.fonction,
           service: null,
           serviceAutre: null,
+          perimetreMinisteriel: null,
         });
 
         // When
@@ -204,6 +214,7 @@ describe("PrismaProfilUtilisateurRepository", () => {
           prenom: "Jean",
           email: "jean.dupont@example.fr",
           fonction: "Directeur",
+          perimetreMinisteriel: "culture",
           service: "direction-regionale-des-affaires-culturelles-drac",
           serviceAutre: null,
         });
@@ -219,6 +230,7 @@ describe("PrismaProfilUtilisateurRepository", () => {
           prenom: "Jean",
           email: "jean.dupont@example.fr",
           fonction: "Directeur",
+          perimetreMinisteriel: "culture",
           service: "direction-regionale-des-affaires-culturelles-drac",
           serviceAutre: null,
         });

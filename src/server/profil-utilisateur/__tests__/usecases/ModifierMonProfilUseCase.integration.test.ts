@@ -39,6 +39,7 @@ describe("ModifierMonProfilUseCase", () => {
           nom: "Nouveau Nom",
           prenom: "Nouveau Prenom",
           fonction: "Nouvelle Fonction",
+          perimetreMinisteriel: null,
           service: null,
           serviceAutre: null,
         });
@@ -68,6 +69,7 @@ describe("ModifierMonProfilUseCase", () => {
           nom: "Nouveau Nom",
           prenom: "Prenom Original",
           fonction: "Fonction Originale",
+          perimetreMinisteriel: null,
           service: null,
           serviceAutre: null,
         });
@@ -97,6 +99,7 @@ describe("ModifierMonProfilUseCase", () => {
           nom: "Nom Test",
           prenom: "Prenom Test",
           fonction: null,
+          perimetreMinisteriel: null,
           service: null,
           serviceAutre: null,
         });
@@ -128,6 +131,7 @@ describe("ModifierMonProfilUseCase", () => {
           nom: "Nom Test",
           prenom: "Prenom Test",
           fonction: "Fonction Test",
+          perimetreMinisteriel: "justice",
           service:
             "direction-interregionale-de-la-protection-judiciaire-de-la-jeunesse-dirpjj",
           serviceAutre: null,
@@ -141,6 +145,7 @@ describe("ModifierMonProfilUseCase", () => {
           nom: "Nom Test",
           prenom: "Prenom Test",
           fonction: "Fonction Test",
+          perimetre_ministeriel: "justice",
           service:
             "direction-interregionale-de-la-protection-judiciaire-de-la-jeunesse-dirpjj",
           service_autre: null,
@@ -162,6 +167,7 @@ describe("ModifierMonProfilUseCase", () => {
           nom: "Nouveau Nom",
           prenom: "Nouveau Prenom",
           fonction: null,
+          perimetreMinisteriel: null,
           service: null,
           serviceAutre: null,
         });
@@ -185,6 +191,7 @@ describe("ModifierMonProfilUseCase", () => {
             nom: "Nouveau Nom",
             prenom: "Nouveau Prenom",
             fonction: null,
+            perimetreMinisteriel: null,
             service: null,
             serviceAutre: null,
           }),
@@ -206,6 +213,7 @@ describe("ModifierMonProfilUseCase", () => {
           nom: "Nouveau Nom",
           prenom: "Nouveau Prenom",
           fonction: "Nouvelle Fonction",
+          perimetreMinisteriel: null,
           service: "prefecture-de-region",
           serviceAutre: null,
         });
@@ -216,6 +224,7 @@ describe("ModifierMonProfilUseCase", () => {
           prenom: "Nouveau Prenom",
           email: "test@example.com",
           fonction: "Nouvelle Fonction",
+          perimetreMinisteriel: null,
           service: "prefecture-de-region",
           serviceAutre: null,
         });

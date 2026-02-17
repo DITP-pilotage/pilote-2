@@ -13,6 +13,7 @@ type ProfilUtilisateurViewModel = {
   fonction: string | null;
   service: string | null;
   serviceAutre: string | null;
+  perimetreMinisteriel: string | null;
 };
 
 export class GetProfilUtilisateurQuery {
@@ -33,6 +34,7 @@ export class GetProfilUtilisateurQuery {
         fonction: true,
         service: true,
         service_autre: true,
+        perimetre_ministeriel: true,
       },
     });
 
@@ -48,6 +50,7 @@ export class GetProfilUtilisateurQuery {
       fonction: utilisateur.fonction,
       service: utilisateur.service,
       serviceAutre: utilisateur.service_autre,
+      perimetreMinisteriel: utilisateur.perimetre_ministeriel,
     };
   }
 }

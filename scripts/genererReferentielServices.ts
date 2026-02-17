@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
+import { parse } from "csv-parse/sync";
 
 interface ServiceReferentiel {
   slug: string;
@@ -14,6 +15,13 @@ interface PerimetreMinisterielReferentiel {
 
 interface Referentiel {
   perimetresMinisteriels: PerimetreMinisterielReferentiel[];
+}
+
+interface CsvRow {
+  Nom_du_service: string;
+  Ministere: string;
+  Echelon: string;
+  Perimetre_ministeriel: string;
 }
 
 function slugify(text: string): string {
@@ -33,16 +41,20 @@ function genererReferentiel(): void {
   );
   const csvContent = fs.readFileSync(csvPath, "utf-8");
 
-  const lines = csvContent.split("\n").slice(1); // Skip header
+  const rows: CsvRow[] = parse(csvContent, {
+    columns: true,
+    skipEmptyLines: true,
+    trim: true,
+  });
 
   const perimetresMap = new Map<string, PerimetreMinisterielReferentiel>();
 
-  for (const line of lines) {
-    if (!line.trim()) continue;
-
-    const parts = line.split(";").map((field) => field.trim());
-    const nomService = parts[0];
-    const perimetreMinisteriel = parts[3]; // Perimetre_ministeriel is column 3
+  for (const row of rows) {
+    const nomService = row.Nom_du_service;
+    const perimetreMinisteriel = row.Perimetre_ministeriel.replace(
+      /^"+|"+$/g,
+      "",
+    );
 
     if (!nomService) continue;
 
@@ -74,7 +86,9 @@ function genererReferentiel(): void {
   const perimetresMinisteriels = Array.from(perimetresMap.values());
 
   // Sort périmètres alphabetically by libelle
-  perimetresMinisteriels.sort((a, b) => a.libelle.localeCompare(b.libelle, "fr"));
+  perimetresMinisteriels.sort((a, b) =>
+    a.libelle.localeCompare(b.libelle, "fr"),
+  );
 
   // Sort services within each périmètre alphabetically by libelle
   for (const perimetre of perimetresMinisteriels) {
@@ -82,16 +96,34 @@ function genererReferentiel(): void {
   }
 
   // Move "Autre" périmètre to the end
-  const autreIndex = perimetresMinisteriels.findIndex((m) => m.slug === "autre");
+  const autreIndex = perimetresMinisteriels.findIndex(
+    (m) => m.slug === "autre",
+  );
   if (autreIndex !== -1) {
     const [autre] = perimetresMinisteriels.splice(autreIndex, 1);
     perimetresMinisteriels.push(autre);
   }
 
+  // Ensure "Autre" périmètre exists at the end with "Autre" service
+  const autrePerimetre = perimetresMinisteriels.find(
+    (perimetre) => perimetre.slug === "autre",
+  );
+  if (autrePerimetre) {
+    if (!autrePerimetre.services.some((service) => service.slug === "autre")) {
+      autrePerimetre.services.push({ slug: "autre", libelle: "Autre" });
+    }
+  } else {
+    perimetresMinisteriels.push({
+      slug: "autre",
+      libelle: "Autre",
+      services: [{ slug: "autre", libelle: "Autre" }],
+    });
+  }
+
   // For each périmètre, move "Autre" service to the end
   for (const perimetre of perimetresMinisteriels) {
     const autreServiceIndex = perimetre.services.findIndex(
-      (s) => s.slug === "autre",
+      (service) => service.slug === "autre",
     );
     if (autreServiceIndex !== -1) {
       const [autreService] = perimetre.services.splice(autreServiceIndex, 1);
@@ -112,9 +144,11 @@ function genererReferentiel(): void {
   fs.writeFileSync(outputPath, JSON.stringify(referentiel, null, 2), "utf-8");
 
   console.log(`✅ Référentiel généré : ${outputPath}`);
-  console.log(`   ${referentiel.perimetresMinisteriels.length} périmètres ministériels`);
   console.log(
-    `   ${referentiel.perimetresMinisteriels.reduce((acc, p) => acc + p.services.length, 0)} services au total`,
+    `   ${referentiel.perimetresMinisteriels.length} périmètres ministériels`,
+  );
+  console.log(
+    `   ${referentiel.perimetresMinisteriels.reduce((acc, perimetre) => acc + perimetre.services.length, 0)} services au total`,
   );
 }
 

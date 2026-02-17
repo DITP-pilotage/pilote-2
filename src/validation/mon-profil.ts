@@ -12,6 +12,7 @@ export const validationModifierMonProfil = z
       .max(200)
       .transform((value) => value || null)
       .nullable(),
+    perimetreMinisteriel: z.string().min(1, "Ce champ est obligatoire"),
   })
   .superRefine((data, ctx) => {
     if (data.service === "autre" && !data.serviceAutre) {

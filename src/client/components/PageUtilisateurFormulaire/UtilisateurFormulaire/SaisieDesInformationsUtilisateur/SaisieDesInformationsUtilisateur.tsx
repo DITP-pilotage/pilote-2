@@ -15,6 +15,7 @@ import { MultiSelectChantier } from "@/components/_commons/MultiSelectNew/MultiS
 import { Icone } from "@/components/_commons/Icone";
 import { ArrowLine1Icon } from "@/components/_commons/Icones/ArrowLine1Icon";
 import { SelecteurApplication } from "@/components/PageUtilisateurFormulaire/UtilisateurFormulaire/SaisieDesInformationsUtilisateur/SelecteurApplication";
+import { SelectServiceAdmin } from "@/client/components/PageUtilisateurFormulaire/UtilisateurFormulaire/SaisieDesInformationsUtilisateur/SelectServiceAdmin";
 import useSaisieDesInformationsUtilisateur from "./useSaisieDesInformationsUtilisateur";
 
 const SaisieDesInformationsUtilisateur: FunctionComponent<
@@ -47,7 +48,10 @@ const SaisieDesInformationsUtilisateur: FunctionComponent<
     afficherChampSaisieCommentaire,
     perimetresSelectionnables,
     chantiersAccessibleSaisieCommentaire,
+    watch,
   } = useSaisieDesInformationsUtilisateur();
+
+  const service = watch("service");
 
   return (
     <>
@@ -91,6 +95,19 @@ const SaisieDesInformationsUtilisateur: FunctionComponent<
         libellé="Prénom"
         register={register("prénom")}
       />
+      <SelectServiceAdmin />
+      {service === "autre" && (
+        <div className="fr-mb-4w">
+          <InputAvecLabel
+            className="fr-mb-1w"
+            htmlName="serviceAutre"
+            libellé="Précisez votre service"
+            register={register("serviceAutre")}
+            erreur={errors.serviceAutre}
+            type="text"
+          />
+        </div>
+      )}
       <InputAvecLabel
         erreur={errors.fonction}
         htmlName="fonction"

@@ -359,5 +359,6 @@ export default function useSectionDétailsMetadataAutresIndicateurForm() {
     afficherChampGestionCompte,
     perimetresSelectionnables,
     chantiersAccessibleSaisieCommentaire,
+    watch,
   };
 }

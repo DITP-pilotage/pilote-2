@@ -8,6 +8,7 @@ type ModifierMonProfilInput = {
   fonction: string | null;
   service: string | null;
   serviceAutre: string | null;
+  perimetreMinisteriel: string | null;
 };
 
 export class ModifierMonProfilUseCase {
@@ -31,6 +32,7 @@ export class ModifierMonProfilUseCase {
       fonction: input.fonction,
       service: input.service,
       serviceAutre: input.serviceAutre,
+      perimetreMinisteriel: input.perimetreMinisteriel,
     });
 
     await this.deps.profilUtilisateurRepository.sauvegarder(profilModifie);

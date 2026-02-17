@@ -8,6 +8,7 @@ export const convertirEnModel = (utilisateurAConvertir: {
   fonction: string | null;
   service: string | null;
   serviceAutre: string | null;
+  perimetreMinisteriel: string | null;
   auteurIdModification: string;
   dateModification: Date;
   auteurIdCreation: string;
@@ -35,6 +36,7 @@ export const convertirEnModel = (utilisateurAConvertir: {
     fonction: utilisateurAConvertir.fonction,
     service: utilisateurAConvertir.service,
     service_autre: utilisateurAConvertir.serviceAutre,
+    perimetre_ministeriel: utilisateurAConvertir.perimetreMinisteriel,
     auteur_id_modification: utilisateurAConvertir.auteurIdModification,
     date_modification: utilisateurAConvertir.dateModification,
     auteur_id_creation: utilisateurAConvertir.auteurIdCreation,

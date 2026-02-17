@@ -604,6 +604,7 @@ model utilisateur {
   fonction                               String?
   service                                String?
   service_autre                          String?
+  perimetre_ministeriel                  String?
   profil                                 profil                                   @relation(fields: [profilCode], references: [code], onUpdate: Cascade)
   profilCode                             String                                   @map("profil_code")
   habilitation                           habilitation[]

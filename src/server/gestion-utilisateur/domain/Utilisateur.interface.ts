@@ -49,6 +49,9 @@ export type Utilisateur = {
   dateCreation: string | null;
   auteurCreation: string | null;
   fonction: string | null;
+  perimetreMinisteriel: string | null;
+  service: string | null;
+  serviceAutre: string | null;
   saisieIndicateur: boolean;
   saisieCommentaire: boolean;
   gestionUtilisateur: boolean;
@@ -62,6 +65,9 @@ export type UtilisateurÀCréerOuMettreÀJour = {
   prénom: string;
   email: string;
   fonction: string | null;
+  service: string | null;
+  serviceAutre: string | null;
+  perimetreMinisteriel: string | null;
   profil: ProfilCode;
   saisieIndicateur: boolean;
   saisieCommentaire: boolean;
