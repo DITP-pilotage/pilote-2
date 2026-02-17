@@ -37,35 +37,50 @@ const customErrorMap: z.ZodErrorMap = (issue, ctx) => {
 
 z.setErrorMap(customErrorMap);
 
-export const validationInfosBaseUtilisateur = z.object({
-  email: z.string().email().min(1).max(100),
-  nom: z.string().min(1).max(100),
-  prénom: z.string().min(1).max(100),
-  fonction: z.string().max(100).nullable(),
-  service: z.string().nullable(),
-  serviceAutre: z.string().max(200).transform((value) => value || null).nullable(),
-  perimetreMinisteriel: z.string().nullable().transform((value) => value || null),
-  profil: z.enum(profilsCodes),
-  saisieIndicateur: z.boolean(),
-  gestionUtilisateur: z.boolean(),
-  applicationsAccessibles: z.array(z.nativeEnum($Enums.application_accessible)),
-}).superRefine((data, ctx) => {
-  if (data.service === "autre" && !data.serviceAutre) {
-    ctx.addIssue({
-      code: z.ZodIssueCode.custom,
-      message: "Ce champ est obligatoire",
-      path: ["serviceAutre"],
-    });
-  }
+export const validationInfosBaseUtilisateur = z
+  .object({
+    email: z.string().email().min(1).max(100),
+    nom: z.string().min(1).max(100),
+    prénom: z.string().min(1).max(100),
+    fonction: z.string().max(100).nullable(),
+    service: z.string().nullable(),
+    serviceAutre: z
+      .string()
+      .max(200)
+      .transform((value) => value || null)
+      .nullable(),
+    perimetreMinisteriel: z
+      .string()
+      .nullable()
+      .transform((value) => value || null),
+    profil: z.enum(profilsCodes),
+    saisieIndicateur: z.boolean(),
+    gestionUtilisateur: z.boolean(),
+    applicationsAccessibles: z.array(
+      z.nativeEnum($Enums.application_accessible),
+    ),
+  })
+  .superRefine((data, ctx) => {
+    if (data.service === "autre" && !data.serviceAutre) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Ce champ est obligatoire",
+        path: ["serviceAutre"],
+      });
+    }
 
-  if (data.service && data.service !== "autre" && !data.perimetreMinisteriel) {
-    ctx.addIssue({
-      code: z.ZodIssueCode.custom,
-      message: "Ce champ est obligatoire",
-      path: ["perimetreMinisteriel"],
-    });
-  }
-});
+    if (
+      data.service &&
+      data.service !== "autre" &&
+      !data.perimetreMinisteriel
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Ce champ est obligatoire",
+        path: ["perimetreMinisteriel"],
+      });
+    }
+  });
 
 const adresseEstValideSecretariatGeneral = (adresse: string) => {
   return (
@@ -75,41 +90,56 @@ const adresseEstValideSecretariatGeneral = (adresse: string) => {
   );
 };
 
-export const validationInfosBaseUtilisateurSecretariatGeneral = z.object({
-  email: z
-    .string()
-    .email()
-    .min(1)
-    .max(100)
-    .refine((value) => adresseEstValideSecretariatGeneral(value), {
-      message: customErrorMail,
-    }),
-  nom: z.string().min(1).max(100),
-  prénom: z.string().min(1).max(100),
-  fonction: z.string().max(100).nullable(),
-  service: z.string().nullable(),
-  serviceAutre: z.string().max(200).transform((value) => value || null).nullable(),
-  perimetreMinisteriel: z.string().nullable().transform((value) => value || null),
-  profil: z.enum(profilsCodes),
-  saisieIndicateur: z.boolean(),
-  applicationsAccessibles: z.array(z.nativeEnum($Enums.application_accessible)),
-}).superRefine((data, ctx) => {
-  if (data.service === "autre" && !data.serviceAutre) {
-    ctx.addIssue({
-      code: z.ZodIssueCode.custom,
-      message: "Ce champ est obligatoire",
-      path: ["serviceAutre"],
-    });
-  }
+export const validationInfosBaseUtilisateurSecretariatGeneral = z
+  .object({
+    email: z
+      .string()
+      .email()
+      .min(1)
+      .max(100)
+      .refine((value) => adresseEstValideSecretariatGeneral(value), {
+        message: customErrorMail,
+      }),
+    nom: z.string().min(1).max(100),
+    prénom: z.string().min(1).max(100),
+    fonction: z.string().max(100).nullable(),
+    service: z.string().nullable(),
+    serviceAutre: z
+      .string()
+      .max(200)
+      .transform((value) => value || null)
+      .nullable(),
+    perimetreMinisteriel: z
+      .string()
+      .nullable()
+      .transform((value) => value || null),
+    profil: z.enum(profilsCodes),
+    saisieIndicateur: z.boolean(),
+    applicationsAccessibles: z.array(
+      z.nativeEnum($Enums.application_accessible),
+    ),
+  })
+  .superRefine((data, ctx) => {
+    if (data.service === "autre" && !data.serviceAutre) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Ce champ est obligatoire",
+        path: ["serviceAutre"],
+      });
+    }
 
-  if (data.service && data.service !== "autre" && !data.perimetreMinisteriel) {
-    ctx.addIssue({
-      code: z.ZodIssueCode.custom,
-      message: "Ce champ est obligatoire",
-      path: ["perimetreMinisteriel"],
-    });
-  }
-});
+    if (
+      data.service &&
+      data.service !== "autre" &&
+      !data.perimetreMinisteriel
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Ce champ est obligatoire",
+        path: ["perimetreMinisteriel"],
+      });
+    }
+  });
 
 const DOMAINES_AUTORISES_COORDINATEUR_BASE = [
   ".gouv.fr",
@@ -135,46 +165,60 @@ const adresseEstValideCoordinateur = (
 export const validationInfosBaseUtilisateurCoordinateur = (
   creationCompteArsActive: boolean,
 ) =>
-  z.object({
-    email: z
-      .string()
-      .email()
-      .min(1)
-      .max(100)
-      .refine(
-        (value) => adresseEstValideCoordinateur(value, creationCompteArsActive),
-        {
-          message: customErrorMail,
-        },
+  z
+    .object({
+      email: z
+        .string()
+        .email()
+        .min(1)
+        .max(100)
+        .refine(
+          (value) =>
+            adresseEstValideCoordinateur(value, creationCompteArsActive),
+          {
+            message: customErrorMail,
+          },
+        ),
+      nom: z.string().min(1).max(100),
+      prénom: z.string().min(1).max(100),
+      fonction: z.string().max(100).nullable(),
+      service: z.string().nullable(),
+      serviceAutre: z
+        .string()
+        .max(200)
+        .transform((value) => value || null)
+        .nullable(),
+      perimetreMinisteriel: z
+        .string()
+        .nullable()
+        .transform((value) => value || null),
+      profil: z.enum(profilsCodes),
+      saisieIndicateur: z.boolean(),
+      applicationsAccessibles: z.array(
+        z.nativeEnum($Enums.application_accessible),
       ),
-    nom: z.string().min(1).max(100),
-    prénom: z.string().min(1).max(100),
-    fonction: z.string().max(100).nullable(),
-    service: z.string().nullable(),
-    serviceAutre: z.string().max(200).transform((value) => value || null).nullable(),
-    perimetreMinisteriel: z.string().nullable().transform((value) => value || null),
-    profil: z.enum(profilsCodes),
-    saisieIndicateur: z.boolean(),
-    applicationsAccessibles: z.array(
-      z.nativeEnum($Enums.application_accessible),
-    ),
-  }).superRefine((data, ctx) => {
-    if (data.service === "autre" && !data.serviceAutre) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Ce champ est obligatoire",
-        path: ["serviceAutre"],
-      });
-    }
+    })
+    .superRefine((data, ctx) => {
+      if (data.service === "autre" && !data.serviceAutre) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Ce champ est obligatoire",
+          path: ["serviceAutre"],
+        });
+      }
 
-    if (data.service && data.service !== "autre" && !data.perimetreMinisteriel) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Ce champ est obligatoire",
-        path: ["perimetreMinisteriel"],
-      });
-    }
-  });
+      if (
+        data.service &&
+        data.service !== "autre" &&
+        !data.perimetreMinisteriel
+      ) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Ce champ est obligatoire",
+          path: ["perimetreMinisteriel"],
+        });
+      }
+    });
 
 export const validationInfosHabilitationsUtilisateur = z.object({
   habilitations: z.object({

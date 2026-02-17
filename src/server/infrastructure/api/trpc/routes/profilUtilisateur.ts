@@ -26,9 +26,6 @@ export const profilUtilisateurRouter = créerRouteurTRPC({
       vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
       await getContainer("profilUtilisateur")
         .resolve("modifierMonProfilUseCase")
-        .run(ctx.session.user.id, {
-          ...input,
-          perimetreMinisteriel: input.perimetreMinisteriel || null,
-        });
+        .run(ctx.session.user.id, input);
     }),
 });

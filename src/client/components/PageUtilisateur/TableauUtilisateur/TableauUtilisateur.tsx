@@ -1,7 +1,7 @@
 import { FunctionComponent } from "react";
 import { formaterDate } from "@/client/utils/date/date";
 import { ProfilCode } from "@/server/domain/utilisateur/Utilisateur.interface";
-import { referentielServices } from "@/client/constants/referentiel-services";
+import { getPerimetreLibelle, getServiceLibelle } from "@/client/constants/referentiel-services";
 
 interface TableauUtilisateurProps {
   utilisateur: {
@@ -23,30 +23,6 @@ interface TableauUtilisateurProps {
 const TableauUtilisateur: FunctionComponent<TableauUtilisateurProps> = ({
   utilisateur,
 }) => {
-  const getPerimetreLibelle = (slug: string | null): string | null => {
-    if (!slug) return null;
-    const perimetre = referentielServices.perimetresMinisteriels.find(
-      (p) => p.slug === slug,
-    );
-    return perimetre?.libelle ?? slug;
-  };
-
-  const getServiceLibelle = (
-    perimetreSlug: string | null,
-    serviceSlug: string | null,
-    serviceAutre: string | null,
-  ): string | null => {
-    if (!serviceSlug) return null;
-    if (serviceSlug === "autre") return serviceAutre;
-    if (!perimetreSlug) return serviceSlug;
-
-    const perimetre = referentielServices.perimetresMinisteriels.find(
-      (p) => p.slug === perimetreSlug,
-    );
-    const service = perimetre?.services.find((s) => s.slug === serviceSlug);
-    return service?.libelle ?? serviceSlug;
-  };
-
   const perimetreLibelle = getPerimetreLibelle(
     utilisateur.perimetreMinisteriel,
   );
