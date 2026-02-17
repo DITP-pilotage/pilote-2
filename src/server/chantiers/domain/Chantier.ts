@@ -31,7 +31,7 @@ export class Chantier {
             : acc.filtresComptesCalculés.estEnAlerteBaisse,
           estEnAlerteTauxAvancementNonCalculé:
             Alerte.estEnAlerteTauxAvancementNonCalculé(
-              avancement.global,
+              avancement.annuel,
               chantier.cibleAttendu,
             )
               ? acc.filtresComptesCalculés.estEnAlerteTauxAvancementNonCalculé +

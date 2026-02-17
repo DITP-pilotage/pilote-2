@@ -174,6 +174,28 @@ export const useTableauChantiers = (
       cell: (cellContext) => cellContext.getValue(),
       enableGrouping: false,
     }),
+    reactTableColonnesHelper.accessor("tendance", {
+      header: () => (
+        <div className="flex align-center no-wrap">
+          <span>Tendance</span>
+          <Infobulle classNameBouton="infobulle-header-tendance">
+            {infobulles.chantiers.listeDesChantiersHeaderTendance}
+          </Infobulle>
+        </div>
+      ),
+      id: "tendance",
+      cell: (cellContext) => (
+        <BadgeTendance
+          estArchive={chantiersSontArchives}
+          tendance={cellContext.getValue()}
+        />
+      ),
+      enableGrouping: false,
+      meta: {
+        width: "9rem",
+        tabIndex: -1,
+      },
+    }),
     reactTableColonnesHelper.accessor("avancement", {
       header: () => (
         <div className="flex align-center no-wrap">
@@ -220,56 +242,29 @@ export const useTableauChantiers = (
       cell: (cellContext) => cellContext.getValue(),
       enableGrouping: false,
     }),
-    ...(process.env.NEXT_PUBLIC_FF_ALERTES === "true" &&
-    process.env.NEXT_PUBLIC_FF_ALERTES_BAISSE === "true"
-      ? [
-          reactTableColonnesHelper.accessor("tendance", {
-            header: () => (
-              <div className="flex align-center no-wrap">
-                <span>Tendance</span>
-                <Infobulle classNameBouton="infobulle-header-tendance">
-                  {infobulles.chantiers.listeDesChantiersHeaderTendance}
-                </Infobulle>
-              </div>
-            ),
-            id: "tendance",
-            cell: (cellContext) => (
-              <BadgeTendance
-                estArchive={chantiersSontArchives}
-                tendance={cellContext.getValue()}
-              />
-            ),
-            enableGrouping: false,
-            meta: {
-              width: "9rem",
-              tabIndex: -1,
-            },
-          }),
-          reactTableColonnesHelper.accessor("écart", {
-            header: () => (
-              <div className="flex align-center no-wrap">
-                <span>Écart</span>
-                <Infobulle classNameBouton="infobulle-header-écart">
-                  {infobulles.chantiers.listeDesChantiersHeaderEcart}
-                </Infobulle>
-              </div>
-            ),
-            id: "écart",
-            cell: (cellContext) => (
-              <TableauChantiersEcart
-                ecart={cellContext.getValue()}
-                estArchive={chantiersSontArchives}
-              />
-            ),
-            enableGrouping: false,
-            aggregatedCell: () => null,
-            meta: {
-              width: "4.5rem",
-              tabIndex: -1,
-            },
-          }),
-        ]
-      : []),
+    reactTableColonnesHelper.accessor("écart", {
+      header: () => (
+        <div className="flex align-center no-wrap">
+          <span>Écart</span>
+          <Infobulle classNameBouton="infobulle-header-écart">
+            {infobulles.chantiers.listeDesChantiersHeaderEcart}
+          </Infobulle>
+        </div>
+      ),
+      id: "écart",
+      cell: (cellContext) => (
+        <TableauChantiersEcart
+          ecart={cellContext.getValue()}
+          estArchive={chantiersSontArchives}
+        />
+      ),
+      enableGrouping: false,
+      aggregatedCell: () => null,
+      meta: {
+        width: "4.5rem",
+        tabIndex: -1,
+      },
+    }),
     reactTableColonnesHelper.display({
       id: "dérouler-groupe",
       aggregatedCell: (aggregatedCellContext) => (
