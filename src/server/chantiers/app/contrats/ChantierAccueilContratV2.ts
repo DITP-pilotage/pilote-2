@@ -128,7 +128,7 @@ export function créerDonnéesTerritoiresV2(
 
     donnéesTerritoires[t.code] = {
       estApplicable: chantierRow?.est_applicable ?? null,
-      écart: chantierRow?.ecart ?? null,
+      écart: chantierRow?.chantier_territoire_jalon.at(0)?.ecart ?? null,
       tendance: chantierRow?.tendance || null,
       dateDeMàjDonnéesQualitatives:
         chantierRow?.derniere_maj_date_qualitative?.toISOString() || null,

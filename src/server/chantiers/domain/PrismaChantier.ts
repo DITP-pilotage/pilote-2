@@ -29,7 +29,7 @@ type EntreePrismaChantierIdentite = Pick<
 >;
 type EntreePrismaChantierTerritoireJalon = Pick<
   PrismaChantierTerritoireJalon,
-  "taux_avancement" | "date_taux_avancement"
+  "taux_avancement" | "date_taux_avancement" | "ecart"
 >;
 type EntreePrismaChantierTerritoire = Pick<
   PrismaChantierTerritoire,
