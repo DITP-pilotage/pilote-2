@@ -165,8 +165,10 @@ const RapportDetail = ({ rapportId }: { rapportId: string }) => {
       ) : (
         chantiers.map((chantier) => (
           <Bloc contenuClassesSupplémentaires="!p-0" key={chantier.id}>
-            <div className="fr-p-2w">
-              <h3 className="fr-text--lg fr-mb-0">{chantier.nom}</h3>
+            <div className="fr-p-2w flex items-baseline gap-3">
+              <h3 className="fr-text--lg fr-mb-0">
+                {chantier.id} - {chantier.nom}
+              </h3>
               <a
                 className="fr-link fr-text--sm"
                 href={`/chantier/${chantier.id}/${territoireCode}`}
@@ -175,15 +177,15 @@ const RapportDetail = ({ rapportId }: { rapportId: string }) => {
               </a>
             </div>
             {chantier.indicateurs.map((indicateur) => (
-              <section className="fr-accordion" key={indicateur.id}>
+              <section className="fr-accordion group" key={indicateur.id}>
                 <h4 className="fr-accordion__title">
                   <button
                     aria-controls={`accordion-indicateur-${indicateur.id}`}
                     aria-expanded={false}
-                    className="fr-accordion__btn"
+                    className="fr-accordion__btn group-even:!bg-dsfr-grey-925/50"
                     type="button"
                   >
-                    {indicateur.nom}
+                    {indicateur.id} - {indicateur.nom}
                   </button>
                 </h4>
                 <div
