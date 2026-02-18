@@ -45,7 +45,7 @@ const PageRapportsHebdomadaires = () => {
                 type="button"
               >
                 Semaine du{" "}
-                {PiloteDateFormatter.formatterDateSemaine(rapport.periodeDebut)}
+                {PiloteDateFormatter.dateFrancaiseLongue(rapport.periodeDebut)}
               </button>
             ))
           )}

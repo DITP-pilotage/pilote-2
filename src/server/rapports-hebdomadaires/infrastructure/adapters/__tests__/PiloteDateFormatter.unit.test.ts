@@ -57,4 +57,28 @@ describe("PiloteDateFormatter", () => {
       expect(result).toBe("01/01/2025");
     });
   });
+
+  describe("dateFrancaiseLongue", () => {
+    it("formate le 1er jour du mois avec '1er'", () => {
+      // Given
+      const date = new Date("2025-01-01");
+
+      // When
+      const result = PiloteDateFormatter.dateFrancaiseLongue(date);
+
+      // Then
+      expect(result).toBe("1er janvier 2025");
+    });
+
+    it("formate un jour ordinaire sans '1er'", () => {
+      // Given
+      const date = new Date("2025-03-15");
+
+      // When
+      const result = PiloteDateFormatter.dateFrancaiseLongue(date);
+
+      // Then
+      expect(result).toBe("15 mars 2025");
+    });
+  });
 });

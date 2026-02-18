@@ -14,7 +14,7 @@ export type RapportHebdomadaire = {
   contenuRapport: ContenuRapport;
 };
 
-export default class RecupererRapportHebdomadaireQuery {
+export class RecupererRapportHebdomadaireQuery {
   constructor(private readonly deps: { prisma: PrismaPilote }) {}
 
   async run(

@@ -24,8 +24,8 @@ import { IndicateurActiviteGateway } from "./infrastructure/adapters/IndicateurA
 
 import { ProduireRapportsHebdomadairesUseCase } from "./usecases/ProduireRapportsHebdomadairesUseCase";
 import { EnvoyerRapportsHebdomadairesUseCase } from "./usecases/EnvoyerRapportsHebdomadairesUseCase";
-import ListerRapportsHebdomadairesQuery from "./queries/ListerRapportsHebdomadairesQuery";
-import RecupererRapportHebdomadaireQuery from "./queries/RecupererRapportHebdomadaireQuery";
+import { ListerRapportsHebdomadairesQuery } from "./queries/ListerRapportsHebdomadairesQuery";
+import { RecupererRapportHebdomadaireQuery } from "./queries/RecupererRapportHebdomadaireQuery";
 
 export type RapportsHebdomadairesDependencies = {
   activiteComptesQuery: PrismaActiviteComptesQuery;

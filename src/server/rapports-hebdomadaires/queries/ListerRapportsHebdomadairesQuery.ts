@@ -9,7 +9,7 @@ export type RapportHebdomadaireResume = {
   dateCreation: Date;
 };
 
-export default class ListerRapportsHebdomadairesQuery {
+export class ListerRapportsHebdomadairesQuery {
   constructor(private readonly deps: { prisma: PrismaPilote }) {}
 
   async run(coordinateurId: string): Promise<RapportHebdomadaireResume[]> {

@@ -1,7 +1,7 @@
 import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
 import { fixtures } from "@/server/infrastructure/test/fixtures";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
-import RecupererRapportHebdomadaireQuery from "@/server/rapports-hebdomadaires/queries/RecupererRapportHebdomadaireQuery";
+import { RecupererRapportHebdomadaireQuery } from "@/server/rapports-hebdomadaires/queries/RecupererRapportHebdomadaireQuery";
 import { NotFoundError } from "@/server/app/error-boundary/not-found-error";
 import { type ContenuRapport } from "@/server/rapports-hebdomadaires/infrastructure/adapters/PrismaRapportRepository";
 
@@ -14,7 +14,7 @@ describe("RecupererRapportHebdomadaireQuery", () => {
   });
 
   it(
-    "returns the full rapport detail with contenuRapport parsed",
+    "retourne le détail complet du rapport avec le contenuRapport parsé",
     createIntegrationTest(async () => {
       // Given
       const coordinateur = await fixtures.utilisateur({
@@ -104,7 +104,7 @@ describe("RecupererRapportHebdomadaireQuery", () => {
   );
 
   it(
-    "throws NotFoundError when rapport does not exist",
+    "lance une NotFoundError quand le rapport n'existe pas",
     createIntegrationTest(async () => {
       // Given
       const coordinateur = await fixtures.utilisateur({
@@ -123,7 +123,7 @@ describe("RecupererRapportHebdomadaireQuery", () => {
   );
 
   it(
-    "throws NotFoundError when rapport belongs to another coordinateur",
+    "lance une NotFoundError quand le rapport appartient à un autre coordinateur",
     createIntegrationTest(async () => {
       // Given
       const coordinateur1 = await fixtures.utilisateur({

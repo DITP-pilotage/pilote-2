@@ -1,7 +1,7 @@
 import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
 import { fixtures } from "@/server/infrastructure/test/fixtures";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
-import ListerRapportsHebdomadairesQuery from "@/server/rapports-hebdomadaires/queries/ListerRapportsHebdomadairesQuery";
+import { ListerRapportsHebdomadairesQuery } from "@/server/rapports-hebdomadaires/queries/ListerRapportsHebdomadairesQuery";
 
 describe("ListerRapportsHebdomadairesQuery", () => {
   let query: ListerRapportsHebdomadairesQuery;
@@ -12,7 +12,7 @@ describe("ListerRapportsHebdomadairesQuery", () => {
   });
 
   it(
-    "returns empty array when no rapports exist for the coordinateur",
+    "retourne un tableau vide quand aucun rapport n'existe pour le coordinateur",
     createIntegrationTest(async () => {
       // Given
       const coordinateur = await fixtures.utilisateur({
@@ -28,7 +28,7 @@ describe("ListerRapportsHebdomadairesQuery", () => {
   );
 
   it(
-    "returns rapports for the given coordinateur, ordered by date_debut_periode desc",
+    "retourne les rapports du coordinateur, triés par date_debut_periode décroissante",
     createIntegrationTest(async () => {
       // Given
       const coordinateur = await fixtures.utilisateur({
@@ -87,7 +87,7 @@ describe("ListerRapportsHebdomadairesQuery", () => {
   );
 
   it(
-    "does not return rapports belonging to another coordinateur",
+    "ne retourne pas les rapports d'un autre coordinateur",
     createIntegrationTest(async () => {
       // Given
       const coordinateur1 = await fixtures.utilisateur({

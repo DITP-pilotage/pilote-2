@@ -344,4 +344,72 @@ describe("Habilitation", () => {
       }).toThrow(UnauthorizedError);
     });
   });
+
+  describe("verifierAutorisationLectureRapportsHebdomadaires", () => {
+    it("devrait autoriser un COORDINATEUR_REGION à lire les rapports hebdomadaires", () => {
+      // Given
+      const habilitation = new HabilitationBuilder()
+        .avecProfilCode(ProfilEnum.COORDINATEUR_REGION)
+        .build();
+
+      // When & THEN
+      expect(() => {
+        habilitation.verifierAutorisationLectureRapportsHebdomadaires();
+      }).not.toThrow();
+    });
+
+    it("devrait autoriser un COORDINATEUR_DEPARTEMENT à lire les rapports hebdomadaires", () => {
+      // Given
+      const habilitation = new HabilitationBuilder()
+        .avecProfilCode(ProfilEnum.COORDINATEUR_DEPARTEMENT)
+        .build();
+
+      // When & THEN
+      expect(() => {
+        habilitation.verifierAutorisationLectureRapportsHebdomadaires();
+      }).not.toThrow();
+    });
+
+    it("devrait rejeter un DITP_ADMIN à lire les rapports hebdomadaires", () => {
+      // Given
+      const habilitation = new HabilitationBuilder()
+        .avecProfilCode(ProfilEnum.DITP_ADMIN)
+        .build();
+
+      // When & THEN
+      expect(() => {
+        habilitation.verifierAutorisationLectureRapportsHebdomadaires();
+      }).toThrow(UnauthorizedError);
+    });
+  });
+
+  describe("estAutoriseAAccederAuxRapportsHebdomadaires", () => {
+    it("devrait retourner true pour un COORDINATEUR_REGION", () => {
+      // Given
+      const habilitation = new HabilitationBuilder()
+        .avecProfilCode(ProfilEnum.COORDINATEUR_REGION)
+        .build();
+
+      // When
+      const resultat =
+        habilitation.estAutoriseAAccederAuxRapportsHebdomadaires();
+
+      // Then
+      expect(resultat).toBe(true);
+    });
+
+    it("devrait retourner false pour un DITP_ADMIN", () => {
+      // Given
+      const habilitation = new HabilitationBuilder()
+        .avecProfilCode(ProfilEnum.DITP_ADMIN)
+        .build();
+
+      // When
+      const resultat =
+        habilitation.estAutoriseAAccederAuxRapportsHebdomadaires();
+
+      // Then
+      expect(resultat).toBe(false);
+    });
+  });
 });

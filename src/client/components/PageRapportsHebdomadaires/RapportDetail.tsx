@@ -23,8 +23,8 @@ const RapportDetail = ({ rapportId }: { rapportId: string }) => {
     <div className="space-y-10 my-10">
       <h2 className="fr-h2 text-primary">
         Semaine du{" "}
-        {PiloteDateFormatter.formatterDateSemaine(rapportDetail.periodeDebut)}{" "}
-        au {PiloteDateFormatter.formatterDateSemaine(rapportDetail.periodeFin)}
+        {PiloteDateFormatter.dateFrancaiseLongue(rapportDetail.periodeDebut)} au{" "}
+        {PiloteDateFormatter.dateFrancaiseLongue(rapportDetail.periodeFin)}
       </h2>
 
       <section className="space-y-4">
