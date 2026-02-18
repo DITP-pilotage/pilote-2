@@ -1,6 +1,7 @@
 import { Accordion } from "radix-ui";
 import { ReactNode } from "react";
 import { clsxm } from "@/utils/clsxm";
+import "./accordion.css";
 
 export const Disclosure = ({
   trigger,
@@ -18,12 +19,7 @@ export const Disclosure = ({
           </Accordion.Trigger>
         </Accordion.Header>
         <Accordion.Content
-          className={clsxm(
-            "overflow-hidden",
-            "data-[state=open]:animate-accordion-open",
-            "data-[state=closed]:animate-accordion-close",
-            "!pt-4",
-          )}
+          className={clsxm("overflow-hidden", "accordion-content", "!pt-4")}
         >
           {children}
         </Accordion.Content>

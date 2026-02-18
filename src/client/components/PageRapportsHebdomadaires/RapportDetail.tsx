@@ -1,4 +1,5 @@
 import "@gouvfr/dsfr/dist/component/table/table.min.css";
+import { useSuspenseQueries } from "@tanstack/react-query";
 import api from "@/server/infrastructure/api/trpc/api";
 import Bloc from "@/components/_commons/Bloc/Bloc";
 import { PiloteDateFormatter } from "@/server/rapports-hebdomadaires/infrastructure/adapters/PiloteDateFormatter";
