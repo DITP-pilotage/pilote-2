@@ -1604,7 +1604,7 @@ describe("PrismaChantierRepository", () => {
           profil,
           filtres,
           "DEPT-87",
-          jalon,
+          [jalon],
         );
 
       // Then
@@ -1747,7 +1747,7 @@ describe("PrismaChantierRepository", () => {
           profil,
           filtres,
           "DEPT-87",
-          jalon,
+          [jalon],
         );
 
       // Then
@@ -1873,7 +1873,7 @@ describe("PrismaChantierRepository", () => {
             profil,
             filtres,
             "DEPT-87",
-            jalon,
+            [jalon],
           );
 
         // Then
@@ -1987,7 +1987,7 @@ describe("PrismaChantierRepository", () => {
             profil,
             filtres,
             "DEPT-87",
-            jalon,
+            [jalon],
           );
 
         // Then
@@ -2102,7 +2102,7 @@ describe("PrismaChantierRepository", () => {
             profil,
             filtres,
             "DEPT-87",
-            jalon,
+            [jalon],
           );
 
         // Then
@@ -2210,7 +2210,7 @@ describe("PrismaChantierRepository", () => {
             profil,
             filtres,
             "DEPT-87",
-            jalon,
+            [jalon],
           );
 
         // Then
@@ -2343,7 +2343,7 @@ describe("PrismaChantierRepository", () => {
             profil,
             filtres,
             "DEPT-87",
-            jalon,
+            [jalon],
           );
 
         // Then
@@ -2466,7 +2466,7 @@ describe("PrismaChantierRepository", () => {
             profil,
             filtres,
             "DEPT-87",
-            jalon,
+            [jalon],
           );
 
         // Then
@@ -2599,7 +2599,7 @@ describe("PrismaChantierRepository", () => {
             profil,
             filtres,
             "DEPT-87",
-            jalon,
+            [jalon],
           );
 
         // Then
@@ -2728,7 +2728,7 @@ describe("PrismaChantierRepository", () => {
             profil,
             filtres,
             "DEPT-87",
-            jalon,
+            [jalon],
           );
 
         // Then

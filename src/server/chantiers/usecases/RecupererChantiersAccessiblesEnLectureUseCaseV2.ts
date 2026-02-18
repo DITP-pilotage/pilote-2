@@ -182,9 +182,9 @@ const appliquerTri =
       }
       case "écart": {
         const donneeTriA =
-          chantierA.mailles[mailleChantier][territoireCode].écart;
+          chantierA.mailles[mailleChantier][territoireCode].ecart.annuel;
         const donneeTriB =
-          chantierB.mailles[mailleChantier][territoireCode].écart;
+          chantierB.mailles[mailleChantier][territoireCode].ecart.annuel;
 
         if (donneeTriA === null) {
           return 1;
@@ -226,6 +226,7 @@ export class RecupererChantiersAccessiblesEnLectureUseCaseV2 {
     filtres: FiltreQueryParams,
     sorting: SortingParams,
     jalon: number,
+    jalonParDefaut: number,
   ): Promise<ChantierAccueilContratV2[]> {
     const habilitation = new Habilitation(habilitations);
     const chantiersLecture =
@@ -252,7 +253,7 @@ export class RecupererChantiersAccessiblesEnLectureUseCaseV2 {
         profil,
         filtresPourChantier,
         territoireCode,
-        jalon,
+        [jalon, jalonParDefaut],
       )
       .then((listePrismaChantier) =>
         listePrismaChantier
@@ -275,6 +276,8 @@ export class RecupererChantiersAccessiblesEnLectureUseCaseV2 {
                   ministères,
                   territoireCode,
                   profil,
+                  jalon,
+                  jalonParDefaut,
                 ),
               ];
             }
