@@ -21,7 +21,7 @@ const SelecteurJalon: FunctionComponent = () => {
     <select
       className="fr-select fr-mt-0 fr-mr-1w"
       id="jalon"
-      onChange={(e) => setJalon(e.target.value as "2024" | "2025")}
+      onChange={(e) => setJalon(e.target.value)}
       value={jalon}
     >
       {listeOptionsJalon.map((option) => (

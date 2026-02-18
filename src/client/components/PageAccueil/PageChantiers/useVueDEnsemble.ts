@@ -23,7 +23,7 @@ export default function useVueDEnsemble(
       },
       porteur: chantier.responsables.porteur,
       tendance: chantier.tendance,
-      écart: chantier.écart,
+      écart: chantier.ecart,
       dateDeMàjDonnéesQualitatives: chantier.dateDeMàjDonnéesQualitatives,
       dateDeMàjDonnéesQuantitatives: chantier.dateDeMàjDonnéesQuantitatives,
       maillesApplicables: chantier.maillesApplicables,

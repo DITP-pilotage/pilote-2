@@ -15,7 +15,7 @@ export class Chantier {
       (acc, chantier) => {
         const {
           météo,
-          écart,
+          ecart,
           tendance,
           avancement,
           aUnePropositionsValeurAvancement,
@@ -23,7 +23,7 @@ export class Chantier {
 
         acc.répartitionMétéos[météo] += 1;
         acc.filtresComptesCalculés = {
-          estEnAlerteÉcart: Alerte.estEnAlerteÉcart(écart)
+          estEnAlerteÉcart: Alerte.estEnAlerteÉcart(ecart.jalonParDefaut)
             ? acc.filtresComptesCalculés.estEnAlerteÉcart + 1
             : acc.filtresComptesCalculés.estEnAlerteÉcart,
           estEnAlerteBaisse: Alerte.estEnAlerteBaisse(tendance)
@@ -31,7 +31,7 @@ export class Chantier {
             : acc.filtresComptesCalculés.estEnAlerteBaisse,
           estEnAlerteTauxAvancementNonCalculé:
             Alerte.estEnAlerteTauxAvancementNonCalculé(
-              avancement.annuel,
+              avancement.jalonParDefaut,
               chantier.cibleAttendu,
             )
               ? acc.filtresComptesCalculés.estEnAlerteTauxAvancementNonCalculé +
