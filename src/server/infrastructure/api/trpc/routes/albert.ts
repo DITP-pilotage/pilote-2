@@ -1,17 +1,11 @@
-import { createOpenAI } from "@ai-sdk/openai";
-import { generateText, tool, stepCountIs, ToolSet } from "ai";
+import { tool } from "ai";
 import { z } from "zod";
-import { Prisma } from "@prisma/client";
 import { prisma } from "@/server/db/prisma";
 import {
   créerRouteurTRPC,
   procédureProtégée,
 } from "@/server/infrastructure/api/trpc/trpc";
-
-const albertProvider = createOpenAI({
-  baseURL: "https://albert.api.etalab.gouv.fr/v1",
-  apiKey: process.env.ALBERT_API_KEY!,
-});
+import { albertPilote } from "@/server/albert/Albert";
 
 const getSyntheseChantier = ({ userId }: { userId: string }) => {
   const description =
@@ -82,40 +76,6 @@ const getSyntheseChantier = ({ userId }: { userId: string }) => {
   });
 };
 
-const albertPilote = async ({
-  prompt,
-  systemPrompt,
-  tools,
-  userId,
-}: {
-  prompt: string;
-  systemPrompt: string;
-  tools?: ToolSet;
-  userId: string;
-}) => {
-  let model = "openai/gpt-oss-120b";
-  const response = await generateText({
-    model: albertProvider.chat(model),
-    system: systemPrompt,
-    prompt: prompt,
-    stopWhen: stepCountIs(5),
-    onFinish: async (event) => {
-      await prisma.llm_calls.create({
-        data: {
-          model,
-          transcript: event as unknown as Prisma.InputJsonValue,
-          utilisateur_id: userId,
-        },
-      });
-    },
-    tools,
-  });
-
-  return {
-    text: response.text,
-  };
-};
-
 const systemPrompt = `
   Tu es un analyste expert en pilotage de chantiers multi-territoriaux et en analyse de risques opérationnels.
 
@@ -179,11 +139,6 @@ export const albertRouter = créerRouteurTRPC({
           JSON.stringify(listeSyntheseResultat),
         ),
         systemPrompt,
-        // tools: {
-        //   getSyntheseChantier: getSyntheseChantier({
-        //     userId: ctx.session.user.id,
-        //   }),
-        // },
         userId: ctx.session.user.email,
       });
     }),
