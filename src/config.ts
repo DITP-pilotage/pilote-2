@@ -461,7 +461,7 @@ config.set(
 );
 config.set(
   "keycloak.authUrl",
-  config.get("keycloak.issuer") + "/protocol/openid-connect/auth",
+  config.get("keycloak.publicIssuer") + "/protocol/openid-connect/auth",
 );
 config.set(
   "keycloak.logoutUrl",
