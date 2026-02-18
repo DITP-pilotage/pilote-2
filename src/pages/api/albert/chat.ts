@@ -87,7 +87,7 @@ ${JSON.stringify(listeSyntheseResultat, null, 2)}`;
     const result = await Albert.streamText({
       messages,
       systemPrompt: enrichedSystemPrompt,
-      userId: session.user.email,
+      userId: session.user.id,
     });
 
     result.pipeUIMessageStreamToResponse(res);
