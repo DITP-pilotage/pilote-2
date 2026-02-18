@@ -61,7 +61,7 @@ const PageRapportsHebdomadaires = () => {
         </div>
       </BarreLatérale>
 
-      <main className="col-span-2 grid grid-cols-subgrid">
+      <main className="col-span-2 grid grid-cols-subgrid grid-rows-[auto_1fr]">
         <div className="fr-background-blue-france-850 col-span-2 grid grid-cols-subgrid">
           <div className="fr-container fr-py-3w">
             <h1 className="fr-h3 fr-mb-0">Rapports hebdomadaires</h1>

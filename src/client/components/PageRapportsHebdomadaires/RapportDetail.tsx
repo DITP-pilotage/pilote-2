@@ -84,7 +84,7 @@ const RapportDetail = ({ rapportId }: { rapportId: string }) => {
     rapportDetail.contenuRapport.coordinateur.territoires[0]?.code || "NAT-FR";
 
   return (
-    <div className="space-y-10 mt-10">
+    <div className="space-y-10 my-10">
       <h2 className="fr-h2">
         Semaine du {formatterDateSemaine(rapportDetail.periodeDebut)} au{" "}
         {formatterDateSemaine(rapportDetail.periodeFin)}
