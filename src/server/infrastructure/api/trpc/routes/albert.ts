@@ -1,80 +1,10 @@
-import { tool } from "ai";
 import { z } from "zod";
 import { prisma } from "@/server/db/prisma";
 import {
   créerRouteurTRPC,
   procédureProtégée,
 } from "@/server/infrastructure/api/trpc/trpc";
-import { albertPilote } from "@/server/albert/Albert";
-
-const getSyntheseChantier = ({ userId }: { userId: string }) => {
-  const description =
-    "Récupère la synthèse des résultats d'un chantier par son ID (L'ID est au format CH-XXX (si l'utilisateur met 75, CH-75, CH-075, tout cela correspond à CH-075) ou par son nom";
-  console.log(userId);
-  return tool({
-    description,
-    inputSchema: z.object({
-      chantierId: z
-        .string()
-        .optional()
-        .describe("L'identifiant du chantier (ex: CH-001)"),
-      chantierNom: z
-        .string()
-        .optional()
-        .describe("Le nom du chantier à rechercher"),
-    }),
-    execute: async ({ chantierId, chantierNom }) => {
-      let resolvedChantierId = chantierId;
-
-      if (!resolvedChantierId && chantierNom) {
-        const chantier = await prisma.chantier_identite.findFirst({
-          where: {
-            nom: {
-              contains: chantierNom,
-              mode: "insensitive",
-            },
-          },
-          select: { id: true, nom: true },
-        });
-
-        if (!chantier) {
-          return {
-            error: `Aucun chantier trouvé avec le nom "${chantierNom}"`,
-          };
-        }
-
-        resolvedChantierId = chantier.id;
-      }
-
-      if (!resolvedChantierId) {
-        return {
-          error: "Veuillez fournir un identifiant ou un nom de chantier",
-        };
-      }
-
-      const syntheses = await prisma.synthese_des_resultats.findMany({
-        where: {
-          chantier_id: resolvedChantierId,
-          maille: "NAT",
-        },
-        orderBy: {
-          date_commentaire: "desc",
-        },
-        take: 5,
-      });
-
-      return {
-        chantierId: resolvedChantierId,
-        syntheses: syntheses.map((synthese) => ({
-          meteo: synthese.meteo,
-          commentaire: synthese.commentaire,
-          dateCommentaire: synthese.date_commentaire,
-          dateMeteo: synthese.date_meteo,
-        })),
-      };
-    },
-  });
-};
+import { Albert } from "@/server/albert/Albert";
 
 const systemPrompt = `
   Tu es un analyste expert en pilotage de chantiers multi-territoriaux et en analyse de risques opérationnels.
@@ -133,7 +63,7 @@ export const albertRouter = créerRouteurTRPC({
             date_commentaire: "desc",
           },
         });
-      return albertPilote({
+      return Albert.generateText({
         prompt: input.prompt.replace(
           "{{LISTE_DES_SYNTHESES}}",
           JSON.stringify(listeSyntheseResultat),

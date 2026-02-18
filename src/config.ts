@@ -453,6 +453,14 @@ const config = convict({
       env: "BREVO_OVERRIDE_EMAIL_RECIPIENT",
     },
   },
+  albert: {
+    apiKey: {
+      format: String,
+      default: "ToBeDefined",
+      doc: "Clé API pour le service Albert (LLM Etalab)",
+      env: "ALBERT_API_KEY",
+    },
+  },
 });
 
 config.set(
