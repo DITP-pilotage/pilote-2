@@ -16,8 +16,6 @@ const PageRapportsHebdomadairesStyled = styled.div`
   }
 
   .horizontal-panel {
-    width: 100%;
-    background-color: #f5f5fe;
     box-shadow: 0 6px 18px var(--shadow-color);
   }
 `;

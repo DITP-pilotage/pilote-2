@@ -17,14 +17,15 @@ const formatterDateSemaine = (date: Date): string => {
 const PageRapportsHebdomadaires = () => {
   const [rapportId, setRapportId] = useQueryState("rapportId", parseAsString);
   const [rapports] = api.rapportHebdomadaire.lister.useSuspenseQuery();
-  const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
 
   return (
-    <PageRapportsHebdomadairesStyled className="flex">
-      <BarreLatérale
-        estOuvert={estOuverteBarreLatérale}
-        setEstOuvert={setEstOuverteBarreLatérale}
-      >
+    <PageRapportsHebdomadairesStyled
+      style={{
+        "--menu-width": "320px",
+      }}
+      className="min-h-screen grid grid-cols-[var(--menu-width)_1fr_var(--menu-width)]"
+    >
+      <BarreLatérale estOuvert={false} setEstOuvert={() => {}}>
         <BarreLatéraleEncart className="bg-dsfr-blue-france-925">
           <div className="fr-text--sm fr-text--bold fr-mb-1w">
             {rapports.length} rapport{rapports.length > 1 ? "s" : ""}
@@ -57,22 +58,16 @@ const PageRapportsHebdomadaires = () => {
         </div>
       </BarreLatérale>
 
-      <main className="min-h-screen">
-        <div className="horizontal-panel fr-background-blue-france-850">
+      <main className="col-span-2 grid grid-cols-subgrid">
+        <div className="fr-background-blue-france-850 col-span-2 grid grid-cols-subgrid">
           <div className="fr-container fr-py-3w">
             <h1 className="fr-h3 fr-mb-0">Rapports hebdomadaires</h1>
           </div>
         </div>
 
-        <div className="fr-container">
+        <div className="fr-container max-2xl:col-span-2">
           {rapportId ? (
-            <Suspense
-              fallback={
-                <div className="fr-p-6w flex items-center justify-center">
-                  <div className="fr-text--sm">Chargement...</div>
-                </div>
-              }
-            >
+            <Suspense fallback={null}>
               <RapportDetail rapportId={rapportId} />
             </Suspense>
           ) : (
