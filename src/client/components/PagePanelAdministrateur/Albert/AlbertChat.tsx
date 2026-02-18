@@ -1,48 +1,52 @@
-import { FormEvent, useRef, useState } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 import { marked } from "marked";
+import { useChat, Chat } from "@ai-sdk/react";
+import { DefaultChatTransport } from "ai";
+import type { UIMessage } from "ai";
 import { clsxm } from "@/utils/clsxm";
-import api from "@/server/infrastructure/api/trpc/api";
 
-interface Message {
-  role: "user" | "assistant";
-  content: string;
-}
+const extractMessageText = (message: UIMessage): string => {
+  if (!message.parts) return "";
+  return message.parts
+    .map((part) => {
+      if (part.type === "text") {
+        return part.text;
+      }
+      return "";
+    })
+    .join("");
+};
 
 export const AlbertChat = () => {
-  const [prompt, setPrompt] = useState("");
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [input, setInput] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const chatRef = useRef(
+    new Chat({
+      transport: new DefaultChatTransport({ api: "/api/albert/chat" }),
+    }),
+  );
 
-  const mutation = api.albert.chat.useMutation({
-    onSuccess: (data) => {
-      setMessages((previous) => [
-        ...previous,
-        { role: "assistant", content: data.text },
-      ]);
+  const { messages, sendMessage, status, error } = useChat({
+    chat: chatRef.current,
+  });
+
+  useEffect(() => {
+    if (messages.length > 0) {
       setTimeout(
         () => messagesEndRef.current?.scrollIntoView({ behavior: "smooth" }),
         100,
       );
-    },
-    onError: (error) => {
-      setMessages((previous) => [
-        ...previous,
-        { role: "assistant", content: `Erreur : ${error.message}` },
-      ]);
-    },
-  });
+    }
+  }, [messages]);
 
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
-    const trimmedPrompt = prompt.trim();
-    if (!trimmedPrompt || mutation.isPending) return;
+    const trimmedInput = input.trim();
+    if (!trimmedInput || status === "submitted" || status === "streaming")
+      return;
 
-    setMessages((previous) => [
-      ...previous,
-      { role: "user", content: trimmedPrompt },
-    ]);
-    setPrompt("");
-    mutation.mutate({ prompt: trimmedPrompt });
+    setInput("");
+    sendMessage({ text: trimmedInput });
   };
 
   return (
@@ -119,32 +123,35 @@ export const AlbertChat = () => {
           </p>
         )}
 
-        {messages.map((message, index) => (
-          <div
-            className={clsxm("flex", {
-              "justify-end": message.role === "user",
-              "justify-start": message.role === "assistant",
-            })}
-            key={index}
-          >
-            {message.role === "user" ? (
-              <div className="max-w-[80%] rounded-lg px-4 py-3 text-sm whitespace-pre-wrap bg-primary text-white">
-                {message.content}
-              </div>
-            ) : (
-              <div
-                className="max-w-[80%] rounded-lg px-4 py-3 text-sm bg-white border border-gray-200 text-gray-900 albert-markdown"
-                dangerouslySetInnerHTML={{
-                  __html: marked.parse(message.content, {
-                    async: false,
-                  }) as string,
-                }}
-              />
-            )}
-          </div>
-        ))}
+        {messages.map((message) => {
+          const messageText = extractMessageText(message);
+          return (
+            <div
+              className={clsxm("flex", {
+                "justify-end": message.role === "user",
+                "justify-start": message.role === "assistant",
+              })}
+              key={message.id}
+            >
+              {message.role === "user" ? (
+                <div className="max-w-[80%] rounded-lg px-4 py-3 text-sm whitespace-pre-wrap bg-primary text-white">
+                  {messageText}
+                </div>
+              ) : (
+                <div
+                  className="max-w-[80%] rounded-lg px-4 py-3 text-sm bg-white border border-gray-200 text-gray-900 albert-markdown"
+                  dangerouslySetInnerHTML={{
+                    __html: marked.parse(messageText, {
+                      async: false,
+                    }) as string,
+                  }}
+                />
+              )}
+            </div>
+          );
+        })}
 
-        {mutation.isPending && (
+        {status === "submitted" && (
           <div className="flex justify-start">
             <div className="bg-white border border-gray-200 rounded-lg px-4 py-3 text-sm text-gray-500">
               <span className="inline-flex gap-1">
@@ -160,14 +167,22 @@ export const AlbertChat = () => {
           </div>
         )}
 
+        {error && (
+          <div className="flex justify-start">
+            <div className="max-w-[80%] rounded-lg px-4 py-3 text-sm bg-red-50 border border-red-200 text-red-900">
+              Erreur : {error.message}
+            </div>
+          </div>
+        )}
+
         <div ref={messagesEndRef} />
       </div>
 
       <form className="flex gap-2" onSubmit={handleSubmit}>
         <textarea
           className="flex-1 resize-none rounded-lg border border-gray-300 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-          disabled={mutation.isPending}
-          onChange={(event) => setPrompt(event.target.value)}
+          disabled={status === "submitted" || status === "streaming"}
+          onChange={(event) => setInput(event.target.value)}
           onKeyDown={(event) => {
             if (event.key === "Enter" && !event.shiftKey) {
               event.preventDefault();
@@ -176,17 +191,21 @@ export const AlbertChat = () => {
           }}
           placeholder="Posez votre question sur un chantier..."
           rows={2}
-          value={prompt}
+          value={input}
         />
         <button
           className={clsxm(
             "self-end rounded-lg px-6 py-3 text-sm font-medium text-white transition-colors",
             {
-              "bg-primary hover:bg-primary/90": !mutation.isPending,
-              "bg-gray-400 cursor-not-allowed": mutation.isPending,
+              "bg-primary hover:bg-primary/90":
+                status !== "submitted" && status !== "streaming",
+              "bg-gray-400 cursor-not-allowed":
+                status === "submitted" || status === "streaming",
             },
           )}
-          disabled={mutation.isPending || !prompt.trim()}
+          disabled={
+            status === "submitted" || status === "streaming" || !input.trim()
+          }
           type="submit"
         >
           Envoyer

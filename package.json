@@ -68,6 +68,7 @@
   },
   "dependencies": {
     "@ai-sdk/openai": "^3.0.26",
+    "@ai-sdk/react": "^3.0.93",
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6",
     "@faker-js/faker": "^7.6.0",
