@@ -4,7 +4,7 @@ import api from "@/server/infrastructure/api/trpc/api";
 import BarreLatérale from "@/components/_commons/BarreLatérale/BarreLatérale";
 import BarreLatéraleEncart from "@/components/_commons/BarreLatérale/BarreLatéraleEncart/BarreLatéraleEncart";
 import { PiloteDateFormatter } from "@/server/rapports-hebdomadaires/infrastructure/adapters/PiloteDateFormatter";
-import RapportDetail from "./RapportDetail";
+import { RapportDetail } from "./RapportDetail";
 
 const PageRapportsHebdomadaires = () => {
   const [rapportId, setRapportId] = useQueryState("rapportId", parseAsString);
@@ -13,11 +13,7 @@ const PageRapportsHebdomadaires = () => {
 
   return (
     <div
-      style={
-        {
-          "--menu-width": "320px",
-        } as React.CSSProperties
-      }
+      style={{ "--menu-width": "320px" } as React.CSSProperties}
       className="min-h-screen grid grid-cols-[var(--menu-width)_1fr_var(--menu-width)] bg-dsfr-contrast-grey"
     >
       <BarreLatérale estOuvert={false} setEstOuvert={() => {}}>
