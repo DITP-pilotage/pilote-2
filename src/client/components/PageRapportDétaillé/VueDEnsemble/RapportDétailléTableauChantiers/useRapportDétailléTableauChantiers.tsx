@@ -68,7 +68,21 @@ export default function useRapportDétailléTableauChantiers(
         width: "8rem",
       },
     }),
-
+    reactTableColonnesHelper.accessor("tendance", {
+      header: "Tendance",
+      id: "tendance",
+      enableSorting: false,
+      cell: (cellContext) => (
+        <BadgeTendance
+          estArchive={chantiersSontArchives}
+          tendance={cellContext.getValue()}
+        />
+      ),
+      enableGrouping: false,
+      meta: {
+        width: "7.5rem",
+      },
+    }),
     reactTableColonnesHelper.accessor("avancement", {
       header: "Avancement",
       id: "avancement",
@@ -86,38 +100,18 @@ export default function useRapportDétailléTableauChantiers(
         width: "11rem",
       },
     }),
-    ...(process.env.NEXT_PUBLIC_FF_ALERTES === "true" &&
-    process.env.NEXT_PUBLIC_FF_ALERTES_BAISSE === "true"
-      ? [
-          reactTableColonnesHelper.accessor("tendance", {
-            header: "Tendance",
-            id: "tendance",
-            enableSorting: false,
-            cell: (cellContext) => (
-              <BadgeTendance
-                estArchive={chantiersSontArchives}
-                tendance={cellContext.getValue()}
-              />
-            ),
-            enableGrouping: false,
-            meta: {
-              width: "7.5rem",
-            },
-          }),
-          reactTableColonnesHelper.accessor("écart", {
-            header: "Écart",
-            id: "écart",
-            enableSorting: false,
-            cell: (cellContext) => (
-              <TableauChantiersEcart ecart={cellContext.getValue()} />
-            ),
-            enableGrouping: false,
-            meta: {
-              width: "5.5rem",
-            },
-          }),
-        ]
-      : []),
+    reactTableColonnesHelper.accessor("écart", {
+      header: "Écart",
+      id: "écart",
+      enableSorting: false,
+      cell: (cellContext) => (
+        <TableauChantiersEcart ecart={cellContext.getValue()} />
+      ),
+      enableGrouping: false,
+      meta: {
+        width: "5.5rem",
+      },
+    }),
   ];
   const tableau = useReactTable({
     data: données,

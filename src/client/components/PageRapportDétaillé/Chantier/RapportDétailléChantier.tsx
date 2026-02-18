@@ -64,7 +64,7 @@ const RapportDétailléChantier: FunctionComponent<
 
   const donneesComparaisonDuTauxDAvancement: DonneesComparaisonDuTauxDAvancementType =
     {
-      ppgEcartMedian: chantier.écart,
+      ppgEcartMedian: chantier.ecart,
       ppgTendanceChantier: chantier.tendance,
       ppgTauxDAvancementValeurPrecedente: chantier.avancementPrecedent,
       ppgDateTauxDAvancementValeurPrecedente:

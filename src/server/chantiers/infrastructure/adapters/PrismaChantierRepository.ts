@@ -1306,6 +1306,7 @@ export class PrismaChantierRepository implements ChantierRepository {
               select: {
                 taux_avancement: true,
                 date_taux_avancement: true,
+                ecart: true,
               },
               where: {
                 jalon,
