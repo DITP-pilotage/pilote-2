@@ -52,12 +52,11 @@ export const getServerSideProps = async (
 
   const pageIndex = searchParams.pageIndex;
   const pageSize = searchParams.pageSize;
-  const jalon =
-    searchParams.jalon ??
-    getAnneeDateDeBascule(
-      new Date(),
-      configuration().dateBasculeAffichageValeursAnneePrecedente,
-    );
+  const jalonParDefaut = getAnneeDateDeBascule(
+    new Date(),
+    configuration().dateBasculeAffichageValeursAnneePrecedente,
+  );
+  const jalon = searchParams.jalon ?? jalonParDefaut;
 
   assert(
     query.territoireCode,
@@ -160,6 +159,7 @@ export const getServerSideProps = async (
       filtres,
       sorting,
       jalon,
+      jalonParDefaut,
     );
   const { filtresComptesCalculés } = Chantier.recupererStatistiqueListeChantier(
     chantiers,
@@ -179,12 +179,14 @@ export const getServerSideProps = async (
             chantier.mailles[mailleChantier][territoireCode];
           return (
             (filtresAlertes.estEnAlerteÉcart &&
-              Alerte.estEnAlerteÉcart(chantierDonnéesTerritoires.écart)) ||
+              Alerte.estEnAlerteÉcart(
+                chantierDonnéesTerritoires.ecart.jalonParDefaut,
+              )) ||
             (filtresAlertes.estEnAlerteBaisse &&
               Alerte.estEnAlerteBaisse(chantierDonnéesTerritoires.tendance)) ||
             (filtresAlertes.estEnAlerteTauxAvancementNonCalculé &&
               Alerte.estEnAlerteTauxAvancementNonCalculé(
-                chantierDonnéesTerritoires.avancement.annuel,
+                chantierDonnéesTerritoires.avancement.jalonParDefaut,
                 chantier.cibleAttendu,
               )) ||
             (filtresAlertes.estEnAlerteAbscenceTauxAvancementDepartemental &&

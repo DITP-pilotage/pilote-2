@@ -98,12 +98,11 @@ export const getServerSideProps: GetServerSideProps<
     territoireCodeVersMailleCodeInsee(territoireCode);
 
   const mailleQuery = searchParams.maille;
-  const jalon =
-    searchParams.jalon ??
-    getAnneeDateDeBascule(
-      new Date(),
-      configuration().dateBasculeAffichageValeursAnneePrecedente,
-    );
+  const jalonParDefaut = getAnneeDateDeBascule(
+    new Date(),
+    configuration().dateBasculeAffichageValeursAnneePrecedente,
+  );
+  const jalon = searchParams.jalon ?? jalonParDefaut;
 
   const mailleSelectionnee =
     maille === "NAT"
@@ -175,6 +174,7 @@ export const getServerSideProps: GetServerSideProps<
       filtres,
       sorting,
       jalon,
+      jalonParDefaut,
     );
 
   const chantiersAvecAlertes =
@@ -189,7 +189,9 @@ export const getServerSideProps: GetServerSideProps<
             chantier.mailles[mailleChantier][territoireCode];
           return (
             (filtresAlertes.estEnAlerteÉcart &&
-              Alerte.estEnAlerteÉcart(chantierDonnéesTerritoires.écart)) ||
+              Alerte.estEnAlerteÉcart(
+                chantierDonnéesTerritoires.ecart.jalonParDefaut,
+              )) ||
             (filtresAlertes.estEnAlerteBaisse &&
               Alerte.estEnAlerteBaisse(chantierDonnéesTerritoires.tendance)) ||
             (filtresAlertes.estEnAlerteTauxAvancementNonCalculé &&

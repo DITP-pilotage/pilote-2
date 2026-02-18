@@ -45,6 +45,6 @@ export interface ChantierRepository {
     profil: ProfilCode,
     filtres: FiltreQueryParams,
     territoireCode: string,
-    jalon: number,
+    jalons: number[],
   ): Promise<PrismaChantier[]>;
 }
