@@ -1,4 +1,4 @@
-import { Suspense, useState } from "react";
+import { Suspense } from "react";
 import { parseAsString, useQueryState } from "nuqs";
 import api from "@/server/infrastructure/api/trpc/api";
 import BarreLatérale from "@/components/_commons/BarreLatérale/BarreLatérale";
@@ -17,6 +17,7 @@ const formatterDateSemaine = (date: Date): string => {
 const PageRapportsHebdomadaires = () => {
   const [rapportId, setRapportId] = useQueryState("rapportId", parseAsString);
   const [rapports] = api.rapportHebdomadaire.lister.useSuspenseQuery();
+  const effectiveRapportId = rapportId ?? rapports[0]?.id ?? null;
 
   return (
     <PageRapportsHebdomadairesStyled
@@ -41,7 +42,9 @@ const PageRapportsHebdomadaires = () => {
               <button
                 key={rapport.id}
                 className={`w-full text-left fr-p-2w fr-text--sm ${
-                  rapportId === rapport.id ? "bg-dsfr-blue-france-950" : ""
+                  effectiveRapportId === rapport.id
+                    ? "bg-dsfr-blue-france-950"
+                    : ""
                 } ${index > 0 ? "fr-border-top" : ""}`}
                 onClick={() => setRapportId(rapport.id)}
                 style={{
@@ -66,15 +69,16 @@ const PageRapportsHebdomadaires = () => {
         </div>
 
         <div className="fr-container max-2xl:col-span-2">
-          {rapportId ? (
-            <Suspense fallback={null}>
-              <RapportDetail rapportId={rapportId} />
-            </Suspense>
-          ) : (
-            <div className="fr-p-6w flex items-center justify-center fr-text--sm">
-              Sélectionnez un rapport pour voir les détails
+          {rapports.length === 0 ? (
+            <div className="fr-p-6w flex items-center justify-center fr-text--sm text-dsfr-grey-625">
+              Les rapports hebdomadaires apparaîtront ici lorsqu'ils seront
+              disponibles.
             </div>
-          )}
+          ) : effectiveRapportId ? (
+            <Suspense fallback={null}>
+              <RapportDetail rapportId={effectiveRapportId} />
+            </Suspense>
+          ) : null}
         </div>
       </main>
     </PageRapportsHebdomadairesStyled>
