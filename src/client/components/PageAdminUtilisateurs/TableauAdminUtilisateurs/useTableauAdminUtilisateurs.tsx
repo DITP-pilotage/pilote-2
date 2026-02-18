@@ -7,9 +7,9 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { ChangeEvent } from "react";
+import { ChangeEvent, useCallback } from "react";
 import {
-  debounce,
+  parseAsArrayOf,
   parseAsInteger,
   parseAsJson,
   parseAsString,
@@ -122,20 +122,16 @@ export const useTableauPageAdminUtilisateurs = (
     },
   );
 
-  const sortingArraySchema = z.array(
-    z.object({
-      id: z
-        .string()
-        .regex(
-          /email|nom|prénom|profil|fonction|statut|territoire|Dernière modification/,
-        ),
-      desc: z.boolean(),
-    }),
-  );
+  const ZodSchemaSorting = z.object({
+    id: z
+      .string()
+      .regex(/email|nom|prénom|profil|fonction|Dernière modification/),
+    desc: z.boolean(),
+  });
 
   const [sorting, setSorting] = useQueryState(
     "sort",
-    parseAsJson<ColumnSort[]>(sortingArraySchema.parse)
+    parseAsArrayOf<ColumnSort>(parseAsJson(ZodSchemaSorting.parse))
       .withDefault([
         {
           id: "Dernière modification",
@@ -155,17 +151,19 @@ export const useTableauPageAdminUtilisateurs = (
       shallow: false,
       clearOnDefault: true,
       history: "push",
+      throttleMs: 400,
     }),
   );
 
-  const changementDeLaRechercheCallback = (
-    event: ChangeEvent<HTMLInputElement>,
-  ) => {
-    const nouvelleValeur = event.target.value;
-    const limitUrlUpdates = nouvelleValeur === "" ? undefined : debounce(400);
-    setValeurDeLaRecherche(nouvelleValeur, { limitUrlUpdates });
-    setPagination({ pageIndex: 1 }, { limitUrlUpdates });
-  };
+  const changementDeLaRechercheCallback = useCallback(
+    (event: ChangeEvent<HTMLInputElement>) => {
+      setPagination({
+        pageIndex: 1,
+      });
+      setValeurDeLaRecherche(event.target.value);
+    },
+    [setPagination, setValeurDeLaRecherche],
+  );
 
   const tableau = useReactTable({
     data: utilisateurs,
@@ -185,7 +183,6 @@ export const useTableauPageAdminUtilisateurs = (
     onPaginationChange: setPagination,
     pageCount: Math.ceil(nombreUtilisateur / pagination.pageSize),
     manualPagination: true,
-    manualSorting: true,
   });
 
   return {
