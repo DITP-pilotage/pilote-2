@@ -11,7 +11,9 @@ import { configuration } from "@/config";
 export const keycloak = KeycloakProvider({
   clientId: configuration().keycloak.clientId,
   clientSecret: configuration().keycloak.clientSecret,
-  issuer: configuration().keycloak.issuer,
+  issuer: configuration().keycloak.publicIssuer, // URL publique pour la validation
+  authorization: { url: configuration().keycloak.authUrl },
+  token: { url: configuration().keycloak.tokenUrl },
 });
 
 function _assertResponseOk(
@@ -177,9 +179,8 @@ const credentialsProvider = CredentialsProvider({
     if (!username || password != configuration().devPassword) {
       return null;
     }
-    const { dependencies } = await import(
-      "@/server/infrastructure/Dependencies"
-    );
+    const { dependencies } =
+      await import("@/server/infrastructure/Dependencies");
     const utilisateurRepository = dependencies.getUtilisateurRepository();
     const utilisateur = await utilisateurRepository.récupérer(username);
 
@@ -270,9 +271,8 @@ export const authConfig: NextAuthConfig = {
 
     async session({ session, token }) {
       const piloteToken = toPiloteJWTPayload(token);
-      const { dependencies } = await import(
-        "@/server/infrastructure/Dependencies"
-      );
+      const { dependencies } =
+        await import("@/server/infrastructure/Dependencies");
       const utilisateurRepository = dependencies.getUtilisateurRepository();
       const utilisateur = await utilisateurRepository.récupérer(
         piloteToken.user.email,
