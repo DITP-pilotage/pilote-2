@@ -1,14 +1,9 @@
-import { TRPCError } from "@trpc/server";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
-import { SectionActiviteComptes } from "@/server/rapports-hebdomadaires/domain/SectionActiviteComptes";
-import { SectionChantier } from "@/server/rapports-hebdomadaires/domain/SectionActiviteChantiers";
-import { Coordinateur } from "@/server/rapports-hebdomadaires/domain/Coordinateur";
-
-type ContenuRapport = {
-  coordinateur: Coordinateur;
-  sectionActiviteComptes: SectionActiviteComptes;
-  sectionActiviteChantiers: SectionChantier[];
-};
+import { NotFoundError } from "@/server/app/error-boundary/not-found-error";
+import {
+  contenuRapportSchema,
+  type ContenuRapport,
+} from "@/server/rapports-hebdomadaires/infrastructure/adapters/PrismaRapportRepository";
 
 export type RapportHebdomadaire = {
   id: string;
@@ -36,10 +31,7 @@ export default class RecupererRapportHebdomadaireQuery {
       });
 
     if (!rapport) {
-      throw new TRPCError({
-        code: "NOT_FOUND",
-        message: "Rapport hebdomadaire non trouvé",
-      });
+      throw new NotFoundError("Rapport hebdomadaire non trouvé");
     }
 
     return {
@@ -48,7 +40,7 @@ export default class RecupererRapportHebdomadaireQuery {
       periodeFin: rapport.date_fin_periode,
       statutEnvoi: rapport.statut_envoi,
       dateCreation: rapport.date_creation,
-      contenuRapport: rapport.contenu_rapport as ContenuRapport,
+      contenuRapport: contenuRapportSchema.parse(rapport.contenu_rapport),
     };
   }
 }
