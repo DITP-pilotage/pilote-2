@@ -38,14 +38,14 @@ const RapportDetail = ({ rapportId }: { rapportId: string }) => {
 
   return (
     <div className="space-y-10 my-10">
-      <h2 className="fr-h2">
+      <h2 className="fr-h2 text-primary">
         Semaine du{" "}
         {PiloteDateFormatter.formatterDateSemaine(rapportDetail.periodeDebut)}{" "}
         au {PiloteDateFormatter.formatterDateSemaine(rapportDetail.periodeFin)}
       </h2>
 
       <section className="space-y-4">
-        <h3 className="fr-h3">Activité des comptes</h3>
+        <h3 className="fr-h3 text-primary">Activité des comptes</h3>
 
         <Bloc contenuClassesSupplémentaires="!p-0">
           <h3 className="fr-text--lg fr-mb-0 p-4">Comptes créés</h3>
@@ -60,8 +60,8 @@ const RapportDetail = ({ rapportId }: { rapportId: string }) => {
               <table className="table">
                 <thead className="bg-dsfr-blue-france-925">
                   <tr>
-                    <th>Nom</th>
                     <th>Prénom</th>
+                    <th>Nom</th>
                     <th>Email</th>
                     <th>Profil</th>
                   </tr>
@@ -69,8 +69,8 @@ const RapportDetail = ({ rapportId }: { rapportId: string }) => {
                 <tbody className="bg-transparent">
                   {comptesCrees.map((compte) => (
                     <tr key={compte.email}>
-                      <td>{compte.nom}</td>
                       <td>{compte.prenom}</td>
+                      <td>{compte.nom}</td>
                       <td>{compte.email}</td>
                       <td>
                         {profilParCode.get(compte.profil) ?? compte.profil}
@@ -96,8 +96,8 @@ const RapportDetail = ({ rapportId }: { rapportId: string }) => {
               <table className="table">
                 <thead className="bg-dsfr-blue-france-925">
                   <tr>
-                    <th>Nom</th>
                     <th>Prénom</th>
+                    <th>Nom</th>
                     <th>Email</th>
                     <th>Profil</th>
                   </tr>
@@ -105,8 +105,8 @@ const RapportDetail = ({ rapportId }: { rapportId: string }) => {
                 <tbody className="bg-transparent">
                   {comptesDesactives.map((compte) => (
                     <tr key={compte.email}>
-                      <td>{compte.nom}</td>
                       <td>{compte.prenom}</td>
+                      <td>{compte.nom}</td>
                       <td>{compte.email}</td>
                       <td>
                         {profilParCode.get(compte.profil) ?? compte.profil}
@@ -121,7 +121,7 @@ const RapportDetail = ({ rapportId }: { rapportId: string }) => {
       </section>
 
       <section className="space-y-4">
-        <h3 className="fr-h3">Suivi des chantiers</h3>
+        <h3 className="fr-h3 text-primary">Suivi des chantiers</h3>
 
         {chantiers.length === 0 ? (
           <p className="fr-text--sm">
@@ -153,7 +153,7 @@ const RapportDetail = ({ rapportId }: { rapportId: string }) => {
                         "group-odd:!bg-transparent group-even:!bg-dsfr-contrast-grey/30 border-t-0",
                       )}
                     >
-                      <Accordion.Trigger className="!bg-transparent hover:!bg-transparent">
+                      <Accordion.Trigger className="!bg-transparent hover:!bg-transparent !pl-8">
                         {indicateur.id} - {indicateur.nom}
                       </Accordion.Trigger>
                     </Accordion.Header>
