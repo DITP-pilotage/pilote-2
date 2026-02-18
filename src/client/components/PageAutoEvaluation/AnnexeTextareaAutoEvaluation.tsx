@@ -6,7 +6,7 @@ import { AddLineIcon } from "@/components/_commons/Icones/AddLineIcon";
 import {
   EditeurRiche,
   EditeurRicheRef,
-} from "@/components/_commons/ÉditeurRiche/EditeurRiche";
+} from "@/components/_commons/EditeurRiche/EditeurRiche";
 import { Bouton } from "@/components/_commons/Bouton/Bouton";
 import { ChatForwardIcon } from "@/components/_commons/Icones/ChatForwardIcon";
 import { useAutosave } from "@/components/Evaluation/useAutosave";

@@ -1,6 +1,6 @@
 import { FunctionComponent, ReactNode, useMemo } from "react";
 import DOMPurify from "isomorphic-dompurify";
-import { EditeurRiche } from "@/components/_commons/ÉditeurRiche/EditeurRiche";
+import { EditeurRiche } from "@/components/_commons/EditeurRiche/EditeurRiche";
 import { ContenuHtmlStyled } from "./EditeurContenu3Colonnes.styled";
 
 export interface ItemListe {
@@ -81,7 +81,10 @@ export const EditeurContenu3Colonnes: FunctionComponent<
         </div>
       </div>
 
-      <div className="flex-1 flex flex-col overflow-hidden min-w-0">
+      <div
+        className="flex-1 flex flex-col overflow-hidden min-w-0"
+        key={itemSelectionneId}
+      >
         <div className="p-4 border-b border-gray-200 flex items-end gap-4">
           <div className="flex-1">{champsSupplementaires}</div>
           <button
@@ -105,6 +108,7 @@ export const EditeurContenu3Colonnes: FunctionComponent<
         <h3 className="text-base font-bold mb-4">Aperçu</h3>
         <ContenuHtmlStyled
           dangerouslySetInnerHTML={{ __html: contenuPreviewSanitise }}
+          key={contenu}
         />
       </div>
     </div>

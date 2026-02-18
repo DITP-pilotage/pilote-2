@@ -5,12 +5,7 @@ import { TextStyle } from "@tiptap/extension-text-style";
 import { Color } from "@tiptap/extension-color";
 import { Placeholder } from "@tiptap/extension-placeholder";
 import { Underline } from "@tiptap/extension-underline";
-import {
-  FunctionComponent,
-  RefObject,
-  useEffect,
-  useImperativeHandle,
-} from "react";
+import { FunctionComponent, RefObject, useImperativeHandle } from "react";
 import { TextareaRef } from "@/components/_commons/Textarea";
 import { ÉditeurRicheStyled } from "./ÉditeurRiche.styled";
 import { MenuBar } from "./MenuBar";
@@ -19,7 +14,7 @@ export type EditeurRicheRef = {
   focus: () => void;
 };
 
-interface ÉditeurRicheProps {
+interface EditeurRicheProps {
   contenu: string;
   onChange: (contenu: string) => void;
   onBlur?: () => void;
@@ -29,7 +24,7 @@ interface ÉditeurRicheProps {
   editeurRef?: RefObject<TextareaRef | null>;
 }
 
-export const EditeurRiche: FunctionComponent<ÉditeurRicheProps> = ({
+export const EditeurRiche: FunctionComponent<EditeurRicheProps> = ({
   contenu,
   onChange,
   onBlur,
@@ -61,12 +56,6 @@ export const EditeurRiche: FunctionComponent<ÉditeurRicheProps> = ({
     onBlur: onBlur,
     onFocus: onFocus,
   });
-
-  useEffect(() => {
-    if (editor && contenu !== editor.getHTML()) {
-      editor.commands.setContent(contenu);
-    }
-  }, [editor, contenu]);
 
   useImperativeHandle(editeurRef, () => ({
     focus: () => {
