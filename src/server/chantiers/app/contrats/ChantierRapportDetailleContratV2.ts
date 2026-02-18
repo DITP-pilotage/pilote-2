@@ -105,10 +105,10 @@ export interface ChantierRapportDetailleContrat {
   dateDeMàjDonnéesQuantitatives: string | null;
   dateDeMàjDonnéesQualitatives: string | null;
   dateTauxAvancementAnnuel: string | null;
-  écart: number | null;
+  ecart: number | null;
   tendance: "BAISSE" | "HAUSSE" | "STAGNATION" | null;
   météo: Météo;
-  avancementGlobal: TerritoireAvancementRapportDetailleContrat["global"];
+  avancement: TerritoireAvancementRapportDetailleContrat["global"];
   avancementPrecedent: TerritoireAvancementRapportDetailleContrat["global"];
   responsableLocalTerritoireSélectionné: ResponsableLocalRapportDetailleContrat[];
   coordinateurTerritorialTerritoireSélectionné: CoordinateurTerritorialRapportDetailleContrat[];
@@ -157,7 +157,7 @@ export function créerDonnéesTerritoiresRapportDetailleNew(
 
     donnéesTerritoires[t.code] = {
       estApplicable: chantierRow?.est_applicable ?? null,
-      écart: chantierRow?.ecart ?? null,
+      écart: chantierRow?.chantier_territoire_jalon.at(0)?.ecart ?? null,
       tendance: chantierRow?.tendance || null,
       dateDeMàjDonnéesQualitatives:
         chantierRow?.derniere_maj_date_qualitative?.toISOString() || null,
@@ -376,11 +376,10 @@ export const presenterEnChantierRapportDetaille = (
       newMaille[mailleChantier][territoireCode].dateDeMàjDonnéesQualitatives,
     dateTauxAvancementAnnuel:
       newMaille[mailleChantier][territoireCode].dateTauxAvancementAnnuel,
-    écart: newMaille[mailleChantier][territoireCode].écart,
+    ecart: newMaille[mailleChantier][territoireCode].écart,
     tendance: newMaille[mailleChantier][territoireCode].tendance,
     météo: newMaille[mailleChantier][territoireCode].météo,
-    avancementGlobal:
-      newMaille[mailleChantier][territoireCode].avancement.global,
+    avancement: newMaille[mailleChantier][territoireCode].avancement.annuel,
     avancementPrecedent:
       newMaille[mailleChantier][territoireCode].avancementPrecedent,
     responsableLocalTerritoireSélectionné:

@@ -166,6 +166,7 @@ model chantier_territoire_jalon {
   taux_avancement      Float?
   taux_avancement_eval Float?
   date_taux_avancement DateTime? @db.Date
+  ecart                Float?
 
   chantier_territoire chantier_territoire   @relation(fields: [id, territoire_code], references: [id, territoire_code], onDelete: Cascade, onUpdate: Cascade)
   chantier_evaluation chantier_evaluation[]
