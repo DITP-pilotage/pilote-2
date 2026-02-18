@@ -27,7 +27,7 @@ export default class ListerRapportsHebdomadairesQuery {
           date_creation: true,
         },
         orderBy: {
-          date_creation: "desc",
+          date_debut_periode: "desc",
         },
       });
 
