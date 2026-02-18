@@ -356,7 +356,8 @@ const ChantierLayout = ({
 
   const monProfilEstDisponible = variableContenu;
   const doitAfficherModaleRenseignerService =
-    !!monProfilEstDisponible && profil.service == null;
+    !!monProfilEstDisponible &&
+    (profil.service == null || profil.fonction == null);
 
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
   const [isModaleInfolettreOpen, setIsModaleInfolettreOpen] = useState(
