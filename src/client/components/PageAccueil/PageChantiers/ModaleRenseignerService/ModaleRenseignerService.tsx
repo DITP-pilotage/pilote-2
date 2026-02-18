@@ -35,7 +35,7 @@ export const ModaleRenseignerService: FunctionComponent<
         />
         <p className="fr-text--md fr-mb-4w fr-mt-2w">
           Vous pourrez toujours compléter ou modifier ces informations depuis la
-          page "Mon compte"
+          page "Mon espace".
         </p>
         <div className="fr-mt-4w flex justify-end gap-3">
           <Dialog.Close asChild>
