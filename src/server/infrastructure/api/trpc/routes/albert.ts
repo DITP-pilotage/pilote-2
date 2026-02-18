@@ -69,7 +69,7 @@ export const albertRouter = créerRouteurTRPC({
           JSON.stringify(listeSyntheseResultat),
         ),
         systemPrompt,
-        userId: ctx.session.user.email,
+        userId: ctx.session.user.id,
       });
     }),
 });
