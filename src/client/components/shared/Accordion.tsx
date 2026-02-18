@@ -43,7 +43,6 @@ export const Accordion = Object.assign({}, RadixAccordion, {
         "flex flex-1 items-center justify-between !p-4 font-medium !text-base text-left !mb-0",
         "hover:!bg-dsfr-blue-france-925-hover transition-colors",
         "focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-inset",
-        "data-[state=open]:!bg-dsfr-blue-france-925-hover",
         "group",
         props.className,
       )}

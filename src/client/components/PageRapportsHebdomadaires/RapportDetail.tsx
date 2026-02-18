@@ -3,6 +3,7 @@ import api from "@/server/infrastructure/api/trpc/api";
 import Bloc from "@/components/_commons/Bloc/Bloc";
 import { PiloteDateFormatter } from "@/server/rapports-hebdomadaires/infrastructure/adapters/PiloteDateFormatter";
 import { Accordion } from "@/components/shared/Accordion";
+import { clsxm } from "@/utils/clsxm";
 
 const formatterTypeValeur = (typeValeur: string): string => {
   switch (typeValeur) {
@@ -142,13 +143,21 @@ const RapportDetail = ({ rapportId }: { rapportId: string }) => {
               </div>
               <Accordion.Root type="multiple">
                 {chantier.indicateurs.map((indicateur) => (
-                  <Accordion.Item value={indicateur.id} key={indicateur.id}>
-                    <Accordion.Header>
-                      <Accordion.Trigger>
+                  <Accordion.Item
+                    value={indicateur.id}
+                    key={indicateur.id}
+                    className="border-b-0 group border-t border-t-gray-200"
+                  >
+                    <Accordion.Header
+                      className={clsxm(
+                        "group-odd:!bg-transparent group-even:!bg-dsfr-contrast-grey/30 border-t-0",
+                      )}
+                    >
+                      <Accordion.Trigger className="!bg-transparent hover:!bg-transparent">
                         {indicateur.id} - {indicateur.nom}
                       </Accordion.Trigger>
                     </Accordion.Header>
-                    <Accordion.Content>
+                    <Accordion.Content className="!bg-transparent !px-0 !pb-0 !pt-0">
                       <div className="fr-table fr-mb-0 fr-pt-0">
                         <table className="table">
                           <thead className="bg-dsfr-blue-france-925">
