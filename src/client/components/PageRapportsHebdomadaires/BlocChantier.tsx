@@ -61,10 +61,9 @@ export const BlocChantier = ({
                   <thead className="bg-dsfr-blue-france-925">
                     <tr>
                       <th>Territoire</th>
-                      <th>Type de valeur</th>
-                      <th>Valeur</th>
-                      <th>Date de valeur</th>
-                      <th>Date d'événement</th>
+                      <th>Donnée</th>
+                      <th>Nouvelle valeur</th>
+                      <th>Saisi le</th>
                     </tr>
                   </thead>
                   <tbody className="bg-transparent">
@@ -73,13 +72,15 @@ export const BlocChantier = ({
                         key={`${territoire.code}-${territoire.typeValeur}-${territoire.dateValeur}`}
                       >
                         <td>{territoire.nom}</td>
-                        <td>{formatterTypeValeur(territoire.typeValeur)}</td>
-                        <td>{territoire.valeur ?? "—"}</td>
                         <td>
+                          {formatterTypeValeur(territoire.typeValeur)}
+                          <br />(
                           {PiloteDateFormatter.isoDateFranceMetropolitaine(
                             territoire.dateValeur,
                           )}
+                          )
                         </td>
+                        <td>{territoire.valeur ?? "—"}</td>
                         <td>
                           {PiloteDateFormatter.isoDateFranceMetropolitaine(
                             territoire.dateEvenement,
