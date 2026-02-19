@@ -89,12 +89,6 @@ ${JSON.stringify(listeSyntheseResultat, null, 2)}`;
       userId: session.user.id,
     });
 
-    // Désactiver la compression et le buffering pour permettre le streaming
-    res.setHeader("Content-Type", "text/event-stream; charset=utf-8");
-    res.setHeader("Cache-Control", "no-cache, no-transform");
-    res.setHeader("Connection", "keep-alive");
-    res.setHeader("X-Accel-Buffering", "no");
-
     result.pipeUIMessageStreamToResponse(res);
   } catch (error) {
     // eslint-disable-next-line no-console
