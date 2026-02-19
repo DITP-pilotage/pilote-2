@@ -133,8 +133,10 @@ async function refreshAccessToken(
         accessToken: openIdTokenResponse.access_token,
         accessTokenExpires: Date.now() + openIdTokenResponse.expires_in * 1000,
         refreshToken: openIdTokenResponse.refresh_token ?? token.refreshToken, // Fall back to old refresh token
+        idToken: openIdTokenResponse.id_token ?? token.idToken,
       };
 
+      logger.info("Refresh token réussi");
       logger.debug({ result }, "Refresh token result");
       return result;
     } catch (error) {
@@ -155,6 +157,28 @@ async function refreshAccessToken(
       error: "RefreshAccessTokenError",
     };
   }
+}
+
+const refreshEnCours = new Map<string, Promise<PiloteJWTPayload>>();
+
+async function refreshAccessTokenAvecDeduplication(
+  token: PiloteJWTPayload,
+): Promise<PiloteJWTPayload> {
+  const promesseExistante = refreshEnCours.get(token.refreshToken);
+  if (promesseExistante) {
+    logger.info(
+      { userId: token.user.id },
+      "Refresh already in progress, waiting for result...",
+    );
+    return promesseExistante;
+  }
+
+  const promesse = refreshAccessToken(token).finally(() => {
+    refreshEnCours.delete(token.refreshToken);
+  });
+
+  refreshEnCours.set(token.refreshToken, promesse);
+  return promesse;
 }
 
 const credentialsProvider = CredentialsProvider({
@@ -259,7 +283,7 @@ export const authConfig: NextAuthConfig = {
       logger.info(
         "NextAuth JWT callback triggers refreshing (Access Token has expired)",
       );
-      const refreshedToken = await refreshAccessToken(
+      const refreshedToken = await refreshAccessTokenAvecDeduplication(
         toPiloteJWTPayload(token),
       );
       if (refreshedToken.error === "RefreshAccessTokenError") {
