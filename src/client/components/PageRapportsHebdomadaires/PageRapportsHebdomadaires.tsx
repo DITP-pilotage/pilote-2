@@ -1,4 +1,4 @@
-import { Suspense } from "react";
+import { Suspense, useState } from "react";
 import { parseAsString, useQueryState } from "nuqs";
 import api from "@/server/infrastructure/api/trpc/api";
 import BarreLatérale from "@/components/_commons/BarreLatérale/BarreLatérale";
@@ -10,13 +10,14 @@ const PageRapportsHebdomadaires = () => {
   const [rapportId, setRapportId] = useQueryState("rapportId", parseAsString);
   const [rapports] = api.rapportHebdomadaire.lister.useSuspenseQuery();
   const effectiveRapportId = rapportId ?? rapports[0]?.id ?? null;
+  const [isOpen, setIsOpen] = useState(false);
 
   return (
     <div
       style={{ "--menu-width": "320px" } as React.CSSProperties}
-      className="min-h-screen grid grid-cols-[var(--menu-width)_1fr_var(--menu-width)] bg-dsfr-contrast-grey"
+      className="min-h-screen grid md:grid-cols-[var(--menu-width)_1fr_var(--menu-width)] max-md:grid-rows-[auto_1fr] bg-dsfr-contrast-grey"
     >
-      <BarreLatérale estOuvert={false} setEstOuvert={() => {}}>
+      <BarreLatérale estOuvert={isOpen} setEstOuvert={setIsOpen}>
         <BarreLatéraleEncart className="bg-dsfr-blue-france-925">
           <div className="fr-text--sm fr-text--bold mb-2">
             {rapports.length} rapport{rapports.length > 1 ? "s" : ""}
@@ -52,7 +53,7 @@ const PageRapportsHebdomadaires = () => {
         </div>
       </BarreLatérale>
 
-      <main className="col-span-2 grid grid-cols-subgrid grid-rows-[auto_1fr]">
+      <main className="md:col-span-2 md:grid md:grid-cols-subgrid md:grid-rows-[auto_1fr]">
         <div className="fr-background-blue-france-850 col-span-2 grid grid-cols-subgrid">
           <div className="fr-container py-6">
             <h1 className="fr-h3 fr-mb-0">Rapports hebdomadaires</h1>
