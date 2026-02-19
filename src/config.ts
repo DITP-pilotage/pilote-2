@@ -70,6 +70,11 @@ const config = convict({
       default: "ToBeDefined",
       env: "KEYCLOAK_ISSUER",
     },
+    publicIssuer: {
+      format: String,
+      default: "ToBeDefined",
+      env: "KEYCLOAK_PUBLIC_ISSUER",
+    },
     tokenUrl: {
       format: String,
       default: "ToBeDefined",
@@ -456,7 +461,7 @@ config.set(
 );
 config.set(
   "keycloak.authUrl",
-  config.get("keycloak.issuer") + "/protocol/openid-connect/auth",
+  config.get("keycloak.publicIssuer") + "/protocol/openid-connect/auth",
 );
 config.set(
   "keycloak.logoutUrl",
