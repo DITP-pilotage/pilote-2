@@ -123,9 +123,7 @@ const personnaliserValidataMessage = (taskError: ReportErrorTask): string => {
   return message;
 };
 
-export class ValidataFichierIndicateurValidationService
-  implements FichierIndicateurValidationService
-{
+export class ValidataFichierIndicateurValidationService implements FichierIndicateurValidationService {
   private httpClient: HttpClient;
 
   constructor({ httpClient }: Dependencies) {

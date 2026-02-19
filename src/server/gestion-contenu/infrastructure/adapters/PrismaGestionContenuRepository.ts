@@ -34,9 +34,7 @@ const convertirEnVariableContenu = (
   );
 };
 
-export class PrismaGestionContenuRepository
-  implements GestionContenuRepository
-{
+export class PrismaGestionContenuRepository implements GestionContenuRepository {
   async mettreAJourContenu<K extends keyof VARIABLE_CONTENU_DISPONIBLE>(
     nomVariableContenu: K,
     valeurVariableContenu: VARIABLE_CONTENU_DISPONIBLE[K],

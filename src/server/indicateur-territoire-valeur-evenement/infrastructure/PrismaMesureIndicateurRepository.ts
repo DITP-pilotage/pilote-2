@@ -7,9 +7,7 @@ import {
 import { convertirTerritoireCodeEnZoneId } from "@/server/app/domain/Territoire";
 import { toISODate } from "@/server/app/domain/Dates";
 
-export class PrismaMesureIndicateurRepository
-  implements MesureIndicateurRepository
-{
+export class PrismaMesureIndicateurRepository implements MesureIndicateurRepository {
   private readonly prismaClient: PrismaPilote;
 
   constructor({ prisma }: { prisma: PrismaPilote }) {

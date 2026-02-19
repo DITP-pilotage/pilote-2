@@ -14,9 +14,7 @@ import { toISODate } from "@/server/app/domain/Dates";
 import { EvenementValeurEnum } from "@/server/app/domain/EvenementValeurEnum";
 import { formaterDate } from "@/client/utils/date/date";
 
-export class PrismaIndicateurTerritoireValeurEvenementRepository
-  implements IndicateurTerritoireValeurEvenementRepository
-{
+export class PrismaIndicateurTerritoireValeurEvenementRepository implements IndicateurTerritoireValeurEvenementRepository {
   private readonly prisma: PrismaPilote;
 
   constructor({ prisma }: { prisma: PrismaPilote }) {

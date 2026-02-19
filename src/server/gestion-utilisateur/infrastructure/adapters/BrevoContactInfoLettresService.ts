@@ -2,9 +2,7 @@ import { ContactInfoLettresService } from "@/server/gestion-utilisateur/domain/p
 import { ProfilCode } from "@/server/gestion-utilisateur/domain/Profil";
 import { EmailManager } from "@/server/infrastructure/email-manager";
 
-export class BrevoContactInfoLettresService
-  implements ContactInfoLettresService
-{
+export class BrevoContactInfoLettresService implements ContactInfoLettresService {
   constructor(private readonly deps: { emailManager: EmailManager }) {}
 
   async creerContact(

@@ -11,6 +11,7 @@ export const parametrageNouveautesRouter = créerRouteurTRPC({
   creer: procédureProtégée
     .input(
       z.object({
+        id: z.string().uuid(),
         contenu: z.string(),
         version: z.string(),
         date: z.string(),
@@ -29,6 +30,7 @@ export const parametrageNouveautesRouter = créerRouteurTRPC({
       return getContainer("parametrageNouveautes")
         .resolve("creerNouveauteUseCase")
         .execute({
+          id: input.id,
           contenu: input.contenu,
           version: input.version,
           date: input.date,

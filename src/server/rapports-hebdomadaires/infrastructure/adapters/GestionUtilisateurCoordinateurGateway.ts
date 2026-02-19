@@ -6,9 +6,7 @@ import {
 import { PrismaUtilisateursQuery } from "@/server/gestion-utilisateur/infrastructure/queries/PrismaUtilisateursQuery";
 import { filtrerTerritoireNat } from "@/server/rapports-hebdomadaires/infrastructure/adapters/utils/territoires";
 
-export class GestionUtilisateurCoordinateurGateway
-  implements CoordinateurGateway
-{
+export class GestionUtilisateurCoordinateurGateway implements CoordinateurGateway {
   constructor(
     private readonly deps: {
       utilisateursQuery: PrismaUtilisateursQuery;

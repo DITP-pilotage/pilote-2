@@ -1,9 +1,7 @@
 import { prisma } from "@/server/db/prisma";
 import { DecisionStrategiqueRepository } from "@/server/gestion-utilisateur/domain/ports/DecisionStrategiqueRepository";
 
-export class PrismaDecisionStrategiqueRepository
-  implements DecisionStrategiqueRepository
-{
+export class PrismaDecisionStrategiqueRepository implements DecisionStrategiqueRepository {
   async anonymiserAuteurs(
     auteursAAnonymiserIds: string[],
     emailAuteurRemplacement: string,

@@ -2,9 +2,7 @@ import { SyntheseDesResultatsRepository } from "@/server/fiche-territoriale/doma
 import { SyntheseDesResultats } from "@/server/fiche-territoriale/domain/SyntheseDesResultats";
 import { prisma } from "@/server/db/prisma";
 
-export class PrismaSyntheseDesResultatsRepository
-  implements SyntheseDesResultatsRepository
-{
+export class PrismaSyntheseDesResultatsRepository implements SyntheseDesResultatsRepository {
   async recupererMapSyntheseDesResultatsParListeChantierIdEtTerritoire({
     listeChantierId,
     maille,

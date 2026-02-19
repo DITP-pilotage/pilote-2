@@ -3,9 +3,7 @@ import { StatutProposition } from "@/server/chantiers/domain/StatutProposition";
 
 import { getPrisma } from "@/server/db/PrismaTransaction";
 
-export class PrismaPropositionValeurAvancementRepository
-  implements PropositionValeurAvancementRepository
-{
+export class PrismaPropositionValeurAvancementRepository implements PropositionValeurAvancementRepository {
   async modifierStatutPropositionsValeurAvancementApresImport({
     indicId,
     zoneId,

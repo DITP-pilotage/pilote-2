@@ -18,9 +18,7 @@ const convertifEnDecisionStrategique = (
 interface Dependencies {
   prisma: PrismaPilote;
 }
-export class PrismaDecisionStrategiqueRepository
-  implements DecisionStrategiqueRepository
-{
+export class PrismaDecisionStrategiqueRepository implements DecisionStrategiqueRepository {
   private prisma: PilotePrismaClient;
 
   constructor({ prisma }: Dependencies) {

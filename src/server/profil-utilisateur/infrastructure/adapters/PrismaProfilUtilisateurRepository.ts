@@ -7,9 +7,7 @@ interface Dependencies {
   prisma: PrismaPilote;
 }
 
-export class PrismaProfilUtilisateurRepository
-  implements ProfilUtilisateurRepository
-{
+export class PrismaProfilUtilisateurRepository implements ProfilUtilisateurRepository {
   constructor(private readonly deps: Dependencies) {}
 
   get prisma() {

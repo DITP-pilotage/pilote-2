@@ -1,7 +1,6 @@
 import { useEditor, EditorContent } from "@tiptap/react";
 import { StarterKit } from "@tiptap/starter-kit";
 import { Link } from "@tiptap/extension-link";
-import { Image } from "@tiptap/extension-image";
 import { TextStyle } from "@tiptap/extension-text-style";
 import { Color } from "@tiptap/extension-color";
 import { Placeholder } from "@tiptap/extension-placeholder";
@@ -15,7 +14,7 @@ export type EditeurRicheRef = {
   focus: () => void;
 };
 
-interface ÉditeurRicheProps {
+interface EditeurRicheProps {
   contenu: string;
   onChange: (contenu: string) => void;
   onBlur?: () => void;
@@ -25,7 +24,7 @@ interface ÉditeurRicheProps {
   editeurRef?: RefObject<TextareaRef | null>;
 }
 
-export const EditeurRiche: FunctionComponent<ÉditeurRicheProps> = ({
+export const EditeurRiche: FunctionComponent<EditeurRicheProps> = ({
   contenu,
   onChange,
   onBlur,
@@ -40,7 +39,6 @@ export const EditeurRiche: FunctionComponent<ÉditeurRicheProps> = ({
       Link.configure({
         openOnClick: false,
       }),
-      Image,
       Placeholder.configure({
         placeholder,
       }),
@@ -66,7 +64,7 @@ export const EditeurRiche: FunctionComponent<ÉditeurRicheProps> = ({
   }));
 
   return (
-    <ÉditeurRicheStyled className="relative max-h-[650px] overflow-auto !bg-dsfr-contrast-grey">
+    <ÉditeurRicheStyled className="relative overflow-auto !bg-dsfr-contrast-grey">
       <MenuBar editor={editor} />
       <EditorContent editor={editor} />
     </ÉditeurRicheStyled>

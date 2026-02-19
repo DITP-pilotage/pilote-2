@@ -25,9 +25,7 @@ const convertirEnModel = <K extends keyof HistorisationModificationDisponible>(
   };
 };
 
-export class PrismaHistorisationModificationRepository
-  implements HistorisationModificationRepository
-{
+export class PrismaHistorisationModificationRepository implements HistorisationModificationRepository {
   async sauvegarderModificationHistorisation<
     K extends keyof HistorisationModificationDisponible,
   >(historisationModification: HistorisationModification<K>) {
