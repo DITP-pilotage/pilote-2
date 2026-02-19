@@ -38,7 +38,7 @@ const TableauChantiersContenu: FunctionComponent<
       {tableau.getRowModel().rows.map((row) =>
         row.getIsGrouped() ? (
           <tr
-            className="ligne-ministère"
+            className="ligne-ministère not-first:border-t-primary not-first:border-t-2"
             key={row.id}
             onClick={() => row.getToggleExpandedHandler()()}
           >
@@ -58,7 +58,7 @@ const TableauChantiersContenu: FunctionComponent<
               return (
                 <td className="fr-p-0" key={cell.id}>
                   <Link
-                    className="fr-p-1w"
+                    className="pl-4 pr-4 py-2"
                     href={`/chantier/${row.original.id}/${territoireCode}?maille=${mailleRedirection}&jalon=${jalon}`}
                     tabIndex={cell.column.columnDef.meta?.tabIndex}
                   >

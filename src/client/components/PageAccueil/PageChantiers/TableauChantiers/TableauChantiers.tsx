@@ -1,14 +1,12 @@
 import "@gouvfr/dsfr/dist/component/table/table.min.css";
 import "@gouvfr/dsfr/dist/component/notice/notice.min.css";
-import { parseAsBoolean, parseAsInteger, useQueryState } from "nuqs";
 import { FunctionComponent } from "react";
 import BarreDeRecherche from "@/components/_commons/BarreDeRecherche/BarreDeRecherche";
 import TableauPagination from "@/components/_commons/TableauNew/Pagination/TableauPagination";
 import { useTableauChantiers } from "@/components/PageAccueil/PageChantiers/TableauChantiers/useTableauChantiers";
-import { TableauChantiersActionsDeTri } from "@/components/PageAccueil/PageChantiers/TableauChantiers/ActionsDeTriNew/TableauChantiersActionsDeTri";
+import { TableauChantiersActionsDeTri } from "@/components/PageAccueil/PageChantiers/TableauChantiers/TableauChantiersActionsDeTri";
 import TableauRéformesEnTête from "@/client/components/PageAccueil/TableauRéformes/EnTête/TableauRéformesEnTête";
-import Interrupteur from "@/components/_commons/Interrupteur/Interrupteur";
-import { sauvegarderFiltres } from "@/stores/useFiltresStoreNew/useFiltresStoreNew";
+import { SelecteurGroupementTableauChantier } from "./SelecteurGroupementTableauChantier";
 import TableauChantiersProps from "./TableauChantiers.interface";
 import TableauChantiersStyled from "./TableauChantiers.styled";
 import TableauChantiersContenu from "./Contenu/TableauChantiersContenu";
@@ -33,26 +31,12 @@ const TableauChantiers: FunctionComponent<TableauChantiersProps> = ({
     chantiersSontArchives,
   );
 
-  const [estGroupe, setEstGroupe] = useQueryState(
-    "groupeParMinistere",
-    parseAsBoolean.withDefault(false).withOptions({
-      clearOnDefault: true,
-    }),
-  );
-
-  const [, setPagination] = useQueryState(
-    "pageIndex",
-    parseAsInteger.withDefault(1).withOptions({
-      shallow: false,
-    }),
-  );
-
   return (
     <TableauChantiersStyled
       chantiersArchives={chantiersSontArchives}
       className="fr-table fr-m-0 fr-p-0"
     >
-      <div className="flex flex-col justify-between md:flex-row gap-4 md:items-center w-full">
+      <div className="flex flex-col justify-between md:flex-row gap-4 md:items-center w-full mb-4">
         <div className="flex flex-col md:flex-row gap-4">
           <div className="w-80">
             <BarreDeRecherche
@@ -61,20 +45,11 @@ const TableauChantiers: FunctionComponent<TableauChantiersProps> = ({
             />
           </div>
         </div>
-        <div className="flex gap-4">
-          <Interrupteur
-            checked={estGroupe}
-            libellé="Grouper par ministère"
-            onChange={async () => {
-              sauvegarderFiltres({ groupeParMinistere: !estGroupe });
-              setPagination(1);
-              await setEstGroupe(!estGroupe);
-              return (
-                tableau.getColumn("porteur")?.getToggleGroupingHandler()() ??
-                undefined
-              );
-            }}
-          />
+        <div className="flex flex-col md:flex-row gap-4 md:items-center">
+          <div className="flex flex-col">
+            <span>Grouper par</span>
+            <SelecteurGroupementTableauChantier />
+          </div>
           <TableauChantiersActionsDeTri />
         </div>
       </div>

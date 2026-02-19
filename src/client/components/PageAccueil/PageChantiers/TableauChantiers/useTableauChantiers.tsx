@@ -72,9 +72,8 @@ export const useTableauChantiers = (
     parseAsBoolean.withDefault(false),
   );
 
-  const [regroupement, setRegroupement] = useState<GroupingState>(
-    ministèresDisponibles.length > 1 && estGroupe ? ["porteur"] : [],
-  );
+  const regroupement: GroupingState =
+    ministèresDisponibles.length > 1 && estGroupe ? ["porteur"] : [];
 
   const [expanded, setExpanded] = useState<ExpandedState>(true);
 
@@ -101,7 +100,9 @@ export const useTableauChantiers = (
               icone={aggregatedCellContext.row.original.porteur?.icône}
             />
           </div>
-          {aggregatedCellContext.row.original.porteur?.nom ?? ""}
+          <span className="font-bold">
+            {aggregatedCellContext.row.original.porteur?.nom ?? ""}
+          </span>
         </div>
       ),
       cell: (cellContext) =>
@@ -361,7 +362,6 @@ export const useTableauChantiers = (
         : Math.trunc(nombreTotalChantiersAvecAlertes / pagination.pageSize) + 1,
     autoResetExpanded: false,
     onExpandedChange: setExpanded,
-    onGroupingChange: setRegroupement,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getSortedRowModel: getSortedRowModel(),
