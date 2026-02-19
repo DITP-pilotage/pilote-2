@@ -3,7 +3,6 @@ import { parseAsJson, useQueryState } from "nuqs";
 import { z } from "zod";
 import SélecteurCustom from "@/components/_commons/SelecteurCustom/SélecteurAvecRecherche/SélecteurCustom";
 import BoutonsDeTri from "@/components/_commons/Tableau/EnTête/BoutonsDeTri/BoutonsDeTri";
-import TableauChantiersActionsDeTriStyled from "@/components/PageAccueil/PageChantiers/TableauChantiers/ActionsDeTri/TableauChantiersActionsDeTri.styled";
 
 const listeColonnesÀtrier = [
   {
@@ -63,8 +62,8 @@ export const TableauChantiersActionsDeTri: FunctionComponent = () => {
   );
 
   return (
-    <TableauChantiersActionsDeTriStyled>
-      <div className="fr-select-group sélecteur-colonne-à-trier">
+    <div className="flex align-end w-full max-w-[22rem] gap-2">
+      <div className="fr-select-group sélecteur-colonne-à-trier mb-0">
         <label className="fr-label label" htmlFor="tri-tableau-chantiers">
           Trier par
         </label>
@@ -80,7 +79,7 @@ export const TableauChantiersActionsDeTri: FunctionComponent = () => {
           valeurSélectionnée={sorting.id}
         />
       </div>
-      <div className="fr-mb-4w fr-ml-1w">
+      <div className="mb-2">
         <BoutonsDeTri
           changementDirectionDeTriCallback={(direction) =>
             setSorting({
@@ -92,6 +91,6 @@ export const TableauChantiersActionsDeTri: FunctionComponent = () => {
           nomColonneÀTrier={sorting.id}
         />
       </div>
-    </TableauChantiersActionsDeTriStyled>
+    </div>
   );
 };

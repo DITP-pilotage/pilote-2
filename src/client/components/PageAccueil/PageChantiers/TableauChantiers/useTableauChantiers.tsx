@@ -1,5 +1,6 @@
 import {
   createColumnHelper,
+  ExpandedState,
   getCoreRowModel,
   getExpandedRowModel,
   getFilteredRowModel,
@@ -71,9 +72,11 @@ export const useTableauChantiers = (
     parseAsBoolean.withDefault(false),
   );
 
-  const [regroupement, setRegroupement] = useState<GroupingState>(
-    ministèresDisponibles.length > 1 && estGroupe ? ["porteur"] : [],
-  );
+  const regroupement: GroupingState =
+    ministèresDisponibles.length > 1 && estGroupe ? ["porteur"] : [];
+
+  const [expanded, setExpanded] = useState<ExpandedState>(true);
+
   const estVueTuile = estLargeurDÉcranActuelleMoinsLargeQue("md");
 
   const reactTableColonnesHelper =
@@ -97,7 +100,9 @@ export const useTableauChantiers = (
               icone={aggregatedCellContext.row.original.porteur?.icône}
             />
           </div>
-          {aggregatedCellContext.row.original.porteur?.nom ?? ""}
+          <span className="font-bold">
+            {aggregatedCellContext.row.original.porteur?.nom ?? ""}
+          </span>
         </div>
       ),
       cell: (cellContext) =>
@@ -219,56 +224,51 @@ export const useTableauChantiers = (
       cell: (cellContext) => cellContext.getValue(),
       enableGrouping: false,
     }),
-    ...(process.env.NEXT_PUBLIC_FF_ALERTES === "true" &&
-    process.env.NEXT_PUBLIC_FF_ALERTES_BAISSE === "true"
-      ? [
-          reactTableColonnesHelper.accessor("tendance", {
-            header: () => (
-              <div className="flex align-center no-wrap">
-                <span>Tendance</span>
-                <Infobulle classNameBouton="infobulle-header-tendance">
-                  {infobulles.chantiers.listeDesChantiersHeaderTendance}
-                </Infobulle>
-              </div>
-            ),
-            id: "tendance",
-            cell: (cellContext) => (
-              <BadgeTendance
-                estArchive={chantiersSontArchives}
-                tendance={cellContext.getValue()}
-              />
-            ),
-            enableGrouping: false,
-            meta: {
-              width: "9rem",
-              tabIndex: -1,
-            },
-          }),
-          reactTableColonnesHelper.accessor("écart", {
-            header: () => (
-              <div className="flex align-center no-wrap">
-                <span>Écart</span>
-                <Infobulle classNameBouton="infobulle-header-écart">
-                  {infobulles.chantiers.listeDesChantiersHeaderEcart}
-                </Infobulle>
-              </div>
-            ),
-            id: "écart",
-            cell: (cellContext) => (
-              <TableauChantiersEcart
-                ecart={cellContext.getValue()}
-                estArchive={chantiersSontArchives}
-              />
-            ),
-            enableGrouping: false,
-            aggregatedCell: () => null,
-            meta: {
-              width: "4.5rem",
-              tabIndex: -1,
-            },
-          }),
-        ]
-      : []),
+    reactTableColonnesHelper.accessor("tendance", {
+      header: () => (
+        <div className="flex align-center no-wrap">
+          <span>Tendance</span>
+          <Infobulle classNameBouton="infobulle-header-tendance">
+            {infobulles.chantiers.listeDesChantiersHeaderTendance}
+          </Infobulle>
+        </div>
+      ),
+      id: "tendance",
+      cell: (cellContext) => (
+        <BadgeTendance
+          estArchive={chantiersSontArchives}
+          tendance={cellContext.getValue()}
+        />
+      ),
+      enableGrouping: false,
+      meta: {
+        width: "9rem",
+        tabIndex: -1,
+      },
+    }),
+    reactTableColonnesHelper.accessor("écart", {
+      header: () => (
+        <div className="flex align-center no-wrap">
+          <span>Écart</span>
+          <Infobulle classNameBouton="infobulle-header-écart">
+            {infobulles.chantiers.listeDesChantiersHeaderEcart}
+          </Infobulle>
+        </div>
+      ),
+      id: "écart",
+      cell: (cellContext) => (
+        <TableauChantiersEcart
+          ecart={cellContext.getValue()}
+          estArchive={chantiersSontArchives}
+        />
+      ),
+      enableGrouping: false,
+      aggregatedCell: () => null,
+      meta: {
+        width: "4.5rem",
+        tabIndex: -1,
+      },
+    }),
     reactTableColonnesHelper.display({
       id: "dérouler-groupe",
       aggregatedCell: (aggregatedCellContext) => (
@@ -332,6 +332,7 @@ export const useTableauChantiers = (
     state: {
       pagination,
       grouping: regroupement,
+      expanded,
       columnVisibility: estVueTuile
         ? {
             porteur: false,
@@ -359,7 +360,8 @@ export const useTableauChantiers = (
       nombreTotalChantiersAvecAlertes % 10 === 0
         ? Math.trunc(nombreTotalChantiersAvecAlertes / pagination.pageSize)
         : Math.trunc(nombreTotalChantiersAvecAlertes / pagination.pageSize) + 1,
-    onGroupingChange: setRegroupement,
+    autoResetExpanded: false,
+    onExpandedChange: setExpanded,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getSortedRowModel: getSortedRowModel(),
