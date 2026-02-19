@@ -80,7 +80,9 @@ export const BlocChantier = ({
                           )}
                           )
                         </td>
-                        <td>{territoire.valeur ?? "—"}</td>
+                        <td className="text-right">
+                          {territoire.valeur ?? "—"}
+                        </td>
                         <td>
                           {PiloteDateFormatter.isoDateFranceMetropolitaine(
                             territoire.dateEvenement,
