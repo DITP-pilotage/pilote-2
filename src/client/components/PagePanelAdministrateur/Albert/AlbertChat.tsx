@@ -156,12 +156,8 @@ export const AlbertChat = () => {
             <div className="bg-white border border-gray-200 rounded-lg px-4 py-3 text-sm text-gray-500">
               <span className="inline-flex gap-1">
                 <span className="animate-bounce">.</span>
-                <span className="animate-bounce [animation-delay:0.2s]">
-                  .
-                </span>
-                <span className="animate-bounce [animation-delay:0.4s]">
-                  .
-                </span>
+                <span className="animate-bounce [animation-delay:0.2s]">.</span>
+                <span className="animate-bounce [animation-delay:0.4s]">.</span>
               </span>
             </div>
           </div>

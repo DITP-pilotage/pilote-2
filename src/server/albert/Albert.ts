@@ -70,14 +70,14 @@ export class Albert {
     const albertProvider = this.createProvider();
     const modelMessages = await convertToModelMessages(messages);
 
-    const result = aiStreamText({
+    return aiStreamText({
       model: albertProvider.chat(MODEL),
       system: systemPrompt,
       messages: modelMessages,
       onFinish: async (event) => {
         await prisma.llm_calls.create({
           data: {
-            id: randomUUID(),
+            id: randomUUID() as string,
             model: MODEL,
             transcript: event as unknown as Prisma.InputJsonValue,
             utilisateur_id: userId,
@@ -85,7 +85,5 @@ export class Albert {
         });
       },
     });
-
-    return result;
   }
 }
