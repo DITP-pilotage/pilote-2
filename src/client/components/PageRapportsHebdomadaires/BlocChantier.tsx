@@ -33,7 +33,7 @@ export const BlocChantier = ({
           {chantier.id} - {chantier.nom}
         </h3>
         <a
-          className="fr-link fr-text--sm"
+          className="fr-link fr-text--sm shrink-0"
           href={`/chantier/${chantier.id}/${territoireCode}`}
         >
           Voir le chantier
