@@ -45,6 +45,7 @@ interface SecureTooltipProps {
   classNameInfoBulle?: string;
   anchorEl: HTMLElement | null;
   isVisible: boolean;
+  positionTooltip?: "centre" | "droite";
 }
 
 /**
