@@ -58,6 +58,30 @@ describe("PiloteDateFormatter", () => {
     });
   });
 
+  describe("isoMonthFranceMetropolitaine", () => {
+    it("formate une date UTC en format mois/année français avec timezone Paris", () => {
+      // Given
+      const dateISO = "2025-01-15T10:00:00Z";
+
+      // When
+      const result = PiloteDateFormatter.isoMonthFranceMetropolitaine(dateISO);
+
+      // Then
+      expect(result).toBe("01/2025");
+    });
+
+    it("convertit correctement une date UTC de fin de mois vers Paris avec changement de mois", () => {
+      // Given
+      const dateISO = "2025-01-31T23:30:00Z";
+
+      // When
+      const result = PiloteDateFormatter.isoMonthFranceMetropolitaine(dateISO);
+
+      // Then
+      expect(result).toBe("02/2025");
+    });
+  });
+
   describe("dateFrancaiseLongue", () => {
     it("formate le 1er jour du mois avec '1er'", () => {
       // Given

@@ -75,7 +75,7 @@ export const BlocChantier = ({
                         <td>
                           {formatterTypeValeur(territoire.typeValeur)}
                           <br />(
-                          {PiloteDateFormatter.isoDateFranceMetropolitaine(
+                          {PiloteDateFormatter.isoMonthFranceMetropolitaine(
                             territoire.dateValeur,
                           )}
                           )
