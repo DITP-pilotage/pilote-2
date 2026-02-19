@@ -65,18 +65,17 @@ export default async function handler(
       return;
     }
 
-    const listeSyntheseResultat =
-      await prisma.synthese_des_resultats.findMany({
-        where: {
-          chantier_id: "CH-075",
-          territoire_code: {
-            in: ["NAT-FR", "REG-01", "REG-02", "REG-03"],
-          },
+    const listeSyntheseResultat = await prisma.synthese_des_resultats.findMany({
+      where: {
+        chantier_id: "CH-075",
+        territoire_code: {
+          in: ["NAT-FR", "REG-01", "REG-02", "REG-03"],
         },
-        orderBy: {
-          date_commentaire: "desc",
-        },
-      });
+      },
+      orderBy: {
+        date_commentaire: "desc",
+      },
+    });
 
     const enrichedSystemPrompt = `${systemPrompt}
 
@@ -89,6 +88,12 @@ ${JSON.stringify(listeSyntheseResultat, null, 2)}`;
       systemPrompt: enrichedSystemPrompt,
       userId: session.user.id,
     });
+
+    // Désactiver la compression et le buffering pour permettre le streaming
+    res.setHeader("Content-Type", "text/event-stream; charset=utf-8");
+    res.setHeader("Cache-Control", "no-cache, no-transform");
+    res.setHeader("Connection", "keep-alive");
+    res.setHeader("X-Accel-Buffering", "no");
 
     result.pipeUIMessageStreamToResponse(res);
   } catch (error) {
