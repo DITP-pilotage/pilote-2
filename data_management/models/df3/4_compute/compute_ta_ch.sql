@@ -33,7 +33,7 @@ select * from (
 	from ta_zone_indic_pond a
 	left join {{ ref('get_max_date_vaca_ch') }} b on a.chantier_id=b.chantier_id and a.zone_id=b.zone_id
 	where vaca is not null
-	and metric_date<=max_date_taa_courant_today::date
+	and metric_date<=max_date_taa_courant_today
 	) a
 where a.r=1
 ),
@@ -45,7 +45,7 @@ select * from (
 	from ta_zone_indic_pond a
 	left join {{ ref('get_max_date_vaca_ch') }} b on a.chantier_id=b.chantier_id and a.zone_id=b.zone_id
 	where vaca is not null
-	and metric_date<=max_date_taa_courant_previous::date
+	and metric_date<=max_date_taa_courant_previous
 	) a
 where a.r=1
 ),

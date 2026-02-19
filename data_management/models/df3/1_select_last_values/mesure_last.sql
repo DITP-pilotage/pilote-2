@@ -23,7 +23,9 @@ rank_mesures AS (
                     mesures.metric_type,
                     mesures.zone_id,
                     mesures.metric_month
-                ORDER BY mesures.date_import DESC
+                ORDER BY mesures.date_import DESC,
+                -- si jamais 2 dates pour le même mois dans le même import
+                mesures.metric_date DESC
             )
             AS r
     FROM {{ ref('stg_mesure_indicateur') }} AS mesures

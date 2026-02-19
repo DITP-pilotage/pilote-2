@@ -5,7 +5,7 @@ WITH get_last_vaca_maille AS (
     SELECT
         a.indic_id,
         b.maille,
-        max(a.date_valeur_actuelle::date) AS last_va_date,
+        max(a.date_valeur_actuelle) AS last_va_date,
 		count(*) AS n
     FROM {{ ref('get_last_vaca') }} AS a
     LEFT JOIN {{ ref('stg_ppg_metadata__zones') }} AS b ON a.zone_id = b.id

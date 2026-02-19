@@ -1,0 +1,254 @@
+version: 2
+
+unit_tests:
+  - name: test_mesure_last
+    description: |
+      Vérifie que le modèle `mesure_last` retourne bien la valeur la plus récente pour chaque combinaison
+      {indic_id, metric_type, metric_month, zone_id}, en respectant les règles suivantes :
+      - Seules les zones applicables sont incluses.
+      - En cas de doublon, la valeur avec la date d'import la plus récente est conservée.
+      - Si deux valeurs ont la même date d'import, celle avec la metric_date la plus récente est conservée.
+      - La date de la metric_date est tronquée au premier jour du mois.
+    model: mesure_last
+    given:
+      - input: ref('stg_mesure_indicateur')
+        format: sql
+        rows: |
+          -- Cas 1 : Deux valeurs pour le même {indic_id, metric_type, metric_month, zone_id},
+          --         la plus récente doit être sélectionnée (date_import = '2023-01-25').
+          SELECT
+            '2023-01-20 00:00:00.000 +0100'::TIMESTAMP AS date_import,
+            'IND-001' AS indic_id,
+            'va' AS metric_type,
+            '2023-01-15'::DATE AS metric_date,
+            '2023-01-01'::DATE AS metric_month,
+            100 AS metric_value,
+            'D01' AS zone_id,
+            '49815b65-b8a0-4cc4-9e0d-2a12047ddabb'::UUID AS id,
+            '49815b65-b8a0-4cc4-9e0d-2a12047ddabb'::UUID AS rapport_id
+
+          UNION ALL
+
+          SELECT
+            '2023-01-25 00:00:00.000 +0100'::TIMESTAMP AS date_import,
+            'IND-001' AS indic_id,
+            'va' AS metric_type,
+            '2023-01-10'::DATE AS metric_date,
+            '2023-01-01'::DATE AS metric_month,
+            200 AS metric_value,
+            'D01' AS zone_id,
+            'e0a5d840-cf73-4408-8d9a-003c4b7362d9'::UUID AS id,
+            'e0a5d840-cf73-4408-8d9a-003c4b7362d9'::UUID AS rapport_id
+
+          UNION ALL
+
+          -- Cas 2 : Une valeur pour une zone non applicable (ne doit pas apparaître dans le résultat).
+          SELECT
+            '2023-01-20 00:00:00.000 +0100'::TIMESTAMP AS date_import,
+            'IND-001' AS indic_id,
+            'va' AS metric_type,
+            '2023-01-15'::DATE AS metric_date,
+            '2023-01-01'::DATE AS metric_month,
+            100 AS metric_value,
+            'D03' AS zone_id,
+            'c2623e04-d962-4771-b214-9ea2599d4c43'::UUID AS id,
+            'c2623e04-d962-4771-b214-9ea2599d4c43'::UUID AS rapport_id
+
+          UNION ALL
+
+          -- Cas 3 : Une valeur unique pour une autre combinaison (doit apparaître telle quelle).
+          SELECT
+            '2023-02-10 00:00:00.000 +0100'::TIMESTAMP AS date_import,
+            'IND-002' AS indic_id,
+            'vc' AS metric_type,
+            '2023-02-15'::DATE AS metric_date,
+            '2023-02-01'::DATE AS metric_month,
+            300 AS metric_value,
+            'D02' AS zone_id,
+            '18772979-9001-4cab-8158-c5d9fa980742'::UUID AS id,
+            '18772979-9001-4cab-8158-c5d9fa980742'::UUID AS rapport_id
+
+          UNION ALL
+
+          -- Cas 4 : Deux valeurs avec la même date_import mais des metric_date différentes.
+          --         On doit conserver celle avec la metric_date la plus récente.
+          SELECT
+            '2023-03-01 00:00:00.000 +0100'::TIMESTAMP AS date_import,
+            'IND-003' AS indic_id,
+            'vi' AS metric_type,
+            '2023-03-10'::DATE AS metric_date,
+            '2023-03-01'::DATE AS metric_month,
+            400 AS metric_value,
+            'D01' AS zone_id,
+            'b7ad36b3-bc57-4f83-bcff-c8ba2384a1bb'::UUID AS id,
+            'b7ad36b3-bc57-4f83-bcff-c8ba2384a1bb'::UUID AS rapport_id
+
+          UNION ALL
+
+          SELECT
+            '2023-03-01 00:00:00.000 +0100'::TIMESTAMP AS date_import,
+            'IND-003' AS indic_id,
+            'vi' AS metric_type,
+            '2023-03-15'::DATE AS metric_date,
+            '2023-03-01'::DATE AS metric_month,
+            500 AS metric_value,
+            'D01' AS zone_id,
+            '1345e471-a931-4497-9226-16900a6399df'::UUID AS id,
+            '1345e471-a931-4497-9226-16900a6399df'::UUID AS rapport_id
+
+          UNION ALL
+
+          -- Cas 5 : Indicateur avec zg_applicable: false (ne doit pas apparaître dans le résultat).
+          SELECT
+            '2023-04-10'::TIMESTAMP AS date_import,
+            'IND-004' AS indic_id,
+            'va' AS metric_type,
+            '2023-04-15'::DATE AS metric_date,
+            '2023-04-01'::DATE AS metric_month,
+            600 AS metric_value,
+            'D01' AS zone_id,
+            '2a9f6283-0956-4159-991a-9d5d4db0cc82'::UUID AS id,
+            '2a9f6283-0956-4159-991a-9d5d4db0cc82'::UUID AS rapport_id
+
+      - input: ref('stg_ppg_metadata__indicateurs')
+        rows:
+          - {
+              id: IND-001,
+              indicateur_parent_id: null,
+              chantier_id: CH-001,
+              nom: Nombre de rendez-vous de prévention en ville,
+              nom_barometre: null,
+              description: Indicateur annuel du nombre de rendez-vous de prévention réalisés en ville.,
+              description_barometre: null,
+              est_perseverant: false,
+              est_phare: false,
+              est_barometre: false,
+              indicateur_type_id: DEPL,
+              source: Facturation par l’Assurance maladie,
+              source_url: null,
+              mode_de_calcul: Nombre de rendez-vous facturés.,
+              unite: null,
+              schema_validata: sans-contraintes.json,
+              est_cache_dans_pilote: false,
+              zone_groupe_applicable: null,
+              est_territorialise: true,
+              maille_la_plus_fine: DEPT
+            }
+          - {
+              id: IND-002,
+              indicateur_parent_id: null,
+              chantier_id: CH-002,
+              nom: Surface agricole en agriculture biologique,
+              nom_barometre: null,
+              description: Part de la surface agricole utile (SAU) en agriculture biologique.,
+              description_barometre: null,
+              est_perseverant: true,
+              est_phare: false,
+              est_barometre: false,
+              indicateur_type_id: DEPL,
+              source: Agence Bio,
+              source_url: https://www.agencebio.org/observatoire,
+              mode_de_calcul: Consolidation des données des organismes certificateurs.,
+              unite: pourcent de la SAU,
+              schema_validata: sans-contraintes.json,
+              est_cache_dans_pilote: false,
+              zone_groupe_applicable: null,
+              est_territorialise: true,
+              maille_la_plus_fine: DEPT
+            }
+          - {
+              id: IND-003,
+              indicateur_parent_id: null,
+              chantier_id: CH-003,
+              nom: Taux de satisfaction des usagers,
+              nom_barometre: null,
+              description: Taux de satisfaction des usagers pour un service public donné.,
+              description_barometre: null,
+              est_perseverant: false,
+              est_phare: false,
+              est_barometre: false,
+              indicateur_type_id: Q_SERV,
+              source: Enquête de satisfaction,
+              source_url: null,
+              mode_de_calcul: Moyenne des réponses à une enquête de satisfaction.,
+              unite: pourcentage,
+              schema_validata: restrict-0-100.json,
+              est_cache_dans_pilote: false,
+              zone_groupe_applicable: null,
+              est_territorialise: true,
+              maille_la_plus_fine: DEPT
+            }
+          - {
+              id: IND-004,
+              indicateur_parent_id: null,
+              chantier_id: CH-004,
+              nom: Indicateur non applicable (test),
+              nom_barometre: null,
+              description: Indicateur marqué comme non applicable pour les tests.,
+              description_barometre: null,
+              est_perseverant: false,
+              est_phare: false,
+              est_barometre: false,
+              indicateur_type_id: DEPL,
+              source: Source fictive,
+              source_url: null,
+              mode_de_calcul: null,
+              unite: null,
+              schema_validata: sans-contraintes.json,
+              est_cache_dans_pilote: false,
+              zone_groupe_applicable: null,
+              est_territorialise: false,  # Indicateur non territorialisé
+              maille_la_plus_fine: null
+            }
+
+      - input: ref('int_indicateurs_zones_applicables')
+        format: csv
+        rows: |
+          chantier_id,indic_id,zone_id,est_applicable
+          CH-001,IND-001,D01,true
+          CH-001,IND-001,D03,false
+          CH-001,IND-002,D02,true
+          CH-001,IND-003,D01,true
+          CH-001,IND-004,D01,true
+
+
+    expect:
+      format: sql
+      rows: |
+        -- Résultat attendu : seule la valeur la plus récente pour {indic_id=IND-001, metric_type=va, metric_month=2023-01-01, zone_id=D01}
+        SELECT
+          '2023-01-25'::TIMESTAMP AS date_import,
+          'IND-001' AS indic_id,
+          'va' AS metric_type,
+          '2023-01-01'::DATE AS metric_date,
+          200 AS metric_value,
+          'D01' AS zone_id,
+          'e0a5d840-cf73-4408-8d9a-003c4b7362d9'::UUID AS id,
+          'e0a5d840-cf73-4408-8d9a-003c4b7362d9'::UUID AS rapport_id
+
+        UNION ALL
+
+        -- Résultat attendu : la valeur unique pour {indic_id=IND-002, metric_type=vc, metric_month=2023-02-01, zone_id=D02}
+        SELECT
+          '2023-02-10'::TIMESTAMP AS date_import,
+          'IND-002' AS indic_id,
+          'vc' AS metric_type,
+          '2023-02-01'::DATE AS metric_date,
+          300 AS metric_value,
+          'D02' AS zone_id,
+          '18772979-9001-4cab-8158-c5d9fa980742'::UUID AS id,
+          '18772979-9001-4cab-8158-c5d9fa980742'::UUID AS rapport_id
+
+        UNION ALL
+
+        -- Résultat attendu : pour {indic_id=IND-003, metric_type=vi, metric_month=2023-03-01, zone_id=D01},
+        -- on conserve la valeur avec la metric_date la plus récente (2023-03-15).
+        SELECT
+          '2023-03-01'::TIMESTAMP AS date_import,
+          'IND-003' AS indic_id,
+          'vi' AS metric_type,
+          '2023-03-01'::DATE AS metric_date,
+          500 AS metric_value,
+          'D01' AS zone_id,
+          '1345e471-a931-4497-9226-16900a6399df'::UUID AS id,
+          '1345e471-a931-4497-9226-16900a6399df'::UUID AS rapport_id

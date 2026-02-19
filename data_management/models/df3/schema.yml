@@ -1,6 +1,19 @@
 version: 2
 
 models:
+  - name: stg_mesure_indicateur
+    description: |
+        Cleaning des données de mesure_indicateur:
+        - cast de la metric_date en date
+        - ajout de metric_month
+        - gestion des valeurs null et cast de la metric_value en numeric pour éviter les soucis d'arrondis. 
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - indic_id
+            - metric_type
+            - metric_date
+            - zone_id
   - name: mesure_last
     config:
       materialized: table
