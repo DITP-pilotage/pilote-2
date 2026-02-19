@@ -52,7 +52,7 @@ const TableauChantiers: FunctionComponent<TableauChantiersProps> = ({
       chantiersArchives={chantiersSontArchives}
       className="fr-table fr-m-0 fr-p-0"
     >
-      <div className="flex flex-col justify-between md:flex-row gap-4 md:items-center">
+      <div className="flex flex-col justify-between md:flex-row gap-4 md:items-center w-full">
         <div className="flex flex-col md:flex-row gap-4">
           <div className="w-80">
             <BarreDeRecherche
@@ -60,6 +60,8 @@ const TableauChantiers: FunctionComponent<TableauChantiersProps> = ({
               valeur={valeurDeLaRecherche}
             />
           </div>
+        </div>
+        <div className="flex gap-4">
           <Interrupteur
             checked={estGroupe}
             libellé="Grouper par ministère"
@@ -73,8 +75,6 @@ const TableauChantiers: FunctionComponent<TableauChantiersProps> = ({
               );
             }}
           />
-        </div>
-        <div className="tableau-actions-droite">
           <TableauChantiersActionsDeTri />
         </div>
       </div>
