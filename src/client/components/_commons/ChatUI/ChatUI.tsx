@@ -4,6 +4,7 @@ import { useChat, Chat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
 import type { UIMessage } from "ai";
 import { clsxm } from "@/utils/clsxm";
+import { ArrowLineIcon } from "@/components/_commons/Icones/ArrowLineIcon";
 
 const extractMessageText = (message: UIMessage): string => {
   if (!message.parts) return "";
@@ -138,7 +139,7 @@ export const ChatUI = ({
   };
 
   return (
-    <div className={clsxm("flex flex-col max-w-7xl", className)}>
+    <div className={clsxm("flex flex-col", className)}>
       <style>
         {`
           .albert-markdown h1, .albert-markdown h2, .albert-markdown h3 {
@@ -200,107 +201,119 @@ export const ChatUI = ({
         `}
       </style>
 
-      <div className="flex-1 overflow-y-auto rounded-lg border border-gray-200 bg-gray-50 p-4 mb-4 space-y-4">
-        {messages.length === 0 && (
-          <p className="text-gray-400 text-center mt-8">{emptyStateText}</p>
-        )}
+      <div className="flex-1 overflow-y-auto bg-white">
+        <div className="max-w-3xl mx-auto p-4 space-y-4">
+          {messages.length === 0 && (
+            <p className="text-gray-400 text-center mt-8">{emptyStateText}</p>
+          )}
 
-        {messages.map((message) => {
-          return (
-            <div
-              className={clsxm("flex", {
-                "justify-end": message.role === "user",
-                "justify-start": message.role === "assistant",
-              })}
-              key={message.id}
-            >
-              {message.role === "user" ? (
-                <div className="max-w-[80%] rounded-lg px-4 py-3 text-sm whitespace-pre-wrap bg-primary text-white">
-                  {extractMessageText(message)}
-                </div>
-              ) : (
-                <div className="rounded-lg px-4 py-3 text-sm bg-white border border-gray-200 text-gray-900">
-                  {message.parts?.map((part, index) => {
-                    if (part.type === "text") {
-                      return (
-                        <div
-                          key={index}
-                          className="albert-markdown"
-                          dangerouslySetInnerHTML={{
-                            __html: marked.parse(part.text, {
-                              async: false,
-                            }) as string,
-                          }}
-                        />
-                      );
-                    }
-                    if (isToolPart(part)) {
-                      return <ToolCallIndicator key={index} part={part} />;
-                    }
-                    return null;
-                  })}
-                </div>
-              )}
+          {messages.map((message) => {
+            return (
+              <div
+                className={clsxm("flex", {
+                  "justify-end": message.role === "user",
+                  "justify-start": message.role === "assistant",
+                })}
+                key={message.id}
+              >
+                {message.role === "user" ? (
+                  <div className="max-w-[80%] rounded-2xl rounded-br-sm px-4 py-3 text-sm whitespace-pre-wrap bg-primary text-white">
+                    {extractMessageText(message)}
+                  </div>
+                ) : (
+                  <div className="text-sm text-gray-900">
+                    {message.parts?.map((part, index) => {
+                      if (part.type === "text") {
+                        return (
+                          <div
+                            key={index}
+                            className="albert-markdown"
+                            dangerouslySetInnerHTML={{
+                              __html: marked.parse(part.text, {
+                                async: false,
+                              }) as string,
+                            }}
+                          />
+                        );
+                      }
+                      if (isToolPart(part)) {
+                        return <ToolCallIndicator key={index} part={part} />;
+                      }
+                      return null;
+                    })}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+
+          {status === "submitted" && (
+            <div className="flex justify-start">
+              <div className="text-sm text-gray-500">
+                <span className="inline-flex gap-1">
+                  <span className="animate-bounce">.</span>
+                  <span className="animate-bounce [animation-delay:0.2s]">
+                    .
+                  </span>
+                  <span className="animate-bounce [animation-delay:0.4s]">
+                    .
+                  </span>
+                </span>
+              </div>
             </div>
-          );
-        })}
+          )}
 
-        {status === "submitted" && (
-          <div className="flex justify-start">
-            <div className="bg-white border border-gray-200 rounded-lg px-4 py-3 text-sm text-gray-500">
-              <span className="inline-flex gap-1">
-                <span className="animate-bounce">.</span>
-                <span className="animate-bounce [animation-delay:0.2s]">.</span>
-                <span className="animate-bounce [animation-delay:0.4s]">.</span>
-              </span>
+          {error && (
+            <div className="flex justify-start">
+              <div className="max-w-[80%] text-sm text-red-600">
+                Erreur : {error.message}
+              </div>
             </div>
-          </div>
-        )}
+          )}
 
-        {error && (
-          <div className="flex justify-start">
-            <div className="max-w-[80%] rounded-lg px-4 py-3 text-sm bg-red-50 border border-red-200 text-red-900">
-              Erreur : {error.message}
-            </div>
-          </div>
-        )}
-
-        <div ref={messagesEndRef} />
+          <div ref={messagesEndRef} />
+        </div>
       </div>
 
-      <form className="flex gap-2" onSubmit={handleSubmit}>
-        <textarea
-          className="flex-1 resize-none rounded-lg border border-gray-300 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-          disabled={status === "submitted" || status === "streaming"}
-          onChange={(event) => setInput(event.target.value)}
-          onKeyDown={(event) => {
-            if (event.key === "Enter" && !event.shiftKey) {
-              event.preventDefault();
-              handleSubmit(event);
+      <div className="shrink-0 border-t border-gray-100 p-4 bg-white">
+        <form className="max-w-3xl mx-auto relative" onSubmit={handleSubmit}>
+          <textarea
+            className="w-full resize-none rounded-xl border border-gray-200 pl-4 pr-12 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+            disabled={status === "submitted" || status === "streaming"}
+            onChange={(event) => setInput(event.target.value)}
+            onKeyDown={(event) => {
+              if (event.key === "Enter" && !event.shiftKey) {
+                event.preventDefault();
+                handleSubmit(event);
+              }
+            }}
+            placeholder={placeholder}
+            rows={2}
+            value={input}
+          />
+          <button
+            className={clsxm(
+              "absolute bottom-4 right-2 w-8 h-8 rounded-full flex items-center justify-center transition-colors",
+              {
+                "bg-primary text-white hover:bg-primary/90":
+                  status !== "submitted" &&
+                  status !== "streaming" &&
+                  input.trim(),
+                "bg-gray-300 text-white cursor-not-allowed":
+                  status === "submitted" ||
+                  status === "streaming" ||
+                  !input.trim(),
+              },
+            )}
+            disabled={
+              status === "submitted" || status === "streaming" || !input.trim()
             }
-          }}
-          placeholder={placeholder}
-          rows={2}
-          value={input}
-        />
-        <button
-          className={clsxm(
-            "self-end rounded-lg px-6 py-3 text-sm font-medium text-white transition-colors",
-            {
-              "bg-primary hover:bg-primary/90":
-                status !== "submitted" && status !== "streaming",
-              "bg-gray-400 cursor-not-allowed":
-                status === "submitted" || status === "streaming",
-            },
-          )}
-          disabled={
-            status === "submitted" || status === "streaming" || !input.trim()
-          }
-          type="submit"
-        >
-          Envoyer
-        </button>
-      </form>
+            type="submit"
+          >
+            <ArrowLineIcon className="w-4 h-4" />
+          </button>
+        </form>
+      </div>
     </div>
   );
 };
