@@ -22,8 +22,16 @@ export function createGetSyntheseTerritoireTool({
   getSyntheseTerritoireQuery,
 }: CreateGetSyntheseTerritoireToolParams) {
   return tool({
-    description:
-      "Récupère la synthèse détaillée d'un territoire avec ses chantiers en retard et en difficulté",
+    description: `Récupère la synthèse détaillée d'un territoire. Cet outil retourne :
+- Le taux d'avancement global du territoire
+- La position du territoire par rapport à la médiane de répartition
+- Les chantiers en retard (écart <= -10) avec leurs métriques détaillées
+- Les chantiers en difficulté (météo ORAGE ou NUAGE) avec leurs synthèses
+
+Utilise cet outil quand l'utilisateur demande :
+- Une analyse d'un territoire spécifique
+- Une comparaison territoriale
+- Des détails sur les chantiers problématiques d'un territoire`,
     inputSchema: getSyntheseTerritoireInputSchema,
     execute: async (input): Promise<GetSyntheseTerritoireOutput> => {
       if (!territoiresAccessibles.includes(input.territoire_code)) {
