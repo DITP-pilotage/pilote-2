@@ -4,6 +4,27 @@ import { GetSyntheseTerritoireQuery } from "@/server/chantiers/query/GetSynthese
 import type { GetSyntheseTerritoireResult } from "@/server/chantiers/query/GetSyntheseTerritoireQuery";
 import { JALON_COURANT } from "@/server/albert/systemPrompt";
 
+export const SYNTHESE_TERRITOIRE_OUTPUT_FORMAT = `
+<instructions>
+Remplace les variables entre {{ }} par les données réelles issues du résultat de l'outil get_synthese_territoire.
+Pour la liste des chantiers, ne reproduis pas les commentaires bruts : rédige un résumé pertinent de la situation de chaque chantier en lien avec les données observées (écart, météo, taux d'avancement).
+</instructions>
+
+<template>
+Synthèse pour {{Nom du territoire}}
+
+Dans Pilote, le TA {{JALON}} de la région s'établit à {{TA_POURCENTAGE_TERRITOIRE}}, pour une médiane nationale à {{TA_POURCENTAGE_NATIONALE}}.
+
+{{X}} chantiers sont en retard de plus de 10 points par rapport à la médiane nationale :
+
+{{Liste des chantiers - inclut leur ID, écart, nom, météo et un résumé de la situation}}
+
+{{Y}} chantiers sont compromis ou nécessitent un appui.
+
+Sources analysées : données quantitatives et qualitatives des chantiers publiés sur PILOTE.
+</template>
+`;
+
 const getSyntheseTerritoireInputSchema = z.object({
   territoire_code: z
     .string()
@@ -12,17 +33,14 @@ const getSyntheseTerritoireInputSchema = z.object({
 
 export type GetSyntheseTerritoireOutput = GetSyntheseTerritoireResult;
 
-interface CreateGetSyntheseTerritoireToolParams {
-  territoiresAccessibles: string[];
-  getSyntheseTerritoireQuery: GetSyntheseTerritoireQuery;
-}
-
 export function createGetSyntheseTerritoireTool({
-  territoiresAccessibles,
   getSyntheseTerritoireQuery,
-}: CreateGetSyntheseTerritoireToolParams) {
-  return tool({
-    description: `Récupère la synthèse détaillée d'un territoire. Cet outil retourne :
+}: {
+  getSyntheseTerritoireQuery: GetSyntheseTerritoireQuery;
+}) {
+  return ({ territoiresAccessibles }: { territoiresAccessibles: string[] }) => {
+    return tool({
+      description: `Récupère la synthèse détaillée d'un territoire. Cet outil retourne :
 - Le taux d'avancement global du territoire
 - La position du territoire par rapport à la médiane de répartition
 - Les chantiers en retard (écart <= -10) avec leurs métriques détaillées
@@ -32,18 +50,19 @@ Utilise cet outil quand l'utilisateur demande :
 - Une analyse d'un territoire spécifique
 - Une comparaison territoriale
 - Des détails sur les chantiers problématiques d'un territoire`,
-    inputSchema: getSyntheseTerritoireInputSchema,
-    execute: async (input): Promise<GetSyntheseTerritoireOutput> => {
-      if (!territoiresAccessibles.includes(input.territoire_code)) {
-        throw new Error(
-          `Accès non autorisé au territoire ${input.territoire_code}`,
-        );
-      }
+      inputSchema: getSyntheseTerritoireInputSchema,
+      execute: async (input): Promise<GetSyntheseTerritoireOutput> => {
+        if (!territoiresAccessibles.includes(input.territoire_code)) {
+          throw new Error(
+            `Accès non autorisé au territoire ${input.territoire_code}`,
+          );
+        }
 
-      return getSyntheseTerritoireQuery.execute({
-        territoireCode: input.territoire_code,
-        jalon: JALON_COURANT,
-      });
-    },
-  });
+        return getSyntheseTerritoireQuery.execute({
+          territoireCode: input.territoire_code,
+          jalon: JALON_COURANT,
+        });
+      },
+    });
+  };
 }

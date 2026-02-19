@@ -11,7 +11,7 @@ import { Prisma } from "@prisma/client";
 import { randomUUID } from "node:crypto";
 import { configuration } from "@/config";
 import { prisma } from "@/server/db/prisma";
-import { SYNTHESE_TERRITOIRE_OUTPUT_FORMAT } from "./outputFormats";
+import { SYNTHESE_TERRITOIRE_OUTPUT_FORMAT } from "./tools/getSyntheseTerritoire";
 
 const MODEL = "openai/gpt-oss-120b";
 
@@ -78,13 +78,12 @@ export class Albert {
       system: systemPrompt,
       messages: modelMessages,
       prepareStep: ({ steps }) => {
-        const hasSyntheseToolCall = steps.some((step) =>
-          step.toolCalls.some(
-            (toolCall) => toolCall.toolName === "get_synthese_territoire",
-          ),
+        const lastStep = steps.at(-1);
+        const lastStepCalledSynthese = lastStep?.toolCalls.some(
+          (toolCall) => toolCall.toolName === "get_synthese_territoire",
         );
 
-        if (hasSyntheseToolCall) {
+        if (lastStepCalledSynthese) {
           return {
             system: systemPrompt + "\n\n" + SYNTHESE_TERRITOIRE_OUTPUT_FORMAT,
           };

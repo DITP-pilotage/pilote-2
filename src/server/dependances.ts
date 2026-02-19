@@ -52,6 +52,7 @@ import {
   getProfilUtilisateurContainer,
   ProfilUtilisateurDependencies,
 } from "./profil-utilisateur/container";
+import { getAlbertContainer, AlbertDependencies } from "./albert/container";
 
 export type ContainerDependencies = {
   main: AwilixContainer<InitialDependencies>;
@@ -67,6 +68,7 @@ export type ContainerDependencies = {
   piloteEval: AwilixContainer<PiloteEvalDependencies>;
   habilitationsCoordinateur: AwilixContainer<HabilitationsCoordinateurDependencies>;
   profilUtilisateur: AwilixContainer<ProfilUtilisateurDependencies>;
+  albert: AwilixContainer<AlbertDependencies>;
 };
 
 function registerContainer(): ContainerDependencies {
@@ -112,6 +114,7 @@ function registerContainer(): ContainerDependencies {
     profilUtilisateur: getProfilUtilisateurContainer(
       initialContainerWithTransversalDependencies,
     ),
+    albert: getAlbertContainer(initialContainerWithTransversalDependencies),
   };
 }
 
