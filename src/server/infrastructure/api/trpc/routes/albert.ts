@@ -6,6 +6,7 @@ import {
 import { Albert } from "@/server/albert/Albert";
 import { buildChatSystemPrompt } from "@/server/albert/systemPrompt";
 import { createGetSyntheseTerritoireTool } from "@/server/albert/tools/getSyntheseTerritoire";
+import { getContainer } from "@/server/dependances";
 
 export const albertRouter = créerRouteurTRPC({
   chat: procédureProtégée
@@ -18,9 +19,15 @@ export const albertRouter = créerRouteurTRPC({
       const territoiresAccessibles =
         ctx.session.habilitations.lecture.territoires;
 
+      const container = getContainer("chantiers");
+      const getSyntheseTerritoireQuery = container.resolve(
+        "getSyntheseTerritoireQuery",
+      );
+
       const systemPrompt = buildChatSystemPrompt({ territoiresAccessibles });
       const getSyntheseTerritoire = createGetSyntheseTerritoireTool({
         territoiresAccessibles,
+        getSyntheseTerritoireQuery,
       });
 
       return Albert.generateText({
