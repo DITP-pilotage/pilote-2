@@ -62,10 +62,12 @@ export class Albert {
     messages,
     systemPrompt,
     userId,
+    tools,
   }: {
     messages: UIMessage[];
     systemPrompt: string;
     userId: string;
+    tools?: ToolSet;
   }) {
     const albertProvider = this.createProvider();
     const modelMessages = await convertToModelMessages(messages);
@@ -74,6 +76,8 @@ export class Albert {
       model: albertProvider.chat(MODEL),
       system: systemPrompt,
       messages: modelMessages,
+      tools,
+      stopWhen: stepCountIs(5),
       onFinish: async (event) => {
         await prisma.llm_calls.create({
           data: {
