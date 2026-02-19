@@ -4,6 +4,7 @@ import { Albert } from "@/server/albert/Albert";
 import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
 import { buildChatSystemPrompt } from "@/server/albert/systemPrompt";
 import { createGetSyntheseTerritoireTool } from "@/server/albert/tools/getSyntheseTerritoire";
+import { getContainer } from "@/server/dependances";
 
 export default async function handler(
   req: NextApiRequest,
@@ -31,9 +32,15 @@ export default async function handler(
 
     const territoiresAccessibles = session.habilitations.lecture.territoires;
 
+    const container = getContainer("chantiers");
+    const getSyntheseTerritoireQuery = container.resolve(
+      "getSyntheseTerritoireQuery",
+    );
+
     const systemPrompt = buildChatSystemPrompt({ territoiresAccessibles });
     const getSyntheseTerritoire = createGetSyntheseTerritoireTool({
       territoiresAccessibles,
+      getSyntheseTerritoireQuery,
     });
 
     const result = await Albert.streamText({

@@ -139,7 +139,7 @@ export const AlbertChat = () => {
                 </div>
               ) : (
                 <div
-                  className="max-w-[80%] rounded-lg px-4 py-3 text-sm bg-white border border-gray-200 text-gray-900 albert-markdown"
+                  className="rounded-lg px-4 py-3 text-sm bg-white border border-gray-200 text-gray-900 albert-markdown"
                   dangerouslySetInnerHTML={{
                     __html: marked.parse(messageText, {
                       async: false,
