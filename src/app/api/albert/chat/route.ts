@@ -1,32 +1,23 @@
-import type { NextApiRequest, NextApiResponse } from "next";
 import type { UIMessage } from "ai";
 import { Albert } from "@/server/albert/Albert";
 import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
 import { buildChatSystemPrompt } from "@/server/albert/systemPrompt";
 import { getContainer } from "@/server/dependances";
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse,
-) {
-  if (req.method !== "POST") {
-    res.status(405).send("Method Not Allowed");
-    return;
-  }
-
-  const session = await auth(req, res);
+export async function POST(request: Request) {
+  const session = await auth();
 
   if (!session) {
-    res.status(401).send("Unauthorized");
-    return;
+    return new Response("Unauthorized", { status: 401 });
   }
 
   try {
-    const { messages } = req.body as { messages: UIMessage[] };
+    const { messages } = (await request.json()) as { messages: UIMessage[] };
 
     if (!messages || !Array.isArray(messages)) {
-      res.status(400).send("Invalid request: messages array required");
-      return;
+      return new Response("Invalid request: messages array required", {
+        status: 400,
+      });
     }
 
     const territoiresAccessibles = session.habilitations.lecture.territoires;
@@ -50,10 +41,10 @@ export default async function handler(
       },
     });
 
-    result.pipeUIMessageStreamToResponse(res);
+    return result.toUIMessageStreamResponse();
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error("Error in Albert chat stream:", error);
-    res.status(500).send("Internal Server Error");
+    return new Response("Internal Server Error", { status: 500 });
   }
 }
