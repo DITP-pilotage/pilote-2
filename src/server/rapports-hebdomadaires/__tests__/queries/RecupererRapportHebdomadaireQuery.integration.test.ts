@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
 import { fixtures } from "@/server/infrastructure/test/fixtures";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
@@ -110,7 +111,7 @@ describe("RecupererRapportHebdomadaireQuery", () => {
       const coordinateur = await fixtures.utilisateur({
         profilCode: "COORDINATEUR_REGION",
       });
-      const nonExistentRapportId = "non-existent-id";
+      const nonExistentRapportId = randomUUID();
 
       // When / Then
       await expect(
