@@ -1,0 +1,34 @@
+/**
+ * IMPORTANT: These @keyframes MUST be defined in plain CSS, not in tailwind.config.js
+ *
+ * Why?
+ * - Tailwind v4 tree-shakes @keyframes from the config if no utility class uses them
+ * - We reference these animations via plain CSS classes (not animate-* utilities)
+ * - If keyframes are missing from CSS output:
+ *   1. No animation plays (looks broken)
+ *   2. Radix Presence waits for 'animationend' event that never fires
+ *   3. Accordion gets stuck open forever (unmountSuspended state)
+ *
+ * When refactoring to Tailwind utilities:
+ * - Either use animate-accordion-open/close utility classes directly in JSX
+ * - OR ensure keyframes are NOT tree-shaken (check final CSS output)
+ * - Test that accordion CLOSES properly (not just opens)
+ */
+
+@keyframes accordion-open {
+  0% { height: 0; opacity: 0; }
+  100% { height: var(--radix-accordion-content-height); opacity: 1; }
+}
+
+@keyframes accordion-close {
+  0% { height: var(--radix-accordion-content-height); opacity: 1; }
+  100% { height: 0; opacity: 0; }
+}
+
+.accordion-content[data-state="open"] {
+  animation: accordion-open 200ms ease-out;
+}
+
+.accordion-content[data-state="closed"] {
+  animation: accordion-close 200ms ease-in;
+}

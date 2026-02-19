@@ -24,6 +24,8 @@ import { IndicateurActiviteGateway } from "./infrastructure/adapters/IndicateurA
 
 import { ProduireRapportsHebdomadairesUseCase } from "./usecases/ProduireRapportsHebdomadairesUseCase";
 import { EnvoyerRapportsHebdomadairesUseCase } from "./usecases/EnvoyerRapportsHebdomadairesUseCase";
+import { ListerRapportsHebdomadairesQuery } from "./queries/ListerRapportsHebdomadairesQuery";
+import { RecupererRapportHebdomadaireQuery } from "./queries/RecupererRapportHebdomadaireQuery";
 
 export type RapportsHebdomadairesDependencies = {
   activiteComptesQuery: PrismaActiviteComptesQuery;
@@ -39,6 +41,8 @@ export type RapportsHebdomadairesDependencies = {
   activiteIndicateurGateway: ActiviteIndicateurGateway;
   produireRapportsHebdomadairesUseCase: ProduireRapportsHebdomadairesUseCase;
   envoyerRapportsHebdomadairesUseCase: EnvoyerRapportsHebdomadairesUseCase;
+  listerRapportsHebdomadairesQuery: ListerRapportsHebdomadairesQuery;
+  recupererRapportHebdomadaireQuery: RecupererRapportHebdomadaireQuery;
 };
 
 export const getRapportsHebdomadairesContainer = (
@@ -74,6 +78,12 @@ export const getRapportsHebdomadairesContainer = (
       ),
       envoyerRapportsHebdomadairesUseCase: asClass(
         EnvoyerRapportsHebdomadairesUseCase,
+      ),
+      listerRapportsHebdomadairesQuery: asClass(
+        ListerRapportsHebdomadairesQuery,
+      ),
+      recupererRapportHebdomadaireQuery: asClass(
+        RecupererRapportHebdomadaireQuery,
       ),
     });
 };

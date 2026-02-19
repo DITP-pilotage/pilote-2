@@ -3,6 +3,7 @@
 import { Accordion as RadixAccordion } from "radix-ui";
 import { ComponentProps } from "react";
 import { clsxm } from "@/utils/clsxm";
+import "./accordion.css";
 
 export const Accordion = Object.assign({}, RadixAccordion, {
   Item: ({
@@ -43,7 +44,6 @@ export const Accordion = Object.assign({}, RadixAccordion, {
         "flex flex-1 items-center justify-between !p-4 font-medium !text-base text-left !mb-0",
         "hover:!bg-dsfr-blue-france-925-hover transition-colors",
         "focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-inset",
-        "data-[state=open]:!bg-dsfr-blue-france-925-hover",
         "group",
         props.className,
       )}
@@ -75,8 +75,7 @@ export const Accordion = Object.assign({}, RadixAccordion, {
         "!bg-dsfr-alt-blue-france",
         "!px-6 !pb-6 !pt-4",
         "overflow-hidden",
-        "data-[state=open]:animate-accordion-open",
-        "data-[state=closed]:animate-accordion-close",
+        "accordion-content",
         props.className,
       )}
     >

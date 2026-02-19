@@ -10,7 +10,7 @@ import {
 import { SectionActiviteComptes } from "@/server/rapports-hebdomadaires/domain/SectionActiviteComptes";
 import { SectionChantier } from "@/server/rapports-hebdomadaires/domain/SectionActiviteChantiers";
 
-const contenuRapportSchema = z.object({
+export const contenuRapportSchema = z.object({
   coordinateur: z.custom<Coordinateur>(),
   sectionActiviteComptes: z.custom<SectionActiviteComptes>(),
   sectionActiviteChantiers: z.custom<SectionChantier[]>(),

@@ -21,6 +21,10 @@ const PROFIL_AUTORISE_A_MODIFIER_PROPOSITION_VALEUR_AVANCEMENT = new Set([
   ProfilEnum.DITP_ADMIN,
   ...LISTE_PROFIL_TERRITORIALISE,
 ]);
+const PROFIL_AUTORISE_A_LIRE_RAPPORTS_HEBDOMADAIRES = new Set([
+  ProfilEnum.COORDINATEUR_REGION,
+  ProfilEnum.COORDINATEUR_DEPARTEMENT,
+]);
 
 export default class Habilitation {
   constructor(
@@ -116,5 +120,23 @@ export default class Habilitation {
 
   estAutoriseAAccederALaPageAdmin() {
     return this.dependencies.profil === ProfilEnum.DITP_ADMIN;
+  }
+
+  verifierAutorisationLectureRapportsHebdomadaires() {
+    if (
+      !PROFIL_AUTORISE_A_LIRE_RAPPORTS_HEBDOMADAIRES.has(
+        this.dependencies.profil,
+      )
+    ) {
+      throw new UnauthorizedError(
+        "Vous n'êtes pas autorisé a effectuer cette action",
+      );
+    }
+  }
+
+  estAutoriseAAccederAuxRapportsHebdomadaires() {
+    return PROFIL_AUTORISE_A_LIRE_RAPPORTS_HEBDOMADAIRES.has(
+      this.dependencies.profil,
+    );
   }
 }
