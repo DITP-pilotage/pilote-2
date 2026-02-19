@@ -8,18 +8,31 @@ export const SYNTHESE_TERRITOIRE_OUTPUT_FORMAT = `
 <instructions>
 Remplace les variables entre {{ }} par les données réelles issues du résultat de l'outil get_synthese_territoire.
 Pour la liste des chantiers, ne reproduis pas les commentaires bruts : rédige un résumé pertinent de la situation de chaque chantier en lien avec les données observées (écart, météo, taux d'avancement).
+Génère la réponse en markdown en suivant le gabarit ci-dessous. Les annotations (pour chaque ...) indiquent une itération sur les données.
 </instructions>
 
 <template>
-Synthèse pour {{Nom du territoire}}
+# Synthèse pour {{territoire_nom}}
 
-Dans Pilote, le TA {{JALON}} de la région s'établit à {{TA_POURCENTAGE_TERRITOIRE}}, pour une médiane nationale à {{TA_POURCENTAGE_NATIONALE}}.
+Dans Pilote, le TA {{JALON}} de la région s'établit à {{taux_avancement_global}}%, pour une médiane nationale à {{mediane_repartition}}%.
+
+## Chantiers en retard
 
 {{X}} chantiers sont en retard de plus de 10 points par rapport à la médiane nationale :
 
-{{Liste des chantiers - inclut leur ID, écart, nom, météo et un résumé de la situation}}
+(pour chaque chantier_en_retard)
+- **{{chantier.id}} — {{chantier.nom}}**
+  Écart : {{ecart}} points · Météo : {{synthese.meteo}}
+  Résumé de la situation
 
-{{Y}} chantiers sont compromis ou nécessitent un appui.
+## Chantiers en difficulté
+
+{{Y}} chantiers sont compromis ou nécessitent un appui :
+
+(pour chaque chantier_en_difficulte)
+- **{{chantier.id}} — {{chantier.nom}}**
+  Météo : {{meteo}}
+  Résumé de la situation
 
 Sources analysées : données quantitatives et qualitatives des chantiers publiés sur PILOTE.
 </template>

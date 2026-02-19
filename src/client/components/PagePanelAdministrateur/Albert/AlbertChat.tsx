@@ -17,6 +17,74 @@ const extractMessageText = (message: UIMessage): string => {
     .join("");
 };
 
+type ToolPart = {
+  type: string;
+  state?:
+    | "input-streaming"
+    | "input-available"
+    | "output-streaming"
+    | "output-available"
+    | "output-error";
+  input?: unknown;
+  output?: unknown;
+  error?: string;
+};
+
+const isToolPart = (part: unknown): part is ToolPart => {
+  if (typeof part !== "object" || part === null) return false;
+  const typedPart = part as { type?: string };
+  return (
+    typeof typedPart.type === "string" &&
+    (typedPart.type.startsWith("tool-") || typedPart.type === "dynamic-tool")
+  );
+};
+
+const ToolCallIndicator = ({ part }: { part: ToolPart }) => {
+  const getToolName = () => {
+    if (part.type === "dynamic-tool") return "outil";
+    return part.type.replace("tool-", "").replace(/_/g, " ");
+  };
+
+  const getIndicatorContent = () => {
+    const input = part.input as { territoire_code?: string } | undefined;
+    const output = part.output as { territoire_nom?: string } | undefined;
+    const territoireCode = input?.territoire_code || "";
+    const territoireNom = output?.territoire_nom || territoireCode;
+
+    if (part.state === "output-error") {
+      return (
+        <span className="text-red-400">
+          Erreur lors de l'appel de {getToolName()}
+          {part.error ? `: ${part.error}` : ""}
+        </span>
+      );
+    }
+
+    if (part.state === "output-available") {
+      return (
+        <span>Données récupérées pour {territoireNom || "le territoire"}</span>
+      );
+    }
+
+    return (
+      <span className="inline-flex items-center gap-1">
+        <span>
+          Recherche des données pour {territoireCode || "le territoire"}...
+        </span>
+        <span className="inline-flex gap-0.5">
+          <span className="animate-bounce">.</span>
+          <span className="animate-bounce [animation-delay:0.2s]">.</span>
+          <span className="animate-bounce [animation-delay:0.4s]">.</span>
+        </span>
+      </span>
+    );
+  };
+
+  return (
+    <p className="text-gray-400 text-xs italic my-2">{getIndicatorContent()}</p>
+  );
+};
+
 export const AlbertChat = () => {
   const [input, setInput] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -50,7 +118,7 @@ export const AlbertChat = () => {
   };
 
   return (
-    <div className="flex flex-col h-[calc(100vh-200px)] max-w-4xl">
+    <div className="flex flex-col h-[calc(100vh-200px)] max-w-7xl">
       <style>
         {`
           .albert-markdown h1, .albert-markdown h2, .albert-markdown h3 {
@@ -124,7 +192,6 @@ export const AlbertChat = () => {
         )}
 
         {messages.map((message) => {
-          const messageText = extractMessageText(message);
           return (
             <div
               className={clsxm("flex", {
@@ -135,17 +202,30 @@ export const AlbertChat = () => {
             >
               {message.role === "user" ? (
                 <div className="max-w-[80%] rounded-lg px-4 py-3 text-sm whitespace-pre-wrap bg-primary text-white">
-                  {messageText}
+                  {extractMessageText(message)}
                 </div>
               ) : (
-                <div
-                  className="rounded-lg px-4 py-3 text-sm bg-white border border-gray-200 text-gray-900 albert-markdown"
-                  dangerouslySetInnerHTML={{
-                    __html: marked.parse(messageText, {
-                      async: false,
-                    }) as string,
-                  }}
-                />
+                <div className="rounded-lg px-4 py-3 text-sm bg-white border border-gray-200 text-gray-900">
+                  {message.parts?.map((part, index) => {
+                    if (part.type === "text") {
+                      return (
+                        <div
+                          key={index}
+                          className="albert-markdown"
+                          dangerouslySetInnerHTML={{
+                            __html: marked.parse(part.text, {
+                              async: false,
+                            }) as string,
+                          }}
+                        />
+                      );
+                    }
+                    if (isToolPart(part)) {
+                      return <ToolCallIndicator key={index} part={part} />;
+                    }
+                    return null;
+                  })}
+                </div>
               )}
             </div>
           );
