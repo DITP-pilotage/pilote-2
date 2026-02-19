@@ -23,8 +23,6 @@ const nextConfig = {
   outputFileTracingRoot: __dirname,
   bundlePagesRouterDependencies: true,
   pageExtensions: ["js", "jsx", "ts", "tsx", "md", "mdx"],
-  // TODO: DO NOT MERGE WITH THIS FLAG ENABLED
-  compress: false,
   compiler: {
     emotion: true,
   },
