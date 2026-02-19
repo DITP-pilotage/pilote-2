@@ -54,14 +54,11 @@ interface CreateGetSyntheseTerritoireToolParams {
 export function createGetSyntheseTerritoireTool({
   territoiresAccessibles,
 }: CreateGetSyntheseTerritoireToolParams) {
-  return tool<
-    typeof getSyntheseTerritoireInputSchema,
-    GetSyntheseTerritoireOutput
-  >({
+  return tool({
     description:
       "Récupère la synthèse détaillée d'un territoire avec ses chantiers en retard et en difficulté",
-    parameters: getSyntheseTerritoireInputSchema,
-    execute: async (input) => {
+    inputSchema: getSyntheseTerritoireInputSchema,
+    execute: async (input): Promise<GetSyntheseTerritoireOutput> => {
       // Validate territory access
       if (!territoiresAccessibles.includes(input.territoire_code)) {
         throw new Error(
