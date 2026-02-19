@@ -9,6 +9,7 @@ export const SYNTHESE_TERRITOIRE_OUTPUT_FORMAT = `
 Remplace les variables entre {{ }} par les données réelles issues du résultat de l'outil get_synthese_territoire.
 Pour la liste des chantiers, ne reproduis pas les commentaires bruts : rédige un résumé pertinent de la situation de chaque chantier en lien avec les données observées (écart, météo, taux d'avancement).
 Génère la réponse en markdown en suivant le gabarit ci-dessous. Les annotations (pour chaque ...) indiquent une itération sur les données.
+N'utilise JAMAIS de tableaux pour présenter la donnée.
 </instructions>
 
 <template>
