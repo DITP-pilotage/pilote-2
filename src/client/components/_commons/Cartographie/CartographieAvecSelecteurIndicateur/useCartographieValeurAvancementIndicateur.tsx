@@ -17,7 +17,6 @@ const REMPLISSAGE_PAR_DÉFAUT =
 
 function déterminerValeurAffichée(
   valeur: number | null,
-  valeurCible: number | null,
   valeurCibleAnnuelle: number | null,
   estApplicable: boolean | null,
   jalon: number,
@@ -44,14 +43,6 @@ function déterminerValeurAffichée(
           {valeurCibleAnnuelle === null
             ? "Non renseigné"
             : valeurCibleAnnuelle.toLocaleString() + unitéAffichée}
-        </div>
-      </div>
-      <div className="flex justify-center align-center">
-        <div className="fr-mr-1w">VC 2026 :</div>
-        <div>
-          {valeurCible === null
-            ? "Non renseigné"
-            : valeurCible.toLocaleString() + unitéAffichée}
         </div>
       </div>
     </>
@@ -142,20 +133,13 @@ export function useCartographieValeurAvancementIndicateur(
     let donnéesFormatées: CartographieDonnées = {};
 
     donnees.forEach(
-      ({
-        valeur,
-        valeurCible,
-        valeurCibleAnnuelle,
-        territoireCode,
-        estApplicable,
-      }) => {
+      ({ valeur, valeurCibleAnnuelle, territoireCode, estApplicable }) => {
         const territoireGéographique =
           récupérerDétailsSurUnTerritoire(territoireCode);
 
         donnéesFormatées[territoireCode] = {
           contenu: déterminerValeurAffichée(
             valeur,
-            valeurCible,
             valeurCibleAnnuelle,
             estApplicable,
             jalon,

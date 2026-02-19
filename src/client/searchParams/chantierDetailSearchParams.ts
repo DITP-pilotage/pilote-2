@@ -7,14 +7,12 @@ import {
 import { maillesInternes } from "@/server/domain/maille/Maille.interface";
 
 const cartographieChantierTypes = [
-  "avancementMandat",
   "avancementJalon",
   "meteo",
   "propositionValeur",
 ] as const;
 
 const cartographieIndicateurTypes = [
-  "avancementMandat",
   "avancementJalon",
   "propositionValeur",
   "valeurAvancement",
@@ -23,13 +21,13 @@ const cartographieIndicateurTypes = [
 export const loadChantierDetailSearchParams = createLoader({
   jalon: parseAsInteger,
   carteChG: parseAsStringLiteral([...cartographieChantierTypes]).withDefault(
-    "avancementMandat",
+    "avancementJalon",
   ),
   carteChD: parseAsStringLiteral([...cartographieChantierTypes]).withDefault(
     "meteo",
   ),
   carteIndG: parseAsStringLiteral([...cartographieIndicateurTypes]).withDefault(
-    "avancementMandat",
+    "avancementJalon",
   ),
   carteIndD: parseAsStringLiteral([...cartographieIndicateurTypes]).withDefault(
     "valeurAvancement",

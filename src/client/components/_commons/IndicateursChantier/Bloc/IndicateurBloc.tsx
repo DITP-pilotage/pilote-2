@@ -209,12 +209,6 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                         </span>
                       </div>
                     </th>
-                    <th
-                      className="fr-background-action-low-blue-france border-b border-b-high-grey text-center fr-mb-0 fr-p-0 fr-py-md-1w !text-sm bold"
-                      colSpan={3}
-                    >
-                      DONNÉES À ÉCHÉANCE 2026
-                    </th>
                   </tr>
                   <tr className="border-b border-b-high-grey">
                     <th className="fr-background-action-low-blue-france text-center fr-mb-0 fr-px-1w fr-py-md-1w !text-sm bold no-wrap">
@@ -230,15 +224,6 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                       valeur cible
                     </th>
                     <th className="fr-background-contrast-grey text-center fr-mb-0 fr-px-1w fr-py-md-1w !text-sm bold">
-                      taux d'avancement
-                    </th>
-                    <th className="fr-background-action-low-blue-france text-center fr-mb-0 fr-px-1w fr-py-md-1w !text-sm bold">
-                      valeur d'avancement
-                    </th>
-                    <th className="fr-background-action-low-blue-france text-center fr-mb-0 fr-px-1w fr-py-md-1w !text-sm bold">
-                      valeur cible
-                    </th>
-                    <th className="fr-background-action-low-blue-france text-center fr-mb-0 fr-px-1w fr-py-md-1w !text-sm bold">
                       taux d'avancement
                     </th>
                   </tr>
@@ -289,42 +274,6 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                         )}
                         valeur={detailIndicateurDuTerritoire.avancement.annuel}
                         variante="secondaire"
-                      />
-                    </td>
-                    {/* Valeur et date valeur d'avancement mandat de indicateurTerritoire */}
-                    <td className="fr-mb-0 fr-p-0 fr-py-md-1w !text-sm text-center">
-                      <ValeurEtDate
-                        date={
-                          detailIndicateurDuTerritoire.dateValeurAvancementMandat
-                        }
-                        unité={detailIndicateurDuTerritoire.unite}
-                        valeur={
-                          detailIndicateurDuTerritoire.valeurAvancementMandat
-                        }
-                      />
-                    </td>
-                    <td className="fr-mb-0 fr-p-0 fr-py-md-1w !text-sm text-center">
-                      <ValeurEtDate
-                        date={detailIndicateurDuTerritoire.dateValeurCible}
-                        unité={detailIndicateurDuTerritoire.unite}
-                        valeur={detailIndicateurDuTerritoire.valeurCible}
-                      />
-                    </td>
-                    <td className="fr-mb-0 fr-p-0 fr-px-2w fr-py-md-1w !text-sm">
-                      <BarreDeProgression
-                        afficherTexte
-                        fond="gris-clair"
-                        positionTexte="dessus"
-                        taille="md"
-                        texteInfobulle={getCalculAvancementMessage(
-                          detailIndicateurDuTerritoire.valeurInitiale,
-                          detailIndicateurDuTerritoire.valeurAvancementMandat,
-                          detailIndicateurDuTerritoire.valeurCible,
-                          detailIndicateurDuTerritoire.avancement.global,
-                          2026,
-                        )}
-                        valeur={detailIndicateurDuTerritoire.avancement.global}
-                        variante="primaire"
                       />
                     </td>
                   </tr>

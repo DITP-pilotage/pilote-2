@@ -10,7 +10,6 @@ import { useBlocIndicateurContext } from "@/components/PageChantier/useBlocIndic
 import { useIndicateurDétails } from "./useIndicateurDétails";
 
 export type CartographieIndicateurType =
-  | "avancementMandat"
   | "avancementJalon"
   | "propositionValeur"
   | "valeurAvancement";

@@ -135,33 +135,6 @@ export default function useIndicateurBloc(
       ),
       enableSorting: false,
     }),
-    reactTableColonnesHelper.accessor("données.valeurCible", {
-      header: "Cible 2026",
-      id: "cible",
-      cell: (valeurCible) => (
-        <ValeurEtDate
-          date={valeurCible.row.original.données.dateValeurCible}
-          unité={valeurCible.row.original.données.unite}
-          valeur={valeurCible.getValue()}
-        />
-      ),
-      enableSorting: false,
-    }),
-    reactTableColonnesHelper.accessor("données.avancement.global", {
-      header: "Avancement 2026",
-      id: "avancement",
-      cell: (avancementGlobal) => (
-        <BarreDeProgression
-          afficherTexte
-          fond="gris-clair"
-          positionTexte="dessus"
-          taille="md"
-          valeur={avancementGlobal.getValue()}
-          variante="primaire"
-        />
-      ),
-      enableSorting: false,
-    }),
     reactTableColonnesHelper.display({
       id: "indicateurTuile",
       cell: (indicateurCellContext) => (

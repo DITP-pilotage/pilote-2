@@ -48,7 +48,7 @@ export function créerDonnéesTerritoires(
       },
       estApplicable: chantierRow?.est_applicable ?? null,
       météo: (chantierRow?.meteo as Météo) ?? "NON_RENSEIGNEE",
-      écart: chantierRow?.ecart ?? null,
+      écart: chantierRow?.chantier_territoire_jalon?.at(0)?.ecart ?? null,
       tendance: chantierRow?.tendance || null,
       dateDeMàjDonnéesQualitatives:
         chantierRow?.derniere_maj_date_qualitative?.toISOString() || null,

@@ -6,7 +6,6 @@ import { DétailsIndicateurTerritoire } from "@/server/domain/indicateur/Détail
 import { useTerritoireHabilitation } from "@/client/hooks/useTerritoireHabilitation";
 
 function determinerValeurAffichee(
-  valeur: number | null,
   valeurAnnuelle: number | null,
   estApplicable: boolean | null,
   jalon: number,
@@ -15,22 +14,11 @@ function determinerValeurAffichee(
     return <span className="fr-text--bold">Non applicable</span>;
   }
 
-  if (valeur === null) {
+  if (valeurAnnuelle === null) {
     return <span className="fr-text--bold">Non renseigné</span>;
   }
 
-  if (valeurAnnuelle === null) {
-    return (
-      <div className="fr-text--bold">{`TA 2026 : ${valeur.toFixed(0)}%`}</div>
-    );
-  }
-
-  return (
-    <>
-      {`TA ${jalon} : ${valeurAnnuelle.toFixed(0)}% | `}
-      <span className="fr-text--bold">{`TA 2026 : ${valeur.toFixed(0)}%`}</span>
-    </>
-  );
+  return <>{`TA ${jalon} : ${valeurAnnuelle.toFixed(0)}%`}</>;
 }
 
 function determinerRemplissage(
@@ -72,7 +60,6 @@ export function useCartographieAvancementIndicateur(
   detailsIndicateurTerritoire: DétailsIndicateurTerritoire,
   elementsDeLegende: CartographieÉlémentsDeLégende,
   jalon: number,
-  typeAvancement: "JALON" | "MANDAT",
 ) {
   const { récupérerDétailsSurUnTerritoire } = useTerritoireHabilitation();
 
@@ -115,13 +102,12 @@ export function useCartographieAvancementIndicateur(
         ...acc,
         [val.territoireCode]: {
           contenu: determinerValeurAffichee(
-            val.valeur,
             val.valeurAnnuelle,
             val.estApplicable,
             jalon,
           ),
           remplissage: determinerRemplissage(
-            typeAvancement === "JALON" ? val.valeurAnnuelle : val.valeur,
+            val.valeurAnnuelle,
             elementsDeLegende,
             val.estApplicable,
           ),

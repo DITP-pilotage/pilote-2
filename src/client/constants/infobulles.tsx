@@ -153,7 +153,7 @@ const INFOBULLE_CONTENUS = {
       ) => (
         <p className="fr-text--sm fr-mb-0">
           {`À la maille ${maille}, `}
-          le taux d'avancement global correspond au taux d'avancement 2026 de
+          le taux d'avancement global correspond au taux d'avancement de
           l'indicateur&nbsp;:
           {` ${indicateurPondération.nom}`}
         </p>
@@ -166,13 +166,12 @@ const INFOBULLE_CONTENUS = {
           <p className="fr-text--sm fr-mb-0">
             {`À la maille ${maille}, `}
             le taux d'avancement global correspond à la somme des taux
-            d'avancement 2026 des indicateurs, pondérés de la façon
-            suivante&nbsp;:
+            d'avancement des indicateurs, pondérés de la façon suivante&nbsp;:
           </p>
           <ul className="fr-text--sm fr-mb-0">
             {indicateurPondérations.map(({ pondération, nom }) => (
               <li key={nom}>
-                {pondération}% du taux d'avancement 2026 de l'indicateur&nbsp;:
+                {pondération}% du taux d'avancement de l'indicateur&nbsp;:
                 {` ${nom}`}
               </li>
             ))}
