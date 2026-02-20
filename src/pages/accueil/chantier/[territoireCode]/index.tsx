@@ -354,6 +354,10 @@ const ChantierLayout = ({
     api.gestionContenu.recupererVariableContenu.useSuspenseQuery({
       nomVariableContenu: "NEXT_PUBLIC_FF_MON_PROFIL",
     });
+  const [ffAskAI] =
+    api.gestionContenu.recupererVariableContenu.useSuspenseQuery({
+      nomVariableContenu: "NEXT_PUBLIC_FF_ASK_AI",
+    });
 
   const monProfilEstDisponible = variableContenu;
   const doitAfficherModaleRenseignerService =
@@ -454,7 +458,9 @@ const ChantierLayout = ({
               mailleSelectionnee={mailleSelectionnee}
               ministères={ministères}
             />
-            <BoutonSyntheseTerritoire territoireCode={territoireCode} />
+            {ffAskAI || session?.profil === ProfilEnum.DITP_ADMIN ? (
+              <BoutonSyntheseTerritoire territoireCode={territoireCode} />
+            ) : null}
           </div>
           <PageChantiers
             avancementsAgrégés={avancementsAgrégés}

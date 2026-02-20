@@ -299,6 +299,11 @@ const config = convict({
       default: false,
       env: "NEXT_PUBLIC_FF_MASQUER_INDICATEURS_NON_APPLICABLES",
     },
+    askAI: {
+      format: Boolean,
+      default: false,
+      env: "NEXT_PUBLIC_FF_ASK_AI",
+    },
   },
   analytics: {
     doc: "Matomo Analytics",

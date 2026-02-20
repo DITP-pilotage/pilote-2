@@ -6,6 +6,9 @@ import {
 import { Albert } from "@/server/albert/Albert";
 import { buildChatSystemPrompt } from "@/server/albert/systemPrompt";
 import { getContainer } from "@/server/dependances";
+import { RécupérerVariableContenuUseCase } from "@/server/gestion-contenu/usecases/RécupérerVariableContenuUseCase";
+import { NotFoundError } from "@/server/app/error-boundary/not-found-error";
+import { ProfilEnum } from "@/server/app/enum/profil.enum";
 
 export const albertRouter = créerRouteurTRPC({
   chat: procédureProtégée
@@ -15,6 +18,14 @@ export const albertRouter = créerRouteurTRPC({
       }),
     )
     .mutation(async ({ input, ctx }) => {
+      const estAskAiActif = new RécupérerVariableContenuUseCase().run({
+        nomVariableContenu: "NEXT_PUBLIC_FF_ASK_AI",
+      }) as boolean;
+
+      if (!estAskAiActif && ctx.session.profil !== ProfilEnum.DITP_ADMIN) {
+        throw new NotFoundError("Not found");
+      }
+
       const territoiresAccessibles =
         ctx.session.habilitations.lecture.territoires;
 

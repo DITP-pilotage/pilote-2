@@ -92,6 +92,10 @@ export class RécupérerVariableContenuUseCase {
         return configuration().featureFlip
           .monProfil as VariableContenuDisponibleEnv[T];
       }
+      case "NEXT_PUBLIC_FF_ASK_AI": {
+        return configuration().featureFlip
+          .askAI as VariableContenuDisponibleEnv[T];
+      }
     }
   }
 }
