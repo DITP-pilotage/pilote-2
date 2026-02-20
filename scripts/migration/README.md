@@ -1,6 +1,6 @@
 # Scripts de migration SQL
 
-Les fichiers `.sql` correspondent au migrations SQL à effectuer sur la donnée (par opposition à la structure des tables).
+Les fichiers `.sql` correspondent aux migrations SQL à effectuer sur la donnée (par opposition à la structure des tables).
 
 Ils sont lancés via le script [run_migration.sh](run_migration.sh) en lui passant comme premier argument le path de la racine jusqu'au fichier `.sql` de migration
 
