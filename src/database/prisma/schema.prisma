@@ -638,6 +638,7 @@ model utilisateur {
   date_derniere_connexion                DateTime                                 @default(now())
   rapports_hebdomadaires                 rapport_hebdomadaire_coordinateur[]
   rapports_propositions_avancement       rapport_propositions_avancement[]
+  llm_calls                              llm_calls[]
 
   @@schema("public")
 }
@@ -765,6 +766,26 @@ model indicateur_territoire_valeur_evenement {
 model datajobs_execution {
   id                      String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   derniere_date_execution DateTime
+
+  @@schema("public")
+}
+
+enum llm_call_evaluation {
+  POSITIVE
+  NEGATIVE
+
+  @@schema("public")
+}
+
+model llm_calls {
+  id             String               @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  utilisateur_id String               @db.Uuid
+  transcript     Json
+  model          String
+  evaluation     llm_call_evaluation?
+  created_at     DateTime             @default(now())
+
+  utilisateur utilisateur @relation(fields: [utilisateur_id], references: [id])
 
   @@schema("public")
 }

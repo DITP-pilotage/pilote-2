@@ -37,6 +37,7 @@ import { ModaleInscriptionInfolettre } from "@/components/PageAccueil/PageChanti
 import { ModaleRenseignerService } from "@/components/PageAccueil/PageChantiers/ModaleRenseignerService/ModaleRenseignerService";
 import { BoutonNavigationFicheTerritoriale } from "@/components/PageAccueil/BoutonNavigationFicheTerritoriale";
 import { BoutonNavigationRapportDetaille } from "@/components/BoutonNavigationRapportDetaille";
+import { BoutonSyntheseTerritoire } from "@/components/PageAccueil/BoutonSyntheseTerritoire";
 import { BoutonExportDesDonnees } from "@/components/PageAccueil/BoutonExportDesDonnees";
 import { clsxm } from "@/utils/clsxm";
 import { loadAccueilSearchParams } from "@/client/searchParams/accueilSearchParams";
@@ -353,6 +354,10 @@ const ChantierLayout = ({
     api.gestionContenu.recupererVariableContenu.useSuspenseQuery({
       nomVariableContenu: "NEXT_PUBLIC_FF_MON_PROFIL",
     });
+  const [ffAskAI] =
+    api.gestionContenu.recupererVariableContenu.useSuspenseQuery({
+      nomVariableContenu: "NEXT_PUBLIC_FF_ASK_AI",
+    });
 
   const monProfilEstDisponible = variableContenu;
   const doitAfficherModaleRenseignerService =
@@ -453,6 +458,9 @@ const ChantierLayout = ({
               mailleSelectionnee={mailleSelectionnee}
               ministères={ministères}
             />
+            {ffAskAI || session?.profil === ProfilEnum.DITP_ADMIN ? (
+              <BoutonSyntheseTerritoire territoireCode={territoireCode} />
+            ) : null}
           </div>
           <PageChantiers
             avancementsAgrégés={avancementsAgrégés}

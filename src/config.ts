@@ -299,6 +299,11 @@ const config = convict({
       default: false,
       env: "NEXT_PUBLIC_FF_MASQUER_INDICATEURS_NON_APPLICABLES",
     },
+    askAI: {
+      format: Boolean,
+      default: false,
+      env: "NEXT_PUBLIC_FF_ASK_AI",
+    },
   },
   analytics: {
     doc: "Matomo Analytics",
@@ -451,6 +456,14 @@ const config = convict({
       default: "",
       doc: "Si défini, tous les emails sont envoyés à cette adresse au lieu des destinataires réels. Utile pour le debug.",
       env: "BREVO_OVERRIDE_EMAIL_RECIPIENT",
+    },
+  },
+  albert: {
+    apiKey: {
+      format: String,
+      default: "ToBeDefined",
+      doc: "Clé API pour le service Albert (LLM Etalab)",
+      env: "ALBERT_API_KEY",
     },
   },
 });

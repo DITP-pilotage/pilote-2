@@ -106,6 +106,7 @@ export async function proxy(request: NextRequest) {
   const estRoutePublique =
     pathname.startsWith("/api/open-api") ||
     pathname.startsWith("/api/auth") ||
+    pathname.startsWith("/api/test") ||
     pathname.startsWith("/centre-aide-pilote-2") ||
     pathname.startsWith("/centreaide") ||
     pathname.startsWith("/api/admin/cron") ||

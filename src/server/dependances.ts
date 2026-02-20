@@ -56,6 +56,7 @@ import {
   getRapportsHebdomadairesContainer,
   RapportsHebdomadairesDependencies,
 } from "./rapports-hebdomadaires/container";
+import { getAlbertContainer, AlbertDependencies } from "./albert/container";
 
 export type ContainerDependencies = {
   main: AwilixContainer<InitialDependencies>;
@@ -72,6 +73,7 @@ export type ContainerDependencies = {
   habilitationsCoordinateur: AwilixContainer<HabilitationsCoordinateurDependencies>;
   profilUtilisateur: AwilixContainer<ProfilUtilisateurDependencies>;
   rapportsHebdomadaires: AwilixContainer<RapportsHebdomadairesDependencies>;
+  albert: AwilixContainer<AlbertDependencies>;
 };
 
 function registerContainer(): ContainerDependencies {
@@ -120,6 +122,7 @@ function registerContainer(): ContainerDependencies {
     rapportsHebdomadaires: getRapportsHebdomadairesContainer(
       initialContainerWithTransversalDependencies,
     ),
+    albert: getAlbertContainer(initialContainerWithTransversalDependencies),
   };
 }
 
