@@ -9,7 +9,7 @@ Ils sont lancés via le script [run_migration.sh](run_migration.sh) en lui passa
 bash scripts/migration/run_migration.sh scripts/migration/YYYYMMDD-migr-script-name.sql
 ```
 
-## Lancement des scripts dans sur Scalingo
+## Lancement des scripts sur Scalingo
 
 ```
 scalingo --app app-name --region osc-secnum-fr1 run "bash scripts/migration/run_migration.sh scripts/migration/YYYYMMDD-migr-script-name.sql"
