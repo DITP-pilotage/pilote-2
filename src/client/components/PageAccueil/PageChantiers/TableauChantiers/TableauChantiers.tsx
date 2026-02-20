@@ -47,10 +47,7 @@ const TableauChantiers: FunctionComponent<TableauChantiersProps> = ({
           </div>
         </div>
         <div className="flex flex-col md:flex-row gap-4 md:items-center">
-          <div className="flex flex-col">
-            <span>Grouper par</span>
-            <SelecteurGroupementTableauChantier />
-          </div>
+          <SelecteurGroupementTableauChantier />
           <TableauChantiersActionsDeTri />
         </div>
       </div>

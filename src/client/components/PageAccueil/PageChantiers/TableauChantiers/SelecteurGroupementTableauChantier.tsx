@@ -33,13 +33,13 @@ export const SelecteurGroupementTableauChantier = () => {
         value="chantier"
         className="whitespace-nowrap py-2"
       >
-        par chantier
+        Vue par chantier
       </SegmentedControl.Item>
       <SegmentedControl.Item
         value="ministere"
         className="whitespace-nowrap py-2"
       >
-        par ministère
+        Vue par ministère
       </SegmentedControl.Item>
     </SegmentedControl.Root>
   );
