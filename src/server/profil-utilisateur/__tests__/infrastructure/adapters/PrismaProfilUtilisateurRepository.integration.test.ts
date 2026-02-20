@@ -132,7 +132,10 @@ describe("PrismaProfilUtilisateurRepository", () => {
         });
 
         // When
-        await repository.sauvegarder(profilModifie);
+        await repository.sauvegarder({
+          profil: profilModifie,
+          auteurId: utilisateur.id,
+        });
 
         // Then
         const result = await repository.recupererParId(utilisateur.id);
@@ -163,7 +166,10 @@ describe("PrismaProfilUtilisateurRepository", () => {
         });
 
         // When
-        await repository.sauvegarder(profilModifie);
+        await repository.sauvegarder({
+          profil: profilModifie,
+          auteurId: utilisateur.id,
+        });
 
         // Then
         const result = await repository.recupererParId(utilisateur.id);
@@ -194,7 +200,10 @@ describe("PrismaProfilUtilisateurRepository", () => {
         });
 
         // When
-        await repository.sauvegarder(profilModifie);
+        await repository.sauvegarder({
+          profil: profilModifie,
+          auteurId: utilisateur.id,
+        });
 
         // Then
         const result = await repository.recupererParId(utilisateur.id);
@@ -220,7 +229,10 @@ describe("PrismaProfilUtilisateurRepository", () => {
         });
 
         // When
-        await repository.sauvegarder(profil);
+        await repository.sauvegarder({
+          profil: profil,
+          auteurId: nouvelUtilisateurId,
+        });
 
         // Then
         const result = await repository.recupererParId(nouvelUtilisateurId);
