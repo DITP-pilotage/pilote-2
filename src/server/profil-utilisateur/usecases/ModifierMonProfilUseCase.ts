@@ -35,7 +35,10 @@ export class ModifierMonProfilUseCase {
       perimetreMinisteriel: input.perimetreMinisteriel,
     });
 
-    await this.deps.profilUtilisateurRepository.sauvegarder(profilModifie);
+    await this.deps.profilUtilisateurRepository.sauvegarder({
+      profil: profilModifie,
+      auteurId: utilisateurId,
+    });
 
     this.deps.profilModifieSideEffects.executer(profilModifie);
   }

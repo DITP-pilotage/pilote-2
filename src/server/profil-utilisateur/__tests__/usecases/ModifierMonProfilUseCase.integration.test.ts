@@ -154,7 +154,7 @@ describe("ModifierMonProfilUseCase", () => {
     );
 
     it(
-      "met a jour la date de modification",
+      "met a jour la date et l'auteur de modification",
       createIntegrationTest(async (tx) => {
         const dateInitiale = new Date("2024-01-01");
         const utilisateur = await fixtures.utilisateur({
@@ -179,6 +179,9 @@ describe("ModifierMonProfilUseCase", () => {
         expect(utilisateurModifie?.date_modification).not.toEqual(dateInitiale);
         expect(utilisateurModifie?.date_modification.getTime()).toBeGreaterThan(
           dateInitiale.getTime(),
+        );
+        expect(utilisateurModifie?.auteur_id_modification).toStrictEqual(
+          utilisateur.id,
         );
       }),
     );

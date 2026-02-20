@@ -45,9 +45,13 @@ export class PrismaProfilUtilisateurRepository implements ProfilUtilisateurRepos
     };
   }
 
-  async sauvegarder(profil: ProfilUtilisateur): Promise<void> {
+  async sauvegarder(params: {
+    profil: ProfilUtilisateur;
+    auteurId: string;
+  }): Promise<void> {
+    const { profil, auteurId } = params;
     await this.prisma.utilisateur.upsert({
-      where: { id: profil.id },
+      where: { id: params.profil.id },
       update: {
         nom: profil.nom,
         prenom: profil.prenom,
@@ -56,6 +60,7 @@ export class PrismaProfilUtilisateurRepository implements ProfilUtilisateurRepos
         service_autre: profil.serviceAutre,
         perimetre_ministeriel: profil.perimetreMinisteriel,
         date_modification: new Date(),
+        auteur_id_modification: auteurId,
       },
       create: {
         id: profil.id,
@@ -69,6 +74,8 @@ export class PrismaProfilUtilisateurRepository implements ProfilUtilisateurRepos
         date_creation: new Date(),
         date_modification: new Date(),
         profilCode: "DITP_ADMIN",
+        auteur_id_creation: auteurId,
+        auteur_id_modification: auteurId,
       },
     });
   }

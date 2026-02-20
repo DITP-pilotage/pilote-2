@@ -2,5 +2,8 @@ import { ProfilUtilisateur } from "@/server/profil-utilisateur/domain/ProfilUtil
 
 export interface ProfilUtilisateurRepository {
   recupererParId(utilisateurId: string): Promise<ProfilUtilisateur>;
-  sauvegarder(profil: ProfilUtilisateur): Promise<void>;
+  sauvegarder(params: {
+    profil: ProfilUtilisateur;
+    auteurId: string;
+  }): Promise<void>;
 }
