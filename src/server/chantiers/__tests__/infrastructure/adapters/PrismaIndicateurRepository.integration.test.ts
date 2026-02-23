@@ -1,3 +1,4 @@
+import { $Enums } from "@prisma/client";
 import { PrismaIndicateurRepository } from "@/server/chantiers/infrastructure/adapters/PrismaIndicateurRepository";
 import { EvenementValeurEnum } from "@/server/app/domain/EvenementValeurEnum";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
@@ -6599,5 +6600,727 @@ describe("PrismaIndicateurRepository", () => {
         expect(result.size).toEqual(0);
       }),
     );
+  });
+
+  describe("#recupererPourExports", () => {
+    const CHANTIER_ID = "CH-001";
+
+    describe("filtrage", () => {
+      it(
+        "doit exclure les indicateurs supprimés",
+        createIntegrationTest(async () => {
+          // Given
+          await fixtures.chantierIdentite({
+            id: CHANTIER_ID,
+            ministeres: ["MINEDU"],
+          });
+          await fixtures.chantierTerritoire({
+            id: CHANTIER_ID,
+            territoire_code: "NAT-FR",
+            code_insee: "FR",
+            maille: "NAT",
+            zone_id: "FRANCE",
+            est_applicable: true,
+          });
+          const indicateur = await fixtures.indicateurIdentite({
+            chantier_id: CHANTIER_ID,
+            statut: $Enums.type_statut_indicateur.SUPPRIME,
+          });
+          await fixtures.indicateurTerritoire({
+            id: indicateur.id,
+            chantier_id: CHANTIER_ID,
+            territoire_code: "NAT-FR",
+            code_insee: "FR",
+            maille: "NAT",
+            zone_id: "FRANCE",
+          });
+
+          // When
+          const result = await prismaIndicateurRepository.recupererPourExports(
+            CHANTIER_ID,
+            ["NAT-FR"],
+            2025,
+            2025,
+          );
+
+          // Then
+          expect(result).toEqual([]);
+        }),
+      );
+
+      it(
+        "doit exclure les indicateurs dont le chantier n'a aucun ministère",
+        createIntegrationTest(async () => {
+          // Given
+          await fixtures.chantierIdentite({ id: CHANTIER_ID, ministeres: [] });
+          await fixtures.chantierTerritoire({
+            id: CHANTIER_ID,
+            territoire_code: "NAT-FR",
+            code_insee: "FR",
+            maille: "NAT",
+            zone_id: "FRANCE",
+            est_applicable: true,
+          });
+          const indicateur = await fixtures.indicateurIdentite({
+            chantier_id: CHANTIER_ID,
+          });
+          await fixtures.indicateurTerritoire({
+            id: indicateur.id,
+            chantier_id: CHANTIER_ID,
+            territoire_code: "NAT-FR",
+            code_insee: "FR",
+            maille: "NAT",
+            zone_id: "FRANCE",
+          });
+
+          // When
+          const result = await prismaIndicateurRepository.recupererPourExports(
+            CHANTIER_ID,
+            ["NAT-FR"],
+            2025,
+            2025,
+          );
+
+          // Then
+          expect(result).toEqual([]);
+        }),
+      );
+
+      it(
+        "doit exclure les indicateurs dont le chantier_territoire n'est pas applicable",
+        createIntegrationTest(async () => {
+          // Given
+          await fixtures.chantierIdentite({
+            id: CHANTIER_ID,
+            ministeres: ["MINEDU"],
+          });
+          await fixtures.chantierTerritoire({
+            id: CHANTIER_ID,
+            territoire_code: "NAT-FR",
+            code_insee: "FR",
+            maille: "NAT",
+            zone_id: "FRANCE",
+            est_applicable: false,
+          });
+          const indicateur = await fixtures.indicateurIdentite({
+            chantier_id: CHANTIER_ID,
+          });
+          await fixtures.indicateurTerritoire({
+            id: indicateur.id,
+            chantier_id: CHANTIER_ID,
+            territoire_code: "NAT-FR",
+            code_insee: "FR",
+            maille: "NAT",
+            zone_id: "FRANCE",
+          });
+
+          // When
+          const result = await prismaIndicateurRepository.recupererPourExports(
+            CHANTIER_ID,
+            ["NAT-FR"],
+            2025,
+            2025,
+          );
+
+          // Then
+          expect(result).toEqual([]);
+        }),
+      );
+
+      it(
+        "doit exclure les indicateurs dont le territoire_code n'est pas dans territoireCodesLecture",
+        createIntegrationTest(async () => {
+          // Given
+          await fixtures.chantierIdentite({
+            id: CHANTIER_ID,
+            ministeres: ["MINEDU"],
+          });
+          await fixtures.chantierTerritoire({
+            id: CHANTIER_ID,
+            territoire_code: "NAT-FR",
+            code_insee: "FR",
+            maille: "NAT",
+            zone_id: "FRANCE",
+            est_applicable: true,
+          });
+          const indicateur = await fixtures.indicateurIdentite({
+            chantier_id: CHANTIER_ID,
+          });
+          await fixtures.indicateurTerritoire({
+            id: indicateur.id,
+            chantier_id: CHANTIER_ID,
+            territoire_code: "NAT-FR",
+            code_insee: "FR",
+            maille: "NAT",
+            zone_id: "FRANCE",
+          });
+
+          // When : seul REG-84 est demandé, NAT-FR ne doit pas apparaître
+          const result = await prismaIndicateurRepository.recupererPourExports(
+            CHANTIER_ID,
+            ["REG-84"],
+            2025,
+            2025,
+          );
+
+          // Then
+          expect(result).toEqual([]);
+        }),
+      );
+    });
+
+    describe("données du jalon", () => {
+      it(
+        "doit retourner les valeurs (actuelle, cible, taux) correspondant au jalon spécifié",
+        createIntegrationTest(async () => {
+          // Given
+          await fixtures.chantierIdentite({
+            id: CHANTIER_ID,
+            ministeres: ["MINEDU"],
+          });
+          await fixtures.chantierTerritoire({
+            id: CHANTIER_ID,
+            territoire_code: "NAT-FR",
+            code_insee: "FR",
+            maille: "NAT",
+            zone_id: "FRANCE",
+            est_applicable: true,
+          });
+          const indicateur = await fixtures.indicateurIdentite({
+            chantier_id: CHANTIER_ID,
+          });
+          await fixtures.indicateurTerritoire({
+            id: indicateur.id,
+            chantier_id: CHANTIER_ID,
+            territoire_code: "NAT-FR",
+            code_insee: "FR",
+            maille: "NAT",
+            zone_id: "FRANCE",
+          });
+          // Jalon 2024 — ne doit pas apparaître dans le résultat
+          await fixtures.indicateurTerritoireJalon({
+            id: indicateur.id,
+            territoire_code: "NAT-FR",
+            jalon: 2024,
+            valeur_actuelle: 10,
+            valeur_cible: 90,
+            taux_avancement: 11,
+          });
+          // Jalon 2025 — attendu dans le résultat
+          await fixtures.indicateurTerritoireJalon({
+            id: indicateur.id,
+            territoire_code: "NAT-FR",
+            jalon: 2025,
+            valeur_actuelle: 80,
+            date_valeur_actuelle: new Date("2025-06-01"),
+            valeur_cible: 100,
+            date_valeur_cible: new Date("2025-12-31"),
+            taux_avancement: 75,
+          });
+
+          // When
+          const result = await prismaIndicateurRepository.recupererPourExports(
+            CHANTIER_ID,
+            ["NAT-FR"],
+            2025,
+            2025,
+          );
+
+          // Then
+          expect(result).toEqual([
+            expect.objectContaining({
+              valeurAvancement: 80,
+              dateValeurAvancement: new Date("2025-06-01").toISOString(),
+              valeurCible: 100,
+              dateValeurCible: new Date("2025-12-31").toISOString(),
+              avancement: 75,
+            }),
+          ]);
+        }),
+      );
+
+      it(
+        "doit retourner des valeurs null quand aucun enregistrement n'existe pour le jalon demandé",
+        createIntegrationTest(async () => {
+          // Given : aucun indicateur_territoire_jalon créé pour le jalon 2026
+          await fixtures.chantierIdentite({
+            id: CHANTIER_ID,
+            ministeres: ["MINEDU"],
+          });
+          await fixtures.chantierTerritoire({
+            id: CHANTIER_ID,
+            territoire_code: "NAT-FR",
+            code_insee: "FR",
+            maille: "NAT",
+            zone_id: "FRANCE",
+            est_applicable: true,
+          });
+          const indicateur = await fixtures.indicateurIdentite({
+            chantier_id: CHANTIER_ID,
+          });
+          await fixtures.indicateurTerritoire({
+            id: indicateur.id,
+            chantier_id: CHANTIER_ID,
+            territoire_code: "NAT-FR",
+            code_insee: "FR",
+            maille: "NAT",
+            zone_id: "FRANCE",
+          });
+
+          // When
+          const result = await prismaIndicateurRepository.recupererPourExports(
+            CHANTIER_ID,
+            ["NAT-FR"],
+            2026,
+            2025,
+          );
+
+          // Then
+          expect(result).toEqual([
+            expect.objectContaining({
+              valeurAvancement: null,
+              dateValeurAvancement: null,
+              valeurCible: null,
+              dateValeurCible: null,
+              avancement: null,
+            }),
+          ]);
+        }),
+      );
+
+      it(
+        "doit retourner le taux d'avancement chantier du jalon sélectionné et du jalon par défaut séparément",
+        createIntegrationTest(async () => {
+          // Given
+          await fixtures.chantierIdentite({
+            id: CHANTIER_ID,
+            ministeres: ["MINEDU"],
+          });
+          await fixtures.chantierTerritoire({
+            id: CHANTIER_ID,
+            territoire_code: "NAT-FR",
+            code_insee: "FR",
+            maille: "NAT",
+            zone_id: "FRANCE",
+            est_applicable: true,
+          });
+          const indicateur = await fixtures.indicateurIdentite({
+            chantier_id: CHANTIER_ID,
+          });
+          await fixtures.indicateurTerritoire({
+            id: indicateur.id,
+            chantier_id: CHANTIER_ID,
+            territoire_code: "NAT-FR",
+            code_insee: "FR",
+            maille: "NAT",
+            zone_id: "FRANCE",
+          });
+          // jalon par défaut 2025 → taux 60
+          await fixtures.chantierTerritoireJalon({
+            id: CHANTIER_ID,
+            territoire_code: "NAT-FR",
+            code_insee: "FR",
+            maille: "NAT",
+            zone_id: "FRANCE",
+            jalon: 2025,
+            taux_avancement: 60,
+          });
+          // jalon sélectionné 2026 → taux 80
+          await fixtures.chantierTerritoireJalon({
+            id: CHANTIER_ID,
+            territoire_code: "NAT-FR",
+            code_insee: "FR",
+            maille: "NAT",
+            zone_id: "FRANCE",
+            jalon: 2026,
+            taux_avancement: 80,
+          });
+
+          // When
+          const result = await prismaIndicateurRepository.recupererPourExports(
+            CHANTIER_ID,
+            ["NAT-FR"],
+            2026,
+            2025,
+          );
+
+          // Then
+          expect(result).toEqual([
+            expect.objectContaining({
+              chantierAvancement: 80,
+              chantierAvancementJalonParDefaut: 60,
+            }),
+          ]);
+        }),
+      );
+    });
+
+    describe("chantierAUnePropositionValeurAvancement", () => {
+      it(
+        "doit être true pour une maille DEPT avec des propositions de valeur d'avancement",
+        createIntegrationTest(async () => {
+          // Given
+          await fixtures.chantierIdentite({
+            id: CHANTIER_ID,
+            ministeres: ["MINEDU"],
+          });
+          await fixtures.chantierTerritoire({
+            id: CHANTIER_ID,
+            territoire_code: "DEPT-01",
+            code_insee: "01",
+            maille: "DEPT",
+            zone_id: "D01",
+            est_applicable: true,
+            nombre_propositions_valeur_actuelle: 2,
+          });
+          const indicateur = await fixtures.indicateurIdentite({
+            chantier_id: CHANTIER_ID,
+          });
+          await fixtures.indicateurTerritoire({
+            id: indicateur.id,
+            chantier_id: CHANTIER_ID,
+            territoire_code: "DEPT-01",
+            code_insee: "01",
+            maille: "DEPT",
+            zone_id: "D01",
+          });
+
+          // When
+          const result = await prismaIndicateurRepository.recupererPourExports(
+            CHANTIER_ID,
+            ["DEPT-01"],
+            2025,
+            2025,
+          );
+
+          // Then
+          expect(result).toEqual([
+            expect.objectContaining({
+              chantierAUnePropositionValeurAvancement: true,
+            }),
+          ]);
+        }),
+      );
+
+      it(
+        "doit être false pour une maille DEPT sans proposition de valeur d'avancement",
+        createIntegrationTest(async () => {
+          // Given
+          await fixtures.chantierIdentite({
+            id: CHANTIER_ID,
+            ministeres: ["MINEDU"],
+          });
+          await fixtures.chantierTerritoire({
+            id: CHANTIER_ID,
+            territoire_code: "DEPT-01",
+            code_insee: "01",
+            maille: "DEPT",
+            zone_id: "D01",
+            est_applicable: true,
+            nombre_propositions_valeur_actuelle: 0,
+          });
+          const indicateur = await fixtures.indicateurIdentite({
+            chantier_id: CHANTIER_ID,
+          });
+          await fixtures.indicateurTerritoire({
+            id: indicateur.id,
+            chantier_id: CHANTIER_ID,
+            territoire_code: "DEPT-01",
+            code_insee: "01",
+            maille: "DEPT",
+            zone_id: "D01",
+          });
+
+          // When
+          const result = await prismaIndicateurRepository.recupererPourExports(
+            CHANTIER_ID,
+            ["DEPT-01"],
+            2025,
+            2025,
+          );
+
+          // Then
+          expect(result).toEqual([
+            expect.objectContaining({
+              chantierAUnePropositionValeurAvancement: false,
+            }),
+          ]);
+        }),
+      );
+
+      it(
+        "doit être true pour une maille REG dont un département enfant a des propositions",
+        createIntegrationTest(async () => {
+          // Given : REG-84 sans propositions, DEPT-01 (enfant de REG-84) avec propositions
+          await fixtures.chantierIdentite({
+            id: CHANTIER_ID,
+            ministeres: ["MINEDU"],
+          });
+          await fixtures.chantierTerritoire({
+            id: CHANTIER_ID,
+            territoire_code: "REG-84",
+            code_insee: "84",
+            maille: "REG",
+            zone_id: "R84",
+            est_applicable: true,
+            nombre_propositions_valeur_actuelle: 0,
+          });
+          await fixtures.chantierTerritoire({
+            id: CHANTIER_ID,
+            territoire_code: "DEPT-01",
+            code_insee: "01",
+            maille: "DEPT",
+            zone_id: "D01",
+            est_applicable: true,
+            nombre_propositions_valeur_actuelle: 1,
+          });
+          const indicateur = await fixtures.indicateurIdentite({
+            chantier_id: CHANTIER_ID,
+          });
+          await fixtures.indicateurTerritoire({
+            id: indicateur.id,
+            chantier_id: CHANTIER_ID,
+            territoire_code: "REG-84",
+            code_insee: "84",
+            maille: "REG",
+            zone_id: "R84",
+          });
+
+          // When
+          const result = await prismaIndicateurRepository.recupererPourExports(
+            CHANTIER_ID,
+            ["REG-84"],
+            2025,
+            2025,
+          );
+
+          // Then
+          expect(result).toEqual([
+            expect.objectContaining({
+              chantierAUnePropositionValeurAvancement: true,
+            }),
+          ]);
+        }),
+      );
+
+      it(
+        "doit être true pour une maille NAT quand n'importe quel territoire du chantier a des propositions",
+        createIntegrationTest(async () => {
+          // Given : NAT-FR sans propositions, DEPT-01 avec propositions
+          await fixtures.chantierIdentite({
+            id: CHANTIER_ID,
+            ministeres: ["MINEDU"],
+          });
+          await fixtures.chantierTerritoire({
+            id: CHANTIER_ID,
+            territoire_code: "NAT-FR",
+            code_insee: "FR",
+            maille: "NAT",
+            zone_id: "FRANCE",
+            est_applicable: true,
+            nombre_propositions_valeur_actuelle: 0,
+          });
+          await fixtures.chantierTerritoire({
+            id: CHANTIER_ID,
+            territoire_code: "DEPT-01",
+            code_insee: "01",
+            maille: "DEPT",
+            zone_id: "D01",
+            est_applicable: true,
+            nombre_propositions_valeur_actuelle: 1,
+          });
+          const indicateur = await fixtures.indicateurIdentite({
+            chantier_id: CHANTIER_ID,
+          });
+          await fixtures.indicateurTerritoire({
+            id: indicateur.id,
+            chantier_id: CHANTIER_ID,
+            territoire_code: "NAT-FR",
+            code_insee: "FR",
+            maille: "NAT",
+            zone_id: "FRANCE",
+          });
+
+          // When
+          const result = await prismaIndicateurRepository.recupererPourExports(
+            CHANTIER_ID,
+            ["NAT-FR"],
+            2025,
+            2025,
+          );
+
+          // Then
+          expect(result).toEqual([
+            expect.objectContaining({
+              chantierAUnePropositionValeurAvancement: true,
+            }),
+          ]);
+        }),
+      );
+    });
+
+    describe("chantierAUnTauxAvancementDepartemental", () => {
+      it(
+        "doit être true si aucun département applicable n'existe pour le chantier",
+        createIntegrationTest(async () => {
+          // Given : DEPT-01 non applicable
+          await fixtures.chantierIdentite({
+            id: CHANTIER_ID,
+            ministeres: ["MINEDU"],
+          });
+          await fixtures.chantierTerritoire({
+            id: CHANTIER_ID,
+            territoire_code: "NAT-FR",
+            code_insee: "FR",
+            maille: "NAT",
+            zone_id: "FRANCE",
+            est_applicable: true,
+          });
+          await fixtures.chantierTerritoire({
+            id: CHANTIER_ID,
+            territoire_code: "DEPT-01",
+            code_insee: "01",
+            maille: "DEPT",
+            zone_id: "D01",
+            est_applicable: false,
+            taux_avancement_mandat: null,
+          });
+          const indicateur = await fixtures.indicateurIdentite({
+            chantier_id: CHANTIER_ID,
+          });
+          await fixtures.indicateurTerritoire({
+            id: indicateur.id,
+            chantier_id: CHANTIER_ID,
+            territoire_code: "NAT-FR",
+            code_insee: "FR",
+            maille: "NAT",
+            zone_id: "FRANCE",
+          });
+
+          // When
+          const result = await prismaIndicateurRepository.recupererPourExports(
+            CHANTIER_ID,
+            ["NAT-FR"],
+            2025,
+            2025,
+          );
+
+          // Then
+          expect(result).toEqual([
+            expect.objectContaining({
+              chantierAUnTauxAvancementDepartemental: true,
+            }),
+          ]);
+        }),
+      );
+
+      it(
+        "doit être true si au moins un département applicable possède un taux d'avancement non null",
+        createIntegrationTest(async () => {
+          // Given
+          await fixtures.chantierIdentite({
+            id: CHANTIER_ID,
+            ministeres: ["MINEDU"],
+          });
+          await fixtures.chantierTerritoire({
+            id: CHANTIER_ID,
+            territoire_code: "NAT-FR",
+            code_insee: "FR",
+            maille: "NAT",
+            zone_id: "FRANCE",
+            est_applicable: true,
+          });
+          await fixtures.chantierTerritoire({
+            id: CHANTIER_ID,
+            territoire_code: "DEPT-01",
+            code_insee: "01",
+            maille: "DEPT",
+            zone_id: "D01",
+            est_applicable: true,
+            taux_avancement_mandat: 50,
+          });
+          const indicateur = await fixtures.indicateurIdentite({
+            chantier_id: CHANTIER_ID,
+          });
+          await fixtures.indicateurTerritoire({
+            id: indicateur.id,
+            chantier_id: CHANTIER_ID,
+            territoire_code: "NAT-FR",
+            code_insee: "FR",
+            maille: "NAT",
+            zone_id: "FRANCE",
+          });
+
+          // When
+          const result = await prismaIndicateurRepository.recupererPourExports(
+            CHANTIER_ID,
+            ["NAT-FR"],
+            2025,
+            2025,
+          );
+
+          // Then
+          expect(result).toEqual([
+            expect.objectContaining({
+              chantierAUnTauxAvancementDepartemental: true,
+            }),
+          ]);
+        }),
+      );
+
+      it(
+        "doit être false si tous les départements applicables ont un taux d'avancement null",
+        createIntegrationTest(async () => {
+          // Given
+          await fixtures.chantierIdentite({
+            id: CHANTIER_ID,
+            ministeres: ["MINEDU"],
+          });
+          await fixtures.chantierTerritoire({
+            id: CHANTIER_ID,
+            territoire_code: "NAT-FR",
+            code_insee: "FR",
+            maille: "NAT",
+            zone_id: "FRANCE",
+            est_applicable: true,
+          });
+          await fixtures.chantierTerritoire({
+            id: CHANTIER_ID,
+            territoire_code: "DEPT-01",
+            code_insee: "01",
+            maille: "DEPT",
+            zone_id: "D01",
+            est_applicable: true,
+            taux_avancement_mandat: null,
+          });
+          const indicateur = await fixtures.indicateurIdentite({
+            chantier_id: CHANTIER_ID,
+          });
+          await fixtures.indicateurTerritoire({
+            id: indicateur.id,
+            chantier_id: CHANTIER_ID,
+            territoire_code: "NAT-FR",
+            code_insee: "FR",
+            maille: "NAT",
+            zone_id: "FRANCE",
+          });
+
+          // When
+          const result = await prismaIndicateurRepository.recupererPourExports(
+            CHANTIER_ID,
+            ["NAT-FR"],
+            2025,
+            2025,
+          );
+
+          // Then
+          expect(result).toEqual([
+            expect.objectContaining({
+              chantierAUnTauxAvancementDepartemental: false,
+            }),
+          ]);
+        }),
+      );
+    });
   });
 });

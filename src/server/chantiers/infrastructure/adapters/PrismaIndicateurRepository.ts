@@ -127,6 +127,7 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
     chantierId: string,
     territoireCodesLecture: string[],
     jalon: number,
+    jalonParDefaut: number,
     estAvecCadrage: boolean = false,
   ): Promise<IndicateurPourExport[]> {
     const listeChantierTerritoires =
@@ -244,9 +245,7 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
             chantier_territoire_jalon: {
               select: {
                 taux_avancement: true,
-              },
-              where: {
-                jalon,
+                jalon: true,
               },
             },
           },
@@ -303,8 +302,12 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
         const indicateurTerritoireJalon =
           indicateurPourExport.indicateur_territoire_jalon.at(0);
         const chantierTerritoireJalon =
-          indicateurPourExport.chantier_territoire.chantier_territoire_jalon.at(
-            0,
+          indicateurPourExport.chantier_territoire.chantier_territoire_jalon.find(
+            (chantier) => chantier.jalon === jalon,
+          );
+        const chantierTerritoireJalonParDefaut =
+          indicateurPourExport.chantier_territoire.chantier_territoire_jalon.find(
+            (chantier) => chantier.jalon === jalonParDefaut,
           );
 
         const prismaChantierTerritoire =
@@ -406,11 +409,11 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
           chantierEstTerritorialise:
             indicateurPourExport.indicateur_identite.chantier_identite
               .est_territorialise,
-          chantierAvancementGlobal: verifyValeurIsNotNullOrUndefined(
-            indicateurPourExport.chantier_territoire.taux_avancement_mandat,
-          ),
-          chantierAvancementAnnuel: verifyValeurIsNotNullOrUndefined(
+          chantierAvancement: verifyValeurIsNotNullOrUndefined(
             chantierTerritoireJalon?.taux_avancement,
+          ),
+          chantierAvancementJalonParDefaut: verifyValeurIsNotNullOrUndefined(
+            chantierTerritoireJalonParDefaut?.taux_avancement,
           ),
           périmètreIds:
             indicateurPourExport.indicateur_identite.chantier_identite
@@ -426,19 +429,14 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
           dateValeurAvancement:
             indicateurTerritoireJalon?.date_valeur_actuelle?.toISOString() ||
             null,
-          valeurCibleAnnuelle: verifyValeurIsNotNullOrUndefined(
+          valeurCible: verifyValeurIsNotNullOrUndefined(
             indicateurTerritoireJalon?.valeur_cible,
           ),
-          dateValeurCibleAnnuelle:
+          dateValeurCible:
             indicateurTerritoireJalon?.date_valeur_cible?.toISOString() || null,
-          avancementAnnuel: verifyValeurIsNotNullOrUndefined(
+          avancement: verifyValeurIsNotNullOrUndefined(
             indicateurTerritoireJalon?.taux_avancement,
           ),
-          valeurCible: indicateurPourExport.valeur_cible_mandat,
-          dateValeurCible:
-            indicateurPourExport.date_valeur_cible_mandat?.toISOString() ||
-            null,
-          avancementGlobal: indicateurPourExport.taux_avancement_mandat,
           maillesApplicables:
             indicateurPourExport.indicateur_identite.mailles_applicables,
           estApplicable: indicateurPourExport.est_applicable,

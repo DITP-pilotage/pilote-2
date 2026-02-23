@@ -1,7 +1,6 @@
 import { Prisma, type_objectif, type_statut } from "@prisma/client";
 import { ChantierRepository } from "@/server/chantiers/domain/ports/ChantierRepository";
 import { DonneeChantier } from "@/server/chantiers/domain/DonneeChantier";
-import { prisma } from "@/server/db/prisma";
 import { Météo } from "@/server/domain/météo/Météo.interface";
 import { OptionsExport } from "@/server/usecase/chantier/OptionsExport";
 import { verifyValeurIsNotNullOrUndefined } from "@/server/utils/VerifyValeurIsNotNullOrUndefined";
@@ -17,6 +16,7 @@ import { FiltreQueryParams } from "@/server/chantiers/app/contrats/FiltreQueryPa
 import { PrismaChantier } from "@/server/chantiers/domain/PrismaChantier";
 import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
 import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
+import { getInitialContainerWithTransversalDependencies } from "@/server/InitialDependencies";
 
 class ErreurChantierNonTrouvé extends Error {
   constructor(idChantier: string) {
@@ -33,11 +33,18 @@ class ErreurChantierPermission extends Error {
 }
 
 export class PrismaChantierRepository implements ChantierRepository {
+  private prismaClient =
+    getInitialContainerWithTransversalDependencies().resolve("prisma");
+
+  get prisma() {
+    return this.prismaClient.getInstance();
+  }
+
   async récupérerDonneesChantier(
     chantierId: string,
     territoireCodesLecture: string[],
   ): Promise<DonneeChantier[]> {
-    const chantierIds = await prisma.chantier_identite.findMany({
+    const chantierIds = await this.prisma.chantier_identite.findMany({
       where: {
         id: chantierId,
         NOT: [
@@ -52,8 +59,8 @@ export class PrismaChantierRepository implements ChantierRepository {
       distinct: ["id"],
     });
 
-    const listePrismaChantierIdentite = await prisma.chantier_identite.findMany(
-      {
+    const listePrismaChantierIdentite =
+      await this.prisma.chantier_identite.findMany({
         where: {
           id: { in: chantierIds.map((chantier) => chantier.id) },
         },
@@ -73,8 +80,7 @@ export class PrismaChantierRepository implements ChantierRepository {
           },
         },
         orderBy: { id: "asc" },
-      },
-    );
+      });
 
     const resultChantierIds = listePrismaChantierIdentite.map(
       (chantier) => chantier.id,
@@ -111,7 +117,7 @@ export class PrismaChantierRepository implements ChantierRepository {
       mapAFaire,
     ] = await Promise.all([
       ...listeTypesCommentaires.map((typeCommentaire) =>
-        prisma.chantier_territoire
+        this.prisma.chantier_territoire
           .findMany({
             where: {
               id: { in: resultChantierIds },
@@ -139,7 +145,7 @@ export class PrismaChantierRepository implements ChantierRepository {
               ),
           ),
       ),
-      prisma.chantier_territoire
+      this.prisma.chantier_territoire
         .findMany({
           where: {
             id: { in: resultChantierIds },
@@ -164,7 +170,7 @@ export class PrismaChantierRepository implements ChantierRepository {
               ]),
             ),
         ),
-      prisma.chantier_territoire
+      this.prisma.chantier_territoire
         .findMany({
           where: {
             id: { in: resultChantierIds },
@@ -189,7 +195,7 @@ export class PrismaChantierRepository implements ChantierRepository {
             ),
         ),
       ...listeTypesDecisionsStrategiques.map((typeDecisionStrategique) =>
-        prisma.chantier_identite
+        this.prisma.chantier_identite
           .findMany({
             where: {
               id: { in: resultChantierIds },
@@ -218,7 +224,7 @@ export class PrismaChantierRepository implements ChantierRepository {
           ),
       ),
       ...listeTypesObjectifs.map((typeObjectif) =>
-        prisma.chantier_identite
+        this.prisma.chantier_identite
           .findMany({
             where: {
               id: { in: resultChantierIds },
@@ -412,7 +418,7 @@ export class PrismaChantierRepository implements ChantierRepository {
       throw new ErreurChantierPermission(id);
     }
 
-    const chantier = await prisma.chantier_identite.findUnique({
+    const chantier = await this.prisma.chantier_identite.findUnique({
       where: {
         id,
       },
@@ -449,31 +455,32 @@ export class PrismaChantierRepository implements ChantierRepository {
     optionsExport: OptionsExport,
     jalon: number,
   ): Promise<ChantierPourExport[] | null> {
-    const prismaChantierIdentite = await prisma.chantier_identite.findUnique({
-      where: {
-        id: chantierIdsLecture,
-        NOT: [
-          {
-            ministeres: { isEmpty: true },
-          },
-        ],
-      },
-      include: {
-        chantier_territoire: {
-          where: {
-            est_applicable: true,
-          },
-          include: {
-            territoire: true,
-            chantier_territoire_jalon: {
-              where: {
-                jalon,
+    const prismaChantierIdentite =
+      await this.prisma.chantier_identite.findUnique({
+        where: {
+          id: chantierIdsLecture,
+          NOT: [
+            {
+              ministeres: { isEmpty: true },
+            },
+          ],
+        },
+        include: {
+          chantier_territoire: {
+            where: {
+              est_applicable: true,
+            },
+            include: {
+              territoire: true,
+              chantier_territoire_jalon: {
+                where: {
+                  jalon,
+                },
               },
             },
           },
         },
-      },
-    });
+      });
 
     if (!prismaChantierIdentite) {
       return null;
@@ -505,7 +512,7 @@ export class PrismaChantierRepository implements ChantierRepository {
     ] = optionsExport.listeOptionsExport.includes("commentaire")
       ? await Promise.all(
           listeTypesCommentaires.map((typeCommentaire) =>
-            prisma.chantier_territoire
+            this.prisma.chantier_territoire
               .findMany({
                 where: {
                   id: chantierIdsLecture,
@@ -539,7 +546,7 @@ export class PrismaChantierRepository implements ChantierRepository {
     const [mapSynthesesDesResultats] =
       optionsExport.listeOptionsExport.includes("synthese")
         ? await Promise.all([
-            prisma.chantier_territoire
+            this.prisma.chantier_territoire
               .findMany({
                 where: {
                   id: chantierIdsLecture,
@@ -571,7 +578,7 @@ export class PrismaChantierRepository implements ChantierRepository {
       optionsExport.listeOptionsExport.includes("decision")
         ? await Promise.all([
             ...listeTypesDecisionsStrategiques.map((typeDecisionStrategique) =>
-              prisma.chantier_identite
+              this.prisma.chantier_identite
                 .findMany({
                   where: {
                     id: chantierIdsLecture,
@@ -600,7 +607,7 @@ export class PrismaChantierRepository implements ChantierRepository {
                 ),
             ),
             ...listeTypesObjectifs.map((typeObjectif) =>
-              prisma.chantier_identite
+              this.prisma.chantier_identite
                 .findMany({
                   where: {
                     id: chantierIdsLecture,
@@ -634,7 +641,7 @@ export class PrismaChantierRepository implements ChantierRepository {
       optionsExport.listeOptionsExport.includes("objectif")
         ? await Promise.all([
             ...listeTypesDecisionsStrategiques.map((typeDecisionStrategique) =>
-              prisma.chantier_identite
+              this.prisma.chantier_identite
                 .findMany({
                   where: {
                     id: chantierIdsLecture,
@@ -663,7 +670,7 @@ export class PrismaChantierRepository implements ChantierRepository {
                 ),
             ),
             ...listeTypesObjectifs.map((typeObjectif) =>
-              prisma.chantier_identite
+              this.prisma.chantier_identite
                 .findMany({
                   where: {
                     id: chantierIdsLecture,
@@ -784,24 +791,28 @@ export class PrismaChantierRepository implements ChantierRepository {
                 ? prismaChantierIdentite.ministeres_acronymes[0]
                 : null,
               axe: prismaChantierIdentite.axe,
-              tauxDAvancementAnnuel: verifyValeurIsNotNullOrUndefined(
+              tauxDAvancement: verifyValeurIsNotNullOrUndefined(
                 prismaChantierTerritoire.chantier_territoire_jalon.at(0)
                   ?.taux_avancement,
               ),
               tauxDAvancementNational: verifyValeurIsNotNullOrUndefined(
-                prismaChantierTerritoireNat.taux_avancement_mandat,
+                prismaChantierTerritoireNat.chantier_territoire_jalon.at(0)
+                  ?.taux_avancement,
               ),
               tauxDAvancementRégional:
                 prismaChantierTerritoire.maille === "REG" ||
                 prismaChantierTerritoire.maille === "DEPT"
                   ? verifyValeurIsNotNullOrUndefined(
-                      prismaChantierTerritoireReg.taux_avancement_mandat,
+                      prismaChantierTerritoireReg.chantier_territoire_jalon.at(
+                        0,
+                      )?.taux_avancement,
                     )
                   : null,
               tauxDAvancementDépartemental:
                 prismaChantierTerritoire.maille === "DEPT"
                   ? verifyValeurIsNotNullOrUndefined(
-                      prismaChantierTerritoire.taux_avancement_mandat,
+                      prismaChantierTerritoire.chantier_territoire_jalon.at(0)
+                        ?.taux_avancement,
                     )
                   : null,
               périmètreIds: prismaChantierIdentite.perimetre_ids,
@@ -1029,7 +1040,7 @@ export class PrismaChantierRepository implements ChantierRepository {
       }
     }
 
-    const chantiers = await prisma.chantier_identite.findMany({
+    const chantiers = await this.prisma.chantier_identite.findMany({
       distinct: ["id"],
       where: {
         id: { in: listeChantierId },
@@ -1050,7 +1061,7 @@ export class PrismaChantierRepository implements ChantierRepository {
     indicId: string;
   }): Promise<RapportDirecteurProjetChantierInformation> {
     const propositionValeurAvancementChantierInformation =
-      await prisma.indicateur_identite.findUnique({
+      await this.prisma.indicateur_identite.findUnique({
         where: {
           id: indicId,
         },
@@ -1086,19 +1097,20 @@ export class PrismaChantierRepository implements ChantierRepository {
   }: {
     listeChantiersIds: string[];
   }): Promise<RapportDirecteurProjetChantierInformation[]> {
-    const listeChantiersInformations = await prisma.chantier_identite.findMany({
-      where: {
-        id: {
-          in: listeChantiersIds,
+    const listeChantiersInformations =
+      await this.prisma.chantier_identite.findMany({
+        where: {
+          id: {
+            in: listeChantiersIds,
+          },
         },
-      },
-      select: {
-        id: true,
-        nom: true,
-        statut: true,
-        conseiller_mail: true,
-      },
-    });
+        select: {
+          id: true,
+          nom: true,
+          statut: true,
+          conseiller_mail: true,
+        },
+      });
 
     return listeChantiersInformations.map((chantierInformation) => ({
       id: chantierInformation.id,
@@ -1209,7 +1221,7 @@ export class PrismaChantierRepository implements ChantierRepository {
         filtres.valeurDeLaRecherche.toLowerCase(),
       );
 
-      chantierIds = await prisma
+      chantierIds = await this.prisma
         .$queryRawUnsafe<
           { id: string }[]
         >("SELECT distinct(id) FROM chantier_identite where (LOWER(unaccent(nom)) ILIKE $1 OR LOWER(unaccent(id)) ILIKE $1)", `%${testLower}%`)
@@ -1221,7 +1233,7 @@ export class PrismaChantierRepository implements ChantierRepository {
     }
 
     if (filtres.meteos?.length > 0) {
-      chantierIds = await prisma.chantier_territoire
+      chantierIds = await this.prisma.chantier_territoire
         .findMany({
           where: {
             id: { in: chantierIds },
@@ -1238,7 +1250,7 @@ export class PrismaChantierRepository implements ChantierRepository {
         );
     }
 
-    return prisma.chantier_identite.findMany({
+    return this.prisma.chantier_identite.findMany({
       where: {
         NOT: {
           ministeres: {

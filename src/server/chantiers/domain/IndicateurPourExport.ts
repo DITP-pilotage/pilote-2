@@ -2,10 +2,8 @@ import Ministère from "@/server/domain/ministère/Ministère.interface";
 import Chantier, {
   ChantierTendance,
 } from "@/server/domain/chantier/Chantier.interface";
-import { Avancement } from "@/server/domain/chantier/avancement/Avancement.interface";
 import { Météo } from "@/server/domain/météo/Météo.interface";
 import Indicateur from "@/server/domain/indicateur/Indicateur.interface";
-import { DétailsIndicateur } from "@/server/domain/indicateur/DétailsIndicateur.interface";
 
 export type IndicateurPourExport = {
   maille: string;
@@ -20,21 +18,18 @@ export type IndicateurPourExport = {
   chantierEstBaromètre: Chantier["estBaromètre"] | null;
   chantierEstTerritorialise: Chantier["estTerritorialisé"] | null;
   chantierEstApplicable: boolean | null;
-  chantierAvancementGlobal: Avancement["global"] | null;
-  chantierAvancementAnnuel: Avancement["annuel"] | null;
+  chantierAvancement: number | null;
+  chantierAvancementJalonParDefaut: number | null;
   périmètreIds: string[];
   météo: Météo | null;
   nom: Indicateur["nom"] | null;
-  valeurInitiale: DétailsIndicateur["valeurInitiale"] | null;
-  dateValeurInitiale: DétailsIndicateur["dateValeurInitiale"] | null;
-  valeurAvancement: DétailsIndicateur["valeurAvancement"] | null;
-  dateValeurAvancement: DétailsIndicateur["dateValeurAvancement"] | null;
-  valeurCibleAnnuelle: DétailsIndicateur["valeurCible"] | null;
-  dateValeurCibleAnnuelle: DétailsIndicateur["dateValeurCible"] | null;
-  avancementAnnuel: DétailsIndicateur["avancement"]["global"] | null;
-  valeurCible: DétailsIndicateur["valeurCible"] | null;
-  dateValeurCible: DétailsIndicateur["dateValeurCible"] | null;
-  avancementGlobal: DétailsIndicateur["avancement"]["global"] | null;
+  valeurInitiale: number | null;
+  dateValeurInitiale: string | null;
+  valeurAvancement: number | null;
+  dateValeurAvancement: string | null;
+  valeurCible: number | null;
+  dateValeurCible: string | null;
+  avancement: number | null;
   maillesApplicables: string[];
   estApplicable: boolean | null;
   chantierEcart: number | null;

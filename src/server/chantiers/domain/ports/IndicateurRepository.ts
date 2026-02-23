@@ -20,6 +20,7 @@ export interface IndicateurRepository {
     chantierIdsLecture: string,
     territoireCodesLecture: string[],
     jalon: number,
+    jalonParDefaut: number,
     estAvecCadrage: boolean,
   ): Promise<IndicateurPourExport[]>;
   récupérerHistoriquePourExports(
