@@ -7,10 +7,10 @@ export const Flag1Icon = ({
 }) => (
   <svg className={className} viewBox="0 0 24 24">
     <path
+      fillRule="evenodd"
       clipRule="evenodd"
       d="M12.382 3C12.7607 3.0002 13.1067 3.21427 13.276 3.553L14 5H20C20.5523 5 21 5.44772 21 6V17C21 17.5523 20.5523 18 20 18H13.618C13.2393 17.9998 12.8933 17.7857 12.724 17.447L12 16H5V22H3V3H12.382ZM11.764 5H5V14H13.236L14.236 16H19V7H12.764L11.764 5Z"
       fill={fill}
-      fillRule="evenodd"
     />
   </svg>
 );

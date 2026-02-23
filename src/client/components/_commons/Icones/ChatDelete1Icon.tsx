@@ -7,10 +7,10 @@ export const ChatDelete1Icon = ({
 }) => (
   <svg className={className} viewBox="0 0 24 24">
     <path
+      fillRule="evenodd"
       clipRule="evenodd"
       d="M21 3C21.5523 3 22 3.44772 22 4V18C22 18.5523 21.5523 19 21 19H6.455L2 22.5V4C2 3.44772 2.44772 3 3 3H21ZM20 5H4V18.385L5.763 17H20V5ZM14.475 7.111L15.889 8.525L13.414 11L15.889 13.475L14.475 14.889L12 12.414L9.525 14.89L8.111 13.476L10.586 11L8.11 8.525L9.524 7.111L12 9.586L14.475 7.111Z"
       fill={fill}
-      fillRule="evenodd"
     />
   </svg>
 );

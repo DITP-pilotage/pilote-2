@@ -11,10 +11,10 @@ export const HexagonevalideContourIcon = ({
       fill={fill}
     />
     <path
+      fillRule="evenodd"
       clipRule="evenodd"
       d="M23 12L17.5 21.5H6.5L1 12L6.5 2.5H17.5L23 12ZM3.31055 12L7.65332 19.5H16.3467L20.6895 12L16.3467 4.5H7.65332L3.31055 12Z"
       fill={fill}
-      fillRule="evenodd"
     />
   </svg>
 );

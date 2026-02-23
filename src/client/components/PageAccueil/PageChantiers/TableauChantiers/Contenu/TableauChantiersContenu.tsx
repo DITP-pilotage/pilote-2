@@ -38,7 +38,7 @@ const TableauChantiersContenu: FunctionComponent<
       {tableau.getRowModel().rows.map((row) =>
         row.getIsGrouped() ? (
           <tr
-            className="ligne-ministère not-first:border-t-primary not-first:border-t-2"
+            className="ligne-ministère not-first:border-t-primary not-first:border-t-2 bold"
             key={row.id}
             onClick={() => row.getToggleExpandedHandler()()}
           >
