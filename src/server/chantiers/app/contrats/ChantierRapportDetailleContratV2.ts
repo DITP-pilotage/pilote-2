@@ -15,11 +15,15 @@ import {
 interface TerritoireAvancementRapportDetailleContrat {
   global: number | null;
   annuel: number | null;
+  jalonParDefaut: number | null;
 }
 
 interface TerritoireDonnéeRapportDetailleContrat {
   estApplicable: boolean | null;
-  écart: number | null;
+  ecart: {
+    annuel: number | null;
+    jalonParDefaut: number | null;
+  };
   tendance: "BAISSE" | "HAUSSE" | "STAGNATION" | null;
   dateDeMàjDonnéesQualitatives: string | null;
   dateDeMàjDonnéesQuantitatives: string | null;
@@ -105,11 +109,13 @@ export interface ChantierRapportDetailleContrat {
   dateDeMàjDonnéesQuantitatives: string | null;
   dateDeMàjDonnéesQualitatives: string | null;
   dateTauxAvancementAnnuel: string | null;
-  écart: number | null;
+  ecart: number | null;
+  ecartJalonParDefaut: number | null;
   tendance: "BAISSE" | "HAUSSE" | "STAGNATION" | null;
   météo: Météo;
-  avancementGlobal: TerritoireAvancementRapportDetailleContrat["global"];
-  avancementPrecedent: TerritoireAvancementRapportDetailleContrat["global"];
+  avancement: number | null;
+  avancementJalonParDefaut: number | null;
+  avancementPrecedent: number | null;
   responsableLocalTerritoireSélectionné: ResponsableLocalRapportDetailleContrat[];
   coordinateurTerritorialTerritoireSélectionné: CoordinateurTerritorialRapportDetailleContrat[];
   aUnePropositionsValeurAvancement: boolean;
@@ -127,6 +133,8 @@ class ErreurChantierSansMailleNationale extends Error {
 export function créerDonnéesTerritoiresRapportDetailleNew(
   territoires: Territoire[],
   chantierRows: EntreePrismaChantier[],
+  jalonSelectionne: number,
+  jalonParDefaut: number,
   listeTerritoireEnfant?: Territoire[],
   chantierRowsMailleEnfant?: EntreePrismaChantier[],
 ) {
@@ -154,23 +162,40 @@ export function créerDonnéesTerritoiresRapportDetailleNew(
             (chantier) => chantier.nombre_propositions_valeur_actuelle > 0,
           );
     }
+    const chantierTerritoireJalonSelectionne =
+      chantierRow?.chantier_territoire_jalon.find(
+        (chantier_jalon) => chantier_jalon.jalon === jalonSelectionne,
+      );
+    const chantierTerritoireJalonParDefaut =
+      chantierRow?.chantier_territoire_jalon.find(
+        (chantier_jalon) => chantier_jalon.jalon === jalonParDefaut,
+      );
 
     donnéesTerritoires[t.code] = {
       estApplicable: chantierRow?.est_applicable ?? null,
-      écart: chantierRow?.ecart ?? null,
+      ecart: {
+        annuel: chantierTerritoireJalonSelectionne?.ecart ?? null,
+        jalonParDefaut: chantierTerritoireJalonParDefaut?.ecart ?? null,
+      },
       tendance: chantierRow?.tendance || null,
       dateDeMàjDonnéesQualitatives:
         chantierRow?.derniere_maj_date_qualitative?.toISOString() || null,
       dateDeMàjDonnéesQuantitatives:
-        chantierRow?.date_taux_avancement_mandat?.toISOString() ?? null,
+        chantierTerritoireJalonSelectionne?.date_taux_avancement?.toISOString() ??
+        null,
       dateTauxAvancementAnnuel:
-        chantierRow?.chantier_territoire_jalon
-          .at(0)
-          ?.date_taux_avancement?.toISOString() ?? null,
+        chantierTerritoireJalonSelectionne?.date_taux_avancement?.toISOString() ??
+        null,
       avancement: {
-        annuel:
-          chantierRow?.chantier_territoire_jalon.at(0)?.taux_avancement ?? null,
-        global: chantierRow?.taux_avancement_mandat ?? null,
+        annuel: verifyValeurIsNotNullOrUndefined(
+          chantierTerritoireJalonSelectionne?.taux_avancement,
+        ),
+        jalonParDefaut: verifyValeurIsNotNullOrUndefined(
+          chantierTerritoireJalonParDefaut?.taux_avancement,
+        ),
+        global: verifyValeurIsNotNullOrUndefined(
+          chantierRow?.taux_avancement_mandat,
+        ),
       },
       avancementPrecedent:
         chantierRow?.taux_avancement_mandat_valeur_precedente ?? null,
@@ -203,6 +228,8 @@ export const presenterEnChantierRapportDetaille = (
   ministères: Ministère[],
   territoireCode: string,
   profil: ProfilCode,
+  jalonSelectionne: number,
+  jalonParDefaut: number,
 ): ChantierRapportDetailleContrat => {
   const mailleChantier = territoireCode.startsWith("NAT")
     ? "nationale"
@@ -234,23 +261,30 @@ export const presenterEnChantierRapportDetaille = (
     territoire.code.startsWith("REG"),
   );
 
+  const chantierMailleNationaleJalon =
+    chantierMailleNationale.chantier_territoire_jalon.find(
+      (chantier_jalon) => chantier_jalon.jalon === jalonSelectionne,
+    );
   const newMaille: MailleRapportDetailleContrat = {
     nationale: {
       "NAT-FR":
         profil === ProfilEnum.DROM &&
         !chantierIdentite.perimetre_ids.includes("PER-018")
           ? {
-              avancement: { annuel: null, global: null },
+              avancement: {
+                jalonParDefaut: null,
+                annuel: null,
+                global: null,
+              },
               avancementPrecedent: null,
               météo: "NON_RENSEIGNEE",
-              écart: null,
+              ecart: {
+                annuel: null,
+                jalonParDefaut: null,
+              },
               tendance: chantierMailleNationale.tendance,
-              dateDeMàjDonnéesQualitatives:
-                chantierMailleNationale.derniere_maj_date_qualitative?.toISOString() ??
-                null,
-              dateDeMàjDonnéesQuantitatives:
-                chantierMailleNationale.date_taux_avancement_mandat?.toISOString() ??
-                null,
+              dateDeMàjDonnéesQualitatives: null,
+              dateDeMàjDonnéesQuantitatives: null,
               dateTauxAvancementAnnuel: null,
               estApplicable: chantierMailleNationale.est_applicable,
               responsableLocal: [],
@@ -268,8 +302,15 @@ export const presenterEnChantierRapportDetaille = (
           : {
               avancement: {
                 annuel: verifyValeurIsNotNullOrUndefined(
-                  chantierMailleNationale.chantier_territoire_jalon.at(0)
-                    ?.taux_avancement,
+                  chantierMailleNationale.chantier_territoire_jalon.find(
+                    (chantier_jalon) =>
+                      chantier_jalon.jalon === jalonSelectionne,
+                  )?.taux_avancement,
+                ),
+                jalonParDefaut: verifyValeurIsNotNullOrUndefined(
+                  chantierMailleNationale.chantier_territoire_jalon.find(
+                    (chantier_jalon) => chantier_jalon.jalon === jalonParDefaut,
+                  )?.taux_avancement,
                 ),
                 global: chantierMailleNationale.taux_avancement_mandat,
               },
@@ -278,18 +319,20 @@ export const presenterEnChantierRapportDetaille = (
                 null,
               météo:
                 (chantierMailleNationale?.meteo as Météo) ?? "NON_RENSEIGNEE",
-              écart: null,
+              ecart: {
+                annuel: null,
+                jalonParDefaut: null,
+              },
               tendance: chantierMailleNationale.tendance,
               dateDeMàjDonnéesQualitatives:
                 chantierMailleNationale.derniere_maj_date_qualitative?.toISOString() ??
                 null,
               dateDeMàjDonnéesQuantitatives:
-                chantierMailleNationale.date_taux_avancement_mandat?.toISOString() ??
+                chantierMailleNationaleJalon?.date_taux_avancement?.toISOString() ??
                 null,
               dateTauxAvancementAnnuel:
-                chantierMailleNationale.chantier_territoire_jalon
-                  .at(0)
-                  ?.date_taux_avancement?.toISOString() ?? null,
+                chantierMailleNationaleJalon?.date_taux_avancement?.toISOString() ??
+                null,
               estApplicable: chantierMailleNationale.est_applicable,
               coordinateurTerritorial: [],
               responsableLocal: [],
@@ -307,10 +350,14 @@ export const presenterEnChantierRapportDetaille = (
     departementale: créerDonnéesTerritoiresRapportDetailleNew(
       listeTerritoireDept,
       listeChantiersMailleDépartementale,
+      jalonSelectionne,
+      jalonParDefaut,
     ),
     regionale: créerDonnéesTerritoiresRapportDetailleNew(
       listeTerritoireReg,
       listeChantiersMailleRégionale,
+      jalonSelectionne,
+      jalonParDefaut,
       listeTerritoireDept,
       listeChantiersMailleDépartementale,
     ),
@@ -376,11 +423,14 @@ export const presenterEnChantierRapportDetaille = (
       newMaille[mailleChantier][territoireCode].dateDeMàjDonnéesQualitatives,
     dateTauxAvancementAnnuel:
       newMaille[mailleChantier][territoireCode].dateTauxAvancementAnnuel,
-    écart: newMaille[mailleChantier][territoireCode].écart,
+    ecart: newMaille[mailleChantier][territoireCode].ecart.annuel,
+    ecartJalonParDefaut:
+      newMaille[mailleChantier][territoireCode].ecart.jalonParDefaut,
     tendance: newMaille[mailleChantier][territoireCode].tendance,
     météo: newMaille[mailleChantier][territoireCode].météo,
-    avancementGlobal:
-      newMaille[mailleChantier][territoireCode].avancement.global,
+    avancement: newMaille[mailleChantier][territoireCode].avancement.annuel,
+    avancementJalonParDefaut:
+      newMaille[mailleChantier][territoireCode].avancement.jalonParDefaut,
     avancementPrecedent:
       newMaille[mailleChantier][territoireCode].avancementPrecedent,
     responsableLocalTerritoireSélectionné:
@@ -396,7 +446,10 @@ export const presenterEnChantierRapportDetaille = (
     aUnTauxAvancementDepartemental:
       listeChantiersMailleDepartementaleApplicables.length === 0 ||
       listeChantiersMailleDepartementaleApplicables.some(
-        (chantier) => chantier.taux_avancement_mandat !== null,
+        (chantier) =>
+          chantier.chantier_territoire_jalon.find(
+            (chantier_jalon) => chantier_jalon.jalon === jalonParDefaut,
+          )?.taux_avancement !== null,
       ),
   };
 };

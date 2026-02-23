@@ -44,17 +44,10 @@ const CartographieAvecSelecteur: FunctionComponent<{
       };
     }
   > = {
-    avancementMandat: useCartographieAvancement(
-      chantierMailles,
-      ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS,
-      jalon,
-      "MANDAT",
-    ),
     avancementJalon: useCartographieAvancement(
       chantierMailles,
       ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS,
       jalon,
-      "JALON",
     ),
     meteo: useCartographieMeteo(
       chantierMailles,
@@ -73,11 +66,6 @@ const CartographieAvecSelecteur: FunctionComponent<{
   );
 
   const optionsCartographie: SélecteurOption<CartographieType>[] = [
-    {
-      valeur: "avancementMandat",
-      libellé: "Carte des taux d'avancement 2026",
-      désactivée: listeCartographiesDesactives.includes("avancementMandat"),
-    },
     {
       valeur: "avancementJalon",
       libellé: `Carte des taux d'avancement ${jalon}`,

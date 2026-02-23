@@ -67,6 +67,7 @@ const BarreDeProgression: FunctionComponent<BarreDeProgressionProps> = ({
         <div
           className={clsxm(`flex pourcentage texte-${positionTexte}`, {
             "justify-center": texteCentre,
+            "justify-between": !texteCentre,
           })}
         >
           <p

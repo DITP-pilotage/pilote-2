@@ -1114,7 +1114,7 @@ export class PrismaChantierRepository implements ChantierRepository {
     profil: ProfilCode,
     filtres: FiltreQueryParams,
     territoireCode: string,
-    jalon: number,
+    jalons: number[],
   ): Promise<PrismaChantier[]> {
     const whereOptions: Prisma.chantier_identiteWhereInput = {};
 
@@ -1306,9 +1306,13 @@ export class PrismaChantierRepository implements ChantierRepository {
               select: {
                 taux_avancement: true,
                 date_taux_avancement: true,
+                ecart: true,
+                jalon: true,
               },
               where: {
-                jalon,
+                jalon: {
+                  in: jalons,
+                },
               },
             },
           },

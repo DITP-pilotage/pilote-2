@@ -13,6 +13,7 @@ export default class RécupérerStatistiquesAvancementChantiersUseCase {
     chantiers: Chantier["id"][],
     maille: Maille,
     habilitations: Habilitations,
+    jalon: number,
   ): Promise<AvancementsStatistiques> {
     const habilitation = new Habilitation(habilitations);
     const maillesAccessibles =
@@ -26,6 +27,7 @@ export default class RécupérerStatistiquesAvancementChantiersUseCase {
       habilitations,
       chantiers,
       maille,
+      jalon,
     );
   }
 }

@@ -2,7 +2,6 @@ import { FunctionComponent } from "react";
 import Bloc from "@/components/_commons/Bloc/Bloc";
 import AvancementsTerritoire from "@/components/_commons/AvancementsTerritoire/AvancementsTerritoire";
 import JaugeDeProgression from "@/components/_commons/JaugeDeProgression/JaugeDeProgression";
-import BarreDeProgression from "@/components/_commons/BarreDeProgression/BarreDeProgression";
 import { Maille, MailleInterne } from "@/server/domain/maille/Maille.interface";
 import Alerte from "@/components/_commons/Alerte/Alerte";
 import INFOBULLE_CONTENUS from "@/client/constants/infobulles";
@@ -111,12 +110,10 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
         >
           <div className="fr-py-1w jauge">
             <AvancementsTerritoire
-              avancementAnnuel={avancements.departementale.annuel.moyenne}
-              avancementGlobal={avancements.departementale.global.moyenne}
+              avancement={avancements.departementale.annuel.moyenne}
               couleurBarreDeProgression="secondaire"
               couleurJaugeDeProgression="bleu"
-              dateAvancementAnnuel={avancements.departementale.annuel.date}
-              dateAvancementGlobal={avancements.departementale.global.date}
+              dateAvancement={avancements.departementale.annuel.date}
               jalon={jalon}
               territoireNom={territoireSélectionné.nom}
               titreTauxAvancement={sousTitreTuileAvancementDepartemental}
@@ -147,8 +144,7 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
         >
           <div className="fr-py-1w jauge">
             <AvancementsTerritoire
-              avancementAnnuel={avancements.regionale.annuel.moyenne}
-              avancementGlobal={avancements.regionale.global.moyenne}
+              avancement={avancements.regionale.annuel.moyenne}
               couleurBarreDeProgression={
                 mailleSelectionnee === "regionale"
                   ? "secondaire"
@@ -157,8 +153,7 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
               couleurJaugeDeProgression={
                 mailleSelectionnee === "regionale" ? "bleu" : "bleu-clair"
               }
-              dateAvancementAnnuel={avancements.regionale.annuel.date}
-              dateAvancementGlobal={avancements.regionale.global.date}
+              dateAvancement={avancements.regionale.annuel.date}
               jalon={jalon}
               territoireNom={
                 territoireSélectionnéParent
@@ -181,46 +176,19 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
             <strong className="fr-text--sm fr-mb-0 text-center">
               Taux d'avancement national
             </strong>
-            <span className="fr-text--sm fr-ml-1v">2026</span>
+            <span className="fr-text--sm fr-ml-1v">{jalon}</span>
           </div>
           <JaugeDeProgression
             couleur={territoireCode !== "NAT-FR" ? "bleu-clair" : "bleu"}
-            date={avancements.nationale?.global.date ?? null}
+            date={avancements.nationale?.annuel.date ?? null}
             libellé="France"
             pourcentage={
               avancements.nationale
-                ? avancements.nationale.global.moyenne
+                ? avancements.nationale.annuel.moyenne
                 : null
             }
             taille="lg"
           />
-          <div className="fr-mt-2w">
-            <p className="fr-text--xl fr-text--bold fr-mb-0 !text-dsfr-mention-grey">
-              {`${(process.env.NEXT_PUBLIC_FF_TA_ANNUEL === "true" ? avancements.nationale?.annuel.moyenne?.toFixed(0) : null) ?? "- "}%`}
-            </p>
-            <BarreDeProgression
-              afficherTexte={false}
-              bordure={null}
-              fond="gris-clair"
-              positionTexte="dessus"
-              taille="xxs"
-              valeur={
-                !!avancements.nationale &&
-                process.env.NEXT_PUBLIC_FF_TA_ANNUEL === "true"
-                  ? avancements.nationale.annuel.moyenne
-                  : null
-              }
-              variante="secondaire-light"
-            />
-            <p className="fr-text--xs flex justify-center fr-mb-0 fr-mt-1v">
-              {`Avancement à échéance ${jalon}`}
-            </p>
-            {avancements.nationale.annuel.date ? (
-              <p className="fr-text--xs flex justify-center fr-mb-0">
-                {`(${formaterDate(avancements.nationale.annuel.date, "MM/YYYY")})`}
-              </p>
-            ) : null}
-          </div>
         </div>
       </Bloc>
       <Bloc
@@ -230,7 +198,7 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
         className="h-full"
         contenuClassesSupplémentaires="fr-p-2w"
         contenuInfobulle={INFOBULLE_CONTENUS.chantiers.repartitions}
-        titre="Répartition territoriale du taux d'avancement 2026"
+        titre={`Répartition territoriale du taux d'avancement ${jalon}`}
       >
         <div className="fr-px-md-1w fr-px-lg-2w fr-py-1w">
           {mailleQuery === "regionale" ? (
@@ -238,14 +206,14 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
               <strong className="fr-text--sm fr-mb-0 text-center">
                 Répartition régionale
               </strong>
-              <span className="fr-text--sm fr-ml-1v">2026</span>
+              <span className="fr-text--sm fr-ml-1v">{jalon}</span>
             </div>
           ) : (
             <div className="flex flex-direction-column flex-wrap justify-center align-center">
               <strong className="fr-text--sm fr-mb-0 text-center">
                 Répartition départementale
               </strong>
-              <span className="fr-text--sm fr-ml-1w">2026</span>
+              <span className="fr-text--sm fr-ml-1w">{jalon}</span>
             </div>
           )}
           <div className="flex flex-column justify-center">
@@ -303,17 +271,15 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
                     territoireSélectionné.maille
                   ].toUpperCase()}{" "}
                 </strong>
-                <span className="fr-text--sm fr-ml-1v fr-mb-1w">2026</span>
+                <span className="fr-text--sm fr-ml-1v fr-mb-1w">{jalon}</span>
                 <EcartTauxAvancementPPG
                   ecart={donneesComparaisonDuTauxDAvancement.ppgEcartMedian}
                 />
                 <p className="fr-text--xs fr-mt-1w text-center jauge-tracé">
                   <strong className="fr-mr-1v">écart</strong>
-                  du taux d'avancement 2026 par rapport au taux médian des
-                  autres{" "}
-                  {
-                    tuileEcartTAAPartirDeLaMaille[territoireSélectionné.maille]
-                  }{" "}
+                  {`du taux d'avancement ${jalon} par rapport au taux médian des
+                  autres`}{" "}
+                  {tuileEcartTAAPartirDeLaMaille[territoireSélectionné.maille]}{" "}
                   (
                   {avancements.nationale &&
                   avancements.nationale.global.médiane ? (

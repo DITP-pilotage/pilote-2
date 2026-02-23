@@ -44,7 +44,7 @@ const Cartes: FunctionComponent<CartesProps> = ({
                   className="fr-text--lg fr-mb-0 fr-py-1v"
                   estInline
                 >
-                  Taux d'avancement 2026
+                  {`Taux d'avancement ${jalon}`}
                 </Titre>
                 <Infobulle>
                   {

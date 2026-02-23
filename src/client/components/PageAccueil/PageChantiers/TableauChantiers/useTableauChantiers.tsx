@@ -45,6 +45,7 @@ export const useTableauChantiers = (
   ministèresDisponibles: Ministère[],
   nombreTotalChantiersAvecAlertes: number,
   chantiersSontArchives: boolean,
+  jalon: number,
 ) => {
   const [valeurDeLaRecherche, setValeurDeLaRecherche] = useQueryState(
     "q",
@@ -178,11 +179,33 @@ export const useTableauChantiers = (
       cell: (cellContext) => cellContext.getValue(),
       enableGrouping: false,
     }),
+    reactTableColonnesHelper.accessor("tendance", {
+      header: () => (
+        <div className="flex align-center no-wrap">
+          <span>Tendance</span>
+          <Infobulle classNameBouton="infobulle-header-tendance">
+            {infobulles.chantiers.listeDesChantiersHeaderTendance}
+          </Infobulle>
+        </div>
+      ),
+      id: "tendance",
+      cell: (cellContext) => (
+        <BadgeTendance
+          estArchive={chantiersSontArchives}
+          tendance={cellContext.getValue()}
+        />
+      ),
+      enableGrouping: false,
+      meta: {
+        width: "9rem",
+        tabIndex: -1,
+      },
+    }),
     reactTableColonnesHelper.accessor("avancement", {
       header: () => (
         <div className="flex align-center no-wrap">
           <span className="whitespace-normal break-normal">
-            Avancement 2026
+            {`Avancement ${jalon}`}
           </span>
           <Infobulle classNameBouton="infobulle-header-taux-avancement">
             {infobulles.chantiers.listeDesChantiersHeaderTauxAvancement}
@@ -223,28 +246,6 @@ export const useTableauChantiers = (
       id: "dateDeMàjDonnéesQuantitatives",
       cell: (cellContext) => cellContext.getValue(),
       enableGrouping: false,
-    }),
-    reactTableColonnesHelper.accessor("tendance", {
-      header: () => (
-        <div className="flex align-center no-wrap">
-          <span>Tendance</span>
-          <Infobulle classNameBouton="infobulle-header-tendance">
-            {infobulles.chantiers.listeDesChantiersHeaderTendance}
-          </Infobulle>
-        </div>
-      ),
-      id: "tendance",
-      cell: (cellContext) => (
-        <BadgeTendance
-          estArchive={chantiersSontArchives}
-          tendance={cellContext.getValue()}
-        />
-      ),
-      enableGrouping: false,
-      meta: {
-        width: "9rem",
-        tabIndex: -1,
-      },
     }),
     reactTableColonnesHelper.accessor("écart", {
       header: () => (

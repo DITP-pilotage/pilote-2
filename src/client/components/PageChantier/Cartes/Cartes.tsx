@@ -8,7 +8,6 @@ import CartographieAvecSelecteur from "@/components/_commons/Cartographie/Cartog
 import { pageChantier } from "@/components/PageChantier/PageChantierServerSideContext";
 
 export type CartographieType =
-  | "avancementMandat"
   | "avancementJalon"
   | "meteo"
   | "propositionValeur";
@@ -40,7 +39,7 @@ const Cartes: FunctionComponent<CartesProps> = ({
 
   const [, setCartographieGaucheSelection] = useQueryState(
     "carteChG",
-    parseAsString.withDefault("avancementMandat").withOptions({
+    parseAsString.withDefault("avancementJalon").withOptions({
       shallow: false,
       history: "push",
       clearOnDefault: true,

@@ -71,6 +71,7 @@ interface NextPageRapportDétailléProps {
   }[];
   listeIndicateursPrisEnCompteAvancement: string[];
   chantiersStatuts: string[];
+  moyenneTauxAvancementTerritoire: number | null;
   masquerIndicateursNonApplicables: boolean;
 }
 
@@ -97,12 +98,11 @@ export const getServerSideProps: GetServerSideProps<
     territoireCodeVersMailleCodeInsee(territoireCode);
 
   const mailleQuery = searchParams.maille;
-  const jalon =
-    searchParams.jalon ??
-    getAnneeDateDeBascule(
-      new Date(),
-      configuration().dateBasculeAffichageValeursAnneePrecedente,
-    );
+  const jalonParDefaut = getAnneeDateDeBascule(
+    new Date(),
+    configuration().dateBasculeAffichageValeursAnneePrecedente,
+  );
+  const jalon = searchParams.jalon ?? jalonParDefaut;
 
   const mailleSelectionnee =
     maille === "NAT"
@@ -174,6 +174,7 @@ export const getServerSideProps: GetServerSideProps<
       filtres,
       sorting,
       jalon,
+      jalonParDefaut,
     );
 
   const chantiersAvecAlertes =
@@ -188,7 +189,9 @@ export const getServerSideProps: GetServerSideProps<
             chantier.mailles[mailleChantier][territoireCode];
           return (
             (filtresAlertes.estEnAlerteÉcart &&
-              Alerte.estEnAlerteÉcart(chantierDonnéesTerritoires.écart)) ||
+              Alerte.estEnAlerteÉcart(
+                chantierDonnéesTerritoires.ecart.jalonParDefaut,
+              )) ||
             (filtresAlertes.estEnAlerteBaisse &&
               Alerte.estEnAlerteBaisse(chantierDonnéesTerritoires.tendance)) ||
             (filtresAlertes.estEnAlerteTauxAvancementNonCalculé &&
@@ -241,6 +244,7 @@ export const getServerSideProps: GetServerSideProps<
         [chantier.id],
         mailleSelectionnee || "departementale",
         session.habilitations,
+        jalon,
       );
 
     const avancementChantierRapportDetaille =
@@ -289,9 +293,9 @@ export const getServerSideProps: GetServerSideProps<
             moyenne:
               avancementChantierRapportDetaille.nationale.répartition
                 .avancements.global.moyenne,
-            médiane: avancementsStatistique?.global.médiane ?? null,
-            minimum: avancementsStatistique?.global.minimum ?? null,
-            maximum: avancementsStatistique?.global.maximum ?? null,
+            médiane: avancementsStatistique?.médiane ?? null,
+            minimum: avancementsStatistique?.minimum ?? null,
+            maximum: avancementsStatistique?.maximum ?? null,
             date: avancementChantierRapportDetaille.nationale.territoires[
               "NAT-FR"
             ].répartition.avancements.global.date,
@@ -390,6 +394,7 @@ export const getServerSideProps: GetServerSideProps<
       chantiersAvecAlertes.map((chantier) => chantier.id),
       mailleSelectionnee || "departementale",
       session.habilitations,
+      jalon,
     )
     .then(presenterEnAvancementsStatistiquesAccueilContrat);
 
@@ -397,16 +402,9 @@ export const getServerSideProps: GetServerSideProps<
     chantiersAvecAlertes,
   ).agréger();
 
-  if (avancementsAgrégés) {
-    avancementsAgrégés.global.moyenne =
-      donnéesTerritoiresAgrégées[mailleChantier].territoires[
-        territoireCode
-      ].répartition.avancements.global.moyenne;
-    avancementsAgrégés.annuel.moyenne =
-      donnéesTerritoiresAgrégées[mailleChantier].territoires[
-        territoireCode
-      ].répartition.avancements.annuel.moyenne;
-  }
+  const moyenneTauxAvancementTerritoire =
+    donnéesTerritoiresAgrégées[mailleChantier].territoires[territoireCode]
+      .répartition.avancements.annuel.moyenne;
 
   const avancementsGlobauxTerritoriauxMoyens = objectEntries(
     donnéesTerritoiresAgrégées[mailleSelectionnee || "departementale"]
@@ -480,6 +478,7 @@ export const getServerSideProps: GetServerSideProps<
       },
       listeIndicateursPrisEnCompteAvancement,
       chantiersStatuts: filtres.statut,
+      moyenneTauxAvancementTerritoire,
       masquerIndicateursNonApplicables:
         configurationFeatureFlip().masquerIndicateursNonApplicables,
     },
@@ -508,6 +507,7 @@ const NextPageRapportDétaillé: FunctionComponent<
   listeDonnéesCartographieMétéo,
   listeIndicateursPrisEnCompteAvancement,
   chantiersStatuts,
+  moyenneTauxAvancementTerritoire,
   masquerIndicateursNonApplicables,
 }) => {
   const mapChantierStatistiques = new Map<
@@ -575,6 +575,7 @@ const NextPageRapportDétaillé: FunctionComponent<
         publicationsGroupéesParChantier={publicationsGroupéesParChantier}
         repartitionMeteosChantiers={repartitionMeteosChantiers}
         territoireCode={territoireCode}
+        moyenneTauxAvancementTerritoire={moyenneTauxAvancementTerritoire}
       />
     </>
   );
