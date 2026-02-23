@@ -14,6 +14,10 @@ import { Territoire } from "@/server/gestion-utilisateur/domain/Territoire";
 import { InformationChantierUtilisateur } from "@/server/gestion-utilisateur/domain/InformationChantierUtilisateur";
 import { UnauthorizedError } from "@/server/app/error-boundary/unauthorized-error";
 import { PerimetreMinisteriel } from "@/server/gestion-utilisateur/domain/PerimetreMinisteriel";
+import {
+  getPerimetreLibelle,
+  getServiceLibelle,
+} from "@/client/constants/referentiel-services";
 
 type UtilisateurPourExportCSVContrat = string[];
 
@@ -24,6 +28,8 @@ const HeadersExportCSVUtilisateur = (): string[] => {
     "Email",
     "Fonction",
     "Profil",
+    "Périmètre ministériel",
+    "Service",
     "Territoire",
     "Périmètre",
     "Droit de lecture",
@@ -89,6 +95,12 @@ const presenterEnUtilisateurPourExportCSVContrat = (
     utilisateurPourExport.email,
     utilisateurPourExport.fonction || "",
     utilisateurPourExport.profil,
+    getPerimetreLibelle(utilisateurPourExport.perimetreMinisteriel) || "",
+    getServiceLibelle(
+      utilisateurPourExport.perimetreMinisteriel,
+      utilisateurPourExport.service,
+      utilisateurPourExport.serviceAutre,
+    ) || "",
     recupererLesNomsDesTerritoires(
       utilisateurPourExport.profil,
       utilisateurPourExport.habilitations,

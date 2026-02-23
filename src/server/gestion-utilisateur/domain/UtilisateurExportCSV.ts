@@ -15,4 +15,7 @@ export interface UtilisateurExportCSV {
   statut: string;
   dateCreation: string;
   auteurCreation: string;
+  perimetreMinisteriel: string | null;
+  service: string | null;
+  serviceAutre: string | null;
 }
