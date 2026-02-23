@@ -8,10 +8,7 @@ export const SegmentedControl = Object.assign({}, ToggleGroup, {
   Root: ({ children, ...props }: ComponentProps<typeof ToggleGroup.Root>) => (
     <ToggleGroup.Root
       {...props}
-      className={clsxm(
-        "flex rounded bg-dsfr-alt-blue-france p-1 gap-2",
-        props.className,
-      )}
+      className={clsxm("flex rounded bg-dsfr-alt-blue-france", props.className)}
     >
       {children}
     </ToggleGroup.Root>

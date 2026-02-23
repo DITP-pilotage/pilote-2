@@ -7,10 +7,10 @@ export const ArrowSLine2Icon = ({
 }) => (
   <svg className={className} viewBox="0 0 24 24">
     <path
-      clipRule="evenodd"
-      d="M12.0002 13.172L16.9502 8.22205L18.3642 9.63605L12.0002 16L5.63623 9.63605L7.05023 8.22205L12.0002 13.172Z"
-      fill={fill}
       fillRule="evenodd"
+      clipRule="evenodd"
+      d="M12 13.172L16.95 8.22198L18.364 9.63598L12 16L5.63599 9.63598L7.04999 8.22198L12 13.172Z"
+      fill={fill}
     />
   </svg>
 );

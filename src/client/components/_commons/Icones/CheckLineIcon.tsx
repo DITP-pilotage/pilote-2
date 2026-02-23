@@ -7,10 +7,10 @@ export const CheckLineIcon = ({
 }) => (
   <svg className={className} viewBox="0 0 24 24">
     <path
-      clipRule="evenodd"
-      d="M10.0002 15.172L19.1922 5.979L20.6072 7.393L10.0002 18L3.63623 11.636L5.05023 10.222L10.0002 15.172Z"
-      fill={fill}
       fillRule="evenodd"
+      clipRule="evenodd"
+      d="M9.99999 15.172L19.192 5.979L20.607 7.393L9.99999 18L3.63599 11.636L5.04999 10.222L9.99999 15.172Z"
+      fill={fill}
     />
   </svg>
 );

@@ -94,7 +94,7 @@ export const useTableauChantiers = (
       header: "Chantiers",
       id: "nom",
       aggregatedCell: (aggregatedCellContext) => (
-        <div className="flex gap-2">
+        <div className="flex gap-2 ">
           <div>
             <IconeMinistere
               className="text-dsfr-blue-france-sun-113"

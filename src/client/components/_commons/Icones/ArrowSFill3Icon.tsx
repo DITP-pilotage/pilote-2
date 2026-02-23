@@ -7,10 +7,10 @@ export const ArrowSFill3Icon = ({
 }) => (
   <svg className={className} viewBox="0 0 24 24">
     <path
+      fillRule="evenodd"
       clipRule="evenodd"
       d="M8 12L14 6V18L8 12Z"
       fill={fill}
-      fillRule="evenodd"
     />
   </svg>
 );

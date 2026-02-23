@@ -7,10 +7,10 @@ export const Upload1Icon = ({
 }) => (
   <svg className={className} viewBox="0 0 24 24">
     <path
+      fillRule="evenodd"
       clipRule="evenodd"
       d="M3 19H21V21H3V19ZM13 5.828V17H11V5.828L4.929 11.9L3.515 10.486L12 2L20.485 10.485L19.071 11.899L13 5.83V5.828Z"
       fill={fill}
-      fillRule="evenodd"
     />
   </svg>
 );

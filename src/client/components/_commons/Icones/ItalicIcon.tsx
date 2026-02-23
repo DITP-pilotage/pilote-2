@@ -7,7 +7,7 @@ export const ItalicIcon = ({
 }) => (
   <svg className={className} viewBox="0 0 24 24">
     <path
-      d="M10 4V7H12.21L8.79 15H6V18H14V15H11.79L15.21 7H18V4H10Z"
+      d="M15 20H7V18H9.927L12.043 6H9V4H17V6H14.073L11.957 18H15V20Z"
       fill={fill}
     />
   </svg>

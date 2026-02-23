@@ -7,16 +7,16 @@ export const Error1Icon = ({
 }) => (
   <svg className={className} viewBox="0 0 24 24">
     <path
+      fillRule="evenodd"
       clipRule="evenodd"
       d="M17.5 2.5L23 12L17.5 21.5H6.5L1 12L6.5 2.5H17.5ZM16.347 4.5H7.653L3.311 12L7.653 19.5H16.347L20.689 12L16.347 4.5Z"
       fill={fill}
-      fillRule="evenodd"
     />
     <path
+      fillRule="evenodd"
       clipRule="evenodd"
       d="M12.0001 10.586L14.8281 7.75696L16.2431 9.17196L13.4141 12L16.2431 14.828L14.8281 16.243L12.0001 13.414L9.17208 16.243L7.75708 14.828L10.5861 12L7.75708 9.17196L9.17208 7.75696L12.0001 10.586Z"
       fill={fill}
-      fillRule="evenodd"
     />
   </svg>
 );
