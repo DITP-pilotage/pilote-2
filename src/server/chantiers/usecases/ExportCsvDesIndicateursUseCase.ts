@@ -24,6 +24,8 @@ import {
   verifierOptionStatut,
 } from "@/server/chantiers/domain/ChantierPourExport";
 import { IndicateurRepository } from "@/server/chantiers/domain/ports/IndicateurRepository";
+import { getAnneeDateDeBascule } from "@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getAnneeDateDeBascule";
+import { configuration } from "@/config";
 
 const presenterEnIndicateurExportContrat = (
   indicateurPourExport: IndicateurPourExport,
@@ -106,15 +108,6 @@ const presenterEnIndicateurExportContrat = (
         "MM-YYYY",
       ),
       formaterNumériqueOuValeurNonRenseignee(
-        indicateurPourExport.valeurCibleAnnuelle,
-        indicateurPourExport.estApplicable,
-      ),
-      formaterDateHeureOuNonRenseignee(
-        indicateurPourExport.dateValeurCibleAnnuelle,
-        indicateurPourExport.estApplicable,
-        "MM-YYYY",
-      ),
-      formaterNumériqueOuValeurNonRenseignee(
         indicateurPourExport.valeurCible,
         indicateurPourExport.estApplicable,
       ),
@@ -124,11 +117,7 @@ const presenterEnIndicateurExportContrat = (
         "MM-YYYY",
       ),
       formaterNumériqueOuValeurManquante(
-        indicateurPourExport.avancementAnnuel,
-        indicateurPourExport.estApplicable,
-      ),
-      formaterNumériqueOuValeurManquante(
-        indicateurPourExport.avancementGlobal,
+        indicateurPourExport.avancement,
         indicateurPourExport.estApplicable,
       ),
     );
@@ -137,11 +126,7 @@ const presenterEnIndicateurExportContrat = (
   if (optionsExport.listeOptionsExport.includes("description-chantier")) {
     donnees.push(
       formaterNumériqueOuValeurManquante(
-        indicateurPourExport.chantierAvancementAnnuel,
-        indicateurPourExport.chantierEstApplicable,
-      ),
-      formaterNumériqueOuValeurManquante(
-        indicateurPourExport.chantierAvancementGlobal,
+        indicateurPourExport.chantierAvancement,
         indicateurPourExport.chantierEstApplicable,
       ),
     );
@@ -225,17 +210,13 @@ export class ExportCsvDesIndicateursUseCase {
         "Date valeur avancement",
         `Valeur cible à fin d'échéance ${jalon}`,
         `Date valeur cible à fin d'échéance ${jalon}`,
-        "Valeur cible à fin d'échéance 2026",
-        "Date valeur cible à fin d'échéance 2026 (indicateur)",
         `Taux d'avancement à fin d'échéance ${jalon} (indicateur)`,
-        "Taux d'avancement à fin d'échéance 2026 (indicateur)",
       );
     }
 
     if (optionsExport.listeOptionsExport.includes("description-chantier")) {
       headersColumn.push(
         `Taux d'avancement à fin d'échéance ${jalon} (chantier)`,
-        "Taux d'avancement à fin d'échéance 2026 (chantier)",
       );
     }
 
@@ -285,9 +266,20 @@ export class ExportCsvDesIndicateursUseCase {
       const estAvecCadrage =
         optionsExport.listeOptionsExport.includes("cadrage");
 
+      const jalonParDefaut = getAnneeDateDeBascule(
+        new Date(),
+        configuration().dateBasculeAffichageValeursAnneePrecedente,
+      );
+
       const input = partialChantierIds.map((id) =>
         this.indicateurRepository
-          .recupererPourExports(id, territoireCodes, jalon, estAvecCadrage)
+          .recupererPourExports(
+            id,
+            territoireCodes,
+            jalon,
+            jalonParDefaut,
+            estAvecCadrage,
+          )
           .then((listeIndicateurTerritoireExport) =>
             (listeIndicateurTerritoireExport || []).reduce(
               (acc, indicateursPourExport) => {
@@ -322,7 +314,7 @@ export class ExportCsvDesIndicateursUseCase {
                     optionsExport,
                     indicateursPourExport.chantierEcart,
                     indicateursPourExport.chantierTendance,
-                    indicateursPourExport.chantierAvancementGlobal,
+                    indicateursPourExport.chantierAvancementJalonParDefaut,
                     indicateursPourExport.chantierCibleAttendue,
                     indicateursPourExport.chantierAUnTauxAvancementDepartemental,
                     indicateursPourExport.météo ?? "NON_RENSEIGNEE",

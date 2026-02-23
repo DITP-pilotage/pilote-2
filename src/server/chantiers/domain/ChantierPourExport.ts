@@ -15,7 +15,7 @@ export type ChantierPourExport = {
   ministèreNom: string | null;
   axe: string | null;
   périmètreIds: string[];
-  tauxDAvancementAnnuel: number | null;
+  tauxDAvancement: number | null;
   tauxDAvancementNational: number | null;
   tauxDAvancementRégional: number | null;
   tauxDAvancementDépartemental: number | null;

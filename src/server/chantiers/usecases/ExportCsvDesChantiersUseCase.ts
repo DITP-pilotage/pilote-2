@@ -90,7 +90,7 @@ const presenterEnChantierExportContrat = (
   if (optionsExport.listeOptionsExport.includes("description")) {
     donnees.push(
       formaterNumériqueOuValeurManquante(
-        chantierPourExport.tauxDAvancementAnnuel,
+        chantierPourExport.tauxDAvancement,
         true,
       ),
     );
@@ -213,9 +213,9 @@ export class ExportCsvDesChantiersUseCase {
 
     if (optionsExport.listeOptionsExport.includes("comparaison")) {
       headersColumn.push(
-        "Taux d'avancement départemental à fin d'échéance 2026",
-        "Taux d'avancement régional à fin d'échéance 2026",
-        "Taux d'avancement national à fin d'échéance 2026",
+        `Taux d'avancement départemental à fin d'échéance ${jalon}`,
+        `Taux d'avancement régional à fin d'échéance ${jalon}`,
+        `Taux d'avancement national à fin d'échéance ${jalon}`,
       );
     }
 

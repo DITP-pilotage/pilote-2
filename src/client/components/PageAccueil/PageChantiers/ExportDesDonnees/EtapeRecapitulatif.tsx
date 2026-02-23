@@ -105,7 +105,7 @@ export const EtapeRecapitulatif = ({
       getAnneeDateDeBascule(
         new Date(),
         dataBasculeValeurAnneePrecedente as string,
-      ).toString() as "2024" | "2025",
+      ).toString(),
     ),
     optionsExport: parseAsString.withDefault("identifiant"),
     isAvecFiltre: parseAsBoolean.withDefault(false),

@@ -784,24 +784,28 @@ export class PrismaChantierRepository implements ChantierRepository {
                 ? prismaChantierIdentite.ministeres_acronymes[0]
                 : null,
               axe: prismaChantierIdentite.axe,
-              tauxDAvancementAnnuel: verifyValeurIsNotNullOrUndefined(
+              tauxDAvancement: verifyValeurIsNotNullOrUndefined(
                 prismaChantierTerritoire.chantier_territoire_jalon.at(0)
                   ?.taux_avancement,
               ),
               tauxDAvancementNational: verifyValeurIsNotNullOrUndefined(
-                prismaChantierTerritoireNat.taux_avancement_mandat,
+                prismaChantierTerritoireNat.chantier_territoire_jalon.at(0)
+                  ?.taux_avancement,
               ),
               tauxDAvancementRégional:
                 prismaChantierTerritoire.maille === "REG" ||
                 prismaChantierTerritoire.maille === "DEPT"
                   ? verifyValeurIsNotNullOrUndefined(
-                      prismaChantierTerritoireReg.taux_avancement_mandat,
+                      prismaChantierTerritoireReg.chantier_territoire_jalon.at(
+                        0,
+                      )?.taux_avancement,
                     )
                   : null,
               tauxDAvancementDépartemental:
                 prismaChantierTerritoire.maille === "DEPT"
                   ? verifyValeurIsNotNullOrUndefined(
-                      prismaChantierTerritoire.taux_avancement_mandat,
+                      prismaChantierTerritoire.chantier_territoire_jalon.at(0)
+                        ?.taux_avancement,
                     )
                   : null,
               périmètreIds: prismaChantierIdentite.perimetre_ids,
