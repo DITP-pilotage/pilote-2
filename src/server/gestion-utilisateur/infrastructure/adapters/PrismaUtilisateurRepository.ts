@@ -827,6 +827,9 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
         nom: utilisateurBrut.nom || "Inconnu",
         prénom: utilisateurBrut.prenom || "Inconnu",
         fonction: utilisateurBrut.fonction,
+        perimetreMinisteriel: utilisateurBrut.perimetre_ministeriel,
+        service: utilisateurBrut.service,
+        serviceAutre: utilisateurBrut.service_autre,
         habilitations,
         dateModification: utilisateurBrut.date_modification?.toISOString(),
         auteurModification: auteurModification
