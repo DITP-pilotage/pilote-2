@@ -1,13 +1,12 @@
 import "@gouvfr/dsfr/dist/core/core.min.css";
 import "@gouvfr/dsfr/dist/component/link/link.min.css";
 import "@/client/styles/app.scss";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import Script from "next/script";
 import { SessionProvider } from "next-auth/react";
 import { AppProps } from "next/app";
 import { useEffect, useState } from "react";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import Head from "next/head";
-import { TRPCClientError } from "@trpc/client";
 import init from "@socialgouv/matomo-next";
 import Router from "next/router";
 import { Toaster } from "sonner";
@@ -16,23 +15,6 @@ import MiseEnPage from "@/client/components/_commons/MiseEnPage/MiseEnPage";
 import useDétecterLargeurDÉcran from "@/client/hooks/useDétecterLargeurDÉcran";
 import api from "@/server/infrastructure/api/trpc/api";
 import { Tooltip } from "@/components/shared/Tooltip";
-
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      refetchOnWindowFocus: false,
-      retry: (failureCount, error) => {
-        if (
-          error instanceof TRPCClientError &&
-          error?.data?.code === "UNAUTHORIZED"
-        ) {
-          return false;
-        }
-        return failureCount < 3;
-      },
-    },
-  },
-});
 
 const DELAI_AVANT_APPARITION_DU_LOADER_EN_MS = 500;
 
@@ -119,16 +101,15 @@ function MonApplication({ Component, pageProps, nonce: appNonce }: MyAppProps) {
           rel="manifest"
         />
       </Head>
-      <QueryClientProvider client={queryClient}>
-        <Tooltip.Provider>
-          <SessionProvider session={pageProps.session}>
-            <MiseEnPage afficherLeLoader={afficherLeLoader}>
-              <Component {...pageProps} />
-              <Toaster />
-            </MiseEnPage>
-          </SessionProvider>
-        </Tooltip.Provider>
-      </QueryClientProvider>
+      <ReactQueryDevtools initialIsOpen={false} />
+      <Tooltip.Provider>
+        <SessionProvider session={pageProps.session}>
+          <MiseEnPage afficherLeLoader={afficherLeLoader}>
+            <Component {...pageProps} />
+            <Toaster />
+          </MiseEnPage>
+        </SessionProvider>
+      </Tooltip.Provider>
     </NuqsAdapter>
   );
 }
