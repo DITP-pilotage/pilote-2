@@ -1,7 +1,10 @@
 #!/bin/bash
 
-# Charger les variables d'environnement
-source .env
+# Charger les variables d'environnement (si le fichier .env existe)
+if [ -f .env ]; then
+    # shellcheck disable=SC1091
+    . .env
+fi
 
 # Vérifier qu'un argument est bien fourni
 if [ "$#" -ne 1 ]; then
