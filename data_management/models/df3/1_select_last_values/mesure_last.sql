@@ -25,7 +25,9 @@ rank_mesures AS (
                     mesures.metric_month
                 ORDER BY mesures.date_import DESC,
                 -- si jamais 2 dates pour le même mois dans le même import
-                mesures.metric_date DESC
+                mesures.metric_date DESC,
+                -- critère de repli pour rendre le tri déterministe
+                mesures.id DESC
             )
             AS r
     FROM {{ ref('stg_mesure_indicateur') }} AS mesures
