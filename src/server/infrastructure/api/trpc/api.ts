@@ -1,7 +1,25 @@
-import { loggerLink, httpBatchLink } from "@trpc/client";
+import { QueryClient } from "@tanstack/react-query";
+import { loggerLink, httpBatchLink, TRPCClientError } from "@trpc/client";
 import { createTRPCNext } from "@trpc/next";
 import superjson from "superjson";
 import { AppRouter } from "./trpc.interface";
+
+export const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+      retry: (failureCount, error) => {
+        if (
+          error instanceof TRPCClientError &&
+          error?.data?.code === "UNAUTHORIZED"
+        ) {
+          return false;
+        }
+        return failureCount < 3;
+      },
+    },
+  },
+});
 
 const récupérerBaseUrl = () => {
   if (typeof window !== "undefined") return "";
@@ -15,6 +33,7 @@ const api = createTRPCNext<AppRouter>({
   transformer: superjson,
   config({ ctx }) {
     return {
+      queryClient,
       links: [
         loggerLink({
           enabled: (opts) =>
