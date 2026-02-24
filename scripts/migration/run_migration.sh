@@ -16,4 +16,4 @@ fi
 fichier_sql="$1"
 
 # Exécuter la commande psql avec le fichier SQL
-psql "$DATABASE_URL" -f "$fichier_sql"
+psql -v ON_ERROR_STOP=1 "$DATABASE_URL" -f "$fichier_sql"
