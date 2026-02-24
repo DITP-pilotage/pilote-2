@@ -155,7 +155,7 @@ test("doit pouvoir exporter les données des indicateurs sous format CSV", async
     await test.step("vérification du fichier identifiant, gouvernance, valeur descriptive", async () => {
       const contents = await fs.promises.readFile(await download.path());
       expect(contents.toString()).toMatch(
-        '"Maille";"Région";"Département";"Code INSEE - Nom du département";"Chantier";"Chantier Id";"Indicateur";"Ministère";"Axe";"Chantier statut";"Chantier du baromètre";"Valeur initiale";"Date valeur initiale";"Valeur avancement";"Date valeur avancement";"Valeur cible à fin d\'échéance 2025";"Date valeur cible à fin d\'échéance 2025";"Valeur cible à fin d\'échéance 2026";"Date valeur cible à fin d\'échéance 2026 (indicateur)";"Taux d\'avancement à fin d\'échéance 2025 (indicateur)";"Taux d\'avancement à fin d\'échéance 2026 (indicateur)"\n',
+        '"Maille";"Région";"Département";"Code INSEE - Nom du département";"Chantier";"Chantier Id";"Indicateur";"Ministère";"Axe";"Chantier statut";"Chantier du baromètre";"Valeur initiale";"Date valeur initiale";"Valeur avancement";"Date valeur avancement";"Valeur cible à fin d\'échéance 2025";"Date valeur cible à fin d\'échéance 2025";"Taux d\'avancement à fin d\'échéance 2025 (indicateur)"\n',
       );
     });
   });
