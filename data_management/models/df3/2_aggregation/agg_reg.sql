@@ -21,7 +21,7 @@ mesure_last_params_reg AS (
         metadata_indic.vc_reg_from,
         metadata_indic.vc_reg_op
     FROM
-        {{ ref('mesure_last_null_erase_keep_lastvalmonth') }}
+        {{ ref('mesure_last') }}
             AS mesure_lastvalmonth
     LEFT JOIN
         {{ source('parametrage_indicateurs', 'metadata_parametrage_indicateurs') }}
@@ -111,7 +111,7 @@ mesure_last_params_reg_from_dept AS (
         indic_agg_from_dept.vc_reg_from,
         indic_agg_from_dept.vc_reg_op
     FROM
-        {{ ref('mesure_last_null_erase_keep_lastvalmonth') }}
+        {{ ref('mesure_last') }}
             AS mesure_lastvalmonth
     INNER JOIN {{ ref('zone_parent') }} AS zone_parent
         ON mesure_lastvalmonth.zone_id = zone_parent.zone_id

@@ -9,11 +9,11 @@ vca_non_null_sorted AS (
         zone_id,
         metric_date,
         vc,
-        date_part('year', metric_date::date) AS jalon,
+        date_part('year', metric_date) AS jalon,
         rank()
             OVER (
                 PARTITION BY
-                    indic_id, zone_id, date_part('year', metric_date::date)
+                    indic_id, zone_id, date_part('year', metric_date)
                 ORDER BY metric_date DESC
             )
         AS r

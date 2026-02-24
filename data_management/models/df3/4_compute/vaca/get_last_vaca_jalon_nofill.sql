@@ -6,12 +6,14 @@ WITH ajout_annee AS (
         zone_id,
         metric_date,
         vaca,
-        DATE_PART('year', metric_date::DATE) AS annee_valeur,
+        DATE_PART('year', metric_date) AS annee_valeur,
         ROW_NUMBER()
             OVER (
                 PARTITION BY
-                    indic_id, zone_id, DATE_PART('year', metric_date::DATE)
-                ORDER BY metric_date::DATE DESC
+                    indic_id,
+                    zone_id,
+                    DATE_PART('year', metric_date)
+                ORDER BY metric_date DESC
             )
             AS r
     FROM {{ ref('compute_vaca') }}

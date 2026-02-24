@@ -17,7 +17,7 @@ vi_non_null_sorted AS (
     -- vi NON NULL
     WHERE vi IS NOT null
     -- vig_min_date: aucune VI globale ne pourra être avant cette date
-    AND metric_date::date >= '{{ var('vig_min_date') }}'::date
+    AND metric_date >= '{{ var('vig_min_date') }}'::date
 ),
 
 -- La première VI pour chaque [indic,zone]

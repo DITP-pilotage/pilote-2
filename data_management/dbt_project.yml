@@ -85,10 +85,11 @@ models:
             +unique_key:
               - 'id'
     exposition:
+      +tags: 'exposition'
       +schema: public
       +materialized: incremental
       +docs:
-        node_color: "#09ad40"
+        node_color: "#F54927"
       axe:
         +unique_key:
           - 'id'

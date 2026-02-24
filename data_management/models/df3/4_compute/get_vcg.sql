@@ -10,7 +10,7 @@ vc_non_null_sorted as (
 	-- vc NON NULL
 	where vc is not null and 
 	-- vcg_max_date: aucune VC globale ne pourra dépasser cette date
-	metric_date::date <= '{{ var('vcg_max_date') }}'::date
+	metric_date <= '{{ var('vcg_max_date') }}'::date
 )
 
 select 
