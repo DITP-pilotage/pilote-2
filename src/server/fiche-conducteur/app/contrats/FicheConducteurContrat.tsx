@@ -9,8 +9,6 @@ interface IndicateurFicheConducteurContrat {
   dateValeurAvancement: string;
   objectifValeurCibleIntermediaire: string;
   objectifTauxAvancementIntermediaire: string;
-  objectifValeurCible: string;
-  objectifTauxAvancement: string;
 }
 
 export interface ChantierFicheConducteurContrat {
@@ -23,7 +21,6 @@ export interface ChantierFicheConducteurContrat {
 }
 
 export interface AvancementFicheConducteurContrat {
-  global: number | null;
   annuel: number | null;
   minimum: number | null;
   mediane: number | null;

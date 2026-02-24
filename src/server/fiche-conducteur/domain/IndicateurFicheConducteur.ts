@@ -15,10 +15,6 @@ export class IndicateurFicheConducteur {
 
   private readonly _objectifTauxAvancementIntermediaire: number | null;
 
-  private readonly _objectifValeurCible: number | null;
-
-  private readonly _objectifTauxAvancement: number | null;
-
   private constructor({
     nom,
     type,
@@ -28,8 +24,6 @@ export class IndicateurFicheConducteur {
     dateValeurInitiale,
     objectifValeurCibleIntermediaire,
     objectifTauxAvancementIntermediaire,
-    objectifValeurCible,
-    objectifTauxAvancement,
   }: {
     nom: string;
     type: string | null;
@@ -39,8 +33,6 @@ export class IndicateurFicheConducteur {
     dateValeurInitiale: string | null;
     objectifValeurCibleIntermediaire: number | null;
     objectifTauxAvancementIntermediaire: number | null;
-    objectifValeurCible: number | null;
-    objectifTauxAvancement: number | null;
   }) {
     this._nom = nom;
     this._type = type;
@@ -51,8 +43,6 @@ export class IndicateurFicheConducteur {
     this._objectifValeurCibleIntermediaire = objectifValeurCibleIntermediaire;
     this._objectifTauxAvancementIntermediaire =
       objectifTauxAvancementIntermediaire;
-    this._objectifValeurCible = objectifValeurCible;
-    this._objectifTauxAvancement = objectifTauxAvancement;
   }
 
   get nom(): string {
@@ -87,14 +77,6 @@ export class IndicateurFicheConducteur {
     return this._objectifTauxAvancementIntermediaire;
   }
 
-  get objectifValeurCible(): number | null {
-    return this._objectifValeurCible;
-  }
-
-  get objectifTauxAvancement(): number | null {
-    return this._objectifTauxAvancement;
-  }
-
   static creerIndicateurFicheConducteur({
     nom,
     type,
@@ -104,8 +86,6 @@ export class IndicateurFicheConducteur {
     dateValeurInitiale,
     objectifValeurCibleIntermediaire,
     objectifTauxAvancementIntermediaire,
-    objectifValeurCible,
-    objectifTauxAvancement,
   }: {
     nom: string;
     type: string | null;
@@ -115,8 +95,6 @@ export class IndicateurFicheConducteur {
     dateValeurInitiale: string | null;
     objectifValeurCibleIntermediaire: number | null;
     objectifTauxAvancementIntermediaire: number | null;
-    objectifValeurCible: number | null;
-    objectifTauxAvancement: number | null;
   }) {
     return new IndicateurFicheConducteur({
       nom,
@@ -127,8 +105,6 @@ export class IndicateurFicheConducteur {
       dateValeurInitiale,
       objectifValeurCibleIntermediaire,
       objectifTauxAvancementIntermediaire,
-      objectifValeurCible,
-      objectifTauxAvancement,
     });
   }
 }

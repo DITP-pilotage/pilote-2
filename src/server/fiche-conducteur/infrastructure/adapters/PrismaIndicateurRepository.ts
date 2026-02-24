@@ -36,8 +36,6 @@ const convertirEnIndicateur = (
       prismaIndicateurTerritoireJalon?.valeur_cible || null,
     objectifTauxAvancementIntermediaire:
       prismaIndicateurTerritoireJalon?.taux_avancement || null,
-    objectifValeurCible: prismaIndicateurTerritoire.valeur_cible_mandat,
-    objectifTauxAvancement: prismaIndicateurTerritoire.taux_avancement_mandat,
   });
 };
 

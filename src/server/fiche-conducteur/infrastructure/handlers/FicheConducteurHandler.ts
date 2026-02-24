@@ -69,12 +69,6 @@ const presenterEnChantierFicheConducteurContrat = (
                 indicateurFicheConducteur.objectifTauxAvancementIntermediaire,
               )
             : "-",
-        objectifValeurCible: indicateurFicheConducteur.objectifValeurCible
-          ? numberWithSpaces(indicateurFicheConducteur.objectifValeurCible)
-          : "-",
-        objectifTauxAvancement: indicateurFicheConducteur.objectifTauxAvancement
-          ? numberWithSpaces(indicateurFicheConducteur.objectifTauxAvancement)
-          : "-",
       }),
     ),
   };
@@ -83,7 +77,6 @@ const presenterEnAvancementFicheConducteurContrat = (
   avancementFicheConducteur: AvancementFicheConducteur,
 ): AvancementFicheConducteurContrat => {
   return {
-    global: avancementFicheConducteur.global,
     annuel: avancementFicheConducteur.annuel,
     minimum: avancementFicheConducteur.minimum,
     mediane: avancementFicheConducteur.mediane,
@@ -137,8 +130,8 @@ const presenterEnDonnéesCartographieContrat = (
     (acc, val) => {
       acc.tauxAvancement.push({
         territoireCode: val.territoireCode,
-        valeur: val.tauxAvancement,
-        valeurAnnuelle: null,
+        valeur: null,
+        valeurAnnuelle: val.tauxAvancement,
         estApplicable: val.estApplicable,
       });
       acc.meteo.push({
@@ -219,7 +212,7 @@ export class FicheConducteurHandler {
 
     const doitAfficherDonnéesCartographie =
       donnéesCartographie.tauxAvancement.some(
-        (tauxAvancement) => tauxAvancement.valeur,
+        (tauxAvancement) => tauxAvancement.valeurAnnuelle,
       ) ||
       donnéesCartographie.meteo.some((meteo) => meteo.valeur) ||
       chantier.estTerritorialise;

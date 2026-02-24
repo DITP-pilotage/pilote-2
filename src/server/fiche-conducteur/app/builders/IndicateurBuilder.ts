@@ -17,10 +17,6 @@ export class IndicateurBuilder {
 
   private objectifTauxAvancementIntermediaire: number = 28.3;
 
-  private objectifCible: number = 12.3;
-
-  private objectifTauxAvancement: number = 16.3;
-
   withNom(nom: string): IndicateurBuilder {
     this.nom = nom;
     return this;
@@ -66,18 +62,6 @@ export class IndicateurBuilder {
     return this;
   }
 
-  withObjectifCible(objectifCible: number): IndicateurBuilder {
-    this.objectifCible = objectifCible;
-    return this;
-  }
-
-  withObjectifTauxAvancement(
-    objectifTauxAvancement: number,
-  ): IndicateurBuilder {
-    this.objectifTauxAvancement = objectifTauxAvancement;
-    return this;
-  }
-
   build(): Indicateur {
     return Indicateur.creerIndicateur({
       nom: this.nom,
@@ -89,8 +73,6 @@ export class IndicateurBuilder {
       objectifValeurCibleIntermediaire: this.objectifValeurCibleIntermediaire,
       objectifTauxAvancementIntermediaire:
         this.objectifTauxAvancementIntermediaire,
-      objectifValeurCible: this.objectifCible,
-      objectifTauxAvancement: this.objectifTauxAvancement,
     });
   }
 }

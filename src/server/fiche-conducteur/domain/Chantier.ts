@@ -7,8 +7,6 @@ export class Chantier {
 
   private readonly _estTerritorialise: boolean;
 
-  private readonly _tauxAvancement: number | null;
-
   private readonly _tauxAvancementAnnuel: number | null;
 
   private readonly _maille: string;
@@ -29,7 +27,6 @@ export class Chantier {
     id,
     nom,
     estTerritorialise,
-    tauxAvancement,
     tauxAvancementAnnuel,
     maille,
     codeInsee,
@@ -42,7 +39,6 @@ export class Chantier {
     id: string;
     nom: string;
     estTerritorialise: boolean;
-    tauxAvancement: number | null;
     tauxAvancementAnnuel: number | null;
     maille: string;
     codeInsee: string;
@@ -55,7 +51,6 @@ export class Chantier {
     this._id = id;
     this._nom = nom;
     this._estTerritorialise = estTerritorialise;
-    this._tauxAvancement = tauxAvancement;
     this._tauxAvancementAnnuel = tauxAvancementAnnuel;
     this._maille = maille;
     this._codeInsee = codeInsee;
@@ -77,10 +72,6 @@ export class Chantier {
 
   get estTerritorialise(): boolean {
     return this._estTerritorialise;
-  }
-
-  get tauxAvancement(): number | null {
-    return this._tauxAvancement;
   }
 
   get tauxAvancementAnnuel(): number | null {
@@ -119,7 +110,6 @@ export class Chantier {
     id,
     nom,
     estTerritorialise,
-    tauxAvancement,
     tauxAvancementAnnuel,
     maille,
     codeInsee,
@@ -132,7 +122,6 @@ export class Chantier {
     id: string;
     nom: string;
     estTerritorialise: boolean;
-    tauxAvancement: number | null;
     tauxAvancementAnnuel: number | null;
     maille: string;
     codeInsee: string;
@@ -146,7 +135,6 @@ export class Chantier {
       id,
       nom,
       estTerritorialise,
-      tauxAvancement,
       tauxAvancementAnnuel,
       maille,
       codeInsee,

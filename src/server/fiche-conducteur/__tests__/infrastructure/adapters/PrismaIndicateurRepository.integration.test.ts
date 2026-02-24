@@ -248,8 +248,6 @@ describe("PrismaIndicateurRepository", () => {
           type: "IMPACT",
           objectifValeurCibleIntermediaire: 20,
           objectifTauxAvancementIntermediaire: 10,
-          objectifValeurCible: 10,
-          objectifTauxAvancement: 30,
           dateValeurAvancement: new Date("2024-12-01").toISOString(),
         },
         {
@@ -257,16 +255,12 @@ describe("PrismaIndicateurRepository", () => {
           type: "IMPACT",
           objectifValeurCibleIntermediaire: 21,
           objectifTauxAvancementIntermediaire: 11,
-          objectifValeurCible: 11,
-          objectifTauxAvancement: 31,
         },
         {
           nom: "Indicateur 004",
           type: "Q_SERV",
           objectifValeurCibleIntermediaire: 23,
           objectifTauxAvancementIntermediaire: 13,
-          objectifValeurCible: 13,
-          objectifTauxAvancement: 33,
         },
       ]);
     });

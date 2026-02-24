@@ -57,8 +57,6 @@ export class RécupererChantierFicheConducteurUseCase {
             indicateur.objectifValeurCibleIntermediaire,
           objectifTauxAvancementIntermediaire:
             indicateur.objectifTauxAvancementIntermediaire,
-          objectifValeurCible: indicateur.objectifValeurCible,
-          objectifTauxAvancement: indicateur.objectifTauxAvancement,
         }),
       ),
     });
