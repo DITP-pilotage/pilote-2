@@ -71,7 +71,7 @@ export const PageFicheTerritoriale: FunctionComponent<
                       </Infobulle>
                     </TitreInfobulleConteneur>
                     <AvancementsFicheTerritoriale
-                      avancementGlobalTerritoire={avancementTerritoire}
+                      avancementTerritoire={avancementTerritoire}
                       jalon={jalon}
                     />
                   </div>
@@ -177,6 +177,7 @@ export const PageFicheTerritoriale: FunctionComponent<
               </div>
               <TableauFicheTerritoriale
                 chantiersFicheTerritoriale={chantiersFicheTerritoriale}
+                jalon={jalon}
               />
             </Bloc>
           </div>

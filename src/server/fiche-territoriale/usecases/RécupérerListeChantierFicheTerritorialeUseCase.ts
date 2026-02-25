@@ -153,14 +153,12 @@ export class RécupérerListeChantierFicheTerritorialeUseCase {
                 valeurAvancement: indicateur.valeurAvancement,
                 nom: indicateur.nom,
                 uniteMesure: indicateur.uniteMesure,
-                tauxAvancement: indicateur.objectifTauxAvancement,
+                tauxAvancement: indicateur.tauxAvancement,
                 valeurCible: indicateur.valeurCible,
                 tauxAvancementNational: !Number.isNaN(
-                  mapIndicateursNationale.get(indicateur.id)
-                    ?.objectifTauxAvancement,
+                  mapIndicateursNationale.get(indicateur.id)?.tauxAvancement,
                 )
-                  ? mapIndicateursNationale.get(indicateur.id)!
-                      .objectifTauxAvancement
+                  ? mapIndicateursNationale.get(indicateur.id)!.tauxAvancement
                   : null,
               },
             );

@@ -104,7 +104,7 @@ describe("RécupérerListeChantierFicheTerritorialeUseCase", () => {
     const indicateur1CH1 = new IndicateurBuilder()
       .withId("IND-001")
       .withNom("Un nom indicateur 1 chantier 1")
-      .withObjectifTauxAvancement(10.1)
+      .withTauxAvancement(10.1)
       .withValeurAvancement(11.1)
       .withValeurCible(12.1)
       .withUniteMesure("Pourcentage")
@@ -113,7 +113,7 @@ describe("RécupérerListeChantierFicheTerritorialeUseCase", () => {
     const indicateur2CH1 = new IndicateurBuilder()
       .withId("IND-002")
       .withNom("Un nom indicateur 2 chantier 1")
-      .withObjectifTauxAvancement(20.1)
+      .withTauxAvancement(20.1)
       .withValeurAvancement(21.1)
       .withValeurCible(22.1)
       .withUniteMesure("Pourcentage")
@@ -122,7 +122,7 @@ describe("RécupérerListeChantierFicheTerritorialeUseCase", () => {
     const indicateur1CH2 = new IndicateurBuilder()
       .withId("IND-003")
       .withNom("Un nom indicateur 1 chantier 2")
-      .withObjectifTauxAvancement(30.1)
+      .withTauxAvancement(30.1)
       .withValeurAvancement(31.1)
       .withValeurCible(32.1)
       .withDateValeurAvancement("2020-08-01T00:00:00.000Z")
@@ -131,7 +131,7 @@ describe("RécupérerListeChantierFicheTerritorialeUseCase", () => {
     const indicateur2CH2 = new IndicateurBuilder()
       .withId("IND-004")
       .withNom("Un nom indicateur 2 chantier 2")
-      .withObjectifTauxAvancement(40.1)
+      .withTauxAvancement(40.1)
       .withValeurAvancement(41.1)
       .withValeurCible(42.1)
       .withUniteMesure("million habitant")
@@ -140,7 +140,7 @@ describe("RécupérerListeChantierFicheTerritorialeUseCase", () => {
     const indicateur1CH3 = new IndicateurBuilder()
       .withId("IND-005")
       .withNom("Un nom indicateur 1 chantier 3")
-      .withObjectifTauxAvancement(40.1)
+      .withTauxAvancement(40.1)
       .withValeurAvancement(41.1)
       .withValeurCible(42.1)
       .withUniteMesure("million habitant")
@@ -153,23 +153,23 @@ describe("RécupérerListeChantierFicheTerritorialeUseCase", () => {
     const mapIndicateursNational = new Map<string, Indicateur>();
     const indicateurNational1CH1 = new IndicateurBuilder()
       .withId("IND-001")
-      .withObjectifTauxAvancement(10.1)
+      .withTauxAvancement(10.1)
       .build();
     const indicateurNational2CH1 = new IndicateurBuilder()
       .withId("IND-002")
-      .withObjectifTauxAvancement(20.1)
+      .withTauxAvancement(20.1)
       .build();
     const indicateurNational1CH2 = new IndicateurBuilder()
       .withId("IND-003")
-      .withObjectifTauxAvancement(30.1)
+      .withTauxAvancement(30.1)
       .build();
     const indicateurNational2CH2 = new IndicateurBuilder()
       .withId("IND-004")
-      .withObjectifTauxAvancement(40.1)
+      .withTauxAvancement(40.1)
       .build();
     const indicateurNational1CH3 = new IndicateurBuilder()
       .withId("IND-005")
-      .withObjectifTauxAvancement(40.1)
+      .withTauxAvancement(40.1)
       .build();
     mapIndicateursNational.set("IND-001", indicateurNational1CH1);
     mapIndicateursNational.set("IND-002", indicateurNational2CH1);
@@ -394,19 +394,19 @@ describe("RécupérerListeChantierFicheTerritorialeUseCase", () => {
     const mapIndicateursNational = new Map<string, Indicateur>();
     const indicateurNational1CH1 = new IndicateurBuilder()
       .withId("IND-001")
-      .withObjectifTauxAvancement(10.1)
+      .withTauxAvancement(10.1)
       .build();
     const indicateurNational2CH1 = new IndicateurBuilder()
       .withId("IND-002")
-      .withObjectifTauxAvancement(20.1)
+      .withTauxAvancement(20.1)
       .build();
     const indicateurNational1CH2 = new IndicateurBuilder()
       .withId("IND-003")
-      .withObjectifTauxAvancement(30.1)
+      .withTauxAvancement(30.1)
       .build();
     const indicateurNational2CH2 = new IndicateurBuilder()
       .withId("IND-004")
-      .withObjectifTauxAvancement(40.1)
+      .withTauxAvancement(40.1)
       .build();
     mapIndicateursNational.set("IND-001", indicateurNational1CH1);
     mapIndicateursNational.set("IND-002", indicateurNational2CH1);

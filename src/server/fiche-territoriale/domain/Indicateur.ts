@@ -5,7 +5,7 @@ export class Indicateur {
 
   private readonly _dateValeurAvancement: string;
 
-  private readonly _objectifTauxAvancement: number | null;
+  private readonly _tauxAvancement: number | null;
 
   private readonly _valeurAvancement: number | null;
 
@@ -17,7 +17,7 @@ export class Indicateur {
     id,
     nom,
     dateValeurAvancement,
-    objectifTauxAvancement,
+    tauxAvancement,
     valeurAvancement,
     valeurCible,
     uniteMesure,
@@ -25,7 +25,7 @@ export class Indicateur {
     id: string;
     nom: string;
     dateValeurAvancement: string;
-    objectifTauxAvancement: number | null;
+    tauxAvancement: number | null;
     valeurAvancement: number | null;
     valeurCible: number | null;
     uniteMesure: string | null;
@@ -33,11 +33,10 @@ export class Indicateur {
     this._id = id;
     this._nom = nom;
     this._dateValeurAvancement = dateValeurAvancement;
-    this._objectifTauxAvancement = objectifTauxAvancement;
     this._valeurAvancement = valeurAvancement;
     this._valeurCible = valeurCible;
     this._uniteMesure = uniteMesure;
-    this._objectifTauxAvancement = objectifTauxAvancement;
+    this._tauxAvancement = tauxAvancement;
   }
 
   get id(): string {
@@ -52,8 +51,8 @@ export class Indicateur {
     return this._dateValeurAvancement;
   }
 
-  get objectifTauxAvancement(): number | null {
-    return this._objectifTauxAvancement;
+  get tauxAvancement(): number | null {
+    return this._tauxAvancement;
   }
 
   get valeurAvancement(): number | null {
@@ -72,7 +71,7 @@ export class Indicateur {
     id,
     nom,
     dateValeurAvancement,
-    objectifTauxAvancement,
+    tauxAvancement,
     valeurAvancement,
     valeurCible,
     uniteMesure,
@@ -80,7 +79,7 @@ export class Indicateur {
     id: string;
     nom: string;
     dateValeurAvancement: string;
-    objectifTauxAvancement: number | null;
+    tauxAvancement: number | null;
     valeurAvancement: number | null;
     valeurCible: number | null;
     uniteMesure: string | null;
@@ -89,7 +88,7 @@ export class Indicateur {
       id,
       nom,
       dateValeurAvancement,
-      objectifTauxAvancement,
+      tauxAvancement,
       valeurAvancement,
       valeurCible,
       uniteMesure,

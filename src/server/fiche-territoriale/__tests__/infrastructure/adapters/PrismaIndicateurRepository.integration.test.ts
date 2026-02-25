@@ -136,10 +136,6 @@ describe("PrismaIndicateurRepository", () => {
             zone_id: "D01",
             territoire_code: "DEPT-01",
             ponderation_zone_reel: null,
-            date_valeur_actuelle_mandat: new Date("2021-01-01"),
-            valeur_actuelle_mandat: 10.1,
-            valeur_cible_mandat: 11.1,
-            taux_avancement_mandat: 12.1,
           },
           {
             id: "IND-002",
@@ -149,10 +145,6 @@ describe("PrismaIndicateurRepository", () => {
             zone_id: "D01",
             territoire_code: "DEPT-01",
             ponderation_zone_reel: 20,
-            date_valeur_actuelle_mandat: new Date("2023-02-04"),
-            valeur_actuelle_mandat: 22.3,
-            valeur_cible_mandat: 23.3,
-            taux_avancement_mandat: 24.3,
           },
           {
             id: "IND-003",
@@ -161,11 +153,6 @@ describe("PrismaIndicateurRepository", () => {
             maille: "DEPT",
             zone_id: "D01",
             territoire_code: "DEPT-01",
-            ponderation_zone_reel: 20,
-            date_valeur_actuelle_mandat: new Date("2022-08-02"),
-            valeur_actuelle_mandat: 31.3,
-            valeur_cible_mandat: 32.3,
-            taux_avancement_mandat: 33.3,
           },
           {
             id: "IND-004",
@@ -175,7 +162,6 @@ describe("PrismaIndicateurRepository", () => {
             zone_id: "R01",
             territoire_code: "REG-01",
             ponderation_zone_reel: 20,
-            date_valeur_actuelle_mandat: new Date("2022-08-02"),
           },
           {
             id: "IND-005",
@@ -185,7 +171,6 @@ describe("PrismaIndicateurRepository", () => {
             zone_id: "D01",
             territoire_code: "DEPT-01",
             ponderation_zone_reel: 20,
-            date_valeur_actuelle_mandat: new Date("2022-08-02"),
           },
           {
             id: "IND-006",
@@ -195,7 +180,6 @@ describe("PrismaIndicateurRepository", () => {
             zone_id: "D01",
             territoire_code: "DEPT-01",
             ponderation_zone_reel: null,
-            date_valeur_actuelle_mandat: new Date("2022-08-02"),
           },
           {
             id: "IND-007",
@@ -205,7 +189,6 @@ describe("PrismaIndicateurRepository", () => {
             zone_id: "D01",
             territoire_code: "DEPT-01",
             ponderation_zone_reel: 0,
-            date_valeur_actuelle_mandat: new Date("2022-08-02"),
           },
         ],
       });
@@ -244,7 +227,7 @@ describe("PrismaIndicateurRepository", () => {
             maille: "DEPT",
             zone_id: "D01",
             territoire_code: "DEPT-01",
-            valeur_cible: 20,
+            valeur_cible: 23.3,
             date_valeur_cible: new Date("2024-12-06"),
             taux_avancement: 13,
             date_valeur_actuelle: new Date("2023-02-04"),
@@ -257,7 +240,7 @@ describe("PrismaIndicateurRepository", () => {
             maille: "DEPT",
             zone_id: "D01",
             territoire_code: "DEPT-01",
-            valeur_cible: 20,
+            valeur_cible: 32.3,
             date_valeur_cible: new Date("2024-12-06"),
             taux_avancement: 13,
             date_valeur_actuelle: new Date("2022-08-02"),
@@ -282,7 +265,7 @@ describe("PrismaIndicateurRepository", () => {
         "2021-01-01T00:00:00.000Z",
       );
       expect(result.get("CH-001")?.at(0)?.valeurAvancement).toEqual(10.1);
-      expect(result.get("CH-001")?.at(0)?.valeurCible).toEqual(11.1);
+      expect(result.get("CH-001")?.at(0)?.valeurCible).toEqual(20);
       expect(result.get("CH-001")?.at(0)?.uniteMesure).toEqual("Pourcentage");
       expect(result.get("CH-001")?.at(1)?.id).toEqual("IND-002");
       expect(result.get("CH-001")?.at(1)?.nom).toEqual(
@@ -730,7 +713,7 @@ describe("PrismaIndicateurRepository", () => {
             territoire_code: "NAT-FR",
             valeur_cible: 20,
             date_valeur_cible: new Date("2024-12-06"),
-            taux_avancement: 13,
+            taux_avancement: 10.2,
             date_valeur_actuelle: new Date("2021-01-01"),
             valeur_actuelle: 10.1,
             jalon: 2024,
@@ -756,7 +739,7 @@ describe("PrismaIndicateurRepository", () => {
             territoire_code: "NAT-FR",
             valeur_cible: 20,
             date_valeur_cible: new Date("2024-12-06"),
-            taux_avancement: 13,
+            taux_avancement: 11.2,
             date_valeur_actuelle: new Date("2023-02-04"),
             valeur_actuelle: 22.3,
             jalon: 2024,
@@ -787,9 +770,9 @@ describe("PrismaIndicateurRepository", () => {
 
       // Then
       expect([...result.keys()]).toEqual(["IND-001", "IND-002"]);
-      expect(result.get("IND-001")?.objectifTauxAvancement).toEqual(10.2);
+      expect(result.get("IND-001")?.tauxAvancement).toEqual(10.2);
 
-      expect(result.get("IND-002")?.objectifTauxAvancement).toEqual(11.2);
+      expect(result.get("IND-002")?.tauxAvancement).toEqual(11.2);
     });
   });
 });
