@@ -38,3 +38,14 @@ export const estPropositionAccuseeReception = (
 export const estPropositionModifiee = (detailIndicateur: DétailsIndicateur) =>
   detailIndicateur.propositionStatutTerritoire?.statut ===
   EvenementValeurEnum.PROPOSITION_VALEUR_MODIFIEE;
+
+export const estUnePropositionTerminée = (
+  detailIndicateur: DétailsIndicateur,
+) =>
+  detailIndicateur.propositionStatutDirectionProjet?.statut &&
+  [
+    EvenementValeurEnum.PROPOSITION_VALEUR_ACCEPTEE,
+    EvenementValeurEnum.PROPOSITION_VALEUR_REFUSEE,
+    EvenementValeurEnum.PROPOSITION_VALEUR_ACCEPTEE_AVEC_MODIFICATION,
+    EvenementValeurEnum.PROPOSITION_VALEUR_SUPPRIMEE,
+  ].includes(detailIndicateur.propositionStatutDirectionProjet?.statut);
