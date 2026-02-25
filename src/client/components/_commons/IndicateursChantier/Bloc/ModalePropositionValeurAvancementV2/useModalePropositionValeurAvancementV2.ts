@@ -9,6 +9,7 @@ import { useBlocIndicateurContext } from "@/components/PageChantier/useBlocIndic
 import {
   estPropositionCreee,
   estPropositionModifiee,
+  estUnePropositionTerminée,
 } from "@/components/_commons/IndicateursChantier/Bloc/utils";
 import { SelecteurNewOption } from "@/components/_commons/SelecteurNew/SelecteurNew";
 
@@ -181,8 +182,9 @@ const useModalePropositionValeurAvancementV2 = () => {
   };
 
   const estUneModificationDeProposition =
-    estPropositionCreee(detailIndicateurDuTerritoire) ||
-    estPropositionModifiee(detailIndicateurDuTerritoire);
+    (estPropositionCreee(detailIndicateurDuTerritoire) ||
+      estPropositionModifiee(detailIndicateurDuTerritoire)) &&
+    !estUnePropositionTerminée(detailIndicateurDuTerritoire);
 
   const moisDateValeurAvancementMandat = formatterMois(
     detailIndicateurDuTerritoire.dateValeurAvancementMandat!,
