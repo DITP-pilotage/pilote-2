@@ -7,8 +7,8 @@ interface IndicateurFicheConducteurContrat {
   valeurInitiale: string;
   valeurAvancement: string;
   dateValeurAvancement: string;
-  objectifValeurCibleIntermediaire: string;
-  objectifTauxAvancementIntermediaire: string;
+  valeurCible: string;
+  tauxAvancement: string;
 }
 
 export interface ChantierFicheConducteurContrat {

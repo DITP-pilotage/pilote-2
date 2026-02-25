@@ -13,9 +13,9 @@ export class IndicateurBuilder {
 
   private dateValeurAvancement: string = "2022-01-01T00:00:00.000Z";
 
-  private objectifValeurCibleIntermediaire: number = 17.3;
+  private valeurCible: number = 17.3;
 
-  private objectifTauxAvancementIntermediaire: number = 28.3;
+  private tauxAvancement: number = 28.3;
 
   withNom(nom: string): IndicateurBuilder {
     this.nom = nom;
@@ -47,18 +47,13 @@ export class IndicateurBuilder {
     return this;
   }
 
-  withObjectifValeurCibleIntermediaire(
-    objectifValeurCibleIntermediaire: number,
-  ): IndicateurBuilder {
-    this.objectifValeurCibleIntermediaire = objectifValeurCibleIntermediaire;
+  withValeurCible(valeurCible: number): IndicateurBuilder {
+    this.valeurCible = valeurCible;
     return this;
   }
 
-  withObjectifTauxAvancementIntermediaire(
-    objectifTauxAvancementIntermediaire: number,
-  ): IndicateurBuilder {
-    this.objectifTauxAvancementIntermediaire =
-      objectifTauxAvancementIntermediaire;
+  withTauxAvancement(tauxAvancement: number): IndicateurBuilder {
+    this.tauxAvancement = tauxAvancement;
     return this;
   }
 
@@ -70,9 +65,8 @@ export class IndicateurBuilder {
       dateValeurInitiale: this.dateValeurInitiale,
       valeurAvancement: this.valeurAvancement,
       dateValeurAvancement: this.dateValeurAvancement,
-      objectifValeurCibleIntermediaire: this.objectifValeurCibleIntermediaire,
-      objectifTauxAvancementIntermediaire:
-        this.objectifTauxAvancementIntermediaire,
+      valeurCible: this.valeurCible,
+      tauxAvancement: this.tauxAvancement,
     });
   }
 }

@@ -173,10 +173,10 @@ const PageFicheConducteur: FunctionComponent<
                       {`${indicateur.valeurAvancement} ${indicateur.dateValeurAvancement}`}
                     </div>
                     <div className="fr-col-3 flex align-center">
-                      {indicateur.objectifValeurCibleIntermediaire}
+                      {indicateur.valeurCible}
                     </div>
                     <div className="fr-col-3 flex align-center">
-                      {indicateur.objectifTauxAvancementIntermediaire}
+                      {indicateur.tauxAvancement}
                     </div>
                   </div>
                 </div>

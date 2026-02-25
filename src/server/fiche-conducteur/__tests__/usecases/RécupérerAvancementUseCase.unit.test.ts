@@ -39,7 +39,7 @@ describe("RécupérerAvancementUseCase", () => {
       .build();
     const chantierNat = new ChantierBuilder()
       .withId("CH-168")
-      .withTauxAvancementAnnuel(10)
+      .withTauxAvancement(10)
       .withMaille("NAT")
       .build();
     chantierRepository.récupérerMailleNatEtDeptParId.mockResolvedValue([
@@ -68,32 +68,32 @@ describe("RécupérerAvancementUseCase", () => {
     let chantierId = "CH-168";
     const chantier1 = new ChantierBuilder()
       .withId("CH-168")
-      .withTauxAvancementAnnuel(42)
+      .withTauxAvancement(42)
       .withMaille("DEPT")
       .build();
     const chantier2 = new ChantierBuilder()
       .withId("CH-168")
-      .withTauxAvancementAnnuel(40)
+      .withTauxAvancement(40)
       .withMaille("DEPT")
       .build();
     const chantier3 = new ChantierBuilder()
       .withId("CH-168")
-      .withTauxAvancementAnnuel(60)
+      .withTauxAvancement(60)
       .withMaille("DEPT")
       .build();
     const chantier4 = new ChantierBuilder()
       .withId("CH-168")
-      .withTauxAvancementAnnuel(55)
+      .withTauxAvancement(55)
       .withMaille("DEPT")
       .build();
     const chantier5 = new ChantierBuilder()
       .withId("CH-168")
-      .withTauxAvancementAnnuel(59)
+      .withTauxAvancement(59)
       .withMaille("DEPT")
       .build();
     const chantierNat = new ChantierBuilder()
       .withId("CH-168")
-      .withTauxAvancementAnnuel(20)
+      .withTauxAvancement(20)
       .withMaille("NAT")
       .build();
     chantierRepository.récupérerMailleNatEtDeptParId.mockResolvedValue([
@@ -124,27 +124,27 @@ describe("RécupérerAvancementUseCase", () => {
     let chantierId = "CH-168";
     const chantier1 = new ChantierBuilder()
       .withId("CH-168")
-      .withTauxAvancementAnnuel(42)
+      .withTauxAvancement(42)
       .withMaille("DEPT")
       .build();
     const chantier2 = new ChantierBuilder()
       .withId("CH-168")
-      .withTauxAvancementAnnuel(40)
+      .withTauxAvancement(40)
       .withMaille("DEPT")
       .build();
     const chantier3 = new ChantierBuilder()
       .withId("CH-168")
-      .withTauxAvancementAnnuel(60)
+      .withTauxAvancement(60)
       .withMaille("DEPT")
       .build();
     const chantier4 = new ChantierBuilder()
       .withId("CH-168")
-      .withTauxAvancementAnnuel(55)
+      .withTauxAvancement(55)
       .withMaille("DEPT")
       .build();
     const chantierNat = new ChantierBuilder()
       .withId("CH-168")
-      .withTauxAvancementAnnuel(20)
+      .withTauxAvancement(20)
       .withMaille("NAT")
       .build();
     chantierRepository.récupérerMailleNatEtDeptParId.mockResolvedValue([
@@ -174,32 +174,32 @@ describe("RécupérerAvancementUseCase", () => {
     let chantierId = "CH-168";
     const chantier1 = new ChantierBuilder()
       .withId("CH-168")
-      .withTauxAvancementAnnuel(42)
+      .withTauxAvancement(42)
       .withMaille("DEPT")
       .build();
     const chantier2 = new ChantierBuilder()
       .withId("CH-168")
-      .withTauxAvancementAnnuel(40)
+      .withTauxAvancement(40)
       .withMaille("DEPT")
       .build();
     const chantier3 = new ChantierBuilder()
       .withId("CH-168")
-      .withTauxAvancementAnnuel(60)
+      .withTauxAvancement(60)
       .withMaille("DEPT")
       .build();
     const chantier4 = new ChantierBuilder()
       .withId("CH-168")
-      .withTauxAvancementAnnuel(55)
+      .withTauxAvancement(55)
       .withMaille("DEPT")
       .build();
     const chantier5 = new ChantierBuilder()
       .withId("CH-168")
-      .withTauxAvancementAnnuel(null)
+      .withTauxAvancement(null)
       .withMaille("DEPT")
       .build();
     const chantierNat = new ChantierBuilder()
       .withId("CH-168")
-      .withTauxAvancementAnnuel(20)
+      .withTauxAvancement(20)
       .withMaille("NAT")
       .build();
     chantierRepository.récupérerMailleNatEtDeptParId.mockResolvedValue([
@@ -230,32 +230,32 @@ describe("RécupérerAvancementUseCase", () => {
     let chantierId = "CH-168";
     const chantier1 = new ChantierBuilder()
       .withId("CH-168")
-      .withTauxAvancementAnnuel(null)
+      .withTauxAvancement(null)
       .withMaille("DEPT")
       .build();
     const chantier2 = new ChantierBuilder()
       .withId("CH-168")
-      .withTauxAvancementAnnuel(null)
+      .withTauxAvancement(null)
       .withMaille("DEPT")
       .build();
     const chantier3 = new ChantierBuilder()
       .withId("CH-168")
-      .withTauxAvancementAnnuel(null)
+      .withTauxAvancement(null)
       .withMaille("DEPT")
       .build();
     const chantier4 = new ChantierBuilder()
       .withId("CH-168")
-      .withTauxAvancementAnnuel(null)
+      .withTauxAvancement(null)
       .withMaille("DEPT")
       .build();
     const chantier5 = new ChantierBuilder()
       .withId("CH-168")
-      .withTauxAvancementAnnuel(null)
+      .withTauxAvancement(null)
       .withMaille("DEPT")
       .build();
     const chantierNat = new ChantierBuilder()
       .withId("CH-168")
-      .withTauxAvancementAnnuel(null)
+      .withTauxAvancement(null)
       .withMaille("NAT")
       .build();
     chantierRepository.récupérerMailleNatEtDeptParId.mockResolvedValue([

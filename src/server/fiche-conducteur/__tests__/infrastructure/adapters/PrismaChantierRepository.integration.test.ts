@@ -110,7 +110,7 @@ describe("PrismaChantierRepository", () => {
       expect(chantierResult.id).toEqual("CH-168");
       expect(chantierResult.nom).toEqual("Chantier 168");
       expect(chantierResult.estTerritorialise).toEqual(true);
-      expect(chantierResult.tauxAvancementAnnuel).toEqual(9.2);
+      expect(chantierResult.tauxAvancement).toEqual(9.2);
       expect(
         chantierResult.listeDirecteursAdministrationCentrale,
       ).toIncludeSameMembers(["DAC 1", "DAC 2"]);
@@ -238,7 +238,7 @@ describe("PrismaChantierRepository", () => {
       // Then
       expect(chantierResult).toHaveLength(3);
       expect(
-        chantierResult.map((chantier) => chantier.tauxAvancementAnnuel),
+        chantierResult.map((chantier) => chantier.tauxAvancement),
       ).toIncludeSameMembers([9.2, 13.3, null]);
       expect(
         chantierResult.map((chantier) => chantier.codeInsee),

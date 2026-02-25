@@ -31,7 +31,7 @@ export class RécupérerDonnéesCartographieUseCase {
       .map((chantier) =>
         DonnéeCartographie.creerDonnéeCartographie({
           territoireCode: chantier.territoireCode,
-          tauxAvancement: chantier.tauxAvancementAnnuel,
+          tauxAvancement: chantier.tauxAvancement,
           météo: chantier.meteo as Meteo,
           estApplicable: chantier.estApplicable,
         }),

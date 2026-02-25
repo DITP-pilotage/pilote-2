@@ -57,18 +57,12 @@ const presenterEnChantierFicheConducteurContrat = (
         valeurAvancement: indicateurFicheConducteur.valeurAvancement
           ? numberWithSpaces(indicateurFicheConducteur.valeurAvancement)
           : "-",
-        objectifValeurCibleIntermediaire:
-          indicateurFicheConducteur.objectifValeurCibleIntermediaire
-            ? numberWithSpaces(
-                indicateurFicheConducteur.objectifValeurCibleIntermediaire,
-              )
-            : "-",
-        objectifTauxAvancementIntermediaire:
-          indicateurFicheConducteur.objectifTauxAvancementIntermediaire
-            ? numberWithSpaces(
-                indicateurFicheConducteur.objectifTauxAvancementIntermediaire,
-              )
-            : "-",
+        valeurCible: indicateurFicheConducteur.valeurCible
+          ? numberWithSpaces(indicateurFicheConducteur.valeurCible)
+          : "-",
+        tauxAvancement: indicateurFicheConducteur.tauxAvancement
+          ? numberWithSpaces(indicateurFicheConducteur.tauxAvancement)
+          : "-",
       }),
     ),
   };

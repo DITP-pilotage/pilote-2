@@ -24,7 +24,7 @@ const convertirChantierTerritoireEnChantier = (
     nom: chantierTerritoireModel.chantier_identite.nom,
     estTerritorialise:
       chantierTerritoireModel.chantier_identite.est_territorialise || false,
-    tauxAvancementAnnuel: verifyValeurIsNotNullOrUndefined(
+    tauxAvancement: verifyValeurIsNotNullOrUndefined(
       chantierTerritoireModel.chantier_territoire_jalon[0]?.taux_avancement,
     ),
     maille: chantierTerritoireModel.maille,
@@ -50,7 +50,7 @@ const convertirChantierIdentiteEnChantier = (
     id: chantierIdentiteModel.id,
     nom: chantierIdentiteModel.nom,
     estTerritorialise: chantierIdentiteModel.est_territorialise || false,
-    tauxAvancementAnnuel:
+    tauxAvancement:
       chantierTerritoire.chantier_territoire_jalon[0]?.taux_avancement,
     maille: chantierTerritoire.maille,
     codeInsee: chantierTerritoire.code_insee,

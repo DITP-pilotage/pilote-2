@@ -11,9 +11,9 @@ export class IndicateurFicheConducteur {
 
   private readonly _dateValeurAvancement: string | null;
 
-  private readonly _objectifValeurCibleIntermediaire: number | null;
+  private readonly _valeurCible: number | null;
 
-  private readonly _objectifTauxAvancementIntermediaire: number | null;
+  private readonly _tauxAvancement: number | null;
 
   private constructor({
     nom,
@@ -22,8 +22,8 @@ export class IndicateurFicheConducteur {
     valeurAvancement,
     dateValeurAvancement,
     dateValeurInitiale,
-    objectifValeurCibleIntermediaire,
-    objectifTauxAvancementIntermediaire,
+    valeurCible,
+    tauxAvancement,
   }: {
     nom: string;
     type: string | null;
@@ -31,8 +31,8 @@ export class IndicateurFicheConducteur {
     valeurAvancement: number | null;
     dateValeurAvancement: string | null;
     dateValeurInitiale: string | null;
-    objectifValeurCibleIntermediaire: number | null;
-    objectifTauxAvancementIntermediaire: number | null;
+    valeurCible: number | null;
+    tauxAvancement: number | null;
   }) {
     this._nom = nom;
     this._type = type;
@@ -40,9 +40,8 @@ export class IndicateurFicheConducteur {
     this._valeurAvancement = valeurAvancement;
     this._dateValeurAvancement = dateValeurAvancement;
     this._dateValeurInitiale = dateValeurInitiale;
-    this._objectifValeurCibleIntermediaire = objectifValeurCibleIntermediaire;
-    this._objectifTauxAvancementIntermediaire =
-      objectifTauxAvancementIntermediaire;
+    this._valeurCible = valeurCible;
+    this._tauxAvancement = tauxAvancement;
   }
 
   get nom(): string {
@@ -69,12 +68,12 @@ export class IndicateurFicheConducteur {
     return this._dateValeurInitiale;
   }
 
-  get objectifValeurCibleIntermediaire(): number | null {
-    return this._objectifValeurCibleIntermediaire;
+  get valeurCible(): number | null {
+    return this._valeurCible;
   }
 
-  get objectifTauxAvancementIntermediaire(): number | null {
-    return this._objectifTauxAvancementIntermediaire;
+  get tauxAvancement(): number | null {
+    return this._tauxAvancement;
   }
 
   static creerIndicateurFicheConducteur({
@@ -84,8 +83,8 @@ export class IndicateurFicheConducteur {
     valeurAvancement,
     dateValeurAvancement,
     dateValeurInitiale,
-    objectifValeurCibleIntermediaire,
-    objectifTauxAvancementIntermediaire,
+    valeurCible,
+    tauxAvancement,
   }: {
     nom: string;
     type: string | null;
@@ -93,8 +92,8 @@ export class IndicateurFicheConducteur {
     valeurAvancement: number | null;
     dateValeurAvancement: string | null;
     dateValeurInitiale: string | null;
-    objectifValeurCibleIntermediaire: number | null;
-    objectifTauxAvancementIntermediaire: number | null;
+    valeurCible: number | null;
+    tauxAvancement: number | null;
   }) {
     return new IndicateurFicheConducteur({
       nom,
@@ -103,8 +102,8 @@ export class IndicateurFicheConducteur {
       valeurAvancement,
       dateValeurAvancement,
       dateValeurInitiale,
-      objectifValeurCibleIntermediaire,
-      objectifTauxAvancementIntermediaire,
+      valeurCible,
+      tauxAvancement,
     });
   }
 }

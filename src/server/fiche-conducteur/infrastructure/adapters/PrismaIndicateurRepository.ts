@@ -32,10 +32,8 @@ const convertirEnIndicateur = (
     dateValeurAvancement: prismaIndicateurTerritoireJalon?.date_valeur_actuelle
       ? prismaIndicateurTerritoireJalon.date_valeur_actuelle.toISOString()
       : null,
-    objectifValeurCibleIntermediaire:
-      prismaIndicateurTerritoireJalon?.valeur_cible || null,
-    objectifTauxAvancementIntermediaire:
-      prismaIndicateurTerritoireJalon?.taux_avancement || null,
+    valeurCible: prismaIndicateurTerritoireJalon?.valeur_cible || null,
+    tauxAvancement: prismaIndicateurTerritoireJalon?.taux_avancement || null,
   });
 };
 

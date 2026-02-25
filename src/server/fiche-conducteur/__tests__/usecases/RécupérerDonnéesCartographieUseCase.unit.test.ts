@@ -21,7 +21,7 @@ describe("RécupérerDonnéesCartographieUseCase", () => {
       .withTerritoireCode("DEPT-87")
       .withMeteo("SOLEIL")
       .withEstApplicable(true)
-      .withTauxAvancementAnnuel(90.3)
+      .withTauxAvancement(90.3)
       .withMaille("DEPT")
       .build();
     const chantier2 = new ChantierBuilder()
@@ -29,7 +29,7 @@ describe("RécupérerDonnéesCartographieUseCase", () => {
       .withTerritoireCode("DEPT-36")
       .withMeteo("COUVERT")
       .withEstApplicable(true)
-      .withTauxAvancementAnnuel(15.2)
+      .withTauxAvancement(15.2)
       .withMaille("DEPT")
       .build();
     const chantier3 = new ChantierBuilder()
@@ -37,7 +37,7 @@ describe("RécupérerDonnéesCartographieUseCase", () => {
       .withTerritoireCode("FR")
       .withMeteo("COUVERT")
       .withEstApplicable(false)
-      .withTauxAvancementAnnuel(17.2)
+      .withTauxAvancement(17.2)
       .withMaille("NAT")
       .build();
     chantierRepository.récupérerMailleNatEtDeptParId.mockResolvedValue([

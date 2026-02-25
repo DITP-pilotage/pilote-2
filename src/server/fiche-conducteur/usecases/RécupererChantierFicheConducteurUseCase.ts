@@ -53,10 +53,8 @@ export class RécupererChantierFicheConducteurUseCase {
           dateValeurInitiale: indicateur.dateValeurInitiale,
           valeurAvancement: indicateur.valeurAvancement,
           dateValeurAvancement: indicateur.dateValeurAvancement,
-          objectifValeurCibleIntermediaire:
-            indicateur.objectifValeurCibleIntermediaire,
-          objectifTauxAvancementIntermediaire:
-            indicateur.objectifTauxAvancementIntermediaire,
+          valeurCible: indicateur.valeurCible,
+          tauxAvancement: indicateur.tauxAvancement,
         }),
       ),
     });
