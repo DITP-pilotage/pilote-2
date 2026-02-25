@@ -4,6 +4,7 @@ import { Link } from "@tiptap/extension-link";
 import { TextStyle } from "@tiptap/extension-text-style";
 import { Color } from "@tiptap/extension-color";
 import { Underline } from "@tiptap/extension-underline";
+import Image from "@tiptap/extension-image";
 import { EditeurRiche, EditeurRicheProps } from "./EditeurRiche";
 import { CalloutExtension } from "./extensions/CalloutExtension";
 import { AccordionExtension } from "./extensions/AccordionExtension";
@@ -17,6 +18,10 @@ const extensions = [
   TextStyle,
   Color,
   Underline,
+  Image.configure({
+    inline: false,
+    allowBase64: true,
+  }),
   CalloutExtension,
   AccordionExtension,
   IconeExtension,

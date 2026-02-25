@@ -34,7 +34,7 @@ export class SanitizerHTML {
       allowedAttributes: {
         div: ["data-type", "data-title", "data-color"],
         a: ["href", "target", "rel"],
-        img: ["src", "alt", "title"],
+        img: ["src", "alt", "title", "width", "height", "draggable"],
         span: ["style", "data-type", "data-icon-type"],
         p: ["style"],
         h1: ["style"],
