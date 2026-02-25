@@ -1,3 +1,4 @@
+import { Fragment, ReactNode } from "react";
 import { Editor } from "@tiptap/react";
 import { Icone } from "@/components/_commons/Icone";
 import { ListOrderedIcon } from "@/components/_commons/Icones/ListOrderedIcon";
@@ -32,6 +33,9 @@ export const MenuBar = ({ editor }: { editor: Editor }) => {
     return null;
   }
 
+  const hasExtension = (name: string) =>
+    editor.extensionManager.extensions.some((ext) => ext.name === name);
+
   const buttonClass = (isActive: boolean) =>
     clsxm(
       "flex items-center justify-center w-8 h-8 p-0 transition-all duration-150 ease-in-out rounded border",
@@ -44,233 +48,263 @@ export const MenuBar = ({ editor }: { editor: Editor }) => {
       },
     );
 
-  return (
-    <div className="flex z-1 sticky top-0 flex-wrap gap-1 items-center p-2 border border-[#ddd] border-b-0 rounded-t !bg-white">
-      {/* Formatage de texte */}
-      <div className="flex gap-1 items-center">
+  const formatageTexte = (): ReactNode | null => {
+    const boutons: ReactNode[] = [];
+
+    if (hasExtension("bold")) {
+      boutons.push(
         <button
           aria-label="Gras"
           aria-pressed={editor.isActive("bold")}
           className={buttonClass(editor.isActive("bold"))}
           disabled={!editor.can().chain().focus().toggleBold().run()}
+          key="bold"
           onClick={() => editor.chain().focus().toggleBold().run()}
           title="Gras"
           type="button"
         >
           <Icone icone={BoldIcon} />
-        </button>
+        </button>,
+      );
+    }
+
+    if (hasExtension("italic")) {
+      boutons.push(
         <button
           aria-label="Italique"
           aria-pressed={editor.isActive("italic")}
           className={buttonClass(editor.isActive("italic"))}
           disabled={!editor.can().chain().focus().toggleItalic().run()}
+          key="italic"
           onClick={() => editor.chain().focus().toggleItalic().run()}
           title="Italique"
           type="button"
         >
           <Icone icone={ItalicIcon} />
-        </button>
+        </button>,
+      );
+    }
+
+    if (hasExtension("strike")) {
+      boutons.push(
         <button
           aria-label="Barré"
           aria-pressed={editor.isActive("strike")}
           className={buttonClass(editor.isActive("strike"))}
           disabled={!editor.can().chain().focus().toggleStrike().run()}
+          key="strike"
           onClick={() => editor.chain().focus().toggleStrike().run()}
           title="Barré"
           type="button"
         >
           <Icone icone={StrikethroughIcon} />
-        </button>
+        </button>,
+      );
+    }
+
+    if (hasExtension("underline")) {
+      boutons.push(
         <button
           aria-label="Souligné"
           aria-pressed={editor.isActive("underline")}
           className={buttonClass(editor.isActive("underline"))}
           disabled={!editor.can().chain().focus().toggleUnderline().run()}
+          key="underline"
           onClick={() => editor.chain().focus().toggleUnderline().run()}
           title="Souligné"
           type="button"
         >
           <Icone icone={UnderlineIcon} />
-        </button>
+        </button>,
+      );
+    }
+
+    if (hasExtension("code")) {
+      boutons.push(
         <button
           aria-label="Ligne de code"
           aria-pressed={editor.isActive("code")}
           className={buttonClass(editor.isActive("code"))}
           disabled={!editor.can().chain().focus().toggleCode().run()}
+          key="code"
           onClick={() => editor.chain().focus().toggleCode().run()}
           title="Ligne de code"
           type="button"
         >
           <Icone icone={CodeIcon} />
-        </button>
-      </div>
+        </button>,
+      );
+    }
 
-      <div className="w-px h-6 mx-1 bg-[#ddd]" />
+    if (boutons.length === 0) return null;
+    return <div className="flex gap-1 items-center">{boutons}</div>;
+  };
 
-      {/* Styles de paragraphe */}
-      <div className="flex gap-1 items-center">
-        <button
-          aria-label="Paragraphe"
-          aria-pressed={editor.isActive("paragraph")}
-          className={buttonClass(editor.isActive("paragraph"))}
-          onClick={() => editor.chain().focus().setParagraph().run()}
-          title="Paragraphe"
-          type="button"
-        >
-          <Icone icone={ParagraphIcon} />
-        </button>
-        <button
-          aria-label="Titre 1"
-          aria-pressed={editor.isActive("heading", { level: 1 })}
-          className={buttonClass(editor.isActive("heading", { level: 1 }))}
-          onClick={() =>
-            editor.chain().focus().toggleHeading({ level: 1 }).run()
-          }
-          title="Titre 1"
-          type="button"
-        >
-          <Icone icone={Heading1Icon} />
-        </button>
-        <button
-          aria-label="Titre 2"
-          aria-pressed={editor.isActive("heading", { level: 2 })}
-          className={buttonClass(editor.isActive("heading", { level: 2 }))}
-          onClick={() =>
-            editor.chain().focus().toggleHeading({ level: 2 }).run()
-          }
-          title="Titre 2"
-          type="button"
-        >
-          <Icone icone={Heading2Icon} />
-        </button>
-        <button
-          aria-label="Titre 3"
-          aria-pressed={editor.isActive("heading", { level: 3 })}
-          className={buttonClass(editor.isActive("heading", { level: 3 }))}
-          onClick={() =>
-            editor.chain().focus().toggleHeading({ level: 3 }).run()
-          }
-          title="Titre 3"
-          type="button"
-        >
-          <Icone icone={Heading3Icon} />
-        </button>
-        <button
-          aria-label="Titre 4"
-          aria-pressed={editor.isActive("heading", { level: 4 })}
-          className={buttonClass(editor.isActive("heading", { level: 4 }))}
-          onClick={() =>
-            editor.chain().focus().toggleHeading({ level: 4 }).run()
-          }
-          title="Titre 4"
-          type="button"
-        >
-          <Icone icone={Heading4Icon} />
-        </button>
-        <button
-          aria-label="Titre 5"
-          aria-pressed={editor.isActive("heading", { level: 5 })}
-          className={buttonClass(editor.isActive("heading", { level: 5 }))}
-          onClick={() =>
-            editor.chain().focus().toggleHeading({ level: 5 }).run()
-          }
-          title="Titre 5"
-          type="button"
-        >
-          <Icone icone={Heading5Icon} />
-        </button>
-        <button
-          aria-label="Titre 6"
-          aria-pressed={editor.isActive("heading", { level: 6 })}
-          className={buttonClass(editor.isActive("heading", { level: 6 }))}
-          onClick={() =>
-            editor.chain().focus().toggleHeading({ level: 6 }).run()
-          }
-          title="Titre 6"
-          type="button"
-        >
-          <Icone icone={Heading6Icon} />
-        </button>
-      </div>
+  const stylesParagraphe = (): ReactNode | null => {
+    const boutons: ReactNode[] = [
+      <button
+        aria-label="Paragraphe"
+        aria-pressed={editor.isActive("paragraph")}
+        className={buttonClass(editor.isActive("paragraph"))}
+        key="paragraph"
+        onClick={() => editor.chain().focus().setParagraph().run()}
+        title="Paragraphe"
+        type="button"
+      >
+        <Icone icone={ParagraphIcon} />
+      </button>,
+    ];
 
-      <div className="w-px h-6 mx-1 bg-[#ddd]" />
+    if (hasExtension("heading")) {
+      const headingIcons = [
+        Heading1Icon,
+        Heading2Icon,
+        Heading3Icon,
+        Heading4Icon,
+        Heading5Icon,
+        Heading6Icon,
+      ];
 
-      {/* Listes */}
-      <div className="flex gap-1 items-center">
+      headingIcons.forEach((icon, index) => {
+        const level = (index + 1) as 1 | 2 | 3 | 4 | 5 | 6;
+        boutons.push(
+          <button
+            aria-label={`Titre ${level}`}
+            aria-pressed={editor.isActive("heading", { level })}
+            className={buttonClass(editor.isActive("heading", { level }))}
+            key={`heading-${level}`}
+            onClick={() =>
+              editor.chain().focus().toggleHeading({ level }).run()
+            }
+            title={`Titre ${level}`}
+            type="button"
+          >
+            <Icone icone={icon} />
+          </button>,
+        );
+      });
+    }
+
+    if (boutons.length <= 1 && !hasExtension("heading")) return null;
+    return <div className="flex gap-1 items-center">{boutons}</div>;
+  };
+
+  const listes = (): ReactNode | null => {
+    const boutons: ReactNode[] = [];
+
+    if (hasExtension("bulletList")) {
+      boutons.push(
         <button
           aria-label="Liste à puces"
           aria-pressed={editor.isActive("bulletList")}
           className={buttonClass(editor.isActive("bulletList"))}
+          key="bulletList"
           onClick={() => editor.chain().focus().toggleBulletList().run()}
           title="Liste à puces"
           type="button"
         >
           <Icone icone={BulletListIcon} />
-        </button>
+        </button>,
+      );
+    }
+
+    if (hasExtension("orderedList")) {
+      boutons.push(
         <button
           aria-label="Liste numérotée"
           aria-pressed={editor.isActive("orderedList")}
           className={buttonClass(editor.isActive("orderedList"))}
+          key="orderedList"
           onClick={() => editor.chain().focus().toggleOrderedList().run()}
           title="Liste numérotée"
           type="button"
         >
           <Icone icone={ListOrderedIcon} />
-        </button>
-      </div>
+        </button>,
+      );
+    }
 
-      <div className="w-px h-6 mx-1 bg-[#ddd]" />
+    if (boutons.length === 0) return null;
+    return <div className="flex gap-1 items-center">{boutons}</div>;
+  };
 
-      {/* Blocs spéciaux */}
-      <div className="flex gap-1 items-center">
+  const blocsSpeciaux = (): ReactNode | null => {
+    const boutons: ReactNode[] = [];
+
+    if (hasExtension("codeBlock")) {
+      boutons.push(
         <button
           aria-label="Bloc de code"
           aria-pressed={editor.isActive("codeBlock")}
           className={buttonClass(editor.isActive("codeBlock"))}
+          key="codeBlock"
           onClick={() => editor.chain().focus().toggleCodeBlock().run()}
           title="Bloc de code"
           type="button"
         >
           <Icone icone={CodeBlockIcon} />
-        </button>
+        </button>,
+      );
+    }
+
+    if (hasExtension("blockquote")) {
+      boutons.push(
         <button
           aria-label="Citation"
           aria-pressed={editor.isActive("blockquote")}
           className={buttonClass(editor.isActive("blockquote"))}
+          key="blockquote"
           onClick={() => editor.chain().focus().toggleBlockquote().run()}
           title="Citation"
           type="button"
         >
           <Icone icone={BlockquoteIcon} />
-        </button>
+        </button>,
+      );
+    }
+
+    if (hasExtension("horizontalRule")) {
+      boutons.push(
         <button
           aria-label="Ligne horizontale"
           className={buttonClass(false)}
+          key="horizontalRule"
           onClick={() => editor.chain().focus().setHorizontalRule().run()}
           title="Ligne horizontale"
           type="button"
         >
           <Icone icone={HorizontalRuleIcon} />
-        </button>
+        </button>,
+      );
+    }
+
+    if (hasExtension("hardBreak")) {
+      boutons.push(
         <button
           aria-label="Retour à la ligne"
           className={buttonClass(false)}
+          key="hardBreak"
           onClick={() => editor.chain().focus().setHardBreak().run()}
           title="Retour à la ligne"
           type="button"
         >
           <Icone icone={LineBreakIcon} />
-        </button>
-      </div>
+        </button>,
+      );
+    }
 
-      <div className="w-px h-6 mx-1 bg-[#ddd]" />
+    if (boutons.length === 0) return null;
+    return <div className="flex gap-1 items-center">{boutons}</div>;
+  };
 
-      {/* Actions */}
+  const actions = (): ReactNode => {
+    return (
       <div className="flex gap-1 items-center">
         <button
           aria-label="Annuler"
           className={buttonClass(false)}
           disabled={!editor.can().chain().focus().undo().run()}
+          key="undo"
           onClick={() => editor.chain().focus().undo().run()}
           title="Annuler"
           type="button"
@@ -281,6 +315,7 @@ export const MenuBar = ({ editor }: { editor: Editor }) => {
           aria-label="Rétablir"
           className={buttonClass(false)}
           disabled={!editor.can().chain().focus().redo().run()}
+          key="redo"
           onClick={() => editor.chain().focus().redo().run()}
           title="Rétablir"
           type="button"
@@ -288,47 +323,68 @@ export const MenuBar = ({ editor }: { editor: Editor }) => {
           <Icone icone={RedoIcon} />
         </button>
       </div>
+    );
+  };
 
-      <div className="w-px h-6 mx-1 bg-[#ddd]" />
+  const composants = (): ReactNode | null => {
+    const boutons: ReactNode[] = [];
 
-      {/* Composants */}
-      <div className="flex gap-1 items-center">
+    if (hasExtension("callout")) {
+      boutons.push(
         <button
           aria-label="Callout"
           className={buttonClass(editor.isActive("callout"))}
+          key="callout"
           onClick={() => editor.chain().focus().insertCallout().run()}
           title="Insérer un callout"
           type="button"
         >
           <Icone icone={InformationPleineIcon} />
-        </button>
+        </button>,
+      );
+    }
+
+    if (hasExtension("accordionItem")) {
+      boutons.push(
         <button
           aria-label="Accordéon"
           className={buttonClass(editor.isActive("accordionItem"))}
+          key="accordion"
           onClick={() => editor.chain().focus().insertAccordion().run()}
           title="Insérer un accordéon"
           type="button"
         >
           <Icone icone={ListUnorderedIcon} />
-        </button>
+        </button>,
+      );
+    }
+
+    if (hasExtension("icone")) {
+      boutons.push(
         <button
           aria-label="Icône"
           className={buttonClass(false)}
+          key="icone"
           onClick={() => editor.chain().focus().insertIcone().run()}
           title="Insérer une icône"
           type="button"
         >
           <Icone icone={EtoileIcon} />
-        </button>
-      </div>
+        </button>,
+      );
+    }
 
-      <div className="w-px h-6 mx-1 bg-[#ddd]" />
+    if (boutons.length === 0) return null;
+    return <div className="flex gap-1 items-center">{boutons}</div>;
+  };
 
-      {/* Nettoyage */}
+  const nettoyage = (): ReactNode => {
+    return (
       <div className="flex gap-1 items-center">
         <button
           aria-label="Effacer le formatage"
           className={buttonClass(false)}
+          key="clearFormat"
           onClick={() => editor.chain().focus().unsetAllMarks().run()}
           title="Effacer le formatage"
           type="button"
@@ -338,6 +394,7 @@ export const MenuBar = ({ editor }: { editor: Editor }) => {
         <button
           aria-label="Effacer les styles de bloc"
           className={buttonClass(false)}
+          key="clearNodes"
           onClick={() => editor.chain().focus().clearNodes().run()}
           title="Effacer les styles de bloc"
           type="button"
@@ -345,6 +402,27 @@ export const MenuBar = ({ editor }: { editor: Editor }) => {
           <Icone icone={ClearNodesIcon} />
         </button>
       </div>
+    );
+  };
+
+  const visibleGroups = [
+    formatageTexte(),
+    stylesParagraphe(),
+    listes(),
+    blocsSpeciaux(),
+    actions(),
+    composants(),
+    nettoyage(),
+  ].filter(Boolean) as ReactNode[];
+
+  return (
+    <div className="flex z-1 sticky top-0 flex-wrap gap-1 items-center p-2 border border-[#ddd] border-b-0 rounded-t !bg-white">
+      {visibleGroups.map((group, index) => (
+        <Fragment key={index}>
+          {index > 0 && <div className="w-px h-6 mx-1 bg-[#ddd]" />}
+          {group}
+        </Fragment>
+      ))}
     </div>
   );
 };

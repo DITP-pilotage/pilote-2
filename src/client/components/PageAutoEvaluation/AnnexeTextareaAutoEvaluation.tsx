@@ -3,10 +3,8 @@ import { flushSync } from "react-dom";
 import { Control, Controller, FieldValues, Path } from "react-hook-form";
 import { Icone } from "@/components/_commons/Icone";
 import { AddLineIcon } from "@/components/_commons/Icones/AddLineIcon";
-import {
-  EditeurRiche,
-  EditeurRicheRef,
-} from "@/components/_commons/EditeurRiche/EditeurRiche";
+import { EditeurRicheRef } from "@/components/_commons/EditeurRiche/EditeurRiche";
+import { EditeurSimple } from "@/components/_commons/EditeurRiche/EditeurSimple";
 import { Bouton } from "@/components/_commons/Bouton/Bouton";
 import { ChatForwardIcon } from "@/components/_commons/Icones/ChatForwardIcon";
 import { useAutosave } from "@/components/Evaluation/useAutosave";
@@ -68,7 +66,7 @@ export function AnnexeTextareaAutoEvaluation<T extends FieldValues>({
         return (
           <div className="isolate z-0 flex flex-column gap-2">
             <span className="text-sm italic">Annexe (facultatif)</span>
-            <EditeurRiche
+            <EditeurSimple
               contenu={field.value || ""}
               editeurRef={editeurRef}
               estEnLectureSeule={readOnly}

@@ -1,5 +1,5 @@
 import { FunctionComponent, ReactNode } from "react";
-import { EditeurRiche } from "@/components/_commons/EditeurRiche/EditeurRiche";
+import { EditeurNouveauté } from "@/components/_commons/EditeurRiche/EditeurNouveauté";
 import { RenduContenuHtml } from "@/components/_commons/EditeurRiche/RenduContenuHtml";
 import { ContenuHtmlStyled } from "./EditeurContenu3Colonnes.styled";
 
@@ -91,7 +91,7 @@ export const EditeurContenu3Colonnes: FunctionComponent<
           </button>
         </div>
         <div className="flex-1 overflow-y-auto p-4">
-          <EditeurRiche
+          <EditeurNouveauté
             contenu={contenu}
             onChange={onContenuChange}
             placeholder="Saisissez votre contenu..."
