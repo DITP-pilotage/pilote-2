@@ -6,55 +6,44 @@ interface NoeudArbreProps {
   niveau: number;
   itemSelectionneId: string | null;
   onSelectionItem: (id: string) => void;
-  groupesOuverts: Set<string>;
-  onToggleGroupe: (id: string) => void;
 }
+
+const IndicateurSelection: FunctionComponent<{
+  estSelectionne: boolean;
+}> = ({ estSelectionne }) => (
+  <span
+    className={`w-[10px] h-[10px] shrink-0 rounded-full border-2 transition-colors ${
+      estSelectionne
+        ? "border-blue-600 bg-blue-600"
+        : "border-gray-300 bg-white"
+    }`}
+  />
+);
 
 const NoeudArbreItem: FunctionComponent<NoeudArbreProps> = ({
   noeud,
   niveau,
   itemSelectionneId,
   onSelectionItem,
-  groupesOuverts,
-  onToggleGroupe,
 }) => {
   const estGroupe = noeud.type === "GROUPE";
-  const estOuvert = groupesOuverts.has(noeud.id);
   const estSelectionne = noeud.id === itemSelectionneId;
 
   return (
     <div>
       <button
-        className={`w-full text-left px-3 py-2 flex items-center gap-2 transition-colors hover:bg-gray-50 ${
-          estSelectionne ? "bg-blue-50 border-l-[3px] border-l-blue-600" : ""
+        className={`w-full text-left py-2 pr-3 flex items-center gap-2 transition-colors ${
+          estSelectionne
+            ? "bg-blue-50 text-blue-700"
+            : "hover:bg-gray-50 text-gray-700"
         }`}
-        onClick={() => {
-          onSelectionItem(noeud.id);
-          if (estGroupe) {
-            onToggleGroupe(noeud.id);
-          }
-        }}
-        style={{ paddingLeft: `${niveau * 16 + 12}px` }}
+        onClick={() => onSelectionItem(noeud.id)}
+        style={{ paddingLeft: `${niveau * 20 + 12}px` }}
         type="button"
       >
-        {estGroupe && (
-          <svg
-            className={`w-3 h-3 shrink-0 transition-transform ${estOuvert ? "rotate-90" : ""}`}
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              d="M9 5l7 7-7 7"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-            />
-          </svg>
-        )}
-        {!estGroupe && <span className="w-3 shrink-0" />}
+        <IndicateurSelection estSelectionne={estSelectionne} />
         <span
-          className={`text-sm truncate ${estGroupe ? "font-semibold" : ""}`}
+          className={`text-sm truncate ${estGroupe ? "font-semibold text-gray-900" : ""}`}
         >
           {noeud.titre || "(sans titre)"}
         </span>
@@ -63,17 +52,19 @@ const NoeudArbreItem: FunctionComponent<NoeudArbreProps> = ({
         )}
       </button>
 
-      {estGroupe && estOuvert && noeud.enfants.length > 0 && (
-        <div>
+      {estGroupe && noeud.enfants.length > 0 && (
+        <div className="relative">
+          <span
+            className="absolute top-0 bottom-0 w-px bg-gray-200"
+            style={{ left: `${niveau * 20 + 18}px` }}
+          />
           {noeud.enfants.map((enfant) => (
             <NoeudArbreItem
-              groupesOuverts={groupesOuverts}
               itemSelectionneId={itemSelectionneId}
               key={enfant.id}
               niveau={niveau + 1}
               noeud={enfant}
               onSelectionItem={onSelectionItem}
-              onToggleGroupe={onToggleGroupe}
             />
           ))}
         </div>
@@ -88,8 +79,6 @@ interface ArborescenceCentreAideProps {
   onSelectionItem: (id: string) => void;
   onCreerGroupe: (avecContenu: boolean) => void;
   onCreerPage: () => void;
-  groupesOuverts: Set<string>;
-  onToggleGroupe: (id: string) => void;
 }
 
 export const ArborescenceCentreAide: FunctionComponent<
@@ -100,8 +89,6 @@ export const ArborescenceCentreAide: FunctionComponent<
   onSelectionItem,
   onCreerGroupe,
   onCreerPage,
-  groupesOuverts,
-  onToggleGroupe,
 }) => {
   const [menuCreationGroupeOuvert, setMenuCreationGroupeOuvert] =
     useState(false);
@@ -156,13 +143,11 @@ export const ArborescenceCentreAide: FunctionComponent<
       <div className="overflow-y-auto flex-1">
         {arbre.map((noeud) => (
           <NoeudArbreItem
-            groupesOuverts={groupesOuverts}
             itemSelectionneId={itemSelectionneId}
             key={noeud.id}
             niveau={0}
             noeud={noeud}
             onSelectionItem={onSelectionItem}
-            onToggleGroupe={onToggleGroupe}
           />
         ))}
       </div>

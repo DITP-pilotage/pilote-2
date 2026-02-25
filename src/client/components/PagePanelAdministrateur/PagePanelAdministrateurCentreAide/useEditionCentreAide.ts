@@ -63,7 +63,6 @@ export const useEditionCentreAide = () => {
   const [contenu, setContenu] = useState<string | null>(templateInitial);
   const [type, setType] = useState<$Enums.TypeArticleCentreAide>("PAGE");
   const [estCreation, setEstCreation] = useState(false);
-  const [groupesOuverts, setGroupesOuverts] = useState<Set<string>>(new Set());
 
   const articles = listeArticles ?? [];
   const arbre = construireArbre(articles);
@@ -71,18 +70,6 @@ export const useEditionCentreAide = () => {
   const itemSelectionne = articles.find(
     (article) => article.id === itemSelectionneId,
   );
-
-  const toggleGroupe = useCallback((id: string) => {
-    setGroupesOuverts((previous) => {
-      const next = new Set(previous);
-      if (next.has(id)) {
-        next.delete(id);
-      } else {
-        next.add(id);
-      }
-      return next;
-    });
-  }, []);
 
   const selectionnerItem = useCallback(
     (id: string) => {
@@ -156,11 +143,6 @@ export const useEditionCentreAide = () => {
       refetchListe();
       setItemSelectionneId(variables.id);
       setEstCreation(false);
-      if (variables.parentId) {
-        setGroupesOuverts(
-          (previous) => new Set([...previous, variables.parentId!]),
-        );
-      }
       toast.success("Article créé avec succès", {
         duration: 3000,
         position: "top-right",
@@ -252,7 +234,5 @@ export const useEditionCentreAide = () => {
     type,
     sauvegarder,
     supprimer,
-    groupesOuverts,
-    toggleGroupe,
   };
 };

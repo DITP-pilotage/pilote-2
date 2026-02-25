@@ -21,8 +21,6 @@ export const PagePanelAdministrateurCentreAide: FunctionComponent = () => {
     setContenu,
     sauvegarder,
     supprimer,
-    groupesOuverts,
-    toggleGroupe,
   } = useEditionCentreAide();
 
   if (estChargement) {
@@ -37,12 +35,10 @@ export const PagePanelAdministrateurCentreAide: FunctionComponent = () => {
       <div className="w-[280px] shrink-0 border-r border-gray-200 flex flex-col overflow-hidden">
         <ArborescenceCentreAide
           arbre={arbre}
-          groupesOuverts={groupesOuverts}
           itemSelectionneId={itemSelectionneId}
           onCreerGroupe={preparerCreationGroupe}
           onCreerPage={preparerCreationPage}
           onSelectionItem={selectionnerItem}
-          onToggleGroupe={toggleGroupe}
         />
       </div>
 
