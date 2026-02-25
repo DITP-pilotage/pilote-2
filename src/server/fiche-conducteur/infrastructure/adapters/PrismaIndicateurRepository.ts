@@ -32,12 +32,12 @@ const convertirEnIndicateur = (
     dateValeurAvancement: prismaIndicateurTerritoireJalon?.date_valeur_actuelle
       ? prismaIndicateurTerritoireJalon.date_valeur_actuelle.toISOString()
       : null,
-    objectifValeurCibleIntermediaire:
-      prismaIndicateurTerritoireJalon?.valeur_cible || null,
-    objectifTauxAvancementIntermediaire:
-      prismaIndicateurTerritoireJalon?.taux_avancement || null,
-    objectifValeurCible: prismaIndicateurTerritoire.valeur_cible_mandat,
-    objectifTauxAvancement: prismaIndicateurTerritoire.taux_avancement_mandat,
+    valeurCible: verifyValeurIsNotNullOrUndefined(
+      prismaIndicateurTerritoireJalon?.valeur_cible,
+    ),
+    tauxAvancement: verifyValeurIsNotNullOrUndefined(
+      prismaIndicateurTerritoireJalon?.taux_avancement,
+    ),
   });
 };
 

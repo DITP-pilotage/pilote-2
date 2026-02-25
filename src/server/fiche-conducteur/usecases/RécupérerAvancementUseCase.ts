@@ -31,7 +31,7 @@ export class RécupérerAvancementUseCase {
     const listeAscChantiersDepartementTauxAvancement = listeChantiers
       .filter((chantier) => chantier.maille === "DEPT")
       .map((chantier) => chantier.tauxAvancement)
-      .filter(Boolean)
+      .filter((avancement) => avancement != null)
       .sort((a, b) => a - b);
 
     let mediane: number;
@@ -47,8 +47,7 @@ export class RécupérerAvancementUseCase {
         : listeAscChantiersDepartementTauxAvancement[indexMilieu];
 
     return AvancementFicheConducteur.creerAvancementFicheConducteur({
-      global: chantierNational.tauxAvancement,
-      annuel: chantierNational.tauxAvancementAnnuel,
+      annuel: chantierNational.tauxAvancement,
       minimum:
         listeAscChantiersDepartementTauxAvancement.length === 0
           ? null

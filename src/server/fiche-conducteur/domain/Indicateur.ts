@@ -11,13 +11,9 @@ export class Indicateur {
 
   private readonly _dateValeurAvancement: string | null;
 
-  private readonly _objectifValeurCibleIntermediaire: number | null;
+  private readonly _valeurCible: number | null;
 
-  private readonly _objectifTauxAvancementIntermediaire: number | null;
-
-  private readonly _objectifValeurCible: number | null;
-
-  private readonly _objectifTauxAvancement: number | null;
+  private readonly _tauxAvancement: number | null;
 
   private constructor({
     nom,
@@ -26,10 +22,8 @@ export class Indicateur {
     dateValeurInitiale,
     valeurAvancement,
     dateValeurAvancement,
-    objectifValeurCibleIntermediaire,
-    objectifTauxAvancementIntermediaire,
-    objectifValeurCible,
-    objectifTauxAvancement,
+    valeurCible,
+    tauxAvancement,
   }: {
     nom: string;
     type: string | null;
@@ -37,10 +31,8 @@ export class Indicateur {
     dateValeurInitiale: string | null;
     valeurAvancement: number | null;
     dateValeurAvancement: string | null;
-    objectifValeurCibleIntermediaire: number | null;
-    objectifTauxAvancementIntermediaire: number | null;
-    objectifValeurCible: number | null;
-    objectifTauxAvancement: number | null;
+    valeurCible: number | null;
+    tauxAvancement: number | null;
   }) {
     this._nom = nom;
     this._type = type;
@@ -48,11 +40,8 @@ export class Indicateur {
     this._dateValeurInitiale = dateValeurInitiale;
     this._valeurAvancement = valeurAvancement;
     this._dateValeurAvancement = dateValeurAvancement;
-    this._objectifValeurCibleIntermediaire = objectifValeurCibleIntermediaire;
-    this._objectifTauxAvancementIntermediaire =
-      objectifTauxAvancementIntermediaire;
-    this._objectifValeurCible = objectifValeurCible;
-    this._objectifTauxAvancement = objectifTauxAvancement;
+    this._valeurCible = valeurCible;
+    this._tauxAvancement = tauxAvancement;
   }
 
   get nom(): string {
@@ -79,20 +68,12 @@ export class Indicateur {
     return this._dateValeurAvancement;
   }
 
-  get objectifValeurCibleIntermediaire(): number | null {
-    return this._objectifValeurCibleIntermediaire;
+  get valeurCible(): number | null {
+    return this._valeurCible;
   }
 
-  get objectifTauxAvancementIntermediaire(): number | null {
-    return this._objectifTauxAvancementIntermediaire;
-  }
-
-  get objectifValeurCible(): number | null {
-    return this._objectifValeurCible;
-  }
-
-  get objectifTauxAvancement(): number | null {
-    return this._objectifTauxAvancement;
+  get tauxAvancement(): number | null {
+    return this._tauxAvancement;
   }
 
   static creerIndicateur({
@@ -102,10 +83,8 @@ export class Indicateur {
     dateValeurInitiale,
     valeurAvancement,
     dateValeurAvancement,
-    objectifValeurCibleIntermediaire,
-    objectifTauxAvancementIntermediaire,
-    objectifValeurCible,
-    objectifTauxAvancement,
+    valeurCible,
+    tauxAvancement,
   }: {
     nom: string;
     type: string | null;
@@ -113,10 +92,8 @@ export class Indicateur {
     dateValeurInitiale: string | null;
     valeurAvancement: number | null;
     dateValeurAvancement: string | null;
-    objectifValeurCibleIntermediaire: number | null;
-    objectifTauxAvancementIntermediaire: number | null;
-    objectifValeurCible: number | null;
-    objectifTauxAvancement: number | null;
+    valeurCible: number | null;
+    tauxAvancement: number | null;
   }) {
     return new Indicateur({
       nom,
@@ -125,10 +102,8 @@ export class Indicateur {
       dateValeurInitiale,
       valeurAvancement,
       dateValeurAvancement,
-      objectifValeurCibleIntermediaire,
-      objectifTauxAvancementIntermediaire,
-      objectifValeurCible,
-      objectifTauxAvancement,
+      valeurCible,
+      tauxAvancement,
     });
   }
 }

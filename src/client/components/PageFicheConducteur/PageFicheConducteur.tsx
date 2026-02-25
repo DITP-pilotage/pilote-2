@@ -13,7 +13,6 @@ import CartographieAvancement from "@/components/_commons/Cartographie/Cartograp
 import { ÉLÉMENTS_LÉGENDE_MÉTÉO_CHANTIERS } from "@/client/constants/légendes/élémentsDeLégendesCartographieMétéo";
 import CartographieMétéo from "@/components/_commons/Cartographie/CartographieMétéo/CartographieMétéo";
 import { EnteteFicheConducteur } from "@/components/PageFicheConducteur/EnteteFicheConducteur";
-import BarreDeProgression from "@/components/_commons/BarreDeProgression/BarreDeProgression";
 
 const PageFicheConducteur: FunctionComponent<
   FicheConducteurContrat & { jalon: number }
@@ -64,8 +63,8 @@ const PageFicheConducteur: FunctionComponent<
                   <div className="fr-col-5 flex justify-center align-end">
                     <JaugeDeProgression
                       couleur="bleu"
-                      libellé="Taux d'avancement à échéance 2026"
-                      pourcentage={avancement.global}
+                      libellé={`Taux d'avancement à échéance ${jalon}`}
+                      pourcentage={avancement.annuel}
                       taille="md"
                     />
                   </div>
@@ -94,25 +93,6 @@ const PageFicheConducteur: FunctionComponent<
                         taille="sm"
                       />
                     </div>
-                  </div>
-                </div>
-                <div className="fr-grid-row border-t">
-                  <div className="w-full fr-pt-1v">
-                    <p className="fr-text--md fr-text--bold fr-mb-0 !text-dsfr-mention-grey">
-                      {`${avancement.annuel?.toFixed(0) ?? "- "}%`}
-                    </p>
-                    <BarreDeProgression
-                      afficherTexte={false}
-                      bordure={null}
-                      fond="gris-clair"
-                      positionTexte="dessus"
-                      taille="xxs"
-                      valeur={avancement.annuel}
-                      variante="secondaire"
-                    />
-                    <p className="fr-text--xs fr-mb-0 fr-mt-1v">
-                      {`Taux d'avancement à échéance ${jalon}`}
-                    </p>
                   </div>
                 </div>
               </Bloc>
@@ -161,23 +141,17 @@ const PageFicheConducteur: FunctionComponent<
                   Avancement des indicateurs d'impact pris en compte dans le TA
                 </div>
                 <div className="fr-col-7 fr-grid-row">
-                  <div className="fr-col-2 fr-text--bold flex align-center no-wrap">
+                  <div className="fr-col-3 fr-text--bold flex align-center no-wrap">
                     {`V.Initiale ${chantier.derniereValeurInitiale}`}
                   </div>
-                  <div className="fr-col-2 fr-text--bold flex align-center">
+                  <div className="fr-col-3 fr-text--bold flex align-center">
                     V. Actuelle
                   </div>
-                  <div className="fr-col-2 fr-text--bold flex align-center">
-                    Jalon 2024
+                  <div className="fr-col-3 fr-text--bold flex align-center">
+                    {`Cible ${jalon}`}
                   </div>
-                  <div className="fr-col-2 fr-text--bold flex align-center">
-                    TA 2024
-                  </div>
-                  <div className="fr-col-2 fr-text--bold flex align-center">
-                    Cible 2026
-                  </div>
-                  <div className="fr-col-2 fr-text--bold flex align-center">
-                    TA 2026
+                  <div className="fr-col-3 fr-text--bold flex align-center">
+                    {`TA ${jalon}`}
                   </div>
                 </div>
               </div>
@@ -192,23 +166,17 @@ const PageFicheConducteur: FunctionComponent<
                     {indicateur.nom}
                   </div>
                   <div className="fr-col-7 fr-grid-row">
-                    <div className="fr-col-2 flex align-center">
+                    <div className="fr-col-3 flex align-center">
                       {indicateur.valeurInitiale}
                     </div>
-                    <div className="fr-col-2 flex align-center fr-pr-1w">
+                    <div className="fr-col-3 flex align-center fr-pr-1w">
                       {`${indicateur.valeurAvancement} ${indicateur.dateValeurAvancement}`}
                     </div>
-                    <div className="fr-col-2 flex align-center">
-                      {indicateur.objectifValeurCibleIntermediaire}
+                    <div className="fr-col-3 flex align-center">
+                      {indicateur.valeurCible}
                     </div>
-                    <div className="fr-col-2 flex align-center">
-                      {indicateur.objectifTauxAvancementIntermediaire}
-                    </div>
-                    <div className="fr-col-2 flex align-center">
-                      {indicateur.objectifValeurCible}
-                    </div>
-                    <div className="fr-col-2 flex align-center">
-                      {indicateur.objectifTauxAvancement}
+                    <div className="fr-col-3 flex align-center">
+                      {indicateur.tauxAvancement}
                     </div>
                   </div>
                 </div>
@@ -231,7 +199,7 @@ const PageFicheConducteur: FunctionComponent<
                     baliseHtml="h2"
                     className="fr-h5 fr-mb-1w fr-text-title--blue-france"
                   >
-                    Taux d'avancement 2026
+                    {`Taux d'avancement ${jalon}`}
                   </Titre>
                   <div>
                     <Bloc>

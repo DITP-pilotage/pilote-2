@@ -8,9 +8,7 @@ export class ChantierBuilder {
 
   private estTerritorialise: boolean = false;
 
-  private tauxAvancement: number | null = 10.3;
-
-  private tauxAvancementAnnuel: number | null = 15.3;
+  private tauxAvancement: number | null = 15.3;
 
   private maille: string = "DEPT";
 
@@ -61,13 +59,6 @@ export class ChantierBuilder {
     return this;
   }
 
-  withTauxAvancementAnnuel(
-    tauxAvancementAnnuel: number | null,
-  ): ChantierBuilder {
-    this.tauxAvancementAnnuel = tauxAvancementAnnuel;
-    return this;
-  }
-
   withMaille(maille: string): ChantierBuilder {
     this.maille = maille;
     return this;
@@ -99,7 +90,6 @@ export class ChantierBuilder {
       nom: this.nom,
       estTerritorialise: this.estTerritorialise,
       tauxAvancement: this.tauxAvancement,
-      tauxAvancementAnnuel: this.tauxAvancementAnnuel,
       maille: this.maille,
       codeInsee: this.codeInsee,
       territoireCode: this.territoireCode,

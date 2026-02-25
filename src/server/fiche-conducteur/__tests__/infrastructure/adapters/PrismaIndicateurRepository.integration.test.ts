@@ -246,27 +246,21 @@ describe("PrismaIndicateurRepository", () => {
         {
           nom: "Indicateur 001",
           type: "IMPACT",
-          objectifValeurCibleIntermediaire: 20,
-          objectifTauxAvancementIntermediaire: 10,
-          objectifValeurCible: 10,
-          objectifTauxAvancement: 30,
+          valeurCible: 20,
+          tauxAvancement: 10,
           dateValeurAvancement: new Date("2024-12-01").toISOString(),
         },
         {
           nom: "Indicateur 002",
           type: "IMPACT",
-          objectifValeurCibleIntermediaire: 21,
-          objectifTauxAvancementIntermediaire: 11,
-          objectifValeurCible: 11,
-          objectifTauxAvancement: 31,
+          valeurCible: 21,
+          tauxAvancement: 11,
         },
         {
           nom: "Indicateur 004",
           type: "Q_SERV",
-          objectifValeurCibleIntermediaire: 23,
-          objectifTauxAvancementIntermediaire: 13,
-          objectifValeurCible: 13,
-          objectifTauxAvancement: 33,
+          valeurCible: 23,
+          tauxAvancement: 13,
         },
       ]);
     });

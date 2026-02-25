@@ -51,30 +51,22 @@ const presenterEnChantierFicheConducteurContrat = (
         dateValeurAvancement: indicateurFicheConducteur.dateValeurAvancement
           ? `(${formaterDate(indicateurFicheConducteur.dateValeurAvancement, "MM/YY")})`
           : "",
-        valeurInitiale: indicateurFicheConducteur.valeurInitiale
-          ? numberWithSpaces(indicateurFicheConducteur.valeurInitiale)
-          : "-",
-        valeurAvancement: indicateurFicheConducteur.valeurAvancement
-          ? numberWithSpaces(indicateurFicheConducteur.valeurAvancement)
-          : "-",
-        objectifValeurCibleIntermediaire:
-          indicateurFicheConducteur.objectifValeurCibleIntermediaire
-            ? numberWithSpaces(
-                indicateurFicheConducteur.objectifValeurCibleIntermediaire,
-              )
+        valeurInitiale:
+          indicateurFicheConducteur.valeurInitiale != null
+            ? numberWithSpaces(indicateurFicheConducteur.valeurInitiale)
             : "-",
-        objectifTauxAvancementIntermediaire:
-          indicateurFicheConducteur.objectifTauxAvancementIntermediaire
-            ? numberWithSpaces(
-                indicateurFicheConducteur.objectifTauxAvancementIntermediaire,
-              )
+        valeurAvancement:
+          indicateurFicheConducteur.valeurAvancement != null
+            ? numberWithSpaces(indicateurFicheConducteur.valeurAvancement)
             : "-",
-        objectifValeurCible: indicateurFicheConducteur.objectifValeurCible
-          ? numberWithSpaces(indicateurFicheConducteur.objectifValeurCible)
-          : "-",
-        objectifTauxAvancement: indicateurFicheConducteur.objectifTauxAvancement
-          ? numberWithSpaces(indicateurFicheConducteur.objectifTauxAvancement)
-          : "-",
+        valeurCible:
+          indicateurFicheConducteur.valeurCible != null
+            ? numberWithSpaces(indicateurFicheConducteur.valeurCible)
+            : "-",
+        tauxAvancement:
+          indicateurFicheConducteur.tauxAvancement != null
+            ? numberWithSpaces(indicateurFicheConducteur.tauxAvancement)
+            : "-",
       }),
     ),
   };
@@ -83,7 +75,6 @@ const presenterEnAvancementFicheConducteurContrat = (
   avancementFicheConducteur: AvancementFicheConducteur,
 ): AvancementFicheConducteurContrat => {
   return {
-    global: avancementFicheConducteur.global,
     annuel: avancementFicheConducteur.annuel,
     minimum: avancementFicheConducteur.minimum,
     mediane: avancementFicheConducteur.mediane,
@@ -137,8 +128,8 @@ const presenterEnDonnéesCartographieContrat = (
     (acc, val) => {
       acc.tauxAvancement.push({
         territoireCode: val.territoireCode,
-        valeur: val.tauxAvancement,
-        valeurAnnuelle: null,
+        valeur: null,
+        valeurAnnuelle: val.tauxAvancement,
         estApplicable: val.estApplicable,
       });
       acc.meteo.push({
@@ -219,7 +210,7 @@ export class FicheConducteurHandler {
 
     const doitAfficherDonnéesCartographie =
       donnéesCartographie.tauxAvancement.some(
-        (tauxAvancement) => tauxAvancement.valeur,
+        (tauxAvancement) => tauxAvancement.valeurAnnuelle != null,
       ) ||
       donnéesCartographie.meteo.some((meteo) => meteo.valeur) ||
       chantier.estTerritorialise;
