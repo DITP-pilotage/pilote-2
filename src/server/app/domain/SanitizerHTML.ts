@@ -2,7 +2,7 @@ import sanitizeHtml from "sanitize-html";
 
 export class SanitizerHTML {
   static sanitize(html: string): string {
-    return sanitizeHtml(html, {
+    const sanitized = sanitizeHtml(html, {
       allowedTags: [
         "div",
         "p",
@@ -58,5 +58,6 @@ export class SanitizerHTML {
       allowedIframeHostnames: [],
       allowProtocolRelative: false,
     });
+    return sanitized.replace(/ \/>/g, ">");
   }
 }
