@@ -753,6 +753,28 @@ model nouveaute {
   @@schema("public")
 }
 
+enum TypeArticleCentreAide {
+  GROUPE
+  PAGE
+
+  @@schema("public")
+}
+
+model article_centre_aide {
+  id                String                @id @db.Uuid
+  titre             String
+  contenu           String?
+  type              TypeArticleCentreAide
+  ordre             Int
+  parent_id         String?               @db.Uuid
+  parent            article_centre_aide?  @relation("article_centre_aide_parent", fields: [parent_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  enfants           article_centre_aide[] @relation("article_centre_aide_parent")
+  date_creation     DateTime              @default(now())
+  date_modification DateTime              @updatedAt
+
+  @@schema("public")
+}
+
 model indicateur_territoire_valeur_evenement {
   id                      String                @id @db.Uuid
   indic_id                String

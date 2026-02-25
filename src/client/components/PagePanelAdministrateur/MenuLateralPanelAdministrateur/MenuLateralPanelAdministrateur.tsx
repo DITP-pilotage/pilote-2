@@ -13,29 +13,34 @@ const menuItems = [
     pageKey: "parametrage-metadata-indicateur",
   },
   {
-    label: "Habilitations coordinateurs",
-    href: "/panel-administrateur/habilitations-coordinateur",
-    pageKey: "habilitations-coordinateur",
-  },
-  {
     label: "🚧 Paramétrage metadata chantier 🚧",
     href: "/panel-administrateur/parametrage-metadata-chantier",
     pageKey: "metadata-chantier",
   },
   {
-    label: "Nouveauté",
+    label: "Habilitations coordinateurs",
+    href: "/panel-administrateur/habilitations-coordinateur",
+    pageKey: "habilitations-coordinateur",
+  },
+  {
+    label: "Nouveautés",
     href: "/panel-administrateur/nouveaute",
     pageKey: "nouveaute",
   },
   {
-    label: "🚧 Feature flipping 🚧",
-    href: "/panel-administrateur/feature-flipping",
-    pageKey: "feature-flipping",
+    label: "Centre d'aide",
+    href: "/panel-administrateur/centre-aide",
+    pageKey: "centre-aide",
   },
   {
     label: "Albert",
     href: "/panel-administrateur/albert",
     pageKey: "albert",
+  },
+  {
+    label: "🚧 Feature flipping 🚧",
+    href: "/panel-administrateur/feature-flipping",
+    pageKey: "feature-flipping",
   },
 ] as const;
 
