@@ -50,8 +50,9 @@ const convertirChantierIdentiteEnChantier = (
     id: chantierIdentiteModel.id,
     nom: chantierIdentiteModel.nom,
     estTerritorialise: chantierIdentiteModel.est_territorialise || false,
-    tauxAvancement:
+    tauxAvancement: verifyValeurIsNotNullOrUndefined(
       chantierTerritoire.chantier_territoire_jalon[0]?.taux_avancement,
+    ),
     maille: chantierTerritoire.maille,
     codeInsee: chantierTerritoire.code_insee,
     territoireCode: chantierTerritoire.territoire_code,

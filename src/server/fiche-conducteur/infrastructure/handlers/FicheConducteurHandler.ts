@@ -51,18 +51,22 @@ const presenterEnChantierFicheConducteurContrat = (
         dateValeurAvancement: indicateurFicheConducteur.dateValeurAvancement
           ? `(${formaterDate(indicateurFicheConducteur.dateValeurAvancement, "MM/YY")})`
           : "",
-        valeurInitiale: indicateurFicheConducteur.valeurInitiale
-          ? numberWithSpaces(indicateurFicheConducteur.valeurInitiale)
-          : "-",
-        valeurAvancement: indicateurFicheConducteur.valeurAvancement
-          ? numberWithSpaces(indicateurFicheConducteur.valeurAvancement)
-          : "-",
-        valeurCible: indicateurFicheConducteur.valeurCible
-          ? numberWithSpaces(indicateurFicheConducteur.valeurCible)
-          : "-",
-        tauxAvancement: indicateurFicheConducteur.tauxAvancement
-          ? numberWithSpaces(indicateurFicheConducteur.tauxAvancement)
-          : "-",
+        valeurInitiale:
+          indicateurFicheConducteur.valeurInitiale != null
+            ? numberWithSpaces(indicateurFicheConducteur.valeurInitiale)
+            : "-",
+        valeurAvancement:
+          indicateurFicheConducteur.valeurAvancement != null
+            ? numberWithSpaces(indicateurFicheConducteur.valeurAvancement)
+            : "-",
+        valeurCible:
+          indicateurFicheConducteur.valeurCible != null
+            ? numberWithSpaces(indicateurFicheConducteur.valeurCible)
+            : "-",
+        tauxAvancement:
+          indicateurFicheConducteur.tauxAvancement != null
+            ? numberWithSpaces(indicateurFicheConducteur.tauxAvancement)
+            : "-",
       }),
     ),
   };
@@ -206,7 +210,7 @@ export class FicheConducteurHandler {
 
     const doitAfficherDonnéesCartographie =
       donnéesCartographie.tauxAvancement.some(
-        (tauxAvancement) => tauxAvancement.valeurAnnuelle,
+        (tauxAvancement) => tauxAvancement.valeurAnnuelle != null,
       ) ||
       donnéesCartographie.meteo.some((meteo) => meteo.valeur) ||
       chantier.estTerritorialise;
