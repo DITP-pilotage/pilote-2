@@ -20,7 +20,7 @@ const FicheIndicateur: FunctionComponent<FicheIndicateurProps> = ({
   chantiers,
 }) => {
   return (
-    <div className="mb-4">
+    <div>
       <SectionSelectionIndicateur
         estEnCoursDeModification={estEnCoursDeModification}
       />

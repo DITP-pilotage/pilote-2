@@ -1,8 +1,8 @@
 import { FunctionComponent } from "react";
 import Titre from "@/components/_commons/Titre/Titre";
 import { MetadataParametrageIndicateurContrat } from "@/server/app/contrats/MetadataParametrageIndicateurContrat";
-import { MapInformationMetadataIndicateurContrat } from "@/server/app/contrats/InformationMetadataIndicateurContrat";
-import { MetadataIndicateurInput } from "@/components/PageIndicateur/FicheIndicateur/commons/MetadataIndicateurInput";
+import { MapInformationMetadataIndicateurContrat } from "@/server/app/contrats/InformationMetadataContrat";
+import { MetadataInput } from "@/components/PageIndicateur/FicheIndicateur/commons/MetadataInput";
 import { useMetadataIndicateurForm } from "@/components/PageIndicateur/useMetadataIndicateurForm";
 
 const SectionDétailsMetadataParametrePonderationIndicateur: FunctionComponent<{
@@ -24,7 +24,7 @@ const SectionDétailsMetadataParametrePonderationIndicateur: FunctionComponent<{
       </Titre>
       <div className="fr-grid-row fr-grid-row--gutters">
         <div className="fr-col-12 fr-col-md-4">
-          <MetadataIndicateurInput
+          <MetadataInput
             disabled={!indicateurEstTerritorialise}
             estEnCoursDeModification={estEnCoursDeModification}
             htmlName="poidsPourcentDept"
@@ -35,7 +35,7 @@ const SectionDétailsMetadataParametrePonderationIndicateur: FunctionComponent<{
           />
         </div>
         <div className="fr-col-12 fr-col-md-4">
-          <MetadataIndicateurInput
+          <MetadataInput
             disabled={!indicateurEstTerritorialise}
             estEnCoursDeModification={estEnCoursDeModification}
             htmlName="poidsPourcentReg"
@@ -46,7 +46,7 @@ const SectionDétailsMetadataParametrePonderationIndicateur: FunctionComponent<{
           />
         </div>
         <div className="fr-col-12 fr-col-md-4">
-          <MetadataIndicateurInput
+          <MetadataInput
             estEnCoursDeModification={estEnCoursDeModification}
             htmlName="poidsPourcentNat"
             informationMetadataIndicateur={
@@ -58,7 +58,7 @@ const SectionDétailsMetadataParametrePonderationIndicateur: FunctionComponent<{
       </div>
       <div className="fr-grid-row fr-grid-row--gutters">
         <div className="fr-col-12 fr-col-md-4">
-          <MetadataIndicateurInput
+          <MetadataInput
             estEnCoursDeModification={estEnCoursDeModification}
             htmlName="poidsPourcentEvalDept"
             informationMetadataIndicateur={
@@ -68,7 +68,7 @@ const SectionDétailsMetadataParametrePonderationIndicateur: FunctionComponent<{
           />
         </div>
         <div className="fr-col-12 fr-col-md-4">
-          <MetadataIndicateurInput
+          <MetadataInput
             estEnCoursDeModification={estEnCoursDeModification}
             htmlName="poidsPourcentEvalReg"
             informationMetadataIndicateur={
@@ -78,7 +78,7 @@ const SectionDétailsMetadataParametrePonderationIndicateur: FunctionComponent<{
           />
         </div>
         <div className="fr-col-12 fr-col-md-4">
-          <MetadataIndicateurInput
+          <MetadataInput
             estEnCoursDeModification={estEnCoursDeModification}
             htmlName="poidsPourcentEvalNat"
             informationMetadataIndicateur={

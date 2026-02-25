@@ -15,7 +15,7 @@ import {
   presenterEnMetadataParametrageIndicateurContrat,
   presenterEnMetadataParametrageIndicateurInformationContrat,
 } from "@/server/app/contrats/MetadataParametrageIndicateurContrat";
-import { presenterEnMapInformationMetadataIndicateurContrat } from "@/server/app/contrats/InformationMetadataIndicateurContrat";
+import { presenterEnMapInformationMetadataIndicateurContrat } from "@/server/app/contrats/InformationMetadataContrat";
 import { zodValidateurCSRF } from "@/validation/publication";
 import { MetadataParametrageIndicateurForm } from "@/server/parametrage-indicateur/domain/MetadataParametrageIndicateurInputForm";
 import { getContainer } from "@/server/dependances";

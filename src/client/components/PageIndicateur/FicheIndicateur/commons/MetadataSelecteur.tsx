@@ -1,12 +1,12 @@
 import { Controller } from "react-hook-form";
 import { FunctionComponent } from "react";
-import { InformationMetadataIndicateurContrat } from "@/server/app/contrats/InformationMetadataIndicateurContrat";
+import { InformationMetadataContrat } from "@/server/app/contrats/InformationMetadataContrat";
 import Sélecteur from "@/components/_commons/Sélecteur/Sélecteur";
-import { MetadataIndicateurChamp } from "@/components/PageIndicateur/FicheIndicateur/commons/MetadataIndicateurChamp";
+import { MetadataChamp } from "@/components/PageIndicateur/FicheIndicateur/commons/MetadataChamp";
 import { useMetadataIndicateurForm } from "@/components/PageIndicateur/useMetadataIndicateurForm";
 
-export const MetadataIndicateurSelecteur: FunctionComponent<{
-  informationMetadataIndicateur: InformationMetadataIndicateurContrat;
+export const MetadataSelecteur: FunctionComponent<{
+  informationMetadataIndicateur: InformationMetadataContrat;
   estEnCoursDeModification: boolean;
   name:
     | "viDeptFrom"
@@ -59,10 +59,10 @@ export const MetadataIndicateurSelecteur: FunctionComponent<{
   const form = useMetadataIndicateurForm();
 
   return (
-    <MetadataIndicateurChamp
+    <MetadataChamp
       estEnCoursDeModification={estEnCoursDeModification}
       estMandatory={estMandatory}
-      informationMetadataIndicateur={informationMetadataIndicateur}
+      informationMetadata={informationMetadataIndicateur}
       valeurAffiché={valeurAffiché}
     >
       <Controller
@@ -86,6 +86,6 @@ export const MetadataIndicateurSelecteur: FunctionComponent<{
           );
         }}
       />
-    </MetadataIndicateurChamp>
+    </MetadataChamp>
   );
 };

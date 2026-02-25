@@ -1,12 +1,12 @@
 import { FunctionComponent } from "react";
 import { Controller } from "react-hook-form";
-import { InformationMetadataIndicateurContrat } from "@/server/app/contrats/InformationMetadataIndicateurContrat";
-import { MetadataIndicateurChamp } from "@/components/PageIndicateur/FicheIndicateur/commons/MetadataIndicateurChamp";
+import { InformationMetadataContrat } from "@/server/app/contrats/InformationMetadataContrat";
+import { MetadataChamp } from "@/components/PageIndicateur/FicheIndicateur/commons/MetadataChamp";
 import SélecteurAvecRecherche from "@/components/_commons/SélecteurAvecRecherche/SélecteurAvecRecherche";
 import { useMetadataIndicateurForm } from "@/components/PageIndicateur/useMetadataIndicateurForm";
 
-export const MetadataIndicateurSelecteurAvecRecherche: FunctionComponent<{
-  informationMetadataIndicateur: InformationMetadataIndicateurContrat;
+export const MetadataSelecteurAvecRecherche: FunctionComponent<{
+  informationMetadataIndicateur: InformationMetadataContrat;
   estEnCoursDeModification: boolean;
   name: "indicParentCh";
   listeValeur: { valeur: string; libellé: string }[];
@@ -20,9 +20,9 @@ export const MetadataIndicateurSelecteurAvecRecherche: FunctionComponent<{
 }) => {
   const form = useMetadataIndicateurForm();
   return (
-    <MetadataIndicateurChamp
+    <MetadataChamp
       estEnCoursDeModification={estEnCoursDeModification}
-      informationMetadataIndicateur={informationMetadataIndicateur}
+      informationMetadata={informationMetadataIndicateur}
       valeurAffiché={valeurAffiché}
     >
       <Controller
@@ -42,6 +42,6 @@ export const MetadataIndicateurSelecteurAvecRecherche: FunctionComponent<{
           );
         }}
       />
-    </MetadataIndicateurChamp>
+    </MetadataChamp>
   );
 };

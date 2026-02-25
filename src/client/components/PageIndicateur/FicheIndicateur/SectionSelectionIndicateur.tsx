@@ -13,7 +13,7 @@ const SectionSelectionIndicateur: FunctionComponent<
   const form = useMetadataIndicateurForm();
 
   return (
-    <div className="flex w-full justify-between align-center">
+    <div className="flex w-full justify-between align-center m-4">
       <Controller
         control={form.control}
         name="indicHiddenPilote"

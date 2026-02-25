@@ -1,18 +1,18 @@
 import { Controller } from "react-hook-form";
 import { FunctionComponent } from "react";
-import { InformationMetadataIndicateurContrat } from "@/server/app/contrats/InformationMetadataIndicateurContrat";
-import { MetadataIndicateurChamp } from "@/components/PageIndicateur/FicheIndicateur/commons/MetadataIndicateurChamp";
+import { InformationMetadataContrat } from "@/server/app/contrats/InformationMetadataContrat";
+import { MetadataChamp } from "@/components/PageIndicateur/FicheIndicateur/commons/MetadataChamp";
 import TextArea from "@/components/_commons/TextArea/TextArea";
 import { useMetadataIndicateurForm } from "@/components/PageIndicateur/useMetadataIndicateurForm";
 
-export const MetadataIndicateurTextArea: FunctionComponent<{
+export const MetadataTextArea: FunctionComponent<{
   name:
     | "indicNom"
     | "commentaire"
     | "indicDescr"
     | "indicMethodeCalcul"
     | "indicSource";
-  informationMetadataIndicateur: InformationMetadataIndicateurContrat;
+  informationMetadataIndicateur: InformationMetadataContrat;
   estEnCoursDeModification: boolean;
 }> = ({ name, informationMetadataIndicateur, estEnCoursDeModification }) => {
   const form = useMetadataIndicateurForm();
@@ -23,9 +23,9 @@ export const MetadataIndicateurTextArea: FunctionComponent<{
       name={name}
       render={({ field }) => {
         return (
-          <MetadataIndicateurChamp
+          <MetadataChamp
             estEnCoursDeModification={estEnCoursDeModification}
-            informationMetadataIndicateur={informationMetadataIndicateur}
+            informationMetadata={informationMetadataIndicateur}
             valeurAffiché={field.value || "_"}
           >
             <TextArea
@@ -34,7 +34,7 @@ export const MetadataIndicateurTextArea: FunctionComponent<{
               onChange={field.onChange}
               value={field.value || ""}
             />
-          </MetadataIndicateurChamp>
+          </MetadataChamp>
         );
       }}
     />

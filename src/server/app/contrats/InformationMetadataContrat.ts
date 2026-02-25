@@ -7,7 +7,7 @@ interface AcceptedValueContrat {
   description: string;
 }
 
-export interface InformationMetadataIndicateurContrat {
+export interface InformationMetadataContrat {
   name: string;
 
   dataType: "text" | "boolean";
@@ -108,12 +108,12 @@ type AvailableInformationMetadataIndicateur =
   | "maille_pilotage";
 
 export type MapInformationMetadataIndicateurContrat = {
-  [key in AvailableInformationMetadataIndicateur]: InformationMetadataIndicateurContrat;
+  [key in AvailableInformationMetadataIndicateur]: InformationMetadataContrat;
 };
 
 export const presenterEnInformationMetadataIndicateurContrat = (
   informationMetadataIndicateur: InformationMetadataIndicateur,
-): InformationMetadataIndicateurContrat => {
+): InformationMetadataContrat => {
   return {
     name: informationMetadataIndicateur.name || "",
     dataType: informationMetadataIndicateur.dataType || "",

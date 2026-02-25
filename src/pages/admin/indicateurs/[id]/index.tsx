@@ -11,7 +11,7 @@ import PageIndicateur from "@/components/PageIndicateur/PageIndicateur";
 import {
   MapInformationMetadataIndicateurContrat,
   presenterEnMapInformationMetadataIndicateurContrat,
-} from "@/server/app/contrats/InformationMetadataIndicateurContrat";
+} from "@/server/app/contrats/InformationMetadataContrat";
 import { ChantierSynthétisé } from "@/server/domain/chantier/Chantier.interface";
 import { getContainer } from "@/server/dependances";
 import { InformationHistorisationMetadataIndicateurContrat } from "@/server/parametrage-indicateur/app/InformationDerniereModificationMetadataIndicateurContrat";

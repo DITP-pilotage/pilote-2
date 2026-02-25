@@ -1,16 +1,16 @@
 import { FunctionComponent } from "react";
 import { MetadataParametrageIndicateurContrat } from "@/server/app/contrats/MetadataParametrageIndicateurContrat";
-import { MapInformationMetadataIndicateurContrat } from "@/server/app/contrats/InformationMetadataIndicateurContrat";
+import { MapInformationMetadataIndicateurContrat } from "@/server/app/contrats/InformationMetadataContrat";
 import { ChantierSynthétisé } from "@/server/domain/chantier/Chantier.interface";
-import { MetadataIndicateurSelecteur } from "@/components/PageIndicateur/FicheIndicateur/commons/MetadataIndicateurSelecteur";
-import { MetadataIndicateurTextArea } from "@/components/PageIndicateur/FicheIndicateur/commons/MetadataIndicateurTextArea";
-import { MetadataIndicateurInput } from "@/components/PageIndicateur/FicheIndicateur/commons/MetadataIndicateurInput";
+import { MetadataSelecteur } from "@/components/PageIndicateur/FicheIndicateur/commons/MetadataSelecteur";
+import { MetadataTextArea } from "@/components/PageIndicateur/FicheIndicateur/commons/MetadataTextArea";
+import { MetadataInput } from "@/components/PageIndicateur/FicheIndicateur/commons/MetadataInput";
 import {
   mappingAcceptedValues,
   mappingDisplayAcceptedValues,
 } from "@/components/PageIndicateur/FicheIndicateur/commons/utils";
-import { MetadataIndicateurInterrupteur } from "@/components/PageIndicateur/FicheIndicateur/commons/MetadataIndicateurInterrupteur";
-import { MetadataIndicateurSelecteurAvecRecherche } from "@/components/PageIndicateur/FicheIndicateur/commons/MetadataIndicateurSelecteurAvecRecherche";
+import { MetadataInterrupteur } from "@/components/PageIndicateur/FicheIndicateur/commons/MetadataInterrupteur";
+import { MetadataSelecteurAvecRecherche } from "@/components/PageIndicateur/FicheIndicateur/commons/MetadataSelecteurAvecRecherche";
 import { useMetadataIndicateurForm } from "@/components/PageIndicateur/useMetadataIndicateurForm";
 import { SélecteurOption } from "@/components/_commons/Sélecteur/Sélecteur.interface";
 import api from "@/server/infrastructure/api/trpc/api";
@@ -78,7 +78,8 @@ const SectionDétailsMetadataIndicateur: FunctionComponent<{
   const setValuePonderation = useMetadataIndicateurForm().setValue;
 
   function displayParentIndic(indicParentIndic: string | null) {
-    return indicParentIndic
+    return indicParentIndic &&
+      indicParentIndic !== "Aucun indicateur selectionné"
       ? `${indicParentIndic} - ${metadataIndicateurs.find((metadataIndicateur) => metadataIndicateur.indicId === indicParentIndic)?.indicNom}`
       : "Pas d'indicateur parent";
   }
@@ -87,7 +88,7 @@ const SectionDétailsMetadataIndicateur: FunctionComponent<{
     <div>
       <div className="fr-grid-row fr-grid-row--gutters">
         <div className="fr-col-12 fr-col-md-6">
-          <MetadataIndicateurTextArea
+          <MetadataTextArea
             estEnCoursDeModification={estEnCoursDeModification}
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.indic_nom
@@ -98,7 +99,7 @@ const SectionDétailsMetadataIndicateur: FunctionComponent<{
       </div>
       <div className="fr-grid-row fr-grid-row--gutters">
         <div className="fr-col-12 fr-col-md-6">
-          <MetadataIndicateurSelecteurAvecRecherche
+          <MetadataSelecteurAvecRecherche
             estEnCoursDeModification={estEnCoursDeModification}
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.indic_parent_ch
@@ -109,7 +110,7 @@ const SectionDétailsMetadataIndicateur: FunctionComponent<{
           />
         </div>
         <div className="fr-col-12 fr-col-md-6">
-          <MetadataIndicateurSelecteur
+          <MetadataSelecteur
             estEnCoursDeModification={estEnCoursDeModification}
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.indic_parent_indic
@@ -122,7 +123,7 @@ const SectionDétailsMetadataIndicateur: FunctionComponent<{
       </div>
       <div className="fr-grid-row fr-grid-row--gutters">
         <div className="fr-col-12 fr-col-md-6">
-          <MetadataIndicateurTextArea
+          <MetadataTextArea
             estEnCoursDeModification={estEnCoursDeModification}
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.indic_descr
@@ -131,7 +132,7 @@ const SectionDétailsMetadataIndicateur: FunctionComponent<{
           />
         </div>
         <div className="fr-col-12 fr-col-md-6">
-          <MetadataIndicateurTextArea
+          <MetadataTextArea
             estEnCoursDeModification={estEnCoursDeModification}
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.indic_methode_calcul
@@ -142,7 +143,7 @@ const SectionDétailsMetadataIndicateur: FunctionComponent<{
       </div>
       <div className="fr-grid-row fr-grid-row--gutters">
         <div className="fr-col-12 fr-col-md-6">
-          <MetadataIndicateurSelecteur
+          <MetadataSelecteur
             estEnCoursDeModification={estEnCoursDeModification}
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.indic_type
@@ -162,7 +163,7 @@ const SectionDétailsMetadataIndicateur: FunctionComponent<{
           />
         </div>
         <div className="fr-col-12 fr-col-md-6">
-          <MetadataIndicateurSelecteur
+          <MetadataSelecteur
             estEnCoursDeModification={estEnCoursDeModification}
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.indic_schema
@@ -184,7 +185,7 @@ const SectionDétailsMetadataIndicateur: FunctionComponent<{
       </div>
       <div className="fr-grid-row fr-grid-row--gutters">
         <div className="fr-col-12 fr-col-md-6">
-          <MetadataIndicateurInput
+          <MetadataInput
             estEnCoursDeModification={estEnCoursDeModification}
             htmlName="indicUnite"
             informationMetadataIndicateur={
@@ -194,7 +195,7 @@ const SectionDétailsMetadataIndicateur: FunctionComponent<{
           />
         </div>
         <div className="fr-col-12 fr-col-md-6">
-          <MetadataIndicateurSelecteur
+          <MetadataSelecteur
             estEnCoursDeModification={estEnCoursDeModification}
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.zg_applicable
@@ -216,7 +217,7 @@ const SectionDétailsMetadataIndicateur: FunctionComponent<{
       </div>
       <div className="fr-grid-row fr-grid-row--gutters">
         <div className="fr-col-12 fr-col-md-6">
-          <MetadataIndicateurInterrupteur
+          <MetadataInterrupteur
             estEnCoursDeModification={estEnCoursDeModification}
             htmlName="indicTerritorialise"
             informationMetadataIndicateur={
@@ -232,7 +233,7 @@ const SectionDétailsMetadataIndicateur: FunctionComponent<{
           />
         </div>
         <div className="fr-col-12 fr-col-md-6">
-          <MetadataIndicateurInterrupteur
+          <MetadataInterrupteur
             estEnCoursDeModification={estEnCoursDeModification}
             htmlName="indicIsBaro"
             informationMetadataIndicateur={
@@ -244,7 +245,7 @@ const SectionDétailsMetadataIndicateur: FunctionComponent<{
       </div>
       <div className="fr-grid-row fr-grid-row--gutters">
         <div className="fr-col-12 fr-col-md-6">
-          <MetadataIndicateurInput
+          <MetadataInput
             disabled={!getValues("indicIsBaro")}
             estEnCoursDeModification={estEnCoursDeModification}
             htmlName="indicNomBaro"
@@ -255,7 +256,7 @@ const SectionDétailsMetadataIndicateur: FunctionComponent<{
           />
         </div>
         <div className="fr-col-12 fr-col-md-6">
-          <MetadataIndicateurInput
+          <MetadataInput
             disabled={!getValues("indicIsBaro")}
             estEnCoursDeModification={estEnCoursDeModification}
             htmlName="indicDescrBaro"
@@ -268,7 +269,7 @@ const SectionDétailsMetadataIndicateur: FunctionComponent<{
       </div>
       <div className="fr-grid-row fr-grid-row--gutters">
         <div className="fr-col-12 fr-col-md-6">
-          <MetadataIndicateurTextArea
+          <MetadataTextArea
             estEnCoursDeModification={estEnCoursDeModification}
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.indic_source
@@ -277,7 +278,7 @@ const SectionDétailsMetadataIndicateur: FunctionComponent<{
           />
         </div>
         <div className="fr-col-12 fr-col-md-6">
-          <MetadataIndicateurInput
+          <MetadataInput
             estEnCoursDeModification={estEnCoursDeModification}
             htmlName="indicSourceUrl"
             informationMetadataIndicateur={
@@ -289,7 +290,7 @@ const SectionDétailsMetadataIndicateur: FunctionComponent<{
       </div>
       <div className="fr-grid-row fr-grid-row--gutters">
         <div className="fr-col-12 fr-col-md-6">
-          <MetadataIndicateurSelecteur
+          <MetadataSelecteur
             estEnCoursDeModification={estEnCoursDeModification}
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.periodicite
@@ -309,7 +310,7 @@ const SectionDétailsMetadataIndicateur: FunctionComponent<{
           />
         </div>
         <div className="fr-col-12 fr-col-md-6">
-          <MetadataIndicateurInput
+          <MetadataInput
             estEnCoursDeModification={estEnCoursDeModification}
             htmlName="delaiDisponibilite"
             informationMetadataIndicateur={

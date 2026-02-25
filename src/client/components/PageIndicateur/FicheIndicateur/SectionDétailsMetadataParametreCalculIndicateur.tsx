@@ -1,8 +1,8 @@
 import { FunctionComponent } from "react";
 import Titre from "@/components/_commons/Titre/Titre";
 import { MetadataParametrageIndicateurContrat } from "@/server/app/contrats/MetadataParametrageIndicateurContrat";
-import { MapInformationMetadataIndicateurContrat } from "@/server/app/contrats/InformationMetadataIndicateurContrat";
-import { MetadataIndicateurSelecteur } from "@/components/PageIndicateur/FicheIndicateur/commons/MetadataIndicateurSelecteur";
+import { MapInformationMetadataIndicateurContrat } from "@/server/app/contrats/InformationMetadataContrat";
+import { MetadataSelecteur } from "@/components/PageIndicateur/FicheIndicateur/commons/MetadataSelecteur";
 import {
   mappingAcceptedValues,
   mappingDisplayAcceptedValues,
@@ -27,7 +27,7 @@ const SectionDétailsMetadataParametreCalculIndicateur: FunctionComponent<{
       </Titre>
       <div className="fr-grid-row fr-grid-row--gutters">
         <div className="fr-col-12 fr-col-md-4">
-          <MetadataIndicateurSelecteur
+          <MetadataSelecteur
             estEnCoursDeModification={estEnCoursDeModification}
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.param_vaca_decumul_from
@@ -51,7 +51,7 @@ const SectionDétailsMetadataParametreCalculIndicateur: FunctionComponent<{
           />
         </div>
         <div className="fr-col-12 fr-col-md-4">
-          <MetadataIndicateurSelecteur
+          <MetadataSelecteur
             estEnCoursDeModification={estEnCoursDeModification}
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.param_vaca_partition_date
@@ -77,7 +77,7 @@ const SectionDétailsMetadataParametreCalculIndicateur: FunctionComponent<{
           />
         </div>
         <div className="fr-col-12 fr-col-md-4">
-          <MetadataIndicateurSelecteur
+          <MetadataSelecteur
             estDesactive
             estEnCoursDeModification={estEnCoursDeModification}
             informationMetadataIndicateur={
@@ -100,7 +100,7 @@ const SectionDétailsMetadataParametreCalculIndicateur: FunctionComponent<{
       </div>
       <div className="fr-grid-row fr-grid-row--gutters">
         <div className="fr-col-12 fr-col-md-4">
-          <MetadataIndicateurSelecteur
+          <MetadataSelecteur
             estEnCoursDeModification={estEnCoursDeModification}
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.param_vacg_decumul_from
@@ -124,7 +124,7 @@ const SectionDétailsMetadataParametreCalculIndicateur: FunctionComponent<{
           />
         </div>
         <div className="fr-col-12 fr-col-md-4">
-          <MetadataIndicateurSelecteur
+          <MetadataSelecteur
             estEnCoursDeModification={estEnCoursDeModification}
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.param_vacg_partition_date
@@ -150,7 +150,7 @@ const SectionDétailsMetadataParametreCalculIndicateur: FunctionComponent<{
           />
         </div>
         <div className="fr-col-12 fr-col-md-4">
-          <MetadataIndicateurSelecteur
+          <MetadataSelecteur
             estDesactive
             estEnCoursDeModification={estEnCoursDeModification}
             informationMetadataIndicateur={
@@ -173,7 +173,7 @@ const SectionDétailsMetadataParametreCalculIndicateur: FunctionComponent<{
       </div>
       <div className="fr-grid-row fr-grid-row--gutters">
         <div className="fr-col-12 fr-col-md-4">
-          <MetadataIndicateurSelecteur
+          <MetadataSelecteur
             estEnCoursDeModification={estEnCoursDeModification}
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.tendance

@@ -1,11 +1,11 @@
 import { FunctionComponent } from "react";
 import Titre from "@/components/_commons/Titre/Titre";
 import { MetadataParametrageIndicateurContrat } from "@/server/app/contrats/MetadataParametrageIndicateurContrat";
-import { MapInformationMetadataIndicateurContrat } from "@/server/app/contrats/InformationMetadataIndicateurContrat";
-import { MetadataIndicateurInput } from "@/components/PageIndicateur/FicheIndicateur/commons/MetadataIndicateurInput";
-import { MetadataIndicateurTextArea } from "@/components/PageIndicateur/FicheIndicateur/commons/MetadataIndicateurTextArea";
-import { MetadataIndicateurInterrupteur } from "@/components/PageIndicateur/FicheIndicateur/commons/MetadataIndicateurInterrupteur";
-import { MetadataIndicateurSelecteur } from "@/components/PageIndicateur/FicheIndicateur/commons/MetadataIndicateurSelecteur";
+import { MapInformationMetadataIndicateurContrat } from "@/server/app/contrats/InformationMetadataContrat";
+import { MetadataInput } from "@/components/PageIndicateur/FicheIndicateur/commons/MetadataInput";
+import { MetadataTextArea } from "@/components/PageIndicateur/FicheIndicateur/commons/MetadataTextArea";
+import { MetadataInterrupteur } from "@/components/PageIndicateur/FicheIndicateur/commons/MetadataInterrupteur";
+import { MetadataSelecteur } from "@/components/PageIndicateur/FicheIndicateur/commons/MetadataSelecteur";
 import {
   mappingAcceptedValues,
   mappingDisplayAcceptedValues,
@@ -27,7 +27,7 @@ const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
       </Titre>
       <div className="fr-grid-row fr-grid-row--gutters">
         <div className="fr-col-12 fr-col-md-6">
-          <MetadataIndicateurInput
+          <MetadataInput
             estEnCoursDeModification={estEnCoursDeModification}
             htmlName="mailles"
             informationMetadataIndicateur={
@@ -37,7 +37,7 @@ const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
           />
         </div>
         <div className="fr-col-12 fr-col-md-6">
-          <MetadataIndicateurInput
+          <MetadataInput
             estEnCoursDeModification={estEnCoursDeModification}
             htmlName="frequenceTerritoriale"
             informationMetadataIndicateur={
@@ -49,7 +49,7 @@ const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
       </div>
       <div className="fr-grid-row fr-grid-row--gutters">
         <div className="fr-col-12 fr-col-md-6">
-          <MetadataIndicateurInput
+          <MetadataInput
             estEnCoursDeModification={estEnCoursDeModification}
             htmlName="adminSource"
             informationMetadataIndicateur={
@@ -59,7 +59,7 @@ const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
           />
         </div>
         <div className="fr-col-12 fr-col-md-6">
-          <MetadataIndicateurInput
+          <MetadataInput
             estEnCoursDeModification={estEnCoursDeModification}
             htmlName="siSource"
             informationMetadataIndicateur={
@@ -71,7 +71,7 @@ const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
       </div>
       <div className="fr-grid-row fr-grid-row--gutters">
         <div className="fr-col-12 fr-col-md-6">
-          <MetadataIndicateurInterrupteur
+          <MetadataInterrupteur
             estEnCoursDeModification={estEnCoursDeModification}
             htmlName="donneeOuverte"
             informationMetadataIndicateur={
@@ -81,7 +81,7 @@ const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
           />
         </div>
         <div className="fr-col-12 fr-col-md-6">
-          <MetadataIndicateurInput
+          <MetadataInput
             estEnCoursDeModification={estEnCoursDeModification}
             htmlName="modalitesDonneeOuverte"
             informationMetadataIndicateur={
@@ -93,7 +93,7 @@ const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
       </div>
       <div className="fr-grid-row fr-grid-row--gutters">
         <div className="fr-col-12 fr-col-md-6">
-          <MetadataIndicateurInput
+          <MetadataInput
             estEnCoursDeModification={estEnCoursDeModification}
             htmlName="respDonnees"
             informationMetadataIndicateur={
@@ -103,7 +103,7 @@ const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
           />
         </div>
         <div className="fr-col-12 fr-col-md-6">
-          <MetadataIndicateurInput
+          <MetadataInput
             estEnCoursDeModification={estEnCoursDeModification}
             htmlName="respDonneesEmail"
             informationMetadataIndicateur={
@@ -115,7 +115,7 @@ const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
       </div>
       <div className="fr-grid-row fr-grid-row--gutters">
         <div className="fr-col-12 fr-col-md-6">
-          <MetadataIndicateurInput
+          <MetadataInput
             estEnCoursDeModification={estEnCoursDeModification}
             htmlName="contactTechnique"
             informationMetadataIndicateur={
@@ -125,7 +125,7 @@ const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
           />
         </div>
         <div className="fr-col-12 fr-col-md-6">
-          <MetadataIndicateurInput
+          <MetadataInput
             estEnCoursDeModification={estEnCoursDeModification}
             htmlName="contactTechniqueEmail"
             informationMetadataIndicateur={
@@ -137,7 +137,7 @@ const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
       </div>
       <div className="fr-grid-row fr-grid-row--gutters">
         <div className="fr-col-12 fr-col-md-6">
-          <MetadataIndicateurInterrupteur
+          <MetadataInterrupteur
             estEnCoursDeModification={estEnCoursDeModification}
             htmlName="indicIsPerseverant"
             informationMetadataIndicateur={
@@ -147,7 +147,7 @@ const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
           />
         </div>
         <div className="fr-col-12 fr-col-md-6">
-          <MetadataIndicateurInput
+          <MetadataInput
             estEnCoursDeModification={estEnCoursDeModification}
             htmlName="reformePrioritaire"
             informationMetadataIndicateur={
@@ -159,7 +159,7 @@ const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
       </div>
       <div className="fr-grid-row fr-grid-row--gutters">
         <div className="fr-col-12 fr-col-md-6">
-          <MetadataIndicateurInterrupteur
+          <MetadataInterrupteur
             estEnCoursDeModification={estEnCoursDeModification}
             htmlName="projetAnnuelPerf"
             informationMetadataIndicateur={
@@ -169,7 +169,7 @@ const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
           />
         </div>
         <div className="fr-col-12 fr-col-md-6">
-          <MetadataIndicateurInput
+          <MetadataInput
             estEnCoursDeModification={estEnCoursDeModification}
             htmlName="detailProjetAnnuelPerf"
             informationMetadataIndicateur={
@@ -181,7 +181,7 @@ const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
       </div>
       <div className="fr-grid-row fr-grid-row--gutters">
         <div className="fr-col-12 fr-col-md-6">
-          <MetadataIndicateurTextArea
+          <MetadataTextArea
             estEnCoursDeModification={estEnCoursDeModification}
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.commentaire
@@ -190,7 +190,7 @@ const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
           />
         </div>
         <div className="fr-col-12 fr-col-md-6">
-          <MetadataIndicateurInput
+          <MetadataInput
             estEnCoursDeModification={estEnCoursDeModification}
             htmlName="methodeCollecte"
             informationMetadataIndicateur={
@@ -202,7 +202,7 @@ const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
       </div>
       <div className="fr-grid-row fr-grid-row--gutters">
         <div className="fr-col-12 fr-col-md-6">
-          <MetadataIndicateurSelecteur
+          <MetadataSelecteur
             estEnCoursDeModification={estEnCoursDeModification}
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.maille_pilotage
@@ -222,7 +222,7 @@ const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
           />
         </div>
         <div className="fr-col-12 fr-col-md-6">
-          <MetadataIndicateurSelecteur
+          <MetadataSelecteur
             estEnCoursDeModification={estEnCoursDeModification}
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.couverture_temporelle
@@ -244,7 +244,7 @@ const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
       </div>
       <div className="fr-grid-row fr-grid-row--gutters">
         <div className="fr-col-12 fr-col-md-6">
-          <MetadataIndicateurInterrupteur
+          <MetadataInterrupteur
             estEnCoursDeModification={estEnCoursDeModification}
             htmlName="cibleAttendue"
             informationMetadataIndicateur={
@@ -254,7 +254,7 @@ const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
           />
         </div>
         <div className="fr-col-12 fr-col-md-6">
-          <MetadataIndicateurInterrupteur
+          <MetadataInterrupteur
             estEnCoursDeModification={estEnCoursDeModification}
             htmlName="indicIsPhare"
             informationMetadataIndicateur={

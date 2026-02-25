@@ -1,8 +1,8 @@
 import { FunctionComponent } from "react";
 import Titre from "@/components/_commons/Titre/Titre";
-import { MapInformationMetadataIndicateurContrat } from "@/server/app/contrats/InformationMetadataIndicateurContrat";
+import { MapInformationMetadataIndicateurContrat } from "@/server/app/contrats/InformationMetadataContrat";
 import { MetadataParametrageIndicateurContrat } from "@/server/app/contrats/MetadataParametrageIndicateurContrat";
-import { MetadataIndicateurSelecteur } from "@/components/PageIndicateur/FicheIndicateur/commons/MetadataIndicateurSelecteur";
+import { MetadataSelecteur } from "@/components/PageIndicateur/FicheIndicateur/commons/MetadataSelecteur";
 import {
   mappingAcceptedValues,
   mappingDisplayAcceptedValues,
@@ -50,7 +50,7 @@ const SectionDétailsMetadataParametreIndicateurNationale: FunctionComponent<{
       </Titre>
       <div className="fr-grid-row fr-grid-row--gutters">
         <div className="fr-col-12 fr-col-md-4">
-          <MetadataIndicateurSelecteur
+          <MetadataSelecteur
             estEnCoursDeModification={estEnCoursDeModification}
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.vi_nat_from
@@ -79,7 +79,7 @@ const SectionDétailsMetadataParametreIndicateurNationale: FunctionComponent<{
           />
         </div>
         <div className="fr-col-12 fr-col-md-4">
-          <MetadataIndicateurSelecteur
+          <MetadataSelecteur
             estEnCoursDeModification={estEnCoursDeModification}
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.va_nat_from
@@ -108,7 +108,7 @@ const SectionDétailsMetadataParametreIndicateurNationale: FunctionComponent<{
           />
         </div>
         <div className="fr-col-12 fr-col-md-4">
-          <MetadataIndicateurSelecteur
+          <MetadataSelecteur
             estEnCoursDeModification={estEnCoursDeModification}
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.vc_nat_from
@@ -139,7 +139,7 @@ const SectionDétailsMetadataParametreIndicateurNationale: FunctionComponent<{
       </div>
       <div className="fr-grid-row fr-grid-row--gutters">
         <div className="fr-col-12 fr-col-md-4">
-          <MetadataIndicateurSelecteur
+          <MetadataSelecteur
             estDesactive={valeursNatFromDesactiveNatOp.has(viNatFromValue)}
             estEnCoursDeModification={estEnCoursDeModification}
             estMandatory={!valeursNatFromDesactiveNatOp.has(viNatFromValue)}
@@ -161,7 +161,7 @@ const SectionDétailsMetadataParametreIndicateurNationale: FunctionComponent<{
           />
         </div>
         <div className="fr-col-12 fr-col-md-4">
-          <MetadataIndicateurSelecteur
+          <MetadataSelecteur
             estDesactive={valeursNatFromDesactiveNatOp.has(vaNatFromValue)}
             estEnCoursDeModification={estEnCoursDeModification}
             estMandatory={!valeursNatFromDesactiveNatOp.has(vaNatFromValue)}
@@ -183,7 +183,7 @@ const SectionDétailsMetadataParametreIndicateurNationale: FunctionComponent<{
           />
         </div>
         <div className="fr-col-12 fr-col-md-4">
-          <MetadataIndicateurSelecteur
+          <MetadataSelecteur
             estDesactive={valeursNatFromDesactiveNatOp.has(vcNatFromValue)}
             estEnCoursDeModification={estEnCoursDeModification}
             estMandatory={!valeursNatFromDesactiveNatOp.has(vcNatFromValue)}

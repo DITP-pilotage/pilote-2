@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { MapInformationMetadataIndicateurContrat } from "@/server/app/contrats/InformationMetadataIndicateurContrat";
+import { MapInformationMetadataIndicateurContrat } from "@/server/app/contrats/InformationMetadataContrat";
 
 export const validationFiltresPourListeMetadataIndicateur = z.object({
   filtres: z.object({

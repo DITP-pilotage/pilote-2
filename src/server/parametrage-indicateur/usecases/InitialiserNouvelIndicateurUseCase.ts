@@ -1,5 +1,5 @@
 import { MetadataParametrageIndicateur } from "@/server/parametrage-indicateur/domain/MetadataParametrageIndicateur";
-import { presenterEnMapInformationMetadataIndicateurContrat } from "@/server/app/contrats/InformationMetadataIndicateurContrat";
+import { presenterEnMapInformationMetadataIndicateurContrat } from "@/server/app/contrats/InformationMetadataContrat";
 import RécupérerInformationMetadataIndicateurUseCase from "@/server/parametrage-indicateur/usecases/RécupérerInformationMetadataIndicateurUseCase";
 
 type Dependencies = {

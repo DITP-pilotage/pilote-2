@@ -1,12 +1,12 @@
 import { Controller } from "react-hook-form";
 import { FunctionComponent } from "react";
-import { InformationMetadataIndicateurContrat } from "@/server/app/contrats/InformationMetadataIndicateurContrat";
-import { MetadataIndicateurChamp } from "@/components/PageIndicateur/FicheIndicateur/commons/MetadataIndicateurChamp";
+import { InformationMetadataContrat } from "@/server/app/contrats/InformationMetadataContrat";
+import { MetadataChamp } from "@/components/PageIndicateur/FicheIndicateur/commons/MetadataChamp";
 import Interrupteur from "@/components/_commons/Interrupteur/Interrupteur";
 import { useMetadataIndicateurForm } from "@/components/PageIndicateur/useMetadataIndicateurForm";
 
-export const MetadataIndicateurInterrupteur: FunctionComponent<{
-  informationMetadataIndicateur: InformationMetadataIndicateurContrat;
+export const MetadataInterrupteur: FunctionComponent<{
+  informationMetadataIndicateur: InformationMetadataContrat;
   estEnCoursDeModification: boolean;
   htmlName:
     | "indicIsPerseverant"
@@ -27,9 +27,9 @@ export const MetadataIndicateurInterrupteur: FunctionComponent<{
 }) => {
   const form = useMetadataIndicateurForm();
   return (
-    <MetadataIndicateurChamp
+    <MetadataChamp
       estEnCoursDeModification={estEnCoursDeModification}
-      informationMetadataIndicateur={informationMetadataIndicateur}
+      informationMetadata={informationMetadataIndicateur}
       valeurAffiché={valeurAffiché}
     >
       <Controller
@@ -50,6 +50,6 @@ export const MetadataIndicateurInterrupteur: FunctionComponent<{
           );
         }}
       />
-    </MetadataIndicateurChamp>
+    </MetadataChamp>
   );
 };

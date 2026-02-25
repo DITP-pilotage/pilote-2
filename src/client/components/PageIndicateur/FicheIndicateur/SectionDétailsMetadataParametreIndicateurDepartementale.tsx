@@ -1,7 +1,7 @@
 import { FunctionComponent } from "react";
 import Titre from "@/components/_commons/Titre/Titre";
-import { MapInformationMetadataIndicateurContrat } from "@/server/app/contrats/InformationMetadataIndicateurContrat";
-import { MetadataIndicateurSelecteur } from "@/components/PageIndicateur/FicheIndicateur/commons/MetadataIndicateurSelecteur";
+import { MapInformationMetadataIndicateurContrat } from "@/server/app/contrats/InformationMetadataContrat";
+import { MetadataSelecteur } from "@/components/PageIndicateur/FicheIndicateur/commons/MetadataSelecteur";
 import {
   mappingAcceptedValues,
   mappingDisplayAcceptedValues,
@@ -55,7 +55,7 @@ const SectionDétailsMetadataParametreIndicateurDepartementale: FunctionComponen
       </Titre>
       <div className="fr-grid-row fr-grid-row--gutters">
         <div className="fr-col-12 fr-col-md-4">
-          <MetadataIndicateurSelecteur
+          <MetadataSelecteur
             estEnCoursDeModification={estEnCoursDeModification}
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.vi_dept_from
@@ -84,7 +84,7 @@ const SectionDétailsMetadataParametreIndicateurDepartementale: FunctionComponen
           />
         </div>
         <div className="fr-col-12 fr-col-md-4">
-          <MetadataIndicateurSelecteur
+          <MetadataSelecteur
             estEnCoursDeModification={estEnCoursDeModification}
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.va_dept_from
@@ -113,7 +113,7 @@ const SectionDétailsMetadataParametreIndicateurDepartementale: FunctionComponen
           />
         </div>
         <div className="fr-col-12 fr-col-md-4">
-          <MetadataIndicateurSelecteur
+          <MetadataSelecteur
             estEnCoursDeModification={estEnCoursDeModification}
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.vc_dept_from
@@ -144,7 +144,7 @@ const SectionDétailsMetadataParametreIndicateurDepartementale: FunctionComponen
       </div>
       <div className="fr-grid-row fr-grid-row--gutters">
         <div className="fr-col-12 fr-col-md-4">
-          <MetadataIndicateurSelecteur
+          <MetadataSelecteur
             estDesactive={valeursDeptFromDesactiveDeptOp.has(viDeptFromValue)}
             estEnCoursDeModification={estEnCoursDeModification}
             estMandatory={!valeursDeptFromDesactiveDeptOp.has(viDeptFromValue)}
@@ -166,7 +166,7 @@ const SectionDétailsMetadataParametreIndicateurDepartementale: FunctionComponen
           />
         </div>
         <div className="fr-col-12 fr-col-md-4">
-          <MetadataIndicateurSelecteur
+          <MetadataSelecteur
             estDesactive={valeursDeptFromDesactiveDeptOp.has(vaDeptFromValue)}
             estEnCoursDeModification={estEnCoursDeModification}
             estMandatory={!valeursDeptFromDesactiveDeptOp.has(vaDeptFromValue)}
@@ -188,7 +188,7 @@ const SectionDétailsMetadataParametreIndicateurDepartementale: FunctionComponen
           />
         </div>
         <div className="fr-col-12 fr-col-md-4">
-          <MetadataIndicateurSelecteur
+          <MetadataSelecteur
             estDesactive={valeursDeptFromDesactiveDeptOp.has(vcDeptFromValue)}
             estEnCoursDeModification={estEnCoursDeModification}
             estMandatory={!valeursDeptFromDesactiveDeptOp.has(vcDeptFromValue)}

@@ -6,7 +6,7 @@ import { z } from "zod";
 import api from "@/server/infrastructure/api/trpc/api";
 import { récupérerUnCookie } from "@/client/utils/cookies";
 import { MetadataParametrageIndicateurContrat } from "@/server/app/contrats/MetadataParametrageIndicateurContrat";
-import { MapInformationMetadataIndicateurContrat } from "@/server/app/contrats/InformationMetadataIndicateurContrat";
+import { MapInformationMetadataIndicateurContrat } from "@/server/app/contrats/InformationMetadataContrat";
 import { createValidationMetadataIndicateurFormulaire } from "@/validation/metadata-indicateur";
 import AlerteProps from "@/components/_commons/Alerte/Alerte.interface";
 

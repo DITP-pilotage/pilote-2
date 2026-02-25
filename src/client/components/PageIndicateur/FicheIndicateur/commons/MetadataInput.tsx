@@ -1,11 +1,11 @@
 import { Controller } from "react-hook-form";
 import { FunctionComponent } from "react";
-import { InformationMetadataIndicateurContrat } from "@/server/app/contrats/InformationMetadataIndicateurContrat";
-import { MetadataIndicateurChamp } from "@/components/PageIndicateur/FicheIndicateur/commons/MetadataIndicateurChamp";
+import { InformationMetadataContrat } from "@/server/app/contrats/InformationMetadataContrat";
+import { MetadataChamp } from "@/components/PageIndicateur/FicheIndicateur/commons/MetadataChamp";
 import Input from "@/components/_commons/Input/Input";
 import { useMetadataIndicateurForm } from "@/components/PageIndicateur/useMetadataIndicateurForm";
 
-export const MetadataIndicateurInput: FunctionComponent<{
+export const MetadataInput: FunctionComponent<{
   htmlName:
     | "mailles"
     | "frequenceTerritoriale"
@@ -30,7 +30,7 @@ export const MetadataIndicateurInput: FunctionComponent<{
     | "poidsPourcentEvalReg"
     | "poidsPourcentEvalNat"
     | "modalitesDonneeOuverte";
-  informationMetadataIndicateur: InformationMetadataIndicateurContrat;
+  informationMetadataIndicateur: InformationMetadataContrat;
   estEnCoursDeModification: boolean;
   valeurAffiché: string;
   disabled?: boolean;
@@ -43,9 +43,9 @@ export const MetadataIndicateurInput: FunctionComponent<{
 }) => {
   const form = useMetadataIndicateurForm();
   return (
-    <MetadataIndicateurChamp
+    <MetadataChamp
       estEnCoursDeModification={estEnCoursDeModification}
-      informationMetadataIndicateur={informationMetadataIndicateur}
+      informationMetadata={informationMetadataIndicateur}
       valeurAffiché={valeurAffiché}
     >
       <Controller
@@ -63,6 +63,6 @@ export const MetadataIndicateurInput: FunctionComponent<{
           );
         }}
       />
-    </MetadataIndicateurChamp>
+    </MetadataChamp>
   );
 };
