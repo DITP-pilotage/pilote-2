@@ -7,7 +7,7 @@ interface Dependencies {
   territoireRepository: TerritoireRepository;
 }
 
-export class RécupérerTauxAvancementAnnuelTerritoireUseCase {
+export class RécupérerTauxAvancementTerritoireUseCase {
   private chantierRepository: ChantierRepository;
 
   private territoireRepository: TerritoireRepository;
@@ -45,6 +45,6 @@ export class RécupérerTauxAvancementAnnuelTerritoireUseCase {
             )
         : [];
 
-    return chantiers.map((chantier) => chantier.tauxAvancementAnnuel);
+    return chantiers.map((chantier) => chantier.tauxAvancement);
   }
 }

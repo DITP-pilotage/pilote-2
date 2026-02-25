@@ -63,8 +63,7 @@ const FicheTerritoriale: FunctionComponent<
 > = ({ ficheTerritoriale, jalon }) => {
   return (
     <PageFicheTerritoriale
-      avancementAnnuelTerritoire={ficheTerritoriale.avancementAnnuelTerritoire}
-      avancementGlobalTerritoire={ficheTerritoriale.avancementGlobalTerritoire}
+      avancementTerritoire={ficheTerritoriale.avancementTerritoire}
       chantiersFicheTerritoriale={ficheTerritoriale.chantiersFicheTerritoriale}
       jalon={jalon}
       répartitionMétéos={ficheTerritoriale.répartitionMétéos}

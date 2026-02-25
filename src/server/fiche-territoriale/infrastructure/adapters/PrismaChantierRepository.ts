@@ -88,8 +88,6 @@ export class PrismaChantierRepository implements ChantierRepository {
       tauxAvancement:
         prismaChantierTerritoireModel.chantier_territoire_jalon.at(0)
           ?.taux_avancement || null,
-      tauxAvancementAnnuel:
-        prismaChantierTerritoireModel.taux_avancement_mandat,
       meteo: prismaChantierTerritoireModel.meteo as MeteoDisponible | null,
       nom: prismaChantierTerritoireModel.chantier_identite.nom,
       codeMinisterePorteur:

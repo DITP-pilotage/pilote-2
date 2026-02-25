@@ -6,16 +6,17 @@ export type AvancementsStatistiques = number | null;
 
 export default interface AvancementsProps {
   avancementGlobalTerritoire: AvancementsStatistiques;
+  jalon: number;
 }
 
 export const AvancementsFicheTerritoriale: FunctionComponent<
   AvancementsProps
-> = ({ avancementGlobalTerritoire }) => {
+> = ({ avancementGlobalTerritoire, jalon }) => {
   return (
     <AvancementsFicheTerritorialeStyled>
       <JaugeDeProgression
         couleur="bleu"
-        libellé="Taux d'avancement à échéance 2026 du territoire"
+        libellé={`Taux d'avancement à échéance ${jalon} du territoire`}
         pourcentage={avancementGlobalTerritoire || null}
         taille="lg"
       />

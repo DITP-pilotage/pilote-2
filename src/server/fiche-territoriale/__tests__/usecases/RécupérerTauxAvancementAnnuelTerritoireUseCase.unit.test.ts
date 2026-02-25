@@ -3,18 +3,18 @@ import { TerritoireRepository } from "@/server/fiche-territoriale/domain/ports/T
 import { TerritoireBuilder } from "@/server/fiche-territoriale/app/builders/TerritoireBuilder";
 import { ChantierBuilder } from "@/server/fiche-territoriale/app/builders/ChantierBuilder";
 import { ChantierRepository } from "@/server/fiche-territoriale/domain/ports/ChantierRepository";
-import { RécupérerTauxAvancementAnnuelTerritoireUseCase } from "@/server/fiche-territoriale/usecases/RécupérerTauxAvancementAnnuelTerritoireUseCase";
+import { RécupérerTauxAvancementTerritoireUseCase } from "@/server/fiche-territoriale/usecases/RécupérerTauxAvancementTerritoireUseCase";
 
 describe("RécupérerTauxAvancementAnnuelTerritoireUseCase", () => {
   let chantierRepository: MockProxy<ChantierRepository>;
   let territoireRepository: MockProxy<TerritoireRepository>;
-  let récupérerTauxAvancementAnnuelTerritoireUseCase: RécupérerTauxAvancementAnnuelTerritoireUseCase;
+  let récupérerTauxAvancementAnnuelTerritoireUseCase: RécupérerTauxAvancementTerritoireUseCase;
 
   beforeEach(() => {
     chantierRepository = mock<ChantierRepository>();
     territoireRepository = mock<TerritoireRepository>();
     récupérerTauxAvancementAnnuelTerritoireUseCase =
-      new RécupérerTauxAvancementAnnuelTerritoireUseCase({
+      new RécupérerTauxAvancementTerritoireUseCase({
         chantierRepository,
         territoireRepository,
       });
@@ -24,11 +24,9 @@ describe("RécupérerTauxAvancementAnnuelTerritoireUseCase", () => {
     const territoireCode = "UN-CODE";
     const territoire = new TerritoireBuilder().withMaille("DEPT").build();
 
-    const chantier1 = new ChantierBuilder()
-      .withTauxAvancementAnnuel(null)
-      .build();
-    const chantier2 = new ChantierBuilder().withTauxAvancementAnnuel(3).build();
-    const chantier3 = new ChantierBuilder().withTauxAvancementAnnuel(4).build();
+    const chantier1 = new ChantierBuilder().withTauxAvancement(null).build();
+    const chantier2 = new ChantierBuilder().withTauxAvancement(3).build();
+    const chantier3 = new ChantierBuilder().withTauxAvancement(4).build();
 
     territoireRepository.recupererTerritoireParCode.mockResolvedValue(
       territoire,
@@ -63,11 +61,9 @@ describe("RécupérerTauxAvancementAnnuelTerritoireUseCase", () => {
     const territoireCode = "UN-CODE";
     const territoire = new TerritoireBuilder().withMaille("REG").build();
 
-    const chantier1 = new ChantierBuilder()
-      .withTauxAvancementAnnuel(null)
-      .build();
-    const chantier2 = new ChantierBuilder().withTauxAvancementAnnuel(5).build();
-    const chantier3 = new ChantierBuilder().withTauxAvancementAnnuel(6).build();
+    const chantier1 = new ChantierBuilder().withTauxAvancement(null).build();
+    const chantier2 = new ChantierBuilder().withTauxAvancement(5).build();
+    const chantier3 = new ChantierBuilder().withTauxAvancement(6).build();
 
     territoireRepository.recupererTerritoireParCode.mockResolvedValue(
       territoire,
@@ -102,11 +98,9 @@ describe("RécupérerTauxAvancementAnnuelTerritoireUseCase", () => {
     const territoireCode = "UN-CODE";
     const territoire = new TerritoireBuilder().withMaille("NAT").build();
 
-    const chantier1 = new ChantierBuilder()
-      .withTauxAvancementAnnuel(null)
-      .build();
-    const chantier2 = new ChantierBuilder().withTauxAvancementAnnuel(7).build();
-    const chantier3 = new ChantierBuilder().withTauxAvancementAnnuel(8).build();
+    const chantier1 = new ChantierBuilder().withTauxAvancement(null).build();
+    const chantier2 = new ChantierBuilder().withTauxAvancement(7).build();
+    const chantier3 = new ChantierBuilder().withTauxAvancement(8).build();
 
     territoireRepository.recupererTerritoireParCode.mockResolvedValue(
       territoire,
