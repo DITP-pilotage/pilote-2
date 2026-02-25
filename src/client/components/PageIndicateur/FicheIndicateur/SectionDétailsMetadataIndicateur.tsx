@@ -14,6 +14,7 @@ import { MetadataSelecteurAvecRecherche } from "@/components/PageIndicateur/Fich
 import { useMetadataIndicateurForm } from "@/components/PageIndicateur/useMetadataIndicateurForm";
 import { SélecteurOption } from "@/components/_commons/Sélecteur/Sélecteur.interface";
 import api from "@/server/infrastructure/api/trpc/api";
+import { MetadataChamp } from "@/components/PageIndicateur/FicheIndicateur/commons/MetadataChamp";
 
 const SectionDétailsMetadataIndicateur: FunctionComponent<{
   indicateur: MetadataParametrageIndicateurContrat;
@@ -88,6 +89,14 @@ const SectionDétailsMetadataIndicateur: FunctionComponent<{
     <div>
       <div className="fr-grid-row fr-grid-row--gutters">
         <div className="fr-col-12 fr-col-md-6">
+          <MetadataChamp
+            informationMetadata={mapInformationMetadataIndicateur.indic_nom}
+            htmlName={"indicNom"}
+            estEnCoursDeModification={estEnCoursDeModification}
+            type={
+              mapInformationMetadataIndicateur.indic_nom.metaPiloteEditBoxType
+            }
+          />
           <MetadataTextArea
             estEnCoursDeModification={estEnCoursDeModification}
             informationMetadataIndicateur={
