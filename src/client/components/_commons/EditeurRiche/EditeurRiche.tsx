@@ -9,6 +9,9 @@ import { FunctionComponent, RefObject, useImperativeHandle } from "react";
 import { TextareaRef } from "@/components/_commons/Textarea";
 import { ÉditeurRicheStyled } from "./ÉditeurRiche.styled";
 import { MenuBar } from "./MenuBar";
+import { CalloutExtension } from "./extensions/CalloutExtension";
+import { AccordionExtension } from "./extensions/AccordionExtension";
+import { IconeExtension } from "./extensions/IconeExtension";
 
 export type EditeurRicheRef = {
   focus: () => void;
@@ -45,6 +48,9 @@ export const EditeurRiche: FunctionComponent<EditeurRicheProps> = ({
       TextStyle,
       Color,
       Underline,
+      CalloutExtension,
+      AccordionExtension,
+      IconeExtension,
     ],
     content: contenu,
     immediatelyRender: true,

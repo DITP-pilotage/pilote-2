@@ -23,6 +23,9 @@ import { UndoIcon } from "@/components/_commons/Icones/UndoIcon";
 import { RedoIcon } from "@/components/_commons/Icones/RedoIcon";
 import { ClearFormatIcon } from "@/components/_commons/Icones/ClearFormatIcon";
 import { ClearNodesIcon } from "@/components/_commons/Icones/ClearNodesIcon";
+import { InformationPleineIcon } from "@/components/_commons/Icones/InformationPleineIcon";
+import { ListUnorderedIcon } from "@/components/_commons/Icones/ListUnorderedIcon";
+import { EtoileIcon } from "@/components/_commons/Icones/EtoileIcon";
 
 export const MenuBar = ({ editor }: { editor: Editor }) => {
   if (!editor) {
@@ -283,6 +286,39 @@ export const MenuBar = ({ editor }: { editor: Editor }) => {
           type="button"
         >
           <Icone icone={RedoIcon} />
+        </button>
+      </div>
+
+      <div className="w-px h-6 mx-1 bg-[#ddd]" />
+
+      {/* Composants */}
+      <div className="flex gap-1 items-center">
+        <button
+          aria-label="Callout"
+          className={buttonClass(editor.isActive("callout"))}
+          onClick={() => editor.chain().focus().insertCallout().run()}
+          title="Insérer un callout"
+          type="button"
+        >
+          <Icone icone={InformationPleineIcon} />
+        </button>
+        <button
+          aria-label="Accordéon"
+          className={buttonClass(editor.isActive("accordionItem"))}
+          onClick={() => editor.chain().focus().insertAccordion().run()}
+          title="Insérer un accordéon"
+          type="button"
+        >
+          <Icone icone={ListUnorderedIcon} />
+        </button>
+        <button
+          aria-label="Icône"
+          className={buttonClass(false)}
+          onClick={() => editor.chain().focus().insertIcone().run()}
+          title="Insérer une icône"
+          type="button"
+        >
+          <Icone icone={EtoileIcon} />
         </button>
       </div>
 

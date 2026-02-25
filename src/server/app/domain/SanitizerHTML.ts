@@ -4,6 +4,7 @@ export class SanitizerHTML {
   static sanitize(html: string): string {
     return sanitizeHtml(html, {
       allowedTags: [
+        "div",
         "p",
         "br",
         "strong",
@@ -31,9 +32,10 @@ export class SanitizerHTML {
         "span",
       ],
       allowedAttributes: {
+        div: ["data-type", "data-title", "data-color"],
         a: ["href", "target", "rel"],
         img: ["src", "alt", "title"],
-        span: ["style"],
+        span: ["style", "data-type", "data-icon-type"],
         p: ["style"],
         h1: ["style"],
         h2: ["style"],
