@@ -2,7 +2,7 @@ import { FunctionComponent } from "react";
 import { EditeurCentreAide } from "@/components/_commons/EditeurRiche/EditeurCentreAide";
 import { RenduContenuHtml } from "@/components/_commons/EditeurRiche/RenduContenuHtml";
 import { ContenuHtmlStyled } from "@/components/_commons/EditeurContenu3Colonnes/EditeurContenu3Colonnes.styled";
-import { ArborescenceCentreAide } from "./ArborescenceCentreAide";
+import { ArborescenceCentreAideAdmin } from "./ArborescenceCentreAide";
 import { useEditionCentreAide } from "./useEditionCentreAide";
 
 export const PagePanelAdministrateurCentreAide: FunctionComponent = () => {
@@ -11,10 +11,9 @@ export const PagePanelAdministrateurCentreAide: FunctionComponent = () => {
     itemSelectionneId,
     itemSelectionne,
     selectionnerItem,
-    preparerCreationGroupe,
-    preparerCreationPage,
+    creerGroupe,
+    creerPage,
     estChargement,
-    estCreation,
     titre,
     setTitre,
     contenu,
@@ -27,17 +26,17 @@ export const PagePanelAdministrateurCentreAide: FunctionComponent = () => {
     return <p>Chargement...</p>;
   }
 
-  const afficherEditeur = estCreation || itemSelectionne !== undefined;
+  const afficherEditeur = itemSelectionne !== undefined;
   const aContenu = contenu !== null;
 
   return (
     <div className="flex h-[calc(100vh-120px)] bg-white border-gray-200 rounded-lg">
       <div className="w-[280px] shrink-0 border-r border-gray-200 flex flex-col overflow-hidden">
-        <ArborescenceCentreAide
+        <ArborescenceCentreAideAdmin
           arbre={arbre}
           itemSelectionneId={itemSelectionneId}
-          onCreerGroupe={preparerCreationGroupe}
-          onCreerPage={preparerCreationPage}
+          onCreerGroupe={creerGroupe}
+          onCreerPage={creerPage}
           onSelectionItem={selectionnerItem}
         />
       </div>
@@ -69,7 +68,7 @@ export const PagePanelAdministrateurCentreAide: FunctionComponent = () => {
                 >
                   Sauvegarder
                 </button>
-                {!estCreation && itemSelectionneId && (
+                {itemSelectionneId && (
                   <button
                     className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded hover:bg-red-700"
                     onClick={supprimer}

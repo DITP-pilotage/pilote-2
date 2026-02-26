@@ -5,6 +5,10 @@ export const ContenuHtmlStyled = styled.div`
     margin-bottom: 0;
   }
 
+  a {
+    color: var(--text-title-blue-france);
+  }
+
   h4 {
     margin-top: 0.5rem;
     margin-bottom: 0.5rem;

@@ -103,12 +103,6 @@ export class ArticleCentreAide {
   }
 
   static sanitizeHtml(html: string): string {
-    const sanitized = SanitizerHTML.sanitize(html);
-    if (sanitized !== html) {
-      throw new BadRequestError(
-        "Le contenu contient des balises HTML non autorisées",
-      );
-    }
-    return sanitized;
+    return SanitizerHTML.sanitize(html);
   }
 }

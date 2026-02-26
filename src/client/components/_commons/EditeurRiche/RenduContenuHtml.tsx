@@ -88,11 +88,23 @@ function renderNode(node: Node): ReactNode {
   const tag = element.tagName.toLowerCase();
   const children = renderChildren(element);
 
-  const props: Record<string, string> = {};
+  const props: Record<string, unknown> = {};
   for (const attr of Array.from(element.attributes)) {
     if (attr.name === "class") {
       props.className = attr.value;
-    } else if (attr.name !== "style") {
+    } else if (attr.name === "style") {
+      const styleObj: Record<string, string> = {};
+      for (const declaration of attr.value.split(";")) {
+        const colonIndex = declaration.indexOf(":");
+        if (colonIndex === -1) continue;
+        const property = declaration.slice(0, colonIndex).trim();
+        const value = declaration.slice(colonIndex + 1).trim();
+        if (!property) continue;
+        const camelCase = property.replace(/-([a-z])/g, (_match, letter: string) => letter.toUpperCase());
+        styleObj[camelCase] = value;
+      }
+      props.style = styleObj;
+    } else {
       props[attr.name] = attr.value;
     }
   }

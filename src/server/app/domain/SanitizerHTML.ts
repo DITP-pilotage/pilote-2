@@ -46,7 +46,11 @@ export class SanitizerHTML {
       },
       allowedStyles: {
         "*": {
-          color: [/^#[\dA-Fa-f]{6}$/, /^rgb\((?:\d+,\s*){2}\d+\)$/],
+          color: [
+            /^#[\dA-Fa-f]{6}$/,
+            /^rgb\((?:\d+,\s*){2}\d+\)$/,
+            /^lab\(-?[\d.]+\s+-?[\d.]+\s+-?[\d.]+\)$/,
+          ],
           "text-align": [/^left$/, /^right$/, /^center$/, /^justify$/],
         },
       },

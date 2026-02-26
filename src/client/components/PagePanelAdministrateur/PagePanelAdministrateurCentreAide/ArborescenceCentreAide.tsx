@@ -1,79 +1,8 @@
 import { FunctionComponent, useState } from "react";
-import { NoeudArbre } from "./useEditionCentreAide";
+import { NoeudArbre } from "@/components/_commons/CentreAide/types";
+import { ArborescenceCentreAide } from "@/components/_commons/CentreAide/ArborescenceCentreAide";
 
-interface NoeudArbreProps {
-  noeud: NoeudArbre;
-  niveau: number;
-  itemSelectionneId: string | null;
-  onSelectionItem: (id: string) => void;
-}
-
-const IndicateurSelection: FunctionComponent<{
-  estSelectionne: boolean;
-}> = ({ estSelectionne }) => (
-  <span
-    className={`w-[10px] h-[10px] shrink-0 rounded-full border-2 transition-colors ${
-      estSelectionne
-        ? "border-blue-600 bg-blue-600"
-        : "border-gray-300 bg-white"
-    }`}
-  />
-);
-
-const NoeudArbreItem: FunctionComponent<NoeudArbreProps> = ({
-  noeud,
-  niveau,
-  itemSelectionneId,
-  onSelectionItem,
-}) => {
-  const estGroupe = noeud.type === "GROUPE";
-  const estSelectionne = noeud.id === itemSelectionneId;
-
-  return (
-    <div>
-      <button
-        className={`w-full text-left py-2 pr-3 flex items-center gap-2 transition-colors ${
-          estSelectionne
-            ? "bg-blue-50 text-blue-700"
-            : "hover:bg-gray-50 text-gray-700"
-        }`}
-        onClick={() => onSelectionItem(noeud.id)}
-        style={{ paddingLeft: `${niveau * 20 + 12}px` }}
-        type="button"
-      >
-        <IndicateurSelection estSelectionne={estSelectionne} />
-        <span
-          className={`text-sm truncate ${estGroupe ? "font-semibold text-gray-900" : ""}`}
-        >
-          {noeud.titre || "(sans titre)"}
-        </span>
-        {estGroupe && noeud.contenu !== null && (
-          <span className="text-xs text-gray-400 shrink-0">+</span>
-        )}
-      </button>
-
-      {estGroupe && noeud.enfants.length > 0 && (
-        <div className="relative">
-          <span
-            className="absolute top-0 bottom-0 w-px bg-gray-200"
-            style={{ left: `${niveau * 20 + 18}px` }}
-          />
-          {noeud.enfants.map((enfant) => (
-            <NoeudArbreItem
-              itemSelectionneId={itemSelectionneId}
-              key={enfant.id}
-              niveau={niveau + 1}
-              noeud={enfant}
-              onSelectionItem={onSelectionItem}
-            />
-          ))}
-        </div>
-      )}
-    </div>
-  );
-};
-
-interface ArborescenceCentreAideProps {
+interface ArborescenceCentreAideAdminProps {
   arbre: NoeudArbre[];
   itemSelectionneId: string | null;
   onSelectionItem: (id: string) => void;
@@ -81,8 +10,8 @@ interface ArborescenceCentreAideProps {
   onCreerPage: () => void;
 }
 
-export const ArborescenceCentreAide: FunctionComponent<
-  ArborescenceCentreAideProps
+export const ArborescenceCentreAideAdmin: FunctionComponent<
+  ArborescenceCentreAideAdminProps
 > = ({
   arbre,
   itemSelectionneId,
@@ -140,17 +69,11 @@ export const ArborescenceCentreAide: FunctionComponent<
         </button>
       </div>
 
-      <div className="overflow-y-auto flex-1">
-        {arbre.map((noeud) => (
-          <NoeudArbreItem
-            itemSelectionneId={itemSelectionneId}
-            key={noeud.id}
-            niveau={0}
-            noeud={noeud}
-            onSelectionItem={onSelectionItem}
-          />
-        ))}
-      </div>
+      <ArborescenceCentreAide
+        arbre={arbre}
+        itemSelectionneId={itemSelectionneId}
+        onSelectionItem={onSelectionItem}
+      />
     </div>
   );
 };
