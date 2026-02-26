@@ -11,26 +11,21 @@ export class Chantier {
 
   private readonly _tauxAvancement: number | null;
 
-  private readonly _tauxAvancementAnnuel: number | null;
-
   private constructor({
     id,
     tauxAvancement,
-    tauxAvancementAnnuel,
     meteo,
     nom,
     codeMinisterePorteur,
   }: {
     id: string;
     tauxAvancement: number | null;
-    tauxAvancementAnnuel: number | null;
     meteo: MeteoDisponible | null;
     nom: string;
     codeMinisterePorteur: string;
   }) {
     this._id = id;
     this._tauxAvancement = tauxAvancement;
-    this._tauxAvancementAnnuel = tauxAvancementAnnuel;
     this._meteo = meteo;
     this._nom = nom;
     this._codeMinisterePorteur = codeMinisterePorteur;
@@ -42,10 +37,6 @@ export class Chantier {
 
   get tauxAvancement(): number | null {
     return this._tauxAvancement;
-  }
-
-  get tauxAvancementAnnuel(): number | null {
-    return this._tauxAvancementAnnuel;
   }
 
   get meteo(): MeteoDisponible | null {
@@ -63,14 +54,12 @@ export class Chantier {
   static creerChantier({
     id,
     tauxAvancement,
-    tauxAvancementAnnuel,
     meteo,
     nom,
     codeMinisterePorteur,
   }: {
     id: string;
     tauxAvancement: number | null;
-    tauxAvancementAnnuel: number | null;
     meteo: MeteoDisponible | null;
     nom: string;
     codeMinisterePorteur?: string;
@@ -78,7 +67,6 @@ export class Chantier {
     return new Chantier({
       id,
       tauxAvancement,
-      tauxAvancementAnnuel,
       meteo,
       nom,
       codeMinisterePorteur: codeMinisterePorteur || "",

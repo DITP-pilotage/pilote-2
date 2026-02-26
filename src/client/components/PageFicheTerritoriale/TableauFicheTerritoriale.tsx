@@ -19,7 +19,8 @@ const classBadge = (
 
 export const TableauFicheTerritoriale: FunctionComponent<{
   chantiersFicheTerritoriale: ChantierFicheTerritorialeContrat[];
-}> = ({ chantiersFicheTerritoriale }) => {
+  jalon: number;
+}> = ({ chantiersFicheTerritoriale, jalon }) => {
   return (
     <div className="fiche-territoriale--tableau fr-container--fluid fr-mt-2v">
       <div className="fr-grid-row fr-p-2w fr-background-action-low--blue-france fiche-territoriale--entete">
@@ -87,12 +88,12 @@ export const TableauFicheTerritoriale: FunctionComponent<{
               </div>
               <div className="fr-col-2 fr-text--bold flex flex-column  fr-p-0 fr-m-0">
                 <span className="fiche-territoriale--contenu--xs fr-m-0 fr-text-mention--grey">
-                  Cible 2026
+                  {`Cible ${jalon}`}
                 </span>
               </div>
               <div className="fr-col-2 fr-text--bold flex flex-column fr-p-0 fr-m-0">
                 <span className="fiche-territoriale--contenu--xs fr-m-0 fr-text-mention--grey">
-                  Avancement d'ici 2026
+                  {`Avancement ${jalon}`}
                 </span>
               </div>
               <div className="fr-col-2 fr-text--bold flex flex-column fr-p-0 fr-m-0">

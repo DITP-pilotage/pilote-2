@@ -4,9 +4,8 @@ import { ChantierFicheTerritorialeContrat } from "@/server/fiche-territoriale/ap
 
 export interface FicheTerritorialeContrat {
   territoire: TerritoireContrat;
-  avancementGlobalTerritoire: number | null;
   jalon: number;
-  avancementAnnuelTerritoire: number | null;
+  avancementTerritoire: number | null;
   répartitionMétéos: RepartitionMeteoContrat;
   chantiersFicheTerritoriale: ChantierFicheTerritorialeContrat[];
 }

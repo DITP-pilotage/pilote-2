@@ -2,6 +2,7 @@ import { Maille } from "@prisma/client";
 import { IndicateurRepository } from "@/server/fiche-territoriale/domain/ports/IndicateurRepository";
 import { Indicateur } from "@/server/fiche-territoriale/domain/Indicateur";
 import { prisma } from "@/server/db/prisma";
+import { verifyValeurIsNotNullOrUndefined } from "@/server/utils/VerifyValeurIsNotNullOrUndefined";
 
 export class PrismaIndicateurRepository implements IndicateurRepository {
   async recupererMapIndicateursParListeChantierIdEtTerritoire({
@@ -42,8 +43,6 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
         ],
       },
       select: {
-        taux_avancement_mandat: true,
-        valeur_cible_mandat: true,
         id: true,
         indicateur_territoire_jalon: {
           where: {
@@ -52,6 +51,8 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
           select: {
             date_valeur_actuelle: true,
             valeur_actuelle: true,
+            taux_avancement: true,
+            valeur_cible: true,
           },
         },
         indicateur_identite: {
@@ -65,15 +66,21 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
     });
 
     return result.reduce((acc, val) => {
+      const indicateurJalon = val.indicateur_territoire_jalon.at(0);
       const indicateur = Indicateur.creerIndicateur({
         id: val.id,
         nom: val.indicateur_identite.nom,
         dateValeurAvancement:
-          val.indicateur_territoire_jalon[0]?.date_valeur_actuelle?.toISOString() ||
-          "",
-        objectifTauxAvancement: val.taux_avancement_mandat,
-        valeurAvancement: val.indicateur_territoire_jalon[0]?.valeur_actuelle,
-        valeurCible: val.valeur_cible_mandat,
+          indicateurJalon?.date_valeur_actuelle?.toISOString() || "",
+        tauxAvancement: verifyValeurIsNotNullOrUndefined(
+          indicateurJalon?.taux_avancement,
+        ),
+        valeurAvancement: verifyValeurIsNotNullOrUndefined(
+          indicateurJalon?.valeur_actuelle,
+        ),
+        valeurCible: verifyValeurIsNotNullOrUndefined(
+          indicateurJalon?.valeur_cible,
+        ),
         uniteMesure: val.indicateur_identite.unite_mesure,
       });
       acc.set(val.indicateur_identite.chantier_id, [
@@ -103,8 +110,6 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
             territoire_code: "NAT-FR",
           },
           select: {
-            taux_avancement_mandat: true,
-            valeur_cible_mandat: true,
             indicateur_territoire_jalon: {
               where: {
                 jalon,
@@ -112,6 +117,8 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
               select: {
                 date_valeur_actuelle: true,
                 valeur_actuelle: true,
+                valeur_cible: true,
+                taux_avancement: true,
               },
             },
           },
@@ -120,18 +127,23 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
     });
 
     return result.reduce((acc, val) => {
+      const indicateurJalon = val.indicateur_territoire
+        .at(0)
+        ?.indicateur_territoire_jalon.at(0);
       const indicateur = Indicateur.creerIndicateur({
         id: val.id,
         nom: val.nom,
         dateValeurAvancement:
-          val.indicateur_territoire[0].indicateur_territoire_jalon[0]?.date_valeur_actuelle?.toISOString() ||
-          "",
-        objectifTauxAvancement:
-          val.indicateur_territoire[0].taux_avancement_mandat,
-        valeurAvancement:
-          val.indicateur_territoire[0].indicateur_territoire_jalon[0]
-            ?.valeur_actuelle,
-        valeurCible: val.indicateur_territoire[0].valeur_cible_mandat,
+          indicateurJalon?.date_valeur_actuelle?.toISOString() || "",
+        tauxAvancement: verifyValeurIsNotNullOrUndefined(
+          indicateurJalon?.taux_avancement,
+        ),
+        valeurAvancement: verifyValeurIsNotNullOrUndefined(
+          indicateurJalon?.valeur_actuelle,
+        ),
+        valeurCible: verifyValeurIsNotNullOrUndefined(
+          indicateurJalon?.valeur_cible,
+        ),
         uniteMesure: val.unite_mesure,
       });
       acc.set(val.id, indicateur);

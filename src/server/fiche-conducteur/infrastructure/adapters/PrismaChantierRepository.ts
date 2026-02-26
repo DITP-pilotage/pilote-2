@@ -7,11 +7,8 @@ import { ChantierRepository } from "@/server/fiche-conducteur/domain/ports/Chant
 import { Chantier } from "@/server/fiche-conducteur/domain/Chantier";
 import { Meteo } from "@/server/fiche-conducteur/domain/Meteo";
 import { verifyValeurIsNotNullOrUndefined } from "@/server/utils/VerifyValeurIsNotNullOrUndefined";
-
-import { PrismaPilote } from "@/server/db/PrismaPilote";
-
-import { PilotePrismaClient } from "@/server/db/PrismaTransaction";
 import { NotFoundError } from "@/server/app/error-boundary/not-found-error";
+import { PrismaPilote } from "@/server/db/PrismaPilote";
 
 const convertirChantierTerritoireEnChantier = (
   chantierTerritoireModel: ChantierTerritoireModel & {
@@ -64,15 +61,11 @@ const convertirChantierIdentiteEnChantier = (
   });
 };
 
-interface Dependencies {
-  prisma: PrismaPilote;
-}
-
 export class PrismaChantierRepository implements ChantierRepository {
-  private prisma: PilotePrismaClient;
+  constructor(private readonly dependencies: { prisma: PrismaPilote }) {}
 
-  constructor({ prisma }: Dependencies) {
-    this.prisma = prisma.getInstance();
+  private get prisma() {
+    return this.dependencies.prisma.getInstance();
   }
 
   async récupérerParIdEtParTerritoireCode({

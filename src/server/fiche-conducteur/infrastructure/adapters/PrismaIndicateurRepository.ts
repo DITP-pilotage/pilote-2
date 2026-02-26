@@ -6,10 +6,7 @@ import {
 import { IndicateurRepository } from "@/server/fiche-conducteur/domain/ports/IndicateurRepository";
 import { Indicateur } from "@/server/fiche-conducteur/domain/Indicateur";
 import { verifyValeurIsNotNullOrUndefined } from "@/server/utils/VerifyValeurIsNotNullOrUndefined";
-
 import { PrismaPilote } from "@/server/db/PrismaPilote";
-
-import { PilotePrismaClient } from "@/server/db/PrismaTransaction";
 
 const convertirEnIndicateur = (
   prismaIndicateurTerritoire: PrismaIndicateurTerritoire & {
@@ -41,15 +38,11 @@ const convertirEnIndicateur = (
   });
 };
 
-interface Dependencies {
-  prisma: PrismaPilote;
-}
-
 export class PrismaIndicateurRepository implements IndicateurRepository {
-  private prisma: PilotePrismaClient;
+  constructor(private readonly dependencies: { prisma: PrismaPilote }) {}
 
-  constructor({ prisma }: Dependencies) {
-    this.prisma = prisma.getInstance();
+  private get prisma() {
+    return this.dependencies.prisma.getInstance();
   }
 
   async récupérerIndicImpactParChantierId(

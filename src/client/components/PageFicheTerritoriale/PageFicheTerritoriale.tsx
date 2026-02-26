@@ -12,7 +12,6 @@ import { Infobulle } from "@/components/_commons/Infobulle/Infobulle";
 import INFOBULLE_CONTENUS from "@/client/constants/infobulles";
 import RépartitionMétéo from "@/components/_commons/RépartitionMétéo/RépartitionMétéo";
 import { TableauFicheTerritoriale } from "@/components/PageFicheTerritoriale/TableauFicheTerritoriale";
-import BarreDeProgression from "@/components/_commons/BarreDeProgression/BarreDeProgression";
 import { MeteoPicto } from "@/components/_commons/Meteo/Picto/MeteoPicto";
 import { FicheTerritorialeContrat } from "@/server/fiche-territoriale/app/contrats/FicheTerritorialeContrat";
 import PageFicheTerritorialeStyled from "./PageFicheTerritoriale.styled";
@@ -21,8 +20,7 @@ export const PageFicheTerritoriale: FunctionComponent<
   FicheTerritorialeContrat
 > = ({
   territoire,
-  avancementGlobalTerritoire,
-  avancementAnnuelTerritoire,
+  avancementTerritoire,
   répartitionMétéos,
   chantiersFicheTerritoriale,
   jalon,
@@ -73,37 +71,9 @@ export const PageFicheTerritoriale: FunctionComponent<
                       </Infobulle>
                     </TitreInfobulleConteneur>
                     <AvancementsFicheTerritoriale
-                      avancementGlobalTerritoire={avancementGlobalTerritoire}
+                      avancementTerritoire={avancementTerritoire}
+                      jalon={jalon}
                     />
-                  </div>
-                </Bloc>
-              </div>
-              <div className="fiche-territoriale__avancement--annuel">
-                <Bloc>
-                  <div className="flex flex-column align-center">
-                    <TitreInfobulleConteneur>
-                      <Titre
-                        baliseHtml="h2"
-                        className="fr-text--md fr-mb-2w fr-py-1v"
-                        estInline
-                      >
-                        Taux d'avancement de l'année en cours
-                      </Titre>
-                    </TitreInfobulleConteneur>
-                    <div className="fiche-territoriale__avancement--barre-progression">
-                      <BarreDeProgression
-                        afficherTexte
-                        bordure={null}
-                        fond="bleu"
-                        positionTexte="dessus"
-                        taille="md"
-                        valeur={avancementAnnuelTerritoire}
-                        variante="primaire"
-                      />
-                    </div>
-                    <div className="w-full flex justify-center fr-mt-2w">
-                      <span>{`Année en cours : ${jalon}`}</span>
-                    </div>
                   </div>
                 </Bloc>
               </div>
@@ -207,6 +177,7 @@ export const PageFicheTerritoriale: FunctionComponent<
               </div>
               <TableauFicheTerritoriale
                 chantiersFicheTerritoriale={chantiersFicheTerritoriale}
+                jalon={jalon}
               />
             </Bloc>
           </div>

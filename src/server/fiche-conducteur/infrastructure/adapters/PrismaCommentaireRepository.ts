@@ -2,10 +2,7 @@ import { commentaire as CommentaireModel } from "@prisma/client";
 import { Commentaire } from "@/server/fiche-conducteur/domain/Commentaire";
 import { CommentaireRepository } from "@/server/fiche-conducteur/domain/ports/CommentaireRepository";
 import { CommentaireType } from "@/server/fiche-conducteur/domain/CommentaireType";
-
 import { PrismaPilote } from "@/server/db/PrismaPilote";
-
-import { PilotePrismaClient } from "@/server/db/PrismaTransaction";
 
 const convertifEnCommentaire = (
   commentaireModel: CommentaireModel,
@@ -16,15 +13,11 @@ const convertifEnCommentaire = (
     date: commentaireModel.date.toISOString(),
   });
 
-interface Dependencies {
-  prisma: PrismaPilote;
-}
-
 export class PrismaCommentaireRepository implements CommentaireRepository {
-  private prisma: PilotePrismaClient;
+  constructor(private readonly dependencies: { prisma: PrismaPilote }) {}
 
-  constructor({ prisma }: Dependencies) {
-    this.prisma = prisma.getInstance();
+  private get prisma() {
+    return this.dependencies.prisma.getInstance();
   }
 
   async listerCommentaireParChantierId({

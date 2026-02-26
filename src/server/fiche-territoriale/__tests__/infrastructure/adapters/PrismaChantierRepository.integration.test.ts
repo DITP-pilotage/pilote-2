@@ -156,7 +156,6 @@ describe("PrismaChantierRepository", () => {
           {
             id: "CH-001",
             tauxAvancement: null,
-            tauxAvancementAnnuel: null,
             meteo: "SOLEIL",
             nom: "Chantier 001",
             codeMinisterePorteur: "1009",
@@ -164,7 +163,6 @@ describe("PrismaChantierRepository", () => {
           {
             id: "CH-002",
             tauxAvancement: 2,
-            tauxAvancementAnnuel: 2,
             meteo: null,
             nom: "Chantier 002",
             codeMinisterePorteur: "1010",

@@ -1,10 +1,7 @@
 import { objectif as ObjectifModel } from "@prisma/client";
 import { Objectif } from "@/server/fiche-conducteur/domain/Objectif";
 import { ObjectifRepository } from "@/server/fiche-conducteur/domain/ports/ObjectifRepository";
-
 import { PrismaPilote } from "@/server/db/PrismaPilote";
-
-import { PilotePrismaClient } from "@/server/db/PrismaTransaction";
 
 const convertifEnObjectif = (objectifModel: ObjectifModel): Objectif =>
   Objectif.creerObjectif({
@@ -13,15 +10,11 @@ const convertifEnObjectif = (objectifModel: ObjectifModel): Objectif =>
     date: objectifModel.date.toISOString(),
   });
 
-interface Dependencies {
-  prisma: PrismaPilote;
-}
-
 export class PrismaObjectifRepository implements ObjectifRepository {
-  private prisma: PilotePrismaClient;
+  constructor(private readonly dependencies: { prisma: PrismaPilote }) {}
 
-  constructor({ prisma }: Dependencies) {
-    this.prisma = prisma.getInstance();
+  private get prisma() {
+    return this.dependencies.prisma.getInstance();
   }
 
   async listerObjectifParChantierId({

@@ -2,10 +2,7 @@ import { synthese_des_resultats as SyntheseDesResultatsModel } from "@prisma/cli
 import { SynthèseDesRésultatsRepository } from "@/server/fiche-conducteur/domain/ports/SynthèseDesRésultatsRepository";
 import { SyntheseDesResultats } from "@/server/fiche-conducteur/domain/SyntheseDesResultats";
 import { Meteo } from "@/server/fiche-conducteur/domain/Meteo";
-
 import { PrismaPilote } from "@/server/db/PrismaPilote";
-
-import { PilotePrismaClient } from "@/server/db/PrismaTransaction";
 
 const convertirEnSyntheseDesResultats = (
   syntheseDesResultatsModel: SyntheseDesResultatsModel,
@@ -16,15 +13,11 @@ const convertirEnSyntheseDesResultats = (
   });
 };
 
-interface Dependencies {
-  prisma: PrismaPilote;
-}
-
 export class PrismaSynthèseDesRésultatsRepository implements SynthèseDesRésultatsRepository {
-  private prisma: PilotePrismaClient;
+  constructor(private readonly dependencies: { prisma: PrismaPilote }) {}
 
-  constructor({ prisma }: Dependencies) {
-    this.prisma = prisma.getInstance();
+  private get prisma() {
+    return this.dependencies.prisma.getInstance();
   }
 
   async recupererLaPlusRecenteMailleNatParChantierId(

@@ -1,71 +1,67 @@
+import { $Enums } from "@prisma/client";
 import { randomUUID } from "node:crypto";
 import { PrismaDecisionStrategiqueRepository } from "@/server/fiche-conducteur/infrastructure/adapters/PrismaDecisionStrategiqueRepository";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
+import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
+import { fixtures } from "@/server/infrastructure/test/fixtures";
 
 describe("PrismaDecisionStrategiqueRepository", () => {
-  let prisma: PrismaPilote;
   let prismaDecisionStrategiqueRepository: PrismaDecisionStrategiqueRepository;
+  const prismaPilote = new PrismaPilote();
 
   beforeEach(() => {
-    prisma = new PrismaPilote();
     prismaDecisionStrategiqueRepository =
-      new PrismaDecisionStrategiqueRepository({ prisma });
+      new PrismaDecisionStrategiqueRepository({ prisma: prismaPilote });
   });
 
   describe("#listerObjectifParChantierId", () => {
-    it("doit lister les decisions strategiques associé au chantier", async () => {
-      // Given
-      const chantierId = "CH-168";
+    it(
+      "doit lister les decisions strategiques associé au chantier",
+      createIntegrationTest(async (prisma) => {
+        // Given
+        const chantier = await fixtures.chantierIdentite();
+        const autreChantier = await fixtures.chantierIdentite();
 
-      await prisma.getInstance().chantier_identite.createMany({
-        data: [
-          {
-            id: "CH-168",
-            nom: "Nom chantier OK",
-          },
-          {
-            id: "CH-169",
-            nom: "Nom chantier OK",
-          },
-        ],
-      });
+        await prisma.decision_strategique.createMany({
+          data: [
+            {
+              id: randomUUID(),
+              chantier_id: chantier.id,
+              type: $Enums.type_decision_strategique.suivi_des_decisions,
+              contenu: "contenu OK suivi_des_decisions",
+              auteur_id: null,
+              date: new Date(),
+            },
+            // autre chantier, ne doit pas être retourné
+            {
+              id: randomUUID(),
+              chantier_id: autreChantier.id,
+              type: $Enums.type_decision_strategique.suivi_des_decisions,
+              contenu: "contenu KO chantier_id",
+              auteur_id: null,
+              date: new Date(),
+            },
+          ],
+        });
 
-      await prisma.getInstance().decision_strategique.createMany({
-        data: [
-          {
-            id: randomUUID(),
-            chantier_id: "CH-168",
-            type: "suivi_des_decisions",
-            contenu: "contenu OK suivi_des_decisions",
-            auteur_id: null,
-            date: new Date(),
-          },
-          {
-            id: randomUUID(),
-            chantier_id: "CH-169",
-            type: "suivi_des_decisions",
-            contenu: "contenu KO chantier_id",
-            auteur_id: null,
-            date: new Date(),
-          },
-        ],
-      });
-      // When
-      const listeDecisionsStrategiquesResult =
-        await prismaDecisionStrategiqueRepository.listerDecisionStrategiqueParChantierId(
-          { chantierId },
-        );
-      // Then
-      expect(
-        listeDecisionsStrategiquesResult.map(
-          (decisionStrategique) => decisionStrategique.type,
-        ),
-      ).toIncludeSameMembers(["suivi_des_decisions"]);
-      expect(
-        listeDecisionsStrategiquesResult.map(
-          (decisionStrategique) => decisionStrategique.contenu,
-        ),
-      ).toIncludeSameMembers(["contenu OK suivi_des_decisions"]);
-    });
+        // When
+        const listeDecisionsStrategiquesResult =
+          await prismaDecisionStrategiqueRepository.listerDecisionStrategiqueParChantierId(
+            { chantierId: chantier.id },
+          );
+
+        // Then
+        expect(
+          listeDecisionsStrategiquesResult.map(
+            (decisionStrategique) => decisionStrategique.type,
+          ),
+        ).toIncludeSameMembers(["suivi_des_decisions"]);
+        expect(
+          listeDecisionsStrategiquesResult.map(
+            (decisionStrategique) => decisionStrategique.contenu,
+          ),
+        ).toIncludeSameMembers(["contenu OK suivi_des_decisions"]);
+      }),
+    );
   });
 });

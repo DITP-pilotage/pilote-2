@@ -13,7 +13,7 @@ export class IndicateurBuilder {
 
   private uniteMesure: string = "Pourcentage";
 
-  private objectifTauxAvancement: number | null = 10.3;
+  private tauxAvancement: number | null = 10.3;
 
   withId(id: string): IndicateurBuilder {
     this.id = id;
@@ -30,10 +30,8 @@ export class IndicateurBuilder {
     return this;
   }
 
-  withObjectifTauxAvancement(
-    objectifTauxAvancement: number | null,
-  ): IndicateurBuilder {
-    this.objectifTauxAvancement = objectifTauxAvancement;
+  withTauxAvancement(tauxAvancement: number | null): IndicateurBuilder {
+    this.tauxAvancement = tauxAvancement;
     return this;
   }
 
@@ -57,7 +55,7 @@ export class IndicateurBuilder {
       id: this.id,
       nom: this.nom,
       dateValeurAvancement: this.dateValeurAvancement,
-      objectifTauxAvancement: this.objectifTauxAvancement,
+      tauxAvancement: this.tauxAvancement,
       valeurAvancement: this.valeurAvancement,
       valeurCible: this.valeurCible,
       uniteMesure: this.uniteMesure,

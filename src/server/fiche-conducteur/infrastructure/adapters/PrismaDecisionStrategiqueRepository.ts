@@ -1,10 +1,7 @@
 import { decision_strategique as DecisionStrategiqueModel } from "@prisma/client";
 import { DecisionStrategique } from "@/server/fiche-conducteur/domain/DecisionStrategique";
 import { DecisionStrategiqueRepository } from "@/server/fiche-conducteur/domain/ports/DecisionStrategiqueRepository";
-
 import { PrismaPilote } from "@/server/db/PrismaPilote";
-
-import { PilotePrismaClient } from "@/server/db/PrismaTransaction";
 
 const convertifEnDecisionStrategique = (
   decisionStrategiqueModel: DecisionStrategiqueModel,
@@ -15,14 +12,11 @@ const convertifEnDecisionStrategique = (
     date: decisionStrategiqueModel.date.toISOString(),
   });
 
-interface Dependencies {
-  prisma: PrismaPilote;
-}
 export class PrismaDecisionStrategiqueRepository implements DecisionStrategiqueRepository {
-  private prisma: PilotePrismaClient;
+  constructor(private readonly dependencies: { prisma: PrismaPilote }) {}
 
-  constructor({ prisma }: Dependencies) {
-    this.prisma = prisma.getInstance();
+  private get prisma() {
+    return this.dependencies.prisma.getInstance();
   }
 
   async listerDecisionStrategiqueParChantierId({
