@@ -1,8 +1,11 @@
 import { Météo } from "@/server/domain/météo/Météo.interface";
 import Chantier from "@/server/domain/chantier/Chantier.interface";
-import SynthèseDesRésultats from "./SynthèseDesRésultats.interface";
+import SynthèseDesRésultats, {
+  SynthèseDesRésultatsV2,
+} from "./SynthèseDesRésultats.interface";
 
 export default interface SynthèseDesRésultatsRepository {
+  save(synthèse: SynthèseDesRésultatsV2): Promise<void>;
   récupérerLaPlusRécente(
     chantierId: string,
     territoireCode: string,

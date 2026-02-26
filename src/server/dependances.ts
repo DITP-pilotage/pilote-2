@@ -29,6 +29,18 @@ import {
   ImportCommentaireDependencies,
 } from "@/server/commentaires/container";
 import {
+  getImportDecisionStrategiqueContainer,
+  ImportDecisionStrategiqueDependencies,
+} from "@/server/decisions-strategiques/container";
+import {
+  getImportObjectifContainer,
+  ImportObjectifDependencies,
+} from "@/server/objectifs/container";
+import {
+  getImportSyntheseDesResultatsContainer,
+  ImportSyntheseDesResultatsDependencies,
+} from "@/server/syntheses-des-resultats/container";
+import {
   GestionUtilisateurDependencies,
   getGestionUtilisateurContainer,
 } from "./gestion-utilisateur/container";
@@ -74,6 +86,9 @@ export type ContainerDependencies = {
   profilUtilisateur: AwilixContainer<ProfilUtilisateurDependencies>;
   rapportsHebdomadaires: AwilixContainer<RapportsHebdomadairesDependencies>;
   albert: AwilixContainer<AlbertDependencies>;
+  importDecisionStrategique: AwilixContainer<ImportDecisionStrategiqueDependencies>;
+  importObjectif: AwilixContainer<ImportObjectifDependencies>;
+  importSyntheseDesResultats: AwilixContainer<ImportSyntheseDesResultatsDependencies>;
 };
 
 function registerContainer(): ContainerDependencies {
@@ -123,6 +138,15 @@ function registerContainer(): ContainerDependencies {
       initialContainerWithTransversalDependencies,
     ),
     albert: getAlbertContainer(initialContainerWithTransversalDependencies),
+    importDecisionStrategique: getImportDecisionStrategiqueContainer(
+      initialContainerWithTransversalDependencies,
+    ),
+    importObjectif: getImportObjectifContainer(
+      initialContainerWithTransversalDependencies,
+    ),
+    importSyntheseDesResultats: getImportSyntheseDesResultatsContainer(
+      initialContainerWithTransversalDependencies,
+    ),
   };
 }
 

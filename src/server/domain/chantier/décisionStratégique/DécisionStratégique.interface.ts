@@ -11,4 +11,13 @@ type DécisionStratégique = {
   type: TypeDécisionStratégique;
 } | null;
 
+export type DécisionStratégiqueV2 = {
+  chantierId: string;
+  id: string;
+  contenu: string;
+  type: TypeDécisionStratégique;
+  auteur_id: string;
+  date: Date;
+};
+
 export default DécisionStratégique;

@@ -4,6 +4,7 @@ import {
   utilisateur,
 } from "@prisma/client";
 import DécisionStratégique, {
+  DécisionStratégiqueV2,
   TypeDécisionStratégique,
 } from "@/server/domain/chantier/décisionStratégique/DécisionStratégique.interface";
 import DécisionStratégiqueRepository from "@/server/domain/chantier/décisionStratégique/DécisionStratégiqueRepository.interface";
@@ -103,6 +104,17 @@ export default class DécisionStratégiqueSQLRepository implements DécisionStra
     });
 
     return this.mapperVersDomaine(décisionStratégiqueCréée);
+  }
+
+  async save({
+    chantierId,
+    id,
+    contenu,
+    type,
+    auteur_id,
+    date,
+  }: DécisionStratégiqueV2): Promise<void> {
+    await this.créer(chantierId, id, contenu, type, auteur_id, date);
   }
 
   async récupérerLesPlusRécentesGroupéesParChantier(
