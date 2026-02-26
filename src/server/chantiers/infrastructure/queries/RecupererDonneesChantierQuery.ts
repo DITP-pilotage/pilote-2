@@ -20,11 +20,14 @@ export class RecupererDonneesChantierQuery {
   async handle(
     chantierId: string,
     listeTerritoireCodes: string[],
+    jalonChoisi?: number,
   ): Promise<DonneeChantierContrat | { message: string }> {
-    const jalon = getAnneeDateDeBascule(
-      new Date(),
-      configuration().dateBasculeAffichageValeursAnneePrecedente,
-    );
+    const jalon =
+      jalonChoisi ??
+      getAnneeDateDeBascule(
+        new Date(),
+        configuration().dateBasculeAffichageValeursAnneePrecedente,
+      );
 
     const listeDonneesChantier =
       await this.chantierRepository.récupérerDonneesChantier(

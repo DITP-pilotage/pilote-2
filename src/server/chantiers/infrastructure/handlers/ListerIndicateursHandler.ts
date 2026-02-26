@@ -8,19 +8,24 @@ import { configuration } from "@/config";
 export const handleListerIndicateurs = async ({
   request,
   response,
+  jalonChoisi,
 }: {
   request: NextApiRequest;
   response: NextApiResponse;
+  jalonChoisi?: number;
 }) => {
+  const jalon =
+    jalonChoisi ??
+    getAnneeDateDeBascule(
+      new Date(),
+      configuration().dateBasculeAffichageValeursAnneePrecedente,
+    );
   const listeDonneesIndicateurs =
     await new ListerDonneesIndicateurParIndicIdUseCase({
       indicateurRepository: dependencies.getChantierIndicateurRepository(),
     }).run({
       indicId: request.query.indicateurId as string,
-      jalon: getAnneeDateDeBascule(
-        new Date(),
-        configuration().dateBasculeAffichageValeursAnneePrecedente,
-      ),
+      jalon,
     });
   response
     .status(200)

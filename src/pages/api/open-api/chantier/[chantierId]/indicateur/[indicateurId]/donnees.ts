@@ -40,7 +40,17 @@ const handle = async (request: NextApiRequest, response: NextApiResponse) => {
           `Vous n'êtes pas autorisé à accéder à l'indicateur ${request.query.indicateurId}`,
         );
       }
-      await handleListerIndicateurs({ request, response });
+      const jalonParam = request.query.jalon
+        ? Number(request.query.jalon)
+        : undefined;
+      if (jalonParam !== undefined && Number.isNaN(jalonParam)) {
+        throw new BadRequestError("Le paramètre jalon doit être un entier");
+      }
+      await handleListerIndicateurs({
+        request,
+        response,
+        jalonChoisi: jalonParam,
+      });
       logger.info(
         `(API) Export des données indicateur ${request.query.indicateurId} réussie`,
       );

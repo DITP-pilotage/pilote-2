@@ -35,11 +35,18 @@ const handle = async (request: NextApiRequest, response: NextApiResponse) => {
           `Vous n'êtes pas autorisé à accéder au chantier ${request.query.chantierId}`,
         );
       }
+      const jalonParam = request.query.jalon
+        ? Number(request.query.jalon)
+        : undefined;
+      if (jalonParam !== undefined && Number.isNaN(jalonParam)) {
+        throw new BadRequestError("Le paramètre jalon doit être un entier");
+      }
       const donneeChantier = await getContainer("chantiers")
         .resolve("recupererDonneesChantierQuery")
         .handle(
           request.query.chantierId as string,
           utilisateurAuthentifie.habilitations.lecture.territoires,
+          jalonParam,
         );
       response.status(200).json(donneeChantier);
       break;
