@@ -2923,4 +2923,531 @@ describe("PrismaChantierRepository", () => {
       );
     });
   });
+
+  describe("#récupérerDonneesChantier", () => {
+    it(
+      "retourne les données de base d'un chantier pour un territoire NAT",
+      createIntegrationTest(async () => {
+        // Given
+        await fixtures.chantierIdentite({
+          id: "CH-001",
+          nom: "Mon chantier",
+          ministeres: ["MINEDU"],
+          ministeres_acronymes: ["EDU"],
+          axe: "Axe 1",
+          statut: "PUBLIE",
+        });
+        await fixtures.chantierTerritoire({
+          id: "CH-001",
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+          est_applicable: true,
+        });
+        await fixtures.chantierTerritoireJalon({
+          id: "CH-001",
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+          jalon: 2025,
+          taux_avancement: 60,
+        });
+
+        // When
+        const result = await prismaChantierRepository.récupérerDonneesChantier(
+          "CH-001",
+          ["NAT-FR"],
+          2025,
+        );
+
+        // Then
+        expect(result).toEqual([
+          expect.objectContaining({
+            id: "CH-001",
+            nom: "Mon chantier",
+            maille: "NAT",
+            territoireCode: "NAT-FR",
+            ministèreNom: "EDU",
+            tauxDAvancementNational: 60,
+            tauxDAvancementRégional: null,
+            tauxDAvancementDépartemental: null,
+          }),
+        ]);
+      }),
+    );
+
+    it(
+      "retourne un tableau vide si le chantier n'a aucun ministère",
+      createIntegrationTest(async () => {
+        // Given
+        await fixtures.chantierIdentite({ id: "CH-001" });
+        await fixtures.chantierTerritoire({
+          id: "CH-001",
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+          est_applicable: true,
+        });
+
+        // When
+        const result = await prismaChantierRepository.récupérerDonneesChantier(
+          "CH-001",
+          ["NAT-FR"],
+          2025,
+        );
+
+        // Then
+        expect(result).toEqual([]);
+      }),
+    );
+
+    it(
+      "exclut les territoires absents de territoireCodesLecture",
+      createIntegrationTest(async () => {
+        // Given
+        await fixtures.chantierIdentite({
+          id: "CH-001",
+          ministeres: ["MINEDU"],
+        });
+        await fixtures.chantierTerritoire({
+          id: "CH-001",
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+          est_applicable: true,
+        });
+        // territoire non demandé
+        await fixtures.chantierTerritoire({
+          id: "CH-001",
+          territoire_code: "REG-84",
+          code_insee: "84",
+          maille: "REG",
+          zone_id: "R84",
+          est_applicable: true,
+        });
+
+        // When
+        const result = await prismaChantierRepository.récupérerDonneesChantier(
+          "CH-001",
+          ["NAT-FR"],
+          2025,
+        );
+
+        // Then
+        expect(result).toEqual([
+          expect.objectContaining({ territoireCode: "NAT-FR" }),
+        ]);
+      }),
+    );
+
+    it(
+      "exclut les territoires dont est_applicable est faux",
+      createIntegrationTest(async () => {
+        // Given
+        await fixtures.chantierIdentite({
+          id: "CH-001",
+          ministeres: ["MINEDU"],
+        });
+        await fixtures.chantierTerritoire({
+          id: "CH-001",
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+          est_applicable: false,
+        });
+
+        // When
+        const result = await prismaChantierRepository.récupérerDonneesChantier(
+          "CH-001",
+          ["NAT-FR"],
+          2025,
+        );
+
+        // Then
+        expect(result).toEqual([]);
+      }),
+    );
+
+    it(
+      "retourne null pour tauxDAvancementNational si aucun jalon n'existe",
+      createIntegrationTest(async () => {
+        // Given
+        await fixtures.chantierIdentite({
+          id: "CH-001",
+          ministeres: ["MINEDU"],
+        });
+        await fixtures.chantierTerritoire({
+          id: "CH-001",
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+          est_applicable: true,
+        });
+
+        // When
+        const result = await prismaChantierRepository.récupérerDonneesChantier(
+          "CH-001",
+          ["NAT-FR"],
+          2025,
+        );
+
+        // Then
+        expect(result).toEqual([
+          expect.objectContaining({ tauxDAvancementNational: null }),
+        ]);
+      }),
+    );
+
+    it(
+      "retourne le taux d'avancement du jalon demandé",
+      createIntegrationTest(async () => {
+        // Given
+        await fixtures.chantierIdentite({
+          id: "CH-001",
+          ministeres: ["MINEDU"],
+        });
+        await fixtures.chantierTerritoire({
+          id: "CH-001",
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+          est_applicable: true,
+        });
+        // Jalon 2024 — ne doit pas apparaître
+        await fixtures.chantierTerritoireJalon({
+          id: "CH-001",
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+          jalon: 2024,
+          taux_avancement: 30,
+        });
+        // Jalon 2025 — attendu
+        await fixtures.chantierTerritoireJalon({
+          id: "CH-001",
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+          jalon: 2025,
+          taux_avancement: 75,
+        });
+
+        // When
+        const result = await prismaChantierRepository.récupérerDonneesChantier(
+          "CH-001",
+          ["NAT-FR"],
+          2025,
+        );
+
+        // Then
+        expect(result).toEqual([
+          expect.objectContaining({ tauxDAvancementNational: 75 }),
+        ]);
+      }),
+    );
+
+    it(
+      "pour une maille DEPT, retourne les taux d'avancement national, régional et départemental",
+      createIntegrationTest(async () => {
+        // Given
+        await fixtures.chantierIdentite({
+          id: "CH-001",
+          ministeres: ["MINEDU"],
+        });
+        await fixtures.chantierTerritoire({
+          id: "CH-001",
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+          est_applicable: true,
+        });
+        await fixtures.chantierTerritoire({
+          id: "CH-001",
+          territoire_code: "REG-84",
+          code_insee: "84",
+          maille: "REG",
+          zone_id: "R84",
+          est_applicable: true,
+        });
+        // DEPT-01 a pour parent REG-84 dans la table territoire pré-seedée
+        await fixtures.chantierTerritoire({
+          id: "CH-001",
+          territoire_code: "DEPT-01",
+          code_insee: "01",
+          maille: "DEPT",
+          zone_id: "D01",
+          est_applicable: true,
+        });
+        await fixtures.chantierTerritoireJalon({
+          id: "CH-001",
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+          jalon: 2025,
+          taux_avancement: 50,
+        });
+        await fixtures.chantierTerritoireJalon({
+          id: "CH-001",
+          territoire_code: "REG-84",
+          code_insee: "84",
+          maille: "REG",
+          zone_id: "R84",
+          jalon: 2025,
+          taux_avancement: 65,
+        });
+        await fixtures.chantierTerritoireJalon({
+          id: "CH-001",
+          territoire_code: "DEPT-01",
+          code_insee: "01",
+          maille: "DEPT",
+          zone_id: "D01",
+          jalon: 2025,
+          taux_avancement: 80,
+        });
+
+        // When
+        const result = await prismaChantierRepository.récupérerDonneesChantier(
+          "CH-001",
+          ["DEPT-01"],
+          2025,
+        );
+
+        // Then
+        expect(result).toEqual([
+          expect.objectContaining({
+            territoireCode: "DEPT-01",
+            tauxDAvancementNational: 50,
+            tauxDAvancementRégional: 65,
+            tauxDAvancementDépartemental: 80,
+          }),
+        ]);
+      }),
+    );
+
+    it(
+      "retourne le commentaire le plus récent par type",
+      createIntegrationTest(async (prisma) => {
+        // Given
+        const utilisateur = await fixtures.utilisateur();
+        await fixtures.chantierIdentite({
+          id: "CH-001",
+          ministeres: ["MINEDU"],
+        });
+        await fixtures.chantierTerritoire({
+          id: "CH-001",
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+          est_applicable: true,
+        });
+        // Commentaire ancien — ne doit pas être retourné
+        await prisma.commentaire.create({
+          data: {
+            id: "c001",
+            chantier_id: "CH-001",
+            auteur_id: utilisateur.id,
+            maille: "NAT",
+            code_insee: "FR",
+            territoire_code: "NAT-FR",
+            type: "actions_a_venir",
+            date: new Date("2024-01-01"),
+            contenu: "Ancien commentaire",
+          },
+        });
+        // Commentaire récent — attendu
+        await prisma.commentaire.create({
+          data: {
+            id: "c002",
+            chantier_id: "CH-001",
+            auteur_id: utilisateur.id,
+            maille: "NAT",
+            code_insee: "FR",
+            territoire_code: "NAT-FR",
+            type: "actions_a_venir",
+            date: new Date("2025-06-01"),
+            contenu: "Commentaire récent",
+          },
+        });
+
+        // When
+        const result = await prismaChantierRepository.récupérerDonneesChantier(
+          "CH-001",
+          ["NAT-FR"],
+          2025,
+        );
+
+        // Then
+        expect(result).toEqual([
+          expect.objectContaining({ commActionsÀVenir: "Commentaire récent" }),
+        ]);
+      }),
+    );
+
+    it(
+      "retourne la synthèse des résultats et la météo les plus récentes",
+      createIntegrationTest(async (prisma) => {
+        // Given
+        await fixtures.chantierIdentite({
+          id: "CH-001",
+          ministeres: ["MINEDU"],
+        });
+        await fixtures.chantierTerritoire({
+          id: "CH-001",
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+          est_applicable: true,
+        });
+        // Synthèse ancienne — ne doit pas être retournée
+        await prisma.synthese_des_resultats.create({
+          data: {
+            id: "s001",
+            chantier_id: "CH-001",
+            code_insee: "FR",
+            maille: "NAT",
+            territoire_code: "NAT-FR",
+            date_commentaire: new Date("2024-01-01"),
+            date_meteo: new Date("2024-01-01"),
+            commentaire: "Ancienne synthèse",
+            meteo: "SOLEIL",
+          },
+        });
+        // Synthèse récente — attendue
+        await prisma.synthese_des_resultats.create({
+          data: {
+            id: "s002",
+            chantier_id: "CH-001",
+            code_insee: "FR",
+            maille: "NAT",
+            territoire_code: "NAT-FR",
+            date_commentaire: new Date("2025-06-01"),
+            date_meteo: new Date("2025-06-01"),
+            commentaire: "Synthèse récente",
+            meteo: "NUAGE",
+          },
+        });
+
+        // When
+        const result = await prismaChantierRepository.récupérerDonneesChantier(
+          "CH-001",
+          ["NAT-FR"],
+          2025,
+        );
+
+        // Then
+        expect(result).toEqual([
+          expect.objectContaining({
+            synthèseDesRésultats: "Synthèse récente",
+            météo: "NUAGE",
+          }),
+        ]);
+      }),
+    );
+
+    it(
+      "retourne les décisions stratégiques et objectifs pour la maille NAT, null pour les autres mailles",
+      createIntegrationTest(async (prisma) => {
+        // Given
+        const utilisateur = await fixtures.utilisateur();
+        await fixtures.chantierIdentite({
+          id: "CH-001",
+          ministeres: ["MINEDU"],
+        });
+        await fixtures.chantierTerritoire({
+          id: "CH-001",
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+          est_applicable: true,
+        });
+        await fixtures.chantierTerritoire({
+          id: "CH-001",
+          territoire_code: "REG-84",
+          code_insee: "84",
+          maille: "REG",
+          zone_id: "R84",
+          est_applicable: true,
+        });
+        await prisma.decision_strategique.create({
+          data: {
+            id: "d001",
+            chantier_id: "CH-001",
+            auteur_id: utilisateur.id,
+            contenu: "Décision stratégique",
+            type: "suivi_des_decisions",
+            date: new Date("2025-01-01"),
+          },
+        });
+        await prisma.objectif.create({
+          data: {
+            id: "o001",
+            chantier_id: "CH-001",
+            auteur_id: utilisateur.id,
+            contenu: "Notre ambition",
+            type: "notre_ambition",
+            date: new Date("2025-01-01"),
+          },
+        });
+        await prisma.objectif.create({
+          data: {
+            id: "o002",
+            chantier_id: "CH-001",
+            auteur_id: utilisateur.id,
+            contenu: "Déjà fait",
+            type: "deja_fait",
+            date: new Date("2025-01-01"),
+          },
+        });
+        await prisma.objectif.create({
+          data: {
+            id: "o003",
+            chantier_id: "CH-001",
+            auteur_id: utilisateur.id,
+            contenu: "À faire",
+            type: "a_faire",
+            date: new Date("2025-01-01"),
+          },
+        });
+
+        // When
+        const result = await prismaChantierRepository.récupérerDonneesChantier(
+          "CH-001",
+          ["NAT-FR", "REG-84"],
+          2025,
+        );
+
+        // Then
+        expect(result).toEqual([
+          expect.objectContaining({
+            territoireCode: "NAT-FR",
+            decStratSuiviDesDécisions: "Décision stratégique",
+            objNotreAmbition: "Notre ambition",
+            objDéjàFait: "Déjà fait",
+            objÀFaire: "À faire",
+          }),
+          expect.objectContaining({
+            territoireCode: "REG-84",
+            decStratSuiviDesDécisions: null,
+            objNotreAmbition: null,
+            objDéjàFait: null,
+            objÀFaire: null,
+          }),
+        ]);
+      }),
+    );
+  });
 });
