@@ -61,19 +61,13 @@ const convertirEnDonneeIndicateur = (
         ),
         dateValeurAvancement:
           indicateurTerritoireJalon?.date_valeur_actuelle || null,
-        valeurCibleAnnuelle: verifyValeurIsNotNullOrUndefined(
+        valeurCible: verifyValeurIsNotNullOrUndefined(
           indicateurTerritoireJalon?.valeur_cible,
         ),
-        dateValeurCibleAnnuelle:
-          indicateurTerritoireJalon?.date_valeur_cible || null,
-        tauxAvancementAnnuel: verifyValeurIsNotNullOrUndefined(
+        dateValeurCible: indicateurTerritoireJalon?.date_valeur_cible || null,
+        tauxAvancement: verifyValeurIsNotNullOrUndefined(
           indicateurTerritoireJalon?.taux_avancement,
         ),
-        valeurCibleGlobale: prismaIndicateurTerritoire.valeur_cible_mandat,
-        dateValeurCibleGlobale:
-          prismaIndicateurTerritoire.date_valeur_cible_mandat,
-        tauxAvancementGlobale:
-          prismaIndicateurTerritoire.taux_avancement_mandat,
         estBarometre: prismaIndicateurIdentite.est_barometre || false,
       });
     },

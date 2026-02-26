@@ -19,17 +19,11 @@ export class DonneeIndicateurBuilder {
 
   private dateValeurAvancement: Date = new Date("2024-06-20");
 
-  private valeurCibleAnnuelle: number = 20.4;
+  private valeurCible: number = 20.4;
 
-  private dateValeurCibleAnnuelle: Date = new Date("2024-07-12");
+  private dateValeurCible: Date = new Date("2024-07-12");
 
-  private tauxAvancementAnnuel: number = 15.3;
-
-  private valeurCibleGlobale: number = 17.8;
-
-  private dateValeurCibleGlobale: Date = new Date("2024-06-12");
-
-  private tauxAvancementGlobale: number = 20.1;
+  private tauxAvancement: number = 15.3;
 
   private estBarometre: boolean = true;
 
@@ -80,43 +74,18 @@ export class DonneeIndicateurBuilder {
     return this;
   }
 
-  withValeurCibleAnnuelle(
-    valeurCibleAnnuelle: number,
-  ): DonneeIndicateurBuilder {
-    this.valeurCibleAnnuelle = valeurCibleAnnuelle;
+  withValeurCible(valeurCible: number): DonneeIndicateurBuilder {
+    this.valeurCible = valeurCible;
     return this;
   }
 
-  withDateValeurCibleAnnuelle(
-    dateValeurCibleAnnuelle: Date,
-  ): DonneeIndicateurBuilder {
-    this.dateValeurCibleAnnuelle = dateValeurCibleAnnuelle;
+  withDateValeurCible(dateValeurCible: Date): DonneeIndicateurBuilder {
+    this.dateValeurCible = dateValeurCible;
     return this;
   }
 
-  withTauxAvancementAnnuel(
-    tauxAvancementAnnuel: number,
-  ): DonneeIndicateurBuilder {
-    this.tauxAvancementAnnuel = tauxAvancementAnnuel;
-    return this;
-  }
-
-  withValeurCibleGlobale(valeurCibleGlobale: number): DonneeIndicateurBuilder {
-    this.valeurCibleGlobale = valeurCibleGlobale;
-    return this;
-  }
-
-  withDateValeurCibleGlobale(
-    dateValeurCibleGlobale: Date,
-  ): DonneeIndicateurBuilder {
-    this.dateValeurCibleGlobale = dateValeurCibleGlobale;
-    return this;
-  }
-
-  withTauxAvancementGlobale(
-    tauxAvancementGlobale: number,
-  ): DonneeIndicateurBuilder {
-    this.tauxAvancementGlobale = tauxAvancementGlobale;
+  withTauxAvancement(tauxAvancement: number): DonneeIndicateurBuilder {
+    this.tauxAvancement = tauxAvancement;
     return this;
   }
 
@@ -136,12 +105,9 @@ export class DonneeIndicateurBuilder {
       dateValeurInitiale: this.dateValeurInitiale,
       valeurAvancement: this.valeurAvancement,
       dateValeurAvancement: this.dateValeurAvancement,
-      valeurCibleAnnuelle: this.valeurCibleAnnuelle,
-      dateValeurCibleAnnuelle: this.dateValeurCibleAnnuelle,
-      tauxAvancementAnnuel: this.tauxAvancementAnnuel,
-      valeurCibleGlobale: this.valeurCibleGlobale,
-      dateValeurCibleGlobale: this.dateValeurCibleGlobale,
-      tauxAvancementGlobale: this.tauxAvancementGlobale,
+      valeurCible: this.valeurCible,
+      dateValeurCible: this.dateValeurCible,
+      tauxAvancement: this.tauxAvancement,
       estBarometre: this.estBarometre,
     });
   }

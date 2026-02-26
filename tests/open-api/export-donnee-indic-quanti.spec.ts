@@ -46,20 +46,13 @@ test("Quand on a accès au chantier, doit remonter une réponse 200 OK avec les 
   expect(donneeTerritoire.code_insee).toBeDefined();
   expect(donneeTerritoire.territoire_code).toBeDefined();
 
-  expect(donneeTerritoire.date_valeur_actuelle).toBeDefined();
-  expect(donneeTerritoire.valeur_actuelle).toBeDefined();
-
   expect(donneeTerritoire.date_valeur_cible).toBeDefined();
   expect(donneeTerritoire.valeur_cible).toBeDefined();
-
-  expect(donneeTerritoire.date_valeur_cible_annuelle).toBeDefined();
-  expect(donneeTerritoire.valeur_cible_annuelle).toBeDefined();
 
   expect(donneeTerritoire.date_valeur_initiale).toBeDefined();
   expect(donneeTerritoire.valeur_initiale).toBeDefined();
 
   expect(donneeTerritoire.taux_avancement).toBeDefined();
-  expect(donneeTerritoire.taux_avancement_annuel).toBeDefined();
 
   expect(donneeTerritoire.zone_id).toBeDefined();
 

@@ -114,8 +114,8 @@ describe("PrismaIndicateurRepository", () => {
           expect.objectContaining({
             indicId: "IND-001",
             territoireCode: "NAT-FR",
-            valeurCibleAnnuelle: 22,
-            tauxAvancementAnnuel: 13,
+            valeurCible: 22,
+            tauxAvancement: 13,
             valeurAvancement: 25,
           }),
           expect.objectContaining({
@@ -124,7 +124,7 @@ describe("PrismaIndicateurRepository", () => {
             valeurAvancement: 30,
           }),
         ]);
-        expect(result[0].dateValeurCibleAnnuelle?.toISOString()).toStartWith(
+        expect(result[0].dateValeurCible?.toISOString()).toStartWith(
           "2025-12-06",
         );
         expect(result[0].dateValeurAvancement?.toISOString()).toStartWith(
@@ -235,8 +235,8 @@ describe("PrismaIndicateurRepository", () => {
           expect.objectContaining({
             indicId: "IND-001",
             territoireCode: "NAT-FR",
-            valeurCibleAnnuelle: 20,
-            tauxAvancementAnnuel: 13,
+            valeurCible: 20,
+            tauxAvancement: 13,
             valeurAvancement: 20,
           }),
           expect.objectContaining({
@@ -246,7 +246,7 @@ describe("PrismaIndicateurRepository", () => {
             dateValeurAvancement: null,
           }),
         ]);
-        expect(result[0].dateValeurCibleAnnuelle?.toISOString()).toStartWith(
+        expect(result[0].dateValeurCible?.toISOString()).toStartWith(
           "2024-12-06",
         );
         expect(result[0].dateValeurAvancement?.toISOString()).toStartWith(

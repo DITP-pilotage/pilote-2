@@ -3,20 +3,15 @@ import { DonneeIndicateur } from "@/server/chantiers/domain/DonneeIndicateur";
 export interface DonneeTerritoireContrat {
   valeur_cible: number | null;
   territoire_code: string;
-  valeur_cible_annuelle: number | null;
   code_insee: string;
   date_valeur_cible: Date | null;
   valeur_initiale: number | null;
-  valeur_actuelle: number | null; // TODO: supprimer cette colonne
-  date_valeur_actuelle: Date | null; // TODO: supprimer cette colonne
   valeur_avancement: number | null;
   date_valeur_avancement: Date | null;
   zone_id: string;
   date_valeur_initiale: Date | null;
   maille: string;
   taux_avancement: number | null;
-  date_valeur_cible_annuelle: Date | null;
-  taux_avancement_annuel: number | null;
 }
 
 export interface DonneeIndicateurContrat {
@@ -45,12 +40,9 @@ export const presenterEnDonneeIndicateurContrat = (
       date_valeur_actuelle: donneeIndicateur.dateValeurAvancement,
       valeur_avancement: donneeIndicateur.valeurAvancement,
       date_valeur_avancement: donneeIndicateur.dateValeurAvancement,
-      valeur_cible: donneeIndicateur.valeurCibleGlobale,
-      date_valeur_cible: donneeIndicateur.dateValeurCibleGlobale,
-      taux_avancement: donneeIndicateur.tauxAvancementGlobale,
-      valeur_cible_annuelle: donneeIndicateur.valeurCibleAnnuelle,
-      date_valeur_cible_annuelle: donneeIndicateur.dateValeurCibleAnnuelle,
-      taux_avancement_annuel: donneeIndicateur.tauxAvancementAnnuel,
+      valeur_cible: donneeIndicateur.valeurCible,
+      date_valeur_cible: donneeIndicateur.dateValeurCible,
+      taux_avancement: donneeIndicateur.tauxAvancement,
     })),
   };
 };
