@@ -2,6 +2,8 @@ import { Dispatch, FunctionComponent, SetStateAction } from "react";
 import InputFichier from "@/components/_commons/InputFichier/InputFichier";
 import { useFormulaireIndicateur } from "@/hooks/useFomulaireIndicateur";
 import { SubmitBouton } from "@/components/_commons/SubmitBouton/SubmitBouton";
+import { Icone } from "@/components/_commons/Icone";
+import { LoaderIcon } from "@/components/_commons/Icones/LoaderIcon";
 import { wording } from "@/client/utils/i18n/i18n";
 import { DetailValidationFichierContrat } from "@/server/app/contrats/DetailValidationFichierContrat.interface";
 
@@ -16,27 +18,41 @@ const FormulaireIndicateur: FunctionComponent<FormulaireIndicateurProps> = ({
   indicateurId,
   setRapport,
 }) => {
-  const { définirLeFichier, verifierLeFichier, file } = useFormulaireIndicateur(
-    chantierId,
-    indicateurId,
-    setRapport,
-  );
+  const { définirLeFichier, estEnChargement, verifierLeFichier, file } =
+    useFormulaireIndicateur(chantierId, indicateurId, setRapport);
 
   return (
     <>
-      <form
-        className="flex align-center fr-mb-3w"
-        onSubmit={verifierLeFichier as React.FormEventHandler<HTMLFormElement>}
-      >
-        <InputFichier onChange={définirLeFichier} />
-        <SubmitBouton
-          disabled={!file}
-          label={
-            wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT
-              .ETAPE_SELECTION_INDICATEUR.LABEL_BOUTON_VERIFIER_FICHIER
+      {estEnChargement ? (
+        <div
+          aria-busy="true"
+          className="flex align-center gap-2 fr-mb-3w"
+          role="status"
+        >
+          <span
+            style={{ animation: "spin 1s linear infinite", display: "flex" }}
+          >
+            <Icone className="h-5 w-5" icone={LoaderIcon} />
+          </span>
+          Envoi du fichier en cours...
+        </div>
+      ) : (
+        <form
+          className="flex align-center fr-mb-3w"
+          onSubmit={
+            verifierLeFichier as React.FormEventHandler<HTMLFormElement>
           }
-        />
-      </form>
+        >
+          <InputFichier onChange={définirLeFichier} />
+          <SubmitBouton
+            disabled={!file}
+            label={
+              wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT
+                .ETAPE_SELECTION_INDICATEUR.LABEL_BOUTON_VERIFIER_FICHIER
+            }
+          />
+        </form>
+      )}
       <p>
         {
           wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT

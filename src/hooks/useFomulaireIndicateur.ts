@@ -17,6 +17,7 @@ export const useFormulaireIndicateur = (
   setRapport: Dispatch<SetStateAction<DetailValidationFichierContrat | null>>,
 ) => {
   const [file, setFile] = useState<File | null>(null);
+  const [estEnChargement, setEstEnChargement] = useState(false);
 
   const définirLeFichier: ChangeEventHandler<HTMLInputElement> = (event) => {
     if (event.target.files && event.target.files[0]) {
@@ -41,19 +42,27 @@ export const useFormulaireIndicateur = (
 
     body.append("file", file);
 
-    const detailValidationFichier: DetailValidationFichierContrat = await fetch(
-      `/api/chantier/${chantierId}/indicateur/${indicateurId}/verifier`,
-      {
-        method: "POST",
-        body,
-      },
-    ).then(
-      (response) => response.json() as Promise<DetailValidationFichierContrat>,
-    );
+    setEstEnChargement(true);
 
-    setRapport(detailValidationFichier);
-    setFile(null);
+    try {
+      const detailValidationFichier: DetailValidationFichierContrat =
+        await fetch(
+          `/api/chantier/${chantierId}/indicateur/${indicateurId}/verifier`,
+          {
+            method: "POST",
+            body,
+          },
+        ).then(
+          (response) =>
+            response.json() as Promise<DetailValidationFichierContrat>,
+        );
+
+      setRapport(detailValidationFichier);
+      setFile(null);
+    } finally {
+      setEstEnChargement(false);
+    }
   };
 
-  return { définirLeFichier, file, verifierLeFichier };
+  return { définirLeFichier, estEnChargement, file, verifierLeFichier };
 };
