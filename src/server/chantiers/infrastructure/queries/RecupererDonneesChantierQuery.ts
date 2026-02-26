@@ -3,6 +3,8 @@ import {
   DonneeChantierContrat,
   presenterEnDonneeChantierContrat,
 } from "@/server/chantiers/app/contrats/DonneeChantierContrat";
+import { getAnneeDateDeBascule } from "@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getAnneeDateDeBascule";
+import { configuration } from "@/config";
 
 type Dependances = {
   chantierRepository: ChantierRepository;
@@ -19,10 +21,16 @@ export class RecupererDonneesChantierQuery {
     chantierId: string,
     listeTerritoireCodes: string[],
   ): Promise<DonneeChantierContrat | { message: string }> {
+    const jalon = getAnneeDateDeBascule(
+      new Date(),
+      configuration().dateBasculeAffichageValeursAnneePrecedente,
+    );
+
     const listeDonneesChantier =
       await this.chantierRepository.récupérerDonneesChantier(
         chantierId,
         listeTerritoireCodes,
+        jalon,
       );
 
     return listeDonneesChantier.length > 0

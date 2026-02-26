@@ -43,6 +43,7 @@ export class PrismaChantierRepository implements ChantierRepository {
   async récupérerDonneesChantier(
     chantierId: string,
     territoireCodesLecture: string[],
+    jalon: number,
   ): Promise<DonneeChantier[]> {
     const chantierIds = await this.prisma.chantier_identite.findMany({
       where: {
@@ -73,7 +74,7 @@ export class PrismaChantierRepository implements ChantierRepository {
               territoire: true,
               chantier_territoire_jalon: {
                 where: {
-                  jalon: 2025,
+                  jalon: jalon,
                 },
               },
             },
@@ -291,19 +292,24 @@ export class PrismaChantierRepository implements ChantierRepository {
               : null,
             axe: prismaChantierIdentite.axe,
             territoireCode: prismaChantierTerritoire.territoire_code,
-            tauxDAvancementAnnuel:
-              prismaChantierTerritoire.chantier_territoire_jalon.at(0)
-                ?.taux_avancement || null,
-            tauxDAvancementNational:
-              prismaChantierTerritoireNat.taux_avancement_mandat,
+            tauxDAvancementNational: verifyValeurIsNotNullOrUndefined(
+              prismaChantierTerritoireNat.chantier_territoire_jalon.at(0)
+                ?.taux_avancement,
+            ),
             tauxDAvancementRégional:
               prismaChantierTerritoire.maille === "REG" ||
               prismaChantierTerritoire.maille === "DEPT"
-                ? prismaChantierTerritoireReg.taux_avancement_mandat
+                ? verifyValeurIsNotNullOrUndefined(
+                    prismaChantierTerritoireReg.chantier_territoire_jalon.at(0)
+                      ?.taux_avancement,
+                  )
                 : null,
             tauxDAvancementDépartemental:
               prismaChantierTerritoire.maille === "DEPT"
-                ? prismaChantierTerritoire.taux_avancement_mandat
+                ? verifyValeurIsNotNullOrUndefined(
+                    prismaChantierTerritoire.chantier_territoire_jalon.at(0)
+                      ?.taux_avancement,
+                  )
                 : null,
             météo:
               ((mapMeteo.get(

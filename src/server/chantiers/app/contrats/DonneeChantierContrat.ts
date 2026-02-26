@@ -27,7 +27,6 @@ type DonneeTerritoireChantierContrat = {
   taux_avancement_dept: string;
   taux_avancement_region: string;
   taux_avancement_nat: string;
-  taux_avancement_annuel: string;
   publication: DonneeChantierPublication;
 };
 
@@ -63,9 +62,6 @@ export const presenterEnDonneeTerritoireChantierContrat = (
     ),
     taux_avancement_nat: formaterNumériqueOuValeurNonApplicable(
       donneeChantier.tauxDAvancementNational,
-    ),
-    taux_avancement_annuel: formaterNumériqueOuValeurNonApplicable(
-      donneeChantier.tauxDAvancementAnnuel,
     ),
     publication: {
       synthese_des_resultats: donneeChantier.synthèseDesRésultats,

@@ -12,6 +12,7 @@ export interface ChantierRepository {
   récupérerDonneesChantier(
     chantierId: string,
     territoireCodesLecture: string[],
+    jalon: number,
   ): Promise<DonneeChantier[]>;
   recupererLesEntreesDUnChantier(
     id: string,

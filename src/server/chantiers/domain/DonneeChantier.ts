@@ -5,7 +5,6 @@ export type DonneeChantier = {
   axe: string;
   territoireCode: string;
   ministèreNom: string | null;
-  tauxDAvancementAnnuel: number | null;
   tauxDAvancementNational: number | null;
   tauxDAvancementRégional: number | null;
   tauxDAvancementDépartemental: number | null;

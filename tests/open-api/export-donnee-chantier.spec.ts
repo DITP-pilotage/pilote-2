@@ -40,7 +40,6 @@ test("Quand on a accès au chantier, doit remonter une réponse 200 OK avec les 
   expect(premierTerritoire.taux_avancement_dept).toBeDefined();
   expect(premierTerritoire.taux_avancement_region).toBeDefined();
   expect(premierTerritoire.taux_avancement_nat).toBeDefined();
-  expect(premierTerritoire.taux_avancement_annuel).toBeDefined();
 
   expect(premierTerritoire.publication.synthese_des_resultats).toBeDefined();
   expect(premierTerritoire.publication.notre_ambition).toBeDefined();
