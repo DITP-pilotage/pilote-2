@@ -418,6 +418,7 @@ const ChantierLayout = ({
                 session?.profil || "",
               ) ? (
                 <BoutonNavigationFicheTerritoriale
+                  jalon={jalon}
                   territoireCode={territoireCode}
                 />
               ) : null}

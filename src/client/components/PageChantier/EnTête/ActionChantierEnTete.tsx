@@ -5,10 +5,12 @@ import { BoutonNavigationFicheConducteur } from "@/components/PageChantier/EnTê
 import { BoutonNavigationMiseAJourDonnee } from "@/components/PageChantier/EnTête/BoutonNavigationMiseAJourDonnee";
 
 export const ActionChantierEnTete: FunctionComponent<{
+  jalon: number;
   afficheLeBoutonImpression?: boolean;
   afficheLeBoutonMiseAJourDonnee?: boolean;
   afficheLeBoutonFicheConducteur?: boolean;
 }> = ({
+  jalon,
   afficheLeBoutonImpression = false,
   afficheLeBoutonMiseAJourDonnee = false,
   afficheLeBoutonFicheConducteur = false,
@@ -40,6 +42,7 @@ export const ActionChantierEnTete: FunctionComponent<{
           <BoutonNavigationFicheConducteur
             chantierEstArchive={chantierEstArchive}
             chantierId={chantier.id}
+            jalon={jalon}
           />
         </div>
       ) : null}

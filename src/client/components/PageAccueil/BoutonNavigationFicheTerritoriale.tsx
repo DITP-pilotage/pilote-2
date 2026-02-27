@@ -4,8 +4,10 @@ import { ArticleContourIcon } from "@/components/_commons/Icones/ArticleContourI
 
 export const BoutonNavigationFicheTerritoriale = ({
   territoireCode,
+  jalon,
 }: {
   territoireCode: string;
+  jalon: number;
 }) => {
   if (territoireCode === "NAT-FR") {
     return (
@@ -19,7 +21,7 @@ export const BoutonNavigationFicheTerritoriale = ({
   return (
     <Link
       className="flex align-center gap-1 !text-sm gap-1 pb-1 !text-primary"
-      href={`/fiche-territoriale?territoireCode=${territoireCode}`}
+      href={`/fiche-territoriale?territoireCode=${territoireCode}&jalon=${jalon}`}
       title="Voir la fiche territoriale"
     >
       <Icone className="w-4 h-4" icone={ArticleContourIcon} />
