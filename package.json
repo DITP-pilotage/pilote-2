@@ -40,6 +40,7 @@
     "centreaide:clean": "git submodule deinit -f src/content"
   },
   "overrides": {
+    "next": "16.2.0-canary.65",
     "lodash-es": "4.17.23",
     "@asamuzakjp/css-color": {
       "@csstools/css-tokenizer": "^4.0.0"
