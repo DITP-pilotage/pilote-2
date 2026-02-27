@@ -33,21 +33,33 @@ export class FetchHttpClient implements HttpClient {
     const result = await new Promise<{
       report: ReportValidata;
       resource_data: ReportResourceData;
-    }>(async (resolve) => {
+    }>((resolve, reject) => {
       return formData.submit(
         configuration().import.urlValidata,
         (error, response) => {
+          if (error) {
+            return reject(error);
+          }
+
           let data = "";
           response.on("data", function (chunk) {
             data += chunk;
           });
           response.on("end", function () {
-            resolve(
-              JSON.parse(data) as Promise<{
-                report: ReportValidata;
-                resource_data: ReportResourceData;
-              }>,
-            );
+            try {
+              resolve(
+                JSON.parse(data) as {
+                  report: ReportValidata;
+                  resource_data: ReportResourceData;
+                },
+              );
+            } catch {
+              reject(
+                new Error(
+                  `Une erreur est survenue lors de la validation du fichier`,
+                ),
+              );
+            }
           });
         },
       );
