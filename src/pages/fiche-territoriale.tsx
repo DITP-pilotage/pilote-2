@@ -6,10 +6,11 @@ import { PageFicheTerritoriale } from "@/components/PageFicheTerritoriale/PageFi
 import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
 import { estAutoriséAConsulterLaFicheTerritoriale } from "@/client/utils/fiche-territoriale/fiche-territoriale";
 import { ficheTerritorialeHandler } from "@/server/fiche-territoriale/infrastructure/handlers/FicheTerritorialeHandler";
-import { configurationFeatureFlip } from "@/config";
+import { configuration, configurationFeatureFlip } from "@/config";
+import { getAnneeDateDeBascule } from "@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getAnneeDateDeBascule";
 
 const loadSearchParams = createLoader({
-  jalon: parseAsInteger.withDefault(2025),
+  jalon: parseAsInteger,
   territoireCode: parseAsString,
 });
 
@@ -42,7 +43,12 @@ export const getServerSideProps = async (
     throw new Error("Veuillez choisir un département ou une région");
   }
 
-  const jalon = searchParams.jalon;
+  const jalon =
+    searchParams.jalon ??
+    getAnneeDateDeBascule(
+      new Date(),
+      configuration().dateBasculeAffichageValeursAnneePrecedente,
+    );
 
   const ficheTerritoriale =
     await ficheTerritorialeHandler().recupererFicheTerritoriale(

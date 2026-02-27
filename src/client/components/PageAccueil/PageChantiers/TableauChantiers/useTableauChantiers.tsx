@@ -250,7 +250,7 @@ export const useTableauChantiers = (
     reactTableColonnesHelper.accessor("écart", {
       header: () => (
         <div className="flex align-center no-wrap">
-          <span>Écart</span>
+          <span>{`Écart ${jalon}`}</span>
           <Infobulle classNameBouton="infobulle-header-écart">
             {infobulles.chantiers.listeDesChantiersHeaderEcart}
           </Infobulle>

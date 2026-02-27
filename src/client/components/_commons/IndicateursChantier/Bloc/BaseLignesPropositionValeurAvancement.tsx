@@ -138,36 +138,6 @@ export const BaseLignesPropositionValeurAvancement = ({
         ) : (
           <td colSpan={3} />
         )}
-        {/* Valeur d'avancement en fonction de la proposition du jalon et date valeur d'avancement en fonction du mandat */}
-        <td className="fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm texte-proposition text-center">
-          <ValeurEtDate
-            date={detailIndicateurDuTerritoire.proposition.dateValeurAvancement}
-            unité={detailIndicateurDuTerritoire.unite}
-            valeur={detailIndicateurDuTerritoire.proposition.valeurAvancement}
-          />
-        </td>
-        <td className="fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm text-center text-dsfr-grey-200">
-          <ValeurEtDate
-            date={detailIndicateurDuTerritoire.dateValeurCible}
-            unité={detailIndicateurDuTerritoire.unite}
-            valeur={detailIndicateurDuTerritoire.valeurCible}
-          />
-        </td>
-        <td className="fr-mb-0 fr-p-0 fr-px-2w fr-py-md-1w fr-text--sm texte-proposition">
-          {detailIndicateurDuTerritoire.proposition.statutTauxAvancement ===
-          "EN_COURS" ? (
-            <BarreDeProgressionAVenir variante={varianteBarreProgression} />
-          ) : (
-            <BarreDeProgression
-              afficherTexte
-              fond="gris-clair"
-              positionTexte="dessus"
-              taille="md"
-              valeur={detailIndicateurDuTerritoire.proposition.tauxAvancement}
-              variante={varianteBarreProgression}
-            />
-          )}
-        </td>
       </tr>
       {children}
     </>

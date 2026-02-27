@@ -27,7 +27,8 @@ const PageChantierEnTête: FunctionComponent<{
   afficheLeBoutonMiseAJourDonnee = false,
   afficheLeBoutonFicheConducteur = false,
 }) => {
-  const { chantier, territoireCode } = pageChantier.useServerSidePropsContext();
+  const { chantier, territoireCode, jalon } =
+    pageChantier.useServerSidePropsContext();
 
   const listeNomsResponsablesMinistèrePorteur: string[] = [
     responsables?.porteur?.nom,
@@ -105,6 +106,7 @@ const PageChantierEnTête: FunctionComponent<{
         afficheLeBoutonFicheConducteur={afficheLeBoutonFicheConducteur}
         afficheLeBoutonImpression={afficheLeBoutonImpression}
         afficheLeBoutonMiseAJourDonnee={afficheLeBoutonMiseAJourDonnee}
+        jalon={jalon}
       />
     </div>
   );
