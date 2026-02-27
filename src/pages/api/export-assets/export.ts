@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { createReadStream, statSync } from "fs";
-import { join } from "path";
+import { resolve } from "path";
 import { configuration } from "@/config";
 import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
 
@@ -45,11 +45,9 @@ export default async function handler(
   }
 
   try {
-    const filePath = join(
-      process.cwd(),
-      configuration().centreaide.assetsFolder,
-      filename,
-    );
+    const baseDir = process.cwd();
+    const assetsFolder = configuration().centreaide.assetsFolder;
+    const filePath = resolve(baseDir, assetsFolder, filename);
 
     const stats = statSync(filePath);
 
