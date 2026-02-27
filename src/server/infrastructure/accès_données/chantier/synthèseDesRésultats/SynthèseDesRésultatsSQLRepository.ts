@@ -6,7 +6,9 @@ import SynthèseDesRésultatsRepository from "@/server/domain/chantier/synthèse
 import { CODES_MAILLES } from "@/server/infrastructure/accès_données/maille/mailleSQLParser";
 import { Maille } from "@/server/domain/maille/Maille.interface";
 import { CodeInsee } from "@/server/domain/territoire/Territoire.interface";
-import SynthèseDesRésultats from "@/server/domain/chantier/synthèseDesRésultats/SynthèseDesRésultats.interface";
+import SynthèseDesRésultats, {
+  SynthèseDesRésultatsV2,
+} from "@/server/domain/chantier/synthèseDesRésultats/SynthèseDesRésultats.interface";
 import { Météo } from "@/server/domain/météo/Météo.interface";
 import Chantier from "@/server/domain/chantier/Chantier.interface";
 import { territoireCodeVersMailleCodeInsee } from "@/server/utils/territoires";
@@ -66,6 +68,26 @@ export class SynthèseDesRésultatsSQLRepository implements SynthèseDesRésulta
       },
     });
     return this.mapperVersDomaine(synthèseDesRésultats);
+  }
+
+  async save({
+    chantierId,
+    territoireCode,
+    id,
+    contenu,
+    auteur_id,
+    météo,
+    date,
+  }: SynthèseDesRésultatsV2): Promise<void> {
+    await this.créer(
+      chantierId,
+      territoireCode,
+      id,
+      contenu,
+      auteur_id,
+      météo,
+      date,
+    );
   }
 
   async récupérerLaPlusRécente(

@@ -245,6 +245,153 @@ paths:
                 $ref: '#/components/schemas/ImportCommentaireErrorResponse'
       security:
         - bearerAuth: []
+  '/chantier/{chantier_id}/decisions-strategiques':
+    parameters:
+      - schema:
+          type: string
+          pattern: '^CH-\d{3}$'
+        name: chantier_id
+        in: path
+        required: true
+        description: ID Chantier
+    post:
+      summary: Import décisions stratégiques chantier
+      operationId: post-decisions-strategiques-chantier
+      tags:
+        - Décision stratégique
+      description: |-
+        Import de décisions stratégiques pour un chantier. Permet d'ajouter plusieurs décisions en une seule requête.
+
+        Les décisions stratégiques sont uniquement à la maille nationale (pas de territoire). Le seul type autorisé est `suivi_des_decisions`.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataImportDecisionStrategiqueAPIContrat'
+        description: Liste des décisions stratégiques à importer.
+      responses:
+        '200':
+          description: Les décisions stratégiques ont été importées avec succès.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImportDecisionStrategiqueSuccessResponse'
+        '400':
+          description: Erreur de validation des données.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImportDecisionStrategiqueErrorResponse'
+        '401':
+          description: Non authentifié.
+        '403':
+          description: Vous n'êtes pas autorisé à saisir des décisions stratégiques pour ce chantier.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImportDecisionStrategiqueErrorResponse'
+      security:
+        - bearerAuth: []
+  '/chantier/{chantier_id}/objectifs':
+    parameters:
+      - schema:
+          type: string
+          pattern: '^CH-\d{3}$'
+        name: chantier_id
+        in: path
+        required: true
+        description: ID Chantier
+    post:
+      summary: Import objectifs chantier
+      operationId: post-objectifs-chantier
+      tags:
+        - Objectif
+      description: |-
+        Import d'objectifs pour un chantier. Permet d'ajouter plusieurs objectifs en une seule requête.
+
+        Les objectifs sont uniquement à la maille nationale (pas de territoire). Les types autorisés sont :
+        - `notre_ambition` : Notre ambition
+        - `deja_fait` : Ce qui a déjà été fait
+        - `a_faire` : Ce qui reste à faire
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataImportObjectifAPIContrat'
+        description: Liste des objectifs à importer.
+      responses:
+        '200':
+          description: Les objectifs ont été importés avec succès.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImportObjectifSuccessResponse'
+        '400':
+          description: Erreur de validation des données.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImportObjectifErrorResponse'
+        '401':
+          description: Non authentifié.
+        '403':
+          description: Vous n'êtes pas autorisé à saisir des objectifs pour ce chantier.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImportObjectifErrorResponse'
+      security:
+        - bearerAuth: []
+  '/chantier/{chantier_id}/syntheses-des-resultats':
+    parameters:
+      - schema:
+          type: string
+          pattern: '^CH-\d{3}$'
+        name: chantier_id
+        in: path
+        required: true
+        description: ID Chantier
+    post:
+      summary: Import synthèses des résultats chantier
+      operationId: post-syntheses-des-resultats-chantier
+      tags:
+        - Synthèse des résultats
+      description: |-
+        Import de synthèses des résultats pour un chantier. Permet d'ajouter plusieurs synthèses en une seule requête.
+
+        Les synthèses sont liées à un territoire (NAT-XX, REG-XX ou DEPT-XX) et nécessitent une météo parmi : `ORAGE`, `NUAGE`, `COUVERT`, `SOLEIL`.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataImportSyntheseDesResultatsAPIContrat'
+        description: Liste des synthèses des résultats à importer.
+      responses:
+        '200':
+          description: Les synthèses des résultats ont été importées avec succès.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImportSyntheseDesResultatsSuccessResponse'
+        '400':
+          description: Erreur de validation des données.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImportSyntheseDesResultatsErrorResponse'
+        '401':
+          description: Non authentifié.
+        '403':
+          description: Vous n'êtes pas autorisé à saisir des synthèses des résultats pour ce chantier.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImportSyntheseDesResultatsErrorResponse'
+      security:
+        - bearerAuth: []
 components:
   schemas:
     DonneeIndicateurContrat:
@@ -808,6 +955,365 @@ components:
         - territoire
         - type
         - message
+    DataImportDecisionStrategiqueAPIContrat:
+      title: DataImportDecisionStrategiqueAPIContrat
+      x-stoplight:
+        id: import-decision-strategique-contrat
+      type: object
+      description: Format d'import des décisions stratégiques en JSON.
+      properties:
+        decisions_strategiques:
+          type: array
+          x-stoplight:
+            id: decisions-strategiques-array
+          description: Liste des décisions stratégiques à importer.
+          items:
+            $ref: '#/components/schemas/ImportDecisionStrategiqueContrat'
+      required:
+        - decisions_strategiques
+    ImportDecisionStrategiqueContrat:
+      title: ImportDecisionStrategiqueContrat
+      x-stoplight:
+        id: import-decision-strategique-item
+      type: object
+      description: Une décision stratégique à importer.
+      properties:
+        type:
+          type: string
+          x-stoplight:
+            id: decision-strategique-type
+          description: Type de décision stratégique. Seule valeur autorisée.
+          enum:
+            - suivi_des_decisions
+          example: suivi_des_decisions
+        contenu:
+          type: string
+          x-stoplight:
+            id: decision-strategique-contenu
+          description: Contenu de la décision stratégique. Maximum 10000 caractères.
+          maxLength: 10000
+          minLength: 1
+          example: Décision prise lors du comité de pilotage du 15 janvier.
+        date_decision_strategique:
+          type: string
+          x-stoplight:
+            id: decision-strategique-date
+          description: Date de la décision stratégique au format YYYY-MM-DD. Si non fournie, la date du jour est utilisée. Ne peut pas être dans le futur.
+          format: date
+          example: '2026-01-15'
+      required:
+        - type
+        - contenu
+    ImportDecisionStrategiqueSuccessResponse:
+      title: ImportDecisionStrategiqueSuccessResponse
+      x-stoplight:
+        id: import-decision-strategique-success
+      type: object
+      description: Réponse en cas de succès de l'import.
+      properties:
+        message:
+          type: string
+          x-stoplight:
+            id: decision-strategique-success-message
+          example: Les décisions stratégiques ont correctement été importées
+      required:
+        - message
+    ImportDecisionStrategiqueErrorResponse:
+      title: ImportDecisionStrategiqueErrorResponse
+      x-stoplight:
+        id: import-decision-strategique-error
+      type: object
+      description: Réponse en cas d'erreur lors de l'import.
+      properties:
+        message:
+          type: string
+          x-stoplight:
+            id: decision-strategique-error-message
+          example: Une erreur est survenue lors de l'import des décisions stratégiques
+        erreurs:
+          type: array
+          x-stoplight:
+            id: decision-strategique-error-list
+          description: Liste des erreurs détectées.
+          items:
+            $ref: '#/components/schemas/ImportDecisionStrategiqueErreur'
+      required:
+        - message
+        - erreurs
+    ImportDecisionStrategiqueErreur:
+      title: ImportDecisionStrategiqueErreur
+      x-stoplight:
+        id: import-decision-strategique-erreur-item
+      type: object
+      description: Détail d'une erreur sur une décision stratégique.
+      properties:
+        index:
+          type: integer
+          x-stoplight:
+            id: decision-strategique-erreur-index
+          description: Index de la décision en erreur dans le tableau.
+          example: 0
+        type:
+          type: string
+          x-stoplight:
+            id: decision-strategique-erreur-type
+          description: Type de la décision en erreur.
+          example: suivi_des_decisions
+        message:
+          type: string
+          x-stoplight:
+            id: decision-strategique-erreur-message
+          description: Message décrivant l'erreur.
+          example: Le contenu ne peut pas être vide
+      required:
+        - index
+        - type
+        - message
+    DataImportObjectifAPIContrat:
+      title: DataImportObjectifAPIContrat
+      x-stoplight:
+        id: import-objectif-contrat
+      type: object
+      description: Format d'import des objectifs en JSON.
+      properties:
+        objectifs:
+          type: array
+          x-stoplight:
+            id: objectifs-array
+          description: Liste des objectifs à importer.
+          items:
+            $ref: '#/components/schemas/ImportObjectifContrat'
+      required:
+        - objectifs
+    ImportObjectifContrat:
+      title: ImportObjectifContrat
+      x-stoplight:
+        id: import-objectif-item
+      type: object
+      description: Un objectif à importer.
+      properties:
+        type:
+          type: string
+          x-stoplight:
+            id: objectif-type
+          description: |-
+            Type d'objectif :
+            - `notre_ambition` : Notre ambition
+            - `deja_fait` : Ce qui a déjà été fait
+            - `a_faire` : Ce qui reste à faire
+          enum:
+            - notre_ambition
+            - deja_fait
+            - a_faire
+          example: notre_ambition
+        contenu:
+          type: string
+          x-stoplight:
+            id: objectif-contenu
+          description: Contenu de l'objectif. Maximum 10000 caractères.
+          maxLength: 10000
+          minLength: 1
+          example: Atteindre 80% de couverture sur le territoire national.
+        date_objectif:
+          type: string
+          x-stoplight:
+            id: objectif-date
+          description: Date de l'objectif au format YYYY-MM-DD. Si non fournie, la date du jour est utilisée. Ne peut pas être dans le futur.
+          format: date
+          example: '2026-01-15'
+      required:
+        - type
+        - contenu
+    ImportObjectifSuccessResponse:
+      title: ImportObjectifSuccessResponse
+      x-stoplight:
+        id: import-objectif-success
+      type: object
+      description: Réponse en cas de succès de l'import.
+      properties:
+        message:
+          type: string
+          x-stoplight:
+            id: objectif-success-message
+          example: Les objectifs ont correctement été importés
+      required:
+        - message
+    ImportObjectifErrorResponse:
+      title: ImportObjectifErrorResponse
+      x-stoplight:
+        id: import-objectif-error
+      type: object
+      description: Réponse en cas d'erreur lors de l'import.
+      properties:
+        message:
+          type: string
+          x-stoplight:
+            id: objectif-error-message
+          example: Une erreur est survenue lors de l'import des objectifs
+        erreurs:
+          type: array
+          x-stoplight:
+            id: objectif-error-list
+          description: Liste des erreurs détectées.
+          items:
+            $ref: '#/components/schemas/ImportObjectifErreur'
+      required:
+        - message
+        - erreurs
+    ImportObjectifErreur:
+      title: ImportObjectifErreur
+      x-stoplight:
+        id: import-objectif-erreur-item
+      type: object
+      description: Détail d'une erreur sur un objectif.
+      properties:
+        index:
+          type: integer
+          x-stoplight:
+            id: objectif-erreur-index
+          description: Index de l'objectif en erreur dans le tableau.
+          example: 0
+        type:
+          type: string
+          x-stoplight:
+            id: objectif-erreur-type
+          description: Type de l'objectif en erreur.
+          example: notre_ambition
+        message:
+          type: string
+          x-stoplight:
+            id: objectif-erreur-message
+          description: Message décrivant l'erreur.
+          example: Le contenu ne peut pas être vide
+      required:
+        - index
+        - type
+        - message
+    DataImportSyntheseDesResultatsAPIContrat:
+      title: DataImportSyntheseDesResultatsAPIContrat
+      x-stoplight:
+        id: import-synthese-des-resultats-contrat
+      type: object
+      description: Format d'import des synthèses des résultats en JSON.
+      properties:
+        syntheses_des_resultats:
+          type: array
+          x-stoplight:
+            id: syntheses-des-resultats-array
+          description: Liste des synthèses des résultats à importer.
+          items:
+            $ref: '#/components/schemas/ImportSyntheseDesResultatsContrat'
+      required:
+        - syntheses_des_resultats
+    ImportSyntheseDesResultatsContrat:
+      title: ImportSyntheseDesResultatsContrat
+      x-stoplight:
+        id: import-synthese-des-resultats-item
+      type: object
+      description: Une synthèse des résultats à importer.
+      properties:
+        territoire:
+          type: string
+          x-stoplight:
+            id: synthese-territoire
+          description: Code du territoire au format NAT-XX, REG-XX ou DEPT-XX.
+          pattern: '^(NAT|REG|DEPT)-[A-Z0-9]+$'
+          example: NAT-FR
+        contenu:
+          type: string
+          x-stoplight:
+            id: synthese-contenu
+          description: Contenu de la synthèse des résultats. Maximum 10000 caractères.
+          maxLength: 10000
+          minLength: 1
+          example: Les résultats du chantier sont en bonne voie sur le territoire.
+        meteo:
+          type: string
+          x-stoplight:
+            id: synthese-meteo
+          description: Météo associée à la synthèse.
+          enum:
+            - ORAGE
+            - NUAGE
+            - COUVERT
+            - SOLEIL
+          example: SOLEIL
+        date_synthese:
+          type: string
+          x-stoplight:
+            id: synthese-date
+          description: Date de la synthèse au format YYYY-MM-DD. Si non fournie, la date du jour est utilisée. Ne peut pas être dans le futur.
+          format: date
+          example: '2026-01-15'
+      required:
+        - territoire
+        - contenu
+        - meteo
+    ImportSyntheseDesResultatsSuccessResponse:
+      title: ImportSyntheseDesResultatsSuccessResponse
+      x-stoplight:
+        id: import-synthese-des-resultats-success
+      type: object
+      description: Réponse en cas de succès de l'import.
+      properties:
+        message:
+          type: string
+          x-stoplight:
+            id: synthese-success-message
+          example: Les synthèses des résultats ont correctement été importées
+      required:
+        - message
+    ImportSyntheseDesResultatsErrorResponse:
+      title: ImportSyntheseDesResultatsErrorResponse
+      x-stoplight:
+        id: import-synthese-des-resultats-error
+      type: object
+      description: Réponse en cas d'erreur lors de l'import.
+      properties:
+        message:
+          type: string
+          x-stoplight:
+            id: synthese-error-message
+          example: Une erreur est survenue lors de l'import des synthèses des résultats
+        erreurs:
+          type: array
+          x-stoplight:
+            id: synthese-error-list
+          description: Liste des erreurs détectées.
+          items:
+            $ref: '#/components/schemas/ImportSyntheseDesResultatsErreur'
+      required:
+        - message
+        - erreurs
+    ImportSyntheseDesResultatsErreur:
+      title: ImportSyntheseDesResultatsErreur
+      x-stoplight:
+        id: import-synthese-des-resultats-erreur-item
+      type: object
+      description: Détail d'une erreur sur une synthèse des résultats.
+      properties:
+        index:
+          type: integer
+          x-stoplight:
+            id: synthese-erreur-index
+          description: Index de la synthèse en erreur dans le tableau.
+          example: 0
+        territoire:
+          type: string
+          x-stoplight:
+            id: synthese-erreur-territoire
+          description: Territoire de la synthèse en erreur.
+          example: REG-84
+        message:
+          type: string
+          x-stoplight:
+            id: synthese-erreur-message
+          description: Message décrivant l'erreur.
+          example: Vous n'êtes pas autorisé à saisir des synthèses des résultats pour le territoire REG-84
+      required:
+        - index
+        - territoire
+        - message
   securitySchemes:
     bearerAuth:
       type: http
@@ -822,6 +1328,12 @@ tags:
     description: Opérations sur les indicateurs des chantiers prioritaires
   - name: Commentaire
     description: Opérations sur les commentaires des chantiers prioritaires
+  - name: Décision stratégique
+    description: Opérations sur les décisions stratégiques des chantiers prioritaires
+  - name: Objectif
+    description: Opérations sur les objectifs des chantiers prioritaires
+  - name: Synthèse des résultats
+    description: Opérations sur les synthèses des résultats des chantiers prioritaires
   - name: PPG
     description: Opérations sur les PPG (Politiques Prioritaires du Gouvernement)
   - name: En test

@@ -5,6 +5,7 @@ import {
 } from "@prisma/client";
 import ObjectifRepository from "@/server/domain/chantier/objectif/ObjectifRepository.interface";
 import Objectif, {
+  ObjectifV2,
   TypeObjectif,
 } from "@/server/domain/chantier/objectif/Objectif.interface";
 import Chantier from "@/server/domain/chantier/Chantier.interface";
@@ -103,6 +104,17 @@ export default class ObjectifSQLRepository implements ObjectifRepository {
     });
 
     return this.mapperVersDomaine(objectifCréé);
+  }
+
+  async save({
+    chantierId,
+    id,
+    contenu,
+    auteur_id,
+    type,
+    date,
+  }: ObjectifV2): Promise<void> {
+    await this.créer(chantierId, id, contenu, auteur_id, type, date);
   }
 
   async récupérerLesPlusRécentsGroupésParChantier(

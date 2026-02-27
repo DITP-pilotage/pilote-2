@@ -1,7 +1,8 @@
 import Chantier from "@/server/domain/chantier/Chantier.interface";
-import Objectif, { TypeObjectif } from "./Objectif.interface";
+import Objectif, { ObjectifV2, TypeObjectif } from "./Objectif.interface";
 
 export default interface ObjectifRepository {
+  save(objectif: ObjectifV2): Promise<void>;
   récupérerHistorique(
     chantierId: string,
     type: TypeObjectif,

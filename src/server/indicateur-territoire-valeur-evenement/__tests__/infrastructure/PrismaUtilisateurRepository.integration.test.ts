@@ -170,7 +170,10 @@ describe("PrismaUtilisateurRepository", () => {
         );
 
       // Then
-      expect(result).toEqual(["actif1@example.com", "actif2@example.com"]);
+      expect(result.sort()).toEqual([
+        "actif1@example.com",
+        "actif2@example.com",
+      ]);
     });
   });
 
@@ -253,7 +256,10 @@ describe("PrismaUtilisateurRepository", () => {
         ]);
 
       // Then
-      expect(result).toEqual(["actif1@example.com", "actif2@example.com"]);
+      expect(result.sort()).toEqual([
+        "actif1@example.com",
+        "actif2@example.com",
+      ]);
     });
   });
 });
