@@ -453,7 +453,8 @@ export class PrismaChantierRepository implements ChantierRepository {
     chantierIdsLecture: string,
     territoireCodesLecture: string[],
     optionsExport: OptionsExport,
-    jalon: number,
+    jalonSelectionne: number,
+    jalonParDefaut: number,
   ): Promise<ChantierPourExport[] | null> {
     const prismaChantierIdentite =
       await this.prisma.chantier_identite.findUnique({
@@ -474,7 +475,7 @@ export class PrismaChantierRepository implements ChantierRepository {
               territoire: true,
               chantier_territoire_jalon: {
                 where: {
-                  jalon,
+                  jalon: { in: [jalonSelectionne, jalonParDefaut] },
                 },
               },
             },
@@ -792,27 +793,35 @@ export class PrismaChantierRepository implements ChantierRepository {
                 : null,
               axe: prismaChantierIdentite.axe,
               tauxDAvancement: verifyValeurIsNotNullOrUndefined(
-                prismaChantierTerritoire.chantier_territoire_jalon.at(0)
-                  ?.taux_avancement,
+                prismaChantierTerritoire.chantier_territoire_jalon.find(
+                  (chantier) => chantier.jalon === jalonSelectionne,
+                )?.taux_avancement,
+              ),
+              tauxDAvancementJalonParDefaut: verifyValeurIsNotNullOrUndefined(
+                prismaChantierTerritoire.chantier_territoire_jalon.find(
+                  (chantier) => chantier.jalon === jalonParDefaut,
+                )?.taux_avancement,
               ),
               tauxDAvancementNational: verifyValeurIsNotNullOrUndefined(
-                prismaChantierTerritoireNat.chantier_territoire_jalon.at(0)
-                  ?.taux_avancement,
+                prismaChantierTerritoireNat.chantier_territoire_jalon.find(
+                  (chantier) => chantier.jalon === jalonSelectionne,
+                )?.taux_avancement,
               ),
               tauxDAvancementRégional:
                 prismaChantierTerritoire.maille === "REG" ||
                 prismaChantierTerritoire.maille === "DEPT"
                   ? verifyValeurIsNotNullOrUndefined(
-                      prismaChantierTerritoireReg.chantier_territoire_jalon.at(
-                        0,
+                      prismaChantierTerritoireReg.chantier_territoire_jalon.find(
+                        (chantier) => chantier.jalon === jalonSelectionne,
                       )?.taux_avancement,
                     )
                   : null,
               tauxDAvancementDépartemental:
                 prismaChantierTerritoire.maille === "DEPT"
                   ? verifyValeurIsNotNullOrUndefined(
-                      prismaChantierTerritoire.chantier_territoire_jalon.at(0)
-                        ?.taux_avancement,
+                      prismaChantierTerritoire.chantier_territoire_jalon.find(
+                        (chantier) => chantier.jalon === jalonSelectionne,
+                      )?.taux_avancement,
                     )
                   : null,
               périmètreIds: prismaChantierIdentite.perimetre_ids,
@@ -878,15 +887,16 @@ export class PrismaChantierRepository implements ChantierRepository {
               ecart: prismaChantierTerritoire.ecart,
               tendance: prismaChantierTerritoire.tendance,
               cibleAttendu: prismaChantierIdentite.cible_attendue,
-              avancementTerritoire:
-                prismaChantierTerritoire.taux_avancement_mandat,
               aUnePropositionsValeurAvancement:
                 aUnePropositionsValeurAvancement,
               aUnTauxAvancementDepartemental:
                 chantiersTerritoiresMailleDepartementale.length === 0 ||
-                chantiersTerritoiresMailleDepartementale.some(
-                  (chantierTerritoire) =>
-                    chantierTerritoire.taux_avancement_mandat !== null,
+                chantiersTerritoiresMailleDepartementale.some((chantier) =>
+                  chantier.chantier_territoire_jalon.some(
+                    (chantierJalon) =>
+                      chantierJalon.jalon === jalonParDefaut &&
+                      chantierJalon.taux_avancement !== null,
+                  ),
                 ),
             },
           ];

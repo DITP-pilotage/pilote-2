@@ -10,6 +10,7 @@ import { OptionsExport } from "@/server/usecase/chantier/OptionsExport";
 import { getContainer } from "@/server/dependances";
 import { Maille } from "@/server/domain/maille/Maille.interface";
 import { ExportCsvDesChantiersUseCase } from "@/server/chantiers/usecases/ExportCsvDesChantiersUseCase";
+import { getAnneeDateDeBascule } from "@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getAnneeDateDeBascule";
 
 export const handleExportDesChantiers = async (
   request: NextApiRequest,
@@ -19,7 +20,14 @@ export const handleExportDesChantiers = async (
   assert(session);
 
   response.setHeader("Content-Type", "text/csv");
-  const jalon = recupererJalon(request.query?.jalon as string | undefined);
+
+  const jalonParDefaut = getAnneeDateDeBascule(
+    new Date(),
+    configuration().dateBasculeAffichageValeursAnneePrecedente,
+  );
+  const jalonSelectionne = recupererJalon(
+    request.query?.jalon as string | undefined,
+  );
 
   const optionsExport = {
     perimetreIds: request.query.perimetreIds
@@ -65,7 +73,7 @@ export const handleExportDesChantiers = async (
   } satisfies OptionsExport;
 
   const headersColumn = ExportCsvDesChantiersUseCase.NOMS_COLONNES(
-    jalon,
+    jalonSelectionne,
     optionsExport,
     session.profil,
   );
@@ -116,7 +124,8 @@ export const handleExportDesChantiers = async (
     territoireCodes: territoireARecuperer,
     profil: session.profil,
     chantierChunkSize: chunkSize,
-    jalon,
+    jalonSelectionne,
+    jalonParDefaut,
     optionsExport,
   })) {
     for (const chantierPourExport of partialResult) {
