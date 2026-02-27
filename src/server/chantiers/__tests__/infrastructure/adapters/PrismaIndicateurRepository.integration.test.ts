@@ -7237,7 +7237,16 @@ describe("PrismaIndicateurRepository", () => {
             maille: "DEPT",
             zone_id: "D01",
             est_applicable: true,
-            taux_avancement_mandat: 50,
+          });
+          // DEPT-01 a un taux non null pour le jalon par défaut (2025), mais pas pour le jalon sélectionné (2026)
+          await fixtures.chantierTerritoireJalon({
+            id: CHANTIER_ID,
+            territoire_code: "DEPT-01",
+            code_insee: "01",
+            maille: "DEPT",
+            zone_id: "D01",
+            jalon: 2025,
+            taux_avancement: 50,
           });
           const indicateur = await fixtures.indicateurIdentite({
             chantier_id: CHANTIER_ID,
@@ -7255,7 +7264,7 @@ describe("PrismaIndicateurRepository", () => {
           const result = await prismaIndicateurRepository.recupererPourExports(
             CHANTIER_ID,
             ["NAT-FR"],
-            2025,
+            2026,
             2025,
           );
 
