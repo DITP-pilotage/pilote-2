@@ -48,6 +48,7 @@ export class PrismaChantierRepository implements ChantierRepository {
     const listePrismaChantierTerritoireModel =
       await prisma.chantier_territoire.findMany({
         where: {
+          est_applicable: true,
           territoire_code: territoireCode,
           maille: maille as Maille,
           chantier_identite: {
