@@ -884,7 +884,11 @@ export class PrismaChantierRepository implements ChantierRepository {
                 mapSynthesesDesResultats?.get(
                   `${prismaChantierTerritoire.id}-${prismaChantierTerritoire.territoire_code}`,
                 ) || null,
-              ecart: prismaChantierTerritoire.ecart,
+              ecart: verifyValeurIsNotNullOrUndefined(
+                prismaChantierTerritoire.chantier_territoire_jalon.find(
+                  (chantier) => chantier.jalon === jalonParDefaut,
+                )?.ecart,
+              ),
               tendance: prismaChantierTerritoire.tendance,
               cibleAttendu: prismaChantierIdentite.cible_attendue,
               aUnePropositionsValeurAvancement:
