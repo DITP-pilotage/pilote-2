@@ -16,6 +16,7 @@ export type ChantierPourExport = {
   axe: string | null;
   périmètreIds: string[];
   tauxDAvancement: number | null;
+  tauxDAvancementJalonParDefaut: number | null;
   tauxDAvancementNational: number | null;
   tauxDAvancementRégional: number | null;
   tauxDAvancementDépartemental: number | null;
@@ -42,7 +43,6 @@ export type ChantierPourExport = {
   synthèseDesRésultats: string | null;
   ecart: number | null;
   tendance: ChantierTendance | null;
-  avancementTerritoire: number | null;
   cibleAttendu: boolean;
   aUnePropositionsValeurAvancement: boolean;
   aUnTauxAvancementDepartemental: boolean;

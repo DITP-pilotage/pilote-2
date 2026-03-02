@@ -23,7 +23,8 @@ export interface ChantierRepository {
     chantierId: string,
     territoireCodesLecture: string[],
     optionsExport: OptionsExport,
-    jalon: number,
+    jalonSelectionne: number,
+    jalonParDefaut: number,
   ): Promise<ChantierPourExport[] | null>;
   récupérerChantierIdsEnLectureOrdonnésParNomAvecOptions(
     chantierIds: string[],

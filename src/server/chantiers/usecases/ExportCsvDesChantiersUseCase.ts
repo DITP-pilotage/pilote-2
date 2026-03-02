@@ -265,21 +265,29 @@ export class ExportCsvDesChantiersUseCase {
     profil,
     chantierChunkSize,
     optionsExport,
-    jalon,
+    jalonSelectionne,
+    jalonParDefaut,
   }: {
     chantierIds: string[];
     territoireCodes: string[];
     profil: ProfilCode;
     chantierChunkSize: number;
     optionsExport: OptionsExport;
-    jalon: number;
+    jalonSelectionne: number;
+    jalonParDefaut: number;
   }): AsyncGenerator<string[][]> {
     for (let i = 0; i < chantierIds.length; i += chantierChunkSize) {
       const partialChantierIds = chantierIds.slice(i, i + chantierChunkSize);
 
       const input = partialChantierIds.map((id) =>
         this.chantierRepository
-          .recupererPourExports(id, territoireCodes, optionsExport, jalon)
+          .recupererPourExports(
+            id,
+            territoireCodes,
+            optionsExport,
+            jalonSelectionne,
+            jalonParDefaut,
+          )
           .then((listerChantierTerritoireExport) =>
             (listerChantierTerritoireExport || []).reduce(
               (acc, chantierTerritoireExport) => {
@@ -310,7 +318,7 @@ export class ExportCsvDesChantiersUseCase {
                     optionsExport,
                     chantierTerritoireExport.ecart,
                     chantierTerritoireExport.tendance,
-                    chantierTerritoireExport.avancementTerritoire,
+                    chantierTerritoireExport.tauxDAvancementJalonParDefaut,
                     chantierTerritoireExport.cibleAttendu,
                     chantierTerritoireExport.aUnTauxAvancementDepartemental,
                     chantierTerritoireExport.météo ?? "NON_RENSEIGNEE",

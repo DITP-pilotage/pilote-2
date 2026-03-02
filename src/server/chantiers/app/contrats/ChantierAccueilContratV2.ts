@@ -346,11 +346,12 @@ export const presenterEnChantierAccueilContratV2 = (
         .aUnePropositionsValeurAvancement,
     aUnTauxAvancementDepartemental:
       listeChantiersMailleDepartementaleApplicables.length === 0 ||
-      listeChantiersMailleDepartementaleApplicables.some(
-        (chantier) =>
-          chantier.chantier_territoire_jalon.find(
-            (chantier_jalon) => chantier_jalon.jalon === jalonParDefaut,
-          )?.taux_avancement !== null,
+      listeChantiersMailleDepartementaleApplicables.some((chantier) =>
+        chantier.chantier_territoire_jalon.some(
+          (chantier_jalon) =>
+            chantier_jalon.jalon === jalonParDefaut &&
+            chantier_jalon.taux_avancement !== null,
+        ),
       ),
   };
 };

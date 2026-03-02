@@ -138,12 +138,19 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
         select: {
           territoire_code: true,
           maille: true,
-          taux_avancement_mandat: true,
           est_applicable: true,
           nombre_propositions_valeur_actuelle: true,
           territoire: {
             select: {
               code_parent: true,
+            },
+          },
+          chantier_territoire_jalon: {
+            where: {
+              jalon: jalonParDefaut,
+            },
+            select: {
+              taux_avancement: true,
             },
           },
         },
@@ -449,7 +456,9 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
             chantierTerritoireMailleDepartementApplicables.length === 0 ||
             chantierTerritoireMailleDepartementApplicables.some(
               (chantierTerritoire) =>
-                chantierTerritoire.taux_avancement_mandat !== null,
+                chantierTerritoire.chantier_territoire_jalon.some(
+                  (chantierJalon) => chantierJalon.taux_avancement !== null,
+                ),
             ),
           chantierAUnePropositionValeurAvancement:
             aUnePropositionsValeurAvancement,

@@ -42,6 +42,7 @@ describe("PrismaChantierRepository", () => {
             ["NAT-FR"],
             optionsParDefaut,
             2025,
+            2025,
           );
 
           // Then
@@ -68,6 +69,7 @@ describe("PrismaChantierRepository", () => {
             "CH-001",
             ["NAT-FR"],
             optionsParDefaut,
+            2025,
             2025,
           );
 
@@ -106,6 +108,7 @@ describe("PrismaChantierRepository", () => {
             "CH-001",
             ["NAT-FR"],
             optionsParDefaut,
+            2025,
             2025,
           );
 
@@ -148,6 +151,7 @@ describe("PrismaChantierRepository", () => {
             "CH-001",
             ["NAT-FR", "REG-84"],
             { ...optionsParDefaut, listeMeteos: ["SOLEIL"] },
+            2025,
             2025,
           );
 
@@ -203,6 +207,7 @@ describe("PrismaChantierRepository", () => {
             ["NAT-FR"],
             optionsParDefaut,
             2025,
+            2025,
           );
 
           // Then
@@ -234,6 +239,7 @@ describe("PrismaChantierRepository", () => {
             "CH-001",
             ["NAT-FR"],
             optionsParDefaut,
+            2025,
             2025,
           );
 
@@ -309,6 +315,7 @@ describe("PrismaChantierRepository", () => {
             "CH-001",
             ["DEPT-01"],
             optionsParDefaut,
+            2025,
             2025,
           );
 
@@ -396,6 +403,7 @@ describe("PrismaChantierRepository", () => {
             ["NAT-FR"],
             optionsPourExport,
             2025,
+            2025,
           );
 
           // Then
@@ -474,6 +482,7 @@ describe("PrismaChantierRepository", () => {
             "CH-001",
             ["NAT-FR"],
             optionsPourExport,
+            2025,
             2025,
           );
 
@@ -554,6 +563,7 @@ describe("PrismaChantierRepository", () => {
             ["REG-84"],
             optionsPourExport,
             2025,
+            2025,
           );
 
           // Then
@@ -632,6 +642,7 @@ describe("PrismaChantierRepository", () => {
             "CH-001",
             ["REG-84"],
             optionsPourExport,
+            2025,
             2025,
           );
 
@@ -712,6 +723,7 @@ describe("PrismaChantierRepository", () => {
             ["REG-84"],
             optionsPourExport,
             2025,
+            2025,
           );
 
           // Then
@@ -791,6 +803,7 @@ describe("PrismaChantierRepository", () => {
             ["DEPT-01"],
             optionsPourExport,
             2025,
+            2025,
           );
 
           // Then
@@ -869,6 +882,7 @@ describe("PrismaChantierRepository", () => {
             "CH-001",
             ["DEPT-01"],
             optionsPourExport,
+            2025,
             2025,
           );
 
@@ -951,6 +965,7 @@ describe("PrismaChantierRepository", () => {
             ["NAT-FR"],
             optionsPourExport,
             2025,
+            2025,
           );
 
           // Then
@@ -1021,11 +1036,23 @@ describe("PrismaChantierRepository", () => {
             est_applicable: true,
           });
 
+          // DEPT-01 a un taux non null pour le jalon par défaut (2025), mais pas pour le jalon sélectionné (2026)
+          await fixtures.chantierTerritoireJalon({
+            id: "CH-001",
+            territoire_code: "DEPT-01",
+            code_insee: "01",
+            maille: "DEPT",
+            zone_id: "D01",
+            jalon: 2025,
+            taux_avancement: 30,
+          });
+
           // When
           const result = await prismaChantierRepository.recupererPourExports(
             "CH-001",
             ["NAT-FR"],
             optionsPourExport,
+            2026,
             2025,
           );
 
@@ -1100,11 +1127,32 @@ describe("PrismaChantierRepository", () => {
             est_applicable: true,
           });
 
+          // Tous les jalons par défaut (2025) ont un taux null, le jalon sélectionné (2026) n'existe pas
+          await fixtures.chantierTerritoireJalon({
+            id: "CH-001",
+            territoire_code: "DEPT-01",
+            code_insee: "01",
+            maille: "DEPT",
+            zone_id: "D01",
+            jalon: 2025,
+            taux_avancement: null,
+          });
+          await fixtures.chantierTerritoireJalon({
+            id: "CH-001",
+            territoire_code: "DEPT-02",
+            code_insee: "02",
+            maille: "DEPT",
+            zone_id: "D02",
+            jalon: 2025,
+            taux_avancement: null,
+          });
+
           // When
           const result = await prismaChantierRepository.recupererPourExports(
             "CH-001",
             ["NAT-FR"],
             optionsPourExport,
+            2026,
             2025,
           );
 
