@@ -44,7 +44,7 @@ const PageUtilisateur: FunctionComponent<PageUtilisateurProps> = ({
     <PageUtilisateurStyled className="fr-pt-2w">
       <main className="fr-container">
         <FilAriane chemin={chemin} libelléPageCourante="Utilisateur" />
-        <div className="fiche-utilisateur fr-pt-1w fr-pb-13w">
+        <div className="fiche-utilisateur fr-pb-4w">
           <div className="flex">
             <Link
               aria-label="Retour à l'accueil"
@@ -55,11 +55,11 @@ const PageUtilisateur: FunctionComponent<PageUtilisateurProps> = ({
               Retour
             </Link>
           </div>
-          <Titre baliseHtml="h1" className="fr-h1 fr-mt-4w">
+          <Titre baliseHtml="h1" className="fr-h1 fr-mt-2w">
             Fiche du compte
           </Titre>
           <Bloc>
-            <div className="fr-py-4w fr-px-10w">
+            <div className="fr-py-2w fr-px-4w">
               {modificationEstImpossible(
                 session,
                 utilisateur.habilitations,

@@ -17,7 +17,7 @@ const FilAriane: FunctionComponent<FilArianeProps> = ({
   return (
     <nav
       aria-label="vous êtes ici :"
-      className="fr-breadcrumb fr-mb-3w"
+      className="fr-breadcrumb fr-mb-1w"
       role="navigation"
     >
       <button

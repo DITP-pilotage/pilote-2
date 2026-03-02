@@ -1,4 +1,3 @@
-import "@gouvfr/dsfr/dist/component/table/table.min.css";
 import "@gouvfr/dsfr/dist/component/badge/badge.min.css";
 import { FunctionComponent } from "react";
 import Titre from "@/components/_commons/Titre/Titre";
