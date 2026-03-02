@@ -253,6 +253,7 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
               select: {
                 taux_avancement: true,
                 jalon: true,
+                ecart: true,
               },
             },
           },
@@ -447,7 +448,9 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
           maillesApplicables:
             indicateurPourExport.indicateur_identite.mailles_applicables,
           estApplicable: indicateurPourExport.est_applicable,
-          chantierEcart: indicateurPourExport.chantier_territoire.ecart,
+          chantierEcart: verifyValeurIsNotNullOrUndefined(
+            chantierTerritoireJalonParDefaut?.ecart,
+          ),
           chantierTendance: indicateurPourExport.chantier_territoire.tendance,
           chantierCibleAttendue:
             indicateurPourExport.indicateur_identite.chantier_identite
