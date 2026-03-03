@@ -4,6 +4,7 @@ import { FormProvider, useForm } from "react-hook-form";
 import { $Enums } from "@prisma/client";
 import { Modale } from "@/components/shared/Modale";
 import TextAreaAvecLabel from "@/components/_commons/TextAreaAvecLabel/TextAreaAvecLabel";
+import { Bouton } from "@/components/_commons/Bouton/Bouton";
 import api from "@/server/infrastructure/api/trpc/api";
 
 export const FeedbackNegatifModale = ({
@@ -58,18 +59,17 @@ export const FeedbackNegatifModale = ({
         />
         <div className="flex justify-end gap-2 mt-4">
           <Dialog.Close asChild>
-            <button className="fr-btn fr-btn--secondary" type="button">
-              Annuler
-            </button>
+            <Bouton
+              label="Annuler"
+              variant="secondary"
+            />
           </Dialog.Close>
-          <button
-            className="fr-btn"
+          <Bouton
             disabled={evaluerMutation.isPending}
+            label="Envoyer"
             onClick={handleEnvoyer}
-            type="button"
-          >
-            Envoyer
-          </button>
+            variant="primary"
+          />
         </div>
       </FormProvider>
     </Modale>
