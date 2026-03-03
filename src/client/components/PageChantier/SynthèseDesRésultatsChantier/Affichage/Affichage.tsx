@@ -1,13 +1,13 @@
 import { formaterDate } from "@/client/utils/date/date";
 import { nettoyerUneChaîneDeCaractèresPourAffichageHTML } from "@/client/utils/strings";
 import { BoutonsAffichage } from "@/components/PageChantier/SynthèseDesRésultatsChantier/BoutonsAffichage/BoutonsAffichage";
-import SynthèseDesRésultats from "@/server/domain/chantier/synthèseDesRésultats/SynthèseDesRésultats.interface";
+import { DerniereSyntheseDesResultats } from "@/server/syntheses-des-resultats/queries/RecupererDerniereSyntheseDesResultatsQuery";
 import useAffichage from "./useAffichage";
 
 const SynthèseDesRésultatsAffichage = ({
   itemHistoriqueSyntheseDesResultats: synthèseDesRésultats,
 }: {
-  itemHistoriqueSyntheseDesResultats: SynthèseDesRésultats;
+  itemHistoriqueSyntheseDesResultats: DerniereSyntheseDesResultats | null;
 }) => {
   const {
     contenuAAfficher,
@@ -28,9 +28,9 @@ const SynthèseDesRésultatsAffichage = ({
   return (
     <>
       <p className="fr-text--xs !text-dsfr-mention-grey fr-mb-1w">
-        {`Mis à jour le ${formaterDate(synthèseDesRésultats.date, "DD/MM/YYYY")}`}
-        {!!synthèseDesRésultats.auteur &&
-          ` | Par ${synthèseDesRésultats.auteur}`}
+        {`Mis à jour le ${formaterDate(synthèseDesRésultats.date_modification, "DD/MM/YYYY")}`}
+        {!!synthèseDesRésultats.auteur_modification_nom &&
+          ` | Par ${synthèseDesRésultats.auteur_modification_nom}`}
       </p>
       <p
         className="fr-text--sm fr-mb-0"

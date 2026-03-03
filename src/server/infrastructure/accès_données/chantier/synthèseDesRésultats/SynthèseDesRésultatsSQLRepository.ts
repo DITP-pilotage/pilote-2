@@ -75,19 +75,37 @@ export class SynthèseDesRésultatsSQLRepository implements SynthèseDesRésulta
     territoireCode,
     id,
     contenu,
-    auteur_id,
     météo,
-    date,
+    auteur_creation_id,
+    date_creation,
+    auteur_modification_id,
+    date_modification,
   }: SynthèseDesRésultatsV2): Promise<void> {
-    await this.créer(
-      chantierId,
-      territoireCode,
-      id,
-      contenu,
-      auteur_id,
-      météo,
-      date,
-    );
+    const { maille, codeInsee } =
+      territoireCodeVersMailleCodeInsee(territoireCode);
+
+    await prisma.synthese_des_resultats.upsert({
+      where: { id },
+      create: {
+        id,
+        chantier_id: chantierId,
+        maille,
+        code_insee: codeInsee,
+        territoire_code: territoireCode,
+        commentaire: contenu,
+        meteo: météo,
+        auteur_creation_id,
+        date_creation,
+        auteur_modification_id,
+        date_modification,
+      },
+      update: {
+        commentaire: contenu,
+        meteo: météo,
+        auteur_modification_id,
+        date_modification,
+      },
+    });
   }
 
   async récupérerLaPlusRécente(

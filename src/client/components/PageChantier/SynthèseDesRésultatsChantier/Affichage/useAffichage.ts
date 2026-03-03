@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { LIMITE_CARACTÈRES_AFFICHAGE_SYNTHÈSE_DES_RÉSULTATS } from "@/validation/synthèseDesRésultats";
-import SynthèseDesRésultats from "@/server/domain/chantier/synthèseDesRésultats/SynthèseDesRésultats.interface";
+import { DerniereSyntheseDesResultats } from "@/server/syntheses-des-resultats/queries/RecupererDerniereSyntheseDesResultatsQuery";
 
 export default function useAffichage(
-  synthèseDesRésultats: SynthèseDesRésultats,
+  synthèseDesRésultats: DerniereSyntheseDesResultats | null,
 ) {
   const [afficherContenuComplet, setAfficherContenuComplet] = useState(false);
   const [afficherBoutonsAffichage, setAfficherBoutonsAffichage] =

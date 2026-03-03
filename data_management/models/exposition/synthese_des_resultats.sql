@@ -16,12 +16,20 @@ SELECT
             ELSE 
                 (SELECT id FROM utilisateur WHERE email = 'import.csv@modernisation.gouv.fr')
         END
-    )::uuid as auteur_id,
-    auteur,
+    )::uuid as auteur_creation_id,
+    (
+        CASE 
+            WHEN (SELECT id FROM utilisateur WHERE email = auteur_email) IS NOT NULL THEN 
+                (SELECT id FROM utilisateur WHERE email = auteur_email)
+            ELSE 
+                (SELECT id FROM utilisateur WHERE email = 'import.csv@modernisation.gouv.fr')
+        END
+    )::uuid as auteur_modification_id,
     COALESCE(meteo, 'NON_RENSEIGNEE') as meteo,
-    date_meteo,
+    date as date_creation,
+    date as date_modification,
     contenu as commentaire,
-    date as date_commentaire,
-    CONCAT(maille, '-', code_insee) as territoire_code
+    CONCAT(maille, '-', code_insee) as territoire_code,
+    'PUBLIE'::statut_synthese_des_resultats as statut
 FROM {{ ref('stg_import_massif__commentaires') }}
 WHERE type='synthese_des_resultats'

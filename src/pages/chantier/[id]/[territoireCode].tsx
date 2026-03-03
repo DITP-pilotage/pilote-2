@@ -12,7 +12,6 @@ import calculerChantierAvancements from "@/client/utils/chantier/avancement/calc
 import { comparerIndicateur } from "@/client/utils/indicateur/indicateur";
 import { convertitEnPondération } from "@/client/utils/ponderation/ponderation";
 import { IndicateurPondération } from "@/components/PageChantier/PageChantier.interface";
-import RécupérerSynthèseDesRésultatsLaPlusRécenteUseCase from "@/server/usecase/chantier/synthèse/RécupérerSynthèseDesRésultatsLaPlusRécenteUseCase";
 import RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase from "@/server/usecase/chantier/commentaire/RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase";
 import RécupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase from "@/server/usecase/chantier/objectif/RécupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase";
 import RécupérerDécisionStratégiqueLaPlusRécenteUseCase from "@/server/usecase/chantier/décision/RécupérerDécisionStratégiqueLaPlusRécenteUseCase";
@@ -108,9 +107,9 @@ export const getServerSideProps = async (
         .resolve("recupererChantierUseCaseV2")
         .run(chantierId, session.habilitations, session.profil, jalon),
       dependencies.getIndicateurRepository().récupérerParChantierId(chantierId),
-      new RécupérerSynthèseDesRésultatsLaPlusRécenteUseCase(
-        dependencies.getSynthèseDesRésultatsRepository(),
-      ).run(chantierId, territoireCode, session.habilitations),
+      getContainer("importSyntheseDesResultats")
+        .resolve("récupérerDerniereSyntheseDesResultatsQuery")
+        .run(chantierId, territoireCode),
       new RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase(
         dependencies.getCommentaireRepository(),
       ).run([chantierId], territoireCode, session.habilitations),

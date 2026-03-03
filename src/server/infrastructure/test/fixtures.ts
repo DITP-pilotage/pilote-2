@@ -539,6 +539,33 @@ export const fixtures = {
     });
   },
 
+  async syntheseDesResultats(
+    overrides: Partial<Prisma.synthese_des_resultatsUncheckedCreateInput> & {
+      chantier_id: string;
+      territoire_code: string;
+      maille: string;
+      code_insee: string;
+    },
+  ) {
+    const prisma = getPrisma();
+    const auteur = overrides.auteur_creation_id
+      ? { id: overrides.auteur_creation_id }
+      : await fixtures.utilisateur();
+    const now = new Date();
+    return prisma.synthese_des_resultats.create({
+      data: {
+        id: randomUUID(),
+        commentaire: "Synthèse de test",
+        meteo: "SOLEIL",
+        auteur_creation_id: auteur.id,
+        date_creation: now,
+        auteur_modification_id: auteur.id,
+        date_modification: now,
+        ...overrides,
+      },
+    });
+  },
+
   async mesureIndicateur(
     overrides: Partial<Prisma.mesure_indicateurUncheckedCreateInput> = {},
   ) {
