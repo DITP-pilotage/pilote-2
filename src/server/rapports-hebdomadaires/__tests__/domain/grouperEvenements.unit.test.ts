@@ -219,29 +219,26 @@ describe("grouperEvenements", () => {
       const result = grouperEvenements(evenements);
 
       // Then
-      expect(result).toHaveLength(3);
-      expect(result).toEqual(
-        expect.arrayContaining([
-          expect.objectContaining({
-            indicateur: expect.objectContaining({ id: "IND-001" }),
-            territoire: expect.objectContaining({ code: "DEPT-75" }),
-            typeValeur: "VALEUR_INITIALE",
-            valeur: 100,
-          }),
-          expect.objectContaining({
-            indicateur: expect.objectContaining({ id: "IND-001" }),
-            territoire: expect.objectContaining({ code: "DEPT-75" }),
-            typeValeur: "VALEUR_CIBLE",
-            valeur: 200,
-          }),
-          expect.objectContaining({
-            indicateur: expect.objectContaining({ id: "IND-001" }),
-            territoire: expect.objectContaining({ code: "DEPT-75" }),
-            typeValeur: "VALEUR_AVANCEMENT",
-            valeur: 150,
-          }),
-        ]),
-      );
+      expect(result).toEqual([
+        expect.objectContaining({
+          indicateur: expect.objectContaining({ id: "IND-001" }),
+          territoire: expect.objectContaining({ code: "DEPT-75" }),
+          typeValeur: "VALEUR_AVANCEMENT",
+          valeur: 150,
+        }),
+        expect.objectContaining({
+          indicateur: expect.objectContaining({ id: "IND-001" }),
+          territoire: expect.objectContaining({ code: "DEPT-75" }),
+          typeValeur: "VALEUR_CIBLE",
+          valeur: 200,
+        }),
+        expect.objectContaining({
+          indicateur: expect.objectContaining({ id: "IND-001" }),
+          territoire: expect.objectContaining({ code: "DEPT-75" }),
+          typeValeur: "VALEUR_INITIALE",
+          valeur: 100,
+        }),
+      ]);
     });
   });
 
@@ -276,32 +273,29 @@ describe("grouperEvenements", () => {
       const result = grouperEvenements(evenements);
 
       // Then
-      expect(result).toHaveLength(3);
-      expect(result).toEqual(
-        expect.arrayContaining([
-          expect.objectContaining({
-            indicateur: expect.objectContaining({ id: "IND-001" }),
-            territoire: expect.objectContaining({ code: "DEPT-75" }),
-            dateValeur: new Date("2025-01-15"),
-            dateEvenement: new Date("2025-01-15T10:00:00Z"),
-            valeur: 50,
-          }),
-          expect.objectContaining({
-            indicateur: expect.objectContaining({ id: "IND-001" }),
-            territoire: expect.objectContaining({ code: "DEPT-75" }),
-            dateValeur: new Date("2025-01-16"),
-            dateEvenement: new Date("2025-01-16T10:00:00Z"),
-            valeur: 60,
-          }),
-          expect.objectContaining({
-            indicateur: expect.objectContaining({ id: "IND-001" }),
-            territoire: expect.objectContaining({ code: "DEPT-75" }),
-            dateValeur: new Date("2025-01-17"),
-            dateEvenement: new Date("2025-01-17T10:00:00Z"),
-            valeur: 70,
-          }),
-        ]),
-      );
+      expect(result).toEqual([
+        expect.objectContaining({
+          indicateur: expect.objectContaining({ id: "IND-001" }),
+          territoire: expect.objectContaining({ code: "DEPT-75" }),
+          dateValeur: new Date("2025-01-17"),
+          dateEvenement: new Date("2025-01-17T10:00:00Z"),
+          valeur: 70,
+        }),
+        expect.objectContaining({
+          indicateur: expect.objectContaining({ id: "IND-001" }),
+          territoire: expect.objectContaining({ code: "DEPT-75" }),
+          dateValeur: new Date("2025-01-16"),
+          dateEvenement: new Date("2025-01-16T10:00:00Z"),
+          valeur: 60,
+        }),
+        expect.objectContaining({
+          indicateur: expect.objectContaining({ id: "IND-001" }),
+          territoire: expect.objectContaining({ code: "DEPT-75" }),
+          dateValeur: new Date("2025-01-15"),
+          dateEvenement: new Date("2025-01-15T10:00:00Z"),
+          valeur: 50,
+        }),
+      ]);
     });
   });
 
@@ -364,24 +358,41 @@ describe("grouperEvenements", () => {
       );
     });
 
-    it("trie par territoire code puis dateValeur desc puis dateEvenement desc", () => {
+    it("trie par territoire code puis typeValeur puis dateValeur desc puis dateEvenement desc", () => {
       // Given
       const evenements = [
         createEvenement({
           indicateurId: "IND-001",
           territoireCode: "DEPT-92",
+          typeValeur: "VALEUR_AVANCEMENT",
           dateValeur: new Date("2025-01-16"),
           valeur: 60,
         }),
         createEvenement({
           indicateurId: "IND-001",
           territoireCode: "DEPT-75",
+          typeValeur: "VALEUR_CIBLE",
           dateValeur: new Date("2025-01-17"),
           valeur: 70,
         }),
         createEvenement({
           indicateurId: "IND-001",
           territoireCode: "DEPT-75",
+          typeValeur: "VALEUR_AVANCEMENT",
+          dateValeur: new Date("2025-01-17"),
+          valeur: 75,
+        }),
+        createEvenement({
+          indicateurId: "IND-001",
+          territoireCode: "DEPT-75",
+          typeValeur: "VALEUR_INITIALE",
+          dateValeur: new Date("2025-01-17"),
+          valeur: 80,
+        }),
+        createEvenement({
+          indicateurId: "IND-001",
+          territoireCode: "DEPT-75",
+          typeValeur: "VALEUR_AVANCEMENT",
           dateValeur: new Date("2025-01-15"),
           valeur: 50,
         }),
@@ -394,14 +405,27 @@ describe("grouperEvenements", () => {
       expect(result).toEqual([
         expect.objectContaining({
           territoire: expect.objectContaining({ code: "DEPT-75" }),
+          typeValeur: "VALEUR_AVANCEMENT",
           dateValeur: new Date("2025-01-17"),
         }),
         expect.objectContaining({
           territoire: expect.objectContaining({ code: "DEPT-75" }),
+          typeValeur: "VALEUR_CIBLE",
+          dateValeur: new Date("2025-01-17"),
+        }),
+        expect.objectContaining({
+          territoire: expect.objectContaining({ code: "DEPT-75" }),
+          typeValeur: "VALEUR_INITIALE",
+          dateValeur: new Date("2025-01-17"),
+        }),
+        expect.objectContaining({
+          territoire: expect.objectContaining({ code: "DEPT-75" }),
+          typeValeur: "VALEUR_AVANCEMENT",
           dateValeur: new Date("2025-01-15"),
         }),
         expect.objectContaining({
           territoire: expect.objectContaining({ code: "DEPT-92" }),
+          typeValeur: "VALEUR_AVANCEMENT",
           dateValeur: new Date("2025-01-16"),
         }),
       ]);

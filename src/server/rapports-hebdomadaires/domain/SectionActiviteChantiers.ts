@@ -56,6 +56,12 @@ export type SectionChantier = {
   indicateurs: SectionIndicateur[];
 };
 
+const TYPE_VALEUR_ORDRE: Record<TypeValeurIndicateur, number> = {
+  VALEUR_AVANCEMENT: 0,
+  VALEUR_CIBLE: 1,
+  VALEUR_INITIALE: 2,
+};
+
 export function grouperEvenements(
   evenements: EvenementIndicateur[],
 ): ActiviteIndicateur[] {
@@ -101,6 +107,9 @@ export function grouperEvenements(
       b.territoire.code,
     );
     if (territoireCompare !== 0) return territoireCompare;
+    const typeValeurCompare =
+      TYPE_VALEUR_ORDRE[a.typeValeur] - TYPE_VALEUR_ORDRE[b.typeValeur];
+    if (typeValeurCompare !== 0) return typeValeurCompare;
     const dateValeurCompare = b.dateValeur.getTime() - a.dateValeur.getTime();
     if (dateValeurCompare !== 0) return dateValeurCompare;
     return b.dateEvenement.getTime() - a.dateEvenement.getTime();
