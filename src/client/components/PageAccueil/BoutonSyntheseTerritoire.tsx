@@ -30,7 +30,7 @@ export const BoutonSyntheseTerritoire = ({
           title="Synthèse de territoire"
         >
           <ChatUI
-            api="/api/albert/chat"
+            endpoint="/api/albert/chat"
             className="h-full"
             emptyStateText="La synthèse est en cours de génération..."
             placeholder="Posez une question sur ce territoire..."

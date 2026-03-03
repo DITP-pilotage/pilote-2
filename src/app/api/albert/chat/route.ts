@@ -1,8 +1,16 @@
-import type { UIMessage } from "ai";
+import { validateUIMessages } from "ai";
+import { z } from "zod";
 import { Albert } from "@/server/albert/Albert";
 import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
 import { buildChatSystemPrompt } from "@/server/albert/systemPrompt";
 import { getContainer } from "@/server/dependances";
+
+const chatRequestSchema = z
+  .object({
+    id: z.string().min(1),
+    messages: z.array(z.any()),
+  })
+  .passthrough();
 
 export async function POST(request: Request) {
   const session = await auth();
@@ -12,16 +20,8 @@ export async function POST(request: Request) {
   }
 
   try {
-    const { id, messages } = (await request.json()) as {
-      id: string;
-      messages: UIMessage[];
-    };
-
-    if (!messages || !Array.isArray(messages)) {
-      return new Response("Invalid request: messages array required", {
-        status: 400,
-      });
-    }
+    const body = chatRequestSchema.parse(await request.json());
+    const messages = await validateUIMessages({ messages: body.messages });
 
     const territoiresAccessibles = session.habilitations.lecture.territoires;
 
@@ -36,7 +36,7 @@ export async function POST(request: Request) {
     });
 
     const result = await Albert.streamText({
-      chatId: id,
+      chatId: body.id,
       messages,
       systemPrompt,
       userId: session.user.id,

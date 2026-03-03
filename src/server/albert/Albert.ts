@@ -22,6 +22,29 @@ export class Albert {
     });
   }
 
+  private static async saveLlmCall({
+    chatId,
+    userId,
+    event,
+  }: {
+    chatId: string;
+    userId: string;
+    event: unknown;
+  }) {
+    await prisma.llm_calls.upsert({
+      where: { id: chatId },
+      create: {
+        id: chatId,
+        model: MODEL,
+        transcript: event as unknown as Prisma.InputJsonValue,
+        utilisateur_id: userId,
+      },
+      update: {
+        transcript: event as unknown as Prisma.InputJsonValue,
+      },
+    });
+  }
+
   static async generateText({
     chatId,
     prompt,
@@ -42,20 +65,7 @@ export class Albert {
       system: systemPrompt,
       prompt: prompt,
       stopWhen: stepCountIs(5),
-      onFinish: async (event) => {
-        await prisma.llm_calls.upsert({
-          where: { id: chatId },
-          create: {
-            id: chatId,
-            model: MODEL,
-            transcript: event as unknown as Prisma.InputJsonValue,
-            utilisateur_id: userId,
-          },
-          update: {
-            transcript: event as unknown as Prisma.InputJsonValue,
-          },
-        });
-      },
+      onFinish: (event) => Albert.saveLlmCall({ chatId, userId, event }),
       tools,
     });
 
@@ -100,20 +110,7 @@ export class Albert {
       },
       tools,
       stopWhen: stepCountIs(5),
-      onFinish: async (event) => {
-        await prisma.llm_calls.upsert({
-          where: { id: chatId },
-          create: {
-            id: chatId,
-            model: MODEL,
-            transcript: event as unknown as Prisma.InputJsonValue,
-            utilisateur_id: userId,
-          },
-          update: {
-            transcript: event as unknown as Prisma.InputJsonValue,
-          },
-        });
-      },
+      onFinish: (event) => Albert.saveLlmCall({ chatId, userId, event }),
     });
   }
 }

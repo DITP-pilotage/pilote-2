@@ -8,7 +8,7 @@ export const AlbertChat = () => {
         Interrogez Albert sur les chantiers et leurs synthèses de résultats.
       </p>
       <ChatUI
-        api="/api/albert/chat"
+        endpoint="/api/albert/chat"
         emptyStateText="Posez une question pour commencer la conversation."
         placeholder="Posez votre question sur un chantier..."
       />
