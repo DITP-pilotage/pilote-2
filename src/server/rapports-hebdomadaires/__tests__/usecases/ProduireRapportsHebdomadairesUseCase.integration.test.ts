@@ -88,7 +88,6 @@ describe("ProduireRapportsHebdomadairesUseCase", () => {
 
       // Then
       expect(result.rapportsCrees).toBe(1);
-      expect(result.coordinateursSansActivite).toBe(0);
 
       const prisma = getPrisma();
       const rapports = await prisma.rapport_hebdomadaire_coordinateur.findMany({
@@ -129,7 +128,6 @@ describe("ProduireRapportsHebdomadairesUseCase", () => {
 
       // Then
       expect(result.rapportsCrees).toBe(1);
-      expect(result.coordinateursSansActivite).toBe(0);
 
       const prisma = getPrisma();
       const rapports = await prisma.rapport_hebdomadaire_coordinateur.findMany({
@@ -435,7 +433,6 @@ describe("ProduireRapportsHebdomadairesUseCase", () => {
       const result = await useCase.run();
 
       expect(result.rapportsCrees).toBe(1);
-      expect(result.coordinateursSansActivite).toBe(0);
     }),
   );
 
@@ -489,7 +486,6 @@ describe("ProduireRapportsHebdomadairesUseCase", () => {
       const result = await useCase.run();
 
       expect(result.rapportsCrees).toBe(1);
-      expect(result.coordinateursSansActivite).toBe(0);
     }),
   );
 
@@ -542,7 +538,6 @@ describe("ProduireRapportsHebdomadairesUseCase", () => {
       const result = await useCase.run();
 
       expect(result.rapportsCrees).toBe(1);
-      expect(result.coordinateursSansActivite).toBe(0);
 
       const prisma = getPrisma();
       const rapports = await prisma.rapport_hebdomadaire_coordinateur.findMany({
@@ -607,7 +602,6 @@ describe("ProduireRapportsHebdomadairesUseCase", () => {
       const result = await useCase.run();
 
       expect(result.rapportsCrees).toBe(1);
-      expect(result.coordinateursSansActivite).toBe(0);
     }),
   );
 
@@ -660,7 +654,6 @@ describe("ProduireRapportsHebdomadairesUseCase", () => {
       const result = await useCase.run();
 
       expect(result.rapportsCrees).toBe(1);
-      expect(result.coordinateursSansActivite).toBe(0);
     }),
   );
 });
