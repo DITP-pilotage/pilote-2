@@ -8,6 +8,7 @@ import {
 import { getQueryParamString } from "@/client/utils/getQueryParamString";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
 import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
+import HabilitationGestionUtilisateur from "@/server/gestion-utilisateur/domain/habilitation/Habilitation";
 import {
   BaseNavigation,
   LienNavigation,
@@ -26,6 +27,17 @@ const estAdministrateurOuPilotage = (session: Session) => {
   return [ProfilEnum.DITP_ADMIN, ProfilEnum.DITP_PILOTAGE].includes(
     session?.profil,
   );
+};
+
+const estAutoriséAAccéderAuxRapportsHebdomadaires = (session: Session | null) => {
+  if (!session) {
+    return false;
+  }
+  const habilitation = new HabilitationGestionUtilisateur({
+    habilitations: session.habilitations,
+    profil: session.profil,
+  });
+  return habilitation.estAutoriseAAccederAuxRapportsHebdomadaires();
 };
 
 export const NavigationPilote = () => {
@@ -68,6 +80,16 @@ export const NavigationPilote = () => {
           prefetch: true,
           target: "_self",
         } as LienNavigation,
+        {
+          nom: "Suivi hebdomadaire",
+          lien: "/rapports-hebdomadaires",
+          matcher: "/rapports-hebdomadaires",
+          accessible:
+            estAutoriséAAccéderAuxRapportsHebdomadaires(session) &&
+            process.env.NEXT_PUBLIC_FF_RAPPORT_COORDINATEURS === "true",
+          prefetch: false,
+          target: "_self",
+        },
         {
           nom: "Gestion des comptes",
           lien: "/admin/utilisateurs",
