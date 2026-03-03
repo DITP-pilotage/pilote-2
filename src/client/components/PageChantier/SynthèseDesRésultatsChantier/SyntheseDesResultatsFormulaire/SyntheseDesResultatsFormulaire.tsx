@@ -10,35 +10,25 @@ import {
 } from "@/server/domain/météo/Météo.interface";
 import Titre from "@/components/_commons/Titre/Titre";
 import { MeteoPicto } from "@/components/_commons/Meteo/Picto/MeteoPicto";
-import Alerte from "@/components/_commons/Alerte/Alerte";
 import {
   LIMITE_CARACTÈRES_SYNTHÈSE_DES_RÉSULTATS,
   validationSynthèseDesRésultatsFormulaire,
 } from "@/validation/synthèseDesRésultats";
 import { pageChantier } from "@/components/PageChantier/PageChantierServerSideContext";
-import SynthèseDesRésultats from "@/server/domain/chantier/synthèseDesRésultats/SynthèseDesRésultats.interface";
 import SyntheseDesResultatsFormulaireStyled from "./SyntheseDesResultatsFormulaire.styled";
 import { SyntheseDesResultatsFormulaireInputs } from "./SyntheseDesResultatsFormulaire.interface";
-import useSynthèseDesRésultatsFormulaire from "./useSynthèseDesRésultatsFormulaire";
+import { useModifierSyntheseDesResultats } from "./useModifierSyntheseDesResultats";
 
 interface SyntheseDesResultatsFormulaireProps {
-  syntheseDesResultatsCreeeCallback: (
-    syntheseDesResultatsCreee: SynthèseDesRésultats,
-  ) => void;
   annulationCallback?: () => void;
 }
 
 const SyntheseDesResultatsFormulaire: FunctionComponent<
   SyntheseDesResultatsFormulaireProps
-> = ({ syntheseDesResultatsCreeeCallback, annulationCallback }) => {
-  const { synthèseDesRésultats, territoireCode } =
-    pageChantier.useServerSidePropsContext();
+> = ({ annulationCallback }) => {
+  const { synthèseDesRésultats } = pageChantier.useServerSidePropsContext();
 
-  const { créerSynthèseDesRésultats, alerte } =
-    useSynthèseDesRésultatsFormulaire(
-      syntheseDesResultatsCreeeCallback,
-      territoireCode,
-    );
+  const modifierSynthèseDesRésultats = useModifierSyntheseDesResultats();
 
   const {
     register,
@@ -62,7 +52,7 @@ const SyntheseDesResultatsFormulaire: FunctionComponent<
   return (
     <SyntheseDesResultatsFormulaireStyled
       method="post"
-      onSubmit={handleSubmit(créerSynthèseDesRésultats)}
+      onSubmit={handleSubmit(modifierSynthèseDesRésultats)}
     >
       <Titre baliseHtml="h3" className="fr-h5 fr-mb-1v">
         Modifier la météo et la synthèse des résultats
@@ -120,11 +110,6 @@ const SyntheseDesResultatsFormulaire: FunctionComponent<
           </button>
         </div>
       </div>
-      {!!alerte && (
-        <div className="fr-mt-2w">
-          <Alerte titre={alerte.titre} type={alerte.type} />
-        </div>
-      )}
     </SyntheseDesResultatsFormulaireStyled>
   );
 };

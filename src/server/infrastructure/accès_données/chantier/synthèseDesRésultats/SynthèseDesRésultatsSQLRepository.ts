@@ -95,15 +95,15 @@ export class SynthèseDesRésultatsSQLRepository implements SynthèseDesRésulta
         commentaire: contenu,
         meteo: météo,
         auteur_creation_id,
-        date_creation,
+        date_creation: new Date(date_creation),
         auteur_modification_id,
-        date_modification,
+        date_modification: new Date(date_modification),
       },
       update: {
         commentaire: contenu,
         meteo: météo,
         auteur_modification_id,
-        date_modification,
+        date_modification: new Date(date_modification),
       },
     });
   }
