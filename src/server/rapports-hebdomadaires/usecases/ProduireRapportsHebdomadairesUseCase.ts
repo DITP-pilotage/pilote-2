@@ -44,7 +44,6 @@ const PROFILS_CONCERNES: ProfilTerritorialise[] = [
 
 type ProduireRapportResult = {
   rapportsCrees: number;
-  coordinateursSansActivite: number;
   dateExecution: Date;
 };
 
@@ -84,7 +83,7 @@ export class ProduireRapportsHebdomadairesUseCase {
     activiteGlobale: ActiviteComptes;
     periode: { dateDebut: Date; dateFin: Date };
     maintenant: Date;
-  }): Promise<RapportHebdomadaire | null> {
+  }): Promise<RapportHebdomadaire> {
     const { comptesCrees, comptesDesactives } = this.produireSectionComptes({
       coordinateur,
       activiteGlobale,
@@ -257,22 +256,17 @@ export class ProduireRapportsHebdomadairesUseCase {
     maintenant: Date;
   }): Promise<ProduireRapportResult> {
     let rapportsCrees = 0;
-    let coordinateursSansActivite = 0;
 
     for (const coordinateur of coordinateurs) {
       try {
-        const rapport = await this.creerRapportPourCoordinateur({
+        await this.creerRapportPourCoordinateur({
           coordinateur,
           activiteGlobale,
           periode,
           maintenant,
         });
 
-        if (rapport) {
-          rapportsCrees++;
-        } else {
-          coordinateursSansActivite++;
-        }
+        rapportsCrees++;
       } catch (error) {
         logger.error(
           {
@@ -286,12 +280,10 @@ export class ProduireRapportsHebdomadairesUseCase {
 
     logger.info("Phase 1 terminée", {
       rapportsCrees,
-      coordinateursSansActivite,
     });
 
     return {
       rapportsCrees,
-      coordinateursSansActivite,
       dateExecution: maintenant,
     };
   }

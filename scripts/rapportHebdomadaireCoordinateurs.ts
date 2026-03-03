@@ -40,7 +40,6 @@ async function main() {
     "## 📊 Rapports hebdomadaires coordinateurs - Phase 1 : Production",
     "",
     `✅ **${resultProduction.rapportsCrees} rapports créés** et persistés en base`,
-    `ℹ️ ${resultProduction.coordinateursSansActivite} coordinateurs sans activité (aucun rapport créé)`,
   ].join("\n");
 
   envoieMessageTchap(messagePhase1, baseUrl, roomId, accessToken);
