@@ -5,7 +5,7 @@ import { RapportHebdomadaire } from "@/server/rapports-hebdomadaires/domain/Rapp
 import { TypeValeurIndicateur } from "@/server/rapports-hebdomadaires/domain/SectionActiviteChantiers";
 import { PiloteDateFormatter } from "./PiloteDateFormatter";
 
-const TEMPLATE_ID_RAPPORT_COORDINATEURS = 60;
+const TEMPLATE_ID_RAPPORT_COORDINATEURS = 68;
 const MAPPING: Record<TypeValeurIndicateur, string> = {
   VALEUR_AVANCEMENT: "va",
   VALEUR_INITIALE: "vi",
