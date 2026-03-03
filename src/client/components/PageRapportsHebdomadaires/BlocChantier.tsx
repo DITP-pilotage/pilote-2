@@ -82,7 +82,7 @@ export const BlocChantier = ({
                           )}
                         </td>
                         <td className="text-right">
-                          {territoire.valeur ?? "—"}
+                          {territoire.valeur?.toLocaleString("fr-FR") ?? "—"}
                         </td>
                         <td className="text-right">
                           {PiloteDateFormatter.isoDateFranceMetropolitaine(
