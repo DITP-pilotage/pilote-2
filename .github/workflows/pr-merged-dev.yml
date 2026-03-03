@@ -1,0 +1,113 @@
+name: "PR fermée en dev"
+
+on:
+  pull_request:
+    types:
+      - closed
+    branches:
+      - 'dev'
+
+jobs:
+  send_msg_on_pr_merged:
+    name: "Envoi Tchap si PR dev"
+    # When the PR is merged
+    # https://stackoverflow.com/a/61565445/21676629
+    if: github.event.pull_request.merged == true or ${{ !github.event.act }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: get infos pr
+        id: PR
+        uses: 8BitJonny/gh-get-current-pr@3.0.0
+        with:
+          # Authetication token to access GitHub APIs. (Can be omitted by default.)
+          github-token: ${{ github.token }}
+          #sha: d6253749d7945e4cba3b603bc3df502742736af4 # for debug
+          sha: ${{ github.event.pull_request.head.sha }}
+      - name: "Envoi message Tchap"
+        uses: indiesdev/curl@v1.1
+        with:
+          url: "https://matrix.agent.dinum.tchap.gouv.fr/_matrix/client/r0/rooms/${{ secrets.TCHAP_ROOM_ID_TECH_EVENTS }}/send/m.room.message"
+          method: POST
+          accept: 200,201,204
+          headers: '{ "Authorization": "Bearer ${{ secrets.TCHAP_ACCESS_TOKEN }}" }'
+          body: '{"body": "","format":"org.matrix.custom.html","formatted_body":"<h2>[pr-dev] ${{ steps.PR.outputs.pr_title }}</h2> Nouvelle PR mergée <i>en dev</i>. <br> <blockquote><a href=\"${{ steps.PR.outputs.pr_url }}\">PR ${{ steps.PR.outputs.number }}</a> <br> <a href=\"https://data-ditp.atlassian.net/wiki/search?spaces=LRSVU&labels=pr-${{ steps.PR.outputs.number }}\">Articles de doc</a></blockquote>","msgtype":"m.text"}'
+          timeout: 6000
+          retries: 3
+  update_dbt_doc:
+    name: "Mise à jour de la doc dbt"
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: "checkout"
+        uses: actions/checkout@v4
+
+      - name: "Vérifier changements data_management/"
+        id: datamgmt_changes
+        run: |
+          git fetch origin ${{ github.event.pull_request.base.ref }} --depth=1
+          if git diff --name-only origin/${{ github.event.pull_request.base.ref }} HEAD | grep '^data_management/'; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: "install dependencies"
+        if: steps.datamgmt_changes.outputs.changed == 'true'
+        run: cd data_management && pipenv sync && pipenv run dbt deps
+
+      - uses: scalingo-community/setup-scalingo@v0.1.1
+        if: steps.datamgmt_changes.outputs.changed == 'true'
+        with:
+          region: 'osc-fr1'
+          api_token: ${{ secrets.scalingo_api_token }}
+          app_name: 'dev-datajobs'
+
+      # Ouvre le tunnel et génère la doc dans le même shell pour s'assurer que le tunnel est actif durant dbt docs
+      - name: "Create Tunnel and Generate DBT Doc"
+        if: steps.datamgmt_changes.outputs.changed == 'true'
+        run: |
+          set -e
+          scalingo db-tunnel SCALINGO_POSTGRESQL_URL --timeout 60 &
+          TUNNEL_PID=$!
+          # Attend que le tunnel soit en place (habituellement sur le port 10000, peut varier)
+          for i in {1..20}; do
+            sleep 2
+            if nc -z localhost 10000; then
+              echo "Tunnel is up!"
+              break
+            fi
+            if [ $i -eq 20 ]; then
+              echo "Timeout waiting for tunnel"; exit 1
+            fi
+          done
+          # Génère la doc (le tunnel doit rester ouvert pendant toute la commande suivante)
+          cd data_management
+          pipenv run dbt docs generate --static
+          # Tue le tunnel quand terminé
+          kill $TUNNEL_PID
+
+      # Prépare et push la doc générée sur gh-pages
+      - name: "Deploy dbt docs to GitHub Pages"
+        if: steps.datamgmt_changes.outputs.changed == 'true'
+        run: |
+          set -e
+          # On déplace le dossier target (contenant la doc générée) vers docs
+          rm -rf docs
+          mv data_management/target docs
+          # On configure git pour le bot
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@github.com"
+          # Assure que la branche gh-pages existe en local et à jour
+          git fetch
+          git checkout gh-pages
+          git pull origin gh-pages
+          # On ajoute et commit les fichiers de documentation
+          git add docs
+          # Commit seulement s'il y a des changements
+          if ! git diff --cached --quiet; then
+            git commit -m "Mise à jour de la documentation dbt"
+            git push -f origin gh-pages
+          else
+            echo "Aucun changement à publier dans la doc dbt."
+          fi
