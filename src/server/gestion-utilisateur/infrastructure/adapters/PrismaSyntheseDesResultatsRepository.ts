@@ -15,12 +15,12 @@ export class PrismaSyntheseDesResultatsRepository implements SyntheseDesResultat
     if (auteurAnonyme) {
       await prisma.synthese_des_resultats.updateMany({
         where: {
-          auteur_id: {
+          auteur_creation_id: {
             in: auteursAAnonymiserIds,
           },
         },
         data: {
-          auteur_id: auteurAnonyme.id,
+          auteur_creation_id: auteurAnonyme.id,
         },
       });
     }

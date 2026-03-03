@@ -4,9 +4,6 @@ import {
   procédureProtégée,
   vérifierSiLeCSRFEstValide,
 } from "@/server/infrastructure/api/trpc/trpc";
-import CréerUneSynthèseDesRésultatsUseCase from "@/server/usecase/chantier/synthèse/CréerUneSynthèseDesRésultatsUseCase";
-import { dependencies } from "@/server/infrastructure/Dependencies";
-import RécupérerSynthèseDesRésultatsLaPlusRécenteUseCase from "@/server/usecase/chantier/synthèse/RécupérerSynthèseDesRésultatsLaPlusRécenteUseCase";
 import {
   validationSynthèseDesRésultatsContexte,
   validationSynthèseDesRésultatsFormulaire,
@@ -31,31 +28,6 @@ const zodValidateurCSRF = z.object({
 });
 
 export const synthèseDesRésultatsRouter = créerRouteurTRPC({
-  créer: procédureProtégée
-    .input(
-      validationSynthèseDesRésultatsContexte
-        .merge(zodValidateurCSRF)
-        .merge(validationSynthèseDesRésultatsFormulaire),
-    )
-    .mutation(({ input, ctx }) => {
-      vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
-      const auteur_id = ctx.session.user.id;
-
-      const créerUneSynthèseDesRésultatsUseCase =
-        new CréerUneSynthèseDesRésultatsUseCase(
-          dependencies.getSynthèseDesRésultatsRepository(),
-          dependencies.getChantierRepository(),
-        );
-      return créerUneSynthèseDesRésultatsUseCase.run(
-        input.réformeId,
-        input.territoireCode,
-        input.contenu,
-        auteur_id,
-        input.météo,
-        ctx.session.habilitations,
-      );
-    }),
-
   modifier: procédureProtégée
     .input(
       zodValidateurCSRF
@@ -83,19 +55,5 @@ export const synthèseDesRésultatsRouter = créerRouteurTRPC({
       return getContainer("importSyntheseDesResultats")
         .resolve("récupérerHistoriqueSyntheseDesResultatsQuery")
         .run(input.réformeId, input.territoireCode);
-    }),
-
-  récupérerLaPlusRécente: procédureProtégée
-    .input(validationSynthèseDesRésultatsContexte)
-    .query(({ input, ctx }) => {
-      const récupérerSynthèseDesRésultatsLaPlusRécenteUseCase =
-        new RécupérerSynthèseDesRésultatsLaPlusRécenteUseCase(
-          dependencies.getSynthèseDesRésultatsRepository(),
-        );
-      return récupérerSynthèseDesRésultatsLaPlusRécenteUseCase.run(
-        input.réformeId,
-        input.territoireCode,
-        ctx.session.habilitations,
-      );
     }),
 });

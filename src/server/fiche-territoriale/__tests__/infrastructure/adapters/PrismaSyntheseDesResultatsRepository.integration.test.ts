@@ -91,8 +91,8 @@ describe("PrismaSyntheseDesResultatsRepository", () => {
             code_insee: "34",
             maille: "DEPT",
             territoire_code: "DEPT-34",
-            date_meteo: "2023-02-02T00:00:00.000Z",
-            date_commentaire: "2024-01-02T00:00:00.000Z",
+            date_creation: "2023-02-02T00:00:00.000Z",
+            date_modification: "2024-01-02T00:00:00.000Z",
           },
           {
             id: "9b87031f-6ea1-483c-b404-3cd83114b386",
@@ -100,8 +100,8 @@ describe("PrismaSyntheseDesResultatsRepository", () => {
             code_insee: "34",
             maille: "DEPT",
             territoire_code: "DEPT-34",
-            date_meteo: "2021-01-02T00:00:00.000Z",
-            date_commentaire: "2022-01-02T00:00:00.000Z",
+            date_creation: "2021-01-02T00:00:00.000Z",
+            date_modification: "2023-01-02T00:00:00.000Z",
           },
           {
             id: "2e15dc4d-7d59-40a2-96c8-5e1cf3270cf4",
@@ -109,8 +109,8 @@ describe("PrismaSyntheseDesResultatsRepository", () => {
             code_insee: "34",
             maille: "DEPT",
             territoire_code: "DEPT-34",
-            date_meteo: "2020-03-02T00:00:00.000Z",
-            date_commentaire: "2021-04-02T00:00:00.000Z",
+            date_creation: "2020-03-02T00:00:00.000Z",
+            date_modification: "2021-04-02T00:00:00.000Z",
           },
           {
             id: "63a7626e-a4ba-46fd-a9c2-73de73e5d6ba",
@@ -118,8 +118,8 @@ describe("PrismaSyntheseDesResultatsRepository", () => {
             code_insee: "35",
             maille: "DEPT",
             territoire_code: "DEPT-35",
-            date_meteo: "2021-01-02T00:00:00.000Z",
-            date_commentaire: "2022-01-02T00:00:00.000Z",
+            date_creation: "2021-01-02T00:00:00.000Z",
+            date_modification: "2022-01-02T00:00:00.000Z",
           },
           {
             id: "34b20967-95d0-4716-8a80-90a905676999",
@@ -127,8 +127,8 @@ describe("PrismaSyntheseDesResultatsRepository", () => {
             code_insee: "01",
             maille: "REG",
             territoire_code: "REG-01",
-            date_meteo: "2021-01-02T00:00:00.000Z",
-            date_commentaire: "2022-01-02T00:00:00.000Z",
+            date_creation: "2021-01-02T00:00:00.000Z",
+            date_modification: "2022-01-02T00:00:00.000Z",
           },
           {
             id: "71f69f33-d95b-47ca-909d-126810ccf129",
@@ -136,8 +136,8 @@ describe("PrismaSyntheseDesResultatsRepository", () => {
             code_insee: "36",
             maille: "DEPT",
             territoire_code: "DEPT-36",
-            date_meteo: "2021-01-02T00:00:00.000Z",
-            date_commentaire: "2022-01-02T00:00:00.000Z",
+            date_creation: "2021-01-02T00:00:00.000Z",
+            date_modification: "2022-01-02T00:00:00.000Z",
           },
         ],
       });
@@ -151,20 +151,20 @@ describe("PrismaSyntheseDesResultatsRepository", () => {
       // Then
       expect([...result.keys()]).toStrictEqual(["CH-001", "CH-002"]);
       expect(result.get("CH-001")?.at(0)?.dateMeteo).toEqual(
-        "2023-02-02T00:00:00.000Z",
+        "2024-01-02T00:00:00.000Z",
       );
       expect(result.get("CH-001")?.at(0)?.dateCommentaire).toEqual(
         "2024-01-02T00:00:00.000Z",
       );
       expect(result.get("CH-001")?.at(1)?.dateMeteo).toEqual(
-        "2021-01-02T00:00:00.000Z",
+        "2023-01-02T00:00:00.000Z",
       );
       expect(result.get("CH-001")?.at(1)?.dateCommentaire).toEqual(
-        "2022-01-02T00:00:00.000Z",
+        "2023-01-02T00:00:00.000Z",
       );
 
       expect(result.get("CH-002")?.at(0)?.dateMeteo).toEqual(
-        "2020-03-02T00:00:00.000Z",
+        "2021-04-02T00:00:00.000Z",
       );
       expect(result.get("CH-002")?.at(0)?.dateCommentaire).toEqual(
         "2021-04-02T00:00:00.000Z",

@@ -187,7 +187,8 @@ describe("ImportSyntheseDesResultatsAPIHandler", () => {
     );
     // Vérifie que la valeur open API est bien transformée en valeur interne
     expect(synthesesEnBase[0].meteo).toEqual("SOLEIL");
-    expect(synthesesEnBase[0].auteur_id).toEqual(auteurId);
+    expect(synthesesEnBase[0].auteur_creation_id).toEqual(auteurId);
+    expect(synthesesEnBase[0].auteur_modification_id).toEqual(auteurId);
   });
 
   it("retourne 400 quand le JSON est invalide", async () => {

@@ -30,11 +30,10 @@ export class PrismaSynthèseDesRésultatsRepository implements SynthèseDesRésu
         NOT: [
           {
             commentaire: null,
-            date_commentaire: null,
           },
         ],
       },
-      orderBy: { date_commentaire: "desc" },
+      orderBy: { date_modification: "desc" },
     });
 
     if (result === null) {

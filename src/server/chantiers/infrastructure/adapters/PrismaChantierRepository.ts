@@ -154,7 +154,7 @@ export class PrismaChantierRepository implements ChantierRepository {
           include: {
             syntheses_des_resultats: {
               orderBy: {
-                date_commentaire: "desc",
+                date_modification: "desc",
               },
               take: 1,
             },
@@ -179,7 +179,7 @@ export class PrismaChantierRepository implements ChantierRepository {
           include: {
             syntheses_des_resultats: {
               orderBy: {
-                date_commentaire: "desc",
+                date_modification: "desc",
               },
               take: 1,
             },
@@ -556,7 +556,7 @@ export class PrismaChantierRepository implements ChantierRepository {
                 include: {
                   syntheses_des_resultats: {
                     orderBy: {
-                      date_commentaire: "desc",
+                      date_modification: "desc",
                     },
                     take: 1,
                   },

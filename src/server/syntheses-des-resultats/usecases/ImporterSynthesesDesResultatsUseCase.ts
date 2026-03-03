@@ -31,9 +31,11 @@ export class ImporterSynthesesDesResultatsUseCase {
         territoireCode: synthese.territoire,
         id,
         contenu: synthese.contenu,
-        auteur_id: auteurId,
+        auteur_creation_id: auteurId,
+        auteur_modification_id: auteurId,
         météo: synthese.meteo as MétéoSaisissable,
-        date,
+        date_creation: date.toISOString(),
+        date_modification: date.toISOString(),
       };
 
       await this.dependencies.synthèseDesRésultatsRepository.save(synthèseV2);

@@ -25,8 +25,8 @@ export class PrismaSyntheseDesResultatsRepository implements SyntheseDesResultat
     return result.reduce((acc, val) => {
       const syntheseDesResultats =
         SyntheseDesResultats.creerSyntheseDesResultats({
-          dateMeteo: val.date_meteo?.toISOString() || "",
-          dateCommentaire: val.date_commentaire?.toISOString() || "",
+          dateMeteo: val.date_modification?.toISOString() || "",
+          dateCommentaire: val.date_modification?.toISOString() || "",
         });
 
       acc.set(val.chantier_id, [
