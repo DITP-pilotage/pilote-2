@@ -15,13 +15,14 @@ describe("RecupererRapportHebdomadaireQuery", () => {
   });
 
   it(
-    "retourne le détail complet du rapport avec le contenuRapport parsé",
+    "retourne le détail complet du rapport avec les chantiers et indicateurs triés par identifiant",
     createIntegrationTest(async () => {
       // Given
       const coordinateur = await fixtures.utilisateur({
         profilCode: "COORDINATEUR_REGION",
       });
 
+      // chantiers and indicateurs are stored in non-id order, and nom is opposite to id order
       const contenuRapport: ContenuRapport = {
         coordinateur: {
           id: coordinateur.id,
@@ -39,32 +40,31 @@ describe("RecupererRapportHebdomadaireQuery", () => {
           ],
         },
         sectionActiviteComptes: {
-          comptesCrees: [
-            {
-              email: "test@example.com",
-              nom: "Test",
-              prenom: "User",
-              profil: "PREFET_REGION",
-              territoires: [
-                {
-                  code: "REG-11",
-                  nom: "Île-de-France",
-                  maille: "REG",
-                  enfants: [],
-                },
-              ],
-            },
-          ],
+          comptesCrees: [],
           comptesDesactives: [],
         },
         sectionActiviteChantiers: [
           {
-            id: "CH-001",
-            nom: "Chantier Test",
+            id: "CH-002",
+            nom: "Chantier A",
             indicateurs: [
               {
+                id: "IND-002",
+                nom: "Indicateur A",
+                territoires: [
+                  {
+                    code: "REG-11",
+                    nom: "Île-de-France",
+                    typeValeur: "VALEUR_AVANCEMENT",
+                    valeur: 50,
+                    dateValeur: "2024-01-15",
+                    dateEvenement: "2024-01-16",
+                  },
+                ],
+              },
+              {
                 id: "IND-001",
-                nom: "Indicateur Test",
+                nom: "Indicateur Z",
                 territoires: [
                   {
                     code: "REG-11",
@@ -75,6 +75,17 @@ describe("RecupererRapportHebdomadaireQuery", () => {
                     dateEvenement: "2024-01-16",
                   },
                 ],
+              },
+            ],
+          },
+          {
+            id: "CH-001",
+            nom: "Chantier Z",
+            indicateurs: [
+              {
+                id: "IND-003",
+                nom: "Indicateur Unique",
+                territoires: [],
               },
             ],
           },
@@ -99,7 +110,56 @@ describe("RecupererRapportHebdomadaireQuery", () => {
         periodeFin: new Date("2024-01-21"),
         statutEnvoi: "CREE",
         dateCreation: rapport.date_creation,
-        contenuRapport,
+        contenuRapport: {
+          ...contenuRapport,
+          sectionActiviteChantiers: [
+            {
+              id: "CH-001",
+              nom: "Chantier Z",
+              indicateurs: [
+                {
+                  id: "IND-003",
+                  nom: "Indicateur Unique",
+                  territoires: [],
+                },
+              ],
+            },
+            {
+              id: "CH-002",
+              nom: "Chantier A",
+              indicateurs: [
+                {
+                  id: "IND-001",
+                  nom: "Indicateur Z",
+                  territoires: [
+                    {
+                      code: "REG-11",
+                      nom: "Île-de-France",
+                      typeValeur: "VALEUR_AVANCEMENT",
+                      valeur: 75,
+                      dateValeur: "2024-01-15",
+                      dateEvenement: "2024-01-16",
+                    },
+                  ],
+                },
+                {
+                  id: "IND-002",
+                  nom: "Indicateur A",
+                  territoires: [
+                    {
+                      code: "REG-11",
+                      nom: "Île-de-France",
+                      typeValeur: "VALEUR_AVANCEMENT",
+                      valeur: 50,
+                      dateValeur: "2024-01-15",
+                      dateEvenement: "2024-01-16",
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
       });
     }),
   );

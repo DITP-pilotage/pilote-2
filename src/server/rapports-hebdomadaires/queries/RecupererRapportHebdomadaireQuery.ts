@@ -34,13 +34,25 @@ export class RecupererRapportHebdomadaireQuery {
       throw new NotFoundError("Rapport hebdomadaire non trouvé");
     }
 
+    const contenuRapport = contenuRapportSchema.parse(rapport.contenu_rapport);
+
+    contenuRapport.sectionActiviteChantiers.sort((chantier1, chantier2) =>
+      chantier1.id.localeCompare(chantier2.id, "fr"),
+    );
+
+    for (const chantier of contenuRapport.sectionActiviteChantiers) {
+      chantier.indicateurs.sort((indicateur1, indicateur2) =>
+        indicateur1.id.localeCompare(indicateur2.id, "fr"),
+      );
+    }
+
     return {
       id: rapport.id,
       periodeDebut: rapport.date_debut_periode,
       periodeFin: rapport.date_fin_periode,
       statutEnvoi: rapport.statut_envoi,
       dateCreation: rapport.date_creation,
-      contenuRapport: contenuRapportSchema.parse(rapport.contenu_rapport),
+      contenuRapport,
     };
   }
 }
