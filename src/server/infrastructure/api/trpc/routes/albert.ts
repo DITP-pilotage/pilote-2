@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { $Enums } from "@prisma/client";
 import {
   créerRouteurTRPC,
   procédureProtégée,
@@ -14,6 +15,7 @@ export const albertRouter = créerRouteurTRPC({
   chat: procédureProtégée
     .input(
       z.object({
+        chatId: z.string().min(1),
         prompt: z.string().min(1),
       }),
     )
@@ -40,12 +42,29 @@ export const albertRouter = créerRouteurTRPC({
       });
 
       return Albert.generateText({
+        chatId: input.chatId,
         prompt: input.prompt,
         systemPrompt,
         userId: ctx.session.user.id,
         tools: {
           get_synthese_territoire: getSyntheseTerritoire,
         },
+      });
+    }),
+
+  evaluer: procédureProtégée
+    .input(
+      z.object({
+        chatId: z.string().min(1),
+        evaluation: z.nativeEnum($Enums.llm_call_evaluation),
+      }),
+    )
+    .mutation(async ({ input }) => {
+      const container = getContainer("albert");
+      const evaluerChatUseCase = container.resolve("evaluerChatUseCase");
+      await evaluerChatUseCase.execute({
+        chatId: input.chatId,
+        evaluation: input.evaluation,
       });
     }),
 });

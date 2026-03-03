@@ -12,7 +12,10 @@ export async function POST(request: Request) {
   }
 
   try {
-    const { messages } = (await request.json()) as { messages: UIMessage[] };
+    const { id, messages } = (await request.json()) as {
+      id: string;
+      messages: UIMessage[];
+    };
 
     if (!messages || !Array.isArray(messages)) {
       return new Response("Invalid request: messages array required", {
@@ -33,6 +36,7 @@ export async function POST(request: Request) {
     });
 
     const result = await Albert.streamText({
+      chatId: id,
       messages,
       systemPrompt,
       userId: session.user.id,

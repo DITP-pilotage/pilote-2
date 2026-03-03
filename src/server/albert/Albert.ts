@@ -8,7 +8,6 @@ import {
   convertToModelMessages,
 } from "ai";
 import { Prisma } from "@prisma/client";
-import { randomUUID } from "node:crypto";
 import { configuration } from "@/config";
 import { prisma } from "@/server/db/prisma";
 import { SYNTHESE_TERRITOIRE_OUTPUT_FORMAT } from "./tools/getSyntheseTerritoire";
@@ -24,11 +23,13 @@ export class Albert {
   }
 
   static async generateText({
+    chatId,
     prompt,
     systemPrompt,
     tools,
     userId,
   }: {
+    chatId: string;
     prompt: string;
     systemPrompt: string;
     tools?: ToolSet;
@@ -42,12 +43,16 @@ export class Albert {
       prompt: prompt,
       stopWhen: stepCountIs(5),
       onFinish: async (event) => {
-        await prisma.llm_calls.create({
-          data: {
-            id: randomUUID(),
+        await prisma.llm_calls.upsert({
+          where: { id: chatId },
+          create: {
+            id: chatId,
             model: MODEL,
             transcript: event as unknown as Prisma.InputJsonValue,
             utilisateur_id: userId,
+          },
+          update: {
+            transcript: event as unknown as Prisma.InputJsonValue,
           },
         });
       },
@@ -60,11 +65,13 @@ export class Albert {
   }
 
   static async streamText({
+    chatId,
     messages,
     systemPrompt,
     userId,
     tools,
   }: {
+    chatId: string;
     messages: UIMessage[];
     systemPrompt: string;
     userId: string;
@@ -94,12 +101,16 @@ export class Albert {
       tools,
       stopWhen: stepCountIs(5),
       onFinish: async (event) => {
-        await prisma.llm_calls.create({
-          data: {
-            id: randomUUID() as string,
+        await prisma.llm_calls.upsert({
+          where: { id: chatId },
+          create: {
+            id: chatId,
             model: MODEL,
             transcript: event as unknown as Prisma.InputJsonValue,
             utilisateur_id: userId,
+          },
+          update: {
+            transcript: event as unknown as Prisma.InputJsonValue,
           },
         });
       },

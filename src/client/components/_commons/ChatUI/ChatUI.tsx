@@ -3,8 +3,10 @@ import { marked } from "marked";
 import { useChat, Chat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
 import type { UIMessage } from "ai";
+import { $Enums } from "@prisma/client";
 import { clsxm } from "@/utils/clsxm";
 import { ArrowLineIcon } from "@/components/_commons/Icones/ArrowLineIcon";
+import { useEvaluerChat } from "@/components/_commons/ChatUI/useEvaluerChat";
 
 const extractMessageText = (message: UIMessage): string => {
   if (!message.parts) return "";
@@ -110,6 +112,14 @@ export const ChatUI = ({
 
   const { messages, sendMessage, status, error } = useChat({
     chat: chatRef.current,
+  });
+
+  const {
+    evaluer,
+    evaluationEnvoyee,
+    isLoading: isEvaluationLoading,
+  } = useEvaluerChat({
+    chatId: chatRef.current.id,
   });
 
   useEffect(() => {
@@ -274,6 +284,36 @@ export const ChatUI = ({
           <div ref={messagesEndRef} />
         </div>
       </div>
+
+      {messages.length > 0 && status === "ready" && (
+        <div className="shrink-0 border-t border-gray-100 px-4 py-2 bg-white">
+          <div className="max-w-3xl mx-auto flex items-center gap-3 text-sm text-gray-500">
+            {evaluationEnvoyee === null ? (
+              <>
+                <span>Trouvez-vous l'assistant utile ?</span>
+                <button
+                  className="rounded-full border border-gray-300 px-3 py-1 hover:bg-gray-100 transition-colors disabled:opacity-50"
+                  disabled={isEvaluationLoading}
+                  onClick={() => evaluer($Enums.llm_call_evaluation.POSITIVE)}
+                  type="button"
+                >
+                  Oui
+                </button>
+                <button
+                  className="rounded-full border border-gray-300 px-3 py-1 hover:bg-gray-100 transition-colors disabled:opacity-50"
+                  disabled={isEvaluationLoading}
+                  onClick={() => evaluer($Enums.llm_call_evaluation.NEGATIVE)}
+                  type="button"
+                >
+                  Non
+                </button>
+              </>
+            ) : (
+              <span>Merci pour votre retour !</span>
+            )}
+          </div>
+        </div>
+      )}
 
       <div className="shrink-0 border-t border-gray-100 p-4 bg-white">
         <form className="max-w-3xl mx-auto relative" onSubmit={handleSubmit}>
