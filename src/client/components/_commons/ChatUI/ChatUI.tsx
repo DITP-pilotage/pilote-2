@@ -4,8 +4,12 @@ import { useChat, Chat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
 import type { UIMessage } from "ai";
 import { $Enums } from "@prisma/client";
+import { Dialog } from "radix-ui";
+import { FormProvider, useForm } from "react-hook-form";
 import { clsxm } from "@/utils/clsxm";
 import { ArrowLineIcon } from "@/components/_commons/Icones/ArrowLineIcon";
+import { Modale } from "@/components/shared/Modale";
+import TextAreaAvecLabel from "@/components/_commons/TextAreaAvecLabel/TextAreaAvecLabel";
 import api from "@/server/infrastructure/api/trpc/api";
 
 const extractMessageText = (message: UIMessage): string => {
@@ -104,6 +108,7 @@ export const ChatUI = ({
   const [input, setInput] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const hasSubmittedInitialMessage = useRef(false);
+  const feedbackForm = useForm<{ commentaire: string }>();
   const chatRef = useRef(
     new Chat({
       transport: new DefaultChatTransport({ api: endpoint }),
@@ -298,19 +303,40 @@ export const ChatUI = ({
                 >
                   Oui
                 </button>
-                <button
-                  className="rounded-full border border-gray-300 px-3 py-1 hover:bg-gray-100 transition-colors disabled:opacity-50"
-                  disabled={evaluerMutation.isPending}
-                  onClick={() =>
-                    evaluerMutation.mutate({
-                      chatId: chatRef.current.id,
-                      evaluation: $Enums.llm_call_evaluation.NEGATIVE,
-                    })
+                <Modale
+                  size="sm"
+                  title="Aidez-nous à améliorer l'assistant"
+                  trigger={
+                    <button
+                      className="rounded-full border border-gray-300 px-3 py-1 hover:bg-gray-100 transition-colors disabled:opacity-50"
+                      disabled={evaluerMutation.isPending}
+                      type="button"
+                    >
+                      Non
+                    </button>
                   }
-                  type="button"
                 >
-                  Non
-                </button>
+                  <FormProvider {...feedbackForm}>
+                    <TextAreaAvecLabel
+                      htmlName="commentaire"
+                      libellé="Qu'est-ce qui n'allait pas ?"
+                      register={feedbackForm.register("commentaire")}
+                    />
+                    <div className="flex justify-end gap-2 mt-4">
+                      <Dialog.Close asChild>
+                        <button
+                          className="fr-btn fr-btn--secondary"
+                          type="button"
+                        >
+                          Annuler
+                        </button>
+                      </Dialog.Close>
+                      <button className="fr-btn" type="button">
+                        Envoyer
+                      </button>
+                    </div>
+                  </FormProvider>
+                </Modale>
               </>
             ) : (
               <span>Merci pour votre retour !</span>
