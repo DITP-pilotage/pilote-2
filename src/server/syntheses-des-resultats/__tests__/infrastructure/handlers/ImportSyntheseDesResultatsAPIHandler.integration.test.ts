@@ -155,7 +155,7 @@ describe("ImportSyntheseDesResultatsAPIHandler", () => {
         {
           territoire: "NAT-FR",
           contenu: "Contenu de la synthèse de test",
-          meteo: "SOLEIL",
+          meteo: "OBJECTIF_SECURISE",
         },
       ],
     };
@@ -185,6 +185,7 @@ describe("ImportSyntheseDesResultatsAPIHandler", () => {
     expect(synthesesEnBase[0].commentaire).toEqual(
       "Contenu de la synthèse de test",
     );
+    // Vérifie que la valeur open API est bien transformée en valeur interne
     expect(synthesesEnBase[0].meteo).toEqual("SOLEIL");
     expect(synthesesEnBase[0].auteur_id).toEqual(auteurId);
   });
@@ -246,7 +247,7 @@ describe("ImportSyntheseDesResultatsAPIHandler", () => {
         {
           territoire: "NAT-FR",
           contenu: "Tentative non autorisée",
-          meteo: "SOLEIL",
+          meteo: "OBJECTIF_SECURISE",
         },
       ],
     };
@@ -323,7 +324,7 @@ describe("ImportSyntheseDesResultatsAPIHandler", () => {
         {
           territoire: "NAT-FR",
           contenu: "Synthèse avec date future",
-          meteo: "SOLEIL",
+          meteo: "OBJECTIF_SECURISE",
           date_synthese: futurDateStr,
         },
       ],
@@ -363,7 +364,7 @@ describe("ImportSyntheseDesResultatsAPIHandler", () => {
         {
           territoire: "REG-84",
           contenu: "Synthèse sur territoire non autorisé",
-          meteo: "SOLEIL",
+          meteo: "OBJECTIF_SECURISE",
         },
       ],
     };

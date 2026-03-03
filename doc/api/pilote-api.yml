@@ -361,7 +361,7 @@ paths:
       description: |-
         Import de synthèses des résultats pour un chantier. Permet d'ajouter plusieurs synthèses en une seule requête.
 
-        Les synthèses sont liées à un territoire (NAT-XX, REG-XX ou DEPT-XX) et nécessitent une météo parmi : `ORAGE`, `NUAGE`, `COUVERT`, `SOLEIL`.
+        Les synthèses sont liées à un territoire (NAT-XX, REG-XX ou DEPT-XX) et nécessitent une météo parmi : `OBJECTIF_COMPROMIS`, `APPUIS_NECESSAIRE`, `OBJECTIF_ATTEIGNABLE`, `OBJECTIF_SECURISE`.
       requestBody:
         required: true
         content:
@@ -1233,11 +1233,11 @@ components:
             id: synthese-meteo
           description: Météo associée à la synthèse.
           enum:
-            - ORAGE
-            - NUAGE
-            - COUVERT
-            - SOLEIL
-          example: SOLEIL
+            - OBJECTIF_COMPROMIS
+            - APPUIS_NECESSAIRE
+            - OBJECTIF_ATTEIGNABLE
+            - OBJECTIF_SECURISE
+          example: OBJECTIF_SECURISE
         date_synthese:
           type: string
           x-stoplight:

@@ -2,12 +2,12 @@ import { APIRequestContext, APIResponse } from "@playwright/test";
 import { ImportCommentaireInput } from "@/validation/import-commentaire";
 import { ImportDecisionStrategiqueInput } from "@/validation/import-decision-strategique";
 import { ImportObjectifInput } from "@/validation/import-objectif";
-import { ImportSyntheseDesResultatsInput } from "@/validation/import-synthese-des-resultats";
+import { ImportSyntheseDesResultatsOpenAPIInput } from "@/validation/import-synthese-des-resultats";
 
 export type CommentaireInput = ImportCommentaireInput;
 export type DecisionStrategiqueInput = ImportDecisionStrategiqueInput;
 export type ObjectifInput = ImportObjectifInput;
-export type SyntheseDesResultatsInput = ImportSyntheseDesResultatsInput;
+export type SyntheseDesResultatsInput = ImportSyntheseDesResultatsOpenAPIInput;
 
 export class OpenApiClient {
   constructor(private readonly apiContext: APIRequestContext) {}
