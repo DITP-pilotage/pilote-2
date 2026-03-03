@@ -129,7 +129,7 @@ describe("SynthèseDesRésultatsSQLRepository ", function () {
             territoire_code: "REG-01",
             commentaire: "Ma synthèse REG-01 2023 ch2",
             date_creation: new Date("2023-12-31"),
-            date_modification: new Date("2022-12-31"),
+            date_modification: new Date("2023-12-31"),
           },
           {
             id: "dc006e87-ce1c-40ad-b127-1fab80b3899e",

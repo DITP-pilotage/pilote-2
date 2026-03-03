@@ -60,16 +60,16 @@ export class SynthèseDesRésultatsSQLRepository implements SynthèseDesRésulta
     >`
       SELECT s.*, utilisateur.prenom as auteur_prenom, utilisateur.nom as auteur_nom
       FROM synthese_des_resultats s
-        LEFT JOIN utilisateur on utilisateur.id = s.auteur_id
+        LEFT JOIN utilisateur on utilisateur.id = s.auteur_modification_id
         INNER JOIN (
-          SELECT chantier_id, maille, code_insee, MAX(date_commentaire) as maxdate
+          SELECT chantier_id, maille, code_insee, MAX(date_modification) as maxdate
           FROM synthese_des_resultats
           WHERE chantier_id = ANY (${chantiersIds})
             AND maille = ${CODES_MAILLES[maille]}
             AND code_insee = ${codeInsee}
           GROUP BY chantier_id, maille, code_insee
         ) s_recentes
-          ON s.date_commentaire = s_recentes.maxdate
+          ON s.date_modification = s_recentes.maxdate
             AND s.chantier_id = s_recentes.chantier_id
             AND s.maille = s_recentes.maille
             AND s.code_insee = s_recentes.code_insee

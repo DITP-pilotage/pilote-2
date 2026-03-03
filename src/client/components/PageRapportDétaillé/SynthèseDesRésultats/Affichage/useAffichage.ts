@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { LIMITE_CARACTÈRES_AFFICHAGE_SYNTHÈSE_DES_RÉSULTATS } from "@/validation/synthèseDesRésultats";
-import { RouterOutputs } from "@/server/infrastructure/api/trpc/trpc.interface";
+import SynthèseDesRésultats from "@/server/domain/chantier/synthèseDesRésultats/SynthèseDesRésultats.interface";
 
 export default function useAffichage(
-  synthèseDesRésultats: RouterOutputs["synthèseDesRésultats"]["récupérerLaPlusRécente"],
+  synthèseDesRésultats: SynthèseDesRésultats,
 ) {
   const [afficherContenuComplet, setAfficherContenuComplet] = useState(false);
   const [afficherBoutonsAffichage, setAfficherBoutonsAffichage] =
