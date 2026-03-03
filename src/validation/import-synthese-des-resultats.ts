@@ -1,5 +1,21 @@
 import { z } from "zod";
-import { météosSaisissables } from "@/server/domain/météo/Météo.interface";
+import { MétéoSaisissable } from "@/server/domain/météo/Météo.interface";
+
+export const météosOpenAPI = [
+  "OBJECTIF_COMPROMIS",
+  "APPUIS_NECESSAIRE",
+  "OBJECTIF_ATTEIGNABLE",
+  "OBJECTIF_SECURISE",
+] as const;
+
+export type MétéoOpenAPI = (typeof météosOpenAPI)[number];
+
+export const méteoOpenAPIVersInterne: Record<MétéoOpenAPI, MétéoSaisissable> = {
+  OBJECTIF_COMPROMIS: "ORAGE",
+  APPUIS_NECESSAIRE: "NUAGE",
+  OBJECTIF_ATTEIGNABLE: "COUVERT",
+  OBJECTIF_SECURISE: "SOLEIL",
+};
 
 export const importSyntheseDesResultatsSchema = z.object({
   territoire: z
@@ -12,11 +28,13 @@ export const importSyntheseDesResultatsSchema = z.object({
     .string()
     .min(1, "Le contenu ne peut pas être vide")
     .max(10000, "Le contenu ne peut pas dépasser 10000 caractères"),
-  meteo: z.enum(météosSaisissables, {
-    errorMap: () => ({
-      message: `La météo doit être l'une des suivantes : ${météosSaisissables.join(", ")}`,
-    }),
-  }),
+  meteo: z
+    .enum(météosOpenAPI, {
+      errorMap: () => ({
+        message: `La météo doit être l'une des suivantes : ${météosOpenAPI.join(", ")}`,
+      }),
+    })
+    .transform((valeur) => méteoOpenAPIVersInterne[valeur]),
   date_synthese: z
     .string()
     .regex(/^\d{4}-\d{2}-\d{2}$/, "Le format de la date doit être YYYY-MM-DD")
@@ -42,5 +60,9 @@ export const importSynthesesDesResultatsSchema = z.object({
 });
 
 export type ImportSyntheseDesResultatsInput = z.infer<
+  typeof importSyntheseDesResultatsSchema
+>;
+
+export type ImportSyntheseDesResultatsOpenAPIInput = z.input<
   typeof importSyntheseDesResultatsSchema
 >;

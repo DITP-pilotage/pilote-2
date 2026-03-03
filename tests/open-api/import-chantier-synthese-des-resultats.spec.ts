@@ -21,7 +21,7 @@ test("Import de synthèses des résultats via l'API open-api", async ({
       {
         territoire: "NAT-FR",
         contenu: "Contenu de la synthèse de test e2e",
-        meteo: "SOLEIL",
+        meteo: "OBJECTIF_SECURISE",
       },
     ];
 
@@ -44,7 +44,7 @@ test("Import de synthèses des résultats via l'API open-api", async ({
       {
         territoire: "NAT-FR",
         contenu: "Synthèse avec date antérieure",
-        meteo: "NUAGE",
+        meteo: "APPUIS_NECESSAIRE",
         date_synthese: "2024-01-15",
       },
     ];
@@ -66,12 +66,12 @@ test("Import de synthèses des résultats via l'API open-api", async ({
       {
         territoire: "NAT-FR",
         contenu: "Première synthèse",
-        meteo: "SOLEIL",
+        meteo: "OBJECTIF_SECURISE",
       },
       {
         territoire: "NAT-FR",
         contenu: "Deuxième synthèse",
-        meteo: "ORAGE",
+        meteo: "OBJECTIF_COMPROMIS",
         date_synthese: "2024-06-01",
       },
     ];
@@ -97,7 +97,7 @@ test("Import de synthèses des résultats via l'API open-api", async ({
       {
         territoire: "NAT-FR",
         contenu: "Synthèse avec date future",
-        meteo: "SOLEIL",
+        meteo: "OBJECTIF_SECURISE",
         date_synthese: futurDateStr,
       },
     ];
@@ -143,7 +143,7 @@ test("Import de synthèses des résultats via l'API open-api", async ({
       {
         territoire: "NAT-FR",
         contenu: "Tentative sur chantier non autorisé",
-        meteo: "SOLEIL",
+        meteo: "OBJECTIF_SECURISE",
       },
     ];
 
