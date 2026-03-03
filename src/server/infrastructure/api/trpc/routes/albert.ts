@@ -72,7 +72,10 @@ export const albertRouter = créerRouteurTRPC({
       await evaluerChatUseCase.execute({
         chatId: input.chatId,
         evaluation: input.evaluation,
-        commentaire: input.evaluation === $Enums.llm_call_evaluation.NEGATIVE ? input.commentaire : undefined,
+        commentaire:
+          input.evaluation === $Enums.llm_call_evaluation.NEGATIVE
+            ? input.commentaire
+            : undefined,
       });
     }),
 });

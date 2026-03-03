@@ -59,10 +59,7 @@ export const FeedbackNegatifModale = ({
         />
         <div className="flex justify-end gap-2 mt-4">
           <Dialog.Close asChild>
-            <Bouton
-              label="Annuler"
-              variant="secondary"
-            />
+            <Bouton label="Annuler" variant="secondary" />
           </Dialog.Close>
           <Bouton
             disabled={evaluerMutation.isPending}
