@@ -29,7 +29,9 @@ const estAdministrateurOuPilotage = (session: Session) => {
   );
 };
 
-const estAutoriséAAccéderAuxRapportsHebdomadaires = (session: Session | null) => {
+const estAutoriseAAccederAuxRapportsHebdomadaires = (
+  session: Session | null,
+) => {
   if (!session) {
     return false;
   }
@@ -85,7 +87,7 @@ export const NavigationPilote = () => {
           lien: "/rapports-hebdomadaires",
           matcher: "/rapports-hebdomadaires",
           accessible:
-            estAutoriséAAccéderAuxRapportsHebdomadaires(session) &&
+            estAutoriseAAccederAuxRapportsHebdomadaires(session) &&
             process.env.NEXT_PUBLIC_FF_RAPPORT_COORDINATEURS === "true",
           prefetch: false,
           target: "_self",
