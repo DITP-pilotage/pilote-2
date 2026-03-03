@@ -4,6 +4,7 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
+chardet = "~=5.2.0"
 dbt-core = "~=1.9.10"
 dbt-duckdb = "~=1.9.0"
 dbt-postgres = "~=1.9.0"
