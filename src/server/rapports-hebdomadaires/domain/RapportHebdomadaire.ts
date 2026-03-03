@@ -27,15 +27,7 @@ export function creerRapportHebdomadaire(params: {
   comptesDesactives: CompteActivite[];
   chantiers: SectionChantier[];
   dateCreation: Date;
-}): RapportHebdomadaire | null {
-  const hasAccountActivity =
-    params.comptesCrees.length > 0 || params.comptesDesactives.length > 0;
-  const hasVAActivity = params.chantiers.length > 0;
-
-  if (!hasAccountActivity && !hasVAActivity) {
-    return null;
-  }
-
+}): RapportHebdomadaire {
   return {
     id: randomUUID(),
     coordinateur: params.coordinateur,

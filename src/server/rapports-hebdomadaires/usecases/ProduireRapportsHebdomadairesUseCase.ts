@@ -104,10 +104,6 @@ export class ProduireRapportsHebdomadairesUseCase {
       dateCreation: maintenant,
     });
 
-    if (!rapport) {
-      return null;
-    }
-
     await this.deps.rapportRepository.sauvegarder(rapport);
 
     logger.info("Rapport créé", {
