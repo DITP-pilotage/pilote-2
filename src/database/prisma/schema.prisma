@@ -784,6 +784,7 @@ model llm_calls {
   transcript     Json
   model          String
   evaluation     llm_call_evaluation?
+  commentaire    String?
   created_at     DateTime             @default(now())
 
   utilisateur utilisateur @relation(fields: [utilisateur_id], references: [id])

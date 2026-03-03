@@ -4,12 +4,9 @@ import { useChat, Chat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
 import type { UIMessage } from "ai";
 import { $Enums } from "@prisma/client";
-import { Dialog } from "radix-ui";
-import { FormProvider, useForm } from "react-hook-form";
 import { clsxm } from "@/utils/clsxm";
 import { ArrowLineIcon } from "@/components/_commons/Icones/ArrowLineIcon";
-import { Modale } from "@/components/shared/Modale";
-import TextAreaAvecLabel from "@/components/_commons/TextAreaAvecLabel/TextAreaAvecLabel";
+import { FeedbackNegatifModale } from "@/components/_commons/ChatUI/FeedbackNegatifModale";
 import api from "@/server/infrastructure/api/trpc/api";
 
 const extractMessageText = (message: UIMessage): string => {
@@ -106,9 +103,9 @@ export const ChatUI = ({
   initialMessage?: string;
 }) => {
   const [input, setInput] = useState("");
+  const [evaluationSoumise, setEvaluationSoumise] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const hasSubmittedInitialMessage = useRef(false);
-  const feedbackForm = useForm<{ commentaire: string }>();
   const chatRef = useRef(
     new Chat({
       transport: new DefaultChatTransport({ api: endpoint }),
@@ -119,7 +116,9 @@ export const ChatUI = ({
     chat: chatRef.current,
   });
 
-  const evaluerMutation = api.albert.evaluer.useMutation();
+  const evaluerMutation = api.albert.evaluer.useMutation({
+    onSuccess: () => setEvaluationSoumise(true),
+  });
 
   useEffect(() => {
     if (messages.length > 0) {
@@ -287,7 +286,7 @@ export const ChatUI = ({
       {messages.length > 0 && status === "ready" && (
         <div className="shrink-0 border-t border-gray-100 px-4 py-2 bg-white">
           <div className="max-w-3xl mx-auto flex items-center gap-3 text-sm text-gray-500">
-            {!evaluerMutation.isSuccess ? (
+            {!evaluationSoumise ? (
               <>
                 <span>Trouvez-vous l'assistant utile ?</span>
                 <button
@@ -303,40 +302,11 @@ export const ChatUI = ({
                 >
                   Oui
                 </button>
-                <Modale
-                  size="sm"
-                  title="Aidez-nous à améliorer l'assistant"
-                  trigger={
-                    <button
-                      className="rounded-full border border-gray-300 px-3 py-1 hover:bg-gray-100 transition-colors disabled:opacity-50"
-                      disabled={evaluerMutation.isPending}
-                      type="button"
-                    >
-                      Non
-                    </button>
-                  }
-                >
-                  <FormProvider {...feedbackForm}>
-                    <TextAreaAvecLabel
-                      htmlName="commentaire"
-                      libellé="Qu'est-ce qui n'allait pas ?"
-                      register={feedbackForm.register("commentaire")}
-                    />
-                    <div className="flex justify-end gap-2 mt-4">
-                      <Dialog.Close asChild>
-                        <button
-                          className="fr-btn fr-btn--secondary"
-                          type="button"
-                        >
-                          Annuler
-                        </button>
-                      </Dialog.Close>
-                      <button className="fr-btn" type="button">
-                        Envoyer
-                      </button>
-                    </div>
-                  </FormProvider>
-                </Modale>
+                <FeedbackNegatifModale
+                  chatId={chatRef.current.id}
+                  disabled={evaluerMutation.isPending}
+                  onSuccess={() => setEvaluationSoumise(true)}
+                />
               </>
             ) : (
               <span>Merci pour votre retour !</span>
