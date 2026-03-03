@@ -113,7 +113,7 @@ describe("ProduireRapportsHebdomadairesUseCase", () => {
   );
 
   it(
-    "ne crée pas de rapport pour les coordinateurs sans activité",
+    "crée un rapport avec sections vides pour les coordinateurs sans activité",
     createIntegrationTest(async () => {
       // Given
       const coordinateur = await fixtures.utilisateur({
@@ -128,14 +128,26 @@ describe("ProduireRapportsHebdomadairesUseCase", () => {
       const result = await useCase.run();
 
       // Then
-      expect(result.rapportsCrees).toBe(0);
-      expect(result.coordinateursSansActivite).toBe(1);
+      expect(result.rapportsCrees).toBe(1);
+      expect(result.coordinateursSansActivite).toBe(0);
 
       const prisma = getPrisma();
       const rapports = await prisma.rapport_hebdomadaire_coordinateur.findMany({
         where: { coordinateur_id: coordinateur.id },
       });
-      expect(rapports).toHaveLength(0);
+      expect(rapports).toEqual([
+        expect.objectContaining({
+          coordinateur_id: coordinateur.id,
+          statut_envoi: "CREE",
+          contenu_rapport: expect.objectContaining({
+            sectionActiviteComptes: expect.objectContaining({
+              comptesCrees: [],
+              comptesDesactives: [],
+            }),
+            sectionActiviteChantiers: [],
+          }),
+        }),
+      ]);
     }),
   );
 
@@ -409,7 +421,7 @@ describe("ProduireRapportsHebdomadairesUseCase", () => {
   );
 
   it(
-    "ne crée pas de rapport si le coordinateur n'a pas de chantiers habilités",
+    "crée un rapport si le coordinateur n'a pas de chantiers habilités",
     createIntegrationTest(async () => {
       const coordinateur = await fixtures.utilisateur({
         profilCode: "COORDINATEUR_DEPARTEMENT",
@@ -422,8 +434,8 @@ describe("ProduireRapportsHebdomadairesUseCase", () => {
 
       const result = await useCase.run();
 
-      expect(result.rapportsCrees).toBe(0);
-      expect(result.coordinateursSansActivite).toBe(1);
+      expect(result.rapportsCrees).toBe(1);
+      expect(result.coordinateursSansActivite).toBe(0);
     }),
   );
 
@@ -529,8 +541,20 @@ describe("ProduireRapportsHebdomadairesUseCase", () => {
 
       const result = await useCase.run();
 
-      expect(result.coordinateursSansActivite).toBe(1);
-      expect(result.rapportsCrees).toBe(0);
+      expect(result.rapportsCrees).toBe(1);
+      expect(result.coordinateursSansActivite).toBe(0);
+
+      const prisma = getPrisma();
+      const rapports = await prisma.rapport_hebdomadaire_coordinateur.findMany({
+        where: { coordinateur_id: coordinateur.id },
+      });
+      expect(rapports).toEqual([
+        expect.objectContaining({
+          contenu_rapport: expect.objectContaining({
+            sectionActiviteChantiers: [],
+          }),
+        }),
+      ]);
     }),
   );
 
@@ -582,8 +606,8 @@ describe("ProduireRapportsHebdomadairesUseCase", () => {
 
       const result = await useCase.run();
 
-      expect(result.coordinateursSansActivite).toBe(1);
-      expect(result.rapportsCrees).toBe(0);
+      expect(result.rapportsCrees).toBe(1);
+      expect(result.coordinateursSansActivite).toBe(0);
     }),
   );
 
@@ -635,8 +659,8 @@ describe("ProduireRapportsHebdomadairesUseCase", () => {
 
       const result = await useCase.run();
 
-      expect(result.coordinateursSansActivite).toBe(1);
-      expect(result.rapportsCrees).toBe(0);
+      expect(result.rapportsCrees).toBe(1);
+      expect(result.coordinateursSansActivite).toBe(0);
     }),
   );
 });
