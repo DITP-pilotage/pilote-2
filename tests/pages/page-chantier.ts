@@ -3,6 +3,7 @@ import { randomUUID } from "node:crypto";
 import { BasePage } from "./base.page";
 import { PageMiseAJourDonnees } from "./page-mise-a-jour-donnees";
 import { HeaderComponent } from "../components/header.component";
+import { PvaIndicateurComponent } from "../components/pva-indicateur.component";
 
 export class PageChantier extends BasePage {
   readonly header: HeaderComponent;
@@ -31,6 +32,24 @@ export class PageChantier extends BasePage {
     territoireCode: string,
   ): Promise<void> {
     await this.page.goto(`/chantier/CH-${chantierId}/${territoireCode}`);
+    await expect(
+      this.page.getByRole("heading", { name: /Avancement du chantier/ }),
+    ).toBeVisible();
+  }
+
+  async expandAutresIndicateurs(): Promise<void> {
+    const accordionButton = this.page.getByRole("button", {
+      name: /Autres indicateurs/,
+    });
+    const isExpanded =
+      await accordionButton.getAttribute("aria-expanded");
+    if (isExpanded !== "true") {
+      await accordionButton.click();
+    }
+  }
+
+  getIndicateurPva(indicateurId: string): PvaIndicateurComponent {
+    return new PvaIndicateurComponent(this.page, indicateurId);
   }
 
   async expectStructure(): Promise<void> {

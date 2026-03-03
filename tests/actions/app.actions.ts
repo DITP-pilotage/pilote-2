@@ -25,6 +25,14 @@ export class AppActions {
     return new PageAccueil(this.page);
   }
 
+  async switchUser(
+    username: string,
+    password = process.env.DEV_PASSWORD!,
+  ): Promise<PageAccueil> {
+    await this.page.context().clearCookies();
+    return this.loginAs(username, password);
+  }
+
   private async dismissPostLoginModals(): Promise<void> {
     const videoModal = this.page
       .getByRole("dialog")
