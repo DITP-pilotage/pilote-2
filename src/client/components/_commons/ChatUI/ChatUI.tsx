@@ -2,14 +2,34 @@ import { FormEvent, useEffect, useRef, useState } from "react";
 import { marked } from "marked";
 import { useChat, Chat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
-import type { UIMessage } from "ai";
 import { $Enums } from "@prisma/client";
+import type { UIMessage, UIDataTypes, ToolUIPart } from "ai";
+import type { DisplayChoice } from "@/server/albert/Albert";
+import type { GetSyntheseTerritoireOutput } from "@/server/albert/tools/getSyntheseTerritoire";
 import { clsxm } from "@/utils/clsxm";
 import { ArrowLineIcon } from "@/components/_commons/Icones/ArrowLineIcon";
 import { FeedbackNegatifModale } from "@/components/_commons/ChatUI/FeedbackNegatifModale";
 import api from "@/server/infrastructure/api/trpc/api";
 
-const extractMessageText = (message: UIMessage): string => {
+type PiloteUITools = {
+  display_choices: {
+    input: { choices: DisplayChoice[] };
+    output: { choices: DisplayChoice[] };
+  };
+  get_synthese_territoire: {
+    input: { territoire_code: string };
+    output: GetSyntheseTerritoireOutput;
+  };
+};
+
+type PiloteUIMessage = UIMessage<unknown, UIDataTypes, PiloteUITools>;
+
+type SyntheseTerritoireToolPart = Extract<
+  ToolUIPart<PiloteUITools>,
+  { type: "tool-get_synthese_territoire" }
+>;
+
+const extractMessageText = (message: PiloteUIMessage): string => {
   if (!message.parts) return "";
   return message.parts
     .map((part) => {
@@ -21,45 +41,44 @@ const extractMessageText = (message: UIMessage): string => {
     .join("");
 };
 
-type ToolPart = {
-  type: string;
-  state?:
-    | "input-streaming"
-    | "input-available"
-    | "output-streaming"
-    | "output-available"
-    | "output-error";
-  input?: unknown;
-  output?: unknown;
-  error?: string;
-};
-
-const isToolPart = (part: unknown): part is ToolPart => {
-  if (typeof part !== "object" || part === null) return false;
-  const typedPart = part as { type?: string };
+const ChoicesButtons = ({
+  choices,
+  onChoiceClick,
+}: {
+  choices: DisplayChoice[];
+  onChoiceClick: (value: string) => void;
+}) => {
   return (
-    typeof typedPart.type === "string" &&
-    (typedPart.type.startsWith("tool-") || typedPart.type === "dynamic-tool")
+    <div className="flex flex-wrap gap-2 my-2">
+      {choices.map((choice) => (
+        <button
+          className="rounded-full border border-primary text-primary px-3 py-1 text-sm hover:bg-primary hover:text-white transition-colors"
+          key={choice.value}
+          onClick={() => onChoiceClick(choice.label)}
+          type="button"
+        >
+          {choice.label}
+        </button>
+      ))}
+    </div>
   );
 };
 
-const ToolCallIndicator = ({ part }: { part: ToolPart }) => {
-  const getToolName = () => {
-    if (part.type === "dynamic-tool") return "outil";
-    return part.type.replace("tool-", "").replace(/_/g, " ");
-  };
-
+const ToolCallIndicator = ({ part }: { part: SyntheseTerritoireToolPart }) => {
   const getIndicatorContent = () => {
-    const input = part.input as { territoire_code?: string } | undefined;
-    const output = part.output as { territoire_nom?: string } | undefined;
-    const territoireCode = input?.territoire_code || "";
-    const territoireNom = output?.territoire_nom || territoireCode;
+    const territoireCode =
+      part.state !== "input-streaming"
+        ? (part.input?.territoire_code ?? "")
+        : "";
+    const territoireNom =
+      part.state === "output-available"
+        ? (part.output?.territoire_nom ?? territoireCode)
+        : territoireCode;
 
     if (part.state === "output-error") {
       return (
         <span className="text-red-400">
-          Erreur lors de l'appel de {getToolName()}
-          {part.error ? `: ${part.error}` : ""}
+          Erreur lors de la récupération des données du territoire
         </span>
       );
     }
@@ -107,12 +126,12 @@ export const ChatUI = ({
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const hasSubmittedInitialMessage = useRef(false);
   const chatRef = useRef(
-    new Chat({
-      transport: new DefaultChatTransport({ api: endpoint }),
+    new Chat<PiloteUIMessage>({
+      transport: new DefaultChatTransport<PiloteUIMessage>({ api: endpoint }),
     }),
   );
 
-  const { messages, sendMessage, status, error } = useChat({
+  const { messages, sendMessage, status, error } = useChat<PiloteUIMessage>({
     chat: chatRef.current,
   });
 
@@ -231,6 +250,12 @@ export const ChatUI = ({
                 ) : (
                   <div className="text-sm text-gray-900">
                     {message.parts?.map((part, index) => {
+                      if (part.type === "tool-get_synthese_territoire") {
+                        return <ToolCallIndicator key={index} part={part} />;
+                      }
+                      return null;
+                    })}
+                    {message.parts?.map((part, index) => {
                       if (part.type === "text") {
                         return (
                           <div
@@ -244,8 +269,20 @@ export const ChatUI = ({
                           />
                         );
                       }
-                      if (isToolPart(part)) {
-                        return <ToolCallIndicator key={index} part={part} />;
+                      return null;
+                    })}
+                    {message.parts?.map((part, index) => {
+                      if (part.type === "tool-display_choices") {
+                        if (part.state !== "output-available") return null;
+                        return (
+                          <ChoicesButtons
+                            choices={part.output.choices}
+                            key={index}
+                            onChoiceClick={(value) =>
+                              sendMessage({ text: value })
+                            }
+                          />
+                        );
                       }
                       return null;
                     })}

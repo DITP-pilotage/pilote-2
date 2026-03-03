@@ -1,6 +1,6 @@
 import { validateUIMessages } from "ai";
 import { z } from "zod";
-import { Albert } from "@/server/albert/Albert";
+import { Albert, displayChoicesTool } from "@/server/albert/Albert";
 import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
 import { buildChatSystemPrompt } from "@/server/albert/systemPrompt";
 import { getContainer } from "@/server/dependances";
@@ -42,6 +42,7 @@ export async function POST(request: Request) {
       userId: session.user.id,
       tools: {
         get_synthese_territoire: getSyntheseTerritoire,
+        display_choices: displayChoicesTool,
       },
     });
 

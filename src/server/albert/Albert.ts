@@ -3,14 +3,42 @@ import {
   generateText as aiGenerateText,
   streamText as aiStreamText,
   stepCountIs,
+  tool,
   ToolSet,
   UIMessage,
   convertToModelMessages,
 } from "ai";
+import { z } from "zod";
 import { Prisma } from "@prisma/client";
 import { configuration } from "@/config";
 import { prisma } from "@/server/db/prisma";
 import { SYNTHESE_TERRITOIRE_OUTPUT_FORMAT } from "./tools/getSyntheseTerritoire";
+
+const displayChoicesInputSchema = z.object({
+  choices: z
+    .array(
+      z.object({
+        label: z.string().describe("Texte à afficher sur le bouton"),
+        value: z
+          .string()
+          .describe("Valeur à renvoyer lorsque le bouton est cliqué"),
+      }),
+    )
+    .describe("Liste des choix à proposer"),
+});
+
+export type DisplayChoice = z.infer<
+  typeof displayChoicesInputSchema
+>["choices"][number];
+
+export const displayChoicesTool = tool({
+  description:
+    "Affiche des choix sous forme de boutons cliquables pour l'utilisateur. Utilise cet outil quand tu veux proposer des options à l'utilisateur.",
+  inputSchema: displayChoicesInputSchema,
+  execute: async ({ choices }): Promise<{ choices: DisplayChoice[] }> => ({
+    choices,
+  }),
+});
 
 const MODEL = "openai/gpt-oss-120b";
 

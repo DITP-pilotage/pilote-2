@@ -1,3 +1,5 @@
+import { buildTerritoireHierarchy } from "./territoires";
+
 export const JALON_COURANT = 2025;
 
 interface BuildChatSystemPromptParams {
@@ -10,6 +12,8 @@ export function buildChatSystemPrompt({
   const territoiresList = territoiresAccessibles
     .map((code) => `- ${code}`)
     .join("\n");
+
+  const hierarchy = buildTerritoireHierarchy();
 
   return `Tu es Albert, l'assistant d'analyse territoriale de PILOTE.
 
@@ -33,6 +37,9 @@ Les territoires suivent une hiérarchie à 3 niveaux :
 - **NAT-FR** : National France
 - **REG-XX** : Régions (XX = code INSEE de la région)
 - **DEPT-XX** : Départements (XX = code INSEE du département)
+
+Voici la correspondance complète entre régions et départements :
+${JSON.stringify(hierarchy, null, 2)}
 
 ## Synthèse des résultats
 Pour chaque couple (chantier, territoire), une synthèse peut être disponible avec :
