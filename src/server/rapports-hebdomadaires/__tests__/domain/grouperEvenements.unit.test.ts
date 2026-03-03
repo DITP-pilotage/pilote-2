@@ -410,6 +410,11 @@ describe("grouperEvenements", () => {
         }),
         expect.objectContaining({
           territoire: expect.objectContaining({ code: "DEPT-75" }),
+          typeValeur: "VALEUR_AVANCEMENT",
+          dateValeur: new Date("2025-01-15"),
+        }),
+        expect.objectContaining({
+          territoire: expect.objectContaining({ code: "DEPT-75" }),
           typeValeur: "VALEUR_CIBLE",
           dateValeur: new Date("2025-01-17"),
         }),
@@ -417,11 +422,6 @@ describe("grouperEvenements", () => {
           territoire: expect.objectContaining({ code: "DEPT-75" }),
           typeValeur: "VALEUR_INITIALE",
           dateValeur: new Date("2025-01-17"),
-        }),
-        expect.objectContaining({
-          territoire: expect.objectContaining({ code: "DEPT-75" }),
-          typeValeur: "VALEUR_AVANCEMENT",
-          dateValeur: new Date("2025-01-15"),
         }),
         expect.objectContaining({
           territoire: expect.objectContaining({ code: "DEPT-92" }),
