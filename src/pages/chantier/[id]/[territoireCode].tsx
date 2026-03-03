@@ -95,7 +95,7 @@ export const getServerSideProps = async (
     const [
       chantier,
       indicateurs,
-      synthèseDesRésultats,
+      syntheseDesResultats,
       commentaires,
       objectifs,
       décisionStratégique,
@@ -237,7 +237,7 @@ export const getServerSideProps = async (
         profil: session.profil,
         mailleSelectionnee,
         mailleQuery,
-        synthèseDesRésultats,
+        syntheseDesResultats,
         commentaires,
         objectifs,
         décisionStratégique,

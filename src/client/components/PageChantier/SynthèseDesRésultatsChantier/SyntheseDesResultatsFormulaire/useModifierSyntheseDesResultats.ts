@@ -5,7 +5,7 @@ import { pageChantier } from "@/components/PageChantier/PageChantierServerSideCo
 import { SyntheseDesResultatsFormulaireInputs } from "./SyntheseDesResultatsFormulaire.interface";
 
 export const useModifierSyntheseDesResultats = () => {
-  const { synthèseDesRésultats } = pageChantier.useServerSidePropsContext();
+  const { syntheseDesResultats } = pageChantier.useServerSidePropsContext();
 
   const modifier = api.synthèseDesRésultats.modifier.useMutation();
 
@@ -30,9 +30,9 @@ export const useModifierSyntheseDesResultats = () => {
   return (data: SyntheseDesResultatsFormulaireInputs) =>
     modifier.mutateAsync(
       {
-        synthèsePrécédente: synthèseDesRésultats!,
+        syntheseAModifier: syntheseDesResultats!,
         contenu: data.contenu,
-        météo: data.météo,
+        meteo: data.meteo,
         csrf: récupérerUnCookie("csrf") ?? "",
       },
       {

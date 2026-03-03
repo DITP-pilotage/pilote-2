@@ -22,7 +22,7 @@ const SyntheseDesResultats: FunctionComponent<SyntheseDesResultatsProps> = ({
   modeEcriture = false,
   estInteractif = true,
 }) => {
-  const { synthèseDesRésultats, chantier } =
+  const { syntheseDesResultats, chantier } =
     pageChantier.useServerSidePropsContext();
 
   const [action] = useQueryState(
@@ -67,22 +67,22 @@ const SyntheseDesResultats: FunctionComponent<SyntheseDesResultatsProps> = ({
               <div className="flex gap-4">
                 <div className="flex flex-col gap-4 align-center">
                   <MétéoBadge
-                    météo={synthèseDesRésultats?.météo ?? "NON_RENSEIGNEE"}
+                    météo={syntheseDesResultats?.météo ?? "NON_RENSEIGNEE"}
                   />
-                  {synthèseDesRésultats ? (
-                    <MeteoPicto meteo={synthèseDesRésultats.météo} />
+                  {syntheseDesResultats ? (
+                    <MeteoPicto meteo={syntheseDesResultats.météo} />
                   ) : null}
                 </div>
                 <div>
                   <SynthèseDesRésultatsAffichage
-                    itemHistoriqueSyntheseDesResultats={synthèseDesRésultats}
+                    itemHistoriqueSyntheseDesResultats={syntheseDesResultats}
                   />
                 </div>
               </div>
               {estInteractif ? (
                 <div className="fr-grid-row fr-grid-row--right">
                   <div className="fr-col-12 flex justify-end fr-mt-1w">
-                    {!!synthèseDesRésultats ? (
+                    {!!syntheseDesResultats ? (
                       <SynthèseDesRésultatsHistorique />
                     ) : null}
                     {modeEcriture ? (

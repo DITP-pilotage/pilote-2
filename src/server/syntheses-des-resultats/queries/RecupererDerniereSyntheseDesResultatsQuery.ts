@@ -1,11 +1,7 @@
+import { $Enums } from "@prisma/client";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
-import { SynthèseDesRésultatsV2 } from "@/server/domain/chantier/synthèseDesRésultats/SynthèseDesRésultats.interface";
+import { SyntheseDesResultatsAvecNomsAuteurs } from "@/server/domain/chantier/synthèseDesRésultats/SynthèseDesRésultats.interface";
 import { Météo } from "@/server/domain/météo/Météo.interface";
-
-export type DerniereSyntheseDesResultats = SynthèseDesRésultatsV2 & {
-  auteur_creation_nom: string;
-  auteur_modification_nom: string;
-};
 
 export class RecupererDerniereSyntheseDesResultatsQuery {
   constructor(private readonly deps: { prisma: PrismaPilote }) {}
@@ -13,14 +9,14 @@ export class RecupererDerniereSyntheseDesResultatsQuery {
   async run(
     chantierId: string,
     territoireCode: string,
-  ): Promise<DerniereSyntheseDesResultats | null> {
+  ): Promise<SyntheseDesResultatsAvecNomsAuteurs | null> {
     const synthese = await this.deps.prisma
       .getInstance()
       .synthese_des_resultats.findFirst({
         where: {
           chantier_id: chantierId,
           territoire_code: territoireCode,
-          NOT: { commentaire: null },
+          statut: $Enums.statut_synthese_des_resultats.PUBLIE,
         },
         include: {
           auteur_creation: true,
@@ -29,13 +25,13 @@ export class RecupererDerniereSyntheseDesResultatsQuery {
         orderBy: { date_modification: "desc" },
       });
 
-    if (!synthese || !synthese.commentaire) return null;
+    if (!synthese) return null;
 
     return {
       id: synthese.id,
       chantierId: synthese.chantier_id,
       territoireCode: synthese.territoire_code,
-      contenu: synthese.commentaire,
+      contenu: synthese.commentaire ?? "",
       météo: (synthese.meteo as Météo) ?? "NON_RENSEIGNEE",
       auteur_creation_id: synthese.auteur_creation_id ?? "",
       date_creation: synthese.date_creation.toISOString(),

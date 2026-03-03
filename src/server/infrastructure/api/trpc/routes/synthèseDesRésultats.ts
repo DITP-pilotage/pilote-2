@@ -5,23 +5,11 @@ import {
   vérifierSiLeCSRFEstValide,
 } from "@/server/infrastructure/api/trpc/trpc";
 import {
+  validationSyntheseAModifier,
   validationSynthèseDesRésultatsContexte,
   validationSynthèseDesRésultatsFormulaire,
 } from "validation/synthèseDesRésultats";
 import { getContainer } from "@/server/dependances";
-import { météos } from "@/server/domain/météo/Météo.interface";
-
-const zodSynthèseDesRésultatsV2 = z.object({
-  id: z.string(),
-  chantierId: z.string(),
-  territoireCode: z.string(),
-  contenu: z.string(),
-  météo: z.enum(météos),
-  auteur_creation_id: z.string(),
-  date_creation: z.string(),
-  auteur_modification_id: z.string(),
-  date_modification: z.string(),
-});
 
 const zodValidateurCSRF = z.object({
   csrf: z.string(),
@@ -32,7 +20,7 @@ export const synthèseDesRésultatsRouter = créerRouteurTRPC({
     .input(
       zodValidateurCSRF
         .merge(validationSynthèseDesRésultatsFormulaire)
-        .merge(z.object({ synthèsePrécédente: zodSynthèseDesRésultatsV2 })),
+        .merge(validationSyntheseAModifier),
     )
     .mutation(({ input, ctx }) => {
       vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
@@ -40,9 +28,9 @@ export const synthèseDesRésultatsRouter = créerRouteurTRPC({
       return getContainer("importSyntheseDesResultats")
         .resolve("modifierUneSyntheseDesResultatsUseCase")
         .execute({
-          synthèsePrécédente: input.synthèsePrécédente,
+          syntheseAModifier: input.syntheseAModifier,
           contenu: input.contenu,
-          météo: input.météo,
+          météo: input.meteo,
           auteur_modification_id: ctx.session.user.id,
           date_modification: new Date().toISOString(),
           habilitations: ctx.session.habilitations,

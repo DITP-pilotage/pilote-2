@@ -20,4 +20,9 @@ export type SynthèseDesRésultatsV2 = {
   date_modification: string;
 };
 
+export type SyntheseDesResultatsAvecNomsAuteurs = SynthèseDesRésultatsV2 & {
+  auteur_creation_nom: string;
+  auteur_modification_nom: string;
+};
+
 export default SynthèseDesRésultats;

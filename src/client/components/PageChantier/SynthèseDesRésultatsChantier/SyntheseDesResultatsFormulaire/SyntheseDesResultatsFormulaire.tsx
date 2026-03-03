@@ -26,7 +26,7 @@ interface SyntheseDesResultatsFormulaireProps {
 const SyntheseDesResultatsFormulaire: FunctionComponent<
   SyntheseDesResultatsFormulaireProps
 > = ({ annulationCallback }) => {
-  const { synthèseDesRésultats } = pageChantier.useServerSidePropsContext();
+  const { syntheseDesResultats } = pageChantier.useServerSidePropsContext();
 
   const modifierSynthèseDesRésultats = useModifierSyntheseDesResultats();
 
@@ -40,11 +40,11 @@ const SyntheseDesResultatsFormulaire: FunctionComponent<
     mode: "all",
     resolver: zodResolver(validationSynthèseDesRésultatsFormulaire),
     defaultValues: {
-      contenu: synthèseDesRésultats?.contenu,
-      météo:
-        synthèseDesRésultats?.météo &&
-        météosSaisissables.includes(synthèseDesRésultats.météo)
-          ? (synthèseDesRésultats.météo as MétéoSaisissable)
+      contenu: syntheseDesResultats?.contenu,
+      meteo:
+        syntheseDesResultats?.météo &&
+        météosSaisissables.includes(syntheseDesResultats.météo)
+          ? (syntheseDesResultats.météo as MétéoSaisissable)
           : undefined,
     },
   });
@@ -90,12 +90,12 @@ const SyntheseDesResultatsFormulaire: FunctionComponent<
             libellé: libellésMétéos[optionMétéo],
             valeur: optionMétéo,
           }))}
-          register={{ ...register("météo") }}
+          register={{ ...register("meteo") }}
           texteFantôme="Météo à renseigner"
-          valeurSélectionnée={getValues("météo")}
+          valeurSélectionnée={getValues("meteo")}
         />
         <div className="fr-mx-3w météo-picto-conteneur">
-          {!!watch("météo") && <MeteoPicto meteo={watch("météo")!} />}
+          {!!watch("meteo") && <MeteoPicto meteo={watch("meteo")!} />}
         </div>
         <div className="actions">
           <button className="fr-btn fr-mr-3w" disabled={!isValid} type="submit">

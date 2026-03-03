@@ -1,13 +1,13 @@
 import { formaterDate } from "@/client/utils/date/date";
 import { nettoyerUneChaîneDeCaractèresPourAffichageHTML } from "@/client/utils/strings";
 import { BoutonsAffichage } from "@/components/PageChantier/SynthèseDesRésultatsChantier/BoutonsAffichage/BoutonsAffichage";
-import { DerniereSyntheseDesResultats } from "@/server/syntheses-des-resultats/queries/RecupererDerniereSyntheseDesResultatsQuery";
+import { SyntheseDesResultatsAvecNomsAuteurs } from "@/server/domain/chantier/synthèseDesRésultats/SynthèseDesRésultats.interface";
 import useAffichage from "./useAffichage";
 
 const SynthèseDesRésultatsAffichage = ({
   itemHistoriqueSyntheseDesResultats: synthèseDesRésultats,
 }: {
-  itemHistoriqueSyntheseDesResultats: DerniereSyntheseDesResultats | null;
+  itemHistoriqueSyntheseDesResultats: SyntheseDesResultatsAvecNomsAuteurs | null;
 }) => {
   const {
     contenuAAfficher,

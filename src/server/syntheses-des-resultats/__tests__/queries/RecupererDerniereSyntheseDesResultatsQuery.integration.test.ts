@@ -1,3 +1,4 @@
+import { $Enums } from "@prisma/client";
 import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
 import { fixtures } from "@/server/infrastructure/test/fixtures";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
@@ -82,6 +83,38 @@ describe("RecupererDerniereSyntheseDesResultatsQuery", () => {
         auteur_creation_nom: "Jean Dupont",
         auteur_modification_nom: "Jean Dupont",
       });
+    }),
+  );
+
+  it(
+    "retourne null quand la synthèse la plus récente est un brouillon",
+    createIntegrationTest(async () => {
+      // Given
+      const auteur = await fixtures.utilisateur();
+      const chantier = await fixtures.chantierIdentite();
+      await fixtures.chantierTerritoire({
+        id: chantier.id,
+        territoire_code: TERRITOIRE_CODE,
+        maille: MAILLE,
+        code_insee: CODE_INSEE,
+      });
+      // Seule une synthèse en BROUILLON existe
+      await fixtures.syntheseDesResultats({
+        chantier_id: chantier.id,
+        territoire_code: TERRITOIRE_CODE,
+        maille: MAILLE,
+        code_insee: CODE_INSEE,
+        auteur_creation_id: auteur.id,
+        auteur_modification_id: auteur.id,
+        commentaire: "Brouillon",
+        statut: $Enums.statut_synthese_des_resultats.BROUILLON,
+      });
+
+      // When
+      const result = await query.run(chantier.id, TERRITOIRE_CODE);
+
+      // Then
+      expect(result).toBeNull();
     }),
   );
 

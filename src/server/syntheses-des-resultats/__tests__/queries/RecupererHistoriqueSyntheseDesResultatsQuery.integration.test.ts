@@ -1,3 +1,4 @@
+import { $Enums } from "@prisma/client";
 import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
 import { fixtures } from "@/server/infrastructure/test/fixtures";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
@@ -94,6 +95,50 @@ describe("RecupererHistoriqueSyntheseDesResultatsQuery", () => {
           auteur_creation_nom: "Jean Dupont",
           auteur_modification_nom: "Jean Dupont",
         }),
+      ]);
+    }),
+  );
+
+  it(
+    "exclut les synthèses en brouillon",
+    createIntegrationTest(async () => {
+      // Given
+      const auteur = await fixtures.utilisateur();
+      const chantier = await fixtures.chantierIdentite();
+      await fixtures.chantierTerritoire({
+        id: chantier.id,
+        territoire_code: TERRITOIRE_CODE,
+        maille: MAILLE,
+        code_insee: CODE_INSEE,
+      });
+      const synthèsePubliée = await fixtures.syntheseDesResultats({
+        chantier_id: chantier.id,
+        territoire_code: TERRITOIRE_CODE,
+        maille: MAILLE,
+        code_insee: CODE_INSEE,
+        auteur_creation_id: auteur.id,
+        auteur_modification_id: auteur.id,
+        commentaire: "Synthèse publiée",
+        statut: $Enums.statut_synthese_des_resultats.PUBLIE,
+      });
+      // Brouillon ne doit pas apparaître dans l'historique
+      await fixtures.syntheseDesResultats({
+        chantier_id: chantier.id,
+        territoire_code: TERRITOIRE_CODE,
+        maille: MAILLE,
+        code_insee: CODE_INSEE,
+        auteur_creation_id: auteur.id,
+        auteur_modification_id: auteur.id,
+        commentaire: "Brouillon",
+        statut: $Enums.statut_synthese_des_resultats.BROUILLON,
+      });
+
+      // When
+      const result = await query.run(chantier.id, TERRITOIRE_CODE);
+
+      // Then
+      expect(result).toEqual([
+        expect.objectContaining({ id: synthèsePubliée.id }),
       ]);
     }),
   );

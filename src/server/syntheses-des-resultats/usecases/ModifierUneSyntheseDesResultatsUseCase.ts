@@ -14,14 +14,14 @@ export class ModifierUneSyntheseDesResultatsUseCase {
   ) {}
 
   async execute({
-    synthèsePrécédente,
+    syntheseAModifier,
     contenu,
     météo,
     auteur_modification_id,
     date_modification,
     habilitations,
   }: {
-    synthèsePrécédente: SynthèseDesRésultatsV2;
+    syntheseAModifier: SynthèseDesRésultatsV2;
     contenu: string;
     météo: Météo;
     auteur_modification_id: string;
@@ -30,18 +30,18 @@ export class ModifierUneSyntheseDesResultatsUseCase {
   }): Promise<void> {
     const habilitation = new Habilitation(habilitations);
     habilitation.vérifierLesHabilitationsEnSaisieDesPublications(
-      synthèsePrécédente.chantierId,
-      synthèsePrécédente.territoireCode,
+      syntheseAModifier.chantierId,
+      syntheseAModifier.territoireCode,
     );
 
     await Promise.all([
       this.dependencies.chantierRepository.modifierMétéo(
-        synthèsePrécédente.chantierId,
-        synthèsePrécédente.territoireCode,
+        syntheseAModifier.chantierId,
+        syntheseAModifier.territoireCode,
         météo,
       ),
       this.dependencies.synthèseDesRésultatsRepository.save({
-        ...synthèsePrécédente,
+        ...syntheseAModifier,
         contenu,
         météo,
         auteur_modification_id,
