@@ -19,9 +19,8 @@ jobs:
         id: PR
         uses: 8BitJonny/gh-get-current-pr@3.0.0
         with:
-          # Authetication token to access GitHub APIs. (Can be omitted by default.)
+          # Authentication token to access GitHub APIs. (Can be omitted by default.)
           github-token: ${{ github.token }}
-          #sha: d6253749d7945e4cba3b603bc3df502742736af4 # for debug
           sha: ${{ github.event.pull_request.head.sha }}
       - name: "Envoi message Tchap"
         uses: indiesdev/curl@v1.1
