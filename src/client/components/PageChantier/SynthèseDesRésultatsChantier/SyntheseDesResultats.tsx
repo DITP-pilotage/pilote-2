@@ -4,7 +4,6 @@ import Bloc from "@/components/_commons/Bloc/Bloc";
 import { MeteoPicto } from "@/components/_commons/Meteo/Picto/MeteoPicto";
 import MétéoBadge from "@/components/_commons/Meteo/Badge/MétéoBadge";
 import SynthèseDesRésultatsHistorique from "@/components/PageChantier/SynthèseDesRésultatsChantier/Historique/Historique";
-import { useSyntheseDesResultats } from "@/components/PageChantier/SynthèseDesRésultatsChantier/useSyntheseDesResultats";
 import Alerte from "@/components/_commons/Alerte/Alerte";
 import SynthèseDesRésultatsAffichage from "@/components/PageChantier/SynthèseDesRésultatsChantier/Affichage/Affichage";
 import { pageChantier } from "@/components/PageChantier/PageChantierServerSideContext";
@@ -39,8 +38,6 @@ const SyntheseDesResultats: FunctionComponent<SyntheseDesResultatsProps> = ({
     }),
   );
 
-  const { synthèseDesRésultatsCréée } = useSyntheseDesResultats();
-
   return (
     <div>
       <Bloc
@@ -56,7 +53,6 @@ const SyntheseDesResultats: FunctionComponent<SyntheseDesResultatsProps> = ({
           {modeÉdition && modeEcriture ? (
             <SyntheseDesResultatsFormulaire
               annulationCallback={() => setModeÉdition(false)}
-              syntheseDesResultatsCreeeCallback={synthèseDesRésultatsCréée}
             />
           ) : (
             <>

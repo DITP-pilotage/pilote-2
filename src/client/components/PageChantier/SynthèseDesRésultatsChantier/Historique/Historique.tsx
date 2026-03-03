@@ -33,7 +33,7 @@ const SynthèseDesRésultatsHistorique = () => {
       <SynthèseDesRésultatsHistoriqueStyled>
         {historiqueDeLaSynthèseDesRésultats ? (
           historiqueDeLaSynthèseDesRésultats.map((synthèse, i) => (
-            <Fragment key={synthèse?.date ?? "MANQUANT"}>
+            <Fragment key={synthèse.date_modification}>
               {i !== 0 && <hr className="fr-mt-4w" />}
               <div className="conteneur">
                 <div className="conteneur-météo fr-mb-3w fr-mb-md-0">

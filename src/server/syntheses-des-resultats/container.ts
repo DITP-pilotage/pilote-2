@@ -3,6 +3,7 @@ import { ImportSyntheseDesResultatsAPIHandler } from "@/server/syntheses-des-res
 import { ImporterSynthesesDesResultatsUseCase } from "@/server/syntheses-des-resultats/usecases/ImporterSynthesesDesResultatsUseCase";
 import { ModifierUneSyntheseDesResultatsUseCase } from "@/server/syntheses-des-resultats/usecases/ModifierUneSyntheseDesResultatsUseCase";
 import { RecupererDerniereSyntheseDesResultatsQuery } from "@/server/syntheses-des-resultats/queries/RecupererDerniereSyntheseDesResultatsQuery";
+import { RecupererHistoriqueSyntheseDesResultatsQuery } from "@/server/syntheses-des-resultats/queries/RecupererHistoriqueSyntheseDesResultatsQuery";
 import SynthèseDesRésultatsRepository from "@/server/domain/chantier/synthèseDesRésultats/SynthèseDesRésultatsRepository.interface";
 import { SynthèseDesRésultatsSQLRepository } from "@/server/infrastructure/accès_données/chantier/synthèseDesRésultats/SynthèseDesRésultatsSQLRepository";
 import ChantierRepository from "@/server/domain/chantier/ChantierRepository.interface";
@@ -14,6 +15,7 @@ export type ImportSyntheseDesResultatsDependencies = {
   importerSynthesesDesResultatsUseCase: ImporterSynthesesDesResultatsUseCase;
   modifierUneSyntheseDesResultatsUseCase: ModifierUneSyntheseDesResultatsUseCase;
   récupérerDerniereSyntheseDesResultatsQuery: RecupererDerniereSyntheseDesResultatsQuery;
+  récupérerHistoriqueSyntheseDesResultatsQuery: RecupererHistoriqueSyntheseDesResultatsQuery;
   synthèseDesRésultatsRepository: SynthèseDesRésultatsRepository;
   chantierRepository: ChantierRepository;
 };
@@ -38,6 +40,9 @@ export const getImportSyntheseDesResultatsContainer = (
       ),
       récupérerDerniereSyntheseDesResultatsQuery: asClass(
         RecupererDerniereSyntheseDesResultatsQuery,
+      ),
+      récupérerHistoriqueSyntheseDesResultatsQuery: asClass(
+        RecupererHistoriqueSyntheseDesResultatsQuery,
       ),
       importSyntheseDesResultatsAPIHandler: asClass(
         ImportSyntheseDesResultatsAPIHandler,

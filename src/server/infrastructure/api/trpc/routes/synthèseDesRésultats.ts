@@ -11,7 +11,6 @@ import {
   validationSynthèseDesRésultatsContexte,
   validationSynthèseDesRésultatsFormulaire,
 } from "validation/synthèseDesRésultats";
-import RécupérerHistoriqueSynthèseDesRésultatsUseCase from "@/server/usecase/chantier/synthèse/RécupérerHistoriqueSynthèseDesRésultatsUseCase";
 import { getContainer } from "@/server/dependances";
 import { météos } from "@/server/domain/météo/Météo.interface";
 
@@ -80,16 +79,10 @@ export const synthèseDesRésultatsRouter = créerRouteurTRPC({
 
   récupérerHistorique: procédureProtégée
     .input(validationSynthèseDesRésultatsContexte)
-    .query(({ input, ctx }) => {
-      const récupérerHistoriqueSynthèseDesRésultatsUseCase =
-        new RécupérerHistoriqueSynthèseDesRésultatsUseCase(
-          dependencies.getSynthèseDesRésultatsRepository(),
-        );
-      return récupérerHistoriqueSynthèseDesRésultatsUseCase.run(
-        input.réformeId,
-        input.territoireCode,
-        ctx.session.habilitations,
-      );
+    .query(({ input }) => {
+      return getContainer("importSyntheseDesResultats")
+        .resolve("récupérerHistoriqueSyntheseDesResultatsQuery")
+        .run(input.réformeId, input.territoireCode);
     }),
 
   récupérerLaPlusRécente: procédureProtégée
