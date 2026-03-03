@@ -109,7 +109,7 @@ export class Albert {
         return {};
       },
       tools,
-      stopWhen: stepCountIs(5),
+      stopWhen: stepCountIs(15),
       onFinish: (event) => Albert.saveLlmCall({ chatId, userId, event }),
     });
   }

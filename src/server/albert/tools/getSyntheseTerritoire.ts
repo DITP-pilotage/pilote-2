@@ -63,7 +63,15 @@ export function createGetSyntheseTerritoireTool({
 Utilise cet outil quand l'utilisateur demande :
 - Une analyse d'un territoire spécifique
 - Une comparaison territoriale
-- Des détails sur les chantiers problématiques d'un territoire`,
+- Des détails sur les chantiers problématiques d'un territoire
+
+IMPORTANT — Comportement spécifique pour les régions (REG-XXX) :
+Quand l'utilisateur demande une synthèse sur une région (code commençant par REG-), tu DOIS d'abord lui demander s'il souhaite :
+1. La synthèse de la région uniquement
+2. La synthèse de la région ET de chacun des départements qui la composent
+
+Ne lance PAS l'outil avant d'avoir obtenu cette précision.
+Cette règle ne s'applique PAS aux territoires nationaux (NAT-FR) ni aux départements (DEPT-XXX).`,
       inputSchema: getSyntheseTerritoireInputSchema,
       execute: async (input): Promise<GetSyntheseTerritoireOutput> => {
         if (!territoiresAccessibles.includes(input.territoire_code)) {
