@@ -20,9 +20,7 @@ export class PvaModalComponent {
     await expect(this.page.getByRole("dialog")).not.toBeVisible();
   }
 
-  async expectConfirmationEtFermer(
-    messageConfirmation: RegExp,
-  ): Promise<void> {
+  async expectConfirmationEtFermer(messageConfirmation: RegExp): Promise<void> {
     await expect(this.dialog.getByText(messageConfirmation)).toBeVisible({
       timeout: 15_000,
     });
@@ -47,9 +45,7 @@ export class PvaModalComponent {
     source: string,
   ): Promise<void> {
     await this.dialog.locator('input[name="valeurAvancement"]').fill(valeur);
-    await this.dialog
-      .locator('textarea[name="motifProposition"]')
-      .fill(motif);
+    await this.dialog.locator('textarea[name="motifProposition"]').fill(motif);
     await this.dialog
       .locator('textarea[name="sourceDonneeEtMethodeCalcul"]')
       .fill(source);
@@ -81,16 +77,13 @@ export class PvaModalComponent {
     const labels: Record<DecisionType, RegExp> = {
       accepter: /accepter la proposition$/,
       refuser: /refuser la proposition/,
-      "accepter-avec-modification":
-        /accepter la proposition avec modification/,
+      "accepter-avec-modification": /accepter la proposition avec modification/,
     };
     await this.dialog.getByLabel(labels[decision]).check({ force: true });
   }
 
   async remplirValeurModification(valeur: string): Promise<void> {
-    await this.dialog
-      .locator('input[name="valeurModification"]')
-      .fill(valeur);
+    await this.dialog.locator('input[name="valeurModification"]').fill(valeur);
   }
 
   async accepterProposition(): Promise<void> {
@@ -114,9 +107,7 @@ export class PvaModalComponent {
   // --- Suppression ---
 
   async remplirMotifSuppression(motif: string): Promise<void> {
-    await this.dialog
-      .locator('textarea[name="motifSuppression"]')
-      .fill(motif);
+    await this.dialog.locator('textarea[name="motifSuppression"]').fill(motif);
   }
 
   async confirmerSuppression(): Promise<void> {

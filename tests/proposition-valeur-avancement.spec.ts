@@ -23,7 +23,10 @@ test.describe("Proposition de valeur d'avancement (PVA)", () => {
 
     await test.step("Territoire crée une proposition", async () => {
       await appActions.switchUser(COORDINATEUR_DEPT);
-      await pageChantier.selectChantierAvecTerritoire(CHANTIER_ID, TERRITOIRE_DEPT);
+      await pageChantier.selectChantierAvecTerritoire(
+        CHANTIER_ID,
+        TERRITOIRE_DEPT,
+      );
       await pageChantier.expandAutresIndicateurs();
 
       const indicateur = pageChantier.getIndicateurPva(indicId);
@@ -47,7 +50,10 @@ test.describe("Proposition de valeur d'avancement (PVA)", () => {
     });
 
     await test.step("Vérification du statut côté territoire après création", async () => {
-      await pageChantier.selectChantierAvecTerritoire(CHANTIER_ID, TERRITOIRE_DEPT);
+      await pageChantier.selectChantierAvecTerritoire(
+        CHANTIER_ID,
+        TERRITOIRE_DEPT,
+      );
       await pageChantier.expandAutresIndicateurs();
 
       const indicateur = pageChantier.getIndicateurPva(indicId);
@@ -65,7 +71,10 @@ test.describe("Proposition de valeur d'avancement (PVA)", () => {
 
     await test.step("Direction accuse réception de la proposition", async () => {
       await appActions.switchUser(EQUIPE_DIR_PROJET);
-      await pageChantier.selectChantierAvecTerritoire(CHANTIER_ID, TERRITOIRE_DEPT);
+      await pageChantier.selectChantierAvecTerritoire(
+        CHANTIER_ID,
+        TERRITOIRE_DEPT,
+      );
       await pageChantier.expandAutresIndicateurs();
 
       const indicateur = pageChantier.getIndicateurPva(indicId);
@@ -77,9 +86,7 @@ test.describe("Proposition de valeur d'avancement (PVA)", () => {
       const modal = await indicateur.clickAccuserReception();
 
       await modal.expectHeading("Accuser réception");
-      await modal.remplirMotif(
-        "Information complementaire pour le territoire",
-      );
+      await modal.remplirMotif("Information complementaire pour le territoire");
       await modal.passerEtapeSuivante();
 
       await modal.expectContient(
@@ -92,7 +99,10 @@ test.describe("Proposition de valeur d'avancement (PVA)", () => {
 
     await test.step("Vérification côté territoire : boutons désactivés après accusé réception", async () => {
       await appActions.switchUser(COORDINATEUR_DEPT);
-      await pageChantier.selectChantierAvecTerritoire(CHANTIER_ID, TERRITOIRE_DEPT);
+      await pageChantier.selectChantierAvecTerritoire(
+        CHANTIER_ID,
+        TERRITOIRE_DEPT,
+      );
       await pageChantier.expandAutresIndicateurs();
 
       const indicateur = pageChantier.getIndicateurPva(indicId);
@@ -105,7 +115,10 @@ test.describe("Proposition de valeur d'avancement (PVA)", () => {
 
     await test.step("Direction accepte la proposition", async () => {
       await appActions.switchUser(EQUIPE_DIR_PROJET);
-      await pageChantier.selectChantierAvecTerritoire(CHANTIER_ID, TERRITOIRE_DEPT);
+      await pageChantier.selectChantierAvecTerritoire(
+        CHANTIER_ID,
+        TERRITOIRE_DEPT,
+      );
       await pageChantier.expandAutresIndicateurs();
 
       const indicateur = pageChantier.getIndicateurPva(indicId);
@@ -124,7 +137,10 @@ test.describe("Proposition de valeur d'avancement (PVA)", () => {
     });
 
     await test.step("Vérification du statut accepté côté direction", async () => {
-      await pageChantier.selectChantierAvecTerritoire(CHANTIER_ID, TERRITOIRE_DEPT);
+      await pageChantier.selectChantierAvecTerritoire(
+        CHANTIER_ID,
+        TERRITOIRE_DEPT,
+      );
       await pageChantier.expandAutresIndicateurs();
 
       const indicateur = pageChantier.getIndicateurPva(indicId);
@@ -143,9 +159,7 @@ test.describe("Proposition de valeur d'avancement (PVA)", () => {
       );
       await modal.expectContient(indicId);
       await modal.expectContient(/nouvelle proposition/);
-      await modal.expectContient(
-        /accusé de réception de la proposition/,
-      );
+      await modal.expectContient(/accusé de réception de la proposition/);
       await modal.expectContient(/acceptée.*par la direction de projet/);
 
       await modal.fermer();
@@ -163,7 +177,10 @@ test.describe("Proposition de valeur d'avancement (PVA)", () => {
 
     await test.step("Territoire crée une proposition", async () => {
       await appActions.switchUser(PREFET_DEPT);
-      await pageChantier.selectChantierAvecTerritoire(CHANTIER_ID, TERRITOIRE_DEPT);
+      await pageChantier.selectChantierAvecTerritoire(
+        CHANTIER_ID,
+        TERRITOIRE_DEPT,
+      );
       await pageChantier.expandAutresIndicateurs();
 
       const indicateur = pageChantier.getIndicateurPva(indicId);
@@ -183,7 +200,10 @@ test.describe("Proposition de valeur d'avancement (PVA)", () => {
 
     await test.step("Direction refuse la proposition", async () => {
       await appActions.switchUser(EQUIPE_DIR_PROJET);
-      await pageChantier.selectChantierAvecTerritoire(CHANTIER_ID, TERRITOIRE_DEPT);
+      await pageChantier.selectChantierAvecTerritoire(
+        CHANTIER_ID,
+        TERRITOIRE_DEPT,
+      );
       await pageChantier.expandAutresIndicateurs();
 
       const indicateur = pageChantier.getIndicateurPva(indicId);
@@ -201,24 +221,26 @@ test.describe("Proposition de valeur d'avancement (PVA)", () => {
     });
 
     await test.step("Vérification côté direction : proposition refusée", async () => {
-      await pageChantier.selectChantierAvecTerritoire(CHANTIER_ID, TERRITOIRE_DEPT);
+      await pageChantier.selectChantierAvecTerritoire(
+        CHANTIER_ID,
+        TERRITOIRE_DEPT,
+      );
       await pageChantier.expandAutresIndicateurs();
 
       const indicateur = pageChantier.getIndicateurPva(indicId);
-      await indicateur.expectStatut(
-        /dernière proposition en date refusée/,
-      );
+      await indicateur.expectStatut(/dernière proposition en date refusée/);
     });
 
     await test.step("Vérification côté territoire : peut proposer à nouveau", async () => {
       await appActions.switchUser(PREFET_DEPT);
-      await pageChantier.selectChantierAvecTerritoire(CHANTIER_ID, TERRITOIRE_DEPT);
+      await pageChantier.selectChantierAvecTerritoire(
+        CHANTIER_ID,
+        TERRITOIRE_DEPT,
+      );
       await pageChantier.expandAutresIndicateurs();
 
       const indicateur = pageChantier.getIndicateurPva(indicId);
-      await indicateur.expectStatut(
-        /dernière proposition en date refusée/,
-      );
+      await indicateur.expectStatut(/dernière proposition en date refusée/);
       await indicateur.expectProposerAutreValeurVisible();
     });
 
@@ -244,7 +266,10 @@ test.describe("Proposition de valeur d'avancement (PVA)", () => {
 
     await test.step("Territoire crée une proposition avec valeur 75", async () => {
       await appActions.switchUser(COORDINATEUR_DEPT);
-      await pageChantier.selectChantierAvecTerritoire(CHANTIER_ID, TERRITOIRE_DEPT);
+      await pageChantier.selectChantierAvecTerritoire(
+        CHANTIER_ID,
+        TERRITOIRE_DEPT,
+      );
       await pageChantier.expandAutresIndicateurs();
 
       const indicateur = pageChantier.getIndicateurPva(indicId);
@@ -264,7 +289,10 @@ test.describe("Proposition de valeur d'avancement (PVA)", () => {
 
     await test.step("Direction accepte avec modification (valeur 60)", async () => {
       await appActions.switchUser(EQUIPE_DIR_PROJET);
-      await pageChantier.selectChantierAvecTerritoire(CHANTIER_ID, TERRITOIRE_DEPT);
+      await pageChantier.selectChantierAvecTerritoire(
+        CHANTIER_ID,
+        TERRITOIRE_DEPT,
+      );
       await pageChantier.expandAutresIndicateurs();
 
       const indicateur = pageChantier.getIndicateurPva(indicId);
@@ -286,7 +314,10 @@ test.describe("Proposition de valeur d'avancement (PVA)", () => {
     });
 
     await test.step("Vérification du statut acceptée avec modification", async () => {
-      await pageChantier.selectChantierAvecTerritoire(CHANTIER_ID, TERRITOIRE_DEPT);
+      await pageChantier.selectChantierAvecTerritoire(
+        CHANTIER_ID,
+        TERRITOIRE_DEPT,
+      );
       await pageChantier.expandAutresIndicateurs();
 
       const indicateur = pageChantier.getIndicateurPva(indicId);
@@ -313,7 +344,10 @@ test.describe("Proposition de valeur d'avancement (PVA)", () => {
 
     await test.step("Territoire crée une proposition avec valeur 30", async () => {
       await appActions.switchUser(COORDINATEUR_DEPT);
-      await pageChantier.selectChantierAvecTerritoire(CHANTIER_ID, TERRITOIRE_DEPT);
+      await pageChantier.selectChantierAvecTerritoire(
+        CHANTIER_ID,
+        TERRITOIRE_DEPT,
+      );
       await pageChantier.expandAutresIndicateurs();
 
       const indicateur = pageChantier.getIndicateurPva(indicId);
@@ -332,7 +366,10 @@ test.describe("Proposition de valeur d'avancement (PVA)", () => {
     });
 
     await test.step("Territoire modifie la proposition (valeur 35)", async () => {
-      await pageChantier.selectChantierAvecTerritoire(CHANTIER_ID, TERRITOIRE_DEPT);
+      await pageChantier.selectChantierAvecTerritoire(
+        CHANTIER_ID,
+        TERRITOIRE_DEPT,
+      );
       await pageChantier.expandAutresIndicateurs();
 
       const indicateur = pageChantier.getIndicateurPva(indicId);
@@ -360,7 +397,10 @@ test.describe("Proposition de valeur d'avancement (PVA)", () => {
     });
 
     await test.step("Vérification du statut modifié", async () => {
-      await pageChantier.selectChantierAvecTerritoire(CHANTIER_ID, TERRITOIRE_DEPT);
+      await pageChantier.selectChantierAvecTerritoire(
+        CHANTIER_ID,
+        TERRITOIRE_DEPT,
+      );
       await pageChantier.expandAutresIndicateurs();
 
       const indicateur = pageChantier.getIndicateurPva(indicId);
@@ -384,19 +424,18 @@ test.describe("Proposition de valeur d'avancement (PVA)", () => {
       await modal.expectContient("Suppression car proposition erronee");
 
       await modal.confirmerSuppression();
-      await modal.expectConfirmationEtFermer(
-        /correctement été supprimée/,
-      );
+      await modal.expectConfirmationEtFermer(/correctement été supprimée/);
     });
 
     await test.step("Vérification : proposition supprimée et possibilité de re-proposer", async () => {
-      await pageChantier.selectChantierAvecTerritoire(CHANTIER_ID, TERRITOIRE_DEPT);
+      await pageChantier.selectChantierAvecTerritoire(
+        CHANTIER_ID,
+        TERRITOIRE_DEPT,
+      );
       await pageChantier.expandAutresIndicateurs();
 
       const indicateur = pageChantier.getIndicateurPva(indicId);
-      await indicateur.expectStatut(
-        /dernière proposition en date supprimée/,
-      );
+      await indicateur.expectStatut(/dernière proposition en date supprimée/);
       await indicateur.expectProposerAutreValeurVisible();
     });
 
@@ -424,7 +463,10 @@ test.describe("Proposition de valeur d'avancement (PVA)", () => {
 
     await test.step("Coordinateur région navigue vers le chantier au niveau régional", async () => {
       await appActions.switchUser(COORDINATEUR_REG);
-      await pageChantier.selectChantierAvecTerritoire(CHANTIER_ID, TERRITOIRE_REG);
+      await pageChantier.selectChantierAvecTerritoire(
+        CHANTIER_ID,
+        TERRITOIRE_REG,
+      );
       await pageChantier.expandAutresIndicateurs();
     });
 

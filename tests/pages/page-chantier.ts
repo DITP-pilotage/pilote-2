@@ -41,8 +41,7 @@ export class PageChantier extends BasePage {
     const accordionButton = this.page.getByRole("button", {
       name: /Autres indicateurs/,
     });
-    const isExpanded =
-      await accordionButton.getAttribute("aria-expanded");
+    const isExpanded = await accordionButton.getAttribute("aria-expanded");
     if (isExpanded !== "true") {
       await accordionButton.click();
     }
