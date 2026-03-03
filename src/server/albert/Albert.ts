@@ -8,7 +8,6 @@ import {
   convertToModelMessages,
 } from "ai";
 import { Prisma } from "@prisma/client";
-import { randomUUID } from "node:crypto";
 import { configuration } from "@/config";
 import { prisma } from "@/server/db/prisma";
 import { SYNTHESE_TERRITOIRE_OUTPUT_FORMAT } from "./tools/getSyntheseTerritoire";
@@ -23,12 +22,37 @@ export class Albert {
     });
   }
 
+  private static async saveLlmCall({
+    chatId,
+    userId,
+    event,
+  }: {
+    chatId: string;
+    userId: string;
+    event: unknown;
+  }) {
+    await prisma.llm_calls.upsert({
+      where: { id: chatId },
+      create: {
+        id: chatId,
+        model: MODEL,
+        transcript: event as unknown as Prisma.InputJsonValue,
+        utilisateur_id: userId,
+      },
+      update: {
+        transcript: event as unknown as Prisma.InputJsonValue,
+      },
+    });
+  }
+
   static async generateText({
+    chatId,
     prompt,
     systemPrompt,
     tools,
     userId,
   }: {
+    chatId: string;
     prompt: string;
     systemPrompt: string;
     tools?: ToolSet;
@@ -41,16 +65,7 @@ export class Albert {
       system: systemPrompt,
       prompt: prompt,
       stopWhen: stepCountIs(5),
-      onFinish: async (event) => {
-        await prisma.llm_calls.create({
-          data: {
-            id: randomUUID(),
-            model: MODEL,
-            transcript: event as unknown as Prisma.InputJsonValue,
-            utilisateur_id: userId,
-          },
-        });
-      },
+      onFinish: (event) => Albert.saveLlmCall({ chatId, userId, event }),
       tools,
     });
 
@@ -60,11 +75,13 @@ export class Albert {
   }
 
   static async streamText({
+    chatId,
     messages,
     systemPrompt,
     userId,
     tools,
   }: {
+    chatId: string;
     messages: UIMessage[];
     systemPrompt: string;
     userId: string;
@@ -93,16 +110,7 @@ export class Albert {
       },
       tools,
       stopWhen: stepCountIs(5),
-      onFinish: async (event) => {
-        await prisma.llm_calls.create({
-          data: {
-            id: randomUUID() as string,
-            model: MODEL,
-            transcript: event as unknown as Prisma.InputJsonValue,
-            utilisateur_id: userId,
-          },
-        });
-      },
+      onFinish: (event) => Albert.saveLlmCall({ chatId, userId, event }),
     });
   }
 }

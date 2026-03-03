@@ -1,6 +1,7 @@
 import { asClass, asFunction, AwilixContainer } from "awilix";
 import { GetSyntheseTerritoireQuery } from "@/server/chantiers/query/GetSyntheseTerritoireQuery";
 import { createGetSyntheseTerritoireTool } from "@/server/albert/tools/getSyntheseTerritoire";
+import { EvaluerChatUseCase } from "@/server/albert/usecases/EvaluerChatUseCase";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 
 export type AlbertDependencies = {
@@ -8,6 +9,7 @@ export type AlbertDependencies = {
   createGetSyntheseTerritoireTool: ReturnType<
     typeof createGetSyntheseTerritoireTool
   >;
+  evaluerChatUseCase: EvaluerChatUseCase;
 };
 
 export const getAlbertContainer = (
@@ -24,5 +26,6 @@ export const getAlbertContainer = (
     createGetSyntheseTerritoireTool: asFunction(
       createGetSyntheseTerritoireTool,
     ),
+    evaluerChatUseCase: asClass(EvaluerChatUseCase),
   });
 };

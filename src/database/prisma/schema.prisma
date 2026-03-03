@@ -779,11 +779,12 @@ enum llm_call_evaluation {
 }
 
 model llm_calls {
-  id             String               @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id             String               @id
   utilisateur_id String               @db.Uuid
   transcript     Json
   model          String
   evaluation     llm_call_evaluation?
+  commentaire    String?
   created_at     DateTime             @default(now())
 
   utilisateur utilisateur @relation(fields: [utilisateur_id], references: [id])

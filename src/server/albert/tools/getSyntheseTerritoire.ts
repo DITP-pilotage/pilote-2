@@ -7,7 +7,7 @@ import { JALON_COURANT } from "@/server/albert/systemPrompt";
 export const SYNTHESE_TERRITOIRE_OUTPUT_FORMAT = `
 <instructions>
 Remplace les variables entre {{ }} par les données réelles issues du résultat de l'outil get_synthese_territoire.
-Pour la liste des chantiers, ne reproduis pas les commentaires bruts : rédige un résumé pertinent de la situation de chaque chantier en lien avec les données observées (écart, météo, taux d'avancement).
+Pour la liste des chantiers, ne reproduis pas les commentaires bruts in extenso. Extrais uniquement les idées clés de chaque commentaire et condense-les en une ou deux phrases factuelles. N'ajoute aucune interprétation, jugement ou information non présente dans le commentaire original. Si aucun commentaire n'est disponible, écris "Pas de commentaire disponible".
 Génère la réponse en markdown en suivant le gabarit ci-dessous. Les annotations (pour chaque ...) indiquent une itération sur les données.
 N'utilise JAMAIS de tableaux pour présenter la donnée.
 </instructions>
