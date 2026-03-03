@@ -12,7 +12,13 @@ export class EvaluerChatUseCase {
     this.prisma = prisma;
   }
 
-  async execute({ chatId, evaluation }: { chatId: string; evaluation: $Enums.llm_call_evaluation }) {
+  async execute({
+    chatId,
+    evaluation,
+  }: {
+    chatId: string;
+    evaluation: $Enums.llm_call_evaluation;
+  }) {
     await this.prisma.getInstance().llm_calls.update({
       where: { id: chatId },
       data: { evaluation },
