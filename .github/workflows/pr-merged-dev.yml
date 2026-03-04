@@ -119,7 +119,7 @@ jobs:
           # Commit seulement s'il y a des changements
           if ! git diff --cached --quiet; then
             git commit -m "Mise à jour de la documentation dbt"
-            git push -f origin gh-pages
+            git push --force-with-lease origin gh-pages
           else
             echo "Aucun changement à publier dans la doc dbt."
           fi
