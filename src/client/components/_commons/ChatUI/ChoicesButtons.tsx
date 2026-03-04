@@ -1,14 +1,10 @@
 import { useState } from "react";
 import type { DisplayChoice } from "@/server/albert/Albert";
+import { useChatContext } from "@/components/_commons/ChatUI/ChatContext";
 
-export const ChoicesButtons = ({
-  choices,
-  onSelect,
-}: {
-  choices: DisplayChoice[];
-  onSelect: (choice: DisplayChoice) => void;
-}) => {
+export const ChoicesButtons = ({ choices }: { choices: DisplayChoice[] }) => {
   const [hidden, setHidden] = useState(false);
+  const { sendMessage } = useChatContext();
 
   if (hidden) return null;
 
@@ -20,7 +16,7 @@ export const ChoicesButtons = ({
           key={choice.value}
           onClick={() => {
             setHidden(true);
-            onSelect(choice);
+            sendMessage({ text: choice.label });
           }}
           type="button"
         >
