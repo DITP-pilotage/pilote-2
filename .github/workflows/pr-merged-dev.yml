@@ -107,10 +107,10 @@ jobs:
           # On configure git pour le bot
           git config --global user.name "github-actions"
           git config --global user.email "github-actions@github.com"
-          # Assure que la branche gh-pages existe en local et à jour
-          git fetch
-          git checkout gh-pages
-          git pull origin gh-pages
+          # Assure que la branche gh-pages existe en local et à jour, même sur un runner fresh
+          git fetch origin gh-pages --depth=1
+          git checkout -B gh-pages origin/gh-pages
+          
           # On supprime le dossier docs et on le met à jour avec le dossier tmp
           rm -rf docs
           mv tmp docs
