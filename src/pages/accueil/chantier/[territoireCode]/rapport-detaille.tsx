@@ -408,14 +408,14 @@ export const getServerSideProps: GetServerSideProps<
 
   const moyenneTauxAvancementTerritoire =
     donnéesTerritoiresAgrégées[mailleChantier].territoires[territoireCode]
-      .répartition.avancements.annuel.moyenne;
+      .repartition.avancements.annuel.moyenne;
 
   const avancementsGlobauxTerritoriauxMoyens = objectEntries(
     donnéesTerritoiresAgrégées[mailleSelectionnee || "departementale"]
       .territoires,
   ).map(([territoireCodeSelectionne, territoire]) => ({
-    valeur: territoire.répartition.avancements.global.moyenne,
-    valeurAnnuelle: territoire.répartition.avancements.annuel.moyenne,
+    valeur: territoire.repartition.avancements.global.moyenne,
+    valeurAnnuelle: territoire.repartition.avancements.annuel.moyenne,
     territoireCode: territoireCodeSelectionne,
     estApplicable: null,
   }));

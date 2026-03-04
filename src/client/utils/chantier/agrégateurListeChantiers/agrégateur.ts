@@ -1,7 +1,7 @@
 import { objectEntries } from "@/client/utils/objects/objects";
 import {
   calculerMoyenne,
-  calculerMédiane,
+  calculerMediane,
   valeurMaximum,
   valeurMinimum,
 } from "@/client/utils/statistiques/statistiques";
@@ -52,9 +52,9 @@ export class AgregateurListeChantiersParTerritoire {
           if (donneesTerritoire.estApplicable) {
             this.agregat["nationale"].territoires[
               territoireCode
-            ].donnéesBrutes.avancements = [
+            ].donneesBrutes.avancements = [
               ...this.agregat["nationale"].territoires[territoireCode]
-                .donnéesBrutes.avancements,
+                .donneesBrutes.avancements,
               donneesTerritoire.avancement,
             ];
           }
@@ -65,9 +65,9 @@ export class AgregateurListeChantiersParTerritoire {
           if (donneesTerritoire.estApplicable) {
             this.agregat["departementale"].territoires[
               territoireCode
-            ].donnéesBrutes.avancements = [
+            ].donneesBrutes.avancements = [
               ...this.agregat["departementale"].territoires[territoireCode]
-                .donnéesBrutes.avancements,
+                .donneesBrutes.avancements,
               donneesTerritoire.avancement,
             ];
           }
@@ -78,9 +78,9 @@ export class AgregateurListeChantiersParTerritoire {
           if (donneesTerritoire.estApplicable) {
             this.agregat["regionale"].territoires[
               territoireCode
-            ].donnéesBrutes.avancements = [
+            ].donneesBrutes.avancements = [
               ...this.agregat["regionale"].territoires[territoireCode]
-                .donnéesBrutes.avancements,
+                .donneesBrutes.avancements,
               donneesTerritoire.avancement,
             ];
           }
@@ -102,11 +102,11 @@ export class AgregateurListeChantiersParTerritoire {
             annuel: [],
           };
         avancementsPourCeTerritoireCode.global =
-          donneesTerritoire.donnéesBrutes.avancements.map(
+          donneesTerritoire.donneesBrutes.avancements.map(
             (avancement) => avancement.global,
           );
         avancementsPourCeTerritoireCode.annuel =
-          donneesTerritoire.donnéesBrutes.avancements.map(
+          donneesTerritoire.donneesBrutes.avancements.map(
             (avancement) => avancement.annuel,
           );
         avancementsPourCetteMaille.global = [
@@ -139,28 +139,28 @@ export class AgregateurListeChantiersParTerritoire {
   ) {
     this.agregat[maille].territoires[
       territoireCode
-    ].répartition.avancements.global.minimum = valeurMinimum(
+    ].repartition.avancements.global.minimum = valeurMinimum(
       avancements.global,
     );
     this.agregat[maille].territoires[
       territoireCode
-    ].répartition.avancements.global.maximum = valeurMaximum(
+    ].repartition.avancements.global.maximum = valeurMaximum(
       avancements.global,
     );
     this.agregat[maille].territoires[
       territoireCode
-    ].répartition.avancements.global.moyenne = calculerMoyenne(
+    ].repartition.avancements.global.moyenne = calculerMoyenne(
       avancements.global,
     );
     this.agregat[maille].territoires[
       territoireCode
-    ].répartition.avancements.global.médiane = calculerMédiane(
+    ].repartition.avancements.global.mediane = calculerMediane(
       avancements.global,
     );
 
     this.agregat[maille].territoires[
       territoireCode
-    ].répartition.avancements.annuel.moyenne = calculerMoyenne(
+    ].repartition.avancements.annuel.moyenne = calculerMoyenne(
       avancements.annuel,
     );
   }
@@ -169,28 +169,28 @@ export class AgregateurListeChantiersParTerritoire {
     maille: Maille,
     avancements: AvancementRegroupementDonneesBrutes,
   ) {
-    this.agregat[maille].répartition.avancements.global.minimum = valeurMinimum(
+    this.agregat[maille].repartition.avancements.global.minimum = valeurMinimum(
       avancements.global,
     );
-    this.agregat[maille].répartition.avancements.global.maximum = valeurMaximum(
+    this.agregat[maille].repartition.avancements.global.maximum = valeurMaximum(
       avancements.global,
     );
-    this.agregat[maille].répartition.avancements.global.moyenne =
+    this.agregat[maille].repartition.avancements.global.moyenne =
       calculerMoyenne(avancements.global);
-    this.agregat[maille].répartition.avancements.global.médiane =
-      calculerMédiane(avancements.global);
+    this.agregat[maille].repartition.avancements.global.mediane =
+      calculerMediane(avancements.global);
 
-    this.agregat[maille].répartition.avancements.annuel.moyenne =
+    this.agregat[maille].repartition.avancements.annuel.moyenne =
       calculerMoyenne(avancements.annuel);
   }
 
   private _creerDonneesInitialesTerritoire() {
     return {
-      répartition: {
+      repartition: {
         avancements: {
           global: {
             moyenne: null,
-            médiane: null,
+            mediane: null,
             minimum: null,
             maximum: null,
           },
@@ -199,7 +199,7 @@ export class AgregateurListeChantiersParTerritoire {
           },
         },
       },
-      donnéesBrutes: {
+      donneesBrutes: {
         avancements: [],
       },
     };
@@ -207,11 +207,11 @@ export class AgregateurListeChantiersParTerritoire {
 
   private _creerDonneesInitialesMaille(listeDeTerritoireCode: string[]) {
     return {
-      répartition: {
+      repartition: {
         avancements: {
           global: {
             moyenne: null,
-            médiane: null,
+            mediane: null,
             minimum: null,
             maximum: null,
           },

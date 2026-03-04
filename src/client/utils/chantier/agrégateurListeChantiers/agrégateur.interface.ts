@@ -2,10 +2,10 @@ import { Avancement } from "@/server/domain/chantier/avancement/Avancement.inter
 import { Maille } from "@/server/domain/maille/Maille.interface";
 import { CodeInsee } from "@/server/domain/territoire/Territoire.interface";
 
-type RépartitionAvancements = {
+type RepartitionAvancements = {
   global: {
     moyenne: number | null;
-    médiane: number | null;
+    mediane: number | null;
     minimum: number | null;
     maximum: number | null;
   };
@@ -14,21 +14,21 @@ type RépartitionAvancements = {
   };
 };
 
-export type Agrégat = {
-  répartition: {
-    avancements: RépartitionAvancements;
+export type Agregat = {
+  repartition: {
+    avancements: RepartitionAvancements;
   };
   territoires: {
-    [clé in CodeInsee]: {
-      répartition: {
-        avancements: RépartitionAvancements;
+    [cle in CodeInsee]: {
+      repartition: {
+        avancements: RepartitionAvancements;
       };
-      donnéesBrutes: {
+      donneesBrutes: {
         avancements: Avancement[];
       };
     };
   };
 };
 export type AgregatParTerritoire = {
-  [key in Maille]: Agrégat;
+  [key in Maille]: Agregat;
 };

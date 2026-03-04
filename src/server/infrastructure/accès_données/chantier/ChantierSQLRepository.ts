@@ -23,7 +23,7 @@ import {
 } from "@/server/domain/utilisateur/Utilisateur.interface";
 import { FiltreQueryParams } from "@/server/chantiers/app/contrats/FiltreQueryParams";
 import { removeAccents } from "@/server/utils/remove-accents";
-import { calculerMédiane } from "@/client/utils/statistiques/statistiques";
+import { calculerMediane } from "@/client/utils/statistiques/statistiques";
 import { RepartitionMeteoChantiers } from "@/server/chantiers/domain/RepartitionMeteoChantiers";
 import { verifyValeurIsNotNullOrUndefined } from "@/server/utils/VerifyValeurIsNotNullOrUndefined";
 import { prisma } from "@/server/db/prisma";
@@ -157,7 +157,7 @@ export default class ChantierSQLRepository implements ChantierRepository {
       });
 
     return {
-      médiane: calculerMédiane(
+      médiane: calculerMediane(
         listeMoyenneParTerritoire.map(
           (moyenneParTerritoire) => moyenneParTerritoire._avg.taux_avancement,
         ),

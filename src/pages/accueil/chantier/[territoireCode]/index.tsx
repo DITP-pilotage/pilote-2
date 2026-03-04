@@ -242,13 +242,13 @@ export const getServerSideProps = async (
 
   const moyenneTerritoire =
     donnéesTerritoiresAgrégées[mailleChantier].territoires[territoireCode]
-      .répartition.avancements.annuel.moyenne;
+      .repartition.avancements.annuel.moyenne;
   const avancementsGlobauxTerritoriauxMoyens = objectEntries({
     ...donnéesTerritoiresAgrégées.regionale.territoires,
     ...donnéesTerritoiresAgrégées.departementale.territoires,
   }).map(([territoireCodeDonnee, territoire]) => ({
-    valeur: territoire.répartition.avancements.global.moyenne,
-    valeurAnnuelle: territoire.répartition.avancements.annuel.moyenne,
+    valeur: territoire.repartition.avancements.global.moyenne,
+    valeurAnnuelle: territoire.repartition.avancements.annuel.moyenne,
     territoireCode: territoireCodeDonnee as string,
     estApplicable: true,
   }));

@@ -37,7 +37,7 @@ describe("AgrégateurListeChantiersParTerritoire", () => {
         ).agreger();
         //THEN
         expect(
-          agregat.departementale.territoires["DEPT-01"].répartition,
+          agregat.departementale.territoires["DEPT-01"].repartition,
         ).toStrictEqual({
           avancements: {
             global: { moyenne: 80, médiane: 80, minimum: 80, maximum: 80 },
@@ -74,7 +74,7 @@ describe("AgrégateurListeChantiersParTerritoire", () => {
         ).agreger();
         //THEN
         expect(
-          agregat.departementale.territoires["DEPT-01"].répartition,
+          agregat.departementale.territoires["DEPT-01"].repartition,
         ).toStrictEqual({
           avancements: {
             global: { moyenne: 70, médiane: 70, minimum: 60, maximum: 80 },
@@ -103,7 +103,7 @@ describe("AgrégateurListeChantiersParTerritoire", () => {
         ).agreger();
         //THEN
         expect(
-          agregat.departementale.territoires["DEPT-01"].répartition,
+          agregat.departementale.territoires["DEPT-01"].repartition,
         ).toStrictEqual({
           avancements: {
             global: {
@@ -137,7 +137,7 @@ describe("AgrégateurListeChantiersParTerritoire", () => {
         ).agreger();
         //THEN
         expect(
-          agregat.departementale.territoires["DEPT-01"].répartition,
+          agregat.departementale.territoires["DEPT-01"].repartition,
         ).toStrictEqual({
           avancements: {
             global: {
@@ -171,7 +171,7 @@ describe("AgrégateurListeChantiersParTerritoire", () => {
         ).agreger();
         //THEN
         expect(
-          agregat.departementale.territoires["DEPT-01"].répartition,
+          agregat.departementale.territoires["DEPT-01"].repartition,
         ).toStrictEqual({
           avancements: {
             global: {
@@ -214,8 +214,8 @@ describe("AgrégateurListeChantiersParTerritoire", () => {
         ).agreger();
         //THEN
         expect(
-          agregat.nationale.territoires["NAT-FR"].répartition.avancements.global
-            .médiane,
+          agregat.nationale.territoires["NAT-FR"].repartition.avancements.global
+            .mediane,
         ).toStrictEqual(70);
       });
     });
@@ -254,7 +254,7 @@ describe("AgrégateurListeChantiersParTerritoire", () => {
         //THEN
         // global values: [60, 80, 90] → moyenne=230/3, médiane=80, min=60, max=90
         // annuel values: [50, 70, 80] → moyenne=200/3
-        expect(agregat.departementale.répartition).toStrictEqual({
+        expect(agregat.departementale.repartition).toStrictEqual({
           avancements: {
             global: {
               moyenne: (60 + 80 + 90) / 3,
@@ -278,7 +278,7 @@ describe("AgrégateurListeChantiersParTerritoire", () => {
         chantiers,
       ).agreger();
       //THEN
-      expect(agrégat.nationale.territoires["NAT-FR"].répartition).toStrictEqual(
+      expect(agrégat.nationale.territoires["NAT-FR"].repartition).toStrictEqual(
         {
           avancements: {
             global: {
@@ -291,7 +291,7 @@ describe("AgrégateurListeChantiersParTerritoire", () => {
           },
         },
       );
-      expect(agrégat.nationale.répartition).toStrictEqual({
+      expect(agrégat.nationale.repartition).toStrictEqual({
         avancements: {
           global: {
             moyenne: null,
