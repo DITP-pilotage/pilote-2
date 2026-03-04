@@ -1,11 +1,11 @@
 import {
-  AgrégateurListeChantiersParTerritoire,
-  ChantierPourAgrégation,
+  AgregateurListeChantiersParTerritoire,
+  ChantierPourAgregation,
 } from "./agrégateur";
 
 function creerChantier(
-  maillesTerritoires: Partial<ChantierPourAgrégation["mailles"]>,
-): ChantierPourAgrégation {
+  maillesTerritoires: Partial<ChantierPourAgregation["mailles"]>,
+): ChantierPourAgregation {
   return {
     mailles: {
       nationale: {},
@@ -32,9 +32,9 @@ describe("AgrégateurListeChantiersParTerritoire", () => {
           }),
         ];
         //WHEN
-        const agregat = new AgrégateurListeChantiersParTerritoire(
+        const agregat = new AgregateurListeChantiersParTerritoire(
           chantiers,
-        ).agréger();
+        ).agreger();
         //THEN
         expect(
           agregat.departementale.territoires["DEPT-01"].répartition,
@@ -69,9 +69,9 @@ describe("AgrégateurListeChantiersParTerritoire", () => {
           }),
         ];
         //WHEN
-        const agregat = new AgrégateurListeChantiersParTerritoire(
+        const agregat = new AgregateurListeChantiersParTerritoire(
           chantiers,
-        ).agréger();
+        ).agreger();
         //THEN
         expect(
           agregat.departementale.territoires["DEPT-01"].répartition,
@@ -98,9 +98,9 @@ describe("AgrégateurListeChantiersParTerritoire", () => {
           }),
         ];
         //WHEN
-        const agregat = new AgrégateurListeChantiersParTerritoire(
+        const agregat = new AgregateurListeChantiersParTerritoire(
           chantiers,
-        ).agréger();
+        ).agreger();
         //THEN
         expect(
           agregat.departementale.territoires["DEPT-01"].répartition,
@@ -132,9 +132,9 @@ describe("AgrégateurListeChantiersParTerritoire", () => {
           }),
         ];
         //WHEN
-        const agregat = new AgrégateurListeChantiersParTerritoire(
+        const agregat = new AgregateurListeChantiersParTerritoire(
           chantiers,
-        ).agréger();
+        ).agreger();
         //THEN
         expect(
           agregat.departementale.territoires["DEPT-01"].répartition,
@@ -166,9 +166,9 @@ describe("AgrégateurListeChantiersParTerritoire", () => {
           }),
         ];
         //WHEN
-        const agregat = new AgrégateurListeChantiersParTerritoire(
+        const agregat = new AgregateurListeChantiersParTerritoire(
           chantiers,
-        ).agréger();
+        ).agreger();
         //THEN
         expect(
           agregat.departementale.territoires["DEPT-01"].répartition,
@@ -209,9 +209,9 @@ describe("AgrégateurListeChantiersParTerritoire", () => {
           }),
         ];
         //WHEN
-        const agregat = new AgrégateurListeChantiersParTerritoire(
+        const agregat = new AgregateurListeChantiersParTerritoire(
           chantiers,
-        ).agréger();
+        ).agreger();
         //THEN
         expect(
           agregat.nationale.territoires["NAT-FR"].répartition.avancements.global
@@ -248,9 +248,9 @@ describe("AgrégateurListeChantiersParTerritoire", () => {
           }),
         ];
         //WHEN
-        const agregat = new AgrégateurListeChantiersParTerritoire(
+        const agregat = new AgregateurListeChantiersParTerritoire(
           chantiers,
-        ).agréger();
+        ).agreger();
         //THEN
         // global values: [60, 80, 90] → moyenne=230/3, médiane=80, min=60, max=90
         // annuel values: [50, 70, 80] → moyenne=200/3
@@ -272,11 +272,11 @@ describe("AgrégateurListeChantiersParTerritoire", () => {
   describe("Cas limite : liste de chantiers vide", () => {
     it("Retourne toutes les stats à null", () => {
       //GIVEN
-      const chantiers: ChantierPourAgrégation[] = [];
+      const chantiers: ChantierPourAgregation[] = [];
       //WHEN
-      const agrégat = new AgrégateurListeChantiersParTerritoire(
+      const agrégat = new AgregateurListeChantiersParTerritoire(
         chantiers,
-      ).agréger();
+      ).agreger();
       //THEN
       expect(agrégat.nationale.territoires["NAT-FR"].répartition).toStrictEqual(
         {

@@ -29,6 +29,6 @@ export type Agrégat = {
     };
   };
 };
-export type AgrégatParTerritoire = {
+export type AgregatParTerritoire = {
   [key in Maille]: Agrégat;
 };

@@ -12,7 +12,7 @@ import {
   CODES_MAILLES,
   NOMS_MAILLES,
 } from "@/server/infrastructure/accès_données/maille/mailleSQLParser";
-import { ChantierPourAgrégation } from "@/client/utils/chantier/agrégateurListeChantiers/agrégateur";
+import { ChantierPourAgregation } from "@/client/utils/chantier/agrégateurListeChantiers/agrégateur";
 import { Météo } from "@/server/domain/météo/Météo.interface";
 import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
 import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
@@ -308,7 +308,7 @@ export default class ChantierSQLRepository implements ChantierRepository {
   async recupererDonneesAvancementChantiers(
     chantierIds: string[],
     jalon: number,
-  ): Promise<ChantierPourAgrégation[]> {
+  ): Promise<ChantierPourAgregation[]> {
     const rows = await prisma.chantier_identite.findMany({
       where: { id: { in: chantierIds } },
       select: {
@@ -329,7 +329,7 @@ export default class ChantierSQLRepository implements ChantierRepository {
     });
 
     return rows.map((row) => {
-      const mailles: ChantierPourAgrégation["mailles"] = {
+      const mailles: ChantierPourAgregation["mailles"] = {
         nationale: {},
         departementale: {},
         regionale: {},
