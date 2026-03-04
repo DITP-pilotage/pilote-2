@@ -8,9 +8,21 @@ import {
 import départements from "@/client/constants/départements.json";
 import régions from "@/client/constants/régions.json";
 import { Maille } from "@/server/domain/maille/Maille.interface";
-import { ChantierAccueilContratV2 } from "@/server/chantiers/app/contrats/ChantierAccueilContratV2";
-import { ChantierRapportDetailleContrat } from "@/server/chantiers/app/contrats/ChantierRapportDetailleContratV2";
+import { Avancement } from "@/server/domain/chantier/avancement/Avancement.interface";
 import { AgrégatParTerritoire } from "./agrégateur.interface";
+
+export type ChantierPourAgrégation = {
+  mailles: Record<
+    Maille,
+    Record<
+      string,
+      {
+        estApplicable: boolean | null;
+        avancement: Avancement;
+      }
+    >
+  >;
+};
 
 type AvancementRegroupementDonnéesBrutes = {
   global: (number | null)[];
@@ -20,12 +32,7 @@ type AvancementRegroupementDonnéesBrutes = {
 export class AgrégateurListeChantiersParTerritoire {
   private readonly agrégat: AgrégatParTerritoire;
 
-  constructor(
-    private chantiers: (
-      | ChantierAccueilContratV2
-      | ChantierRapportDetailleContrat
-    )[],
-  ) {
+  constructor(private chantiers: ChantierPourAgrégation[]) {
     this.chantiers = chantiers;
     this.agrégat = this._créerAgrégatInitial();
   }

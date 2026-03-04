@@ -11,6 +11,7 @@ import { AvancementsStatistiques } from "@/components/_commons/Avancements/Avanc
 import { ProfilCode } from "@/server/domain/utilisateur/Utilisateur.interface";
 import { RepartitionMeteoChantiers } from "@/server/chantiers/domain/RepartitionMeteoChantiers";
 import { FiltreQueryParams } from "@/server/chantiers/app/contrats/FiltreQueryParams";
+import { ChantierPourAgrégation } from "@/client/utils/chantier/agrégateurListeChantiers/agrégateur";
 
 export default interface ChantierRepository {
   récupérerLesEntréesDUnChantier(
@@ -41,4 +42,8 @@ export default interface ChantierRepository {
     territoireCode: string,
     filtres: FiltreQueryParams,
   ): Promise<RepartitionMeteoChantiers>;
+  recupererDonneesAvancementChantiers(
+    chantierIds: string[],
+    jalon: number,
+  ): Promise<ChantierPourAgrégation[]>;
 }

@@ -8,7 +8,11 @@ import {
 import ChantierRepository from "@/server/domain/chantier/ChantierRepository.interface";
 import Chantier from "@/server/domain/chantier/Chantier.interface";
 import { Maille } from "@/server/domain/maille/Maille.interface";
-import { CODES_MAILLES } from "@/server/infrastructure/accès_données/maille/mailleSQLParser";
+import {
+  CODES_MAILLES,
+  NOMS_MAILLES,
+} from "@/server/infrastructure/accès_données/maille/mailleSQLParser";
+import { ChantierPourAgrégation } from "@/client/utils/chantier/agrégateurListeChantiers/agrégateur";
 import { Météo } from "@/server/domain/météo/Météo.interface";
 import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
 import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
@@ -298,6 +302,49 @@ export default class ChantierSQLRepository implements ChantierRepository {
         meteosGroupee.find((meteo) => meteo.meteo === "ORAGE")?._count ?? 0,
       nombreSoleil:
         meteosGroupee.find((meteo) => meteo.meteo === "SOLEIL")?._count ?? 0,
+    });
+  }
+
+  async recupererDonneesAvancementChantiers(
+    chantierIds: string[],
+    jalon: number,
+  ): Promise<ChantierPourAgrégation[]> {
+    const rows = await prisma.chantier_identite.findMany({
+      where: { id: { in: chantierIds } },
+      select: {
+        id: true,
+        chantier_territoire: {
+          select: {
+            maille: true,
+            territoire_code: true,
+            est_applicable: true,
+            taux_avancement_mandat: true,
+            chantier_territoire_jalon: {
+              where: { jalon },
+              select: { taux_avancement: true },
+            },
+          },
+        },
+      },
+    });
+
+    return rows.map((row) => {
+      const mailles: ChantierPourAgrégation["mailles"] = {
+        nationale: {},
+        departementale: {},
+        regionale: {},
+      };
+      for (const ct of row.chantier_territoire) {
+        const maille: Maille = NOMS_MAILLES[ct.maille];
+        mailles[maille][ct.territoire_code] = {
+          estApplicable: ct.est_applicable,
+          avancement: {
+            global: ct.taux_avancement_mandat ?? null,
+            annuel: ct.chantier_territoire_jalon[0]?.taux_avancement ?? null,
+          },
+        };
+      }
+      return { mailles };
     });
   }
 }

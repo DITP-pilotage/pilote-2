@@ -16,13 +16,13 @@ import Axe from "@/server/domain/axe/Axe.interface";
 import Alerte from "@/server/domain/alerte/Alerte";
 import RécupérerStatistiquesAvancementChantiersUseCase from "@/server/usecase/chantier/RécupérerStatistiquesAvancementChantiersUseCase";
 import { presenterEnAvancementsStatistiquesAccueilContrat } from "@/server/chantiers/app/contrats/AvancementsStatistiquesAccueilContrat";
-import { AgrégateurListeChantiersParTerritoire } from "@/client/utils/chantier/agrégateurListeChantiers/agrégateur";
 import { objectEntries } from "@/client/utils/objects/objects";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
 import { territoireCodeVersMailleCodeInsee } from "@/server/utils/territoires";
 import { Chantier } from "@/server/chantiers/domain/Chantier";
 import { FiltreQueryParams } from "@/server/chantiers/app/contrats/FiltreQueryParams";
 import { RecupererRepartitionsMeteoChantiersUseCase } from "@/server/chantiers/usecases/RecupererRepartitionMeteoChantiersUseCase";
+import { AgregerAvancementsChantiersUseCase } from "@/server/chantiers/usecases/AgregerAvancementsChantiersUseCase";
 import { presenterEnRépartitionsMétéosChantiersContrat } from "@/server/chantiers/app/contrats/RepartitionMeteoChantiersContrat";
 import { getAnneeDateDeBascule } from "@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getAnneeDateDeBascule";
 import { configuration, configurationFeatureFlip } from "@/config";
@@ -231,9 +231,14 @@ export const getServerSideProps = async (
       jalon,
     )
     .then(presenterEnAvancementsStatistiquesAccueilContrat);
-  const donnéesTerritoiresAgrégées = new AgrégateurListeChantiersParTerritoire(
-    chantiersAvecAlertes,
-  ).agréger();
+
+  const donnéesTerritoiresAgrégées =
+    await new AgregerAvancementsChantiersUseCase({
+      chantierRepository: dependencies.getChantierRepository(),
+    }).run(
+      chantiersAvecAlertes.map((chantier) => chantier.id),
+      jalon,
+    );
 
   const moyenneTerritoire =
     donnéesTerritoiresAgrégées[mailleChantier].territoires[territoireCode]
