@@ -250,6 +250,7 @@ Ce document recense l'ensemble des scénarios couverts par les tests end-to-end 
 Profil : `ditp.admin@example.com` (DITP_ADMIN)
 
 **Page listing :**
+
 - Accès via le lien "Gestion des comptes" dans la navigation
 - Vérification de la structure du tableau : présence de toutes les colonnes (Adresse électronique, Nom, Prénom, Profil, Fonction, Dernière modification, Territoire, Actif)
 - Vérification que la colonne "Territoire" est visible (spécifique aux profils DITP)
@@ -258,18 +259,21 @@ Profil : `ditp.admin@example.com` (DITP_ADMIN)
 - Vérification que des utilisateurs de profils variés sont visibles dans le tableau (DITP_ADMIN voit tous les utilisateurs)
 
 **Fiche détail :**
-- Navigation vers la fiche d'un utilisateur depuis le tableau (clic sur une ligne)
-- Vérification des informations affichées : email, nom, prénom, profil, fonction, périmètre ministériel, service
+
+- Navigation vers la fiche d'un utilisateur depuis le tableau (clic sur la ligne de `coordinateur.region@example.com`)
+- Vérification des informations affichées dans le tableau de la fiche : email, nom, prénom, profil
 - Vérification que le bouton "Modifier" est visible
 - Vérification que le lien "Désactiver le compte" est visible
 - Vérification qu'aucun bandeau de restriction n'est affiché (DITP_ADMIN peut tout modifier)
 
 **Génération de token API :**
+
 - Navigation vers la fiche d'un utilisateur éligible au token API (profil parmi : DITP_ADMIN, DIR_PROJET, EQUIPE_DIR_PROJET, SECRETARIAT_GENERAL, COORDINATEUR_REGION, COORDINATEUR_DEPARTEMENT)
 - Vérification que le bouton "Générer un token d'authentification" est visible
 - Clic sur le bouton et vérification que la génération fonctionne
 
 **Vérification négative token API :**
+
 - Navigation vers la fiche d'un utilisateur avec un profil NON éligible au token API (ex : PREFET_REGION, PREFET_DEPARTEMENT, CABINET_MINISTERIEL)
 - Vérification que le bouton "Générer un token d'authentification" n'est PAS visible
 
@@ -278,6 +282,7 @@ Profil : `ditp.admin@example.com` (DITP_ADMIN)
 Profil : `coordinateur.region@example.com` (COORDINATEUR_REGION, territoires : REG-53, DEPT-56, DEPT-29, DEPT-35, DEPT-22)
 
 **Page listing — vérification de la visibilité :**
+
 - Accès à la page listing
 - Vérification que la colonne "Territoire" n'est PAS visible
 - Vérification que seuls les profils autorisés en lecture apparaissent dans le filtre "Profil" : Préfet de région, Préfet de département, Services déconcentrés régionaux, Services déconcentrés départementaux, Coordinateur PILOTE départemental, Coordinateur PILOTE régional
@@ -286,30 +291,42 @@ Profil : `coordinateur.region@example.com` (COORDINATEUR_REGION, territoires : R
 - Vérification que le bouton "Créer un compte" mène vers `/admin/utilisateur/creer/aide` (page d'aide, pas l'accès direct)
 
 **Fiche détail — utilisateur modifiable (PREFET_DEPARTEMENT) :**
+
 - Navigation vers `prefet.departement@example.com` (PREFET_DEPARTEMENT, territoires dans le périmètre)
 - Vérification que le bouton "Modifier" est visible
 - Vérification que le lien "Désactiver le compte" est visible
 - Vérification qu'aucun bandeau de restriction n'est affiché
+- Vérification que le bouton "Générer un token" n'est PAS visible
 
 **Fiche détail — utilisateur modifiable (SERVICES_DECONCENTRES_REGION) :**
+
 - Navigation vers `services.deconcentres.region@example.com`
 - Vérification que le bouton "Modifier" est visible
 - Vérification que le lien "Désactiver le compte" est visible
+- Vérification qu'aucun bandeau de restriction n'est affiché
+- Vérification que le bouton "Générer un token" n'est PAS visible
 
 **Fiche détail — restriction : profil coordinateur non modifiable :**
+
 - Navigation vers `coordinateur.departement@example.com` (COORDINATEUR_DEPARTEMENT)
 - Vérification du bandeau de restriction : "Ce compte a un profil de coordinateur PILOTE. Vous ne pouvez le modifier ou le désactiver."
 - Vérification que le bouton "Modifier" est absent
 - Vérification que le lien "Désactiver le compte" est absent
 
-**Vérification négative : pas de bouton token API :**
-- Sur chaque fiche visitée, vérification que le bouton "Générer un token d'authentification" n'est PAS visible (seul DITP_ADMIN peut générer des tokens)
+**Fiche détail — utilisateur avec chantier hors ATE : le coordinateur peut quand même modifier :**
+
+- Navigation vers `services.deconcentres.hors-ate@example.com` (SERVICES_DECONCENTRES_REGION avec CH-108 `hors_ate_deconcentre`)
+- CH-108 est présent dans les `lecture.chantiers` de cet utilisateur, mais absent des `gestionUtilisateur.chantiers` du coordinateur (qui ne contient que les chantiers `ate`)
+- Malgré cet écart, le coordinateur n'est pas bloqué : la vérification de couverture des chantiers dans `modificationEstImpossible` ne s'applique qu'au profil Secrétariat Général, pas aux coordinateurs
+- Vérification que le bouton "Modifier" EST visible (le coordinateur peut modifier)
+- Vérification qu'aucun bandeau de restriction n'est affiché
 
 ### Test 3 : Coordinateur Département — Périmètre le plus restreint
 
-Profil : `coordinateur.departement@example.com` (COORDINATEUR_DEPARTEMENT, territoires : DEPT-56, DEPT-29, DEPT-35, DEPT-22)
+Profil : `coordinateur.departement@example.com` (COORDINATEUR_DEPARTEMENT, territoires: DEPT-56, DEPT-29, DEPT-35, DEPT-22)
 
 **Page listing — vérification du périmètre réduit :**
+
 - Accès à la page listing
 - Vérification que la colonne "Territoire" n'est PAS visible
 - Vérification que seuls 3 profils apparaissent dans le filtre "Profil" : Préfet de département, Services déconcentrés départementaux, Coordinateur PILOTE départemental
@@ -317,35 +334,52 @@ Profil : `coordinateur.departement@example.com` (COORDINATEUR_DEPARTEMENT, terri
 - Vérification du nombre d'utilisateurs visibles (restreint aux utilisateurs départementaux du périmètre)
 
 **Fiche détail — utilisateur modifiable (PREFET_DEPARTEMENT) :**
+
 - Navigation vers `prefet.departement@example.com`
 - Vérification que le bouton "Modifier" est visible
 - Vérification que le lien "Désactiver le compte" est visible
 
 **Fiche détail — utilisateur modifiable (SERVICES_DECONCENTRES_DEPARTEMENT) :**
+
 - Navigation vers `services.deconcentres.departement@example.com`
 - Vérification que le bouton "Modifier" est visible
+- Vérification que le lien "Désactiver le compte" est visible
 
-**Fiche détail — restriction : coordinateur non modifiable (soi-même) :**
+**Fiche détail — restriction : profil coordinateur non modifiable (soi-même) :**
+
 - Navigation vers sa propre fiche (`coordinateur.departement@example.com`)
+- Le coordinateur département ne peut pas modifier un autre coordinateur (même soi-même)
 - Vérification du bandeau de restriction : "Ce compte a un profil de coordinateur PILOTE. Vous ne pouvez le modifier ou le désactiver."
-- Vérification que les boutons Modifier et Désactiver sont absents
+- Vérification que le bouton "Modifier" est absent
+- Vérification que le lien "Désactiver le compte" est absent
 
 ### Test 4 : Secrétariat Général — Gestion par périmètre de chantiers
 
-Profil : `secretariat.general@example.com` (SECRETARIAT_GENERAL, chantiers : CH-070, CH-071, CH-067)
+Profil : `secretariat.general@example.com` (SECRETARIAT_GENERAL, chantiers: CH-070, CH-071, CH-067)
 
 **Page listing :**
+
 - Accès à la page listing
 - Vérification que la colonne "Territoire" n'est PAS visible
+- Vérification que le bouton "Créer un compte" mène vers `/admin/utilisateur/creer/aide` (page d'aide, pas l'accès direct)
 - Vérification que seuls 2 profils apparaissent dans le filtre "Profil" : Services déconcentrés régionaux, Services déconcentrés départementaux
 - Vérification que les profils Préfet, Coordinateur, DITP, etc. ne sont PAS dans le filtre
 - Vérification que les utilisateurs affichés correspondent au périmètre de chantiers du secrétariat général
 
-**Fiche détail — utilisateur modifiable :**
-- Navigation vers un utilisateur services déconcentrés visible dans le listing
-- Vérification que le bouton "Modifier" est visible
-- Vérification que le lien "Désactiver le compte" est visible
-- Vérification que le bouton "Générer un token" n'est PAS visible (seul DITP_ADMIN peut)
+**Listing — utilisateurs visibles :**
+
+- Vérification que `services.deconcentres.region@example.com` et `services.deconcentres.departement@example.com` sont visibles
+- Vérification que `ditp.admin@example.com` et `prefet.region@example.com` ne sont PAS visibles
+
+**Fiche détail — restriction chantiers (toujours présente pour SG) :**
+
+- Les profils SD ont `a_acces_tous_chantiers_territorialises=true` → leur `lecture.chantiers` inclut TOUS les chantiers territorialisés par défaut
+- Le SG ne couvre qu'un sous-ensemble de chantiers (`gestionUtilisateur.chantiers` = CH-070, CH-071, CH-067) → la vérification `every()` échoue systématiquement
+- Navigation vers `services.deconcentres.region@example.com`
+- Vérification du bandeau de restriction : "Ce compte a des droits d'accès sur plusieurs chantiers. Vous ne pouvez pas modifier ses droits ou désactiver l'utilisateur."
+- Vérification que le bouton "Modifier" est absent
+- Vérification que le lien "Désactiver le compte" est absent
+- Vérification que le bouton "Générer un token" n'est PAS visible
 
 ### Test 5 : Profils sans droit de gestion — Accès refusé
 
@@ -365,6 +399,7 @@ Profil : `equipe.dir.projet@example.com` (EQUIPE_DIR_PROJET)
 Profil : `prefet.departement@example.com` (PREFET_DEPARTEMENT)
 
 - Vérification que le lien "Gestion des comptes" n'est PAS visible dans la navigation
+- Tentative d'accès direct à `/admin/utilisateurs` : vérification de la redirection vers la page d'accueil
 
 ### Test 6 : Désactivation et réactivation d'un compte
 
@@ -389,39 +424,55 @@ Profil : `ditp.admin@example.com` (DITP_ADMIN)
 
 Profil : `ditp.admin@example.com` (DITP_ADMIN) — pour avoir la visibilité complète sur tous les utilisateurs
 
-**Filtre par statut de compte :**
-- Clic sur le tag "Comptes actifs" : vérification que seuls les comptes actifs sont affichés
-- Clic sur le tag "Comptes désactivés" : vérification que seuls les comptes désactivés apparaissent (ou message vide si aucun désactivé)
-- Clic sur "Tous" : vérification que tous les comptes sont de nouveau affichés
+**Filtre par statut — comptes actifs :**
 
-**Filtre par profil :**
-- Sélection d'un profil spécifique dans la barre latérale (ex : "Préfet de département")
-- Vérification que seuls les utilisateurs ayant ce profil sont affichés dans le tableau
-- Vérification que le tag de filtre actif est visible avec possibilité de le supprimer
-- Réinitialisation du filtre
+- Clic sur le tag "Comptes actifs" : vérification que `ditp.admin@example.com` est visible
+- Retour au filtre "Tous"
+
+**Filtre par statut — comptes désactivés :**
+
+- Clic sur le tag "Comptes désactivés" : vérification que `ditp.admin@example.com` n'est PAS visible (aucun compte désactivé)
+- Retour au filtre "Tous"
 
 **Recherche textuelle :**
-- Saisie d'un nom d'utilisateur dans la barre de recherche
-- Vérification que le tableau est filtré en conséquence
-- Effacement de la recherche et vérification du retour à la liste complète
 
-**Réinitialisation des filtres :**
-- Application de plusieurs filtres simultanément (profil + recherche)
+- Saisie de "coordinateur" dans la barre de recherche
+- Vérification que `coordinateur.region@example.com` et `coordinateur.departement@example.com` sont visibles
+- Vérification que `ditp.admin@example.com` n'est PAS visible (ne correspond pas à la recherche)
+- Effacement de la recherche
+
+**Filtre par profil :**
+
+- Sélection de "Préfet de département et collaborateurs" dans le filtre profil
+- Vérification que `prefet.departement@example.com` est visible
+- Vérification que `ditp.admin@example.com` et `coordinateur.region@example.com` ne sont PAS visibles
+- Réinitialisation des filtres
+
+**Réinitialisation avec filtres combinés :**
+
+- Application simultanée d'un filtre profil ("Coordinateur PILOTE régional") et d'une recherche textuelle ("coordinateur")
 - Clic sur "Réinitialiser les filtres"
-- Vérification que tous les filtres sont effacés et la liste complète est restaurée
+- Vérification que tous les filtres sont effacés et la liste complète est restaurée (`ditp.admin@example.com` visible)
 
 ### Test 8 : Restriction multi-territoires — Coordinateur face à un utilisateur hors périmètre
 
-Profil : `coordinateur.region@example.com` (COORDINATEUR_REGION, territoires : REG-53, DEPT-56, DEPT-29, DEPT-35, DEPT-22)
+Profil connecté : `coordinateur.region@example.com` (COORDINATEUR_REGION, territoires : REG-53, DEPT-56, DEPT-29, DEPT-35, DEPT-22)
 
-> **Prérequis seed data** : ce test nécessite un utilisateur de test avec un profil modifiable par le coordinateur (ex : PREFET_DEPARTEMENT) mais ayant des territoires en lecture dépassant le périmètre du coordinateur (ex : DEPT-56 + DEPT-75). Cet utilisateur apparaîtrait dans le listing (au moins un territoire en commun) mais ne serait PAS modifiable (tous les territoires ne sont pas couverts).
+Utilisateur cible : `prefet.multi.territoires@example.com` (PREFET_DEPARTEMENT, territoires : DEPT-56, DEPT-75)
 
-- Navigation vers la fiche de cet utilisateur multi-territoires
+- DEPT-56 est dans le périmètre Bretagne du coordinateur → l'utilisateur apparaît dans le listing
+- DEPT-75 (Paris) est hors périmètre → l'utilisateur n'est PAS modifiable
+
+**Listing :**
+
+- Vérification que `prefet.multi.territoires@example.com` est visible dans le tableau (au moins un territoire en commun)
+
+**Fiche détail — restriction multi-territoires :**
+
+- Navigation vers la fiche de `prefet.multi.territoires@example.com`
 - Vérification du bandeau de restriction : "Ce compte a des droits d'accès sur plusieurs territoires. Vous ne pouvez pas modifier ses droits ou désactiver l'utilisateur."
 - Vérification que le bouton "Modifier" est absent
 - Vérification que le lien "Désactiver le compte" est absent
-
-> **Note** : un test symétrique existe pour le Secrétariat Général avec le bandeau "Ce compte a des droits d'accès sur plusieurs chantiers." si un utilisateur services déconcentrés a des chantiers hors du périmètre du SG.
 
 ---
 
@@ -429,22 +480,24 @@ Profil : `coordinateur.region@example.com` (COORDINATEUR_REGION, territoires : R
 
 Légende : ✓ modifiable | 🔒 bandeau restriction | — non visible | ✗ pas d'accès à la page
 
-| Utilisateur dans le listing       |      DITP Admin       |   Coord. Région   |    Coord. Dept    | Sec. Général  | Préfet Région |
-|-----------------------------------|:---------------------:|:-----------------:|:-----------------:|:-------------:|:-------------:|
-| **Accès au listing**              |           ✓           |         ✓         |         ✓         |       ✓       |       ✗       |
-| **Colonne Territoire**            |        visible        |      masquée      |      masquée      |    masquée    |       —       |
-| **Bouton Créer un compte**        |       `/creer`        |   `/creer/aide`   |   `/creer/aide`   | `/creer/aide` |       —       |
-| prefet.region                     |           ✓           |         ✓         |         —         |       —       |       —       |
-| prefet.departement                |           ✓           |         ✓         |         ✓         |       —       |       —       |
-| services.deconcentres.region      |           ✓           |         ✓         |         —         |       ✓       |       —       |
-| services.deconcentres.departement |           ✓           |         ✓         |         ✓         |       ✓       |       —       |
-| coordinateur.departement          |           ✓           | 🔒 bandeau coord. | 🔒 bandeau coord. |       —       |       —       |
-| coordinateur.region               |           ✓           | 🔒 bandeau coord. |         —         |       —       |       —       |
-| ditp.admin                        |           ✓           |         —         |         —         |       —       |       —       |
-| ditp.pilotage                     |           ✓           |         —         |         —         |       —       |       —       |
-| equipe.dir.projet                 |           ✓           |         —         |         —         |       —       |       —       |
-| secretariat.general               |           ✓           |         —         |         —         |       —       |       —       |
-| **Token API (bouton visible)**    | ✓ (profils éligibles) |         ✗         |         ✗         |       ✗       |       —       |
+| Utilisateur dans le listing       |      DITP Admin       |   Coord. Région   |    Coord. Dept    |   Sec. Général    | Préfet Région |
+|-----------------------------------|:---------------------:|:-----------------:|:-----------------:|:-----------------:|:-------------:|
+| **Accès au listing**              |           ✓           |         ✓         |         ✓         |         ✓         |       ✗       |
+| **Colonne Territoire**            |        visible        |      masquée      |      masquée      |      masquée      |       —       |
+| **Bouton Créer un compte**        |       `/creer`        |   `/creer/aide`   |   `/creer/aide`   |   `/creer/aide`   |       —       |
+| prefet.region                     |           ✓           |         ✓         |         —         |         —         |       —       |
+| prefet.departement                |           ✓           |         ✓         |         ✓         |         —         |       —       |
+| services.deconcentres.region      |           ✓           |         ✓         |         —         | 🔒 bandeau chant. |       —       |
+| services.deconcentres.departement |           ✓           |         ✓         |         ✓         | 🔒 bandeau chant. |       —       |
+| coordinateur.departement          |           ✓           | 🔒 bandeau coord. | 🔒 bandeau coord. |         —         |       —       |
+| coordinateur.region               |           ✓           | 🔒 bandeau coord. |         —         |         —         |       —       |
+| prefet.multi.territoires          |           ✓           | 🔒 bandeau terr.  |         —         |         —         |       —       |
+| services.dec.hors-ate             |           ✓           |         ✓         |         —         |         —         |       —       |
+| ditp.admin                        |           ✓           |         —         |         —         |         —         |       —       |
+| ditp.pilotage                     |           ✓           |         —         |         —         |         —         |       —       |
+| equipe.dir.projet                 |           ✓           |         —         |         —         |         —         |       —       |
+| secretariat.general               |           ✓           |         —         |         —         |         —         |       —       |
+| **Token API (bouton visible)**    | ✓ (profils éligibles) |         ✗         |         ✗         |         ✗         |       —       |
 
 ---
 
@@ -487,6 +540,8 @@ Légende : ✓ = profil utilisé dans ce test
 | Sec. Gén.         | `secretariat.general@example.com`                                         |
 | Préfet Rég.       | `prefet.region@example.com`                                               |
 | Préfet Dept       | `prefet.departement@example.com`                                          |
+| Préfet Multi-terr | `prefet.multi.territoires@example.com`                                    |
+| SD Hors ATE       | `services.deconcentres.hors-ate@example.com`                              |
 | Éq. Dir. Projet   | `equipe.dir.projet@example.com` (API) / `pva.dir.projet@example.com` (UI) |
 | Coord. Rég. (PVA) | `pva.coordinateur.reg@example.com`                                        |
 | Coord. Dept (PVA) | `pva.coordinateur.dept@example.com`                                       |

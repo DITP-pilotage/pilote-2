@@ -105,7 +105,10 @@ export default class ReactiverUnUtilisateurUseCase {
       );
     }
 
-    if (process.env.IMPORT_KEYCLOAK_URL) {
+    if (
+      process.env.IMPORT_KEYCLOAK_URL &&
+      process.env.IMPORT_KEYCLOAK_URL.startsWith("http")
+    ) {
       await this.utilisateurIAMRepository.reactive(email);
     }
   }
