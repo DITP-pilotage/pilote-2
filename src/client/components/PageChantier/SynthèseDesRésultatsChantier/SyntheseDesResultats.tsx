@@ -8,19 +8,15 @@ import Alerte from "@/components/_commons/Alerte/Alerte";
 import SynthèseDesRésultatsAffichage from "@/components/PageChantier/SynthèseDesRésultatsChantier/Affichage/Affichage";
 import { pageChantier } from "@/components/PageChantier/PageChantierServerSideContext";
 import SyntheseDesResultatsFormulaire from "@/components/PageChantier/SynthèseDesRésultatsChantier/SyntheseDesResultatsFormulaire/SyntheseDesResultatsFormulaire";
-import { Icone } from "@/components/_commons/Icone";
-import { Icone1Icon } from "@/components/_commons/Icones/Icone1Icon";
 
 export interface SyntheseDesResultatsProps {
   nomTerritoire: string;
   modeEcriture?: boolean;
-  estInteractif?: boolean;
 }
 
 const SyntheseDesResultats: FunctionComponent<SyntheseDesResultatsProps> = ({
   nomTerritoire,
   modeEcriture = false,
-  estInteractif = true,
 }) => {
   const { syntheseDesResultats, chantier } =
     pageChantier.useServerSidePropsContext();
@@ -59,7 +55,7 @@ const SyntheseDesResultats: FunctionComponent<SyntheseDesResultatsProps> = ({
               {action === "creation-reussie" && (
                 <div className="fr-mb-2w">
                   <Alerte
-                    titre="Météo et synthèse des résultats publiées"
+                    titre="Votre commentaire a bien été modifié"
                     type="succès"
                   />
                 </div>
@@ -76,28 +72,19 @@ const SyntheseDesResultats: FunctionComponent<SyntheseDesResultatsProps> = ({
                 <div>
                   <SynthèseDesRésultatsAffichage
                     itemHistoriqueSyntheseDesResultats={syntheseDesResultats}
+                    onModifier={
+                      modeEcriture ? () => setModeÉdition(true) : undefined
+                    }
                   />
                 </div>
               </div>
-              {estInteractif ? (
-                <div className="fr-grid-row fr-grid-row--right">
-                  <div className="fr-col-12 flex justify-end fr-mt-1w">
-                    {!!syntheseDesResultats ? (
-                      <SynthèseDesRésultatsHistorique />
-                    ) : null}
-                    {modeEcriture ? (
-                      <button
-                        className="fr-btn fr-btn--secondary !ml-6 rounded gap-2"
-                        onClick={() => setModeÉdition(true)}
-                        type="button"
-                      >
-                        <Icone icone={Icone1Icon} />
-                        Modifier
-                      </button>
-                    ) : null}
-                  </div>
+              <div className="fr-grid-row fr-grid-row--right">
+                <div className="fr-col-12 flex justify-end fr-mt-1w">
+                  {!!syntheseDesResultats ? (
+                    <SynthèseDesRésultatsHistorique />
+                  ) : null}
                 </div>
-              ) : null}
+              </div>
             </>
           )}
         </div>
