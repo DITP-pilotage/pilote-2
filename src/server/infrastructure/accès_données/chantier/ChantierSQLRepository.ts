@@ -12,7 +12,7 @@ import {
   CODES_MAILLES,
   NOMS_MAILLES,
 } from "@/server/infrastructure/accès_données/maille/mailleSQLParser";
-import { ChantierPourAgregation } from "@/client/utils/chantier/agrégateurListeChantiers/agrégateur";
+import { ChantierPourAgregation } from "@/client/utils/chantier/agrégateurListeChantiers/agregateur";
 import { Météo } from "@/server/domain/météo/Météo.interface";
 import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
 import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";

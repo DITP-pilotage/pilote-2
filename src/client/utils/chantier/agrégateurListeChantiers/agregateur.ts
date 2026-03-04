@@ -9,7 +9,7 @@ import departements from "@/client/constants/départements.json";
 import regions from "@/client/constants/régions.json";
 import { Maille } from "@/server/domain/maille/Maille.interface";
 import { Avancement } from "@/server/domain/chantier/avancement/Avancement.interface";
-import { AgregatParTerritoire } from "./agrégateur.interface";
+import { AgregatParTerritoire } from "./agregateur.interface";
 
 export type ChantierPourAgregation = {
   mailles: Record<

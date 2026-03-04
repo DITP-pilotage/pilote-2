@@ -398,7 +398,7 @@ export const getServerSideProps: GetServerSideProps<
     )
     .then(presenterEnAvancementsStatistiquesAccueilContrat);
 
-  const donnéesTerritoiresAgrégées =
+  const donneesTerritoiresAgregees =
     await new AgregerAvancementsChantiersUseCase({
       chantierRepository: dependencies.getChantierRepository(),
     }).run(
@@ -407,11 +407,11 @@ export const getServerSideProps: GetServerSideProps<
     );
 
   const moyenneTauxAvancementTerritoire =
-    donnéesTerritoiresAgrégées[mailleChantier].territoires[territoireCode]
+    donneesTerritoiresAgregees[mailleChantier].territoires[territoireCode]
       .repartition.avancements.annuel.moyenne;
 
   const avancementsGlobauxTerritoriauxMoyens = objectEntries(
-    donnéesTerritoiresAgrégées[mailleSelectionnee || "departementale"]
+    donneesTerritoiresAgregees[mailleSelectionnee || "departementale"]
       .territoires,
   ).map(([territoireCodeSelectionne, territoire]) => ({
     valeur: territoire.repartition.avancements.global.moyenne,

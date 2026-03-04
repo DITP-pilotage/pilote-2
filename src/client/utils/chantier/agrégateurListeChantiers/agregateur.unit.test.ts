@@ -1,7 +1,7 @@
 import {
   AgregateurListeChantiersParTerritoire,
   ChantierPourAgregation,
-} from "./agrégateur";
+} from "./agregateur";
 
 function creerChantier(
   maillesTerritoires: Partial<ChantierPourAgregation["mailles"]>,
@@ -16,7 +16,7 @@ function creerChantier(
   };
 }
 
-describe("AgrégateurListeChantiersParTerritoire", () => {
+describe("AgregateurListeChantiersParTerritoire", () => {
   describe("Par territoire", () => {
     describe("Avec 1 chantier applicable sur DEPT-01", () => {
       it("Retourne les stats correspondant à ce chantier", () => {
@@ -40,7 +40,7 @@ describe("AgrégateurListeChantiersParTerritoire", () => {
           agregat.departementale.territoires["DEPT-01"].repartition,
         ).toStrictEqual({
           avancements: {
-            global: { moyenne: 80, médiane: 80, minimum: 80, maximum: 80 },
+            global: { moyenne: 80, mediane: 80, minimum: 80, maximum: 80 },
             annuel: { moyenne: 70 },
           },
         });
@@ -77,7 +77,7 @@ describe("AgrégateurListeChantiersParTerritoire", () => {
           agregat.departementale.territoires["DEPT-01"].repartition,
         ).toStrictEqual({
           avancements: {
-            global: { moyenne: 70, médiane: 70, minimum: 60, maximum: 80 },
+            global: { moyenne: 70, mediane: 70, minimum: 60, maximum: 80 },
             annuel: { moyenne: 60 },
           },
         });
@@ -108,7 +108,7 @@ describe("AgrégateurListeChantiersParTerritoire", () => {
           avancements: {
             global: {
               moyenne: null,
-              médiane: null,
+              mediane: null,
               minimum: null,
               maximum: null,
             },
@@ -142,7 +142,7 @@ describe("AgrégateurListeChantiersParTerritoire", () => {
           avancements: {
             global: {
               moyenne: null,
-              médiane: null,
+              mediane: null,
               minimum: null,
               maximum: null,
             },
@@ -176,7 +176,7 @@ describe("AgrégateurListeChantiersParTerritoire", () => {
           avancements: {
             global: {
               moyenne: null,
-              médiane: null,
+              mediane: null,
               minimum: null,
               maximum: null,
             },
@@ -258,7 +258,7 @@ describe("AgrégateurListeChantiersParTerritoire", () => {
           avancements: {
             global: {
               moyenne: (60 + 80 + 90) / 3,
-              médiane: 80,
+              mediane: 80,
               minimum: 60,
               maximum: 90,
             },
@@ -283,7 +283,7 @@ describe("AgrégateurListeChantiersParTerritoire", () => {
           avancements: {
             global: {
               moyenne: null,
-              médiane: null,
+              mediane: null,
               minimum: null,
               maximum: null,
             },
@@ -295,7 +295,7 @@ describe("AgrégateurListeChantiersParTerritoire", () => {
         avancements: {
           global: {
             moyenne: null,
-            médiane: null,
+            mediane: null,
             minimum: null,
             maximum: null,
           },
