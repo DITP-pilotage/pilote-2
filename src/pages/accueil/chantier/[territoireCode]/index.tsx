@@ -232,7 +232,7 @@ export const getServerSideProps = async (
     )
     .then(presenterEnAvancementsStatistiquesAccueilContrat);
 
-  const donnéesTerritoiresAgrégées =
+  const donneesTerritoiresAgregees =
     await new AgregerAvancementsChantiersUseCase({
       chantierRepository: dependencies.getChantierRepository(),
     }).run(
@@ -241,11 +241,11 @@ export const getServerSideProps = async (
     );
 
   const moyenneTerritoire =
-    donnéesTerritoiresAgrégées[mailleChantier].territoires[territoireCode]
+    donneesTerritoiresAgregees[mailleChantier].territoires[territoireCode]
       .repartition.avancements.annuel.moyenne;
   const avancementsGlobauxTerritoriauxMoyens = objectEntries({
-    ...donnéesTerritoiresAgrégées.regionale.territoires,
-    ...donnéesTerritoiresAgrégées.departementale.territoires,
+    ...donneesTerritoiresAgregees.regionale.territoires,
+    ...donneesTerritoiresAgregees.departementale.territoires,
   }).map(([territoireCodeDonnee, territoire]) => ({
     valeur: territoire.repartition.avancements.global.moyenne,
     valeurAnnuelle: territoire.repartition.avancements.annuel.moyenne,
