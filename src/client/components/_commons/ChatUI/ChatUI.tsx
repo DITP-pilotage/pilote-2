@@ -66,7 +66,7 @@ export const ChatUI = ({
               <p className="text-gray-400 text-center mt-8">{emptyStateText}</p>
             )}
 
-            {messages.map((message) => (
+            {messages.map((message, index) => (
               <div
                 className={clsxm("flex", {
                   "justify-end": message.role === "user",
@@ -77,7 +77,12 @@ export const ChatUI = ({
                 {message.role === "user" ? (
                   <UserMessage message={message} />
                 ) : (
-                  <AssistantMessage message={message} />
+                  <AssistantMessage
+                    message={message}
+                    isStreaming={
+                      index === messages.length - 1 && status !== "ready"
+                    }
+                  />
                 )}
               </div>
             ))}

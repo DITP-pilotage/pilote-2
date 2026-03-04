@@ -4,9 +4,22 @@ import { AssistantMessageText } from "@/components/_commons/ChatUI/AssistantMess
 import { ChoicesButtons } from "@/components/_commons/ChatUI/ChoicesButtons";
 import { ValeursIndicateurTable } from "@/components/_commons/ChatUI/ValeursIndicateurTable";
 
-export const AssistantMessage = ({ message }: { message: PiloteUIMessage }) => {
+export const AssistantMessage = ({
+  message,
+  isStreaming,
+}: {
+  message: PiloteUIMessage;
+  isStreaming: boolean;
+}) => {
   const hasText = message.parts?.some(
     (part) => part.type === "text" && part.text.trim().length > 0,
+  );
+
+  const hasDisplayTool = message.parts?.some(
+    (part) =>
+      (part.type === "tool-display_valeurs_indicateur" ||
+        part.type === "tool-display_choices") &&
+      part.state === "output-available",
   );
 
   return (
@@ -26,23 +39,37 @@ export const AssistantMessage = ({ message }: { message: PiloteUIMessage }) => {
         }
         return null;
       })}
-      {message.parts?.map((part, index) => {
-        if (part.type === "tool-display_valeurs_indicateur") {
-          if (part.state !== "output-available") return null;
-          return (
-            <ValeursIndicateurTable
-              key={index}
-              indicateurs={part.output.indicateurs}
-            />
-          );
-        }
-        return null;
-      })}
-      {hasText &&
+
+      {isStreaming && hasDisplayTool && (
+        <span className="inline-flex gap-1 text-gray-500">
+          <span className="animate-bounce">.</span>
+          <span className="animate-bounce [animation-delay:0.2s]">.</span>
+          <span className="animate-bounce [animation-delay:0.4s]">.</span>
+        </span>
+      )}
+
+      {!isStreaming &&
+        message.parts?.map((part, index) => {
+          if (part.type === "tool-display_valeurs_indicateur") {
+            if (part.state !== "output-available") return null;
+            return (
+              <div key={index} className="animate-fade-in">
+                <ValeursIndicateurTable indicateurs={part.output.indicateurs} />
+              </div>
+            );
+          }
+          return null;
+        })}
+      {!isStreaming &&
+        hasText &&
         message.parts?.map((part, index) => {
           if (part.type === "tool-display_choices") {
             if (part.state !== "output-available") return null;
-            return <ChoicesButtons choices={part.output.choices} key={index} />;
+            return (
+              <div key={index} className="animate-fade-in">
+                <ChoicesButtons choices={part.output.choices} />
+              </div>
+            );
           }
           return null;
         })}

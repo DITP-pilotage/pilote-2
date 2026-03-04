@@ -1,29 +1,7 @@
 import "@gouvfr/dsfr/dist/component/table/table.min.css";
 import type { ValeursIndicateurDisplay } from "@/server/albert/Albert";
-import { formaterDate } from "@/client/utils/date/date";
-
-const ValeurEtDate = ({
-  valeur,
-  date,
-  unite,
-}: {
-  valeur: number | null;
-  date: string | null;
-  unite?: string | null;
-}) => {
-  if (valeur === null) return <span>—</span>;
-  return (
-    <span>
-      {valeur}
-      {unite ? ` ${unite}` : ""}
-      {date && (
-        <span className="block text-xs text-gray-500">
-          {formaterDate(date, "MM/YYYY")}
-        </span>
-      )}
-    </span>
-  );
-};
+import ValeurEtDate from "@/client/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/ValeurEtDate";
+import BarreDeProgression from "@/client/components/_commons/BarreDeProgression/BarreDeProgression";
 
 export const ValeursIndicateurTable = ({
   indicateurs,
@@ -45,41 +23,36 @@ export const ValeursIndicateurTable = ({
         <tbody>
           {indicateurs.map((indicateur) => (
             <tr key={indicateur.indicateur_id}>
-              <td>
-                {indicateur.nom}
-                {indicateur.unite_mesure && (
-                  <span className="block text-xs text-gray-500">
-                    ({indicateur.unite_mesure})
-                  </span>
-                )}
-              </td>
+              <td>{indicateur.nom}</td>
               <td>
                 <ValeurEtDate
                   valeur={indicateur.valeur_initiale}
                   date={indicateur.date_valeur_initiale}
-                  unite={indicateur.unite_mesure}
+                  unité={indicateur.unite_mesure}
                 />
               </td>
               <td>
                 <ValeurEtDate
                   valeur={indicateur.valeur_actuelle}
                   date={indicateur.date_valeur_actuelle}
-                  unite={indicateur.unite_mesure}
+                  unité={indicateur.unite_mesure}
                 />
               </td>
               <td>
                 <ValeurEtDate
                   valeur={indicateur.valeur_cible}
                   date={indicateur.date_valeur_cible}
-                  unite={indicateur.unite_mesure}
+                  unité={indicateur.unite_mesure}
                 />
               </td>
               <td>
-                {indicateur.taux_avancement === null ? (
-                  <span>—</span>
-                ) : (
-                  <span>{indicateur.taux_avancement} %</span>
-                )}
+                <BarreDeProgression
+                  taille="sm"
+                  variante="primaire"
+                  fond="blanc"
+                  bordure={null}
+                  valeur={indicateur.taux_avancement}
+                />
               </td>
             </tr>
           ))}

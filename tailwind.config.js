@@ -64,10 +64,15 @@ module.exports = {
           "0%": { opacity: "1", transform: "translateY(0)" },
           "100%": { opacity: "0", transform: "translateY(8px)" },
         },
+        "fade-in": {
+          "0%": { opacity: "0" },
+          "100%": { opacity: "1" },
+        },
       },
       animation: {
         "dropdown-fade-in": "dropdown-fade-in 150ms ease-out",
         "dropdown-fade-out": "dropdown-fade-out 150ms ease-in",
+        "fade-in": "fade-in 300ms ease-out",
       },
     },
   },

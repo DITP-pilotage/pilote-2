@@ -64,7 +64,7 @@ export type ValeursIndicateurDisplay = z.infer<
 
 export const displayValeursIndicateurTool = tool({
   description:
-    "Affiche les valeurs des indicateurs d'un chantier dans un tableau. Appelle cet outil APRÈS get_valeurs_indicateur en lui passant le tableau d'indicateurs tel quel.",
+    "Affiche les valeurs des indicateurs dans un tableau visuel. OBLIGATOIRE après get_valeurs_indicateur : passe-lui le tableau d'indicateurs tel quel. IMPORTANT : n'écris JAMAIS les données des indicateurs en texte ou en markdown. Utilise TOUJOURS cet outil pour les afficher.",
   inputSchema: displayValeursIndicateurInputSchema,
   execute: async ({
     indicateurs,
@@ -167,7 +167,10 @@ export class Albert {
           };
         }
 
-        if (lastStepToolNames?.includes("get_valeurs_indicateur")) {
+        if (
+          lastStepToolNames?.includes("get_valeurs_indicateur") ||
+          lastStepToolNames?.includes("display_valeurs_indicateur")
+        ) {
           return {
             system: systemPrompt + "\n\n" + VALEURS_INDICATEUR_OUTPUT_FORMAT,
           };
