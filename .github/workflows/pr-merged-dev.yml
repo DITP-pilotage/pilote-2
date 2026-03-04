@@ -70,9 +70,15 @@ jobs:
       # Ouvre le tunnel et génère la doc dans le même shell pour s'assurer que le tunnel est actif durant dbt docs
       - name: "Create Tunnel and Generate DBT Doc"
         if: steps.datamgmt_changes.outputs.changed == 'true'
+        env:
+          PGHOST: ${{ secrets.PGHOST }}
+          PGPORT: ${{ secrets.PGPORT }}
+          PGUSER: ${{ secrets.PGUSER }}
+          PGDATABASE: ${{ secrets.PGDATABASE }}
+          PGPASSWORD: ${{ secrets.PGPASSWORD }}
         run: |
           set -e
-          scalingo db-tunnel SCALINGO_POSTGRESQL_URL --timeout 60 &
+          scalingo db-tunnel SCALINGO_POSTGRESQL_URL_READONLY --timeout 60 &
           TUNNEL_PID=$!
           # Attend que le tunnel soit en place (habituellement sur le port 10000, peut varier)
           for i in {1..20}; do
