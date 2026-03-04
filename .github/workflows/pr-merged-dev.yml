@@ -102,9 +102,8 @@ jobs:
         if: steps.datamgmt_changes.outputs.changed == 'true'
         run: |
           set -e
-          # On déplace le dossier target (contenant la doc générée) vers docs
-          rm -rf docs
-          mv data_management/target docs
+          # On déplace le dossier target (contenant la doc générée) vers un dossier tmp
+          mv data_management/target tmp
           # On configure git pour le bot
           git config --global user.name "github-actions"
           git config --global user.email "github-actions@github.com"
@@ -112,7 +111,10 @@ jobs:
           git fetch
           git checkout gh-pages
           git pull origin gh-pages
-          # On ajoute et commit les fichiers de documentation
+          # On supprime le dossier docs et on le met à jour avec le dossier tmp
+          rm -rf docs
+          mv tmp docs
+          rm -rf tmp
           git add docs
           # Commit seulement s'il y a des changements
           if ! git diff --cached --quiet; then
