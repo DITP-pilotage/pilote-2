@@ -6,7 +6,7 @@ Ce répertoire administre les pipelines d'import, de chargement et transformatio
 
 La mise à jour des données de la datafactory se fait automatiquement via l'exécution du script `scripts/run_datajobs.sh`. La fréquence de mise à jour est définie par le job cron de l'app Scalingo (exemple [pour la dev](https://dashboard.scalingo.com/apps/osc-secnum-fr1/dev-datajobs/resources)).
 
-Les modèles de données *dbt* sont dans le dossier [models/](models/). La doc *dbt* est générée via `dbt docs generate`.
+Les modèles de données *dbt* sont dans le dossier [models/](models/). La doc *dbt* est générée via `pipenv run dbt docs generate`.
 
 ## Avant de démarrer
 
