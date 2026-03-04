@@ -67,12 +67,14 @@ export class SynthèseDesRésultatsSQLRepository implements SynthèseDesRésulta
           WHERE chantier_id = ANY (${chantiersIds})
             AND maille = ${CODES_MAILLES[maille]}
             AND code_insee = ${codeInsee}
+            AND statut = 'PUBLIE'
           GROUP BY chantier_id, maille, code_insee
         ) s_recentes
           ON s.date_modification = s_recentes.maxdate
             AND s.chantier_id = s_recentes.chantier_id
             AND s.maille = s_recentes.maille
             AND s.code_insee = s_recentes.code_insee
+            AND s.statut = 'PUBLIE'
       `;
 
     return Object.fromEntries(

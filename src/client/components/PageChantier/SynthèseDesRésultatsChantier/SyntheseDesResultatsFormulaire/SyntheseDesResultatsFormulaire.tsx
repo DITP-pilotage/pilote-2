@@ -16,10 +16,11 @@ import { pageChantier } from "@/components/PageChantier/PageChantierServerSideCo
 import { Icone } from "@/components/_commons/Icone";
 import { SuccessIcon } from "@/components/_commons/Icones/SuccessIcon";
 import { ArrowGoBack1Icon } from "@/components/_commons/Icones/ArrowGoBack1Icon";
-import SelecteurMeteo from "./SelecteurMeteo";
+import { Bouton } from "@/components/_commons/Bouton/Bouton";
 import SyntheseDesResultatsFormulaireStyled from "./SyntheseDesResultatsFormulaire.styled";
 import { SyntheseDesResultatsFormulaireInputs } from "./SyntheseDesResultatsFormulaire.interface";
 import { useModifierSyntheseDesResultats } from "./useModifierSyntheseDesResultats";
+import { SelecteurMeteo } from "./SelecteurMeteo";
 
 interface SyntheseDesResultatsFormulaireProps {
   annulationCallback?: () => void;
@@ -96,18 +97,22 @@ const SyntheseDesResultatsFormulaire: FunctionComponent<
         </div>
       </div>
       <div className="flex justify-end fr-mt-2w">
-        <button className="fr-btn mr-3 gap-2" disabled={!isValid} type="submit">
-          <Icone className="w-4 h-4 text-current" icone={SuccessIcon} />
-          Valider
-        </button>
-        <button
-          className="fr-btn fr-btn--secondary gap-2"
+        <Bouton
+          className="mr-3"
+          disabled={!isValid}
+          iconLeft={
+            <Icone className="w-4 h-4 text-current" icone={SuccessIcon} />
+          }
+          label="Valider"
+          type="submit"
+          variant="primary"
+        />
+        <Bouton
+          iconLeft={<Icone className="w-4 h-4" icone={ArrowGoBack1Icon} />}
+          label="Annuler"
           onClick={annulationCallback}
-          type="button"
-        >
-          <Icone className="w-4 h-4" icone={ArrowGoBack1Icon} />
-          Annuler
-        </button>
+          variant="secondary"
+        />
       </div>
     </SyntheseDesResultatsFormulaireStyled>
   );

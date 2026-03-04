@@ -5,7 +5,7 @@ import {
 } from "@/server/domain/météo/Météo.interface";
 import { MeteoComponentMap } from "@/components/_commons/Meteo/Picto/MeteoPicto";
 
-const SelecteurMeteo = ({
+export const SelecteurMeteo = ({
   value,
   onChange,
 }: {
@@ -43,5 +43,3 @@ const SelecteurMeteo = ({
     </div>
   );
 };
-
-export default SelecteurMeteo;

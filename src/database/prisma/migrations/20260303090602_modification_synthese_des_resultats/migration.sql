@@ -26,8 +26,8 @@ ADD COLUMN     "statut" "public"."statut_synthese_des_resultats" NOT NULL DEFAUL
 UPDATE "public"."synthese_des_resultats" SET
   "auteur_creation_id" = "auteur_id",
   "auteur_modification_id" = "auteur_id",
-  "date_creation" = "date_commentaire",
-  "date_modification" = "date_commentaire";
+  "date_creation" = COALESCE("date_commentaire", '2024-01-01'),
+  "date_modification" = COALESCE("date_commentaire", '2024-01-01');
 
 -- SetNotNull
 ALTER TABLE "public"."synthese_des_resultats"
