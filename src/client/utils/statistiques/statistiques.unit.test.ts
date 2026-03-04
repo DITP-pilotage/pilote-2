@@ -1,6 +1,6 @@
 import {
   calculerMoyenne,
-  calculerMédiane,
+  calculerMediane,
   filtrerValeurs,
 } from "./statistiques";
 
@@ -81,7 +81,7 @@ describe("statistiques", () => {
         //GIVEN
         const valeursInitiales = [7, null, 2, null, 3, 2, 8, 1, 8];
         //WHEN
-        const résultat = calculerMédiane(valeursInitiales);
+        const résultat = calculerMediane(valeursInitiales);
         //THEN
         expect(résultat).toStrictEqual(3);
       });
@@ -92,7 +92,7 @@ describe("statistiques", () => {
         //GIVEN
         const valeursInitiales = [null, null, null];
         //WHEN
-        const résultat = calculerMédiane(valeursInitiales);
+        const résultat = calculerMediane(valeursInitiales);
         //THEN
         expect(résultat).toStrictEqual(null);
       });
@@ -103,7 +103,7 @@ describe("statistiques", () => {
         //GIVEN
         const valeursInitiales: (number | null)[] = [];
         //WHEN
-        const résultat = calculerMédiane(valeursInitiales);
+        const résultat = calculerMediane(valeursInitiales);
         //THEN
         expect(résultat).toStrictEqual(null);
       });

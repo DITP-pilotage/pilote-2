@@ -1,7 +1,7 @@
 import { Maille } from "@prisma/client";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import {
-  calculerMédiane,
+  calculerMediane,
   calculerMoyenne,
 } from "@/client/utils/statistiques/statistiques";
 
@@ -96,7 +96,7 @@ export class GetSyntheseTerritoireQuery {
       orderBy: { _avg: { taux_avancement_mandat: "asc" } },
     });
 
-    const mediane = calculerMédiane(
+    const mediane = calculerMediane(
       moyennesParTerritoire.map((t) => t._avg.taux_avancement_mandat),
     );
 

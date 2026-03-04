@@ -20,7 +20,6 @@ import {
   AvancementsStatistiquesAccueilContrat,
   presenterEnAvancementsStatistiquesAccueilContrat,
 } from "@/server/chantiers/app/contrats/AvancementsStatistiquesAccueilContrat";
-import { AgrégateurListeChantiersParTerritoire } from "@/client/utils/chantier/agrégateurListeChantiers/agrégateur";
 import { objectEntries } from "@/client/utils/objects/objects";
 import Axe from "@/server/domain/axe/Axe.interface";
 import { AgrégateurChantierRapportDetailleParTerritoire } from "@/client/utils/chantier/agrégateurRapportDetailleNew/agrégateur";
@@ -35,6 +34,7 @@ import { MailleInterne } from "@/server/domain/maille/Maille.interface";
 import { RepartitionMeteoContrat } from "@/server/fiche-territoriale/app/contrats/RepartitionMeteoContrat";
 import { presenterEnRépartitionsMétéosChantiersContrat } from "@/server/chantiers/app/contrats/RepartitionMeteoChantiersContrat";
 import { RecupererRepartitionsMeteoChantiersUseCase } from "@/server/chantiers/usecases/RecupererRepartitionMeteoChantiersUseCase";
+import { AgregerAvancementsChantiersUseCase } from "@/server/chantiers/usecases/AgregerAvancementsChantiersUseCase";
 import { getAnneeDateDeBascule } from "@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getAnneeDateDeBascule";
 import { configuration, configurationFeatureFlip } from "@/config";
 import { getContainer } from "@/server/dependances";
@@ -398,20 +398,24 @@ export const getServerSideProps: GetServerSideProps<
     )
     .then(presenterEnAvancementsStatistiquesAccueilContrat);
 
-  const donnéesTerritoiresAgrégées = new AgrégateurListeChantiersParTerritoire(
-    chantiersAvecAlertes,
-  ).agréger();
+  const donneesTerritoiresAgregees =
+    await new AgregerAvancementsChantiersUseCase({
+      chantierRepository: dependencies.getChantierRepository(),
+    }).run(
+      chantiersAvecAlertes.map((chantier) => chantier.id),
+      jalon,
+    );
 
   const moyenneTauxAvancementTerritoire =
-    donnéesTerritoiresAgrégées[mailleChantier].territoires[territoireCode]
-      .répartition.avancements.annuel.moyenne;
+    donneesTerritoiresAgregees[mailleChantier].territoires[territoireCode]
+      .repartition.avancements.annuel.moyenne;
 
   const avancementsGlobauxTerritoriauxMoyens = objectEntries(
-    donnéesTerritoiresAgrégées[mailleSelectionnee || "departementale"]
+    donneesTerritoiresAgregees[mailleSelectionnee || "departementale"]
       .territoires,
   ).map(([territoireCodeSelectionne, territoire]) => ({
-    valeur: territoire.répartition.avancements.global.moyenne,
-    valeurAnnuelle: territoire.répartition.avancements.annuel.moyenne,
+    valeur: territoire.repartition.avancements.global.moyenne,
+    valeurAnnuelle: territoire.repartition.avancements.annuel.moyenne,
     territoireCode: territoireCodeSelectionne,
     estApplicable: null,
   }));

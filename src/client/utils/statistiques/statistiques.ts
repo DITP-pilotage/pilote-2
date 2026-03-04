@@ -12,7 +12,7 @@ export function calculerMoyenne(valeurs: (number | null)[]) {
   return valeursFiltrées.length === 0 ? null : somme / valeursFiltrées.length;
 }
 
-export function calculerMédiane(valeurs: (number | null)[]) {
+export function calculerMediane(valeurs: (number | null)[]) {
   const valeursFiltrées = filtrerValeurs(valeurs);
 
   valeursFiltrées.sort((a, b) => a - b);

@@ -1,7 +1,7 @@
 import { objectEntries } from "@/client/utils/objects/objects";
 import {
   calculerMoyenne,
-  calculerMédiane,
+  calculerMediane,
   valeurMaximum,
   valeurMinimum,
 } from "@/client/utils/statistiques/statistiques";
@@ -127,7 +127,7 @@ export class AgrégateurChantiersParTerritoire {
     this.agrégat[maille].répartition.avancements.global.moyenne =
       calculerMoyenne(avancements.global);
     this.agrégat[maille].répartition.avancements.global.médiane =
-      calculerMédiane(avancements.global);
+      calculerMediane(avancements.global);
 
     this.agrégat[maille].répartition.avancements.annuel.moyenne =
       calculerMoyenne(avancements.annuel);
