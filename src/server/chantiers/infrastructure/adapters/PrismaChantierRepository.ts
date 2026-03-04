@@ -40,6 +40,22 @@ export class PrismaChantierRepository implements ChantierRepository {
     return this.prismaClient.getInstance();
   }
 
+  async modifierMeteo(
+    chantierId: string,
+    territoireCode: string,
+    meteo: Météo,
+  ): Promise<void> {
+    await this.prisma.chantier_territoire.update({
+      data: { meteo },
+      where: {
+        id_territoire_code: {
+          id: chantierId,
+          territoire_code: territoireCode,
+        },
+      },
+    });
+  }
+
   async récupérerDonneesChantier(
     chantierId: string,
     territoireCodesLecture: string[],

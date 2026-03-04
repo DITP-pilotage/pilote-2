@@ -6,6 +6,7 @@ import { Utilisateur } from "@/server/gestion-utilisateur/domain/Utilisateur.int
 import { OptionsExport } from "@/server/usecase/chantier/OptionsExport";
 import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
 import { fixtures } from "@/server/infrastructure/test/fixtures";
+import { getPrisma } from "@/server/db/PrismaTransaction";
 
 describe("PrismaChantierRepository", () => {
   let prismaChantierRepository: PrismaChantierRepository;
@@ -2970,5 +2971,69 @@ describe("PrismaChantierRepository", () => {
         }),
       );
     });
+  });
+
+  describe("#modifierMeteo", () => {
+    it(
+      "doit mettre à jour la météo appartenant au chantier territoire",
+      createIntegrationTest(async () => {
+        // Given
+        const prisma = getPrisma();
+
+        await fixtures.chantierIdentite({ id: "CH-001" });
+        await fixtures.chantierIdentite({ id: "CH-002" });
+        await fixtures.chantierTerritoire({
+          id: "CH-001",
+          territoire_code: "DEPT-87",
+          zone_id: "D87",
+          maille: "DEPT",
+          code_insee: "87",
+          meteo: "SOLEIL",
+        });
+        await fixtures.chantierTerritoire({
+          id: "CH-001",
+          territoire_code: "DEPT-88",
+          zone_id: "D88",
+          maille: "DEPT",
+          code_insee: "88",
+          meteo: "COUVERT",
+        });
+        await fixtures.chantierTerritoire({
+          id: "CH-002",
+          territoire_code: "DEPT-87",
+          zone_id: "D87",
+          maille: "DEPT",
+          code_insee: "87",
+          meteo: "NON_RENSEIGNEE",
+        });
+
+        // When
+        await prismaChantierRepository.modifierMeteo(
+          "CH-001",
+          "DEPT-87",
+          "NUAGE",
+        );
+
+        // Then
+        const chantier01Dept87 = await prisma.chantier_territoire.findUnique({
+          where: {
+            id_territoire_code: { id: "CH-001", territoire_code: "DEPT-87" },
+          },
+        });
+        const chantier01Dept88 = await prisma.chantier_territoire.findUnique({
+          where: {
+            id_territoire_code: { id: "CH-001", territoire_code: "DEPT-88" },
+          },
+        });
+        const chantier02Dept87 = await prisma.chantier_territoire.findUnique({
+          where: {
+            id_territoire_code: { id: "CH-002", territoire_code: "DEPT-87" },
+          },
+        });
+        expect(chantier01Dept87!.meteo).toStrictEqual("NUAGE");
+        expect(chantier01Dept88!.meteo).toStrictEqual("COUVERT");
+        expect(chantier02Dept87!.meteo).toStrictEqual("NON_RENSEIGNEE");
+      }),
+    );
   });
 });

@@ -13,7 +13,6 @@ import {
   NOMS_MAILLES,
 } from "@/server/infrastructure/accès_données/maille/mailleSQLParser";
 import { ChantierPourAgregation } from "@/client/utils/chantier/agrégateurListeChantiers/agregateur";
-import { Météo } from "@/server/domain/météo/Météo.interface";
 import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
 import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
 import { AvancementsStatistiques } from "@/components/_commons/Avancements/Avancements.interface";
@@ -98,24 +97,6 @@ export default class ChantierSQLRepository implements ChantierRepository {
     }
 
     return chantier;
-  }
-
-  async modifierMétéo(
-    chantierId: string,
-    territoireCode: string,
-    météo: Météo,
-  ) {
-    await prisma.chantier_territoire.update({
-      data: {
-        meteo: météo,
-      },
-      where: {
-        id_territoire_code: {
-          id: chantierId,
-          territoire_code: territoireCode,
-        },
-      },
-    });
   }
 
   async getChantierStatistiques(

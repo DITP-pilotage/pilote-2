@@ -6,8 +6,10 @@ import { RecupererDerniereSyntheseDesResultatsQuery } from "@/server/syntheses-d
 import { RecupererHistoriqueSyntheseDesResultatsQuery } from "@/server/syntheses-des-resultats/queries/RecupererHistoriqueSyntheseDesResultatsQuery";
 import SynthèseDesRésultatsRepository from "@/server/domain/chantier/synthèseDesRésultats/SynthèseDesRésultatsRepository.interface";
 import { SynthèseDesRésultatsSQLRepository } from "@/server/infrastructure/accès_données/chantier/synthèseDesRésultats/SynthèseDesRésultatsSQLRepository";
-import ChantierRepository from "@/server/domain/chantier/ChantierRepository.interface";
-import ChantierSQLRepository from "@/server/infrastructure/accès_données/chantier/ChantierSQLRepository";
+import { ChantierRepository } from "@/server/chantiers/domain/ports/ChantierRepository";
+import { PrismaChantierRepository } from "@/server/chantiers/infrastructure/adapters/PrismaChantierRepository";
+import { Transaction } from "@/server/db/Transaction";
+import { PrismaTransaction } from "@/server/db/PrismaTransaction";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 
 export type ImportSyntheseDesResultatsDependencies = {
@@ -18,6 +20,7 @@ export type ImportSyntheseDesResultatsDependencies = {
   récupérerHistoriqueSyntheseDesResultatsQuery: RecupererHistoriqueSyntheseDesResultatsQuery;
   synthèseDesRésultatsRepository: SynthèseDesRésultatsRepository;
   chantierRepository: ChantierRepository;
+  transaction: Transaction;
 };
 
 export const getImportSyntheseDesResultatsContainer = (
@@ -31,7 +34,8 @@ export const getImportSyntheseDesResultatsContainer = (
       synthèseDesRésultatsRepository: asClass(
         SynthèseDesRésultatsSQLRepository,
       ),
-      chantierRepository: asClass(ChantierSQLRepository),
+      chantierRepository: asClass(PrismaChantierRepository),
+      transaction: asClass(PrismaTransaction),
       importerSynthesesDesResultatsUseCase: asClass(
         ImporterSynthesesDesResultatsUseCase,
       ),
