@@ -76,7 +76,7 @@ export class GetSyntheseTerritoireQuery {
           where: { jalon: params.jalon },
         },
         syntheses_des_resultats: {
-          orderBy: { date_commentaire: "desc" },
+          orderBy: { date_modification: "desc" },
           take: 1,
         },
       },
@@ -135,10 +135,10 @@ export class GetSyntheseTerritoireQuery {
                 meteo: c.syntheses_des_resultats[0].meteo,
                 commentaire: c.syntheses_des_resultats[0].commentaire,
                 date_meteo:
-                  c.syntheses_des_resultats[0].date_meteo?.toISOString() ??
+                  c.syntheses_des_resultats[0].date_modification?.toISOString() ??
                   null,
                 date_commentaire:
-                  c.syntheses_des_resultats[0].date_commentaire?.toISOString() ??
+                  c.syntheses_des_resultats[0].date_modification?.toISOString() ??
                   null,
               }
             : null,
@@ -172,10 +172,10 @@ export class GetSyntheseTerritoireQuery {
                 meteo: c.syntheses_des_resultats[0].meteo,
                 commentaire: c.syntheses_des_resultats[0].commentaire,
                 date_meteo:
-                  c.syntheses_des_resultats[0].date_meteo?.toISOString() ??
+                  c.syntheses_des_resultats[0].date_modification?.toISOString() ??
                   null,
                 date_commentaire:
-                  c.syntheses_des_resultats[0].date_commentaire?.toISOString() ??
+                  c.syntheses_des_resultats[0].date_modification?.toISOString() ??
                   null,
               }
             : null,

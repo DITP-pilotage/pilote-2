@@ -4,6 +4,8 @@ import MétéoBadge from "@/components/_commons/Meteo/Badge/MétéoBadge";
 import { MeteoPicto } from "@/components/_commons/Meteo/Picto/MeteoPicto";
 import SynthèseDesRésultatsAffichage from "@/components/PageChantier/SynthèseDesRésultatsChantier/Affichage/Affichage";
 import { BoutonSousLigné } from "@/components/_commons/BoutonSousLigné/BoutonSousLigné";
+import { Icone } from "@/components/_commons/Icone";
+import { Eye1Icon } from "@/components/_commons/Icones/Eye1Icon";
 import { useTerritoireSelectionne } from "@/components/PageChantier/PageChantierServerSideContext";
 import SynthèseDesRésultatsHistoriqueStyled from "./Historique.styled";
 import useHistoriqueDeLaSyntheseDesResultats from "./useHistoriqueDeLaSyntheseDesResultats";
@@ -25,7 +27,13 @@ const SynthèseDesRésultatsHistorique = () => {
       sousTitre={territoireSélectionné.nomAffiché}
       title="Historique - Synthèse des résultats"
       trigger={
-        <BoutonSousLigné className="fr-mt-1w fr-ml-3w" type="button">
+        <BoutonSousLigné
+          className="fr-mt-1w fr-ml-3w"
+          iconLeft={
+            <Icone className="w-4 h-4 !text-current" icone={Eye1Icon} />
+          }
+          type="button"
+        >
           Voir l'historique
         </BoutonSousLigné>
       }
@@ -33,7 +41,7 @@ const SynthèseDesRésultatsHistorique = () => {
       <SynthèseDesRésultatsHistoriqueStyled>
         {historiqueDeLaSynthèseDesRésultats ? (
           historiqueDeLaSynthèseDesRésultats.map((synthèse, i) => (
-            <Fragment key={synthèse?.date ?? "MANQUANT"}>
+            <Fragment key={synthèse.date_modification}>
               {i !== 0 && <hr className="fr-mt-4w" />}
               <div className="conteneur">
                 <div className="conteneur-météo fr-mb-3w fr-mb-md-0">

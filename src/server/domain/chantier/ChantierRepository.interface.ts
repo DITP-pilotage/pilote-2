@@ -4,7 +4,6 @@ import {
   chantier_territoire_jalon as PrismaChantierTerritoireJalon,
 } from "@prisma/client";
 import Chantier from "@/server/domain/chantier/Chantier.interface";
-import { Météo } from "@/server/domain/météo/Météo.interface";
 import { Maille } from "@/server/domain/maille/Maille.interface";
 import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
 import { AvancementsStatistiques } from "@/components/_commons/Avancements/Avancements.interface";
@@ -32,11 +31,6 @@ export default interface ChantierRepository {
     maille: Maille,
     jalon: number,
   ): Promise<AvancementsStatistiques>;
-  modifierMétéo(
-    chantierId: string,
-    territoireCode: string,
-    météo: Météo,
-  ): Promise<void>;
   recupererLaRepartitionMeteo(
     chantiersLectureIds: string[],
     territoireCode: string,

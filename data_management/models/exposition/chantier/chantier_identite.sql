@@ -8,6 +8,7 @@
 WITH
 
 -- On récupère les directeurs des directions porteuses de chaque chantier
+
 ch_unnest_porteurs_dac AS (
     SELECT
         mc.id AS chantier_id,
@@ -73,11 +74,11 @@ synthese_triee_par_date AS (
         code_insee,
         maille,
         meteo,
-        date_meteo,
+        date_modification as date_meteo,
         ROW_NUMBER()
             OVER (
                 PARTITION BY chantier_id, code_insee, maille
-                ORDER BY date_meteo DESC
+                ORDER BY date_modification DESC
             )
         AS row_id_by_date_meteo_desc
     FROM {{ source('db_schema_public', 'synthese_des_resultats') }}
@@ -88,16 +89,20 @@ ch_has_meteo AS (
     SELECT
         chantier_id,
         BOOL_OR(meteo IS NOT NULL) FILTER (
-            WHERE maille = 'DEPT'
+            WHERE
+                maille = 'DEPT'
         ) AS has_meteo_dept,
         BOOL_OR(meteo IS NOT NULL) FILTER (
-            WHERE maille = 'REG'
+            WHERE
+                maille = 'REG'
         ) AS has_meteo_reg,
         BOOL_OR(meteo IS NOT NULL) FILTER (
-            WHERE maille = 'NAT'
+            WHERE
+                maille = 'NAT'
         ) AS has_meteo_nat
     FROM synthese_triee_par_date
-    GROUP BY chantier_id
+    GROUP BY
+        chantier_id
 )
 
 

@@ -88,6 +88,13 @@ enum statut_envoi_rapport {
   @@schema("public")
 }
 
+enum statut_synthese_des_resultats {
+  BROUILLON
+  PUBLIE
+
+  @@schema("public")
+}
+
 model chantier_identite {
   id                                    String                 @id
   nom                                   String
@@ -289,18 +296,21 @@ model indicateur_territoire_jalon {
 }
 
 model synthese_des_resultats {
-  id                  String              @id
-  chantier_id         String
-  maille              String
-  code_insee          String
-  territoire_code     String
-  meteo               String?
-  date_meteo          DateTime?           @db.Timestamp
-  commentaire         String?
-  date_commentaire    DateTime?           @db.Timestamp
-  auteur_synthese     utilisateur?        @relation(fields: [auteur_id], references: [id], onUpdate: Cascade)
-  auteur_id           String?             @db.Uuid
-  chantier_territoire chantier_territoire @relation(fields: [chantier_id, territoire_code], references: [id, territoire_code], onUpdate: Cascade)
+  id                     String                        @id
+  chantier_id            String
+  maille                 String
+  code_insee             String
+  territoire_code        String
+  statut                 statut_synthese_des_resultats @default(PUBLIE)
+  meteo                  String?
+  commentaire            String?
+  date_creation          DateTime                      @db.Timestamp
+  auteur_creation_id     String?                       @db.Uuid
+  date_modification      DateTime                      @db.Timestamp
+  auteur_modification_id String?                       @db.Uuid
+  auteur_creation        utilisateur?                  @relation("syntheses_creees", fields: [auteur_creation_id], references: [id], onUpdate: Cascade)
+  auteur_modification    utilisateur?                  @relation("syntheses_modifiees", fields: [auteur_modification_id], references: [id], onUpdate: Cascade)
+  chantier_territoire    chantier_territoire           @relation(fields: [chantier_id, territoire_code], references: [id, territoire_code], onUpdate: Cascade)
 
   @@schema("public")
 }
@@ -619,7 +629,8 @@ model utilisateur {
   commentaires                           commentaire[]
   decisions_strategique                  decision_strategique[]
   objectifs                              objectif[]
-  syntheses                              synthese_des_resultats[]
+  syntheses_creees                       synthese_des_resultats[]                 @relation("syntheses_creees")
+  syntheses_modifiees                    synthese_des_resultats[]                 @relation("syntheses_modifiees")
   utilisateurs_crees                     utilisateur[]                            @relation("creation")
   utilisateur_modifies                   utilisateur[]                            @relation("modification")
   propositions_valeur_actuelle           proposition_valeur_actuelle[]

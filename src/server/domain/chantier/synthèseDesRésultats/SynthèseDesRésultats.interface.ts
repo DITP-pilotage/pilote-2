@@ -13,9 +13,16 @@ export type SynthèseDesRésultatsV2 = {
   territoireCode: string;
   id: string;
   contenu: string;
-  auteur_id: string;
   météo: Météo;
-  date: Date;
+  auteur_creation_id: string;
+  date_creation: string;
+  auteur_modification_id: string;
+  date_modification: string;
+};
+
+export type SyntheseDesResultatsAvecNomsAuteurs = SynthèseDesRésultatsV2 & {
+  auteur_creation_nom: string;
+  auteur_modification_nom: string;
 };
 
 export default SynthèseDesRésultats;

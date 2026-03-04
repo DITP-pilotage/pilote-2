@@ -4,70 +4,44 @@ import {
   procédureProtégée,
   vérifierSiLeCSRFEstValide,
 } from "@/server/infrastructure/api/trpc/trpc";
-import CréerUneSynthèseDesRésultatsUseCase from "@/server/usecase/chantier/synthèse/CréerUneSynthèseDesRésultatsUseCase";
-import { dependencies } from "@/server/infrastructure/Dependencies";
-import RécupérerSynthèseDesRésultatsLaPlusRécenteUseCase from "@/server/usecase/chantier/synthèse/RécupérerSynthèseDesRésultatsLaPlusRécenteUseCase";
 import {
+  validationSyntheseAModifier,
   validationSynthèseDesRésultatsContexte,
   validationSynthèseDesRésultatsFormulaire,
 } from "validation/synthèseDesRésultats";
-import RécupérerHistoriqueSynthèseDesRésultatsUseCase from "@/server/usecase/chantier/synthèse/RécupérerHistoriqueSynthèseDesRésultatsUseCase";
+import { getContainer } from "@/server/dependances";
 
 const zodValidateurCSRF = z.object({
   csrf: z.string(),
 });
 
 export const synthèseDesRésultatsRouter = créerRouteurTRPC({
-  créer: procédureProtégée
+  modifier: procédureProtégée
     .input(
-      validationSynthèseDesRésultatsContexte
-        .merge(zodValidateurCSRF)
-        .merge(validationSynthèseDesRésultatsFormulaire),
+      zodValidateurCSRF
+        .merge(validationSynthèseDesRésultatsFormulaire)
+        .merge(validationSyntheseAModifier),
     )
     .mutation(({ input, ctx }) => {
       vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
-      const auteur_id = ctx.session.user.id;
 
-      const créerUneSynthèseDesRésultatsUseCase =
-        new CréerUneSynthèseDesRésultatsUseCase(
-          dependencies.getSynthèseDesRésultatsRepository(),
-          dependencies.getChantierRepository(),
-        );
-      return créerUneSynthèseDesRésultatsUseCase.run(
-        input.réformeId,
-        input.territoireCode,
-        input.contenu,
-        auteur_id,
-        input.météo,
-        ctx.session.habilitations,
-      );
+      return getContainer("importSyntheseDesResultats")
+        .resolve("modifierUneSyntheseDesResultatsUseCase")
+        .execute({
+          syntheseAModifier: input.syntheseAModifier,
+          contenu: input.contenu,
+          météo: input.meteo,
+          auteur_modification_id: ctx.session.user.id,
+          date_modification: new Date().toISOString(),
+          habilitations: ctx.session.habilitations,
+        });
     }),
 
   récupérerHistorique: procédureProtégée
     .input(validationSynthèseDesRésultatsContexte)
-    .query(({ input, ctx }) => {
-      const récupérerHistoriqueSynthèseDesRésultatsUseCase =
-        new RécupérerHistoriqueSynthèseDesRésultatsUseCase(
-          dependencies.getSynthèseDesRésultatsRepository(),
-        );
-      return récupérerHistoriqueSynthèseDesRésultatsUseCase.run(
-        input.réformeId,
-        input.territoireCode,
-        ctx.session.habilitations,
-      );
-    }),
-
-  récupérerLaPlusRécente: procédureProtégée
-    .input(validationSynthèseDesRésultatsContexte)
-    .query(({ input, ctx }) => {
-      const récupérerSynthèseDesRésultatsLaPlusRécenteUseCase =
-        new RécupérerSynthèseDesRésultatsLaPlusRécenteUseCase(
-          dependencies.getSynthèseDesRésultatsRepository(),
-        );
-      return récupérerSynthèseDesRésultatsLaPlusRécenteUseCase.run(
-        input.réformeId,
-        input.territoireCode,
-        ctx.session.habilitations,
-      );
+    .query(({ input }) => {
+      return getContainer("importSyntheseDesResultats")
+        .resolve("récupérerHistoriqueSyntheseDesResultatsQuery")
+        .run(input.réformeId, input.territoireCode);
     }),
 });

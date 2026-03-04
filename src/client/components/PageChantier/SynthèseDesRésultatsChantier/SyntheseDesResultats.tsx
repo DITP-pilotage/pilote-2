@@ -4,26 +4,21 @@ import Bloc from "@/components/_commons/Bloc/Bloc";
 import { MeteoPicto } from "@/components/_commons/Meteo/Picto/MeteoPicto";
 import MétéoBadge from "@/components/_commons/Meteo/Badge/MétéoBadge";
 import SynthèseDesRésultatsHistorique from "@/components/PageChantier/SynthèseDesRésultatsChantier/Historique/Historique";
-import { useSyntheseDesResultats } from "@/components/PageChantier/SynthèseDesRésultatsChantier/useSyntheseDesResultats";
 import Alerte from "@/components/_commons/Alerte/Alerte";
 import SynthèseDesRésultatsAffichage from "@/components/PageChantier/SynthèseDesRésultatsChantier/Affichage/Affichage";
 import { pageChantier } from "@/components/PageChantier/PageChantierServerSideContext";
 import SyntheseDesResultatsFormulaire from "@/components/PageChantier/SynthèseDesRésultatsChantier/SyntheseDesResultatsFormulaire/SyntheseDesResultatsFormulaire";
-import { Icone } from "@/components/_commons/Icone";
-import { Icone1Icon } from "@/components/_commons/Icones/Icone1Icon";
 
 export interface SyntheseDesResultatsProps {
   nomTerritoire: string;
   modeEcriture?: boolean;
-  estInteractif?: boolean;
 }
 
 const SyntheseDesResultats: FunctionComponent<SyntheseDesResultatsProps> = ({
   nomTerritoire,
   modeEcriture = false,
-  estInteractif = true,
 }) => {
-  const { synthèseDesRésultats, chantier } =
+  const { syntheseDesResultats, chantier } =
     pageChantier.useServerSidePropsContext();
 
   const [action] = useQueryState(
@@ -38,8 +33,6 @@ const SyntheseDesResultats: FunctionComponent<SyntheseDesResultatsProps> = ({
       clearOnDefault: true,
     }),
   );
-
-  const { synthèseDesRésultatsCréée } = useSyntheseDesResultats();
 
   return (
     <div>
@@ -56,14 +49,13 @@ const SyntheseDesResultats: FunctionComponent<SyntheseDesResultatsProps> = ({
           {modeÉdition && modeEcriture ? (
             <SyntheseDesResultatsFormulaire
               annulationCallback={() => setModeÉdition(false)}
-              syntheseDesResultatsCreeeCallback={synthèseDesRésultatsCréée}
             />
           ) : (
             <>
               {action === "creation-reussie" && (
                 <div className="fr-mb-2w">
                   <Alerte
-                    titre="Météo et synthèse des résultats publiées"
+                    titre="Votre commentaire a bien été modifié"
                     type="succès"
                   />
                 </div>
@@ -71,37 +63,28 @@ const SyntheseDesResultats: FunctionComponent<SyntheseDesResultatsProps> = ({
               <div className="flex gap-4">
                 <div className="flex flex-col gap-4 align-center">
                   <MétéoBadge
-                    météo={synthèseDesRésultats?.météo ?? "NON_RENSEIGNEE"}
+                    météo={syntheseDesResultats?.météo ?? "NON_RENSEIGNEE"}
                   />
-                  {synthèseDesRésultats ? (
-                    <MeteoPicto meteo={synthèseDesRésultats.météo} />
+                  {syntheseDesResultats ? (
+                    <MeteoPicto meteo={syntheseDesResultats.météo} />
                   ) : null}
                 </div>
                 <div>
                   <SynthèseDesRésultatsAffichage
-                    itemHistoriqueSyntheseDesResultats={synthèseDesRésultats}
+                    itemHistoriqueSyntheseDesResultats={syntheseDesResultats}
+                    onModifier={
+                      modeEcriture ? () => setModeÉdition(true) : undefined
+                    }
                   />
                 </div>
               </div>
-              {estInteractif ? (
-                <div className="fr-grid-row fr-grid-row--right">
-                  <div className="fr-col-12 flex justify-end fr-mt-1w">
-                    {!!synthèseDesRésultats ? (
-                      <SynthèseDesRésultatsHistorique />
-                    ) : null}
-                    {modeEcriture ? (
-                      <button
-                        className="fr-btn fr-btn--secondary !ml-6 rounded gap-2"
-                        onClick={() => setModeÉdition(true)}
-                        type="button"
-                      >
-                        <Icone icone={Icone1Icon} />
-                        Modifier
-                      </button>
-                    ) : null}
-                  </div>
+              <div className="fr-grid-row fr-grid-row--right">
+                <div className="fr-col-12 flex justify-end fr-mt-1w">
+                  {!!syntheseDesResultats ? (
+                    <SynthèseDesRésultatsHistorique />
+                  ) : null}
                 </div>
-              ) : null}
+              </div>
             </>
           )}
         </div>

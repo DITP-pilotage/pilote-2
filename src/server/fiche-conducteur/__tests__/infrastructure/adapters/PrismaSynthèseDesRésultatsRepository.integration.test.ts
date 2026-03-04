@@ -58,7 +58,8 @@ describe("PrismaSynthèseDesRésultatsRepository", () => {
             territoire_code: "NAT-FR",
             code_insee: "FR",
             maille: $Enums.Maille.NAT,
-            date_commentaire: "2022-01-02T00:00:00.000Z",
+            date_creation: "2022-01-02T00:00:00.000Z",
+            date_modification: "2022-01-02T00:00:00.000Z",
             meteo: "SOLEIL",
             commentaire: "commentaire synthèse OK maille",
           },
@@ -71,7 +72,8 @@ describe("PrismaSynthèseDesRésultatsRepository", () => {
             territoire_code: "NAT-FR",
             code_insee: "FR",
             maille: $Enums.Maille.NAT,
-            date_commentaire: "2021-01-02T00:00:00.000Z",
+            date_creation: "2021-01-02T00:00:00.000Z",
+            date_modification: "2021-01-02T00:00:00.000Z",
             meteo: "COUVERT",
             commentaire: "commentaire synthèse KO ancienne",
           },
@@ -86,6 +88,8 @@ describe("PrismaSynthèseDesRésultatsRepository", () => {
             maille: $Enums.Maille.DEPT,
             meteo: "SOLEIL",
             commentaire: "commentaire synthèse KO maille",
+            date_creation: "2021-01-02T00:00:00.000Z",
+            date_modification: "2021-01-02T00:00:00.000Z",
           },
         });
         // autre chantier, ne doit pas être retourné
@@ -98,6 +102,8 @@ describe("PrismaSynthèseDesRésultatsRepository", () => {
             maille: $Enums.Maille.DEPT,
             meteo: "SOLEIL",
             commentaire: "commentaire synthèse KO chantierID",
+            date_creation: "2021-01-02T00:00:00.000Z",
+            date_modification: "2021-01-02T00:00:00.000Z",
           },
         });
 

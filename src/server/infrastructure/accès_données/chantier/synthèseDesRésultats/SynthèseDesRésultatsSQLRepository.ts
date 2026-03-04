@@ -1,7 +1,4 @@
-import {
-  synthese_des_resultats,
-  utilisateur as UtilisateurPrisma,
-} from "@prisma/client";
+import { synthese_des_resultats } from "@prisma/client";
 import SynthèseDesRésultatsRepository from "@/server/domain/chantier/synthèseDesRésultats/SynthèseDesRésultatsRepository.interface";
 import { CODES_MAILLES } from "@/server/infrastructure/accès_données/maille/mailleSQLParser";
 import { Maille } from "@/server/domain/maille/Maille.interface";
@@ -15,133 +12,42 @@ import { territoireCodeVersMailleCodeInsee } from "@/server/utils/territoires";
 import { prisma } from "@/server/db/prisma";
 
 export class SynthèseDesRésultatsSQLRepository implements SynthèseDesRésultatsRepository {
-  private mapperVersDomaine(
-    synthèse:
-      | (synthese_des_resultats & { auteur_synthese: UtilisateurPrisma | null })
-      | null,
-  ): SynthèseDesRésultats {
-    if (
-      synthèse === null ||
-      synthèse.commentaire === null ||
-      synthèse.date_commentaire === null
-    )
-      return null;
-    const auteurSynthese = synthèse.auteur_synthese;
-    return {
-      id: synthèse.id,
-      contenu: synthèse.commentaire,
-      date: synthèse.date_commentaire.toISOString(),
-      auteur: auteurSynthese
-        ? `${auteurSynthese.prenom} ${auteurSynthese.nom}`
-        : "Auteur Inconnu",
-      météo: (synthèse.meteo as Météo) ?? "NON_RENSEIGNEE",
-    };
-  }
-
-  async créer(
-    chantierId: string,
-    territoireCode: string,
-    id: string,
-    contenu: string,
-    auteur_id: string,
-    météo: Météo,
-    date: Date,
-  ): Promise<SynthèseDesRésultats> {
-    const { maille, codeInsee } =
-      territoireCodeVersMailleCodeInsee(territoireCode);
-
-    const synthèseDesRésultats = await prisma.synthese_des_resultats.create({
-      data: {
-        id: id,
-        chantier_id: chantierId,
-        maille: maille,
-        code_insee: codeInsee,
-        territoire_code: territoireCode,
-        commentaire: contenu,
-        meteo: météo,
-        date_commentaire: date,
-        date_meteo: date,
-        auteur_id: auteur_id,
-      },
-      include: {
-        auteur_synthese: true,
-      },
-    });
-    return this.mapperVersDomaine(synthèseDesRésultats);
-  }
-
   async save({
     chantierId,
     territoireCode,
     id,
     contenu,
-    auteur_id,
     météo,
-    date,
+    auteur_creation_id,
+    date_creation,
+    auteur_modification_id,
+    date_modification,
   }: SynthèseDesRésultatsV2): Promise<void> {
-    await this.créer(
-      chantierId,
-      territoireCode,
-      id,
-      contenu,
-      auteur_id,
-      météo,
-      date,
-    );
-  }
-
-  async récupérerLaPlusRécente(
-    chantierId: string,
-    territoireCode: string,
-  ): Promise<SynthèseDesRésultats> {
     const { maille, codeInsee } =
       territoireCodeVersMailleCodeInsee(territoireCode);
 
-    const synthèseDesRésultats = await prisma.synthese_des_resultats.findFirst({
-      where: {
+    await prisma.synthese_des_resultats.upsert({
+      where: { id },
+      create: {
+        id,
         chantier_id: chantierId,
-        maille: maille,
+        maille,
         code_insee: codeInsee,
-        NOT: [
-          {
-            commentaire: null,
-          },
-          {
-            date_commentaire: null,
-          },
-        ],
+        territoire_code: territoireCode,
+        commentaire: contenu,
+        meteo: météo,
+        auteur_creation_id,
+        date_creation: new Date(date_creation),
+        auteur_modification_id,
+        date_modification: new Date(date_modification),
       },
-      include: {
-        auteur_synthese: true,
+      update: {
+        commentaire: contenu,
+        meteo: météo,
+        auteur_modification_id,
+        date_modification: new Date(date_modification),
       },
-      orderBy: { date_commentaire: "desc" },
     });
-
-    return this.mapperVersDomaine(synthèseDesRésultats);
-  }
-
-  async récupérerHistorique(
-    chantierId: string,
-    territoireCode: string,
-  ): Promise<SynthèseDesRésultats[]> {
-    const { maille, codeInsee } =
-      territoireCodeVersMailleCodeInsee(territoireCode);
-
-    const synthèsesDesRésultats = await prisma.synthese_des_resultats.findMany({
-      where: {
-        chantier_id: chantierId,
-        maille: maille,
-        code_insee: codeInsee,
-      },
-      include: {
-        auteur_synthese: true,
-      },
-      orderBy: { date_commentaire: "desc" },
-    });
-
-    return synthèsesDesRésultats
-      .map((synthèse) => this.mapperVersDomaine(synthèse))
-      .filter((synthèse) => synthèse !== null);
   }
 
   async récupérerLesPlusRécentesGroupéesParChantier(
@@ -154,19 +60,21 @@ export class SynthèseDesRésultatsSQLRepository implements SynthèseDesRésulta
     >`
       SELECT s.*, utilisateur.prenom as auteur_prenom, utilisateur.nom as auteur_nom
       FROM synthese_des_resultats s
-        LEFT JOIN utilisateur on utilisateur.id = s.auteur_id
+        LEFT JOIN utilisateur on utilisateur.id = s.auteur_modification_id
         INNER JOIN (
-          SELECT chantier_id, maille, code_insee, MAX(date_commentaire) as maxdate
+          SELECT chantier_id, maille, code_insee, MAX(date_modification) as maxdate
           FROM synthese_des_resultats
           WHERE chantier_id = ANY (${chantiersIds})
             AND maille = ${CODES_MAILLES[maille]}
             AND code_insee = ${codeInsee}
+            AND statut = 'PUBLIE'
           GROUP BY chantier_id, maille, code_insee
         ) s_recentes
-          ON s.date_commentaire = s_recentes.maxdate
+          ON s.date_modification = s_recentes.maxdate
             AND s.chantier_id = s_recentes.chantier_id
             AND s.maille = s_recentes.maille
             AND s.code_insee = s_recentes.code_insee
+            AND s.statut = 'PUBLIE'
       `;
 
     return Object.fromEntries(
@@ -175,8 +83,8 @@ export class SynthèseDesRésultatsSQLRepository implements SynthèseDesRésulta
         {
           id: synthèseDesRésultats.id,
           contenu: synthèseDesRésultats.commentaire ?? "",
-          date: synthèseDesRésultats.date_commentaire?.toISOString() ?? "",
-          auteur: synthèseDesRésultats.auteur_id
+          date: synthèseDesRésultats.date_modification?.toISOString() ?? "",
+          auteur: synthèseDesRésultats.auteur_modification_id
             ? `${synthèseDesRésultats.auteur_prenom} ${synthèseDesRésultats.auteur_nom}`
             : "Auteur Inconnu",
           météo: (synthèseDesRésultats.meteo as Météo) ?? "NON_RENSEIGNEE",

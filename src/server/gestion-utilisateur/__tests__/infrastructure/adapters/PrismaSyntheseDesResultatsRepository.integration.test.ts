@@ -66,26 +66,32 @@ describe("PrismaSyntheseDesResultatsRepository", () => {
           {
             id: "77053976-1a8e-49f0-b68a-df01da2fc277",
             chantier_id: "CH-001",
-            auteur_id: auteurId1,
+            auteur_creation_id: auteurId1,
             maille: "NAT",
             code_insee: "FR",
             territoire_code: "NAT-FR",
+            date_creation: new Date(),
+            date_modification: new Date(),
           },
           {
             id: "b699907e-43c4-43be-8d8d-185fca1b2e50",
             chantier_id: "CH-001",
-            auteur_id: auteurId2,
+            auteur_creation_id: auteurId2,
             maille: "NAT",
             code_insee: "FR",
             territoire_code: "NAT-FR",
+            date_creation: new Date(),
+            date_modification: new Date(),
           },
           {
             id: "e3885e40-caab-4fb6-acf4-0c8f66c9e290",
             chantier_id: "CH-001",
-            auteur_id: auteurId2,
+            auteur_creation_id: auteurId2,
             maille: "NAT",
             code_insee: "FR",
             territoire_code: "NAT-FR",
+            date_creation: new Date(),
+            date_modification: new Date(),
           },
         ],
       });
@@ -99,7 +105,7 @@ describe("PrismaSyntheseDesResultatsRepository", () => {
       // Then
       const synthesesAvecAuteurAnonyme =
         await prisma.synthese_des_resultats.findMany({
-          where: { auteur_id: auteurId3 },
+          where: { auteur_creation_id: auteurId3 },
         });
       expect(synthesesAvecAuteurAnonyme).toHaveLength(2);
       expect(synthesesAvecAuteurAnonyme[0].id).toStrictEqual(
