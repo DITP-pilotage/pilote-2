@@ -15,7 +15,7 @@ N'utilise JAMAIS de tableaux pour présenter la donnée.
 <template>
 # Synthèse pour {{territoire_nom}}
 
-Dans Pilote, le TA {{JALON}} de la région s'établit à {{taux_avancement_global}}%, pour une médiane nationale à {{mediane_repartition}}%.
+Dans Pilote, le TA {{JALON}} de la région s'établit à {{taux_avancement_global}}%, pour une médiane des <if territoire is DEPT>départements</if><else>régions</else> à {{mediane_repartition}}%.
 
 ## Chantiers en retard
 
