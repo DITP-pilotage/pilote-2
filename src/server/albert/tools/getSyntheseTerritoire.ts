@@ -57,11 +57,7 @@ export function createGetSyntheseTerritoireTool({
 }: {
   getSyntheseTerritoireQuery: GetSyntheseTerritoireQuery;
 }) {
-  return ({
-    territoiresAccessibles,
-  }: {
-    territoiresAccessibles: string[];
-  }) => {
+  return ({ territoiresAccessibles }: { territoiresAccessibles: string[] }) => {
     return tool({
       description: `Récupère la synthèse détaillée d'un territoire. Cet outil retourne :
 - Le taux d'avancement global du territoire

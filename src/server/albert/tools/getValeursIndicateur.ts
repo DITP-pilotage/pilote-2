@@ -38,11 +38,7 @@ export function createGetValeursIndicateurTool({
 }: {
   getValeursIndicateurQuery: GetValeursIndicateurQuery;
 }) {
-  return ({
-    territoiresAccessibles,
-  }: {
-    territoiresAccessibles: string[];
-  }) => {
+  return ({ territoiresAccessibles }: { territoiresAccessibles: string[] }) => {
     return tool({
       description: `Récupère les valeurs des indicateurs (VI, VA, VC, TA) d'un chantier sur un territoire donné. Cet outil retourne :
 - La valeur initiale (VI) et sa date
