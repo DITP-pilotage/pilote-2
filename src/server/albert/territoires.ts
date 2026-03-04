@@ -15,7 +15,9 @@ interface RegionInfo {
 
 export function buildTerritoireHierarchy(): RegionInfo[] {
   const regions = _territoires.filter((t) => t.maille === "regionale");
-  const departements = _territoires.filter((t) => t.maille === "departementale");
+  const departements = _territoires.filter(
+    (t) => t.maille === "departementale",
+  );
 
   return regions.map((region) => ({
     code: region.code,

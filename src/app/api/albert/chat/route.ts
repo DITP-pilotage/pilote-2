@@ -29,9 +29,15 @@ export async function POST(request: Request) {
     const createGetSyntheseTerritoireTool = container.resolve(
       "createGetSyntheseTerritoireTool",
     );
+    const createGetValeursIndicateurTool = container.resolve(
+      "createGetValeursIndicateurTool",
+    );
 
     const systemPrompt = buildChatSystemPrompt({ territoiresAccessibles });
     const getSyntheseTerritoire = createGetSyntheseTerritoireTool({
+      territoiresAccessibles,
+    });
+    const getValeursIndicateur = createGetValeursIndicateurTool({
       territoiresAccessibles,
     });
 
@@ -42,6 +48,7 @@ export async function POST(request: Request) {
       userId: session.user.id,
       tools: {
         get_synthese_territoire: getSyntheseTerritoire,
+        get_valeurs_indicateur: getValeursIndicateur,
         display_choices: displayChoicesTool,
       },
     });

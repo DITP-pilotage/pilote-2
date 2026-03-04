@@ -13,6 +13,7 @@ import { Prisma } from "@prisma/client";
 import { configuration } from "@/config";
 import { prisma } from "@/server/db/prisma";
 import { SYNTHESE_TERRITOIRE_OUTPUT_FORMAT } from "./tools/getSyntheseTerritoire";
+import { VALEURS_INDICATEUR_OUTPUT_FORMAT } from "./tools/getValeursIndicateur";
 
 const displayChoicesInputSchema = z.object({
   choices: z
@@ -124,13 +125,19 @@ export class Albert {
       messages: modelMessages,
       prepareStep: ({ steps }) => {
         const lastStep = steps.at(-1);
-        const lastStepCalledSynthese = lastStep?.toolCalls.some(
-          (toolCall) => toolCall.toolName === "get_synthese_territoire",
+        const lastStepToolNames = lastStep?.toolCalls.map(
+          (toolCall) => toolCall.toolName,
         );
 
-        if (lastStepCalledSynthese) {
+        if (lastStepToolNames?.includes("get_synthese_territoire")) {
           return {
             system: systemPrompt + "\n\n" + SYNTHESE_TERRITOIRE_OUTPUT_FORMAT,
+          };
+        }
+
+        if (lastStepToolNames?.includes("get_valeurs_indicateur")) {
+          return {
+            system: systemPrompt + "\n\n" + VALEURS_INDICATEUR_OUTPUT_FORMAT,
           };
         }
 

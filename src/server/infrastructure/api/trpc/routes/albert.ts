@@ -35,9 +35,15 @@ export const albertRouter = créerRouteurTRPC({
       const createGetSyntheseTerritoireTool = container.resolve(
         "createGetSyntheseTerritoireTool",
       );
+      const createGetValeursIndicateurTool = container.resolve(
+        "createGetValeursIndicateurTool",
+      );
 
       const systemPrompt = buildChatSystemPrompt({ territoiresAccessibles });
       const getSyntheseTerritoire = createGetSyntheseTerritoireTool({
+        territoiresAccessibles,
+      });
+      const getValeursIndicateur = createGetValeursIndicateurTool({
         territoiresAccessibles,
       });
 
@@ -48,6 +54,7 @@ export const albertRouter = créerRouteurTRPC({
         userId: ctx.session.user.id,
         tools: {
           get_synthese_territoire: getSyntheseTerritoire,
+          get_valeurs_indicateur: getValeursIndicateur,
           display_choices: displayChoicesTool,
         },
       });
