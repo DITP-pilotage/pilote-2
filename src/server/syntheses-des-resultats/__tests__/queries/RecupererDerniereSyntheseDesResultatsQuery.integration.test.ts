@@ -80,6 +80,7 @@ describe("RecupererDerniereSyntheseDesResultatsQuery", () => {
         date_creation: new Date("2025-01-01").toISOString(),
         auteur_modification_id: auteur.id,
         date_modification: new Date("2025-06-01").toISOString(),
+        statut: $Enums.statut_synthese_des_resultats.PUBLIE,
         auteur_creation_nom: "Jean Dupont",
         auteur_modification_nom: "Jean Dupont",
       });

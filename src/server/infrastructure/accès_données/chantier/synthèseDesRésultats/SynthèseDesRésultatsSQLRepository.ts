@@ -22,6 +22,7 @@ export class SynthèseDesRésultatsSQLRepository implements SynthèseDesRésulta
     date_creation,
     auteur_modification_id,
     date_modification,
+    statut,
   }: SynthèseDesRésultatsV2): Promise<void> {
     const { maille, codeInsee } =
       territoireCodeVersMailleCodeInsee(territoireCode);
@@ -40,12 +41,14 @@ export class SynthèseDesRésultatsSQLRepository implements SynthèseDesRésulta
         date_creation: new Date(date_creation),
         auteur_modification_id,
         date_modification: new Date(date_modification),
+        statut,
       },
       update: {
         commentaire: contenu,
         meteo: météo,
         auteur_modification_id,
         date_modification: new Date(date_modification),
+        statut,
       },
     });
   }
