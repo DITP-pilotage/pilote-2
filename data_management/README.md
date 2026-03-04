@@ -351,7 +351,7 @@ pipenv run dbt docs generate && pipenv run dbt docs serve
 Cette ligne de commande ouvrira une interface web avec laquelle vous pourrez interagir. 
 Une petite icône bleue en bas à droite indique le DAG.
 
-La doc pour la branche de dev est hébergée publiquement à l'adresse : [https://ditp-pilotage.github.io/pilote-2/](https://ditp-pilotage.github.io/pilote-2/) via Github Pages.
+La doc pour la branche de dev est hébergée publiquement à l'adresse : [https://ditp-pilotage.github.io/pilote-2/](https://ditp-pilotage.github.io/pilote-2/) via GitHub Pages.
 
 
 ### Zoom sur une brique du flux
