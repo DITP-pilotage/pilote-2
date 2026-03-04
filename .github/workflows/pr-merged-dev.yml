@@ -64,7 +64,7 @@ jobs:
         if: steps.datamgmt_changes.outputs.changed == 'true'
         with:
           region: 'osc-secnum-fr1'
-          api_token: ${{ secrets.scalingo_api_token }}
+          api_token: ${{ secrets.SCALINGO_API_TOKEN }}
           app_name: 'dev-datajobs'
 
       # Ouvre le tunnel et génère la doc dans le même shell pour s'assurer que le tunnel est actif durant dbt docs
