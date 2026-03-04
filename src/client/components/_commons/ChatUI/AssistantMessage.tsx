@@ -71,7 +71,7 @@ export const AssistantMessage = ({
           if (part.type === "tool-display_choices") {
             if (part.state !== "output-available") return null;
             return (
-              <div key={index} className="animate-fade-in">
+              <div key={index} className="animate-fade-in my-2">
                 <ChoicesButtons choices={part.output.choices} />
               </div>
             );

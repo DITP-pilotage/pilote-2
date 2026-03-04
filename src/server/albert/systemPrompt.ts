@@ -1,26 +1,36 @@
 import { buildTerritoireHierarchy } from "./territoires";
 
-export const JALON_COURANT = 2025;
+export const JALON_PAR_DEFAUT = 2025;
 
 interface BuildChatSystemPromptParams {
   territoiresAccessibles: string[];
+  agentContext?: Record<string, unknown> | null;
 }
 
 export function buildChatSystemPrompt({
   territoiresAccessibles,
+  agentContext,
 }: BuildChatSystemPromptParams): string {
   const territoiresList = territoiresAccessibles
     .map((code) => `- ${code}`)
     .join("\n");
 
   const hierarchy = buildTerritoireHierarchy();
+  const jalon =
+    typeof agentContext?.jalon === "number"
+      ? agentContext.jalon
+      : JALON_PAR_DEFAUT;
+
+  const agentContextSection = agentContext
+    ? `\n## Contexte utilisateur\n${JSON.stringify(agentContext)}\n`
+    : "";
 
   return `Tu es Albert, l'assistant d'analyse territoriale de PILOTE.
 
 # Contexte métier
-
+${agentContextSection}
 ## Jalon courant
-Le jalon d'analyse actuel est ${JALON_COURANT}.
+Le jalon d'analyse actuel est ${jalon}.
 
 ## Chantiers
 Les chantiers sont identifiés par un code au format CH-XXX (3 chiffres avec des zéros en tête).

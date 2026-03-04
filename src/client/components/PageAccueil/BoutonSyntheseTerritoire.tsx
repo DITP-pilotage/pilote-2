@@ -7,8 +7,10 @@ import { ModalePleinEcran } from "@/components/shared/ModalePleinEcran";
 
 export const BoutonSyntheseTerritoire = ({
   territoireCode,
+  jalon,
 }: {
   territoireCode: string;
+  jalon: number;
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const territoire = récupérerDétailsSurUnTerritoire(territoireCode);
@@ -35,6 +37,7 @@ export const BoutonSyntheseTerritoire = ({
             emptyStateText="La synthèse est en cours de génération..."
             placeholder="Posez une question sur ce territoire..."
             initialMessage={`Fais moi la synthèse de ${territoire.nomAffiché}`}
+            agentContext={{ jalon, territoireCode }}
           />
         </ModalePleinEcran>
       )}

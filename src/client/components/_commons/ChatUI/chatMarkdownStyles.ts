@@ -3,6 +3,7 @@ export const chatMarkdownStyles = `
     font-weight: 700;
     margin-top: 0.75em;
     margin-bottom: 0.25em;
+    line-height: 1.5;
   }
   .albert-markdown h1 { font-size: 1.25em; }
   .albert-markdown h2 { font-size: 1.1em; }

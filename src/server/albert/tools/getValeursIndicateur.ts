@@ -2,7 +2,6 @@ import { tool } from "ai";
 import { z } from "zod";
 import { GetValeursIndicateurQuery } from "@/server/chantiers/query/GetValeursIndicateurQuery";
 import type { GetValeursIndicateurResult } from "@/server/chantiers/query/GetValeursIndicateurQuery";
-import { JALON_COURANT } from "@/server/albert/systemPrompt";
 
 export const VALEURS_INDICATEUR_OUTPUT_FORMAT = `
 <instructions>
@@ -33,7 +32,13 @@ export function createGetValeursIndicateurTool({
 }: {
   getValeursIndicateurQuery: GetValeursIndicateurQuery;
 }) {
-  return ({ territoiresAccessibles }: { territoiresAccessibles: string[] }) => {
+  return ({
+    territoiresAccessibles,
+    jalon,
+  }: {
+    territoiresAccessibles: string[];
+    jalon: number;
+  }) => {
     return tool({
       description: `Récupère les valeurs des indicateurs (VI, VA, VC, TA) d'un chantier sur un territoire donné. Cet outil retourne :
 - La valeur initiale (VI) et sa date
@@ -56,7 +61,7 @@ Utilise cet outil quand l'utilisateur demande :
         return getValeursIndicateurQuery.execute({
           territoireCode: input.territoire_code,
           chantierId: input.chantier_id,
-          jalon: JALON_COURANT,
+          jalon,
         });
       },
     });

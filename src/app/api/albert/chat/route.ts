@@ -6,13 +6,17 @@ import {
   displayValeursIndicateurTool,
 } from "@/server/albert/Albert";
 import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
-import { buildChatSystemPrompt } from "@/server/albert/systemPrompt";
+import {
+  buildChatSystemPrompt,
+  JALON_PAR_DEFAUT,
+} from "@/server/albert/systemPrompt";
 import { getContainer } from "@/server/dependances";
 
 const chatRequestSchema = z
   .object({
     id: z.string().min(1),
     messages: z.array(z.any()),
+    agentContext: z.record(z.string(), z.unknown()).nullable().optional(),
   })
   .passthrough();
 
@@ -27,6 +31,12 @@ export async function POST(request: Request) {
     const body = chatRequestSchema.parse(await request.json());
     const messages = await validateUIMessages({ messages: body.messages });
 
+    const agentContext = body.agentContext ?? undefined;
+    const jalon =
+      typeof agentContext?.jalon === "number"
+        ? agentContext.jalon
+        : JALON_PAR_DEFAUT;
+
     const territoiresAccessibles = session.habilitations.lecture.territoires;
 
     const container = getContainer("albert");
@@ -37,12 +47,17 @@ export async function POST(request: Request) {
       "createGetValeursIndicateurTool",
     );
 
-    const systemPrompt = buildChatSystemPrompt({ territoiresAccessibles });
+    const systemPrompt = buildChatSystemPrompt({
+      territoiresAccessibles,
+      agentContext,
+    });
     const getSyntheseTerritoire = createGetSyntheseTerritoireTool({
       territoiresAccessibles,
+      jalon,
     });
     const getValeursIndicateur = createGetValeursIndicateurTool({
       territoiresAccessibles,
+      jalon,
     });
 
     const result = await Albert.streamText({

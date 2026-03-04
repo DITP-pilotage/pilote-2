@@ -2,7 +2,6 @@ import { tool } from "ai";
 import { z } from "zod";
 import { GetSyntheseTerritoireQuery } from "@/server/chantiers/query/GetSyntheseTerritoireQuery";
 import type { GetSyntheseTerritoireResult } from "@/server/chantiers/query/GetSyntheseTerritoireQuery";
-import { JALON_COURANT } from "@/server/albert/systemPrompt";
 
 export const SYNTHESE_TERRITOIRE_OUTPUT_FORMAT = `
 <instructions>
@@ -52,7 +51,13 @@ export function createGetSyntheseTerritoireTool({
 }: {
   getSyntheseTerritoireQuery: GetSyntheseTerritoireQuery;
 }) {
-  return ({ territoiresAccessibles }: { territoiresAccessibles: string[] }) => {
+  return ({
+    territoiresAccessibles,
+    jalon,
+  }: {
+    territoiresAccessibles: string[];
+    jalon: number;
+  }) => {
     return tool({
       description: `Récupère la synthèse détaillée d'un territoire. Cet outil retourne :
 - Le taux d'avancement global du territoire
@@ -82,7 +87,7 @@ Cette règle ne s'applique PAS aux territoires nationaux (NAT-FR) ni aux départ
 
         return getSyntheseTerritoireQuery.execute({
           territoireCode: input.territoire_code,
-          jalon: JALON_COURANT,
+          jalon,
         });
       },
     });

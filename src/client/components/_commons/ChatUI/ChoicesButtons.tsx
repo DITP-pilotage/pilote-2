@@ -9,7 +9,7 @@ export const ChoicesButtons = ({ choices }: { choices: DisplayChoice[] }) => {
   if (hidden) return null;
 
   return (
-    <div className="flex flex-wrap gap-2 my-2">
+    <div className="grid md:grid-cols-2 gap-2 my-2 max-w-3xl mx-auto">
       {choices.map((choice) => (
         <button
           className="rounded-full border border-primary text-primary px-3 py-1 text-sm hover:bg-primary hover:text-white transition-colors"

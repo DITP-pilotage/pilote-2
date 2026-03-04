@@ -16,18 +16,23 @@ export const ChatUI = ({
   emptyStateText = "Posez une question pour commencer la conversation.",
   className = "h-[calc(100vh-200px)]",
   initialMessage,
+  agentContext,
 }: {
   endpoint: string;
   placeholder?: string;
   emptyStateText?: string;
   className?: string;
   initialMessage?: string;
+  agentContext?: Record<string, unknown>;
 }) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const hasSubmittedInitialMessage = useRef(false);
   const chatRef = useRef(
     new Chat<PiloteUIMessage>({
-      transport: new DefaultChatTransport<PiloteUIMessage>({ api: endpoint }),
+      transport: new DefaultChatTransport<PiloteUIMessage>({
+        api: endpoint,
+        body: agentContext ? { agentContext } : undefined,
+      }),
     }),
   );
 
