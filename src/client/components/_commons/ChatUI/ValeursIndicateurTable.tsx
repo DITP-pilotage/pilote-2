@@ -9,8 +9,8 @@ export const ValeursIndicateurTable = ({
   indicateurs: ValeursIndicateurDisplay[];
 }) => {
   return (
-    <div className="fr-table">
-      <table>
+    <div className="fr-table fr-p-0 fr-m-0">
+      <table className="!table">
         <thead>
           <tr>
             <th scope="col">Nom</th>

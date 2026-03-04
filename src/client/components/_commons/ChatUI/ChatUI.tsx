@@ -61,21 +61,19 @@ export const ChatUI = ({
         <style>{chatMarkdownStyles}</style>
 
         <div className="flex-1 overflow-y-auto bg-white">
-          <div className="max-w-3xl mx-auto p-4 space-y-4">
+          <div className="max-w-6xl mx-auto p-4 space-y-4">
             {messages.length === 0 && (
-              <p className="text-gray-400 text-center mt-8">{emptyStateText}</p>
+              <p className="max-w-3xl mx-auto text-gray-400 text-center mt-8">
+                {emptyStateText}
+              </p>
             )}
 
             {messages.map((message, index) => (
-              <div
-                className={clsxm("flex", {
-                  "justify-end": message.role === "user",
-                  "justify-start": message.role === "assistant",
-                })}
-                key={message.id}
-              >
+              <div key={message.id}>
                 {message.role === "user" ? (
-                  <UserMessage message={message} />
+                  <div className="max-w-3xl mx-auto flex justify-end">
+                    <UserMessage message={message} />
+                  </div>
                 ) : (
                   <AssistantMessage
                     message={message}
@@ -88,7 +86,7 @@ export const ChatUI = ({
             ))}
 
             {status === "submitted" && (
-              <div className="flex justify-start">
+              <div className="max-w-3xl mx-auto flex justify-start">
                 <div className="text-sm text-gray-500">
                   <span className="inline-flex gap-1">
                     <span className="animate-bounce">.</span>
@@ -104,7 +102,7 @@ export const ChatUI = ({
             )}
 
             {error && (
-              <div className="flex justify-start">
+              <div className="max-w-3xl mx-auto flex justify-start">
                 <div className="max-w-[80%] text-sm text-red-600">
                   Erreur : {error.message}
                 </div>
