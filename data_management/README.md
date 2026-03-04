@@ -6,7 +6,7 @@ Ce répertoire administre les pipelines d'import, de chargement et transformatio
 
 La mise à jour des données de la datafactory se fait automatiquement via l'exécution du script `scripts/run_datajobs.sh`. La fréquence de mise à jour est définie par le job cron de l'app Scalingo (exemple [pour la dev](https://dashboard.scalingo.com/apps/osc-secnum-fr1/dev-datajobs/resources)).
 
-Les modèles de données *dbt* sont dans le dossier [models/](models/). La doc *dbt* est générée via [`scripts/doc_dbt.sh`](scripts/doc_dbt.sh).
+Les modèles de données *dbt* sont dans le dossier [models/](models/). La doc *dbt* est générée via `pipenv run dbt docs generate`.
 
 ## Avant de démarrer
 
@@ -85,8 +85,6 @@ NEXTAUTH_URL=http://pilote.localhost
 *Note*: Les containers créés sont:
 - `pilote_traefik`: reverse proxy
 - `pilote_postgres`: base de données
-- `pilote_dbt`: documentation interactive dbt
-- `pilote_prisma`: prisma studio
 - `pilote_webapp`: webapp
 
 
@@ -341,7 +339,7 @@ STG --> PUBLIC
 
 ## Visualisation de l'ensemble du flux
 
-Afin de mieux visualiser le DAG à l'intérieur du projet, nous vous proposons de vous référer à la doc générée par DBT.
+Afin de mieux visualiser le DAG à l'intérieur du projet, nous vous proposons de vous référer à la doc générée par dbt.
 Il est possible d'y avoir accès en exécutant la commande suivante : 
 
 ```bash
@@ -349,9 +347,12 @@ pipenv run dbt docs generate && pipenv run dbt docs serve
 ```
 
 Cette ligne de commande ouvrira une interface web avec laquelle vous pourrez interagir. 
-Une petite icône bleue en bas à droite indique le DAG pour visualiser le flux.
+Une petite icône bleue en bas à droite indique le DAG.
 
-Ou via Docker, puis à l'adresse `pilote-dbt.localhost` (voir la section [Installation](installation)) lors de l'exécution de `docker-compose up`.
+La doc pour la branche de dev est hébergée publiquement à l'adresse : [https://ditp-pilotage.github.io/pilote-2/](https://ditp-pilotage.github.io/pilote-2/) via GitHub Pages.
+
+La mise à jour est effectuée grâce à une [GitHub Action](../.github/workflows/pr-merged-dev.yml) qui push la doc dbt sur la branche `gh-pages` à chaque changement de celle-ci.
+
 
 ### Zoom sur une brique du flux
 
