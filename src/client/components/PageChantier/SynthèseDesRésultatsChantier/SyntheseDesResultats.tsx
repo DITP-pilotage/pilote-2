@@ -8,6 +8,7 @@ import Alerte from "@/components/_commons/Alerte/Alerte";
 import SynthèseDesRésultatsAffichage from "@/components/PageChantier/SynthèseDesRésultatsChantier/Affichage/Affichage";
 import { pageChantier } from "@/components/PageChantier/PageChantierServerSideContext";
 import SyntheseDesResultatsFormulaire from "@/components/PageChantier/SynthèseDesRésultatsChantier/SyntheseDesResultatsFormulaire/SyntheseDesResultatsFormulaire";
+import { BoutonNouvelleSyntheseDesResultats } from "@/components/PageChantier/SynthèseDesRésultatsChantier/BoutonNouvelleSyntheseDesResultats/BoutonNouvelleSyntheseDesResultats";
 
 export interface SyntheseDesResultatsProps {
   nomTerritoire: string;
@@ -78,12 +79,11 @@ const SyntheseDesResultats: FunctionComponent<SyntheseDesResultatsProps> = ({
                   />
                 </div>
               </div>
-              <div className="fr-grid-row fr-grid-row--right">
-                <div className="fr-col-12 flex justify-end fr-mt-1w">
-                  {!!syntheseDesResultats ? (
-                    <SynthèseDesRésultatsHistorique />
-                  ) : null}
-                </div>
+              <div className="flex justify-end items-center gap-4 mt-2">
+                {!!syntheseDesResultats ? (
+                  <SynthèseDesRésultatsHistorique />
+                ) : null}
+                {modeEcriture && <BoutonNouvelleSyntheseDesResultats />}
               </div>
             </>
           )}

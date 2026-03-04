@@ -1,3 +1,4 @@
+import { $Enums } from "@prisma/client";
 import { randomUUID } from "node:crypto";
 import SynthèseDesRésultatsRepository from "@/server/domain/chantier/synthèseDesRésultats/SynthèseDesRésultatsRepository.interface";
 import { ImportSyntheseDesResultatsInput } from "@/validation/import-synthese-des-resultats";
@@ -36,6 +37,7 @@ export class ImporterSynthesesDesResultatsUseCase {
         météo: synthese.meteo as MétéoSaisissable,
         date_creation: date.toISOString(),
         date_modification: date.toISOString(),
+        statut: $Enums.statut_synthese_des_resultats.PUBLIE,
       };
 
       await this.dependencies.synthèseDesRésultatsRepository.save(synthèseV2);

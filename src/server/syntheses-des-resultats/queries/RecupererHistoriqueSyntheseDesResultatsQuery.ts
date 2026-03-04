@@ -35,6 +35,7 @@ export class RecupererHistoriqueSyntheseDesResultatsQuery {
       date_creation: synthese.date_creation.toISOString(),
       auteur_modification_id: synthese.auteur_modification_id ?? "",
       date_modification: synthese.date_modification.toISOString(),
+      statut: synthese.statut,
       auteur_creation_nom: synthese.auteur_creation
         ? `${synthese.auteur_creation.prenom} ${synthese.auteur_creation.nom}`
         : "Auteur Inconnu",

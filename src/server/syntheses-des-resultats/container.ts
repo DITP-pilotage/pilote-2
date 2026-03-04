@@ -2,6 +2,7 @@ import { asClass, AwilixContainer } from "awilix";
 import { ImportSyntheseDesResultatsAPIHandler } from "@/server/syntheses-des-resultats/infrastructure/handlers/ImportSyntheseDesResultatsAPIHandler";
 import { ImporterSynthesesDesResultatsUseCase } from "@/server/syntheses-des-resultats/usecases/ImporterSynthesesDesResultatsUseCase";
 import { ModifierUneSyntheseDesResultatsUseCase } from "@/server/syntheses-des-resultats/usecases/ModifierUneSyntheseDesResultatsUseCase";
+import { CreerUneSyntheseDesResultatsUseCase } from "@/server/syntheses-des-resultats/usecases/CreerUneSyntheseDesResultatsUseCase";
 import { RecupererDerniereSyntheseDesResultatsQuery } from "@/server/syntheses-des-resultats/queries/RecupererDerniereSyntheseDesResultatsQuery";
 import { RecupererHistoriqueSyntheseDesResultatsQuery } from "@/server/syntheses-des-resultats/queries/RecupererHistoriqueSyntheseDesResultatsQuery";
 import SynthèseDesRésultatsRepository from "@/server/domain/chantier/synthèseDesRésultats/SynthèseDesRésultatsRepository.interface";
@@ -16,6 +17,7 @@ export type ImportSyntheseDesResultatsDependencies = {
   importSyntheseDesResultatsAPIHandler: ImportSyntheseDesResultatsAPIHandler;
   importerSynthesesDesResultatsUseCase: ImporterSynthesesDesResultatsUseCase;
   modifierUneSyntheseDesResultatsUseCase: ModifierUneSyntheseDesResultatsUseCase;
+  créerUneSyntheseDesResultatsUseCase: CreerUneSyntheseDesResultatsUseCase;
   récupérerDerniereSyntheseDesResultatsQuery: RecupererDerniereSyntheseDesResultatsQuery;
   récupérerHistoriqueSyntheseDesResultatsQuery: RecupererHistoriqueSyntheseDesResultatsQuery;
   synthèseDesRésultatsRepository: SynthèseDesRésultatsRepository;
@@ -41,6 +43,9 @@ export const getImportSyntheseDesResultatsContainer = (
       ),
       modifierUneSyntheseDesResultatsUseCase: asClass(
         ModifierUneSyntheseDesResultatsUseCase,
+      ),
+      créerUneSyntheseDesResultatsUseCase: asClass(
+        CreerUneSyntheseDesResultatsUseCase,
       ),
       récupérerDerniereSyntheseDesResultatsQuery: asClass(
         RecupererDerniereSyntheseDesResultatsQuery,

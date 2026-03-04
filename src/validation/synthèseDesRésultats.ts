@@ -8,7 +8,6 @@ export const LIMITE_CARACTÈRES_SYNTHÈSE_DES_RÉSULTATS = 1000;
 export const LIMITE_CARACTÈRES_AFFICHAGE_SYNTHÈSE_DES_RÉSULTATS = 250;
 
 export const validationSynthèseDesRésultatsContexte = z.object({
-  typeDeRéforme: z.string(),
   réformeId: z.string(),
   territoireCode: z.string(),
 });
@@ -35,5 +34,6 @@ export const validationSyntheseAModifier = z.object({
     date_creation: z.string(),
     auteur_modification_id: z.string(),
     date_modification: z.string(),
+    statut: z.enum(["PUBLIE", "BROUILLON"]),
   }),
 });

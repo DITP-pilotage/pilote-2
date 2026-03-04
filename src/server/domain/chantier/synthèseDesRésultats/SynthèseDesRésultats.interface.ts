@@ -1,3 +1,4 @@
+import { $Enums } from "@prisma/client";
 import { Météo } from "@/server/domain/météo/Météo.interface";
 
 type SynthèseDesRésultats = {
@@ -18,6 +19,7 @@ export type SynthèseDesRésultatsV2 = {
   date_creation: string;
   auteur_modification_id: string;
   date_modification: string;
+  statut: $Enums.statut_synthese_des_resultats;
 };
 
 export type SyntheseDesResultatsAvecNomsAuteurs = SynthèseDesRésultatsV2 & {

@@ -1,13 +1,13 @@
 import { $Enums } from "@prisma/client";
+import { randomUUID } from "node:crypto";
 import SynthèseDesRésultatsRepository from "@/server/domain/chantier/synthèseDesRésultats/SynthèseDesRésultatsRepository.interface";
-import { SynthèseDesRésultatsV2 } from "@/server/domain/chantier/synthèseDesRésultats/SynthèseDesRésultats.interface";
 import { Météo } from "@/server/domain/météo/Météo.interface";
 import { ChantierRepository } from "@/server/chantiers/domain/ports/ChantierRepository";
 import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
 import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
 import { Transaction } from "@/server/db/Transaction";
 
-export class ModifierUneSyntheseDesResultatsUseCase {
+export class CreerUneSyntheseDesResultatsUseCase {
   constructor(
     private readonly dependencies: {
       synthèseDesRésultatsRepository: SynthèseDesRésultatsRepository;
@@ -17,39 +17,47 @@ export class ModifierUneSyntheseDesResultatsUseCase {
   ) {}
 
   async execute({
-    syntheseAModifier,
+    chantierId,
+    territoireCode,
     contenu,
     météo,
-    auteur_modification_id,
-    date_modification,
+    auteur_id,
+    date_creation,
+    statut,
     habilitations,
   }: {
-    syntheseAModifier: SynthèseDesRésultatsV2;
+    chantierId: string;
+    territoireCode: string;
     contenu: string;
     météo: Météo;
-    auteur_modification_id: string;
-    date_modification: string;
+    auteur_id: string;
+    date_creation: string;
+    statut: $Enums.statut_synthese_des_resultats;
     habilitations: Habilitations;
   }): Promise<void> {
     const habilitation = new Habilitation(habilitations);
     habilitation.vérifierLesHabilitationsEnSaisieDesPublications(
-      syntheseAModifier.chantierId,
-      syntheseAModifier.territoireCode,
+      chantierId,
+      territoireCode,
     );
 
     await this.dependencies.transaction.run(async () => {
       await this.dependencies.chantierRepository.modifierMeteo(
-        syntheseAModifier.chantierId,
-        syntheseAModifier.territoireCode,
+        chantierId,
+        territoireCode,
         météo,
       );
       await this.dependencies.synthèseDesRésultatsRepository.save({
-        ...syntheseAModifier,
+        id: randomUUID(),
+        chantierId,
+        territoireCode,
         contenu,
         météo,
-        auteur_modification_id,
-        date_modification,
-        statut: $Enums.statut_synthese_des_resultats.PUBLIE,
+        auteur_creation_id: auteur_id,
+        date_creation,
+        auteur_modification_id: auteur_id,
+        date_modification: date_creation,
+        statut,
       });
     });
   }
