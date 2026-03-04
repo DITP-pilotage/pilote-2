@@ -36,6 +36,9 @@ jobs:
     name: "Mise à jour de la doc dbt"
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      contents: write
     timeout-minutes: 5
     steps:
       - name: "checkout"
