@@ -34,7 +34,6 @@ export async function getServerSideProps(
   if (!params?.id || !session || !session.habilitations) {
     return redirigerVersPageAccueil;
   }
-
   const utilisateurDemandé = await new RécupérerUnUtilisateurUseCase(
     dependencies.getUtilisateurRepository(),
   ).run(params.id);
