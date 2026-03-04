@@ -1,90 +1,16 @@
 import { FormEvent, useEffect, useRef, useState } from "react";
 import { marked } from "marked";
 import { Chat, useChat } from "@ai-sdk/react";
-import type { ToolUIPart, UIDataTypes, UIMessage } from "ai";
 import { DefaultChatTransport } from "ai";
 import { $Enums } from "@prisma/client";
-import type { DisplayChoice } from "@/server/albert/Albert";
-import type { GetSyntheseTerritoireOutput } from "@/server/albert/tools/getSyntheseTerritoire";
 import { clsxm } from "@/utils/clsxm";
 import { ArrowLineIcon } from "@/components/_commons/Icones/ArrowLineIcon";
 import { FeedbackNegatifModale } from "@/components/_commons/ChatUI/FeedbackNegatifModale";
 import api from "@/server/infrastructure/api/trpc/api";
 import { ChoicesButtons } from "@/components/_commons/ChatUI/ChoicesButtons";
-
-type PiloteUITools = {
-  display_choices: {
-    input: { choices: DisplayChoice[] };
-    output: { choices: DisplayChoice[] };
-  };
-  get_synthese_territoire: {
-    input: { territoire_code: string };
-    output: GetSyntheseTerritoireOutput;
-  };
-};
-
-type PiloteUIMessage = UIMessage<unknown, UIDataTypes, PiloteUITools>;
-
-type SyntheseTerritoireToolPart = Extract<
-  ToolUIPart<PiloteUITools>,
-  { type: "tool-get_synthese_territoire" }
->;
-
-const extractMessageText = (message: PiloteUIMessage): string => {
-  if (!message.parts) return "";
-  return message.parts
-    .map((part) => {
-      if (part.type === "text") {
-        return part.text;
-      }
-      return "";
-    })
-    .join("");
-};
-
-const ToolCallIndicator = ({ part }: { part: SyntheseTerritoireToolPart }) => {
-  const getIndicatorContent = () => {
-    const territoireCode =
-      part.state !== "input-streaming"
-        ? (part.input?.territoire_code ?? "")
-        : "";
-    const territoireNom =
-      part.state === "output-available"
-        ? (part.output?.territoire_nom ?? territoireCode)
-        : territoireCode;
-
-    if (part.state === "output-error") {
-      return (
-        <span className="text-red-400">
-          Erreur lors de la récupération des données du territoire
-        </span>
-      );
-    }
-
-    if (part.state === "output-available") {
-      return (
-        <span>Données récupérées pour {territoireNom || "le territoire"}</span>
-      );
-    }
-
-    return (
-      <span className="inline-flex items-center gap-1">
-        <span>
-          Recherche des données pour {territoireCode || "le territoire"}...
-        </span>
-        <span className="inline-flex gap-0.5">
-          <span className="animate-bounce">.</span>
-          <span className="animate-bounce [animation-delay:0.2s]">.</span>
-          <span className="animate-bounce [animation-delay:0.4s]">.</span>
-        </span>
-      </span>
-    );
-  };
-
-  return (
-    <p className="text-gray-400 text-xs italic my-2">{getIndicatorContent()}</p>
-  );
-};
+import { ToolCallIndicator } from "@/components/_commons/ChatUI/ToolCallIndicator";
+import { extractMessageText } from "@/components/_commons/ChatUI/utils";
+import { PiloteUIMessage } from "@/server/albert/PiloteUIMessage";
 
 export const ChatUI = ({
   endpoint,
