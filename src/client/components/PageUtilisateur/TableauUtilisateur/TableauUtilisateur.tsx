@@ -23,6 +23,24 @@ interface TableauUtilisateurProps {
   };
 }
 
+const Champ = ({
+  label,
+  valeur,
+}: {
+  label: string;
+  valeur: string | null | undefined;
+}) => (
+  <div className="min-w-0">
+    <p className="text-xs text-gray-500 mb-1">{label}</p>
+    <p
+      className="text-sm font-bold text-gray-900 truncate mb-0"
+      title={valeur ?? undefined}
+    >
+      {valeur || "-"}
+    </p>
+  </div>
+);
+
 const TableauUtilisateur: FunctionComponent<TableauUtilisateurProps> = ({
   utilisateur,
 }) => {
@@ -36,49 +54,28 @@ const TableauUtilisateur: FunctionComponent<TableauUtilisateurProps> = ({
   );
 
   return (
-    <div className="fr-table">
-      <table className="table">
-        <thead>
-          <tr>
-            <th>Adresse électronique</th>
-            <th>Nom</th>
-            <th>Prénom</th>
-            <th>Profil</th>
-            <th>Fonction</th>
-            <th>Périmètre ministériel</th>
-            <th>Service</th>
-            {!!utilisateur.auteurCreation && <th>Création du compte</th>}
-            {!!utilisateur.auteurModification && <th>Dernière modification</th>}
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td title={utilisateur.email}>{utilisateur.email}</td>
-            <td title={utilisateur.nom}>{utilisateur.nom}</td>
-            <td title={utilisateur.prénom}>{utilisateur.prénom}</td>
-            <td title={utilisateur.profil}>{utilisateur.profil}</td>
-            <td title={utilisateur.fonction ?? undefined}>
-              {utilisateur.fonction}
-            </td>
-            <td title={perimetreLibelle ?? undefined}>{perimetreLibelle}</td>
-            <td title={serviceLibelle ?? undefined}>{serviceLibelle}</td>
-            {!!utilisateur.auteurCreation && (
-              <td
-                title={`${formaterDate(utilisateur.dateCreation, "DD/MM/YYYY")} par ${utilisateur.auteurCreation}`}
-              >
-                {`${formaterDate(utilisateur.dateCreation, "DD/MM/YYYY")} par ${utilisateur.auteurCreation}`}
-              </td>
-            )}
-            {!!utilisateur.auteurModification && (
-              <td
-                title={`${formaterDate(utilisateur.dateModification, "DD/MM/YYYY")} par ${utilisateur.auteurModification}`}
-              >
-                {`${formaterDate(utilisateur.dateModification, "DD/MM/YYYY")} par ${utilisateur.auteurModification}`}
-              </td>
-            )}
-          </tr>
-        </tbody>
-      </table>
+    <div className="rounded-lg bg-blue-50 p-6 mb-4">
+      <div className="grid grid-cols-3 gap-x-6 gap-y-3">
+        <Champ label="Adresse électronique" valeur={utilisateur.email} />
+        <Champ label="Nom" valeur={utilisateur.nom} />
+        <Champ label="Prénom" valeur={utilisateur.prénom} />
+        <Champ label="Profil" valeur={utilisateur.profil} />
+        <Champ label="Fonction" valeur={utilisateur.fonction} />
+        <Champ label="Périmètre ministériel" valeur={perimetreLibelle} />
+        <Champ label="Service" valeur={serviceLibelle} />
+        {!!utilisateur.auteurCreation && (
+          <Champ
+            label="Création du compte"
+            valeur={`${formaterDate(utilisateur.dateCreation, "DD/MM/YYYY")} par ${utilisateur.auteurCreation}`}
+          />
+        )}
+        {!!utilisateur.auteurModification && (
+          <Champ
+            label="Dernière modification"
+            valeur={`${formaterDate(utilisateur.dateModification, "DD/MM/YYYY")} par ${utilisateur.auteurModification}`}
+          />
+        )}
+      </div>
     </div>
   );
 };
