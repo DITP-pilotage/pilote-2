@@ -41,6 +41,38 @@ export const displayChoicesTool = tool({
   }),
 });
 
+const displayValeursIndicateurInputSchema = z.object({
+  indicateurs: z.array(
+    z.object({
+      indicateur_id: z.string(),
+      nom: z.string(),
+      unite_mesure: z.string().nullable(),
+      valeur_initiale: z.number().nullable(),
+      date_valeur_initiale: z.string().nullable(),
+      valeur_actuelle: z.number().nullable(),
+      date_valeur_actuelle: z.string().nullable(),
+      valeur_cible: z.number().nullable(),
+      date_valeur_cible: z.string().nullable(),
+      taux_avancement: z.number().nullable(),
+    }),
+  ),
+});
+
+export type ValeursIndicateurDisplay = z.infer<
+  typeof displayValeursIndicateurInputSchema
+>["indicateurs"][number];
+
+export const displayValeursIndicateurTool = tool({
+  description:
+    "Affiche les valeurs des indicateurs d'un chantier dans un tableau. Appelle cet outil APRÈS get_valeurs_indicateur en lui passant le tableau d'indicateurs tel quel.",
+  inputSchema: displayValeursIndicateurInputSchema,
+  execute: async ({
+    indicateurs,
+  }): Promise<{ indicateurs: ValeursIndicateurDisplay[] }> => ({
+    indicateurs,
+  }),
+});
+
 const MODEL = "openai/gpt-oss-120b";
 
 export class Albert {

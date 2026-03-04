@@ -6,25 +6,11 @@ import { JALON_COURANT } from "@/server/albert/systemPrompt";
 
 export const VALEURS_INDICATEUR_OUTPUT_FORMAT = `
 <instructions>
-Remplace les variables entre {{ }} par les données réelles issues du résultat de l'outil get_valeurs_indicateur.
-Génère la réponse en markdown en suivant le gabarit ci-dessous. Les annotations (pour chaque ...) indiquent une itération sur les données.
-N'utilise JAMAIS de tableaux pour présenter la donnée.
-Si une valeur est nulle, écris "Non renseigné".
+Après avoir reçu les données de get_valeurs_indicateur, tu DOIS :
+1. Écrire un titre en markdown : "# Indicateurs du chantier {nom_chantier} sur {territoire}"
+2. Appeler le tool display_valeurs_indicateur en lui passant le tableau d'indicateurs tel quel
+3. Écrire "Sources analysées : données quantitatives des indicateurs publiés sur PILOTE."
 </instructions>
-
-<template>
-# Indicateurs du chantier {{chantier_id}} sur {{territoire_code}}
-
-(pour chaque indicateur)
-## {{nom}}{{#si unite_mesure}} ({{unite_mesure}}){{/si}}
-
-- **Valeur initiale** : {{valeur_initiale}} ({{date_valeur_initiale}})
-- **Valeur actuelle** : {{valeur_actuelle}} ({{date_valeur_actuelle}})
-- **Valeur cible** : {{valeur_cible}} ({{date_valeur_cible}})
-- **Taux d'avancement** : {{taux_avancement}}%
-
-Sources analysées : données quantitatives des indicateurs publiés sur PILOTE.
-</template>
 `;
 
 const getValeursIndicateurInputSchema = z.object({

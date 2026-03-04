@@ -1,6 +1,10 @@
 import { validateUIMessages } from "ai";
 import { z } from "zod";
-import { Albert, displayChoicesTool } from "@/server/albert/Albert";
+import {
+  Albert,
+  displayChoicesTool,
+  displayValeursIndicateurTool,
+} from "@/server/albert/Albert";
 import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
 import { buildChatSystemPrompt } from "@/server/albert/systemPrompt";
 import { getContainer } from "@/server/dependances";
@@ -50,6 +54,7 @@ export async function POST(request: Request) {
         get_synthese_territoire: getSyntheseTerritoire,
         get_valeurs_indicateur: getValeursIndicateur,
         display_choices: displayChoicesTool,
+        display_valeurs_indicateur: displayValeursIndicateurTool,
       },
     });
 

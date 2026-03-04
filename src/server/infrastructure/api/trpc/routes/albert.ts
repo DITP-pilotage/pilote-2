@@ -4,7 +4,11 @@ import {
   créerRouteurTRPC,
   procédureProtégée,
 } from "@/server/infrastructure/api/trpc/trpc";
-import { Albert, displayChoicesTool } from "@/server/albert/Albert";
+import {
+  Albert,
+  displayChoicesTool,
+  displayValeursIndicateurTool,
+} from "@/server/albert/Albert";
 import { buildChatSystemPrompt } from "@/server/albert/systemPrompt";
 import { getContainer } from "@/server/dependances";
 import { RécupérerVariableContenuUseCase } from "@/server/gestion-contenu/usecases/RécupérerVariableContenuUseCase";
@@ -56,6 +60,7 @@ export const albertRouter = créerRouteurTRPC({
           get_synthese_territoire: getSyntheseTerritoire,
           get_valeurs_indicateur: getValeursIndicateur,
           display_choices: displayChoicesTool,
+          display_valeurs_indicateur: displayValeursIndicateurTool,
         },
       });
     }),
