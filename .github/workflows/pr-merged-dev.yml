@@ -85,6 +85,15 @@ jobs:
           set -e
           scalingo db-tunnel SCALINGO_POSTGRESQL_URL_READONLY --timeout 60 &
           TUNNEL_PID=$!
+
+          # Trap pour garantir la fermeture du tunnel en sortie ou en cas d'erreur
+          cleanup_tunnel() {
+            if kill -0 "$TUNNEL_PID" 2>/dev/null; then
+              kill "$TUNNEL_PID"
+            fi
+          }
+          trap cleanup_tunnel EXIT ERR
+
           # Attend que le tunnel soit en place (habituellement sur le port 10000, peut varier)
           for i in {1..20}; do
             sleep 2
@@ -96,11 +105,10 @@ jobs:
               echo "Timeout waiting for tunnel"; exit 1
             fi
           done
+          
           # Génère la doc (le tunnel doit rester ouvert pendant toute la commande suivante)
           cd data_management
           pipenv run dbt docs generate --static
-          # Tue le tunnel quand terminé
-          kill $TUNNEL_PID
 
       # Prépare et push la doc générée sur gh-pages
       - name: "Deploy dbt docs to GitHub Pages"
