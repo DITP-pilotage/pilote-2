@@ -33,7 +33,7 @@ export type DisplayChoice = z.infer<
 
 export const displayChoicesTool = tool({
   description:
-    "Affiche des choix sous forme de boutons cliquables pour l'utilisateur. Utilise cet outil quand tu veux proposer des options à l'utilisateur.",
+    "Affiche des choix sous forme de boutons cliquables pour l'utilisateur. Utilise cet outil quand tu veux proposer des options à l'utilisateur. IMPORTANT : écris toujours ton message textuel AVANT d'appeler cet outil. Ne l'appelle jamais sans avoir d'abord rédigé le texte d'accompagnement.",
   inputSchema: displayChoicesInputSchema,
   execute: async ({ choices }): Promise<{ choices: DisplayChoice[] }> => ({
     choices,

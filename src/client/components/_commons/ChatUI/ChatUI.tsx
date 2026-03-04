@@ -1,15 +1,16 @@
 import { FormEvent, useEffect, useRef, useState } from "react";
 import { marked } from "marked";
-import { useChat, Chat } from "@ai-sdk/react";
+import { Chat, useChat } from "@ai-sdk/react";
+import type { ToolUIPart, UIDataTypes, UIMessage } from "ai";
 import { DefaultChatTransport } from "ai";
 import { $Enums } from "@prisma/client";
-import type { UIMessage, UIDataTypes, ToolUIPart } from "ai";
 import type { DisplayChoice } from "@/server/albert/Albert";
 import type { GetSyntheseTerritoireOutput } from "@/server/albert/tools/getSyntheseTerritoire";
 import { clsxm } from "@/utils/clsxm";
 import { ArrowLineIcon } from "@/components/_commons/Icones/ArrowLineIcon";
 import { FeedbackNegatifModale } from "@/components/_commons/ChatUI/FeedbackNegatifModale";
 import api from "@/server/infrastructure/api/trpc/api";
+import { ChoicesButtons } from "@/components/_commons/ChatUI/ChoicesButtons";
 
 type PiloteUITools = {
   display_choices: {
@@ -39,29 +40,6 @@ const extractMessageText = (message: PiloteUIMessage): string => {
       return "";
     })
     .join("");
-};
-
-const ChoicesButtons = ({
-  choices,
-  onChoiceClick,
-}: {
-  choices: DisplayChoice[];
-  onChoiceClick: (value: string) => void;
-}) => {
-  return (
-    <div className="flex flex-wrap gap-2 my-2">
-      {choices.map((choice) => (
-        <button
-          className="rounded-full border border-primary text-primary px-3 py-1 text-sm hover:bg-primary hover:text-white transition-colors"
-          key={choice.value}
-          onClick={() => onChoiceClick(choice.label)}
-          type="button"
-        >
-          {choice.label}
-        </button>
-      ))}
-    </div>
-  );
 };
 
 const ToolCallIndicator = ({ part }: { part: SyntheseTerritoireToolPart }) => {
@@ -271,21 +249,25 @@ export const ChatUI = ({
                       }
                       return null;
                     })}
-                    {message.parts?.map((part, index) => {
-                      if (part.type === "tool-display_choices") {
-                        if (part.state !== "output-available") return null;
-                        return (
-                          <ChoicesButtons
-                            choices={part.output.choices}
-                            key={index}
-                            onChoiceClick={(value) =>
-                              sendMessage({ text: value })
-                            }
-                          />
-                        );
-                      }
-                      return null;
-                    })}
+                    {message.parts?.some(
+                      (part) =>
+                        part.type === "text" && part.text.trim().length > 0,
+                    ) &&
+                      message.parts?.map((part, index) => {
+                        if (part.type === "tool-display_choices") {
+                          if (part.state !== "output-available") return null;
+                          return (
+                            <ChoicesButtons
+                              choices={part.output.choices}
+                              key={index}
+                              onSelect={(choice) =>
+                                sendMessage({ text: choice.label })
+                              }
+                            />
+                          );
+                        }
+                        return null;
+                      })}
                   </div>
                 )}
               </div>
