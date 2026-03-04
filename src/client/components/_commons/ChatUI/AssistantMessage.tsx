@@ -1,8 +1,13 @@
+import { toast } from "sonner";
 import { PiloteUIMessage } from "@/server/albert/PiloteUIMessage";
 import { ToolCallIndicator } from "@/components/_commons/ChatUI/ToolCallIndicator";
 import { AssistantMessageText } from "@/components/_commons/ChatUI/AssistantMessageText";
+import { BaseDisplayTool } from "@/components/_commons/ChatUI/BaseDisplayTool";
 import { ChoicesButtons } from "@/components/_commons/ChatUI/ChoicesButtons";
 import { ValeursIndicateurTable } from "@/components/_commons/ChatUI/ValeursIndicateurTable";
+import { extractMessageText } from "@/components/_commons/ChatUI/utils";
+import { Icone } from "@/components/_commons/Icone";
+import { ClipboardIcon } from "@/components/_commons/Icones/ClipboardIcon";
 
 export const AssistantMessage = ({
   message,
@@ -34,12 +39,32 @@ export const AssistantMessage = ({
           }
           return null;
         })}
-        {message.parts?.map((part, index) => {
-          if (part.type === "text") {
-            return <AssistantMessageText key={index} text={part.text} />;
-          }
-          return null;
-        })}
+        <div className="relative group">
+          {message.parts?.map((part, index) => {
+            if (part.type === "text") {
+              return <AssistantMessageText key={index} text={part.text} />;
+            }
+            return null;
+          })}
+          {!isStreaming && hasText && (
+            <button
+              className="absolute top-1 right-1 p-1 rounded bg-white/80 text-gray-500 hover:text-gray-800 hover:bg-gray-100 border border-gray-200 opacity-0 group-hover:opacity-100 transition-opacity"
+              onClick={() => {
+                navigator.clipboard
+                  .writeText(extractMessageText(message))
+                  .then(() => {
+                    toast.success("Texte copié dans le presse-papiers", {
+                      duration: 3000,
+                    });
+                  });
+              }}
+              title="Copier dans le presse-papiers"
+              type="button"
+            >
+              <Icone className="w-4 h-4" icone={ClipboardIcon} />
+            </button>
+          )}
+        </div>
 
         {isStreaming && hasDisplayTool && (
           <span className="inline-flex gap-1 text-gray-500">
@@ -55,12 +80,9 @@ export const AssistantMessage = ({
           if (part.type === "tool-display_valeurs_indicateur") {
             if (part.state !== "output-available") return null;
             return (
-              <div
-                key={index}
-                className="animate-fade-in bg-white p-2 shadow-lg rounded-lg border border-gray-300/30 my-4"
-              >
+              <BaseDisplayTool key={index}>
                 <ValeursIndicateurTable indicateurs={part.output.indicateurs} />
-              </div>
+              </BaseDisplayTool>
             );
           }
           return null;
