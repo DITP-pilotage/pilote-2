@@ -1,6 +1,6 @@
 import { buildTerritoireHierarchy } from "./territoires";
 
-export const JALON_PAR_DEFAUT = 2025;
+const JALON_PAR_DEFAUT = 2025;
 
 interface BuildChatSystemPromptParams {
   territoiresAccessibles: string[];

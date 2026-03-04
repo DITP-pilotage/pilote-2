@@ -101,7 +101,9 @@ export class GetSyntheseTerritoireQuery {
     );
 
     const taux_avancement_global = calculerMoyenne(
-      chantiersTerritoire.map((c) => c.taux_avancement_mandat),
+      chantiersTerritoire.map(
+        (c) => c.chantier_territoire_jalon[0]?.taux_avancement,
+      ),
     );
 
     let position_mediane: "EN_RETARD" | "EN_AVANCE" | "DANS_LA_MEDIANE" | null =
@@ -128,7 +130,7 @@ export class GetSyntheseTerritoireQuery {
           ministeres: c.chantier_identite.ministeres_acronymes,
         },
         ecart: c.ecart!,
-        taux_avancement: c.taux_avancement_mandat,
+        taux_avancement: c.chantier_territoire_jalon[0]?.taux_avancement,
         synthese:
           c.syntheses_des_resultats.length > 0
             ? {

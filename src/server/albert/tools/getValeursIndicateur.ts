@@ -23,6 +23,12 @@ const getValeursIndicateurInputSchema = z.object({
   territoire_code: z
     .string()
     .describe("Code du territoire (ex: NAT-FR, REG-11, DEPT-75)"),
+  jalon: z
+    .number()
+    .int()
+    .min(2022)
+    .max(new Date().getFullYear())
+    .describe("Année du jalon (ex: 2024, 2025)"),
 });
 
 export type GetValeursIndicateurOutput = GetValeursIndicateurResult;
@@ -34,10 +40,8 @@ export function createGetValeursIndicateurTool({
 }) {
   return ({
     territoiresAccessibles,
-    jalon,
   }: {
     territoiresAccessibles: string[];
-    jalon: number;
   }) => {
     return tool({
       description: `Récupère les valeurs des indicateurs (VI, VA, VC, TA) d'un chantier sur un territoire donné. Cet outil retourne :
@@ -61,7 +65,7 @@ Utilise cet outil quand l'utilisateur demande :
         return getValeursIndicateurQuery.execute({
           territoireCode: input.territoire_code,
           chantierId: input.chantier_id,
-          jalon,
+          jalon: input.jalon,
         });
       },
     });

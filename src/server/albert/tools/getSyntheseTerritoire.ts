@@ -42,6 +42,12 @@ const getSyntheseTerritoireInputSchema = z.object({
   territoire_code: z
     .string()
     .describe("Code du territoire (ex: NAT-FR, REG-11, DEPT-75)"),
+  jalon: z
+    .number()
+    .int()
+    .min(2022)
+    .max(new Date().getFullYear())
+    .describe("Année du jalon (ex: 2024, 2025)"),
 });
 
 export type GetSyntheseTerritoireOutput = GetSyntheseTerritoireResult;
@@ -53,10 +59,8 @@ export function createGetSyntheseTerritoireTool({
 }) {
   return ({
     territoiresAccessibles,
-    jalon,
   }: {
     territoiresAccessibles: string[];
-    jalon: number;
   }) => {
     return tool({
       description: `Récupère la synthèse détaillée d'un territoire. Cet outil retourne :
@@ -87,7 +91,7 @@ Cette règle ne s'applique PAS aux territoires nationaux (NAT-FR) ni aux départ
 
         return getSyntheseTerritoireQuery.execute({
           territoireCode: input.territoire_code,
-          jalon,
+          jalon: input.jalon,
         });
       },
     });

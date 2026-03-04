@@ -41,6 +41,7 @@ export const ToolCallIndicator = ({ part }: { part: DataFetchingToolPart }) => {
   const hasOutput =
     part.state === "output-available" || part.state === "output-error";
 
+  const inputData = part.input;
   const outputData = hasOutput ? (part as { output?: unknown }).output : null;
 
   return (
@@ -61,7 +62,10 @@ export const ToolCallIndicator = ({ part }: { part: DataFetchingToolPart }) => {
       </button>
       <AnimateEntry visible={expanded && hasOutput}>
         <pre className="bg-gray-50 text-gray-600 border border-gray-200 rounded p-2 text-[10px] mt-1 overflow-auto">
-          {JSON.stringify(outputData, null, 2)}
+          Paramètres : {JSON.stringify(inputData, null, 2)}
+        </pre>
+        <pre className="bg-gray-50 text-gray-600 border border-gray-200 rounded p-2 text-[10px] mt-1 overflow-auto">
+          Résultats : {JSON.stringify(outputData, null, 2)}
         </pre>
       </AnimateEntry>
     </p>
