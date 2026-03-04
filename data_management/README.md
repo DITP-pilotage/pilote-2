@@ -337,7 +337,7 @@ INTER --> PUBLIC(Exposition à Pilote 2)
 STG --> PUBLIC
 ```
 
-## Visualisation de l'ensemble du flux
+## Visualisation de l'ensemble du DAG
 
 Afin de mieux visualiser le DAG à l'intérieur du projet, nous vous proposons de vous référer à la doc générée par dbt.
 Il est possible d'y avoir accès en exécutant la commande suivante : 
@@ -347,7 +347,7 @@ pipenv run dbt docs generate && pipenv run dbt docs serve
 ```
 
 Cette ligne de commande ouvrira une interface web avec laquelle vous pourrez interagir. 
-Une petite icône bleue en bas à droite indique le DAG.
+Une petite icône bleue en bas à droite permet d'afficher le DAG.
 
 La doc pour la branche de dev est hébergée publiquement à l'adresse : [https://ditp-pilotage.github.io/pilote-2/](https://ditp-pilotage.github.io/pilote-2/) via GitHub Pages.
 
