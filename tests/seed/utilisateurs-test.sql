@@ -111,8 +111,8 @@ BEGIN
   RETURNING id INTO v_user_id;
 
   INSERT INTO public.habilitation (utilisateur_id, scope_code, territoires, perimetres, chantiers) VALUES
-    (v_user_id, 'lecture', ARRAY['REG-53', 'DEPT-56', 'DEPT-29', 'DEPT-35', 'DEPT-22'], ARRAY[]::text[], ARRAY['CH-058', 'CH-054', 'CH-062', 'CH-051']),
-    (v_user_id, 'saisieCommentaire', ARRAY['REG-53', 'DEPT-56', 'DEPT-29', 'DEPT-35', 'DEPT-22'], ARRAY[]::text[], ARRAY['CH-058', 'CH-054', 'CH-062', 'CH-051']);
+    (v_user_id, 'lecture', ARRAY['REG-53', 'DEPT-56', 'DEPT-29', 'DEPT-35', 'DEPT-22'], ARRAY[]::text[], ARRAY['CH-058', 'CH-054', 'CH-062', 'CH-051', 'CH-070']),
+    (v_user_id, 'saisieCommentaire', ARRAY['REG-53', 'DEPT-56', 'DEPT-29', 'DEPT-35', 'DEPT-22'], ARRAY[]::text[], ARRAY['CH-058', 'CH-054', 'CH-062', 'CH-051', 'CH-070']);
 
   -- coordinateur.departement@example.com (COORDINATEUR_DEPARTEMENT)
   INSERT INTO public.utilisateur (id, email, nom, prenom, profil_code, date_creation, date_modification, date_visualisation_video_accueil, date_inscription_infolettre)
@@ -139,8 +139,31 @@ BEGIN
   RETURNING id INTO v_user_id;
 
   INSERT INTO public.habilitation (utilisateur_id, scope_code, territoires, perimetres, chantiers) VALUES
-    (v_user_id, 'lecture', ARRAY['DEPT-56', 'DEPT-29', 'DEPT-35', 'DEPT-22'], ARRAY[]::text[], ARRAY['CH-058', 'CH-054', 'CH-062', 'CH-051']),
-    (v_user_id, 'saisieCommentaire', ARRAY['DEPT-56', 'DEPT-29', 'DEPT-35', 'DEPT-22'], ARRAY[]::text[], ARRAY['CH-058', 'CH-054', 'CH-062', 'CH-051']);
+    (v_user_id, 'lecture', ARRAY['DEPT-56', 'DEPT-29', 'DEPT-35', 'DEPT-22'], ARRAY[]::text[], ARRAY['CH-058', 'CH-054', 'CH-062', 'CH-051', 'CH-070']),
+    (v_user_id, 'saisieCommentaire', ARRAY['DEPT-56', 'DEPT-29', 'DEPT-35', 'DEPT-22'], ARRAY[]::text[], ARRAY['CH-058', 'CH-054', 'CH-062', 'CH-051', 'CH-070']);
+
+  -- prefet.multi.territoires@example.com (PREFET_DEPARTEMENT avec territoires hors périmètre coordinateur)
+  -- DEPT-56 est dans le périmètre du coordinateur Bretagne, DEPT-75 (Paris) est hors périmètre
+  -- → visible dans le listing du coordinateur (au moins 1 territoire en commun)
+  -- → mais non modifiable (tous les territoires ne sont pas couverts)
+  INSERT INTO public.utilisateur (id, email, nom, prenom, profil_code, date_creation, date_modification, date_visualisation_video_accueil, date_inscription_infolettre)
+  VALUES (gen_random_uuid(), 'prefet.multi.territoires@example.com', 'Prefet', 'Multi-territoires', 'PREFET_DEPARTEMENT', NOW(), NOW(), NOW(), NOW())
+  RETURNING id INTO v_user_id;
+
+  INSERT INTO public.habilitation (utilisateur_id, scope_code, territoires, perimetres, chantiers) VALUES
+    (v_user_id, 'lecture', ARRAY['DEPT-56', 'DEPT-75'], ARRAY[]::text[], ARRAY[]::text[]),
+    (v_user_id, 'saisieCommentaire', ARRAY['DEPT-56', 'DEPT-75'], ARRAY[]::text[], ARRAY[]::text[]);
+
+  -- services.deconcentres.hors-ate@example.com (SERVICES_DECONCENTRES_REGION avec chantier hors_ate_deconcentre)
+  -- CH-054 (ate) + CH-108 (hors_ate_deconcentre) dans lecture.chantiers
+  -- Le coordinateur n'est PAS bloqué par le mismatch chantiers (seul le SG l'est)
+  INSERT INTO public.utilisateur (id, email, nom, prenom, profil_code, date_creation, date_modification, date_visualisation_video_accueil, date_inscription_infolettre)
+  VALUES (gen_random_uuid(), 'services.deconcentres.hors-ate@example.com', 'Services deconcentres', 'Hors ATE', 'SERVICES_DECONCENTRES_REGION', NOW(), NOW(), NOW(), NOW())
+  RETURNING id INTO v_user_id;
+
+  INSERT INTO public.habilitation (utilisateur_id, scope_code, territoires, perimetres, chantiers) VALUES
+    (v_user_id, 'lecture', ARRAY['REG-53', 'DEPT-56', 'DEPT-29', 'DEPT-35', 'DEPT-22'], ARRAY[]::text[], ARRAY['CH-054', 'CH-108']),
+    (v_user_id, 'saisieCommentaire', ARRAY['REG-53', 'DEPT-56', 'DEPT-29', 'DEPT-35', 'DEPT-22'], ARRAY[]::text[], ARRAY['CH-054', 'CH-108']);
 
   -- drom@example.com (DROM)
   INSERT INTO public.utilisateur (id, email, nom, prenom, profil_code, date_creation, date_modification, date_visualisation_video_accueil, date_inscription_infolettre)

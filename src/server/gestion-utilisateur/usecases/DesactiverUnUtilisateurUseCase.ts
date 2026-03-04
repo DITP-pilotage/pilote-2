@@ -94,7 +94,10 @@ export default class DesactiverUnUtilisateurUseCase {
       await this.contactInfoLettresService.supprimerContact(email);
     }
 
-    if (process.env.IMPORT_KEYCLOAK_URL) {
+    if (
+      process.env.IMPORT_KEYCLOAK_URL &&
+      process.env.IMPORT_KEYCLOAK_URL.startsWith("http")
+    ) {
       await this.utilisateurIAMRepository.desactive(email);
     }
     await this.tokenAPIInformationRepository.supprimerTokenAPIInformation({

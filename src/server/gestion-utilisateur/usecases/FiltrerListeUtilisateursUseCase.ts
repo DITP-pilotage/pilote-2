@@ -144,8 +144,9 @@ export class FiltrerListeUtilisateursUseCase {
       !Object.keys(PROFILS_POSSIBLES_GESTION_UTILISATEUR_LECTURE).includes(
         profil,
       )
-    )
+    ) {
       return true;
+    }
 
     return (
       this.profilEstAutorisé(utilisateur, profil) &&

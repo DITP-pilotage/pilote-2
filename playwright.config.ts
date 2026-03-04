@@ -36,7 +36,7 @@ export default defineConfig({
     timeout: 120_000,
     url: process.env.BASE_URL!,
     reuseExistingServer: !process.env.CI,
-    stdout: "ignore",
+    stdout: "pipe",
     stderr: "pipe",
   },
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */

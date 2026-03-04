@@ -719,3 +719,843 @@ CH-155,REG-76,76,reg,R76,,,Occitanie,,,true,,,,,,,,,,,,0,0
 CH-155,REG-84,84,reg,R84,,,Auvergne-Rhône-Alpes,,,true,,,,,,,,,,,,0,0
 CH-155,REG-93,93,reg,R93,,,Provence - Alpes - Côte d'Azur,,,true,,,,,,,,,,,,0,0
 CH-155,REG-94,94,reg,R94,,,Corse,,,true,,,,,,,,,,,,0,0
+CH-054,DEPT-01,01,dept,D01,,,Ain,,,true,,,,,,,,,,,,0,0
+CH-054,DEPT-02,02,dept,D02,,,Aisne,,,true,,,,,,,,,,,,0,0
+CH-054,DEPT-03,03,dept,D03,,,Allier,,,true,,,,,,,,,,,,0,0
+CH-054,DEPT-04,04,dept,D04,,,Alpes-de-Haute-Provence,,,true,,,,,,,,,,,,0,0
+CH-054,DEPT-05,05,dept,D05,,,Hautes-Alpes,,,true,,,,,,,,,,,,0,0
+CH-054,DEPT-06,06,dept,D06,,,Alpes-Maritimes,,,true,,,,,,,,,,,,0,0
+CH-054,DEPT-07,07,dept,D07,,,Ardèche,,,true,,,,,,,,,,,,0,0
+CH-054,DEPT-08,08,dept,D08,,,Ardennes,,,true,,,,,,,,,,,,0,0
+CH-054,DEPT-09,09,dept,D09,,,Ariège,,,true,,,,,,,,,,,,0,0
+CH-054,DEPT-10,10,dept,D10,,,Aube,,,true,,,,,,,,,,,,0,0
+CH-054,DEPT-11,11,dept,D11,,,Aude,,,true,,,,,,,,,,,,0,0
+CH-054,DEPT-12,12,dept,D12,,,Aveyron,,,true,,,,,,,,,,,,0,0
+CH-054,DEPT-13,13,dept,D13,,,Bouches-du-Rhône,,,true,,,,,,,,,,,,0,0
+CH-054,DEPT-14,14,dept,D14,,,Calvados,,,true,,,,,,,,,,,,0,0
+CH-054,DEPT-15,15,dept,D15,,,Cantal,,,true,,,,,,,,,,,,0,0
+CH-054,DEPT-16,16,dept,D16,,,Charente,,,true,,,,,,,,,,,,0,0
+CH-054,DEPT-17,17,dept,D17,,,Charente-Maritime,,,true,,,,,,,,,,,,0,0
+CH-054,DEPT-18,18,dept,D18,,,Cher,,,true,,,,,,,,,,,,0,0
+CH-054,DEPT-19,19,dept,D19,,,Corrèze,,,true,,,,,,,,,,,,0,0
+CH-054,DEPT-21,21,dept,D21,,,Côte-d'Or,,,true,,,,,,,,,,,,0,0
+CH-054,DEPT-22,22,dept,D22,,,Côtes-d'Armor,,,true,,{Departement Coordinateur},,{coordinateur.departement@example.com},,,,,,,,0,0
+CH-054,DEPT-23,23,dept,D23,,,Creuse,,,true,,,,,,,,,,,,0,0
+CH-054,DEPT-24,24,dept,D24,,,Dordogne,,,true,,,,,,,,,,,,0,0
+CH-054,DEPT-25,25,dept,D25,,,Doubs,,,true,,,,,,,,,,,,0,0
+CH-054,DEPT-26,26,dept,D26,,,Drôme,,,true,,,,,,,,,,,,0,0
+CH-054,DEPT-27,27,dept,D27,,,Eure,,,true,,,,,,,,,,,,0,0
+CH-054,DEPT-28,28,dept,D28,,,Eure-et-Loir,,,true,,,,,,,,,,,,0,0
+CH-054,DEPT-29,29,dept,D29,,,Finistère,,,true,,{Departement Coordinateur},,{coordinateur.departement@example.com},,,,,,,,0,0
+CH-054,DEPT-2A,2A,dept,D2A,,,Corse-du-Sud,,,true,,,,,,,,,,,,0,0
+CH-054,DEPT-2B,2B,dept,D2B,,,Haute-Corse,,,true,,,,,,,,,,,,0,0
+CH-054,DEPT-30,30,dept,D30,,,Gard,,,true,,,,,,,,,,,,0,0
+CH-054,DEPT-31,31,dept,D31,,,Haute-Garonne,,,true,,,,,,,,,,,,0,0
+CH-054,DEPT-32,32,dept,D32,,,Gers,,,true,,,,,,,,,,,,0,0
+CH-054,DEPT-33,33,dept,D33,,,Gironde,,,true,,,,,,,,,,,,0,0
+CH-054,DEPT-34,34,dept,D34,,,Hérault,,,true,,,,,,,,,,,,0,0
+CH-054,DEPT-35,35,dept,D35,,,Ille-et-Vilaine,,,true,,{Departement Coordinateur},,{coordinateur.departement@example.com},,,,,,,,0,0
+CH-054,DEPT-36,36,dept,D36,,,Indre,,,true,,,,,,,,,,,,0,0
+CH-054,DEPT-37,37,dept,D37,,,Indre-et-Loire,,,true,,,,,,,,,,,,0,0
+CH-054,DEPT-38,38,dept,D38,,,Isère,,,true,,,,,,,,,,,,0,0
+CH-054,DEPT-39,39,dept,D39,,,Jura,,,true,,,,,,,,,,,,0,0
+CH-054,DEPT-40,40,dept,D40,,,Landes,,,true,,,,,,,,,,,,0,0
+CH-054,DEPT-41,41,dept,D41,,,Loir-et-Cher,,,true,,,,,,,,,,,,0,0
+CH-054,DEPT-42,42,dept,D42,,,Loire,,,true,,,,,,,,,,,,0,0
+CH-054,DEPT-43,43,dept,D43,,,Haute-Loire,,,true,,,,,,,,,,,,0,0
+CH-054,DEPT-44,44,dept,D44,,,Loire-Atlantique,,,true,,,,,,,,,,,,0,0
+CH-054,DEPT-45,45,dept,D45,,,Loiret,,,true,,,,,,,,,,,,0,0
+CH-054,DEPT-46,46,dept,D46,,,Lot,,,true,,,,,,,,,,,,0,0
+CH-054,DEPT-47,47,dept,D47,,,Lot-et-Garonne,,,true,,,,,,,,,,,,0,0
+CH-054,DEPT-48,48,dept,D48,,,Lozère,,,true,,,,,,,,,,,,0,0
+CH-054,DEPT-49,49,dept,D49,,,Maine-et-Loire,,,true,,,,,,,,,,,,0,0
+CH-054,DEPT-50,50,dept,D50,,,Manche,,,true,,,,,,,,,,,,0,0
+CH-054,DEPT-51,51,dept,D51,,,Marne,,,true,,,,,,,,,,,,0,0
+CH-054,DEPT-52,52,dept,D52,,,Haute-Marne,,,true,,,,,,,,,,,,0,0
+CH-054,DEPT-53,53,dept,D53,,,Mayenne,,,true,,,,,,,,,,,,0,0
+CH-054,DEPT-54,54,dept,D54,,,Meurthe-et-Moselle,,,true,,,,,,,,,,,,0,0
+CH-054,DEPT-55,55,dept,D55,,,Meuse,,,true,,,,,,,,,,,,0,0
+CH-054,DEPT-56,56,dept,D56,,,Morbihan,,,true,,{Departement Coordinateur},,{coordinateur.departement@example.com},,,,,,,,0,0
+CH-054,DEPT-57,57,dept,D57,,,Moselle,,,true,,,,,,,,,,,,0,0
+CH-054,DEPT-58,58,dept,D58,,,Nièvre,,,true,,,,,,,,,,,,0,0
+CH-054,DEPT-59,59,dept,D59,,,Nord,,,true,,,,,,,,,,,,0,0
+CH-054,DEPT-60,60,dept,D60,,,Oise,,,true,,,,,,,,,,,,0,0
+CH-054,DEPT-61,61,dept,D61,,,Orne,,,true,,,,,,,,,,,,0,0
+CH-054,DEPT-62,62,dept,D62,,,Pas-de-Calais,,,true,,,,,,,,,,,,0,0
+CH-054,DEPT-63,63,dept,D63,,,Puy-de-Dôme,,,true,,,,,,,,,,,,0,0
+CH-054,DEPT-64,64,dept,D64,,,Pyrénées-Atlantiques,,,true,,,,,,,,,,,,0,0
+CH-054,DEPT-65,65,dept,D65,,,Hautes-Pyrénées,,,true,,,,,,,,,,,,0,0
+CH-054,DEPT-66,66,dept,D66,,,Pyrénées-Orientales,,,true,,,,,,,,,,,,0,0
+CH-054,DEPT-67,67,dept,D67,,,Bas-Rhin,,,true,,,,,,,,,,,,0,0
+CH-054,DEPT-68,68,dept,D68,,,Haut-Rhin,,,true,,,,,,,,,,,,0,0
+CH-054,DEPT-69,69,dept,D69,,,Rhône,,,true,,,,,,,,,,,,0,0
+CH-054,DEPT-70,70,dept,D70,,,Haute-Saône,,,true,,,,,,,,,,,,0,0
+CH-054,DEPT-71,71,dept,D71,,,Saône-et-Loire,,,true,,,,,,,,,,,,0,0
+CH-054,DEPT-72,72,dept,D72,,,Sarthe,,,true,,,,,,,,,,,,0,0
+CH-054,DEPT-73,73,dept,D73,,,Savoie,,,true,,,,,,,,,,,,0,0
+CH-054,DEPT-74,74,dept,D74,,,Haute-Savoie,,,true,,,,,,,,,,,,0,0
+CH-054,DEPT-75,75,dept,D75,,,Paris,,,true,,,,,,,,,,,,0,0
+CH-054,DEPT-76,76,dept,D76,,,Seine-Maritime,,,true,,,,,,,,,,,,0,0
+CH-054,DEPT-77,77,dept,D77,,,Seine-et-Marne,,,true,,,,,,,,,,,,0,0
+CH-054,DEPT-78,78,dept,D78,,,Yvelines,,,true,,,,,,,,,,,,0,0
+CH-054,DEPT-79,79,dept,D79,,,Deux-Sèvres,,,true,,,,,,,,,,,,0,0
+CH-054,DEPT-80,80,dept,D80,,,Somme,,,true,,,,,,,,,,,,0,0
+CH-054,DEPT-81,81,dept,D81,,,Tarn,,,true,,,,,,,,,,,,0,0
+CH-054,DEPT-82,82,dept,D82,,,Tarn-et-Garonne,,,true,,,,,,,,,,,,0,0
+CH-054,DEPT-83,83,dept,D83,,,Var,,,true,,,,,,,,,,,,0,0
+CH-054,DEPT-84,84,dept,D84,,,Vaucluse,,,true,,,,,,,,,,,,0,0
+CH-054,DEPT-85,85,dept,D85,,,Vendée,,,true,,,,,,,,,,,,0,0
+CH-054,DEPT-86,86,dept,D86,,,Vienne,,,true,,,,,,,,,,,,0,0
+CH-054,DEPT-87,87,dept,D87,,,Haute-Vienne,,,true,,,,,,,,,,,,0,0
+CH-054,DEPT-88,88,dept,D88,,,Vosges,,,true,,,,,,,,,,,,0,0
+CH-054,DEPT-89,89,dept,D89,,,Yonne,,,true,,,,,,,,,,,,0,0
+CH-054,DEPT-90,90,dept,D90,,,Territoire de Belfort,,,true,,,,,,,,,,,,0,0
+CH-054,DEPT-91,91,dept,D91,,,Essonne,,,true,,,,,,,,,,,,0,0
+CH-054,DEPT-92,92,dept,D92,,,Hauts-de-Seine,,,true,,,,,,,,,,,,0,0
+CH-054,DEPT-93,93,dept,D93,,,Seine-Saint-Denis,,,true,,,,,,,,,,,,0,0
+CH-054,DEPT-94,94,dept,D94,,,Val-de-Marne,,,true,,,,,,,,,,,,0,0
+CH-054,DEPT-95,95,dept,D95,,,Val-d'Oise,,,true,,,,,,,,,,,,0,0
+CH-054,DEPT-971,971,dept,D971,,,Guadeloupe,,,true,,,,,,,,,,,,0,0
+CH-054,DEPT-972,972,dept,D972,,,Martinique,,,true,,,,,,,,,,,,0,0
+CH-054,DEPT-973,973,dept,D973,,,Guyane,,,true,,,,,,,,,,,,0,0
+CH-054,DEPT-974,974,dept,D974,,,La Réunion,,,true,,,,,,,,,,,,0,0
+CH-054,DEPT-976,976,dept,D976,,,Mayotte,,,true,,,,,,,,,,,,0,0
+CH-054,NAT-FR,FR,nat,FRANCE,,,France,,,true,,,,,,,,,,,,0,0
+CH-054,REG-01,01,reg,R01,,,Guadeloupe,,,true,,,,,,,,,,,,0,0
+CH-054,REG-02,02,reg,R02,,,Martinique,,,true,,,,,,,,,,,,0,0
+CH-054,REG-03,03,reg,R03,,,Guyane,,,true,,,,,,,,,,,,0,0
+CH-054,REG-04,04,reg,R04,,,La Réunion,,,true,,,,,,,,,,,,0,0
+CH-054,REG-06,06,reg,R06,,,Mayotte,,,true,,,,,,,,,,,,0,0
+CH-054,REG-11,11,reg,R11,,,Île-de-France,,,true,,,,,,,,,,,,0,0
+CH-054,REG-24,24,reg,R24,,,Centre-Val de Loire,,,true,,,,,,,,,,,,0,0
+CH-054,REG-27,27,reg,R27,,,Bourgogne-Franche-Comté,,,true,,,,,,,,,,,,0,0
+CH-054,REG-28,28,reg,R28,,,Normandie,,,true,,,,,,,,,,,,0,0
+CH-054,REG-32,32,reg,R32,,,Hauts-de-France,,,true,,,,,,,,,,,,0,0
+CH-054,REG-44,44,reg,R44,,,Grand-Est,,,true,,,,,,,,,,,,0,0
+CH-054,REG-52,52,reg,R52,,,Pays de la Loire,,,true,,,,,,,,,,,,0,0
+CH-054,REG-53,53,reg,R53,,,Bretagne,,,true,,{Region Coordinateur},,{coordinateur.region@example.com},,,,,,,,0,0
+CH-054,REG-75,75,reg,R75,,,Nouvelle Aquitaine,,,true,,,,,,,,,,,,0,0
+CH-054,REG-76,76,reg,R76,,,Occitanie,,,true,,,,,,,,,,,,0,0
+CH-054,REG-84,84,reg,R84,,,Auvergne-Rhône-Alpes,,,true,,,,,,,,,,,,0,0
+CH-054,REG-93,93,reg,R93,,,Provence - Alpes - Côte d'Azur,,,true,,,,,,,,,,,,0,0
+CH-054,REG-94,94,reg,R94,,,Corse,,,true,,,,,,,,,,,,0,0
+CH-058,DEPT-01,01,dept,D01,,,Ain,,,true,,,,,,,,,,,,0,0
+CH-058,DEPT-02,02,dept,D02,,,Aisne,,,true,,,,,,,,,,,,0,0
+CH-058,DEPT-03,03,dept,D03,,,Allier,,,true,,,,,,,,,,,,0,0
+CH-058,DEPT-04,04,dept,D04,,,Alpes-de-Haute-Provence,,,true,,,,,,,,,,,,0,0
+CH-058,DEPT-05,05,dept,D05,,,Hautes-Alpes,,,true,,,,,,,,,,,,0,0
+CH-058,DEPT-06,06,dept,D06,,,Alpes-Maritimes,,,true,,,,,,,,,,,,0,0
+CH-058,DEPT-07,07,dept,D07,,,Ardèche,,,true,,,,,,,,,,,,0,0
+CH-058,DEPT-08,08,dept,D08,,,Ardennes,,,true,,,,,,,,,,,,0,0
+CH-058,DEPT-09,09,dept,D09,,,Ariège,,,true,,,,,,,,,,,,0,0
+CH-058,DEPT-10,10,dept,D10,,,Aube,,,true,,,,,,,,,,,,0,0
+CH-058,DEPT-11,11,dept,D11,,,Aude,,,true,,,,,,,,,,,,0,0
+CH-058,DEPT-12,12,dept,D12,,,Aveyron,,,true,,,,,,,,,,,,0,0
+CH-058,DEPT-13,13,dept,D13,,,Bouches-du-Rhône,,,true,,,,,,,,,,,,0,0
+CH-058,DEPT-14,14,dept,D14,,,Calvados,,,true,,,,,,,,,,,,0,0
+CH-058,DEPT-15,15,dept,D15,,,Cantal,,,true,,,,,,,,,,,,0,0
+CH-058,DEPT-16,16,dept,D16,,,Charente,,,true,,,,,,,,,,,,0,0
+CH-058,DEPT-17,17,dept,D17,,,Charente-Maritime,,,true,,,,,,,,,,,,0,0
+CH-058,DEPT-18,18,dept,D18,,,Cher,,,true,,,,,,,,,,,,0,0
+CH-058,DEPT-19,19,dept,D19,,,Corrèze,,,true,,,,,,,,,,,,0,0
+CH-058,DEPT-21,21,dept,D21,,,Côte-d'Or,,,true,,,,,,,,,,,,0,0
+CH-058,DEPT-22,22,dept,D22,,,Côtes-d'Armor,,,true,,{Departement Coordinateur},,{coordinateur.departement@example.com},,,,,,,,0,0
+CH-058,DEPT-23,23,dept,D23,,,Creuse,,,true,,,,,,,,,,,,0,0
+CH-058,DEPT-24,24,dept,D24,,,Dordogne,,,true,,,,,,,,,,,,0,0
+CH-058,DEPT-25,25,dept,D25,,,Doubs,,,true,,,,,,,,,,,,0,0
+CH-058,DEPT-26,26,dept,D26,,,Drôme,,,true,,,,,,,,,,,,0,0
+CH-058,DEPT-27,27,dept,D27,,,Eure,,,true,,,,,,,,,,,,0,0
+CH-058,DEPT-28,28,dept,D28,,,Eure-et-Loir,,,true,,,,,,,,,,,,0,0
+CH-058,DEPT-29,29,dept,D29,,,Finistère,,,true,,{Departement Coordinateur},,{coordinateur.departement@example.com},,,,,,,,0,0
+CH-058,DEPT-2A,2A,dept,D2A,,,Corse-du-Sud,,,true,,,,,,,,,,,,0,0
+CH-058,DEPT-2B,2B,dept,D2B,,,Haute-Corse,,,true,,,,,,,,,,,,0,0
+CH-058,DEPT-30,30,dept,D30,,,Gard,,,true,,,,,,,,,,,,0,0
+CH-058,DEPT-31,31,dept,D31,,,Haute-Garonne,,,true,,,,,,,,,,,,0,0
+CH-058,DEPT-32,32,dept,D32,,,Gers,,,true,,,,,,,,,,,,0,0
+CH-058,DEPT-33,33,dept,D33,,,Gironde,,,true,,,,,,,,,,,,0,0
+CH-058,DEPT-34,34,dept,D34,,,Hérault,,,true,,,,,,,,,,,,0,0
+CH-058,DEPT-35,35,dept,D35,,,Ille-et-Vilaine,,,true,,{Departement Coordinateur},,{coordinateur.departement@example.com},,,,,,,,0,0
+CH-058,DEPT-36,36,dept,D36,,,Indre,,,true,,,,,,,,,,,,0,0
+CH-058,DEPT-37,37,dept,D37,,,Indre-et-Loire,,,true,,,,,,,,,,,,0,0
+CH-058,DEPT-38,38,dept,D38,,,Isère,,,true,,,,,,,,,,,,0,0
+CH-058,DEPT-39,39,dept,D39,,,Jura,,,true,,,,,,,,,,,,0,0
+CH-058,DEPT-40,40,dept,D40,,,Landes,,,true,,,,,,,,,,,,0,0
+CH-058,DEPT-41,41,dept,D41,,,Loir-et-Cher,,,true,,,,,,,,,,,,0,0
+CH-058,DEPT-42,42,dept,D42,,,Loire,,,true,,,,,,,,,,,,0,0
+CH-058,DEPT-43,43,dept,D43,,,Haute-Loire,,,true,,,,,,,,,,,,0,0
+CH-058,DEPT-44,44,dept,D44,,,Loire-Atlantique,,,true,,,,,,,,,,,,0,0
+CH-058,DEPT-45,45,dept,D45,,,Loiret,,,true,,,,,,,,,,,,0,0
+CH-058,DEPT-46,46,dept,D46,,,Lot,,,true,,,,,,,,,,,,0,0
+CH-058,DEPT-47,47,dept,D47,,,Lot-et-Garonne,,,true,,,,,,,,,,,,0,0
+CH-058,DEPT-48,48,dept,D48,,,Lozère,,,true,,,,,,,,,,,,0,0
+CH-058,DEPT-49,49,dept,D49,,,Maine-et-Loire,,,true,,,,,,,,,,,,0,0
+CH-058,DEPT-50,50,dept,D50,,,Manche,,,true,,,,,,,,,,,,0,0
+CH-058,DEPT-51,51,dept,D51,,,Marne,,,true,,,,,,,,,,,,0,0
+CH-058,DEPT-52,52,dept,D52,,,Haute-Marne,,,true,,,,,,,,,,,,0,0
+CH-058,DEPT-53,53,dept,D53,,,Mayenne,,,true,,,,,,,,,,,,0,0
+CH-058,DEPT-54,54,dept,D54,,,Meurthe-et-Moselle,,,true,,,,,,,,,,,,0,0
+CH-058,DEPT-55,55,dept,D55,,,Meuse,,,true,,,,,,,,,,,,0,0
+CH-058,DEPT-56,56,dept,D56,,,Morbihan,,,true,,{Departement Coordinateur},,{coordinateur.departement@example.com},,,,,,,,0,0
+CH-058,DEPT-57,57,dept,D57,,,Moselle,,,true,,,,,,,,,,,,0,0
+CH-058,DEPT-58,58,dept,D58,,,Nièvre,,,true,,,,,,,,,,,,0,0
+CH-058,DEPT-59,59,dept,D59,,,Nord,,,true,,,,,,,,,,,,0,0
+CH-058,DEPT-60,60,dept,D60,,,Oise,,,true,,,,,,,,,,,,0,0
+CH-058,DEPT-61,61,dept,D61,,,Orne,,,true,,,,,,,,,,,,0,0
+CH-058,DEPT-62,62,dept,D62,,,Pas-de-Calais,,,true,,,,,,,,,,,,0,0
+CH-058,DEPT-63,63,dept,D63,,,Puy-de-Dôme,,,true,,,,,,,,,,,,0,0
+CH-058,DEPT-64,64,dept,D64,,,Pyrénées-Atlantiques,,,true,,,,,,,,,,,,0,0
+CH-058,DEPT-65,65,dept,D65,,,Hautes-Pyrénées,,,true,,,,,,,,,,,,0,0
+CH-058,DEPT-66,66,dept,D66,,,Pyrénées-Orientales,,,true,,,,,,,,,,,,0,0
+CH-058,DEPT-67,67,dept,D67,,,Bas-Rhin,,,true,,,,,,,,,,,,0,0
+CH-058,DEPT-68,68,dept,D68,,,Haut-Rhin,,,true,,,,,,,,,,,,0,0
+CH-058,DEPT-69,69,dept,D69,,,Rhône,,,true,,,,,,,,,,,,0,0
+CH-058,DEPT-70,70,dept,D70,,,Haute-Saône,,,true,,,,,,,,,,,,0,0
+CH-058,DEPT-71,71,dept,D71,,,Saône-et-Loire,,,true,,,,,,,,,,,,0,0
+CH-058,DEPT-72,72,dept,D72,,,Sarthe,,,true,,,,,,,,,,,,0,0
+CH-058,DEPT-73,73,dept,D73,,,Savoie,,,true,,,,,,,,,,,,0,0
+CH-058,DEPT-74,74,dept,D74,,,Haute-Savoie,,,true,,,,,,,,,,,,0,0
+CH-058,DEPT-75,75,dept,D75,,,Paris,,,true,,,,,,,,,,,,0,0
+CH-058,DEPT-76,76,dept,D76,,,Seine-Maritime,,,true,,,,,,,,,,,,0,0
+CH-058,DEPT-77,77,dept,D77,,,Seine-et-Marne,,,true,,,,,,,,,,,,0,0
+CH-058,DEPT-78,78,dept,D78,,,Yvelines,,,true,,,,,,,,,,,,0,0
+CH-058,DEPT-79,79,dept,D79,,,Deux-Sèvres,,,true,,,,,,,,,,,,0,0
+CH-058,DEPT-80,80,dept,D80,,,Somme,,,true,,,,,,,,,,,,0,0
+CH-058,DEPT-81,81,dept,D81,,,Tarn,,,true,,,,,,,,,,,,0,0
+CH-058,DEPT-82,82,dept,D82,,,Tarn-et-Garonne,,,true,,,,,,,,,,,,0,0
+CH-058,DEPT-83,83,dept,D83,,,Var,,,true,,,,,,,,,,,,0,0
+CH-058,DEPT-84,84,dept,D84,,,Vaucluse,,,true,,,,,,,,,,,,0,0
+CH-058,DEPT-85,85,dept,D85,,,Vendée,,,true,,,,,,,,,,,,0,0
+CH-058,DEPT-86,86,dept,D86,,,Vienne,,,true,,,,,,,,,,,,0,0
+CH-058,DEPT-87,87,dept,D87,,,Haute-Vienne,,,true,,,,,,,,,,,,0,0
+CH-058,DEPT-88,88,dept,D88,,,Vosges,,,true,,,,,,,,,,,,0,0
+CH-058,DEPT-89,89,dept,D89,,,Yonne,,,true,,,,,,,,,,,,0,0
+CH-058,DEPT-90,90,dept,D90,,,Territoire de Belfort,,,true,,,,,,,,,,,,0,0
+CH-058,DEPT-91,91,dept,D91,,,Essonne,,,true,,,,,,,,,,,,0,0
+CH-058,DEPT-92,92,dept,D92,,,Hauts-de-Seine,,,true,,,,,,,,,,,,0,0
+CH-058,DEPT-93,93,dept,D93,,,Seine-Saint-Denis,,,true,,,,,,,,,,,,0,0
+CH-058,DEPT-94,94,dept,D94,,,Val-de-Marne,,,true,,,,,,,,,,,,0,0
+CH-058,DEPT-95,95,dept,D95,,,Val-d'Oise,,,true,,,,,,,,,,,,0,0
+CH-058,DEPT-971,971,dept,D971,,,Guadeloupe,,,true,,,,,,,,,,,,0,0
+CH-058,DEPT-972,972,dept,D972,,,Martinique,,,true,,,,,,,,,,,,0,0
+CH-058,DEPT-973,973,dept,D973,,,Guyane,,,true,,,,,,,,,,,,0,0
+CH-058,DEPT-974,974,dept,D974,,,La Réunion,,,true,,,,,,,,,,,,0,0
+CH-058,DEPT-976,976,dept,D976,,,Mayotte,,,true,,,,,,,,,,,,0,0
+CH-058,NAT-FR,FR,nat,FRANCE,,,France,,,true,,,,,,,,,,,,0,0
+CH-058,REG-01,01,reg,R01,,,Guadeloupe,,,true,,,,,,,,,,,,0,0
+CH-058,REG-02,02,reg,R02,,,Martinique,,,true,,,,,,,,,,,,0,0
+CH-058,REG-03,03,reg,R03,,,Guyane,,,true,,,,,,,,,,,,0,0
+CH-058,REG-04,04,reg,R04,,,La Réunion,,,true,,,,,,,,,,,,0,0
+CH-058,REG-06,06,reg,R06,,,Mayotte,,,true,,,,,,,,,,,,0,0
+CH-058,REG-11,11,reg,R11,,,Île-de-France,,,true,,,,,,,,,,,,0,0
+CH-058,REG-24,24,reg,R24,,,Centre-Val de Loire,,,true,,,,,,,,,,,,0,0
+CH-058,REG-27,27,reg,R27,,,Bourgogne-Franche-Comté,,,true,,,,,,,,,,,,0,0
+CH-058,REG-28,28,reg,R28,,,Normandie,,,true,,,,,,,,,,,,0,0
+CH-058,REG-32,32,reg,R32,,,Hauts-de-France,,,true,,,,,,,,,,,,0,0
+CH-058,REG-44,44,reg,R44,,,Grand-Est,,,true,,,,,,,,,,,,0,0
+CH-058,REG-52,52,reg,R52,,,Pays de la Loire,,,true,,,,,,,,,,,,0,0
+CH-058,REG-53,53,reg,R53,,,Bretagne,,,true,,{Region Coordinateur},,{coordinateur.region@example.com},,,,,,,,0,0
+CH-058,REG-75,75,reg,R75,,,Nouvelle Aquitaine,,,true,,,,,,,,,,,,0,0
+CH-058,REG-76,76,reg,R76,,,Occitanie,,,true,,,,,,,,,,,,0,0
+CH-058,REG-84,84,reg,R84,,,Auvergne-Rhône-Alpes,,,true,,,,,,,,,,,,0,0
+CH-058,REG-93,93,reg,R93,,,Provence - Alpes - Côte d'Azur,,,true,,,,,,,,,,,,0,0
+CH-058,REG-94,94,reg,R94,,,Corse,,,true,,,,,,,,,,,,0,0
+CH-062,DEPT-01,01,dept,D01,,,Ain,,,true,,,,,,,,,,,,0,0
+CH-062,DEPT-02,02,dept,D02,,,Aisne,,,true,,,,,,,,,,,,0,0
+CH-062,DEPT-03,03,dept,D03,,,Allier,,,true,,,,,,,,,,,,0,0
+CH-062,DEPT-04,04,dept,D04,,,Alpes-de-Haute-Provence,,,true,,,,,,,,,,,,0,0
+CH-062,DEPT-05,05,dept,D05,,,Hautes-Alpes,,,true,,,,,,,,,,,,0,0
+CH-062,DEPT-06,06,dept,D06,,,Alpes-Maritimes,,,true,,,,,,,,,,,,0,0
+CH-062,DEPT-07,07,dept,D07,,,Ardèche,,,true,,,,,,,,,,,,0,0
+CH-062,DEPT-08,08,dept,D08,,,Ardennes,,,true,,,,,,,,,,,,0,0
+CH-062,DEPT-09,09,dept,D09,,,Ariège,,,true,,,,,,,,,,,,0,0
+CH-062,DEPT-10,10,dept,D10,,,Aube,,,true,,,,,,,,,,,,0,0
+CH-062,DEPT-11,11,dept,D11,,,Aude,,,true,,,,,,,,,,,,0,0
+CH-062,DEPT-12,12,dept,D12,,,Aveyron,,,true,,,,,,,,,,,,0,0
+CH-062,DEPT-13,13,dept,D13,,,Bouches-du-Rhône,,,true,,,,,,,,,,,,0,0
+CH-062,DEPT-14,14,dept,D14,,,Calvados,,,true,,,,,,,,,,,,0,0
+CH-062,DEPT-15,15,dept,D15,,,Cantal,,,true,,,,,,,,,,,,0,0
+CH-062,DEPT-16,16,dept,D16,,,Charente,,,true,,,,,,,,,,,,0,0
+CH-062,DEPT-17,17,dept,D17,,,Charente-Maritime,,,true,,,,,,,,,,,,0,0
+CH-062,DEPT-18,18,dept,D18,,,Cher,,,true,,,,,,,,,,,,0,0
+CH-062,DEPT-19,19,dept,D19,,,Corrèze,,,true,,,,,,,,,,,,0,0
+CH-062,DEPT-21,21,dept,D21,,,Côte-d'Or,,,true,,,,,,,,,,,,0,0
+CH-062,DEPT-22,22,dept,D22,,,Côtes-d'Armor,,,true,,{Departement Coordinateur},,{coordinateur.departement@example.com},,,,,,,,0,0
+CH-062,DEPT-23,23,dept,D23,,,Creuse,,,true,,,,,,,,,,,,0,0
+CH-062,DEPT-24,24,dept,D24,,,Dordogne,,,true,,,,,,,,,,,,0,0
+CH-062,DEPT-25,25,dept,D25,,,Doubs,,,true,,,,,,,,,,,,0,0
+CH-062,DEPT-26,26,dept,D26,,,Drôme,,,true,,,,,,,,,,,,0,0
+CH-062,DEPT-27,27,dept,D27,,,Eure,,,true,,,,,,,,,,,,0,0
+CH-062,DEPT-28,28,dept,D28,,,Eure-et-Loir,,,true,,,,,,,,,,,,0,0
+CH-062,DEPT-29,29,dept,D29,,,Finistère,,,true,,{Departement Coordinateur},,{coordinateur.departement@example.com},,,,,,,,0,0
+CH-062,DEPT-2A,2A,dept,D2A,,,Corse-du-Sud,,,true,,,,,,,,,,,,0,0
+CH-062,DEPT-2B,2B,dept,D2B,,,Haute-Corse,,,true,,,,,,,,,,,,0,0
+CH-062,DEPT-30,30,dept,D30,,,Gard,,,true,,,,,,,,,,,,0,0
+CH-062,DEPT-31,31,dept,D31,,,Haute-Garonne,,,true,,,,,,,,,,,,0,0
+CH-062,DEPT-32,32,dept,D32,,,Gers,,,true,,,,,,,,,,,,0,0
+CH-062,DEPT-33,33,dept,D33,,,Gironde,,,true,,,,,,,,,,,,0,0
+CH-062,DEPT-34,34,dept,D34,,,Hérault,,,true,,,,,,,,,,,,0,0
+CH-062,DEPT-35,35,dept,D35,,,Ille-et-Vilaine,,,true,,{Departement Coordinateur},,{coordinateur.departement@example.com},,,,,,,,0,0
+CH-062,DEPT-36,36,dept,D36,,,Indre,,,true,,,,,,,,,,,,0,0
+CH-062,DEPT-37,37,dept,D37,,,Indre-et-Loire,,,true,,,,,,,,,,,,0,0
+CH-062,DEPT-38,38,dept,D38,,,Isère,,,true,,,,,,,,,,,,0,0
+CH-062,DEPT-39,39,dept,D39,,,Jura,,,true,,,,,,,,,,,,0,0
+CH-062,DEPT-40,40,dept,D40,,,Landes,,,true,,,,,,,,,,,,0,0
+CH-062,DEPT-41,41,dept,D41,,,Loir-et-Cher,,,true,,,,,,,,,,,,0,0
+CH-062,DEPT-42,42,dept,D42,,,Loire,,,true,,,,,,,,,,,,0,0
+CH-062,DEPT-43,43,dept,D43,,,Haute-Loire,,,true,,,,,,,,,,,,0,0
+CH-062,DEPT-44,44,dept,D44,,,Loire-Atlantique,,,true,,,,,,,,,,,,0,0
+CH-062,DEPT-45,45,dept,D45,,,Loiret,,,true,,,,,,,,,,,,0,0
+CH-062,DEPT-46,46,dept,D46,,,Lot,,,true,,,,,,,,,,,,0,0
+CH-062,DEPT-47,47,dept,D47,,,Lot-et-Garonne,,,true,,,,,,,,,,,,0,0
+CH-062,DEPT-48,48,dept,D48,,,Lozère,,,true,,,,,,,,,,,,0,0
+CH-062,DEPT-49,49,dept,D49,,,Maine-et-Loire,,,true,,,,,,,,,,,,0,0
+CH-062,DEPT-50,50,dept,D50,,,Manche,,,true,,,,,,,,,,,,0,0
+CH-062,DEPT-51,51,dept,D51,,,Marne,,,true,,,,,,,,,,,,0,0
+CH-062,DEPT-52,52,dept,D52,,,Haute-Marne,,,true,,,,,,,,,,,,0,0
+CH-062,DEPT-53,53,dept,D53,,,Mayenne,,,true,,,,,,,,,,,,0,0
+CH-062,DEPT-54,54,dept,D54,,,Meurthe-et-Moselle,,,true,,,,,,,,,,,,0,0
+CH-062,DEPT-55,55,dept,D55,,,Meuse,,,true,,,,,,,,,,,,0,0
+CH-062,DEPT-56,56,dept,D56,,,Morbihan,,,true,,{Departement Coordinateur},,{coordinateur.departement@example.com},,,,,,,,0,0
+CH-062,DEPT-57,57,dept,D57,,,Moselle,,,true,,,,,,,,,,,,0,0
+CH-062,DEPT-58,58,dept,D58,,,Nièvre,,,true,,,,,,,,,,,,0,0
+CH-062,DEPT-59,59,dept,D59,,,Nord,,,true,,,,,,,,,,,,0,0
+CH-062,DEPT-60,60,dept,D60,,,Oise,,,true,,,,,,,,,,,,0,0
+CH-062,DEPT-61,61,dept,D61,,,Orne,,,true,,,,,,,,,,,,0,0
+CH-062,DEPT-62,62,dept,D62,,,Pas-de-Calais,,,true,,,,,,,,,,,,0,0
+CH-062,DEPT-63,63,dept,D63,,,Puy-de-Dôme,,,true,,,,,,,,,,,,0,0
+CH-062,DEPT-64,64,dept,D64,,,Pyrénées-Atlantiques,,,true,,,,,,,,,,,,0,0
+CH-062,DEPT-65,65,dept,D65,,,Hautes-Pyrénées,,,true,,,,,,,,,,,,0,0
+CH-062,DEPT-66,66,dept,D66,,,Pyrénées-Orientales,,,true,,,,,,,,,,,,0,0
+CH-062,DEPT-67,67,dept,D67,,,Bas-Rhin,,,true,,,,,,,,,,,,0,0
+CH-062,DEPT-68,68,dept,D68,,,Haut-Rhin,,,true,,,,,,,,,,,,0,0
+CH-062,DEPT-69,69,dept,D69,,,Rhône,,,true,,,,,,,,,,,,0,0
+CH-062,DEPT-70,70,dept,D70,,,Haute-Saône,,,true,,,,,,,,,,,,0,0
+CH-062,DEPT-71,71,dept,D71,,,Saône-et-Loire,,,true,,,,,,,,,,,,0,0
+CH-062,DEPT-72,72,dept,D72,,,Sarthe,,,true,,,,,,,,,,,,0,0
+CH-062,DEPT-73,73,dept,D73,,,Savoie,,,true,,,,,,,,,,,,0,0
+CH-062,DEPT-74,74,dept,D74,,,Haute-Savoie,,,true,,,,,,,,,,,,0,0
+CH-062,DEPT-75,75,dept,D75,,,Paris,,,true,,,,,,,,,,,,0,0
+CH-062,DEPT-76,76,dept,D76,,,Seine-Maritime,,,true,,,,,,,,,,,,0,0
+CH-062,DEPT-77,77,dept,D77,,,Seine-et-Marne,,,true,,,,,,,,,,,,0,0
+CH-062,DEPT-78,78,dept,D78,,,Yvelines,,,true,,,,,,,,,,,,0,0
+CH-062,DEPT-79,79,dept,D79,,,Deux-Sèvres,,,true,,,,,,,,,,,,0,0
+CH-062,DEPT-80,80,dept,D80,,,Somme,,,true,,,,,,,,,,,,0,0
+CH-062,DEPT-81,81,dept,D81,,,Tarn,,,true,,,,,,,,,,,,0,0
+CH-062,DEPT-82,82,dept,D82,,,Tarn-et-Garonne,,,true,,,,,,,,,,,,0,0
+CH-062,DEPT-83,83,dept,D83,,,Var,,,true,,,,,,,,,,,,0,0
+CH-062,DEPT-84,84,dept,D84,,,Vaucluse,,,true,,,,,,,,,,,,0,0
+CH-062,DEPT-85,85,dept,D85,,,Vendée,,,true,,,,,,,,,,,,0,0
+CH-062,DEPT-86,86,dept,D86,,,Vienne,,,true,,,,,,,,,,,,0,0
+CH-062,DEPT-87,87,dept,D87,,,Haute-Vienne,,,true,,,,,,,,,,,,0,0
+CH-062,DEPT-88,88,dept,D88,,,Vosges,,,true,,,,,,,,,,,,0,0
+CH-062,DEPT-89,89,dept,D89,,,Yonne,,,true,,,,,,,,,,,,0,0
+CH-062,DEPT-90,90,dept,D90,,,Territoire de Belfort,,,true,,,,,,,,,,,,0,0
+CH-062,DEPT-91,91,dept,D91,,,Essonne,,,true,,,,,,,,,,,,0,0
+CH-062,DEPT-92,92,dept,D92,,,Hauts-de-Seine,,,true,,,,,,,,,,,,0,0
+CH-062,DEPT-93,93,dept,D93,,,Seine-Saint-Denis,,,true,,,,,,,,,,,,0,0
+CH-062,DEPT-94,94,dept,D94,,,Val-de-Marne,,,true,,,,,,,,,,,,0,0
+CH-062,DEPT-95,95,dept,D95,,,Val-d'Oise,,,true,,,,,,,,,,,,0,0
+CH-062,DEPT-971,971,dept,D971,,,Guadeloupe,,,true,,,,,,,,,,,,0,0
+CH-062,DEPT-972,972,dept,D972,,,Martinique,,,true,,,,,,,,,,,,0,0
+CH-062,DEPT-973,973,dept,D973,,,Guyane,,,true,,,,,,,,,,,,0,0
+CH-062,DEPT-974,974,dept,D974,,,La Réunion,,,true,,,,,,,,,,,,0,0
+CH-062,DEPT-976,976,dept,D976,,,Mayotte,,,true,,,,,,,,,,,,0,0
+CH-062,NAT-FR,FR,nat,FRANCE,,,France,,,true,,,,,,,,,,,,0,0
+CH-062,REG-01,01,reg,R01,,,Guadeloupe,,,true,,,,,,,,,,,,0,0
+CH-062,REG-02,02,reg,R02,,,Martinique,,,true,,,,,,,,,,,,0,0
+CH-062,REG-03,03,reg,R03,,,Guyane,,,true,,,,,,,,,,,,0,0
+CH-062,REG-04,04,reg,R04,,,La Réunion,,,true,,,,,,,,,,,,0,0
+CH-062,REG-06,06,reg,R06,,,Mayotte,,,true,,,,,,,,,,,,0,0
+CH-062,REG-11,11,reg,R11,,,Île-de-France,,,true,,,,,,,,,,,,0,0
+CH-062,REG-24,24,reg,R24,,,Centre-Val de Loire,,,true,,,,,,,,,,,,0,0
+CH-062,REG-27,27,reg,R27,,,Bourgogne-Franche-Comté,,,true,,,,,,,,,,,,0,0
+CH-062,REG-28,28,reg,R28,,,Normandie,,,true,,,,,,,,,,,,0,0
+CH-062,REG-32,32,reg,R32,,,Hauts-de-France,,,true,,,,,,,,,,,,0,0
+CH-062,REG-44,44,reg,R44,,,Grand-Est,,,true,,,,,,,,,,,,0,0
+CH-062,REG-52,52,reg,R52,,,Pays de la Loire,,,true,,,,,,,,,,,,0,0
+CH-062,REG-53,53,reg,R53,,,Bretagne,,,true,,{Region Coordinateur},,{coordinateur.region@example.com},,,,,,,,0,0
+CH-062,REG-75,75,reg,R75,,,Nouvelle Aquitaine,,,true,,,,,,,,,,,,0,0
+CH-062,REG-76,76,reg,R76,,,Occitanie,,,true,,,,,,,,,,,,0,0
+CH-062,REG-84,84,reg,R84,,,Auvergne-Rhône-Alpes,,,true,,,,,,,,,,,,0,0
+CH-062,REG-93,93,reg,R93,,,Provence - Alpes - Côte d'Azur,,,true,,,,,,,,,,,,0,0
+CH-062,REG-94,94,reg,R94,,,Corse,,,true,,,,,,,,,,,,0,0
+CH-067,DEPT-01,01,dept,D01,,,Ain,,,true,,,,,,,,,,,,0,0
+CH-067,DEPT-02,02,dept,D02,,,Aisne,,,true,,,,,,,,,,,,0,0
+CH-067,DEPT-03,03,dept,D03,,,Allier,,,true,,,,,,,,,,,,0,0
+CH-067,DEPT-04,04,dept,D04,,,Alpes-de-Haute-Provence,,,true,,,,,,,,,,,,0,0
+CH-067,DEPT-05,05,dept,D05,,,Hautes-Alpes,,,true,,,,,,,,,,,,0,0
+CH-067,DEPT-06,06,dept,D06,,,Alpes-Maritimes,,,true,,,,,,,,,,,,0,0
+CH-067,DEPT-07,07,dept,D07,,,Ardèche,,,true,,,,,,,,,,,,0,0
+CH-067,DEPT-08,08,dept,D08,,,Ardennes,,,true,,,,,,,,,,,,0,0
+CH-067,DEPT-09,09,dept,D09,,,Ariège,,,true,,,,,,,,,,,,0,0
+CH-067,DEPT-10,10,dept,D10,,,Aube,,,true,,,,,,,,,,,,0,0
+CH-067,DEPT-11,11,dept,D11,,,Aude,,,true,,,,,,,,,,,,0,0
+CH-067,DEPT-12,12,dept,D12,,,Aveyron,,,true,,,,,,,,,,,,0,0
+CH-067,DEPT-13,13,dept,D13,,,Bouches-du-Rhône,,,true,,,,,,,,,,,,0,0
+CH-067,DEPT-14,14,dept,D14,,,Calvados,,,true,,,,,,,,,,,,0,0
+CH-067,DEPT-15,15,dept,D15,,,Cantal,,,true,,,,,,,,,,,,0,0
+CH-067,DEPT-16,16,dept,D16,,,Charente,,,true,,,,,,,,,,,,0,0
+CH-067,DEPT-17,17,dept,D17,,,Charente-Maritime,,,true,,,,,,,,,,,,0,0
+CH-067,DEPT-18,18,dept,D18,,,Cher,,,true,,,,,,,,,,,,0,0
+CH-067,DEPT-19,19,dept,D19,,,Corrèze,,,true,,,,,,,,,,,,0,0
+CH-067,DEPT-21,21,dept,D21,,,Côte-d'Or,,,true,,,,,,,,,,,,0,0
+CH-067,DEPT-22,22,dept,D22,,,Côtes-d'Armor,,,true,,{Departement Coordinateur},,{coordinateur.departement@example.com},,,,,,,,0,0
+CH-067,DEPT-23,23,dept,D23,,,Creuse,,,true,,,,,,,,,,,,0,0
+CH-067,DEPT-24,24,dept,D24,,,Dordogne,,,true,,,,,,,,,,,,0,0
+CH-067,DEPT-25,25,dept,D25,,,Doubs,,,true,,,,,,,,,,,,0,0
+CH-067,DEPT-26,26,dept,D26,,,Drôme,,,true,,,,,,,,,,,,0,0
+CH-067,DEPT-27,27,dept,D27,,,Eure,,,true,,,,,,,,,,,,0,0
+CH-067,DEPT-28,28,dept,D28,,,Eure-et-Loir,,,true,,,,,,,,,,,,0,0
+CH-067,DEPT-29,29,dept,D29,,,Finistère,,,true,,{Departement Coordinateur},,{coordinateur.departement@example.com},,,,,,,,0,0
+CH-067,DEPT-2A,2A,dept,D2A,,,Corse-du-Sud,,,true,,,,,,,,,,,,0,0
+CH-067,DEPT-2B,2B,dept,D2B,,,Haute-Corse,,,true,,,,,,,,,,,,0,0
+CH-067,DEPT-30,30,dept,D30,,,Gard,,,true,,,,,,,,,,,,0,0
+CH-067,DEPT-31,31,dept,D31,,,Haute-Garonne,,,true,,,,,,,,,,,,0,0
+CH-067,DEPT-32,32,dept,D32,,,Gers,,,true,,,,,,,,,,,,0,0
+CH-067,DEPT-33,33,dept,D33,,,Gironde,,,true,,,,,,,,,,,,0,0
+CH-067,DEPT-34,34,dept,D34,,,Hérault,,,true,,,,,,,,,,,,0,0
+CH-067,DEPT-35,35,dept,D35,,,Ille-et-Vilaine,,,true,,{Departement Coordinateur},,{coordinateur.departement@example.com},,,,,,,,0,0
+CH-067,DEPT-36,36,dept,D36,,,Indre,,,true,,,,,,,,,,,,0,0
+CH-067,DEPT-37,37,dept,D37,,,Indre-et-Loire,,,true,,,,,,,,,,,,0,0
+CH-067,DEPT-38,38,dept,D38,,,Isère,,,true,,,,,,,,,,,,0,0
+CH-067,DEPT-39,39,dept,D39,,,Jura,,,true,,,,,,,,,,,,0,0
+CH-067,DEPT-40,40,dept,D40,,,Landes,,,true,,,,,,,,,,,,0,0
+CH-067,DEPT-41,41,dept,D41,,,Loir-et-Cher,,,true,,,,,,,,,,,,0,0
+CH-067,DEPT-42,42,dept,D42,,,Loire,,,true,,,,,,,,,,,,0,0
+CH-067,DEPT-43,43,dept,D43,,,Haute-Loire,,,true,,,,,,,,,,,,0,0
+CH-067,DEPT-44,44,dept,D44,,,Loire-Atlantique,,,true,,,,,,,,,,,,0,0
+CH-067,DEPT-45,45,dept,D45,,,Loiret,,,true,,,,,,,,,,,,0,0
+CH-067,DEPT-46,46,dept,D46,,,Lot,,,true,,,,,,,,,,,,0,0
+CH-067,DEPT-47,47,dept,D47,,,Lot-et-Garonne,,,true,,,,,,,,,,,,0,0
+CH-067,DEPT-48,48,dept,D48,,,Lozère,,,true,,,,,,,,,,,,0,0
+CH-067,DEPT-49,49,dept,D49,,,Maine-et-Loire,,,true,,,,,,,,,,,,0,0
+CH-067,DEPT-50,50,dept,D50,,,Manche,,,true,,,,,,,,,,,,0,0
+CH-067,DEPT-51,51,dept,D51,,,Marne,,,true,,,,,,,,,,,,0,0
+CH-067,DEPT-52,52,dept,D52,,,Haute-Marne,,,true,,,,,,,,,,,,0,0
+CH-067,DEPT-53,53,dept,D53,,,Mayenne,,,true,,,,,,,,,,,,0,0
+CH-067,DEPT-54,54,dept,D54,,,Meurthe-et-Moselle,,,true,,,,,,,,,,,,0,0
+CH-067,DEPT-55,55,dept,D55,,,Meuse,,,true,,,,,,,,,,,,0,0
+CH-067,DEPT-56,56,dept,D56,,,Morbihan,,,true,,{Departement Coordinateur},,{coordinateur.departement@example.com},,,,,,,,0,0
+CH-067,DEPT-57,57,dept,D57,,,Moselle,,,true,,,,,,,,,,,,0,0
+CH-067,DEPT-58,58,dept,D58,,,Nièvre,,,true,,,,,,,,,,,,0,0
+CH-067,DEPT-59,59,dept,D59,,,Nord,,,true,,,,,,,,,,,,0,0
+CH-067,DEPT-60,60,dept,D60,,,Oise,,,true,,,,,,,,,,,,0,0
+CH-067,DEPT-61,61,dept,D61,,,Orne,,,true,,,,,,,,,,,,0,0
+CH-067,DEPT-62,62,dept,D62,,,Pas-de-Calais,,,true,,,,,,,,,,,,0,0
+CH-067,DEPT-63,63,dept,D63,,,Puy-de-Dôme,,,true,,,,,,,,,,,,0,0
+CH-067,DEPT-64,64,dept,D64,,,Pyrénées-Atlantiques,,,true,,,,,,,,,,,,0,0
+CH-067,DEPT-65,65,dept,D65,,,Hautes-Pyrénées,,,true,,,,,,,,,,,,0,0
+CH-067,DEPT-66,66,dept,D66,,,Pyrénées-Orientales,,,true,,,,,,,,,,,,0,0
+CH-067,DEPT-67,67,dept,D67,,,Bas-Rhin,,,true,,,,,,,,,,,,0,0
+CH-067,DEPT-68,68,dept,D68,,,Haut-Rhin,,,true,,,,,,,,,,,,0,0
+CH-067,DEPT-69,69,dept,D69,,,Rhône,,,true,,,,,,,,,,,,0,0
+CH-067,DEPT-70,70,dept,D70,,,Haute-Saône,,,true,,,,,,,,,,,,0,0
+CH-067,DEPT-71,71,dept,D71,,,Saône-et-Loire,,,true,,,,,,,,,,,,0,0
+CH-067,DEPT-72,72,dept,D72,,,Sarthe,,,true,,,,,,,,,,,,0,0
+CH-067,DEPT-73,73,dept,D73,,,Savoie,,,true,,,,,,,,,,,,0,0
+CH-067,DEPT-74,74,dept,D74,,,Haute-Savoie,,,true,,,,,,,,,,,,0,0
+CH-067,DEPT-75,75,dept,D75,,,Paris,,,true,,,,,,,,,,,,0,0
+CH-067,DEPT-76,76,dept,D76,,,Seine-Maritime,,,true,,,,,,,,,,,,0,0
+CH-067,DEPT-77,77,dept,D77,,,Seine-et-Marne,,,true,,,,,,,,,,,,0,0
+CH-067,DEPT-78,78,dept,D78,,,Yvelines,,,true,,,,,,,,,,,,0,0
+CH-067,DEPT-79,79,dept,D79,,,Deux-Sèvres,,,true,,,,,,,,,,,,0,0
+CH-067,DEPT-80,80,dept,D80,,,Somme,,,true,,,,,,,,,,,,0,0
+CH-067,DEPT-81,81,dept,D81,,,Tarn,,,true,,,,,,,,,,,,0,0
+CH-067,DEPT-82,82,dept,D82,,,Tarn-et-Garonne,,,true,,,,,,,,,,,,0,0
+CH-067,DEPT-83,83,dept,D83,,,Var,,,true,,,,,,,,,,,,0,0
+CH-067,DEPT-84,84,dept,D84,,,Vaucluse,,,true,,,,,,,,,,,,0,0
+CH-067,DEPT-85,85,dept,D85,,,Vendée,,,true,,,,,,,,,,,,0,0
+CH-067,DEPT-86,86,dept,D86,,,Vienne,,,true,,,,,,,,,,,,0,0
+CH-067,DEPT-87,87,dept,D87,,,Haute-Vienne,,,true,,,,,,,,,,,,0,0
+CH-067,DEPT-88,88,dept,D88,,,Vosges,,,true,,,,,,,,,,,,0,0
+CH-067,DEPT-89,89,dept,D89,,,Yonne,,,true,,,,,,,,,,,,0,0
+CH-067,DEPT-90,90,dept,D90,,,Territoire de Belfort,,,true,,,,,,,,,,,,0,0
+CH-067,DEPT-91,91,dept,D91,,,Essonne,,,true,,,,,,,,,,,,0,0
+CH-067,DEPT-92,92,dept,D92,,,Hauts-de-Seine,,,true,,,,,,,,,,,,0,0
+CH-067,DEPT-93,93,dept,D93,,,Seine-Saint-Denis,,,true,,,,,,,,,,,,0,0
+CH-067,DEPT-94,94,dept,D94,,,Val-de-Marne,,,true,,,,,,,,,,,,0,0
+CH-067,DEPT-95,95,dept,D95,,,Val-d'Oise,,,true,,,,,,,,,,,,0,0
+CH-067,DEPT-971,971,dept,D971,,,Guadeloupe,,,true,,,,,,,,,,,,0,0
+CH-067,DEPT-972,972,dept,D972,,,Martinique,,,true,,,,,,,,,,,,0,0
+CH-067,DEPT-973,973,dept,D973,,,Guyane,,,true,,,,,,,,,,,,0,0
+CH-067,DEPT-974,974,dept,D974,,,La Réunion,,,true,,,,,,,,,,,,0,0
+CH-067,DEPT-976,976,dept,D976,,,Mayotte,,,true,,,,,,,,,,,,0,0
+CH-067,NAT-FR,FR,nat,FRANCE,,,France,,,true,,,,,,,,,,,,0,0
+CH-067,REG-01,01,reg,R01,,,Guadeloupe,,,true,,,,,,,,,,,,0,0
+CH-067,REG-02,02,reg,R02,,,Martinique,,,true,,,,,,,,,,,,0,0
+CH-067,REG-03,03,reg,R03,,,Guyane,,,true,,,,,,,,,,,,0,0
+CH-067,REG-04,04,reg,R04,,,La Réunion,,,true,,,,,,,,,,,,0,0
+CH-067,REG-06,06,reg,R06,,,Mayotte,,,true,,,,,,,,,,,,0,0
+CH-067,REG-11,11,reg,R11,,,Île-de-France,,,true,,,,,,,,,,,,0,0
+CH-067,REG-24,24,reg,R24,,,Centre-Val de Loire,,,true,,,,,,,,,,,,0,0
+CH-067,REG-27,27,reg,R27,,,Bourgogne-Franche-Comté,,,true,,,,,,,,,,,,0,0
+CH-067,REG-28,28,reg,R28,,,Normandie,,,true,,,,,,,,,,,,0,0
+CH-067,REG-32,32,reg,R32,,,Hauts-de-France,,,true,,,,,,,,,,,,0,0
+CH-067,REG-44,44,reg,R44,,,Grand-Est,,,true,,,,,,,,,,,,0,0
+CH-067,REG-52,52,reg,R52,,,Pays de la Loire,,,true,,,,,,,,,,,,0,0
+CH-067,REG-53,53,reg,R53,,,Bretagne,,,true,,{Region Coordinateur},,{coordinateur.region@example.com},,,,,,,,0,0
+CH-067,REG-75,75,reg,R75,,,Nouvelle Aquitaine,,,true,,,,,,,,,,,,0,0
+CH-067,REG-76,76,reg,R76,,,Occitanie,,,true,,,,,,,,,,,,0,0
+CH-067,REG-84,84,reg,R84,,,Auvergne-Rhône-Alpes,,,true,,,,,,,,,,,,0,0
+CH-067,REG-93,93,reg,R93,,,Provence - Alpes - Côte d'Azur,,,true,,,,,,,,,,,,0,0
+CH-067,REG-94,94,reg,R94,,,Corse,,,true,,,,,,,,,,,,0,0
+CH-070,DEPT-01,01,dept,D01,,,Ain,,,true,,,,,,,,,,,,0,0
+CH-070,DEPT-02,02,dept,D02,,,Aisne,,,true,,,,,,,,,,,,0,0
+CH-070,DEPT-03,03,dept,D03,,,Allier,,,true,,,,,,,,,,,,0,0
+CH-070,DEPT-04,04,dept,D04,,,Alpes-de-Haute-Provence,,,true,,,,,,,,,,,,0,0
+CH-070,DEPT-05,05,dept,D05,,,Hautes-Alpes,,,true,,,,,,,,,,,,0,0
+CH-070,DEPT-06,06,dept,D06,,,Alpes-Maritimes,,,true,,,,,,,,,,,,0,0
+CH-070,DEPT-07,07,dept,D07,,,Ardèche,,,true,,,,,,,,,,,,0,0
+CH-070,DEPT-08,08,dept,D08,,,Ardennes,,,true,,,,,,,,,,,,0,0
+CH-070,DEPT-09,09,dept,D09,,,Ariège,,,true,,,,,,,,,,,,0,0
+CH-070,DEPT-10,10,dept,D10,,,Aube,,,true,,,,,,,,,,,,0,0
+CH-070,DEPT-11,11,dept,D11,,,Aude,,,true,,,,,,,,,,,,0,0
+CH-070,DEPT-12,12,dept,D12,,,Aveyron,,,true,,,,,,,,,,,,0,0
+CH-070,DEPT-13,13,dept,D13,,,Bouches-du-Rhône,,,true,,,,,,,,,,,,0,0
+CH-070,DEPT-14,14,dept,D14,,,Calvados,,,true,,,,,,,,,,,,0,0
+CH-070,DEPT-15,15,dept,D15,,,Cantal,,,true,,,,,,,,,,,,0,0
+CH-070,DEPT-16,16,dept,D16,,,Charente,,,true,,,,,,,,,,,,0,0
+CH-070,DEPT-17,17,dept,D17,,,Charente-Maritime,,,true,,,,,,,,,,,,0,0
+CH-070,DEPT-18,18,dept,D18,,,Cher,,,true,,,,,,,,,,,,0,0
+CH-070,DEPT-19,19,dept,D19,,,Corrèze,,,true,,,,,,,,,,,,0,0
+CH-070,DEPT-21,21,dept,D21,,,Côte-d'Or,,,true,,,,,,,,,,,,0,0
+CH-070,DEPT-22,22,dept,D22,,,Côtes-d'Armor,,,true,,{Departement Coordinateur},,{coordinateur.departement@example.com},,,,,,,,0,0
+CH-070,DEPT-23,23,dept,D23,,,Creuse,,,true,,,,,,,,,,,,0,0
+CH-070,DEPT-24,24,dept,D24,,,Dordogne,,,true,,,,,,,,,,,,0,0
+CH-070,DEPT-25,25,dept,D25,,,Doubs,,,true,,,,,,,,,,,,0,0
+CH-070,DEPT-26,26,dept,D26,,,Drôme,,,true,,,,,,,,,,,,0,0
+CH-070,DEPT-27,27,dept,D27,,,Eure,,,true,,,,,,,,,,,,0,0
+CH-070,DEPT-28,28,dept,D28,,,Eure-et-Loir,,,true,,,,,,,,,,,,0,0
+CH-070,DEPT-29,29,dept,D29,,,Finistère,,,true,,{Departement Coordinateur},,{coordinateur.departement@example.com},,,,,,,,0,0
+CH-070,DEPT-2A,2A,dept,D2A,,,Corse-du-Sud,,,true,,,,,,,,,,,,0,0
+CH-070,DEPT-2B,2B,dept,D2B,,,Haute-Corse,,,true,,,,,,,,,,,,0,0
+CH-070,DEPT-30,30,dept,D30,,,Gard,,,true,,,,,,,,,,,,0,0
+CH-070,DEPT-31,31,dept,D31,,,Haute-Garonne,,,true,,,,,,,,,,,,0,0
+CH-070,DEPT-32,32,dept,D32,,,Gers,,,true,,,,,,,,,,,,0,0
+CH-070,DEPT-33,33,dept,D33,,,Gironde,,,true,,,,,,,,,,,,0,0
+CH-070,DEPT-34,34,dept,D34,,,Hérault,,,true,,,,,,,,,,,,0,0
+CH-070,DEPT-35,35,dept,D35,,,Ille-et-Vilaine,,,true,,{Departement Coordinateur},,{coordinateur.departement@example.com},,,,,,,,0,0
+CH-070,DEPT-36,36,dept,D36,,,Indre,,,true,,,,,,,,,,,,0,0
+CH-070,DEPT-37,37,dept,D37,,,Indre-et-Loire,,,true,,,,,,,,,,,,0,0
+CH-070,DEPT-38,38,dept,D38,,,Isère,,,true,,,,,,,,,,,,0,0
+CH-070,DEPT-39,39,dept,D39,,,Jura,,,true,,,,,,,,,,,,0,0
+CH-070,DEPT-40,40,dept,D40,,,Landes,,,true,,,,,,,,,,,,0,0
+CH-070,DEPT-41,41,dept,D41,,,Loir-et-Cher,,,true,,,,,,,,,,,,0,0
+CH-070,DEPT-42,42,dept,D42,,,Loire,,,true,,,,,,,,,,,,0,0
+CH-070,DEPT-43,43,dept,D43,,,Haute-Loire,,,true,,,,,,,,,,,,0,0
+CH-070,DEPT-44,44,dept,D44,,,Loire-Atlantique,,,true,,,,,,,,,,,,0,0
+CH-070,DEPT-45,45,dept,D45,,,Loiret,,,true,,,,,,,,,,,,0,0
+CH-070,DEPT-46,46,dept,D46,,,Lot,,,true,,,,,,,,,,,,0,0
+CH-070,DEPT-47,47,dept,D47,,,Lot-et-Garonne,,,true,,,,,,,,,,,,0,0
+CH-070,DEPT-48,48,dept,D48,,,Lozère,,,true,,,,,,,,,,,,0,0
+CH-070,DEPT-49,49,dept,D49,,,Maine-et-Loire,,,true,,,,,,,,,,,,0,0
+CH-070,DEPT-50,50,dept,D50,,,Manche,,,true,,,,,,,,,,,,0,0
+CH-070,DEPT-51,51,dept,D51,,,Marne,,,true,,,,,,,,,,,,0,0
+CH-070,DEPT-52,52,dept,D52,,,Haute-Marne,,,true,,,,,,,,,,,,0,0
+CH-070,DEPT-53,53,dept,D53,,,Mayenne,,,true,,,,,,,,,,,,0,0
+CH-070,DEPT-54,54,dept,D54,,,Meurthe-et-Moselle,,,true,,,,,,,,,,,,0,0
+CH-070,DEPT-55,55,dept,D55,,,Meuse,,,true,,,,,,,,,,,,0,0
+CH-070,DEPT-56,56,dept,D56,,,Morbihan,,,true,,{Departement Coordinateur},,{coordinateur.departement@example.com},,,,,,,,0,0
+CH-070,DEPT-57,57,dept,D57,,,Moselle,,,true,,,,,,,,,,,,0,0
+CH-070,DEPT-58,58,dept,D58,,,Nièvre,,,true,,,,,,,,,,,,0,0
+CH-070,DEPT-59,59,dept,D59,,,Nord,,,true,,,,,,,,,,,,0,0
+CH-070,DEPT-60,60,dept,D60,,,Oise,,,true,,,,,,,,,,,,0,0
+CH-070,DEPT-61,61,dept,D61,,,Orne,,,true,,,,,,,,,,,,0,0
+CH-070,DEPT-62,62,dept,D62,,,Pas-de-Calais,,,true,,,,,,,,,,,,0,0
+CH-070,DEPT-63,63,dept,D63,,,Puy-de-Dôme,,,true,,,,,,,,,,,,0,0
+CH-070,DEPT-64,64,dept,D64,,,Pyrénées-Atlantiques,,,true,,,,,,,,,,,,0,0
+CH-070,DEPT-65,65,dept,D65,,,Hautes-Pyrénées,,,true,,,,,,,,,,,,0,0
+CH-070,DEPT-66,66,dept,D66,,,Pyrénées-Orientales,,,true,,,,,,,,,,,,0,0
+CH-070,DEPT-67,67,dept,D67,,,Bas-Rhin,,,true,,,,,,,,,,,,0,0
+CH-070,DEPT-68,68,dept,D68,,,Haut-Rhin,,,true,,,,,,,,,,,,0,0
+CH-070,DEPT-69,69,dept,D69,,,Rhône,,,true,,,,,,,,,,,,0,0
+CH-070,DEPT-70,70,dept,D70,,,Haute-Saône,,,true,,,,,,,,,,,,0,0
+CH-070,DEPT-71,71,dept,D71,,,Saône-et-Loire,,,true,,,,,,,,,,,,0,0
+CH-070,DEPT-72,72,dept,D72,,,Sarthe,,,true,,,,,,,,,,,,0,0
+CH-070,DEPT-73,73,dept,D73,,,Savoie,,,true,,,,,,,,,,,,0,0
+CH-070,DEPT-74,74,dept,D74,,,Haute-Savoie,,,true,,,,,,,,,,,,0,0
+CH-070,DEPT-75,75,dept,D75,,,Paris,,,true,,,,,,,,,,,,0,0
+CH-070,DEPT-76,76,dept,D76,,,Seine-Maritime,,,true,,,,,,,,,,,,0,0
+CH-070,DEPT-77,77,dept,D77,,,Seine-et-Marne,,,true,,,,,,,,,,,,0,0
+CH-070,DEPT-78,78,dept,D78,,,Yvelines,,,true,,,,,,,,,,,,0,0
+CH-070,DEPT-79,79,dept,D79,,,Deux-Sèvres,,,true,,,,,,,,,,,,0,0
+CH-070,DEPT-80,80,dept,D80,,,Somme,,,true,,,,,,,,,,,,0,0
+CH-070,DEPT-81,81,dept,D81,,,Tarn,,,true,,,,,,,,,,,,0,0
+CH-070,DEPT-82,82,dept,D82,,,Tarn-et-Garonne,,,true,,,,,,,,,,,,0,0
+CH-070,DEPT-83,83,dept,D83,,,Var,,,true,,,,,,,,,,,,0,0
+CH-070,DEPT-84,84,dept,D84,,,Vaucluse,,,true,,,,,,,,,,,,0,0
+CH-070,DEPT-85,85,dept,D85,,,Vendée,,,true,,,,,,,,,,,,0,0
+CH-070,DEPT-86,86,dept,D86,,,Vienne,,,true,,,,,,,,,,,,0,0
+CH-070,DEPT-87,87,dept,D87,,,Haute-Vienne,,,true,,,,,,,,,,,,0,0
+CH-070,DEPT-88,88,dept,D88,,,Vosges,,,true,,,,,,,,,,,,0,0
+CH-070,DEPT-89,89,dept,D89,,,Yonne,,,true,,,,,,,,,,,,0,0
+CH-070,DEPT-90,90,dept,D90,,,Territoire de Belfort,,,true,,,,,,,,,,,,0,0
+CH-070,DEPT-91,91,dept,D91,,,Essonne,,,true,,,,,,,,,,,,0,0
+CH-070,DEPT-92,92,dept,D92,,,Hauts-de-Seine,,,true,,,,,,,,,,,,0,0
+CH-070,DEPT-93,93,dept,D93,,,Seine-Saint-Denis,,,true,,,,,,,,,,,,0,0
+CH-070,DEPT-94,94,dept,D94,,,Val-de-Marne,,,true,,,,,,,,,,,,0,0
+CH-070,DEPT-95,95,dept,D95,,,Val-d'Oise,,,true,,,,,,,,,,,,0,0
+CH-070,DEPT-971,971,dept,D971,,,Guadeloupe,,,true,,,,,,,,,,,,0,0
+CH-070,DEPT-972,972,dept,D972,,,Martinique,,,true,,,,,,,,,,,,0,0
+CH-070,DEPT-973,973,dept,D973,,,Guyane,,,true,,,,,,,,,,,,0,0
+CH-070,DEPT-974,974,dept,D974,,,La Réunion,,,true,,,,,,,,,,,,0,0
+CH-070,DEPT-976,976,dept,D976,,,Mayotte,,,true,,,,,,,,,,,,0,0
+CH-070,NAT-FR,FR,nat,FRANCE,,,France,,,true,,,,,,,,,,,,0,0
+CH-070,REG-01,01,reg,R01,,,Guadeloupe,,,true,,,,,,,,,,,,0,0
+CH-070,REG-02,02,reg,R02,,,Martinique,,,true,,,,,,,,,,,,0,0
+CH-070,REG-03,03,reg,R03,,,Guyane,,,true,,,,,,,,,,,,0,0
+CH-070,REG-04,04,reg,R04,,,La Réunion,,,true,,,,,,,,,,,,0,0
+CH-070,REG-06,06,reg,R06,,,Mayotte,,,true,,,,,,,,,,,,0,0
+CH-070,REG-11,11,reg,R11,,,Île-de-France,,,true,,,,,,,,,,,,0,0
+CH-070,REG-24,24,reg,R24,,,Centre-Val de Loire,,,true,,,,,,,,,,,,0,0
+CH-070,REG-27,27,reg,R27,,,Bourgogne-Franche-Comté,,,true,,,,,,,,,,,,0,0
+CH-070,REG-28,28,reg,R28,,,Normandie,,,true,,,,,,,,,,,,0,0
+CH-070,REG-32,32,reg,R32,,,Hauts-de-France,,,true,,,,,,,,,,,,0,0
+CH-070,REG-44,44,reg,R44,,,Grand-Est,,,true,,,,,,,,,,,,0,0
+CH-070,REG-52,52,reg,R52,,,Pays de la Loire,,,true,,,,,,,,,,,,0,0
+CH-070,REG-53,53,reg,R53,,,Bretagne,,,true,,{Region Coordinateur},,{coordinateur.region@example.com},,,,,,,,0,0
+CH-070,REG-75,75,reg,R75,,,Nouvelle Aquitaine,,,true,,,,,,,,,,,,0,0
+CH-070,REG-76,76,reg,R76,,,Occitanie,,,true,,,,,,,,,,,,0,0
+CH-070,REG-84,84,reg,R84,,,Auvergne-Rhône-Alpes,,,true,,,,,,,,,,,,0,0
+CH-070,REG-93,93,reg,R93,,,Provence - Alpes - Côte d'Azur,,,true,,,,,,,,,,,,0,0
+CH-070,REG-94,94,reg,R94,,,Corse,,,true,,,,,,,,,,,,0,0
+CH-071,DEPT-01,01,dept,D01,,,Ain,,,true,,,,,,,,,,,,0,0
+CH-071,DEPT-02,02,dept,D02,,,Aisne,,,true,,,,,,,,,,,,0,0
+CH-071,DEPT-03,03,dept,D03,,,Allier,,,true,,,,,,,,,,,,0,0
+CH-071,DEPT-04,04,dept,D04,,,Alpes-de-Haute-Provence,,,true,,,,,,,,,,,,0,0
+CH-071,DEPT-05,05,dept,D05,,,Hautes-Alpes,,,true,,,,,,,,,,,,0,0
+CH-071,DEPT-06,06,dept,D06,,,Alpes-Maritimes,,,true,,,,,,,,,,,,0,0
+CH-071,DEPT-07,07,dept,D07,,,Ardèche,,,true,,,,,,,,,,,,0,0
+CH-071,DEPT-08,08,dept,D08,,,Ardennes,,,true,,,,,,,,,,,,0,0
+CH-071,DEPT-09,09,dept,D09,,,Ariège,,,true,,,,,,,,,,,,0,0
+CH-071,DEPT-10,10,dept,D10,,,Aube,,,true,,,,,,,,,,,,0,0
+CH-071,DEPT-11,11,dept,D11,,,Aude,,,true,,,,,,,,,,,,0,0
+CH-071,DEPT-12,12,dept,D12,,,Aveyron,,,true,,,,,,,,,,,,0,0
+CH-071,DEPT-13,13,dept,D13,,,Bouches-du-Rhône,,,true,,,,,,,,,,,,0,0
+CH-071,DEPT-14,14,dept,D14,,,Calvados,,,true,,,,,,,,,,,,0,0
+CH-071,DEPT-15,15,dept,D15,,,Cantal,,,true,,,,,,,,,,,,0,0
+CH-071,DEPT-16,16,dept,D16,,,Charente,,,true,,,,,,,,,,,,0,0
+CH-071,DEPT-17,17,dept,D17,,,Charente-Maritime,,,true,,,,,,,,,,,,0,0
+CH-071,DEPT-18,18,dept,D18,,,Cher,,,true,,,,,,,,,,,,0,0
+CH-071,DEPT-19,19,dept,D19,,,Corrèze,,,true,,,,,,,,,,,,0,0
+CH-071,DEPT-21,21,dept,D21,,,Côte-d'Or,,,true,,,,,,,,,,,,0,0
+CH-071,DEPT-22,22,dept,D22,,,Côtes-d'Armor,,,true,,{Departement Coordinateur},,{coordinateur.departement@example.com},,,,,,,,0,0
+CH-071,DEPT-23,23,dept,D23,,,Creuse,,,true,,,,,,,,,,,,0,0
+CH-071,DEPT-24,24,dept,D24,,,Dordogne,,,true,,,,,,,,,,,,0,0
+CH-071,DEPT-25,25,dept,D25,,,Doubs,,,true,,,,,,,,,,,,0,0
+CH-071,DEPT-26,26,dept,D26,,,Drôme,,,true,,,,,,,,,,,,0,0
+CH-071,DEPT-27,27,dept,D27,,,Eure,,,true,,,,,,,,,,,,0,0
+CH-071,DEPT-28,28,dept,D28,,,Eure-et-Loir,,,true,,,,,,,,,,,,0,0
+CH-071,DEPT-29,29,dept,D29,,,Finistère,,,true,,{Departement Coordinateur},,{coordinateur.departement@example.com},,,,,,,,0,0
+CH-071,DEPT-2A,2A,dept,D2A,,,Corse-du-Sud,,,true,,,,,,,,,,,,0,0
+CH-071,DEPT-2B,2B,dept,D2B,,,Haute-Corse,,,true,,,,,,,,,,,,0,0
+CH-071,DEPT-30,30,dept,D30,,,Gard,,,true,,,,,,,,,,,,0,0
+CH-071,DEPT-31,31,dept,D31,,,Haute-Garonne,,,true,,,,,,,,,,,,0,0
+CH-071,DEPT-32,32,dept,D32,,,Gers,,,true,,,,,,,,,,,,0,0
+CH-071,DEPT-33,33,dept,D33,,,Gironde,,,true,,,,,,,,,,,,0,0
+CH-071,DEPT-34,34,dept,D34,,,Hérault,,,true,,,,,,,,,,,,0,0
+CH-071,DEPT-35,35,dept,D35,,,Ille-et-Vilaine,,,true,,{Departement Coordinateur},,{coordinateur.departement@example.com},,,,,,,,0,0
+CH-071,DEPT-36,36,dept,D36,,,Indre,,,true,,,,,,,,,,,,0,0
+CH-071,DEPT-37,37,dept,D37,,,Indre-et-Loire,,,true,,,,,,,,,,,,0,0
+CH-071,DEPT-38,38,dept,D38,,,Isère,,,true,,,,,,,,,,,,0,0
+CH-071,DEPT-39,39,dept,D39,,,Jura,,,true,,,,,,,,,,,,0,0
+CH-071,DEPT-40,40,dept,D40,,,Landes,,,true,,,,,,,,,,,,0,0
+CH-071,DEPT-41,41,dept,D41,,,Loir-et-Cher,,,true,,,,,,,,,,,,0,0
+CH-071,DEPT-42,42,dept,D42,,,Loire,,,true,,,,,,,,,,,,0,0
+CH-071,DEPT-43,43,dept,D43,,,Haute-Loire,,,true,,,,,,,,,,,,0,0
+CH-071,DEPT-44,44,dept,D44,,,Loire-Atlantique,,,true,,,,,,,,,,,,0,0
+CH-071,DEPT-45,45,dept,D45,,,Loiret,,,true,,,,,,,,,,,,0,0
+CH-071,DEPT-46,46,dept,D46,,,Lot,,,true,,,,,,,,,,,,0,0
+CH-071,DEPT-47,47,dept,D47,,,Lot-et-Garonne,,,true,,,,,,,,,,,,0,0
+CH-071,DEPT-48,48,dept,D48,,,Lozère,,,true,,,,,,,,,,,,0,0
+CH-071,DEPT-49,49,dept,D49,,,Maine-et-Loire,,,true,,,,,,,,,,,,0,0
+CH-071,DEPT-50,50,dept,D50,,,Manche,,,true,,,,,,,,,,,,0,0
+CH-071,DEPT-51,51,dept,D51,,,Marne,,,true,,,,,,,,,,,,0,0
+CH-071,DEPT-52,52,dept,D52,,,Haute-Marne,,,true,,,,,,,,,,,,0,0
+CH-071,DEPT-53,53,dept,D53,,,Mayenne,,,true,,,,,,,,,,,,0,0
+CH-071,DEPT-54,54,dept,D54,,,Meurthe-et-Moselle,,,true,,,,,,,,,,,,0,0
+CH-071,DEPT-55,55,dept,D55,,,Meuse,,,true,,,,,,,,,,,,0,0
+CH-071,DEPT-56,56,dept,D56,,,Morbihan,,,true,,{Departement Coordinateur},,{coordinateur.departement@example.com},,,,,,,,0,0
+CH-071,DEPT-57,57,dept,D57,,,Moselle,,,true,,,,,,,,,,,,0,0
+CH-071,DEPT-58,58,dept,D58,,,Nièvre,,,true,,,,,,,,,,,,0,0
+CH-071,DEPT-59,59,dept,D59,,,Nord,,,true,,,,,,,,,,,,0,0
+CH-071,DEPT-60,60,dept,D60,,,Oise,,,true,,,,,,,,,,,,0,0
+CH-071,DEPT-61,61,dept,D61,,,Orne,,,true,,,,,,,,,,,,0,0
+CH-071,DEPT-62,62,dept,D62,,,Pas-de-Calais,,,true,,,,,,,,,,,,0,0
+CH-071,DEPT-63,63,dept,D63,,,Puy-de-Dôme,,,true,,,,,,,,,,,,0,0
+CH-071,DEPT-64,64,dept,D64,,,Pyrénées-Atlantiques,,,true,,,,,,,,,,,,0,0
+CH-071,DEPT-65,65,dept,D65,,,Hautes-Pyrénées,,,true,,,,,,,,,,,,0,0
+CH-071,DEPT-66,66,dept,D66,,,Pyrénées-Orientales,,,true,,,,,,,,,,,,0,0
+CH-071,DEPT-67,67,dept,D67,,,Bas-Rhin,,,true,,,,,,,,,,,,0,0
+CH-071,DEPT-68,68,dept,D68,,,Haut-Rhin,,,true,,,,,,,,,,,,0,0
+CH-071,DEPT-69,69,dept,D69,,,Rhône,,,true,,,,,,,,,,,,0,0
+CH-071,DEPT-70,70,dept,D70,,,Haute-Saône,,,true,,,,,,,,,,,,0,0
+CH-071,DEPT-71,71,dept,D71,,,Saône-et-Loire,,,true,,,,,,,,,,,,0,0
+CH-071,DEPT-72,72,dept,D72,,,Sarthe,,,true,,,,,,,,,,,,0,0
+CH-071,DEPT-73,73,dept,D73,,,Savoie,,,true,,,,,,,,,,,,0,0
+CH-071,DEPT-74,74,dept,D74,,,Haute-Savoie,,,true,,,,,,,,,,,,0,0
+CH-071,DEPT-75,75,dept,D75,,,Paris,,,true,,,,,,,,,,,,0,0
+CH-071,DEPT-76,76,dept,D76,,,Seine-Maritime,,,true,,,,,,,,,,,,0,0
+CH-071,DEPT-77,77,dept,D77,,,Seine-et-Marne,,,true,,,,,,,,,,,,0,0
+CH-071,DEPT-78,78,dept,D78,,,Yvelines,,,true,,,,,,,,,,,,0,0
+CH-071,DEPT-79,79,dept,D79,,,Deux-Sèvres,,,true,,,,,,,,,,,,0,0
+CH-071,DEPT-80,80,dept,D80,,,Somme,,,true,,,,,,,,,,,,0,0
+CH-071,DEPT-81,81,dept,D81,,,Tarn,,,true,,,,,,,,,,,,0,0
+CH-071,DEPT-82,82,dept,D82,,,Tarn-et-Garonne,,,true,,,,,,,,,,,,0,0
+CH-071,DEPT-83,83,dept,D83,,,Var,,,true,,,,,,,,,,,,0,0
+CH-071,DEPT-84,84,dept,D84,,,Vaucluse,,,true,,,,,,,,,,,,0,0
+CH-071,DEPT-85,85,dept,D85,,,Vendée,,,true,,,,,,,,,,,,0,0
+CH-071,DEPT-86,86,dept,D86,,,Vienne,,,true,,,,,,,,,,,,0,0
+CH-071,DEPT-87,87,dept,D87,,,Haute-Vienne,,,true,,,,,,,,,,,,0,0
+CH-071,DEPT-88,88,dept,D88,,,Vosges,,,true,,,,,,,,,,,,0,0
+CH-071,DEPT-89,89,dept,D89,,,Yonne,,,true,,,,,,,,,,,,0,0
+CH-071,DEPT-90,90,dept,D90,,,Territoire de Belfort,,,true,,,,,,,,,,,,0,0
+CH-071,DEPT-91,91,dept,D91,,,Essonne,,,true,,,,,,,,,,,,0,0
+CH-071,DEPT-92,92,dept,D92,,,Hauts-de-Seine,,,true,,,,,,,,,,,,0,0
+CH-071,DEPT-93,93,dept,D93,,,Seine-Saint-Denis,,,true,,,,,,,,,,,,0,0
+CH-071,DEPT-94,94,dept,D94,,,Val-de-Marne,,,true,,,,,,,,,,,,0,0
+CH-071,DEPT-95,95,dept,D95,,,Val-d'Oise,,,true,,,,,,,,,,,,0,0
+CH-071,DEPT-971,971,dept,D971,,,Guadeloupe,,,true,,,,,,,,,,,,0,0
+CH-071,DEPT-972,972,dept,D972,,,Martinique,,,true,,,,,,,,,,,,0,0
+CH-071,DEPT-973,973,dept,D973,,,Guyane,,,true,,,,,,,,,,,,0,0
+CH-071,DEPT-974,974,dept,D974,,,La Réunion,,,true,,,,,,,,,,,,0,0
+CH-071,DEPT-976,976,dept,D976,,,Mayotte,,,true,,,,,,,,,,,,0,0
+CH-071,NAT-FR,FR,nat,FRANCE,,,France,,,true,,,,,,,,,,,,0,0
+CH-071,REG-01,01,reg,R01,,,Guadeloupe,,,true,,,,,,,,,,,,0,0
+CH-071,REG-02,02,reg,R02,,,Martinique,,,true,,,,,,,,,,,,0,0
+CH-071,REG-03,03,reg,R03,,,Guyane,,,true,,,,,,,,,,,,0,0
+CH-071,REG-04,04,reg,R04,,,La Réunion,,,true,,,,,,,,,,,,0,0
+CH-071,REG-06,06,reg,R06,,,Mayotte,,,true,,,,,,,,,,,,0,0
+CH-071,REG-11,11,reg,R11,,,Île-de-France,,,true,,,,,,,,,,,,0,0
+CH-071,REG-24,24,reg,R24,,,Centre-Val de Loire,,,true,,,,,,,,,,,,0,0
+CH-071,REG-27,27,reg,R27,,,Bourgogne-Franche-Comté,,,true,,,,,,,,,,,,0,0
+CH-071,REG-28,28,reg,R28,,,Normandie,,,true,,,,,,,,,,,,0,0
+CH-071,REG-32,32,reg,R32,,,Hauts-de-France,,,true,,,,,,,,,,,,0,0
+CH-071,REG-44,44,reg,R44,,,Grand-Est,,,true,,,,,,,,,,,,0,0
+CH-071,REG-52,52,reg,R52,,,Pays de la Loire,,,true,,,,,,,,,,,,0,0
+CH-071,REG-53,53,reg,R53,,,Bretagne,,,true,,{Region Coordinateur},,{coordinateur.region@example.com},,,,,,,,0,0
+CH-071,REG-75,75,reg,R75,,,Nouvelle Aquitaine,,,true,,,,,,,,,,,,0,0
+CH-071,REG-76,76,reg,R76,,,Occitanie,,,true,,,,,,,,,,,,0,0
+CH-071,REG-84,84,reg,R84,,,Auvergne-Rhône-Alpes,,,true,,,,,,,,,,,,0,0
+CH-071,REG-93,93,reg,R93,,,Provence - Alpes - Côte d'Azur,,,true,,,,,,,,,,,,0,0
+CH-071,REG-94,94,reg,R94,,,Corse,,,true,,,,,,,,,,,,0,0
+CH-108,DEPT-01,01,dept,D01,,,Ain,,,true,,,,,,,,,,,,0,0
+CH-108,DEPT-02,02,dept,D02,,,Aisne,,,true,,,,,,,,,,,,0,0
+CH-108,DEPT-03,03,dept,D03,,,Allier,,,true,,,,,,,,,,,,0,0
+CH-108,DEPT-04,04,dept,D04,,,Alpes-de-Haute-Provence,,,true,,,,,,,,,,,,0,0
+CH-108,DEPT-05,05,dept,D05,,,Hautes-Alpes,,,true,,,,,,,,,,,,0,0
+CH-108,DEPT-06,06,dept,D06,,,Alpes-Maritimes,,,true,,,,,,,,,,,,0,0
+CH-108,DEPT-07,07,dept,D07,,,Ardèche,,,true,,,,,,,,,,,,0,0
+CH-108,DEPT-08,08,dept,D08,,,Ardennes,,,true,,,,,,,,,,,,0,0
+CH-108,DEPT-09,09,dept,D09,,,Ariège,,,true,,,,,,,,,,,,0,0
+CH-108,DEPT-10,10,dept,D10,,,Aube,,,true,,,,,,,,,,,,0,0
+CH-108,DEPT-11,11,dept,D11,,,Aude,,,true,,,,,,,,,,,,0,0
+CH-108,DEPT-12,12,dept,D12,,,Aveyron,,,true,,,,,,,,,,,,0,0
+CH-108,DEPT-13,13,dept,D13,,,Bouches-du-Rhône,,,true,,,,,,,,,,,,0,0
+CH-108,DEPT-14,14,dept,D14,,,Calvados,,,true,,,,,,,,,,,,0,0
+CH-108,DEPT-15,15,dept,D15,,,Cantal,,,true,,,,,,,,,,,,0,0
+CH-108,DEPT-16,16,dept,D16,,,Charente,,,true,,,,,,,,,,,,0,0
+CH-108,DEPT-17,17,dept,D17,,,Charente-Maritime,,,true,,,,,,,,,,,,0,0
+CH-108,DEPT-18,18,dept,D18,,,Cher,,,true,,,,,,,,,,,,0,0
+CH-108,DEPT-19,19,dept,D19,,,Corrèze,,,true,,,,,,,,,,,,0,0
+CH-108,DEPT-21,21,dept,D21,,,Côte-d'Or,,,true,,,,,,,,,,,,0,0
+CH-108,DEPT-22,22,dept,D22,,,Côtes-d'Armor,,,true,,{Departement Coordinateur},,{coordinateur.departement@example.com},,,,,,,,0,0
+CH-108,DEPT-23,23,dept,D23,,,Creuse,,,true,,,,,,,,,,,,0,0
+CH-108,DEPT-24,24,dept,D24,,,Dordogne,,,true,,,,,,,,,,,,0,0
+CH-108,DEPT-25,25,dept,D25,,,Doubs,,,true,,,,,,,,,,,,0,0
+CH-108,DEPT-26,26,dept,D26,,,Drôme,,,true,,,,,,,,,,,,0,0
+CH-108,DEPT-27,27,dept,D27,,,Eure,,,true,,,,,,,,,,,,0,0
+CH-108,DEPT-28,28,dept,D28,,,Eure-et-Loir,,,true,,,,,,,,,,,,0,0
+CH-108,DEPT-29,29,dept,D29,,,Finistère,,,true,,{Departement Coordinateur},,{coordinateur.departement@example.com},,,,,,,,0,0
+CH-108,DEPT-2A,2A,dept,D2A,,,Corse-du-Sud,,,true,,,,,,,,,,,,0,0
+CH-108,DEPT-2B,2B,dept,D2B,,,Haute-Corse,,,true,,,,,,,,,,,,0,0
+CH-108,DEPT-30,30,dept,D30,,,Gard,,,true,,,,,,,,,,,,0,0
+CH-108,DEPT-31,31,dept,D31,,,Haute-Garonne,,,true,,,,,,,,,,,,0,0
+CH-108,DEPT-32,32,dept,D32,,,Gers,,,true,,,,,,,,,,,,0,0
+CH-108,DEPT-33,33,dept,D33,,,Gironde,,,true,,,,,,,,,,,,0,0
+CH-108,DEPT-34,34,dept,D34,,,Hérault,,,true,,,,,,,,,,,,0,0
+CH-108,DEPT-35,35,dept,D35,,,Ille-et-Vilaine,,,true,,{Departement Coordinateur},,{coordinateur.departement@example.com},,,,,,,,0,0
+CH-108,DEPT-36,36,dept,D36,,,Indre,,,true,,,,,,,,,,,,0,0
+CH-108,DEPT-37,37,dept,D37,,,Indre-et-Loire,,,true,,,,,,,,,,,,0,0
+CH-108,DEPT-38,38,dept,D38,,,Isère,,,true,,,,,,,,,,,,0,0
+CH-108,DEPT-39,39,dept,D39,,,Jura,,,true,,,,,,,,,,,,0,0
+CH-108,DEPT-40,40,dept,D40,,,Landes,,,true,,,,,,,,,,,,0,0
+CH-108,DEPT-41,41,dept,D41,,,Loir-et-Cher,,,true,,,,,,,,,,,,0,0
+CH-108,DEPT-42,42,dept,D42,,,Loire,,,true,,,,,,,,,,,,0,0
+CH-108,DEPT-43,43,dept,D43,,,Haute-Loire,,,true,,,,,,,,,,,,0,0
+CH-108,DEPT-44,44,dept,D44,,,Loire-Atlantique,,,true,,,,,,,,,,,,0,0
+CH-108,DEPT-45,45,dept,D45,,,Loiret,,,true,,,,,,,,,,,,0,0
+CH-108,DEPT-46,46,dept,D46,,,Lot,,,true,,,,,,,,,,,,0,0
+CH-108,DEPT-47,47,dept,D47,,,Lot-et-Garonne,,,true,,,,,,,,,,,,0,0
+CH-108,DEPT-48,48,dept,D48,,,Lozère,,,true,,,,,,,,,,,,0,0
+CH-108,DEPT-49,49,dept,D49,,,Maine-et-Loire,,,true,,,,,,,,,,,,0,0
+CH-108,DEPT-50,50,dept,D50,,,Manche,,,true,,,,,,,,,,,,0,0
+CH-108,DEPT-51,51,dept,D51,,,Marne,,,true,,,,,,,,,,,,0,0
+CH-108,DEPT-52,52,dept,D52,,,Haute-Marne,,,true,,,,,,,,,,,,0,0
+CH-108,DEPT-53,53,dept,D53,,,Mayenne,,,true,,,,,,,,,,,,0,0
+CH-108,DEPT-54,54,dept,D54,,,Meurthe-et-Moselle,,,true,,,,,,,,,,,,0,0
+CH-108,DEPT-55,55,dept,D55,,,Meuse,,,true,,,,,,,,,,,,0,0
+CH-108,DEPT-56,56,dept,D56,,,Morbihan,,,true,,{Departement Coordinateur},,{coordinateur.departement@example.com},,,,,,,,0,0
+CH-108,DEPT-57,57,dept,D57,,,Moselle,,,true,,,,,,,,,,,,0,0
+CH-108,DEPT-58,58,dept,D58,,,Nièvre,,,true,,,,,,,,,,,,0,0
+CH-108,DEPT-59,59,dept,D59,,,Nord,,,true,,,,,,,,,,,,0,0
+CH-108,DEPT-60,60,dept,D60,,,Oise,,,true,,,,,,,,,,,,0,0
+CH-108,DEPT-61,61,dept,D61,,,Orne,,,true,,,,,,,,,,,,0,0
+CH-108,DEPT-62,62,dept,D62,,,Pas-de-Calais,,,true,,,,,,,,,,,,0,0
+CH-108,DEPT-63,63,dept,D63,,,Puy-de-Dôme,,,true,,,,,,,,,,,,0,0
+CH-108,DEPT-64,64,dept,D64,,,Pyrénées-Atlantiques,,,true,,,,,,,,,,,,0,0
+CH-108,DEPT-65,65,dept,D65,,,Hautes-Pyrénées,,,true,,,,,,,,,,,,0,0
+CH-108,DEPT-66,66,dept,D66,,,Pyrénées-Orientales,,,true,,,,,,,,,,,,0,0
+CH-108,DEPT-67,67,dept,D67,,,Bas-Rhin,,,true,,,,,,,,,,,,0,0
+CH-108,DEPT-68,68,dept,D68,,,Haut-Rhin,,,true,,,,,,,,,,,,0,0
+CH-108,DEPT-69,69,dept,D69,,,Rhône,,,true,,,,,,,,,,,,0,0
+CH-108,DEPT-70,70,dept,D70,,,Haute-Saône,,,true,,,,,,,,,,,,0,0
+CH-108,DEPT-71,71,dept,D71,,,Saône-et-Loire,,,true,,,,,,,,,,,,0,0
+CH-108,DEPT-72,72,dept,D72,,,Sarthe,,,true,,,,,,,,,,,,0,0
+CH-108,DEPT-73,73,dept,D73,,,Savoie,,,true,,,,,,,,,,,,0,0
+CH-108,DEPT-74,74,dept,D74,,,Haute-Savoie,,,true,,,,,,,,,,,,0,0
+CH-108,DEPT-75,75,dept,D75,,,Paris,,,true,,,,,,,,,,,,0,0
+CH-108,DEPT-76,76,dept,D76,,,Seine-Maritime,,,true,,,,,,,,,,,,0,0
+CH-108,DEPT-77,77,dept,D77,,,Seine-et-Marne,,,true,,,,,,,,,,,,0,0
+CH-108,DEPT-78,78,dept,D78,,,Yvelines,,,true,,,,,,,,,,,,0,0
+CH-108,DEPT-79,79,dept,D79,,,Deux-Sèvres,,,true,,,,,,,,,,,,0,0
+CH-108,DEPT-80,80,dept,D80,,,Somme,,,true,,,,,,,,,,,,0,0
+CH-108,DEPT-81,81,dept,D81,,,Tarn,,,true,,,,,,,,,,,,0,0
+CH-108,DEPT-82,82,dept,D82,,,Tarn-et-Garonne,,,true,,,,,,,,,,,,0,0
+CH-108,DEPT-83,83,dept,D83,,,Var,,,true,,,,,,,,,,,,0,0
+CH-108,DEPT-84,84,dept,D84,,,Vaucluse,,,true,,,,,,,,,,,,0,0
+CH-108,DEPT-85,85,dept,D85,,,Vendée,,,true,,,,,,,,,,,,0,0
+CH-108,DEPT-86,86,dept,D86,,,Vienne,,,true,,,,,,,,,,,,0,0
+CH-108,DEPT-87,87,dept,D87,,,Haute-Vienne,,,true,,,,,,,,,,,,0,0
+CH-108,DEPT-88,88,dept,D88,,,Vosges,,,true,,,,,,,,,,,,0,0
+CH-108,DEPT-89,89,dept,D89,,,Yonne,,,true,,,,,,,,,,,,0,0
+CH-108,DEPT-90,90,dept,D90,,,Territoire de Belfort,,,true,,,,,,,,,,,,0,0
+CH-108,DEPT-91,91,dept,D91,,,Essonne,,,true,,,,,,,,,,,,0,0
+CH-108,DEPT-92,92,dept,D92,,,Hauts-de-Seine,,,true,,,,,,,,,,,,0,0
+CH-108,DEPT-93,93,dept,D93,,,Seine-Saint-Denis,,,true,,,,,,,,,,,,0,0
+CH-108,DEPT-94,94,dept,D94,,,Val-de-Marne,,,true,,,,,,,,,,,,0,0
+CH-108,DEPT-95,95,dept,D95,,,Val-d'Oise,,,true,,,,,,,,,,,,0,0
+CH-108,DEPT-971,971,dept,D971,,,Guadeloupe,,,true,,,,,,,,,,,,0,0
+CH-108,DEPT-972,972,dept,D972,,,Martinique,,,true,,,,,,,,,,,,0,0
+CH-108,DEPT-973,973,dept,D973,,,Guyane,,,true,,,,,,,,,,,,0,0
+CH-108,DEPT-974,974,dept,D974,,,La Réunion,,,true,,,,,,,,,,,,0,0
+CH-108,DEPT-976,976,dept,D976,,,Mayotte,,,true,,,,,,,,,,,,0,0
+CH-108,NAT-FR,FR,nat,FRANCE,,,France,,,true,,,,,,,,,,,,0,0
+CH-108,REG-01,01,reg,R01,,,Guadeloupe,,,true,,,,,,,,,,,,0,0
+CH-108,REG-02,02,reg,R02,,,Martinique,,,true,,,,,,,,,,,,0,0
+CH-108,REG-03,03,reg,R03,,,Guyane,,,true,,,,,,,,,,,,0,0
+CH-108,REG-04,04,reg,R04,,,La Réunion,,,true,,,,,,,,,,,,0,0
+CH-108,REG-06,06,reg,R06,,,Mayotte,,,true,,,,,,,,,,,,0,0
+CH-108,REG-11,11,reg,R11,,,Île-de-France,,,true,,,,,,,,,,,,0,0
+CH-108,REG-24,24,reg,R24,,,Centre-Val de Loire,,,true,,,,,,,,,,,,0,0
+CH-108,REG-27,27,reg,R27,,,Bourgogne-Franche-Comté,,,true,,,,,,,,,,,,0,0
+CH-108,REG-28,28,reg,R28,,,Normandie,,,true,,,,,,,,,,,,0,0
+CH-108,REG-32,32,reg,R32,,,Hauts-de-France,,,true,,,,,,,,,,,,0,0
+CH-108,REG-44,44,reg,R44,,,Grand-Est,,,true,,,,,,,,,,,,0,0
+CH-108,REG-52,52,reg,R52,,,Pays de la Loire,,,true,,,,,,,,,,,,0,0
+CH-108,REG-53,53,reg,R53,,,Bretagne,,,true,,{Region Coordinateur},,{coordinateur.region@example.com},,,,,,,,0,0
+CH-108,REG-75,75,reg,R75,,,Nouvelle Aquitaine,,,true,,,,,,,,,,,,0,0
+CH-108,REG-76,76,reg,R76,,,Occitanie,,,true,,,,,,,,,,,,0,0
+CH-108,REG-84,84,reg,R84,,,Auvergne-Rhône-Alpes,,,true,,,,,,,,,,,,0,0
+CH-108,REG-93,93,reg,R93,,,Provence - Alpes - Côte d'Azur,,,true,,,,,,,,,,,,0,0
+CH-108,REG-94,94,reg,R94,,,Corse,,,true,,,,,,,,,,,,0,0
