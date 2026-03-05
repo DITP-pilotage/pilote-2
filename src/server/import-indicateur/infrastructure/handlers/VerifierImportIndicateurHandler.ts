@@ -8,7 +8,7 @@ import { parseForm } from "@/server/import-indicateur/infrastructure/handlers/Pa
 import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
 import { configuration } from "@/config";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
-import { RécupérerVariableContenuUseCase } from "@/server/gestion-contenu/usecases/RécupérerVariableContenuUseCase";
+import { RecupererVariableContenuUseCase } from "@/server/gestion-contenu/usecases/RecupererVariableContenuUseCase";
 import { VerifierFichierIndicateurImporteUseCase } from "@/server/import-indicateur/usecases/VerifierFichierIndicateurImporteUseCase";
 
 const présenterEnContrat = (
@@ -49,7 +49,7 @@ export class VerifierFichierImportIndicateurHandler {
     const fichier = <File>formData.file![0];
 
     const récupérerVariableContenuUseCase =
-      new RécupérerVariableContenuUseCase();
+      new RecupererVariableContenuUseCase();
     const baseSchemaUrl = récupérerVariableContenuUseCase.run({
       nomVariableContenu: "NEXT_PUBLIC_SCHEMA_VALIDATA_URL",
     });

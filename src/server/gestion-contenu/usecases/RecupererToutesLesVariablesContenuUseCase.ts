@@ -2,16 +2,16 @@ import {
   VARIABLE_CONTENU_DISPONIBLE_ENV,
   VariableContenuDisponibleEnv,
 } from "@/server/gestion-contenu/domain/VariableContenuDisponible";
-import { RécupérerVariableContenuUseCase } from "@/server/gestion-contenu/usecases/RécupérerVariableContenuUseCase";
+import { RecupererVariableContenuUseCase } from "@/server/gestion-contenu/usecases/RecupererVariableContenuUseCase";
 
 export class RecupererToutesLesVariablesContenuUseCase {
   run(): VariableContenuDisponibleEnv {
-    const récupérerVariableContenuUseCase =
-      new RécupérerVariableContenuUseCase();
+    const recupererVariableContenuUseCase =
+      new RecupererVariableContenuUseCase();
     return Object.fromEntries(
       VARIABLE_CONTENU_DISPONIBLE_ENV.map((nomVariable) => [
         nomVariable,
-        récupérerVariableContenuUseCase.run({
+        recupererVariableContenuUseCase.run({
           nomVariableContenu: nomVariable,
         }),
       ]),

@@ -1,7 +1,7 @@
 import { VariableContenuDisponibleEnv } from "@/server/gestion-contenu/domain/VariableContenuDisponible";
 import { configuration } from "@/config";
 
-export class RécupérerVariableContenuUseCase {
+export class RecupererVariableContenuUseCase {
   run<T extends keyof VariableContenuDisponibleEnv>({
     nomVariableContenu,
   }: {

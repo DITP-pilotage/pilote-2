@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef } from "react";
 import Script from "next/script";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
-import { RécupérerVariableContenuUseCase } from "@/server/gestion-contenu/usecases/RécupérerVariableContenuUseCase";
+import { RecupererVariableContenuUseCase } from "@/server/gestion-contenu/usecases/RecupererVariableContenuUseCase";
 import data from "../../doc/api/pilote-api.yml";
 
 declare global {
@@ -11,7 +11,7 @@ declare global {
 }
 
 export const getServerSideProps: GetServerSideProps = async () => {
-  const estDocsAPIActive = new RécupérerVariableContenuUseCase().run({
+  const estDocsAPIActive = new RecupererVariableContenuUseCase().run({
     nomVariableContenu: "NEXT_PUBLIC_FF_DOCS_API",
   }) as boolean;
 

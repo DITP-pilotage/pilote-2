@@ -6,7 +6,7 @@ import assert from "node:assert";
 import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
 import { FicheConducteurContrat } from "@/server/fiche-conducteur/app/contrats/FicheConducteurContrat";
 import { PageFicheConducteur } from "@/components/PageFicheConducteur/PageFicheConducteur";
-import { RécupérerVariableContenuUseCase } from "@/server/gestion-contenu/usecases/RécupérerVariableContenuUseCase";
+import { RecupererVariableContenuUseCase } from "@/server/gestion-contenu/usecases/RecupererVariableContenuUseCase";
 import { estAutoriséAConsulterLaFicheConducteur } from "@/client/utils/fiche-conducteur/fiche-conducteur";
 import { getAnneeDateDeBascule } from "@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getAnneeDateDeBascule";
 import { configuration } from "@/config";
@@ -24,7 +24,7 @@ export const getServerSideProps: GetServerSideProps<{
   const session = await auth(context);
 
   const estFicheConducteurDisponible =
-    new RécupérerVariableContenuUseCase().run({
+    new RecupererVariableContenuUseCase().run({
       nomVariableContenu: "NEXT_PUBLIC_FF_FICHE_CONDUCTEUR",
     });
 

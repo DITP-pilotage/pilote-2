@@ -20,7 +20,7 @@ import RécupérerStatistiquesAvancementChantiersUseCase from "@/server/usecase/
 import { presenterEnAvancementsStatistiquesAccueilContrat } from "@/server/chantiers/app/contrats/AvancementsStatistiquesAccueilContrat";
 import { DonneesComparaisonDuTauxDAvancementType } from "@/server/domain/territoire/Territoire.interface";
 import { territoireCodeVersMailleCodeInsee } from "@/server/utils/territoires";
-import { RécupérerVariableContenuUseCase } from "@/server/gestion-contenu/usecases/RécupérerVariableContenuUseCase";
+import { RecupererVariableContenuUseCase } from "@/server/gestion-contenu/usecases/RecupererVariableContenuUseCase";
 import { getAnneeDateDeBascule } from "@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getAnneeDateDeBascule";
 import { configuration } from "@/config";
 import { getContainer } from "@/server/dependances";
@@ -129,7 +129,7 @@ export const getServerSideProps = async (
       )
         .run([chantierId], mailleQuery, session.habilitations, jalon)
         .then(presenterEnAvancementsStatistiquesAccueilContrat),
-      new RécupérerVariableContenuUseCase().run({
+      new RecupererVariableContenuUseCase().run({
         nomVariableContenu: "NEXT_PUBLIC_FF_PPG_ARCHIVE",
       }),
     ]);
