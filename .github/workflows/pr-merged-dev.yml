@@ -57,11 +57,25 @@ jobs:
             echo "changed=false" >> $GITHUB_OUTPUT
           fi
 
-      - name: Install Python, pipenv and Pipfile packages
-        if: steps.datamgmt_changes.outputs.changed == 'true'
-        uses: palewire/install-python-pipenv-pipfile@v4
+      - id: setup-python
+        name: Setup Python
+        uses: actions/setup-python@v5
         with:
           python-version: '3.10'
+
+      - id: install-pipenv
+        name: Install pipenv
+        run: |
+          python -m pip install --upgrade --no-cache-dir pip
+          python -m pip install --no-cache-dir pipenv
+        shell: bash
+
+      - id: cache-pipfile
+        name: Cache Pipfile
+        uses: actions/cache@v4
+        with:
+          path: ~/.local/share/virtualenvs
+          key: ${{ runner.os }}-python-${{ steps.setup-python.outputs.python-version }}-pipenv-${{ hashFiles('data_management/Pipfile.lock') }}
         
       - name: "install dependencies"
         if: steps.datamgmt_changes.outputs.changed == 'true'
@@ -72,7 +86,7 @@ jobs:
         with:
           region: 'osc-secnum-fr1'
           api_token: ${{ secrets.SCALINGO_API_TOKEN }}
-          app_name: 'dev-datajobs'
+          app_name: 'dev-pilote-ditp'
 
       # Ouvre le tunnel et génère la doc dans le même shell pour s'assurer que le tunnel est actif durant dbt docs
       - name: "Create Tunnel and Generate DBT Doc"
