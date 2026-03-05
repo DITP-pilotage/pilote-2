@@ -46,7 +46,7 @@ const RECIPES: Record<string, Recipe> = {
       "Assemble le rapport en texte brut structuré et appelle export_rapport avec le contenu.",
     ],
     outputFormat:
-      "Une courte phrase incitant l'utilisateur a cliquer sur le bouton en dessous pour télécharger le rapport.",
+      'Réponds "Votre rapport est disponible." IMPORTANT : n\'invente et ne donne JAMAIS de lien.',
   },
   autre: {
     steps: [],
