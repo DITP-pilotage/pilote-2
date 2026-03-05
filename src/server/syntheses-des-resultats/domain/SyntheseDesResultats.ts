@@ -53,22 +53,7 @@ export function creerSyntheseDesResultatsBrouillon(
   };
 }
 
-export function publierSyntheseDesResultatsBrouillon(
-  existing: SynthèseDesRésultatsV2,
-  params: ParamsModification,
-): SynthèseDesRésultatsV2 {
-  return {
-    ...existing,
-    contenu: params.contenu,
-    meteo: params.meteo,
-    auteurModificationId: params.auteurModificationId,
-    dateModification: params.dateModification,
-    statut: $Enums.statut_synthese_des_resultats.PUBLIE,
-  };
-}
-
-// eslint-disable-next-line sonarjs/no-identical-functions
-export function modifierSyntheseDesResultatsPublie(
+export function modifierSyntheseDesResultats(
   existing: SynthèseDesRésultatsV2,
   params: ParamsModification,
 ): SynthèseDesRésultatsV2 {

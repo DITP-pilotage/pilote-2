@@ -3,7 +3,7 @@ import { Météo } from "@/server/domain/météo/Météo.interface";
 import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
 import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
 import { EnregistrerSyntheseDesResultatsService } from "@/server/syntheses-des-resultats/services/EnregistrerSyntheseDesResultatsService";
-import { modifierSyntheseDesResultatsPublie } from "@/server/syntheses-des-resultats/domain/SyntheseDesResultats";
+import { modifierSyntheseDesResultats } from "@/server/syntheses-des-resultats/domain/SyntheseDesResultats";
 
 export class ModifierSyntheseDesResultatsPublieeUseCase {
   constructor(
@@ -34,7 +34,7 @@ export class ModifierSyntheseDesResultatsPublieeUseCase {
       syntheseAModifier.territoireCode,
     );
 
-    const synthese = modifierSyntheseDesResultatsPublie(syntheseAModifier, {
+    const synthese = modifierSyntheseDesResultats(syntheseAModifier, {
       contenu,
       meteo,
       auteurModificationId,

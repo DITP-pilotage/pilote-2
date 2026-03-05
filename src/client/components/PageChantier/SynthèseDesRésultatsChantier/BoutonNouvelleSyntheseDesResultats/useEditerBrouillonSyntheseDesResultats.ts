@@ -1,20 +1,21 @@
 import { parseAsStringLiteral, useQueryState } from "nuqs";
 import api from "@/server/infrastructure/api/trpc/api";
 import { récupérerUnCookie } from "@/client/utils/cookies";
-import { pageChantier } from "@/components/PageChantier/PageChantierServerSideContext";
 import { SyntheseDesResultatsFormulaireInputs } from "@/components/PageChantier/SynthèseDesRésultatsChantier/SyntheseDesResultatsFormulaire/SyntheseDesResultatsFormulaire.interface";
+import { SynthèseDesRésultatsV2 } from "@/server/domain/chantier/synthèseDesRésultats/SynthèseDesRésultats.interface";
 import { SYNTHESE_ACTIONS } from "@/components/PageChantier/SynthèseDesRésultatsChantier/AlerteSyntheseDesResultats";
 
-export const useNouvelleSyntheseDesResultats = ({
+export const useEditerBrouillonSyntheseDesResultats = ({
+  brouillon,
   onSuccess,
 }: {
+  brouillon: SynthèseDesRésultatsV2;
   onSuccess: () => void;
 }) => {
-  const { chantier, territoireCode } = pageChantier.useServerSidePropsContext();
-
-  const publierMutation = api.synthèseDesRésultats.publier.useMutation();
-  const enregistrerEnBrouillonMutation =
-    api.synthèseDesRésultats.enregistrerEnBrouillon.useMutation();
+  const publierUnBrouillonMutation =
+    api.synthèseDesRésultats.publierUnBrouillon.useMutation();
+  const modifierLeBrouillonMutation =
+    api.synthèseDesRésultats.modifierLeBrouillon.useMutation();
 
   const [, setAction] = useQueryState(
     "_action",
@@ -26,15 +27,14 @@ export const useNouvelleSyntheseDesResultats = ({
   );
 
   const input = (data: SyntheseDesResultatsFormulaireInputs) => ({
-    réformeId: chantier.id,
-    territoireCode,
+    brouillon,
     contenu: data.contenu,
     meteo: data.meteo,
     csrf: récupérerUnCookie("csrf") ?? "",
   });
 
   const publier = (data: SyntheseDesResultatsFormulaireInputs) =>
-    publierMutation.mutateAsync(input(data), {
+    publierUnBrouillonMutation.mutateAsync(input(data), {
       onSuccess: async () => {
         onSuccess();
         await setAction(null, { shallow: true });
@@ -43,7 +43,7 @@ export const useNouvelleSyntheseDesResultats = ({
     });
 
   const enregistrerEnBrouillon = (data: SyntheseDesResultatsFormulaireInputs) =>
-    enregistrerEnBrouillonMutation.mutateAsync(input(data), {
+    modifierLeBrouillonMutation.mutateAsync(input(data), {
       onSuccess: async () => {
         onSuccess();
         await setAction(null, { shallow: true });

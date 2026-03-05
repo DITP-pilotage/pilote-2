@@ -12,10 +12,9 @@ export const BoutonNouvelleSyntheseDesResultats = () => {
         iconRight={
           <Infobulle classNameIcone="w-5 h-5">
             Vous pouvez ici saisir un nouveau commentaire et le publier ou
-            l&apos;enregistrer en tant que brouillon. Si vous choisissez de
-            publier votre nouveau commentaire, le commentaire précédemment
-            affiché sera automatiquement archivé dans l&apos;historique des
-            commentaires.
+            l'enregistrer en tant que brouillon. Si vous choisissez de publier
+            votre nouveau commentaire, le commentaire précédemment affiché sera
+            automatiquement archivé dans l'historique des commentaires.
           </Infobulle>
         }
         label="Nouveau commentaire"
