@@ -28,13 +28,13 @@ export const synthèseDesRésultatsRouter = créerRouteurTRPC({
       vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
 
       return getContainer("importSyntheseDesResultats")
-        .resolve("modifierUneSyntheseDesResultatsUseCase")
+        .resolve("modifierSyntheseDesResultatsPublieeUseCase")
         .execute({
           syntheseAModifier: input.syntheseAModifier,
           contenu: input.contenu,
-          météo: input.meteo,
-          auteur_modification_id: ctx.session.user.id,
-          date_modification: new Date().toISOString(),
+          meteo: input.meteo,
+          auteurModificationId: ctx.session.user.id,
+          dateModification: new Date().toISOString(),
           habilitations: ctx.session.habilitations,
         });
     }),
@@ -49,15 +49,14 @@ export const synthèseDesRésultatsRouter = créerRouteurTRPC({
       vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
 
       return getContainer("importSyntheseDesResultats")
-        .resolve("créerUneSyntheseDesResultatsUseCase")
+        .resolve("publierSyntheseDesResultatsUseCase")
         .execute({
           chantierId: input.réformeId,
           territoireCode: input.territoireCode,
           contenu: input.contenu,
-          météo: input.meteo,
-          auteur_id: ctx.session.user.id,
-          date_creation: new Date().toISOString(),
-          statut: "PUBLIE",
+          meteo: input.meteo,
+          auteurId: ctx.session.user.id,
+          date: new Date().toISOString(),
           habilitations: ctx.session.habilitations,
         });
     }),
@@ -72,25 +71,16 @@ export const synthèseDesRésultatsRouter = créerRouteurTRPC({
       vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
 
       return getContainer("importSyntheseDesResultats")
-        .resolve("créerUneSyntheseDesResultatsUseCase")
+        .resolve("enregistrerBrouillonSyntheseDesResultatsUseCase")
         .execute({
           chantierId: input.réformeId,
           territoireCode: input.territoireCode,
           contenu: input.contenu,
-          météo: input.meteo,
-          auteur_id: ctx.session.user.id,
-          date_creation: new Date().toISOString(),
-          statut: "BROUILLON",
+          meteo: input.meteo,
+          auteurId: ctx.session.user.id,
+          date: new Date().toISOString(),
           habilitations: ctx.session.habilitations,
         });
-    }),
-
-  récupérerHistorique: procédureProtégée
-    .input(validationSynthèseDesRésultatsContexte)
-    .query(({ input }) => {
-      return getContainer("importSyntheseDesResultats")
-        .resolve("récupérerHistoriqueSyntheseDesResultatsQuery")
-        .run(input.réformeId, input.territoireCode);
     }),
 
   publierUnBrouillon: procédureProtégée
@@ -102,22 +92,14 @@ export const synthèseDesRésultatsRouter = créerRouteurTRPC({
     .mutation(({ input, ctx }) => {
       vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
 
-      const auteur_modification_id = ctx.session.user.id;
-      const date_modification = new Date().toISOString();
-
       return getContainer("importSyntheseDesResultats")
-        .resolve("modifierUneSyntheseDesResultatsUseCase")
+        .resolve("publierBrouillonSyntheseDesResultatsUseCase")
         .execute({
-          syntheseAModifier: {
-            ...input.brouillon,
-            météo: input.brouillon.meteo,
-            auteur_modification_id,
-            date_modification,
-          },
+          brouillon: input.brouillon,
           contenu: input.contenu,
-          météo: input.meteo,
-          auteur_modification_id,
-          date_modification,
+          meteo: input.meteo,
+          auteurModificationId: ctx.session.user.id,
+          dateModification: new Date().toISOString(),
           habilitations: ctx.session.habilitations,
         });
     }),
@@ -131,25 +113,24 @@ export const synthèseDesRésultatsRouter = créerRouteurTRPC({
     .mutation(({ input, ctx }) => {
       vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
 
-      const auteur_modification_id = ctx.session.user.id;
-      const date_modification = new Date().toISOString();
-
       return getContainer("importSyntheseDesResultats")
-        .resolve("modifierUneSyntheseDesResultatsUseCase")
+        .resolve("modifierBrouillonSyntheseDesResultatsUseCase")
         .execute({
-          syntheseAModifier: {
-            ...input.brouillon,
-            météo: input.brouillon.meteo,
-            auteur_modification_id,
-            date_modification,
-          },
+          brouillon: input.brouillon,
           contenu: input.contenu,
-          météo: input.meteo,
-          auteur_modification_id,
-          date_modification,
-          statut: "BROUILLON",
+          meteo: input.meteo,
+          auteurModificationId: ctx.session.user.id,
+          dateModification: new Date().toISOString(),
           habilitations: ctx.session.habilitations,
         });
+    }),
+
+  récupérerHistorique: procédureProtégée
+    .input(validationSynthèseDesRésultatsContexte)
+    .query(({ input }) => {
+      return getContainer("importSyntheseDesResultats")
+        .resolve("récupérerHistoriqueSyntheseDesResultatsQuery")
+        .run(input.réformeId, input.territoireCode);
     }),
 
   recupererDernierBrouillon: procédureProtégée

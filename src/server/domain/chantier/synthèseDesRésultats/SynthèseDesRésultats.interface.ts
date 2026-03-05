@@ -14,17 +14,17 @@ export type SynthèseDesRésultatsV2 = {
   territoireCode: string;
   id: string;
   contenu: string;
-  météo: Météo;
-  auteur_creation_id: string;
-  date_creation: string;
-  auteur_modification_id: string;
-  date_modification: string;
+  meteo: Météo;
+  auteurCreationId: string;
+  dateCreation: string;
+  auteurModificationId: string;
+  dateModification: string;
   statut: $Enums.statut_synthese_des_resultats;
 };
 
 export type SyntheseDesResultatsAvecNomsAuteurs = SynthèseDesRésultatsV2 & {
-  auteur_creation_nom: string;
-  auteur_modification_nom: string;
+  auteurCreationNom: string;
+  auteurModificationNom: string;
   dateDernierBrouillon: string | null;
 };
 

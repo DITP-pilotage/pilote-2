@@ -50,16 +50,16 @@ export class RecupererDerniereSyntheseDesResultatsQuery {
       chantierId: synthese.chantier_id,
       territoireCode: synthese.territoire_code,
       contenu: synthese.commentaire ?? "",
-      météo: (synthese.meteo as Météo) ?? "NON_RENSEIGNEE",
-      auteur_creation_id: synthese.auteur_creation_id ?? "",
-      date_creation: synthese.date_creation.toISOString(),
-      auteur_modification_id: synthese.auteur_modification_id ?? "",
-      date_modification: synthese.date_modification.toISOString(),
+      meteo: (synthese.meteo as Météo) ?? "NON_RENSEIGNEE",
+      auteurCreationId: synthese.auteur_creation_id ?? "",
+      dateCreation: synthese.date_creation.toISOString(),
+      auteurModificationId: synthese.auteur_modification_id ?? "",
+      dateModification: synthese.date_modification.toISOString(),
       statut: synthese.statut,
-      auteur_creation_nom: synthese.auteur_creation
+      auteurCreationNom: synthese.auteur_creation
         ? `${synthese.auteur_creation.prenom} ${synthese.auteur_creation.nom}`
         : "Auteur Inconnu",
-      auteur_modification_nom: synthese.auteur_modification
+      auteurModificationNom: synthese.auteur_modification
         ? `${synthese.auteur_modification.prenom} ${synthese.auteur_modification.nom}`
         : "Auteur Inconnu",
       dateDernierBrouillon,

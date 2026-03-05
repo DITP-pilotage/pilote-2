@@ -32,11 +32,11 @@ export class ImporterSynthesesDesResultatsUseCase {
         territoireCode: synthese.territoire,
         id,
         contenu: synthese.contenu,
-        auteur_creation_id: auteurId,
-        auteur_modification_id: auteurId,
-        météo: synthese.meteo as MétéoSaisissable,
-        date_creation: date.toISOString(),
-        date_modification: date.toISOString(),
+        auteurCreationId: auteurId,
+        auteurModificationId: auteurId,
+        meteo: synthese.meteo as MétéoSaisissable,
+        dateCreation: date.toISOString(),
+        dateModification: date.toISOString(),
         statut: $Enums.statut_synthese_des_resultats.PUBLIE,
       };
 

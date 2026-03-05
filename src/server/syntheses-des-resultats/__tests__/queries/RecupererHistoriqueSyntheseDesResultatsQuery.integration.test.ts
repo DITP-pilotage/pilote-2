@@ -53,7 +53,7 @@ describe("RecupererHistoriqueSyntheseDesResultatsQuery", () => {
         maille: MAILLE,
         code_insee: CODE_INSEE,
       });
-      const synthese1 = await fixtures.syntheseDesResultats({
+      await fixtures.syntheseDesResultats({
         chantier_id: chantier.id,
         territoire_code: TERRITOIRE_CODE,
         maille: MAILLE,
@@ -65,7 +65,7 @@ describe("RecupererHistoriqueSyntheseDesResultatsQuery", () => {
         commentaire: "Première synthèse",
         meteo: "SOLEIL",
       });
-      const synthese2 = await fixtures.syntheseDesResultats({
+      await fixtures.syntheseDesResultats({
         chantier_id: chantier.id,
         territoire_code: TERRITOIRE_CODE,
         maille: MAILLE,
@@ -84,14 +84,12 @@ describe("RecupererHistoriqueSyntheseDesResultatsQuery", () => {
       // Then
       expect(result).toEqual([
         expect.objectContaining({
-          id: synthese2.id,
           contenu: "Deuxième synthèse",
-          auteur_modification_nom: "Jean Dupont",
+          auteurModificationNom: "Jean Dupont",
         }),
         expect.objectContaining({
-          id: synthese1.id,
           contenu: "Première synthèse",
-          auteur_modification_nom: "Jean Dupont",
+          auteurModificationNom: "Jean Dupont",
         }),
       ]);
     }),
@@ -109,7 +107,7 @@ describe("RecupererHistoriqueSyntheseDesResultatsQuery", () => {
         maille: MAILLE,
         code_insee: CODE_INSEE,
       });
-      const synthèsePubliée = await fixtures.syntheseDesResultats({
+      await fixtures.syntheseDesResultats({
         chantier_id: chantier.id,
         territoire_code: TERRITOIRE_CODE,
         maille: MAILLE,
@@ -135,9 +133,7 @@ describe("RecupererHistoriqueSyntheseDesResultatsQuery", () => {
       const result = await query.run(chantier.id, TERRITOIRE_CODE);
 
       // Then
-      expect(result).toEqual([
-        expect.objectContaining({ id: synthèsePubliée.id }),
-      ]);
+      expect(result).toHaveLength(1);
     }),
   );
 
@@ -154,7 +150,7 @@ describe("RecupererHistoriqueSyntheseDesResultatsQuery", () => {
         code_insee: CODE_INSEE,
       });
 
-      const synthèseLaPlusAncienne = await fixtures.syntheseDesResultats({
+      await fixtures.syntheseDesResultats({
         chantier_id: chantier.id,
         territoire_code: TERRITOIRE_CODE,
         maille: MAILLE,
@@ -164,7 +160,7 @@ describe("RecupererHistoriqueSyntheseDesResultatsQuery", () => {
         date_modification: new Date("2025-01-01"),
         commentaire: "Synthèse ancienne",
       });
-      const synthèseLaPlusRécente = await fixtures.syntheseDesResultats({
+      await fixtures.syntheseDesResultats({
         chantier_id: chantier.id,
         territoire_code: TERRITOIRE_CODE,
         maille: MAILLE,
@@ -180,8 +176,8 @@ describe("RecupererHistoriqueSyntheseDesResultatsQuery", () => {
 
       // Then
       expect(result).toEqual([
-        expect.objectContaining({ id: synthèseLaPlusRécente.id }),
-        expect.objectContaining({ id: synthèseLaPlusAncienne.id }),
+        expect.objectContaining({ contenu: "Synthèse récente" }),
+        expect.objectContaining({ contenu: "Synthèse ancienne" }),
       ]);
     }),
   );

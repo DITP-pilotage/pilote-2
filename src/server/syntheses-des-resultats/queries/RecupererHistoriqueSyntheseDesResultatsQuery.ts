@@ -6,10 +6,10 @@ export type SyntheseDesResultatsHistoriqueItem = {
   chantierId: string;
   territoireCode: string;
   contenu: string;
-  météo: Météo;
-  date_creation: string;
-  date_modification: string;
-  auteur_modification_nom: string;
+  meteo: Météo;
+  dateCreation: string;
+  dateModification: string;
+  auteurModificationNom: string;
 };
 
 export class RecupererHistoriqueSyntheseDesResultatsQuery {
@@ -35,14 +35,13 @@ export class RecupererHistoriqueSyntheseDesResultatsQuery {
       });
 
     return syntheses.map((synthese) => ({
-      id: synthese.id,
       chantierId: synthese.chantier_id,
       territoireCode: synthese.territoire_code,
       contenu: synthese.commentaire ?? "",
-      météo: (synthese.meteo as Météo) ?? "NON_RENSEIGNEE",
-      date_creation: synthese.date_creation.toISOString(),
-      date_modification: synthese.date_modification.toISOString(),
-      auteur_modification_nom: synthese.auteur_modification
+      meteo: (synthese.meteo as Météo) ?? "NON_RENSEIGNEE",
+      dateCreation: synthese.date_creation.toISOString(),
+      dateModification: synthese.date_modification.toISOString(),
+      auteurModificationNom: synthese.auteur_modification
         ? `${synthese.auteur_modification.prenom} ${synthese.auteur_modification.nom}`
         : "Auteur Inconnu",
     }));

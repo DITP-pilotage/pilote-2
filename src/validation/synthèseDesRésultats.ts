@@ -23,30 +23,23 @@ export const validationSynthèseDesRésultatsFormulaire = z.object({
   meteo: z.enum(météosSaisissables),
 });
 
+export const validationSyntheseDesResultats = z.object({
+  id: z.string(),
+  chantierId: z.string(),
+  territoireCode: z.string(),
+  contenu: z.string(),
+  meteo: z.enum(météos),
+  auteurCreationId: z.string(),
+  dateCreation: z.string(),
+  auteurModificationId: z.string(),
+  dateModification: z.string(),
+  statut: z.enum(["PUBLIE", "BROUILLON"]),
+});
+
 export const validationBrouillonAPublier = z.object({
-  brouillon: z.object({
-    id: z.string(),
-    chantierId: z.string(),
-    territoireCode: z.string(),
-    auteur_creation_id: z.string(),
-    date_creation: z.string(),
-    statut: z.enum(["PUBLIE", "BROUILLON"]),
-    contenu: z.string(),
-    meteo: z.enum(météos),
-  }),
+  brouillon: validationSyntheseDesResultats,
 });
 
 export const validationSyntheseAModifier = z.object({
-  syntheseAModifier: z.object({
-    id: z.string(),
-    chantierId: z.string(),
-    territoireCode: z.string(),
-    contenu: z.string(),
-    météo: z.enum(météos),
-    auteur_creation_id: z.string(),
-    date_creation: z.string(),
-    auteur_modification_id: z.string(),
-    date_modification: z.string(),
-    statut: z.enum(["PUBLIE", "BROUILLON"]),
-  }),
+  syntheseAModifier: validationSyntheseDesResultats,
 });
