@@ -26,7 +26,6 @@ export const AssistantMessage = ({
     (part) =>
       (part.type === "tool-display_valeurs_indicateur" ||
         part.type === "tool-display_choices" ||
-        part.type === "tool-display_multi_choices" ||
         part.type === "tool-export_rapport") &&
       part.state === "output-available",
   );
