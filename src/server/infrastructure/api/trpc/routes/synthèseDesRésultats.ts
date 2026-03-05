@@ -5,6 +5,7 @@ import {
   vérifierSiLeCSRFEstValide,
 } from "@/server/infrastructure/api/trpc/trpc";
 import {
+  validationBrouillonAPublier,
   validationSyntheseAModifier,
   validationSynthèseDesRésultatsContexte,
   validationSynthèseDesRésultatsFormulaire,
@@ -90,5 +91,72 @@ export const synthèseDesRésultatsRouter = créerRouteurTRPC({
       return getContainer("importSyntheseDesResultats")
         .resolve("récupérerHistoriqueSyntheseDesResultatsQuery")
         .run(input.réformeId, input.territoireCode);
+    }),
+
+  publierUnBrouillon: procédureProtégée
+    .input(
+      zodValidateurCSRF
+        .merge(validationSynthèseDesRésultatsFormulaire)
+        .merge(validationBrouillonAPublier),
+    )
+    .mutation(({ input, ctx }) => {
+      vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
+
+      const auteur_modification_id = ctx.session.user.id;
+      const date_modification = new Date().toISOString();
+
+      return getContainer("importSyntheseDesResultats")
+        .resolve("modifierUneSyntheseDesResultatsUseCase")
+        .execute({
+          syntheseAModifier: {
+            ...input.brouillon,
+            météo: input.brouillon.meteo,
+            auteur_modification_id,
+            date_modification,
+          },
+          contenu: input.contenu,
+          météo: input.meteo,
+          auteur_modification_id,
+          date_modification,
+          habilitations: ctx.session.habilitations,
+        });
+    }),
+
+  modifierLeBrouillon: procédureProtégée
+    .input(
+      zodValidateurCSRF
+        .merge(validationSynthèseDesRésultatsFormulaire)
+        .merge(validationBrouillonAPublier),
+    )
+    .mutation(({ input, ctx }) => {
+      vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
+
+      const auteur_modification_id = ctx.session.user.id;
+      const date_modification = new Date().toISOString();
+
+      return getContainer("importSyntheseDesResultats")
+        .resolve("modifierUneSyntheseDesResultatsUseCase")
+        .execute({
+          syntheseAModifier: {
+            ...input.brouillon,
+            météo: input.brouillon.meteo,
+            auteur_modification_id,
+            date_modification,
+          },
+          contenu: input.contenu,
+          météo: input.meteo,
+          auteur_modification_id,
+          date_modification,
+          statut: "BROUILLON",
+          habilitations: ctx.session.habilitations,
+        });
+    }),
+
+  recupererDernierBrouillon: procédureProtégée
+    .input(validationSynthèseDesRésultatsContexte)
+    .query(({ input, ctx }) => {
+      return getContainer("importSyntheseDesResultats")
+        .resolve("recupererDernierBrouillonSyntheseDesResultatsQuery")
+        .run(input.réformeId, input.territoireCode, ctx.session.user.id);
     }),
 });

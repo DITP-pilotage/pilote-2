@@ -9,6 +9,7 @@ import SynthèseDesRésultatsAffichage from "@/components/PageChantier/Synthèse
 import { pageChantier } from "@/components/PageChantier/PageChantierServerSideContext";
 import SyntheseDesResultatsFormulaire from "@/components/PageChantier/SynthèseDesRésultatsChantier/SyntheseDesResultatsFormulaire/SyntheseDesResultatsFormulaire";
 import { BoutonNouvelleSyntheseDesResultats } from "@/components/PageChantier/SynthèseDesRésultatsChantier/BoutonNouvelleSyntheseDesResultats/BoutonNouvelleSyntheseDesResultats";
+import { BoutonEditerBrouillonSyntheseDesResultats } from "@/components/PageChantier/SynthèseDesRésultatsChantier/BoutonNouvelleSyntheseDesResultats/BoutonEditerBrouillonSyntheseDesResultats";
 import BandeauInformation from "@/components/_commons/BandeauInformation/BandeauInformation";
 import { formaterDate } from "@/client/utils/date/date";
 
@@ -91,7 +92,12 @@ const SyntheseDesResultats: FunctionComponent<SyntheseDesResultatsProps> = ({
                 {!!syntheseDesResultats ? (
                   <SynthèseDesRésultatsHistorique />
                 ) : null}
-                {modeEcriture && <BoutonNouvelleSyntheseDesResultats />}
+                {modeEcriture &&
+                  (syntheseDesResultats?.dateDernierBrouillon ? (
+                    <BoutonEditerBrouillonSyntheseDesResultats />
+                  ) : (
+                    <BoutonNouvelleSyntheseDesResultats />
+                  ))}
               </div>
             </>
           )}

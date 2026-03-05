@@ -5,6 +5,7 @@ import { ModifierUneSyntheseDesResultatsUseCase } from "@/server/syntheses-des-r
 import { CreerUneSyntheseDesResultatsUseCase } from "@/server/syntheses-des-resultats/usecases/CreerUneSyntheseDesResultatsUseCase";
 import { RecupererDerniereSyntheseDesResultatsQuery } from "@/server/syntheses-des-resultats/queries/RecupererDerniereSyntheseDesResultatsQuery";
 import { RecupererHistoriqueSyntheseDesResultatsQuery } from "@/server/syntheses-des-resultats/queries/RecupererHistoriqueSyntheseDesResultatsQuery";
+import { RecupererDernierBrouillonSyntheseDesResultatsQuery } from "@/server/syntheses-des-resultats/queries/RecupererDernierBrouillonSyntheseDesResultatsQuery";
 import SynthèseDesRésultatsRepository from "@/server/domain/chantier/synthèseDesRésultats/SynthèseDesRésultatsRepository.interface";
 import { SynthèseDesRésultatsSQLRepository } from "@/server/infrastructure/accès_données/chantier/synthèseDesRésultats/SynthèseDesRésultatsSQLRepository";
 import { ChantierRepository } from "@/server/chantiers/domain/ports/ChantierRepository";
@@ -20,6 +21,7 @@ export type ImportSyntheseDesResultatsDependencies = {
   créerUneSyntheseDesResultatsUseCase: CreerUneSyntheseDesResultatsUseCase;
   récupérerDerniereSyntheseDesResultatsQuery: RecupererDerniereSyntheseDesResultatsQuery;
   récupérerHistoriqueSyntheseDesResultatsQuery: RecupererHistoriqueSyntheseDesResultatsQuery;
+  recupererDernierBrouillonSyntheseDesResultatsQuery: RecupererDernierBrouillonSyntheseDesResultatsQuery;
   synthèseDesRésultatsRepository: SynthèseDesRésultatsRepository;
   chantierRepository: ChantierRepository;
   transaction: Transaction;
@@ -52,6 +54,9 @@ export const getImportSyntheseDesResultatsContainer = (
       ),
       récupérerHistoriqueSyntheseDesResultatsQuery: asClass(
         RecupererHistoriqueSyntheseDesResultatsQuery,
+      ),
+      recupererDernierBrouillonSyntheseDesResultatsQuery: asClass(
+        RecupererDernierBrouillonSyntheseDesResultatsQuery,
       ),
       importSyntheseDesResultatsAPIHandler: asClass(
         ImportSyntheseDesResultatsAPIHandler,
