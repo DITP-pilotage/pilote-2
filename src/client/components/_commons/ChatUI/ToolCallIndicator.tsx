@@ -45,7 +45,7 @@ export const ToolCallIndicator = ({ part }: { part: DataFetchingToolPart }) => {
   const outputData = hasOutput ? (part as { output?: unknown }).output : null;
 
   return (
-    <p className="text-gray-400 text-xs italic my-2">
+    <div className="text-gray-400 text-xs italic my-2">
       <button
         className="flex items-center gap-1 text-gray-400 cursor-pointer !p-0 hover:bg-transparent"
         onClick={() => setExpanded((prev) => !prev)}
@@ -68,6 +68,6 @@ export const ToolCallIndicator = ({ part }: { part: DataFetchingToolPart }) => {
           Résultats : {JSON.stringify(outputData, null, 2)}
         </pre>
       </AnimateEntry>
-    </p>
+    </div>
   );
 };
