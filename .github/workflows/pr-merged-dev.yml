@@ -99,7 +99,7 @@ jobs:
           PGPASSWORD: ${{ secrets.PGPASSWORD }}
         run: |
           set -e
-          scalingo db-tunnel SCALINGO_POSTGRESQL_URL_READONLY --timeout 60 &
+          scalingo db-tunnel SCALINGO_POSTGRESQL_URL_READONLY &
           TUNNEL_PID=$!
 
           # Trap pour garantir la fermeture du tunnel en sortie ou en cas d'erreur
@@ -110,7 +110,7 @@ jobs:
           }
           trap cleanup_tunnel EXIT ERR
 
-          # Attend que le tunnel soit en place (habituellement sur le port 10000, peut varier)
+          # Attend que le tunnel soit en place sur le port 10000
           for i in {1..20}; do
             sleep 2
             if nc -z localhost 10000; then
