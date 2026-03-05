@@ -23,6 +23,7 @@ export class ModifierUneSyntheseDesResultatsUseCase {
     auteur_modification_id,
     date_modification,
     habilitations,
+    statut = $Enums.statut_synthese_des_resultats.PUBLIE,
   }: {
     syntheseAModifier: SynthèseDesRésultatsV2;
     contenu: string;
@@ -30,6 +31,7 @@ export class ModifierUneSyntheseDesResultatsUseCase {
     auteur_modification_id: string;
     date_modification: string;
     habilitations: Habilitations;
+    statut?: $Enums.statut_synthese_des_resultats;
   }): Promise<void> {
     const habilitation = new Habilitation(habilitations);
     habilitation.vérifierLesHabilitationsEnSaisieDesPublications(
@@ -49,7 +51,7 @@ export class ModifierUneSyntheseDesResultatsUseCase {
         météo,
         auteur_modification_id,
         date_modification,
-        statut: $Enums.statut_synthese_des_resultats.PUBLIE,
+        statut,
       });
     });
   }
