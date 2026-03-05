@@ -1,6 +1,6 @@
-import { FunctionComponent, ReactNode, useMemo } from "react";
-import DOMPurify from "isomorphic-dompurify";
-import { EditeurRiche } from "@/components/_commons/EditeurRiche/EditeurRiche";
+import { FunctionComponent, ReactNode } from "react";
+import { EditeurNouveauté } from "@/components/_commons/EditeurRiche/EditeurNouveauté";
+import { RenduContenuHtml } from "@/components/_commons/EditeurRiche/RenduContenuHtml";
 import { ContenuHtmlStyled } from "./EditeurContenu3Colonnes.styled";
 
 export interface ItemListe {
@@ -38,13 +38,8 @@ export const EditeurContenu3Colonnes: FunctionComponent<
   onContenuChange,
   champsSupplementaires,
   onSauvegarder,
-  contenuPreview,
+  contenuPreview: _contenuPreview,
 }) => {
-  const contenuPreviewSanitise = useMemo(
-    () => DOMPurify.sanitize(contenuPreview),
-    [contenuPreview],
-  );
-
   if (estChargement) {
     return <p>Chargement...</p>;
   }
@@ -96,7 +91,7 @@ export const EditeurContenu3Colonnes: FunctionComponent<
           </button>
         </div>
         <div className="flex-1 overflow-y-auto p-4">
-          <EditeurRiche
+          <EditeurNouveauté
             contenu={contenu}
             onChange={onContenuChange}
             placeholder="Saisissez votre contenu..."
@@ -106,10 +101,9 @@ export const EditeurContenu3Colonnes: FunctionComponent<
 
       <div className="flex-1 border-l border-gray-200 overflow-y-auto p-4">
         <h3 className="text-base font-bold mb-4">Aperçu</h3>
-        <ContenuHtmlStyled
-          dangerouslySetInnerHTML={{ __html: contenuPreviewSanitise }}
-          key={contenu}
-        />
+        <ContenuHtmlStyled key={contenu}>
+          <RenduContenuHtml html={contenu} />
+        </ContenuHtmlStyled>
       </div>
     </div>
   );

@@ -1,10 +1,6 @@
 import { useEditor, EditorContent } from "@tiptap/react";
-import { StarterKit } from "@tiptap/starter-kit";
-import { Link } from "@tiptap/extension-link";
-import { TextStyle } from "@tiptap/extension-text-style";
-import { Color } from "@tiptap/extension-color";
+import { type Extensions } from "@tiptap/core";
 import { Placeholder } from "@tiptap/extension-placeholder";
-import { Underline } from "@tiptap/extension-underline";
 import { FunctionComponent, RefObject, useImperativeHandle } from "react";
 import { TextareaRef } from "@/components/_commons/Textarea";
 import { ÉditeurRicheStyled } from "./ÉditeurRiche.styled";
@@ -14,7 +10,8 @@ export type EditeurRicheRef = {
   focus: () => void;
 };
 
-interface EditeurRicheProps {
+export interface EditeurRicheProps {
+  extensions: Extensions;
   contenu: string;
   onChange: (contenu: string) => void;
   onBlur?: () => void;
@@ -25,6 +22,7 @@ interface EditeurRicheProps {
 }
 
 export const EditeurRiche: FunctionComponent<EditeurRicheProps> = ({
+  extensions,
   contenu,
   onChange,
   onBlur,
@@ -35,16 +33,10 @@ export const EditeurRiche: FunctionComponent<EditeurRicheProps> = ({
 }) => {
   const editor = useEditor({
     extensions: [
-      StarterKit,
-      Link.configure({
-        openOnClick: false,
-      }),
+      ...extensions.filter((ext) => ext.name !== "placeholder"),
       Placeholder.configure({
         placeholder,
       }),
-      TextStyle,
-      Color,
-      Underline,
     ],
     content: contenu,
     immediatelyRender: true,

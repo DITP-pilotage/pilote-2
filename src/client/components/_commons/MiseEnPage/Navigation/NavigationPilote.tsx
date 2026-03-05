@@ -117,6 +117,15 @@ export const NavigationPilote = () => {
           target: "_blank",
         },
         {
+          nom: "Centre d'aide Pilote",
+          lien: "/centre-aide-pilote",
+          matcher: "/centre-aide-pilote",
+          accessible:
+            process.env.NEXT_PUBLIC_FF_CENTRE_AIDE_CUSTOM_PILOTE === "true",
+          prefetch: false,
+          target: "_self",
+        },
+        {
           nom: "Suivi de la complétude",
           lien: "https://copilot-metabase.osc-secnum-fr1.scalingo.io/dashboard/39-tableau-de-bord-de-conformite-pilote",
           matcher: "/suivicompletude",

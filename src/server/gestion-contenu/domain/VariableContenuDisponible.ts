@@ -27,6 +27,7 @@ export const VARIABLE_CONTENU_DISPONIBLE_ENV = [
   "NEXT_PUBLIC_FF_PANEL_ADMIN",
   "NEXT_PUBLIC_FF_MON_PROFIL",
   "NEXT_PUBLIC_FF_ASK_AI",
+  "NEXT_PUBLIC_FF_CENTRE_AIDE_CUSTOM_PILOTE",
 ] as const;
 
 export type VariableContenuDisponibleEnv = {
@@ -52,4 +53,5 @@ export type VariableContenuDisponibleEnv = {
   NEXT_PUBLIC_FF_PANEL_ADMIN: boolean;
   NEXT_PUBLIC_FF_MON_PROFIL: boolean;
   NEXT_PUBLIC_FF_ASK_AI: boolean;
+  NEXT_PUBLIC_FF_CENTRE_AIDE_CUSTOM_PILOTE: boolean;
 };

@@ -304,6 +304,11 @@ const config = convict({
       default: false,
       env: "NEXT_PUBLIC_FF_ASK_AI",
     },
+    centreAideCustomPilote: {
+      format: Boolean,
+      default: false,
+      env: "NEXT_PUBLIC_FF_CENTRE_AIDE_CUSTOM_PILOTE",
+    },
   },
   analytics: {
     doc: "Matomo Analytics",

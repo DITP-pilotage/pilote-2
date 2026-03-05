@@ -2,8 +2,9 @@ import sanitizeHtml from "sanitize-html";
 
 export class SanitizerHTML {
   static sanitize(html: string): string {
-    return sanitizeHtml(html, {
+    const sanitized = sanitizeHtml(html, {
       allowedTags: [
+        "div",
         "p",
         "br",
         "strong",
@@ -31,9 +32,10 @@ export class SanitizerHTML {
         "span",
       ],
       allowedAttributes: {
+        div: ["data-type", "data-title", "data-color"],
         a: ["href", "target", "rel"],
-        img: ["src", "alt", "title"],
-        span: ["style"],
+        img: ["src", "alt", "title", "width", "height", "draggable"],
+        span: ["style", "data-type", "data-icon-type"],
         p: ["style"],
         h1: ["style"],
         h2: ["style"],
@@ -44,7 +46,11 @@ export class SanitizerHTML {
       },
       allowedStyles: {
         "*": {
-          color: [/^#[\dA-Fa-f]{6}$/, /^rgb\((?:\d+,\s*){2}\d+\)$/],
+          color: [
+            /^#[\dA-Fa-f]{6}$/,
+            /^rgb\((?:\d+,\s*){2}\d+\)$/,
+            /^lab\(-?[\d.]+\s+-?[\d.]+\s+-?[\d.]+\)$/,
+          ],
           "text-align": [/^left$/, /^right$/, /^center$/, /^justify$/],
         },
       },
@@ -56,5 +62,6 @@ export class SanitizerHTML {
       allowedIframeHostnames: [],
       allowProtocolRelative: false,
     });
+    return sanitized.replace(/ \/>/g, ">");
   }
 }
