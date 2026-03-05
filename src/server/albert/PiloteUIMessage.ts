@@ -1,6 +1,7 @@
 import type { UIDataTypes, UIMessage } from "ai";
 import type {
   DisplayChoice,
+  ExportRapportOutput,
   ValeursIndicateurDisplay,
 } from "@/server/albert/Albert";
 import type { GetTauxAvancementTerritoireOutput } from "@/server/albert/tools/getTauxAvancementTerritoire";
@@ -32,6 +33,10 @@ export type PiloteUITools = {
   get_valeurs_indicateur: {
     input: { chantier_id: string; territoire_code: string };
     output: GetValeursIndicateurOutput;
+  };
+  export_rapport: {
+    input: { contenu: string };
+    output: ExportRapportOutput;
   };
 };
 

@@ -8,6 +8,7 @@ import {
   Albert,
   displayChoicesTool,
   displayValeursIndicateurTool,
+  exportRapportTool,
 } from "@/server/albert/Albert";
 import { buildChatSystemPrompt } from "@/server/albert/systemPrompt";
 import { getContainer } from "@/server/dependances";
@@ -51,10 +52,11 @@ export const albertRouter = créerRouteurTRPC({
       );
 
       const systemPrompt = buildChatSystemPrompt({ territoiresAccessibles });
-      const getTauxAvancementTerritoire =
-        createGetTauxAvancementTerritoireTool({
+      const getTauxAvancementTerritoire = createGetTauxAvancementTerritoireTool(
+        {
           habilitations: ctx.session.habilitations,
-        });
+        },
+      );
       const getChantiersEnRetard = createGetChantiersEnRetardTool({
         territoiresAccessibles,
       });
@@ -78,6 +80,7 @@ export const albertRouter = créerRouteurTRPC({
           get_valeurs_indicateur: getValeursIndicateur,
           display_choices: displayChoicesTool,
           display_valeurs_indicateur: displayValeursIndicateurTool,
+          export_rapport: exportRapportTool,
         },
       });
     }),

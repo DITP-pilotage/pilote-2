@@ -40,6 +40,13 @@ const RECIPES: Record<string, Recipe> = {
     ],
     outputFormat: VALEURS_INDICATEUR_OUTPUT_FORMAT,
   },
+  exporter_rapport: {
+    steps: [
+      "Analyse la conversation pour identifier les données pertinentes.",
+      "Assemble le rapport en texte brut structuré et appelle export_rapport avec le contenu.",
+    ],
+    outputFormat: null,
+  },
   autre: {
     steps: [],
     outputFormat: null,
@@ -55,6 +62,7 @@ const getInstructionsInputSchema = z.object({
       "chantiers_en_retard",
       "chantiers_en_difficulte",
       "valeurs_indicateur",
+      "exporter_rapport",
       "autre",
     ])
     .describe("L'intention détectée de l'utilisateur"),

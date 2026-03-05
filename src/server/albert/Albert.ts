@@ -13,6 +13,19 @@ import { Prisma } from "@prisma/client";
 import { configuration } from "@/config";
 import { prisma } from "@/server/db/prisma";
 
+const exportRapportInputSchema = z.object({
+  contenu: z.string().describe("Contenu du rapport en texte brut"),
+});
+
+export type ExportRapportOutput = { contenu: string };
+
+export const exportRapportTool = tool({
+  description:
+    "Déclenche le téléchargement d'un rapport en texte brut côté client. Appelle cet outil une fois que tu as assemblé le contenu du rapport à partir des données récupérées.",
+  inputSchema: exportRapportInputSchema,
+  execute: async ({ contenu }): Promise<ExportRapportOutput> => ({ contenu }),
+});
+
 const displayChoicesInputSchema = z.object({
   choices: z
     .array(
@@ -71,7 +84,7 @@ export const displayValeursIndicateurTool = tool({
   }),
 });
 
-const MODEL = "openai/gpt-oss-120b";
+const MODEL = "openweight-large";
 
 export class Albert {
   private static createProvider() {

@@ -5,6 +5,7 @@ import { AssistantMessageText } from "@/components/_commons/ChatUI/AssistantMess
 import { AssistantLoader } from "@/components/_commons/ChatUI/AssistantLoader";
 import { BaseDisplayTool } from "@/components/_commons/ChatUI/BaseDisplayTool";
 import { ChoicesButtons } from "@/components/_commons/ChatUI/ChoicesButtons";
+import { ExportRapportDownload } from "@/components/_commons/ChatUI/ExportRapportDownload";
 import { ValeursIndicateurTable } from "@/components/_commons/ChatUI/ValeursIndicateurTable";
 import { extractMessageText } from "@/components/_commons/ChatUI/utils";
 import { Icone } from "@/components/_commons/Icone";
@@ -24,7 +25,9 @@ export const AssistantMessage = ({
   const hasDisplayTool = message.parts?.some(
     (part) =>
       (part.type === "tool-display_valeurs_indicateur" ||
-        part.type === "tool-display_choices") &&
+        part.type === "tool-display_choices" ||
+        part.type === "tool-display_multi_choices" ||
+        part.type === "tool-export_rapport") &&
       part.state === "output-available",
   );
 
@@ -104,6 +107,14 @@ export const AssistantMessage = ({
             return (
               <div key={index} className="animate-fade-in my-2">
                 <ChoicesButtons choices={part.output.choices} />
+              </div>
+            );
+          }
+          if (part.type === "tool-export_rapport") {
+            if (part.state !== "output-available") return null;
+            return (
+              <div key={index} className="animate-fade-in my-2">
+                <ExportRapportDownload contenu={part.output.contenu} />
               </div>
             );
           }

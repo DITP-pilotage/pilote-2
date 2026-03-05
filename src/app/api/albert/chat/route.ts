@@ -4,6 +4,7 @@ import {
   Albert,
   displayChoicesTool,
   displayValeursIndicateurTool,
+  exportRapportTool,
 } from "@/server/albert/Albert";
 import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
 import { buildChatSystemPrompt } from "@/server/albert/systemPrompt";
@@ -77,6 +78,7 @@ export async function POST(request: Request) {
         get_valeurs_indicateur: getValeursIndicateur,
         display_choices: displayChoicesTool,
         display_valeurs_indicateur: displayValeursIndicateurTool,
+        export_rapport: exportRapportTool,
       },
     });
 
