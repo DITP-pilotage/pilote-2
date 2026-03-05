@@ -1,22 +1,25 @@
-import { ChatScenario, ChatUI } from "@/components/_commons/ChatUI/ChatUI";
+import { ChatScenarios, ChatUI } from "@/components/_commons/ChatUI/ChatUI";
 
-const scenarios: ChatScenario[] = [
-  {
-    label: "Synthèse d'un territoire",
-    message: "Fais moi la synthèse de ",
-    mode: "fill",
-  },
-  {
-    label: "Chantiers en retard",
-    message: "Quels sont les chantiers en retard sur ",
-    mode: "fill",
-  },
-  {
-    label: "Chantiers en difficulté",
-    message: "Quels sont les chantiers en difficulté sur ",
-    mode: "fill",
-  },
-];
+const scenarios: ChatScenarios = {
+  kind: "flat",
+  scenarios: [
+    {
+      label: "Synthèse d'un territoire",
+      message: "Fais moi la synthèse de ",
+      mode: "fill",
+    },
+    {
+      label: "Chantiers en retard",
+      message: "Quels sont les chantiers en retard sur ",
+      mode: "fill",
+    },
+    {
+      label: "Chantiers en difficulté",
+      message: "Quels sont les chantiers en difficulté sur ",
+      mode: "fill",
+    },
+  ],
+};
 
 export const AlbertChat = () => {
   return (

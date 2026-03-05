@@ -11,21 +11,25 @@ import { ChatInputForm } from "@/components/_commons/ChatUI/ChatInputForm";
 import { chatMarkdownStyles } from "@/components/_commons/ChatUI/chatMarkdownStyles";
 import { PiloteUIMessage } from "@/server/albert/PiloteUIMessage";
 import { ChatEmptyState } from "@/components/_commons/ChatUI/ChatEmptyState";
-import type { ChatScenario } from "@/components/_commons/ChatUI/ChatEmptyState";
+import type {
+  ChatScenario,
+  ChatScenarioGroup,
+  ChatScenarios,
+} from "@/components/_commons/ChatUI/ChatEmptyState";
 
-export type { ChatScenario };
+export type { ChatScenario, ChatScenarioGroup, ChatScenarios };
 
 export const ChatUI = ({
   endpoint,
   placeholder = "Posez votre question...",
   className = "h-[calc(100vh-200px)]",
-  scenarios = [],
+  scenarios,
   agentContext,
 }: {
   endpoint: string;
   placeholder?: string;
   className?: string;
-  scenarios?: ChatScenario[];
+  scenarios?: ChatScenarios;
   agentContext?: Record<string, unknown>;
 }) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -94,7 +98,7 @@ export const ChatUI = ({
           className="flex-1 overflow-y-auto bg-white"
         >
           <div className="max-w-6xl mx-auto p-4 space-y-4">
-            {messages.length === 0 && scenarios.length > 0 && (
+            {messages.length === 0 && scenarios && (
               <ChatEmptyState scenarios={scenarios} />
             )}
 

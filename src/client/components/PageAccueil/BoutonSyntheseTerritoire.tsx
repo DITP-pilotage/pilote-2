@@ -2,7 +2,7 @@ import { useState } from "react";
 import { récupérerDétailsSurUnTerritoire } from "@/client/constants/territoires";
 import { Icone } from "@/components/_commons/Icone";
 import { SparklingIcon } from "@/components/_commons/Icones/SparklingIcon";
-import { ChatScenario, ChatUI } from "@/components/_commons/ChatUI/ChatUI";
+import { ChatScenarios, ChatUI } from "@/components/_commons/ChatUI/ChatUI";
 import { ModalePleinEcran } from "@/components/shared/ModalePleinEcran";
 
 export const BoutonSyntheseTerritoire = ({
@@ -14,29 +14,86 @@ export const BoutonSyntheseTerritoire = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const territoire = récupérerDétailsSurUnTerritoire(territoireCode);
+  const estDepartement = territoire.maille === "departementale";
+  const estRegion = territoire.maille === "regionale";
+  const region =
+    estDepartement && territoire.codeParent
+      ? récupérerDétailsSurUnTerritoire(territoire.codeParent)
+      : null;
 
-  const scenarios: ChatScenario[] = [
-    {
-      label: `Synthèse de ${territoire.nomAffiché}`,
-      message: `Fais moi la synthèse de ${territoire.nomAffiché}`,
-      mode: "send",
-    },
-    {
-      label: `Chantiers en retard sur ${territoire.nomAffiché}`,
-      message: `Chantiers en retard sur ${territoire.nomAffiché}`,
-      mode: "send",
-    },
-    {
-      label: `Chantiers en difficulté sur ${territoire.nomAffiché}`,
-      message: `Chantiers en difficulté sur ${territoire.nomAffiché}`,
-      mode: "send",
-    },
-    {
-      label: "Comparer avec un autre territoire",
-      message: `Compare ${territoire.nomAffiché} avec `,
-      mode: "fill",
-    },
-  ];
+  const scenarios: ChatScenarios = {
+    kind: "grouped",
+    groups: [
+      {
+        label: "Synthèse",
+        scenarios: [
+          {
+            label: `Synthèse de ${territoire.nomAffiché}`,
+            message: `Fais moi la synthèse de ${territoire.nomAffiché}`,
+            mode: "send",
+          },
+          {
+            label: "Analyser les chantiers en retard",
+            message: `Analyse les chantiers en retard sur ${territoire.nomAffiché} sur la base des commentaires`,
+            mode: "send",
+          },
+        ],
+      },
+      {
+        label: "Comparaison",
+        scenarios: [
+          {
+            label: "Comparer avec un autre territoire",
+            message: `Compare le taux d'avancement de ${territoire.nomAffiché} avec `,
+            mode: "fill",
+          },
+          {
+            label: `Comparer les taux d'avancement entre le jalon ${jalon} et un autre jalon`,
+            message: `Compare les taux d'avancement de ${territoire.nomAffiché} entre le jalon ${jalon} et `,
+            mode: "fill",
+          },
+          ...(estRegion
+            ? [
+                {
+                  label: `Comparer ${territoire.nomAffiché} avec ses départements`,
+                  message: `Compare ${territoire.nomAffiché} avec ses départements`,
+                  mode: "send" as const,
+                },
+              ]
+            : []),
+          ...(estDepartement && region
+            ? [
+                {
+                  label: `Comparer avec les autres départements de ${region.nomAffiché}`,
+                  message: `Compare ${territoire.nomAffiché} avec les autres départements de ${region.nomAffiché}`,
+                  mode: "send" as const,
+                },
+              ]
+            : []),
+          {
+            label: "Comparer un chantier sur plusieurs territoires",
+            message: `Compare le chantier `,
+            mode: "fill",
+          },
+        ],
+      },
+      {
+        label: "Analyse",
+        scenarios: [
+          {
+            label: "Analyser un chantier sur le territoire",
+            message: `Analyse les indicateurs du chantier `,
+            mode: "fill",
+          },
+          {
+            label: "Identifier les plus grands écarts à la médiane",
+            message: `Identifie les chantiers avec le plus grand écart à la médiane sur ${territoire.nomAffiché}`,
+            mode: "send",
+          },
+        ],
+      },
+    ],
+  };
 
   return (
     <>
