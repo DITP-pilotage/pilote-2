@@ -6,6 +6,7 @@ import { $Enums } from "@prisma/client";
 import { Session } from "next-auth";
 import api from "@/server/infrastructure/api/trpc/api";
 import { useCurrentApplication } from "@/client/hooks/useCurrentApplication";
+import { useEnv } from "@/client/hooks/useEnv";
 import { récupérerUnCookie } from "@/client/utils/cookies";
 import { BoutonContacterEquipePilote } from "@/components/PageAccueil/BoutonContacterEquipePilote";
 import { Utilisateur } from "@/components/_commons/MiseEnPage/EnTete/Utilisateur/Utilisateur";
@@ -27,14 +28,12 @@ const estAdministrateur = (session: Session | null) =>
   session?.profil === ProfilEnum.DITP_ADMIN;
 
 export const useNavigation = () => {
-  const { data: applicationEstDisponible } =
-    api.gestionContenu.recupererVariableContenu.useQuery({
-      nomVariableContenu: "NEXT_PUBLIC_FF_APPLICATION_INDISPONIBLE",
-    });
-  const { data: suiviCompletudeEstDisponible } =
-    api.gestionContenu.recupererVariableContenu.useQuery({
-      nomVariableContenu: "NEXT_PUBLIC_FF_SUIVI_COMPLETUDE",
-    });
+  const applicationEstDisponible = useEnv(
+    "NEXT_PUBLIC_FF_APPLICATION_INDISPONIBLE",
+  );
+  const suiviCompletudeEstDisponible = useEnv(
+    "NEXT_PUBLIC_FF_SUIVI_COMPLETUDE",
+  );
 
   return {
     vérifierValeurApplicationEstIndisponible: applicationEstDisponible,

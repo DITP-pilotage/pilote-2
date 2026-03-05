@@ -8,7 +8,7 @@ import {
 import { FunctionComponent } from "react";
 import { useSession } from "next-auth/react";
 import { sauvegarderFiltres } from "@/stores/useFiltresStoreNew/useFiltresStoreNew";
-import api from "@/server/infrastructure/api/trpc/api";
+import { useEnv } from "@/client/hooks/useEnv";
 import {
   statutArchive,
   statutBrouillon,
@@ -30,10 +30,7 @@ export const FiltresSelectionUnique: FunctionComponent<
 > = ({ categorieDeFiltre, libelle }) => {
   const { data: session } = useSession();
 
-  const { data: variableContenuFFPpgArchive } =
-    api.gestionContenu.recupererVariableContenu.useQuery({
-      nomVariableContenu: "NEXT_PUBLIC_FF_PPG_ARCHIVE",
-    });
+  const variableContenuFFPpgArchive = useEnv("NEXT_PUBLIC_FF_PPG_ARCHIVE");
   const profilPeutAccederAuxBrouillons =
     !!session?.profilAAccèsAuxChantiersBrouillons;
 

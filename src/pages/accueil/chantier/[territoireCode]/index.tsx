@@ -5,7 +5,7 @@ import { useSession } from "next-auth/react";
 import { parseAsStringLiteral, useQueryState } from "nuqs";
 import assert from "node:assert/strict";
 import { useProfilUtilisateurConnecte } from "@/client/hooks/useProfilUtilisateurConnecte";
-import api from "@/server/infrastructure/api/trpc/api";
+import { useEnv } from "@/client/hooks/useEnv";
 import PageChantiers from "@/components/PageAccueil/PageChantiers/PageChantiers";
 import BarreLatérale from "@/components/_commons/BarreLatérale/BarreLatérale";
 import BarreLatéraleEncart from "@/components/_commons/BarreLatérale/BarreLatéraleEncart/BarreLatéraleEncart";
@@ -352,16 +352,8 @@ const ChantierLayout = ({
     );
 
   const profil = useProfilUtilisateurConnecte();
-  const [variableContenu] =
-    api.gestionContenu.recupererVariableContenu.useSuspenseQuery({
-      nomVariableContenu: "NEXT_PUBLIC_FF_MON_PROFIL",
-    });
-  const [ffAskAI] =
-    api.gestionContenu.recupererVariableContenu.useSuspenseQuery({
-      nomVariableContenu: "NEXT_PUBLIC_FF_ASK_AI",
-    });
-
-  const monProfilEstDisponible = variableContenu;
+  const monProfilEstDisponible = useEnv("NEXT_PUBLIC_FF_MON_PROFIL");
+  const ffAskAI = useEnv("NEXT_PUBLIC_FF_ASK_AI");
   const doitAfficherModaleRenseignerService =
     !!monProfilEstDisponible &&
     (profil.service == null || profil.fonction == null);

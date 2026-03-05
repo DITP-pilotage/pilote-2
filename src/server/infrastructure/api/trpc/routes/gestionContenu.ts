@@ -11,6 +11,7 @@ import { RécupérerMessageInformationUseCase } from "@/server/gestion-contenu/u
 import { presenterEnMessageInformationContrat } from "@/server/app/contrats/MessageInformationContrat";
 import { RécupérerVariableContenuUseCase } from "@/server/gestion-contenu/usecases/RécupérerVariableContenuUseCase";
 import { VARIABLE_CONTENU_DISPONIBLE_ENV } from "@/server/gestion-contenu/domain/VariableContenuDisponible";
+import { RecupererToutesLesVariablesContenuUseCase } from "@/server/gestion-contenu/usecases/RecupererToutesLesVariablesContenuUseCase";
 import { getContainer } from "@/server/dependances";
 
 export const validationVariableContenu = z.object({
@@ -53,4 +54,9 @@ export const gestionContenuRouter = créerRouteurTRPC({
         nomVariableContenu: input.nomVariableContenu,
       });
     }),
+  recupererToutesLesVariablesContenu: procédureNonConnecte.query(() => {
+    const récupérerToutesLesVariablesContenuUseCase =
+      new RecupererToutesLesVariablesContenuUseCase();
+    return récupérerToutesLesVariablesContenuUseCase.run();
+  }),
 });

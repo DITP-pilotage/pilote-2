@@ -8,8 +8,8 @@ import {
 } from "nuqs";
 import { Dialog } from "radix-ui";
 import { horodatage } from "@/client/utils/date/date";
-import api from "@/server/infrastructure/api/trpc/api";
 import { getAnneeDateDeBascule } from "@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getAnneeDateDeBascule";
+import { useEnv } from "@/client/hooks/useEnv";
 import { useSelecteurJalon } from "@/components/_commons/SelecteurJalon/useSelecteurJalon";
 import { Icone } from "@/components/_commons/Icone";
 import { CheckLineIcon } from "@/components/_commons/Icones/CheckLineIcon";
@@ -83,11 +83,9 @@ export const EtapeRecapitulatif = ({
     }),
   );
 
-  const { data: dataBasculeValeurAnneePrecedente } =
-    api.gestionContenu.recupererVariableContenu.useQuery({
-      nomVariableContenu:
-        "NEXT_PUBLIC_DATE_BASCULE_AFFICHAGE_VALEURS_ANNEE_PRECEDENTE",
-    });
+  const dataBasculeValeurAnneePrecedente = useEnv(
+    "NEXT_PUBLIC_DATE_BASCULE_AFFICHAGE_VALEURS_ANNEE_PRECEDENTE",
+  );
 
   const { listeJalonAAfficher } = useSelecteurJalon();
   const [filtres] = useQueryStates({
@@ -104,7 +102,7 @@ export const EtapeRecapitulatif = ({
     jalon: parseAsStringLiteral(listeJalonAAfficher).withDefault(
       getAnneeDateDeBascule(
         new Date(),
-        dataBasculeValeurAnneePrecedente as string,
+        dataBasculeValeurAnneePrecedente,
       ).toString(),
     ),
     optionsExport: parseAsString.withDefault("identifiant"),

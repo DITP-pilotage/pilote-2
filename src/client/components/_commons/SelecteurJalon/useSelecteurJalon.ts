@@ -1,5 +1,5 @@
-import api from "@/server/infrastructure/api/trpc/api";
 import { getAnneeDateDeBascule } from "@/client/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getAnneeDateDeBascule";
+import { useEnv } from "@/client/hooks/useEnv";
 
 const PREMIER_JALON = 2022;
 const listeJalonAAfficher = Array.from(
@@ -9,14 +9,12 @@ const listeJalonAAfficher = Array.from(
 export type JalonsAAfficherType = (typeof listeJalonAAfficher)[number];
 
 export const useSelecteurJalon = () => {
-  const { data: dateBasculeValeurAnneePrecedente } =
-    api.gestionContenu.recupererVariableContenu.useQuery({
-      nomVariableContenu:
-        "NEXT_PUBLIC_DATE_BASCULE_AFFICHAGE_VALEURS_ANNEE_PRECEDENTE",
-    });
+  const dateBasculeValeurAnneePrecedente = useEnv(
+    "NEXT_PUBLIC_DATE_BASCULE_AFFICHAGE_VALEURS_ANNEE_PRECEDENTE",
+  );
   const jalonAAfficherParDefaut: JalonsAAfficherType = getAnneeDateDeBascule(
     new Date(),
-    dateBasculeValeurAnneePrecedente as string,
+    dateBasculeValeurAnneePrecedente,
   ).toString();
   const listeOptionsJalon: {
     libellé: JalonsAAfficherType;

@@ -101,6 +101,7 @@ export async function proxy(request: NextRequest) {
   const routesTrpcPubliques = [
     "/api/trpc/gestionContenu.recupererMessageInformation",
     "/api/trpc/gestionContenu.recupererVariableContenu",
+    "/api/trpc/gestionContenu.recupererToutesLesVariablesContenu",
   ];
 
   const estRoutePublique =
