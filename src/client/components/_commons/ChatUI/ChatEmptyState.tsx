@@ -15,11 +15,7 @@ export type ChatScenarios =
   | { kind: "flat"; scenarios: ChatScenario[] }
   | { kind: "grouped"; groups: ChatScenarioGroup[] };
 
-export const ChatEmptyState = ({
-  scenarios,
-}: {
-  scenarios: ChatScenarios;
-}) => {
+export const ChatEmptyState = ({ scenarios }: { scenarios: ChatScenarios }) => {
   const { sendMessage, fillInput } = useChatContext();
 
   const handleClick = (scenario: ChatScenario) => {
