@@ -30,7 +30,8 @@ export const ChatUI = ({
 }) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const lastAssistantMessageRef = useRef<HTMLDivElement>(null);
+  const userHasScrolledRef = useRef(false);
+  const prevMessageCountRef = useRef(0);
   const fillInputRef = useRef<((text: string) => void) | null>(null);
   const chatRef = useRef(
     new Chat<PiloteUIMessage>({
@@ -46,22 +47,32 @@ export const ChatUI = ({
   });
 
   useEffect(() => {
+    if (messages.length !== prevMessageCountRef.current) {
+      userHasScrolledRef.current = false;
+      prevMessageCountRef.current = messages.length;
+    }
+  }, [messages]);
+
+  useEffect(() => {
     if (messages.length === 0) return;
+    if (userHasScrolledRef.current) return;
 
     setTimeout(() => {
-      const container = scrollContainerRef.current;
-      const lastMessage = lastAssistantMessageRef.current;
-
-      if (container && lastMessage) {
-        const containerRect = container.getBoundingClientRect();
-        const messageRect = lastMessage.getBoundingClientRect();
-
-        if (messageRect.top < containerRect.top + 60) return;
-      }
-
       messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }, 100);
   }, [messages]);
+
+  const handleScroll = useCallback(() => {
+    const container = scrollContainerRef.current;
+    if (!container) return;
+
+    const { scrollTop, scrollHeight, clientHeight } = container;
+    const isNearBottom = scrollHeight - scrollTop - clientHeight < 50;
+
+    if (!isNearBottom) {
+      userHasScrolledRef.current = true;
+    }
+  }, []);
 
   const fillInput = useCallback((text: string) => {
     fillInputRef.current?.(text);
@@ -79,6 +90,7 @@ export const ChatUI = ({
 
         <div
           ref={scrollContainerRef}
+          onScroll={handleScroll}
           className="flex-1 overflow-y-auto bg-white"
         >
           <div className="max-w-6xl mx-auto p-4 space-y-4">
@@ -87,13 +99,8 @@ export const ChatUI = ({
             )}
 
             {messages.map((message, index) => {
-              const isLastAssistant =
-                message.role === "assistant" && index === messages.length - 1;
               return (
-                <div
-                  key={message.id}
-                  ref={isLastAssistant ? lastAssistantMessageRef : undefined}
-                >
+                <div key={message.id}>
                   {message.role === "user" ? (
                     <div className="max-w-3xl mx-auto flex justify-end">
                       <UserMessage message={message} />

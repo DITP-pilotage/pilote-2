@@ -6,7 +6,11 @@ export type ChatScenario = {
   mode: "send" | "fill";
 };
 
-export const ChatEmptyState = ({ scenarios }: { scenarios: ChatScenario[] }) => {
+export const ChatEmptyState = ({
+  scenarios,
+}: {
+  scenarios: ChatScenario[];
+}) => {
   const { sendMessage, fillInput } = useChatContext();
 
   const handleClick = (scenario: ChatScenario) => {
