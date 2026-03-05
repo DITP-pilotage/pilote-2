@@ -24,10 +24,14 @@ const getTauxAvancementTerritoireInputSchema = z.object({
 export type GetTauxAvancementTerritoireResult = {
   territoire_code: string;
   jalon: number;
-  taux_avancement_global: number | null;
-  mediane_repartition: number | null;
+  taux_avancement_global: string;
+  mediane_repartition: string;
   position_mediane: "EN_RETARD" | "EN_AVANCE" | "DANS_LA_MEDIANE" | null;
 };
+
+function formatPourcentage(value: number | null | undefined): string {
+  return `${value?.toFixed(0) ?? "- "}%`;
+}
 
 export type GetTauxAvancementTerritoireOutput =
   GetTauxAvancementTerritoireResult;
@@ -131,8 +135,8 @@ Utilise cet outil quand l'utilisateur demande :
         return {
           territoire_code: input.territoire_code,
           jalon: input.jalon,
-          taux_avancement_global,
-          mediane_repartition,
+          taux_avancement_global: formatPourcentage(taux_avancement_global),
+          mediane_repartition: formatPourcentage(mediane_repartition),
           position_mediane,
         };
       },
