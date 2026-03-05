@@ -2,6 +2,7 @@ import { parseAsBoolean, parseAsStringLiteral, useQueryState } from "nuqs";
 import api from "@/server/infrastructure/api/trpc/api";
 import { récupérerUnCookie } from "@/client/utils/cookies";
 import { pageChantier } from "@/components/PageChantier/PageChantierServerSideContext";
+import { SYNTHESE_ACTIONS } from "@/components/PageChantier/SynthèseDesRésultatsChantier/AlerteSyntheseDesResultats";
 import { SyntheseDesResultatsFormulaireInputs } from "./SyntheseDesResultatsFormulaire.interface";
 
 export const useModifierSyntheseDesResultats = () => {
@@ -11,7 +12,7 @@ export const useModifierSyntheseDesResultats = () => {
 
   const [, setAction] = useQueryState(
     "_action",
-    parseAsStringLiteral(["creation-reussie", ""]).withDefault("").withOptions({
+    parseAsStringLiteral(SYNTHESE_ACTIONS).withDefault("").withOptions({
       history: "push",
       shallow: false,
       clearOnDefault: true,
@@ -37,7 +38,8 @@ export const useModifierSyntheseDesResultats = () => {
       },
       {
         onSuccess: async () => {
-          setAction("creation-reussie");
+          setAction(null, { shallow: true });
+          setAction("modification-reussie", { shallow: true });
           await setModeÉdition(false);
         },
       },

@@ -9,9 +9,16 @@ import SynthèseDesRésultats, {
 import { Météo } from "@/server/domain/météo/Météo.interface";
 import Chantier from "@/server/domain/chantier/Chantier.interface";
 import { territoireCodeVersMailleCodeInsee } from "@/server/utils/territoires";
-import { prisma } from "@/server/db/prisma";
+import { getInitialContainerWithTransversalDependencies } from "@/server/InitialDependencies";
 
 export class SynthèseDesRésultatsSQLRepository implements SynthèseDesRésultatsRepository {
+  private prismaClient =
+    getInitialContainerWithTransversalDependencies().resolve("prisma");
+
+  get prisma() {
+    return this.prismaClient.getInstance();
+  }
+
   async save({
     chantierId,
     territoireCode,
@@ -27,7 +34,7 @@ export class SynthèseDesRésultatsSQLRepository implements SynthèseDesRésulta
     const { maille, codeInsee } =
       territoireCodeVersMailleCodeInsee(territoireCode);
 
-    await prisma.synthese_des_resultats.upsert({
+    await this.prisma.synthese_des_resultats.upsert({
       where: { id },
       create: {
         id,
@@ -58,7 +65,7 @@ export class SynthèseDesRésultatsSQLRepository implements SynthèseDesRésulta
     maille: Maille,
     codeInsee: CodeInsee,
   ): Promise<Record<Chantier["id"], SynthèseDesRésultats>> {
-    const synthèsesDesRésultats = await prisma.$queryRaw<
+    const synthèsesDesRésultats = await this.prisma.$queryRaw<
       (synthese_des_resultats & { auteur_prenom: string; auteur_nom: string })[]
     >`
       SELECT s.*, utilisateur.prenom as auteur_prenom, utilisateur.nom as auteur_nom

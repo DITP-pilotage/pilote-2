@@ -28,22 +28,21 @@ export class RecupererDerniereSyntheseDesResultatsQuery {
 
     if (!synthese) return null;
 
-    const derniereSyntheseTousStatutsAuteur = await this.deps.prisma
+    const dernierBrouillonAuteur = await this.deps.prisma
       .getInstance()
       .synthese_des_resultats.findFirst({
         where: {
           chantier_id: chantierId,
           territoire_code: territoireCode,
           auteur_modification_id: utilisateurId,
+          statut: $Enums.statut_synthese_des_resultats.BROUILLON,
         },
         orderBy: { date_modification: "desc" },
       });
 
-    const dateDernierBrouillon =
-      derniereSyntheseTousStatutsAuteur?.statut ===
-      $Enums.statut_synthese_des_resultats.BROUILLON
-        ? derniereSyntheseTousStatutsAuteur.date_modification.toISOString()
-        : null;
+    const dateDernierBrouillon = dernierBrouillonAuteur
+      ? dernierBrouillonAuteur.date_modification.toISOString()
+      : null;
 
     return {
       id: synthese.id,
