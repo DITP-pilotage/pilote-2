@@ -109,7 +109,7 @@ export const getServerSideProps = async (
       dependencies.getIndicateurRepository().récupérerParChantierId(chantierId),
       getContainer("importSyntheseDesResultats")
         .resolve("récupérerDerniereSyntheseDesResultatsQuery")
-        .run(chantierId, territoireCode),
+        .run(chantierId, territoireCode, session.user!.id),
       new RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase(
         dependencies.getCommentaireRepository(),
       ).run([chantierId], territoireCode, session.habilitations),

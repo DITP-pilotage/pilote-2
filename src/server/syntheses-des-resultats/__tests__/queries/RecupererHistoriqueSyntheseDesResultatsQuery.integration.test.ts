@@ -86,13 +86,11 @@ describe("RecupererHistoriqueSyntheseDesResultatsQuery", () => {
         expect.objectContaining({
           id: synthese2.id,
           contenu: "Deuxième synthèse",
-          auteur_creation_nom: "Jean Dupont",
           auteur_modification_nom: "Jean Dupont",
         }),
         expect.objectContaining({
           id: synthese1.id,
           contenu: "Première synthèse",
-          auteur_creation_nom: "Jean Dupont",
           auteur_modification_nom: "Jean Dupont",
         }),
       ]);

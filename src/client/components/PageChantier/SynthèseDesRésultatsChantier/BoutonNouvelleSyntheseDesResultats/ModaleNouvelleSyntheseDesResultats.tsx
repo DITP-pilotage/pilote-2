@@ -19,6 +19,7 @@ import { SelecteurMeteo } from "@/components/PageChantier/SynthèseDesRésultats
 import { SyntheseDesResultatsFormulaireInputs } from "@/components/PageChantier/SynthèseDesRésultatsChantier/SyntheseDesResultatsFormulaire/SyntheseDesResultatsFormulaire.interface";
 import { BoutonSousLigné } from "@/components/_commons/BoutonSousLigné/BoutonSousLigné";
 import { SaveIcon } from "@/components/_commons/Icones/SaveIcon";
+import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
 import { useNouvelleSyntheseDesResultats } from "./useNouvelleSyntheseDesResultats";
 
 export const ModaleNouvelleSyntheseDesResultats: FunctionComponent<
@@ -26,8 +27,12 @@ export const ModaleNouvelleSyntheseDesResultats: FunctionComponent<
 > = ({ children }) => {
   const { syntheseDesResultats } = pageChantier.useServerSidePropsContext();
   const [open, setOpen] = useState(false);
+  const refreshRouter = useRefreshRouter();
   const { publier, enregistrerEnBrouillon } = useNouvelleSyntheseDesResultats({
-    onSuccess: () => setOpen(false),
+    onSuccess: () => {
+      setOpen(false);
+      refreshRouter();
+    },
   });
 
   const {

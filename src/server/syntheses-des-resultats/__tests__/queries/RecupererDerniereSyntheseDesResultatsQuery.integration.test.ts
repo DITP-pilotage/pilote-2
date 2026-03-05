@@ -22,6 +22,7 @@ describe("RecupererDerniereSyntheseDesResultatsQuery", () => {
     "retourne null quand aucune synthèse n'existe pour ce chantier/territoire",
     createIntegrationTest(async () => {
       // Given
+      const auteur = await fixtures.utilisateur();
       const chantier = await fixtures.chantierIdentite();
       await fixtures.chantierTerritoire({
         id: chantier.id,
@@ -31,7 +32,7 @@ describe("RecupererDerniereSyntheseDesResultatsQuery", () => {
       });
 
       // When
-      const result = await query.run(chantier.id, TERRITOIRE_CODE);
+      const result = await query.run(chantier.id, TERRITOIRE_CODE, auteur.id);
 
       // Then
       expect(result).toBeNull();
@@ -67,7 +68,7 @@ describe("RecupererDerniereSyntheseDesResultatsQuery", () => {
       });
 
       // When
-      const result = await query.run(chantier.id, TERRITOIRE_CODE);
+      const result = await query.run(chantier.id, TERRITOIRE_CODE, auteur.id);
 
       // Then
       expect(result).toEqual({
@@ -83,6 +84,7 @@ describe("RecupererDerniereSyntheseDesResultatsQuery", () => {
         statut: $Enums.statut_synthese_des_resultats.PUBLIE,
         auteur_creation_nom: "Jean Dupont",
         auteur_modification_nom: "Jean Dupont",
+        dateDernierBrouillon: null,
       });
     }),
   );
@@ -112,10 +114,106 @@ describe("RecupererDerniereSyntheseDesResultatsQuery", () => {
       });
 
       // When
-      const result = await query.run(chantier.id, TERRITOIRE_CODE);
+      const result = await query.run(chantier.id, TERRITOIRE_CODE, auteur.id);
 
       // Then
       expect(result).toBeNull();
+    }),
+  );
+
+  it(
+    "retourne la date du brouillon quand il est plus récent que le dernier publié",
+    createIntegrationTest(async () => {
+      // Given
+      const auteur = await fixtures.utilisateur();
+      const chantier = await fixtures.chantierIdentite();
+      await fixtures.chantierTerritoire({
+        id: chantier.id,
+        territoire_code: TERRITOIRE_CODE,
+        maille: MAILLE,
+        code_insee: CODE_INSEE,
+      });
+
+      await fixtures.syntheseDesResultats({
+        chantier_id: chantier.id,
+        territoire_code: TERRITOIRE_CODE,
+        maille: MAILLE,
+        code_insee: CODE_INSEE,
+        auteur_creation_id: auteur.id,
+        auteur_modification_id: auteur.id,
+        date_modification: new Date("2025-01-01"),
+        commentaire: "Synthèse publiée",
+        statut: $Enums.statut_synthese_des_resultats.PUBLIE,
+      });
+      const brouillon = await fixtures.syntheseDesResultats({
+        chantier_id: chantier.id,
+        territoire_code: TERRITOIRE_CODE,
+        maille: MAILLE,
+        code_insee: CODE_INSEE,
+        auteur_creation_id: auteur.id,
+        auteur_modification_id: auteur.id,
+        date_modification: new Date("2025-06-01"),
+        commentaire: "Brouillon récent",
+        statut: $Enums.statut_synthese_des_resultats.BROUILLON,
+      });
+
+      // When
+      const result = await query.run(chantier.id, TERRITOIRE_CODE, auteur.id);
+
+      // Then
+      expect(result).toEqual(
+        expect.objectContaining({
+          dateDernierBrouillon: brouillon.date_modification.toISOString(),
+        }),
+      );
+    }),
+  );
+
+  it(
+    "retourne null pour dateDernierBrouillon quand le brouillon est plus ancien que le dernier publié",
+    createIntegrationTest(async () => {
+      // Given
+      const auteur = await fixtures.utilisateur();
+      const chantier = await fixtures.chantierIdentite();
+      await fixtures.chantierTerritoire({
+        id: chantier.id,
+        territoire_code: TERRITOIRE_CODE,
+        maille: MAILLE,
+        code_insee: CODE_INSEE,
+      });
+
+      await fixtures.syntheseDesResultats({
+        chantier_id: chantier.id,
+        territoire_code: TERRITOIRE_CODE,
+        maille: MAILLE,
+        code_insee: CODE_INSEE,
+        auteur_creation_id: auteur.id,
+        auteur_modification_id: auteur.id,
+        date_modification: new Date("2025-01-01"),
+        commentaire: "Brouillon ancien",
+        statut: $Enums.statut_synthese_des_resultats.BROUILLON,
+      });
+      await fixtures.syntheseDesResultats({
+        chantier_id: chantier.id,
+        territoire_code: TERRITOIRE_CODE,
+        maille: MAILLE,
+        code_insee: CODE_INSEE,
+        auteur_creation_id: auteur.id,
+        auteur_modification_id: auteur.id,
+        date_modification: new Date("2025-06-01"),
+        commentaire: "Synthèse publiée récente",
+        statut: $Enums.statut_synthese_des_resultats.PUBLIE,
+      });
+
+      // When
+      const result = await query.run(chantier.id, TERRITOIRE_CODE, auteur.id);
+
+      // Then
+      expect(result).toEqual(
+        expect.objectContaining({
+          dateDernierBrouillon: null,
+        }),
+      );
     }),
   );
 
@@ -154,13 +252,63 @@ describe("RecupererDerniereSyntheseDesResultatsQuery", () => {
       });
 
       // When
-      const result = await query.run(chantier.id, TERRITOIRE_CODE);
+      const result = await query.run(chantier.id, TERRITOIRE_CODE, auteur.id);
 
       // Then
       expect(result).toEqual(
         expect.objectContaining({
           id: synthèseLaPlusRécente.id,
           contenu: "Synthèse récente",
+        }),
+      );
+    }),
+  );
+
+  it(
+    "retourne null pour dateDernierBrouillon quand le brouillon appartient à un autre auteur",
+    createIntegrationTest(async () => {
+      // Given
+      const auteur = await fixtures.utilisateur();
+      const autreAuteur = await fixtures.utilisateur();
+      const chantier = await fixtures.chantierIdentite();
+      await fixtures.chantierTerritoire({
+        id: chantier.id,
+        territoire_code: TERRITOIRE_CODE,
+        maille: MAILLE,
+        code_insee: CODE_INSEE,
+      });
+
+      await fixtures.syntheseDesResultats({
+        chantier_id: chantier.id,
+        territoire_code: TERRITOIRE_CODE,
+        maille: MAILLE,
+        code_insee: CODE_INSEE,
+        auteur_creation_id: auteur.id,
+        auteur_modification_id: auteur.id,
+        date_modification: new Date("2025-01-01"),
+        commentaire: "Synthèse publiée",
+        statut: $Enums.statut_synthese_des_resultats.PUBLIE,
+      });
+      // Le brouillon le plus récent appartient à autreAuteur
+      await fixtures.syntheseDesResultats({
+        chantier_id: chantier.id,
+        territoire_code: TERRITOIRE_CODE,
+        maille: MAILLE,
+        code_insee: CODE_INSEE,
+        auteur_creation_id: autreAuteur.id,
+        auteur_modification_id: autreAuteur.id,
+        date_modification: new Date("2025-06-01"),
+        commentaire: "Brouillon d'un autre auteur",
+        statut: $Enums.statut_synthese_des_resultats.BROUILLON,
+      });
+
+      // When
+      const result = await query.run(chantier.id, TERRITOIRE_CODE, auteur.id);
+
+      // Then
+      expect(result).toEqual(
+        expect.objectContaining({
+          dateDernierBrouillon: null,
         }),
       );
     }),
