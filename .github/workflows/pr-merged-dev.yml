@@ -148,11 +148,11 @@ jobs:
           git fetch origin gh-pages --depth=1
           git checkout -B gh-pages origin/gh-pages
           
-          # On supprime le dossier docs et on le met à jour avec le dossier tmp
-          rm -rf docs
-          mv tmp docs
+          # On supprime le dossier docs/dbt et on le met à jour avec le dossier tmp
+          rm -rf docs/dbt
+          mv tmp docs/dbt
           rm -rf tmp
-          git add docs
+          git add docs/dbt
           # Commit seulement s'il y a des changements
           if ! git diff --cached --quiet; then
             git commit -m "Mise à jour de la documentation dbt"

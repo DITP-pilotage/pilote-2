@@ -347,7 +347,7 @@ pipenv run dbt docs generate && pipenv run dbt docs serve
 Cette ligne de commande ouvrira une interface web avec laquelle vous pourrez interagir. 
 Une petite icône bleue en bas à droite permet d'afficher le DAG.
 
-La doc pour la branche `dev` est hébergée publiquement à l'adresse : [https://ditp-pilotage.github.io/pilote-2/](https://ditp-pilotage.github.io/pilote-2/) via GitHub Pages.
+La doc pour la branche `dev` est hébergée publiquement à l'adresse : [https://ditp-pilotage.github.io/pilote-2/docs/dbt](https://ditp-pilotage.github.io/pilote-2/docs/dbt) via GitHub Pages.
 
 La mise à jour est effectuée grâce à une [GitHub Action](../.github/workflows/pr-merged-dev.yml) qui push la doc dbt sur la branche `gh-pages` à chaque changement de celle-ci.
 
