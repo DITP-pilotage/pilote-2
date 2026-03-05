@@ -48,7 +48,7 @@ describe("ModifierNouveauteUseCase", () => {
     ).rejects.toThrow(BadRequestError);
   });
 
-  it("Doit lancer une erreur si le contenu n'est pas valide", async () => {
+  it("Doit sanitizer le contenu avant de modifier la nouveauté", async () => {
     // Given
     const id = "123";
     const version = "1.0.0";
@@ -56,8 +56,13 @@ describe("ModifierNouveauteUseCase", () => {
     const contenu = '<script>alert("XSS")</script>';
 
     // When
-    await expect(
-      modifierNouveauteUseCase.execute({ id, version, date, contenu }),
-    ).rejects.toThrow(BadRequestError);
+    await modifierNouveauteUseCase.execute({ id, version, date, contenu });
+
+    // Then
+    expect(nouveauteRepository.modifier).toHaveBeenCalledWith(
+      expect.objectContaining({
+        contenu: "",
+      }),
+    );
   });
 });

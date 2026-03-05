@@ -46,7 +46,7 @@ describe("CreerNouveauteUseCase", () => {
     ).rejects.toThrow(BadRequestError);
   });
 
-  it("Doit lancer une erreur si le contenu n'est pas valide", async () => {
+  it("Doit sanitizer le contenu avant de créer la nouveauté", async () => {
     // Given
     const id = "550e8400-e29b-41d4-a716-446655440000";
     const version = "1.0.0";
@@ -54,8 +54,13 @@ describe("CreerNouveauteUseCase", () => {
     const contenu = '<script>alert("XSS")</script>';
 
     // When
-    await expect(
-      creerNouveauteUseCase.execute({ id, version, date, contenu }),
-    ).rejects.toThrow(BadRequestError);
+    await creerNouveauteUseCase.execute({ id, version, date, contenu });
+
+    // Then
+    expect(nouveauteRepository.creerNouveaute).toHaveBeenCalledWith(
+      expect.objectContaining({
+        contenu: "",
+      }),
+    );
   });
 });

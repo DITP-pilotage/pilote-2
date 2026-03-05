@@ -52,7 +52,7 @@ export const useEditionCentreAide = () => {
       refetchListe();
       setItemSelectionneId(variables.id);
       setTitre(variables.titre);
-      setContenu(variables.contenu);
+      setContenu(variables.contenu ?? null);
       setType(variables.type);
       toast.success("Article créé avec succès", {
         duration: 3000,

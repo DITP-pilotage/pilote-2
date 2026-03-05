@@ -100,7 +100,10 @@ function renderNode(node: Node): ReactNode {
         const property = declaration.slice(0, colonIndex).trim();
         const value = declaration.slice(colonIndex + 1).trim();
         if (!property) continue;
-        const camelCase = property.replace(/-([a-z])/g, (_match, letter: string) => letter.toUpperCase());
+        const camelCase = property.replace(
+          /-([a-z])/g,
+          (_match, letter: string) => letter.toUpperCase(),
+        );
         styleObj[camelCase] = value;
       }
       props.style = styleObj;
@@ -112,9 +115,9 @@ function renderNode(node: Node): ReactNode {
   return createElement(tag, props, ...children);
 }
 
-export function RenduContenuHtml({ html }: { html: string }) {
+export const RenduContenuHtml = ({ html }: { html: string }) => {
   if (!html) return null;
 
   const doc = new DOMParser().parseFromString(html, "text/html");
   return <>{renderChildren(doc.body)}</>;
-}
+};

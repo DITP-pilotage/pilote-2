@@ -1,5 +1,4 @@
 import { $Enums } from "@prisma/client";
-import { BadRequestError } from "@/server/app/error-boundary/bad-request-error";
 import { SanitizerHTML } from "@/server/app/domain/SanitizerHTML";
 
 export class ArticleCentreAide {
