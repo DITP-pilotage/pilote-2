@@ -59,6 +59,7 @@ export const MetadataIndicateurInput: FunctionComponent<{
               htmlName={htmlName}
               onChange={field.onChange}
               type="text"
+              value={field.value ?? ""}
             />
           );
         }}

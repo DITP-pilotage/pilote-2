@@ -20,6 +20,7 @@ interface InputProps {
   erreurMessage?: string;
   register?: UseFormRegisterReturn;
   onChange?: (value: string) => void;
+  value?: string;
   disabled?: boolean;
   className?: string;
   classNameGroupe?: string;
@@ -33,6 +34,7 @@ const Input: FunctionComponent<PropsWithChildren<InputProps>> = ({
   htmlName,
   register,
   onChange,
+  value,
   disabled,
   className,
   classNameGroupe,
@@ -51,6 +53,7 @@ const Input: FunctionComponent<PropsWithChildren<InputProps>> = ({
           onChange?.(event.target.value);
         }}
         type={type}
+        value={value ?? undefined}
         {...register}
       />
       {(erreurMessage !== undefined || erreur !== undefined) && (
