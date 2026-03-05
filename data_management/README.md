@@ -319,7 +319,6 @@ L'évolution de ces flux se fera au fur et à mesure de la création et de l'év
 graph LR
 PM(PPG_metadata) --> PG[(Base PG Pilote 2)]
 IC(ImportCommentaires) --> PG[(Base PG Pilote 2)]
-DFAK(Dump Dfakto Chantier) --> PG
 PG --> BE(Back-end) --> FE(Front-end)
 ```
 
@@ -329,7 +328,6 @@ graph LR
 PM(PPG_metadata) --> RAW(Données brutes)
 IC(Import massif de commentaires) --> RAW
 MI(Import massif de mesures d'indicateurs) --> RAW
-DFAK(Dump Dfakto PS) --> RAW
 RAW --> STG(Staging / standardisation)
 STG --> MARTS(Marts / data factory)
 STG --> INTER(Intermediate / filtre sur les sources)
