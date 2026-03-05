@@ -99,7 +99,7 @@ jobs:
           PGPASSWORD: ${{ secrets.PGPASSWORD }}
         run: |
           set -e
-          scalingo db-tunnel SCALINGO_POSTGRESQL_URL_READONLY --timeout 60 &
+          scalingo db-tunnel SCALINGO_POSTGRESQL_URL_READONLY &
           TUNNEL_PID=$!
 
           # Trap pour garantir la fermeture du tunnel en sortie ou en cas d'erreur
