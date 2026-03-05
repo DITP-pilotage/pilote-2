@@ -90,5 +90,9 @@ mois_historique AS (
 
 
 SELECT
-	*
+  ta_encadre.*,
+  mois_historique.snapshot_month
 FROM ta_encadre
+LEFT OUTER JOIN mois_historique
+    ON mois_historique.snapshot_month >= ta_encadre.date_debut_validite_ta
+        AND mois_historique.snapshot_month <= ta_encadre.date_fin_validite_ta
