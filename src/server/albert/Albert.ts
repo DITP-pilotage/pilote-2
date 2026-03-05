@@ -84,7 +84,7 @@ export const displayValeursIndicateurTool = tool({
   }),
 });
 
-const MODEL = "openweight-large";
+const MODEL = "openweight-medium";
 
 export class Albert {
   private static createProvider() {

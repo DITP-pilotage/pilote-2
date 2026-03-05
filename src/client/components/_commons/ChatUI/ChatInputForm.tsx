@@ -1,13 +1,16 @@
 import {
   FormEvent,
   MutableRefObject,
+  useCallback,
   useEffect,
   useRef,
   useState,
 } from "react";
 import { clsxm } from "@/utils/clsxm";
 import { ArrowLineIcon } from "@/components/_commons/Icones/ArrowLineIcon";
+import { MicrophoneIcon } from "@/components/_commons/Icones/MicrophoneIcon";
 import { useChatContext } from "@/components/_commons/ChatUI/ChatContext";
+import { useSpeechRecognition } from "@/components/_commons/ChatUI/useSpeechRecognition";
 
 export const ChatInputForm = ({
   placeholder,
@@ -19,6 +22,7 @@ export const ChatInputForm = ({
   const [input, setInput] = useState("");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const { sendMessage, status } = useChatContext();
+  const isBusy = status === "submitted" || status === "streaming";
 
   useEffect(() => {
     fillInputRef.current = (text: string) => {
@@ -33,11 +37,16 @@ export const ChatInputForm = ({
     };
   }, [fillInputRef]);
 
+  const handleTranscript = useCallback((text: string) => {
+    setInput((prev) => (prev ? `${prev} ${text}` : text));
+  }, []);
+
+  const { state: micState, isSupported, toggle: toggleMic } = useSpeechRecognition({ onTranscript: handleTranscript });
+
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
     const trimmedInput = input.trim();
-    if (!trimmedInput || status === "submitted" || status === "streaming")
-      return;
+    if (!trimmedInput || isBusy) return;
 
     setInput("");
     sendMessage({ text: trimmedInput });
@@ -48,8 +57,8 @@ export const ChatInputForm = ({
       <form className="max-w-3xl mx-auto relative" onSubmit={handleSubmit}>
         <textarea
           ref={textareaRef}
-          className="w-full resize-none rounded-xl border border-gray-200 pl-4 pr-12 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-          disabled={status === "submitted" || status === "streaming"}
+          className="w-full resize-none rounded-xl border border-gray-200 pl-4 pr-20 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+          disabled={isBusy}
           onChange={(event) => setInput(event.target.value)}
           onKeyDown={(event) => {
             if (event.key === "Enter" && !event.shiftKey) {
@@ -61,27 +70,43 @@ export const ChatInputForm = ({
           rows={2}
           value={input}
         />
-        <button
-          className={clsxm(
-            "absolute bottom-4 right-2 w-8 h-8 rounded-full flex items-center justify-center transition-colors",
-            {
-              "bg-primary text-white hover:bg-primary/90":
-                status !== "submitted" &&
-                status !== "streaming" &&
-                input.trim(),
-              "bg-gray-300 text-white cursor-not-allowed":
-                status === "submitted" ||
-                status === "streaming" ||
-                !input.trim(),
-            },
+        <div className="absolute bottom-4 right-2 flex items-center gap-1">
+          {isSupported && (
+            <button
+              aria-label={micState === "listening" ? "Arrêter l'écoute" : "Dicter un message"}
+              className={clsxm(
+                "w-8 h-8 rounded-full flex items-center justify-center transition-colors",
+                {
+                  "text-gray-500 bg-transparent hover:text-gray-700 hover:bg-gray-100":
+                    !isBusy && micState === "inactive",
+                  "bg-red-500 text-white animate-pulse-recording":
+                    micState === "listening",
+                  "text-gray-300 cursor-not-allowed": isBusy,
+                },
+              )}
+              disabled={isBusy}
+              onClick={toggleMic}
+              type="button"
+            >
+              <MicrophoneIcon className="w-4 h-4" />
+            </button>
           )}
-          disabled={
-            status === "submitted" || status === "streaming" || !input.trim()
-          }
-          type="submit"
-        >
-          <ArrowLineIcon className="w-4 h-4" />
-        </button>
+          <button
+            className={clsxm(
+              "w-8 h-8 rounded-full flex items-center justify-center transition-colors",
+              {
+                "bg-primary text-white hover:bg-primary/90":
+                  !isBusy && input.trim(),
+                "bg-gray-300 text-white cursor-not-allowed":
+                  isBusy || !input.trim(),
+              },
+            )}
+            disabled={isBusy || !input.trim()}
+            type="submit"
+          >
+            <ArrowLineIcon className="w-4 h-4" />
+          </button>
+        </div>
       </form>
     </div>
   );
