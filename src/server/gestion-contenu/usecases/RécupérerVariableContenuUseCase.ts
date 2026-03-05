@@ -96,6 +96,10 @@ export class RécupérerVariableContenuUseCase {
         return configuration().featureFlip
           .askAI as VariableContenuDisponibleEnv[T];
       }
+      case "NEXT_PUBLIC_FF_CENTRE_AIDE_CUSTOM_PILOTE": {
+        return configuration().featureFlip
+          .centreAideCustomPilote as VariableContenuDisponibleEnv[T];
+      }
     }
   }
 }

@@ -27,11 +27,15 @@ const menuItems = [
     href: "/panel-administrateur/nouveaute",
     pageKey: "nouveaute",
   },
-  {
-    label: "Centre d'aide",
-    href: "/panel-administrateur/centre-aide",
-    pageKey: "centre-aide",
-  },
+  ...(process.env.NEXT_PUBLIC_FF_CENTRE_AIDE_CUSTOM_PILOTE === "true"
+    ? [
+        {
+          label: "Centre d'aide",
+          href: "/panel-administrateur/centre-aide",
+          pageKey: "centre-aide",
+        },
+      ]
+    : []),
   {
     label: "Albert",
     href: "/panel-administrateur/albert",

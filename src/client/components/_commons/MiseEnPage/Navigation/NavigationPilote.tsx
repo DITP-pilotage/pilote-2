@@ -120,7 +120,8 @@ export const NavigationPilote = () => {
           nom: "Centre d'aide Pilote",
           lien: "/centre-aide-pilote",
           matcher: "/centre-aide-pilote",
-          accessible: true,
+          accessible:
+            process.env.NEXT_PUBLIC_FF_CENTRE_AIDE_CUSTOM_PILOTE === "true",
           prefetch: false,
           target: "_self",
         },

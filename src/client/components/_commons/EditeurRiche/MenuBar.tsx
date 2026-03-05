@@ -9,12 +9,12 @@ import { StrikethroughIcon } from "@/components/_commons/Icones/StrikethroughIco
 import { UnderlineIcon } from "@/components/_commons/Icones/UnderlineIcon";
 import { CodeIcon } from "@/components/_commons/Icones/CodeIcon";
 import { ParagraphIcon } from "@/components/_commons/Icones/ParagraphIcon";
-import { Heading1Icon } from "@/components/_commons/Icones/Heading1Icon";
-import { Heading2Icon } from "@/components/_commons/Icones/Heading2Icon";
-import { Heading3Icon } from "@/components/_commons/Icones/Heading3Icon";
-import { Heading4Icon } from "@/components/_commons/Icones/Heading4Icon";
-import { Heading5Icon } from "@/components/_commons/Icones/Heading5Icon";
-import { Heading6Icon } from "@/components/_commons/Icones/Heading6Icon";
+import { H1Icon } from "@/components/_commons/Icones/H1Icon";
+import { H2Icon } from "@/components/_commons/Icones/H2Icon";
+import { H3Icon } from "@/components/_commons/Icones/H3Icon";
+import { H4Icon } from "@/components/_commons/Icones/H4Icon";
+import { H5Icon } from "@/components/_commons/Icones/H5Icon";
+import { H6Icon } from "@/components/_commons/Icones/H6Icon";
 import { BulletListIcon } from "@/components/_commons/Icones/BulletListIcon";
 import { CodeBlockIcon } from "@/components/_commons/Icones/CodeBlockIcon";
 import { BlockquoteIcon } from "@/components/_commons/Icones/BlockquoteIcon";
@@ -156,14 +156,7 @@ export const MenuBar = ({ editor }: { editor: Editor }) => {
     ];
 
     if (hasExtension("heading")) {
-      const headingIcons = [
-        Heading1Icon,
-        Heading2Icon,
-        Heading3Icon,
-        Heading4Icon,
-        Heading5Icon,
-        Heading6Icon,
-      ];
+      const headingIcons = [H1Icon, H2Icon, H3Icon, H4Icon, H5Icon, H6Icon];
 
       headingIcons.forEach((icon, index) => {
         const level = (index + 1) as 1 | 2 | 3 | 4 | 5 | 6;

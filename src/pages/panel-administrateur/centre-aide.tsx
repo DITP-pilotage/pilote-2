@@ -3,6 +3,7 @@ import { GetServerSideProps } from "next";
 import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
 import { NextPanelAdministrateurLayout } from "@/components/PagePanelAdministrateur/PanelAdministrateurLayout/layout";
 import { PagePanelAdministrateurCentreAide } from "@/components/PagePanelAdministrateur/PagePanelAdministrateurCentreAide/PagePanelAdministrateurCentreAide";
+import { configurationFeatureFlip } from "@/config";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const session = await auth(context);
@@ -13,7 +14,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     },
   };
 
-  if (!session) {
+  if (!session || !configurationFeatureFlip().centreAideCustomPilote) {
     return redirigerVersPageAccueil;
   }
 
