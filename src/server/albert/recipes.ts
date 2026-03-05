@@ -45,7 +45,8 @@ const RECIPES: Record<string, Recipe> = {
       "Analyse la conversation pour identifier les données pertinentes.",
       "Assemble le rapport en texte brut structuré et appelle export_rapport avec le contenu.",
     ],
-    outputFormat: null,
+    outputFormat:
+      "Une courte phrase incitant l'utilisateur a cliquer sur le bouton en dessous pour télécharger le rapport.",
   },
   autre: {
     steps: [],
