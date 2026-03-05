@@ -14,9 +14,11 @@ WITH valeurs_ordonnees AS (
 	WHERE valeurs.vaca IS NOT NULL
 ), 
 
+
 jalons_pour_lesquels_calculer_ta AS (
 	SELECT
 		valeur.id,
+    valeur_suivante.metric_date AS date_prochaine_va,
 		EXTRACT(YEAR FROM GENERATE_SERIES(
 				DATE_TRUNC('year', valeur.metric_date),
 				DATE_TRUNC('year', COALESCE(valeur_suivante.metric_date, NOW())),
@@ -40,6 +42,21 @@ ta AS (
 		cibles.vca,
 		valeurs.vig,
 		jalons_pour_lesquels_calculer_ta.jalon,
+    CASE
+      WHEN jalons_pour_lesquels_calculer_ta.jalon = EXTRACT(YEAR FROM metric_date)
+        THEN metric_date
+      ELSE (jalons_pour_lesquels_calculer_ta.jalon || '-01-01')::DATE
+    END AS date_debut_validite_ta,
+    CASE
+        -- si la prochaine valeur est nulle, le plus tôt entre now et la fin de l'année du jalon
+        WHEN jalons_pour_lesquels_calculer_ta.date_prochaine_va IS NULL
+            THEN LEAST(DATE_TRUNC('month', NOW()), (jalons_pour_lesquels_calculer_ta.jalon || '-12-01')::DATE)::DATE
+        -- si l'année de prochaine valeur est l'année du jalon, alors le mois avant la date de la prochaine valeur
+        WHEN EXTRACT(YEAR FROM  jalons_pour_lesquels_calculer_ta.date_prochaine_va) = jalons_pour_lesquels_calculer_ta.jalon
+          THEN (jalons_pour_lesquels_calculer_ta.date_prochaine_va - INTERVAL '1 month')::DATE
+        -- sinon la fin de l'année du jalon
+        ELSE (jalons_pour_lesquels_calculer_ta.jalon || '-12-01')::DATE
+    END AS date_fin_validite_ta,
 		{{ compute_ta_macro('valeurs.vig', 'cibles.vca', 'valeurs.vaca', 'indicateurs.tendance') }} AS ta
 	FROM {{ ref('merge_computed_values') }} AS valeurs
 	LEFT OUTER JOIN {{ source('parametrage_indicateurs', 'metadata_parametrage_indicateurs') }} AS indicateurs
