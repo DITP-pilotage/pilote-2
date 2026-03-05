@@ -9,6 +9,8 @@ import SynthèseDesRésultatsAffichage from "@/components/PageChantier/Synthèse
 import { pageChantier } from "@/components/PageChantier/PageChantierServerSideContext";
 import SyntheseDesResultatsFormulaire from "@/components/PageChantier/SynthèseDesRésultatsChantier/SyntheseDesResultatsFormulaire/SyntheseDesResultatsFormulaire";
 import { BoutonNouvelleSyntheseDesResultats } from "@/components/PageChantier/SynthèseDesRésultatsChantier/BoutonNouvelleSyntheseDesResultats/BoutonNouvelleSyntheseDesResultats";
+import BandeauInformation from "@/components/_commons/BandeauInformation/BandeauInformation";
+import { formaterDate } from "@/client/utils/date/date";
 
 export interface SyntheseDesResultatsProps {
   nomTerritoire: string;
@@ -44,9 +46,15 @@ const SyntheseDesResultats: FunctionComponent<SyntheseDesResultatsProps> = ({
             : "bg-dsfr-blue-france-925"
         }
         className="h-full"
+        contenuClassesSupplémentaires=""
         titre={nomTerritoire}
       >
-        <div className="fr-py-1w">
+        {syntheseDesResultats?.dateDernierBrouillon ? (
+          <BandeauInformation bandeauType="INFO">
+            {`Vous avez enregistré un nouveau commentaire en tant que brouillon le ${formaterDate(syntheseDesResultats?.dateDernierBrouillon, "DD/MM/YYYY")}`}
+          </BandeauInformation>
+        ) : null}
+        <div className="p-4">
           {modeÉdition && modeEcriture ? (
             <SyntheseDesResultatsFormulaire
               annulationCallback={() => setModeÉdition(false)}
@@ -61,7 +69,7 @@ const SyntheseDesResultats: FunctionComponent<SyntheseDesResultatsProps> = ({
                   />
                 </div>
               )}
-              <div className="flex gap-4">
+              <div className="flex gap-4 pt-2">
                 <div className="flex flex-col gap-4 align-center">
                   <MétéoBadge
                     météo={syntheseDesResultats?.météo ?? "NON_RENSEIGNEE"}

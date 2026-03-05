@@ -1,18 +1,18 @@
 import { formaterDate } from "@/client/utils/date/date";
 import { nettoyerUneChaîneDeCaractèresPourAffichageHTML } from "@/client/utils/strings";
 import { BoutonsAffichage } from "@/components/PageChantier/SynthèseDesRésultatsChantier/BoutonsAffichage/BoutonsAffichage";
-import { SyntheseDesResultatsAvecNomsAuteurs } from "@/server/domain/chantier/synthèseDesRésultats/SynthèseDesRésultats.interface";
 import { Icone } from "@/components/_commons/Icone";
 import { Icone1Icon } from "@/components/_commons/Icones/Icone1Icon";
 import { BoutonSousLigné } from "@/components/_commons/BoutonSousLigné/BoutonSousLigné";
 import { Infobulle } from "@/components/_commons/Infobulle/Infobulle";
+import { SyntheseDesResultatsHistoriqueItem } from "@/server/syntheses-des-resultats/queries/RecupererHistoriqueSyntheseDesResultatsQuery";
 import useAffichage from "./useAffichage";
 
 const SynthèseDesRésultatsAffichage = ({
   itemHistoriqueSyntheseDesResultats: synthèseDesRésultats,
   onModifier,
 }: {
-  itemHistoriqueSyntheseDesResultats: SyntheseDesResultatsAvecNomsAuteurs | null;
+  itemHistoriqueSyntheseDesResultats: SyntheseDesResultatsHistoriqueItem | null;
   onModifier?: () => void;
 }) => {
   const {

@@ -25,6 +25,7 @@ export type SynthèseDesRésultatsV2 = {
 export type SyntheseDesResultatsAvecNomsAuteurs = SynthèseDesRésultatsV2 & {
   auteur_creation_nom: string;
   auteur_modification_nom: string;
+  dateDernierBrouillon: string | null;
 };
 
 export default SynthèseDesRésultats;
