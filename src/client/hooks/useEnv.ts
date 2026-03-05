@@ -1,5 +1,5 @@
 import api from "@/server/infrastructure/api/trpc/api";
-import { VariableContenuDisponibleEnv } from "@/server/gestion-contenu/domain/VariableContenuDisponible";
+import type { VariableContenuDisponibleEnv } from "@/server/gestion-contenu/domain/VariableContenuDisponible";
 
 export const useEnv = <T extends keyof VariableContenuDisponibleEnv>(
   nomVariable: T,
