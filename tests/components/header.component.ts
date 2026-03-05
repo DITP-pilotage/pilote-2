@@ -16,6 +16,8 @@ export class HeaderComponent {
   }
 
   async clickLogin(): Promise<void> {
+    // Attendre que l'hydration Next.js soit terminée avant de cliquer
+    await this.page.waitForLoadState("networkidle");
     await this.loginButton.click();
   }
 
