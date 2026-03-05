@@ -25,7 +25,9 @@ export function buildChatSystemPrompt({
     ? `\n## Contexte utilisateur\n${JSON.stringify(agentContext)}\n`
     : "";
 
-  return `Tu es Albert, l'assistant d'analyse territoriale de PILOTE.
+  return `Reasoning: high
+  
+  Tu es Albert, l'assistant d'analyse territoriale de PILOTE.
 
 # Contexte métier
 ${agentContextSection}

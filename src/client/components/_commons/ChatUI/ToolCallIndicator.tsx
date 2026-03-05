@@ -4,6 +4,7 @@ import { ArrowSLine2Icon } from "@/components/_commons/Icones/ArrowSLine2Icon";
 import { ArrowSLineIcon } from "@/components/_commons/Icones/ArrowSLineIcon";
 import { CheckLineIcon } from "@/components/_commons/Icones/CheckLineIcon";
 import { ErrorWarningIcon } from "@/components/_commons/Icones/ErrorWarningIcon";
+import { AssistantLoader } from "@/components/_commons/ChatUI/AssistantLoader";
 import { PiloteUITools } from "@/server/albert/PiloteUIMessage";
 import { AnimateEntry } from "@/components/shared/AnimateEntry";
 
@@ -34,13 +35,7 @@ const StatusIcon = ({ state }: { state: DataFetchingToolPart["state"] }) => {
   if (state === "output-available") {
     return <CheckLineIcon className="w-3 h-3 text-green-500" />;
   }
-  return (
-    <span className="inline-flex gap-0.5">
-      <span className="animate-bounce">.</span>
-      <span className="animate-bounce [animation-delay:0.2s]">.</span>
-      <span className="animate-bounce [animation-delay:0.4s]">.</span>
-    </span>
-  );
+  return <AssistantLoader />;
 };
 
 export const ToolCallIndicator = ({ part }: { part: DataFetchingToolPart }) => {

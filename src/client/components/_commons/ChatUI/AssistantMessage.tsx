@@ -2,6 +2,7 @@ import { toast } from "sonner";
 import { PiloteUIMessage } from "@/server/albert/PiloteUIMessage";
 import { ToolCallIndicator } from "@/components/_commons/ChatUI/ToolCallIndicator";
 import { AssistantMessageText } from "@/components/_commons/ChatUI/AssistantMessageText";
+import { AssistantLoader } from "@/components/_commons/ChatUI/AssistantLoader";
 import { BaseDisplayTool } from "@/components/_commons/ChatUI/BaseDisplayTool";
 import { ChoicesButtons } from "@/components/_commons/ChatUI/ChoicesButtons";
 import { ValeursIndicateurTable } from "@/components/_commons/ChatUI/ValeursIndicateurTable";
@@ -27,6 +28,15 @@ export const AssistantMessage = ({
       part.state === "output-available",
   );
 
+  const hasCompletedDataFetchingTool = message.parts?.some(
+    (part) =>
+      (part.type === "tool-get_taux_avancement_territoire" ||
+        part.type === "tool-get_chantiers_en_retard" ||
+        part.type === "tool-get_chantiers_en_difficulte" ||
+        part.type === "tool-get_valeurs_indicateur") &&
+      part.state === "output-available",
+  );
+
   return (
     <div className="text-sm text-gray-900 w-full">
       <div className="max-w-3xl mx-auto">
@@ -41,6 +51,9 @@ export const AssistantMessage = ({
           }
           return null;
         })}
+        {isStreaming && !hasText && hasCompletedDataFetchingTool && (
+          <AssistantLoader />
+        )}
         <div className="relative group">
           {message.parts?.map((part, index) => {
             if (part.type === "text") {
@@ -68,13 +81,7 @@ export const AssistantMessage = ({
           )}
         </div>
 
-        {isStreaming && hasDisplayTool && (
-          <span className="inline-flex gap-1 text-gray-500">
-            <span className="animate-bounce">.</span>
-            <span className="animate-bounce [animation-delay:0.2s]">.</span>
-            <span className="animate-bounce [animation-delay:0.4s]">.</span>
-          </span>
-        )}
+        {isStreaming && hasDisplayTool && <AssistantLoader />}
       </div>
 
       {!isStreaming &&

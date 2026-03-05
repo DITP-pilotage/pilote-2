@@ -5,6 +5,7 @@ import { clsxm } from "@/utils/clsxm";
 import { ChatContextProvider } from "@/components/_commons/ChatUI/ChatContext";
 import { UserMessage } from "@/components/_commons/ChatUI/UserMessage";
 import { AssistantMessage } from "@/components/_commons/ChatUI/AssistantMessage";
+import { AssistantLoader } from "@/components/_commons/ChatUI/AssistantLoader";
 import { FeedbackBar } from "@/components/_commons/ChatUI/FeedbackBar";
 import { ChatInputForm } from "@/components/_commons/ChatUI/ChatInputForm";
 import { chatMarkdownStyles } from "@/components/_commons/ChatUI/chatMarkdownStyles";
@@ -114,15 +115,7 @@ export const ChatUI = ({
             {status === "submitted" && (
               <div className="max-w-3xl mx-auto flex justify-start">
                 <div className="text-sm text-gray-500">
-                  <span className="inline-flex gap-1">
-                    <span className="animate-bounce">.</span>
-                    <span className="animate-bounce [animation-delay:0.2s]">
-                      .
-                    </span>
-                    <span className="animate-bounce [animation-delay:0.4s]">
-                      .
-                    </span>
-                  </span>
+                  <AssistantLoader />
                 </div>
               </div>
             )}
