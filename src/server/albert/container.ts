@@ -1,5 +1,4 @@
 import { asClass, asFunction, AwilixContainer } from "awilix";
-import { GetTauxAvancementTerritoireQuery } from "@/server/chantiers/query/GetTauxAvancementTerritoireQuery";
 import { GetChantiersEnRetardQuery } from "@/server/chantiers/query/GetChantiersEnRetardQuery";
 import { GetChantiersEnDifficulteQuery } from "@/server/chantiers/query/GetChantiersEnDifficulteQuery";
 import { createGetTauxAvancementTerritoireTool } from "@/server/albert/tools/getTauxAvancementTerritoire";
@@ -11,7 +10,6 @@ import { EvaluerChatUseCase } from "@/server/albert/usecases/EvaluerChatUseCase"
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 
 export type AlbertDependencies = {
-  getTauxAvancementTerritoireQuery: GetTauxAvancementTerritoireQuery;
   createGetTauxAvancementTerritoireTool: ReturnType<
     typeof createGetTauxAvancementTerritoireTool
   >;
@@ -40,7 +38,6 @@ export const getAlbertContainer = (
   }
 > => {
   return initialContainer.createScope<AlbertDependencies>().register({
-    getTauxAvancementTerritoireQuery: asClass(GetTauxAvancementTerritoireQuery),
     createGetTauxAvancementTerritoireTool: asFunction(
       createGetTauxAvancementTerritoireTool,
     ),

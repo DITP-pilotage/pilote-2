@@ -52,7 +52,9 @@ export const albertRouter = créerRouteurTRPC({
 
       const systemPrompt = buildChatSystemPrompt({ territoiresAccessibles });
       const getTauxAvancementTerritoire =
-        createGetTauxAvancementTerritoireTool({ territoiresAccessibles });
+        createGetTauxAvancementTerritoireTool({
+          habilitations: ctx.session.habilitations,
+        });
       const getChantiersEnRetard = createGetChantiersEnRetardTool({
         territoiresAccessibles,
       });

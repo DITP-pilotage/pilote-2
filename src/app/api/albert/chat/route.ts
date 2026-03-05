@@ -52,7 +52,7 @@ export async function POST(request: Request) {
       agentContext,
     });
     const getTauxAvancementTerritoire = createGetTauxAvancementTerritoireTool({
-      territoiresAccessibles,
+      habilitations: session.habilitations,
     });
     const getChantiersEnRetard = createGetChantiersEnRetardTool({
       territoiresAccessibles,
