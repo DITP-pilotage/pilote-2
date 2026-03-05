@@ -1,11 +1,31 @@
-import { FormEvent, useState } from "react";
+import { FormEvent, MutableRefObject, useEffect, useRef, useState } from "react";
 import { clsxm } from "@/utils/clsxm";
 import { ArrowLineIcon } from "@/components/_commons/Icones/ArrowLineIcon";
 import { useChatContext } from "@/components/_commons/ChatUI/ChatContext";
 
-export const ChatInputForm = ({ placeholder }: { placeholder: string }) => {
+export const ChatInputForm = ({
+  placeholder,
+  fillInputRef,
+}: {
+  placeholder: string;
+  fillInputRef: MutableRefObject<((text: string) => void) | null>;
+}) => {
   const [input, setInput] = useState("");
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
   const { sendMessage, status } = useChatContext();
+
+  useEffect(() => {
+    fillInputRef.current = (text: string) => {
+      setInput(text);
+      setTimeout(() => {
+        const textarea = textareaRef.current;
+        if (textarea) {
+          textarea.focus();
+          textarea.setSelectionRange(text.length, text.length);
+        }
+      }, 0);
+    };
+  }, [fillInputRef]);
 
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
@@ -21,6 +41,7 @@ export const ChatInputForm = ({ placeholder }: { placeholder: string }) => {
     <div className="shrink-0 border-t border-gray-100 p-4 bg-white">
       <form className="max-w-3xl mx-auto relative" onSubmit={handleSubmit}>
         <textarea
+          ref={textareaRef}
           className="w-full resize-none rounded-xl border border-gray-200 pl-4 pr-12 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
           disabled={status === "submitted" || status === "streaming"}
           onChange={(event) => setInput(event.target.value)}

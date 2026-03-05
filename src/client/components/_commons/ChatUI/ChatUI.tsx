@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { Chat, useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
 import { clsxm } from "@/utils/clsxm";
@@ -10,26 +10,28 @@ import { FeedbackBar } from "@/components/_commons/ChatUI/FeedbackBar";
 import { ChatInputForm } from "@/components/_commons/ChatUI/ChatInputForm";
 import { chatMarkdownStyles } from "@/components/_commons/ChatUI/chatMarkdownStyles";
 import { PiloteUIMessage } from "@/server/albert/PiloteUIMessage";
+import { ChatEmptyState } from "@/components/_commons/ChatUI/ChatEmptyState";
+import type { ChatScenario } from "@/components/_commons/ChatUI/ChatEmptyState";
+
+export type { ChatScenario };
 
 export const ChatUI = ({
   endpoint,
   placeholder = "Posez votre question...",
-  emptyStateText = "Posez une question pour commencer la conversation.",
   className = "h-[calc(100vh-200px)]",
-  initialMessage,
+  scenarios = [],
   agentContext,
 }: {
   endpoint: string;
   placeholder?: string;
-  emptyStateText?: string;
   className?: string;
-  initialMessage?: string;
+  scenarios?: ChatScenario[];
   agentContext?: Record<string, unknown>;
 }) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const lastAssistantMessageRef = useRef<HTMLDivElement>(null);
-  const hasSubmittedInitialMessage = useRef(false);
+  const fillInputRef = useRef<((text: string) => void) | null>(null);
   const chatRef = useRef(
     new Chat<PiloteUIMessage>({
       transport: new DefaultChatTransport<PiloteUIMessage>({
@@ -61,16 +63,14 @@ export const ChatUI = ({
     }, 100);
   }, [messages]);
 
-  useEffect(() => {
-    if (initialMessage && !hasSubmittedInitialMessage.current) {
-      hasSubmittedInitialMessage.current = true;
-      sendMessage({ text: initialMessage });
-    }
-  }, [initialMessage, sendMessage]);
+  const fillInput = useCallback((text: string) => {
+    fillInputRef.current?.(text);
+  }, []);
 
   return (
     <ChatContextProvider
       error={error}
+      fillInput={fillInput}
       sendMessage={sendMessage}
       status={status}
     >
@@ -82,10 +82,8 @@ export const ChatUI = ({
           className="flex-1 overflow-y-auto bg-white"
         >
           <div className="max-w-6xl mx-auto p-4 space-y-4">
-            {messages.length === 0 && (
-              <p className="max-w-3xl mx-auto text-gray-400 text-center mt-8">
-                {emptyStateText}
-              </p>
+            {messages.length === 0 && scenarios.length > 0 && (
+              <ChatEmptyState scenarios={scenarios} />
             )}
 
             {messages.map((message, index) => {
@@ -136,7 +134,7 @@ export const ChatUI = ({
           <FeedbackBar chatId={chatRef.current.id} />
         )}
 
-        <ChatInputForm placeholder={placeholder} />
+        <ChatInputForm fillInputRef={fillInputRef} placeholder={placeholder} />
       </div>
     </ChatContextProvider>
   );

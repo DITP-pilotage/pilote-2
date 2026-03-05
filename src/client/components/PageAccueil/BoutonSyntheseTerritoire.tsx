@@ -2,7 +2,7 @@ import { useState } from "react";
 import { récupérerDétailsSurUnTerritoire } from "@/client/constants/territoires";
 import { Icone } from "@/components/_commons/Icone";
 import { SparklingIcon } from "@/components/_commons/Icones/SparklingIcon";
-import { ChatUI } from "@/components/_commons/ChatUI/ChatUI";
+import { ChatScenario, ChatUI } from "@/components/_commons/ChatUI/ChatUI";
 import { ModalePleinEcran } from "@/components/shared/ModalePleinEcran";
 
 export const BoutonSyntheseTerritoire = ({
@@ -14,6 +14,29 @@ export const BoutonSyntheseTerritoire = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const territoire = récupérerDétailsSurUnTerritoire(territoireCode);
+
+  const scenarios: ChatScenario[] = [
+    {
+      label: `Synthèse de ${territoire.nomAffiché}`,
+      message: `Fais moi la synthèse de ${territoire.nomAffiché}`,
+      mode: "send",
+    },
+    {
+      label: `Chantiers en retard sur ${territoire.nomAffiché}`,
+      message: `Chantiers en retard sur ${territoire.nomAffiché}`,
+      mode: "send",
+    },
+    {
+      label: `Chantiers en difficulté sur ${territoire.nomAffiché}`,
+      message: `Chantiers en difficulté sur ${territoire.nomAffiché}`,
+      mode: "send",
+    },
+    {
+      label: "Comparer avec un autre territoire",
+      message: `Compare ${territoire.nomAffiché} avec `,
+      mode: "fill",
+    },
+  ];
 
   return (
     <>
@@ -34,9 +57,8 @@ export const BoutonSyntheseTerritoire = ({
           <ChatUI
             endpoint="/api/albert/chat"
             className="h-full"
-            emptyStateText="La synthèse est en cours de génération..."
             placeholder="Posez une question sur ce territoire..."
-            initialMessage={`Fais moi la synthèse de ${territoire.nomAffiché}`}
+            scenarios={scenarios}
             agentContext={{ jalon, territoireCode }}
           />
         </ModalePleinEcran>

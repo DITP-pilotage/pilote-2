@@ -1,4 +1,22 @@
-import { ChatUI } from "@/components/_commons/ChatUI/ChatUI";
+import { ChatScenario, ChatUI } from "@/components/_commons/ChatUI/ChatUI";
+
+const scenarios: ChatScenario[] = [
+  {
+    label: "Synthèse d'un territoire",
+    message: "Fais moi la synthèse de ",
+    mode: "fill",
+  },
+  {
+    label: "Chantiers en retard",
+    message: "Quels sont les chantiers en retard sur ",
+    mode: "fill",
+  },
+  {
+    label: "Chantiers en difficulté",
+    message: "Quels sont les chantiers en difficulté sur ",
+    mode: "fill",
+  },
+];
 
 export const AlbertChat = () => {
   return (
@@ -9,8 +27,8 @@ export const AlbertChat = () => {
       </p>
       <ChatUI
         endpoint="/api/albert/chat"
-        emptyStateText="Posez une question pour commencer la conversation."
         placeholder="Posez votre question sur un chantier..."
+        scenarios={scenarios}
       />
     </div>
   );

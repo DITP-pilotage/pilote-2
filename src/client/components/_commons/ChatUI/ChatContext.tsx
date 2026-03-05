@@ -3,6 +3,7 @@ import type { ChatStatus } from "ai";
 
 type ChatContextValue = {
   sendMessage: (params: { text: string }) => void;
+  fillInput: (text: string) => void;
   status: ChatStatus;
   error: Error | undefined;
 };
