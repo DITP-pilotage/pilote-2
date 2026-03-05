@@ -39,8 +39,6 @@ export const gestionContenuRouter = créerRouteurTRPC({
     return presenterEnMessageInformationContrat(messageInformation);
   }),
   recupererToutesLesVariablesContenu: procédureNonConnecte.query(() => {
-    const récupérerToutesLesVariablesContenuUseCase =
-      new RecupererToutesLesVariablesContenuUseCase();
-    return récupérerToutesLesVariablesContenuUseCase.run();
+    return new RecupererToutesLesVariablesContenuUseCase().run();
   }),
 });
