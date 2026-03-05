@@ -34,12 +34,12 @@ const SynthèseDesRésultatsAffichage = ({
   return (
     <>
       <p className="text-xs text-dsfr-mention-grey mb-1">
-        {synthèseDesRésultats.date_creation ===
-        synthèseDesRésultats.date_modification
-          ? `Publié le ${formaterDate(synthèseDesRésultats.date_creation, "DD/MM/YYYY")}`
-          : `Publié le ${formaterDate(synthèseDesRésultats.date_creation, "DD/MM/YYYY")} et modifié le ${formaterDate(synthèseDesRésultats.date_modification, "DD/MM/YYYY")}`}
-        {!!synthèseDesRésultats.auteur_modification_nom &&
-          ` | Par ${synthèseDesRésultats.auteur_modification_nom}`}
+        {synthèseDesRésultats.dateCreation ===
+        synthèseDesRésultats.dateModification
+          ? `Publié le ${formaterDate(synthèseDesRésultats.dateCreation, "DD/MM/YYYY")}`
+          : `Publié le ${formaterDate(synthèseDesRésultats.dateCreation, "DD/MM/YYYY")} et modifié le ${formaterDate(synthèseDesRésultats.dateModification, "DD/MM/YYYY")}`}
+        {!!synthèseDesRésultats.auteurModificationNom &&
+          ` | Par ${synthèseDesRésultats.auteurModificationNom}`}
       </p>
       {!!onModifier ? (
         <div className="flex items-center gap-1 mb-3">

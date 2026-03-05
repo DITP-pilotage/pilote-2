@@ -73,10 +73,10 @@ const SyntheseDesResultats: FunctionComponent<SyntheseDesResultatsProps> = ({
               <div className="flex gap-4 pt-2">
                 <div className="flex flex-col gap-4 align-center">
                   <MétéoBadge
-                    météo={syntheseDesResultats?.météo ?? "NON_RENSEIGNEE"}
+                    météo={syntheseDesResultats?.meteo ?? "NON_RENSEIGNEE"}
                   />
                   {syntheseDesResultats ? (
-                    <MeteoPicto meteo={syntheseDesResultats.météo} />
+                    <MeteoPicto meteo={syntheseDesResultats.meteo} />
                   ) : null}
                 </div>
                 <div>

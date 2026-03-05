@@ -89,9 +89,9 @@ export const ModaleEditerBrouillonSyntheseDesResultats: FunctionComponent<
       <h3 className="text-base font-bold mb-3">Commentaire actuel</h3>
       <div className="flex gap-4 mb-6">
         <div className="flex-none w-55 flex flex-col gap-4 items-center">
-          <MétéoBadge météo={syntheseDesResultats?.météo ?? "NON_RENSEIGNEE"} />
+          <MétéoBadge météo={syntheseDesResultats?.meteo ?? "NON_RENSEIGNEE"} />
           {syntheseDesResultats ? (
-            <MeteoPicto meteo={syntheseDesResultats.météo} />
+            <MeteoPicto meteo={syntheseDesResultats.meteo} />
           ) : null}
         </div>
         <div>
