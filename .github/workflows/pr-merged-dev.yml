@@ -110,7 +110,7 @@ jobs:
           }
           trap cleanup_tunnel EXIT ERR
 
-          # Attend que le tunnel soit en place (habituellement sur le port 10000, peut varier)
+          # Attend que le tunnel soit en place sur le port 10000
           for i in {1..20}; do
             sleep 2
             if nc -z localhost 10000; then
