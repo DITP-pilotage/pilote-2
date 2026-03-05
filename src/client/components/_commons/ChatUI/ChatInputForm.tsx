@@ -57,6 +57,7 @@ export const ChatInputForm = ({
     state: micState,
     isSupported,
     toggle: toggleMic,
+    stop: stopMic,
   } = useSpeechRecognition({ onTranscript: handleTranscript });
 
   const handleSubmit = (event: FormEvent) => {
@@ -64,6 +65,7 @@ export const ChatInputForm = ({
     const trimmedInput = input.trim();
     if (!trimmedInput || isBusy) return;
 
+    stopMic();
     setInput("");
     sendMessage({ text: trimmedInput });
   };

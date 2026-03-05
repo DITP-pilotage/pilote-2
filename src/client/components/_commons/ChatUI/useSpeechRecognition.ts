@@ -6,6 +6,7 @@ type UseSpeechRecognitionReturn = {
   state: SpeechRecognitionState;
   isSupported: boolean;
   toggle: () => void;
+  stop: () => void;
 };
 
 export const useSpeechRecognition = ({
@@ -75,5 +76,10 @@ export const useSpeechRecognition = ({
     setState("listening");
   }, [isSupported, lang, state]);
 
-  return { state, isSupported, toggle };
+  const stop = useCallback(() => {
+    recognitionRef.current?.stop();
+    setState("inactive");
+  }, []);
+
+  return { state, isSupported, toggle, stop };
 };
