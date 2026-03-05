@@ -17,7 +17,10 @@ Dans Pilote, le TA {{JALON}} de la région s'établit à {{taux_avancement_globa
 
 (pour chaque chantier_en_retard)
 - **{{chantier.id}} — {{chantier.nom}}**
-  Écart : {{ecart}} points · Météo : {{synthese.meteo}}
+  
+  Écart : {{ecart}} points
+  Météo : {{synthese.meteo}}
+  
   Résumé de la situation
 
 ## Chantiers en difficulté
