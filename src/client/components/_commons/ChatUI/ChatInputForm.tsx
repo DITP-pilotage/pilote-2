@@ -11,7 +11,7 @@ import { ArrowLineIcon } from "@/components/_commons/Icones/ArrowLineIcon";
 import { MicrophoneIcon } from "@/components/_commons/Icones/MicrophoneIcon";
 import { useChatContext } from "@/components/_commons/ChatUI/ChatContext";
 import { useSpeechRecognition } from "@/components/_commons/ChatUI/useSpeechRecognition";
-import { SelecteurNew } from "@/components/_commons/SelecteurNew/SelecteurNew";
+import { Select } from "@/components/shared/Select";
 
 export type AlbertModel = "openweight-medium" | "openweight-large";
 
@@ -70,24 +70,10 @@ export const ChatInputForm = ({
 
   return (
     <div className="shrink-0 border-t border-gray-100 p-4 bg-white">
-      <div className="max-w-3xl mx-auto mb-2">
-        <SelecteurNew
-          disabled={isBusy}
-          htmlName="albert-model"
-          onChange={(model) => {
-            setSelectedModel(model);
-            onModelChange(model);
-          }}
-          options={MODEL_OPTIONS}
-          showSearch={false}
-          triggerClassName="!w-auto text-xs"
-          valeurSelectionnee={selectedModel}
-        />
-      </div>
       <form className="max-w-3xl mx-auto relative" onSubmit={handleSubmit}>
         <textarea
           ref={textareaRef}
-          className="w-full resize-none rounded-xl border border-gray-200 pl-4 pr-20 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+          className="w-full resize-none rounded-xl pl-4 pr-20 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent  bg-white border border-gray-200 "
           disabled={isBusy}
           onChange={(event) => setInput(event.target.value)}
           onKeyDown={(event) => {
@@ -97,9 +83,30 @@ export const ChatInputForm = ({
             }
           }}
           placeholder={placeholder}
-          rows={2}
+          rows={4}
           value={input}
         />
+        <div className="absolute bottom-3 left-2">
+          <Select.Root
+            disabled={isBusy}
+            onValueChange={(model) => {
+              setSelectedModel(model as AlbertModel);
+              onModelChange(model as AlbertModel);
+            }}
+            value={selectedModel}
+          >
+            <Select.GhostButtonTrigger>
+              <Select.Value />
+            </Select.GhostButtonTrigger>
+            <Select.Content>
+              {MODEL_OPTIONS.map((option) => (
+                <Select.Item key={option.valeur} value={option.valeur}>
+                  {option.libelle}
+                </Select.Item>
+              ))}
+            </Select.Content>
+          </Select.Root>
+        </div>
         <div className="absolute bottom-4 right-2 flex items-center gap-1">
           {isSupported && (
             <button

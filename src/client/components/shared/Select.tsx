@@ -25,6 +25,27 @@ export const Select = Object.assign({}, SelectPrimitive, {
       </SelectPrimitive.Icon>
     </SelectPrimitive.Trigger>
   ),
+  GhostButtonTrigger: ({
+    children,
+    className,
+    ...props
+  }: ComponentProps<typeof SelectPrimitive.Trigger>) => (
+    <SelectPrimitive.Trigger
+      className={clsxm(
+        "flex items-center gap-1 px-2 py-1 rounded-lg text-xs text-gray-500 bg-transparent border-none",
+        "hover:bg-gray-100 hover:text-gray-700",
+        "data-[state=open]:bg-gray-100",
+        "disabled:opacity-50 disabled:cursor-not-allowed",
+        className,
+      )}
+      {...props}
+    >
+      {children}
+      <SelectPrimitive.Icon asChild>
+        <Icone className="text-current" icone={ArrowSLine2Icon} />
+      </SelectPrimitive.Icon>
+    </SelectPrimitive.Trigger>
+  ),
   Content: ({
     children,
     className,
