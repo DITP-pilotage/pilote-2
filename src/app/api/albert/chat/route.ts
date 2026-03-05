@@ -16,6 +16,9 @@ const chatRequestSchema = z
     id: z.string().min(1),
     messages: z.array(z.any()),
     agentContext: z.record(z.string(), z.unknown()).nullable().optional(),
+    model: z
+      .enum(["openweight-medium", "openweight-large"])
+      .default("openweight-large"),
   })
   .passthrough();
 
@@ -70,6 +73,7 @@ export async function POST(request: Request) {
       messages,
       systemPrompt,
       userId: session.user.id,
+      model: body.model,
       tools: {
         get_instructions: getInstructionsTool,
         get_taux_avancement_territoire: getTauxAvancementTerritoire,

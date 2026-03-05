@@ -84,7 +84,7 @@ export const displayValeursIndicateurTool = tool({
   }),
 });
 
-const MODEL = "openweight-medium";
+const DEFAULT_MODEL = "openweight-large";
 
 export class Albert {
   private static createProvider() {
@@ -98,16 +98,18 @@ export class Albert {
     chatId,
     userId,
     event,
+    model = DEFAULT_MODEL,
   }: {
     chatId: string;
     userId: string;
     event: unknown;
+    model?: string;
   }) {
     await prisma.llm_calls.upsert({
       where: { id: chatId },
       create: {
         id: chatId,
-        model: MODEL,
+        model,
         transcript: event as unknown as Prisma.InputJsonValue,
         utilisateur_id: userId,
       },
@@ -133,7 +135,7 @@ export class Albert {
     const albertProvider = this.createProvider();
 
     const response = await aiGenerateText({
-      model: albertProvider.chat(MODEL),
+      model: albertProvider.chat(DEFAULT_MODEL),
       system: systemPrompt,
       prompt: prompt,
       stopWhen: stepCountIs(5),
@@ -152,23 +154,25 @@ export class Albert {
     systemPrompt,
     userId,
     tools,
+    model = DEFAULT_MODEL,
   }: {
     chatId: string;
     messages: UIMessage[];
     systemPrompt: string;
     userId: string;
     tools?: ToolSet;
+    model?: string;
   }) {
     const albertProvider = this.createProvider();
     const modelMessages = await convertToModelMessages(messages);
 
     return aiStreamText({
-      model: albertProvider.chat(MODEL),
+      model: albertProvider.chat(model),
       system: systemPrompt,
       messages: modelMessages,
       tools,
       stopWhen: stepCountIs(15),
-      onFinish: (event) => Albert.saveLlmCall({ chatId, userId, event }),
+      onFinish: (event) => Albert.saveLlmCall({ chatId, userId, event, model }),
     });
   }
 }

@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef } from "react";
 import { Chat, useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
+import type { AlbertModel } from "@/components/_commons/ChatUI/ChatInputForm";
 import { clsxm } from "@/utils/clsxm";
 import { ChatContextProvider } from "@/components/_commons/ChatUI/ChatContext";
 import { UserMessage } from "@/components/_commons/ChatUI/UserMessage";
@@ -37,11 +38,18 @@ export const ChatUI = ({
   const userHasScrolledRef = useRef(false);
   const prevMessageCountRef = useRef(0);
   const fillInputRef = useRef<((text: string) => void) | null>(null);
+  const bodyRef = useRef<{
+    agentContext?: Record<string, unknown>;
+    model: AlbertModel;
+  }>({
+    ...(agentContext ? { agentContext } : {}),
+    model: "openweight-large",
+  });
   const chatRef = useRef(
     new Chat<PiloteUIMessage>({
       transport: new DefaultChatTransport<PiloteUIMessage>({
         api: endpoint,
-        body: agentContext ? { agentContext } : undefined,
+        body: bodyRef.current,
       }),
     }),
   );
@@ -80,6 +88,10 @@ export const ChatUI = ({
 
   const fillInput = useCallback((text: string) => {
     fillInputRef.current?.(text);
+  }, []);
+
+  const handleModelChange = useCallback((model: AlbertModel) => {
+    bodyRef.current.model = model;
   }, []);
 
   return (
@@ -145,7 +157,11 @@ export const ChatUI = ({
           <FeedbackBar chatId={chatRef.current.id} />
         )}
 
-        <ChatInputForm fillInputRef={fillInputRef} placeholder={placeholder} />
+        <ChatInputForm
+          fillInputRef={fillInputRef}
+          onModelChange={handleModelChange}
+          placeholder={placeholder}
+        />
       </div>
     </ChatContextProvider>
   );

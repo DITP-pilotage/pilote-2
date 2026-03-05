@@ -11,15 +11,27 @@ import { ArrowLineIcon } from "@/components/_commons/Icones/ArrowLineIcon";
 import { MicrophoneIcon } from "@/components/_commons/Icones/MicrophoneIcon";
 import { useChatContext } from "@/components/_commons/ChatUI/ChatContext";
 import { useSpeechRecognition } from "@/components/_commons/ChatUI/useSpeechRecognition";
+import { SelecteurNew } from "@/components/_commons/SelecteurNew/SelecteurNew";
+
+export type AlbertModel = "openweight-medium" | "openweight-large";
+
+const MODEL_OPTIONS: { libelle: string; valeur: AlbertModel }[] = [
+  { libelle: "GPT-OSS 120B", valeur: "openweight-large" },
+  { libelle: "Mistral Small 24B", valeur: "openweight-medium" },
+];
 
 export const ChatInputForm = ({
   placeholder,
   fillInputRef,
+  onModelChange,
 }: {
   placeholder: string;
   fillInputRef: MutableRefObject<((text: string) => void) | null>;
+  onModelChange: (model: AlbertModel) => void;
 }) => {
   const [input, setInput] = useState("");
+  const [selectedModel, setSelectedModel] =
+    useState<AlbertModel>("openweight-large");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const { sendMessage, status } = useChatContext();
   const isBusy = status === "submitted" || status === "streaming";
@@ -41,7 +53,11 @@ export const ChatInputForm = ({
     setInput((prev) => (prev ? `${prev} ${text}` : text));
   }, []);
 
-  const { state: micState, isSupported, toggle: toggleMic } = useSpeechRecognition({ onTranscript: handleTranscript });
+  const {
+    state: micState,
+    isSupported,
+    toggle: toggleMic,
+  } = useSpeechRecognition({ onTranscript: handleTranscript });
 
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
@@ -54,6 +70,20 @@ export const ChatInputForm = ({
 
   return (
     <div className="shrink-0 border-t border-gray-100 p-4 bg-white">
+      <div className="max-w-3xl mx-auto mb-2">
+        <SelecteurNew
+          disabled={isBusy}
+          htmlName="albert-model"
+          onChange={(model) => {
+            setSelectedModel(model);
+            onModelChange(model);
+          }}
+          options={MODEL_OPTIONS}
+          showSearch={false}
+          triggerClassName="!w-auto text-xs"
+          valeurSelectionnee={selectedModel}
+        />
+      </div>
       <form className="max-w-3xl mx-auto relative" onSubmit={handleSubmit}>
         <textarea
           ref={textareaRef}
@@ -73,7 +103,11 @@ export const ChatInputForm = ({
         <div className="absolute bottom-4 right-2 flex items-center gap-1">
           {isSupported && (
             <button
-              aria-label={micState === "listening" ? "Arrêter l'écoute" : "Dicter un message"}
+              aria-label={
+                micState === "listening"
+                  ? "Arrêter l'écoute"
+                  : "Dicter un message"
+              }
               className={clsxm(
                 "w-8 h-8 rounded-full flex items-center justify-center transition-colors",
                 {
