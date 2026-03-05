@@ -100,6 +100,18 @@ export class RécupérerVariableContenuUseCase {
         return configuration().featureFlip
           .centreAideCustomPilote as VariableContenuDisponibleEnv[T];
       }
+      case "NEXT_PUBLIC_FF_PILOTE_EVAL": {
+        return configuration().featureFlip
+          .piloteEval as VariableContenuDisponibleEnv[T];
+      }
+      case "NEXT_PUBLIC_FF_RAPPORT_COORDINATEURS": {
+        return configuration().featureFlip
+          .rapportCoordinateurs as VariableContenuDisponibleEnv[T];
+      }
+      case "NEXT_PUBLIC_FF_ACCES_PILOTE": {
+        return configuration().featureFlip
+          .accesPilote as VariableContenuDisponibleEnv[T];
+      }
     }
   }
 }

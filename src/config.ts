@@ -309,6 +309,11 @@ const config = convict({
       default: false,
       env: "NEXT_PUBLIC_FF_CENTRE_AIDE_CUSTOM_PILOTE",
     },
+    accesPilote: {
+      format: Boolean,
+      default: false,
+      env: "NEXT_PUBLIC_FF_ACCES_PILOTE",
+    },
   },
   analytics: {
     doc: "Matomo Analytics",

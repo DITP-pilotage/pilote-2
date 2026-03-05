@@ -9,6 +9,7 @@ import { getQueryParamString } from "@/client/utils/getQueryParamString";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
 import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
 import HabilitationGestionUtilisateur from "@/server/gestion-utilisateur/domain/habilitation/Habilitation";
+import { useEnv } from "@/client/hooks/useEnv";
 import {
   BaseNavigation,
   LienNavigation,
@@ -46,6 +47,10 @@ export const NavigationPilote = () => {
   const { data: session } = useSession();
   const router = useRouter();
 
+  const ffRapportCoordinateurs = useEnv("NEXT_PUBLIC_FF_RAPPORT_COORDINATEURS");
+  const ffCentreAideCustomPilote = useEnv(
+    "NEXT_PUBLIC_FF_CENTRE_AIDE_CUSTOM_PILOTE",
+  );
   const { vérifierSuiviCompletudeEstDisponibleEstIndisponible } =
     useNavigation();
 
@@ -88,7 +93,7 @@ export const NavigationPilote = () => {
           matcher: "/rapports-hebdomadaires",
           accessible:
             estAutoriseAAccederAuxRapportsHebdomadaires(session) &&
-            process.env.NEXT_PUBLIC_FF_RAPPORT_COORDINATEURS === "true",
+            ffRapportCoordinateurs,
           prefetch: false,
           target: "_self",
         },
@@ -120,8 +125,7 @@ export const NavigationPilote = () => {
           nom: "Centre d'aide Pilote",
           lien: "/centre-aide-pilote",
           matcher: "/centre-aide-pilote",
-          accessible:
-            process.env.NEXT_PUBLIC_FF_CENTRE_AIDE_CUSTOM_PILOTE === "true",
+          accessible: ffCentreAideCustomPilote,
           prefetch: false,
           target: "_self",
         },
