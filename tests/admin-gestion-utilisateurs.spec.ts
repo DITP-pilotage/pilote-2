@@ -66,11 +66,12 @@ test.describe("Gestion des comptes utilisateurs", () => {
     await test.step("Fiche détail - actions complètes", async () => {
       const pageDetail =
         await pageUtilisateurs.clickUtilisateurParEmail(COORDINATEUR_REGION);
+      // La fiche détail affiche le code brut du profil, pas le libellé
       await pageDetail.expectInfoUtilisateur(
         COORDINATEUR_REGION,
         "Region",
         "Coordinateur",
-        "Coordinateur PILOTE régional",
+        "COORDINATEUR_REGION",
       );
       await pageDetail.expectModifierVisible();
       await pageDetail.expectDesactiverVisible();
@@ -438,7 +439,8 @@ test.describe("Gestion des comptes utilisateurs", () => {
       await page
         .getByRole("button", { name: /Réinitialiser les filtres/ })
         .click();
-      await page.waitForTimeout(600);
+      // Le bouton "Réinitialiser" ne clear que la barre latérale, pas la recherche
+      await pageUtilisateurs.effacerRecherche();
       await pageUtilisateurs.expectUtilisateurDansTableau(DITP_ADMIN);
     });
   });

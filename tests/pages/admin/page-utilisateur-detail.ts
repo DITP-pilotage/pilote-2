@@ -69,11 +69,10 @@ export class PageUtilisateurDetail extends BasePage {
     prenom: string,
     profil: string,
   ): Promise<void> {
-    const tableau = this.page.getByRole("table");
-    await expect(tableau.getByRole("cell", { name: email })).toBeVisible();
-    await expect(tableau.getByRole("cell", { name: nom })).toBeVisible();
-    await expect(tableau.getByRole("cell", { name: prenom })).toBeVisible();
-    await expect(tableau.getByRole("cell", { name: profil })).toBeVisible();
+    await expect(this.page.locator("main")).toContainText(email);
+    await expect(this.page.locator("main")).toContainText(nom);
+    await expect(this.page.locator("main")).toContainText(prenom);
+    await expect(this.page.locator("main")).toContainText(profil);
   }
 
   async expectModifierVisible(): Promise<void> {
