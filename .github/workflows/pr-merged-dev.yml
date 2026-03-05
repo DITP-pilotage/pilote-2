@@ -88,6 +88,14 @@ jobs:
           api_token: ${{ secrets.SCALINGO_API_TOKEN }}
           app_name: 'dev-pilote-ditp'
 
+      - name: Write SSH keys
+        run: |
+          mkdir -p /home/runner/.ssh
+          echo "${{ env.SSH_PRIVATE_KEY }}" > /home/runner/.ssh/id_rsa
+          chmod 600 /home/runner/.ssh/id_rsa
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+
       # Ouvre le tunnel et génère la doc dans le même shell pour s'assurer que le tunnel est actif durant dbt docs
       - name: "Create Tunnel and Generate DBT Doc"
         if: steps.datamgmt_changes.outputs.changed == 'true'
