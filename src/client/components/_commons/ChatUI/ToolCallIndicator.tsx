@@ -9,11 +9,21 @@ import { AnimateEntry } from "@/components/shared/AnimateEntry";
 
 type DataFetchingToolPart = Extract<
   ToolUIPart<PiloteUITools>,
-  { type: "tool-get_synthese_territoire" | "tool-get_valeurs_indicateur" }
+  {
+    type:
+      | "tool-get_taux_avancement_territoire"
+      | "tool-get_chantiers_en_retard"
+      | "tool-get_chantiers_en_difficulte"
+      | "tool-get_valeurs_indicateur";
+  }
 >;
 
 const TOOL_LABELS: Record<DataFetchingToolPart["type"], string> = {
-  "tool-get_synthese_territoire": "Récupération de la synthèse du territoire",
+  "tool-get_taux_avancement_territoire":
+    "Récupération du taux d'avancement du territoire",
+  "tool-get_chantiers_en_retard": "Récupération des chantiers en retard",
+  "tool-get_chantiers_en_difficulte":
+    "Récupération des chantiers en difficulté",
   "tool-get_valeurs_indicateur": "Récupération des valeurs de l'indicateur",
 };
 

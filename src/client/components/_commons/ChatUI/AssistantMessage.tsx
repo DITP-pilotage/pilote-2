@@ -32,7 +32,9 @@ export const AssistantMessage = ({
       <div className="max-w-3xl mx-auto">
         {message.parts?.map((part, index) => {
           if (
-            part.type === "tool-get_synthese_territoire" ||
+            part.type === "tool-get_taux_avancement_territoire" ||
+            part.type === "tool-get_chantiers_en_retard" ||
+            part.type === "tool-get_chantiers_en_difficulte" ||
             part.type === "tool-get_valeurs_indicateur"
           ) {
             return <ToolCallIndicator key={index} part={part} />;

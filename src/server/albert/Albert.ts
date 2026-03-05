@@ -12,8 +12,6 @@ import { z } from "zod";
 import { Prisma } from "@prisma/client";
 import { configuration } from "@/config";
 import { prisma } from "@/server/db/prisma";
-import { SYNTHESE_TERRITOIRE_OUTPUT_FORMAT } from "./tools/getSyntheseTerritoire";
-import { VALEURS_INDICATEUR_OUTPUT_FORMAT } from "./tools/getValeursIndicateur";
 
 const displayChoicesInputSchema = z.object({
   choices: z
@@ -155,29 +153,6 @@ export class Albert {
       model: albertProvider.chat(MODEL),
       system: systemPrompt,
       messages: modelMessages,
-      prepareStep: ({ steps }) => {
-        const lastStep = steps.at(-1);
-        const lastStepToolNames = lastStep?.toolCalls.map(
-          (toolCall) => toolCall.toolName,
-        );
-
-        if (lastStepToolNames?.includes("get_synthese_territoire")) {
-          return {
-            system: systemPrompt + "\n\n" + SYNTHESE_TERRITOIRE_OUTPUT_FORMAT,
-          };
-        }
-
-        if (
-          lastStepToolNames?.includes("get_valeurs_indicateur") ||
-          lastStepToolNames?.includes("display_valeurs_indicateur")
-        ) {
-          return {
-            system: systemPrompt + "\n\n" + VALEURS_INDICATEUR_OUTPUT_FORMAT,
-          };
-        }
-
-        return {};
-      },
       tools,
       stopWhen: stepCountIs(15),
       onFinish: (event) => Albert.saveLlmCall({ chatId, userId, event }),

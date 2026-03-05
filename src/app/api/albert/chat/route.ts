@@ -8,6 +8,7 @@ import {
 import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
 import { buildChatSystemPrompt } from "@/server/albert/systemPrompt";
 import { getContainer } from "@/server/dependances";
+import { getInstructionsTool } from "@/server/albert/recipes";
 
 const chatRequestSchema = z
   .object({
@@ -33,8 +34,14 @@ export async function POST(request: Request) {
     const territoiresAccessibles = session.habilitations.lecture.territoires;
 
     const container = getContainer("albert");
-    const createGetSyntheseTerritoireTool = container.resolve(
-      "createGetSyntheseTerritoireTool",
+    const createGetTauxAvancementTerritoireTool = container.resolve(
+      "createGetTauxAvancementTerritoireTool",
+    );
+    const createGetChantiersEnRetardTool = container.resolve(
+      "createGetChantiersEnRetardTool",
+    );
+    const createGetChantiersEnDifficulteTool = container.resolve(
+      "createGetChantiersEnDifficulteTool",
     );
     const createGetValeursIndicateurTool = container.resolve(
       "createGetValeursIndicateurTool",
@@ -44,7 +51,13 @@ export async function POST(request: Request) {
       territoiresAccessibles,
       agentContext,
     });
-    const getSyntheseTerritoire = createGetSyntheseTerritoireTool({
+    const getTauxAvancementTerritoire = createGetTauxAvancementTerritoireTool({
+      territoiresAccessibles,
+    });
+    const getChantiersEnRetard = createGetChantiersEnRetardTool({
+      territoiresAccessibles,
+    });
+    const getChantiersEnDifficulte = createGetChantiersEnDifficulteTool({
       territoiresAccessibles,
     });
     const getValeursIndicateur = createGetValeursIndicateurTool({
@@ -57,7 +70,10 @@ export async function POST(request: Request) {
       systemPrompt,
       userId: session.user.id,
       tools: {
-        get_synthese_territoire: getSyntheseTerritoire,
+        get_instructions: getInstructionsTool,
+        get_taux_avancement_territoire: getTauxAvancementTerritoire,
+        get_chantiers_en_retard: getChantiersEnRetard,
+        get_chantiers_en_difficulte: getChantiersEnDifficulte,
         get_valeurs_indicateur: getValeursIndicateur,
         display_choices: displayChoicesTool,
         display_valeurs_indicateur: displayValeursIndicateurTool,

@@ -14,6 +14,7 @@ import { getContainer } from "@/server/dependances";
 import { RécupérerVariableContenuUseCase } from "@/server/gestion-contenu/usecases/RécupérerVariableContenuUseCase";
 import { NotFoundError } from "@/server/app/error-boundary/not-found-error";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
+import { getInstructionsTool } from "@/server/albert/recipes";
 
 export const albertRouter = créerRouteurTRPC({
   chat: procédureProtégée
@@ -36,15 +37,26 @@ export const albertRouter = créerRouteurTRPC({
         ctx.session.habilitations.lecture.territoires;
 
       const container = getContainer("albert");
-      const createGetSyntheseTerritoireTool = container.resolve(
-        "createGetSyntheseTerritoireTool",
+      const createGetTauxAvancementTerritoireTool = container.resolve(
+        "createGetTauxAvancementTerritoireTool",
+      );
+      const createGetChantiersEnRetardTool = container.resolve(
+        "createGetChantiersEnRetardTool",
+      );
+      const createGetChantiersEnDifficulteTool = container.resolve(
+        "createGetChantiersEnDifficulteTool",
       );
       const createGetValeursIndicateurTool = container.resolve(
         "createGetValeursIndicateurTool",
       );
 
       const systemPrompt = buildChatSystemPrompt({ territoiresAccessibles });
-      const getSyntheseTerritoire = createGetSyntheseTerritoireTool({
+      const getTauxAvancementTerritoire =
+        createGetTauxAvancementTerritoireTool({ territoiresAccessibles });
+      const getChantiersEnRetard = createGetChantiersEnRetardTool({
+        territoiresAccessibles,
+      });
+      const getChantiersEnDifficulte = createGetChantiersEnDifficulteTool({
         territoiresAccessibles,
       });
       const getValeursIndicateur = createGetValeursIndicateurTool({
@@ -57,7 +69,10 @@ export const albertRouter = créerRouteurTRPC({
         systemPrompt,
         userId: ctx.session.user.id,
         tools: {
-          get_synthese_territoire: getSyntheseTerritoire,
+          get_instructions: getInstructionsTool,
+          get_taux_avancement_territoire: getTauxAvancementTerritoire,
+          get_chantiers_en_retard: getChantiersEnRetard,
+          get_chantiers_en_difficulte: getChantiersEnDifficulte,
           get_valeurs_indicateur: getValeursIndicateur,
           display_choices: displayChoicesTool,
           display_valeurs_indicateur: displayValeursIndicateurTool,
