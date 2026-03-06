@@ -27,6 +27,8 @@ import { configuration } from "@/config";
 import {
   getImportCommentaireContainer,
   ImportCommentaireDependencies,
+  getCommentairesContainer,
+  CommentairesDependencies,
 } from "@/server/commentaires/container";
 import {
   getImportDecisionStrategiqueContainer,
@@ -77,6 +79,7 @@ export type ContainerDependencies = {
   parametrageIndicateur: AwilixContainer<ParametrageIndicateurDependencies>;
   importIndicateur: AwilixContainer<ImportIndicateurDependencies>;
   importCommentaire: AwilixContainer<ImportCommentaireDependencies>;
+  commentaires: AwilixContainer<CommentairesDependencies>;
   gestionUtilisateur: AwilixContainer<GestionUtilisateurDependencies>;
   ficheConducteur: AwilixContainer<FicheConducteurDependencies>;
   parametrageNouveautes: AwilixContainer<ParametrageNouveautesDependencies>;
@@ -110,6 +113,9 @@ function registerContainer(): ContainerDependencies {
       initialContainerWithTransversalDependencies,
     ),
     importCommentaire: getImportCommentaireContainer(
+      initialContainerWithTransversalDependencies,
+    ),
+    commentaires: getCommentairesContainer(
       initialContainerWithTransversalDependencies,
     ),
     gestionUtilisateur: getGestionUtilisateurContainer(
