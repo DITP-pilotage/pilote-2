@@ -501,34 +501,227 @@ Légende : ✓ modifiable | 🔒 bandeau restriction | — non visible | ✗ pas
 
 ---
 
+## 8. Gestion des paramètres des indicateurs — Listing
+
+**Fichier :** `tests/admin-indicateurs-listing.spec.ts`
+
+Page accessible uniquement aux profils DITP_ADMIN. Affiche un tableau paginé des metadata indicateurs avec des filtres dans une barre latérale.
+
+### Test 1 : Structure de la page et fonctionnalités principales
+
+Profil : `ditp.admin@example.com` (DITP_ADMIN)
+
+**Accès et structure :**
+
+- Connexion en tant que DITP Admin et navigation vers `/admin/indicateurs`
+- Vérification du titre de la page : "Gestion des paramètres des indicateurs"
+- Vérification de la structure du tableau : présence des 6 colonnes (Chantier associé, Nom du chantier, Identifiant indicateur, Nom de l'indicateur, Dernière modification, Actif / Inactif)
+- Vérification de la présence du bouton "Créer un indicateur"
+- Vérification de la présence du bouton d'export
+
+**Pagination :**
+
+- Vérification que la pagination est visible (plus de 20 indicateurs)
+- Vérification que la première page affiche 20 lignes
+- Navigation vers la page suivante : vérification que le nombre de lignes correspond au reste des indicateurs
+- Retour à la page 1
+
+**Recherche textuelle :**
+
+- Saisie de "IND-021" dans la barre de recherche
+- Vérification que IND-021 apparaît dans le tableau
+- Vérification que la pagination disparaît (résultat unique)
+- Effacement de la recherche : retour au nombre initial d'indicateurs avec pagination
+
+**Filtre par indicateurs territorialisés :**
+
+- Activation du toggle "Indicateurs territorialisés" dans la barre latérale
+- Vérification que le nombre d'indicateurs est inférieur ou égal au total
+- Vérification que le tag de filtre actif "Indicateurs territorialisés" est visible
+- Réinitialisation des filtres : retour au nombre initial
+
+**Filtre par indicateurs du baromètre :**
+
+- Activation du toggle "Indicateurs du baromètre" dans la barre latérale
+- Vérification que le nombre d'indicateurs est inférieur ou égal au total
+- Vérification que le tag de filtre actif "Indicateurs du baromètre" est visible
+- Réinitialisation des filtres : retour au nombre initial
+
+**Navigation vers le détail :**
+
+- Clic sur un indicateur (IND-021) dans le tableau
+- Vérification de la redirection vers `/admin/indicateurs/IND-021`
+
+### Test 2 : Accès refusé aux profils non DITP_ADMIN
+
+**Coordinateur région** (`coordinateur.region@example.com`) :
+
+- Vérification que le lien "Indicateurs des chantiers" n'est PAS visible dans la navigation
+- Tentative d'accès direct à `/admin/indicateurs` : vérification que l'URL ne reste pas sur `/admin/indicateurs`
+
+**Équipe direction de projet** (`equipe.dir.projet@example.com`) :
+
+- Vérification que le lien "Indicateurs des chantiers" n'est PAS visible dans la navigation
+- Tentative d'accès direct à `/admin/indicateurs` : vérification que l'URL ne reste pas sur `/admin/indicateurs`
+
+---
+
+## 9. Gestion des paramètres des indicateurs — Formulaire
+
+**Fichier :** `tests/admin-indicateurs-formulaire.spec.ts`
+
+Page accessible uniquement aux profils DITP_ADMIN. Affiche la fiche détaillée d'un indicateur avec 3 modes : consultation (lecture seule), modification et création.
+
+### Test 1 : Consultation et modification d'un indicateur existant
+
+Profil : `ditp.admin@example.com` (DITP_ADMIN)
+
+**Accès et structure :**
+
+- Connexion en tant que DITP Admin et navigation vers `/admin/indicateurs/IND-021`
+- Vérification du titre : "Fiche de l'indicateur IND-021"
+- Vérification du lien "Retour" vers le listing
+- Vérification du sélecteur Actif/Inactif
+- Vérification du tableau récapitulatif avec les 6 colonnes (Chantier associé, Nom du chantier, Identifiant indicateur, Nom de l'indicateur, Création de l'indicateur, Dernière modification)
+
+**Structure des accordéons :**
+
+- Vérification que l'accordéon "Identité indicateur" est ouvert par défaut
+- Vérification que l'accordéon "Paramétrages" est fermé par défaut
+- Vérification que l'accordéon "Autres informations" est fermé par défaut
+
+**Mode consultation :**
+
+- Vérification que le bouton "Modifier" est visible
+- Vérification que les boutons "Confirmer les changements" et "Annuler" ne sont pas visibles
+- Vérification que les données de l'indicateur sont affichées (CH-129, IND-021)
+
+**Section Paramétrages :**
+
+- Ouverture de l'accordéon Paramétrages
+- Vérification des sections : Maille départementale, Maille régionale, Maille nationale, Pondération
+
+**Mode modification :**
+
+- Clic sur "Modifier" : passage en mode modification
+- Vérification que "Confirmer les changements" et "Annuler" sont visibles, "Modifier" masqué
+- Clic sur "Annuler" : retour au mode consultation
+
+**Soumission des modifications :**
+
+- Passage en mode modification et soumission via "Confirmer les changements"
+- Vérification de l'alerte de succès : "Bravo, l'indicateur a bien été modifié !"
+- Vérification du retour au mode consultation
+
+**Retour au listing :**
+
+- Clic sur le lien "Retour" : vérification de la redirection vers `/admin/indicateurs`
+
+### Test 2 : Règles d'activation/désactivation — Mailles départementale, régionale et nationale
+
+Profil : `ditp.admin@example.com` (DITP_ADMIN)
+
+Indicateur cible : IND-021 (seed : vi_dept_from=user_input, vi_reg_from=DEPT, vi_nat_from=DEPT)
+
+**Maille départementale :**
+
+- vi_dept_from=user_input → vi_dept_op est désactivé (règle : `_` ou `user_input` désactive l'op)
+- Changement de vi_dept_from en `sub_indic` → vi_dept_op devient activé
+- Retour de vi_dept_from en `user_input` → vi_dept_op redevient désactivé
+- va_dept_from=user_input → va_dept_op est désactivé
+
+**Maille régionale :**
+
+- vi_reg_from=DEPT → vi_reg_op=sum est activé
+- Changement de vi_reg_from en `user_input` → vi_reg_op se désactive
+- Retour de vi_reg_from en `DEPT` → vi_reg_op se réactive
+
+**Maille nationale :**
+
+- vi_nat_from=DEPT → vi_nat_op est activé
+- Changement de vi_nat_from en `_` → vi_nat_op se désactive
+
+### Test 3 : Règles du calcul de la valeur d'avancement
+
+Profil : `ditp.admin@example.com` (DITP_ADMIN)
+
+Indicateur cible : IND-021 (seed : param_vaca_partition_date=from_year_start, param_vaca_op=sum)
+
+- param_vaca_op et param_vacg_op sont toujours désactivés (non éditables)
+- Valeurs initiales : partition_date=from_year_start, op=sum (TA annuel et TA global synchronisés)
+- Changement partition_date TA annuel en `_` → op passe à `current_value`, et les champs TA global se synchronisent
+- Changement partition_date TA global en `from_year_start` → op revient à `sum`, TA annuel se synchronise
+- Synchronisation des décumul_from entre TA annuel et TA global
+
+### Test 4 : Pondération — Désactivation quand non territorialisé
+
+Profil : `ditp.admin@example.com` (DITP_ADMIN)
+
+Indicateur cible : IND-021 (territorialisé=true)
+
+- poidsPourcentDept et poidsPourcentReg sont activés quand l'indicateur est territorialisé
+- Désactivation du switch "Territorialisation" → poidsPourcentDept et poidsPourcentReg se désactivent
+
+### Test 5 : Formulaire en mode création
+
+Profil : `ditp.admin@example.com` (DITP_ADMIN)
+
+- Navigation vers `/admin/indicateurs/IND-999?_action=creer-indicateur`
+- Vérification du titre : "Fiche de l'indicateur IND-999"
+- Vérification du mode création : bouton "Créer l'indicateur" visible, "Modifier" et "Confirmer les changements" absents
+- Vérification de la structure : sélecteur Actif/Inactif, accordéons avec l'identité ouvert
+
+### Test 6 : Navigation listing vers fiche et retour
+
+Profil : `ditp.admin@example.com` (DITP_ADMIN)
+
+- Connexion et accès au listing des indicateurs
+- Recherche et navigation vers IND-021
+- Vérification de la fiche affichée
+- Retour au listing via le lien "Retour"
+
+### Test 7 : Accès refusé à la fiche indicateur pour les profils non DITP_ADMIN
+
+**Coordinateur région** (`coordinateur.region@example.com`) :
+
+- Tentative d'accès direct à `/admin/indicateurs/IND-021` : vérification que l'URL ne reste pas sur la fiche
+
+**Équipe direction de projet** (`equipe.dir.projet@example.com`) :
+
+- Tentative d'accès direct à `/admin/indicateurs/IND-021` : vérification que l'URL ne reste pas sur la fiche
+
+---
+
 ## Matrice profils × tests
 
 Légende : ✓ = profil utilisé dans ce test
 
-| Test                                    | DITP Admin | Coord. Rég. | Coord. Dept | Sec. Gén. | Préfet Rég. | Préfet Dept | Éq. Dir. Projet | Coord. Rég. (PVA) | Coord. Dept (PVA) | Préfet Dept (PVA) |
-|-----------------------------------------|:----------:|:-----------:|:-----------:|:---------:|:-----------:|:-----------:|:---------------:|:-----------------:|:-----------------:|:-----------------:|
-| 1. Login                                |     ✓      |             |             |           |             |             |                 |                   |                   |                   |
-| 2. Consultation chantier                |     ✓      |             |             |           |             |             |                 |                   |                   |                   |
-| 3. Import données                       |     ✓      |             |             |           |             |             |                 |                   |                   |                   |
-| 4.1 Export CSV chantiers                |     ✓      |             |             |           |             |             |                 |                   |                   |                   |
-| 4.2 Export CSV indicateurs              |     ✓      |             |             |           |             |             |                 |                   |                   |                   |
-| 4.3 Export CSV historique               |     ✓      |             |             |           |             |             |                 |                   |                   |                   |
-| 4.4 Export CSV utilisateurs             |     ✓      |             |             |           |             |             |                 |                   |                   |                   |
-| 5. PVA - Création/acceptation           |            |             |             |           |             |             |                 |                   |         ✓         |                   |
-| 5. PVA - Refus                          |            |             |             |           |             |             |                 |                   |                   |         ✓         |
-| 5. PVA - Acceptation modifiée           |            |             |             |           |             |             |                 |                   |         ✓         |                   |
-| 5. PVA - Modif/suppression              |            |             |             |           |             |             |                 |                   |         ✓         |                   |
-| 5. PVA - Blocage maille                 |            |             |             |           |             |             |                 |         ✓         |                   |                   |
-| 5. PVA - Dir. projet (décisions)        |            |             |             |           |             |             |        ✓        |                   |                   |                   |
-| 6. API                                  |     ✓      |             |             |           |             |             |        ✓        |                   |                   |                   |
-| 7.1 Gestion - Vue admin + token         |     ✓      |             |             |           |             |             |                 |                   |                   |                   |
-| 7.2 Gestion - Visibilité + restrictions |            |      ✓      |             |           |             |             |                 |                   |                   |                   |
-| 7.3 Gestion - Périmètre restreint       |            |             |      ✓      |           |             |             |                 |                   |                   |                   |
-| 7.4 Gestion - Par chantiers             |            |             |             |     ✓     |             |             |                 |                   |                   |                   |
-| 7.5 Gestion - Accès refusé              |            |             |             |           |      ✓      |      ✓      |        ✓        |                   |                   |                   |
-| 7.6 Gestion - Désactiver/réactiver      |     ✓      |             |             |           |             |             |                 |                   |                   |                   |
-| 7.7 Gestion - Filtres                   |     ✓      |             |             |           |             |             |                 |                   |                   |                   |
-| 7.8 Gestion - Multi-territoires         |            |      ✓      |             |           |             |             |                 |                   |                   |                   |
+| Test                                    | DITP Admin | Coord. Rég. | Coord. Dept | Sec. Gén. | Préfet Rég. | Préfet Dept | Éq. Dir. Projet |
+|-----------------------------------------|:----------:|:-----------:|:-----------:|:---------:|:-----------:|:-----------:|:---------------:|
+| 1. Login                                |     ✓      |             |             |           |             |             |                 |
+| 2. Consultation chantier                |     ✓      |             |             |           |             |             |                 |
+| 3. Import données                       |     ✓      |             |             |           |             |             |                 |
+| 4.1 Export CSV chantiers                |     ✓      |             |             |           |             |             |                 |
+| 4.2 Export CSV indicateurs              |     ✓      |             |             |           |             |             |                 |
+| 4.3 Export CSV historique               |     ✓      |             |             |           |             |             |                 |
+| 4.4 Export CSV utilisateurs             |     ✓      |             |             |           |             |             |                 |
+| 5. PVA - Création/acceptation           |            |             |      ✓      |           |             |             |        ✓        |
+| 5. PVA - Refus                          |            |             |             |           |             |      ✓      |        ✓        |
+| 5. PVA - Acceptation modifiée           |            |             |      ✓      |           |             |             |        ✓        |
+| 5. PVA - Modif/suppression              |            |             |      ✓      |           |             |             |                 |
+| 5. PVA - Blocage maille                 |            |      ✓      |             |           |             |             |                 |
+| 5. PVA - Dir. projet (décisions)        |            |             |             |           |             |             |        ✓        |
+| 6. API                                  |     ✓      |             |             |           |             |             |        ✓        |
+| 7.1 Gestion - Vue admin + token         |     ✓      |             |             |           |             |             |                 |
+| 7.2 Gestion - Visibilité + restrictions |            |      ✓      |             |           |             |             |                 |
+| 7.3 Gestion - Périmètre restreint       |            |             |      ✓      |           |             |             |                 |
+| 7.4 Gestion - Par chantiers             |            |             |             |     ✓     |             |             |                 |
+| 7.5 Gestion - Accès refusé              |            |             |             |           |      ✓      |      ✓      |        ✓        |
+| 7.6 Gestion - Désactiver/réactiver      |     ✓      |             |             |           |             |             |                 |
+| 7.7 Gestion - Filtres                   |     ✓      |             |             |           |             |             |                 |
+| 7.8 Gestion - Multi-territoires         |            |      ✓      |             |           |             |             |                 |
+| 8. Indicateurs - Listing                |     ✓      |      ✓      |             |           |             |             |        ✓        |
+| 9. Indicateurs - Formulaire             |     ✓      |      ✓      |             |           |             |             |        ✓        |
 
 **Identifiants des profils :**
 

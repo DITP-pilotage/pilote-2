@@ -6,9 +6,16 @@ import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
 import { estAutoriséAModifierDesIndicateurs } from "@/client/utils/indicateur/indicateur";
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
+  const redirigerVersPageAccueil = {
+    redirect: {
+      destination: "/",
+      permanent: false,
+    },
+  };
+
   const session = await auth(context);
   if (!session || !estAutoriséAModifierDesIndicateurs(session.profil)) {
-    throw new Error("Not connected or not authorized ?");
+    return redirigerVersPageAccueil;
   }
 
   return {

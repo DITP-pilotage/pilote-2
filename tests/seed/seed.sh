@@ -14,8 +14,8 @@ npx prisma migrate reset --force
 
 psql -q -d "$DATABASE_URL" -f "$SCRIPT_DIR/schema.sql"
 
-# Utilisateurs de test E2E (remplace seedUtilisateursTest.ts)
 psql -q -d "$DATABASE_URL" -f "$SCRIPT_DIR/utilisateurs-test.sql"
+psql -q -d "$DATABASE_URL" -f "$SCRIPT_DIR/seed-metadata-indicateur.sql"
 
 # Tables sans dependances
 psql -q -d "$DATABASE_URL" -c "\COPY raw_data.metadata_axes FROM '$SCRIPT_DIR/$RAW_DATA_SEED_DIR/metadata_axes.csv' WITH (FORMAT csv, HEADER true)"

@@ -50,7 +50,11 @@ export async function getServerSideProps(
     .resolve("habilitationService")
     .recupererHabilitations(session);
 
-  habilitations.verifierAutorisationLectureMetadataIndicateur();
+  try {
+    habilitations.verifierAutorisationLectureMetadataIndicateur();
+  } catch {
+    return redirigerVersPageAccueil;
+  }
 
   let indicateurDemandé: MetadataParametrageIndicateurContrat;
   let creationReussie = query._action === "creation-reussie";

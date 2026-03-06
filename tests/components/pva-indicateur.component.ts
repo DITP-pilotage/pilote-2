@@ -15,6 +15,21 @@ export class PvaIndicateurComponent {
 
   // --- Actions ---
 
+  async supprimerPropositionSiExistante(): Promise<void> {
+    const boutonSupprimer = this.section.getByRole("button", {
+      name: /Supprimer la proposition/,
+    });
+    if (
+      await boutonSupprimer.isVisible({ timeout: 2_000 }).catch(() => false)
+    ) {
+      await boutonSupprimer.click();
+      const modal = new PvaModalComponent(this.page);
+      await modal.remplirMotifSuppression("Nettoyage avant test e2e");
+      await modal.confirmerSuppression();
+      await modal.expectConfirmationEtFermer(/supprimée/);
+    }
+  }
+
   async clickProposerAutreValeur(): Promise<PvaModalComponent> {
     await this.section
       .getByRole("button", {
