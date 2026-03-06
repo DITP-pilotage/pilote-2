@@ -1,22 +1,38 @@
-export const JALON_COURANT = 2025;
+import { buildTerritoireHierarchy } from "./territoires";
+
+const JALON_PAR_DEFAUT = 2025;
 
 interface BuildChatSystemPromptParams {
   territoiresAccessibles: string[];
+  agentContext?: Record<string, unknown> | null;
 }
 
 export function buildChatSystemPrompt({
   territoiresAccessibles,
+  agentContext,
 }: BuildChatSystemPromptParams): string {
   const territoiresList = territoiresAccessibles
     .map((code) => `- ${code}`)
     .join("\n");
 
-  return `Tu es Albert, l'assistant d'analyse territoriale de PILOTE.
+  const hierarchy = buildTerritoireHierarchy();
+  const jalon =
+    typeof agentContext?.jalon === "number"
+      ? agentContext.jalon
+      : JALON_PAR_DEFAUT;
+
+  const agentContextSection = agentContext
+    ? `\n## Contexte utilisateur\n${JSON.stringify(agentContext)}\n`
+    : "";
+
+  return `Reasoning: high
+  
+  Tu es Albert, l'assistant d'analyse territoriale de PILOTE.
 
 # Contexte métier
-
+${agentContextSection}
 ## Jalon courant
-Le jalon d'analyse actuel est ${JALON_COURANT}.
+Le jalon d'analyse actuel est ${jalon}.
 
 ## Chantiers
 Les chantiers sont identifiés par un code au format CH-XXX (3 chiffres avec des zéros en tête).
@@ -33,6 +49,9 @@ Les territoires suivent une hiérarchie à 3 niveaux :
 - **NAT-FR** : National France
 - **REG-XX** : Régions (XX = code INSEE de la région)
 - **DEPT-XX** : Départements (XX = code INSEE du département)
+
+Voici la correspondance complète entre régions et départements :
+${JSON.stringify(hierarchy, null, 2)}
 
 ## Synthèse des résultats
 Pour chaque couple (chantier, territoire), une synthèse peut être disponible avec :

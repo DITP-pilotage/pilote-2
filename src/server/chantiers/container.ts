@@ -30,7 +30,6 @@ import { RapportPropositionsAvancementRepository } from "./domain/ports/RapportP
 import { PrismaRapportPropositionsAvancementRepository } from "./infrastructure/adapters/PrismaRapportPropositionsAvancementRepository";
 import { CreerLesRapportsPropositionsUseCase } from "./usecases/CreerLesRapportsPropositionsUseCase";
 import { EnvoyerLesRapportsPropositionsUseCase } from "./usecases/EnvoyerLesRapportsPropositionsUseCase";
-import { GetSyntheseTerritoireQuery } from "./query/GetSyntheseTerritoireQuery";
 
 export type ChantierDependencies = {
   chantierRepository: ChantierRepository;
@@ -41,7 +40,6 @@ export type ChantierDependencies = {
   utilisateurRepository: UtilisateurRepository;
   envoieEmailService: EnvoieEmailService;
   recupererDonneesChantierQuery: RecupererDonneesChantierQuery;
-  getSyntheseTerritoireQuery: GetSyntheseTerritoireQuery;
   exportCsvDesChantiersUseCase: ExportCsvDesChantiersUseCase;
   exportCsvDesIndicateursUseCase: ExportCsvDesIndicateursUseCase;
   exportCsvDesHistoriquesIndicateursUseCase: ExportCsvDesHistoriquesIndicateursUseCase;
@@ -70,7 +68,6 @@ export const getChantiersContainer = (
     utilisateurRepository: asClass(PrismaUtilisateurRepository),
     envoieEmailService: asClass(BrevoEnvoieEmailService),
     recupererDonneesChantierQuery: asClass(RecupererDonneesChantierQuery),
-    getSyntheseTerritoireQuery: asClass(GetSyntheseTerritoireQuery),
     exportCsvDesChantiersUseCase: asClass(ExportCsvDesChantiersUseCase),
     exportCsvDesIndicateursUseCase: asClass(ExportCsvDesIndicateursUseCase),
     exportCsvDesHistoriquesIndicateursUseCase: asClass(

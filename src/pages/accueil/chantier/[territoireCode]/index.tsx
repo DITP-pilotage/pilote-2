@@ -462,7 +462,10 @@ const ChantierLayout = ({
               ministères={ministères}
             />
             {ffAskAI || session?.profil === ProfilEnum.DITP_ADMIN ? (
-              <BoutonSyntheseTerritoire territoireCode={territoireCode} />
+              <BoutonSyntheseTerritoire
+                territoireCode={territoireCode}
+                jalon={jalon}
+              />
             ) : null}
           </div>
           <PageChantiers

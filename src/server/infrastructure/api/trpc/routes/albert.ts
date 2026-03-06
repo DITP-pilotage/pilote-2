@@ -4,12 +4,18 @@ import {
   créerRouteurTRPC,
   procédureProtégée,
 } from "@/server/infrastructure/api/trpc/trpc";
-import { Albert } from "@/server/albert/Albert";
+import {
+  Albert,
+  displayChoicesTool,
+  displayValeursIndicateurTool,
+  exportRapportTool,
+} from "@/server/albert/Albert";
 import { buildChatSystemPrompt } from "@/server/albert/systemPrompt";
 import { getContainer } from "@/server/dependances";
 import { RécupérerVariableContenuUseCase } from "@/server/gestion-contenu/usecases/RécupérerVariableContenuUseCase";
 import { NotFoundError } from "@/server/app/error-boundary/not-found-error";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
+import { getInstructionsTool } from "@/server/albert/recipes";
 
 export const albertRouter = créerRouteurTRPC({
   chat: procédureProtégée
@@ -32,12 +38,32 @@ export const albertRouter = créerRouteurTRPC({
         ctx.session.habilitations.lecture.territoires;
 
       const container = getContainer("albert");
-      const createGetSyntheseTerritoireTool = container.resolve(
-        "createGetSyntheseTerritoireTool",
+      const createGetTauxAvancementTerritoireTool = container.resolve(
+        "createGetTauxAvancementTerritoireTool",
+      );
+      const createGetChantiersEnRetardTool = container.resolve(
+        "createGetChantiersEnRetardTool",
+      );
+      const createGetChantiersEnDifficulteTool = container.resolve(
+        "createGetChantiersEnDifficulteTool",
+      );
+      const createGetValeursIndicateurTool = container.resolve(
+        "createGetValeursIndicateurTool",
       );
 
       const systemPrompt = buildChatSystemPrompt({ territoiresAccessibles });
-      const getSyntheseTerritoire = createGetSyntheseTerritoireTool({
+      const getTauxAvancementTerritoire = createGetTauxAvancementTerritoireTool(
+        {
+          habilitations: ctx.session.habilitations,
+        },
+      );
+      const getChantiersEnRetard = createGetChantiersEnRetardTool({
+        territoiresAccessibles,
+      });
+      const getChantiersEnDifficulte = createGetChantiersEnDifficulteTool({
+        territoiresAccessibles,
+      });
+      const getValeursIndicateur = createGetValeursIndicateurTool({
         territoiresAccessibles,
       });
 
@@ -47,7 +73,14 @@ export const albertRouter = créerRouteurTRPC({
         systemPrompt,
         userId: ctx.session.user.id,
         tools: {
-          get_synthese_territoire: getSyntheseTerritoire,
+          get_instructions: getInstructionsTool,
+          get_taux_avancement_territoire: getTauxAvancementTerritoire,
+          get_chantiers_en_retard: getChantiersEnRetard,
+          get_chantiers_en_difficulte: getChantiersEnDifficulte,
+          get_valeurs_indicateur: getValeursIndicateur,
+          display_choices: displayChoicesTool,
+          display_valeurs_indicateur: displayValeursIndicateurTool,
+          export_rapport: exportRapportTool,
         },
       });
     }),
