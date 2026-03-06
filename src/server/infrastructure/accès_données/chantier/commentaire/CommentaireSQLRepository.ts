@@ -1,4 +1,3 @@
-import { commentaire as CommentairePrisma, utilisateur } from "@prisma/client";
 import CommentaireRepository from "@/server/domain/chantier/commentaire/CommentaireRepository.interface";
 import {
   Commentaire,
@@ -32,6 +31,16 @@ export const CODES_TYPES_COMMENTAIRES: Record<TypeCommentaireChantier, string> =
     exemplesConcretsDeRéussite: "actions_a_valoriser",
   };
 
+type CommentaireRaw = {
+  id: string;
+  chantier_id: string;
+  type: string;
+  contenu: string;
+  date_modification: Date;
+  nom: string | null;
+  prenom: string | null;
+};
+
 export default class CommentaireSQLRepository implements CommentaireRepository {
   private prismaClient =
     getInitialContainerWithTransversalDependencies().resolve("prisma");
@@ -40,118 +49,44 @@ export default class CommentaireSQLRepository implements CommentaireRepository {
     return this.prismaClient.getInstance();
   }
 
-  private mapperVersDomaine(
-    commentairePrisma: CommentairePrisma & {
-      auteur_commentaire: utilisateur | null;
-    },
-  ): Commentaire {
-    if (commentairePrisma === undefined) return null;
-    const auteurCommentaire = commentairePrisma.auteur_commentaire;
-    return {
-      id: commentairePrisma.id,
-      contenu: commentairePrisma.contenu,
-      date: commentairePrisma.date.toISOString(),
-      auteur: auteurCommentaire
-        ? `${auteurCommentaire.prenom} ${auteurCommentaire.nom}`
-        : "Auteur Inconnu",
-      type: NOMS_TYPES_COMMENTAIRES[commentairePrisma.type],
-    };
-  }
-
-  async récupérerLePlusRécent(
-    chantierId: string,
-    territoireCode: string,
-    type: TypeCommentaireChantier,
-  ): Promise<Commentaire> {
-    const commentaireLePlusRécent = await this.prisma.commentaire.findFirst({
-      where: {
-        chantier_id: chantierId,
-        territoire_code: territoireCode,
-        type: CODES_TYPES_COMMENTAIRES[type],
-      },
-      include: {
-        auteur_commentaire: true,
-      },
-      orderBy: { date: "desc" },
-    });
-
-    return commentaireLePlusRécent
-      ? this.mapperVersDomaine(commentaireLePlusRécent)
-      : null;
-  }
-
-  async récupérerHistorique(
-    chantierId: string,
-    territoireCode: string,
-    type: TypeCommentaireChantier,
-  ): Promise<Commentaire[]> {
-    const commentaires = await this.prisma.commentaire.findMany({
-      where: {
-        chantier_id: chantierId,
-        territoire_code: territoireCode,
-        type: CODES_TYPES_COMMENTAIRES[type],
-      },
-      include: {
-        auteur_commentaire: true,
-      },
-      orderBy: { date: "desc" },
-    });
-
-    return commentaires.map((commentaireDeLHistorique) =>
-      this.mapperVersDomaine(commentaireDeLHistorique),
-    );
-  }
-
-  async créer(
-    chantierId: string,
-    territoireCode: string,
-    id: string,
-    contenu: string,
-    auteur_id: string,
-    type: TypeCommentaireChantier,
-    date: Date,
-  ): Promise<Commentaire> {
+  async save({
+    id,
+    chantierId,
+    territoireCode,
+    type,
+    contenu,
+    statut,
+    auteurCreationId,
+    dateCreation,
+    auteurModificationId,
+    dateModification,
+  }: CommentaireV2): Promise<void> {
     const { maille, codeInsee } =
       territoireCodeVersMailleCodeInsee(territoireCode);
 
-    const commentaireCréé = await this.prisma.commentaire.create({
-      data: {
-        id: id,
+    await this.prisma.commentaire.upsert({
+      where: { id },
+      create: {
+        id,
         chantier_id: chantierId,
-        maille: maille,
+        maille,
         code_insee: codeInsee,
         territoire_code: territoireCode,
-        contenu: contenu,
         type: CODES_TYPES_COMMENTAIRES[type],
-        date: date,
-        auteur_id: auteur_id,
+        contenu,
+        statut,
+        auteur_creation_id: auteurCreationId,
+        date_creation: new Date(dateCreation),
+        auteur_modification_id: auteurModificationId,
+        date_modification: new Date(dateModification),
       },
-      include: {
-        auteur_commentaire: true,
+      update: {
+        contenu,
+        statut,
+        auteur_modification_id: auteurModificationId,
+        date_modification: new Date(dateModification),
       },
     });
-
-    return this.mapperVersDomaine(commentaireCréé);
-  }
-
-  async save({
-    chantierId,
-    territoireCode,
-    id,
-    contenu,
-    auteur_id,
-    type,
-    date,
-  }: CommentaireV2): Promise<void> {
-    await this.créer(
-      chantierId,
-      territoireCode,
-      id,
-      contenu,
-      auteur_id,
-      type,
-      date,
-    );
   }
 
   async récupérerLesPlusRécentsGroupésParChantier(
@@ -162,34 +97,36 @@ export default class CommentaireSQLRepository implements CommentaireRepository {
       territoireCodeVersMailleCodeInsee(territoireCode);
 
     const commentairesAvecAuteur = await this.prisma.$queryRaw<
-      (CommentairePrisma & utilisateur)[]
+      CommentaireRaw[]
     >`
-      SELECT c.chantier_id, c.contenu, c.type, c.id, c.date, utilisateur.nom, utilisateur.prenom
+      SELECT c.chantier_id, c.contenu, c.type, c.id, c.date_modification, utilisateur.nom, utilisateur.prenom
       FROM commentaire c
-      LEFT JOIN utilisateur on utilisateur.id = c.auteur_id
+      LEFT JOIN utilisateur ON utilisateur.id = c.auteur_modification_id
       INNER JOIN (
-        SELECT type, chantier_id, maille, code_insee, MAX(date) as maxdate
+        SELECT type, chantier_id, maille, code_insee, MAX(date_modification) as maxdate
         FROM commentaire
         WHERE chantier_id = ANY (${listeChantierIds})
           AND maille = ${maille}
           AND code_insee = ${codeInsee}
+          AND statut = 'PUBLIE'
         GROUP BY type, chantier_id, maille, code_insee
       ) c_recents
         ON c.type = c_recents.type
-        AND c.date = c_recents.maxdate
+        AND c.date_modification = c_recents.maxdate
         AND c.chantier_id = c_recents.chantier_id
         AND c.maille = c_recents.maille
         AND c.code_insee = c_recents.code_insee
+        AND c.statut = 'PUBLIE'
     `;
 
     return groupByAndTransform(
       commentairesAvecAuteur,
       (commentaireAvecAuteur) => commentaireAvecAuteur.chantier_id,
-      (commentaireAvecAuteur: CommentairePrisma & utilisateur) => {
+      (commentaireAvecAuteur: CommentaireRaw) => {
         return {
           id: commentaireAvecAuteur.id,
           contenu: commentaireAvecAuteur.contenu,
-          date: commentaireAvecAuteur.date.toISOString(),
+          date: commentaireAvecAuteur.date_modification.toISOString(),
           auteur:
             commentaireAvecAuteur.nom && commentaireAvecAuteur.prenom
               ? `${commentaireAvecAuteur.prenom} ${commentaireAvecAuteur.nom}`
