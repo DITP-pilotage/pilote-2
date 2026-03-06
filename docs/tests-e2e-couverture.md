@@ -501,6 +501,59 @@ Légende : ✓ modifiable | 🔒 bandeau restriction | — non visible | ✗ pas
 
 ---
 
+## 8. Gestion des paramètres des indicateurs — Listing
+
+**Fichier :** `tests/admin-indicateurs-listing.spec.ts`
+
+Page accessible uniquement aux profils DITP_ADMIN. Affiche un tableau paginé des metadata indicateurs avec des filtres dans une barre latérale.
+
+### Test 1 : Structure de la page et fonctionnalités principales
+
+Profil : `ditp.admin@example.com` (DITP_ADMIN)
+
+**Accès et structure :**
+
+- Connexion en tant que DITP Admin et navigation vers `/admin/indicateurs`
+- Vérification du titre de la page : "Gestion des paramètres des indicateurs"
+- Vérification de la structure du tableau : présence des 6 colonnes (Chantier associé, Nom du chantier, Identifiant indicateur, Nom de l'indicateur, Dernière modification, Actif / Inactif)
+- Vérification de la présence du bouton "Créer un indicateur"
+- Vérification de la présence du bouton d'export
+
+**Pagination :**
+
+- Vérification que la pagination est visible (plus de 20 indicateurs)
+- Vérification que la première page affiche 20 lignes
+- Navigation vers la page suivante : vérification que le nombre de lignes correspond au reste des indicateurs
+- Retour à la page 1
+
+**Recherche textuelle :**
+
+- Saisie de "IND-021" dans la barre de recherche
+- Vérification que IND-021 apparaît dans le tableau
+- Vérification que la pagination disparaît (résultat unique)
+- Effacement de la recherche : retour au nombre initial d'indicateurs avec pagination
+
+**Filtre par indicateurs territorialisés :**
+
+- Activation du toggle "Indicateurs territorialisés" dans la barre latérale
+- Vérification que le nombre d'indicateurs est inférieur ou égal au total
+- Vérification que le tag de filtre actif "Indicateurs territorialisés" est visible
+- Réinitialisation des filtres : retour au nombre initial
+
+**Filtre par indicateurs du baromètre :**
+
+- Activation du toggle "Indicateurs du baromètre" dans la barre latérale
+- Vérification que le nombre d'indicateurs est inférieur ou égal au total
+- Vérification que le tag de filtre actif "Indicateurs du baromètre" est visible
+- Réinitialisation des filtres : retour au nombre initial
+
+**Navigation vers le détail :**
+
+- Clic sur un indicateur (IND-021) dans le tableau
+- Vérification de la redirection vers `/admin/indicateurs/IND-021`
+
+---
+
 ## Matrice profils × tests
 
 Légende : ✓ = profil utilisé dans ce test
@@ -529,6 +582,7 @@ Légende : ✓ = profil utilisé dans ce test
 | 7.6 Gestion - Désactiver/réactiver      |     ✓      |             |             |           |             |             |                 |                   |                   |                   |
 | 7.7 Gestion - Filtres                   |     ✓      |             |             |           |             |             |                 |                   |                   |                   |
 | 7.8 Gestion - Multi-territoires         |            |      ✓      |             |           |             |             |                 |                   |                   |                   |
+| 8. Indicateurs - Listing                |     ✓      |             |             |           |             |             |                 |                   |                   |                   |
 
 **Identifiants des profils :**
 

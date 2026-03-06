@@ -13,3 +13,10 @@ IND-694,user_input,_,user_input,_,_,_,user_input,_,user_input,_,user_input,_,use
 IND-695,user_input,_,user_input,_,_,_,user_input,_,user_input,_,user_input,_,user_input,_,user_input,_,user_input,_,_,_,current_value,_,_,current_value,HAUSSE,0,20,20,0,20,20
 IND-696,user_input,_,user_input,_,_,_,user_input,_,user_input,_,user_input,_,user_input,_,user_input,_,user_input,_,_,_,current_value,_,_,current_value,HAUSSE,0,20,20,0,20,20
 IND-838,user_input,_,user_input,_,user_input,_,user_input,_,user_input,_,user_input,_,user_input,_,user_input,_,user_input,_,_,_,current_value,_,_,current_value,BAISSE,0,33,33,0,33,33
+IND-101,user_input,_,user_input,_,user_input,_,user_input,_,user_input,_,user_input,_,user_input,_,user_input,_,user_input,_,_,_,current_value,_,_,current_value,HAUSSE,0,0,0,0,0,0
+IND-102,user_input,_,user_input,_,user_input,_,user_input,_,user_input,_,user_input,_,user_input,_,user_input,_,user_input,_,_,_,current_value,_,_,current_value,HAUSSE,0,0,0,0,0,0
+IND-103,_,_,_,_,_,_,user_input,_,user_input,_,user_input,_,user_input,_,user_input,_,user_input,_,_,_,current_value,_,_,current_value,HAUSSE,0,0,0,0,0,0
+IND-104,user_input,_,user_input,_,user_input,_,user_input,_,user_input,_,user_input,_,user_input,_,user_input,_,user_input,_,_,_,current_value,_,_,current_value,HAUSSE,0,0,0,0,0,0
+IND-105,user_input,_,user_input,_,user_input,_,user_input,_,user_input,_,user_input,_,user_input,_,user_input,_,user_input,_,_,_,current_value,_,_,current_value,HAUSSE,0,0,0,0,0,0
+IND-106,user_input,_,user_input,_,user_input,_,user_input,_,user_input,_,user_input,_,user_input,_,user_input,_,user_input,_,_,_,current_value,_,_,current_value,HAUSSE,0,0,0,0,0,0
+IND-108,user_input,_,user_input,_,user_input,_,user_input,_,user_input,_,user_input,_,user_input,_,user_input,_,user_input,_,_,_,current_value,_,_,current_value,HAUSSE,0,0,0,0,0,0
