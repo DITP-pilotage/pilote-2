@@ -31,7 +31,11 @@ export class ModifierBrouillonCommentaireUseCase {
       brouillon.territoireCode,
     );
 
-    const commentaire = modifierCommentaireBrouillon(brouillon, { contenu, auteurModificationId, dateModification });
+    const commentaire = modifierCommentaireBrouillon(brouillon, {
+      contenu,
+      auteurModificationId,
+      dateModification,
+    });
 
     await this.dependencies.commentaireRepository.save(commentaire);
   }

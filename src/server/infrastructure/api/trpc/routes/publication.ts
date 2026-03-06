@@ -4,7 +4,6 @@ import {
   vérifierSiLeCSRFEstValide,
 } from "@/server/infrastructure/api/trpc/trpc";
 import { dependencies } from "@/server/infrastructure/Dependencies";
-import CréerUnCommentaireUseCase from "@/server/usecase/chantier/commentaire/CréerUnCommentaireUseCase";
 import {
   validationPublicationContexte,
   validationPublicationFormulaire,
@@ -12,18 +11,14 @@ import {
   zodValidateurEntité,
   zodValidateurEntitéType,
 } from "validation/publication";
-import RécupérerCommentaireLePlusRécentUseCase from "@/server/usecase/chantier/commentaire/RécupérerCommentaireLePlusRécentUseCase";
-import RécupérerHistoriqueCommentaireUseCase from "@/server/usecase/chantier/commentaire/RécupérerHistoriqueCommentaireUseCase";
 import CréerUnObjectifUseCase from "@/server/usecase/chantier/objectif/CréerUnObjectifUseCase";
 import RécupérerObjectifLePlusRécentUseCase from "@/server/usecase/chantier/objectif/RécupérerObjectifLePlusRécentUseCase";
 import RécupérerHistoriqueObjectifUseCase from "@/server/usecase/chantier/objectif/RécupérerHistoriqueObjectifUseCase";
 import RécupérerDécisionStratégiqueLaPlusRécenteUseCase from "@/server/usecase/chantier/décision/RécupérerDécisionStratégiqueLaPlusRécenteUseCase";
 import CréerUneDécisionStratégiqueUseCase from "@/server/usecase/chantier/décision/CréerUneDécisionStratégiqueUseCase";
 import RécupérerHistoriqueDécisionStratégiqueUseCase from "@/server/usecase/chantier/décision/RécupérerHistoriqueDécisionStratégiqueUseCase";
-import RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase from "@/server/usecase/chantier/commentaire/RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase";
 import RécupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase from "@/server/usecase/chantier/objectif/RécupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase";
 import { TypeObjectif } from "@/server/domain/chantier/objectif/Objectif.interface";
-import { TypeCommentaireChantier } from "@/server/domain/chantier/commentaire/Commentaire.interface";
 
 export const publicationRouter = créerRouteurTRPC({
   créer: procédureProtégée
@@ -35,20 +30,6 @@ export const publicationRouter = créerRouteurTRPC({
     .mutation(async ({ input, ctx }) => {
       vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
       const auteur_id = ctx.session.user.id;
-
-      if (input.entité === "commentaires") {
-        const créerUnCommentaireUseCase = new CréerUnCommentaireUseCase(
-          dependencies.getCommentaireRepository(),
-        );
-        return créerUnCommentaireUseCase.run(
-          input.réformeId,
-          input.territoireCode,
-          input.contenu,
-          auteur_id,
-          input.type as TypeCommentaireChantier,
-          ctx.session.habilitations,
-        );
-      }
 
       if (input.entité === "objectifs") {
         const créerUnObjectifUseCase = new CréerUnObjectifUseCase(
@@ -80,19 +61,6 @@ export const publicationRouter = créerRouteurTRPC({
   récupérerLaPlusRécente: procédureProtégée
     .input(validationPublicationContexte.and(zodValidateurEntitéType))
     .query(async ({ input, ctx }) => {
-      if (input.entité === "commentaires") {
-        const récupérerCommentaireLePlusRécentUseCase =
-          new RécupérerCommentaireLePlusRécentUseCase(
-            dependencies.getCommentaireRepository(),
-          );
-        return récupérerCommentaireLePlusRécentUseCase.run(
-          input.réformeId,
-          input.territoireCode,
-          input.type as TypeCommentaireChantier,
-          ctx.session.habilitations,
-        );
-      }
-
       if (input.entité === "objectifs") {
         const récupérerObjectifLePlusRécentUseCase =
           new RécupérerObjectifLePlusRécentUseCase(
@@ -120,18 +88,6 @@ export const publicationRouter = créerRouteurTRPC({
   récupérerLesPlusRécentesParTypeGroupéesParRéformes: procédureProtégée
     .input(validationPublicationContexte.merge(zodValidateurEntité))
     .query(async ({ input, ctx }) => {
-      if (input.entité === "commentaires") {
-        const récupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase =
-          new RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase(
-            dependencies.getCommentaireRepository(),
-          );
-        return récupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase.run(
-          [input.réformeId],
-          input.territoireCode,
-          ctx.session.habilitations,
-        );
-      }
-
       if (input.entité === "objectifs") {
         const récupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase =
           new RécupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase(
@@ -147,19 +103,6 @@ export const publicationRouter = créerRouteurTRPC({
   récupérerHistorique: procédureProtégée
     .input(validationPublicationContexte.and(zodValidateurEntitéType))
     .query(async ({ input, ctx }) => {
-      if (input.entité === "commentaires") {
-        const récupérerHistoriqueCommentaireUseCase =
-          new RécupérerHistoriqueCommentaireUseCase(
-            dependencies.getCommentaireRepository(),
-          );
-        return récupérerHistoriqueCommentaireUseCase.run(
-          input.réformeId,
-          input.territoireCode,
-          input.type as TypeCommentaireChantier,
-          ctx.session.habilitations,
-        );
-      }
-
       if (input.entité === "objectifs") {
         const récupérerHistoriqueObjectifUseCase =
           new RécupérerHistoriqueObjectifUseCase(

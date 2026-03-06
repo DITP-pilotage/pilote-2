@@ -15,7 +15,7 @@ export class EnregistrerSyntheseDesResultatsService {
 
   async enregistrer(synthese: SynthèseDesRésultatsV2): Promise<void> {
     await this.dependencies.transaction.run(async () => {
-      if (synthese.statut === $Enums.statut_synthese_des_resultats.PUBLIE) {
+      if (synthese.statut === $Enums.statut_publication.PUBLIE) {
         await this.dependencies.chantierRepository.modifierMeteo(
           synthese.chantierId,
           synthese.territoireCode,

@@ -81,7 +81,7 @@ describe("RecupererDerniereSyntheseDesResultatsQuery", () => {
         dateCreation: new Date("2025-01-01").toISOString(),
         auteurModificationId: auteur.id,
         dateModification: new Date("2025-06-01").toISOString(),
-        statut: $Enums.statut_synthese_des_resultats.PUBLIE,
+        statut: $Enums.statut_publication.PUBLIE,
         auteurCreationNom: "Jean Dupont",
         auteurModificationNom: "Jean Dupont",
         dateDernierBrouillon: null,
@@ -110,7 +110,7 @@ describe("RecupererDerniereSyntheseDesResultatsQuery", () => {
         auteur_creation_id: auteur.id,
         auteur_modification_id: auteur.id,
         commentaire: "Brouillon",
-        statut: $Enums.statut_synthese_des_resultats.BROUILLON,
+        statut: $Enums.statut_publication.BROUILLON,
       });
 
       // When
@@ -143,7 +143,7 @@ describe("RecupererDerniereSyntheseDesResultatsQuery", () => {
         auteur_modification_id: auteur.id,
         date_modification: new Date("2025-01-01"),
         commentaire: "Synthèse publiée",
-        statut: $Enums.statut_synthese_des_resultats.PUBLIE,
+        statut: $Enums.statut_publication.PUBLIE,
       });
       const brouillon = await fixtures.syntheseDesResultats({
         chantier_id: chantier.id,
@@ -154,7 +154,7 @@ describe("RecupererDerniereSyntheseDesResultatsQuery", () => {
         auteur_modification_id: auteur.id,
         date_modification: new Date("2025-06-01"),
         commentaire: "Brouillon",
-        statut: $Enums.statut_synthese_des_resultats.BROUILLON,
+        statut: $Enums.statut_publication.BROUILLON,
       });
 
       // When
@@ -239,7 +239,7 @@ describe("RecupererDerniereSyntheseDesResultatsQuery", () => {
         auteur_modification_id: auteur.id,
         date_modification: new Date("2025-01-01"),
         commentaire: "Synthèse publiée",
-        statut: $Enums.statut_synthese_des_resultats.PUBLIE,
+        statut: $Enums.statut_publication.PUBLIE,
       });
       // Le brouillon le plus récent appartient à autreAuteur
       await fixtures.syntheseDesResultats({
@@ -251,7 +251,7 @@ describe("RecupererDerniereSyntheseDesResultatsQuery", () => {
         auteur_modification_id: autreAuteur.id,
         date_modification: new Date("2025-06-01"),
         commentaire: "Brouillon d'un autre auteur",
-        statut: $Enums.statut_synthese_des_resultats.BROUILLON,
+        statut: $Enums.statut_publication.BROUILLON,
       });
 
       // When

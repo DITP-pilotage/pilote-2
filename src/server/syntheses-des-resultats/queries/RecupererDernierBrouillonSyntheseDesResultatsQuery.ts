@@ -17,7 +17,7 @@ export class RecupererDernierBrouillonSyntheseDesResultatsQuery {
         where: {
           chantier_id: chantierId,
           territoire_code: territoireCode,
-          statut: $Enums.statut_synthese_des_resultats.BROUILLON,
+          statut: $Enums.statut_publication.BROUILLON,
           auteur_modification_id: utilisateurId,
         },
         orderBy: { date_modification: "desc" },

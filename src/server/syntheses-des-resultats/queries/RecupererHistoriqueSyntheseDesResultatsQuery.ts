@@ -25,7 +25,7 @@ export class RecupererHistoriqueSyntheseDesResultatsQuery {
         where: {
           chantier_id: chantierId,
           territoire_code: territoireCode,
-          statut: $Enums.statut_synthese_des_resultats.PUBLIE,
+          statut: $Enums.statut_publication.PUBLIE,
         },
         include: {
           auteur_creation: true,

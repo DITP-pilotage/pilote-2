@@ -62,7 +62,7 @@ describe("EnregistrerSyntheseDesResultatsService", () => {
           territoire_code: TERRITOIRE_CODE,
           commentaire: "Mon contenu publié",
           meteo: "SOLEIL",
-          statut: $Enums.statut_synthese_des_resultats.PUBLIE,
+          statut: $Enums.statut_publication.PUBLIE,
         }),
       );
     }),

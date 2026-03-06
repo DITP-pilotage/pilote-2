@@ -30,6 +30,6 @@ SELECT
     date as date_modification,
     contenu as commentaire,
     CONCAT(maille, '-', code_insee) as territoire_code,
-    'PUBLIE'::statut_synthese_des_resultats as statut
+    'PUBLIE'::statut_publication as statut
 FROM {{ ref('stg_import_massif__commentaires') }}
 WHERE type='synthese_des_resultats'

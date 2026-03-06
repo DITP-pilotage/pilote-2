@@ -30,9 +30,19 @@ export class EnregistrerBrouillonCommentaireUseCase {
   }): Promise<void> {
     new Habilitation(
       habilitations,
-    ).vérifierLesHabilitationsEnSaisieDesPublications(chantierId, territoireCode);
+    ).vérifierLesHabilitationsEnSaisieDesPublications(
+      chantierId,
+      territoireCode,
+    );
 
-    const commentaire = creerCommentaireBrouillon({ chantierId, territoireCode, type, contenu, auteurId, date });
+    const commentaire = creerCommentaireBrouillon({
+      chantierId,
+      territoireCode,
+      type,
+      contenu,
+      auteurId,
+      date,
+    });
 
     await this.dependencies.commentaireRepository.save(commentaire);
   }

@@ -31,7 +31,11 @@ export class ModifierCommentairePublieUseCase {
       commentaireAModifier.territoireCode,
     );
 
-    const commentaire = modifierCommentaire(commentaireAModifier, { contenu, auteurModificationId, dateModification });
+    const commentaire = modifierCommentaire(commentaireAModifier, {
+      contenu,
+      auteurModificationId,
+      dateModification,
+    });
 
     await this.dependencies.commentaireRepository.save(commentaire);
   }

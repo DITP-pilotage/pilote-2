@@ -17,7 +17,7 @@ export class RecupererDerniereSyntheseDesResultatsQuery {
         where: {
           chantier_id: chantierId,
           territoire_code: territoireCode,
-          statut: $Enums.statut_synthese_des_resultats.PUBLIE,
+          statut: $Enums.statut_publication.PUBLIE,
         },
         include: {
           auteur_creation: true,
@@ -35,7 +35,7 @@ export class RecupererDerniereSyntheseDesResultatsQuery {
           chantier_id: chantierId,
           territoire_code: territoireCode,
           auteur_modification_id: utilisateurId,
-          statut: $Enums.statut_synthese_des_resultats.BROUILLON,
+          statut: $Enums.statut_publication.BROUILLON,
         },
         orderBy: { date_modification: "desc" },
       });

@@ -134,6 +134,11 @@ export const commentaireRouter = créerRouteurTRPC({
     .query(({ input, ctx }) => {
       return getContainer("commentaires")
         .resolve("recupererDernierBrouillonCommentaireQuery")
-        .run(input.réformeId, input.territoireCode, input.type, ctx.session.user.id);
+        .run(
+          input.réformeId,
+          input.territoireCode,
+          input.type,
+          ctx.session.user.id,
+        );
     }),
 });

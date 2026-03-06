@@ -15,12 +15,12 @@ export class PrismaCommentaireRepository implements CommentaireRepository {
     if (auteurAnonyme) {
       await prisma.commentaire.updateMany({
         where: {
-          auteur_id: {
+          auteur_modification_id: {
             in: auteursAAnonymiserIds,
           },
         },
         data: {
-          auteur_id: auteurAnonyme.id,
+          auteur_modification_id: auteurAnonyme.id,
         },
       });
     }

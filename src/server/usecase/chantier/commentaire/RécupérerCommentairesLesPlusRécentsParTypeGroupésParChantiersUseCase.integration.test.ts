@@ -5,11 +5,11 @@ import CommentaireSQLRepository, {
   CODES_TYPES_COMMENTAIRES,
   NOMS_TYPES_COMMENTAIRES,
 } from "@/server/infrastructure/accès_données/chantier/commentaire/CommentaireSQLRepository";
-import CommentaireSQLRowBuilder from "@/server/infrastructure/test/builders/sqlRow/CommentaireSQLRow.builder";
 import { prisma } from "@/server/db/prisma";
 import Utilisateur from "@/server/domain/utilisateur/Utilisateur.interface";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
 import RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase from "./RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase";
+import CommentaireSQLRowBuilder from "@/server/infrastructure/test/builders/sqlRow/CommentaireSQLRow.builder";
 
 function mapperVersDomaine(commentairePrisma: commentaire): Commentaire {
   return {

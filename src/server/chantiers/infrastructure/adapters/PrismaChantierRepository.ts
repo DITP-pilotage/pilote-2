@@ -145,7 +145,7 @@ export class PrismaChantierRepository implements ChantierRepository {
                   type: typeCommentaire,
                 },
                 orderBy: {
-                  date: "desc",
+                  date_modification: "desc",
                 },
                 take: 1,
               },
@@ -541,7 +541,7 @@ export class PrismaChantierRepository implements ChantierRepository {
                       type: typeCommentaire,
                     },
                     orderBy: {
-                      date: "desc",
+                      date_modification: "desc",
                     },
                     take: 1,
                   },
