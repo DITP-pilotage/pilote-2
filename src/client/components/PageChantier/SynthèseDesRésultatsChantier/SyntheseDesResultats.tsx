@@ -1,10 +1,9 @@
-import { parseAsBoolean, parseAsStringLiteral, useQueryState } from "nuqs";
+import { parseAsBoolean, useQueryState } from "nuqs";
 import { FunctionComponent } from "react";
 import Bloc from "@/components/_commons/Bloc/Bloc";
 import { MeteoPicto } from "@/components/_commons/Meteo/Picto/MeteoPicto";
 import MétéoBadge from "@/components/_commons/Meteo/Badge/MétéoBadge";
 import SynthèseDesRésultatsHistorique from "@/components/PageChantier/SynthèseDesRésultatsChantier/Historique/Historique";
-import Alerte from "@/components/_commons/Alerte/Alerte";
 import SynthèseDesRésultatsAffichage from "@/components/PageChantier/SynthèseDesRésultatsChantier/Affichage/Affichage";
 import { pageChantier } from "@/components/PageChantier/PageChantierServerSideContext";
 import SyntheseDesResultatsFormulaire from "@/components/PageChantier/SynthèseDesRésultatsChantier/SyntheseDesResultatsFormulaire/SyntheseDesResultatsFormulaire";
@@ -21,10 +20,6 @@ const SyntheseDesResultats: FunctionComponent<SyntheseDesResultatsProps> = ({
   const { syntheseDesResultats, chantier } =
     pageChantier.useServerSidePropsContext();
 
-  const [action] = useQueryState(
-    "_action",
-    parseAsStringLiteral(["creation-reussie", ""]),
-  );
   const [modeÉdition, setModeÉdition] = useQueryState(
     "edition",
     parseAsBoolean.withDefault(false).withOptions({
@@ -52,14 +47,6 @@ const SyntheseDesResultats: FunctionComponent<SyntheseDesResultatsProps> = ({
             />
           ) : (
             <>
-              {action === "creation-reussie" && (
-                <div className="fr-mb-2w">
-                  <Alerte
-                    titre="Votre commentaire a bien été modifié"
-                    type="succès"
-                  />
-                </div>
-              )}
               <div className="flex gap-4">
                 <div className="flex flex-col gap-4 align-center">
                   <MétéoBadge

@@ -21,8 +21,6 @@ export interface NextPageAdminUtilisateurProps {
   informationHistorisationIndicateur: InformationHistorisationMetadataIndicateurContrat;
   mapInformationMetadataIndicateur: MapInformationMetadataIndicateurContrat;
   estUneCréation: boolean;
-  modificationReussie: boolean;
-  creationReussie: boolean;
   chantiers: ChantierSynthétisé[];
 }
 
@@ -53,8 +51,6 @@ export async function getServerSideProps(
   habilitations.verifierAutorisationLectureMetadataIndicateur();
 
   let indicateurDemandé: MetadataParametrageIndicateurContrat;
-  let creationReussie = query._action === "creation-reussie";
-  let modificationReussie = query._action === "modification-reussie";
   let estUneCréation = query._action === "creer-indicateur";
   if (estUneCréation) {
     indicateurDemandé = presenterEnMetadataParametrageIndicateurContrat(
@@ -99,8 +95,6 @@ export async function getServerSideProps(
       mapInformationMetadataIndicateur,
       chantiers,
       estUneCréation,
-      creationReussie,
-      modificationReussie,
     },
   };
 }
@@ -112,8 +106,6 @@ const NextPageAdminIndicateur: FunctionComponent<
   informationHistorisationIndicateur,
   mapInformationMetadataIndicateur,
   estUneCréation,
-  modificationReussie,
-  creationReussie,
   chantiers,
 }) => {
   return (
@@ -123,12 +115,10 @@ const NextPageAdminIndicateur: FunctionComponent<
       </Head>
       <PageIndicateur
         chantiers={chantiers}
-        creationReussie={creationReussie}
         estUneCréation={estUneCréation}
         indicateur={indicateur}
         informationHistorisationIndicateur={informationHistorisationIndicateur}
         mapInformationMetadataIndicateur={mapInformationMetadataIndicateur}
-        modificationReussie={modificationReussie}
       />
     </>
   );

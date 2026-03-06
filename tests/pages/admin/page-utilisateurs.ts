@@ -49,8 +49,8 @@ export class PageAdminUtilisateurs extends BasePage {
     return this.page.getByRole("button", { name: /Réinitialiser les filtres/ });
   }
 
-  private get alerteSucces() {
-    return this.page.locator("#alerte.fr-alert--success .fr-alert__title");
+  private get toastSucces() {
+    return this.page.locator("[data-sonner-toast][data-type='success']");
   }
 
   private get lienGestionDesComptes() {
@@ -164,8 +164,10 @@ export class PageAdminUtilisateurs extends BasePage {
   }
 
   async expectAlerte(titre: string | RegExp): Promise<void> {
-    await expect(this.alerteSucces).toBeVisible();
-    await expect(this.alerteSucces).toHaveText(titre);
+    const toast = this.page
+      .locator("[data-sonner-toast][data-type='success']")
+      .filter({ hasText: titre });
+    await expect(toast).toBeVisible();
   }
 
   async expectGestionDesComptesVisible(): Promise<void> {

@@ -17,9 +17,7 @@ export function estAutoriséAModifierLesTokensAPI(profil: string): boolean {
 
 export const getServerSideProps: GetServerSideProps<{
   listeTokenAPIInformation: TokenAPIInformationContrat[];
-  suppressionReussie: boolean;
 }> = async (context) => {
-  const { query } = context;
   const session = await auth(context);
   if (
     process.env.NEXT_PUBLIC_FF_GESTION_TOKEN_API !== "true" ||
@@ -34,19 +32,16 @@ export const getServerSideProps: GetServerSideProps<{
       dependencies.getTokenAPIInformationRepository(),
   }).run();
 
-  const suppressionReussie = query._action === "suppression-reussie";
-
   return {
     props: {
       listeTokenAPIInformation,
-      suppressionReussie,
     },
   };
 };
 
 const NextAdminTokenApi: FunctionComponent<
   InferGetServerSidePropsType<typeof getServerSideProps>
-> = ({ listeTokenAPIInformation, suppressionReussie }) => {
+> = ({ listeTokenAPIInformation }) => {
   return (
     <>
       <Head>
@@ -55,7 +50,6 @@ const NextAdminTokenApi: FunctionComponent<
       <div>
         <PageAdminGestionTokenAPI
           listeTokenAPIInformation={listeTokenAPIInformation}
-          suppressionReussie={suppressionReussie}
         />
       </div>
     </>

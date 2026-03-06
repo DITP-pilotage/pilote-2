@@ -1,12 +1,9 @@
 import { render, screen } from "@testing-library/react";
-import mockRouter from "next-router-mock";
 import { DetailValidationFichierContrat } from "@/server/app/contrats/DetailValidationFichierContrat.interface";
 import ResultatValidationFichier from "@/components/PageImportIndicateur/ResultatValidationFichier/ResultatValidationFichier";
 
-vi.mock("next/router", async () => await vi.importActual("next-router-mock"));
-
 describe("ResultatValidationFichier", () => {
-  it("quand le fichier est valide doit afficher que le fichier est correct", () => {
+  it("quand le fichier est valide ne doit rien afficher", () => {
     // Given
     const rapport: DetailValidationFichierContrat = {
       id: "0df7df91-7c63-4e45-ba85-6553bf873705",
@@ -14,15 +11,11 @@ describe("ResultatValidationFichier", () => {
       listeErreursValidation: [],
     };
 
-    mockRouter.push("chantier/CH-123/indicateurs?indicateurId=IND-123");
-
     // When
     render(<ResultatValidationFichier rapport={rapport} />);
 
     // Then
-    expect(
-      screen.getByText("Bravo, le fichier est conforme !"),
-    ).toBeInTheDocument();
+    expect(screen.queryByRole("table")).not.toBeInTheDocument();
   });
 
   it("quand le fichier contient des erreurs, doit afficher que le tableau d'erreur", () => {

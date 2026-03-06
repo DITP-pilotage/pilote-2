@@ -8,6 +8,7 @@ import api from "@/server/infrastructure/api/trpc/api";
 import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
 import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
+import { Toaster } from "@/client/utils/toaster";
 
 const PROFIL_AUTORISE_A_POSSEDER_UN_TOKEN_API = new Set([
   ProfilEnum.DITP_ADMIN,
@@ -28,13 +29,15 @@ export default function usePageUtilisateur(utilisateur: Utilisateur) {
 
   const mutationDesactiverUtilisateur = api.utilisateur.desactiver.useMutation({
     onSuccess: () => {
-      router.push("/admin/utilisateurs?compteDésactivé=true");
+      Toaster.success("Le compte a bien été désactivé.");
+      router.push("/admin/utilisateurs");
     },
   });
 
   const mutationReactiverUtilisateur = api.utilisateur.reactiver.useMutation({
     onSuccess: () => {
-      router.push("/admin/utilisateurs?compteRéactivé=true");
+      Toaster.success("Bravo, le compte a bien été réactivé !");
+      router.push("/admin/utilisateurs");
     },
   });
 

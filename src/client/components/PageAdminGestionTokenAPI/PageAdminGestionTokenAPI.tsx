@@ -4,15 +4,13 @@ import { FormProvider } from "react-hook-form";
 import Titre from "@/components/_commons/Titre/Titre";
 import Bloc from "@/client/components/_commons/Bloc/Bloc";
 import { useGestionTokenAPI } from "@/components/PageAdminGestionTokenAPI/useGestionTokenAPI";
-import Alerte from "@/components/_commons/Alerte/Alerte";
 import TokenAPIForm from "@/components/PageAdminGestionTokenAPI/TokenAPIForm/TokenAPIForm";
 import { TokenAPIInformationContrat } from "@/server/authentification/app/contrats/TokenAPIInformationContrat";
 
 const PageAdminGestionTokenAPI: FunctionComponent<{
   listeTokenAPIInformation: TokenAPIInformationContrat[];
-  suppressionReussie: boolean;
-}> = ({ listeTokenAPIInformation, suppressionReussie }) => {
-  const { reactHookForm, creerTokenAPI, alerte, supprimerTokenAPI } =
+}> = ({ listeTokenAPIInformation }) => {
+  const { reactHookForm, creerTokenAPI, supprimerTokenAPI } =
     useGestionTokenAPI();
 
   return (
@@ -24,24 +22,6 @@ const PageAdminGestionTokenAPI: FunctionComponent<{
               Gestion des tokens API
             </Titre>
             <Bloc>
-              {alerte ? (
-                <div className="fr-my-2w">
-                  <Alerte
-                    message={alerte.message}
-                    titre={alerte.titre}
-                    type={alerte.type}
-                  />
-                </div>
-              ) : null}
-              {suppressionReussie ? (
-                <div className="fr-my-2w">
-                  <Alerte
-                    message="Le token a correctement été supprimé, le consommateur ne pourra plus l'utiliser"
-                    titre="Suppression réussie"
-                    type="succès"
-                  />
-                </div>
-              ) : null}
               <FormProvider {...reactHookForm}>
                 <form
                   method="put"

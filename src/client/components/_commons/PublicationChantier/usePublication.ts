@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import AlerteProps from "@/components/_commons/Alerte/Alerte.interface";
 import { RouterOutputs } from "@/server/infrastructure/api/trpc/trpc.interface";
+import { Toaster } from "@/client/utils/toaster";
 import PublicationProps from "./Publication.interface";
 
 export default function usePublication(
@@ -8,7 +8,6 @@ export default function usePublication(
 ) {
   const [modeÉdition, setModeÉdition] = useState(false);
   const [publication, setPublication] = useState(publicationInitiale);
-  const [alerte, setAlerte] = useState<AlerteProps | null>(null);
 
   const désactiverLeModeÉdition = () => {
     setModeÉdition(false);
@@ -19,31 +18,23 @@ export default function usePublication(
   };
 
   const afficherAlerteErreur = (message: string) => {
-    setAlerte({
-      type: "erreur",
-      titre: message,
-    });
+    Toaster.error(message);
   };
 
   const publicationCréée = (p: RouterOutputs["publication"]["créer"]) => {
     setPublication(p);
-    setAlerte({
-      type: "succès",
-      titre: "Modification effectuée",
-    });
+    Toaster.success("Modification effectuée");
     désactiverLeModeÉdition();
   };
 
   useEffect(() => {
     setPublication(publicationInitiale);
-    setAlerte(null);
     désactiverLeModeÉdition();
   }, [publicationInitiale]);
 
   return {
     publication,
     modeÉdition,
-    alerte,
     afficherAlerteErreur,
     activerLeModeÉdition,
     désactiverLeModeÉdition,

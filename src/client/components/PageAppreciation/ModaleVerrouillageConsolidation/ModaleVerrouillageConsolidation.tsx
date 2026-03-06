@@ -286,15 +286,7 @@ export const ModaleTransmissionDITP = ({
             </form>
           </FormProvider>
         </>
-      ) : (
-        <Alerte
-          message="Un mail de confirmation vient de vous être envoyé. La DITP va
-            prendre connaissance de vos appréciations et vous tiendra informé du
-            passage en instruction des territoires concernés."
-          titre="Les appréciations ont été transmises correctement"
-          type="succès"
-        />
-      )}
+      ) : null}
     </Modale>
   );
 };

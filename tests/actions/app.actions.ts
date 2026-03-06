@@ -30,6 +30,7 @@ export class AppActions {
     password = process.env.DEV_PASSWORD!,
   ): Promise<PageAccueil> {
     await this.page.context().clearCookies();
+    await this.page.goto("about:blank");
     return this.loginAs(username, password);
   }
 

@@ -5,15 +5,12 @@ import Bloc from "@/components/_commons/Bloc/Bloc";
 import { useMessageInformation } from "@/components/PageAdminGestionContenus/useMessageInformation";
 import MessageInformationForm from "@/components/PageAdminGestionContenus/MessageInformationForm/MessageInformationForm";
 import { MessageInformationContrat } from "@/server/app/contrats/MessageInformationContrat";
-import Alerte from "@/components/_commons/Alerte/Alerte";
 
 const PageMessageInformation: FunctionComponent<{
   messageInformation: MessageInformationContrat;
-  modificationReussie: boolean;
-}> = ({ messageInformation, modificationReussie }) => {
+}> = ({ messageInformation }) => {
   const { reactHookForm, modifierIndicateur } = useMessageInformation({
     messageInformation,
-    modificationReussie,
   });
 
   return (
@@ -25,11 +22,6 @@ const PageMessageInformation: FunctionComponent<{
               Message d'information
             </Titre>
             <Bloc>
-              {modificationReussie ? (
-                <div className="fr-my-2w">
-                  <Alerte titre="Modification réussie" type="succès" />
-                </div>
-              ) : null}
               <FormProvider {...reactHookForm}>
                 <form
                   method="put"

@@ -1,4 +1,4 @@
-import { toast } from "sonner";
+import { Toaster } from "@/client/utils/toaster";
 import api from "@/server/infrastructure/api/trpc/api";
 
 const openPDFInNewTab = (base64Data: string) => {
@@ -16,16 +16,10 @@ export function useImprimerFiche() {
   return api.evaluation.genererPDFAutoEvaluation.useMutation({
     onSuccess: (base64Data) => {
       openPDFInNewTab(base64Data);
-      toast.success("PDF ouvert dans un nouvel onglet", {
-        position: "top-right",
-        richColors: true,
-      });
+      Toaster.success("PDF ouvert dans un nouvel onglet");
     },
     onError: () => {
-      toast.error("Erreur lors de la génération du PDF", {
-        position: "top-right",
-        richColors: true,
-      });
+      Toaster.error("Erreur lors de la génération du PDF");
     },
   });
 }

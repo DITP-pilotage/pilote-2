@@ -1,12 +1,10 @@
 import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
-import { useRouter } from "next/router";
 import { validationContenu } from "@/validation/gestion-contenu";
 import api from "@/server/infrastructure/api/trpc/api";
-import AlerteProps from "@/components/_commons/Alerte/Alerte.interface";
 import { récupérerUnCookie } from "@/client/utils/cookies";
 import { MessageInformationContrat } from "@/server/app/contrats/MessageInformationContrat";
+import { Toaster } from "@/client/utils/toaster";
 
 export type ContenuForm = {
   isBandeauActif: boolean;
@@ -15,13 +13,10 @@ export type ContenuForm = {
 };
 export const useMessageInformation = ({
   messageInformation,
-  modificationReussie,
 }: {
   messageInformation: MessageInformationContrat;
-  modificationReussie: boolean;
 }) => {
-  const router = useRouter();
-  const [alerte, setAlerte] = useState<AlerteProps | null>(null);
+  const utils = api.useUtils();
 
   const reactHookForm = useForm<ContenuForm>({
     resolver: zodResolver(validationContenu),
@@ -37,24 +32,12 @@ export const useMessageInformation = ({
   const mutationModifierBandeauIndisponibilite =
     api.gestionContenu.modifierBandeauIndisponibilite.useMutation({
       onSuccess: () => {
-        setAlerte({
-          type: "succès",
-          titre: "modification réussie",
-        });
-        if (modificationReussie) {
-          router.reload();
-        } else {
-          router
-            .push("/admin/message-information?_action=modification-reussie")
-            .then(() => router.reload());
-        }
+        Toaster.success("Modification réussie");
+        utils.gestionContenu.recupererMessageInformation.invalidate();
       },
       onError: (error) => {
         if (error.data?.code === "INTERNAL_SERVER_ERROR") {
-          setAlerte({
-            type: "erreur",
-            titre: error.message,
-          });
+          Toaster.error(error.message);
         }
       },
     });
@@ -68,5 +51,5 @@ export const useMessageInformation = ({
     mutationModifierBandeauIndisponibilite.mutate(inputs);
   };
 
-  return { modifierIndicateur, reactHookForm, alerte };
+  return { modifierIndicateur, reactHookForm };
 };

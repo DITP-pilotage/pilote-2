@@ -1,39 +1,33 @@
 import { useFormContext } from "react-hook-form";
-import { useState } from "react";
 import { useRouter } from "next/router";
 import { récupérerUnCookie } from "@/client/utils/cookies";
 import api from "@/server/infrastructure/api/trpc/api";
-import AlerteProps from "@/components/_commons/Alerte/Alerte.interface";
 import { UtilisateurFormInputs } from "@/client/components/PageUtilisateurFormulaire/UtilisateurFormulaire/UtilisateurFormulaire.interface";
+import { Toaster } from "@/client/utils/toaster";
 
 export default function useRécapitulatifUtilisateur() {
   const { getValues } = useFormContext<UtilisateurFormInputs>();
   const utilisateur = getValues();
 
   const router = useRouter();
-  const [alerte, setAlerte] = useState<AlerteProps | null>(null);
 
   const mutationCréerUtilisateur = api.utilisateur.créer.useMutation({
     onSuccess: () => {
-      router.push("/admin/utilisateurs?compteCréé=true");
+      Toaster.success("Bravo, le compte a bien été créé !");
+      router.push("/admin/utilisateurs");
     },
     onError: (error) => {
-      setAlerte({
-        type: "erreur",
-        titre: error.message,
-      });
+      Toaster.error(error.message);
     },
   });
 
   const mutationModifierUtilisateur = api.utilisateur.modifier.useMutation({
     onSuccess: () => {
-      router.push("/admin/utilisateurs?compteModifié=true");
+      Toaster.success("Bravo, le compte a bien été modifié !");
+      router.push("/admin/utilisateurs");
     },
     onError: (error) => {
-      setAlerte({
-        type: "erreur",
-        titre: error.message,
-      });
+      Toaster.error(error.message);
     },
   });
 
@@ -53,6 +47,5 @@ export default function useRécapitulatifUtilisateur() {
   return {
     utilisateur,
     envoyerFormulaireUtilisateur,
-    alerte,
   };
 }

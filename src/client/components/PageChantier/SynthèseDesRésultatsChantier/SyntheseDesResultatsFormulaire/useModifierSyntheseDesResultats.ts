@@ -1,22 +1,14 @@
-import { parseAsBoolean, parseAsStringLiteral, useQueryState } from "nuqs";
+import { parseAsBoolean, useQueryState } from "nuqs";
 import api from "@/server/infrastructure/api/trpc/api";
 import { récupérerUnCookie } from "@/client/utils/cookies";
 import { pageChantier } from "@/components/PageChantier/PageChantierServerSideContext";
+import { Toaster } from "@/client/utils/toaster";
 import { SyntheseDesResultatsFormulaireInputs } from "./SyntheseDesResultatsFormulaire.interface";
 
 export const useModifierSyntheseDesResultats = () => {
   const { syntheseDesResultats } = pageChantier.useServerSidePropsContext();
 
   const modifier = api.synthèseDesRésultats.modifier.useMutation();
-
-  const [, setAction] = useQueryState(
-    "_action",
-    parseAsStringLiteral(["creation-reussie", ""]).withDefault("").withOptions({
-      history: "push",
-      shallow: false,
-      clearOnDefault: true,
-    }),
-  );
 
   const [, setModeÉdition] = useQueryState(
     "edition",
@@ -37,7 +29,7 @@ export const useModifierSyntheseDesResultats = () => {
       },
       {
         onSuccess: async () => {
-          setAction("creation-reussie");
+          Toaster.success("Votre commentaire a bien été modifié");
           await setModeÉdition(false);
         },
       },

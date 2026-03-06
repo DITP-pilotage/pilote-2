@@ -1,6 +1,5 @@
 import { FunctionComponent } from "react";
 import { wording } from "@/client/utils/i18n/i18n";
-import Alerte from "@/components/_commons/Alerte/Alerte";
 import "@gouvfr/dsfr/dist/component/table/table.min.css";
 import { DetailValidationFichierContrat } from "@/server/app/contrats/DetailValidationFichierContrat.interface";
 
@@ -11,51 +10,10 @@ interface ResultatValidationFichierProps {
 const ResultatValidationFichier: FunctionComponent<
   ResultatValidationFichierProps
 > = ({ rapport }) => {
-  const contientDesErreursNonIdentifies = rapport.listeErreursValidation.some(
-    (erreur) => erreur.nom === "Erreur non identifié",
-  );
-
   return (
     <section className="fr-my-2w">
-      {rapport.estValide ? (
-        <Alerte
-          message={
-            wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT
-              .ETAPE_CHARGER_FICHIER.MESSAGE_ALERT_SUCCES
-          }
-          titre={
-            wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT
-              .ETAPE_CHARGER_FICHIER.TITRE_ALERT_SUCCES
-          }
-          type="succès"
-        />
-      ) : (
+      {rapport.estValide ? null : (
         <div>
-          {contientDesErreursNonIdentifies ? (
-            <Alerte
-              message={
-                wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT
-                  .ETAPE_CHARGER_FICHIER.MESSAGE_ALERT_ERREUR_SUPPORT
-              }
-              titre={
-                wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT
-                  .ETAPE_CHARGER_FICHIER.TITRE_ALERT_ERREUR_SUPPORT
-              }
-              type="erreur"
-            />
-          ) : (
-            <Alerte
-              message={
-                wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT
-                  .ETAPE_CHARGER_FICHIER.MESSAGE_ALERT_ERREUR
-              }
-              titre={
-                wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT
-                  .ETAPE_CHARGER_FICHIER.TITRE_ALERT_ERREUR
-              }
-              type="erreur"
-            />
-          )}
           <h5 className="fr-mt-3w">
             Rapport d'erreur de la validation du fichier
           </h5>

@@ -10,13 +10,10 @@ import TableauAdminIndicateursContenu from "@/components/PageAdminIndicateurs/Ta
 import TableauPagination from "@/components/_commons/Tableau/Pagination/TableauPagination";
 import InputFichier from "@/components/_commons/InputFichier/InputFichier";
 import { SubmitBouton } from "@/components/_commons/SubmitBouton/SubmitBouton";
-import Alerte from "@/components/_commons/Alerte/Alerte";
-
 const TableauAdminIndicateurs: FunctionComponent = () => {
   const {
     tableau,
     file,
-    alerte,
     définirLeFichier,
     verifierLeFichier,
     estEnChargement,
@@ -28,15 +25,6 @@ const TableauAdminIndicateurs: FunctionComponent = () => {
 
   return (
     <TableauAdminIndicateursStyled>
-      {!!alerte && (
-        <div className="fr-mt-2w">
-          <Alerte
-            message={alerte.message}
-            titre={alerte.titre}
-            type={alerte.type}
-          />
-        </div>
-      )}
       <div className="fr-container--fluid">
         <div className="fr-grid-row fr-grid-row--middle fr-grid-row--gutters">
           <div className="fr-col-12 fr-col-md-6">

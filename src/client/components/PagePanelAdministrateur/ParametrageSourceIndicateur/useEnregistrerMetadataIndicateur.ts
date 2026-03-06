@@ -1,4 +1,4 @@
-import { toast } from "sonner";
+import { Toaster } from "@/client/utils/toaster";
 import api from "@/server/infrastructure/api/trpc/api";
 import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
 import { FormValues } from "./form";
@@ -15,10 +15,7 @@ export function useEnregistrerMetadataIndicateur() {
       },
       {
         onSuccess: () => {
-          toast.success("Sauvegarde du metadata indicateur réussie", {
-            position: "top-right",
-            richColors: true,
-          });
+          Toaster.success("Sauvegarde du metadata indicateur réussie");
           refreshRouter();
         },
       },

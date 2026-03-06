@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect } from "react";
 import { keepPreviousData } from "@tanstack/react-query";
-import { toast } from "sonner";
+import { Toaster } from "@/client/utils/toaster";
 import api from "@/server/infrastructure/api/trpc/api";
 import { ItemListe } from "@/components/_commons/EditeurContenu3Colonnes/EditeurContenu3Colonnes";
 
@@ -102,22 +102,14 @@ export const useEditionNouveaute = () => {
       refetchListe();
       setItemSelectionneId(variables.id);
       setEstCreation(false);
-      toast.success("Nouveauté créée avec succès", {
-        duration: 3000,
-        position: "top-right",
-        richColors: true,
-      });
+      Toaster.success("Nouveauté créée avec succès");
     },
   });
 
   const mutationModifier = api.parametrageNouveautes.modifier.useMutation({
     onSuccess: () => {
       refetchListe();
-      toast.success("Nouveauté modifiée avec succès", {
-        duration: 3000,
-        position: "top-right",
-        richColors: true,
-      });
+      Toaster.success("Nouveauté modifiée avec succès");
     },
   });
 

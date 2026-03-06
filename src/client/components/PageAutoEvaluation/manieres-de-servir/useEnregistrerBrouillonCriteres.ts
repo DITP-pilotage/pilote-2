@@ -1,4 +1,4 @@
-import { toast } from "sonner";
+import { Toaster } from "@/client/utils/toaster";
 import api from "@/server/infrastructure/api/trpc/api";
 import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
 import { FormValuesCriteres } from "@/components/PageAutoEvaluation/manieres-de-servir/form";
@@ -31,10 +31,7 @@ export const useEnregistrerBrouillonCriteres = ({
       {
         onSuccess: async () => {
           if (showToast) {
-            toast.success("Données enregistrées", {
-              position: "top-right",
-              richColors: true,
-            });
+            Toaster.success("Données enregistrées");
           }
           await refreshRouter();
         },

@@ -1,11 +1,10 @@
 import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
 import { useRouter } from "next/router";
 import api from "@/server/infrastructure/api/trpc/api";
-import AlerteProps from "@/components/_commons/Alerte/Alerte.interface";
 import { récupérerUnCookie } from "@/client/utils/cookies";
 import { validationCreationTokenAPI } from "@/validation/gestion-token-api";
+import { Toaster } from "@/client/utils/toaster";
 
 export type TokenAPIForm = {
   email: string;
@@ -13,7 +12,6 @@ export type TokenAPIForm = {
 
 export const useGestionTokenAPI = () => {
   const router = useRouter();
-  const [alerte, setAlerte] = useState<AlerteProps | null>(null);
 
   const reactHookForm = useForm<TokenAPIForm>({
     resolver: zodResolver(validationCreationTokenAPI),
@@ -27,32 +25,26 @@ export const useGestionTokenAPI = () => {
         return error;
       }
 
-      setAlerte({
-        type: "succès",
-        titre:
-          "Le token d'authentification est généré pour cet utilisateur et est sauvegardé dans votre presse-papier.",
-        message: result,
-      });
+      Toaster.success(
+        "Le token d'authentification est généré pour cet utilisateur et est sauvegardé dans votre presse-papier.",
+      );
     },
     onError: (error) => {
-      setAlerte({
-        type: "erreur",
-        titre: error.message,
-      });
+      Toaster.error(error.message);
     },
   });
 
   const mutationSupprimerTokenAPI =
     api.gestionTokenAPI.supprimerTokenAPI.useMutation({
       onSuccess: () => {
-        router.push("/admin/gestion-token-api?_action=suppression-reussie");
+        Toaster.success(
+          "Le token a correctement été supprimé, le consommateur ne pourra plus l'utiliser",
+        );
+        router.push("/admin/gestion-token-api");
       },
       onError: (error) => {
         if (error.data?.code === "INTERNAL_SERVER_ERROR") {
-          setAlerte({
-            type: "erreur",
-            titre: error.message,
-          });
+          Toaster.error(error.message);
         }
       },
     });
@@ -75,5 +67,5 @@ export const useGestionTokenAPI = () => {
     mutationSupprimerTokenAPI.mutate(inputs);
   };
 
-  return { creerTokenAPI, supprimerTokenAPI, reactHookForm, alerte };
+  return { creerTokenAPI, supprimerTokenAPI, reactHookForm };
 };

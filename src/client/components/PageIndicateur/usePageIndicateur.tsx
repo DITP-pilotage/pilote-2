@@ -8,7 +8,7 @@ import { récupérerUnCookie } from "@/client/utils/cookies";
 import { MetadataParametrageIndicateurContrat } from "@/server/app/contrats/MetadataParametrageIndicateurContrat";
 import { MapInformationMetadataIndicateurContrat } from "@/server/app/contrats/InformationMetadataIndicateurContrat";
 import { createValidationMetadataIndicateurFormulaire } from "@/validation/metadata-indicateur";
-import AlerteProps from "@/components/_commons/Alerte/Alerte.interface";
+import { Toaster } from "@/client/utils/toaster";
 
 export type MetadataIndicateurForm = z.infer<
   ReturnType<typeof createValidationMetadataIndicateurFormulaire>
@@ -19,7 +19,6 @@ export const usePageIndicateur = (
   mapInformationMetadataIndicateur: MapInformationMetadataIndicateurContrat,
 ) => {
   const router = useRouter();
-  const [alerte, setAlerte] = useState<AlerteProps | null>(null);
   const [estEnCoursDeModification, setEstEnCoursDeModification] =
     useState<boolean>(false);
 
@@ -63,30 +62,22 @@ export const usePageIndicateur = (
     api.metadataIndicateur.modifier.useMutation({
       onSuccess: () => {
         setEstEnCoursDeModification(false);
-        router.push(
-          `/admin/indicateurs/${indicateur.indicId}?_action=modification-reussie`,
-        );
+        Toaster.success("Bravo, l'indicateur a bien été modifié !");
+        router.push(`/admin/indicateurs/${indicateur.indicId}`);
       },
       onError: (error) => {
-        setAlerte({
-          type: "erreur",
-          titre: error.message,
-        });
+        Toaster.error(error.message);
       },
     });
   const mutationCreerMetadataIndicateur =
     api.metadataIndicateur.creer.useMutation({
       onSuccess: () => {
         setEstEnCoursDeModification(false);
-        router.push(
-          `/admin/indicateurs/${indicateur.indicId}?_action=creation-reussie`,
-        );
+        Toaster.success("Bravo, l'indicateur a bien été crée !");
+        router.push(`/admin/indicateurs/${indicateur.indicId}`);
       },
       onError: (error) => {
-        setAlerte({
-          type: "erreur",
-          titre: error.message,
-        });
+        Toaster.error(error.message);
       },
     });
 
@@ -131,7 +122,6 @@ export const usePageIndicateur = (
     modifierIndicateur,
     creerIndicateur,
     reactHookForm,
-    alerte,
     reinitialiserIndicateur,
   };
 };

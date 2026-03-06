@@ -1,4 +1,4 @@
-import { toast } from "sonner";
+import { Toaster } from "@/client/utils/toaster";
 import api from "@/server/infrastructure/api/trpc/api";
 import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
 
@@ -14,10 +14,7 @@ export const usePasserALEtapeInstruction = () => {
       },
       {
         onSuccess: async () => {
-          toast.success("Les fiches sont passées en instruction", {
-            position: "top-right",
-            richColors: true,
-          });
+          Toaster.success("Les fiches sont passées en instruction");
           await refreshRouter();
         },
       },

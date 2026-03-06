@@ -1,5 +1,5 @@
-import { toast } from "sonner";
 import { useId, useState } from "react";
+import { Toaster } from "@/client/utils/toaster";
 import api from "@/server/infrastructure/api/trpc/api";
 import { clsxm } from "@/utils/clsxm";
 import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
@@ -24,22 +24,15 @@ export const BoutonTraitementEvaluation = ({
       setComplete(payload.statut === "TRAITEE");
     },
     onSuccess: async (_, payload) => {
-      toast.success(
+      Toaster.success(
         payload.statut === "NON_TRAITEE"
           ? "Évaluation marquée comme non complétée"
           : "Évaluation marquée comme complétée",
-        {
-          position: "top-right",
-          richColors: true,
-        },
       );
       return refreshRouter();
     },
     onError: () => {
-      toast.error("Erreur lors de la mise à jour", {
-        position: "top-right",
-        richColors: true,
-      });
+      Toaster.error("Erreur lors de la mise à jour");
     },
   });
 

@@ -1,3 +1,4 @@
+import { z } from "zod";
 import {
   créerRouteurTRPC,
   procédureProtégée,
@@ -16,6 +17,16 @@ export const indicateurRouter = créerRouteurTRPC({
         .run({
           indicId: input.indicateurId,
           territoireCode: input.territoireCode,
+        });
+    }),
+  publierFichierImporte: procédureProtégée
+    .input(z.object({ rapportId: z.string() }))
+    .mutation(async ({ input, ctx }) => {
+      await getContainer("importIndicateur")
+        .resolve("publierFichierIndicateurImporteUseCase")
+        .execute({
+          rapportId: input.rapportId,
+          auteurId: ctx.session.user.id,
         });
     }),
 });

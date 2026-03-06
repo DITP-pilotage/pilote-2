@@ -1,4 +1,4 @@
-import { toast } from "sonner";
+import { Toaster } from "@/client/utils/toaster";
 import api from "@/server/infrastructure/api/trpc/api";
 import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
 
@@ -12,10 +12,7 @@ export const useRetournerAppreciation = () => {
       { ficheEvaluationIds },
       {
         onSuccess: async () => {
-          toast.success("Les fiches sont retournées en appréciation", {
-            position: "top-right",
-            richColors: true,
-          });
+          Toaster.success("Les fiches sont retournées en appréciation");
           await refreshRouter();
         },
       },

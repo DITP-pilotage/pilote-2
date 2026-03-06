@@ -1,12 +1,9 @@
-import { FunctionComponent, useEffect, useState } from "react";
-import { useRouter } from "next/router";
+import { FunctionComponent, useState } from "react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import Titre from "@/components/_commons/Titre/Titre";
 import Bloc from "@/components/_commons/Bloc/Bloc";
 import TableauAdminUtilisateurs from "@/components/PageAdminUtilisateurs/TableauAdminUtilisateurs/TableauAdminUtilisateurs";
-import Alerte from "@/client/components/_commons/Alerte/Alerte";
-import AlerteProps from "@/client/components/_commons/Alerte/Alerte.interface";
 import { AdminUtilisateursBarreLatérale } from "@/components/PageAdminUtilisateurs/BarreLatérale/AdminUtilisateursBarreLatérale";
 import "@gouvfr/dsfr/dist/component/select/select.min.css";
 import "@gouvfr/dsfr/dist/component/form/form.min.css";
@@ -38,8 +35,6 @@ const PageAdminUtilisateurs: FunctionComponent<{
   listeTerritoiresSelectionnable,
 }) => {
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
-  const [alerte, setAlerte] = useState<AlerteProps | null>(null);
-  const router = useRouter();
   const { data: session } = useSession();
 
   const donneLaRedirection = () => {
@@ -53,38 +48,6 @@ const PageAdminUtilisateurs: FunctionComponent<{
       ? "/admin/utilisateur/creer"
       : "/admin/utilisateur/creer/aide";
   };
-
-  useEffect(() => {
-    if (router.query["compteCréé"]) {
-      setAlerte({
-        titre: "Bravo, le compte a bien été créé !",
-        type: "succès",
-        message: "Un mail lui a été envoyé pour définir son mot de passe.",
-      });
-    }
-
-    if (router.query["compteModifié"]) {
-      setAlerte({
-        titre: "Bravo, le compte a bien été modifié !",
-        type: "succès",
-      });
-    }
-
-    if (router.query["compteRéactivé"]) {
-      setAlerte({
-        titre: "Bravo, le compte a bien été réactivé !",
-        type: "succès",
-      });
-    }
-
-    if (router.query["compteDésactivé"]) {
-      setAlerte({
-        titre: "Le compte a bien été désactivé.",
-        type: "succès",
-      });
-      window.scroll(0, 0);
-    }
-  }, [router]);
 
   return (
     <div className="flex">
@@ -101,15 +64,6 @@ const PageAdminUtilisateurs: FunctionComponent<{
       />
       <main>
         <div className="!mt-8 !mb-6 md:!mx-4">
-          {alerte ? (
-            <div className="fr-my-4w">
-              <Alerte
-                message={alerte.message}
-                titre={alerte.titre}
-                type={alerte.type}
-              />
-            </div>
-          ) : null}
           <div className="fr-grid-row fr-grid-row--middle fr-mb-3w !px-4">
             <div className="fr-col-12 fr-col-md-6">
               <Titre baliseHtml="h1" className="fr-h1 fr-mb-0">

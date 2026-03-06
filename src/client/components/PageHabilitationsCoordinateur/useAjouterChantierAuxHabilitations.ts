@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { toast } from "sonner";
+import { Toaster } from "@/client/utils/toaster";
 import api from "@/server/infrastructure/api/trpc/api";
 import { pageHabilitationsCoordinateur } from "@/components/PageHabilitationsCoordinateur/PageHabilitationsCoordinateurServerSideContext";
 
@@ -29,16 +29,10 @@ export const useAjouterChantierAuxHabilitations = () => {
       },
       {
         onSuccess: () => {
-          toast.success("Chantiers ajoutés aux habilitations", {
-            position: "top-right",
-            richColors: true,
-          });
+          Toaster.success("Chantiers ajoutés aux habilitations");
         },
         onError: () => {
-          toast.error("Erreur lors de l'ajout des chantiers", {
-            position: "top-right",
-            richColors: true,
-          });
+          Toaster.error("Erreur lors de l'ajout des chantiers");
         },
       },
     );

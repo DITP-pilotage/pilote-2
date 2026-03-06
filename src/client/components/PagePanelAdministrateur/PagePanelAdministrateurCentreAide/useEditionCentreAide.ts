@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react";
-import { toast } from "sonner";
 import { $Enums } from "@prisma/client";
+import { Toaster } from "@/client/utils/toaster";
 import api from "@/server/infrastructure/api/trpc/api";
 import { ArticleCentreAideContrat } from "@/server/parametrage-centre-aide/app/contrats/ArticleCentreAideContrat";
 import { useLectureCentreAide } from "@/components/_commons/CentreAide/useLectureCentreAide";
@@ -54,22 +54,14 @@ export const useEditionCentreAide = () => {
       setTitre(variables.titre);
       setContenu(variables.contenu ?? null);
       setType(variables.type);
-      toast.success("Article créé avec succès", {
-        duration: 3000,
-        position: "top-right",
-        richColors: true,
-      });
+      Toaster.success("Article créé avec succès");
     },
   });
 
   const mutationModifier = api.parametrageCentreAide.modifier.useMutation({
     onSuccess: () => {
       refetchListe();
-      toast.success("Article modifié avec succès", {
-        duration: 3000,
-        position: "top-right",
-        richColors: true,
-      });
+      Toaster.success("Article modifié avec succès");
     },
   });
 
@@ -79,11 +71,7 @@ export const useEditionCentreAide = () => {
       setItemSelectionneId(null);
       setTitre("");
       setContenu(null);
-      toast.success("Article supprimé avec succès", {
-        duration: 3000,
-        position: "top-right",
-        richColors: true,
-      });
+      Toaster.success("Article supprimé avec succès");
     },
   });
 

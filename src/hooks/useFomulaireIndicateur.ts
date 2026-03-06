@@ -6,6 +6,8 @@ import {
   useState,
 } from "react";
 import { DetailValidationFichierContrat } from "@/server/app/contrats/DetailValidationFichierContrat.interface";
+import { wording } from "@/client/utils/i18n/i18n";
+import { Toaster } from "@/client/utils/toaster";
 
 type UploadFichierFormulaireElement = {
   "file-upload": HTMLInputElement;
@@ -59,6 +61,25 @@ export const useFormulaireIndicateur = (
 
       setRapport(detailValidationFichier);
       setFile(null);
+
+      if (detailValidationFichier.estValide) {
+        Toaster.success(
+          wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT
+            .ETAPE_CHARGER_FICHIER.TITRE_ALERT_SUCCES,
+        );
+      } else {
+        const contientDesErreursNonIdentifies =
+          detailValidationFichier.listeErreursValidation.some(
+            (erreur) => erreur.nom === "Erreur non identifié",
+          );
+        Toaster.error(
+          contientDesErreursNonIdentifies
+            ? wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT
+                .ETAPE_CHARGER_FICHIER.TITRE_ALERT_ERREUR_SUPPORT
+            : wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT
+                .ETAPE_CHARGER_FICHIER.TITRE_ALERT_ERREUR,
+        );
+      }
     } finally {
       setEstEnChargement(false);
     }

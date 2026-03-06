@@ -1,6 +1,6 @@
-import { toast } from "sonner";
 import api from "@/server/infrastructure/api/trpc/api";
 import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
+import { Toaster } from "@/client/utils/toaster";
 
 export const useModifierEtatFichesConsolidation = () => {
   const mutation = api.evaluation.modifierEtatFichesConsolidation.useMutation();
@@ -15,14 +15,10 @@ export const useModifierEtatFichesConsolidation = () => {
         },
         {
           onSuccess: async () => {
-            toast.success(
+            Toaster.success(
               readOnly
                 ? "Les fiches ont correctement été bloquées"
                 : "Les fiches ont correctement été débloquées",
-              {
-                position: "top-right",
-                richColors: true,
-              },
             );
             await refreshRouter();
           },

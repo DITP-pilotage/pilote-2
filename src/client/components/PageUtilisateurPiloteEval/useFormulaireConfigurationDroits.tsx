@@ -1,7 +1,7 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { toast } from "sonner";
 import { useRouter } from "next/router";
+import { Toaster } from "@/client/utils/toaster";
 import api from "@/server/infrastructure/api/trpc/api";
 import {
   parametrageUtilisateurPiloteEvalSchema,
@@ -44,17 +44,11 @@ export const useFormulaireConfigurationDroits = () => {
       },
       {
         onSuccess: async () => {
-          toast.success("Droits modifiés avec succès", {
-            position: "top-right",
-            richColors: true,
-          });
+          Toaster.success("Droits modifiés avec succès");
           await router.push("/evaluation/utilisateurs");
         },
         onError: () => {
-          toast.error("Erreur lors de la modification des droits", {
-            position: "top-right",
-            richColors: true,
-          });
+          Toaster.error("Erreur lors de la modification des droits");
         },
       },
     );

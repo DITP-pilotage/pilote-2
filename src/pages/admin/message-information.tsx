@@ -14,24 +14,19 @@ import { dependencies } from "@/server/infrastructure/Dependencies";
 
 const NextAdminMessageInformation: FunctionComponent<{
   messageInformation: MessageInformationContrat;
-  modificationReussie: boolean;
-}> = ({ messageInformation, modificationReussie }) => {
+}> = ({ messageInformation }) => {
   return (
     <>
       <Head>
         <title>Message d'information - Pilote</title>
       </Head>
-      <PageMessageInformation
-        messageInformation={messageInformation}
-        modificationReussie={modificationReussie}
-      />
+      <PageMessageInformation messageInformation={messageInformation} />
     </>
   );
 };
 export default NextAdminMessageInformation;
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
-  const { query } = context;
   const session = await auth(context);
   if (!session || !estAutoriséAModifierDesIndicateurs(session.profil)) {
     throw new Error("Not connected or not authorized ?");
@@ -43,12 +38,9 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     }).run(),
   );
 
-  const modificationReussie = query._action === "modification-reussie";
-
   return {
     props: {
       messageInformation,
-      modificationReussie,
     },
   };
 }

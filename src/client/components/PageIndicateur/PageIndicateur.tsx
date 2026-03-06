@@ -11,7 +11,6 @@ import {
   MetadataIndicateurForm,
   usePageIndicateur,
 } from "@/components/PageIndicateur/usePageIndicateur";
-import Alerte from "@/components/_commons/Alerte/Alerte";
 import { MetadataParametrageIndicateurContrat } from "@/server/app/contrats/MetadataParametrageIndicateurContrat";
 import { MapInformationMetadataIndicateurContrat } from "@/server/app/contrats/InformationMetadataIndicateurContrat";
 import { ChantierSynthétisé } from "@/server/domain/chantier/Chantier.interface";
@@ -24,8 +23,6 @@ interface PageIndicateurProps {
   informationHistorisationIndicateur: InformationHistorisationMetadataIndicateurContrat;
   mapInformationMetadataIndicateur: MapInformationMetadataIndicateurContrat;
   estUneCréation: boolean;
-  modificationReussie: boolean;
-  creationReussie: boolean;
   chantiers: ChantierSynthétisé[];
 }
 
@@ -34,8 +31,6 @@ const PageIndicateur: FunctionComponent<PageIndicateurProps> = ({
   informationHistorisationIndicateur,
   mapInformationMetadataIndicateur,
   estUneCréation,
-  modificationReussie,
-  creationReussie,
   chantiers,
 }) => {
   const chemin = [
@@ -48,7 +43,6 @@ const PageIndicateur: FunctionComponent<PageIndicateurProps> = ({
     creerIndicateur,
     estEnCoursDeModification,
     setEstEnCoursDeModification,
-    alerte,
     reinitialiserIndicateur,
   } = usePageIndicateur(indicateur, mapInformationMetadataIndicateur);
 
@@ -57,11 +51,6 @@ const PageIndicateur: FunctionComponent<PageIndicateurProps> = ({
       <main className="fr-container">
         <FilAriane chemin={chemin} libelléPageCourante="Indicateur" />
         <div className="fiche-indicateur fr-pt-1w fr-pb-13w">
-          {!!alerte && (
-            <div className="fr-mt-2w">
-              <Alerte titre={alerte.titre} type={alerte.type} />
-            </div>
-          )}
           <FormProvider {...reactHookForm}>
             <form
               method="post"
@@ -88,24 +77,6 @@ const PageIndicateur: FunctionComponent<PageIndicateurProps> = ({
                   Retour
                 </Link>
               </div>
-              {modificationReussie ? (
-                <div className="fr-my-4w">
-                  <Alerte
-                    message="Les modifications ont bien été prises en compte pour cet indicateur. Elles apparaitront dans PILOTE lors de la prochaine mise à jour de données"
-                    titre="Bravo, l'indicateur a bien été modifié !"
-                    type="succès"
-                  />
-                </div>
-              ) : null}
-              {creationReussie ? (
-                <div className="fr-my-4w">
-                  <Alerte
-                    message="La création a bien été prise en compte pour cet indicateur. Il apparaitra dans PILOTE lors de la prochaine mise à jour de données"
-                    titre="Bravo, l'indicateur a bien été crée !"
-                    type="succès"
-                  />
-                </div>
-              ) : null}
               <Titre baliseHtml="h1" className="fr-h1 fr-mt-4w">
                 Fiche de l'indicateur {indicateur.indicId}
                 <div className="fr-grid-row fr-mt-4w">

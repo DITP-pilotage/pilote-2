@@ -1,17 +1,15 @@
 import { FormProvider } from "react-hook-form";
-import { useState } from "react";
 import { z } from "zod";
 import Bloc from "@/components/_commons/Bloc/Bloc";
 import Titre from "@/components/_commons/Titre/Titre";
 import InputAvecLabel from "@/components/_commons/InputAvecLabel/InputAvecLabel";
 import { SubmitBouton } from "@/components/_commons/SubmitBouton/SubmitBouton";
-import Alerte from "@/components/_commons/Alerte/Alerte";
 import { validationModifierMonProfil } from "@/validation/mon-profil";
-import type AlerteProps from "@/components/_commons/Alerte/Alerte.interface";
 import api from "@/server/infrastructure/api/trpc/api";
 import { récupérerUnCookie } from "@/client/utils/cookies";
 import { Icone } from "@/components/_commons/Icone";
 import { ArrowLine1Icon } from "@/components/_commons/Icones/ArrowLine1Icon";
+import { Toaster } from "@/client/utils/toaster";
 import { useMonProfilFormulaire } from "./useMonProfilFormulaire";
 import { SelectService } from "./SelectService";
 import { useMonProfilForm } from "./form";
@@ -20,21 +18,15 @@ type MonProfilUtilisateurFormInputs = z.infer<
   typeof validationModifierMonProfil
 >;
 
-function useModifierProfilUtilisateur(setAlert: (props: AlerteProps) => void) {
+function useModifierProfilUtilisateur() {
   const { refetch } = api.profilUtilisateur.getUtilisateurConnecte.useQuery();
   return api.profilUtilisateur.modifierMonProfil.useMutation({
     onSuccess: async () => {
       await refetch();
-      setAlert({
-        type: "succès",
-        titre: "Vos informations ont été modifiées avec succès",
-      });
+      Toaster.success("Vos informations ont été modifiées avec succès");
     },
     onError: (error) => {
-      setAlert({
-        type: "erreur",
-        titre: error.message,
-      });
+      Toaster.error(error.message);
     },
   });
 }
@@ -107,8 +99,7 @@ const PageMonProfilUtilisateurContent = () => {
 };
 
 export const PageMonProfilUtilisateur = () => {
-  const [alerte, setAlerte] = useState<AlerteProps | null>(null);
-  const mutationModifierMonProfil = useModifierProfilUtilisateur(setAlerte);
+  const mutationModifierMonProfil = useModifierProfilUtilisateur();
   const form = useMonProfilFormulaire();
 
   const soumettreFormulaire = (data: MonProfilUtilisateurFormInputs) => {
@@ -125,8 +116,6 @@ export const PageMonProfilUtilisateur = () => {
           <Titre baliseHtml="h1" className="fr-h1 text-primary fr-mt-4w mb-0">
             Mon profil utilisateur
           </Titre>
-
-          {alerte ? <Alerte {...alerte} /> : null}
 
           <FormProvider {...form}>
             <form onSubmit={form.handleSubmit(soumettreFormulaire)}>

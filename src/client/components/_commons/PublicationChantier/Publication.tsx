@@ -1,5 +1,4 @@
 import { FunctionComponent } from "react";
-import Alerte from "@/components/_commons/Alerte/Alerte";
 import Titre from "@/components/_commons/Titre/Titre";
 import { Icone } from "@/components/_commons/Icone";
 import { Icone1Icon } from "@/components/_commons/Icones/Icone1Icon";
@@ -21,7 +20,6 @@ const Publication: FunctionComponent<PublicationProps> = ({
   const {
     publication,
     modeÉdition,
-    alerte,
     afficherAlerteErreur,
     publicationCréée,
     activerLeModeÉdition,
@@ -35,11 +33,6 @@ const Publication: FunctionComponent<PublicationProps> = ({
           ? `Modifier : ${caractéristiques.libelléType}`
           : caractéristiques.libelléType}
       </Titre>
-      {!!alerte && (
-        <div className="fr-mb-2w">
-          <Alerte titre={alerte.titre} type={alerte.type} />
-        </div>
-      )}
       {modeÉdition && modeÉcriture ? (
         <PublicationFormulaire
           annulationCallback={désactiverLeModeÉdition}

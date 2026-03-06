@@ -46,6 +46,7 @@ const EtapeChargerFichier: FunctionComponent<{
         chantierId={chantierId}
         indicateurId={indicateurId}
         setRapport={setRapport}
+        rapportEstValide={!!rapport?.estValide}
       />
       {rapport !== null && <ResultatValidationFichier rapport={rapport} />}
       {rapport?.estValide ? (

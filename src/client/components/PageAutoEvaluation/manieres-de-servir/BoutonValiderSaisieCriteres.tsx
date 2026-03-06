@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { toast } from "sonner";
 import { useRouter } from "next/router";
+import { Toaster } from "@/client/utils/toaster";
 import api from "@/server/infrastructure/api/trpc/api";
 import { useFormEvaluationCriteres } from "@/components/PageAutoEvaluation/manieres-de-servir/form";
 import { useEnregistrerBrouillonCriteres } from "@/components/PageAutoEvaluation/manieres-de-servir/useEnregistrerBrouillonCriteres";
@@ -31,17 +31,11 @@ export const BoutonValiderSaisieCriteres = ({
       { ficheEvaluationId },
       {
         onSuccess: async () => {
-          toast.success("Manières de servir validées", {
-            position: "top-right",
-            richColors: true,
-          });
+          Toaster.success("Manières de servir validées");
           await router.push("/evaluation/auto-evaluation");
         },
         onError: () => {
-          toast.error("Erreur lors de la validation", {
-            position: "top-right",
-            richColors: true,
-          });
+          Toaster.error("Erreur lors de la validation");
         },
       },
     );

@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { toast } from "sonner";
 import { useForm } from "react-hook-form";
+import { Toaster } from "@/client/utils/toaster";
 import api from "@/server/infrastructure/api/trpc/api";
 import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
 import { FicheEvaluation } from "@/server/evaluation/domain/FicheEvaluation";
@@ -73,12 +73,8 @@ export const useTransmissionDITP = (fichesConsolidation: FicheEvaluation[]) => {
       { ficheEvaluationIds: fichesSelectionnees },
       {
         onSuccess: async () => {
-          toast.success(
+          Toaster.success(
             "Les territoires ont été transmis à la DITP avec succès",
-            {
-              position: "top-right",
-              richColors: true,
-            },
           );
           setEtapeTransmission(null);
           await refreshRouter();

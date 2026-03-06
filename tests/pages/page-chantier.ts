@@ -41,6 +41,7 @@ export class PageChantier extends BasePage {
     const accordionButton = this.page.getByRole("button", {
       name: /Autres indicateurs/,
     });
+    await accordionButton.waitFor({ state: "visible" });
     const isExpanded = await accordionButton.getAttribute("aria-expanded");
     if (isExpanded !== "true") {
       await accordionButton.click();
@@ -131,7 +132,9 @@ export class PageChantier extends BasePage {
 
     await this.page.getByText("Publier").click();
 
-    await this.page.waitForSelector("#alerte");
+    await expect(
+      this.page.locator("[data-sonner-toast][data-type='success']"),
+    ).toBeVisible();
 
     await expect(this.page.getByText("Modification effectuée")).toBeVisible();
 

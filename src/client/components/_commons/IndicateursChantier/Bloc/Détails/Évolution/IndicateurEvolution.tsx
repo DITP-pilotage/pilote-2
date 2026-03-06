@@ -10,7 +10,7 @@ import {
 import { FunctionComponent, useMemo, useRef, useState } from "react";
 import { toBlob, toPng } from "html-to-image";
 import { flushSync } from "react-dom";
-import { toast } from "sonner";
+import { Toaster } from "@/client/utils/toaster";
 import { useBlocIndicateurContext } from "@/components/PageChantier/useBlocIndicateurContext";
 import { useTerritoireSelectionne } from "@/components/PageChantier/PageChantierServerSideContext";
 import { IndicateurDetailsParTerritoire } from "@/client/components/_commons/IndicateursChantier/Bloc/IndicateurBloc.interface";
@@ -138,9 +138,7 @@ export const IndicateurEvolution: FunctionComponent<{
         }),
       ]);
 
-      toast.success("Image copiée dans le presse-papiers", {
-        duration: 3000,
-      });
+      Toaster.success("Image copiée dans le presse-papiers");
     });
   };
 

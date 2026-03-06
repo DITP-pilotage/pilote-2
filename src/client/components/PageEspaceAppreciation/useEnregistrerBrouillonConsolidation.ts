@@ -1,5 +1,5 @@
-import { toast } from "sonner";
 import { useCallback } from "react";
+import { Toaster } from "@/client/utils/toaster";
 import api from "@/server/infrastructure/api/trpc/api";
 import {
   enregistrerTousLesChamps,
@@ -44,10 +44,7 @@ export const useEnregistrerBrouillonConsolidation = () => {
       return mutateAsync(dataToSend, {
         onSuccess: async () => {
           if (showToast) {
-            toast.success("Données enregistrées", {
-              position: "top-right",
-              richColors: true,
-            });
+            Toaster.success("Données enregistrées");
           }
           return refreshRouter();
         },

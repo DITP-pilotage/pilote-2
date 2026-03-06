@@ -18,8 +18,8 @@ import api from "@/server/infrastructure/api/trpc/api";
 import { filtresModifierIndicateursActifsStore } from "@/stores/useFiltresModifierIndicateursStore/useFiltresModifierIndicateursStore";
 import { MetadataParametrageIndicateurInformationContrat } from "@/server/app/contrats/MetadataParametrageIndicateurContrat";
 import { formaterDate, horodatage } from "@/client/utils/date/date";
-import AlerteProps from "@/components/_commons/Alerte/Alerte.interface";
 import Chantier from "@/server/domain/chantier/Chantier.interface";
+import { Toaster } from "@/client/utils/toaster";
 import { CloseCircleIcon } from "@/components/_commons/Icones/CloseCircleIcon";
 import { Icone } from "@/components/_commons/Icone";
 import { SuccessIcon } from "@/components/_commons/Icones/SuccessIcon";
@@ -90,7 +90,6 @@ export default function useTableauPageAdminIndicateurs() {
   const [valeurDeLaRecherche, setValeurDeLaRecherche] = useState("");
 
   const [file, setFile] = useState<File | null>(null);
-  const [alerte, setAlerte] = useState<AlerteProps | null>(null);
 
   const { data: metadataIndicateurs = [], isLoading: estEnChargement } =
     api.metadataIndicateur.listerMetadataIndicateurFiltrés.useQuery({
@@ -206,23 +205,17 @@ export default function useTableauPageAdminIndicateurs() {
     });
 
     if (result.status === 200) {
-      setAlerte({
-        type: "succès",
-        titre: "Import de masse réussie",
-      });
+      Toaster.success("Import de masse réussie");
     } else {
       const errorResponse = (await result.json()) as { message: string };
-      setAlerte({
-        type: "erreur",
-        titre: "Une erreur est survenue",
-        message: `Une erreur interne est survenu : ${errorResponse.message}`,
-      });
+      Toaster.error(
+        `Une erreur interne est survenu : ${errorResponse.message}`,
+      );
     }
   };
 
   return {
     file,
-    alerte,
     définirLeFichier,
     verifierLeFichier,
     tableau,

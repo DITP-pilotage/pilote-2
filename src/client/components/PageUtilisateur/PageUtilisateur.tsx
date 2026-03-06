@@ -8,7 +8,6 @@ import PageUtilisateurStyled from "@/components/PageUtilisateur/PageUtilisateur.
 import Titre from "@/components/_commons/Titre/Titre";
 import Bloc from "@/components/_commons/Bloc/Bloc";
 import FicheUtilisateur from "@/components/PageUtilisateur/FicheUtilisateur/FicheUtilisateur";
-import Alerte from "@/components/_commons/Alerte/Alerte";
 import { Modale } from "@/components/shared/Modale";
 import { Bouton } from "@/client/components/_commons/Bouton/Bouton";
 import BandeauInformation from "@/components/_commons/BandeauInformation/BandeauInformation";
@@ -38,7 +37,7 @@ const PageUtilisateur: FunctionComponent<PageUtilisateurProps> = ({
   } = usePageUtilisateur(utilisateur);
   const chemin = [{ nom: "Gestion des comptes", lien: "/admin/utilisateurs" }];
   const { data: session } = useSession();
-  const { creerTokenAPI, alerte } = useGestionTokenAPI();
+  const { creerTokenAPI } = useGestionTokenAPI();
 
   return (
     <PageUtilisateurStyled className="fr-pt-2w">
@@ -134,15 +133,6 @@ const PageUtilisateur: FunctionComponent<PageUtilisateurProps> = ({
                         />
                       </div>
                     </Modale>
-                    {alerte ? (
-                      <div className="fr-my-2w">
-                        <Alerte
-                          message={alerte.message}
-                          titre={alerte.titre}
-                          type={alerte.type}
-                        />
-                      </div>
-                    ) : null}
                     {tokenAPIInformation ? (
                       <div className="fr-alert fr-alert--info fr-alert--sm fr-mt-2w">
                         <p className="fr-text--sm">

@@ -6,16 +6,19 @@ import { Icone } from "@/components/_commons/Icone";
 import { LoaderIcon } from "@/components/_commons/Icones/LoaderIcon";
 import { wording } from "@/client/utils/i18n/i18n";
 import { DetailValidationFichierContrat } from "@/server/app/contrats/DetailValidationFichierContrat.interface";
+import { SuccessIcon } from "@/components/_commons/Icones/SuccessIcon";
 
 interface FormulaireIndicateurProps {
   chantierId: string;
   indicateurId: string;
+  rapportEstValide: boolean;
   setRapport: Dispatch<SetStateAction<DetailValidationFichierContrat | null>>;
 }
 
 const FormulaireIndicateur: FunctionComponent<FormulaireIndicateurProps> = ({
   chantierId,
   indicateurId,
+  rapportEstValide,
   setRapport,
 }) => {
   const { définirLeFichier, estEnChargement, verifierLeFichier, file } =
@@ -36,6 +39,12 @@ const FormulaireIndicateur: FunctionComponent<FormulaireIndicateurProps> = ({
           </span>
           Envoi du fichier en cours...
         </div>
+      ) : rapportEstValide ? (
+        <p className="fr-mt-2w flex align-center gap-2">
+          <Icone className="h-5 w-5 text-success" icone={SuccessIcon} />
+          Le fichier est conforme, vous pouvez continuer en cliquant sur le
+          bouton <b>« Suivant »</b>
+        </p>
       ) : (
         <form
           className="flex align-center fr-mb-3w"
