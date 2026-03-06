@@ -88,7 +88,7 @@ enum statut_envoi_rapport {
   @@schema("public")
 }
 
-enum statut_synthese_des_resultats {
+enum statut_publication {
   BROUILLON
   PUBLIE
 
@@ -301,7 +301,7 @@ model synthese_des_resultats {
   maille                 String
   code_insee             String
   territoire_code        String
-  statut                 statut_synthese_des_resultats @default(PUBLIE)
+  statut                 statut_publication            @default(PUBLIE)
   meteo                  String?
   commentaire            String?
   date_creation          DateTime                      @db.Timestamp
@@ -332,17 +332,21 @@ model ppg {
 }
 
 model commentaire {
-  id                  String              @id
-  chantier_id         String
-  type                String
-  contenu             String
-  date                DateTime            @db.Timestamp
-  maille              String
-  code_insee          String
-  territoire_code     String
-  auteur_commentaire  utilisateur?        @relation(fields: [auteur_id], references: [id], onUpdate: Cascade)
-  chantier_territoire chantier_territoire @relation(fields: [chantier_id, territoire_code], references: [id, territoire_code], onUpdate: Cascade)
-  auteur_id           String?             @db.Uuid
+  id                     String              @id
+  chantier_id            String
+  type                   String
+  contenu                String
+  maille                 String
+  code_insee             String
+  territoire_code        String
+  statut                 statut_publication  @default(PUBLIE)
+  date_creation          DateTime            @db.Timestamp
+  date_modification      DateTime            @db.Timestamp
+  auteur_creation_id     String?             @db.Uuid
+  auteur_modification_id String?             @db.Uuid
+  auteur_creation        utilisateur?        @relation("commentaires_crees", fields: [auteur_creation_id], references: [id], onUpdate: Cascade)
+  auteur_modification    utilisateur?        @relation("commentaires_modifies", fields: [auteur_modification_id], references: [id], onUpdate: Cascade)
+  chantier_territoire    chantier_territoire @relation(fields: [chantier_id, territoire_code], references: [id, territoire_code], onUpdate: Cascade)
 
   @@schema("public")
 }
@@ -626,7 +630,8 @@ model utilisateur {
   date_creation                          DateTime
   auteur_creation                        utilisateur?                             @relation("creation", fields: [auteur_id_creation], references: [id])
   auteur_id_creation                     String?                                  @db.Uuid
-  commentaires                           commentaire[]
+  commentaires_crees                     commentaire[]                            @relation("commentaires_crees")
+  commentaires_modifies                  commentaire[]                            @relation("commentaires_modifies")
   decisions_strategique                  decision_strategique[]
   objectifs                              objectif[]
   syntheses_creees                       synthese_des_resultats[]                 @relation("syntheses_creees")
