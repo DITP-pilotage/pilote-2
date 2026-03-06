@@ -3,6 +3,8 @@ import { AppActions } from "./actions/app.actions";
 import { PageAdminIndicateurs } from "./pages/admin/page-admin-indicateurs";
 
 const DITP_ADMIN = "ditp.admin@example.com";
+const COORDINATEUR_REGION = "coordinateur.region@example.com";
+const EQUIPE_DIR_PROJET = "equipe.dir.projet@example.com";
 
 test.describe("Listing des indicateurs — Admin", () => {
   test("doit afficher la page de gestion des indicateurs avec la structure attendue", async ({
@@ -34,8 +36,7 @@ test.describe("Listing des indicateurs — Admin", () => {
       await pageIndicateurs.expectNombreIndicateursSuperieurA(0);
     });
 
-    const nombreInitial =
-      await pageIndicateurs.getNombreIndicateursAffiches();
+    const nombreInitial = await pageIndicateurs.getNombreIndicateursAffiches();
 
     await test.step("Vérification de la pagination", async () => {
       await pageIndicateurs.expectPaginationVisible();
@@ -56,8 +57,7 @@ test.describe("Listing des indicateurs — Admin", () => {
 
     await test.step("Filtre par indicateurs territorialisés", async () => {
       await pageIndicateurs.filtrerParTerritorialise();
-      const nombreFiltré =
-        await pageIndicateurs.getNombreIndicateursAffiches();
+      const nombreFiltré = await pageIndicateurs.getNombreIndicateursAffiches();
       expect(nombreFiltré).toBeLessThanOrEqual(nombreInitial);
       await pageIndicateurs.expectFiltreActifVisible(
         "Indicateurs territorialisés",
@@ -71,8 +71,7 @@ test.describe("Listing des indicateurs — Admin", () => {
 
     await test.step("Filtre par indicateurs du baromètre", async () => {
       await pageIndicateurs.filtrerParBarometre();
-      const nombreFiltré =
-        await pageIndicateurs.getNombreIndicateursAffiches();
+      const nombreFiltré = await pageIndicateurs.getNombreIndicateursAffiches();
       expect(nombreFiltré).toBeLessThanOrEqual(nombreInitial);
       await pageIndicateurs.expectFiltreActifVisible(
         "Indicateurs du baromètre",
@@ -86,9 +85,7 @@ test.describe("Listing des indicateurs — Admin", () => {
 
     await test.step("Navigation via la pagination", async () => {
       await pageIndicateurs.allerPageSuivante();
-      await pageIndicateurs.expectNombreLignesTableau(
-        nombreInitial - 20,
-      );
+      await pageIndicateurs.expectNombreLignesTableau(nombreInitial - 20);
     });
 
     await test.step("Navigation vers le détail d'un indicateur", async () => {
@@ -96,6 +93,27 @@ test.describe("Listing des indicateurs — Admin", () => {
       await pageIndicateurs.rechercherIndicateur("IND-021");
       await pageIndicateurs.clickIndicateurParId("IND-021");
       await expect(page).toHaveURL(/\/admin\/indicateurs\/IND-021/);
+    });
+  });
+
+  test("doit refuser l'accès aux profils non DITP_ADMIN", async ({ page }) => {
+    test.setTimeout(150_000);
+
+    const appActions = new AppActions(page);
+    const pageIndicateurs = new PageAdminIndicateurs(page);
+
+    await test.step("Coordinateur région — pas de lien navbar ni d'accès par URL", async () => {
+      await appActions.loginAs(COORDINATEUR_REGION);
+      await pageIndicateurs.expectLienIndicateursDesChantiersNonVisible();
+      await page.goto("/admin/indicateurs");
+      await expect(page).not.toHaveURL(/\/admin\/indicateurs/);
+    });
+
+    await test.step("Équipe direction de projet — pas de lien navbar ni d'accès par URL", async () => {
+      await appActions.switchUser(EQUIPE_DIR_PROJET);
+      await pageIndicateurs.expectLienIndicateursDesChantiersNonVisible();
+      await page.goto("/admin/indicateurs");
+      await expect(page).not.toHaveURL(/\/admin\/indicateurs/);
     });
   });
 });

@@ -99,9 +99,7 @@ export class PageAdminIndicateurs extends BasePage {
   }
 
   async allerPage(numero: number): Promise<void> {
-    await this.pagination
-      .getByRole("button", { name: `${numero}` })
-      .click();
+    await this.pagination.getByRole("button", { name: `${numero}` }).click();
   }
 
   async clickIndicateurParId(indicateurId: string): Promise<void> {
@@ -148,9 +146,7 @@ export class PageAdminIndicateurs extends BasePage {
     ).toBeVisible();
   }
 
-  async expectIndicateurAbsentDuTableau(
-    indicateurId: string,
-  ): Promise<void> {
+  async expectIndicateurAbsentDuTableau(indicateurId: string): Promise<void> {
     await expect(
       this.tableau.getByRole("row").filter({ hasText: indicateurId }),
     ).not.toBeVisible();
@@ -186,5 +182,17 @@ export class PageAdminIndicateurs extends BasePage {
     const texte = await this.titreNombreIndicateurs.textContent();
     const match = texte?.match(/(\d+)/);
     return match ? Number(match[1]) : 0;
+  }
+
+  private get lienIndicateursDesChantiers() {
+    return this.page.getByRole("link", { name: /Indicateurs des chantiers/ });
+  }
+
+  async expectLienIndicateursDesChangtiersVisible(): Promise<void> {
+    await expect(this.lienIndicateursDesChantiers).toBeVisible();
+  }
+
+  async expectLienIndicateursDesChantiersNonVisible(): Promise<void> {
+    await expect(this.lienIndicateursDesChantiers).not.toBeVisible();
   }
 }

@@ -30,6 +30,7 @@ test.describe("Proposition de valeur d'avancement (PVA)", () => {
       await pageChantier.expandAutresIndicateurs();
 
       const indicateur = pageChantier.getIndicateurPva(indicId);
+      await indicateur.supprimerPropositionSiExistante();
       const modal = await indicateur.clickProposerAutreValeur();
 
       await modal.expectContient("Proposer une valeur d'avancement");
@@ -184,6 +185,7 @@ test.describe("Proposition de valeur d'avancement (PVA)", () => {
       await pageChantier.expandAutresIndicateurs();
 
       const indicateur = pageChantier.getIndicateurPva(indicId);
+      await indicateur.supprimerPropositionSiExistante();
       const modal = await indicateur.clickProposerAutreValeur();
 
       await modal.remplirProposition(
@@ -273,6 +275,7 @@ test.describe("Proposition de valeur d'avancement (PVA)", () => {
       await pageChantier.expandAutresIndicateurs();
 
       const indicateur = pageChantier.getIndicateurPva(indicId);
+      await indicateur.supprimerPropositionSiExistante();
       const modal = await indicateur.clickProposerAutreValeur();
 
       await modal.remplirProposition(
@@ -351,6 +354,7 @@ test.describe("Proposition de valeur d'avancement (PVA)", () => {
       await pageChantier.expandAutresIndicateurs();
 
       const indicateur = pageChantier.getIndicateurPva(indicId);
+      await indicateur.supprimerPropositionSiExistante();
       const modal = await indicateur.clickProposerAutreValeur();
 
       await modal.remplirProposition(
