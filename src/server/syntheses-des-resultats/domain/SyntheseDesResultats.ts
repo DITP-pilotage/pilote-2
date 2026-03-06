@@ -32,7 +32,7 @@ export function creerSyntheseDesResultatsPublie(
     dateCreation: params.date,
     auteurModificationId: params.auteurId,
     dateModification: params.date,
-    statut: $Enums.statut_synthese_des_resultats.PUBLIE,
+    statut: $Enums.statut_publication.PUBLIE,
   };
 }
 
@@ -49,7 +49,7 @@ export function creerSyntheseDesResultatsBrouillon(
     dateCreation: params.date,
     auteurModificationId: params.auteurId,
     dateModification: params.date,
-    statut: $Enums.statut_synthese_des_resultats.BROUILLON,
+    statut: $Enums.statut_publication.BROUILLON,
   };
 }
 
@@ -63,7 +63,7 @@ export function modifierSyntheseDesResultats(
     meteo: params.meteo,
     auteurModificationId: params.auteurModificationId,
     dateModification: params.dateModification,
-    statut: $Enums.statut_synthese_des_resultats.PUBLIE,
+    statut: $Enums.statut_publication.PUBLIE,
   };
 }
 
@@ -77,6 +77,6 @@ export function modifierSyntheseDesResultatsBrouillon(
     meteo: params.meteo,
     auteurModificationId: params.auteurModificationId,
     dateModification: params.dateModification,
-    statut: $Enums.statut_synthese_des_resultats.BROUILLON,
+    statut: $Enums.statut_publication.BROUILLON,
   };
 }

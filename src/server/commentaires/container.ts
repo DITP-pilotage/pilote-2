@@ -34,19 +34,27 @@ export type CommentairesDependencies = {
 export const getCommentairesContainer = (
   initialContainer: AwilixContainer<{ prisma: PrismaPilote }>,
 ): AwilixContainer<CommentairesDependencies & { prisma: PrismaPilote }> => {
-  return initialContainer
-    .createScope<CommentairesDependencies>()
-    .register({
-      commentaireRepository: asClass(CommentaireSQLRepository),
-      publierCommentaireUseCase: asClass(PublierCommentaireUseCase),
-      enregistrerBrouillonCommentaireUseCase: asClass(EnregistrerBrouillonCommentaireUseCase),
-      modifierCommentairePublieUseCase: asClass(ModifierCommentairePublieUseCase),
-      publierBrouillonCommentaireUseCase: asClass(PublierBrouillonCommentaireUseCase),
-      modifierBrouillonCommentaireUseCase: asClass(ModifierBrouillonCommentaireUseCase),
-      recupererDernierCommentaireQuery: asClass(RecupererDernierCommentaireQuery),
-      recupererDernierBrouillonCommentaireQuery: asClass(RecupererDernierBrouillonCommentaireQuery),
-      recupererHistoriqueCommentaireQuery: asClass(RecupererHistoriqueCommentaireQuery),
-    });
+  return initialContainer.createScope<CommentairesDependencies>().register({
+    commentaireRepository: asClass(CommentaireSQLRepository),
+    publierCommentaireUseCase: asClass(PublierCommentaireUseCase),
+    enregistrerBrouillonCommentaireUseCase: asClass(
+      EnregistrerBrouillonCommentaireUseCase,
+    ),
+    modifierCommentairePublieUseCase: asClass(ModifierCommentairePublieUseCase),
+    publierBrouillonCommentaireUseCase: asClass(
+      PublierBrouillonCommentaireUseCase,
+    ),
+    modifierBrouillonCommentaireUseCase: asClass(
+      ModifierBrouillonCommentaireUseCase,
+    ),
+    recupererDernierCommentaireQuery: asClass(RecupererDernierCommentaireQuery),
+    recupererDernierBrouillonCommentaireQuery: asClass(
+      RecupererDernierBrouillonCommentaireQuery,
+    ),
+    recupererHistoriqueCommentaireQuery: asClass(
+      RecupererHistoriqueCommentaireQuery,
+    ),
+  });
 };
 
 export const getImportCommentaireContainer = (

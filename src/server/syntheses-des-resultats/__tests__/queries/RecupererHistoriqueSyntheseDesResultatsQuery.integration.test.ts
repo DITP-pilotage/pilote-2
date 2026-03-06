@@ -115,7 +115,7 @@ describe("RecupererHistoriqueSyntheseDesResultatsQuery", () => {
         auteur_creation_id: auteur.id,
         auteur_modification_id: auteur.id,
         commentaire: "Synthèse publiée",
-        statut: $Enums.statut_synthese_des_resultats.PUBLIE,
+        statut: $Enums.statut_publication.PUBLIE,
       });
       // Brouillon ne doit pas apparaître dans l'historique
       await fixtures.syntheseDesResultats({
@@ -126,7 +126,7 @@ describe("RecupererHistoriqueSyntheseDesResultatsQuery", () => {
         auteur_creation_id: auteur.id,
         auteur_modification_id: auteur.id,
         commentaire: "Brouillon",
-        statut: $Enums.statut_synthese_des_resultats.BROUILLON,
+        statut: $Enums.statut_publication.BROUILLON,
       });
 
       // When

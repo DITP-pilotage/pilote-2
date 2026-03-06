@@ -40,7 +40,7 @@ export class ImporterSynthesesDesResultatsUseCase {
         meteo: synthese.meteo as MétéoSaisissable,
         dateCreation: date.toISOString(),
         dateModification: date.toISOString(),
-        statut: $Enums.statut_synthese_des_resultats.PUBLIE,
+        statut: $Enums.statut_publication.PUBLIE,
       };
 
       await this.synthèseDesRésultatsRepository.save(synthèseV2);

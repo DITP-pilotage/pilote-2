@@ -30,9 +30,19 @@ export class PublierCommentaireUseCase {
   }): Promise<void> {
     new Habilitation(
       habilitations,
-    ).vérifierLesHabilitationsEnSaisieDesPublications(chantierId, territoireCode);
+    ).vérifierLesHabilitationsEnSaisieDesPublications(
+      chantierId,
+      territoireCode,
+    );
 
-    const commentaire = creerCommentairePublie({ chantierId, territoireCode, type, contenu, auteurId, date });
+    const commentaire = creerCommentairePublie({
+      chantierId,
+      territoireCode,
+      type,
+      contenu,
+      auteurId,
+      date,
+    });
 
     await this.dependencies.commentaireRepository.save(commentaire);
   }

@@ -60,7 +60,7 @@ describe("RecupererDernierBrouillonSyntheseDesResultatsQuery", () => {
         auteur_creation_id: autreAuteur.id,
         auteur_modification_id: autreAuteur.id,
         commentaire: "Brouillon d'un autre auteur",
-        statut: $Enums.statut_synthese_des_resultats.BROUILLON,
+        statut: $Enums.statut_publication.BROUILLON,
       });
 
       // When
@@ -92,7 +92,7 @@ describe("RecupererDernierBrouillonSyntheseDesResultatsQuery", () => {
         auteur_modification_id: auteur.id,
         commentaire: "Mon brouillon",
         meteo: "NUAGE",
-        statut: $Enums.statut_synthese_des_resultats.BROUILLON,
+        statut: $Enums.statut_publication.BROUILLON,
       });
 
       // When
@@ -107,7 +107,7 @@ describe("RecupererDernierBrouillonSyntheseDesResultatsQuery", () => {
         dateCreation: expect.any(String),
         auteurModificationId: auteur.id,
         dateModification: expect.any(String),
-        statut: $Enums.statut_synthese_des_resultats.BROUILLON,
+        statut: $Enums.statut_publication.BROUILLON,
         contenu: "Mon brouillon",
         meteo: "NUAGE",
       });
@@ -136,7 +136,7 @@ describe("RecupererDernierBrouillonSyntheseDesResultatsQuery", () => {
         date_modification: new Date("2025-01-01"),
         commentaire: "Ancien brouillon",
         meteo: "SOLEIL",
-        statut: $Enums.statut_synthese_des_resultats.BROUILLON,
+        statut: $Enums.statut_publication.BROUILLON,
       });
       await fixtures.syntheseDesResultats({
         chantier_id: chantier.id,
@@ -148,7 +148,7 @@ describe("RecupererDernierBrouillonSyntheseDesResultatsQuery", () => {
         date_modification: new Date("2025-06-01"),
         commentaire: "Brouillon recent",
         meteo: "ORAGE",
-        statut: $Enums.statut_synthese_des_resultats.BROUILLON,
+        statut: $Enums.statut_publication.BROUILLON,
       });
 
       // When

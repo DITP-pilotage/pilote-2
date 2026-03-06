@@ -1,7 +1,13 @@
 import { $Enums } from "@prisma/client";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
-import { CommentaireV2, TypeCommentaireChantier } from "@/server/domain/chantier/commentaire/Commentaire.interface";
-import { CODES_TYPES_COMMENTAIRES, NOMS_TYPES_COMMENTAIRES } from "@/server/infrastructure/accès_données/chantier/commentaire/CommentaireSQLRepository";
+import {
+  CommentaireV2,
+  TypeCommentaireChantier,
+} from "@/server/domain/chantier/commentaire/Commentaire.interface";
+import {
+  CODES_TYPES_COMMENTAIRES,
+  NOMS_TYPES_COMMENTAIRES,
+} from "@/server/infrastructure/accès_données/chantier/commentaire/CommentaireSQLRepository";
 
 export class RecupererDernierBrouillonCommentaireQuery {
   constructor(private readonly deps: { prisma: PrismaPilote }) {}
@@ -12,16 +18,18 @@ export class RecupererDernierBrouillonCommentaireQuery {
     type: TypeCommentaireChantier,
     utilisateurId: string,
   ): Promise<CommentaireV2 | null> {
-    const brouillon = await this.deps.prisma.getInstance().commentaire.findFirst({
-      where: {
-        chantier_id: chantierId,
-        territoire_code: territoireCode,
-        type: CODES_TYPES_COMMENTAIRES[type],
-        statut: $Enums.statut_publication.BROUILLON,
-        auteur_modification_id: utilisateurId,
-      },
-      orderBy: { date_modification: "desc" },
-    });
+    const brouillon = await this.deps.prisma
+      .getInstance()
+      .commentaire.findFirst({
+        where: {
+          chantier_id: chantierId,
+          territoire_code: territoireCode,
+          type: CODES_TYPES_COMMENTAIRES[type],
+          statut: $Enums.statut_publication.BROUILLON,
+          auteur_modification_id: utilisateurId,
+        },
+        orderBy: { date_modification: "desc" },
+      });
 
     if (!brouillon) return null;
 

@@ -6,7 +6,10 @@ import {
   typesCommentaireMailleNationale,
   typesCommentaireMailleRégionaleOuDépartementale,
 } from "@/server/domain/chantier/commentaire/Commentaire.interface";
-import { CODES_TYPES_COMMENTAIRES, NOMS_TYPES_COMMENTAIRES } from "@/server/infrastructure/accès_données/chantier/commentaire/CommentaireSQLRepository";
+import {
+  CODES_TYPES_COMMENTAIRES,
+  NOMS_TYPES_COMMENTAIRES,
+} from "@/server/infrastructure/accès_données/chantier/commentaire/CommentaireSQLRepository";
 
 const TOUS_LES_TYPES: TypeCommentaireChantier[] = [
   ...typesCommentaireMailleNationale,
@@ -20,7 +23,9 @@ export class RecupererDernierCommentaireQuery {
     chantierId: string,
     territoireCode: string,
     utilisateurId: string,
-  ): Promise<Record<TypeCommentaireChantier, CommentaireAvecNomsAuteurs | null>> {
+  ): Promise<
+    Record<TypeCommentaireChantier, CommentaireAvecNomsAuteurs | null>
+  > {
     const [commentaires, brouillons] = await Promise.all([
       this.deps.prisma.getInstance().commentaire.findMany({
         where: {
@@ -43,10 +48,16 @@ export class RecupererDernierCommentaireQuery {
     ]);
 
     const dernierBrouillonParType = new Map(
-      brouillons.map((brouillon) => [brouillon.type, brouillon.date_modification.toISOString()]),
+      brouillons.map((brouillon) => [
+        brouillon.type,
+        brouillon.date_modification.toISOString(),
+      ]),
     );
 
-    const dernierCommentaireParType = new Map<string, (typeof commentaires)[number]>();
+    const dernierCommentaireParType = new Map<
+      string,
+      (typeof commentaires)[number]
+    >();
     for (const commentaire of commentaires) {
       if (!dernierCommentaireParType.has(commentaire.type)) {
         dernierCommentaireParType.set(commentaire.type, commentaire);

@@ -1,21 +1,20 @@
 import { Fragment, FunctionComponent } from "react";
 import Bloc from "@/components/_commons/Bloc/Bloc";
-import Publication from "@/components/_commons/PublicationChantier/Publication";
-import {
-  consignesDÉcritureCommentaire,
-  libellésTypesCommentaire,
-  TypeCommentaire,
-} from "@/client/constants/libellésCommentaire";
 import Chantier from "@/server/domain/chantier/Chantier.interface";
 import {
-  Commentaire,
+  CommentaireAvecNomsAuteurs,
+  TypeCommentaireChantier,
   typesCommentaireMailleNationale,
   typesCommentaireMailleRégionaleOuDépartementale,
 } from "@/server/domain/chantier/commentaire/Commentaire.interface";
 import { Maille } from "@/server/domain/maille/Maille.interface";
+import CommentaireSection from "@/components/_commons/CommentairesNew/CommentaireSection/CommentaireSection";
 
 interface CommentairesProps {
-  commentaires: Commentaire[] | null;
+  commentaires: Record<
+    TypeCommentaireChantier,
+    CommentaireAvecNomsAuteurs | null
+  >;
   réformeId: Chantier["id"];
   maille: Maille;
   nomTerritoire: string;
@@ -23,7 +22,6 @@ interface CommentairesProps {
     | typeof typesCommentaireMailleNationale
     | typeof typesCommentaireMailleRégionaleOuDépartementale;
   modeÉcriture?: boolean;
-  estInteractif?: boolean;
   estChantierArchive?: boolean;
   territoireCode: string;
 }
@@ -35,7 +33,6 @@ const Commentaires: FunctionComponent<CommentairesProps> = ({
   nomTerritoire,
   typesCommentaire,
   modeÉcriture = false,
-  estInteractif = true,
   territoireCode,
   estChantierArchive = false,
 }) => {
@@ -49,23 +46,13 @@ const Commentaires: FunctionComponent<CommentairesProps> = ({
       {typesCommentaire.map((type, i) => (
         <Fragment key={type}>
           {i !== 0 && <hr className="fr-hr fr-mx-n2w" />}
-          <Publication
-            caractéristiques={{
-              entité: "commentaires",
-              type: type,
-              libelléType: libellésTypesCommentaire[type as TypeCommentaire],
-              consigneDÉcriture:
-                consignesDÉcritureCommentaire[type as TypeCommentaire],
-            }}
-            estInteractif={estInteractif}
+          <CommentaireSection
+            commentaire={commentaires[type]}
             maille={maille}
-            modeÉcriture={modeÉcriture}
-            publicationInitiale={
-              commentaires?.find((commentaire) => commentaire?.type === type) ||
-              null
-            }
+            modeEcriture={modeÉcriture}
             réformeId={réformeId}
             territoireCode={territoireCode}
+            type={type}
           />
         </Fragment>
       ))}

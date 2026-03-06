@@ -12,7 +12,6 @@ import {
   zodValidateurEntitéType,
 } from "validation/publication";
 import { TypeObjectif } from "@/server/domain/chantier/objectif/Objectif.interface";
-import { TypeCommentaireChantier } from "@/server/domain/chantier/commentaire/Commentaire.interface";
 
 export const publicationRouter = créerRouteurTRPC({
   créer: procédureProtégée
@@ -24,19 +23,6 @@ export const publicationRouter = créerRouteurTRPC({
     .mutation(async ({ input, ctx }) => {
       vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
       const auteur_id = ctx.session.user.id;
-
-      if (input.entité === "commentaires") {
-        return getContainer("legacy")
-          .resolve("créerUnCommentaireUseCase")
-          .run(
-            input.réformeId,
-            input.territoireCode,
-            input.contenu,
-            auteur_id,
-            input.type as TypeCommentaireChantier,
-            ctx.session.habilitations,
-          );
-      }
 
       if (input.entité === "objectifs") {
         return getContainer("legacy")
@@ -65,17 +51,6 @@ export const publicationRouter = créerRouteurTRPC({
   récupérerLaPlusRécente: procédureProtégée
     .input(validationPublicationContexte.and(zodValidateurEntitéType))
     .query(async ({ input, ctx }) => {
-      if (input.entité === "commentaires") {
-        return getContainer("legacy")
-          .resolve("récupérerCommentaireLePlusRécentUseCase")
-          .run(
-            input.réformeId,
-            input.territoireCode,
-            input.type as TypeCommentaireChantier,
-            ctx.session.habilitations,
-          );
-      }
-
       if (input.entité === "objectifs") {
         return getContainer("legacy")
           .resolve("récupérerObjectifLePlusRécentUseCase")
@@ -96,18 +71,6 @@ export const publicationRouter = créerRouteurTRPC({
   récupérerLesPlusRécentesParTypeGroupéesParRéformes: procédureProtégée
     .input(validationPublicationContexte.merge(zodValidateurEntité))
     .query(async ({ input, ctx }) => {
-      if (input.entité === "commentaires") {
-        return getContainer("legacy")
-          .resolve(
-            "récupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase",
-          )
-          .run(
-            [input.réformeId],
-            input.territoireCode,
-            ctx.session.habilitations,
-          );
-      }
-
       if (input.entité === "objectifs") {
         return getContainer("legacy")
           .resolve(
@@ -120,17 +83,6 @@ export const publicationRouter = créerRouteurTRPC({
   récupérerHistorique: procédureProtégée
     .input(validationPublicationContexte.and(zodValidateurEntitéType))
     .query(async ({ input, ctx }) => {
-      if (input.entité === "commentaires") {
-        return getContainer("legacy")
-          .resolve("récupérerHistoriqueCommentaireUseCase")
-          .run(
-            input.réformeId,
-            input.territoireCode,
-            input.type as TypeCommentaireChantier,
-            ctx.session.habilitations,
-          );
-      }
-
       if (input.entité === "objectifs") {
         return getContainer("legacy")
           .resolve("récupérerHistoriqueObjectifUseCase")

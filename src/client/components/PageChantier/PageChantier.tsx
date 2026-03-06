@@ -420,7 +420,7 @@ const PageChantier = () => {
                 </Infobulle>
               </TitreInfobulleConteneur>
               <Commentaires
-                commentaires={commentaires[chantier.id]}
+                commentaires={commentaires}
                 estChantierArchive={estChantierArchive}
                 maille={territoireSélectionné.maille}
                 modeÉcriture={estAutoriseAModifierLesPublications}

@@ -80,7 +80,7 @@ describe("RecupererDerniereSyntheseDesResultatsQuery", () => {
         dateCreation: new Date("2025-01-01").toISOString(),
         auteurModificationId: auteur.id,
         dateModification: new Date("2025-06-01").toISOString(),
-        statut: $Enums.statut_synthese_des_resultats.PUBLIE,
+        statut: $Enums.statut_publication.PUBLIE,
         auteurCreationNom: "Jean Dupont",
         auteurModificationNom: "Jean Dupont",
       });
@@ -108,7 +108,7 @@ describe("RecupererDerniereSyntheseDesResultatsQuery", () => {
         auteur_creation_id: auteur.id,
         auteur_modification_id: auteur.id,
         commentaire: "Brouillon",
-        statut: $Enums.statut_synthese_des_resultats.BROUILLON,
+        statut: $Enums.statut_publication.BROUILLON,
       });
 
       // When

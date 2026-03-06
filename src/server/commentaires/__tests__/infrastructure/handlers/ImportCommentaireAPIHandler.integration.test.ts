@@ -186,7 +186,8 @@ describe("ImportCommentaireAPIHandler", () => {
       "Contenu du commentaire de test",
     );
     expect(commentairesEnBase[0].type).toEqual("freins_a_lever");
-    expect(commentairesEnBase[0].auteur_id).toEqual(auteurId);
+    expect(commentairesEnBase[0].auteur_creation_id).toEqual(auteurId);
+    expect(commentairesEnBase[0].auteur_modification_id).toEqual(auteurId);
   });
 
   it("retourne 400 quand le JSON est invalide", async () => {

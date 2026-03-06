@@ -1,7 +1,10 @@
 import { $Enums } from "@prisma/client";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { TypeCommentaireChantier } from "@/server/domain/chantier/commentaire/Commentaire.interface";
-import { CODES_TYPES_COMMENTAIRES, NOMS_TYPES_COMMENTAIRES } from "@/server/infrastructure/accès_données/chantier/commentaire/CommentaireSQLRepository";
+import {
+  CODES_TYPES_COMMENTAIRES,
+  NOMS_TYPES_COMMENTAIRES,
+} from "@/server/infrastructure/accès_données/chantier/commentaire/CommentaireSQLRepository";
 
 export type CommentaireHistoriqueItem = {
   chantierId: string;
@@ -21,16 +24,18 @@ export class RecupererHistoriqueCommentaireQuery {
     territoireCode: string,
     type: TypeCommentaireChantier,
   ): Promise<CommentaireHistoriqueItem[]> {
-    const commentaires = await this.deps.prisma.getInstance().commentaire.findMany({
-      where: {
-        chantier_id: chantierId,
-        territoire_code: territoireCode,
-        type: CODES_TYPES_COMMENTAIRES[type],
-        statut: $Enums.statut_publication.PUBLIE,
-      },
-      include: { auteur_modification: true },
-      orderBy: { date_modification: "desc" },
-    });
+    const commentaires = await this.deps.prisma
+      .getInstance()
+      .commentaire.findMany({
+        where: {
+          chantier_id: chantierId,
+          territoire_code: territoireCode,
+          type: CODES_TYPES_COMMENTAIRES[type],
+          statut: $Enums.statut_publication.PUBLIE,
+        },
+        include: { auteur_modification: true },
+        orderBy: { date_modification: "desc" },
+      });
 
     return commentaires.map((commentaire) => ({
       chantierId: commentaire.chantier_id,
