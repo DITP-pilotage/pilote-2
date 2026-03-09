@@ -1,14 +1,11 @@
-import { useEffect, useState } from "react";
 import { CommentaireAvecNomsAuteurs } from "@/server/domain/chantier/commentaire/Commentaire.interface";
 import { formaterDate } from "@/client/utils/date/date";
 import { nettoyerUneChaîneDeCaractèresPourAffichageHTML } from "@/client/utils/strings";
-import { BoutonsAffichage } from "@/components/PageChantier/SynthèseDesRésultatsChantier/BoutonsAffichage/BoutonsAffichage";
 import { BoutonSousLigné } from "@/components/_commons/BoutonSousLigné/BoutonSousLigné";
 import { Icone } from "@/components/_commons/Icone";
 import { Icone1Icon } from "@/components/_commons/Icones/Icone1Icon";
 import { Infobulle } from "@/components/_commons/Infobulle/Infobulle";
-
-const LIMITE_AFFICHAGE = 250;
+import { Badge } from "@/components/_commons/Badge";
 
 const AffichageCommentaire = ({
   commentaire,
@@ -17,32 +14,8 @@ const AffichageCommentaire = ({
   commentaire: CommentaireAvecNomsAuteurs | null;
   onModifier?: () => void;
 }) => {
-  const [afficherContenuComplet, setAfficherContenuComplet] = useState(false);
-  const [afficherBoutonsAffichage, setAfficherBoutonsAffichage] =
-    useState(false);
-  const [contenuAAfficher, setContenuAAfficher] = useState("");
-
-  useEffect(() => {
-    setAfficherBoutonsAffichage(
-      (commentaire?.contenu.length ?? 0) > LIMITE_AFFICHAGE,
-    );
-    setAfficherContenuComplet(false);
-  }, [commentaire]);
-
-  useEffect(() => {
-    if (commentaire) {
-      setContenuAAfficher(
-        afficherContenuComplet || commentaire.contenu.length <= LIMITE_AFFICHAGE
-          ? commentaire.contenu
-          : commentaire.contenu.slice(0, LIMITE_AFFICHAGE) + "...",
-      );
-    }
-  }, [commentaire, afficherContenuComplet]);
-
   if (!commentaire) {
-    return (
-      <p className="fr-text--sm !text-dsfr-mention-grey">Aucun commentaire.</p>
-    );
+    return <Badge type="gris">Non renseigné</Badge>;
   }
 
   return (
@@ -75,20 +48,13 @@ const AffichageCommentaire = ({
         </div>
       ) : null}
       <p
-        className="fr-text--sm fr-mb-0"
+        className="fr-text--sm fr-mb-2"
         dangerouslySetInnerHTML={{
-          __html:
-            nettoyerUneChaîneDeCaractèresPourAffichageHTML(contenuAAfficher),
+          __html: nettoyerUneChaîneDeCaractèresPourAffichageHTML(
+            commentaire.contenu,
+          ),
         }}
       />
-      {afficherBoutonsAffichage ? (
-        <BoutonsAffichage
-          afficherVoirMoins={afficherContenuComplet}
-          afficherVoirPlus={!afficherContenuComplet}
-          déplierLeContenu={() => setAfficherContenuComplet(true)}
-          replierLeContenu={() => setAfficherContenuComplet(false)}
-        />
-      ) : null}
     </>
   );
 };

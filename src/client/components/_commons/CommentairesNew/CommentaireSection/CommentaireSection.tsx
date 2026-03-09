@@ -42,12 +42,14 @@ const CommentaireSection: FunctionComponent<CommentaireSectionProps> = ({
   );
 
   return (
-    <div>
-      <p className="fr-text--bold fr-mb-1w">{libellésTypesCommentaire[type]}</p>
+    <div className="px-2 py-4">
+      <p className="font-bold text-xl mb-1">{libellésTypesCommentaire[type]}</p>
       {commentaire?.dateDernierBrouillon ? (
-        <BandeauInformation bandeauType="INFO">
-          {`Vous avez enregistré un nouveau commentaire en tant que brouillon le ${formaterDate(commentaire.dateDernierBrouillon, "DD/MM/YYYY")}`}
-        </BandeauInformation>
+        <div className="my-2">
+          <BandeauInformation bandeauType="INFO">
+            {`Vous avez enregistré un nouveau commentaire en tant que brouillon le ${formaterDate(commentaire.dateDernierBrouillon, "DD/MM/YYYY")}`}
+          </BandeauInformation>
+        </div>
       ) : null}
       {modeÉdition && modeEcriture ? (
         <CommentaireFormulaire
