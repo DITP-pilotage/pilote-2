@@ -96,6 +96,7 @@ export const getServerSideProps = async (
       chantier,
       indicateurs,
       syntheseDesResultats,
+      syntheseDesResultatsBrouillon,
       commentaires,
       objectifs,
       décisionStratégique,
@@ -109,6 +110,9 @@ export const getServerSideProps = async (
       dependencies.getIndicateurRepository().récupérerParChantierId(chantierId),
       getContainer("importSyntheseDesResultats")
         .resolve("récupérerDerniereSyntheseDesResultatsQuery")
+        .run(chantierId, territoireCode),
+      getContainer("importSyntheseDesResultats")
+        .resolve("recupererDernierBrouillonSyntheseDesResultatsQuery")
         .run(chantierId, territoireCode, session.user!.id),
       new RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase(
         dependencies.getCommentaireRepository(),
@@ -238,6 +242,7 @@ export const getServerSideProps = async (
         mailleSelectionnee,
         mailleQuery,
         syntheseDesResultats,
+        syntheseDesResultatsBrouillon,
         commentaires,
         objectifs,
         décisionStratégique,

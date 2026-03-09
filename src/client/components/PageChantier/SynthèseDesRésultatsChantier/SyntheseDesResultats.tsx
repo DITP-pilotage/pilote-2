@@ -22,7 +22,7 @@ const SyntheseDesResultats: FunctionComponent<SyntheseDesResultatsProps> = ({
   nomTerritoire,
   modeEcriture = false,
 }) => {
-  const { syntheseDesResultats, chantier } =
+  const { syntheseDesResultats, syntheseDesResultatsBrouillon, chantier } =
     pageChantier.useServerSidePropsContext();
 
   const [modeÉdition, setModeÉdition] = useQueryState(
@@ -46,9 +46,9 @@ const SyntheseDesResultats: FunctionComponent<SyntheseDesResultatsProps> = ({
         contenuClassesSupplémentaires=""
         titre={nomTerritoire}
       >
-        {syntheseDesResultats?.dateDernierBrouillon ? (
+        {syntheseDesResultatsBrouillon?.dateModification ? (
           <BandeauInformation bandeauType="INFO">
-            {`Vous avez enregistré un nouveau commentaire en tant que brouillon le ${formaterDate(syntheseDesResultats?.dateDernierBrouillon, "DD/MM/YYYY")}`}
+            {`Vous avez enregistré un nouveau commentaire en tant que brouillon le ${formaterDate(syntheseDesResultatsBrouillon?.dateModification, "DD/MM/YYYY")}`}
           </BandeauInformation>
         ) : null}
         <div className="p-4">
@@ -82,7 +82,7 @@ const SyntheseDesResultats: FunctionComponent<SyntheseDesResultatsProps> = ({
                   <SynthèseDesRésultatsHistorique />
                 ) : null}
                 {modeEcriture &&
-                  (syntheseDesResultats?.dateDernierBrouillon ? (
+                  (syntheseDesResultatsBrouillon?.dateModification ? (
                     <BoutonEditerBrouillonSyntheseDesResultats />
                   ) : (
                     <BoutonNouvelleSyntheseDesResultats />

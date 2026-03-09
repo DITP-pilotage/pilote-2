@@ -132,12 +132,4 @@ export const synthèseDesRésultatsRouter = créerRouteurTRPC({
         .resolve("récupérerHistoriqueSyntheseDesResultatsQuery")
         .run(input.réformeId, input.territoireCode);
     }),
-
-  recupererDernierBrouillon: procédureProtégée
-    .input(validationSynthèseDesRésultatsContexte)
-    .query(({ input, ctx }) => {
-      return getContainer("importSyntheseDesResultats")
-        .resolve("recupererDernierBrouillonSyntheseDesResultatsQuery")
-        .run(input.réformeId, input.territoireCode, ctx.session.user.id);
-    }),
 });

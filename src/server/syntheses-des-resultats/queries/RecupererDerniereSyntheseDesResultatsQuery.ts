@@ -9,7 +9,6 @@ export class RecupererDerniereSyntheseDesResultatsQuery {
   async run(
     chantierId: string,
     territoireCode: string,
-    utilisateurId: string,
   ): Promise<SyntheseDesResultatsAvecNomsAuteurs | null> {
     const synthese = await this.deps.prisma
       .getInstance()
@@ -28,22 +27,6 @@ export class RecupererDerniereSyntheseDesResultatsQuery {
 
     if (!synthese) return null;
 
-    const dernierBrouillonAuteur = await this.deps.prisma
-      .getInstance()
-      .synthese_des_resultats.findFirst({
-        where: {
-          chantier_id: chantierId,
-          territoire_code: territoireCode,
-          auteur_modification_id: utilisateurId,
-          statut: $Enums.statut_synthese_des_resultats.BROUILLON,
-        },
-        orderBy: { date_modification: "desc" },
-      });
-
-    const dateDernierBrouillon = dernierBrouillonAuteur
-      ? dernierBrouillonAuteur.date_modification.toISOString()
-      : null;
-
     return {
       id: synthese.id,
       chantierId: synthese.chantier_id,
@@ -61,7 +44,6 @@ export class RecupererDerniereSyntheseDesResultatsQuery {
       auteurModificationNom: synthese.auteur_modification
         ? `${synthese.auteur_modification.prenom} ${synthese.auteur_modification.nom}`
         : "Auteur Inconnu",
-      dateDernierBrouillon,
     };
   }
 }

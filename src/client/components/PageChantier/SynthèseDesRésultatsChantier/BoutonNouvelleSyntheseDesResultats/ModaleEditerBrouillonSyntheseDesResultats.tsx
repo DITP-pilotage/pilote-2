@@ -20,27 +20,20 @@ import { SyntheseDesResultatsFormulaireInputs } from "@/components/PageChantier/
 import { BoutonSousLigné } from "@/components/_commons/BoutonSousLigné/BoutonSousLigné";
 import { SaveIcon } from "@/components/_commons/Icones/SaveIcon";
 import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
-import api from "@/server/infrastructure/api/trpc/api";
 import { MétéoSaisissable } from "@/server/domain/météo/Météo.interface";
 import { useEditerBrouillonSyntheseDesResultats } from "./useEditerBrouillonSyntheseDesResultats";
 
 export const ModaleEditerBrouillonSyntheseDesResultats: FunctionComponent<
   PropsWithChildren
 > = ({ children }) => {
-  const { syntheseDesResultats, chantier, territoireCode } =
+  const { syntheseDesResultats, syntheseDesResultatsBrouillon } =
     pageChantier.useServerSidePropsContext();
   const [open, setOpen] = useState(false);
   const refreshRouter = useRefreshRouter();
 
-  const { data: brouillon } =
-    api.synthèseDesRésultats.recupererDernierBrouillon.useQuery(
-      { réformeId: chantier.id, territoireCode },
-      { enabled: open },
-    );
-
   const { publier, enregistrerEnBrouillon } =
     useEditerBrouillonSyntheseDesResultats({
-      brouillon: brouillon!,
+      brouillon: syntheseDesResultatsBrouillon!,
       onSuccess: () => {
         setOpen(false);
         refreshRouter();
@@ -50,10 +43,10 @@ export const ModaleEditerBrouillonSyntheseDesResultats: FunctionComponent<
   const form = useForm<SyntheseDesResultatsFormulaireInputs>({
     mode: "all",
     resolver: zodResolver(validationSynthèseDesRésultatsFormulaire),
-    values: brouillon
+    values: syntheseDesResultatsBrouillon
       ? {
-          contenu: brouillon.contenu,
-          meteo: brouillon.meteo as MétéoSaisissable,
+          contenu: syntheseDesResultatsBrouillon.contenu,
+          meteo: syntheseDesResultatsBrouillon.meteo as MétéoSaisissable,
         }
       : undefined,
   });
@@ -90,7 +83,7 @@ export const ModaleEditerBrouillonSyntheseDesResultats: FunctionComponent<
       </div>
 
       <h3 className="text-base font-bold mb-3">Votre nouveau commentaire</h3>
-      {brouillon && (
+      {syntheseDesResultatsBrouillon && (
         <form onSubmit={form.handleSubmit(publier)}>
           <div className="flex gap-4 items-stretch">
             <div className="flex-none w-55">
