@@ -14,7 +14,7 @@ import Responsables from "@/components/PageChantier/ResponsablesChantier/Respons
 import SynthèseDesRésultats from "@/components/PageRapportDétaillé/SynthèseDesRésultats/SynthèseDesRésultats";
 import IndicateursRapportDetaille from "@/components/PageRapportDétaillé/Chantier/IndicateursRapportDetaille/IndicateursRapportDetaille";
 import { DécisionsStratégiques } from "@/components/PageChantier/DécisionsStratégiques/DécisionsStratégiques";
-import Commentaires from "@/components/_commons/CommentairesNew/Commentaires";
+import CommentairesRapportDetaille from "@/client/components/PageRapportDétaillé/Commentaires/CommentairesRapportDetaille";
 import Titre from "@/components/_commons/Titre/Titre";
 import Publication from "@/components/_commons/PublicationChantier/Publication";
 import { typesObjectif } from "@/server/domain/chantier/objectif/Objectif.interface";
@@ -320,13 +320,9 @@ const RapportDétailléChantier: FunctionComponent<
                 >
                   Commentaires du chantier
                 </Titre>
-                <Commentaires
+                <CommentairesRapportDetaille
                   commentaires={commentaires}
-                  estInteractif={false}
-                  maille={territoireSélectionné!.maille}
                   nomTerritoire={territoireSélectionné!.nomAffiché}
-                  réformeId={chantier.id}
-                  territoireCode={territoireCode}
                   typesCommentaire={
                     territoireSélectionné!.maille === "nationale"
                       ? typesCommentaireMailleNationale

@@ -51,7 +51,7 @@ const CommentaireFormulaire: FunctionComponent<CommentaireFormulaireProps> = ({
 
   return (
     <form onSubmit={handleSubmit(modifierCommentaire)}>
-      <Titre baliseHtml="h3" className="fr-h5 fr-mb-1v">
+      <Titre baliseHtml="h3" className="text-lg fr-mb-1v">
         Modifier le commentaire
       </Titre>
       <p className="fr-text--xs mb-4 text-dsfr-mention-grey">
