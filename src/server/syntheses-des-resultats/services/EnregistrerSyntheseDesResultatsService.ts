@@ -1,5 +1,5 @@
 import { $Enums } from "@prisma/client";
-import { SynthèseDesRésultatsV2 } from "@/server/domain/chantier/synthèseDesRésultats/SynthèseDesRésultats.interface";
+import { SyntheseDesResultatsV2 } from "@/server/domain/chantier/synthèseDesRésultats/SynthèseDesRésultats.interface";
 import SynthèseDesRésultatsRepository from "@/server/domain/chantier/synthèseDesRésultats/SynthèseDesRésultatsRepository.interface";
 import { ChantierRepository } from "@/server/chantiers/domain/ports/ChantierRepository";
 import { Transaction } from "@/server/db/Transaction";
@@ -13,7 +13,7 @@ export class EnregistrerSyntheseDesResultatsService {
     },
   ) {}
 
-  async enregistrer(synthese: SynthèseDesRésultatsV2): Promise<void> {
+  async enregistrer(synthese: SyntheseDesResultatsV2): Promise<void> {
     await this.dependencies.transaction.run(async () => {
       if (synthese.statut === $Enums.statut_synthese_des_resultats.PUBLIE) {
         await this.dependencies.chantierRepository.modifierMeteo(

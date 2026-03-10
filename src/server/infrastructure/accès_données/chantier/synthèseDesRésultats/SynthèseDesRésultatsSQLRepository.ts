@@ -4,7 +4,7 @@ import { CODES_MAILLES } from "@/server/infrastructure/accès_données/maille/ma
 import { Maille } from "@/server/domain/maille/Maille.interface";
 import { CodeInsee } from "@/server/domain/territoire/Territoire.interface";
 import SynthèseDesRésultats, {
-  SynthèseDesRésultatsV2,
+  SyntheseDesResultatsV2,
 } from "@/server/domain/chantier/synthèseDesRésultats/SynthèseDesRésultats.interface";
 import { Météo } from "@/server/domain/météo/Météo.interface";
 import Chantier from "@/server/domain/chantier/Chantier.interface";
@@ -30,7 +30,7 @@ export class SynthèseDesRésultatsSQLRepository implements SynthèseDesRésulta
     auteurModificationId,
     dateModification,
     statut,
-  }: SynthèseDesRésultatsV2): Promise<void> {
+  }: SyntheseDesResultatsV2): Promise<void> {
     const { maille, codeInsee } =
       territoireCodeVersMailleCodeInsee(territoireCode);
 

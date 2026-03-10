@@ -1,7 +1,7 @@
 import { $Enums } from "@prisma/client";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { Météo } from "@/server/domain/météo/Météo.interface";
-import { SynthèseDesRésultatsV2 } from "@/server/domain/chantier/synthèseDesRésultats/SynthèseDesRésultats.interface";
+import { SyntheseDesResultatsV2 } from "@/server/domain/chantier/synthèseDesRésultats/SynthèseDesRésultats.interface";
 
 export class RecupererDernierBrouillonSyntheseDesResultatsQuery {
   constructor(private readonly deps: { prisma: PrismaPilote }) {}
@@ -10,7 +10,7 @@ export class RecupererDernierBrouillonSyntheseDesResultatsQuery {
     chantierId: string,
     territoireCode: string,
     utilisateurId: string,
-  ): Promise<SynthèseDesRésultatsV2 | null> {
+  ): Promise<SyntheseDesResultatsV2 | null> {
     const brouillon = await this.deps.prisma
       .getInstance()
       .synthese_des_resultats.findFirst({

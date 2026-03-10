@@ -1,4 +1,4 @@
-import { SynthèseDesRésultatsV2 } from "@/server/domain/chantier/synthèseDesRésultats/SynthèseDesRésultats.interface";
+import { SyntheseDesResultatsV2 } from "@/server/domain/chantier/synthèseDesRésultats/SynthèseDesRésultats.interface";
 import { Météo } from "@/server/domain/météo/Météo.interface";
 import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
 import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
@@ -20,7 +20,7 @@ export class PublierBrouillonSyntheseDesResultatsUseCase {
     dateModification,
     habilitations,
   }: {
-    brouillon: SynthèseDesRésultatsV2;
+    brouillon: SyntheseDesResultatsV2;
     contenu: string;
     meteo: Météo;
     auteurModificationId: string;

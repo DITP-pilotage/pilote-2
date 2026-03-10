@@ -1,6 +1,6 @@
 import { $Enums } from "@prisma/client";
 import { randomUUID } from "node:crypto";
-import { SynthèseDesRésultatsV2 } from "@/server/domain/chantier/synthèseDesRésultats/SynthèseDesRésultats.interface";
+import { SyntheseDesResultatsV2 } from "@/server/domain/chantier/synthèseDesRésultats/SynthèseDesRésultats.interface";
 import { Météo } from "@/server/domain/météo/Météo.interface";
 
 type ParamsCreation = {
@@ -21,7 +21,7 @@ type ParamsModification = {
 
 export function creerSyntheseDesResultatsPublie(
   params: ParamsCreation,
-): SynthèseDesRésultatsV2 {
+): SyntheseDesResultatsV2 {
   return {
     id: randomUUID(),
     chantierId: params.chantierId,
@@ -38,7 +38,7 @@ export function creerSyntheseDesResultatsPublie(
 
 export function creerSyntheseDesResultatsBrouillon(
   params: ParamsCreation,
-): SynthèseDesRésultatsV2 {
+): SyntheseDesResultatsV2 {
   return {
     id: randomUUID(),
     chantierId: params.chantierId,
@@ -54,9 +54,9 @@ export function creerSyntheseDesResultatsBrouillon(
 }
 
 export function modifierSyntheseDesResultats(
-  existing: SynthèseDesRésultatsV2,
+  existing: SyntheseDesResultatsV2,
   params: ParamsModification,
-): SynthèseDesRésultatsV2 {
+): SyntheseDesResultatsV2 {
   return {
     ...existing,
     contenu: params.contenu,
@@ -68,9 +68,9 @@ export function modifierSyntheseDesResultats(
 }
 
 export function modifierSyntheseDesResultatsBrouillon(
-  existing: SynthèseDesRésultatsV2,
+  existing: SyntheseDesResultatsV2,
   params: ParamsModification,
-): SynthèseDesRésultatsV2 {
+): SyntheseDesResultatsV2 {
   return {
     ...existing,
     contenu: params.contenu,

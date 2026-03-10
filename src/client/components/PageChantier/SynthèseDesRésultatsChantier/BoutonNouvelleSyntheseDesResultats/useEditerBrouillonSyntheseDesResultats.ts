@@ -2,14 +2,14 @@ import { parseAsStringLiteral, useQueryState } from "nuqs";
 import api from "@/server/infrastructure/api/trpc/api";
 import { récupérerUnCookie } from "@/client/utils/cookies";
 import { SyntheseDesResultatsFormulaireInputs } from "@/components/PageChantier/SynthèseDesRésultatsChantier/SyntheseDesResultatsFormulaire/SyntheseDesResultatsFormulaire.interface";
-import { SynthèseDesRésultatsV2 } from "@/server/domain/chantier/synthèseDesRésultats/SynthèseDesRésultats.interface";
+import { SyntheseDesResultatsV2 } from "@/server/domain/chantier/synthèseDesRésultats/SynthèseDesRésultats.interface";
 import { SYNTHESE_ACTIONS } from "@/components/PageChantier/SynthèseDesRésultatsChantier/AlerteSyntheseDesResultats";
 
 export const useEditerBrouillonSyntheseDesResultats = ({
   brouillon,
   onSuccess,
 }: {
-  brouillon: SynthèseDesRésultatsV2;
+  brouillon: SyntheseDesResultatsV2;
   onSuccess: () => void;
 }) => {
   const publierUnBrouillonMutation =

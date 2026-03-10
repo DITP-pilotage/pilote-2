@@ -1,5 +1,6 @@
-import { FunctionComponent, PropsWithChildren, useState } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { FunctionComponent, ReactNode } from "react";
+import { Dialog } from "radix-ui";
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Bouton } from "@/components/_commons/Bouton/Bouton";
 import { Icone } from "@/components/_commons/Icone";
@@ -19,39 +20,43 @@ import { SelecteurMeteo } from "@/components/PageChantier/SynthèseDesRésultats
 import { SyntheseDesResultatsFormulaireInputs } from "@/components/PageChantier/SynthèseDesRésultatsChantier/SyntheseDesResultatsFormulaire/SyntheseDesResultatsFormulaire.interface";
 import { BoutonSousLigné } from "@/components/_commons/BoutonSousLigné/BoutonSousLigné";
 import { SaveIcon } from "@/components/_commons/Icones/SaveIcon";
-import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
-import { useNouvelleSyntheseDesResultats } from "./useNouvelleSyntheseDesResultats";
+import { MétéoSaisissable } from "@/server/domain/météo/Météo.interface";
 
-export const ModaleNouvelleSyntheseDesResultats: FunctionComponent<
-  PropsWithChildren
-> = ({ children }) => {
-  const { syntheseDesResultats } = pageChantier.useServerSidePropsContext();
-  const [open, setOpen] = useState(false);
-  const refreshRouter = useRefreshRouter();
-  const { publier, enregistrerEnBrouillon } = useNouvelleSyntheseDesResultats({
-    onSuccess: () => {
-      setOpen(false);
-      refreshRouter();
-    },
-  });
+interface ModaleFormulaireSyntheseDesResultatsProps {
+  title: string;
+  trigger: ReactNode;
+  open: boolean;
+  onOpenChange: (isOpen: boolean) => void;
+  onPublier: SubmitHandler<SyntheseDesResultatsFormulaireInputs>;
+  onBrouillon: SubmitHandler<SyntheseDesResultatsFormulaireInputs>;
+}
+
+export const ModaleFormulaireSyntheseDesResultats: FunctionComponent<
+  ModaleFormulaireSyntheseDesResultatsProps
+> = ({ title, trigger, open, onOpenChange, onPublier, onBrouillon }) => {
+  const { syntheseDesResultats, syntheseDesResultatsBrouillon } =
+    pageChantier.useServerSidePropsContext();
 
   const form = useForm<SyntheseDesResultatsFormulaireInputs>({
     mode: "all",
     resolver: zodResolver(validationSynthèseDesRésultatsFormulaire),
-    defaultValues: {
-      contenu: "",
-      meteo: undefined,
-    },
+    ...(syntheseDesResultatsBrouillon
+      ? {
+          defaultValues: { contenu: "", meteo: undefined },
+          values: {
+            contenu: syntheseDesResultatsBrouillon.contenu,
+            meteo: syntheseDesResultatsBrouillon.meteo as MétéoSaisissable,
+          },
+        }
+      : { defaultValues: { contenu: "", meteo: undefined } }),
   });
 
   return (
     <Modale
-      onOpenChange={(isOpen) => {
-        setOpen(isOpen);
-      }}
+      onOpenChange={onOpenChange}
       open={open}
-      title="Nouveau commentaire"
-      trigger={children}
+      title={title}
+      trigger={trigger}
     >
       <p className="text-sm text-dsfr-mention-grey mb-6">
         Veuillez saisir ci-dessous le nouveau commentaire relatif à la météo et
@@ -76,7 +81,7 @@ export const ModaleNouvelleSyntheseDesResultats: FunctionComponent<
       </div>
 
       <h3 className="text-base font-bold mb-3">Votre nouveau commentaire</h3>
-      <form onSubmit={form.handleSubmit(publier)}>
+      <form onSubmit={form.handleSubmit(onPublier)}>
         <div className="flex gap-4 items-stretch">
           <div className="flex-none w-55">
             <label className="block text-sm mb-2">Météo</label>
@@ -84,7 +89,12 @@ export const ModaleNouvelleSyntheseDesResultats: FunctionComponent<
               control={form.control}
               name="meteo"
               render={({ field }) => (
-                <SelecteurMeteo onChange={field.onChange} value={field.value} />
+                <SelecteurMeteo
+                  onChange={field.onChange}
+                  onBlur={field.onBlur}
+                  ref={field.ref}
+                  value={field.value}
+                />
               )}
             />
           </div>
@@ -122,19 +132,20 @@ export const ModaleNouvelleSyntheseDesResultats: FunctionComponent<
             type="submit"
             variant="primary"
           />
-          <Bouton
-            iconLeft={<Icone className="w-4 h-4" icone={ArrowGoBack1Icon} />}
-            label="Annuler"
-            type="button"
-            variant="secondary"
-          />
-
+          <Dialog.Close asChild>
+            <Bouton
+              iconLeft={<Icone className="w-4 h-4" icone={ArrowGoBack1Icon} />}
+              label="Annuler"
+              type="button"
+              variant="secondary"
+            />
+          </Dialog.Close>
           <BoutonSousLigné
             disabled={!form.formState.isValid}
             iconLeft={
               <Icone className="w-4 h-4 text-current" icone={SaveIcon} />
             }
-            onClick={form.handleSubmit(enregistrerEnBrouillon)}
+            onClick={form.handleSubmit(onBrouillon)}
             type="button"
           >
             Enregistrer en tant que brouillon

@@ -1,3 +1,4 @@
+import { forwardRef } from "react";
 import {
   libellésMétéos,
   MétéoSaisissable,
@@ -5,15 +6,21 @@ import {
 } from "@/server/domain/météo/Météo.interface";
 import { MeteoComponentMap } from "@/components/_commons/Meteo/Picto/MeteoPicto";
 
-export const SelecteurMeteo = ({
-  value,
-  onChange,
-}: {
-  value?: MétéoSaisissable;
-  onChange: (meteo: MétéoSaisissable) => void;
-}) => {
+export const SelecteurMeteo = forwardRef<
+  HTMLDivElement,
+  {
+    value?: MétéoSaisissable;
+    onChange: (meteo: MétéoSaisissable) => void;
+    onBlur?: () => void;
+  }
+>(({ value, onChange, onBlur }, ref) => {
   return (
-    <div className="grid grid-cols-2 gap-2">
+    <div
+      className="grid grid-cols-2 gap-2"
+      onBlur={onBlur}
+      ref={ref}
+      tabIndex={-1}
+    >
       {météosSaisissables.map((météo) => {
         const IconComponent = MeteoComponentMap[météo];
         const isSelected = value === météo;
@@ -42,4 +49,6 @@ export const SelecteurMeteo = ({
       })}
     </div>
   );
-};
+});
+
+SelecteurMeteo.displayName = "SelecteurMeteo";

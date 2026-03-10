@@ -2,7 +2,7 @@ import { $Enums } from "@prisma/client";
 import { randomUUID } from "node:crypto";
 import SynthèseDesRésultatsRepository from "@/server/domain/chantier/synthèseDesRésultats/SynthèseDesRésultatsRepository.interface";
 import { ImportSyntheseDesResultatsInput } from "@/validation/import-synthese-des-resultats";
-import { SynthèseDesRésultatsV2 } from "@/server/domain/chantier/synthèseDesRésultats/SynthèseDesRésultats.interface";
+import { SyntheseDesResultatsV2 } from "@/server/domain/chantier/synthèseDesRésultats/SynthèseDesRésultats.interface";
 import { MétéoSaisissable } from "@/server/domain/météo/Météo.interface";
 
 export class ImporterSynthesesDesResultatsUseCase {
@@ -27,7 +27,7 @@ export class ImporterSynthesesDesResultatsUseCase {
         ? new Date(synthese.date_synthese)
         : new Date();
 
-      const synthèseV2: SynthèseDesRésultatsV2 = {
+      const synthèseV2: SyntheseDesResultatsV2 = {
         chantierId,
         territoireCode: synthese.territoire,
         id,

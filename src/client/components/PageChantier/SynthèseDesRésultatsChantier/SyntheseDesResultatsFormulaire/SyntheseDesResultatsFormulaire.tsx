@@ -69,7 +69,12 @@ const SyntheseDesResultatsFormulaire: FunctionComponent<
             control={control}
             name="meteo"
             render={({ field }) => (
-              <SelecteurMeteo onChange={field.onChange} value={field.value} />
+              <SelecteurMeteo
+                onChange={field.onChange}
+                onBlur={field.onBlur}
+                ref={field.ref}
+                value={field.value}
+              />
             )}
           />
         </div>

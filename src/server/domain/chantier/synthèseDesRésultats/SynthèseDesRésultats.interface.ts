@@ -9,7 +9,7 @@ type SynthèseDesRésultats = {
   météo: Météo;
 } | null;
 
-export type SynthèseDesRésultatsV2 = {
+export type SyntheseDesResultatsV2 = {
   chantierId: string;
   territoireCode: string;
   id: string;
@@ -22,7 +22,7 @@ export type SynthèseDesRésultatsV2 = {
   statut: $Enums.statut_synthese_des_resultats;
 };
 
-export type SyntheseDesResultatsAvecNomsAuteurs = SynthèseDesRésultatsV2 & {
+export type SyntheseDesResultatsAvecNomsAuteurs = SyntheseDesResultatsV2 & {
   auteurCreationNom: string;
   auteurModificationNom: string;
 };
