@@ -1,5 +1,6 @@
 import {
   asFunction,
+  asValue,
   type AwilixContainer,
   createContainer,
   InjectionMode,
@@ -42,7 +43,11 @@ const bootModules = (
     containers.set(mod.name, scope);
   }
 
-  // Phase 2 — wire cross-module exports via lazy resolvers.
+  // Phase 2 — wire cross-module exports via eager resolution.
+  // All modules are already registered (Phase 1), so we can resolve
+  // exports eagerly and register them as plain values.  This avoids
+  // awilix's cycle detection which fires when asFunction re-resolves
+  // a key that is already on the resolution stack of a shared scope.
   for (const mod of modules) {
     if (mod === rootModule) continue;
     const container = containers.get(mod.name)!;
@@ -59,9 +64,9 @@ const bootModules = (
 
       for (const exportKey of importedModule.exports) {
         container.register({
-          [exportKey as string]: asFunction(() =>
+          [exportKey as string]: asValue(
             importedContainer.resolve(exportKey as string),
-          ).scoped(),
+          ),
         });
       }
     }
