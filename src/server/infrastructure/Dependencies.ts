@@ -23,7 +23,6 @@ import { SyntheseDesResultatsRepository as FicheTerritorialeSyntheseDesResultats
 import { MinistereRepository as FicheTerritorialeMinistereRepository } from "@/server/fiche-territoriale/domain/ports/MinistereRepository";
 import { PrismaRapportRepository } from "@/server/import-indicateur/infrastructure/adapters/PrismaRapportRepository";
 import { RapportRepository } from "@/server/import-indicateur/domain/ports/RapportRepository";
-import PérimètreMinistérielRepository from "@/server/domain/périmètreMinistériel/PérimètreMinistérielRepository.interface";
 import ObjectifSQLRepository from "@/server/infrastructure/accès_données/chantier/objectif/ObjectifSQLRepository";
 import DécisionStratégiqueSQLRepository from "@/server/infrastructure/accès_données/chantier/décisionStratégique/DécisionStratégiqueSQLRepository";
 import ProfilSQLRepository from "@/server/infrastructure/accès_données/profil/ProfilSQLRepository";
@@ -50,7 +49,6 @@ import { PrismaUtilisateurRepository } from "@/server/authentification/infrastru
 import { PrismaProfilRepository } from "@/server/authentification/infrastructure/adapters/PrismaProfilRepository";
 import { UtilisateurSQLRepository } from "./accès_données/utilisateur/UtilisateurSQLRepository";
 import { TerritoireSQLRepository } from "./accès_données/territoire/TerritoireSQLRepository";
-import PérimètreMinistérielSQLRepository from "./accès_données/périmètreMinistériel/PérimètreMinistérielSQLRepository";
 
 class Dependencies {
   private readonly _chantierRepository: ChantierRepository;
@@ -93,8 +91,6 @@ class Dependencies {
 
   private readonly _rapportRepository: RapportRepository;
 
-  private readonly _périmètreMinistérielRepository: PérimètreMinistérielRepository;
-
   private readonly _importIndicateurRepository: ImportIndicateurRepository;
 
   private readonly _historisationModification: HistorisationModificationRepository;
@@ -134,8 +130,6 @@ class Dependencies {
       new PrismaChantierIndicateurRepository();
     this._profilRepository = new ProfilSQLRepository();
     this._rapportRepository = new PrismaRapportRepository();
-    this._périmètreMinistérielRepository =
-      new PérimètreMinistérielSQLRepository();
     this._importIndicateurRepository = new PrismaIndicateurRepository();
     this._historisationModification =
       new PrismaHistorisationModificationRepository();
@@ -237,10 +231,6 @@ class Dependencies {
 
   getProfilRepository() {
     return this._profilRepository;
-  }
-
-  getPérimètreMinistérielRepository() {
-    return this._périmètreMinistérielRepository;
   }
 
   getTokenAPIService() {
