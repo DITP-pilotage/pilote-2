@@ -43,7 +43,29 @@ const bootModules = (
   }
 
   // Phase 2 — wire cross-module exports via lazy resolvers.
-  // No-op for now: every module has exports: [].
+  for (const mod of modules) {
+    if (mod === rootModule) continue;
+    const container = containers.get(mod.name)!;
+
+    for (const importName of mod.imports) {
+      if (importName === rootModule.name) continue;
+      const importedModule = modules.find((m) => m.name === importName);
+      if (!importedModule) {
+        throw new Error(
+          `Module "${mod.name}" imports unknown module "${importName}"`,
+        );
+      }
+      const importedContainer = containers.get(importName)!;
+
+      for (const exportKey of importedModule.exports) {
+        container.register({
+          [exportKey as string]: asFunction(() =>
+            importedContainer.resolve(exportKey as string),
+          ).scoped(),
+        });
+      }
+    }
+  }
 
   return {
     getContainer: (name: string) => {

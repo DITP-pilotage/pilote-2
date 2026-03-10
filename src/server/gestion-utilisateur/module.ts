@@ -56,8 +56,13 @@ import { CreerLesActionsComptesInactifsUseCase } from "./usecases/CreerLesAction
 import { EnvoyerLesRelancesUseCase } from "./usecases/EnvoyerLesRelancesUseCase";
 import { DesactiverLesComptesInactifsUseCase } from "./usecases/DesactiverLesComptesInactifsUseCase";
 import ImporterDesUtilisateursUseCase from "./usecases/ImporterDesUtilisateursUseCase";
+import { PrismaActiviteComptesQuery } from "./infrastructure/queries/PrismaActiviteComptesQuery";
+import { PrismaUtilisateursQuery } from "./infrastructure/queries/PrismaUtilisateursQuery";
 
-type GestionUtilisateurExports = Record<string, never>;
+type GestionUtilisateurExports = {
+  activiteComptesQuery: PrismaActiviteComptesQuery;
+  utilisateursQuery: PrismaUtilisateursQuery;
+};
 
 type GestionUtilisateurCradle = GestionUtilisateurExports & {
   utilisateurRepository: UtilisateurRepository;
@@ -110,9 +115,11 @@ export const gestionUtilisateurModule = defineModule<
 >({
   name: "gestionUtilisateur",
   imports: ["shared"],
-  exports: [],
+  exports: ["activiteComptesQuery", "utilisateursQuery"],
   register: (container) => {
     container.register({
+      activiteComptesQuery: asClass(PrismaActiviteComptesQuery),
+      utilisateursQuery: asClass(PrismaUtilisateursQuery),
       utilisateurRepository: asClass(PrismaUtilisateurRepository),
       territoireRepository: asClass(PrismaTerritoireRepository),
       utilisateurIAMRepository: asClass(UtilisateurIAMKeycloakRepository),

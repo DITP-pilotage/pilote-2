@@ -1,6 +1,6 @@
 import { asClass } from "awilix";
-import { PrismaActiviteComptesQuery } from "@/server/gestion-utilisateur/infrastructure/queries/PrismaActiviteComptesQuery";
-import { PrismaUtilisateursQuery } from "@/server/gestion-utilisateur/infrastructure/queries/PrismaUtilisateursQuery";
+import type { PrismaActiviteComptesQuery } from "@/server/gestion-utilisateur/infrastructure/queries/PrismaActiviteComptesQuery";
+import type { PrismaUtilisateursQuery } from "@/server/gestion-utilisateur/infrastructure/queries/PrismaUtilisateursQuery";
 import { RecupererChantiersApplicablesParTerritoiresQuery } from "@/server/chantiers/infrastructure/queries/RecupererChantiersApplicablesParTerritoiresQuery";
 import { RecupererMesuresIndicateurParPeriodeQuery } from "@/server/chantiers/infrastructure/queries/RecupererMesuresIndicateurParPeriodeQuery";
 import { RecupererEvenementsVAParPeriodeQuery } from "@/server/indicateur-territoire-valeur-evenement/infrastructure/queries/RecupererEvenementsVAParPeriodeQuery";
@@ -50,12 +50,10 @@ export const rapportsHebdomadairesModule = defineModule<
   RapportsHebdomadairesCradle
 >({
   name: "rapportsHebdomadaires",
-  imports: ["shared"],
+  imports: ["shared", "gestionUtilisateur"],
   exports: [],
   register: (container) => {
     container.register({
-      activiteComptesQuery: asClass(PrismaActiviteComptesQuery),
-      utilisateursQuery: asClass(PrismaUtilisateursQuery),
       recupererChantiersQuery: asClass(
         RecupererChantiersApplicablesParTerritoiresQuery,
       ),
