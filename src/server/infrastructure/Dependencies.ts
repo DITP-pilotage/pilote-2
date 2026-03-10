@@ -30,8 +30,6 @@ import ProfilRepository from "@/server/domain/profil/ProfilRepository";
 import { PrismaIndicateurRepository } from "@/server/import-indicateur/infrastructure/adapters/PrismaIndicateurRepository";
 import { IndicateurRepository as ImportIndicateurRepository } from "@/server/import-indicateur/domain/ports/IndicateurRepository";
 import { IndicateurRepository as ChantierIndicateurRepository } from "@/server/chantiers/domain/ports/IndicateurRepository";
-import { PrismaHistorisationModificationRepository } from "@/server/infrastructure/accès_données/historisationModification/PrismaHistorisationModificationRepository";
-import { HistorisationModificationRepository } from "@/server/domain/historisationModification/HistorisationModificationRepository";
 import { GestionContenuRepository } from "@/server/gestion-contenu/domain/ports/GestionContenuRepository";
 import { PrismaGestionContenuRepository } from "@/server/gestion-contenu/infrastructure/adapters/PrismaGestionContenuRepository";
 import { PrismaTerritoireRepository } from "@/server/fiche-territoriale/infrastructure/adapters/PrismaTerritoireRepository";
@@ -93,8 +91,6 @@ class Dependencies {
 
   private readonly _importIndicateurRepository: ImportIndicateurRepository;
 
-  private readonly _historisationModification: HistorisationModificationRepository;
-
   private readonly _gestionContenuRepository: GestionContenuRepository;
 
   private readonly _tokenAPIService: TokenAPIService;
@@ -131,8 +127,6 @@ class Dependencies {
     this._profilRepository = new ProfilSQLRepository();
     this._rapportRepository = new PrismaRapportRepository();
     this._importIndicateurRepository = new PrismaIndicateurRepository();
-    this._historisationModification =
-      new PrismaHistorisationModificationRepository();
     this._gestionContenuRepository = new PrismaGestionContenuRepository();
     this._tokenAPIService = new TokenAPIJWTService({
       secret: configuration().tokenAPI.secret,
@@ -143,10 +137,6 @@ class Dependencies {
 
   getGestionContenuRepository(): GestionContenuRepository {
     return this._gestionContenuRepository;
-  }
-
-  getHistorisationModificationRepository(): HistorisationModificationRepository {
-    return this._historisationModification;
   }
 
   getChantierRepository(): ChantierRepository {
