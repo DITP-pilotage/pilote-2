@@ -1,7 +1,7 @@
 import { FicheTerritorialeContrat } from "@/server/fiche-territoriale/app/contrats/FicheTerritorialeContrat";
 import { presenterEnTerritoireContrat } from "@/server/fiche-territoriale/app/contrats/TerritoireContrat";
 import { RécupérerTerritoireParCodeUseCase } from "@/server/fiche-territoriale/usecases/RécupérerTerritoireParCodeUseCase";
-import { dependencies } from "@/server/infrastructure/Dependencies";
+import { getContainer } from "@/server/dependances";
 import { presenterEnTauxAvancementAnnuelTerritoireContrat } from "@/server/fiche-territoriale/app/contrats/TauxAvancementAnnuelTerritoireContrat";
 import { RécupérerTauxAvancementTerritoireUseCase } from "@/server/fiche-territoriale/usecases/RécupérerTauxAvancementTerritoireUseCase";
 import { presenterEnRépartitionsMétéosContrat } from "@/server/fiche-territoriale/app/contrats/RepartitionMeteoContrat";
@@ -16,41 +16,52 @@ export const ficheTerritorialeHandler = () => {
   ): Promise<FicheTerritorialeContrat> => {
     const territoire = presenterEnTerritoireContrat(
       await new RécupérerTerritoireParCodeUseCase({
-        territoireRepository:
-          dependencies.getFicheTerritorialeTerritoireRepository(),
+        territoireRepository: getContainer("legacy").resolve(
+          "ficheTerritorialeTerritoireRepository",
+        ),
       }).run({ territoireCode: territoireCode as string }),
     );
 
     const avancementTerritoire =
       await new RécupérerTauxAvancementTerritoireUseCase({
-        chantierRepository:
-          dependencies.getFicheTerritorialeChantierRepository(),
-        territoireRepository:
-          dependencies.getFicheTerritorialeTerritoireRepository(),
+        chantierRepository: getContainer("legacy").resolve(
+          "ficheTerritorialeChantierRepository",
+        ),
+        territoireRepository: getContainer("legacy").resolve(
+          "ficheTerritorialeTerritoireRepository",
+        ),
       })
         .run({ territoireCode, jalon })
         .then(presenterEnTauxAvancementAnnuelTerritoireContrat);
 
     const répartitionMétéos = await new RécupérerRépartitionMétéoUseCase({
-      chantierRepository: dependencies.getFicheTerritorialeChantierRepository(),
-      territoireRepository:
-        dependencies.getFicheTerritorialeTerritoireRepository(),
+      chantierRepository: getContainer("legacy").resolve(
+        "ficheTerritorialeChantierRepository",
+      ),
+      territoireRepository: getContainer("legacy").resolve(
+        "ficheTerritorialeTerritoireRepository",
+      ),
     })
       .run({ territoireCode, jalon })
       .then(presenterEnRépartitionsMétéosContrat);
 
     const chantiersFicheTerritoriale =
       await new RécupérerListeChantierFicheTerritorialeUseCase({
-        chantierRepository:
-          dependencies.getFicheTerritorialeChantierRepository(),
-        territoireRepository:
-          dependencies.getFicheTerritorialeTerritoireRepository(),
-        syntheseDesResultatsRepository:
-          dependencies.getFicheTerritorialeSyntheseDesResultatsRepository(),
-        indicateurRepository:
-          dependencies.getFicheTerritorialeIndicateurRepository(),
-        ministereRepository:
-          dependencies.getFicheTerritorialeMinistereRepository(),
+        chantierRepository: getContainer("legacy").resolve(
+          "ficheTerritorialeChantierRepository",
+        ),
+        territoireRepository: getContainer("legacy").resolve(
+          "ficheTerritorialeTerritoireRepository",
+        ),
+        syntheseDesResultatsRepository: getContainer("legacy").resolve(
+          "ficheTerritorialeSyntheseDesResultatsRepository",
+        ),
+        indicateurRepository: getContainer("legacy").resolve(
+          "ficheTerritorialeIndicateurRepository",
+        ),
+        ministereRepository: getContainer("legacy").resolve(
+          "ficheTerritorialeMinistereRepository",
+        ),
       })
         .run({ territoireCode, jalon })
         .then((result) =>

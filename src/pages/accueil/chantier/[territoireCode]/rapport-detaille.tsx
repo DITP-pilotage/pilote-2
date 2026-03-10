@@ -3,7 +3,6 @@ import { GetServerSideProps } from "next";
 import { FunctionComponent } from "react";
 import assert from "node:assert/strict";
 import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
-import { dependencies } from "@/server/infrastructure/Dependencies";
 import PageRapportDétaillé from "@/components/PageRapportDétaillé/PageRapportDétaillé";
 import Indicateur from "@/server/domain/indicateur/Indicateur.interface";
 import { DétailsIndicateurs } from "@/server/domain/indicateur/DétailsIndicateur.interface";
@@ -144,17 +143,19 @@ export const getServerSideProps: GetServerSideProps<
     session.habilitations.lecture.chantiers.length === 0
       ? [[], []]
       : await Promise.all([
-          dependencies
-            .getMinistèreRepository()
+          getContainer("legacy")
+            .resolve("ministèreRepository")
             .getListePourChantiers(session.habilitations.lecture.chantiers),
-          dependencies
-            .getAxeRepository()
+          getContainer("legacy")
+            .resolve("axeRepository")
             .getListePourChantiers(session.habilitations.lecture.chantiers),
         ]);
 
   const habilitation = new Habilitation(session.habilitations);
 
-  const territoireRepository = dependencies.getTerritoireRepository();
+  const territoireRepository = getContainer("legacy").resolve(
+    "territoireRepository",
+  );
   const territoireSélectionné =
     await territoireRepository.récupérer(territoireCode);
 
@@ -218,7 +219,7 @@ export const getServerSideProps: GetServerSideProps<
 
   const repartitionMeteosChantiers =
     await new RecupererRepartitionsMeteoChantiersUseCase({
-      chantierRepository: dependencies.getChantierRepository(),
+      chantierRepository: getContainer("legacy").resolve("chantierRepository"),
     })
       .run(
         territoireCode,
@@ -230,7 +231,7 @@ export const getServerSideProps: GetServerSideProps<
 
   const récupérerStatistiquesChantiersUseCase =
     new RécupérerStatistiquesAvancementChantiersUseCase(
-      dependencies.getChantierRepository(),
+      getContainer("legacy").resolve("chantierRepository"),
     );
 
   const listeAvancementsStatistiques: {
@@ -331,7 +332,9 @@ export const getServerSideProps: GetServerSideProps<
 
   const chantiersIds = chantiers.map((chantier) => chantier.id);
 
-  const indicateursRepository = dependencies.getIndicateurRepository();
+  const indicateursRepository = getContainer("legacy").resolve(
+    "indicateurRepository",
+  );
   const indicateursGroupésParChantier =
     await indicateursRepository.récupérerGroupésParChantier(chantiersIds);
   const datajobsExecution =
@@ -351,8 +354,9 @@ export const getServerSideProps: GetServerSideProps<
       chantiersIds,
     );
 
-  const synthèseDesRésultatsRepository =
-    dependencies.getSynthèseDesRésultatsRepository();
+  const synthèseDesRésultatsRepository = getContainer("legacy").resolve(
+    "synthèseDesRésultatsRepository",
+  );
   const synthèsesDesRésultatsGroupéesParChantier =
     await synthèseDesRésultatsRepository.récupérerLesPlusRécentesGroupéesParChantier(
       chantiersIds,
@@ -365,8 +369,9 @@ export const getServerSideProps: GetServerSideProps<
     DécisionStratégique | null
   > = Object.fromEntries(chantiersIds.map((id) => [id, null]));
   if (habilitation.peutAccéderAuTerritoire("NAT-FR")) {
-    const décisionStratégiqueRepository =
-      dependencies.getDécisionStratégiqueRepository();
+    const décisionStratégiqueRepository = getContainer("legacy").resolve(
+      "décisionStratégiqueRepository",
+    );
     décisionStratégiquesGroupéesParChantier =
       await décisionStratégiqueRepository.récupérerLesPlusRécentesGroupéesParChantier(
         chantiersIds,
@@ -375,12 +380,12 @@ export const getServerSideProps: GetServerSideProps<
 
   const commentairesGroupésParChantier =
     await new RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase(
-      dependencies.getCommentaireRepository(),
+      getContainer("legacy").resolve("commentaireRepository"),
     ).run(chantiersIds, territoireCode, session.habilitations);
 
   const objectifsGroupésParChantier =
     await new RécupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase(
-      dependencies.getObjectifRepository(),
+      getContainer("legacy").resolve("objectifRepository"),
     ).run(chantiersIds, session.habilitations);
 
   const { filtresComptesCalculés } = Chantier.recupererStatistiqueListeChantier(
@@ -400,7 +405,7 @@ export const getServerSideProps: GetServerSideProps<
 
   const donneesTerritoiresAgregees =
     await new AgregerAvancementsChantiersUseCase({
-      chantierRepository: dependencies.getChantierRepository(),
+      chantierRepository: getContainer("legacy").resolve("chantierRepository"),
     }).run(
       chantiersAvecAlertes.map((chantier) => chantier.id),
       jalon,

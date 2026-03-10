@@ -5,7 +5,6 @@ import {
 } from "@/server/infrastructure/api/trpc/trpc";
 import { validationContenu } from "@/validation/gestion-contenu";
 import { ModifierMessageInformationUseCase } from "@/server/gestion-contenu/usecases/ModifierMessageInformationUseCase";
-import { dependencies } from "@/server/infrastructure/Dependencies";
 import { RécupérerMessageInformationUseCase } from "@/server/gestion-contenu/usecases/RécupérerMessageInformationUseCase";
 import { presenterEnMessageInformationContrat } from "@/server/app/contrats/MessageInformationContrat";
 import { RecupererToutesLesVariablesContenuUseCase } from "@/server/gestion-contenu/usecases/RecupererToutesLesVariablesContenuUseCase";
@@ -22,7 +21,9 @@ export const gestionContenuRouter = créerRouteurTRPC({
 
       const modifierMessageInformationUseCase =
         new ModifierMessageInformationUseCase({
-          gestionContenuRepository: dependencies.getGestionContenuRepository(),
+          gestionContenuRepository: getContainer("legacy").resolve(
+            "gestionContenuRepository",
+          ),
         });
       return modifierMessageInformationUseCase.run({
         bandeauType: input.bandeauType,
@@ -33,7 +34,9 @@ export const gestionContenuRouter = créerRouteurTRPC({
   recupererMessageInformation: procédureNonConnecte.query(async () => {
     const récupérerMessageInformationUseCase =
       new RécupérerMessageInformationUseCase({
-        gestionContenuRepository: dependencies.getGestionContenuRepository(),
+        gestionContenuRepository: getContainer("legacy").resolve(
+          "gestionContenuRepository",
+        ),
       });
     const messageInformation = await récupérerMessageInformationUseCase.run();
     return presenterEnMessageInformationContrat(messageInformation);

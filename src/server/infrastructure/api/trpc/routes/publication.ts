@@ -3,7 +3,7 @@ import {
   procédureProtégée,
   vérifierSiLeCSRFEstValide,
 } from "@/server/infrastructure/api/trpc/trpc";
-import { dependencies } from "@/server/infrastructure/Dependencies";
+import { getContainer } from "@/server/dependances";
 import CréerUnCommentaireUseCase from "@/server/usecase/chantier/commentaire/CréerUnCommentaireUseCase";
 import {
   validationPublicationContexte,
@@ -38,7 +38,7 @@ export const publicationRouter = créerRouteurTRPC({
 
       if (input.entité === "commentaires") {
         const créerUnCommentaireUseCase = new CréerUnCommentaireUseCase(
-          dependencies.getCommentaireRepository(),
+          getContainer("legacy").resolve("commentaireRepository"),
         );
         return créerUnCommentaireUseCase.run(
           input.réformeId,
@@ -52,7 +52,7 @@ export const publicationRouter = créerRouteurTRPC({
 
       if (input.entité === "objectifs") {
         const créerUnObjectifUseCase = new CréerUnObjectifUseCase(
-          dependencies.getObjectifRepository(),
+          getContainer("legacy").resolve("objectifRepository"),
         );
         return créerUnObjectifUseCase.run(
           input.réformeId,
@@ -66,7 +66,7 @@ export const publicationRouter = créerRouteurTRPC({
       if (input.entité === "décisions stratégiques") {
         const créerUneDécisionStratégiqueUseCase =
           new CréerUneDécisionStratégiqueUseCase(
-            dependencies.getDécisionStratégiqueRepository(),
+            getContainer("legacy").resolve("décisionStratégiqueRepository"),
           );
         return créerUneDécisionStratégiqueUseCase.run(
           input.réformeId,
@@ -83,7 +83,7 @@ export const publicationRouter = créerRouteurTRPC({
       if (input.entité === "commentaires") {
         const récupérerCommentaireLePlusRécentUseCase =
           new RécupérerCommentaireLePlusRécentUseCase(
-            dependencies.getCommentaireRepository(),
+            getContainer("legacy").resolve("commentaireRepository"),
           );
         return récupérerCommentaireLePlusRécentUseCase.run(
           input.réformeId,
@@ -96,7 +96,7 @@ export const publicationRouter = créerRouteurTRPC({
       if (input.entité === "objectifs") {
         const récupérerObjectifLePlusRécentUseCase =
           new RécupérerObjectifLePlusRécentUseCase(
-            dependencies.getObjectifRepository(),
+            getContainer("legacy").resolve("objectifRepository"),
           );
         return récupérerObjectifLePlusRécentUseCase.run(
           input.réformeId,
@@ -108,7 +108,7 @@ export const publicationRouter = créerRouteurTRPC({
       if (input.entité === "décisions stratégiques") {
         const récupérerDésionStratégiqueLaPlusRécenteUseCase =
           new RécupérerDécisionStratégiqueLaPlusRécenteUseCase(
-            dependencies.getDécisionStratégiqueRepository(),
+            getContainer("legacy").resolve("décisionStratégiqueRepository"),
           );
         return récupérerDésionStratégiqueLaPlusRécenteUseCase.run(
           input.réformeId,
@@ -123,7 +123,7 @@ export const publicationRouter = créerRouteurTRPC({
       if (input.entité === "commentaires") {
         const récupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase =
           new RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase(
-            dependencies.getCommentaireRepository(),
+            getContainer("legacy").resolve("commentaireRepository"),
           );
         return récupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase.run(
           [input.réformeId],
@@ -135,7 +135,7 @@ export const publicationRouter = créerRouteurTRPC({
       if (input.entité === "objectifs") {
         const récupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase =
           new RécupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase(
-            dependencies.getObjectifRepository(),
+            getContainer("legacy").resolve("objectifRepository"),
           );
         return récupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase.run(
           [input.réformeId],
@@ -150,7 +150,7 @@ export const publicationRouter = créerRouteurTRPC({
       if (input.entité === "commentaires") {
         const récupérerHistoriqueCommentaireUseCase =
           new RécupérerHistoriqueCommentaireUseCase(
-            dependencies.getCommentaireRepository(),
+            getContainer("legacy").resolve("commentaireRepository"),
           );
         return récupérerHistoriqueCommentaireUseCase.run(
           input.réformeId,
@@ -163,7 +163,7 @@ export const publicationRouter = créerRouteurTRPC({
       if (input.entité === "objectifs") {
         const récupérerHistoriqueObjectifUseCase =
           new RécupérerHistoriqueObjectifUseCase(
-            dependencies.getObjectifRepository(),
+            getContainer("legacy").resolve("objectifRepository"),
           );
         return récupérerHistoriqueObjectifUseCase.run(
           input.réformeId,
@@ -175,7 +175,7 @@ export const publicationRouter = créerRouteurTRPC({
       if (input.entité === "décisions stratégiques") {
         const récupérerHistoriqueDésionStratégiqueUseCase =
           new RécupérerHistoriqueDécisionStratégiqueUseCase(
-            dependencies.getDécisionStratégiqueRepository(),
+            getContainer("legacy").resolve("décisionStratégiqueRepository"),
           );
         return récupérerHistoriqueDésionStratégiqueUseCase.run(
           input.réformeId,

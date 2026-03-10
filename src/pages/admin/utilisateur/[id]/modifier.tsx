@@ -6,7 +6,7 @@ import Utilisateur from "@/server/domain/utilisateur/Utilisateur.interface";
 import RécupérerUnUtilisateurUseCase from "@/server/gestion-utilisateur/usecases/RécupérerUnUtilisateurUseCase";
 import PageModifierUtilisateur from "@/components/PageUtilisateurFormulaire/PageModifierUtilisateur/PageModifierUtilisateur";
 import { commenceParUneVoyelle } from "@/client/utils/strings";
-import { dependencies } from "@/server/infrastructure/Dependencies";
+import { getContainer } from "@/server/dependances";
 import { pageModifierUtilisateur } from "@/components/PageUtilisateurFormulaire/PageModifierUtilisateur/PageModifierUtilisateurServerSideContext";
 import { configurationFeatureFlip } from "@/config";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
@@ -35,7 +35,7 @@ export const getServerSideProps = async (
   }
 
   const utilisateurDemandé = await new RécupérerUnUtilisateurUseCase(
-    dependencies.getUtilisateurRepository(),
+    getContainer("legacy").resolve("utilisateurRepository"),
   ).run(params.id);
   if (!utilisateurDemandé) {
     return redirigerVersPageAccueil;

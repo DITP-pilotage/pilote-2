@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { TerritoireAvecNombreUtilisateurs } from "@/server/domain/territoire/Territoire.interface";
-import { dependencies } from "@/server/infrastructure/Dependencies";
+import { getContainer } from "@/server/dependances";
 import {
   créerRouteurTRPC,
   procédureProtégée,
@@ -16,8 +16,12 @@ export const territoireRouter = créerRouteurTRPC({
     .input(validation)
     .query(async ({ input }): Promise<TerritoireAvecNombreUtilisateurs[]> => {
       return new RécupérerTerritoiresAvecNombreUtilisateursUseCase({
-        territoireRepository: dependencies.getTerritoireRepository(),
-        utilisateurRepository: dependencies.getUtilisateurRepository(),
+        territoireRepository: getContainer("legacy").resolve(
+          "territoireRepository",
+        ),
+        utilisateurRepository: getContainer("legacy").resolve(
+          "utilisateurRepository",
+        ),
       }).run({ territoireCodes: input.territoireCodes });
     }),
 });

@@ -3,7 +3,6 @@ import Head from "next/head";
 import { FunctionComponent } from "react";
 import assert from "node:assert/strict";
 import PageChantier from "@/components/PageChantier/PageChantier";
-import { dependencies } from "@/server/infrastructure/Dependencies";
 import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
 import { NonAutorisé } from "@/server/utils/errors";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
@@ -83,7 +82,9 @@ export const getServerSideProps = async (
         ? "departementale"
         : "regionale";
 
-  const territoireRepository = dependencies.getTerritoireRepository();
+  const territoireRepository = getContainer("legacy").resolve(
+    "territoireRepository",
+  );
   const territoireSélectionné =
     await territoireRepository.récupérer(territoireCode);
   const territoireCodes =
@@ -107,7 +108,9 @@ export const getServerSideProps = async (
       getContainer("chantiers")
         .resolve("recupererChantierUseCaseV2")
         .run(chantierId, session.habilitations, session.profil, jalon),
-      dependencies.getIndicateurRepository().récupérerParChantierId(chantierId),
+      getContainer("legacy")
+        .resolve("indicateurRepository")
+        .récupérerParChantierId(chantierId),
       getContainer("importSyntheseDesResultats")
         .resolve("récupérerDerniereSyntheseDesResultatsQuery")
         .run(chantierId, territoireCode),
@@ -115,13 +118,13 @@ export const getServerSideProps = async (
         .resolve("recupererDernierBrouillonSyntheseDesResultatsQuery")
         .run(chantierId, territoireCode, session.user!.id),
       new RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase(
-        dependencies.getCommentaireRepository(),
+        getContainer("legacy").resolve("commentaireRepository"),
       ).run([chantierId], territoireCode, session.habilitations),
       new RécupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase(
-        dependencies.getObjectifRepository(),
+        getContainer("legacy").resolve("objectifRepository"),
       ).run([chantierId], session.habilitations),
       new RécupérerDécisionStratégiqueLaPlusRécenteUseCase(
-        dependencies.getDécisionStratégiqueRepository(),
+        getContainer("legacy").resolve("décisionStratégiqueRepository"),
       )
         .run(chantierId, session.habilitations)
         .catch(() => null),
@@ -129,7 +132,7 @@ export const getServerSideProps = async (
         .resolve("recupererDetailsIndicateursV2UseCase")
         .run(chantierId, territoireCodes, session.habilitations, jalon),
       new RécupérerStatistiquesAvancementChantiersUseCase(
-        dependencies.getChantierRepository(),
+        getContainer("legacy").resolve("chantierRepository"),
       )
         .run([chantierId], mailleQuery, session.habilitations, jalon)
         .then(presenterEnAvancementsStatistiquesAccueilContrat),

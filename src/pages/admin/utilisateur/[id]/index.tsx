@@ -11,7 +11,7 @@ import {
   TokenAPIInformationContrat,
 } from "@/server/authentification/app/contrats/TokenAPIInformationContrat";
 import { commenceParUneVoyelle } from "@/client/utils/strings";
-import { dependencies } from "@/server/infrastructure/Dependencies";
+import { getContainer } from "@/server/dependances";
 
 export interface NextPageAdminUtilisateurProps {
   utilisateur: Utilisateur;
@@ -35,7 +35,7 @@ export async function getServerSideProps(
     return redirigerVersPageAccueil;
   }
   const utilisateurDemandé = await new RécupérerUnUtilisateurUseCase(
-    dependencies.getUtilisateurRepository(),
+    getContainer("legacy").resolve("utilisateurRepository"),
   ).run(params.id);
 
   if (!utilisateurDemandé) {
@@ -43,8 +43,9 @@ export async function getServerSideProps(
   }
 
   const tokenAPIInformation = await new RecupererTokenAPIInformationUseCase({
-    tokenAPIInformationRepository:
-      dependencies.getTokenAPIInformationRepository(),
+    tokenAPIInformationRepository: getContainer("legacy").resolve(
+      "tokenAPIInformationRepository",
+    ),
   })
     .run({ email: utilisateurDemandé.email })
     .then((tokenAPI) => {

@@ -11,7 +11,6 @@ import BarreLatérale from "@/components/_commons/BarreLatérale/BarreLatérale"
 import BarreLatéraleEncart from "@/components/_commons/BarreLatérale/BarreLatéraleEncart/BarreLatéraleEncart";
 import { Filtres } from "@/components/PageAccueil/Filtres/Filtres";
 import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
-import { dependencies } from "@/server/infrastructure/Dependencies";
 import Axe from "@/server/domain/axe/Axe.interface";
 import Alerte from "@/server/domain/alerte/Alerte";
 import RécupérerStatistiquesAvancementChantiersUseCase from "@/server/usecase/chantier/RécupérerStatistiquesAvancementChantiersUseCase";
@@ -137,11 +136,11 @@ export const getServerSideProps = async (
     session.habilitations.lecture.chantiers.length === 0
       ? [[], []]
       : await Promise.all([
-          dependencies
-            .getMinistèreRepository()
+          getContainer("legacy")
+            .resolve("ministèreRepository")
             .getListePourChantiers(session.habilitations.lecture.chantiers),
-          dependencies
-            .getAxeRepository()
+          getContainer("legacy")
+            .resolve("axeRepository")
             .getListePourChantiers(session.habilitations.lecture.chantiers),
         ]);
 
@@ -208,7 +207,7 @@ export const getServerSideProps = async (
 
   const repartitionMeteosChantiers =
     await new RecupererRepartitionsMeteoChantiersUseCase({
-      chantierRepository: dependencies.getChantierRepository(),
+      chantierRepository: getContainer("legacy").resolve("chantierRepository"),
     })
       .run(
         territoireCode,
@@ -220,7 +219,7 @@ export const getServerSideProps = async (
 
   const récupérerStatistiquesChantiersUseCase =
     new RécupérerStatistiquesAvancementChantiersUseCase(
-      dependencies.getChantierRepository(),
+      getContainer("legacy").resolve("chantierRepository"),
     );
 
   const avancementsAgrégés = await récupérerStatistiquesChantiersUseCase
@@ -234,7 +233,7 @@ export const getServerSideProps = async (
 
   const donneesTerritoiresAgregees =
     await new AgregerAvancementsChantiersUseCase({
-      chantierRepository: dependencies.getChantierRepository(),
+      chantierRepository: getContainer("legacy").resolve("chantierRepository"),
     }).run(
       chantiersAvecAlertes.map((chantier) => chantier.id),
       jalon,

@@ -1,7 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import logger from "@/server/infrastructure/Logger";
 import { UtilisateurAuthentifieJWTService } from "@/server/authentification/infrastructure/adapters/services/UtilisateurAuthentifieJWTService";
-import { dependencies } from "@/server/infrastructure/Dependencies";
 import { getContainer } from "@/server/dependances";
 import { endpointProtege } from "@/server/app/error-boundary/endpoint-protege";
 import { BadRequestError } from "@/server/app/error-boundary/bad-request-error";
@@ -17,9 +16,15 @@ const handle = async (request: NextApiRequest, response: NextApiResponse) => {
   const token = (bearerToken || "").split(" ")[1];
 
   const utilisateurAuthentifie = await new UtilisateurAuthentifieJWTService({
-    utilisateurRepository: dependencies.getUtilisateurRepository(),
-    tokenAPIRepository: dependencies.getTokenAPIInformationRepository(),
-    profilRepository: dependencies.getAuthentificationProfilRepository(),
+    utilisateurRepository: getContainer("legacy").resolve(
+      "utilisateurRepository",
+    ),
+    tokenAPIRepository: getContainer("legacy").resolve(
+      "tokenAPIInformationRepository",
+    ),
+    profilRepository: getContainer("legacy").resolve(
+      "authentificationProfilRepository",
+    ),
   }).recupererUtilisateurAuthentifie(token);
 
   const chantierId = request.query.chantierId as string;

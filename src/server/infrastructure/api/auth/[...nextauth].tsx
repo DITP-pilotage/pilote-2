@@ -203,9 +203,10 @@ const credentialsProvider = CredentialsProvider({
     if (!username || password != configuration().devPassword) {
       return null;
     }
-    const { dependencies } =
-      await import("@/server/infrastructure/Dependencies");
-    const utilisateurRepository = dependencies.getUtilisateurRepository();
+    const { getContainer } = await import("@/server/dependances");
+    const utilisateurRepository = getContainer("legacy").resolve(
+      "utilisateurRepository",
+    );
     const utilisateur = await utilisateurRepository.récupérer(username);
 
     if (!utilisateur) {
@@ -295,14 +296,16 @@ export const authConfig: NextAuthConfig = {
 
     async session({ session, token }) {
       const piloteToken = toPiloteJWTPayload(token);
-      const { dependencies } =
-        await import("@/server/infrastructure/Dependencies");
-      const utilisateurRepository = dependencies.getUtilisateurRepository();
+      const { getContainer } = await import("@/server/dependances");
+      const utilisateurRepository = getContainer("legacy").resolve(
+        "utilisateurRepository",
+      );
       const utilisateur = await utilisateurRepository.récupérer(
         piloteToken.user.email,
       );
 
-      const profilRepository = dependencies.getProfilRepository();
+      const profilRepository =
+        getContainer("legacy").resolve("profilRepository");
       const profil = await profilRepository.récupérer(utilisateur!.profil);
 
       logger.debug(

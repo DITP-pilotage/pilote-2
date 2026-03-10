@@ -12,7 +12,6 @@ import {
   validationSupprimerUtilisateur,
 } from "@/validation/utilisateur";
 import { zodValidateurCSRF } from "@/validation/publication";
-import { dependencies } from "@/server/infrastructure/Dependencies";
 import RécupérerUnProfilUseCase from "@/server/usecase/profil/RécupérerUnProfilUseCase";
 import { getContainer } from "@/server/dependances";
 
@@ -26,7 +25,7 @@ export const utilisateurRouter = créerRouteurTRPC({
     .mutation(async ({ input, ctx }) => {
       vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
       const profilAuteur = await new RécupérerUnProfilUseCase(
-        dependencies.getProfilRepository(),
+        getContainer("legacy").resolve("profilRepository"),
       ).run(ctx.session.profil);
       await getContainer("gestionUtilisateur")
         .resolve("créerOuMettreÀJourUnUtilisateurUseCase")
@@ -43,7 +42,7 @@ export const utilisateurRouter = créerRouteurTRPC({
     .mutation(async ({ input, ctx }) => {
       vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
       const profilAuteur = await new RécupérerUnProfilUseCase(
-        dependencies.getProfilRepository(),
+        getContainer("legacy").resolve("profilRepository"),
       ).run(ctx.session.profil);
       await getContainer("gestionUtilisateur")
         .resolve("créerOuMettreÀJourUnUtilisateurUseCase")
@@ -60,7 +59,7 @@ export const utilisateurRouter = créerRouteurTRPC({
     .mutation(async ({ input, ctx }) => {
       vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
       const profilAuteur = await new RécupérerUnProfilUseCase(
-        dependencies.getProfilRepository(),
+        getContainer("legacy").resolve("profilRepository"),
       ).run(ctx.session.profil);
       await getContainer("gestionUtilisateur")
         .resolve("desactiverUnUtilisateurUseCase")
@@ -76,7 +75,7 @@ export const utilisateurRouter = créerRouteurTRPC({
     .mutation(async ({ input, ctx }) => {
       vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
       const profilAuteur = await new RécupérerUnProfilUseCase(
-        dependencies.getProfilRepository(),
+        getContainer("legacy").resolve("profilRepository"),
       ).run(ctx.session.profil);
       await getContainer("gestionUtilisateur")
         .resolve("reactiverUnUtilisateurUseCase")
