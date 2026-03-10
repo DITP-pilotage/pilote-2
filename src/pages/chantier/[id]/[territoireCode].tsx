@@ -11,11 +11,7 @@ import calculerChantierAvancements from "@/client/utils/chantier/avancement/calc
 import { comparerIndicateur } from "@/client/utils/indicateur/indicateur";
 import { convertitEnPondération } from "@/client/utils/ponderation/ponderation";
 import { IndicateurPondération } from "@/components/PageChantier/PageChantier.interface";
-import RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase from "@/server/usecase/chantier/commentaire/RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase";
-import RécupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase from "@/server/usecase/chantier/objectif/RécupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase";
-import RécupérerDécisionStratégiqueLaPlusRécenteUseCase from "@/server/usecase/chantier/décision/RécupérerDécisionStratégiqueLaPlusRécenteUseCase";
 import { DétailsIndicateurTerritoire } from "@/server/domain/indicateur/DétailsIndicateur.interface";
-import RécupérerStatistiquesAvancementChantiersUseCase from "@/server/usecase/chantier/RécupérerStatistiquesAvancementChantiersUseCase";
 import { presenterEnAvancementsStatistiquesAccueilContrat } from "@/server/chantiers/app/contrats/AvancementsStatistiquesAccueilContrat";
 import { DonneesComparaisonDuTauxDAvancementType } from "@/server/domain/territoire/Territoire.interface";
 import { territoireCodeVersMailleCodeInsee } from "@/server/utils/territoires";
@@ -117,23 +113,21 @@ export const getServerSideProps = async (
       getContainer("importSyntheseDesResultats")
         .resolve("recupererDernierBrouillonSyntheseDesResultatsQuery")
         .run(chantierId, territoireCode, session.user!.id),
-      new RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase(
-        getContainer("legacy").resolve("commentaireRepository"),
-      ).run([chantierId], territoireCode, session.habilitations),
-      new RécupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase(
-        getContainer("legacy").resolve("objectifRepository"),
-      ).run([chantierId], session.habilitations),
-      new RécupérerDécisionStratégiqueLaPlusRécenteUseCase(
-        getContainer("legacy").resolve("décisionStratégiqueRepository"),
-      )
+      getContainer("legacy")
+        .resolve("récupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase")
+        .run([chantierId], territoireCode, session.habilitations),
+      getContainer("legacy")
+        .resolve("récupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase")
+        .run([chantierId], session.habilitations),
+      getContainer("legacy")
+        .resolve("récupérerDécisionStratégiqueLaPlusRécenteUseCase")
         .run(chantierId, session.habilitations)
         .catch(() => null),
       getContainer("chantiers")
         .resolve("recupererDetailsIndicateursV2UseCase")
         .run(chantierId, territoireCodes, session.habilitations, jalon),
-      new RécupérerStatistiquesAvancementChantiersUseCase(
-        getContainer("legacy").resolve("chantierRepository"),
-      )
+      getContainer("legacy")
+        .resolve("récupérerStatistiquesAvancementChantiersUseCase")
         .run([chantierId], mailleQuery, session.habilitations, jalon)
         .then(presenterEnAvancementsStatistiquesAccueilContrat),
       new RecupererVariableContenuUseCase().run({

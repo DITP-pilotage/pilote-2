@@ -3,7 +3,6 @@ import Head from "next/head";
 import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
 import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
 import Utilisateur from "@/server/domain/utilisateur/Utilisateur.interface";
-import RécupérerUnUtilisateurUseCase from "@/server/gestion-utilisateur/usecases/RécupérerUnUtilisateurUseCase";
 import PageModifierUtilisateur from "@/components/PageUtilisateurFormulaire/PageModifierUtilisateur/PageModifierUtilisateur";
 import { commenceParUneVoyelle } from "@/client/utils/strings";
 import { getContainer } from "@/server/dependances";
@@ -34,9 +33,9 @@ export const getServerSideProps = async (
     return redirigerVersPageAccueil;
   }
 
-  const utilisateurDemandé = await new RécupérerUnUtilisateurUseCase(
-    getContainer("legacy").resolve("utilisateurRepository"),
-  ).run(params.id);
+  const utilisateurDemandé = await getContainer("legacy")
+    .resolve("récupérerUnUtilisateurUseCase")
+    .run(params.id);
   if (!utilisateurDemandé) {
     return redirigerVersPageAccueil;
   }

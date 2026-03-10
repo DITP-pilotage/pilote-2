@@ -1,5 +1,4 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { ListerDonneesIndicateurParIndicIdUseCase } from "@/server/chantiers/usecases/ListerDonneesIndicateurParIndicIdUseCase";
 import { getContainer } from "@/server/dependances";
 import { presenterEnDonneeIndicateurContrat } from "@/server/chantiers/app/contrats/DonneeIndicateurContrat";
 import { getAnneeDateDeBascule } from "@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getAnneeDateDeBascule";
@@ -12,12 +11,9 @@ export const handleListerIndicateurs = async ({
   request: NextApiRequest;
   response: NextApiResponse;
 }) => {
-  const listeDonneesIndicateurs =
-    await new ListerDonneesIndicateurParIndicIdUseCase({
-      indicateurRepository: getContainer("legacy").resolve(
-        "chantierIndicateurRepository",
-      ),
-    }).run({
+  const listeDonneesIndicateurs = await getContainer("legacy")
+    .resolve("listerDonneesIndicateurParIndicIdUseCase")
+    .run({
       indicId: request.query.indicateurId as string,
       jalon: getAnneeDateDeBascule(
         new Date(),

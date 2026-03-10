@@ -1,7 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import assert from "node:assert";
 import logger from "@/server/infrastructure/Logger";
-import { UtilisateurAuthentifieJWTService } from "@/server/authentification/infrastructure/adapters/services/UtilisateurAuthentifieJWTService";
 import { getContainer } from "@/server/dependances";
 import { endpointProtege } from "@/server/app/error-boundary/endpoint-protege";
 import { ForbiddenError } from "@/server/app/error-boundary/forbidden-error";
@@ -13,17 +12,9 @@ const handle = async (request: NextApiRequest, response: NextApiResponse) => {
   assert(request.query.chantierId, "Le chantier id est obligatoire");
 
   const token = (bearerToken || "").split(" ")[1];
-  const utilisateurAuthentifie = await new UtilisateurAuthentifieJWTService({
-    utilisateurRepository: getContainer("legacy").resolve(
-      "utilisateurRepository",
-    ),
-    tokenAPIRepository: getContainer("legacy").resolve(
-      "tokenAPIInformationRepository",
-    ),
-    profilRepository: getContainer("legacy").resolve(
-      "authentificationProfilRepository",
-    ),
-  }).recupererUtilisateurAuthentifie(token);
+  const utilisateurAuthentifie = await getContainer("legacy")
+    .resolve("utilisateurAuthentifieJWTService")
+    .recupererUtilisateurAuthentifie(token);
 
   switch (request.method) {
     case "GET": {

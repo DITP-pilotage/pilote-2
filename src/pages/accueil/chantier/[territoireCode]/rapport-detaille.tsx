@@ -7,13 +7,10 @@ import PageRapportDétaillé from "@/components/PageRapportDétaillé/PageRappor
 import Indicateur from "@/server/domain/indicateur/Indicateur.interface";
 import { DétailsIndicateurs } from "@/server/domain/indicateur/DétailsIndicateur.interface";
 import { PublicationsGroupéesParChantier } from "@/components/PageRapportDétaillé/PageRapportDétaillé.interface";
-import RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase from "@/server/usecase/chantier/commentaire/RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase";
-import RécupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase from "@/server/usecase/chantier/objectif/RécupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase";
 import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
 import DécisionStratégique from "@/server/domain/chantier/décisionStratégique/DécisionStratégique.interface";
 import Ministère from "@/server/domain/ministère/Ministère.interface";
 import Alerte from "@/server/domain/alerte/Alerte";
-import RécupérerStatistiquesAvancementChantiersUseCase from "@/server/usecase/chantier/RécupérerStatistiquesAvancementChantiersUseCase";
 import {
   AvancementsGlobauxTerritoriauxMoyensContrat,
   AvancementsStatistiquesAccueilContrat,
@@ -32,8 +29,6 @@ import { FiltreQueryParams } from "@/server/chantiers/app/contrats/FiltreQueryPa
 import { MailleInterne } from "@/server/domain/maille/Maille.interface";
 import { RepartitionMeteoContrat } from "@/server/fiche-territoriale/app/contrats/RepartitionMeteoContrat";
 import { presenterEnRépartitionsMétéosChantiersContrat } from "@/server/chantiers/app/contrats/RepartitionMeteoChantiersContrat";
-import { RecupererRepartitionsMeteoChantiersUseCase } from "@/server/chantiers/usecases/RecupererRepartitionMeteoChantiersUseCase";
-import { AgregerAvancementsChantiersUseCase } from "@/server/chantiers/usecases/AgregerAvancementsChantiersUseCase";
 import { getAnneeDateDeBascule } from "@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getAnneeDateDeBascule";
 import { configuration, configurationFeatureFlip } from "@/config";
 import { getContainer } from "@/server/dependances";
@@ -217,22 +212,18 @@ export const getServerSideProps: GetServerSideProps<
         })
       : chantiers;
 
-  const repartitionMeteosChantiers =
-    await new RecupererRepartitionsMeteoChantiersUseCase({
-      chantierRepository: getContainer("legacy").resolve("chantierRepository"),
-    })
-      .run(
-        territoireCode,
-        filtres,
-        axes,
-        chantiersAvecAlertes.map((chantierAvecAlerte) => chantierAvecAlerte.id),
-      )
-      .then(presenterEnRépartitionsMétéosChantiersContrat);
+  const repartitionMeteosChantiers = await getContainer("legacy")
+    .resolve("recupererRepartitionsMeteoChantiersUseCase")
+    .run(
+      territoireCode,
+      filtres,
+      axes,
+      chantiersAvecAlertes.map((chantierAvecAlerte) => chantierAvecAlerte.id),
+    )
+    .then(presenterEnRépartitionsMétéosChantiersContrat);
 
-  const récupérerStatistiquesChantiersUseCase =
-    new RécupérerStatistiquesAvancementChantiersUseCase(
-      getContainer("legacy").resolve("chantierRepository"),
-    );
+  const récupérerStatistiquesChantiersUseCase = getContainer("legacy")
+    .resolve("récupérerStatistiquesAvancementChantiersUseCase");
 
   const listeAvancementsStatistiques: {
     id: string;
@@ -378,15 +369,13 @@ export const getServerSideProps: GetServerSideProps<
       );
   }
 
-  const commentairesGroupésParChantier =
-    await new RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase(
-      getContainer("legacy").resolve("commentaireRepository"),
-    ).run(chantiersIds, territoireCode, session.habilitations);
+  const commentairesGroupésParChantier = await getContainer("legacy")
+    .resolve("récupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase")
+    .run(chantiersIds, territoireCode, session.habilitations);
 
-  const objectifsGroupésParChantier =
-    await new RécupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase(
-      getContainer("legacy").resolve("objectifRepository"),
-    ).run(chantiersIds, session.habilitations);
+  const objectifsGroupésParChantier = await getContainer("legacy")
+    .resolve("récupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase")
+    .run(chantiersIds, session.habilitations);
 
   const { filtresComptesCalculés } = Chantier.recupererStatistiqueListeChantier(
     chantiers,
@@ -403,10 +392,9 @@ export const getServerSideProps: GetServerSideProps<
     )
     .then(presenterEnAvancementsStatistiquesAccueilContrat);
 
-  const donneesTerritoiresAgregees =
-    await new AgregerAvancementsChantiersUseCase({
-      chantierRepository: getContainer("legacy").resolve("chantierRepository"),
-    }).run(
+  const donneesTerritoiresAgregees = await getContainer("legacy")
+    .resolve("agregerAvancementsChantiersUseCase")
+    .run(
       chantiersAvecAlertes.map((chantier) => chantier.id),
       jalon,
     );

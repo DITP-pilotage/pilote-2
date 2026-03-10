@@ -4,9 +4,11 @@ import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation"
 import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
 
 export default class RécupérerDécisionStratégiqueLaPlusRécenteUseCase {
-  constructor(
-    private readonly décisionStratégiqueRepository: DécisionStratégiqueRepository,
-  ) {}
+  private readonly décisionStratégiqueRepository: DécisionStratégiqueRepository;
+
+  constructor({ décisionStratégiqueRepository }: { décisionStratégiqueRepository: DécisionStratégiqueRepository }) {
+    this.décisionStratégiqueRepository = décisionStratégiqueRepository;
+  }
 
   async run(
     chantierId: string,

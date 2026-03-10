@@ -4,8 +4,6 @@ import { FunctionComponent } from "react";
 import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
 import Utilisateur from "@/server/domain/utilisateur/Utilisateur.interface";
 import PageUtilisateur from "@/components/PageUtilisateur/PageUtilisateur";
-import RécupérerUnUtilisateurUseCase from "@/server/gestion-utilisateur/usecases/RécupérerUnUtilisateurUseCase";
-import { RecupererTokenAPIInformationUseCase } from "@/server/authentification/usecases/RecupererTokenAPIInformationUseCase";
 import {
   presenterEnTokenAPIInformationContrat,
   TokenAPIInformationContrat,
@@ -34,19 +32,16 @@ export async function getServerSideProps(
   if (!params?.id || !session || !session.habilitations) {
     return redirigerVersPageAccueil;
   }
-  const utilisateurDemandé = await new RécupérerUnUtilisateurUseCase(
-    getContainer("legacy").resolve("utilisateurRepository"),
-  ).run(params.id);
+  const utilisateurDemandé = await getContainer("legacy")
+    .resolve("récupérerUnUtilisateurUseCase")
+    .run(params.id);
 
   if (!utilisateurDemandé) {
     return redirigerVersPageAccueil;
   }
 
-  const tokenAPIInformation = await new RecupererTokenAPIInformationUseCase({
-    tokenAPIInformationRepository: getContainer("legacy").resolve(
-      "tokenAPIInformationRepository",
-    ),
-  })
+  const tokenAPIInformation = await getContainer("legacy")
+    .resolve("recupererTokenAPIInformationUseCase")
     .run({ email: utilisateurDemandé.email })
     .then((tokenAPI) => {
       return tokenAPI ? presenterEnTokenAPIInformationContrat(tokenAPI) : null;

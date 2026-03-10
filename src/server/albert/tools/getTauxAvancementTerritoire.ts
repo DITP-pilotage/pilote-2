@@ -1,13 +1,11 @@
 import { tool } from "ai";
 import { z } from "zod";
 import { $Enums } from "@prisma/client";
-import ChantierSQLRepository from "@/server/infrastructure/accès_données/chantier/ChantierSQLRepository";
-import { AgregerAvancementsChantiersUseCase } from "@/server/chantiers/usecases/AgregerAvancementsChantiersUseCase";
-import RécupérerStatistiquesAvancementChantiersUseCase from "@/server/usecase/chantier/RécupérerStatistiquesAvancementChantiersUseCase";
 import { MailleNonAutoriséeErreur } from "@/server/utils/errors";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
 import { Maille } from "@/server/domain/maille/Maille.interface";
+import { getContainer } from "@/server/dependances";
 
 const getTauxAvancementTerritoireInputSchema = z.object({
   territoire_code: z
@@ -74,13 +72,13 @@ Utilise cet outil quand l'utilisateur demande :
 
         const chantierIds = publishedChantiers.map((c) => c.id);
 
-        const chantierRepository = new ChantierSQLRepository();
-        const agregerAvancementsChantiersUseCase =
-          new AgregerAvancementsChantiersUseCase({ chantierRepository });
-        const récupérerStatistiquesUseCase =
-          new RécupérerStatistiquesAvancementChantiersUseCase(
-            chantierRepository,
-          );
+        const legacyContainer = getContainer("legacy");
+        const agregerAvancementsChantiersUseCase = legacyContainer.resolve(
+          "agregerAvancementsChantiersUseCase",
+        );
+        const récupérerStatistiquesUseCase = legacyContainer.resolve(
+          "récupérerStatistiquesAvancementChantiersUseCase",
+        );
 
         const agregat = await agregerAvancementsChantiersUseCase.run(
           chantierIds,

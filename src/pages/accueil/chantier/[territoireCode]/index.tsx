@@ -13,15 +13,12 @@ import { Filtres } from "@/components/PageAccueil/Filtres/Filtres";
 import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
 import Axe from "@/server/domain/axe/Axe.interface";
 import Alerte from "@/server/domain/alerte/Alerte";
-import RécupérerStatistiquesAvancementChantiersUseCase from "@/server/usecase/chantier/RécupérerStatistiquesAvancementChantiersUseCase";
 import { presenterEnAvancementsStatistiquesAccueilContrat } from "@/server/chantiers/app/contrats/AvancementsStatistiquesAccueilContrat";
 import { objectEntries } from "@/client/utils/objects/objects";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
 import { territoireCodeVersMailleCodeInsee } from "@/server/utils/territoires";
 import { Chantier } from "@/server/chantiers/domain/Chantier";
 import { FiltreQueryParams } from "@/server/chantiers/app/contrats/FiltreQueryParams";
-import { RecupererRepartitionsMeteoChantiersUseCase } from "@/server/chantiers/usecases/RecupererRepartitionMeteoChantiersUseCase";
-import { AgregerAvancementsChantiersUseCase } from "@/server/chantiers/usecases/AgregerAvancementsChantiersUseCase";
 import { presenterEnRépartitionsMétéosChantiersContrat } from "@/server/chantiers/app/contrats/RepartitionMeteoChantiersContrat";
 import { getAnneeDateDeBascule } from "@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getAnneeDateDeBascule";
 import { configuration, configurationFeatureFlip } from "@/config";
@@ -205,24 +202,18 @@ export const getServerSideProps = async (
         })
       : chantiers;
 
-  const repartitionMeteosChantiers =
-    await new RecupererRepartitionsMeteoChantiersUseCase({
-      chantierRepository: getContainer("legacy").resolve("chantierRepository"),
-    })
-      .run(
-        territoireCode,
-        filtres,
-        axes,
-        chantiersAvecAlertes.map((chantierAvecAlerte) => chantierAvecAlerte.id),
-      )
-      .then(presenterEnRépartitionsMétéosChantiersContrat);
+  const repartitionMeteosChantiers = await getContainer("legacy")
+    .resolve("recupererRepartitionsMeteoChantiersUseCase")
+    .run(
+      territoireCode,
+      filtres,
+      axes,
+      chantiersAvecAlertes.map((chantierAvecAlerte) => chantierAvecAlerte.id),
+    )
+    .then(presenterEnRépartitionsMétéosChantiersContrat);
 
-  const récupérerStatistiquesChantiersUseCase =
-    new RécupérerStatistiquesAvancementChantiersUseCase(
-      getContainer("legacy").resolve("chantierRepository"),
-    );
-
-  const avancementsAgrégés = await récupérerStatistiquesChantiersUseCase
+  const avancementsAgrégés = await getContainer("legacy")
+    .resolve("récupérerStatistiquesAvancementChantiersUseCase")
     .run(
       chantiersAvecAlertes.map((chantier) => chantier.id),
       mailleQuery,
@@ -231,10 +222,9 @@ export const getServerSideProps = async (
     )
     .then(presenterEnAvancementsStatistiquesAccueilContrat);
 
-  const donneesTerritoiresAgregees =
-    await new AgregerAvancementsChantiersUseCase({
-      chantierRepository: getContainer("legacy").resolve("chantierRepository"),
-    }).run(
+  const donneesTerritoiresAgregees = await getContainer("legacy")
+    .resolve("agregerAvancementsChantiersUseCase")
+    .run(
       chantiersAvecAlertes.map((chantier) => chantier.id),
       jalon,
     );

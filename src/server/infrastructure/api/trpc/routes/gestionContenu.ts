@@ -4,8 +4,6 @@ import {
   procédureProtégée,
 } from "@/server/infrastructure/api/trpc/trpc";
 import { validationContenu } from "@/validation/gestion-contenu";
-import { ModifierMessageInformationUseCase } from "@/server/gestion-contenu/usecases/ModifierMessageInformationUseCase";
-import { RécupérerMessageInformationUseCase } from "@/server/gestion-contenu/usecases/RécupérerMessageInformationUseCase";
 import { presenterEnMessageInformationContrat } from "@/server/app/contrats/MessageInformationContrat";
 import { RecupererToutesLesVariablesContenuUseCase } from "@/server/gestion-contenu/usecases/RecupererToutesLesVariablesContenuUseCase";
 import { getContainer } from "@/server/dependances";
@@ -19,26 +17,18 @@ export const gestionContenuRouter = créerRouteurTRPC({
         .recupererHabilitations(ctx.session);
       habilitations.verifierAutorisationModificationGestionContenu();
 
-      const modifierMessageInformationUseCase =
-        new ModifierMessageInformationUseCase({
-          gestionContenuRepository: getContainer("legacy").resolve(
-            "gestionContenuRepository",
-          ),
+      return getContainer("legacy")
+        .resolve("modifierMessageInformationUseCase")
+        .run({
+          bandeauType: input.bandeauType,
+          isBandeauActif: input.isBandeauActif,
+          bandeauTexte: input.bandeauTexte,
         });
-      return modifierMessageInformationUseCase.run({
-        bandeauType: input.bandeauType,
-        isBandeauActif: input.isBandeauActif,
-        bandeauTexte: input.bandeauTexte,
-      });
     }),
   recupererMessageInformation: procédureNonConnecte.query(async () => {
-    const récupérerMessageInformationUseCase =
-      new RécupérerMessageInformationUseCase({
-        gestionContenuRepository: getContainer("legacy").resolve(
-          "gestionContenuRepository",
-        ),
-      });
-    const messageInformation = await récupérerMessageInformationUseCase.run();
+    const messageInformation = await getContainer("legacy")
+      .resolve("récupérerMessageInformationUseCase")
+      .run();
     return presenterEnMessageInformationContrat(messageInformation);
   }),
   recupererToutesLesVariablesContenu: procédureNonConnecte.query(() => {

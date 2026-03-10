@@ -4,7 +4,11 @@ import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation"
 import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
 
 export default class RécupérerCommentaireLePlusRécentUseCase {
-  constructor(private readonly commentaireRepository: CommentaireRepository) {}
+  private readonly commentaireRepository: CommentaireRepository;
+
+  constructor({ commentaireRepository }: { commentaireRepository: CommentaireRepository }) {
+    this.commentaireRepository = commentaireRepository;
+  }
 
   async run(
     chantierId: string,

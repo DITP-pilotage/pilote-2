@@ -1,6 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import logger from "@/server/infrastructure/Logger";
-import { UtilisateurAuthentifieJWTService } from "@/server/authentification/infrastructure/adapters/services/UtilisateurAuthentifieJWTService";
 import { handleListerIndicateurs } from "@/server/chantiers/infrastructure/handlers/ListerIndicateursHandler";
 import { getContainer } from "@/server/dependances";
 import { endpointProtege } from "@/server/app/error-boundary/endpoint-protege";
@@ -17,17 +16,9 @@ const handle = async (request: NextApiRequest, response: NextApiResponse) => {
   const bearerToken = request.headers["authorization"];
 
   const token = (bearerToken || "").split(" ")[1];
-  const utilisateurAuthentifie = await new UtilisateurAuthentifieJWTService({
-    utilisateurRepository: getContainer("legacy").resolve(
-      "utilisateurRepository",
-    ),
-    tokenAPIRepository: getContainer("legacy").resolve(
-      "tokenAPIInformationRepository",
-    ),
-    profilRepository: getContainer("legacy").resolve(
-      "authentificationProfilRepository",
-    ),
-  }).recupererUtilisateurAuthentifie(token);
+  const utilisateurAuthentifie = await getContainer("legacy")
+    .resolve("utilisateurAuthentifieJWTService")
+    .recupererUtilisateurAuthentifie(token);
 
   switch (request.method) {
     case "GET": {
