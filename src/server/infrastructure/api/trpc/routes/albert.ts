@@ -12,7 +12,7 @@ import {
 } from "@/server/albert/Albert";
 import { buildChatSystemPrompt } from "@/server/albert/systemPrompt";
 import { getContainer } from "@/server/dependances";
-import { RécupérerVariableContenuUseCase } from "@/server/gestion-contenu/usecases/RécupérerVariableContenuUseCase";
+import { RecupererVariableContenuUseCase } from "@/server/gestion-contenu/usecases/RecupererVariableContenuUseCase";
 import { NotFoundError } from "@/server/app/error-boundary/not-found-error";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
 import { getInstructionsTool } from "@/server/albert/recipes";
@@ -26,7 +26,7 @@ export const albertRouter = créerRouteurTRPC({
       }),
     )
     .mutation(async ({ input, ctx }) => {
-      const estAskAiActif = new RécupérerVariableContenuUseCase().run({
+      const estAskAiActif = new RecupererVariableContenuUseCase().run({
         nomVariableContenu: "NEXT_PUBLIC_FF_ASK_AI",
       }) as boolean;
 

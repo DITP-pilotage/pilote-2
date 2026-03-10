@@ -45,7 +45,9 @@ const MiseEnPage: FunctionComponent<MiseEnPageProps> = ({
               <div id="main">{children}</div>
             </ClientOnly>
           )}
-          <PiedDePage />
+          <ClientOnly>
+            <PiedDePage />
+          </ClientOnly>
         </div>
       )}
     </MiseEnPageStyled>

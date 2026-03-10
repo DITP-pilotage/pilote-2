@@ -10,14 +10,15 @@ import { BoutonSeConnecter } from "@/components/_commons/BoutonSeConnecter";
 import { BoutonApplicationsPilote } from "@/components/_commons/MiseEnPage/EnTete/BoutonApplicationsPilote";
 import { ClientOnly } from "@/components/shared/ClientOnly";
 import { LogoPilote } from "@/components/_commons/LogoPilote";
+import { useEnv } from "@/client/hooks/useEnv";
 
 const InformationsEspaceConnecte = () => {
   const { data: session } = useSession();
+  const ffPiloteEval = useEnv("NEXT_PUBLIC_FF_PILOTE_EVAL");
+  const ffAccesPilote = useEnv("NEXT_PUBLIC_FF_ACCES_PILOTE");
 
   const peutVoirLeBoutonApplicationsPilote =
-    process.env.NEXT_PUBLIC_FF_PILOTE_EVAL === "true" &&
-    (process.env.NEXT_PUBLIC_FF_ACCES_PILOTE === "true" ||
-      session?.profil === "DITP_ADMIN");
+    ffPiloteEval && (ffAccesPilote || session?.profil === "DITP_ADMIN");
 
   if (session?.user != null)
     return (

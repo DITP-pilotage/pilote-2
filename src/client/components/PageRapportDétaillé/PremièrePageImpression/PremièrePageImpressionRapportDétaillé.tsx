@@ -11,6 +11,7 @@ import PérimètreMinistériel from "@/server/domain/périmètreMinistériel/Pé
 import Axe from "@/server/domain/axe/Axe.interface";
 import Ppg from "@/server/domain/ppg/Ppg.interface";
 import { DétailTerritoire } from "@/server/domain/territoire/Territoire.interface";
+import { useEnv } from "@/client/hooks/useEnv";
 import PremièrePageImpressionRapportDétailléStyled from "./PremièrePageImpressionRapportDétaillé.styled";
 
 interface PremièrePageImpressionRapportDétailléProps {
@@ -28,6 +29,7 @@ const PremièrePageImpressionRapportDétaillé: FunctionComponent<
   ministères,
   axes,
 }) => {
+  const ffAlertes = useEnv("NEXT_PUBLIC_FF_ALERTES");
   const [filtres] = useQueryStates({
     perimetres: parseAsString.withDefault(""),
     axes: parseAsString.withDefault(""),
@@ -208,17 +210,16 @@ const PremièrePageImpressionRapportDétaillé: FunctionComponent<
               </ul>
             </li>
           )}
-          {process.env.NEXT_PUBLIC_FF_ALERTES === "true" &&
-            filtresAlertes.length > 0 && (
-              <li>
-                <span className="fr-text--bold">Alerte(s) sélectionnée(s)</span>
-                <ul>
-                  {filtresAlertes.map((alerte) => (
-                    <li key={alerte}>{alerte}</li>
-                  ))}
-                </ul>
-              </li>
-            )}
+          {ffAlertes && filtresAlertes.length > 0 && (
+            <li>
+              <span className="fr-text--bold">Alerte(s) sélectionnée(s)</span>
+              <ul>
+                {filtresAlertes.map((alerte) => (
+                  <li key={alerte}>{alerte}</li>
+                ))}
+              </ul>
+            </li>
+          )}
         </ul>
       </div>
     </PremièrePageImpressionRapportDétailléStyled>

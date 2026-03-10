@@ -1,7 +1,7 @@
 import { VariableContenuDisponibleEnv } from "@/server/gestion-contenu/domain/VariableContenuDisponible";
 import { configuration } from "@/config";
 
-export class RécupérerVariableContenuUseCase {
+export class RecupererVariableContenuUseCase {
   run<T extends keyof VariableContenuDisponibleEnv>({
     nomVariableContenu,
   }: {
@@ -99,6 +99,18 @@ export class RécupérerVariableContenuUseCase {
       case "NEXT_PUBLIC_FF_CENTRE_AIDE_CUSTOM_PILOTE": {
         return configuration().featureFlip
           .centreAideCustomPilote as VariableContenuDisponibleEnv[T];
+      }
+      case "NEXT_PUBLIC_FF_PILOTE_EVAL": {
+        return configuration().featureFlip
+          .piloteEval as VariableContenuDisponibleEnv[T];
+      }
+      case "NEXT_PUBLIC_FF_RAPPORT_COORDINATEURS": {
+        return configuration().featureFlip
+          .rapportCoordinateurs as VariableContenuDisponibleEnv[T];
+      }
+      case "NEXT_PUBLIC_FF_ACCES_PILOTE": {
+        return configuration().featureFlip
+          .accesPilote as VariableContenuDisponibleEnv[T];
       }
     }
   }

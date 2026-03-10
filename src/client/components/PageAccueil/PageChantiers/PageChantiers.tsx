@@ -28,6 +28,7 @@ import JaugeDeProgression from "@/components/_commons/JaugeDeProgression/JaugeDe
 import { RepartitionMeteoContrat } from "@/server/fiche-territoriale/app/contrats/RepartitionMeteoContrat";
 import { useSelecteurJalon } from "@/components/_commons/SelecteurJalon/useSelecteurJalon";
 import { ChantierAccueilContratV2 } from "@/server/chantiers/app/contrats/ChantierAccueilContratV2";
+import { useEnv } from "@/client/hooks/useEnv";
 import PageChantiersStyled from "./PageChantiers.styled";
 import TableauChantiers from "./TableauChantiers/TableauChantiers";
 import usePageChantiers from "./usePageChantiers";
@@ -60,6 +61,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
   jalon,
   moyenneTerritoire,
 }) => {
+  const ffAlertesBaisse = useEnv("NEXT_PUBLIC_FF_ALERTES_BAISSE");
   const pathname = "/accueil/chantier/[territoireCode]";
   const { auClicTerritoireCallback } = useCartographie(
     territoireCode,
@@ -229,8 +231,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
             <div className="flex flex-col sm:flex-row gap-2">
               {remontéesAlertes.map(
                 ({ nomCritère, libellé, nombre, estActivée }) =>
-                  (process.env.NEXT_PUBLIC_FF_ALERTES_BAISSE === "true" ||
-                    nomCritère !== "estEnAlerteBaisse") && (
+                  (ffAlertesBaisse || nomCritère !== "estEnAlerteBaisse") && (
                     <div key={libellé} title={libellé}>
                       <RemontéeAlerte
                         estActivée={estActivée}

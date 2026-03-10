@@ -1,13 +1,10 @@
 import "@gouvfr/dsfr/dist/component/footer/footer.min.css";
 import Link from "next/link";
 import { FunctionComponent } from "react";
-import api from "@/server/infrastructure/api/trpc/api";
+import { useEnv } from "@/client/hooks/useEnv";
 
 const PiedDePage: FunctionComponent = () => {
-  const { data: estBoutonDocsAPIAffiche } =
-    api.gestionContenu.recupererVariableContenu.useQuery({
-      nomVariableContenu: "NEXT_PUBLIC_FF_DOCS_API",
-    });
+  const estBoutonDocsAPIAffiche = useEnv("NEXT_PUBLIC_FF_DOCS_API");
 
   return (
     <footer className="fr-footer" id="footer" role="contentinfo">

@@ -1,5 +1,6 @@
 import { FunctionComponent } from "react";
 import Link from "next/link";
+import { useEnv } from "@/client/hooks/useEnv";
 
 interface PageGestionContenu {
   nom: string;
@@ -10,6 +11,7 @@ interface PageGestionContenu {
 const MenuItemGestionContenu: FunctionComponent<{ urlActuelle: string }> = ({
   urlActuelle,
 }) => {
+  const ffGestionTokenAPI = useEnv("NEXT_PUBLIC_FF_GESTION_TOKEN_API");
   const pagesGestionContenu: PageGestionContenu[] = [
     {
       nom: "Message d'information",
@@ -19,7 +21,7 @@ const MenuItemGestionContenu: FunctionComponent<{ urlActuelle: string }> = ({
     {
       nom: "Token API",
       lien: "/admin/gestion-token-api",
-      accessible: process.env.NEXT_PUBLIC_FF_GESTION_TOKEN_API === "true",
+      accessible: ffGestionTokenAPI,
     },
     {
       nom: "Nouveautés",

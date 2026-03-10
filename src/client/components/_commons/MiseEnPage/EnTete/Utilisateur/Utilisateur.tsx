@@ -7,8 +7,8 @@ import { ArrowSLine1Icon } from "@/components/_commons/Icones/ArrowSLine1Icon";
 import { BoutonSeDeconnecter } from "@/components/_commons/BoutonSeDeconnecter";
 import { clsxm } from "@/utils/clsxm";
 import { Dropdown } from "@/components/shared/Dropdown";
-import api from "@/server/infrastructure/api/trpc/api";
 import { useProfilUtilisateurConnecte } from "@/client/hooks/useProfilUtilisateurConnecte";
+import { useEnv } from "@/client/hooks/useEnv";
 import { Settings1Icon } from "@/components/_commons/Icones/Settings1Icon";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
 
@@ -21,14 +21,8 @@ export const Utilisateur = () => {
   const session = useSession();
   const { email, prenom, nom } = useProfilUtilisateurConnecte();
 
-  const { data: panelAdminEstDisponible } =
-    api.gestionContenu.recupererVariableContenu.useQuery({
-      nomVariableContenu: "NEXT_PUBLIC_FF_PANEL_ADMIN",
-    });
-  const { data: monProfilEstDisponible } =
-    api.gestionContenu.recupererVariableContenu.useQuery({
-      nomVariableContenu: "NEXT_PUBLIC_FF_MON_PROFIL",
-    });
+  const panelAdminEstDisponible = useEnv("NEXT_PUBLIC_FF_PANEL_ADMIN");
+  const monProfilEstDisponible = useEnv("NEXT_PUBLIC_FF_MON_PROFIL");
 
   const showPanelAdministrateur =
     panelAdminEstDisponible && peutAccederPanelAdministrateur(session);
