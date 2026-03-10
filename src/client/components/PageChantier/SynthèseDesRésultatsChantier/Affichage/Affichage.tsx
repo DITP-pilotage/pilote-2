@@ -1,18 +1,18 @@
-import { formaterDate } from "@/client/utils/date/date";
 import { nettoyerUneChaîneDeCaractèresPourAffichageHTML } from "@/client/utils/strings";
 import { BoutonsAffichage } from "@/components/PageChantier/SynthèseDesRésultatsChantier/BoutonsAffichage/BoutonsAffichage";
-import { SyntheseDesResultatsAvecNomsAuteurs } from "@/server/domain/chantier/synthèseDesRésultats/SynthèseDesRésultats.interface";
 import { Icone } from "@/components/_commons/Icone";
 import { Icone1Icon } from "@/components/_commons/Icones/Icone1Icon";
 import { BoutonSousLigné } from "@/components/_commons/BoutonSousLigné/BoutonSousLigné";
 import { Infobulle } from "@/components/_commons/Infobulle/Infobulle";
+import { SyntheseDesResultatsHistoriqueItem } from "@/server/syntheses-des-resultats/queries/RecupererHistoriqueSyntheseDesResultatsQuery";
+import { PiloteDateFormatter } from "@/server/rapports-hebdomadaires/infrastructure/adapters/PiloteDateFormatter";
 import useAffichage from "./useAffichage";
 
 const SynthèseDesRésultatsAffichage = ({
   itemHistoriqueSyntheseDesResultats: synthèseDesRésultats,
   onModifier,
 }: {
-  itemHistoriqueSyntheseDesResultats: SyntheseDesResultatsAvecNomsAuteurs | null;
+  itemHistoriqueSyntheseDesResultats: SyntheseDesResultatsHistoriqueItem | null;
   onModifier?: () => void;
 }) => {
   const {
@@ -34,12 +34,12 @@ const SynthèseDesRésultatsAffichage = ({
   return (
     <>
       <p className="text-xs text-dsfr-mention-grey mb-1">
-        {synthèseDesRésultats.date_creation ===
-        synthèseDesRésultats.date_modification
-          ? `Publié le ${formaterDate(synthèseDesRésultats.date_creation, "DD/MM/YYYY")}`
-          : `Publié le ${formaterDate(synthèseDesRésultats.date_creation, "DD/MM/YYYY")} et modifié le ${formaterDate(synthèseDesRésultats.date_modification, "DD/MM/YYYY")}`}
-        {!!synthèseDesRésultats.auteur_modification_nom &&
-          ` | Par ${synthèseDesRésultats.auteur_modification_nom}`}
+        {synthèseDesRésultats.dateCreation ===
+        synthèseDesRésultats.dateModification
+          ? `Publié le ${PiloteDateFormatter.isoDateFranceMetropolitaine(synthèseDesRésultats.dateCreation)}`
+          : `Publié le ${PiloteDateFormatter.isoDateFranceMetropolitaine(synthèseDesRésultats.dateCreation)} et modifié le ${PiloteDateFormatter.isoDateFranceMetropolitaine(synthèseDesRésultats.dateModification)}`}
+        {!!synthèseDesRésultats.auteurModificationNom &&
+          ` | Par ${synthèseDesRésultats.auteurModificationNom}`}
       </p>
       {!!onModifier ? (
         <div className="flex items-center gap-1 mb-3">

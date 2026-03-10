@@ -17,6 +17,7 @@ import { Icone } from "@/components/_commons/Icone";
 import { SuccessIcon } from "@/components/_commons/Icones/SuccessIcon";
 import { ArrowGoBack1Icon } from "@/components/_commons/Icones/ArrowGoBack1Icon";
 import { Bouton } from "@/components/_commons/Bouton/Bouton";
+import { SyntheseDesResultatsAction } from "@/components/PageChantier/SynthèseDesRésultatsChantier/AlerteSyntheseDesResultats";
 import SyntheseDesResultatsFormulaireStyled from "./SyntheseDesResultatsFormulaire.styled";
 import { SyntheseDesResultatsFormulaireInputs } from "./SyntheseDesResultatsFormulaire.interface";
 import { useModifierSyntheseDesResultats } from "./useModifierSyntheseDesResultats";
@@ -24,14 +25,17 @@ import { SelecteurMeteo } from "./SelecteurMeteo";
 
 interface SyntheseDesResultatsFormulaireProps {
   annulationCallback?: () => void;
+  onAction: (action: SyntheseDesResultatsAction) => void;
 }
 
 const SyntheseDesResultatsFormulaire: FunctionComponent<
   SyntheseDesResultatsFormulaireProps
-> = ({ annulationCallback }) => {
+> = ({ annulationCallback, onAction }) => {
   const { syntheseDesResultats } = pageChantier.useServerSidePropsContext();
 
-  const modifierSynthèseDesRésultats = useModifierSyntheseDesResultats();
+  const modifierSynthèseDesRésultats = useModifierSyntheseDesResultats({
+    onAction,
+  });
 
   const {
     register,
@@ -45,9 +49,9 @@ const SyntheseDesResultatsFormulaire: FunctionComponent<
     defaultValues: {
       contenu: syntheseDesResultats?.contenu,
       meteo:
-        syntheseDesResultats?.météo &&
-        météosSaisissables.includes(syntheseDesResultats.météo)
-          ? (syntheseDesResultats.météo as MétéoSaisissable)
+        syntheseDesResultats?.meteo &&
+        météosSaisissables.includes(syntheseDesResultats.meteo)
+          ? (syntheseDesResultats.meteo as MétéoSaisissable)
           : undefined,
     },
   });
@@ -61,7 +65,7 @@ const SyntheseDesResultatsFormulaire: FunctionComponent<
         Modifier la météo et la synthèse des résultats
       </Titre>
       <p className="fr-text--xs mb-4 text-dsfr-mention-grey">
-        {`Vous pouvez apporter ci-dessous des modifications au commentaire que vous avez posté le ${formaterDate(syntheseDesResultats?.date_modification, "DD/MM/YYYY")}. Après validation, le commentaire modifié annulera et remplacera le commentaire actuel.`}
+        {`Vous pouvez apporter ci-dessous des modifications au commentaire que vous avez posté le ${formaterDate(syntheseDesResultats?.dateModification, "DD/MM/YYYY")}. Après validation, le commentaire modifié annulera et remplacera le commentaire actuel.`}
       </p>
       <div className="flex flex-1 gap-4 items-stretch">
         <div className="flex-none w-60">
@@ -69,7 +73,12 @@ const SyntheseDesResultatsFormulaire: FunctionComponent<
             control={control}
             name="meteo"
             render={({ field }) => (
-              <SelecteurMeteo onChange={field.onChange} value={field.value} />
+              <SelecteurMeteo
+                onChange={field.onChange}
+                onBlur={field.onBlur}
+                ref={field.ref}
+                value={field.value}
+              />
             )}
           />
         </div>

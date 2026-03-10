@@ -5,10 +5,12 @@ import {
   vérifierSiLeCSRFEstValide,
 } from "@/server/infrastructure/api/trpc/trpc";
 import {
+  validationBrouillonAPublier,
   validationSyntheseAModifier,
   validationSynthèseDesRésultatsContexte,
   validationSynthèseDesRésultatsFormulaire,
 } from "validation/synthèseDesRésultats";
+
 import { getContainer } from "@/server/dependances";
 
 const zodValidateurCSRF = z.object({
@@ -26,13 +28,99 @@ export const synthèseDesRésultatsRouter = créerRouteurTRPC({
       vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
 
       return getContainer("importSyntheseDesResultats")
-        .resolve("modifierUneSyntheseDesResultatsUseCase")
+        .resolve("modifierSyntheseDesResultatsPublieeUseCase")
         .execute({
           syntheseAModifier: input.syntheseAModifier,
           contenu: input.contenu,
-          météo: input.meteo,
-          auteur_modification_id: ctx.session.user.id,
-          date_modification: new Date().toISOString(),
+          meteo: input.meteo,
+          auteurModificationId: ctx.session.user.id,
+          dateModification: new Date().toISOString(),
+          habilitations: ctx.session.habilitations,
+        });
+    }),
+
+  publier: procédureProtégée
+    .input(
+      zodValidateurCSRF
+        .merge(validationSynthèseDesRésultatsFormulaire)
+        .merge(validationSynthèseDesRésultatsContexte),
+    )
+    .mutation(({ input, ctx }) => {
+      vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
+
+      return getContainer("importSyntheseDesResultats")
+        .resolve("publierSyntheseDesResultatsUseCase")
+        .execute({
+          chantierId: input.réformeId,
+          territoireCode: input.territoireCode,
+          contenu: input.contenu,
+          meteo: input.meteo,
+          auteurId: ctx.session.user.id,
+          date: new Date().toISOString(),
+          habilitations: ctx.session.habilitations,
+        });
+    }),
+
+  enregistrerEnBrouillon: procédureProtégée
+    .input(
+      zodValidateurCSRF
+        .merge(validationSynthèseDesRésultatsFormulaire)
+        .merge(validationSynthèseDesRésultatsContexte),
+    )
+    .mutation(({ input, ctx }) => {
+      vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
+
+      return getContainer("importSyntheseDesResultats")
+        .resolve("enregistrerBrouillonSyntheseDesResultatsUseCase")
+        .execute({
+          chantierId: input.réformeId,
+          territoireCode: input.territoireCode,
+          contenu: input.contenu,
+          meteo: input.meteo,
+          auteurId: ctx.session.user.id,
+          date: new Date().toISOString(),
+          habilitations: ctx.session.habilitations,
+        });
+    }),
+
+  publierUnBrouillon: procédureProtégée
+    .input(
+      zodValidateurCSRF
+        .merge(validationSynthèseDesRésultatsFormulaire)
+        .merge(validationBrouillonAPublier),
+    )
+    .mutation(({ input, ctx }) => {
+      vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
+
+      return getContainer("importSyntheseDesResultats")
+        .resolve("publierBrouillonSyntheseDesResultatsUseCase")
+        .execute({
+          brouillon: input.brouillon,
+          contenu: input.contenu,
+          meteo: input.meteo,
+          auteurModificationId: ctx.session.user.id,
+          dateModification: new Date().toISOString(),
+          habilitations: ctx.session.habilitations,
+        });
+    }),
+
+  modifierLeBrouillon: procédureProtégée
+    .input(
+      zodValidateurCSRF
+        .merge(validationSynthèseDesRésultatsFormulaire)
+        .merge(validationBrouillonAPublier),
+    )
+    .mutation(({ input, ctx }) => {
+      vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
+
+      return getContainer("importSyntheseDesResultats")
+        .resolve("modifierBrouillonSyntheseDesResultatsUseCase")
+        .execute({
+          brouillon: input.brouillon,
+          contenu: input.contenu,
+          meteo: input.meteo,
+          auteurModificationId: ctx.session.user.id,
+          dateModification: new Date().toISOString(),
           habilitations: ctx.session.habilitations,
         });
     }),

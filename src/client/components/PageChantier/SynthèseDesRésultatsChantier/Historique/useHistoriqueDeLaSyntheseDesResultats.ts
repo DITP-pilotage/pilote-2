@@ -15,7 +15,6 @@ export default function useHistoriqueDeLaSyntheseDesResultats() {
       {
         réformeId: chantier.id,
         territoireCode,
-        typeDeRéforme: "chantier",
       },
       {
         enabled: false,

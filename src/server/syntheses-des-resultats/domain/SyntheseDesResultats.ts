@@ -1,0 +1,82 @@
+import { $Enums } from "@prisma/client";
+import { randomUUID } from "node:crypto";
+import { SyntheseDesResultatsV2 } from "@/server/domain/chantier/synthèseDesRésultats/SynthèseDesRésultats.interface";
+import { Météo } from "@/server/domain/météo/Météo.interface";
+
+type ParamsCreation = {
+  chantierId: string;
+  territoireCode: string;
+  contenu: string;
+  meteo: Météo;
+  auteurId: string;
+  date: string;
+};
+
+type ParamsModification = {
+  contenu: string;
+  meteo: Météo;
+  auteurModificationId: string;
+  dateModification: string;
+};
+
+export function creerSyntheseDesResultatsPublie(
+  params: ParamsCreation,
+): SyntheseDesResultatsV2 {
+  return {
+    id: randomUUID(),
+    chantierId: params.chantierId,
+    territoireCode: params.territoireCode,
+    contenu: params.contenu,
+    meteo: params.meteo,
+    auteurCreationId: params.auteurId,
+    dateCreation: params.date,
+    auteurModificationId: params.auteurId,
+    dateModification: params.date,
+    statut: $Enums.statut_synthese_des_resultats.PUBLIE,
+  };
+}
+
+export function creerSyntheseDesResultatsBrouillon(
+  params: ParamsCreation,
+): SyntheseDesResultatsV2 {
+  return {
+    id: randomUUID(),
+    chantierId: params.chantierId,
+    territoireCode: params.territoireCode,
+    contenu: params.contenu,
+    meteo: params.meteo,
+    auteurCreationId: params.auteurId,
+    dateCreation: params.date,
+    auteurModificationId: params.auteurId,
+    dateModification: params.date,
+    statut: $Enums.statut_synthese_des_resultats.BROUILLON,
+  };
+}
+
+export function modifierSyntheseDesResultats(
+  existing: SyntheseDesResultatsV2,
+  params: ParamsModification,
+): SyntheseDesResultatsV2 {
+  return {
+    ...existing,
+    contenu: params.contenu,
+    meteo: params.meteo,
+    auteurModificationId: params.auteurModificationId,
+    dateModification: params.dateModification,
+    statut: $Enums.statut_synthese_des_resultats.PUBLIE,
+  };
+}
+
+export function modifierSyntheseDesResultatsBrouillon(
+  existing: SyntheseDesResultatsV2,
+  params: ParamsModification,
+): SyntheseDesResultatsV2 {
+  return {
+    ...existing,
+    contenu: params.contenu,
+    meteo: params.meteo,
+    auteurModificationId: params.auteurModificationId,
+    dateModification: params.dateModification,
+    statut: $Enums.statut_synthese_des_resultats.BROUILLON,
+  };
+}

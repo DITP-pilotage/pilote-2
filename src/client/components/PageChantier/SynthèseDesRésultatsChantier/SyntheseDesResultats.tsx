@@ -1,13 +1,20 @@
-import { parseAsBoolean, parseAsStringLiteral, useQueryState } from "nuqs";
-import { FunctionComponent } from "react";
+import { parseAsBoolean, useQueryState } from "nuqs";
+import { FunctionComponent, useState } from "react";
 import Bloc from "@/components/_commons/Bloc/Bloc";
 import { MeteoPicto } from "@/components/_commons/Meteo/Picto/MeteoPicto";
 import MétéoBadge from "@/components/_commons/Meteo/Badge/MétéoBadge";
 import SynthèseDesRésultatsHistorique from "@/components/PageChantier/SynthèseDesRésultatsChantier/Historique/Historique";
-import Alerte from "@/components/_commons/Alerte/Alerte";
 import SynthèseDesRésultatsAffichage from "@/components/PageChantier/SynthèseDesRésultatsChantier/Affichage/Affichage";
 import { pageChantier } from "@/components/PageChantier/PageChantierServerSideContext";
 import SyntheseDesResultatsFormulaire from "@/components/PageChantier/SynthèseDesRésultatsChantier/SyntheseDesResultatsFormulaire/SyntheseDesResultatsFormulaire";
+import { BoutonNouvelleSyntheseDesResultats } from "@/components/PageChantier/SynthèseDesRésultatsChantier/BoutonNouvelleSyntheseDesResultats/BoutonNouvelleSyntheseDesResultats";
+import { BoutonEditerBrouillonSyntheseDesResultats } from "@/components/PageChantier/SynthèseDesRésultatsChantier/BoutonNouvelleSyntheseDesResultats/BoutonEditerBrouillonSyntheseDesResultats";
+import BandeauInformation from "@/components/_commons/BandeauInformation/BandeauInformation";
+import { formaterDate } from "@/client/utils/date/date";
+import {
+  AlerteSyntheseDesResultats,
+  SyntheseDesResultatsAction,
+} from "@/components/PageChantier/SynthèseDesRésultatsChantier/AlerteSyntheseDesResultats";
 
 export interface SyntheseDesResultatsProps {
   nomTerritoire: string;
@@ -18,13 +25,11 @@ const SyntheseDesResultats: FunctionComponent<SyntheseDesResultatsProps> = ({
   nomTerritoire,
   modeEcriture = false,
 }) => {
-  const { syntheseDesResultats, chantier } =
+  const { syntheseDesResultats, syntheseDesResultatsBrouillon, chantier } =
     pageChantier.useServerSidePropsContext();
 
-  const [action] = useQueryState(
-    "_action",
-    parseAsStringLiteral(["creation-reussie", ""]),
-  );
+  const [action, setAction] = useState<SyntheseDesResultatsAction | null>(null);
+
   const [modeÉdition, setModeÉdition] = useQueryState(
     "edition",
     parseAsBoolean.withDefault(false).withOptions({
@@ -43,30 +48,30 @@ const SyntheseDesResultats: FunctionComponent<SyntheseDesResultatsProps> = ({
             : "bg-dsfr-blue-france-925"
         }
         className="h-full"
+        contenuClassesSupplémentaires=""
         titre={nomTerritoire}
       >
-        <div className="fr-py-1w">
+        {syntheseDesResultatsBrouillon?.dateModification ? (
+          <BandeauInformation bandeauType="INFO">
+            {`Vous avez enregistré un nouveau commentaire en tant que brouillon le ${formaterDate(syntheseDesResultatsBrouillon?.dateModification, "DD/MM/YYYY")}`}
+          </BandeauInformation>
+        ) : null}
+        <div className="p-4">
           {modeÉdition && modeEcriture ? (
             <SyntheseDesResultatsFormulaire
               annulationCallback={() => setModeÉdition(false)}
+              onAction={setAction}
             />
           ) : (
             <>
-              {action === "creation-reussie" && (
-                <div className="fr-mb-2w">
-                  <Alerte
-                    titre="Votre commentaire a bien été modifié"
-                    type="succès"
-                  />
-                </div>
-              )}
-              <div className="flex gap-4">
+              <AlerteSyntheseDesResultats action={action} />
+              <div className="flex gap-4 pt-2">
                 <div className="flex flex-col gap-4 align-center">
                   <MétéoBadge
-                    météo={syntheseDesResultats?.météo ?? "NON_RENSEIGNEE"}
+                    météo={syntheseDesResultats?.meteo ?? "NON_RENSEIGNEE"}
                   />
                   {syntheseDesResultats ? (
-                    <MeteoPicto meteo={syntheseDesResultats.météo} />
+                    <MeteoPicto meteo={syntheseDesResultats.meteo} />
                   ) : null}
                 </div>
                 <div>
@@ -78,12 +83,18 @@ const SyntheseDesResultats: FunctionComponent<SyntheseDesResultatsProps> = ({
                   />
                 </div>
               </div>
-              <div className="fr-grid-row fr-grid-row--right">
-                <div className="fr-col-12 flex justify-end fr-mt-1w">
-                  {!!syntheseDesResultats ? (
-                    <SynthèseDesRésultatsHistorique />
-                  ) : null}
-                </div>
+              <div className="flex justify-end items-center gap-4 mt-2">
+                {!!syntheseDesResultats ? (
+                  <SynthèseDesRésultatsHistorique />
+                ) : null}
+                {modeEcriture &&
+                  (syntheseDesResultatsBrouillon?.dateModification ? (
+                    <BoutonEditerBrouillonSyntheseDesResultats
+                      onAction={setAction}
+                    />
+                  ) : (
+                    <BoutonNouvelleSyntheseDesResultats onAction={setAction} />
+                  ))}
               </div>
             </>
           )}

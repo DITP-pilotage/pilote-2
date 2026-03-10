@@ -1,22 +1,18 @@
-import { parseAsBoolean, parseAsStringLiteral, useQueryState } from "nuqs";
+import { parseAsBoolean, useQueryState } from "nuqs";
 import api from "@/server/infrastructure/api/trpc/api";
 import { récupérerUnCookie } from "@/client/utils/cookies";
 import { pageChantier } from "@/components/PageChantier/PageChantierServerSideContext";
+import { SyntheseDesResultatsAction } from "@/components/PageChantier/SynthèseDesRésultatsChantier/AlerteSyntheseDesResultats";
 import { SyntheseDesResultatsFormulaireInputs } from "./SyntheseDesResultatsFormulaire.interface";
 
-export const useModifierSyntheseDesResultats = () => {
+export const useModifierSyntheseDesResultats = ({
+  onAction,
+}: {
+  onAction: (action: SyntheseDesResultatsAction) => void;
+}) => {
   const { syntheseDesResultats } = pageChantier.useServerSidePropsContext();
 
   const modifier = api.synthèseDesRésultats.modifier.useMutation();
-
-  const [, setAction] = useQueryState(
-    "_action",
-    parseAsStringLiteral(["creation-reussie", ""]).withDefault("").withOptions({
-      history: "push",
-      shallow: false,
-      clearOnDefault: true,
-    }),
-  );
 
   const [, setModeÉdition] = useQueryState(
     "edition",
@@ -37,7 +33,7 @@ export const useModifierSyntheseDesResultats = () => {
       },
       {
         onSuccess: async () => {
-          setAction("creation-reussie");
+          onAction("modification-reussie");
           await setModeÉdition(false);
         },
       },

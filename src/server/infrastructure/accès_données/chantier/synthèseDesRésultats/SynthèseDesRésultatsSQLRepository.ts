@@ -4,29 +4,37 @@ import { CODES_MAILLES } from "@/server/infrastructure/accès_données/maille/ma
 import { Maille } from "@/server/domain/maille/Maille.interface";
 import { CodeInsee } from "@/server/domain/territoire/Territoire.interface";
 import SynthèseDesRésultats, {
-  SynthèseDesRésultatsV2,
+  SyntheseDesResultatsV2,
 } from "@/server/domain/chantier/synthèseDesRésultats/SynthèseDesRésultats.interface";
 import { Météo } from "@/server/domain/météo/Météo.interface";
 import Chantier from "@/server/domain/chantier/Chantier.interface";
 import { territoireCodeVersMailleCodeInsee } from "@/server/utils/territoires";
-import { prisma } from "@/server/db/prisma";
+import { getInitialContainerWithTransversalDependencies } from "@/server/InitialDependencies";
 
 export class SynthèseDesRésultatsSQLRepository implements SynthèseDesRésultatsRepository {
+  private prismaClient =
+    getInitialContainerWithTransversalDependencies().resolve("prisma");
+
+  get prisma() {
+    return this.prismaClient.getInstance();
+  }
+
   async save({
     chantierId,
     territoireCode,
     id,
     contenu,
-    météo,
-    auteur_creation_id,
-    date_creation,
-    auteur_modification_id,
-    date_modification,
-  }: SynthèseDesRésultatsV2): Promise<void> {
+    meteo,
+    auteurCreationId,
+    dateCreation,
+    auteurModificationId,
+    dateModification,
+    statut,
+  }: SyntheseDesResultatsV2): Promise<void> {
     const { maille, codeInsee } =
       territoireCodeVersMailleCodeInsee(territoireCode);
 
-    await prisma.synthese_des_resultats.upsert({
+    await this.prisma.synthese_des_resultats.upsert({
       where: { id },
       create: {
         id,
@@ -35,17 +43,19 @@ export class SynthèseDesRésultatsSQLRepository implements SynthèseDesRésulta
         code_insee: codeInsee,
         territoire_code: territoireCode,
         commentaire: contenu,
-        meteo: météo,
-        auteur_creation_id,
-        date_creation: new Date(date_creation),
-        auteur_modification_id,
-        date_modification: new Date(date_modification),
+        meteo,
+        auteur_creation_id: auteurCreationId,
+        date_creation: new Date(dateCreation),
+        auteur_modification_id: auteurModificationId,
+        date_modification: new Date(dateModification),
+        statut,
       },
       update: {
         commentaire: contenu,
-        meteo: météo,
-        auteur_modification_id,
-        date_modification: new Date(date_modification),
+        meteo,
+        auteur_modification_id: auteurModificationId,
+        date_modification: new Date(dateModification),
+        statut,
       },
     });
   }
@@ -55,7 +65,7 @@ export class SynthèseDesRésultatsSQLRepository implements SynthèseDesRésulta
     maille: Maille,
     codeInsee: CodeInsee,
   ): Promise<Record<Chantier["id"], SynthèseDesRésultats>> {
-    const synthèsesDesRésultats = await prisma.$queryRaw<
+    const synthèsesDesRésultats = await this.prisma.$queryRaw<
       (synthese_des_resultats & { auteur_prenom: string; auteur_nom: string })[]
     >`
       SELECT s.*, utilisateur.prenom as auteur_prenom, utilisateur.nom as auteur_nom
