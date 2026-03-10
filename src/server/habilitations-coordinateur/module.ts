@@ -1,19 +1,28 @@
-import { asClass, AwilixContainer } from "awilix";
-import { PrismaPilote } from "@/server/db/PrismaPilote";
+import { asClass } from "awilix";
 import { AjouterLesChantierAuxHabilitationsHandler } from "@/server/habilitations-coordinateur/handlers/AjouterLesChantierAuxHabilitationsHandler";
 import { RecupererLesChantiersTerritorialisesQuery } from "@/server/habilitations-coordinateur/queries/RecupererLesChantiersTerritorialisesQuery";
+import { defineModule } from "@/server/module-system";
 
-export type HabilitationsCoordinateurDependencies = {
+type HabilitationsCoordinateurExports = Record<string, never>;
+
+type HabilitationsCoordinateurCradle = HabilitationsCoordinateurExports & {
   recupererLesChantiersTerritorialisesQuery: RecupererLesChantiersTerritorialisesQuery;
   ajouterLesChantierAuxHabilitationsHandler: AjouterLesChantierAuxHabilitationsHandler;
 };
 
-export const getHabilitationsCoordinateurContainer = (
-  initialContainer: AwilixContainer<{ prisma: PrismaPilote }>,
-): AwilixContainer<HabilitationsCoordinateurDependencies> => {
-  return initialContainer
-    .createScope<HabilitationsCoordinateurDependencies>()
-    .register({
+export type HabilitationsCoordinateurDependencies =
+  HabilitationsCoordinateurCradle;
+
+export const habilitationsCoordinateurModule = defineModule<
+  "habilitationsCoordinateur",
+  HabilitationsCoordinateurExports,
+  HabilitationsCoordinateurCradle
+>({
+  name: "habilitationsCoordinateur",
+  imports: ["shared"],
+  exports: [],
+  register: (container) => {
+    container.register({
       recupererLesChantiersTerritorialisesQuery: asClass(
         RecupererLesChantiersTerritorialisesQuery,
       ),
@@ -21,4 +30,5 @@ export const getHabilitationsCoordinateurContainer = (
         AjouterLesChantierAuxHabilitationsHandler,
       ),
     });
-};
+  },
+});

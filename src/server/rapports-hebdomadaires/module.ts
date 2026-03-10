@@ -1,33 +1,30 @@
-import { asClass, AwilixContainer } from "awilix";
-import { InitialDependencies } from "@/server/InitialDependencies";
-import { PrismaPilote } from "@/server/db/PrismaPilote";
-import { EmailManager } from "@/server/infrastructure/email-manager";
+import { asClass } from "awilix";
 import { PrismaActiviteComptesQuery } from "@/server/gestion-utilisateur/infrastructure/queries/PrismaActiviteComptesQuery";
 import { PrismaUtilisateursQuery } from "@/server/gestion-utilisateur/infrastructure/queries/PrismaUtilisateursQuery";
 import { RecupererChantiersApplicablesParTerritoiresQuery } from "@/server/chantiers/infrastructure/queries/RecupererChantiersApplicablesParTerritoiresQuery";
 import { RecupererMesuresIndicateurParPeriodeQuery } from "@/server/chantiers/infrastructure/queries/RecupererMesuresIndicateurParPeriodeQuery";
 import { RecupererEvenementsVAParPeriodeQuery } from "@/server/indicateur-territoire-valeur-evenement/infrastructure/queries/RecupererEvenementsVAParPeriodeQuery";
-
+import { defineModule } from "@/server/module-system";
 import { ActiviteComptesGateway } from "./domain/ports/ActiviteComptesGateway";
 import { CoordinateurGateway } from "./domain/ports/CoordinateurGateway";
 import { RapportRepository } from "./domain/ports/RapportRepository";
 import { EnvoieEmailService } from "./domain/ports/EnvoieEmailService";
 import { ChantierGateway } from "./domain/ports/ChantierGateway";
 import { ActiviteIndicateurGateway } from "./domain/ports/ActiviteVAGateway";
-
 import { GestionUtilisateurActiviteComptesGateway } from "./infrastructure/adapters/GestionUtilisateurActiviteComptesGateway";
 import { GestionUtilisateurCoordinateurGateway } from "./infrastructure/adapters/GestionUtilisateurCoordinateurGateway";
 import { PrismaRapportRepository } from "./infrastructure/adapters/PrismaRapportRepository";
 import { BrevoEnvoieEmailService } from "./infrastructure/adapters/BrevoEnvoieEmailService";
 import { ChantiersChantierGateway } from "./infrastructure/adapters/ChantiersChantierGateway";
 import { IndicateurActiviteGateway } from "./infrastructure/adapters/IndicateurActiviteGateway";
-
 import { ProduireRapportsHebdomadairesUseCase } from "./usecases/ProduireRapportsHebdomadairesUseCase";
 import { EnvoyerRapportsHebdomadairesUseCase } from "./usecases/EnvoyerRapportsHebdomadairesUseCase";
 import { ListerRapportsHebdomadairesQuery } from "./queries/ListerRapportsHebdomadairesQuery";
 import { RecupererRapportHebdomadaireQuery } from "./queries/RecupererRapportHebdomadaireQuery";
 
-export type RapportsHebdomadairesDependencies = {
+type RapportsHebdomadairesExports = Record<string, never>;
+
+type RapportsHebdomadairesCradle = RapportsHebdomadairesExports & {
   activiteComptesQuery: PrismaActiviteComptesQuery;
   utilisateursQuery: PrismaUtilisateursQuery;
   recupererChantiersQuery: RecupererChantiersApplicablesParTerritoiresQuery;
@@ -45,19 +42,18 @@ export type RapportsHebdomadairesDependencies = {
   recupererRapportHebdomadaireQuery: RecupererRapportHebdomadaireQuery;
 };
 
-export const getRapportsHebdomadairesContainer = (
-  initialContainer: AwilixContainer<
-    InitialDependencies & { prisma: PrismaPilote; emailManager: EmailManager }
-  >,
-): AwilixContainer<
-  RapportsHebdomadairesDependencies & {
-    prisma: PrismaPilote;
-    emailManager: EmailManager;
-  }
-> => {
-  return initialContainer
-    .createScope<RapportsHebdomadairesDependencies>()
-    .register({
+export type RapportsHebdomadairesDependencies = RapportsHebdomadairesCradle;
+
+export const rapportsHebdomadairesModule = defineModule<
+  "rapportsHebdomadaires",
+  RapportsHebdomadairesExports,
+  RapportsHebdomadairesCradle
+>({
+  name: "rapportsHebdomadaires",
+  imports: ["shared"],
+  exports: [],
+  register: (container) => {
+    container.register({
       activiteComptesQuery: asClass(PrismaActiviteComptesQuery),
       utilisateursQuery: asClass(PrismaUtilisateursQuery),
       recupererChantiersQuery: asClass(
@@ -86,4 +82,5 @@ export const getRapportsHebdomadairesContainer = (
         RecupererRapportHebdomadaireQuery,
       ),
     });
-};
+  },
+});

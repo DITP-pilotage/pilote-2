@@ -1,8 +1,8 @@
-import { asClass, AwilixContainer } from "awilix";
-import { PrismaPilote } from "@/server/db/PrismaPilote";
+import { asClass } from "awilix";
 import { PrismaIndicateurTerritoireValeurEvenementRepository } from "@/server/indicateur-territoire-valeur-evenement/infrastructure/PrismaIndicateurTerritoireValeurEvenementRepository";
 import { PrismaMesureIndicateurRepository } from "@/server/indicateur-territoire-valeur-evenement/infrastructure/PrismaMesureIndicateurRepository";
 import { MesureIndicateurRepository } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/MesureIndicateurRepository";
+import { defineModule } from "@/server/module-system";
 import { IndicateurTerritoireValeurEvenementRepository } from "./domain/ports/IndicateurTerritoireValeurEvenementRepository";
 import { CreerPropositionValeurAvancementUseCase } from "./usecases/CreerPropositionValeurAvancementUseCase";
 import { AccepterPropositionValeurAvancementUseCase } from "./usecases/AccepterPropositionValeurAvancementUseCase";
@@ -19,29 +19,38 @@ import { BrevoEnvoieEmailService } from "./infrastructure/BrevoEnvoieEmailServic
 import { UtilisateurRepository } from "./domain/ports/UtilisateurRepository";
 import { PrismaUtilisateurRepository } from "./infrastructure/PrismaUtilisateurRepository";
 
-export type IndicateurTerritoireValeurEvenementDependencies = {
-  indicateurTerritoireValeurEvenementRepository: IndicateurTerritoireValeurEvenementRepository;
-  mesureIndicateurRepository: MesureIndicateurRepository;
-  indicateurRepository: IndicateurRepository;
-  utilisateurRepository: UtilisateurRepository;
-  envoieEmailService: EnvoieEmailService;
-  creerPropositionValeurAvancementUseCase: CreerPropositionValeurAvancementUseCase;
-  accepterPropositionValeurAvancementUseCase: AccepterPropositionValeurAvancementUseCase;
-  refuserPropositionValeurAvancementUseCase: RefuserPropositionValeurAvancementUseCase;
-  accuserReceptionPropositionValeurUseCase: AccuserReceptionPropositionValeurUseCase;
-  modifierPropositionValeurAvancementUseCase: ModifierPropositionValeurAvancementUseCase;
-  supprimerPropositionValeurAvancementUseCase: SupprimerPropositionValeurAvancementUseCase;
-  accepterAvecModificationPropositionValeurAvancementUseCase: AccepterAvecModificationPropositionValeurAvancementUseCase;
-  recupererHistoriqueIndicateurTerritoireValeurEvenementUseCase: RecupererHistoriqueIndicateurTerritoireValeurEvenementUseCase;
-};
-export const getIndicateurTerritoireValeurEvenementContainer = (
-  initialContainer: AwilixContainer<{ prisma: PrismaPilote }>,
-): AwilixContainer<
-  IndicateurTerritoireValeurEvenementDependencies & { prisma: PrismaPilote }
-> => {
-  return initialContainer
-    .createScope<IndicateurTerritoireValeurEvenementDependencies>()
-    .register({
+type IndicateurTerritoireValeurEvenementExports = Record<string, never>;
+
+type IndicateurTerritoireValeurEvenementCradle =
+  IndicateurTerritoireValeurEvenementExports & {
+    indicateurTerritoireValeurEvenementRepository: IndicateurTerritoireValeurEvenementRepository;
+    mesureIndicateurRepository: MesureIndicateurRepository;
+    indicateurRepository: IndicateurRepository;
+    utilisateurRepository: UtilisateurRepository;
+    envoieEmailService: EnvoieEmailService;
+    creerPropositionValeurAvancementUseCase: CreerPropositionValeurAvancementUseCase;
+    accepterPropositionValeurAvancementUseCase: AccepterPropositionValeurAvancementUseCase;
+    refuserPropositionValeurAvancementUseCase: RefuserPropositionValeurAvancementUseCase;
+    accuserReceptionPropositionValeurUseCase: AccuserReceptionPropositionValeurUseCase;
+    modifierPropositionValeurAvancementUseCase: ModifierPropositionValeurAvancementUseCase;
+    supprimerPropositionValeurAvancementUseCase: SupprimerPropositionValeurAvancementUseCase;
+    accepterAvecModificationPropositionValeurAvancementUseCase: AccepterAvecModificationPropositionValeurAvancementUseCase;
+    recupererHistoriqueIndicateurTerritoireValeurEvenementUseCase: RecupererHistoriqueIndicateurTerritoireValeurEvenementUseCase;
+  };
+
+export type IndicateurTerritoireValeurEvenementDependencies =
+  IndicateurTerritoireValeurEvenementCradle;
+
+export const indicateurTerritoireValeurEvenementModule = defineModule<
+  "indicateurTerritoireValeurEvenement",
+  IndicateurTerritoireValeurEvenementExports,
+  IndicateurTerritoireValeurEvenementCradle
+>({
+  name: "indicateurTerritoireValeurEvenement",
+  imports: ["shared"],
+  exports: [],
+  register: (container) => {
+    container.register({
       indicateurTerritoireValeurEvenementRepository: asClass(
         PrismaIndicateurTerritoireValeurEvenementRepository,
       ),
@@ -74,4 +83,5 @@ export const getIndicateurTerritoireValeurEvenementContainer = (
         RecupererHistoriqueIndicateurTerritoireValeurEvenementUseCase,
       ),
     });
-};
+  },
+});

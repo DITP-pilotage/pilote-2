@@ -1,8 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { z } from "zod";
 import { onlyCron } from "@/server/infrastructure/api/cron/onlyCron";
-import { getInitialContainerWithTransversalDependencies } from "@/server/InitialDependencies";
-import { getRapportsHebdomadairesContainer } from "@/server/rapports-hebdomadaires/container";
+import { getContainer } from "@/server/dependances";
 import logger from "@/server/infrastructure/Logger";
 import { envoieMessageTchap } from "@/server/utils/notification-tchap";
 import { configuration, configurationFeatureFlip } from "@/config";
@@ -41,8 +40,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     dateExecution: maintenant.toISOString(),
   });
 
-  const initialContainer = getInitialContainerWithTransversalDependencies();
-  const container = getRapportsHebdomadairesContainer(initialContainer);
+  const container = getContainer("rapportsHebdomadaires");
 
   const produireUseCase = container.resolve(
     "produireRapportsHebdomadairesUseCase",

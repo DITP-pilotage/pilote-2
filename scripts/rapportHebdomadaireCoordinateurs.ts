@@ -3,8 +3,7 @@ import process from "node:process";
 import assert from "node:assert/strict";
 import logger from "@/server/infrastructure/Logger";
 import { envoieMessageTchap } from "@/server/utils/notification-tchap";
-import { getInitialContainerWithTransversalDependencies } from "@/server/InitialDependencies";
-import { getRapportsHebdomadairesContainer } from "@/server/rapports-hebdomadaires/container";
+import { getContainer } from "@/server/dependances";
 
 const baseUrl = process.env.TCHAP_BASE_URL ?? "";
 const roomId = process.env.TCHAP_ROOM_ID_RAPPORT_COORDINATEURS ?? "";
@@ -28,8 +27,7 @@ async function main() {
     dateExecution: maintenant.toISOString(),
   });
 
-  const initialContainer = getInitialContainerWithTransversalDependencies();
-  const container = getRapportsHebdomadairesContainer(initialContainer);
+  const container = getContainer("rapportsHebdomadaires");
 
   const produireUseCase = container.resolve(
     "produireRapportsHebdomadairesUseCase",

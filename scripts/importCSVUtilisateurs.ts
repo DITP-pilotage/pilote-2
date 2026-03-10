@@ -3,8 +3,7 @@ import process from "node:process";
 import assert from "node:assert/strict";
 import logger from "@/server/infrastructure/Logger";
 import UtilisateurCSVParseur from "@/server/infrastructure/import_csv/utilisateur/UtilisateurCSVParseur";
-import { getInitialContainerWithTransversalDependencies } from "@/server/InitialDependencies";
-import { getGestionUtilisateurContainer } from "@/server/gestion-utilisateur/container";
+import { getContainer } from "@/server/dependances";
 
 const projectDir = process.cwd();
 loadEnvConfig(projectDir); // ⚠️ À appeler avant nos imports, because Configuration.ts est aussi chargée côté front
@@ -57,8 +56,7 @@ async function main() {
   const filename = process.argv[2];
   assert(filename, "Nom de fichier CSV manquant");
 
-  const initialContainer = getInitialContainerWithTransversalDependencies();
-  const container = getGestionUtilisateurContainer(initialContainer);
+  const container = getContainer("gestionUtilisateur");
 
   const contenuParsé = new UtilisateurCSVParseur(filename).parse()
     .parsedCsvRecords;

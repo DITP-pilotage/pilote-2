@@ -1,4 +1,4 @@
-import { asClass, AwilixContainer } from "awilix";
+import { asClass } from "awilix";
 import { ChantierRepository } from "@/server/gestion-utilisateur/domain/ports/ChantierRepository";
 import { PrismaChantierRepository } from "@/server/gestion-utilisateur/infrastructure/adapters/PrismaChantierRepository";
 import { RecupererChantiersSynthetisesUseCase } from "@/server/gestion-utilisateur/usecases/RecupererChantiersSynthetisesUseCase";
@@ -8,7 +8,6 @@ import RecupererPerimetresMinisterielsUseCase from "@/server/gestion-utilisateur
 import { RecupererListeProfilUseCase } from "@/server/usecase/profil/RecupererListeProfilUseCase";
 import { ProfilRepository } from "@/server/gestion-utilisateur/domain/ports/ProfilRepository";
 import { PrismaProfilRepository } from "@/server/gestion-utilisateur/infrastructure/adapters/PrismaProfilRepository";
-import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { PrismaTerritoireRepository } from "@/server/gestion-utilisateur/infrastructure/adapters/PrismaTerritoireRepository";
 import { TerritoireRepository } from "@/server/gestion-utilisateur/domain/ports/TerritoireRepository";
 import { RecupererTerritoiresAvecNombreUtilisateursUseCase } from "@/server/gestion-utilisateur/usecases/RecupererTerritoiresAvecNombreUtilisateursUseCase";
@@ -17,6 +16,7 @@ import { RecupererTousLesTerritoiresUseCase } from "@/server/usecase/territoire/
 import { RecupererListeUtilisateursUseCase } from "@/server/gestion-utilisateur/usecases/RecupererListeUtilisateursUseCase";
 import { PrismaHistorisationModificationRepository } from "@/server/infrastructure/accès_données/historisationModification/PrismaHistorisationModificationRepository";
 import { HistorisationModificationRepository } from "@/server/domain/historisationModification/HistorisationModificationRepository";
+import { defineModule } from "@/server/module-system";
 import { UtilisateurRepository } from "./domain/ports/UtilisateurRepository";
 import { UtilisateurIAMRepository } from "./domain/ports/UtilisateurIAMRepository";
 import { TokenAPIInformationRepository } from "./domain/ports/TokenAPIInformationRepository";
@@ -57,7 +57,9 @@ import { EnvoyerLesRelancesUseCase } from "./usecases/EnvoyerLesRelancesUseCase"
 import { DesactiverLesComptesInactifsUseCase } from "./usecases/DesactiverLesComptesInactifsUseCase";
 import ImporterDesUtilisateursUseCase from "./usecases/ImporterDesUtilisateursUseCase";
 
-export type GestionUtilisateurDependencies = {
+type GestionUtilisateurExports = Record<string, never>;
+
+type GestionUtilisateurCradle = GestionUtilisateurExports & {
   utilisateurRepository: UtilisateurRepository;
   territoireRepository: TerritoireRepository;
   utilisateurIAMRepository: UtilisateurIAMRepository;
@@ -99,14 +101,18 @@ export type GestionUtilisateurDependencies = {
   importerDesUtilisateursUseCase: ImporterDesUtilisateursUseCase;
 };
 
-export const getGestionUtilisateurContainer = (
-  initialContainer: AwilixContainer<{ prisma: PrismaPilote }>,
-): AwilixContainer<
-  GestionUtilisateurDependencies & { prisma: PrismaPilote }
-> => {
-  return initialContainer
-    .createScope<GestionUtilisateurDependencies>()
-    .register({
+export type GestionUtilisateurDependencies = GestionUtilisateurCradle;
+
+export const gestionUtilisateurModule = defineModule<
+  "gestionUtilisateur",
+  GestionUtilisateurExports,
+  GestionUtilisateurCradle
+>({
+  name: "gestionUtilisateur",
+  imports: ["shared"],
+  exports: [],
+  register: (container) => {
+    container.register({
       utilisateurRepository: asClass(PrismaUtilisateurRepository),
       territoireRepository: asClass(PrismaTerritoireRepository),
       utilisateurIAMRepository: asClass(UtilisateurIAMKeycloakRepository),
@@ -191,4 +197,5 @@ export const getGestionUtilisateurContainer = (
       ),
       importerDesUtilisateursUseCase: asClass(ImporterDesUtilisateursUseCase),
     });
-};
+  },
+});

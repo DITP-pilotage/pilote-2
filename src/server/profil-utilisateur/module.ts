@@ -1,37 +1,38 @@
-import { asClass, asFunction, AwilixContainer } from "awilix";
+import { asClass } from "awilix";
 import { ProfilUtilisateurRepository } from "@/server/profil-utilisateur/domain/ports/ProfilUtilisateurRepository";
 import { PrismaProfilUtilisateurRepository } from "@/server/profil-utilisateur/infrastructure/adapters/PrismaProfilUtilisateurRepository";
 import { ModifierMonProfilUseCase } from "@/server/profil-utilisateur/usecases/ModifierMonProfilUseCase";
 import { GetProfilUtilisateurQuery } from "@/server/profil-utilisateur/queries/GetProfilUtilisateurQuery";
-import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { ProfilModifieSideEffects } from "@/server/profil-utilisateur/domain/ports/ProfilModifieSideEffects";
 import { KeycloakBrevoProfilModifieSideEffects } from "@/server/profil-utilisateur/infrastructure/adapters/KeycloakBrevoProfilModifieSideEffects";
-import { EmailManager } from "@/server/infrastructure/email-manager/EmailManager";
+import type { EmailManager } from "@/server/infrastructure/email-manager/EmailManager";
 import { configuration } from "@/config";
+import { defineModule } from "@/server/module-system";
 
-export type ProfilUtilisateurDependencies = {
+type ProfilUtilisateurExports = Record<string, never>;
+
+type ProfilUtilisateurCradle = ProfilUtilisateurExports & {
   profilUtilisateurRepository: ProfilUtilisateurRepository;
   profilModifieSideEffects: ProfilModifieSideEffects;
   modifierMonProfilUseCase: ModifierMonProfilUseCase;
   getProfilUtilisateurQuery: GetProfilUtilisateurQuery;
+  emailManager: EmailManager;
 };
 
-export const getProfilUtilisateurContainer = (
-  initialContainer: AwilixContainer<{
-    prisma: PrismaPilote;
-    emailManager: EmailManager;
-  }>,
-): AwilixContainer<
-  ProfilUtilisateurDependencies & {
-    prisma: PrismaPilote;
-    emailManager: EmailManager;
-  }
-> => {
-  return initialContainer
-    .createScope<ProfilUtilisateurDependencies>()
-    .register({
+export type ProfilUtilisateurDependencies = ProfilUtilisateurCradle;
+
+export const profilUtilisateurModule = defineModule<
+  "profilUtilisateur",
+  ProfilUtilisateurExports,
+  ProfilUtilisateurCradle
+>({
+  name: "profilUtilisateur",
+  imports: ["shared"],
+  exports: [],
+  register: (container, fn) => {
+    container.register({
       profilUtilisateurRepository: asClass(PrismaProfilUtilisateurRepository),
-      profilModifieSideEffects: asFunction(({ emailManager }) => {
+      profilModifieSideEffects: fn(({ emailManager }) => {
         const config = configuration();
         return new KeycloakBrevoProfilModifieSideEffects({
           emailManager,
@@ -43,4 +44,5 @@ export const getProfilUtilisateurContainer = (
       modifierMonProfilUseCase: asClass(ModifierMonProfilUseCase),
       getProfilUtilisateurQuery: asClass(GetProfilUtilisateurQuery),
     });
-};
+  },
+});

@@ -1,4 +1,4 @@
-import { asClass, AwilixContainer } from "awilix";
+import { asClass } from "awilix";
 import { PublierFichierImportIndicateurHandler } from "@/server/import-indicateur/infrastructure/handlers/PublierIndicateurHandler";
 import { PublierFichierIndicateurImporteUseCase } from "@/server/import-indicateur/usecases/PublierFichierIndicateurImporteUseCase";
 import { MesureIndicateurTemporaireRepository } from "@/server/import-indicateur/domain/ports/MesureIndicateurTemporaireRepository.interface";
@@ -18,11 +18,13 @@ import { VerifierFichierIndicateurImporteUseCase } from "@/server/import-indicat
 import { FetchHttpClient } from "@/server/import-indicateur/infrastructure/adapters/FetchHttpClient";
 import { HttpClient } from "@/server/import-indicateur/domain/ports/HttpClient.interface";
 import { ImportDonneeIndicateurAPIHandler } from "@/server/import-indicateur/infrastructure/handlers/ImportDonneeIndicateurAPIHandler";
-import { PrismaPilote } from "@/server/db/PrismaPilote";
+import { defineModule } from "@/server/module-system";
 import { PropositionValeurAvancementRepository } from "./domain/ports/PropositionValeurAvancementRepository";
 import { PrismaPropositionValeurAvancementRepository } from "./infrastructure/adapters/PrismaPropositionValeurAvancementRepository";
 
-export type ImportIndicateurDependencies = {
+type ImportIndicateurExports = Record<string, never>;
+
+type ImportIndicateurCradle = ImportIndicateurExports & {
   httpClient: HttpClient;
   publierFichierImportIndicateurHandler: PublierFichierImportIndicateurHandler;
   publierFichierIndicateurImporteUseCase: PublierFichierIndicateurImporteUseCase;
@@ -37,38 +39,50 @@ export type ImportIndicateurDependencies = {
   importDonneeIndicateurAPIHandler: ImportDonneeIndicateurAPIHandler;
   propositionValeurAvancementRepository: PropositionValeurAvancementRepository;
 };
-export const getImportIndicateurContainer = (
-  initialContainer: AwilixContainer<{ prisma: PrismaPilote }>,
-): AwilixContainer<ImportIndicateurDependencies & { prisma: PrismaPilote }> => {
-  return initialContainer.createScope<ImportIndicateurDependencies>().register({
-    httpClient: asClass(FetchHttpClient),
-    publierFichierImportIndicateurHandler: asClass(
-      PublierFichierImportIndicateurHandler,
-    ),
-    publierFichierIndicateurImporteUseCase: asClass(
-      PublierFichierIndicateurImporteUseCase,
-    ),
-    mesureIndicateurTemporaireRepository: asClass(
-      PrismaMesureIndicateurTemporaireRepository,
-    ),
-    mesureIndicateurRepository: asClass(PrismaMesureIndicateurRepository),
-    verifierFichierImportIndicateurHandler: asClass(
-      VerifierFichierImportIndicateurHandler,
-    ),
-    verifierFichierIndicateurImporteUseCase: asClass(
-      VerifierFichierIndicateurImporteUseCase,
-    ),
-    fichierIndicateurValidationService: asClass(
-      ValidataFichierIndicateurValidationService,
-    ),
-    erreurValidationFichierRepository: asClass(
-      PrismaErreurValidationFichierRepository,
-    ),
-    indicateurRepository: asClass(PrismaIndicateurRepository),
-    rapportRepository: asClass(PrismaRapportRepository),
-    importDonneeIndicateurAPIHandler: asClass(ImportDonneeIndicateurAPIHandler),
-    propositionValeurAvancementRepository: asClass(
-      PrismaPropositionValeurAvancementRepository,
-    ),
-  });
-};
+
+export type ImportIndicateurDependencies = ImportIndicateurCradle;
+
+export const importIndicateurModule = defineModule<
+  "importIndicateur",
+  ImportIndicateurExports,
+  ImportIndicateurCradle
+>({
+  name: "importIndicateur",
+  imports: ["shared"],
+  exports: [],
+  register: (container) => {
+    container.register({
+      httpClient: asClass(FetchHttpClient),
+      publierFichierImportIndicateurHandler: asClass(
+        PublierFichierImportIndicateurHandler,
+      ),
+      publierFichierIndicateurImporteUseCase: asClass(
+        PublierFichierIndicateurImporteUseCase,
+      ),
+      mesureIndicateurTemporaireRepository: asClass(
+        PrismaMesureIndicateurTemporaireRepository,
+      ),
+      mesureIndicateurRepository: asClass(PrismaMesureIndicateurRepository),
+      verifierFichierImportIndicateurHandler: asClass(
+        VerifierFichierImportIndicateurHandler,
+      ),
+      verifierFichierIndicateurImporteUseCase: asClass(
+        VerifierFichierIndicateurImporteUseCase,
+      ),
+      fichierIndicateurValidationService: asClass(
+        ValidataFichierIndicateurValidationService,
+      ),
+      erreurValidationFichierRepository: asClass(
+        PrismaErreurValidationFichierRepository,
+      ),
+      indicateurRepository: asClass(PrismaIndicateurRepository),
+      rapportRepository: asClass(PrismaRapportRepository),
+      importDonneeIndicateurAPIHandler: asClass(
+        ImportDonneeIndicateurAPIHandler,
+      ),
+      propositionValeurAvancementRepository: asClass(
+        PrismaPropositionValeurAvancementRepository,
+      ),
+    });
+  },
+});

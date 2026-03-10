@@ -1,4 +1,4 @@
-import { asClass, AwilixContainer } from "awilix";
+import { asClass } from "awilix";
 import { HistorisationModificationRepository } from "@/server/domain/historisationModification/HistorisationModificationRepository";
 import CreerUneMetadataIndicateurUseCase from "@/server/parametrage-indicateur/usecases/CreerUneMetadataIndicateurUseCase";
 import ModifierUneMetadataIndicateurUseCase from "@/server/parametrage-indicateur/usecases/ModifierUneMetadataIndicateurUseCase";
@@ -14,10 +14,12 @@ import { PrismaHistorisationModificationRepository } from "@/server/infrastructu
 import { PrismaMetadataParametrageIndicateurRepository } from "@/server/parametrage-indicateur/infrastructure/adapters/PrismaMetadataParametrageIndicateurRepository";
 import { PrismaMetadataParametrageIndicateurQuery } from "@/server/parametrage-indicateur/infrastructure/queries/PrismaMetadataParametrageIndicateurQuery";
 import { GetMetadataIndicateurConfigurationQuery } from "@/server/parametrage-indicateur/queries/GetMetadataIndicateurConfigurationQuery";
-import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { EnregistrerMetadataIndicateurHandler } from "@/server/parametrage-indicateur/handlers/EnregistrerMetadataIndicateurHandler";
+import { defineModule } from "@/server/module-system";
 
-export type ParametrageIndicateurDependencies = {
+type ParametrageIndicateurExports = Record<string, never>;
+
+type ParametrageIndicateurCradle = ParametrageIndicateurExports & {
   historisationModificationRepository: HistorisationModificationRepository;
   creerUneMetadataIndicateurUseCase: CreerUneMetadataIndicateurUseCase;
   modifierUneMetadataIndicateurUseCase: ModifierUneMetadataIndicateurUseCase;
@@ -34,14 +36,18 @@ export type ParametrageIndicateurDependencies = {
   enregistrerMetadataIndicateurHandler: EnregistrerMetadataIndicateurHandler;
 };
 
-export const getParametrageIndicateurContainer = (
-  initialContainer: AwilixContainer<{ prisma: PrismaPilote }>,
-): AwilixContainer<
-  ParametrageIndicateurDependencies & { prisma: PrismaPilote }
-> => {
-  return initialContainer
-    .createScope<ParametrageIndicateurDependencies>()
-    .register({
+export type ParametrageIndicateurDependencies = ParametrageIndicateurCradle;
+
+export const parametrageIndicateurModule = defineModule<
+  "parametrageIndicateur",
+  ParametrageIndicateurExports,
+  ParametrageIndicateurCradle
+>({
+  name: "parametrageIndicateur",
+  imports: ["shared"],
+  exports: [],
+  register: (container) => {
+    container.register({
       historisationModificationRepository: asClass(
         PrismaHistorisationModificationRepository,
       ),
@@ -83,4 +89,5 @@ export const getParametrageIndicateurContainer = (
         EnregistrerMetadataIndicateurHandler,
       ),
     });
-};
+  },
+});

@@ -1,5 +1,5 @@
-import { asClass, AwilixContainer } from "awilix";
-import { PrismaPilote } from "@/server/db/PrismaPilote";
+import { asClass } from "awilix";
+import { defineModule } from "@/server/module-system";
 import { CreerArticleCentreAideUseCase } from "./usecases/CreerArticleCentreAideUseCase";
 import { PrismaArticleCentreAideRepository } from "./infrastructure/adapters/PrismaArticleCentreAideRepository";
 import { ArticleCentreAideRepository } from "./domain/ports/ArticleCentreAideRepository";
@@ -7,7 +7,9 @@ import { ListerArticlesCentreAideUseCase } from "./usecases/ListerArticlesCentre
 import { ModifierArticleCentreAideUseCase } from "./usecases/ModifierArticleCentreAideUseCase";
 import { SupprimerArticleCentreAideUseCase } from "./usecases/SupprimerArticleCentreAideUseCase";
 
-export type ParametrageCentreAideDependencies = {
+type ParametrageCentreAideExports = Record<string, never>;
+
+type ParametrageCentreAideCradle = ParametrageCentreAideExports & {
   creerArticleCentreAideUseCase: CreerArticleCentreAideUseCase;
   articleCentreAideRepository: ArticleCentreAideRepository;
   listerArticlesCentreAideUseCase: ListerArticlesCentreAideUseCase;
@@ -15,14 +17,18 @@ export type ParametrageCentreAideDependencies = {
   supprimerArticleCentreAideUseCase: SupprimerArticleCentreAideUseCase;
 };
 
-export const getParametrageCentreAideContainer = (
-  initialContainer: AwilixContainer<{ prisma: PrismaPilote }>,
-): AwilixContainer<
-  ParametrageCentreAideDependencies & { prisma: PrismaPilote }
-> => {
-  return initialContainer
-    .createScope<ParametrageCentreAideDependencies>()
-    .register({
+export type ParametrageCentreAideDependencies = ParametrageCentreAideCradle;
+
+export const parametrageCentreAideModule = defineModule<
+  "parametrageCentreAide",
+  ParametrageCentreAideExports,
+  ParametrageCentreAideCradle
+>({
+  name: "parametrageCentreAide",
+  imports: ["shared"],
+  exports: [],
+  register: (container) => {
+    container.register({
       creerArticleCentreAideUseCase: asClass(CreerArticleCentreAideUseCase),
       articleCentreAideRepository: asClass(PrismaArticleCentreAideRepository),
       listerArticlesCentreAideUseCase: asClass(ListerArticlesCentreAideUseCase),
@@ -33,4 +39,5 @@ export const getParametrageCentreAideContainer = (
         SupprimerArticleCentreAideUseCase,
       ),
     });
-};
+  },
+});

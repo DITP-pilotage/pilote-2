@@ -3,8 +3,7 @@ import { loadEnvConfig } from "@next/env";
 import process from "node:process";
 import logger from "@/server/infrastructure/Logger";
 import { envoieMessageTchap } from "@/server/utils/notification-tchap";
-import { getInitialContainerWithTransversalDependencies } from "@/server/InitialDependencies";
-import { getChantiersContainer } from "@/server/chantiers/container";
+import { getContainer } from "@/server/dependances";
 import { CreerLesRapportsPropositionsResultat } from "@/server/chantiers/usecases/CreerLesRapportsPropositionsUseCase";
 import { EnvoyerLesRapportsPropositionsResultat } from "@/server/chantiers/usecases/EnvoyerLesRapportsPropositionsUseCase";
 
@@ -20,8 +19,7 @@ interface ResultatRapportPVA {
 }
 
 async function main(): Promise<ResultatRapportPVA> {
-  const initialContainer = getInitialContainerWithTransversalDependencies();
-  const container = getChantiersContainer(initialContainer);
+  const container = getContainer("chantiers");
 
   logger.info("Phase 1 : Création des rapports");
   const resultatCreation = await container

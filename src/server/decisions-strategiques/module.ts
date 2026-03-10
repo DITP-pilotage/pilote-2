@@ -1,24 +1,31 @@
-import { asClass, AwilixContainer } from "awilix";
+import { asClass } from "awilix";
 import { ImportDecisionStrategiqueAPIHandler } from "@/server/decisions-strategiques/infrastructure/handlers/ImportDecisionStrategiqueAPIHandler";
 import { ImporterDecisionsStrategiquesUseCase } from "@/server/decisions-strategiques/usecases/ImporterDecisionsStrategiquesUseCase";
 import DécisionStratégiqueRepository from "@/server/domain/chantier/décisionStratégique/DécisionStratégiqueRepository.interface";
 import DécisionStratégiqueSQLRepository from "@/server/infrastructure/accès_données/chantier/décisionStratégique/DécisionStratégiqueSQLRepository";
-import { PrismaPilote } from "@/server/db/PrismaPilote";
+import { defineModule } from "@/server/module-system";
 
-export type ImportDecisionStrategiqueDependencies = {
+type ImportDecisionStrategiqueExports = Record<string, never>;
+
+type ImportDecisionStrategiqueCradle = ImportDecisionStrategiqueExports & {
   importDecisionStrategiqueAPIHandler: ImportDecisionStrategiqueAPIHandler;
   importerDecisionsStrategiquesUseCase: ImporterDecisionsStrategiquesUseCase;
   décisionStratégiqueRepository: DécisionStratégiqueRepository;
 };
 
-export const getImportDecisionStrategiqueContainer = (
-  initialContainer: AwilixContainer<{ prisma: PrismaPilote }>,
-): AwilixContainer<
-  ImportDecisionStrategiqueDependencies & { prisma: PrismaPilote }
-> => {
-  return initialContainer
-    .createScope<ImportDecisionStrategiqueDependencies>()
-    .register({
+export type ImportDecisionStrategiqueDependencies =
+  ImportDecisionStrategiqueCradle;
+
+export const importDecisionStrategiqueModule = defineModule<
+  "importDecisionStrategique",
+  ImportDecisionStrategiqueExports,
+  ImportDecisionStrategiqueCradle
+>({
+  name: "importDecisionStrategique",
+  imports: ["shared"],
+  exports: [],
+  register: (container) => {
+    container.register({
       décisionStratégiqueRepository: asClass(DécisionStratégiqueSQLRepository),
       importerDecisionsStrategiquesUseCase: asClass(
         ImporterDecisionsStrategiquesUseCase,
@@ -27,4 +34,5 @@ export const getImportDecisionStrategiqueContainer = (
         ImportDecisionStrategiqueAPIHandler,
       ),
     });
-};
+  },
+});

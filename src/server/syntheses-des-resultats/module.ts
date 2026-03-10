@@ -1,4 +1,4 @@
-import { asClass, AwilixContainer } from "awilix";
+import { asClass } from "awilix";
 import { ImportSyntheseDesResultatsAPIHandler } from "@/server/syntheses-des-resultats/infrastructure/handlers/ImportSyntheseDesResultatsAPIHandler";
 import { ImporterSynthesesDesResultatsUseCase } from "@/server/syntheses-des-resultats/usecases/ImporterSynthesesDesResultatsUseCase";
 import { RecupererDerniereSyntheseDesResultatsQuery } from "@/server/syntheses-des-resultats/queries/RecupererDerniereSyntheseDesResultatsQuery";
@@ -10,7 +10,7 @@ import { ChantierRepository } from "@/server/chantiers/domain/ports/ChantierRepo
 import { PrismaChantierRepository } from "@/server/chantiers/infrastructure/adapters/PrismaChantierRepository";
 import { Transaction } from "@/server/db/Transaction";
 import { PrismaTransaction } from "@/server/db/PrismaTransaction";
-import { PrismaPilote } from "@/server/db/PrismaPilote";
+import { defineModule } from "@/server/module-system";
 import { EnregistrerSyntheseDesResultatsService } from "@/server/syntheses-des-resultats/services/EnregistrerSyntheseDesResultatsService";
 import { PublierSyntheseDesResultatsUseCase } from "@/server/syntheses-des-resultats/usecases/PublierSyntheseDesResultatsUseCase";
 import { EnregistrerBrouillonSyntheseDesResultatsUseCase } from "@/server/syntheses-des-resultats/usecases/EnregistrerBrouillonSyntheseDesResultatsUseCase";
@@ -18,7 +18,9 @@ import { ModifierSyntheseDesResultatsPublieeUseCase } from "@/server/syntheses-d
 import { PublierBrouillonSyntheseDesResultatsUseCase } from "@/server/syntheses-des-resultats/usecases/PublierBrouillonSyntheseDesResultatsUseCase";
 import { ModifierBrouillonSyntheseDesResultatsUseCase } from "@/server/syntheses-des-resultats/usecases/ModifierBrouillonSyntheseDesResultatsUseCase";
 
-export type ImportSyntheseDesResultatsDependencies = {
+type ImportSyntheseDesResultatsExports = Record<string, never>;
+
+type ImportSyntheseDesResultatsCradle = ImportSyntheseDesResultatsExports & {
   importSyntheseDesResultatsAPIHandler: ImportSyntheseDesResultatsAPIHandler;
   importerSynthesesDesResultatsUseCase: ImporterSynthesesDesResultatsUseCase;
   enregistrerSyntheseDesResultatsService: EnregistrerSyntheseDesResultatsService;
@@ -35,14 +37,19 @@ export type ImportSyntheseDesResultatsDependencies = {
   transaction: Transaction;
 };
 
-export const getImportSyntheseDesResultatsContainer = (
-  initialContainer: AwilixContainer<{ prisma: PrismaPilote }>,
-): AwilixContainer<
-  ImportSyntheseDesResultatsDependencies & { prisma: PrismaPilote }
-> => {
-  return initialContainer
-    .createScope<ImportSyntheseDesResultatsDependencies>()
-    .register({
+export type ImportSyntheseDesResultatsDependencies =
+  ImportSyntheseDesResultatsCradle;
+
+export const importSyntheseDesResultatsModule = defineModule<
+  "importSyntheseDesResultats",
+  ImportSyntheseDesResultatsExports,
+  ImportSyntheseDesResultatsCradle
+>({
+  name: "importSyntheseDesResultats",
+  imports: ["shared"],
+  exports: [],
+  register: (container) => {
+    container.register({
       synthèseDesRésultatsRepository: asClass(
         SynthèseDesRésultatsSQLRepository,
       ),
@@ -82,4 +89,5 @@ export const getImportSyntheseDesResultatsContainer = (
         ImportSyntheseDesResultatsAPIHandler,
       ),
     });
-};
+  },
+});

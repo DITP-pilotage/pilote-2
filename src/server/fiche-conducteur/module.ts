@@ -1,4 +1,4 @@
-import { asClass, AwilixContainer } from "awilix";
+import { asClass } from "awilix";
 import { FicheConducteurHandler } from "@/server/fiche-conducteur/infrastructure/handlers/FicheConducteurHandler";
 import { ChantierRepository } from "@/server/fiche-conducteur/domain/ports/ChantierRepository";
 import { PrismaChantierRepository } from "@/server/fiche-conducteur/infrastructure/adapters/PrismaChantierRepository";
@@ -17,9 +17,11 @@ import { RécupérerDernièreSynthèseDesRésultatsUseCase } from "@/server/fich
 import { RécupérerDonnéesCartographieUseCase } from "@/server/fiche-conducteur/usecases/RécupérerDonnéesCartographieUseCase";
 import { PrismaSynthèseDesRésultatsRepository } from "@/server/fiche-conducteur/infrastructure/adapters/PrismaSynthèseDesRésultatsRepository";
 import { SynthèseDesRésultatsRepository } from "@/server/fiche-conducteur/domain/ports/SynthèseDesRésultatsRepository";
-import { PrismaPilote } from "@/server/db/PrismaPilote";
+import { defineModule } from "@/server/module-system";
 
-export type FicheConducteurDependencies = {
+type FicheConducteurExports = Record<string, never>;
+
+type FicheConducteurCradle = FicheConducteurExports & {
   ficheConducteurHandler: FicheConducteurHandler;
   recupererChantierFicheConducteurUseCase: RécupererChantierFicheConducteurUseCase;
   recupererAvancementUseCase: RécupérerAvancementUseCase;
@@ -33,29 +35,41 @@ export type FicheConducteurDependencies = {
   synthèseDesRésultatsRepository: SynthèseDesRésultatsRepository;
   decisionStrategiqueRepository: DecisionStrategiqueRepository;
 };
-export const getFicheConducteurContainer = (
-  initialContainer: AwilixContainer<{ prisma: PrismaPilote }>,
-): AwilixContainer<FicheConducteurDependencies & { prisma: PrismaPilote }> => {
-  return initialContainer.createScope<FicheConducteurDependencies>().register({
-    ficheConducteurHandler: asClass(FicheConducteurHandler),
-    recupererChantierFicheConducteurUseCase: asClass(
-      RécupererChantierFicheConducteurUseCase,
-    ),
-    recupererAvancementUseCase: asClass(RécupérerAvancementUseCase),
-    recupererDerniereSyntheseDesResultatsUseCase: asClass(
-      RécupérerDernièreSynthèseDesRésultatsUseCase,
-    ),
-    recupererDonneesCartographieUseCase: asClass(
-      RécupérerDonnéesCartographieUseCase,
-    ),
-    recupererPublicationsUseCase: asClass(RécupérerPublicationsUseCase),
-    chantierRepository: asClass(PrismaChantierRepository),
-    indicateurRepository: asClass(PrismaIndicateurRepository),
-    objectifRepository: asClass(PrismaObjectifRepository),
-    commentaireRepository: asClass(PrismaCommentaireRepository),
-    synthèseDesRésultatsRepository: asClass(
-      PrismaSynthèseDesRésultatsRepository,
-    ),
-    decisionStrategiqueRepository: asClass(PrismaDecisionStrategiqueRepository),
-  });
-};
+
+export type FicheConducteurDependencies = FicheConducteurCradle;
+
+export const ficheConducteurModule = defineModule<
+  "ficheConducteur",
+  FicheConducteurExports,
+  FicheConducteurCradle
+>({
+  name: "ficheConducteur",
+  imports: ["shared"],
+  exports: [],
+  register: (container) => {
+    container.register({
+      ficheConducteurHandler: asClass(FicheConducteurHandler),
+      recupererChantierFicheConducteurUseCase: asClass(
+        RécupererChantierFicheConducteurUseCase,
+      ),
+      recupererAvancementUseCase: asClass(RécupérerAvancementUseCase),
+      recupererDerniereSyntheseDesResultatsUseCase: asClass(
+        RécupérerDernièreSynthèseDesRésultatsUseCase,
+      ),
+      recupererDonneesCartographieUseCase: asClass(
+        RécupérerDonnéesCartographieUseCase,
+      ),
+      recupererPublicationsUseCase: asClass(RécupérerPublicationsUseCase),
+      chantierRepository: asClass(PrismaChantierRepository),
+      indicateurRepository: asClass(PrismaIndicateurRepository),
+      objectifRepository: asClass(PrismaObjectifRepository),
+      commentaireRepository: asClass(PrismaCommentaireRepository),
+      synthèseDesRésultatsRepository: asClass(
+        PrismaSynthèseDesRésultatsRepository,
+      ),
+      decisionStrategiqueRepository: asClass(
+        PrismaDecisionStrategiqueRepository,
+      ),
+    });
+  },
+});

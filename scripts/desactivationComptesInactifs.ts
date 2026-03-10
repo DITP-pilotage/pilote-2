@@ -2,8 +2,7 @@ import { loadEnvConfig } from "@next/env";
 import process from "node:process";
 import logger from "@/server/infrastructure/Logger";
 import { envoieMessageTchap } from "@/server/utils/notification-tchap";
-import { getGestionUtilisateurContainer } from "@/server/gestion-utilisateur/container";
-import { getInitialContainerWithTransversalDependencies } from "@/server/InitialDependencies";
+import { getContainer } from "@/server/dependances";
 
 const projectDir = process.cwd();
 loadEnvConfig(projectDir);
@@ -12,8 +11,7 @@ const roomId = process.env.TCHAP_ROOM_ID_DESACTIVATION_COMPTES ?? "";
 const accessToken = process.env.TCHAP_ACCESS_TOKEN ?? "";
 
 async function main() {
-  const initialContainer = getInitialContainerWithTransversalDependencies();
-  const container = getGestionUtilisateurContainer(initialContainer);
+  const container = getContainer("gestionUtilisateur");
 
   logger.info("Phase 1 : Création des actions pour les comptes inactifs");
   const resultatCreation = await container

@@ -1,7 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { onlyCron } from "@/server/infrastructure/api/cron/onlyCron";
-import { getInitialContainerWithTransversalDependencies } from "@/server/InitialDependencies";
-import { getChantiersContainer } from "@/server/chantiers/container";
+import { getContainer } from "@/server/dependances";
 import logger from "@/server/infrastructure/Logger";
 import { envoieMessageTchap } from "@/server/utils/notification-tchap";
 import { configuration, configurationFeatureFlip } from "@/config";
@@ -24,8 +23,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   }
 
   try {
-    const initialContainer = getInitialContainerWithTransversalDependencies();
-    const container = getChantiersContainer(initialContainer);
+    const container = getContainer("chantiers");
 
     logger.info("Phase 1 : Création des rapports");
     const resultatCreation = await container

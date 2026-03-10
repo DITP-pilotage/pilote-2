@@ -1,26 +1,33 @@
-import { asClass, AwilixContainer } from "awilix";
+import { asClass } from "awilix";
 import { ImportCommentaireAPIHandler } from "@/server/commentaires/infrastructure/handlers/ImportCommentaireAPIHandler";
 import { ImporterCommentairesUseCase } from "@/server/commentaires/usecases/ImporterCommentairesUseCase";
 import CommentaireRepository from "@/server/domain/chantier/commentaire/CommentaireRepository.interface";
 import CommentaireSQLRepository from "@/server/infrastructure/accès_données/chantier/commentaire/CommentaireSQLRepository";
-import { PrismaPilote } from "@/server/db/PrismaPilote";
+import { defineModule } from "@/server/module-system";
 
-export type ImportCommentaireDependencies = {
+type ImportCommentaireExports = Record<string, never>;
+
+type ImportCommentaireCradle = ImportCommentaireExports & {
   importCommentaireAPIHandler: ImportCommentaireAPIHandler;
   importerCommentairesUseCase: ImporterCommentairesUseCase;
   commentaireRepository: CommentaireRepository;
 };
 
-export const getImportCommentaireContainer = (
-  initialContainer: AwilixContainer<{ prisma: PrismaPilote }>,
-): AwilixContainer<
-  ImportCommentaireDependencies & { prisma: PrismaPilote }
-> => {
-  return initialContainer
-    .createScope<ImportCommentaireDependencies>()
-    .register({
+export type ImportCommentaireDependencies = ImportCommentaireCradle;
+
+export const importCommentaireModule = defineModule<
+  "importCommentaire",
+  ImportCommentaireExports,
+  ImportCommentaireCradle
+>({
+  name: "importCommentaire",
+  imports: ["shared"],
+  exports: [],
+  register: (container) => {
+    container.register({
       commentaireRepository: asClass(CommentaireSQLRepository),
       importerCommentairesUseCase: asClass(ImporterCommentairesUseCase),
       importCommentaireAPIHandler: asClass(ImportCommentaireAPIHandler),
     });
-};
+  },
+});
