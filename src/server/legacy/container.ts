@@ -139,91 +139,115 @@ export const getLegacyContainer = (
   initialContainer: AwilixContainer<InitialDependencies>,
 ): AwilixContainer<LegacyDependencies> => {
   return initialContainer.createScope<LegacyDependencies>().register({
-    chantierRepository: asClass(ChantierSQLRepository),
-    axeRepository: asClass(AxeSQLRepository),
-    synthèseDesRésultatsRepository: asClass(SynthèseDesRésultatsSQLRepository),
-    ministèreRepository: asClass(MinistèreSQLRepository),
-    indicateurRepository: asClass(IndicateurSQLRepository),
-    commentaireRepository: asClass(CommentaireSQLRepository),
-    objectifRepository: asClass(ObjectifSQLRepository),
-    décisionStratégiqueRepository: asClass(DécisionStratégiqueSQLRepository),
-    utilisateurRepository: asClass(UtilisateurSQLRepository),
-    authentificationUtilisateurRepository: asClass(PrismaUtilisateurRepository),
-    authentificationProfilRepository: asClass(PrismaProfilRepository),
-    territoireRepository: asClass(TerritoireSQLRepository),
-    ficheTerritorialeTerritoireRepository: asClass(PrismaTerritoireRepository),
-    ficheTerritorialeChantierRepository: asClass(PrismaChantierRepository),
+    chantierRepository: asClass(ChantierSQLRepository).singleton(),
+    axeRepository: asClass(AxeSQLRepository).singleton(),
+    synthèseDesRésultatsRepository: asClass(
+      SynthèseDesRésultatsSQLRepository,
+    ).singleton(),
+    ministèreRepository: asClass(MinistèreSQLRepository).singleton(),
+    indicateurRepository: asClass(IndicateurSQLRepository).singleton(),
+    commentaireRepository: asClass(CommentaireSQLRepository).singleton(),
+    objectifRepository: asClass(ObjectifSQLRepository).singleton(),
+    décisionStratégiqueRepository: asClass(
+      DécisionStratégiqueSQLRepository,
+    ).singleton(),
+    utilisateurRepository: asClass(UtilisateurSQLRepository).singleton(),
+    authentificationUtilisateurRepository: asClass(
+      PrismaUtilisateurRepository,
+    ).singleton(),
+    authentificationProfilRepository: asClass(
+      PrismaProfilRepository,
+    ).singleton(),
+    territoireRepository: asClass(TerritoireSQLRepository).singleton(),
+    ficheTerritorialeTerritoireRepository: asClass(
+      PrismaTerritoireRepository,
+    ).singleton(),
+    ficheTerritorialeChantierRepository: asClass(
+      PrismaChantierRepository,
+    ).singleton(),
     ficheTerritorialeIndicateurRepository: asClass(
       PrismaFicheTerritorialeIndicateurRepository,
-    ),
+    ).singleton(),
     ficheTerritorialeSyntheseDesResultatsRepository: asClass(
       PrismaSyntheseDesResultatsRepository,
-    ),
-    ficheTerritorialeMinistereRepository: asClass(PrismaMinistereRepository),
-    chantierIndicateurRepository: asClass(PrismaChantierIndicateurRepository),
-    profilRepository: asClass(ProfilSQLRepository),
-    rapportRepository: asClass(PrismaRapportRepository),
-    importIndicateurRepository: asClass(PrismaIndicateurRepository),
-    gestionContenuRepository: asClass(PrismaGestionContenuRepository),
+    ).singleton(),
+    ficheTerritorialeMinistereRepository: asClass(
+      PrismaMinistereRepository,
+    ).singleton(),
+    chantierIndicateurRepository: asClass(
+      PrismaChantierIndicateurRepository,
+    ).singleton(),
+    profilRepository: asClass(ProfilSQLRepository).singleton(),
+    rapportRepository: asClass(PrismaRapportRepository).singleton(),
+    importIndicateurRepository: asClass(PrismaIndicateurRepository).singleton(),
+    gestionContenuRepository: asClass(
+      PrismaGestionContenuRepository,
+    ).singleton(),
     tokenAPIService: asFunction(
       () => new TokenAPIJWTService({ secret: configuration().tokenAPI.secret }),
-    ),
-    tokenAPIInformationRepository: asClass(PrismaTokenAPIInformationRepository),
+    ).singleton(),
+    tokenAPIInformationRepository: asClass(
+      PrismaTokenAPIInformationRepository,
+    ).singleton(),
     récupérerStatistiquesAvancementChantiersUseCase: asClass(
       RécupérerStatistiquesAvancementChantiersUseCase,
-    ),
+    ).singleton(),
     recupererRepartitionsMeteoChantiersUseCase: asClass(
       RecupererRepartitionsMeteoChantiersUseCase,
-    ),
+    ).singleton(),
     agregerAvancementsChantiersUseCase: asClass(
       AgregerAvancementsChantiersUseCase,
-    ),
-    créerUnCommentaireUseCase: asClass(CréerUnCommentaireUseCase),
+    ).singleton(),
+    créerUnCommentaireUseCase: asClass(CréerUnCommentaireUseCase).singleton(),
     récupérerCommentaireLePlusRécentUseCase: asClass(
       RécupérerCommentaireLePlusRécentUseCase,
-    ),
+    ).singleton(),
     récupérerHistoriqueCommentaireUseCase: asClass(
       RécupérerHistoriqueCommentaireUseCase,
-    ),
+    ).singleton(),
     récupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase:
       asClass(
         RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase,
-      ),
-    créerUnObjectifUseCase: asClass(CréerUnObjectifUseCase),
+      ).singleton(),
+    créerUnObjectifUseCase: asClass(CréerUnObjectifUseCase).singleton(),
     récupérerObjectifLePlusRécentUseCase: asClass(
       RécupérerObjectifLePlusRécentUseCase,
-    ),
+    ).singleton(),
     récupérerHistoriqueObjectifUseCase: asClass(
       RécupérerHistoriqueObjectifUseCase,
-    ),
+    ).singleton(),
     récupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase: asClass(
       RécupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase,
-    ),
+    ).singleton(),
     créerUneDécisionStratégiqueUseCase: asClass(
       CréerUneDécisionStratégiqueUseCase,
-    ),
+    ).singleton(),
     récupérerDécisionStratégiqueLaPlusRécenteUseCase: asClass(
       RécupérerDécisionStratégiqueLaPlusRécenteUseCase,
-    ),
+    ).singleton(),
     récupérerHistoriqueDécisionStratégiqueUseCase: asClass(
       RécupérerHistoriqueDécisionStratégiqueUseCase,
-    ),
-    récupérerUnUtilisateurUseCase: asClass(RécupérerUnUtilisateurUseCase),
-    récupérerUnProfilUseCase: asClass(RécupérerUnProfilUseCase),
+    ).singleton(),
+    récupérerUnUtilisateurUseCase: asClass(
+      RécupérerUnUtilisateurUseCase,
+    ).singleton(),
+    récupérerUnProfilUseCase: asClass(RécupérerUnProfilUseCase).singleton(),
     récupérerTerritoiresAvecNombreUtilisateursUseCase: asClass(
       RécupérerTerritoiresAvecNombreUtilisateursUseCase,
-    ),
+    ).singleton(),
     recupererTokenAPIInformationUseCase: asClass(
       RecupererTokenAPIInformationUseCase,
-    ),
-    listerTokenAPIInformationUseCase: asClass(ListerTokenAPIInformationUseCase),
+    ).singleton(),
+    listerTokenAPIInformationUseCase: asClass(
+      ListerTokenAPIInformationUseCase,
+    ).singleton(),
     récupérerMessageInformationUseCase: asClass(
       RécupérerMessageInformationUseCase,
-    ),
+    ).singleton(),
     modifierMessageInformationUseCase: asClass(
       ModifierMessageInformationUseCase,
-    ),
-    supprimerTokenAPIUseCase: asClass(SupprimerTokenAPIUseCase),
+    ).singleton(),
+    supprimerTokenAPIUseCase: asClass(SupprimerTokenAPIUseCase).singleton(),
     utilisateurAuthentifieJWTService: asFunction(
       ({
         utilisateurRepository,
@@ -235,7 +259,7 @@ export const getLegacyContainer = (
           tokenAPIRepository: tokenAPIInformationRepository,
           profilRepository: authentificationProfilRepository,
         }),
-    ),
+    ).singleton(),
     creerTokenAPIUseCase: asFunction(
       ({
         tokenAPIService,
@@ -247,19 +271,19 @@ export const getLegacyContainer = (
           tokenAPIInformationRepository,
           utilisateurRepository: authentificationUtilisateurRepository,
         }),
-    ),
+    ).singleton(),
     listerDonneesIndicateurParIndicIdUseCase: asFunction(
       ({ chantierIndicateurRepository }) =>
         new ListerDonneesIndicateurParIndicIdUseCase({
           indicateurRepository: chantierIndicateurRepository,
         }),
-    ),
+    ).singleton(),
     récupérerTerritoireParCodeUseCase: asFunction(
       ({ ficheTerritorialeTerritoireRepository }) =>
         new RécupérerTerritoireParCodeUseCase({
           territoireRepository: ficheTerritorialeTerritoireRepository,
         }),
-    ),
+    ).singleton(),
     récupérerTauxAvancementTerritoireUseCase: asFunction(
       ({
         ficheTerritorialeChantierRepository,
@@ -269,7 +293,7 @@ export const getLegacyContainer = (
           chantierRepository: ficheTerritorialeChantierRepository,
           territoireRepository: ficheTerritorialeTerritoireRepository,
         }),
-    ),
+    ).singleton(),
     récupérerRépartitionMétéoUseCase: asFunction(
       ({
         ficheTerritorialeChantierRepository,
@@ -279,7 +303,7 @@ export const getLegacyContainer = (
           chantierRepository: ficheTerritorialeChantierRepository,
           territoireRepository: ficheTerritorialeTerritoireRepository,
         }),
-    ),
+    ).singleton(),
     récupérerListeChantierFicheTerritorialeUseCase: asFunction(
       ({
         ficheTerritorialeChantierRepository,
@@ -296,6 +320,6 @@ export const getLegacyContainer = (
           indicateurRepository: ficheTerritorialeIndicateurRepository,
           ministereRepository: ficheTerritorialeMinistereRepository,
         }),
-    ),
+    ).singleton(),
   });
 };
