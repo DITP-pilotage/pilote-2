@@ -9,7 +9,11 @@ import { MailleNonAutoriséeErreur } from "@/server/utils/errors";
 export default class RécupérerStatistiquesAvancementChantiersUseCase {
   private readonly chantierRepository: ChantierRepository;
 
-  constructor({ chantierRepository }: { chantierRepository: ChantierRepository }) {
+  constructor({
+    chantierRepository,
+  }: {
+    chantierRepository: ChantierRepository;
+  }) {
     this.chantierRepository = chantierRepository;
   }
 

@@ -9,7 +9,11 @@ import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation"
 export default class CréerUnObjectifUseCase {
   private readonly objectifRepository: ObjectifRepository;
 
-  constructor({ objectifRepository }: { objectifRepository: ObjectifRepository }) {
+  constructor({
+    objectifRepository,
+  }: {
+    objectifRepository: ObjectifRepository;
+  }) {
     this.objectifRepository = objectifRepository;
   }
 

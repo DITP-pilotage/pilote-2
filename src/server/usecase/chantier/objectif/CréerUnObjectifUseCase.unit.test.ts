@@ -21,7 +21,9 @@ describe("CréerUnObjectifUseCase", () => {
     const stubObjectifRepository = {
       créer: vi.fn(),
     } as unknown as ObjectifRepository;
-    const créerUnObjectif = new CréerUnObjectifUseCase({ objectifRepository: stubObjectifRepository });
+    const créerUnObjectif = new CréerUnObjectifUseCase({
+      objectifRepository: stubObjectifRepository,
+    });
 
     const habilitation = {
       saisieCommentaire: {
@@ -61,7 +63,9 @@ describe("CréerUnObjectifUseCase", () => {
         date,
       }),
     } as unknown as ObjectifRepository;
-    const créerUnObjectif = new CréerUnObjectifUseCase({ objectifRepository: stubObjectifRepository });
+    const créerUnObjectif = new CréerUnObjectifUseCase({
+      objectifRepository: stubObjectifRepository,
+    });
 
     const habilitation = {
       saisieCommentaire: {

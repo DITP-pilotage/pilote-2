@@ -6,7 +6,11 @@ import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation"
 export default class RécupérerHistoriqueDécisionStratégiqueUseCase {
   private readonly décisionStratégiqueRepository: DécisionStratégiqueRepository;
 
-  constructor({ décisionStratégiqueRepository }: { décisionStratégiqueRepository: DécisionStratégiqueRepository }) {
+  constructor({
+    décisionStratégiqueRepository,
+  }: {
+    décisionStratégiqueRepository: DécisionStratégiqueRepository;
+  }) {
     this.décisionStratégiqueRepository = décisionStratégiqueRepository;
   }
 

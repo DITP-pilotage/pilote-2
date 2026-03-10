@@ -5,7 +5,11 @@ import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilita
 export default class RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase {
   private readonly commentaireRepository: CommentaireRepository;
 
-  constructor({ commentaireRepository }: { commentaireRepository: CommentaireRepository }) {
+  constructor({
+    commentaireRepository,
+  }: {
+    commentaireRepository: CommentaireRepository;
+  }) {
     this.commentaireRepository = commentaireRepository;
   }
 

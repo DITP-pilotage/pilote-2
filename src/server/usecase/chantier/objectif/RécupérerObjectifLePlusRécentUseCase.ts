@@ -8,7 +8,11 @@ import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilita
 export default class RécupérerObjectifLePlusRécentUseCase {
   private readonly objectifRepository: ObjectifRepository;
 
-  constructor({ objectifRepository }: { objectifRepository: ObjectifRepository }) {
+  constructor({
+    objectifRepository,
+  }: {
+    objectifRepository: ObjectifRepository;
+  }) {
     this.objectifRepository = objectifRepository;
   }
 

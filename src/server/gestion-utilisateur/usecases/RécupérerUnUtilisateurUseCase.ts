@@ -4,7 +4,11 @@ import Utilisateur from "@/server/domain/utilisateur/Utilisateur.interface";
 export default class RécupérerUnUtilisateurUseCase {
   private readonly utilisateurRepository: UtilisateurRepository;
 
-  constructor({ utilisateurRepository }: { utilisateurRepository: UtilisateurRepository }) {
+  constructor({
+    utilisateurRepository,
+  }: {
+    utilisateurRepository: UtilisateurRepository;
+  }) {
     this.utilisateurRepository = utilisateurRepository;
   }
 

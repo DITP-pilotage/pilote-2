@@ -222,8 +222,9 @@ export const getServerSideProps: GetServerSideProps<
     )
     .then(presenterEnRépartitionsMétéosChantiersContrat);
 
-  const récupérerStatistiquesChantiersUseCase = getContainer("legacy")
-    .resolve("récupérerStatistiquesAvancementChantiersUseCase");
+  const récupérerStatistiquesChantiersUseCase = getContainer("legacy").resolve(
+    "récupérerStatistiquesAvancementChantiersUseCase",
+  );
 
   const listeAvancementsStatistiques: {
     id: string;
@@ -370,11 +371,15 @@ export const getServerSideProps: GetServerSideProps<
   }
 
   const commentairesGroupésParChantier = await getContainer("legacy")
-    .resolve("récupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase")
+    .resolve(
+      "récupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase",
+    )
     .run(chantiersIds, territoireCode, session.habilitations);
 
   const objectifsGroupésParChantier = await getContainer("legacy")
-    .resolve("récupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase")
+    .resolve(
+      "récupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase",
+    )
     .run(chantiersIds, session.habilitations);
 
   const { filtresComptesCalculés } = Chantier.recupererStatistiqueListeChantier(

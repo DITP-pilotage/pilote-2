@@ -114,10 +114,14 @@ export const getServerSideProps = async (
         .resolve("recupererDernierBrouillonSyntheseDesResultatsQuery")
         .run(chantierId, territoireCode, session.user!.id),
       getContainer("legacy")
-        .resolve("récupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase")
+        .resolve(
+          "récupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase",
+        )
         .run([chantierId], territoireCode, session.habilitations),
       getContainer("legacy")
-        .resolve("récupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase")
+        .resolve(
+          "récupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase",
+        )
         .run([chantierId], session.habilitations),
       getContainer("legacy")
         .resolve("récupérerDécisionStratégiqueLaPlusRécenteUseCase")

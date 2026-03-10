@@ -6,7 +6,11 @@ import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilita
 export default class RécupérerDécisionStratégiqueLaPlusRécenteUseCase {
   private readonly décisionStratégiqueRepository: DécisionStratégiqueRepository;
 
-  constructor({ décisionStratégiqueRepository }: { décisionStratégiqueRepository: DécisionStratégiqueRepository }) {
+  constructor({
+    décisionStratégiqueRepository,
+  }: {
+    décisionStratégiqueRepository: DécisionStratégiqueRepository;
+  }) {
     this.décisionStratégiqueRepository = décisionStratégiqueRepository;
   }
 
