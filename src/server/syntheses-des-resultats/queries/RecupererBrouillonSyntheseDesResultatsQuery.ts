@@ -3,7 +3,7 @@ import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { Météo } from "@/server/domain/météo/Météo.interface";
 import { SyntheseDesResultatsV2 } from "@/server/domain/chantier/synthèseDesRésultats/SynthèseDesRésultats.interface";
 
-export class RecupererDernierBrouillonSyntheseDesResultatsQuery {
+export class RecupererBrouillonSyntheseDesResultatsQuery {
   constructor(private readonly deps: { prisma: PrismaPilote }) {}
 
   async run(

@@ -1,5 +1,5 @@
 import { parseAsBoolean, useQueryState } from "nuqs";
-import { FunctionComponent } from "react";
+import { FunctionComponent, useState } from "react";
 import Bloc from "@/components/_commons/Bloc/Bloc";
 import { MeteoPicto } from "@/components/_commons/Meteo/Picto/MeteoPicto";
 import MétéoBadge from "@/components/_commons/Meteo/Badge/MétéoBadge";
@@ -11,7 +11,10 @@ import { BoutonNouvelleSyntheseDesResultats } from "@/components/PageChantier/Sy
 import { BoutonEditerBrouillonSyntheseDesResultats } from "@/components/PageChantier/SynthèseDesRésultatsChantier/BoutonNouvelleSyntheseDesResultats/BoutonEditerBrouillonSyntheseDesResultats";
 import BandeauInformation from "@/components/_commons/BandeauInformation/BandeauInformation";
 import { formaterDate } from "@/client/utils/date/date";
-import { AlerteSyntheseDesResultats } from "@/components/PageChantier/SynthèseDesRésultatsChantier/AlerteSyntheseDesResultats";
+import {
+  AlerteSyntheseDesResultats,
+  SyntheseDesResultatsAction,
+} from "@/components/PageChantier/SynthèseDesRésultatsChantier/AlerteSyntheseDesResultats";
 
 export interface SyntheseDesResultatsProps {
   nomTerritoire: string;
@@ -24,6 +27,8 @@ const SyntheseDesResultats: FunctionComponent<SyntheseDesResultatsProps> = ({
 }) => {
   const { syntheseDesResultats, syntheseDesResultatsBrouillon, chantier } =
     pageChantier.useServerSidePropsContext();
+
+  const [action, setAction] = useState<SyntheseDesResultatsAction | null>(null);
 
   const [modeÉdition, setModeÉdition] = useQueryState(
     "edition",
@@ -55,10 +60,11 @@ const SyntheseDesResultats: FunctionComponent<SyntheseDesResultatsProps> = ({
           {modeÉdition && modeEcriture ? (
             <SyntheseDesResultatsFormulaire
               annulationCallback={() => setModeÉdition(false)}
+              onAction={setAction}
             />
           ) : (
             <>
-              <AlerteSyntheseDesResultats />
+              <AlerteSyntheseDesResultats action={action} />
               <div className="flex gap-4 pt-2">
                 <div className="flex flex-col gap-4 align-center">
                   <MétéoBadge
@@ -83,9 +89,11 @@ const SyntheseDesResultats: FunctionComponent<SyntheseDesResultatsProps> = ({
                 ) : null}
                 {modeEcriture &&
                   (syntheseDesResultatsBrouillon?.dateModification ? (
-                    <BoutonEditerBrouillonSyntheseDesResultats />
+                    <BoutonEditerBrouillonSyntheseDesResultats
+                      onAction={setAction}
+                    />
                   ) : (
-                    <BoutonNouvelleSyntheseDesResultats />
+                    <BoutonNouvelleSyntheseDesResultats onAction={setAction} />
                   ))}
               </div>
             </>

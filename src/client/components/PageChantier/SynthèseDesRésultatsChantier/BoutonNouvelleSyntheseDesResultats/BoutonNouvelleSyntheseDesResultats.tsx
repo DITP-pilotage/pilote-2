@@ -4,13 +4,19 @@ import { Icone } from "@/components/_commons/Icone";
 import { Icone1Icon } from "@/components/_commons/Icones/Icone1Icon";
 import { Infobulle } from "@/components/_commons/Infobulle/Infobulle";
 import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
+import { SyntheseDesResultatsAction } from "@/components/PageChantier/SynthèseDesRésultatsChantier/AlerteSyntheseDesResultats";
 import { useNouvelleSyntheseDesResultats } from "./useNouvelleSyntheseDesResultats";
 import { ModaleFormulaireSyntheseDesResultats } from "./ModaleFormulaireSyntheseDesResultats";
 
-export const BoutonNouvelleSyntheseDesResultats = () => {
+export const BoutonNouvelleSyntheseDesResultats = ({
+  onAction,
+}: {
+  onAction: (action: SyntheseDesResultatsAction) => void;
+}) => {
   const [open, setOpen] = useState(false);
   const refreshRouter = useRefreshRouter();
   const { publier, enregistrerEnBrouillon } = useNouvelleSyntheseDesResultats({
+    onAction,
     onSuccess: () => {
       setOpen(false);
       refreshRouter();

@@ -1,4 +1,3 @@
-import { formaterDate } from "@/client/utils/date/date";
 import { nettoyerUneChaîneDeCaractèresPourAffichageHTML } from "@/client/utils/strings";
 import { BoutonsAffichage } from "@/components/PageChantier/SynthèseDesRésultatsChantier/BoutonsAffichage/BoutonsAffichage";
 import { Icone } from "@/components/_commons/Icone";
@@ -6,6 +5,7 @@ import { Icone1Icon } from "@/components/_commons/Icones/Icone1Icon";
 import { BoutonSousLigné } from "@/components/_commons/BoutonSousLigné/BoutonSousLigné";
 import { Infobulle } from "@/components/_commons/Infobulle/Infobulle";
 import { SyntheseDesResultatsHistoriqueItem } from "@/server/syntheses-des-resultats/queries/RecupererHistoriqueSyntheseDesResultatsQuery";
+import { PiloteDateFormatter } from "@/server/rapports-hebdomadaires/infrastructure/adapters/PiloteDateFormatter";
 import useAffichage from "./useAffichage";
 
 const SynthèseDesRésultatsAffichage = ({
@@ -36,8 +36,8 @@ const SynthèseDesRésultatsAffichage = ({
       <p className="text-xs text-dsfr-mention-grey mb-1">
         {synthèseDesRésultats.dateCreation ===
         synthèseDesRésultats.dateModification
-          ? `Publié le ${formaterDate(synthèseDesRésultats.dateCreation, "DD/MM/YYYY")}`
-          : `Publié le ${formaterDate(synthèseDesRésultats.dateCreation, "DD/MM/YYYY")} et modifié le ${formaterDate(synthèseDesRésultats.dateModification, "DD/MM/YYYY")}`}
+          ? `Publié le ${PiloteDateFormatter.isoDateFranceMetropolitaine(synthèseDesRésultats.dateCreation)}`
+          : `Publié le ${PiloteDateFormatter.isoDateFranceMetropolitaine(synthèseDesRésultats.dateCreation)} et modifié le ${PiloteDateFormatter.isoDateFranceMetropolitaine(synthèseDesRésultats.dateModification)}`}
         {!!synthèseDesRésultats.auteurModificationNom &&
           ` | Par ${synthèseDesRésultats.auteurModificationNom}`}
       </p>

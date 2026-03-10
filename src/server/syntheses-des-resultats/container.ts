@@ -3,7 +3,7 @@ import { ImportSyntheseDesResultatsAPIHandler } from "@/server/syntheses-des-res
 import { ImporterSynthesesDesResultatsUseCase } from "@/server/syntheses-des-resultats/usecases/ImporterSynthesesDesResultatsUseCase";
 import { RecupererDerniereSyntheseDesResultatsQuery } from "@/server/syntheses-des-resultats/queries/RecupererDerniereSyntheseDesResultatsQuery";
 import { RecupererHistoriqueSyntheseDesResultatsQuery } from "@/server/syntheses-des-resultats/queries/RecupererHistoriqueSyntheseDesResultatsQuery";
-import { RecupererDernierBrouillonSyntheseDesResultatsQuery } from "@/server/syntheses-des-resultats/queries/RecupererDernierBrouillonSyntheseDesResultatsQuery";
+import { RecupererBrouillonSyntheseDesResultatsQuery } from "@/server/syntheses-des-resultats/queries/RecupererBrouillonSyntheseDesResultatsQuery";
 import SynthèseDesRésultatsRepository from "@/server/domain/chantier/synthèseDesRésultats/SynthèseDesRésultatsRepository.interface";
 import { SynthèseDesRésultatsSQLRepository } from "@/server/infrastructure/accès_données/chantier/synthèseDesRésultats/SynthèseDesRésultatsSQLRepository";
 import { ChantierRepository } from "@/server/chantiers/domain/ports/ChantierRepository";
@@ -29,7 +29,7 @@ export type ImportSyntheseDesResultatsDependencies = {
   modifierBrouillonSyntheseDesResultatsUseCase: ModifierBrouillonSyntheseDesResultatsUseCase;
   récupérerDerniereSyntheseDesResultatsQuery: RecupererDerniereSyntheseDesResultatsQuery;
   récupérerHistoriqueSyntheseDesResultatsQuery: RecupererHistoriqueSyntheseDesResultatsQuery;
-  recupererDernierBrouillonSyntheseDesResultatsQuery: RecupererDernierBrouillonSyntheseDesResultatsQuery;
+  recupererDernierBrouillonSyntheseDesResultatsQuery: RecupererBrouillonSyntheseDesResultatsQuery;
   synthèseDesRésultatsRepository: SynthèseDesRésultatsRepository;
   chantierRepository: ChantierRepository;
   transaction: Transaction;
@@ -76,7 +76,7 @@ export const getImportSyntheseDesResultatsContainer = (
         RecupererHistoriqueSyntheseDesResultatsQuery,
       ),
       recupererDernierBrouillonSyntheseDesResultatsQuery: asClass(
-        RecupererDernierBrouillonSyntheseDesResultatsQuery,
+        RecupererBrouillonSyntheseDesResultatsQuery,
       ),
       importSyntheseDesResultatsAPIHandler: asClass(
         ImportSyntheseDesResultatsAPIHandler,

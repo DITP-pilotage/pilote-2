@@ -2,18 +2,18 @@ import { $Enums } from "@prisma/client";
 import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
 import { fixtures } from "@/server/infrastructure/test/fixtures";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
-import { RecupererDernierBrouillonSyntheseDesResultatsQuery } from "@/server/syntheses-des-resultats/queries/RecupererDernierBrouillonSyntheseDesResultatsQuery";
+import { RecupererBrouillonSyntheseDesResultatsQuery } from "@/server/syntheses-des-resultats/queries/RecupererBrouillonSyntheseDesResultatsQuery";
 
 const TERRITOIRE_CODE = "DEPT-75";
 const MAILLE = "DEPT";
 const CODE_INSEE = "75";
 
 describe("RecupererDernierBrouillonSyntheseDesResultatsQuery", () => {
-  let query: RecupererDernierBrouillonSyntheseDesResultatsQuery;
+  let query: RecupererBrouillonSyntheseDesResultatsQuery;
   const prismaPilote = new PrismaPilote();
 
   beforeEach(() => {
-    query = new RecupererDernierBrouillonSyntheseDesResultatsQuery({
+    query = new RecupererBrouillonSyntheseDesResultatsQuery({
       prisma: prismaPilote,
     });
   });

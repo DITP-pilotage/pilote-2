@@ -5,10 +5,15 @@ import { Icone1Icon } from "@/components/_commons/Icones/Icone1Icon";
 import { Infobulle } from "@/components/_commons/Infobulle/Infobulle";
 import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
 import { pageChantier } from "@/components/PageChantier/PageChantierServerSideContext";
+import { SyntheseDesResultatsAction } from "@/components/PageChantier/SynthèseDesRésultatsChantier/AlerteSyntheseDesResultats";
 import { useEditerBrouillonSyntheseDesResultats } from "./useEditerBrouillonSyntheseDesResultats";
 import { ModaleFormulaireSyntheseDesResultats } from "./ModaleFormulaireSyntheseDesResultats";
 
-export const BoutonEditerBrouillonSyntheseDesResultats = () => {
+export const BoutonEditerBrouillonSyntheseDesResultats = ({
+  onAction,
+}: {
+  onAction: (action: SyntheseDesResultatsAction) => void;
+}) => {
   const { syntheseDesResultatsBrouillon } =
     pageChantier.useServerSidePropsContext();
   const [open, setOpen] = useState(false);
@@ -16,6 +21,7 @@ export const BoutonEditerBrouillonSyntheseDesResultats = () => {
   const { publier, enregistrerEnBrouillon } =
     useEditerBrouillonSyntheseDesResultats({
       brouillon: syntheseDesResultatsBrouillon!,
+      onAction,
       onSuccess: () => {
         setOpen(false);
         refreshRouter();

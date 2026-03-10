@@ -17,6 +17,7 @@ import { Icone } from "@/components/_commons/Icone";
 import { SuccessIcon } from "@/components/_commons/Icones/SuccessIcon";
 import { ArrowGoBack1Icon } from "@/components/_commons/Icones/ArrowGoBack1Icon";
 import { Bouton } from "@/components/_commons/Bouton/Bouton";
+import { SyntheseDesResultatsAction } from "@/components/PageChantier/SynthèseDesRésultatsChantier/AlerteSyntheseDesResultats";
 import SyntheseDesResultatsFormulaireStyled from "./SyntheseDesResultatsFormulaire.styled";
 import { SyntheseDesResultatsFormulaireInputs } from "./SyntheseDesResultatsFormulaire.interface";
 import { useModifierSyntheseDesResultats } from "./useModifierSyntheseDesResultats";
@@ -24,14 +25,17 @@ import { SelecteurMeteo } from "./SelecteurMeteo";
 
 interface SyntheseDesResultatsFormulaireProps {
   annulationCallback?: () => void;
+  onAction: (action: SyntheseDesResultatsAction) => void;
 }
 
 const SyntheseDesResultatsFormulaire: FunctionComponent<
   SyntheseDesResultatsFormulaireProps
-> = ({ annulationCallback }) => {
+> = ({ annulationCallback, onAction }) => {
   const { syntheseDesResultats } = pageChantier.useServerSidePropsContext();
 
-  const modifierSynthèseDesRésultats = useModifierSyntheseDesResultats();
+  const modifierSynthèseDesRésultats = useModifierSyntheseDesResultats({
+    onAction,
+  });
 
   const {
     register,

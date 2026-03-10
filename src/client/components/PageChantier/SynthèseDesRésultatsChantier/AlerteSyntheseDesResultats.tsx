@@ -1,19 +1,14 @@
 import { FunctionComponent } from "react";
-import { parseAsStringLiteral, useQueryState } from "nuqs";
 import Alerte from "@/components/_commons/Alerte/Alerte";
 import { typeAlerte } from "@/components/_commons/Alerte/Alerte.interface";
 
-export const SYNTHESE_ACTIONS = [
-  "publication-reussie",
-  "modification-reussie",
-  "brouillon-enregistre",
-  "",
-] as const;
-
-export type SyntheseDesResultatsAction = (typeof SYNTHESE_ACTIONS)[number];
+export type SyntheseDesResultatsAction =
+  | "publication-reussie"
+  | "modification-reussie"
+  | "brouillon-enregistre";
 
 const ALERTES: Record<
-  Exclude<SyntheseDesResultatsAction, "">,
+  SyntheseDesResultatsAction,
   { message: string; type: typeAlerte }
 > = {
   "publication-reussie": {
@@ -31,15 +26,12 @@ const ALERTES: Record<
   },
 };
 
-export const AlerteSyntheseDesResultats: FunctionComponent = () => {
-  const [action] = useQueryState(
-    "_action",
-    parseAsStringLiteral(SYNTHESE_ACTIONS),
-  );
+export const AlerteSyntheseDesResultats: FunctionComponent<{
+  action: SyntheseDesResultatsAction | null;
+}> = ({ action }) => {
+  if (!action) return null;
 
-  if (!action || !(action in ALERTES)) return null;
-
-  const { message, type } = ALERTES[action as keyof typeof ALERTES];
+  const { message, type } = ALERTES[action];
 
   return (
     <div className="fr-mb-2w">
