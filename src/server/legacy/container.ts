@@ -169,30 +169,67 @@ export const getLegacyContainer = (
       () => new TokenAPIJWTService({ secret: configuration().tokenAPI.secret }),
     ),
     tokenAPIInformationRepository: asClass(PrismaTokenAPIInformationRepository),
-    récupérerStatistiquesAvancementChantiersUseCase: asClass(RécupérerStatistiquesAvancementChantiersUseCase),
-    recupererRepartitionsMeteoChantiersUseCase: asClass(RecupererRepartitionsMeteoChantiersUseCase),
-    agregerAvancementsChantiersUseCase: asClass(AgregerAvancementsChantiersUseCase),
+    récupérerStatistiquesAvancementChantiersUseCase: asClass(
+      RécupérerStatistiquesAvancementChantiersUseCase,
+    ),
+    recupererRepartitionsMeteoChantiersUseCase: asClass(
+      RecupererRepartitionsMeteoChantiersUseCase,
+    ),
+    agregerAvancementsChantiersUseCase: asClass(
+      AgregerAvancementsChantiersUseCase,
+    ),
     créerUnCommentaireUseCase: asClass(CréerUnCommentaireUseCase),
-    récupérerCommentaireLePlusRécentUseCase: asClass(RécupérerCommentaireLePlusRécentUseCase),
-    récupérerHistoriqueCommentaireUseCase: asClass(RécupérerHistoriqueCommentaireUseCase),
-    récupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase: asClass(RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase),
+    récupérerCommentaireLePlusRécentUseCase: asClass(
+      RécupérerCommentaireLePlusRécentUseCase,
+    ),
+    récupérerHistoriqueCommentaireUseCase: asClass(
+      RécupérerHistoriqueCommentaireUseCase,
+    ),
+    récupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase:
+      asClass(
+        RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase,
+      ),
     créerUnObjectifUseCase: asClass(CréerUnObjectifUseCase),
-    récupérerObjectifLePlusRécentUseCase: asClass(RécupérerObjectifLePlusRécentUseCase),
-    récupérerHistoriqueObjectifUseCase: asClass(RécupérerHistoriqueObjectifUseCase),
-    récupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase: asClass(RécupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase),
-    créerUneDécisionStratégiqueUseCase: asClass(CréerUneDécisionStratégiqueUseCase),
-    récupérerDécisionStratégiqueLaPlusRécenteUseCase: asClass(RécupérerDécisionStratégiqueLaPlusRécenteUseCase),
-    récupérerHistoriqueDécisionStratégiqueUseCase: asClass(RécupérerHistoriqueDécisionStratégiqueUseCase),
+    récupérerObjectifLePlusRécentUseCase: asClass(
+      RécupérerObjectifLePlusRécentUseCase,
+    ),
+    récupérerHistoriqueObjectifUseCase: asClass(
+      RécupérerHistoriqueObjectifUseCase,
+    ),
+    récupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase: asClass(
+      RécupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase,
+    ),
+    créerUneDécisionStratégiqueUseCase: asClass(
+      CréerUneDécisionStratégiqueUseCase,
+    ),
+    récupérerDécisionStratégiqueLaPlusRécenteUseCase: asClass(
+      RécupérerDécisionStratégiqueLaPlusRécenteUseCase,
+    ),
+    récupérerHistoriqueDécisionStratégiqueUseCase: asClass(
+      RécupérerHistoriqueDécisionStratégiqueUseCase,
+    ),
     récupérerUnUtilisateurUseCase: asClass(RécupérerUnUtilisateurUseCase),
     récupérerUnProfilUseCase: asClass(RécupérerUnProfilUseCase),
-    récupérerTerritoiresAvecNombreUtilisateursUseCase: asClass(RécupérerTerritoiresAvecNombreUtilisateursUseCase),
-    recupererTokenAPIInformationUseCase: asClass(RecupererTokenAPIInformationUseCase),
+    récupérerTerritoiresAvecNombreUtilisateursUseCase: asClass(
+      RécupérerTerritoiresAvecNombreUtilisateursUseCase,
+    ),
+    recupererTokenAPIInformationUseCase: asClass(
+      RecupererTokenAPIInformationUseCase,
+    ),
     listerTokenAPIInformationUseCase: asClass(ListerTokenAPIInformationUseCase),
-    récupérerMessageInformationUseCase: asClass(RécupérerMessageInformationUseCase),
-    modifierMessageInformationUseCase: asClass(ModifierMessageInformationUseCase),
+    récupérerMessageInformationUseCase: asClass(
+      RécupérerMessageInformationUseCase,
+    ),
+    modifierMessageInformationUseCase: asClass(
+      ModifierMessageInformationUseCase,
+    ),
     supprimerTokenAPIUseCase: asClass(SupprimerTokenAPIUseCase),
     utilisateurAuthentifieJWTService: asFunction(
-      ({ utilisateurRepository, tokenAPIInformationRepository, authentificationProfilRepository }) =>
+      ({
+        utilisateurRepository,
+        tokenAPIInformationRepository,
+        authentificationProfilRepository,
+      }) =>
         new UtilisateurAuthentifieJWTService({
           utilisateurRepository,
           tokenAPIRepository: tokenAPIInformationRepository,
@@ -200,7 +237,11 @@ export const getLegacyContainer = (
         }),
     ),
     creerTokenAPIUseCase: asFunction(
-      ({ tokenAPIService, tokenAPIInformationRepository, authentificationUtilisateurRepository }) =>
+      ({
+        tokenAPIService,
+        tokenAPIInformationRepository,
+        authentificationUtilisateurRepository,
+      }) =>
         new CreerTokenAPIUseCase({
           tokenAPIService,
           tokenAPIInformationRepository,
@@ -220,14 +261,20 @@ export const getLegacyContainer = (
         }),
     ),
     récupérerTauxAvancementTerritoireUseCase: asFunction(
-      ({ ficheTerritorialeChantierRepository, ficheTerritorialeTerritoireRepository }) =>
+      ({
+        ficheTerritorialeChantierRepository,
+        ficheTerritorialeTerritoireRepository,
+      }) =>
         new RécupérerTauxAvancementTerritoireUseCase({
           chantierRepository: ficheTerritorialeChantierRepository,
           territoireRepository: ficheTerritorialeTerritoireRepository,
         }),
     ),
     récupérerRépartitionMétéoUseCase: asFunction(
-      ({ ficheTerritorialeChantierRepository, ficheTerritorialeTerritoireRepository }) =>
+      ({
+        ficheTerritorialeChantierRepository,
+        ficheTerritorialeTerritoireRepository,
+      }) =>
         new RécupérerRépartitionMétéoUseCase({
           chantierRepository: ficheTerritorialeChantierRepository,
           territoireRepository: ficheTerritorialeTerritoireRepository,
@@ -244,7 +291,8 @@ export const getLegacyContainer = (
         new RécupérerListeChantierFicheTerritorialeUseCase({
           chantierRepository: ficheTerritorialeChantierRepository,
           territoireRepository: ficheTerritorialeTerritoireRepository,
-          syntheseDesResultatsRepository: ficheTerritorialeSyntheseDesResultatsRepository,
+          syntheseDesResultatsRepository:
+            ficheTerritorialeSyntheseDesResultatsRepository,
           indicateurRepository: ficheTerritorialeIndicateurRepository,
           ministereRepository: ficheTerritorialeMinistereRepository,
         }),
