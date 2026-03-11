@@ -1,6 +1,8 @@
 import { asClass } from "awilix";
 import { ChantierRepository } from "@/server/chantiers/domain/ports/ChantierRepository";
 import { RecupererDonneesChantierQuery } from "@/server/chantiers/infrastructure/queries/RecupererDonneesChantierQuery";
+import { RecupererChantiersApplicablesParTerritoiresQuery } from "@/server/chantiers/infrastructure/queries/RecupererChantiersApplicablesParTerritoiresQuery";
+import { RecupererMesuresIndicateurParPeriodeQuery } from "@/server/chantiers/infrastructure/queries/RecupererMesuresIndicateurParPeriodeQuery";
 import { PrismaChantierRepository } from "@/server/chantiers/infrastructure/adapters/PrismaChantierRepository";
 import { PrismaIndicateurRepository } from "@/server/chantiers/infrastructure/adapters/PrismaIndicateurRepository";
 import { IndicateurRepository } from "@/server/chantiers/domain/ports/IndicateurRepository";
@@ -30,7 +32,10 @@ import { PrismaRapportPropositionsAvancementRepository } from "./infrastructure/
 import { CreerLesRapportsPropositionsUseCase } from "./usecases/CreerLesRapportsPropositionsUseCase";
 import { EnvoyerLesRapportsPropositionsUseCase } from "./usecases/EnvoyerLesRapportsPropositionsUseCase";
 
-type ChantierExports = Record<string, never>;
+type ChantierExports = {
+  recupererChantiersQuery: RecupererChantiersApplicablesParTerritoiresQuery;
+  mesuresIndicateurQuery: RecupererMesuresIndicateurParPeriodeQuery;
+};
 
 type ChantierCradle = ChantierExports & {
   chantierRepository: ChantierRepository;
@@ -65,7 +70,7 @@ export const chantiersModule = defineModule<
 >({
   name: "chantiers",
   imports: ["shared", "indicateurTerritoireValeurEvenement"],
-  exports: [],
+  exports: ["recupererChantiersQuery", "mesuresIndicateurQuery"],
   register: (container) => {
     container.register({
       chantierRepository: asClass(PrismaChantierRepository),
@@ -106,6 +111,12 @@ export const chantiersModule = defineModule<
         ListerDetailsIndicateurTerritoireUseCaseV2,
       ),
       datajobsExecutionQueries: asClass(DatajobsExecutionQueries),
+      recupererChantiersQuery: asClass(
+        RecupererChantiersApplicablesParTerritoiresQuery,
+      ),
+      mesuresIndicateurQuery: asClass(
+        RecupererMesuresIndicateurParPeriodeQuery,
+      ),
     });
   },
 });

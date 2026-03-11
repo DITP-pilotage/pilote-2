@@ -208,9 +208,7 @@ export const legacyModule = defineModule<"legacy", LegacyExports, LegacyCradle>(
         agregerAvancementsChantiersUseCase: asClass(
           AgregerAvancementsChantiersUseCase,
         ).scoped(),
-        créerUnCommentaireUseCase: asClass(
-          CréerUnCommentaireUseCase,
-        ).scoped(),
+        créerUnCommentaireUseCase: asClass(CréerUnCommentaireUseCase).scoped(),
         récupérerCommentaireLePlusRécentUseCase: asClass(
           RécupérerCommentaireLePlusRécentUseCase,
         ).scoped(),

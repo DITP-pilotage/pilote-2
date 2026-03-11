@@ -145,7 +145,7 @@ function registerContainer(): ContainerDependencies {
     importObjectif: getContainer("importObjectif"),
     importSyntheseDesResultats: getContainer("importSyntheseDesResultats"),
     legacy: getContainer("legacy"),
-  } as ContainerDependencies;
+  };
 }
 
 let innerContainer: ContainerDependencies;

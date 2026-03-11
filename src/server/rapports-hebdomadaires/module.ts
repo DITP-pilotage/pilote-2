@@ -1,9 +1,9 @@
 import { asClass } from "awilix";
 import type { PrismaActiviteComptesQuery } from "@/server/gestion-utilisateur/infrastructure/queries/PrismaActiviteComptesQuery";
 import type { PrismaUtilisateursQuery } from "@/server/gestion-utilisateur/infrastructure/queries/PrismaUtilisateursQuery";
-import { RecupererChantiersApplicablesParTerritoiresQuery } from "@/server/chantiers/infrastructure/queries/RecupererChantiersApplicablesParTerritoiresQuery";
-import { RecupererMesuresIndicateurParPeriodeQuery } from "@/server/chantiers/infrastructure/queries/RecupererMesuresIndicateurParPeriodeQuery";
-import { RecupererEvenementsVAParPeriodeQuery } from "@/server/indicateur-territoire-valeur-evenement/infrastructure/queries/RecupererEvenementsVAParPeriodeQuery";
+import type { RecupererChantiersApplicablesParTerritoiresQuery } from "@/server/chantiers/infrastructure/queries/RecupererChantiersApplicablesParTerritoiresQuery";
+import type { RecupererMesuresIndicateurParPeriodeQuery } from "@/server/chantiers/infrastructure/queries/RecupererMesuresIndicateurParPeriodeQuery";
+import type { RecupererEvenementsVAParPeriodeQuery } from "@/server/indicateur-territoire-valeur-evenement/infrastructure/queries/RecupererEvenementsVAParPeriodeQuery";
 import { defineModule } from "@/server/module-system";
 import { ActiviteComptesGateway } from "./domain/ports/ActiviteComptesGateway";
 import { CoordinateurGateway } from "./domain/ports/CoordinateurGateway";
@@ -50,17 +50,15 @@ export const rapportsHebdomadairesModule = defineModule<
   RapportsHebdomadairesCradle
 >({
   name: "rapportsHebdomadaires",
-  imports: ["shared", "gestionUtilisateur"],
+  imports: [
+    "shared",
+    "gestionUtilisateur",
+    "chantiers",
+    "indicateurTerritoireValeurEvenement",
+  ],
   exports: [],
   register: (container) => {
     container.register({
-      recupererChantiersQuery: asClass(
-        RecupererChantiersApplicablesParTerritoiresQuery,
-      ),
-      mesuresIndicateurQuery: asClass(
-        RecupererMesuresIndicateurParPeriodeQuery,
-      ),
-      evenementsVAQuery: asClass(RecupererEvenementsVAParPeriodeQuery),
       activiteComptesGateway: asClass(GestionUtilisateurActiviteComptesGateway),
       coordinateurGateway: asClass(GestionUtilisateurCoordinateurGateway),
       rapportRepository: asClass(PrismaRapportRepository),

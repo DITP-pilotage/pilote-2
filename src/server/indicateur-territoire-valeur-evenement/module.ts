@@ -18,9 +18,11 @@ import { EnvoieEmailService } from "./domain/ports/EnvoieEmailService";
 import { BrevoEnvoieEmailService } from "./infrastructure/BrevoEnvoieEmailService";
 import { UtilisateurRepository } from "./domain/ports/UtilisateurRepository";
 import { PrismaUtilisateurRepository } from "./infrastructure/PrismaUtilisateurRepository";
+import { RecupererEvenementsVAParPeriodeQuery } from "./infrastructure/queries/RecupererEvenementsVAParPeriodeQuery";
 
 type IndicateurTerritoireValeurEvenementExports = {
   indicateurTerritoireValeurEvenementRepository: IndicateurTerritoireValeurEvenementRepository;
+  evenementsVAQuery: RecupererEvenementsVAParPeriodeQuery;
 };
 
 type IndicateurTerritoireValeurEvenementCradle =
@@ -50,7 +52,10 @@ export const indicateurTerritoireValeurEvenementModule = defineModule<
 >({
   name: "indicateurTerritoireValeurEvenement",
   imports: ["shared"],
-  exports: ["indicateurTerritoireValeurEvenementRepository"],
+  exports: [
+    "indicateurTerritoireValeurEvenementRepository",
+    "evenementsVAQuery",
+  ],
   register: (container) => {
     container.register({
       indicateurTerritoireValeurEvenementRepository: asClass(
@@ -84,6 +89,7 @@ export const indicateurTerritoireValeurEvenementModule = defineModule<
       recupererHistoriqueIndicateurTerritoireValeurEvenementUseCase: asClass(
         RecupererHistoriqueIndicateurTerritoireValeurEvenementUseCase,
       ),
+      evenementsVAQuery: asClass(RecupererEvenementsVAParPeriodeQuery),
     });
   },
 });

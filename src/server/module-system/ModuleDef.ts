@@ -9,6 +9,10 @@ type TypedAsFunction<TCradle> = <T>(
   fn: (cradle: TCradle) => T,
 ) => BuildResolver<T> & DisposableResolver<T>;
 
+type RemoveIndexSignature<T> = {
+  [K in keyof T as string extends K ? never : K]: T[K];
+};
+
 type ModuleDef<
   TName extends string,
   TExports extends Record<string, unknown>,
@@ -17,7 +21,10 @@ type ModuleDef<
   name: TName;
   imports: string[];
   exports: (keyof TExports)[];
-  register: (container: AwilixContainer, fn: TypedAsFunction<TCradle>) => void;
+  register: (
+    container: AwilixContainer<RemoveIndexSignature<TCradle>>,
+    fn: TypedAsFunction<TCradle>,
+  ) => void;
 };
 
 const defineModule = <

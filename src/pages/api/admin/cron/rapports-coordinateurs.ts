@@ -23,9 +23,8 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   const accessToken = configuration().tchap.accessToken;
 
   if (
-    false
-    // !configurationFeatureFlip().rapportCoordinateurs ||
-    // configuration().scalingoEnvironment !== "PROD"
+    !configurationFeatureFlip().rapportCoordinateurs ||
+    configuration().scalingoEnvironment !== "PROD"
   ) {
     return res.status(200).json({
       skipped: true,
