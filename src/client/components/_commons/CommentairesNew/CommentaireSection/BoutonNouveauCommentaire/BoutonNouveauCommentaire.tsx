@@ -47,6 +47,7 @@ const BoutonNouveauCommentaire = ({
       onPublier={publier}
       open={open}
       title="Nouveau commentaire"
+      type={type}
       trigger={
         <Bouton
           iconLeft={

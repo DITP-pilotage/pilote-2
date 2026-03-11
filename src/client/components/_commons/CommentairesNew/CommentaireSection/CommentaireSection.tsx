@@ -7,7 +7,7 @@ import {
 } from "@/server/domain/chantier/commentaire/Commentaire.interface";
 import { Maille } from "@/server/domain/maille/Maille.interface";
 import BandeauInformation from "@/components/_commons/BandeauInformation/BandeauInformation";
-import { libellésTypesCommentaire } from "@/client/constants/libellésCommentaire";
+import { libellesTypesCommentaire } from "@/client/constants/libellesCommentaire";
 import AlerteCommentaire, {
   CommentaireAction,
 } from "@/components/_commons/CommentairesNew/CommentaireSection/AlerteCommentaire";
@@ -50,7 +50,7 @@ const CommentaireSection: FunctionComponent<CommentaireSectionProps> = ({
 
   return (
     <div className="px-2 py-4">
-      <p className="font-bold text-xl mb-1">{libellésTypesCommentaire[type]}</p>
+      <p className="font-bold text-xl mb-1">{libellesTypesCommentaire[type]}</p>
       {commentaireBrouillon?.dateModification ? (
         <div className="my-2">
           <BandeauInformation bandeauType="INFO">

@@ -42,6 +42,7 @@ const BoutonEditerBrouillonCommentaire = ({
       onPublier={publier}
       open={open}
       title="Editer un brouillon"
+      type={brouillon!.type}
       trigger={
         <Bouton
           iconLeft={

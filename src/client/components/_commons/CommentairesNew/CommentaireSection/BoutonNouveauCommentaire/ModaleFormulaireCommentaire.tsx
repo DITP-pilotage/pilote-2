@@ -12,15 +12,21 @@ import CompteurCaractères from "@/components/_commons/CompteurCaractères/Compt
 import {
   CommentaireAvecNomsAuteurs,
   CommentaireV2,
+  TypeCommentaireChantier,
 } from "@/server/domain/chantier/commentaire/Commentaire.interface";
 import {
   LIMITE_CARACTÈRES_COMMENTAIRE,
   validationCommentaireFormulaire,
 } from "@/validation/commentaire";
 import AffichageCommentaire from "@/components/_commons/CommentairesNew/CommentaireSection/Affichage/Affichage";
+import {
+  consignesEcritureCommentaire,
+  libellesTypesCommentaire,
+} from "@/client/constants/libellesCommentaire";
 
 interface ModaleFormulaireCommentaireProps {
   title: string;
+  type: TypeCommentaireChantier;
   trigger: ReactNode;
   open: boolean;
   onOpenChange: (isOpen: boolean) => void;
@@ -34,6 +40,7 @@ export const ModaleFormulaireCommentaire: FunctionComponent<
   ModaleFormulaireCommentaireProps
 > = ({
   title,
+  type,
   trigger,
   open,
   onOpenChange,
@@ -56,18 +63,23 @@ export const ModaleFormulaireCommentaire: FunctionComponent<
       title={title}
       trigger={trigger}
     >
-      <p className="text-sm text-dsfr-mention-grey mb-6">
-        Veuillez saisir ci-dessous le nouveau commentaire. Après publication, le
-        nouveau commentaire sera affiché et l'ancien sera archivé dans
-        l'historique.
+      <p className="text-base font-bold mb-1">
+        {libellesTypesCommentaire[type]}
       </p>
-
+      <p className="text-sm text-dsfr-mention-grey mb-6">
+        {consignesEcritureCommentaire[type]}
+      </p>
       <h3 className="text-base font-bold mb-3">Commentaire actuel</h3>
       <div className="mb-6">
         <AffichageCommentaire commentaire={commentaire} />
       </div>
 
       <h3 className="text-base font-bold mb-3">Votre nouveau commentaire</h3>
+      <p className="text-sm text-dsfr-mention-grey mb-6">
+        Veuillez saisir ci-dessous le nouveau commentaire. Après publication, le
+        nouveau commentaire sera affiché et l'ancien sera archivé dans
+        l'historique.
+      </p>
       <form onSubmit={form.handleSubmit(onPublier)}>
         <div
           className={`flex flex-col ${form.formState.errors.contenu ? "fr-input-group--error" : ""}`}

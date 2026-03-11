@@ -6,7 +6,7 @@ import {
   typesCommentaireMailleNationale,
   typesCommentaireMailleRégionaleOuDépartementale,
 } from "@/server/domain/chantier/commentaire/Commentaire.interface";
-import { libellésTypesCommentaire } from "@/client/constants/libellésCommentaire";
+import { libellesTypesCommentaire } from "@/client/constants/libellesCommentaire";
 import { nettoyerUneChaîneDeCaractèresPourAffichageHTML } from "@/client/utils/strings";
 import { Badge } from "@/components/_commons/Badge";
 import { PiloteDateFormatter } from "@/server/rapports-hebdomadaires/infrastructure/adapters/PiloteDateFormatter";
@@ -41,7 +41,7 @@ const CommentairesRapportDetaille: FunctionComponent<
             {index !== 0 && <hr className="fr-hr p-1" />}
             <div className="py-4 px-6">
               <p className="font-bold mb-1 text-xl">
-                {libellésTypesCommentaire[type]}
+                {libellesTypesCommentaire[type]}
               </p>
               {commentaire ? (
                 <>
