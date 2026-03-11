@@ -19,7 +19,9 @@ import { BrevoEnvoieEmailService } from "./infrastructure/BrevoEnvoieEmailServic
 import { UtilisateurRepository } from "./domain/ports/UtilisateurRepository";
 import { PrismaUtilisateurRepository } from "./infrastructure/PrismaUtilisateurRepository";
 
-type IndicateurTerritoireValeurEvenementExports = Record<string, never>;
+type IndicateurTerritoireValeurEvenementExports = {
+  indicateurTerritoireValeurEvenementRepository: IndicateurTerritoireValeurEvenementRepository;
+};
 
 type IndicateurTerritoireValeurEvenementCradle =
   IndicateurTerritoireValeurEvenementExports & {
@@ -48,7 +50,7 @@ export const indicateurTerritoireValeurEvenementModule = defineModule<
 >({
   name: "indicateurTerritoireValeurEvenement",
   imports: ["shared"],
-  exports: [],
+  exports: ["indicateurTerritoireValeurEvenementRepository"],
   register: (container) => {
     container.register({
       indicateurTerritoireValeurEvenementRepository: asClass(

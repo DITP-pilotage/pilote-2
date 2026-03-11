@@ -18,6 +18,7 @@ import { VerifierFichierIndicateurImporteUseCase } from "@/server/import-indicat
 import { FetchHttpClient } from "@/server/import-indicateur/infrastructure/adapters/FetchHttpClient";
 import { HttpClient } from "@/server/import-indicateur/domain/ports/HttpClient.interface";
 import { ImportDonneeIndicateurAPIHandler } from "@/server/import-indicateur/infrastructure/handlers/ImportDonneeIndicateurAPIHandler";
+import type { IndicateurTerritoireValeurEvenementRepository } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/IndicateurTerritoireValeurEvenementRepository";
 import { defineModule } from "@/server/module-system";
 import { PropositionValeurAvancementRepository } from "./domain/ports/PropositionValeurAvancementRepository";
 import { PrismaPropositionValeurAvancementRepository } from "./infrastructure/adapters/PrismaPropositionValeurAvancementRepository";
@@ -38,6 +39,7 @@ type ImportIndicateurCradle = ImportIndicateurExports & {
   rapportRepository: RapportRepository;
   importDonneeIndicateurAPIHandler: ImportDonneeIndicateurAPIHandler;
   propositionValeurAvancementRepository: PropositionValeurAvancementRepository;
+  indicateurTerritoireValeurEvenementRepository: IndicateurTerritoireValeurEvenementRepository;
 };
 
 export type ImportIndicateurDependencies = ImportIndicateurCradle;
@@ -48,7 +50,7 @@ export const importIndicateurModule = defineModule<
   ImportIndicateurCradle
 >({
   name: "importIndicateur",
-  imports: ["shared"],
+  imports: ["shared", "indicateurTerritoireValeurEvenement"],
   exports: [],
   register: (container) => {
     container.register({

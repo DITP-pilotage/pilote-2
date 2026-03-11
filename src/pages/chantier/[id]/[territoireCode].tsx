@@ -225,7 +225,7 @@ export const getServerSideProps = async (
         jalon,
       );
 
-    const datajobsExecution = await getContainer("shared")
+    const datajobsExecution = await getContainer("chantiers")
       .resolve("datajobsExecutionQueries")
       .recupererEtatCourant();
 

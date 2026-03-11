@@ -6,8 +6,8 @@ import { PrismaIndicateurRepository } from "@/server/chantiers/infrastructure/ad
 import { IndicateurRepository } from "@/server/chantiers/domain/ports/IndicateurRepository";
 import { PropositionValeurAvancementRepository } from "@/server/chantiers/domain/ports/PropositionValeurAvancementRepository";
 import { PrismaPropositionValeurAvancementRepository } from "@/server/chantiers/infrastructure/adapters/PrismaPropositionValeurAvancementRepository";
-import { IndicateurTerritoireValeurEvenementRepository } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/IndicateurTerritoireValeurEvenementRepository";
-import { PrismaIndicateurTerritoireValeurEvenementRepository } from "@/server/indicateur-territoire-valeur-evenement/infrastructure/PrismaIndicateurTerritoireValeurEvenementRepository";
+import type { IndicateurTerritoireValeurEvenementRepository } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/IndicateurTerritoireValeurEvenementRepository";
+import { DatajobsExecutionQueries } from "@/server/datajobs-execution/DatajobsExecution";
 import { defineModule } from "@/server/module-system";
 import { TerritoireRepository } from "./domain/ports/TerritoireRepository";
 import { PrismaTerritoireRepository } from "./infrastructure/adapters/PrismaTerritoireRepository";
@@ -50,6 +50,7 @@ type ChantierCradle = ChantierExports & {
   recupererChantierUseCaseV2: RecupererChantierUseCaseV2;
   listerDetailsIndicateurTerritoireUseCaseV2: ListerDetailsIndicateurTerritoireUseCaseV2;
   indicateurTerritoireValeurEvenementRepository: IndicateurTerritoireValeurEvenementRepository;
+  datajobsExecutionQueries: DatajobsExecutionQueries;
   rapportPropositionsAvancementRepository: RapportPropositionsAvancementRepository;
   creerLesRapportsPropositionsUseCase: CreerLesRapportsPropositionsUseCase;
   envoyerLesRapportsPropositionsUseCase: EnvoyerLesRapportsPropositionsUseCase;
@@ -63,7 +64,7 @@ export const chantiersModule = defineModule<
   ChantierCradle
 >({
   name: "chantiers",
-  imports: ["shared"],
+  imports: ["shared", "indicateurTerritoireValeurEvenement"],
   exports: [],
   register: (container) => {
     container.register({
@@ -104,9 +105,7 @@ export const chantiersModule = defineModule<
       listerDetailsIndicateurTerritoireUseCaseV2: asClass(
         ListerDetailsIndicateurTerritoireUseCaseV2,
       ),
-      indicateurTerritoireValeurEvenementRepository: asClass(
-        PrismaIndicateurTerritoireValeurEvenementRepository,
-      ),
+      datajobsExecutionQueries: asClass(DatajobsExecutionQueries),
     });
   },
 });
