@@ -33,7 +33,7 @@ export const useWidgetCartographieMeteo = (params: {
       const meteo = territoire.meteo as Météo;
       return {
         ...acc,
-        [territoire.codeInsee]: {
+        [territoire.territoireCode]: {
           contenu: (
             <div className="fr-text--bold">
               {territoire.estApplicable === false
