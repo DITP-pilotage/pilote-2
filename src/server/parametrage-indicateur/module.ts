@@ -15,11 +15,9 @@ import { PrismaMetadataParametrageIndicateurRepository } from "@/server/parametr
 import { PrismaMetadataParametrageIndicateurQuery } from "@/server/parametrage-indicateur/infrastructure/queries/PrismaMetadataParametrageIndicateurQuery";
 import { GetMetadataIndicateurConfigurationQuery } from "@/server/parametrage-indicateur/queries/GetMetadataIndicateurConfigurationQuery";
 import { EnregistrerMetadataIndicateurHandler } from "@/server/parametrage-indicateur/handlers/EnregistrerMetadataIndicateurHandler";
-import { defineModule } from "@/server/module-system";
+import { defineModule, type NoExports } from "@/server/module-system";
 
-type ParametrageIndicateurExports = Record<string, never>;
-
-type ParametrageIndicateurCradle = ParametrageIndicateurExports & {
+type ParametrageIndicateurCradle = NoExports & {
   historisationModificationRepository: HistorisationModificationRepository;
   creerUneMetadataIndicateurUseCase: CreerUneMetadataIndicateurUseCase;
   modifierUneMetadataIndicateurUseCase: ModifierUneMetadataIndicateurUseCase;
@@ -36,10 +34,8 @@ type ParametrageIndicateurCradle = ParametrageIndicateurExports & {
   enregistrerMetadataIndicateurHandler: EnregistrerMetadataIndicateurHandler;
 };
 
-export type ParametrageIndicateurDependencies = ParametrageIndicateurCradle;
-
 export const parametrageIndicateurModule = defineModule<
-  ParametrageIndicateurExports,
+  NoExports,
   ParametrageIndicateurCradle
 >()({
   name: "parametrageIndicateur",

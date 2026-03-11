@@ -61,8 +61,6 @@ type ChantierCradle = ChantierExports & {
   envoyerLesRapportsPropositionsUseCase: EnvoyerLesRapportsPropositionsUseCase;
 };
 
-export type ChantierDependencies = ChantierCradle;
-
 export const chantiersModule = defineModule<ChantierExports, ChantierCradle>()({
   name: "chantiers",
   imports: ["shared", "indicateurTerritoireValeurEvenement"],

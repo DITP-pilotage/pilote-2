@@ -48,10 +48,17 @@ const defineModule =
   ): ModuleDef<TName, TExports, TCradle> =>
     def;
 
+type NoExports = Record<string, never>;
+
+type ExtractScope<M> =
+  M extends ModuleDef<ModuleName, any, infer C> ? ModuleScope<C> : never;
+
 export type {
+  ExtractScope,
   ModuleDef,
   ModuleHelpers,
   ModuleScope,
+  NoExports,
   TypedAsClass,
   TypedAsFunction,
 };

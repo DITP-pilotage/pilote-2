@@ -8,11 +8,9 @@ import { configuration } from "@/config";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { type Transaction } from "@/server/db/Transaction";
 import { PrismaTransaction } from "@/server/db/PrismaTransaction";
-import { defineModule } from "@/server/module-system";
+import { defineModule, type NoExports } from "@/server/module-system";
 
-type SharedExports = Record<string, never>;
-
-type SharedCradle = SharedExports & {
+type SharedCradle = NoExports & {
   prisma: PrismaPilote;
   transaction: Transaction;
   emailManager: EmailManager;
@@ -20,7 +18,7 @@ type SharedCradle = SharedExports & {
 
 export type SharedDependencies = SharedCradle;
 
-export const sharedModule = defineModule<SharedExports, SharedCradle>()({
+export const sharedModule = defineModule<NoExports, SharedCradle>()({
   name: "shared",
   imports: [],
   exports: [],

@@ -20,8 +20,8 @@ import { ModifierEtatFichesInstructionHandler } from "@/server/evaluation/handle
 import { RecupererDetailsNoteCollectiveQuery } from "@/server/evaluation/queries/RecupererDetailsNoteCollectiveQuery";
 import { SoumettreEtapeEvaluationService } from "@/server/evaluation/services/SoumettreEtapeEvaluationService";
 import { PasserALaConsolidationHandler } from "@/server/evaluation/handlers/PasserALaConsolidationHandler";
-import { defineModule } from "@/server/module-system";
-import { EnregistrerBrouillonAutoEvaluationObjectifsHandler } from "./handlers/EnregistrerBrouillonAutoEvaluationObjectifsHandler";
+import { defineModule, type NoExports } from "@/server/module-system";
+import { EnregistrerBrouillonAutoEvaluationObjectifsHandler} from "./handlers/EnregistrerBrouillonAutoEvaluationObjectifsHandler";
 import { EnregistrerBrouillonAutoEvaluationCriteresHandler } from "./handlers/EnregistrerBrouillonAutoEvaluationCriteresHandler";
 import { ValiderSaisieCriteresHandler } from "./handlers/ValiderSaisieCriteresHandler";
 import { ValiderSaisieObjectifsHandler } from "./handlers/ValiderSaisieObjectifsHandler";
@@ -34,9 +34,7 @@ import { ModifierDroitsUtilisateurHandler } from "./handlers/ModifierDroitsUtili
 import { NotificationEmailService } from "./services/NotificationEmailService";
 import { TransmettreAppreciationHandler } from "./handlers/TransmettreAppreciationHandler";
 
-type PiloteEvalExports = Record<string, never>;
-
-type PiloteEvalCradle = PiloteEvalExports & {
+type PiloteEvalCradle = NoExports & {
   afficherAutoEvaluation: AfficherAutoEvaluationQuery;
   afficherConsolidationQuery: AfficherConsolidationQuery;
   afficherInstructionQuery: AfficherInstructionQuery;
@@ -72,12 +70,7 @@ type PiloteEvalCradle = PiloteEvalExports & {
   transmettreAppreciationHandler: TransmettreAppreciationHandler;
 };
 
-export type PiloteEvalDependencies = PiloteEvalCradle;
-
-export const piloteEvalModule = defineModule<
-  PiloteEvalExports,
-  PiloteEvalCradle
->()({
+export const piloteEvalModule = defineModule<NoExports, PiloteEvalCradle>()({
   name: "piloteEval",
   imports: ["shared"],
   exports: [],

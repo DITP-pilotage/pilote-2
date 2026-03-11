@@ -98,4 +98,4 @@ const bootModules = <TModules extends readonly AnyModuleDef[]>(
 };
 
 export { bootModules };
-export type { AnyModuleDef };
+export type { AnyModuleDef, ExtractCradle };

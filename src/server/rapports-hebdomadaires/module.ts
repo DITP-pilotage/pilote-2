@@ -3,7 +3,11 @@ import type { PrismaUtilisateursQuery } from "@/server/gestion-utilisateur/infra
 import type { RecupererChantiersApplicablesParTerritoiresQuery } from "@/server/chantiers/infrastructure/queries/RecupererChantiersApplicablesParTerritoiresQuery";
 import type { RecupererMesuresIndicateurParPeriodeQuery } from "@/server/chantiers/infrastructure/queries/RecupererMesuresIndicateurParPeriodeQuery";
 import type { RecupererEvenementsVAParPeriodeQuery } from "@/server/indicateur-territoire-valeur-evenement/infrastructure/queries/RecupererEvenementsVAParPeriodeQuery";
-import { defineModule, type ModuleScope } from "@/server/module-system";
+import {
+  defineModule,
+  type ExtractScope,
+  type NoExports,
+} from "@/server/module-system";
 import { ActiviteComptesGateway } from "./domain/ports/ActiviteComptesGateway";
 import { CoordinateurGateway } from "./domain/ports/CoordinateurGateway";
 import { RapportRepository } from "./domain/ports/RapportRepository";
@@ -21,9 +25,7 @@ import { EnvoyerRapportsHebdomadairesUseCase } from "./usecases/EnvoyerRapportsH
 import { ListerRapportsHebdomadairesQuery } from "./queries/ListerRapportsHebdomadairesQuery";
 import { RecupererRapportHebdomadaireQuery } from "./queries/RecupererRapportHebdomadaireQuery";
 
-type RapportsHebdomadairesExports = Record<string, never>;
-
-type RapportsHebdomadairesCradle = RapportsHebdomadairesExports & {
+type RapportsHebdomadairesCradle = NoExports & {
   activiteComptesQuery: PrismaActiviteComptesQuery;
   utilisateursQuery: PrismaUtilisateursQuery;
   recupererChantiersQuery: RecupererChantiersApplicablesParTerritoiresQuery;
@@ -41,13 +43,8 @@ type RapportsHebdomadairesCradle = RapportsHebdomadairesExports & {
   recupererRapportHebdomadaireQuery: RecupererRapportHebdomadaireQuery;
 };
 
-export type RapportsHebdomadairesDependencies = RapportsHebdomadairesCradle;
-
-type Scope = ModuleScope<RapportsHebdomadairesCradle>;
-export type Inject<K extends keyof Scope> = Pick<Scope, K>;
-
 export const rapportsHebdomadairesModule = defineModule<
-  RapportsHebdomadairesExports,
+  NoExports,
   RapportsHebdomadairesCradle
 >()({
   name: "rapportsHebdomadaires",
@@ -83,3 +80,6 @@ export const rapportsHebdomadairesModule = defineModule<
     });
   },
 });
+
+type Scope = ExtractScope<typeof rapportsHebdomadairesModule>;
+export type Inject<K extends keyof Scope> = Pick<Scope, K>;

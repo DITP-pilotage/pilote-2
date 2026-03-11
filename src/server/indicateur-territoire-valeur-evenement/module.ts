@@ -42,9 +42,6 @@ type IndicateurTerritoireValeurEvenementCradle =
     recupererHistoriqueIndicateurTerritoireValeurEvenementUseCase: RecupererHistoriqueIndicateurTerritoireValeurEvenementUseCase;
   };
 
-export type IndicateurTerritoireValeurEvenementDependencies =
-  IndicateurTerritoireValeurEvenementCradle;
-
 export const indicateurTerritoireValeurEvenementModule = defineModule<
   IndicateurTerritoireValeurEvenementExports,
   IndicateurTerritoireValeurEvenementCradle

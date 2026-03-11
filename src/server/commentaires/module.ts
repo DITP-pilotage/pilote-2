@@ -3,20 +3,16 @@ import { ImportCommentaireAPIHandler } from "@/server/commentaires/infrastructur
 import { ImporterCommentairesUseCase } from "@/server/commentaires/usecases/ImporterCommentairesUseCase";
 import CommentaireRepository from "@/server/domain/chantier/commentaire/CommentaireRepository.interface";
 import CommentaireSQLRepository from "@/server/infrastructure/accès_données/chantier/commentaire/CommentaireSQLRepository";
-import { defineModule } from "@/server/module-system";
+import { defineModule, type NoExports } from "@/server/module-system";
 
-type ImportCommentaireExports = Record<string, never>;
-
-type ImportCommentaireCradle = ImportCommentaireExports & {
+type ImportCommentaireCradle = NoExports & {
   importCommentaireAPIHandler: ImportCommentaireAPIHandler;
   importerCommentairesUseCase: ImporterCommentairesUseCase;
   commentaireRepository: CommentaireRepository;
 };
 
-export type ImportCommentaireDependencies = ImportCommentaireCradle;
-
 export const importCommentaireModule = defineModule<
-  ImportCommentaireExports,
+  NoExports,
   ImportCommentaireCradle
 >()({
   name: "importCommentaire",

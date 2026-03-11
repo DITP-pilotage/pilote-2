@@ -77,11 +77,9 @@ import { RécupérerTerritoireParCodeUseCase } from "@/server/fiche-territoriale
 import { RécupérerTauxAvancementTerritoireUseCase } from "@/server/fiche-territoriale/usecases/RécupérerTauxAvancementTerritoireUseCase";
 import { RécupérerRépartitionMétéoUseCase } from "@/server/fiche-territoriale/usecases/RécupérerRépartitionMétéoUseCase";
 import { RécupérerListeChantierFicheTerritorialeUseCase } from "@/server/fiche-territoriale/usecases/RécupérerListeChantierFicheTerritorialeUseCase";
-import { defineModule } from "@/server/module-system";
+import { defineModule, type NoExports } from "@/server/module-system";
 
-type LegacyExports = Record<string, never>;
-
-type LegacyCradle = LegacyExports & {
+type LegacyCradle = NoExports & {
   chantierRepository: ChantierRepository;
   axeRepository: AxeRepository;
   synthèseDesRésultatsRepository: SynthèseDesRésultatsRepository;
@@ -137,9 +135,7 @@ type LegacyCradle = LegacyExports & {
   récupérerListeChantierFicheTerritorialeUseCase: RécupérerListeChantierFicheTerritorialeUseCase;
 };
 
-export type LegacyDependencies = LegacyCradle;
-
-export const legacyModule = defineModule<LegacyExports, LegacyCradle>()({
+export const legacyModule = defineModule<NoExports, LegacyCradle>()({
   name: "legacy",
   imports: ["shared"],
   exports: [],

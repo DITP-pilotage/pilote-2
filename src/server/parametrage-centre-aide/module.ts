@@ -1,15 +1,13 @@
 import { asClass } from "awilix";
-import { defineModule } from "@/server/module-system";
-import { CreerArticleCentreAideUseCase } from "./usecases/CreerArticleCentreAideUseCase";
+import { defineModule, type NoExports } from "@/server/module-system";
+import { CreerArticleCentreAideUseCase} from "./usecases/CreerArticleCentreAideUseCase";
 import { PrismaArticleCentreAideRepository } from "./infrastructure/adapters/PrismaArticleCentreAideRepository";
 import { ArticleCentreAideRepository } from "./domain/ports/ArticleCentreAideRepository";
 import { ListerArticlesCentreAideUseCase } from "./usecases/ListerArticlesCentreAideUseCase";
 import { ModifierArticleCentreAideUseCase } from "./usecases/ModifierArticleCentreAideUseCase";
 import { SupprimerArticleCentreAideUseCase } from "./usecases/SupprimerArticleCentreAideUseCase";
 
-type ParametrageCentreAideExports = Record<string, never>;
-
-type ParametrageCentreAideCradle = ParametrageCentreAideExports & {
+type ParametrageCentreAideCradle = NoExports & {
   creerArticleCentreAideUseCase: CreerArticleCentreAideUseCase;
   articleCentreAideRepository: ArticleCentreAideRepository;
   listerArticlesCentreAideUseCase: ListerArticlesCentreAideUseCase;
@@ -17,10 +15,8 @@ type ParametrageCentreAideCradle = ParametrageCentreAideExports & {
   supprimerArticleCentreAideUseCase: SupprimerArticleCentreAideUseCase;
 };
 
-export type ParametrageCentreAideDependencies = ParametrageCentreAideCradle;
-
 export const parametrageCentreAideModule = defineModule<
-  ParametrageCentreAideExports,
+  NoExports,
   ParametrageCentreAideCradle
 >()({
   name: "parametrageCentreAide",

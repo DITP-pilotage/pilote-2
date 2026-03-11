@@ -3,21 +3,16 @@ import { ImportDecisionStrategiqueAPIHandler } from "@/server/decisions-strategi
 import { ImporterDecisionsStrategiquesUseCase } from "@/server/decisions-strategiques/usecases/ImporterDecisionsStrategiquesUseCase";
 import DécisionStratégiqueRepository from "@/server/domain/chantier/décisionStratégique/DécisionStratégiqueRepository.interface";
 import DécisionStratégiqueSQLRepository from "@/server/infrastructure/accès_données/chantier/décisionStratégique/DécisionStratégiqueSQLRepository";
-import { defineModule } from "@/server/module-system";
+import { defineModule, type NoExports } from "@/server/module-system";
 
-type ImportDecisionStrategiqueExports = Record<string, never>;
-
-type ImportDecisionStrategiqueCradle = ImportDecisionStrategiqueExports & {
+type ImportDecisionStrategiqueCradle = NoExports & {
   importDecisionStrategiqueAPIHandler: ImportDecisionStrategiqueAPIHandler;
   importerDecisionsStrategiquesUseCase: ImporterDecisionsStrategiquesUseCase;
   décisionStratégiqueRepository: DécisionStratégiqueRepository;
 };
 
-export type ImportDecisionStrategiqueDependencies =
-  ImportDecisionStrategiqueCradle;
-
 export const importDecisionStrategiqueModule = defineModule<
-  ImportDecisionStrategiqueExports,
+  NoExports,
   ImportDecisionStrategiqueCradle
 >()({
   name: "importDecisionStrategique",

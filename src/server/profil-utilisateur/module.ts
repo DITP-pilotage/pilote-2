@@ -7,11 +7,9 @@ import { ProfilModifieSideEffects } from "@/server/profil-utilisateur/domain/por
 import { KeycloakBrevoProfilModifieSideEffects } from "@/server/profil-utilisateur/infrastructure/adapters/KeycloakBrevoProfilModifieSideEffects";
 import type { EmailManager } from "@/server/infrastructure/email-manager/EmailManager";
 import { configuration } from "@/config";
-import { defineModule } from "@/server/module-system";
+import { defineModule, type NoExports } from "@/server/module-system";
 
-type ProfilUtilisateurExports = Record<string, never>;
-
-type ProfilUtilisateurCradle = ProfilUtilisateurExports & {
+type ProfilUtilisateurCradle = NoExports & {
   profilUtilisateurRepository: ProfilUtilisateurRepository;
   profilModifieSideEffects: ProfilModifieSideEffects;
   modifierMonProfilUseCase: ModifierMonProfilUseCase;
@@ -19,10 +17,8 @@ type ProfilUtilisateurCradle = ProfilUtilisateurExports & {
   emailManager: EmailManager;
 };
 
-export type ProfilUtilisateurDependencies = ProfilUtilisateurCradle;
-
 export const profilUtilisateurModule = defineModule<
-  ProfilUtilisateurExports,
+  NoExports,
   ProfilUtilisateurCradle
 >()({
   name: "profilUtilisateur",

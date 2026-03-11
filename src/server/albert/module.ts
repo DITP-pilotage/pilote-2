@@ -7,12 +7,10 @@ import { createGetChantiersEnDifficulteTool } from "@/server/albert/tools/getCha
 import { GetValeursIndicateurQuery } from "@/server/chantiers/query/GetValeursIndicateurQuery";
 import { createGetValeursIndicateurTool } from "@/server/albert/tools/getValeursIndicateur";
 import { EvaluerChatUseCase } from "@/server/albert/usecases/EvaluerChatUseCase";
-import { defineModule } from "@/server/module-system";
+import { defineModule, type NoExports } from "@/server/module-system";
 import type { PrismaPilote } from "@/server/db/PrismaPilote";
 
-type AlbertExports = Record<string, never>;
-
-type AlbertCradle = AlbertExports & {
+type AlbertCradle = NoExports & {
   prisma: PrismaPilote;
   createGetTauxAvancementTerritoireTool: ReturnType<
     typeof createGetTauxAvancementTerritoireTool
@@ -32,9 +30,7 @@ type AlbertCradle = AlbertExports & {
   evaluerChatUseCase: EvaluerChatUseCase;
 };
 
-export type AlbertDependencies = AlbertCradle;
-
-export const albertModule = defineModule<AlbertExports, AlbertCradle>()({
+export const albertModule = defineModule<NoExports, AlbertCradle>()({
   name: "albert",
   imports: ["shared"],
   exports: [],

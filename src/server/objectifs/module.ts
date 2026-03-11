@@ -3,20 +3,16 @@ import { ImportObjectifAPIHandler } from "@/server/objectifs/infrastructure/hand
 import { ImporterObjectifsUseCase } from "@/server/objectifs/usecases/ImporterObjectifsUseCase";
 import ObjectifRepository from "@/server/domain/chantier/objectif/ObjectifRepository.interface";
 import ObjectifSQLRepository from "@/server/infrastructure/accès_données/chantier/objectif/ObjectifSQLRepository";
-import { defineModule } from "@/server/module-system";
+import { defineModule, type NoExports } from "@/server/module-system";
 
-type ImportObjectifExports = Record<string, never>;
-
-type ImportObjectifCradle = ImportObjectifExports & {
+type ImportObjectifCradle = NoExports & {
   importObjectifAPIHandler: ImportObjectifAPIHandler;
   importerObjectifsUseCase: ImporterObjectifsUseCase;
   objectifRepository: ObjectifRepository;
 };
 
-export type ImportObjectifDependencies = ImportObjectifCradle;
-
 export const importObjectifModule = defineModule<
-  ImportObjectifExports,
+  NoExports,
   ImportObjectifCradle
 >()({
   name: "importObjectif",

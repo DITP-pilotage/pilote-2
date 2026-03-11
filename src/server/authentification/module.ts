@@ -1,18 +1,14 @@
 import { asClass } from "awilix";
 import UtilisateurRepository from "@/server/domain/utilisateur/UtilisateurRepository.interface";
 import { UtilisateurSQLRepository } from "@/server/infrastructure/accès_données/utilisateur/UtilisateurSQLRepository";
-import { defineModule } from "@/server/module-system";
+import { defineModule, type NoExports } from "@/server/module-system";
 
-type AuthentificationExports = Record<string, never>;
-
-type AuthentificationCradle = AuthentificationExports & {
+type AuthentificationCradle = NoExports & {
   utilisateurRepository: UtilisateurRepository;
 };
 
-export type AuthentificationDependencies = AuthentificationCradle;
-
 export const authentificationModule = defineModule<
-  AuthentificationExports,
+  NoExports,
   AuthentificationCradle
 >()({
   name: "authentification",

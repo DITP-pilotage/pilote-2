@@ -106,8 +106,6 @@ type GestionUtilisateurCradle = GestionUtilisateurExports & {
   importerDesUtilisateursUseCase: ImporterDesUtilisateursUseCase;
 };
 
-export type GestionUtilisateurDependencies = GestionUtilisateurCradle;
-
 export const gestionUtilisateurModule = defineModule<
   GestionUtilisateurExports,
   GestionUtilisateurCradle

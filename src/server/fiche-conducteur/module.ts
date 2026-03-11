@@ -17,11 +17,9 @@ import { RécupérerDernièreSynthèseDesRésultatsUseCase } from "@/server/fich
 import { RécupérerDonnéesCartographieUseCase } from "@/server/fiche-conducteur/usecases/RécupérerDonnéesCartographieUseCase";
 import { PrismaSynthèseDesRésultatsRepository } from "@/server/fiche-conducteur/infrastructure/adapters/PrismaSynthèseDesRésultatsRepository";
 import { SynthèseDesRésultatsRepository } from "@/server/fiche-conducteur/domain/ports/SynthèseDesRésultatsRepository";
-import { defineModule } from "@/server/module-system";
+import { defineModule, type NoExports } from "@/server/module-system";
 
-type FicheConducteurExports = Record<string, never>;
-
-type FicheConducteurCradle = FicheConducteurExports & {
+type FicheConducteurCradle = NoExports & {
   ficheConducteurHandler: FicheConducteurHandler;
   recupererChantierFicheConducteurUseCase: RécupererChantierFicheConducteurUseCase;
   recupererAvancementUseCase: RécupérerAvancementUseCase;
@@ -36,10 +34,8 @@ type FicheConducteurCradle = FicheConducteurExports & {
   decisionStrategiqueRepository: DecisionStrategiqueRepository;
 };
 
-export type FicheConducteurDependencies = FicheConducteurCradle;
-
 export const ficheConducteurModule = defineModule<
-  FicheConducteurExports,
+  NoExports,
   FicheConducteurCradle
 >()({
   name: "ficheConducteur",
