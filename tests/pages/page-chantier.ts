@@ -129,7 +129,9 @@ export class PageChantier extends BasePage {
       .getByLabel(`champ d'edition pour le contenu de ${typeCommentaire}`)
       .fill(`Un commentaire test e2e ${id}`);
 
-    await this.page.getByText("Publier").click();
+    await this.page
+      .getByRole("button", { name: "Publier", exact: true })
+      .click();
 
     await this.page.waitForSelector("#alerte");
 
