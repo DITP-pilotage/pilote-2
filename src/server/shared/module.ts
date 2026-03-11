@@ -24,13 +24,13 @@ export const sharedModule = defineModule<SharedExports, SharedCradle>()({
   name: "shared",
   imports: [],
   exports: [],
-  register: (container, fn, _asModuleClass) => {
+  register: (container, { asModuleFunction }) => {
     container.register({
       prisma: asClass(PrismaPilote, { lifetime: Lifetime.SINGLETON }),
       transaction: asClass(PrismaTransaction, {
         lifetime: Lifetime.SINGLETON,
       }),
-      emailManager: fn(() =>
+      emailManager: asModuleFunction(() =>
         configuration().brevo.disableEmails
           ? new StubEmailManager()
           : new BrevoEmailManager(),

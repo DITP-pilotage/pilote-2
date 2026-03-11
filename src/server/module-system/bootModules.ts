@@ -7,34 +7,22 @@ import {
   InjectionMode,
 } from "awilix";
 import type { ModuleDef, TypedAsClass, TypedAsFunction } from "./ModuleDef";
+import type { ModuleName } from "./moduleNames";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-type AnyModuleDef = ModuleDef<string, string, any, any>;
+type AnyModuleDef = ModuleDef<ModuleName, any, any>;
 
 type ExtractCradle<M> =
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  M extends ModuleDef<string, string, any, infer C> ? C : never;
-
-type ExtractImports<M> =
-  M extends ModuleDef<string, infer I, any, any> // eslint-disable-line @typescript-eslint/no-explicit-any
-    ? I
-    : never;
-
-type InvalidImports<TModules extends readonly AnyModuleDef[]> = Exclude<
-  ExtractImports<TModules[number]>,
-  TModules[number]["name"]
->;
+  M extends ModuleDef<ModuleName, any, infer C> ? C : never;
 
 const bootModules = <TModules extends readonly AnyModuleDef[]>(
-  ...args: InvalidImports<TModules> extends never
-    ? [modules: [...TModules]]
-    : [modules: [...TModules], INVALID_IMPORTS: InvalidImports<TModules>]
+  modules: [...TModules],
 ): {
   getContainer: <N extends TModules[number]["name"]>(
     name: N,
   ) => AwilixContainer<ExtractCradle<Extract<TModules[number], { name: N }>>>;
 } => {
-  const modules = args[0];
   const containers = new Map<string, AwilixContainer>();
 
   // Phase 1 — create containers
@@ -53,16 +41,18 @@ const bootModules = <TModules extends readonly AnyModuleDef[]>(
     strict: true,
   });
 
-  const fn = asFunction as unknown as TypedAsFunction<never>;
-  const cls = asClass as unknown as TypedAsClass<never>;
+  const helpers = {
+    asModuleFunction: asFunction as unknown as TypedAsFunction<never>,
+    asModuleClass: asClass as unknown as TypedAsClass<never>,
+  };
 
-  rootModule.register(rootContainer, fn, cls);
+  rootModule.register(rootContainer, helpers);
   containers.set(rootModule.name, rootContainer);
 
   for (const mod of modules) {
     if (mod === rootModule) continue;
     const scope = rootContainer.createScope();
-    mod.register(scope, fn, cls);
+    mod.register(scope, helpers);
     containers.set(mod.name, scope);
   }
 

@@ -58,7 +58,7 @@ export const rapportsHebdomadairesModule = defineModule<
     "indicateurTerritoireValeurEvenement",
   ],
   exports: [],
-  register: (container, _fn, asModuleClass) => {
+  register: (container, { asModuleClass }) => {
     container.register({
       activiteComptesGateway: asModuleClass(
         GestionUtilisateurActiviteComptesGateway,

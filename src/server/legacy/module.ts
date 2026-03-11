@@ -143,7 +143,7 @@ export const legacyModule = defineModule<LegacyExports, LegacyCradle>()({
   name: "legacy",
   imports: ["shared"],
   exports: [],
-  register: (container, fn) => {
+  register: (container, { asModuleFunction }) => {
     container.register({
       chantierRepository: asClass(ChantierSQLRepository).scoped(),
       axeRepository: asClass(AxeSQLRepository).scoped(),
@@ -189,7 +189,7 @@ export const legacyModule = defineModule<LegacyExports, LegacyCradle>()({
       gestionContenuRepository: asClass(
         PrismaGestionContenuRepository,
       ).scoped(),
-      tokenAPIService: fn(
+      tokenAPIService: asModuleFunction(
         () =>
           new TokenAPIJWTService({ secret: configuration().tokenAPI.secret }),
       ).scoped(),
@@ -256,7 +256,7 @@ export const legacyModule = defineModule<LegacyExports, LegacyCradle>()({
         ModifierMessageInformationUseCase,
       ).scoped(),
       supprimerTokenAPIUseCase: asClass(SupprimerTokenAPIUseCase).scoped(),
-      utilisateurAuthentifieJWTService: fn(
+      utilisateurAuthentifieJWTService: asModuleFunction(
         ({
           utilisateurRepository,
           tokenAPIInformationRepository,
@@ -268,7 +268,7 @@ export const legacyModule = defineModule<LegacyExports, LegacyCradle>()({
             profilRepository: authentificationProfilRepository,
           }),
       ).scoped(),
-      creerTokenAPIUseCase: fn(
+      creerTokenAPIUseCase: asModuleFunction(
         ({
           tokenAPIService,
           tokenAPIInformationRepository,
@@ -280,19 +280,19 @@ export const legacyModule = defineModule<LegacyExports, LegacyCradle>()({
             utilisateurRepository: authentificationUtilisateurRepository,
           }),
       ).scoped(),
-      listerDonneesIndicateurParIndicIdUseCase: fn(
+      listerDonneesIndicateurParIndicIdUseCase: asModuleFunction(
         ({ chantierIndicateurRepository }) =>
           new ListerDonneesIndicateurParIndicIdUseCase({
             indicateurRepository: chantierIndicateurRepository,
           }),
       ).scoped(),
-      récupérerTerritoireParCodeUseCase: fn(
+      récupérerTerritoireParCodeUseCase: asModuleFunction(
         ({ ficheTerritorialeTerritoireRepository }) =>
           new RécupérerTerritoireParCodeUseCase({
             territoireRepository: ficheTerritorialeTerritoireRepository,
           }),
       ).scoped(),
-      récupérerTauxAvancementTerritoireUseCase: fn(
+      récupérerTauxAvancementTerritoireUseCase: asModuleFunction(
         ({
           ficheTerritorialeChantierRepository,
           ficheTerritorialeTerritoireRepository,
@@ -302,7 +302,7 @@ export const legacyModule = defineModule<LegacyExports, LegacyCradle>()({
             territoireRepository: ficheTerritorialeTerritoireRepository,
           }),
       ).scoped(),
-      récupérerRépartitionMétéoUseCase: fn(
+      récupérerRépartitionMétéoUseCase: asModuleFunction(
         ({
           ficheTerritorialeChantierRepository,
           ficheTerritorialeTerritoireRepository,
@@ -312,7 +312,7 @@ export const legacyModule = defineModule<LegacyExports, LegacyCradle>()({
             territoireRepository: ficheTerritorialeTerritoireRepository,
           }),
       ).scoped(),
-      récupérerListeChantierFicheTerritorialeUseCase: fn(
+      récupérerListeChantierFicheTerritorialeUseCase: asModuleFunction(
         ({
           ficheTerritorialeChantierRepository,
           ficheTerritorialeTerritoireRepository,

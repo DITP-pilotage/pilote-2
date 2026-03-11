@@ -1,6 +1,6 @@
 import { type AwilixContainer } from "awilix";
 import { configuration } from "@/config";
-import { bootModules } from "@/server/module-system";
+import { bootModules, type ModuleName } from "@/server/module-system";
 import { sharedModule, type SharedDependencies } from "@/server/shared/module";
 import {
   authentificationModule,
@@ -118,6 +118,13 @@ const allModules = [
   parametrageCentreAideModule,
   legacyModule,
 ];
+
+// Compile-time check: errors with missing module name(s) if allModules is not exhaustive
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+type _AssertExhaustiveModules =
+  Exclude<ModuleName, (typeof allModules)[number]["name"]> extends never
+    ? true
+    : never;
 
 function registerContainer(): ContainerDependencies {
   const { getContainer } = bootModules(allModules);

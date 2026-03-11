@@ -38,19 +38,19 @@ export const albertModule = defineModule<AlbertExports, AlbertCradle>()({
   name: "albert",
   imports: ["shared"],
   exports: [],
-  register: (container, fn) => {
+  register: (container, { asModuleFunction }) => {
     container.register({
-      createGetTauxAvancementTerritoireTool: fn(
+      createGetTauxAvancementTerritoireTool: asModuleFunction(
         createGetTauxAvancementTerritoireTool,
       ),
       getChantiersEnRetardQuery: asClass(GetChantiersEnRetardQuery),
-      createGetChantiersEnRetardTool: fn(createGetChantiersEnRetardTool),
+      createGetChantiersEnRetardTool: asModuleFunction(createGetChantiersEnRetardTool),
       getChantiersEnDifficulteQuery: asClass(GetChantiersEnDifficulteQuery),
-      createGetChantiersEnDifficulteTool: fn(
+      createGetChantiersEnDifficulteTool: asModuleFunction(
         createGetChantiersEnDifficulteTool,
       ),
       getValeursIndicateurQuery: asClass(GetValeursIndicateurQuery),
-      createGetValeursIndicateurTool: fn(createGetValeursIndicateurTool),
+      createGetValeursIndicateurTool: asModuleFunction(createGetValeursIndicateurTool),
       evaluerChatUseCase: asClass(EvaluerChatUseCase),
     });
   },

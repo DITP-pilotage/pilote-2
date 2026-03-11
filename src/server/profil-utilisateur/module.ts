@@ -28,10 +28,10 @@ export const profilUtilisateurModule = defineModule<
   name: "profilUtilisateur",
   imports: ["shared"],
   exports: [],
-  register: (container, fn) => {
+  register: (container, { asModuleFunction }) => {
     container.register({
       profilUtilisateurRepository: asClass(PrismaProfilUtilisateurRepository),
-      profilModifieSideEffects: fn(({ emailManager }) => {
+      profilModifieSideEffects: asModuleFunction(({ emailManager }) => {
         const config = configuration();
         return new KeycloakBrevoProfilModifieSideEffects({
           emailManager,
