@@ -14,7 +14,7 @@ describe("RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCa
   const récupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase =
     new RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase({
       commentaireRepository,
-    );
+    });
 
   it(
     "Retourne les bons libellé des auteurs",

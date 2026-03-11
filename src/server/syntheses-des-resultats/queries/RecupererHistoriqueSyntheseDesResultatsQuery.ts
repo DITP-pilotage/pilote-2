@@ -1,5 +1,4 @@
 import { $Enums } from "@prisma/client";
-import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { Météo } from "@/server/domain/météo/Météo.interface";
 
 export type SyntheseDesResultatsHistoriqueItem = {
@@ -14,8 +13,7 @@ export type SyntheseDesResultatsHistoriqueItem = {
 import type { Inject } from "@/server/syntheses-des-resultats/module";
 
 export class RecupererHistoriqueSyntheseDesResultatsQuery {
-  constructor(private readonly deps: Inject<"prisma">) {
-  }
+  constructor(private readonly deps: Inject<"prisma">) {}
 
   async run(
     chantierId: string,

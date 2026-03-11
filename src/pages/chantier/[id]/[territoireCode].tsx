@@ -120,12 +120,13 @@ export const getServerSideProps = async (
       getContainer("commentaires")
         .resolve("recupererBrouillonCommentaireQuery")
         .run(chantierId, territoireCode, session.user!.id),
-      new RécupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase(
-        dependencies.getObjectifRepository(),
-      ).run([chantierId], session.habilitations),
-      new RécupérerDécisionStratégiqueLaPlusRécenteUseCase(
-        dependencies.getDécisionStratégiqueRepository(),
-      )
+      getContainer("legacy")
+        .resolve(
+          "récupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase",
+        )
+        .run([chantierId], session.habilitations),
+      getContainer("legacy")
+        .resolve("récupérerDécisionStratégiqueLaPlusRécenteUseCase")
         .run(chantierId, session.habilitations)
         .catch(() => null),
       getContainer("chantiers")

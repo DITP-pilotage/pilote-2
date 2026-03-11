@@ -163,7 +163,7 @@ describe("ImportCommentaireAPIHandler", () => {
     const { request, response } = créerMockRequestAvecBody(body);
 
     // When
-    await getContainer("importCommentaire")
+    await getContainer("commentaires")
       .resolve("importCommentaireAPIHandler")
       .handle({
         request,
@@ -203,7 +203,7 @@ describe("ImportCommentaireAPIHandler", () => {
     const { request, response } = créerMockRequestAvecBodyInvalide();
 
     // When
-    await getContainer("importCommentaire")
+    await getContainer("commentaires")
       .resolve("importCommentaireAPIHandler")
       .handle({
         request,
@@ -256,7 +256,7 @@ describe("ImportCommentaireAPIHandler", () => {
     const { request, response } = créerMockRequestAvecBody(body);
 
     // When
-    await getContainer("importCommentaire")
+    await getContainer("commentaires")
       .resolve("importCommentaireAPIHandler")
       .handle({
         request,
@@ -292,7 +292,7 @@ describe("ImportCommentaireAPIHandler", () => {
     const { request, response } = créerMockRequestAvecBody(body);
 
     // When
-    await getContainer("importCommentaire")
+    await getContainer("commentaires")
       .resolve("importCommentaireAPIHandler")
       .handle({
         request,
@@ -354,7 +354,7 @@ describe("ImportCommentaireAPIHandler", () => {
     const { request, response } = créerMockRequestAvecBody(body);
 
     // When
-    await getContainer("importCommentaire")
+    await getContainer("commentaires")
       .resolve("importCommentaireAPIHandler")
       .handle({
         request,
@@ -398,7 +398,7 @@ describe("ImportCommentaireAPIHandler", () => {
     const { request, response } = créerMockRequestAvecBody(body);
 
     // When
-    await getContainer("importCommentaire")
+    await getContainer("commentaires")
       .resolve("importCommentaireAPIHandler")
       .handle({
         request,

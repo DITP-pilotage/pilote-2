@@ -19,7 +19,7 @@ describe("CommentaireSQLRepository", () => {
   let repository: CommentaireSQLRepository;
 
   beforeEach(() => {
-    prismaCommentaireRepository = new CommentaireSQLRepository({
+    repository = new CommentaireSQLRepository({
       prisma: new PrismaPilote(),
     });
   });

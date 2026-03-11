@@ -24,7 +24,7 @@ const handle = async (request: NextApiRequest, response: NextApiResponse) => {
     case "POST": {
       logger.info("(API) Import des commentaires", `Chantier : ${chantierId}`);
 
-      await getContainer("importCommentaire")
+      await getContainer("commentaires")
         .resolve("importCommentaireAPIHandler")
         .handle({
           request,
