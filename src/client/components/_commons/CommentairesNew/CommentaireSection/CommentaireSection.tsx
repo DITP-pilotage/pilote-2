@@ -80,7 +80,6 @@ const CommentaireSection: FunctionComponent<CommentaireSectionProps> = ({
               (commentaire?.dateDernierBrouillon ? (
                 <BoutonEditerBrouillonCommentaire
                   commentaire={commentaire}
-                  maille={maille}
                   réformeId={réformeId}
                   territoireCode={territoireCode}
                   type={type}
@@ -88,7 +87,6 @@ const CommentaireSection: FunctionComponent<CommentaireSectionProps> = ({
               ) : (
                 <BoutonNouveauCommentaire
                   commentaire={commentaire}
-                  maille={maille}
                   réformeId={réformeId}
                   territoireCode={territoireCode}
                   type={type}

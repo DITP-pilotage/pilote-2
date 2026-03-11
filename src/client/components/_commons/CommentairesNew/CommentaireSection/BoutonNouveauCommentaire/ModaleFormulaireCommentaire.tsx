@@ -1,5 +1,5 @@
-import { FunctionComponent, PropsWithChildren, useState } from "react";
-import { useForm } from "react-hook-form";
+import { FunctionComponent, ReactNode } from "react";
+import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Bouton } from "@/components/_commons/Bouton/Bouton";
 import { Icone } from "@/components/_commons/Icone";
@@ -9,53 +9,52 @@ import { Modale } from "@/components/shared/Modale";
 import { BoutonSousLigné } from "@/components/_commons/BoutonSousLigné/BoutonSousLigné";
 import { SaveIcon } from "@/components/_commons/Icones/SaveIcon";
 import CompteurCaractères from "@/components/_commons/CompteurCaractères/CompteurCaractères";
-import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
 import {
   CommentaireAvecNomsAuteurs,
-  TypeCommentaireChantier,
+  CommentaireV2,
 } from "@/server/domain/chantier/commentaire/Commentaire.interface";
-import { Maille } from "@/server/domain/maille/Maille.interface";
 import {
   LIMITE_CARACTÈRES_COMMENTAIRE,
   validationCommentaireFormulaire,
 } from "@/validation/commentaire";
 import AffichageCommentaire from "@/components/_commons/CommentairesNew/CommentaireSection/Affichage/Affichage";
-import { useNouveauCommentaire } from "./useNouveauCommentaire";
 
-export const ModaleNouveauCommentaire: FunctionComponent<
-  PropsWithChildren<{
-    commentaire: CommentaireAvecNomsAuteurs | null;
-    réformeId: string;
-    territoireCode: string;
-    type: TypeCommentaireChantier;
-    maille: Maille;
-  }>
-> = ({ children, commentaire, réformeId, territoireCode, type }) => {
-  const [open, setOpen] = useState(false);
-  const refreshRouter = useRefreshRouter();
+interface ModaleFormulaireCommentaireProps {
+  title: string;
+  trigger: ReactNode;
+  open: boolean;
+  onOpenChange: (isOpen: boolean) => void;
+  commentaire: CommentaireAvecNomsAuteurs | null;
+  brouillon?: CommentaireV2 | null;
+  onPublier: SubmitHandler<{ contenu: string }>;
+  onBrouillon: SubmitHandler<{ contenu: string }>;
+}
 
-  const { publier, enregistrerEnBrouillon } = useNouveauCommentaire({
-    réformeId,
-    territoireCode,
-    type,
-    onSuccess: () => {
-      setOpen(false);
-      refreshRouter();
-    },
-  });
-
+export const ModaleFormulaireCommentaire: FunctionComponent<
+  ModaleFormulaireCommentaireProps
+> = ({
+  title,
+  trigger,
+  open,
+  onOpenChange,
+  commentaire,
+  brouillon,
+  onPublier,
+  onBrouillon,
+}) => {
   const form = useForm<{ contenu: string }>({
     mode: "all",
     resolver: zodResolver(validationCommentaireFormulaire),
     defaultValues: { contenu: "" },
+    ...(brouillon ? { values: { contenu: brouillon.contenu } } : {}),
   });
 
   return (
     <Modale
-      onOpenChange={(isOpen) => setOpen(isOpen)}
+      onOpenChange={onOpenChange}
       open={open}
-      title="Nouveau commentaire"
-      trigger={children}
+      title={title}
+      trigger={trigger}
     >
       <p className="text-sm text-dsfr-mention-grey mb-6">
         Veuillez saisir ci-dessous le nouveau commentaire. Après publication, le
@@ -69,7 +68,7 @@ export const ModaleNouveauCommentaire: FunctionComponent<
       </div>
 
       <h3 className="text-base font-bold mb-3">Votre nouveau commentaire</h3>
-      <form onSubmit={form.handleSubmit(publier)}>
+      <form onSubmit={form.handleSubmit(onPublier)}>
         <div
           className={`flex flex-col ${form.formState.errors.contenu ? "fr-input-group--error" : ""}`}
         >
@@ -105,7 +104,7 @@ export const ModaleNouveauCommentaire: FunctionComponent<
           <Bouton
             iconLeft={<Icone className="w-4 h-4" icone={ArrowGoBack1Icon} />}
             label="Annuler"
-            onClick={() => setOpen(false)}
+            onClick={() => onOpenChange(false)}
             type="button"
             variant="secondary"
           />
@@ -114,7 +113,7 @@ export const ModaleNouveauCommentaire: FunctionComponent<
             iconLeft={
               <Icone className="w-4 h-4 text-current" icone={SaveIcon} />
             }
-            onClick={form.handleSubmit(enregistrerEnBrouillon)}
+            onClick={form.handleSubmit(onBrouillon)}
             type="button"
           >
             Enregistrer en tant que brouillon
