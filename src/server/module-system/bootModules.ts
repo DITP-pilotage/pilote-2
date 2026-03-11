@@ -9,14 +9,36 @@ import {
 import type { ModuleDef, TypedAsClass, TypedAsFunction } from "./ModuleDef";
 import type { ModuleName } from "./moduleNames";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type AnyModuleDef = ModuleDef<ModuleName, any, any>;
+// `bootModules` est le point d'entrée du système de modules.
+// Il reçoit une liste de définitions de modules et construit le graphe
+// de dépendances en deux phases :
+//
+// Phase 1 — Création des containers :
+//   Le module racine (celui sans imports) obtient un container awilix neuf.
+//   Chaque autre module obtient un scope (enfant) du container racine, ce qui
+//   permet d'hériter des dépendances transverses (prisma, transaction, etc.).
+//
+// Phase 2 — Câblage des exports inter-modules :
+//   Les exports de chaque module importé sont résolus eagerly puis
+//   ré-enregistrés comme valeurs simples dans le container consommateur.
+//   Cela évite la détection de cycles d'awilix quand `asFunction` tente de
+//   ré-résoudre une clé déjà sur la pile de résolution d'un scope partagé.
+//
+// Le typage est restauré à l'usage via `getContainer`, qui renvoie un
+// container correctement typé pour chaque module.
 
-type ExtractCradle<M> =
+// `any` nécessaire : effacement de type à la frontière du système de modules,
+// les types concrets sont restaurés via `getContainer`
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type AnyModuleDef = ModuleDef<ModuleName, any, any>;
+
+// `any` nécessaire : inférence conditionnelle qui extrait le cradle d'un ModuleDef,
+// le type concret est restauré par le générique de `getContainer`
+export type ExtractCradle<M> =
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   M extends ModuleDef<ModuleName, any, infer C> ? C : never;
 
-const bootModules = <TModules extends readonly AnyModuleDef[]>(
+export const bootModules = <TModules extends readonly AnyModuleDef[]>(
   modules: [...TModules],
 ): {
   getContainer: <N extends TModules[number]["name"]>(
@@ -25,10 +47,10 @@ const bootModules = <TModules extends readonly AnyModuleDef[]>(
 } => {
   const containers = new Map<string, AwilixContainer>();
 
-  // Phase 1 — create containers
-  // The root module (imports: []) gets a fresh container.
-  // Every other module gets a scope of the root container so that
-  // prisma / transaction / transversal deps are inherited.
+  // Phase 1 — Création des containers
+  // Le module racine (imports: []) obtient un container neuf.
+  // Chaque autre module obtient un scope du container racine pour
+  // hériter des dépendances transverses (prisma, transaction, etc.).
   const rootModule = modules.find((m) => m.imports.length === 0);
   if (!rootModule) {
     throw new Error(
@@ -56,11 +78,11 @@ const bootModules = <TModules extends readonly AnyModuleDef[]>(
     containers.set(mod.name, scope);
   }
 
-  // Phase 2 — wire cross-module exports via eager resolution.
-  // All modules are already registered (Phase 1), so we can resolve
-  // exports eagerly and register them as plain values.  This avoids
-  // awilix's cycle detection which fires when asFunction re-resolves
-  // a key that is already on the resolution stack of a shared scope.
+  // Phase 2 — Câblage des exports inter-modules via résolution eager.
+  // Tous les modules sont déjà enregistrés (Phase 1), donc on résout
+  // les exports de manière eager et on les ré-enregistre comme valeurs simples.
+  // Cela évite la détection de cycles d'awilix quand `asFunction` tente de
+  // ré-résoudre une clé déjà sur la pile de résolution d'un scope partagé.
   for (const mod of modules) {
     if (mod === rootModule) continue;
     const container = containers.get(mod.name)!;
@@ -91,11 +113,10 @@ const bootModules = <TModules extends readonly AnyModuleDef[]>(
       if (!container) {
         throw new Error(`Module "${name}" not found`);
       }
+      // `any` nécessaire : cast vers le type concret du container,
+      // la sûreté est garantie par le générique de `getContainer`
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       return container as any;
     },
   };
 };
-
-export { bootModules };
-export type { AnyModuleDef, ExtractCradle };

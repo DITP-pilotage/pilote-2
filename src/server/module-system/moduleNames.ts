@@ -1,4 +1,4 @@
-const moduleNames = [
+export const moduleNames = [
   "shared",
   "authentification",
   "chantiers",
@@ -21,7 +21,4 @@ const moduleNames = [
   "legacy",
 ] as const;
 
-type ModuleName = (typeof moduleNames)[number];
-
-export type { ModuleName };
-export { moduleNames };
+export type ModuleName = (typeof moduleNames)[number];
