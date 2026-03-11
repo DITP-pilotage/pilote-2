@@ -9,6 +9,7 @@ import {
   creerSyntheseDesResultatsPublie,
 } from "@/server/syntheses-des-resultats/domain/SyntheseDesResultats";
 import { InMemoryTransaction } from "@/server/db/InMemoryTransaction";
+import { PrismaPilote } from "@/server/db/PrismaPilote";
 
 const TERRITOIRE_CODE = "DEPT-75";
 const MAILLE = "DEPT";
@@ -20,8 +21,12 @@ describe("EnregistrerSyntheseDesResultatsService", () => {
 
   beforeEach(() => {
     service = new EnregistrerSyntheseDesResultatsService({
-      synthèseDesRésultatsRepository: new SynthèseDesRésultatsSQLRepository(),
-      chantierRepository: new PrismaChantierRepository(),
+      synthèseDesRésultatsRepository: new SynthèseDesRésultatsSQLRepository({
+        prisma: new PrismaPilote(),
+      }),
+      chantierRepository: new PrismaChantierRepository({
+        prisma: new PrismaPilote(),
+      }),
       transaction,
     });
   });

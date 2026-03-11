@@ -52,22 +52,22 @@ export const importSyntheseDesResultatsModule = defineModule<
       ),
       chantierRepository: asModuleClass(PrismaChantierRepository),
       transaction: asModuleClass(PrismaTransaction),
-      enregistrerSyntheseDesResultatsService: asClass(
+      enregistrerSyntheseDesResultatsService: asModuleClass(
         EnregistrerSyntheseDesResultatsService,
       ),
       importerSynthesesDesResultatsUseCase: asModuleClass(
         ImporterSynthesesDesResultatsUseCase,
       ),
-      publierSyntheseDesResultatsUseCase: asClass(
+      publierSyntheseDesResultatsUseCase: asModuleClass(
         PublierSyntheseDesResultatsUseCase,
       ),
-      enregistrerBrouillonSyntheseDesResultatsUseCase: asClass(
+      enregistrerBrouillonSyntheseDesResultatsUseCase: asModuleClass(
         EnregistrerBrouillonSyntheseDesResultatsUseCase,
       ),
-      modifierSyntheseDesResultatsPublieeUseCase: asClass(
+      modifierSyntheseDesResultatsPublieeUseCase: asModuleClass(
         ModifierSyntheseDesResultatsPublieeUseCase,
       ),
-      publierBrouillonSyntheseDesResultatsUseCase: asClass(
+      publierBrouillonSyntheseDesResultatsUseCase: asModuleClass(
         PublierBrouillonSyntheseDesResultatsUseCase,
       ),
       modifierBrouillonSyntheseDesResultatsUseCase: asModuleClass(
@@ -79,7 +79,7 @@ export const importSyntheseDesResultatsModule = defineModule<
       récupérerHistoriqueSyntheseDesResultatsQuery: asModuleClass(
         RecupererHistoriqueSyntheseDesResultatsQuery,
       ),
-      recupererDernierBrouillonSyntheseDesResultatsQuery: asClass(
+      recupererDernierBrouillonSyntheseDesResultatsQuery: asModuleClass(
         RecupererBrouillonSyntheseDesResultatsQuery,
       ),
       importSyntheseDesResultatsAPIHandler: asModuleClass(
