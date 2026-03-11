@@ -143,9 +143,7 @@ export const CartographieV2: FunctionComponent<CartographieV2Props> = ({
               territoire.code,
               {
                 key: territoire.code,
-                className: auClicTerritoire
-                  ? "cursor-pointer hover:opacity-70"
-                  : "",
+                className: `stroke-[var(--grey-1000-50)] stroke-[0.15] ${auClicTerritoire ? "cursor-pointer hover:opacity-70" : ""}`,
                 fill: donnee?.remplissage ?? "#e0e0e0",
                 onClick: () => auClicTerritoire?.(territoire.code),
                 onMouseEnter: (event) => {
@@ -162,6 +160,18 @@ export const CartographieV2: FunctionComponent<CartographieV2Props> = ({
               maille,
             );
           })}
+          {maille === "departementale" &&
+            listeTerritoires.régions.map((region) =>
+              getTraceSvg(
+                region.code,
+                {
+                  key: `frontiere-${region.code}`,
+                  className:
+                    "fill-none stroke-[var(--grey-1000-50)] stroke-[0.4] pointer-events-none",
+                },
+                maille,
+              ),
+            )}
           {territoiresSelectionnes?.map((code) =>
             getTraceSvg(
               code,
