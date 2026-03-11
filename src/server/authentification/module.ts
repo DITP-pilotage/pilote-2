@@ -2,7 +2,7 @@ import UtilisateurRepository from "@/server/domain/utilisateur/UtilisateurReposi
 import { UtilisateurSQLRepository } from "@/server/infrastructure/accès_données/utilisateur/UtilisateurSQLRepository";
 import {
   defineModule,
-  type ModuleScope,
+  type ExtractScope,
   type NoExports,
 } from "@/server/module-system";
 
@@ -24,5 +24,5 @@ export const authentificationModule = defineModule<
   },
 });
 
-type Scope = ModuleScope<AuthentificationCradle>;
+type Scope = ExtractScope<typeof authentificationModule>;
 export type Inject<K extends keyof Scope> = Pick<Scope, K>;

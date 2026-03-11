@@ -4,7 +4,7 @@ import CommentaireRepository from "@/server/domain/chantier/commentaire/Commenta
 import CommentaireSQLRepository from "@/server/infrastructure/accès_données/chantier/commentaire/CommentaireSQLRepository";
 import {
   defineModule,
-  type ModuleScope,
+  type ExtractScope,
   type NoExports,
 } from "@/server/module-system";
 
@@ -30,5 +30,5 @@ export const importCommentaireModule = defineModule<
   },
 });
 
-type Scope = ModuleScope<ImportCommentaireCradle>;
+type Scope = ExtractScope<typeof importCommentaireModule>;
 export type Inject<K extends keyof Scope> = Pick<Scope, K>;

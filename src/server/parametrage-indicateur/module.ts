@@ -16,7 +16,7 @@ import { GetMetadataIndicateurConfigurationQuery } from "@/server/parametrage-in
 import { EnregistrerMetadataIndicateurHandler } from "@/server/parametrage-indicateur/handlers/EnregistrerMetadataIndicateurHandler";
 import {
   defineModule,
-  type ModuleScope,
+  type ExtractScope,
   type NoExports,
 } from "@/server/module-system";
 
@@ -90,5 +90,5 @@ export const parametrageIndicateurModule = defineModule<
   },
 });
 
-type Scope = ModuleScope<ParametrageIndicateurCradle>;
+type Scope = ExtractScope<typeof parametrageIndicateurModule>;
 export type Inject<K extends keyof Scope> = Pick<Scope, K>;

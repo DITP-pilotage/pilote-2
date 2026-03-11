@@ -18,7 +18,7 @@ import { PrismaSynthèseDesRésultatsRepository } from "@/server/fiche-conducteu
 import { SynthèseDesRésultatsRepository } from "@/server/fiche-conducteur/domain/ports/SynthèseDesRésultatsRepository";
 import {
   defineModule,
-  type ModuleScope,
+  type ExtractScope,
   type NoExports,
 } from "@/server/module-system";
 
@@ -72,5 +72,5 @@ export const ficheConducteurModule = defineModule<
   },
 });
 
-type Scope = ModuleScope<FicheConducteurCradle>;
+type Scope = ExtractScope<typeof ficheConducteurModule>;
 export type Inject<K extends keyof Scope> = Pick<Scope, K>;

@@ -1,6 +1,6 @@
 import {
   defineModule,
-  type ModuleScope,
+  type ExtractScope,
   type NoExports,
 } from "@/server/module-system";
 import { CreerNouveauteUseCase } from "./usecases/CreerNouveauteUseCase";
@@ -33,5 +33,5 @@ export const parametrageNouveautesModule = defineModule<
   },
 });
 
-type Scope = ModuleScope<ParametrageNouveautesCradle>;
+type Scope = ExtractScope<typeof parametrageNouveautesModule>;
 export type Inject<K extends keyof Scope> = Pick<Scope, K>;

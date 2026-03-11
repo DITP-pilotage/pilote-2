@@ -20,7 +20,7 @@ import { ImportDonneeIndicateurAPIHandler } from "@/server/import-indicateur/inf
 import type { IndicateurTerritoireValeurEvenementRepository } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/IndicateurTerritoireValeurEvenementRepository";
 import {
   defineModule,
-  type ModuleScope,
+  type ExtractScope,
   type NoExports,
 } from "@/server/module-system";
 import { PropositionValeurAvancementRepository } from "./domain/ports/PropositionValeurAvancementRepository";
@@ -89,5 +89,5 @@ export const importIndicateurModule = defineModule<
   },
 });
 
-type Scope = ModuleScope<ImportIndicateurCradle>;
+type Scope = ExtractScope<typeof importIndicateurModule>;
 export type Inject<K extends keyof Scope> = Pick<Scope, K>;

@@ -1,6 +1,6 @@
 import {
   defineModule,
-  type ModuleScope,
+  type ExtractScope,
   type NoExports,
 } from "@/server/module-system";
 import { CreerArticleCentreAideUseCase } from "./usecases/CreerArticleCentreAideUseCase";
@@ -46,5 +46,5 @@ export const parametrageCentreAideModule = defineModule<
   },
 });
 
-type Scope = ModuleScope<ParametrageCentreAideCradle>;
+type Scope = ExtractScope<typeof parametrageCentreAideModule>;
 export type Inject<K extends keyof Scope> = Pick<Scope, K>;

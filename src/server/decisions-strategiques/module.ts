@@ -4,7 +4,7 @@ import DécisionStratégiqueRepository from "@/server/domain/chantier/décisionS
 import DécisionStratégiqueSQLRepository from "@/server/infrastructure/accès_données/chantier/décisionStratégique/DécisionStratégiqueSQLRepository";
 import {
   defineModule,
-  type ModuleScope,
+  type ExtractScope,
   type NoExports,
 } from "@/server/module-system";
 
@@ -36,5 +36,5 @@ export const importDecisionStrategiqueModule = defineModule<
   },
 });
 
-type Scope = ModuleScope<ImportDecisionStrategiqueCradle>;
+type Scope = ExtractScope<typeof importDecisionStrategiqueModule>;
 export type Inject<K extends keyof Scope> = Pick<Scope, K>;

@@ -4,7 +4,7 @@ import ObjectifRepository from "@/server/domain/chantier/objectif/ObjectifReposi
 import ObjectifSQLRepository from "@/server/infrastructure/accès_données/chantier/objectif/ObjectifSQLRepository";
 import {
   defineModule,
-  type ModuleScope,
+  type ExtractScope,
   type NoExports,
 } from "@/server/module-system";
 
@@ -30,5 +30,5 @@ export const importObjectifModule = defineModule<
   },
 });
 
-type Scope = ModuleScope<ImportObjectifCradle>;
+type Scope = ExtractScope<typeof importObjectifModule>;
 export type Inject<K extends keyof Scope> = Pick<Scope, K>;

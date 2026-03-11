@@ -9,7 +9,7 @@ import { PropositionValeurAvancementRepository } from "@/server/chantiers/domain
 import { PrismaPropositionValeurAvancementRepository } from "@/server/chantiers/infrastructure/adapters/PrismaPropositionValeurAvancementRepository";
 import type { IndicateurTerritoireValeurEvenementRepository } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/IndicateurTerritoireValeurEvenementRepository";
 import { DatajobsExecutionQueries } from "@/server/datajobs-execution/DatajobsExecution";
-import { defineModule, type ModuleScope } from "@/server/module-system";
+import { defineModule, type ExtractScope } from "@/server/module-system";
 import { TerritoireRepository } from "./domain/ports/TerritoireRepository";
 import { PrismaTerritoireRepository } from "./infrastructure/adapters/PrismaTerritoireRepository";
 import { UtilisateurRepository } from "./domain/ports/UtilisateurRepository";
@@ -119,5 +119,5 @@ export const chantiersModule = defineModule<ChantierExports, ChantierCradle>()({
   },
 });
 
-type Scope = ModuleScope<ChantierCradle>;
+type Scope = ExtractScope<typeof chantiersModule>;
 export type Inject<K extends keyof Scope> = Pick<Scope, K>;

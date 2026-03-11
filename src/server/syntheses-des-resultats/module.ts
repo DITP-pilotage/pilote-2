@@ -11,7 +11,7 @@ import { Transaction } from "@/server/db/Transaction";
 import { PrismaTransaction } from "@/server/db/PrismaTransaction";
 import {
   defineModule,
-  type ModuleScope,
+  type ExtractScope,
   type NoExports,
 } from "@/server/module-system";
 import { EnregistrerSyntheseDesResultatsService } from "@/server/syntheses-des-resultats/services/EnregistrerSyntheseDesResultatsService";
@@ -89,5 +89,5 @@ export const importSyntheseDesResultatsModule = defineModule<
   },
 });
 
-type Scope = ModuleScope<ImportSyntheseDesResultatsCradle>;
+type Scope = ExtractScope<typeof importSyntheseDesResultatsModule>;
 export type Inject<K extends keyof Scope> = Pick<Scope, K>;

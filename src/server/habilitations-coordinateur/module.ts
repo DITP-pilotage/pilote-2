@@ -2,7 +2,7 @@ import { AjouterLesChantierAuxHabilitationsHandler } from "@/server/habilitation
 import { RecupererLesChantiersTerritorialisesQuery } from "@/server/habilitations-coordinateur/queries/RecupererLesChantiersTerritorialisesQuery";
 import {
   defineModule,
-  type ModuleScope,
+  type ExtractScope,
   type NoExports,
 } from "@/server/module-system";
 
@@ -30,5 +30,5 @@ export const habilitationsCoordinateurModule = defineModule<
   },
 });
 
-type Scope = ModuleScope<HabilitationsCoordinateurCradle>;
+type Scope = ExtractScope<typeof habilitationsCoordinateurModule>;
 export type Inject<K extends keyof Scope> = Pick<Scope, K>;

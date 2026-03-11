@@ -8,7 +8,7 @@ import { createGetValeursIndicateurTool } from "@/server/albert/tools/getValeurs
 import { EvaluerChatUseCase } from "@/server/albert/usecases/EvaluerChatUseCase";
 import {
   defineModule,
-  type ModuleScope,
+  type ExtractScope,
   type NoExports,
 } from "@/server/module-system";
 import type { PrismaPilote } from "@/server/db/PrismaPilote";
@@ -61,5 +61,5 @@ export const albertModule = defineModule<NoExports, AlbertCradle>()({
   },
 });
 
-type Scope = ModuleScope<AlbertCradle>;
+type Scope = ExtractScope<typeof albertModule>;
 export type Inject<K extends keyof Scope> = Pick<Scope, K>;

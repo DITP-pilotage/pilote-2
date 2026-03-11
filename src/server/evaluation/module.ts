@@ -21,7 +21,7 @@ import { SoumettreEtapeEvaluationService } from "@/server/evaluation/services/So
 import { PasserALaConsolidationHandler } from "@/server/evaluation/handlers/PasserALaConsolidationHandler";
 import {
   defineModule,
-  type ModuleScope,
+  type ExtractScope,
   type NoExports,
 } from "@/server/module-system";
 import { EnregistrerBrouillonAutoEvaluationObjectifsHandler } from "./handlers/EnregistrerBrouillonAutoEvaluationObjectifsHandler";
@@ -156,5 +156,5 @@ export const piloteEvalModule = defineModule<NoExports, PiloteEvalCradle>()({
   },
 });
 
-type Scope = ModuleScope<PiloteEvalCradle>;
+type Scope = ExtractScope<typeof piloteEvalModule>;
 export type Inject<K extends keyof Scope> = Pick<Scope, K>;

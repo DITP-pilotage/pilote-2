@@ -8,7 +8,7 @@ import type { EmailManager } from "@/server/infrastructure/email-manager/EmailMa
 import { configuration } from "@/config";
 import {
   defineModule,
-  type ModuleScope,
+  type ExtractScope,
   type NoExports,
 } from "@/server/module-system";
 
@@ -47,5 +47,5 @@ export const profilUtilisateurModule = defineModule<
   },
 });
 
-type Scope = ModuleScope<ProfilUtilisateurCradle>;
+type Scope = ExtractScope<typeof profilUtilisateurModule>;
 export type Inject<K extends keyof Scope> = Pick<Scope, K>;

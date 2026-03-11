@@ -78,7 +78,7 @@ import { RécupérerRépartitionMétéoUseCase } from "@/server/fiche-territoria
 import { RécupérerListeChantierFicheTerritorialeUseCase } from "@/server/fiche-territoriale/usecases/RécupérerListeChantierFicheTerritorialeUseCase";
 import {
   defineModule,
-  type ModuleScope,
+  type ExtractScope,
   type NoExports,
 } from "@/server/module-system";
 
@@ -340,5 +340,5 @@ export const legacyModule = defineModule<NoExports, LegacyCradle>()({
   },
 });
 
-type Scope = ModuleScope<LegacyCradle>;
+type Scope = ExtractScope<typeof legacyModule>;
 export type Inject<K extends keyof Scope> = Pick<Scope, K>;
