@@ -6,7 +6,15 @@ import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation"
 import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
 
 export default class RécupérerObjectifLePlusRécentUseCase {
-  constructor(private readonly objectifRepository: ObjectifRepository) {}
+  private readonly objectifRepository: ObjectifRepository;
+
+  constructor({
+    objectifRepository,
+  }: {
+    objectifRepository: ObjectifRepository;
+  }) {
+    this.objectifRepository = objectifRepository;
+  }
 
   async run(
     chantierId: string,

@@ -4,14 +4,12 @@ import { FunctionComponent } from "react";
 import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
 import Utilisateur from "@/server/domain/utilisateur/Utilisateur.interface";
 import PageUtilisateur from "@/components/PageUtilisateur/PageUtilisateur";
-import RécupérerUnUtilisateurUseCase from "@/server/gestion-utilisateur/usecases/RécupérerUnUtilisateurUseCase";
-import { RecupererTokenAPIInformationUseCase } from "@/server/authentification/usecases/RecupererTokenAPIInformationUseCase";
 import {
   presenterEnTokenAPIInformationContrat,
   TokenAPIInformationContrat,
 } from "@/server/authentification/app/contrats/TokenAPIInformationContrat";
 import { commenceParUneVoyelle } from "@/client/utils/strings";
-import { dependencies } from "@/server/infrastructure/Dependencies";
+import { getContainer } from "@/server/dependances";
 
 export interface NextPageAdminUtilisateurProps {
   utilisateur: Utilisateur;
@@ -34,18 +32,16 @@ export async function getServerSideProps(
   if (!params?.id || !session || !session.habilitations) {
     return redirigerVersPageAccueil;
   }
-  const utilisateurDemandé = await new RécupérerUnUtilisateurUseCase(
-    dependencies.getUtilisateurRepository(),
-  ).run(params.id);
+  const utilisateurDemandé = await getContainer("legacy")
+    .resolve("récupérerUnUtilisateurUseCase")
+    .run(params.id);
 
   if (!utilisateurDemandé) {
     return redirigerVersPageAccueil;
   }
 
-  const tokenAPIInformation = await new RecupererTokenAPIInformationUseCase({
-    tokenAPIInformationRepository:
-      dependencies.getTokenAPIInformationRepository(),
-  })
+  const tokenAPIInformation = await getContainer("legacy")
+    .resolve("recupererTokenAPIInformationUseCase")
     .run({ email: utilisateurDemandé.email })
     .then((tokenAPI) => {
       return tokenAPI ? presenterEnTokenAPIInformationContrat(tokenAPI) : null;

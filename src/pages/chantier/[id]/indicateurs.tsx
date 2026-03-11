@@ -7,7 +7,6 @@ import { createLoader, parseAsInteger, parseAsString } from "nuqs/server";
 import PageImportIndicateur from "@/components/PageImportIndicateur/PageImportIndicateur";
 import Chantier from "@/server/domain/chantier/Chantier.interface";
 import { ChantierInformations } from "@/components/PageImportIndicateur/ChantierInformation.interface";
-import { dependencies } from "@/server/infrastructure/Dependencies";
 import Indicateur from "@/server/domain/indicateur/Indicateur.interface";
 import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
 import {
@@ -70,7 +69,9 @@ export async function getServerSideProps(
     .resolve("recupererChantierUseCaseV2")
     .run(params.id, session.habilitations, session.profil, jalon);
 
-  const indicateurRepository = dependencies.getIndicateurRepository();
+  const indicateurRepository = getContainer("legacy").resolve(
+    "indicateurRepository",
+  );
   const indicateurs = await indicateurRepository.récupérerParChantierId(
     params.id,
   );
@@ -79,8 +80,8 @@ export async function getServerSideProps(
 
   if (searchParams.rapportId) {
     rapport = presenterEnRapportContrat(
-      await dependencies
-        .getRapportRepository()
+      await getContainer("legacy")
+        .resolve("rapportRepository")
         .récupérerRapportParId(searchParams.rapportId),
     );
   }
@@ -88,8 +89,8 @@ export async function getServerSideProps(
   const informationsIndicateur =
     await Promise.all<InformationIndicateurContrat>(
       indicateurs.map((indicateur) =>
-        dependencies
-          .getImportIndicateurRepository()
+        getContainer("legacy")
+          .resolve("importIndicateurRepository")
           .recupererInformationIndicateurParId(indicateur.id)
           .then((result) => presenterEnInformationIndicateurContrat(result)),
       ),

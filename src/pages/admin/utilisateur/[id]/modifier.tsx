@@ -3,10 +3,9 @@ import Head from "next/head";
 import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
 import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
 import Utilisateur from "@/server/domain/utilisateur/Utilisateur.interface";
-import RécupérerUnUtilisateurUseCase from "@/server/gestion-utilisateur/usecases/RécupérerUnUtilisateurUseCase";
 import PageModifierUtilisateur from "@/components/PageUtilisateurFormulaire/PageModifierUtilisateur/PageModifierUtilisateur";
 import { commenceParUneVoyelle } from "@/client/utils/strings";
-import { dependencies } from "@/server/infrastructure/Dependencies";
+import { getContainer } from "@/server/dependances";
 import { pageModifierUtilisateur } from "@/components/PageUtilisateurFormulaire/PageModifierUtilisateur/PageModifierUtilisateurServerSideContext";
 import { configurationFeatureFlip } from "@/config";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
@@ -34,9 +33,9 @@ export const getServerSideProps = async (
     return redirigerVersPageAccueil;
   }
 
-  const utilisateurDemandé = await new RécupérerUnUtilisateurUseCase(
-    dependencies.getUtilisateurRepository(),
-  ).run(params.id);
+  const utilisateurDemandé = await getContainer("legacy")
+    .resolve("récupérerUnUtilisateurUseCase")
+    .run(params.id);
   if (!utilisateurDemandé) {
     return redirigerVersPageAccueil;
   }

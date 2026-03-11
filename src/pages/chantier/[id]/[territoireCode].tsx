@@ -3,7 +3,6 @@ import Head from "next/head";
 import { FunctionComponent } from "react";
 import assert from "node:assert/strict";
 import PageChantier from "@/components/PageChantier/PageChantier";
-import { dependencies } from "@/server/infrastructure/Dependencies";
 import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
 import { NonAutorisé } from "@/server/utils/errors";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
@@ -12,11 +11,7 @@ import calculerChantierAvancements from "@/client/utils/chantier/avancement/calc
 import { comparerIndicateur } from "@/client/utils/indicateur/indicateur";
 import { convertitEnPondération } from "@/client/utils/ponderation/ponderation";
 import { IndicateurPondération } from "@/components/PageChantier/PageChantier.interface";
-import RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase from "@/server/usecase/chantier/commentaire/RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase";
-import RécupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase from "@/server/usecase/chantier/objectif/RécupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase";
-import RécupérerDécisionStratégiqueLaPlusRécenteUseCase from "@/server/usecase/chantier/décision/RécupérerDécisionStratégiqueLaPlusRécenteUseCase";
 import { DétailsIndicateurTerritoire } from "@/server/domain/indicateur/DétailsIndicateur.interface";
-import RécupérerStatistiquesAvancementChantiersUseCase from "@/server/usecase/chantier/RécupérerStatistiquesAvancementChantiersUseCase";
 import { presenterEnAvancementsStatistiquesAccueilContrat } from "@/server/chantiers/app/contrats/AvancementsStatistiquesAccueilContrat";
 import { DonneesComparaisonDuTauxDAvancementType } from "@/server/domain/territoire/Territoire.interface";
 import { territoireCodeVersMailleCodeInsee } from "@/server/utils/territoires";
@@ -83,7 +78,9 @@ export const getServerSideProps = async (
         ? "departementale"
         : "regionale";
 
-  const territoireRepository = dependencies.getTerritoireRepository();
+  const territoireRepository = getContainer("legacy").resolve(
+    "territoireRepository",
+  );
   const territoireSélectionné =
     await territoireRepository.récupérer(territoireCode);
   const territoireCodes =
@@ -107,30 +104,34 @@ export const getServerSideProps = async (
       getContainer("chantiers")
         .resolve("recupererChantierUseCaseV2")
         .run(chantierId, session.habilitations, session.profil, jalon),
-      dependencies.getIndicateurRepository().récupérerParChantierId(chantierId),
+      getContainer("legacy")
+        .resolve("indicateurRepository")
+        .récupérerParChantierId(chantierId),
       getContainer("importSyntheseDesResultats")
         .resolve("récupérerDerniereSyntheseDesResultatsQuery")
         .run(chantierId, territoireCode),
       getContainer("importSyntheseDesResultats")
         .resolve("recupererDernierBrouillonSyntheseDesResultatsQuery")
         .run(chantierId, territoireCode, session.user!.id),
-      new RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase(
-        dependencies.getCommentaireRepository(),
-      ).run([chantierId], territoireCode, session.habilitations),
-      new RécupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase(
-        dependencies.getObjectifRepository(),
-      ).run([chantierId], session.habilitations),
-      new RécupérerDécisionStratégiqueLaPlusRécenteUseCase(
-        dependencies.getDécisionStratégiqueRepository(),
-      )
+      getContainer("legacy")
+        .resolve(
+          "récupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase",
+        )
+        .run([chantierId], territoireCode, session.habilitations),
+      getContainer("legacy")
+        .resolve(
+          "récupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase",
+        )
+        .run([chantierId], session.habilitations),
+      getContainer("legacy")
+        .resolve("récupérerDécisionStratégiqueLaPlusRécenteUseCase")
         .run(chantierId, session.habilitations)
         .catch(() => null),
       getContainer("chantiers")
         .resolve("recupererDetailsIndicateursV2UseCase")
         .run(chantierId, territoireCodes, session.habilitations, jalon),
-      new RécupérerStatistiquesAvancementChantiersUseCase(
-        dependencies.getChantierRepository(),
-      )
+      getContainer("legacy")
+        .resolve("récupérerStatistiquesAvancementChantiersUseCase")
         .run([chantierId], mailleQuery, session.habilitations, jalon)
         .then(presenterEnAvancementsStatistiquesAccueilContrat),
       new RecupererVariableContenuUseCase().run({

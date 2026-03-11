@@ -6,9 +6,6 @@ import {
   validationCreationTokenAPI,
   validationSuppressionTokenAPI,
 } from "@/validation/gestion-token-api";
-import { CreerTokenAPIUseCase } from "@/server/authentification/usecases/CreerTokenAPIUseCase";
-import { dependencies } from "@/server/infrastructure/Dependencies";
-import { SupprimerTokenAPIUseCase } from "@/server/authentification/usecases/SupprimerTokenAPIUseCase";
 import { getContainer } from "@/server/dependances";
 
 export const gestionTokenAPIRouter = créerRouteurTRPC({
@@ -21,13 +18,9 @@ export const gestionTokenAPIRouter = créerRouteurTRPC({
 
       habilitations.verifierAutorisationModificationTokenAPI();
 
-      return new CreerTokenAPIUseCase({
-        tokenAPIService: dependencies.getTokenAPIService(),
-        tokenAPIInformationRepository:
-          dependencies.getTokenAPIInformationRepository(),
-        utilisateurRepository:
-          dependencies.getAuthentificationUtilisateurRepository(),
-      }).run({ email: input.email });
+      return getContainer("legacy")
+        .resolve("creerTokenAPIUseCase")
+        .run({ email: input.email });
     }),
 
   supprimerTokenAPI: procédureProtégée
@@ -39,9 +32,8 @@ export const gestionTokenAPIRouter = créerRouteurTRPC({
 
       habilitations.verifierAutorisationModificationTokenAPI();
 
-      return new SupprimerTokenAPIUseCase({
-        tokenAPIInformationRepository:
-          dependencies.getTokenAPIInformationRepository(),
-      }).run({ email: input.email });
+      return getContainer("legacy")
+        .resolve("supprimerTokenAPIUseCase")
+        .run({ email: input.email });
     }),
 });

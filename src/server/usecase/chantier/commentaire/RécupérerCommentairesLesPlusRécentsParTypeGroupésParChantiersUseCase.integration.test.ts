@@ -24,9 +24,9 @@ function mapperVersDomaine(commentairePrisma: commentaire): Commentaire {
 describe("RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase", () => {
   const commentaireRepository = new CommentaireSQLRepository();
   const récupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase =
-    new RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase(
+    new RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase({
       commentaireRepository,
-    );
+    });
 
   const auteur_id = randomUUID();
   const chantierId = "CH-001";

@@ -6,9 +6,15 @@ import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilita
 import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
 
 export default class CréerUneDécisionStratégiqueUseCase {
-  constructor(
-    private readonly décisionStratégiqueRepository: DécisionStratégiqueRepository,
-  ) {}
+  private readonly décisionStratégiqueRepository: DécisionStratégiqueRepository;
+
+  constructor({
+    décisionStratégiqueRepository,
+  }: {
+    décisionStratégiqueRepository: DécisionStratégiqueRepository;
+  }) {
+    this.décisionStratégiqueRepository = décisionStratégiqueRepository;
+  }
 
   async run(
     chantierId: Chantier["id"],

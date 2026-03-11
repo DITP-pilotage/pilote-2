@@ -12,8 +12,6 @@ import {
   validationSupprimerUtilisateur,
 } from "@/validation/utilisateur";
 import { zodValidateurCSRF } from "@/validation/publication";
-import { dependencies } from "@/server/infrastructure/Dependencies";
-import RécupérerUnProfilUseCase from "@/server/usecase/profil/RécupérerUnProfilUseCase";
 import { getContainer } from "@/server/dependances";
 
 const creerUtilisateurSchemaBase = validationInfosBaseUtilisateur.and(
@@ -25,9 +23,9 @@ export const utilisateurRouter = créerRouteurTRPC({
     .input(creerUtilisateurSchemaBase.and(zodValidateurCSRF))
     .mutation(async ({ input, ctx }) => {
       vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
-      const profilAuteur = await new RécupérerUnProfilUseCase(
-        dependencies.getProfilRepository(),
-      ).run(ctx.session.profil);
+      const profilAuteur = await getContainer("legacy")
+        .resolve("récupérerUnProfilUseCase")
+        .run(ctx.session.profil);
       await getContainer("gestionUtilisateur")
         .resolve("créerOuMettreÀJourUnUtilisateurUseCase")
         .run(
@@ -42,9 +40,9 @@ export const utilisateurRouter = créerRouteurTRPC({
     .input(creerUtilisateurSchemaBase.and(zodValidateurCSRF))
     .mutation(async ({ input, ctx }) => {
       vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
-      const profilAuteur = await new RécupérerUnProfilUseCase(
-        dependencies.getProfilRepository(),
-      ).run(ctx.session.profil);
+      const profilAuteur = await getContainer("legacy")
+        .resolve("récupérerUnProfilUseCase")
+        .run(ctx.session.profil);
       await getContainer("gestionUtilisateur")
         .resolve("créerOuMettreÀJourUnUtilisateurUseCase")
         .run(
@@ -59,9 +57,9 @@ export const utilisateurRouter = créerRouteurTRPC({
     .input(validationSupprimerUtilisateur.merge(zodValidateurCSRF))
     .mutation(async ({ input, ctx }) => {
       vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
-      const profilAuteur = await new RécupérerUnProfilUseCase(
-        dependencies.getProfilRepository(),
-      ).run(ctx.session.profil);
+      const profilAuteur = await getContainer("legacy")
+        .resolve("récupérerUnProfilUseCase")
+        .run(ctx.session.profil);
       await getContainer("gestionUtilisateur")
         .resolve("desactiverUnUtilisateurUseCase")
         .run(
@@ -75,9 +73,9 @@ export const utilisateurRouter = créerRouteurTRPC({
     .input(validationReactiverUtilisateur.merge(zodValidateurCSRF))
     .mutation(async ({ input, ctx }) => {
       vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
-      const profilAuteur = await new RécupérerUnProfilUseCase(
-        dependencies.getProfilRepository(),
-      ).run(ctx.session.profil);
+      const profilAuteur = await getContainer("legacy")
+        .resolve("récupérerUnProfilUseCase")
+        .run(ctx.session.profil);
       await getContainer("gestionUtilisateur")
         .resolve("reactiverUnUtilisateurUseCase")
         .run(

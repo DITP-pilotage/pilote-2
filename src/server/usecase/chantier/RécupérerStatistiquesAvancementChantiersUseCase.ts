@@ -7,7 +7,15 @@ import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation"
 import { MailleNonAutoriséeErreur } from "@/server/utils/errors";
 
 export default class RécupérerStatistiquesAvancementChantiersUseCase {
-  constructor(private readonly chantierRepository: ChantierRepository) {}
+  private readonly chantierRepository: ChantierRepository;
+
+  constructor({
+    chantierRepository,
+  }: {
+    chantierRepository: ChantierRepository;
+  }) {
+    this.chantierRepository = chantierRepository;
+  }
 
   async run(
     chantiers: Chantier["id"][],

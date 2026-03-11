@@ -2,7 +2,15 @@ import UtilisateurRepository from "@/server/domain/utilisateur/UtilisateurReposi
 import Utilisateur from "@/server/domain/utilisateur/Utilisateur.interface";
 
 export default class RécupérerUnUtilisateurUseCase {
-  constructor(private readonly utilisateurRepository: UtilisateurRepository) {}
+  private readonly utilisateurRepository: UtilisateurRepository;
+
+  constructor({
+    utilisateurRepository,
+  }: {
+    utilisateurRepository: UtilisateurRepository;
+  }) {
+    this.utilisateurRepository = utilisateurRepository;
+  }
 
   async run(utilisateurId: Utilisateur["id"]): Promise<Utilisateur | null> {
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);

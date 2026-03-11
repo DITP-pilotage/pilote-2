@@ -5,8 +5,7 @@ import { FunctionComponent } from "react";
 import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
 import PageAdminGestionTokenAPI from "@/components/PageAdminGestionTokenAPI/PageAdminGestionTokenAPI";
 import { TokenAPIInformationContrat } from "@/server/authentification/app/contrats/TokenAPIInformationContrat";
-import { ListerTokenAPIInformationUseCase } from "@/server/authentification/usecases/ListerTokenAPIInformationUseCase";
-import { dependencies } from "@/server/infrastructure/Dependencies";
+import { getContainer } from "@/server/dependances";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
 
 const PROFIL_AUTORISE_A_MODIFIER = new Set([ProfilEnum.DITP_ADMIN]);
@@ -29,10 +28,9 @@ export const getServerSideProps: GetServerSideProps<{
     throw new Error("Not connected or not authorized ?");
   }
 
-  const listeTokenAPIInformation = await new ListerTokenAPIInformationUseCase({
-    tokenAPIInformationRepository:
-      dependencies.getTokenAPIInformationRepository(),
-  }).run();
+  const listeTokenAPIInformation = await getContainer("legacy")
+    .resolve("listerTokenAPIInformationUseCase")
+    .run();
 
   const suppressionReussie = query._action === "suppression-reussie";
 

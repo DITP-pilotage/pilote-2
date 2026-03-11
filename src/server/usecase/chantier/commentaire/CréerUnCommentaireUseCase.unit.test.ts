@@ -24,9 +24,9 @@ describe("CréerUnCommentaireUseCase", () => {
     const stubCommentaireRepository = {
       créer: vi.fn(),
     } as unknown as CommentaireRepository;
-    const créerUnCommentaire = new CréerUnCommentaireUseCase(
-      stubCommentaireRepository,
-    );
+    const créerUnCommentaire = new CréerUnCommentaireUseCase({
+      commentaireRepository: stubCommentaireRepository,
+    });
 
     const territoireCode = `${CODES_MAILLES[maille]}-${codeInsee}`;
 
@@ -78,9 +78,9 @@ describe("CréerUnCommentaireUseCase", () => {
         date,
       }),
     } as unknown as CommentaireRepository;
-    const créerUnCommentaire = new CréerUnCommentaireUseCase(
-      stubCommentaireRepository,
-    );
+    const créerUnCommentaire = new CréerUnCommentaireUseCase({
+      commentaireRepository: stubCommentaireRepository,
+    });
 
     const territoireCode = `${CODES_MAILLES[maille]}-${codeInsee}`;
 

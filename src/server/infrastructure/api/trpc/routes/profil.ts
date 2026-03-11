@@ -2,9 +2,7 @@ import {
   créerRouteurTRPC,
   procédureProtégée,
 } from "@/server/infrastructure/api/trpc/trpc";
-import RécupérerUnProfilUseCase from "@/server/usecase/profil/RécupérerUnProfilUseCase";
 import { validationProfilContexte } from "@/validation/profil";
-import { dependencies } from "@/server/infrastructure/Dependencies";
 import { getContainer } from "@/server/dependances";
 
 export const profilRouter = créerRouteurTRPC({
@@ -17,8 +15,8 @@ export const profilRouter = créerRouteurTRPC({
   récupérer: procédureProtégée
     .input(validationProfilContexte)
     .query(({ input }) => {
-      return new RécupérerUnProfilUseCase(
-        dependencies.getProfilRepository(),
-      ).run(input.profilCode);
+      return getContainer("legacy")
+        .resolve("récupérerUnProfilUseCase")
+        .run(input.profilCode);
     }),
 });

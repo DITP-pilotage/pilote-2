@@ -9,8 +9,7 @@ import {
   MessageInformationContrat,
   presenterEnMessageInformationContrat,
 } from "@/server/app/contrats/MessageInformationContrat";
-import { RécupérerMessageInformationUseCase } from "@/server/gestion-contenu/usecases/RécupérerMessageInformationUseCase";
-import { dependencies } from "@/server/infrastructure/Dependencies";
+import { getContainer } from "@/server/dependances";
 
 const NextAdminMessageInformation: FunctionComponent<{
   messageInformation: MessageInformationContrat;
@@ -38,9 +37,9 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   }
 
   const messageInformation = presenterEnMessageInformationContrat(
-    await new RécupérerMessageInformationUseCase({
-      gestionContenuRepository: dependencies.getGestionContenuRepository(),
-    }).run(),
+    await getContainer("legacy")
+      .resolve("récupérerMessageInformationUseCase")
+      .run(),
   );
 
   const modificationReussie = query._action === "modification-reussie";

@@ -73,6 +73,7 @@ import {
   getParametrageCentreAideContainer,
   ParametrageCentreAideDependencies,
 } from "./parametrage-centre-aide/container";
+import { getLegacyContainer, LegacyDependencies } from "./legacy/container";
 
 export type ContainerDependencies = {
   main: AwilixContainer<InitialDependencies>;
@@ -94,6 +95,7 @@ export type ContainerDependencies = {
   importDecisionStrategique: AwilixContainer<ImportDecisionStrategiqueDependencies>;
   importObjectif: AwilixContainer<ImportObjectifDependencies>;
   importSyntheseDesResultats: AwilixContainer<ImportSyntheseDesResultatsDependencies>;
+  legacy: AwilixContainer<LegacyDependencies>;
 };
 
 function registerContainer(): ContainerDependencies {
@@ -155,6 +157,7 @@ function registerContainer(): ContainerDependencies {
     importSyntheseDesResultats: getImportSyntheseDesResultatsContainer(
       initialContainerWithTransversalDependencies,
     ),
+    legacy: getLegacyContainer(initialContainerWithTransversalDependencies),
   };
 }
 
