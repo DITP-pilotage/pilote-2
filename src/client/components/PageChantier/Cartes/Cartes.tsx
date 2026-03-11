@@ -6,6 +6,10 @@ import { Maille } from "@/server/domain/maille/Maille.interface";
 import Alerte from "@/components/_commons/Alerte/Alerte";
 import CartographieAvecSelecteur from "@/components/_commons/Cartographie/CartographieAvecSelecteur/CartographieAvecSelecteur";
 import { pageChantier } from "@/components/PageChantier/PageChantierServerSideContext";
+import { WidgetCartographieMeteo } from "@/components/_commons/Widget/WidgetCartographieMeteo/WidgetCartographieMeteo";
+
+const FEATURE_COMPARAISON_TERRITOIRES =
+  process.env.NEXT_PUBLIC_FEATURE_COMPARAISON_TERRITOIRES === "true";
 
 export type CartographieType =
   | "avancementJalon"
@@ -88,18 +92,28 @@ const Cartes: FunctionComponent<CartesProps> = ({
         <div className="carte">
           <Bloc>
             <section>
-              <CartographieAvecSelecteur
-                aLaSelectionCartographie={(valeur: CartographieType) =>
-                  setCartographieDroiteSelection(valeur)
-                }
-                cartographieSelectionnee={cartographieDroiteChantier}
-                chantierMailles={chantier.mailles}
-                estInteractif={estInteractif}
-                jalon={jalon}
-                listeCartographiesDesactives={[cartographieGaucheChantier]}
-                mailleQuery={mailleQuery}
-                territoireCode={territoireCode}
-              />
+              {FEATURE_COMPARAISON_TERRITOIRES &&
+              cartographieDroiteChantier === "meteo" ? (
+                <WidgetCartographieMeteo
+                  chantierId={chantier.id}
+                  initialTerritoiresCodes={[territoireCode]}
+                  maille={mailleQuery}
+                  territoireCode={territoireCode}
+                />
+              ) : (
+                <CartographieAvecSelecteur
+                  aLaSelectionCartographie={(valeur: CartographieType) =>
+                    setCartographieDroiteSelection(valeur)
+                  }
+                  cartographieSelectionnee={cartographieDroiteChantier}
+                  chantierMailles={chantier.mailles}
+                  estInteractif={estInteractif}
+                  jalon={jalon}
+                  listeCartographiesDesactives={[cartographieGaucheChantier]}
+                  mailleQuery={mailleQuery}
+                  territoireCode={territoireCode}
+                />
+              )}
             </section>
           </Bloc>
         </div>

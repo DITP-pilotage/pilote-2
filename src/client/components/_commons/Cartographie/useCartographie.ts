@@ -54,9 +54,9 @@ export default function useCartographie(
         code: territoire.code,
         remplissage: données[territoire.code]?.remplissage ?? "#bababa", // TODO où gérer ce undefined ?
         libellé: données[territoire.code]?.libellé ?? "-", // TODO où gérer ce undefined ?
-        contenuInfoBulle: données[territoire.code].contenu, // TODO où gérer ce undefined ?
+        contenuInfoBulle: données[territoire.code]?.contenu, // TODO où gérer ce undefined ?
         estInteractif: territoire.accèsLecture,
-        estApplicable: données[territoire.code].estApplicable,
+        estApplicable: données[territoire.code]?.estApplicable ?? false,
       })),
       frontières: frontièresÀTracer.map((frontière) => ({
         codeInsee: frontière.codeInsee,

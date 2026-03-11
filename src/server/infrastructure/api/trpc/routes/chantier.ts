@@ -1,3 +1,4 @@
+import { z } from "zod";
 import {
   créerRouteurTRPC,
   procédureProtégée,
@@ -21,4 +22,16 @@ export const chantierRouter = créerRouteurTRPC({
     ).resolve("recupererLaListeDesInfomrationsChantiersUse");
     return recupererLaListeDesInfomrationsChantiersUse.run();
   }),
+  recupererMeteosTerritoires: procédureProtégée
+    .input(
+      z.object({
+        chantierId: z.string(),
+        maille: z.enum(["REG", "DEPT"]),
+      }),
+    )
+    .query(({ input }) => {
+      return getContainer("chantiers")
+        .resolve("getChantierMeteosTerritoiresQuery")
+        .execute(input);
+    }),
 });
