@@ -8,6 +8,7 @@ import {
   TypeCommentaireChantier,
 } from "@/server/domain/chantier/commentaire/Commentaire.interface";
 import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
+import { CommentaireAction } from "@/components/_commons/CommentairesNew/CommentaireSection/AlerteCommentaire";
 import { useNouveauCommentaire } from "./useNouveauCommentaire";
 import { ModaleFormulaireCommentaire } from "./ModaleFormulaireCommentaire";
 
@@ -16,11 +17,13 @@ const BoutonNouveauCommentaire = ({
   réformeId,
   territoireCode,
   type,
+  onAction,
 }: {
   commentaire: CommentaireAvecNomsAuteurs | null;
   réformeId: string;
   territoireCode: string;
   type: TypeCommentaireChantier;
+  onAction: (action: CommentaireAction) => void;
 }) => {
   const [open, setOpen] = useState(false);
   const refreshRouter = useRefreshRouter();
@@ -29,9 +32,10 @@ const BoutonNouveauCommentaire = ({
     réformeId,
     territoireCode,
     type,
-    onSuccess: () => {
+    onSuccess: (action) => {
       setOpen(false);
       refreshRouter();
+      onAction(action);
     },
   });
 

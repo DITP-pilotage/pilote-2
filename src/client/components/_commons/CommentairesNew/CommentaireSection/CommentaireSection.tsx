@@ -1,4 +1,4 @@
-import { FunctionComponent } from "react";
+import { FunctionComponent, useState } from "react";
 import { parseAsBoolean, useQueryState } from "nuqs";
 import {
   CommentaireAvecNomsAuteurs,
@@ -8,7 +8,9 @@ import { Maille } from "@/server/domain/maille/Maille.interface";
 import BandeauInformation from "@/components/_commons/BandeauInformation/BandeauInformation";
 import { formaterDate } from "@/client/utils/date/date";
 import { libellésTypesCommentaire } from "@/client/constants/libellésCommentaire";
-import AlerteCommentaire from "@/components/_commons/CommentairesNew/CommentaireSection/AlerteCommentaire";
+import AlerteCommentaire, {
+  CommentaireAction,
+} from "@/components/_commons/CommentairesNew/CommentaireSection/AlerteCommentaire";
 import AffichageCommentaire from "@/components/_commons/CommentairesNew/CommentaireSection/Affichage/Affichage";
 import HistoriqueCommentaire from "@/components/_commons/CommentairesNew/CommentaireSection/Historique/Historique";
 import CommentaireFormulaire from "@/components/_commons/CommentairesNew/CommentaireSection/Formulaire/CommentaireFormulaire";
@@ -41,6 +43,8 @@ const CommentaireSection: FunctionComponent<CommentaireSectionProps> = ({
     }),
   );
 
+  const [action, setAction] = useState<CommentaireAction | null>(null);
+
   return (
     <div className="px-2 py-4">
       <p className="font-bold text-xl mb-1">{libellésTypesCommentaire[type]}</p>
@@ -62,7 +66,7 @@ const CommentaireSection: FunctionComponent<CommentaireSectionProps> = ({
         />
       ) : (
         <>
-          <AlerteCommentaire type={type} />
+          <AlerteCommentaire action={action} />
           <AffichageCommentaire
             commentaire={commentaire}
             onModifier={modeEcriture ? () => setModeÉdition(true) : undefined}
@@ -80,6 +84,7 @@ const CommentaireSection: FunctionComponent<CommentaireSectionProps> = ({
               (commentaire?.dateDernierBrouillon ? (
                 <BoutonEditerBrouillonCommentaire
                   commentaire={commentaire}
+                  onAction={setAction}
                   réformeId={réformeId}
                   territoireCode={territoireCode}
                   type={type}
@@ -87,6 +92,7 @@ const CommentaireSection: FunctionComponent<CommentaireSectionProps> = ({
               ) : (
                 <BoutonNouveauCommentaire
                   commentaire={commentaire}
+                  onAction={setAction}
                   réformeId={réformeId}
                   territoireCode={territoireCode}
                   type={type}

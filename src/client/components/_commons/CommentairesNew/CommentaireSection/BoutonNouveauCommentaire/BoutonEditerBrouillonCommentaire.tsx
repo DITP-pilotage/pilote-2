@@ -9,6 +9,7 @@ import {
 } from "@/server/domain/chantier/commentaire/Commentaire.interface";
 import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
 import api from "@/server/infrastructure/api/trpc/api";
+import { CommentaireAction } from "@/components/_commons/CommentairesNew/CommentaireSection/AlerteCommentaire";
 import { useEditerBrouillonCommentaire } from "./useEditerBrouillonCommentaire";
 import { ModaleFormulaireCommentaire } from "./ModaleFormulaireCommentaire";
 
@@ -17,27 +18,28 @@ const BoutonEditerBrouillonCommentaire = ({
   réformeId,
   territoireCode,
   type,
+  onAction,
 }: {
   commentaire: CommentaireAvecNomsAuteurs | null;
   réformeId: string;
   territoireCode: string;
   type: TypeCommentaireChantier;
+  onAction: (action: CommentaireAction) => void;
 }) => {
   const [open, setOpen] = useState(false);
   const refreshRouter = useRefreshRouter();
 
-  const { data: brouillon } =
-    api.commentaire.recupererDernierBrouillon.useQuery(
-      { réformeId, territoireCode, type },
-      { enabled: open },
-    );
+  const { data: brouillon } = api.commentaire.recupererDernierBrouillon.useQuery(
+    { réformeId, territoireCode, type },
+    { enabled: open },
+  );
 
   const { publier, enregistrerEnBrouillon } = useEditerBrouillonCommentaire({
     brouillon: brouillon!,
-    type,
-    onSuccess: () => {
+    onSuccess: (action) => {
       setOpen(false);
       refreshRouter();
+      onAction(action);
     },
   });
 

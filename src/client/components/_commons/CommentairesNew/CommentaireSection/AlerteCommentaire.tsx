@@ -1,20 +1,17 @@
 import { FunctionComponent } from "react";
-import { parseAsStringLiteral, useQueryState } from "nuqs";
 import Alerte from "@/components/_commons/Alerte/Alerte";
 import { typeAlerte } from "@/components/_commons/Alerte/Alerte.interface";
-import { TypeCommentaireChantier } from "@/server/domain/chantier/commentaire/Commentaire.interface";
 
 export const COMMENTAIRE_ACTIONS = [
   "publication-reussie",
   "modification-reussie",
   "brouillon-enregistre",
-  "",
 ] as const;
 
 export type CommentaireAction = (typeof COMMENTAIRE_ACTIONS)[number];
 
 const ALERTES: Record<
-  Exclude<CommentaireAction, "">,
+  CommentaireAction,
   { message: string; type: typeAlerte }
 > = {
   "publication-reussie": {
@@ -33,20 +30,15 @@ const ALERTES: Record<
 };
 
 const AlerteCommentaire: FunctionComponent<{
-  type: TypeCommentaireChantier;
-}> = ({ type }) => {
-  const [action] = useQueryState(
-    `_action-${type}`,
-    parseAsStringLiteral(COMMENTAIRE_ACTIONS),
-  );
+  action: CommentaireAction | null;
+}> = ({ action }) => {
+  if (!action) return null;
 
-  if (!action || !(action in ALERTES)) return null;
-
-  const { message, type: typeAlerte } = ALERTES[action as keyof typeof ALERTES];
+  const { message, type } = ALERTES[action];
 
   return (
     <div className="fr-mb-2w">
-      <Alerte titre={message} type={typeAlerte} />
+      <Alerte titre={message} type={type} />
     </div>
   );
 };
