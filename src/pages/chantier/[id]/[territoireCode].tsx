@@ -95,6 +95,7 @@ export const getServerSideProps = async (
       syntheseDesResultats,
       syntheseDesResultatsBrouillon,
       commentaires,
+      commentairesBrouillon,
       objectifs,
       décisionStratégique,
       détailsIndicateurs,
@@ -113,18 +114,18 @@ export const getServerSideProps = async (
       getContainer("importSyntheseDesResultats")
         .resolve("recupererDernierBrouillonSyntheseDesResultatsQuery")
         .run(chantierId, territoireCode, session.user!.id),
-      getContainer("legacy")
-        .resolve(
-          "récupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase",
-        )
-        .run([chantierId], territoireCode, session.habilitations),
-      getContainer("legacy")
-        .resolve(
-          "récupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase",
-        )
-        .run([chantierId], session.habilitations),
-      getContainer("legacy")
-        .resolve("récupérerDécisionStratégiqueLaPlusRécenteUseCase")
+      getContainer("commentaires")
+        .resolve("recupererDernierCommentaireQuery")
+        .run(chantierId, territoireCode),
+      getContainer("commentaires")
+        .resolve("recupererBrouillonCommentaireQuery")
+        .run(chantierId, territoireCode, session.user!.id),
+      new RécupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase(
+        dependencies.getObjectifRepository(),
+      ).run([chantierId], session.habilitations),
+      new RécupérerDécisionStratégiqueLaPlusRécenteUseCase(
+        dependencies.getDécisionStratégiqueRepository(),
+      )
         .run(chantierId, session.habilitations)
         .catch(() => null),
       getContainer("chantiers")
@@ -245,6 +246,7 @@ export const getServerSideProps = async (
         syntheseDesResultats,
         syntheseDesResultatsBrouillon,
         commentaires,
+        commentairesBrouillon,
         objectifs,
         décisionStratégique,
         détailsIndicateurs,

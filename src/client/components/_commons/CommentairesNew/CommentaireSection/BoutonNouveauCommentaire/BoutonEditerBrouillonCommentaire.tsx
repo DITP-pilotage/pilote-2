@@ -5,34 +5,24 @@ import { Icone1Icon } from "@/components/_commons/Icones/Icone1Icon";
 import { Infobulle } from "@/components/_commons/Infobulle/Infobulle";
 import {
   CommentaireAvecNomsAuteurs,
-  TypeCommentaireChantier,
+  CommentaireV2,
 } from "@/server/domain/chantier/commentaire/Commentaire.interface";
 import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
-import api from "@/server/infrastructure/api/trpc/api";
 import { CommentaireAction } from "@/components/_commons/CommentairesNew/CommentaireSection/AlerteCommentaire";
 import { useEditerBrouillonCommentaire } from "./useEditerBrouillonCommentaire";
 import { ModaleFormulaireCommentaire } from "./ModaleFormulaireCommentaire";
 
 const BoutonEditerBrouillonCommentaire = ({
   commentaire,
-  réformeId,
-  territoireCode,
-  type,
+  brouillon,
   onAction,
 }: {
   commentaire: CommentaireAvecNomsAuteurs | null;
-  réformeId: string;
-  territoireCode: string;
-  type: TypeCommentaireChantier;
+  brouillon: CommentaireV2 | null;
   onAction: (action: CommentaireAction) => void;
 }) => {
   const [open, setOpen] = useState(false);
   const refreshRouter = useRefreshRouter();
-
-  const { data: brouillon } = api.commentaire.recupererDernierBrouillon.useQuery(
-    { réformeId, territoireCode, type },
-    { enabled: open },
-  );
 
   const { publier, enregistrerEnBrouillon } = useEditerBrouillonCommentaire({
     brouillon: brouillon!,

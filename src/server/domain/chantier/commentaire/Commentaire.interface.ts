@@ -23,7 +23,6 @@ export type CommentaireV2 = {
 
 export type CommentaireAvecNomsAuteurs = CommentaireV2 & {
   auteurModificationNom: string;
-  dateDernierBrouillon: string | null;
 };
 
 export const typesCommentaireMailleNationale = [

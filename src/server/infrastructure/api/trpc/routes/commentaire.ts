@@ -128,17 +128,4 @@ export const commentaireRouter = créerRouteurTRPC({
         .resolve("recupererHistoriqueCommentaireQuery")
         .run(input.réformeId, input.territoireCode, input.type);
     }),
-
-  recupererDernierBrouillon: procédureProtégée
-    .input(validationCommentaireContexte)
-    .query(({ input, ctx }) => {
-      return getContainer("commentaires")
-        .resolve("recupererDernierBrouillonCommentaireQuery")
-        .run(
-          input.réformeId,
-          input.territoireCode,
-          input.type,
-          ctx.session.user.id,
-        );
-    }),
 });

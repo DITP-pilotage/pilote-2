@@ -22,7 +22,6 @@ describe("RecupererDernierCommentaireQuery", () => {
     "retourne null pour chaque type quand aucun commentaire publié n'existe",
     createIntegrationTest(async () => {
       // Given
-      const auteur = await fixtures.utilisateur();
       const chantier = await fixtures.chantierIdentite();
       await fixtures.chantierTerritoire({
         id: chantier.id,
@@ -32,7 +31,7 @@ describe("RecupererDernierCommentaireQuery", () => {
       });
 
       // When
-      const result = await query.run(chantier.id, TERRITOIRE_CODE, auteur.id);
+      const result = await query.run(chantier.id, TERRITOIRE_CODE);
 
       // Then
       expect(result[TYPE]).toBeNull();
@@ -65,7 +64,7 @@ describe("RecupererDernierCommentaireQuery", () => {
       });
 
       // When
-      const result = await query.run(chantier.id, TERRITOIRE_CODE, auteur.id);
+      const result = await query.run(chantier.id, TERRITOIRE_CODE);
 
       // Then
       expect(result[TYPE]).toBeNull();
@@ -102,7 +101,7 @@ describe("RecupererDernierCommentaireQuery", () => {
       });
 
       // When
-      const result = await query.run(chantier.id, TERRITOIRE_CODE, auteur.id);
+      const result = await query.run(chantier.id, TERRITOIRE_CODE);
 
       // Then
       expect(result[TYPE]).toEqual({
@@ -117,106 +116,7 @@ describe("RecupererDernierCommentaireQuery", () => {
         auteurModificationId: auteur.id,
         dateModification: new Date("2025-06-01").toISOString(),
         auteurModificationNom: "Jean Dupont",
-        dateDernierBrouillon: null,
       });
-    }),
-  );
-
-  it(
-    "retourne la date du brouillon de l'utilisateur s'il existe",
-    createIntegrationTest(async () => {
-      // Given
-      const auteur = await fixtures.utilisateur();
-      const chantier = await fixtures.chantierIdentite();
-      await fixtures.chantierTerritoire({
-        id: chantier.id,
-        territoire_code: TERRITOIRE_CODE,
-        maille: MAILLE,
-        code_insee: CODE_INSEE,
-      });
-      await fixtures.commentaire({
-        chantier_id: chantier.id,
-        territoire_code: TERRITOIRE_CODE,
-        maille: MAILLE,
-        code_insee: CODE_INSEE,
-        type: TYPE_DB,
-        auteur_creation_id: auteur.id,
-        auteur_modification_id: auteur.id,
-        date_modification: new Date("2025-01-01"),
-        contenu: "Commentaire publié",
-        statut: $Enums.statut_publication.PUBLIE,
-      });
-      const brouillon = await fixtures.commentaire({
-        chantier_id: chantier.id,
-        territoire_code: TERRITOIRE_CODE,
-        maille: MAILLE,
-        code_insee: CODE_INSEE,
-        type: TYPE_DB,
-        auteur_creation_id: auteur.id,
-        auteur_modification_id: auteur.id,
-        date_modification: new Date("2025-06-01"),
-        contenu: "Brouillon",
-        statut: $Enums.statut_publication.BROUILLON,
-      });
-
-      // When
-      const result = await query.run(chantier.id, TERRITOIRE_CODE, auteur.id);
-
-      // Then
-      expect(result[TYPE]).toEqual(
-        expect.objectContaining({
-          dateDernierBrouillon: brouillon.date_modification.toISOString(),
-        }),
-      );
-    }),
-  );
-
-  it(
-    "retourne null pour dateDernierBrouillon quand le brouillon appartient à un autre auteur",
-    createIntegrationTest(async () => {
-      // Given
-      const auteur = await fixtures.utilisateur();
-      const autreAuteur = await fixtures.utilisateur();
-      const chantier = await fixtures.chantierIdentite();
-      await fixtures.chantierTerritoire({
-        id: chantier.id,
-        territoire_code: TERRITOIRE_CODE,
-        maille: MAILLE,
-        code_insee: CODE_INSEE,
-      });
-      await fixtures.commentaire({
-        chantier_id: chantier.id,
-        territoire_code: TERRITOIRE_CODE,
-        maille: MAILLE,
-        code_insee: CODE_INSEE,
-        type: TYPE_DB,
-        auteur_creation_id: auteur.id,
-        auteur_modification_id: auteur.id,
-        date_modification: new Date("2025-01-01"),
-        contenu: "Commentaire publié",
-        statut: $Enums.statut_publication.PUBLIE,
-      });
-      // Le brouillon appartient à un autre auteur
-      await fixtures.commentaire({
-        chantier_id: chantier.id,
-        territoire_code: TERRITOIRE_CODE,
-        maille: MAILLE,
-        code_insee: CODE_INSEE,
-        type: TYPE_DB,
-        auteur_creation_id: autreAuteur.id,
-        auteur_modification_id: autreAuteur.id,
-        date_modification: new Date("2025-06-01"),
-        contenu: "Brouillon d'un autre auteur",
-        statut: $Enums.statut_publication.BROUILLON,
-      });
-
-      // When
-      const result = await query.run(chantier.id, TERRITOIRE_CODE, auteur.id);
-
-      // Then
-      expect(result[TYPE]).toEqual(
-        expect.objectContaining({ dateDernierBrouillon: null }),
-      );
     }),
   );
 
@@ -256,7 +156,7 @@ describe("RecupererDernierCommentaireQuery", () => {
       });
 
       // When
-      const result = await query.run(chantier.id, TERRITOIRE_CODE, auteur.id);
+      const result = await query.run(chantier.id, TERRITOIRE_CODE);
 
       // Then
       expect(result[TYPE]).toEqual(

@@ -2,6 +2,7 @@ import { FunctionComponent, useState } from "react";
 import { parseAsBoolean, useQueryState } from "nuqs";
 import {
   CommentaireAvecNomsAuteurs,
+  CommentaireV2,
   TypeCommentaireChantier,
 } from "@/server/domain/chantier/commentaire/Commentaire.interface";
 import { Maille } from "@/server/domain/maille/Maille.interface";
@@ -20,6 +21,7 @@ import BoutonEditerBrouillonCommentaire from "@/components/_commons/Commentaires
 interface CommentaireSectionProps {
   type: TypeCommentaireChantier;
   commentaire: CommentaireAvecNomsAuteurs | null;
+  commentaireBrouillon: CommentaireV2 | null;
   réformeId: string;
   territoireCode: string;
   maille: Maille;
@@ -29,6 +31,7 @@ interface CommentaireSectionProps {
 const CommentaireSection: FunctionComponent<CommentaireSectionProps> = ({
   type,
   commentaire,
+  commentaireBrouillon,
   réformeId,
   territoireCode,
   maille,
@@ -48,10 +51,10 @@ const CommentaireSection: FunctionComponent<CommentaireSectionProps> = ({
   return (
     <div className="px-2 py-4">
       <p className="font-bold text-xl mb-1">{libellésTypesCommentaire[type]}</p>
-      {commentaire?.dateDernierBrouillon ? (
+      {commentaireBrouillon?.dateModification ? (
         <div className="my-2">
           <BandeauInformation bandeauType="INFO">
-            {`Vous avez enregistré un nouveau commentaire en tant que brouillon le ${formaterDate(commentaire.dateDernierBrouillon, "DD/MM/YYYY")}`}
+            {`Vous avez enregistré un nouveau commentaire en tant que brouillon le ${formaterDate(commentaireBrouillon.dateModification, "DD/MM/YYYY")}`}
           </BandeauInformation>
         </div>
       ) : null}
@@ -60,6 +63,10 @@ const CommentaireSection: FunctionComponent<CommentaireSectionProps> = ({
           annulationCallback={() => setModeÉdition(false)}
           commentaire={commentaire}
           maille={maille}
+          onSuccess={(commentaireAction) => {
+            setModeÉdition(false);
+            setAction(commentaireAction);
+          }}
           réformeId={réformeId}
           territoireCode={territoireCode}
           type={type}
@@ -81,13 +88,11 @@ const CommentaireSection: FunctionComponent<CommentaireSectionProps> = ({
               />
             ) : null}
             {modeEcriture &&
-              (commentaire?.dateDernierBrouillon ? (
+              (commentaireBrouillon?.dateModification ? (
                 <BoutonEditerBrouillonCommentaire
                   commentaire={commentaire}
+                  brouillon={commentaireBrouillon}
                   onAction={setAction}
-                  réformeId={réformeId}
-                  territoireCode={territoireCode}
-                  type={type}
                 />
               ) : (
                 <BoutonNouveauCommentaire

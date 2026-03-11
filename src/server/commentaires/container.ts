@@ -10,7 +10,7 @@ import { ModifierCommentairePublieUseCase } from "@/server/commentaires/usecases
 import { PublierBrouillonCommentaireUseCase } from "@/server/commentaires/usecases/PublierBrouillonCommentaireUseCase";
 import { ModifierBrouillonCommentaireUseCase } from "@/server/commentaires/usecases/ModifierBrouillonCommentaireUseCase";
 import { RecupererDernierCommentaireQuery } from "@/server/commentaires/queries/RecupererDernierCommentaireQuery";
-import { RecupererDernierBrouillonCommentaireQuery } from "@/server/commentaires/queries/RecupererDernierBrouillonCommentaireQuery";
+import { RecupererBrouillonCommentaireQuery } from "@/server/commentaires/queries/RecupererBrouillonCommentaireQuery";
 import { RecupererHistoriqueCommentaireQuery } from "@/server/commentaires/queries/RecupererHistoriqueCommentaireQuery";
 
 export type ImportCommentaireDependencies = {
@@ -26,7 +26,7 @@ export type CommentairesDependencies = {
   publierBrouillonCommentaireUseCase: PublierBrouillonCommentaireUseCase;
   modifierBrouillonCommentaireUseCase: ModifierBrouillonCommentaireUseCase;
   recupererDernierCommentaireQuery: RecupererDernierCommentaireQuery;
-  recupererDernierBrouillonCommentaireQuery: RecupererDernierBrouillonCommentaireQuery;
+  recupererBrouillonCommentaireQuery: RecupererBrouillonCommentaireQuery;
   recupererHistoriqueCommentaireQuery: RecupererHistoriqueCommentaireQuery;
   commentaireRepository: CommentaireRepository;
 };
@@ -48,8 +48,8 @@ export const getCommentairesContainer = (
       ModifierBrouillonCommentaireUseCase,
     ),
     recupererDernierCommentaireQuery: asClass(RecupererDernierCommentaireQuery),
-    recupererDernierBrouillonCommentaireQuery: asClass(
-      RecupererDernierBrouillonCommentaireQuery,
+    recupererBrouillonCommentaireQuery: asClass(
+      RecupererBrouillonCommentaireQuery,
     ),
     recupererHistoriqueCommentaireQuery: asClass(
       RecupererHistoriqueCommentaireQuery,

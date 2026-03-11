@@ -55,7 +55,6 @@ const HistoriqueCommentaire = ({
                 auteurCreationId: "",
                 dateCreation: item.dateCreation,
                 auteurModificationId: "",
-                dateDernierBrouillon: null,
               }}
             />
           </Fragment>

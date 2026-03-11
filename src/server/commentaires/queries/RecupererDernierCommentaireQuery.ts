@@ -22,12 +22,12 @@ export class RecupererDernierCommentaireQuery {
   async run(
     chantierId: string,
     territoireCode: string,
-    utilisateurId: string,
   ): Promise<
     Record<TypeCommentaireChantier, CommentaireAvecNomsAuteurs | null>
   > {
-    const [commentaires, brouillons] = await Promise.all([
-      this.deps.prisma.getInstance().commentaire.findMany({
+    const commentaires = await this.deps.prisma
+      .getInstance()
+      .commentaire.findMany({
         where: {
           chantier_id: chantierId,
           territoire_code: territoireCode,
@@ -35,24 +35,7 @@ export class RecupererDernierCommentaireQuery {
         },
         include: { auteur_modification: true },
         orderBy: { date_modification: "desc" },
-      }),
-      this.deps.prisma.getInstance().commentaire.findMany({
-        where: {
-          chantier_id: chantierId,
-          territoire_code: territoireCode,
-          statut: $Enums.statut_publication.BROUILLON,
-          auteur_modification_id: utilisateurId,
-        },
-        orderBy: { date_modification: "desc" },
-      }),
-    ]);
-
-    const dernierBrouillonParType = new Map(
-      brouillons.map((brouillon) => [
-        brouillon.type,
-        brouillon.date_modification.toISOString(),
-      ]),
-    );
+      });
 
     const dernierCommentaireParType = new Map<
       string,
@@ -87,7 +70,6 @@ export class RecupererDernierCommentaireQuery {
             auteurModificationNom: commentaire.auteur_modification
               ? `${commentaire.auteur_modification.prenom} ${commentaire.auteur_modification.nom}`
               : "Auteur Inconnu",
-            dateDernierBrouillon: dernierBrouillonParType.get(typeDb) ?? null,
           },
         ];
       }),

@@ -3,6 +3,7 @@ import Bloc from "@/components/_commons/Bloc/Bloc";
 import Chantier from "@/server/domain/chantier/Chantier.interface";
 import {
   CommentaireAvecNomsAuteurs,
+  CommentaireV2,
   TypeCommentaireChantier,
   typesCommentaireMailleNationale,
   typesCommentaireMailleRégionaleOuDépartementale,
@@ -15,6 +16,7 @@ interface CommentairesProps {
     TypeCommentaireChantier,
     CommentaireAvecNomsAuteurs | null
   >;
+  commentairesBrouillon: Record<TypeCommentaireChantier, CommentaireV2 | null>;
   réformeId: Chantier["id"];
   maille: Maille;
   nomTerritoire: string;
@@ -28,6 +30,7 @@ interface CommentairesProps {
 
 const Commentaires: FunctionComponent<CommentairesProps> = ({
   commentaires,
+  commentairesBrouillon,
   réformeId,
   maille,
   nomTerritoire,
@@ -48,6 +51,7 @@ const Commentaires: FunctionComponent<CommentairesProps> = ({
           {i !== 0 && <hr className="fr-hr fr-mx-n2w" />}
           <CommentaireSection
             commentaire={commentaires[type]}
+            commentaireBrouillon={commentairesBrouillon[type]}
             maille={maille}
             modeEcriture={modeÉcriture}
             réformeId={réformeId}

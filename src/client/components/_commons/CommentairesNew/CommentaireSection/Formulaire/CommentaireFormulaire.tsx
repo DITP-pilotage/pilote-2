@@ -17,6 +17,7 @@ import { Icone } from "@/components/_commons/Icone";
 import { SuccessIcon } from "@/components/_commons/Icones/SuccessIcon";
 import { ArrowGoBack1Icon } from "@/components/_commons/Icones/ArrowGoBack1Icon";
 import { Bouton } from "@/components/_commons/Bouton/Bouton";
+import { CommentaireAction } from "@/components/_commons/CommentairesNew/CommentaireSection/AlerteCommentaire";
 import { useModifierCommentaire } from "./useModifierCommentaire";
 
 interface CommentaireFormulaireProps {
@@ -26,16 +27,17 @@ interface CommentaireFormulaireProps {
   territoireCode: string;
   maille: Maille;
   annulationCallback?: () => void;
+  onSuccess: (action: CommentaireAction) => void;
 }
 
 const CommentaireFormulaire: FunctionComponent<CommentaireFormulaireProps> = ({
   commentaire,
-  type,
   annulationCallback,
+  onSuccess,
 }) => {
   const modifierCommentaire = useModifierCommentaire({
     commentaire: commentaire!,
-    type,
+    onSuccess,
   });
 
   const {
