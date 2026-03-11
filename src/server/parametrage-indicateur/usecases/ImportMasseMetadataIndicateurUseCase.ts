@@ -8,6 +8,7 @@ import { createValidationImportMetadataIndicateurFormulaire } from "@/validation
 import { BadRequestError } from "@/server/app/error-boundary/bad-request-error";
 import RécupérerInformationMetadataIndicateurUseCase from "@/server/parametrage-indicateur/usecases/RécupérerInformationMetadataIndicateurUseCase";
 import { presenterEnMapInformationMetadataIndicateurContrat } from "@/server/app/contrats/InformationMetadataIndicateurContrat";
+import type { Inject } from "@/server/parametrage-indicateur/module";
 
 type RecordCSVImport = Record<
   (typeof AvailableHeaderCSVImport)[number],
@@ -187,10 +188,6 @@ const AvailableHeaderCSVImport = [
 ] as const;
 
 const TEXT_LABEL_CREATION_ID = "CREATE-ID";
-type Dependencies = {
-  metadataParametrageIndicateurRepository: MetadataParametrageIndicateurRepository;
-  récupérerInformationMetadataIndicateurUseCase: RécupérerInformationMetadataIndicateurUseCase;
-};
 export default class ImportMasseMetadataIndicateurUseCase {
   private _metadataParametrageIndicateurRepository: MetadataParametrageIndicateurRepository;
 
@@ -199,7 +196,10 @@ export default class ImportMasseMetadataIndicateurUseCase {
   constructor({
     metadataParametrageIndicateurRepository,
     récupérerInformationMetadataIndicateurUseCase,
-  }: Dependencies) {
+  }: Inject<
+    | "metadataParametrageIndicateurRepository"
+    | "récupérerInformationMetadataIndicateurUseCase"
+  >) {
     this._metadataParametrageIndicateurRepository =
       metadataParametrageIndicateurRepository;
     this._récupérerInformationMetadataIndicateurUseCase =

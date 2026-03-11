@@ -2,15 +2,20 @@ import { $Enums } from "@prisma/client";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { SyntheseDesResultatsAvecNomsAuteurs } from "@/server/domain/chantier/synthèseDesRésultats/SynthèseDesRésultats.interface";
 import { Météo } from "@/server/domain/météo/Météo.interface";
+import type { Inject } from "@/server/syntheses-des-resultats/module";
 
 export class RecupererDerniereSyntheseDesResultatsQuery {
-  constructor(private readonly deps: { prisma: PrismaPilote }) {}
+  private readonly prisma: PrismaPilote;
+
+  constructor({ prisma }: Inject<"prisma">) {
+    this.prisma = prisma;
+  }
 
   async run(
     chantierId: string,
     territoireCode: string,
   ): Promise<SyntheseDesResultatsAvecNomsAuteurs | null> {
-    const synthese = await this.deps.prisma
+    const synthese = await this.prisma
       .getInstance()
       .synthese_des_resultats.findFirst({
         where: {

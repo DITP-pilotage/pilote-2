@@ -1,4 +1,5 @@
 import { PrismaPilote } from "@/server/db/PrismaPilote";
+import type { Inject } from "@/server/evaluation/module";
 
 type IndicateurDetailsNoteCollective = {
   id: string;
@@ -18,7 +19,11 @@ type DetailsNoteCollectiveResult = {
 };
 
 export class RecupererDetailsNoteCollectiveQuery {
-  constructor(private readonly dependencies: { prisma: PrismaPilote }) {}
+  private readonly prisma: PrismaPilote;
+
+  constructor({ prisma }: Inject<"prisma">) {
+    this.prisma = prisma;
+  }
 
   async run({
     rattachementCode,
@@ -27,7 +32,7 @@ export class RecupererDetailsNoteCollectiveQuery {
     rattachementCode: string;
     jalon: number;
   }): Promise<DetailsNoteCollectiveResult[]> {
-    const derniereDateCalcul = await this.dependencies.prisma
+    const derniereDateCalcul = await this.prisma
       .getInstance()
       .chantier_evaluation.findFirst({
         orderBy: {
@@ -42,7 +47,7 @@ export class RecupererDetailsNoteCollectiveQuery {
       return [];
     }
 
-    const chantiersEvaluation = await this.dependencies.prisma
+    const chantiersEvaluation = await this.prisma
       .getInstance()
       .chantier_evaluation.findMany({
         where: {
@@ -93,9 +98,7 @@ export class RecupererDetailsNoteCollectiveQuery {
         },
       });
 
-    const ministeres = await this.dependencies.prisma
-      .getInstance()
-      .ministere.findMany();
+    const ministeres = await this.prisma.getInstance().ministere.findMany();
 
     return chantiersEvaluation.map((chantier) => {
       const ministereId =

@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
+import type { Inject } from "@/server/habilitations-coordinateur/module";
 
 export const ajouterLesChantierAuxHabilitationsCommandSchema = z.object({
   chantierIds: z.array(z.string()).min(1),
@@ -11,12 +12,16 @@ export type AjouterLesChantierAuxHabilitationsCommand = z.infer<
 >;
 
 export class AjouterLesChantierAuxHabilitationsHandler {
-  constructor(private readonly dependencies: { prisma: PrismaPilote }) {}
+  private readonly prisma: PrismaPilote;
+
+  constructor({ prisma }: Inject<"prisma">) {
+    this.prisma = prisma;
+  }
 
   async execute(
     command: AjouterLesChantierAuxHabilitationsCommand,
   ): Promise<void> {
-    const prisma = this.dependencies.prisma.getInstance();
+    const prisma = this.prisma.getInstance();
 
     const territoiresParChantier = await this.recupererTerritoiresApplicables(
       prisma,

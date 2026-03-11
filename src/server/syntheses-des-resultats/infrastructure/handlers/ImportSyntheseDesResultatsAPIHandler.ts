@@ -12,13 +12,17 @@ import {
 } from "@/server/syntheses-des-resultats/app/contrats/ImportSyntheseDesResultatsAPIContrat";
 import { UtilisateurAuthentifie } from "@/server/authentification/domain/UtilisateurAuthentifie";
 import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
+import type { Inject } from "@/server/syntheses-des-resultats/module";
 
 export class ImportSyntheseDesResultatsAPIHandler {
-  constructor(
-    private readonly dependencies: {
-      importerSynthesesDesResultatsUseCase: ImporterSynthesesDesResultatsUseCase;
-    },
-  ) {}
+  private readonly importerSynthesesDesResultatsUseCase: ImporterSynthesesDesResultatsUseCase;
+
+  constructor({
+    importerSynthesesDesResultatsUseCase,
+  }: Inject<"importerSynthesesDesResultatsUseCase">) {
+    this.importerSynthesesDesResultatsUseCase =
+      importerSynthesesDesResultatsUseCase;
+  }
 
   async handle({
     request,
@@ -74,7 +78,7 @@ export class ImportSyntheseDesResultatsAPIHandler {
       return;
     }
 
-    await this.dependencies.importerSynthesesDesResultatsUseCase.execute({
+    await this.importerSynthesesDesResultatsUseCase.execute({
       chantierId,
       syntheses: validationResult.data.syntheses_des_resultats,
       auteurId: utilisateurAuthentifie.id,

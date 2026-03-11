@@ -8,6 +8,7 @@ import {
   Objectif,
   Rattachement,
 } from "@/server/evaluation/queries/types";
+import type { Inject } from "@/server/evaluation/module";
 
 type AfficherConsolidationQueryResult = {
   criteres: Critere[];
@@ -15,7 +16,11 @@ type AfficherConsolidationQueryResult = {
 };
 
 export class AfficherConsolidationQuery {
-  constructor(private readonly dependencies: { prisma: PrismaPilote }) {}
+  private readonly prisma: PrismaPilote;
+
+  constructor({ prisma }: Inject<"prisma">) {
+    this.prisma = prisma;
+  }
 
   async run({
     utilisateurId,
@@ -114,62 +119,60 @@ export class AfficherConsolidationQuery {
   }
 
   private fetchCriteres() {
-    return this.dependencies.prisma.getInstance().referentiel_critere.findMany({
+    return this.prisma.getInstance().referentiel_critere.findMany({
       orderBy: { libelle: "asc" },
       include: { sous_criteres: true },
     });
   }
 
   private fetchRattachements(utilisateurId: string) {
-    return this.dependencies.prisma
-      .getInstance()
-      .referentiel_rattachement.findMany({
-        orderBy: { libelle: "asc" },
-        where: {
-          fiche_evaluation: {
-            some: {
-              etape_courante: {
-                in: [
-                  $Enums.etape_evaluation_enum.CONSOLIDATION,
-                  $Enums.etape_evaluation_enum.INSTRUCTION,
-                ],
-              },
-            },
-          },
-          rattachement_utilisateur_etape_jalon: {
-            some: {
-              utilisateur_id: utilisateurId,
-              etape: $Enums.etape_evaluation_enum.CONSOLIDATION,
+    return this.prisma.getInstance().referentiel_rattachement.findMany({
+      orderBy: { libelle: "asc" },
+      where: {
+        fiche_evaluation: {
+          some: {
+            etape_courante: {
+              in: [
+                $Enums.etape_evaluation_enum.CONSOLIDATION,
+                $Enums.etape_evaluation_enum.INSTRUCTION,
+              ],
             },
           },
         },
-        include: {
-          objectifs: { orderBy: { libelle: "asc" } },
-          fiche_evaluation: {
-            where: {
-              etape_courante: {
-                in: [
-                  $Enums.etape_evaluation_enum.CONSOLIDATION,
-                  $Enums.etape_evaluation_enum.INSTRUCTION,
-                ],
-              },
+        rattachement_utilisateur_etape_jalon: {
+          some: {
+            utilisateur_id: utilisateurId,
+            etape: $Enums.etape_evaluation_enum.CONSOLIDATION,
+          },
+        },
+      },
+      include: {
+        objectifs: { orderBy: { libelle: "asc" } },
+        fiche_evaluation: {
+          where: {
+            etape_courante: {
+              in: [
+                $Enums.etape_evaluation_enum.CONSOLIDATION,
+                $Enums.etape_evaluation_enum.INSTRUCTION,
+              ],
             },
-            include: {
-              etape_evaluations: {
-                where: {
-                  type: {
-                    in: [$Enums.etape_evaluation_enum.CONSOLIDATION],
-                  },
+          },
+          include: {
+            etape_evaluations: {
+              where: {
+                type: {
+                  in: [$Enums.etape_evaluation_enum.CONSOLIDATION],
                 },
-                include: {
-                  evaluations_objectifs: true,
-                  evaluations_criteres: true,
-                },
+              },
+              include: {
+                evaluations_objectifs: true,
+                evaluations_criteres: true,
               },
             },
           },
         },
-      });
+      },
+    });
   }
 
   private findEvaluationObjectif(

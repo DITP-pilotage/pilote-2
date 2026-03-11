@@ -11,10 +11,7 @@ import {
 import { HttpClient } from "@/server/import-indicateur/domain/ports/HttpClient.interface";
 import { ErreurValidationFichier } from "@/server/import-indicateur/domain/ErreurValidationFichier";
 import logger from "@/server/infrastructure/Logger";
-
-interface Dependencies {
-  httpClient: HttpClient;
-}
+import type { Inject } from "@/server/import-indicateur/module";
 
 enum EnTeteFichierEnum {
   INDIC_ID = "identifiant_indic",
@@ -126,7 +123,7 @@ const personnaliserValidataMessage = (taskError: ReportErrorTask): string => {
 export class ValidataFichierIndicateurValidationService implements FichierIndicateurValidationService {
   private httpClient: HttpClient;
 
-  constructor({ httpClient }: Dependencies) {
+  constructor({ httpClient }: Inject<"httpClient">) {
     this.httpClient = httpClient;
   }
 

@@ -4,12 +4,7 @@ import { DecisionStrategiqueRepository } from "@/server/fiche-conducteur/domain/
 import { DecisionStrategiqueType } from "@/server/fiche-conducteur/domain/DecisionStrategiqueType";
 import { CommentaireType } from "@/server/fiche-conducteur/domain/CommentaireType";
 import { CommentaireRepository } from "@/server/fiche-conducteur/domain/ports/CommentaireRepository";
-
-interface Dependencies {
-  objectifRepository: ObjectifRepository;
-  decisionStrategiqueRepository: DecisionStrategiqueRepository;
-  commentaireRepository: CommentaireRepository;
-}
+import type { Inject } from "@/server/fiche-conducteur/module";
 
 export class RécupérerPublicationsUseCase {
   private objectifRepository: ObjectifRepository;
@@ -22,7 +17,11 @@ export class RécupérerPublicationsUseCase {
     objectifRepository,
     decisionStrategiqueRepository,
     commentaireRepository,
-  }: Dependencies) {
+  }: Inject<
+    | "objectifRepository"
+    | "decisionStrategiqueRepository"
+    | "commentaireRepository"
+  >) {
     this.objectifRepository = objectifRepository;
     this.decisionStrategiqueRepository = decisionStrategiqueRepository;
     this.commentaireRepository = commentaireRepository;

@@ -1,4 +1,3 @@
-import { asClass } from "awilix";
 import { ProfilUtilisateurRepository } from "@/server/profil-utilisateur/domain/ports/ProfilUtilisateurRepository";
 import { PrismaProfilUtilisateurRepository } from "@/server/profil-utilisateur/infrastructure/adapters/PrismaProfilUtilisateurRepository";
 import { ModifierMonProfilUseCase } from "@/server/profil-utilisateur/usecases/ModifierMonProfilUseCase";
@@ -7,7 +6,11 @@ import { ProfilModifieSideEffects } from "@/server/profil-utilisateur/domain/por
 import { KeycloakBrevoProfilModifieSideEffects } from "@/server/profil-utilisateur/infrastructure/adapters/KeycloakBrevoProfilModifieSideEffects";
 import type { EmailManager } from "@/server/infrastructure/email-manager/EmailManager";
 import { configuration } from "@/config";
-import { defineModule, type NoExports } from "@/server/module-system";
+import {
+  defineModule,
+  type ModuleScope,
+  type NoExports,
+} from "@/server/module-system";
 
 type ProfilUtilisateurCradle = NoExports & {
   profilUtilisateurRepository: ProfilUtilisateurRepository;
@@ -24,9 +27,11 @@ export const profilUtilisateurModule = defineModule<
   name: "profilUtilisateur",
   imports: ["shared"],
   exports: [],
-  register: (container, { asModuleFunction }) => {
+  register: (container, { asModuleFunction, asModuleClass }) => {
     container.register({
-      profilUtilisateurRepository: asClass(PrismaProfilUtilisateurRepository),
+      profilUtilisateurRepository: asModuleClass(
+        PrismaProfilUtilisateurRepository,
+      ),
       profilModifieSideEffects: asModuleFunction(({ emailManager }) => {
         const config = configuration();
         return new KeycloakBrevoProfilModifieSideEffects({
@@ -36,8 +41,11 @@ export const profilUtilisateurModule = defineModule<
           keycloakClientSecret: config.import.clientSecret,
         });
       }),
-      modifierMonProfilUseCase: asClass(ModifierMonProfilUseCase),
-      getProfilUtilisateurQuery: asClass(GetProfilUtilisateurQuery),
+      modifierMonProfilUseCase: asModuleClass(ModifierMonProfilUseCase),
+      getProfilUtilisateurQuery: asModuleClass(GetProfilUtilisateurQuery),
     });
   },
 });
+
+type Scope = ModuleScope<ProfilUtilisateurCradle>;
+export type Inject<K extends keyof Scope> = Pick<Scope, K>;

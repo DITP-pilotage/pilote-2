@@ -3,11 +3,7 @@ import { UtilisateurRepository } from "@/server/gestion-utilisateur/domain/ports
 import { ActionCompteInactifRepository } from "@/server/gestion-utilisateur/domain/ports/ActionCompteInactifRepository";
 import logger from "@/server/infrastructure/Logger";
 import { creerActionCompteInactif } from "@/server/gestion-utilisateur/domain/ActionCompteInactif";
-
-type Dependencies = {
-  utilisateurRepository: UtilisateurRepository;
-  actionCompteInactifRepository: ActionCompteInactifRepository;
-};
+import type { Inject } from "@/server/gestion-utilisateur/module";
 
 export interface CreerLesActionsComptesInactifsResultat {
   actionsPremiereRelance: number;
@@ -25,7 +21,7 @@ export class CreerLesActionsComptesInactifsUseCase {
   constructor({
     utilisateurRepository,
     actionCompteInactifRepository,
-  }: Dependencies) {
+  }: Inject<"utilisateurRepository" | "actionCompteInactifRepository">) {
     this.utilisateurRepository = utilisateurRepository;
     this.actionCompteInactifRepository = actionCompteInactifRepository;
   }

@@ -1,4 +1,3 @@
-import { asClass, Lifetime } from "awilix";
 import {
   BrevoEmailManager,
   type EmailManager,
@@ -24,10 +23,8 @@ export const sharedModule = defineModule<NoExports, SharedCradle>()({
   exports: [],
   register: (container, { asModuleFunction }) => {
     container.register({
-      prisma: asClass(PrismaPilote, { lifetime: Lifetime.SINGLETON }),
-      transaction: asClass(PrismaTransaction, {
-        lifetime: Lifetime.SINGLETON,
-      }),
+      prisma: asModuleFunction(() => new PrismaPilote()).singleton(),
+      transaction: asModuleFunction(() => new PrismaTransaction()).singleton(),
       emailManager: asModuleFunction(() =>
         configuration().brevo.disableEmails
           ? new StubEmailManager()

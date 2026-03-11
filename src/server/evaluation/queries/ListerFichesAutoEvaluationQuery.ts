@@ -1,5 +1,6 @@
 import { $Enums } from "@prisma/client";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
+import type { Inject } from "@/server/evaluation/module";
 
 export interface Rattachement {
   id: string;
@@ -7,10 +8,14 @@ export interface Rattachement {
 }
 
 export class ListerFichesAutoEvaluationQuery {
-  constructor(private readonly dependencies: { prisma: PrismaPilote }) {}
+  private readonly prisma: PrismaPilote;
+
+  constructor({ prisma }: Inject<"prisma">) {
+    this.prisma = prisma;
+  }
 
   async run({ utilisateurId }: { utilisateurId: string }) {
-    const derniereDateCalcul = await this.dependencies.prisma
+    const derniereDateCalcul = await this.prisma
       .getInstance()
       .chantier_evaluation.findFirst({
         orderBy: {
@@ -21,11 +26,11 @@ export class ListerFichesAutoEvaluationQuery {
         },
       });
 
-    const tousLesCriteres = await this.dependencies.prisma
+    const tousLesCriteres = await this.prisma
       .getInstance()
       .referentiel_critere.findMany();
 
-    const fichesEvaluation = await this.dependencies.prisma
+    const fichesEvaluation = await this.prisma
       .getInstance()
       .fiche_evaluation.findMany({
         orderBy: {

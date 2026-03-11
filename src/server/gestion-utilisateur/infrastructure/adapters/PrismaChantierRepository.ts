@@ -5,13 +5,8 @@ import {
 import { ChantierRepository } from "@/server/gestion-utilisateur/domain/ports/ChantierRepository";
 import { ChantierSynthétisé } from "@/server/domain/chantier/Chantier.interface";
 import { InformationChantierUtilisateur } from "@/server/gestion-utilisateur/domain/InformationChantierUtilisateur";
-import { PrismaPilote } from "@/server/db/PrismaPilote";
-
 import { PilotePrismaClient } from "@/server/db/PrismaTransaction";
-
-interface Dependencies {
-  prisma: PrismaPilote;
-}
+import type { Inject } from "@/server/gestion-utilisateur/module";
 
 const convertirEnInformationChantierUtilisateur = (
   prismaChantier: Pick<
@@ -40,7 +35,7 @@ const convertirEnInformationChantierUtilisateur = (
 export class PrismaChantierRepository implements ChantierRepository {
   private prisma: PilotePrismaClient;
 
-  constructor({ prisma }: Dependencies) {
+  constructor({ prisma }: Inject<"prisma">) {
     this.prisma = prisma.getInstance();
   }
 

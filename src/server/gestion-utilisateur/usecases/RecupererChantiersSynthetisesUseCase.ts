@@ -1,14 +1,11 @@
 import { ChantierSynthétisé } from "@/server/domain/chantier/Chantier.interface";
 import { ChantierRepository } from "@/server/gestion-utilisateur/domain/ports/ChantierRepository";
-
-interface Dependencies {
-  chantierRepository: ChantierRepository;
-}
+import type { Inject } from "@/server/gestion-utilisateur/module";
 
 export class RecupererChantiersSynthetisesUseCase {
   private chantierRepository: ChantierRepository;
 
-  constructor({ chantierRepository }: Dependencies) {
+  constructor({ chantierRepository }: Inject<"chantierRepository">) {
     this.chantierRepository = chantierRepository;
   }
 

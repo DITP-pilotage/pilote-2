@@ -8,13 +8,17 @@ import {
   ImportDecisionStrategiqueErrorResponse,
 } from "@/server/decisions-strategiques/app/contrats/ImportDecisionStrategiqueAPIContrat";
 import { UtilisateurAuthentifie } from "@/server/authentification/domain/UtilisateurAuthentifie";
+import type { Inject } from "@/server/decisions-strategiques/module";
 
 export class ImportDecisionStrategiqueAPIHandler {
-  constructor(
-    private readonly dependencies: {
-      importerDecisionsStrategiquesUseCase: ImporterDecisionsStrategiquesUseCase;
-    },
-  ) {}
+  private readonly importerDecisionsStrategiquesUseCase: ImporterDecisionsStrategiquesUseCase;
+
+  constructor({
+    importerDecisionsStrategiquesUseCase,
+  }: Inject<"importerDecisionsStrategiquesUseCase">) {
+    this.importerDecisionsStrategiquesUseCase =
+      importerDecisionsStrategiquesUseCase;
+  }
 
   async handle({
     request,
@@ -55,7 +59,7 @@ export class ImportDecisionStrategiqueAPIHandler {
       return;
     }
 
-    await this.dependencies.importerDecisionsStrategiquesUseCase.execute({
+    await this.importerDecisionsStrategiquesUseCase.execute({
       chantierId,
       decisionsStrategiques: validationResult.data.decisions_strategiques,
       auteurId: utilisateurAuthentifie.id,

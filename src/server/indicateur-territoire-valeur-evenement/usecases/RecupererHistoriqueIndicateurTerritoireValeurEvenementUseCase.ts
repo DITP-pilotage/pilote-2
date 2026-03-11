@@ -2,6 +2,7 @@ import { IndicateurTerritoireValeurEvenement } from "@/server/indicateur-territo
 import { IndicateurTerritoireValeurEvenementRepository } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/IndicateurTerritoireValeurEvenementRepository";
 import { toISODate } from "@/server/app/domain/Dates";
 import { EvenementValeurEnum } from "@/server/app/domain/EvenementValeurEnum";
+import type { Inject } from "@/server/indicateur-territoire-valeur-evenement/module";
 
 export type HistoriqueIndicateurTerritoireValeurEvenementContrat = {
   [dateValeur: string]: IndicateurTerritoireValeurEvenementContrat[];
@@ -48,9 +49,7 @@ export class RecupererHistoriqueIndicateurTerritoireValeurEvenementUseCase {
 
   constructor({
     indicateurTerritoireValeurEvenementRepository,
-  }: {
-    indicateurTerritoireValeurEvenementRepository: IndicateurTerritoireValeurEvenementRepository;
-  }) {
+  }: Inject<"indicateurTerritoireValeurEvenementRepository">) {
     this._indicateurTerritoireValeurEvenementRepository =
       indicateurTerritoireValeurEvenementRepository;
   }

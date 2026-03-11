@@ -1,4 +1,3 @@
-import { asClass } from "awilix";
 import { ImportSyntheseDesResultatsAPIHandler } from "@/server/syntheses-des-resultats/infrastructure/handlers/ImportSyntheseDesResultatsAPIHandler";
 import { ImporterSynthesesDesResultatsUseCase } from "@/server/syntheses-des-resultats/usecases/ImporterSynthesesDesResultatsUseCase";
 import { RecupererDerniereSyntheseDesResultatsQuery } from "@/server/syntheses-des-resultats/queries/RecupererDerniereSyntheseDesResultatsQuery";
@@ -10,7 +9,11 @@ import { ChantierRepository } from "@/server/chantiers/domain/ports/ChantierRepo
 import { PrismaChantierRepository } from "@/server/chantiers/infrastructure/adapters/PrismaChantierRepository";
 import { Transaction } from "@/server/db/Transaction";
 import { PrismaTransaction } from "@/server/db/PrismaTransaction";
-import { defineModule, type NoExports } from "@/server/module-system";
+import {
+  defineModule,
+  type ModuleScope,
+  type NoExports,
+} from "@/server/module-system";
 import { EnregistrerSyntheseDesResultatsService } from "@/server/syntheses-des-resultats/services/EnregistrerSyntheseDesResultatsService";
 import { PublierSyntheseDesResultatsUseCase } from "@/server/syntheses-des-resultats/usecases/PublierSyntheseDesResultatsUseCase";
 import { EnregistrerBrouillonSyntheseDesResultatsUseCase } from "@/server/syntheses-des-resultats/usecases/EnregistrerBrouillonSyntheseDesResultatsUseCase";
@@ -42,17 +45,17 @@ export const importSyntheseDesResultatsModule = defineModule<
   name: "importSyntheseDesResultats",
   imports: ["shared"],
   exports: [],
-  register: (container) => {
+  register: (container, { asModuleClass }) => {
     container.register({
-      synthèseDesRésultatsRepository: asClass(
+      synthèseDesRésultatsRepository: asModuleClass(
         SynthèseDesRésultatsSQLRepository,
       ),
-      chantierRepository: asClass(PrismaChantierRepository),
-      transaction: asClass(PrismaTransaction),
+      chantierRepository: asModuleClass(PrismaChantierRepository),
+      transaction: asModuleClass(PrismaTransaction),
       enregistrerSyntheseDesResultatsService: asClass(
         EnregistrerSyntheseDesResultatsService,
       ),
-      importerSynthesesDesResultatsUseCase: asClass(
+      importerSynthesesDesResultatsUseCase: asModuleClass(
         ImporterSynthesesDesResultatsUseCase,
       ),
       publierSyntheseDesResultatsUseCase: asClass(
@@ -67,21 +70,24 @@ export const importSyntheseDesResultatsModule = defineModule<
       publierBrouillonSyntheseDesResultatsUseCase: asClass(
         PublierBrouillonSyntheseDesResultatsUseCase,
       ),
-      modifierBrouillonSyntheseDesResultatsUseCase: asClass(
+      modifierBrouillonSyntheseDesResultatsUseCase: asModuleClass(
         ModifierBrouillonSyntheseDesResultatsUseCase,
       ),
-      récupérerDerniereSyntheseDesResultatsQuery: asClass(
+      récupérerDerniereSyntheseDesResultatsQuery: asModuleClass(
         RecupererDerniereSyntheseDesResultatsQuery,
       ),
-      récupérerHistoriqueSyntheseDesResultatsQuery: asClass(
+      récupérerHistoriqueSyntheseDesResultatsQuery: asModuleClass(
         RecupererHistoriqueSyntheseDesResultatsQuery,
       ),
       recupererDernierBrouillonSyntheseDesResultatsQuery: asClass(
         RecupererBrouillonSyntheseDesResultatsQuery,
       ),
-      importSyntheseDesResultatsAPIHandler: asClass(
+      importSyntheseDesResultatsAPIHandler: asModuleClass(
         ImportSyntheseDesResultatsAPIHandler,
       ),
     });
   },
 });
+
+type Scope = ModuleScope<ImportSyntheseDesResultatsCradle>;
+export type Inject<K extends keyof Scope> = Pick<Scope, K>;

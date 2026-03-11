@@ -1,12 +1,11 @@
 import { MetadataParametrageIndicateur } from "@/server/parametrage-indicateur/domain/MetadataParametrageIndicateur";
 import { presenterEnMapInformationMetadataIndicateurContrat } from "@/server/app/contrats/InformationMetadataIndicateurContrat";
-import RécupérerInformationMetadataIndicateurUseCase from "@/server/parametrage-indicateur/usecases/RécupérerInformationMetadataIndicateurUseCase";
+import type { Inject } from "@/server/parametrage-indicateur/module";
 
-type Dependencies = {
-  récupérerInformationMetadataIndicateurUseCase: RécupérerInformationMetadataIndicateurUseCase;
-};
 export default class InitialiserNouvelIndicateurUseCase {
-  constructor(private dependencies: Dependencies) {}
+  constructor(
+    private dependencies: Inject<"récupérerInformationMetadataIndicateurUseCase">,
+  ) {}
 
   async run(indicId: string): Promise<MetadataParametrageIndicateur> {
     const listeInformation = presenterEnMapInformationMetadataIndicateurContrat(

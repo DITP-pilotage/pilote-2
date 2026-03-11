@@ -1,7 +1,12 @@
 import { EmailManager } from "@/server/infrastructure/email-manager";
+import type { Inject } from "@/server/evaluation/module";
 
 export class NotificationEmailService {
-  constructor(private readonly deps: { emailManager: EmailManager }) {}
+  private readonly emailManager: EmailManager;
+
+  constructor({ emailManager }: Inject<"emailManager">) {
+    this.emailManager = emailManager;
+  }
 
   async execute({
     destinataires,
@@ -14,7 +19,7 @@ export class NotificationEmailService {
       listeTerritoires: string[];
     };
   }) {
-    await this.deps.emailManager.sendTransactionalEmail(
+    await this.emailManager.sendTransactionalEmail(
       destinataires,
       templateId,
       params,

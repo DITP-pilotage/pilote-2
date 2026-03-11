@@ -1,9 +1,12 @@
-import { asClass } from "awilix";
 import { ImportDecisionStrategiqueAPIHandler } from "@/server/decisions-strategiques/infrastructure/handlers/ImportDecisionStrategiqueAPIHandler";
 import { ImporterDecisionsStrategiquesUseCase } from "@/server/decisions-strategiques/usecases/ImporterDecisionsStrategiquesUseCase";
 import DécisionStratégiqueRepository from "@/server/domain/chantier/décisionStratégique/DécisionStratégiqueRepository.interface";
 import DécisionStratégiqueSQLRepository from "@/server/infrastructure/accès_données/chantier/décisionStratégique/DécisionStratégiqueSQLRepository";
-import { defineModule, type NoExports } from "@/server/module-system";
+import {
+  defineModule,
+  type ModuleScope,
+  type NoExports,
+} from "@/server/module-system";
 
 type ImportDecisionStrategiqueCradle = NoExports & {
   importDecisionStrategiqueAPIHandler: ImportDecisionStrategiqueAPIHandler;
@@ -18,15 +21,20 @@ export const importDecisionStrategiqueModule = defineModule<
   name: "importDecisionStrategique",
   imports: ["shared"],
   exports: [],
-  register: (container) => {
+  register: (container, { asModuleClass }) => {
     container.register({
-      décisionStratégiqueRepository: asClass(DécisionStratégiqueSQLRepository),
-      importerDecisionsStrategiquesUseCase: asClass(
+      décisionStratégiqueRepository: asModuleClass(
+        DécisionStratégiqueSQLRepository,
+      ),
+      importerDecisionsStrategiquesUseCase: asModuleClass(
         ImporterDecisionsStrategiquesUseCase,
       ),
-      importDecisionStrategiqueAPIHandler: asClass(
+      importDecisionStrategiqueAPIHandler: asModuleClass(
         ImportDecisionStrategiqueAPIHandler,
       ),
     });
   },
 });
+
+type Scope = ModuleScope<ImportDecisionStrategiqueCradle>;
+export type Inject<K extends keyof Scope> = Pick<Scope, K>;

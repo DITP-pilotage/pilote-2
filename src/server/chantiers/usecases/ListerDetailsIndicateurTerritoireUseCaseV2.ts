@@ -7,6 +7,7 @@ import {
   presenterEnDetailsIndicateursTerritoireContrat,
 } from "@/server/chantiers/app/contrats/DetailsIndicateursTerritoireContrat";
 import { DatajobsExecutionQueries } from "@/server/datajobs-execution/DatajobsExecution";
+import type { Inject } from "@/server/chantiers/module";
 
 export class ListerDetailsIndicateurTerritoireUseCaseV2 {
   private readonly indicateurRepository: IndicateurRepository;
@@ -16,10 +17,7 @@ export class ListerDetailsIndicateurTerritoireUseCaseV2 {
   constructor({
     indicateurRepository,
     datajobsExecutionQueries,
-  }: {
-    indicateurRepository: IndicateurRepository;
-    datajobsExecutionQueries: DatajobsExecutionQueries;
-  }) {
+  }: Inject<"indicateurRepository" | "datajobsExecutionQueries">) {
     this.indicateurRepository = indicateurRepository;
     this.datajobsExecutionQueries = datajobsExecutionQueries;
   }

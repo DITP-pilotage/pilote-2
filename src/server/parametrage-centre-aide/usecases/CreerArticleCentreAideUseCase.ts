@@ -1,15 +1,14 @@
 import { $Enums } from "@prisma/client";
 import { ArticleCentreAideRepository } from "@/server/parametrage-centre-aide/domain/ports/ArticleCentreAideRepository";
 import { ArticleCentreAide } from "@/server/parametrage-centre-aide/domain/ArticleCentreAide";
-
-type Dependencies = {
-  articleCentreAideRepository: ArticleCentreAideRepository;
-};
+import type { Inject } from "@/server/parametrage-centre-aide/module";
 
 export class CreerArticleCentreAideUseCase {
   private articleCentreAideRepository: ArticleCentreAideRepository;
 
-  constructor({ articleCentreAideRepository }: Dependencies) {
+  constructor({
+    articleCentreAideRepository,
+  }: Inject<"articleCentreAideRepository">) {
     this.articleCentreAideRepository = articleCentreAideRepository;
   }
 

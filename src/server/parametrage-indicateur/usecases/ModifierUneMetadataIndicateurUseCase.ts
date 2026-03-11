@@ -3,11 +3,8 @@ import { MetadataParametrageIndicateurForm } from "@/server/parametrage-indicate
 import { HistorisationModification } from "@/server/domain/historisationModification/HistorisationModification";
 import { MetadataParametrageIndicateur } from "@/server/parametrage-indicateur/domain/MetadataParametrageIndicateur";
 import { HistorisationModificationRepository } from "@/server/domain/historisationModification/HistorisationModificationRepository";
+import type { Inject } from "@/server/parametrage-indicateur/module";
 
-type Dependencies = {
-  metadataParametrageIndicateurRepository: MetadataParametrageIndicateurRepository;
-  historisationModificationRepository: HistorisationModificationRepository;
-};
 export default class ModifierUneMetadataIndicateurUseCase {
   private metadataParametrageIndicateurRepository: MetadataParametrageIndicateurRepository;
 
@@ -16,7 +13,10 @@ export default class ModifierUneMetadataIndicateurUseCase {
   constructor({
     metadataParametrageIndicateurRepository,
     historisationModificationRepository,
-  }: Dependencies) {
+  }: Inject<
+    | "metadataParametrageIndicateurRepository"
+    | "historisationModificationRepository"
+  >) {
     this.metadataParametrageIndicateurRepository =
       metadataParametrageIndicateurRepository;
     this.historisationModificationRepository =

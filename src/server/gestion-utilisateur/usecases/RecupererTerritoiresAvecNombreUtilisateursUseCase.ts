@@ -1,18 +1,17 @@
 import { TerritoireAvecNombreUtilisateurs } from "@/server/domain/territoire/Territoire.interface";
 import { TerritoireRepository } from "@/server/gestion-utilisateur/domain/ports/TerritoireRepository";
 import { UtilisateurRepository } from "@/server/gestion-utilisateur/domain/ports/UtilisateurRepository";
-
-interface Dependencies {
-  territoireRepository: TerritoireRepository;
-  utilisateurRepository: UtilisateurRepository;
-}
+import type { Inject } from "@/server/gestion-utilisateur/module";
 
 export class RecupererTerritoiresAvecNombreUtilisateursUseCase {
   private territoireRepository: TerritoireRepository;
 
   private utilisateurRepository: UtilisateurRepository;
 
-  constructor({ territoireRepository, utilisateurRepository }: Dependencies) {
+  constructor({
+    territoireRepository,
+    utilisateurRepository,
+  }: Inject<"territoireRepository" | "utilisateurRepository">) {
     this.territoireRepository = territoireRepository;
     this.utilisateurRepository = utilisateurRepository;
   }

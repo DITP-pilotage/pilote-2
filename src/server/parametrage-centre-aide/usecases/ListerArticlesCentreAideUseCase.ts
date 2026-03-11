@@ -1,14 +1,17 @@
 import { ArticleCentreAide } from "@/server/parametrage-centre-aide/domain/ArticleCentreAide";
 import { ArticleCentreAideRepository } from "@/server/parametrage-centre-aide/domain/ports/ArticleCentreAideRepository";
-
-type Dependencies = {
-  articleCentreAideRepository: ArticleCentreAideRepository;
-};
+import type { Inject } from "@/server/parametrage-centre-aide/module";
 
 export class ListerArticlesCentreAideUseCase {
-  constructor(private readonly deps: Dependencies) {}
+  private articleCentreAideRepository: ArticleCentreAideRepository;
+
+  constructor({
+    articleCentreAideRepository,
+  }: Inject<"articleCentreAideRepository">) {
+    this.articleCentreAideRepository = articleCentreAideRepository;
+  }
 
   async execute(): Promise<ArticleCentreAide[]> {
-    return this.deps.articleCentreAideRepository.lister();
+    return this.articleCentreAideRepository.lister();
   }
 }

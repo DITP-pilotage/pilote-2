@@ -10,16 +10,7 @@ import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation"
 import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
 import { ContactInfoLettresService } from "@/server/gestion-utilisateur/domain/ports/ContactInfoLettresService";
 import { NotFoundError } from "@/server/app/error-boundary/not-found-error";
-
-type Dependencies = {
-  utilisateurRepository: UtilisateurRepository;
-  chantierRepository: ChantierRepository;
-  territoireRepository: TerritoireRepository;
-  perimetreMinisterielRepository: PerimetreMinisterielRepository;
-  utilisateurIAMRepository: UtilisateurIAMRepository;
-  tokenAPIInformationRepository: TokenAPIInformationRepository;
-  contactInfoLettresService: ContactInfoLettresService;
-};
+import type { Inject } from "@/server/gestion-utilisateur/module";
 
 export default class DesactiverUnUtilisateurUseCase {
   private utilisateurRepository: UtilisateurRepository;
@@ -44,7 +35,15 @@ export default class DesactiverUnUtilisateurUseCase {
     utilisateurIAMRepository,
     tokenAPIInformationRepository,
     contactInfoLettresService,
-  }: Dependencies) {
+  }: Inject<
+    | "utilisateurRepository"
+    | "chantierRepository"
+    | "territoireRepository"
+    | "perimetreMinisterielRepository"
+    | "utilisateurIAMRepository"
+    | "tokenAPIInformationRepository"
+    | "contactInfoLettresService"
+  >) {
     this.utilisateurRepository = utilisateurRepository;
     this.chantierRepository = chantierRepository;
     this.territoireRepository = territoireRepository;

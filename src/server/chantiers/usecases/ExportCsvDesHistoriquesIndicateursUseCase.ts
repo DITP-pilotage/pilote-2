@@ -16,6 +16,7 @@ import {
   verifierOptionStatut,
 } from "@/server/chantiers/domain/ChantierPourExport";
 import { IndicateurRepository } from "@/server/chantiers/domain/ports/IndicateurRepository";
+import type { Inject } from "@/server/chantiers/module";
 import { verifierApplicabiliteMaille } from "@/server/chantiers/domain/IndicateurPourExport";
 
 const presenterEnHistoriqueIndicateurExportContrat = (
@@ -77,10 +78,6 @@ const presenterEnHistoriqueIndicateurExportContrat = (
   ];
 };
 
-interface Dependencies {
-  indicateurRepository: IndicateurRepository;
-}
-
 export class ExportCsvDesHistoriquesIndicateursUseCase {
   public static readonly NOMS_COLONNES = (jalon: number): string[] => {
     return [
@@ -104,7 +101,7 @@ export class ExportCsvDesHistoriquesIndicateursUseCase {
 
   private indicateurRepository: IndicateurRepository;
 
-  constructor({ indicateurRepository }: Dependencies) {
+  constructor({ indicateurRepository }: Inject<"indicateurRepository">) {
     this.indicateurRepository = indicateurRepository;
   }
 

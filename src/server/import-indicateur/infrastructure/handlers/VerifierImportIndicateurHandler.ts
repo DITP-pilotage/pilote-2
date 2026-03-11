@@ -10,6 +10,7 @@ import { configuration } from "@/config";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
 import { RecupererVariableContenuUseCase } from "@/server/gestion-contenu/usecases/RecupererVariableContenuUseCase";
 import { VerifierFichierIndicateurImporteUseCase } from "@/server/import-indicateur/usecases/VerifierFichierIndicateurImporteUseCase";
+import type { Inject } from "@/server/import-indicateur/module";
 
 const présenterEnContrat = (
   report: DetailValidationFichier,
@@ -29,14 +30,12 @@ const présenterEnContrat = (
   };
 };
 
-type Dependencies = {
-  verifierFichierIndicateurImporteUseCase: VerifierFichierIndicateurImporteUseCase;
-};
-
 export class VerifierFichierImportIndicateurHandler {
   private verifierFichierIndicateurImporteUseCase: VerifierFichierIndicateurImporteUseCase;
 
-  constructor({ verifierFichierIndicateurImporteUseCase }: Dependencies) {
+  constructor({
+    verifierFichierIndicateurImporteUseCase,
+  }: Inject<"verifierFichierIndicateurImporteUseCase">) {
     this.verifierFichierIndicateurImporteUseCase =
       verifierFichierIndicateurImporteUseCase;
   }

@@ -4,6 +4,7 @@ import { MesureIndicateurRepository } from "@/server/indicateur-territoire-valeu
 import { UtilisateurRepository } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/UtilisateurRepository";
 import { IndicateurRepository } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/IndicateurRepository";
 import { EnvoieEmailService } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/EnvoieEmailService";
+import type { Inject } from "@/server/indicateur-territoire-valeur-evenement/module";
 import { formaterDate } from "@/client/utils/date/date";
 import { formaterNombre } from "@/client/utils/nombre/nombre";
 import { EvenementsSurDate } from "@/server/import-indicateur/domain/EvenementsSurDate";
@@ -30,14 +31,14 @@ export class AccepterAvecModificationPropositionValeurAvancementUseCase {
     indicateurRepository,
     envoieEmailService,
     transaction,
-  }: {
-    indicateurTerritoireValeurEvenementRepository: IndicateurTerritoireValeurEvenementRepository;
-    mesureIndicateurRepository: MesureIndicateurRepository;
-    utilisateurRepository: UtilisateurRepository;
-    indicateurRepository: IndicateurRepository;
-    envoieEmailService: EnvoieEmailService;
-    transaction: Transaction;
-  }) {
+  }: Inject<
+    | "indicateurTerritoireValeurEvenementRepository"
+    | "mesureIndicateurRepository"
+    | "utilisateurRepository"
+    | "indicateurRepository"
+    | "envoieEmailService"
+    | "transaction"
+  >) {
     this.indicateurTerritoireValeurEvenementRepository =
       indicateurTerritoireValeurEvenementRepository;
     this.mesureIndicateurRepository = mesureIndicateurRepository;

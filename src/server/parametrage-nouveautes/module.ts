@@ -1,6 +1,9 @@
-import { asClass } from "awilix";
-import { defineModule, type NoExports } from "@/server/module-system";
-import { CreerNouveauteUseCase} from "./usecases/CreerNouveauteUseCase";
+import {
+  defineModule,
+  type ModuleScope,
+  type NoExports,
+} from "@/server/module-system";
+import { CreerNouveauteUseCase } from "./usecases/CreerNouveauteUseCase";
 import { PrismaNouveauteRepository } from "./infrastructure/adapters/PrismaNouveauteRepository";
 import { NouveauteRepository } from "./domain/ports/NouveauteRepository";
 import { ListerNouveautesUseCase } from "./usecases/ListerNouveautesUseCase";
@@ -20,12 +23,15 @@ export const parametrageNouveautesModule = defineModule<
   name: "parametrageNouveautes",
   imports: ["shared"],
   exports: [],
-  register: (container) => {
+  register: (container, { asModuleClass }) => {
     container.register({
-      creerNouveauteUseCase: asClass(CreerNouveauteUseCase),
-      nouveauteRepository: asClass(PrismaNouveauteRepository),
-      listerNouveautesUseCase: asClass(ListerNouveautesUseCase),
-      modifierNouveauteUseCase: asClass(ModifierNouveauteUseCase),
+      creerNouveauteUseCase: asModuleClass(CreerNouveauteUseCase),
+      nouveauteRepository: asModuleClass(PrismaNouveauteRepository),
+      listerNouveautesUseCase: asModuleClass(ListerNouveautesUseCase),
+      modifierNouveauteUseCase: asModuleClass(ModifierNouveauteUseCase),
     });
   },
 });
+
+type Scope = ModuleScope<ParametrageNouveautesCradle>;
+export type Inject<K extends keyof Scope> = Pick<Scope, K>;

@@ -8,13 +8,16 @@ import {
   ImportObjectifErrorResponse,
 } from "@/server/objectifs/app/contrats/ImportObjectifAPIContrat";
 import { UtilisateurAuthentifie } from "@/server/authentification/domain/UtilisateurAuthentifie";
+import type { Inject } from "@/server/objectifs/module";
 
 export class ImportObjectifAPIHandler {
-  constructor(
-    private readonly dependencies: {
-      importerObjectifsUseCase: ImporterObjectifsUseCase;
-    },
-  ) {}
+  private readonly importerObjectifsUseCase: ImporterObjectifsUseCase;
+
+  constructor({
+    importerObjectifsUseCase,
+  }: Inject<"importerObjectifsUseCase">) {
+    this.importerObjectifsUseCase = importerObjectifsUseCase;
+  }
 
   async handle({
     request,
@@ -55,7 +58,7 @@ export class ImportObjectifAPIHandler {
       return;
     }
 
-    await this.dependencies.importerObjectifsUseCase.execute({
+    await this.importerObjectifsUseCase.execute({
       chantierId,
       objectifs: validationResult.data.objectifs,
       auteurId: utilisateurAuthentifie.id,

@@ -1,13 +1,10 @@
 import { UtilisateurRepository } from "@/server/gestion-utilisateur/domain/ports/UtilisateurRepository";
-
-type Dependencies = {
-  utilisateurRepository: UtilisateurRepository;
-};
+import type { Inject } from "@/server/gestion-utilisateur/module";
 
 export class DesactiverPopupInfolettreUseCase {
   private readonly utilisateurRepository: UtilisateurRepository;
 
-  constructor({ utilisateurRepository }: Dependencies) {
+  constructor({ utilisateurRepository }: Inject<"utilisateurRepository">) {
     this.utilisateurRepository = utilisateurRepository;
   }
 

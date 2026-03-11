@@ -2,6 +2,7 @@ import { IndicateurTerritoireValeurEvenementRepository } from "@/server/indicate
 import { IndicateurRepository } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/IndicateurRepository";
 import { UtilisateurRepository } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/UtilisateurRepository";
 import { EnvoieEmailService } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/EnvoieEmailService";
+import type { Inject } from "@/server/indicateur-territoire-valeur-evenement/module";
 import { formaterDate } from "@/client/utils/date/date";
 import { formaterNombre } from "@/client/utils/nombre/nombre";
 import { EvenementsSurDate } from "@/server/import-indicateur/domain/EvenementsSurDate";
@@ -22,12 +23,12 @@ export class AccuserReceptionPropositionValeurUseCase {
     indicateurRepository,
     utilisateurRepository,
     envoieEmailService,
-  }: {
-    indicateurTerritoireValeurEvenementRepository: IndicateurTerritoireValeurEvenementRepository;
-    indicateurRepository: IndicateurRepository;
-    utilisateurRepository: UtilisateurRepository;
-    envoieEmailService: EnvoieEmailService;
-  }) {
+  }: Inject<
+    | "indicateurTerritoireValeurEvenementRepository"
+    | "indicateurRepository"
+    | "utilisateurRepository"
+    | "envoieEmailService"
+  >) {
     this.indicateurTerritoireValeurEvenementRepository =
       indicateurTerritoireValeurEvenementRepository;
     this.indicateurRepository = indicateurRepository;

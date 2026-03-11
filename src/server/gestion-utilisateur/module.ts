@@ -1,4 +1,3 @@
-import { asClass } from "awilix";
 import { ChantierRepository } from "@/server/gestion-utilisateur/domain/ports/ChantierRepository";
 import { PrismaChantierRepository } from "@/server/gestion-utilisateur/infrastructure/adapters/PrismaChantierRepository";
 import { RecupererChantiersSynthetisesUseCase } from "@/server/gestion-utilisateur/usecases/RecupererChantiersSynthetisesUseCase";
@@ -16,7 +15,7 @@ import { RecupererTousLesTerritoiresUseCase } from "@/server/usecase/territoire/
 import { RecupererListeUtilisateursUseCase } from "@/server/gestion-utilisateur/usecases/RecupererListeUtilisateursUseCase";
 import { PrismaHistorisationModificationRepository } from "@/server/infrastructure/accès_données/historisationModification/PrismaHistorisationModificationRepository";
 import { HistorisationModificationRepository } from "@/server/domain/historisationModification/HistorisationModificationRepository";
-import { defineModule } from "@/server/module-system";
+import { defineModule, type ModuleScope } from "@/server/module-system";
 import { UtilisateurRepository } from "./domain/ports/UtilisateurRepository";
 import { UtilisateurIAMRepository } from "./domain/ports/UtilisateurIAMRepository";
 import { TokenAPIInformationRepository } from "./domain/ports/TokenAPIInformationRepository";
@@ -113,93 +112,106 @@ export const gestionUtilisateurModule = defineModule<
   name: "gestionUtilisateur",
   imports: ["shared"],
   exports: ["activiteComptesQuery", "utilisateursQuery"],
-  register: (container) => {
+  register: (container, { asModuleClass }) => {
     container.register({
-      activiteComptesQuery: asClass(PrismaActiviteComptesQuery),
-      utilisateursQuery: asClass(PrismaUtilisateursQuery),
-      utilisateurRepository: asClass(PrismaUtilisateurRepository),
-      territoireRepository: asClass(PrismaTerritoireRepository),
-      utilisateurIAMRepository: asClass(UtilisateurIAMKeycloakRepository),
-      chantierRepository: asClass(PrismaChantierRepository),
-      perimetreMinisterielRepository: asClass(
+      activiteComptesQuery: asModuleClass(PrismaActiviteComptesQuery),
+      utilisateursQuery: asModuleClass(PrismaUtilisateursQuery),
+      utilisateurRepository: asModuleClass(PrismaUtilisateurRepository),
+      territoireRepository: asModuleClass(PrismaTerritoireRepository),
+      utilisateurIAMRepository: asModuleClass(UtilisateurIAMKeycloakRepository),
+      chantierRepository: asModuleClass(PrismaChantierRepository),
+      perimetreMinisterielRepository: asModuleClass(
         PrismaPerimetreMinisterielRepository,
       ),
-      profilRepository: asClass(PrismaProfilRepository),
-      tokenAPIInformationRepository: asClass(
+      profilRepository: asModuleClass(PrismaProfilRepository),
+      tokenAPIInformationRepository: asModuleClass(
         PrismaTokenAPIInformationRepository,
       ),
-      historisationModification: asClass(
+      historisationModification: asModuleClass(
         PrismaHistorisationModificationRepository,
       ),
-      desactiverUnUtilisateurUseCase: asClass(DesactiverUnUtilisateurUseCase),
-      reactiverUnUtilisateurUseCase: asClass(ReactiverUnUtilisateurUseCase),
-      recupererChantiersSynthetisesUseCase: asClass(
+      desactiverUnUtilisateurUseCase: asModuleClass(
+        DesactiverUnUtilisateurUseCase,
+      ),
+      reactiverUnUtilisateurUseCase: asModuleClass(
+        ReactiverUnUtilisateurUseCase,
+      ),
+      recupererChantiersSynthetisesUseCase: asModuleClass(
         RecupererChantiersSynthetisesUseCase,
       ),
-      recupererPerimetresMinisterielsUseCase: asClass(
+      recupererPerimetresMinisterielsUseCase: asModuleClass(
         RecupererPerimetresMinisterielsUseCase,
       ),
-      recupererListeProfilUseCase: asClass(RecupererListeProfilUseCase),
-      recupererTerritoiresAvecNombreUtilisateursUseCase: asClass(
+      recupererListeProfilUseCase: asModuleClass(RecupererListeProfilUseCase),
+      recupererTerritoiresAvecNombreUtilisateursUseCase: asModuleClass(
         RecupererTerritoiresAvecNombreUtilisateursUseCase,
       ),
-      filtrerListeUtilisateursUseCase: asClass(FiltrerListeUtilisateursUseCase),
-      recupererTousLesTerritoiresUseCase: asClass(
+      filtrerListeUtilisateursUseCase: asModuleClass(
+        FiltrerListeUtilisateursUseCase,
+      ),
+      recupererTousLesTerritoiresUseCase: asModuleClass(
         RecupererTousLesTerritoiresUseCase,
       ),
-      recupererListeUtilisateursUseCase: asClass(
+      recupererListeUtilisateursUseCase: asModuleClass(
         RecupererListeUtilisateursUseCase,
       ),
-      recupererEtatVisualisationVideoAccueilUseCase: asClass(
+      recupererEtatVisualisationVideoAccueilUseCase: asModuleClass(
         RecupererEtatVisualisationVideoAccueilUseCase,
       ),
-      desactiverVideoAccueilUseCase: asClass(DesactiverVideoAccueilUseCase),
-      commentaireRepository: asClass(PrismaCommentaireRepository),
-      decisionStrategiqueRepository: asClass(
+      desactiverVideoAccueilUseCase: asModuleClass(
+        DesactiverVideoAccueilUseCase,
+      ),
+      commentaireRepository: asModuleClass(PrismaCommentaireRepository),
+      decisionStrategiqueRepository: asModuleClass(
         PrismaDecisionStrategiqueRepository,
       ),
-      objectifRepository: asClass(PrismaObjectifRepository),
-      rapportRepository: asClass(PrismaRapportRepository),
-      syntheseDesResultatsRepository: asClass(
+      objectifRepository: asModuleClass(PrismaObjectifRepository),
+      rapportRepository: asModuleClass(PrismaRapportRepository),
+      syntheseDesResultatsRepository: asModuleClass(
         PrismaSyntheseDesResultatsRepository,
       ),
-      propositionValeurAvancementRepository: asClass(
+      propositionValeurAvancementRepository: asModuleClass(
         PrismaPropositionValeurAvancementRepository,
       ),
-      supprimerLesComptesDesactivesUseCase: asClass(
+      supprimerLesComptesDesactivesUseCase: asModuleClass(
         SupprimerLesComptesDesactivesUseCase,
       ),
-      recupererLaListeDesInfomrationsChantiersUse: asClass(
+      recupererLaListeDesInfomrationsChantiersUse: asModuleClass(
         RecupererLaListeDesInfomrationsChantiersUse,
       ),
-      contactInfoLettresService: asClass(BrevoContactInfoLettresService),
-      créerOuMettreÀJourUnUtilisateurUseCase: asClass(
+      contactInfoLettresService: asModuleClass(BrevoContactInfoLettresService),
+      créerOuMettreÀJourUnUtilisateurUseCase: asModuleClass(
         CréerOuMettreÀJourUnUtilisateurUseCase,
       ),
-      envoyerMailInscriptionInfolettreUseCase: asClass(
+      envoyerMailInscriptionInfolettreUseCase: asModuleClass(
         EnvoyerMailInscriptionInfolettreUseCase,
       ),
-      recupererEtatModaleInscriptionUseCase: asClass(
+      recupererEtatModaleInscriptionUseCase: asModuleClass(
         RecupererEtatModaleInscriptionUseCase,
       ),
-      desactiverPopupInfolettreUseCase: asClass(
+      desactiverPopupInfolettreUseCase: asModuleClass(
         DesactiverPopupInfolettreUseCase,
       ),
-      ajouterUnContactAUneInfoLettreUseCase: asClass(
+      ajouterUnContactAUneInfoLettreUseCase: asModuleClass(
         AjouterUnContactAUneInfoLettreUseCase,
       ),
-      habilitationService: asClass(PrismaHabilitationService),
-      actionCompteInactifRepository: asClass(
+      habilitationService: asModuleClass(PrismaHabilitationService),
+      actionCompteInactifRepository: asModuleClass(
         PrismaActionCompteInactifRepository,
       ),
-      creerLesActionsComptesInactifsUseCase: asClass(
+      creerLesActionsComptesInactifsUseCase: asModuleClass(
         CreerLesActionsComptesInactifsUseCase,
       ),
-      envoyerLesRelancesUseCase: asClass(EnvoyerLesRelancesUseCase),
-      desactiverLesComptesInactifsUseCase: asClass(
+      envoyerLesRelancesUseCase: asModuleClass(EnvoyerLesRelancesUseCase),
+      desactiverLesComptesInactifsUseCase: asModuleClass(
         DesactiverLesComptesInactifsUseCase,
       ),
-      importerDesUtilisateursUseCase: asClass(ImporterDesUtilisateursUseCase),
+      importerDesUtilisateursUseCase: asModuleClass(
+        ImporterDesUtilisateursUseCase,
+      ),
     });
   },
 });
+
+type Scope = ModuleScope<GestionUtilisateurCradle>;
+export type Inject<K extends keyof Scope> = Pick<Scope, K>;

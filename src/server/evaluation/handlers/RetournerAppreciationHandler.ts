@@ -3,6 +3,7 @@ import { $Enums } from "@prisma/client";
 import { Transaction } from "@/server/db/Transaction";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { getPrisma } from "@/server/db/PrismaTransaction";
+import type { Inject } from "@/server/evaluation/module";
 
 export const retournerAppreciationCommandSchema = z.object({
   ficheEvaluationIds: z.array(z.string()),
@@ -13,19 +14,20 @@ export type RetournerAppreciationCommand = z.infer<
 >;
 
 export class RetournerAppreciationHandler {
-  constructor(
-    private readonly dependencies: {
-      transaction: Transaction;
-      prisma: PrismaPilote;
-    },
-  ) {}
+  private readonly transaction: Transaction;
+  private readonly prisma: PrismaPilote;
+
+  constructor({ transaction, prisma }: Inject<"transaction" | "prisma">) {
+    this.transaction = transaction;
+    this.prisma = prisma;
+  }
 
   async execute(command: RetournerAppreciationCommand): Promise<void> {
     if (command.ficheEvaluationIds.length === 0) {
       return;
     }
 
-    await this.dependencies.transaction.run(async () => {
+    await this.transaction.run(async () => {
       const prisma = getPrisma();
 
       const fiches = await prisma.fiche_evaluation.findMany({

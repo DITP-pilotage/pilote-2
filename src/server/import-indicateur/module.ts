@@ -1,4 +1,3 @@
-import { asClass } from "awilix";
 import { PublierFichierImportIndicateurHandler } from "@/server/import-indicateur/infrastructure/handlers/PublierIndicateurHandler";
 import { PublierFichierIndicateurImporteUseCase } from "@/server/import-indicateur/usecases/PublierFichierIndicateurImporteUseCase";
 import { MesureIndicateurTemporaireRepository } from "@/server/import-indicateur/domain/ports/MesureIndicateurTemporaireRepository.interface";
@@ -19,7 +18,11 @@ import { FetchHttpClient } from "@/server/import-indicateur/infrastructure/adapt
 import { HttpClient } from "@/server/import-indicateur/domain/ports/HttpClient.interface";
 import { ImportDonneeIndicateurAPIHandler } from "@/server/import-indicateur/infrastructure/handlers/ImportDonneeIndicateurAPIHandler";
 import type { IndicateurTerritoireValeurEvenementRepository } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/IndicateurTerritoireValeurEvenementRepository";
-import { defineModule, type NoExports } from "@/server/module-system";
+import {
+  defineModule,
+  type ModuleScope,
+  type NoExports,
+} from "@/server/module-system";
 import { PropositionValeurAvancementRepository } from "./domain/ports/PropositionValeurAvancementRepository";
 import { PrismaPropositionValeurAvancementRepository } from "./infrastructure/adapters/PrismaPropositionValeurAvancementRepository";
 
@@ -47,39 +50,44 @@ export const importIndicateurModule = defineModule<
   name: "importIndicateur",
   imports: ["shared", "indicateurTerritoireValeurEvenement"],
   exports: [],
-  register: (container) => {
+  register: (container, { asModuleClass }) => {
     container.register({
-      httpClient: asClass(FetchHttpClient),
-      publierFichierImportIndicateurHandler: asClass(
+      httpClient: asModuleClass(FetchHttpClient),
+      publierFichierImportIndicateurHandler: asModuleClass(
         PublierFichierImportIndicateurHandler,
       ),
-      publierFichierIndicateurImporteUseCase: asClass(
+      publierFichierIndicateurImporteUseCase: asModuleClass(
         PublierFichierIndicateurImporteUseCase,
       ),
-      mesureIndicateurTemporaireRepository: asClass(
+      mesureIndicateurTemporaireRepository: asModuleClass(
         PrismaMesureIndicateurTemporaireRepository,
       ),
-      mesureIndicateurRepository: asClass(PrismaMesureIndicateurRepository),
-      verifierFichierImportIndicateurHandler: asClass(
+      mesureIndicateurRepository: asModuleClass(
+        PrismaMesureIndicateurRepository,
+      ),
+      verifierFichierImportIndicateurHandler: asModuleClass(
         VerifierFichierImportIndicateurHandler,
       ),
-      verifierFichierIndicateurImporteUseCase: asClass(
+      verifierFichierIndicateurImporteUseCase: asModuleClass(
         VerifierFichierIndicateurImporteUseCase,
       ),
-      fichierIndicateurValidationService: asClass(
+      fichierIndicateurValidationService: asModuleClass(
         ValidataFichierIndicateurValidationService,
       ),
-      erreurValidationFichierRepository: asClass(
+      erreurValidationFichierRepository: asModuleClass(
         PrismaErreurValidationFichierRepository,
       ),
-      indicateurRepository: asClass(PrismaIndicateurRepository),
-      rapportRepository: asClass(PrismaRapportRepository),
-      importDonneeIndicateurAPIHandler: asClass(
+      indicateurRepository: asModuleClass(PrismaIndicateurRepository),
+      rapportRepository: asModuleClass(PrismaRapportRepository),
+      importDonneeIndicateurAPIHandler: asModuleClass(
         ImportDonneeIndicateurAPIHandler,
       ),
-      propositionValeurAvancementRepository: asClass(
+      propositionValeurAvancementRepository: asModuleClass(
         PrismaPropositionValeurAvancementRepository,
       ),
     });
   },
 });
+
+type Scope = ModuleScope<ImportIndicateurCradle>;
+export type Inject<K extends keyof Scope> = Pick<Scope, K>;

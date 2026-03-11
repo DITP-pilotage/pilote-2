@@ -1,7 +1,10 @@
-import { asClass } from "awilix";
 import { AjouterLesChantierAuxHabilitationsHandler } from "@/server/habilitations-coordinateur/handlers/AjouterLesChantierAuxHabilitationsHandler";
 import { RecupererLesChantiersTerritorialisesQuery } from "@/server/habilitations-coordinateur/queries/RecupererLesChantiersTerritorialisesQuery";
-import { defineModule, type NoExports } from "@/server/module-system";
+import {
+  defineModule,
+  type ModuleScope,
+  type NoExports,
+} from "@/server/module-system";
 
 type HabilitationsCoordinateurCradle = NoExports & {
   recupererLesChantiersTerritorialisesQuery: RecupererLesChantiersTerritorialisesQuery;
@@ -15,14 +18,17 @@ export const habilitationsCoordinateurModule = defineModule<
   name: "habilitationsCoordinateur",
   imports: ["shared"],
   exports: [],
-  register: (container) => {
+  register: (container, { asModuleClass }) => {
     container.register({
-      recupererLesChantiersTerritorialisesQuery: asClass(
+      recupererLesChantiersTerritorialisesQuery: asModuleClass(
         RecupererLesChantiersTerritorialisesQuery,
       ),
-      ajouterLesChantierAuxHabilitationsHandler: asClass(
+      ajouterLesChantierAuxHabilitationsHandler: asModuleClass(
         AjouterLesChantierAuxHabilitationsHandler,
       ),
     });
   },
 });
+
+type Scope = ModuleScope<HabilitationsCoordinateurCradle>;
+export type Inject<K extends keyof Scope> = Pick<Scope, K>;

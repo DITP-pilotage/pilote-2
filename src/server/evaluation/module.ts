@@ -1,4 +1,3 @@
-import { asClass } from "awilix";
 import { AfficherAutoEvaluationQuery } from "@/server/evaluation/queries/AfficherAutoEvaluationQuery";
 import { ListerFichesAutoEvaluationQuery } from "@/server/evaluation/queries/ListerFichesAutoEvaluationQuery";
 import { ListerFichesEvaluationParPhaseQuery } from "@/server/evaluation/queries/ListerFichesEvaluationParPhaseQuery";
@@ -20,8 +19,12 @@ import { ModifierEtatFichesInstructionHandler } from "@/server/evaluation/handle
 import { RecupererDetailsNoteCollectiveQuery } from "@/server/evaluation/queries/RecupererDetailsNoteCollectiveQuery";
 import { SoumettreEtapeEvaluationService } from "@/server/evaluation/services/SoumettreEtapeEvaluationService";
 import { PasserALaConsolidationHandler } from "@/server/evaluation/handlers/PasserALaConsolidationHandler";
-import { defineModule, type NoExports } from "@/server/module-system";
-import { EnregistrerBrouillonAutoEvaluationObjectifsHandler} from "./handlers/EnregistrerBrouillonAutoEvaluationObjectifsHandler";
+import {
+  defineModule,
+  type ModuleScope,
+  type NoExports,
+} from "@/server/module-system";
+import { EnregistrerBrouillonAutoEvaluationObjectifsHandler } from "./handlers/EnregistrerBrouillonAutoEvaluationObjectifsHandler";
 import { EnregistrerBrouillonAutoEvaluationCriteresHandler } from "./handlers/EnregistrerBrouillonAutoEvaluationCriteresHandler";
 import { ValiderSaisieCriteresHandler } from "./handlers/ValiderSaisieCriteresHandler";
 import { ValiderSaisieObjectifsHandler } from "./handlers/ValiderSaisieObjectifsHandler";
@@ -74,61 +77,84 @@ export const piloteEvalModule = defineModule<NoExports, PiloteEvalCradle>()({
   name: "piloteEval",
   imports: ["shared"],
   exports: [],
-  register: (container) => {
+  register: (container, { asModuleClass }) => {
     container.register({
-      afficherAutoEvaluation: asClass(AfficherAutoEvaluationQuery),
-      afficherConsolidationQuery: asClass(AfficherConsolidationQuery),
-      afficherInstructionQuery: asClass(AfficherInstructionQuery),
-      afficherPilotageQuery: asClass(AfficherPilotageQuery),
-      listerFichesAutoEvaluation: asClass(ListerFichesAutoEvaluationQuery),
-      listerFichesEvaluationParPhaseQuery: asClass(
+      afficherAutoEvaluation: asModuleClass(AfficherAutoEvaluationQuery),
+      afficherConsolidationQuery: asModuleClass(AfficherConsolidationQuery),
+      afficherInstructionQuery: asModuleClass(AfficherInstructionQuery),
+      afficherPilotageQuery: asModuleClass(AfficherPilotageQuery),
+      listerFichesAutoEvaluation: asModuleClass(
+        ListerFichesAutoEvaluationQuery,
+      ),
+      listerFichesEvaluationParPhaseQuery: asModuleClass(
         ListerFichesEvaluationParPhaseQuery,
       ),
-      listerUtilisateursPiloteEval: asClass(ListerUtilisateursPiloteEval),
-      listerCriteresPiloteEval: asClass(ListerCriteresPiloteEval),
-      listerRattachementsPiloteEval: asClass(ListerRattachementsPiloteEval),
-      listerObjectifsParRattachementPiloteEval: asClass(
+      listerUtilisateursPiloteEval: asModuleClass(ListerUtilisateursPiloteEval),
+      listerCriteresPiloteEval: asModuleClass(ListerCriteresPiloteEval),
+      listerRattachementsPiloteEval: asModuleClass(
+        ListerRattachementsPiloteEval,
+      ),
+      listerObjectifsParRattachementPiloteEval: asModuleClass(
         ListerObjectifsParRattachementPiloteEval,
       ),
-      recupererDroitsUtilisateurQuery: asClass(RecupererDroitsUtilisateurQuery),
-      recupererDetailsNoteCollectiveQuery: asClass(
+      recupererDroitsUtilisateurQuery: asModuleClass(
+        RecupererDroitsUtilisateurQuery,
+      ),
+      recupererDetailsNoteCollectiveQuery: asModuleClass(
         RecupererDetailsNoteCollectiveQuery,
       ),
-      getRattachementPourEtapeQuery: asClass(GetRattachementPourEtapeQuery),
-      enregistrerBrouillonAutoEvaluationObjectifs: asClass(
+      getRattachementPourEtapeQuery: asModuleClass(
+        GetRattachementPourEtapeQuery,
+      ),
+      enregistrerBrouillonAutoEvaluationObjectifs: asModuleClass(
         EnregistrerBrouillonAutoEvaluationObjectifsHandler,
       ),
-      enregistrerBrouillonAutoEvaluationCriteres: asClass(
+      enregistrerBrouillonAutoEvaluationCriteres: asModuleClass(
         EnregistrerBrouillonAutoEvaluationCriteresHandler,
       ),
-      validerSaisieObjectifs: asClass(ValiderSaisieObjectifsHandler),
-      validerSaisieCriteres: asClass(ValiderSaisieCriteresHandler),
-      enregistrerBrouillonConsolidationHandler: asClass(
+      validerSaisieObjectifs: asModuleClass(ValiderSaisieObjectifsHandler),
+      validerSaisieCriteres: asModuleClass(ValiderSaisieCriteresHandler),
+      enregistrerBrouillonConsolidationHandler: asModuleClass(
         EnregistrerBrouillonConsolidationHandler,
       ),
-      enregistrerBrouillonInstructionHandler: asClass(
+      enregistrerBrouillonInstructionHandler: asModuleClass(
         EnregistrerBrouillonInstructionHandler,
       ),
-      accesFicheEvaluationService: asClass(AccesFicheEvaluationService),
-      soumettreEtapeEvaluationService: asClass(SoumettreEtapeEvaluationService),
-      modifierEtatFichesConsolidationHandler: asClass(
+      accesFicheEvaluationService: asModuleClass(AccesFicheEvaluationService),
+      soumettreEtapeEvaluationService: asModuleClass(
+        SoumettreEtapeEvaluationService,
+      ),
+      modifierEtatFichesConsolidationHandler: asModuleClass(
         ModifierEtatFichesConsolidationHandler,
       ),
-      modifierEtatFichesInstructionHandler: asClass(
+      modifierEtatFichesInstructionHandler: asModuleClass(
         ModifierEtatFichesInstructionHandler,
       ),
-      passerALaConsolidationHandler: asClass(PasserALaConsolidationHandler),
-      passerALEtapeInstructionHandler: asClass(PasserALEtapeInstructionHandler),
-      setTraitementEvaluationHandler: asClass(SetTraitementEvaluationHandler),
-      retournerAutoEvaluationHandler: asClass(RetournerAutoEvaluationHandler),
-      retournerAppreciationHandler: asClass(RetournerAppreciationHandler),
-      modifierObjectifHandler: asClass(ModifierObjectifHandler),
-      genererPDFEvaluationHandler: asClass(GenererPDFEvaluationHandler),
-      modifierDroitsUtilisateurHandler: asClass(
+      passerALaConsolidationHandler: asModuleClass(
+        PasserALaConsolidationHandler,
+      ),
+      passerALEtapeInstructionHandler: asModuleClass(
+        PasserALEtapeInstructionHandler,
+      ),
+      setTraitementEvaluationHandler: asModuleClass(
+        SetTraitementEvaluationHandler,
+      ),
+      retournerAutoEvaluationHandler: asModuleClass(
+        RetournerAutoEvaluationHandler,
+      ),
+      retournerAppreciationHandler: asModuleClass(RetournerAppreciationHandler),
+      modifierObjectifHandler: asModuleClass(ModifierObjectifHandler),
+      genererPDFEvaluationHandler: asModuleClass(GenererPDFEvaluationHandler),
+      modifierDroitsUtilisateurHandler: asModuleClass(
         ModifierDroitsUtilisateurHandler,
       ),
-      notificationEmailService: asClass(NotificationEmailService),
-      transmettreAppreciationHandler: asClass(TransmettreAppreciationHandler),
+      notificationEmailService: asModuleClass(NotificationEmailService),
+      transmettreAppreciationHandler: asModuleClass(
+        TransmettreAppreciationHandler,
+      ),
     });
   },
 });
+
+type Scope = ModuleScope<PiloteEvalCradle>;
+export type Inject<K extends keyof Scope> = Pick<Scope, K>;

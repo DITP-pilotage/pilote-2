@@ -1,6 +1,7 @@
 import { IndicateurTerritoireValeurEvenementRepository } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/IndicateurTerritoireValeurEvenementRepository";
 import { Transaction } from "@/server/db/Transaction";
 import { IndicateurRepository } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/IndicateurRepository";
+import type { Inject } from "@/server/indicateur-territoire-valeur-evenement/module";
 
 export type SupprimerPropositionValeurAvancementInput = {
   indicId: string;
@@ -9,12 +10,6 @@ export type SupprimerPropositionValeurAvancementInput = {
   idAuteurModification: string;
   motif: string;
 };
-
-interface Dependencies {
-  indicateurTerritoireValeurEvenementRepository: IndicateurTerritoireValeurEvenementRepository;
-  indicateurRepository: IndicateurRepository;
-  transaction: Transaction;
-}
 
 export class SupprimerPropositionValeurAvancementUseCase {
   private readonly indicateurTerritoireValeurEvenementRepository: IndicateurTerritoireValeurEvenementRepository;
@@ -27,7 +22,11 @@ export class SupprimerPropositionValeurAvancementUseCase {
     indicateurTerritoireValeurEvenementRepository,
     indicateurRepository,
     transaction,
-  }: Dependencies) {
+  }: Inject<
+    | "indicateurTerritoireValeurEvenementRepository"
+    | "indicateurRepository"
+    | "transaction"
+  >) {
     this.indicateurTerritoireValeurEvenementRepository =
       indicateurTerritoireValeurEvenementRepository;
     this.indicateurRepository = indicateurRepository;

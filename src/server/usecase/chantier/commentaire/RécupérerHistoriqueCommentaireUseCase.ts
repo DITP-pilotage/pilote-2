@@ -5,15 +5,12 @@ import {
 } from "@/server/domain/chantier/commentaire/Commentaire.interface";
 import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
 import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
+import type { Inject } from "@/server/legacy/module";
 
 export default class RécupérerHistoriqueCommentaireUseCase {
   private readonly commentaireRepository: CommentaireRepository;
 
-  constructor({
-    commentaireRepository,
-  }: {
-    commentaireRepository: CommentaireRepository;
-  }) {
+  constructor({ commentaireRepository }: Inject<"commentaireRepository">) {
     this.commentaireRepository = commentaireRepository;
   }
 

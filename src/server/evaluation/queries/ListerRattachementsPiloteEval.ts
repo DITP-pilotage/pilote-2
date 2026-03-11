@@ -1,4 +1,5 @@
 import { PrismaPilote } from "@/server/db/PrismaPilote";
+import type { Inject } from "@/server/evaluation/module";
 
 export type RattachementPiloteEval = {
   code: string;
@@ -8,18 +9,20 @@ export type RattachementPiloteEval = {
 };
 
 export class ListerRattachementsPiloteEval {
-  constructor(private readonly dependencies: { prisma: PrismaPilote }) {}
+  private readonly prisma: PrismaPilote;
+
+  constructor({ prisma }: Inject<"prisma">) {
+    this.prisma = prisma;
+  }
 
   async run(): Promise<RattachementPiloteEval[]> {
-    return this.dependencies.prisma
-      .getInstance()
-      .referentiel_rattachement.findMany({
-        select: {
-          code: true,
-          libelle: true,
-          groupe: true,
-          ordre: true,
-        },
-      });
+    return this.prisma.getInstance().referentiel_rattachement.findMany({
+      select: {
+        code: true,
+        libelle: true,
+        groupe: true,
+        ordre: true,
+      },
+    });
   }
 }

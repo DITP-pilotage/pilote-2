@@ -1,6 +1,9 @@
-import { asClass } from "awilix";
-import { defineModule, type NoExports } from "@/server/module-system";
-import { CreerArticleCentreAideUseCase} from "./usecases/CreerArticleCentreAideUseCase";
+import {
+  defineModule,
+  type ModuleScope,
+  type NoExports,
+} from "@/server/module-system";
+import { CreerArticleCentreAideUseCase } from "./usecases/CreerArticleCentreAideUseCase";
 import { PrismaArticleCentreAideRepository } from "./infrastructure/adapters/PrismaArticleCentreAideRepository";
 import { ArticleCentreAideRepository } from "./domain/ports/ArticleCentreAideRepository";
 import { ListerArticlesCentreAideUseCase } from "./usecases/ListerArticlesCentreAideUseCase";
@@ -22,17 +25,26 @@ export const parametrageCentreAideModule = defineModule<
   name: "parametrageCentreAide",
   imports: ["shared"],
   exports: [],
-  register: (container) => {
+  register: (container, { asModuleClass }) => {
     container.register({
-      creerArticleCentreAideUseCase: asClass(CreerArticleCentreAideUseCase),
-      articleCentreAideRepository: asClass(PrismaArticleCentreAideRepository),
-      listerArticlesCentreAideUseCase: asClass(ListerArticlesCentreAideUseCase),
-      modifierArticleCentreAideUseCase: asClass(
+      creerArticleCentreAideUseCase: asModuleClass(
+        CreerArticleCentreAideUseCase,
+      ),
+      articleCentreAideRepository: asModuleClass(
+        PrismaArticleCentreAideRepository,
+      ),
+      listerArticlesCentreAideUseCase: asModuleClass(
+        ListerArticlesCentreAideUseCase,
+      ),
+      modifierArticleCentreAideUseCase: asModuleClass(
         ModifierArticleCentreAideUseCase,
       ),
-      supprimerArticleCentreAideUseCase: asClass(
+      supprimerArticleCentreAideUseCase: asModuleClass(
         SupprimerArticleCentreAideUseCase,
       ),
     });
   },
 });
+
+type Scope = ModuleScope<ParametrageCentreAideCradle>;
+export type Inject<K extends keyof Scope> = Pick<Scope, K>;

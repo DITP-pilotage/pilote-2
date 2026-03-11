@@ -3,15 +3,14 @@ import {
   presenterEnTokenAPIInformationContrat,
   TokenAPIInformationContrat,
 } from "@/server/authentification/app/contrats/TokenAPIInformationContrat";
+import type { Inject } from "@/server/legacy/module";
 
 export class ListerTokenAPIInformationUseCase {
   private readonly tokenAPIInformationRepository: TokenAPIInformationRepository;
 
   constructor({
     tokenAPIInformationRepository,
-  }: {
-    tokenAPIInformationRepository: TokenAPIInformationRepository;
-  }) {
+  }: Inject<"tokenAPIInformationRepository">) {
     this.tokenAPIInformationRepository = tokenAPIInformationRepository;
   }
 

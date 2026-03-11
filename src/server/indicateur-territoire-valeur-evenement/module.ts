@@ -1,8 +1,7 @@
-import { asClass } from "awilix";
 import { PrismaIndicateurTerritoireValeurEvenementRepository } from "@/server/indicateur-territoire-valeur-evenement/infrastructure/PrismaIndicateurTerritoireValeurEvenementRepository";
 import { PrismaMesureIndicateurRepository } from "@/server/indicateur-territoire-valeur-evenement/infrastructure/PrismaMesureIndicateurRepository";
 import { MesureIndicateurRepository } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/MesureIndicateurRepository";
-import { defineModule } from "@/server/module-system";
+import { defineModule, type ModuleScope } from "@/server/module-system";
 import { IndicateurTerritoireValeurEvenementRepository } from "./domain/ports/IndicateurTerritoireValeurEvenementRepository";
 import { CreerPropositionValeurAvancementUseCase } from "./usecases/CreerPropositionValeurAvancementUseCase";
 import { AccepterPropositionValeurAvancementUseCase } from "./usecases/AccepterPropositionValeurAvancementUseCase";
@@ -52,40 +51,46 @@ export const indicateurTerritoireValeurEvenementModule = defineModule<
     "indicateurTerritoireValeurEvenementRepository",
     "evenementsVAQuery",
   ],
-  register: (container) => {
+  register: (container, { asModuleClass }) => {
     container.register({
-      indicateurTerritoireValeurEvenementRepository: asClass(
+      indicateurTerritoireValeurEvenementRepository: asModuleClass(
         PrismaIndicateurTerritoireValeurEvenementRepository,
       ),
-      mesureIndicateurRepository: asClass(PrismaMesureIndicateurRepository),
-      indicateurRepository: asClass(PrismaIndicateurRepository),
-      utilisateurRepository: asClass(PrismaUtilisateurRepository),
-      envoieEmailService: asClass(BrevoEnvoieEmailService),
-      creerPropositionValeurAvancementUseCase: asClass(
+      mesureIndicateurRepository: asModuleClass(
+        PrismaMesureIndicateurRepository,
+      ),
+      indicateurRepository: asModuleClass(PrismaIndicateurRepository),
+      utilisateurRepository: asModuleClass(PrismaUtilisateurRepository),
+      envoieEmailService: asModuleClass(BrevoEnvoieEmailService),
+      creerPropositionValeurAvancementUseCase: asModuleClass(
         CreerPropositionValeurAvancementUseCase,
       ),
-      accepterPropositionValeurAvancementUseCase: asClass(
+      accepterPropositionValeurAvancementUseCase: asModuleClass(
         AccepterPropositionValeurAvancementUseCase,
       ),
-      refuserPropositionValeurAvancementUseCase: asClass(
+      refuserPropositionValeurAvancementUseCase: asModuleClass(
         RefuserPropositionValeurAvancementUseCase,
       ),
-      modifierPropositionValeurAvancementUseCase: asClass(
+      modifierPropositionValeurAvancementUseCase: asModuleClass(
         ModifierPropositionValeurAvancementUseCase,
       ),
-      supprimerPropositionValeurAvancementUseCase: asClass(
+      supprimerPropositionValeurAvancementUseCase: asModuleClass(
         SupprimerPropositionValeurAvancementUseCase,
       ),
-      accuserReceptionPropositionValeurUseCase: asClass(
+      accuserReceptionPropositionValeurUseCase: asModuleClass(
         AccuserReceptionPropositionValeurUseCase,
       ),
-      accepterAvecModificationPropositionValeurAvancementUseCase: asClass(
+      accepterAvecModificationPropositionValeurAvancementUseCase: asModuleClass(
         AccepterAvecModificationPropositionValeurAvancementUseCase,
       ),
-      recupererHistoriqueIndicateurTerritoireValeurEvenementUseCase: asClass(
-        RecupererHistoriqueIndicateurTerritoireValeurEvenementUseCase,
-      ),
-      evenementsVAQuery: asClass(RecupererEvenementsVAParPeriodeQuery),
+      recupererHistoriqueIndicateurTerritoireValeurEvenementUseCase:
+        asModuleClass(
+          RecupererHistoriqueIndicateurTerritoireValeurEvenementUseCase,
+        ),
+      evenementsVAQuery: asModuleClass(RecupererEvenementsVAParPeriodeQuery),
     });
   },
 });
+
+type Scope = ModuleScope<IndicateurTerritoireValeurEvenementCradle>;
+export type Inject<K extends keyof Scope> = Pick<Scope, K>;

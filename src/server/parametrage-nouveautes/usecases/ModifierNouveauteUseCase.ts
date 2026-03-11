@@ -1,15 +1,12 @@
 import { Nouveaute } from "@/server/parametrage-nouveautes/domain/Nouveaute";
 
 import { NouveauteRepository } from "@/server/parametrage-nouveautes/domain/ports/NouveauteRepository";
-
-type Dependencies = {
-  nouveauteRepository: NouveauteRepository;
-};
+import type { Inject } from "@/server/parametrage-nouveautes/module";
 
 export class ModifierNouveauteUseCase {
   private readonly nouveauteRepository: NouveauteRepository;
 
-  constructor({ nouveauteRepository }: Dependencies) {
+  constructor({ nouveauteRepository }: Inject<"nouveauteRepository">) {
     this.nouveauteRepository = nouveauteRepository;
   }
 

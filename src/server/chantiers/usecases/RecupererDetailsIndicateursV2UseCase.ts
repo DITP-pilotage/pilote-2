@@ -3,6 +3,7 @@ import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation"
 import { IndicateurRepository } from "@/server/chantiers/domain/ports/IndicateurRepository";
 import { presenterEnDetailsIndicateursContrat } from "@/server/chantiers/app/contrats/DetailsIndicateursContrat";
 import { DatajobsExecutionQueries } from "@/server/datajobs-execution/DatajobsExecution";
+import type { Inject } from "@/server/chantiers/module";
 
 export class RecupererDetailsIndicateursV2UseCase {
   private readonly indicateurRepository: IndicateurRepository;
@@ -12,10 +13,7 @@ export class RecupererDetailsIndicateursV2UseCase {
   constructor({
     indicateurRepository,
     datajobsExecutionQueries,
-  }: {
-    indicateurRepository: IndicateurRepository;
-    datajobsExecutionQueries: DatajobsExecutionQueries;
-  }) {
+  }: Inject<"indicateurRepository" | "datajobsExecutionQueries">) {
     this.indicateurRepository = indicateurRepository;
     this.datajobsExecutionQueries = datajobsExecutionQueries;
   }

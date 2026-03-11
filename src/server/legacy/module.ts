@@ -1,4 +1,3 @@
-import { asClass } from "awilix";
 import ChantierRepository from "@/server/domain/chantier/ChantierRepository.interface";
 import AxeRepository from "@/server/domain/axe/AxeRepository.interface";
 import SynthèseDesRésultatsRepository from "@/server/domain/chantier/synthèseDesRésultats/SynthèseDesRésultatsRepository.interface";
@@ -77,7 +76,11 @@ import { RécupérerTerritoireParCodeUseCase } from "@/server/fiche-territoriale
 import { RécupérerTauxAvancementTerritoireUseCase } from "@/server/fiche-territoriale/usecases/RécupérerTauxAvancementTerritoireUseCase";
 import { RécupérerRépartitionMétéoUseCase } from "@/server/fiche-territoriale/usecases/RécupérerRépartitionMétéoUseCase";
 import { RécupérerListeChantierFicheTerritorialeUseCase } from "@/server/fiche-territoriale/usecases/RécupérerListeChantierFicheTerritorialeUseCase";
-import { defineModule, type NoExports } from "@/server/module-system";
+import {
+  defineModule,
+  type ModuleScope,
+  type NoExports,
+} from "@/server/module-system";
 
 type LegacyCradle = NoExports & {
   chantierRepository: ChantierRepository;
@@ -139,119 +142,127 @@ export const legacyModule = defineModule<NoExports, LegacyCradle>()({
   name: "legacy",
   imports: ["shared"],
   exports: [],
-  register: (container, { asModuleFunction }) => {
+  register: (container, { asModuleFunction, asModuleClass }) => {
     container.register({
-      chantierRepository: asClass(ChantierSQLRepository).scoped(),
-      axeRepository: asClass(AxeSQLRepository).scoped(),
-      synthèseDesRésultatsRepository: asClass(
+      chantierRepository: asModuleClass(ChantierSQLRepository).scoped(),
+      axeRepository: asModuleClass(AxeSQLRepository).scoped(),
+      synthèseDesRésultatsRepository: asModuleClass(
         SynthèseDesRésultatsSQLRepository,
       ).scoped(),
-      ministèreRepository: asClass(MinistèreSQLRepository).scoped(),
-      indicateurRepository: asClass(IndicateurSQLRepository).scoped(),
-      commentaireRepository: asClass(CommentaireSQLRepository).scoped(),
-      objectifRepository: asClass(ObjectifSQLRepository).scoped(),
-      décisionStratégiqueRepository: asClass(
+      ministèreRepository: asModuleClass(MinistèreSQLRepository).scoped(),
+      indicateurRepository: asModuleClass(IndicateurSQLRepository).scoped(),
+      commentaireRepository: asModuleClass(CommentaireSQLRepository).scoped(),
+      objectifRepository: asModuleClass(ObjectifSQLRepository).scoped(),
+      décisionStratégiqueRepository: asModuleClass(
         DécisionStratégiqueSQLRepository,
       ).scoped(),
-      utilisateurRepository: asClass(UtilisateurSQLRepository).scoped(),
-      authentificationUtilisateurRepository: asClass(
+      utilisateurRepository: asModuleClass(UtilisateurSQLRepository).scoped(),
+      authentificationUtilisateurRepository: asModuleClass(
         PrismaUtilisateurRepository,
       ).scoped(),
-      authentificationProfilRepository: asClass(
+      authentificationProfilRepository: asModuleClass(
         PrismaProfilRepository,
       ).scoped(),
-      territoireRepository: asClass(TerritoireSQLRepository).scoped(),
-      ficheTerritorialeTerritoireRepository: asClass(
+      territoireRepository: asModuleClass(TerritoireSQLRepository).scoped(),
+      ficheTerritorialeTerritoireRepository: asModuleClass(
         PrismaTerritoireRepository,
       ).scoped(),
-      ficheTerritorialeChantierRepository: asClass(
+      ficheTerritorialeChantierRepository: asModuleClass(
         PrismaChantierRepository,
       ).scoped(),
-      ficheTerritorialeIndicateurRepository: asClass(
+      ficheTerritorialeIndicateurRepository: asModuleClass(
         PrismaFicheTerritorialeIndicateurRepository,
       ).scoped(),
-      ficheTerritorialeSyntheseDesResultatsRepository: asClass(
+      ficheTerritorialeSyntheseDesResultatsRepository: asModuleClass(
         PrismaSyntheseDesResultatsRepository,
       ).scoped(),
-      ficheTerritorialeMinistereRepository: asClass(
+      ficheTerritorialeMinistereRepository: asModuleClass(
         PrismaMinistereRepository,
       ).scoped(),
-      chantierIndicateurRepository: asClass(
+      chantierIndicateurRepository: asModuleClass(
         PrismaChantierIndicateurRepository,
       ).scoped(),
-      profilRepository: asClass(ProfilSQLRepository).scoped(),
-      rapportRepository: asClass(PrismaRapportRepository).scoped(),
-      importIndicateurRepository: asClass(PrismaIndicateurRepository).scoped(),
-      gestionContenuRepository: asClass(
+      profilRepository: asModuleClass(ProfilSQLRepository).scoped(),
+      rapportRepository: asModuleClass(PrismaRapportRepository).scoped(),
+      importIndicateurRepository: asModuleClass(
+        PrismaIndicateurRepository,
+      ).scoped(),
+      gestionContenuRepository: asModuleClass(
         PrismaGestionContenuRepository,
       ).scoped(),
       tokenAPIService: asModuleFunction(
         () =>
           new TokenAPIJWTService({ secret: configuration().tokenAPI.secret }),
       ).scoped(),
-      tokenAPIInformationRepository: asClass(
+      tokenAPIInformationRepository: asModuleClass(
         PrismaTokenAPIInformationRepository,
       ).scoped(),
-      récupérerStatistiquesAvancementChantiersUseCase: asClass(
+      récupérerStatistiquesAvancementChantiersUseCase: asModuleClass(
         RécupérerStatistiquesAvancementChantiersUseCase,
       ).scoped(),
-      recupererRepartitionsMeteoChantiersUseCase: asClass(
+      recupererRepartitionsMeteoChantiersUseCase: asModuleClass(
         RecupererRepartitionsMeteoChantiersUseCase,
       ).scoped(),
-      agregerAvancementsChantiersUseCase: asClass(
+      agregerAvancementsChantiersUseCase: asModuleClass(
         AgregerAvancementsChantiersUseCase,
       ).scoped(),
-      créerUnCommentaireUseCase: asClass(CréerUnCommentaireUseCase).scoped(),
-      récupérerCommentaireLePlusRécentUseCase: asClass(
+      créerUnCommentaireUseCase: asModuleClass(
+        CréerUnCommentaireUseCase,
+      ).scoped(),
+      récupérerCommentaireLePlusRécentUseCase: asModuleClass(
         RécupérerCommentaireLePlusRécentUseCase,
       ).scoped(),
-      récupérerHistoriqueCommentaireUseCase: asClass(
+      récupérerHistoriqueCommentaireUseCase: asModuleClass(
         RécupérerHistoriqueCommentaireUseCase,
       ).scoped(),
       récupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase:
-        asClass(
+        asModuleClass(
           RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase,
         ).scoped(),
-      créerUnObjectifUseCase: asClass(CréerUnObjectifUseCase).scoped(),
-      récupérerObjectifLePlusRécentUseCase: asClass(
+      créerUnObjectifUseCase: asModuleClass(CréerUnObjectifUseCase).scoped(),
+      récupérerObjectifLePlusRécentUseCase: asModuleClass(
         RécupérerObjectifLePlusRécentUseCase,
       ).scoped(),
-      récupérerHistoriqueObjectifUseCase: asClass(
+      récupérerHistoriqueObjectifUseCase: asModuleClass(
         RécupérerHistoriqueObjectifUseCase,
       ).scoped(),
       récupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase:
-        asClass(
+        asModuleClass(
           RécupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase,
         ).scoped(),
-      créerUneDécisionStratégiqueUseCase: asClass(
+      créerUneDécisionStratégiqueUseCase: asModuleClass(
         CréerUneDécisionStratégiqueUseCase,
       ).scoped(),
-      récupérerDécisionStratégiqueLaPlusRécenteUseCase: asClass(
+      récupérerDécisionStratégiqueLaPlusRécenteUseCase: asModuleClass(
         RécupérerDécisionStratégiqueLaPlusRécenteUseCase,
       ).scoped(),
-      récupérerHistoriqueDécisionStratégiqueUseCase: asClass(
+      récupérerHistoriqueDécisionStratégiqueUseCase: asModuleClass(
         RécupérerHistoriqueDécisionStratégiqueUseCase,
       ).scoped(),
-      récupérerUnUtilisateurUseCase: asClass(
+      récupérerUnUtilisateurUseCase: asModuleClass(
         RécupérerUnUtilisateurUseCase,
       ).scoped(),
-      récupérerUnProfilUseCase: asClass(RécupérerUnProfilUseCase).scoped(),
-      récupérerTerritoiresAvecNombreUtilisateursUseCase: asClass(
+      récupérerUnProfilUseCase: asModuleClass(
+        RécupérerUnProfilUseCase,
+      ).scoped(),
+      récupérerTerritoiresAvecNombreUtilisateursUseCase: asModuleClass(
         RécupérerTerritoiresAvecNombreUtilisateursUseCase,
       ).scoped(),
-      recupererTokenAPIInformationUseCase: asClass(
+      recupererTokenAPIInformationUseCase: asModuleClass(
         RecupererTokenAPIInformationUseCase,
       ).scoped(),
-      listerTokenAPIInformationUseCase: asClass(
+      listerTokenAPIInformationUseCase: asModuleClass(
         ListerTokenAPIInformationUseCase,
       ).scoped(),
-      récupérerMessageInformationUseCase: asClass(
+      récupérerMessageInformationUseCase: asModuleClass(
         RécupérerMessageInformationUseCase,
       ).scoped(),
-      modifierMessageInformationUseCase: asClass(
+      modifierMessageInformationUseCase: asModuleClass(
         ModifierMessageInformationUseCase,
       ).scoped(),
-      supprimerTokenAPIUseCase: asClass(SupprimerTokenAPIUseCase).scoped(),
+      supprimerTokenAPIUseCase: asModuleClass(
+        SupprimerTokenAPIUseCase,
+      ).scoped(),
       utilisateurAuthentifieJWTService: asModuleFunction(
         ({
           utilisateurRepository,
@@ -328,3 +339,6 @@ export const legacyModule = defineModule<NoExports, LegacyCradle>()({
     });
   },
 });
+
+type Scope = ModuleScope<LegacyCradle>;
+export type Inject<K extends keyof Scope> = Pick<Scope, K>;

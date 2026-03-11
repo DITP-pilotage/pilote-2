@@ -1,15 +1,14 @@
 import { ContactInfoLettresService } from "@/server/gestion-utilisateur/domain/ports/ContactInfoLettresService";
-
-type Dependencies = {
-  contactInfoLettresService: ContactInfoLettresService;
-};
+import type { Inject } from "@/server/gestion-utilisateur/module";
 
 const TEMPLATE_ID_INSCRIPTION_INFOLETTRE = 20;
 
 export class EnvoyerMailInscriptionInfolettreUseCase {
   private readonly contactInfoLettresService: ContactInfoLettresService;
 
-  constructor({ contactInfoLettresService }: Dependencies) {
+  constructor({
+    contactInfoLettresService,
+  }: Inject<"contactInfoLettresService">) {
     this.contactInfoLettresService = contactInfoLettresService;
   }
 

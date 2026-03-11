@@ -1,13 +1,13 @@
 import { MetadataParametrageIndicateurRepository } from "@/server/parametrage-indicateur/domain/port/MetadataParametrageIndicateurRepository";
 import { MetadataParametrageIndicateur } from "@/server/parametrage-indicateur/domain/MetadataParametrageIndicateur";
+import type { Inject } from "@/server/parametrage-indicateur/module";
 
-type Dependencies = {
-  metadataParametrageIndicateurRepository: MetadataParametrageIndicateurRepository;
-};
 export default class RécupérerMetadataIndicateurIdentifiantGénéréUseCase {
   private metadataParametrageIndicateurRepository: MetadataParametrageIndicateurRepository;
 
-  constructor({ metadataParametrageIndicateurRepository }: Dependencies) {
+  constructor({
+    metadataParametrageIndicateurRepository,
+  }: Inject<"metadataParametrageIndicateurRepository">) {
     this.metadataParametrageIndicateurRepository =
       metadataParametrageIndicateurRepository;
   }

@@ -25,16 +25,7 @@ import { InformationChantierUtilisateur } from "@/server/gestion-utilisateur/dom
 import { UtilisateurIAMRepository } from "@/server/gestion-utilisateur/domain/ports/UtilisateurIAMRepository";
 import { NotFoundError } from "@/server/app/error-boundary/not-found-error";
 import { ConflictError } from "@/server/app/error-boundary/conflict-error";
-
-type Dependencies = {
-  utilisateurIAMRepository: UtilisateurIAMRepository;
-  utilisateurRepository: UtilisateurRepository;
-  territoireRepository: TerritoireRepository;
-  chantierRepository: ChantierRepository;
-  perimetreMinisterielRepository: PerimetreMinisterielRepository;
-  historisationModification: HistorisationModificationRepository;
-  contactInfoLettresService: ContactInfoLettresService;
-};
+import type { Inject } from "@/server/gestion-utilisateur/module";
 
 export default class CréerOuMettreÀJourUnUtilisateurUseCase {
   private utilisateurIAMRepository: UtilisateurIAMRepository;
@@ -59,7 +50,15 @@ export default class CréerOuMettreÀJourUnUtilisateurUseCase {
     perimetreMinisterielRepository,
     historisationModification,
     contactInfoLettresService,
-  }: Dependencies) {
+  }: Inject<
+    | "utilisateurIAMRepository"
+    | "utilisateurRepository"
+    | "territoireRepository"
+    | "chantierRepository"
+    | "perimetreMinisterielRepository"
+    | "historisationModification"
+    | "contactInfoLettresService"
+  >) {
     this.utilisateurIAMRepository = utilisateurIAMRepository;
     this.utilisateurRepository = utilisateurRepository;
     this.territoireRepository = territoireRepository;

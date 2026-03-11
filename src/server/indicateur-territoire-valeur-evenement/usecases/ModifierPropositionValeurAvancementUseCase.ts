@@ -1,6 +1,7 @@
 import { IndicateurTerritoireValeurEvenementRepository } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/IndicateurTerritoireValeurEvenementRepository";
 import { IndicateurRepository } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/IndicateurRepository";
 import { Transaction } from "@/server/db/Transaction";
+import type { Inject } from "@/server/indicateur-territoire-valeur-evenement/module";
 
 export type ModifierPropositionValeurAvancementInput = {
   indicId: string;
@@ -11,12 +12,6 @@ export type ModifierPropositionValeurAvancementInput = {
   motif: string;
   sourceDonneeEtMethodeCalcul: string;
 };
-
-interface Dependencies {
-  indicateurTerritoireValeurEvenementRepository: IndicateurTerritoireValeurEvenementRepository;
-  indicateurRepository: IndicateurRepository;
-  transaction: Transaction;
-}
 
 export class ModifierPropositionValeurAvancementUseCase {
   private readonly indicateurTerritoireValeurEvenementRepository: IndicateurTerritoireValeurEvenementRepository;
@@ -29,7 +24,11 @@ export class ModifierPropositionValeurAvancementUseCase {
     indicateurTerritoireValeurEvenementRepository,
     indicateurRepository,
     transaction,
-  }: Dependencies) {
+  }: Inject<
+    | "indicateurTerritoireValeurEvenementRepository"
+    | "indicateurRepository"
+    | "transaction"
+  >) {
     this.indicateurTerritoireValeurEvenementRepository =
       indicateurTerritoireValeurEvenementRepository;
     this.indicateurRepository = indicateurRepository;

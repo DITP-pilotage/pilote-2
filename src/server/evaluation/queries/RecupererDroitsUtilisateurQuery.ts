@@ -1,4 +1,5 @@
 import { PrismaPilote } from "@/server/db/PrismaPilote";
+import type { Inject } from "@/server/evaluation/module";
 
 export type DroitsUtilisateur = {
   autoEvaluation: {
@@ -21,7 +22,11 @@ export type UtilisateurPiloteEval = {
 };
 
 export class RecupererDroitsUtilisateurQuery {
-  constructor(private readonly dependencies: { prisma: PrismaPilote }) {}
+  private readonly prisma: PrismaPilote;
+
+  constructor({ prisma }: Inject<"prisma">) {
+    this.prisma = prisma;
+  }
 
   async run({
     utilisateurId,
@@ -30,18 +35,16 @@ export class RecupererDroitsUtilisateurQuery {
     utilisateurId: string;
     jalon: number;
   }): Promise<UtilisateurPiloteEval> {
-    const utilisateur = await this.dependencies.prisma
-      .getInstance()
-      .utilisateur.findUnique({
-        where: {
-          id: utilisateurId,
-        },
-        select: {
-          email: true,
-        },
-      });
+    const utilisateur = await this.prisma.getInstance().utilisateur.findUnique({
+      where: {
+        id: utilisateurId,
+      },
+      select: {
+        email: true,
+      },
+    });
 
-    const rattachements = await this.dependencies.prisma
+    const rattachements = await this.prisma
       .getInstance()
       .rattachement_utilisateur_etape_jalon.findMany({
         where: {

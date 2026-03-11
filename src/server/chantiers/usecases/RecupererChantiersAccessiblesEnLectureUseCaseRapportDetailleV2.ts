@@ -16,6 +16,7 @@ import {
   ChantierRapportDetailleContrat,
   presenterEnChantierRapportDetaille,
 } from "@/server/chantiers/app/contrats/ChantierRapportDetailleContratV2";
+import type { Inject } from "@/server/chantiers/module";
 
 const masquerPourDROM = (
   sessionProfil: string,
@@ -208,10 +209,7 @@ export default class RecupererChantiersAccessiblesEnLectureUseCaseRapportDetaill
   constructor({
     chantierRepository,
     territoireRepository,
-  }: {
-    chantierRepository: ChantierRepository;
-    territoireRepository: TerritoireRepository;
-  }) {
+  }: Inject<"chantierRepository" | "territoireRepository">) {
     this.chantierRepository = chantierRepository;
     this.territoireRepository = territoireRepository;
   }

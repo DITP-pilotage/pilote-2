@@ -5,13 +5,14 @@ import {
   mapTypeCommentaireAPIVersDomaine,
 } from "@/validation/import-commentaire";
 import { CommentaireV2 } from "@/server/domain/chantier/commentaire/Commentaire.interface";
+import type { Inject } from "@/server/commentaires/module";
 
 export class ImporterCommentairesUseCase {
-  constructor(
-    private readonly dependencies: {
-      commentaireRepository: CommentaireRepository;
-    },
-  ) {}
+  private readonly commentaireRepository: CommentaireRepository;
+
+  constructor({ commentaireRepository }: Inject<"commentaireRepository">) {
+    this.commentaireRepository = commentaireRepository;
+  }
 
   async execute({
     chantierId,
@@ -40,7 +41,7 @@ export class ImporterCommentairesUseCase {
         date,
       };
 
-      await this.dependencies.commentaireRepository.save(commentaireV2);
+      await this.commentaireRepository.save(commentaireV2);
     }
   }
 }

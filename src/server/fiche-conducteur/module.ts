@@ -1,4 +1,3 @@
-import { asClass } from "awilix";
 import { FicheConducteurHandler } from "@/server/fiche-conducteur/infrastructure/handlers/FicheConducteurHandler";
 import { ChantierRepository } from "@/server/fiche-conducteur/domain/ports/ChantierRepository";
 import { PrismaChantierRepository } from "@/server/fiche-conducteur/infrastructure/adapters/PrismaChantierRepository";
@@ -17,7 +16,11 @@ import { RécupérerDernièreSynthèseDesRésultatsUseCase } from "@/server/fich
 import { RécupérerDonnéesCartographieUseCase } from "@/server/fiche-conducteur/usecases/RécupérerDonnéesCartographieUseCase";
 import { PrismaSynthèseDesRésultatsRepository } from "@/server/fiche-conducteur/infrastructure/adapters/PrismaSynthèseDesRésultatsRepository";
 import { SynthèseDesRésultatsRepository } from "@/server/fiche-conducteur/domain/ports/SynthèseDesRésultatsRepository";
-import { defineModule, type NoExports } from "@/server/module-system";
+import {
+  defineModule,
+  type ModuleScope,
+  type NoExports,
+} from "@/server/module-system";
 
 type FicheConducteurCradle = NoExports & {
   ficheConducteurHandler: FicheConducteurHandler;
@@ -41,30 +44,33 @@ export const ficheConducteurModule = defineModule<
   name: "ficheConducteur",
   imports: ["shared"],
   exports: [],
-  register: (container) => {
+  register: (container, { asModuleClass }) => {
     container.register({
-      ficheConducteurHandler: asClass(FicheConducteurHandler),
-      recupererChantierFicheConducteurUseCase: asClass(
+      ficheConducteurHandler: asModuleClass(FicheConducteurHandler),
+      recupererChantierFicheConducteurUseCase: asModuleClass(
         RécupererChantierFicheConducteurUseCase,
       ),
-      recupererAvancementUseCase: asClass(RécupérerAvancementUseCase),
-      recupererDerniereSyntheseDesResultatsUseCase: asClass(
+      recupererAvancementUseCase: asModuleClass(RécupérerAvancementUseCase),
+      recupererDerniereSyntheseDesResultatsUseCase: asModuleClass(
         RécupérerDernièreSynthèseDesRésultatsUseCase,
       ),
-      recupererDonneesCartographieUseCase: asClass(
+      recupererDonneesCartographieUseCase: asModuleClass(
         RécupérerDonnéesCartographieUseCase,
       ),
-      recupererPublicationsUseCase: asClass(RécupérerPublicationsUseCase),
-      chantierRepository: asClass(PrismaChantierRepository),
-      indicateurRepository: asClass(PrismaIndicateurRepository),
-      objectifRepository: asClass(PrismaObjectifRepository),
-      commentaireRepository: asClass(PrismaCommentaireRepository),
-      synthèseDesRésultatsRepository: asClass(
+      recupererPublicationsUseCase: asModuleClass(RécupérerPublicationsUseCase),
+      chantierRepository: asModuleClass(PrismaChantierRepository),
+      indicateurRepository: asModuleClass(PrismaIndicateurRepository),
+      objectifRepository: asModuleClass(PrismaObjectifRepository),
+      commentaireRepository: asModuleClass(PrismaCommentaireRepository),
+      synthèseDesRésultatsRepository: asModuleClass(
         PrismaSynthèseDesRésultatsRepository,
       ),
-      decisionStrategiqueRepository: asClass(
+      decisionStrategiqueRepository: asModuleClass(
         PrismaDecisionStrategiqueRepository,
       ),
     });
   },
 });
+
+type Scope = ModuleScope<FicheConducteurCradle>;
+export type Inject<K extends keyof Scope> = Pick<Scope, K>;

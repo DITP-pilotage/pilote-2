@@ -1,14 +1,11 @@
 import { $Enums } from "@prisma/client";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
-
-type Dependencies = {
-  prisma: PrismaPilote;
-};
+import type { Inject } from "@/server/albert/module";
 
 export class EvaluerChatUseCase {
   private readonly prisma: PrismaPilote;
 
-  constructor({ prisma }: Dependencies) {
+  constructor({ prisma }: Inject<"prisma">) {
     this.prisma = prisma;
   }
 

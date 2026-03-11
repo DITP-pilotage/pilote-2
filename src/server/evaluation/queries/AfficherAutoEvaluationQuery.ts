@@ -2,6 +2,7 @@ import { $Enums } from "@prisma/client";
 import pick from "lodash.pick";
 import { randomUUID } from "node:crypto";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
+import type { Inject } from "@/server/evaluation/module";
 
 export interface Critere {
   id: string;
@@ -48,20 +49,24 @@ export type AfficherAutoEvaluationViewModel = {
 };
 
 export class AfficherAutoEvaluationQuery {
-  constructor(private readonly dependencies: { prisma: PrismaPilote }) {}
+  private readonly prisma: PrismaPilote;
+
+  constructor({ prisma }: Inject<"prisma">) {
+    this.prisma = prisma;
+  }
 
   async run({
     ficheEvaluationId,
   }: {
     ficheEvaluationId: string;
   }): Promise<AfficherAutoEvaluationViewModel> {
-    const criteres = await this.dependencies.prisma
+    const criteres = await this.prisma
       .getInstance()
       .referentiel_critere.findMany({
         include: { sous_criteres: true },
         orderBy: { libelle: "asc" },
       });
-    const etapeAutoEvaluation = await this.dependencies.prisma
+    const etapeAutoEvaluation = await this.prisma
       .getInstance()
       .etape_evaluation.findFirstOrThrow({
         where: {

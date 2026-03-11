@@ -9,14 +9,7 @@ import {
   marquerCommeEchec,
   marquerCommeSucces,
 } from "@/server/gestion-utilisateur/domain/ActionCompteInactif";
-
-type Dependencies = {
-  utilisateurRepository: UtilisateurRepository;
-  actionCompteInactifRepository: ActionCompteInactifRepository;
-  utilisateurIAMRepository: UtilisateurIAMRepository;
-  tokenAPIInformationRepository: TokenAPIInformationRepository;
-  contactInfoLettresService: ContactInfoLettresService;
-};
+import type { Inject } from "@/server/gestion-utilisateur/module";
 
 export interface DesactiverLesComptesInactifsResultat {
   comptesDesactives: number;
@@ -42,7 +35,13 @@ export class DesactiverLesComptesInactifsUseCase {
     utilisateurIAMRepository,
     tokenAPIInformationRepository,
     contactInfoLettresService,
-  }: Dependencies) {
+  }: Inject<
+    | "utilisateurRepository"
+    | "actionCompteInactifRepository"
+    | "utilisateurIAMRepository"
+    | "tokenAPIInformationRepository"
+    | "contactInfoLettresService"
+  >) {
     this.utilisateurRepository = utilisateurRepository;
     this.actionCompteInactifRepository = actionCompteInactifRepository;
     this.utilisateurIAMRepository = utilisateurIAMRepository;

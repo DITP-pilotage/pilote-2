@@ -1,10 +1,6 @@
 import { ContactInfoLettresService } from "@/server/gestion-utilisateur/domain/ports/ContactInfoLettresService";
 import { UtilisateurRepository } from "@/server/gestion-utilisateur/domain/ports/UtilisateurRepository";
-
-type Dependencies = {
-  contactInfoLettresService: ContactInfoLettresService;
-  utilisateurRepository: UtilisateurRepository;
-};
+import type { Inject } from "@/server/gestion-utilisateur/module";
 
 export class AjouterUnContactAUneInfoLettreUseCase {
   private readonly contactInfoLettresService: ContactInfoLettresService;
@@ -14,7 +10,7 @@ export class AjouterUnContactAUneInfoLettreUseCase {
   constructor({
     contactInfoLettresService,
     utilisateurRepository,
-  }: Dependencies) {
+  }: Inject<"contactInfoLettresService" | "utilisateurRepository">) {
     this.contactInfoLettresService = contactInfoLettresService;
     this.utilisateurRepository = utilisateurRepository;
   }

@@ -1,4 +1,3 @@
-import { asClass } from "awilix";
 import { ChantierRepository } from "@/server/chantiers/domain/ports/ChantierRepository";
 import { RecupererDonneesChantierQuery } from "@/server/chantiers/infrastructure/queries/RecupererDonneesChantierQuery";
 import { RecupererChantiersApplicablesParTerritoiresQuery } from "@/server/chantiers/infrastructure/queries/RecupererChantiersApplicablesParTerritoiresQuery";
@@ -10,7 +9,7 @@ import { PropositionValeurAvancementRepository } from "@/server/chantiers/domain
 import { PrismaPropositionValeurAvancementRepository } from "@/server/chantiers/infrastructure/adapters/PrismaPropositionValeurAvancementRepository";
 import type { IndicateurTerritoireValeurEvenementRepository } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/IndicateurTerritoireValeurEvenementRepository";
 import { DatajobsExecutionQueries } from "@/server/datajobs-execution/DatajobsExecution";
-import { defineModule } from "@/server/module-system";
+import { defineModule, type ModuleScope } from "@/server/module-system";
 import { TerritoireRepository } from "./domain/ports/TerritoireRepository";
 import { PrismaTerritoireRepository } from "./infrastructure/adapters/PrismaTerritoireRepository";
 import { UtilisateurRepository } from "./domain/ports/UtilisateurRepository";
@@ -65,52 +64,60 @@ export const chantiersModule = defineModule<ChantierExports, ChantierCradle>()({
   name: "chantiers",
   imports: ["shared", "indicateurTerritoireValeurEvenement"],
   exports: ["recupererChantiersQuery", "mesuresIndicateurQuery"],
-  register: (container) => {
+  register: (container, { asModuleClass }) => {
     container.register({
-      chantierRepository: asClass(PrismaChantierRepository),
-      indicateurRepository: asClass(PrismaIndicateurRepository),
-      territoireRepository: asClass(PrismaTerritoireRepository),
-      ministereRepository: asClass(PrismaMinistereRepository),
-      propositionValeurAvancementRepository: asClass(
+      chantierRepository: asModuleClass(PrismaChantierRepository),
+      indicateurRepository: asModuleClass(PrismaIndicateurRepository),
+      territoireRepository: asModuleClass(PrismaTerritoireRepository),
+      ministereRepository: asModuleClass(PrismaMinistereRepository),
+      propositionValeurAvancementRepository: asModuleClass(
         PrismaPropositionValeurAvancementRepository,
       ),
-      utilisateurRepository: asClass(PrismaUtilisateurRepository),
-      envoieEmailService: asClass(BrevoEnvoieEmailService),
-      recupererDonneesChantierQuery: asClass(RecupererDonneesChantierQuery),
-      exportCsvDesChantiersUseCase: asClass(ExportCsvDesChantiersUseCase),
-      exportCsvDesIndicateursUseCase: asClass(ExportCsvDesIndicateursUseCase),
-      exportCsvDesHistoriquesIndicateursUseCase: asClass(
+      utilisateurRepository: asModuleClass(PrismaUtilisateurRepository),
+      envoieEmailService: asModuleClass(BrevoEnvoieEmailService),
+      recupererDonneesChantierQuery: asModuleClass(
+        RecupererDonneesChantierQuery,
+      ),
+      exportCsvDesChantiersUseCase: asModuleClass(ExportCsvDesChantiersUseCase),
+      exportCsvDesIndicateursUseCase: asModuleClass(
+        ExportCsvDesIndicateursUseCase,
+      ),
+      exportCsvDesHistoriquesIndicateursUseCase: asModuleClass(
         ExportCsvDesHistoriquesIndicateursUseCase,
       ),
-      rapportPropositionsAvancementRepository: asClass(
+      rapportPropositionsAvancementRepository: asModuleClass(
         PrismaRapportPropositionsAvancementRepository,
       ),
-      creerLesRapportsPropositionsUseCase: asClass(
+      creerLesRapportsPropositionsUseCase: asModuleClass(
         CreerLesRapportsPropositionsUseCase,
       ),
-      envoyerLesRapportsPropositionsUseCase: asClass(
+      envoyerLesRapportsPropositionsUseCase: asModuleClass(
         EnvoyerLesRapportsPropositionsUseCase,
       ),
-      recupererDetailsIndicateursV2UseCase: asClass(
+      recupererDetailsIndicateursV2UseCase: asModuleClass(
         RecupererDetailsIndicateursV2UseCase,
       ),
-      recupererChantiersAccessiblesEnLectureUseCaseV2: asClass(
+      recupererChantiersAccessiblesEnLectureUseCaseV2: asModuleClass(
         RecupererChantiersAccessiblesEnLectureUseCaseV2,
       ),
-      recupererChantiersAccessiblesEnLectureUseCaseRapportDetailleV2: asClass(
-        RecupererChantiersAccessiblesEnLectureUseCaseRapportDetailleV2,
-      ),
-      recupererChantierUseCaseV2: asClass(RecupererChantierUseCaseV2),
-      listerDetailsIndicateurTerritoireUseCaseV2: asClass(
+      recupererChantiersAccessiblesEnLectureUseCaseRapportDetailleV2:
+        asModuleClass(
+          RecupererChantiersAccessiblesEnLectureUseCaseRapportDetailleV2,
+        ),
+      recupererChantierUseCaseV2: asModuleClass(RecupererChantierUseCaseV2),
+      listerDetailsIndicateurTerritoireUseCaseV2: asModuleClass(
         ListerDetailsIndicateurTerritoireUseCaseV2,
       ),
-      datajobsExecutionQueries: asClass(DatajobsExecutionQueries),
-      recupererChantiersQuery: asClass(
+      datajobsExecutionQueries: asModuleClass(DatajobsExecutionQueries),
+      recupererChantiersQuery: asModuleClass(
         RecupererChantiersApplicablesParTerritoiresQuery,
       ),
-      mesuresIndicateurQuery: asClass(
+      mesuresIndicateurQuery: asModuleClass(
         RecupererMesuresIndicateurParPeriodeQuery,
       ),
     });
   },
 });
+
+type Scope = ModuleScope<ChantierCradle>;
+export type Inject<K extends keyof Scope> = Pick<Scope, K>;

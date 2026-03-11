@@ -1,13 +1,16 @@
 import { $Enums } from "@prisma/client";
 import { ArticleCentreAide } from "@/server/parametrage-centre-aide/domain/ArticleCentreAide";
 import { ArticleCentreAideRepository } from "@/server/parametrage-centre-aide/domain/ports/ArticleCentreAideRepository";
-
-type Dependencies = {
-  articleCentreAideRepository: ArticleCentreAideRepository;
-};
+import type { Inject } from "@/server/parametrage-centre-aide/module";
 
 export class ModifierArticleCentreAideUseCase {
-  constructor(private readonly deps: Dependencies) {}
+  private articleCentreAideRepository: ArticleCentreAideRepository;
+
+  constructor({
+    articleCentreAideRepository,
+  }: Inject<"articleCentreAideRepository">) {
+    this.articleCentreAideRepository = articleCentreAideRepository;
+  }
 
   async execute({
     id,
@@ -37,6 +40,6 @@ export class ModifierArticleCentreAideUseCase {
       parentId,
     });
 
-    return this.deps.articleCentreAideRepository.modifier(article);
+    return this.articleCentreAideRepository.modifier(article);
   }
 }

@@ -14,7 +14,6 @@ import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation"
 import { Territoire } from "@/server/domain/territoire/Territoire.interface";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
 import { UtilisateurRepository } from "@/server/gestion-utilisateur/domain/ports/UtilisateurRepository";
-import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { UtilisateurListeGestion } from "@/server/gestion-utilisateur/domain/UtilisateurListeGestion.interface";
 import { removeAccents } from "@/server/utils/remove-accents";
 import { estUnProfilTerritorialise } from "@/server/app/domain/ProfilTerritorialise";
@@ -28,10 +27,7 @@ import {
   Utilisateur,
 } from "@/server/gestion-utilisateur/domain/Utilisateur.interface";
 import { UtilisateurÀCréerOuMettreÀJourSansHabilitation } from "@/server/domain/utilisateur/Utilisateur.interface";
-
-interface Dependencies {
-  prisma: PrismaPilote;
-}
+import type { Inject } from "@/server/gestion-utilisateur/module";
 
 const récupérerChantiersParDéfaut = (
   profilUtilisateur: PrismaProfilModel,
@@ -247,7 +243,7 @@ const créerLesHabilitations = (
 };
 
 export class PrismaUtilisateurRepository implements UtilisateurRepository {
-  constructor(private readonly deps: Dependencies) {}
+  constructor(private readonly deps: Inject<"prisma">) {}
 
   get prisma() {
     return this.deps.prisma.getInstance();

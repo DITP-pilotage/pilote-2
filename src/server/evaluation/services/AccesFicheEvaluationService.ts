@@ -1,8 +1,13 @@
 import { $Enums } from "@prisma/client";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
+import type { Inject } from "@/server/evaluation/module";
 
 export class AccesFicheEvaluationService {
-  constructor(private readonly dependencies: { prisma: PrismaPilote }) {}
+  private readonly prisma: PrismaPilote;
+
+  constructor({ prisma }: Inject<"prisma">) {
+    this.prisma = prisma;
+  }
 
   async peutAccederEtapeAutoEvaluation({
     utilisateurId,
@@ -80,21 +85,19 @@ export class AccesFicheEvaluationService {
     utilisateurId: string,
     etape: $Enums.etape_evaluation_enum,
   ) {
-    const resultat = await this.dependencies.prisma
-      .getInstance()
-      .fiche_evaluation.count({
-        where: {
-          id: ficheEvaluationId,
-          rattachement: {
-            rattachement_utilisateur_etape_jalon: {
-              some: {
-                etape,
-                utilisateur_id: utilisateurId,
-              },
+    const resultat = await this.prisma.getInstance().fiche_evaluation.count({
+      where: {
+        id: ficheEvaluationId,
+        rattachement: {
+          rattachement_utilisateur_etape_jalon: {
+            some: {
+              etape,
+              utilisateur_id: utilisateurId,
             },
           },
         },
-      });
+      },
+    });
 
     return resultat !== 0;
   }
@@ -103,7 +106,7 @@ export class AccesFicheEvaluationService {
     utilisateurId: string,
     etape: $Enums.etape_evaluation_enum,
   ) {
-    const resultat = await this.dependencies.prisma
+    const resultat = await this.prisma
       .getInstance()
       .rattachement_utilisateur_etape_jalon.count({
         where: {
@@ -120,7 +123,7 @@ export class AccesFicheEvaluationService {
     etape: $Enums.etape_evaluation_enum,
     rattachementCode: string,
   ) {
-    const resultat = await this.dependencies.prisma
+    const resultat = await this.prisma
       .getInstance()
       .rattachement_utilisateur_etape_jalon.count({
         where: {

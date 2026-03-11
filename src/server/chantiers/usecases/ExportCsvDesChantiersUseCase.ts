@@ -15,6 +15,7 @@ import {
 } from "@/server/domain/utilisateur/Utilisateur.interface";
 import { OptionsExport } from "@/server/usecase/chantier/OptionsExport";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
+import type { Inject } from "@/server/chantiers/module";
 import { ChantierRepository } from "@/server/chantiers/domain/ports/ChantierRepository";
 import {
   ChantierPourExport,
@@ -150,10 +151,6 @@ const presenterEnChantierExportContrat = (
   return donnees;
 };
 
-interface Dependencies {
-  chantierRepository: ChantierRepository;
-}
-
 export class ExportCsvDesChantiersUseCase {
   public static readonly NOMS_COLONNES = (
     jalon: number,
@@ -255,7 +252,7 @@ export class ExportCsvDesChantiersUseCase {
 
   private readonly chantierRepository: ChantierRepository;
 
-  constructor({ chantierRepository }: Dependencies) {
+  constructor({ chantierRepository }: Inject<"chantierRepository">) {
     this.chantierRepository = chantierRepository;
   }
 

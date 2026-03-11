@@ -1,15 +1,12 @@
 import { ChantierRepository } from "@/server/fiche-conducteur/domain/ports/ChantierRepository";
 import { DonnéeCartographie } from "@/server/fiche-conducteur/domain/DonnéeCartographie";
 import { Meteo } from "@/server/fiche-conducteur/domain/Meteo";
-
-interface Dependencies {
-  chantierRepository: ChantierRepository;
-}
+import type { Inject } from "@/server/fiche-conducteur/module";
 
 export class RécupérerDonnéesCartographieUseCase {
   private chantierRepository: ChantierRepository;
 
-  constructor({ chantierRepository }: Dependencies) {
+  constructor({ chantierRepository }: Inject<"chantierRepository">) {
     this.chantierRepository = chantierRepository;
   }
 

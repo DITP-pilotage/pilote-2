@@ -7,14 +7,16 @@ import {
 import { randomUUID } from "node:crypto";
 import { Transaction } from "@/server/db/Transaction";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
+import type { Inject } from "@/server/evaluation/module";
 
 export class SoumettreEtapeEvaluationService {
-  constructor(
-    private readonly dependencies: {
-      transaction: Transaction;
-      prisma: PrismaPilote;
-    },
-  ) {}
+  private readonly transaction: Transaction;
+  private readonly prismaPilote: PrismaPilote;
+
+  constructor({ transaction, prisma }: Inject<"transaction" | "prisma">) {
+    this.transaction = transaction;
+    this.prismaPilote = prisma;
+  }
 
   async execute({
     ficheEvaluationId,
@@ -32,7 +34,7 @@ export class SoumettreEtapeEvaluationService {
       nomEtapeCourante,
     );
 
-    await this.dependencies.transaction.run(async () => {
+    await this.transaction.run(async () => {
       const existingEtapeSuivante = await this.getExistingEtapeSuivante(
         ficheEvaluationId,
         nomEtapeSuivante,
@@ -218,6 +220,6 @@ export class SoumettreEtapeEvaluationService {
   }
 
   private get prisma() {
-    return this.dependencies.prisma.getInstance();
+    return this.prismaPilote.getInstance();
   }
 }

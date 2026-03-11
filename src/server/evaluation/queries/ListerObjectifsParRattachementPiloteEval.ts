@@ -1,4 +1,5 @@
 import { PrismaPilote } from "@/server/db/PrismaPilote";
+import type { Inject } from "@/server/evaluation/module";
 
 export type ObjectifPiloteEval = {
   id: string;
@@ -8,10 +9,14 @@ export type ObjectifPiloteEval = {
 export type ObjectifsParRattachement = Record<string, ObjectifPiloteEval[]>;
 
 export class ListerObjectifsParRattachementPiloteEval {
-  constructor(private readonly dependencies: { prisma: PrismaPilote }) {}
+  private readonly prisma: PrismaPilote;
+
+  constructor({ prisma }: Inject<"prisma">) {
+    this.prisma = prisma;
+  }
 
   async run({ jalon }: { jalon: number }): Promise<ObjectifsParRattachement> {
-    const objectifs = await this.dependencies.prisma
+    const objectifs = await this.prisma
       .getInstance()
       .referentiel_objectif.findMany({
         where: {

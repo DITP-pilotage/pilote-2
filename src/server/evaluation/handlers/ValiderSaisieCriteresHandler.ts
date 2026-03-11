@@ -3,6 +3,7 @@ import { $Enums } from "@prisma/client";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { Transaction } from "@/server/db/Transaction";
 import { SoumettreEtapeEvaluationService } from "@/server/evaluation/services/SoumettreEtapeEvaluationService";
+import type { Inject } from "@/server/evaluation/module";
 
 export const validerSaisieCriteresCommandSchema = z.object({
   ficheEvaluationId: z.string(),
@@ -13,17 +14,23 @@ export type ValiderSaisieCriteresCommandSchema = z.infer<
 >;
 
 export class ValiderSaisieCriteresHandler {
-  constructor(
-    private readonly dependencies: {
-      transaction: Transaction;
-      prisma: PrismaPilote;
-      soumettreEtapeEvaluationService: SoumettreEtapeEvaluationService;
-    },
-  ) {}
+  private readonly transaction: Transaction;
+  private readonly prisma: PrismaPilote;
+  private readonly soumettreEtapeEvaluationService: SoumettreEtapeEvaluationService;
+
+  constructor({
+    transaction,
+    prisma,
+    soumettreEtapeEvaluationService,
+  }: Inject<"transaction" | "prisma" | "soumettreEtapeEvaluationService">) {
+    this.transaction = transaction;
+    this.prisma = prisma;
+    this.soumettreEtapeEvaluationService = soumettreEtapeEvaluationService;
+  }
 
   async execute(command: ValiderSaisieCriteresCommandSchema, auteurId: string) {
-    const updatedEtape = await this.dependencies.transaction.run(async () => {
-      const prisma = this.dependencies.prisma.getInstance();
+    const updatedEtape = await this.transaction.run(async () => {
+      const prisma = this.prisma.getInstance();
 
       const etape = await prisma.etape_evaluation.findFirstOrThrow({
         where: {
@@ -42,7 +49,7 @@ export class ValiderSaisieCriteresHandler {
     });
 
     if (updatedEtape.objectifs_valides) {
-      await this.dependencies.soumettreEtapeEvaluationService.execute({
+      await this.soumettreEtapeEvaluationService.execute({
         ficheEvaluationId: command.ficheEvaluationId,
         auteurId: auteurId,
         nomEtapeCourante: $Enums.etape_evaluation_enum.AUTO_EVALUATION,

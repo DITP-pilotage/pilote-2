@@ -1,14 +1,11 @@
 import { IndicateurRepository } from "@/server/chantiers/domain/ports/IndicateurRepository";
 import { DonneeIndicateur } from "@/server/chantiers/domain/DonneeIndicateur";
-
-interface Dependencies {
-  indicateurRepository: IndicateurRepository;
-}
+import type { Inject } from "@/server/chantiers/module";
 
 export class ListerDonneesIndicateurParIndicIdUseCase {
   private indicateurRepository: IndicateurRepository;
 
-  constructor({ indicateurRepository }: Dependencies) {
+  constructor({ indicateurRepository }: Inject<"indicateurRepository">) {
     this.indicateurRepository = indicateurRepository;
   }
 

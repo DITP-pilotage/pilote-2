@@ -1,14 +1,10 @@
 import { ProfilUtilisateurRepository } from "@/server/profil-utilisateur/domain/ports/ProfilUtilisateurRepository";
 import { ProfilUtilisateur } from "@/server/profil-utilisateur/domain/ProfilUtilisateur";
-import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { NotFoundError } from "@/server/app/error-boundary/not-found-error";
-
-interface Dependencies {
-  prisma: PrismaPilote;
-}
+import type { Inject } from "@/server/profil-utilisateur/module";
 
 export class PrismaProfilUtilisateurRepository implements ProfilUtilisateurRepository {
-  constructor(private readonly deps: Dependencies) {}
+  constructor(private readonly deps: Inject<"prisma">) {}
 
   get prisma() {
     return this.deps.prisma.getInstance();
