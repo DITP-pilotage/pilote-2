@@ -51,6 +51,7 @@ const defineModule =
 type NoExports = Record<string, never>;
 
 type ExtractScope<M> =
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   M extends ModuleDef<ModuleName, any, infer C> ? ModuleScope<C> : never;
 
 export type {
