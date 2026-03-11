@@ -14,14 +14,13 @@ export class GetChantierMeteosTerritoiresQuery {
 
   async execute(params: {
     chantierId: string;
-    maille: "REG" | "DEPT";
   }): Promise<MeteoTerritoireViewModel[]> {
     const prisma = this.deps.prisma.getInstance();
 
     const rows = await prisma.chantier_territoire.findMany({
       where: {
         id: params.chantierId,
-        maille: params.maille,
+        maille: { in: ["REG", "DEPT"] },
       },
       select: {
         territoire_code: true,

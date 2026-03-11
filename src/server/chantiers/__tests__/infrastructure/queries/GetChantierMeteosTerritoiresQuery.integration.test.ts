@@ -13,7 +13,7 @@ describe("GetChantierMeteosTerritoiresQuery", () => {
   });
 
   it(
-    "retourne les météos pour la maille demandée uniquement",
+    "retourne les météos REG et DEPT mais pas NAT",
     createIntegrationTest(async () => {
       // Given
       await fixtures.chantierIdentite({ id: "CH-001" });
@@ -35,21 +35,41 @@ describe("GetChantierMeteosTerritoiresQuery", () => {
         meteo: "ORAGE",
         est_applicable: true,
       });
+      await fixtures.chantierTerritoire({
+        id: "CH-001",
+        territoire_code: "NAT-FR",
+        code_insee: "FR",
+        maille: "NAT",
+        zone_id: "zone-3",
+        meteo: "NUAGE",
+        est_applicable: true,
+      });
 
       // When
       const result = await query.execute({
         chantierId: "CH-001",
-        maille: "DEPT",
       });
 
       // Then
-      expect(result).toEqual([
-        expect.objectContaining({
-          territoireCode: "DEPT-75",
-          codeInsee: "75",
-          meteo: "SOLEIL",
-        }),
-      ]);
+      expect(result).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            territoireCode: "DEPT-75",
+            codeInsee: "75",
+            meteo: "SOLEIL",
+          }),
+          expect.objectContaining({
+            territoireCode: "REG-11",
+            codeInsee: "11",
+            meteo: "ORAGE",
+          }),
+        ]),
+      );
+      expect(result).not.toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ territoireCode: "NAT-FR" }),
+        ]),
+      );
     }),
   );
 
@@ -80,7 +100,6 @@ describe("GetChantierMeteosTerritoiresQuery", () => {
       // When
       const result = await query.execute({
         chantierId: "CH-002",
-        maille: "DEPT",
       });
 
       // Then
@@ -118,7 +137,6 @@ describe("GetChantierMeteosTerritoiresQuery", () => {
       // When
       const result = await query.execute({
         chantierId: "CH-003",
-        maille: "REG",
       });
 
       // Then
@@ -150,7 +168,6 @@ describe("GetChantierMeteosTerritoiresQuery", () => {
       // When
       const result = await query.execute({
         chantierId: "CH-004",
-        maille: "DEPT",
       });
 
       // Then
@@ -171,7 +188,6 @@ describe("GetChantierMeteosTerritoiresQuery", () => {
       // When
       const result = await query.execute({
         chantierId: "CH-005",
-        maille: "DEPT",
       });
 
       // Then

@@ -1,25 +1,19 @@
 import { useCallback, useMemo, useState } from "react";
 import api from "@/server/infrastructure/api/trpc/api";
-import { MailleInterne } from "@/server/domain/maille/Maille.interface";
 import { libellésMétéos, Météo } from "@/server/domain/météo/Météo.interface";
 import { CartographieDonnées } from "@/client/components/_commons/Cartographie/Cartographie.interface";
 import { ÉLÉMENTS_LÉGENDE_MÉTÉO_CHANTIERS } from "@/client/constants/légendes/élémentsDeLégendesCartographieMétéo";
 import { determinerRemplissageMeteo } from "@/client/utils/meteo/determinerRemplissageMeteo";
 
-const mailleInterneVersMaille = (maille: MailleInterne): "REG" | "DEPT" =>
-  maille === "regionale" ? "REG" : "DEPT";
-
 export const useWidgetCartographieMeteo = (params: {
   chantierId: string;
-  maille: MailleInterne;
   initialTerritoiresCodes: string[];
 }) => {
-  const { chantierId, maille, initialTerritoiresCodes } = params;
+  const { chantierId, initialTerritoiresCodes } = params;
 
   const { data: territoiresMeteo, isLoading } =
     api.chantier.recupererMeteosTerritoires.useQuery({
       chantierId,
-      maille: mailleInterneVersMaille(maille),
     });
 
   const [selectedTerritoireCodes, setSelectedTerritoireCodes] = useState<
@@ -95,11 +89,11 @@ export const useWidgetCartographieMeteo = (params: {
   }, [territoiresMeteo, selectedTerritoireCodes]);
 
   const auClicTerritoire = useCallback(
-    (codeInsee: string) => {
+    (territoireCode: string) => {
       if (!territoiresMeteo) return;
 
       const territoire = territoiresMeteo.find(
-        (terr) => terr.codeInsee === codeInsee,
+        (terr) => terr.territoireCode === territoireCode,
       );
       if (!territoire) return;
 

@@ -26,7 +26,6 @@ export const chantierRouter = créerRouteurTRPC({
     .input(
       z.object({
         chantierId: z.string(),
-        maille: z.enum(["REG", "DEPT"]),
       }),
     )
     .query(({ input }) => {

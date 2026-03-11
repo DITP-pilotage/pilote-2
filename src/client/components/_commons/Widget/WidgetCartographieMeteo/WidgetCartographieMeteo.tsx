@@ -27,7 +27,6 @@ export const WidgetCartographieMeteo: FunctionComponent<
     isLoading,
   } = useWidgetCartographieMeteo({
     chantierId,
-    maille,
     initialTerritoiresCodes,
   });
 

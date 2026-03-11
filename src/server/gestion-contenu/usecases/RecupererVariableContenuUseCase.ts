@@ -112,6 +112,9 @@ export class RecupererVariableContenuUseCase {
         return configuration().featureFlip
           .accesPilote as VariableContenuDisponibleEnv[T];
       }
+      case "NEXT_PUBLIC_FF_COMPARAISON_TERRITOIRES":
+        return configuration().featureFlip
+          .comparaisonTerritoires as VariableContenuDisponibleEnv[T];
     }
   }
 }

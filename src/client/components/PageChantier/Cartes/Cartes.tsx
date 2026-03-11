@@ -7,9 +7,7 @@ import Alerte from "@/components/_commons/Alerte/Alerte";
 import CartographieAvecSelecteur from "@/components/_commons/Cartographie/CartographieAvecSelecteur/CartographieAvecSelecteur";
 import { pageChantier } from "@/components/PageChantier/PageChantierServerSideContext";
 import { WidgetCartographieMeteo } from "@/components/_commons/Widget/WidgetCartographieMeteo/WidgetCartographieMeteo";
-
-const FEATURE_COMPARAISON_TERRITOIRES =
-  process.env.NEXT_PUBLIC_FEATURE_COMPARAISON_TERRITOIRES === "true";
+import { useEnv } from "@/client/hooks/useEnv";
 
 export type CartographieType =
   | "avancementJalon"
@@ -24,6 +22,10 @@ const Cartes: FunctionComponent<CartesProps> = ({
   estInteractif = true,
   mailleSourceDonnees,
 }) => {
+  const featureComparaisonTerritoires = useEnv(
+    "NEXT_PUBLIC_FF_COMPARAISON_TERRITOIRES",
+  );
+
   const {
     chantier,
     jalon,
@@ -92,7 +94,7 @@ const Cartes: FunctionComponent<CartesProps> = ({
         <div className="carte">
           <Bloc>
             <section>
-              {FEATURE_COMPARAISON_TERRITOIRES &&
+              {featureComparaisonTerritoires &&
               cartographieDroiteChantier === "meteo" ? (
                 <WidgetCartographieMeteo
                   chantierId={chantier.id}
