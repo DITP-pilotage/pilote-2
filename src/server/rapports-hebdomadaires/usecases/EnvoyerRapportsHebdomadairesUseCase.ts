@@ -1,7 +1,6 @@
 import { $Enums } from "@prisma/client";
 import logger from "@/server/infrastructure/Logger";
-import { RapportRepository } from "@/server/rapports-hebdomadaires/domain/ports/RapportRepository";
-import { EnvoieEmailService } from "@/server/rapports-hebdomadaires/domain/ports/EnvoieEmailService";
+import type { Inject } from "@/server/rapports-hebdomadaires/module";
 import {
   marquerCommeEchec,
   marquerCommeEnvoye,
@@ -16,10 +15,7 @@ type EnvoyerRapportResult = {
 
 export class EnvoyerRapportsHebdomadairesUseCase {
   constructor(
-    private readonly deps: {
-      rapportRepository: RapportRepository;
-      envoieEmailService: EnvoieEmailService;
-    },
+    private readonly deps: Inject<"rapportRepository" | "envoieEmailService">,
   ) {}
 
   async run(params: { dateCreationMin?: Date }): Promise<EnvoyerRapportResult> {

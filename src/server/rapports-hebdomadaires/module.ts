@@ -1,10 +1,9 @@
-import { asClass } from "awilix";
 import type { PrismaActiviteComptesQuery } from "@/server/gestion-utilisateur/infrastructure/queries/PrismaActiviteComptesQuery";
 import type { PrismaUtilisateursQuery } from "@/server/gestion-utilisateur/infrastructure/queries/PrismaUtilisateursQuery";
 import type { RecupererChantiersApplicablesParTerritoiresQuery } from "@/server/chantiers/infrastructure/queries/RecupererChantiersApplicablesParTerritoiresQuery";
 import type { RecupererMesuresIndicateurParPeriodeQuery } from "@/server/chantiers/infrastructure/queries/RecupererMesuresIndicateurParPeriodeQuery";
 import type { RecupererEvenementsVAParPeriodeQuery } from "@/server/indicateur-territoire-valeur-evenement/infrastructure/queries/RecupererEvenementsVAParPeriodeQuery";
-import { defineModule } from "@/server/module-system";
+import { defineModule, type ModuleScope } from "@/server/module-system";
 import { ActiviteComptesGateway } from "./domain/ports/ActiviteComptesGateway";
 import { CoordinateurGateway } from "./domain/ports/CoordinateurGateway";
 import { RapportRepository } from "./domain/ports/RapportRepository";
@@ -44,6 +43,9 @@ type RapportsHebdomadairesCradle = RapportsHebdomadairesExports & {
 
 export type RapportsHebdomadairesDependencies = RapportsHebdomadairesCradle;
 
+type Scope = ModuleScope<RapportsHebdomadairesCradle>;
+export type Inject<K extends keyof Scope> = Pick<Scope, K>;
+
 export const rapportsHebdomadairesModule = defineModule<
   RapportsHebdomadairesExports,
   RapportsHebdomadairesCradle
@@ -56,24 +58,26 @@ export const rapportsHebdomadairesModule = defineModule<
     "indicateurTerritoireValeurEvenement",
   ],
   exports: [],
-  register: (container) => {
+  register: (container, _fn, asModuleClass) => {
     container.register({
-      activiteComptesGateway: asClass(GestionUtilisateurActiviteComptesGateway),
-      coordinateurGateway: asClass(GestionUtilisateurCoordinateurGateway),
-      rapportRepository: asClass(PrismaRapportRepository),
-      envoieEmailService: asClass(BrevoEnvoieEmailService),
-      chantierGateway: asClass(ChantiersChantierGateway),
-      activiteIndicateurGateway: asClass(IndicateurActiviteGateway),
-      produireRapportsHebdomadairesUseCase: asClass(
+      activiteComptesGateway: asModuleClass(
+        GestionUtilisateurActiviteComptesGateway,
+      ),
+      coordinateurGateway: asModuleClass(GestionUtilisateurCoordinateurGateway),
+      rapportRepository: asModuleClass(PrismaRapportRepository),
+      envoieEmailService: asModuleClass(BrevoEnvoieEmailService),
+      chantierGateway: asModuleClass(ChantiersChantierGateway),
+      activiteIndicateurGateway: asModuleClass(IndicateurActiviteGateway),
+      produireRapportsHebdomadairesUseCase: asModuleClass(
         ProduireRapportsHebdomadairesUseCase,
       ),
-      envoyerRapportsHebdomadairesUseCase: asClass(
+      envoyerRapportsHebdomadairesUseCase: asModuleClass(
         EnvoyerRapportsHebdomadairesUseCase,
       ),
-      listerRapportsHebdomadairesQuery: asClass(
+      listerRapportsHebdomadairesQuery: asModuleClass(
         ListerRapportsHebdomadairesQuery,
       ),
-      recupererRapportHebdomadaireQuery: asClass(
+      recupererRapportHebdomadaireQuery: asModuleClass(
         RecupererRapportHebdomadaireQuery,
       ),
     });

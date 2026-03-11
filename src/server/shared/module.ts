@@ -24,7 +24,7 @@ export const sharedModule = defineModule<SharedExports, SharedCradle>()({
   name: "shared",
   imports: [],
   exports: [],
-  register: (container, fn) => {
+  register: (container, fn, _asModuleClass) => {
     container.register({
       prisma: asClass(PrismaPilote, { lifetime: Lifetime.SINGLETON }),
       transaction: asClass(PrismaTransaction, {

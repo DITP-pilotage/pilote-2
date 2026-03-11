@@ -1,11 +1,12 @@
 import {
+  asClass,
   asFunction,
   asValue,
   type AwilixContainer,
   createContainer,
   InjectionMode,
 } from "awilix";
-import type { ModuleDef, TypedAsFunction } from "./ModuleDef";
+import type { ModuleDef, TypedAsClass, TypedAsFunction } from "./ModuleDef";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyModuleDef = ModuleDef<string, string, any, any>;
@@ -53,14 +54,15 @@ const bootModules = <TModules extends readonly AnyModuleDef[]>(
   });
 
   const fn = asFunction as unknown as TypedAsFunction<never>;
+  const cls = asClass as unknown as TypedAsClass<never>;
 
-  rootModule.register(rootContainer, fn);
+  rootModule.register(rootContainer, fn, cls);
   containers.set(rootModule.name, rootContainer);
 
   for (const mod of modules) {
     if (mod === rootModule) continue;
     const scope = rootContainer.createScope();
-    mod.register(scope, fn);
+    mod.register(scope, fn, cls);
     containers.set(mod.name, scope);
   }
 

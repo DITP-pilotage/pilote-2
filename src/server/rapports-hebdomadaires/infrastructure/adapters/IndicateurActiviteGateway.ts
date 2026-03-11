@@ -1,15 +1,13 @@
-import { ActiviteIndicateurGateway } from "@/server/rapports-hebdomadaires/domain/ports/ActiviteVAGateway";
-import { EvenementIndicateur } from "@/server/rapports-hebdomadaires/domain/SectionActiviteChantiers";
-import { PeriodeRapport } from "@/server/rapports-hebdomadaires/domain/PeriodeRapport";
-import { RecupererEvenementsVAParPeriodeQuery } from "@/server/indicateur-territoire-valeur-evenement/infrastructure/queries/RecupererEvenementsVAParPeriodeQuery";
-import { RecupererMesuresIndicateurParPeriodeQuery } from "@/server/chantiers/infrastructure/queries/RecupererMesuresIndicateurParPeriodeQuery";
+import { type ActiviteIndicateurGateway } from "@/server/rapports-hebdomadaires/domain/ports/ActiviteVAGateway";
+import { type EvenementIndicateur } from "@/server/rapports-hebdomadaires/domain/SectionActiviteChantiers";
+import { type PeriodeRapport } from "@/server/rapports-hebdomadaires/domain/PeriodeRapport";
+import type { Inject } from "@/server/rapports-hebdomadaires/module";
 
 export class IndicateurActiviteGateway implements ActiviteIndicateurGateway {
   constructor(
-    private readonly deps: {
-      evenementsVAQuery: RecupererEvenementsVAParPeriodeQuery;
-      mesuresIndicateurQuery: RecupererMesuresIndicateurParPeriodeQuery;
-    },
+    private readonly deps: Inject<
+      "evenementsVAQuery" | "mesuresIndicateurQuery"
+    >,
   ) {}
 
   async recupererEvenementsDansPeriode(params: {

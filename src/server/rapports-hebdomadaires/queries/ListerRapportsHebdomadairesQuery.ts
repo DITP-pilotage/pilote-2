@@ -1,5 +1,5 @@
 import { type $Enums } from "@prisma/client";
-import { PrismaPilote } from "@/server/db/PrismaPilote";
+import type { Inject } from "@/server/rapports-hebdomadaires/module";
 
 export type RapportHebdomadaireResume = {
   id: string;
@@ -10,7 +10,7 @@ export type RapportHebdomadaireResume = {
 };
 
 export class ListerRapportsHebdomadairesQuery {
-  constructor(private readonly deps: { prisma: PrismaPilote }) {}
+  constructor(private readonly deps: Inject<"prisma">) {}
 
   async run(coordinateurId: string): Promise<RapportHebdomadaireResume[]> {
     const rapports = await this.deps.prisma

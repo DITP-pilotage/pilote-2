@@ -1,16 +1,10 @@
 import logger from "@/server/infrastructure/Logger";
+import { type ProfilTerritorialise } from "@/server/rapports-hebdomadaires/domain/ports/ActiviteComptesGateway";
 import {
-  ActiviteComptesGateway,
-  ProfilTerritorialise,
-} from "@/server/rapports-hebdomadaires/domain/ports/ActiviteComptesGateway";
-import { CoordinateurGateway } from "@/server/rapports-hebdomadaires/domain/ports/CoordinateurGateway";
-import { RapportRepository } from "@/server/rapports-hebdomadaires/domain/ports/RapportRepository";
-import {
-  ChantierAvecIndicateurs,
-  ChantierGateway,
+  type ChantierAvecIndicateurs,
   getChantiersIndicateursIds,
 } from "@/server/rapports-hebdomadaires/domain/ports/ChantierGateway";
-import { ActiviteIndicateurGateway } from "@/server/rapports-hebdomadaires/domain/ports/ActiviteVAGateway";
+import type { Inject } from "@/server/rapports-hebdomadaires/module";
 import { calculerPeriodeDernierLundiNeufHeures } from "@/server/rapports-hebdomadaires/domain/PeriodeRapport";
 import {
   creerRapportHebdomadaire,
@@ -49,13 +43,13 @@ type ProduireRapportResult = {
 
 export class ProduireRapportsHebdomadairesUseCase {
   constructor(
-    private readonly deps: {
-      activiteComptesGateway: ActiviteComptesGateway;
-      coordinateurGateway: CoordinateurGateway;
-      rapportRepository: RapportRepository;
-      chantierGateway: ChantierGateway;
-      activiteIndicateurGateway: ActiviteIndicateurGateway;
-    },
+    private readonly deps: Inject<
+      | "activiteComptesGateway"
+      | "coordinateurGateway"
+      | "rapportRepository"
+      | "chantierGateway"
+      | "activiteIndicateurGateway"
+    >,
   ) {}
 
   async run(params?: { maintenant?: Date }): Promise<ProduireRapportResult> {

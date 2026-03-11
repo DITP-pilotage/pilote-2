@@ -1,5 +1,5 @@
-import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { NotFoundError } from "@/server/app/error-boundary/not-found-error";
+import type { Inject } from "@/server/rapports-hebdomadaires/module";
 import {
   contenuRapportSchema,
   type ContenuRapport,
@@ -15,7 +15,7 @@ export type RapportHebdomadaire = {
 };
 
 export class RecupererRapportHebdomadaireQuery {
-  constructor(private readonly deps: { prisma: PrismaPilote }) {}
+  constructor(private readonly deps: Inject<"prisma">) {}
 
   async run(
     rapportId: string,

@@ -1,14 +1,14 @@
 import { $Enums, Prisma } from "@prisma/client";
 import { z } from "zod";
-import { PrismaPilote } from "@/server/db/PrismaPilote";
-import { RapportRepository } from "@/server/rapports-hebdomadaires/domain/ports/RapportRepository";
-import { RapportHebdomadaire } from "@/server/rapports-hebdomadaires/domain/RapportHebdomadaire";
+import { type RapportRepository } from "@/server/rapports-hebdomadaires/domain/ports/RapportRepository";
+import { type RapportHebdomadaire } from "@/server/rapports-hebdomadaires/domain/RapportHebdomadaire";
 import {
-  Coordinateur,
-  ProfilCoordinateur,
+  type Coordinateur,
+  type ProfilCoordinateur,
 } from "@/server/rapports-hebdomadaires/domain/Coordinateur";
-import { SectionActiviteComptes } from "@/server/rapports-hebdomadaires/domain/SectionActiviteComptes";
-import { SectionChantier } from "@/server/rapports-hebdomadaires/domain/SectionActiviteChantiers";
+import { type SectionActiviteComptes } from "@/server/rapports-hebdomadaires/domain/SectionActiviteComptes";
+import { type SectionChantier } from "@/server/rapports-hebdomadaires/domain/SectionActiviteChantiers";
+import type { Inject } from "@/server/rapports-hebdomadaires/module";
 
 export const contenuRapportSchema = z.object({
   coordinateur: z.custom<Coordinateur>(),
@@ -19,11 +19,7 @@ export const contenuRapportSchema = z.object({
 export type ContenuRapport = z.infer<typeof contenuRapportSchema>;
 
 export class PrismaRapportRepository implements RapportRepository {
-  constructor(
-    private readonly deps: {
-      prisma: PrismaPilote;
-    },
-  ) {}
+  constructor(private readonly deps: Inject<"prisma">) {}
 
   async sauvegarder(rapport: RapportHebdomadaire): Promise<void> {
     const prisma = this.deps.prisma.getInstance();
