@@ -109,10 +109,9 @@ type GestionUtilisateurCradle = GestionUtilisateurExports & {
 export type GestionUtilisateurDependencies = GestionUtilisateurCradle;
 
 export const gestionUtilisateurModule = defineModule<
-  "gestionUtilisateur",
   GestionUtilisateurExports,
   GestionUtilisateurCradle
->({
+>()({
   name: "gestionUtilisateur",
   imports: ["shared"],
   exports: ["activiteComptesQuery", "utilisateursQuery"],

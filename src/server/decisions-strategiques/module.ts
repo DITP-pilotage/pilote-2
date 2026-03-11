@@ -17,10 +17,9 @@ export type ImportDecisionStrategiqueDependencies =
   ImportDecisionStrategiqueCradle;
 
 export const importDecisionStrategiqueModule = defineModule<
-  "importDecisionStrategique",
   ImportDecisionStrategiqueExports,
   ImportDecisionStrategiqueCradle
->({
+>()({
   name: "importDecisionStrategique",
   imports: ["shared"],
   exports: [],

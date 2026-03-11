@@ -41,10 +41,9 @@ export type ImportSyntheseDesResultatsDependencies =
   ImportSyntheseDesResultatsCradle;
 
 export const importSyntheseDesResultatsModule = defineModule<
-  "importSyntheseDesResultats",
   ImportSyntheseDesResultatsExports,
   ImportSyntheseDesResultatsCradle
->({
+>()({
   name: "importSyntheseDesResultats",
   imports: ["shared"],
   exports: [],

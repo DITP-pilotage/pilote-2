@@ -45,10 +45,9 @@ type RapportsHebdomadairesCradle = RapportsHebdomadairesExports & {
 export type RapportsHebdomadairesDependencies = RapportsHebdomadairesCradle;
 
 export const rapportsHebdomadairesModule = defineModule<
-  "rapportsHebdomadaires",
   RapportsHebdomadairesExports,
   RapportsHebdomadairesCradle
->({
+>()({
   name: "rapportsHebdomadaires",
   imports: [
     "shared",

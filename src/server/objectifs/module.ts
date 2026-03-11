@@ -16,10 +16,9 @@ type ImportObjectifCradle = ImportObjectifExports & {
 export type ImportObjectifDependencies = ImportObjectifCradle;
 
 export const importObjectifModule = defineModule<
-  "importObjectif",
   ImportObjectifExports,
   ImportObjectifCradle
->({
+>()({
   name: "importObjectif",
   imports: ["shared"],
   exports: [],

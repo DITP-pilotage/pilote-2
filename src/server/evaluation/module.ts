@@ -75,10 +75,9 @@ type PiloteEvalCradle = PiloteEvalExports & {
 export type PiloteEvalDependencies = PiloteEvalCradle;
 
 export const piloteEvalModule = defineModule<
-  "piloteEval",
   PiloteEvalExports,
   PiloteEvalCradle
->({
+>()({
   name: "piloteEval",
   imports: ["shared"],
   exports: [],

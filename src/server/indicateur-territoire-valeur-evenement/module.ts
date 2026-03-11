@@ -46,10 +46,9 @@ export type IndicateurTerritoireValeurEvenementDependencies =
   IndicateurTerritoireValeurEvenementCradle;
 
 export const indicateurTerritoireValeurEvenementModule = defineModule<
-  "indicateurTerritoireValeurEvenement",
   IndicateurTerritoireValeurEvenementExports,
   IndicateurTerritoireValeurEvenementCradle
->({
+>()({
   name: "indicateurTerritoireValeurEvenement",
   imports: ["shared"],
   exports: [

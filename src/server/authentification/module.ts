@@ -12,10 +12,9 @@ type AuthentificationCradle = AuthentificationExports & {
 export type AuthentificationDependencies = AuthentificationCradle;
 
 export const authentificationModule = defineModule<
-  "authentification",
   AuthentificationExports,
   AuthentificationCradle
->({
+>()({
   name: "authentification",
   imports: ["shared"],
   exports: [],

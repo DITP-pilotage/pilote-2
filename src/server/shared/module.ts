@@ -20,23 +20,21 @@ type SharedCradle = SharedExports & {
 
 export type SharedDependencies = SharedCradle;
 
-export const sharedModule = defineModule<"shared", SharedExports, SharedCradle>(
-  {
-    name: "shared",
-    imports: [],
-    exports: [],
-    register: (container, fn) => {
-      container.register({
-        prisma: asClass(PrismaPilote, { lifetime: Lifetime.SINGLETON }),
-        transaction: asClass(PrismaTransaction, {
-          lifetime: Lifetime.SINGLETON,
-        }),
-        emailManager: fn(() =>
-          configuration().brevo.disableEmails
-            ? new StubEmailManager()
-            : new BrevoEmailManager(),
-        ).singleton(),
-      });
-    },
+export const sharedModule = defineModule<SharedExports, SharedCradle>()({
+  name: "shared",
+  imports: [],
+  exports: [],
+  register: (container, fn) => {
+    container.register({
+      prisma: asClass(PrismaPilote, { lifetime: Lifetime.SINGLETON }),
+      transaction: asClass(PrismaTransaction, {
+        lifetime: Lifetime.SINGLETON,
+      }),
+      emailManager: fn(() =>
+        configuration().brevo.disableEmails
+          ? new StubEmailManager()
+          : new BrevoEmailManager(),
+      ).singleton(),
+    });
   },
-);
+});

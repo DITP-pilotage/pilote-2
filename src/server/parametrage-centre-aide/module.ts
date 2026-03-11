@@ -20,10 +20,9 @@ type ParametrageCentreAideCradle = ParametrageCentreAideExports & {
 export type ParametrageCentreAideDependencies = ParametrageCentreAideCradle;
 
 export const parametrageCentreAideModule = defineModule<
-  "parametrageCentreAide",
   ParametrageCentreAideExports,
   ParametrageCentreAideCradle
->({
+>()({
   name: "parametrageCentreAide",
   imports: ["shared"],
   exports: [],

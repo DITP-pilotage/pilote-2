@@ -18,10 +18,9 @@ type ParametrageNouveautesCradle = ParametrageNouveautesExports & {
 export type ParametrageNouveautesDependencies = ParametrageNouveautesCradle;
 
 export const parametrageNouveautesModule = defineModule<
-  "parametrageNouveautes",
   ParametrageNouveautesExports,
   ParametrageNouveautesCradle
->({
+>()({
   name: "parametrageNouveautes",
   imports: ["shared"],
   exports: [],

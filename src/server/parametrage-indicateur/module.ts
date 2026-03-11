@@ -39,10 +39,9 @@ type ParametrageIndicateurCradle = ParametrageIndicateurExports & {
 export type ParametrageIndicateurDependencies = ParametrageIndicateurCradle;
 
 export const parametrageIndicateurModule = defineModule<
-  "parametrageIndicateur",
   ParametrageIndicateurExports,
   ParametrageIndicateurCradle
->({
+>()({
   name: "parametrageIndicateur",
   imports: ["shared"],
   exports: [],

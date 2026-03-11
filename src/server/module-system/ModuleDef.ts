@@ -15,11 +15,12 @@ type RemoveIndexSignature<T> = {
 
 type ModuleDef<
   TName extends string,
+  TImports extends string,
   TExports extends Record<string, unknown>,
   TCradle extends TExports,
 > = {
   name: TName;
-  imports: string[];
+  imports: TImports[];
   exports: (keyof TExports)[];
   register: (
     container: AwilixContainer<RemoveIndexSignature<TCradle>>,
@@ -27,13 +28,12 @@ type ModuleDef<
   ) => void;
 };
 
-const defineModule = <
-  TName extends string,
-  TExports extends Record<string, unknown>,
-  TCradle extends TExports,
->(
-  def: ModuleDef<TName, TExports, TCradle>,
-): ModuleDef<TName, TExports, TCradle> => def;
+const defineModule =
+  <TExports extends Record<string, unknown>, TCradle extends TExports>() =>
+  <TName extends string, TImports extends string>(
+    def: ModuleDef<TName, TImports, TExports, TCradle>,
+  ): ModuleDef<TName, TImports, TExports, TCradle> =>
+    def;
 
 const typedAsFunction = <TCradle>(): TypedAsFunction<TCradle> => {
   return asFunction as unknown as TypedAsFunction<TCradle>;

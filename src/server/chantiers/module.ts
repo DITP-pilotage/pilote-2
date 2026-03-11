@@ -63,11 +63,7 @@ type ChantierCradle = ChantierExports & {
 
 export type ChantierDependencies = ChantierCradle;
 
-export const chantiersModule = defineModule<
-  "chantiers",
-  ChantierExports,
-  ChantierCradle
->({
+export const chantiersModule = defineModule<ChantierExports, ChantierCradle>()({
   name: "chantiers",
   imports: ["shared", "indicateurTerritoireValeurEvenement"],
   exports: ["recupererChantiersQuery", "mesuresIndicateurQuery"],

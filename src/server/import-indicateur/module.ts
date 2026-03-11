@@ -45,10 +45,9 @@ type ImportIndicateurCradle = ImportIndicateurExports & {
 export type ImportIndicateurDependencies = ImportIndicateurCradle;
 
 export const importIndicateurModule = defineModule<
-  "importIndicateur",
   ImportIndicateurExports,
   ImportIndicateurCradle
->({
+>()({
   name: "importIndicateur",
   imports: ["shared", "indicateurTerritoireValeurEvenement"],
   exports: [],

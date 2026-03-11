@@ -8,18 +8,32 @@ import {
 import type { ModuleDef, TypedAsFunction } from "./ModuleDef";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-type AnyModuleDef = ModuleDef<string, any, any>;
+type AnyModuleDef = ModuleDef<string, string, any, any>;
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type ExtractCradle<M> = M extends ModuleDef<string, any, infer C> ? C : never;
+type ExtractCradle<M> =
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  M extends ModuleDef<string, string, any, infer C> ? C : never;
+
+type ExtractImports<M> =
+  M extends ModuleDef<string, infer I, any, any> // eslint-disable-line @typescript-eslint/no-explicit-any
+    ? I
+    : never;
+
+type InvalidImports<TModules extends readonly AnyModuleDef[]> = Exclude<
+  ExtractImports<TModules[number]>,
+  TModules[number]["name"]
+>;
 
 const bootModules = <TModules extends readonly AnyModuleDef[]>(
-  modules: [...TModules],
+  ...args: InvalidImports<TModules> extends never
+    ? [modules: [...TModules]]
+    : [modules: [...TModules], INVALID_IMPORTS: InvalidImports<TModules>]
 ): {
   getContainer: <N extends TModules[number]["name"]>(
     name: N,
   ) => AwilixContainer<ExtractCradle<Extract<TModules[number], { name: N }>>>;
 } => {
+  const modules = args[0];
   const containers = new Map<string, AwilixContainer>();
 
   // Phase 1 — create containers

@@ -39,10 +39,9 @@ type FicheConducteurCradle = FicheConducteurExports & {
 export type FicheConducteurDependencies = FicheConducteurCradle;
 
 export const ficheConducteurModule = defineModule<
-  "ficheConducteur",
   FicheConducteurExports,
   FicheConducteurCradle
->({
+>()({
   name: "ficheConducteur",
   imports: ["shared"],
   exports: [],

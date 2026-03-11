@@ -14,10 +14,9 @@ export type HabilitationsCoordinateurDependencies =
   HabilitationsCoordinateurCradle;
 
 export const habilitationsCoordinateurModule = defineModule<
-  "habilitationsCoordinateur",
   HabilitationsCoordinateurExports,
   HabilitationsCoordinateurCradle
->({
+>()({
   name: "habilitationsCoordinateur",
   imports: ["shared"],
   exports: [],

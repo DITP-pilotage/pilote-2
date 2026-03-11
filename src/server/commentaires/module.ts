@@ -16,10 +16,9 @@ type ImportCommentaireCradle = ImportCommentaireExports & {
 export type ImportCommentaireDependencies = ImportCommentaireCradle;
 
 export const importCommentaireModule = defineModule<
-  "importCommentaire",
   ImportCommentaireExports,
   ImportCommentaireCradle
->({
+>()({
   name: "importCommentaire",
   imports: ["shared"],
   exports: [],

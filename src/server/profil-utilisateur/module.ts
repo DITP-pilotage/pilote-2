@@ -22,10 +22,9 @@ type ProfilUtilisateurCradle = ProfilUtilisateurExports & {
 export type ProfilUtilisateurDependencies = ProfilUtilisateurCradle;
 
 export const profilUtilisateurModule = defineModule<
-  "profilUtilisateur",
   ProfilUtilisateurExports,
   ProfilUtilisateurCradle
->({
+>()({
   name: "profilUtilisateur",
   imports: ["shared"],
   exports: [],

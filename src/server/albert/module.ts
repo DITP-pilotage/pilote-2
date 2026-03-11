@@ -34,26 +34,24 @@ type AlbertCradle = AlbertExports & {
 
 export type AlbertDependencies = AlbertCradle;
 
-export const albertModule = defineModule<"albert", AlbertExports, AlbertCradle>(
-  {
-    name: "albert",
-    imports: ["shared"],
-    exports: [],
-    register: (container, fn) => {
-      container.register({
-        createGetTauxAvancementTerritoireTool: fn(
-          createGetTauxAvancementTerritoireTool,
-        ),
-        getChantiersEnRetardQuery: asClass(GetChantiersEnRetardQuery),
-        createGetChantiersEnRetardTool: fn(createGetChantiersEnRetardTool),
-        getChantiersEnDifficulteQuery: asClass(GetChantiersEnDifficulteQuery),
-        createGetChantiersEnDifficulteTool: fn(
-          createGetChantiersEnDifficulteTool,
-        ),
-        getValeursIndicateurQuery: asClass(GetValeursIndicateurQuery),
-        createGetValeursIndicateurTool: fn(createGetValeursIndicateurTool),
-        evaluerChatUseCase: asClass(EvaluerChatUseCase),
-      });
-    },
+export const albertModule = defineModule<AlbertExports, AlbertCradle>()({
+  name: "albert",
+  imports: ["shared"],
+  exports: [],
+  register: (container, fn) => {
+    container.register({
+      createGetTauxAvancementTerritoireTool: fn(
+        createGetTauxAvancementTerritoireTool,
+      ),
+      getChantiersEnRetardQuery: asClass(GetChantiersEnRetardQuery),
+      createGetChantiersEnRetardTool: fn(createGetChantiersEnRetardTool),
+      getChantiersEnDifficulteQuery: asClass(GetChantiersEnDifficulteQuery),
+      createGetChantiersEnDifficulteTool: fn(
+        createGetChantiersEnDifficulteTool,
+      ),
+      getValeursIndicateurQuery: asClass(GetValeursIndicateurQuery),
+      createGetValeursIndicateurTool: fn(createGetValeursIndicateurTool),
+      evaluerChatUseCase: asClass(EvaluerChatUseCase),
+    });
   },
-);
+});

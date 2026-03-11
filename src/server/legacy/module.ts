@@ -139,200 +139,196 @@ type LegacyCradle = LegacyExports & {
 
 export type LegacyDependencies = LegacyCradle;
 
-export const legacyModule = defineModule<"legacy", LegacyExports, LegacyCradle>(
-  {
-    name: "legacy",
-    imports: ["shared"],
-    exports: [],
-    register: (container, fn) => {
-      container.register({
-        chantierRepository: asClass(ChantierSQLRepository).scoped(),
-        axeRepository: asClass(AxeSQLRepository).scoped(),
-        synthèseDesRésultatsRepository: asClass(
-          SynthèseDesRésultatsSQLRepository,
+export const legacyModule = defineModule<LegacyExports, LegacyCradle>()({
+  name: "legacy",
+  imports: ["shared"],
+  exports: [],
+  register: (container, fn) => {
+    container.register({
+      chantierRepository: asClass(ChantierSQLRepository).scoped(),
+      axeRepository: asClass(AxeSQLRepository).scoped(),
+      synthèseDesRésultatsRepository: asClass(
+        SynthèseDesRésultatsSQLRepository,
+      ).scoped(),
+      ministèreRepository: asClass(MinistèreSQLRepository).scoped(),
+      indicateurRepository: asClass(IndicateurSQLRepository).scoped(),
+      commentaireRepository: asClass(CommentaireSQLRepository).scoped(),
+      objectifRepository: asClass(ObjectifSQLRepository).scoped(),
+      décisionStratégiqueRepository: asClass(
+        DécisionStratégiqueSQLRepository,
+      ).scoped(),
+      utilisateurRepository: asClass(UtilisateurSQLRepository).scoped(),
+      authentificationUtilisateurRepository: asClass(
+        PrismaUtilisateurRepository,
+      ).scoped(),
+      authentificationProfilRepository: asClass(
+        PrismaProfilRepository,
+      ).scoped(),
+      territoireRepository: asClass(TerritoireSQLRepository).scoped(),
+      ficheTerritorialeTerritoireRepository: asClass(
+        PrismaTerritoireRepository,
+      ).scoped(),
+      ficheTerritorialeChantierRepository: asClass(
+        PrismaChantierRepository,
+      ).scoped(),
+      ficheTerritorialeIndicateurRepository: asClass(
+        PrismaFicheTerritorialeIndicateurRepository,
+      ).scoped(),
+      ficheTerritorialeSyntheseDesResultatsRepository: asClass(
+        PrismaSyntheseDesResultatsRepository,
+      ).scoped(),
+      ficheTerritorialeMinistereRepository: asClass(
+        PrismaMinistereRepository,
+      ).scoped(),
+      chantierIndicateurRepository: asClass(
+        PrismaChantierIndicateurRepository,
+      ).scoped(),
+      profilRepository: asClass(ProfilSQLRepository).scoped(),
+      rapportRepository: asClass(PrismaRapportRepository).scoped(),
+      importIndicateurRepository: asClass(PrismaIndicateurRepository).scoped(),
+      gestionContenuRepository: asClass(
+        PrismaGestionContenuRepository,
+      ).scoped(),
+      tokenAPIService: fn(
+        () =>
+          new TokenAPIJWTService({ secret: configuration().tokenAPI.secret }),
+      ).scoped(),
+      tokenAPIInformationRepository: asClass(
+        PrismaTokenAPIInformationRepository,
+      ).scoped(),
+      récupérerStatistiquesAvancementChantiersUseCase: asClass(
+        RécupérerStatistiquesAvancementChantiersUseCase,
+      ).scoped(),
+      recupererRepartitionsMeteoChantiersUseCase: asClass(
+        RecupererRepartitionsMeteoChantiersUseCase,
+      ).scoped(),
+      agregerAvancementsChantiersUseCase: asClass(
+        AgregerAvancementsChantiersUseCase,
+      ).scoped(),
+      créerUnCommentaireUseCase: asClass(CréerUnCommentaireUseCase).scoped(),
+      récupérerCommentaireLePlusRécentUseCase: asClass(
+        RécupérerCommentaireLePlusRécentUseCase,
+      ).scoped(),
+      récupérerHistoriqueCommentaireUseCase: asClass(
+        RécupérerHistoriqueCommentaireUseCase,
+      ).scoped(),
+      récupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase:
+        asClass(
+          RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase,
         ).scoped(),
-        ministèreRepository: asClass(MinistèreSQLRepository).scoped(),
-        indicateurRepository: asClass(IndicateurSQLRepository).scoped(),
-        commentaireRepository: asClass(CommentaireSQLRepository).scoped(),
-        objectifRepository: asClass(ObjectifSQLRepository).scoped(),
-        décisionStratégiqueRepository: asClass(
-          DécisionStratégiqueSQLRepository,
+      créerUnObjectifUseCase: asClass(CréerUnObjectifUseCase).scoped(),
+      récupérerObjectifLePlusRécentUseCase: asClass(
+        RécupérerObjectifLePlusRécentUseCase,
+      ).scoped(),
+      récupérerHistoriqueObjectifUseCase: asClass(
+        RécupérerHistoriqueObjectifUseCase,
+      ).scoped(),
+      récupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase:
+        asClass(
+          RécupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase,
         ).scoped(),
-        utilisateurRepository: asClass(UtilisateurSQLRepository).scoped(),
-        authentificationUtilisateurRepository: asClass(
-          PrismaUtilisateurRepository,
-        ).scoped(),
-        authentificationProfilRepository: asClass(
-          PrismaProfilRepository,
-        ).scoped(),
-        territoireRepository: asClass(TerritoireSQLRepository).scoped(),
-        ficheTerritorialeTerritoireRepository: asClass(
-          PrismaTerritoireRepository,
-        ).scoped(),
-        ficheTerritorialeChantierRepository: asClass(
-          PrismaChantierRepository,
-        ).scoped(),
-        ficheTerritorialeIndicateurRepository: asClass(
-          PrismaFicheTerritorialeIndicateurRepository,
-        ).scoped(),
-        ficheTerritorialeSyntheseDesResultatsRepository: asClass(
-          PrismaSyntheseDesResultatsRepository,
-        ).scoped(),
-        ficheTerritorialeMinistereRepository: asClass(
-          PrismaMinistereRepository,
-        ).scoped(),
-        chantierIndicateurRepository: asClass(
-          PrismaChantierIndicateurRepository,
-        ).scoped(),
-        profilRepository: asClass(ProfilSQLRepository).scoped(),
-        rapportRepository: asClass(PrismaRapportRepository).scoped(),
-        importIndicateurRepository: asClass(
-          PrismaIndicateurRepository,
-        ).scoped(),
-        gestionContenuRepository: asClass(
-          PrismaGestionContenuRepository,
-        ).scoped(),
-        tokenAPIService: fn(
-          () =>
-            new TokenAPIJWTService({ secret: configuration().tokenAPI.secret }),
-        ).scoped(),
-        tokenAPIInformationRepository: asClass(
-          PrismaTokenAPIInformationRepository,
-        ).scoped(),
-        récupérerStatistiquesAvancementChantiersUseCase: asClass(
-          RécupérerStatistiquesAvancementChantiersUseCase,
-        ).scoped(),
-        recupererRepartitionsMeteoChantiersUseCase: asClass(
-          RecupererRepartitionsMeteoChantiersUseCase,
-        ).scoped(),
-        agregerAvancementsChantiersUseCase: asClass(
-          AgregerAvancementsChantiersUseCase,
-        ).scoped(),
-        créerUnCommentaireUseCase: asClass(CréerUnCommentaireUseCase).scoped(),
-        récupérerCommentaireLePlusRécentUseCase: asClass(
-          RécupérerCommentaireLePlusRécentUseCase,
-        ).scoped(),
-        récupérerHistoriqueCommentaireUseCase: asClass(
-          RécupérerHistoriqueCommentaireUseCase,
-        ).scoped(),
-        récupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase:
-          asClass(
-            RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase,
-          ).scoped(),
-        créerUnObjectifUseCase: asClass(CréerUnObjectifUseCase).scoped(),
-        récupérerObjectifLePlusRécentUseCase: asClass(
-          RécupérerObjectifLePlusRécentUseCase,
-        ).scoped(),
-        récupérerHistoriqueObjectifUseCase: asClass(
-          RécupérerHistoriqueObjectifUseCase,
-        ).scoped(),
-        récupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase:
-          asClass(
-            RécupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase,
-          ).scoped(),
-        créerUneDécisionStratégiqueUseCase: asClass(
-          CréerUneDécisionStratégiqueUseCase,
-        ).scoped(),
-        récupérerDécisionStratégiqueLaPlusRécenteUseCase: asClass(
-          RécupérerDécisionStratégiqueLaPlusRécenteUseCase,
-        ).scoped(),
-        récupérerHistoriqueDécisionStratégiqueUseCase: asClass(
-          RécupérerHistoriqueDécisionStratégiqueUseCase,
-        ).scoped(),
-        récupérerUnUtilisateurUseCase: asClass(
-          RécupérerUnUtilisateurUseCase,
-        ).scoped(),
-        récupérerUnProfilUseCase: asClass(RécupérerUnProfilUseCase).scoped(),
-        récupérerTerritoiresAvecNombreUtilisateursUseCase: asClass(
-          RécupérerTerritoiresAvecNombreUtilisateursUseCase,
-        ).scoped(),
-        recupererTokenAPIInformationUseCase: asClass(
-          RecupererTokenAPIInformationUseCase,
-        ).scoped(),
-        listerTokenAPIInformationUseCase: asClass(
-          ListerTokenAPIInformationUseCase,
-        ).scoped(),
-        récupérerMessageInformationUseCase: asClass(
-          RécupérerMessageInformationUseCase,
-        ).scoped(),
-        modifierMessageInformationUseCase: asClass(
-          ModifierMessageInformationUseCase,
-        ).scoped(),
-        supprimerTokenAPIUseCase: asClass(SupprimerTokenAPIUseCase).scoped(),
-        utilisateurAuthentifieJWTService: fn(
-          ({
+      créerUneDécisionStratégiqueUseCase: asClass(
+        CréerUneDécisionStratégiqueUseCase,
+      ).scoped(),
+      récupérerDécisionStratégiqueLaPlusRécenteUseCase: asClass(
+        RécupérerDécisionStratégiqueLaPlusRécenteUseCase,
+      ).scoped(),
+      récupérerHistoriqueDécisionStratégiqueUseCase: asClass(
+        RécupérerHistoriqueDécisionStratégiqueUseCase,
+      ).scoped(),
+      récupérerUnUtilisateurUseCase: asClass(
+        RécupérerUnUtilisateurUseCase,
+      ).scoped(),
+      récupérerUnProfilUseCase: asClass(RécupérerUnProfilUseCase).scoped(),
+      récupérerTerritoiresAvecNombreUtilisateursUseCase: asClass(
+        RécupérerTerritoiresAvecNombreUtilisateursUseCase,
+      ).scoped(),
+      recupererTokenAPIInformationUseCase: asClass(
+        RecupererTokenAPIInformationUseCase,
+      ).scoped(),
+      listerTokenAPIInformationUseCase: asClass(
+        ListerTokenAPIInformationUseCase,
+      ).scoped(),
+      récupérerMessageInformationUseCase: asClass(
+        RécupérerMessageInformationUseCase,
+      ).scoped(),
+      modifierMessageInformationUseCase: asClass(
+        ModifierMessageInformationUseCase,
+      ).scoped(),
+      supprimerTokenAPIUseCase: asClass(SupprimerTokenAPIUseCase).scoped(),
+      utilisateurAuthentifieJWTService: fn(
+        ({
+          utilisateurRepository,
+          tokenAPIInformationRepository,
+          authentificationProfilRepository,
+        }) =>
+          new UtilisateurAuthentifieJWTService({
             utilisateurRepository,
-            tokenAPIInformationRepository,
-            authentificationProfilRepository,
-          }) =>
-            new UtilisateurAuthentifieJWTService({
-              utilisateurRepository,
-              tokenAPIRepository: tokenAPIInformationRepository,
-              profilRepository: authentificationProfilRepository,
-            }),
-        ).scoped(),
-        creerTokenAPIUseCase: fn(
-          ({
+            tokenAPIRepository: tokenAPIInformationRepository,
+            profilRepository: authentificationProfilRepository,
+          }),
+      ).scoped(),
+      creerTokenAPIUseCase: fn(
+        ({
+          tokenAPIService,
+          tokenAPIInformationRepository,
+          authentificationUtilisateurRepository,
+        }) =>
+          new CreerTokenAPIUseCase({
             tokenAPIService,
             tokenAPIInformationRepository,
-            authentificationUtilisateurRepository,
-          }) =>
-            new CreerTokenAPIUseCase({
-              tokenAPIService,
-              tokenAPIInformationRepository,
-              utilisateurRepository: authentificationUtilisateurRepository,
-            }),
-        ).scoped(),
-        listerDonneesIndicateurParIndicIdUseCase: fn(
-          ({ chantierIndicateurRepository }) =>
-            new ListerDonneesIndicateurParIndicIdUseCase({
-              indicateurRepository: chantierIndicateurRepository,
-            }),
-        ).scoped(),
-        récupérerTerritoireParCodeUseCase: fn(
-          ({ ficheTerritorialeTerritoireRepository }) =>
-            new RécupérerTerritoireParCodeUseCase({
-              territoireRepository: ficheTerritorialeTerritoireRepository,
-            }),
-        ).scoped(),
-        récupérerTauxAvancementTerritoireUseCase: fn(
-          ({
-            ficheTerritorialeChantierRepository,
-            ficheTerritorialeTerritoireRepository,
-          }) =>
-            new RécupérerTauxAvancementTerritoireUseCase({
-              chantierRepository: ficheTerritorialeChantierRepository,
-              territoireRepository: ficheTerritorialeTerritoireRepository,
-            }),
-        ).scoped(),
-        récupérerRépartitionMétéoUseCase: fn(
-          ({
-            ficheTerritorialeChantierRepository,
-            ficheTerritorialeTerritoireRepository,
-          }) =>
-            new RécupérerRépartitionMétéoUseCase({
-              chantierRepository: ficheTerritorialeChantierRepository,
-              territoireRepository: ficheTerritorialeTerritoireRepository,
-            }),
-        ).scoped(),
-        récupérerListeChantierFicheTerritorialeUseCase: fn(
-          ({
-            ficheTerritorialeChantierRepository,
-            ficheTerritorialeTerritoireRepository,
-            ficheTerritorialeSyntheseDesResultatsRepository,
-            ficheTerritorialeIndicateurRepository,
-            ficheTerritorialeMinistereRepository,
-          }) =>
-            new RécupérerListeChantierFicheTerritorialeUseCase({
-              chantierRepository: ficheTerritorialeChantierRepository,
-              territoireRepository: ficheTerritorialeTerritoireRepository,
-              syntheseDesResultatsRepository:
-                ficheTerritorialeSyntheseDesResultatsRepository,
-              indicateurRepository: ficheTerritorialeIndicateurRepository,
-              ministereRepository: ficheTerritorialeMinistereRepository,
-            }),
-        ).scoped(),
-      });
-    },
+            utilisateurRepository: authentificationUtilisateurRepository,
+          }),
+      ).scoped(),
+      listerDonneesIndicateurParIndicIdUseCase: fn(
+        ({ chantierIndicateurRepository }) =>
+          new ListerDonneesIndicateurParIndicIdUseCase({
+            indicateurRepository: chantierIndicateurRepository,
+          }),
+      ).scoped(),
+      récupérerTerritoireParCodeUseCase: fn(
+        ({ ficheTerritorialeTerritoireRepository }) =>
+          new RécupérerTerritoireParCodeUseCase({
+            territoireRepository: ficheTerritorialeTerritoireRepository,
+          }),
+      ).scoped(),
+      récupérerTauxAvancementTerritoireUseCase: fn(
+        ({
+          ficheTerritorialeChantierRepository,
+          ficheTerritorialeTerritoireRepository,
+        }) =>
+          new RécupérerTauxAvancementTerritoireUseCase({
+            chantierRepository: ficheTerritorialeChantierRepository,
+            territoireRepository: ficheTerritorialeTerritoireRepository,
+          }),
+      ).scoped(),
+      récupérerRépartitionMétéoUseCase: fn(
+        ({
+          ficheTerritorialeChantierRepository,
+          ficheTerritorialeTerritoireRepository,
+        }) =>
+          new RécupérerRépartitionMétéoUseCase({
+            chantierRepository: ficheTerritorialeChantierRepository,
+            territoireRepository: ficheTerritorialeTerritoireRepository,
+          }),
+      ).scoped(),
+      récupérerListeChantierFicheTerritorialeUseCase: fn(
+        ({
+          ficheTerritorialeChantierRepository,
+          ficheTerritorialeTerritoireRepository,
+          ficheTerritorialeSyntheseDesResultatsRepository,
+          ficheTerritorialeIndicateurRepository,
+          ficheTerritorialeMinistereRepository,
+        }) =>
+          new RécupérerListeChantierFicheTerritorialeUseCase({
+            chantierRepository: ficheTerritorialeChantierRepository,
+            territoireRepository: ficheTerritorialeTerritoireRepository,
+            syntheseDesResultatsRepository:
+              ficheTerritorialeSyntheseDesResultatsRepository,
+            indicateurRepository: ficheTerritorialeIndicateurRepository,
+            ministereRepository: ficheTerritorialeMinistereRepository,
+          }),
+      ).scoped(),
+    });
   },
-);
+});
