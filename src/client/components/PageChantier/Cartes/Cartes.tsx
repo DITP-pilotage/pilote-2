@@ -99,6 +99,7 @@ const Cartes: FunctionComponent<CartesProps> = ({
                 <WidgetCartographieMeteo
                   chantierId={chantier.id}
                   initialTerritoiresCodes={[territoireCode]}
+                  jalon={jalon}
                   maille={mailleQuery}
                   territoireCode={territoireCode}
                 />

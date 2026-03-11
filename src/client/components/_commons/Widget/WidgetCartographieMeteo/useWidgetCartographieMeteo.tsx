@@ -1,19 +1,20 @@
-import { useCallback, useMemo, useState } from "react";
+import { ReactNode, useCallback, useMemo, useState } from "react";
 import api from "@/server/infrastructure/api/trpc/api";
 import { libellésMétéos, Météo } from "@/server/domain/météo/Météo.interface";
-import { CartographieDonnées } from "@/client/components/_commons/Cartographie/Cartographie.interface";
 import { ÉLÉMENTS_LÉGENDE_MÉTÉO_CHANTIERS } from "@/client/constants/légendes/élémentsDeLégendesCartographieMétéo";
 import { determinerRemplissageMeteo } from "@/client/utils/meteo/determinerRemplissageMeteo";
 
 export const useWidgetCartographieMeteo = (params: {
   chantierId: string;
   initialTerritoiresCodes: string[];
+  jalon: number;
 }) => {
-  const { chantierId, initialTerritoiresCodes } = params;
+  const { chantierId, initialTerritoiresCodes, jalon } = params;
 
   const { data: territoiresMeteo, isLoading } =
     api.chantier.recupererMeteosTerritoires.useQuery({
       chantierId,
+      jalon,
     });
 
   const [selectedTerritoireCodes, setSelectedTerritoireCodes] = useState<
@@ -21,30 +22,39 @@ export const useWidgetCartographieMeteo = (params: {
   >(initialTerritoiresCodes);
 
   const donneesCartographie = useMemo(() => {
-    if (!territoiresMeteo) return {} as CartographieDonnées;
+    if (!territoiresMeteo)
+      return {} as Record<
+        string,
+        { remplissage: string; libelle: string; contenuInfoBulle?: ReactNode }
+      >;
 
-    return territoiresMeteo.reduce((acc, territoire) => {
-      const meteo = territoire.meteo as Météo;
-      return {
-        ...acc,
-        [territoire.territoireCode]: {
-          contenu: (
-            <div className="fr-text--bold">
-              {territoire.estApplicable === false
-                ? "Non applicable"
-                : libellésMétéos[meteo]}
-            </div>
-          ),
-          remplissage: determinerRemplissageMeteo(
-            meteo,
-            ÉLÉMENTS_LÉGENDE_MÉTÉO_CHANTIERS,
-            territoire.estApplicable,
-          ),
-          libellé: territoire.territoireNom,
-          estApplicable: territoire.estApplicable,
-        },
-      };
-    }, {} as CartographieDonnées);
+    return territoiresMeteo.reduce(
+      (acc, territoire) => {
+        const meteo = territoire.meteo as Météo;
+        return {
+          ...acc,
+          [territoire.territoireCode]: {
+            remplissage: determinerRemplissageMeteo(
+              meteo,
+              ÉLÉMENTS_LÉGENDE_MÉTÉO_CHANTIERS,
+              territoire.estApplicable,
+            ),
+            libelle: territoire.territoireNom,
+            contenuInfoBulle: (
+              <div className="fr-text--bold">
+                {territoire.estApplicable === false
+                  ? "Non applicable"
+                  : libellésMétéos[meteo]}
+              </div>
+            ),
+          },
+        };
+      },
+      {} as Record<
+        string,
+        { remplissage: string; libelle: string; contenuInfoBulle?: ReactNode }
+      >,
+    );
   }, [territoiresMeteo]);
 
   const legende = useMemo(() => {

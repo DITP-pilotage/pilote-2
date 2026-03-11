@@ -1,14 +1,27 @@
-import { FunctionComponent } from "react";
+import { Fragment, FunctionComponent } from "react";
 import { Météo, libellésMétéos } from "@/server/domain/météo/Météo.interface";
 import { MeteoPicto } from "@/components/_commons/Meteo/Picto/MeteoPicto";
 import { MeteoTerritoireViewModel } from "@/server/chantiers/infrastructure/queries/GetChantierMeteosTerritoiresQuery";
+import {
+  SelecteurNew,
+  SelecteurNewOption,
+} from "@/components/_commons/SelecteurNew/SelecteurNew";
 
 type RepartitionNiveauxDeConfianceProps = {
   territoiresSelectionnes: MeteoTerritoireViewModel[];
   territoiresDisponibles: MeteoTerritoireViewModel[];
   onSupprimerTerritoire: (territoireCode: string) => void;
   onAjouterTerritoire: (territoireCode: string) => void;
+  jalon: number;
+  initialTerritoiresCodes: string[];
 };
+
+function formaterNomTerritoire(territoire: MeteoTerritoireViewModel): string {
+  if (territoire.maille === "DEPT") {
+    return `${territoire.codeInsee} - ${territoire.territoireNom}`;
+  }
+  return territoire.territoireNom;
+}
 
 export const RepartitionNiveauxDeConfiance: FunctionComponent<
   RepartitionNiveauxDeConfianceProps
@@ -17,44 +30,39 @@ export const RepartitionNiveauxDeConfiance: FunctionComponent<
   territoiresDisponibles,
   onSupprimerTerritoire,
   onAjouterTerritoire,
+  jalon,
+  initialTerritoiresCodes,
 }) => {
-  return (
-    <div className="fr-mt-2w">
-      <table className="fr-table fr-table--no-caption fr-mb-0">
-        <thead>
-          <tr>
-            <th scope="col">Territoire</th>
-            <th scope="col">Météo</th>
-            <th scope="col">Date de MAJ</th>
-            <th scope="col" />
-          </tr>
-        </thead>
-        <tbody>
-          {territoiresSelectionnes.map((territoire) => {
-            const meteo = territoire.meteo as Météo;
-            const dateMaj = territoire.dateDeMajQualitative
-              ? new Date(territoire.dateDeMajQualitative).toLocaleDateString(
-                  "fr-FR",
-                )
-              : "—";
+  const options: SelecteurNewOption<string>[] = territoiresDisponibles.map(
+    (territoire) => ({
+      libelle: formaterNomTerritoire(territoire),
+      valeur: territoire.territoireCode,
+    }),
+  );
 
-            return (
-              <tr key={territoire.territoireCode}>
-                <td>{territoire.territoireNom}</td>
-                <td>
-                  <span className="fr-flex fr-flex--row fr-flex--middle">
-                    <MeteoPicto meteo={meteo} />
-                    <span className="fr-ml-1w">
-                      {territoire.estApplicable === false
-                        ? "Non applicable"
-                        : libellésMétéos[meteo]}
-                    </span>
-                  </span>
-                </td>
-                <td>{dateMaj}</td>
-                <td>
+  return (
+    <div className="mt-4">
+      <div className="grid grid-cols-2 border-y">
+        <div />
+        <div className="text-center font-bold py-2">{jalon}</div>
+
+        {territoiresSelectionnes.map((territoire) => {
+          const meteo = territoire.meteo as Météo;
+          const dateMaj = territoire.dateDeMajQualitative
+            ? new Date(territoire.dateDeMajQualitative).toLocaleDateString(
+                "fr-FR",
+              )
+            : "—";
+          const estInitial = initialTerritoiresCodes.includes(
+            territoire.territoireCode,
+          );
+
+          return (
+            <Fragment key={territoire.territoireCode}>
+              <div className="py-2 flex items-center justify-between">
+                <span>{formaterNomTerritoire(territoire)}</span>
+                {!estInitial && (
                   <button
-                    className="fr-btn fr-btn--tertiary-no-outline fr-btn--sm"
                     onClick={() =>
                       onSupprimerTerritoire(territoire.territoireCode)
                     }
@@ -63,42 +71,33 @@ export const RepartitionNiveauxDeConfiance: FunctionComponent<
                   >
                     ✕
                   </button>
-                </td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
+                )}
+              </div>
+              <div className="py-2">
+                <div className="flex items-center gap-2">
+                  <MeteoPicto meteo={meteo} />
+                  <span>
+                    {territoire.estApplicable === false
+                      ? "Non applicable"
+                      : libellésMétéos[meteo]}
+                  </span>
+                </div>
+                <p className="text-sm text-gray-500">{dateMaj}</p>
+              </div>
+            </Fragment>
+          );
+        })}
+      </div>
 
       {territoiresDisponibles.length > 0 && (
-        <div className="fr-mt-1w">
-          <label
-            className="fr-label fr-mb-1v"
-            htmlFor="ajout-territoire-select"
-          >
-            Ajouter un territoire
-          </label>
-          <select
-            className="fr-select"
-            id="ajout-territoire-select"
-            onChange={(event) => {
-              if (event.target.value) {
-                onAjouterTerritoire(event.target.value);
-                event.target.value = "";
-              }
-            }}
-          >
-            <option value="">+ ajouter un territoire</option>
-            {territoiresDisponibles.map((territoire) => (
-              <option
-                key={territoire.territoireCode}
-                value={territoire.territoireCode}
-              >
-                {territoire.territoireNom}
-              </option>
-            ))}
-          </select>
-        </div>
+        <SelecteurNew
+          key={territoiresSelectionnes.length}
+          htmlName="ajout-territoire-select"
+          libelle="Ajouter un territoire"
+          onChange={(valeur) => onAjouterTerritoire(valeur)}
+          options={options}
+          placeholder="+ ajouter un territoire"
+        />
       )}
     </div>
   );

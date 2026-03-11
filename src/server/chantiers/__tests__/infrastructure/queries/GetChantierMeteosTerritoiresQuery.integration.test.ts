@@ -26,6 +26,14 @@ describe("GetChantierMeteosTerritoiresQuery", () => {
         meteo: "SOLEIL",
         est_applicable: true,
       });
+      await fixtures.chantierTerritoireJalon({
+        id: "CH-001",
+        territoire_code: "DEPT-75",
+        code_insee: "75",
+        maille: "DEPT",
+        zone_id: "zone-1",
+        jalon: 2025,
+      });
       await fixtures.chantierTerritoire({
         id: "CH-001",
         territoire_code: "REG-11",
@@ -34,6 +42,14 @@ describe("GetChantierMeteosTerritoiresQuery", () => {
         zone_id: "zone-2",
         meteo: "ORAGE",
         est_applicable: true,
+      });
+      await fixtures.chantierTerritoireJalon({
+        id: "CH-001",
+        territoire_code: "REG-11",
+        code_insee: "11",
+        maille: "REG",
+        zone_id: "zone-2",
+        jalon: 2025,
       });
       await fixtures.chantierTerritoire({
         id: "CH-001",
@@ -44,10 +60,19 @@ describe("GetChantierMeteosTerritoiresQuery", () => {
         meteo: "NUAGE",
         est_applicable: true,
       });
+      await fixtures.chantierTerritoireJalon({
+        id: "CH-001",
+        territoire_code: "NAT-FR",
+        code_insee: "FR",
+        maille: "NAT",
+        zone_id: "zone-3",
+        jalon: 2025,
+      });
 
       // When
       const result = await query.execute({
         chantierId: "CH-001",
+        jalon: 2025,
       });
 
       // Then
@@ -87,6 +112,14 @@ describe("GetChantierMeteosTerritoiresQuery", () => {
         meteo: "SOLEIL",
         est_applicable: true,
       });
+      await fixtures.chantierTerritoireJalon({
+        id: "CH-002",
+        territoire_code: "DEPT-75",
+        code_insee: "75",
+        maille: "DEPT",
+        zone_id: "zone-1",
+        jalon: 2025,
+      });
       await fixtures.chantierTerritoire({
         id: "CH-002",
         territoire_code: "DEPT-13",
@@ -96,10 +129,19 @@ describe("GetChantierMeteosTerritoiresQuery", () => {
         meteo: "ORAGE",
         est_applicable: false,
       });
+      await fixtures.chantierTerritoireJalon({
+        id: "CH-002",
+        territoire_code: "DEPT-13",
+        code_insee: "13",
+        maille: "DEPT",
+        zone_id: "zone-2",
+        jalon: 2025,
+      });
 
       // When
       const result = await query.execute({
         chantierId: "CH-002",
+        jalon: 2025,
       });
 
       // Then
@@ -133,10 +175,19 @@ describe("GetChantierMeteosTerritoiresQuery", () => {
         meteo: "NUAGE",
         est_applicable: true,
       });
+      await fixtures.chantierTerritoireJalon({
+        id: "CH-003",
+        territoire_code: "REG-11",
+        code_insee: "11",
+        maille: "REG",
+        zone_id: "zone-1",
+        jalon: 2025,
+      });
 
       // When
       const result = await query.execute({
         chantierId: "CH-003",
+        jalon: 2025,
       });
 
       // Then
@@ -164,10 +215,19 @@ describe("GetChantierMeteosTerritoiresQuery", () => {
         meteo: null,
         est_applicable: true,
       });
+      await fixtures.chantierTerritoireJalon({
+        id: "CH-004",
+        territoire_code: "DEPT-75",
+        code_insee: "75",
+        maille: "DEPT",
+        zone_id: "zone-1",
+        jalon: 2025,
+      });
 
       // When
       const result = await query.execute({
         chantierId: "CH-004",
+        jalon: 2025,
       });
 
       // Then
@@ -188,6 +248,7 @@ describe("GetChantierMeteosTerritoiresQuery", () => {
       // When
       const result = await query.execute({
         chantierId: "CH-005",
+        jalon: 2025,
       });
 
       // Then

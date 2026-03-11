@@ -1,7 +1,7 @@
 import { FunctionComponent } from "react";
 import { MailleInterne } from "@/server/domain/maille/Maille.interface";
-import Cartographie from "@/components/_commons/Cartographie/Cartographie";
-import CartographieLégendeListe from "@/components/_commons/Cartographie/Légende/Liste/CartographieLégendeListe";
+import { CartographieV2 } from "@/components/_commons/CartographieV2/CartographieV2";
+import { LegendeCartographie } from "@/components/_commons/CartographieV2/LegendeCartographie";
 import { TuileWidget } from "@/components/_commons/Widget/TuileWidget/TuileWidget";
 import { RepartitionNiveauxDeConfiance } from "./RepartitionNiveauxDeConfiance";
 import { useWidgetCartographieMeteo } from "./useWidgetCartographieMeteo";
@@ -11,11 +11,12 @@ type WidgetCartographieMeteoProps = {
   maille: MailleInterne;
   initialTerritoiresCodes: string[];
   territoireCode: string;
+  jalon: number;
 };
 
 export const WidgetCartographieMeteo: FunctionComponent<
   WidgetCartographieMeteoProps
-> = ({ chantierId, maille, initialTerritoiresCodes, territoireCode }) => {
+> = ({ chantierId, maille, initialTerritoiresCodes, jalon }) => {
   const {
     donneesCartographie,
     legende,
@@ -28,6 +29,7 @@ export const WidgetCartographieMeteo: FunctionComponent<
   } = useWidgetCartographieMeteo({
     chantierId,
     initialTerritoiresCodes,
+    jalon,
   });
 
   if (isLoading) {
@@ -40,17 +42,20 @@ export const WidgetCartographieMeteo: FunctionComponent<
 
   return (
     <TuileWidget titre="Carte des valeurs météo 2026">
-      <Cartographie
-        auClicTerritoireCallback={(codeInsee) => auClicTerritoire(codeInsee)}
-        données={donneesCartographie}
-        mailleSelectionnee={maille}
-        pathname={null}
-        territoireCode={territoireCode}
+      <CartographieV2
+        auClicTerritoire={auClicTerritoire}
+        donnees={donneesCartographie}
+        maille={maille}
+        territoiresSelectionnes={territoiresSelectionnes.map(
+          (territoire) => territoire.territoireCode,
+        )}
       >
-        <CartographieLégendeListe contenu={legende} />
-      </Cartographie>
+        <LegendeCartographie items={legende} />
+      </CartographieV2>
 
       <RepartitionNiveauxDeConfiance
+        initialTerritoiresCodes={initialTerritoiresCodes}
+        jalon={jalon}
         onAjouterTerritoire={ajouterTerritoire}
         onSupprimerTerritoire={supprimerTerritoire}
         territoiresDisponibles={territoiresDisponibles}
