@@ -7,9 +7,9 @@ import {
   typesCommentaireMailleRégionaleOuDépartementale,
 } from "@/server/domain/chantier/commentaire/Commentaire.interface";
 import { libellésTypesCommentaire } from "@/client/constants/libellésCommentaire";
-import { formaterDate } from "@/client/utils/date/date";
 import { nettoyerUneChaîneDeCaractèresPourAffichageHTML } from "@/client/utils/strings";
 import { Badge } from "@/components/_commons/Badge";
+import { PiloteDateFormatter } from "@/server/rapports-hebdomadaires/infrastructure/adapters/PiloteDateFormatter";
 
 interface CommentairesRapportDetailleProps {
   commentaires: Commentaire[];
@@ -46,7 +46,7 @@ const CommentairesRapportDetaille: FunctionComponent<
               {commentaire ? (
                 <>
                   <p className="text-xs text-dsfr-mention-grey mb-1">
-                    {`Mis à jour le ${formaterDate(commentaire.date, "DD/MM/YYYY")}`}
+                    {`Mis à jour le ${PiloteDateFormatter.isoDateFranceMetropolitaine(commentaire.date)}`}
                     {!!commentaire.auteur && ` | Par ${commentaire.auteur}`}
                   </p>
                   <p

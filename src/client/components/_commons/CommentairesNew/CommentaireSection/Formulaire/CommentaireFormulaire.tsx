@@ -12,12 +12,12 @@ import {
   LIMITE_CARACTÈRES_COMMENTAIRE,
   validationCommentaireFormulaire,
 } from "@/validation/commentaire";
-import { formaterDate } from "@/client/utils/date/date";
 import { Icone } from "@/components/_commons/Icone";
 import { SuccessIcon } from "@/components/_commons/Icones/SuccessIcon";
 import { ArrowGoBack1Icon } from "@/components/_commons/Icones/ArrowGoBack1Icon";
 import { Bouton } from "@/components/_commons/Bouton/Bouton";
 import { CommentaireAction } from "@/components/_commons/CommentairesNew/CommentaireSection/AlerteCommentaire";
+import { PiloteDateFormatter } from "@/server/rapports-hebdomadaires/infrastructure/adapters/PiloteDateFormatter";
 import { useModifierCommentaire } from "./useModifierCommentaire";
 
 interface CommentaireFormulaireProps {
@@ -57,7 +57,7 @@ const CommentaireFormulaire: FunctionComponent<CommentaireFormulaireProps> = ({
         Modifier le commentaire
       </Titre>
       <p className="fr-text--xs mb-4 text-dsfr-mention-grey">
-        {`Vous pouvez apporter ci-dessous des modifications au commentaire que vous avez posté le ${formaterDate(commentaire?.dateModification, "DD/MM/YYYY")}. Après validation, le commentaire modifié annulera et remplacera le commentaire actuel.`}
+        {`Vous pouvez apporter ci-dessous des modifications au commentaire que vous avez posté le ${PiloteDateFormatter.isoDateFranceMetropolitaine(commentaire!.dateModification)}. Après validation, le commentaire modifié annulera et remplacera le commentaire actuel.`}
       </p>
       <div
         className={`flex flex-col fr-mb-0 fr-input-group ${errors.contenu ? "fr-input-group--error" : ""}`}

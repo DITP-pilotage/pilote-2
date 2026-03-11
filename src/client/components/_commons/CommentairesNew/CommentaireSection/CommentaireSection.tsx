@@ -7,7 +7,6 @@ import {
 } from "@/server/domain/chantier/commentaire/Commentaire.interface";
 import { Maille } from "@/server/domain/maille/Maille.interface";
 import BandeauInformation from "@/components/_commons/BandeauInformation/BandeauInformation";
-import { formaterDate } from "@/client/utils/date/date";
 import { libellésTypesCommentaire } from "@/client/constants/libellésCommentaire";
 import AlerteCommentaire, {
   CommentaireAction,
@@ -17,6 +16,7 @@ import HistoriqueCommentaire from "@/components/_commons/CommentairesNew/Comment
 import CommentaireFormulaire from "@/components/_commons/CommentairesNew/CommentaireSection/Formulaire/CommentaireFormulaire";
 import BoutonNouveauCommentaire from "@/components/_commons/CommentairesNew/CommentaireSection/BoutonNouveauCommentaire/BoutonNouveauCommentaire";
 import BoutonEditerBrouillonCommentaire from "@/components/_commons/CommentairesNew/CommentaireSection/BoutonNouveauCommentaire/BoutonEditerBrouillonCommentaire";
+import { PiloteDateFormatter } from "@/server/rapports-hebdomadaires/infrastructure/adapters/PiloteDateFormatter";
 
 interface CommentaireSectionProps {
   type: TypeCommentaireChantier;
@@ -54,7 +54,7 @@ const CommentaireSection: FunctionComponent<CommentaireSectionProps> = ({
       {commentaireBrouillon?.dateModification ? (
         <div className="my-2">
           <BandeauInformation bandeauType="INFO">
-            {`Vous avez enregistré un nouveau commentaire en tant que brouillon le ${formaterDate(commentaireBrouillon.dateModification, "DD/MM/YYYY")}`}
+            {`Vous avez enregistré un nouveau commentaire en tant que brouillon le ${PiloteDateFormatter.isoDateFranceMetropolitaine(commentaireBrouillon.dateModification)}`}
           </BandeauInformation>
         </div>
       ) : null}
