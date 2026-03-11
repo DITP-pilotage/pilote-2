@@ -8,7 +8,7 @@ import { IndicateurRepository } from "@/server/chantiers/domain/ports/Indicateur
 import { PropositionValeurAvancementRepository } from "@/server/chantiers/domain/ports/PropositionValeurAvancementRepository";
 import { PrismaPropositionValeurAvancementRepository } from "@/server/chantiers/infrastructure/adapters/PrismaPropositionValeurAvancementRepository";
 import type { IndicateurTerritoireValeurEvenementExports } from "@/server/indicateur-territoire-valeur-evenement/module";
-import { DatajobsExecutionQueries } from "@/server/datajobs-execution/DatajobsExecution";
+import type { DatajobsExecutionExports } from "@/server/datajobs-execution/module";
 import { defineModule, type ExtractScope } from "@/server/module-system";
 import { TerritoireRepository } from "./domain/ports/TerritoireRepository";
 import { PrismaTerritoireRepository } from "./infrastructure/adapters/PrismaTerritoireRepository";
@@ -37,7 +37,8 @@ type ChantierExports = {
 };
 
 type ChantierCradle = ChantierExports &
-  IndicateurTerritoireValeurEvenementExports & {
+  IndicateurTerritoireValeurEvenementExports &
+  DatajobsExecutionExports & {
     chantierRepository: ChantierRepository;
     indicateurRepository: IndicateurRepository;
     territoireRepository: TerritoireRepository;
@@ -54,7 +55,6 @@ type ChantierCradle = ChantierExports &
     recupererChantiersAccessiblesEnLectureUseCaseRapportDetailleV2: RecupererChantiersAccessiblesEnLectureUseCaseRapportDetailleV2;
     recupererChantierUseCaseV2: RecupererChantierUseCaseV2;
     listerDetailsIndicateurTerritoireUseCaseV2: ListerDetailsIndicateurTerritoireUseCaseV2;
-    datajobsExecutionQueries: DatajobsExecutionQueries;
     rapportPropositionsAvancementRepository: RapportPropositionsAvancementRepository;
     creerLesRapportsPropositionsUseCase: CreerLesRapportsPropositionsUseCase;
     envoyerLesRapportsPropositionsUseCase: EnvoyerLesRapportsPropositionsUseCase;
@@ -62,7 +62,11 @@ type ChantierCradle = ChantierExports &
 
 export const chantiersModule = defineModule<ChantierExports, ChantierCradle>()({
   name: "chantiers",
-  imports: ["shared", "indicateurTerritoireValeurEvenement"],
+  imports: [
+    "shared",
+    "indicateurTerritoireValeurEvenement",
+    "datajobsExecution",
+  ],
   exports: ["recupererChantiersQuery", "mesuresIndicateurQuery"],
   register: (container, { asModuleClass }) => {
     container.register({
@@ -108,7 +112,6 @@ export const chantiersModule = defineModule<ChantierExports, ChantierCradle>()({
       listerDetailsIndicateurTerritoireUseCaseV2: asModuleClass(
         ListerDetailsIndicateurTerritoireUseCaseV2,
       ),
-      datajobsExecutionQueries: asModuleClass(DatajobsExecutionQueries),
       recupererChantiersQuery: asModuleClass(
         RecupererChantiersApplicablesParTerritoiresQuery,
       ),

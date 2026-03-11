@@ -18,6 +18,7 @@ export const moduleNames = [
   "rapportsHebdomadaires",
   "albert",
   "parametrageCentreAide",
+  "datajobsExecution",
   "legacy",
 ] as const;
 

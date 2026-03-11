@@ -33,7 +33,6 @@ import { getAnneeDateDeBascule } from "@/components/_commons/IndicateursChantier
 import { configuration, configurationFeatureFlip } from "@/config";
 import { getContainer } from "@/server/dependances";
 import { ChantierRapportDetailleContrat } from "@/server/chantiers/app/contrats/ChantierRapportDetailleContratV2";
-import { getInitialContainerWithTransversalDependencies } from "@/server/InitialDependencies";
 import { loadRapportDetailleSearchParams } from "@/client/searchParams/accueilSearchParams";
 
 interface NextPageRapportDétailléProps {
@@ -329,10 +328,9 @@ export const getServerSideProps: GetServerSideProps<
   );
   const indicateursGroupésParChantier =
     await indicateursRepository.récupérerGroupésParChantier(chantiersIds);
-  const datajobsExecution =
-    await getInitialContainerWithTransversalDependencies()
-      .resolve("datajobsExecutionQueries")
-      .recupererEtatCourant();
+  const datajobsExecution = await getContainer("datajobsExecution")
+    .resolve("datajobsExecutionQueries")
+    .recupererEtatCourant();
   const détailsIndicateursGroupésParChantier =
     await indicateursRepository.récupérerDétailsGroupésParChantierEtParIndicateur(
       chantiersIds,

@@ -8,7 +8,7 @@ import {
 import Chantier from "@/server/domain/chantier/Chantier.interface";
 import { groupByAndTransform } from "@/client/utils/arrays";
 import { territoireCodeVersMailleCodeInsee } from "@/server/utils/territoires";
-import { getInitialContainerWithTransversalDependencies } from "@/server/InitialDependencies";
+import { PrismaPilote } from "@/server/db/PrismaPilote";
 
 export const NOMS_TYPES_COMMENTAIRES: Record<string, TypeCommentaireChantier> =
   {
@@ -33,8 +33,11 @@ export const CODES_TYPES_COMMENTAIRES: Record<TypeCommentaireChantier, string> =
   };
 
 export default class CommentaireSQLRepository implements CommentaireRepository {
-  private prismaClient =
-    getInitialContainerWithTransversalDependencies().resolve("prisma");
+  private prismaClient: PrismaPilote;
+
+  constructor({ prisma }: { prisma: PrismaPilote }) {
+    this.prismaClient = prisma;
+  }
 
   get prisma() {
     return this.prismaClient.getInstance();

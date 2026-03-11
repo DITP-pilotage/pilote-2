@@ -24,6 +24,7 @@ import { profilUtilisateurModule } from "./profil-utilisateur/module";
 import { rapportsHebdomadairesModule } from "./rapports-hebdomadaires/module";
 import { albertModule } from "./albert/module";
 import { parametrageCentreAideModule } from "./parametrage-centre-aide/module";
+import { datajobsExecutionModule } from "./datajobs-execution/module";
 import { legacyModule } from "./legacy/module";
 
 const allModules = [
@@ -46,6 +47,7 @@ const allModules = [
   rapportsHebdomadairesModule,
   albertModule,
   parametrageCentreAideModule,
+  datajobsExecutionModule,
   legacyModule,
 ];
 
@@ -86,6 +88,7 @@ function registerContainer(): ContainerDependencies {
     importDecisionStrategique: getContainer("importDecisionStrategique"),
     importObjectif: getContainer("importObjectif"),
     importSyntheseDesResultats: getContainer("importSyntheseDesResultats"),
+    datajobsExecution: getContainer("datajobsExecution"),
     legacy: getContainer("legacy"),
   };
 }

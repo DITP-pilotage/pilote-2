@@ -18,7 +18,7 @@ import Chantier from "@/server/domain/chantier/Chantier.interface";
 import { comparerDates, formatDate } from "@/client/utils/date/date";
 import { verifyValeurIsNotNullOrUndefined } from "@/server/utils/VerifyValeurIsNotNullOrUndefined";
 import { EvenementValeurEnum } from "@/server/app/domain/EvenementValeurEnum";
-import { getInitialContainerWithTransversalDependencies } from "@/server/InitialDependencies";
+import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { calculerDateDernierImport } from "@/server/chantiers/domain/calculerDateDernierImport";
 
 export interface historique_valeurs {
@@ -29,8 +29,11 @@ export interface historique_valeurs {
 }
 
 export default class IndicateurSQLRepository implements IndicateurRepository {
-  private prismaClient =
-    getInitialContainerWithTransversalDependencies().resolve("prisma");
+  private prismaClient: PrismaPilote;
+
+  constructor({ prisma }: { prisma: PrismaPilote }) {
+    this.prismaClient = prisma;
+  }
 
   get prisma() {
     return this.prismaClient.getInstance();

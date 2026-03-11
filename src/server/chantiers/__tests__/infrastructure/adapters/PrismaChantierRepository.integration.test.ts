@@ -7,12 +7,15 @@ import { OptionsExport } from "@/server/usecase/chantier/OptionsExport";
 import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
 import { fixtures } from "@/server/infrastructure/test/fixtures";
 import { getPrisma } from "@/server/db/PrismaTransaction";
+import { PrismaPilote } from "@/server/db/PrismaPilote";
 
 describe("PrismaChantierRepository", () => {
   let prismaChantierRepository: PrismaChantierRepository;
 
   beforeEach(() => {
-    prismaChantierRepository = new PrismaChantierRepository();
+    prismaChantierRepository = new PrismaChantierRepository({
+      prisma: new PrismaPilote(),
+    });
   });
 
   describe("#recupererPourExports", () => {
