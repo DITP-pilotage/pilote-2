@@ -9,7 +9,7 @@ import { NouveauteRepository } from "./domain/ports/NouveauteRepository";
 import { ListerNouveautesUseCase } from "./usecases/ListerNouveautesUseCase";
 import { ModifierNouveauteUseCase } from "./usecases/ModifierNouveauteUseCase";
 
-type ParametrageNouveautesCradle = NoExports & {
+type ParametrageNouveautesCradle = {
   creerNouveauteUseCase: CreerNouveauteUseCase;
   nouveauteRepository: NouveauteRepository;
   listerNouveautesUseCase: ListerNouveautesUseCase;

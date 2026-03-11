@@ -92,5 +92,6 @@ export const indicateurTerritoireValeurEvenementModule = defineModule<
   },
 });
 
+export type { IndicateurTerritoireValeurEvenementExports };
 type Scope = ExtractScope<typeof indicateurTerritoireValeurEvenementModule>;
 export type Inject<K extends keyof Scope> = Pick<Scope, K>;

@@ -213,5 +213,6 @@ export const gestionUtilisateurModule = defineModule<
   },
 });
 
+export type { GestionUtilisateurExports };
 type Scope = ExtractScope<typeof gestionUtilisateurModule>;
 export type Inject<K extends keyof Scope> = Pick<Scope, K>;

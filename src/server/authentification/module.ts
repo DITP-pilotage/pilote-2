@@ -6,7 +6,7 @@ import {
   type NoExports,
 } from "@/server/module-system";
 
-type AuthentificationCradle = NoExports & {
+type AuthentificationCradle = {
   utilisateurRepository: UtilisateurRepository;
 };
 

@@ -48,7 +48,8 @@ const defineModule =
   ): ModuleDef<TName, TExports, TCradle> =>
     def;
 
-type NoExports = Record<string, never>;
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
+type NoExports = {};
 
 type ExtractScope<M> =
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

@@ -12,7 +12,7 @@ import {
   type NoExports,
 } from "@/server/module-system";
 
-type ProfilUtilisateurCradle = NoExports & {
+type ProfilUtilisateurCradle = {
   profilUtilisateurRepository: ProfilUtilisateurRepository;
   profilModifieSideEffects: ProfilModifieSideEffects;
   modifierMonProfilUseCase: ModifierMonProfilUseCase;

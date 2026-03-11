@@ -82,7 +82,7 @@ import {
   type NoExports,
 } from "@/server/module-system";
 
-type LegacyCradle = NoExports & {
+type LegacyCradle = {
   chantierRepository: ChantierRepository;
   axeRepository: AxeRepository;
   synthèseDesRésultatsRepository: SynthèseDesRésultatsRepository;

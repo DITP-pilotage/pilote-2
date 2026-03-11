@@ -37,7 +37,7 @@ import { ModifierDroitsUtilisateurHandler } from "./handlers/ModifierDroitsUtili
 import { NotificationEmailService } from "./services/NotificationEmailService";
 import { TransmettreAppreciationHandler } from "./handlers/TransmettreAppreciationHandler";
 
-type PiloteEvalCradle = NoExports & {
+type PiloteEvalCradle = {
   afficherAutoEvaluation: AfficherAutoEvaluationQuery;
   afficherConsolidationQuery: AfficherConsolidationQuery;
   afficherInstructionQuery: AfficherInstructionQuery;

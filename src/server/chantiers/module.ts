@@ -7,7 +7,7 @@ import { PrismaIndicateurRepository } from "@/server/chantiers/infrastructure/ad
 import { IndicateurRepository } from "@/server/chantiers/domain/ports/IndicateurRepository";
 import { PropositionValeurAvancementRepository } from "@/server/chantiers/domain/ports/PropositionValeurAvancementRepository";
 import { PrismaPropositionValeurAvancementRepository } from "@/server/chantiers/infrastructure/adapters/PrismaPropositionValeurAvancementRepository";
-import type { IndicateurTerritoireValeurEvenementRepository } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/IndicateurTerritoireValeurEvenementRepository";
+import type { IndicateurTerritoireValeurEvenementExports } from "@/server/indicateur-territoire-valeur-evenement/module";
 import { DatajobsExecutionQueries } from "@/server/datajobs-execution/DatajobsExecution";
 import { defineModule, type ExtractScope } from "@/server/module-system";
 import { TerritoireRepository } from "./domain/ports/TerritoireRepository";
@@ -36,29 +36,29 @@ type ChantierExports = {
   mesuresIndicateurQuery: RecupererMesuresIndicateurParPeriodeQuery;
 };
 
-type ChantierCradle = ChantierExports & {
-  chantierRepository: ChantierRepository;
-  indicateurRepository: IndicateurRepository;
-  territoireRepository: TerritoireRepository;
-  ministereRepository: MinistereRepository;
-  propositionValeurAvancementRepository: PropositionValeurAvancementRepository;
-  utilisateurRepository: UtilisateurRepository;
-  envoieEmailService: EnvoieEmailService;
-  recupererDonneesChantierQuery: RecupererDonneesChantierQuery;
-  exportCsvDesChantiersUseCase: ExportCsvDesChantiersUseCase;
-  exportCsvDesIndicateursUseCase: ExportCsvDesIndicateursUseCase;
-  exportCsvDesHistoriquesIndicateursUseCase: ExportCsvDesHistoriquesIndicateursUseCase;
-  recupererDetailsIndicateursV2UseCase: RecupererDetailsIndicateursV2UseCase;
-  recupererChantiersAccessiblesEnLectureUseCaseV2: RecupererChantiersAccessiblesEnLectureUseCaseV2;
-  recupererChantiersAccessiblesEnLectureUseCaseRapportDetailleV2: RecupererChantiersAccessiblesEnLectureUseCaseRapportDetailleV2;
-  recupererChantierUseCaseV2: RecupererChantierUseCaseV2;
-  listerDetailsIndicateurTerritoireUseCaseV2: ListerDetailsIndicateurTerritoireUseCaseV2;
-  indicateurTerritoireValeurEvenementRepository: IndicateurTerritoireValeurEvenementRepository;
-  datajobsExecutionQueries: DatajobsExecutionQueries;
-  rapportPropositionsAvancementRepository: RapportPropositionsAvancementRepository;
-  creerLesRapportsPropositionsUseCase: CreerLesRapportsPropositionsUseCase;
-  envoyerLesRapportsPropositionsUseCase: EnvoyerLesRapportsPropositionsUseCase;
-};
+type ChantierCradle = ChantierExports &
+  IndicateurTerritoireValeurEvenementExports & {
+    chantierRepository: ChantierRepository;
+    indicateurRepository: IndicateurRepository;
+    territoireRepository: TerritoireRepository;
+    ministereRepository: MinistereRepository;
+    propositionValeurAvancementRepository: PropositionValeurAvancementRepository;
+    utilisateurRepository: UtilisateurRepository;
+    envoieEmailService: EnvoieEmailService;
+    recupererDonneesChantierQuery: RecupererDonneesChantierQuery;
+    exportCsvDesChantiersUseCase: ExportCsvDesChantiersUseCase;
+    exportCsvDesIndicateursUseCase: ExportCsvDesIndicateursUseCase;
+    exportCsvDesHistoriquesIndicateursUseCase: ExportCsvDesHistoriquesIndicateursUseCase;
+    recupererDetailsIndicateursV2UseCase: RecupererDetailsIndicateursV2UseCase;
+    recupererChantiersAccessiblesEnLectureUseCaseV2: RecupererChantiersAccessiblesEnLectureUseCaseV2;
+    recupererChantiersAccessiblesEnLectureUseCaseRapportDetailleV2: RecupererChantiersAccessiblesEnLectureUseCaseRapportDetailleV2;
+    recupererChantierUseCaseV2: RecupererChantierUseCaseV2;
+    listerDetailsIndicateurTerritoireUseCaseV2: ListerDetailsIndicateurTerritoireUseCaseV2;
+    datajobsExecutionQueries: DatajobsExecutionQueries;
+    rapportPropositionsAvancementRepository: RapportPropositionsAvancementRepository;
+    creerLesRapportsPropositionsUseCase: CreerLesRapportsPropositionsUseCase;
+    envoyerLesRapportsPropositionsUseCase: EnvoyerLesRapportsPropositionsUseCase;
+  };
 
 export const chantiersModule = defineModule<ChantierExports, ChantierCradle>()({
   name: "chantiers",
@@ -119,5 +119,6 @@ export const chantiersModule = defineModule<ChantierExports, ChantierCradle>()({
   },
 });
 
+export type { ChantierExports };
 type Scope = ExtractScope<typeof chantiersModule>;
 export type Inject<K extends keyof Scope> = Pick<Scope, K>;

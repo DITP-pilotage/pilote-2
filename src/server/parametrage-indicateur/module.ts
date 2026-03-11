@@ -20,7 +20,7 @@ import {
   type NoExports,
 } from "@/server/module-system";
 
-type ParametrageIndicateurCradle = NoExports & {
+type ParametrageIndicateurCradle = {
   historisationModificationRepository: HistorisationModificationRepository;
   creerUneMetadataIndicateurUseCase: CreerUneMetadataIndicateurUseCase;
   modifierUneMetadataIndicateurUseCase: ModifierUneMetadataIndicateurUseCase;

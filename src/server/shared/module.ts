@@ -9,7 +9,7 @@ import { type Transaction } from "@/server/db/Transaction";
 import { PrismaTransaction } from "@/server/db/PrismaTransaction";
 import { defineModule, type NoExports } from "@/server/module-system";
 
-type SharedCradle = NoExports & {
+type SharedCradle = {
   prisma: PrismaPilote;
   transaction: Transaction;
   emailManager: EmailManager;

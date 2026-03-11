@@ -13,7 +13,7 @@ import {
 } from "@/server/module-system";
 import type { PrismaPilote } from "@/server/db/PrismaPilote";
 
-type AlbertCradle = NoExports & {
+type AlbertCradle = {
   prisma: PrismaPilote;
   createGetTauxAvancementTerritoireTool: ReturnType<
     typeof createGetTauxAvancementTerritoireTool

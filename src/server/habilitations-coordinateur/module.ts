@@ -6,7 +6,7 @@ import {
   type NoExports,
 } from "@/server/module-system";
 
-type HabilitationsCoordinateurCradle = NoExports & {
+type HabilitationsCoordinateurCradle = {
   recupererLesChantiersTerritorialisesQuery: RecupererLesChantiersTerritorialisesQuery;
   ajouterLesChantierAuxHabilitationsHandler: AjouterLesChantierAuxHabilitationsHandler;
 };

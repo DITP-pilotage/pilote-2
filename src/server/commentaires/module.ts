@@ -8,7 +8,7 @@ import {
   type NoExports,
 } from "@/server/module-system";
 
-type ImportCommentaireCradle = NoExports & {
+type ImportCommentaireCradle = {
   importCommentaireAPIHandler: ImportCommentaireAPIHandler;
   importerCommentairesUseCase: ImporterCommentairesUseCase;
   commentaireRepository: CommentaireRepository;

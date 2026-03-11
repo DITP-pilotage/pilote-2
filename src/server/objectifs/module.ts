@@ -8,7 +8,7 @@ import {
   type NoExports,
 } from "@/server/module-system";
 
-type ImportObjectifCradle = NoExports & {
+type ImportObjectifCradle = {
   importObjectifAPIHandler: ImportObjectifAPIHandler;
   importerObjectifsUseCase: ImporterObjectifsUseCase;
   objectifRepository: ObjectifRepository;

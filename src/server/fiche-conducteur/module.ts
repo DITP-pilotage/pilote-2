@@ -22,7 +22,7 @@ import {
   type NoExports,
 } from "@/server/module-system";
 
-type FicheConducteurCradle = NoExports & {
+type FicheConducteurCradle = {
   ficheConducteurHandler: FicheConducteurHandler;
   recupererChantierFicheConducteurUseCase: RécupererChantierFicheConducteurUseCase;
   recupererAvancementUseCase: RécupérerAvancementUseCase;

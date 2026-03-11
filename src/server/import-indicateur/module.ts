@@ -17,7 +17,7 @@ import { VerifierFichierIndicateurImporteUseCase } from "@/server/import-indicat
 import { FetchHttpClient } from "@/server/import-indicateur/infrastructure/adapters/FetchHttpClient";
 import { HttpClient } from "@/server/import-indicateur/domain/ports/HttpClient.interface";
 import { ImportDonneeIndicateurAPIHandler } from "@/server/import-indicateur/infrastructure/handlers/ImportDonneeIndicateurAPIHandler";
-import type { IndicateurTerritoireValeurEvenementRepository } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/IndicateurTerritoireValeurEvenementRepository";
+import type { IndicateurTerritoireValeurEvenementExports } from "@/server/indicateur-territoire-valeur-evenement/module";
 import {
   defineModule,
   type ExtractScope,
@@ -26,7 +26,7 @@ import {
 import { PropositionValeurAvancementRepository } from "./domain/ports/PropositionValeurAvancementRepository";
 import { PrismaPropositionValeurAvancementRepository } from "./infrastructure/adapters/PrismaPropositionValeurAvancementRepository";
 
-type ImportIndicateurCradle = NoExports & {
+type ImportIndicateurCradle = IndicateurTerritoireValeurEvenementExports & {
   httpClient: HttpClient;
   publierFichierImportIndicateurHandler: PublierFichierImportIndicateurHandler;
   publierFichierIndicateurImporteUseCase: PublierFichierIndicateurImporteUseCase;
@@ -40,7 +40,6 @@ type ImportIndicateurCradle = NoExports & {
   rapportRepository: RapportRepository;
   importDonneeIndicateurAPIHandler: ImportDonneeIndicateurAPIHandler;
   propositionValeurAvancementRepository: PropositionValeurAvancementRepository;
-  indicateurTerritoireValeurEvenementRepository: IndicateurTerritoireValeurEvenementRepository;
 };
 
 export const importIndicateurModule = defineModule<

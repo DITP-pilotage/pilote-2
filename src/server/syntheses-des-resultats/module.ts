@@ -21,7 +21,7 @@ import { ModifierSyntheseDesResultatsPublieeUseCase } from "@/server/syntheses-d
 import { PublierBrouillonSyntheseDesResultatsUseCase } from "@/server/syntheses-des-resultats/usecases/PublierBrouillonSyntheseDesResultatsUseCase";
 import { ModifierBrouillonSyntheseDesResultatsUseCase } from "@/server/syntheses-des-resultats/usecases/ModifierBrouillonSyntheseDesResultatsUseCase";
 
-type ImportSyntheseDesResultatsCradle = NoExports & {
+type ImportSyntheseDesResultatsCradle = {
   importSyntheseDesResultatsAPIHandler: ImportSyntheseDesResultatsAPIHandler;
   importerSynthesesDesResultatsUseCase: ImporterSynthesesDesResultatsUseCase;
   enregistrerSyntheseDesResultatsService: EnregistrerSyntheseDesResultatsService;

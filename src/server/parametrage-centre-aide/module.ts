@@ -10,7 +10,7 @@ import { ListerArticlesCentreAideUseCase } from "./usecases/ListerArticlesCentre
 import { ModifierArticleCentreAideUseCase } from "./usecases/ModifierArticleCentreAideUseCase";
 import { SupprimerArticleCentreAideUseCase } from "./usecases/SupprimerArticleCentreAideUseCase";
 
-type ParametrageCentreAideCradle = NoExports & {
+type ParametrageCentreAideCradle = {
   creerArticleCentreAideUseCase: CreerArticleCentreAideUseCase;
   articleCentreAideRepository: ArticleCentreAideRepository;
   listerArticlesCentreAideUseCase: ListerArticlesCentreAideUseCase;

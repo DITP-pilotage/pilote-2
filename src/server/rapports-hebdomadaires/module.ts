@@ -1,8 +1,6 @@
-import type { PrismaActiviteComptesQuery } from "@/server/gestion-utilisateur/infrastructure/queries/PrismaActiviteComptesQuery";
-import type { PrismaUtilisateursQuery } from "@/server/gestion-utilisateur/infrastructure/queries/PrismaUtilisateursQuery";
-import type { RecupererChantiersApplicablesParTerritoiresQuery } from "@/server/chantiers/infrastructure/queries/RecupererChantiersApplicablesParTerritoiresQuery";
-import type { RecupererMesuresIndicateurParPeriodeQuery } from "@/server/chantiers/infrastructure/queries/RecupererMesuresIndicateurParPeriodeQuery";
-import type { RecupererEvenementsVAParPeriodeQuery } from "@/server/indicateur-territoire-valeur-evenement/infrastructure/queries/RecupererEvenementsVAParPeriodeQuery";
+import type { GestionUtilisateurExports } from "@/server/gestion-utilisateur/module";
+import type { ChantierExports } from "@/server/chantiers/module";
+import type { IndicateurTerritoireValeurEvenementExports } from "@/server/indicateur-territoire-valeur-evenement/module";
 import {
   defineModule,
   type ExtractScope,
@@ -25,23 +23,20 @@ import { EnvoyerRapportsHebdomadairesUseCase } from "./usecases/EnvoyerRapportsH
 import { ListerRapportsHebdomadairesQuery } from "./queries/ListerRapportsHebdomadairesQuery";
 import { RecupererRapportHebdomadaireQuery } from "./queries/RecupererRapportHebdomadaireQuery";
 
-type RapportsHebdomadairesCradle = NoExports & {
-  activiteComptesQuery: PrismaActiviteComptesQuery;
-  utilisateursQuery: PrismaUtilisateursQuery;
-  recupererChantiersQuery: RecupererChantiersApplicablesParTerritoiresQuery;
-  mesuresIndicateurQuery: RecupererMesuresIndicateurParPeriodeQuery;
-  evenementsVAQuery: RecupererEvenementsVAParPeriodeQuery;
-  activiteComptesGateway: ActiviteComptesGateway;
-  coordinateurGateway: CoordinateurGateway;
-  rapportRepository: RapportRepository;
-  envoieEmailService: EnvoieEmailService;
-  chantierGateway: ChantierGateway;
-  activiteIndicateurGateway: ActiviteIndicateurGateway;
-  produireRapportsHebdomadairesUseCase: ProduireRapportsHebdomadairesUseCase;
-  envoyerRapportsHebdomadairesUseCase: EnvoyerRapportsHebdomadairesUseCase;
-  listerRapportsHebdomadairesQuery: ListerRapportsHebdomadairesQuery;
-  recupererRapportHebdomadaireQuery: RecupererRapportHebdomadaireQuery;
-};
+type RapportsHebdomadairesCradle = GestionUtilisateurExports &
+  ChantierExports &
+  IndicateurTerritoireValeurEvenementExports & {
+    activiteComptesGateway: ActiviteComptesGateway;
+    coordinateurGateway: CoordinateurGateway;
+    rapportRepository: RapportRepository;
+    envoieEmailService: EnvoieEmailService;
+    chantierGateway: ChantierGateway;
+    activiteIndicateurGateway: ActiviteIndicateurGateway;
+    produireRapportsHebdomadairesUseCase: ProduireRapportsHebdomadairesUseCase;
+    envoyerRapportsHebdomadairesUseCase: EnvoyerRapportsHebdomadairesUseCase;
+    listerRapportsHebdomadairesQuery: ListerRapportsHebdomadairesQuery;
+    recupererRapportHebdomadaireQuery: RecupererRapportHebdomadaireQuery;
+  };
 
 export const rapportsHebdomadairesModule = defineModule<
   NoExports,

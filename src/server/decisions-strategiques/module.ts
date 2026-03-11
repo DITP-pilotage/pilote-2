@@ -8,7 +8,7 @@ import {
   type NoExports,
 } from "@/server/module-system";
 
-type ImportDecisionStrategiqueCradle = NoExports & {
+type ImportDecisionStrategiqueCradle = {
   importDecisionStrategiqueAPIHandler: ImportDecisionStrategiqueAPIHandler;
   importerDecisionsStrategiquesUseCase: ImporterDecisionsStrategiquesUseCase;
   décisionStratégiqueRepository: DécisionStratégiqueRepository;
