@@ -1,4 +1,5 @@
 import { PrismaPilote } from "@/server/db/PrismaPilote";
+import type { Inject } from "@/server/habilitations-coordinateur/module";
 
 export type ChantierTerritorialise = {
   id: string;
@@ -8,10 +9,14 @@ export type ChantierTerritorialise = {
 };
 
 export class RecupererLesChantiersTerritorialisesQuery {
-  constructor(private readonly dependencies: { prisma: PrismaPilote }) {}
+  private readonly prisma: PrismaPilote;
+
+  constructor({ prisma }: Inject<"prisma">) {
+    this.prisma = prisma;
+  }
 
   async run(): Promise<ChantierTerritorialise[]> {
-    const chantiers = await this.dependencies.prisma
+    const chantiers = await this.prisma
       .getInstance()
       .chantier_identite.findMany({
         where: {

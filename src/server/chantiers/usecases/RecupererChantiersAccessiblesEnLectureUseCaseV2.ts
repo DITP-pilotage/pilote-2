@@ -15,6 +15,7 @@ import {
   MailleChantierContrat,
   presenterEnChantierAccueilContratV2,
 } from "@/server/chantiers/app/contrats/ChantierAccueilContratV2";
+import type { Inject } from "@/server/chantiers/module";
 import { PrismaChantier } from "@/server/chantiers/domain/PrismaChantier";
 
 const masquerPourDROM = (
@@ -208,10 +209,7 @@ export class RecupererChantiersAccessiblesEnLectureUseCaseV2 {
   constructor({
     chantierRepository,
     territoireRepository,
-  }: {
-    chantierRepository: ChantierRepository;
-    territoireRepository: TerritoireRepository;
-  }) {
+  }: Inject<"chantierRepository" | "territoireRepository">) {
     this.chantierRepository = chantierRepository;
     this.territoireRepository = territoireRepository;
   }

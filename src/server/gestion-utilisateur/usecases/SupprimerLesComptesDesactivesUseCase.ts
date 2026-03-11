@@ -8,18 +8,7 @@ import { RapportRepository } from "@/server/gestion-utilisateur/domain/ports/Rap
 import { UtilisateurRepository } from "@/server/gestion-utilisateur/domain/ports/UtilisateurRepository";
 import { PropositionValeurAvancementRepository } from "@/server/gestion-utilisateur/domain/ports/PropositionValeurAvancementRepository";
 import { HistorisationModificationRepository } from "@/server/domain/historisationModification/HistorisationModificationRepository";
-
-type Dependencies = {
-  utilisateurRepository: UtilisateurRepository;
-  utilisateurIAMRepository: UtilisateurIAMRepository;
-  commentaireRepository: CommentaireRepository;
-  syntheseDesResultatsRepository: SyntheseDesResultatsRepository;
-  decisionStrategiqueRepository: DecisionStrategiqueRepository;
-  objectifRepository: ObjectifRepository;
-  rapportRepository: RapportRepository;
-  propositionValeurAvancementRepository: PropositionValeurAvancementRepository;
-  historisationModification: HistorisationModificationRepository;
-};
+import type { Inject } from "@/server/gestion-utilisateur/module";
 
 export const EMAIL_AUTEUR_REMPLACEMENT =
   "utilisateur.supprime@modernisation.gouv.fr";
@@ -54,7 +43,17 @@ export class SupprimerLesComptesDesactivesUseCase {
     rapportRepository,
     propositionValeurAvancementRepository,
     historisationModification,
-  }: Dependencies) {
+  }: Inject<
+    | "utilisateurRepository"
+    | "utilisateurIAMRepository"
+    | "commentaireRepository"
+    | "syntheseDesResultatsRepository"
+    | "decisionStrategiqueRepository"
+    | "objectifRepository"
+    | "rapportRepository"
+    | "propositionValeurAvancementRepository"
+    | "historisationModification"
+  >) {
     this.utilisateurRepository = utilisateurRepository;
     this.utilisateurIAMRepository = utilisateurIAMRepository;
     this.commentaireRepository = commentaireRepository;

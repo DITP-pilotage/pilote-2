@@ -1,7 +1,6 @@
 import { UtilisateurRepository } from "@/server/gestion-utilisateur/domain/ports/UtilisateurRepository";
 import { UtilisateurIAMRepository } from "@/server/gestion-utilisateur/domain/ports/UtilisateurIAMRepository";
 import { Utilisateur } from "@/server/gestion-utilisateur/domain/Utilisateur.interface";
-import { TokenAPIInformationRepository } from "@/server/gestion-utilisateur/domain/ports/TokenAPIInformationRepository";
 import { Profil } from "@/server/domain/profil/Profil.interface";
 import { TerritoireRepository } from "@/server/gestion-utilisateur/domain/ports/TerritoireRepository";
 import { PerimetreMinisterielRepository } from "@/server/gestion-utilisateur/domain/ports/PerimetreMinisterielRepository";
@@ -11,16 +10,7 @@ import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation"
 import { profilsInfolettreCoordinateur } from "@/server/domain/utilisateur/Utilisateur.interface";
 import { ContactInfoLettresService } from "@/server/gestion-utilisateur/domain/ports/ContactInfoLettresService";
 import { NotFoundError } from "@/server/app/error-boundary/not-found-error";
-
-type Dependencies = {
-  utilisateurRepository: UtilisateurRepository;
-  chantierRepository: ChantierRepository;
-  territoireRepository: TerritoireRepository;
-  perimetreMinisterielRepository: PerimetreMinisterielRepository;
-  utilisateurIAMRepository: UtilisateurIAMRepository;
-  tokenAPIInformationRepository: TokenAPIInformationRepository;
-  contactInfoLettresService: ContactInfoLettresService;
-};
+import type { Inject } from "@/server/gestion-utilisateur/module";
 
 export default class ReactiverUnUtilisateurUseCase {
   private utilisateurRepository: UtilisateurRepository;
@@ -42,7 +32,14 @@ export default class ReactiverUnUtilisateurUseCase {
     perimetreMinisterielRepository,
     utilisateurIAMRepository,
     contactInfoLettresService,
-  }: Dependencies) {
+  }: Inject<
+    | "utilisateurRepository"
+    | "chantierRepository"
+    | "territoireRepository"
+    | "perimetreMinisterielRepository"
+    | "utilisateurIAMRepository"
+    | "contactInfoLettresService"
+  >) {
     this.utilisateurRepository = utilisateurRepository;
     this.chantierRepository = chantierRepository;
     this.territoireRepository = territoireRepository;

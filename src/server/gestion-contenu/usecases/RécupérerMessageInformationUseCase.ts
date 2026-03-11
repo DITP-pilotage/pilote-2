@@ -1,14 +1,13 @@
 import { MessageInformation } from "@/server/gestion-contenu/domain/MessageInformation";
 import { GestionContenuRepository } from "@/server/gestion-contenu/domain/ports/GestionContenuRepository";
-
-interface Dependencies {
-  gestionContenuRepository: GestionContenuRepository;
-}
+import type { Inject } from "@/server/legacy/module";
 
 export class RécupérerMessageInformationUseCase {
   private _gestionContenuRepository: GestionContenuRepository;
 
-  constructor({ gestionContenuRepository }: Dependencies) {
+  constructor({
+    gestionContenuRepository,
+  }: Inject<"gestionContenuRepository">) {
     this._gestionContenuRepository = gestionContenuRepository;
   }
 

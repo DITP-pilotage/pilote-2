@@ -3,6 +3,7 @@ import { $Enums } from "@prisma/client";
 import { Transaction } from "@/server/db/Transaction";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { SanitizerHTML } from "@/server/app/domain/SanitizerHTML";
+import type { Inject } from "@/server/evaluation/module";
 
 export const enregistrerEvaluationCommandSchema = z.object({
   ficheEvaluationId: z.string(),
@@ -31,12 +32,13 @@ export type EnregistrerEvaluationCommandSchema = z.infer<
 >;
 
 export class EnregistrerEvaluationService {
-  constructor(
-    private readonly dependencies: {
-      transaction: Transaction;
-      prisma: PrismaPilote;
-    },
-  ) {}
+  private readonly transaction: Transaction;
+  private readonly prisma: PrismaPilote;
+
+  constructor({ transaction, prisma }: Inject<"transaction" | "prisma">) {
+    this.transaction = transaction;
+    this.prisma = prisma;
+  }
 
   async enregister({
     command,
@@ -47,8 +49,8 @@ export class EnregistrerEvaluationService {
     auteurId: string;
     etapeCourante: $Enums.etape_evaluation_enum;
   }) {
-    await this.dependencies.transaction.run(async () => {
-      const prisma = this.dependencies.prisma.getInstance();
+    await this.transaction.run(async () => {
+      const prisma = this.prisma.getInstance();
       const etape = await prisma.etape_evaluation.findFirstOrThrow({
         where: {
           fiche_evaluation: {

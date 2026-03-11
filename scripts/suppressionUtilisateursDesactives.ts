@@ -1,8 +1,7 @@
 import { loadEnvConfig } from "@next/env";
 import logger from "@/server/infrastructure/Logger";
-import { getGestionUtilisateurContainer } from "@/server/gestion-utilisateur/container";
 import { envoieMessageTchap } from "@/server/utils/notification-tchap";
-import { getInitialContainer } from "@/server/initial-container";
+import { getContainer } from "@/server/dependances";
 
 const projectDir = process.cwd();
 loadEnvConfig(projectDir);
@@ -12,8 +11,7 @@ const roomId = process.env.TCHAP_ROOM_ID ?? "";
 const accessToken = process.env.TCHAP_ACCESS_TOKEN ?? "";
 
 async function main() {
-  const initialContainer = getInitialContainer();
-  return getGestionUtilisateurContainer(initialContainer)
+  return getContainer("gestionUtilisateur")
     .resolve("supprimerLesComptesDesactivesUseCase")
     .run();
 }

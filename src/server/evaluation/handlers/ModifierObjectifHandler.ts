@@ -3,6 +3,7 @@ import { Transaction } from "@/server/db/Transaction";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { getPrisma } from "@/server/db/PrismaTransaction";
 import { NotFoundError } from "@/server/app/error-boundary/not-found-error";
+import type { Inject } from "@/server/evaluation/module";
 
 export const modifierObjectifCommandSchema = z.object({
   ficheEvaluationId: z.string(),
@@ -16,15 +17,16 @@ export type ModifierObjectifCommand = z.infer<
 >;
 
 export class ModifierObjectifHandler {
-  constructor(
-    private readonly dependencies: {
-      transaction: Transaction;
-      prisma: PrismaPilote;
-    },
-  ) {}
+  private readonly transaction: Transaction;
+  private readonly prisma: PrismaPilote;
+
+  constructor({ transaction, prisma }: Inject<"transaction" | "prisma">) {
+    this.transaction = transaction;
+    this.prisma = prisma;
+  }
 
   async execute(command: ModifierObjectifCommand): Promise<void> {
-    await this.dependencies.transaction.run(async () => {
+    await this.transaction.run(async () => {
       const prisma = getPrisma();
 
       const objectif = await prisma.referentiel_objectif.findFirst({

@@ -3,6 +3,7 @@ import { z } from "zod";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { Transaction } from "@/server/db/Transaction";
 import { EnregistrerEvaluationService } from "@/server/evaluation/services/EnregistrerEvaluationService";
+import type { Inject } from "@/server/evaluation/module";
 
 export const enregistrerEvaluationObjectifsCommandSchema = z.object({
   ficheEvaluationId: z.string(),
@@ -22,18 +23,22 @@ export type EnregistrerEvaluationObjectifsCommandSchema = z.infer<
 >;
 
 export class EnregistrerBrouillonAutoEvaluationObjectifsHandler {
-  constructor(
-    private readonly dependencies: {
-      transaction: Transaction;
-      prisma: PrismaPilote;
-    },
-  ) {}
+  private readonly transaction: Transaction;
+  private readonly prisma: PrismaPilote;
+
+  constructor({ transaction, prisma }: Inject<"transaction" | "prisma">) {
+    this.transaction = transaction;
+    this.prisma = prisma;
+  }
 
   async execute(
     command: EnregistrerEvaluationObjectifsCommandSchema,
     auteurId: string,
   ) {
-    await new EnregistrerEvaluationService(this.dependencies).enregister({
+    await new EnregistrerEvaluationService({
+      transaction: this.transaction,
+      prisma: this.prisma,
+    }).enregister({
       command: {
         ficheEvaluationId: command.ficheEvaluationId,
         evaluationsObjectifs: command.evaluationsObjectifs,

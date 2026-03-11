@@ -1,14 +1,13 @@
 import { PerimetreMinisteriel } from "@/server/gestion-utilisateur/domain/PerimetreMinisteriel";
 import { PerimetreMinisterielRepository } from "@/server/gestion-utilisateur/domain/ports/PerimetreMinisterielRepository";
-
-interface Dependencies {
-  perimetreMinisterielRepository: PerimetreMinisterielRepository;
-}
+import type { Inject } from "@/server/gestion-utilisateur/module";
 
 export default class RecupererPerimetresMinisterielsUseCase {
   private readonly perimetreMinisterielRepository: PerimetreMinisterielRepository;
 
-  constructor({ perimetreMinisterielRepository }: Dependencies) {
+  constructor({
+    perimetreMinisterielRepository,
+  }: Inject<"perimetreMinisterielRepository">) {
     this.perimetreMinisterielRepository = perimetreMinisterielRepository;
   }
 

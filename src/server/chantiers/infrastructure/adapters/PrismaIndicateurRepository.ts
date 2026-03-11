@@ -35,7 +35,7 @@ import {
   profilsTerritoriaux,
 } from "@/server/domain/utilisateur/Utilisateur.interface";
 import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
-import { getInitialContainerWithTransversalDependencies } from "@/server/InitialDependencies";
+import { PrismaPilote } from "@/server/db/PrismaPilote";
 
 const convertirEnDonneeIndicateur = (
   prismaIndicateurIdentite: PrismaIndicateurIdentite & {
@@ -87,8 +87,11 @@ class ErreurIndicateurNonTrouvé extends Error {
 }
 
 export class PrismaIndicateurRepository implements IndicateurRepository {
-  private prismaClient =
-    getInitialContainerWithTransversalDependencies().resolve("prisma");
+  private prismaClient: PrismaPilote;
+
+  constructor({ prisma }: { prisma: PrismaPilote }) {
+    this.prismaClient = prisma;
+  }
 
   get prisma() {
     return this.prismaClient.getInstance();

@@ -1,6 +1,7 @@
 import { SynthèseDesRésultatsSQLRepository } from "@/server/infrastructure/accès_données/chantier/synthèseDesRésultats/SynthèseDesRésultatsSQLRepository";
 import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
 import { fixtures } from "@/server/infrastructure/test/fixtures";
+import { PrismaPilote } from "@/server/db/PrismaPilote";
 
 const TERRITOIRE_CODE = "REG-01";
 const MAILLE = "REG";
@@ -10,7 +11,9 @@ describe("SynthèseDesRésultatsSQLRepository", () => {
   let repository: SynthèseDesRésultatsSQLRepository;
 
   beforeEach(() => {
-    repository = new SynthèseDesRésultatsSQLRepository();
+    repository = new SynthèseDesRésultatsSQLRepository({
+      prisma: new PrismaPilote(),
+    });
   });
 
   describe("récupérerLesPlusRécentesGroupéesParChantier", () => {

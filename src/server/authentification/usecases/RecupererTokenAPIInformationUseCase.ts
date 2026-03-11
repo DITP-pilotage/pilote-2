@@ -1,14 +1,13 @@
 import { TokenAPIInformationRepository } from "@/server/authentification/domain/ports/TokenAPIInformationRepository";
 import { TokenAPIInformation } from "@/server/authentification/domain/TokenAPIInformation";
+import type { Inject } from "@/server/legacy/module";
 
 export class RecupererTokenAPIInformationUseCase {
   private readonly tokenAPIInformationRepository: TokenAPIInformationRepository;
 
   constructor({
     tokenAPIInformationRepository,
-  }: {
-    tokenAPIInformationRepository: TokenAPIInformationRepository;
-  }) {
+  }: Inject<"tokenAPIInformationRepository">) {
     this.tokenAPIInformationRepository = tokenAPIInformationRepository;
   }
 

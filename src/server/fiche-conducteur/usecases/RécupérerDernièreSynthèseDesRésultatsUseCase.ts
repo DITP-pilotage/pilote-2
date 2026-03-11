@@ -1,14 +1,13 @@
 import { SynthèseDesRésultatsRepository } from "@/server/fiche-conducteur/domain/ports/SynthèseDesRésultatsRepository";
 import { SyntheseDesResultats } from "@/server/fiche-conducteur/domain/SyntheseDesResultats";
-
-interface Dependencies {
-  synthèseDesRésultatsRepository: SynthèseDesRésultatsRepository;
-}
+import type { Inject } from "@/server/fiche-conducteur/module";
 
 export class RécupérerDernièreSynthèseDesRésultatsUseCase {
   private synthèseDesRésultatsRepository: SynthèseDesRésultatsRepository;
 
-  constructor({ synthèseDesRésultatsRepository }: Dependencies) {
+  constructor({
+    synthèseDesRésultatsRepository,
+  }: Inject<"synthèseDesRésultatsRepository">) {
     this.synthèseDesRésultatsRepository = synthèseDesRésultatsRepository;
   }
 

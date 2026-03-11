@@ -1,19 +1,24 @@
 import { $Enums } from "@prisma/client";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { FicheEvaluation } from "@/server/evaluation/domain/FicheEvaluation";
+import type { Inject } from "@/server/evaluation/module";
 
 type FichesParPhase = Record<$Enums.etape_evaluation_enum, FicheEvaluation[]>;
 type FichesParGroupe = Record<string, FichesParPhase>;
 
 export class ListerFichesEvaluationParPhaseQuery {
-  constructor(private readonly dependencies: { prisma: PrismaPilote }) {}
+  private readonly prisma: PrismaPilote;
+
+  constructor({ prisma }: Inject<"prisma">) {
+    this.prisma = prisma;
+  }
 
   async run({
     utilisateurId,
   }: {
     utilisateurId: string;
   }): Promise<FichesParGroupe> {
-    const derniereDateCalcul = await this.dependencies.prisma
+    const derniereDateCalcul = await this.prisma
       .getInstance()
       .chantier_evaluation.findFirst({
         orderBy: {
@@ -24,11 +29,11 @@ export class ListerFichesEvaluationParPhaseQuery {
         },
       });
 
-    const tousLesCriteres = await this.dependencies.prisma
+    const tousLesCriteres = await this.prisma
       .getInstance()
       .referentiel_critere.findMany();
 
-    const tousLesRattachements = await this.dependencies.prisma
+    const tousLesRattachements = await this.prisma
       .getInstance()
       .referentiel_rattachement.findMany({
         include: { referentiel_rattachement_groupe: true },
@@ -41,7 +46,7 @@ export class ListerFichesEvaluationParPhaseQuery {
       ]),
     );
 
-    const rattachementsEnAppreciation = await this.dependencies.prisma
+    const rattachementsEnAppreciation = await this.prisma
       .getInstance()
       .rattachement_utilisateur_etape_jalon.findMany({
         where: {
@@ -57,7 +62,7 @@ export class ListerFichesEvaluationParPhaseQuery {
       (r) => r.rattachement_code,
     );
 
-    const fichesEvaluation = await this.dependencies.prisma
+    const fichesEvaluation = await this.prisma
       .getInstance()
       .fiche_evaluation.findMany({
         orderBy: {

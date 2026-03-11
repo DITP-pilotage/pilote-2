@@ -5,21 +5,26 @@ import {
   EnregistrerEvaluationCommandSchema,
   EnregistrerEvaluationService,
 } from "@/server/evaluation/services/EnregistrerEvaluationService";
+import type { Inject } from "@/server/evaluation/module";
 
 export class EnregistrerBrouillonInstructionHandler {
-  constructor(
-    private readonly dependencies: {
-      transaction: Transaction;
-      prisma: PrismaPilote;
-    },
-  ) {}
+  private readonly transaction: Transaction;
+  private readonly prisma: PrismaPilote;
+
+  constructor({ transaction, prisma }: Inject<"transaction" | "prisma">) {
+    this.transaction = transaction;
+    this.prisma = prisma;
+  }
 
   async execute(
     commands: EnregistrerEvaluationCommandSchema[],
     auteurId: string,
   ) {
     for (const command of commands) {
-      await new EnregistrerEvaluationService(this.dependencies).enregister({
+      await new EnregistrerEvaluationService({
+        transaction: this.transaction,
+        prisma: this.prisma,
+      }).enregister({
         command,
         auteurId,
         etapeCourante: $Enums.etape_evaluation_enum.INSTRUCTION,

@@ -1,6 +1,6 @@
-import { EmailManager } from "@/server/infrastructure/email-manager";
-import { EnvoieEmailService } from "@/server/rapports-hebdomadaires/domain/ports/EnvoieEmailService";
-import { RapportHebdomadaire } from "@/server/rapports-hebdomadaires/domain/RapportHebdomadaire";
+import { type EnvoieEmailService } from "@/server/rapports-hebdomadaires/domain/ports/EnvoieEmailService";
+import { type RapportHebdomadaire } from "@/server/rapports-hebdomadaires/domain/RapportHebdomadaire";
+import type { Inject } from "@/server/rapports-hebdomadaires/module";
 
 const TEMPLATE_ID_RAPPORT_COORDINATEURS = 68;
 
@@ -50,7 +50,7 @@ export const createBrevoParams = ({
 };
 
 export class BrevoEnvoieEmailService implements EnvoieEmailService {
-  constructor(private readonly deps: { emailManager: EmailManager }) {}
+  constructor(private readonly deps: Inject<"emailManager">) {}
 
   async envoyerRapportHebdomadaire({
     rapport,

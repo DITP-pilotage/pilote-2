@@ -1,7 +1,5 @@
 import groupBy from "lodash.groupby";
 import { MesureIndicateurRepository } from "@/server/import-indicateur/domain/ports/MesureIndicateurRepository.interface";
-
-import { RapportRepository } from "@/server/import-indicateur/domain/ports/RapportRepository";
 import { MesureIndicateurTemporaireRepository } from "@/server/import-indicateur/domain/ports/MesureIndicateurTemporaireRepository.interface";
 import { IndicateurData } from "@/server/import-indicateur/domain/IndicateurData";
 import { PropositionValeurAvancementRepository } from "@/server/import-indicateur/domain/ports/PropositionValeurAvancementRepository";
@@ -10,15 +8,7 @@ import { IndicateurTerritoireValeurEvenement } from "@/server/indicateur-territo
 import { IndicateurTerritoireValeurEvenements } from "@/server/import-indicateur/domain/IndicateurTerritoireValeurEvenements";
 import { convertirZoneIdEnTerritoireCode } from "@/server/app/domain/Territoire";
 import { Transaction } from "@/server/db/Transaction";
-
-interface Dependencies {
-  mesureIndicateurTemporaireRepository: MesureIndicateurTemporaireRepository;
-  mesureIndicateurRepository: MesureIndicateurRepository;
-  rapportRepository: RapportRepository;
-  propositionValeurAvancementRepository: PropositionValeurAvancementRepository;
-  indicateurTerritoireValeurEvenementRepository: IndicateurTerritoireValeurEvenementRepository;
-  transaction: Transaction;
-}
+import type { Inject } from "@/server/import-indicateur/module";
 
 export class PublierFichierIndicateurImporteUseCase {
   private mesureIndicateurTemporaireRepository: MesureIndicateurTemporaireRepository;
@@ -37,7 +27,13 @@ export class PublierFichierIndicateurImporteUseCase {
     propositionValeurAvancementRepository,
     indicateurTerritoireValeurEvenementRepository,
     transaction,
-  }: Dependencies) {
+  }: Inject<
+    | "mesureIndicateurTemporaireRepository"
+    | "mesureIndicateurRepository"
+    | "propositionValeurAvancementRepository"
+    | "indicateurTerritoireValeurEvenementRepository"
+    | "transaction"
+  >) {
     this.mesureIndicateurTemporaireRepository =
       mesureIndicateurTemporaireRepository;
     this.mesureIndicateurRepository = mesureIndicateurRepository;

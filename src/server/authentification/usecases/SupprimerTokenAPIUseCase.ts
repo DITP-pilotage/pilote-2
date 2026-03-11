@@ -1,13 +1,12 @@
 import { TokenAPIInformationRepository } from "@/server/authentification/domain/ports/TokenAPIInformationRepository";
+import type { Inject } from "@/server/legacy/module";
 
 export class SupprimerTokenAPIUseCase {
   private tokenAPIInformationRepository: TokenAPIInformationRepository;
 
   constructor({
     tokenAPIInformationRepository,
-  }: {
-    tokenAPIInformationRepository: TokenAPIInformationRepository;
-  }) {
+  }: Inject<"tokenAPIInformationRepository">) {
     this.tokenAPIInformationRepository = tokenAPIInformationRepository;
   }
 

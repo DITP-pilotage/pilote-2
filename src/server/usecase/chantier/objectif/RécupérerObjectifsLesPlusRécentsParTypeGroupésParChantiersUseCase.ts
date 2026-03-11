@@ -1,15 +1,12 @@
 import ObjectifRepository from "@/server/domain/chantier/objectif/ObjectifRepository.interface";
 import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
 import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
+import type { Inject } from "@/server/legacy/module";
 
 export default class RécupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase {
   private readonly objectifRepository: ObjectifRepository;
 
-  constructor({
-    objectifRepository,
-  }: {
-    objectifRepository: ObjectifRepository;
-  }) {
+  constructor({ objectifRepository }: Inject<"objectifRepository">) {
     this.objectifRepository = objectifRepository;
   }
 

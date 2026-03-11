@@ -1,6 +1,6 @@
 import keyBy from "lodash.keyby";
-import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { mapTerritoiresToDTO } from "@/server/gestion-utilisateur/infrastructure/utils/territoires";
+import type { Inject } from "@/server/gestion-utilisateur/module";
 
 export type TerritoireDTO = {
   code: string;
@@ -18,12 +18,8 @@ export type UtilisateurDTO = {
   habilitationLectureTerritoires: TerritoireDTO[];
 };
 
-interface Dependencies {
-  prisma: PrismaPilote;
-}
-
 export class PrismaUtilisateursQuery {
-  constructor(private readonly dependencies: Dependencies) {}
+  constructor(private readonly dependencies: Inject<"prisma">) {}
 
   async recupererParProfils(profils: string[]): Promise<UtilisateurDTO[]> {
     const prisma = this.dependencies.prisma.getInstance();

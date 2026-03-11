@@ -11,9 +11,11 @@ export type SyntheseDesResultatsHistoriqueItem = {
   dateModification: string;
   auteurModificationNom: string;
 };
+import type { Inject } from "@/server/syntheses-des-resultats/module";
 
 export class RecupererHistoriqueSyntheseDesResultatsQuery {
-  constructor(private readonly deps: { prisma: PrismaPilote }) {}
+  constructor(private readonly deps: Inject<"prisma">) {
+  }
 
   async run(
     chantierId: string,

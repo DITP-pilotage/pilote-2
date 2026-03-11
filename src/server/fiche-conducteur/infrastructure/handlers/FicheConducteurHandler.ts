@@ -19,6 +19,7 @@ import { RécupérerPublicationsUseCase } from "@/server/fiche-conducteur/usecas
 import { ObjectifType } from "@/server/fiche-conducteur/domain/ObjectifType";
 import { DecisionStrategiqueType } from "@/server/fiche-conducteur/domain/DecisionStrategiqueType";
 import { CommentaireType } from "@/server/fiche-conducteur/domain/CommentaireType";
+import type { Inject } from "@/server/fiche-conducteur/module";
 
 const numberWithSpaces = (nombreATransformer: number) => {
   const parts = nombreATransformer.toString().split(".");
@@ -146,14 +147,6 @@ const presenterEnDonnéesCartographieContrat = (
   );
 };
 
-interface Dependencies {
-  recupererChantierFicheConducteurUseCase: RécupererChantierFicheConducteurUseCase;
-  recupererAvancementUseCase: RécupérerAvancementUseCase;
-  recupererDerniereSyntheseDesResultatsUseCase: RécupérerDernièreSynthèseDesRésultatsUseCase;
-  recupererDonneesCartographieUseCase: RécupérerDonnéesCartographieUseCase;
-  recupererPublicationsUseCase: RécupérerPublicationsUseCase;
-}
-
 export class FicheConducteurHandler {
   private recupererChantierFicheConducteurUseCase: RécupererChantierFicheConducteurUseCase;
 
@@ -171,7 +164,13 @@ export class FicheConducteurHandler {
     recupererDerniereSyntheseDesResultatsUseCase,
     recupererDonneesCartographieUseCase,
     recupererPublicationsUseCase,
-  }: Dependencies) {
+  }: Inject<
+    | "recupererChantierFicheConducteurUseCase"
+    | "recupererAvancementUseCase"
+    | "recupererDerniereSyntheseDesResultatsUseCase"
+    | "recupererDonneesCartographieUseCase"
+    | "recupererPublicationsUseCase"
+  >) {
     this.recupererChantierFicheConducteurUseCase =
       recupererChantierFicheConducteurUseCase;
     this.recupererAvancementUseCase = recupererAvancementUseCase;

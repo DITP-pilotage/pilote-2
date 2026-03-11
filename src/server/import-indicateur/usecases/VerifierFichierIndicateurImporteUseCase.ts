@@ -9,14 +9,7 @@ import { ACCEPTED_DATE_FORMAT } from "@/server/import-indicateur/domain/enum/ACC
 import { ErreurValidationFichierRepository } from "@/server/import-indicateur/domain/ports/ErreurValidationFichierRepository";
 import { IndicateurRepository } from "@/server/import-indicateur/domain/ports/IndicateurRepository";
 import logger from "@/server/infrastructure/Logger";
-
-interface Dependencies {
-  fichierIndicateurValidationService: FichierIndicateurValidationService;
-  mesureIndicateurTemporaireRepository: MesureIndicateurTemporaireRepository;
-  erreurValidationFichierRepository: ErreurValidationFichierRepository;
-  indicateurRepository: IndicateurRepository;
-  rapportRepository: RapportRepository;
-}
+import type { Inject } from "@/server/import-indicateur/module";
 
 const correspondALIndicateurId = (
   mesureIndicateurTemporaire: MesureIndicateurTemporaire,
@@ -129,7 +122,13 @@ export class VerifierFichierIndicateurImporteUseCase {
     erreurValidationFichierRepository,
     indicateurRepository,
     rapportRepository,
-  }: Dependencies) {
+  }: Inject<
+    | "fichierIndicateurValidationService"
+    | "mesureIndicateurTemporaireRepository"
+    | "erreurValidationFichierRepository"
+    | "indicateurRepository"
+    | "rapportRepository"
+  >) {
     this.fichierIndicateurValidationService =
       fichierIndicateurValidationService;
     this.mesureIndicateurTemporaireRepository =

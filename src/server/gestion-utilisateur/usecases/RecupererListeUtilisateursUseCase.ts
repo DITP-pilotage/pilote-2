@@ -3,13 +3,7 @@ import { UtilisateurRepository } from "@/server/gestion-utilisateur/domain/ports
 import { TerritoireRepository } from "@/server/gestion-utilisateur/domain/ports/TerritoireRepository";
 import { PerimetreMinisterielRepository } from "@/server/gestion-utilisateur/domain/ports/PerimetreMinisterielRepository";
 import { ChantierRepository } from "@/server/gestion-utilisateur/domain/ports/ChantierRepository";
-
-interface Dependencies {
-  utilisateurRepository: UtilisateurRepository;
-  territoireRepository: TerritoireRepository;
-  chantierRepository: ChantierRepository;
-  perimetreMinisterielRepository: PerimetreMinisterielRepository;
-}
+import type { Inject } from "@/server/gestion-utilisateur/module";
 
 export class RecupererListeUtilisateursUseCase {
   private utilisateurRepository: UtilisateurRepository;
@@ -25,7 +19,12 @@ export class RecupererListeUtilisateursUseCase {
     territoireRepository,
     perimetreMinisterielRepository,
     chantierRepository,
-  }: Dependencies) {
+  }: Inject<
+    | "utilisateurRepository"
+    | "territoireRepository"
+    | "perimetreMinisterielRepository"
+    | "chantierRepository"
+  >) {
     this.utilisateurRepository = utilisateurRepository;
     this.territoireRepository = territoireRepository;
     this.chantierRepository = chantierRepository;

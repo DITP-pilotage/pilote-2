@@ -11,15 +11,7 @@ import { ProfilEnum } from "@/server/app/enum/profil.enum";
 import { ChantierRepository } from "@/server/gestion-utilisateur/domain/ports/ChantierRepository";
 import { PerimetreMinisterielRepository } from "@/server/gestion-utilisateur/domain/ports/PerimetreMinisterielRepository";
 import { ContactInfoLettresService } from "@/server/gestion-utilisateur/domain/ports/ContactInfoLettresService";
-
-type Dependencies = {
-  utilisateurRepository: UtilisateurRepository;
-  utilisateurIAMRepository: UtilisateurIAMRepository;
-  territoireRepository: TerritoireRepository;
-  chantierRepository: ChantierRepository;
-  perimetreMinisterielRepository: PerimetreMinisterielRepository;
-  contactInfoLettresService: ContactInfoLettresService;
-};
+import type { Inject } from "@/server/gestion-utilisateur/module";
 
 export default class ImporterDesUtilisateursUseCase {
   private readonly utilisateurRepository: UtilisateurRepository;
@@ -41,7 +33,14 @@ export default class ImporterDesUtilisateursUseCase {
     chantierRepository,
     perimetreMinisterielRepository,
     contactInfoLettresService,
-  }: Dependencies) {
+  }: Inject<
+    | "utilisateurRepository"
+    | "utilisateurIAMRepository"
+    | "territoireRepository"
+    | "chantierRepository"
+    | "perimetreMinisterielRepository"
+    | "contactInfoLettresService"
+  >) {
     this.utilisateurRepository = utilisateurRepository;
     this.utilisateurIAMRepository = utilisateurIAMRepository;
     this.territoireRepository = territoireRepository;

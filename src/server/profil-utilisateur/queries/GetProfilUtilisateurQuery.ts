@@ -1,9 +1,5 @@
 import { NotFoundError } from "@/server/app/error-boundary/not-found-error";
-import { PrismaPilote } from "@/server/db/PrismaPilote";
-
-type Dependencies = {
-  prisma: PrismaPilote;
-};
+import type { Inject } from "@/server/profil-utilisateur/module";
 
 type ProfilUtilisateurViewModel = {
   id: string;
@@ -17,7 +13,7 @@ type ProfilUtilisateurViewModel = {
 };
 
 export class GetProfilUtilisateurQuery {
-  constructor(private readonly deps: Dependencies) {}
+  constructor(private readonly deps: Inject<"prisma">) {}
 
   get prisma() {
     return this.deps.prisma.getInstance();

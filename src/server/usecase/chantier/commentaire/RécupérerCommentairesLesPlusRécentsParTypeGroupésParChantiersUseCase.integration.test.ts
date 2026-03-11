@@ -9,6 +9,7 @@ import CommentaireSQLRowBuilder from "@/server/infrastructure/test/builders/sqlR
 import { prisma } from "@/server/db/prisma";
 import Utilisateur from "@/server/domain/utilisateur/Utilisateur.interface";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
+import { PrismaPilote } from "@/server/db/PrismaPilote";
 import RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase from "./RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase";
 
 function mapperVersDomaine(commentairePrisma: commentaire): Commentaire {
@@ -22,7 +23,9 @@ function mapperVersDomaine(commentairePrisma: commentaire): Commentaire {
 }
 
 describe("RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase", () => {
-  const commentaireRepository = new CommentaireSQLRepository();
+  const commentaireRepository = new CommentaireSQLRepository({
+    prisma: new PrismaPilote(),
+  });
   const récupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase =
     new RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase({
       commentaireRepository,

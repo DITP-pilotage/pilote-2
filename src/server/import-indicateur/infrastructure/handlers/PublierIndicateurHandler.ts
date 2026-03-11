@@ -1,14 +1,13 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { PublierFichierIndicateurImporteUseCase } from "@/server/import-indicateur/usecases/PublierFichierIndicateurImporteUseCase";
-
-type Dependencies = {
-  publierFichierIndicateurImporteUseCase: PublierFichierIndicateurImporteUseCase;
-};
+import type { Inject } from "@/server/import-indicateur/module";
 
 export class PublierFichierImportIndicateurHandler {
   private publierFichierIndicateurImporteUseCase: PublierFichierIndicateurImporteUseCase;
 
-  constructor({ publierFichierIndicateurImporteUseCase }: Dependencies) {
+  constructor({
+    publierFichierIndicateurImporteUseCase,
+  }: Inject<"publierFichierIndicateurImporteUseCase">) {
     this.publierFichierIndicateurImporteUseCase =
       publierFichierIndicateurImporteUseCase;
   }

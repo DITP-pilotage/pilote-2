@@ -1,12 +1,12 @@
 import { GestionContenuRepository } from "@/server/gestion-contenu/domain/ports/GestionContenuRepository";
+import type { Inject } from "@/server/legacy/module";
 
-interface Dependencies {
-  gestionContenuRepository: GestionContenuRepository;
-}
 export class ModifierMessageInformationUseCase {
   private gestionContenuRepository: GestionContenuRepository;
 
-  constructor({ gestionContenuRepository }: Dependencies) {
+  constructor({
+    gestionContenuRepository,
+  }: Inject<"gestionContenuRepository">) {
     this.gestionContenuRepository = gestionContenuRepository;
   }
 

@@ -1,7 +1,7 @@
 import { captor, mock, MockProxy } from "vitest-mock-extended";
 import { PublierFichierIndicateurImporteUseCase } from "@/server/import-indicateur/usecases/PublierFichierIndicateurImporteUseCase";
 import { MesureIndicateurTemporaireRepository } from "@/server/import-indicateur/domain/ports/MesureIndicateurTemporaireRepository.interface";
-import { RapportRepository } from "@/server/import-indicateur/domain/ports/RapportRepository";
+
 import { MesureIndicateurTemporaire } from "@/server/import-indicateur/domain/MesureIndicateurTemporaire";
 import { MesureIndicateurTemporaireBuilder } from "@/server/import-indicateur/app/builder/MesureIndicateurTemporaire.builder";
 import { MesureIndicateurRepository } from "@/server/import-indicateur/domain/ports/MesureIndicateurRepository.interface";
@@ -16,7 +16,7 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
   let publierFichierIndicateurImporteUseCase: PublierFichierIndicateurImporteUseCase;
   let mesureIndicateurTemporaireRepository: MockProxy<MesureIndicateurTemporaireRepository>;
   let mesureIndicateurRepository: MesureIndicateurRepository;
-  let rapportRepository: RapportRepository;
+
   let propositionValeurAvancementRepository: PropositionValeurAvancementRepository;
   let indicateurTerritoireValeurEvenementRepository: MockProxy<IndicateurTerritoireValeurEvenementRepository>;
 
@@ -24,7 +24,6 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
     mesureIndicateurRepository = mock<MesureIndicateurRepository>();
     mesureIndicateurTemporaireRepository =
       mock<MesureIndicateurTemporaireRepository>();
-    rapportRepository = mock<RapportRepository>();
     propositionValeurAvancementRepository =
       mock<PropositionValeurAvancementRepository>();
     indicateurTerritoireValeurEvenementRepository =
@@ -33,7 +32,6 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
       new PublierFichierIndicateurImporteUseCase({
         mesureIndicateurTemporaireRepository,
         mesureIndicateurRepository,
-        rapportRepository,
         propositionValeurAvancementRepository,
         indicateurTerritoireValeurEvenementRepository,
         transaction: new InMemoryTransaction(),

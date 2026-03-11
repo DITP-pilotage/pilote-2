@@ -1,4 +1,3 @@
-import { asClass, AwilixContainer } from "awilix";
 import { HistorisationModificationRepository } from "@/server/domain/historisationModification/HistorisationModificationRepository";
 import CreerUneMetadataIndicateurUseCase from "@/server/parametrage-indicateur/usecases/CreerUneMetadataIndicateurUseCase";
 import ModifierUneMetadataIndicateurUseCase from "@/server/parametrage-indicateur/usecases/ModifierUneMetadataIndicateurUseCase";
@@ -14,10 +13,14 @@ import { PrismaHistorisationModificationRepository } from "@/server/infrastructu
 import { PrismaMetadataParametrageIndicateurRepository } from "@/server/parametrage-indicateur/infrastructure/adapters/PrismaMetadataParametrageIndicateurRepository";
 import { PrismaMetadataParametrageIndicateurQuery } from "@/server/parametrage-indicateur/infrastructure/queries/PrismaMetadataParametrageIndicateurQuery";
 import { GetMetadataIndicateurConfigurationQuery } from "@/server/parametrage-indicateur/queries/GetMetadataIndicateurConfigurationQuery";
-import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { EnregistrerMetadataIndicateurHandler } from "@/server/parametrage-indicateur/handlers/EnregistrerMetadataIndicateurHandler";
+import {
+  defineModule,
+  type ExtractScope,
+  type NoExports,
+} from "@/server/module-system";
 
-export type ParametrageIndicateurDependencies = {
+type ParametrageIndicateurCradle = {
   historisationModificationRepository: HistorisationModificationRepository;
   creerUneMetadataIndicateurUseCase: CreerUneMetadataIndicateurUseCase;
   modifierUneMetadataIndicateurUseCase: ModifierUneMetadataIndicateurUseCase;
@@ -34,53 +37,58 @@ export type ParametrageIndicateurDependencies = {
   enregistrerMetadataIndicateurHandler: EnregistrerMetadataIndicateurHandler;
 };
 
-export const getParametrageIndicateurContainer = (
-  initialContainer: AwilixContainer<{ prisma: PrismaPilote }>,
-): AwilixContainer<
-  ParametrageIndicateurDependencies & { prisma: PrismaPilote }
-> => {
-  return initialContainer
-    .createScope<ParametrageIndicateurDependencies>()
-    .register({
-      historisationModificationRepository: asClass(
+export const parametrageIndicateurModule = defineModule<
+  NoExports,
+  ParametrageIndicateurCradle
+>()({
+  name: "parametrageIndicateur",
+  imports: ["shared"],
+  exports: [],
+  register: (container, { asModuleClass }) => {
+    container.register({
+      historisationModificationRepository: asModuleClass(
         PrismaHistorisationModificationRepository,
       ),
-      creerUneMetadataIndicateurUseCase: asClass(
+      creerUneMetadataIndicateurUseCase: asModuleClass(
         CreerUneMetadataIndicateurUseCase,
       ),
-      modifierUneMetadataIndicateurUseCase: asClass(
+      modifierUneMetadataIndicateurUseCase: asModuleClass(
         ModifierUneMetadataIndicateurUseCase,
       ),
-      initialiserNouvelIndicateurUseCase: asClass(
+      initialiserNouvelIndicateurUseCase: asModuleClass(
         InitialiserNouvelIndicateurUseCase,
       ),
-      récupérerInformationMetadataIndicateurUseCase: asClass(
+      récupérerInformationMetadataIndicateurUseCase: asModuleClass(
         RécupérerInformationMetadataIndicateurUseCase,
       ),
-      récupérerListeMetadataIndicateurUseCase: asClass(
+      récupérerListeMetadataIndicateurUseCase: asModuleClass(
         RécupérerListeMetadataIndicateurUseCase,
       ),
-      récupérerMetadataIndicateurIdentifiantGénéréUseCase: asClass(
+      récupérerMetadataIndicateurIdentifiantGénéréUseCase: asModuleClass(
         RécupérerMetadataIndicateurIdentifiantGénéréUseCase,
       ),
-      récupérerUnIndicateurUseCase: asClass(RécupérerUnIndicateurUseCase),
-      importMasseMetadataIndicateurHandler: asClass(
+      récupérerUnIndicateurUseCase: asModuleClass(RécupérerUnIndicateurUseCase),
+      importMasseMetadataIndicateurHandler: asModuleClass(
         ImportMasseMetadataIndicateurHandler,
       ),
-      importMasseMetadataIndicateurUseCase: asClass(
+      importMasseMetadataIndicateurUseCase: asModuleClass(
         ImportMasseMetadataIndicateurUseCase,
       ),
-      metadataParametrageIndicateurRepository: asClass(
+      metadataParametrageIndicateurRepository: asModuleClass(
         PrismaMetadataParametrageIndicateurRepository,
       ),
-      metadataParametrageIndicateurQuery: asClass(
+      metadataParametrageIndicateurQuery: asModuleClass(
         PrismaMetadataParametrageIndicateurQuery,
       ),
-      getMetadataIndicateurConfigurationQuery: asClass(
+      getMetadataIndicateurConfigurationQuery: asModuleClass(
         GetMetadataIndicateurConfigurationQuery,
       ),
-      enregistrerMetadataIndicateurHandler: asClass(
+      enregistrerMetadataIndicateurHandler: asModuleClass(
         EnregistrerMetadataIndicateurHandler,
       ),
     });
-};
+  },
+});
+
+type Scope = ExtractScope<typeof parametrageIndicateurModule>;
+export type Inject<K extends keyof Scope> = Pick<Scope, K>;

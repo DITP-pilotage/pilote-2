@@ -6,12 +6,7 @@ import { TerritoireRepository } from "@/server/chantiers/domain/ports/Territoire
 import { ChantierRepository } from "@/server/chantiers/domain/ports/ChantierRepository";
 import { MinistereRepository } from "@/server/chantiers/domain/ports/MinistereRepository";
 import { presenterEnChantierContrat } from "@/server/chantiers/app/contrats/ChantierContrat";
-
-interface Dependencies {
-  chantierRepository: ChantierRepository;
-  ministereRepository: MinistereRepository;
-  territoireRepository: TerritoireRepository;
-}
+import type { Inject } from "@/server/chantiers/module";
 
 export default class RecupererChantierUseCaseV2 {
   private chantierRepository: ChantierRepository;
@@ -24,7 +19,9 @@ export default class RecupererChantierUseCaseV2 {
     chantierRepository,
     ministereRepository,
     territoireRepository,
-  }: Dependencies) {
+  }: Inject<
+    "chantierRepository" | "ministereRepository" | "territoireRepository"
+  >) {
     this.chantierRepository = chantierRepository;
     this.ministereRepository = ministereRepository;
     this.territoireRepository = territoireRepository;

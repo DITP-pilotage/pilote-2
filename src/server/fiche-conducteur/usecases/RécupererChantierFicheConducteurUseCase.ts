@@ -2,18 +2,17 @@ import { ChantierRepository } from "@/server/fiche-conducteur/domain/ports/Chant
 import { ChantierFicheConducteur } from "@/server/fiche-conducteur/domain/ChantierFicheConducteur";
 import { IndicateurFicheConducteur } from "@/server/fiche-conducteur/domain/IndicateurFicheConducteur";
 import { IndicateurRepository } from "@/server/fiche-conducteur/domain/ports/IndicateurRepository";
-
-interface Dependencies {
-  chantierRepository: ChantierRepository;
-  indicateurRepository: IndicateurRepository;
-}
+import type { Inject } from "@/server/fiche-conducteur/module";
 
 export class RécupererChantierFicheConducteurUseCase {
   private chantierRepository: ChantierRepository;
 
   private indicateurRepository: IndicateurRepository;
 
-  constructor({ chantierRepository, indicateurRepository }: Dependencies) {
+  constructor({
+    chantierRepository,
+    indicateurRepository,
+  }: Inject<"chantierRepository" | "indicateurRepository">) {
     this.chantierRepository = chantierRepository;
     this.indicateurRepository = indicateurRepository;
   }

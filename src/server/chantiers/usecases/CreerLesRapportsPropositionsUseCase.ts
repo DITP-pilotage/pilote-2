@@ -1,21 +1,9 @@
 import logger from "@/server/infrastructure/Logger";
-import { ChantierRepository } from "@/server/chantiers/domain/ports/ChantierRepository";
-import { UtilisateurRepository } from "@/server/chantiers/domain/ports/UtilisateurRepository";
-import { IndicateurTerritoireValeurEvenementRepository } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/IndicateurTerritoireValeurEvenementRepository";
-import { IndicateurRepository } from "@/server/chantiers/domain/ports/IndicateurRepository";
-import { RapportPropositionsAvancementRepository } from "@/server/chantiers/domain/ports/RapportPropositionsAvancementRepository";
 import { creerRapportPropositionsAvancement } from "@/server/chantiers/domain/RapportPropositionsAvancement";
 import { genererParametresEnvoieRapportProposition } from "@/server/chantiers/app/contrats/ParametresEnvoieEmailRapportProposition";
 import { getAnneeDateDeBascule } from "@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getAnneeDateDeBascule";
 import { configuration } from "@/config";
-
-interface Dependencies {
-  chantierRepository: ChantierRepository;
-  utilisateurRepository: UtilisateurRepository;
-  indicateurTerritoireValeurEvenementRepository: IndicateurTerritoireValeurEvenementRepository;
-  indicateurRepository: IndicateurRepository;
-  rapportPropositionsAvancementRepository: RapportPropositionsAvancementRepository;
-}
+import type { Inject } from "@/server/chantiers/module";
 
 export interface CreerLesRapportsPropositionsResultat {
   rapportsCrees: number;
@@ -23,7 +11,15 @@ export interface CreerLesRapportsPropositionsResultat {
 }
 
 export class CreerLesRapportsPropositionsUseCase {
-  constructor(private readonly dependencies: Dependencies) {}
+  constructor(
+    private readonly dependencies: Inject<
+      | "chantierRepository"
+      | "utilisateurRepository"
+      | "indicateurTerritoireValeurEvenementRepository"
+      | "indicateurRepository"
+      | "rapportPropositionsAvancementRepository"
+    >,
+  ) {}
 
   async run(): Promise<CreerLesRapportsPropositionsResultat> {
     const propositionsParChantier =

@@ -16,7 +16,7 @@ import { FiltreQueryParams } from "@/server/chantiers/app/contrats/FiltreQueryPa
 import { PrismaChantier } from "@/server/chantiers/domain/PrismaChantier";
 import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
 import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
-import { getInitialContainerWithTransversalDependencies } from "@/server/InitialDependencies";
+import { PrismaPilote } from "@/server/db/PrismaPilote";
 
 class ErreurChantierNonTrouvé extends Error {
   constructor(idChantier: string) {
@@ -33,8 +33,11 @@ class ErreurChantierPermission extends Error {
 }
 
 export class PrismaChantierRepository implements ChantierRepository {
-  private prismaClient =
-    getInitialContainerWithTransversalDependencies().resolve("prisma");
+  private prismaClient: PrismaPilote;
+
+  constructor({ prisma }: { prisma: PrismaPilote }) {
+    this.prismaClient = prisma;
+  }
 
   get prisma() {
     return this.prismaClient.getInstance();

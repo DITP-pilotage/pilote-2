@@ -1,17 +1,13 @@
-import { CoordinateurGateway } from "@/server/rapports-hebdomadaires/domain/ports/CoordinateurGateway";
+import { type CoordinateurGateway } from "@/server/rapports-hebdomadaires/domain/ports/CoordinateurGateway";
 import {
-  Coordinateur,
-  ProfilCoordinateur,
+  type Coordinateur,
+  type ProfilCoordinateur,
 } from "@/server/rapports-hebdomadaires/domain/Coordinateur";
-import { PrismaUtilisateursQuery } from "@/server/gestion-utilisateur/infrastructure/queries/PrismaUtilisateursQuery";
 import { filtrerTerritoireNat } from "@/server/rapports-hebdomadaires/infrastructure/adapters/utils/territoires";
+import type { Inject } from "@/server/rapports-hebdomadaires/module";
 
 export class GestionUtilisateurCoordinateurGateway implements CoordinateurGateway {
-  constructor(
-    private readonly deps: {
-      utilisateursQuery: PrismaUtilisateursQuery;
-    },
-  ) {}
+  constructor(private readonly deps: Inject<"utilisateursQuery">) {}
 
   async recupererCoordinateurs(
     profils: ProfilCoordinateur[],

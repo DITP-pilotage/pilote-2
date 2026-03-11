@@ -9,14 +9,13 @@ import SynthèseDesRésultats, {
 import { Météo } from "@/server/domain/météo/Météo.interface";
 import Chantier from "@/server/domain/chantier/Chantier.interface";
 import { territoireCodeVersMailleCodeInsee } from "@/server/utils/territoires";
-import { getInitialContainerWithTransversalDependencies } from "@/server/InitialDependencies";
+import { Inject } from "@/server/legacy/module";
 
 export class SynthèseDesRésultatsSQLRepository implements SynthèseDesRésultatsRepository {
-  private prismaClient =
-    getInitialContainerWithTransversalDependencies().resolve("prisma");
+  constructor(private readonly deps: Inject<"prisma">) {}
 
   get prisma() {
-    return this.prismaClient.getInstance();
+    return this.deps.prisma.getInstance();
   }
 
   async save({

@@ -1,6 +1,5 @@
-import { ProfilUtilisateurRepository } from "@/server/profil-utilisateur/domain/ports/ProfilUtilisateurRepository";
 import { modifierProfilUtilisateur } from "@/server/profil-utilisateur/domain/ProfilUtilisateur";
-import { ProfilModifieSideEffects } from "@/server/profil-utilisateur/domain/ports/ProfilModifieSideEffects";
+import type { Inject } from "@/server/profil-utilisateur/module";
 
 type ModifierMonProfilInput = {
   nom: string;
@@ -13,10 +12,9 @@ type ModifierMonProfilInput = {
 
 export class ModifierMonProfilUseCase {
   constructor(
-    private readonly deps: {
-      profilUtilisateurRepository: ProfilUtilisateurRepository;
-      profilModifieSideEffects: ProfilModifieSideEffects;
-    },
+    private readonly deps: Inject<
+      "profilUtilisateurRepository" | "profilModifieSideEffects"
+    >,
   ) {}
 
   async run(

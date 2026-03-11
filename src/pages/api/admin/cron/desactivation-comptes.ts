@@ -1,7 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { onlyCron } from "@/server/infrastructure/api/cron/onlyCron";
-import { getInitialContainerWithTransversalDependencies } from "@/server/InitialDependencies";
-import { getGestionUtilisateurContainer } from "@/server/gestion-utilisateur/container";
+import { getContainer } from "@/server/dependances";
 import logger from "@/server/infrastructure/Logger";
 import { envoieMessageTchap } from "@/server/utils/notification-tchap";
 import { configuration } from "@/config";
@@ -19,8 +18,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   }
 
   try {
-    const initialContainer = getInitialContainerWithTransversalDependencies();
-    const container = getGestionUtilisateurContainer(initialContainer);
+    const container = getContainer("gestionUtilisateur");
 
     logger.info("Phase 1 : Création des actions pour les comptes inactifs");
     const resultatCreation = await container

@@ -14,13 +14,16 @@ import {
   ImportCommentaireErrorResponse,
 } from "@/server/commentaires/app/contrats/ImportCommentaireAPIContrat";
 import { UtilisateurAuthentifie } from "@/server/authentification/domain/UtilisateurAuthentifie";
+import type { Inject } from "@/server/commentaires/module";
 
 export class ImportCommentaireAPIHandler {
-  constructor(
-    private readonly dependencies: {
-      importerCommentairesUseCase: ImporterCommentairesUseCase;
-    },
-  ) {}
+  private readonly importerCommentairesUseCase: ImporterCommentairesUseCase;
+
+  constructor({
+    importerCommentairesUseCase,
+  }: Inject<"importerCommentairesUseCase">) {
+    this.importerCommentairesUseCase = importerCommentairesUseCase;
+  }
 
   async handle({
     request,
@@ -75,7 +78,7 @@ export class ImportCommentaireAPIHandler {
       return;
     }
 
-    await this.dependencies.importerCommentairesUseCase.execute({
+    await this.importerCommentairesUseCase.execute({
       chantierId,
       commentaires: validationResult.data.commentaires,
       auteurId: utilisateurAuthentifie.id,

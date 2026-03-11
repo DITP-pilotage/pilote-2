@@ -2,6 +2,7 @@ import { IndicateurTerritoireValeurEvenementRepository } from "@/server/indicate
 import { IndicateurRepository } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/IndicateurRepository";
 import { toISODate } from "@/server/app/domain/Dates";
 import { BadRequestError } from "@/server/app/error-boundary/bad-request-error";
+import type { Inject } from "@/server/indicateur-territoire-valeur-evenement/module";
 
 export type CreerIndicateurTerritoireValeurEvenementInput = {
   indicId: string;
@@ -13,11 +14,6 @@ export type CreerIndicateurTerritoireValeurEvenementInput = {
   sourceDonneeEtMethodeCalcul: string;
 };
 
-interface Dependencies {
-  indicateurTerritoireValeurEvenementRepository: IndicateurTerritoireValeurEvenementRepository;
-  indicateurRepository: IndicateurRepository;
-}
-
 export class CreerPropositionValeurAvancementUseCase {
   private readonly indicateurTerritoireValeurEvenementRepository: IndicateurTerritoireValeurEvenementRepository;
 
@@ -26,7 +22,9 @@ export class CreerPropositionValeurAvancementUseCase {
   constructor({
     indicateurTerritoireValeurEvenementRepository,
     indicateurRepository,
-  }: Dependencies) {
+  }: Inject<
+    "indicateurTerritoireValeurEvenementRepository" | "indicateurRepository"
+  >) {
     this.indicateurTerritoireValeurEvenementRepository =
       indicateurTerritoireValeurEvenementRepository;
     this.indicateurRepository = indicateurRepository;

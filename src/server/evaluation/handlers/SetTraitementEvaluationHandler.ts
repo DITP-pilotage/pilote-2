@@ -3,6 +3,7 @@ import { $Enums } from "@prisma/client";
 import { Transaction } from "@/server/db/Transaction";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { getPrisma } from "@/server/db/PrismaTransaction";
+import type { Inject } from "@/server/evaluation/module";
 
 export const setTraitementEvaluationCommandSchema = z.object({
   evaluationId: z.string(),
@@ -15,15 +16,16 @@ export type SetTraitementEvaluationCommand = z.infer<
 >;
 
 export class SetTraitementEvaluationHandler {
-  constructor(
-    private readonly dependencies: {
-      transaction: Transaction;
-      prisma: PrismaPilote;
-    },
-  ) {}
+  private readonly transaction: Transaction;
+  private readonly prisma: PrismaPilote;
+
+  constructor({ transaction, prisma }: Inject<"transaction" | "prisma">) {
+    this.transaction = transaction;
+    this.prisma = prisma;
+  }
 
   async execute(command: SetTraitementEvaluationCommand): Promise<void> {
-    await this.dependencies.transaction.run(async () => {
+    await this.transaction.run(async () => {
       const prisma = getPrisma();
 
       const evaluation =

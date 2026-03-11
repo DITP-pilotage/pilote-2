@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { PrismaPilote } from "@/server/db/PrismaPilote";
-import { PrismaTransaction, getPrisma } from "@/server/db/PrismaTransaction";
+import { getPrisma } from "@/server/db/PrismaTransaction";
+import type { Inject } from "@/server/parametrage-indicateur/module";
 
 const valeurAccepteeSchema = z.object({
   ordre: z.number(),
@@ -43,10 +43,7 @@ export type EnregistrerMetadataIndicateurCommand = z.infer<
 
 export class EnregistrerMetadataIndicateurHandler {
   constructor(
-    private readonly dependencies: {
-      prisma: PrismaPilote;
-      transaction: PrismaTransaction;
-    },
+    private readonly dependencies: Inject<"prisma" | "transaction">,
   ) {}
 
   async execute(command: EnregistrerMetadataIndicateurCommand): Promise<void> {

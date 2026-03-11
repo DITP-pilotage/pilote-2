@@ -3,12 +3,15 @@ import IndicateurSQLRepository from "@/server/infrastructure/accès_données/cha
 import { EvenementValeurEnum } from "@/server/app/domain/EvenementValeurEnum";
 import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
 import { fixtures } from "@/server/infrastructure/test/fixtures";
+import { PrismaPilote } from "@/server/db/PrismaPilote";
 
 describe("IndicateurSQLRepository", () => {
   let prismaIndicateurRepository: IndicateurSQLRepository;
 
   beforeEach(() => {
-    prismaIndicateurRepository = new IndicateurSQLRepository();
+    prismaIndicateurRepository = new IndicateurSQLRepository({
+      prisma: new PrismaPilote(),
+    });
   });
 
   describe("#récupérerGroupésParChantier", () => {

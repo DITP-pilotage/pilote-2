@@ -1,4 +1,3 @@
-import { asClass, AwilixContainer } from "awilix";
 import { ImportSyntheseDesResultatsAPIHandler } from "@/server/syntheses-des-resultats/infrastructure/handlers/ImportSyntheseDesResultatsAPIHandler";
 import { ImporterSynthesesDesResultatsUseCase } from "@/server/syntheses-des-resultats/usecases/ImporterSynthesesDesResultatsUseCase";
 import { RecupererDerniereSyntheseDesResultatsQuery } from "@/server/syntheses-des-resultats/queries/RecupererDerniereSyntheseDesResultatsQuery";
@@ -10,7 +9,11 @@ import { ChantierRepository } from "@/server/chantiers/domain/ports/ChantierRepo
 import { PrismaChantierRepository } from "@/server/chantiers/infrastructure/adapters/PrismaChantierRepository";
 import { Transaction } from "@/server/db/Transaction";
 import { PrismaTransaction } from "@/server/db/PrismaTransaction";
-import { PrismaPilote } from "@/server/db/PrismaPilote";
+import {
+  defineModule,
+  type ExtractScope,
+  type NoExports,
+} from "@/server/module-system";
 import { EnregistrerSyntheseDesResultatsService } from "@/server/syntheses-des-resultats/services/EnregistrerSyntheseDesResultatsService";
 import { PublierSyntheseDesResultatsUseCase } from "@/server/syntheses-des-resultats/usecases/PublierSyntheseDesResultatsUseCase";
 import { EnregistrerBrouillonSyntheseDesResultatsUseCase } from "@/server/syntheses-des-resultats/usecases/EnregistrerBrouillonSyntheseDesResultatsUseCase";
@@ -18,7 +21,7 @@ import { ModifierSyntheseDesResultatsPublieeUseCase } from "@/server/syntheses-d
 import { PublierBrouillonSyntheseDesResultatsUseCase } from "@/server/syntheses-des-resultats/usecases/PublierBrouillonSyntheseDesResultatsUseCase";
 import { ModifierBrouillonSyntheseDesResultatsUseCase } from "@/server/syntheses-des-resultats/usecases/ModifierBrouillonSyntheseDesResultatsUseCase";
 
-export type ImportSyntheseDesResultatsDependencies = {
+type ImportSyntheseDesResultatsCradle = {
   importSyntheseDesResultatsAPIHandler: ImportSyntheseDesResultatsAPIHandler;
   importerSynthesesDesResultatsUseCase: ImporterSynthesesDesResultatsUseCase;
   enregistrerSyntheseDesResultatsService: EnregistrerSyntheseDesResultatsService;
@@ -35,51 +38,56 @@ export type ImportSyntheseDesResultatsDependencies = {
   transaction: Transaction;
 };
 
-export const getImportSyntheseDesResultatsContainer = (
-  initialContainer: AwilixContainer<{ prisma: PrismaPilote }>,
-): AwilixContainer<
-  ImportSyntheseDesResultatsDependencies & { prisma: PrismaPilote }
-> => {
-  return initialContainer
-    .createScope<ImportSyntheseDesResultatsDependencies>()
-    .register({
-      synthèseDesRésultatsRepository: asClass(
+export const importSyntheseDesResultatsModule = defineModule<
+  NoExports,
+  ImportSyntheseDesResultatsCradle
+>()({
+  name: "importSyntheseDesResultats",
+  imports: ["shared"],
+  exports: [],
+  register: (container, { asModuleClass }) => {
+    container.register({
+      synthèseDesRésultatsRepository: asModuleClass(
         SynthèseDesRésultatsSQLRepository,
       ),
-      chantierRepository: asClass(PrismaChantierRepository),
-      transaction: asClass(PrismaTransaction),
-      enregistrerSyntheseDesResultatsService: asClass(
+      chantierRepository: asModuleClass(PrismaChantierRepository),
+      transaction: asModuleClass(PrismaTransaction),
+      enregistrerSyntheseDesResultatsService: asModuleClass(
         EnregistrerSyntheseDesResultatsService,
       ),
-      importerSynthesesDesResultatsUseCase: asClass(
+      importerSynthesesDesResultatsUseCase: asModuleClass(
         ImporterSynthesesDesResultatsUseCase,
       ),
-      publierSyntheseDesResultatsUseCase: asClass(
+      publierSyntheseDesResultatsUseCase: asModuleClass(
         PublierSyntheseDesResultatsUseCase,
       ),
-      enregistrerBrouillonSyntheseDesResultatsUseCase: asClass(
+      enregistrerBrouillonSyntheseDesResultatsUseCase: asModuleClass(
         EnregistrerBrouillonSyntheseDesResultatsUseCase,
       ),
-      modifierSyntheseDesResultatsPublieeUseCase: asClass(
+      modifierSyntheseDesResultatsPublieeUseCase: asModuleClass(
         ModifierSyntheseDesResultatsPublieeUseCase,
       ),
-      publierBrouillonSyntheseDesResultatsUseCase: asClass(
+      publierBrouillonSyntheseDesResultatsUseCase: asModuleClass(
         PublierBrouillonSyntheseDesResultatsUseCase,
       ),
-      modifierBrouillonSyntheseDesResultatsUseCase: asClass(
+      modifierBrouillonSyntheseDesResultatsUseCase: asModuleClass(
         ModifierBrouillonSyntheseDesResultatsUseCase,
       ),
-      récupérerDerniereSyntheseDesResultatsQuery: asClass(
+      récupérerDerniereSyntheseDesResultatsQuery: asModuleClass(
         RecupererDerniereSyntheseDesResultatsQuery,
       ),
-      récupérerHistoriqueSyntheseDesResultatsQuery: asClass(
+      récupérerHistoriqueSyntheseDesResultatsQuery: asModuleClass(
         RecupererHistoriqueSyntheseDesResultatsQuery,
       ),
-      recupererDernierBrouillonSyntheseDesResultatsQuery: asClass(
+      recupererDernierBrouillonSyntheseDesResultatsQuery: asModuleClass(
         RecupererBrouillonSyntheseDesResultatsQuery,
       ),
-      importSyntheseDesResultatsAPIHandler: asClass(
+      importSyntheseDesResultatsAPIHandler: asModuleClass(
         ImportSyntheseDesResultatsAPIHandler,
       ),
     });
-};
+  },
+});
+
+type Scope = ExtractScope<typeof importSyntheseDesResultatsModule>;
+export type Inject<K extends keyof Scope> = Pick<Scope, K>;

@@ -1,4 +1,4 @@
-import { PrismaPilote } from "@/server/db/PrismaPilote";
+import type { Inject } from "@/server/parametrage-indicateur/module";
 
 export interface ValeurAcceptee {
   ordre: number;
@@ -33,7 +33,7 @@ export type GetMetadataIndicateurConfigurationViewModel = {
 };
 
 export class GetMetadataIndicateurConfigurationQuery {
-  constructor(private readonly dependencies: { prisma: PrismaPilote }) {}
+  constructor(private readonly dependencies: Inject<"prisma">) {}
 
   async run(): Promise<GetMetadataIndicateurConfigurationViewModel> {
     const metadataIndicateurs = await this.dependencies.prisma

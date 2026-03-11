@@ -5,13 +5,16 @@ import { ProfilEnum } from "@/server/app/enum/profil.enum";
 import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
 import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
 import { fixtures } from "@/server/infrastructure/test/fixtures";
+import { PrismaPilote } from "@/server/db/PrismaPilote";
 
 describe("PrismaIndicateurRepository", () => {
   const dateDerniereExecutionDatajobs = new Date("2026-02-12T00:00:00.000Z");
   let prismaIndicateurRepository: PrismaIndicateurRepository;
 
   beforeEach(() => {
-    prismaIndicateurRepository = new PrismaIndicateurRepository();
+    prismaIndicateurRepository = new PrismaIndicateurRepository({
+      prisma: new PrismaPilote(),
+    });
   });
 
   describe("#listerParIndicId", () => {

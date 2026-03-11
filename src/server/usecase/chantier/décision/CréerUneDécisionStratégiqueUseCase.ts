@@ -4,15 +4,14 @@ import DécisionStratégique from "@/server/domain/chantier/décisionStratégiqu
 import DécisionStratégiqueRepository from "@/server/domain/chantier/décisionStratégique/DécisionStratégiqueRepository.interface";
 import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
 import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
+import type { Inject } from "@/server/legacy/module";
 
 export default class CréerUneDécisionStratégiqueUseCase {
   private readonly décisionStratégiqueRepository: DécisionStratégiqueRepository;
 
   constructor({
     décisionStratégiqueRepository,
-  }: {
-    décisionStratégiqueRepository: DécisionStratégiqueRepository;
-  }) {
+  }: Inject<"décisionStratégiqueRepository">) {
     this.décisionStratégiqueRepository = décisionStratégiqueRepository;
   }
 

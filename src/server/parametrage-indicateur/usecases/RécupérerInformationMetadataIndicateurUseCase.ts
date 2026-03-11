@@ -1,13 +1,9 @@
 import { InformationMetadataIndicateur } from "@/server/parametrage-indicateur/domain/InformationMetadataIndicateur";
 import { AcceptedValue } from "@/server/parametrage-indicateur/domain/AcceptedValue";
-import { PrismaPilote } from "@/server/db/PrismaPilote";
+import type { Inject } from "@/server/parametrage-indicateur/module";
 
 export default class RécupérerInformationMetadataIndicateurUseCase {
-  constructor(
-    private readonly dependencies: {
-      prisma: PrismaPilote;
-    },
-  ) {}
+  constructor(private readonly dependencies: Inject<"prisma">) {}
 
   async run(): Promise<InformationMetadataIndicateur[]> {
     return this.récupérerDepuisBDD();

@@ -2,15 +2,14 @@ import { File } from "formidable";
 import { NextApiRequest } from "next";
 import { parseForm } from "@/server/import-indicateur/infrastructure/handlers/ParseForm";
 import ImportMasseMetadataIndicateurUseCase from "@/server/parametrage-indicateur/usecases/ImportMasseMetadataIndicateurUseCase";
-
-type Dependencies = {
-  importMasseMetadataIndicateurUseCase: ImportMasseMetadataIndicateurUseCase;
-};
+import type { Inject } from "@/server/parametrage-indicateur/module";
 
 export class ImportMasseMetadataIndicateurHandler {
   private importMasseMetadataIndicateurUseCase: ImportMasseMetadataIndicateurUseCase;
 
-  constructor({ importMasseMetadataIndicateurUseCase }: Dependencies) {
+  constructor({
+    importMasseMetadataIndicateurUseCase,
+  }: Inject<"importMasseMetadataIndicateurUseCase">) {
     this.importMasseMetadataIndicateurUseCase =
       importMasseMetadataIndicateurUseCase;
   }

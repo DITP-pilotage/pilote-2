@@ -7,12 +7,7 @@ import {
   marquerCommeEchec,
   marquerCommeSucces,
 } from "@/server/gestion-utilisateur/domain/ActionCompteInactif";
-
-type Dependencies = {
-  utilisateurRepository: UtilisateurRepository;
-  actionCompteInactifRepository: ActionCompteInactifRepository;
-  contactInfoLettresService: ContactInfoLettresService;
-};
+import type { Inject } from "@/server/gestion-utilisateur/module";
 
 export interface EnvoyerLesRelancesResultat {
   premieresRelancesEnvoyees: number;
@@ -35,7 +30,11 @@ export class EnvoyerLesRelancesUseCase {
     utilisateurRepository,
     actionCompteInactifRepository,
     contactInfoLettresService,
-  }: Dependencies) {
+  }: Inject<
+    | "utilisateurRepository"
+    | "actionCompteInactifRepository"
+    | "contactInfoLettresService"
+  >) {
     this.utilisateurRepository = utilisateurRepository;
     this.actionCompteInactifRepository = actionCompteInactifRepository;
     this.contactInfoLettresService = contactInfoLettresService;

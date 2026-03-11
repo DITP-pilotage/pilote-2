@@ -1,14 +1,11 @@
 import { ChantierRepository } from "@/server/gestion-utilisateur/domain/ports/ChantierRepository";
 import { InformationChantierUtilisateur } from "@/server/gestion-utilisateur/domain/InformationChantierUtilisateur";
-
-interface Dependencies {
-  chantierRepository: ChantierRepository;
-}
+import type { Inject } from "@/server/gestion-utilisateur/module";
 
 export class RecupererLaListeDesInfomrationsChantiersUse {
   private chantierRepository: ChantierRepository;
 
-  constructor({ chantierRepository }: Dependencies) {
+  constructor({ chantierRepository }: Inject<"chantierRepository">) {
     this.chantierRepository = chantierRepository;
   }
 

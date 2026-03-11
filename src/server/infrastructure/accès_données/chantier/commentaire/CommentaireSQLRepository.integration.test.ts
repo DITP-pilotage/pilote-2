@@ -7,12 +7,15 @@ import { TypeCommentaireChantier } from "@/server/domain/chantier/commentaire/Co
 import { Maille } from "@/server/domain/maille/Maille.interface";
 import { CODES_MAILLES } from "@/server/infrastructure/accès_données/maille/mailleSQLParser";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
+import { PrismaPilote } from "@/server/db/PrismaPilote";
 
 describe("CommentaireSQLRepository", () => {
   let prismaCommentaireRepository: CommentaireSQLRepository;
 
   beforeEach(() => {
-    prismaCommentaireRepository = new CommentaireSQLRepository();
+    prismaCommentaireRepository = new CommentaireSQLRepository({
+      prisma: new PrismaPilote(),
+    });
   });
 
   describe("#récupérerLePlusRécent", () => {

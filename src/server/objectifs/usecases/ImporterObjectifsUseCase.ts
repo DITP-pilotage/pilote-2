@@ -5,13 +5,14 @@ import {
   mapTypeObjectifAPIVersDomaine,
 } from "@/validation/import-objectif";
 import { ObjectifV2 } from "@/server/domain/chantier/objectif/Objectif.interface";
+import type { Inject } from "@/server/objectifs/module";
 
 export class ImporterObjectifsUseCase {
-  constructor(
-    private readonly dependencies: {
-      objectifRepository: ObjectifRepository;
-    },
-  ) {}
+  private readonly objectifRepository: ObjectifRepository;
+
+  constructor({ objectifRepository }: Inject<"objectifRepository">) {
+    this.objectifRepository = objectifRepository;
+  }
 
   async execute({
     chantierId,
@@ -39,7 +40,7 @@ export class ImporterObjectifsUseCase {
         date,
       };
 
-      await this.dependencies.objectifRepository.save(objectifV2);
+      await this.objectifRepository.save(objectifV2);
     }
   }
 }

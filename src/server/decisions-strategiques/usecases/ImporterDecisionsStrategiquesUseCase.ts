@@ -5,13 +5,16 @@ import {
   mapTypeDecisionStrategiqueAPIVersDomaine,
 } from "@/validation/import-decision-strategique";
 import { DécisionStratégiqueV2 } from "@/server/domain/chantier/décisionStratégique/DécisionStratégique.interface";
+import type { Inject } from "@/server/decisions-strategiques/module";
 
 export class ImporterDecisionsStrategiquesUseCase {
-  constructor(
-    private readonly dependencies: {
-      décisionStratégiqueRepository: DécisionStratégiqueRepository;
-    },
-  ) {}
+  private readonly décisionStratégiqueRepository: DécisionStratégiqueRepository;
+
+  constructor({
+    décisionStratégiqueRepository,
+  }: Inject<"décisionStratégiqueRepository">) {
+    this.décisionStratégiqueRepository = décisionStratégiqueRepository;
+  }
 
   async execute({
     chantierId,
@@ -41,7 +44,7 @@ export class ImporterDecisionsStrategiquesUseCase {
         date,
       };
 
-      await this.dependencies.décisionStratégiqueRepository.save(décisionV2);
+      await this.décisionStratégiqueRepository.save(décisionV2);
     }
   }
 }

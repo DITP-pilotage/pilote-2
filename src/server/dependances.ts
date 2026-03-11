@@ -1,163 +1,95 @@
-import { AwilixContainer } from "awilix";
-import {
-  getParametrageIndicateurContainer,
-  ParametrageIndicateurDependencies,
-} from "@/server/parametrage-indicateur/container";
-import {
-  ChantierDependencies,
-  getChantiersContainer,
-} from "@/server/chantiers/container";
-import {
-  getImportIndicateurContainer,
-  ImportIndicateurDependencies,
-} from "@/server/import-indicateur/container";
-import {
-  AuthentificationDependencies,
-  getAuthentificationContainer,
-} from "@/server/authentification/container";
-import {
-  FicheConducteurDependencies,
-  getFicheConducteurContainer,
-} from "@/server/fiche-conducteur/container";
-import {
-  getPiloteEvalContainer,
-  PiloteEvalDependencies,
-} from "@/server/evaluation/container";
+import { type AwilixContainer } from "awilix";
 import { configuration } from "@/config";
 import {
-  getImportCommentaireContainer,
-  ImportCommentaireDependencies,
-} from "@/server/commentaires/container";
-import {
-  getImportDecisionStrategiqueContainer,
-  ImportDecisionStrategiqueDependencies,
-} from "@/server/decisions-strategiques/container";
-import {
-  getImportObjectifContainer,
-  ImportObjectifDependencies,
-} from "@/server/objectifs/container";
-import {
-  getImportSyntheseDesResultatsContainer,
-  ImportSyntheseDesResultatsDependencies,
-} from "@/server/syntheses-des-resultats/container";
-import {
-  GestionUtilisateurDependencies,
-  getGestionUtilisateurContainer,
-} from "./gestion-utilisateur/container";
-import {
-  getParametrageNouveautesContainer,
-  ParametrageNouveautesDependencies,
-} from "./parametrage-nouveautes/container";
-import {
-  getInitialContainerWithTransversalDependencies,
-  InitialDependencies,
-} from "./InitialDependencies";
-import {
-  getIndicateurTerritoireValeurEvenementContainer,
-  IndicateurTerritoireValeurEvenementDependencies,
-} from "./indicateur-territoire-valeur-evenement/container";
-import {
-  getHabilitationsCoordinateurContainer,
-  HabilitationsCoordinateurDependencies,
-} from "./habilitations-coordinateur/container";
-import {
-  getProfilUtilisateurContainer,
-  ProfilUtilisateurDependencies,
-} from "./profil-utilisateur/container";
-import {
-  getRapportsHebdomadairesContainer,
-  RapportsHebdomadairesDependencies,
-} from "./rapports-hebdomadaires/container";
-import { getAlbertContainer, AlbertDependencies } from "./albert/container";
-import {
-  getParametrageCentreAideContainer,
-  ParametrageCentreAideDependencies,
-} from "./parametrage-centre-aide/container";
-import { getLegacyContainer, LegacyDependencies } from "./legacy/container";
+  bootModules,
+  type ExtractCradle,
+  type ModuleName,
+} from "@/server/module-system";
+import { sharedModule } from "@/server/shared/module";
+import { authentificationModule } from "@/server/authentification/module";
+import { chantiersModule } from "@/server/chantiers/module";
+import { parametrageIndicateurModule } from "@/server/parametrage-indicateur/module";
+import { importIndicateurModule } from "@/server/import-indicateur/module";
+import { importCommentaireModule } from "@/server/commentaires/module";
+import { importDecisionStrategiqueModule } from "@/server/decisions-strategiques/module";
+import { importObjectifModule } from "@/server/objectifs/module";
+import { importSyntheseDesResultatsModule } from "@/server/syntheses-des-resultats/module";
+import { ficheConducteurModule } from "@/server/fiche-conducteur/module";
+import { piloteEvalModule } from "@/server/evaluation/module";
+import { gestionUtilisateurModule } from "./gestion-utilisateur/module";
+import { parametrageNouveautesModule } from "./parametrage-nouveautes/module";
+import { indicateurTerritoireValeurEvenementModule } from "./indicateur-territoire-valeur-evenement/module";
+import { habilitationsCoordinateurModule } from "./habilitations-coordinateur/module";
+import { profilUtilisateurModule } from "./profil-utilisateur/module";
+import { rapportsHebdomadairesModule } from "./rapports-hebdomadaires/module";
+import { albertModule } from "./albert/module";
+import { parametrageCentreAideModule } from "./parametrage-centre-aide/module";
+import { datajobsExecutionModule } from "./datajobs-execution/module";
+import { legacyModule } from "./legacy/module";
 
+const allModules = [
+  sharedModule,
+  authentificationModule,
+  chantiersModule,
+  parametrageIndicateurModule,
+  importIndicateurModule,
+  importCommentaireModule,
+  importDecisionStrategiqueModule,
+  importObjectifModule,
+  importSyntheseDesResultatsModule,
+  gestionUtilisateurModule,
+  ficheConducteurModule,
+  parametrageNouveautesModule,
+  indicateurTerritoireValeurEvenementModule,
+  piloteEvalModule,
+  habilitationsCoordinateurModule,
+  profilUtilisateurModule,
+  rapportsHebdomadairesModule,
+  albertModule,
+  parametrageCentreAideModule,
+  datajobsExecutionModule,
+  legacyModule,
+];
+
+// Compile-time check: errors with missing module name(s) if allModules is not exhaustive
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+type _AssertExhaustiveModules =
+  Exclude<ModuleName, (typeof allModules)[number]["name"]> extends never
+    ? true
+    : never;
+
+type AllModuleDefs = (typeof allModules)[number];
 export type ContainerDependencies = {
-  main: AwilixContainer<InitialDependencies>;
-  authentification: AwilixContainer<AuthentificationDependencies>;
-  chantiers: AwilixContainer<ChantierDependencies>;
-  parametrageIndicateur: AwilixContainer<ParametrageIndicateurDependencies>;
-  importIndicateur: AwilixContainer<ImportIndicateurDependencies>;
-  importCommentaire: AwilixContainer<ImportCommentaireDependencies>;
-  gestionUtilisateur: AwilixContainer<GestionUtilisateurDependencies>;
-  ficheConducteur: AwilixContainer<FicheConducteurDependencies>;
-  parametrageNouveautes: AwilixContainer<ParametrageNouveautesDependencies>;
-  indicateurTerritoireValeurEvenement: AwilixContainer<IndicateurTerritoireValeurEvenementDependencies>;
-  piloteEval: AwilixContainer<PiloteEvalDependencies>;
-  habilitationsCoordinateur: AwilixContainer<HabilitationsCoordinateurDependencies>;
-  profilUtilisateur: AwilixContainer<ProfilUtilisateurDependencies>;
-  rapportsHebdomadaires: AwilixContainer<RapportsHebdomadairesDependencies>;
-  albert: AwilixContainer<AlbertDependencies>;
-  parametrageCentreAide: AwilixContainer<ParametrageCentreAideDependencies>;
-  importDecisionStrategique: AwilixContainer<ImportDecisionStrategiqueDependencies>;
-  importObjectif: AwilixContainer<ImportObjectifDependencies>;
-  importSyntheseDesResultats: AwilixContainer<ImportSyntheseDesResultatsDependencies>;
-  legacy: AwilixContainer<LegacyDependencies>;
+  [M in AllModuleDefs as M["name"]]: AwilixContainer<ExtractCradle<M>>;
 };
 
 function registerContainer(): ContainerDependencies {
-  const initialContainerWithTransversalDependencies =
-    getInitialContainerWithTransversalDependencies();
+  const { getContainer } = bootModules(allModules);
 
   return {
-    main: initialContainerWithTransversalDependencies.createScope(),
-    authentification: getAuthentificationContainer(
-      initialContainerWithTransversalDependencies,
+    shared: getContainer("shared"),
+    authentification: getContainer("authentification"),
+    chantiers: getContainer("chantiers"),
+    parametrageIndicateur: getContainer("parametrageIndicateur"),
+    importIndicateur: getContainer("importIndicateur"),
+    importCommentaire: getContainer("importCommentaire"),
+    gestionUtilisateur: getContainer("gestionUtilisateur"),
+    ficheConducteur: getContainer("ficheConducteur"),
+    parametrageNouveautes: getContainer("parametrageNouveautes"),
+    indicateurTerritoireValeurEvenement: getContainer(
+      "indicateurTerritoireValeurEvenement",
     ),
-    chantiers: getChantiersContainer(
-      initialContainerWithTransversalDependencies,
-    ),
-    parametrageIndicateur: getParametrageIndicateurContainer(
-      initialContainerWithTransversalDependencies,
-    ),
-    importIndicateur: getImportIndicateurContainer(
-      initialContainerWithTransversalDependencies,
-    ),
-    importCommentaire: getImportCommentaireContainer(
-      initialContainerWithTransversalDependencies,
-    ),
-    gestionUtilisateur: getGestionUtilisateurContainer(
-      initialContainerWithTransversalDependencies,
-    ),
-    ficheConducteur: getFicheConducteurContainer(
-      initialContainerWithTransversalDependencies,
-    ),
-    parametrageNouveautes: getParametrageNouveautesContainer(
-      initialContainerWithTransversalDependencies,
-    ),
-    indicateurTerritoireValeurEvenement:
-      getIndicateurTerritoireValeurEvenementContainer(
-        initialContainerWithTransversalDependencies,
-      ),
-    piloteEval: getPiloteEvalContainer(
-      initialContainerWithTransversalDependencies,
-    ),
-    habilitationsCoordinateur: getHabilitationsCoordinateurContainer(
-      initialContainerWithTransversalDependencies,
-    ),
-    profilUtilisateur: getProfilUtilisateurContainer(
-      initialContainerWithTransversalDependencies,
-    ),
-    rapportsHebdomadaires: getRapportsHebdomadairesContainer(
-      initialContainerWithTransversalDependencies,
-    ),
-    albert: getAlbertContainer(initialContainerWithTransversalDependencies),
-    parametrageCentreAide: getParametrageCentreAideContainer(
-      initialContainerWithTransversalDependencies,
-    ),
-    importDecisionStrategique: getImportDecisionStrategiqueContainer(
-      initialContainerWithTransversalDependencies,
-    ),
-    importObjectif: getImportObjectifContainer(
-      initialContainerWithTransversalDependencies,
-    ),
-    importSyntheseDesResultats: getImportSyntheseDesResultatsContainer(
-      initialContainerWithTransversalDependencies,
-    ),
-    legacy: getLegacyContainer(initialContainerWithTransversalDependencies),
+    piloteEval: getContainer("piloteEval"),
+    habilitationsCoordinateur: getContainer("habilitationsCoordinateur"),
+    profilUtilisateur: getContainer("profilUtilisateur"),
+    rapportsHebdomadaires: getContainer("rapportsHebdomadaires"),
+    albert: getContainer("albert"),
+    parametrageCentreAide: getContainer("parametrageCentreAide"),
+    importDecisionStrategique: getContainer("importDecisionStrategique"),
+    importObjectif: getContainer("importObjectif"),
+    importSyntheseDesResultats: getContainer("importSyntheseDesResultats"),
+    datajobsExecution: getContainer("datajobsExecution"),
+    legacy: getContainer("legacy"),
   };
 }
 

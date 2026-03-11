@@ -1,8 +1,13 @@
 import { $Enums } from "@prisma/client";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
+import type { Inject } from "@/server/evaluation/module";
 
 export class AfficherPilotageQuery {
-  constructor(private readonly dependencies: { prisma: PrismaPilote }) {}
+  private readonly prisma: PrismaPilote;
+
+  constructor({ prisma }: Inject<"prisma">) {
+    this.prisma = prisma;
+  }
 
   async run() {
     const [fichesEvaluation, criteres] = await Promise.all([
@@ -132,7 +137,7 @@ export class AfficherPilotageQuery {
   }
 
   private async fetchFichesEvaluation() {
-    const derniereDateNoteCollectives = await this.dependencies.prisma
+    const derniereDateNoteCollectives = await this.prisma
       .getInstance()
       .chantier_evaluation.findFirst({
         orderBy: {
@@ -143,7 +148,7 @@ export class AfficherPilotageQuery {
         },
       });
 
-    return this.dependencies.prisma.getInstance().fiche_evaluation.findMany({
+    return this.prisma.getInstance().fiche_evaluation.findMany({
       include: {
         rattachement: {
           include: {
@@ -190,7 +195,7 @@ export class AfficherPilotageQuery {
   }
 
   private fetchCriteres() {
-    return this.dependencies.prisma.getInstance().referentiel_critere.findMany({
+    return this.prisma.getInstance().referentiel_critere.findMany({
       include: { sous_criteres: true },
       orderBy: { libelle: "asc" },
     });

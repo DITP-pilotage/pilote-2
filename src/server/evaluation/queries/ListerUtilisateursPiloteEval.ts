@@ -1,6 +1,7 @@
 import { $Enums } from "@prisma/client";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { comparerDates } from "@/client/utils/date/date";
+import type { Inject } from "@/server/evaluation/module";
 
 export type UtilisateurPiloteEval = {
   id: string;
@@ -12,30 +13,32 @@ export type UtilisateurPiloteEval = {
 };
 
 export class ListerUtilisateursPiloteEval {
-  constructor(private readonly dependencies: { prisma: PrismaPilote }) {}
+  private readonly prisma: PrismaPilote;
+
+  constructor({ prisma }: Inject<"prisma">) {
+    this.prisma = prisma;
+  }
 
   async run(): Promise<UtilisateurPiloteEval[]> {
-    const utilisateurs = await this.dependencies.prisma
-      .getInstance()
-      .utilisateur.findMany({
-        where: {
-          date_desactivation: null,
-          applications_accessibles: {
-            has: $Enums.application_accessible.PILOTE_EVAL,
-          },
+    const utilisateurs = await this.prisma.getInstance().utilisateur.findMany({
+      where: {
+        date_desactivation: null,
+        applications_accessibles: {
+          has: $Enums.application_accessible.PILOTE_EVAL,
         },
-        select: {
-          id: true,
-          email: true,
-          nom: true,
-          prenom: true,
-          profilCode: true,
-        },
-      });
+      },
+      select: {
+        id: true,
+        email: true,
+        nom: true,
+        prenom: true,
+        profilCode: true,
+      },
+    });
 
     const utilisateurIds = utilisateurs.map((u) => u.id);
 
-    const datesModification = await this.dependencies.prisma
+    const datesModification = await this.prisma
       .getInstance()
       .rattachement_utilisateur_etape_jalon.groupBy({
         by: ["utilisateur_id"],

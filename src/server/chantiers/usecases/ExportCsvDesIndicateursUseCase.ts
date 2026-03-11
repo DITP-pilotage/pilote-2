@@ -24,6 +24,7 @@ import {
   verifierOptionStatut,
 } from "@/server/chantiers/domain/ChantierPourExport";
 import { IndicateurRepository } from "@/server/chantiers/domain/ports/IndicateurRepository";
+import type { Inject } from "@/server/chantiers/module";
 import { getAnneeDateDeBascule } from "@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getAnneeDateDeBascule";
 import { configuration } from "@/config";
 
@@ -156,10 +157,6 @@ const presenterEnIndicateurExportContrat = (
   return donnees;
 };
 
-interface Dependencies {
-  indicateurRepository: IndicateurRepository;
-}
-
 export class ExportCsvDesIndicateursUseCase {
   public static readonly NOMS_COLONNES = (
     jalon: number,
@@ -241,7 +238,7 @@ export class ExportCsvDesIndicateursUseCase {
 
   private indicateurRepository: IndicateurRepository;
 
-  constructor({ indicateurRepository }: Dependencies) {
+  constructor({ indicateurRepository }: Inject<"indicateurRepository">) {
     this.indicateurRepository = indicateurRepository;
   }
 

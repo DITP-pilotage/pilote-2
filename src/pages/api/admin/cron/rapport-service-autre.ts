@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { onlyCron } from "@/server/infrastructure/api/cron/onlyCron";
-import { getInitialContainerWithTransversalDependencies } from "@/server/InitialDependencies";
+import { getContainer } from "@/server/dependances";
 import logger from "@/server/infrastructure/Logger";
 import { envoieMessageTchap } from "@/server/utils/notification-tchap";
 import { configuration } from "@/config";
@@ -12,8 +12,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   const isProd = configuration().scalingoEnvironment === "PROD";
 
   try {
-    const initialContainer = getInitialContainerWithTransversalDependencies();
-    const prisma = initialContainer.resolve("prisma");
+    const prisma = getContainer("shared").resolve("prisma");
 
     logger.info("Récupération des utilisateurs avec service_autre");
 

@@ -3,6 +3,7 @@ import { Transaction } from "@/server/db/Transaction";
 import { IndicateurRepository } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/IndicateurRepository";
 import { UtilisateurRepository } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/UtilisateurRepository";
 import { EnvoieEmailService } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/EnvoieEmailService";
+import type { Inject } from "@/server/indicateur-territoire-valeur-evenement/module";
 import { formaterDate } from "@/client/utils/date/date";
 import { formaterNombre } from "@/client/utils/nombre/nombre";
 import { EvenementsSurDate } from "@/server/import-indicateur/domain/EvenementsSurDate";
@@ -26,13 +27,13 @@ export class RefuserPropositionValeurAvancementUseCase {
     utilisateurRepository,
     transaction,
     envoieEmailService,
-  }: {
-    indicateurTerritoireValeurEvenementRepository: IndicateurTerritoireValeurEvenementRepository;
-    indicateurRepository: IndicateurRepository;
-    utilisateurRepository: UtilisateurRepository;
-    transaction: Transaction;
-    envoieEmailService: EnvoieEmailService;
-  }) {
+  }: Inject<
+    | "indicateurTerritoireValeurEvenementRepository"
+    | "indicateurRepository"
+    | "utilisateurRepository"
+    | "transaction"
+    | "envoieEmailService"
+  >) {
     this.indicateurTerritoireValeurEvenementRepository =
       indicateurTerritoireValeurEvenementRepository;
     this.indicateurRepository = indicateurRepository;

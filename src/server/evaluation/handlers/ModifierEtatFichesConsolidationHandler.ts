@@ -5,6 +5,7 @@ import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { getPrisma } from "@/server/db/PrismaTransaction";
 import { NotificationEmailService } from "@/server/evaluation/services/NotificationEmailService";
 import { formatterTitreEvaluation } from "@/components/PageAppreciation/utilsTexteEvaluation";
+import type { Inject } from "@/server/evaluation/module";
 
 export const modifierEtatFichesConsolidationCommandSchema = z.object({
   ficheEvaluationIds: z.array(z.string()),
@@ -16,16 +17,18 @@ export type ModifierEtatFichesConsolidationCommand = z.infer<
 >;
 
 export class ModifierEtatFichesConsolidationHandler {
+  private readonly transaction: Transaction;
+  private readonly prisma: PrismaPilote;
   private readonly notificationEmailService: NotificationEmailService;
 
-  constructor(
-    private readonly dependencies: {
-      transaction: Transaction;
-      prisma: PrismaPilote;
-      notificationEmailService: NotificationEmailService;
-    },
-  ) {
-    this.notificationEmailService = dependencies.notificationEmailService;
+  constructor({
+    transaction,
+    prisma,
+    notificationEmailService,
+  }: Inject<"transaction" | "prisma" | "notificationEmailService">) {
+    this.transaction = transaction;
+    this.prisma = prisma;
+    this.notificationEmailService = notificationEmailService;
   }
 
   async execute(
@@ -35,7 +38,7 @@ export class ModifierEtatFichesConsolidationHandler {
       return;
     }
 
-    await this.dependencies.transaction.run(async () => {
+    await this.transaction.run(async () => {
       const prisma = getPrisma();
 
       await prisma.etape_evaluation.updateMany({
@@ -73,7 +76,7 @@ export class ModifierEtatFichesConsolidationHandler {
   }
 
   private async getUtilisateursANotifier(ficheEvaluationIds: string[]) {
-    return this.dependencies.transaction.run(async () => {
+    return this.transaction.run(async () => {
       const prisma = getPrisma();
 
       const fichesEvaluation = await prisma.fiche_evaluation.findMany({

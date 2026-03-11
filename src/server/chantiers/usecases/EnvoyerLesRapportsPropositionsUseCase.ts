@@ -1,15 +1,9 @@
 import logger from "@/server/infrastructure/Logger";
-import { RapportPropositionsAvancementRepository } from "@/server/chantiers/domain/ports/RapportPropositionsAvancementRepository";
-import { EnvoieEmailService } from "@/server/chantiers/domain/ports/EnvoieEmailService";
 import {
   marquerRapportCommeEnvoye,
   marquerRapportCommeEchec,
 } from "@/server/chantiers/domain/RapportPropositionsAvancement";
-
-interface Dependencies {
-  rapportPropositionsAvancementRepository: RapportPropositionsAvancementRepository;
-  envoieEmailService: EnvoieEmailService;
-}
+import type { Inject } from "@/server/chantiers/module";
 
 export interface EnvoyerLesRapportsPropositionsResultat {
   rapportsEnvoyes: number;
@@ -20,7 +14,11 @@ export interface EnvoyerLesRapportsPropositionsResultat {
 const TEMPLATE_ID_RAPPORT_PROPOSITIONS = 4;
 
 export class EnvoyerLesRapportsPropositionsUseCase {
-  constructor(private readonly dependencies: Dependencies) {}
+  constructor(
+    private readonly dependencies: Inject<
+      "rapportPropositionsAvancementRepository" | "envoieEmailService"
+    >,
+  ) {}
 
   async run(): Promise<EnvoyerLesRapportsPropositionsResultat> {
     const rapports =

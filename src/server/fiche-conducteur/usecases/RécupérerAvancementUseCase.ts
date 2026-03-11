@@ -1,14 +1,11 @@
 import { ChantierRepository } from "@/server/fiche-conducteur/domain/ports/ChantierRepository";
 import { AvancementFicheConducteur } from "@/server/fiche-conducteur/domain/AvancementFicheConducteur";
-
-interface Dependencies {
-  chantierRepository: ChantierRepository;
-}
+import type { Inject } from "@/server/fiche-conducteur/module";
 
 export class RécupérerAvancementUseCase {
   private chantierRepository: ChantierRepository;
 
-  constructor({ chantierRepository }: Dependencies) {
+  constructor({ chantierRepository }: Inject<"chantierRepository">) {
     this.chantierRepository = chantierRepository;
   }
 

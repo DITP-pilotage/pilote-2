@@ -1,15 +1,11 @@
 import {
-  ChantierGateway,
-  ChantierAvecIndicateurs,
+  type ChantierGateway,
+  type ChantierAvecIndicateurs,
 } from "@/server/rapports-hebdomadaires/domain/ports/ChantierGateway";
-import { RecupererChantiersApplicablesParTerritoiresQuery } from "@/server/chantiers/infrastructure/queries/RecupererChantiersApplicablesParTerritoiresQuery";
+import type { Inject } from "@/server/rapports-hebdomadaires/module";
 
 export class ChantiersChantierGateway implements ChantierGateway {
-  constructor(
-    private readonly deps: {
-      recupererChantiersQuery: RecupererChantiersApplicablesParTerritoiresQuery;
-    },
-  ) {}
+  constructor(private readonly deps: Inject<"recupererChantiersQuery">) {}
 
   async recupererChantiersAccessibles(params: {
     territoireCodes: string[];
