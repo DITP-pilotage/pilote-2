@@ -17,8 +17,8 @@ export const useWidgetCartographieMeteo = ({
   const [territoiresCompares, setTerritoiresCompares] =
     useTerritoiresCompares();
 
-  const { data: territoiresMeteo, isLoading } =
-    api.chantier.recupererMeteosTerritoires.useQuery({
+  const [territoiresMeteo] =
+    api.chantier.recupererMeteosTerritoires.useSuspenseQuery({
       chantierId,
       jalon,
     });
@@ -165,6 +165,5 @@ export const useWidgetCartographieMeteo = ({
     ajouterTerritoire,
     ajouterTerritoires,
     supprimerTerritoire,
-    isLoading,
   };
 };

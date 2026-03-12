@@ -25,17 +25,12 @@ export const WidgetCartographieMeteo = ({
     ajouterTerritoire,
     ajouterTerritoires,
     supprimerTerritoire,
-    isLoading,
   } = useWidgetCartographieMeteo({
     chantierId,
     territoireCode,
     jalon,
   });
   const { isTailleTuileXL, isModeDispositionG } = useTuileWidget();
-
-  if (isLoading) {
-    return null;
-  }
 
   return (
     <div
