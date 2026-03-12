@@ -1,8 +1,8 @@
-import { Météo } from "@/server/domain/météo/Météo.interface";
+import { Meteo } from "@/server/domain/météo/Météo.interface";
 import { CartographieÉlémentsDeLégende } from "@/client/components/_commons/Cartographie/Légende/CartographieLégende.interface";
 
 export const determinerRemplissageMeteo = (
-  valeur: Météo | null,
+  valeur: Meteo | null,
   elementsDeLegende: CartographieÉlémentsDeLégende,
   estApplicable: boolean | null,
 ) => {

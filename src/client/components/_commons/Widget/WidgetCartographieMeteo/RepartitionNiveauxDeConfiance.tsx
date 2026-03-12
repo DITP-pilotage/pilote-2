@@ -1,7 +1,7 @@
 import { Fragment, useMemo } from "react";
 import { getCouleurTerritoire } from "@/client/utils/couleur/paletteTerritoires";
 import { territoiresGroupesPourPicker } from "@/client/constants/territoires";
-import { libellésMétéos, Météo } from "@/server/domain/météo/Météo.interface";
+import { libellesMeteos, Meteo } from "@/server/domain/météo/Météo.interface";
 import { MeteoPicto } from "@/components/_commons/Meteo/Picto/MeteoPicto";
 import { MeteoTerritoireViewModel } from "@/server/chantiers/infrastructure/queries/GetChantierMeteosTerritoiresQuery";
 import { Picker } from "@/components/shared/Picker";
@@ -74,7 +74,7 @@ export const RepartitionNiveauxDeConfiance = ({
         </div>
 
         {territoiresTries.map((territoire, index) => {
-          const meteo = territoire.meteo as Météo;
+          const meteo = territoire.meteo as Meteo;
           const dateMaj = territoire.dateDeMajQualitative
             ? new Date(territoire.dateDeMajQualitative).toLocaleDateString(
                 "fr-FR",
@@ -126,7 +126,7 @@ export const RepartitionNiveauxDeConfiance = ({
                   <span>
                     {territoire.estApplicable === false
                       ? "Non applicable"
-                      : libellésMétéos[meteo]}
+                      : libellesMeteos[meteo]}
                   </span>
                 </div>
                 <span className="text-[10px] !text-dsfr-grey-625">

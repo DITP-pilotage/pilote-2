@@ -1,19 +1,19 @@
-export const météosSaisissables = [
+export const meteosSaisissables = [
   "ORAGE",
   "NUAGE",
   "COUVERT",
   "SOLEIL",
 ] as const;
-export type MétéoSaisissable = (typeof météosSaisissables)[number];
+export type MeteoSaisissable = (typeof meteosSaisissables)[number];
 
-export const météos = [
+export const meteos = [
   "NON_RENSEIGNEE",
-  ...météosSaisissables,
+  ...meteosSaisissables,
   "NON_NECESSAIRE",
 ] as const;
-export type Météo = (typeof météos)[number];
+export type Meteo = (typeof meteos)[number];
 
-export const libellésMétéos: Record<Météo | string, string> = {
+export const libellesMeteos: Record<Meteo | string, string> = {
   ORAGE: "Objectifs compromis",
   NUAGE: "Appuis nécessaires",
   COUVERT: "Objectifs atteignables",

@@ -6,14 +6,14 @@ import { RapportDirecteurProjetChantierInformation } from "@/server/chantiers/do
 import { ProfilCode } from "@/server/domain/utilisateur/Utilisateur.interface";
 import { FiltreQueryParams } from "@/server/chantiers/app/contrats/FiltreQueryParams";
 import { PrismaChantier } from "@/server/chantiers/domain/PrismaChantier";
-import { Météo } from "@/server/domain/météo/Météo.interface";
+import { Meteo } from "@/server/domain/météo/Météo.interface";
 import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
 
 export interface ChantierRepository {
   modifierMeteo(
     chantierId: string,
     territoireCode: string,
-    meteo: Météo,
+    meteo: Meteo,
   ): Promise<void>;
   récupérerDonneesChantier(
     chantierId: string,

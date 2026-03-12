@@ -2,7 +2,7 @@ import Ministère from "@/server/domain/ministère/Ministère.interface";
 import Chantier, {
   ChantierTendance,
 } from "@/server/domain/chantier/Chantier.interface";
-import { Météo } from "@/server/domain/météo/Météo.interface";
+import { Meteo } from "@/server/domain/météo/Météo.interface";
 import Indicateur from "@/server/domain/indicateur/Indicateur.interface";
 
 export type IndicateurPourExport = {
@@ -21,7 +21,7 @@ export type IndicateurPourExport = {
   chantierAvancement: number | null;
   chantierAvancementJalonParDefaut: number | null;
   périmètreIds: string[];
-  météo: Météo | null;
+  météo: Meteo | null;
   nom: Indicateur["nom"] | null;
   valeurInitiale: number | null;
   dateValeurInitiale: string | null;

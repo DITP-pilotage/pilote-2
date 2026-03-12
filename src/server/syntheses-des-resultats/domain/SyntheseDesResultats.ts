@@ -1,20 +1,20 @@
 import { $Enums } from "@prisma/client";
 import { randomUUID } from "node:crypto";
 import { SyntheseDesResultatsV2 } from "@/server/domain/chantier/synthèseDesRésultats/SynthèseDesRésultats.interface";
-import { Météo } from "@/server/domain/météo/Météo.interface";
+import { Meteo } from "@/server/domain/météo/Météo.interface";
 
 type ParamsCreation = {
   chantierId: string;
   territoireCode: string;
   contenu: string;
-  meteo: Météo;
+  meteo: Meteo;
   auteurId: string;
   date: string;
 };
 
 type ParamsModification = {
   contenu: string;
-  meteo: Météo;
+  meteo: Meteo;
   auteurModificationId: string;
   dateModification: string;
 };

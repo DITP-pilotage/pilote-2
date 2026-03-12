@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { libellésMétéos } from "@/server/domain/météo/Météo.interface";
+import { libellesMeteos } from "@/server/domain/météo/Météo.interface";
 import { CartographieÉlémentsDeLégende } from "@/client/components/_commons/Cartographie/Légende/CartographieLégende.interface";
 import { CartographieDonnées } from "@/client/components/_commons/Cartographie/Cartographie.interface";
 import { objectEntries } from "@/client/utils/objects/objects";
@@ -67,7 +67,7 @@ export const useCartographieMeteo = (
             <div className="fr-text--bold">
               {val.estApplicable === false
                 ? "Non applicable"
-                : libellésMétéos[val.valeur]}
+                : libellesMeteos[val.valeur]}
             </div>
           ),
           remplissage: determinerRemplissageMeteo(

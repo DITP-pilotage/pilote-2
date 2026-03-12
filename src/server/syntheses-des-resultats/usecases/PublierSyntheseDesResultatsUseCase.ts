@@ -1,4 +1,4 @@
-import { Météo } from "@/server/domain/météo/Météo.interface";
+import { Meteo } from "@/server/domain/météo/Météo.interface";
 import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
 import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
 import { EnregistrerSyntheseDesResultatsService } from "@/server/syntheses-des-resultats/services/EnregistrerSyntheseDesResultatsService";
@@ -23,7 +23,7 @@ export class PublierSyntheseDesResultatsUseCase {
     chantierId: string;
     territoireCode: string;
     contenu: string;
-    meteo: Météo;
+    meteo: Meteo;
     auteurId: string;
     date: string;
     habilitations: Habilitations;

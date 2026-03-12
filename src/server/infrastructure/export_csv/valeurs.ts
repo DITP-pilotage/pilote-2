@@ -1,7 +1,7 @@
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
-import { libellésMétéos, Météo } from "@/server/domain/météo/Météo.interface";
+import { libellesMeteos, Meteo } from "@/server/domain/météo/Météo.interface";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -13,19 +13,19 @@ export const NON_CALCULE_INFO_MANQUANTES =
 export const OUI = "Oui";
 export const NON = "Non";
 
-const formaterMétéoOuErreur = (météo: Météo | null, errorMessage: string) => {
+const formaterMétéoOuErreur = (météo: Meteo | null, errorMessage: string) => {
   if (météo === null) {
     return errorMessage;
   }
-  return libellésMétéos[météo]?.toUpperCase() || NON_RENSEIGNEE;
+  return libellesMeteos[météo]?.toUpperCase() || NON_RENSEIGNEE;
 };
 
-export const formaterMétéoOuNonApplicable = (meteo: Météo | null) => {
+export const formaterMétéoOuNonApplicable = (meteo: Meteo | null) => {
   return formaterMétéoOuErreur(meteo, NON_APPLICABLE);
 };
 
 export const formaterMétéoOuNonRenseigne = (
-  meteo: Météo | null,
+  meteo: Meteo | null,
   estApplicable: boolean | null,
 ) => {
   return formaterMétéoOuErreur(

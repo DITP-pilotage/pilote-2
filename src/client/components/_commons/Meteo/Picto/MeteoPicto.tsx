@@ -1,5 +1,5 @@
 import { ComponentType } from "react";
-import { Météo } from "@/server/domain/météo/Météo.interface";
+import { Meteo } from "@/server/domain/météo/Météo.interface";
 import { MeteoCouvertIcon } from "@/components/_commons/IconeMeteo/MeteoCouvertIcon";
 import { MeteoOrageIcon } from "@/components/_commons/IconeMeteo/MeteoOrageIcon";
 import { MeteoNuageIcon } from "@/components/_commons/IconeMeteo/MeteoNuageIcon";
@@ -7,7 +7,7 @@ import { MeteoSoleilIcon } from "@/components/_commons/IconeMeteo/MeteoSoleilIco
 import { clsxm } from "@/utils/clsxm";
 
 export const MeteoComponentMap: Record<
-  Météo,
+  Meteo,
   ComponentType<{ className?: string }> | null
 > = {
   ORAGE: MeteoOrageIcon,
@@ -22,7 +22,7 @@ export const MeteoPicto = ({
   meteo,
   size = "md",
 }: {
-  meteo: Météo;
+  meteo: Meteo;
   size?: "md" | "sm";
 }) => {
   const MeteoComponent = MeteoComponentMap[meteo];

@@ -1,10 +1,10 @@
 import { FunctionComponent } from "react";
 import { MeteoPicto } from "@/components/_commons/Meteo/Picto/MeteoPicto";
-import { libellésMétéos, Météo } from "@/server/domain/météo/Météo.interface";
+import { libellesMeteos, Meteo } from "@/server/domain/météo/Météo.interface";
 import { clsxm } from "@/utils/clsxm";
 
 interface RépartitionMétéoÉlémentProps {
-  météo: Météo;
+  météo: Meteo;
   nombreDeChantiers: string;
   estArchive?: boolean;
 }
@@ -23,7 +23,7 @@ const RépartitionMétéoÉlément: FunctionComponent<
     >
       <MeteoPicto meteo={météo} />
       <span className="!text-primary !text-5xl bold">{nombreDeChantiers}</span>
-      <span className="!text-xs bold text-center">{libellésMétéos[météo]}</span>
+      <span className="!text-xs bold text-center">{libellesMeteos[météo]}</span>
     </div>
   );
 };

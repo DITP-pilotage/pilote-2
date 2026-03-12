@@ -6,7 +6,7 @@ import { CodeInsee } from "@/server/domain/territoire/Territoire.interface";
 import SynthèseDesRésultats, {
   SyntheseDesResultatsV2,
 } from "@/server/domain/chantier/synthèseDesRésultats/SynthèseDesRésultats.interface";
-import { Météo } from "@/server/domain/météo/Météo.interface";
+import { Meteo } from "@/server/domain/météo/Météo.interface";
 import Chantier from "@/server/domain/chantier/Chantier.interface";
 import { territoireCodeVersMailleCodeInsee } from "@/server/utils/territoires";
 import { Inject } from "@/server/legacy/module";
@@ -116,7 +116,7 @@ export class SynthèseDesRésultatsSQLRepository implements SynthèseDesRésulta
           auteur: synthèseDesRésultats.auteur_modification_id
             ? `${synthèseDesRésultats.auteur_prenom} ${synthèseDesRésultats.auteur_nom}`
             : "Auteur Inconnu",
-          météo: (synthèseDesRésultats.meteo as Météo) ?? "NON_RENSEIGNEE",
+          météo: (synthèseDesRésultats.meteo as Meteo) ?? "NON_RENSEIGNEE",
         },
       ]),
     );

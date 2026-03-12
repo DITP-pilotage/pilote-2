@@ -1,7 +1,7 @@
 import { Prisma, type_objectif, type_statut } from "@prisma/client";
 import { ChantierRepository } from "@/server/chantiers/domain/ports/ChantierRepository";
 import { DonneeChantier } from "@/server/chantiers/domain/DonneeChantier";
-import { Météo } from "@/server/domain/météo/Météo.interface";
+import { Meteo } from "@/server/domain/météo/Météo.interface";
 import { OptionsExport } from "@/server/usecase/chantier/OptionsExport";
 import { verifyValeurIsNotNullOrUndefined } from "@/server/utils/VerifyValeurIsNotNullOrUndefined";
 import { ChantierPourExport } from "@/server/chantiers/domain/ChantierPourExport";
@@ -46,7 +46,7 @@ export class PrismaChantierRepository implements ChantierRepository {
   async modifierMeteo(
     chantierId: string,
     territoireCode: string,
-    meteo: Météo,
+    meteo: Meteo,
   ): Promise<void> {
     await this.prisma.chantier_territoire.update({
       data: { meteo },
@@ -327,7 +327,7 @@ export class PrismaChantierRepository implements ChantierRepository {
             météo:
               ((mapMeteo.get(
                 `${prismaChantierTerritoire.id}-${prismaChantierTerritoire.territoire_code}`,
-              ) || null) as Météo) || null,
+              ) || null) as Meteo) || null,
             directeursProjet: prismaChantierIdentite.directeurs_projet,
             directeursProjetMails:
               prismaChantierIdentite.directeurs_projet_mails,
@@ -844,7 +844,7 @@ export class PrismaChantierRepository implements ChantierRepository {
                     )
                   : null,
               périmètreIds: prismaChantierIdentite.perimetre_ids,
-              météo: (prismaChantierTerritoire.meteo as Météo) || null,
+              météo: (prismaChantierTerritoire.meteo as Meteo) || null,
               directeursProjet: prismaChantierIdentite.directeurs_projet,
               directeursProjetMails:
                 prismaChantierIdentite.directeurs_projet_mails,
@@ -1271,7 +1271,7 @@ export class PrismaChantierRepository implements ChantierRepository {
           where: {
             id: { in: chantierIds },
             meteo: {
-              in: filtres.meteos as Météo[],
+              in: filtres.meteos as Meteo[],
             },
             territoire_code: territoireCode,
           },

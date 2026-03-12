@@ -1,17 +1,19 @@
 import { ReactNode, useCallback, useMemo } from "react";
 import api from "@/server/infrastructure/api/trpc/api";
-import { libellésMétéos, Météo } from "@/server/domain/météo/Météo.interface";
+import { libellesMeteos, Meteo } from "@/server/domain/météo/Météo.interface";
 import { ÉLÉMENTS_LÉGENDE_MÉTÉO_CHANTIERS } from "@/client/constants/légendes/élémentsDeLégendesCartographieMétéo";
 import { determinerRemplissageMeteo } from "@/client/utils/meteo/determinerRemplissageMeteo";
 import { useTerritoiresCompares } from "@/client/hooks/useTerritoiresCompares";
 
-export const useWidgetCartographieMeteo = (params: {
+export const useWidgetCartographieMeteo = ({
+  chantierId,
+  territoireCode,
+  jalon,
+}: {
   chantierId: string;
   territoireCode: string;
   jalon: number;
 }) => {
-  const { chantierId, territoireCode, jalon } = params;
-
   const [territoiresCompares, setTerritoiresCompares] =
     useTerritoiresCompares();
 
@@ -35,7 +37,7 @@ export const useWidgetCartographieMeteo = (params: {
 
     return territoiresMeteo.reduce(
       (acc, territoire) => {
-        const meteo = territoire.meteo as Météo;
+        const meteo = territoire.meteo as Meteo;
         return {
           ...acc,
           [territoire.territoireCode]: {
@@ -49,7 +51,7 @@ export const useWidgetCartographieMeteo = (params: {
               <div className="fr-text--bold">
                 {territoire.estApplicable === false
                   ? "Non applicable"
-                  : libellésMétéos[meteo]}
+                  : libellesMeteos[meteo]}
               </div>
             ),
           },
@@ -150,9 +152,7 @@ export const useWidgetCartographieMeteo = (params: {
 
   const supprimerTerritoire = useCallback(
     (code: string) => {
-      updateUrlTerritoires(
-        selectedTerritoireCodes.filter((c) => c !== code),
-      );
+      updateUrlTerritoires(selectedTerritoireCodes.filter((c) => c !== code));
     },
     [selectedTerritoireCodes, updateUrlTerritoires],
   );

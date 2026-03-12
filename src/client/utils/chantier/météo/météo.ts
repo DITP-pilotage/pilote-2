@@ -1,7 +1,7 @@
 import { SortingState } from "@tanstack/react-table";
-import { Météo, météos } from "@/server/domain/météo/Météo.interface";
+import { Meteo, meteos } from "@/server/domain/météo/Météo.interface";
 
-const ORDRE_DES_MÉTÉOS: typeof météos = [
+const ORDRE_DES_MÉTÉOS: typeof meteos = [
   "NON_RENSEIGNEE",
   "ORAGE",
   "NUAGE",
@@ -10,7 +10,7 @@ const ORDRE_DES_MÉTÉOS: typeof météos = [
   "NON_NECESSAIRE",
 ];
 
-export function comparerMétéo(a: Météo, b: Météo, tri: SortingState) {
+export function comparerMétéo(a: Meteo, b: Meteo, tri: SortingState) {
   const indexA = ORDRE_DES_MÉTÉOS.indexOf(a);
   const indexB = ORDRE_DES_MÉTÉOS.indexOf(b);
   const sensDeTriDesc = tri[0].desc;

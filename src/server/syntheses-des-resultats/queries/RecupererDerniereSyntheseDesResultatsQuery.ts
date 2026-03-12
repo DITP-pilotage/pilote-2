@@ -1,7 +1,7 @@
 import { $Enums } from "@prisma/client";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { SyntheseDesResultatsAvecNomsAuteurs } from "@/server/domain/chantier/synthèseDesRésultats/SynthèseDesRésultats.interface";
-import { Météo } from "@/server/domain/météo/Météo.interface";
+import { Meteo } from "@/server/domain/météo/Météo.interface";
 import type { Inject } from "@/server/syntheses-des-resultats/module";
 
 export class RecupererDerniereSyntheseDesResultatsQuery {
@@ -37,7 +37,7 @@ export class RecupererDerniereSyntheseDesResultatsQuery {
       chantierId: synthese.chantier_id,
       territoireCode: synthese.territoire_code,
       contenu: synthese.commentaire ?? "",
-      meteo: (synthese.meteo as Météo) ?? "NON_RENSEIGNEE",
+      meteo: (synthese.meteo as Meteo) ?? "NON_RENSEIGNEE",
       auteurCreationId: synthese.auteur_creation_id ?? "",
       dateCreation: synthese.date_creation.toISOString(),
       auteurModificationId: synthese.auteur_modification_id ?? "",

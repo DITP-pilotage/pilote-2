@@ -12,7 +12,7 @@ import {
 import { DonneeIndicateur } from "@/server/chantiers/domain/DonneeIndicateur";
 import { IndicateurRepository } from "@/server/chantiers/domain/ports/IndicateurRepository";
 import { verifyValeurIsNotNullOrUndefined } from "@/server/utils/VerifyValeurIsNotNullOrUndefined";
-import { Météo } from "@/server/domain/météo/Météo.interface";
+import { Meteo } from "@/server/domain/météo/Météo.interface";
 import { IndicateurPourExport } from "@/server/chantiers/domain/IndicateurPourExport";
 import { historique_valeurs } from "@/server/infrastructure/accès_données/chantier/indicateur/IndicateurSQLRepository";
 import { HistoriqueIndicateurPourExport } from "@/server/chantiers/domain/HistoriqueIndicateurPourExport";
@@ -429,7 +429,7 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
           périmètreIds:
             indicateurPourExport.indicateur_identite.chantier_identite
               .perimetre_ids,
-          météo: indicateurPourExport.chantier_territoire.meteo as Météo | null,
+          météo: indicateurPourExport.chantier_territoire.meteo as Meteo | null,
           nom: indicateurPourExport.indicateur_identite.nom,
           valeurInitiale: indicateurPourExport.valeur_initiale,
           dateValeurInitiale:
@@ -701,7 +701,7 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
               dateValeurAvancement: historiqueIndicateur.date,
               périmètreIds: indicateurIdentite.chantier_identite.perimetre_ids,
               météo: indicateurPourExport.chantier_territoire
-                .meteo as Météo | null,
+                .meteo as Meteo | null,
               chantierEstBaromètre:
                 indicateurIdentite.chantier_identite.est_barometre,
               chantierEstTerritorialise:

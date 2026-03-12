@@ -3,7 +3,7 @@ import Chantier, {
 } from "@/server/domain/chantier/Chantier.interface";
 import Indicateur from "@/server/domain/indicateur/Indicateur.interface";
 import { DétailsIndicateur } from "@/server/domain/indicateur/DétailsIndicateur.interface";
-import { Météo } from "@/server/domain/météo/Météo.interface";
+import { Meteo } from "@/server/domain/météo/Météo.interface";
 
 export type HistoriqueIndicateurPourExport = {
   maille: string;
@@ -22,7 +22,7 @@ export type HistoriqueIndicateurPourExport = {
   valeurAvancement: DétailsIndicateur["valeurAvancement"] | null;
   dateValeurAvancement: DétailsIndicateur["dateValeurAvancement"];
   périmètreIds: string[];
-  météo: Météo | null;
+  météo: Meteo | null;
   chantierEstBaromètre: Chantier["estBaromètre"] | null;
   chantierStatut: Chantier["statut"] | null;
   chantierEstTerritorialise: Chantier["estTerritorialisé"] | null;

@@ -1,12 +1,12 @@
 import { FunctionComponent } from "react";
 import {
-  libellésMétéos,
-  MétéoSaisissable,
+  libellesMeteos,
+  MeteoSaisissable,
 } from "@/server/domain/météo/Météo.interface";
 import RépartitionMétéoÉlément from "./RépartitionMétéoÉlément/RépartitionMétéoÉlément";
 import RépartitionMétéoStyled from "./RépartitionMétéo.styled";
 
-export type RépartitionMétéos = Record<MétéoSaisissable, number>;
+export type RépartitionMétéos = Record<MeteoSaisissable, number>;
 
 interface RépartitionMétéoProps {
   météos: RépartitionMétéos;
@@ -22,7 +22,7 @@ const RépartitionMétéo: FunctionComponent<RépartitionMétéoProps> = ({
   return (
     <RépartitionMétéoStyled className="flex gap-4">
       {météosÀAfficher.map((météo) => (
-        <li key={libellésMétéos[météo]}>
+        <li key={libellesMeteos[météo]}>
           <RépartitionMétéoÉlément
             estArchive={chantiersSontArchives}
             météo={météo}

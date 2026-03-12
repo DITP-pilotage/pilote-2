@@ -1,9 +1,9 @@
 import { FunctionComponent, useCallback } from "react";
 import { parseAsInteger, parseAsString, useQueryState } from "nuqs";
 import {
-  libellésMétéos,
-  MétéoSaisissable,
-  météosSaisissables,
+  libellesMeteos,
+  MeteoSaisissable,
+  meteosSaisissables,
 } from "@/server/domain/météo/Météo.interface";
 import { sauvegarderFiltres } from "@/client/stores/useFiltresStoreNew/useFiltresStoreNew";
 import { MeteoPicto } from "@/components/_commons/Meteo/Picto/MeteoPicto";
@@ -35,7 +35,7 @@ const RepartitionsMeteosChantiers: FunctionComponent<
   );
 
   const auClickCallback = useCallback(
-    (meteo: MétéoSaisissable) => {
+    (meteo: MeteoSaisissable) => {
       let arrMeteoFiltre = meteos.split(",").filter(Boolean);
       if (meteos.includes(meteo)) {
         arrMeteoFiltre.splice(arrMeteoFiltre.indexOf(meteo), 1);
@@ -51,11 +51,11 @@ const RepartitionsMeteosChantiers: FunctionComponent<
 
   return (
     <RepartitionsMeteosChantiersStyled className="fr-grid-row fr-mx-n3v">
-      {météosSaisissables.map((meteo) => (
+      {meteosSaisissables.map((meteo) => (
         <li
           className="fr-col-3 fr-p-2v"
-          key={libellésMétéos[meteo]}
-          title={libellésMétéos[meteo]}
+          key={libellesMeteos[meteo]}
+          title={libellesMeteos[meteo]}
         >
           <button
             className={clsxm(
@@ -73,7 +73,7 @@ const RepartitionsMeteosChantiers: FunctionComponent<
             <p className="nombre-de-chantiers fr-h1 fr-mb-0">
               {repartitionMeteos[meteo]}
             </p>
-            <p className="label fr-mb-0 break-keep">{libellésMétéos[meteo]}</p>
+            <p className="label fr-mb-0 break-keep">{libellesMeteos[meteo]}</p>
           </button>
         </li>
       ))}

@@ -1,7 +1,7 @@
 import { Maille, MailleInterne } from "@/server/domain/maille/Maille.interface";
 import { TypeStatut } from "@/server/domain/chantier/Chantier.interface";
 import Ministère from "@/server/domain/ministère/Ministère.interface";
-import { Météo } from "@/server/domain/météo/Météo.interface";
+import { Meteo } from "@/server/domain/météo/Météo.interface";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
 import { ProfilCode } from "@/server/domain/utilisateur/Utilisateur.interface";
 import { Territoire } from "@/server/domain/territoire/Territoire.interface";
@@ -112,7 +112,7 @@ export interface ChantierRapportDetailleContrat {
   ecart: number | null;
   ecartJalonParDefaut: number | null;
   tendance: "BAISSE" | "HAUSSE" | "STAGNATION" | null;
-  météo: Météo;
+  météo: Meteo;
   avancement: number | null;
   avancementJalonParDefaut: number | null;
   avancementPrecedent: number | null;
@@ -199,7 +199,7 @@ export function créerDonnéesTerritoiresRapportDetailleNew(
       },
       avancementPrecedent:
         chantierRow?.taux_avancement_mandat_valeur_precedente ?? null,
-      météo: (chantierRow?.meteo as Météo) ?? "NON_RENSEIGNEE",
+      météo: (chantierRow?.meteo as Meteo) ?? "NON_RENSEIGNEE",
       responsableLocal: (chantierRow?.responsables_locaux || []).map(
         (value, index) => ({
           nom: value,
@@ -318,7 +318,7 @@ export const presenterEnChantierRapportDetaille = (
                 chantierMailleNationale?.taux_avancement_mandat_valeur_precedente ??
                 null,
               météo:
-                (chantierMailleNationale?.meteo as Météo) ?? "NON_RENSEIGNEE",
+                (chantierMailleNationale?.meteo as Meteo) ?? "NON_RENSEIGNEE",
               ecart: {
                 annuel: null,
                 jalonParDefaut: null,

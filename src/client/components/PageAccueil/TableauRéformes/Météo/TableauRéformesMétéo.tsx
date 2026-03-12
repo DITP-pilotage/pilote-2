@@ -1,12 +1,12 @@
 import { FunctionComponent } from "react";
 import { MeteoPicto } from "@/components/_commons/Meteo/Picto/MeteoPicto";
-import { libellésMétéos, Météo } from "@/server/domain/météo/Météo.interface";
+import { libellesMeteos, Meteo } from "@/server/domain/météo/Météo.interface";
 import { TableauChantiersMétéoTaille } from "@/components/PageAccueil/TableauRéformes/Météo/TableauRéformesMétéo.interface";
 import { formaterDate } from "@/client/utils/date/date";
 import { clsxm } from "@/utils/clsxm";
 
 interface TableauChantiersMétéoProps {
-  météo: Météo;
+  météo: Meteo;
   dateDeMàjDonnéesQualitatives?: string | null;
   taille?: TableauChantiersMétéoTaille;
   chantiersSontArchives?: boolean;
@@ -15,11 +15,11 @@ interface TableauChantiersMétéoProps {
 const libelléMétéosÀPartirDeLaTaille = {
   sm: {
     className: "text-center",
-    texte: (_: Météo) => "–",
+    texte: (_: Meteo) => "–",
   },
   md: {
     className: "",
-    texte: (météo: Météo) => libellésMétéos[météo],
+    texte: (météo: Meteo) => libellesMeteos[météo],
   },
 };
 

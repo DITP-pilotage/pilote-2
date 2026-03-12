@@ -1,7 +1,7 @@
-import { Météo } from "@/server/domain/météo/Météo.interface";
+import { Meteo } from "@/server/domain/météo/Météo.interface";
 
 export type CartographieDonnéesMétéo = {
-  valeur: Météo;
+  valeur: Meteo;
   territoireCode: string;
   estApplicable: boolean | null;
 }[];

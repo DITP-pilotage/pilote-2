@@ -1,12 +1,12 @@
 import { useMemo } from "react";
 import { CartographieDonnées } from "@/components/_commons/Cartographie/Cartographie.interface";
-import { libellésMétéos, Météo } from "@/server/domain/météo/Météo.interface";
+import { libellesMeteos, Meteo } from "@/server/domain/météo/Météo.interface";
 import { CartographieÉlémentsDeLégende } from "@/client/components/_commons/Cartographie/Légende/CartographieLégende.interface";
 import { useTerritoireHabilitation } from "@/client/hooks/useTerritoireHabilitation";
 import { CartographieDonnéesMétéo } from "./CartographieMétéo.interface";
 
 function déterminerRemplissage(
-  valeur: Météo | null,
+  valeur: Meteo | null,
   élémentsDeLégende: CartographieÉlémentsDeLégende,
   estApplicable: boolean | null,
 ) {
@@ -67,7 +67,7 @@ export default function useCartographieMétéo(
           <div className="fr-text--bold">
             {val.estApplicable === false
               ? "Non applicable"
-              : libellésMétéos[val.valeur]}
+              : libellesMeteos[val.valeur]}
           </div>
         ),
         remplissage: déterminerRemplissage(

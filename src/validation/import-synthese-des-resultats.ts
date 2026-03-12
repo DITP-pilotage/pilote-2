@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { MétéoSaisissable } from "@/server/domain/météo/Météo.interface";
+import { MeteoSaisissable } from "@/server/domain/météo/Météo.interface";
 
 export const météosOpenAPI = [
   "OBJECTIF_COMPROMIS",
@@ -10,7 +10,7 @@ export const météosOpenAPI = [
 
 export type MétéoOpenAPI = (typeof météosOpenAPI)[number];
 
-export const méteoOpenAPIVersInterne: Record<MétéoOpenAPI, MétéoSaisissable> = {
+export const méteoOpenAPIVersInterne: Record<MétéoOpenAPI, MeteoSaisissable> = {
   OBJECTIF_COMPROMIS: "ORAGE",
   APPUIS_NECESSAIRE: "NUAGE",
   OBJECTIF_ATTEIGNABLE: "COUVERT",
