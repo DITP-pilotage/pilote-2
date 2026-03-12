@@ -2,7 +2,6 @@ import { FunctionComponent } from "react";
 import { MailleInterne } from "@/server/domain/maille/Maille.interface";
 import { CartographieV2 } from "@/components/_commons/CartographieV2/CartographieV2";
 import { LegendeCartographie } from "@/components/_commons/CartographieV2/LegendeCartographie";
-import { TuileWidget } from "@/components/_commons/Widget/TuileWidget/TuileWidget";
 import { RepartitionNiveauxDeConfiance } from "./RepartitionNiveauxDeConfiance";
 import { useWidgetCartographieMeteo } from "./useWidgetCartographieMeteo";
 
@@ -33,34 +32,40 @@ export const WidgetCartographieMeteo: FunctionComponent<
   });
 
   if (isLoading) {
-    return (
-      <TuileWidget titre="Carte des valeurs météo 2026">
-        <p>Chargement…</p>
-      </TuileWidget>
-    );
+    return null;
   }
 
   return (
-    <TuileWidget titre="Carte des valeurs météo 2026">
-      <CartographieV2
-        onTerritoireSelect={auClicTerritoire}
-        donnees={donneesCartographie}
-        maille={maille}
-        territoiresSelectionnes={territoiresSelectionnes.map(
-          (territoire) => territoire.territoireCode,
-        )}
-      >
-        <LegendeCartographie items={legende} />
-      </CartographieV2>
+    <>
+      <div className="flex flex-col gap-2">
+        <span className="fr-text font-bold">
+          Répartition des niveaux de confiance
+        </span>
+        <CartographieV2
+          onTerritoireSelect={auClicTerritoire}
+          donnees={donneesCartographie}
+          maille={maille}
+          territoiresSelectionnes={territoiresSelectionnes.map(
+            (territoire) => territoire.territoireCode,
+          )}
+        >
+          <LegendeCartographie items={legende} />
+        </CartographieV2>
+      </div>
 
-      <RepartitionNiveauxDeConfiance
-        initialTerritoiresCodes={initialTerritoiresCodes}
-        jalon={jalon}
-        onAjouterTerritoire={ajouterTerritoire}
-        onSupprimerTerritoire={supprimerTerritoire}
-        territoiresDisponibles={territoiresDisponibles}
-        territoiresSelectionnes={territoiresSelectionnes}
-      />
-    </TuileWidget>
+      <div className="flex flex-col gap-2">
+        <span className="fr-text font-bold">
+          Répartition des niveaux de confiance
+        </span>
+        <RepartitionNiveauxDeConfiance
+          initialTerritoiresCodes={initialTerritoiresCodes}
+          jalon={jalon}
+          onAjouterTerritoire={ajouterTerritoire}
+          onSupprimerTerritoire={supprimerTerritoire}
+          territoiresDisponibles={territoiresDisponibles}
+          territoiresSelectionnes={territoiresSelectionnes}
+        />
+      </div>
+    </>
   );
 };

@@ -10,8 +10,8 @@ export const TuileWidget: FunctionComponent<TuileWidgetProps> = ({
   children,
 }) => {
   return (
-    <div className="fr-card fr-p-3w">
-      <h4 className="fr-text--bold fr-mb-2w">{titre}</h4>
+    <div className="fr-card fr-p-3w max-w-[512px] flex flex-col gap-4">
+      <span className="fr-text--xl font-bold fr-m-0">{titre}</span>
       {children}
     </div>
   );

@@ -8,6 +8,7 @@ import CartographieAvecSelecteur from "@/components/_commons/Cartographie/Cartog
 import { pageChantier } from "@/components/PageChantier/PageChantierServerSideContext";
 import { WidgetCartographieMeteo } from "@/components/_commons/Widget/WidgetCartographieMeteo/WidgetCartographieMeteo";
 import { useEnv } from "@/client/hooks/useEnv";
+import { TuileWidget } from "@/components/_commons/Widget/TuileWidget/TuileWidget";
 
 export type CartographieType =
   | "avancementJalon"
@@ -92,18 +93,20 @@ const Cartes: FunctionComponent<CartesProps> = ({
       ) : null}
       {afficheCarteMétéo ? (
         <div className="carte">
-          <Bloc>
-            <section>
-              {featureComparaisonTerritoires &&
-              cartographieDroiteChantier === "meteo" ? (
-                <WidgetCartographieMeteo
-                  chantierId={chantier.id}
-                  initialTerritoiresCodes={[territoireCode]}
-                  jalon={jalon}
-                  maille={mailleQuery}
-                  territoireCode={territoireCode}
-                />
-              ) : (
+          {featureComparaisonTerritoires &&
+          cartographieDroiteChantier === "meteo" ? (
+            <TuileWidget titre="Comparaison territoriale et évolution">
+              <WidgetCartographieMeteo
+                chantierId={chantier.id}
+                initialTerritoiresCodes={[territoireCode]}
+                jalon={jalon}
+                maille={mailleQuery}
+                territoireCode={territoireCode}
+              />
+            </TuileWidget>
+          ) : (
+            <Bloc>
+              <section>
                 <CartographieAvecSelecteur
                   aLaSelectionCartographie={(valeur: CartographieType) =>
                     setCartographieDroiteSelection(valeur)
@@ -116,9 +119,9 @@ const Cartes: FunctionComponent<CartesProps> = ({
                   mailleQuery={mailleQuery}
                   territoireCode={territoireCode}
                 />
-              )}
-            </section>
-          </Bloc>
+              </section>
+            </Bloc>
+          )}
         </div>
       ) : null}
     </CartesStyled>
