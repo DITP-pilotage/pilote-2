@@ -17,7 +17,6 @@ export const WidgetCartographieMeteo = ({
   territoireCode: string;
   jalon: number;
 }) => {
-  console.log(useTuileWidget());
   const {
     donneesCartographie,
     legende,
