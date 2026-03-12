@@ -1,21 +1,20 @@
-import { FunctionComponent } from "react";
 import { MailleInterne } from "@/server/domain/maille/Maille.interface";
 import { CartographieV2 } from "@/components/_commons/CartographieV2/CartographieV2";
 import { LegendeCartographie } from "@/components/_commons/CartographieV2/LegendeCartographie";
 import { RepartitionNiveauxDeConfiance } from "./RepartitionNiveauxDeConfiance";
 import { useWidgetCartographieMeteo } from "./useWidgetCartographieMeteo";
 
-type WidgetCartographieMeteoProps = {
+export const WidgetCartographieMeteo = ({
+  chantierId,
+  maille,
+  territoireCode,
+  jalon,
+}: {
   chantierId: string;
   maille: MailleInterne;
-  initialTerritoiresCodes: string[];
   territoireCode: string;
   jalon: number;
-};
-
-export const WidgetCartographieMeteo: FunctionComponent<
-  WidgetCartographieMeteoProps
-> = ({ chantierId, maille, initialTerritoiresCodes, jalon }) => {
+}) => {
   const {
     donneesCartographie,
     legende,
@@ -27,7 +26,7 @@ export const WidgetCartographieMeteo: FunctionComponent<
     isLoading,
   } = useWidgetCartographieMeteo({
     chantierId,
-    initialTerritoiresCodes,
+    territoireCode,
     jalon,
   });
 
@@ -58,7 +57,7 @@ export const WidgetCartographieMeteo: FunctionComponent<
           Répartition des niveaux de confiance
         </span>
         <RepartitionNiveauxDeConfiance
-          initialTerritoiresCodes={initialTerritoiresCodes}
+          territoireCode={territoireCode}
           jalon={jalon}
           onAjouterTerritoire={ajouterTerritoire}
           onAjouterTerritoires={ajouterTerritoires}

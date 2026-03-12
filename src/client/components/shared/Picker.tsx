@@ -51,22 +51,27 @@ export const Picker = <T extends string>({
 
   const rechercheNormalisee = recherche.toLowerCase();
 
+  const matchesRecherche = (libelle: string) =>
+    libelle.toLowerCase().includes(rechercheNormalisee);
+
+  const isVisibleBySearch = (
+    option: PickerOption<T>,
+    groupMatchesSearch: boolean,
+  ) => {
+    if (!showSearch || !recherche) return true;
+    return groupMatchesSearch || matchesRecherche(option.libelle);
+  };
+
   const hasVisibleResults = showSearch
     ? isGrouped
       ? options.some((group) => {
-          const groupMatchesSearch = group.libelle
-            .toLowerCase()
-            .includes(rechercheNormalisee);
+          const groupMatches = matchesRecherche(group.libelle);
           return (
-            groupMatchesSearch ||
-            group.options.some((option) =>
-              option.libelle.toLowerCase().includes(rechercheNormalisee),
-            )
+            groupMatches ||
+            group.options.some((option) => matchesRecherche(option.libelle))
           );
         })
-      : options.some((option) =>
-          option.libelle.toLowerCase().includes(rechercheNormalisee),
-        )
+      : options.some((option) => matchesRecherche(option.libelle))
     : true;
 
   return (
@@ -129,11 +134,9 @@ export const Picker = <T extends string>({
           )}
           {isGrouped
             ? (options as PickerOptionGroup<T>[]).map((group, index) => {
-                const groupMatchesSearch = group.libelle
-                  .toLowerCase()
-                  .includes(rechercheNormalisee);
+                const groupMatchesSearch = matchesRecherche(group.libelle);
                 const hasMatchingOptions = group.options.some((option) =>
-                  option.libelle.toLowerCase().includes(rechercheNormalisee),
+                  matchesRecherche(option.libelle),
                 );
                 const shouldHideGroup =
                   showSearch &&
@@ -157,16 +160,13 @@ export const Picker = <T extends string>({
                               event.preventDefault();
                               event.stopPropagation();
                               const visibleValues = group.options
-                                .filter((option) => {
-                                  if (!showSearch || !recherche)
-                                    return !option.desactivee;
-                                  const matchesSearch =
-                                    groupMatchesSearch ||
-                                    option.libelle
-                                      .toLowerCase()
-                                      .includes(rechercheNormalisee);
-                                  return matchesSearch && !option.desactivee;
-                                })
+                                .filter(
+                                  (option) =>
+                                    isVisibleBySearch(
+                                      option,
+                                      groupMatchesSearch,
+                                    ) && !option.desactivee,
+                                )
                                 .map((option) => option.valeur);
                               if (visibleValues.length > 0) {
                                 onValuesChange(visibleValues);
@@ -181,13 +181,10 @@ export const Picker = <T extends string>({
                       </div>
                       <div className="pl-3">
                         {group.options.map((option) => {
-                          const shouldHideOption =
-                            showSearch &&
-                            recherche &&
-                            !groupMatchesSearch &&
-                            !option.libelle
-                              .toLowerCase()
-                              .includes(rechercheNormalisee);
+                          const shouldHideOption = !isVisibleBySearch(
+                            option,
+                            groupMatchesSearch,
+                          );
 
                           return (
                             <AnimateEntry
@@ -209,10 +206,7 @@ export const Picker = <T extends string>({
                 );
               })
             : (options as PickerOption<T>[]).map((option) => {
-                const shouldHideOption =
-                  showSearch &&
-                  recherche &&
-                  !option.libelle.toLowerCase().includes(rechercheNormalisee);
+                const shouldHideOption = !isVisibleBySearch(option, false);
 
                 return (
                   <AnimateEntry

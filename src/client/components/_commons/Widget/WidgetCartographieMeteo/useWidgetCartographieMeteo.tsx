@@ -1,15 +1,19 @@
-import { ReactNode, useCallback, useMemo, useState } from "react";
+import { ReactNode, useCallback, useMemo } from "react";
 import api from "@/server/infrastructure/api/trpc/api";
 import { libellésMétéos, Météo } from "@/server/domain/météo/Météo.interface";
 import { ÉLÉMENTS_LÉGENDE_MÉTÉO_CHANTIERS } from "@/client/constants/légendes/élémentsDeLégendesCartographieMétéo";
 import { determinerRemplissageMeteo } from "@/client/utils/meteo/determinerRemplissageMeteo";
+import { useTerritoiresCompares } from "@/client/hooks/useTerritoiresCompares";
 
 export const useWidgetCartographieMeteo = (params: {
   chantierId: string;
-  initialTerritoiresCodes: string[];
+  territoireCode: string;
   jalon: number;
 }) => {
-  const { chantierId, initialTerritoiresCodes, jalon } = params;
+  const { chantierId, territoireCode, jalon } = params;
+
+  const [territoiresCompares, setTerritoiresCompares] =
+    useTerritoiresCompares();
 
   const { data: territoiresMeteo, isLoading } =
     api.chantier.recupererMeteosTerritoires.useQuery({
@@ -17,9 +21,10 @@ export const useWidgetCartographieMeteo = (params: {
       jalon,
     });
 
-  const [selectedTerritoireCodes, setSelectedTerritoireCodes] = useState<
-    string[]
-  >(initialTerritoiresCodes);
+  const selectedTerritoireCodes = useMemo(() => {
+    const fromUrl = territoiresCompares.split(",").filter(Boolean);
+    return [territoireCode, ...fromUrl];
+  }, [territoireCode, territoiresCompares]);
 
   const donneesCartographie = useMemo(() => {
     if (!territoiresMeteo)
@@ -98,45 +103,59 @@ export const useWidgetCartographieMeteo = (params: {
     );
   }, [territoiresMeteo, selectedTerritoireCodes]);
 
+  const updateUrlTerritoires = useCallback(
+    (codes: string[]) => {
+      const withoutCurrent = codes.filter((code) => code !== territoireCode);
+      setTerritoiresCompares(withoutCurrent.join(","));
+    },
+    [territoireCode, setTerritoiresCompares],
+  );
+
   const auClicTerritoire = useCallback(
-    (territoireCode: string) => {
+    (clickedCode: string) => {
       if (!territoiresMeteo) return;
 
       const territoire = territoiresMeteo.find(
-        (terr) => terr.territoireCode === territoireCode,
+        (terr) => terr.territoireCode === clickedCode,
       );
       if (!territoire) return;
 
-      setSelectedTerritoireCodes((prev) => {
-        if (prev.includes(territoire.territoireCode)) {
-          return prev.filter((code) => code !== territoire.territoireCode);
-        }
-        return [...prev, territoire.territoireCode];
-      });
+      if (selectedTerritoireCodes.includes(clickedCode)) {
+        updateUrlTerritoires(
+          selectedTerritoireCodes.filter((code) => code !== clickedCode),
+        );
+      } else {
+        updateUrlTerritoires([...selectedTerritoireCodes, clickedCode]);
+      }
     },
-    [territoiresMeteo],
+    [territoiresMeteo, selectedTerritoireCodes, updateUrlTerritoires],
   );
 
-  const ajouterTerritoire = useCallback((territoireCode: string) => {
-    setSelectedTerritoireCodes((prev) => {
-      if (prev.includes(territoireCode)) return prev;
-      return [...prev, territoireCode];
-    });
-  }, []);
+  const ajouterTerritoire = useCallback(
+    (code: string) => {
+      if (selectedTerritoireCodes.includes(code)) return;
+      updateUrlTerritoires([...selectedTerritoireCodes, code]);
+    },
+    [selectedTerritoireCodes, updateUrlTerritoires],
+  );
 
-  const ajouterTerritoires = useCallback((territoireCodes: string[]) => {
-    setSelectedTerritoireCodes((prev) => {
-      const existing = new Set(prev);
-      const nouveaux = territoireCodes.filter((code) => !existing.has(code));
-      return [...prev, ...nouveaux];
-    });
-  }, []);
+  const ajouterTerritoires = useCallback(
+    (codes: string[]) => {
+      const existing = new Set(selectedTerritoireCodes);
+      const nouveaux = codes.filter((code) => !existing.has(code));
+      updateUrlTerritoires([...selectedTerritoireCodes, ...nouveaux]);
+    },
+    [selectedTerritoireCodes, updateUrlTerritoires],
+  );
 
-  const supprimerTerritoire = useCallback((territoireCode: string) => {
-    setSelectedTerritoireCodes((prev) =>
-      prev.filter((code) => code !== territoireCode),
-    );
-  }, []);
+  const supprimerTerritoire = useCallback(
+    (code: string) => {
+      updateUrlTerritoires(
+        selectedTerritoireCodes.filter((c) => c !== code),
+      );
+    },
+    [selectedTerritoireCodes, updateUrlTerritoires],
+  );
 
   return {
     donneesCartographie,

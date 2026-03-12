@@ -29,14 +29,14 @@ export const RepartitionNiveauxDeConfiance = ({
   onAjouterTerritoire,
   onAjouterTerritoires,
   jalon,
-  initialTerritoiresCodes,
+  territoireCode,
 }: {
   territoiresSelectionnes: MeteoTerritoireViewModel[];
   onSupprimerTerritoire: (territoireCode: string) => void;
   onAjouterTerritoire: (territoireCode: string) => void;
   onAjouterTerritoires: (territoireCodes: string[]) => void;
   jalon: number;
-  initialTerritoiresCodes: string[];
+  territoireCode: string;
 }) => {
   const groupedOptions = useMemo(() => {
     const selectedCodes = new Set(
@@ -77,9 +77,7 @@ export const RepartitionNiveauxDeConfiance = ({
                 "fr-FR",
               )
             : "—";
-          const estInitial = initialTerritoiresCodes.includes(
-            territoire.territoireCode,
-          );
+          const estInitial = territoire.territoireCode === territoireCode;
           const couleur = getCouleurTerritoire(index);
 
           return (

@@ -43,15 +43,6 @@ const Cartes: FunctionComponent<CartesProps> = ({
   const afficheCarteMétéo =
     !!chantier.météoDonnéeTerritorialisée[mailleSelectionnee] ||
     chantier.estTerritorialisé;
-  const [territoiresCompares, setTerritoiresCompares] = useQueryState(
-    "territoiresCompares",
-    parseAsString.withDefault("").withOptions({
-      shallow: false,
-      history: "push",
-      clearOnDefault: true,
-    }),
-  );
-
   const [, setCartographieGaucheSelection] = useQueryState(
     "carteChG",
     parseAsString.withDefault("avancementJalon").withOptions({
@@ -106,10 +97,6 @@ const Cartes: FunctionComponent<CartesProps> = ({
             <TuileWidget titre="Comparaison territoriale et évolution">
               <WidgetCartographieMeteo
                 chantierId={chantier.id}
-                initialTerritoiresCodes={[
-                  territoireCode,
-                  ...territoiresCompares.split(","),
-                ]}
                 jalon={jalon}
                 maille={mailleQuery}
                 territoireCode={territoireCode}

@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
-import { parseAsString, useQueryState } from "nuqs";
 import { DétailTerritoire } from "@/server/domain/territoire/Territoire.interface";
 import { useTerritoireHabilitation } from "@/client/hooks/useTerritoireHabilitation";
+import { useTerritoiresCompares } from "@/client/hooks/useTerritoiresCompares";
 import {
   CartographieOptions,
   CartographieTerritoireAffiché,
@@ -21,14 +21,8 @@ export default function useCartographie(
   const régions = listeTerritoires.filter(
     (territoire) => territoire.maille === "regionale",
   );
-  const [territoiresCompares, setTerritoiresCompares] = useQueryState(
-    "territoiresCompares",
-    parseAsString.withDefault("").withOptions({
-      shallow: false,
-      history: "push",
-      clearOnDefault: true,
-    }),
-  );
+  const [territoiresCompares, setTerritoiresCompares] =
+    useTerritoiresCompares();
 
   const router = useRouter();
 
