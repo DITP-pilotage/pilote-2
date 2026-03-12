@@ -1,4 +1,5 @@
 import { territoires as _territoires } from "@/client/constants/territoires.json";
+import { PickerOptionGroup } from "@/components/shared/Picker";
 import { Territoire } from "@/server/domain/territoire/Territoire.interface";
 
 const territoires = _territoires as Territoire[];
@@ -12,6 +13,29 @@ export const listeTerritoires = {
     (territoire) => territoire.maille === "regionale",
   ),
 };
+
+export const territoiresGroupesPourPicker: PickerOptionGroup<string>[] =
+  listeTerritoires.régions.map((region) => {
+    const departements = listeTerritoires.départements.filter(
+      (dept) => dept.codeParent === region.code,
+    );
+
+    return {
+      libelle: region.nomAffiché,
+      valeur: region.code,
+      options: [
+        { libelle: region.nomAffiché, valeur: region.code },
+        ...departements.map((dept) => ({
+          libelle: dept.nomAffiché,
+          valeur: dept.code,
+        })),
+      ],
+    };
+  });
+
+export const départementVersRégion: Map<string, string> = new Map(
+  listeTerritoires.départements.map((dept) => [dept.code, dept.codeParent]),
+);
 
 export const récupérerDétailsSurUnTerritoire = (
   territoireCode: string,

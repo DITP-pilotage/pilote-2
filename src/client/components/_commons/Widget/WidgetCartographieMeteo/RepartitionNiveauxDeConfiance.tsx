@@ -1,11 +1,20 @@
 import { Fragment, useMemo } from "react";
 import { getCouleurTerritoire } from "@/client/utils/couleur/paletteTerritoires";
-import { listeTerritoires } from "@/client/constants/territoires";
+import { territoiresGroupesPourPicker } from "@/client/constants/territoires";
 import { libellésMétéos, Météo } from "@/server/domain/météo/Météo.interface";
 import { MeteoPicto } from "@/components/_commons/Meteo/Picto/MeteoPicto";
 import { MeteoTerritoireViewModel } from "@/server/chantiers/infrastructure/queries/GetChantierMeteosTerritoiresQuery";
-import { Picker, PickerOptionGroup } from "@/components/shared/Picker";
+import { Picker } from "@/components/shared/Picker";
 import { Select } from "@/components/shared/Select";
+
+const ordreMeteo: Record<string, number> = {
+  SOLEIL: 0,
+  COUVERT: 1,
+  NUAGE: 2,
+  ORAGE: 3,
+  NON_NECESSAIRE: 4,
+  NON_RENSEIGNEE: 5,
+};
 
 function formaterNomTerritoire(territoire: MeteoTerritoireViewModel): string {
   if (territoire.maille === "DEPT") {
@@ -31,32 +40,23 @@ export const RepartitionNiveauxDeConfiance = ({
     const selectedCodes = new Set(
       territoiresSelectionnes.map((territoire) => territoire.territoireCode),
     );
-    const groups: PickerOptionGroup<string>[] = [];
 
-    for (const region of listeTerritoires.régions) {
-      const departements = listeTerritoires.départements.filter(
-        (dept) => dept.codeParent === region.code,
-      );
-
-      const options = [
-        { libelle: region.nomAffiché, valeur: region.code },
-        ...departements.map((dept) => ({
-          libelle: dept.nomAffiché,
-          valeur: dept.code,
-        })),
-      ].filter((option) => !selectedCodes.has(option.valeur));
-
-      if (options.length > 0) {
-        groups.push({
-          libelle: region.nomAffiché,
-          valeur: region.code,
-          options,
-        });
-      }
-    }
-
-    return groups;
+    return territoiresGroupesPourPicker
+      .map((group) => ({
+        ...group,
+        options: group.options.filter((opt) => !selectedCodes.has(opt.valeur)),
+      }))
+      .filter((group) => group.options.length > 0);
   }, [territoiresSelectionnes]);
+
+  const territoiresTries = useMemo(
+    () =>
+      [...territoiresSelectionnes].sort(
+        (a, b) =>
+          (ordreMeteo[a.meteo ?? ""] ?? 99) - (ordreMeteo[b.meteo ?? ""] ?? 99),
+      ),
+    [territoiresSelectionnes],
+  );
 
   return (
     <div>
@@ -68,7 +68,7 @@ export const RepartitionNiveauxDeConfiance = ({
           </div>
         </div>
 
-        {territoiresSelectionnes.map((territoire, index) => {
+        {territoiresTries.map((territoire, index) => {
           const meteo = territoire.meteo as Météo;
           const dateMaj = territoire.dateDeMajQualitative
             ? new Date(territoire.dateDeMajQualitative).toLocaleDateString(
