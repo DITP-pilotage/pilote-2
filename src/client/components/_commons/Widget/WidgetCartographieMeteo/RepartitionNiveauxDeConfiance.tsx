@@ -6,6 +6,8 @@ import { MeteoPicto } from "@/components/_commons/Meteo/Picto/MeteoPicto";
 import { MeteoTerritoireViewModel } from "@/server/chantiers/infrastructure/queries/GetChantierMeteosTerritoiresQuery";
 import { Picker } from "@/components/shared/Picker";
 import { Select } from "@/components/shared/Select";
+import { useTuileWidget } from "@/components/_commons/Widget/TuileWidget/TuileWidgetContext";
+import { clsxm } from "@/utils/clsxm";
 
 const ordreMeteo: Record<string, number> = {
   SOLEIL: 0,
@@ -38,6 +40,7 @@ export const RepartitionNiveauxDeConfiance = ({
   jalon: number;
   territoireCode: string;
 }) => {
+  const { modeDisposition } = useTuileWidget();
   const groupedOptions = useMemo(() => {
     const selectedCodes = new Set(
       territoiresSelectionnes.map((territoire) => territoire.territoireCode),
@@ -82,25 +85,43 @@ export const RepartitionNiveauxDeConfiance = ({
 
           return (
             <Fragment key={territoire.territoireCode}>
-              <div className="py-2 grid grid-cols-[1fr_30px] items-center gap-2 border-b">
-                <span className="text-right" style={{ color: couleur }}>
-                  {formaterNomTerritoire(territoire)}
-                </span>
-                {!estInitial && (
-                  <button
-                    onClick={() =>
-                      onSupprimerTerritoire(territoire.territoireCode)
-                    }
-                    title={`Retirer ${territoire.territoireNom}`}
-                    type="button"
-                    className="p-2"
-                    style={{ color: couleur }}
-                  >
-                    ✕
-                  </button>
-                )}
+              <div
+                className={clsxm("border-b", {
+                  "flex justify-center": modeDisposition === "G",
+                })}
+              >
+                <div
+                  className={clsxm(
+                    "py-2 grid grid-cols-[1fr_30px] items-center gap-2",
+                    {
+                      "w-full max-w-[300px] mr-auto": modeDisposition === "G",
+                    },
+                  )}
+                >
+                  <span className="text-right" style={{ color: couleur }}>
+                    {formaterNomTerritoire(territoire)}
+                  </span>
+                  {!estInitial && (
+                    <button
+                      onClick={() =>
+                        onSupprimerTerritoire(territoire.territoireCode)
+                      }
+                      title={`Retirer ${territoire.territoireNom}`}
+                      type="button"
+                      className="p-2"
+                      style={{ color: couleur }}
+                    >
+                      ✕
+                    </button>
+                  )}
+                </div>
               </div>
-              <div className="py-2 flex flex-col items-center border-b">
+              <div
+                className={clsxm("py-2 flex items-center border-b", {
+                  "flex-col": modeDisposition === "P",
+                  "gap-4": modeDisposition === "G",
+                })}
+              >
                 <div className="flex items-center gap-2">
                   <MeteoPicto meteo={meteo} size="sm" />
                   <span>
