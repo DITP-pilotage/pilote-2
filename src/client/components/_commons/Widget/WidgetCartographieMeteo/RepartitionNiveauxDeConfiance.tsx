@@ -27,12 +27,14 @@ export const RepartitionNiveauxDeConfiance = ({
   territoiresSelectionnes,
   onSupprimerTerritoire,
   onAjouterTerritoire,
+  onAjouterTerritoires,
   jalon,
   initialTerritoiresCodes,
 }: {
   territoiresSelectionnes: MeteoTerritoireViewModel[];
   onSupprimerTerritoire: (territoireCode: string) => void;
   onAjouterTerritoire: (territoireCode: string) => void;
+  onAjouterTerritoires: (territoireCodes: string[]) => void;
   jalon: number;
   initialTerritoiresCodes: string[];
 }) => {
@@ -122,6 +124,7 @@ export const RepartitionNiveauxDeConfiance = ({
         <Picker
           key={territoiresSelectionnes.length}
           onValueChange={(valeur) => onAjouterTerritoire(valeur)}
+          onValuesChange={onAjouterTerritoires}
           options={groupedOptions}
           trigger={
             <Select.LinkButtonTrigger className="mt-2">

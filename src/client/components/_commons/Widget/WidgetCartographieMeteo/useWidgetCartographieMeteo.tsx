@@ -124,6 +124,14 @@ export const useWidgetCartographieMeteo = (params: {
     });
   }, []);
 
+  const ajouterTerritoires = useCallback((territoireCodes: string[]) => {
+    setSelectedTerritoireCodes((prev) => {
+      const existing = new Set(prev);
+      const nouveaux = territoireCodes.filter((code) => !existing.has(code));
+      return [...prev, ...nouveaux];
+    });
+  }, []);
+
   const supprimerTerritoire = useCallback((territoireCode: string) => {
     setSelectedTerritoireCodes((prev) =>
       prev.filter((code) => code !== territoireCode),
@@ -136,6 +144,7 @@ export const useWidgetCartographieMeteo = (params: {
     territoiresSelectionnes,
     auClicTerritoire,
     ajouterTerritoire,
+    ajouterTerritoires,
     supprimerTerritoire,
     isLoading,
   };

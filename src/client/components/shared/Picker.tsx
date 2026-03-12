@@ -25,6 +25,7 @@ export const Picker = <T extends string>({
   options,
   value,
   onValueChange,
+  onValuesChange,
   disabled = false,
   showSearch = true,
   placeholderRecherche = "Rechercher...",
@@ -34,6 +35,7 @@ export const Picker = <T extends string>({
   options: PickerOption<T>[] | PickerOptionGroup<T>[];
   value?: T;
   onValueChange?: (value: T, group?: PickerOptionGroup<T> | null) => void;
+  onValuesChange?: (values: T[]) => void;
   disabled?: boolean;
   showSearch?: boolean;
   placeholderRecherche?: string;
@@ -41,6 +43,7 @@ export const Picker = <T extends string>({
   trigger: React.ReactNode;
 }) => {
   const [recherche, setRecherche] = useState("");
+  const [open, setOpen] = useState(false);
   const rechercheRef = useRef<HTMLInputElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
@@ -68,6 +71,7 @@ export const Picker = <T extends string>({
 
   return (
     <Select.Root
+      open={open}
       onValueChange={(val) => {
         if (isGrouped) {
           const group = (options as PickerOptionGroup<T>[]).find((g) =>
@@ -80,8 +84,9 @@ export const Picker = <T extends string>({
       }}
       value={value}
       disabled={disabled}
-      onOpenChange={(open) => {
-        if (open) {
+      onOpenChange={(nextOpen) => {
+        setOpen(nextOpen);
+        if (nextOpen) {
           setTimeout(() => {
             rechercheRef.current?.focus();
             if (scrollContainerRef.current) {
@@ -143,7 +148,37 @@ export const Picker = <T extends string>({
                   >
                     {index > 0 && <Select.Separator />}
                     <Select.Group>
-                      <Select.Label>{group.libelle}</Select.Label>
+                      <div className="flex items-center justify-between">
+                        <Select.Label>{group.libelle}</Select.Label>
+                        {onValuesChange && (
+                          <button
+                            className="text-xs text-[var(--text-action-high-blue-france)] hover:underline px-2 py-1"
+                            onPointerDown={(event) => {
+                              event.preventDefault();
+                              event.stopPropagation();
+                              const visibleValues = group.options
+                                .filter((option) => {
+                                  if (!showSearch || !recherche)
+                                    return !option.desactivee;
+                                  const matchesSearch =
+                                    groupMatchesSearch ||
+                                    option.libelle
+                                      .toLowerCase()
+                                      .includes(rechercheNormalisee);
+                                  return matchesSearch && !option.desactivee;
+                                })
+                                .map((option) => option.valeur);
+                              if (visibleValues.length > 0) {
+                                onValuesChange(visibleValues);
+                                setOpen(false);
+                              }
+                            }}
+                            type="button"
+                          >
+                            Tout sélectionner
+                          </button>
+                        )}
+                      </div>
                       <div className="pl-3">
                         {group.options.map((option) => {
                           const shouldHideOption =
