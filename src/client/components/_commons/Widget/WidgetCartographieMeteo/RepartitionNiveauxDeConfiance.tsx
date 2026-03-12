@@ -1,4 +1,5 @@
 import { Fragment, FunctionComponent } from "react";
+import { getCouleurTerritoire } from "@/client/utils/couleur/paletteTerritoires";
 import { Météo, libellésMétéos } from "@/server/domain/météo/Météo.interface";
 import { MeteoPicto } from "@/components/_commons/Meteo/Picto/MeteoPicto";
 import { MeteoTerritoireViewModel } from "@/server/chantiers/infrastructure/queries/GetChantierMeteosTerritoiresQuery";
@@ -48,7 +49,7 @@ export const RepartitionNiveauxDeConfiance: FunctionComponent<
           <div className="text-center text-sm py-1">{jalon}</div>
         </div>
 
-        {territoiresSelectionnes.map((territoire) => {
+        {territoiresSelectionnes.map((territoire, index) => {
           const meteo = territoire.meteo as Météo;
           const dateMaj = territoire.dateDeMajQualitative
             ? new Date(territoire.dateDeMajQualitative).toLocaleDateString(
@@ -58,11 +59,12 @@ export const RepartitionNiveauxDeConfiance: FunctionComponent<
           const estInitial = initialTerritoiresCodes.includes(
             territoire.territoireCode,
           );
+          const couleur = getCouleurTerritoire(index);
 
           return (
             <Fragment key={territoire.territoireCode}>
               <div className="py-2 grid grid-cols-[1fr_30px] items-center gap-2 border-b">
-                <span className="text-right">
+                <span className="text-right" style={{ color: couleur }}>
                   {formaterNomTerritoire(territoire)}
                 </span>
                 {!estInitial && (
@@ -73,6 +75,7 @@ export const RepartitionNiveauxDeConfiance: FunctionComponent<
                     title={`Retirer ${territoire.territoireNom}`}
                     type="button"
                     className="p-2"
+                    style={{ color: couleur }}
                   >
                     ✕
                   </button>

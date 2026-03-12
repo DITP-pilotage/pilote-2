@@ -4,26 +4,9 @@ import { ComposeOption } from "echarts/types/dist/echarts";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import type { IndicateurDetailsParTerritoire } from "@/client/components/_commons/IndicateursChantier/Bloc/IndicateurBloc.interface";
 import { formaterDate } from "@/client/utils/date/date";
+import { PALETTE_DSFR } from "@/client/utils/couleur/paletteTerritoires";
 
 export type ECOption = ComposeOption<LineSeriesOption>;
-export const PALETTE_DSFR = [
-  "#68A532",
-  "#A558A0",
-  "#417DC4",
-  "#C8AA39",
-  "#009081",
-  "#E18B76",
-  "#465F9D",
-  "#C08C65",
-  "#00A95F",
-  "#E4794A",
-  "#0078F3",
-  "#D1B781",
-  "#1F8D49",
-  "#CE614A",
-  "#009099",
-  "#AEA397",
-];
 
 const creerSerie = (
   indicateur: IndicateurDetailsParTerritoire,
