@@ -3,8 +3,11 @@ import { CartographieV2 } from "@/components/_commons/CartographieV2/Cartographi
 import { LegendeCartographie } from "@/components/_commons/CartographieV2/LegendeCartographie";
 import { useTuileWidget } from "@/components/_commons/Widget/TuileWidget/TuileWidgetContext";
 import { clsxm } from "@/utils/clsxm";
+import api from "@/server/infrastructure/api/trpc/api";
 import { RepartitionNiveauxDeConfiance } from "./RepartitionNiveauxDeConfiance";
-import { useWidgetCartographieMeteo } from "./useWidgetCartographieMeteo";
+import { useDonneesCartographie } from "./useDonneesCartographie";
+import { useLegendeMeteo } from "./useLegendeMeteo";
+import { useSelectionTerritoires } from "./useSelectionTerritoires";
 
 export const WidgetCartographieMeteo = ({
   chantierId,
@@ -17,19 +20,22 @@ export const WidgetCartographieMeteo = ({
   territoireCode: string;
   jalon: number;
 }) => {
+  const [territoiresMeteo] =
+    api.chantier.recupererMeteosTerritoires.useSuspenseQuery({
+      chantierId,
+      jalon,
+    });
+
+  const donneesCartographie = useDonneesCartographie(territoiresMeteo);
+  const legende = useLegendeMeteo(territoiresMeteo);
   const {
-    donneesCartographie,
-    legende,
     territoiresSelectionnes,
-    auClicTerritoire,
+    onSelectTerritoire,
     ajouterTerritoire,
     ajouterTerritoires,
     supprimerTerritoire,
-  } = useWidgetCartographieMeteo({
-    chantierId,
-    territoireCode,
-    jalon,
-  });
+  } = useSelectionTerritoires({ territoiresMeteo, territoireCode });
+
   const { isTailleTuileXL, isModeDispositionG } = useTuileWidget();
 
   return (
@@ -44,7 +50,7 @@ export const WidgetCartographieMeteo = ({
         </span>
         <div className="max-w-[400px] mx-auto">
           <CartographieV2
-            onTerritoireSelect={auClicTerritoire}
+            onTerritoireSelect={onSelectTerritoire}
             donnees={donneesCartographie}
             maille={maille}
             territoiresSelectionnes={territoiresSelectionnes.map(
