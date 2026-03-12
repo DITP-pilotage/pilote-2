@@ -1,12 +1,12 @@
-import { Fragment } from "react";
+import { Fragment, useState } from "react";
 import { Modale } from "@/components/shared/Modale";
 import { BoutonSousLigné } from "@/components/_commons/BoutonSousLigné/BoutonSousLigné";
 import { Icone } from "@/components/_commons/Icone";
 import { Eye1Icon } from "@/components/_commons/Icones/Eye1Icon";
 import { TypeCommentaireChantier } from "@/server/domain/chantier/commentaire/Commentaire.interface";
 import { Maille } from "@/server/domain/maille/Maille.interface";
+import api from "@/server/infrastructure/api/trpc/api";
 import AffichageCommentaire from "@/components/_commons/CommentairesNew/CommentaireSection/Affichage/Affichage";
-import useHistoriqueCommentaire from "./useHistoriqueCommentaire";
 
 const HistoriqueCommentaire = ({
   réformeId,
@@ -19,17 +19,17 @@ const HistoriqueCommentaire = ({
   type: TypeCommentaireChantier;
   maille: Maille;
 }) => {
-  const { historique, récupérerHistorique } = useHistoriqueCommentaire({
-    réformeId,
-    territoireCode,
-    type,
-  });
+  const [open, setOpen] = useState(false);
+
+  const { data: historique } = api.commentaire.récupérerHistorique.useQuery(
+    { réformeId, territoireCode, type },
+    { enabled: open },
+  );
 
   return (
     <Modale
-      onOpenChange={(open) => {
-        if (open) récupérerHistorique();
-      }}
+      open={open}
+      onOpenChange={setOpen}
       title="Historique - Commentaires"
       trigger={
         <BoutonSousLigné

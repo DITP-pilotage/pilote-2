@@ -1,5 +1,4 @@
 import { FunctionComponent, useState } from "react";
-import { parseAsBoolean, useQueryState } from "nuqs";
 import {
   CommentaireAvecNomsAuteurs,
   CommentaireV2,
@@ -37,14 +36,7 @@ const CommentaireSection: FunctionComponent<CommentaireSectionProps> = ({
   maille,
   modeEcriture = false,
 }) => {
-  const [modeÉdition, setModeÉdition] = useQueryState(
-    `edition-${type}`,
-    parseAsBoolean.withDefault(false).withOptions({
-      history: "push",
-      shallow: false,
-      clearOnDefault: true,
-    }),
-  );
+  const [modeÉdition, setModeÉdition] = useState(false);
 
   const [action, setAction] = useState<CommentaireAction | null>(null);
 

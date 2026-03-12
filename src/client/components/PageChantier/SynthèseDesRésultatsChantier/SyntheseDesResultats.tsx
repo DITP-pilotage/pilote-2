@@ -1,4 +1,3 @@
-import { parseAsBoolean, useQueryState } from "nuqs";
 import { FunctionComponent, useState } from "react";
 import Bloc from "@/components/_commons/Bloc/Bloc";
 import { MeteoPicto } from "@/components/_commons/Meteo/Picto/MeteoPicto";
@@ -30,14 +29,7 @@ const SyntheseDesResultats: FunctionComponent<SyntheseDesResultatsProps> = ({
 
   const [action, setAction] = useState<SyntheseDesResultatsAction | null>(null);
 
-  const [modeÉdition, setModeÉdition] = useQueryState(
-    "edition",
-    parseAsBoolean.withDefault(false).withOptions({
-      history: "push",
-      shallow: false,
-      clearOnDefault: true,
-    }),
-  );
+  const [modeÉdition, setModeÉdition] = useState(false);
 
   return (
     <div>

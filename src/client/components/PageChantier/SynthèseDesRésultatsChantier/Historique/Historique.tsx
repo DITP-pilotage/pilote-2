@@ -1,4 +1,4 @@
-import { Fragment } from "react";
+import { Fragment, useState } from "react";
 import { Modale } from "@/components/shared/Modale";
 import MétéoBadge from "@/components/_commons/Meteo/Badge/MétéoBadge";
 import { MeteoPicto } from "@/components/_commons/Meteo/Picto/MeteoPicto";
@@ -7,23 +7,24 @@ import { BoutonSousLigné } from "@/components/_commons/BoutonSousLigné/BoutonS
 import { Icone } from "@/components/_commons/Icone";
 import { Eye1Icon } from "@/components/_commons/Icones/Eye1Icon";
 import { useTerritoireSelectionne } from "@/components/PageChantier/PageChantierServerSideContext";
+import api from "@/server/infrastructure/api/trpc/api";
+import { pageChantier } from "@/components/PageChantier/PageChantierServerSideContext";
 import SynthèseDesRésultatsHistoriqueStyled from "./Historique.styled";
-import useHistoriqueDeLaSyntheseDesResultats from "./useHistoriqueDeLaSyntheseDesResultats";
 
 const SynthèseDesRésultatsHistorique = () => {
-  const {
-    historiqueDeLaSynthèseDesRésultats,
-    récupérerHistoriqueSynthèseDesRésultats,
-  } = useHistoriqueDeLaSyntheseDesResultats();
+  const { chantier, territoireCode } = pageChantier.useServerSidePropsContext();
+  const [open, setOpen] = useState(false);
+  const { data: historiqueDeLaSynthèseDesRésultats } =
+    api.synthèseDesRésultats.récupérerHistorique.useQuery(
+      { réformeId: chantier.id, territoireCode },
+      { enabled: open },
+    );
   const territoireSélectionné = useTerritoireSelectionne();
 
   return (
     <Modale
-      onOpenChange={(open) => {
-        if (open) {
-          récupérerHistoriqueSynthèseDesRésultats();
-        }
-      }}
+      open={open}
+      onOpenChange={setOpen}
       sousTitre={territoireSélectionné.nomAffiché}
       title="Historique - Synthèse des résultats"
       trigger={

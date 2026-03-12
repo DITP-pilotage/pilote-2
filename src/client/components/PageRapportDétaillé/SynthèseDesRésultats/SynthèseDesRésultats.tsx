@@ -20,7 +20,10 @@ const SynthèseDesRésultats = ({
 }: SynthèseDesRésultatsProps) => {
   return (
     <SynthèseDesRésultatsStyled>
-      <Bloc titre={nomTerritoire}>
+      <Bloc
+        titre={nomTerritoire}
+        backgroundClassNameTitre="bg-dsfr-blue-france-925"
+      >
         <div className="fr-py-1w">
           {mailleSourceDonnees === "regionale" && (
             <Alerte

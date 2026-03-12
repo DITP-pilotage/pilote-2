@@ -1,4 +1,4 @@
-import { FunctionComponent, ReactNode } from "react";
+import { ReactNode } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Bouton } from "@/components/_commons/Bouton/Bouton";
@@ -36,9 +36,7 @@ interface ModaleFormulaireCommentaireProps {
   onBrouillon: SubmitHandler<{ contenu: string }>;
 }
 
-export const ModaleFormulaireCommentaire: FunctionComponent<
-  ModaleFormulaireCommentaireProps
-> = ({
+export const ModaleFormulaireCommentaire = ({
   title,
   type,
   trigger,
@@ -48,12 +46,11 @@ export const ModaleFormulaireCommentaire: FunctionComponent<
   brouillon,
   onPublier,
   onBrouillon,
-}) => {
+}: ModaleFormulaireCommentaireProps) => {
   const form = useForm<{ contenu: string }>({
     mode: "all",
     resolver: zodResolver(validationCommentaireFormulaire),
-    defaultValues: { contenu: "" },
-    ...(brouillon ? { values: { contenu: brouillon.contenu } } : {}),
+    defaultValues: { contenu: brouillon?.contenu ?? "" },
   });
 
   return (

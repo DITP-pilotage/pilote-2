@@ -8,6 +8,7 @@ import {
 } from "@/server/domain/chantier/commentaire/Commentaire.interface";
 import { libellesTypesCommentaire } from "@/client/constants/libellesCommentaire";
 import { nettoyerUneChaîneDeCaractèresPourAffichageHTML } from "@/client/utils/strings";
+import { isDefined } from "@/client/utils/predicates";
 import { Badge } from "@/components/_commons/Badge";
 import { PiloteDateFormatter } from "@/server/rapports-hebdomadaires/infrastructure/adapters/PiloteDateFormatter";
 
@@ -24,8 +25,8 @@ const CommentairesRapportDetaille: FunctionComponent<
 > = ({ commentaires, nomTerritoire, typesCommentaire }) => {
   const commentaireParType = new Map<TypeCommentaireChantier, Commentaire>(
     commentaires
-      .filter((commentaire) => commentaire !== null)
-      .map((commentaire) => [commentaire!.type, commentaire]),
+      .filter(isDefined)
+      .map((commentaire) => [commentaire.type, commentaire]),
   );
 
   return (
@@ -46,8 +47,7 @@ const CommentairesRapportDetaille: FunctionComponent<
               {commentaire ? (
                 <>
                   <p className="text-xs text-dsfr-mention-grey mb-1">
-                    {`Mis à jour le ${PiloteDateFormatter.isoDateFranceMetropolitaine(commentaire.date)}`}
-                    {!!commentaire.auteur && ` | Par ${commentaire.auteur}`}
+                    {`Mis à jour le ${PiloteDateFormatter.isoDateFranceMetropolitaine(commentaire.date)} | Par ${commentaire.auteur}`}
                   </p>
                   <p
                     className="fr-text--sm fr-mb-0"
