@@ -14,6 +14,7 @@ import {
   AlerteSyntheseDesResultats,
   SyntheseDesResultatsAction,
 } from "@/components/PageChantier/SynthèseDesRésultatsChantier/AlerteSyntheseDesResultats";
+import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
 
 export interface SyntheseDesResultatsProps {
   nomTerritoire: string;
@@ -28,8 +29,8 @@ const SyntheseDesResultats: FunctionComponent<SyntheseDesResultatsProps> = ({
     pageChantier.useServerSidePropsContext();
 
   const [action, setAction] = useState<SyntheseDesResultatsAction | null>(null);
-
   const [modeÉdition, setModeÉdition] = useState(false);
+  const refreshRouter = useRefreshRouter();
 
   return (
     <div>
@@ -52,7 +53,11 @@ const SyntheseDesResultats: FunctionComponent<SyntheseDesResultatsProps> = ({
           {modeÉdition && modeEcriture ? (
             <SyntheseDesResultatsFormulaire
               annulationCallback={() => setModeÉdition(false)}
-              onAction={setAction}
+              onSucess={(action) => {
+                setAction(action);
+                refreshRouter();
+                setModeÉdition(false);
+              }}
             />
           ) : (
             <>

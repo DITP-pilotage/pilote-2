@@ -20,7 +20,7 @@ export const BoutonEditerBrouillonSyntheseDesResultats = ({
   const refreshRouter = useRefreshRouter();
   const { publier, enregistrerEnBrouillon } =
     useEditerBrouillonSyntheseDesResultats({
-      brouillon: syntheseDesResultatsBrouillon!,
+      brouillonId: syntheseDesResultatsBrouillon!.id,
       onAction,
       onSuccess: () => {
         setOpen(false);

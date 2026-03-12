@@ -5,6 +5,7 @@ import SynthèseDesRésultats, {
 
 export default interface SynthèseDesRésultatsRepository {
   save(synthèse: SyntheseDesResultatsV2): Promise<void>;
+  getById(id: string): Promise<SyntheseDesResultatsV2 | null>;
   récupérerLesPlusRécentesGroupéesParChantier(
     chantiersIds: Chantier["id"][],
     maille: string,

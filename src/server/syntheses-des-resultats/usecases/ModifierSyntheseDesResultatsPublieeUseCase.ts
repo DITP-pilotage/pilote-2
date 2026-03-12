@@ -1,7 +1,7 @@
-import { SyntheseDesResultatsV2 } from "@/server/domain/chantier/synthèseDesRésultats/SynthèseDesRésultats.interface";
 import { Météo } from "@/server/domain/météo/Météo.interface";
 import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
 import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
+import SynthèseDesRésultatsRepository from "@/server/domain/chantier/synthèseDesRésultats/SynthèseDesRésultatsRepository.interface";
 import { EnregistrerSyntheseDesResultatsService } from "@/server/syntheses-des-resultats/services/EnregistrerSyntheseDesResultatsService";
 import { modifierSyntheseDesResultats } from "@/server/syntheses-des-resultats/domain/SyntheseDesResultats";
 
@@ -9,24 +9,33 @@ export class ModifierSyntheseDesResultatsPublieeUseCase {
   constructor(
     private readonly dependencies: {
       enregistrerSyntheseDesResultatsService: EnregistrerSyntheseDesResultatsService;
+      synthèseDesRésultatsRepository: SynthèseDesRésultatsRepository;
     },
   ) {}
 
   async execute({
-    syntheseAModifier,
+    syntheseId,
     contenu,
     meteo,
     auteurModificationId,
     dateModification,
     habilitations,
   }: {
-    syntheseAModifier: SyntheseDesResultatsV2;
+    syntheseId: string;
     contenu: string;
     meteo: Météo;
     auteurModificationId: string;
     dateModification: string;
     habilitations: Habilitations;
   }): Promise<void> {
+    const syntheseAModifier =
+      await this.dependencies.synthèseDesRésultatsRepository.getById(
+        syntheseId,
+      );
+
+    if (!syntheseAModifier)
+      throw new Error(`Synthèse introuvable : ${syntheseId}`);
+
     new Habilitation(
       habilitations,
     ).vérifierLesHabilitationsEnSaisieDesPublications(

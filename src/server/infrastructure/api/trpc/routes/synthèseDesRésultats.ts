@@ -30,7 +30,7 @@ export const synthèseDesRésultatsRouter = créerRouteurTRPC({
       return getContainer("importSyntheseDesResultats")
         .resolve("modifierSyntheseDesResultatsPublieeUseCase")
         .execute({
-          syntheseAModifier: input.syntheseAModifier,
+          syntheseId: input.syntheseId,
           contenu: input.contenu,
           meteo: input.meteo,
           auteurModificationId: ctx.session.user.id,
@@ -95,7 +95,7 @@ export const synthèseDesRésultatsRouter = créerRouteurTRPC({
       return getContainer("importSyntheseDesResultats")
         .resolve("publierBrouillonSyntheseDesResultatsUseCase")
         .execute({
-          brouillon: input.brouillon,
+          brouillonId: input.brouillonId,
           contenu: input.contenu,
           meteo: input.meteo,
           auteurModificationId: ctx.session.user.id,
@@ -116,7 +116,7 @@ export const synthèseDesRésultatsRouter = créerRouteurTRPC({
       return getContainer("importSyntheseDesResultats")
         .resolve("modifierBrouillonSyntheseDesResultatsUseCase")
         .execute({
-          brouillon: input.brouillon,
+          brouillonId: input.brouillonId,
           contenu: input.contenu,
           meteo: input.meteo,
           auteurModificationId: ctx.session.user.id,

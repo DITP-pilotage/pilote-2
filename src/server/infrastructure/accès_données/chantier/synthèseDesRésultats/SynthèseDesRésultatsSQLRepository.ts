@@ -59,6 +59,26 @@ export class SynthèseDesRésultatsSQLRepository implements SynthèseDesRésulta
     });
   }
 
+  async getById(id: string): Promise<SyntheseDesResultatsV2 | null> {
+    const row = await this.prisma.synthese_des_resultats.findUnique({
+      where: { id },
+    });
+    if (!row) return null;
+
+    return {
+      id: row.id,
+      chantierId: row.chantier_id,
+      territoireCode: row.territoire_code,
+      contenu: row.commentaire ?? "",
+      meteo: row.meteo as Météo,
+      auteurCreationId: row.auteur_creation_id ?? "",
+      dateCreation: row.date_creation.toISOString(),
+      auteurModificationId: row.auteur_modification_id ?? "",
+      dateModification: row.date_modification.toISOString(),
+      statut: row.statut,
+    };
+  }
+
   async récupérerLesPlusRécentesGroupéesParChantier(
     chantiersIds: Chantier["id"][],
     maille: Maille,
