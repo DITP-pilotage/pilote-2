@@ -1,19 +1,11 @@
-import { Fragment, FunctionComponent } from "react";
+import { Fragment, useMemo } from "react";
 import { getCouleurTerritoire } from "@/client/utils/couleur/paletteTerritoires";
-import { Météo, libellésMétéos } from "@/server/domain/météo/Météo.interface";
+import { listeTerritoires } from "@/client/constants/territoires";
+import { libellésMétéos, Météo } from "@/server/domain/météo/Météo.interface";
 import { MeteoPicto } from "@/components/_commons/Meteo/Picto/MeteoPicto";
 import { MeteoTerritoireViewModel } from "@/server/chantiers/infrastructure/queries/GetChantierMeteosTerritoiresQuery";
-import { Picker, PickerOption } from "@/components/shared/Picker";
+import { Picker, PickerOptionGroup } from "@/components/shared/Picker";
 import { Select } from "@/components/shared/Select";
-
-type RepartitionNiveauxDeConfianceProps = {
-  territoiresSelectionnes: MeteoTerritoireViewModel[];
-  territoiresDisponibles: MeteoTerritoireViewModel[];
-  onSupprimerTerritoire: (territoireCode: string) => void;
-  onAjouterTerritoire: (territoireCode: string) => void;
-  jalon: number;
-  initialTerritoiresCodes: string[];
-};
 
 function formaterNomTerritoire(territoire: MeteoTerritoireViewModel): string {
   if (territoire.maille === "DEPT") {
@@ -22,22 +14,49 @@ function formaterNomTerritoire(territoire: MeteoTerritoireViewModel): string {
   return territoire.territoireNom;
 }
 
-export const RepartitionNiveauxDeConfiance: FunctionComponent<
-  RepartitionNiveauxDeConfianceProps
-> = ({
+export const RepartitionNiveauxDeConfiance = ({
   territoiresSelectionnes,
-  territoiresDisponibles,
   onSupprimerTerritoire,
   onAjouterTerritoire,
   jalon,
   initialTerritoiresCodes,
+}: {
+  territoiresSelectionnes: MeteoTerritoireViewModel[];
+  onSupprimerTerritoire: (territoireCode: string) => void;
+  onAjouterTerritoire: (territoireCode: string) => void;
+  jalon: number;
+  initialTerritoiresCodes: string[];
 }) => {
-  const options: PickerOption<string>[] = territoiresDisponibles.map(
-    (territoire) => ({
-      libelle: formaterNomTerritoire(territoire),
-      valeur: territoire.territoireCode,
-    }),
-  );
+  const groupedOptions = useMemo(() => {
+    const selectedCodes = new Set(
+      territoiresSelectionnes.map((territoire) => territoire.territoireCode),
+    );
+    const groups: PickerOptionGroup<string>[] = [];
+
+    for (const region of listeTerritoires.régions) {
+      const departements = listeTerritoires.départements.filter(
+        (dept) => dept.codeParent === region.code,
+      );
+
+      const options = [
+        { libelle: region.nomAffiché, valeur: region.code },
+        ...departements.map((dept) => ({
+          libelle: dept.nomAffiché,
+          valeur: dept.code,
+        })),
+      ].filter((option) => !selectedCodes.has(option.valeur));
+
+      if (options.length > 0) {
+        groups.push({
+          libelle: region.nomAffiché,
+          valeur: region.code,
+          options,
+        });
+      }
+    }
+
+    return groups;
+  }, [territoiresSelectionnes]);
 
   return (
     <div>
@@ -99,11 +118,11 @@ export const RepartitionNiveauxDeConfiance: FunctionComponent<
         })}
       </div>
 
-      {territoiresDisponibles.length > 0 && (
+      {groupedOptions.length > 0 && (
         <Picker
           key={territoiresSelectionnes.length}
           onValueChange={(valeur) => onAjouterTerritoire(valeur)}
-          options={options}
+          options={groupedOptions}
           trigger={
             <Select.LinkButtonTrigger className="mt-2">
               + ajouter un territoire

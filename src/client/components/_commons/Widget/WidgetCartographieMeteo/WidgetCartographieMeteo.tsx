@@ -20,7 +20,6 @@ export const WidgetCartographieMeteo: FunctionComponent<
     donneesCartographie,
     legende,
     territoiresSelectionnes,
-    territoiresDisponibles,
     auClicTerritoire,
     ajouterTerritoire,
     supprimerTerritoire,
@@ -62,7 +61,6 @@ export const WidgetCartographieMeteo: FunctionComponent<
           jalon={jalon}
           onAjouterTerritoire={ajouterTerritoire}
           onSupprimerTerritoire={supprimerTerritoire}
-          territoiresDisponibles={territoiresDisponibles}
           territoiresSelectionnes={territoiresSelectionnes}
         />
       </div>

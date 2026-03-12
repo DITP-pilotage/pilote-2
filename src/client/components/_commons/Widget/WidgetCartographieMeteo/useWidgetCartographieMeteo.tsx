@@ -130,19 +130,10 @@ export const useWidgetCartographieMeteo = (params: {
     );
   }, []);
 
-  const territoiresDisponibles = useMemo(() => {
-    if (!territoiresMeteo) return [];
-    return territoiresMeteo.filter(
-      (territoire) =>
-        !selectedTerritoireCodes.includes(territoire.territoireCode),
-    );
-  }, [territoiresMeteo, selectedTerritoireCodes]);
-
   return {
     donneesCartographie,
     legende,
     territoiresSelectionnes,
-    territoiresDisponibles,
     auClicTerritoire,
     ajouterTerritoire,
     supprimerTerritoire,

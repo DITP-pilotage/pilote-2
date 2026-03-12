@@ -28,7 +28,7 @@ export const Picker = <T extends string>({
   disabled = false,
   showSearch = true,
   placeholderRecherche = "Rechercher...",
-  contentClassName = "max-h-96 overflow-hidden !w-[var(--radix-select-trigger-width)]",
+  contentClassName = "max-h-96 overflow-hidden",
   trigger,
 }: {
   options: PickerOption<T>[] | PickerOptionGroup<T>[];
