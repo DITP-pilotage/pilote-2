@@ -5,7 +5,6 @@ import {
   CommentaireAvecNomsAuteurs,
   TypeCommentaireChantier,
 } from "@/server/domain/chantier/commentaire/Commentaire.interface";
-import { Maille } from "@/server/domain/maille/Maille.interface";
 import CompteurCaractères from "@/components/_commons/CompteurCaractères/CompteurCaractères";
 import Titre from "@/components/_commons/Titre/Titre";
 import {
@@ -28,9 +27,6 @@ import { useModifierCommentaire } from "./useModifierCommentaire";
 interface CommentaireFormulaireProps {
   commentaire: CommentaireAvecNomsAuteurs | null;
   type: TypeCommentaireChantier;
-  réformeId: string;
-  territoireCode: string;
-  maille: Maille;
   annulationCallback?: () => void;
   onSuccess: (action: CommentaireAction) => void;
 }

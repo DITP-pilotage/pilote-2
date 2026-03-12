@@ -424,11 +424,8 @@ const PageChantier = () => {
                 commentaires={commentaires}
                 commentairesBrouillon={commentairesBrouillon}
                 estChantierArchive={estChantierArchive}
-                maille={territoireSélectionné.maille}
                 modeÉcriture={estAutoriseAModifierLesPublications}
                 nomTerritoire={territoireSélectionné.nomAffiché}
-                réformeId={chantier.id}
-                territoireCode={territoireCode}
                 typesCommentaire={
                   territoireSélectionné.maille === "nationale"
                     ? typesCommentaireMailleNationale

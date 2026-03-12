@@ -4,25 +4,16 @@ import { BoutonSousLigné } from "@/components/_commons/BoutonSousLigné/BoutonS
 import { Icone } from "@/components/_commons/Icone";
 import { Eye1Icon } from "@/components/_commons/Icones/Eye1Icon";
 import { TypeCommentaireChantier } from "@/server/domain/chantier/commentaire/Commentaire.interface";
-import { Maille } from "@/server/domain/maille/Maille.interface";
 import api from "@/server/infrastructure/api/trpc/api";
 import AffichageCommentaire from "@/components/_commons/CommentairesNew/CommentaireSection/Affichage/Affichage";
+import { pageChantier } from "@/components/PageChantier/PageChantierServerSideContext";
 
-const HistoriqueCommentaire = ({
-  réformeId,
-  territoireCode,
-  type,
-  maille: _maille,
-}: {
-  réformeId: string;
-  territoireCode: string;
-  type: TypeCommentaireChantier;
-  maille: Maille;
-}) => {
+const HistoriqueCommentaire = ({ type }: { type: TypeCommentaireChantier }) => {
   const [open, setOpen] = useState(false);
+  const { chantier, territoireCode } = pageChantier.useServerSidePropsContext();
 
-  const { data: historique } = api.commentaire.récupérerHistorique.useQuery(
-    { réformeId, territoireCode, type },
+  const { data: historique } = api.commentaire.recupererHistorique.useQuery(
+    { chantierId: chantier.id, territoireCode, type },
     { enabled: open },
   );
 

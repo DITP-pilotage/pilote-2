@@ -18,7 +18,7 @@ export const useNouvelleSyntheseDesResultats = ({
     api.synthèseDesRésultats.enregistrerEnBrouillon.useMutation();
 
   const input = (data: SyntheseDesResultatsFormulaireInputs) => ({
-    réformeId: chantier.id,
+    chantierId: chantier.id,
     territoireCode,
     contenu: data.contenu,
     meteo: data.meteo,

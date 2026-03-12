@@ -73,7 +73,7 @@ export const ModaleFormulaireCommentaire = ({
       </p>
       <p className="text-sm">{territoireSélectionné.nomAffiché}</p>
       <p className="text-sm text-dsfr-mention-grey mb-6">
-        {`Veuillez saisir ci-dessous le nouveau commentaire relatif aux ${libellesTypesCommentaire[type][0].toLowerCase() + libellesTypesCommentaire[type].slice(1)}. Après publication, le nouveau commentaire sera affiché et l'ancien sera archivé dans l'historique.`}
+        {`Veuillez saisir ci-dessous le nouveau commentaire relatif aux ${libellesTypesCommentaire[type].toLowerCase()}. Après publication, le nouveau commentaire sera affiché et l'ancien sera archivé dans l'historique.`}
       </p>
       <h3 className="text-base font-bold mb-3">Commentaire actuel</h3>
       <div className="mb-6">

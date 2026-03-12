@@ -7,7 +7,7 @@ import {
 export const LIMITE_CARACTÈRES_COMMENTAIRE = 5000;
 
 export const validationCommentaireContexte = z.object({
-  réformeId: z.string(),
+  chantierId: z.string(),
   territoireCode: z.string(),
   type: z.union([
     z.enum(typesCommentaireMailleNationale),

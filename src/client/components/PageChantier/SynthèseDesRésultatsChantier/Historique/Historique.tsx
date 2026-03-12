@@ -16,7 +16,7 @@ const SynthèseDesRésultatsHistorique = () => {
   const [open, setOpen] = useState(false);
   const { data: historiqueDeLaSynthèseDesRésultats } =
     api.synthèseDesRésultats.récupérerHistorique.useQuery(
-      { réformeId: chantier.id, territoireCode },
+      { chantierId: chantier.id, territoireCode },
       { enabled: open },
     );
   const territoireSélectionné = useTerritoireSelectionne();
