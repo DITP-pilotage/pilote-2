@@ -31,7 +31,7 @@ export const WidgetCartographieMeteo = ({
     territoireCode,
     jalon,
   });
-  const { modeDisposition, tailleTuile } = useTuileWidget();
+  const { isTailleTuileXL, isModeDispositionG } = useTuileWidget();
 
   if (isLoading) {
     return null;
@@ -40,7 +40,7 @@ export const WidgetCartographieMeteo = ({
   return (
     <div
       className={clsxm("flex flex-col gap-4", {
-        "flex-row": modeDisposition === "G" && tailleTuile === "XL",
+        "flex-row": isModeDispositionG() && isTailleTuileXL(),
       })}
     >
       <div className="flex flex-col gap-2">

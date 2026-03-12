@@ -36,9 +36,13 @@ export const TuileWidgetCtx = createContext<TuileWidgetContextValue | null>(
   null,
 );
 
-export const useTuileWidget = (): TuileWidgetContextValue => {
+export const useTuileWidget = () => {
   const ctx = useContext(TuileWidgetCtx);
   if (!ctx)
     throw new Error("useTuileWidget must be used within TuileWidget provider");
-  return ctx;
+
+  return {
+    isModeDispositionG: () => ctx.modeDisposition === "G",
+    isTailleTuileXL: () => ctx.tailleTuile === "XL",
+  };
 };

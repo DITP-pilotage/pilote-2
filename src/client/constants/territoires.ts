@@ -33,10 +33,6 @@ export const territoiresGroupesPourPicker: PickerOptionGroup<string>[] =
     };
   });
 
-export const départementVersRégion: Map<string, string> = new Map(
-  listeTerritoires.départements.map((dept) => [dept.code, dept.codeParent]),
-);
-
 export const récupérerDétailsSurUnTerritoire = (
   territoireCode: string,
 ): Territoire => {
