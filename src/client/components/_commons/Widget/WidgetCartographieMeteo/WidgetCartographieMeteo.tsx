@@ -2,6 +2,7 @@ import { MailleInterne } from "@/server/domain/maille/Maille.interface";
 import { CartographieV2 } from "@/components/_commons/CartographieV2/CartographieV2";
 import { LegendeCartographie } from "@/components/_commons/CartographieV2/LegendeCartographie";
 import { useTuileWidget } from "@/components/_commons/Widget/TuileWidget/TuileWidgetContext";
+import { clsxm } from "@/utils/clsxm";
 import { RepartitionNiveauxDeConfiance } from "./RepartitionNiveauxDeConfiance";
 import { useWidgetCartographieMeteo } from "./useWidgetCartographieMeteo";
 
@@ -31,13 +32,18 @@ export const WidgetCartographieMeteo = ({
     territoireCode,
     jalon,
   });
+  const { modeDisposition, tailleTuile } = useTuileWidget();
 
   if (isLoading) {
     return null;
   }
 
   return (
-    <>
+    <div
+      className={clsxm("flex flex-col gap-4", {
+        "flex-row": modeDisposition === "G" && tailleTuile === "XL",
+      })}
+    >
       <div className="flex flex-col gap-2">
         <span className="fr-text font-bold">
           Répartition des niveaux de confiance
@@ -69,6 +75,6 @@ export const WidgetCartographieMeteo = ({
           territoiresSelectionnes={territoiresSelectionnes}
         />
       </div>
-    </>
+    </div>
   );
 };
