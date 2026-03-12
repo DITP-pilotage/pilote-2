@@ -1,6 +1,5 @@
 import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
 import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
-import { CommentaireV2 } from "@/server/domain/chantier/commentaire/Commentaire.interface";
 import CommentaireRepository from "@/server/domain/chantier/commentaire/CommentaireRepository.interface";
 import { modifierCommentaireBrouillon } from "@/server/domain/chantier/commentaire/Commentaire";
 
@@ -12,18 +11,23 @@ export class ModifierBrouillonCommentaireUseCase {
   ) {}
 
   async execute({
-    brouillon,
+    brouillonId,
     contenu,
     auteurModificationId,
     dateModification,
     habilitations,
   }: {
-    brouillon: CommentaireV2;
+    brouillonId: string;
     contenu: string;
     auteurModificationId: string;
     dateModification: string;
     habilitations: Habilitations;
   }): Promise<void> {
+    const brouillon =
+      await this.dependencies.commentaireRepository.getById(brouillonId);
+
+    if (!brouillon) throw new Error(`Brouillon introuvable : ${brouillonId}`);
+
     new Habilitation(
       habilitations,
     ).vérifierLesHabilitationsEnSaisieDesPublications(

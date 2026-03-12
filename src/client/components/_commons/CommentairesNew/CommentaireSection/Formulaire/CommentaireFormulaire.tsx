@@ -36,7 +36,7 @@ const CommentaireFormulaire: FunctionComponent<CommentaireFormulaireProps> = ({
   onSuccess,
 }) => {
   const modifierCommentaire = useModifierCommentaire({
-    commentaire: commentaire!,
+    commentaireId: commentaire!.id,
     onSuccess,
   });
 

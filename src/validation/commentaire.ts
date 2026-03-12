@@ -25,26 +25,10 @@ export const validationCommentaireFormulaire = z.object({
     .min(1, "Le commentaire ne peut pas être vide"),
 });
 
-export const validationCommentaire = z.object({
-  id: z.string(),
-  chantierId: z.string(),
-  territoireCode: z.string(),
-  type: z.union([
-    z.enum(typesCommentaireMailleNationale),
-    z.enum(typesCommentaireMailleRégionaleOuDépartementale),
-  ]),
-  contenu: z.string(),
-  statut: z.enum(["PUBLIE", "BROUILLON"]),
-  auteurCreationId: z.string(),
-  dateCreation: z.string(),
-  auteurModificationId: z.string(),
-  dateModification: z.string(),
-});
-
 export const validationBrouillonCommentaireAPublier = z.object({
-  brouillon: validationCommentaire,
+  brouillonId: z.string(),
 });
 
 export const validationCommentaireAModifier = z.object({
-  commentaireAModifier: validationCommentaire,
+  commentaireId: z.string(),
 });

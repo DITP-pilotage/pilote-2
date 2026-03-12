@@ -1,6 +1,5 @@
 import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
 import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
-import { CommentaireV2 } from "@/server/domain/chantier/commentaire/Commentaire.interface";
 import CommentaireRepository from "@/server/domain/chantier/commentaire/CommentaireRepository.interface";
 import { modifierCommentaire } from "@/server/domain/chantier/commentaire/Commentaire";
 
@@ -12,18 +11,24 @@ export class ModifierCommentairePublieUseCase {
   ) {}
 
   async execute({
-    commentaireAModifier,
+    commentaireId,
     contenu,
     auteurModificationId,
     dateModification,
     habilitations,
   }: {
-    commentaireAModifier: CommentaireV2;
+    commentaireId: string;
     contenu: string;
     auteurModificationId: string;
     dateModification: string;
     habilitations: Habilitations;
   }): Promise<void> {
+    const commentaireAModifier =
+      await this.dependencies.commentaireRepository.getById(commentaireId);
+
+    if (!commentaireAModifier)
+      throw new Error(`Commentaire introuvable : ${commentaireId}`);
+
     new Habilitation(
       habilitations,
     ).vérifierLesHabilitationsEnSaisieDesPublications(

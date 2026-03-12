@@ -1,4 +1,5 @@
 import { FunctionComponent, useState } from "react";
+import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
 import {
   CommentaireAvecNomsAuteurs,
   CommentaireV2,
@@ -37,8 +38,8 @@ const CommentaireSection: FunctionComponent<CommentaireSectionProps> = ({
   modeEcriture = false,
 }) => {
   const [modeÉdition, setModeÉdition] = useState(false);
-
   const [action, setAction] = useState<CommentaireAction | null>(null);
+  const refreshRouter = useRefreshRouter();
 
   return (
     <div className="px-2 py-4">
@@ -57,6 +58,7 @@ const CommentaireSection: FunctionComponent<CommentaireSectionProps> = ({
           maille={maille}
           onSuccess={(commentaireAction) => {
             setModeÉdition(false);
+            refreshRouter();
             setAction(commentaireAction);
           }}
           réformeId={réformeId}

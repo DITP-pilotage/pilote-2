@@ -1,13 +1,12 @@
 import api from "@/server/infrastructure/api/trpc/api";
 import { récupérerUnCookie } from "@/client/utils/cookies";
-import { CommentaireV2 } from "@/server/domain/chantier/commentaire/Commentaire.interface";
 import { CommentaireAction } from "@/components/_commons/CommentairesNew/CommentaireSection/AlerteCommentaire";
 
 export const useEditerBrouillonCommentaire = ({
-  brouillon,
+  brouillonId,
   onSuccess,
 }: {
-  brouillon: CommentaireV2;
+  brouillonId: string;
   onSuccess: (action: CommentaireAction) => void;
 }) => {
   const publierUnBrouillonMutation =
@@ -16,7 +15,7 @@ export const useEditerBrouillonCommentaire = ({
     api.commentaire.modifierLeBrouillon.useMutation();
 
   const input = (data: { contenu: string }) => ({
-    brouillon,
+    brouillonId,
     contenu: data.contenu,
     csrf: récupérerUnCookie("csrf") ?? "",
   });

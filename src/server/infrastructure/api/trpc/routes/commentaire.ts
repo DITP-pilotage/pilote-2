@@ -73,7 +73,7 @@ export const commentaireRouter = créerRouteurTRPC({
       return getContainer("commentaires")
         .resolve("modifierCommentairePublieUseCase")
         .execute({
-          commentaireAModifier: input.commentaireAModifier,
+          commentaireId: input.commentaireId,
           contenu: input.contenu,
           auteurModificationId: ctx.session.user.id,
           dateModification: new Date().toISOString(),
@@ -93,7 +93,7 @@ export const commentaireRouter = créerRouteurTRPC({
       return getContainer("commentaires")
         .resolve("publierBrouillonCommentaireUseCase")
         .execute({
-          brouillon: input.brouillon,
+          brouillonId: input.brouillonId,
           contenu: input.contenu,
           auteurModificationId: ctx.session.user.id,
           dateModification: new Date().toISOString(),
@@ -113,7 +113,7 @@ export const commentaireRouter = créerRouteurTRPC({
       return getContainer("commentaires")
         .resolve("modifierBrouillonCommentaireUseCase")
         .execute({
-          brouillon: input.brouillon,
+          brouillonId: input.brouillonId,
           contenu: input.contenu,
           auteurModificationId: ctx.session.user.id,
           dateModification: new Date().toISOString(),

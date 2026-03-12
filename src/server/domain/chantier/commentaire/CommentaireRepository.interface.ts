@@ -6,6 +6,7 @@ import Chantier from "@/server/domain/chantier/Chantier.interface";
 
 export default interface CommentaireRepository {
   save(commentaire: CommentaireV2): Promise<void>;
+  getById(id: string): Promise<CommentaireV2 | null>;
   récupérerLesPlusRécentsGroupésParChantier(
     chantiersIds: Chantier["id"][],
     territoireCode: string,

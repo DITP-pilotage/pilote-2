@@ -92,6 +92,24 @@ export default class CommentaireSQLRepository implements CommentaireRepository {
     });
   }
 
+  async getById(id: string): Promise<CommentaireV2 | null> {
+    const row = await this.prisma.commentaire.findUnique({ where: { id } });
+    if (!row) return null;
+
+    return {
+      id: row.id,
+      chantierId: row.chantier_id,
+      territoireCode: row.territoire_code,
+      type: NOMS_TYPES_COMMENTAIRES[row.type],
+      contenu: row.contenu,
+      statut: row.statut,
+      auteurCreationId: row.auteur_creation_id ?? "",
+      dateCreation: row.date_creation.toISOString(),
+      auteurModificationId: row.auteur_modification_id ?? "",
+      dateModification: row.date_modification.toISOString(),
+    };
+  }
+
   async récupérerLesPlusRécentsGroupésParChantier(
     listeChantierIds: Chantier["id"][],
     territoireCode: string,

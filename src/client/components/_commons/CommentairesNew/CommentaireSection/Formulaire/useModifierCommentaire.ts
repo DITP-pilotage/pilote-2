@@ -1,13 +1,12 @@
 import api from "@/server/infrastructure/api/trpc/api";
 import { récupérerUnCookie } from "@/client/utils/cookies";
-import { CommentaireAvecNomsAuteurs } from "@/server/domain/chantier/commentaire/Commentaire.interface";
 import { CommentaireAction } from "@/components/_commons/CommentairesNew/CommentaireSection/AlerteCommentaire";
 
 export const useModifierCommentaire = ({
-  commentaire,
+  commentaireId,
   onSuccess,
 }: {
-  commentaire: CommentaireAvecNomsAuteurs;
+  commentaireId: string;
   onSuccess: (action: CommentaireAction) => void;
 }) => {
   const modifier = api.commentaire.modifier.useMutation();
@@ -15,7 +14,7 @@ export const useModifierCommentaire = ({
   return (data: { contenu: string }) =>
     modifier.mutateAsync(
       {
-        commentaireAModifier: commentaire,
+        commentaireId,
         contenu: data.contenu,
         csrf: récupérerUnCookie("csrf") ?? "",
       },

@@ -25,7 +25,7 @@ const BoutonEditerBrouillonCommentaire = ({
   const refreshRouter = useRefreshRouter();
 
   const { publier, enregistrerEnBrouillon } = useEditerBrouillonCommentaire({
-    brouillon: brouillon!,
+    brouillonId: brouillon!.id,
     onSuccess: (action) => {
       setOpen(false);
       refreshRouter();
