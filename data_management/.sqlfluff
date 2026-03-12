@@ -7,9 +7,6 @@ exclude_rules = L034
 [sqlfluff:templater:dbt]
 target = prod
 
-[sqlfluff:indentation]
-indented_ctes = True
-
 [sqlfluff:rules:aliasing.length]
 min_alias_length = 4
 [sqlfluff:rules:capitalisation.keywords]
