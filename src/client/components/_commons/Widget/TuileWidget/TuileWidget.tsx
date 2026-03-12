@@ -36,7 +36,9 @@ export const TuileWidget: FunctionComponent<TuileWidgetProps> = ({
           style={{ gridTemplateColumns: `repeat(${colonnes}, 1fr)` }}
         >
           {Children.toArray(children).map((child, index) => (
-            <div key={index}>{child}</div>
+            <div key={index} className="flex flex-col gap-4">
+              {child}
+            </div>
           ))}
         </div>
       </div>
