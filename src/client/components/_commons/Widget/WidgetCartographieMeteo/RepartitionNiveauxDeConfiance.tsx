@@ -3,10 +3,8 @@ import { getCouleurTerritoire } from "@/client/utils/couleur/paletteTerritoires"
 import { Météo, libellésMétéos } from "@/server/domain/météo/Météo.interface";
 import { MeteoPicto } from "@/components/_commons/Meteo/Picto/MeteoPicto";
 import { MeteoTerritoireViewModel } from "@/server/chantiers/infrastructure/queries/GetChantierMeteosTerritoiresQuery";
-import {
-  SelecteurNew,
-  SelecteurNewOption,
-} from "@/components/_commons/SelecteurNew/SelecteurNew";
+import { Picker, PickerOption } from "@/components/shared/Picker";
+import { Select } from "@/components/shared/Select";
 
 type RepartitionNiveauxDeConfianceProps = {
   territoiresSelectionnes: MeteoTerritoireViewModel[];
@@ -34,7 +32,7 @@ export const RepartitionNiveauxDeConfiance: FunctionComponent<
   jalon,
   initialTerritoiresCodes,
 }) => {
-  const options: SelecteurNewOption<string>[] = territoiresDisponibles.map(
+  const options: PickerOption<string>[] = territoiresDisponibles.map(
     (territoire) => ({
       libelle: formaterNomTerritoire(territoire),
       valeur: territoire.territoireCode,
@@ -46,7 +44,9 @@ export const RepartitionNiveauxDeConfiance: FunctionComponent<
       <div className="grid grid-cols-2 border-y text-xs">
         <div className="grid col-span-2 grid-cols-subgrid border-b border-b-black">
           <div />
-          <div className="text-center text-sm py-1">{jalon}</div>
+          <div className="text-center text-sm py-1 text-dsfr-mention-grey">
+            {jalon}
+          </div>
         </div>
 
         {territoiresSelectionnes.map((territoire, index) => {
@@ -90,7 +90,7 @@ export const RepartitionNiveauxDeConfiance: FunctionComponent<
                       : libellésMétéos[meteo]}
                   </span>
                 </div>
-                <span className="text-[10px] !text-dsfr-mention-grey">
+                <span className="text-[10px] !text-dsfr-grey-625">
                   ({dateMaj})
                 </span>
               </div>
@@ -100,13 +100,15 @@ export const RepartitionNiveauxDeConfiance: FunctionComponent<
       </div>
 
       {territoiresDisponibles.length > 0 && (
-        <SelecteurNew
+        <Picker
           key={territoiresSelectionnes.length}
-          htmlName="ajout-territoire-select"
-          libelle="Ajouter un territoire"
-          onChange={(valeur) => onAjouterTerritoire(valeur)}
+          onValueChange={(valeur) => onAjouterTerritoire(valeur)}
           options={options}
-          placeholder="+ ajouter un territoire"
+          trigger={
+            <Select.LinkButtonTrigger className="mt-2">
+              + ajouter un territoire
+            </Select.LinkButtonTrigger>
+          }
         />
       )}
     </div>
