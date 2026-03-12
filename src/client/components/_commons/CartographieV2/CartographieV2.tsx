@@ -1,28 +1,18 @@
-import {
-  FunctionComponent,
-  ReactNode,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
-import { select as d3Select } from "d3-selection";
-import { zoom as d3Zoom } from "d3-zoom";
+import { FunctionComponent, ReactNode, useCallback, useState } from "react";
 import { MailleInterne } from "@/server/domain/maille/Maille.interface";
 import hachuresGrisBlanc from "@/client/constants/légendes/hachure/hachuresGrisBlanc";
 import SecureTooltip from "@/components/_commons/SecureTooltip/SecureTooltip";
-import { Icone } from "@/components/_commons/Icone";
-import { AddLineIcon } from "@/components/_commons/Icones/AddLineIcon";
-import { SubtractLineIcon } from "@/components/_commons/Icones/SubtractLineIcon";
-import { getTraceSvg } from "@/components/_commons/Cartographie/SVG/CartographieSVGContrat";
-import { listeTerritoires } from "@/client/constants/territoires";
-
-type CartographieV2Donnee = {
-  remplissage: string;
-  libelle: string;
-  contenuInfoBulle?: ReactNode;
-};
+import { getListeTerritoires } from "@/client/constants/territoires";
+import { clsxm } from "@/utils/clsxm";
+import {
+  CartographieV2Donnee,
+  GetTerritoireProps,
+} from "./CartographieV2.types";
+import { useZoomContext, ZoomControl, ZoomProvider } from "./ZoomContext";
+import { CarteDepartements } from "./CarteDepartements";
+import { CarteRegions } from "./CarteRegions";
+import { FrontieresRegions } from "./FrontieresRegions";
+import { ContoursTerritoiresSelectionnes } from "./ContoursTerritoiresSelectionnes";
 
 type CartographieV2Props = {
   maille: MailleInterne;
@@ -32,86 +22,57 @@ type CartographieV2Props = {
   children?: ReactNode;
 };
 
-const ZOOM_MAXIMUM = 10;
-const MULTIPLICATEUR_AU_ZOOM = 1.5;
-const VIEWBOX = { x: 1, y: 0, width: 100, height: 100 };
-
-export const CartographieV2: FunctionComponent<CartographieV2Props> = ({
+const CartographieV2Contenu: FunctionComponent<
+  Omit<CartographieV2Props, "children"> & { children?: ReactNode }
+> = ({
   maille,
   donnees,
   territoiresSelectionnes,
   auClicTerritoire,
   children,
 }) => {
-  const territoiresAffiches =
-    maille === "departementale"
-      ? listeTerritoires.départements
-      : listeTerritoires.régions;
+  const { svgRef } = useZoomContext();
+  const territoiresAffiches = getListeTerritoires(maille);
+  const [hovered, setHovered] = useState<{
+    code: string;
+    element: HTMLElement;
+  } | null>(null);
 
-  const svgRef = useRef<SVGSVGElement | null>(null);
-  const [hoveredCode, setHoveredCode] = useState<string | null>(null);
-  const [hoveredElement, setHoveredElement] = useState<HTMLElement | null>(
-    null,
-  );
-
-  const hoveredDonnee = hoveredCode ? donnees[hoveredCode] : null;
-  const hoveredTerritoire = hoveredCode
-    ? territoiresAffiches.find((territoire) => territoire.code === hoveredCode)
+  const hoveredDonnee = hovered?.code ? donnees[hovered.code] : null;
+  const hoveredTerritoire = hovered
+    ? territoiresAffiches.find(
+        (territoire) => territoire.code === hovered?.code,
+      )
     : null;
 
-  const svg = svgRef.current;
-  const canvas = useMemo(() => d3Select(svg).selectChild(".canvas"), [svg]);
-
-  const auZoomCallback = useCallback(
-    (event: { transform: string | null }) =>
-      canvas.attr("transform", event.transform),
-    [canvas],
+  const getTerritoireProps: GetTerritoireProps = useCallback(
+    (territoire) => ({
+      key: territoire.code,
+      className: clsxm(
+        "stroke-[var(--grey-1000-50)] stroke-[0.15]",
+        auClicTerritoire && "cursor-pointer hover:opacity-70",
+      ),
+      fill: donnees[territoire.code]?.remplissage ?? "#e0e0e0",
+      onClick: () => auClicTerritoire?.(territoire.code),
+      onMouseEnter: (event) => {
+        setHovered({
+          code: territoire.code,
+          element: event.currentTarget as unknown as HTMLElement,
+        });
+      },
+      onMouseLeave: () => {
+        setHovered(null);
+      },
+    }),
+    [donnees, auClicTerritoire],
   );
-
-  const zoom = useMemo(
-    () =>
-      d3Zoom<SVGSVGElement, unknown>()
-        .translateExtent([
-          [VIEWBOX.x, VIEWBOX.y],
-          [VIEWBOX.x + VIEWBOX.width, VIEWBOX.y + VIEWBOX.height],
-        ])
-        .scaleExtent([1, ZOOM_MAXIMUM])
-        .on("zoom", auZoomCallback),
-    [auZoomCallback],
-  );
-
-  const zoomer = useCallback(
-    (multiplicateur: number) => {
-      if (svg) d3Select(svg).call(zoom.scaleBy, multiplicateur);
-    },
-    [svg, zoom.scaleBy],
-  );
-
-  useEffect(() => {
-    if (svg) d3Select<SVGSVGElement, unknown>(svg).call(zoom);
-  }, [svg, zoom]);
 
   return (
     <div className="relative">
-      <div className="absolute right-0 z-10 w-8">
-        <button
-          className="flex justify-center !p-0.5 text-primary bg-white border-2 border-gray-300 rounded-t-lg shadow-[0_1px_1px_rgba(0,0,0,0.16),0_1px_0_-2px_rgba(0,0,0,0.16),0_1px_4px_rgba(0,0,0,0.23)]"
-          onClick={() => zoomer(MULTIPLICATEUR_AU_ZOOM)}
-          type="button"
-        >
-          <Icone icone={AddLineIcon} />
-        </button>
-        <button
-          className="flex justify-center !p-0.5 text-primary bg-white border-2 border-gray-300 rounded-b-lg shadow-[0_1px_1px_rgba(0,0,0,0.16),0_1px_0_-2px_rgba(0,0,0,0.16),0_1px_4px_rgba(0,0,0,0.23)]"
-          onClick={() => zoomer(1 / MULTIPLICATEUR_AU_ZOOM)}
-          type="button"
-        >
-          <Icone icone={SubtractLineIcon} />
-        </button>
-      </div>
+      <ZoomControl />
 
       <SecureTooltip
-        anchorEl={hoveredElement}
+        anchorEl={hovered?.element ?? null}
         classNameInfoBulle="infobull--sm"
         isVisible={!!hoveredTerritoire}
       >
@@ -137,56 +98,32 @@ export const CartographieV2: FunctionComponent<CartographieV2Props> = ({
       >
         <defs>{hachuresGrisBlanc.patternSVG}</defs>
         <g className="canvas">
-          {territoiresAffiches.map((territoire) => {
-            const donnee = donnees[territoire.code];
-            return getTraceSvg(
-              territoire.code,
-              {
-                key: territoire.code,
-                className: `stroke-[var(--grey-1000-50)] stroke-[0.15] ${auClicTerritoire ? "cursor-pointer hover:opacity-70" : ""}`,
-                fill: donnee?.remplissage ?? "#e0e0e0",
-                onClick: () => auClicTerritoire?.(territoire.code),
-                onMouseEnter: (event) => {
-                  setHoveredCode(territoire.code);
-                  setHoveredElement(
-                    event.currentTarget as unknown as HTMLElement,
-                  );
-                },
-                onMouseLeave: () => {
-                  setHoveredCode(null);
-                  setHoveredElement(null);
-                },
-              },
-              maille,
-            );
-          })}
-          {maille === "departementale" &&
-            listeTerritoires.régions.map((region) =>
-              getTraceSvg(
-                region.code,
-                {
-                  key: `frontiere-${region.code}`,
-                  className:
-                    "fill-none stroke-[var(--grey-1000-50)] stroke-[0.4] pointer-events-none",
-                },
-                maille,
-              ),
-            )}
-          {territoiresSelectionnes?.map((code) =>
-            getTraceSvg(
-              code,
-              {
-                key: `sel-${code}`,
-                className:
-                  "fill-none stroke-[var(--yellow-moutarde-850-200)] stroke-[0.5] pointer-events-none",
-              },
-              maille,
-            ),
+          {maille === "departementale" ? (
+            <CarteDepartements getTerritoireProps={getTerritoireProps} />
+          ) : (
+            <CarteRegions getTerritoireProps={getTerritoireProps} />
+          )}
+          {maille === "departementale" && <FrontieresRegions />}
+          {territoiresSelectionnes && territoiresSelectionnes.length > 0 && (
+            <ContoursTerritoiresSelectionnes
+              maille={maille}
+              territoiresCodes={territoiresSelectionnes}
+            />
           )}
         </g>
       </svg>
 
       {children}
     </div>
+  );
+};
+
+export const CartographieV2: FunctionComponent<CartographieV2Props> = (
+  props,
+) => {
+  return (
+    <ZoomProvider>
+      <CartographieV2Contenu {...props} />
+    </ZoomProvider>
   );
 };

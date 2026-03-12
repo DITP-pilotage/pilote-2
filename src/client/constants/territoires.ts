@@ -20,3 +20,11 @@ export const récupérerDétailsSurUnTerritoire = (
     (territoire) => territoire.code === territoireCode,
   )!;
 };
+
+export const getListeTerritoires = (maille: string) => {
+  if (maille === "departementale") {
+    return listeTerritoires.départements;
+  }
+
+  return listeTerritoires.régions;
+};
