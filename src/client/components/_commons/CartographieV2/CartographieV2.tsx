@@ -1,4 +1,4 @@
-import { FunctionComponent, ReactNode, useCallback, useState } from "react";
+import { ReactNode, useCallback, useState } from "react";
 import { MailleInterne } from "@/server/domain/maille/Maille.interface";
 import hachuresGrisBlanc from "@/client/constants/légendes/hachure/hachuresGrisBlanc";
 import SecureTooltip from "@/components/_commons/SecureTooltip/SecureTooltip";
@@ -18,19 +18,17 @@ type CartographieV2Props = {
   maille: MailleInterne;
   donnees: Record<string, CartographieV2Donnee>;
   territoiresSelectionnes?: string[];
-  auClicTerritoire?: (territoireCode: string) => void;
-  children?: ReactNode;
+  onTerritoireSelect?: (territoireCode: string) => void;
+  children: ReactNode;
 };
 
-const CartographieV2Contenu: FunctionComponent<
-  Omit<CartographieV2Props, "children"> & { children?: ReactNode }
-> = ({
+const CartographieV2Contenu = ({
   maille,
   donnees,
   territoiresSelectionnes,
-  auClicTerritoire,
+  onTerritoireSelect,
   children,
-}) => {
+}: CartographieV2Props) => {
   const { svgRef } = useZoomContext();
   const territoiresAffiches = getListeTerritoires(maille);
   const [hovered, setHovered] = useState<{
@@ -50,10 +48,10 @@ const CartographieV2Contenu: FunctionComponent<
       key: territoire.code,
       className: clsxm(
         "stroke-[var(--grey-1000-50)] stroke-[0.15]",
-        auClicTerritoire && "cursor-pointer hover:opacity-70",
+        onTerritoireSelect && "cursor-pointer hover:opacity-70",
       ),
       fill: donnees[territoire.code]?.remplissage ?? "#e0e0e0",
-      onClick: () => auClicTerritoire?.(territoire.code),
+      onClick: () => onTerritoireSelect?.(territoire.code),
       onMouseEnter: (event) => {
         setHovered({
           code: territoire.code,
@@ -64,7 +62,7 @@ const CartographieV2Contenu: FunctionComponent<
         setHovered(null);
       },
     }),
-    [donnees, auClicTerritoire],
+    [donnees, onTerritoireSelect],
   );
 
   return (
@@ -118,12 +116,8 @@ const CartographieV2Contenu: FunctionComponent<
   );
 };
 
-export const CartographieV2: FunctionComponent<CartographieV2Props> = (
-  props,
-) => {
-  return (
-    <ZoomProvider>
-      <CartographieV2Contenu {...props} />
-    </ZoomProvider>
-  );
-};
+export const CartographieV2 = (props: CartographieV2Props) => (
+  <ZoomProvider>
+    <CartographieV2Contenu {...props} />
+  </ZoomProvider>
+);

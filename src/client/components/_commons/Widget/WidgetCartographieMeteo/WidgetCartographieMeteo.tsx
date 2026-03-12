@@ -43,7 +43,7 @@ export const WidgetCartographieMeteo: FunctionComponent<
   return (
     <TuileWidget titre="Carte des valeurs météo 2026">
       <CartographieV2
-        auClicTerritoire={auClicTerritoire}
+        onTerritoireSelect={auClicTerritoire}
         donnees={donneesCartographie}
         maille={maille}
         territoiresSelectionnes={territoiresSelectionnes.map(
