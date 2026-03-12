@@ -11,12 +11,14 @@ export const Modale = ({
   titleHidden = false,
   children,
   size = "lg",
+  titleClassName,
   ...props
 }: Pick<
   ComponentProps<typeof Dialog.Root>,
   "open" | "onOpenChange" | "children"
 > & {
   title: ReactNode;
+  titleClassName?: string;
   sousTitre?: string;
   titleHidden?: boolean;
   trigger?: ReactNode;
@@ -52,9 +54,13 @@ export const Modale = ({
               </button>
             </Dialog.Close>
             <Dialog.Title
-              className={clsxm("!text-primary !text-2xl !mb-4", {
-                "sr-only": titleHidden,
-              })}
+              className={clsxm(
+                "!text-primary !text-2xl !mb-4",
+                titleClassName,
+                {
+                  "sr-only": titleHidden,
+                },
+              )}
             >
               {title}
             </Dialog.Title>

@@ -21,6 +21,8 @@ import { SyntheseDesResultatsFormulaireInputs } from "@/components/PageChantier/
 import { BoutonSousLigné } from "@/components/_commons/BoutonSousLigné/BoutonSousLigné";
 import { SaveIcon } from "@/components/_commons/Icones/SaveIcon";
 import { MétéoSaisissable } from "@/server/domain/météo/Météo.interface";
+import { useTerritoireSelectionne } from "@/components/PageChantier/PageChantierServerSideContext";
+import { CONSIGNE_SYNTHÈSE_DES_RÉSULTATS } from "@/client/constants/libellesSyntheseDesResultats";
 
 interface ModaleFormulaireSyntheseDesResultatsProps {
   title: string;
@@ -34,8 +36,12 @@ interface ModaleFormulaireSyntheseDesResultatsProps {
 export const ModaleFormulaireSyntheseDesResultats: FunctionComponent<
   ModaleFormulaireSyntheseDesResultatsProps
 > = ({ title, trigger, open, onOpenChange, onPublier, onBrouillon }) => {
-  const { syntheseDesResultats, syntheseDesResultatsBrouillon } =
-    pageChantier.useServerSidePropsContext();
+  const {
+    syntheseDesResultats,
+    syntheseDesResultatsBrouillon,
+    chantierInformations,
+  } = pageChantier.useServerSidePropsContext();
+  const territoireSélectionné = useTerritoireSelectionne();
 
   const form = useForm<SyntheseDesResultatsFormulaireInputs>({
     mode: "all",
@@ -56,8 +62,13 @@ export const ModaleFormulaireSyntheseDesResultats: FunctionComponent<
       onOpenChange={onOpenChange}
       open={open}
       title={title}
+      titleClassName="text-dsfr-grey-50"
       trigger={trigger}
     >
+      <p className="text-sm mb-0">
+        {chantierInformations.id} {chantierInformations.nom}
+      </p>
+      <p className="text-sm">{territoireSélectionné.nomAffiché}</p>
       <p className="text-sm text-dsfr-mention-grey mb-6">
         Veuillez saisir ci-dessous le nouveau commentaire relatif à la météo et
         à la synthèse des résultats. Après publication, le nouveau commentaire
@@ -81,6 +92,7 @@ export const ModaleFormulaireSyntheseDesResultats: FunctionComponent<
       </div>
 
       <h3 className="text-base font-bold mb-3">Votre nouveau commentaire</h3>
+      <p className="text-sm mb-6">{CONSIGNE_SYNTHÈSE_DES_RÉSULTATS}</p>
       <form onSubmit={form.handleSubmit(onPublier)}>
         <div className="flex gap-4 items-stretch">
           <div className="flex-none w-55">

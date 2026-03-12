@@ -18,6 +18,11 @@ import { SuccessIcon } from "@/components/_commons/Icones/SuccessIcon";
 import { ArrowGoBack1Icon } from "@/components/_commons/Icones/ArrowGoBack1Icon";
 import { Bouton } from "@/components/_commons/Bouton/Bouton";
 import { SyntheseDesResultatsAction } from "@/components/PageChantier/SynthèseDesRésultatsChantier/AlerteSyntheseDesResultats";
+import {
+  CONSIGNE_SYNTHÈSE_DES_RÉSULTATS,
+  LIBELLÉ_SYNTHÈSE_DES_RÉSULTATS,
+} from "@/client/constants/libellesSyntheseDesResultats";
+import { Infobulle } from "@/components/_commons/Infobulle/Infobulle";
 import SyntheseDesResultatsFormulaireStyled from "./SyntheseDesResultatsFormulaire.styled";
 import { SyntheseDesResultatsFormulaireInputs } from "./SyntheseDesResultatsFormulaire.interface";
 import { useModifierSyntheseDesResultats } from "./useModifierSyntheseDesResultats";
@@ -61,9 +66,14 @@ const SyntheseDesResultatsFormulaire: FunctionComponent<
       method="post"
       onSubmit={handleSubmit(modifierSynthèseDesRésultats)}
     >
-      <Titre baliseHtml="h3" className="fr-h5 fr-mb-1v">
-        Modifier la météo et la synthèse des résultats
-      </Titre>
+      <div className="flex items-center gap-2 fr-mb-1v">
+        <Titre baliseHtml="h3" className="text-xl mb-0">
+          {`Modifier le commentaire "${LIBELLÉ_SYNTHÈSE_DES_RÉSULTATS}"`}
+        </Titre>
+        <Infobulle classNameIcone="w-5 h-5">
+          {CONSIGNE_SYNTHÈSE_DES_RÉSULTATS}
+        </Infobulle>
+      </div>
       <p className="fr-text--xs mb-4 text-dsfr-mention-grey">
         {`Vous pouvez apporter ci-dessous des modifications au commentaire que vous avez posté le ${formaterDate(syntheseDesResultats?.dateModification, "DD/MM/YYYY")}. Après validation, le commentaire modifié annulera et remplacera le commentaire actuel.`}
       </p>

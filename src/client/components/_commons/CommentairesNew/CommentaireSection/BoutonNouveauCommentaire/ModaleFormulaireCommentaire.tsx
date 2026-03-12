@@ -19,7 +19,10 @@ import {
   validationCommentaireFormulaire,
 } from "@/validation/commentaire";
 import AffichageCommentaire from "@/components/_commons/CommentairesNew/CommentaireSection/Affichage/Affichage";
-import { consignesEcritureCommentaire } from "@/client/constants/libellesCommentaire";
+import {
+  consignesEcritureCommentaire,
+  libellesTypesCommentaire,
+} from "@/client/constants/libellesCommentaire";
 import {
   pageChantier,
   useTerritoireSelectionne,
@@ -62,18 +65,15 @@ export const ModaleFormulaireCommentaire = ({
       onOpenChange={onOpenChange}
       open={open}
       title={title}
+      titleClassName="text-dsfr-grey-50"
       trigger={trigger}
     >
       <p className="text-sm mb-0">
         {chantierInformations.id} {chantierInformations.nom}
       </p>
-      <p className="text-sm">
-        {territoireSélectionné.codeInsee} - {territoireSélectionné.nomAffiché}
-      </p>
+      <p className="text-sm">{territoireSélectionné.nomAffiché}</p>
       <p className="text-sm text-dsfr-mention-grey mb-6">
-        Veuillez saisir ci-dessous le nouveau commentaire. Après publication, le
-        nouveau commentaire sera affiché et l'ancien sera archivé dans
-        l'historique.
+        {`Veuillez saisir ci-dessous le nouveau commentaire relatif aux ${libellesTypesCommentaire[type][0].toLowerCase() + libellesTypesCommentaire[type].slice(1)}. Après publication, le nouveau commentaire sera affiché et l'ancien sera archivé dans l'historique.`}
       </p>
       <h3 className="text-base font-bold mb-3">Commentaire actuel</h3>
       <div className="mb-6">
