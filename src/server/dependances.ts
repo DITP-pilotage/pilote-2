@@ -10,7 +10,7 @@ import { authentificationModule } from "@/server/authentification/module";
 import { chantiersModule } from "@/server/chantiers/module";
 import { parametrageIndicateurModule } from "@/server/parametrage-indicateur/module";
 import { importIndicateurModule } from "@/server/import-indicateur/module";
-import { importCommentaireModule } from "@/server/commentaires/module";
+import { commentaireModule } from "@/server/commentaires/module";
 import { importDecisionStrategiqueModule } from "@/server/decisions-strategiques/module";
 import { importObjectifModule } from "@/server/objectifs/module";
 import { importSyntheseDesResultatsModule } from "@/server/syntheses-des-resultats/module";
@@ -33,7 +33,7 @@ const allModules = [
   chantiersModule,
   parametrageIndicateurModule,
   importIndicateurModule,
-  importCommentaireModule,
+  commentaireModule,
   importDecisionStrategiqueModule,
   importObjectifModule,
   importSyntheseDesResultatsModule,
@@ -72,7 +72,7 @@ function registerContainer(): ContainerDependencies {
     chantiers: getContainer("chantiers"),
     parametrageIndicateur: getContainer("parametrageIndicateur"),
     importIndicateur: getContainer("importIndicateur"),
-    importCommentaire: getContainer("importCommentaire"),
+    commentaires: getContainer("commentaires"),
     gestionUtilisateur: getContainer("gestionUtilisateur"),
     ficheConducteur: getContainer("ficheConducteur"),
     parametrageNouveautes: getContainer("parametrageNouveautes"),

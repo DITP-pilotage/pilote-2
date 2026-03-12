@@ -10,7 +10,7 @@ const convertifEnCommentaire = (
   Commentaire.creerCommentaire({
     type: commentaireModel.type as CommentaireType,
     contenu: commentaireModel.contenu,
-    date: commentaireModel.date.toISOString(),
+    date: commentaireModel.date_modification.toISOString(),
   });
 
 export class PrismaCommentaireRepository implements CommentaireRepository {

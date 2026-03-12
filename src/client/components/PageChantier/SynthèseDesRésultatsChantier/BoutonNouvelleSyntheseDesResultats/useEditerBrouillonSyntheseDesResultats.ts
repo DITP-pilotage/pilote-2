@@ -1,15 +1,14 @@
 import api from "@/server/infrastructure/api/trpc/api";
 import { récupérerUnCookie } from "@/client/utils/cookies";
 import { SyntheseDesResultatsFormulaireInputs } from "@/components/PageChantier/SynthèseDesRésultatsChantier/SyntheseDesResultatsFormulaire/SyntheseDesResultatsFormulaire.interface";
-import { SyntheseDesResultatsV2 } from "@/server/domain/chantier/synthèseDesRésultats/SynthèseDesRésultats.interface";
 import { SyntheseDesResultatsAction } from "@/components/PageChantier/SynthèseDesRésultatsChantier/AlerteSyntheseDesResultats";
 
 export const useEditerBrouillonSyntheseDesResultats = ({
-  brouillon,
+  brouillonId,
   onSuccess,
   onAction,
 }: {
-  brouillon: SyntheseDesResultatsV2;
+  brouillonId: string;
   onSuccess: () => void;
   onAction: (action: SyntheseDesResultatsAction) => void;
 }) => {
@@ -19,7 +18,7 @@ export const useEditerBrouillonSyntheseDesResultats = ({
     api.synthèseDesRésultats.modifierLeBrouillon.useMutation();
 
   const input = (data: SyntheseDesResultatsFormulaireInputs) => ({
-    brouillon,
+    brouillonId,
     contenu: data.contenu,
     meteo: data.meteo,
     csrf: récupérerUnCookie("csrf") ?? "",

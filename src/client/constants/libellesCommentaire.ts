@@ -9,7 +9,7 @@ export const typesCommentaire = [
 ] as const;
 export type TypeCommentaire = (typeof typesCommentaire)[number];
 
-export const libellésTypesCommentaire: Record<TypeCommentaire, string> = {
+export const libellesTypesCommentaire: Record<TypeCommentaire, string> = {
   commentairesSurLesDonnées: "Commentaires sur les données",
   autresRésultatsObtenus: "Autres résultats obtenus",
   autresRésultatsObtenusNonCorrélésAuxIndicateurs:
@@ -19,7 +19,7 @@ export const libellésTypesCommentaire: Record<TypeCommentaire, string> = {
   exemplesConcretsDeRéussite: "Exemples concrets de réussite",
 };
 
-export const consignesDÉcritureCommentaire: Record<TypeCommentaire, string> = {
+export const consignesEcritureCommentaire: Record<TypeCommentaire, string> = {
   commentairesSurLesDonnées:
     "Présentez les résultats obtenus pour votre territoire. Précisez ce qui pourrait expliquer l'avance ou le retard du territoire par rapport aux autres.",
   autresRésultatsObtenusNonCorrélésAuxIndicateurs:

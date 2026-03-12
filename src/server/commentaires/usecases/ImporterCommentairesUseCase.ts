@@ -1,3 +1,4 @@
+import { $Enums } from "@prisma/client";
 import { randomUUID } from "node:crypto";
 import CommentaireRepository from "@/server/domain/chantier/commentaire/CommentaireRepository.interface";
 import {
@@ -36,9 +37,12 @@ export class ImporterCommentairesUseCase {
         territoireCode: commentaire.territoire,
         id,
         contenu: commentaire.contenu,
-        auteur_id: auteurId,
+        auteurCreationId: auteurId,
+        auteurModificationId: auteurId,
+        dateCreation: date.toISOString(),
+        dateModification: date.toISOString(),
         type: typeDomaine,
-        date,
+        statut: $Enums.statut_publication.PUBLIE,
       };
 
       await this.commentaireRepository.save(commentaireV2);

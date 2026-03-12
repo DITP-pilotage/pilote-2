@@ -25,16 +25,16 @@ import { SelecteurMeteo } from "./SelecteurMeteo";
 
 interface SyntheseDesResultatsFormulaireProps {
   annulationCallback?: () => void;
-  onAction: (action: SyntheseDesResultatsAction) => void;
+  onSucess: (action: SyntheseDesResultatsAction) => void;
 }
 
 const SyntheseDesResultatsFormulaire: FunctionComponent<
   SyntheseDesResultatsFormulaireProps
-> = ({ annulationCallback, onAction }) => {
+> = ({ annulationCallback, onSucess }) => {
   const { syntheseDesResultats } = pageChantier.useServerSidePropsContext();
 
   const modifierSynthèseDesRésultats = useModifierSyntheseDesResultats({
-    onAction,
+    onSucess,
   });
 
   const {

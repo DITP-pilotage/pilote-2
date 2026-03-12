@@ -4,7 +4,7 @@ export const moduleNames = [
   "chantiers",
   "parametrageIndicateur",
   "importIndicateur",
-  "importCommentaire",
+  "commentaires",
   "importDecisionStrategique",
   "importObjectif",
   "importSyntheseDesResultats",

@@ -1,8 +1,5 @@
 import { z } from "zod";
-import {
-  météos,
-  météosSaisissables,
-} from "@/server/domain/météo/Météo.interface";
+import { météosSaisissables } from "@/server/domain/météo/Météo.interface";
 
 export const LIMITE_CARACTÈRES_SYNTHÈSE_DES_RÉSULTATS = 1000;
 export const LIMITE_CARACTÈRES_AFFICHAGE_SYNTHÈSE_DES_RÉSULTATS = 250;
@@ -23,23 +20,10 @@ export const validationSynthèseDesRésultatsFormulaire = z.object({
   meteo: z.enum(météosSaisissables),
 });
 
-export const validationSyntheseDesResultats = z.object({
-  id: z.string(),
-  chantierId: z.string(),
-  territoireCode: z.string(),
-  contenu: z.string(),
-  meteo: z.enum(météos),
-  auteurCreationId: z.string(),
-  dateCreation: z.string(),
-  auteurModificationId: z.string(),
-  dateModification: z.string(),
-  statut: z.enum(["PUBLIE", "BROUILLON"]),
-});
-
 export const validationBrouillonAPublier = z.object({
-  brouillon: validationSyntheseDesResultats,
+  brouillonId: z.string(),
 });
 
 export const validationSyntheseAModifier = z.object({
-  syntheseAModifier: validationSyntheseDesResultats,
+  syntheseId: z.string(),
 });

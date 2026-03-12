@@ -50,9 +50,6 @@ import { configuration } from "@/config";
 import RécupérerStatistiquesAvancementChantiersUseCase from "@/server/usecase/chantier/RécupérerStatistiquesAvancementChantiersUseCase";
 import { RecupererRepartitionsMeteoChantiersUseCase } from "@/server/chantiers/usecases/RecupererRepartitionMeteoChantiersUseCase";
 import { AgregerAvancementsChantiersUseCase } from "@/server/chantiers/usecases/AgregerAvancementsChantiersUseCase";
-import CréerUnCommentaireUseCase from "@/server/usecase/chantier/commentaire/CréerUnCommentaireUseCase";
-import RécupérerCommentaireLePlusRécentUseCase from "@/server/usecase/chantier/commentaire/RécupérerCommentaireLePlusRécentUseCase";
-import RécupérerHistoriqueCommentaireUseCase from "@/server/usecase/chantier/commentaire/RécupérerHistoriqueCommentaireUseCase";
 import RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase from "@/server/usecase/chantier/commentaire/RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase";
 import CréerUnObjectifUseCase from "@/server/usecase/chantier/objectif/CréerUnObjectifUseCase";
 import RécupérerObjectifLePlusRécentUseCase from "@/server/usecase/chantier/objectif/RécupérerObjectifLePlusRécentUseCase";
@@ -110,9 +107,6 @@ type LegacyCradle = {
   récupérerStatistiquesAvancementChantiersUseCase: RécupérerStatistiquesAvancementChantiersUseCase;
   recupererRepartitionsMeteoChantiersUseCase: RecupererRepartitionsMeteoChantiersUseCase;
   agregerAvancementsChantiersUseCase: AgregerAvancementsChantiersUseCase;
-  créerUnCommentaireUseCase: CréerUnCommentaireUseCase;
-  récupérerCommentaireLePlusRécentUseCase: RécupérerCommentaireLePlusRécentUseCase;
-  récupérerHistoriqueCommentaireUseCase: RécupérerHistoriqueCommentaireUseCase;
   récupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase: RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase;
   créerUnObjectifUseCase: CréerUnObjectifUseCase;
   récupérerObjectifLePlusRécentUseCase: RécupérerObjectifLePlusRécentUseCase;
@@ -205,15 +199,6 @@ export const legacyModule = defineModule<NoExports, LegacyCradle>()({
       ).scoped(),
       agregerAvancementsChantiersUseCase: asModuleClass(
         AgregerAvancementsChantiersUseCase,
-      ).scoped(),
-      créerUnCommentaireUseCase: asModuleClass(
-        CréerUnCommentaireUseCase,
-      ).scoped(),
-      récupérerCommentaireLePlusRécentUseCase: asModuleClass(
-        RécupérerCommentaireLePlusRécentUseCase,
-      ).scoped(),
-      récupérerHistoriqueCommentaireUseCase: asModuleClass(
-        RécupérerHistoriqueCommentaireUseCase,
       ).scoped(),
       récupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase:
         asModuleClass(

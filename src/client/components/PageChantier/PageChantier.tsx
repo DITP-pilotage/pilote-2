@@ -45,6 +45,7 @@ const PageChantier = () => {
     mailleSelectionnee,
     mailleQuery,
     commentaires,
+    commentairesBrouillon,
     détailsIndicateurs,
     detailsIndicateursTerritoire,
     décisionStratégique,
@@ -420,7 +421,8 @@ const PageChantier = () => {
                 </Infobulle>
               </TitreInfobulleConteneur>
               <Commentaires
-                commentaires={commentaires[chantier.id]}
+                commentaires={commentaires}
+                commentairesBrouillon={commentairesBrouillon}
                 estChantierArchive={estChantierArchive}
                 maille={territoireSélectionné.maille}
                 modeÉcriture={estAutoriseAModifierLesPublications}

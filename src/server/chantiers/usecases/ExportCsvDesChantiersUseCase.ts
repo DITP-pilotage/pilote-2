@@ -6,7 +6,7 @@ import {
   NON_RENSEIGNEE,
   OUI,
 } from "@/server/infrastructure/export_csv/valeurs";
-import { libellésTypesCommentaire } from "@/client/constants/libellésCommentaire";
+import { libellesTypesCommentaire } from "@/client/constants/libellesCommentaire";
 import { libellésTypesObjectif } from "@/client/constants/libellésObjectif";
 import { libellésTypesDécisionStratégique } from "@/client/constants/libellésDécisionStratégique";
 import {
@@ -222,18 +222,18 @@ export class ExportCsvDesChantiersUseCase {
 
     if (optionsExport.listeOptionsExport.includes("commentaire")) {
       headersColumn.push(
-        libellésTypesCommentaire["commentairesSurLesDonnées"],
-        libellésTypesCommentaire["autresRésultatsObtenus"],
+        libellesTypesCommentaire["commentairesSurLesDonnées"],
+        libellesTypesCommentaire["autresRésultatsObtenus"],
       );
 
       if (!profilsTerritoriaux.includes(profil)) {
         headersColumn.push(
-          libellésTypesCommentaire[
+          libellesTypesCommentaire[
             "autresRésultatsObtenusNonCorrélésAuxIndicateurs"
           ],
-          libellésTypesCommentaire["risquesEtFreinsÀLever"],
-          libellésTypesCommentaire["solutionsEtActionsÀVenir"],
-          libellésTypesCommentaire["exemplesConcretsDeRéussite"],
+          libellesTypesCommentaire["risquesEtFreinsÀLever"],
+          libellesTypesCommentaire["solutionsEtActionsÀVenir"],
+          libellesTypesCommentaire["exemplesConcretsDeRéussite"],
         );
       }
     }

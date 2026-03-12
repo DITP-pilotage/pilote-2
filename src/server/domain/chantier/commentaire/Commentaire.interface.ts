@@ -1,3 +1,5 @@
+import { $Enums } from "@prisma/client";
+
 export type Commentaire = {
   id: string;
   contenu: string;
@@ -7,13 +9,20 @@ export type Commentaire = {
 } | null;
 
 export type CommentaireV2 = {
+  id: string;
   chantierId: string;
   territoireCode: string;
-  id: string;
-  contenu: string;
-  auteur_id: string;
   type: TypeCommentaireChantier;
-  date: Date;
+  contenu: string;
+  statut: $Enums.statut_publication;
+  auteurCreationId: string;
+  dateCreation: string;
+  auteurModificationId: string;
+  dateModification: string;
+};
+
+export type CommentaireAvecNomsAuteurs = CommentaireV2 & {
+  auteurModificationNom: string;
 };
 
 export const typesCommentaireMailleNationale = [

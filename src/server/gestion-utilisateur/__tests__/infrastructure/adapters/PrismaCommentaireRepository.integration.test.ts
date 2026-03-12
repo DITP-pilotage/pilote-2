@@ -66,34 +66,37 @@ describe("PrismaCommentaireRepository", () => {
           {
             id: "77053976-1a8e-49f0-b68a-df01da2fc277",
             chantier_id: "CH-001",
-            auteur_id: auteurId1,
+            auteur_modification_id: auteurId1,
             maille: "NAT",
             code_insee: "FR",
             territoire_code: "NAT-FR",
             type: "commentaires_sur_les_donnees",
-            date: new Date("2023-04-20"),
+            date_creation: new Date("2023-04-20"),
+            date_modification: new Date("2023-04-20"),
             contenu: "commentaire risquesEtFreinsÀLever",
           },
           {
             id: "b699907e-43c4-43be-8d8d-185fca1b2e50",
             chantier_id: "CH-001",
-            auteur_id: auteurId2,
+            auteur_modification_id: auteurId2,
             maille: "NAT",
             code_insee: "FR",
             territoire_code: "NAT-FR",
             type: "commentaires_sur_les_donnees",
-            date: new Date("2024-04-20"),
+            date_modification: new Date("2024-04-20"),
+            date_creation: new Date("2024-04-20"),
             contenu: "commentaire risquesEtFreinsÀLever",
           },
           {
             id: "e3885e40-caab-4fb6-acf4-0c8f66c9e290",
             chantier_id: "CH-001",
-            auteur_id: auteurId2,
+            auteur_modification_id: auteurId2,
             maille: "NAT",
             code_insee: "FR",
             territoire_code: "NAT-FR",
             type: "commentaires_sur_les_donnees",
-            date: new Date("2023-04-20"),
+            date_creation: new Date("2023-04-20"),
+            date_modification: new Date("2023-04-20"),
             contenu: "commentaire risquesEtFreinsÀLever",
           },
         ],
@@ -107,7 +110,7 @@ describe("PrismaCommentaireRepository", () => {
 
       // Then
       const commentairesAvecAuteurAnonyme = await prisma.commentaire.findMany({
-        where: { auteur_id: auteurId3 },
+        where: { auteur_modification_id: auteurId3 },
       });
       expect(commentairesAvecAuteurAnonyme).toHaveLength(2);
       expect(commentairesAvecAuteurAnonyme[0].id).toStrictEqual(

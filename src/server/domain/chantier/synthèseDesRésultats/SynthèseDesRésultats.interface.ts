@@ -19,7 +19,7 @@ export type SyntheseDesResultatsV2 = {
   dateCreation: string;
   auteurModificationId: string;
   dateModification: string;
-  statut: $Enums.statut_synthese_des_resultats;
+  statut: $Enums.statut_publication;
 };
 
 export type SyntheseDesResultatsAvecNomsAuteurs = SyntheseDesResultatsV2 & {
