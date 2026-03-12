@@ -23,9 +23,11 @@ c.vacg,
 vacp.vacp as vacp,
 vacp.metric_date as date_valeur_proposition,
 -- VCA pour l'année COURANTE (rule::620)
-d2.vca as vca_courant, d2.vca_date as vca_courant_date,
+d2.vca as vca_courant,
+d2.vca_date as vca_courant_date,
 -- VCA pour l'année de la a.metric_date (pas utilisé, mais valeur avant rule::620)
-d.vca as vca_adate, d.vca_date as vca_adate_date,
+d.vca as vca_adate,
+d.vca_date as vca_adate_date,
 e.vig, e.vig_date,
 f.vcg, f.vcg_date
 from "dev_pilote__6230"."df3"."pivot_mesures" a
