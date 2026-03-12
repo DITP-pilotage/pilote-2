@@ -62,47 +62,37 @@ const Cartes: FunctionComponent<CartesProps> = ({
   );
 
   return (
-    <CartesStyled>
-      {afficheCarteAvancement ? (
-        <div className="carte">
-          <Bloc>
-            <section>
-              <CartographieAvecSelecteur
-                aLaSelectionCartographie={(valeur: CartographieType) =>
-                  setCartographieGaucheSelection(valeur)
-                }
-                cartographieSelectionnee={cartographieGaucheChantier}
-                chantierMailles={chantier.mailles}
-                estInteractif={estInteractif}
-                jalon={jalon}
-                listeCartographiesDesactives={[cartographieDroiteChantier]}
-                mailleQuery={mailleQuery}
-                territoireCode={territoireCode}
-              />
-              {mailleSourceDonnees === "regionale" && (
-                <Alerte
-                  classesSupplementaires="fr-mt-2w"
-                  message="Données régionales"
-                  type="info"
+    <>
+      <CartesStyled>
+        {afficheCarteAvancement ? (
+          <div className="carte">
+            <Bloc>
+              <section>
+                <CartographieAvecSelecteur
+                  aLaSelectionCartographie={(valeur: CartographieType) =>
+                    setCartographieGaucheSelection(valeur)
+                  }
+                  cartographieSelectionnee={cartographieGaucheChantier}
+                  chantierMailles={chantier.mailles}
+                  estInteractif={estInteractif}
+                  jalon={jalon}
+                  listeCartographiesDesactives={[cartographieDroiteChantier]}
+                  mailleQuery={mailleQuery}
+                  territoireCode={territoireCode}
                 />
-              )}
-            </section>
-          </Bloc>
-        </div>
-      ) : null}
-      {afficheCarteMétéo ? (
-        <div className="carte">
-          {featureComparaisonTerritoires &&
-          cartographieDroiteChantier === "meteo" ? (
-            <TuileWidget titre="Comparaison territoriale et évolution">
-              <WidgetCartographieMeteo
-                chantierId={chantier.id}
-                jalon={jalon}
-                maille={mailleQuery}
-                territoireCode={territoireCode}
-              />
-            </TuileWidget>
-          ) : (
+                {mailleSourceDonnees === "regionale" && (
+                  <Alerte
+                    classesSupplementaires="fr-mt-2w"
+                    message="Données régionales"
+                    type="info"
+                  />
+                )}
+              </section>
+            </Bloc>
+          </div>
+        ) : null}
+        {afficheCarteMétéo ? (
+          <div className="carte">
             <Bloc>
               <section>
                 <CartographieAvecSelecteur
@@ -119,10 +109,30 @@ const Cartes: FunctionComponent<CartesProps> = ({
                 />
               </section>
             </Bloc>
-          )}
+          </div>
+        ) : null}
+      </CartesStyled>
+      {featureComparaisonTerritoires &&
+      cartographieDroiteChantier === "meteo" ? (
+        <div className="mt-4">
+          <TuileWidget titre="Comparaison territoriale et évolution">
+            <WidgetCartographieMeteo
+              chantierId={chantier.id}
+              jalon={jalon}
+              maille={mailleQuery}
+              territoireCode={territoireCode}
+            />
+
+            <WidgetCartographieMeteo
+              chantierId={chantier.id}
+              jalon={jalon}
+              maille={mailleQuery}
+              territoireCode={territoireCode}
+            />
+          </TuileWidget>
         </div>
       ) : null}
-    </CartesStyled>
+    </>
   );
 };
 
