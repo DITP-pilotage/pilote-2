@@ -9,6 +9,7 @@ import {
 } from "@/server/domain/chantier/commentaire/Commentaire.interface";
 import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
 import { CommentaireAction } from "@/components/_commons/CommentairesNew/CommentaireSection/AlerteCommentaire";
+import { libellesTypesCommentaire } from "@/client/constants/libellesCommentaire";
 import { useNouveauCommentaire } from "./useNouveauCommentaire";
 import { ModaleFormulaireCommentaire } from "./ModaleFormulaireCommentaire";
 
@@ -46,7 +47,7 @@ const BoutonNouveauCommentaire = ({
       onOpenChange={setOpen}
       onPublier={publier}
       open={open}
-      title="Nouveau commentaire"
+      title={`Nouveau commentaire "${libellesTypesCommentaire[type]}"`}
       type={type}
       trigger={
         <Bouton

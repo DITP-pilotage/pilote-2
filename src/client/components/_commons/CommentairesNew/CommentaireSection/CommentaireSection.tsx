@@ -43,7 +43,11 @@ const CommentaireSection: FunctionComponent<CommentaireSectionProps> = ({
 
   return (
     <div className="px-2 py-4">
-      <p className="font-bold text-xl mb-1">{libellesTypesCommentaire[type]}</p>
+      {!modeÉdition && (
+        <p className="font-bold text-xl mb-1">
+          {libellesTypesCommentaire[type]}
+        </p>
+      )}
       {commentaireBrouillon?.dateModification ? (
         <div className="my-2">
           <BandeauInformation bandeauType="INFO">
