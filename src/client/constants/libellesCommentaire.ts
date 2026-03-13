@@ -27,7 +27,7 @@ export const consignesEcritureCommentaire: Record<TypeCommentaire, string> = {
   autresRésultatsObtenus:
     "Le cas échéant, présentez les résultats obtenus qui ne transparaissent pas dans les chiffres.",
   risquesEtFreinsÀLever:
-    "Résumez les principaux risques et freins que vous identifiez. Préciser si ces risques nécessitent un soutien de haut niveau ou des arbitrages interministériels.",
+    "Résumez les principaux risques et freins que vous identifiez. Précisez si ces risques nécessitent un soutien de haut niveau ou des arbitrages interministériels.",
   solutionsEtActionsÀVenir:
     "Quelles solutions envisagez-vous pour faire face aux risques listés précédemment ? Avez-vous déjà initié des actions liées à ces solutions ?",
   exemplesConcretsDeRéussite:

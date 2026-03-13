@@ -1,6 +1,5 @@
 import { Fragment, FunctionComponent } from "react";
 import Bloc from "@/components/_commons/Bloc/Bloc";
-import Chantier from "@/server/domain/chantier/Chantier.interface";
 import {
   CommentaireAvecNomsAuteurs,
   CommentaireV2,
@@ -8,7 +7,6 @@ import {
   typesCommentaireMailleNationale,
   typesCommentaireMailleRégionaleOuDépartementale,
 } from "@/server/domain/chantier/commentaire/Commentaire.interface";
-import { Maille } from "@/server/domain/maille/Maille.interface";
 import CommentaireSection from "@/components/_commons/CommentairesNew/CommentaireSection/CommentaireSection";
 
 interface CommentairesProps {
@@ -17,26 +15,20 @@ interface CommentairesProps {
     CommentaireAvecNomsAuteurs | null
   >;
   commentairesBrouillon: Record<TypeCommentaireChantier, CommentaireV2 | null>;
-  réformeId: Chantier["id"];
-  maille: Maille;
   nomTerritoire: string;
   typesCommentaire:
     | typeof typesCommentaireMailleNationale
     | typeof typesCommentaireMailleRégionaleOuDépartementale;
   modeÉcriture?: boolean;
   estChantierArchive?: boolean;
-  territoireCode: string;
 }
 
 const Commentaires: FunctionComponent<CommentairesProps> = ({
   commentaires,
   commentairesBrouillon,
-  réformeId,
-  maille,
   nomTerritoire,
   typesCommentaire,
   modeÉcriture = false,
-  territoireCode,
   estChantierArchive = false,
 }) => {
   return (
@@ -52,10 +44,7 @@ const Commentaires: FunctionComponent<CommentairesProps> = ({
           <CommentaireSection
             commentaire={commentaires[type]}
             commentaireBrouillon={commentairesBrouillon[type]}
-            maille={maille}
             modeEcriture={modeÉcriture}
-            réformeId={réformeId}
-            territoireCode={territoireCode}
             type={type}
           />
         </Fragment>

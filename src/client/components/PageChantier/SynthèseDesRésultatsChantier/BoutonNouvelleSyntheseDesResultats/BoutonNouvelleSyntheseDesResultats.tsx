@@ -5,6 +5,7 @@ import { Icone1Icon } from "@/components/_commons/Icones/Icone1Icon";
 import { Infobulle } from "@/components/_commons/Infobulle/Infobulle";
 import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
 import { SyntheseDesResultatsAction } from "@/components/PageChantier/SynthèseDesRésultatsChantier/AlerteSyntheseDesResultats";
+import { LIBELLÉ_SYNTHÈSE_DES_RÉSULTATS } from "@/client/constants/libellesSyntheseDesResultats";
 import { useNouvelleSyntheseDesResultats } from "./useNouvelleSyntheseDesResultats";
 import { ModaleFormulaireSyntheseDesResultats } from "./ModaleFormulaireSyntheseDesResultats";
 
@@ -29,7 +30,7 @@ export const BoutonNouvelleSyntheseDesResultats = ({
       onOpenChange={setOpen}
       onPublier={publier}
       open={open}
-      title="Nouveau commentaire"
+      title={`Nouveau commentaire "${LIBELLÉ_SYNTHÈSE_DES_RÉSULTATS}"`}
       trigger={
         <Bouton
           iconLeft={

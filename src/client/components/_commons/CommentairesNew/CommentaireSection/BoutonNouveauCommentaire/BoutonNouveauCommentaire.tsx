@@ -9,27 +9,26 @@ import {
 } from "@/server/domain/chantier/commentaire/Commentaire.interface";
 import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
 import { CommentaireAction } from "@/components/_commons/CommentairesNew/CommentaireSection/AlerteCommentaire";
+import { libellesTypesCommentaire } from "@/client/constants/libellesCommentaire";
+import { pageChantier } from "@/components/PageChantier/PageChantierServerSideContext";
 import { useNouveauCommentaire } from "./useNouveauCommentaire";
 import { ModaleFormulaireCommentaire } from "./ModaleFormulaireCommentaire";
 
 const BoutonNouveauCommentaire = ({
   commentaire,
-  réformeId,
-  territoireCode,
   type,
   onAction,
 }: {
   commentaire: CommentaireAvecNomsAuteurs | null;
-  réformeId: string;
-  territoireCode: string;
   type: TypeCommentaireChantier;
   onAction: (action: CommentaireAction) => void;
 }) => {
+  const { chantier, territoireCode } = pageChantier.useServerSidePropsContext();
   const [open, setOpen] = useState(false);
   const refreshRouter = useRefreshRouter();
 
   const { publier, enregistrerEnBrouillon } = useNouveauCommentaire({
-    réformeId,
+    chantierId: chantier.id,
     territoireCode,
     type,
     onSuccess: (action) => {
@@ -46,7 +45,7 @@ const BoutonNouveauCommentaire = ({
       onOpenChange={setOpen}
       onPublier={publier}
       open={open}
-      title="Nouveau commentaire"
+      title={`Nouveau commentaire "${libellesTypesCommentaire[type]}"`}
       type={type}
       trigger={
         <Bouton
@@ -61,6 +60,7 @@ const BoutonNouveauCommentaire = ({
               sera automatiquement archivé dans l'historique des commentaires.
             </Infobulle>
           }
+          aria-label={`bouton-nouveau-commentaire-${type}`}
           label="Nouveau commentaire"
           variant="secondary"
         />

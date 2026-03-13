@@ -9,6 +9,7 @@ import {
 } from "@/server/domain/chantier/commentaire/Commentaire.interface";
 import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
 import { CommentaireAction } from "@/components/_commons/CommentairesNew/CommentaireSection/AlerteCommentaire";
+import { libellesTypesCommentaire } from "@/client/constants/libellesCommentaire";
 import { useEditerBrouillonCommentaire } from "./useEditerBrouillonCommentaire";
 import { ModaleFormulaireCommentaire } from "./ModaleFormulaireCommentaire";
 
@@ -41,7 +42,7 @@ const BoutonEditerBrouillonCommentaire = ({
       onOpenChange={setOpen}
       onPublier={publier}
       open={open}
-      title="Editer un brouillon"
+      title={`Nouveau commentaire "${libellesTypesCommentaire[brouillon!.type]}"`}
       type={brouillon!.type}
       trigger={
         <Bouton

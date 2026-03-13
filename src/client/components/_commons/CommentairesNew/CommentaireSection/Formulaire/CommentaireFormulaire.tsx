@@ -5,7 +5,6 @@ import {
   CommentaireAvecNomsAuteurs,
   TypeCommentaireChantier,
 } from "@/server/domain/chantier/commentaire/Commentaire.interface";
-import { Maille } from "@/server/domain/maille/Maille.interface";
 import CompteurCaractères from "@/components/_commons/CompteurCaractères/CompteurCaractères";
 import Titre from "@/components/_commons/Titre/Titre";
 import {
@@ -18,20 +17,23 @@ import { ArrowGoBack1Icon } from "@/components/_commons/Icones/ArrowGoBack1Icon"
 import { Bouton } from "@/components/_commons/Bouton/Bouton";
 import { CommentaireAction } from "@/components/_commons/CommentairesNew/CommentaireSection/AlerteCommentaire";
 import { PiloteDateFormatter } from "@/server/rapports-hebdomadaires/infrastructure/adapters/PiloteDateFormatter";
+import { Infobulle } from "@/components/_commons/Infobulle/Infobulle";
+import {
+  consignesEcritureCommentaire,
+  libellesTypesCommentaire,
+} from "@/client/constants/libellesCommentaire";
 import { useModifierCommentaire } from "./useModifierCommentaire";
 
 interface CommentaireFormulaireProps {
   commentaire: CommentaireAvecNomsAuteurs | null;
   type: TypeCommentaireChantier;
-  réformeId: string;
-  territoireCode: string;
-  maille: Maille;
   annulationCallback?: () => void;
   onSuccess: (action: CommentaireAction) => void;
 }
 
 const CommentaireFormulaire: FunctionComponent<CommentaireFormulaireProps> = ({
   commentaire,
+  type,
   annulationCallback,
   onSuccess,
 }) => {
@@ -53,9 +55,14 @@ const CommentaireFormulaire: FunctionComponent<CommentaireFormulaireProps> = ({
 
   return (
     <form onSubmit={handleSubmit(modifierCommentaire)}>
-      <Titre baliseHtml="h3" className="text-lg fr-mb-1v">
-        Modifier le commentaire
-      </Titre>
+      <div className="flex items-center gap-2 fr-mb-1v">
+        <Titre baliseHtml="h3" className="text-xl mb-0">
+          {`Modifier le commentaire "${libellesTypesCommentaire[type]}"`}
+        </Titre>
+        <Infobulle classNameIcone="w-5 h-5">
+          {consignesEcritureCommentaire[type]}
+        </Infobulle>
+      </div>
       <p className="fr-text--xs mb-4 text-dsfr-mention-grey">
         {`Vous pouvez apporter ci-dessous des modifications au commentaire que vous avez posté le ${PiloteDateFormatter.isoDateFranceMetropolitaine(commentaire!.dateModification)}. Après validation, le commentaire modifié annulera et remplacera le commentaire actuel.`}
       </p>

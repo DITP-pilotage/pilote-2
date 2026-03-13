@@ -5,7 +5,6 @@ import {
   CommentaireV2,
   TypeCommentaireChantier,
 } from "@/server/domain/chantier/commentaire/Commentaire.interface";
-import { Maille } from "@/server/domain/maille/Maille.interface";
 import BandeauInformation from "@/components/_commons/BandeauInformation/BandeauInformation";
 import { libellesTypesCommentaire } from "@/client/constants/libellesCommentaire";
 import AlerteCommentaire, {
@@ -22,9 +21,6 @@ interface CommentaireSectionProps {
   type: TypeCommentaireChantier;
   commentaire: CommentaireAvecNomsAuteurs | null;
   commentaireBrouillon: CommentaireV2 | null;
-  réformeId: string;
-  territoireCode: string;
-  maille: Maille;
   modeEcriture?: boolean;
 }
 
@@ -32,9 +28,6 @@ const CommentaireSection: FunctionComponent<CommentaireSectionProps> = ({
   type,
   commentaire,
   commentaireBrouillon,
-  réformeId,
-  territoireCode,
-  maille,
   modeEcriture = false,
 }) => {
   const [modeÉdition, setModeÉdition] = useState(false);
@@ -43,7 +36,11 @@ const CommentaireSection: FunctionComponent<CommentaireSectionProps> = ({
 
   return (
     <div className="px-2 py-4">
-      <p className="font-bold text-xl mb-1">{libellesTypesCommentaire[type]}</p>
+      {!modeÉdition && (
+        <h5 className="font-bold text-xl mb-1">
+          {libellesTypesCommentaire[type]}
+        </h5>
+      )}
       {commentaireBrouillon?.dateModification ? (
         <div className="my-2">
           <BandeauInformation bandeauType="INFO">
@@ -55,14 +52,11 @@ const CommentaireSection: FunctionComponent<CommentaireSectionProps> = ({
         <CommentaireFormulaire
           annulationCallback={() => setModeÉdition(false)}
           commentaire={commentaire}
-          maille={maille}
           onSuccess={(commentaireAction) => {
             setModeÉdition(false);
             refreshRouter();
             setAction(commentaireAction);
           }}
-          réformeId={réformeId}
-          territoireCode={territoireCode}
           type={type}
         />
       ) : (
@@ -73,14 +67,7 @@ const CommentaireSection: FunctionComponent<CommentaireSectionProps> = ({
             onModifier={modeEcriture ? () => setModeÉdition(true) : undefined}
           />
           <div className="flex justify-end items-center gap-4 mt-2">
-            {!!commentaire ? (
-              <HistoriqueCommentaire
-                maille={maille}
-                réformeId={réformeId}
-                territoireCode={territoireCode}
-                type={type}
-              />
-            ) : null}
+            {commentaire ? <HistoriqueCommentaire type={type} /> : null}
             {modeEcriture &&
               (commentaireBrouillon?.dateModification ? (
                 <BoutonEditerBrouillonCommentaire
@@ -92,8 +79,6 @@ const CommentaireSection: FunctionComponent<CommentaireSectionProps> = ({
                 <BoutonNouveauCommentaire
                   commentaire={commentaire}
                   onAction={setAction}
-                  réformeId={réformeId}
-                  territoireCode={territoireCode}
                   type={type}
                 />
               ))}

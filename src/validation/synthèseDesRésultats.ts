@@ -5,7 +5,7 @@ export const LIMITE_CARACTÈRES_SYNTHÈSE_DES_RÉSULTATS = 1000;
 export const LIMITE_CARACTÈRES_AFFICHAGE_SYNTHÈSE_DES_RÉSULTATS = 250;
 
 export const validationSynthèseDesRésultatsContexte = z.object({
-  réformeId: z.string(),
+  chantierId: z.string(),
   territoireCode: z.string(),
 });
 

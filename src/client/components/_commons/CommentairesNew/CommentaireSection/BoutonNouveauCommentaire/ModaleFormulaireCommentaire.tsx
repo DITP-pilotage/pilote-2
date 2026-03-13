@@ -23,6 +23,10 @@ import {
   consignesEcritureCommentaire,
   libellesTypesCommentaire,
 } from "@/client/constants/libellesCommentaire";
+import {
+  pageChantier,
+  useTerritoireSelectionne,
+} from "@/components/PageChantier/PageChantierServerSideContext";
 
 interface ModaleFormulaireCommentaireProps {
   title: string;
@@ -47,6 +51,9 @@ export const ModaleFormulaireCommentaire = ({
   onPublier,
   onBrouillon,
 }: ModaleFormulaireCommentaireProps) => {
+  const { chantierInformations } = pageChantier.useServerSidePropsContext();
+  const territoireSélectionné = useTerritoireSelectionne();
+
   const form = useForm<{ contenu: string }>({
     mode: "all",
     resolver: zodResolver(validationCommentaireFormulaire),
@@ -58,13 +65,15 @@ export const ModaleFormulaireCommentaire = ({
       onOpenChange={onOpenChange}
       open={open}
       title={title}
+      titleClassName="text-dsfr-grey-50"
       trigger={trigger}
     >
-      <p className="text-base font-bold mb-1">
-        {libellesTypesCommentaire[type]}
+      <p className="text-sm mb-0">
+        {chantierInformations.id} {chantierInformations.nom}
       </p>
+      <p className="text-sm">{territoireSélectionné.nomAffiché}</p>
       <p className="text-sm text-dsfr-mention-grey mb-6">
-        {consignesEcritureCommentaire[type]}
+        {`Veuillez saisir ci-dessous le nouveau commentaire relatif aux ${libellesTypesCommentaire[type].toLowerCase()}. Après publication, le nouveau commentaire sera affiché et l'ancien sera archivé dans l'historique.`}
       </p>
       <h3 className="text-base font-bold mb-3">Commentaire actuel</h3>
       <div className="mb-6">
@@ -72,11 +81,7 @@ export const ModaleFormulaireCommentaire = ({
       </div>
 
       <h3 className="text-base font-bold mb-3">Votre nouveau commentaire</h3>
-      <p className="text-sm text-dsfr-mention-grey mb-6">
-        Veuillez saisir ci-dessous le nouveau commentaire. Après publication, le
-        nouveau commentaire sera affiché et l'ancien sera archivé dans
-        l'historique.
-      </p>
+      <p className="text-sm mb-6">{consignesEcritureCommentaire[type]}</p>
       <form onSubmit={form.handleSubmit(onPublier)}>
         <div
           className={`flex flex-col ${form.formState.errors.contenu ? "fr-input-group--error" : ""}`}

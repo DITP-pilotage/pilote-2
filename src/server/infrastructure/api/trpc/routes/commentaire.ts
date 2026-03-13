@@ -29,7 +29,7 @@ export const commentaireRouter = créerRouteurTRPC({
       return getContainer("commentaires")
         .resolve("publierCommentaireUseCase")
         .execute({
-          chantierId: input.réformeId,
+          chantierId: input.chantierId,
           territoireCode: input.territoireCode,
           type: input.type,
           contenu: input.contenu,
@@ -51,7 +51,7 @@ export const commentaireRouter = créerRouteurTRPC({
       return getContainer("commentaires")
         .resolve("enregistrerBrouillonCommentaireUseCase")
         .execute({
-          chantierId: input.réformeId,
+          chantierId: input.chantierId,
           territoireCode: input.territoireCode,
           type: input.type,
           contenu: input.contenu,
@@ -121,11 +121,11 @@ export const commentaireRouter = créerRouteurTRPC({
         });
     }),
 
-  récupérerHistorique: procédureProtégée
+  recupererHistorique: procédureProtégée
     .input(validationCommentaireContexte)
     .query(({ input }) => {
       return getContainer("commentaires")
         .resolve("recupererHistoriqueCommentaireQuery")
-        .run(input.réformeId, input.territoireCode, input.type);
+        .run(input.chantierId, input.territoireCode, input.type);
     }),
 });

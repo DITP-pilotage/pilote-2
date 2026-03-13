@@ -6,6 +6,7 @@ import { Infobulle } from "@/components/_commons/Infobulle/Infobulle";
 import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
 import { pageChantier } from "@/components/PageChantier/PageChantierServerSideContext";
 import { SyntheseDesResultatsAction } from "@/components/PageChantier/SynthèseDesRésultatsChantier/AlerteSyntheseDesResultats";
+import { LIBELLÉ_SYNTHÈSE_DES_RÉSULTATS } from "@/client/constants/libellesSyntheseDesResultats";
 import { useEditerBrouillonSyntheseDesResultats } from "./useEditerBrouillonSyntheseDesResultats";
 import { ModaleFormulaireSyntheseDesResultats } from "./ModaleFormulaireSyntheseDesResultats";
 
@@ -34,7 +35,7 @@ export const BoutonEditerBrouillonSyntheseDesResultats = ({
       onOpenChange={setOpen}
       onPublier={publier}
       open={open}
-      title="Editer un brouillon"
+      title={`Nouveau commentaire "${LIBELLÉ_SYNTHÈSE_DES_RÉSULTATS}"`}
       trigger={
         <Bouton
           iconLeft={

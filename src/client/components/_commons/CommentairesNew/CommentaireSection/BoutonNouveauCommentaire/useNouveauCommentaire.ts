@@ -4,12 +4,12 @@ import { TypeCommentaireChantier } from "@/server/domain/chantier/commentaire/Co
 import { CommentaireAction } from "@/components/_commons/CommentairesNew/CommentaireSection/AlerteCommentaire";
 
 export const useNouveauCommentaire = ({
-  réformeId,
+  chantierId,
   territoireCode,
   type,
   onSuccess,
 }: {
-  réformeId: string;
+  chantierId: string;
   territoireCode: string;
   type: TypeCommentaireChantier;
   onSuccess: (action: CommentaireAction) => void;
@@ -19,7 +19,7 @@ export const useNouveauCommentaire = ({
     api.commentaire.enregistrerEnBrouillon.useMutation();
 
   const input = (data: { contenu: string }) => ({
-    réformeId,
+    chantierId,
     territoireCode,
     type,
     contenu: data.contenu,

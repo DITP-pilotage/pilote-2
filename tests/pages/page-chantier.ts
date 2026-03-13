@@ -124,18 +124,20 @@ export class PageChantier extends BasePage {
     typeCommentaire: string = "risquesEtFreinsÀLever",
   ): Promise<void> {
     const id = randomUUID();
-    await this.page.getByLabel(`bouton-modifier-${typeCommentaire}`).click();
-    await this.page
-      .getByLabel(`champ d'edition pour le contenu de ${typeCommentaire}`)
-      .fill(`Un commentaire test e2e ${id}`);
 
     await this.page
-      .getByRole("button", { name: "Publier", exact: true })
+      .getByLabel(`bouton-nouveau-commentaire-${typeCommentaire}`)
       .click();
+
+    const dialog = this.page.getByRole("dialog");
+    await dialog.getByRole("textbox").fill(`Un commentaire test e2e ${id}`);
+    await dialog.getByRole("button", { name: "Publier", exact: true }).click();
 
     await this.page.waitForSelector("#alerte");
 
-    await expect(this.page.getByText("Modification effectuée")).toBeVisible();
+    await expect(
+      this.page.getByText("Votre nouveau commentaire a bien été publié"),
+    ).toBeVisible();
 
     await this.page
       .getByLabel(`Voir l'histoire des commentaires du type ${typeCommentaire}`)
@@ -144,7 +146,7 @@ export class PageChantier extends BasePage {
     const commentaireHistoriqueModal = this.page.getByRole("dialog");
 
     await expect(commentaireHistoriqueModal).toContainText(
-      "Historique - commentaires",
+      "Historique - Commentaires",
     );
     await expect(commentaireHistoriqueModal).toContainText(
       `Un commentaire test e2e ${id}`,

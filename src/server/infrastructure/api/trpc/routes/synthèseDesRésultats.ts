@@ -51,7 +51,7 @@ export const synthèseDesRésultatsRouter = créerRouteurTRPC({
       return getContainer("importSyntheseDesResultats")
         .resolve("publierSyntheseDesResultatsUseCase")
         .execute({
-          chantierId: input.réformeId,
+          chantierId: input.chantierId,
           territoireCode: input.territoireCode,
           contenu: input.contenu,
           meteo: input.meteo,
@@ -73,7 +73,7 @@ export const synthèseDesRésultatsRouter = créerRouteurTRPC({
       return getContainer("importSyntheseDesResultats")
         .resolve("enregistrerBrouillonSyntheseDesResultatsUseCase")
         .execute({
-          chantierId: input.réformeId,
+          chantierId: input.chantierId,
           territoireCode: input.territoireCode,
           contenu: input.contenu,
           meteo: input.meteo,
@@ -130,6 +130,6 @@ export const synthèseDesRésultatsRouter = créerRouteurTRPC({
     .query(({ input }) => {
       return getContainer("importSyntheseDesResultats")
         .resolve("récupérerHistoriqueSyntheseDesResultatsQuery")
-        .run(input.réformeId, input.territoireCode);
+        .run(input.chantierId, input.territoireCode);
     }),
 });
