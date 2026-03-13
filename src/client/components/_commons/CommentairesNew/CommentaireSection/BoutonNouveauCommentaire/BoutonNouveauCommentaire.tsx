@@ -60,6 +60,7 @@ const BoutonNouveauCommentaire = ({
               sera automatiquement archivé dans l'historique des commentaires.
             </Infobulle>
           }
+          aria-label={`bouton-nouveau-commentaire-${type}`}
           label="Nouveau commentaire"
           variant="secondary"
         />

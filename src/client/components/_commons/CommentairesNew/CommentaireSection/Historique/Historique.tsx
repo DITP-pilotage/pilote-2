@@ -24,6 +24,7 @@ const HistoriqueCommentaire = ({ type }: { type: TypeCommentaireChantier }) => {
       title="Historique - Commentaires"
       trigger={
         <BoutonSousLigné
+          aria-label={`Voir l'histoire des commentaires du type ${type}`}
           className="fr-mt-1w fr-ml-3w"
           iconLeft={
             <Icone className="w-4 h-4 !text-current" icone={Eye1Icon} />

@@ -37,9 +37,9 @@ const CommentaireSection: FunctionComponent<CommentaireSectionProps> = ({
   return (
     <div className="px-2 py-4">
       {!modeÉdition && (
-        <p className="font-bold text-xl mb-1">
+        <h5 className="font-bold text-xl mb-1">
           {libellesTypesCommentaire[type]}
-        </p>
+        </h5>
       )}
       {commentaireBrouillon?.dateModification ? (
         <div className="my-2">
