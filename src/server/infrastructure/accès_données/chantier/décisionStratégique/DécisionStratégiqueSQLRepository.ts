@@ -1,4 +1,5 @@
 import {
+  $Enums,
   decision_strategique as DécisionStratégiquePrisma,
   type_decision_strategique as TypeDécisionStratégiquePrisma,
 } from "@prisma/client";
@@ -9,7 +10,7 @@ import {
 } from "@/server/domain/chantier/décisionStratégique/DécisionStratégique.interface";
 import DécisionStratégiqueRepository from "@/server/domain/chantier/décisionStratégique/DécisionStratégiqueRepository.interface";
 import Chantier from "@/server/domain/chantier/Chantier.interface";
-import { prisma } from "@/server/db/prisma";
+import { PrismaPilote } from "@/server/db/PrismaPilote";
 
 export const NOMS_TYPES_DÉCISION_STRATÉGIQUE: Record<
   string,
@@ -26,8 +27,18 @@ export const CODES_TYPES_DÉCISION_STRATÉGIQUE: Record<
 };
 
 export default class DécisionStratégiqueSQLRepository implements DécisionStratégiqueRepository {
+  private prismaClient: PrismaPilote;
+
+  constructor({ prisma }: { prisma: PrismaPilote }) {
+    this.prismaClient = prisma;
+  }
+
+  get prisma() {
+    return this.prismaClient.getInstance();
+  }
+
   async getById(id: string): Promise<DecisionStrategiqueV2 | null> {
-    const decision = await prisma.decision_strategique.findUnique({
+    const decision = await this.prisma.decision_strategique.findUnique({
       where: { id },
     });
 
@@ -47,7 +58,7 @@ export default class DécisionStratégiqueSQLRepository implements DécisionStra
   }
 
   async save(decision: DecisionStrategiqueV2): Promise<void> {
-    await prisma.decision_strategique.upsert({
+    await this.prisma.decision_strategique.upsert({
       where: { id: decision.id },
       create: {
         id: decision.id,
@@ -72,23 +83,25 @@ export default class DécisionStratégiqueSQLRepository implements DécisionStra
   async récupérerLesPlusRécentesGroupéesParChantier(
     chantiersIds: Chantier["id"][],
   ): Promise<Record<string, DécisionStratégique>> {
-    const décisionsStratégiques = await prisma.$queryRaw<
+    const décisionsStratégiques = await this.prisma.$queryRaw<
       (DécisionStratégiquePrisma & {
         prenom_auteur: string | null;
         nom_auteur: string | null;
       })[]
     >`
-        SELECT d.*, utilisateur.prenom as prenom_auteur, utilisateur.nom as nom_auteur
+        SELECT d.*, u.prenom as prenom_auteur, u.nom as nom_auteur
         FROM decision_strategique d
-          LEFT JOIN utilisateur on utilisateur.id = d.auteur_id
+          LEFT JOIN utilisateur u ON u.id = d.auteur_modification_id
           INNER JOIN (
-            SELECT chantier_id, MAX(date) as maxdate
+            SELECT chantier_id, MAX(date_modification) as maxdate
             FROM decision_strategique
             WHERE chantier_id = ANY (${chantiersIds})
+              AND statut = ${$Enums.statut_publication.PUBLIE}::"statut_publication"
             GROUP BY chantier_id
           ) d_recents
-          ON d.date = d_recents.maxdate
+          ON d.date_modification = d_recents.maxdate
           AND d.chantier_id = d_recents.chantier_id
+        WHERE d.statut = ${$Enums.statut_publication.PUBLIE}::"statut_publication"
     `;
 
     return Object.fromEntries(
@@ -98,8 +111,8 @@ export default class DécisionStratégiqueSQLRepository implements DécisionStra
           id: décisionStratégique.id,
           type: NOMS_TYPES_DÉCISION_STRATÉGIQUE[décisionStratégique.type],
           contenu: décisionStratégique.contenu,
-          date: décisionStratégique.date.toISOString(),
-          auteur: décisionStratégique.auteur_id
+          date: décisionStratégique.date_modification.toISOString(),
+          auteur: décisionStratégique.auteur_modification_id
             ? `${décisionStratégique.prenom_auteur} ${décisionStratégique.nom_auteur}`
             : "Auteur Inconnu",
         },
