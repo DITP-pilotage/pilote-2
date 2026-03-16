@@ -4,8 +4,7 @@ import { Bouton } from "@/components/_commons/Bouton/Bouton";
 import { Icone } from "@/components/_commons/Icone";
 import { Icone1Icon } from "@/components/_commons/Icones/Icone1Icon";
 import { Infobulle } from "@/components/_commons/Infobulle/Infobulle";
-import { CommentaireAction } from "@/components/_commons/CommentairesNew/CommentaireSection/AlerteCommentaire";
-import { PublicationAvecAuteur } from "@/components/_commons/CommentairesNew/CommentaireSection/Publication.interface";
+import { Publication } from "@/components/_commons/CommentairesNew/CommentaireSection/Publication.interface";
 import { ModaleFormulaireCommentaire } from "./ModaleFormulaireCommentaire";
 
 const BoutonNouveauCommentaire = ({
@@ -13,28 +12,24 @@ const BoutonNouveauCommentaire = ({
   libelle,
   consigne,
   onPublier,
-  onBrouillon,
-  onAction,
+  onEnregistrerBrouillon,
 }: {
-  commentaire: PublicationAvecAuteur | null;
+  commentaire: Publication | null;
   libelle: string;
   consigne: string;
   onPublier: SubmitHandler<{ contenu: string }>;
-  onBrouillon: SubmitHandler<{ contenu: string }>;
-  onAction: (action: CommentaireAction) => void;
+  onEnregistrerBrouillon: SubmitHandler<{ contenu: string }>;
 }) => {
   const [open, setOpen] = useState(false);
 
   const handlePublier: SubmitHandler<{ contenu: string }> = async (data) => {
     await onPublier(data);
     setOpen(false);
-    onAction("publication-reussie");
   };
 
   const handleBrouillon: SubmitHandler<{ contenu: string }> = async (data) => {
-    await onBrouillon(data);
+    await onEnregistrerBrouillon(data);
     setOpen(false);
-    onAction("brouillon-enregistre");
   };
 
   return (
@@ -42,7 +37,7 @@ const BoutonNouveauCommentaire = ({
       commentaire={commentaire}
       consigne={consigne}
       libelle={libelle}
-      onBrouillon={handleBrouillon}
+      onEnregistrerBrouillon={handleBrouillon}
       onOpenChange={setOpen}
       onPublier={handlePublier}
       open={open}

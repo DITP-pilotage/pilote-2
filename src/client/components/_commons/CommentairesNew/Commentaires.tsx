@@ -4,7 +4,7 @@ import {
   typesCommentaireMailleNationale,
   typesCommentaireMailleRégionaleOuDépartementale,
 } from "@/server/domain/chantier/commentaire/Commentaire.interface";
-import CommentaireSectionConnectee from "@/components/_commons/CommentairesNew/CommentaireSection/CommentaireSectionConnectee";
+import { CommentaireSectionParType } from "@/components/_commons/CommentairesNew/CommentaireSection/CommentaireSectionParType";
 import {
   pageChantier,
   useTerritoireSelectionne,
@@ -18,7 +18,7 @@ interface CommentairesProps {
   estChantierArchive?: boolean;
 }
 
-const Commentaires = ({
+export const Commentaires = ({
   typesCommentaire,
   modeÉcriture = false,
   estChantierArchive = false,
@@ -36,7 +36,7 @@ const Commentaires = ({
       {typesCommentaire.map((type, i) => (
         <Fragment key={type}>
           {i !== 0 && <hr className="fr-hr fr-mx-n2w" />}
-          <CommentaireSectionConnectee
+          <CommentaireSectionParType
             commentaire={commentaires[type]}
             commentaireBrouillon={commentairesBrouillon[type]}
             modeEcriture={modeÉcriture}
@@ -47,5 +47,3 @@ const Commentaires = ({
     </Bloc>
   );
 };
-
-export default Commentaires;

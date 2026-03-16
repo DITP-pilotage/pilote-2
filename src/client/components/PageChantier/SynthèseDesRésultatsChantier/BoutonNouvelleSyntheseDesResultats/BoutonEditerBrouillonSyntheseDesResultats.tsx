@@ -31,7 +31,7 @@ export const BoutonEditerBrouillonSyntheseDesResultats = ({
 
   return (
     <ModaleFormulaireSyntheseDesResultats
-      onBrouillon={enregistrerEnBrouillon}
+      onEnregistrerBrouillon={enregistrerEnBrouillon}
       onOpenChange={setOpen}
       onPublier={publier}
       open={open}

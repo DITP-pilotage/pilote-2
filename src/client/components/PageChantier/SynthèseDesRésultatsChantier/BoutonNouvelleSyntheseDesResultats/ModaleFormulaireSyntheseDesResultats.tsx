@@ -30,12 +30,19 @@ interface ModaleFormulaireSyntheseDesResultatsProps {
   open: boolean;
   onOpenChange: (isOpen: boolean) => void;
   onPublier: SubmitHandler<SyntheseDesResultatsFormulaireInputs>;
-  onBrouillon: SubmitHandler<SyntheseDesResultatsFormulaireInputs>;
+  onEnregistrerBrouillon: SubmitHandler<SyntheseDesResultatsFormulaireInputs>;
 }
 
 export const ModaleFormulaireSyntheseDesResultats: FunctionComponent<
   ModaleFormulaireSyntheseDesResultatsProps
-> = ({ title, trigger, open, onOpenChange, onPublier, onBrouillon }) => {
+> = ({
+  title,
+  trigger,
+  open,
+  onOpenChange,
+  onPublier,
+  onEnregistrerBrouillon,
+}) => {
   const {
     syntheseDesResultats,
     syntheseDesResultatsBrouillon,
@@ -157,7 +164,7 @@ export const ModaleFormulaireSyntheseDesResultats: FunctionComponent<
             iconLeft={
               <Icone className="w-4 h-4 text-current" icone={SaveIcon} />
             }
-            onClick={form.handleSubmit(onBrouillon)}
+            onClick={form.handleSubmit(onEnregistrerBrouillon)}
             type="button"
           >
             Enregistrer en tant que brouillon

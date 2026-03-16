@@ -5,13 +5,13 @@ import { Icone1Icon } from "@/components/_commons/Icones/Icone1Icon";
 import { Infobulle } from "@/components/_commons/Infobulle/Infobulle";
 import { Badge } from "@/components/_commons/Badge";
 import { PiloteDateFormatter } from "@/server/rapports-hebdomadaires/infrastructure/adapters/PiloteDateFormatter";
-import { PublicationAvecAuteur } from "@/components/_commons/CommentairesNew/CommentaireSection/Publication.interface";
+import { Publication } from "@/components/_commons/CommentairesNew/CommentaireSection/Publication.interface";
 
 export const AffichageCommentaire = ({
   commentaire,
   onModifier,
 }: {
-  commentaire: PublicationAvecAuteur | null;
+  commentaire: Publication | null;
   onModifier?: () => void;
 }) => {
   if (!commentaire) {

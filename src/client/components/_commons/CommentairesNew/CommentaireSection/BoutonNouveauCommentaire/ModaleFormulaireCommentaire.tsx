@@ -19,8 +19,8 @@ import {
   useTerritoireSelectionne,
 } from "@/components/PageChantier/PageChantierServerSideContext";
 import {
-  BrouillonPublication,
-  PublicationAvecAuteur,
+  PublicationBrouillon,
+  Publication,
 } from "@/components/_commons/CommentairesNew/CommentaireSection/Publication.interface";
 
 interface ModaleFormulaireCommentaireProps {
@@ -30,10 +30,10 @@ interface ModaleFormulaireCommentaireProps {
   trigger: ReactNode;
   open: boolean;
   onOpenChange: (isOpen: boolean) => void;
-  commentaire: PublicationAvecAuteur | null;
-  brouillon?: BrouillonPublication | null;
+  commentaire: Publication | null;
+  brouillon?: PublicationBrouillon | null;
   onPublier: SubmitHandler<{ contenu: string }>;
-  onBrouillon: SubmitHandler<{ contenu: string }>;
+  onEnregistrerBrouillon: SubmitHandler<{ contenu: string }>;
 }
 
 export const ModaleFormulaireCommentaire = ({
@@ -46,7 +46,7 @@ export const ModaleFormulaireCommentaire = ({
   commentaire,
   brouillon,
   onPublier,
-  onBrouillon,
+  onEnregistrerBrouillon,
 }: ModaleFormulaireCommentaireProps) => {
   const { chantierInformations } = pageChantier.useServerSidePropsContext();
   const territoireSélectionné = useTerritoireSelectionne();
@@ -124,7 +124,7 @@ export const ModaleFormulaireCommentaire = ({
             iconLeft={
               <Icone className="w-4 h-4 text-current" icone={SaveIcon} />
             }
-            onClick={form.handleSubmit(onBrouillon)}
+            onClick={form.handleSubmit(onEnregistrerBrouillon)}
             type="button"
           >
             Enregistrer en tant que brouillon

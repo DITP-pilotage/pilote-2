@@ -1,13 +1,13 @@
 import { SubmitHandler } from "react-hook-form";
 
-export interface PublicationAvecAuteur {
+export interface Publication {
   contenu: string;
   dateCreation: string;
   dateModification: string;
   auteurModificationNom: string;
 }
 
-export interface BrouillonPublication {
+export interface PublicationBrouillon {
   id: string;
   contenu: string;
   dateModification: string;
