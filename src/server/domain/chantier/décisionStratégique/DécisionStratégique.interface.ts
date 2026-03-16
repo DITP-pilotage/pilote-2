@@ -1,5 +1,5 @@
 export const typesDecisionStrategique = [
-  "suiviDesDécisionsStratégiques",
+  "suiviDesDecisionsStrategiques",
 ] as const;
 export type TypeDecisionStrategique = (typeof typesDecisionStrategique)[number];
 

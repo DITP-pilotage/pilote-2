@@ -94,7 +94,7 @@ describe("RecupererBrouillonDecisionStrategiqueQuery", () => {
       expect(result).toEqual({
         id: brouillon.id,
         chantierId: chantier.id,
-        type: "suiviDesDécisionsStratégiques",
+        type: "suiviDesDecisionsStrategiques",
         contenu: "Mon brouillon",
         statut: $Enums.statut_publication.BROUILLON,
         auteurCreationId: auteur.id,

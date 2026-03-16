@@ -126,14 +126,12 @@ export const getServerSideProps = async (
           "récupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase",
         )
         .run([chantierId], session.habilitations),
-      getContainer("importDecisionStrategique")
+      getContainer("decisionStrategique")
         .resolve("recupererDerniereDecisionStrategiqueQuery")
-        .run(chantierId)
-        .catch(() => null),
-      getContainer("importDecisionStrategique")
+        .run(chantierId),
+      getContainer("decisionStrategique")
         .resolve("recupererBrouillonDecisionStrategiqueQuery")
-        .run(chantierId, session.user!.id)
-        .catch(() => null),
+        .run(chantierId, session.user!.id),
       getContainer("chantiers")
         .resolve("recupererDetailsIndicateursV2UseCase")
         .run(chantierId, territoireCodes, session.habilitations, jalon),

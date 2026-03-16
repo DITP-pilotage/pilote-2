@@ -5,7 +5,7 @@ import { Icone } from "@/components/_commons/Icone";
 import { Eye1Icon } from "@/components/_commons/Icones/Eye1Icon";
 import { TypeCommentaireChantier } from "@/server/domain/chantier/commentaire/Commentaire.interface";
 import api from "@/server/infrastructure/api/trpc/api";
-import AffichageCommentaire from "@/components/_commons/CommentairesNew/CommentaireSection/Affichage/Affichage";
+import { AffichageCommentaire } from "@/components/_commons/CommentairesNew/CommentaireSection/Affichage/Affichage";
 import { pageChantier } from "@/components/PageChantier/PageChantierServerSideContext";
 
 const HistoriqueCommentaire = ({ type }: { type: TypeCommentaireChantier }) => {

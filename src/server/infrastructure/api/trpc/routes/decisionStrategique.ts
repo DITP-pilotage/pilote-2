@@ -26,7 +26,7 @@ export const decisionStrategiqueRouter = créerRouteurTRPC({
     .mutation(({ input, ctx }) => {
       vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
 
-      return getContainer("importDecisionStrategique")
+      return getContainer("decisionStrategique")
         .resolve("publierDecisionStrategiqueUseCase")
         .execute({
           chantierId: input.chantierId,
@@ -47,7 +47,7 @@ export const decisionStrategiqueRouter = créerRouteurTRPC({
     .mutation(({ input, ctx }) => {
       vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
 
-      return getContainer("importDecisionStrategique")
+      return getContainer("decisionStrategique")
         .resolve("enregistrerBrouillonDecisionStrategiqueUseCase")
         .execute({
           chantierId: input.chantierId,
@@ -68,7 +68,7 @@ export const decisionStrategiqueRouter = créerRouteurTRPC({
     .mutation(({ input, ctx }) => {
       vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
 
-      return getContainer("importDecisionStrategique")
+      return getContainer("decisionStrategique")
         .resolve("publierBrouillonDecisionStrategiqueUseCase")
         .execute({
           brouillonId: input.brouillonId,
@@ -88,7 +88,7 @@ export const decisionStrategiqueRouter = créerRouteurTRPC({
     .mutation(({ input, ctx }) => {
       vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
 
-      return getContainer("importDecisionStrategique")
+      return getContainer("decisionStrategique")
         .resolve("modifierBrouillonDecisionStrategiqueUseCase")
         .execute({
           brouillonId: input.brouillonId,
@@ -108,7 +108,7 @@ export const decisionStrategiqueRouter = créerRouteurTRPC({
     .mutation(({ input, ctx }) => {
       vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
 
-      return getContainer("importDecisionStrategique")
+      return getContainer("decisionStrategique")
         .resolve("modifierDecisionStrategiquePublieeUseCase")
         .execute({
           decisionStrategiqueId: input.decisionStrategiqueId,
@@ -122,7 +122,7 @@ export const decisionStrategiqueRouter = créerRouteurTRPC({
   recupererHistorique: procédureProtégée
     .input(validationDecisionStrategiqueContexte)
     .query(({ input }) => {
-      return getContainer("importDecisionStrategique")
+      return getContainer("decisionStrategique")
         .resolve("recupererHistoriqueDecisionStrategiqueQuery")
         .run(input.chantierId);
     }),

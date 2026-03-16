@@ -2,7 +2,7 @@ import { z } from "zod";
 import { TypeDecisionStrategique } from "@/server/domain/chantier/décisionStratégique/DécisionStratégique.interface";
 
 export const typesDecisionStrategiqueAPIVersDomaine = {
-  suivi_des_decisions: "suiviDesDécisionsStratégiques",
+  suivi_des_decisions: "suiviDesDecisionsStrategiques",
 } as const;
 
 export type TypeDecisionStrategiqueAPI =

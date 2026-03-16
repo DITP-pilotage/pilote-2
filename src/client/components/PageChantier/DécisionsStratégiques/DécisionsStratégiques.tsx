@@ -5,10 +5,6 @@ import {
   BrouillonPublication,
   PublicationActions,
 } from "@/components/_commons/CommentairesNew/CommentaireSection/Publication.interface";
-import {
-  DecisionStrategiqueV2,
-  DecisionStrategiqueV2AvecNomsAuteurs,
-} from "@/server/domain/chantier/décisionStratégique/DécisionStratégique.interface";
 import { pageChantier } from "@/components/PageChantier/PageChantierServerSideContext";
 import {
   consignesEcritureDecisionStrategique,
@@ -19,20 +15,17 @@ import { useEditerBrouillonDecisionStrategique } from "./useEditerBrouillonDecis
 import { useModifierDecisionStrategique } from "./useModifierDecisionStrategique";
 import HistoriqueDecisionStrategique from "./HistoriqueDecisionStrategique";
 
-const TYPE = "suiviDesDécisionsStratégiques" as const;
+const TYPE = "suiviDesDecisionsStrategiques" as const;
 
 export const DécisionsStratégiques = ({
-  decisionStrategique,
-  brouillon,
   modeEcriture = false,
   estChantierArchive,
 }: {
-  decisionStrategique: DecisionStrategiqueV2AvecNomsAuteurs | null;
-  brouillon: DecisionStrategiqueV2 | null;
   modeEcriture?: boolean;
   estChantierArchive: boolean;
 }) => {
-  const { chantier } = pageChantier.useServerSidePropsContext();
+  const { chantier, décisionStratégique, brouillonDecisionStrategique } =
+    pageChantier.useServerSidePropsContext();
   const refreshRouter = useRefreshRouter();
 
   const { publier, enregistrerEnBrouillon } = useNouvelleDecisionStrategique({
@@ -45,12 +38,12 @@ export const DécisionsStratégiques = ({
     publier: publierBrouillon,
     enregistrerEnBrouillon: modifierBrouillon,
   } = useEditerBrouillonDecisionStrategique({
-    brouillonId: brouillon?.id ?? "",
+    brouillonId: brouillonDecisionStrategique?.id ?? "",
     onSuccess: () => refreshRouter(),
   });
 
   const modifier = useModifierDecisionStrategique({
-    decisionStrategiqueId: decisionStrategique?.id ?? "",
+    decisionStrategiqueId: décisionStratégique?.id ?? "",
     onSuccess: () => {},
   });
 
@@ -62,13 +55,14 @@ export const DécisionsStratégiques = ({
     modifier,
   };
 
-  const brouillonPublication: BrouillonPublication | null = brouillon
-    ? {
-        id: brouillon.id,
-        contenu: brouillon.contenu,
-        dateModification: brouillon.dateModification,
-      }
-    : null;
+  const brouillonPublication: BrouillonPublication | null =
+    brouillonDecisionStrategique
+      ? {
+          id: brouillonDecisionStrategique.id,
+          contenu: brouillonDecisionStrategique.contenu,
+          dateModification: brouillonDecisionStrategique.dateModification,
+        }
+      : null;
 
   return (
     <Bloc
@@ -84,7 +78,7 @@ export const DécisionsStratégiques = ({
         historiqueNode={<HistoriqueDecisionStrategique />}
         libelle={libellésTypesDécisionStratégique[TYPE]}
         modeEcriture={modeEcriture}
-        publication={decisionStrategique}
+        publication={décisionStratégique}
       />
     </Bloc>
   );

@@ -1,7 +1,7 @@
 import { $Enums } from "@prisma/client";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { TypeDecisionStrategique } from "@/server/domain/chantier/décisionStratégique/DécisionStratégique.interface";
-import { NOMS_TYPES_DÉCISION_STRATÉGIQUE } from "@/server/infrastructure/accès_données/chantier/décisionStratégique/DécisionStratégiqueSQLRepository";
+import { NOMS_TYPES_DECISION_STRATEGIQUE } from "@/server/infrastructure/accès_données/chantier/décisionStratégique/DécisionStratégiqueSQLRepository";
 
 export type DecisionStrategiqueHistoriqueItem = {
   chantierId: string;
@@ -29,7 +29,7 @@ export class RecupererHistoriqueDecisionStrategiqueQuery {
 
     return decisions.map((decision) => ({
       chantierId: decision.chantier_id,
-      type: NOMS_TYPES_DÉCISION_STRATÉGIQUE[decision.type],
+      type: NOMS_TYPES_DECISION_STRATEGIQUE[decision.type],
       contenu: decision.contenu,
       dateCreation: decision.date_creation.toISOString(),
       dateModification: decision.date_modification.toISOString(),

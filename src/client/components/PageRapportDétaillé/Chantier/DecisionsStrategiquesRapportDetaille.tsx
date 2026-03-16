@@ -18,7 +18,7 @@ export const DecisionsStrategiquesRapportDetaille = ({
     >
       <div className="py-4 px-6">
         <p className="font-bold mb-1 text-xl">
-          {libellésTypesDécisionStratégique.suiviDesDécisionsStratégiques}
+          {libellésTypesDécisionStratégique.suiviDesDecisionsStrategiques}
         </p>
         {décisionStratégique ? (
           <>

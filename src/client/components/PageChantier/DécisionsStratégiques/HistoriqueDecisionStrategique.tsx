@@ -4,7 +4,7 @@ import { BoutonSousLigné } from "@/components/_commons/BoutonSousLigné/BoutonS
 import { Icone } from "@/components/_commons/Icone";
 import { Eye1Icon } from "@/components/_commons/Icones/Eye1Icon";
 import api from "@/server/infrastructure/api/trpc/api";
-import AffichageCommentaire from "@/components/_commons/CommentairesNew/CommentaireSection/Affichage/Affichage";
+import { AffichageCommentaire } from "@/components/_commons/CommentairesNew/CommentaireSection/Affichage/Affichage";
 import { pageChantier } from "@/components/PageChantier/PageChantierServerSideContext";
 
 const HistoriqueDecisionStrategique = () => {
@@ -13,7 +13,7 @@ const HistoriqueDecisionStrategique = () => {
 
   const { data: historique } =
     api.decisionStrategique.recupererHistorique.useQuery(
-      { chantierId: chantier.id, type: "suiviDesDécisionsStratégiques" },
+      { chantierId: chantier.id, type: "suiviDesDecisionsStrategiques" },
       { enabled: open },
     );
 

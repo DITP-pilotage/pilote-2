@@ -85,7 +85,7 @@ function registerContainer(): ContainerDependencies {
     rapportsHebdomadaires: getContainer("rapportsHebdomadaires"),
     albert: getContainer("albert"),
     parametrageCentreAide: getContainer("parametrageCentreAide"),
-    importDecisionStrategique: getContainer("importDecisionStrategique"),
+    decisionStrategique: getContainer("decisionStrategique"),
     importObjectif: getContainer("importObjectif"),
     importSyntheseDesResultats: getContainer("importSyntheseDesResultats"),
     datajobsExecution: getContainer("datajobsExecution"),

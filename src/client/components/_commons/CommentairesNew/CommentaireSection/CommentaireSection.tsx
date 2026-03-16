@@ -1,11 +1,11 @@
-import { FunctionComponent, ReactNode, useState } from "react";
+import { ReactNode, useState } from "react";
 import { SubmitHandler } from "react-hook-form";
 import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
 import BandeauInformation from "@/components/_commons/BandeauInformation/BandeauInformation";
 import AlerteCommentaire, {
   CommentaireAction,
 } from "@/components/_commons/CommentairesNew/CommentaireSection/AlerteCommentaire";
-import AffichageCommentaire from "@/components/_commons/CommentairesNew/CommentaireSection/Affichage/Affichage";
+import { AffichageCommentaire } from "@/components/_commons/CommentairesNew/CommentaireSection/Affichage/Affichage";
 import CommentaireFormulaire from "@/components/_commons/CommentairesNew/CommentaireSection/Formulaire/CommentaireFormulaire";
 import BoutonNouveauCommentaire from "@/components/_commons/CommentairesNew/CommentaireSection/BoutonNouveauCommentaire/BoutonNouveauCommentaire";
 import BoutonEditerBrouillonCommentaire from "@/components/_commons/CommentairesNew/CommentaireSection/BoutonNouveauCommentaire/BoutonEditerBrouillonCommentaire";
@@ -26,7 +26,7 @@ interface CommentaireSectionProps {
   historiqueNode?: ReactNode;
 }
 
-const CommentaireSection: FunctionComponent<CommentaireSectionProps> = ({
+const CommentaireSection = ({
   libelle,
   consigne,
   publication,
@@ -34,7 +34,7 @@ const CommentaireSection: FunctionComponent<CommentaireSectionProps> = ({
   modeEcriture = false,
   actions,
   historiqueNode,
-}) => {
+}: CommentaireSectionProps) => {
   const [modeÉdition, setModeÉdition] = useState(false);
   const [action, setAction] = useState<CommentaireAction | null>(null);
   const refreshRouter = useRefreshRouter();

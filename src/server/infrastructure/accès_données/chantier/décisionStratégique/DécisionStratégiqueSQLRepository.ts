@@ -12,18 +12,18 @@ import DécisionStratégiqueRepository from "@/server/domain/chantier/décisionS
 import Chantier from "@/server/domain/chantier/Chantier.interface";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 
-export const NOMS_TYPES_DÉCISION_STRATÉGIQUE: Record<
+export const NOMS_TYPES_DECISION_STRATEGIQUE: Record<
   string,
   TypeDecisionStrategique
 > = {
-  suivi_des_decisions: "suiviDesDécisionsStratégiques",
+  suivi_des_decisions: "suiviDesDecisionsStrategiques",
 };
 
-export const CODES_TYPES_DÉCISION_STRATÉGIQUE: Record<
+export const CODES_TYPES_DECISION_STRATEGIQUE: Record<
   TypeDecisionStrategique,
   TypeDécisionStratégiquePrisma
 > = {
-  suiviDesDécisionsStratégiques: "suivi_des_decisions",
+  suiviDesDecisionsStrategiques: "suivi_des_decisions",
 };
 
 export default class DécisionStratégiqueSQLRepository implements DécisionStratégiqueRepository {
@@ -47,7 +47,7 @@ export default class DécisionStratégiqueSQLRepository implements DécisionStra
     return {
       id: decision.id,
       chantierId: decision.chantier_id,
-      type: NOMS_TYPES_DÉCISION_STRATÉGIQUE[decision.type],
+      type: NOMS_TYPES_DECISION_STRATEGIQUE[decision.type],
       contenu: decision.contenu,
       statut: decision.statut,
       auteurCreationId: decision.auteur_creation_id ?? "",
@@ -63,7 +63,7 @@ export default class DécisionStratégiqueSQLRepository implements DécisionStra
       create: {
         id: decision.id,
         chantier_id: decision.chantierId,
-        type: CODES_TYPES_DÉCISION_STRATÉGIQUE[decision.type],
+        type: CODES_TYPES_DECISION_STRATEGIQUE[decision.type],
         contenu: decision.contenu,
         statut: decision.statut,
         auteur_creation_id: decision.auteurCreationId,
@@ -109,7 +109,7 @@ export default class DécisionStratégiqueSQLRepository implements DécisionStra
         décisionStratégique.chantier_id,
         {
           id: décisionStratégique.id,
-          type: NOMS_TYPES_DÉCISION_STRATÉGIQUE[décisionStratégique.type],
+          type: NOMS_TYPES_DECISION_STRATEGIQUE[décisionStratégique.type],
           contenu: décisionStratégique.contenu,
           date: décisionStratégique.date_modification.toISOString(),
           auteur: décisionStratégique.auteur_modification_id
