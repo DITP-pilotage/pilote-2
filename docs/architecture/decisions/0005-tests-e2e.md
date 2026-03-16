@@ -1,6 +1,6 @@
-# 5. Tests E2E avec le pattern Page Object Model
+# 5. Tests E2E : Page Object Model et isolation des données
 
-Date : 2026-01-26
+Date : 2026-01-26 (mise à jour : 2026-03-16)
 
 ## Statut
 
@@ -8,7 +8,11 @@ Accepté
 
 ## Contexte
 
-Les tests E2E initiaux de la codebase manipulaient directement les sélecteurs Playwright dans chaque fichier de test. Cette approche entraînait plusieurs problèmes :
+Les tests E2E de la codebase présentaient deux problèmes distincts :
+
+### Problème 1 : Sélecteurs dupliqués et fragiles
+
+Les tests manipulaient directement les sélecteurs Playwright dans chaque fichier de test :
 
 **Code dupliqué et fragile :**
 ```typescript
@@ -27,9 +31,30 @@ await page.getByRole("button").click();
 - **Pas de réutilisation** : impossible de factoriser des scénarios communs (login, navigation)
 - **Tests fragiles** : les sélecteurs magiques rendent les tests difficiles à déboguer
 
+### Problème 2 : Pollution des données entre tests
+
+La base de données est seedée une seule fois au `globalSetup` (le seed complet est trop long pour être exécuté avant chaque test). Les tests partagent donc les mêmes données. Quand un test crée des entités (propositions PVA, commentaires, etc.) et échoue en cours de route, les données restent en base et polluent les retries et les tests suivants :
+
+```typescript
+// Le test crée une PVA via l'UI
+const modal = await indicateur.clickProposerAutreValeur();
+await modal.publierProposition();
+
+// Échoue plus tard dans le test
+await appActions.switchUser(autreUtilisateur); // 💥 Timeout
+
+// Au retry, la PVA existe toujours en base.
+// Le bouton "Proposer une autre valeur" n'est plus visible → échec en cascade.
+```
+
+**Problèmes identifiés :**
+- **Couplage temporel** : l'ordre d'exécution et le résultat des tests précédents impactent les suivants
+- **Retries inutiles** : un test qui échoue pour une raison transitoire échoue aussi en retry à cause de données résiduelles
+- **Cleanup via l'UI fragile** : tenter de nettoyer les données via des interactions UI (boutons "Supprimer") est lui-même sujet à des timeouts et ajoute de la complexité
+
 ## Décision
 
-Nous utilisons le pattern **Page Object Model (POM)** pour structurer nos tests E2E Playwright, ainsi qu'un **API Object Model** pour les tests d'API.
+Nous utilisons le pattern **Page Object Model (POM)** pour structurer nos tests E2E Playwright, un **API Object Model** pour les tests d'API, et un **E2ETestContext** pour l'isolation des données entre tests.
 
 ### Page Object Model (tests UI)
 
@@ -43,6 +68,8 @@ Nous utilisons le pattern **Page Object Model (POM)** pour structurer nos tests 
 **Structure du dossier `tests/` :**
 ```
 tests/
+├── e2e-test-context.ts       # Context d'isolation des données
+├── fixtures.ts               # Fixture Playwright (injection du context)
 ├── pages/                    # Page Objects
 │   ├── base.page.ts          # Classe abstraite de base
 │   ├── page-accueil.ts
@@ -73,7 +100,10 @@ tests/
 ```typescript
 // tests/pages/base.page.ts
 export abstract class BasePage {
-  constructor(protected readonly page: Page) {}
+  constructor(
+    protected readonly page: Page,
+    protected readonly e2eContext: E2ETestContext,
+  ) {}
 }
 ```
 
@@ -125,8 +155,8 @@ export class PageAccueil extends BasePage {
   readonly header: HeaderComponent;
   readonly exportModal: ExportCsvModal;
 
-  constructor(page: Page) {
-    super(page);
+  constructor(page: Page, e2eContext: E2ETestContext) {
+    super(page, e2eContext);
     this.header = new HeaderComponent(page);
     this.exportModal = new ExportCsvModal(page);
   }
@@ -135,7 +165,7 @@ export class PageAccueil extends BasePage {
     await this.page.getByRole("table")
       .getByRole("cell", { name: nom }).click();
     await this.page.waitForURL(`**/chantier/CH-${id}/NAT-FR**`);
-    return new PageChantier(this.page);
+    return new PageChantier(this.page, this.e2eContext);
   }
 }
 ```
@@ -144,18 +174,21 @@ export class PageAccueil extends BasePage {
 ```typescript
 // tests/actions/app.actions.ts
 export class AppActions {
-  constructor(private readonly page: Page) {}
+  constructor(
+    private readonly page: Page,
+    private readonly e2eContext: E2ETestContext,
+  ) {}
 
   async loginAs(username?: string, password?: string): Promise<PageAccueil> {
-    const pageAccueilNonConnecte = new PageAccueilNonConnecte(this.page);
+    const pageAccueilNonConnecte = new PageAccueilNonConnecte(this.page, this.e2eContext);
     await pageAccueilNonConnecte.goto();
     await pageAccueilNonConnecte.header.clickLogin();
 
-    const pageLogin = new PageLogin(this.page);
+    const pageLogin = new PageLogin(this.page, this.e2eContext);
     await pageLogin.fillCredentials(username, password);
     await pageLogin.submit();
 
-    return new PageAccueil(this.page);
+    return new PageAccueil(this.page, this.e2eContext);
   }
 }
 ```
@@ -168,8 +201,10 @@ export class AppActions {
 
 **Exemple de test avec POM** :
 ```typescript
-test("doit pouvoir consulter les données des chantiers", async ({ page }) => {
-  const appActions = new AppActions(page);
+import { test } from "./fixtures";
+
+test("doit pouvoir consulter les données des chantiers", async ({ page, e2eContext }) => {
+  const appActions = new AppActions(page, e2eContext);
   const pageAccueil = await appActions.loginAs();
 
   await test.step("Vérification de la structure de la page d'accueil", async () => {
@@ -185,6 +220,133 @@ test("doit pouvoir consulter les données des chantiers", async ({ page }) => {
 ```
 
 **Exemple de référence** : `tests/information-chantier.spec.ts`
+
+### Isolation des données avec E2ETestContext
+
+Le `E2ETestContext` est un registre d'entités créées pendant un test. Il permet de garantir que chaque test (et chaque retry) part d'un état propre, sans dépendre du résultat des tests précédents.
+
+**Principe :**
+- Le context est injecté dans les tests via une fixture Playwright personnalisée
+- Les POM reçoivent le context dans leur constructeur et y enregistrent les entités créées via l'UI
+- En `afterEach`, la fixture appelle `cleanup()` qui supprime les entités trackées via Prisma
+- Le seed global (données de référence : chantiers, indicateurs, territoires, utilisateurs) reste inchangé
+
+**Implémentation :**
+
+1. **Le registre d'entités** :
+```typescript
+// tests/e2e-test-context.ts
+import { PrismaClient } from "@prisma/client";
+
+const prisma = new PrismaClient();
+
+type EntityType = "pva" | "commentaire" | "evenement";
+
+interface TrackedEntity {
+  type: EntityType;
+  filters: Record<string, unknown>;
+}
+
+export class E2ETestContext {
+  private readonly entities: TrackedEntity[] = [];
+
+  track(type: EntityType, filters: Record<string, unknown>): void {
+    this.entities.push({ type, filters });
+  }
+
+  async cleanup(): Promise<void> {
+    for (const entity of this.entities) {
+      switch (entity.type) {
+        case "pva":
+          await prisma.proposition_valeur_actuelle.deleteMany({
+            where: entity.filters,
+          });
+          break;
+        case "evenement":
+          await prisma.indicateur_territoire_valeur_evenement.deleteMany({
+            where: entity.filters,
+          });
+          break;
+        case "commentaire":
+          await prisma.commentaire.deleteMany({
+            where: entity.filters,
+          });
+          break;
+      }
+    }
+    this.entities.length = 0;
+  }
+}
+```
+
+2. **La fixture Playwright** :
+```typescript
+// tests/fixtures.ts
+import { test as base } from "@playwright/test";
+import { E2ETestContext } from "./e2e-test-context";
+
+export const test = base.extend<{ e2eContext: E2ETestContext }>({
+  e2eContext: async ({}, use) => {
+    const context = new E2ETestContext();
+    await use(context);
+    await context.cleanup();
+  },
+});
+```
+
+3. **Enregistrement dans les POM** :
+```typescript
+// tests/components/pva-indicateur.component.ts
+export class PvaIndicateurComponent {
+  constructor(
+    private readonly page: Page,
+    private readonly indicateurId: string,
+    private readonly territoireCode: string,
+    private readonly e2eContext: E2ETestContext,
+  ) {}
+
+  async clickProposerAutreValeur(): Promise<PvaModalComponent> {
+    await this.section
+      .getByRole("button", { name: /Proposer une autre valeur/ })
+      .click();
+    this.e2eContext.track("pva", {
+      indic_id: this.indicateurId,
+      territoire_code: this.territoireCode,
+    });
+    this.e2eContext.track("evenement", {
+      indic_id: this.indicateurId,
+      territoire_code: this.territoireCode,
+      type_evenement: { startsWith: "PROPOSITION_VALEUR" },
+    });
+    return new PvaModalComponent(this.page);
+  }
+}
+```
+
+4. **Utilisation dans les tests** :
+```typescript
+import { test } from "./fixtures";
+
+test("Coordinateur département propose, Direction accepte", async ({
+  page,
+  e2eContext,
+}) => {
+  const pageChantier = new PageChantier(page, e2eContext);
+  const indicateur = pageChantier.getIndicateurPva("IND-021", "DEPT-56");
+
+  const modal = await indicateur.clickProposerAutreValeur();
+  // La PVA et ses événements sont trackés automatiquement.
+  // En cas d'échec du test, cleanup() les supprimera.
+});
+```
+
+**Conventions :**
+- Le tracking se fait au moment de l'action UI, pas après confirmation, pour couvrir les cas où le test échoue entre la création et la confirmation
+- Chaque nouveau type d'entité ajoute une entrée dans le `switch` de `cleanup()` et un `EntityType` correspondant
+- Les POM sont responsables d'appeler `track()` ; les tests n'ont pas à gérer le cleanup
+- Le `E2ETestContext` est propagé via les constructeurs des POM (hérité de `BasePage`)
+
+**Exemple de référence** : `tests/proposition-valeur-avancement.spec.ts`
 
 ### API Object Model (tests API)
 
@@ -315,6 +477,8 @@ test("Quand on a accès au chantier, doit remonter une réponse 200 OK", async (
 - **Chaînage naturel** : les méthodes de navigation retournent le contexte approprié
 - **Tests plus faciles à écrire** : pour les humains ET les agents IA (Claude Code, Copilot, etc.)
 - **Tests API ultra-rapides** : génération directe des JWT sans passer par l'UI (quelques ms vs ~15s)
+- **Isolation fiable** : chaque test part d'un état propre grâce au cleanup automatique via Prisma, sans dépendre d'interactions UI fragiles
+- **Retries fonctionnels** : un retry après échec retrouve un état de base propre
 
 **Comparaison avant/après (UI):**
 ```typescript
@@ -350,10 +514,11 @@ await apiContext.dispose();
 ```
 
 **Inconvénients :**
-- **Courbe d'apprentissage** : nécessite de comprendre la structure des pages, composants et clients API
-- **Effort initial** : création des classes avant d'écrire les premiers tests
+- **Courbe d'apprentissage** : nécessite de comprendre la structure des pages, composants, clients API et le mécanisme de tracking
+- **Effort initial** : création des classes et du context avant d'écrire les premiers tests
 - **Indirection** : le code de test est séparé des sélecteurs/endpoints, ce qui peut compliquer le débogage
 - **Sur-abstraction potentielle** : risque de créer trop de petites classes pour des cas simples
+- **Discipline requise** : les POM doivent systématiquement appeler `track()` pour chaque entité créée, sous peine de laisser des données résiduelles
 
 **Impact sur l'équipe :**
 - Les tests E2E deviennent plus accessibles aux nouveaux développeurs

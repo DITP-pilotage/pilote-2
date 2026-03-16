@@ -30,6 +30,10 @@ export class AppActions {
     password = process.env.DEV_PASSWORD!,
   ): Promise<PageAccueil> {
     await this.page.context().clearCookies();
+    await this.page.evaluate(() => {
+      localStorage.clear();
+      sessionStorage.clear();
+    });
     return this.loginAs(username, password);
   }
 

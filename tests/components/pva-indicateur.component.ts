@@ -16,6 +16,13 @@ export class PvaIndicateurComponent {
   // --- Actions ---
 
   async supprimerPropositionSiExistante(): Promise<void> {
+    const boutonAfficher = this.section.getByRole("button", {
+      name: /Afficher la proposition/,
+    });
+    if (await boutonAfficher.isVisible({ timeout: 2_000 }).catch(() => false)) {
+      await boutonAfficher.click();
+    }
+
     const boutonSupprimer = this.section.getByRole("button", {
       name: /Supprimer la proposition/,
     });
@@ -25,6 +32,7 @@ export class PvaIndicateurComponent {
       await boutonSupprimer.click();
       const modal = new PvaModalComponent(this.page);
       await modal.remplirMotifSuppression("Nettoyage avant test e2e");
+      await modal.passerEtapeSuivante();
       await modal.confirmerSuppression();
       await modal.expectConfirmationEtFermer(/supprimée/);
     }
