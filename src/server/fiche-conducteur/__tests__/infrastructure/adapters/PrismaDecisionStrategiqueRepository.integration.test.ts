@@ -29,8 +29,9 @@ describe("PrismaDecisionStrategiqueRepository", () => {
               chantier_id: chantier.id,
               type: $Enums.type_decision_strategique.suivi_des_decisions,
               contenu: "contenu OK suivi_des_decisions",
-              auteur_id: null,
-              date: new Date(),
+              auteur_modification_id: null,
+              date_modification: new Date(),
+              date_creation: new Date(),
             },
             // autre chantier, ne doit pas être retourné
             {
@@ -38,8 +39,9 @@ describe("PrismaDecisionStrategiqueRepository", () => {
               chantier_id: autreChantier.id,
               type: $Enums.type_decision_strategique.suivi_des_decisions,
               contenu: "contenu KO chantier_id",
-              auteur_id: null,
-              date: new Date(),
+              auteur_modification_id: null,
+              date_modification: new Date(),
+              date_creation: new Date(),
             },
           ],
         });

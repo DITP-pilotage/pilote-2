@@ -39,16 +39,7 @@ const HistoriqueCommentaire = ({ type }: { type: TypeCommentaireChantier }) => {
         historique.map((item, index) => (
           <Fragment key={item.dateModification}>
             {index !== 0 && <hr className="fr-mt-4w" />}
-            <AffichageCommentaire
-              commentaire={{
-                ...item,
-                id: "",
-                statut: "PUBLIE" as const,
-                auteurCreationId: "",
-                dateCreation: item.dateCreation,
-                auteurModificationId: "",
-              }}
-            />
+            <AffichageCommentaire commentaire={item} />
           </Fragment>
         ))
       ) : (
