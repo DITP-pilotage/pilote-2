@@ -10,39 +10,36 @@ import { BoutonSousLigné } from "@/components/_commons/BoutonSousLigné/BoutonS
 import { SaveIcon } from "@/components/_commons/Icones/SaveIcon";
 import CompteurCaractères from "@/components/_commons/CompteurCaractères/CompteurCaractères";
 import {
-  CommentaireAvecNomsAuteurs,
-  CommentaireV2,
-  TypeCommentaireChantier,
-} from "@/server/domain/chantier/commentaire/Commentaire.interface";
-import {
   LIMITE_CARACTÈRES_COMMENTAIRE,
   validationCommentaireFormulaire,
 } from "@/validation/commentaire";
 import AffichageCommentaire from "@/components/_commons/CommentairesNew/CommentaireSection/Affichage/Affichage";
 import {
-  consignesEcritureCommentaire,
-  libellesTypesCommentaire,
-} from "@/client/constants/libellesCommentaire";
-import {
   pageChantier,
   useTerritoireSelectionne,
 } from "@/components/PageChantier/PageChantierServerSideContext";
+import {
+  BrouillonPublication,
+  PublicationAvecAuteur,
+} from "@/components/_commons/CommentairesNew/CommentaireSection/Publication.interface";
 
 interface ModaleFormulaireCommentaireProps {
   title: string;
-  type: TypeCommentaireChantier;
+  libelle: string;
+  consigne: string;
   trigger: ReactNode;
   open: boolean;
   onOpenChange: (isOpen: boolean) => void;
-  commentaire: CommentaireAvecNomsAuteurs | null;
-  brouillon?: CommentaireV2 | null;
+  commentaire: PublicationAvecAuteur | null;
+  brouillon?: BrouillonPublication | null;
   onPublier: SubmitHandler<{ contenu: string }>;
   onBrouillon: SubmitHandler<{ contenu: string }>;
 }
 
 export const ModaleFormulaireCommentaire = ({
   title,
-  type,
+  libelle,
+  consigne,
   trigger,
   open,
   onOpenChange,
@@ -73,7 +70,7 @@ export const ModaleFormulaireCommentaire = ({
       </p>
       <p className="text-sm">{territoireSélectionné.nomAffiché}</p>
       <p className="text-sm text-dsfr-mention-grey mb-6">
-        {`Veuillez saisir ci-dessous le nouveau commentaire relatif aux ${libellesTypesCommentaire[type].toLowerCase()}. Après publication, le nouveau commentaire sera affiché et l'ancien sera archivé dans l'historique.`}
+        {`Veuillez saisir ci-dessous le nouveau commentaire relatif aux ${libelle.toLowerCase()}. Après publication, le nouveau commentaire sera affiché et l'ancien sera archivé dans l'historique.`}
       </p>
       <h3 className="text-base font-bold mb-3">Commentaire actuel</h3>
       <div className="mb-6">
@@ -81,7 +78,7 @@ export const ModaleFormulaireCommentaire = ({
       </div>
 
       <h3 className="text-base font-bold mb-3">Votre nouveau commentaire</h3>
-      <p className="text-sm mb-6">{consignesEcritureCommentaire[type]}</p>
+      <p className="text-sm mb-6">{consigne}</p>
       <form onSubmit={form.handleSubmit(onPublier)}>
         <div
           className={`flex flex-col ${form.formState.errors.contenu ? "fr-input-group--error" : ""}`}

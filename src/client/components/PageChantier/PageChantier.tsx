@@ -49,6 +49,7 @@ const PageChantier = () => {
     détailsIndicateurs,
     detailsIndicateursTerritoire,
     décisionStratégique,
+    brouillonDecisionStrategique,
     avancements,
     indicateurPondérations,
     listeResponsablesLocaux,
@@ -391,11 +392,10 @@ const PageChantier = () => {
                   </Infobulle>
                 </TitreInfobulleConteneur>
                 <DécisionsStratégiques
-                  chantierId={chantier.id}
-                  décisionStratégique={décisionStratégique ?? null}
+                  brouillon={brouillonDecisionStrategique ?? null}
+                  decisionStrategique={décisionStratégique ?? null}
                   estChantierArchive={estChantierArchive}
-                  modeÉcriture={estAutoriseAModifierLesPublications}
-                  territoireCode={territoireCode}
+                  modeEcriture={estAutoriseAModifierLesPublications}
                 />
               </section>
             </div>

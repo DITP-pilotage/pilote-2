@@ -7,7 +7,7 @@ import {
   typesCommentaireMailleNationale,
   typesCommentaireMailleRégionaleOuDépartementale,
 } from "@/server/domain/chantier/commentaire/Commentaire.interface";
-import CommentaireSection from "@/components/_commons/CommentairesNew/CommentaireSection/CommentaireSection";
+import CommentaireSectionConnectee from "@/components/_commons/CommentairesNew/CommentaireSection/CommentaireSectionConnectee";
 
 interface CommentairesProps {
   commentaires: Record<
@@ -41,7 +41,7 @@ const Commentaires: FunctionComponent<CommentairesProps> = ({
       {typesCommentaire.map((type, i) => (
         <Fragment key={type}>
           {i !== 0 && <hr className="fr-hr fr-mx-n2w" />}
-          <CommentaireSection
+          <CommentaireSectionConnectee
             commentaire={commentaires[type]}
             commentaireBrouillon={commentairesBrouillon[type]}
             modeEcriture={modeÉcriture}
