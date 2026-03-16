@@ -1,7 +1,7 @@
 import { $Enums } from "@prisma/client";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { DecisionStrategiqueV2AvecNomsAuteurs } from "@/server/domain/chantier/décisionStratégique/DécisionStratégique.interface";
-import { NOMS_TYPES_DÉCISION_STRATÉGIQUE } from "@/server/infrastructure/accès_données/chantier/décisionStratégique/DécisionStratégiqueSQLRepository";
+import { NOMS_TYPES_DECISION_STRATEGIQUE } from "@/server/infrastructure/accès_données/chantier/décisionStratégique/DécisionStratégiqueSQLRepository";
 
 export class RecupererDerniereDecisionStrategiqueQuery {
   constructor(private readonly deps: { prisma: PrismaPilote }) {}
@@ -25,7 +25,7 @@ export class RecupererDerniereDecisionStrategiqueQuery {
     return {
       id: decision.id,
       chantierId: decision.chantier_id,
-      type: NOMS_TYPES_DÉCISION_STRATÉGIQUE[decision.type],
+      type: NOMS_TYPES_DECISION_STRATEGIQUE[decision.type],
       contenu: decision.contenu,
       statut: decision.statut,
       auteurCreationId: decision.auteur_creation_id ?? "",

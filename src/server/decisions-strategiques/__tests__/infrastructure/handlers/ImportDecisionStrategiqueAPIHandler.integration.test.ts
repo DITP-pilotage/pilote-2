@@ -135,7 +135,7 @@ describe("ImportDecisionStrategiqueAPIHandler", () => {
     const { request, response } = créerMockRequestAvecBody(body);
 
     // When
-    await getContainer("importDecisionStrategique")
+    await getContainer("decisionStrategique")
       .resolve("importDecisionStrategiqueAPIHandler")
       .handle({
         request,
@@ -174,7 +174,7 @@ describe("ImportDecisionStrategiqueAPIHandler", () => {
     const { request, response } = créerMockRequestAvecBodyInvalide();
 
     // When
-    await getContainer("importDecisionStrategique")
+    await getContainer("decisionStrategique")
       .resolve("importDecisionStrategiqueAPIHandler")
       .handle({
         request,
@@ -226,7 +226,7 @@ describe("ImportDecisionStrategiqueAPIHandler", () => {
     const { request, response } = créerMockRequestAvecBody(body);
 
     // When
-    await getContainer("importDecisionStrategique")
+    await getContainer("decisionStrategique")
       .resolve("importDecisionStrategiqueAPIHandler")
       .handle({
         request,
@@ -261,7 +261,7 @@ describe("ImportDecisionStrategiqueAPIHandler", () => {
     const { request, response } = créerMockRequestAvecBody(body);
 
     // When
-    await getContainer("importDecisionStrategique")
+    await getContainer("decisionStrategique")
       .resolve("importDecisionStrategiqueAPIHandler")
       .handle({
         request,
@@ -302,7 +302,7 @@ describe("ImportDecisionStrategiqueAPIHandler", () => {
     const { request, response } = créerMockRequestAvecBody(body);
 
     // When
-    await getContainer("importDecisionStrategique")
+    await getContainer("decisionStrategique")
       .resolve("importDecisionStrategiqueAPIHandler")
       .handle({
         request,

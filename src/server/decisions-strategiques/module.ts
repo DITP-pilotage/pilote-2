@@ -34,7 +34,7 @@ export const importDecisionStrategiqueModule = defineModule<
   NoExports,
   ImportDecisionStrategiqueCradle
 >()({
-  name: "importDecisionStrategique",
+  name: "decisionStrategique",
   imports: ["shared"],
   exports: [],
   register: (container, { asModuleClass }) => {

@@ -1,21 +1,16 @@
-import { Fragment, FunctionComponent } from "react";
+import { Fragment } from "react";
 import Bloc from "@/components/_commons/Bloc/Bloc";
 import {
-  CommentaireAvecNomsAuteurs,
-  CommentaireV2,
-  TypeCommentaireChantier,
   typesCommentaireMailleNationale,
   typesCommentaireMailleRégionaleOuDépartementale,
 } from "@/server/domain/chantier/commentaire/Commentaire.interface";
 import CommentaireSectionConnectee from "@/components/_commons/CommentairesNew/CommentaireSection/CommentaireSectionConnectee";
+import {
+  pageChantier,
+  useTerritoireSelectionne,
+} from "@/components/PageChantier/PageChantierServerSideContext";
 
 interface CommentairesProps {
-  commentaires: Record<
-    TypeCommentaireChantier,
-    CommentaireAvecNomsAuteurs | null
-  >;
-  commentairesBrouillon: Record<TypeCommentaireChantier, CommentaireV2 | null>;
-  nomTerritoire: string;
   typesCommentaire:
     | typeof typesCommentaireMailleNationale
     | typeof typesCommentaireMailleRégionaleOuDépartementale;
@@ -23,20 +18,20 @@ interface CommentairesProps {
   estChantierArchive?: boolean;
 }
 
-const Commentaires: FunctionComponent<CommentairesProps> = ({
-  commentaires,
-  commentairesBrouillon,
-  nomTerritoire,
+const Commentaires = ({
   typesCommentaire,
   modeÉcriture = false,
   estChantierArchive = false,
-}) => {
+}: CommentairesProps) => {
+  const { commentaires, commentairesBrouillon } =
+    pageChantier.useServerSidePropsContext();
+  const territoireSélectionné = useTerritoireSelectionne();
   return (
     <Bloc
       backgroundClassNameTitre={
         estChantierArchive ? "bg-dsfr-grey-925" : "bg-dsfr-blue-france-925"
       }
-      titre={nomTerritoire}
+      titre={territoireSélectionné.nomAffiché}
     >
       {typesCommentaire.map((type, i) => (
         <Fragment key={type}>

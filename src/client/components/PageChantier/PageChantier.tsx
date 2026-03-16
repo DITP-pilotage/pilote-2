@@ -44,12 +44,8 @@ const PageChantier = () => {
     territoireCode,
     mailleSelectionnee,
     mailleQuery,
-    commentaires,
-    commentairesBrouillon,
     détailsIndicateurs,
     detailsIndicateursTerritoire,
-    décisionStratégique,
-    brouillonDecisionStrategique,
     avancements,
     indicateurPondérations,
     listeResponsablesLocaux,
@@ -392,8 +388,6 @@ const PageChantier = () => {
                   </Infobulle>
                 </TitreInfobulleConteneur>
                 <DécisionsStratégiques
-                  brouillon={brouillonDecisionStrategique ?? null}
-                  decisionStrategique={décisionStratégique ?? null}
                   estChantierArchive={estChantierArchive}
                   modeEcriture={estAutoriseAModifierLesPublications}
                 />
@@ -421,11 +415,8 @@ const PageChantier = () => {
                 </Infobulle>
               </TitreInfobulleConteneur>
               <Commentaires
-                commentaires={commentaires}
-                commentairesBrouillon={commentairesBrouillon}
                 estChantierArchive={estChantierArchive}
                 modeÉcriture={estAutoriseAModifierLesPublications}
-                nomTerritoire={territoireSélectionné.nomAffiché}
                 typesCommentaire={
                   territoireSélectionné.maille === "nationale"
                     ? typesCommentaireMailleNationale

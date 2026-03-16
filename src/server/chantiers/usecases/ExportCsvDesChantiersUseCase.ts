@@ -243,7 +243,7 @@ export class ExportCsvDesChantiersUseCase {
       !profilsTerritoriaux.includes(profil)
     ) {
       headersColumn.push(
-        libellésTypesDécisionStratégique["suiviDesDécisionsStratégiques"],
+        libellésTypesDécisionStratégique["suiviDesDecisionsStrategiques"],
       );
     }
 

@@ -7,7 +7,7 @@ import { Badge } from "@/components/_commons/Badge";
 import { PiloteDateFormatter } from "@/server/rapports-hebdomadaires/infrastructure/adapters/PiloteDateFormatter";
 import { PublicationAvecAuteur } from "@/components/_commons/CommentairesNew/CommentaireSection/Publication.interface";
 
-const AffichageCommentaire = ({
+export const AffichageCommentaire = ({
   commentaire,
   onModifier,
 }: {
@@ -58,5 +58,3 @@ const AffichageCommentaire = ({
     </>
   );
 };
-
-export default AffichageCommentaire;
