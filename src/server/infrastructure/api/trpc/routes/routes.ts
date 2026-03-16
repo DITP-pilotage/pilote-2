@@ -10,6 +10,7 @@ import { rapportHebdomadaireRouter } from "@/server/infrastructure/api/trpc/rout
 import { chantierRouter } from "./chantier";
 import { synthèseDesRésultatsRouter } from "./synthèseDesRésultats";
 import { commentaireRouter } from "./commentaire";
+import { decisionStrategiqueRouter } from "./decisionStrategique";
 import { publicationRouter } from "./publication";
 import { indicateurRouter } from "./indicateur";
 import { propositionValeurAvancementRouter } from "./propositionValeurAvancement";
@@ -24,6 +25,7 @@ export const appRouter = créerRouteurTRPC({
   chantier: chantierRouter,
   synthèseDesRésultats: synthèseDesRésultatsRouter,
   commentaire: commentaireRouter,
+  decisionStrategique: decisionStrategiqueRouter,
   publication: publicationRouter,
   indicateur: indicateurRouter,
   territoire: territoireRouter,

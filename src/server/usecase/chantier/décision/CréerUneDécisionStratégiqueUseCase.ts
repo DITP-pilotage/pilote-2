@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 import Chantier from "@/server/domain/chantier/Chantier.interface";
-import DécisionStratégique from "@/server/domain/chantier/décisionStratégique/DécisionStratégique.interface";
+import { DécisionStratégique } from "@/server/domain/chantier/décisionStratégique/DécisionStratégique.interface";
 import DécisionStratégiqueRepository from "@/server/domain/chantier/décisionStratégique/DécisionStratégiqueRepository.interface";
 import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
 import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";

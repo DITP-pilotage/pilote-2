@@ -3,8 +3,9 @@ import {
   type_decision_strategique as TypeDécisionStratégiquePrisma,
   utilisateur,
 } from "@prisma/client";
-import DécisionStratégique, {
+import {
   DecisionStrategiqueV2,
+  DécisionStratégique,
   TypeDecisionStrategique,
 } from "@/server/domain/chantier/décisionStratégique/DécisionStratégique.interface";
 import DécisionStratégiqueRepository from "@/server/domain/chantier/décisionStratégique/DécisionStratégiqueRepository.interface";
@@ -106,15 +107,47 @@ export default class DécisionStratégiqueSQLRepository implements DécisionStra
     return this.mapperVersDomaine(décisionStratégiqueCréée);
   }
 
-  async save({
-    chantierId,
-    id,
-    contenu,
-    type,
-    auteur_id,
-    date,
-  }: DecisionStrategiqueV2): Promise<void> {
-    await this.créer(chantierId, id, contenu, type, auteur_id, date);
+  async getById(id: string): Promise<DecisionStrategiqueV2 | null> {
+    const decision = await prisma.decision_strategique.findUnique({
+      where: { id },
+    });
+
+    if (!decision) return null;
+
+    return {
+      id: decision.id,
+      chantierId: decision.chantier_id,
+      type: NOMS_TYPES_DÉCISION_STRATÉGIQUE[decision.type],
+      contenu: decision.contenu,
+      statut: decision.statut,
+      auteurCreationId: decision.auteur_creation_id ?? "",
+      auteurModificationId: decision.auteur_modification_id ?? "",
+      dateCreation: decision.date_creation.toISOString(),
+      dateModification: decision.date_modification.toISOString(),
+    };
+  }
+
+  async save(decision: DecisionStrategiqueV2): Promise<void> {
+    await prisma.decision_strategique.upsert({
+      where: { id: decision.id },
+      create: {
+        id: decision.id,
+        chantier_id: decision.chantierId,
+        type: CODES_TYPES_DÉCISION_STRATÉGIQUE[decision.type],
+        contenu: decision.contenu,
+        statut: decision.statut,
+        auteur_creation_id: decision.auteurCreationId,
+        auteur_modification_id: decision.auteurModificationId,
+        date_creation: new Date(decision.dateCreation),
+        date_modification: new Date(decision.dateModification),
+      },
+      update: {
+        contenu: decision.contenu,
+        statut: decision.statut,
+        auteur_modification_id: decision.auteurModificationId,
+        date_modification: new Date(decision.dateModification),
+      },
+    });
   }
 
   async récupérerLesPlusRécentesGroupéesParChantier(
