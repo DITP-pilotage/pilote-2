@@ -1,32 +1,29 @@
-import { ReactNode, useState } from "react";
-import { SubmitHandler } from "react-hook-form";
-import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
+import { ReactNode } from "react";
 import BandeauInformation from "@/components/_commons/BandeauInformation/BandeauInformation";
-import AlerteCommentaire, {
-  CommentaireAction,
-} from "@/components/_commons/CommentairesNew/CommentaireSection/AlerteCommentaire";
+import AlerteCommentaire from "@/components/_commons/CommentairesNew/CommentaireSection/AlerteCommentaire";
 import { AffichageCommentaire } from "@/components/_commons/CommentairesNew/CommentaireSection/Affichage/Affichage";
 import CommentaireFormulaire from "@/components/_commons/CommentairesNew/CommentaireSection/Formulaire/CommentaireFormulaire";
 import BoutonNouveauCommentaire from "@/components/_commons/CommentairesNew/CommentaireSection/BoutonNouveauCommentaire/BoutonNouveauCommentaire";
 import BoutonEditerBrouillonCommentaire from "@/components/_commons/CommentairesNew/CommentaireSection/BoutonNouveauCommentaire/BoutonEditerBrouillonCommentaire";
 import { PiloteDateFormatter } from "@/server/rapports-hebdomadaires/infrastructure/adapters/PiloteDateFormatter";
 import {
-  BrouillonPublication,
+  PublicationBrouillon,
   PublicationActions,
-  PublicationAvecAuteur,
+  Publication,
 } from "./Publication.interface";
+import { useCommentaireSectionEtat } from "./useCommentaireSectionEtat";
 
 interface CommentaireSectionProps {
   libelle: string;
   consigne: string;
-  publication: PublicationAvecAuteur | null;
-  brouillon: BrouillonPublication | null;
+  publication: Publication | null;
+  brouillon: PublicationBrouillon | null;
   modeEcriture?: boolean;
   actions: PublicationActions;
   historiqueNode?: ReactNode;
 }
 
-const CommentaireSection = ({
+export const CommentaireSection = ({
   libelle,
   consigne,
   publication,
@@ -35,16 +32,17 @@ const CommentaireSection = ({
   actions,
   historiqueNode,
 }: CommentaireSectionProps) => {
-  const [modeÉdition, setModeÉdition] = useState(false);
-  const [action, setAction] = useState<CommentaireAction | null>(null);
-  const refreshRouter = useRefreshRouter();
-
-  const handleModifier: SubmitHandler<{ contenu: string }> = async (data) => {
-    await actions.modifier(data);
-    setModeÉdition(false);
-    refreshRouter();
-    setAction("modification-reussie");
-  };
+  const {
+    modeÉdition,
+    entrerEnModeÉdition,
+    quitterModeÉdition,
+    alerteAction,
+    handleModifier,
+    handlePublier,
+    handleBrouillon,
+    handlePublierBrouillon,
+    handleModifierBrouillon,
+  } = useCommentaireSectionEtat(actions);
 
   return (
     <div className="px-2 py-4">
@@ -58,7 +56,7 @@ const CommentaireSection = ({
       ) : null}
       {modeÉdition && modeEcriture ? (
         <CommentaireFormulaire
-          annulationCallback={() => setModeÉdition(false)}
+          annulationCallback={quitterModeÉdition}
           consigne={consigne}
           libelle={libelle}
           onModifier={handleModifier}
@@ -66,10 +64,10 @@ const CommentaireSection = ({
         />
       ) : (
         <>
-          <AlerteCommentaire action={action} />
+          <AlerteCommentaire action={alerteAction} />
           <AffichageCommentaire
             commentaire={publication}
-            onModifier={modeEcriture ? () => setModeÉdition(true) : undefined}
+            onModifier={modeEcriture ? entrerEnModeÉdition : undefined}
           />
           <div className="flex justify-end items-center gap-4 mt-2">
             {publication ? historiqueNode : null}
@@ -80,18 +78,16 @@ const CommentaireSection = ({
                   commentaire={publication}
                   consigne={consigne}
                   libelle={libelle}
-                  onAction={setAction}
-                  onBrouillon={actions.modifierBrouillon}
-                  onPublier={actions.publierBrouillon}
+                  onEnregistrerBrouillon={handleModifierBrouillon}
+                  onPublier={handlePublierBrouillon}
                 />
               ) : (
                 <BoutonNouveauCommentaire
                   commentaire={publication}
                   consigne={consigne}
                   libelle={libelle}
-                  onAction={setAction}
-                  onBrouillon={actions.enregistrerEnBrouillon}
-                  onPublier={actions.publier}
+                  onEnregistrerBrouillon={handleBrouillon}
+                  onPublier={handlePublier}
                 />
               ))}
           </div>
@@ -100,5 +96,3 @@ const CommentaireSection = ({
     </div>
   );
 };
-
-export default CommentaireSection;
