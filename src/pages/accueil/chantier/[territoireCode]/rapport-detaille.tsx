@@ -8,7 +8,7 @@ import Indicateur from "@/server/domain/indicateur/Indicateur.interface";
 import { DétailsIndicateurs } from "@/server/domain/indicateur/DétailsIndicateur.interface";
 import { PublicationsGroupéesParChantier } from "@/components/PageRapportDétaillé/PageRapportDétaillé.interface";
 import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
-import DécisionStratégique from "@/server/domain/chantier/décisionStratégique/DécisionStratégique.interface";
+import { DécisionStratégique } from "@/server/domain/chantier/décisionStratégique/DécisionStratégique.interface";
 import Ministère from "@/server/domain/ministère/Ministère.interface";
 import Alerte from "@/server/domain/alerte/Alerte";
 import {
