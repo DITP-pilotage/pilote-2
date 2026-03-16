@@ -4,8 +4,8 @@ import {
   utilisateur,
 } from "@prisma/client";
 import DécisionStratégique, {
-  DécisionStratégiqueV2,
-  TypeDécisionStratégique,
+  DecisionStrategiqueV2,
+  TypeDecisionStrategique,
 } from "@/server/domain/chantier/décisionStratégique/DécisionStratégique.interface";
 import DécisionStratégiqueRepository from "@/server/domain/chantier/décisionStratégique/DécisionStratégiqueRepository.interface";
 import Chantier from "@/server/domain/chantier/Chantier.interface";
@@ -13,13 +13,13 @@ import { prisma } from "@/server/db/prisma";
 
 export const NOMS_TYPES_DÉCISION_STRATÉGIQUE: Record<
   string,
-  TypeDécisionStratégique
+  TypeDecisionStrategique
 > = {
   suivi_des_decisions: "suiviDesDécisionsStratégiques",
 };
 
 export const CODES_TYPES_DÉCISION_STRATÉGIQUE: Record<
-  TypeDécisionStratégique,
+  TypeDecisionStrategique,
   TypeDécisionStratégiquePrisma
 > = {
   suiviDesDécisionsStratégiques: "suivi_des_decisions",
@@ -85,7 +85,7 @@ export default class DécisionStratégiqueSQLRepository implements DécisionStra
     chantierId: string,
     id: string,
     contenu: string,
-    type: TypeDécisionStratégique,
+    type: TypeDecisionStrategique,
     auteur_id: string,
     date: Date,
   ): Promise<DécisionStratégique> {
@@ -113,7 +113,7 @@ export default class DécisionStratégiqueSQLRepository implements DécisionStra
     type,
     auteur_id,
     date,
-  }: DécisionStratégiqueV2): Promise<void> {
+  }: DecisionStrategiqueV2): Promise<void> {
     await this.créer(chantierId, id, contenu, type, auteur_id, date);
   }
 

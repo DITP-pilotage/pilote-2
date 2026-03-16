@@ -4,7 +4,7 @@ import {
   ImportDecisionStrategiqueInput,
   mapTypeDecisionStrategiqueAPIVersDomaine,
 } from "@/validation/import-decision-strategique";
-import { DécisionStratégiqueV2 } from "@/server/domain/chantier/décisionStratégique/DécisionStratégique.interface";
+import { DecisionStrategiqueV2 } from "@/server/domain/chantier/décisionStratégique/DécisionStratégique.interface";
 import type { Inject } from "@/server/decisions-strategiques/module";
 
 export class ImporterDecisionsStrategiquesUseCase {
@@ -35,7 +35,7 @@ export class ImporterDecisionsStrategiquesUseCase {
         decision.type,
       );
 
-      const décisionV2: DécisionStratégiqueV2 = {
+      const décisionV2: DecisionStrategiqueV2 = {
         chantierId,
         id,
         contenu: decision.contenu,
