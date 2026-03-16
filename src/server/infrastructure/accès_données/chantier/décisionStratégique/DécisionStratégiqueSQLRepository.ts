@@ -1,7 +1,6 @@
 import {
   decision_strategique as DécisionStratégiquePrisma,
   type_decision_strategique as TypeDécisionStratégiquePrisma,
-  utilisateur,
 } from "@prisma/client";
 import {
   DecisionStrategiqueV2,
@@ -27,86 +26,6 @@ export const CODES_TYPES_DÉCISION_STRATÉGIQUE: Record<
 };
 
 export default class DécisionStratégiqueSQLRepository implements DécisionStratégiqueRepository {
-  private mapperVersDomaine(
-    décisionStratégique: DécisionStratégiquePrisma & {
-      auteur_decision_strategique: utilisateur | null;
-    },
-  ): DécisionStratégique {
-    const auteurDecisionStrategique =
-      décisionStratégique.auteur_decision_strategique;
-    return {
-      id: décisionStratégique.id,
-      type: NOMS_TYPES_DÉCISION_STRATÉGIQUE[décisionStratégique.type],
-      contenu: décisionStratégique.contenu,
-      date: décisionStratégique.date.toISOString(),
-      auteur: auteurDecisionStrategique
-        ? `${auteurDecisionStrategique.prenom} ${auteurDecisionStrategique.nom}`
-        : "Auteur Inconnu",
-    };
-  }
-
-  async récupérerLaPlusRécente(
-    chantierId: string,
-  ): Promise<DécisionStratégique> {
-    const décisionStratégiqueLaPlusRécente =
-      await prisma.decision_strategique.findFirst({
-        where: {
-          chantier_id: chantierId,
-        },
-        include: {
-          auteur_decision_strategique: true,
-        },
-        orderBy: { date: "desc" },
-      });
-
-    return décisionStratégiqueLaPlusRécente
-      ? this.mapperVersDomaine(décisionStratégiqueLaPlusRécente)
-      : null;
-  }
-
-  async récupérerHistorique(
-    chantierId: string,
-  ): Promise<DécisionStratégique[]> {
-    const décisionsStratégiques = await prisma.decision_strategique.findMany({
-      where: {
-        chantier_id: chantierId,
-      },
-      include: {
-        auteur_decision_strategique: true,
-      },
-      orderBy: { date: "desc" },
-    });
-
-    return décisionsStratégiques.map((décisionStratégique) =>
-      this.mapperVersDomaine(décisionStratégique),
-    );
-  }
-
-  async créer(
-    chantierId: string,
-    id: string,
-    contenu: string,
-    type: TypeDecisionStrategique,
-    auteur_id: string,
-    date: Date,
-  ): Promise<DécisionStratégique> {
-    const décisionStratégiqueCréée = await prisma.decision_strategique.create({
-      data: {
-        id,
-        chantier_id: chantierId,
-        contenu,
-        type: CODES_TYPES_DÉCISION_STRATÉGIQUE[type],
-        date,
-        auteur_id,
-      },
-      include: {
-        auteur_decision_strategique: true,
-      },
-    });
-
-    return this.mapperVersDomaine(décisionStratégiqueCréée);
-  }
-
   async getById(id: string): Promise<DecisionStrategiqueV2 | null> {
     const decision = await prisma.decision_strategique.findUnique({
       where: { id },

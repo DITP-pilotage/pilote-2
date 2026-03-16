@@ -9,7 +9,7 @@ const convertifEnDecisionStrategique = (
   DecisionStrategique.creerDecisionStrategique({
     type: decisionStrategiqueModel.type,
     contenu: decisionStrategiqueModel.contenu,
-    date: decisionStrategiqueModel.date.toISOString(),
+    date: decisionStrategiqueModel.date_modification.toISOString(),
   });
 
 export class PrismaDecisionStrategiqueRepository implements DecisionStrategiqueRepository {

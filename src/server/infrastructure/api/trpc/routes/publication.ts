@@ -35,17 +35,6 @@ export const publicationRouter = créerRouteurTRPC({
             ctx.session.habilitations,
           );
       }
-
-      if (input.entité === "décisions stratégiques") {
-        return getContainer("legacy")
-          .resolve("créerUneDécisionStratégiqueUseCase")
-          .run(
-            input.réformeId,
-            input.contenu,
-            auteur_id,
-            ctx.session.habilitations,
-          );
-      }
     }),
 
   récupérerLaPlusRécente: procédureProtégée
@@ -59,12 +48,6 @@ export const publicationRouter = créerRouteurTRPC({
             input.type as TypeObjectif,
             ctx.session.habilitations,
           );
-      }
-
-      if (input.entité === "décisions stratégiques") {
-        return getContainer("legacy")
-          .resolve("récupérerDécisionStratégiqueLaPlusRécenteUseCase")
-          .run(input.réformeId, ctx.session.habilitations);
       }
     }),
 
@@ -91,12 +74,6 @@ export const publicationRouter = créerRouteurTRPC({
             input.type as TypeObjectif,
             ctx.session.habilitations,
           );
-      }
-
-      if (input.entité === "décisions stratégiques") {
-        return getContainer("legacy")
-          .resolve("récupérerHistoriqueDécisionStratégiqueUseCase")
-          .run(input.réformeId, ctx.session.habilitations);
       }
     }),
 });

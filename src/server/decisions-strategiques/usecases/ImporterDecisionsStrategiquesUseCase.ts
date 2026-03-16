@@ -1,3 +1,4 @@
+import { $Enums } from "@prisma/client";
 import { randomUUID } from "node:crypto";
 import DécisionStratégiqueRepository from "@/server/domain/chantier/décisionStratégique/DécisionStratégiqueRepository.interface";
 import {
@@ -40,8 +41,11 @@ export class ImporterDecisionsStrategiquesUseCase {
         id,
         contenu: decision.contenu,
         type: typeDomaine,
-        auteur_id: auteurId,
-        date,
+        auteurModificationId: auteurId,
+        auteurCreationId: auteurId,
+        dateCreation: date.toISOString(),
+        dateModification: date.toISOString(),
+        statut: $Enums.statut_publication.PUBLIE,
       };
 
       await this.décisionStratégiqueRepository.save(décisionV2);

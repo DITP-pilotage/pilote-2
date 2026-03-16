@@ -158,7 +158,8 @@ describe("ImportDecisionStrategiqueAPIHandler", () => {
       "Contenu de la décision stratégique de test",
     );
     expect(decisionsEnBase[0].type).toEqual("suivi_des_decisions");
-    expect(decisionsEnBase[0].auteur_id).toEqual(auteurId);
+    expect(decisionsEnBase[0].auteur_modification_id).toEqual(auteurId);
+    expect(decisionsEnBase[0].auteur_creation_id).toEqual(auteurId);
   });
 
   it("retourne 400 quand le JSON est invalide", async () => {
