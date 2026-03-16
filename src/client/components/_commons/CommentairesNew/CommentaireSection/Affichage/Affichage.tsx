@@ -1,4 +1,3 @@
-import { CommentaireAvecNomsAuteurs } from "@/server/domain/chantier/commentaire/Commentaire.interface";
 import { nettoyerUneChaîneDeCaractèresPourAffichageHTML } from "@/client/utils/strings";
 import { BoutonSousLigné } from "@/components/_commons/BoutonSousLigné/BoutonSousLigné";
 import { Icone } from "@/components/_commons/Icone";
@@ -6,12 +5,13 @@ import { Icone1Icon } from "@/components/_commons/Icones/Icone1Icon";
 import { Infobulle } from "@/components/_commons/Infobulle/Infobulle";
 import { Badge } from "@/components/_commons/Badge";
 import { PiloteDateFormatter } from "@/server/rapports-hebdomadaires/infrastructure/adapters/PiloteDateFormatter";
+import { PublicationAvecAuteur } from "@/components/_commons/CommentairesNew/CommentaireSection/Publication.interface";
 
 const AffichageCommentaire = ({
   commentaire,
   onModifier,
 }: {
-  commentaire: CommentaireAvecNomsAuteurs | null;
+  commentaire: PublicationAvecAuteur | null;
   onModifier?: () => void;
 }) => {
   if (!commentaire) {

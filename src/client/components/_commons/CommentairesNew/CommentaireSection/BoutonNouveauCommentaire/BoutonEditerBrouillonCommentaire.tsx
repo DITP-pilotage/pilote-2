@@ -1,49 +1,58 @@
 import { useState } from "react";
+import { SubmitHandler } from "react-hook-form";
 import { Bouton } from "@/components/_commons/Bouton/Bouton";
 import { Icone } from "@/components/_commons/Icone";
 import { Icone1Icon } from "@/components/_commons/Icones/Icone1Icon";
 import { Infobulle } from "@/components/_commons/Infobulle/Infobulle";
-import {
-  CommentaireAvecNomsAuteurs,
-  CommentaireV2,
-} from "@/server/domain/chantier/commentaire/Commentaire.interface";
-import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
 import { CommentaireAction } from "@/components/_commons/CommentairesNew/CommentaireSection/AlerteCommentaire";
-import { libellesTypesCommentaire } from "@/client/constants/libellesCommentaire";
-import { useEditerBrouillonCommentaire } from "./useEditerBrouillonCommentaire";
+import {
+  BrouillonPublication,
+  PublicationAvecAuteur,
+} from "@/components/_commons/CommentairesNew/CommentaireSection/Publication.interface";
 import { ModaleFormulaireCommentaire } from "./ModaleFormulaireCommentaire";
 
 const BoutonEditerBrouillonCommentaire = ({
   commentaire,
   brouillon,
+  libelle,
+  consigne,
+  onPublier,
+  onBrouillon,
   onAction,
 }: {
-  commentaire: CommentaireAvecNomsAuteurs | null;
-  brouillon: CommentaireV2 | null;
+  commentaire: PublicationAvecAuteur | null;
+  brouillon: BrouillonPublication | null;
+  libelle: string;
+  consigne: string;
+  onPublier: SubmitHandler<{ contenu: string }>;
+  onBrouillon: SubmitHandler<{ contenu: string }>;
   onAction: (action: CommentaireAction) => void;
 }) => {
   const [open, setOpen] = useState(false);
-  const refreshRouter = useRefreshRouter();
 
-  const { publier, enregistrerEnBrouillon } = useEditerBrouillonCommentaire({
-    brouillonId: brouillon!.id,
-    onSuccess: (action) => {
-      setOpen(false);
-      refreshRouter();
-      onAction(action);
-    },
-  });
+  const handlePublier: SubmitHandler<{ contenu: string }> = async (data) => {
+    await onPublier(data);
+    setOpen(false);
+    onAction("publication-reussie");
+  };
+
+  const handleBrouillon: SubmitHandler<{ contenu: string }> = async (data) => {
+    await onBrouillon(data);
+    setOpen(false);
+    onAction("brouillon-enregistre");
+  };
 
   return (
     <ModaleFormulaireCommentaire
       brouillon={brouillon}
       commentaire={commentaire}
-      onBrouillon={enregistrerEnBrouillon}
+      consigne={consigne}
+      libelle={libelle}
+      onBrouillon={handleBrouillon}
       onOpenChange={setOpen}
-      onPublier={publier}
+      onPublier={handlePublier}
       open={open}
-      title={`Nouveau commentaire "${libellesTypesCommentaire[brouillon!.type]}"`}
-      type={brouillon!.type}
+      title={`Nouveau commentaire "${libelle}"`}
       trigger={
         <Bouton
           iconLeft={

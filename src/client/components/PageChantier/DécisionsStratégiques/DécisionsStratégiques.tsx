@@ -1,25 +1,75 @@
+import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
 import Bloc from "@/components/_commons/Bloc/Bloc";
-import Publication from "@/components/_commons/PublicationChantier/Publication";
-import { libellésTypesDécisionStratégique } from "@/client/constants/libellésDécisionStratégique";
+import CommentaireSection from "@/components/_commons/CommentairesNew/CommentaireSection/CommentaireSection";
+import {
+  BrouillonPublication,
+  PublicationActions,
+} from "@/components/_commons/CommentairesNew/CommentaireSection/Publication.interface";
+import {
+  DecisionStrategiqueV2,
+  DecisionStrategiqueV2AvecNomsAuteurs,
+} from "@/server/domain/chantier/décisionStratégique/DécisionStratégique.interface";
+import { pageChantier } from "@/components/PageChantier/PageChantierServerSideContext";
+import {
+  consignesEcritureDecisionStrategique,
+  libellésTypesDécisionStratégique,
+} from "@/client/constants/libellésDécisionStratégique";
+import { useNouvelleDecisionStrategique } from "./useNouvelleDecisionStrategique";
+import { useEditerBrouillonDecisionStrategique } from "./useEditerBrouillonDecisionStrategique";
+import { useModifierDecisionStrategique } from "./useModifierDecisionStrategique";
+import HistoriqueDecisionStrategique from "./HistoriqueDecisionStrategique";
 
-import Chantier from "@/server/domain/chantier/Chantier.interface";
-import { RouterOutputs } from "@/server/infrastructure/api/trpc/trpc.interface";
+const TYPE = "suiviDesDécisionsStratégiques" as const;
 
 export const DécisionsStratégiques = ({
-  décisionStratégique,
-  chantierId,
-  modeÉcriture = false,
-  estInteractif = true,
+  decisionStrategique,
+  brouillon,
+  modeEcriture = false,
   estChantierArchive,
-  territoireCode,
 }: {
-  décisionStratégique: RouterOutputs["publication"]["récupérerLaPlusRécente"];
-  chantierId: Chantier["id"];
-  territoireCode: string;
-  modeÉcriture?: boolean;
-  estInteractif?: boolean;
+  decisionStrategique: DecisionStrategiqueV2AvecNomsAuteurs | null;
+  brouillon: DecisionStrategiqueV2 | null;
+  modeEcriture?: boolean;
   estChantierArchive: boolean;
 }) => {
+  const { chantier } = pageChantier.useServerSidePropsContext();
+  const refreshRouter = useRefreshRouter();
+
+  const { publier, enregistrerEnBrouillon } = useNouvelleDecisionStrategique({
+    chantierId: chantier.id,
+    type: TYPE,
+    onSuccess: () => refreshRouter(),
+  });
+
+  const {
+    publier: publierBrouillon,
+    enregistrerEnBrouillon: modifierBrouillon,
+  } = useEditerBrouillonDecisionStrategique({
+    brouillonId: brouillon?.id ?? "",
+    onSuccess: () => refreshRouter(),
+  });
+
+  const modifier = useModifierDecisionStrategique({
+    decisionStrategiqueId: decisionStrategique?.id ?? "",
+    onSuccess: () => {},
+  });
+
+  const actions: PublicationActions = {
+    publier,
+    enregistrerEnBrouillon,
+    publierBrouillon,
+    modifierBrouillon,
+    modifier,
+  };
+
+  const brouillonPublication: BrouillonPublication | null = brouillon
+    ? {
+        id: brouillon.id,
+        contenu: brouillon.contenu,
+        dateModification: brouillon.dateModification,
+      }
+    : null;
+
   return (
     <Bloc
       backgroundClassNameTitre={
@@ -27,21 +77,14 @@ export const DécisionsStratégiques = ({
       }
       titre="France"
     >
-      <Publication
-        caractéristiques={{
-          type: "suiviDesDécisionsStratégiques",
-          libelléType:
-            libellésTypesDécisionStratégique.suiviDesDécisionsStratégiques,
-          entité: "décisions stratégiques",
-          consigneDÉcriture:
-            "Notez les décisions prises lors des réunions Elysée <> Matignon et indiquez les actions envisagées et/ou réalisées pour mettre en œuvre ou répondre à ces décisions.",
-        }}
-        estInteractif={estInteractif}
-        maille="nationale"
-        modeÉcriture={modeÉcriture}
-        publicationInitiale={décisionStratégique}
-        réformeId={chantierId}
-        territoireCode={territoireCode}
+      <CommentaireSection
+        actions={actions}
+        brouillon={brouillonPublication}
+        consigne={consignesEcritureDecisionStrategique[TYPE]}
+        historiqueNode={<HistoriqueDecisionStrategique />}
+        libelle={libellésTypesDécisionStratégique[TYPE]}
+        modeEcriture={modeEcriture}
+        publication={decisionStrategique}
       />
     </Bloc>
   );
