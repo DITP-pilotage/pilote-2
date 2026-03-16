@@ -1,18 +1,19 @@
 import Chantier from "@/server/domain/chantier/Chantier.interface";
 import DécisionStratégique, {
-  DécisionStratégiqueV2,
-  TypeDécisionStratégique,
+  DecisionStrategiqueV2,
+  TypeDecisionStrategique,
 } from "./DécisionStratégique.interface";
 
 export default interface DécisionStratégiqueRepository {
-  save(décision: DécisionStratégiqueV2): Promise<void>;
+  save(décision: DecisionStrategiqueV2): Promise<void>;
+  getById(id: string): Promise<DecisionStrategiqueV2 | null>;
   récupérerLaPlusRécente(chantierId: string): Promise<DécisionStratégique>;
   récupérerHistorique(chantierId: string): Promise<DécisionStratégique[]>;
   créer(
     chantierId: string,
     id: string,
     contenu: string,
-    type: TypeDécisionStratégique,
+    type: TypeDecisionStrategique,
     auteur: string,
     date: Date,
   ): Promise<DécisionStratégique>;
