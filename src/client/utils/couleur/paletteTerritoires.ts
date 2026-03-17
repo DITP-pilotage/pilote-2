@@ -20,3 +20,11 @@ export const PALETTE_DSFR = [
 export function getCouleurTerritoire(index: number): string {
   return PALETTE_DSFR[index % PALETTE_DSFR.length];
 }
+
+export function getCouleurTerritoireParCode(code: string): string {
+  let hash = 5381;
+  for (let i = 0; i < code.length; i++) {
+    hash = (hash * 33) ^ code.charCodeAt(i);
+  }
+  return PALETTE_DSFR[Math.abs(hash) % PALETTE_DSFR.length];
+}

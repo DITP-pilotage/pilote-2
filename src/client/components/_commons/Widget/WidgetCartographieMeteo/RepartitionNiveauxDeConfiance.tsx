@@ -1,5 +1,5 @@
 import { Fragment, useMemo } from "react";
-import { getCouleurTerritoire } from "@/client/utils/couleur/paletteTerritoires";
+import { getCouleurTerritoireParCode } from "@/client/utils/couleur/paletteTerritoires";
 import { libellesMeteos, Meteo } from "@/server/domain/météo/Météo.interface";
 import { MeteoPicto } from "@/components/_commons/Meteo/Picto/MeteoPicto";
 import { MeteoTerritoireViewModel } from "@/server/chantiers/infrastructure/queries/GetChantierMeteosTerritoiresQuery";
@@ -54,7 +54,7 @@ export const RepartitionNiveauxDeConfiance = ({
           </div>
         </div>
 
-        {territoiresTries.map((territoire, index) => {
+        {territoiresTries.map((territoire) => {
           const meteo = territoire.meteo as Meteo;
           const dateMaj = territoire.dateDeMajQualitative
             ? new Date(territoire.dateDeMajQualitative).toLocaleDateString(
@@ -62,7 +62,9 @@ export const RepartitionNiveauxDeConfiance = ({
               )
             : "—";
           const estInitial = territoire.territoireCode === territoireCode;
-          const couleur = getCouleurTerritoire(index);
+          const couleur = getCouleurTerritoireParCode(
+            territoire.territoireCode,
+          );
 
           return (
             <Fragment key={territoire.territoireCode}>
