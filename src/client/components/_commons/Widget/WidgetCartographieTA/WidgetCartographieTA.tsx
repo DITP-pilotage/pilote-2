@@ -1,12 +1,12 @@
 import { MailleInterne } from "@/server/domain/maille/Maille.interface";
 import { CartographieV2 } from "@/components/_commons/CartographieV2/CartographieV2";
 import { LegendeCartographie } from "@/components/_commons/CartographieV2/LegendeCartographie";
-import { useMesureWidget } from "@/components/_commons/Widget/TuileWidget/useMesureWidget";
-import { clsxm } from "@/utils/clsxm";
+import { BaseCartographieWidgetLayout } from "@/components/_commons/Widget/BaseCartographieWidgetLayout";
 import api from "@/server/infrastructure/api/trpc/api";
 import { useSelectionTerritoires } from "@/components/_commons/Widget/WidgetCartographieMeteo/useSelectionTerritoires";
 import { useDonneesCartographieTA } from "./useDonneesCartographieTA";
 import { useLegendeTA } from "./useLegendeTA";
+import { SuiviTauxAvancement } from "./SuiviTauxAvancement";
 
 export const WidgetCartographieTA = ({
   chantierId,
@@ -30,30 +30,40 @@ export const WidgetCartographieTA = ({
     jalon,
   );
   const legende = useLegendeTA(territoiresAvancement);
-  const { territoiresSelectionnes, onSelectTerritoire } =
-    useSelectionTerritoires({
-      territoires: territoiresAvancement,
-      territoireCode,
-    });
-
-  const { isModeDispositionG } = useMesureWidget();
+  const {
+    territoiresSelectionnes,
+    onSelectTerritoire,
+    ajouterTerritoire,
+    ajouterTerritoires,
+    supprimerTerritoire,
+  } = useSelectionTerritoires({
+    territoires: territoiresAvancement,
+    territoireCode,
+  });
 
   return (
-    <div className="flex flex-col gap-4">
-      <div className="flex flex-col gap-2">
-        <div className="max-w-[400px] mx-auto">
-          <CartographieV2
-            onTerritoireSelect={onSelectTerritoire}
-            donnees={donneesCartographie}
-            maille={maille}
-            territoiresSelectionnes={territoiresSelectionnes.map(
-              (territoire) => territoire.territoireCode,
-            )}
-          >
-            <LegendeCartographie items={legende} />
-          </CartographieV2>
-        </div>
-      </div>
-    </div>
+    <BaseCartographieWidgetLayout
+      cartographie={
+        <CartographieV2
+          onTerritoireSelect={onSelectTerritoire}
+          donnees={donneesCartographie}
+          maille={maille}
+          territoiresSelectionnes={territoiresSelectionnes.map(
+            (territoire) => territoire.territoireCode,
+          )}
+        >
+          <LegendeCartographie items={legende} />
+        </CartographieV2>
+      }
+      titre="Suivi et évolution des taux d'avancement"
+    >
+      <SuiviTauxAvancement
+        territoireCode={territoireCode}
+        onAjouterTerritoire={ajouterTerritoire}
+        onAjouterTerritoires={ajouterTerritoires}
+        onSupprimerTerritoire={supprimerTerritoire}
+        territoiresSelectionnes={territoiresSelectionnes}
+      />
+    </BaseCartographieWidgetLayout>
   );
 };

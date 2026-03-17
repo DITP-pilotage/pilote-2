@@ -9,6 +9,7 @@ export type AvancementTerritoireViewModel = {
   maille: string;
   avancementAnnuel: number | null;
   estApplicable: boolean | null;
+  dateTauxAvancementAnnuel: string | null;
 };
 
 export class GetChantierAvancementsTerritoiresQuery {
@@ -49,6 +50,7 @@ export class GetChantierAvancementsTerritoiresQuery {
         maille: "REG",
         avancementAnnuel: donnees.avancement.annuel,
         estApplicable: donnees.estApplicable,
+        dateTauxAvancementAnnuel: donnees.dateTauxAvancementAnnuel,
       });
     }
 
@@ -63,6 +65,7 @@ export class GetChantierAvancementsTerritoiresQuery {
         maille: "DEPT",
         avancementAnnuel: donnees.avancement.annuel,
         estApplicable: donnees.estApplicable,
+        dateTauxAvancementAnnuel: donnees.dateTauxAvancementAnnuel,
       });
     }
 

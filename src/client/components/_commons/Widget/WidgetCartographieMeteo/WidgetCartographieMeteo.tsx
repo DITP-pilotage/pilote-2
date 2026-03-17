@@ -1,6 +1,7 @@
 import { MailleInterne } from "@/server/domain/maille/Maille.interface";
 import { CartographieV2 } from "@/components/_commons/CartographieV2/CartographieV2";
 import { LegendeCartographie } from "@/components/_commons/CartographieV2/LegendeCartographie";
+import { BaseCartographieWidgetLayout } from "@/components/_commons/Widget/BaseCartographieWidgetLayout";
 import api from "@/server/infrastructure/api/trpc/api";
 import { RepartitionNiveauxDeConfiance } from "./RepartitionNiveauxDeConfiance";
 import { useDonneesCartographie } from "./useDonneesCartographie";
@@ -38,35 +39,29 @@ export const WidgetCartographieMeteo = ({
   });
 
   return (
-    <div className="flex flex-col gap-4">
-      <div className="flex flex-col gap-2 shrink-0">
-        <div className="max-w-[400px] mx-auto">
-          <CartographieV2
-            onTerritoireSelect={onSelectTerritoire}
-            donnees={donneesCartographie}
-            maille={maille}
-            territoiresSelectionnes={territoiresSelectionnes.map(
-              (territoire) => territoire.territoireCode,
-            )}
-          >
-            <LegendeCartographie items={legende} />
-          </CartographieV2>
-        </div>
-      </div>
-
-      <div className="flex flex-col gap-2 shrink-0">
-        <span className="fr-text font-bold">
-          Répartition des niveaux de confiance
-        </span>
-        <RepartitionNiveauxDeConfiance
-          territoireCode={territoireCode}
-          jalon={jalon}
-          onAjouterTerritoire={ajouterTerritoire}
-          onAjouterTerritoires={ajouterTerritoires}
-          onSupprimerTerritoire={supprimerTerritoire}
-          territoiresSelectionnes={territoiresSelectionnes}
-        />
-      </div>
-    </div>
+    <BaseCartographieWidgetLayout
+      cartographie={
+        <CartographieV2
+          onTerritoireSelect={onSelectTerritoire}
+          donnees={donneesCartographie}
+          maille={maille}
+          territoiresSelectionnes={territoiresSelectionnes.map(
+            (territoire) => territoire.territoireCode,
+          )}
+        >
+          <LegendeCartographie items={legende} />
+        </CartographieV2>
+      }
+      titre="Répartition des niveaux de confiance"
+    >
+      <RepartitionNiveauxDeConfiance
+        territoireCode={territoireCode}
+        jalon={jalon}
+        onAjouterTerritoire={ajouterTerritoire}
+        onAjouterTerritoires={ajouterTerritoires}
+        onSupprimerTerritoire={supprimerTerritoire}
+        territoiresSelectionnes={territoiresSelectionnes}
+      />
+    </BaseCartographieWidgetLayout>
   );
 };

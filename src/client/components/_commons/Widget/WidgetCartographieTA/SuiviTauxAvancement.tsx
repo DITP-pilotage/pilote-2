@@ -1,68 +1,43 @@
 import { Fragment, useMemo } from "react";
 import { getCouleurTerritoire } from "@/client/utils/couleur/paletteTerritoires";
-import { libellesMeteos, Meteo } from "@/server/domain/météo/Météo.interface";
-import { MeteoPicto } from "@/components/_commons/Meteo/Picto/MeteoPicto";
-import { MeteoTerritoireViewModel } from "@/server/chantiers/infrastructure/queries/GetChantierMeteosTerritoiresQuery";
+import { AvancementTerritoireViewModel } from "@/server/chantiers/infrastructure/queries/GetChantierAvancementsTerritoiresQuery";
 import { AjouterTerritoirePicker } from "@/components/_commons/Widget/AjouterTerritoirePicker";
 import { useMesureWidget } from "@/components/_commons/Widget/TuileWidget/useMesureWidget";
 import { clsxm } from "@/utils/clsxm";
 
-const ordreMeteo: Record<string, number> = {
-  SOLEIL: 0,
-  COUVERT: 1,
-  NUAGE: 2,
-  ORAGE: 3,
-  NON_NECESSAIRE: 4,
-  NON_RENSEIGNEE: 5,
-};
-
-function formaterNomTerritoire(territoire: MeteoTerritoireViewModel): string {
-  if (territoire.maille === "DEPT") {
-    return `${territoire.codeInsee} - ${territoire.territoireNom}`;
-  }
-  return territoire.territoireNom;
-}
-
-export const RepartitionNiveauxDeConfiance = ({
+export const SuiviTauxAvancement = ({
   territoiresSelectionnes,
   onSupprimerTerritoire,
   onAjouterTerritoire,
   onAjouterTerritoires,
-  jalon,
   territoireCode,
 }: {
-  territoiresSelectionnes: MeteoTerritoireViewModel[];
+  territoiresSelectionnes: AvancementTerritoireViewModel[];
   onSupprimerTerritoire: (territoireCode: string) => void;
   onAjouterTerritoire: (territoireCode: string) => void;
   onAjouterTerritoires: (territoireCodes: string[]) => void;
-  jalon: number;
   territoireCode: string;
 }) => {
   const { isModeDispositionG } = useMesureWidget();
 
   const territoiresTries = useMemo(
     () =>
-      [...territoiresSelectionnes].sort(
-        (a, b) =>
-          (ordreMeteo[a.meteo ?? ""] ?? 99) - (ordreMeteo[b.meteo ?? ""] ?? 99),
-      ),
+      [...territoiresSelectionnes].sort((a, b) => {
+        if (a.avancementAnnuel === null && b.avancementAnnuel === null)
+          return 0;
+        if (a.avancementAnnuel === null) return 1;
+        if (b.avancementAnnuel === null) return -1;
+        return b.avancementAnnuel - a.avancementAnnuel;
+      }),
     [territoiresSelectionnes],
   );
 
   return (
     <div>
-      <div className="grid grid-cols-2 border-y text-xs">
-        <div className="grid col-span-2 grid-cols-subgrid border-b border-b-black">
-          <div />
-          <div className="text-center text-sm py-1 text-dsfr-mention-grey">
-            {jalon}
-          </div>
-        </div>
-
+      <div className="grid grid-cols-2 text-xs">
         {territoiresTries.map((territoire, index) => {
-          const meteo = territoire.meteo as Meteo;
-          const dateMaj = territoire.dateDeMajQualitative
-            ? new Date(territoire.dateDeMajQualitative).toLocaleDateString(
+          const dateMaj = territoire.dateTauxAvancementAnnuel
+            ? new Date(territoire.dateTauxAvancementAnnuel).toLocaleDateString(
                 "fr-FR",
               )
             : "—";
@@ -72,20 +47,20 @@ export const RepartitionNiveauxDeConfiance = ({
           return (
             <Fragment key={territoire.territoireCode}>
               <div
-                className={clsxm("border-b", {
+                className={clsxm({
                   "flex justify-center": isModeDispositionG(),
                 })}
               >
                 <div
                   className={clsxm(
-                    "py-2 grid grid-cols-[1fr_30px] items-center gap-2",
+                    "py-1 grid grid-cols-[1fr_30px] items-center gap-2",
                     {
                       "w-full max-w-[300px] mr-auto": isModeDispositionG(),
                     },
                   )}
                 >
                   <span className="text-right" style={{ color: couleur }}>
-                    {formaterNomTerritoire(territoire)}
+                    {territoire.territoireNom}
                   </span>
                   {!estInitial && (
                     <button
@@ -103,21 +78,41 @@ export const RepartitionNiveauxDeConfiance = ({
                 </div>
               </div>
               <div
-                className={clsxm("py-2 flex items-center flex-col border-b", {
+                className={clsxm("py-1 flex items-center flex-col", {
                   "flex-row gap-4": isModeDispositionG(),
                 })}
               >
-                <div className="flex items-center gap-2">
-                  <MeteoPicto meteo={meteo} size="sm" />
-                  <span>
-                    {territoire.estApplicable === false
-                      ? "Non applicable"
-                      : libellesMeteos[meteo]}
-                  </span>
-                </div>
-                <span className="text-[10px] !text-dsfr-grey-625">
-                  ({dateMaj})
-                </span>
+                {territoire.estApplicable === false ? (
+                  <span>Non applicable</span>
+                ) : territoire.avancementAnnuel === null ? (
+                  <span>Non renseigné</span>
+                ) : (
+                  <div className="flex items-center gap-2 w-full px-2">
+                    <div className="flex-1 h-3 rounded-full bg-dsfr-grey-925">
+                      <div
+                        className="h-full rounded-full"
+                        style={{
+                          width: `${Math.min(territoire.avancementAnnuel, 100)}%`,
+                          backgroundColor: couleur,
+                        }}
+                      />
+                    </div>
+
+                    <div
+                      className={clsxm("flex whitespace-nowrap", {
+                        "flex-col": !isModeDispositionG(),
+                        "items-baseline flex-row gap-1": isModeDispositionG(),
+                      })}
+                    >
+                      <span style={{ color: couleur }}>
+                        {territoire.avancementAnnuel.toFixed(0)} %
+                      </span>
+                      <span className="text-[10px] !text-dsfr-grey-625">
+                        ({dateMaj})
+                      </span>
+                    </div>
+                  </div>
+                )}
               </div>
             </Fragment>
           );
