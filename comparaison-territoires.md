@@ -99,12 +99,15 @@ En comparant `WidgetCartographieMeteo` avec ce dont `WidgetCartographieTA` a bes
 
 ### Phase 1 : Endpoint tRPC pour les taux d'avancement par territoire
 
+Stratégie : réutiliser `RecupererChantierUseCaseV2` (use case existant qui charge le chantier complet avec ses mailles) plutôt que d'écrire une query Prisma brute. Cela garantit d'être iso-fonctionnel avec la page existante (mêmes filtres habilitations, même presenter, même logique métier).
+
 - [ ] **1.1** Créer `GetChantierAvancementsTerritoiresQuery.ts` dans `server/chantiers/infrastructure/queries/`
-  - Input : `{ chantierId: string, jalon: number }`
-  - Output : `AvancementTerritoireViewModel[]` avec `{ territoireCode, territoireNom, codeInsee, maille, tauxAvancementAnnuel, tauxAvancementGlobal, estApplicable, dateDeMajQuantitative }`
-  - Query Prisma sur `chantier_territoire` + `chantier_territoire_jalon`
+  - Input : `{ chantierId: string, jalon: number, habilitations, profil }`
+  - Délègue à `RecupererChantierUseCaseV2.run()` pour obtenir le `Chantier` complet
+  - Extrait et transforme `chantier.mailles` (departementale + regionale) en `AvancementTerritoireViewModel[]`
+  - Output : `{ territoireCode, territoireNom, codeInsee, maille, tauxAvancementAnnuel, tauxAvancementGlobal, estApplicable, dateDeMajQuantitative }`
 - [ ] **1.2** Enregistrer la query dans `chantiersModule` (`chantiers/module.ts`)
-- [ ] **1.3** Ajouter l'endpoint `recupererAvancementsTerritoires` dans `chantierRouter` (`routes/chantier.ts`)
+- [ ] **1.3** Ajouter l'endpoint `recupererAvancementsTerritoires` dans `chantierRouter` (`routes/chantier.ts`) — passer les habilitations et profil depuis le context
 - [ ] **1.4** Écrire les tests de la query
 
 ### Phase 2 : Généraliser `useSelectionTerritoires`
@@ -118,29 +121,27 @@ En comparant `WidgetCartographieMeteo` avec ce dont `WidgetCartographieTA` a bes
 - [ ] **3.2** Créer `useLegendeTA.ts` — calcule la légende à partir des données (filtre les items non présents)
   - Utilise `ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS`
 
-### Phase 4 : Créer le composant de comparaison pour le TA
+### ~~Phase 4 : Créer le composant de comparaison pour le TA~~ (reportée)
 
-- [ ] **4.1** Créer `RepartitionTauxAvancement.tsx` — tableau de comparaison des territoires sélectionnés
-  - S'inspirer de `RepartitionNiveauxDeConfiance.tsx` mais afficher le TA (pourcentage + barre de progression) au lieu du picto méteo
-  - Réutiliser : `getCouleurTerritoire`, `Picker`, `Select`, `useTuileWidget`, `territoiresGroupesPourPicker`
+> Pas nécessaire pour l'instant. On se concentre d'abord sur la cartographie seule. Le tableau de comparaison pourra être ajouté dans un second temps.
 
-### Phase 5 : Assembler le widget
+### Phase 4 : Assembler le widget
 
-- [ ] **5.1** Créer `WidgetCartographieTA.tsx` dans `Widget/WidgetCartographieTA/`
+- [ ] **4.1** Créer `WidgetCartographieTA.tsx` dans `Widget/WidgetCartographieTA/`
   - Props : `{ chantierId, maille, territoireCode, jalon }`
   - Data : `api.chantier.recupererAvancementsTerritoires.useSuspenseQuery()`
-  - Compose : CartographieV2 + LegendeCartographie + RepartitionTauxAvancement
+  - Compose : CartographieV2 + LegendeCartographie (pas de tableau de comparaison pour l'instant)
   - Layout responsive via `useTuileWidget`
 
-### Phase 6 : Intégrer dans la page
+### Phase 5 : Intégrer dans la page
 
-- [ ] **6.1** Ajouter `WidgetCartographieTA` dans `Cartes.tsx` à côté de `WidgetCartographieMeteo` dans le `TuileWidget`
-  - Conditionner l'affichage au feature flag `NEXT_PUBLIC_FF_COMPARAISON_TERRITOIRES`
-  - Afficher quand la carte sélectionnée est "avancementJalon"
+- [ ] **5.1** Dans `Cartes.tsx`, remplacer le premier `WidgetCartographieMeteo` (qui est actuellement un doublon/placeholder) par `WidgetCartographieTA`
+  - Le `TuileWidget` contiendra donc : `WidgetCartographieTA` + `WidgetCartographieMeteo`
+  - Toujours conditionné au feature flag `NEXT_PUBLIC_FF_COMPARAISON_TERRITOIRES`
 
-### Phase 7 (bonus) : Mutualiser le layout widget cartographie
+### Phase 6 (bonus) : Mutualiser le layout widget cartographie
 
-- [ ] **7.1** Optionnel — si les deux widgets ont un layout quasi identique (carte + tableau côte à côte avec responsive), extraire un composant `WidgetCartographieLayout` partagé qui prend en props la carte et le tableau. Cela évitera de dupliquer le layout flex-col/flex-row + les titres.
+- [ ] **6.1** Optionnel — si les deux widgets ont un layout quasi identique (carte + tableau côte à côte avec responsive), extraire un composant `WidgetCartographieLayout` partagé qui prend en props la carte et le tableau. Cela évitera de dupliquer le layout flex-col/flex-row + les titres.
 
 ---
 
@@ -151,7 +152,6 @@ src/server/chantiers/infrastructure/queries/GetChantierAvancementsTerritoiresQue
 src/client/components/_commons/Widget/WidgetCartographieTA/WidgetCartographieTA.tsx
 src/client/components/_commons/Widget/WidgetCartographieTA/useDonneesCartographieTA.tsx
 src/client/components/_commons/Widget/WidgetCartographieTA/useLegendeTA.ts
-src/client/components/_commons/Widget/WidgetCartographieTA/RepartitionTauxAvancement.tsx
 ```
 
 ## Fichiers à modifier
@@ -160,5 +160,5 @@ src/client/components/_commons/Widget/WidgetCartographieTA/RepartitionTauxAvance
 src/server/chantiers/module.ts                              # Enregistrer la nouvelle query
 src/server/infrastructure/api/trpc/routes/chantier.ts       # Ajouter l'endpoint
 src/client/components/_commons/Widget/WidgetCartographieMeteo/useSelectionTerritoires.ts  # Généraliser le type
-src/client/components/PageChantier/Cartes/Cartes.tsx        # Intégrer le widget
+src/client/components/PageChantier/Cartes/Cartes.tsx        # Remplacer le 1er widget placeholder
 ```
