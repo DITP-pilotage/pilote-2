@@ -39,15 +39,8 @@ export const WidgetCartographieTA = ({
   const { isModeDispositionG } = useMesureWidget();
 
   return (
-    <div
-      className={clsxm("flex flex-col gap-4", {
-        "flex-row": isModeDispositionG(),
-      })}
-    >
+    <div className="flex flex-col gap-4">
       <div className="flex flex-col gap-2">
-        <span className="fr-text font-bold">
-          Répartition des taux d'avancement
-        </span>
         <div className="max-w-[400px] mx-auto">
           <CartographieV2
             onTerritoireSelect={onSelectTerritoire}

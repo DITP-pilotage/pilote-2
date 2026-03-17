@@ -40,9 +40,6 @@ export const WidgetCartographieMeteo = ({
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-col gap-2 shrink-0">
-        <span className="fr-text font-bold">
-          Répartition des niveaux de confiance
-        </span>
         <div className="max-w-[400px] mx-auto">
           <CartographieV2
             onTerritoireSelect={onSelectTerritoire}
