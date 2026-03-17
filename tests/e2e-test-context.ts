@@ -14,56 +14,56 @@ const PROPOSITION_VALEUR_EVENEMENTS: $Enums.type_evenement[] = [
   "PROPOSITION_VALEUR_ACCEPTEE_AVEC_MODIFICATION",
 ];
 
-type EntityType =
-  | "pva"
-  | "evenement"
-  | "commentaire"
-  | "mesure_indicateur"
-  | "rapport_import"
-  | "utilisateur_reactivation";
+type ActionType =
+  | "PROPOSITION_VALEUR_AVANCEMENT_CREEE"
+  | "EVENEMENT_PROPOSITION_VALEUR_CREE"
+  | "COMMENTAIRE_CREE"
+  | "MESURE_INDICATEUR_IMPORTEE"
+  | "RAPPORT_IMPORT_CREE"
+  | "UTILISATEUR_DESACTIVE";
 
-interface TrackedEntity {
-  type: EntityType;
+interface TrackedAction {
+  type: ActionType;
   filters: Record<string, unknown>;
 }
 
 export class E2ETestContext {
-  private readonly entities: TrackedEntity[] = [];
+  private readonly actions: TrackedAction[] = [];
 
-  track(type: EntityType, filters: Record<string, unknown>): void {
-    this.entities.push({ type, filters });
+  track(type: ActionType, filters: Record<string, unknown>): void {
+    this.actions.push({ type, filters });
   }
 
   async cleanup(): Promise<void> {
-    for (const entity of this.entities) {
-      switch (entity.type) {
-        case "evenement":
+    for (const action of this.actions) {
+      switch (action.type) {
+        case "EVENEMENT_PROPOSITION_VALEUR_CREE":
           await prisma.indicateur_territoire_valeur_evenement.deleteMany({
             where: {
-              ...entity.filters,
+              ...action.filters,
               type_evenement: { in: PROPOSITION_VALEUR_EVENEMENTS },
             },
           });
           break;
-        case "pva":
+        case "PROPOSITION_VALEUR_AVANCEMENT_CREEE":
           await prisma.proposition_valeur_actuelle.deleteMany({
-            where: entity.filters,
+            where: action.filters,
           });
           break;
-        case "commentaire":
+        case "COMMENTAIRE_CREE":
           await prisma.commentaire.deleteMany({
-            where: entity.filters,
+            where: action.filters,
           });
           break;
-        case "mesure_indicateur":
+        case "MESURE_INDICATEUR_IMPORTEE":
           await prisma.mesure_indicateur.deleteMany({
-            where: entity.filters,
+            where: action.filters,
           });
           break;
-        case "rapport_import": {
+        case "RAPPORT_IMPORT_CREE": {
           const rapports =
             await prisma.rapport_import_mesure_indicateur.findMany({
-              where: entity.filters,
+              where: action.filters,
               select: { id: true },
             });
           const rapportIds = rapports.map((rapport) => rapport.id);
@@ -83,14 +83,14 @@ export class E2ETestContext {
           }
           break;
         }
-        case "utilisateur_reactivation":
+        case "UTILISATEUR_DESACTIVE":
           await prisma.utilisateur.updateMany({
-            where: entity.filters,
+            where: action.filters,
             data: { date_desactivation: null },
           });
           break;
       }
     }
-    this.entities.length = 0;
+    this.actions.length = 0;
   }
 }

@@ -263,28 +263,28 @@ test("doit pouvoir consulter les données des chantiers", async ({ page, e2eCont
 
 ### Isolation des données avec E2ETestContext
 
-Le `E2ETestContext` est un registre d'entités créées pendant un test. Il permet de garantir que chaque test (et chaque retry) part d'un état propre, sans dépendre du résultat des tests précédents.
+Le `E2ETestContext` est un registre d'actions effectuées pendant un test. Il permet de garantir que chaque test (et chaque retry) part d'un état propre, sans dépendre du résultat des tests précédents.
 
 **Principe :**
 - Le context est injecté dans les tests via une fixture Playwright personnalisée
-- Les POM reçoivent le context dans leur constructeur et y enregistrent les entités créées via l'UI
-- En `afterEach`, la fixture appelle `cleanup()` qui supprime les entités trackées via Prisma
+- Les POM reçoivent le context dans leur constructeur et y enregistrent les actions effectuées via l'UI
+- En `afterEach`, la fixture appelle `cleanup()` qui annule les actions trackées via Prisma
 - Le seed global (données de référence : chantiers, indicateurs, territoires, utilisateurs) reste inchangé
 
-**Types d'entités supportés :**
+**Types d'actions supportés :**
 
-| Type | Action cleanup | Utilisé par |
-|------|---------------|-------------|
-| `pva` | Suppression des propositions de valeur | `PvaIndicateurComponent` |
-| `evenement` | Suppression des événements PVA (filtrés par `PROPOSITION_VALEUR_*`) | `PvaIndicateurComponent` |
-| `commentaire` | Suppression des commentaires créés | `PageChantier` |
-| `rapport_import` | Suppression en cascade : mesures, temporaires, erreurs, rapport | `PageMiseAJourDonnees` |
-| `mesure_indicateur` | Suppression des mesures importées | Usage direct si nécessaire |
-| `utilisateur_reactivation` | Restauration de `date_desactivation` à `null` | `PageUtilisateurDetail` |
+| ActionType | Cleanup | Utilisé par |
+|------------|---------|-------------|
+| `PROPOSITION_VALEUR_AVANCEMENT_CREEE` | Suppression des propositions de valeur | `PvaIndicateurComponent` |
+| `EVENEMENT_PROPOSITION_VALEUR_CREE` | Suppression des événements PVA (filtrés par `PROPOSITION_VALEUR_*`) | `PvaIndicateurComponent` |
+| `COMMENTAIRE_CREE` | Suppression des commentaires créés | `PageChantier` |
+| `RAPPORT_IMPORT_CREE` | Suppression en cascade : mesures, temporaires, erreurs, rapport | `PageMiseAJourDonnees` |
+| `MESURE_INDICATEUR_IMPORTEE` | Suppression des mesures importées | Usage direct si nécessaire |
+| `UTILISATEUR_DESACTIVE` | Restauration de `date_desactivation` à `null` | `PageUtilisateurDetail` |
 
 **Implémentation :**
 
-1. **Le registre d'entités** :
+1. **Le registre d'actions** :
 ```typescript
 // tests/e2e-test-context.ts
 import { $Enums, PrismaClient } from "@prisma/client";
@@ -303,57 +303,57 @@ const PROPOSITION_VALEUR_EVENEMENTS: $Enums.type_evenement[] = [
   "PROPOSITION_VALEUR_ACCEPTEE_AVEC_MODIFICATION",
 ];
 
-type EntityType =
-  | "pva"
-  | "evenement"
-  | "commentaire"
-  | "mesure_indicateur"
-  | "rapport_import"
-  | "utilisateur_reactivation";
+type ActionType =
+  | "PROPOSITION_VALEUR_AVANCEMENT_CREEE"
+  | "EVENEMENT_PROPOSITION_VALEUR_CREE"
+  | "COMMENTAIRE_CREE"
+  | "MESURE_INDICATEUR_IMPORTEE"
+  | "RAPPORT_IMPORT_CREE"
+  | "UTILISATEUR_DESACTIVE";
 
-interface TrackedEntity {
-  type: EntityType;
+interface TrackedAction {
+  type: ActionType;
   filters: Record<string, unknown>;
 }
 
 export class E2ETestContext {
-  private readonly entities: TrackedEntity[] = [];
+  private readonly actions: TrackedAction[] = [];
 
-  track(type: EntityType, filters: Record<string, unknown>): void {
-    this.entities.push({ type, filters });
+  track(type: ActionType, filters: Record<string, unknown>): void {
+    this.actions.push({ type, filters });
   }
 
   async cleanup(): Promise<void> {
-    for (const entity of this.entities) {
-      switch (entity.type) {
-        case "evenement":
+    for (const action of this.actions) {
+      switch (action.type) {
+        case "EVENEMENT_PROPOSITION_VALEUR_CREE":
           await prisma.indicateur_territoire_valeur_evenement.deleteMany({
             where: {
-              ...entity.filters,
+              ...action.filters,
               type_evenement: { in: PROPOSITION_VALEUR_EVENEMENTS },
             },
           });
           break;
-        case "pva":
+        case "PROPOSITION_VALEUR_AVANCEMENT_CREEE":
           await prisma.proposition_valeur_actuelle.deleteMany({
-            where: entity.filters,
+            where: action.filters,
           });
           break;
-        case "commentaire":
+        case "COMMENTAIRE_CREE":
           await prisma.commentaire.deleteMany({
-            where: entity.filters,
+            where: action.filters,
           });
           break;
-        case "mesure_indicateur":
+        case "MESURE_INDICATEUR_IMPORTEE":
           await prisma.mesure_indicateur.deleteMany({
-            where: entity.filters,
+            where: action.filters,
           });
           break;
-        case "rapport_import": {
+        case "RAPPORT_IMPORT_CREE": {
           // Cascade : supprimer les dépendances avant le rapport
           const rapports =
             await prisma.rapport_import_mesure_indicateur.findMany({
-              where: entity.filters,
+              where: action.filters,
               select: { id: true },
             });
           const rapportIds = rapports.map((rapport) => rapport.id);
@@ -373,16 +373,16 @@ export class E2ETestContext {
           }
           break;
         }
-        case "utilisateur_reactivation":
+        case "UTILISATEUR_DESACTIVE":
           // Restauration d'état (pas suppression) : remettre l'utilisateur actif
           await prisma.utilisateur.updateMany({
-            where: entity.filters,
+            where: action.filters,
             data: { date_desactivation: null },
           });
           break;
       }
     }
-    this.entities.length = 0;
+    this.actions.length = 0;
   }
 }
 ```
@@ -394,6 +394,7 @@ import { test as base } from "@playwright/test";
 import { E2ETestContext } from "./e2e-test-context";
 
 export const test = base.extend<{ e2eContext: E2ETestContext }>({
+  // eslint-disable-next-line no-empty-pattern, react-hooks/rules-of-hooks
   e2eContext: async ({}, use) => {
     const context = new E2ETestContext();
     await use(context);
@@ -414,11 +415,11 @@ export class PvaIndicateurComponent {
   ) {}
 
   private trackPva(): void {
-    this.e2eContext.track("evenement", {
+    this.e2eContext.track("EVENEMENT_PROPOSITION_VALEUR_CREE", {
       indic_id: this.indicateurId,
       territoire_code: this.territoireCode,
     });
-    this.e2eContext.track("pva", {
+    this.e2eContext.track("PROPOSITION_VALEUR_AVANCEMENT_CREEE", {
       indic_id: this.indicateurId,
       territoire_code: this.territoireCode,
     });
@@ -442,7 +443,7 @@ async expectHistoriqueCommentaire(
   const id = randomUUID();
 
   // Track avant l'action UI pour couvrir les échecs intermédiaires
-  this.e2eContext.track("commentaire", {
+  this.e2eContext.track("COMMENTAIRE_CREE", {
     contenu: { contains: id },
   });
 
@@ -454,7 +455,7 @@ async expectHistoriqueCommentaire(
 // tests/pages/page-mise-a-jour-donnees.ts — tracking des imports
 async submitData(): Promise<void> {
   // Track le rapport d'import par timestamp pour cleanup en cascade
-  this.e2eContext.track("rapport_import", {
+  this.e2eContext.track("RAPPORT_IMPORT_CREE", {
     date_creation: { gte: new Date() },
   });
 
@@ -473,7 +474,7 @@ Certains tests modifient l'état d'entités existantes (ex : désactiver un util
 // tests/pages/admin/page-utilisateur-detail.ts
 async confirmerDesactivation(email: string): Promise<void> {
   // En cas d'échec avant réactivation, cleanup remettra l'utilisateur actif
-  this.e2eContext.track("utilisateur_reactivation", { email });
+  this.e2eContext.track("UTILISATEUR_DESACTIVE", { email });
 
   await this.dialog
     .getByRole("button", { name: "Confirmer la désactivation" })

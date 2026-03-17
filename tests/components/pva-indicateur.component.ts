@@ -17,11 +17,11 @@ export class PvaIndicateurComponent {
   }
 
   private trackPva(): void {
-    this.e2eContext.track("evenement", {
+    this.e2eContext.track("EVENEMENT_PROPOSITION_VALEUR_CREE", {
       indic_id: this.indicateurId,
       territoire_code: this.territoireCode,
     });
-    this.e2eContext.track("pva", {
+    this.e2eContext.track("PROPOSITION_VALEUR_AVANCEMENT_CREEE", {
       indic_id: this.indicateurId,
       territoire_code: this.territoireCode,
     });

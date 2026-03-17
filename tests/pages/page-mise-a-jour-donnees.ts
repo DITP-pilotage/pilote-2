@@ -50,7 +50,7 @@ export class PageMiseAJourDonnees extends BasePage {
 
   async submitData(): Promise<void> {
     this.importTimestamp = new Date();
-    this.e2eContext.track("rapport_import", {
+    this.e2eContext.track("RAPPORT_IMPORT_CREE", {
       date_creation: { gte: this.importTimestamp },
     });
 

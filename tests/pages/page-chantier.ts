@@ -134,7 +134,7 @@ export class PageChantier extends BasePage {
   ): Promise<void> {
     const id = randomUUID();
 
-    this.e2eContext.track("commentaire", {
+    this.e2eContext.track("COMMENTAIRE_CREE", {
       contenu: { contains: id },
     });
 

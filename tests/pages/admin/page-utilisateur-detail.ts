@@ -44,7 +44,7 @@ export class PageUtilisateurDetail extends BasePage {
   }
 
   async confirmerDesactivation(email: string): Promise<void> {
-    this.e2eContext.track("utilisateur_reactivation", { email });
+    this.e2eContext.track("UTILISATEUR_DESACTIVE", { email });
 
     await this.dialog
       .getByRole("button", { name: "Confirmer la désactivation" })
