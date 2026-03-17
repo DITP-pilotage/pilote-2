@@ -135,14 +135,12 @@ describe("ImportObjectifAPIHandler", () => {
     const { request, response } = créerMockRequestAvecBody(body);
 
     // When
-    await getContainer("importObjectif")
-      .resolve("importObjectifAPIHandler")
-      .handle({
-        request,
-        response,
-        chantierId,
-        utilisateurAuthentifie: utilisateurAuthentifié,
-      });
+    await getContainer("objectif").resolve("importObjectifAPIHandler").handle({
+      request,
+      response,
+      chantierId,
+      utilisateurAuthentifie: utilisateurAuthentifié,
+    });
 
     // Then
     expect(response._getStatusCode()).toEqual(200);
@@ -156,7 +154,8 @@ describe("ImportObjectifAPIHandler", () => {
     expect(objectifsEnBase).toHaveLength(1);
     expect(objectifsEnBase[0].contenu).toEqual("Contenu de l'objectif de test");
     expect(objectifsEnBase[0].type).toEqual("notre_ambition");
-    expect(objectifsEnBase[0].auteur_id).toEqual(auteurId);
+    expect(objectifsEnBase[0].auteur_creation_id).toEqual(auteurId);
+    expect(objectifsEnBase[0].auteur_modification_id).toEqual(auteurId);
   });
 
   it("retourne 400 quand le JSON est invalide", async () => {
@@ -171,14 +170,12 @@ describe("ImportObjectifAPIHandler", () => {
     const { request, response } = créerMockRequestAvecBodyInvalide();
 
     // When
-    await getContainer("importObjectif")
-      .resolve("importObjectifAPIHandler")
-      .handle({
-        request,
-        response,
-        chantierId,
-        utilisateurAuthentifie: utilisateurAuthentifié,
-      });
+    await getContainer("objectif").resolve("importObjectifAPIHandler").handle({
+      request,
+      response,
+      chantierId,
+      utilisateurAuthentifie: utilisateurAuthentifié,
+    });
 
     // Then
     expect(response._getStatusCode()).toEqual(400);
@@ -223,14 +220,12 @@ describe("ImportObjectifAPIHandler", () => {
     const { request, response } = créerMockRequestAvecBody(body);
 
     // When
-    await getContainer("importObjectif")
-      .resolve("importObjectifAPIHandler")
-      .handle({
-        request,
-        response,
-        chantierId,
-        utilisateurAuthentifie: utilisateurAuthentifié,
-      });
+    await getContainer("objectif").resolve("importObjectifAPIHandler").handle({
+      request,
+      response,
+      chantierId,
+      utilisateurAuthentifie: utilisateurAuthentifié,
+    });
 
     // Then
     expect(response._getStatusCode()).toEqual(403);
@@ -258,14 +253,12 @@ describe("ImportObjectifAPIHandler", () => {
     const { request, response } = créerMockRequestAvecBody(body);
 
     // When
-    await getContainer("importObjectif")
-      .resolve("importObjectifAPIHandler")
-      .handle({
-        request,
-        response,
-        chantierId,
-        utilisateurAuthentifie: utilisateurAuthentifié,
-      });
+    await getContainer("objectif").resolve("importObjectifAPIHandler").handle({
+      request,
+      response,
+      chantierId,
+      utilisateurAuthentifie: utilisateurAuthentifié,
+    });
 
     // Then
     expect(response._getStatusCode()).toEqual(400);
@@ -299,14 +292,12 @@ describe("ImportObjectifAPIHandler", () => {
     const { request, response } = créerMockRequestAvecBody(body);
 
     // When
-    await getContainer("importObjectif")
-      .resolve("importObjectifAPIHandler")
-      .handle({
-        request,
-        response,
-        chantierId,
-        utilisateurAuthentifie: utilisateurAuthentifié,
-      });
+    await getContainer("objectif").resolve("importObjectifAPIHandler").handle({
+      request,
+      response,
+      chantierId,
+      utilisateurAuthentifie: utilisateurAuthentifié,
+    });
 
     // Then
     expect(response._getStatusCode()).toEqual(400);

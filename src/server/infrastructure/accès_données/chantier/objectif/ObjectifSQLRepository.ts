@@ -1,10 +1,6 @@
-import {
-  objectif as ObjectifPrisma,
-  type_objectif as TypeObjectifPrisma,
-  utilisateur as UtilisateurPrisma,
-} from "@prisma/client";
+import { type_objectif as TypeObjectifPrisma } from "@prisma/client";
 import ObjectifRepository from "@/server/domain/chantier/objectif/ObjectifRepository.interface";
-import Objectif, {
+import {
   ObjectifV2,
   TypeObjectif,
 } from "@/server/domain/chantier/objectif/Objectif.interface";
@@ -25,87 +21,6 @@ export const CODES_TYPES_OBJECTIFS: Record<TypeObjectif, TypeObjectifPrisma> = {
 };
 
 export default class ObjectifSQLRepository implements ObjectifRepository {
-  private mapperVersDomaine(
-    objectif:
-      | (ObjectifPrisma & { auteur_objectif: UtilisateurPrisma | null })
-      | null,
-  ): Objectif {
-    if (objectif === null) return null;
-    const auteurObjectif = objectif.auteur_objectif;
-    return {
-      id: objectif.id,
-      type: NOMS_TYPES_OBJECTIFS[objectif.type],
-      contenu: objectif.contenu,
-      date: objectif.date.toISOString(),
-      auteur: auteurObjectif
-        ? `${auteurObjectif.prenom} ${auteurObjectif.nom}`
-        : "Auteur Inconnu",
-    };
-  }
-
-  async récupérerLePlusRécent(
-    chantierId: string,
-    type: TypeObjectif,
-  ): Promise<Objectif> {
-    const objectifLePlusRécent = await prisma.objectif.findFirst({
-      where: {
-        chantier_id: chantierId,
-        type: CODES_TYPES_OBJECTIFS[type],
-      },
-      include: {
-        auteur_objectif: true,
-      },
-      orderBy: { date: "desc" },
-    });
-
-    return this.mapperVersDomaine(objectifLePlusRécent);
-  }
-
-  async récupérerHistorique(
-    chantierId: string,
-    type: TypeObjectif,
-  ): Promise<Objectif[]> {
-    const objectifs = await prisma.objectif.findMany({
-      where: {
-        chantier_id: chantierId,
-        type: CODES_TYPES_OBJECTIFS[type],
-      },
-      include: {
-        auteur_objectif: true,
-      },
-      orderBy: { date: "desc" },
-    });
-
-    return objectifs.map((objectifDeLHistorique) =>
-      this.mapperVersDomaine(objectifDeLHistorique),
-    );
-  }
-
-  async créer(
-    chantierId: string,
-    id: string,
-    contenu: string,
-    auteur_id: string,
-    type: TypeObjectif,
-    date: Date,
-  ): Promise<Objectif> {
-    const objectifCréé = await prisma.objectif.create({
-      data: {
-        id: id,
-        chantier_id: chantierId,
-        contenu: contenu,
-        type: CODES_TYPES_OBJECTIFS[type],
-        date: date,
-        auteur_id: auteur_id,
-      },
-      include: {
-        auteur_objectif: true,
-      },
-    });
-
-    return this.mapperVersDomaine(objectifCréé);
-  }
-
   async save({
     id,
     chantierId,

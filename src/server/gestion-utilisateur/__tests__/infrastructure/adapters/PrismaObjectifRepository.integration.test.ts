@@ -56,26 +56,29 @@ describe("PrismaObjectifRepository", () => {
           {
             id: "77053976-1a8e-49f0-b68a-df01da2fc277",
             chantier_id: "CH-001",
-            auteur_id: auteurId1,
+            auteur_modification_id: auteurId1,
             contenu: "",
             type: "a_faire",
-            date: new Date("2023-05-01"),
+            date_creation: new Date("2023-05-01"),
+            date_modification: new Date("2023-05-01"),
           },
           {
             id: "b699907e-43c4-43be-8d8d-185fca1b2e50",
             chantier_id: "CH-001",
-            auteur_id: auteurId2,
+            auteur_modification_id: auteurId2,
             contenu: "",
             type: "a_faire",
-            date: new Date("2024-05-01"),
+            date_creation: new Date("2024-05-01"),
+            date_modification: new Date("2024-05-01"),
           },
           {
             id: "e3885e40-caab-4fb6-acf4-0c8f66c9e290",
             chantier_id: "CH-001",
-            auteur_id: auteurId2,
+            auteur_modification_id: auteurId2,
             contenu: "",
             type: "a_faire",
-            date: new Date("2023-05-01"),
+            date_creation: new Date("2023-05-01"),
+            date_modification: new Date("2023-05-01"),
           },
         ],
       });
@@ -88,7 +91,7 @@ describe("PrismaObjectifRepository", () => {
 
       // Then
       const decisionsAvecAuteurAnonyme = await prisma.objectif.findMany({
-        where: { auteur_id: auteurId3 },
+        where: { auteur_modification_id: auteurId3 },
       });
       expect(decisionsAvecAuteurAnonyme).toHaveLength(2);
       expect(decisionsAvecAuteurAnonyme[0].id).toStrictEqual(

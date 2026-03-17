@@ -23,13 +23,17 @@ export class ModifierBrouillonObjectifUseCase {
     dateModification: string;
     habilitations: Habilitations;
   }): Promise<void> {
-    const brouillon = await this.dependencies.objectifRepository.getById(brouillonId);
+    const brouillon =
+      await this.dependencies.objectifRepository.getById(brouillonId);
 
     if (!brouillon) throw new Error(`Brouillon introuvable : ${brouillonId}`);
 
     new Habilitation(
       habilitations,
-    ).vérifierLesHabilitationsEnSaisieDesPublications(brouillon.chantierId, "NAT-FR");
+    ).vérifierLesHabilitationsEnSaisieDesPublications(
+      brouillon.chantierId,
+      "NAT-FR",
+    );
 
     const objectif = modifierObjectifBrouillon(brouillon, {
       contenu,
