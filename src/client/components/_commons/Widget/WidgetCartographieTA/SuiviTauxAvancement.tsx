@@ -46,7 +46,7 @@ export const SuiviTauxAvancement = ({
               >
                 {territoire.territoireNom}
               </span>
-              {!estInitial && (
+              {!estInitial ? (
                 <button
                   onClick={() =>
                     onSupprimerTerritoire(territoire.territoireCode)
@@ -58,6 +58,8 @@ export const SuiviTauxAvancement = ({
                 >
                   ✕
                 </button>
+              ) : (
+                <div />
               )}
             </div>
 

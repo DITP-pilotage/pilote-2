@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ToggleGroup } from "radix-ui";
+import { PillToggleGroup } from "@/components/shared/PillToggleGroup";
 import { MailleInterne } from "@/server/domain/maille/Maille.interface";
 import { CartographieV2 } from "@/components/_commons/CartographieV2/CartographieV2";
 import { LegendeCartographie } from "@/components/_commons/CartographieV2/LegendeCartographie";
@@ -67,54 +67,41 @@ export const WidgetCartographieTA = ({
       }
       titre="Suivi et évolution des taux d'avancement"
     >
-      <ToggleGroup.Root
+      <PillToggleGroup.Root
         type="single"
         value={vueActive}
         onValueChange={(value) => {
           if (value) setVueActive(value as VueCartographieTA);
         }}
-        className="flex flex-wrap justify-center gap-2"
       >
-        <ToggleGroup.Item
-          value="situation"
-          className="leading-none rounded-full px-2 py-1.5 text-[10px] font-medium flex items-center gap-1.5 data-[state=on]:bg-dsfr-blue-france-925 data-[state=off]:bg-dsfr-alt-blue-france text-dsfr-blue-france-sun-113"
-        >
+        <PillToggleGroup.Item value="situation">
           <EqualizerIcon className="w-3 h-3" />
           situation en {jalon}
-        </ToggleGroup.Item>
-        <ToggleGroup.Item
-          value="tableau"
-          className="leading-none rounded-full px-2 py-1.5 text-[10px] font-medium flex items-center gap-1.5 data-[state=on]:bg-dsfr-blue-france-925 data-[state=off]:bg-dsfr-alt-blue-france text-dsfr-blue-france-sun-113"
-        >
+        </PillToggleGroup.Item>
+        <PillToggleGroup.Item value="tableau">
           <GridIcon className="w-3 h-3" />
-          {"\u00e9volution temporelle \u2013 tableau"}
-        </ToggleGroup.Item>
-        <ToggleGroup.Item
-          value="courbes"
-          className="leading-none rounded-full px-2 py-1.5 text-[10px] font-medium flex items-center gap-1.5 data-[state=on]:bg-dsfr-blue-france-925 data-[state=off]:bg-dsfr-alt-blue-france text-dsfr-blue-france-sun-113"
-        >
+          évolution temporelle - tableau
+        </PillToggleGroup.Item>
+        <PillToggleGroup.Item value="courbes">
           <LineChartIcon className="w-3 h-3" />
-          {"\u00e9volution temporelle \u2013 courbes"}
-        </ToggleGroup.Item>
-      </ToggleGroup.Root>
+          évolution temporelle - courbes
+        </PillToggleGroup.Item>
+      </PillToggleGroup.Root>
 
       {vueActive === "situation" && (
-        <>
-          <SuiviTauxAvancement
-            territoireCode={territoireCode}
-            onSupprimerTerritoire={supprimerTerritoire}
-            territoiresSelectionnes={territoiresSelectionnes}
-          />
-
-          <AjouterTerritoirePicker
-            territoiresSelectionnesCodes={territoiresSelectionnes.map(
-              (territoire) => territoire.territoireCode,
-            )}
-            onAjouterTerritoire={ajouterTerritoire}
-            onAjouterTerritoires={ajouterTerritoires}
-          />
-        </>
+        <SuiviTauxAvancement
+          territoireCode={territoireCode}
+          onSupprimerTerritoire={supprimerTerritoire}
+          territoiresSelectionnes={territoiresSelectionnes}
+        />
       )}
+      <AjouterTerritoirePicker
+        territoiresSelectionnesCodes={territoiresSelectionnes.map(
+          (territoire) => territoire.territoireCode,
+        )}
+        onAjouterTerritoire={ajouterTerritoire}
+        onAjouterTerritoires={ajouterTerritoires}
+      />
     </BaseCartographieWidgetLayout>
   );
 };
