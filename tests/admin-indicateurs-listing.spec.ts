@@ -1,4 +1,5 @@
-import { expect, test } from "@playwright/test";
+import { expect } from "@playwright/test";
+import { test } from "./fixtures";
 import { AppActions } from "./actions/app.actions";
 import { PageAdminIndicateurs } from "./pages/admin/page-admin-indicateurs";
 
@@ -9,11 +10,12 @@ const EQUIPE_DIR_PROJET = "equipe.dir.projet@example.com";
 test.describe("Listing des indicateurs — Admin", () => {
   test("doit afficher la page de gestion des indicateurs avec la structure attendue", async ({
     page,
+    e2eContext,
   }) => {
     test.setTimeout(150_000);
 
-    const appActions = new AppActions(page);
-    const pageIndicateurs = new PageAdminIndicateurs(page);
+    const appActions = new AppActions(page, e2eContext);
+    const pageIndicateurs = new PageAdminIndicateurs(page, e2eContext);
 
     await test.step("Connexion en tant que DITP Admin et accès à la page", async () => {
       await appActions.loginAs(DITP_ADMIN);
@@ -96,11 +98,11 @@ test.describe("Listing des indicateurs — Admin", () => {
     });
   });
 
-  test("doit refuser l'accès aux profils non DITP_ADMIN", async ({ page }) => {
+  test("doit refuser l'accès aux profils non DITP_ADMIN", async ({ page, e2eContext }) => {
     test.setTimeout(150_000);
 
-    const appActions = new AppActions(page);
-    const pageIndicateurs = new PageAdminIndicateurs(page);
+    const appActions = new AppActions(page, e2eContext);
+    const pageIndicateurs = new PageAdminIndicateurs(page, e2eContext);
 
     await test.step("Coordinateur région — pas de lien navbar ni d'accès par URL", async () => {
       await appActions.loginAs(COORDINATEUR_REGION);

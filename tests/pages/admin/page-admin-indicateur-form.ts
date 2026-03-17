@@ -1,9 +1,10 @@
 import { Page, expect } from "@playwright/test";
 import { BasePage } from "../base.page";
+import { E2ETestContext } from "../../e2e-test-context";
 
 export class PageAdminIndicateurForm extends BasePage {
-  constructor(page: Page) {
-    super(page);
+  constructor(page: Page, e2eContext: E2ETestContext) {
+    super(page, e2eContext);
   }
 
   private get titreFiche() {

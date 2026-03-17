@@ -1,4 +1,5 @@
-import { expect, test } from "@playwright/test";
+import { expect } from "@playwright/test";
+import { test } from "./fixtures";
 import { AppActions } from "./actions/app.actions";
 import { PageAdminUtilisateurs } from "./pages/admin/page-utilisateurs";
 import { PageUtilisateurDetail } from "./pages/admin/page-utilisateur-detail";
@@ -15,11 +16,11 @@ const SERVICES_DECONCENTRES_DEPARTEMENT =
   "services.deconcentres.departement@example.com";
 
 test.describe("Gestion des comptes utilisateurs", () => {
-  test("DITP Admin — Vue admin complète et token API", async ({ page }) => {
+  test("DITP Admin — Vue admin complète et token API", async ({ page, e2eContext }) => {
     test.setTimeout(300_000);
 
-    const appActions = new AppActions(page);
-    const pageUtilisateurs = new PageAdminUtilisateurs(page);
+    const appActions = new AppActions(page, e2eContext);
+    const pageUtilisateurs = new PageAdminUtilisateurs(page, e2eContext);
 
     await test.step("Accès et structure du listing", async () => {
       await appActions.loginAs(DITP_ADMIN);
@@ -93,11 +94,11 @@ test.describe("Gestion des comptes utilisateurs", () => {
     });
   });
 
-  test("Coordinateur Région — Visibilité et restrictions", async ({ page }) => {
+  test("Coordinateur Région — Visibilité et restrictions", async ({ page, e2eContext }) => {
     test.setTimeout(300_000);
 
-    const appActions = new AppActions(page);
-    const pageUtilisateurs = new PageAdminUtilisateurs(page);
+    const appActions = new AppActions(page, e2eContext);
+    const pageUtilisateurs = new PageAdminUtilisateurs(page, e2eContext);
 
     await test.step("Listing - structure et visibilité", async () => {
       await appActions.loginAs(COORDINATEUR_REGION);
@@ -190,11 +191,11 @@ test.describe("Gestion des comptes utilisateurs", () => {
     });
   });
 
-  test("Coordinateur Département — Périmètre restreint", async ({ page }) => {
+  test("Coordinateur Département — Périmètre restreint", async ({ page, e2eContext }) => {
     test.setTimeout(300_000);
 
-    const appActions = new AppActions(page);
-    const pageUtilisateurs = new PageAdminUtilisateurs(page);
+    const appActions = new AppActions(page, e2eContext);
+    const pageUtilisateurs = new PageAdminUtilisateurs(page, e2eContext);
 
     await test.step("Listing - profils restreints", async () => {
       await appActions.loginAs(COORDINATEUR_DEPARTEMENT);
@@ -264,11 +265,11 @@ test.describe("Gestion des comptes utilisateurs", () => {
     });
   });
 
-  test("Secrétariat Général — Par chantiers", async ({ page }) => {
+  test("Secrétariat Général — Par chantiers", async ({ page, e2eContext }) => {
     test.setTimeout(300_000);
 
-    const appActions = new AppActions(page);
-    const pageUtilisateurs = new PageAdminUtilisateurs(page);
+    const appActions = new AppActions(page, e2eContext);
+    const pageUtilisateurs = new PageAdminUtilisateurs(page, e2eContext);
 
     await test.step("Listing - profils autorisés", async () => {
       await appActions.loginAs(SECRETARIAT_GENERAL);
@@ -312,11 +313,11 @@ test.describe("Gestion des comptes utilisateurs", () => {
     });
   });
 
-  test("Profils sans accès — Redirection", async ({ page }) => {
+  test("Profils sans accès — Redirection", async ({ page, e2eContext }) => {
     test.setTimeout(150_000);
 
-    const appActions = new AppActions(page);
-    const pageUtilisateurs = new PageAdminUtilisateurs(page);
+    const appActions = new AppActions(page, e2eContext);
+    const pageUtilisateurs = new PageAdminUtilisateurs(page, e2eContext);
 
     await test.step("Préfet de région - pas d'accès", async () => {
       await appActions.loginAs(PREFET_REGION);
@@ -340,11 +341,11 @@ test.describe("Gestion des comptes utilisateurs", () => {
     });
   });
 
-  test("Désactivation et réactivation", async ({ page }) => {
+  test("Désactivation et réactivation", async ({ page, e2eContext }) => {
     test.setTimeout(300_000);
 
-    const appActions = new AppActions(page);
-    const pageUtilisateurs = new PageAdminUtilisateurs(page);
+    const appActions = new AppActions(page, e2eContext);
+    const pageUtilisateurs = new PageAdminUtilisateurs(page, e2eContext);
     let pageDetail: PageUtilisateurDetail;
 
     // On utilise SERVICES_DECONCENTRES_DEPARTEMENT comme utilisateur de test
@@ -357,7 +358,7 @@ test.describe("Gestion des comptes utilisateurs", () => {
         await pageUtilisateurs.clickUtilisateurParEmail(utilisateurCible);
       await pageDetail.expectDesactiverVisible();
       await page.getByText("Désactiver le compte").click();
-      await pageDetail.confirmerDesactivation();
+      await pageDetail.confirmerDesactivation(utilisateurCible);
       await pageUtilisateurs.expectAlerte(/désactivé/);
     });
 
@@ -387,11 +388,11 @@ test.describe("Gestion des comptes utilisateurs", () => {
     });
   });
 
-  test("Filtres et recherche", async ({ page }) => {
+  test("Filtres et recherche", async ({ page, e2eContext }) => {
     test.setTimeout(300_000);
 
-    const appActions = new AppActions(page);
-    const pageUtilisateurs = new PageAdminUtilisateurs(page);
+    const appActions = new AppActions(page, e2eContext);
+    const pageUtilisateurs = new PageAdminUtilisateurs(page, e2eContext);
 
     await appActions.loginAs(DITP_ADMIN);
     await pageUtilisateurs.goto();
@@ -445,11 +446,11 @@ test.describe("Gestion des comptes utilisateurs", () => {
     });
   });
 
-  test("Restriction multi-territoires", async ({ page }) => {
+  test("Restriction multi-territoires", async ({ page, e2eContext }) => {
     test.setTimeout(300_000);
 
-    const appActions = new AppActions(page);
-    const pageUtilisateurs = new PageAdminUtilisateurs(page);
+    const appActions = new AppActions(page, e2eContext);
+    const pageUtilisateurs = new PageAdminUtilisateurs(page, e2eContext);
 
     // prefet.multi.territoires a DEPT-56 (dans périmètre Bretagne) + DEPT-75 (hors périmètre)
     // → visible dans le listing (au moins 1 territoire en commun)

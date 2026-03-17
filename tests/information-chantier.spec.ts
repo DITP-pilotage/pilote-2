@@ -1,7 +1,8 @@
-import { expect, test } from "@playwright/test";
+import { expect } from "@playwright/test";
+import { test } from "./fixtures";
 import { AppActions } from "./actions/app.actions";
 
-test("doit pouvoir consulter les données des chantiers", async ({ page }) => {
+test("doit pouvoir consulter les données des chantiers", async ({ page, e2eContext }) => {
   test.setTimeout(150_000);
 
   const chantier = {
@@ -9,7 +10,7 @@ test("doit pouvoir consulter les données des chantiers", async ({ page }) => {
     nom: "Faciliter l'efficacité opérationnelle",
   };
 
-  const appActions = new AppActions(page);
+  const appActions = new AppActions(page, e2eContext);
   const pageAccueil = await appActions.loginAs();
 
   await test.step("Vérification de la structure de la page d'accueil", async () => {

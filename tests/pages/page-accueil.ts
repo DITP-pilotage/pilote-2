@@ -3,14 +3,15 @@ import { BasePage } from "./base.page";
 import { PageChantier } from "./page-chantier";
 import { HeaderComponent } from "../components/header.component";
 import { ExportCsvModal } from "../components/export-csv.modal";
+import { E2ETestContext } from "../e2e-test-context";
 
 export class PageAccueil extends BasePage {
   readonly header: HeaderComponent;
 
   readonly exportModal: ExportCsvModal;
 
-  constructor(page: Page) {
-    super(page);
+  constructor(page: Page, e2eContext: E2ETestContext) {
+    super(page, e2eContext);
     this.header = new HeaderComponent(page);
     this.exportModal = new ExportCsvModal(page);
   }
@@ -53,10 +54,11 @@ export class PageAccueil extends BasePage {
       .getByRole("table")
       .getByRole("cell", { name: chantierName })
       .click();
+    await this.page.waitForURL("**/chantier/**");
     await expect(
       this.page.getByRole("heading", { name: /Avancement du chantier/ }),
-    ).toBeVisible();
-    return new PageChantier(this.page);
+    ).toBeVisible({ timeout: 30_000 });
+    return new PageChantier(this.page, this.e2eContext);
   }
 
   async openExportModal(): Promise<void> {

@@ -2,12 +2,13 @@ import { Page, Download, expect } from "@playwright/test";
 import { PageUtilisateurDetail } from "./page-utilisateur-detail";
 import { HeaderComponent } from "../../components/header.component";
 import { BasePage } from "../base.page";
+import { E2ETestContext } from "../../e2e-test-context";
 
 export class PageAdminUtilisateurs extends BasePage {
   readonly header: HeaderComponent;
 
-  constructor(page: Page) {
-    super(page);
+  constructor(page: Page, e2eContext: E2ETestContext) {
+    super(page, e2eContext);
     this.header = new HeaderComponent(page);
   }
 
@@ -75,7 +76,7 @@ export class PageAdminUtilisateurs extends BasePage {
     email: string,
   ): Promise<PageUtilisateurDetail> {
     await this.tableau.getByRole("row").filter({ hasText: email }).click();
-    const pageDetail = new PageUtilisateurDetail(this.page);
+    const pageDetail = new PageUtilisateurDetail(this.page, this.e2eContext);
     await pageDetail.expectPageChargee();
     return pageDetail;
   }
