@@ -5,7 +5,7 @@ import {
   TypeCommentaireChantier,
 } from "@/server/domain/chantier/commentaire/Commentaire.interface";
 import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
-import { PublicationActions } from "./Publication.interface";
+import { PublicationActions } from "@/components/PageChantier/PublicationV2/Publication.interface";
 
 export const useCommentaireActions = ({
   chantierId,

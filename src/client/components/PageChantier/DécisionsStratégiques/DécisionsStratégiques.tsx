@@ -1,5 +1,5 @@
 import Bloc from "@/components/_commons/Bloc/Bloc";
-import { CommentaireSection } from "@/components/_commons/CommentairesNew/CommentaireSection/CommentaireSection";
+import { PublicationSection } from "@/components/PageChantier/PublicationV2/PublicationSection";
 import { pageChantier } from "@/components/PageChantier/PageChantierServerSideContext";
 import {
   consignesEcritureDecisionStrategique,
@@ -34,13 +34,14 @@ export const DécisionsStratégiques = ({
       }
       titre="France"
     >
-      <CommentaireSection
+      <PublicationSection
         actions={actions}
         brouillon={brouillonDecisionStrategique}
         consigne={consignesEcritureDecisionStrategique[TYPE]}
         historiqueNode={<HistoriqueDecisionStrategique />}
         libelle={libellésTypesDécisionStratégique[TYPE]}
         modeEcriture={modeEcriture}
+        type={TYPE}
         publication={décisionStratégique}
       />
     </Bloc>

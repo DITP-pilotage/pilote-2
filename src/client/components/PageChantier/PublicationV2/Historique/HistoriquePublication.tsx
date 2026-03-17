@@ -3,8 +3,8 @@ import { Modale } from "@/components/shared/Modale";
 import { BoutonSousLigné } from "@/components/_commons/BoutonSousLigné/BoutonSousLigné";
 import { Icone } from "@/components/_commons/Icone";
 import { Eye1Icon } from "@/components/_commons/Icones/Eye1Icon";
-import { AffichageCommentaire } from "@/components/_commons/CommentairesNew/CommentaireSection/Affichage/Affichage";
-import { Publication } from "@/components/_commons/CommentairesNew/CommentaireSection/Publication.interface";
+import { AffichagePublication } from "@/components/PageChantier/PublicationV2/Affichage/AffichagePublication";
+import { Publication } from "@/components/PageChantier/PublicationV2/Publication.interface";
 
 type HistoriquePublicationProps = {
   title: string;
@@ -40,7 +40,7 @@ export const HistoriquePublication = ({
       historique.map((item, index) => (
         <Fragment key={item.dateModification}>
           {index !== 0 && <hr className="fr-mt-4w" />}
-          <AffichageCommentaire commentaire={item} />
+          <AffichagePublication commentaire={item} />
         </Fragment>
       ))
     ) : (

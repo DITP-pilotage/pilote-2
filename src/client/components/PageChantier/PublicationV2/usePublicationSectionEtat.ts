@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { SubmitHandler } from "react-hook-form";
-import { CommentaireAction } from "./AlerteCommentaire";
+import { CommentaireAction } from "./AlertePublication";
 import { PublicationActions } from "./Publication.interface";
 
-export const useCommentaireSectionEtat = (actions: PublicationActions) => {
+export const usePublicationSectionEtat = (actions: PublicationActions) => {
   const [modeÉdition, setModeÉdition] = useState(false);
   const [alerteAction, setAlerteAction] = useState<CommentaireAction | null>(
     null,

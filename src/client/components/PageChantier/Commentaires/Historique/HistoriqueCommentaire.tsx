@@ -2,9 +2,13 @@ import { useState } from "react";
 import { TypeCommentaireChantier } from "@/server/domain/chantier/commentaire/Commentaire.interface";
 import api from "@/server/infrastructure/api/trpc/api";
 import { pageChantier } from "@/components/PageChantier/PageChantierServerSideContext";
-import { HistoriquePublication } from "@/components/_commons/CommentairesNew/CommentaireSection/HistoriquePublication/HistoriquePublication";
+import { HistoriquePublication } from "@/components/PageChantier/PublicationV2/Historique/HistoriquePublication";
 
-const HistoriqueCommentaire = ({ type }: { type: TypeCommentaireChantier }) => {
+export const HistoriqueCommentaire = ({
+  type,
+}: {
+  type: TypeCommentaireChantier;
+}) => {
   const [open, setOpen] = useState(false);
   const { chantier, territoireCode } = pageChantier.useServerSidePropsContext();
 
@@ -23,5 +27,3 @@ const HistoriqueCommentaire = ({ type }: { type: TypeCommentaireChantier }) => {
     />
   );
 };
-
-export default HistoriqueCommentaire;

@@ -13,7 +13,7 @@ import {
   LIMITE_CARACTÈRES_COMMENTAIRE,
   validationCommentaireFormulaire,
 } from "@/validation/commentaire";
-import { AffichageCommentaire } from "@/components/_commons/CommentairesNew/CommentaireSection/Affichage/Affichage";
+import { AffichagePublication } from "@/components/PageChantier/PublicationV2/Affichage/AffichagePublication";
 import {
   pageChantier,
   useTerritoireSelectionne,
@@ -21,9 +21,9 @@ import {
 import {
   PublicationBrouillon,
   Publication,
-} from "@/components/_commons/CommentairesNew/CommentaireSection/Publication.interface";
+} from "@/components/PageChantier/PublicationV2/Publication.interface";
 
-interface ModaleFormulaireCommentaireProps {
+interface ModaleFormulairePublicationProps {
   title: string;
   libelle: string;
   consigne: string;
@@ -36,7 +36,7 @@ interface ModaleFormulaireCommentaireProps {
   onEnregistrerBrouillon: SubmitHandler<{ contenu: string }>;
 }
 
-export const ModaleFormulaireCommentaire = ({
+export const ModaleFormulairePublication = ({
   title,
   libelle,
   consigne,
@@ -47,7 +47,7 @@ export const ModaleFormulaireCommentaire = ({
   brouillon,
   onPublier,
   onEnregistrerBrouillon,
-}: ModaleFormulaireCommentaireProps) => {
+}: ModaleFormulairePublicationProps) => {
   const { chantierInformations } = pageChantier.useServerSidePropsContext();
   const territoireSélectionné = useTerritoireSelectionne();
 
@@ -74,7 +74,7 @@ export const ModaleFormulaireCommentaire = ({
       </p>
       <h3 className="text-base font-bold mb-3">Commentaire actuel</h3>
       <div className="mb-6">
-        <AffichageCommentaire commentaire={commentaire} />
+        <AffichagePublication commentaire={commentaire} />
       </div>
 
       <h3 className="text-base font-bold mb-3">Votre nouveau commentaire</h3>

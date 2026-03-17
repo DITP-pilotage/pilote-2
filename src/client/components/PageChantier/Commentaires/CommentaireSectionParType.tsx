@@ -8,8 +8,8 @@ import {
   consignesEcritureCommentaire,
 } from "@/client/constants/libellesCommentaire";
 import { pageChantier } from "@/components/PageChantier/PageChantierServerSideContext";
-import { CommentaireSection } from "./CommentaireSection";
-import HistoriqueCommentaire from "./Historique/Historique";
+import { PublicationSection } from "@/components/PageChantier/PublicationV2/PublicationSection";
+import { HistoriqueCommentaire } from "@/components/PageChantier/Commentaires/Historique/HistoriqueCommentaire";
 import { useCommentaireActions } from "./useCommentaireActions";
 
 interface CommentaireSectionConnecteeProps {
@@ -36,13 +36,14 @@ export const CommentaireSectionParType = ({
   });
 
   return (
-    <CommentaireSection
+    <PublicationSection
       actions={actions}
       brouillon={commentaireBrouillon}
       consigne={consignesEcritureCommentaire[type]}
       historiqueNode={<HistoriqueCommentaire type={type} />}
       libelle={libellesTypesCommentaire[type]}
       modeEcriture={modeEcriture}
+      type={type}
       publication={commentaire}
     />
   );

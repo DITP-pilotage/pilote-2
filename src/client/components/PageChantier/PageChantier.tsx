@@ -3,7 +3,7 @@ import { useState } from "react";
 import clsx from "clsx";
 import BarreLatérale from "@/components/_commons/BarreLatérale/BarreLatérale";
 import BarreLatéraleEncart from "@/components/_commons/BarreLatérale/BarreLatéraleEncart/BarreLatéraleEncart";
-import { Commentaires } from "@/components/_commons/CommentairesNew/Commentaires";
+import { Commentaires } from "@/components/PageChantier/Commentaires/Commentaires";
 import SyntheseDesResultats from "@/components/PageChantier/SynthèseDesRésultatsChantier/SyntheseDesResultats";
 import Sommaire from "@/client/components/_commons/Sommaire/Sommaire";
 import Titre from "@/components/_commons/Titre/Titre";

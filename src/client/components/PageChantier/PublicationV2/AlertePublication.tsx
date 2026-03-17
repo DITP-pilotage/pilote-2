@@ -29,7 +29,7 @@ const ALERTES: Record<
   },
 };
 
-const AlerteCommentaire: FunctionComponent<{
+const AlertePublication: FunctionComponent<{
   action: CommentaireAction | null;
 }> = ({ action }) => {
   if (!action) return null;
@@ -43,4 +43,4 @@ const AlerteCommentaire: FunctionComponent<{
   );
 };
 
-export default AlerteCommentaire;
+export default AlertePublication;
