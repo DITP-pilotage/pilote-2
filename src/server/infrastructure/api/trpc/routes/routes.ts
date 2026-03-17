@@ -11,7 +11,7 @@ import { chantierRouter } from "./chantier";
 import { synthèseDesRésultatsRouter } from "./synthèseDesRésultats";
 import { commentaireRouter } from "./commentaire";
 import { decisionStrategiqueRouter } from "./decisionStrategique";
-import { publicationRouter } from "./publication";
+import { objectifRouter } from "./objectif";
 import { indicateurRouter } from "./indicateur";
 import { propositionValeurAvancementRouter } from "./propositionValeurAvancement";
 import { territoireRouter } from "./territoire";
@@ -26,7 +26,7 @@ export const appRouter = créerRouteurTRPC({
   synthèseDesRésultats: synthèseDesRésultatsRouter,
   commentaire: commentaireRouter,
   decisionStrategique: decisionStrategiqueRouter,
-  publication: publicationRouter,
+  objectif: objectifRouter,
   indicateur: indicateurRouter,
   territoire: territoireRouter,
   utilisateur: utilisateurRouter,

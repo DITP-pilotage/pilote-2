@@ -12,7 +12,7 @@ import { parametrageIndicateurModule } from "@/server/parametrage-indicateur/mod
 import { importIndicateurModule } from "@/server/import-indicateur/module";
 import { commentaireModule } from "@/server/commentaires/module";
 import { importDecisionStrategiqueModule } from "@/server/decisions-strategiques/module";
-import { importObjectifModule } from "@/server/objectifs/module";
+import { objectifModule } from "@/server/objectifs/module";
 import { importSyntheseDesResultatsModule } from "@/server/syntheses-des-resultats/module";
 import { ficheConducteurModule } from "@/server/fiche-conducteur/module";
 import { piloteEvalModule } from "@/server/evaluation/module";
@@ -35,7 +35,7 @@ const allModules = [
   importIndicateurModule,
   commentaireModule,
   importDecisionStrategiqueModule,
-  importObjectifModule,
+  objectifModule,
   importSyntheseDesResultatsModule,
   gestionUtilisateurModule,
   ficheConducteurModule,
@@ -86,7 +86,7 @@ function registerContainer(): ContainerDependencies {
     albert: getContainer("albert"),
     parametrageCentreAide: getContainer("parametrageCentreAide"),
     decisionStrategique: getContainer("decisionStrategique"),
-    importObjectif: getContainer("importObjectif"),
+    objectif: getContainer("objectif"),
     importSyntheseDesResultats: getContainer("importSyntheseDesResultats"),
     datajobsExecution: getContainer("datajobsExecution"),
     legacy: getContainer("legacy"),

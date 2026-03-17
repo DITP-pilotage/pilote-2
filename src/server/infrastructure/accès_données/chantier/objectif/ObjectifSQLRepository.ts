@@ -107,14 +107,54 @@ export default class ObjectifSQLRepository implements ObjectifRepository {
   }
 
   async save({
-    chantierId,
     id,
+    chantierId,
     contenu,
-    auteur_id,
     type,
-    date,
+    statut,
+    auteurCreationId,
+    dateCreation,
+    auteurModificationId,
+    dateModification,
   }: ObjectifV2): Promise<void> {
-    await this.créer(chantierId, id, contenu, auteur_id, type, date);
+    await prisma.objectif.upsert({
+      where: { id },
+      create: {
+        id,
+        chantier_id: chantierId,
+        contenu,
+        type: CODES_TYPES_OBJECTIFS[type],
+        statut,
+        auteur_creation_id: auteurCreationId,
+        date_creation: new Date(dateCreation),
+        auteur_modification_id: auteurModificationId,
+        date_modification: new Date(dateModification),
+      },
+      update: {
+        contenu,
+        statut,
+        auteur_modification_id: auteurModificationId,
+        date_modification: new Date(dateModification),
+      },
+    });
+  }
+
+  async getById(id: string): Promise<ObjectifV2 | null> {
+    const objectif = await prisma.objectif.findUnique({ where: { id } });
+
+    if (objectif === null) return null;
+
+    return {
+      id: objectif.id,
+      chantierId: objectif.chantier_id,
+      type: NOMS_TYPES_OBJECTIFS[objectif.type],
+      contenu: objectif.contenu,
+      statut: objectif.statut,
+      auteurCreationId: objectif.auteur_creation_id ?? "",
+      dateCreation: objectif.date_creation.toISOString(),
+      auteurModificationId: objectif.auteur_modification_id ?? "",
+      dateModification: objectif.date_modification.toISOString(),
+    };
   }
 
   async récupérerLesPlusRécentsGroupésParChantier(

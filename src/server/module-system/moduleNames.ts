@@ -6,7 +6,7 @@ export const moduleNames = [
   "importIndicateur",
   "commentaires",
   "decisionStrategique",
-  "importObjectif",
+  "objectif",
   "importSyntheseDesResultats",
   "gestionUtilisateur",
   "ficheConducteur",
