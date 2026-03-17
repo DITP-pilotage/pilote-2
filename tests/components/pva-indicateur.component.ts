@@ -27,7 +27,7 @@ export class PvaIndicateurComponent {
     });
   }
 
-  // --- Actions ---
+  // --- Actions---
 
   async clickProposerAutreValeur(): Promise<PvaModalComponent> {
     await this.section

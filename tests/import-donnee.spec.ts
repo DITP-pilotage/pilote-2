@@ -1,6 +1,6 @@
 import { expect } from "@playwright/test";
-import { test } from "./fixtures";
 import { stringify } from "csv-stringify/sync";
+import { test } from "./fixtures";
 import { AppActions } from "./actions/app.actions";
 
 test("doit pouvoir importer des données", async ({ page, e2eContext }) => {

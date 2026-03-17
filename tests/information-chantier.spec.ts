@@ -2,7 +2,10 @@ import { expect } from "@playwright/test";
 import { test } from "./fixtures";
 import { AppActions } from "./actions/app.actions";
 
-test("doit pouvoir consulter les données des chantiers", async ({ page, e2eContext }) => {
+test("doit pouvoir consulter les données des chantiers", async ({
+  page,
+  e2eContext,
+}) => {
   test.setTimeout(150_000);
 
   const chantier = {

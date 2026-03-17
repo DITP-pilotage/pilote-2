@@ -1,6 +1,6 @@
 import { Download, expect } from "@playwright/test";
-import { test } from "./fixtures";
 import fs from "node:fs";
+import { test } from "./fixtures";
 import { AppActions } from "./actions/app.actions";
 import { PageAdminUtilisateurs } from "./pages/admin/page-utilisateurs";
 

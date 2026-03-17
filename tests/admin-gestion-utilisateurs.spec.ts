@@ -16,7 +16,10 @@ const SERVICES_DECONCENTRES_DEPARTEMENT =
   "services.deconcentres.departement@example.com";
 
 test.describe("Gestion des comptes utilisateurs", () => {
-  test("DITP Admin — Vue admin complète et token API", async ({ page, e2eContext }) => {
+  test("DITP Admin — Vue admin complète et token API", async ({
+    page,
+    e2eContext,
+  }) => {
     test.setTimeout(300_000);
 
     const appActions = new AppActions(page, e2eContext);
@@ -94,7 +97,10 @@ test.describe("Gestion des comptes utilisateurs", () => {
     });
   });
 
-  test("Coordinateur Région — Visibilité et restrictions", async ({ page, e2eContext }) => {
+  test("Coordinateur Région — Visibilité et restrictions", async ({
+    page,
+    e2eContext,
+  }) => {
     test.setTimeout(300_000);
 
     const appActions = new AppActions(page, e2eContext);
@@ -191,7 +197,10 @@ test.describe("Gestion des comptes utilisateurs", () => {
     });
   });
 
-  test("Coordinateur Département — Périmètre restreint", async ({ page, e2eContext }) => {
+  test("Coordinateur Département — Périmètre restreint", async ({
+    page,
+    e2eContext,
+  }) => {
     test.setTimeout(300_000);
 
     const appActions = new AppActions(page, e2eContext);

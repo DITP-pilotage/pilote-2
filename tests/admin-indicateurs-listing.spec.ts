@@ -98,7 +98,10 @@ test.describe("Listing des indicateurs — Admin", () => {
     });
   });
 
-  test("doit refuser l'accès aux profils non DITP_ADMIN", async ({ page, e2eContext }) => {
+  test("doit refuser l'accès aux profils non DITP_ADMIN", async ({
+    page,
+    e2eContext,
+  }) => {
     test.setTimeout(150_000);
 
     const appActions = new AppActions(page, e2eContext);

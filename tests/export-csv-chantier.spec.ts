@@ -1,6 +1,6 @@
 import { Download, expect } from "@playwright/test";
-import { test } from "./fixtures";
 import fs from "node:fs";
+import { test } from "./fixtures";
 import { AppActions } from "./actions/app.actions";
 
 test("doit pouvoir exporter les données des chantiers sous format CSV", async ({
