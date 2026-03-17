@@ -30,12 +30,12 @@ export class PvaIndicateurComponent {
   // --- Actions---
 
   async clickProposerAutreValeur(): Promise<PvaModalComponent> {
+    this.trackPva();
     await this.section
       .getByRole("button", {
         name: /Proposer une autre valeur d'avancement/,
       })
       .click();
-    this.trackPva();
     return new PvaModalComponent(this.page);
   }
 

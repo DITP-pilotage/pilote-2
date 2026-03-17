@@ -146,7 +146,7 @@ test("doit pouvoir importer des données", async ({ page, e2eContext }) => {
       });
 
       await test.step("Action de transmissions des données vérifiés", async () => {
-        await pageMaj.submitData();
+        await pageMaj.submitData(process.env.E2E_USERNAME!);
       });
 
       await test.step("Vérification que les données ont correctement été transmises", async () => {

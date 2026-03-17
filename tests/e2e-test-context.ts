@@ -92,5 +92,6 @@ export class E2ETestContext {
       }
     }
     this.actions.length = 0;
+    await prisma.$disconnect();
   }
 }

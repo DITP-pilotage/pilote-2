@@ -2,8 +2,6 @@ import { expect } from "@playwright/test";
 import { BasePage } from "./base.page";
 
 export class PageMiseAJourDonnees extends BasePage {
-  private importTimestamp: Date | null = null;
-
   async expectTitle(chantierId: string): Promise<void> {
     await expect(this.page).toHaveTitle(
       `Mettre à jour les données - Chantier ${chantierId} - PILOTE`,
@@ -48,10 +46,10 @@ export class PageMiseAJourDonnees extends BasePage {
       .click();
   }
 
-  async submitData(): Promise<void> {
-    this.importTimestamp = new Date();
+  async submitData(utilisateurEmail: string): Promise<void> {
     this.e2eContext.track("RAPPORT_IMPORT_CREE", {
-      date_creation: { gte: this.importTimestamp },
+      utilisateurEmail,
+      date_creation: { gte: new Date() },
     });
 
     await this.page
