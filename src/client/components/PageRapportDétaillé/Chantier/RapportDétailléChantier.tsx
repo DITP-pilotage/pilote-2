@@ -2,12 +2,6 @@ import Link from "next/link";
 import { FunctionComponent } from "react";
 import Alerte from "@/components/_commons/Alerte/Alerte";
 import Encart from "@/components/_commons/Encart/Encart";
-import {
-  consignesDÉcritureObjectif,
-  libellésTypesObjectif,
-  TypeObjectif,
-} from "@/client/constants/libellésObjectif";
-
 import { htmlId } from "@/components/PageRapportDétaillé/PageRapportDétaillé";
 import RapportDétailléChantierProps from "@/components/PageRapportDétaillé/Chantier/RapportDétailléChantier.interface";
 import Responsables from "@/components/PageChantier/ResponsablesChantier/ResponsablesChantier";
@@ -15,9 +9,8 @@ import SynthèseDesRésultats from "@/components/PageRapportDétaillé/Synthèse
 import IndicateursRapportDetaille from "@/components/PageRapportDétaillé/Chantier/IndicateursRapportDetaille/IndicateursRapportDetaille";
 import { DecisionsStrategiquesRapportDetaille } from "@/components/PageRapportDétaillé/Chantier/DecisionsStrategiquesRapportDetaille";
 import CommentairesRapportDetaille from "@/client/components/PageRapportDétaillé/Commentaires/CommentairesRapportDetaille";
+import ObjectifsRapportDetaille from "@/client/components/PageRapportDétaillé/Objectifs/ObjectifsRapportDetaille";
 import Titre from "@/components/_commons/Titre/Titre";
-import Publication from "@/components/_commons/PublicationChantier/Publication";
-import { typesObjectif } from "@/server/domain/chantier/objectif/Objectif.interface";
 import {
   typesCommentaireMailleNationale,
   typesCommentaireMailleRégionaleOuDépartementale,
@@ -27,7 +20,6 @@ import {
   listeRubriquesIndicateursChantier,
 } from "@/client/utils/rubriques";
 import Cartes from "@/client/components/PageRapportDétaillé/Cartes/Cartes";
-import Bloc from "@/components/_commons/Bloc/Bloc";
 import AvancementChantier from "@/components/PageChantier/AvancementChantier/AvancementChantier";
 import Indicateur from "@/server/domain/indicateur/Indicateur.interface";
 import { DonneesComparaisonDuTauxDAvancementType } from "@/server/domain/territoire/Territoire.interface";
@@ -225,31 +217,7 @@ const RapportDétailléChantier: FunctionComponent<
                 >
                   Objectifs
                 </Titre>
-                <Bloc>
-                  {typesObjectif.map((type) => (
-                    <Publication
-                      caractéristiques={{
-                        type: type,
-                        entité: "objectifs",
-                        libelléType:
-                          libellésTypesObjectif[type as TypeObjectif],
-                        consigneDÉcriture:
-                          consignesDÉcritureObjectif[type as TypeObjectif],
-                      }}
-                      estInteractif={false}
-                      key={type}
-                      maille="nationale"
-                      modeÉcriture={false}
-                      publicationInitiale={
-                        objectifs?.find(
-                          (objectif) => objectif?.type === type,
-                        ) || null
-                      }
-                      réformeId={chantier.id}
-                      territoireCode={territoireCode}
-                    />
-                  ))}
-                </Bloc>
+                <ObjectifsRapportDetaille objectifs={objectifs} />
               </div>
             </section>
           </div>

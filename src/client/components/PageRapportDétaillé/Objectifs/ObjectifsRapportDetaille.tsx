@@ -1,0 +1,68 @@
+import { Fragment, FunctionComponent } from "react";
+import Bloc from "@/components/_commons/Bloc/Bloc";
+import {
+  libellésTypesObjectif,
+  TypeObjectif,
+} from "@/client/constants/libellésObjectif";
+import { typesObjectif } from "@/server/domain/chantier/objectif/Objectif.interface";
+import Objectif from "@/server/domain/chantier/objectif/Objectif.interface";
+import { nettoyerUneChaîneDeCaractèresPourAffichageHTML } from "@/client/utils/strings";
+import { Badge } from "@/components/_commons/Badge";
+import { PiloteDateFormatter } from "@/server/rapports-hebdomadaires/infrastructure/adapters/PiloteDateFormatter";
+
+interface ObjectifsRapportDetailleProps {
+  objectifs: Objectif[];
+}
+
+const ObjectifsRapportDetaille: FunctionComponent<
+  ObjectifsRapportDetailleProps
+> = ({ objectifs }) => {
+  const objectifParType = new Map<TypeObjectif, NonNullable<Objectif>>(
+    objectifs
+      .filter(
+        (objectif): objectif is NonNullable<Objectif> => objectif !== null,
+      )
+      .map((objectif) => [objectif.type, objectif]),
+  );
+
+  return (
+    <Bloc
+      backgroundClassNameTitre="bg-dsfr-blue-france-925"
+      contenuClassesSupplémentaires=""
+      titre="National"
+    >
+      {typesObjectif.map((type, index) => {
+        const objectif = objectifParType.get(type) ?? null;
+        return (
+          <Fragment key={type}>
+            {index !== 0 && <hr className="fr-hr p-1" />}
+            <div className="py-4 px-6">
+              <p className="font-bold mb-1 text-xl">
+                {libellésTypesObjectif[type]}
+              </p>
+              {objectif ? (
+                <>
+                  <p className="text-xs text-dsfr-mention-grey mb-1">
+                    {`Mis à jour le ${PiloteDateFormatter.isoDateFranceMetropolitaine(objectif.date)} | Par ${objectif.auteur}`}
+                  </p>
+                  <p
+                    className="fr-text--sm fr-mb-0"
+                    dangerouslySetInnerHTML={{
+                      __html: nettoyerUneChaîneDeCaractèresPourAffichageHTML(
+                        objectif.contenu,
+                      ),
+                    }}
+                  />
+                </>
+              ) : (
+                <Badge type="gris">Non renseigné</Badge>
+              )}
+            </div>
+          </Fragment>
+        );
+      })}
+    </Bloc>
+  );
+};
+
+export default ObjectifsRapportDetaille;

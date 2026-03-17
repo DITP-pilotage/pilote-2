@@ -1,4 +1,4 @@
-import { type_objectif as TypeObjectifPrisma } from "@prisma/client";
+import { $Enums, type_objectif as TypeObjectifPrisma } from "@prisma/client";
 import ObjectifRepository from "@/server/domain/chantier/objectif/ObjectifRepository.interface";
 import {
   ObjectifV2,
@@ -79,24 +79,26 @@ export default class ObjectifSQLRepository implements ObjectifRepository {
       by: ["type", "chantier_id"],
       where: {
         chantier_id: { in: chantiersIds },
+        statut: $Enums.statut_publication.PUBLIE,
       },
       _max: {
-        date: true,
+        date_modification: true,
       },
     });
 
     const latestEntries = await Promise.all(
       result
-        .filter((group) => group._max.date)
+        .filter((group) => group._max.date_modification)
         .map(async (group) =>
           prisma.objectif.findFirst({
             where: {
               type: group.type,
-              date: group._max.date!,
+              date_modification: group._max.date_modification!,
               chantier_id: group.chantier_id,
+              statut: $Enums.statut_publication.PUBLIE,
             },
             include: {
-              auteur_objectif: true,
+              auteur_modification: true,
             },
           }),
         ),
@@ -110,9 +112,9 @@ export default class ObjectifSQLRepository implements ObjectifRepository {
           id: objectif.id,
           type: NOMS_TYPES_OBJECTIFS[objectif.type],
           contenu: objectif.contenu,
-          date: objectif.date.toISOString(),
-          auteur: objectif.auteur_objectif
-            ? `${objectif.auteur_objectif.prenom} ${objectif.auteur_objectif.nom}`
+          date: objectif.date_modification.toISOString(),
+          auteur: objectif.auteur_modification
+            ? `${objectif.auteur_modification.prenom} ${objectif.auteur_modification.nom}`
             : "Auteur Inconnu",
         };
       },
