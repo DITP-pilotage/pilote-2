@@ -34,17 +34,17 @@ export const WidgetCartographieMeteo = ({
     ajouterTerritoire,
     ajouterTerritoires,
     supprimerTerritoire,
-  } = useSelectionTerritoires({ territoiresMeteo, territoireCode });
+  } = useSelectionTerritoires({
+    territoires: territoiresMeteo,
+    territoireCode,
+  });
 
+  // TODO(layout): gestion du mode P / G selon taille dispo
   const { isTailleTuileXL, isModeDispositionG } = useTuileWidget();
 
   return (
-    <div
-      className={clsxm("flex flex-col gap-4", {
-        "flex-row": isModeDispositionG() && isTailleTuileXL(),
-      })}
-    >
-      <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-2 shrink-0">
         <span className="fr-text font-bold">
           Répartition des niveaux de confiance
         </span>
@@ -62,7 +62,7 @@ export const WidgetCartographieMeteo = ({
         </div>
       </div>
 
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-2 shrink-0">
         <span className="fr-text font-bold">
           Répartition des niveaux de confiance
         </span>

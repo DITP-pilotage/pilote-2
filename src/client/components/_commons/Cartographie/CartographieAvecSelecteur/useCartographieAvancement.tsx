@@ -1,61 +1,12 @@
-import { ReactNode, useMemo } from "react";
+import { useMemo } from "react";
 import { CartographieÉlémentsDeLégende } from "@/client/components/_commons/Cartographie/Légende/CartographieLégende.interface";
 import { CartographieDonnées } from "@/client/components/_commons/Cartographie/Cartographie.interface";
 import { objectEntries } from "@/client/utils/objects/objects";
 import { TerritoiresDonnées } from "@/server/domain/territoire/Territoire.interface";
 import { Maille } from "@/server/domain/maille/Maille.interface";
 import { useTerritoireHabilitation } from "@/client/hooks/useTerritoireHabilitation";
-
-const determinerValeurAffichee = (
-  valeurAnnuelle: number | null,
-  estApplicable: boolean | null,
-  jalon: number,
-): ReactNode => {
-  if (estApplicable === false) {
-    return <span className="fr-text--bold">Non applicable</span>;
-  }
-
-  if (valeurAnnuelle === null) {
-    return <span className="fr-text--bold">Non renseigné</span>;
-  }
-
-  return <>{`TA ${jalon} : ${valeurAnnuelle.toFixed(0)}%`}</>;
-};
-
-const determinerRemplissage = (
-  valeur: number | null,
-  elementsDeLegende: CartographieÉlémentsDeLégende,
-  estApplicable: boolean | null,
-) => {
-  if (estApplicable === false) {
-    return elementsDeLegende.NON_APPLICABLE.remplissage;
-  }
-
-  if (valeur === null) return elementsDeLegende.DÉFAUT.remplissage;
-
-  const valeurArrondie = Number(valeur.toFixed(0));
-
-  if (valeurArrondie >= 0 && valeurArrondie < 10)
-    return elementsDeLegende["0-10"].remplissage;
-  else if (valeurArrondie >= 10 && valeurArrondie < 20)
-    return elementsDeLegende["10-20"].remplissage;
-  else if (valeurArrondie >= 20 && valeurArrondie < 30)
-    return elementsDeLegende["20-30"].remplissage;
-  else if (valeurArrondie >= 30 && valeurArrondie < 40)
-    return elementsDeLegende["30-40"].remplissage;
-  else if (valeurArrondie >= 40 && valeurArrondie < 50)
-    return elementsDeLegende["40-50"].remplissage;
-  else if (valeurArrondie >= 50 && valeurArrondie < 60)
-    return elementsDeLegende["50-60"].remplissage;
-  else if (valeurArrondie >= 60 && valeurArrondie < 70)
-    return elementsDeLegende["60-70"].remplissage;
-  else if (valeurArrondie >= 70 && valeurArrondie < 80)
-    return elementsDeLegende["70-80"].remplissage;
-  else if (valeurArrondie >= 80 && valeurArrondie < 90)
-    return elementsDeLegende["80-90"].remplissage;
-  else if (valeurArrondie >= 90) return elementsDeLegende["90-100"].remplissage;
-  else return elementsDeLegende.DÉFAUT.remplissage;
-};
+import { determinerRemplissageAvancement } from "@/client/utils/avancement/determinerRemplissageAvancement";
+import { determinerValeurAfficheeAvancement } from "@/client/utils/avancement/determinerValeurAfficheeAvancement";
 
 export const useCartographieAvancement = (
   chantierMailles: Record<Maille, TerritoiresDonnées>,
@@ -112,12 +63,12 @@ export const useCartographieAvancement = (
       return {
         ...acc,
         [val.territoireCode]: {
-          contenu: determinerValeurAffichee(
+          contenu: determinerValeurAfficheeAvancement(
             val.valeurAnnuelle,
             val.estApplicable,
             jalon,
           ),
-          remplissage: determinerRemplissage(
+          remplissage: determinerRemplissageAvancement(
             val.valeurAnnuelle,
             elementsDeLegende,
             val.estApplicable,

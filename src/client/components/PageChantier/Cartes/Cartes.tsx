@@ -7,6 +7,7 @@ import Alerte from "@/components/_commons/Alerte/Alerte";
 import CartographieAvecSelecteur from "@/components/_commons/Cartographie/CartographieAvecSelecteur/CartographieAvecSelecteur";
 import { pageChantier } from "@/components/PageChantier/PageChantierServerSideContext";
 import { WidgetCartographieMeteo } from "@/components/_commons/Widget/WidgetCartographieMeteo/WidgetCartographieMeteo";
+import { WidgetCartographieTA } from "@/components/_commons/Widget/WidgetCartographieTA/WidgetCartographieTA";
 import { useEnv } from "@/client/hooks/useEnv";
 import { TuileWidget } from "@/components/_commons/Widget/TuileWidget/TuileWidget";
 
@@ -116,7 +117,7 @@ const Cartes: FunctionComponent<CartesProps> = ({
       cartographieDroiteChantier === "meteo" ? (
         <div className="mt-4">
           <TuileWidget titre="Comparaison territoriale et évolution">
-            <WidgetCartographieMeteo
+            <WidgetCartographieTA
               chantierId={chantier.id}
               jalon={jalon}
               maille={mailleQuery}

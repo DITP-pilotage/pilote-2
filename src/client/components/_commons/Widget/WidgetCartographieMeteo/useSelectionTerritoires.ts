@@ -1,12 +1,11 @@
 import { useCallback, useMemo } from "react";
 import { useTerritoiresCompares } from "@/client/hooks/useTerritoiresCompares";
-import { MeteoTerritoireViewModel } from "@/server/chantiers/infrastructure/queries/GetChantierMeteosTerritoiresQuery";
 
-export const useSelectionTerritoires = ({
-  territoiresMeteo,
+export const useSelectionTerritoires = <T extends { territoireCode: string }>({
+  territoires,
   territoireCode,
 }: {
-  territoiresMeteo: MeteoTerritoireViewModel[];
+  territoires: T[];
   territoireCode: string;
 }) => {
   const [territoiresCompares, setTerritoiresCompares] =
@@ -18,10 +17,10 @@ export const useSelectionTerritoires = ({
   }, [territoireCode, territoiresCompares]);
 
   const territoiresSelectionnes = useMemo(() => {
-    return territoiresMeteo.filter((territoire) =>
+    return territoires.filter((territoire) =>
       selectedTerritoireCodes.includes(territoire.territoireCode),
     );
-  }, [territoiresMeteo, selectedTerritoireCodes]);
+  }, [territoires, selectedTerritoireCodes]);
 
   const updateUrlTerritoires = useCallback(
     (codes: string[]) => {
@@ -33,7 +32,7 @@ export const useSelectionTerritoires = ({
 
   const onSelectTerritoire = useCallback(
     (clickedCode: string) => {
-      const territoire = territoiresMeteo.find(
+      const territoire = territoires.find(
         (terr) => terr.territoireCode === clickedCode,
       );
       if (!territoire) return;
@@ -46,7 +45,7 @@ export const useSelectionTerritoires = ({
         updateUrlTerritoires([...selectedTerritoireCodes, clickedCode]);
       }
     },
-    [territoiresMeteo, selectedTerritoireCodes, updateUrlTerritoires],
+    [territoires, selectedTerritoireCodes, updateUrlTerritoires],
   );
 
   const ajouterTerritoire = useCallback(
@@ -68,9 +67,7 @@ export const useSelectionTerritoires = ({
 
   const supprimerTerritoire = useCallback(
     (code: string) => {
-      updateUrlTerritoires(
-        selectedTerritoireCodes.filter((c) => c !== code),
-      );
+      updateUrlTerritoires(selectedTerritoireCodes.filter((c) => c !== code));
     },
     [selectedTerritoireCodes, updateUrlTerritoires],
   );
