@@ -16,7 +16,6 @@ import { $Enums } from "@prisma/client";
 export type DecisionStrategiqueV2 = {
   id: string;
   chantierId: string;
-  type: TypeDecisionStrategique;
   contenu: string;
   statut: $Enums.statut_publication;
   auteurCreationId: string;

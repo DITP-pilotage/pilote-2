@@ -72,7 +72,6 @@ describe("RecupererDerniereDecisionStrategiqueQuery", () => {
       expect(result).toEqual({
         id: decision.id,
         chantierId: chantier.id,
-        type: "suiviDesDecisionsStrategiques",
         contenu: "Ma décision publiée",
         statut: $Enums.statut_publication.PUBLIE,
         auteurCreationId: auteur.id,

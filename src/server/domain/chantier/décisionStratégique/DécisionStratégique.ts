@@ -25,7 +25,6 @@ export function creerDecisionStrategiquePubliee(
   return {
     id: randomUUID(),
     chantierId: params.chantierId,
-    type: params.type,
     contenu: params.contenu,
     statut: $Enums.statut_publication.PUBLIE,
     auteurCreationId: params.auteurId,

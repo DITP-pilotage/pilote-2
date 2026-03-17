@@ -1,4 +1,4 @@
-import { commentaire as CommentaireModel } from "@prisma/client";
+import { $Enums, commentaire as CommentaireModel } from "@prisma/client";
 import { Commentaire } from "@/server/fiche-conducteur/domain/Commentaire";
 import { CommentaireRepository } from "@/server/fiche-conducteur/domain/ports/CommentaireRepository";
 import { CommentaireType } from "@/server/fiche-conducteur/domain/CommentaireType";
@@ -27,6 +27,7 @@ export class PrismaCommentaireRepository implements CommentaireRepository {
   }): Promise<Commentaire[]> {
     const commentaireResult = await this.prisma.commentaire.findMany({
       where: {
+        statut: $Enums.statut_publication.PUBLIE,
         chantier_id: chantierId,
       },
     });

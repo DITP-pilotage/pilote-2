@@ -1,4 +1,7 @@
-import { decision_strategique as DecisionStrategiqueModel } from "@prisma/client";
+import {
+  $Enums,
+  decision_strategique as DecisionStrategiqueModel,
+} from "@prisma/client";
 import { DecisionStrategique } from "@/server/fiche-conducteur/domain/DecisionStrategique";
 import { DecisionStrategiqueRepository } from "@/server/fiche-conducteur/domain/ports/DecisionStrategiqueRepository";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
@@ -27,6 +30,7 @@ export class PrismaDecisionStrategiqueRepository implements DecisionStrategiqueR
     const decisionStrategiqueResult =
       await this.prisma.decision_strategique.findMany({
         where: {
+          statut: $Enums.statut_publication.PUBLIE,
           chantier_id: chantierId,
         },
       });

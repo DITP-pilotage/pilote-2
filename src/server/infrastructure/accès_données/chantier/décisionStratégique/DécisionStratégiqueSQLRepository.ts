@@ -1,7 +1,6 @@
 import {
   $Enums,
   decision_strategique as DécisionStratégiquePrisma,
-  type_decision_strategique as TypeDécisionStratégiquePrisma,
 } from "@prisma/client";
 import {
   DecisionStrategiqueV2,
@@ -17,13 +16,6 @@ export const NOMS_TYPES_DECISION_STRATEGIQUE: Record<
   TypeDecisionStrategique
 > = {
   suivi_des_decisions: "suiviDesDecisionsStrategiques",
-};
-
-export const CODES_TYPES_DECISION_STRATEGIQUE: Record<
-  TypeDecisionStrategique,
-  TypeDécisionStratégiquePrisma
-> = {
-  suiviDesDecisionsStrategiques: "suivi_des_decisions",
 };
 
 export default class DécisionStratégiqueSQLRepository implements DécisionStratégiqueRepository {
@@ -47,7 +39,6 @@ export default class DécisionStratégiqueSQLRepository implements DécisionStra
     return {
       id: decision.id,
       chantierId: decision.chantier_id,
-      type: NOMS_TYPES_DECISION_STRATEGIQUE[decision.type],
       contenu: decision.contenu,
       statut: decision.statut,
       auteurCreationId: decision.auteur_creation_id ?? "",
@@ -63,7 +54,7 @@ export default class DécisionStratégiqueSQLRepository implements DécisionStra
       create: {
         id: decision.id,
         chantier_id: decision.chantierId,
-        type: CODES_TYPES_DECISION_STRATEGIQUE[decision.type],
+        type: $Enums.type_decision_strategique.suivi_des_decisions,
         contenu: decision.contenu,
         statut: decision.statut,
         auteur_creation_id: decision.auteurCreationId,

@@ -1,4 +1,4 @@
-import { Prisma, type_objectif, type_statut } from "@prisma/client";
+import { $Enums, Prisma, type_objectif, type_statut } from "@prisma/client";
 import { ChantierRepository } from "@/server/chantiers/domain/ports/ChantierRepository";
 import { DonneeChantier } from "@/server/chantiers/domain/DonneeChantier";
 import { Meteo } from "@/server/domain/météo/Météo.interface";
@@ -146,6 +146,7 @@ export class PrismaChantierRepository implements ChantierRepository {
               commentaires: {
                 where: {
                   type: typeCommentaire,
+                  statut: $Enums.statut_publication.PUBLIE,
                 },
                 orderBy: {
                   date_modification: "desc",
@@ -172,6 +173,9 @@ export class PrismaChantierRepository implements ChantierRepository {
           },
           include: {
             syntheses_des_resultats: {
+              where: {
+                statut: $Enums.statut_publication.PUBLIE,
+              },
               orderBy: {
                 date_modification: "desc",
               },
@@ -223,6 +227,7 @@ export class PrismaChantierRepository implements ChantierRepository {
               decisions_strategiques: {
                 where: {
                   type: typeDecisionStrategique,
+                  statut: $Enums.statut_publication.PUBLIE,
                 },
                 orderBy: {
                   date_modification: "desc",
@@ -541,6 +546,7 @@ export class PrismaChantierRepository implements ChantierRepository {
                 include: {
                   commentaires: {
                     where: {
+                      statut: $Enums.statut_publication.PUBLIE,
                       type: typeCommentaire,
                     },
                     orderBy: {
@@ -574,6 +580,9 @@ export class PrismaChantierRepository implements ChantierRepository {
                 },
                 include: {
                   syntheses_des_resultats: {
+                    where: {
+                      statut: $Enums.statut_publication.PUBLIE,
+                    },
                     orderBy: {
                       date_modification: "desc",
                     },
@@ -607,6 +616,7 @@ export class PrismaChantierRepository implements ChantierRepository {
                     decisions_strategiques: {
                       where: {
                         type: typeDecisionStrategique,
+                        statut: $Enums.statut_publication.PUBLIE,
                       },
                       orderBy: {
                         date_modification: "desc",

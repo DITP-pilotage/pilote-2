@@ -1,7 +1,6 @@
 import { $Enums } from "@prisma/client";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { DecisionStrategiqueV2 } from "@/server/domain/chantier/décisionStratégique/DécisionStratégique.interface";
-import { NOMS_TYPES_DECISION_STRATEGIQUE } from "@/server/infrastructure/accès_données/chantier/décisionStratégique/DécisionStratégiqueSQLRepository";
 
 export class RecupererBrouillonDecisionStrategiqueQuery {
   constructor(private readonly deps: { prisma: PrismaPilote }) {}
@@ -26,7 +25,6 @@ export class RecupererBrouillonDecisionStrategiqueQuery {
     return {
       id: brouillon.id,
       chantierId: brouillon.chantier_id,
-      type: NOMS_TYPES_DECISION_STRATEGIQUE[brouillon.type],
       contenu: brouillon.contenu,
       statut: brouillon.statut,
       auteurCreationId: brouillon.auteur_creation_id ?? "",

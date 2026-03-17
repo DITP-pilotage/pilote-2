@@ -1,10 +1,7 @@
 import { $Enums } from "@prisma/client";
 import { randomUUID } from "node:crypto";
 import DécisionStratégiqueRepository from "@/server/domain/chantier/décisionStratégique/DécisionStratégiqueRepository.interface";
-import {
-  ImportDecisionStrategiqueInput,
-  mapTypeDecisionStrategiqueAPIVersDomaine,
-} from "@/validation/import-decision-strategique";
+import { ImportDecisionStrategiqueInput } from "@/validation/import-decision-strategique";
 import { DecisionStrategiqueV2 } from "@/server/domain/chantier/décisionStratégique/DécisionStratégique.interface";
 import type { Inject } from "@/server/decisions-strategiques/module";
 
@@ -32,15 +29,10 @@ export class ImporterDecisionsStrategiquesUseCase {
         ? new Date(decision.date_decision_strategique)
         : new Date();
 
-      const typeDomaine = mapTypeDecisionStrategiqueAPIVersDomaine(
-        decision.type,
-      );
-
       const décisionV2: DecisionStrategiqueV2 = {
         chantierId,
         id,
         contenu: decision.contenu,
-        type: typeDomaine,
         auteurModificationId: auteurId,
         auteurCreationId: auteurId,
         dateCreation: date.toISOString(),
