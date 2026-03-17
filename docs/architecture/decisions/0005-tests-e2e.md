@@ -1,6 +1,6 @@
 # 5. Tests E2E : Page Object Model et isolation des données
 
-Date : 2026-01-26 (mise à jour : 2026-03-16)
+Date : 2026-01-26 (mise à jour : 2026-03-17)
 
 ## Statut
 
@@ -41,10 +41,10 @@ const modal = await indicateur.clickProposerAutreValeur();
 await modal.publierProposition();
 
 // Échoue plus tard dans le test
-await appActions.switchUser(autreUtilisateur); // 💥 Timeout
+await appActions.switchUser(autreUtilisateur); // Timeout
 
 // Au retry, la PVA existe toujours en base.
-// Le bouton "Proposer une autre valeur" n'est plus visible → échec en cascade.
+// Le bouton "Proposer une autre valeur" n'est plus visible -> échec en cascade.
 ```
 
 **Problèmes identifiés :**
@@ -63,7 +63,7 @@ Nous utilisons le pattern **Page Object Model (POM)** pour structurer nos tests 
 - Les interactions avec l'UI sont encapsulées dans des méthodes
 - Les sélecteurs sont centralisés dans les classes de page
 - Les composants réutilisables (header, modales) sont extraits dans des classes dédiées
-- Les actions transversales (login) sont regroupées dans des classes d'actions
+- Les actions transversales (login, switch user) sont regroupées dans des classes d'actions
 
 **Structure du dossier `tests/` :**
 ```
@@ -73,13 +73,20 @@ tests/
 ├── pages/                    # Page Objects
 │   ├── base.page.ts          # Classe abstraite de base
 │   ├── page-accueil.ts
+│   ├── page-accueil-non-connecte.ts
 │   ├── page-chantier.ts
+│   ├── page-login.ts
+│   ├── page-mise-a-jour-donnees.ts
 │   └── admin/
 │       ├── page-utilisateurs.ts
-│       └── page-gestion-token-api.ts
+│       ├── page-utilisateur-detail.ts
+│       ├── page-admin-indicateurs.ts
+│       └── page-admin-indicateur-form.ts
 ├── components/               # Composants réutilisables
 │   ├── header.component.ts
-│   └── export-csv.modal.ts
+│   ├── export-csv.modal.ts
+│   ├── pva-indicateur.component.ts
+│   └── pva-modal.component.ts
 ├── actions/                  # Actions transversales
 │   └── app.actions.ts
 ├── open-api/                 # Tests API
@@ -138,8 +145,21 @@ export class HeaderComponent {
   constructor(private readonly page: Page) {}
 
   async clickLogin(): Promise<void> {
-    await this.page.getByRole("banner")
-      .getByRole("button", { name: "Se connecter" }).click();
+    await this.loginButton.waitFor({ state: "visible" });
+    await this.loginButton.click();
+  }
+
+  async logout(): Promise<void> {
+    // Attendre que la session soit chargée (l'un des deux boutons visible)
+    // avant de décider si on est connecté ou non
+    const userOrLogin = this.userButton().or(this.loginButton);
+    await userOrLogin.first().waitFor({ state: "visible", timeout: 30_000 });
+
+    if (await this.userButton().isVisible()) {
+      await this.userButton().click();
+      await this.logoutButton.click();
+      await this.loginButton.waitFor({ state: "visible" });
+    }
   }
 
   async expectUserLoggedIn(): Promise<void> {
@@ -161,10 +181,14 @@ export class PageAccueil extends BasePage {
     this.exportModal = new ExportCsvModal(page);
   }
 
-  async selectChantier(nom: string, id: string): Promise<PageChantier> {
+  async selectChantier(chantierName: string): Promise<PageChantier> {
+    await this.page.waitForLoadState("networkidle");
     await this.page.getByRole("table")
-      .getByRole("cell", { name: nom }).click();
-    await this.page.waitForURL(`**/chantier/CH-${id}/NAT-FR**`);
+      .getByRole("cell", { name: chantierName }).click();
+    await this.page.waitForURL("**/chantier/**");
+    await expect(
+      this.page.getByRole("heading", { name: /Avancement du chantier/ }),
+    ).toBeVisible({ timeout: 30_000 });
     return new PageChantier(this.page, this.e2eContext);
   }
 }
@@ -179,7 +203,10 @@ export class AppActions {
     private readonly e2eContext: E2ETestContext,
   ) {}
 
-  async loginAs(username?: string, password?: string): Promise<PageAccueil> {
+  async loginAs(
+    username = process.env.E2E_USERNAME!,
+    password = process.env.DEV_PASSWORD!,
+  ): Promise<PageAccueil> {
     const pageAccueilNonConnecte = new PageAccueilNonConnecte(this.page, this.e2eContext);
     await pageAccueilNonConnecte.goto();
     await pageAccueilNonConnecte.header.clickLogin();
@@ -188,7 +215,19 @@ export class AppActions {
     await pageLogin.fillCredentials(username, password);
     await pageLogin.submit();
 
+    await this.dismissPostLoginModals();
+    await this.page.waitForSelector("div#main");
+
     return new PageAccueil(this.page, this.e2eContext);
+  }
+
+  async switchUser(
+    username: string,
+    password = process.env.DEV_PASSWORD!,
+  ): Promise<PageAccueil> {
+    const header = new HeaderComponent(this.page);
+    await header.logout();
+    return this.loginAs(username, password);
   }
 }
 ```
@@ -198,6 +237,7 @@ export class AppActions {
 - Les assertions sont encapsulées dans des méthodes `expect*`
 - Les sélecteurs sont définis comme getters privés
 - Les composants sont injectés via le constructeur
+- `loginAs()` pour la première connexion d'un test (page vide), `switchUser()` uniquement quand l'utilisateur est déjà connecté
 
 **Exemple de test avec POM** :
 ```typescript
@@ -212,8 +252,8 @@ test("doit pouvoir consulter les données des chantiers", async ({ page, e2eCont
   });
 
   await test.step("Navigation vers le chantier", async () => {
-    const pageChantier = await pageAccueil.selectChantier("Mon chantier", "155");
-    await pageChantier.expectTitle("155", "Mon chantier");
+    const pageChantier = await pageAccueil.selectChantier("Faciliter l'efficacité opérationnelle");
+    await pageChantier.expectTitle("155", "Faciliter l'efficacité opérationnelle");
     await pageChantier.expectStructure();
   });
 });
@@ -231,16 +271,45 @@ Le `E2ETestContext` est un registre d'entités créées pendant un test. Il perm
 - En `afterEach`, la fixture appelle `cleanup()` qui supprime les entités trackées via Prisma
 - Le seed global (données de référence : chantiers, indicateurs, territoires, utilisateurs) reste inchangé
 
+**Types d'entités supportés :**
+
+| Type | Action cleanup | Utilisé par |
+|------|---------------|-------------|
+| `pva` | Suppression des propositions de valeur | `PvaIndicateurComponent` |
+| `evenement` | Suppression des événements PVA (filtrés par `PROPOSITION_VALEUR_*`) | `PvaIndicateurComponent` |
+| `commentaire` | Suppression des commentaires créés | `PageChantier` |
+| `rapport_import` | Suppression en cascade : mesures, temporaires, erreurs, rapport | `PageMiseAJourDonnees` |
+| `mesure_indicateur` | Suppression des mesures importées | Usage direct si nécessaire |
+| `utilisateur_reactivation` | Restauration de `date_desactivation` à `null` | `PageUtilisateurDetail` |
+
 **Implémentation :**
 
 1. **Le registre d'entités** :
 ```typescript
 // tests/e2e-test-context.ts
-import { PrismaClient } from "@prisma/client";
+import { $Enums, PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-type EntityType = "pva" | "commentaire" | "evenement";
+const PROPOSITION_VALEUR_EVENEMENTS: $Enums.type_evenement[] = [
+  "PROPOSITION_VALEUR_CREEE",
+  "PROPOSITION_VALEUR_MODIFIEE",
+  "PROPOSITION_VALEUR_SUPPRIMEE",
+  "PROPOSITION_VALEUR_REFUSEE",
+  "PROPOSITION_VALEUR_ACCUSEE_RECEPTION",
+  "PROPOSITION_VALEUR_ACCEPTEE",
+  "PROPOSITION_VALEUR_IGNOREE_VALEUR_MODIFIEE",
+  "PROPOSITION_VALEUR_IGNOREE_VALEUR_HISTORISEE",
+  "PROPOSITION_VALEUR_ACCEPTEE_AVEC_MODIFICATION",
+];
+
+type EntityType =
+  | "pva"
+  | "evenement"
+  | "commentaire"
+  | "mesure_indicateur"
+  | "rapport_import"
+  | "utilisateur_reactivation";
 
 interface TrackedEntity {
   type: EntityType;
@@ -257,19 +326,58 @@ export class E2ETestContext {
   async cleanup(): Promise<void> {
     for (const entity of this.entities) {
       switch (entity.type) {
-        case "pva":
-          await prisma.proposition_valeur_actuelle.deleteMany({
-            where: entity.filters,
-          });
-          break;
         case "evenement":
           await prisma.indicateur_territoire_valeur_evenement.deleteMany({
+            where: {
+              ...entity.filters,
+              type_evenement: { in: PROPOSITION_VALEUR_EVENEMENTS },
+            },
+          });
+          break;
+        case "pva":
+          await prisma.proposition_valeur_actuelle.deleteMany({
             where: entity.filters,
           });
           break;
         case "commentaire":
           await prisma.commentaire.deleteMany({
             where: entity.filters,
+          });
+          break;
+        case "mesure_indicateur":
+          await prisma.mesure_indicateur.deleteMany({
+            where: entity.filters,
+          });
+          break;
+        case "rapport_import": {
+          // Cascade : supprimer les dépendances avant le rapport
+          const rapports =
+            await prisma.rapport_import_mesure_indicateur.findMany({
+              where: entity.filters,
+              select: { id: true },
+            });
+          const rapportIds = rapports.map((rapport) => rapport.id);
+          if (rapportIds.length > 0) {
+            await prisma.mesure_indicateur.deleteMany({
+              where: { rapport_id: { in: rapportIds } },
+            });
+            await prisma.mesure_indicateur_temporaire.deleteMany({
+              where: { rapport_id: { in: rapportIds } },
+            });
+            await prisma.erreur_validation_fichier.deleteMany({
+              where: { rapport_id: { in: rapportIds } },
+            });
+            await prisma.rapport_import_mesure_indicateur.deleteMany({
+              where: { id: { in: rapportIds } },
+            });
+          }
+          break;
+        }
+        case "utilisateur_reactivation":
+          // Restauration d'état (pas suppression) : remettre l'utilisateur actif
+          await prisma.utilisateur.updateMany({
+            where: entity.filters,
+            data: { date_desactivation: null },
           });
           break;
       }
@@ -294,7 +402,7 @@ export const test = base.extend<{ e2eContext: E2ETestContext }>({
 });
 ```
 
-3. **Enregistrement dans les POM** :
+3. **Enregistrement dans les POM — suppression d'entités** :
 ```typescript
 // tests/components/pva-indicateur.component.ts
 export class PvaIndicateurComponent {
@@ -305,25 +413,75 @@ export class PvaIndicateurComponent {
     private readonly e2eContext: E2ETestContext,
   ) {}
 
-  async clickProposerAutreValeur(): Promise<PvaModalComponent> {
-    await this.section
-      .getByRole("button", { name: /Proposer une autre valeur/ })
-      .click();
+  private trackPva(): void {
+    this.e2eContext.track("evenement", {
+      indic_id: this.indicateurId,
+      territoire_code: this.territoireCode,
+    });
     this.e2eContext.track("pva", {
       indic_id: this.indicateurId,
       territoire_code: this.territoireCode,
     });
-    this.e2eContext.track("evenement", {
-      indic_id: this.indicateurId,
-      territoire_code: this.territoireCode,
-      type_evenement: { startsWith: "PROPOSITION_VALEUR" },
-    });
+  }
+
+  async clickProposerAutreValeur(): Promise<PvaModalComponent> {
+    await this.section
+      .getByRole("button", { name: /Proposer une autre valeur/ })
+      .click();
+    this.trackPva();
     return new PvaModalComponent(this.page);
   }
 }
 ```
 
-4. **Utilisation dans les tests** :
+```typescript
+// tests/pages/page-chantier.ts — tracking des commentaires
+async expectHistoriqueCommentaire(
+  typeCommentaire: string = "risquesEtFreinsALever",
+): Promise<void> {
+  const id = randomUUID();
+
+  // Track avant l'action UI pour couvrir les échecs intermédiaires
+  this.e2eContext.track("commentaire", {
+    contenu: { contains: id },
+  });
+
+  // ... création du commentaire via l'UI ...
+}
+```
+
+```typescript
+// tests/pages/page-mise-a-jour-donnees.ts — tracking des imports
+async submitData(): Promise<void> {
+  // Track le rapport d'import par timestamp pour cleanup en cascade
+  this.e2eContext.track("rapport_import", {
+    date_creation: { gte: new Date() },
+  });
+
+  await this.page
+    .getByRole("button", { name: /Transmettre les données/ })
+    .first()
+    .click();
+}
+```
+
+4. **Enregistrement dans les POM — restauration d'état** :
+
+Certains tests modifient l'état d'entités existantes (ex : désactiver un utilisateur). Le cleanup ne supprime pas l'entité mais restaure son état initial.
+
+```typescript
+// tests/pages/admin/page-utilisateur-detail.ts
+async confirmerDesactivation(email: string): Promise<void> {
+  // En cas d'échec avant réactivation, cleanup remettra l'utilisateur actif
+  this.e2eContext.track("utilisateur_reactivation", { email });
+
+  await this.dialog
+    .getByRole("button", { name: "Confirmer la désactivation" })
+    .click();
+}
+```
+
+5. **Utilisation dans les tests** :
 ```typescript
 import { test } from "./fixtures";
 
@@ -331,12 +489,22 @@ test("Coordinateur département propose, Direction accepte", async ({
   page,
   e2eContext,
 }) => {
+  const appActions = new AppActions(page, e2eContext);
   const pageChantier = new PageChantier(page, e2eContext);
-  const indicateur = pageChantier.getIndicateurPva("IND-021", "DEPT-56");
 
-  const modal = await indicateur.clickProposerAutreValeur();
-  // La PVA et ses événements sont trackés automatiquement.
-  // En cas d'échec du test, cleanup() les supprimera.
+  await test.step("Territoire crée une proposition", async () => {
+    await appActions.loginAs(COORDINATEUR_DEPT);
+    // ...
+    const indicateur = pageChantier.getIndicateurPva("IND-021", "DEPT-56");
+    const modal = await indicateur.clickProposerAutreValeur();
+    // La PVA et ses événements sont trackés automatiquement.
+    // En cas d'échec du test, cleanup() les supprimera.
+  });
+
+  await test.step("Direction accepte la proposition", async () => {
+    await appActions.switchUser(EQUIPE_DIR_PROJET);
+    // ...
+  });
 });
 ```
 
@@ -345,6 +513,8 @@ test("Coordinateur département propose, Direction accepte", async ({
 - Chaque nouveau type d'entité ajoute une entrée dans le `switch` de `cleanup()` et un `EntityType` correspondant
 - Les POM sont responsables d'appeler `track()` ; les tests n'ont pas à gérer le cleanup
 - Le `E2ETestContext` est propagé via les constructeurs des POM (hérité de `BasePage`)
+- Pour les entités avec des dépendances FK (ex : `rapport_import`), le cleanup gère la cascade de suppression
+- Pour les mutations d'état (ex : désactivation d'utilisateur), le cleanup restaure l'état initial au lieu de supprimer
 
 **Exemple de référence** : `tests/proposition-valeur-avancement.spec.ts`
 
