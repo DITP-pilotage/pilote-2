@@ -1,8 +1,6 @@
 import { MailleInterne } from "@/server/domain/maille/Maille.interface";
 import { CartographieV2 } from "@/components/_commons/CartographieV2/CartographieV2";
 import { LegendeCartographie } from "@/components/_commons/CartographieV2/LegendeCartographie";
-import { useTuileWidget } from "@/components/_commons/Widget/TuileWidget/TuileWidgetContext";
-import { clsxm } from "@/utils/clsxm";
 import api from "@/server/infrastructure/api/trpc/api";
 import { RepartitionNiveauxDeConfiance } from "./RepartitionNiveauxDeConfiance";
 import { useDonneesCartographie } from "./useDonneesCartographie";
@@ -38,9 +36,6 @@ export const WidgetCartographieMeteo = ({
     territoires: territoiresMeteo,
     territoireCode,
   });
-
-  // TODO(layout): gestion du mode P / G selon taille dispo
-  const { isTailleTuileXL, isModeDispositionG } = useTuileWidget();
 
   return (
     <div className="flex flex-col gap-4">

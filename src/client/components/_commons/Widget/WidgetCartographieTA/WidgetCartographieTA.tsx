@@ -1,7 +1,7 @@
 import { MailleInterne } from "@/server/domain/maille/Maille.interface";
 import { CartographieV2 } from "@/components/_commons/CartographieV2/CartographieV2";
 import { LegendeCartographie } from "@/components/_commons/CartographieV2/LegendeCartographie";
-import { useTuileWidget } from "@/components/_commons/Widget/TuileWidget/TuileWidgetContext";
+import { useMesureWidget } from "@/components/_commons/Widget/TuileWidget/useMesureWidget";
 import { clsxm } from "@/utils/clsxm";
 import api from "@/server/infrastructure/api/trpc/api";
 import { useSelectionTerritoires } from "@/components/_commons/Widget/WidgetCartographieMeteo/useSelectionTerritoires";
@@ -36,13 +36,12 @@ export const WidgetCartographieTA = ({
       territoireCode,
     });
 
-  // TODO(layout): disposition P / G
-  const { isTailleTuileXL, isModeDispositionG } = useTuileWidget();
+  const { isModeDispositionG } = useMesureWidget();
 
   return (
     <div
       className={clsxm("flex flex-col gap-4", {
-        "flex-row": isModeDispositionG() && isTailleTuileXL(),
+        "flex-row": isModeDispositionG(),
       })}
     >
       <div className="flex flex-col gap-2">

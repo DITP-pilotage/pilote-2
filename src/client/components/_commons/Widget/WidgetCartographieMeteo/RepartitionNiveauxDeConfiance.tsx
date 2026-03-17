@@ -6,7 +6,7 @@ import { MeteoPicto } from "@/components/_commons/Meteo/Picto/MeteoPicto";
 import { MeteoTerritoireViewModel } from "@/server/chantiers/infrastructure/queries/GetChantierMeteosTerritoiresQuery";
 import { Picker } from "@/components/shared/Picker";
 import { Select } from "@/components/shared/Select";
-import { useTuileWidget } from "@/components/_commons/Widget/TuileWidget/TuileWidgetContext";
+import { useMesureWidget } from "@/components/_commons/Widget/TuileWidget/useMesureWidget";
 import { clsxm } from "@/utils/clsxm";
 
 const ordreMeteo: Record<string, number> = {
@@ -40,7 +40,7 @@ export const RepartitionNiveauxDeConfiance = ({
   jalon: number;
   territoireCode: string;
 }) => {
-  const { isModeDispositionG } = useTuileWidget();
+  const { isModeDispositionG } = useMesureWidget();
   const groupedOptions = useMemo(() => {
     const selectedCodes = new Set(
       territoiresSelectionnes.map((territoire) => territoire.territoireCode),
