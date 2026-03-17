@@ -1,5 +1,5 @@
 import Bloc from "@/components/_commons/Bloc/Bloc";
-import { CommentaireSection } from "@/components/_commons/CommentairesNew/CommentaireSection/CommentaireSection";
+import { PublicationSection } from "@/components/PageChantier/Publication/PublicationSection";
 import { pageChantier } from "@/components/PageChantier/PageChantierServerSideContext";
 import {
   consignesEcritureDecisionStrategique,
@@ -34,7 +34,7 @@ export const DécisionsStratégiques = ({
       }
       titre="France"
     >
-      <CommentaireSection
+      <PublicationSection
         actions={actions}
         brouillon={brouillonDecisionStrategique}
         consigne={consignesEcritureDecisionStrategique[TYPE]}

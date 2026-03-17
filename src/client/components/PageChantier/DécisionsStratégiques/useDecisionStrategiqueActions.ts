@@ -5,7 +5,7 @@ import {
   DecisionStrategiqueV2,
   TypeDecisionStrategique,
 } from "@/server/domain/chantier/décisionStratégique/DécisionStratégique.interface";
-import { PublicationActions } from "@/components/_commons/CommentairesNew/CommentaireSection/Publication.interface";
+import { PublicationActions } from "@/components/PageChantier/Publication/Publication.interface";
 
 export const useDecisionStrategiqueActions = ({
   chantierId,

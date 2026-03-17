@@ -2,7 +2,7 @@ import { useState } from "react";
 import { TypeCommentaireChantier } from "@/server/domain/chantier/commentaire/Commentaire.interface";
 import api from "@/server/infrastructure/api/trpc/api";
 import { pageChantier } from "@/components/PageChantier/PageChantierServerSideContext";
-import { HistoriquePublication } from "@/components/_commons/CommentairesNew/CommentaireSection/HistoriquePublication/HistoriquePublication";
+import { HistoriquePublication } from "@/components/PageChantier/Publication/Historique/HistoriquePublication";
 
 const HistoriqueCommentaire = ({ type }: { type: TypeCommentaireChantier }) => {
   const [open, setOpen] = useState(false);

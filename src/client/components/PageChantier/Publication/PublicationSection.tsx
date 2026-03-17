@@ -1,19 +1,19 @@
 import { ReactNode } from "react";
 import BandeauInformation from "@/components/_commons/BandeauInformation/BandeauInformation";
-import AlerteCommentaire from "@/components/_commons/CommentairesNew/CommentaireSection/AlerteCommentaire";
-import { AffichageCommentaire } from "@/components/_commons/CommentairesNew/CommentaireSection/Affichage/Affichage";
-import CommentaireFormulaire from "@/components/_commons/CommentairesNew/CommentaireSection/Formulaire/CommentaireFormulaire";
-import BoutonNouveauCommentaire from "@/components/_commons/CommentairesNew/CommentaireSection/BoutonNouveauCommentaire/BoutonNouveauCommentaire";
-import BoutonEditerBrouillonCommentaire from "@/components/_commons/CommentairesNew/CommentaireSection/BoutonNouveauCommentaire/BoutonEditerBrouillonCommentaire";
+import AlertePublication from "@/components/PageChantier/Publication/AlertePublication";
+import { AffichagePublication } from "@/components/PageChantier/Publication/Affichage/AffichagePublication";
+import CommentaireFormulaire from "@/components/PageChantier/Commentaires/Formulaire/CommentaireFormulaire";
+import BoutonNouveauCommentaire from "@/components/PageChantier/Commentaires/BoutonNouveauCommentaire/BoutonNouveauCommentaire";
+import BoutonEditerBrouillonCommentaire from "@/components/PageChantier/Commentaires/BoutonNouveauCommentaire/BoutonEditerBrouillonCommentaire";
 import { PiloteDateFormatter } from "@/server/rapports-hebdomadaires/infrastructure/adapters/PiloteDateFormatter";
 import {
   PublicationBrouillon,
   PublicationActions,
   Publication,
 } from "./Publication.interface";
-import { useCommentaireSectionEtat } from "./useCommentaireSectionEtat";
+import { usePublicationSectionEtat } from "./usePublicationSectionEtat";
 
-interface CommentaireSectionProps {
+interface PublicationSectionProps {
   libelle: string;
   consigne: string;
   publication: Publication | null;
@@ -23,7 +23,7 @@ interface CommentaireSectionProps {
   historiqueNode?: ReactNode;
 }
 
-export const CommentaireSection = ({
+export const PublicationSection = ({
   libelle,
   consigne,
   publication,
@@ -31,7 +31,7 @@ export const CommentaireSection = ({
   modeEcriture = false,
   actions,
   historiqueNode,
-}: CommentaireSectionProps) => {
+}: PublicationSectionProps) => {
   const {
     modeÉdition,
     entrerEnModeÉdition,
@@ -42,7 +42,7 @@ export const CommentaireSection = ({
     handleBrouillon,
     handlePublierBrouillon,
     handleModifierBrouillon,
-  } = useCommentaireSectionEtat(actions);
+  } = usePublicationSectionEtat(actions);
 
   return (
     <div className="px-2 py-4">
@@ -64,8 +64,8 @@ export const CommentaireSection = ({
         />
       ) : (
         <>
-          <AlerteCommentaire action={alerteAction} />
-          <AffichageCommentaire
+          <AlertePublication action={alerteAction} />
+          <AffichagePublication
             commentaire={publication}
             onModifier={modeEcriture ? entrerEnModeÉdition : undefined}
           />

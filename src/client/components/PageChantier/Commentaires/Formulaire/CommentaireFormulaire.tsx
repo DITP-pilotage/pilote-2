@@ -13,7 +13,7 @@ import { ArrowGoBack1Icon } from "@/components/_commons/Icones/ArrowGoBack1Icon"
 import { Bouton } from "@/components/_commons/Bouton/Bouton";
 import { PiloteDateFormatter } from "@/server/rapports-hebdomadaires/infrastructure/adapters/PiloteDateFormatter";
 import { Infobulle } from "@/components/_commons/Infobulle/Infobulle";
-import { Publication } from "@/components/_commons/CommentairesNew/CommentaireSection/Publication.interface";
+import { Publication } from "@/components/PageChantier/Publication/Publication.interface";
 
 interface CommentaireFormulaireProps {
   publication: Publication | null;

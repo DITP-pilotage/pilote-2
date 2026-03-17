@@ -4,17 +4,22 @@ import { Bouton } from "@/components/_commons/Bouton/Bouton";
 import { Icone } from "@/components/_commons/Icone";
 import { Icone1Icon } from "@/components/_commons/Icones/Icone1Icon";
 import { Infobulle } from "@/components/_commons/Infobulle/Infobulle";
-import { Publication } from "@/components/_commons/CommentairesNew/CommentaireSection/Publication.interface";
-import { ModaleFormulaireCommentaire } from "./ModaleFormulaireCommentaire";
+import {
+  PublicationBrouillon,
+  Publication,
+} from "@/components/PageChantier/Publication/Publication.interface";
+import { ModaleFormulairePublication } from "@/components/PageChantier/Publication/Formulaire/ModaleFormulairePublication";
 
-const BoutonNouveauCommentaire = ({
+const BoutonEditerBrouillonCommentaire = ({
   commentaire,
+  brouillon,
   libelle,
   consigne,
   onPublier,
   onEnregistrerBrouillon,
 }: {
   commentaire: Publication | null;
+  brouillon: PublicationBrouillon | null;
   libelle: string;
   consigne: string;
   onPublier: SubmitHandler<{ contenu: string }>;
@@ -33,7 +38,8 @@ const BoutonNouveauCommentaire = ({
   };
 
   return (
-    <ModaleFormulaireCommentaire
+    <ModaleFormulairePublication
+      brouillon={brouillon}
       commentaire={commentaire}
       consigne={consigne}
       libelle={libelle}
@@ -49,14 +55,12 @@ const BoutonNouveauCommentaire = ({
           }
           iconRight={
             <Infobulle classNameIcone="w-5 h-5">
-              Vous pouvez ici saisir un nouveau commentaire et le publier ou
-              l'enregistrer en tant que brouillon. Si vous choisissez de publier
-              votre nouveau commentaire, le commentaire précédemment affiché
-              sera automatiquement archivé dans l'historique des commentaires.
+              Vous avez déjà saisi un nouveau commentaire mais vous ne l'avez
+              pas publié. Vous pouvez éditer ce nouveau commentaire pour le
+              publier ou le conserver en tant que brouillon.
             </Infobulle>
           }
-          aria-label={`bouton-nouveau-commentaire-${libelle}`}
-          label="Nouveau commentaire"
+          label="Editer un brouillon"
           variant="secondary"
         />
       }
@@ -64,4 +68,4 @@ const BoutonNouveauCommentaire = ({
   );
 };
 
-export default BoutonNouveauCommentaire;
+export default BoutonEditerBrouillonCommentaire;
