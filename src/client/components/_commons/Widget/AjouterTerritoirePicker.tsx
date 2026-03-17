@@ -28,16 +28,18 @@ export const AjouterTerritoirePicker = ({
   }
 
   return (
-    <Picker
-      key={territoiresSelectionnesCodes.length}
-      onValueChange={(valeur) => onAjouterTerritoire(valeur)}
-      onValuesChange={onAjouterTerritoires}
-      options={groupedOptions}
-      trigger={
-        <Select.LinkButtonTrigger className="mt-2">
-          + ajouter un territoire
-        </Select.LinkButtonTrigger>
-      }
-    />
+    <div className="mt-auto">
+      <Picker
+        key={territoiresSelectionnesCodes.length}
+        onValueChange={(valeur) => onAjouterTerritoire(valeur)}
+        onValuesChange={onAjouterTerritoires}
+        options={groupedOptions}
+        trigger={
+          <Select.LinkButtonTrigger className="mt-2">
+            + ajouter un territoire
+          </Select.LinkButtonTrigger>
+        }
+      />
+    </div>
   );
 };

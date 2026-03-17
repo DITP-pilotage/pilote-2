@@ -3,7 +3,6 @@ import { getCouleurTerritoire } from "@/client/utils/couleur/paletteTerritoires"
 import { libellesMeteos, Meteo } from "@/server/domain/météo/Météo.interface";
 import { MeteoPicto } from "@/components/_commons/Meteo/Picto/MeteoPicto";
 import { MeteoTerritoireViewModel } from "@/server/chantiers/infrastructure/queries/GetChantierMeteosTerritoiresQuery";
-import { AjouterTerritoirePicker } from "@/components/_commons/Widget/AjouterTerritoirePicker";
 import { useMesureWidget } from "@/components/_commons/Widget/TuileWidget/useMesureWidget";
 import { clsxm } from "@/utils/clsxm";
 
@@ -26,15 +25,11 @@ function formaterNomTerritoire(territoire: MeteoTerritoireViewModel): string {
 export const RepartitionNiveauxDeConfiance = ({
   territoiresSelectionnes,
   onSupprimerTerritoire,
-  onAjouterTerritoire,
-  onAjouterTerritoires,
   jalon,
   territoireCode,
 }: {
   territoiresSelectionnes: MeteoTerritoireViewModel[];
   onSupprimerTerritoire: (territoireCode: string) => void;
-  onAjouterTerritoire: (territoireCode: string) => void;
-  onAjouterTerritoires: (territoireCodes: string[]) => void;
   jalon: number;
   territoireCode: string;
 }) => {
@@ -123,14 +118,6 @@ export const RepartitionNiveauxDeConfiance = ({
           );
         })}
       </div>
-
-      <AjouterTerritoirePicker
-        territoiresSelectionnesCodes={territoiresSelectionnes.map(
-          (territoire) => territoire.territoireCode,
-        )}
-        onAjouterTerritoire={onAjouterTerritoire}
-        onAjouterTerritoires={onAjouterTerritoires}
-      />
     </div>
   );
 };

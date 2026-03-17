@@ -3,6 +3,7 @@ import { CartographieV2 } from "@/components/_commons/CartographieV2/Cartographi
 import { LegendeCartographie } from "@/components/_commons/CartographieV2/LegendeCartographie";
 import { BaseCartographieWidgetLayout } from "@/components/_commons/Widget/BaseCartographieWidgetLayout";
 import api from "@/server/infrastructure/api/trpc/api";
+import { AjouterTerritoirePicker } from "@/components/_commons/Widget/AjouterTerritoirePicker";
 import { RepartitionNiveauxDeConfiance } from "./RepartitionNiveauxDeConfiance";
 import { useDonneesCartographie } from "./useDonneesCartographie";
 import { useLegendeMeteo } from "./useLegendeMeteo";
@@ -57,10 +58,16 @@ export const WidgetCartographieMeteo = ({
       <RepartitionNiveauxDeConfiance
         territoireCode={territoireCode}
         jalon={jalon}
-        onAjouterTerritoire={ajouterTerritoire}
-        onAjouterTerritoires={ajouterTerritoires}
         onSupprimerTerritoire={supprimerTerritoire}
         territoiresSelectionnes={territoiresSelectionnes}
+      />
+
+      <AjouterTerritoirePicker
+        territoiresSelectionnesCodes={territoiresSelectionnes.map(
+          (territoire) => territoire.territoireCode,
+        )}
+        onAjouterTerritoire={ajouterTerritoire}
+        onAjouterTerritoires={ajouterTerritoires}
       />
     </BaseCartographieWidgetLayout>
   );

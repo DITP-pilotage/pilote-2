@@ -4,6 +4,7 @@ import { LegendeCartographie } from "@/components/_commons/CartographieV2/Legend
 import { BaseCartographieWidgetLayout } from "@/components/_commons/Widget/BaseCartographieWidgetLayout";
 import api from "@/server/infrastructure/api/trpc/api";
 import { useSelectionTerritoires } from "@/components/_commons/Widget/WidgetCartographieMeteo/useSelectionTerritoires";
+import { AjouterTerritoirePicker } from "@/components/_commons/Widget/AjouterTerritoirePicker";
 import { useDonneesCartographieTA } from "./useDonneesCartographieTA";
 import { useLegendeTA } from "./useLegendeTA";
 import { SuiviTauxAvancement } from "./SuiviTauxAvancement";
@@ -59,10 +60,16 @@ export const WidgetCartographieTA = ({
     >
       <SuiviTauxAvancement
         territoireCode={territoireCode}
-        onAjouterTerritoire={ajouterTerritoire}
-        onAjouterTerritoires={ajouterTerritoires}
         onSupprimerTerritoire={supprimerTerritoire}
         territoiresSelectionnes={territoiresSelectionnes}
+      />
+
+      <AjouterTerritoirePicker
+        territoiresSelectionnesCodes={territoiresSelectionnes.map(
+          (territoire) => territoire.territoireCode,
+        )}
+        onAjouterTerritoire={ajouterTerritoire}
+        onAjouterTerritoires={ajouterTerritoires}
       />
     </BaseCartographieWidgetLayout>
   );

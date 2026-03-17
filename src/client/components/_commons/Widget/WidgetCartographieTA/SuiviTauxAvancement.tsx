@@ -1,21 +1,16 @@
 import { Fragment, useMemo } from "react";
 import { getCouleurTerritoire } from "@/client/utils/couleur/paletteTerritoires";
 import { AvancementTerritoireViewModel } from "@/server/chantiers/infrastructure/queries/GetChantierAvancementsTerritoiresQuery";
-import { AjouterTerritoirePicker } from "@/components/_commons/Widget/AjouterTerritoirePicker";
 import { useMesureWidget } from "@/components/_commons/Widget/TuileWidget/useMesureWidget";
 import { clsxm } from "@/utils/clsxm";
 
 export const SuiviTauxAvancement = ({
   territoiresSelectionnes,
   onSupprimerTerritoire,
-  onAjouterTerritoire,
-  onAjouterTerritoires,
   territoireCode,
 }: {
   territoiresSelectionnes: AvancementTerritoireViewModel[];
   onSupprimerTerritoire: (territoireCode: string) => void;
-  onAjouterTerritoire: (territoireCode: string) => void;
-  onAjouterTerritoires: (territoireCodes: string[]) => void;
   territoireCode: string;
 }) => {
   const { isModeDispositionG } = useMesureWidget();
@@ -118,14 +113,6 @@ export const SuiviTauxAvancement = ({
           );
         })}
       </div>
-
-      <AjouterTerritoirePicker
-        territoiresSelectionnesCodes={territoiresSelectionnes.map(
-          (territoire) => territoire.territoireCode,
-        )}
-        onAjouterTerritoire={onAjouterTerritoire}
-        onAjouterTerritoires={onAjouterTerritoires}
-      />
     </div>
   );
 };
