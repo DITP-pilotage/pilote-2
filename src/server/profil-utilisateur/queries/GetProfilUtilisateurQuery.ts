@@ -10,6 +10,7 @@ type ProfilUtilisateurViewModel = {
   service: string | null;
   serviceAutre: string | null;
   perimetreMinisteriel: string | null;
+  dateModification: string;
 };
 
 export class GetProfilUtilisateurQuery {
@@ -31,6 +32,7 @@ export class GetProfilUtilisateurQuery {
         service: true,
         service_autre: true,
         perimetre_ministeriel: true,
+        date_modification: true,
       },
     });
 
@@ -47,6 +49,7 @@ export class GetProfilUtilisateurQuery {
       service: utilisateur.service,
       serviceAutre: utilisateur.service_autre,
       perimetreMinisteriel: utilisateur.perimetre_ministeriel,
+      dateModification: utilisateur.date_modification.toISOString(),
     };
   }
 }
