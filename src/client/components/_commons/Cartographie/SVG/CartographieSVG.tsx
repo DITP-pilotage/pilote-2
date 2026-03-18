@@ -87,13 +87,16 @@ export const CartographieSVG: FunctionComponent<CartographieSVGProps> = ({
                   fill: territoire.remplissage,
                   key: `territoire-${territoire.codeInsee}`,
                   onClick: () => {
-                    territoire.estApplicable &&
+                    if (
+                      territoire.estApplicable &&
                       options.estInteractif &&
-                      territoire.estInteractif &&
+                      territoire.estInteractif
+                    ) {
                       auClicTerritoireCallback(
                         territoire.code,
                         options.territoireSélectionnable,
                       );
+                    }
                   },
                   onMouseEnter: (e) => {
                     if (options.estInteractif) {
