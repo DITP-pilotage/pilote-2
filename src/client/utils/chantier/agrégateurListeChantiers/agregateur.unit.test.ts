@@ -27,6 +27,7 @@ describe("AgregateurListeChantiersParTerritoire", () => {
               "DEPT-01": {
                 estApplicable: true,
                 avancement: { global: 80, annuel: 70 },
+                dateTauxAvancementAnnuel: null,
               },
             },
           }),
@@ -56,6 +57,7 @@ describe("AgregateurListeChantiersParTerritoire", () => {
               "DEPT-01": {
                 estApplicable: true,
                 avancement: { global: 60, annuel: 50 },
+                dateTauxAvancementAnnuel: null,
               },
             },
           }),
@@ -64,6 +66,7 @@ describe("AgregateurListeChantiersParTerritoire", () => {
               "DEPT-01": {
                 estApplicable: true,
                 avancement: { global: 80, annuel: 70 },
+                dateTauxAvancementAnnuel: null,
               },
             },
           }),
@@ -93,6 +96,7 @@ describe("AgregateurListeChantiersParTerritoire", () => {
               "DEPT-01": {
                 estApplicable: false,
                 avancement: { global: 80, annuel: 70 },
+                dateTauxAvancementAnnuel: null,
               },
             },
           }),
@@ -127,6 +131,7 @@ describe("AgregateurListeChantiersParTerritoire", () => {
               "DEPT-01": {
                 estApplicable: null,
                 avancement: { global: 80, annuel: 70 },
+                dateTauxAvancementAnnuel: null,
               },
             },
           }),
@@ -161,6 +166,7 @@ describe("AgregateurListeChantiersParTerritoire", () => {
               "DEPT-01": {
                 estApplicable: true,
                 avancement: { global: null, annuel: null },
+                dateTauxAvancementAnnuel: null,
               },
             },
           }),
@@ -196,6 +202,7 @@ describe("AgregateurListeChantiersParTerritoire", () => {
               "NAT-FR": {
                 estApplicable: true,
                 avancement: { global: 60, annuel: 50 },
+                dateTauxAvancementAnnuel: null,
               },
             },
           }),
@@ -204,6 +211,7 @@ describe("AgregateurListeChantiersParTerritoire", () => {
               "NAT-FR": {
                 estApplicable: true,
                 avancement: { global: 80, annuel: 70 },
+                dateTauxAvancementAnnuel: null,
               },
             },
           }),
@@ -231,10 +239,12 @@ describe("AgregateurListeChantiersParTerritoire", () => {
               "DEPT-01": {
                 estApplicable: true,
                 avancement: { global: 60, annuel: 50 },
+                dateTauxAvancementAnnuel: null,
               },
               "DEPT-02": {
                 estApplicable: true,
                 avancement: { global: 90, annuel: 80 },
+                dateTauxAvancementAnnuel: null,
               },
             },
           }),
@@ -243,6 +253,7 @@ describe("AgregateurListeChantiersParTerritoire", () => {
               "DEPT-01": {
                 estApplicable: true,
                 avancement: { global: 80, annuel: 70 },
+                dateTauxAvancementAnnuel: null,
               },
             },
           }),
