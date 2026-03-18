@@ -23,6 +23,15 @@ function créerChantierAvecMailles(
       dateTauxAvancementAnnuel: string | null;
     }
   > = {},
+  nationale: Record<
+    string,
+    {
+      territoireCode: string;
+      avancementAnnuel: number | null;
+      estApplicable: boolean | null;
+      dateTauxAvancementAnnuel: string | null;
+    }
+  > = {},
 ): Chantier {
   const toMailleData = (
     entries: Record<
@@ -71,7 +80,7 @@ function créerChantierAvecMailles(
     périmètreIds: [],
     maillesApplicables: [],
     mailles: {
-      nationale: {},
+      nationale: toMailleData(nationale),
       regionale: toMailleData(regionale),
       departementale: toMailleData(departementale),
     },
@@ -198,7 +207,48 @@ describe("GetChantierAvancementsTerritoiresQuery", () => {
     ]);
   });
 
-  it("retourne les territoires REG et DEPT combinés", async () => {
+  it("mappe les territoires nationaux avec maille NAT", async () => {
+    // Given
+    const chantier = créerChantierAvecMailles(
+      {},
+      {},
+      {
+        FR: {
+          territoireCode: "NAT-FR",
+          avancementAnnuel: 55,
+          estApplicable: true,
+          dateTauxAvancementAnnuel: "2025-01-01",
+        },
+      },
+    );
+
+    const query = new GetChantierAvancementsTerritoiresQuery({
+      recupererChantierUseCaseV2: { run: async () => chantier },
+      territoireRepository: {
+        récupérerTousNew: async () => [
+          créerTerritoire("NAT-FR", "France", "FR"),
+        ],
+      },
+    } as never);
+
+    // When
+    const result = await query.execute(defaultParams);
+
+    // Then
+    expect(result).toEqual([
+      {
+        territoireCode: "NAT-FR",
+        territoireNom: "France",
+        codeInsee: "FR",
+        maille: "NAT",
+        avancementAnnuel: 55,
+        estApplicable: true,
+        dateTauxAvancementAnnuel: "2025-01-01",
+      },
+    ]);
+  });
+
+  it("retourne les territoires NAT, REG et DEPT combinés", async () => {
     // Given
     const chantier = créerChantierAvecMailles(
       {
@@ -217,12 +267,21 @@ describe("GetChantierAvancementsTerritoiresQuery", () => {
           dateTauxAvancementAnnuel: null,
         },
       },
+      {
+        FR: {
+          territoireCode: "NAT-FR",
+          avancementAnnuel: 45,
+          estApplicable: true,
+          dateTauxAvancementAnnuel: null,
+        },
+      },
     );
 
     const query = new GetChantierAvancementsTerritoiresQuery({
       recupererChantierUseCaseV2: { run: async () => chantier },
       territoireRepository: {
         récupérerTousNew: async () => [
+          créerTerritoire("NAT-FR", "France", "FR"),
           créerTerritoire("REG-11", "Île-de-France", "11"),
           créerTerritoire("DEPT-75", "Paris", "75"),
         ],
@@ -234,6 +293,7 @@ describe("GetChantierAvancementsTerritoiresQuery", () => {
 
     // Then
     expect(result).toEqual([
+      expect.objectContaining({ territoireCode: "NAT-FR", maille: "NAT" }),
       expect.objectContaining({ territoireCode: "REG-11", maille: "REG" }),
       expect.objectContaining({ territoireCode: "DEPT-75", maille: "DEPT" }),
     ]);

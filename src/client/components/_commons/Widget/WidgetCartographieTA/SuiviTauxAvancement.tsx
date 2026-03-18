@@ -13,12 +13,15 @@ export const SuiviTauxAvancement = ({
 }) => {
   const territoiresTries = useMemo(
     () =>
-      [...territoiresSelectionnes].sort((a, b) => {
-        if (a.avancementAnnuel === null && b.avancementAnnuel === null)
+      [...territoiresSelectionnes].sort((territoire1, territoire2) => {
+        if (
+          territoire1.avancementAnnuel === null &&
+          territoire2.avancementAnnuel === null
+        )
           return 0;
-        if (a.avancementAnnuel === null) return 1;
-        if (b.avancementAnnuel === null) return -1;
-        return b.avancementAnnuel - a.avancementAnnuel;
+        if (territoire1.avancementAnnuel === null) return 1;
+        if (territoire2.avancementAnnuel === null) return -1;
+        return territoire2.avancementAnnuel - territoire1.avancementAnnuel;
       }),
     [territoiresSelectionnes],
   );
