@@ -70,7 +70,7 @@ export class SynthèseDesRésultatsSQLRepository implements SynthèseDesRésulta
       chantierId: row.chantier_id,
       territoireCode: row.territoire_code,
       contenu: row.commentaire ?? "",
-      meteo: row.meteo as Météo,
+      meteo: row.meteo as Meteo,
       auteurCreationId: row.auteur_creation_id ?? "",
       dateCreation: row.date_creation.toISOString(),
       auteurModificationId: row.auteur_modification_id ?? "",

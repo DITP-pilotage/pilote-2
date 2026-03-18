@@ -1,11 +1,13 @@
 import { Inject } from "@/server/chantiers/module";
+import { Meteo } from "@/server/domain/météo/Météo.interface";
+import { MailleTerritoireSelectionne } from "@/server/domain/maille/Maille.interface";
 
 export type MeteoTerritoireViewModel = {
   territoireCode: string;
   territoireNom: string;
   codeInsee: string;
-  maille: string;
-  meteo: string;
+  maille: MailleTerritoireSelectionne;
+  meteo: Meteo;
   estApplicable: boolean | null;
   dateDeMajQualitative: string | null;
 };
@@ -36,8 +38,8 @@ export class GetChantierMeteosTerritoiresQuery {
       territoireCode: row.territoire.code,
       territoireNom: row.territoire.nom_affiche,
       codeInsee: row.code_insee,
-      maille: row.maille,
-      meteo: row.meteo ?? "NON_RENSEIGNEE",
+      maille: row.maille as MailleTerritoireSelectionne,
+      meteo: (row.meteo as Meteo) ?? "NON_RENSEIGNEE",
       estApplicable: row.est_applicable,
       dateDeMajQualitative:
         row.derniere_maj_date_qualitative?.toISOString() ?? null,

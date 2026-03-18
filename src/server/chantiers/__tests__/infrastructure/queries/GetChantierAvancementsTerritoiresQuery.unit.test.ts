@@ -2,6 +2,7 @@ import { GetChantierAvancementsTerritoiresQuery } from "@/server/chantiers/infra
 import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
 import Chantier from "@/server/domain/chantier/Chantier.interface";
 import { Territoire } from "@/server/domain/territoire/Territoire.interface";
+import { ProfilCode } from "@/server/gestion-utilisateur/domain/Profil";
 
 function créerChantierAvecMailles(
   regionale: Record<
@@ -116,7 +117,7 @@ const defaultParams = {
   chantierId: "CH-001",
   jalon: 2025,
   habilitations: {} as Habilitations,
-  profil: "DITP_ADMIN" as const,
+  profil: "DITP_ADMIN" as ProfilCode,
 };
 
 describe("GetChantierAvancementsTerritoiresQuery", () => {

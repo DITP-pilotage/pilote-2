@@ -1,5 +1,5 @@
 import { ReactNode, useMemo } from "react";
-import { libellesMeteos, Meteo } from "@/server/domain/météo/Météo.interface";
+import { libellesMeteos } from "@/server/domain/météo/Météo.interface";
 import { ÉLÉMENTS_LÉGENDE_MÉTÉO_CHANTIERS } from "@/client/constants/légendes/élémentsDeLégendesCartographieMétéo";
 import { determinerRemplissageMeteo } from "@/client/utils/meteo/determinerRemplissageMeteo";
 import { MeteoTerritoireViewModel } from "@/server/chantiers/infrastructure/queries/GetChantierMeteosTerritoiresQuery";
@@ -10,7 +10,7 @@ export const useDonneesCartographie = (
   return useMemo(() => {
     return territoiresMeteo.reduce(
       (acc, territoire) => {
-        const meteo = territoire.meteo as Meteo;
+        const meteo = territoire.meteo;
         return {
           ...acc,
           [territoire.territoireCode]: {

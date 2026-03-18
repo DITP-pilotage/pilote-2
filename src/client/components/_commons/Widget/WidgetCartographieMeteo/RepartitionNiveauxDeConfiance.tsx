@@ -1,6 +1,6 @@
 import { Fragment, useMemo } from "react";
 import { getCouleurTerritoireParCode } from "@/client/utils/couleur/paletteTerritoires";
-import { libellesMeteos, Meteo } from "@/server/domain/météo/Météo.interface";
+import { libellesMeteos } from "@/server/domain/météo/Météo.interface";
 import { MeteoPicto } from "@/components/_commons/Meteo/Picto/MeteoPicto";
 import { MeteoTerritoireViewModel } from "@/server/chantiers/infrastructure/queries/GetChantierMeteosTerritoiresQuery";
 import { useMesureWidget } from "@/components/_commons/Widget/TuileWidget/useMesureWidget";
@@ -48,7 +48,7 @@ export const RepartitionNiveauxDeConfiance = ({
         </div>
 
         {territoiresTries.map((territoire) => {
-          const meteo = territoire.meteo as Meteo;
+          const meteo = territoire.meteo;
           const dateMaj = territoire.dateDeMajQualitative
             ? new Date(territoire.dateDeMajQualitative).toLocaleDateString(
                 "fr-FR",
