@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS } from "@/client/constants/légendes/élémentsDeLégendesCartographieAvancement";
 import { determinerRemplissageAvancement } from "@/client/utils/avancement/determinerRemplissageAvancement";
 import { determinerValeurAfficheeAvancement } from "@/client/utils/avancement/determinerValeurAfficheeAvancement";
-import { CartographieV2Donnee } from "@/components/_commons/CartographieV2/CartographieV2.types";
+import { CartographieV2Donnee } from "@/components/_commons/CartographieV2/types";
 import { AvancementTerritoireViewModel } from "@/server/chantiers/infrastructure/queries/GetChantierAvancementsTerritoiresQuery";
 
 export const useDonneesCartographieTA = (

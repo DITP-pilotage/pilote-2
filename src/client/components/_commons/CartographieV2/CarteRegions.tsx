@@ -1,7 +1,7 @@
 import { FunctionComponent } from "react";
 import { getTraceSvg } from "@/components/_commons/Cartographie/SVG/CartographieSVGContrat";
 import { listeTerritoires } from "@/client/constants/territoires";
-import { GetTerritoireProps } from "./CartographieV2.types";
+import { GetTerritoireProps } from "./types";
 
 type CarteRegionsProps = {
   getTerritoireProps: GetTerritoireProps;

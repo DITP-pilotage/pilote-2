@@ -4,10 +4,7 @@ import hachuresGrisBlanc from "@/client/constants/légendes/hachure/hachuresGris
 import SecureTooltip from "@/components/_commons/SecureTooltip/SecureTooltip";
 import { getListeTerritoires } from "@/client/constants/territoires";
 import { clsxm } from "@/utils/clsxm";
-import {
-  CartographieV2Donnee,
-  GetTerritoireProps,
-} from "./CartographieV2.types";
+import { CartographieV2Donnee, GetTerritoireProps } from "./types";
 import { useZoomContext, ZoomControl, ZoomProvider } from "./ZoomContext";
 import { CarteDepartements } from "./CarteDepartements";
 import { CarteRegions } from "./CarteRegions";
