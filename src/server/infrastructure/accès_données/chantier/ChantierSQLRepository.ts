@@ -302,7 +302,7 @@ export default class ChantierSQLRepository implements ChantierRepository {
             taux_avancement_mandat: true,
             chantier_territoire_jalon: {
               where: { jalon },
-              select: { taux_avancement: true },
+              select: { taux_avancement: true, date_taux_avancement: true },
             },
           },
         },
@@ -323,6 +323,9 @@ export default class ChantierSQLRepository implements ChantierRepository {
             global: ct.taux_avancement_mandat ?? null,
             annuel: ct.chantier_territoire_jalon[0]?.taux_avancement ?? null,
           },
+          dateTauxAvancementAnnuel:
+            ct.chantier_territoire_jalon[0]?.date_taux_avancement?.toISOString() ??
+            null,
         };
       }
       return { mailles };

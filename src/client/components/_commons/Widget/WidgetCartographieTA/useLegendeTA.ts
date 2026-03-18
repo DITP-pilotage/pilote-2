@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS } from "@/client/constants/légendes/élémentsDeLégendesCartographieAvancement";
-import { AvancementTerritoireViewModel } from "@/server/chantiers/infrastructure/queries/GetChantierAvancementsTerritoiresQuery";
+import { AvancementTerritoireViewModel } from "@/server/chantiers/app/contrats/AvancementTerritoireContrat";
 
 export const useLegendeTA = (territoires: AvancementTerritoireViewModel[]) => {
   return useMemo(() => {

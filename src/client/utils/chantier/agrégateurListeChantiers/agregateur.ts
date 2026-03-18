@@ -19,6 +19,7 @@ export type ChantierPourAgregation = {
       {
         estApplicable: boolean | null;
         avancement: Avancement;
+        dateTauxAvancementAnnuel: string | null;
       }
     >
   >;
@@ -57,6 +58,13 @@ export class AgregateurListeChantiersParTerritoire {
                 .donneesBrutes.avancements,
               donneesTerritoire.avancement,
             ];
+            if (donneesTerritoire.dateTauxAvancementAnnuel !== null) {
+              this.agregat["nationale"].territoires[
+                territoireCode
+              ].donneesBrutes.dates.push(
+                donneesTerritoire.dateTauxAvancementAnnuel,
+              );
+            }
           }
         },
       );
@@ -70,6 +78,13 @@ export class AgregateurListeChantiersParTerritoire {
                 .donneesBrutes.avancements,
               donneesTerritoire.avancement,
             ];
+            if (donneesTerritoire.dateTauxAvancementAnnuel !== null) {
+              this.agregat["departementale"].territoires[
+                territoireCode
+              ].donneesBrutes.dates.push(
+                donneesTerritoire.dateTauxAvancementAnnuel,
+              );
+            }
           }
         },
       );
@@ -83,6 +98,13 @@ export class AgregateurListeChantiersParTerritoire {
                 .donneesBrutes.avancements,
               donneesTerritoire.avancement,
             ];
+            if (donneesTerritoire.dateTauxAvancementAnnuel !== null) {
+              this.agregat["regionale"].territoires[
+                territoireCode
+              ].donneesBrutes.dates.push(
+                donneesTerritoire.dateTauxAvancementAnnuel,
+              );
+            }
           }
         },
       );
@@ -163,6 +185,11 @@ export class AgregateurListeChantiersParTerritoire {
     ].repartition.avancements.annuel.moyenne = calculerMoyenne(
       avancements.annuel,
     );
+
+    const dates =
+      this.agregat[maille].territoires[territoireCode].donneesBrutes.dates;
+    this.agregat[maille].territoires[territoireCode].dateTauxAvancementAnnuel =
+      dates.length > 0 ? (dates.sort().at(-1) ?? null) : null;
   }
 
   private _calculerRepartitionAvancementsParMaille(
@@ -201,7 +228,9 @@ export class AgregateurListeChantiersParTerritoire {
       },
       donneesBrutes: {
         avancements: [],
+        dates: [],
       },
+      dateTauxAvancementAnnuel: null,
     };
   }
 

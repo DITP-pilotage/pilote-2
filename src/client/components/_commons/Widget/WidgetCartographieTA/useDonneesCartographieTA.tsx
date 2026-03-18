@@ -3,7 +3,7 @@ import { ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS } from "@/client/constants/lé
 import { determinerRemplissageAvancement } from "@/client/utils/avancement/determinerRemplissageAvancement";
 import { determinerValeurAfficheeAvancement } from "@/client/utils/avancement/determinerValeurAfficheeAvancement";
 import { CartographieV2Donnee } from "@/components/_commons/CartographieV2/types";
-import { AvancementTerritoireViewModel } from "@/server/chantiers/infrastructure/queries/GetChantierAvancementsTerritoiresQuery";
+import { AvancementTerritoireViewModel } from "@/server/chantiers/app/contrats/AvancementTerritoireContrat";
 
 export const useDonneesCartographieTA = (
   territoires: AvancementTerritoireViewModel[],
