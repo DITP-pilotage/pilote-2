@@ -46,7 +46,12 @@ export class PageMiseAJourDonnees extends BasePage {
       .click();
   }
 
-  async submitData(): Promise<void> {
+  async submitData(utilisateurEmail: string): Promise<void> {
+    this.e2eContext.track("RAPPORT_IMPORT_CREE", {
+      utilisateurEmail,
+      date_creation: { gte: new Date() },
+    });
+
     await this.page
       .getByRole("button", { name: /Transmettre les données/ })
       .first()

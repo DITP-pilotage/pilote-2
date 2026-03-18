@@ -1,4 +1,5 @@
-import { expect, test } from "@playwright/test";
+import { expect } from "@playwright/test";
+import { test } from "./fixtures";
 import { AppActions } from "./actions/app.actions";
 import { PageAdminIndicateurForm } from "./pages/admin/page-admin-indicateur-form";
 import { PageAdminIndicateurs } from "./pages/admin/page-admin-indicateurs";
@@ -8,11 +9,12 @@ const DITP_ADMIN = "ditp.admin@example.com";
 test.describe("Formulaire indicateur — Consultation et modification", () => {
   test("doit afficher la fiche indicateur en mode consultation puis permettre la modification", async ({
     page,
+    e2eContext,
   }) => {
     test.setTimeout(150_000);
 
-    const appActions = new AppActions(page);
-    const pageForm = new PageAdminIndicateurForm(page);
+    const appActions = new AppActions(page, e2eContext);
+    const pageForm = new PageAdminIndicateurForm(page, e2eContext);
 
     await test.step("Connexion et accès à la fiche indicateur IND-021", async () => {
       await appActions.loginAs(DITP_ADMIN);
@@ -95,11 +97,12 @@ test.describe("Formulaire indicateur — Consultation et modification", () => {
 test.describe("Formulaire indicateur — Règles d'activation/désactivation des paramétrages", () => {
   test("doit activer/désactiver les champs d'agrégation selon l'origine des valeurs dans les mailles", async ({
     page,
+    e2eContext,
   }) => {
     test.setTimeout(150_000);
 
-    const appActions = new AppActions(page);
-    const pageForm = new PageAdminIndicateurForm(page);
+    const appActions = new AppActions(page, e2eContext);
+    const pageForm = new PageAdminIndicateurForm(page, e2eContext);
 
     await test.step("Connexion et accès à la fiche IND-021 en mode modification", async () => {
       await appActions.loginAs(DITP_ADMIN);
@@ -168,11 +171,12 @@ test.describe("Formulaire indicateur — Règles d'activation/désactivation des
 
   test("doit gérer les règles du calcul de la valeur d'avancement", async ({
     page,
+    e2eContext,
   }) => {
     test.setTimeout(150_000);
 
-    const appActions = new AppActions(page);
-    const pageForm = new PageAdminIndicateurForm(page);
+    const appActions = new AppActions(page, e2eContext);
+    const pageForm = new PageAdminIndicateurForm(page, e2eContext);
 
     await test.step("Connexion et accès à la fiche IND-021 en mode modification", async () => {
       await appActions.loginAs(DITP_ADMIN);
@@ -239,11 +243,12 @@ test.describe("Formulaire indicateur — Règles d'activation/désactivation des
 
   test("doit désactiver les pondérations dept/reg quand l'indicateur n'est pas territorialisé", async ({
     page,
+    e2eContext,
   }) => {
     test.setTimeout(150_000);
 
-    const appActions = new AppActions(page);
-    const pageForm = new PageAdminIndicateurForm(page);
+    const appActions = new AppActions(page, e2eContext);
+    const pageForm = new PageAdminIndicateurForm(page, e2eContext);
 
     // IND-021 est territorialisé → poidsPourcentDept et poidsPourcentReg sont activés
     await test.step("Connexion et accès à la fiche IND-021 en mode modification", async () => {
@@ -275,11 +280,12 @@ test.describe("Formulaire indicateur — Règles d'activation/désactivation des
 test.describe("Formulaire indicateur — Création", () => {
   test("doit afficher le formulaire en mode création et permettre de créer un indicateur", async ({
     page,
+    e2eContext,
   }) => {
     test.setTimeout(150_000);
 
-    const appActions = new AppActions(page);
-    const pageForm = new PageAdminIndicateurForm(page);
+    const appActions = new AppActions(page, e2eContext);
+    const pageForm = new PageAdminIndicateurForm(page, e2eContext);
 
     // IND-999 n'existe pas en base, il sera initialisé comme nouvel indicateur
     const nouvelIndicateurId = "IND-999";
@@ -306,12 +312,13 @@ test.describe("Formulaire indicateur — Création", () => {
 test.describe("Formulaire indicateur — Navigation depuis le listing", () => {
   test("doit naviguer du listing vers la fiche et revenir", async ({
     page,
+    e2eContext,
   }) => {
     test.setTimeout(150_000);
 
-    const appActions = new AppActions(page);
-    const pageIndicateurs = new PageAdminIndicateurs(page);
-    const pageForm = new PageAdminIndicateurForm(page);
+    const appActions = new AppActions(page, e2eContext);
+    const pageIndicateurs = new PageAdminIndicateurs(page, e2eContext);
+    const pageForm = new PageAdminIndicateurForm(page, e2eContext);
 
     await test.step("Connexion et accès au listing", async () => {
       await appActions.loginAs(DITP_ADMIN);
@@ -337,10 +344,11 @@ const EQUIPE_DIR_PROJET = "equipe.dir.projet@example.com";
 test.describe("Formulaire indicateur — Accès refusé", () => {
   test("doit refuser l'accès à la fiche indicateur aux profils non DITP_ADMIN", async ({
     page,
+    e2eContext,
   }) => {
     test.setTimeout(150_000);
 
-    const appActions = new AppActions(page);
+    const appActions = new AppActions(page, e2eContext);
 
     await test.step("Coordinateur région — accès direct par URL refusé", async () => {
       await appActions.loginAs(COORDINATEUR_REGION);

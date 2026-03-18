@@ -1,36 +1,36 @@
 import { Locator, Page, expect } from "@playwright/test";
 import { PvaModalComponent } from "./pva-modal.component";
+import { E2ETestContext } from "../e2e-test-context";
 
 export class PvaIndicateurComponent {
   private readonly section: Locator;
 
   constructor(
     private readonly page: Page,
-    indicateurId: string,
+    private readonly indicateurId: string,
+    private readonly territoireCode: string,
+    private readonly e2eContext: E2ETestContext,
   ) {
     this.section = page.locator(
       `xpath=//strong[text()="${indicateurId}"]/ancestor::section[1]`,
     );
   }
 
-  // --- Actions ---
-
-  async supprimerPropositionSiExistante(): Promise<void> {
-    const boutonSupprimer = this.section.getByRole("button", {
-      name: /Supprimer la proposition/,
+  private trackPva(): void {
+    this.e2eContext.track("EVENEMENT_PROPOSITION_VALEUR_CREE", {
+      indic_id: this.indicateurId,
+      territoire_code: this.territoireCode,
     });
-    if (
-      await boutonSupprimer.isVisible({ timeout: 2_000 }).catch(() => false)
-    ) {
-      await boutonSupprimer.click();
-      const modal = new PvaModalComponent(this.page);
-      await modal.remplirMotifSuppression("Nettoyage avant test e2e");
-      await modal.confirmerSuppression();
-      await modal.expectConfirmationEtFermer(/supprimée/);
-    }
+    this.e2eContext.track("PROPOSITION_VALEUR_AVANCEMENT_CREEE", {
+      indic_id: this.indicateurId,
+      territoire_code: this.territoireCode,
+    });
   }
 
+  // --- Actions---
+
   async clickProposerAutreValeur(): Promise<PvaModalComponent> {
+    this.trackPva();
     await this.section
       .getByRole("button", {
         name: /Proposer une autre valeur d'avancement/,

@@ -43,7 +43,9 @@ export class PageUtilisateurDetail extends BasePage {
     await this.heading.waitFor({ state: "visible" });
   }
 
-  async confirmerDesactivation(): Promise<void> {
+  async confirmerDesactivation(email: string): Promise<void> {
+    this.e2eContext.track("UTILISATEUR_DESACTIVE", { email });
+
     await this.dialog
       .getByRole("button", { name: "Confirmer la désactivation" })
       .click();

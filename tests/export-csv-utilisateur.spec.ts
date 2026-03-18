@@ -1,19 +1,21 @@
-import { Download, expect, test } from "@playwright/test";
+import { Download, expect } from "@playwright/test";
 import fs from "node:fs";
+import { test } from "./fixtures";
 import { AppActions } from "./actions/app.actions";
 import { PageAdminUtilisateurs } from "./pages/admin/page-utilisateurs";
 
 test("doit pouvoir exporter les données des utilisateurs sous format CSV", async ({
   page,
+  e2eContext,
 }) => {
   test.setTimeout(150_000);
-  const appActions = new AppActions(page);
+  const appActions = new AppActions(page, e2eContext);
   await appActions.loginAs();
 
   let download: Download;
 
   await test.step("Navigation vers la page Utilisateur", async () => {
-    const pageUtilisateurs = new PageAdminUtilisateurs(page);
+    const pageUtilisateurs = new PageAdminUtilisateurs(page, e2eContext);
     await pageUtilisateurs.goto();
 
     await test.step("Téléchargement du fichier", async () => {

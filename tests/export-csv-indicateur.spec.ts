@@ -1,12 +1,14 @@
-import { Download, expect, test } from "@playwright/test";
+import { Download, expect } from "@playwright/test";
 import fs from "node:fs";
+import { test } from "./fixtures";
 import { AppActions } from "./actions/app.actions";
 
 test("doit pouvoir exporter les données des indicateurs sous format CSV", async ({
   page,
+  e2eContext,
 }) => {
   test.setTimeout(150_000);
-  const appActions = new AppActions(page);
+  const appActions = new AppActions(page, e2eContext);
   const pageAccueil = await appActions.loginAs();
 
   await test.step("Ouverture de la modale d'export csv à l'étape 1 - Éléments à exporter", async () => {

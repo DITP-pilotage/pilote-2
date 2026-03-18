@@ -1,8 +1,9 @@
-import { expect, test } from "@playwright/test";
+import { expect } from "@playwright/test";
 import { stringify } from "csv-stringify/sync";
+import { test } from "./fixtures";
 import { AppActions } from "./actions/app.actions";
 
-test("doit pouvoir importer des données", async ({ page }) => {
+test("doit pouvoir importer des données", async ({ page, e2eContext }) => {
   test.setTimeout(150_000);
 
   const chantier = {
@@ -12,7 +13,7 @@ test("doit pouvoir importer des données", async ({ page }) => {
     indicateurNom: "Nombre de conformité aux standards",
   };
 
-  const appActions = new AppActions(page);
+  const appActions = new AppActions(page, e2eContext);
   const pageAccueil = await appActions.loginAs();
 
   await test.step(`Navigation vers la page chantier "${chantier.nom}"`, async () => {
@@ -145,7 +146,7 @@ test("doit pouvoir importer des données", async ({ page }) => {
       });
 
       await test.step("Action de transmissions des données vérifiés", async () => {
-        await pageMaj.submitData();
+        await pageMaj.submitData(process.env.E2E_USERNAME!);
       });
 
       await test.step("Vérification que les données ont correctement été transmises", async () => {

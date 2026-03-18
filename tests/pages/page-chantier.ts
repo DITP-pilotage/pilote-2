@@ -4,12 +4,13 @@ import { BasePage } from "./base.page";
 import { PageMiseAJourDonnees } from "./page-mise-a-jour-donnees";
 import { HeaderComponent } from "../components/header.component";
 import { PvaIndicateurComponent } from "../components/pva-indicateur.component";
+import { E2ETestContext } from "../e2e-test-context";
 
 export class PageChantier extends BasePage {
   readonly header: HeaderComponent;
 
-  constructor(page: Page) {
-    super(page);
+  constructor(page: Page, e2eContext: E2ETestContext) {
+    super(page, e2eContext);
     this.header = new HeaderComponent(page);
   }
 
@@ -24,7 +25,7 @@ export class PageChantier extends BasePage {
     await expect(
       this.page.getByRole("heading", { name: /Sélectionnez l'indicateur/ }),
     ).toBeVisible();
-    return new PageMiseAJourDonnees(this.page);
+    return new PageMiseAJourDonnees(this.page, this.e2eContext);
   }
 
   async selectChantierAvecTerritoire(
@@ -47,8 +48,16 @@ export class PageChantier extends BasePage {
     }
   }
 
-  getIndicateurPva(indicateurId: string): PvaIndicateurComponent {
-    return new PvaIndicateurComponent(this.page, indicateurId);
+  getIndicateurPva(
+    indicateurId: string,
+    territoireCode: string,
+  ): PvaIndicateurComponent {
+    return new PvaIndicateurComponent(
+      this.page,
+      indicateurId,
+      territoireCode,
+      this.e2eContext,
+    );
   }
 
   async expectStructure(): Promise<void> {
@@ -124,6 +133,10 @@ export class PageChantier extends BasePage {
     typeCommentaire: string = "risquesEtFreinsÀLever",
   ): Promise<void> {
     const id = randomUUID();
+
+    this.e2eContext.track("COMMENTAIRE_CREE", {
+      contenu: { contains: id },
+    });
 
     await this.page
       .getByLabel(`bouton-nouveau-commentaire-${typeCommentaire}`)
