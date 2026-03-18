@@ -24,7 +24,7 @@ export class GetChantierMeteosTerritoiresQuery {
     const rows = await prisma.chantier_territoire.findMany({
       where: {
         id: params.chantierId,
-        maille: { in: ["REG", "DEPT"] },
+        maille: { in: ["NAT", "REG", "DEPT"] },
         chantier_territoire_jalon: {
           some: { jalon: params.jalon },
         },

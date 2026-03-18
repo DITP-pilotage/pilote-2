@@ -13,7 +13,7 @@ describe("GetChantierMeteosTerritoiresQuery", () => {
   });
 
   it(
-    "retourne les météos REG et DEPT mais pas NAT",
+    "retourne les météos NAT, REG et DEPT",
     createIntegrationTest(async () => {
       // Given
       await fixtures.chantierIdentite({ id: "CH-001" });
@@ -88,11 +88,11 @@ describe("GetChantierMeteosTerritoiresQuery", () => {
             codeInsee: "11",
             meteo: "ORAGE",
           }),
-        ]),
-      );
-      expect(result).not.toEqual(
-        expect.arrayContaining([
-          expect.objectContaining({ territoireCode: "NAT-FR" }),
+          expect.objectContaining({
+            territoireCode: "NAT-FR",
+            codeInsee: "FR",
+            meteo: "NUAGE",
+          }),
         ]),
       );
     }),

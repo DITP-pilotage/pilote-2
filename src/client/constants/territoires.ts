@@ -14,8 +14,15 @@ export const listeTerritoires = {
   ),
 };
 
-export const territoiresGroupesPourPicker: PickerOptionGroup<string>[] =
-  listeTerritoires.régions.map((region) => {
+const france = territoires.find((t) => t.maille === "nationale")!;
+
+export const territoiresGroupesPourPicker: PickerOptionGroup<string>[] = [
+  {
+    libelle: france.nomAffiché,
+    valeur: france.code,
+    options: [{ libelle: france.nomAffiché, valeur: france.code }],
+  },
+  ...listeTerritoires.régions.map((region) => {
     const departements = listeTerritoires.départements.filter(
       (dept) => dept.codeParent === region.code,
     );
@@ -31,7 +38,8 @@ export const territoiresGroupesPourPicker: PickerOptionGroup<string>[] =
         })),
       ],
     };
-  });
+  }),
+];
 
 export const récupérerDétailsSurUnTerritoire = (
   territoireCode: string,

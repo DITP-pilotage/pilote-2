@@ -13,6 +13,7 @@ import { AjouterTerritoirePicker } from "@/components/_commons/Widget/AjouterTer
 import { useDonneesCartographieTA } from "./useDonneesCartographieTA";
 import { useLegendeTA } from "./useLegendeTA";
 import { SuiviTauxAvancement } from "./SuiviTauxAvancement";
+import { ValeursRemarquables } from "./ValeursRemarquables";
 
 type VueCartographieTA = "situation" | "tableau" | "courbes";
 
@@ -62,6 +63,11 @@ export const WidgetCartographieTA = ({
             (territoire) => territoire.territoireCode,
           )}
         >
+          <ValeursRemarquables
+            chantierId={chantierId}
+            maille={maille}
+            jalon={jalon}
+          />
           <LegendeCartographie items={legende} />
         </CartographieV2>
       }

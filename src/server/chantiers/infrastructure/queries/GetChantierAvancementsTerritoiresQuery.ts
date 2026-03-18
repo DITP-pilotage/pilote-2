@@ -40,6 +40,21 @@ export class GetChantierAvancementsTerritoiresQuery {
     const result: AvancementTerritoireViewModel[] = [];
 
     for (const [codeInsee, donnees] of Object.entries(
+      chantier.mailles.nationale,
+    )) {
+      const territoire = territoiresMap.get(donnees.territoireCode);
+      result.push({
+        territoireCode: donnees.territoireCode,
+        territoireNom: territoire?.nomAffiché ?? "",
+        codeInsee,
+        maille: "NAT",
+        avancementAnnuel: donnees.avancement.annuel,
+        estApplicable: donnees.estApplicable,
+        dateTauxAvancementAnnuel: donnees.dateTauxAvancementAnnuel,
+      });
+    }
+
+    for (const [codeInsee, donnees] of Object.entries(
       chantier.mailles.regionale,
     )) {
       const territoire = territoiresMap.get(donnees.territoireCode);

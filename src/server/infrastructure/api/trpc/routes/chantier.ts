@@ -50,4 +50,22 @@ export const chantierRouter = créerRouteurTRPC({
           profil: ctx.session.profil,
         });
     }),
+  recupererStatistiquesAvancement: procédureProtégée
+    .input(
+      z.object({
+        chantierIds: z.array(z.string()),
+        maille: z.enum(["regionale", "departementale"]),
+        jalon: z.number(),
+      }),
+    )
+    .query(({ input, ctx }) => {
+      return getContainer("legacy")
+        .resolve("récupérerStatistiquesAvancementChantiersUseCase")
+        .run(
+          input.chantierIds,
+          input.maille,
+          ctx.session.habilitations,
+          input.jalon,
+        );
+    }),
 });
