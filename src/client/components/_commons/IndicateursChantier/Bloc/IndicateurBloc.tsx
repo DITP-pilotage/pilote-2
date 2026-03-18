@@ -366,50 +366,6 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                                 variante="secondaire-light"
                               />
                             </td>
-                            {/* Valeur et date valeur d'avancement mandat de indicateurTerritoire */}
-                            <td className="fr-mb-0 fr-p-0 fr-py-md-1w !text-sm text-center">
-                              <ValeurEtDate
-                                date={
-                                  informationIndicateurComparé.données
-                                    .dateValeurAvancementMandat
-                                }
-                                unité={
-                                  informationIndicateurComparé.données.unite
-                                }
-                                valeur={
-                                  informationIndicateurComparé.données
-                                    .valeurAvancementMandat
-                                }
-                              />
-                            </td>
-                            <td className="fr-mb-0 fr-p-0 fr-py-md-1w !text-sm text-center">
-                              <ValeurEtDate
-                                date={
-                                  informationIndicateurComparé.données
-                                    .dateValeurCible
-                                }
-                                unité={
-                                  informationIndicateurComparé.données.unite
-                                }
-                                valeur={
-                                  informationIndicateurComparé.données
-                                    .valeurCible
-                                }
-                              />
-                            </td>
-                            <td className="fr-mb-0 fr-p-0 fr-px-2w fr-py-md-1w !text-sm">
-                              <BarreDeProgression
-                                afficherTexte
-                                fond="gris-clair"
-                                positionTexte="dessus"
-                                taille="md"
-                                valeur={
-                                  informationIndicateurComparé.données
-                                    .avancement.global
-                                }
-                                variante="bleu-clair"
-                              />
-                            </td>
                           </tr>
                         </Fragment>
                       ) : null;
