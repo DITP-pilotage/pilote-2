@@ -79,7 +79,11 @@ import {
   type NoExports,
 } from "@/server/module-system";
 
-type LegacyCradle = {
+export type LegacyExport = {
+  agregerAvancementsChantiersUseCase: AgregerAvancementsChantiersUseCase;
+};
+
+type LegacyCradle = LegacyExport & {
   chantierRepository: ChantierRepository;
   axeRepository: AxeRepository;
   synthèseDesRésultatsRepository: SynthèseDesRésultatsRepository;
@@ -106,7 +110,6 @@ type LegacyCradle = {
   tokenAPIInformationRepository: TokenAPIInformationRepository;
   récupérerStatistiquesAvancementChantiersUseCase: RécupérerStatistiquesAvancementChantiersUseCase;
   recupererRepartitionsMeteoChantiersUseCase: RecupererRepartitionsMeteoChantiersUseCase;
-  agregerAvancementsChantiersUseCase: AgregerAvancementsChantiersUseCase;
   récupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase: RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase;
   créerUnObjectifUseCase: CréerUnObjectifUseCase;
   récupérerObjectifLePlusRécentUseCase: RécupérerObjectifLePlusRécentUseCase;
@@ -132,10 +135,10 @@ type LegacyCradle = {
   récupérerListeChantierFicheTerritorialeUseCase: RécupérerListeChantierFicheTerritorialeUseCase;
 };
 
-export const legacyModule = defineModule<NoExports, LegacyCradle>()({
+export const legacyModule = defineModule<LegacyExport, LegacyCradle>()({
   name: "legacy",
   imports: ["shared"],
-  exports: [],
+  exports: ["agregerAvancementsChantiersUseCase"],
   register: (container, { asModuleFunction, asModuleClass }) => {
     container.register({
       chantierRepository: asModuleClass(ChantierSQLRepository).scoped(),

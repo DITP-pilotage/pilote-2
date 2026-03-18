@@ -4,8 +4,6 @@ import {
   procédureProtégée,
 } from "@/server/infrastructure/api/trpc/trpc";
 import { getContainer } from "@/server/dependances";
-import { AvancementTerritoireViewModel } from "@/server/chantiers/app/contrats/AvancementTerritoireContrat";
-import { MailleTerritoireSelectionne } from "@/server/domain/maille/Maille.interface";
 
 export const chantierRouter = créerRouteurTRPC({
   récupérerTousSynthétisésAccessiblesEnLecture: procédureProtégée.query(
@@ -43,46 +41,10 @@ export const chantierRouter = créerRouteurTRPC({
         jalon: z.number(),
       }),
     )
-    .query(async ({ input }) => {
-      const agregat = await getContainer("legacy")
-        .resolve("agregerAvancementsChantiersUseCase")
-        .run(input.chantierIds, input.jalon);
-
-      const territoires = await getContainer("chantiers")
-        .resolve("territoireRepository")
-        .récupérerTousNew();
-      const territoiresMap = new Map(
-        territoires.map((territoire) => [territoire.code, territoire]),
-      );
-
-      const result: AvancementTerritoireViewModel[] = [];
-
-      const mailleMapping: Array<{
-        maille: keyof typeof agregat;
-        mailleCode: MailleTerritoireSelectionne;
-      }> = [
-        { maille: "nationale", mailleCode: "NAT" },
-        { maille: "regionale", mailleCode: "REG" },
-        { maille: "departementale", mailleCode: "DEPT" },
-      ];
-
-      for (const { maille, mailleCode } of mailleMapping) {
-        for (const [territoireCode, territoire] of Object.entries(
-          agregat[maille].territoires,
-        )) {
-          result.push({
-            territoireCode,
-            territoireNom: territoiresMap.get(territoireCode)?.nomAffiché ?? "",
-            codeInsee: territoireCode,
-            maille: mailleCode,
-            avancementAnnuel: territoire.repartition.avancements.annuel.moyenne,
-            estApplicable: null,
-            dateTauxAvancementAnnuel: territoire.dateTauxAvancementAnnuel,
-          });
-        }
-      }
-
-      return result;
+    .query(({ input }) => {
+      return getContainer("chantiers")
+        .resolve("recupererAvancementsTerritoiresQuery")
+        .run(input);
     }),
   recupererStatistiquesAvancement: procédureProtégée
     .input(
