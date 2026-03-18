@@ -1,23 +1,29 @@
-export const typesDécisionStratégique = [
-  "suiviDesDécisionsStratégiques",
+export const typesDecisionStrategique = [
+  "suiviDesDecisionsStrategiques",
 ] as const;
-export type TypeDécisionStratégique = (typeof typesDécisionStratégique)[number];
+export type TypeDecisionStrategique = (typeof typesDecisionStrategique)[number];
 
-type DécisionStratégique = {
+export type DécisionStratégique = {
   id: string;
   contenu: string;
   date: string;
   auteur: string;
-  type: TypeDécisionStratégique;
+  type: TypeDecisionStrategique;
 } | null;
 
-export type DécisionStratégiqueV2 = {
-  chantierId: string;
+import { $Enums } from "@prisma/client";
+
+export type DecisionStrategiqueV2 = {
   id: string;
+  chantierId: string;
   contenu: string;
-  type: TypeDécisionStratégique;
-  auteur_id: string;
-  date: Date;
+  statut: $Enums.statut_publication;
+  auteurCreationId: string;
+  auteurModificationId: string;
+  dateCreation: string;
+  dateModification: string;
 };
 
-export default DécisionStratégique;
+export type DecisionStrategiqueV2AvecNomsAuteurs = DecisionStrategiqueV2 & {
+  auteurModificationNom: string;
+};

@@ -1,3 +1,4 @@
+import { $Enums } from "@prisma/client";
 import { SyntheseDesResultatsRepository } from "@/server/fiche-territoriale/domain/ports/SyntheseDesResultatsRepository";
 import { SyntheseDesResultats } from "@/server/fiche-territoriale/domain/SyntheseDesResultats";
 import { prisma } from "@/server/db/prisma";
@@ -17,6 +18,7 @@ export class PrismaSyntheseDesResultatsRepository implements SyntheseDesResultat
         chantier_id: {
           in: listeChantierId,
         },
+        statut: $Enums.statut_publication.PUBLIE,
         code_insee: codeInsee,
         maille,
       },

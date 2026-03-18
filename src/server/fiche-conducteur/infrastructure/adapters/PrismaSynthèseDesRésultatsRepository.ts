@@ -1,4 +1,7 @@
-import { synthese_des_resultats as SyntheseDesResultatsModel } from "@prisma/client";
+import {
+  $Enums,
+  synthese_des_resultats as SyntheseDesResultatsModel,
+} from "@prisma/client";
 import { SynthèseDesRésultatsRepository } from "@/server/fiche-conducteur/domain/ports/SynthèseDesRésultatsRepository";
 import { SyntheseDesResultats } from "@/server/fiche-conducteur/domain/SyntheseDesResultats";
 import { Meteo } from "@/server/fiche-conducteur/domain/Meteo";
@@ -26,6 +29,7 @@ export class PrismaSynthèseDesRésultatsRepository implements SynthèseDesRésu
     const result = await this.prisma.synthese_des_resultats.findFirst({
       where: {
         chantier_id: chantierId,
+        statut: $Enums.statut_publication.PUBLIE,
         maille: "NAT",
         NOT: [
           {

@@ -55,9 +55,6 @@ import CréerUnObjectifUseCase from "@/server/usecase/chantier/objectif/CréerUn
 import RécupérerObjectifLePlusRécentUseCase from "@/server/usecase/chantier/objectif/RécupérerObjectifLePlusRécentUseCase";
 import RécupérerHistoriqueObjectifUseCase from "@/server/usecase/chantier/objectif/RécupérerHistoriqueObjectifUseCase";
 import RécupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase from "@/server/usecase/chantier/objectif/RécupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase";
-import CréerUneDécisionStratégiqueUseCase from "@/server/usecase/chantier/décision/CréerUneDécisionStratégiqueUseCase";
-import RécupérerDécisionStratégiqueLaPlusRécenteUseCase from "@/server/usecase/chantier/décision/RécupérerDécisionStratégiqueLaPlusRécenteUseCase";
-import RécupérerHistoriqueDécisionStratégiqueUseCase from "@/server/usecase/chantier/décision/RécupérerHistoriqueDécisionStratégiqueUseCase";
 import RécupérerUnUtilisateurUseCase from "@/server/gestion-utilisateur/usecases/RécupérerUnUtilisateurUseCase";
 import RécupérerUnProfilUseCase from "@/server/usecase/profil/RécupérerUnProfilUseCase";
 import { RécupérerTerritoiresAvecNombreUtilisateursUseCase } from "@/server/usecase/territoire/RécupérerTerritoiresAvecNombreUtilisateursUseCase";
@@ -112,9 +109,6 @@ type LegacyCradle = {
   récupérerObjectifLePlusRécentUseCase: RécupérerObjectifLePlusRécentUseCase;
   récupérerHistoriqueObjectifUseCase: RécupérerHistoriqueObjectifUseCase;
   récupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase: RécupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase;
-  créerUneDécisionStratégiqueUseCase: CréerUneDécisionStratégiqueUseCase;
-  récupérerDécisionStratégiqueLaPlusRécenteUseCase: RécupérerDécisionStratégiqueLaPlusRécenteUseCase;
-  récupérerHistoriqueDécisionStratégiqueUseCase: RécupérerHistoriqueDécisionStratégiqueUseCase;
   récupérerUnUtilisateurUseCase: RécupérerUnUtilisateurUseCase;
   récupérerUnProfilUseCase: RécupérerUnProfilUseCase;
   récupérerTerritoiresAvecNombreUtilisateursUseCase: RécupérerTerritoiresAvecNombreUtilisateursUseCase;
@@ -215,15 +209,6 @@ export const legacyModule = defineModule<NoExports, LegacyCradle>()({
         asModuleClass(
           RécupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase,
         ).scoped(),
-      créerUneDécisionStratégiqueUseCase: asModuleClass(
-        CréerUneDécisionStratégiqueUseCase,
-      ).scoped(),
-      récupérerDécisionStratégiqueLaPlusRécenteUseCase: asModuleClass(
-        RécupérerDécisionStratégiqueLaPlusRécenteUseCase,
-      ).scoped(),
-      récupérerHistoriqueDécisionStratégiqueUseCase: asModuleClass(
-        RécupérerHistoriqueDécisionStratégiqueUseCase,
-      ).scoped(),
       récupérerUnUtilisateurUseCase: asModuleClass(
         RécupérerUnUtilisateurUseCase,
       ).scoped(),

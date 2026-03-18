@@ -135,7 +135,7 @@ describe("ImportDecisionStrategiqueAPIHandler", () => {
     const { request, response } = créerMockRequestAvecBody(body);
 
     // When
-    await getContainer("importDecisionStrategique")
+    await getContainer("decisionStrategique")
       .resolve("importDecisionStrategiqueAPIHandler")
       .handle({
         request,
@@ -158,7 +158,8 @@ describe("ImportDecisionStrategiqueAPIHandler", () => {
       "Contenu de la décision stratégique de test",
     );
     expect(decisionsEnBase[0].type).toEqual("suivi_des_decisions");
-    expect(decisionsEnBase[0].auteur_id).toEqual(auteurId);
+    expect(decisionsEnBase[0].auteur_modification_id).toEqual(auteurId);
+    expect(decisionsEnBase[0].auteur_creation_id).toEqual(auteurId);
   });
 
   it("retourne 400 quand le JSON est invalide", async () => {
@@ -173,7 +174,7 @@ describe("ImportDecisionStrategiqueAPIHandler", () => {
     const { request, response } = créerMockRequestAvecBodyInvalide();
 
     // When
-    await getContainer("importDecisionStrategique")
+    await getContainer("decisionStrategique")
       .resolve("importDecisionStrategiqueAPIHandler")
       .handle({
         request,
@@ -225,7 +226,7 @@ describe("ImportDecisionStrategiqueAPIHandler", () => {
     const { request, response } = créerMockRequestAvecBody(body);
 
     // When
-    await getContainer("importDecisionStrategique")
+    await getContainer("decisionStrategique")
       .resolve("importDecisionStrategiqueAPIHandler")
       .handle({
         request,
@@ -260,7 +261,7 @@ describe("ImportDecisionStrategiqueAPIHandler", () => {
     const { request, response } = créerMockRequestAvecBody(body);
 
     // When
-    await getContainer("importDecisionStrategique")
+    await getContainer("decisionStrategique")
       .resolve("importDecisionStrategiqueAPIHandler")
       .handle({
         request,
@@ -301,7 +302,7 @@ describe("ImportDecisionStrategiqueAPIHandler", () => {
     const { request, response } = créerMockRequestAvecBody(body);
 
     // When
-    await getContainer("importDecisionStrategique")
+    await getContainer("decisionStrategique")
       .resolve("importDecisionStrategiqueAPIHandler")
       .handle({
         request,

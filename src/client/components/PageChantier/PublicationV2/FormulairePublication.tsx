@@ -1,10 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { SubmitHandler, useForm } from "react-hook-form";
 import { FunctionComponent } from "react";
-import {
-  CommentaireAvecNomsAuteurs,
-  TypeCommentaireChantier,
-} from "@/server/domain/chantier/commentaire/Commentaire.interface";
 import CompteurCaractères from "@/components/_commons/CompteurCaractères/CompteurCaractères";
 import Titre from "@/components/_commons/Titre/Titre";
 import {
@@ -15,33 +11,25 @@ import { Icone } from "@/components/_commons/Icone";
 import { SuccessIcon } from "@/components/_commons/Icones/SuccessIcon";
 import { ArrowGoBack1Icon } from "@/components/_commons/Icones/ArrowGoBack1Icon";
 import { Bouton } from "@/components/_commons/Bouton/Bouton";
-import { CommentaireAction } from "@/components/_commons/CommentairesNew/CommentaireSection/AlerteCommentaire";
 import { PiloteDateFormatter } from "@/server/rapports-hebdomadaires/infrastructure/adapters/PiloteDateFormatter";
 import { Infobulle } from "@/components/_commons/Infobulle/Infobulle";
-import {
-  consignesEcritureCommentaire,
-  libellesTypesCommentaire,
-} from "@/client/constants/libellesCommentaire";
-import { useModifierCommentaire } from "./useModifierCommentaire";
+import { Publication } from "@/components/PageChantier/PublicationV2/Publication.interface";
 
-interface CommentaireFormulaireProps {
-  commentaire: CommentaireAvecNomsAuteurs | null;
-  type: TypeCommentaireChantier;
+interface FormulairePublicationProps {
+  publication: Publication | null;
+  libelle: string;
+  consigne: string;
   annulationCallback?: () => void;
-  onSuccess: (action: CommentaireAction) => void;
+  onModifier: SubmitHandler<{ contenu: string }>;
 }
 
-const CommentaireFormulaire: FunctionComponent<CommentaireFormulaireProps> = ({
-  commentaire,
-  type,
+const FormulairePublication: FunctionComponent<FormulairePublicationProps> = ({
+  publication,
+  libelle,
+  consigne,
   annulationCallback,
-  onSuccess,
+  onModifier,
 }) => {
-  const modifierCommentaire = useModifierCommentaire({
-    commentaireId: commentaire!.id,
-    onSuccess,
-  });
-
   const {
     register,
     handleSubmit,
@@ -50,21 +38,19 @@ const CommentaireFormulaire: FunctionComponent<CommentaireFormulaireProps> = ({
   } = useForm<{ contenu: string }>({
     mode: "all",
     resolver: zodResolver(validationCommentaireFormulaire),
-    defaultValues: { contenu: commentaire?.contenu ?? "" },
+    defaultValues: { contenu: publication?.contenu ?? "" },
   });
 
   return (
-    <form onSubmit={handleSubmit(modifierCommentaire)}>
+    <form onSubmit={handleSubmit(onModifier)}>
       <div className="flex items-center gap-2 fr-mb-1v">
         <Titre baliseHtml="h3" className="text-xl mb-0">
-          {`Modifier le commentaire "${libellesTypesCommentaire[type]}"`}
+          {`Modifier le commentaire "${libelle}"`}
         </Titre>
-        <Infobulle classNameIcone="w-5 h-5">
-          {consignesEcritureCommentaire[type]}
-        </Infobulle>
+        <Infobulle classNameIcone="w-5 h-5">{consigne}</Infobulle>
       </div>
       <p className="fr-text--xs mb-4 text-dsfr-mention-grey">
-        {`Vous pouvez apporter ci-dessous des modifications au commentaire que vous avez posté le ${PiloteDateFormatter.isoDateFranceMetropolitaine(commentaire!.dateModification)}. Après validation, le commentaire modifié annulera et remplacera le commentaire actuel.`}
+        {`Vous pouvez apporter ci-dessous des modifications au commentaire que vous avez posté le ${PiloteDateFormatter.isoDateFranceMetropolitaine(publication!.dateModification)}. Après validation, le commentaire modifié annulera et remplacera le commentaire actuel.`}
       </p>
       <div
         className={`flex flex-col fr-mb-0 fr-input-group ${errors.contenu ? "fr-input-group--error" : ""}`}
@@ -110,4 +96,4 @@ const CommentaireFormulaire: FunctionComponent<CommentaireFormulaireProps> = ({
   );
 };
 
-export default CommentaireFormulaire;
+export default FormulairePublication;

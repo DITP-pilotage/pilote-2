@@ -3,7 +3,7 @@ import { useState } from "react";
 import clsx from "clsx";
 import BarreLatérale from "@/components/_commons/BarreLatérale/BarreLatérale";
 import BarreLatéraleEncart from "@/components/_commons/BarreLatérale/BarreLatéraleEncart/BarreLatéraleEncart";
-import Commentaires from "@/components/_commons/CommentairesNew/Commentaires";
+import { Commentaires } from "@/components/PageChantier/Commentaires/Commentaires";
 import SyntheseDesResultats from "@/components/PageChantier/SynthèseDesRésultatsChantier/SyntheseDesResultats";
 import Sommaire from "@/client/components/_commons/Sommaire/Sommaire";
 import Titre from "@/components/_commons/Titre/Titre";
@@ -44,11 +44,8 @@ const PageChantier = () => {
     territoireCode,
     mailleSelectionnee,
     mailleQuery,
-    commentaires,
-    commentairesBrouillon,
     détailsIndicateurs,
     detailsIndicateursTerritoire,
-    décisionStratégique,
     avancements,
     indicateurPondérations,
     listeResponsablesLocaux,
@@ -391,11 +388,8 @@ const PageChantier = () => {
                   </Infobulle>
                 </TitreInfobulleConteneur>
                 <DécisionsStratégiques
-                  chantierId={chantier.id}
-                  décisionStratégique={décisionStratégique ?? null}
                   estChantierArchive={estChantierArchive}
-                  modeÉcriture={estAutoriseAModifierLesPublications}
-                  territoireCode={territoireCode}
+                  modeEcriture={estAutoriseAModifierLesPublications}
                 />
               </section>
             </div>
@@ -421,11 +415,8 @@ const PageChantier = () => {
                 </Infobulle>
               </TitreInfobulleConteneur>
               <Commentaires
-                commentaires={commentaires}
-                commentairesBrouillon={commentairesBrouillon}
                 estChantierArchive={estChantierArchive}
                 modeÉcriture={estAutoriseAModifierLesPublications}
-                nomTerritoire={territoireSélectionné.nomAffiché}
                 typesCommentaire={
                   territoireSélectionné.maille === "nationale"
                     ? typesCommentaireMailleNationale

@@ -27,7 +27,7 @@ const handle = async (request: NextApiRequest, response: NextApiResponse) => {
         `Chantier : ${chantierId}`,
       );
 
-      await getContainer("importDecisionStrategique")
+      await getContainer("decisionStrategique")
         .resolve("importDecisionStrategiqueAPIHandler")
         .handle({
           request,

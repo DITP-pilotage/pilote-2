@@ -594,6 +594,31 @@ export const fixtures = {
     });
   },
 
+  async decisionStrategique(
+    overrides: Partial<Prisma.decision_strategiqueUncheckedCreateInput> & {
+      chantier_id: string;
+    },
+  ) {
+    const prisma = getPrisma();
+    const auteur = overrides.auteur_creation_id
+      ? { id: overrides.auteur_creation_id }
+      : await fixtures.utilisateur();
+    const now = new Date();
+    return prisma.decision_strategique.create({
+      data: {
+        id: randomUUID(),
+        type: "suivi_des_decisions",
+        contenu: "Décision stratégique de test",
+        statut: $Enums.statut_publication.PUBLIE,
+        auteur_creation_id: auteur.id,
+        date_creation: now,
+        auteur_modification_id: auteur.id,
+        date_modification: now,
+        ...overrides,
+      },
+    });
+  },
+
   async mesureIndicateur(
     overrides: Partial<Prisma.mesure_indicateurUncheckedCreateInput> = {},
   ) {

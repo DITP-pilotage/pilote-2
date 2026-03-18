@@ -1,8 +1,8 @@
 import { z } from "zod";
-import { TypeDécisionStratégique } from "@/server/domain/chantier/décisionStratégique/DécisionStratégique.interface";
+import { TypeDecisionStrategique } from "@/server/domain/chantier/décisionStratégique/DécisionStratégique.interface";
 
 export const typesDecisionStrategiqueAPIVersDomaine = {
-  suivi_des_decisions: "suiviDesDécisionsStratégiques",
+  suivi_des_decisions: "suiviDesDecisionsStrategiques",
 } as const;
 
 export type TypeDecisionStrategiqueAPI =
@@ -14,7 +14,7 @@ const tousLesTypesDecisionStrategiqueAPI = Object.keys(
 
 export function mapTypeDecisionStrategiqueAPIVersDomaine(
   typeAPI: TypeDecisionStrategiqueAPI,
-): TypeDécisionStratégique {
+): TypeDecisionStrategique {
   return typesDecisionStrategiqueAPIVersDomaine[typeAPI];
 }
 

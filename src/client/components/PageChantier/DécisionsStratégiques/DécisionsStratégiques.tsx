@@ -1,25 +1,32 @@
 import Bloc from "@/components/_commons/Bloc/Bloc";
-import Publication from "@/components/_commons/PublicationChantier/Publication";
-import { libellésTypesDécisionStratégique } from "@/client/constants/libellésDécisionStratégique";
+import { PublicationSection } from "@/components/PageChantier/PublicationV2/PublicationSection";
+import { pageChantier } from "@/components/PageChantier/PageChantierServerSideContext";
+import {
+  consignesEcritureDecisionStrategique,
+  libellésTypesDécisionStratégique,
+} from "@/client/constants/libellésDécisionStratégique";
+import { HistoriqueDecisionStrategique } from "./HistoriqueDecisionStrategique";
+import { useDecisionStrategiqueActions } from "./useDecisionStrategiqueActions";
 
-import Chantier from "@/server/domain/chantier/Chantier.interface";
-import { RouterOutputs } from "@/server/infrastructure/api/trpc/trpc.interface";
+const TYPE = "suiviDesDecisionsStrategiques" as const;
 
 export const DécisionsStratégiques = ({
-  décisionStratégique,
-  chantierId,
-  modeÉcriture = false,
-  estInteractif = true,
+  modeEcriture = false,
   estChantierArchive,
-  territoireCode,
 }: {
-  décisionStratégique: RouterOutputs["publication"]["récupérerLaPlusRécente"];
-  chantierId: Chantier["id"];
-  territoireCode: string;
-  modeÉcriture?: boolean;
-  estInteractif?: boolean;
+  modeEcriture?: boolean;
   estChantierArchive: boolean;
 }) => {
+  const { chantier, décisionStratégique, brouillonDecisionStrategique } =
+    pageChantier.useServerSidePropsContext();
+
+  const actions = useDecisionStrategiqueActions({
+    chantierId: chantier.id,
+    type: TYPE,
+    decisionStrategique: décisionStratégique,
+    brouillon: brouillonDecisionStrategique,
+  });
+
   return (
     <Bloc
       backgroundClassNameTitre={
@@ -27,21 +34,15 @@ export const DécisionsStratégiques = ({
       }
       titre="France"
     >
-      <Publication
-        caractéristiques={{
-          type: "suiviDesDécisionsStratégiques",
-          libelléType:
-            libellésTypesDécisionStratégique.suiviDesDécisionsStratégiques,
-          entité: "décisions stratégiques",
-          consigneDÉcriture:
-            "Notez les décisions prises lors des réunions Elysée <> Matignon et indiquez les actions envisagées et/ou réalisées pour mettre en œuvre ou répondre à ces décisions.",
-        }}
-        estInteractif={estInteractif}
-        maille="nationale"
-        modeÉcriture={modeÉcriture}
-        publicationInitiale={décisionStratégique}
-        réformeId={chantierId}
-        territoireCode={territoireCode}
+      <PublicationSection
+        actions={actions}
+        brouillon={brouillonDecisionStrategique}
+        consigne={consignesEcritureDecisionStrategique[TYPE]}
+        historiqueNode={<HistoriqueDecisionStrategique />}
+        libelle={libellésTypesDécisionStratégique[TYPE]}
+        modeEcriture={modeEcriture}
+        type={TYPE}
+        publication={décisionStratégique}
       />
     </Bloc>
   );

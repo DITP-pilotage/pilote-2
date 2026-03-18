@@ -1,142 +1,98 @@
 import {
+  $Enums,
   decision_strategique as DécisionStratégiquePrisma,
-  type_decision_strategique as TypeDécisionStratégiquePrisma,
-  utilisateur,
 } from "@prisma/client";
-import DécisionStratégique, {
-  DécisionStratégiqueV2,
-  TypeDécisionStratégique,
+import {
+  DecisionStrategiqueV2,
+  DécisionStratégique,
+  TypeDecisionStrategique,
 } from "@/server/domain/chantier/décisionStratégique/DécisionStratégique.interface";
 import DécisionStratégiqueRepository from "@/server/domain/chantier/décisionStratégique/DécisionStratégiqueRepository.interface";
 import Chantier from "@/server/domain/chantier/Chantier.interface";
-import { prisma } from "@/server/db/prisma";
+import { PrismaPilote } from "@/server/db/PrismaPilote";
 
-export const NOMS_TYPES_DÉCISION_STRATÉGIQUE: Record<
+export const NOMS_TYPES_DECISION_STRATEGIQUE: Record<
   string,
-  TypeDécisionStratégique
+  TypeDecisionStrategique
 > = {
-  suivi_des_decisions: "suiviDesDécisionsStratégiques",
-};
-
-export const CODES_TYPES_DÉCISION_STRATÉGIQUE: Record<
-  TypeDécisionStratégique,
-  TypeDécisionStratégiquePrisma
-> = {
-  suiviDesDécisionsStratégiques: "suivi_des_decisions",
+  suivi_des_decisions: "suiviDesDecisionsStrategiques",
 };
 
 export default class DécisionStratégiqueSQLRepository implements DécisionStratégiqueRepository {
-  private mapperVersDomaine(
-    décisionStratégique: DécisionStratégiquePrisma & {
-      auteur_decision_strategique: utilisateur | null;
-    },
-  ): DécisionStratégique {
-    const auteurDecisionStrategique =
-      décisionStratégique.auteur_decision_strategique;
+  private prismaClient: PrismaPilote;
+
+  constructor({ prisma }: { prisma: PrismaPilote }) {
+    this.prismaClient = prisma;
+  }
+
+  get prisma() {
+    return this.prismaClient.getInstance();
+  }
+
+  async getById(id: string): Promise<DecisionStrategiqueV2 | null> {
+    const decision = await this.prisma.decision_strategique.findUnique({
+      where: { id },
+    });
+
+    if (!decision) return null;
+
     return {
-      id: décisionStratégique.id,
-      type: NOMS_TYPES_DÉCISION_STRATÉGIQUE[décisionStratégique.type],
-      contenu: décisionStratégique.contenu,
-      date: décisionStratégique.date.toISOString(),
-      auteur: auteurDecisionStrategique
-        ? `${auteurDecisionStrategique.prenom} ${auteurDecisionStrategique.nom}`
-        : "Auteur Inconnu",
+      id: decision.id,
+      chantierId: decision.chantier_id,
+      contenu: decision.contenu,
+      statut: decision.statut,
+      auteurCreationId: decision.auteur_creation_id ?? "",
+      auteurModificationId: decision.auteur_modification_id ?? "",
+      dateCreation: decision.date_creation.toISOString(),
+      dateModification: decision.date_modification.toISOString(),
     };
   }
 
-  async récupérerLaPlusRécente(
-    chantierId: string,
-  ): Promise<DécisionStratégique> {
-    const décisionStratégiqueLaPlusRécente =
-      await prisma.decision_strategique.findFirst({
-        where: {
-          chantier_id: chantierId,
-        },
-        include: {
-          auteur_decision_strategique: true,
-        },
-        orderBy: { date: "desc" },
-      });
-
-    return décisionStratégiqueLaPlusRécente
-      ? this.mapperVersDomaine(décisionStratégiqueLaPlusRécente)
-      : null;
-  }
-
-  async récupérerHistorique(
-    chantierId: string,
-  ): Promise<DécisionStratégique[]> {
-    const décisionsStratégiques = await prisma.decision_strategique.findMany({
-      where: {
-        chantier_id: chantierId,
+  async save(decision: DecisionStrategiqueV2): Promise<void> {
+    await this.prisma.decision_strategique.upsert({
+      where: { id: decision.id },
+      create: {
+        id: decision.id,
+        chantier_id: decision.chantierId,
+        type: $Enums.type_decision_strategique.suivi_des_decisions,
+        contenu: decision.contenu,
+        statut: decision.statut,
+        auteur_creation_id: decision.auteurCreationId,
+        auteur_modification_id: decision.auteurModificationId,
+        date_creation: new Date(decision.dateCreation),
+        date_modification: new Date(decision.dateModification),
       },
-      include: {
-        auteur_decision_strategique: true,
-      },
-      orderBy: { date: "desc" },
-    });
-
-    return décisionsStratégiques.map((décisionStratégique) =>
-      this.mapperVersDomaine(décisionStratégique),
-    );
-  }
-
-  async créer(
-    chantierId: string,
-    id: string,
-    contenu: string,
-    type: TypeDécisionStratégique,
-    auteur_id: string,
-    date: Date,
-  ): Promise<DécisionStratégique> {
-    const décisionStratégiqueCréée = await prisma.decision_strategique.create({
-      data: {
-        id,
-        chantier_id: chantierId,
-        contenu,
-        type: CODES_TYPES_DÉCISION_STRATÉGIQUE[type],
-        date,
-        auteur_id,
-      },
-      include: {
-        auteur_decision_strategique: true,
+      update: {
+        contenu: decision.contenu,
+        statut: decision.statut,
+        auteur_modification_id: decision.auteurModificationId,
+        date_modification: new Date(decision.dateModification),
       },
     });
-
-    return this.mapperVersDomaine(décisionStratégiqueCréée);
-  }
-
-  async save({
-    chantierId,
-    id,
-    contenu,
-    type,
-    auteur_id,
-    date,
-  }: DécisionStratégiqueV2): Promise<void> {
-    await this.créer(chantierId, id, contenu, type, auteur_id, date);
   }
 
   async récupérerLesPlusRécentesGroupéesParChantier(
     chantiersIds: Chantier["id"][],
   ): Promise<Record<string, DécisionStratégique>> {
-    const décisionsStratégiques = await prisma.$queryRaw<
+    const décisionsStratégiques = await this.prisma.$queryRaw<
       (DécisionStratégiquePrisma & {
         prenom_auteur: string | null;
         nom_auteur: string | null;
       })[]
     >`
-        SELECT d.*, utilisateur.prenom as prenom_auteur, utilisateur.nom as nom_auteur
+        SELECT d.*, u.prenom as prenom_auteur, u.nom as nom_auteur
         FROM decision_strategique d
-          LEFT JOIN utilisateur on utilisateur.id = d.auteur_id
+          LEFT JOIN utilisateur u ON u.id = d.auteur_modification_id
           INNER JOIN (
-            SELECT chantier_id, MAX(date) as maxdate
+            SELECT chantier_id, MAX(date_modification) as maxdate
             FROM decision_strategique
             WHERE chantier_id = ANY (${chantiersIds})
+              AND statut = ${$Enums.statut_publication.PUBLIE}::"statut_publication"
             GROUP BY chantier_id
           ) d_recents
-          ON d.date = d_recents.maxdate
+          ON d.date_modification = d_recents.maxdate
           AND d.chantier_id = d_recents.chantier_id
+        WHERE d.statut = ${$Enums.statut_publication.PUBLIE}::"statut_publication"
     `;
 
     return Object.fromEntries(
@@ -144,10 +100,10 @@ export default class DécisionStratégiqueSQLRepository implements DécisionStra
         décisionStratégique.chantier_id,
         {
           id: décisionStratégique.id,
-          type: NOMS_TYPES_DÉCISION_STRATÉGIQUE[décisionStratégique.type],
+          type: NOMS_TYPES_DECISION_STRATEGIQUE[décisionStratégique.type],
           contenu: décisionStratégique.contenu,
-          date: décisionStratégique.date.toISOString(),
-          auteur: décisionStratégique.auteur_id
+          date: décisionStratégique.date_modification.toISOString(),
+          auteur: décisionStratégique.auteur_modification_id
             ? `${décisionStratégique.prenom_auteur} ${décisionStratégique.nom_auteur}`
             : "Auteur Inconnu",
         },
