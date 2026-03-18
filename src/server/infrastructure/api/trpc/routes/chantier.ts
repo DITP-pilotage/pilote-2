@@ -37,7 +37,7 @@ export const chantierRouter = créerRouteurTRPC({
   recupererAvancementsTerritoires: procédureProtégée
     .input(
       z.object({
-        chantierId: z.string(),
+        chantierIds: z.array(z.string()),
         jalon: z.number(),
       }),
     )

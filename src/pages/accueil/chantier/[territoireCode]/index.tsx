@@ -271,6 +271,7 @@ export const getServerSideProps = async (
         delete chantier.mailles;
         return chantier;
       }),
+      chantierIds: chantiersAvecAlertes.map((chantier) => chantier.id),
       nombreTotalChantiersAvecAlertes,
       ministères,
       axes,
@@ -315,6 +316,7 @@ const PROFIL_REGIONAUX_AUTORISE_A_VOIR_FILTRE_TERRITORIALISE = new Set(
 
 const ChantierLayout = ({
   chantiers,
+  chantierIds,
   nombreTotalChantiersAvecAlertes,
   axes,
   ministères,
@@ -454,6 +456,7 @@ const ChantierLayout = ({
             avancementsGlobauxTerritoriauxMoyens={
               avancementsGlobauxTerritoriauxMoyens
             }
+            chantierIds={chantierIds}
             chantiers={chantiers}
             filtresComptesCalculés={filtresComptesCalculés}
             jalon={jalon}

@@ -118,7 +118,7 @@ const Cartes: FunctionComponent<CartesProps> = ({
         <div className="mt-4">
           <TuileWidget titre="Comparaison territoriale et évolution">
             <WidgetCartographieTA
-              chantierId={chantier.id}
+              chantierIds={[chantier.id]}
               jalon={jalon}
               maille={mailleQuery}
               territoireCode={territoireCode}

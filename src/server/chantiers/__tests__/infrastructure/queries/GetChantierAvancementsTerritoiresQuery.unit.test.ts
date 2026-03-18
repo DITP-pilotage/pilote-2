@@ -123,7 +123,7 @@ function créerTerritoire(
 }
 
 const defaultParams = {
-  chantierId: "CH-001",
+  chantierIds: ["CH-001"],
   jalon: 2025,
   habilitations: {} as Habilitations,
   profil: "DITP_ADMIN" as ProfilCode,
