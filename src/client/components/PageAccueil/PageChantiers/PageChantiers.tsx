@@ -30,6 +30,7 @@ import { useSelecteurJalon } from "@/components/_commons/SelecteurJalon/useSelec
 import { ChantierAccueilContratV2 } from "@/server/chantiers/app/contrats/ChantierAccueilContratV2";
 import { useEnv } from "@/client/hooks/useEnv";
 import { WidgetCartographieTA } from "@/components/_commons/Widget/WidgetCartographieTA/WidgetCartographieTA";
+import { TuileWidget } from "@/components/_commons/Widget/TuileWidget/TuileWidget";
 import PageChantiersStyled from "./PageChantiers.styled";
 import TableauChantiers from "./TableauChantiers/TableauChantiers";
 import usePageChantiers from "./usePageChantiers";
@@ -196,36 +197,39 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
             </section>
           </div>
           <div className="fr-col-12 fr-col-lg-5 fr-col-xl-6 fr-pl-xl-1w">
-            {featureComparaisonTerritoires ? (
-              <WidgetCartographieTA
-                chantierIds={chantierIds}
-                jalon={jalon}
-                maille={mailleQuery}
-                territoireCode={territoireCode}
-              />
-            ) : (
-              <Bloc>
-                <section>
-                  <Titre
-                    baliseHtml="h2"
-                    className="fr-text--lg break-keep fr-mb-0 fr-py-1v"
-                  >
-                    Taux d'avancement des chantiers par territoire
-                  </Titre>
-                  <CartographieAvancement
-                    auClicTerritoireCallback={auClicTerritoireCallback}
-                    données={avancementsGlobauxTerritoriauxMoyens}
-                    jalon={jalon}
-                    mailleSelectionnee={mailleQuery}
-                    pathname="/accueil/chantier/[territoireCode]"
-                    territoireCode={territoireCode}
-                    élémentsDeLégende={ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS}
-                  />
-                </section>
-              </Bloc>
-            )}
+            <Bloc>
+              <section>
+                <Titre
+                  baliseHtml="h2"
+                  className="fr-text--lg break-keep fr-mb-0 fr-py-1v"
+                >
+                  Taux d'avancement des chantiers par territoire
+                </Titre>
+                <CartographieAvancement
+                  auClicTerritoireCallback={auClicTerritoireCallback}
+                  données={avancementsGlobauxTerritoriauxMoyens}
+                  jalon={jalon}
+                  mailleSelectionnee={mailleQuery}
+                  pathname="/accueil/chantier/[territoireCode]"
+                  territoireCode={territoireCode}
+                  élémentsDeLégende={ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS}
+                />
+              </section>
+            </Bloc>
           </div>
         </div>
+        {featureComparaisonTerritoires ? (
+          <TuileWidget titre="Comparaison territorial et évolution">
+            <div />
+            <WidgetCartographieTA
+              chantierIds={chantierIds}
+              jalon={jalon}
+              maille={mailleQuery}
+              territoireCode={territoireCode}
+            />
+          </TuileWidget>
+        ) : null}
+        )
         {!chantiersSontArchives && (
           <div className="fr-pt-2w fr-px-2w fr-px-md-0 alertes">
             <div className="fr-mb-2w">
