@@ -219,7 +219,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
           </div>
         </div>
         {featureComparaisonTerritoires ? (
-          <TuileWidget titre="Comparaison territorial et évolution">
+          <TuileWidget titre="Comparaison territoriale et évolution">
             <div />
             <WidgetCartographieTA
               chantierIds={chantierIds}
