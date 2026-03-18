@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
-import { parseAsString, useQueryState } from "nuqs";
 import { DétailTerritoire } from "@/server/domain/territoire/Territoire.interface";
 import { useTerritoireHabilitation } from "@/client/hooks/useTerritoireHabilitation";
+import { useTerritoiresCompares } from "@/client/hooks/useTerritoiresCompares";
 import {
   CartographieOptions,
   CartographieTerritoireAffiché,
@@ -21,14 +21,8 @@ export default function useCartographie(
   const régions = listeTerritoires.filter(
     (territoire) => territoire.maille === "regionale",
   );
-  const [territoiresCompares, setTerritoiresCompares] = useQueryState(
-    "territoiresCompares",
-    parseAsString.withDefault("").withOptions({
-      shallow: false,
-      history: "push",
-      clearOnDefault: true,
-    }),
-  );
+  const [territoiresCompares, setTerritoiresCompares] =
+    useTerritoiresCompares();
 
   const router = useRouter();
 
@@ -54,9 +48,9 @@ export default function useCartographie(
         code: territoire.code,
         remplissage: données[territoire.code]?.remplissage ?? "#bababa", // TODO où gérer ce undefined ?
         libellé: données[territoire.code]?.libellé ?? "-", // TODO où gérer ce undefined ?
-        contenuInfoBulle: données[territoire.code].contenu, // TODO où gérer ce undefined ?
+        contenuInfoBulle: données[territoire.code]?.contenu, // TODO où gérer ce undefined ?
         estInteractif: territoire.accèsLecture,
-        estApplicable: données[territoire.code].estApplicable,
+        estApplicable: données[territoire.code]?.estApplicable ?? null,
       })),
       frontières: frontièresÀTracer.map((frontière) => ({
         codeInsee: frontière.codeInsee,

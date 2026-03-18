@@ -3,8 +3,8 @@ import { Controller, useForm } from "react-hook-form";
 import { FunctionComponent } from "react";
 import CompteurCaractères from "@/components/_commons/CompteurCaractères/CompteurCaractères";
 import {
-  MétéoSaisissable,
-  météosSaisissables,
+  MeteoSaisissable,
+  meteosSaisissables,
 } from "@/server/domain/météo/Météo.interface";
 import Titre from "@/components/_commons/Titre/Titre";
 import {
@@ -55,8 +55,8 @@ const SyntheseDesResultatsFormulaire: FunctionComponent<
       contenu: syntheseDesResultats?.contenu,
       meteo:
         syntheseDesResultats?.meteo &&
-        météosSaisissables.includes(syntheseDesResultats.meteo)
-          ? (syntheseDesResultats.meteo as MétéoSaisissable)
+        meteosSaisissables.includes(syntheseDesResultats.meteo)
+          ? (syntheseDesResultats.meteo as MeteoSaisissable)
           : undefined,
     },
   });

@@ -20,7 +20,7 @@ import { SelecteurMeteo } from "@/components/PageChantier/SynthèseDesRésultats
 import { SyntheseDesResultatsFormulaireInputs } from "@/components/PageChantier/SynthèseDesRésultatsChantier/SyntheseDesResultatsFormulaire/SyntheseDesResultatsFormulaire.interface";
 import { BoutonSousLigné } from "@/components/_commons/BoutonSousLigné/BoutonSousLigné";
 import { SaveIcon } from "@/components/_commons/Icones/SaveIcon";
-import { MétéoSaisissable } from "@/server/domain/météo/Météo.interface";
+import { MeteoSaisissable } from "@/server/domain/météo/Météo.interface";
 import { useTerritoireSelectionne } from "@/components/PageChantier/PageChantierServerSideContext";
 import { CONSIGNE_SYNTHÈSE_DES_RÉSULTATS } from "@/client/constants/libellesSyntheseDesResultats";
 
@@ -51,7 +51,7 @@ export const ModaleFormulaireSyntheseDesResultats: FunctionComponent<
           defaultValues: { contenu: "", meteo: undefined },
           values: {
             contenu: syntheseDesResultatsBrouillon.contenu,
-            meteo: syntheseDesResultatsBrouillon.meteo as MétéoSaisissable,
+            meteo: syntheseDesResultatsBrouillon.meteo as MeteoSaisissable,
           },
         }
       : { defaultValues: { contenu: "", meteo: undefined } }),

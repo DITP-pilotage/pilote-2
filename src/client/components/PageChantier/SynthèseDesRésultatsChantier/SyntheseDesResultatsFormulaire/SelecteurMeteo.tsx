@@ -1,16 +1,16 @@
 import { forwardRef } from "react";
 import {
-  libellésMétéos,
-  MétéoSaisissable,
-  météosSaisissables,
+  libellesMeteos,
+  MeteoSaisissable,
+  meteosSaisissables,
 } from "@/server/domain/météo/Météo.interface";
 import { MeteoComponentMap } from "@/components/_commons/Meteo/Picto/MeteoPicto";
 
 export const SelecteurMeteo = forwardRef<
   HTMLDivElement,
   {
-    value?: MétéoSaisissable;
-    onChange: (meteo: MétéoSaisissable) => void;
+    value?: MeteoSaisissable;
+    onChange: (meteo: MeteoSaisissable) => void;
     onBlur?: () => void;
   }
 >(({ value, onChange, onBlur }, ref) => {
@@ -21,7 +21,7 @@ export const SelecteurMeteo = forwardRef<
       ref={ref}
       tabIndex={-1}
     >
-      {météosSaisissables.map((météo) => {
+      {meteosSaisissables.map((météo) => {
         const IconComponent = MeteoComponentMap[météo];
         const isSelected = value === météo;
 
@@ -42,7 +42,7 @@ export const SelecteurMeteo = forwardRef<
             <span
               className={`text-xs text-center ${isSelected ? "text-black" : "text-dsfr-mention-grey "}`}
             >
-              {libellésMétéos[météo]}
+              {libellesMeteos[météo]}
             </span>
           </button>
         );

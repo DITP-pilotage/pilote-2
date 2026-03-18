@@ -1,5 +1,5 @@
 import { Avancement } from "@/server/domain/chantier/avancement/Avancement.interface";
-import { Météo } from "@/server/domain/météo/Météo.interface";
+import { Meteo } from "@/server/domain/météo/Météo.interface";
 import { Maille } from "@/server/domain/maille/Maille.interface";
 import { ChantierTendance } from "@/server/domain/chantier/Chantier.interface";
 
@@ -148,7 +148,7 @@ export type TerritoireDonnées = {
   codeInsee: CodeInsee;
   avancement: Avancement;
   avancementPrécédent: Avancement;
-  météo: Météo;
+  météo: Meteo;
   écart: number | null;
   tendance: ChantierTendance | null;
   dateDeMàjDonnéesQualitatives: string | null;

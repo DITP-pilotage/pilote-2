@@ -1,8 +1,8 @@
 import { FunctionComponent } from "react";
 import { parseAsString, useQueryState } from "nuqs";
 import {
-  libellésMétéos,
-  météosSaisissables,
+  libellesMeteos,
+  meteosSaisissables,
 } from "@/server/domain/météo/Météo.interface";
 import { MeteoPicto } from "@/components/_commons/Meteo/Picto/MeteoPicto";
 import { RepartitionMeteoContrat } from "@/server/fiche-territoriale/app/contrats/RepartitionMeteoContrat";
@@ -27,11 +27,11 @@ const RepartitionsMeteosRapportDetaille: FunctionComponent<
 
   return (
     <RepartitionsMeteosRapportDetailleStyled className="fr-grid-row fr-mx-n3v">
-      {météosSaisissables.map((meteo) => (
+      {meteosSaisissables.map((meteo) => (
         <li
           className="fr-col-3 fr-p-2v"
-          key={libellésMétéos[meteo]}
-          title={libellésMétéos[meteo]}
+          key={libellesMeteos[meteo]}
+          title={libellesMeteos[meteo]}
         >
           <button
             className={clsxm(
@@ -47,7 +47,7 @@ const RepartitionsMeteosRapportDetaille: FunctionComponent<
             <p className="nombre-de-chantiers fr-h1 fr-mb-0">
               {repartitionMeteos[meteo]}
             </p>
-            <p className="label fr-mb-0 break-keep">{libellésMétéos[meteo]}</p>
+            <p className="label fr-mb-0 break-keep">{libellesMeteos[meteo]}</p>
           </button>
         </li>
       ))}

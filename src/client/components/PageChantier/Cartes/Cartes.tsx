@@ -6,6 +6,10 @@ import { Maille } from "@/server/domain/maille/Maille.interface";
 import Alerte from "@/components/_commons/Alerte/Alerte";
 import CartographieAvecSelecteur from "@/components/_commons/Cartographie/CartographieAvecSelecteur/CartographieAvecSelecteur";
 import { pageChantier } from "@/components/PageChantier/PageChantierServerSideContext";
+import { WidgetCartographieMeteo } from "@/components/_commons/Widget/WidgetCartographieMeteo/WidgetCartographieMeteo";
+import { WidgetCartographieTA } from "@/components/_commons/Widget/WidgetCartographieTA/WidgetCartographieTA";
+import { useEnv } from "@/client/hooks/useEnv";
+import { TuileWidget } from "@/components/_commons/Widget/TuileWidget/TuileWidget";
 
 export type CartographieType =
   | "avancementJalon"
@@ -20,6 +24,10 @@ const Cartes: FunctionComponent<CartesProps> = ({
   estInteractif = true,
   mailleSourceDonnees,
 }) => {
+  const featureComparaisonTerritoires = useEnv(
+    "NEXT_PUBLIC_FF_COMPARAISON_TERRITOIRES",
+  );
+
   const {
     chantier,
     jalon,
@@ -36,7 +44,6 @@ const Cartes: FunctionComponent<CartesProps> = ({
   const afficheCarteMétéo =
     !!chantier.météoDonnéeTerritorialisée[mailleSelectionnee] ||
     chantier.estTerritorialisé;
-
   const [, setCartographieGaucheSelection] = useQueryState(
     "carteChG",
     parseAsString.withDefault("avancementJalon").withOptions({
@@ -56,55 +63,77 @@ const Cartes: FunctionComponent<CartesProps> = ({
   );
 
   return (
-    <CartesStyled>
-      {afficheCarteAvancement ? (
-        <div className="carte">
-          <Bloc>
-            <section>
-              <CartographieAvecSelecteur
-                aLaSelectionCartographie={(valeur: CartographieType) =>
-                  setCartographieGaucheSelection(valeur)
-                }
-                cartographieSelectionnee={cartographieGaucheChantier}
-                chantierMailles={chantier.mailles}
-                estInteractif={estInteractif}
-                jalon={jalon}
-                listeCartographiesDesactives={[cartographieDroiteChantier]}
-                mailleQuery={mailleQuery}
-                territoireCode={territoireCode}
-              />
-              {mailleSourceDonnees === "regionale" && (
-                <Alerte
-                  classesSupplementaires="fr-mt-2w"
-                  message="Données régionales"
-                  type="info"
+    <>
+      <CartesStyled>
+        {afficheCarteAvancement ? (
+          <div className="carte">
+            <Bloc>
+              <section>
+                <CartographieAvecSelecteur
+                  aLaSelectionCartographie={(valeur: CartographieType) =>
+                    setCartographieGaucheSelection(valeur)
+                  }
+                  cartographieSelectionnee={cartographieGaucheChantier}
+                  chantierMailles={chantier.mailles}
+                  estInteractif={estInteractif}
+                  jalon={jalon}
+                  listeCartographiesDesactives={[cartographieDroiteChantier]}
+                  mailleQuery={mailleQuery}
+                  territoireCode={territoireCode}
                 />
-              )}
-            </section>
-          </Bloc>
+                {mailleSourceDonnees === "regionale" && (
+                  <Alerte
+                    classesSupplementaires="fr-mt-2w"
+                    message="Données régionales"
+                    type="info"
+                  />
+                )}
+              </section>
+            </Bloc>
+          </div>
+        ) : null}
+        {afficheCarteMétéo ? (
+          <div className="carte">
+            <Bloc>
+              <section>
+                <CartographieAvecSelecteur
+                  aLaSelectionCartographie={(valeur: CartographieType) =>
+                    setCartographieDroiteSelection(valeur)
+                  }
+                  cartographieSelectionnee={cartographieDroiteChantier}
+                  chantierMailles={chantier.mailles}
+                  estInteractif={estInteractif}
+                  jalon={jalon}
+                  listeCartographiesDesactives={[cartographieGaucheChantier]}
+                  mailleQuery={mailleQuery}
+                  territoireCode={territoireCode}
+                />
+              </section>
+            </Bloc>
+          </div>
+        ) : null}
+      </CartesStyled>
+      {featureComparaisonTerritoires &&
+      cartographieDroiteChantier === "meteo" ? (
+        <div className="mt-4">
+          <TuileWidget titre="Comparaison territoriale et évolution">
+            <WidgetCartographieTA
+              chantierId={chantier.id}
+              jalon={jalon}
+              maille={mailleQuery}
+              territoireCode={territoireCode}
+            />
+
+            <WidgetCartographieMeteo
+              chantierId={chantier.id}
+              jalon={jalon}
+              maille={mailleQuery}
+              territoireCode={territoireCode}
+            />
+          </TuileWidget>
         </div>
       ) : null}
-      {afficheCarteMétéo ? (
-        <div className="carte">
-          <Bloc>
-            <section>
-              <CartographieAvecSelecteur
-                aLaSelectionCartographie={(valeur: CartographieType) =>
-                  setCartographieDroiteSelection(valeur)
-                }
-                cartographieSelectionnee={cartographieDroiteChantier}
-                chantierMailles={chantier.mailles}
-                estInteractif={estInteractif}
-                jalon={jalon}
-                listeCartographiesDesactives={[cartographieGaucheChantier]}
-                mailleQuery={mailleQuery}
-                territoireCode={territoireCode}
-              />
-            </section>
-          </Bloc>
-        </div>
-      ) : null}
-    </CartesStyled>
+    </>
   );
 };
 

@@ -1,5 +1,5 @@
 import { Dispatch, FunctionComponent, SetStateAction, useId } from "react";
-import { PALETTE_DSFR } from "@/client/components/_commons/IndicateursChantier/Bloc/Détails/Évolution/useIndicateurEvolutionNew";
+import { PALETTE_DSFR } from "@/client/utils/couleur/paletteTerritoires";
 import { IndicateurDetailsParTerritoire } from "@/client/components/_commons/IndicateursChantier/Bloc/IndicateurBloc.interface";
 import Interrupteur from "@/components/_commons/Interrupteur/Interrupteur";
 import {

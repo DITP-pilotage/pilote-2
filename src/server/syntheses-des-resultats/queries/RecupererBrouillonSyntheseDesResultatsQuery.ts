@@ -1,6 +1,6 @@
 import { $Enums } from "@prisma/client";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
-import { Météo } from "@/server/domain/météo/Météo.interface";
+import { Meteo } from "@/server/domain/météo/Météo.interface";
 import { SyntheseDesResultatsV2 } from "@/server/domain/chantier/synthèseDesRésultats/SynthèseDesRésultats.interface";
 
 export class RecupererBrouillonSyntheseDesResultatsQuery {
@@ -33,7 +33,7 @@ export class RecupererBrouillonSyntheseDesResultatsQuery {
       dateCreation: brouillon.date_creation.toISOString(),
       statut: brouillon.statut,
       contenu: brouillon.commentaire ?? "",
-      meteo: (brouillon.meteo as Météo) ?? "NON_RENSEIGNEE",
+      meteo: (brouillon.meteo as Meteo) ?? "NON_RENSEIGNEE",
       auteurModificationId: brouillon.auteur_modification_id ?? "",
       dateModification: brouillon.date_modification.toISOString(),
     };

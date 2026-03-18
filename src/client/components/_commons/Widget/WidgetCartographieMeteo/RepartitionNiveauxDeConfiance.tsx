@@ -1,0 +1,118 @@
+import { Fragment, useMemo } from "react";
+import { getCouleurTerritoireParCode } from "@/client/utils/couleur/paletteTerritoires";
+import { libellesMeteos } from "@/server/domain/météo/Météo.interface";
+import { MeteoPicto } from "@/components/_commons/Meteo/Picto/MeteoPicto";
+import { MeteoTerritoireViewModel } from "@/server/chantiers/infrastructure/queries/GetChantierMeteosTerritoiresQuery";
+import { useMesureWidget } from "@/components/_commons/Widget/TuileWidget/useMesureWidget";
+import { clsxm } from "@/utils/clsxm";
+
+const ordreMeteo: Record<string, number> = {
+  SOLEIL: 0,
+  COUVERT: 1,
+  NUAGE: 2,
+  ORAGE: 3,
+  NON_NECESSAIRE: 4,
+  NON_RENSEIGNEE: 5,
+};
+
+export const RepartitionNiveauxDeConfiance = ({
+  territoiresSelectionnes,
+  onSupprimerTerritoire,
+  jalon,
+  territoireCode,
+}: {
+  territoiresSelectionnes: MeteoTerritoireViewModel[];
+  onSupprimerTerritoire: (territoireCode: string) => void;
+  jalon: number;
+  territoireCode: string;
+}) => {
+  const { isModeDispositionG } = useMesureWidget();
+
+  const territoiresTries = useMemo(
+    () =>
+      [...territoiresSelectionnes].sort(
+        (a, b) =>
+          (ordreMeteo[a.meteo ?? ""] ?? 99) - (ordreMeteo[b.meteo ?? ""] ?? 99),
+      ),
+    [territoiresSelectionnes],
+  );
+
+  return (
+    <div>
+      <div className="grid grid-cols-2 border-y text-xs">
+        <div className="grid col-span-2 grid-cols-subgrid border-b border-b-black">
+          <div />
+          <div className="text-center text-sm py-1 text-dsfr-mention-grey">
+            {jalon}
+          </div>
+        </div>
+
+        {territoiresTries.map((territoire) => {
+          const meteo = territoire.meteo;
+          const dateMaj = territoire.dateDeMajQualitative
+            ? new Date(territoire.dateDeMajQualitative).toLocaleDateString(
+                "fr-FR",
+              )
+            : "—";
+          const estInitial = territoire.territoireCode === territoireCode;
+          const couleur = getCouleurTerritoireParCode(
+            territoire.territoireCode,
+          );
+
+          return (
+            <Fragment key={territoire.territoireCode}>
+              <div
+                className={clsxm("border-b", {
+                  "flex justify-center": isModeDispositionG(),
+                })}
+              >
+                <div
+                  className={clsxm(
+                    "py-2 grid grid-cols-[1fr_30px] items-center gap-2",
+                    {
+                      "w-full max-w-[300px] mr-auto": isModeDispositionG(),
+                    },
+                  )}
+                >
+                  <span className="text-right" style={{ color: couleur }}>
+                    {territoire.territoireNom}
+                  </span>
+                  {!estInitial && (
+                    <button
+                      onClick={() =>
+                        onSupprimerTerritoire(territoire.territoireCode)
+                      }
+                      title={`Retirer ${territoire.territoireNom}`}
+                      type="button"
+                      className="p-2"
+                      style={{ color: couleur }}
+                    >
+                      ✕
+                    </button>
+                  )}
+                </div>
+              </div>
+              <div
+                className={clsxm("py-2 flex items-center flex-col border-b", {
+                  "flex-row gap-4": isModeDispositionG(),
+                })}
+              >
+                <div className="flex items-center gap-2">
+                  <MeteoPicto meteo={meteo} size="sm" />
+                  <span>
+                    {territoire.estApplicable === false
+                      ? "Non applicable"
+                      : libellesMeteos[meteo]}
+                  </span>
+                </div>
+                <span className="text-[10px] !text-dsfr-grey-625">
+                  ({dateMaj})
+                </span>
+              </div>
+            </Fragment>
+          );
+        })}
+      </div>
+    </div>
+  );
+};

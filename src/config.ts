@@ -314,6 +314,11 @@ const config = convict({
       default: false,
       env: "NEXT_PUBLIC_FF_ACCES_PILOTE",
     },
+    comparaisonTerritoires: {
+      format: Boolean,
+      default: false,
+      env: "NEXT_PUBLIC_FF_COMPARAISON_TERRITOIRES",
+    },
   },
   analytics: {
     doc: "Matomo Analytics",

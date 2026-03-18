@@ -30,6 +30,8 @@ import { RapportPropositionsAvancementRepository } from "./domain/ports/RapportP
 import { PrismaRapportPropositionsAvancementRepository } from "./infrastructure/adapters/PrismaRapportPropositionsAvancementRepository";
 import { CreerLesRapportsPropositionsUseCase } from "./usecases/CreerLesRapportsPropositionsUseCase";
 import { EnvoyerLesRapportsPropositionsUseCase } from "./usecases/EnvoyerLesRapportsPropositionsUseCase";
+import { GetChantierMeteosTerritoiresQuery } from "./infrastructure/queries/GetChantierMeteosTerritoiresQuery";
+import { GetChantierAvancementsTerritoiresQuery } from "./infrastructure/queries/GetChantierAvancementsTerritoiresQuery";
 
 type ChantierExports = {
   recupererChantiersQuery: RecupererChantiersApplicablesParTerritoiresQuery;
@@ -58,6 +60,8 @@ type ChantierCradle = ChantierExports &
     rapportPropositionsAvancementRepository: RapportPropositionsAvancementRepository;
     creerLesRapportsPropositionsUseCase: CreerLesRapportsPropositionsUseCase;
     envoyerLesRapportsPropositionsUseCase: EnvoyerLesRapportsPropositionsUseCase;
+    getChantierMeteosTerritoiresQuery: GetChantierMeteosTerritoiresQuery;
+    getChantierAvancementsTerritoiresQuery: GetChantierAvancementsTerritoiresQuery;
   };
 
 export const chantiersModule = defineModule<ChantierExports, ChantierCradle>()({
@@ -117,6 +121,12 @@ export const chantiersModule = defineModule<ChantierExports, ChantierCradle>()({
       ),
       mesuresIndicateurQuery: asModuleClass(
         RecupererMesuresIndicateurParPeriodeQuery,
+      ),
+      getChantierMeteosTerritoiresQuery: asModuleClass(
+        GetChantierMeteosTerritoiresQuery,
+      ),
+      getChantierAvancementsTerritoiresQuery: asModuleClass(
+        GetChantierAvancementsTerritoiresQuery,
       ),
     });
   },

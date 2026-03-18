@@ -9,7 +9,7 @@ import {
   PrismaChantier,
 } from "@/server/chantiers/domain/PrismaChantier";
 import { verifyValeurIsNotNullOrUndefined } from "@/server/utils/VerifyValeurIsNotNullOrUndefined";
-import { Météo } from "@/server/domain/météo/Météo.interface";
+import { Meteo } from "@/server/domain/météo/Météo.interface";
 import { NOMS_MAILLES } from "@/server/infrastructure/accès_données/maille/mailleSQLParser";
 
 export type ChantierContrat = Chantier;
@@ -47,7 +47,7 @@ export function créerDonnéesTerritoires(
         ),
       },
       estApplicable: chantierRow?.est_applicable ?? null,
-      météo: (chantierRow?.meteo as Météo) ?? "NON_RENSEIGNEE",
+      météo: (chantierRow?.meteo as Meteo) ?? "NON_RENSEIGNEE",
       écart: chantierRow?.chantier_territoire_jalon?.at(0)?.ecart ?? null,
       tendance: chantierRow?.tendance || null,
       dateDeMàjDonnéesQualitatives:
@@ -145,7 +145,7 @@ export const presenterEnChantierContrat = (
               chantierMailleNationale.taux_avancement_mandat_valeur_precedente,
             ),
           },
-          météo: (chantierMailleNationale?.meteo as Météo) ?? "NON_RENSEIGNEE",
+          météo: (chantierMailleNationale?.meteo as Meteo) ?? "NON_RENSEIGNEE",
           écart: null,
           tendance: chantierMailleNationale.tendance,
           dateDeMàjDonnéesQualitatives:

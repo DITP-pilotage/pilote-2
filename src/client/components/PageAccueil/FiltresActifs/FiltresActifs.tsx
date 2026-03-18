@@ -7,7 +7,7 @@ import Ppg from "@/server/domain/ppg/Ppg.interface";
 import PérimètreMinistériel from "@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface";
 import { sauvegarderFiltres } from "@/stores/useFiltresStoreNew/useFiltresStoreNew";
 import { Maille, MailleInterne } from "@/server/domain/maille/Maille.interface";
-import { libellésMétéos } from "@/server/domain/météo/Météo.interface";
+import { libellesMeteos } from "@/server/domain/météo/Météo.interface";
 import { NOMS_CODES_MAILLES } from "@/server/infrastructure/accès_données/maille/mailleSQLParser";
 import { listeStatuts } from "@/client/constants/statut";
 import { BoutonReintialiserLesFiltres } from "@/components/PageAccueil/BoutonReintialiserLesFiltres";
@@ -260,11 +260,11 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({
                   .map((meteo) => (
                     <li key={`tag-axe-${meteo}`}>
                       <Tag
-                        ariaLabel={`Retirer le tag ${libellésMétéos[meteo]}`}
+                        ariaLabel={`Retirer le tag ${libellesMeteos[meteo]}`}
                         color="yellow-moutarde"
                         doitAvoirUneTailleFixe
                         iconRight={CloseLineIcon}
-                        libelle={libellésMétéos[meteo]}
+                        libelle={libellesMeteos[meteo]}
                         onClick={() => {
                           let arrFiltreMeteos = filtres.meteos
                             .split(",")

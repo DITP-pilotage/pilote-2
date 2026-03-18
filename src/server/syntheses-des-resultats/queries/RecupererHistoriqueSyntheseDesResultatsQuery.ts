@@ -1,11 +1,11 @@
 import { $Enums } from "@prisma/client";
-import { Météo } from "@/server/domain/météo/Météo.interface";
+import { Meteo } from "@/server/domain/météo/Météo.interface";
 
 export type SyntheseDesResultatsHistoriqueItem = {
   chantierId: string;
   territoireCode: string;
   contenu: string;
-  meteo: Météo;
+  meteo: Meteo;
   dateCreation: string;
   dateModification: string;
   auteurModificationNom: string;
@@ -38,7 +38,7 @@ export class RecupererHistoriqueSyntheseDesResultatsQuery {
       chantierId: synthese.chantier_id,
       territoireCode: synthese.territoire_code,
       contenu: synthese.commentaire ?? "",
-      meteo: (synthese.meteo as Météo) ?? "NON_RENSEIGNEE",
+      meteo: (synthese.meteo as Meteo) ?? "NON_RENSEIGNEE",
       dateCreation: synthese.date_creation.toISOString(),
       dateModification: synthese.date_modification.toISOString(),
       auteurModificationNom: synthese.auteur_modification

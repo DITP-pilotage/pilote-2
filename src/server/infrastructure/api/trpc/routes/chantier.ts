@@ -1,3 +1,4 @@
+import { z } from "zod";
 import {
   créerRouteurTRPC,
   procédureProtégée,
@@ -21,4 +22,32 @@ export const chantierRouter = créerRouteurTRPC({
     ).resolve("recupererLaListeDesInfomrationsChantiersUse");
     return recupererLaListeDesInfomrationsChantiersUse.run();
   }),
+  recupererMeteosTerritoires: procédureProtégée
+    .input(
+      z.object({
+        chantierId: z.string(),
+        jalon: z.number(),
+      }),
+    )
+    .query(({ input }) => {
+      return getContainer("chantiers")
+        .resolve("getChantierMeteosTerritoiresQuery")
+        .execute(input);
+    }),
+  recupererAvancementsTerritoires: procédureProtégée
+    .input(
+      z.object({
+        chantierId: z.string(),
+        jalon: z.number(),
+      }),
+    )
+    .query(({ input, ctx }) => {
+      return getContainer("chantiers")
+        .resolve("getChantierAvancementsTerritoiresQuery")
+        .execute({
+          ...input,
+          habilitations: ctx.session.habilitations,
+          profil: ctx.session.profil,
+        });
+    }),
 });

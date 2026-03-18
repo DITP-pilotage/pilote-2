@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { météosSaisissables } from "@/server/domain/météo/Météo.interface";
+import { meteosSaisissables } from "@/server/domain/météo/Météo.interface";
 
 export const LIMITE_CARACTÈRES_SYNTHÈSE_DES_RÉSULTATS = 1000;
 export const LIMITE_CARACTÈRES_AFFICHAGE_SYNTHÈSE_DES_RÉSULTATS = 250;
@@ -17,7 +17,7 @@ export const validationSynthèseDesRésultatsFormulaire = z.object({
       `La limite maximale de ${LIMITE_CARACTÈRES_SYNTHÈSE_DES_RÉSULTATS} caractères a été dépassée`,
     )
     .min(1, "Le commentaire ne peut pas être vide"),
-  meteo: z.enum(météosSaisissables),
+  meteo: z.enum(meteosSaisissables),
 });
 
 export const validationBrouillonAPublier = z.object({

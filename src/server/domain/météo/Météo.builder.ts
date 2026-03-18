@@ -1,14 +1,14 @@
 import { faker } from "@faker-js/faker/locale/fr";
-import { Météo, météos } from "@/server/domain/météo/Météo.interface";
+import { Meteo, meteos } from "@/server/domain/météo/Météo.interface";
 
 export default class MétéoBuilder {
-  private readonly _météo: Météo;
+  private readonly _météo: Meteo;
 
   constructor() {
-    this._météo = faker.helpers.arrayElement(météos);
+    this._météo = faker.helpers.arrayElement(meteos);
   }
 
-  build(): Météo {
+  build(): Meteo {
     return this._météo;
   }
 }

@@ -1,5 +1,5 @@
 import { TypeStatut } from "@/server/domain/chantier/Chantier.interface";
-import { Météo } from "@/server/domain/météo/Météo.interface";
+import { Meteo } from "@/server/domain/météo/Météo.interface";
 import Ministère from "@/server/domain/ministère/Ministère.interface";
 import { ProfilCode } from "@/server/domain/utilisateur/Utilisateur.interface";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
@@ -86,7 +86,7 @@ export interface ChantierAccueilContratV2 {
   ecart: number | null;
   ecartJalonParDefaut: number | null;
   tendance: "BAISSE" | "HAUSSE" | "STAGNATION" | null;
-  météo: Météo;
+  météo: Meteo;
   avancement: number | null;
   avancementJalonParDefaut: number | null;
   aUnePropositionsValeurAvancement: boolean;
@@ -164,7 +164,7 @@ export function créerDonnéesTerritoiresV2(
           chantierRow?.taux_avancement_mandat,
         ),
       },
-      météo: (chantierRow?.meteo as Météo) ?? "NON_RENSEIGNEE",
+      météo: (chantierRow?.meteo as Meteo) ?? "NON_RENSEIGNEE",
       aUnePropositionsValeurAvancement: aUnePropositionDeValeurAvancement,
     };
   });
@@ -257,7 +257,7 @@ export const presenterEnChantierAccueilContratV2 = (
                 ),
               },
               météo:
-                (chantierMailleNationale?.meteo as Météo) ?? "NON_RENSEIGNEE",
+                (chantierMailleNationale?.meteo as Meteo) ?? "NON_RENSEIGNEE",
               ecart: {
                 jalonParDefaut: null,
                 annuel: null,

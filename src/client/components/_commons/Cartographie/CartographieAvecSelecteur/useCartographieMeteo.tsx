@@ -1,25 +1,12 @@
 import { useMemo } from "react";
-import { libellésMétéos, Météo } from "@/server/domain/météo/Météo.interface";
+import { libellesMeteos } from "@/server/domain/météo/Météo.interface";
 import { CartographieÉlémentsDeLégende } from "@/client/components/_commons/Cartographie/Légende/CartographieLégende.interface";
 import { CartographieDonnées } from "@/client/components/_commons/Cartographie/Cartographie.interface";
 import { objectEntries } from "@/client/utils/objects/objects";
 import { TerritoiresDonnées } from "@/server/domain/territoire/Territoire.interface";
 import { Maille } from "@/server/domain/maille/Maille.interface";
 import { useTerritoireHabilitation } from "@/client/hooks/useTerritoireHabilitation";
-
-const determinerRemplissage = (
-  valeur: Météo | null,
-  elementsDeLegende: CartographieÉlémentsDeLégende,
-  estApplicable: boolean | null,
-) => {
-  if (estApplicable === false)
-    return elementsDeLegende.NON_APPLICABLE.remplissage;
-  else if (valeur === "ORAGE") return elementsDeLegende.ORAGE.remplissage;
-  else if (valeur === "COUVERT") return elementsDeLegende.COUVERT.remplissage;
-  else if (valeur === "NUAGE") return elementsDeLegende.NUAGE.remplissage;
-  else if (valeur === "SOLEIL") return elementsDeLegende.SOLEIL.remplissage;
-  else return elementsDeLegende.DÉFAUT.remplissage;
-};
+import { determinerRemplissageMeteo } from "@/client/utils/meteo/determinerRemplissageMeteo";
 
 export const useCartographieMeteo = (
   chantierMailles: Record<Maille, TerritoiresDonnées>,
@@ -80,10 +67,10 @@ export const useCartographieMeteo = (
             <div className="fr-text--bold">
               {val.estApplicable === false
                 ? "Non applicable"
-                : libellésMétéos[val.valeur]}
+                : libellesMeteos[val.valeur]}
             </div>
           ),
-          remplissage: determinerRemplissage(
+          remplissage: determinerRemplissageMeteo(
             val.valeur,
             elementsDeLegende,
             val.estApplicable,

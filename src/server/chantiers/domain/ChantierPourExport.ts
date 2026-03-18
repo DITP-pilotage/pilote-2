@@ -1,4 +1,4 @@
-import { Météo } from "@/server/domain/météo/Météo.interface";
+import { Meteo } from "@/server/domain/météo/Météo.interface";
 import { OptionsExport } from "@/server/usecase/chantier/OptionsExport";
 import { ProfilCode } from "@/server/domain/utilisateur/Utilisateur.interface";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
@@ -20,7 +20,7 @@ export type ChantierPourExport = {
   tauxDAvancementNational: number | null;
   tauxDAvancementRégional: number | null;
   tauxDAvancementDépartemental: number | null;
-  météo: Météo | null;
+  météo: Meteo | null;
   directeursProjet: string[] | null;
   directeursProjetMails: string[] | null;
   responsablesLocaux: string[] | null;
@@ -109,7 +109,7 @@ export const verifierOptionChantiersSignales = (
   chantierAvancementTerritoire: number | null,
   chantierCibleAttendue: boolean,
   chantierAUnTauxAvancementDepartemental: boolean,
-  chantierMeteo: Météo,
+  chantierMeteo: Meteo,
   chantierAUnePropositionsValeurAvancement: boolean,
 ) => {
   if (

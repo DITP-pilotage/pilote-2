@@ -1,7 +1,7 @@
-import { parseAsString, useQueryState } from "nuqs";
 import { FunctionComponent } from "react";
 import { MailleInterne } from "@/server/domain/maille/Maille.interface";
 import { useTerritoireHabilitation } from "@/client/hooks/useTerritoireHabilitation";
+import { useTerritoiresCompares } from "@/client/hooks/useTerritoiresCompares";
 import { getTraceSvg } from "./CartographieSVGContrat";
 
 export const CartographieTerritoireSélectionné: FunctionComponent<{
@@ -10,10 +10,7 @@ export const CartographieTerritoireSélectionné: FunctionComponent<{
 }> = ({ territoireCode, mailleSelectionnee }) => {
   const { récupérerDétailsSurUnTerritoire } = useTerritoireHabilitation();
 
-  const [territoiresCompares] = useQueryState(
-    "territoiresCompares",
-    parseAsString.withDefault(""),
-  );
+  const [territoiresCompares] = useTerritoiresCompares();
 
   const detailTerritoiresComparés = [
     territoireCode,

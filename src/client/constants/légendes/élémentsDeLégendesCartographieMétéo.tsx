@@ -1,27 +1,27 @@
 import { CartographieÉlémentsDeLégende } from "@/components/_commons/Cartographie/Légende/CartographieLégende.interface";
 import { MeteoPicto } from "@/components/_commons/Meteo/Picto/MeteoPicto";
-import { libellésMétéos } from "@/server/domain/météo/Météo.interface";
+import { libellesMeteos } from "@/server/domain/météo/Météo.interface";
 
 const REMPLISSAGE_PAR_DÉFAUT = "#bababa";
 
 export const ÉLÉMENTS_LÉGENDE_MÉTÉO_CHANTIERS: CartographieÉlémentsDeLégende = {
   ORAGE: {
-    libellé: libellésMétéos.ORAGE,
+    libellé: libellesMeteos.ORAGE,
     remplissage: "#B34000",
     picto: <MeteoPicto meteo="ORAGE" />,
   },
   COUVERT: {
-    libellé: libellésMétéos.COUVERT,
+    libellé: libellesMeteos.COUVERT,
     remplissage: "#95E257",
     picto: <MeteoPicto meteo="COUVERT" />,
   },
   NUAGE: {
-    libellé: libellésMétéos.NUAGE,
+    libellé: libellesMeteos.NUAGE,
     remplissage: "#EFCB3A",
     picto: <MeteoPicto meteo="NUAGE" />,
   },
   SOLEIL: {
-    libellé: libellésMétéos.SOLEIL,
+    libellé: libellesMeteos.SOLEIL,
     remplissage: "#27A658",
     picto: <MeteoPicto meteo="SOLEIL" />,
   },

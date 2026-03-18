@@ -1,6 +1,6 @@
-import { MétéoSaisissable } from "@/server/domain/météo/Météo.interface";
+import { MeteoSaisissable } from "@/server/domain/météo/Météo.interface";
 
 export interface SyntheseDesResultatsFormulaireInputs {
   contenu: string;
-  meteo: MétéoSaisissable;
+  meteo: MeteoSaisissable;
 }

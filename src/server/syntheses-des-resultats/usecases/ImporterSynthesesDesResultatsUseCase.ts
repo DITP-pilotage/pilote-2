@@ -3,7 +3,7 @@ import { randomUUID } from "node:crypto";
 import SynthèseDesRésultatsRepository from "@/server/domain/chantier/synthèseDesRésultats/SynthèseDesRésultatsRepository.interface";
 import { ImportSyntheseDesResultatsInput } from "@/validation/import-synthese-des-resultats";
 import { SyntheseDesResultatsV2 } from "@/server/domain/chantier/synthèseDesRésultats/SynthèseDesRésultats.interface";
-import { MétéoSaisissable } from "@/server/domain/météo/Météo.interface";
+import { MeteoSaisissable } from "@/server/domain/météo/Météo.interface";
 import type { Inject } from "@/server/syntheses-des-resultats/module";
 
 export class ImporterSynthesesDesResultatsUseCase {
@@ -37,7 +37,7 @@ export class ImporterSynthesesDesResultatsUseCase {
         contenu: synthese.contenu,
         auteurCreationId: auteurId,
         auteurModificationId: auteurId,
-        meteo: synthese.meteo as MétéoSaisissable,
+        meteo: synthese.meteo as MeteoSaisissable,
         dateCreation: date.toISOString(),
         dateModification: date.toISOString(),
         statut: $Enums.statut_publication.PUBLIE,

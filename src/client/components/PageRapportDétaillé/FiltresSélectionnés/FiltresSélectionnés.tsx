@@ -11,7 +11,7 @@ import PérimètreMinistériel from "@/server/domain/périmètreMinistériel/Pé
 import Axe from "@/server/domain/axe/Axe.interface";
 import Ppg from "@/server/domain/ppg/Ppg.interface";
 import { DétailTerritoire } from "@/server/domain/territoire/Territoire.interface";
-import { libellésMétéos } from "@/server/domain/météo/Météo.interface";
+import { libellesMeteos } from "@/server/domain/météo/Météo.interface";
 import { Maille } from "@/server/domain/maille/Maille.interface";
 import { NOMS_CODES_MAILLES } from "@/server/infrastructure/accès_données/maille/mailleSQLParser";
 import FiltresSélectionnésCatégorie from "./Catégorie/FiltresSélectionnésCatégorie";
@@ -145,7 +145,7 @@ const FiltresSélectionnés: FunctionComponent<FiltresSélectionnésProps> = ({
       filtresActifs: filtres.meteos
         .split(",")
         .filter(Boolean)
-        .map((meteo) => libellésMétéos[meteo]),
+        .map((meteo) => libellesMeteos[meteo]),
     },
   ];
 

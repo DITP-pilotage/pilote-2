@@ -1,5 +1,5 @@
 import { comparerMétéo } from "@/client/utils/chantier/météo/météo";
-import { météos } from "@/server/domain/météo/Météo.interface";
+import { meteos } from "@/server/domain/météo/Météo.interface";
 
 describe("comparerMétéo", () => {
   test("retourne 0 si les météos sont identiques", () => {
@@ -45,7 +45,7 @@ describe("comparerMétéo", () => {
   });
 
   test("fonctionne pour tous les types de météo", () => {
-    météos.forEach((météo) => {
+    meteos.forEach((météo) => {
       expect(() =>
         comparerMétéo(météo, météo, [{ desc: true, id: "1" }]),
       ).not.toThrow();
