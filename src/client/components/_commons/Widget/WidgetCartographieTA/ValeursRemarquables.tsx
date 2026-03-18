@@ -2,7 +2,7 @@ import api from "@/server/infrastructure/api/trpc/api";
 import { MailleInterne } from "@/server/domain/maille/Maille.interface";
 
 const COULEUR_MINIMUM = "#cbcbe8";
-const COULEUR_MÉDIANE = "#6666bd";
+const COULEUR_MEDIANE = "#6666bd";
 const COULEUR_MAXIMUM = "#000091";
 
 const libelleMaille = (maille: MailleInterne): string =>
@@ -65,7 +65,7 @@ export const ValeursRemarquables = ({
         )}
         {mediane !== null && (
           <ValeurRemarquable
-            color={COULEUR_MÉDIANE}
+            color={COULEUR_MEDIANE}
             label={`médiane des ${libelle}`}
             value={mediane}
           />
