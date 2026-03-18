@@ -22,6 +22,7 @@ export class AgregerAvancementsChantiersUseCase {
         chantierIds,
         jalon,
       );
+
     return new AgregateurListeChantiersParTerritoire(chantiers).agreger();
   }
 }

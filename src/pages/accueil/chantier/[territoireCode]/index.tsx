@@ -243,6 +243,7 @@ export const getServerSideProps = async (
   }));
 
   const nombreTotalChantiersAvecAlertes = chantiersAvecAlertes.length;
+  const chantierIds = chantiersAvecAlertes.map((chantier) => chantier.id);
 
   const chantiersPaginesAvecAlertes = chantiersAvecAlertes.splice(
     (pageIndex - 1) * pageSize,
@@ -271,7 +272,7 @@ export const getServerSideProps = async (
         delete chantier.mailles;
         return chantier;
       }),
-      chantierIds: chantiersAvecAlertes.map((chantier) => chantier.id),
+      chantierIds,
       nombreTotalChantiersAvecAlertes,
       ministères,
       axes,
