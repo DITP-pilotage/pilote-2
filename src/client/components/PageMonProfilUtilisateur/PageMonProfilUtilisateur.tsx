@@ -159,7 +159,9 @@ export const PageMonProfilUtilisateur = () => {
                     }
                   />
                   <p className="!text-sm !text-dsfr-mention-grey !mb-0">
-                    {formaterDateModification(profilUtilisateur.dateModification)}
+                    {formaterDateModification(
+                      profilUtilisateur.dateModification,
+                    )}
                   </p>
                 </div>
               </Bloc>
