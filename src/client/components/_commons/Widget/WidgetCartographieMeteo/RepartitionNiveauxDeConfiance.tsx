@@ -15,13 +15,6 @@ const ordreMeteo: Record<string, number> = {
   NON_RENSEIGNEE: 5,
 };
 
-function formaterNomTerritoire(territoire: MeteoTerritoireViewModel): string {
-  if (territoire.maille === "DEPT") {
-    return `${territoire.codeInsee} - ${territoire.territoireNom}`;
-  }
-  return territoire.territoireNom;
-}
-
 export const RepartitionNiveauxDeConfiance = ({
   territoiresSelectionnes,
   onSupprimerTerritoire,
@@ -82,7 +75,7 @@ export const RepartitionNiveauxDeConfiance = ({
                   )}
                 >
                   <span className="text-right" style={{ color: couleur }}>
-                    {formaterNomTerritoire(territoire)}
+                    {territoire.territoireNom}
                   </span>
                   {!estInitial && (
                     <button

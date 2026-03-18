@@ -27,20 +27,14 @@ export class GetChantierMeteosTerritoiresQuery {
           some: { jalon: params.jalon },
         },
       },
-      select: {
-        territoire_code: true,
-        territoire_nom: true,
-        code_insee: true,
-        maille: true,
-        meteo: true,
-        est_applicable: true,
-        derniere_maj_date_qualitative: true,
+      include: {
+        territoire: true,
       },
     });
 
     return rows.map((row) => ({
-      territoireCode: row.territoire_code,
-      territoireNom: row.territoire_nom ?? "",
+      territoireCode: row.territoire.code,
+      territoireNom: row.territoire.nom_affiche,
       codeInsee: row.code_insee,
       maille: row.maille,
       meteo: row.meteo ?? "NON_RENSEIGNEE",

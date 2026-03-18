@@ -26,8 +26,7 @@ export const useLegendeMeteo = (
     if (tousNonNull) {
       legendeAffichee = legendeAffichee.filter(
         (el) =>
-          el.libellé !==
-          "Territoire pour lequel la météo n'est pas renseignée",
+          el.libellé !== "Territoire pour lequel la météo n'est pas renseignée",
       );
     }
 
