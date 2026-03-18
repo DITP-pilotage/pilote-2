@@ -1,166 +1,227 @@
-import { prisma } from "@/server/db/prisma";
-import ObjectifRepository from "@/server/domain/chantier/objectif/ObjectifRepository.interface";
+import { $Enums } from "@prisma/client";
+import { randomUUID } from "node:crypto";
+import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
+import { fixtures } from "@/server/infrastructure/test/fixtures";
 import ObjectifSQLRepository from "@/server/infrastructure/accès_données/chantier/objectif/ObjectifSQLRepository";
-import { ProfilEnum } from "@/server/app/enum/profil.enum";
+import { PrismaPilote } from "@/server/db/PrismaPilote";
 
-describe("ObjectifSQLRepository", function () {
-  let objectifRepository: ObjectifRepository;
+describe("ObjectifSQLRepository", () => {
+  let repository: ObjectifSQLRepository;
 
   beforeEach(() => {
-    objectifRepository = new ObjectifSQLRepository();
+    repository = new ObjectifSQLRepository({
+      prisma: new PrismaPilote(),
+    });
   });
 
   describe("récupérerLesPlusRécentsGroupésParChantier", () => {
-    test("retourne les objectifs les plus récent groupé par chantier", async () => {
-      // Given
-      const auteur_id = "ce68cbcd-e67c-48ea-bd0d-061b310e18ce";
-      await prisma.utilisateur.create({
-        data: {
-          id: auteur_id,
-          email: "john.doe@test.com",
+    it(
+      "retourne les objectifs les plus récents groupés par chantier",
+      createIntegrationTest(async () => {
+        // Given
+        const auteur = await fixtures.utilisateur({
           nom: "John",
           prenom: "Doe",
-          date_creation: new Date().toISOString(),
-          profil: {
-            connect: {
-              code: ProfilEnum.DITP_ADMIN,
-            },
-          },
-        },
-      });
+        });
+        const ch1 = await fixtures.chantierIdentite();
+        const ch2 = await fixtures.chantierIdentite();
+        const ch3 = await fixtures.chantierIdentite();
 
-      await prisma.chantier_identite.createMany({
-        data: [
-          {
-            id: "CH-001",
-            nom: "Chantier 001",
-          },
-          {
-            id: "CH-002",
-            nom: "Chantier 002",
-          },
-          {
-            id: "CH-003",
-            nom: "Chantier 003",
-          },
-        ],
-      });
-      await prisma.objectif.createMany({
-        data: [
-          {
-            id: "2354f938-13be-4821-817f-38ff6fc75591",
-            chantier_id: "CH-001",
-            date_modification: new Date("2022-04-01"),
-            date_creation: new Date("2022-04-01"),
-            contenu: "Objectif notre ambition entre 2 dates",
-            type: "notre_ambition",
-            auteur_modification_id: auteur_id,
-          },
-          {
-            id: "7a16426d-7abb-40f3-88ac-b8873b99c8bc",
-            chantier_id: "CH-001",
-            date_modification: new Date("2023-04-01"),
-            date_creation: new Date("2023-04-01"),
-            contenu: "Objectif notre ambition plus recent",
-            type: "notre_ambition",
-            auteur_modification_id: auteur_id,
-          },
-          {
-            id: "f49556f6-6490-4c14-9ccd-24808731f41f",
-            chantier_id: "CH-001",
-            date_modification: new Date("2023-04-01"),
-            date_creation: new Date("2023-04-01"),
-            contenu: "Objectif notre ambition plus recent",
-            type: "a_faire",
-            auteur_modification_id: auteur_id,
-          },
-          {
-            id: "6d818ff8-b66c-47af-88f9-7a57702061c5",
-            chantier_id: "CH-001",
-            date_modification: new Date("2023-04-02"),
-            date_creation: new Date("2023-04-02"),
-            contenu: "Objectif deja fait plus recent",
-            type: "deja_fait",
-          },
-          {
-            id: "93fecdd7-f68f-4f9a-8aa5-2fe7d4d983f3",
-            chantier_id: "CH-001",
-            date_modification: new Date("2021-12-31"),
-            date_creation: new Date("2021-12-31"),
-            contenu: "Objectif déjà fait plus ancien",
-            type: "notre_ambition",
-            auteur_modification_id: auteur_id,
-          },
-          {
-            id: "57f99fce-9db0-4079-83f0-144c27ec1dca",
-            chantier_id: "CH-002",
-            date_modification: new Date("2022-04-01"),
-            date_creation: new Date("2022-04-01"),
-            contenu: "Objectif notre ambition entre 2 dates ch2",
-            type: "notre_ambition",
-            auteur_modification_id: auteur_id,
-          },
-          {
-            id: "ab310903-3d61-41d3-9adf-31cbd4ff8f68",
-            chantier_id: "CH-002",
-            date_modification: new Date("2023-04-03"),
-            date_creation: new Date("2023-04-03"),
-            contenu: "Objectif notre ambition plus recent ch2",
-            type: "notre_ambition",
-            auteur_modification_id: auteur_id,
-          },
-          {
-            id: "665da850-5446-4cc9-ab5a-c24304c12550",
-            chantier_id: "CH-003",
-            date_modification: new Date("2023-04-01"),
-            date_creation: new Date("2023-04-01"),
-            contenu: "Objectif notre ambition plus recent ch2",
-            type: "notre_ambition",
-            auteur_modification_id: auteur_id,
-          },
-        ],
-      });
-
-      // When
-      const result =
-        await objectifRepository.récupérerLesPlusRécentsGroupésParChantier([
-          "CH-001",
-          "CH-002",
-        ]);
-
-      // Then
-      expect(result["CH-001"]).toIncludeAllMembers([
-        {
-          id: "6d818ff8-b66c-47af-88f9-7a57702061c5",
-          type: "déjàFait",
+        await fixtures.objectifChantier({
+          chantier_id: ch1.id,
+          type: "notre_ambition",
+          auteur_modification_id: auteur.id,
+          date_modification: new Date("2022-04-01"),
+          contenu: "Objectif notre ambition entre 2 dates",
+        });
+        const ch1NaRecent = await fixtures.objectifChantier({
+          chantier_id: ch1.id,
+          type: "notre_ambition",
+          auteur_modification_id: auteur.id,
+          date_modification: new Date("2023-04-01"),
+          contenu: "Objectif notre ambition plus recent",
+        });
+        const ch1AFaire = await fixtures.objectifChantier({
+          chantier_id: ch1.id,
+          type: "a_faire",
+          auteur_modification_id: auteur.id,
+          date_modification: new Date("2023-04-01"),
+          contenu: "Objectif a faire plus recent",
+        });
+        const ch1DejaFait = await fixtures.objectifChantier({
+          chantier_id: ch1.id,
+          type: "deja_fait",
+          // auteur_modification_id null pour tester "Auteur Inconnu"
+          auteur_modification_id: null,
+          date_modification: new Date("2023-04-02"),
           contenu: "Objectif deja fait plus recent",
-          date: new Date("2023-04-02").toISOString(),
-          auteur: "Auteur Inconnu",
-        },
-        {
-          id: "f49556f6-6490-4c14-9ccd-24808731f41f",
-          type: "àFaire",
-          contenu: "Objectif notre ambition plus recent",
-          date: new Date("2023-04-01").toISOString(),
-          auteur: "Doe John",
-        },
-        {
-          id: "7a16426d-7abb-40f3-88ac-b8873b99c8bc",
-          type: "notreAmbition",
-          contenu: "Objectif notre ambition plus recent",
-          date: new Date("2023-04-01").toISOString(),
-          auteur: "Doe John",
-        },
-      ]);
-      expect(result["CH-002"]).toIncludeAllMembers([
-        {
-          id: "ab310903-3d61-41d3-9adf-31cbd4ff8f68",
-          auteur: "Doe John",
-          type: "notreAmbition",
+        });
+        await fixtures.objectifChantier({
+          chantier_id: ch1.id,
+          type: "notre_ambition",
+          auteur_modification_id: auteur.id,
+          date_modification: new Date("2021-12-31"),
+          contenu: "Objectif notre ambition plus ancien",
+        });
+
+        await fixtures.objectifChantier({
+          chantier_id: ch2.id,
+          type: "notre_ambition",
+          auteur_modification_id: auteur.id,
+          date_modification: new Date("2022-04-01"),
+          contenu: "Objectif notre ambition entre 2 dates ch2",
+        });
+        const ch2NaRecent = await fixtures.objectifChantier({
+          chantier_id: ch2.id,
+          type: "notre_ambition",
+          auteur_modification_id: auteur.id,
+          date_modification: new Date("2023-04-03"),
           contenu: "Objectif notre ambition plus recent ch2",
-          date: new Date("2023-04-03").toISOString(),
-        },
-      ]);
-    });
+        });
+
+        // ch3 non demandé dans la requête
+        await fixtures.objectifChantier({
+          chantier_id: ch3.id,
+          type: "notre_ambition",
+          auteur_modification_id: auteur.id,
+          date_modification: new Date("2023-04-01"),
+          contenu: "Objectif ch3",
+        });
+
+        // When
+        const result =
+          await repository.récupérerLesPlusRécentsGroupésParChantier([
+            ch1.id,
+            ch2.id,
+          ]);
+
+        // Then
+        expect(result[ch1.id]).toIncludeAllMembers([
+          {
+            id: ch1NaRecent.id,
+            type: "notreAmbition",
+            contenu: "Objectif notre ambition plus recent",
+            date: new Date("2023-04-01").toISOString(),
+            auteur: "Doe John",
+          },
+          {
+            id: ch1AFaire.id,
+            type: "àFaire",
+            contenu: "Objectif a faire plus recent",
+            date: new Date("2023-04-01").toISOString(),
+            auteur: "Doe John",
+          },
+          {
+            id: ch1DejaFait.id,
+            type: "déjàFait",
+            contenu: "Objectif deja fait plus recent",
+            date: new Date("2023-04-02").toISOString(),
+            auteur: "Auteur Inconnu",
+          },
+        ]);
+        expect(result[ch2.id]).toIncludeAllMembers([
+          {
+            id: ch2NaRecent.id,
+            type: "notreAmbition",
+            contenu: "Objectif notre ambition plus recent ch2",
+            date: new Date("2023-04-03").toISOString(),
+            auteur: "Doe John",
+          },
+        ]);
+        expect(result[ch3.id]).toBeUndefined();
+      }),
+    );
+  });
+
+  describe("save", () => {
+    it(
+      "crée un objectif quand il n'existe pas encore",
+      createIntegrationTest(async (tx) => {
+        // Given
+        const auteur = await fixtures.utilisateur();
+        const chantier = await fixtures.chantierIdentite();
+        const objectifId = randomUUID();
+
+        // When
+        await repository.save({
+          id: objectifId,
+          chantierId: chantier.id,
+          type: "notreAmbition",
+          contenu: "Contenu initial",
+          statut: $Enums.statut_publication.BROUILLON,
+          auteurCreationId: auteur.id,
+          dateCreation: "2024-01-01T00:00:00.000Z",
+          auteurModificationId: auteur.id,
+          dateModification: "2024-01-01T00:00:00.000Z",
+        });
+
+        // Then
+        const stored = await tx.objectif.findUnique({
+          where: { id: objectifId },
+        });
+        expect(stored).toEqual(
+          expect.objectContaining({
+            id: objectifId,
+            chantier_id: chantier.id,
+            type: "notre_ambition",
+            contenu: "Contenu initial",
+            statut: $Enums.statut_publication.BROUILLON,
+            auteur_creation_id: auteur.id,
+            auteur_modification_id: auteur.id,
+            date_creation: new Date("2024-01-01T00:00:00.000Z"),
+            date_modification: new Date("2024-01-01T00:00:00.000Z"),
+          }),
+        );
+      }),
+    );
+
+    it(
+      "met à jour contenu, statut et auteur_modification quand l'objectif existe déjà",
+      createIntegrationTest(async (tx) => {
+        // Given
+        const auteurCreation = await fixtures.utilisateur();
+        const auteurModification = await fixtures.utilisateur();
+        const chantier = await fixtures.chantierIdentite();
+        const existant = await fixtures.objectifChantier({
+          chantier_id: chantier.id,
+          type: "notre_ambition",
+          auteur_creation_id: auteurCreation.id,
+          auteur_modification_id: auteurCreation.id,
+          date_creation: new Date("2024-01-01"),
+          date_modification: new Date("2024-01-01"),
+          contenu: "Contenu original",
+          statut: $Enums.statut_publication.BROUILLON,
+        });
+
+        // When
+        await repository.save({
+          id: existant.id,
+          chantierId: chantier.id,
+          type: "notreAmbition",
+          contenu: "Contenu modifié",
+          statut: $Enums.statut_publication.PUBLIE,
+          auteurCreationId: auteurCreation.id,
+          dateCreation: "2024-01-01T00:00:00.000Z",
+          auteurModificationId: auteurModification.id,
+          dateModification: "2024-06-01T00:00:00.000Z",
+        });
+
+        // Then
+        const stored = await tx.objectif.findUnique({
+          where: { id: existant.id },
+        });
+        expect(stored).toEqual(
+          expect.objectContaining({
+            contenu: "Contenu modifié",
+            statut: $Enums.statut_publication.PUBLIE,
+            auteur_modification_id: auteurModification.id,
+            date_modification: new Date("2024-06-01T00:00:00.000Z"),
+            // type et auteur_creation_id ne sont pas modifiés lors d'un update
+            type: "notre_ambition",
+            auteur_creation_id: auteurCreation.id,
+          }),
+        );
+      }),
+    );
   });
 });

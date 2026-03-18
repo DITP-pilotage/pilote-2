@@ -9,7 +9,7 @@ import SynthèseDesRésultats from "@/components/PageRapportDétaillé/Synthèse
 import IndicateursRapportDetaille from "@/components/PageRapportDétaillé/Chantier/IndicateursRapportDetaille/IndicateursRapportDetaille";
 import { DecisionsStrategiquesRapportDetaille } from "@/components/PageRapportDétaillé/Chantier/DecisionsStrategiquesRapportDetaille";
 import CommentairesRapportDetaille from "@/client/components/PageRapportDétaillé/Commentaires/CommentairesRapportDetaille";
-import ObjectifsRapportDetaille from "@/client/components/PageRapportDétaillé/Objectifs/ObjectifsRapportDetaille";
+import { ObjectifsRapportDetaille } from "@/client/components/PageRapportDétaillé/Objectifs/ObjectifsRapportDetaille";
 import Titre from "@/components/_commons/Titre/Titre";
 import {
   typesCommentaireMailleNationale,

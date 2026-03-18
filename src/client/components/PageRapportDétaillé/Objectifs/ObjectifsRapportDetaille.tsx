@@ -1,4 +1,4 @@
-import { Fragment, FunctionComponent } from "react";
+import { Fragment } from "react";
 import Bloc from "@/components/_commons/Bloc/Bloc";
 import {
   libellésTypesObjectif,
@@ -6,6 +6,7 @@ import {
 } from "@/client/constants/libellésObjectif";
 import { typesObjectif } from "@/server/domain/chantier/objectif/Objectif.interface";
 import Objectif from "@/server/domain/chantier/objectif/Objectif.interface";
+import { isDefined } from "@/client/utils/predicates";
 import { nettoyerUneChaîneDeCaractèresPourAffichageHTML } from "@/client/utils/strings";
 import { Badge } from "@/components/_commons/Badge";
 import { PiloteDateFormatter } from "@/server/rapports-hebdomadaires/infrastructure/adapters/PiloteDateFormatter";
@@ -14,15 +15,11 @@ interface ObjectifsRapportDetailleProps {
   objectifs: Objectif[];
 }
 
-const ObjectifsRapportDetaille: FunctionComponent<
-  ObjectifsRapportDetailleProps
-> = ({ objectifs }) => {
+export const ObjectifsRapportDetaille = ({
+  objectifs,
+}: ObjectifsRapportDetailleProps) => {
   const objectifParType = new Map<TypeObjectif, NonNullable<Objectif>>(
-    objectifs
-      .filter(
-        (objectif): objectif is NonNullable<Objectif> => objectif !== null,
-      )
-      .map((objectif) => [objectif.type, objectif]),
+    objectifs.filter(isDefined).map((objectif) => [objectif.type, objectif]),
   );
 
   return (
@@ -64,5 +61,3 @@ const ObjectifsRapportDetaille: FunctionComponent<
     </Bloc>
   );
 };
-
-export default ObjectifsRapportDetaille;

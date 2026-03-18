@@ -6,7 +6,7 @@ import {
 } from "@/server/domain/chantier/objectif/Objectif.interface";
 import Chantier from "@/server/domain/chantier/Chantier.interface";
 import { groupByAndTransform } from "@/client/utils/arrays";
-import { prisma } from "@/server/db/prisma";
+import { PrismaPilote } from "@/server/db/PrismaPilote";
 
 export const NOMS_TYPES_OBJECTIFS: Record<TypeObjectifPrisma, TypeObjectif> = {
   notre_ambition: "notreAmbition",
@@ -21,6 +21,16 @@ export const CODES_TYPES_OBJECTIFS: Record<TypeObjectif, TypeObjectifPrisma> = {
 };
 
 export default class ObjectifSQLRepository implements ObjectifRepository {
+  private prismaClient: PrismaPilote;
+
+  constructor({ prisma }: { prisma: PrismaPilote }) {
+    this.prismaClient = prisma;
+  }
+
+  get prisma() {
+    return this.prismaClient.getInstance();
+  }
+
   async save({
     id,
     chantierId,
@@ -32,7 +42,7 @@ export default class ObjectifSQLRepository implements ObjectifRepository {
     auteurModificationId,
     dateModification,
   }: ObjectifV2): Promise<void> {
-    await prisma.objectif.upsert({
+    await this.prisma.objectif.upsert({
       where: { id },
       create: {
         id,
@@ -55,7 +65,7 @@ export default class ObjectifSQLRepository implements ObjectifRepository {
   }
 
   async getById(id: string): Promise<ObjectifV2 | null> {
-    const objectif = await prisma.objectif.findUnique({ where: { id } });
+    const objectif = await this.prisma.objectif.findUnique({ where: { id } });
 
     if (objectif === null) return null;
 
@@ -75,7 +85,7 @@ export default class ObjectifSQLRepository implements ObjectifRepository {
   async récupérerLesPlusRécentsGroupésParChantier(
     chantiersIds: Chantier["id"][],
   ) {
-    const result = await prisma.objectif.groupBy({
+    const result = await this.prisma.objectif.groupBy({
       by: ["type", "chantier_id"],
       where: {
         chantier_id: { in: chantiersIds },
@@ -90,7 +100,7 @@ export default class ObjectifSQLRepository implements ObjectifRepository {
       result
         .filter((group) => group._max.date_modification)
         .map(async (group) =>
-          prisma.objectif.findFirst({
+          this.prisma.objectif.findFirst({
             where: {
               type: group.type,
               date_modification: group._max.date_modification!,
