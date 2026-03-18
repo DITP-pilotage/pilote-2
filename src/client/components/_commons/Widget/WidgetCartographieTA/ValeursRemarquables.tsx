@@ -13,6 +13,23 @@ const formatValeur = (valeur: number | null | undefined): string | null => {
   return `${Math.round(valeur)}%`;
 };
 
+const ValeurRemarquable = ({
+  label,
+  value,
+  color,
+}: {
+  label: string;
+  value: string;
+  color: string;
+}) => (
+  <div className="fr-mb-0 items-center flex flex-col p-2 basis-1/2 grow">
+    <strong className="text-xl" style={{ color }}>
+      {value}
+    </strong>
+    <span className="inline-block text-center">{label}</span>
+  </div>
+);
+
 export const ValeursRemarquables = ({
   chantierId,
   maille,
@@ -37,77 +54,30 @@ export const ValeursRemarquables = ({
   const libelle = libelleMaille(maille);
 
   return (
-    <div className="fr-mb-2w">
-      <div className="fr-grid-row fr-grid-row--gutters">
+    <div className="mb-4">
+      <div className="flex flex-col md:flex-row md:flex-wrap md:justify-center">
         {minimum !== null && (
-          <div className="fr-col-6">
-            <div
-              className="fr-text--sm fr-mb-0"
-              style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}
-            >
-              <span
-                style={{
-                  display: "inline-block",
-                  width: "1rem",
-                  height: "1rem",
-                  backgroundColor: COULEUR_MINIMUM,
-                  borderRadius: "2px",
-                  flexShrink: 0,
-                }}
-              />
-              <span>
-                <strong>{minimum}</strong> — minimum des {libelle}
-              </span>
-            </div>
-          </div>
+          <ValeurRemarquable
+            color={COULEUR_MINIMUM}
+            label={`minimum des ${libelle}`}
+            value={minimum}
+          />
         )}
         {mediane !== null && (
-          <div className="fr-col-6">
-            <div
-              className="fr-text--sm fr-mb-0"
-              style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}
-            >
-              <span
-                style={{
-                  display: "inline-block",
-                  width: "1rem",
-                  height: "1rem",
-                  backgroundColor: COULEUR_MÉDIANE,
-                  borderRadius: "2px",
-                  flexShrink: 0,
-                }}
-              />
-              <span>
-                <strong>{mediane}</strong> — médiane des {libelle}
-              </span>
-            </div>
-          </div>
+          <ValeurRemarquable
+            color={COULEUR_MÉDIANE}
+            label={`médiane des ${libelle}`}
+            value={mediane}
+          />
+        )}
+        {maximum !== null && (
+          <ValeurRemarquable
+            color={COULEUR_MAXIMUM}
+            label={`maximum des ${libelle}`}
+            value={maximum}
+          />
         )}
       </div>
-      {maximum !== null && (
-        <div className="fr-grid-row fr-grid-row--center fr-mt-1w">
-          <div className="fr-col-6">
-            <div
-              className="fr-text--sm fr-mb-0"
-              style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}
-            >
-              <span
-                style={{
-                  display: "inline-block",
-                  width: "1rem",
-                  height: "1rem",
-                  backgroundColor: COULEUR_MAXIMUM,
-                  borderRadius: "2px",
-                  flexShrink: 0,
-                }}
-              />
-              <span>
-                <strong>{maximum}</strong> — maximum des {libelle}
-              </span>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
