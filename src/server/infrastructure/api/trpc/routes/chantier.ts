@@ -41,10 +41,13 @@ export const chantierRouter = créerRouteurTRPC({
         jalon: z.number(),
       }),
     )
-    .query(({ input }) => {
+    .query(({ input, ctx }) => {
+      const chantierIdsAutorisés = input.chantierIds.filter((id) =>
+        ctx.session.habilitations.lecture.chantiers.includes(id),
+      );
       return getContainer("chantiers")
         .resolve("recupererAvancementsTerritoiresQuery")
-        .run(input);
+        .run({ chantierIds: chantierIdsAutorisés, jalon: input.jalon });
     }),
   recupererStatistiquesAvancement: procédureProtégée
     .input(
