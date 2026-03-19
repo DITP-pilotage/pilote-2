@@ -53,10 +53,34 @@ export function creerSyntheseDesResultatsBrouillon(
   };
 }
 
-export function modifierSyntheseDesResultats(
+export function publierBrouillonSyntheseDesResultats(
   existing: SyntheseDesResultatsV2,
   params: ParamsModification,
 ): SyntheseDesResultatsV2 {
+  if (existing.statut !== $Enums.statut_publication.BROUILLON)
+    throw new Error(
+      `Statut invalide : attendu BROUILLON, reçu ${existing.statut}`,
+    );
+
+  return {
+    ...existing,
+    contenu: params.contenu,
+    meteo: params.meteo,
+    auteurModificationId: params.auteurModificationId,
+    dateModification: params.dateModification,
+    statut: $Enums.statut_publication.PUBLIE,
+  };
+}
+
+export function modifierSyntheseDesResultatsPubliee(
+  existing: SyntheseDesResultatsV2,
+  params: ParamsModification,
+): SyntheseDesResultatsV2 {
+  if (existing.statut !== $Enums.statut_publication.PUBLIE)
+    throw new Error(
+      `Statut invalide : attendu PUBLIE, reçu ${existing.statut}`,
+    );
+
   return {
     ...existing,
     contenu: params.contenu,
@@ -71,6 +95,11 @@ export function modifierSyntheseDesResultatsBrouillon(
   existing: SyntheseDesResultatsV2,
   params: ParamsModification,
 ): SyntheseDesResultatsV2 {
+  if (existing.statut !== $Enums.statut_publication.BROUILLON)
+    throw new Error(
+      `Statut invalide : attendu BROUILLON, reçu ${existing.statut}`,
+    );
+
   return {
     ...existing,
     contenu: params.contenu,
