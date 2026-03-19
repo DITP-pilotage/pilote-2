@@ -1,7 +1,7 @@
 import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
 import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
 import CommentaireRepository from "@/server/domain/chantier/commentaire/CommentaireRepository.interface";
-import { modifierCommentaire } from "@/server/domain/chantier/commentaire/Commentaire";
+import { publierBrouillonCommentaire } from "@/server/domain/chantier/commentaire/Commentaire";
 
 export class PublierBrouillonCommentaireUseCase {
   constructor(
@@ -35,7 +35,7 @@ export class PublierBrouillonCommentaireUseCase {
       brouillon.territoireCode,
     );
 
-    const commentaire = modifierCommentaire(brouillon, {
+    const commentaire = publierBrouillonCommentaire(brouillon, {
       contenu,
       auteurModificationId,
       dateModification,

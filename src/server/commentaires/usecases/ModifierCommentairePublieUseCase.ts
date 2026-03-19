@@ -1,7 +1,7 @@
 import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
 import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
 import CommentaireRepository from "@/server/domain/chantier/commentaire/CommentaireRepository.interface";
-import { modifierCommentaire } from "@/server/domain/chantier/commentaire/Commentaire";
+import { modifierCommentairePublie } from "@/server/domain/chantier/commentaire/Commentaire";
 
 export class ModifierCommentairePublieUseCase {
   constructor(
@@ -36,7 +36,7 @@ export class ModifierCommentairePublieUseCase {
       commentaireAModifier.territoireCode,
     );
 
-    const commentaire = modifierCommentaire(commentaireAModifier, {
+    const commentaire = modifierCommentairePublie(commentaireAModifier, {
       contenu,
       auteurModificationId,
       dateModification,
