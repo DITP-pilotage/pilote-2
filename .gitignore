@@ -40,7 +40,7 @@ yarn-error.log*
 .idea/
 .vscode/
 .cursor/
-.claude/settings.local.json
+.claude/
 qodana.yaml
 *.pgsql
 
