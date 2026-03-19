@@ -580,14 +580,18 @@ enum type_objectif {
 }
 
 model objectif {
-  id                String            @id
-  type              type_objectif
-  contenu           String
-  date              DateTime          @db.Timestamp
-  chantier_id       String
-  auteur_objectif   utilisateur?      @relation(fields: [auteur_id], references: [id], onUpdate: Cascade)
-  auteur_id         String?           @db.Uuid
-  chantier_identite chantier_identite @relation(fields: [chantier_id], references: [id], onUpdate: Cascade)
+  id                     String             @id
+  type                   type_objectif
+  contenu                String
+  statut                 statut_publication @default(PUBLIE)
+  chantier_id            String
+  auteur_creation_id     String?            @db.Uuid
+  auteur_modification_id String?            @db.Uuid
+  date_creation          DateTime           @db.Timestamp
+  date_modification      DateTime           @db.Timestamp
+  auteur_creation        utilisateur?       @relation("objectifs_crees", fields: [auteur_creation_id], references: [id], onUpdate: Cascade)
+  auteur_modification    utilisateur?       @relation("objectifs_modifies", fields: [auteur_modification_id], references: [id], onUpdate: Cascade)
+  chantier_identite      chantier_identite  @relation(fields: [chantier_id], references: [id], onUpdate: Cascade)
 
   @@schema("public")
 }
@@ -638,7 +642,8 @@ model utilisateur {
   commentaires_modifies                  commentaire[]                            @relation("commentaires_modifies")
   decisions_strategiques_creees          decision_strategique[]                   @relation("decision_auteur_creation")
   decisions_strategiques_modifiees       decision_strategique[]                   @relation("decision_auteur_modification")
-  objectifs                              objectif[]
+  objectifs_crees                        objectif[]                               @relation("objectifs_crees")
+  objectifs_modifies                     objectif[]                               @relation("objectifs_modifies")
   syntheses_creees                       synthese_des_resultats[]                 @relation("syntheses_creees")
   syntheses_modifiees                    synthese_des_resultats[]                 @relation("syntheses_modifiees")
   utilisateurs_crees                     utilisateur[]                            @relation("creation")

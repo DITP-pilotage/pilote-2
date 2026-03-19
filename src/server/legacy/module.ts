@@ -51,9 +51,6 @@ import RécupérerStatistiquesAvancementChantiersUseCase from "@/server/usecase/
 import { RecupererRepartitionsMeteoChantiersUseCase } from "@/server/chantiers/usecases/RecupererRepartitionMeteoChantiersUseCase";
 import { AgregerAvancementsChantiersUseCase } from "@/server/chantiers/usecases/AgregerAvancementsChantiersUseCase";
 import RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase from "@/server/usecase/chantier/commentaire/RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase";
-import CréerUnObjectifUseCase from "@/server/usecase/chantier/objectif/CréerUnObjectifUseCase";
-import RécupérerObjectifLePlusRécentUseCase from "@/server/usecase/chantier/objectif/RécupérerObjectifLePlusRécentUseCase";
-import RécupérerHistoriqueObjectifUseCase from "@/server/usecase/chantier/objectif/RécupérerHistoriqueObjectifUseCase";
 import RécupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase from "@/server/usecase/chantier/objectif/RécupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase";
 import RécupérerUnUtilisateurUseCase from "@/server/gestion-utilisateur/usecases/RécupérerUnUtilisateurUseCase";
 import RécupérerUnProfilUseCase from "@/server/usecase/profil/RécupérerUnProfilUseCase";
@@ -105,9 +102,6 @@ type LegacyCradle = {
   recupererRepartitionsMeteoChantiersUseCase: RecupererRepartitionsMeteoChantiersUseCase;
   agregerAvancementsChantiersUseCase: AgregerAvancementsChantiersUseCase;
   récupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase: RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase;
-  créerUnObjectifUseCase: CréerUnObjectifUseCase;
-  récupérerObjectifLePlusRécentUseCase: RécupérerObjectifLePlusRécentUseCase;
-  récupérerHistoriqueObjectifUseCase: RécupérerHistoriqueObjectifUseCase;
   récupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase: RécupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase;
   récupérerUnUtilisateurUseCase: RécupérerUnUtilisateurUseCase;
   récupérerUnProfilUseCase: RécupérerUnProfilUseCase;
@@ -198,13 +192,6 @@ export const legacyModule = defineModule<NoExports, LegacyCradle>()({
         asModuleClass(
           RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase,
         ).scoped(),
-      créerUnObjectifUseCase: asModuleClass(CréerUnObjectifUseCase).scoped(),
-      récupérerObjectifLePlusRécentUseCase: asModuleClass(
-        RécupérerObjectifLePlusRécentUseCase,
-      ).scoped(),
-      récupérerHistoriqueObjectifUseCase: asModuleClass(
-        RécupérerHistoriqueObjectifUseCase,
-      ).scoped(),
       récupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase:
         asModuleClass(
           RécupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase,

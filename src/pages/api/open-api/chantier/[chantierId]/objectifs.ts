@@ -24,7 +24,7 @@ const handle = async (request: NextApiRequest, response: NextApiResponse) => {
     case "POST": {
       logger.info("(API) Import des objectifs", `Chantier : ${chantierId}`);
 
-      await getContainer("importObjectif")
+      await getContainer("objectif")
         .resolve("importObjectifAPIHandler")
         .handle({
           request,

@@ -567,6 +567,31 @@ export const fixtures = {
     });
   },
 
+  async objectifChantier(
+    overrides: Partial<Prisma.objectifUncheckedCreateInput> & {
+      chantier_id: string;
+      type: Prisma.objectifUncheckedCreateInput["type"];
+    },
+  ) {
+    const prisma = getPrisma();
+    const auteur = overrides.auteur_creation_id
+      ? { id: overrides.auteur_creation_id }
+      : await fixtures.utilisateur();
+    const now = new Date();
+    return prisma.objectif.create({
+      data: {
+        id: randomUUID(),
+        contenu: "Objectif de test",
+        statut: $Enums.statut_publication.PUBLIE,
+        auteur_creation_id: auteur.id,
+        date_creation: now,
+        auteur_modification_id: auteur.id,
+        date_modification: now,
+        ...overrides,
+      },
+    });
+  },
+
   async syntheseDesResultats(
     overrides: Partial<Prisma.synthese_des_resultatsUncheckedCreateInput> & {
       chantier_id: string;

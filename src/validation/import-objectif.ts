@@ -3,8 +3,8 @@ import { TypeObjectif } from "@/server/domain/chantier/objectif/Objectif.interfa
 
 export const typesObjectifAPIVersDomaine = {
   notre_ambition: "notreAmbition",
-  deja_fait: "déjàFait",
-  a_faire: "àFaire",
+  deja_fait: "dejaFait",
+  a_faire: "aFaire",
 } as const;
 
 export type TypeObjectifAPI = keyof typeof typesObjectifAPIVersDomaine;

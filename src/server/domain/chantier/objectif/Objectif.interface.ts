@@ -1,4 +1,6 @@
-export const typesObjectif = ["notreAmbition", "déjàFait", "àFaire"] as const;
+import { $Enums } from "@prisma/client";
+
+export const typesObjectif = ["notreAmbition", "dejaFait", "aFaire"] as const;
 export type TypeObjectif = (typeof typesObjectif)[number];
 
 type Objectif = {
@@ -12,12 +14,19 @@ type Objectif = {
 export type Objectifs = Record<TypeObjectif, Objectif>;
 
 export type ObjectifV2 = {
-  chantierId: string;
   id: string;
-  contenu: string;
+  chantierId: string;
   type: TypeObjectif;
-  auteur_id: string;
-  date: Date;
+  contenu: string;
+  statut: $Enums.statut_publication;
+  auteurCreationId: string;
+  dateCreation: string;
+  auteurModificationId: string;
+  dateModification: string;
+};
+
+export type ObjectifV2AvecNomAuteur = ObjectifV2 & {
+  auteurModificationNom: string;
 };
 
 export default Objectif;

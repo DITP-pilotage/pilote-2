@@ -1,3 +1,4 @@
+import { $Enums } from "@prisma/client";
 import { randomUUID } from "node:crypto";
 import ObjectifRepository from "@/server/domain/chantier/objectif/ObjectifRepository.interface";
 import {
@@ -36,8 +37,11 @@ export class ImporterObjectifsUseCase {
         id,
         contenu: objectif.contenu,
         type: typeDomaine,
-        auteur_id: auteurId,
-        date,
+        auteurCreationId: auteurId,
+        auteurModificationId: auteurId,
+        dateCreation: date.toISOString(),
+        dateModification: date.toISOString(),
+        statut: $Enums.statut_publication.PUBLIE,
       };
 
       await this.objectifRepository.save(objectifV2);

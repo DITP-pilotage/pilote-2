@@ -16,6 +16,7 @@ import { usePublicationSectionEtat } from "./usePublicationSectionEtat";
 interface PublicationSectionProps {
   libelle: string;
   consigne: string;
+  complementConsigneGenerique: string;
   publication: Publication | null;
   brouillon: PublicationBrouillon | null;
   modeEcriture?: boolean;
@@ -27,6 +28,7 @@ interface PublicationSectionProps {
 export const PublicationSection = ({
   libelle,
   consigne,
+  complementConsigneGenerique,
   publication,
   brouillon,
   modeEcriture = false,
@@ -78,6 +80,7 @@ export const PublicationSection = ({
                 <BoutonEditerBrouillonPublication
                   brouillon={brouillon}
                   commentaire={publication}
+                  complementConsigneGenerique={complementConsigneGenerique}
                   consigne={consigne}
                   libelle={libelle}
                   onEnregistrerBrouillon={handleModifierBrouillon}
@@ -86,6 +89,7 @@ export const PublicationSection = ({
               ) : (
                 <BoutonNouvellePublication
                   commentaire={publication}
+                  complementConsigneGenerique={complementConsigneGenerique}
                   consigne={consigne}
                   libelle={libelle}
                   onEnregistrerBrouillon={handleBrouillon}

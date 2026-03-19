@@ -122,7 +122,7 @@ export const ModaleFormulaireSyntheseDesResultats: FunctionComponent<
           >
             <label className="block text-sm mb-2">Synthèse des résultats</label>
             <textarea
-              className="fr-input fr-text--sm flex-1"
+              className="fr-input fr-text--sm flex-1 mb-0"
               rows={6}
               {...form.register("contenu")}
             />

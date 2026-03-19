@@ -3,6 +3,7 @@ import { PublicationSection } from "@/components/PageChantier/PublicationV2/Publ
 import { pageChantier } from "@/components/PageChantier/PageChantierServerSideContext";
 import {
   consignesEcritureDecisionStrategique,
+  complementsConsigneGeneriqueDecisionStrategique,
   libellésTypesDécisionStratégique,
 } from "@/client/constants/libellésDécisionStratégique";
 import { HistoriqueDecisionStrategique } from "./HistoriqueDecisionStrategique";
@@ -37,6 +38,9 @@ export const DécisionsStratégiques = ({
       <PublicationSection
         actions={actions}
         brouillon={brouillonDecisionStrategique}
+        complementConsigneGenerique={
+          complementsConsigneGeneriqueDecisionStrategique[TYPE]
+        }
         consigne={consignesEcritureDecisionStrategique[TYPE]}
         historiqueNode={<HistoriqueDecisionStrategique />}
         libelle={libellésTypesDécisionStratégique[TYPE]}

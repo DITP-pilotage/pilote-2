@@ -6,6 +6,7 @@ import {
 import {
   libellesTypesCommentaire,
   consignesEcritureCommentaire,
+  complementsConsigneGeneriqueCommentaire,
 } from "@/client/constants/libellesCommentaire";
 import { pageChantier } from "@/components/PageChantier/PageChantierServerSideContext";
 import { PublicationSection } from "@/components/PageChantier/PublicationV2/PublicationSection";
@@ -39,6 +40,9 @@ export const CommentaireSectionParType = ({
     <PublicationSection
       actions={actions}
       brouillon={commentaireBrouillon}
+      complementConsigneGenerique={
+        complementsConsigneGeneriqueCommentaire[type]
+      }
       consigne={consignesEcritureCommentaire[type]}
       historiqueNode={<HistoriqueCommentaire type={type} />}
       libelle={libellesTypesCommentaire[type]}

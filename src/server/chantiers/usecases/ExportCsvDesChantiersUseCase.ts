@@ -199,8 +199,8 @@ export class ExportCsvDesChantiersUseCase {
     if (optionsExport.listeOptionsExport.includes("objectif")) {
       headersColumn.push(
         libellésTypesObjectif["notreAmbition"],
-        libellésTypesObjectif["déjàFait"],
-        libellésTypesObjectif["àFaire"],
+        libellésTypesObjectif["dejaFait"],
+        libellésTypesObjectif["aFaire"],
       );
     }
 

@@ -97,6 +97,7 @@ export const getServerSideProps = async (
       commentaires,
       commentairesBrouillon,
       objectifs,
+      objectifsBrouillon,
       décisionStratégique,
       brouillonDecisionStrategique,
       détailsIndicateurs,
@@ -121,11 +122,12 @@ export const getServerSideProps = async (
       getContainer("commentaires")
         .resolve("recupererBrouillonCommentaireQuery")
         .run(chantierId, territoireCode, session.user!.id),
-      getContainer("legacy")
-        .resolve(
-          "récupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase",
-        )
-        .run([chantierId], session.habilitations),
+      getContainer("objectif")
+        .resolve("recupererDerniersObjectifsQuery")
+        .run(chantierId),
+      getContainer("objectif")
+        .resolve("recupererBrouillonObjectifQuery")
+        .run(chantierId, session.user!.id),
       getContainer("decisionStrategique")
         .resolve("recupererDerniereDecisionStrategiqueQuery")
         .run(chantierId),
@@ -252,6 +254,7 @@ export const getServerSideProps = async (
         commentaires,
         commentairesBrouillon,
         objectifs,
+        objectifsBrouillon,
         décisionStratégique,
         brouillonDecisionStrategique,
         détailsIndicateurs,

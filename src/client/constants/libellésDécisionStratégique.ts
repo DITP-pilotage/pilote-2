@@ -7,6 +7,13 @@ export const libellésTypesDécisionStratégique: Record<
   suiviDesDecisionsStrategiques: "Suivi des décisions stratégiques",
 };
 
+export const complementsConsigneGeneriqueDecisionStrategique: Record<
+  TypeDecisionStrategique,
+  string
+> = {
+  suiviDesDecisionsStrategiques: "au suivi des décisions stratégiques",
+};
+
 export const consignesEcritureDecisionStrategique: Record<
   TypeDecisionStrategique,
   string
