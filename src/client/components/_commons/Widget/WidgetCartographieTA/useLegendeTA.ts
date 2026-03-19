@@ -1,14 +1,16 @@
 import { useMemo } from "react";
 import { ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS } from "@/client/constants/légendes/élémentsDeLégendesCartographieAvancement";
-import { AvancementTerritoireViewModel } from "@/server/chantiers/app/contrats/AvancementTerritoireContrat";
+import { TauxAvancementComparaisonTerritoireViewModel } from "@/server/chantiers/app/contrats/TauxAvancementComparaisonTerritoireViewModel";
 
-export const useLegendeTA = (territoires: AvancementTerritoireViewModel[]) => {
+export const useLegendeTA = (
+  territoires: TauxAvancementComparaisonTerritoireViewModel[],
+) => {
   return useMemo(() => {
     const tousApplicables = territoires.every(
       (territoire) => territoire.estApplicable,
     );
     const tousNonNull = territoires.every(
-      (territoire) => territoire.avancementAnnuel !== null,
+      (territoire) => territoire.tauxAvancementJalon !== null,
     );
 
     let legendeAffichee = Object.values(ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS);

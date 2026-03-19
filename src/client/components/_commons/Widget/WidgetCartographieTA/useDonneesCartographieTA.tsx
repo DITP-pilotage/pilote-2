@@ -3,10 +3,10 @@ import { ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS } from "@/client/constants/lé
 import { determinerRemplissageAvancement } from "@/client/utils/avancement/determinerRemplissageAvancement";
 import { determinerValeurAfficheeAvancement } from "@/client/utils/avancement/determinerValeurAfficheeAvancement";
 import { CartographieV2Donnee } from "@/components/_commons/CartographieV2/types";
-import { AvancementTerritoireViewModel } from "@/server/chantiers/app/contrats/AvancementTerritoireContrat";
+import { TauxAvancementComparaisonTerritoireViewModel } from "@/server/chantiers/app/contrats/TauxAvancementComparaisonTerritoireViewModel";
 
 export const useDonneesCartographieTA = (
-  territoires: AvancementTerritoireViewModel[],
+  territoires: TauxAvancementComparaisonTerritoireViewModel[],
   jalon: number,
 ) => {
   return useMemo(() => {
@@ -16,13 +16,13 @@ export const useDonneesCartographieTA = (
           ...acc,
           [territoire.territoireCode]: {
             remplissage: determinerRemplissageAvancement(
-              territoire.avancementAnnuel,
+              territoire.tauxAvancementJalon,
               ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS,
               territoire.estApplicable,
             ),
             libelle: territoire.territoireNom,
             contenuInfoBulle: determinerValeurAfficheeAvancement(
-              territoire.avancementAnnuel,
+              territoire.tauxAvancementJalon,
               territoire.estApplicable,
               jalon,
             ),

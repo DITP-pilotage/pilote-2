@@ -1,5 +1,5 @@
 import { ChantierPourAgregation } from "@/client/utils/chantier/agrégateurListeChantiers/agregateur";
-import { AvancementTerritoireViewModel } from "@/server/chantiers/app/contrats/AvancementTerritoireContrat";
+import { TauxAvancementComparaisonTerritoireViewModel } from "@/server/chantiers/app/contrats/TauxAvancementComparaisonTerritoireViewModel";
 import { Inject } from "@/server/chantiers/module";
 import {
   Maille,
@@ -9,7 +9,7 @@ import {
 export class RecupererAvancementsTerritoiresQuery {
   constructor(
     private readonly deps: Inject<
-      // TODO : expliquer que normalement on ne doit pas dépendre d'un use case mais on l'autorise pour des raisons legacy (l'autre truc est plus un domaine service)
+      // TODO: cette query de couche infra ne devrait pas dépendre d'un use case — toléré ici pour des raisons legacy
       "agregerAvancementsChantiersUseCase" | "territoireRepository"
     >,
   ) {}
@@ -17,7 +17,7 @@ export class RecupererAvancementsTerritoiresQuery {
   async run(params: {
     chantierIds: string[];
     jalon: number;
-  }): Promise<AvancementTerritoireViewModel[]> {
+  }): Promise<TauxAvancementComparaisonTerritoireViewModel[]> {
     const { agregat, chantiers } =
       await this.deps.agregerAvancementsChantiersUseCase.run(
         params.chantierIds,
@@ -29,7 +29,7 @@ export class RecupererAvancementsTerritoiresQuery {
       territoires.map((territoire) => [territoire.code, territoire]),
     );
 
-    const result: AvancementTerritoireViewModel[] = [];
+    const result: TauxAvancementComparaisonTerritoireViewModel[] = [];
 
     const mailleMapping: Array<{
       maille: keyof typeof agregat;
@@ -47,9 +47,9 @@ export class RecupererAvancementsTerritoiresQuery {
         result.push({
           territoireCode,
           territoireNom: territoiresMap.get(territoireCode)?.nomAffiché ?? "",
-          codeInsee: territoireCode,
           maille: mailleCode,
-          avancementAnnuel: territoire.repartition.avancements.annuel.moyenne,
+          tauxAvancementJalon:
+            territoire.repartition.avancements.annuel.moyenne,
           estApplicable: this._calculerEstApplicable({
             chantiers,
             maille,
@@ -76,16 +76,23 @@ export class RecupererAvancementsTerritoiresQuery {
     maille: Maille;
     territoireCode: string;
   }): boolean | null {
-    const auMoinsUnChantierPotentiellementApplicable = chantiers.some(
-      (chantier) =>
-        chantier.mailles[maille][territoireCode]?.estApplicable !== false,
-    );
-    const territoireExisteDansAuMoinsUnChantier = chantiers.some(
+    const chantiersAvecTerritoire = chantiers.filter(
       (chantier) => territoireCode in chantier.mailles[maille],
     );
+    if (chantiersAvecTerritoire.length === 0) return null;
 
-    if (auMoinsUnChantierPotentiellementApplicable) return null;
-    if (territoireExisteDansAuMoinsUnChantier) return false;
+    const tousNonApplicables = chantiersAvecTerritoire.every(
+      (chantier) =>
+        chantier.mailles[maille][territoireCode]?.estApplicable === false,
+    );
+    if (tousNonApplicables) return false;
+
+    const tousApplicables = chantiersAvecTerritoire.every(
+      (chantier) =>
+        chantier.mailles[maille][territoireCode]?.estApplicable === true,
+    );
+    if (tousApplicables) return true;
+
     return null;
   }
 

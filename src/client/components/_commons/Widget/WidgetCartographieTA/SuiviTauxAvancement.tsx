@@ -1,13 +1,13 @@
 import { useMemo } from "react";
 import { getCouleurTerritoireParCode } from "@/client/utils/couleur/paletteTerritoires";
-import { AvancementTerritoireViewModel } from "@/server/chantiers/app/contrats/AvancementTerritoireContrat";
+import { TauxAvancementComparaisonTerritoireViewModel } from "@/server/chantiers/app/contrats/TauxAvancementComparaisonTerritoireViewModel";
 
 export const SuiviTauxAvancement = ({
   territoiresSelectionnes,
   onSupprimerTerritoire,
   territoireCode,
 }: {
-  territoiresSelectionnes: AvancementTerritoireViewModel[];
+  territoiresSelectionnes: TauxAvancementComparaisonTerritoireViewModel[];
   onSupprimerTerritoire: (territoireCode: string) => void;
   territoireCode: string;
 }) => {
@@ -15,13 +15,15 @@ export const SuiviTauxAvancement = ({
     () =>
       [...territoiresSelectionnes].sort((territoire1, territoire2) => {
         if (
-          territoire1.avancementAnnuel === null &&
-          territoire2.avancementAnnuel === null
+          territoire1.tauxAvancementJalon === null &&
+          territoire2.tauxAvancementJalon === null
         )
           return 0;
-        if (territoire1.avancementAnnuel === null) return 1;
-        if (territoire2.avancementAnnuel === null) return -1;
-        return territoire2.avancementAnnuel - territoire1.avancementAnnuel;
+        if (territoire1.tauxAvancementJalon === null) return 1;
+        if (territoire2.tauxAvancementJalon === null) return -1;
+        return (
+          territoire2.tauxAvancementJalon - territoire1.tauxAvancementJalon
+        );
       }),
     [territoiresSelectionnes],
   );
@@ -68,7 +70,7 @@ export const SuiviTauxAvancement = ({
 
             {territoire.estApplicable === false ? (
               <span className="col-span-2 text-center">Non applicable</span>
-            ) : territoire.avancementAnnuel === null ? (
+            ) : territoire.tauxAvancementJalon === null ? (
               <span className="col-span-2 text-center">Non renseigné</span>
             ) : (
               <>
@@ -76,7 +78,7 @@ export const SuiviTauxAvancement = ({
                   <div
                     className="h-full rounded-full"
                     style={{
-                      width: `${Math.min(territoire.avancementAnnuel, 100)}%`,
+                      width: `${Math.min(territoire.tauxAvancementJalon, 100)}%`,
                       backgroundColor: couleur,
                     }}
                   />
@@ -84,7 +86,7 @@ export const SuiviTauxAvancement = ({
 
                 <div className="whitespace-nowrap">
                   <span style={{ color: couleur }}>
-                    {territoire.avancementAnnuel.toFixed(0)} %
+                    {territoire.tauxAvancementJalon.toFixed(0)} %
                   </span>
                   <span className="text-[10px] !text-dsfr-grey-625">
                     {" "}

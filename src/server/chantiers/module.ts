@@ -10,7 +10,7 @@ import { PrismaPropositionValeurAvancementRepository } from "@/server/chantiers/
 import type { IndicateurTerritoireValeurEvenementExports } from "@/server/indicateur-territoire-valeur-evenement/module";
 import type { DatajobsExecutionExports } from "@/server/datajobs-execution/module";
 import { defineModule, type ExtractScope } from "@/server/module-system";
-import { LegacyExport } from "@/server/legacy/module";
+import type { LegacyExport } from "@/server/legacy/module";
 import { TerritoireRepository } from "./domain/ports/TerritoireRepository";
 import { PrismaTerritoireRepository } from "./infrastructure/adapters/PrismaTerritoireRepository";
 import { UtilisateurRepository } from "./domain/ports/UtilisateurRepository";

@@ -184,6 +184,64 @@ describe("RecupererAvancementsTerritoiresQuery", () => {
     );
 
     it(
+      "retourne true si tous les chantiers sont applicables",
+      createIntegrationTest(async () => {
+        // given
+        await fixtures.chantierIdentite({ id: "CH-008" });
+        await fixtures.chantierTerritoire({
+          id: "CH-008",
+          territoire_code: "DEPT-75",
+          maille: "DEPT",
+          code_insee: "75",
+          zone_id: "zone-1",
+          est_applicable: true,
+        });
+        await fixtures.chantierTerritoireJalon({
+          id: "CH-008",
+          territoire_code: "DEPT-75",
+          maille: "DEPT",
+          code_insee: "75",
+          zone_id: "zone-1",
+          jalon: 2025,
+        });
+
+        await fixtures.chantierIdentite({ id: "CH-009" });
+        await fixtures.chantierTerritoire({
+          id: "CH-009",
+          territoire_code: "DEPT-75",
+          maille: "DEPT",
+          code_insee: "75",
+          zone_id: "zone-1",
+          est_applicable: true,
+        });
+        await fixtures.chantierTerritoireJalon({
+          id: "CH-009",
+          territoire_code: "DEPT-75",
+          maille: "DEPT",
+          code_insee: "75",
+          zone_id: "zone-1",
+          jalon: 2025,
+        });
+
+        // when
+        const result = await query.run({
+          chantierIds: ["CH-008", "CH-009"],
+          jalon: 2025,
+        });
+
+        // then
+        expect(result).toEqual(
+          expect.arrayContaining([
+            expect.objectContaining({
+              territoireCode: "DEPT-75",
+              estApplicable: true,
+            }),
+          ]),
+        );
+      }),
+    );
+
+    it(
       "retourne null si au moins un chantier est applicable",
       createIntegrationTest(async () => {
         // given
