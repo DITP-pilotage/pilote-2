@@ -4,6 +4,7 @@ export interface Publication {
   contenu: string;
   dateCreation: string;
   dateModification: string;
+  auteurCreationNom: string;
   auteurModificationNom: string;
 }
 

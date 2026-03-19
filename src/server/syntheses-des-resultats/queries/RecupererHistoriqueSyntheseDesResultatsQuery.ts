@@ -8,6 +8,7 @@ export type SyntheseDesResultatsHistoriqueItem = {
   meteo: Meteo;
   dateCreation: string;
   dateModification: string;
+  auteurCreationNom: string;
   auteurModificationNom: string;
 };
 import type { Inject } from "@/server/syntheses-des-resultats/module";
@@ -41,6 +42,9 @@ export class RecupererHistoriqueSyntheseDesResultatsQuery {
       meteo: (synthese.meteo as Meteo) ?? "NON_RENSEIGNEE",
       dateCreation: synthese.date_creation.toISOString(),
       dateModification: synthese.date_modification.toISOString(),
+      auteurCreationNom: synthese.auteur_creation
+        ? `${synthese.auteur_creation.prenom} ${synthese.auteur_creation.nom}`
+        : "Auteur Inconnu",
       auteurModificationNom: synthese.auteur_modification
         ? `${synthese.auteur_modification.prenom} ${synthese.auteur_modification.nom}`
         : "Auteur Inconnu",

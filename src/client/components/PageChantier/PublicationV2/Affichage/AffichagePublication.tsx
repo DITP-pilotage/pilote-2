@@ -22,10 +22,8 @@ export const AffichagePublication = ({
     <>
       <p className="text-xs text-dsfr-mention-grey mb-1">
         {commentaire.dateCreation === commentaire.dateModification
-          ? `Publié le ${PiloteDateFormatter.isoDateFranceMetropolitaine(commentaire.dateCreation)}`
-          : `Publié le ${PiloteDateFormatter.isoDateFranceMetropolitaine(commentaire.dateCreation)} et modifié le ${PiloteDateFormatter.isoDateFranceMetropolitaine(commentaire.dateModification)}`}
-        {!!commentaire.auteurModificationNom &&
-          ` | Par ${commentaire.auteurModificationNom}`}
+          ? `Publié le ${PiloteDateFormatter.isoDateFranceMetropolitaine(commentaire.dateCreation)} | Par ${commentaire.auteurCreationNom}`
+          : `Publié le ${PiloteDateFormatter.isoDateFranceMetropolitaine(commentaire.dateCreation)} par ${commentaire.auteurCreationNom} et modifié le ${PiloteDateFormatter.isoDateFranceMetropolitaine(commentaire.dateModification)} par ${commentaire.auteurModificationNom}`}
       </p>
       {!!onModifier ? (
         <div className="flex items-center gap-1 mb-3">

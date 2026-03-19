@@ -61,10 +61,12 @@ describe("RecupererHistoriqueDecisionStrategiqueQuery", () => {
       expect(result).toEqual([
         expect.objectContaining({
           contenu: "Deuxième décision",
+          auteurCreationNom: "Jean Dupont",
           auteurModificationNom: "Jean Dupont",
         }),
         expect.objectContaining({
           contenu: "Première décision",
+          auteurCreationNom: "Jean Dupont",
           auteurModificationNom: "Jean Dupont",
         }),
       ]);

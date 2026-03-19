@@ -85,10 +85,12 @@ describe("RecupererHistoriqueSyntheseDesResultatsQuery", () => {
       expect(result).toEqual([
         expect.objectContaining({
           contenu: "Deuxième synthèse",
+          auteurCreationNom: "Jean Dupont",
           auteurModificationNom: "Jean Dupont",
         }),
         expect.objectContaining({
           contenu: "Première synthèse",
+          auteurCreationNom: "Jean Dupont",
           auteurModificationNom: "Jean Dupont",
         }),
       ]);

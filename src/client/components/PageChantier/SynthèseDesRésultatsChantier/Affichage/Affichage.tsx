@@ -36,10 +36,8 @@ const SynthèseDesRésultatsAffichage = ({
       <p className="text-xs text-dsfr-mention-grey mb-1">
         {synthèseDesRésultats.dateCreation ===
         synthèseDesRésultats.dateModification
-          ? `Publié le ${PiloteDateFormatter.isoDateFranceMetropolitaine(synthèseDesRésultats.dateCreation)}`
-          : `Publié le ${PiloteDateFormatter.isoDateFranceMetropolitaine(synthèseDesRésultats.dateCreation)} et modifié le ${PiloteDateFormatter.isoDateFranceMetropolitaine(synthèseDesRésultats.dateModification)}`}
-        {!!synthèseDesRésultats.auteurModificationNom &&
-          ` | Par ${synthèseDesRésultats.auteurModificationNom}`}
+          ? `Publié le ${PiloteDateFormatter.isoDateFranceMetropolitaine(synthèseDesRésultats.dateCreation)} | Par ${synthèseDesRésultats.auteurCreationNom}`
+          : `Publié le ${PiloteDateFormatter.isoDateFranceMetropolitaine(synthèseDesRésultats.dateCreation)} par ${synthèseDesRésultats.auteurCreationNom} et modifié le ${PiloteDateFormatter.isoDateFranceMetropolitaine(synthèseDesRésultats.dateModification)} par ${synthèseDesRésultats.auteurModificationNom}`}
       </p>
       {!!onModifier ? (
         <div className="flex items-center gap-1 mb-3">

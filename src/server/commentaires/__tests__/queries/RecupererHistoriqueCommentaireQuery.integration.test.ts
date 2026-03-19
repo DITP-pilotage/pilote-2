@@ -85,10 +85,12 @@ describe("RecupererHistoriqueCommentaireQuery", () => {
       expect(result).toEqual([
         expect.objectContaining({
           contenu: "Deuxième commentaire",
+          auteurCreationNom: "Jean Dupont",
           auteurModificationNom: "Jean Dupont",
         }),
         expect.objectContaining({
           contenu: "Premier commentaire",
+          auteurCreationNom: "Jean Dupont",
           auteurModificationNom: "Jean Dupont",
         }),
       ]);
