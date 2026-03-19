@@ -13,6 +13,7 @@ import { récupérerUnCookie } from "@/client/utils/cookies";
 import { Icone } from "@/components/_commons/Icone";
 import { ArrowLine1Icon } from "@/components/_commons/Icones/ArrowLine1Icon";
 import { useProfilUtilisateurConnecte } from "@/client/hooks/useProfilUtilisateurConnecte";
+import { PiloteDateFormatter } from "@/server/rapports-hebdomadaires/infrastructure/adapters/PiloteDateFormatter";
 import { useMonProfilFormulaire } from "./useMonProfilFormulaire";
 import { SelectService } from "./SelectService";
 import { useMonProfilForm } from "./form";
@@ -107,11 +108,6 @@ const PageMonProfilUtilisateurContent = () => {
   );
 };
 
-function formaterDateModification(dateISO: string): string {
-  const date = new Date(dateISO);
-  return `Modifié le ${date.toLocaleDateString("fr-FR")} à ${date.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}`;
-}
-
 export const PageMonProfilUtilisateur = () => {
   const [alerte, setAlerte] = useState<AlerteProps | null>(null);
   const mutationModifierMonProfil = useModifierProfilUtilisateur(setAlerte);
@@ -159,9 +155,7 @@ export const PageMonProfilUtilisateur = () => {
                     }
                   />
                   <p className="!text-sm !text-dsfr-mention-grey !mb-0">
-                    {formaterDateModification(
-                      profilUtilisateur.dateModification,
-                    )}
+                    {`Modifié le ${PiloteDateFormatter.isoDateTimeFranceMetropolitaine(profilUtilisateur.dateModification)}`}
                   </p>
                 </div>
               </Bloc>
