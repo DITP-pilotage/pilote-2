@@ -1,7 +1,7 @@
 import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
 import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
 import ObjectifRepository from "@/server/domain/chantier/objectif/ObjectifRepository.interface";
-import { modifierObjectif } from "@/server/domain/chantier/objectif/Objectif";
+import { modifierObjectifPublie } from "@/server/domain/chantier/objectif/Objectif";
 
 export class ModifierObjectifPublieUseCase {
   constructor(
@@ -36,7 +36,7 @@ export class ModifierObjectifPublieUseCase {
       "NAT-FR",
     );
 
-    const objectif = modifierObjectif(objectifAModifier, {
+    const objectif = modifierObjectifPublie(objectifAModifier, {
       contenu,
       auteurModificationId,
       dateModification,

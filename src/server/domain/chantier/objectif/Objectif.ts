@@ -38,10 +38,33 @@ export function creerObjectifBrouillon(params: ParamsCreation): ObjectifV2 {
   };
 }
 
-export function modifierObjectif(
+export function publierBrouillonObjectif(
   existing: ObjectifV2,
   params: ParamsModification,
 ): ObjectifV2 {
+  if (existing.statut !== $Enums.statut_publication.BROUILLON)
+    throw new Error(
+      `Statut invalide : attendu BROUILLON, reçu ${existing.statut}`,
+    );
+
+  return {
+    ...existing,
+    contenu: params.contenu,
+    auteurModificationId: params.auteurModificationId,
+    dateModification: params.dateModification,
+    statut: $Enums.statut_publication.PUBLIE,
+  };
+}
+
+export function modifierObjectifPublie(
+  existing: ObjectifV2,
+  params: ParamsModification,
+): ObjectifV2 {
+  if (existing.statut !== $Enums.statut_publication.PUBLIE)
+    throw new Error(
+      `Statut invalide : attendu PUBLIE, reçu ${existing.statut}`,
+    );
+
   return {
     ...existing,
     contenu: params.contenu,
@@ -55,6 +78,11 @@ export function modifierObjectifBrouillon(
   existing: ObjectifV2,
   params: ParamsModification,
 ): ObjectifV2 {
+  if (existing.statut !== $Enums.statut_publication.BROUILLON)
+    throw new Error(
+      `Statut invalide : attendu BROUILLON, reçu ${existing.statut}`,
+    );
+
   return {
     ...existing,
     contenu: params.contenu,
