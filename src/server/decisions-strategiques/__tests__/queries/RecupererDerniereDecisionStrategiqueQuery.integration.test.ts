@@ -78,6 +78,7 @@ describe("RecupererDerniereDecisionStrategiqueQuery", () => {
         dateCreation: new Date("2025-01-01").toISOString(),
         auteurModificationId: auteur.id,
         dateModification: new Date("2025-06-01").toISOString(),
+        auteurCreationNom: "Jean Dupont",
         auteurModificationNom: "Jean Dupont",
       });
     }),

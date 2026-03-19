@@ -64,10 +64,12 @@ describe("RecupererHistoriqueObjectifQuery", () => {
       expect(result).toEqual([
         expect.objectContaining({
           contenu: "Deuxième objectif",
+          auteurCreationNom: "Jean Dupont",
           auteurModificationNom: "Jean Dupont",
         }),
         expect.objectContaining({
           contenu: "Premier objectif",
+          auteurCreationNom: "Jean Dupont",
           auteurModificationNom: "Jean Dupont",
         }),
       ]);

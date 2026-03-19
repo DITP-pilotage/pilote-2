@@ -25,5 +25,6 @@ export type DecisionStrategiqueV2 = {
 };
 
 export type DecisionStrategiqueV2AvecNomsAuteurs = DecisionStrategiqueV2 & {
+  auteurCreationNom: string;
   auteurModificationNom: string;
 };

@@ -26,6 +26,7 @@ export type ObjectifV2 = {
 };
 
 export type ObjectifV2AvecNomAuteur = ObjectifV2 & {
+  auteurCreationNom: string;
   auteurModificationNom: string;
 };
 

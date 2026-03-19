@@ -33,7 +33,7 @@ export class RecupererDernierCommentaireQuery {
           territoire_code: territoireCode,
           statut: $Enums.statut_publication.PUBLIE,
         },
-        include: { auteur_modification: true },
+        include: { auteur_creation: true, auteur_modification: true },
         orderBy: { date_modification: "desc" },
       });
 
@@ -67,6 +67,9 @@ export class RecupererDernierCommentaireQuery {
             dateCreation: commentaire.date_creation.toISOString(),
             auteurModificationId: commentaire.auteur_modification_id ?? "",
             dateModification: commentaire.date_modification.toISOString(),
+            auteurCreationNom: commentaire.auteur_creation
+              ? `${commentaire.auteur_creation.prenom} ${commentaire.auteur_creation.nom}`
+              : "Auteur Inconnu",
             auteurModificationNom: commentaire.auteur_modification
               ? `${commentaire.auteur_modification.prenom} ${commentaire.auteur_modification.nom}`
               : "Auteur Inconnu",

@@ -22,6 +22,7 @@ export type CommentaireV2 = {
 };
 
 export type CommentaireAvecNomsAuteurs = CommentaireV2 & {
+  auteurCreationNom: string;
   auteurModificationNom: string;
 };
 

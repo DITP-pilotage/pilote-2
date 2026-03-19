@@ -1,6 +1,6 @@
 import { $Enums, type_objectif as TypeObjectifPrisma } from "@prisma/client";
 import ObjectifRepository from "@/server/domain/chantier/objectif/ObjectifRepository.interface";
-import {
+import Objectif, {
   ObjectifV2,
   TypeObjectif,
 } from "@/server/domain/chantier/objectif/Objectif.interface";
@@ -84,7 +84,7 @@ export default class ObjectifSQLRepository implements ObjectifRepository {
 
   async récupérerLesPlusRécentsGroupésParChantier(
     chantiersIds: Chantier["id"][],
-  ) {
+  ): Promise<Record<string, Objectif[]>> {
     const result = await this.prisma.objectif.groupBy({
       by: ["type", "chantier_id"],
       where: {
