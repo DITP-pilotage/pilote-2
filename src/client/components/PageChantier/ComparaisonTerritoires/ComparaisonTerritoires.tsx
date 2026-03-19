@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { MailleInterne } from "@/server/domain/maille/Maille.interface";
 import { ColonneMesuree } from "@/components/_commons/Widget/TuileWidget/TuileWidget";
 import { useComparaisonTerritoires } from "./useComparaisonTerritoires";
@@ -51,19 +52,21 @@ export const ComparaisonTerritoires = ({
           />
         </ColonneMesuree>
 
-        {estEnComparaison && panneauDroite !== null && (
+        {panneauDroite != null && (
           <ColonneMesuree>
-            <PanneauCarte
-              chantierId={chantierId}
-              jalon={jalon}
-              maille={maille}
-              territoireCode={territoireCode}
-              typeCarte={panneauDroite}
-              estEnComparaison={estEnComparaison}
-              onChangerType={(type) => changerTypeCarte("droite", type)}
-              onComparer={activerComparaison}
-              onSupprimer={() => supprimerPanneau("droite")}
-            />
+            <Suspense>
+              <PanneauCarte
+                chantierId={chantierId}
+                jalon={jalon}
+                maille={maille}
+                territoireCode={territoireCode}
+                typeCarte={panneauDroite}
+                estEnComparaison={estEnComparaison}
+                onChangerType={(type) => changerTypeCarte("droite", type)}
+                onComparer={activerComparaison}
+                onSupprimer={() => supprimerPanneau("droite")}
+              />
+            </Suspense>
           </ColonneMesuree>
         )}
       </div>

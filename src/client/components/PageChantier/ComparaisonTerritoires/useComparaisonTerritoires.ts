@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { startTransition, useState } from "react";
 import { TypeCarte } from "./ComparaisonTerritoires.interface";
 
 export const useComparaisonTerritoires = () => {
@@ -6,17 +6,19 @@ export const useComparaisonTerritoires = () => {
   const [panneauDroite, setPanneauDroite] = useState<TypeCarte | null>(null);
 
   const changerTypeCarte = (panneau: "gauche" | "droite", type: TypeCarte) => {
-    if (panneau === "gauche") {
-      if (panneauDroite === type) {
-        setPanneauDroite(panneauGauche);
+    startTransition(() => {
+      if (panneau === "gauche") {
+        if (panneauDroite === type) {
+          setPanneauDroite(panneauGauche);
+        }
+        setPanneauGauche(type);
+      } else {
+        if (panneauGauche === type) {
+          setPanneauGauche(panneauDroite!);
+        }
+        setPanneauDroite(type);
       }
-      setPanneauGauche(type);
-    } else {
-      if (panneauGauche === type) {
-        setPanneauGauche(panneauDroite!);
-      }
-      setPanneauDroite(type);
-    }
+    });
   };
 
   const activerComparaison = () => {
