@@ -77,6 +77,7 @@ tests/
 │   ├── page-chantier.ts
 │   ├── page-login.ts
 │   ├── page-mise-a-jour-donnees.ts
+│   ├── page-mon-profil-utilisateur.ts
 │   └── admin/
 │       ├── page-utilisateurs.ts
 │       ├── page-utilisateur-detail.ts
@@ -96,6 +97,8 @@ tests/
 │   │   └── unauthenticated-api.client.ts
 │   ├── authentification.spec.ts
 │   └── ...
+├── assets/                  # Gifs de démonstration des tests
+│   └── mon-profil-utilisateur.gif
 ├── login.spec.ts             # Fichiers de test UI
 ├── information-chantier.spec.ts
 └── ...
@@ -243,15 +246,15 @@ export class AppActions {
 ```typescript
 import { test } from "./fixtures";
 
-test("doit pouvoir consulter les données des chantiers", async ({ page, e2eContext }) => {
+test("doit pouvoir consulter les données des chantiers", async ({ page, e2eContext, step }) => {
   const appActions = new AppActions(page, e2eContext);
   const pageAccueil = await appActions.loginAs();
 
-  await test.step("Vérification de la structure de la page d'accueil", async () => {
+  await step("Vérification de la structure de la page d'accueil", async () => {
     await pageAccueil.expectStructure();
   });
 
-  await test.step("Navigation vers le chantier", async () => {
+  await step("Navigation vers le chantier", async () => {
     const pageChantier = await pageAccueil.selectChantier("Faciliter l'efficacité opérationnelle");
     await pageChantier.expectTitle("155", "Faciliter l'efficacité opérationnelle");
     await pageChantier.expectStructure();
@@ -281,6 +284,7 @@ Le `E2ETestContext` est un registre d'actions effectuées pendant un test. Il pe
 | `RAPPORT_IMPORT_CREE` | Suppression en cascade : mesures, temporaires, erreurs, rapport | `PageMiseAJourDonnees` |
 | `MESURE_INDICATEUR_IMPORTEE` | Suppression des mesures importées | Usage direct si nécessaire |
 | `UTILISATEUR_DESACTIVE` | Restauration de `date_desactivation` à `null` | `PageUtilisateurDetail` |
+| `PROFIL_UTILISATEUR_MODIFIE` | Restauration des champs du profil à leur valeur originale | `PageMonProfilUtilisateur` |
 
 **Implémentation :**
 
@@ -390,15 +394,50 @@ export class E2ETestContext {
 2. **La fixture Playwright** :
 ```typescript
 // tests/fixtures.ts
-import { test as base } from "@playwright/test";
+import { Page, test as base } from "@playwright/test";
 import { E2ETestContext } from "./e2e-test-context";
 
-export const test = base.extend<{ e2eContext: E2ETestContext }>({
-  // eslint-disable-next-line no-empty-pattern, react-hooks/rules-of-hooks
+type Step = (stepName: string, fn: () => Promise<void>) => Promise<void>;
+
+// Quand E2E_VIDEO=on, chaque step affiche un bandeau visible dans la vidéo
+const videoEnabled = process.env.E2E_VIDEO === "on";
+const BANNER_DISPLAY_MS = 1500;
+
+function createStep(page: Page): Step {
+  return async (stepName, fn) => {
+    await base.step(stepName, async () => {
+      if (videoEnabled) {
+        await page.evaluate((text) => {
+          const existing = document.getElementById("e2e-step-banner");
+          if (existing) existing.remove();
+          const banner = document.createElement("div");
+          banner.id = "e2e-step-banner";
+          banner.textContent = text;
+          Object.assign(banner.style, {
+            position: "fixed", top: "0", left: "0", right: "0",
+            zIndex: "99999", background: "#1e1e2e", color: "#fff",
+            padding: "8px 16px", fontSize: "14px", fontFamily: "monospace",
+          });
+          document.body.appendChild(banner);
+        }, stepName).catch(() => {});
+        await page.waitForTimeout(BANNER_DISPLAY_MS);
+      }
+      await fn();
+    });
+  };
+}
+
+export const test = base.extend<{
+  e2eContext: E2ETestContext;
+  step: Step;
+}>({
   e2eContext: async ({}, use) => {
     const context = new E2ETestContext();
     await use(context);
     await context.cleanup();
+  },
+  step: async ({ page }, use) => {
+    await use(createStep(page));
   },
 });
 ```
@@ -518,6 +557,30 @@ test("Coordinateur département propose, Direction accepte", async ({
 - Pour les mutations d'état (ex : désactivation d'utilisateur), le cleanup restaure l'état initial au lieu de supprimer
 
 **Exemple de référence** : `tests/proposition-valeur-avancement.spec.ts`
+
+### Bandeau vidéo et génération de gifs
+
+La fixture `step` remplace `test.step` et ajoute, quand `E2E_VIDEO=on`, un bandeau visible en haut de la page avec le nom du step en cours. Cela permet de générer des gifs de démonstration lisibles pour les PR GitHub et les tickets Jira.
+
+**Activation :**
+```bash
+E2E_VIDEO=on npx playwright test mon-test.spec.ts --project=chromium
+```
+
+La variable `E2E_VIDEO` active deux comportements dans `playwright.config.ts` et `fixtures.ts` :
+- `video: "on"` au lieu de `"retain-on-failure"` (enregistre la vidéo même en cas de succès)
+- Injection d'un bandeau avec le nom du step + pause de 1.5s pour la lisibilité
+
+**Génération du gif :**
+```bash
+ffmpeg -i video.webm -vf "setpts=2*PTS,fps=10,scale=800:-1:flags=lanczos" -y tests/assets/<nom>.gif
+```
+
+- `setpts=2*PTS` : ralentit la vidéo par 2
+- `fps=10` : 10 images/seconde (bon compromis taille/fluidité)
+- `scale=800:-1` : largeur 800px, hauteur proportionnelle
+
+Les gifs sont stockés dans `tests/assets/` et référencés dans les PR GitHub et les commentaires Jira.
 
 ### API Object Model (tests API)
 
