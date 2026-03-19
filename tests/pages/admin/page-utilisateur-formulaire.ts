@@ -9,6 +9,13 @@ export class PageUtilisateurFormulaire extends BasePage {
     ).toBeVisible({ timeout: 30_000 });
   }
 
+  async gotoModifierDepuisFiche(): Promise<void> {
+    await this.page.getByRole("link", { name: "Modifier" }).click();
+    await expect(
+      this.page.getByRole("heading", { name: "Identification" }),
+    ).toBeVisible({ timeout: 30_000 });
+  }
+
   private get emailInput() {
     return this.page.getByRole("textbox", { name: "Adresse électronique" });
   }
@@ -84,5 +91,15 @@ export class PageUtilisateurFormulaire extends BasePage {
 
   async expectPasErreurService(): Promise<void> {
     await expect(this.blocService.locator(".fr-error-text")).not.toBeVisible();
+  }
+
+  async confirmer(): Promise<void> {
+    await this.page.getByRole("button", { name: "Confirmer" }).click();
+  }
+
+  async expectSuccesModification(): Promise<void> {
+    await expect(this.page.locator(".fr-alert--success")).toBeVisible({
+      timeout: 10_000,
+    });
   }
 }

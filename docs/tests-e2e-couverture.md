@@ -520,6 +520,28 @@ Profil : `ditp.admin@example.com` (DITP_ADMIN)
 - Remplissage du champ Fonction et sélection d'un Service
 - Clic sur "Suivant" : vérification que la soumission passe (pas d'erreur de validation)
 
+### Test 2 : Validation à la modification et modale "Complétez votre profil"
+
+Profils : `coordinateur.region@example.com` (COORDINATEUR_REGION) et `ditp.admin@example.com` (DITP_ADMIN)
+
+**Modale présente avant complétion :**
+
+- Connexion en tant que coordinateur régional (sans service ni fonction)
+- Vérification que la modale "Complétez votre profil" apparaît
+
+**Modification via l'admin :**
+
+- Switch vers DITP Admin
+- Navigation vers la fiche du coordinateur et clic sur "Modifier"
+- Clic sur "Suivant" : vérification que les erreurs de validation apparaissent sur Service et Fonction
+- Remplissage du champ Fonction et sélection d'un Service
+- Clic sur "Suivant" : vérification que les erreurs disparaissent
+
+**Modale absente après complétion :**
+
+- Re-connexion en tant que coordinateur régional
+- Vérification que la modale "Complétez votre profil" ne réapparaît plus
+
 ---
 
 ## 9. Gestion des paramètres des indicateurs — Listing
