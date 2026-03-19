@@ -42,8 +42,8 @@ export const validationInfosBaseUtilisateur = z
     email: z.string().email().min(1).max(100),
     nom: z.string().min(1).max(100),
     prénom: z.string().min(1).max(100),
-    fonction: z.string().min(1).max(100),
-    service: z.string().min(1),
+    fonction: z.string().trim().min(1).max(100),
+    service: z.string().trim().min(1),
     serviceAutre: z
       .string()
       .max(200)
@@ -90,8 +90,8 @@ export const validationInfosBaseUtilisateurSecretariatGeneral = z
       }),
     nom: z.string().min(1).max(100),
     prénom: z.string().min(1).max(100),
-    fonction: z.string().min(1).max(100),
-    service: z.string().min(1),
+    fonction: z.string().trim().min(1).max(100),
+    service: z.string().trim().min(1),
     serviceAutre: z
       .string()
       .max(200)
@@ -157,8 +157,8 @@ export const validationInfosBaseUtilisateurCoordinateur = (
         ),
       nom: z.string().min(1).max(100),
       prénom: z.string().min(1).max(100),
-      fonction: z.string().min(1).max(100),
-      service: z.string().min(1),
+      fonction: z.string().trim().min(1).max(100),
+      service: z.string().trim().min(1),
       serviceAutre: z
         .string()
         .max(200)
