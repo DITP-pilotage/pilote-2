@@ -1,5 +1,6 @@
 import { getCouleurTerritoireParCode } from "@/client/utils/couleur/paletteTerritoires";
 import { TauxAvancementComparaisonTerritoireViewModel } from "@/server/chantiers/app/contrats/TauxAvancementComparaisonTerritoireViewModel";
+import { PiloteDateFormatter } from "@/server/rapports-hebdomadaires/infrastructure/adapters/PiloteDateFormatter";
 import { useTerritoiresTries } from "./useTerritoiresTries";
 
 export const TableauTauxAvancement = ({
@@ -16,15 +17,15 @@ export const TableauTauxAvancement = ({
   const territoiresTries = useTerritoiresTries(territoiresSelectionnes);
 
   return (
-    <div className="text-xs">
-      <div className="grid grid-cols-[120px_1fr] border-b pb-1 mb-1">
+    <div className="text-xs border-b border-b-black">
+      <div className="grid grid-cols-[120px_1fr] border-b py-1 border-y border-b-black">
         <div />
         <div className="text-center font-bold">{jalon}</div>
       </div>
       {territoiresTries.map((territoire) => {
         const dateMaj = territoire.dateTauxAvancementAnnuel
-          ? new Date(territoire.dateTauxAvancementAnnuel).toLocaleDateString(
-              "fr-FR",
+          ? PiloteDateFormatter.isoMonthFranceMetropolitaine(
+              territoire.dateTauxAvancementAnnuel,
             )
           : "—";
         const estInitial = territoire.territoireCode === territoireCode;
@@ -33,7 +34,7 @@ export const TableauTauxAvancement = ({
         return (
           <div
             key={territoire.territoireCode}
-            className="grid grid-cols-[120px_1fr] items-center py-2 border-b"
+            className="grid grid-cols-[120px_1fr] items-center py-2 border-b font-medium"
           >
             <div className="flex items-center gap-1">
               <span

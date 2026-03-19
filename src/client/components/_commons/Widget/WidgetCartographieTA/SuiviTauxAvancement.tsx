@@ -27,7 +27,7 @@ export const SuiviTauxAvancement = ({
         return (
           <div
             key={territoire.territoireCode}
-            className="grid grid-cols-[120px_1fr_auto] items-center py-2"
+            className="grid grid-cols-[120px_1fr_auto] items-center py-2 font-medium"
           >
             <div className="flex items-center gap-1">
               <span
