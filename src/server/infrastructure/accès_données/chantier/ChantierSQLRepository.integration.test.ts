@@ -2,14 +2,19 @@ import { chantier_territoire_jalon } from "@prisma/client";
 import Utilisateur from "@/server/domain/utilisateur/Utilisateur.interface";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
 import { prisma } from "@/server/db/prisma";
+import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { FiltreQueryParams } from "@/server/chantiers/app/contrats/FiltreQueryParams";
 import ChantierSQLRepository from "./ChantierSQLRepository";
+
+const prismaPilote = new PrismaPilote();
 
 describe("ChantierSQLRepository", () => {
   let prismaChantierRepository: ChantierSQLRepository;
 
   beforeEach(() => {
-    prismaChantierRepository = new ChantierSQLRepository();
+    prismaChantierRepository = new ChantierSQLRepository({
+      prisma: prismaPilote,
+    });
   });
 
   describe("#récupérerLesEntréesDUnChantier", () => {

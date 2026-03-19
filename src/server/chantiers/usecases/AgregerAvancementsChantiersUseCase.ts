@@ -19,7 +19,10 @@ export class AgregerAvancementsChantiersUseCase {
   async run(
     chantierIds: string[],
     jalon: number,
-  ): Promise<{ agregat: AgregatParTerritoire; chantiers: ChantierPourAgregation[] }> {
+  ): Promise<{
+    agregat: AgregatParTerritoire;
+    chantiers: ChantierPourAgregation[];
+  }> {
     const chantiers =
       await this.chantierRepository.recupererDonneesAvancementChantiers(
         chantierIds,
