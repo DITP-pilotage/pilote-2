@@ -73,11 +73,7 @@ import { RécupérerTerritoireParCodeUseCase } from "@/server/fiche-territoriale
 import { RécupérerTauxAvancementTerritoireUseCase } from "@/server/fiche-territoriale/usecases/RécupérerTauxAvancementTerritoireUseCase";
 import { RécupérerRépartitionMétéoUseCase } from "@/server/fiche-territoriale/usecases/RécupérerRépartitionMétéoUseCase";
 import { RécupérerListeChantierFicheTerritorialeUseCase } from "@/server/fiche-territoriale/usecases/RécupérerListeChantierFicheTerritorialeUseCase";
-import {
-  defineModule,
-  type ExtractScope,
-  type NoExports,
-} from "@/server/module-system";
+import { defineModule, type ExtractScope } from "@/server/module-system";
 
 export type LegacyExport = {
   agregerAvancementsChantiersUseCase: AgregerAvancementsChantiersUseCase;

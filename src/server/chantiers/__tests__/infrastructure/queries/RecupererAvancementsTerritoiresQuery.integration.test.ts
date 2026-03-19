@@ -106,7 +106,10 @@ describe("RecupererAvancementsTerritoiresQuery", () => {
         });
 
         // when
-        const result = await query.run({ chantierIds: ["CH-003"], jalon: 2025 });
+        const result = await query.run({
+          chantierIds: ["CH-003"],
+          jalon: 2025,
+        });
 
         // then
         expect(result).toEqual(
