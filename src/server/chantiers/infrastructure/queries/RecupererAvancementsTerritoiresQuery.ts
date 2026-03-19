@@ -1,6 +1,10 @@
+import { ChantierPourAgregation } from "@/client/utils/chantier/agrégateurListeChantiers/agregateur";
 import { AvancementTerritoireViewModel } from "@/server/chantiers/app/contrats/AvancementTerritoireContrat";
 import { Inject } from "@/server/chantiers/module";
-import { MailleTerritoireSelectionne } from "@/server/domain/maille/Maille.interface";
+import {
+  Maille,
+  MailleTerritoireSelectionne,
+} from "@/server/domain/maille/Maille.interface";
 
 export class RecupererAvancementsTerritoiresQuery {
   constructor(
@@ -45,30 +49,57 @@ export class RecupererAvancementsTerritoiresQuery {
           codeInsee: territoireCode,
           maille: mailleCode,
           avancementAnnuel: territoire.repartition.avancements.annuel.moyenne,
-          estApplicable: chantiers.some(
-            (chantier) =>
-              chantier.mailles[maille][territoireCode]?.estApplicable !== false,
-          )
-            ? null
-            : chantiers.some(
-                  (chantier) => territoireCode in chantier.mailles[maille],
-                )
-              ? false
-              : null,
-          dateTauxAvancementAnnuel: chantiers.reduce<string | null>(
-            (max, chantier) => {
-              const date =
-                chantier.mailles[maille][territoireCode]
-                  ?.dateTauxAvancementAnnuel ?? null;
-              if (date === null) return max;
-              return max === null || date > max ? date : max;
-            },
-            null,
-          ),
+          estApplicable: this._calculerEstApplicable({
+            chantiers,
+            maille,
+            territoireCode,
+          }),
+          dateTauxAvancementAnnuel: this._calculerDateTauxAvancementAnnuel({
+            chantiers,
+            maille,
+            territoireCode,
+          }),
         });
       }
     }
 
     return result;
+  }
+
+  private _calculerEstApplicable({
+    chantiers,
+    maille,
+    territoireCode,
+  }: {
+    chantiers: ChantierPourAgregation[];
+    maille: Maille;
+    territoireCode: string;
+  }): boolean | null {
+    return chantiers.some(
+      (chantier) =>
+        chantier.mailles[maille][territoireCode]?.estApplicable !== false,
+    )
+      ? null
+      : chantiers.some((chantier) => territoireCode in chantier.mailles[maille])
+        ? false
+        : null;
+  }
+
+  private _calculerDateTauxAvancementAnnuel({
+    chantiers,
+    maille,
+    territoireCode,
+  }: {
+    chantiers: ChantierPourAgregation[];
+    maille: Maille;
+    territoireCode: string;
+  }): string | null {
+    return chantiers.reduce<string | null>((max, chantier) => {
+      const date =
+        chantier.mailles[maille][territoireCode]?.dateTauxAvancementAnnuel ??
+        null;
+      if (date === null) return max;
+      return max === null || date > max ? date : max;
+    }, null);
   }
 }
