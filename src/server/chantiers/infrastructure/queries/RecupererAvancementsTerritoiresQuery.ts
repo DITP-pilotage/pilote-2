@@ -75,14 +75,17 @@ export class RecupererAvancementsTerritoiresQuery {
     maille: Maille;
     territoireCode: string;
   }): boolean | null {
-    return chantiers.some(
+    const auMoinsUnChantierPotentiellementApplicable = chantiers.some(
       (chantier) =>
         chantier.mailles[maille][territoireCode]?.estApplicable !== false,
-    )
-      ? null
-      : chantiers.some((chantier) => territoireCode in chantier.mailles[maille])
-        ? false
-        : null;
+    );
+    const territoireExisteDansAuMoinsUnChantier = chantiers.some(
+      (chantier) => territoireCode in chantier.mailles[maille],
+    );
+
+    if (auMoinsUnChantierPotentiellementApplicable) return null;
+    if (territoireExisteDansAuMoinsUnChantier) return false;
+    return null;
   }
 
   private _calculerDateTauxAvancementAnnuel({
