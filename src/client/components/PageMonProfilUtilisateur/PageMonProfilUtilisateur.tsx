@@ -12,6 +12,8 @@ import api from "@/server/infrastructure/api/trpc/api";
 import { récupérerUnCookie } from "@/client/utils/cookies";
 import { Icone } from "@/components/_commons/Icone";
 import { ArrowLine1Icon } from "@/components/_commons/Icones/ArrowLine1Icon";
+import { useProfilUtilisateurConnecte } from "@/client/hooks/useProfilUtilisateurConnecte";
+import { PiloteDateFormatter } from "@/server/rapports-hebdomadaires/infrastructure/adapters/PiloteDateFormatter";
 import { useMonProfilFormulaire } from "./useMonProfilFormulaire";
 import { SelectService } from "./SelectService";
 import { useMonProfilForm } from "./form";
@@ -110,6 +112,7 @@ export const PageMonProfilUtilisateur = () => {
   const [alerte, setAlerte] = useState<AlerteProps | null>(null);
   const mutationModifierMonProfil = useModifierProfilUtilisateur(setAlerte);
   const form = useMonProfilFormulaire();
+  const profilUtilisateur = useProfilUtilisateurConnecte();
 
   const soumettreFormulaire = (data: MonProfilUtilisateurFormInputs) => {
     mutationModifierMonProfil.mutate({
@@ -140,7 +143,7 @@ export const PageMonProfilUtilisateur = () => {
 
                 <PageMonProfilUtilisateurContent />
 
-                <div className="flex justify-end">
+                <div className="flex flex-col items-end gap-2">
                   <SubmitBouton
                     disabled={mutationModifierMonProfil.isPending}
                     label="Enregistrer"
@@ -151,6 +154,9 @@ export const PageMonProfilUtilisateur = () => {
                       />
                     }
                   />
+                  <p className="!text-sm !text-dsfr-mention-grey !mb-0">
+                    {`Modifié le ${PiloteDateFormatter.isoDateTimeFranceMetropolitaine(profilUtilisateur.dateModification)}`}
+                  </p>
                 </div>
               </Bloc>
             </form>

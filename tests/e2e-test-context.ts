@@ -20,7 +20,8 @@ type ActionType =
   | "COMMENTAIRE_CREE"
   | "MESURE_INDICATEUR_IMPORTEE"
   | "RAPPORT_IMPORT_CREE"
-  | "UTILISATEUR_DESACTIVE";
+  | "UTILISATEUR_DESACTIVE"
+  | "PROFIL_UTILISATEUR_MODIFIE";
 
 interface TrackedAction {
   type: ActionType;
@@ -87,6 +88,12 @@ export class E2ETestContext {
           await prisma.utilisateur.updateMany({
             where: action.filters,
             data: { date_desactivation: null },
+          });
+          break;
+        case "PROFIL_UTILISATEUR_MODIFIE":
+          await prisma.utilisateur.updateMany({
+            where: { email: action.filters.email as string },
+            data: action.filters.originalData as Record<string, unknown>,
           });
           break;
       }

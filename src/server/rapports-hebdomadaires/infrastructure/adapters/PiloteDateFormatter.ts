@@ -26,6 +26,18 @@ export class PiloteDateFormatter {
   }
 
   /**
+   * Convertit une date ISO UTC en format français date + heure (dd/MM/yyyy 'à' HH:mm) avec timezone Europe/Paris
+   * @example
+   * PiloteDateFormatter.isoDateTimeFranceMetropolitaine("2025-01-15T16:31:00Z")
+   * // retourne "15/01/2025 à 17:31"
+   */
+  static isoDateTimeFranceMetropolitaine(dateISO: string): string {
+    return DateTime.fromISO(dateISO, { zone: "utc" })
+      .setZone("Europe/Paris")
+      .toFormat("dd/MM/yyyy 'à' HH:mm");
+  }
+
+  /**
    * Formate une date en français long avec "1er" pour le premier jour du mois
    * @example
    * PiloteDateFormatter.dateFrancaiseLongue(new Date("2025-01-01"))

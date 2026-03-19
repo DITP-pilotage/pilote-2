@@ -692,6 +692,38 @@ Profil : `ditp.admin@example.com` (DITP_ADMIN)
 
 ---
 
+## 10. Mon profil utilisateur
+
+**Fichier :** `tests/mon-profil-utilisateur.spec.ts`
+
+**Structure de la page :**
+
+- Connexion et navigation vers la page "Mon profil utilisateur"
+- Vérification du titre "Mon profil utilisateur"
+- Vérification de la section "Identification" avec la mention "Tous les champs sont obligatoires."
+- Vérification de la présence des champs du formulaire : Adresse électronique, Prénom, Nom, Service, Fonction
+- Vérification que le champ "Adresse électronique" est désactivé (lecture seule)
+- Vérification que les champs Prénom, Nom et Fonction sont pré-remplis avec les données de l'utilisateur connecté
+- Vérification de la présence du bouton "Enregistrer"
+- Vérification que la mention "Modifié le JJ/MM/AAAA à HH:MM" est affichée sous le bouton "Enregistrer"
+
+**Sélection du service "Autre" :**
+
+- Sélection de "Autre" dans le champ "Service"
+- Vérification que le champ "Précisez votre service" apparaît
+- Vérification du message d'aide : "Afin de nous aider à compléter cette liste, merci de nous indiquer votre rattachement. Cette information ne sera pas publiée dans un premier temps."
+
+**Modification du profil :**
+
+- Modification du champ "Fonction" et soumission du formulaire
+- Vérification de l'alerte de succès : "Vos informations ont été modifiées avec succès"
+- Vérification que la date de modification est mise à jour après l'enregistrement
+
+**Isolation entre utilisateurs :**
+
+- Connexion avec un autre profil et navigation vers "Mon profil utilisateur"
+- Vérification que les informations affichées correspondent bien à ce second utilisateur et n'ont pas été impactées par la modification précédente
+
 ## Matrice profils × tests
 
 Légende : ✓ = profil utilisé dans ce test
@@ -722,6 +754,7 @@ Légende : ✓ = profil utilisé dans ce test
 | 7.8 Gestion - Multi-territoires         |            |      ✓      |             |           |             |             |                 |
 | 8. Indicateurs - Listing                |     ✓      |      ✓      |             |           |             |             |        ✓        |
 | 9. Indicateurs - Formulaire             |     ✓      |      ✓      |             |           |             |             |        ✓        |
+| 10. Mon profil utilisateur              |     ✓      |      ✓      |             |           |             |             |                 |
 
 **Identifiants des profils :**
 

@@ -39,6 +39,7 @@ describe("GetProfilUtilisateurQuery", () => {
           perimetreMinisteriel: null,
           service: "prefecture-de-region",
           serviceAutre: null,
+          dateModification: utilisateur.date_modification.toISOString(),
         });
       }),
     );
@@ -73,6 +74,7 @@ describe("GetProfilUtilisateurQuery", () => {
           perimetreMinisteriel: null,
           service: null,
           serviceAutre: null,
+          dateModification: utilisateur.date_modification.toISOString(),
         });
       }),
     );
