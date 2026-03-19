@@ -5,7 +5,6 @@ import { CartographieV2 } from "@/components/_commons/CartographieV2/Cartographi
 import { LegendeCartographie } from "@/components/_commons/CartographieV2/LegendeCartographie";
 import { EqualizerIcon } from "@/components/_commons/Icones/EqualizerIcon";
 import { GridIcon } from "@/components/_commons/Icones/GridIcon";
-import { LineChartIcon } from "@/components/_commons/Icones/LineChartIcon";
 import { BaseCartographieWidgetLayout } from "@/components/_commons/Widget/BaseCartographieWidgetLayout";
 import api from "@/server/infrastructure/api/trpc/api";
 import { useSelectionTerritoires } from "@/components/_commons/Widget/WidgetCartographieMeteo/useSelectionTerritoires";
@@ -13,9 +12,10 @@ import { AjouterTerritoirePicker } from "@/components/_commons/Widget/AjouterTer
 import { useDonneesCartographieTA } from "./useDonneesCartographieTA";
 import { useLegendeTA } from "./useLegendeTA";
 import { SuiviTauxAvancement } from "./SuiviTauxAvancement";
+import { TableauTauxAvancement } from "./TableauTauxAvancement";
 import { ValeursRemarquables } from "./ValeursRemarquables";
 
-type VueCartographieTA = "situation" | "tableau" | "courbes";
+type VueCartographieTA = "situation" | "tableau";
 
 export const WidgetCartographieTA = ({
   chantierIds,
@@ -88,10 +88,6 @@ export const WidgetCartographieTA = ({
           <GridIcon className="w-3 h-3" />
           évolution temporelle - tableau
         </PillToggleGroup.Item>
-        <PillToggleGroup.Item value="courbes">
-          <LineChartIcon className="w-3 h-3" />
-          évolution temporelle - courbes
-        </PillToggleGroup.Item>
       </PillToggleGroup.Root>
 
       {vueActive === "situation" && (
@@ -99,6 +95,14 @@ export const WidgetCartographieTA = ({
           territoireCode={territoireCode}
           onSupprimerTerritoire={supprimerTerritoire}
           territoiresSelectionnes={territoiresSelectionnes}
+        />
+      )}
+      {vueActive === "tableau" && (
+        <TableauTauxAvancement
+          territoireCode={territoireCode}
+          onSupprimerTerritoire={supprimerTerritoire}
+          territoiresSelectionnes={territoiresSelectionnes}
+          jalon={jalon}
         />
       )}
       <AjouterTerritoirePicker
