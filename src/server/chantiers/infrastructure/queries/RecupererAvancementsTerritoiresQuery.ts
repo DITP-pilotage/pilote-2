@@ -55,7 +55,16 @@ export class RecupererAvancementsTerritoiresQuery {
                 )
               ? false
               : null,
-          dateTauxAvancementAnnuel: territoire.dateTauxAvancementAnnuel,
+          dateTauxAvancementAnnuel: chantiers.reduce<string | null>(
+            (max, chantier) => {
+              const date =
+                chantier.mailles[maille][territoireCode]
+                  ?.dateTauxAvancementAnnuel ?? null;
+              if (date === null) return max;
+              return max === null || date > max ? date : max;
+            },
+            null,
+          ),
         });
       }
     }
