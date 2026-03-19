@@ -6,10 +6,8 @@ import { Maille } from "@/server/domain/maille/Maille.interface";
 import Alerte from "@/components/_commons/Alerte/Alerte";
 import CartographieAvecSelecteur from "@/components/_commons/Cartographie/CartographieAvecSelecteur/CartographieAvecSelecteur";
 import { pageChantier } from "@/components/PageChantier/PageChantierServerSideContext";
-import { WidgetCartographieMeteo } from "@/components/_commons/Widget/WidgetCartographieMeteo/WidgetCartographieMeteo";
-import { WidgetCartographieTA } from "@/components/_commons/Widget/WidgetCartographieTA/WidgetCartographieTA";
 import { useEnv } from "@/client/hooks/useEnv";
-import { TuileWidget } from "@/components/_commons/Widget/TuileWidget/TuileWidget";
+import { ComparaisonTerritoires } from "@/components/PageChantier/ComparaisonTerritoires/ComparaisonTerritoires";
 
 export type CartographieType =
   | "avancementJalon"
@@ -113,24 +111,14 @@ const Cartes: FunctionComponent<CartesProps> = ({
           </div>
         ) : null}
       </CartesStyled>
-      {featureComparaisonTerritoires &&
-      cartographieDroiteChantier === "meteo" ? (
+      {featureComparaisonTerritoires ? (
         <div className="mt-4">
-          <TuileWidget titre="Comparaison territoriale et évolution">
-            <WidgetCartographieTA
-              chantierIds={[chantier.id]}
-              jalon={jalon}
-              maille={mailleQuery}
-              territoireCode={territoireCode}
-            />
-
-            <WidgetCartographieMeteo
-              chantierId={chantier.id}
-              jalon={jalon}
-              maille={mailleQuery}
-              territoireCode={territoireCode}
-            />
-          </TuileWidget>
+          <ComparaisonTerritoires
+            chantierId={chantier.id}
+            jalon={jalon}
+            maille={mailleQuery}
+            territoireCode={territoireCode}
+          />
         </div>
       ) : null}
     </>

@@ -7,7 +7,7 @@ type TuileWidgetProps = {
   children: ReactNode;
 };
 
-const ColonneMesuree = ({ children }: { children: ReactNode }) => {
+export const ColonneMesuree = ({ children }: { children: ReactNode }) => {
   const ref = useRef<HTMLDivElement>(null);
   const largeur = useContainerWidth(ref);
 
