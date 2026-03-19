@@ -501,7 +501,28 @@ Légende : ✓ modifiable | 🔒 bandeau restriction | — non visible | ✗ pas
 
 ---
 
-## 8. Gestion des paramètres des indicateurs — Listing
+## 8. Création / modification des comptes utilisateurs
+
+**Fichier :** `tests/admin-gestion-utilisateurs-formulaire.spec.ts`
+
+### Test 1 : Validation des champs obligatoires Service et Fonction
+
+Profil : `ditp.admin@example.com` (DITP_ADMIN)
+
+**Création — champs manquants :**
+
+- Navigation vers la page de création d'un compte (`/admin/utilisateur/creer`)
+- Remplissage des champs email, nom, prénom, profil mais sans service ni fonction
+- Clic sur "Suivant" : vérification que la soumission est bloquée avec les erreurs de validation sur Service et Fonction
+
+**Création — champs remplis :**
+
+- Remplissage du champ Fonction et sélection d'un Service
+- Clic sur "Suivant" : vérification que la soumission passe (pas d'erreur de validation)
+
+---
+
+## 9. Gestion des paramètres des indicateurs — Listing
 
 **Fichier :** `tests/admin-indicateurs-listing.spec.ts`
 
@@ -566,7 +587,7 @@ Profil : `ditp.admin@example.com` (DITP_ADMIN)
 
 ---
 
-## 9. Gestion des paramètres des indicateurs — Formulaire
+## 10. Gestion des paramètres des indicateurs — Formulaire
 
 **Fichier :** `tests/admin-indicateurs-formulaire.spec.ts`
 
@@ -692,7 +713,7 @@ Profil : `ditp.admin@example.com` (DITP_ADMIN)
 
 ---
 
-## 10. Mon profil utilisateur
+## 11. Mon profil utilisateur
 
 **Fichier :** `tests/mon-profil-utilisateur.spec.ts`
 
@@ -752,9 +773,10 @@ Légende : ✓ = profil utilisé dans ce test
 | 7.6 Gestion - Désactiver/réactiver      |     ✓      |             |             |           |             |             |                 |
 | 7.7 Gestion - Filtres                   |     ✓      |             |             |           |             |             |                 |
 | 7.8 Gestion - Multi-territoires         |            |      ✓      |             |           |             |             |                 |
-| 8. Indicateurs - Listing                |     ✓      |      ✓      |             |           |             |             |        ✓        |
-| 9. Indicateurs - Formulaire             |     ✓      |      ✓      |             |           |             |             |        ✓        |
-| 10. Mon profil utilisateur              |     ✓      |      ✓      |             |           |             |             |                 |
+| 8. Création/modif - Validation          |     ✓      |             |             |           |             |             |                 |
+| 9. Indicateurs - Listing                |     ✓      |      ✓      |             |           |             |             |        ✓        |
+| 10. Indicateurs - Formulaire            |     ✓      |      ✓      |             |           |             |             |        ✓        |
+| 11. Mon profil utilisateur              |     ✓      |      ✓      |             |           |             |             |                 |
 
 **Identifiants des profils :**
 
