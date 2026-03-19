@@ -229,7 +229,6 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
             />
           </TuileWidget>
         ) : null}
-        )
         {!chantiersSontArchives && (
           <div className="fr-pt-2w fr-px-2w fr-px-md-0 alertes">
             <div className="fr-mb-2w">

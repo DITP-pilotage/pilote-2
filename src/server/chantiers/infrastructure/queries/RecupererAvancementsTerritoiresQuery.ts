@@ -9,6 +9,7 @@ import {
 export class RecupererAvancementsTerritoiresQuery {
   constructor(
     private readonly deps: Inject<
+      // TODO : expliquer que normalement on ne doit pas dépendre d'un use case mais on l'autorise pour des raisons legacy (l'autre truc est plus un domaine service)
       "agregerAvancementsChantiersUseCase" | "territoireRepository"
     >,
   ) {}
