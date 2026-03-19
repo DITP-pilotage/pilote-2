@@ -222,7 +222,7 @@ export const getServerSideProps = async (
     )
     .then(presenterEnAvancementsStatistiquesAccueilContrat);
 
-  const donneesTerritoiresAgregees = await getContainer("legacy")
+  const { agregat: donneesTerritoiresAgregees } = await getContainer("legacy")
     .resolve("agregerAvancementsChantiersUseCase")
     .run(
       chantiersAvecAlertes.map((chantier) => chantier.id),

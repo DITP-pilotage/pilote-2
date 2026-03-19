@@ -13,10 +13,11 @@ export class RecupererAvancementsTerritoiresQuery {
     chantierIds: string[];
     jalon: number;
   }): Promise<AvancementTerritoireViewModel[]> {
-    const agregat = await this.deps.agregerAvancementsChantiersUseCase.run(
-      params.chantierIds,
-      params.jalon,
-    );
+    const { agregat, chantiers } =
+      await this.deps.agregerAvancementsChantiersUseCase.run(
+        params.chantierIds,
+        params.jalon,
+      );
 
     const territoires = await this.deps.territoireRepository.récupérerTousNew();
     const territoiresMap = new Map(
@@ -44,7 +45,16 @@ export class RecupererAvancementsTerritoiresQuery {
           codeInsee: territoireCode,
           maille: mailleCode,
           avancementAnnuel: territoire.repartition.avancements.annuel.moyenne,
-          estApplicable: null,
+          estApplicable: chantiers.some(
+            (chantier) =>
+              chantier.mailles[maille][territoireCode]?.estApplicable !== false,
+          )
+            ? null
+            : chantiers.some(
+                  (chantier) => territoireCode in chantier.mailles[maille],
+                )
+              ? false
+              : null,
           dateTauxAvancementAnnuel: territoire.dateTauxAvancementAnnuel,
         });
       }
