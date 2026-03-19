@@ -25,9 +25,7 @@ export type Agregat = {
       };
       donneesBrutes: {
         avancements: Avancement[];
-        dates: string[];
       };
-      dateTauxAvancementAnnuel: string | null;
     };
   };
 };
