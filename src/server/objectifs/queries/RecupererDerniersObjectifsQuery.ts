@@ -21,7 +21,7 @@ export class RecupererDerniersObjectifsQuery {
         chantier_id: chantierId,
         statut: $Enums.statut_publication.PUBLIE,
       },
-      include: { auteur_modification: true },
+      include: { auteur_creation: true, auteur_modification: true },
       orderBy: { date_modification: "desc" },
     });
 
@@ -51,6 +51,9 @@ export class RecupererDerniersObjectifsQuery {
             dateCreation: objectif.date_creation.toISOString(),
             auteurModificationId: objectif.auteur_modification_id ?? "",
             dateModification: objectif.date_modification.toISOString(),
+            auteurCreationNom: objectif.auteur_creation
+              ? `${objectif.auteur_creation.prenom} ${objectif.auteur_creation.nom}`
+              : "Auteur Inconnu",
             auteurModificationNom: objectif.auteur_modification
               ? `${objectif.auteur_modification.prenom} ${objectif.auteur_modification.nom}`
               : "Auteur Inconnu",

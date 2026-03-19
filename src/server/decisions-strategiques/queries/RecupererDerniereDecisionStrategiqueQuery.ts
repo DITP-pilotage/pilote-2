@@ -15,7 +15,7 @@ export class RecupererDerniereDecisionStrategiqueQuery {
           chantier_id: chantierId,
           statut: $Enums.statut_publication.PUBLIE,
         },
-        include: { auteur_modification: true },
+        include: { auteur_creation: true, auteur_modification: true },
         orderBy: { date_modification: "desc" },
       });
 
@@ -30,6 +30,9 @@ export class RecupererDerniereDecisionStrategiqueQuery {
       dateCreation: decision.date_creation.toISOString(),
       auteurModificationId: decision.auteur_modification_id ?? "",
       dateModification: decision.date_modification.toISOString(),
+      auteurCreationNom: decision.auteur_creation
+        ? `${decision.auteur_creation.prenom} ${decision.auteur_creation.nom}`
+        : "Auteur Inconnu",
       auteurModificationNom: decision.auteur_modification
         ? `${decision.auteur_modification.prenom} ${decision.auteur_modification.nom}`
         : "Auteur Inconnu",
