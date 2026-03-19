@@ -80,7 +80,7 @@ Utilise cet outil quand l'utilisateur demande :
           "récupérerStatistiquesAvancementChantiersUseCase",
         );
 
-        const agregat = await agregerAvancementsChantiersUseCase.run(
+        const { agregat } = await agregerAvancementsChantiersUseCase.run(
           chantierIds,
           input.jalon,
         );

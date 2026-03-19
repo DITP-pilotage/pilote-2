@@ -37,18 +37,17 @@ export const chantierRouter = créerRouteurTRPC({
   recupererAvancementsTerritoires: procédureProtégée
     .input(
       z.object({
-        chantierId: z.string(),
+        chantierIds: z.array(z.string()),
         jalon: z.number(),
       }),
     )
     .query(({ input, ctx }) => {
+      const chantierIdsAutorisés = input.chantierIds.filter((id) =>
+        ctx.session.habilitations.lecture.chantiers.includes(id),
+      );
       return getContainer("chantiers")
-        .resolve("getChantierAvancementsTerritoiresQuery")
-        .execute({
-          ...input,
-          habilitations: ctx.session.habilitations,
-          profil: ctx.session.profil,
-        });
+        .resolve("recupererAvancementsTerritoiresQuery")
+        .run({ chantierIds: chantierIdsAutorisés, jalon: input.jalon });
     }),
   recupererStatistiquesAvancement: procédureProtégée
     .input(

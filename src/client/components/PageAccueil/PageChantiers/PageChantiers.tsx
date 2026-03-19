@@ -29,6 +29,8 @@ import { RepartitionMeteoContrat } from "@/server/fiche-territoriale/app/contrat
 import { useSelecteurJalon } from "@/components/_commons/SelecteurJalon/useSelecteurJalon";
 import { ChantierAccueilContratV2 } from "@/server/chantiers/app/contrats/ChantierAccueilContratV2";
 import { useEnv } from "@/client/hooks/useEnv";
+import { WidgetCartographieTA } from "@/components/_commons/Widget/WidgetCartographieTA/WidgetCartographieTA";
+import { TuileWidget } from "@/components/_commons/Widget/TuileWidget/TuileWidget";
 import PageChantiersStyled from "./PageChantiers.styled";
 import TableauChantiers from "./TableauChantiers/TableauChantiers";
 import usePageChantiers from "./usePageChantiers";
@@ -36,6 +38,7 @@ import RepartitionsMeteosChantiers from "./FiltresMeteos/RepartitionsMeteosChant
 
 interface PageChantiersProps {
   chantiers: ChantierAccueilContratV2[];
+  chantierIds: string[];
   nombreTotalChantiersAvecAlertes: number;
   ministères: Ministère[];
   territoireCode: string;
@@ -50,6 +53,7 @@ interface PageChantiersProps {
 
 const PageChantiers: FunctionComponent<PageChantiersProps> = ({
   chantiers,
+  chantierIds,
   nombreTotalChantiersAvecAlertes,
   ministères,
   territoireCode,
@@ -62,6 +66,9 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
   moyenneTerritoire,
 }) => {
   const ffAlertesBaisse = useEnv("NEXT_PUBLIC_FF_ALERTES_BAISSE");
+  const featureComparaisonTerritoires = useEnv(
+    "NEXT_PUBLIC_FF_COMPARAISON_TERRITOIRES",
+  );
   const pathname = "/accueil/chantier/[territoireCode]";
   const { auClicTerritoireCallback } = useCartographie(
     territoireCode,
@@ -211,6 +218,17 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
             </Bloc>
           </div>
         </div>
+        {featureComparaisonTerritoires ? (
+          <TuileWidget titre="Comparaison territoriale et évolution">
+            <div />
+            <WidgetCartographieTA
+              chantierIds={chantierIds}
+              jalon={jalon}
+              maille={mailleQuery}
+              territoireCode={territoireCode}
+            />
+          </TuileWidget>
+        ) : null}
         {!chantiersSontArchives && (
           <div className="fr-pt-2w fr-px-2w fr-px-md-0 alertes">
             <div className="fr-mb-2w">

@@ -1,5 +1,8 @@
 import ChantierRepository from "@/server/domain/chantier/ChantierRepository.interface";
-import { AgregateurListeChantiersParTerritoire } from "@/client/utils/chantier/agrégateurListeChantiers/agregateur";
+import {
+  AgregateurListeChantiersParTerritoire,
+  ChantierPourAgregation,
+} from "@/client/utils/chantier/agrégateurListeChantiers/agregateur";
 import { AgregatParTerritoire } from "@/client/utils/chantier/agrégateurListeChantiers/agregateur.interface";
 
 export class AgregerAvancementsChantiersUseCase {
@@ -16,12 +19,19 @@ export class AgregerAvancementsChantiersUseCase {
   async run(
     chantierIds: string[],
     jalon: number,
-  ): Promise<AgregatParTerritoire> {
+  ): Promise<{
+    agregat: AgregatParTerritoire;
+    chantiers: ChantierPourAgregation[];
+  }> {
     const chantiers =
       await this.chantierRepository.recupererDonneesAvancementChantiers(
         chantierIds,
         jalon,
       );
-    return new AgregateurListeChantiersParTerritoire(chantiers).agreger();
+
+    return {
+      agregat: new AgregateurListeChantiersParTerritoire(chantiers).agreger(),
+      chantiers,
+    };
   }
 }

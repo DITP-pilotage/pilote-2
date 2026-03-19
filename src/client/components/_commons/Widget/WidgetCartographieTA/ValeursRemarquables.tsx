@@ -31,17 +31,17 @@ const ValeurRemarquable = ({
 );
 
 export const ValeursRemarquables = ({
-  chantierId,
+  chantierIds,
   maille,
   jalon,
 }: {
-  chantierId: string;
+  chantierIds: string[];
   maille: MailleInterne;
   jalon: number;
 }) => {
   const [statistiques] =
     api.chantier.recupererStatistiquesAvancement.useSuspenseQuery({
-      chantierIds: [chantierId],
+      chantierIds,
       maille,
       jalon,
     });

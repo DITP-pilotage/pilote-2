@@ -19,6 +19,7 @@ export type ChantierPourAgregation = {
       {
         estApplicable: boolean | null;
         avancement: Avancement;
+        dateTauxAvancementAnnuel: string | null;
       }
     >
   >;

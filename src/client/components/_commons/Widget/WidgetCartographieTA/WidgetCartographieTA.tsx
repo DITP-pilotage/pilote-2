@@ -18,12 +18,12 @@ import { ValeursRemarquables } from "./ValeursRemarquables";
 type VueCartographieTA = "situation" | "tableau" | "courbes";
 
 export const WidgetCartographieTA = ({
-  chantierId,
+  chantierIds,
   maille,
   territoireCode,
   jalon,
 }: {
-  chantierId: string;
+  chantierIds: string[];
   maille: MailleInterne;
   territoireCode: string;
   jalon: number;
@@ -32,7 +32,7 @@ export const WidgetCartographieTA = ({
 
   const [territoiresAvancement] =
     api.chantier.recupererAvancementsTerritoires.useSuspenseQuery({
-      chantierId,
+      chantierIds,
       jalon,
     });
 
@@ -64,7 +64,7 @@ export const WidgetCartographieTA = ({
           )}
         >
           <ValeursRemarquables
-            chantierId={chantierId}
+            chantierIds={chantierIds}
             maille={maille}
             jalon={jalon}
           />

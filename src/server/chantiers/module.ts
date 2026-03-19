@@ -10,6 +10,7 @@ import { PrismaPropositionValeurAvancementRepository } from "@/server/chantiers/
 import type { IndicateurTerritoireValeurEvenementExports } from "@/server/indicateur-territoire-valeur-evenement/module";
 import type { DatajobsExecutionExports } from "@/server/datajobs-execution/module";
 import { defineModule, type ExtractScope } from "@/server/module-system";
+import type { LegacyExport } from "@/server/legacy/module";
 import { TerritoireRepository } from "./domain/ports/TerritoireRepository";
 import { PrismaTerritoireRepository } from "./infrastructure/adapters/PrismaTerritoireRepository";
 import { UtilisateurRepository } from "./domain/ports/UtilisateurRepository";
@@ -31,7 +32,7 @@ import { PrismaRapportPropositionsAvancementRepository } from "./infrastructure/
 import { CreerLesRapportsPropositionsUseCase } from "./usecases/CreerLesRapportsPropositionsUseCase";
 import { EnvoyerLesRapportsPropositionsUseCase } from "./usecases/EnvoyerLesRapportsPropositionsUseCase";
 import { GetChantierMeteosTerritoiresQuery } from "./infrastructure/queries/GetChantierMeteosTerritoiresQuery";
-import { GetChantierAvancementsTerritoiresQuery } from "./infrastructure/queries/GetChantierAvancementsTerritoiresQuery";
+import { RecupererAvancementsTerritoiresQuery } from "./infrastructure/queries/RecupererAvancementsTerritoiresQuery";
 
 type ChantierExports = {
   recupererChantiersQuery: RecupererChantiersApplicablesParTerritoiresQuery;
@@ -40,6 +41,7 @@ type ChantierExports = {
 
 type ChantierCradle = ChantierExports &
   IndicateurTerritoireValeurEvenementExports &
+  LegacyExport &
   DatajobsExecutionExports & {
     chantierRepository: ChantierRepository;
     indicateurRepository: IndicateurRepository;
@@ -61,7 +63,7 @@ type ChantierCradle = ChantierExports &
     creerLesRapportsPropositionsUseCase: CreerLesRapportsPropositionsUseCase;
     envoyerLesRapportsPropositionsUseCase: EnvoyerLesRapportsPropositionsUseCase;
     getChantierMeteosTerritoiresQuery: GetChantierMeteosTerritoiresQuery;
-    getChantierAvancementsTerritoiresQuery: GetChantierAvancementsTerritoiresQuery;
+    recupererAvancementsTerritoiresQuery: RecupererAvancementsTerritoiresQuery;
   };
 
 export const chantiersModule = defineModule<ChantierExports, ChantierCradle>()({
@@ -70,6 +72,7 @@ export const chantiersModule = defineModule<ChantierExports, ChantierCradle>()({
     "shared",
     "indicateurTerritoireValeurEvenement",
     "datajobsExecution",
+    "legacy",
   ],
   exports: ["recupererChantiersQuery", "mesuresIndicateurQuery"],
   register: (container, { asModuleClass }) => {
@@ -125,8 +128,8 @@ export const chantiersModule = defineModule<ChantierExports, ChantierCradle>()({
       getChantierMeteosTerritoiresQuery: asModuleClass(
         GetChantierMeteosTerritoiresQuery,
       ),
-      getChantierAvancementsTerritoiresQuery: asModuleClass(
-        GetChantierAvancementsTerritoiresQuery,
+      recupererAvancementsTerritoiresQuery: asModuleClass(
+        RecupererAvancementsTerritoiresQuery,
       ),
     });
   },
