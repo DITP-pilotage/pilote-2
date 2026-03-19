@@ -11,6 +11,7 @@ export const BoutonNouvellePublication = ({
   commentaire,
   libelle,
   consigne,
+  complementConsigneGenerique,
   onPublier,
   onEnregistrerBrouillon,
   ariaLabel,
@@ -18,6 +19,7 @@ export const BoutonNouvellePublication = ({
   commentaire: Publication | null;
   libelle: string;
   consigne: string;
+  complementConsigneGenerique: string;
   onPublier: SubmitHandler<{ contenu: string }>;
   onEnregistrerBrouillon: SubmitHandler<{ contenu: string }>;
   ariaLabel: string;
@@ -37,8 +39,8 @@ export const BoutonNouvellePublication = ({
   return (
     <ModaleFormulairePublication
       commentaire={commentaire}
+      complementConsigneGenerique={complementConsigneGenerique}
       consigne={consigne}
-      libelle={libelle}
       onEnregistrerBrouillon={handleBrouillon}
       onOpenChange={setOpen}
       onPublier={handlePublier}

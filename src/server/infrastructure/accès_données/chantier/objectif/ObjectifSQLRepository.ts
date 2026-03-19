@@ -10,14 +10,14 @@ import { PrismaPilote } from "@/server/db/PrismaPilote";
 
 export const NOMS_TYPES_OBJECTIFS: Record<TypeObjectifPrisma, TypeObjectif> = {
   notre_ambition: "notreAmbition",
-  deja_fait: "déjàFait",
-  a_faire: "àFaire",
+  deja_fait: "dejaFait",
+  a_faire: "aFaire",
 };
 
 export const CODES_TYPES_OBJECTIFS: Record<TypeObjectif, TypeObjectifPrisma> = {
   notreAmbition: "notre_ambition",
-  déjàFait: "deja_fait",
-  àFaire: "a_faire",
+  dejaFait: "deja_fait",
+  aFaire: "a_faire",
 };
 
 export default class ObjectifSQLRepository implements ObjectifRepository {

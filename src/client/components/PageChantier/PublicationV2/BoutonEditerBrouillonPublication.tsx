@@ -15,6 +15,7 @@ export const BoutonEditerBrouillonPublication = ({
   brouillon,
   libelle,
   consigne,
+  complementConsigneGenerique,
   onPublier,
   onEnregistrerBrouillon,
 }: {
@@ -22,6 +23,7 @@ export const BoutonEditerBrouillonPublication = ({
   brouillon: PublicationBrouillon | null;
   libelle: string;
   consigne: string;
+  complementConsigneGenerique: string;
   onPublier: SubmitHandler<{ contenu: string }>;
   onEnregistrerBrouillon: SubmitHandler<{ contenu: string }>;
 }) => {
@@ -41,8 +43,8 @@ export const BoutonEditerBrouillonPublication = ({
     <ModaleFormulairePublication
       brouillon={brouillon}
       commentaire={commentaire}
+      complementConsigneGenerique={complementConsigneGenerique}
       consigne={consigne}
-      libelle={libelle}
       onEnregistrerBrouillon={handleBrouillon}
       onOpenChange={setOpen}
       onPublier={handlePublier}

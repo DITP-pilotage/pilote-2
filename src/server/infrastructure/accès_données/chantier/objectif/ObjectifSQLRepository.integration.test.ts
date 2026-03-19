@@ -106,14 +106,14 @@ describe("ObjectifSQLRepository", () => {
           },
           {
             id: ch1AFaire.id,
-            type: "àFaire",
+            type: "aFaire",
             contenu: "Objectif a faire plus recent",
             date: new Date("2023-04-01").toISOString(),
             auteur: "Doe John",
           },
           {
             id: ch1DejaFait.id,
-            type: "déjàFait",
+            type: "dejaFait",
             contenu: "Objectif deja fait plus recent",
             date: new Date("2023-04-02").toISOString(),
             auteur: "Auteur Inconnu",

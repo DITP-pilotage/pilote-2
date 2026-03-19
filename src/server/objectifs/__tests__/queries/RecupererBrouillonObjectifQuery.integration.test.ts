@@ -175,10 +175,10 @@ describe("RecupererBrouillonObjectifQuery", () => {
       expect(result["notreAmbition"]).toEqual(
         expect.objectContaining({ contenu: "Brouillon notre ambition" }),
       );
-      expect(result["déjàFait"]).toEqual(
+      expect(result["dejaFait"]).toEqual(
         expect.objectContaining({ contenu: "Brouillon déjà fait" }),
       );
-      expect(result["àFaire"]).toBeNull();
+      expect(result["aFaire"]).toBeNull();
     }),
   );
 });

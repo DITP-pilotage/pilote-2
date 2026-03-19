@@ -19,6 +19,24 @@ export const libellesTypesCommentaire: Record<TypeCommentaire, string> = {
   exemplesConcretsDeRéussite: "Exemples concrets de réussite",
 };
 
+export const complementsConsigneGeneriqueCommentaire: Record<
+  TypeCommentaire,
+  string
+> = {
+  autresRésultatsObtenusNonCorrélésAuxIndicateurs:
+    "aux résultats obtenus – non corrélés aux indicateurs (commentaires du chantier)",
+  risquesEtFreinsÀLever:
+    "aux risques et freins à lever (commentaires du chantier)",
+  solutionsEtActionsÀVenir:
+    "aux solutions et actions à venir (commentaires du chantier)",
+  exemplesConcretsDeRéussite:
+    "aux exemples concrets de réussite (commentaires du chantier)",
+  autresRésultatsObtenus:
+    "aux autres résultats obtenus (commentaires du chantier)",
+  commentairesSurLesDonnées:
+    "aux commentaires sur les données (commentaires du chantier)",
+};
+
 export const consignesEcritureCommentaire: Record<TypeCommentaire, string> = {
   commentairesSurLesDonnées:
     "Présentez les résultats obtenus pour votre territoire. Précisez ce qui pourrait expliquer l'avance ou le retard du territoire par rapport aux autres.",

@@ -1,5 +1,6 @@
 import {
   consignesDÉcritureObjectif,
+  complementsConsigneGeneriqueObjectif,
   libellésTypesObjectif,
   TypeObjectif,
 } from "@/client/constants/libellésObjectif";
@@ -38,6 +39,9 @@ export const ObjectifSection = ({
         <PublicationSection
           actions={actions}
           brouillon={brouillon}
+          complementConsigneGenerique={
+            complementsConsigneGeneriqueObjectif[type]
+          }
           consigne={consignesDÉcritureObjectif[type]}
           historiqueNode={<HistoriqueObjectif type={type} />}
           libelle={libellésTypesObjectif[type]}

@@ -1,6 +1,6 @@
 import { $Enums } from "@prisma/client";
 
-export const typesObjectif = ["notreAmbition", "déjàFait", "àFaire"] as const;
+export const typesObjectif = ["notreAmbition", "dejaFait", "aFaire"] as const;
 export type TypeObjectif = (typeof typesObjectif)[number];
 
 type Objectif = {

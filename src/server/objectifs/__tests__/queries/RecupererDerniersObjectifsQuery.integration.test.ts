@@ -153,10 +153,10 @@ describe("RecupererDerniersObjectifsQuery", () => {
       expect(result["notreAmbition"]).toEqual(
         expect.objectContaining({ contenu: "Notre ambition" }),
       );
-      expect(result["déjàFait"]).toEqual(
+      expect(result["dejaFait"]).toEqual(
         expect.objectContaining({ contenu: "Déjà fait" }),
       );
-      expect(result["àFaire"]).toBeNull();
+      expect(result["aFaire"]).toBeNull();
     }),
   );
 });

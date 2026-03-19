@@ -25,8 +25,8 @@ import {
 
 interface ModaleFormulairePublicationProps {
   title: string;
-  libelle: string;
   consigne: string;
+  complementConsigneGenerique: string;
   trigger: ReactNode;
   open: boolean;
   onOpenChange: (isOpen: boolean) => void;
@@ -38,8 +38,8 @@ interface ModaleFormulairePublicationProps {
 
 export const ModaleFormulairePublication = ({
   title,
-  libelle,
   consigne,
+  complementConsigneGenerique,
   trigger,
   open,
   onOpenChange,
@@ -70,7 +70,7 @@ export const ModaleFormulairePublication = ({
       </p>
       <p className="text-sm">{territoireSélectionné.nomAffiché}</p>
       <p className="text-sm text-dsfr-mention-grey mb-6">
-        {`Veuillez saisir ci-dessous le nouveau commentaire relatif aux ${libelle.toLowerCase()}. Après publication, le nouveau commentaire sera affiché et l'ancien sera archivé dans l'historique.`}
+        {`Veuillez saisir ci-dessous le nouveau commentaire relatif ${complementConsigneGenerique}. Après publication, le nouveau commentaire sera affiché et l'ancien sera archivé dans l'historique.`}
       </p>
       <h3 className="text-base font-bold mb-3">Commentaire actuel</h3>
       <div className="mb-6">
@@ -84,7 +84,7 @@ export const ModaleFormulairePublication = ({
           className={`flex flex-col ${form.formState.errors.contenu ? "fr-input-group--error" : ""}`}
         >
           <textarea
-            className="fr-input fr-text--sm flex-1"
+            className="fr-input fr-text--sm flex-1 mb-0"
             rows={6}
             {...form.register("contenu")}
           />
