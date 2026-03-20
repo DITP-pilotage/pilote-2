@@ -216,4 +216,17 @@ BEGIN
     (v_user_id, 'saisieCommentaire', ARRAY['NAT'], ARRAY[]::text[], ARRAY['CH-129']),
     (v_user_id, 'saisieIndicateur', ARRAY[]::text[], ARRAY[]::text[], ARRAY['CH-129']);
 
+  ---
+  --- Utilisateurs page chantier (isolation par profil)
+  ---
+
+  -- chantier.prefet.reg@example.com : préfet région avec saisieCommentaire sur CH-129 / REG-53
+  INSERT INTO public.utilisateur (id, email, nom, prenom, profil_code, date_creation, date_modification, date_visualisation_video_accueil, date_inscription_infolettre)
+  VALUES (gen_random_uuid(), 'chantier.prefet.reg@example.com', 'Chantier-Prefet', 'Region', 'PREFET_REGION', NOW(), NOW(), NOW(), NOW())
+  RETURNING id INTO v_user_id;
+
+  INSERT INTO public.habilitation (utilisateur_id, scope_code, territoires, perimetres, chantiers) VALUES
+    (v_user_id, 'lecture', ARRAY['REG-53', 'DEPT-22', 'DEPT-29', 'DEPT-35', 'DEPT-56'], ARRAY[]::text[], ARRAY['CH-129']),
+    (v_user_id, 'saisieCommentaire', ARRAY['REG-53', 'DEPT-22', 'DEPT-29', 'DEPT-35', 'DEPT-56'], ARRAY[]::text[], ARRAY['CH-129']);
+
 END $$;
