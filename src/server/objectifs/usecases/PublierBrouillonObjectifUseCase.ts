@@ -1,7 +1,7 @@
 import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
 import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
 import ObjectifRepository from "@/server/domain/chantier/objectif/ObjectifRepository.interface";
-import { modifierObjectif } from "@/server/domain/chantier/objectif/Objectif";
+import { publierBrouillonObjectif } from "@/server/domain/chantier/objectif/Objectif";
 
 export class PublierBrouillonObjectifUseCase {
   constructor(
@@ -35,7 +35,7 @@ export class PublierBrouillonObjectifUseCase {
       "NAT-FR",
     );
 
-    const objectif = modifierObjectif(brouillon, {
+    const objectif = publierBrouillonObjectif(brouillon, {
       contenu,
       auteurModificationId,
       dateModification,

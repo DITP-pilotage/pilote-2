@@ -44,10 +44,33 @@ export function creerDecisionStrategiqueBrouillon(
   };
 }
 
-export function modifierDecisionStrategique(
+export function publierBrouillonDecisionStrategique(
   existing: DecisionStrategiqueV2,
   params: ParamsModification,
 ): DecisionStrategiqueV2 {
+  if (existing.statut !== $Enums.statut_publication.BROUILLON)
+    throw new Error(
+      `Statut invalide : attendu BROUILLON, reçu ${existing.statut}`,
+    );
+
+  return {
+    ...existing,
+    contenu: params.contenu,
+    auteurModificationId: params.auteurModificationId,
+    dateModification: params.dateModification,
+    statut: $Enums.statut_publication.PUBLIE,
+  };
+}
+
+export function modifierDecisionStrategiquePubliee(
+  existing: DecisionStrategiqueV2,
+  params: ParamsModification,
+): DecisionStrategiqueV2 {
+  if (existing.statut !== $Enums.statut_publication.PUBLIE)
+    throw new Error(
+      `Statut invalide : attendu PUBLIE, reçu ${existing.statut}`,
+    );
+
   return {
     ...existing,
     contenu: params.contenu,
@@ -61,6 +84,11 @@ export function modifierDecisionStrategiqueBrouillon(
   existing: DecisionStrategiqueV2,
   params: ParamsModification,
 ): DecisionStrategiqueV2 {
+  if (existing.statut !== $Enums.statut_publication.BROUILLON)
+    throw new Error(
+      `Statut invalide : attendu BROUILLON, reçu ${existing.statut}`,
+    );
+
   return {
     ...existing,
     contenu: params.contenu,
