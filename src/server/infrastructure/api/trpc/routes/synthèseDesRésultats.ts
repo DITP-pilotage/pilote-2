@@ -12,6 +12,7 @@ import {
 } from "validation/synthèseDesRésultats";
 
 import { getContainer } from "@/server/dependances";
+import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
 
 const zodValidateurCSRF = z.object({
   csrf: z.string(),
@@ -127,7 +128,13 @@ export const synthèseDesRésultatsRouter = créerRouteurTRPC({
 
   récupérerHistorique: procédureProtégée
     .input(validationSynthèseDesRésultatsContexte)
-    .query(({ input }) => {
+    .query(({ input, ctx }) => {
+      new Habilitation(
+        ctx.session.habilitations,
+      ).vérifierLesHabilitationsEnLecture(
+        input.chantierId,
+        input.territoireCode,
+      );
       return getContainer("importSyntheseDesResultats")
         .resolve("récupérerHistoriqueSyntheseDesResultatsQuery")
         .run(input.chantierId, input.territoireCode);

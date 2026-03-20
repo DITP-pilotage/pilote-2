@@ -11,6 +11,7 @@ import {
   validationBrouillonCommentaireAPublier,
 } from "validation/commentaire";
 import { getContainer } from "@/server/dependances";
+import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
 
 const zodValidateurCSRF = z.object({
   csrf: z.string(),
@@ -123,7 +124,13 @@ export const commentaireRouter = créerRouteurTRPC({
 
   recupererHistorique: procédureProtégée
     .input(validationCommentaireContexte)
-    .query(({ input }) => {
+    .query(({ input, ctx }) => {
+      new Habilitation(
+        ctx.session.habilitations,
+      ).vérifierLesHabilitationsEnLecture(
+        input.chantierId,
+        input.territoireCode,
+      );
       return getContainer("commentaires")
         .resolve("recupererHistoriqueCommentaireQuery")
         .run(input.chantierId, input.territoireCode, input.type);

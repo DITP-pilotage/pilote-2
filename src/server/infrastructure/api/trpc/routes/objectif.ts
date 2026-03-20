@@ -5,6 +5,7 @@ import {
   vérifierSiLeCSRFEstValide,
 } from "@/server/infrastructure/api/trpc/trpc";
 import { getContainer } from "@/server/dependances";
+import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
 import {
   validationObjectifContexte,
   validationObjectifFormulaire,
@@ -121,7 +122,10 @@ export const objectifRouter = créerRouteurTRPC({
 
   recupererHistorique: procédureProtégée
     .input(validationObjectifContexte)
-    .query(({ input }) => {
+    .query(({ input, ctx }) => {
+      new Habilitation(
+        ctx.session.habilitations,
+      ).vérifierLesHabilitationsEnLecture(input.chantierId, null);
       return getContainer("objectif")
         .resolve("recupererHistoriqueObjectifQuery")
         .run(input.chantierId, input.type);
