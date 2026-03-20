@@ -13,21 +13,129 @@ Ce document recense l'ensemble des scénarios couverts par les tests end-to-end 
 
 ---
 
-## 2. Consultation des données d'un chantier
+## 2. Consultation des données d'un chantier — Isolation par profil
 
 **Fichier :** `tests/information-chantier.spec.ts`
 
-- Vérification de la structure de la page d'accueil : présence du tableau des chantiers, taux d'avancement, avancement territorial, répartition météo
-- Application d'un filtre par ministère ("Transition écologique et Cohésion des territoires") et vérification des tags de filtre actifs ("Logement", "Transition Écologique")
-- Navigation vers un chantier depuis le tableau (chantier 155 - "Faciliter l'efficacité opérationnelle")
+7 scénarios couvrant la page chantier avec différents profils pour vérifier l'isolation des droits de lecture, d'écriture et d'accès territorial. Chantier de référence : CH-129.
+
+### Test 1 : DITP Admin — Accès complet en lecture et écriture
+
+Profil : `ditp.admin@example.com` (DITP_ADMIN)
+
+**Navigation et structure :**
+
+- Navigation vers CH-129 au niveau national (NAT-FR)
 - Vérification de la structure complète de la page chantier :
   - Avancement du chantier, Responsables, Min/Médiane/Max
   - Météo et synthèse des résultats, Répartition géographique
   - Objectifs (Notre ambition, Ce qui a déjà été fait, Ce qui reste à faire)
-  - Indicateurs (5), Décisions stratégiques, Commentaires du chantier
-  - Risques et freins, Solutions et actions, Exemples de réussite
-- Vérification de l'historique des commentaires au niveau national (NAT-FR) : édition d'un commentaire, publication, vérification dans la modale d'historique
-- Navigation vers un territoire régional (REG-76 Occitanie) et vérification de l'historique des commentaires sur les données au niveau territorial
+  - Indicateurs, Décisions stratégiques, Suivi des décisions stratégiques
+  - Commentaires : Autres résultats obtenus, Risques et freins, Solutions et actions, Exemples de réussite
+
+**Éléments spécifiques au profil :**
+
+- Vérification que le sélecteur de maille est visible
+- Vérification que le lien "Mettre à jour les données" est visible
+- Vérification que les boutons de nouveau commentaire sont visibles pour chaque type de commentaire
+- Vérification que le bouton d'édition de la synthèse/météo est visible
+
+### Test 2 : Premier Ministre — Lecture seule, tous territoires
+
+Profil : `premiere.ministre@example.com` (PM_ET_CABINET)
+
+**Navigation et structure :**
+
+- Navigation vers CH-129 au niveau national (NAT-FR)
+- Vérification de la structure complète de la page chantier (mêmes sections que Test 1)
+
+**Éléments de lecture seule :**
+
+- Vérification que le sélecteur de maille est visible
+- Vérification que le lien "Mettre à jour les données" n'est PAS visible
+- Vérification que les boutons de nouveau commentaire ne sont PAS visibles
+- Vérification que le bouton d'édition de la synthèse/météo n'est PAS visible
+
+### Test 3 : Équipe Direction de Projet — Périmètre chantier limité, écriture nationale
+
+Profil : `equipe.dir.projet@example.com` (EQUIPE_DIR_PROJET, chantiers : CH-054, CH-058, CH-062, CH-051, CH-129)
+
+**Navigation vers un chantier autorisé :**
+
+- Navigation vers CH-129 au niveau national (NAT-FR)
+- Vérification de la structure complète
+- Vérification que le sélecteur de maille est visible
+- Vérification que le lien "Mettre à jour les données" est visible
+
+**Écriture à la maille nationale :**
+
+- Vérification que les boutons de nouveau commentaire sont visibles
+- Vérification que le bouton d'édition de la synthèse/météo est visible
+- Vérification que les objectifs sont en mode écriture
+
+**Isolation par chantier — accès refusé :**
+
+- Navigation vers un chantier non autorisé → vérification de la page 404
+
+### Test 4 : Coordinateur Département — Territoire restreint, sélecteur de maille masqué, écriture ATE
+
+Profil : `pva.coordinateur.dept@example.com` (COORDINATEUR_DEPARTEMENT, territoires : DEPT-56, saisieCommentaire chantiers : CH-129)
+
+**Navigation vers le territoire autorisé :**
+
+- Navigation vers CH-129 au niveau DEPT-56
+- Vérification de la structure de la page chantier (sans section Décisions stratégiques ni Suivi des décisions stratégiques — maille non nationale)
+
+**Éléments spécifiques au profil :**
+
+- Vérification que le sélecteur de maille n'est PAS visible
+- Vérification que le lien "Mettre à jour les données" n'est PAS visible
+- Vérification que les boutons de nouveau commentaire sont visibles (saisieCommentaire inclut CH-129)
+
+### Test 5 : Préfet Région — Territoire régional, écriture commentaires ATE
+
+Profil : `chantier.prefet.reg@example.com` (PREFET_REGION, territoires : REG-53 + départements, saisieCommentaire chantiers : CH-129)
+
+**Navigation vers le territoire régional :**
+
+- Navigation vers CH-129 au niveau REG-53
+- Vérification de la structure de la page chantier (sans section Décisions stratégiques ni Suivi des décisions stratégiques — maille non nationale)
+
+**Éléments spécifiques au profil :**
+
+- Vérification que le sélecteur de maille est visible
+- Vérification que le lien "Mettre à jour les données" n'est PAS visible
+- Vérification que les boutons de nouveau commentaire sont visibles (saisieCommentaire inclut CH-129)
+
+### Test 6 : Coordinateur Département sans habilitation chantier — lecture seule sur le territoire
+
+Profil : `coordinateur.departement@example.com` (COORDINATEUR_DEPARTEMENT, territoires : DEPT-56, saisieCommentaire chantiers : aucun)
+
+- Navigation vers CH-129 au niveau DEPT-56
+- Vérification de la structure territoriale
+- Vérification que le sélecteur de maille n'est PAS visible
+- Vérification que les boutons de nouveau commentaire ne sont PAS visibles (saisieCommentaire.chantiers ne contient pas CH-129)
+
+### Test 7 : Préfet Région sans habilitation chantier — lecture seule sur le territoire
+
+Profil : `prefet.region@example.com` (PREFET_REGION, territoires : REG-53, saisieCommentaire chantiers : aucun)
+
+- Navigation vers CH-129 au niveau REG-53
+- Vérification de la structure territoriale
+- Vérification du sélecteur de maille visible
+- Vérification que les boutons de nouveau commentaire ne sont PAS visibles (saisieCommentaire.chantiers ne contient pas CH-129)
+
+### Matrice de visibilité sur la page chantier par profil
+
+| Élément                        | DITP Admin | PM Cabinet | Éq. Dir. Projet | Coord. Dept (avec hab.) | Préfet Rég. (avec hab.) | Coord. Dept (sans hab.) | Préfet Rég. (sans hab.) |
+|--------------------------------|:----------:|:----------:|:----------------:|:-----------------------:|:-----------------------:|:-----------------------:|:-----------------------:|
+| **Territoire testé**           |   NAT-FR   |   NAT-FR   |      NAT-FR      |         DEPT-56         |         REG-53          |         DEPT-56         |         REG-53          |
+| Structure complète             |     ✓      |     ✓      |        ✓         |            ✓            |            ✓            |            ✓            |            ✓            |
+| Décisions stratégiques         |     ✓      |     ✓      |        ✓         |            ✗            |            ✗            |            ✗            |            ✗            |
+| Sélecteur de maille            |     ✓      |     ✓      |        ✓         |            ✗            |            ✓            |            ✗            |            ✓            |
+| Mettre à jour les données      |     ✓      |     ✗      |        ✓         |            ✗            |            ✗            |            ✗            |            ✗            |
+| Boutons nouveau commentaire    |     ✓      |     ✗      |        ✓         |            ✓            |            ✓            |            ✗            |            ✗            |
+| Accès chantier non autorisé    |     —      |     —      |       404        |            —            |            —            |            —            |            —            |
 
 ---
 
@@ -771,40 +879,47 @@ Profil : `ditp.admin@example.com` (DITP_ADMIN)
 
 Légende : ✓ = profil utilisé dans ce test
 
-| Test                                    | DITP Admin | Coord. Rég. | Coord. Dept | Sec. Gén. | Préfet Rég. | Préfet Dept | Éq. Dir. Projet |
-|-----------------------------------------|:----------:|:-----------:|:-----------:|:---------:|:-----------:|:-----------:|:---------------:|
-| 1. Login                                |     ✓      |             |             |           |             |             |                 |
-| 2. Consultation chantier                |     ✓      |             |             |           |             |             |                 |
-| 3. Import données                       |     ✓      |             |             |           |             |             |                 |
-| 4.1 Export CSV chantiers                |     ✓      |             |             |           |             |             |                 |
-| 4.2 Export CSV indicateurs              |     ✓      |             |             |           |             |             |                 |
-| 4.3 Export CSV historique               |     ✓      |             |             |           |             |             |                 |
-| 4.4 Export CSV utilisateurs             |     ✓      |             |             |           |             |             |                 |
-| 5. PVA - Création/acceptation           |            |             |      ✓      |           |             |             |        ✓        |
-| 5. PVA - Refus                          |            |             |             |           |             |      ✓      |        ✓        |
-| 5. PVA - Acceptation modifiée           |            |             |      ✓      |           |             |             |        ✓        |
-| 5. PVA - Modif/suppression              |            |             |      ✓      |           |             |             |                 |
-| 5. PVA - Blocage maille                 |            |      ✓      |             |           |             |             |                 |
-| 5. PVA - Dir. projet (décisions)        |            |             |             |           |             |             |        ✓        |
-| 6. API                                  |     ✓      |             |             |           |             |             |        ✓        |
-| 7.1 Gestion - Vue admin + token         |     ✓      |             |             |           |             |             |                 |
-| 7.2 Gestion - Visibilité + restrictions |            |      ✓      |             |           |             |             |                 |
-| 7.3 Gestion - Périmètre restreint       |            |             |      ✓      |           |             |             |                 |
-| 7.4 Gestion - Par chantiers             |            |             |             |     ✓     |             |             |                 |
-| 7.5 Gestion - Accès refusé              |            |             |             |           |      ✓      |      ✓      |        ✓        |
-| 7.6 Gestion - Désactiver/réactiver      |     ✓      |             |             |           |             |             |                 |
-| 7.7 Gestion - Filtres                   |     ✓      |             |             |           |             |             |                 |
-| 7.8 Gestion - Multi-territoires         |            |      ✓      |             |           |             |             |                 |
-| 8. Création/modif - Validation          |     ✓      |             |             |           |             |             |                 |
-| 9. Indicateurs - Listing                |     ✓      |      ✓      |             |           |             |             |        ✓        |
-| 10. Indicateurs - Formulaire            |     ✓      |      ✓      |             |           |             |             |        ✓        |
-| 11. Mon profil utilisateur              |     ✓      |      ✓      |             |           |             |             |                 |
+| Test                                    | DITP Admin | PM Cabinet | Coord. Rég. | Coord. Dept | Sec. Gén. | Préfet Rég. | Préfet Dept | Éq. Dir. Projet |
+|-----------------------------------------|:----------:|:----------:|:-----------:|:-----------:|:---------:|:-----------:|:-----------:|:---------------:|
+| 1. Login                                |     ✓      |            |             |             |           |             |             |                 |
+| 2. Chantier - Accès complet             |     ✓      |            |             |             |           |             |             |                 |
+| 2. Chantier - Lecture seule             |            |     ✓      |             |             |           |             |             |                 |
+| 2. Chantier - Périmètre chantier        |            |            |             |             |           |             |             |        ✓        |
+| 2. Chantier - Territoire dept (écriture)|            |            |             |      ✓      |           |             |             |                 |
+| 2. Chantier - Territoire rég. (écriture)|            |            |             |             |           |      ✓      |             |                 |
+| 2. Chantier - Dept sans hab. chantier   |            |            |             |      ✓      |           |             |             |                 |
+| 2. Chantier - Rég. sans hab. chantier   |            |            |             |             |           |      ✓      |             |                 |
+| 3. Import données                       |     ✓      |            |             |             |           |             |             |                 |
+| 4.1 Export CSV chantiers                |     ✓      |            |             |             |           |             |             |                 |
+| 4.2 Export CSV indicateurs              |     ✓      |            |             |             |           |             |             |                 |
+| 4.3 Export CSV historique               |     ✓      |            |             |             |           |             |             |                 |
+| 4.4 Export CSV utilisateurs             |     ✓      |            |             |             |           |             |             |                 |
+| 5. PVA - Création/acceptation           |            |            |             |      ✓      |           |             |             |        ✓        |
+| 5. PVA - Refus                          |            |            |             |             |           |             |      ✓      |        ✓        |
+| 5. PVA - Acceptation modifiée           |            |            |             |      ✓      |           |             |             |        ✓        |
+| 5. PVA - Modif/suppression              |            |            |             |      ✓      |           |             |             |                 |
+| 5. PVA - Blocage maille                 |            |            |      ✓      |             |           |             |             |                 |
+| 5. PVA - Dir. projet (décisions)        |            |            |             |             |           |             |             |        ✓        |
+| 6. API                                  |     ✓      |            |             |             |           |             |             |        ✓        |
+| 7.1 Gestion - Vue admin + token         |     ✓      |            |             |             |           |             |             |                 |
+| 7.2 Gestion - Visibilité + restrictions |            |            |      ✓      |             |           |             |             |                 |
+| 7.3 Gestion - Périmètre restreint       |            |            |             |      ✓      |           |             |             |                 |
+| 7.4 Gestion - Par chantiers             |            |            |             |             |     ✓     |             |             |                 |
+| 7.5 Gestion - Accès refusé              |            |            |             |             |           |      ✓      |      ✓      |        ✓        |
+| 7.6 Gestion - Désactiver/réactiver      |     ✓      |            |             |             |           |             |             |                 |
+| 7.7 Gestion - Filtres                   |     ✓      |            |             |             |           |             |             |                 |
+| 7.8 Gestion - Multi-territoires         |            |            |      ✓      |             |           |             |             |                 |
+| 8. Création/modif - Validation          |     ✓      |            |             |             |           |             |             |                 |
+| 9. Indicateurs - Listing                |     ✓      |            |      ✓      |             |           |             |             |        ✓        |
+| 10. Indicateurs - Formulaire            |     ✓      |            |      ✓      |             |           |             |             |        ✓        |
+| 11. Mon profil utilisateur              |     ✓      |            |      ✓      |             |           |             |             |                 |
 
 **Identifiants des profils :**
 
 | Abréviation       | Email                                                                     |
 |-------------------|---------------------------------------------------------------------------|
 | DITP Admin        | `ditp.admin@example.com`                                                  |
+| PM Cabinet        | `premiere.ministre@example.com`                                           |
 | Coord. Rég.       | `coordinateur.region@example.com`                                         |
 | Coord. Dept       | `coordinateur.departement@example.com`                                    |
 | Sec. Gén.         | `secretariat.general@example.com`                                         |
@@ -816,3 +931,4 @@ Légende : ✓ = profil utilisé dans ce test
 | Coord. Rég. (PVA) | `pva.coordinateur.reg@example.com`                                        |
 | Coord. Dept (PVA) | `pva.coordinateur.dept@example.com`                                       |
 | Préfet Dept (PVA) | `pva.prefet.dept@example.com`                                             |
+| Préfet Rég. (CH)  | `chantier.prefet.reg@example.com`                                         |
