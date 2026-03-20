@@ -45,12 +45,8 @@ export class RecupererHistoriqueCommentaireQuery {
       contenu: commentaire.contenu,
       dateCreation: commentaire.date_creation.toISOString(),
       dateModification: commentaire.date_modification.toISOString(),
-      auteurCreationNom: commentaire.auteur_creation
-        ? `${commentaire.auteur_creation.prenom} ${commentaire.auteur_creation.nom}`
-        : "Auteur Inconnu",
-      auteurModificationNom: commentaire.auteur_modification
-        ? `${commentaire.auteur_modification.prenom} ${commentaire.auteur_modification.nom}`
-        : "Auteur Inconnu",
+      auteurCreationNom: `${commentaire.auteur_creation.prenom} ${commentaire.auteur_creation.nom}`,
+      auteurModificationNom: `${commentaire.auteur_modification.prenom} ${commentaire.auteur_modification.nom}`,
     }));
   }
 }

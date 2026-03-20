@@ -37,8 +37,8 @@ type CommentaireRaw = {
   type: string;
   contenu: string;
   date_modification: Date;
-  nom: string | null;
-  prenom: string | null;
+  nom: string;
+  prenom: string;
 };
 
 export default class CommentaireSQLRepository implements CommentaireRepository {
@@ -103,9 +103,9 @@ export default class CommentaireSQLRepository implements CommentaireRepository {
       type: NOMS_TYPES_COMMENTAIRES[row.type],
       contenu: row.contenu,
       statut: row.statut,
-      auteurCreationId: row.auteur_creation_id ?? "",
+      auteurCreationId: row.auteur_creation_id,
       dateCreation: row.date_creation.toISOString(),
-      auteurModificationId: row.auteur_modification_id ?? "",
+      auteurModificationId: row.auteur_modification_id,
       dateModification: row.date_modification.toISOString(),
     };
   }
@@ -148,10 +148,7 @@ export default class CommentaireSQLRepository implements CommentaireRepository {
           id: commentaireAvecAuteur.id,
           contenu: commentaireAvecAuteur.contenu,
           date: commentaireAvecAuteur.date_modification.toISOString(),
-          auteur:
-            commentaireAvecAuteur.nom && commentaireAvecAuteur.prenom
-              ? `${commentaireAvecAuteur.prenom} ${commentaireAvecAuteur.nom}`
-              : "Auteur Inconnu",
+          auteur: `${commentaireAvecAuteur.prenom} ${commentaireAvecAuteur.nom}`,
           type: NOMS_TYPES_COMMENTAIRES[commentaireAvecAuteur.type],
         };
       },

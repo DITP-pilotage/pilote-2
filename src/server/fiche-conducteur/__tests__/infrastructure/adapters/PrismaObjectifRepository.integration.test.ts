@@ -20,6 +20,7 @@ describe("PrismaObjectifRepository", () => {
       "doit lister les objectifs associé au chantier",
       createIntegrationTest(async (prisma) => {
         // Given
+        const auteur = await fixtures.utilisateur();
         const chantier = await fixtures.chantierIdentite();
         const autreChantier = await fixtures.chantierIdentite();
 
@@ -30,7 +31,8 @@ describe("PrismaObjectifRepository", () => {
               chantier_id: chantier.id,
               type: $Enums.type_objectif.deja_fait,
               contenu: "contenu OK deja_fait",
-              auteur_modification_id: null,
+              auteur_creation_id: auteur.id,
+              auteur_modification_id: auteur.id,
               date_modification: new Date(),
               date_creation: new Date(),
             },
@@ -39,7 +41,8 @@ describe("PrismaObjectifRepository", () => {
               chantier_id: chantier.id,
               type: $Enums.type_objectif.notre_ambition,
               contenu: "contenu OK notre_ambition",
-              auteur_modification_id: null,
+              auteur_creation_id: auteur.id,
+              auteur_modification_id: auteur.id,
               date_modification: new Date(),
               date_creation: new Date(),
             },
@@ -48,7 +51,8 @@ describe("PrismaObjectifRepository", () => {
               chantier_id: chantier.id,
               type: $Enums.type_objectif.a_faire,
               contenu: "contenu OK a_faire",
-              auteur_modification_id: null,
+              auteur_creation_id: auteur.id,
+              auteur_modification_id: auteur.id,
               date_modification: new Date(),
               date_creation: new Date(),
             },
@@ -58,7 +62,8 @@ describe("PrismaObjectifRepository", () => {
               chantier_id: autreChantier.id,
               type: $Enums.type_objectif.notre_ambition,
               contenu: "contenu KO chantier_id",
-              auteur_modification_id: null,
+              auteur_creation_id: auteur.id,
+              auteur_modification_id: auteur.id,
               date_modification: new Date(),
               date_creation: new Date(),
             },

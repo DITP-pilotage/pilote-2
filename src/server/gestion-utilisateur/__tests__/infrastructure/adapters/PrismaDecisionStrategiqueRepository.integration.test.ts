@@ -57,6 +57,7 @@ describe("PrismaDecisionStrategiqueRepository", () => {
           {
             id: "77053976-1a8e-49f0-b68a-df01da2fc277",
             chantier_id: "CH-001",
+            auteur_creation_id: auteurId1,
             auteur_modification_id: auteurId1,
             contenu: "",
             type: "suivi_des_decisions",
@@ -66,6 +67,7 @@ describe("PrismaDecisionStrategiqueRepository", () => {
           {
             id: "b699907e-43c4-43be-8d8d-185fca1b2e50",
             chantier_id: "CH-001",
+            auteur_creation_id: auteurId2,
             auteur_modification_id: auteurId2,
             contenu: "",
             type: "suivi_des_decisions",
@@ -75,6 +77,7 @@ describe("PrismaDecisionStrategiqueRepository", () => {
           {
             id: "e3885e40-caab-4fb6-acf4-0c8f66c9e290",
             chantier_id: "CH-001",
+            auteur_creation_id: auteurId2,
             auteur_modification_id: auteurId2,
             contenu: "",
             type: "suivi_des_decisions",

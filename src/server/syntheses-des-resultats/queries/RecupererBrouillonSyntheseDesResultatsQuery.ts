@@ -29,12 +29,12 @@ export class RecupererBrouillonSyntheseDesResultatsQuery {
       id: brouillon.id,
       chantierId: brouillon.chantier_id,
       territoireCode: brouillon.territoire_code,
-      auteurCreationId: brouillon.auteur_creation_id ?? "",
+      auteurCreationId: brouillon.auteur_creation_id,
       dateCreation: brouillon.date_creation.toISOString(),
       statut: brouillon.statut,
       contenu: brouillon.commentaire ?? "",
       meteo: (brouillon.meteo as Meteo) ?? "NON_RENSEIGNEE",
-      auteurModificationId: brouillon.auteur_modification_id ?? "",
+      auteurModificationId: brouillon.auteur_modification_id,
       dateModification: brouillon.date_modification.toISOString(),
     };
   }
