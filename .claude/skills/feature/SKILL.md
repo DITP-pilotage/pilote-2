@@ -73,7 +73,7 @@ L'utilisateur fournit un identifiant de ticket Jira (ex: PIL-1249) en argument, 
 
 - Ajoute un commentaire sur le ticket Jira avec :
   - Lien vers la PR
-  - Gif de démonstration via le même permalink (syntaxe Jira : `!permalink!`)
+  - Gif de démonstration via le même permalink (syntaxe markdown `![demo](permalink)` — Jira supporte le markdown, ne PAS utiliser la syntaxe wiki `!url!`)
   - Description des changements
   - Critères d'acceptation (checklist)
   - Résumé des tests e2e ajoutés

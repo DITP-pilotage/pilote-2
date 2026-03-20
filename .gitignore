@@ -41,6 +41,7 @@ yarn-error.log*
 .vscode/
 .cursor/
 .claude/
+!.claude/skills/feature/SKILL.md
 qodana.yaml
 *.pgsql
 
