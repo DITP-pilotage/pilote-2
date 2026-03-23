@@ -4,8 +4,7 @@ import { typeAlerte } from "@/components/_commons/Alerte/Alerte.interface";
 
 export type SyntheseDesResultatsAction =
   | "publication-reussie"
-  | "modification-reussie"
-  | "brouillon-enregistre";
+  | "modification-reussie";
 
 const ALERTES: Record<
   SyntheseDesResultatsAction,
@@ -18,11 +17,6 @@ const ALERTES: Record<
   "modification-reussie": {
     message: "Votre commentaire a bien été modifié",
     type: "succès",
-  },
-  "brouillon-enregistre": {
-    message:
-      "Votre nouveau commentaire a bien été enregistré en tant que brouillon",
-    type: "info",
   },
 };
 

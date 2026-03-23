@@ -45,7 +45,7 @@ const SyntheseDesResultats: FunctionComponent<SyntheseDesResultatsProps> = ({
         titre={nomTerritoire}
       >
         {syntheseDesResultatsBrouillon?.dateModification ? (
-          <BandeauInformation bandeauType="INFO">
+          <BandeauInformation bandeauType="INFO" classNameContainer="px-4">
             {`Vous avez enregistré un nouveau commentaire en tant que brouillon le ${formaterDate(syntheseDesResultatsBrouillon?.dateModification, "DD/MM/YYYY")}`}
           </BandeauInformation>
         ) : null}

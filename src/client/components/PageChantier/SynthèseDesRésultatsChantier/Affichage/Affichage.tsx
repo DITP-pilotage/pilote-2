@@ -1,12 +1,14 @@
+import { useState } from "react";
 import { nettoyerUneChaîneDeCaractèresPourAffichageHTML } from "@/client/utils/strings";
-import { BoutonsAffichage } from "@/components/PageChantier/SynthèseDesRésultatsChantier/BoutonsAffichage/BoutonsAffichage";
+import { BoutonsAffichage } from "@/components/_commons/BoutonsAffichage/BoutonsAffichage";
 import { Icone } from "@/components/_commons/Icone";
 import { Icone1Icon } from "@/components/_commons/Icones/Icone1Icon";
 import { BoutonSousLigné } from "@/components/_commons/BoutonSousLigné/BoutonSousLigné";
 import { Infobulle } from "@/components/_commons/Infobulle/Infobulle";
 import { SyntheseDesResultatsHistoriqueItem } from "@/server/syntheses-des-resultats/queries/RecupererHistoriqueSyntheseDesResultatsQuery";
 import { PiloteDateFormatter } from "@/server/rapports-hebdomadaires/infrastructure/adapters/PiloteDateFormatter";
-import useAffichage from "./useAffichage";
+
+const LIMITE_CARACTERES_AFFICHAGE_SYNTHESE_DES_RESULTATS = 250;
 
 const SynthèseDesRésultatsAffichage = ({
   itemHistoriqueSyntheseDesResultats: synthèseDesRésultats,
@@ -15,13 +17,7 @@ const SynthèseDesRésultatsAffichage = ({
   itemHistoriqueSyntheseDesResultats: SyntheseDesResultatsHistoriqueItem | null;
   onModifier?: () => void;
 }) => {
-  const {
-    contenuAAfficher,
-    afficherBoutonsAffichage,
-    afficherContenuComplet,
-    déplierLeContenu,
-    replierLeContenu,
-  } = useAffichage(synthèseDesRésultats);
+  const [afficherContenuComplet, setAfficherContenuComplet] = useState(false);
 
   if (!synthèseDesRésultats) {
     return (
@@ -30,6 +26,17 @@ const SynthèseDesRésultatsAffichage = ({
       </p>
     );
   }
+
+  const contenuTronque =
+    synthèseDesRésultats.contenu.length >
+    LIMITE_CARACTERES_AFFICHAGE_SYNTHESE_DES_RESULTATS;
+  const contenuAAfficher =
+    afficherContenuComplet || !contenuTronque
+      ? synthèseDesRésultats.contenu
+      : synthèseDesRésultats.contenu.slice(
+          0,
+          LIMITE_CARACTERES_AFFICHAGE_SYNTHESE_DES_RESULTATS,
+        ) + "...";
 
   return (
     <>
@@ -60,18 +67,17 @@ const SynthèseDesRésultatsAffichage = ({
         </div>
       ) : null}
       <p
-        className="fr-text--sm fr-mb-0"
+        className="fr-text--sm mb-1"
         dangerouslySetInnerHTML={{
           __html:
             nettoyerUneChaîneDeCaractèresPourAffichageHTML(contenuAAfficher),
         }}
       />
-      {afficherBoutonsAffichage ? (
+      {contenuTronque ? (
         <BoutonsAffichage
-          afficherVoirMoins={afficherContenuComplet}
-          afficherVoirPlus={!afficherContenuComplet}
-          déplierLeContenu={déplierLeContenu}
-          replierLeContenu={replierLeContenu}
+          deplie={afficherContenuComplet}
+          deplierLeContenu={() => setAfficherContenuComplet(true)}
+          replierLeContenu={() => setAfficherContenuComplet(false)}
         />
       ) : null}
     </>

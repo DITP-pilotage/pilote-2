@@ -37,7 +37,6 @@ export const useNouvelleSyntheseDesResultats = ({
     enregistrerEnBrouillonMutation.mutateAsync(input(data), {
       onSuccess: () => {
         onSuccess();
-        onAction("brouillon-enregistre");
       },
     });
 
