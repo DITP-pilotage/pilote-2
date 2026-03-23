@@ -733,7 +733,7 @@ Profil : `ditp.admin@example.com` (DITP_ADMIN)
 - Vérification du titre : "Fiche de l'indicateur IND-021"
 - Vérification du lien "Retour" vers le listing
 - Vérification du sélecteur Actif/Inactif
-- Vérification du tableau récapitulatif avec les 6 colonnes (Chantier associé, Nom du chantier, Identifiant indicateur, Nom de l'indicateur, Création de l'indicateur, Dernière modification)
+- Vérification de la carte récapitulative avec les 6 champs (Chantier associé, Nom du chantier, Identifiant indicateur, Nom de l'indicateur, Création de l'indicateur, Dernière modification)
 
 **Structure des accordéons :**
 

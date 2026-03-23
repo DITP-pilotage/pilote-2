@@ -35,8 +35,8 @@ export class PageAdminIndicateurForm extends BasePage {
     return this.page.getByRole("link", { name: "Retour" });
   }
 
-  private get tableauRecapitulatif() {
-    return this.page.locator("table").first();
+  private get carteRecapitulative() {
+    return this.page.locator(".rounded-lg.bg-blue-50").first();
   }
 
   private get accordionIdentite() {
@@ -143,14 +143,12 @@ export class PageAdminIndicateurForm extends BasePage {
     ).toBeVisible();
   }
 
-  async expectTableauRecapitulatifVisible(): Promise<void> {
-    await expect(this.tableauRecapitulatif).toBeVisible();
+  async expectCarteRecapitulativeVisible(): Promise<void> {
+    await expect(this.carteRecapitulative).toBeVisible();
   }
 
-  async expectColonneRecapitulatif(nom: string): Promise<void> {
-    await expect(
-      this.tableauRecapitulatif.getByRole("columnheader", { name: nom }),
-    ).toBeVisible();
+  async expectChampRecapitulatif(label: string): Promise<void> {
+    await expect(this.carteRecapitulative.getByText(label)).toBeVisible();
   }
 
   async expectAccordionIdentiteOuvert(): Promise<void> {

@@ -37,6 +37,7 @@ export class AppActions {
     username: string,
     password = process.env.DEV_PASSWORD!,
   ): Promise<PageAccueil> {
+    await this.dismissPostLoginModals();
     const header = new HeaderComponent(this.page);
     await header.logout();
     return this.loginAs(username, password);
@@ -53,6 +54,15 @@ export class AppActions {
     }
     if (await newsletterModal.isVisible({ timeout: 4000 }).catch(() => false)) {
       await newsletterModal.click();
+    }
+
+    const completerProfilModal = this.page.getByRole("button", {
+      name: "Plus tard",
+    });
+    if (
+      await completerProfilModal.isVisible({ timeout: 4000 }).catch(() => false)
+    ) {
+      await completerProfilModal.click();
     }
   }
 }
