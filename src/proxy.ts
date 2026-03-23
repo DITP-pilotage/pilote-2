@@ -78,7 +78,7 @@ export async function proxy(request: NextRequest) {
   ) {
     response.headers.set(
       "Content-Security-Policy",
-      "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src https://api.validata.etalab.studio/ https://stats.beta.gouv.fr/ 'self' ws: wss:; frame-src 'self' https://video.finances.gouv.fr/; object-src 'none'; base-uri 'self'; form-action 'self'; media-src 'self' https://video.finances.gouv.fr/",
+      "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://fichiers.numerique.gouv.fr/; font-src 'self'; connect-src https://api.validata.etalab.studio/ https://stats.beta.gouv.fr/ 'self' ws: wss:; frame-src 'self' https://video.finances.gouv.fr/; object-src 'none'; base-uri 'self'; form-action 'self'; media-src 'self' https://video.finances.gouv.fr/",
     );
   } else {
     response.headers.set(
@@ -86,7 +86,7 @@ export async function proxy(request: NextRequest) {
       `default-src 'self';
        script-src 'self' 'nonce-${nonce}' https://plausible.4p-analyse.fr https://app.livestorm.co/ https://stats.beta.gouv.fr/;
        style-src 'self' 'unsafe-inline';
-       img-src 'self' data: blob:;
+       img-src 'self' data: blob: https://fichiers.numerique.gouv.fr/;
        font-src 'self' data:;
        connect-src https://api.validata.etalab.studio/ https://stats.beta.gouv.fr/ 'self';
        frame-src 'self' https://video.finances.gouv.fr/;

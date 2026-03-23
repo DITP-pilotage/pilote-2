@@ -9,6 +9,7 @@ import { EditeurRiche, EditeurRicheProps } from "./EditeurRiche";
 import { CalloutExtension } from "./extensions/CalloutExtension";
 import { AccordionExtension } from "./extensions/AccordionExtension";
 import { IconeExtension } from "./extensions/IconeExtension";
+import { VideoExtension } from "./extensions/VideoExtension";
 
 const extensions = [
   StarterKit,
@@ -20,11 +21,12 @@ const extensions = [
   Underline,
   Image.configure({
     inline: false,
-    allowBase64: true,
+    allowBase64: false,
   }),
   CalloutExtension,
   AccordionExtension,
   IconeExtension,
+  VideoExtension,
 ];
 
 export const EditeurCentreAide: FunctionComponent<

@@ -27,6 +27,9 @@ import { ClearNodesIcon } from "@/components/_commons/Icones/ClearNodesIcon";
 import { InformationPleineIcon } from "@/components/_commons/Icones/InformationPleineIcon";
 import { ListUnorderedIcon } from "@/components/_commons/Icones/ListUnorderedIcon";
 import { EtoileIcon } from "@/components/_commons/Icones/EtoileIcon";
+import { LinkLineIcon } from "@/components/_commons/Icones/LinkLineIcon";
+import { LinkUnlinkIcon } from "@/components/_commons/Icones/LinkUnlinkIcon";
+import { VideoIcon } from "@/components/_commons/Icones/VideoIcon";
 
 export const MenuBar = ({ editor }: { editor: Editor }) => {
   if (!editor) {
@@ -293,20 +296,10 @@ export const MenuBar = ({ editor }: { editor: Editor }) => {
           className={buttonClass(false)}
           key="image"
           onClick={() => {
-            const input = document.createElement("input");
-            input.type = "file";
-            input.accept = "image/*";
-            input.onchange = () => {
-              const file = input.files?.[0];
-              if (!file) return;
-              const reader = new FileReader();
-              reader.onload = () => {
-                const result = reader.result as string;
-                editor.chain().focus().setImage({ src: result }).run();
-              };
-              reader.readAsDataURL(file);
-            };
-            input.click();
+            const url = window.prompt("URL de l'image :");
+            if (url) {
+              editor.chain().focus().setImage({ src: url }).run();
+            }
           }}
           title="Insérer une image"
           type="button"
@@ -328,7 +321,65 @@ export const MenuBar = ({ editor }: { editor: Editor }) => {
       );
     }
 
+    if (hasExtension("video")) {
+      boutons.push(
+        <button
+          aria-label="Vidéo"
+          className={buttonClass(false)}
+          key="video"
+          onClick={() => {
+            const url = window.prompt("URL de la vidéo :");
+            if (url) {
+              editor.chain().focus().setVideo({ src: url }).run();
+            }
+          }}
+          title="Insérer une vidéo"
+          type="button"
+        >
+          <Icone icone={VideoIcon} />
+        </button>,
+      );
+    }
+
     if (boutons.length === 0) return null;
+    return <div className="flex gap-1 items-center">{boutons}</div>;
+  };
+
+  const liens =(): ReactNode | null => {
+    if (!hasExtension("link")) return null;
+
+    const boutons: ReactNode[] = [];
+
+    boutons.push(
+      <button
+        aria-label="Ajouter un lien"
+        aria-pressed={editor.isActive("link")}
+        className={buttonClass(editor.isActive("link"))}
+        key="link"
+        onClick={() => {
+          if (editor.isActive("link")) {
+            editor.chain().focus().unsetLink().run();
+            return;
+          }
+          const url = window.prompt("URL du lien :");
+          if (url) {
+            editor
+              .chain()
+              .focus()
+              .extendMarkRange("link")
+              .setLink({ href: url, target: "_blank" })
+              .run();
+          }
+        }}
+        title={editor.isActive("link") ? "Retirer le lien" : "Ajouter un lien"}
+        type="button"
+      >
+        <Icone
+          icone={editor.isActive("link") ? LinkUnlinkIcon : LinkLineIcon}
+        />
+      </button>,
+    );
+
     return <div className="flex gap-1 items-center">{boutons}</div>;
   };
 
@@ -445,6 +496,7 @@ export const MenuBar = ({ editor }: { editor: Editor }) => {
     stylesParagraphe(),
     listes(),
     blocsSpeciaux(),
+    liens(),
     actions(),
     composants(),
     nettoyage(),
