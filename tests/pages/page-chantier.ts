@@ -7,6 +7,18 @@ import { PvaIndicateurComponent } from "../components/pva-indicateur.component";
 import { E2ETestContext } from "../e2e-test-context";
 
 export class PageChantier extends BasePage {
+  static readonly COMMENT_TYPES_NATIONAL = [
+    "autresRésultatsObtenusNonCorrélésAuxIndicateurs",
+    "risquesEtFreinsÀLever",
+    "solutionsEtActionsÀVenir",
+    "exemplesConcretsDeRéussite",
+  ] as const;
+
+  static readonly COMMENT_TYPES_TERRITORIAL = [
+    "commentairesSurLesDonnées",
+    "autresRésultatsObtenus",
+  ] as const;
+
   readonly header: HeaderComponent;
 
   constructor(page: Page, e2eContext: E2ETestContext) {
@@ -127,6 +139,146 @@ export class PageChantier extends BasePage {
         name: /^Exemples concrets de réussite$/,
       }),
     ).toBeVisible();
+  }
+
+  async expectStructureNationale(): Promise<void> {
+    await expect(
+      this.page.getByRole("heading", { name: /Avancement du chantier/ }),
+    ).toBeVisible();
+    await expect(
+      this.page.getByRole("heading", { name: /Responsables/ }),
+    ).toBeVisible();
+    await expect(this.page.getByText(/^Minimum$/)).toBeVisible();
+    await expect(this.page.getByText(/^Médiane$/)).toBeVisible();
+    await expect(this.page.getByText(/^Maximum$/)).toBeVisible();
+    await expect(
+      this.page.getByRole("heading", {
+        name: /^Météo et synthèse des résultats$/,
+      }),
+    ).toBeVisible();
+    await expect(
+      this.page.getByRole("heading", { name: /^Répartition géographique$/ }),
+    ).toBeVisible();
+    await expect(
+      this.page.getByRole("heading", { name: /^Objectifs$/ }),
+    ).toBeVisible();
+    await expect(
+      this.page.getByRole("heading", { name: /^Indicateurs \(/ }),
+    ).toBeVisible();
+    await expect(
+      this.page.getByRole("heading", { name: /^Décisions stratégiques$/ }),
+    ).toBeVisible();
+    await expect(
+      this.page.getByRole("heading", {
+        name: /^Suivi des décisions stratégiques$/,
+      }),
+    ).toBeVisible();
+    await expect(
+      this.page.getByRole("heading", { name: /^Commentaires du chantier$/ }),
+    ).toBeVisible();
+    await expect(
+      this.page.getByRole("heading", {
+        name: /^Autres résultats obtenus \(non corrélés aux indicateurs\)$/,
+      }),
+    ).toBeVisible();
+    await expect(
+      this.page.getByRole("heading", { name: /^Risques et freins à lever$/ }),
+    ).toBeVisible();
+    await expect(
+      this.page.getByRole("heading", {
+        name: /^Solutions et actions à venir$/,
+      }),
+    ).toBeVisible();
+    await expect(
+      this.page.getByRole("heading", {
+        name: /^Exemples concrets de réussite$/,
+      }),
+    ).toBeVisible();
+  }
+
+  async expectStructureTerritoriale(): Promise<void> {
+    await expect(
+      this.page.getByRole("heading", { name: /Avancement du chantier/ }),
+    ).toBeVisible();
+    await expect(
+      this.page.getByRole("heading", { name: /Responsables/ }),
+    ).toBeVisible();
+    await expect(
+      this.page.getByRole("heading", {
+        name: /^Météo et synthèse des résultats$/,
+      }),
+    ).toBeVisible();
+    await expect(
+      this.page.getByRole("heading", { name: /^Indicateurs \(/ }),
+    ).toBeVisible();
+    await expect(
+      this.page.getByRole("heading", { name: /^Commentaires du chantier$/ }),
+    ).toBeVisible();
+    await expect(
+      this.page.getByRole("heading", { name: /^Décisions stratégiques$/ }),
+    ).not.toBeVisible();
+    await expect(
+      this.page.getByRole("heading", {
+        name: /^Suivi des décisions stratégiques$/,
+      }),
+    ).not.toBeVisible();
+  }
+
+  async expectMailleSelectorVisible(): Promise<void> {
+    await expect(
+      this.page.getByRole("button", { name: "Régions" }),
+    ).toBeVisible();
+    await expect(
+      this.page.getByRole("button", { name: "Départements" }),
+    ).toBeVisible();
+  }
+
+  async expectMailleSelectorNotVisible(): Promise<void> {
+    await expect(
+      this.page.getByRole("button", { name: "Régions" }),
+    ).not.toBeVisible();
+    await expect(
+      this.page.getByRole("button", { name: "Départements" }),
+    ).not.toBeVisible();
+  }
+
+  async expectImportLinkVisible(): Promise<void> {
+    await expect(
+      this.page.getByRole("link", { name: /Mettre à jour les données/ }),
+    ).toBeVisible();
+  }
+
+  async expectImportLinkNotVisible(): Promise<void> {
+    await expect(
+      this.page.getByRole("link", { name: /Mettre à jour les données/ }),
+    ).not.toBeVisible();
+  }
+
+  async expectCommentWriteButtonsVisible(
+    types: readonly string[],
+  ): Promise<void> {
+    for (const type of types) {
+      await expect(
+        this.page.getByLabel(`bouton-nouveau-commentaire-${type}`),
+      ).toBeVisible();
+    }
+  }
+
+  async expectCommentWriteButtonsNotVisible(
+    types: readonly string[],
+  ): Promise<void> {
+    for (const type of types) {
+      await expect(
+        this.page.getByLabel(`bouton-nouveau-commentaire-${type}`),
+      ).not.toBeVisible();
+    }
+  }
+
+  async expectPageNotFound(): Promise<void> {
+    await this.page.waitForLoadState("networkidle");
+    await expect(
+      this.page.getByRole("heading", { name: /Avancement du chantier/ }),
+    ).not.toBeVisible();
   }
 
   async expectHistoriqueCommentaire(

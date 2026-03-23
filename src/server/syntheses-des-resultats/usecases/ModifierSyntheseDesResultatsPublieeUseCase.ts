@@ -3,7 +3,7 @@ import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation"
 import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
 import SynthèseDesRésultatsRepository from "@/server/domain/chantier/synthèseDesRésultats/SynthèseDesRésultatsRepository.interface";
 import { EnregistrerSyntheseDesResultatsService } from "@/server/syntheses-des-resultats/services/EnregistrerSyntheseDesResultatsService";
-import { modifierSyntheseDesResultats } from "@/server/syntheses-des-resultats/domain/SyntheseDesResultats";
+import { modifierSyntheseDesResultatsPubliee } from "@/server/syntheses-des-resultats/domain/SyntheseDesResultats";
 
 export class ModifierSyntheseDesResultatsPublieeUseCase {
   constructor(
@@ -43,7 +43,7 @@ export class ModifierSyntheseDesResultatsPublieeUseCase {
       syntheseAModifier.territoireCode,
     );
 
-    const synthese = modifierSyntheseDesResultats(syntheseAModifier, {
+    const synthese = modifierSyntheseDesResultatsPubliee(syntheseAModifier, {
       contenu,
       meteo,
       auteurModificationId,

@@ -88,7 +88,7 @@ export const NavigationPilote = () => {
           target: "_self",
         } as LienNavigation,
         {
-          nom: "Suivi hebdomadaire",
+          nom: "Mes rapports",
           lien: "/rapports-hebdomadaires",
           matcher: "/rapports-hebdomadaires",
           accessible:

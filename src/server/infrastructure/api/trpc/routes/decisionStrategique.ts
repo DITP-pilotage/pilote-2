@@ -5,6 +5,7 @@ import {
   vérifierSiLeCSRFEstValide,
 } from "@/server/infrastructure/api/trpc/trpc";
 import { getContainer } from "@/server/dependances";
+import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
 import {
   validationDecisionStrategiqueContexte,
   validationDecisionStrategiqueFormulaire,
@@ -121,7 +122,10 @@ export const decisionStrategiqueRouter = créerRouteurTRPC({
 
   recupererHistorique: procédureProtégée
     .input(validationDecisionStrategiqueContexte)
-    .query(({ input }) => {
+    .query(({ input, ctx }) => {
+      new Habilitation(
+        ctx.session.habilitations,
+      ).vérifierLesHabilitationsEnLecture(input.chantierId, null);
       return getContainer("decisionStrategique")
         .resolve("recupererHistoriqueDecisionStrategiqueQuery")
         .run(input.chantierId);

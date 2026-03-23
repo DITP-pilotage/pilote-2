@@ -1,7 +1,7 @@
 import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
 import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
 import DécisionStratégiqueRepository from "@/server/domain/chantier/décisionStratégique/DécisionStratégiqueRepository.interface";
-import { modifierDecisionStrategique } from "@/server/domain/chantier/décisionStratégique/DécisionStratégique";
+import { modifierDecisionStrategiquePubliee } from "@/server/domain/chantier/décisionStratégique/DécisionStratégique";
 
 export class ModifierDecisionStrategiquePublieeUseCase {
   constructor(
@@ -40,7 +40,7 @@ export class ModifierDecisionStrategiquePublieeUseCase {
       "NAT-FR",
     );
 
-    const decision = modifierDecisionStrategique(decisionAModifier, {
+    const decision = modifierDecisionStrategiquePubliee(decisionAModifier, {
       contenu,
       auteurModificationId,
       dateModification,

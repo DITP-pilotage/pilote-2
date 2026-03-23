@@ -53,7 +53,7 @@ const UtilisateurFormulaire: FunctionComponent<UtilisateurFormulaireProps> = ({
       email: utilisateur?.email,
       nom: utilisateur?.nom,
       prénom: utilisateur?.prénom,
-      fonction: utilisateur?.fonction,
+      fonction: utilisateur?.fonction ?? "",
       service: utilisateur?.service ?? "",
       serviceAutre: utilisateur?.serviceAutre ?? "",
       perimetreMinisteriel: utilisateur?.perimetreMinisteriel ?? "",

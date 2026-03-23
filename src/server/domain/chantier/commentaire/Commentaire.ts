@@ -45,10 +45,33 @@ export function creerCommentaireBrouillon(
   };
 }
 
-export function modifierCommentaire(
+export function publierBrouillonCommentaire(
   existing: CommentaireV2,
   params: ParamsModification,
 ): CommentaireV2 {
+  if (existing.statut !== $Enums.statut_publication.BROUILLON)
+    throw new Error(
+      `Statut invalide : attendu BROUILLON, reçu ${existing.statut}`,
+    );
+
+  return {
+    ...existing,
+    contenu: params.contenu,
+    auteurModificationId: params.auteurModificationId,
+    dateModification: params.dateModification,
+    statut: $Enums.statut_publication.PUBLIE,
+  };
+}
+
+export function modifierCommentairePublie(
+  existing: CommentaireV2,
+  params: ParamsModification,
+): CommentaireV2 {
+  if (existing.statut !== $Enums.statut_publication.PUBLIE)
+    throw new Error(
+      `Statut invalide : attendu PUBLIE, reçu ${existing.statut}`,
+    );
+
   return {
     ...existing,
     contenu: params.contenu,
@@ -62,6 +85,11 @@ export function modifierCommentaireBrouillon(
   existing: CommentaireV2,
   params: ParamsModification,
 ): CommentaireV2 {
+  if (existing.statut !== $Enums.statut_publication.BROUILLON)
+    throw new Error(
+      `Statut invalide : attendu BROUILLON, reçu ${existing.statut}`,
+    );
+
   return {
     ...existing,
     contenu: params.contenu,
