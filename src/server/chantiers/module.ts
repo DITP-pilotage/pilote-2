@@ -63,7 +63,7 @@ type ChantierOwnCradle = ChantierExports & {
   envoieEmailService: EnvoieEmailService;
   recupererDonneesChantierQuery: RecupererDonneesChantierQuery;
   exportCsvDesChantiersUseCase: ExportCsvDesChantiersUseCase;
-    récupérerStatistiquesAvancementChantiersUseCase: RécupérerStatistiquesAvancementChantiersUseCase;
+  récupérerStatistiquesAvancementChantiersUseCase: RécupérerStatistiquesAvancementChantiersUseCase;
   exportCsvDesIndicateursUseCase: ExportCsvDesIndicateursUseCase;
   exportCsvDesHistoriquesIndicateursUseCase: ExportCsvDesHistoriquesIndicateursUseCase;
   recupererDetailsIndicateursV2UseCase: RecupererDetailsIndicateursV2UseCase;

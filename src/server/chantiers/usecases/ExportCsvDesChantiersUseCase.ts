@@ -18,7 +18,6 @@ import { ProfilEnum } from "@/server/app/enum/profil.enum";
 import type { Inject } from "@/server/chantiers/module";
 import { ChantierRepository } from "@/server/chantiers/domain/ports/ChantierRepository";
 import { AvancementsStatistiques } from "@/components/_commons/Avancements/Avancements.interface";
-import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
 import {
   ChantierPourExport,
   masquerPourProfilDROM,
@@ -308,7 +307,6 @@ export class ExportCsvDesChantiersUseCase {
     optionsExport,
     jalonSelectionne,
     jalonParDefaut,
-    habilitations,
   }: {
     chantierIds: string[];
     territoireCodes: string[];
@@ -317,26 +315,20 @@ export class ExportCsvDesChantiersUseCase {
     optionsExport: OptionsExport;
     jalonSelectionne: number;
     jalonParDefaut: number;
-    habilitations: Habilitations;
   }): AsyncGenerator<string[][]> {
-    const [statistiquesReg, statistiquesDept] =
-      optionsExport.listeOptionsExport.includes("valeurs-reference")
-        ? await Promise.all([
-            this.chantierRepository.getChantierStatistiques(
-              habilitations,
-              chantierIds,
-              "regionale",
-              jalonSelectionne,
-            ),
-            this.chantierRepository.getChantierStatistiques(
-              habilitations,
-              chantierIds,
-              "departementale",
-              jalonSelectionne,
-            ),
-          ])
-        : [null, null];
-
+    const [statistiquesRegParChantier, statistiquesDeptParChantier] =
+      await Promise.all([
+        this.chantierRepository.getChantierStatistiquesParChantier(
+          chantierIds,
+          "regionale",
+          jalonSelectionne,
+        ),
+        this.chantierRepository.getChantierStatistiquesParChantier(
+          chantierIds,
+          "departementale",
+          jalonSelectionne,
+        ),
+      ]);
     for (let i = 0; i < chantierIds.length; i += chantierChunkSize) {
       const partialChantierIds = chantierIds.slice(i, i + chantierChunkSize);
 
@@ -392,8 +384,12 @@ export class ExportCsvDesChantiersUseCase {
                       chantierTerritoireExport,
                       profil,
                       optionsExport,
-                      statistiquesReg,
-                      statistiquesDept,
+                      statistiquesRegParChantier.get(
+                        chantierTerritoireExport.id,
+                      ) ?? null,
+                      statistiquesDeptParChantier.get(
+                        chantierTerritoireExport.id,
+                      ) ?? null,
                     ),
                   ];
                 }

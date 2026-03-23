@@ -62,4 +62,9 @@ export interface ChantierRepository {
     maille: Maille,
     jalon: number,
   ): Promise<AvancementsStatistiques>;
+  getChantierStatistiquesParChantier(
+    listeChantier: string[],
+    maille: Maille,
+    jalon: number,
+  ): Promise<Map<string, AvancementsStatistiques>>;
 }
