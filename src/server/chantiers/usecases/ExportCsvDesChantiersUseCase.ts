@@ -17,6 +17,8 @@ import { OptionsExport } from "@/server/usecase/chantier/OptionsExport";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
 import type { Inject } from "@/server/chantiers/module";
 import { ChantierRepository } from "@/server/chantiers/domain/ports/ChantierRepository";
+import { AvancementsStatistiques } from "@/components/_commons/Avancements/Avancements.interface";
+import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
 import {
   ChantierPourExport,
   masquerPourProfilDROM,
@@ -32,6 +34,8 @@ const presenterEnChantierExportContrat = (
   chantierPourExport: ChantierPourExport,
   profil: ProfilCode,
   optionsExport: OptionsExport,
+  statistiquesReg: AvancementsStatistiques,
+  statistiquesDept: AvancementsStatistiques,
 ): string[] => {
   const donnees = [
     chantierPourExport.maille === "NAT"
@@ -113,6 +117,35 @@ const presenterEnChantierExportContrat = (
             chantierPourExport.tauxDAvancementNational,
             true,
           ),
+    );
+  }
+
+  if (optionsExport.listeOptionsExport.includes("valeurs-reference")) {
+    donnees.push(
+      formaterNumériqueOuValeurManquante(
+        statistiquesReg?.maximum ?? null,
+        true,
+      ),
+      formaterNumériqueOuValeurManquante(
+        statistiquesReg?.médiane ?? null,
+        true,
+      ),
+      formaterNumériqueOuValeurManquante(
+        statistiquesReg?.minimum ?? null,
+        true,
+      ),
+      formaterNumériqueOuValeurManquante(
+        statistiquesDept?.maximum ?? null,
+        true,
+      ),
+      formaterNumériqueOuValeurManquante(
+        statistiquesDept?.médiane ?? null,
+        true,
+      ),
+      formaterNumériqueOuValeurManquante(
+        statistiquesDept?.minimum ?? null,
+        true,
+      ),
     );
   }
 
@@ -216,6 +249,17 @@ export class ExportCsvDesChantiersUseCase {
       );
     }
 
+    if (optionsExport.listeOptionsExport.includes("valeurs-reference")) {
+      headersColumn.push(
+        `maximum régional ${jalon}`,
+        `médiane régionale ${jalon}`,
+        `minimum régional ${jalon}`,
+        `maximum départemental ${jalon}`,
+        `médiane départementale ${jalon}`,
+        `minimum départemental ${jalon}`,
+      );
+    }
+
     if (optionsExport.listeOptionsExport.includes("synthese")) {
       headersColumn.push("Météo", "Synthèse des résultats");
     }
@@ -264,6 +308,7 @@ export class ExportCsvDesChantiersUseCase {
     optionsExport,
     jalonSelectionne,
     jalonParDefaut,
+    habilitations,
   }: {
     chantierIds: string[];
     territoireCodes: string[];
@@ -272,7 +317,26 @@ export class ExportCsvDesChantiersUseCase {
     optionsExport: OptionsExport;
     jalonSelectionne: number;
     jalonParDefaut: number;
+    habilitations: Habilitations;
   }): AsyncGenerator<string[][]> {
+    const [statistiquesReg, statistiquesDept] =
+      optionsExport.listeOptionsExport.includes("valeurs-reference")
+        ? await Promise.all([
+            this.chantierRepository.getChantierStatistiques(
+              habilitations,
+              chantierIds,
+              "regionale",
+              jalonSelectionne,
+            ),
+            this.chantierRepository.getChantierStatistiques(
+              habilitations,
+              chantierIds,
+              "departementale",
+              jalonSelectionne,
+            ),
+          ])
+        : [null, null];
+
     for (let i = 0; i < chantierIds.length; i += chantierChunkSize) {
       const partialChantierIds = chantierIds.slice(i, i + chantierChunkSize);
 
@@ -328,6 +392,8 @@ export class ExportCsvDesChantiersUseCase {
                       chantierTerritoireExport,
                       profil,
                       optionsExport,
+                      statistiquesReg,
+                      statistiquesDept,
                     ),
                   ];
                 }

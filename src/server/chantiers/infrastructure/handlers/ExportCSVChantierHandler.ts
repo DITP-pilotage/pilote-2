@@ -127,6 +127,7 @@ export const handleExportDesChantiers = async (
     jalonSelectionne,
     jalonParDefaut,
     optionsExport,
+    habilitations: session.habilitations,
   })) {
     for (const chantierPourExport of partialResult) {
       stringifier.write(chantierPourExport);
