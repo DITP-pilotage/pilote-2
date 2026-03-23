@@ -3,6 +3,24 @@ import { MetadataParametrageIndicateurContrat } from "@/server/app/contrats/Meta
 import { InformationHistorisationMetadataIndicateurContrat } from "@/server/parametrage-indicateur/app/InformationDerniereModificationMetadataIndicateurContrat";
 import { formaterDate } from "@/client/utils/date/date";
 
+const Champ = ({
+  label,
+  valeur,
+}: {
+  label: string;
+  valeur: string | null | undefined;
+}) => (
+  <div className="min-w-0">
+    <p className="text-xs text-gray-500 mb-1">{label}</p>
+    <p
+      className="text-sm font-bold text-gray-900 truncate mb-0"
+      title={valeur ?? undefined}
+    >
+      {valeur || "-"}
+    </p>
+  </div>
+);
+
 const SectionTableauIndicateur: FunctionComponent<{
   indicateur: MetadataParametrageIndicateurContrat;
   informationHistorisationIndicateur: InformationHistorisationMetadataIndicateurContrat;
@@ -11,41 +29,15 @@ const SectionTableauIndicateur: FunctionComponent<{
   const derniereModification = `${formaterDate(informationHistorisationIndicateur.dateDerniereModification, "DD/MM/YYYY")} par ${informationHistorisationIndicateur.auteurModification}`;
 
   return (
-    <div className="fr-table">
-      <table>
-        <thead className="!bg-dsfr-blue-france-925 border !border-dsfr-grey-925">
-          <tr>
-            <th>Chantier associé</th>
-            <th>Nom du chantier</th>
-            <th>Identifiant indicateur</th>
-            <th>Nom de l'indicateur</th>
-            <th>Création de l'indicateur</th>
-            <th>Dernière modification</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td className="truncate max-w-20" title={indicateur.indicParentCh}>
-              {indicateur.indicParentCh}
-            </td>
-            <td className="truncate max-w-20" title={indicateur.chantierNom}>
-              {indicateur.chantierNom}
-            </td>
-            <td className="truncate max-w-20" title={indicateur.indicId}>
-              {indicateur.indicId}
-            </td>
-            <td className="truncate max-w-20" title={indicateur.indicNom}>
-              {indicateur.indicNom}
-            </td>
-            <td className="truncate max-w-20" title={creation}>
-              {creation}
-            </td>
-            <td className="truncate max-w-20" title={derniereModification}>
-              {derniereModification}
-            </td>
-          </tr>
-        </tbody>
-      </table>
+    <div className="rounded-lg bg-blue-50 p-6 mb-4">
+      <div className="grid grid-cols-3 gap-x-6 gap-y-3">
+        <Champ label="Chantier associé" valeur={indicateur.indicParentCh} />
+        <Champ label="Nom du chantier" valeur={indicateur.chantierNom} />
+        <Champ label="Identifiant indicateur" valeur={indicateur.indicId} />
+        <Champ label="Nom de l'indicateur" valeur={indicateur.indicNom} />
+        <Champ label="Création de l'indicateur" valeur={creation} />
+        <Champ label="Dernière modification" valeur={derniereModification} />
+      </div>
     </div>
   );
 };

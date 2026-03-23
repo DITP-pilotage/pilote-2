@@ -53,7 +53,7 @@ test("doit valider les champs obligatoires Service et Fonction à la création",
   );
 });
 
-const COORDINATEUR_REGION = "coordinateur.region@example.com";
+const MODALE_PROFIL = "modale.profil@example.com";
 
 test("doit valider les champs obligatoires à la modification et supprimer la modale après complétion", async ({
   page,
@@ -71,7 +71,7 @@ test("doit valider les champs obligatoires à la modification et supprimer la mo
   await step(
     "Connexion en coordinateur — la modale Complétez votre profil apparaît",
     async () => {
-      await appActions.loginAs(COORDINATEUR_REGION);
+      await appActions.loginAs(MODALE_PROFIL);
       await expect(modaleCompletezProfil).toBeVisible({ timeout: 10_000 });
       await modaleCompletezProfil.click();
     },
@@ -89,7 +89,7 @@ test("doit valider les champs obligatoires à la modification et supprimer la mo
     "Navigation vers la fiche du coordinateur et clic Modifier",
     async () => {
       await pageUtilisateurs.goto();
-      await pageUtilisateurs.clickUtilisateurParEmail(COORDINATEUR_REGION);
+      await pageUtilisateurs.clickUtilisateurParEmail(MODALE_PROFIL);
       await pageFormulaire.gotoModifierDepuisFiche();
     },
   );
@@ -107,7 +107,7 @@ test("doit valider les champs obligatoires à la modification et supprimer la mo
     "Remplissage de Fonction et Service — passage à l'étape 2",
     async () => {
       e2eContext.track("PROFIL_UTILISATEUR_MODIFIE", {
-        email: COORDINATEUR_REGION,
+        email: MODALE_PROFIL,
         originalData: {
           fonction: null,
           service: null,
@@ -131,7 +131,7 @@ test("doit valider les champs obligatoires à la modification et supprimer la mo
   await step(
     "Re-connexion en coordinateur — la modale ne réapparaît plus",
     async () => {
-      await appActions.switchUser(COORDINATEUR_REGION);
+      await appActions.switchUser(MODALE_PROFIL);
       await page.waitForTimeout(3000);
       await expect(modaleCompletezProfil).not.toBeVisible();
     },
