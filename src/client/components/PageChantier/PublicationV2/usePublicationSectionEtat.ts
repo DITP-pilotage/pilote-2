@@ -24,7 +24,7 @@ export const usePublicationSectionEtat = (actions: PublicationActions) => {
     contenu: string;
   }> = async (data) => {
     await actions.enregistrerEnBrouillon(data);
-    setAlerteAction("brouillon-enregistre");
+    setAlerteAction(null);
   };
 
   const handlePublierBrouillon: SubmitHandler<{
@@ -38,7 +38,7 @@ export const usePublicationSectionEtat = (actions: PublicationActions) => {
     contenu: string;
   }> = async (data) => {
     await actions.modifierBrouillon(data);
-    setAlerteAction("brouillon-enregistre");
+    setAlerteAction(null);
   };
 
   return {

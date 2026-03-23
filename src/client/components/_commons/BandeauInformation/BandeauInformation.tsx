@@ -19,12 +19,18 @@ const BandeauInformation: FunctionComponent<
   PropsWithChildren<{
     bandeauType: string;
     fermable?: boolean;
+    classNameContainer?: string;
   }>
-> = ({ children, bandeauType, fermable = true }) => {
+> = ({
+  children,
+  bandeauType,
+  fermable = true,
+  classNameContainer = "fr-container",
+}) => {
   return (
     <BandeauInformationStyled>
       <div className={`fr-notice ${getBandeauTypeClass(bandeauType)}`}>
-        <div className="fr-container">
+        <div className={classNameContainer}>
           <div className="fr-notice__body flex">
             <p className="fr-notice__title">{children}</p>
             {fermable ? (

@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { nettoyerUneChaîneDeCaractèresPourAffichageHTML } from "@/client/utils/strings";
 import { BoutonSousLigné } from "@/components/_commons/BoutonSousLigné/BoutonSousLigné";
 import { Icone } from "@/components/_commons/Icone";
@@ -6,6 +7,9 @@ import { Infobulle } from "@/components/_commons/Infobulle/Infobulle";
 import { Badge } from "@/components/_commons/Badge";
 import { PiloteDateFormatter } from "@/server/rapports-hebdomadaires/infrastructure/adapters/PiloteDateFormatter";
 import { Publication } from "@/components/PageChantier/PublicationV2/Publication.interface";
+import { BoutonsAffichage } from "@/components/_commons/BoutonsAffichage/BoutonsAffichage";
+
+const LIMITE_CARACTERES_AFFICHAGE_PUBLICATION = 250;
 
 export const AffichagePublication = ({
   commentaire,
@@ -14,9 +18,19 @@ export const AffichagePublication = ({
   commentaire: Publication | null;
   onModifier?: () => void;
 }) => {
+  const [afficherContenuComplet, setAfficherContenuComplet] = useState(false);
+
   if (!commentaire) {
     return <Badge type="gris">Non renseigné</Badge>;
   }
+
+  const contenuTronque =
+    commentaire.contenu.length > LIMITE_CARACTERES_AFFICHAGE_PUBLICATION;
+  const contenuAAfficher =
+    afficherContenuComplet || !contenuTronque
+      ? commentaire.contenu
+      : commentaire.contenu.slice(0, LIMITE_CARACTERES_AFFICHAGE_PUBLICATION) +
+        "...";
 
   return (
     <>
@@ -46,13 +60,19 @@ export const AffichagePublication = ({
         </div>
       ) : null}
       <p
-        className="fr-text--sm fr-mb-2"
+        className="fr-text--sm mb-1"
         dangerouslySetInnerHTML={{
-          __html: nettoyerUneChaîneDeCaractèresPourAffichageHTML(
-            commentaire.contenu,
-          ),
+          __html:
+            nettoyerUneChaîneDeCaractèresPourAffichageHTML(contenuAAfficher),
         }}
       />
+      {contenuTronque ? (
+        <BoutonsAffichage
+          deplie={afficherContenuComplet}
+          deplierLeContenu={() => setAfficherContenuComplet(true)}
+          replierLeContenu={() => setAfficherContenuComplet(false)}
+        />
+      ) : null}
     </>
   );
 };

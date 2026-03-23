@@ -53,7 +53,7 @@ export const PublicationSection = ({
       {!modeÉdition && <h5 className="font-bold text-xl mb-1">{libelle}</h5>}
       {brouillon?.dateModification ? (
         <div className="my-2">
-          <BandeauInformation bandeauType="INFO">
+          <BandeauInformation bandeauType="INFO" classNameContainer="px-4">
             {`Vous avez enregistré un nouveau commentaire en tant que brouillon le ${PiloteDateFormatter.isoDateFranceMetropolitaine(brouillon.dateModification)}`}
           </BandeauInformation>
         </div>

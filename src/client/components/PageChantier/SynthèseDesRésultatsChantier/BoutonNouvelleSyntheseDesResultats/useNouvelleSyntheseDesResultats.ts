@@ -9,7 +9,7 @@ export const useNouvelleSyntheseDesResultats = ({
   onAction,
 }: {
   onSuccess: () => void;
-  onAction: (action: SyntheseDesResultatsAction) => void;
+  onAction: (action: SyntheseDesResultatsAction | null) => void;
 }) => {
   const { chantier, territoireCode } = pageChantier.useServerSidePropsContext();
 
@@ -37,7 +37,7 @@ export const useNouvelleSyntheseDesResultats = ({
     enregistrerEnBrouillonMutation.mutateAsync(input(data), {
       onSuccess: () => {
         onSuccess();
-        onAction("brouillon-enregistre");
+        onAction(null);
       },
     });
 

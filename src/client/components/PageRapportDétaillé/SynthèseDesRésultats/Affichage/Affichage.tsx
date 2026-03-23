@@ -1,8 +1,6 @@
 import { formaterDate } from "@/client/utils/date/date";
 import { nettoyerUneChaîneDeCaractèresPourAffichageHTML } from "@/client/utils/strings";
-import BoutonsAffichage from "@/components/PageRapportDétaillé/SynthèseDesRésultats/BoutonsAffichage/BoutonsAffichage";
 import SynthèseDesRésultatsInterface from "@/server/domain/chantier/synthèseDesRésultats/SynthèseDesRésultats.interface";
-import useAffichage from "./useAffichage";
 
 interface SynthèseDesRésultatsAffichageProps {
   synthèseDesRésultats: SynthèseDesRésultatsInterface;
@@ -11,14 +9,6 @@ interface SynthèseDesRésultatsAffichageProps {
 const SynthèseDesRésultatsAffichage = ({
   synthèseDesRésultats,
 }: SynthèseDesRésultatsAffichageProps) => {
-  const {
-    contenuAAfficher,
-    afficherBoutonsAffichage,
-    afficherContenuComplet,
-    déplierLeContenu,
-    replierLeContenu,
-  } = useAffichage(synthèseDesRésultats);
-
   if (!synthèseDesRésultats) {
     return (
       <p className="fr-text--sm texte-gris">Aucune synthèse des résultats.</p>
@@ -35,18 +25,11 @@ const SynthèseDesRésultatsAffichage = ({
       <p
         className="fr-text--sm fr-mb-0"
         dangerouslySetInnerHTML={{
-          __html:
-            nettoyerUneChaîneDeCaractèresPourAffichageHTML(contenuAAfficher),
+          __html: nettoyerUneChaîneDeCaractèresPourAffichageHTML(
+            synthèseDesRésultats.contenu,
+          ),
         }}
       />
-      {afficherBoutonsAffichage ? (
-        <BoutonsAffichage
-          afficherVoirMoins={afficherContenuComplet}
-          afficherVoirPlus={!afficherContenuComplet}
-          déplierLeContenu={déplierLeContenu}
-          replierLeContenu={replierLeContenu}
-        />
-      ) : null}
     </>
   );
 };
