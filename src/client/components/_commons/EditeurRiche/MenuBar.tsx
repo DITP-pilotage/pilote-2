@@ -1,4 +1,4 @@
-import { Fragment, ReactNode } from "react";
+import { Fragment, ReactNode, useState } from "react";
 import { Editor } from "@tiptap/react";
 import { Icone } from "@/components/_commons/Icone";
 import { ListOrderedIcon } from "@/components/_commons/Icones/ListOrderedIcon";
@@ -30,8 +30,12 @@ import { EtoileIcon } from "@/components/_commons/Icones/EtoileIcon";
 import { LinkLineIcon } from "@/components/_commons/Icones/LinkLineIcon";
 import { LinkUnlinkIcon } from "@/components/_commons/Icones/LinkUnlinkIcon";
 import { VideoIcon } from "@/components/_commons/Icones/VideoIcon";
+import { ModaleInsertionUrl } from "./ModaleInsertionUrl";
 
 export const MenuBar = ({ editor }: { editor: Editor }) => {
+  const [modaleImage, setModaleImage] = useState(false);
+  const [modaleLien, setModaleLien] = useState(false);
+
   if (!editor) {
     return null;
   }
@@ -295,12 +299,7 @@ export const MenuBar = ({ editor }: { editor: Editor }) => {
           aria-label="Image"
           className={buttonClass(false)}
           key="image"
-          onClick={() => {
-            const url = window.prompt("URL de l'image :");
-            if (url) {
-              editor.chain().focus().setImage({ src: url }).run();
-            }
-          }}
+          onClick={() => setModaleImage(true)}
           title="Insérer une image"
           type="button"
         >
@@ -345,7 +344,7 @@ export const MenuBar = ({ editor }: { editor: Editor }) => {
     return <div className="flex gap-1 items-center">{boutons}</div>;
   };
 
-  const liens =(): ReactNode | null => {
+  const liens = (): ReactNode | null => {
     if (!hasExtension("link")) return null;
 
     const boutons: ReactNode[] = [];
@@ -361,15 +360,7 @@ export const MenuBar = ({ editor }: { editor: Editor }) => {
             editor.chain().focus().unsetLink().run();
             return;
           }
-          const url = window.prompt("URL du lien :");
-          if (url) {
-            editor
-              .chain()
-              .focus()
-              .extendMarkRange("link")
-              .setLink({ href: url, target: "_blank" })
-              .run();
-          }
+          setModaleLien(true);
         }}
         title={editor.isActive("link") ? "Retirer le lien" : "Ajouter un lien"}
         type="button"
@@ -503,13 +494,38 @@ export const MenuBar = ({ editor }: { editor: Editor }) => {
   ].filter(Boolean) as ReactNode[];
 
   return (
-    <div className="flex z-1 sticky top-0 flex-wrap gap-1 items-center p-2 border border-[#ddd] border-b-0 rounded-t !bg-white">
-      {visibleGroups.map((group, index) => (
-        <Fragment key={index}>
-          {index > 0 && <div className="w-px h-6 mx-1 bg-[#ddd]" />}
-          {group}
-        </Fragment>
-      ))}
-    </div>
+    <>
+      <div className="flex z-1 sticky top-0 flex-wrap gap-1 items-center p-2 border border-[#ddd] border-b-0 rounded-t !bg-white">
+        {visibleGroups.map((group, index) => (
+          <Fragment key={index}>
+            {index > 0 && <div className="w-px h-6 mx-1 bg-[#ddd]" />}
+            {group}
+          </Fragment>
+        ))}
+      </div>
+      <ModaleInsertionUrl
+        onOpenChange={setModaleImage}
+        onValider={(url) => {
+          editor.chain().focus().setImage({ src: url }).run();
+        }}
+        open={modaleImage}
+        titre="Insérer une image"
+        type="image"
+      />
+      <ModaleInsertionUrl
+        onOpenChange={setModaleLien}
+        onValider={(url) => {
+          editor
+            .chain()
+            .focus()
+            .extendMarkRange("link")
+            .setLink({ href: url, target: "_blank" })
+            .run();
+        }}
+        open={modaleLien}
+        titre="Insérer un lien"
+        type="lien"
+      />
+    </>
   );
 };
