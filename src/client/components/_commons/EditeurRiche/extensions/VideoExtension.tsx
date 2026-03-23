@@ -18,6 +18,9 @@ export const VideoExtension = Node.create({
       src: {
         default: null,
       },
+      title: {
+        default: "Lecteur vidéo",
+      },
       frameborder: {
         default: "0",
       },
@@ -45,6 +48,7 @@ export const VideoExtension = Node.create({
           style: "max-width: 100%; width: 560px; height: 315px;",
           frameborder: "0",
           allowfullscreen: "true",
+          title: HTMLAttributes.title || "Lecteur vidéo",
         }),
       ],
     ];

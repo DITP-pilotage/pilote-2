@@ -35,6 +35,7 @@ import { ModaleInsertionUrl } from "./ModaleInsertionUrl";
 export const MenuBar = ({ editor }: { editor: Editor }) => {
   const [modaleImage, setModaleImage] = useState(false);
   const [modaleLien, setModaleLien] = useState(false);
+  const [modaleVideo, setModaleVideo] = useState(false);
 
   if (!editor) {
     return null;
@@ -326,12 +327,7 @@ export const MenuBar = ({ editor }: { editor: Editor }) => {
           aria-label="Vidéo"
           className={buttonClass(false)}
           key="video"
-          onClick={() => {
-            const url = window.prompt("URL de la vidéo :");
-            if (url) {
-              editor.chain().focus().setVideo({ src: url }).run();
-            }
-          }}
+          onClick={() => setModaleVideo(true)}
           title="Insérer une vidéo"
           type="button"
         >
@@ -519,12 +515,25 @@ export const MenuBar = ({ editor }: { editor: Editor }) => {
             .chain()
             .focus()
             .extendMarkRange("link")
-            .setLink({ href: url, target: "_blank" })
+            .setLink({
+              href: url,
+              target: "_blank",
+              rel: "noopener noreferrer",
+            })
             .run();
         }}
         open={modaleLien}
         titre="Insérer un lien"
         type="lien"
+      />
+      <ModaleInsertionUrl
+        onOpenChange={setModaleVideo}
+        onValider={(url) => {
+          editor.chain().focus().setVideo({ src: url }).run();
+        }}
+        open={modaleVideo}
+        titre="Insérer une vidéo"
+        type="video"
       />
     </>
   );

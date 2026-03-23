@@ -4,9 +4,15 @@ import { Modale } from "@/client/components/shared/Modale";
 const EXTENSIONS_PAR_TYPE = {
   image: ["png", "jpg", "jpeg", "gif", "webp", "svg"],
   lien: ["pdf", "xlsx", "ods", "docx", "odt", "csv"],
+  video: [],
 } as const;
 
 type TypeInsertion = keyof typeof EXTENSIONS_PAR_TYPE;
+
+const DOMAINES_AUTORISES_PAR_TYPE: Partial<Record<TypeInsertion, string[]>> = {
+  image: ["fichiers.numerique.gouv.fr"],
+  video: ["video.finances.gouv.fr"],
+};
 
 function extraireIdDepuisUrl(url: string): string | null {
   const match =
@@ -21,7 +27,8 @@ function construireUrlMedia(
   nomFichier: string,
   extension: string,
 ): string {
-  return `https://fichiers.numerique.gouv.fr/media/preview/item/${identifiant}/${nomFichier}.${extension}`;
+  const nomFichierEncode = encodeURIComponent(nomFichier);
+  return `https://fichiers.numerique.gouv.fr/media/preview/item/${identifiant}/${nomFichierEncode}.${extension}`;
 }
 
 export const ModaleInsertionUrl = ({
@@ -42,7 +49,7 @@ export const ModaleInsertionUrl = ({
   const [urlFichier, setUrlFichier] = useState("");
   const [nomFichier, setNomFichier] = useState("");
   const [extension, setExtension] = useState<string>(
-    EXTENSIONS_PAR_TYPE[type][0],
+    EXTENSIONS_PAR_TYPE[type][0] ?? "",
   );
   const [erreur, setErreur] = useState("");
 
@@ -50,7 +57,7 @@ export const ModaleInsertionUrl = ({
     setUrlDirecte("");
     setUrlFichier("");
     setNomFichier("");
-    setExtension(EXTENSIONS_PAR_TYPE[type][0]);
+    setExtension(EXTENSIONS_PAR_TYPE[type][0] ?? "");
     setErreur("");
     setMode("direct");
   };
@@ -63,6 +70,21 @@ export const ModaleInsertionUrl = ({
       if (!urlDirecte.trim()) {
         setErreur("L'URL est requise.");
         return;
+      }
+      const domainesAutorises = DOMAINES_AUTORISES_PAR_TYPE[type];
+      if (domainesAutorises) {
+        try {
+          const hostname = new URL(urlDirecte.trim()).hostname;
+          if (!domainesAutorises.some((domaine) => hostname === domaine)) {
+            setErreur(
+              `L'URL doit provenir de : ${domainesAutorises.join(", ")}`,
+            );
+            return;
+          }
+        } catch {
+          setErreur("L'URL saisie n'est pas valide.");
+          return;
+        }
       }
       onValider(urlDirecte.trim());
     } else {
@@ -84,6 +106,8 @@ export const ModaleInsertionUrl = ({
     onOpenChange(false);
   };
 
+  const aDesExtensions = EXTENSIONS_PAR_TYPE[type].length > 0;
+
   return (
     <Modale
       onOpenChange={(ouvert) => {
@@ -94,28 +118,30 @@ export const ModaleInsertionUrl = ({
       size="sm"
       title={titre}
     >
-      <div className="flex gap-2 mb-4">
-        <button
-          className={`px-3 py-1 rounded text-sm border ${mode === "direct" ? "!bg-[#000091] !text-white !border-[#000091]" : "!bg-white !text-[#3a3a3a] !border-[#ddd]"}`}
-          onClick={() => {
-            setMode("direct");
-            setErreur("");
-          }}
-          type="button"
-        >
-          URL directe
-        </button>
-        <button
-          className={`px-3 py-1 rounded text-sm border ${mode === "constructeur" ? "!bg-[#000091] !text-white !border-[#000091]" : "!bg-white !text-[#3a3a3a] !border-[#ddd]"}`}
-          onClick={() => {
-            setMode("constructeur");
-            setErreur("");
-          }}
-          type="button"
-        >
-          Fichiers numériques
-        </button>
-      </div>
+      {aDesExtensions && (
+        <div className="flex gap-2 mb-4">
+          <button
+            className={`px-3 py-1 rounded text-sm border ${mode === "direct" ? "!bg-[#000091] !text-white !border-[#000091]" : "!bg-white !text-[#3a3a3a] !border-[#ddd]"}`}
+            onClick={() => {
+              setMode("direct");
+              setErreur("");
+            }}
+            type="button"
+          >
+            URL directe
+          </button>
+          <button
+            className={`px-3 py-1 rounded text-sm border ${mode === "constructeur" ? "!bg-[#000091] !text-white !border-[#000091]" : "!bg-white !text-[#3a3a3a] !border-[#ddd]"}`}
+            onClick={() => {
+              setMode("constructeur");
+              setErreur("");
+            }}
+            type="button"
+          >
+            Fichiers numériques
+          </button>
+        </div>
+      )}
 
       <form className="flex flex-col gap-3" onSubmit={valider}>
         {mode === "direct" ? (
@@ -149,7 +175,7 @@ export const ModaleInsertionUrl = ({
             </div>
             <div className="flex flex-col gap-1">
               <label className="text-sm font-medium" htmlFor="nom-fichier">
-                Nom du fichier exacte sur le drive
+                Nom du fichier exact sur le drive
               </label>
               <input
                 className="border rounded px-3 py-2 text-sm"

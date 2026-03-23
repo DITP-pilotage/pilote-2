@@ -36,7 +36,7 @@ export class SanitizerHTML {
         div: ["data-type", "data-title", "data-color", "style"],
         a: ["href", "target", "rel"],
         img: ["src", "alt", "title", "width", "height", "draggable"],
-        iframe: ["src", "frameborder", "allowfullscreen", "style"],
+        iframe: ["src", "frameborder", "allowfullscreen", "style", "title"],
         span: ["style", "data-type", "data-icon-type"],
         p: ["style"],
         h1: ["style"],
@@ -63,7 +63,7 @@ export class SanitizerHTML {
       },
       allowedSchemes: ["http", "https", "mailto"],
       allowedSchemesByTag: {
-        img: ["http", "https", "data"],
+        img: ["http", "https"],
       },
       disallowedTagsMode: "discard",
       allowedIframeHostnames: ["video.finances.gouv.fr"],
