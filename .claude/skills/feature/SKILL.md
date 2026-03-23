@@ -64,10 +64,13 @@ L'utilisateur fournit un identifiant de ticket Jira (ex: PIL-1249) en argument, 
 - Push la branche
 - Construis le permalink du gif avec le SHA du commit : `https://raw.githubusercontent.com/<owner>/<repo>/<commit-sha>/tests/assets/<nom>.gif` (récupère owner/repo via `gh repo view --json nameWithOwner -q .nameWithOwner` et le SHA via `git rev-parse HEAD`)
 - Crée ou mets à jour la PR GitHub avec :
+  - Ne PAS mentionner que la PR a été générée par Claude Code (pas de footer "Generated with Claude Code")
   - Lien vers le ticket Jira
   - Description des changements
-  - Gif de démonstration via le permalink (pas de drag & drop, utilise la syntaxe markdown `![demo](permalink)`)
-  - Détail des tests e2e (contenu de `docs/tests-e2e-couverture.md` pour cette feature)
+  - Pour chaque test e2e, un bloc contenant :
+    1. Le nom du test et une courte description
+    2. Le gif de démonstration via le permalink (pas de drag & drop, utilise la syntaxe markdown `![demo](permalink)`)
+    3. En dessous du gif, le copier-coller du texte correspondant à ce test dans `docs/tests-e2e-couverture.md` (c'est ce qu'on voit dans les bandeaux de la vidéo, ça permet de suivre le déroulé)
 
 ## Étape 8 — Mettre à jour Jira
 
