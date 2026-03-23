@@ -13,7 +13,7 @@ import { ModaleFormulaireSyntheseDesResultats } from "./ModaleFormulaireSynthese
 export const BoutonEditerBrouillonSyntheseDesResultats = ({
   onAction,
 }: {
-  onAction: (action: SyntheseDesResultatsAction) => void;
+  onAction: (action: SyntheseDesResultatsAction | null) => void;
 }) => {
   const { syntheseDesResultatsBrouillon } =
     pageChantier.useServerSidePropsContext();

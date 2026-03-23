@@ -12,7 +12,7 @@ import { ModaleFormulaireSyntheseDesResultats } from "./ModaleFormulaireSynthese
 export const BoutonNouvelleSyntheseDesResultats = ({
   onAction,
 }: {
-  onAction: (action: SyntheseDesResultatsAction) => void;
+  onAction: (action: SyntheseDesResultatsAction | null) => void;
 }) => {
   const [open, setOpen] = useState(false);
   const refreshRouter = useRefreshRouter();

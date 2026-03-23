@@ -10,7 +10,7 @@ export const useEditerBrouillonSyntheseDesResultats = ({
 }: {
   brouillonId: string;
   onSuccess: () => void;
-  onAction: (action: SyntheseDesResultatsAction) => void;
+  onAction: (action: SyntheseDesResultatsAction | null) => void;
 }) => {
   const publierUnBrouillonMutation =
     api.synthèseDesRésultats.publierUnBrouillon.useMutation();
@@ -36,6 +36,7 @@ export const useEditerBrouillonSyntheseDesResultats = ({
     modifierLeBrouillonMutation.mutateAsync(input(data), {
       onSuccess: () => {
         onSuccess();
+        onAction(null);
       },
     });
 
