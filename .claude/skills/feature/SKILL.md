@@ -60,7 +60,7 @@ L'utilisateur fournit un identifiant de ticket Jira (ex: PIL-1249) en argument, 
 ## Étape 7 — Commit, push et PR
 
 - Ne mets pas de Co-Authored-By dans les commits
-- Commit les changements avec un message descriptif
+- Si le skill utilisateur `commit-billable` est disponible (visible dans la liste des skills), utilise-le pour générer le commit (il ajoutera les métadonnées structurées : client, projet, catégorie, tags, etc.). Sinon, commit avec un message descriptif classique.
 - Push la branche
 - Construis le permalink du gif avec le SHA du commit : `https://raw.githubusercontent.com/<owner>/<repo>/<commit-sha>/tests/assets/<nom>.gif` (récupère owner/repo via `gh repo view --json nameWithOwner -q .nameWithOwner` et le SHA via `git rev-parse HEAD`)
 - Crée ou mets à jour la PR GitHub avec :
@@ -74,10 +74,11 @@ L'utilisateur fournit un identifiant de ticket Jira (ex: PIL-1249) en argument, 
 
 ## Étape 8 — Mettre à jour Jira
 
-- Ajoute un commentaire sur le ticket Jira avec :
+- Si le skill utilisateur `jira-billable` est disponible (visible dans la liste des skills), utilise-le pour ajouter le commentaire Jira (il ajoutera les métadonnées structurées : client, projet, catégorie, tags, commit, PR). Réutilise les mêmes métadonnées que le `commit-billable` de l'étape 7 sans les redemander. Le contenu du commentaire doit inclure :
   - Lien vers la PR
   - Gif de démonstration via le même permalink (syntaxe markdown `![demo](permalink)` — Jira supporte le markdown, ne PAS utiliser la syntaxe wiki `!url!`)
   - Description des changements
   - Critères d'acceptation (checklist)
   - Résumé des tests e2e ajoutés
+- Sinon (skill non disponible), ajoute un commentaire classique avec les mêmes informations mais sans le bloc de métadonnées
 - **Ne mets PAS à jour Confluence** (l'utilisateur le fait manuellement pour gérer les accordions)
