@@ -75,7 +75,7 @@ export const chantierRouter = créerRouteurTRPC({
       }),
     )
     .query(({ input, ctx }) => {
-      return getContainer("legacy")
+      return getContainer("chantiers")
         .resolve("récupérerStatistiquesAvancementChantiersUseCase")
         .run(
           input.chantierIds,

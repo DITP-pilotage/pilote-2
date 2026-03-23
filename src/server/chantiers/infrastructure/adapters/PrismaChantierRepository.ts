@@ -17,6 +17,11 @@ import { PrismaChantier } from "@/server/chantiers/domain/PrismaChantier";
 import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
 import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
+import { Maille } from "@/server/domain/maille/Maille.interface";
+import { AvancementsStatistiques } from "@/components/_commons/Avancements/Avancements.interface";
+import { CODES_MAILLES } from "@/server/infrastructure/accès_données/maille/mailleSQLParser";
+import { calculerMediane } from "@/client/utils/statistiques/statistiques";
+import Chantier from "@/server/domain/chantier/Chantier.interface";
 
 class ErreurChantierNonTrouvé extends Error {
   constructor(idChantier: string) {
@@ -1377,5 +1382,58 @@ export class PrismaChantierRepository implements ChantierRepository {
         },
       },
     });
+  }
+
+  async getChantierStatistiques(
+    habilitations: Habilitations,
+    listeChantier: Chantier["id"][],
+    maille: Maille,
+    jalon: number,
+  ): Promise<AvancementsStatistiques> {
+    const habilitation = new Habilitation(habilitations);
+    const chantiersAutorisés =
+      habilitation.récupérerListeChantiersIdsAccessiblesEnLecture();
+    const chantiersLecture = listeChantier.filter((chantier) =>
+      chantiersAutorisés.includes(chantier),
+    );
+
+    const listeMoyenneParTerritoire =
+      await this.prisma.chantier_territoire_jalon.groupBy({
+        by: ["territoire_code"],
+        _avg: {
+          taux_avancement: true,
+        },
+        where: {
+          id: {
+            in: chantiersLecture || [],
+          },
+          jalon: jalon,
+          maille: CODES_MAILLES[maille],
+          NOT: {
+            taux_avancement: {
+              equals: null,
+            },
+          },
+        },
+        orderBy: {
+          _avg: {
+            taux_avancement: "asc",
+          },
+        },
+      });
+
+    return {
+      médiane: calculerMediane(
+        listeMoyenneParTerritoire.map(
+          (moyenneParTerritoire) => moyenneParTerritoire._avg.taux_avancement,
+        ),
+      ),
+      minimum: verifyValeurIsNotNullOrUndefined(
+        listeMoyenneParTerritoire.at(0)?._avg.taux_avancement,
+      ),
+      maximum: verifyValeurIsNotNullOrUndefined(
+        listeMoyenneParTerritoire.at(-1)?._avg.taux_avancement,
+      ),
+    };
   }
 }

@@ -1,13 +1,13 @@
-import ChantierRepository from "@/server/domain/chantier/ChantierRepository.interface";
 import { AvancementsStatistiques } from "@/components/_commons/Avancements/Avancements.interface";
 import Chantier from "@/server/domain/chantier/Chantier.interface";
 import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
 import { Maille } from "@/server/domain/maille/Maille.interface";
 import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
 import { MailleNonAutoriséeErreur } from "@/server/utils/errors";
-import type { Inject } from "@/server/legacy/module";
+import type { Inject } from "@/server/chantiers/module";
+import { ChantierRepository } from "@/server/chantiers/domain/ports/ChantierRepository";
 
-export default class RécupérerStatistiquesAvancementChantiersUseCase {
+export class RécupérerStatistiquesAvancementChantiersUseCase {
   private readonly chantierRepository: ChantierRepository;
 
   constructor({ chantierRepository }: Inject<"chantierRepository">) {

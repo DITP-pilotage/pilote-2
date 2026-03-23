@@ -212,7 +212,7 @@ export const getServerSideProps = async (
     )
     .then(presenterEnRépartitionsMétéosChantiersContrat);
 
-  const avancementsAgrégés = await getContainer("legacy")
+  const avancementsAgrégés = await getContainer("chantiers")
     .resolve("récupérerStatistiquesAvancementChantiersUseCase")
     .run(
       chantiersAvecAlertes.map((chantier) => chantier.id),

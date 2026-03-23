@@ -25,6 +25,7 @@ import { RecupererDetailsIndicateursV2UseCase } from "./usecases/RecupererDetail
 import { RecupererChantiersAccessiblesEnLectureUseCaseV2 } from "./usecases/RecupererChantiersAccessiblesEnLectureUseCaseV2";
 import RecupererChantiersAccessiblesEnLectureUseCaseRapportDetailleV2 from "./usecases/RecupererChantiersAccessiblesEnLectureUseCaseRapportDetailleV2";
 import { ExportCsvDesChantiersUseCase } from "./usecases/ExportCsvDesChantiersUseCase";
+import { RécupérerStatistiquesAvancementChantiersUseCase } from "./usecases/RécupérerStatistiquesAvancementChantiersUseCase";
 import { ExportCsvDesIndicateursUseCase } from "./usecases/ExportCsvDesIndicateursUseCase";
 import { ExportCsvDesHistoriquesIndicateursUseCase } from "./usecases/ExportCsvDesHistoriquesIndicateursUseCase";
 import { MinistereRepository } from "./domain/ports/MinistereRepository";
@@ -62,6 +63,7 @@ type ChantierOwnCradle = ChantierExports & {
   envoieEmailService: EnvoieEmailService;
   recupererDonneesChantierQuery: RecupererDonneesChantierQuery;
   exportCsvDesChantiersUseCase: ExportCsvDesChantiersUseCase;
+    récupérerStatistiquesAvancementChantiersUseCase: RécupérerStatistiquesAvancementChantiersUseCase;
   exportCsvDesIndicateursUseCase: ExportCsvDesIndicateursUseCase;
   exportCsvDesHistoriquesIndicateursUseCase: ExportCsvDesHistoriquesIndicateursUseCase;
   recupererDetailsIndicateursV2UseCase: RecupererDetailsIndicateursV2UseCase;
@@ -107,6 +109,9 @@ export const chantiersModule = defineModule<ChantierExports, ChantierCradle>()({
         RecupererDonneesChantierQuery,
       ),
       exportCsvDesChantiersUseCase: asModuleClass(ExportCsvDesChantiersUseCase),
+      récupérerStatistiquesAvancementChantiersUseCase: asModuleClass(
+        RécupérerStatistiquesAvancementChantiersUseCase,
+      ),
       exportCsvDesIndicateursUseCase: asModuleClass(
         ExportCsvDesIndicateursUseCase,
       ),

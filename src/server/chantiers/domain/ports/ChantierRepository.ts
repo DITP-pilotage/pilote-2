@@ -8,6 +8,8 @@ import { FiltreQueryParams } from "@/server/chantiers/app/contrats/FiltreQueryPa
 import { PrismaChantier } from "@/server/chantiers/domain/PrismaChantier";
 import { Meteo } from "@/server/domain/météo/Météo.interface";
 import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
+import { Maille } from "@/server/domain/maille/Maille.interface";
+import { AvancementsStatistiques } from "@/components/_commons/Avancements/Avancements.interface";
 
 export interface ChantierRepository {
   modifierMeteo(
@@ -54,4 +56,10 @@ export interface ChantierRepository {
     territoireCode: string,
     jalons: number[],
   ): Promise<PrismaChantier[]>;
+  getChantierStatistiques(
+    habilitations: Habilitations,
+    listeChantier: Chantier["id"][],
+    maille: Maille,
+    jalon: number,
+  ): Promise<AvancementsStatistiques>;
 }

@@ -76,7 +76,7 @@ Utilise cet outil quand l'utilisateur demande :
         const agregerAvancementsChantiersUseCase = legacyContainer.resolve(
           "agregerAvancementsChantiersUseCase",
         );
-        const récupérerStatistiquesUseCase = legacyContainer.resolve(
+        const récupérerStatistiquesUseCase = getContainer("chantiers").resolve(
           "récupérerStatistiquesAvancementChantiersUseCase",
         );
 

@@ -47,7 +47,6 @@ import { PrismaGestionContenuRepository } from "@/server/gestion-contenu/infrast
 import { TokenAPIJWTService } from "@/server/authentification/infrastructure/adapters/services/TokenAPIJWTService";
 import { PrismaTokenAPIInformationRepository } from "@/server/authentification/infrastructure/adapters/PrismaTokenAPIInformationRepository";
 import { configuration } from "@/config";
-import RécupérerStatistiquesAvancementChantiersUseCase from "@/server/usecase/chantier/RécupérerStatistiquesAvancementChantiersUseCase";
 import { RecupererRepartitionsMeteoChantiersUseCase } from "@/server/chantiers/usecases/RecupererRepartitionMeteoChantiersUseCase";
 import { AgregerAvancementsChantiersUseCase } from "@/server/chantiers/usecases/AgregerAvancementsChantiersUseCase";
 import RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase from "@/server/usecase/chantier/commentaire/RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase";
@@ -102,7 +101,6 @@ type LegacyCradle = LegacyExport & {
   gestionContenuRepository: GestionContenuRepository;
   tokenAPIService: TokenAPIService;
   tokenAPIInformationRepository: TokenAPIInformationRepository;
-  récupérerStatistiquesAvancementChantiersUseCase: RécupérerStatistiquesAvancementChantiersUseCase;
   recupererRepartitionsMeteoChantiersUseCase: RecupererRepartitionsMeteoChantiersUseCase;
   récupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase: RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase;
   récupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase: RécupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase;
@@ -181,9 +179,6 @@ export const legacyModule = defineModule<LegacyExport, LegacyCradle>()({
       ).scoped(),
       tokenAPIInformationRepository: asModuleClass(
         PrismaTokenAPIInformationRepository,
-      ).scoped(),
-      récupérerStatistiquesAvancementChantiersUseCase: asModuleClass(
-        RécupérerStatistiquesAvancementChantiersUseCase,
       ).scoped(),
       recupererRepartitionsMeteoChantiersUseCase: asModuleClass(
         RecupererRepartitionsMeteoChantiersUseCase,

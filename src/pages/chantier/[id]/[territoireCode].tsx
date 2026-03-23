@@ -137,7 +137,7 @@ export const getServerSideProps = async (
       getContainer("chantiers")
         .resolve("recupererDetailsIndicateursV2UseCase")
         .run(chantierId, territoireCodes, session.habilitations, jalon),
-      getContainer("legacy")
+      getContainer("chantiers")
         .resolve("récupérerStatistiquesAvancementChantiersUseCase")
         .run([chantierId], mailleQuery, session.habilitations, jalon)
         .then(presenterEnAvancementsStatistiquesAccueilContrat),
