@@ -62,8 +62,10 @@ export const WidgetCartographieValeurAvancement = ({
           )}
         >
           <ValeursRemarquables
-            territoires={territoiresValeurAvancement}
+            indicateurId={indicateurId}
+            chantierId={chantierId}
             maille={maille}
+            jalon={jalon}
             unite={unite}
           />
           <LegendeDegradeVA

@@ -183,7 +183,7 @@ De plus, le calcul **doit prendre en compte la maille** (régionale ou départem
 
 **À faire** :
 - [ ] Créer un endpoint tRPC `indicateur.recupererStatistiquesValeurAvancement` avec input `{ indicateurId, chantierId, maille, jalon }`
-- [ ] Le calcul côté serveur filtre les territoires par maille puis calcule min/médiane/max sur les `valeurAvancement` (en excluant les non applicables)
+- [ ] Réutiliser `recupererValeursAvancementTerritoires` (le endpoint legacy déjà en place), filtrer par maille dans l'adapter, puis calculer min/médiane/max côté serveur (en excluant les non applicables)
 - [ ] Refactorer `ValeursRemarquables.tsx` pour consommer cet endpoint au lieu de calculer en local
 - [ ] Pattern de référence : `chantier.recupererStatistiquesAvancement` (`src/server/infrastructure/api/trpc/routes/chantier.ts:52-69`)
 
@@ -210,4 +210,4 @@ De plus, le calcul **doit prendre en compte la maille** (régionale ou départem
 
 ## 7. Questions ouvertes
 
-- [ ] Pour le endpoint statistiques : réutiliser le use case legacy (over-fetching + filter/compute dans l'adapter) ou query SQL dédiée ?
+Aucune — toutes les décisions sont prises.

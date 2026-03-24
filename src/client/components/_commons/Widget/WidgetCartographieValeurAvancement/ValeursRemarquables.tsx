@@ -1,11 +1,5 @@
-import { useMemo } from "react";
-import {
-  calculerMediane,
-  valeurMaximum,
-  valeurMinimum,
-} from "@/client/utils/statistiques/statistiques";
+import api from "@/server/infrastructure/api/trpc/api";
 import { MailleInterne } from "@/server/domain/maille/Maille.interface";
-import { ValeurAvancementIndicateurTerritoire } from "./types";
 
 const COULEUR_MINIMUM = "#8bcdb1";
 const COULEUR_MEDIANE = "#47a882";
@@ -42,28 +36,28 @@ const ValeurRemarquable = ({
 );
 
 export const ValeursRemarquables = ({
-  territoires,
+  indicateurId,
+  chantierId,
   maille,
+  jalon,
   unite,
 }: {
-  territoires: ValeurAvancementIndicateurTerritoire[];
+  indicateurId: string;
+  chantierId: string;
   maille: MailleInterne;
+  jalon: number;
   unite: string | null;
 }) => {
-  const statistiques = useMemo(() => {
-    const valeurs = territoires
-      .filter((territoire) => territoire.estApplicable !== false)
-      .map((territoire) => territoire.valeurAvancement);
-
-    return {
-      minimum: valeurMinimum(valeurs),
-      mediane: calculerMediane(valeurs),
-      maximum: valeurMaximum(valeurs),
-    };
-  }, [territoires]);
+  const [statistiques] =
+    api.indicateur.recupererStatistiquesValeurAvancement.useSuspenseQuery({
+      indicateurId,
+      chantierId,
+      maille,
+      jalon,
+    });
 
   const minimum = formatValeur(statistiques.minimum, unite);
-  const mediane = formatValeur(statistiques.mediane, unite);
+  const mediane = formatValeur(statistiques.médiane, unite);
   const maximum = formatValeur(statistiques.maximum, unite);
   const libelle = libelleMaille(maille);
 
