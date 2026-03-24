@@ -1,4 +1,3 @@
-import api from "@/server/infrastructure/api/trpc/api";
 import { MailleInterne } from "@/server/domain/maille/Maille.interface";
 
 const COULEUR_MINIMUM = "#8bcdb1";
@@ -35,26 +34,18 @@ const ValeurRemarquable = ({
 );
 
 export const ValeursRemarquables = ({
-  indicateurId,
-  chantierId,
+  statistiques,
   maille,
-  jalon,
   unite,
 }: {
-  indicateurId: string;
-  chantierId: string;
+  statistiques: {
+    minimum: number | null;
+    médiane: number | null;
+    maximum: number | null;
+  };
   maille: MailleInterne;
-  jalon: number;
   unite: string | null;
 }) => {
-  const [statistiques] =
-    api.indicateur.recupererStatistiquesValeurAvancement.useSuspenseQuery({
-      indicateurId,
-      chantierId,
-      maille,
-      jalon,
-    });
-
   const minimum = formatValeur(statistiques.minimum, unite);
   const mediane = formatValeur(statistiques.médiane, unite);
   const maximum = formatValeur(statistiques.maximum, unite);

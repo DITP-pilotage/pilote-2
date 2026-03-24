@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { MailleInterne } from "@/server/domain/maille/Maille.interface";
 import { CartographieV2 } from "@/components/_commons/CartographieV2/CartographieV2";
 import { LegendeCartographie } from "@/components/_commons/CartographieV2/LegendeCartographie";
@@ -5,11 +6,14 @@ import { BaseCartographieWidgetLayout } from "@/components/_commons/Widget/BaseC
 import api from "@/server/infrastructure/api/trpc/api";
 import { useSelectionTerritoires } from "@/components/_commons/Widget/WidgetCartographieMeteo/useSelectionTerritoires";
 import { AjouterTerritoirePicker } from "@/components/_commons/Widget/AjouterTerritoirePicker";
+import { ÉLÉMENTS_LÉGENDE_VALEUR_ACTUELLE } from "@/client/constants/légendes/élémentsDeLégendesCartographieValeurAvancement";
 import { useDonneesCartographieVA } from "./useDonneesCartographieVA";
-import { useLegendeVA } from "./useLegendeVA";
 import { LegendeDegradeVA } from "./LegendeDegradeVA";
 import { SuiviValeurAvancement } from "./SuiviValeurAvancement";
 import { ValeursRemarquables } from "./ValeursRemarquables";
+
+const COULEUR_MIN = "#8bcdb1";
+const COULEUR_MAX = "#083a25";
 
 export const WidgetCartographieValeurAvancement = ({
   indicateurId,
@@ -33,12 +37,46 @@ export const WidgetCartographieValeurAvancement = ({
       jalon,
     });
 
+  const [statistiques] =
+    api.indicateur.recupererStatistiquesValeurAvancement.useSuspenseQuery({
+      indicateurId,
+      chantierId,
+      maille,
+      jalon,
+    });
+
   const donneesCartographie = useDonneesCartographieVA(
     territoiresValeurAvancement,
+    statistiques.minimum,
+    statistiques.maximum,
     jalon,
     unite,
   );
-  const legende = useLegendeVA(territoiresValeurAvancement, unite);
+
+  const legendeItems = useMemo(() => {
+    const tousApplicables = territoiresValeurAvancement.every(
+      (territoire) => territoire.estApplicable,
+    );
+    const tousNonNull = territoiresValeurAvancement.every(
+      (territoire) => territoire.valeurAvancement !== null,
+    );
+
+    return Object.values(ÉLÉMENTS_LÉGENDE_VALEUR_ACTUELLE)
+      .filter(
+        (el) =>
+          !tousApplicables ||
+          el.libellé !==
+            "Territoire où le chantier prioritaire ne s'applique pas",
+      )
+      .filter(
+        (el) =>
+          !tousNonNull ||
+          el.libellé !==
+            "Territoire pour lequel la donnée n'est pas renseignée/disponible",
+      )
+      .map(({ remplissage, libellé }) => ({ libellé, remplissage }));
+  }, [territoiresValeurAvancement]);
+
   const {
     territoiresSelectionnes,
     onSelectTerritoire,
@@ -49,6 +87,11 @@ export const WidgetCartographieValeurAvancement = ({
     territoires: territoiresValeurAvancement,
     territoireCode,
   });
+
+  const libelleDegrade =
+    unite === null || unite === undefined
+      ? ""
+      : `En ${unite.toLocaleLowerCase()}`;
 
   return (
     <BaseCartographieWidgetLayout
@@ -62,20 +105,26 @@ export const WidgetCartographieValeurAvancement = ({
           )}
         >
           <ValeursRemarquables
-            indicateurId={indicateurId}
-            chantierId={chantierId}
+            statistiques={statistiques}
             maille={maille}
-            jalon={jalon}
             unite={unite}
           />
           <LegendeDegradeVA
-            libelle={legende.degrade.libellé}
-            valeurMin={legende.degrade.valeurMin}
-            valeurMax={legende.degrade.valeurMax}
-            couleurMin={legende.degrade.couleurMin}
-            couleurMax={legende.degrade.couleurMax}
+            libelle={libelleDegrade}
+            valeurMin={
+              statistiques.minimum !== null
+                ? statistiques.minimum.toLocaleString()
+                : "-"
+            }
+            valeurMax={
+              statistiques.maximum !== null
+                ? statistiques.maximum.toLocaleString()
+                : "-"
+            }
+            couleurMin={COULEUR_MIN}
+            couleurMax={COULEUR_MAX}
           />
-          <LegendeCartographie items={legende.items} />
+          <LegendeCartographie items={legendeItems} />
         </CartographieV2>
       }
       titre="Valeurs d'avancement par territoire"

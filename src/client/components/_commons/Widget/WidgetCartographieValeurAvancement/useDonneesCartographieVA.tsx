@@ -1,9 +1,5 @@
 import { useMemo } from "react";
 import { interpolerCouleurs } from "@/client/utils/couleur/couleur";
-import {
-  valeurMaximum,
-  valeurMinimum,
-} from "@/client/utils/statistiques/statistiques";
 import { récupérerDétailsSurUnTerritoire } from "@/client/constants/territoires";
 import { CartographieV2Donnee } from "@/components/_commons/CartographieV2/types";
 import { ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS } from "@/client/constants/légendes/élémentsDeLégendesCartographieAvancement";
@@ -44,16 +40,12 @@ const déterminerRemplissage = (
 
 export const useDonneesCartographieVA = (
   territoires: ValeurAvancementIndicateurTerritoire[],
+  valeurMin: number | null,
+  valeurMax: number | null,
   jalon: number,
   unite: string | null,
 ) => {
   return useMemo(() => {
-    const valeurs = territoires.map(
-      (territoire) => territoire.valeurAvancement,
-    );
-    const valeurMin = valeurMinimum(valeurs);
-    const valeurMax = valeurMaximum(valeurs);
-
     return territoires.reduce(
       (acc, territoire) => {
         const détails = récupérerDétailsSurUnTerritoire(
@@ -94,5 +86,5 @@ export const useDonneesCartographieVA = (
       },
       {} as Record<string, CartographieV2Donnee>,
     );
-  }, [territoires, jalon, unite]);
+  }, [territoires, valeurMin, valeurMax, jalon, unite]);
 };

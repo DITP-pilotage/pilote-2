@@ -30,6 +30,7 @@ export class GetValeursRemarquablesValeurAvancementIndicateurTerritoiresQuery {
     const valeurs = Object.entries(details)
       .filter(
         ([territoireCode, detail]) =>
+          territoireCode !== "NAT-FR" &&
           territoireCode.startsWith(prefixeMaille) &&
           detail.estApplicable !== false,
       )
