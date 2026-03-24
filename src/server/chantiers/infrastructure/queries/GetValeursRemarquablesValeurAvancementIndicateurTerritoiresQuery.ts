@@ -1,3 +1,8 @@
+import {
+  calculerMediane,
+  valeurMinimum,
+  valeurMaximum,
+} from "@/client/utils/statistiques/statistiques";
 import type { Inject } from "@/server/chantiers/module";
 import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
 import { ProfilCode } from "@/server/domain/utilisateur/Utilisateur.interface";
@@ -37,18 +42,9 @@ export class GetValeursRemarquablesValeurAvancementIndicateurTerritoiresQuery {
       .map(([, detail]) => detail.valeurAvancement)
       .filter((valeur): valeur is number => valeur !== null);
 
-    valeurs.sort((valueA, valueB) => valueA - valueB);
-
-    const minimum = valeurs.length > 0 ? valeurs[0] : null;
-    const maximum = valeurs.length > 0 ? valeurs[valeurs.length - 1] : null;
-    let médiane: number | null = null;
-    if (valeurs.length > 0) {
-      const mid = Math.floor(valeurs.length / 2);
-      médiane =
-        valeurs.length % 2 === 0
-          ? (valeurs[mid - 1] + valeurs[mid]) / 2
-          : valeurs[mid];
-    }
+    const minimum = valeurMinimum(valeurs);
+    const médiane = calculerMediane(valeurs);
+    const maximum = valeurMaximum(valeurs);
 
     return { minimum, médiane, maximum };
   }

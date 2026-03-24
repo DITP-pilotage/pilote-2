@@ -38,7 +38,9 @@ export class RecupererValeursAvancementIndicateurTerritoiresQuery {
       valeurAvancement: detail.valeurAvancement,
       valeurCibleAnnuelle: detail.valeurCibleAnnuelle,
       estApplicable: detail.estApplicable,
-      dateValeurAvancement: detail.dateValeurAvancement,
+      dateValeurAvancement: detail.dateValeurAvancement
+        ? new Date(detail.dateValeurAvancement).toISOString()
+        : null,
     }));
   }
 }
