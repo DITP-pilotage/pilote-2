@@ -11,18 +11,18 @@ export const TerritoireLabel = ({
     <span className="text-right flex-1 truncate" style={{ color: couleur }}>
       {nom}
     </span>
-    {onSupprimer ? (
-      <button
-        onClick={onSupprimer}
-        title={`Retirer ${nom}`}
-        type="button"
-        className="p-2 -m-2"
-        style={{ color: couleur }}
-      >
-        ✕
-      </button>
-    ) : (
-      <div />
-    )}
+    <div className="w-4 shrink-0 flex justify-center">
+      {onSupprimer && (
+        <button
+          onClick={onSupprimer}
+          title={`Retirer ${nom}`}
+          type="button"
+          className="p-2 -m-2"
+          style={{ color: couleur }}
+        >
+          ✕
+        </button>
+      )}
+    </div>
   </div>
 );
