@@ -14,6 +14,7 @@ import {
   defineModule,
   type ExtractScope,
   type NoExports,
+  type VerifyCradle,
 } from "@/server/module-system";
 
 type CommentaireCradle = {
@@ -61,7 +62,7 @@ export const commentaireModule = defineModule<NoExports, CommentaireCradle>()({
       recupererHistoriqueCommentaireQuery: asModuleClass(
         RecupererHistoriqueCommentaireQuery,
       ),
-    } satisfies Record<keyof CommentaireCradle, unknown>);
+    } satisfies VerifyCradle<CommentaireCradle>);
   },
 });
 

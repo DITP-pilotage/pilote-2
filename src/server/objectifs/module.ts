@@ -14,6 +14,7 @@ import {
   defineModule,
   type ExtractScope,
   type NoExports,
+  type VerifyCradle,
 } from "@/server/module-system";
 
 type ObjectifCradle = {
@@ -61,7 +62,7 @@ export const objectifModule = defineModule<NoExports, ObjectifCradle>()({
       recupererHistoriqueObjectifQuery: asModuleClass(
         RecupererHistoriqueObjectifQuery,
       ),
-    } satisfies Record<keyof ObjectifCradle, unknown>);
+    } satisfies VerifyCradle<ObjectifCradle>);
   },
 });
 

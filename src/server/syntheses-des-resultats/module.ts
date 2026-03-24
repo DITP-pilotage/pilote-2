@@ -13,6 +13,7 @@ import {
   defineModule,
   type ExtractScope,
   type NoExports,
+  type VerifyCradle,
 } from "@/server/module-system";
 import { EnregistrerSyntheseDesResultatsService } from "@/server/syntheses-des-resultats/services/EnregistrerSyntheseDesResultatsService";
 import { PublierSyntheseDesResultatsUseCase } from "@/server/syntheses-des-resultats/usecases/PublierSyntheseDesResultatsUseCase";
@@ -85,7 +86,7 @@ export const importSyntheseDesResultatsModule = defineModule<
       importSyntheseDesResultatsAPIHandler: asModuleClass(
         ImportSyntheseDesResultatsAPIHandler,
       ),
-    } satisfies Record<keyof ImportSyntheseDesResultatsCradle, unknown>);
+    } satisfies VerifyCradle<ImportSyntheseDesResultatsCradle>);
   },
 });
 

@@ -23,6 +23,7 @@ import {
   defineModule,
   type ExtractScope,
   type NoExports,
+  type VerifyCradle,
 } from "@/server/module-system";
 import { EnregistrerBrouillonAutoEvaluationObjectifsHandler } from "./handlers/EnregistrerBrouillonAutoEvaluationObjectifsHandler";
 import { EnregistrerBrouillonAutoEvaluationCriteresHandler } from "./handlers/EnregistrerBrouillonAutoEvaluationCriteresHandler";
@@ -152,7 +153,7 @@ export const piloteEvalModule = defineModule<NoExports, PiloteEvalCradle>()({
       transmettreAppreciationHandler: asModuleClass(
         TransmettreAppreciationHandler,
       ),
-    } satisfies Record<keyof PiloteEvalCradle, unknown>);
+    } satisfies VerifyCradle<PiloteEvalCradle>);
   },
 });
 

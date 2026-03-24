@@ -18,6 +18,7 @@ import {
   defineModule,
   type ExtractScope,
   type NoExports,
+  type VerifyCradle,
 } from "@/server/module-system";
 
 type ParametrageIndicateurCradle = {
@@ -86,7 +87,7 @@ export const parametrageIndicateurModule = defineModule<
       enregistrerMetadataIndicateurHandler: asModuleClass(
         EnregistrerMetadataIndicateurHandler,
       ),
-    } satisfies Record<keyof ParametrageIndicateurCradle, unknown>);
+    } satisfies VerifyCradle<ParametrageIndicateurCradle>);
   },
 });
 

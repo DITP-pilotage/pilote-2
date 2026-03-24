@@ -20,6 +20,7 @@ import {
   defineModule,
   type ExtractScope,
   type NoExports,
+  type VerifyCradle,
 } from "@/server/module-system";
 
 type FicheConducteurCradle = {
@@ -68,7 +69,7 @@ export const ficheConducteurModule = defineModule<
       decisionStrategiqueRepository: asModuleClass(
         PrismaDecisionStrategiqueRepository,
       ),
-    } satisfies Record<keyof FicheConducteurCradle, unknown>);
+    } satisfies VerifyCradle<FicheConducteurCradle>);
   },
 });
 

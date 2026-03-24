@@ -5,6 +5,7 @@ import {
   defineModule,
   type ExtractScope,
   type NoExports,
+  type VerifyCradle,
 } from "@/server/module-system";
 import { ActiviteComptesGateway } from "./domain/ports/ActiviteComptesGateway";
 import { CoordinateurGateway } from "./domain/ports/CoordinateurGateway";
@@ -77,7 +78,7 @@ export const rapportsHebdomadairesModule = defineModule<
       recupererRapportHebdomadaireQuery: asModuleClass(
         RecupererRapportHebdomadaireQuery,
       ),
-    } satisfies Record<keyof RapportsHebdomadairesOwnCradle, unknown>);
+    } satisfies VerifyCradle<RapportsHebdomadairesOwnCradle>);
   },
 });
 

@@ -10,12 +10,11 @@ import {
   defineModule,
   type ExtractScope,
   type NoExports,
+  type VerifyCradle,
 } from "@/server/module-system";
-import type { PrismaPilote } from "@/server/db/PrismaPilote";
+import type { SharedDependencies } from "@/server/shared/module";
 
-type AlbertImports = {
-  prisma: PrismaPilote;
-};
+type AlbertImports = SharedDependencies;
 
 type AlbertOwnCradle = {
   createGetTauxAvancementTerritoireTool: ReturnType<
@@ -62,7 +61,7 @@ export const albertModule = defineModule<NoExports, AlbertCradle>()({
         createGetValeursIndicateurTool,
       ),
       evaluerChatUseCase: asModuleClass(EvaluerChatUseCase),
-    } satisfies Record<keyof AlbertOwnCradle, unknown>);
+    } satisfies VerifyCradle<AlbertOwnCradle>);
   },
 });
 

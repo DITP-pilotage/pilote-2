@@ -22,6 +22,7 @@ import {
   defineModule,
   type ExtractScope,
   type NoExports,
+  type VerifyCradle,
 } from "@/server/module-system";
 import { PropositionValeurAvancementRepository } from "./domain/ports/PropositionValeurAvancementRepository";
 import { PrismaPropositionValeurAvancementRepository } from "./infrastructure/adapters/PrismaPropositionValeurAvancementRepository";
@@ -89,7 +90,7 @@ export const importIndicateurModule = defineModule<
       propositionValeurAvancementRepository: asModuleClass(
         PrismaPropositionValeurAvancementRepository,
       ),
-    } satisfies Record<keyof ImportIndicateurOwnCradle, unknown>);
+    } satisfies VerifyCradle<ImportIndicateurOwnCradle>);
   },
 });
 

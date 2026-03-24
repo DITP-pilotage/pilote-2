@@ -4,6 +4,7 @@ import {
   defineModule,
   type ExtractScope,
   type NoExports,
+  type VerifyCradle,
 } from "@/server/module-system";
 
 type HabilitationsCoordinateurCradle = {
@@ -26,7 +27,7 @@ export const habilitationsCoordinateurModule = defineModule<
       ajouterLesChantierAuxHabilitationsHandler: asModuleClass(
         AjouterLesChantierAuxHabilitationsHandler,
       ),
-    } satisfies Record<keyof HabilitationsCoordinateurCradle, unknown>);
+    } satisfies VerifyCradle<HabilitationsCoordinateurCradle>);
   },
 });
 

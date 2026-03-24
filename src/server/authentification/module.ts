@@ -4,6 +4,7 @@ import {
   defineModule,
   type ExtractScope,
   type NoExports,
+  type VerifyCradle,
 } from "@/server/module-system";
 
 type AuthentificationCradle = {
@@ -20,7 +21,7 @@ export const authentificationModule = defineModule<
   register: (container, { asModuleClass }) => {
     container.register({
       utilisateurRepository: asModuleClass(UtilisateurSQLRepository),
-    } satisfies Record<keyof AuthentificationCradle, unknown>);
+    } satisfies VerifyCradle<AuthentificationCradle>);
   },
 });
 

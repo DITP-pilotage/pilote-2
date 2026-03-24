@@ -7,7 +7,11 @@ import { configuration } from "@/config";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { type Transaction } from "@/server/db/Transaction";
 import { PrismaTransaction } from "@/server/db/PrismaTransaction";
-import { defineModule, type NoExports } from "@/server/module-system";
+import {
+  defineModule,
+  type NoExports,
+  type VerifyCradle,
+} from "@/server/module-system";
 
 type SharedCradle = {
   prisma: PrismaPilote;
@@ -30,6 +34,6 @@ export const sharedModule = defineModule<NoExports, SharedCradle>()({
           ? new StubEmailManager()
           : new BrevoEmailManager(),
       ).singleton(),
-    } satisfies Record<keyof SharedCradle, unknown>);
+    } satisfies VerifyCradle<SharedCradle>);
   },
 });

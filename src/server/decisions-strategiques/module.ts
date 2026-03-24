@@ -14,6 +14,7 @@ import {
   defineModule,
   type ExtractScope,
   type NoExports,
+  type VerifyCradle,
 } from "@/server/module-system";
 
 type ImportDecisionStrategiqueCradle = {
@@ -72,7 +73,7 @@ export const importDecisionStrategiqueModule = defineModule<
       recupererHistoriqueDecisionStrategiqueQuery: asModuleClass(
         RecupererHistoriqueDecisionStrategiqueQuery,
       ),
-    } satisfies Record<keyof ImportDecisionStrategiqueCradle, unknown>);
+    } satisfies VerifyCradle<ImportDecisionStrategiqueCradle>);
   },
 });
 

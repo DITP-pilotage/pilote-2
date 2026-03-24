@@ -67,7 +67,11 @@ import { RécupérerTerritoireParCodeUseCase } from "@/server/fiche-territoriale
 import { RécupérerTauxAvancementTerritoireUseCase } from "@/server/fiche-territoriale/usecases/RécupérerTauxAvancementTerritoireUseCase";
 import { RécupérerRépartitionMétéoUseCase } from "@/server/fiche-territoriale/usecases/RécupérerRépartitionMétéoUseCase";
 import { RécupérerListeChantierFicheTerritorialeUseCase } from "@/server/fiche-territoriale/usecases/RécupérerListeChantierFicheTerritorialeUseCase";
-import { defineModule, type ExtractScope } from "@/server/module-system";
+import {
+  defineModule,
+  type ExtractScope,
+  type VerifyCradle,
+} from "@/server/module-system";
 
 export type LegacyExport = {
   agregerAvancementsChantiersUseCase: AgregerAvancementsChantiersUseCase;
@@ -292,7 +296,7 @@ export const legacyModule = defineModule<LegacyExport, LegacyCradle>()({
             ministereRepository: ficheTerritorialeMinistereRepository,
           }),
       ).scoped(),
-    } satisfies Record<keyof LegacyCradle, unknown>);
+    } satisfies VerifyCradle<LegacyCradle>);
   },
 });
 

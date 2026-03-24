@@ -1,7 +1,11 @@
 import { PrismaIndicateurTerritoireValeurEvenementRepository } from "@/server/indicateur-territoire-valeur-evenement/infrastructure/PrismaIndicateurTerritoireValeurEvenementRepository";
 import { PrismaMesureIndicateurRepository } from "@/server/indicateur-territoire-valeur-evenement/infrastructure/PrismaMesureIndicateurRepository";
 import { MesureIndicateurRepository } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/MesureIndicateurRepository";
-import { defineModule, type ExtractScope } from "@/server/module-system";
+import {
+  defineModule,
+  type ExtractScope,
+  type VerifyCradle,
+} from "@/server/module-system";
 import { IndicateurTerritoireValeurEvenementRepository } from "./domain/ports/IndicateurTerritoireValeurEvenementRepository";
 import { CreerPropositionValeurAvancementUseCase } from "./usecases/CreerPropositionValeurAvancementUseCase";
 import { AccepterPropositionValeurAvancementUseCase } from "./usecases/AccepterPropositionValeurAvancementUseCase";
@@ -88,10 +92,7 @@ export const indicateurTerritoireValeurEvenementModule = defineModule<
           RecupererHistoriqueIndicateurTerritoireValeurEvenementUseCase,
         ),
       evenementsVAQuery: asModuleClass(RecupererEvenementsVAParPeriodeQuery),
-    } satisfies Record<
-      keyof IndicateurTerritoireValeurEvenementCradle,
-      unknown
-    >);
+    } satisfies VerifyCradle<IndicateurTerritoireValeurEvenementCradle>);
   },
 });
 
