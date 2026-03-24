@@ -127,7 +127,7 @@ export const WidgetCartographieValeurAvancement = ({
           <LegendeCartographie items={legendeItems} />
         </CartographieV2>
       }
-      titre="Valeurs d'avancement par territoire"
+      titre="Suivi et évolution des valeurs d'avancement"
     >
       <SuiviValeurAvancement
         territoireCode={territoireCode}
