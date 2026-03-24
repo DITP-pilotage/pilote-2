@@ -1,3 +1,4 @@
+import { z } from "zod";
 import {
   créerRouteurTRPC,
   procédureProtégée,
@@ -17,5 +18,33 @@ export const indicateurRouter = créerRouteurTRPC({
           indicId: input.indicateurId,
           territoireCode: input.territoireCode,
         });
+    }),
+  recupererValeursAvancementTerritoires: procédureProtégée
+    .input(
+      z.object({
+        indicateurId: z.string(),
+        chantierId: z.string(),
+        jalon: z.number(),
+      }),
+    )
+    .query(async ({ input, ctx }) => {
+      const result = await getContainer("chantiers")
+        .resolve("listerDetailsIndicateurTerritoireUseCaseV2")
+        .run(
+          [input.indicateurId],
+          input.chantierId,
+          ctx.session.habilitations,
+          ctx.session.profil,
+          input.jalon,
+        );
+
+      const details = result[input.indicateurId] ?? {};
+
+      return Object.entries(details).map(([codeInsee, detail]) => ({
+        territoireCode: codeInsee,
+        valeurAvancement: detail.valeurAvancement,
+        valeurCibleAnnuelle: detail.valeurCibleAnnuelle,
+        estApplicable: detail.estApplicable,
+      }));
     }),
 });
