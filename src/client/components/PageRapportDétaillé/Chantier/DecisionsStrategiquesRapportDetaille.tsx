@@ -2,7 +2,7 @@ import Bloc from "@/components/_commons/Bloc/Bloc";
 import { Badge } from "@/components/_commons/Badge";
 import { DécisionStratégique } from "@/server/domain/chantier/décisionStratégique/DécisionStratégique.interface";
 import { nettoyerUneChaîneDeCaractèresPourAffichageHTML } from "@/client/utils/strings";
-import { PiloteDateFormatter } from "@/server/rapports-hebdomadaires/infrastructure/adapters/PiloteDateFormatter";
+import { PiloteDateFormatter } from "@/utils/PiloteDateFormatter";
 import { libellésTypesDécisionStratégique } from "@/client/constants/libellésDécisionStratégique";
 
 export const DecisionsStrategiquesRapportDetaille = ({

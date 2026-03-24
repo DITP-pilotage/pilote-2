@@ -13,7 +13,7 @@ import { récupérerUnCookie } from "@/client/utils/cookies";
 import { Icone } from "@/components/_commons/Icone";
 import { ArrowLine1Icon } from "@/components/_commons/Icones/ArrowLine1Icon";
 import { useProfilUtilisateurConnecte } from "@/client/hooks/useProfilUtilisateurConnecte";
-import { PiloteDateFormatter } from "@/server/rapports-hebdomadaires/infrastructure/adapters/PiloteDateFormatter";
+import { PiloteDateFormatter } from "@/utils/PiloteDateFormatter";
 import { useMonProfilFormulaire } from "./useMonProfilFormulaire";
 import { SelectService } from "./SelectService";
 import { useMonProfilForm } from "./form";

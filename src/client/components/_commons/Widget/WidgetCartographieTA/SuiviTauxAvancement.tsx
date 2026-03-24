@@ -18,10 +18,7 @@ export const SuiviTauxAvancement = ({
     () =>
       [...territoiresSelectionnes]
         .sort((a, b) => {
-          if (
-            a.tauxAvancementJalon === null &&
-            b.tauxAvancementJalon === null
-          )
+          if (a.tauxAvancementJalon === null && b.tauxAvancementJalon === null)
             return 0;
           if (a.tauxAvancementJalon === null) return 1;
           if (b.tauxAvancementJalon === null) return -1;

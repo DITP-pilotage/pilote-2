@@ -43,10 +43,7 @@ export const SuiviValeurAvancement = ({
     () =>
       [...territoiresSelectionnes]
         .sort((a, b) => {
-          if (
-            a.valeurAvancement === null &&
-            b.valeurAvancement === null
-          )
+          if (a.valeurAvancement === null && b.valeurAvancement === null)
             return 0;
           if (a.valeurAvancement === null) return 1;
           if (b.valeurAvancement === null) return -1;

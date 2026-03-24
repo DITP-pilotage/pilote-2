@@ -5,7 +5,7 @@ import { Icone } from "@/components/_commons/Icone";
 import { Icone1Icon } from "@/components/_commons/Icones/Icone1Icon";
 import { Infobulle } from "@/components/_commons/Infobulle/Infobulle";
 import { Badge } from "@/components/_commons/Badge";
-import { PiloteDateFormatter } from "@/server/rapports-hebdomadaires/infrastructure/adapters/PiloteDateFormatter";
+import { PiloteDateFormatter } from "@/utils/PiloteDateFormatter";
 import { Publication } from "@/components/PageChantier/PublicationV2/Publication.interface";
 import { BoutonsAffichage } from "@/components/_commons/BoutonsAffichage/BoutonsAffichage";
 

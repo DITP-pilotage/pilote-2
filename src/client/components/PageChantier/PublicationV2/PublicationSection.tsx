@@ -5,7 +5,7 @@ import { AffichagePublication } from "@/components/PageChantier/PublicationV2/Af
 import FormulairePublication from "@/components/PageChantier/PublicationV2/FormulairePublication";
 import { BoutonNouvellePublication } from "@/components/PageChantier/PublicationV2/BoutonNouvellePublication";
 import { BoutonEditerBrouillonPublication } from "@/components/PageChantier/PublicationV2/BoutonEditerBrouillonPublication";
-import { PiloteDateFormatter } from "@/server/rapports-hebdomadaires/infrastructure/adapters/PiloteDateFormatter";
+import { PiloteDateFormatter } from "@/utils/PiloteDateFormatter";
 import {
   PublicationBrouillon,
   PublicationActions,

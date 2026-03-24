@@ -9,7 +9,7 @@ import Objectif from "@/server/domain/chantier/objectif/Objectif.interface";
 import { isDefined } from "@/client/utils/predicates";
 import { nettoyerUneChaîneDeCaractèresPourAffichageHTML } from "@/client/utils/strings";
 import { Badge } from "@/components/_commons/Badge";
-import { PiloteDateFormatter } from "@/server/rapports-hebdomadaires/infrastructure/adapters/PiloteDateFormatter";
+import { PiloteDateFormatter } from "@/utils/PiloteDateFormatter";
 
 interface ObjectifsRapportDetailleProps {
   objectifs: Objectif[];
