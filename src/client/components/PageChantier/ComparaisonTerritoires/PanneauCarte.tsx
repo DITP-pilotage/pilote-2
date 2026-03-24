@@ -3,6 +3,7 @@ import { WidgetCartographieTA } from "@/components/_commons/Widget/WidgetCartogr
 import { WidgetCartographieMeteo } from "@/components/_commons/Widget/WidgetCartographieMeteo/WidgetCartographieMeteo";
 import { Icone } from "@/components/_commons/Icone";
 import { DeleteIcon } from "@/components/_commons/Icones/DeleteIcon";
+import { WidgetCartographiePVA } from "@/components/_commons/Widget/WidgetCartographiePVA/WidgetCartographiePVA";
 import { TypeCarte } from "./ComparaisonTerritoires.interface";
 import { SelecteurTypeCarte } from "./SelecteurTypeCarte";
 
@@ -64,14 +65,21 @@ export const PanneauCarte = ({
           maille={maille}
           territoireCode={territoireCode}
         />
-      ) : (
+      ) : typeCarte === "meteo" ? (
         <WidgetCartographieMeteo
           chantierId={chantierId}
           jalon={jalon}
           maille={maille}
           territoireCode={territoireCode}
         />
-      )}
+      ) : typeCarte === "pva" ? (
+        <WidgetCartographiePVA
+          chantierId={chantierId}
+          jalon={jalon}
+          maille={maille}
+          territoireCode={territoireCode}
+        />
+      ) : null}
     </div>
   );
 };

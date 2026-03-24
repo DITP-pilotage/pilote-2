@@ -286,11 +286,20 @@ test.describe("Cartographie PVA — Comparaison territoriale", () => {
   const chantierId = "129";
 
   async function selectionnerCartePVA(page: import("@playwright/test").Page) {
-    // Le second sélecteur est la carte de droite
-    const selecteurDroite = page
-      .locator("select[name='selecteur-carte']")
-      .nth(1);
-    await selecteurDroite.selectOption("propositionValeur");
+    // Scoper dans la section "Comparaison territoriale et évolution"
+    const sectionComparaison = page.locator("div.fr-card").filter({
+      hasText: "Comparaison territoriale et évolution",
+    });
+
+    // Cliquer sur le sélecteur de type de carte (Radix Select trigger)
+    await sectionComparaison.getByRole("combobox").first().click();
+
+    // Sélectionner la carte PVA dans le dropdown (portail Radix)
+    await page
+      .getByRole("option", {
+        name: "Carte des propositions des valeurs d'avancement",
+      })
+      .click();
   }
 
   test("Affichage du widget PVA avec les données de propositions", async ({

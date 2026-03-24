@@ -1,1 +1,1 @@
-export type TypeCarte = "ta" | "meteo";
+export type TypeCarte = "ta" | "meteo" | "pva";
