@@ -201,8 +201,9 @@ export const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
         </div>
       </section>
       {featureComparaisonTerritoires && (
-        <div className="fr-mt-2w">
+        <div className="fr-mt-2w fr-container">
           <TuileWidget titre="Comparaison territoriale">
+            <div />
             <Suspense>
               <WidgetCartographieValeurAvancement
                 indicateurId={indicateur.id}
