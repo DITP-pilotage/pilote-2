@@ -14,13 +14,17 @@ export const listeTerritoires = {
   ),
 };
 
-const france = territoires.find((t) => t.maille === "nationale")!;
+export const territoireFrance = territoires.find(
+  (t) => t.maille === "nationale",
+)!;
 
 export const territoiresGroupesPourPicker: PickerOptionGroup<string>[] = [
   {
-    libelle: france.nomAffiché,
-    valeur: france.code,
-    options: [{ libelle: france.nomAffiché, valeur: france.code }],
+    libelle: territoireFrance.nomAffiché,
+    valeur: territoireFrance.code,
+    options: [
+      { libelle: territoireFrance.nomAffiché, valeur: territoireFrance.code },
+    ],
   },
   ...listeTerritoires.régions.map((region) => {
     const departements = listeTerritoires.départements.filter(
