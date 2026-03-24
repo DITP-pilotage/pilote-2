@@ -434,7 +434,7 @@ CH-129,DEPT-71,71,dept,D71,,,Saône-et-Loire,,,true,,,,,,,,,,,,0,0
 CH-129,DEPT-72,72,dept,D72,,,Sarthe,,,true,,,,,,,,,,,,0,0
 CH-129,DEPT-73,73,dept,D73,,,Savoie,,,true,,,,,,,,,,,,0,0
 CH-129,DEPT-74,74,dept,D74,,,Haute-Savoie,,,true,,,,,,,,,,,,0,0
-CH-129,DEPT-75,75,dept,D75,,,Paris,,,true,,,,,,,,,,,,0,0
+CH-129,DEPT-75,75,dept,D75,,,Paris,,,true,,,,,,,,,,,,2,0
 CH-129,DEPT-76,76,dept,D76,,,Seine-Maritime,,,true,,,,,,,,,,,,0,0
 CH-129,DEPT-77,77,dept,D77,,,Seine-et-Marne,,,true,,,,,,,,,,,,0,0
 CH-129,DEPT-78,78,dept,D78,,,Yvelines,,,true,,,,,,,,,,,,0,0
@@ -460,13 +460,13 @@ CH-129,DEPT-972,972,dept,D972,,,Martinique,,,true,,,,,,,,,,,,0,0
 CH-129,DEPT-973,973,dept,D973,,,Guyane,,,true,,,,,,,,,,,,0,0
 CH-129,DEPT-974,974,dept,D974,,,La Réunion,,,true,,,,,,,,,,,,0,0
 CH-129,DEPT-976,976,dept,D976,,,Mayotte,,,true,,,,,,,,,,,,0,0
-CH-129,NAT-FR,FR,nat,FRANCE,,,France,,,true,,,,,,,,,,,,0,0
+CH-129,NAT-FR,FR,nat,FRANCE,,,France,,,true,,,,,,,,,,,,3,0
 CH-129,REG-01,01,reg,R01,,,Guadeloupe,,,true,,,,,,,,,,,,0,0
 CH-129,REG-02,02,reg,R02,,,Martinique,,,true,,,,,,,,,,,,0,0
 CH-129,REG-03,03,reg,R03,,,Guyane,,,true,,,,,,,,,,,,0,0
 CH-129,REG-04,04,reg,R04,,,La Réunion,,,true,,,,,,,,,,,,0,0
 CH-129,REG-06,06,reg,R06,,,Mayotte,,,true,,,,,,,,,,,,0,0
-CH-129,REG-11,11,reg,R11,,,Île-de-France,,,true,,,,,,,,,,,,0,0
+CH-129,REG-11,11,reg,R11,,,Île-de-France,,,true,,,,,,,,,,,,1,0
 CH-129,REG-24,24,reg,R24,,,Centre-Val de Loire,,,true,,,,,,,,,,,,0,0
 CH-129,REG-27,27,reg,R27,,,Bourgogne-Franche-Comté,,,true,,,,,,,,,,,,0,0
 CH-129,REG-28,28,reg,R28,,,Normandie,,,true,,,,,,,,,,,,0,0

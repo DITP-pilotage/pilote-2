@@ -1,3 +1,4 @@
+import { expect } from "@playwright/test";
 import { test } from "./fixtures";
 import { AppActions } from "./actions/app.actions";
 import { PageChantier } from "./pages/page-chantier";
@@ -276,6 +277,151 @@ test.describe("Consultation des données d'un chantier — Isolation par profil"
         await pageChantier.expectCommentWriteButtonsNotVisible(
           PageChantier.COMMENT_TYPES_TERRITORIAL,
         );
+      },
+    );
+  });
+});
+
+test.describe("Cartographie PVA — Comparaison territoriale", () => {
+  const chantierId = "129";
+
+  async function selectionnerCartePVA(page: import("@playwright/test").Page) {
+    // Le second sélecteur est la carte de droite
+    const selecteurDroite = page
+      .locator("select[name='selecteur-carte']")
+      .nth(1);
+    await selecteurDroite.selectOption("propositionValeur");
+  }
+
+  test("Affichage du widget PVA avec les données de propositions", async ({
+    page,
+    e2eContext,
+    step,
+  }) => {
+    test.setTimeout(150_000);
+
+    const appActions = new AppActions(page, e2eContext);
+    await appActions.loginAs("ditp.admin@example.com");
+
+    const pageChantier = new PageChantier(page, e2eContext);
+    await pageChantier.selectChantierAvecTerritoire(chantierId, "NAT-FR");
+
+    await step(
+      "Sélection de la carte des propositions de valeur d'avancement",
+      async () => {
+        await selectionnerCartePVA(page);
+      },
+    );
+
+    await step(
+      "Vérification que le widget 'Comparaison territoriale et évolution' s'affiche",
+      async () => {
+        await expect(
+          page.getByText("Comparaison territoriale et évolution", {
+            exact: true,
+          }),
+        ).toBeVisible();
+      },
+    );
+
+    await step(
+      "Vérification du sous-titre 'Nombres de propositions de valeur d'avancement'",
+      async () => {
+        await expect(
+          page.getByText("Nombres de propositions de valeur d'avancement", {
+            exact: true,
+          }),
+        ).toBeVisible();
+      },
+    );
+
+    await step(
+      "Vérification que le territoire initial (France) affiche '3 propositions'",
+      async () => {
+        await expect(
+          page.getByText("3 propositions", { exact: true }),
+        ).toBeVisible();
+      },
+    );
+
+    await step(
+      "Vérification de la présence du lien '+ ajouter un territoire'",
+      async () => {
+        await expect(
+          page.getByText("+ ajouter un territoire").last(),
+        ).toBeVisible();
+      },
+    );
+  });
+
+  test("Ajout et suppression d'un territoire dans le widget PVA", async ({
+    page,
+    e2eContext,
+    step,
+  }) => {
+    test.setTimeout(150_000);
+
+    const appActions = new AppActions(page, e2eContext);
+    await appActions.loginAs("ditp.admin@example.com");
+
+    const pageChantier = new PageChantier(page, e2eContext);
+    await pageChantier.selectChantierAvecTerritoire(chantierId, "NAT-FR");
+
+    await step(
+      "Sélection de la carte des propositions de valeur d'avancement",
+      async () => {
+        await selectionnerCartePVA(page);
+        await expect(
+          page.getByText("Nombres de propositions de valeur d'avancement", {
+            exact: true,
+          }),
+        ).toBeVisible();
+      },
+    );
+
+    await step("Ajout du territoire 'Paris' via le picker", async () => {
+      await page.getByText("+ ajouter un territoire").last().click();
+      await page.getByLabel("Rechercher").last().fill("Paris");
+      await page.getByRole("option", { name: "Paris" }).click();
+    });
+
+    await step(
+      "Vérification que 'Paris' apparaît avec '2 propositions'",
+      async () => {
+        await expect(
+          page.getByText("2 propositions", { exact: true }),
+        ).toBeVisible();
+      },
+    );
+
+    await step("Ajout du territoire 'Morbihan'", async () => {
+      await page.getByText("+ ajouter un territoire").last().click();
+      await page.getByLabel("Rechercher").last().fill("Morbihan");
+      await page.getByRole("option", { name: "Morbihan" }).click();
+    });
+
+    await step(
+      "Vérification que 'Morbihan' affiche 'pas de proposition'",
+      async () => {
+        await expect(
+          page.getByText("pas de proposition", { exact: true }),
+        ).toBeVisible();
+      },
+    );
+
+    await step("Suppression de 'Paris' (clic sur le bouton ✕)", async () => {
+      await page
+        .getByTitle(/Retirer.*Paris/)
+        .last()
+        .click();
+    });
+
+    await step(
+      "Vérification que 'Paris' n'est plus affiché dans le widget PVA",
+      async () => {
+        await expect(
+          page.getByText("2 propositions", { exact: true }),
+        ).not.toBeVisible();
       },
     );
   });

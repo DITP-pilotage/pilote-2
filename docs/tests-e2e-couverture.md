@@ -875,6 +875,37 @@ Profil : `ditp.admin@example.com` (DITP_ADMIN)
 - Connexion avec un autre profil et navigation vers "Mon profil utilisateur"
 - Vérification que les informations affichées correspondent bien à ce second utilisateur et n'ont pas été impactées par la modification précédente
 
+## 12. Cartographie PVA — Comparaison territoriale
+
+**Fichier :** `tests/information-chantier.spec.ts`
+
+2 scénarios couvrant le widget de cartographie PVA dans la section "Comparaison territoriale et évolution". Chantier de référence : CH-129, profil DITP Admin. Données seedées : NAT-FR (3 propositions), DEPT-75 (2 propositions), REG-11 (1 proposition), DEPT-56 (0), REG-53 (0).
+
+### Test 1 : Affichage du widget PVA avec les données de propositions
+
+Profil : `ditp.admin@example.com` (DITP_ADMIN)
+
+- Navigation vers CH-129 au niveau national (NAT-FR)
+- Sélection de "Carte des propositions de valeur d'avancement" sur la carte de droite
+- Vérification que le widget "Comparaison territoriale et évolution" s'affiche
+- Vérification du sous-titre "Nombres de propositions de valeur d'avancement"
+- Vérification que le territoire initial (France) affiche "3 propositions"
+- Vérification de la présence du lien "+ ajouter un territoire"
+
+### Test 2 : Ajout et suppression d'un territoire dans le widget PVA
+
+Profil : `ditp.admin@example.com` (DITP_ADMIN)
+
+- Navigation vers CH-129 au niveau national (NAT-FR) avec sélection carte PVA
+- Ajout du territoire "Paris" via le picker
+- Vérification que "Paris" apparaît avec "2 propositions"
+- Ajout du territoire "Morbihan"
+- Vérification que "Morbihan" affiche "pas de proposition"
+- Suppression de "Paris" (clic sur le bouton ✕)
+- Vérification que "Paris" n'est plus affiché
+
+---
+
 ## Matrice profils × tests
 
 Légende : ✓ = profil utilisé dans ce test
@@ -913,6 +944,8 @@ Légende : ✓ = profil utilisé dans ce test
 | 9. Indicateurs - Listing                |     ✓      |            |      ✓      |             |           |             |             |        ✓        |
 | 10. Indicateurs - Formulaire            |     ✓      |            |      ✓      |             |           |             |             |        ✓        |
 | 11. Mon profil utilisateur              |     ✓      |            |      ✓      |             |           |             |             |                 |
+| 12. Carto PVA - Affichage widget        |     ✓      |            |             |             |           |             |             |                 |
+| 12. Carto PVA - Ajout/suppression terr. |     ✓      |            |             |             |           |             |             |                 |
 
 **Identifiants des profils :**
 
