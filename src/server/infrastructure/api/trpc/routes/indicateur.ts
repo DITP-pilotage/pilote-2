@@ -28,24 +28,15 @@ export const indicateurRouter = créerRouteurTRPC({
       }),
     )
     .query(async ({ input, ctx }) => {
-      const result = await getContainer("chantiers")
-        .resolve("listerDetailsIndicateurTerritoireUseCaseV2")
-        .run(
-          [input.indicateurId],
-          input.chantierId,
-          ctx.session.habilitations,
-          ctx.session.profil,
-          input.jalon,
-        );
-
-      const details = result[input.indicateurId] ?? {};
-
-      return Object.entries(details).map(([territoireCode, detail]) => ({
-        territoireCode,
-        valeurAvancement: detail.valeurAvancement,
-        valeurCibleAnnuelle: detail.valeurCibleAnnuelle,
-        estApplicable: detail.estApplicable,
-      }));
+      return getContainer("chantiers")
+        .resolve("recupererValeursAvancementIndicateurTerritoiresQuery")
+        .execute({
+          indicateurId: input.indicateurId,
+          chantierId: input.chantierId,
+          jalon: input.jalon,
+          habilitations: ctx.session.habilitations,
+          profil: ctx.session.profil,
+        });
     }),
   recupererStatistiquesValeurAvancement: procédureProtégée
     .input(
@@ -57,42 +48,17 @@ export const indicateurRouter = créerRouteurTRPC({
       }),
     )
     .query(async ({ input, ctx }) => {
-      const result = await getContainer("chantiers")
-        .resolve("listerDetailsIndicateurTerritoireUseCaseV2")
-        .run(
-          [input.indicateurId],
-          input.chantierId,
-          ctx.session.habilitations,
-          ctx.session.profil,
-          input.jalon,
-        );
-
-      const details = result[input.indicateurId] ?? {};
-      const prefixeMaille =
-        input.maille === "regionale" ? "REG-" : "DEPT-";
-
-      const valeurs = Object.entries(details)
-        .filter(
-          ([territoireCode, detail]) =>
-            territoireCode.startsWith(prefixeMaille) &&
-            detail.estApplicable !== false,
+      return getContainer("chantiers")
+        .resolve(
+          "getValeursRemarquablesValeurAvancementIndicateurTerritoiresQuery",
         )
-        .map(([, detail]) => detail.valeurAvancement)
-        .filter((valeur): valeur is number => valeur !== null);
-
-      valeurs.sort((valueA, valueB) => valueA - valueB);
-
-      const minimum = valeurs.length > 0 ? valeurs[0] : null;
-      const maximum = valeurs.length > 0 ? valeurs[valeurs.length - 1] : null;
-      let médiane: number | null = null;
-      if (valeurs.length > 0) {
-        const mid = Math.floor(valeurs.length / 2);
-        médiane =
-          valeurs.length % 2 === 0
-            ? (valeurs[mid - 1] + valeurs[mid]) / 2
-            : valeurs[mid];
-      }
-
-      return { minimum, médiane, maximum };
+        .execute({
+          indicateurId: input.indicateurId,
+          chantierId: input.chantierId,
+          maille: input.maille,
+          jalon: input.jalon,
+          habilitations: ctx.session.habilitations,
+          profil: ctx.session.profil,
+        });
     }),
 });

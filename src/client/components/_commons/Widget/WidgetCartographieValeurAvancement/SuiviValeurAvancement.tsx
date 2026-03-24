@@ -3,13 +3,9 @@ import { getCouleurTerritoireParCode } from "@/client/utils/couleur/paletteTerri
 import { récupérerDétailsSurUnTerritoire } from "@/client/constants/territoires";
 import { ValeurAvancementIndicateurTerritoire } from "./types";
 
-const formatValeur = (
-  valeur: number | null,
-  unite: string | null,
-): string => {
+const formatValeur = (valeur: number | null, unite: string | null): string => {
   if (valeur === null) return "Non renseigné";
-  const unitéAffichée =
-    unite?.toLocaleLowerCase() === "pourcentage" ? "%" : "";
+  const unitéAffichée = unite?.toLocaleLowerCase() === "pourcentage" ? "%" : "";
   return valeur.toLocaleString() + unitéAffichée;
 };
 
@@ -45,9 +41,7 @@ export const SuiviValeurAvancement = ({
     <div className="text-xs flex flex-col">
       {territoiresTries.map((territoire) => {
         const estInitial = territoire.territoireCode === territoireCode;
-        const couleur = getCouleurTerritoireParCode(
-          territoire.territoireCode,
-        );
+        const couleur = getCouleurTerritoireParCode(territoire.territoireCode);
         const détails = récupérerDétailsSurUnTerritoire(
           territoire.territoireCode,
         );
@@ -93,9 +87,7 @@ export const SuiviValeurAvancement = ({
                   </span>
                 </div>
                 <div className="whitespace-nowrap text-center">
-                  <span className="!text-dsfr-grey-625">
-                    VC {jalon} :{" "}
-                  </span>
+                  <span className="!text-dsfr-grey-625">VC {jalon} : </span>
                   <span style={{ color: couleur }}>
                     {formatValeur(territoire.valeurCibleAnnuelle, unite)}
                   </span>

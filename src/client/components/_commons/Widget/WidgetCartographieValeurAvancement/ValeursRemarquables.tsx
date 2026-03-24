@@ -13,8 +13,7 @@ const formatValeur = (
   unite: string | null,
 ): string | null => {
   if (valeur === null) return null;
-  const unitéAffichée =
-    unite?.toLocaleLowerCase() === "pourcentage" ? "%" : "";
+  const unitéAffichée = unite?.toLocaleLowerCase() === "pourcentage" ? "%" : "";
   return valeur.toLocaleString() + unitéAffichée;
 };
 

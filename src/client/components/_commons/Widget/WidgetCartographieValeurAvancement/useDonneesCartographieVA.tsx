@@ -16,13 +16,9 @@ const REMPLISSAGE_PAR_DÉFAUT =
 const REMPLISSAGE_NON_APPLICABLE =
   ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS.NON_APPLICABLE.remplissage;
 
-const formatValeur = (
-  valeur: number | null,
-  unite: string | null,
-): string => {
+const formatValeur = (valeur: number | null, unite: string | null): string => {
   if (valeur === null) return "Non renseigné";
-  const unitéAffichée =
-    unite?.toLocaleLowerCase() === "pourcentage" ? "%" : "";
+  const unitéAffichée = unite?.toLocaleLowerCase() === "pourcentage" ? "%" : "";
   return valeur.toLocaleString() + unitéAffichée;
 };
 

@@ -37,6 +37,8 @@ import { CreerLesRapportsPropositionsUseCase } from "./usecases/CreerLesRapports
 import { EnvoyerLesRapportsPropositionsUseCase } from "./usecases/EnvoyerLesRapportsPropositionsUseCase";
 import { GetChantierMeteosTerritoiresQuery } from "./infrastructure/queries/GetChantierMeteosTerritoiresQuery";
 import { RecupererAvancementsTerritoiresQuery } from "./infrastructure/queries/RecupererAvancementsTerritoiresQuery";
+import { RecupererValeursAvancementIndicateurTerritoiresQuery } from "./infrastructure/queries/RecupererValeursAvancementIndicateurTerritoiresQuery";
+import { GetValeursRemarquablesValeurAvancementIndicateurTerritoiresQuery } from "./infrastructure/queries/GetValeursRemarquablesValeurAvancementIndicateurTerritoiresQuery";
 
 type ChantierExports = {
   recupererChantiersQuery: RecupererChantiersApplicablesParTerritoiresQuery;
@@ -69,6 +71,8 @@ type ChantierOwnCradle = ChantierExports & {
   envoyerLesRapportsPropositionsUseCase: EnvoyerLesRapportsPropositionsUseCase;
   getChantierMeteosTerritoiresQuery: GetChantierMeteosTerritoiresQuery;
   recupererAvancementsTerritoiresQuery: RecupererAvancementsTerritoiresQuery;
+  recupererValeursAvancementIndicateurTerritoiresQuery: RecupererValeursAvancementIndicateurTerritoiresQuery;
+  getValeursRemarquablesValeurAvancementIndicateurTerritoiresQuery: GetValeursRemarquablesValeurAvancementIndicateurTerritoiresQuery;
 };
 
 type ChantierCradle = ChantierOwnCradle & ChantierImports;
@@ -138,6 +142,13 @@ export const chantiersModule = defineModule<ChantierExports, ChantierCradle>()({
       recupererAvancementsTerritoiresQuery: asModuleClass(
         RecupererAvancementsTerritoiresQuery,
       ),
+      recupererValeursAvancementIndicateurTerritoiresQuery: asModuleClass(
+        RecupererValeursAvancementIndicateurTerritoiresQuery,
+      ),
+      getValeursRemarquablesValeurAvancementIndicateurTerritoiresQuery:
+        asModuleClass(
+          GetValeursRemarquablesValeurAvancementIndicateurTerritoiresQuery,
+        ),
     } satisfies VerifyCradle<ChantierOwnCradle>);
   },
 });
