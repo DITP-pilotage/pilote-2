@@ -148,50 +148,44 @@ return Object.entries(details).map(([codeInsee, detail]) => ({
 
 Référence : `WidgetCartographieTA` est le modèle à suivre pour l'architecture ET l'UI (sélection de territoires, comparaison, `AjouterTerritoirePicker`, etc.).
 
-### Étape 1 : Endpoint tRPC
+### Étape 1 : Endpoint tRPC `recupererValeursAvancementTerritoires` — DONE
 
-- Ajouter `recupererValeursAvancementTerritoires` dans `indicateurRouter` (`src/server/infrastructure/api/trpc/routes/indicateur.ts`)
-- Input : `{ indicateurId: string, chantierId: string, jalon: number }`
-- Appelle `getContainer("chantiers").resolve("listerDetailsIndicateurTerritoireUseCaseV2")` (pas de module indicateur dédié, OK d'utiliser le container chantiers)
-- Projette la sortie vers `ValeurAvancementIndicateurTerritoire[]` (données métier uniquement, pas de nom/maille)
+- `indicateurRouter` (`src/server/infrastructure/api/trpc/routes/indicateur.ts`)
+- Input : `{ indicateurId, chantierId, jalon }`
+- Wraps `ListerDetailsIndicateurTerritoireUseCaseV2` via `getContainer("chantiers")`
+- Projette vers `{ territoireCode, valeurAvancement, valeurCibleAnnuelle, estApplicable }[]`
 
-### Étape 2 : Widget `WidgetCartographieValeurAvancement`
+### Étape 2 : Widget client — DONE
 
-Nouveau dossier `src/client/components/_commons/Widget/WidgetCartographieValeurAvancement/` avec :
+Dossier `src/client/components/_commons/Widget/WidgetCartographieValeurAvancement/` :
 
-| Fichier | Rôle | Calqué sur (dans WidgetCartographieTA) |
+| Fichier | Rôle | Statut |
 |---|---|---|
-| `WidgetCartographieValeurAvancement.tsx` | Composant principal, data fetching tRPC, layout | `WidgetCartographieTA.tsx` |
-| `useDonneesCartographieVA.tsx` | Transformer données → `Record<string, CartographieV2Donnee>` (dégradé) | `useDonneesCartographieTA.tsx` |
-| `useLegendeVA.ts` | Légende dégradé + états spéciaux | `useLegendeTA.ts` |
-| `SuiviValeurAvancement.tsx` | Panneau latéral de comparaison des territoires sélectionnés | `SuiviTauxAvancement.tsx` |
-| `ValeursRemarquables.tsx` | Min/max/médiane affichés sur la carto | `ValeursRemarquables.tsx` |
+| `types.ts` | Type `ValeurAvancementIndicateurTerritoire` | DONE |
+| `WidgetCartographieValeurAvancement.tsx` | Composant principal, data fetching, layout | DONE |
+| `useDonneesCartographieVA.tsx` | Données carto (dégradé interpolé) | DONE |
+| `useLegendeVA.ts` | Légende dégradé + items conditionnels | DONE |
+| `LegendeDegradeVA.tsx` | Composant légende dégradé (barre gradient) | DONE |
+| `SuiviValeurAvancement.tsx` | Panneau comparaison territoires | DONE |
+| `ValeursRemarquables.tsx` | Min/max/médiane | DONE — **à refactorer (voir étape 4)** |
 
-### Composants partagés réutilisés (aucune modification)
+### Étape 3 : Intégration dans `IndicateurDétails` — DONE
 
-- `BaseCartographieWidgetLayout` — layout carto + panneau latéral
-- `CartographieV2` — rendu de la carte
-- `LegendeCartographie` — affichage légende
-- `AjouterTerritoirePicker` — picker d'ajout de territoires
-- `useSelectionTerritoires` — gestion sélection/comparaison (depuis `WidgetCartographieMeteo/`)
+- Feature flag `NEXT_PUBLIC_FF_COMPARAISON_TERRITOIRES`
+- `TuileWidget` + `Suspense` wrapper
+- Fichier : `src/client/components/_commons/IndicateursChantier/Bloc/Détails/IndicateurDétails.tsx`
 
-### Étape 3 : Hooks carto (détail)
+### Étape 4 : Valeurs remarquables côté serveur — TODO
 
-**`useDonneesCartographieVA`** — adapté de `useCartographieValeurAvancementIndicateur` pour `CartographieV2` :
-- Input : `ValeurAvancementIndicateurTerritoire[]`, `jalon`, `unite`
-- Output : `Record<string, CartographieV2Donnee>`
-- Résout `territoireNom` via `récupérerDétailsSurUnTerritoire()` côté client
-- Logique : dégradé interpolé `#8bcdb1` → `#083a25` (min/max), hachures si non applicable, gris si null
-- Tooltip : "VA: {valeur}" + "VC {jalon}: {valeurCibleAnnuelle}"
+**Problème** : les valeurs remarquables (min/médiane/max) sont actuellement calculées **côté client** dans `ValeursRemarquables.tsx`. Ça doit être fait **côté serveur** comme pour le TA (ref: `chantier.recupererStatistiquesAvancement`).
 
-**`useLegendeVA`** — légende dégradé :
-- Dégradé min/max avec unité
-- Entrées conditionnelles "Non applicable" et "Non renseigné"
+De plus, le calcul **doit prendre en compte la maille** (régionale ou départementale) — actuellement on calcule sur tous les territoires sans filtrer.
 
-**`SuiviValeurAvancement`** — panneau comparaison (calqué sur `SuiviTauxAvancement`) :
-- Liste triée des territoires sélectionnés
-- Affiche VA et VC par territoire avec couleur par territoire
-- Bouton supprimer (sauf territoire courant)
+**À faire** :
+- [ ] Créer un endpoint tRPC `indicateur.recupererStatistiquesValeurAvancement` avec input `{ indicateurId, chantierId, maille, jalon }`
+- [ ] Le calcul côté serveur filtre les territoires par maille puis calcule min/médiane/max sur les `valeurAvancement` (en excluant les non applicables)
+- [ ] Refactorer `ValeursRemarquables.tsx` pour consommer cet endpoint au lieu de calculer en local
+- [ ] Pattern de référence : `chantier.recupererStatistiquesAvancement` (`src/server/infrastructure/api/trpc/routes/chantier.ts:52-69`)
 
 ---
 
@@ -199,25 +193,21 @@ Nouveau dossier `src/client/components/_commons/Widget/WidgetCartographieValeurA
 
 | Fichier | Rôle |
 |---|---|
-| `src/server/chantiers/usecases/ListerDetailsIndicateurTerritoireUseCaseV2.ts` | UseCase réutilisé via tRPC (adapter) |
-| `src/server/infrastructure/api/trpc/routes/indicateur.ts` | Router tRPC indicateur (ajouter endpoint ici) |
-| `src/server/infrastructure/api/trpc/routes/chantier.ts:37-51` | Pattern tRPC de référence |
-| `src/client/components/_commons/Cartographie/CartographieAvecSelecteurIndicateur/useCartographieValeurAvancementIndicateur.tsx` | Logique de rendu legacy à porter vers CartographieV2 |
-| `src/client/components/_commons/Widget/WidgetCartographieTA/` | **Référence principale** : architecture ET UI |
-| `src/client/components/_commons/Widget/WidgetCartographieMeteo/useSelectionTerritoires.ts` | Hook partagé pour sélection territoires |
-| `src/server/chantiers/app/contrats/TauxAvancementComparaisonTerritoireViewModel.ts` | ViewModel de référence pour la shape des données |
-| `src/client/components/_commons/Widget/BaseCartographieWidgetLayout.tsx` | Layout partagé |
-| `src/client/components/_commons/Widget/AjouterTerritoirePicker.tsx` | Picker partagé |
+| `src/server/infrastructure/api/trpc/routes/indicateur.ts` | Router tRPC indicateur (endpoints) |
+| `src/server/infrastructure/api/trpc/routes/chantier.ts:52-69` | Pattern de référence pour statistiques serveur |
+| `src/client/components/_commons/Widget/WidgetCartographieValeurAvancement/` | Widget complet |
+| `src/client/components/_commons/IndicateursChantier/Bloc/Détails/IndicateurDétails.tsx` | Point d'intégration du widget |
+| `src/client/components/_commons/Widget/WidgetCartographieTA/ValeursRemarquables.tsx` | Référence : valeurs remarquables avec appel tRPC |
 
 ---
 
 ## 6. Décisions prises
 
-- [x] `territoireNom` et `maille` : résolus **côté client** via `récupérerDétailsSurUnTerritoire()` (JSON statique). Le tRPC ne retourne que les données métier.
+- [x] `territoireNom` et `maille` : résolus **côté client** via `récupérerDétailsSurUnTerritoire()` (JSON statique)
 - [x] Sélection de territoires + comparaison : oui, calqué sur WidgetCartographieTA
-- [x] Container DI : `getContainer("chantiers")` depuis le router indicateur (pas de module indicateur dédié)
-- [x] ValeursRemarquables : oui, min/max/médiane comme dans WidgetCartographieTA
+- [x] Container DI : `getContainer("chantiers")` depuis le router indicateur
+- [x] ValeursRemarquables : oui, min/max/médiane — **calcul côté serveur, filtré par maille**
 
 ## 7. Questions ouvertes
 
-Aucune — toutes les décisions sont prises.
+- [ ] Pour le endpoint statistiques : réutiliser le use case legacy (over-fetching + filter/compute dans l'adapter) ou query SQL dédiée ?
