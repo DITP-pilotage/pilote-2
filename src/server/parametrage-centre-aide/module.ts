@@ -42,7 +42,7 @@ export const parametrageCentreAideModule = defineModule<
       supprimerArticleCentreAideUseCase: asModuleClass(
         SupprimerArticleCentreAideUseCase,
       ),
-    });
+    } satisfies Record<keyof ParametrageCentreAideCradle, unknown>);
   },
 });
 

@@ -26,7 +26,7 @@ export const habilitationsCoordinateurModule = defineModule<
       ajouterLesChantierAuxHabilitationsHandler: asModuleClass(
         AjouterLesChantierAuxHabilitationsHandler,
       ),
-    });
+    } satisfies Record<keyof HabilitationsCoordinateurCradle, unknown>);
   },
 });
 

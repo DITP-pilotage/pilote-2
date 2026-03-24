@@ -17,7 +17,7 @@ export const datajobsExecutionModule = defineModule<
   register: (container, { asModuleClass }) => {
     container.register({
       datajobsExecutionQueries: asModuleClass(DatajobsExecutionQueries),
-    });
+    } satisfies Record<keyof DatajobsExecutionCradle, unknown>);
   },
 });
 

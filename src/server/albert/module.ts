@@ -13,8 +13,11 @@ import {
 } from "@/server/module-system";
 import type { PrismaPilote } from "@/server/db/PrismaPilote";
 
-type AlbertCradle = {
+type AlbertImports = {
   prisma: PrismaPilote;
+};
+
+type AlbertOwnCradle = {
   createGetTauxAvancementTerritoireTool: ReturnType<
     typeof createGetTauxAvancementTerritoireTool
   >;
@@ -32,6 +35,8 @@ type AlbertCradle = {
   >;
   evaluerChatUseCase: EvaluerChatUseCase;
 };
+
+type AlbertCradle = AlbertOwnCradle & AlbertImports;
 
 export const albertModule = defineModule<NoExports, AlbertCradle>()({
   name: "albert",
@@ -57,7 +62,7 @@ export const albertModule = defineModule<NoExports, AlbertCradle>()({
         createGetValeursIndicateurTool,
       ),
       evaluerChatUseCase: asModuleClass(EvaluerChatUseCase),
-    });
+    } satisfies Record<keyof AlbertOwnCradle, unknown>);
   },
 });
 

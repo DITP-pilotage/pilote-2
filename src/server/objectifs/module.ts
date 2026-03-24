@@ -61,7 +61,7 @@ export const objectifModule = defineModule<NoExports, ObjectifCradle>()({
       recupererHistoriqueObjectifQuery: asModuleClass(
         RecupererHistoriqueObjectifQuery,
       ),
-    });
+    } satisfies Record<keyof ObjectifCradle, unknown>);
   },
 });
 

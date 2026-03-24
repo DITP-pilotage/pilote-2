@@ -86,7 +86,7 @@ export const parametrageIndicateurModule = defineModule<
       enregistrerMetadataIndicateurHandler: asModuleClass(
         EnregistrerMetadataIndicateurHandler,
       ),
-    });
+    } satisfies Record<keyof ParametrageIndicateurCradle, unknown>);
   },
 });
 

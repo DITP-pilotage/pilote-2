@@ -30,6 +30,6 @@ export const sharedModule = defineModule<NoExports, SharedCradle>()({
           ? new StubEmailManager()
           : new BrevoEmailManager(),
       ).singleton(),
-    });
+    } satisfies Record<keyof SharedCradle, unknown>);
   },
 });

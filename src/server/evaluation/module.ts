@@ -152,7 +152,7 @@ export const piloteEvalModule = defineModule<NoExports, PiloteEvalCradle>()({
       transmettreAppreciationHandler: asModuleClass(
         TransmettreAppreciationHandler,
       ),
-    });
+    } satisfies Record<keyof PiloteEvalCradle, unknown>);
   },
 });
 

@@ -292,7 +292,7 @@ export const legacyModule = defineModule<LegacyExport, LegacyCradle>()({
             ministereRepository: ficheTerritorialeMinistereRepository,
           }),
       ).scoped(),
-    });
+    } satisfies Record<keyof LegacyCradle, unknown>);
   },
 });
 

@@ -88,7 +88,10 @@ export const indicateurTerritoireValeurEvenementModule = defineModule<
           RecupererHistoriqueIndicateurTerritoireValeurEvenementUseCase,
         ),
       evenementsVAQuery: asModuleClass(RecupererEvenementsVAParPeriodeQuery),
-    });
+    } satisfies Record<
+      keyof IndicateurTerritoireValeurEvenementCradle,
+      unknown
+    >);
   },
 });
 

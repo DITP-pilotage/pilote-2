@@ -20,7 +20,7 @@ export const authentificationModule = defineModule<
   register: (container, { asModuleClass }) => {
     container.register({
       utilisateurRepository: asModuleClass(UtilisateurSQLRepository),
-    });
+    } satisfies Record<keyof AuthentificationCradle, unknown>);
   },
 });
 

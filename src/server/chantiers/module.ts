@@ -39,32 +39,35 @@ type ChantierExports = {
   mesuresIndicateurQuery: RecupererMesuresIndicateurParPeriodeQuery;
 };
 
-type ChantierCradle = ChantierExports &
-  IndicateurTerritoireValeurEvenementExports &
+type ChantierImports = IndicateurTerritoireValeurEvenementExports &
   LegacyExport &
-  DatajobsExecutionExports & {
-    chantierRepository: ChantierRepository;
-    indicateurRepository: IndicateurRepository;
-    territoireRepository: TerritoireRepository;
-    ministereRepository: MinistereRepository;
-    propositionValeurAvancementRepository: PropositionValeurAvancementRepository;
-    utilisateurRepository: UtilisateurRepository;
-    envoieEmailService: EnvoieEmailService;
-    recupererDonneesChantierQuery: RecupererDonneesChantierQuery;
-    exportCsvDesChantiersUseCase: ExportCsvDesChantiersUseCase;
-    exportCsvDesIndicateursUseCase: ExportCsvDesIndicateursUseCase;
-    exportCsvDesHistoriquesIndicateursUseCase: ExportCsvDesHistoriquesIndicateursUseCase;
-    recupererDetailsIndicateursV2UseCase: RecupererDetailsIndicateursV2UseCase;
-    recupererChantiersAccessiblesEnLectureUseCaseV2: RecupererChantiersAccessiblesEnLectureUseCaseV2;
-    recupererChantiersAccessiblesEnLectureUseCaseRapportDetailleV2: RecupererChantiersAccessiblesEnLectureUseCaseRapportDetailleV2;
-    recupererChantierUseCaseV2: RecupererChantierUseCaseV2;
-    listerDetailsIndicateurTerritoireUseCaseV2: ListerDetailsIndicateurTerritoireUseCaseV2;
-    rapportPropositionsAvancementRepository: RapportPropositionsAvancementRepository;
-    creerLesRapportsPropositionsUseCase: CreerLesRapportsPropositionsUseCase;
-    envoyerLesRapportsPropositionsUseCase: EnvoyerLesRapportsPropositionsUseCase;
-    getChantierMeteosTerritoiresQuery: GetChantierMeteosTerritoiresQuery;
-    recupererAvancementsTerritoiresQuery: RecupererAvancementsTerritoiresQuery;
-  };
+  DatajobsExecutionExports;
+
+type ChantierOwnCradle = ChantierExports & {
+  chantierRepository: ChantierRepository;
+  indicateurRepository: IndicateurRepository;
+  territoireRepository: TerritoireRepository;
+  ministereRepository: MinistereRepository;
+  propositionValeurAvancementRepository: PropositionValeurAvancementRepository;
+  utilisateurRepository: UtilisateurRepository;
+  envoieEmailService: EnvoieEmailService;
+  recupererDonneesChantierQuery: RecupererDonneesChantierQuery;
+  exportCsvDesChantiersUseCase: ExportCsvDesChantiersUseCase;
+  exportCsvDesIndicateursUseCase: ExportCsvDesIndicateursUseCase;
+  exportCsvDesHistoriquesIndicateursUseCase: ExportCsvDesHistoriquesIndicateursUseCase;
+  recupererDetailsIndicateursV2UseCase: RecupererDetailsIndicateursV2UseCase;
+  recupererChantiersAccessiblesEnLectureUseCaseV2: RecupererChantiersAccessiblesEnLectureUseCaseV2;
+  recupererChantiersAccessiblesEnLectureUseCaseRapportDetailleV2: RecupererChantiersAccessiblesEnLectureUseCaseRapportDetailleV2;
+  recupererChantierUseCaseV2: RecupererChantierUseCaseV2;
+  listerDetailsIndicateurTerritoireUseCaseV2: ListerDetailsIndicateurTerritoireUseCaseV2;
+  rapportPropositionsAvancementRepository: RapportPropositionsAvancementRepository;
+  creerLesRapportsPropositionsUseCase: CreerLesRapportsPropositionsUseCase;
+  envoyerLesRapportsPropositionsUseCase: EnvoyerLesRapportsPropositionsUseCase;
+  getChantierMeteosTerritoiresQuery: GetChantierMeteosTerritoiresQuery;
+  recupererAvancementsTerritoiresQuery: RecupererAvancementsTerritoiresQuery;
+};
+
+type ChantierCradle = ChantierOwnCradle & ChantierImports;
 
 export const chantiersModule = defineModule<ChantierExports, ChantierCradle>()({
   name: "chantiers",
@@ -131,7 +134,7 @@ export const chantiersModule = defineModule<ChantierExports, ChantierCradle>()({
       recupererAvancementsTerritoiresQuery: asModuleClass(
         RecupererAvancementsTerritoiresQuery,
       ),
-    });
+    } satisfies Record<keyof ChantierOwnCradle, unknown>);
   },
 });
 

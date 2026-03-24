@@ -85,7 +85,7 @@ export const importSyntheseDesResultatsModule = defineModule<
       importSyntheseDesResultatsAPIHandler: asModuleClass(
         ImportSyntheseDesResultatsAPIHandler,
       ),
-    });
+    } satisfies Record<keyof ImportSyntheseDesResultatsCradle, unknown>);
   },
 });
 

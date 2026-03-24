@@ -12,13 +12,19 @@ import {
   type NoExports,
 } from "@/server/module-system";
 
-type ProfilUtilisateurCradle = {
+type ProfilUtilisateurImports = {
+  emailManager: EmailManager;
+};
+
+type ProfilUtilisateurOwnCradle = {
   profilUtilisateurRepository: ProfilUtilisateurRepository;
   profilModifieSideEffects: ProfilModifieSideEffects;
   modifierMonProfilUseCase: ModifierMonProfilUseCase;
   getProfilUtilisateurQuery: GetProfilUtilisateurQuery;
-  emailManager: EmailManager;
 };
+
+type ProfilUtilisateurCradle = ProfilUtilisateurOwnCradle &
+  ProfilUtilisateurImports;
 
 export const profilUtilisateurModule = defineModule<
   NoExports,
@@ -43,7 +49,7 @@ export const profilUtilisateurModule = defineModule<
       }),
       modifierMonProfilUseCase: asModuleClass(ModifierMonProfilUseCase),
       getProfilUtilisateurQuery: asModuleClass(GetProfilUtilisateurQuery),
-    });
+    } satisfies Record<keyof ProfilUtilisateurOwnCradle, unknown>);
   },
 });
 

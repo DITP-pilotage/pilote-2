@@ -72,7 +72,7 @@ export const importDecisionStrategiqueModule = defineModule<
       recupererHistoriqueDecisionStrategiqueQuery: asModuleClass(
         RecupererHistoriqueDecisionStrategiqueQuery,
       ),
-    });
+    } satisfies Record<keyof ImportDecisionStrategiqueCradle, unknown>);
   },
 });
 

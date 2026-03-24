@@ -68,7 +68,7 @@ export const ficheConducteurModule = defineModule<
       decisionStrategiqueRepository: asModuleClass(
         PrismaDecisionStrategiqueRepository,
       ),
-    });
+    } satisfies Record<keyof FicheConducteurCradle, unknown>);
   },
 });
 

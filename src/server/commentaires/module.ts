@@ -61,7 +61,7 @@ export const commentaireModule = defineModule<NoExports, CommentaireCradle>()({
       recupererHistoriqueCommentaireQuery: asModuleClass(
         RecupererHistoriqueCommentaireQuery,
       ),
-    });
+    } satisfies Record<keyof CommentaireCradle, unknown>);
   },
 });
 

@@ -209,7 +209,7 @@ export const gestionUtilisateurModule = defineModule<
       importerDesUtilisateursUseCase: asModuleClass(
         ImporterDesUtilisateursUseCase,
       ),
-    });
+    } satisfies Record<keyof GestionUtilisateurCradle, unknown>);
   },
 });
 

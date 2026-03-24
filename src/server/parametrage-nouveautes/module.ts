@@ -29,7 +29,7 @@ export const parametrageNouveautesModule = defineModule<
       nouveauteRepository: asModuleClass(PrismaNouveauteRepository),
       listerNouveautesUseCase: asModuleClass(ListerNouveautesUseCase),
       modifierNouveauteUseCase: asModuleClass(ModifierNouveauteUseCase),
-    });
+    } satisfies Record<keyof ParametrageNouveautesCradle, unknown>);
   },
 });
 
