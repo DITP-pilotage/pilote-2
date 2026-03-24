@@ -1,17 +1,7 @@
-import api from "@/server/infrastructure/api/trpc/api";
 import { MailleInterne } from "@/server/domain/maille/Maille.interface";
-
-const COULEUR_MINIMUM = "#cbcbe8";
-const COULEUR_MEDIANE = "#6666bd";
-const COULEUR_MAXIMUM = "#000091";
 
 const libelleMaille = (maille: MailleInterne): string =>
   maille === "departementale" ? "départements" : "régions";
-
-const formatValeur = (valeur: number | null | undefined): string | null => {
-  if (valeur === null || valeur === undefined) return null;
-  return `${Math.round(valeur)}%`;
-};
 
 const ValeurRemarquable = ({
   label,
@@ -31,50 +21,49 @@ const ValeurRemarquable = ({
 );
 
 export const ValeursRemarquables = ({
-  chantierIds,
+  valeurs,
+  palette,
   maille,
-  jalon,
 }: {
-  chantierIds: string[];
+  valeurs: {
+    minimum: string | null;
+    mediane: string | null;
+    maximum: string | null;
+  };
+  palette: { minimum: string; mediane: string; maximum: string };
   maille: MailleInterne;
-  jalon: number;
 }) => {
-  const [statistiques] =
-    api.chantier.recupererStatistiquesAvancement.useSuspenseQuery({
-      chantierIds,
-      maille,
-      jalon,
-    });
-
-  if (!statistiques) return null;
-
-  const minimum = formatValeur(statistiques.minimum);
-  const mediane = formatValeur(statistiques.médiane);
-  const maximum = formatValeur(statistiques.maximum);
   const libelle = libelleMaille(maille);
+
+  if (
+    valeurs.minimum === null &&
+    valeurs.mediane === null &&
+    valeurs.maximum === null
+  )
+    return null;
 
   return (
     <div className="mb-4">
       <div className="flex flex-col md:flex-row md:flex-wrap md:justify-center">
-        {minimum !== null && (
+        {valeurs.minimum !== null && (
           <ValeurRemarquable
-            color={COULEUR_MINIMUM}
+            color={palette.minimum}
             label={`minimum des ${libelle}`}
-            value={minimum}
+            value={valeurs.minimum}
           />
         )}
-        {mediane !== null && (
+        {valeurs.mediane !== null && (
           <ValeurRemarquable
-            color={COULEUR_MEDIANE}
+            color={palette.mediane}
             label={`médiane des ${libelle}`}
-            value={mediane}
+            value={valeurs.mediane}
           />
         )}
-        {maximum !== null && (
+        {valeurs.maximum !== null && (
           <ValeurRemarquable
-            color={COULEUR_MAXIMUM}
+            color={palette.maximum}
             label={`maximum des ${libelle}`}
-            value={maximum}
+            value={valeurs.maximum}
           />
         )}
       </div>

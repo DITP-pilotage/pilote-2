@@ -10,10 +10,10 @@ import { BaseCartographieWidgetLayout } from "@/components/_commons/Widget/BaseC
 import api from "@/server/infrastructure/api/trpc/api";
 import { useSelectionTerritoires } from "@/components/_commons/Widget/WidgetCartographieMeteo/useSelectionTerritoires";
 import { AjouterTerritoirePicker } from "@/components/_commons/Widget/AjouterTerritoirePicker";
+import { ValeursRemarquables } from "@/components/_commons/Widget/ValeursRemarquables";
 import { useDonneesCartographieTA } from "./useDonneesCartographieTA";
 import { useLegendeTA } from "./useLegendeTA";
 import { SuiviTauxAvancement } from "./SuiviTauxAvancement";
-import { ValeursRemarquables } from "./ValeursRemarquables";
 
 type VueCartographieTA = "situation" | "tableau" | "courbes";
 
@@ -35,6 +35,24 @@ export const WidgetCartographieTA = ({
       chantierIds,
       jalon,
     });
+
+  const [statistiques] =
+    api.chantier.recupererStatistiquesAvancement.useSuspenseQuery({
+      chantierIds,
+      maille,
+      jalon,
+    });
+
+  const formatValeurTA = (valeur: number | null | undefined): string | null => {
+    if (valeur === null || valeur === undefined) return null;
+    return `${Math.round(valeur)}%`;
+  };
+
+  const valeursRemarquables = {
+    minimum: formatValeurTA(statistiques?.minimum),
+    mediane: formatValeurTA(statistiques?.médiane),
+    maximum: formatValeurTA(statistiques?.maximum),
+  };
 
   const donneesCartographie = useDonneesCartographieTA(
     territoiresAvancement,
@@ -64,9 +82,13 @@ export const WidgetCartographieTA = ({
           )}
         >
           <ValeursRemarquables
-            chantierIds={chantierIds}
+            valeurs={valeursRemarquables}
+            palette={{
+              minimum: "#cbcbe8",
+              mediane: "#6666bd",
+              maximum: "#000091",
+            }}
             maille={maille}
-            jalon={jalon}
           />
           <LegendeCartographie items={legende} />
         </CartographieV2>

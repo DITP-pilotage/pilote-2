@@ -7,13 +7,22 @@ import api from "@/server/infrastructure/api/trpc/api";
 import { useSelectionTerritoires } from "@/components/_commons/Widget/WidgetCartographieMeteo/useSelectionTerritoires";
 import { AjouterTerritoirePicker } from "@/components/_commons/Widget/AjouterTerritoirePicker";
 import { ÉLÉMENTS_LÉGENDE_VALEUR_ACTUELLE } from "@/client/constants/légendes/élémentsDeLégendesCartographieValeurAvancement";
+import { ValeursRemarquables } from "@/components/_commons/Widget/ValeursRemarquables";
 import { useDonneesCartographieVA } from "./useDonneesCartographieVA";
 import { LegendeDegradeVA } from "./LegendeDegradeVA";
 import { SuiviValeurAvancement } from "./SuiviValeurAvancement";
-import { ValeursRemarquables } from "./ValeursRemarquables";
 
 const COULEUR_MIN = "#8bcdb1";
 const COULEUR_MAX = "#083a25";
+
+const formatValeurVA = (
+  valeur: number | null,
+  unite: string | null,
+): string | null => {
+  if (valeur === null) return null;
+  const unitéAffichée = unite?.toLocaleLowerCase() === "pourcentage" ? "%" : "";
+  return valeur.toLocaleString() + unitéAffichée;
+};
 
 export const WidgetCartographieValeurAvancement = ({
   indicateurId,
@@ -105,9 +114,17 @@ export const WidgetCartographieValeurAvancement = ({
           )}
         >
           <ValeursRemarquables
-            statistiques={statistiques}
+            valeurs={{
+              minimum: formatValeurVA(statistiques.minimum, unite),
+              mediane: formatValeurVA(statistiques.médiane, unite),
+              maximum: formatValeurVA(statistiques.maximum, unite),
+            }}
+            palette={{
+              minimum: "#8bcdb1",
+              mediane: "#47a882",
+              maximum: "#083a25",
+            }}
             maille={maille}
-            unite={unite}
           />
           <LegendeDegradeVA
             libelle={libelleDegrade}
@@ -133,8 +150,8 @@ export const WidgetCartographieValeurAvancement = ({
         territoireCode={territoireCode}
         onSupprimerTerritoire={supprimerTerritoire}
         territoiresSelectionnes={territoiresSelectionnes}
-        jalon={jalon}
         unite={unite}
+        statistiques={statistiques}
       />
       <AjouterTerritoirePicker
         territoiresSelectionnesCodes={territoiresSelectionnes.map(

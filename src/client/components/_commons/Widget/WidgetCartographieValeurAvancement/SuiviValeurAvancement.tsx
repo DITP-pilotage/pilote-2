@@ -1,6 +1,8 @@
 import { useMemo } from "react";
 import { getCouleurTerritoireParCode } from "@/client/utils/couleur/paletteTerritoires";
 import { récupérerDétailsSurUnTerritoire } from "@/client/constants/territoires";
+import { TerritoireLabel } from "@/components/_commons/Widget/TerritoireLabel";
+import { TerritoireProgressBar } from "@/components/_commons/Widget/TerritoireProgressBar";
 import { ValeurAvancementIndicateurTerritoire } from "./types";
 
 const formatValeur = (valeur: number | null, unite: string | null): string => {
@@ -9,18 +11,31 @@ const formatValeur = (valeur: number | null, unite: string | null): string => {
   return valeur.toLocaleString() + unitéAffichée;
 };
 
+const computePourcentage = (
+  valeur: number | null,
+  min: number | null,
+  max: number | null,
+): number => {
+  if (valeur === null || min === null || max === null) return 0;
+  if (max === min) return 100;
+  return ((valeur - min) / (max - min)) * 100;
+};
+
 export const SuiviValeurAvancement = ({
   territoiresSelectionnes,
   onSupprimerTerritoire,
   territoireCode,
-  jalon,
   unite,
+  statistiques,
 }: {
   territoiresSelectionnes: ValeurAvancementIndicateurTerritoire[];
   onSupprimerTerritoire: (territoireCode: string) => void;
   territoireCode: string;
-  jalon: number;
   unite: string | null;
+  statistiques: {
+    minimum: number | null;
+    maximum: number | null;
+  };
 }) => {
   const territoiresTries = useMemo(
     () =>
@@ -50,49 +65,32 @@ export const SuiviValeurAvancement = ({
         return (
           <div
             key={territoire.territoireCode}
-            className="grid grid-cols-[120px_1fr_1fr] items-center py-2"
+            className="grid grid-cols-[120px_1fr_auto] items-center py-2"
           >
-            <div className="flex items-center gap-1">
-              <span
-                className="text-right flex-1 truncate"
-                style={{ color: couleur }}
-              >
-                {nom}
-              </span>
-              {!estInitial ? (
-                <button
-                  onClick={() =>
-                    onSupprimerTerritoire(territoire.territoireCode)
-                  }
-                  title={`Retirer ${nom}`}
-                  type="button"
-                  className="p-2 -m-2"
-                  style={{ color: couleur }}
-                >
-                  ✕
-                </button>
-              ) : (
-                <div />
-              )}
-            </div>
+            <TerritoireLabel
+              nom={nom}
+              couleur={couleur}
+              onSupprimer={
+                !estInitial
+                  ? () => onSupprimerTerritoire(territoire.territoireCode)
+                  : undefined
+              }
+            />
 
             {territoire.estApplicable === false ? (
               <span className="col-span-2 text-center">Non applicable</span>
+            ) : territoire.valeurAvancement === null ? (
+              <span className="col-span-2 text-center">Non renseigné</span>
             ) : (
-              <>
-                <div className="whitespace-nowrap text-center">
-                  <span className="!text-dsfr-grey-625">VA : </span>
-                  <span style={{ color: couleur }}>
-                    {formatValeur(territoire.valeurAvancement, unite)}
-                  </span>
-                </div>
-                <div className="whitespace-nowrap text-center">
-                  <span className="!text-dsfr-grey-625">VC {jalon} : </span>
-                  <span style={{ color: couleur }}>
-                    {formatValeur(territoire.valeurCibleAnnuelle, unite)}
-                  </span>
-                </div>
-              </>
+              <TerritoireProgressBar
+                pourcentage={computePourcentage(
+                  territoire.valeurAvancement,
+                  statistiques.minimum,
+                  statistiques.maximum,
+                )}
+                libelle={formatValeur(territoire.valeurAvancement, unite)}
+                couleur={couleur}
+              />
             )}
           </div>
         );
