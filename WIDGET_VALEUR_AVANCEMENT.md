@@ -85,20 +85,27 @@ Le `detailsIndicateursTerritoire` est calculé dans le `getServerSideProps` de l
 
 ## 3. Ce dont le widget a besoin
 
-### ViewModel (par territoire)
+### Output tRPC (par territoire)
 
-Calqué sur `TauxAvancementComparaisonTerritoireViewModel` qui est le ViewModel de référence pour `WidgetCartographieTA` :
+Le endpoint tRPC retourne les **données métier uniquement**. Le `territoireNom` et la `maille` sont résolus côté client.
 
 ```typescript
-type ValeurAvancementIndicateurTerritoireViewModel = {
-  territoireCode: string;
-  territoireNom: string;
-  maille: MailleTerritoireSelectionne;
+type ValeurAvancementIndicateurTerritoire = {
+  territoireCode: string;        // = CodeInsee (clé du Record retourné par le use case)
   valeurAvancement: number | null;
   valeurCibleAnnuelle: number | null;
   estApplicable: boolean | null;
 };
 ```
+
+### Résolution territoire côté client
+
+`territoireNom` et `maille` sont des données de **présentation** — elles sont résolues côté client via :
+- `récupérerDétailsSurUnTerritoire(territoireCode)` depuis `src/client/constants/territoires.ts`
+- Retourne `{ nom, nomAffiché, maille, codeInsee, codeParent }` à partir du JSON statique (`territoires.json`, 1004 entrées)
+- Déjà utilisé partout dans l'app (y compris le hook legacy `useCartographieValeurAvancementIndicateur`)
+
+> **Sujet futur** : un `TerritoireProvider` React centralisé serait pertinent pour éviter les imports directs de `récupérerDétailsSurUnTerritoire` éparpillés partout.
 
 ### Props du widget
 
@@ -118,7 +125,7 @@ type ValeurAvancementIndicateurTerritoireViewModel = {
 ```
 indicateur.recupererValeursAvancementTerritoires
   Input:  { indicateurId: string, chantierId: string, jalon: number }
-  Output: ValeurAvancementIndicateurTerritoireViewModel[]
+  Output: ValeurAvancementIndicateurTerritoire[]
 ```
 
 **Implémentation côté serveur** : la query tRPC appelle `ListerDetailsIndicateurTerritoireUseCaseV2.run([indicateurId], chantierId, habilitations, profil, jalon)` puis projette le résultat :
@@ -129,15 +136,11 @@ const result = await useCase.run([input.indicateurId], input.chantierId, ...);
 const details = result[input.indicateurId]; // Record<CodeInsee, DetailsIndicateur>
 return Object.entries(details).map(([codeInsee, detail]) => ({
   territoireCode: codeInsee,
-  territoireNom: ???, // à résoudre — le use case ne retourne pas le nom
-  maille: ???,        // à résoudre — idem
   valeurAvancement: detail.valeurAvancement,
   valeurCibleAnnuelle: detail.valeurCibleAnnuelle,
   estApplicable: detail.estApplicable,
 }));
 ```
-
-> **Point d'attention** : `ListerDetailsIndicateurTerritoireUseCaseV2` retourne un `Record<CodeInsee, DetailsIndicateur>` mais `DetailsIndicateur` ne contient ni `territoireNom` ni `maille`. Or ces champs sont nécessaires pour `useSelectionTerritoires` (qui filtre par `territoireCode`) et pour le panneau latéral de comparaison (qui affiche le nom). Il faudra enrichir la projection — soit en récupérant les territoires depuis un autre source (ex: le store client des territoires), soit en enrichissant côté serveur dans l'adapter tRPC.
 
 ---
 
@@ -150,8 +153,7 @@ Référence : `WidgetCartographieTA` est le modèle à suivre pour l'architectur
 - Ajouter `recupererValeursAvancementTerritoires` dans `indicateurRouter` (`src/server/infrastructure/api/trpc/routes/indicateur.ts`)
 - Input : `{ indicateurId: string, chantierId: string, jalon: number }`
 - Appelle `getContainer("chantiers").resolve("listerDetailsIndicateurTerritoireUseCaseV2")` (pas de module indicateur dédié, OK d'utiliser le container chantiers)
-- Projette la sortie vers `ValeurAvancementIndicateurTerritoireViewModel[]`
-- Résoudre `territoireNom` et `maille` côté serveur dans l'adapter
+- Projette la sortie vers `ValeurAvancementIndicateurTerritoire[]` (données métier uniquement, pas de nom/maille)
 
 ### Étape 2 : Widget `WidgetCartographieValeurAvancement`
 
@@ -163,6 +165,7 @@ Nouveau dossier `src/client/components/_commons/Widget/WidgetCartographieValeurA
 | `useDonneesCartographieVA.tsx` | Transformer données → `Record<string, CartographieV2Donnee>` (dégradé) | `useDonneesCartographieTA.tsx` |
 | `useLegendeVA.ts` | Légende dégradé + états spéciaux | `useLegendeTA.ts` |
 | `SuiviValeurAvancement.tsx` | Panneau latéral de comparaison des territoires sélectionnés | `SuiviTauxAvancement.tsx` |
+| `ValeursRemarquables.tsx` | Min/max/médiane affichés sur la carto | `ValeursRemarquables.tsx` |
 
 ### Composants partagés réutilisés (aucune modification)
 
@@ -175,8 +178,9 @@ Nouveau dossier `src/client/components/_commons/Widget/WidgetCartographieValeurA
 ### Étape 3 : Hooks carto (détail)
 
 **`useDonneesCartographieVA`** — adapté de `useCartographieValeurAvancementIndicateur` pour `CartographieV2` :
-- Input : `ValeurAvancementIndicateurTerritoireViewModel[]`, `jalon`, `unite`
+- Input : `ValeurAvancementIndicateurTerritoire[]`, `jalon`, `unite`
 - Output : `Record<string, CartographieV2Donnee>`
+- Résout `territoireNom` via `récupérerDétailsSurUnTerritoire()` côté client
 - Logique : dégradé interpolé `#8bcdb1` → `#083a25` (min/max), hachures si non applicable, gris si null
 - Tooltip : "VA: {valeur}" + "VC {jalon}: {valeurCibleAnnuelle}"
 
@@ -207,7 +211,13 @@ Nouveau dossier `src/client/components/_commons/Widget/WidgetCartographieValeurA
 
 ---
 
-## 6. Questions ouvertes
+## 6. Décisions prises
 
-- [ ] Comment résoudre `territoireNom` et `maille` dans l'adapter tRPC ? Le use case legacy ne les retourne pas. Options : (a) enrichir côté serveur en requêtant les territoires, (b) résoudre côté client via un store/hook existant.
-- [ ] Faut-il une `ValeursRemarquables` (min/max/médiane) comme dans WidgetCartographieTA ?
+- [x] `territoireNom` et `maille` : résolus **côté client** via `récupérerDétailsSurUnTerritoire()` (JSON statique). Le tRPC ne retourne que les données métier.
+- [x] Sélection de territoires + comparaison : oui, calqué sur WidgetCartographieTA
+- [x] Container DI : `getContainer("chantiers")` depuis le router indicateur (pas de module indicateur dédié)
+- [x] ValeursRemarquables : oui, min/max/médiane comme dans WidgetCartographieTA
+
+## 7. Questions ouvertes
+
+Aucune — toutes les décisions sont prises.
