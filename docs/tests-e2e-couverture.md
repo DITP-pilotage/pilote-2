@@ -886,7 +886,7 @@ Profil : `ditp.admin@example.com` (DITP_ADMIN)
 Profil : `ditp.admin@example.com` (DITP_ADMIN)
 
 - Navigation vers CH-129 au niveau national (NAT-FR)
-- Sélection de "Carte des propositions de valeur d'avancement" sur la carte de droite
+- Sélection de "Carte des propositions des valeurs d'avancement" via le sélecteur de type de carte dans la section "Comparaison territoriale et évolution"
 - Vérification que le widget "Comparaison territoriale et évolution" s'affiche
 - Vérification du sous-titre "Nombres de propositions de valeur d'avancement"
 - Vérification que le territoire initial (France) affiche "3 propositions"
@@ -896,7 +896,7 @@ Profil : `ditp.admin@example.com` (DITP_ADMIN)
 
 Profil : `ditp.admin@example.com` (DITP_ADMIN)
 
-- Navigation vers CH-129 au niveau national (NAT-FR) avec sélection carte PVA
+- Navigation vers CH-129 au niveau national (NAT-FR) avec sélection carte PVA via le sélecteur dans "Comparaison territoriale et évolution"
 - Ajout du territoire "Paris" via le picker
 - Vérification que "Paris" apparaît avec "2 propositions"
 - Ajout du territoire "Morbihan"
