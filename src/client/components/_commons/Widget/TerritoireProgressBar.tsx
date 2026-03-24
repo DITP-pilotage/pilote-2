@@ -24,7 +24,7 @@ export const TerritoireProgressBar = ({
 
     <div className="whitespace-nowrap text-left">
       <div style={{ color: couleur }}>{libelle}</div>
-      {dateMaj != undefined && (
+      {dateMaj != null && (
         <div className="text-[10px] !text-dsfr-grey-625">
           {PiloteDateFormatter.isoMonthFranceMetropolitaine(dateMaj) ?? "—"}
         </div>
