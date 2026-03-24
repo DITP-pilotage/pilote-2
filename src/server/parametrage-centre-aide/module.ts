@@ -2,6 +2,7 @@ import {
   defineModule,
   type ExtractScope,
   type NoExports,
+  type VerifyCradle,
 } from "@/server/module-system";
 import { CreerArticleCentreAideUseCase } from "./usecases/CreerArticleCentreAideUseCase";
 import { PrismaArticleCentreAideRepository } from "./infrastructure/adapters/PrismaArticleCentreAideRepository";
@@ -42,7 +43,7 @@ export const parametrageCentreAideModule = defineModule<
       supprimerArticleCentreAideUseCase: asModuleClass(
         SupprimerArticleCentreAideUseCase,
       ),
-    });
+    } satisfies VerifyCradle<ParametrageCentreAideCradle>);
   },
 });
 

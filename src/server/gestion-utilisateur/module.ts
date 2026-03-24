@@ -15,7 +15,11 @@ import { RecupererTousLesTerritoiresUseCase } from "@/server/usecase/territoire/
 import { RecupererListeUtilisateursUseCase } from "@/server/gestion-utilisateur/usecases/RecupererListeUtilisateursUseCase";
 import { PrismaHistorisationModificationRepository } from "@/server/infrastructure/accès_données/historisationModification/PrismaHistorisationModificationRepository";
 import { HistorisationModificationRepository } from "@/server/domain/historisationModification/HistorisationModificationRepository";
-import { defineModule, type ExtractScope } from "@/server/module-system";
+import {
+  defineModule,
+  type ExtractScope,
+  type VerifyCradle,
+} from "@/server/module-system";
 import { UtilisateurRepository } from "./domain/ports/UtilisateurRepository";
 import { UtilisateurIAMRepository } from "./domain/ports/UtilisateurIAMRepository";
 import { TokenAPIInformationRepository } from "./domain/ports/TokenAPIInformationRepository";
@@ -209,7 +213,7 @@ export const gestionUtilisateurModule = defineModule<
       importerDesUtilisateursUseCase: asModuleClass(
         ImporterDesUtilisateursUseCase,
       ),
-    });
+    } satisfies VerifyCradle<GestionUtilisateurCradle>);
   },
 });
 

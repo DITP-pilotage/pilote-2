@@ -5,6 +5,7 @@ import {
   defineModule,
   type ExtractScope,
   type NoExports,
+  type VerifyCradle,
 } from "@/server/module-system";
 import { ActiviteComptesGateway } from "./domain/ports/ActiviteComptesGateway";
 import { CoordinateurGateway } from "./domain/ports/CoordinateurGateway";
@@ -23,20 +24,25 @@ import { EnvoyerRapportsHebdomadairesUseCase } from "./usecases/EnvoyerRapportsH
 import { ListerRapportsHebdomadairesQuery } from "./queries/ListerRapportsHebdomadairesQuery";
 import { RecupererRapportHebdomadaireQuery } from "./queries/RecupererRapportHebdomadaireQuery";
 
-type RapportsHebdomadairesCradle = GestionUtilisateurExports &
+type RapportsHebdomadairesImports = GestionUtilisateurExports &
   ChantierExports &
-  IndicateurTerritoireValeurEvenementExports & {
-    activiteComptesGateway: ActiviteComptesGateway;
-    coordinateurGateway: CoordinateurGateway;
-    rapportRepository: RapportRepository;
-    envoieEmailService: EnvoieEmailService;
-    chantierGateway: ChantierGateway;
-    activiteIndicateurGateway: ActiviteIndicateurGateway;
-    produireRapportsHebdomadairesUseCase: ProduireRapportsHebdomadairesUseCase;
-    envoyerRapportsHebdomadairesUseCase: EnvoyerRapportsHebdomadairesUseCase;
-    listerRapportsHebdomadairesQuery: ListerRapportsHebdomadairesQuery;
-    recupererRapportHebdomadaireQuery: RecupererRapportHebdomadaireQuery;
-  };
+  IndicateurTerritoireValeurEvenementExports;
+
+type RapportsHebdomadairesOwnCradle = {
+  activiteComptesGateway: ActiviteComptesGateway;
+  coordinateurGateway: CoordinateurGateway;
+  rapportRepository: RapportRepository;
+  envoieEmailService: EnvoieEmailService;
+  chantierGateway: ChantierGateway;
+  activiteIndicateurGateway: ActiviteIndicateurGateway;
+  produireRapportsHebdomadairesUseCase: ProduireRapportsHebdomadairesUseCase;
+  envoyerRapportsHebdomadairesUseCase: EnvoyerRapportsHebdomadairesUseCase;
+  listerRapportsHebdomadairesQuery: ListerRapportsHebdomadairesQuery;
+  recupererRapportHebdomadaireQuery: RecupererRapportHebdomadaireQuery;
+};
+
+type RapportsHebdomadairesCradle = RapportsHebdomadairesOwnCradle &
+  RapportsHebdomadairesImports;
 
 export const rapportsHebdomadairesModule = defineModule<
   NoExports,
@@ -72,7 +78,7 @@ export const rapportsHebdomadairesModule = defineModule<
       recupererRapportHebdomadaireQuery: asModuleClass(
         RecupererRapportHebdomadaireQuery,
       ),
-    });
+    } satisfies VerifyCradle<RapportsHebdomadairesOwnCradle>);
   },
 });
 

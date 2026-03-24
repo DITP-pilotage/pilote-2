@@ -4,21 +4,26 @@ import { ModifierMonProfilUseCase } from "@/server/profil-utilisateur/usecases/M
 import { GetProfilUtilisateurQuery } from "@/server/profil-utilisateur/queries/GetProfilUtilisateurQuery";
 import { ProfilModifieSideEffects } from "@/server/profil-utilisateur/domain/ports/ProfilModifieSideEffects";
 import { KeycloakBrevoProfilModifieSideEffects } from "@/server/profil-utilisateur/infrastructure/adapters/KeycloakBrevoProfilModifieSideEffects";
-import type { EmailManager } from "@/server/infrastructure/email-manager/EmailManager";
 import { configuration } from "@/config";
 import {
   defineModule,
   type ExtractScope,
   type NoExports,
+  type VerifyCradle,
 } from "@/server/module-system";
+import type { SharedDependencies } from "@/server/shared/module";
 
-type ProfilUtilisateurCradle = {
+type ProfilUtilisateurImports = SharedDependencies;
+
+type ProfilUtilisateurOwnCradle = {
   profilUtilisateurRepository: ProfilUtilisateurRepository;
   profilModifieSideEffects: ProfilModifieSideEffects;
   modifierMonProfilUseCase: ModifierMonProfilUseCase;
   getProfilUtilisateurQuery: GetProfilUtilisateurQuery;
-  emailManager: EmailManager;
 };
+
+type ProfilUtilisateurCradle = ProfilUtilisateurOwnCradle &
+  ProfilUtilisateurImports;
 
 export const profilUtilisateurModule = defineModule<
   NoExports,
@@ -43,7 +48,7 @@ export const profilUtilisateurModule = defineModule<
       }),
       modifierMonProfilUseCase: asModuleClass(ModifierMonProfilUseCase),
       getProfilUtilisateurQuery: asModuleClass(GetProfilUtilisateurQuery),
-    });
+    } satisfies VerifyCradle<ProfilUtilisateurOwnCradle>);
   },
 });
 

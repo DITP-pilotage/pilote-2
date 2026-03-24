@@ -1,4 +1,8 @@
-import { defineModule, type ExtractScope } from "@/server/module-system";
+import {
+  defineModule,
+  type ExtractScope,
+  type VerifyCradle,
+} from "@/server/module-system";
 import { DatajobsExecutionQueries } from "./DatajobsExecution";
 
 export type DatajobsExecutionExports = {
@@ -17,7 +21,7 @@ export const datajobsExecutionModule = defineModule<
   register: (container, { asModuleClass }) => {
     container.register({
       datajobsExecutionQueries: asModuleClass(DatajobsExecutionQueries),
-    });
+    } satisfies VerifyCradle<DatajobsExecutionCradle>);
   },
 });
 

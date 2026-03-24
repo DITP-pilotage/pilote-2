@@ -7,6 +7,7 @@ export type {
   NoExports,
   TypedAsClass,
   TypedAsFunction,
+  VerifyCradle,
 } from "./ModuleDef";
 export { bootModules } from "./bootModules";
 export type { AnyModuleDef, ExtractCradle } from "./bootModules";

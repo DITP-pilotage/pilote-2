@@ -2,6 +2,7 @@ import {
   defineModule,
   type ExtractScope,
   type NoExports,
+  type VerifyCradle,
 } from "@/server/module-system";
 import { CreerNouveauteUseCase } from "./usecases/CreerNouveauteUseCase";
 import { PrismaNouveauteRepository } from "./infrastructure/adapters/PrismaNouveauteRepository";
@@ -29,7 +30,7 @@ export const parametrageNouveautesModule = defineModule<
       nouveauteRepository: asModuleClass(PrismaNouveauteRepository),
       listerNouveautesUseCase: asModuleClass(ListerNouveautesUseCase),
       modifierNouveauteUseCase: asModuleClass(ModifierNouveauteUseCase),
-    });
+    } satisfies VerifyCradle<ParametrageNouveautesCradle>);
   },
 });
 

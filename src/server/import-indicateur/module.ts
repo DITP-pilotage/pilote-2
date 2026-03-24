@@ -22,11 +22,14 @@ import {
   defineModule,
   type ExtractScope,
   type NoExports,
+  type VerifyCradle,
 } from "@/server/module-system";
 import { PropositionValeurAvancementRepository } from "./domain/ports/PropositionValeurAvancementRepository";
 import { PrismaPropositionValeurAvancementRepository } from "./infrastructure/adapters/PrismaPropositionValeurAvancementRepository";
 
-type ImportIndicateurCradle = IndicateurTerritoireValeurEvenementExports & {
+type ImportIndicateurImports = IndicateurTerritoireValeurEvenementExports;
+
+type ImportIndicateurOwnCradle = {
   httpClient: HttpClient;
   publierFichierImportIndicateurHandler: PublierFichierImportIndicateurHandler;
   publierFichierIndicateurImporteUseCase: PublierFichierIndicateurImporteUseCase;
@@ -41,6 +44,9 @@ type ImportIndicateurCradle = IndicateurTerritoireValeurEvenementExports & {
   importDonneeIndicateurAPIHandler: ImportDonneeIndicateurAPIHandler;
   propositionValeurAvancementRepository: PropositionValeurAvancementRepository;
 };
+
+type ImportIndicateurCradle = ImportIndicateurOwnCradle &
+  ImportIndicateurImports;
 
 export const importIndicateurModule = defineModule<
   NoExports,
@@ -84,7 +90,7 @@ export const importIndicateurModule = defineModule<
       propositionValeurAvancementRepository: asModuleClass(
         PrismaPropositionValeurAvancementRepository,
       ),
-    });
+    } satisfies VerifyCradle<ImportIndicateurOwnCradle>);
   },
 });
 

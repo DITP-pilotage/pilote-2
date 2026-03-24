@@ -56,6 +56,9 @@ export const defineModule =
   ): ModuleDef<TName, TExports, TCradle> =>
     def;
 
+// Vérifie que toutes les clés du cradle sont enregistrées
+export type VerifyCradle<T> = Record<keyof T, unknown>;
+
 // Type utilitaire pour les modules qui n'exportent rien
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export type NoExports = {};
