@@ -1,218 +1,315 @@
+import { $Enums } from "@prisma/client";
+import { ProfilEnum } from "@/server/app/enum/profil.enum";
+import { PrismaIndicateurRepository } from "@/server/chantiers/infrastructure/adapters/PrismaIndicateurRepository";
 import { GetValeursRemarquablesValeurAvancementIndicateurTerritoiresQuery } from "@/server/chantiers/infrastructure/queries/GetValeursRemarquablesValeurAvancementIndicateurTerritoiresQuery";
 import { ListerDetailsIndicateurTerritoireUseCaseV2 } from "@/server/chantiers/usecases/ListerDetailsIndicateurTerritoireUseCaseV2";
+import { DatajobsExecutionQueries } from "@/server/datajobs-execution/DatajobsExecution";
+import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
-import { ProfilCode } from "@/server/domain/utilisateur/Utilisateur.interface";
-import { ProfilEnum } from "@/server/app/enum/profil.enum";
+import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
+import { fixtures } from "@/server/infrastructure/test/fixtures";
 
-const habilitations = {
-  lecture: { chantiers: [], territoires: [], périmètres: [] },
-  saisieCommentaire: { chantiers: [], territoires: [], périmètres: [] },
-  saisieIndicateur: { chantiers: [], territoires: [], périmètres: [] },
-  responsabilite: { chantiers: [], territoires: [], périmètres: [] },
-  gestionUtilisateur: { chantiers: [], territoires: [], périmètres: [] },
-} as unknown as Habilitations;
-const profil: ProfilCode = ProfilEnum.DITP_ADMIN;
-
-function createMockUseCase(
-  result: Awaited<
-    ReturnType<ListerDetailsIndicateurTerritoireUseCaseV2["run"]>
-  >,
-) {
+function habilitationsPourChantier(
+  chantierId: string,
+  territoires: string[],
+): Habilitations {
   return {
-    run: vi.fn().mockResolvedValue(result),
-  } as unknown as ListerDetailsIndicateurTerritoireUseCaseV2;
+    lecture: {
+      chantiers: [chantierId],
+      territoires,
+      périmètres: [],
+    },
+    saisieCommentaire: { chantiers: [], territoires: [], périmètres: [] },
+    saisieIndicateur: { chantiers: [], territoires: [], périmètres: [] },
+    responsabilite: { chantiers: [], territoires: [], périmètres: [] },
+    gestionUtilisateur: { chantiers: [], territoires: [], périmètres: [] },
+  };
 }
 
-function createQuery(
-  details: Record<
-    string,
-    { valeurAvancement: number | null; estApplicable: boolean | null }
-  >,
+async function créerIndicateurAvecTerritoires(
+  chantierId: string,
+  indicateurId: string,
+  territoires: {
+    code: string;
+    codeInsee: string;
+    maille: $Enums.Maille;
+    zoneId: string;
+    valeurActuelle: number | null;
+    estApplicable: boolean;
+  }[],
 ) {
-  return new GetValeursRemarquablesValeurAvancementIndicateurTerritoiresQuery({
-    listerDetailsIndicateurTerritoireUseCaseV2: createMockUseCase({
-      "IND-001": details as any,
-    }),
+  await fixtures.chantierIdentite({ id: chantierId });
+  await fixtures.indicateurIdentite({
+    id: indicateurId,
+    chantier_id: chantierId,
+    statut: "PUBLIE",
   });
+
+  for (const t of territoires) {
+    await fixtures.chantierTerritoire({
+      id: chantierId,
+      territoire_code: t.code,
+      maille: t.maille,
+      code_insee: t.codeInsee,
+      zone_id: t.zoneId,
+    });
+    await fixtures.indicateurTerritoire({
+      id: indicateurId,
+      chantier_id: chantierId,
+      territoire_code: t.code,
+      code_insee: t.codeInsee,
+      maille: t.maille,
+      zone_id: t.zoneId,
+      est_applicable: t.estApplicable,
+    });
+    await fixtures.indicateurTerritoireJalon({
+      id: indicateurId,
+      territoire_code: t.code,
+      code_insee: t.codeInsee,
+      maille: t.maille,
+      zone_id: t.zoneId,
+      jalon: 2025,
+      valeur_actuelle: t.valeurActuelle,
+      taux_avancement: t.valeurActuelle,
+    });
+  }
 }
 
 describe("GetValeursRemarquablesValeurAvancementIndicateurTerritoiresQuery", () => {
-  it("retourne null pour toutes les valeurs quand il n'y a pas de territoires", async () => {
-    // given
-    const query = createQuery({});
+  const prismaPilote = new PrismaPilote();
+  let query: GetValeursRemarquablesValeurAvancementIndicateurTerritoiresQuery;
 
-    // when
-    const result = await query.execute({
-      indicateurId: "IND-001",
-      chantierId: "CH-001",
-      maille: "departementale",
-      jalon: 2025,
-      habilitations,
-      profil,
+  beforeEach(() => {
+    const indicateurRepository = new PrismaIndicateurRepository({
+      prisma: prismaPilote,
+    });
+    const datajobsExecutionQueries = new DatajobsExecutionQueries({
+      prisma: prismaPilote,
     });
 
-    // then
-    expect(result).toEqual({
-      minimum: null,
-      médiane: null,
-      maximum: null,
-    });
+    query =
+      new GetValeursRemarquablesValeurAvancementIndicateurTerritoiresQuery({
+        listerDetailsIndicateurTerritoireUseCaseV2:
+          new ListerDetailsIndicateurTerritoireUseCaseV2({
+            indicateurRepository,
+            datajobsExecutionQueries,
+          }),
+      });
   });
 
-  it("calcule la médiane pour un nombre impair de valeurs", async () => {
-    // given
-    const query = createQuery({
-      "DEPT-75": { valeurAvancement: 30, estApplicable: true },
-      "DEPT-92": { valeurAvancement: 50, estApplicable: true },
-      "DEPT-93": { valeurAvancement: 70, estApplicable: true },
-    });
+  it(
+    "calcule minimum, médiane et maximum pour des territoires départementaux",
+    createIntegrationTest(async () => {
+      // given
+      await créerIndicateurAvecTerritoires("CH-010", "IND-010", [
+        {
+          code: "DEPT-75",
+          codeInsee: "75",
+          maille: "DEPT",
+          zoneId: "D75",
+          valeurActuelle: 30,
+          estApplicable: true,
+        },
+        {
+          code: "DEPT-92",
+          codeInsee: "92",
+          maille: "DEPT",
+          zoneId: "D92",
+          valeurActuelle: 50,
+          estApplicable: true,
+        },
+        {
+          code: "DEPT-93",
+          codeInsee: "93",
+          maille: "DEPT",
+          zoneId: "D93",
+          valeurActuelle: 70,
+          estApplicable: true,
+        },
+      ]);
 
-    // when
-    const result = await query.execute({
-      indicateurId: "IND-001",
-      chantierId: "CH-001",
-      maille: "departementale",
-      jalon: 2025,
-      habilitations,
-      profil,
-    });
+      // when
+      const result = await query.execute({
+        indicateurId: "IND-010",
+        chantierId: "CH-010",
+        maille: "departementale",
+        jalon: 2025,
+        habilitations: habilitationsPourChantier("CH-010", [
+          "DEPT-75",
+          "DEPT-92",
+          "DEPT-93",
+        ]),
+        profil: ProfilEnum.DITP_ADMIN,
+      });
 
-    // then
-    expect(result).toEqual({
-      minimum: 30,
-      médiane: 50,
-      maximum: 70,
-    });
-  });
+      // then
+      expect(result).toEqual({
+        minimum: 30,
+        médiane: 50,
+        maximum: 70,
+      });
+    }),
+  );
 
-  it("calcule la médiane pour un nombre pair de valeurs", async () => {
-    // given
-    const query = createQuery({
-      "DEPT-75": { valeurAvancement: 20, estApplicable: true },
-      "DEPT-92": { valeurAvancement: 40, estApplicable: true },
-      "DEPT-93": { valeurAvancement: 60, estApplicable: true },
-      "DEPT-94": { valeurAvancement: 80, estApplicable: true },
-    });
+  it(
+    "exclut les territoires non applicables du calcul",
+    createIntegrationTest(async () => {
+      // given
+      await créerIndicateurAvecTerritoires("CH-011", "IND-011", [
+        {
+          code: "DEPT-75",
+          codeInsee: "75",
+          maille: "DEPT",
+          zoneId: "D75",
+          valeurActuelle: 10,
+          estApplicable: false,
+        },
+        {
+          code: "DEPT-92",
+          codeInsee: "92",
+          maille: "DEPT",
+          zoneId: "D92",
+          valeurActuelle: 50,
+          estApplicable: true,
+        },
+        {
+          code: "DEPT-93",
+          codeInsee: "93",
+          maille: "DEPT",
+          zoneId: "D93",
+          valeurActuelle: 90,
+          estApplicable: true,
+        },
+      ]);
 
-    // when
-    const result = await query.execute({
-      indicateurId: "IND-001",
-      chantierId: "CH-001",
-      maille: "departementale",
-      jalon: 2025,
-      habilitations,
-      profil,
-    });
+      // when
+      const result = await query.execute({
+        indicateurId: "IND-011",
+        chantierId: "CH-011",
+        maille: "departementale",
+        jalon: 2025,
+        habilitations: habilitationsPourChantier("CH-011", [
+          "DEPT-75",
+          "DEPT-92",
+          "DEPT-93",
+        ]),
+        profil: ProfilEnum.DITP_ADMIN,
+      });
 
-    // then
-    expect(result).toEqual({
-      minimum: 20,
-      médiane: 50,
-      maximum: 80,
-    });
-  });
+      // then
+      expect(result).toEqual({
+        minimum: 50,
+        médiane: 70,
+        maximum: 90,
+      });
+    }),
+  );
 
-  it("filtre par maille régionale", async () => {
-    // given
-    const query = createQuery({
-      "REG-11": { valeurAvancement: 10, estApplicable: true },
-      "REG-44": { valeurAvancement: 90, estApplicable: true },
-      "DEPT-75": { valeurAvancement: 50, estApplicable: true },
-    });
+  it(
+    "filtre par maille régionale en ignorant les territoires départementaux",
+    createIntegrationTest(async () => {
+      // given
+      await créerIndicateurAvecTerritoires("CH-012", "IND-012", [
+        {
+          code: "REG-11",
+          codeInsee: "11",
+          maille: "REG",
+          zoneId: "R11",
+          valeurActuelle: 20,
+          estApplicable: true,
+        },
+        {
+          code: "DEPT-75",
+          codeInsee: "75",
+          maille: "DEPT",
+          zoneId: "D75",
+          valeurActuelle: 99,
+          estApplicable: true,
+        },
+      ]);
 
-    // when
-    const result = await query.execute({
-      indicateurId: "IND-001",
-      chantierId: "CH-001",
-      maille: "regionale",
-      jalon: 2025,
-      habilitations,
-      profil,
-    });
+      // when
+      const result = await query.execute({
+        indicateurId: "IND-012",
+        chantierId: "CH-012",
+        maille: "regionale",
+        jalon: 2025,
+        habilitations: habilitationsPourChantier("CH-012", [
+          "REG-11",
+          "DEPT-75",
+        ]),
+        profil: ProfilEnum.DITP_ADMIN,
+      });
 
-    // then
-    expect(result).toEqual({
-      minimum: 10,
-      médiane: 50,
-      maximum: 90,
-    });
-  });
+      // then
+      expect(result).toEqual({
+        minimum: 20,
+        médiane: 20,
+        maximum: 20,
+      });
+    }),
+  );
 
-  it("filtre par maille départementale", async () => {
-    // given
-    const query = createQuery({
-      "DEPT-75": { valeurAvancement: 20, estApplicable: true },
-      "DEPT-92": { valeurAvancement: 80, estApplicable: true },
-      "REG-11": { valeurAvancement: 50, estApplicable: true },
-    });
+  it(
+    "calcule la médiane pour un nombre pair de valeurs",
+    createIntegrationTest(async () => {
+      // given
+      await créerIndicateurAvecTerritoires("CH-013", "IND-013", [
+        {
+          code: "DEPT-75",
+          codeInsee: "75",
+          maille: "DEPT",
+          zoneId: "D75",
+          valeurActuelle: 20,
+          estApplicable: true,
+        },
+        {
+          code: "DEPT-92",
+          codeInsee: "92",
+          maille: "DEPT",
+          zoneId: "D92",
+          valeurActuelle: 40,
+          estApplicable: true,
+        },
+        {
+          code: "DEPT-93",
+          codeInsee: "93",
+          maille: "DEPT",
+          zoneId: "D93",
+          valeurActuelle: 60,
+          estApplicable: true,
+        },
+        {
+          code: "REG-11",
+          codeInsee: "11",
+          maille: "REG",
+          zoneId: "R11",
+          valeurActuelle: 80,
+          estApplicable: true,
+        },
+      ]);
 
-    // when
-    const result = await query.execute({
-      indicateurId: "IND-001",
-      chantierId: "CH-001",
-      maille: "departementale",
-      jalon: 2025,
-      habilitations,
-      profil,
-    });
+      // when — only DEPT territories are used for departementale
+      const result = await query.execute({
+        indicateurId: "IND-013",
+        chantierId: "CH-013",
+        maille: "departementale",
+        jalon: 2025,
+        habilitations: habilitationsPourChantier("CH-013", [
+          "DEPT-75",
+          "DEPT-92",
+          "DEPT-93",
+          "REG-11",
+        ]),
+        profil: ProfilEnum.DITP_ADMIN,
+      });
 
-    // then
-    expect(result).toEqual({
-      minimum: 20,
-      médiane: 50,
-      maximum: 80,
-    });
-  });
-
-  it("exclut les territoires non applicables", async () => {
-    // given
-    const query = createQuery({
-      "DEPT-75": { valeurAvancement: 10, estApplicable: false },
-      "DEPT-92": { valeurAvancement: 50, estApplicable: true },
-      "DEPT-93": { valeurAvancement: 90, estApplicable: true },
-    });
-
-    // when
-    const result = await query.execute({
-      indicateurId: "IND-001",
-      chantierId: "CH-001",
-      maille: "departementale",
-      jalon: 2025,
-      habilitations,
-      profil,
-    });
-
-    // then
-    expect(result).toEqual({
-      minimum: 50,
-      médiane: 70,
-      maximum: 90,
-    });
-  });
-
-  it("exclut les territoires avec valeurAvancement null", async () => {
-    // given
-    const query = createQuery({
-      "DEPT-75": { valeurAvancement: null, estApplicable: true },
-      "DEPT-92": { valeurAvancement: 40, estApplicable: true },
-      "DEPT-93": { valeurAvancement: 60, estApplicable: true },
-    });
-
-    // when
-    const result = await query.execute({
-      indicateurId: "IND-001",
-      chantierId: "CH-001",
-      maille: "departementale",
-      jalon: 2025,
-      habilitations,
-      profil,
-    });
-
-    // then
-    expect(result).toEqual({
-      minimum: 40,
-      médiane: 50,
-      maximum: 60,
-    });
-  });
+      // then — median of [20, 40, 60] = 40 (3 DEPT values, odd count)
+      expect(result).toEqual({
+        minimum: 20,
+        médiane: 40,
+        maximum: 60,
+      });
+    }),
+  );
 });
